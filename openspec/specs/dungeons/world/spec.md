@@ -87,6 +87,16 @@ A chest's opened state SHALL persist with the saved run for each map, and NPC po
 - **WHEN** the player enters that map again
 - **THEN** every NPC is back at its starting position
 
+### Requirement: A map's objects belong to that map
+
+The world SHALL read each map's chests and NPCs from that map alone, so a map entered after another shows its own objects.
+
+#### Scenario: Entering a second map shows its NPCs
+
+- **GIVEN** the player has been in one map
+- **WHEN** the player goes through a door into another map
+- **THEN** the NPCs shown are the other map's, not the first map's
+
 ### Requirement: Encounter chance grows with steps until a battle is certain
 
 Each step taken in an encounter area SHALL increase the chance of a wild battle, and the chance SHALL reach certainty at the step cap.

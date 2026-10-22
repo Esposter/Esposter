@@ -23,7 +23,9 @@ export const SwitchAttempt: State<StateName.SwitchAttempt> = {
     const battleDialogStore = useBattleDialogStore();
     const { showMessages } = battleDialogStore;
 
-    if (!player.value.monsters.some(({ id }) => id !== activeMonster.value.id)) {
+    if (
+      !player.value.monsters.some((monster) => monster.id !== activeMonster.value.id && !checkIsMonsterFainted(monster))
+    ) {
       await showMessages(scene, ["You have no other monsters in your party..."]);
       await battleStateMachine.setState(StateName.PlayerInput);
       return;

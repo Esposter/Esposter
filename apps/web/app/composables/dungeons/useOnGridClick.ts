@@ -8,16 +8,12 @@ import { checkIsDeepEqual } from "@esposter/shared";
 export const useOnGridClick = <TGrid extends readonly (readonly unknown[])[]>(
   grid: Grid<TGrid>,
   position: MaybeRefOrGetter<Position>,
-  onConfirm?: () => void,
 ) => {
   const controlsStore = useControlsStore();
   const { controls } = storeToRefs(controlsStore);
-  const defaultOnConfirm = () => {
-    controls.value.setInput(PlayerSpecialInput.Confirm);
-  };
   return () => {
     const positionValue = toValue(position);
-    if (checkIsDeepEqual(positionValue, grid.position.value)) (onConfirm ?? defaultOnConfirm)();
+    if (checkIsDeepEqual(positionValue, grid.position.value)) controls.value.setInput(PlayerSpecialInput.Confirm);
     else grid.position.value = positionValue;
   };
 };

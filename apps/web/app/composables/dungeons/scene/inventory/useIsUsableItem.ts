@@ -7,10 +7,10 @@ import { useSceneStore } from "@/store/dungeons/scene";
 export const useIsUsableItem = (item: MaybeRefOrGetter<Item>) => {
   const sceneStore = useSceneStore();
   const { previousSceneKey } = storeToRefs(sceneStore);
-  return computed(() =>
+  return computed(() => {
     // Outside a scene that lists its own usable effects — the world scene — only heal items may be used
-    (PreviousSceneUsableItemEffectTypesMap[previousSceneKey.value] ?? [ItemEffectType.Heal]).includes(
-      toValue(item).effect.type,
-    ),
-  );
+    const usableEffectTypes =
+      previousSceneKey.value === undefined ? undefined : PreviousSceneUsableItemEffectTypesMap[previousSceneKey.value];
+    return (usableEffectTypes ?? [ItemEffectType.Heal]).includes(toValue(item).effect.type);
+  });
 };

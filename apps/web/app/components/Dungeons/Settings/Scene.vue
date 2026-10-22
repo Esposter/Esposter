@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { SceneWithPlugins } from "vue-phaserjs";
+
 import { SceneKey } from "@/models/dungeons/keys/SceneKey";
 import { BackgroundMusicKey } from "@/models/dungeons/keys/sound/BackgroundMusicKey";
 import { playDungeonsBackgroundMusic } from "@/services/dungeons/sound/playDungeonsBackgroundMusic";
@@ -8,13 +10,17 @@ import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
 const controlsStore = useControlsStore();
 const { controls } = storeToRefs(controlsStore);
 const settingsSceneStore = useSettingsSceneStore();
-const { onPlayerInput } = settingsSceneStore;
+const { onPlayerInput, restSettingsCursor } = settingsSceneStore;
+const onCreate = (scene: SceneWithPlugins) => {
+  restSettingsCursor();
+  playDungeonsBackgroundMusic(scene, BackgroundMusicKey.Title);
+};
 </script>
 
 <template>
   <DungeonsScene
     :scene-key="SceneKey.Settings"
-    @create="playDungeonsBackgroundMusic($event, BackgroundMusicKey.Title)"
+    @create="(scene) => onCreate(scene)"
     @update="(scene, _time, delta) => onPlayerInput(scene, controls.getInput(true), controls.getInput(), delta)"
   >
     <DungeonsSettingsContainer />

@@ -24,10 +24,13 @@ onCreate((scene) => {
   y.value = scene.scale.height - 69;
 });
 
-watchImmediate(isCancelButtonActive, (newIsCancelButtonActive) => {
+const setInfoText = (newIsCancelButtonActive: boolean) => {
   // Info text stays a ref since other things set it (e.g. using items).
   infoDialogMessage.value.text = newIsCancelButtonActive ? "Go back to previous menu." : DEFAULT_INFO_DIALOG_MESSAGE;
-});
+};
+
+setInfoText(isCancelButtonActive.value);
+watch(isCancelButtonActive, setInfoText);
 </script>
 
 <template>

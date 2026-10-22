@@ -5,6 +5,7 @@ import { StateName } from "@/models/dungeons/state/battle/StateName";
 import { battleStateMachine } from "@/services/dungeons/scene/battle/battleStateMachine";
 import { playDungeonsBackgroundMusic } from "@/services/dungeons/sound/playDungeonsBackgroundMusic";
 import { StateMap } from "@/services/dungeons/state/battle/StateMap";
+import { useBattlePlayerStore } from "@/store/dungeons/battle/player";
 import { useBattleSceneStore } from "@/store/dungeons/battle/scene";
 import { useControlsStore } from "@/store/dungeons/controls";
 import { getResultAsync, noop } from "@esposter/shared";
@@ -13,6 +14,8 @@ const controlsStore = useControlsStore();
 const { controls } = storeToRefs(controlsStore);
 const battleSceneStore = useBattleSceneStore();
 const { onPlayerInput } = battleSceneStore;
+const battlePlayerStore = useBattlePlayerStore();
+const { resetActiveMonster } = battlePlayerStore;
 </script>
 
 <template>
@@ -24,6 +27,7 @@ const { onPlayerInput } = battleSceneStore;
           playDungeonsBackgroundMusic(scene, BackgroundMusicKey.DecisiveBattle);
           battleStateMachine.scene = scene;
           battleStateMachine.stateMap = StateMap;
+          resetActiveMonster();
           await battleStateMachine.setState(StateName.Intro);
         }).match(noop, console.error)
     "

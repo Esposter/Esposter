@@ -1,0 +1,48 @@
+// @vitest-environment nuxt
+import type { Item } from "#shared/models/dungeons/item/Item";
+
+import { ItemId } from "#shared/generated/tiled/propertyTypes/enum/ItemId";
+import { ItemEffectType } from "#shared/models/dungeons/item/ItemEffectType";
+import { consumeItem } from "@/services/dungeons/item/consumeItem";
+import { usePlayerStore } from "@/store/dungeons/player";
+import { beforeEach, describe, expect, test, vi } from "vitest";
+import { ref } from "vue";
+
+// The player store reads the dungeons store, which imports Phaser. Only its inventory is read here, so the fake holds one
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type
+vi.mock("@/store/dungeons/player", async () => {
+  const { reactive } = await import("vue");
+  const player = reactive({ inventory: [] as Item[] });
+  return { usePlayerStore: () => ({ player }) };
+});
+
+let item: Item;
+
+describe(consumeItem, () => {
+  beforeEach(() => {
+    item = {
+      description: "description",
+      effect: { type: ItemEffectType.Heal, value: 0 },
+      id: ItemId.Potion,
+      quantity: 1,
+    };
+    usePlayerStore().player.inventory = [item];
+  });
+
+  test("removes the item once its last one is spent", () => {
+    expect.hasAssertions();
+
+    consumeItem(ref(item));
+
+    expect(usePlayerStore().player.inventory).toStrictEqual([]);
+  });
+
+  test("keeps the item while one is left", () => {
+    expect.hasAssertions();
+
+    item.quantity = 2;
+    consumeItem(ref(item));
+
+    expect(usePlayerStore().player.inventory).toStrictEqual([{ ...item, quantity: 1 }]);
+  });
+});

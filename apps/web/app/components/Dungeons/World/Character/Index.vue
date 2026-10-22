@@ -46,6 +46,9 @@ onUnmounted(() => {
     }"
     :on-complete="
       (scene, sprite) => {
+        // The sprite can be created again, and each creation adds its subscriptions, so the last set is released first
+        for (const subscription of subscriptions) subscription.unsubscribe();
+        subscriptions.length = 0;
         // The world camera's zoom scales every sprite, which the default rounding skips, so a pixel sprite walking
         // Between tiles would land between screen pixels and smear across both
         sprite.setVertexRoundMode('fullAuto');

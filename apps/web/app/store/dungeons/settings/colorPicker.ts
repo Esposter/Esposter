@@ -1,5 +1,6 @@
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
 import { ThemeModeSettings } from "#shared/models/dungeons/data/settings/ThemeModeSetting";
+import { getDirectionStep } from "@/services/dungeons/UI/input/getDirectionStep";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { mod } from "@/util/math/mod";
 import { takeOne } from "@esposter/shared";
@@ -13,7 +14,7 @@ export const useColorPickerStore = defineStore("dungeons/settings/colorPicker", 
     const index = ThemeModeSettings.indexOf(themeModeSetting.value);
     if (index === -1 || ![Direction.LEFT, Direction.RIGHT].includes(direction)) return;
     // The setting list is a ring, so stepping past either end lands on the other
-    const offset = direction === Direction.LEFT ? -1 : 1;
+    const offset = getDirectionStep(direction, Direction.LEFT);
     await setSettings(
       SettingsOption["Theme Mode"],
       takeOne(ThemeModeSettings, mod(index + offset, ThemeModeSettings.length)),

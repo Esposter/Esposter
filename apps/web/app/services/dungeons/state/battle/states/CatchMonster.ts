@@ -24,8 +24,9 @@ export const CatchMonster: State<StateName.CatchMonster> = {
       const { monsters } = storeToRefs(monsterPartySceneStore);
       await useMonsterDeathTween(true);
       await showMessages(scene, [`You caught ${prettify(activeMonster.value.key)}.`]);
-      await battleStateMachine.setState(StateName.GainExperience);
+      // The caught monster joins the party before the battle's experience is shared out, so it takes its share
       monsters.value.push(activeMonster.value);
+      await battleStateMachine.setState(StateName.GainExperience);
     } else {
       await showMessages(scene, [`Wild ${prettify(activeMonster.value.key)} breaks free!`]);
       await battleStateMachine.setState(StateName.EnemyInput);

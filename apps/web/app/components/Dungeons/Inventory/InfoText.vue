@@ -14,15 +14,15 @@ onCreate((scene) => {
   wordWrapWidth.value = scene.scale.width - WORD_PADDING;
 });
 
-watchImmediate(
-  () => itemOptionGrid.value,
-  (newItemOption) => {
-    infoDialogMessage.value.text =
-      newItemOption === PlayerSpecialInput.Cancel
-        ? "Close your bag and go back to adventuring!"
-        : newItemOption.description;
-  },
-);
+const setInfoText = (newItemOption: typeof itemOptionGrid.value) => {
+  infoDialogMessage.value.text =
+    newItemOption === PlayerSpecialInput.Cancel
+      ? "Close your bag and go back to adventuring!"
+      : newItemOption.description;
+};
+
+setInfoText(itemOptionGrid.value);
+watch(() => itemOptionGrid.value, setInfoText);
 </script>
 
 <template>

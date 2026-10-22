@@ -1,4 +1,5 @@
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
+import type { Position } from "grid-engine";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
@@ -9,11 +10,16 @@ import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsO
 import { checkIsUpdateThemeModeSetting } from "@/services/dungeons/settings/checkIsUpdateThemeModeSetting";
 import { checkIsPlayerSpecialInput } from "@/services/dungeons/UI/input/checkIsPlayerSpecialInput";
 import { useDungeonsStore } from "@/store/dungeons";
+import { getDirectionStep } from "@/services/dungeons/UI/input/getDirectionStep";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { useColorPickerStore } from "@/store/dungeons/settings/colorPicker";
 import { useVolumeStore } from "@/store/dungeons/settings/volume";
 import { exhaustiveGuard, getResultAsync, noop } from "@esposter/shared";
+import { clamp } from "@vueuse/core";
 import { Direction } from "grid-engine";
+
+// A row with only its name has no value cells: Volume and Theme Mode have their own controls, Close has no value
+const checkHasValueCells = (rowIndex: number) => SettingsOptionGrid.getColumnSize(rowIndex) > 1;
 
 export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () => {
   const dungeonsStore = useDungeonsStore();
@@ -28,40 +34,65 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
     () => SettingsOptionGrid.getValue({ x: 0, y: SettingsOptionGrid.position.value.y }) as SettingsOption,
   );
   const infoText = computed(() => InfoContainerTextMap[selectedSettingsOption.value]);
-  // Set by the y watcher below so the x watcher it triggers knows the move was the grid following the option
-  // Rather than the player picking a value — held here rather than at module level so it belongs to this
-  // Pinia instance
-  let isAutoUpdateGridX = false;
-  // On option grid update, do one of two things:
-  // 1. Position "y" changed (settings option): switch to the active settings value.
-  // 2. Position "x" changed (settings value): setSettings to save the game.
-  watch(
-    () => SettingsOptionGrid.position.value.y,
-    (newY) => {
-      if (!(selectedSettingsOption.value in settingsStore.settings)) return;
+  // A row with value cells rests on the cell holding its current setting, so the cursor's column always shows the value.
+  // A row without them rests on its name
+  const getRestingPosition = (rowIndex: number): Position => {
+    if (!checkHasValueCells(rowIndex)) return { x: 0, y: rowIndex };
 
-      const value = settingsStore.settings[selectedSettingsOption.value as keyof typeof settingsStore.settings];
-      const x = SettingsOptionGrid.getPositionX(value as typeof SettingsOptionGrid.value, newY);
-      if (x === undefined) return;
+    const option = SettingsOptionGrid.getValue({ x: 0, y: rowIndex }) as SettingsOption;
+    const restingX = SettingsOptionGrid.getPositionX(
+      settingsStore.settings[option as keyof typeof settingsStore.settings] as typeof SettingsOptionGrid.value,
+      rowIndex,
+    );
+    // A saved value that matches no cell rests on the first, so the cursor stays on a value cell
+    return { x: restingX ?? 1, y: rowIndex };
+  };
+  // The one place a value is saved: only the cursor's own value cell calls it, so an option with no cells cannot write
+  const saveSelectedValue = async () => {
+    // Close is the one option without a value to save, so the cursor can never be on a cell that would save for it
+    if (selectedSettingsOption.value === SettingsOption.Close) return;
 
-      SettingsOptionGrid.position.value.x = x;
-      isAutoUpdateGridX = true;
-    },
-  );
+    await setSettings(
+      selectedSettingsOption.value,
+      SettingsOptionGrid.value as (typeof settingsStore.settings)[keyof typeof settingsStore.settings],
+    );
+  };
 
-  watch(
-    () => SettingsOptionGrid.position.value.x,
-    async () => {
-      if (isAutoUpdateGridX) isAutoUpdateGridX = false;
-      // Only a value cell holds a setting. Close is the exit row, and Volume's value is set by the slider and the volume
-      // Keys, so a cursor on either has no value to write back
-      else if (unref(SettingsOptionGrid.validate(SettingsOptionGrid.position.value)))
-        await setSettings(
-          selectedSettingsOption.value,
-          SettingsOptionGrid.value as (typeof settingsStore.settings)[keyof typeof settingsStore.settings],
-        );
-    },
-  );
+  const moveSettingsRow = (direction: Direction) => {
+    const rowIndex = SettingsOptionGrid.position.value.y + getDirectionStep(direction, Direction.UP);
+    if (SettingsOptionGrid.getValue({ x: 0, y: rowIndex }) === undefined) return;
+
+    SettingsOptionGrid.position.value = getRestingPosition(rowIndex);
+  };
+
+  const moveSettingsColumn = async (direction: Direction) => {
+    const { x, y } = SettingsOptionGrid.position.value;
+    if (!checkHasValueCells(y)) return;
+
+    const nextX = clamp(x + getDirectionStep(direction, Direction.LEFT), 1, SettingsOptionGrid.getColumnSize(y) - 1);
+    if (nextX === x) return;
+
+    SettingsOptionGrid.position.value = { x: nextX, y };
+    await saveSelectedValue();
+  };
+
+  const selectSettingsPosition = async (position: Position) => {
+    const { x, y } = position;
+    if (SettingsOptionGrid.getValue({ x, y }) === undefined) return;
+    // The name column moves to its row without choosing a value
+    if (x === 0) {
+      SettingsOptionGrid.position.value = getRestingPosition(y);
+      return;
+    }
+
+    SettingsOptionGrid.position.value = { x, y };
+    await saveSelectedValue();
+  };
+
+  // The saved values may have loaded after the cursor last moved, so the scene rests the cursor on them when it opens
+  const restSettingsCursor = () => {
+    SettingsOptionGrid.position.value = getRestingPosition(SettingsOptionGrid.position.value.y);
+  };
 
   const onPlayerInput = (scene: SceneWithPlugins, justDownInput: PlayerInput, input: PlayerInput, delta: number) =>
     getResultAsync(async () => {
@@ -70,9 +101,9 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
       else if (checkIsUpdateVolume(input, selectedSettingsOption.value)) await updateVolume(input, delta);
       else if (checkIsUpdateThemeModeSetting(justDownInput, selectedSettingsOption.value))
         await updateThemeModeSetting(justDownInput);
-      // We ignore validation when moving up/down since we auto update grid x
-      // And this is just updating the settings options being viewed, not the actual values
-      else SettingsOptionGrid.move(justDownInput, justDownInput === Direction.UP || justDownInput === Direction.DOWN);
+      else if (justDownInput === Direction.UP || justDownInput === Direction.DOWN) moveSettingsRow(justDownInput);
+      else if (justDownInput === Direction.LEFT || justDownInput === Direction.RIGHT)
+        await moveSettingsColumn(justDownInput);
     }).match(noop, console.error);
 
   const onPlayerSpecialInput = (scene: SceneWithPlugins, playerSpecialInput: PlayerSpecialInput) => {
@@ -90,5 +121,5 @@ export const useSettingsSceneStore = defineStore("dungeons/settings/scene", () =
     }
   };
 
-  return { infoText, onPlayerInput };
+  return { infoText, onPlayerInput, restSettingsCursor, selectSettingsPosition };
 });

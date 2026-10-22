@@ -23,9 +23,13 @@ export const useItemOptionGrid = createUseGrid(ItemOptionGrid, (grid) => {
   const { inventory } = storeToRefs(inventorySceneStore);
   grid.grid = computed(() => [...inventory.value.map((item) => [item]), [PlayerSpecialInput.Cancel]]);
 
-  watchDeep(inventory, () => {
-    if (unref(grid.validate(grid.position.value))) return;
-    // An inventory that shrank under the cursor leaves it on a hole, so it moves down to the next valid item
-    grid.move(Direction.DOWN);
+  // The grid is a singleton, so this watch must outlive the component that first reads it. A detached scope keeps it
+  // Running after that component unmounts, where its own scope would stop it
+  effectScope(true).run(() => {
+    watchDeep(inventory, () => {
+      if (unref(grid.validate(grid.position.value))) return;
+      // An inventory that shrank under the cursor leaves it on a hole, so it moves down to the next valid item
+      grid.move(Direction.DOWN);
+    });
   });
 });

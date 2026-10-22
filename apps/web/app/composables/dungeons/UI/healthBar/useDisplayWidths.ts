@@ -23,28 +23,26 @@ export const useDisplayWidths = (totalDisplayWidth: MaybeRefOrGetter<number>, di
     }
   };
 
-  watch(leftCapDisplayWidth, (newLeftCapDisplayWidth, oldLeftCapDisplayWidth) => {
-    if (oldLeftCapDisplayWidth !== undefined || newLeftCapDisplayWidth === undefined) return;
+  // Each cap's total is the width its image first reports, and it is kept from then on
+  watchOnce(leftCapDisplayWidth, (newLeftCapDisplayWidth) => {
     totalLeftCapDisplayWidth.value = newLeftCapDisplayWidth;
   });
-
-  watch(
-    [leftCapDisplayWidth, rightCapDisplayWidth],
-    ([newLeftCapDisplayWidth, newRightCapDisplayWidth], [oldLeftCapDisplayWidth, oldRightCapDisplayWidth]) => {
-      if (
-        (oldLeftCapDisplayWidth !== undefined && oldRightCapDisplayWidth !== undefined) ||
-        !(newLeftCapDisplayWidth !== undefined && newRightCapDisplayWidth !== undefined)
-      )
-        return;
-      totalMiddleDisplayWidth.value = toValue(totalDisplayWidth) - (newLeftCapDisplayWidth + newRightCapDisplayWidth);
-      // Both caps have measured, so the width they leave for the middle is final
-      syncDisplayWidths(displayWidth.value);
-    },
-  );
-
-  watch(rightCapDisplayWidth, (newRightCapDisplayWidth, oldRightCapDisplayWidth) => {
-    if (oldRightCapDisplayWidth !== undefined || newRightCapDisplayWidth === undefined) return;
+  watchOnce(rightCapDisplayWidth, (newRightCapDisplayWidth) => {
     totalRightCapDisplayWidth.value = newRightCapDisplayWidth;
+  });
+
+  // Once both caps have measured, the width they leave for the middle is final, so it is set and synced once. Syncing
+  // Writes the caps again, which is why this is a one-shot rather than a watch that would re-run on its own writes
+  const measuredCapsWidth = computed(() =>
+    leftCapDisplayWidth.value === undefined || rightCapDisplayWidth.value === undefined
+      ? undefined
+      : leftCapDisplayWidth.value + rightCapDisplayWidth.value,
+  );
+  watchOnce(measuredCapsWidth, (newMeasuredCapsWidth) => {
+    if (newMeasuredCapsWidth === undefined) return;
+
+    totalMiddleDisplayWidth.value = toValue(totalDisplayWidth) - newMeasuredCapsWidth;
+    syncDisplayWidths(displayWidth.value);
   });
 
   return { leftCapDisplayWidth, middleDisplayWidth, rightCapDisplayWidth, syncDisplayWidths };

@@ -20,6 +20,7 @@ watch([base, thumb], ([newBase, newThumb]) => {
   if (!(newBase && newThumb)) return;
 
   const scene = getScene(sceneKey);
+  virtualJoystick.value?.destroy();
   virtualJoystick.value = scene.virtualJoystickPlugin.add(scene, {
     base: newBase,
     radius: JOYSTICK_RADIUS,

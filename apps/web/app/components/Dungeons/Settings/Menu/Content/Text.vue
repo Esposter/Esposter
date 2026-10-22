@@ -20,11 +20,7 @@ interface Props {
 const { columnIndex, rowIndex, text } = defineProps<Props>();
 const settingsStore = useSettingsStore();
 const { settings } = storeToRefs(settingsStore);
-// We shouldn't be able to move to the settings option
-const onGridClick = useSettingsOnGridClick(() => ({
-  x: columnIndex === 0 ? SettingsOptionGrid.position.value.x : columnIndex,
-  y: rowIndex,
-}));
+const onGridClick = useSettingsOnGridClick(() => ({ x: columnIndex, y: rowIndex }));
 </script>
 
 <template>

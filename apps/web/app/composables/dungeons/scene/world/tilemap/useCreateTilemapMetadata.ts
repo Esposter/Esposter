@@ -1,3 +1,4 @@
+import type { ObjectgroupName } from "#shared/generated/tiled/layers/ObjectgroupName";
 import type { Tilemaps } from "phaser";
 
 import { LayerName } from "#shared/generated/tiled/layers/Home/LayerName";
@@ -9,12 +10,14 @@ import { useWorldSceneStore } from "@/store/dungeons/world/scene";
 
 export const useCreateTilemapMetadata = (layerNameEnum: Record<string, string>) => {
   const worldSceneStore = useWorldSceneStore();
-  const { layerMap, objectLayerMap, tilemap, tilemapKey } = storeToRefs(worldSceneStore);
+  const { layerMap, objectLayerMap, tilemap } = storeToRefs(worldSceneStore);
 
+  // Both maps belong to the tilemap being created, so each is built fresh rather than kept from the tilemap before
+  const rawLayerMap = new Map<string, ReturnType<typeof createLayer>>();
   for (const layerName of Object.values(layerNameEnum)) {
     const tilesets: Tilemaps.Tileset[] = [];
     for (const tilesetKey of BASE_TILESET_KEYS) {
-      const tileset = addTilesetImage(tilemap.value, tilemapKey.value, tilesetKey);
+      const tileset = addTilesetImage(tilemap.value, tilesetKey);
       if (!tileset) continue;
       tilesets.push(tileset);
     }
@@ -23,18 +26,15 @@ export const useCreateTilemapMetadata = (layerNameEnum: Record<string, string>) 
     if (debugLayerNames.includes(layerName)) layer.setAlpha(IS_PRODUCTION ? 0 : 0.7);
 
     // A layer holds its scene, so it enters the store raw like the tilemap it belongs to
-    const rawLayer = markRaw(layer);
-    if (layerMap.value) layerMap.value.set(layerName, rawLayer);
-    else layerMap.value = new Map([[layerName, rawLayer]]);
+    rawLayerMap.set(layerName, markRaw(layer));
   }
+  layerMap.value = rawLayerMap;
 
-  if (!objectLayerMap.value) {
-    objectLayerMap.value = new Map();
-
-    for (const objectgroupName of OBJECTGROUP_NAMES) {
-      const objectLayer = tilemap.value.getObjectLayer(objectgroupName);
-      if (!objectLayer) continue;
-      objectLayerMap.value.set(objectgroupName, objectLayer);
-    }
+  const newObjectLayerMap = new Map<ObjectgroupName, Tilemaps.ObjectLayer>();
+  for (const objectgroupName of OBJECTGROUP_NAMES) {
+    const objectLayer = tilemap.value.getObjectLayer(objectgroupName);
+    if (!objectLayer) continue;
+    newObjectLayerMap.set(objectgroupName, objectLayer);
   }
+  objectLayerMap.value = newObjectLayerMap;
 };

@@ -5,17 +5,20 @@ import { takeOne } from "@esposter/shared";
 import { onCreate } from "vue-phaserjs";
 
 const worldSceneStore = useWorldSceneStore();
-const { tilemapKey } = storeToRefs(worldSceneStore);
+const { objectLayerMap } = storeToRefs(worldSceneStore);
 const npcStore = useNpcStore();
 const { resetCursorPaginationData } = npcStore;
 const { items } = storeToRefs(npcStore);
 
-const { trigger } = watchTriggerable(tilemapKey, () => {
+// The layers are rebuilt for each tilemap, so the NPCs are read once they exist. The tilemap key changes before them,
+// Which is why this follows the layers rather than the key
+watch(objectLayerMap, () => {
   useReadNpcs();
 });
 
 onCreate(() => {
-  trigger();
+  // Leaving the scene resets the NPCs, so returning to a map that is already built reads it again
+  if (objectLayerMap.value) useReadNpcs();
 });
 
 onUnmounted(() => {
