@@ -20,6 +20,10 @@ export const useInitializeGameObjectSetters = <
   const sceneKey = useInjectSceneKey();
   const setters: ((gameObject: TGameObject) => void)[] = [];
   const setterWatchHandles: WatchHandle[] = [];
+  const isUnmounted = ref(false);
+  onUnmounted(() => {
+    isUnmounted.value = true;
+  });
 
   for (const [key, value] of Object.entries(toValue(configuration)) as [
     keyof TConfiguration,
@@ -47,6 +51,9 @@ export const useInitializeGameObjectSetters = <
           if (newValue === oldValue && (newValue === null || typeof newValue !== "object")) return;
 
           const updater = () => {
+            // A value queued before unmount must not reach the game object the unmount destroyed
+            if (isUnmounted.value) return;
+
             setter(toValue(gameObject), emit)(newValue);
             emit(updateEvent, newValue);
           };

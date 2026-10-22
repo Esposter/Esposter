@@ -6,6 +6,7 @@ import type { GameObjects } from "phaser";
 import { ComputedSizeSetterMap } from "#src/services/setterMap/components/ComputedSizeSetterMap";
 import { FlipSetterMap } from "#src/services/setterMap/components/FlipSetterMap";
 import { RenderableSetterMap } from "#src/services/setterMap/shared/RenderableSetterMap";
+import { omitUndefined } from "#src/services/shared/omitUndefined";
 
 export const TextSetterMap: SetterMap<TextConfiguration, GameObjects.Text, TextEventEmitsOptions> = {
   padding: (gameObject) => (value) => {
@@ -14,7 +15,7 @@ export const TextSetterMap: SetterMap<TextConfiguration, GameObjects.Text, TextE
   },
   style: (gameObject) => (value) => {
     if (!value) return;
-    gameObject.setStyle(value);
+    gameObject.setStyle(omitUndefined(value));
   },
   text: (gameObject, emit) => (value) => {
     if (value === undefined) return;

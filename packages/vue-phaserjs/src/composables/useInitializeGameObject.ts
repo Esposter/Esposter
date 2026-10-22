@@ -25,6 +25,8 @@ export const useInitializeGameObject = <
   immediate?: true,
 ) => {
   let gameObject: TGameObject;
+  let isCreated = false;
+  let isUnmounted = false;
   const { initializeGameObjectSetters, setterWatchHandles } = useInitializeGameObjectSetters(
     () => gameObject,
     configuration,
@@ -43,6 +45,7 @@ export const useInitializeGameObject = <
   const lifecycleHook = getInitializeGameObjectLifecycleHook(sceneKey);
   const initializeGameObject = (scene: SceneWithPlugins) => {
     gameObject = create(scene);
+    isCreated = true;
     initializeGameObjectSetters(gameObject);
     initializeGameObjectEvents(gameObject, emit, scene);
   };
@@ -60,13 +63,17 @@ export const useInitializeGameObject = <
     });
   } else
     lifecycleHook((scene) => {
+      // A component unmounted before its scene created it has nothing left to create
+      if (isUnmounted) return;
+
       initializeGameObject(scene);
       pushToParentContainer();
     });
 
   onUnmounted(() => {
+    isUnmounted = true;
     for (const setterWatchHandle of setterWatchHandles) setterWatchHandle();
     for (const eventStopHandle of eventStopHandles) eventStopHandle();
-    gameObject.destroy();
+    if (isCreated) gameObject.destroy();
   });
 };

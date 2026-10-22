@@ -4,6 +4,7 @@ import type { TMXExternalTilesetParsed } from "parse-tmx";
 import type { Types } from "phaser";
 
 import { TilesetFile } from "#src/models/plugins/TilesetFile";
+import { getTilesetDefinitionFields } from "#src/services/shared/getTilesetDefinitionFields";
 import { ID_SEPARATOR, InvalidOperationError, NotFoundError, Operation } from "@esposter/shared";
 import { parseTileset } from "parse-tmx";
 import { Loader, Tilemaps, Utils } from "phaser";
@@ -74,7 +75,7 @@ export class TiledJSONExternalFile extends MultiFile {
         },
       );
       const index = tilesetFile.tilesetIndex;
-      Object.assign(tilemapData.tilesets[index], tilesetData, {
+      Object.assign(tilemapData.tilesets[index], getTilesetDefinitionFields(tilesetData), {
         imageheight: tilesetData.image?.height,
         imagewidth: tilesetData.image?.width,
         // Avoid throwing in tilemap creator
@@ -106,12 +107,9 @@ export class TiledJSONExternalFile extends MultiFile {
     const prefix = GetFastValue(config, "prefix", currentPrefix);
     const tilesetXhrSettings = GetFastValue(config, "tilesetXhrSettings");
 
-    loader.setBaseURL(baseURL);
-    loader.setPath(path);
-    loader.setPrefix(prefix);
-
     const tilesetURLs = GetFastValue(config, "tilesetURLs") as Record<string, string> | undefined;
-    for (const [tilesetIndex, tileset] of tilesets.entries()) {
+    // Every url is resolved before the loader changes, so a missing one throws with the loader as it was
+    const tilesetSources = tilesets.map((tileset, tilesetIndex) => {
       // A tileset is named by its file, and the app supplies each one's url by import, so a tileset may live anywhere
       const tilesetName =
         tileset.source
@@ -121,6 +119,14 @@ export class TiledJSONExternalFile extends MultiFile {
       const tilesetURL = tilesetURLs?.[tilesetName];
       if (!tilesetURL) throw new NotFoundError(this.onFileComplete.name, tileset.source);
 
+      return { tilesetIndex, tilesetName, tilesetURL };
+    });
+
+    loader.setBaseURL(baseURL);
+    loader.setPath(path);
+    loader.setPrefix(prefix);
+
+    for (const { tilesetIndex, tilesetName, tilesetURL } of tilesetSources) {
       const tilesetFile = new TilesetFile(
         tilesetIndex,
         loader,

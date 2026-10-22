@@ -4,7 +4,7 @@ import type { Tilemaps, Types } from "phaser";
 import type { VNode } from "vue";
 
 import { useInjectSceneKey } from "#src/composables/useInjectSceneKey";
-import { onCreate } from "#src/hooks/onCreate";
+import { getInitializeGameObjectLifecycleHook } from "#src/services/hooks/getInitializeGameObjectLifecycleHook";
 import { getScene } from "#src/services/shared/getScene";
 
 interface Props {
@@ -16,8 +16,9 @@ defineSlots<{ default: () => VNode }>();
 const { configuration, onComplete } = defineProps<Props>();
 const sceneKey = useInjectSceneKey();
 const tilemap = shallowRef<Tilemaps.Tilemap>();
+const lifecycleHook = getInitializeGameObjectLifecycleHook(sceneKey);
 
-onCreate((newScene) => {
+lifecycleHook((newScene) => {
   tilemap.value = newScene.make.tilemap(configuration);
   onComplete?.(newScene, tilemap.value);
 });

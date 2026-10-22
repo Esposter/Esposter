@@ -5,9 +5,10 @@ import { Lifecycle } from "#src/models/lifecycle/Lifecycle";
 import { useCameraStore } from "#src/store/camera";
 import { useInputStore } from "#src/store/input";
 import { getTestGame, getTestPinia, removeTestScene } from "#src/test/fixtures/headlessGame.test";
+import { noop } from "@esposter/shared";
 import { mount } from "@vue/test-utils";
 import { Cameras } from "phaser";
-import { afterEach, describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe("scene", () => {
   const sceneKey = "sceneKey";
@@ -98,5 +99,38 @@ describe("scene", () => {
 
     expect(isInputActive.value).toBe(false);
     expect(isFading.value).toBe(false);
+  });
+
+  test("leaves the first scene in place when a second component with its key unmounts", () => {
+    expect.hasAssertions();
+
+    const game = getTestGame();
+    mountScene();
+    const secondWrapper = mount(Scene, { global: { plugins: [getTestPinia()] }, props: { sceneKey } });
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(noop);
+
+    secondWrapper.unmount();
+    consoleErrorSpy.mockRestore();
+
+    expect(game.scene.getScene(sceneKey)).not.toBeNull();
+  });
+
+  test("emits shutdown when the component unmounts while its scene runs", () => {
+    expect.hasAssertions();
+
+    const game = getTestGame();
+    let shutdownScene: SceneWithPlugins | undefined;
+    const mounted = mountScene({
+      onShutdown: (scene: SceneWithPlugins) => {
+        shutdownScene = scene;
+      },
+    });
+
+    game.scene.start(sceneKey);
+    const scene = game.scene.getScene(sceneKey);
+    mounted.unmount();
+    wrapper = undefined;
+
+    expect(shutdownScene).toBe(scene);
   });
 });

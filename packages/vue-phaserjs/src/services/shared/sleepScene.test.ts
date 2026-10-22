@@ -18,4 +18,15 @@ describe(sleepScene, () => {
 
     removeTestScene(sceneKey);
   });
+
+  test("resolves at once for a scene that has already shut down", async () => {
+    expect.hasAssertions();
+
+    const scene = startTestScene(sceneKey);
+    getTestGame().scene.stop(sceneKey);
+
+    await expect(sleepScene(scene, durationMs)).resolves.toBeUndefined();
+
+    removeTestScene(sceneKey);
+  });
 });

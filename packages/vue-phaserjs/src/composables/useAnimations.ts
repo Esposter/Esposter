@@ -13,21 +13,30 @@ export const useAnimations = (
   immediate?: true,
 ) => {
   const animations = ref<Types.Animations.Animation[]>([]);
+  let animationScene: SceneWithPlugins | undefined;
+  const createAnimations = (scene: SceneWithPlugins) => {
+    animationScene = scene;
+    animations.value = createConfigurations(scene);
+  };
+  // The scene's animation manager keeps the frames, so they are removed on shutdown or on unmount, whichever comes first
+  const removeAnimations = () => {
+    if (!animationScene) return;
+
+    for (const { key } of animations.value) {
+      if (!key) continue;
+      animationScene.anims.remove(key);
+    }
+  };
 
   if (immediate) {
     const sceneKey = useInjectSceneKey();
-    const scene = getScene(sceneKey);
-    animations.value = createConfigurations(scene);
-  } else
-    onNextTick((scene) => {
-      animations.value = createConfigurations(scene);
-    });
+    createAnimations(getScene(sceneKey));
+  } else onNextTick(createAnimations);
 
-  onShutdown((scene) => {
-    for (const { key } of animations.value) {
-      if (!key) continue;
-      scene.anims.remove(key);
-    }
+  const removeShutdownListener = onShutdown(removeAnimations);
+  onUnmounted(() => {
+    removeShutdownListener();
+    removeAnimations();
   });
 
   return animations;

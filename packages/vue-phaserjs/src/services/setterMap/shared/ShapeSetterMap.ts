@@ -17,8 +17,9 @@ export const ShapeSetterMap = {
   ...GameObjectSetterMap,
   ...OriginSetterMap,
   ...RenderNodesSetterMap,
+  // Setting the alpha on its own must not fill the shape, which `setFillStyle` would do
   fillAlpha: (gameObject) => (value) => {
-    gameObject.setFillStyle(gameObject.fillColor, value);
+    gameObject.fillAlpha = value;
   },
   fillColor: (gameObject) => (value) => {
     gameObject.setFillStyle(value, gameObject.fillAlpha);

@@ -13,6 +13,7 @@ import { useCameraStore } from "#src/store/camera";
 import { ExternalSceneStore } from "#src/store/ExternalSceneStore";
 import { usePhaserStore } from "#src/store/index";
 import { useInputStore } from "#src/store/input";
+import { getResult } from "@esposter/shared";
 import { Cameras, Scenes } from "phaser";
 
 defineSlots<{ default: () => VNode }>();
@@ -64,21 +65,34 @@ const shutdownListener = () => {
   emit("shutdown", scene);
 };
 
+// Only the component that added the scene may remove it, so a second component with the same key cannot take it away
+let isSceneAdded = false;
 onMounted(async () => {
   const game = useGame();
-  const scene = game.scene.add(sceneKey, NewScene);
+  const scene = getResult(() => game.scene.add(sceneKey, NewScene)).match(
+    (addedScene) => addedScene,
+    (error) => {
+      console.error(error);
+      return null;
+    },
+  );
   if (!scene) {
     console.error(`Failed to add scene: ${sceneKey}`);
     return;
   }
+  isSceneAdded = true;
   scene.events.on(Scenes.Events.READY, readyListener);
   scene.events.on(Scenes.Events.SHUTDOWN, shutdownListener);
   if (autoStart) await switchToScene(sceneKey);
 });
 
 onUnmounted(() => {
+  if (!isSceneAdded) return;
+
   const game = useGame();
   const scene = getScene(sceneKey);
+  // Removing a scene destroys it without the shutdown its hooks and ready flag wait on, so a running one stops first
+  if (game.scene.isActive(sceneKey)) game.scene.stop(sceneKey);
   scene.events.off(Scenes.Events.READY, readyListener);
   scene.events.off(Scenes.Events.SHUTDOWN, shutdownListener);
   game.scene.remove(sceneKey);

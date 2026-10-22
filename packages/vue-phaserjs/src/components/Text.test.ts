@@ -27,4 +27,21 @@ describe("text", () => {
 
     textStore.defaultTextStyle = undefined;
   });
+
+  test("keeps the store's default for a style field the configuration leaves undefined", () => {
+    expect.hasAssertions();
+
+    const textStore = useTextStore();
+    textStore.defaultTextStyle = { fontSize: "0px" };
+    mountGameObject(Text, { props: { configuration: { style: { fontSize: undefined }, text: "", x: 0, y: 0 } } });
+
+    const scene = startTestScene(sceneKey);
+    const capturedText = scene.children.list.find((gameObject) => gameObject instanceof GameObjects.Text);
+
+    assert.exists(capturedText);
+
+    expect(capturedText.style.fontSize).toBe("0px");
+
+    textStore.defaultTextStyle = undefined;
+  });
 });

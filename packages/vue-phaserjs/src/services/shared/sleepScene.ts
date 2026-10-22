@@ -12,6 +12,12 @@ import { Scenes } from "phaser";
 // Discarding it is the very reason this listener exists
 export const sleepScene = (scene: SceneWithPlugins, durationMs: number) =>
   new Promise<void>((resolve) => {
+    // A scene that has shut down has no clock left to wait on, so there is nothing to sleep through
+    if (scene.sys.settings.status >= Scenes.SHUTDOWN) {
+      resolve();
+      return;
+    }
+
     const settle = () => {
       scene.events.off(Scenes.Events.SHUTDOWN, settle);
       resolve();

@@ -129,4 +129,49 @@ describe(useInitializeGameObject, () => {
 
     expect(scene.children.list).toContain(capturedSprite);
   });
+
+  test("does not create the game object when it unmounts before its scene creates it", () => {
+    expect.hasAssertions();
+
+    let capturedSprite: GameObjects.Sprite | undefined;
+
+    mountGameObject(Sprite, {
+      props: {
+        configuration,
+        onComplete: (_scene: SceneWithPlugins, sprite: GameObjects.Sprite) => {
+          capturedSprite = sprite;
+        },
+      },
+    });
+
+    unmountGameObject();
+    startTestScene(sceneKey);
+
+    expect(capturedSprite).toBeUndefined();
+  });
+
+  test("does not apply a value queued for the next tick once the game object has unmounted", async () => {
+    expect.hasAssertions();
+
+    let capturedSprite: GameObjects.Sprite | undefined;
+
+    const wrapper = mountGameObject(Sprite, {
+      props: {
+        configuration,
+        onComplete: (_scene: SceneWithPlugins, sprite: GameObjects.Sprite) => {
+          capturedSprite = sprite;
+        },
+      },
+    });
+
+    const scene = startTestScene(sceneKey);
+    assert.exists(capturedSprite);
+
+    await wrapper.setProps({ configuration: { ...configuration, texture: "__MISSING" } });
+    unmountGameObject();
+
+    expect(() => {
+      stepScene(scene);
+    }).not.toThrow();
+  });
 });

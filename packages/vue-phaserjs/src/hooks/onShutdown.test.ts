@@ -22,4 +22,18 @@ describe(onShutdown, () => {
 
     removeTestScene(sceneKey);
   });
+
+  test("stops firing a listener once its remover is called", () => {
+    expect.hasAssertions();
+
+    const listener = vi.fn<(scene: SceneWithPlugins) => void>();
+    const removeListener = onShutdown(listener, sceneKey);
+    removeListener();
+    startTestScene(sceneKey);
+    getTestGame().scene.stop(sceneKey);
+
+    expect(listener).toHaveBeenCalledTimes(0);
+
+    removeTestScene(sceneKey);
+  });
 });

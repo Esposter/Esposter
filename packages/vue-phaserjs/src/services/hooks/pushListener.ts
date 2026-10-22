@@ -5,8 +5,16 @@ import { useInjectSceneKey } from "#src/composables/useInjectSceneKey";
 import { ExternalSceneStore } from "#src/store/ExternalSceneStore";
 import { getOrCreate } from "@esposter/shared";
 
+// Returns the function that removes the listener, for an owner that goes away before its scene does
 export const pushListener = (lifecycle: Lifecycle, listener: (scene: SceneWithPlugins) => void, key?: string) => {
   const sceneKey = key ?? useInjectSceneKey();
   const listenersMap = getOrCreate(ExternalSceneStore.lifecycleListenersMap, lifecycle, () => new Map());
   getOrCreate(listenersMap, sceneKey, () => []).push(listener);
+
+  return () => {
+    listenersMap.set(
+      sceneKey,
+      (listenersMap.get(sceneKey) ?? []).filter((existingListener) => existingListener !== listener),
+    );
+  };
 };

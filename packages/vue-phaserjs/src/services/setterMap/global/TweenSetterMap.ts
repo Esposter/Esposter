@@ -5,23 +5,35 @@ import type { GameObjects } from "phaser";
 
 import { Tweens } from "phaser";
 
+// A game object runs one tween at a time, so a new one replaces the running one rather than running beside it
+const activeTweens = new WeakMap<GameObjects.GameObject, Tweens.Tween | Tweens.TweenChain>();
+const replaceActiveTween = (
+  gameObject: GameObjects.GameObject,
+  tween: Tweens.Tween | Tweens.TweenChain,
+  onComplete: () => void,
+) => {
+  activeTweens.get(gameObject)?.destroy();
+  activeTweens.set(gameObject, tween);
+  tween.on(Tweens.Events.TWEEN_COMPLETE, onComplete);
+};
+
 export const TweenSetterMap = {
   tween: (gameObject, emit) => (value) => {
     if (!value) return;
 
-    const tween = gameObject.scene.add.tween({ ...value, targets: gameObject });
-    tween.on(Tweens.Events.TWEEN_COMPLETE, () => {
+    replaceActiveTween(gameObject, gameObject.scene.add.tween({ ...value, targets: gameObject }), () => {
       emit("update:tween", undefined);
     });
   },
   tweenchain: (gameObject, emit) => (value) => {
     if (!value) return;
 
-    const tweenchain = gameObject.scene.add.tweenchain(
-      value.map((configuration) => ({ ...configuration, targets: gameObject })),
+    replaceActiveTween(
+      gameObject,
+      gameObject.scene.add.tweenchain(value.map((configuration) => ({ ...configuration, targets: gameObject }))),
+      () => {
+        emit("update:tweenchain", undefined);
+      },
     );
-    tweenchain.on(Tweens.Events.TWEEN_COMPLETE, () => {
-      emit("update:tweenchain", undefined);
-    });
   },
 } as const satisfies SetterMap<TweenConfiguration, GameObjects.GameObject, TweenEventEmitsOptions>;
