@@ -145,6 +145,21 @@ The rule is per side effect, decided by who can construct the result:
 
 Both shapes are correct; what is never correct is leaving the state stale because the mutation "was only about something else". An asymmetry between two neighbouring actions (one mirrors, one re-reads) is a deliberate consequence of this rule, not an oversight.
 
+## Server-owned aggregates are re-read, never adjusted
+
+A count the server derives from many rows (a room's member total, a group's members per role, a post's likes or replies) is **never** moved by the client through a delta, `+1` for a join or `-1` for a leave. A delta is exact only when the client provably holds the state it is changing against, and the client never does for every change: a member whose roles it never read has no prior role to subtract, a read can already include a change whose event then arrives and is added on top (counted twice), and two reads can finish out of order. Each of those drifts the count with no later write to correct it.
+
+The rule is therefore:
+
+- **Every change to an aggregate's inputs re-reads the aggregate** from the server — the write itself, the subscription echo, and a rollback alike. An echo is a notice that the inputs changed, not a number to add.
+- **Reads of one aggregate are ordered per room (or per entity), latest started wins.** A read that started before a newer one can finish after it, and its value would then overwrite the newer one, so a read applies its result only if no later read of the same aggregate has started. The latest read started after every change the client has been told of, so it reflects them all.
+- **An optimistic prediction is allowed for display only**, and the settled server value replaces it. Where the optimistic change is the viewer's own vote on a row the client holds exactly (`viewerLike`), the rollback restores that row and the settled value still comes from the server.
+- **Tests that wait on a re-read observe the store's own write** (a watcher on the aggregate), not a timer or a retry. Two reads sent in the same tick share one batched response, so a test that holds one read open to order two reads must send the second only after the first has reached the server.
+
+Derived in the client, not re-read: values the client computes from data it already holds exactly (the roleless group is `total - sum(role groups)` of two server-read numbers, not a third number to maintain).
+
+The rule is the same shape as the server-side effects rule above (re-read what only the server can construct), applied to aggregates. The consequence the member list shows is the test of it: a role change to a member outside the loaded pages re-reads the room's group totals, and a leave of any member does too.
+
 ## When not to use them
 
 `useQuery` is the wrapper for a one-shot fetch, on setup or — `isLazy` — on the first `refresh`, and an inline error panel is its `isInlineError` option rather than a reason to leave it. A read whose state shape differs — its own cursor, a page that accumulates — skips the wrapper but still goes through `executeQuery` on a `useMutation()` instance of its own (`useDataset`, `useReadResourcesPage`), so it inherits the latest-wins guarding and the pending flag without owning either. These stay off both wrappers entirely:

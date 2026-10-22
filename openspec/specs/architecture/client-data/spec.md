@@ -177,3 +177,19 @@ Each user action SHALL have its own write queue, so that unrelated actions on th
 - **GIVEN** a role creation in flight
 - **WHEN** the reader deletes a different role
 - **THEN** the deletion is sent at once
+
+### Requirement: A server-owned aggregate is re-read, never adjusted by the client
+
+A count the server derives from many rows SHALL be re-read from the server on every change to its inputs, and the client SHALL NOT move it by a delta. Reads of one aggregate SHALL apply only the latest started.
+
+#### Scenario: a leave re-reads the room's totals instead of decrementing them
+
+- **GIVEN** a room whose totals the client holds
+- **WHEN** a member leaves, from a page the client has loaded or not
+- **THEN** the room's member total and per-role group totals are read again from the server
+
+#### Scenario: an older read never overwrites a newer one
+
+- **GIVEN** two reads of the same room's totals, the older still in flight
+- **WHEN** the newer read finishes first
+- **THEN** the older read's result, when it arrives, is not applied
