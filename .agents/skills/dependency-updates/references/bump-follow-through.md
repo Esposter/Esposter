@@ -15,6 +15,6 @@ Any bump that reaches a `dist/` is finished only by this sequence, all of it in 
 1. `vp run build:packages` from the repo root — rebuilds every library package, so tsdown rewrites each `inlinedDependencies` and the `dist/` the size tests read. Skipping it makes `-u` write the stale `dist/` into the snapshot.
 2. Read the `package.json` diff of every package the rebuild touched: the `inlinedDependencies` entries the bump moved, and nothing else.
 3. Refresh the size snapshots as `testing`'s `references/bundle-size.md` names. `apps/functions` and `apps/infra` carry the same snapshot outside `test:packages`, and `apps/functions` inlines the bumped package when it bundles it, so build and refresh them too, as `build`'s `references/dist-size.md` names.
-4. Run the same size tests again without `-u` — they must pass with nothing written.
+4. Run the same size tests again without `-u` — they must pass with nothing written. `test:packages` is `--project "packages/*"`, so the apps need their own run: `pnpm test:packages -t "size" index.test.ts`, then `pnpm -C apps/functions test src/index.test.ts --run` and `pnpm -C apps/infra test src/index.test.ts --run`.
 
 Never edit a snapshot to the number a failure printed.
