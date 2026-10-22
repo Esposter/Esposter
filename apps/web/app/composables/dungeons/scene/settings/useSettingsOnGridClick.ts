@@ -14,7 +14,7 @@ export const useSettingsOnGridClick = (position: MaybeRefOrGetter<Position>) => 
   const settingsSceneStore = useSettingsSceneStore();
   const { selectSettingsPosition } = settingsSceneStore;
   // A click on the cell the cursor is already on is a second press, which only Close answers. Any other click moves the
-  // cursor by way of the store, since a value cell saves what it lands on
+  // Cursor by way of the store, since a value cell saves what it lands on
   return useOnGridClick(SettingsOptionGrid, position, {
     onConfirm: () => {
       if (SettingsOptionGrid.value === SettingsOption.Close) controls.value.setInput(PlayerSpecialInput.Confirm);

@@ -26,7 +26,8 @@ describe(consumeItem, () => {
       id: ItemId.Potion,
       quantity: 1,
     };
-    usePlayerStore().player.inventory = [item];
+    const playerStore = usePlayerStore();
+    playerStore.player.inventory = [item];
   });
 
   test("removes the item once its last one is spent", () => {
@@ -34,7 +35,8 @@ describe(consumeItem, () => {
 
     consumeItem(ref(item));
 
-    expect(usePlayerStore().player.inventory).toStrictEqual([]);
+    const playerStore = usePlayerStore();
+    expect(playerStore.player.inventory).toStrictEqual([]);
   });
 
   test("keeps the item while one is left", () => {
@@ -43,6 +45,7 @@ describe(consumeItem, () => {
     item.quantity = 2;
     consumeItem(ref(item));
 
-    expect(usePlayerStore().player.inventory).toStrictEqual([{ ...item, quantity: 1 }]);
+    const playerStore = usePlayerStore();
+    expect(playerStore.player.inventory).toStrictEqual([{ ...item, quantity: 1 }]);
   });
 });
