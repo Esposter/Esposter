@@ -18,11 +18,11 @@ flowchart TD
 
 A run takes every key marked before it starts, so a batch is one read. Runs do not overlap: a mark made during a run is read by the run owed after it, and the run that finishes last is always the newest. A run with no dirty keys makes no read.
 
-The caller that starts a flight awaits the run owed after it, so its promise settles only once the newest value is in. A caller that is owed resolves when its keys are marked, not when they are read; the flight that owes the run is the one that waits for it.
+The caller that starts a flight awaits the run owed after it, and so does every call made while the flight is in progress: they all join that one run, so each settles only once the newest value is in. A mark made during a run is never answered with a value the run owed after it has not read.
 
 ## Failure
 
-A run that fails puts its keys back in the dirty set and logs the error, so the next mark reads them again. It also schedules one more run without a mark, paced by the backoff from [retry and backoff](../retry-and-backoff/design.md): the first retry waits one second, and each one after doubles up to thirty seconds. A success resets the count. After five retries in a row the keys stay dirty until the next mark, so a server that stays down is not asked forever.
+A run that fails puts its keys back in the dirty set and logs the error, so the next mark reads them again. It also schedules one more run without a mark, paced by the backoff from [retry and backoff](../retry-and-backoff/design.md): the first retry waits one second, and each one after doubles up to thirty seconds. A success resets the count. After five retries in a row the keys stay dirty until the next mark, so a server that stays down is not asked forever. The wait does not reset when the retries stop: the next mark's read runs only after the backoff's last wait, the thirty-second maximum, so a server that recovered is read within that window rather than at once.
 
 The primitive never rejects. Its callers do not need to wrap a call in a result, because the failure is already logged and retried.
 

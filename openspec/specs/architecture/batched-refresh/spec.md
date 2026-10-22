@@ -14,10 +14,10 @@ A batched refresh SHALL run one read at a time, and a key marked while a run is 
 - **WHEN** key B is marked
 - **THEN** B is read by the run owed after the one in flight, and the reads do not overlap
 
-#### Scenario: The flight's caller waits for the owed run
+#### Scenario: The flight's caller and every call made during it wait for the owed run
 
 - **GIVEN** a flight with an owed run
-- **WHEN** the flight's caller awaits its refresh
+- **WHEN** the flight's caller, or a call made during the flight, awaits its refresh
 - **THEN** the call settles only after the owed run has read its keys
 
 ### Requirement: A run with no keys makes no read
@@ -66,7 +66,7 @@ A failed run SHALL schedule one more run without a mark, paced by the backoff fr
 
 - **GIVEN** a read that has stopped retrying at the cap
 - **WHEN** a key is marked and the read succeeds
-- **THEN** the key is read, and the retry count resets
+- **THEN** the key is read after the backoff's last wait, the maximum, and the retry count resets
 
 ### Requirement: A post count moves only by a read, and every copy the client holds receives it
 
