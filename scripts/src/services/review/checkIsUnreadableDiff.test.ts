@@ -1,5 +1,5 @@
-import { REVIEW_LINE_CHARACTER_LIMIT } from "#src/services/review/constants";
 import { checkIsUnreadableDiff } from "#src/services/review/checkIsUnreadableDiff";
+import { REVIEW_LINE_CHARACTER_LIMIT } from "#src/services/review/constants";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsUnreadableDiff, () => {

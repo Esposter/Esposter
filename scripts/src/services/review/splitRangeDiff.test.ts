@@ -1,7 +1,8 @@
 import { splitRangeDiff } from "#src/services/review/splitRangeDiff";
 import { describe, expect, test } from "vitest";
 
-const diff = `diff --git a/a.ts b/a.ts
+describe(splitRangeDiff, () => {
+  const diff = `diff --git a/a.ts b/a.ts
 index 1111111..2222222 100644
 --- a/a.ts
 +++ b/a.ts
@@ -17,7 +18,6 @@ index 0000000..3333333
 +const b = 1;
 `;
 
-describe(splitRangeDiff, () => {
   test("splits a diff into one chunk per file, each from its header to the next", () => {
     expect.hasAssertions();
 
