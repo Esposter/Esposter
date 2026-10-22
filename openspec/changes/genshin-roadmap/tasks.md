@@ -190,7 +190,7 @@ Clips and stills a value needs, which agents find in published material (see [pa
 - [ ] **HUD hidden** — `world-hud-hidden.mkv`, waits on [HUD](../genshin-hud/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
 - [ ] **Elemental Sight** — `elemental-sight.mkv`, waits on [elemental sight](../genshin-elemental-sight/design.md).
 - [ ] **Stamina refill** — `world-stamina.mkv`, waits on [HUD](../genshin-hud/design.md). The climb it reads, `captures/yt-hRR2yoP3uY0-world-stamina.mp4`, is not in `captures` yet, so the stamina meter's scoring waits on it. Searched 2026-10-11 on the wiki and YouTube, none found.
-- [ ] **Skill and burst energy** — `world-skill-burst.mkv`, waits on [combat](../archive/2026-10-22-genshin-combat/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
+- [ ] **Skill and burst energy** — `world-skill-burst.mkv`, on the built [combat](../../specs/genshin/combat/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
 - [ ] **Bennett's Charge Levels** — `bennett-charge-levels.mkv`, waits on [character kits](../genshin-character-kits/design.md).
 - [ ] **Lisa's Violet Arc hold** — `lisa-violet-arc-hold.mkv`, waits on [character kits](../genshin-character-kits/design.md).
 - [ ] **Razor's Claw and Thunder** — `razor-claw-and-thunder.mkv`, waits on [character kits](../genshin-character-kits/design.md).
@@ -213,24 +213,24 @@ Clips and stills a value needs, which agents find in published material (see [pa
 - [ ] **Photo mode range** — `photo-mode-range.mkv`, waits on [follow camera](../genshin-follow-camera/design.md).
 - [ ] **Dialogue auto-skip** — `dialogue-auto-skip.mkv`, waits on [dialogue](../../specs/genshin/dialogue/design.md). Partly found 2026-10-11: the page it waits on holds the find and what is still sought.
 - [ ] **Camp wake** — `world-camp.mkv`, waits on [enemies](../../specs/genshin/enemies/design.md).
-- [ ] **Traveler's attacks** — `world-attacks.mkv`, waits on [combat](../archive/2026-10-22-genshin-combat/design.md).
+- [ ] **Traveler's attacks** — `world-attacks.mkv`, on the built [combat](../../specs/genshin/combat/design.md).
 - [ ] **Quit prompt** — `menu-quit-prompt.mkv`, waits on [menu quit prompt](../genshin-menu-quit-prompt/design.md). Searched 2026-10-11, none found: the searches are on [the Paimon menu's compute page](../../specs/genshin/compute/paimon/design.md).
 - [ ] **Paimon menu, current build** — `menu-paimon-current.png`, waits on [Paimon menu](../genshin-menu-paimon/design.md). Partly found 2026-10-11: the page it waits on holds the find and what is still sought.
 - [ ] **Character screen** — `menu-character.mkv`, waits on [character screen](../genshin-character-screen/design.md).
 - [ ] **Profile tab** — `character-profile.png`, waits on [character screen](../genshin-character-screen/design.md).
 - [ ] **Mobile touch controls** — `mobile-touch.png`, a drag of the look, waits on [touch controls](../../specs/genshin/touch-controls/design.md).
-- [ ] **Bag open and close** — `bag-open-close.mkv`, waits on [inventory](../archive/2026-10-18-genshin-inventory/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
-- [ ] **Bag tabs** — `bag-tabs.mkv`, waits on [inventory](../archive/2026-10-18-genshin-inventory/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
-- [ ] **Bag sort** — `bag-sort.mkv`, waits on [inventory](../archive/2026-10-18-genshin-inventory/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
-- [ ] **Bag scroll** — `bag-scroll.mkv`, waits on [inventory](../archive/2026-10-18-genshin-inventory/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
-- [ ] **Bag select** — `bag-select.mkv`, waits on [inventory](../archive/2026-10-18-genshin-inventory/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
-- [ ] **Standard Wish banner** — `wish-standard.png`, waits on [wish](../archive/2026-10-18-genshin-wish/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
+- [ ] **Bag open and close** — `bag-open-close.mkv`, on the built [inventory](../../specs/genshin/inventory/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
+- [ ] **Bag tabs** — `bag-tabs.mkv`, on the built [inventory](../../specs/genshin/inventory/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
+- [ ] **Bag sort** — `bag-sort.mkv`, on the built [inventory](../../specs/genshin/inventory/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
+- [ ] **Bag scroll** — `bag-scroll.mkv`, on the built [inventory](../../specs/genshin/inventory/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
+- [ ] **Bag select** — `bag-select.mkv`, on the built [inventory](../../specs/genshin/inventory/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
+- [ ] **Standard Wish banner** — `wish-standard.png`, on the built [wish](../../specs/genshin/wish/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
 - [ ] **Adventurer Handbook** — `handbook-open-close.mkv`, waits on [Adventurer Handbook](../../specs/genshin/adventurer-handbook/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
-- [ ] **Bag sort dropdown open** — `bag-sort-open.png`, waits on [inventory](../archive/2026-10-18-genshin-inventory/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
+- [ ] **Bag sort dropdown open** — `bag-sort-open.png`, on the built [inventory](../../specs/genshin/inventory/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
 - [ ] **Attributes Details** — `character-details.mkv`, waits on [character screen](../genshin-character-screen/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
 - [ ] **Weapon levelling** — `weapon-levelling.mkv`, the [weapon screen](../genshin-weapon-screen/design.md) over [weapon enhancement](../genshin-weapon-enhancement/design.md)'s rules.
 - [ ] **Attributes at 1080 high** — `character-attributes-1080.png`, waits on [character screen](../genshin-character-screen/design.md). Searched 2026-10-11 on the wiki and YouTube, none found.
-- [ ] **Camp enemy level by World Level** — `enemy-level-world-level-1.mkv`, `enemy-level-world-level-5.mkv`, `enemy-level-world-level-9.mkv`, waits on [Adventure Rank](../archive/2026-10-22-genshin-adventure-rank/design.md).
+- [ ] **Camp enemy level by World Level** — `enemy-level-world-level-1.mkv`, `enemy-level-world-level-5.mkv`, `enemy-level-world-level-9.mkv`, on the built [Adventure Rank](../../specs/genshin/adventure-rank/design.md).
 - [ ] **Liyue outcrops by rank** — `liyue-outcrop-rank.mkv`, waits on [ley line outcrops](../genshin-ley-line-outcrops/design.md).
 - [ ] **Ley line claim** — `ley-line-claim.mkv`, waits on [ley line outcrops](../genshin-ley-line-outcrops/design.md).
 - [ ] **Exploration percentage steps** — `exploration-steps.mkv`, waits on [exploration progress](../genshin-exploration-progress/design.md).
@@ -242,10 +242,10 @@ Clips and stills a value needs, which agents find in published material (see [pa
 - [ ] **Gathering pick** — `gather-pick.mkv`, waits on [gathering](../genshin-gathering/design.md).
 - [ ] **Fish reel** — `fishing-reel.mkv`, waits on [fishing](../genshin-fishing/design.md).
 - [ ] **Fishing point pools** — `fishing-point-pool.mkv`, waits on [fishing](../genshin-fishing/design.md).
-- [ ] **Cooking zones** — `cooking-zones.mkv`, waits on [cooking](../archive/2026-10-18-genshin-cooking/design.md).
-- [ ] **Special dish quality** — `cooking-special-dish.mkv`, waits on [cooking](../archive/2026-10-18-genshin-cooking/design.md).
-- [ ] **Processing queue** — `processing-queue.mkv`, waits on [cooking](../archive/2026-10-18-genshin-cooking/design.md).
-- [ ] **Campfire elements** — `campfire-elements.mkv`, waits on [cooking](../archive/2026-10-18-genshin-cooking/design.md).
+- [ ] **Cooking zones** — `cooking-zones.mkv`, on the built [cooking](../../specs/genshin/cooking/design.md).
+- [ ] **Special dish quality** — `cooking-special-dish.mkv`, on the built [cooking](../../specs/genshin/cooking/design.md).
+- [ ] **Processing queue** — `processing-queue.mkv`, on the built [cooking](../../specs/genshin/cooking/design.md).
+- [ ] **Campfire elements** — `campfire-elements.mkv`, on the built [cooking](../../specs/genshin/cooking/design.md).
 - [ ] **Forge order queue** — `forge-order-queue.mkv`, waits on [forging](../genshin-forging/design.md).
 - [ ] **Forge refusal** — `forge-refusal.mkv`, waits on [forging](../genshin-forging/design.md).
 - [ ] **Achievements screen** — `achievements-screen.mkv`, waits on [achievements](../genshin-achievements/design.md). Partly found 2026-10-11: the page it waits on holds the find and what is still sought.
