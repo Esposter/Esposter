@@ -25,7 +25,7 @@ flowchart TD
 
 ## Scope and order
 
-**Still to build:** a quest step that unlocks a waypoint outright (task 2.1). It is blocked: the one `QUEST_EXEC_UNLOCK_POINT` in the quest data names point 7, a statue's point rather than a waypoint's, so the step waits on the data naming a waypoint. The pointer, the hidden waypoints, the offers and the first-unlock rewards are built, and their tasks are checked.
+**Still to build:** a quest step that unlocks a waypoint outright (task 2.1). It is blocked, as the [first decision](#decisions) says: the quest data's one unlock names a statue's point, so the step waits on the data naming a waypoint. The pointer, the hidden waypoints, the offers and the first-unlock rewards are built, and their tasks are checked.
 
 **Not here:** the achievements `TRIGGER_UNLOCK_TRANS_POINT` and `TRIGGER_UNLOCK_AREA` rows count unlocks, and the achievements proposal wires them as their pages land. The wiki says "Brush of a Thousand Winds" is every Teleport Waypoint in Mondstadt except those of Dragonspine, Windrest Peak and the Temple of Space, so a watcher needs each waypoint's region as well as its point. An area trigger names the game's own area ids, which no catalogue area holds yet.
 
