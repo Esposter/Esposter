@@ -62,9 +62,9 @@ describe(useCallBackgroundStore, () => {
     const { readVirtualBackgroundImagePath } = callBackgroundStore;
     // The last preset rather than the first, because the first is the None entry and resolves to the empty
     // Sentinel either way — which would pass whether or not presets are resolved at all
-    const { imagePath } = takeOne(CallVirtualBackgroundDefinitions.slice(-1));
+    const { id, url } = takeOne(CallVirtualBackgroundDefinitions.slice(-1));
 
-    await expect(readVirtualBackgroundImagePath(imagePath)).resolves.toBe(imagePath);
+    await expect(readVirtualBackgroundImagePath(id)).resolves.toBe(url);
     expect(handler).not.toHaveBeenCalled();
   });
 

@@ -73,8 +73,8 @@ export const useCallBackgroundStore = defineStore("message/user/settings/callBac
   // Picker's None entry already selects. That is what makes a deleted slot degrade instead of publishing a
   // Camera track with a broken image composited behind it
   const readVirtualBackgroundImagePath = async (virtualBackground: UserSettingsInMessage["virtualBackground"]) => {
-    const preset = CallVirtualBackgroundDefinitions.find(({ imagePath }) => imagePath === virtualBackground);
-    if (preset) return preset.imagePath;
+    const preset = CallVirtualBackgroundDefinitions.find(({ id }) => id === virtualBackground);
+    if (preset) return preset.url;
     // Re-read rather than resolve from the session cache, and only a slot ever gets here so a preset still pays
     // Nothing. A cached listing is wrong in both directions over the life of a session: it holds a slot another
     // Device has deleted, whose url would resolve to a blob that is gone rather than to no background, and its

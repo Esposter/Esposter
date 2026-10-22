@@ -35,7 +35,7 @@ onMounted(async () => {
     <p text-sm text-muted px-2>Backgrounds and effects</p>
     <div gap-2 grid cols-3>
       <UiTooltip
-        v-for="{ imagePath, title } of CallVirtualBackgroundDefinitions"
+        v-for="{ id, title, url } of CallVirtualBackgroundDefinitions"
         :key="title"
         #default="{ activatorProps }"
         :label="title"
@@ -43,8 +43,8 @@ onMounted(async () => {
         <button
           :="activatorProps"
           :aria-label="title"
-          :aria-pressed="selectedVirtualBackground === imagePath"
-          :style="{ backgroundImage: imagePath ? `url(${imagePath})` : undefined }"
+          :aria-pressed="selectedVirtualBackground === id"
+          :style="{ backgroundImage: url ? `url(${url})` : undefined }"
           type="button"
           class="aria-pressed:shadow-[0_0_0_var(--ui-indicator-width)_var(--ui-accent)]"
           flex
@@ -55,9 +55,9 @@ onMounted(async () => {
           bg-cover
           bg-center
           ui-field
-          @click="emit('select', imagePath)"
+          @click="emit('select', id)"
         >
-          <UiIcon v-if="!imagePath" :meaning="UiIconMeaning.None" />
+          <UiIcon v-if="!url" :meaning="UiIconMeaning.None" />
         </button>
       </UiTooltip>
       <!-- A slot's delete sits on the tile rather than behind a menu: the picker is the only surface these

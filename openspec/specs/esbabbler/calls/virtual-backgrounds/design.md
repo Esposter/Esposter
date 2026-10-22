@@ -1,6 +1,6 @@
 # Virtual Backgrounds
 
-The camera background the local media pipeline composites behind you, applied through `@livekit/track-processors`. Two kinds of background share one selection: the presets the repo ships as static SVGs, and up to `MAX_CALL_BACKGROUNDS` images you upload yourself.
+The camera background the local media pipeline composites behind you, applied through `@livekit/track-processors`. Two kinds of background share one selection: the presets the repo bundles as SVGs, and up to `MAX_CALL_BACKGROUNDS` images you upload yourself.
 
 This is not profile imagery — the profile image is user-editable separately ([users](../../../user/README.md)). A background is composited **locally**, before the track is published, so nobody but the uploader ever fetches it.
 
@@ -18,11 +18,11 @@ The list is the container listing under that prefix. Nothing has to be kept in s
 
 ## Remembering the choice
 
-`userSettingsInMessage.virtualBackground` is a text column defaulting to the empty sentinel, alongside the voice settings it already carries ([user settings](../../settings/design.md)). It holds either a preset's path or a slot name; the client resolves a slot to a freshly signed read SAS and a preset to its static path, and the empty value means no background.
+`userSettingsInMessage.virtualBackground` is a text column defaulting to the empty sentinel, alongside the voice settings it already carries ([user settings](../../settings/design.md)). It holds either a preset's id, its member of `CallVirtualBackground`, or a slot name; the client resolves a slot to a freshly signed read SAS and a preset to its bundled url, and the empty value means no background. The id is a name rather than a url, so a rebuild that changes the file's url leaves every saved choice valid ([static assets](../../../architecture/static-assets/design.md)).
 
 **Resolving a slot re-reads the listing rather than the session cache.** The cache the picker renders from goes wrong in both directions over the life of a session: it holds a slot another device has deleted, which would resolve to a url whose blob is gone instead of to no background, and the read SAS it is holding expires while the session stays open. Only a slot ever reaches that path, so a preset still pays nothing.
 
-A preset's path can never collide with a slot number, so the two need no tag to tell apart. Persisting it is the smaller half of the value, but the visible one: before it, choosing a background was a per-tab act and anyone who wanted one had to re-pick it every session.
+A preset's id can never collide with a slot number, since ids are names and slots are numbers, so the two need no tag to tell apart. Persisting it is the smaller half of the value, but the visible one: before it, choosing a background was a per-tab act and anyone who wanted one had to re-pick it every session.
 
 Applying a background and remembering it are separate calls. A camera that starts mid-call applies the persisted pick without writing it back — restoring a selection is not the user making it again.
 
@@ -39,7 +39,7 @@ flowchart TD
   list --> picker
   picker -->|"select"| settings[("userSettings.virtualBackground")]
   settings --> resolve{"preset path or slot?"}
-  resolve -->|preset| static["Static path from the public directory"]
+  resolve -->|preset| static["Bundled url from the preset's id"]
   resolve -->|slot| read["Short-lived read SAS"]
   resolve -->|"neither — a deleted slot"| none["Processor disabled — no background"]
   static --> processor["BackgroundProcessor on the local camera track"]
@@ -62,6 +62,8 @@ A browser without background-processor support keeps the earlier behaviour: uplo
 | `packages/db-schema/src/schema/message/userSettingsInMessage.ts`              | the persisted selection                                 |
 | `apps/web/server/services/message/call/getCallBackgroundBlobName.ts`          | the one place a slot's blob name is spelled             |
 | `apps/web/server/trpc/routers/user.ts`                                        | slot upload SAS, slot listing, slot delete              |
+| `apps/web/app/models/message/room/call/CallVirtualBackground.ts`              | the preset ids a choice is saved as                     |
+| `apps/web/app/services/message/room/call/CallVirtualBackgroundUrlMap.ts`      | each preset id's bundled url, typed over every member   |
 | `apps/web/app/services/message/room/call/CallVirtualBackgroundDefinitions.ts` | presets as one source among two                         |
 | `apps/web/app/store/message/user/settings/callBackground.ts`                  | the listing, the upload/delete writes, and the resolver |
 | `apps/web/app/components/Message/Content/Call/VirtualBackground/Grid.vue`     | upload tile, per-slot delete, resolved image urls       |
