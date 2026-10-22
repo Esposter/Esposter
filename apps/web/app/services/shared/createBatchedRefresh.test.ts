@@ -4,7 +4,7 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 describe(createBatchedRefresh, () => {
   beforeEach(() => {
     vi.useFakeTimers();
-    vi.spyOn(console, "error").mockImplementation(() => undefined);
+    vi.spyOn(console, "error").mockReturnValue(undefined);
   });
 
   afterEach(() => {
@@ -39,9 +39,9 @@ describe(createBatchedRefresh, () => {
     expect.hasAssertions();
 
     const refreshedKeys: string[][] = [];
-    const markChanged = createBatchedRefresh(async (keys: string[]) => {
+    const markChanged = createBatchedRefresh((keys: string[]) => {
       refreshedKeys.push(keys);
-      if (refreshedKeys.length === 1) throw new Error(" ");
+      return refreshedKeys.length === 1 ? Promise.reject(new Error(" ")) : Promise.resolve();
     });
     await markChanged([""]);
     const secondChange = markChanged([" "]);
@@ -49,16 +49,16 @@ describe(createBatchedRefresh, () => {
     await secondChange;
 
     expect(refreshedKeys).toStrictEqual([[""], ["", " "]]);
-    expect(console.error).toHaveBeenCalledOnce();
+    expect(console.error).toHaveBeenCalledTimes(1);
   });
 
   test("a failed run is read again without a mark, after the backoff", async () => {
     expect.hasAssertions();
 
     const refreshedKeys: string[][] = [];
-    const markChanged = createBatchedRefresh(async (keys: string[]) => {
+    const markChanged = createBatchedRefresh((keys: string[]) => {
       refreshedKeys.push(keys);
-      if (refreshedKeys.length === 1) throw new Error(" ");
+      return refreshedKeys.length === 1 ? Promise.reject(new Error(" ")) : Promise.resolve();
     });
     await markChanged([""]);
     await vi.runAllTimersAsync();

@@ -11,6 +11,21 @@ import { useRoleStore } from "@/store/message/room/role";
 import { useMemberStore } from "@/store/message/user/member";
 import { beforeEach, describe, expect, test } from "vitest";
 
+// Resolves on the next write of the room's group totals, the store's own signal that a re-read has landed
+const waitForCounts = (readRoomId: string) => {
+  const memberStore = useMemberStore();
+  const { getMemberCountsRef } = memberStore;
+  return new Promise<void>((resolve) => {
+    const stopWatching = watch(
+      () => getMemberCountsRef(readRoomId).value.countsByTopRole,
+      () => {
+        stopWatching();
+        resolve();
+      },
+    );
+  });
+};
+
 describe(useMemberStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const roomId = crypto.randomUUID();
@@ -29,28 +44,17 @@ describe(useMemberStore, () => {
   const loadMemberRoles = async (readRoomId: string, memberRoles: RoomRoleInMessage[]) => {
     trpcMsw.role.readMemberRoles.query(() =>
       memberRoles.map((memberRole) => ({
+        createdAt: memberRole.createdAt,
+        deletedAt: memberRole.deletedAt,
         role: memberRole,
         roleId: memberRole.id,
         roomId: readRoomId,
+        updatedAt: memberRole.updatedAt,
         userId: member.id,
       })),
     );
-    await useRoleStore().readMemberRoles({ roomId: readRoomId, userIds: [member.id] });
-  };
-
-  // Resolves on the next write of the room's group totals, the store's own signal that a re-read has landed
-  const waitForCounts = (readRoomId: string) => {
-    const memberStore = useMemberStore();
-    const { getMemberCountsRef } = memberStore;
-    return new Promise<void>((resolve) => {
-      const stopWatching = watch(
-        () => getMemberCountsRef(readRoomId).value.countsByTopRole,
-        () => {
-          stopWatching();
-          resolve();
-        },
-      );
-    });
+    const roleStore = useRoleStore();
+    await roleStore.readMemberRoles({ roomId: readRoomId, userIds: [member.id] });
   };
 
   beforeEach(() => {

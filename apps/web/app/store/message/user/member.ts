@@ -61,7 +61,7 @@ export const useMemberStore = defineStore("message/user/member", () => {
   const refreshMemberCountsInBackground = (roomId: string) =>
     getResultAsync(() => refreshMemberCounts([roomId])).match(noop, console.error);
   // Every role-membership write re-reads its room's totals, so a leave, a role change, and a committed optimistic write
-  // all reach the totals through the same path. The room is the one the write happened in, not necessarily the one on
+  // They all reach the totals through the same path. The room is the one the write happened in, not necessarily the one on
   // Screen — a role assigned from a profile card in one room while another is open belongs to that room's totals
   memberRoleChangeHooks.register(refreshMemberCountsInBackground);
   // A join or a leave is subscribed for every room the user is in, so both handlers are told which room the event

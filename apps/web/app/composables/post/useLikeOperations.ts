@@ -17,7 +17,8 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostInPostWithRelat
   const { executeMutation: executeCreateLikeMutation } = useMutation();
   const { executeMutation: executeUpdateLikeMutation } = useMutation();
   const { executeMutation: executeDeleteLikeMutation } = useMutation();
-  const { refreshPostCounts } = usePostCountStore();
+  const postCountStore = usePostCountStore();
+  const { refreshPostCounts } = postCountStore;
   // A list may hold the same object twice, and a copy changed twice would be rolled back against the wrong vote
   const getPosts = (postId: PostInPostWithRelations["id"]) => [
     ...new Set(toValue(allPosts).filter(({ id }) => id === postId)),

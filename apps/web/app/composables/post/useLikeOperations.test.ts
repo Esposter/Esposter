@@ -39,7 +39,8 @@ describe(useLikeOperations, () => {
     });
     serveLikeCount(-1);
     const post = createPost({ id: postId, likeCount: 1, viewerLike: createLike(1) });
-    const { items } = storeToRefs(usePostStore());
+    const postStore = usePostStore();
+    const { items } = storeToRefs(postStore);
     items.value = [post];
     const { updateLike } = useLikeOperations(items);
     await Promise.all([updateLike({ postId, value: -1 }), updateLike({ postId, value: 1 })]);
@@ -56,7 +57,8 @@ describe(useLikeOperations, () => {
     trpcMsw.like.deleteLike.mutation(() => createLike(1));
     serveLikeCount(0);
     const post = createPost({ id: postId, likeCount: 1, viewerLike: createLike(1) });
-    const { items } = storeToRefs(usePostStore());
+    const postStore = usePostStore();
+    const { items } = storeToRefs(postStore);
     items.value = [post];
     const { deleteLike } = useLikeOperations(items);
     await Promise.all([deleteLike(postId), deleteLike(postId)]);

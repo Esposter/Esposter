@@ -14,7 +14,8 @@ import { DatabaseEntityType } from "@esposter/db-schema";
 
 export const usePostStore = defineStore("post", () => {
   const { $trpc } = useNuxtApp();
-  const { refreshPostCounts } = usePostCountStore();
+  const postCountStore = usePostCountStore();
+  const { refreshPostCounts } = postCountStore;
   const sortType = ref(PostSortType.Hot);
   const { items, ...restData } = useCursorPaginationData<PostInPostWithRelations>();
   const {
@@ -77,8 +78,8 @@ export const usePostStore = defineStore("post", () => {
       key: input,
       onError: async (error) => {
         createErrorAlert(error);
-        // The rollback put this post back with the counts it held when the delete was sent, and a count that moved since
-        // reached no copy, because the post was not on the feed then
+        // The rollback put this post back with the counts it held when the delete was sent.
+        // A count that moved since reached no copy, because the post was not on the feed then
         await refreshPostCounts([input]);
       },
     });

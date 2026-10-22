@@ -48,7 +48,7 @@ describe(useCommentStore, () => {
       return { ancestorIds: [postId], removedCommentCount: 1 };
     });
     // The rollback restores the comment with the count it held when the delete was sent, so the count the server holds
-    // is read back over it: a count that moved while the comment was out of the thread reached no copy
+    // It is read back over it: a count that moved while the comment was out of the thread reached no copy
     trpcMsw.post.readPostCounts.query(() => [
       { commentCount: 1, id: postId, likeCount: 0 },
       { commentCount: 0, id: comment.id, likeCount: 3 },
@@ -151,16 +151,17 @@ describe(useCommentStore, () => {
     trpcMsw.post.createComment.mutation(() => ({ ancestorIds: [postId], comment: reply }));
     trpcMsw.post.readPostCounts.query(() => [{ commentCount: 1, id: postId, likeCount: 0 }]);
     const feedPost = createPost({ commentCount: 0, id: postId });
-    const { items } = storeToRefs(usePostStore());
+    const postStore = usePostStore();
+    const { items } = storeToRefs(postStore);
     items.value = [feedPost];
 
-    await useCommentStore().createComment({ description: "a", parentId: postId });
+    const commentStore = useCommentStore();
+    await commentStore.createComment({ description: "a", parentId: postId });
 
     expect(feedPost.commentCount).toBe(1);
   });
 
-  // An edit's response carries the count as it was when the server answered it, which can be older than a read that
-  // already landed, so the count the edit's copy keeps is the one the owner reads back
+  // An edit's response can be older than a read that already landed, so the count the owner reads back is kept
   test("keeps the count the owner reads back over an edit's older response", async () => {
     expect.hasAssertions();
 

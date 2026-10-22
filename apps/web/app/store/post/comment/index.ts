@@ -14,7 +14,8 @@ import { DerivedDatabaseEntityType } from "@esposter/db-schema";
 
 export const useCommentStore = defineStore("post/comment", () => {
   const { $trpc } = useNuxtApp();
-  const { refreshPostCounts } = usePostCountStore();
+  const postCountStore = usePostCountStore();
+  const { refreshPostCounts } = postCountStore;
   const currentPost = ref<PostInPostWithRelations>();
   // Keyed by the post whose replies the partition holds, the route's own post included
   const { getSlice, getSliceOperationData, keys } = useCursorPaginationDataMap<PostInPostWithRelations>();
@@ -103,8 +104,8 @@ export const useCommentStore = defineStore("post/comment", () => {
       key: input,
       onError: async (error) => {
         createErrorAlert(error);
-        // The rollback put this comment back with the counts it held when the delete was sent, and a count that moved
-        // since reached no copy, because the comment was not in the thread then
+        // The rollback put this comment back with the counts it held when the delete was sent.
+        // A count that moved since reached no copy, because the comment was not in the thread then
         await refreshPostCounts([input]);
       },
       onSuccess: async ({ ancestorIds }) => {
