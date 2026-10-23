@@ -1,5 +1,5 @@
 import { transformer } from "#shared/services/trpc/transformer";
-import { jsonDateParse } from "@esposter/shared";
+import { jsonDateParse, takeOne } from "@esposter/shared";
 import { expect, test, vi } from "vitest";
 
 test("keeps tagging instances of a class a hot reload re-creates", async () => {
@@ -13,7 +13,8 @@ test("keeps tagging instances of a class a hot reload re-creates", async () => {
   });
   const { JSONClassMap } = await import("#shared/services/superjson/JSONClassMap");
   const createdAt = new Date(0);
-  const entity = new JSONClassMap.StandardMessageEntity({
+  const StandardMessageEntity = takeOne(JSONClassMap, "StandardMessageEntity");
+  const entity = new StandardMessageEntity({
     createdAt,
     message: "hi",
     partitionKey: "room",
