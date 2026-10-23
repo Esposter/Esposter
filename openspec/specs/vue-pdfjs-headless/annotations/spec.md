@@ -57,7 +57,7 @@ The package SHALL list a document's text annotations as its comments, each with 
 
 ### Requirement: Free texts are exchanged as XFDF
 
-The package SHALL write free-text annotations as XFDF and read XFDF back into them, from a `vue-pdfjs-headless/xfdf` subpath that loads no renderer. Reading XFDF that is not well-formed SHALL return an error and change nothing.
+The package SHALL write free-text annotations as XFDF and read XFDF back into them. Reading XFDF that is not well-formed SHALL return an error and change nothing.
 
 #### Scenario: An XFDF round trip
 

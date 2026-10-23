@@ -187,7 +187,7 @@ describe("usePdfAnnotations", () => {
     expect(
       state.importXfdf(writeXfdf([{ contents: "Imported", id: "0", pageNumber: 1, rect: [72, 300, 200, 320] }])),
     ).toStrictEqual(ok(undefined));
-    expect(Array.from(pdfDocument.annotationStorage)[0]).toStrictEqual(["pdfjs_internal_editor_0", drawn]);
+    expect([...pdfDocument.annotationStorage][0]).toStrictEqual(["pdfjs_internal_editor_0", drawn]);
     expect(pdfDocument.annotationStorage.size).toBe(2);
   });
 });

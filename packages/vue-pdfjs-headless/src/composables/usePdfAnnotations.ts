@@ -12,7 +12,8 @@ import { createFreeTextEntry } from "#src/services/createFreeTextEntry";
 import { readXfdf } from "#src/xfdf/readXfdf";
 import { writeXfdf } from "#src/xfdf/writeXfdf";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
-import { err, ok, Result } from "neverthrow";
+import type { Result } from "neverthrow";
+import { err, ok } from "neverthrow";
 import { shallowRef, toValue, watch } from "vue";
 
 interface UsePdfAnnotationsOptions {
@@ -61,9 +62,9 @@ const readFreeTexts = (loaded: PDFDocumentProxy): PdfFreeText[] =>
   }).flat();
 
 // An imported free text is stored as the renderer's own free text, so the save writes it like one drawn. It is keyed
-// apart from the renderer's numbered editors, which an imported name could otherwise replace
+// Apart from the renderer's numbered editors, which an imported name could otherwise replace
 const storeFreeTexts = (loaded: PDFDocumentProxy, freeTexts: PdfFreeText[]) => {
-  for (const { contents, id, pageNumber, rect } of freeTexts) {
+  for (const { contents, id, pageNumber, rect } of freeTexts)
     loaded.annotationStorage.setValue(
       `${PDF_EDITOR_KEY_PREFIX}xfdf${id}`,
       createFreeTextEntry({
@@ -75,7 +76,6 @@ const storeFreeTexts = (loaded: PDFDocumentProxy, freeTexts: PdfFreeText[]) => {
         value: contents,
       }),
     );
-  }
 };
 
 export const usePdfAnnotations = ({ onChange, pdfDocument, viewer }: UsePdfAnnotationsOptions): PdfAnnotationsState => {

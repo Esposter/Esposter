@@ -5,7 +5,7 @@
 ## Built
 
 - **`usePdfAnnotations`** takes the viewer and the document `usePdfViewer` and `usePdfDocument` return. It sets the editor mode, reports each drawn annotation, lists comments, and imports and exports XFDF free texts through the storage.
-- **`vue-pdfjs-headless/xfdf`** holds `readXfdf` and `writeXfdf`, framework-free and renderer-free, as a second build entry beside `index`. It carries free texts only.
+- **XFDF** is read and written by `readXfdf` and `writeXfdf`, which the package exports from its barrel, framework-free and renderer-free. It carries free texts only.
 - **The download** `usePdfViewer` returns saves through the renderer once the storage holds an entry or a watermark is set. The watermark is stored for that save alone.
 
 ## What the renderer saves
@@ -24,6 +24,7 @@ An untouched document's storage is empty, so "the storage has changed" is its si
 ## Decisions
 
 - **Comments are listed, not added.** The renderer's save drops text annotations. Writing them with a second PDF library was rejected, for the reason XFDF was not given one: the renderer's storage is the model, and a comment written outside it would not reach the download. Adding a comment is therefore not offered, and the package's spec says so.
+- **No subpath for XFDF.** No package imports XFDF alone, and a second build entry would bundle `readXfdf` and `writeXfdf` a second time. The functions ship from the package's barrel.
 - **The change event names a drawing, and only a drawing.** pdf.js calls its storage hook with the mode of an editor it has just stored, and gives no page. The page comes from the newest storage entry, which is that editor. Removing an editor and filling a form report no event, though a download still carries both.
 - **XFDF carries free texts.** Ink, highlight, stamp and comments are not written or read. XFDF does not name the colour or size of a free text, so an imported one takes the renderer's defaults.
 - **Imports are keyed apart from drawn editors, and a page past the end is refused.** pdf.js numbers its editors from zero, so an imported free text named `0` would replace the first drawn annotation; imports are stored under their own key namespace instead. A free text on a page that does not exist makes the renderer's save fail for the whole download, so the import checks the page count before it stores anything. A drawn editor has no element id until a page saves it, so the export takes its id from the key the renderer stores it under.
@@ -33,9 +34,10 @@ An untouched document's storage is empty, so "the storage has changed" is its si
 
 ## Known limits
 
-- **Several free texts in one save log a pdf.js error.** The saved bytes reload with every free text, in probes, but the unhandled rejection reaches the console on each download that writes more than one. This is pdf.js's own bookkeeping; the upstream report is for the user to file by hand.
-- **The watermark's grey is set, not seen.** The probe reloaded the watermark as a free text, but did not check its colour on a rendered page.
-- **Comments cannot be added** (see Decisions). A future renderer that writes text annotations on save would make the comment requirement addable.
+- **Comments cannot be added.** The renderer's save drops text annotations (see Decisions). Resume when pdf.js writes them on save: on each pdf.js bump, rerun the probe that stores a text annotation entry and reloads the file. If it survives, add `addComment` and a requirement for it in the spec.
+- **Several free texts in one save log a pdf.js error.** The saved bytes reload with every free text, but pdf.js logs `Object already resolved` as an unhandled rejection. Resume: the user files it upstream by hand, with a reproduction (two free texts in one `saveDocument` call on pdf.js 6.4.299, run with the legacy build in Node), and the issue is linked here.
+- **The browser check is open.** A drawn free text's export and the watermark's grey have not been seen in a browser. The export was checked against pdf.js's source and a stub, not a run. Resume: a harness page that mounts `usePdfAnnotations` and `usePdfViewer` in a browser test with the renderer's worker, draws one free text, exports it, and reads the saved file's FreeText annotation and its colour back with pdf.js. The app's PDF viewer draws none of these controls, so no existing page drives them.
+- **The upstream rows are not re-judged.** The annotation issues on both trackers have not been read against this change (tasks 2.1). Resume: `gh issue view` each annotation issue on the two trackers, judge it against this change, and update the package page's Upstream table. The `#68` row is already updated.
 
 ## Key files
 
@@ -53,8 +55,7 @@ packages/vue-pdfjs-headless/src/models/                           PdfAnnotationC
 | :-------------------------------------------------------------- | :----------------------------------------------------------------------------------- |
 | `packages/vue-pdfjs-headless/src/composables/usePdfViewer.ts`   | the editor mode applied to the renderer, and the download through `getDownloadBytes` |
 | `packages/vue-pdfjs-headless/src/composables/usePdfDocument.ts` | the document whose annotation storage `usePdfAnnotations` reads and writes           |
-| `packages/vue-pdfjs-headless/tsdown.config.ts`                  | the `xfdf` entry beside `index`                                                      |
-| `packages/vue-pdfjs-headless/package.json`                      | the `./xfdf` export, and `neverthrow` for the XFDF results                           |
+| `packages/vue-pdfjs-headless/package.json`                      | the `neverthrow` dependency for the XFDF results                                     |
 | `openspec/specs/architecture/pdf-viewer/design.md`              | The app's PDF viewer, which draws none of these controls                             |
 
 ## Sources

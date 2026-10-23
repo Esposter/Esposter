@@ -9,7 +9,7 @@ The PDF viewer package's first change gives it loading, page drawing and the vie
 - **Forms** are filled through the renderer's annotation layer and kept in the saved bytes.
 - **Annotation editing** sets the renderer's editor mode (free text, ink, highlight and stamp) and reports each drawn annotation as an event.
 - **Comments** are listed per document. Adding them is not offered: the renderer's save writes no text annotation, which was probed against pdf.js 6.4.299.
-- **XFDF**, the annotation exchange format, carries free texts, read and written by a framework-free `/xfdf` subpath.
+- **XFDF**, the annotation exchange format, carries free texts, read and written by functions the package exports.
 - **A download carries what was edited.** Once anything has changed or a watermark is set, the download is the saved bytes rather than the original, with the watermark written into every page for that save alone.
 
 ## Capabilities
@@ -22,5 +22,5 @@ None.
 
 ## Impact
 
-- `vue-pdfjs-headless`, which gains the annotation composable, the `/xfdf` subpath, and `neverthrow` as a dependency for XFDF's results.
+- `vue-pdfjs-headless`, which gains the annotation composable, the XFDF functions, and `neverthrow` as a dependency for XFDF's results.
 - The app changes nothing a reader sees: its dialog draws none of these controls.
