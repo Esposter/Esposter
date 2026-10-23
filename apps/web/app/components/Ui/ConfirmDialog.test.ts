@@ -11,7 +11,8 @@ import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 // Its label shares the button with the spinner while it is pending, so the button is found by its variant
-const getConfirmButton = (component: VueWrapper) => component.get(`button[data-variant="${UiButtonVariant.Danger}"]`);
+const getConfirmButton = (component: VueWrapper) =>
+  component.get<HTMLButtonElement>(`button[data-variant="${UiButtonVariant.Danger}"]`);
 
 describe("uiConfirmDialog", () => {
   beforeEach(() => {
@@ -75,7 +76,7 @@ describe("uiConfirmDialog", () => {
     test("sends one optimistic answer however many times it is pressed", async () => {
       expect.hasAssertions();
 
-      const confirm = vi.fn<() => undefined>(noop);
+      const confirm = vi.fn(noop);
       const component = await mountDialog({ confirm, isOptimistic: true });
       // Two presses before the dialog re-renders, as a double click lands inside its close transition
       const confirmButton = getConfirmButton(component).element;
