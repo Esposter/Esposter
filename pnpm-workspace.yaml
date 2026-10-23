@@ -288,7 +288,7 @@ overrides:
   # @TODO: https://github.com/nitrojs/nitro/pull/4827 — back to `@latest` once a `5x` Nuxt nightly hands Nitro its
   # Services under `vite`: every build since reads them there, so Nuxt's renderer is dropped and every page answers 404
   nitro: npm:nitro-nightly@3.0.1-20261018-005730-bb9894fe
-  typescript: npm:typescript-native-bridge@6.0.3-bridge.18.tsgo.7.0.2
+  typescript: npm:typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2
   # grapesjs-mjml's `^4.7.4` range reaches `@types/mjml` 4.18.0, which needs `@types/mjml-core@~4.18`; the registry no longer
   # publishes that, so a fresh resolve (`pnpm refresh:lockfile`) fails. This forces the catalog's 5.0.0 for every dependent
   # @TODO: no upstream issue — grapesjs-mjml's `@types/mjml` range reaches 4.18.0, whose `@types/mjml-core@~4.18` is unpublished (DefinitelyTyped)
