@@ -50,6 +50,7 @@ A file under `shared/` is parsed by the server and read by the Nuxt config in No
 - **Textures kept in `public/` because Phaser needs a path.** Phaser and three.js read any URL, bundled ones included, so the constraint never came from the loader.
 - **Tilesets kept in `public/` because the external loader fetched them by a path under a `public` segment.** That derived each tileset's url from the folder name in its `source`, so a tileset anywhere else threw. The loader now takes the url of each tileset from the app's import, which is the same rule every other file follows.
 - **Tilesets as `data:` urls.** Phaser decodes every data url as base64, and then `XHRLoader` returns `undefined` and overwrites the file's `xhrLoader` with it, so the tileset's text never reaches the loader. A `blob:` url is passed through unchanged and loaded with a real XHR.
+- **A positional tileset-url argument on the external loader.** The loader takes one configuration object, which carries `tilesetURLs` beside the map's own fields. A positional form would need that map as a seventh argument after six others, and every new field would add another position; the only caller uses the object form.
 
 ## Key files
 

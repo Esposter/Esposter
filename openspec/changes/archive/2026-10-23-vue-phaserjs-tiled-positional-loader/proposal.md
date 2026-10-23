@@ -17,7 +17,7 @@ Then bring [the static-assets design](../../specs/architecture/static-assets/des
 
 ## Capabilities
 
-- **vue-phaserjs** (modified, once decided)
+- **architecture/static-assets** (modified: its rejected list gains the positional form). No vue-phaserjs spec page describes the loader, so none is modified.
 
 ## Impact
 

@@ -1,4 +1,3 @@
-/* oxlint-disable no-param-reassign -- Phaser file-plugin base contract reassigns loader params */
 import type { TilemapFile } from "#src/models/plugins/TilemapFile";
 import type { TMXExternalTilesetParsed } from "parse-tmx";
 import type { Types } from "phaser";
@@ -13,38 +12,27 @@ const GetFastValue = Utils.Objects.GetFastValue;
 const JSONFile = Loader.FileTypes.JSONFile;
 const MultiFile = Loader.MultiFile;
 
+export interface TiledJSONExternalConfiguration {
+  baseURL?: string;
+  key: string;
+  path?: string;
+  tilesetURLs?: Record<string, string>;
+  tilesetXhrSettings?: Types.Loader.XHRSettingsObject;
+  url?: object | string;
+  xhrSettings?: Types.Loader.XHRSettingsObject;
+}
+
 export class TiledJSONExternalFile extends MultiFile {
   declare files: [TilemapFile, ...TilesetFile[]];
 
-  constructor(
-    loader: Loader.LoaderPlugin,
-    key: object | string,
-    tilemapURL?: object | string,
-    path?: object | string,
-    baseURL?: object | string,
-    tilemapXhrSettings?: Types.Loader.XHRSettingsObject,
-    tilesetXhrSettings?: Types.Loader.XHRSettingsObject,
-  ) {
-    let tilesetURLs: Record<string, string> | undefined;
-    // The config-object form of the loader call, as Phaser's own tilemap file reads it
-    if (typeof key !== "string") {
-      const configuration = key;
-      key = GetFastValue(configuration, "key") as string;
-      tilemapURL = GetFastValue(configuration, "url");
-      tilemapXhrSettings = GetFastValue(configuration, "xhrSettings");
-      path = GetFastValue(configuration, "path");
-      baseURL = GetFastValue(configuration, "baseURL");
-      tilesetXhrSettings = GetFastValue(configuration, "tilesetXhrSettings");
-      tilesetURLs = GetFastValue(configuration, "tilesetURLs");
-    }
+  constructor(loader: Loader.LoaderPlugin, configuration: TiledJSONExternalConfiguration) {
+    const tilemapFile = new JSONFile(loader, configuration.key, configuration.url, configuration.xhrSettings);
+    super(loader, "tilemapJSON", configuration.key, [tilemapFile]);
 
-    const tilemapFile = new JSONFile(loader, key, tilemapURL, tilemapXhrSettings);
-    super(loader, "tilemapJSON", key, [tilemapFile]);
-
-    this.config.path = path;
-    this.config.baseURL = baseURL;
-    this.config.tilesetXhrSettings = tilesetXhrSettings;
-    this.config.tilesetURLs = tilesetURLs;
+    this.config.path = configuration.path;
+    this.config.baseURL = configuration.baseURL;
+    this.config.tilesetXhrSettings = configuration.tilesetXhrSettings;
+    this.config.tilesetURLs = configuration.tilesetURLs;
   }
 
   addToCache() {
