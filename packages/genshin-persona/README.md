@@ -5,6 +5,8 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
+> **Experimental.** Its exports, build entries and files may change or be removed in any release, a minor one included. See [Stability](../../openspec/specs/architecture/monorepo-tooling/design.md#stability-every-published-package-is-experimental).
+
 A Claude Code plugin that gives every session a Genshin Impact character: a reply to a question for the assistant opens with one spoken line in their voice and answers plainly, a reply to a question for the character — a joke, a hello — is all spoken lines, and every line is read aloud in the character's own cloned voice by an engine on your machine.
 
 - **A character per session** — picked by the nearest birthday, or by lore through one typed decision when you give it a TypeSafe key; `use` and `pin` override the pick.

@@ -5,6 +5,8 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
+> **Experimental.** Its exports, build entries and files may change or be removed in any release, a minor one included. See [Stability](../../openspec/specs/architecture/monorepo-tooling/design.md#stability-every-published-package-is-experimental).
+
 Content-addressed version storage for documents handed over whole. Every version is stored as a zstd **keyframe** — compressed on its own — or as a **delta** compressed against exactly one keyframe, using that keyframe's plaintext as the dictionary. Reconstructing any version is at most two reads, a version whose content is already held costs nothing, and the backend is anything that can store bytes by key.
 
 ## Table of Contents

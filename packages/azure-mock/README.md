@@ -5,6 +5,8 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
+> **Experimental.** Its exports, build entries and files may change or be removed in any release, a minor one included. See [Stability](../../openspec/specs/architecture/monorepo-tooling/design.md#stability-every-published-package-is-experimental).
+
 Mock Azure service classes for local development and testing. Provides in-memory implementations of Azure Table Storage, Blob Storage, Service Bus, and EventGrid clients that mirror the real Azure SDK interfaces.
 
 ## Table of Contents

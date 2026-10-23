@@ -5,6 +5,8 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
+> **Experimental.** Its exports, build entries and files may change or be removed in any release, a minor one included. See [Stability](../../openspec/specs/architecture/monorepo-tooling/design.md#stability-every-published-package-is-experimental).
+
 tRPC for [Mock Service Worker](https://mswjs.io). Register a resolver per procedure, typed off your router, and every call your client makes is answered at the network by tRPC's own handlers — so batching, your transformer, your error formatter, `FormData` input and subscriptions over server-sent events or WebSockets all behave exactly as they do against the real server.
 
 ## Table of Contents

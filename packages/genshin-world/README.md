@@ -5,6 +5,8 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
+> **Experimental.** Its exports, build entries and files may change or be removed in any release, a minor one included. See [Stability](../../openspec/specs/architecture/monorepo-tooling/design.md#stability-every-published-package-is-experimental).
+
 Genshin Impact's world, rebuilt as an unofficial, non-commercial fan work on [`genshin-engine`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-engine) and not affiliated with HoYoverse. It holds everything that is the game's rather than any engine's:
 
 - the catalogue of regions, areas and subareas;

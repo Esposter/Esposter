@@ -5,6 +5,8 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
+> **Experimental.** Its exports, build entries and files may change or be removed in any release, a minor one included. See [Stability](../../openspec/specs/architecture/monorepo-tooling/design.md#stability-every-published-package-is-experimental).
+
 Genshin Impact's own text in its fifteen languages, as an unofficial, non-commercial fan work and not affiliated with HoYoverse:
 
 - the game's languages, each with its BCP-47 tag and its own name for itself;

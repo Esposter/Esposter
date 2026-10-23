@@ -5,6 +5,8 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
+> **Experimental.** Its exports, build entries and files may change or be removed in any release, a minor one included. See [Stability](../../openspec/specs/architecture/monorepo-tooling/design.md#stability-every-published-package-is-experimental).
+
 Math expressions compiled once into a function of plain numbers, in mathjs's numeric language and held to mathjs's recorded answers. A formula is parsed into a tree, the tree is compiled into a function of its variables' values, and that function is called once per row with no parsing or lookup per call.
 
 ## Table of Contents
