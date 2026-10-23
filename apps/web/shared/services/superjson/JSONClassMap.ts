@@ -20,6 +20,7 @@ import { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { StandardMessageEntity, SurveyResponseEntity, WebhookMessageEntity } from "@esposter/db-schema";
+import { takeOne } from "@esposter/shared";
 
 export const JSONClassMap: Record<string, Class<Serializable>> = {
   BasicChartConfiguration,
@@ -53,5 +54,5 @@ Object.assign(globalThis, { [JSON_CLASS_MAP_KEY]: JSONClassMap });
 
 export const getJSONClass = (name: string): Class<Serializable> => {
   const currentJSONClassMap: Record<string, Class<Serializable>> = Reflect.get(globalThis, JSON_CLASS_MAP_KEY);
-  return currentJSONClassMap[name];
+  return takeOne(currentJSONClassMap, name);
 };
