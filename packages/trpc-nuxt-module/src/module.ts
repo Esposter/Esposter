@@ -24,8 +24,15 @@ declare module "@nuxt/schema" {
     trpc?: Partial<ModuleOptions>;
   }
 }
-// What the app imports from the client runtime without naming it, the way it reaches every other Nuxt composable
-const CLIENT_IMPORTS = ["createTRPCNuxtClient", "getMutationKey", "getQueryKey", "httpBatchLink", "httpLink"] as const;
+// What the app imports from the client runtime without naming it, the way it reaches every other Nuxt composable. Each
+// Specifier is written out rather than built from the module name, so the subpath audit can see the module consume it.
+const CLIENT_IMPORTS = [
+  { from: "trpc-nuxt-module/runtime/client/createTRPCNuxtClient", name: "createTRPCNuxtClient" },
+  { from: "trpc-nuxt-module/runtime/client/getMutationKey", name: "getMutationKey" },
+  { from: "trpc-nuxt-module/runtime/client/getQueryKey", name: "getQueryKey" },
+  { from: "trpc-nuxt-module/runtime/client/httpBatchLink", name: "httpBatchLink" },
+  { from: "trpc-nuxt-module/runtime/client/httpLink", name: "httpLink" },
+] as const;
 const EVENT_HANDLER_FILENAME = `#${MODULE_NAME}/eventHandler.mjs`;
 const WEBSOCKET_HANDLER_FILENAME = `#${MODULE_NAME}/webSocketHandler.mjs`;
 
@@ -64,7 +71,7 @@ const trpcNuxtModule: NuxtModule<ModuleOptions> = defineNuxtModule<ModuleOptions
       );
     }
 
-    addImports(CLIENT_IMPORTS.map((name) => ({ from: `${MODULE_NAME}/runtime/client/${name}`, name })));
+    addImports([...CLIENT_IMPORTS]);
   },
 });
 
