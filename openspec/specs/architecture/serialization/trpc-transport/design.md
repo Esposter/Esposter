@@ -15,6 +15,6 @@ SuperJSON.registerCustom(
 );
 ```
 
-The hook is registered once per process, guarded by a `globalThis` symbol, because a hot reload re-evaluates the transformer on the same SuperJSON instance and would otherwise stack duplicate transformers. Each check looks the class up by name through `getJSONClass`, which reads the map that the class registry publishes on `globalThis`. A hot reload re-creates the classes, and a registration that held the class object would then match nothing, so the lookup has to happen at check time.
+The hooks are registered at module load with no guard. SuperJSON keys its custom transformers by name, so a hot reload re-evaluating the transformer on the same SuperJSON instance replaces each one rather than stacking a duplicate. Each check looks the class up by name through `getJSONClass`, which reads the map that the class registry publishes on `globalThis`. A hot reload re-creates the classes, and a registration that held the class object would then match nothing, so the lookup has to happen at check time.
 
 The classes it registers come from the shared [class registry](../class-registry/design.md). A value that is not a registered class is not covered by the hook at all, which is the case [unregistered instances](../unregistered-instances/design.md) covers.
