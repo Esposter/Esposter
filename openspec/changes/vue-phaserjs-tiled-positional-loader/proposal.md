@@ -11,7 +11,9 @@ Fixing it means choosing between two shapes, which the code cannot choose on its
 
 ## What Changes
 
-Decide between the two shapes, then bring [the static-assets design](../../specs/architecture/static-assets/design.md) and the vue-phaserjs specs into line with the decision. Until it is made, the positional form stays as it is.
+Decided: delete the positional form. The loader registration keeps only the object form, its positional parameter list and the `ArrayTail` import go, and `TiledJSONExternalFile`'s constructor takes the configuration object alone, which already carries `tilesetURLs`. This is the smallest shape: a seventh positional argument would extend a signature that cannot take any new field without another position, and it would keep two forms alive for one loader. The removal is a `refactor` under the [no-compatibility-debt](../../specs/architecture/no-compatibility-debt/design.md) published-packages rule, not a major.
+
+Then bring [the static-assets design](../../specs/architecture/static-assets/design.md) and the vue-phaserjs specs into line with the decision.
 
 ## Capabilities
 

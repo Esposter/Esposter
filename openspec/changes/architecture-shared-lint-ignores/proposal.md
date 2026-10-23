@@ -8,12 +8,11 @@ Sharing the glob is a design call, not a mechanical edit. oxlint reads a TypeScr
 
 ## What Changes
 
-Decide where the tileset glob is defined, once, and have both entry configs read it from there. Options:
+Decided: `oxlint.config.ts` owns the glob. It exports the tileset glob as a named constant, its `ignorePatterns` spreads that constant, and `packages/configuration/eslint/ignores.js` imports it from there. The ESLint file takes the same `../../../oxlint.config.ts` import that `packages/configuration/eslint/oxlint.js` already makes, so no new file and no new dependency edge appear, and `oxlint.config.ts` gains no workspace import.
 
-- Export the glob from `packages/configuration/eslint/ignores.js` and import it in `oxlint.config.ts`, which imports nothing from the workspace today, so this option adds its first workspace import.
-- Move the glob into a plain data module that both configs import, so neither config owns it.
+Rejected: a plain data module both configs import. It is one more file to edit when the tilesets move, and it holds nothing the root config does not already own. Also rejected, for now: deriving ESLint's ignores from all of oxlint's `ignorePatterns`. That widens what ESLint skips (`.claude`, `auto-imports.d.ts`, `useFluidSimulator.ts`) and needs its own review.
 
-Until the decision is made, nothing changes.
+The implementation checks one thing before it lands: oxlint loads a config file with a named export beside its default, so a planted-violation run through `oxlint -c` on the tileset folder must still show the glob applied.
 
 ## Capabilities
 
