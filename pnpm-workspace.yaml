@@ -280,7 +280,7 @@ cleanupUnusedCatalogs: true
 minimumReleaseAge: 0
 
 # Node prints the stack behind each warning (a MaxListenersExceededWarning names the emitter but not who added the listener),
-# So every script run through pnpm traces its warnings
+# so every script run through pnpm traces its warnings
 nodeOptions: --max-old-space-size=8192 --trace-warnings
 
 overrides:
