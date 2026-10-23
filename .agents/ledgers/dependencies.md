@@ -114,6 +114,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@xterm/addon-fit`                      | —                     | Keep — engine     | the terminal engine's sizing                                                                           |
 | `@xterm/xterm`                          | —                     | Keep — engine     | the terminal engine                                                                                    |
 | `apexcharts`                            | 2026-10-18 · Opus 5.5 | Keep — engine     | the chart engine, in a chunk of its own that only the routes drawing a chart load                      |
+| `azurite`                               | —                     | Keep — tooling    | the local Azure Storage emulator the dev server starts when its storage connection string asks for it  |
 | `better-auth`                           | —                     | Keep — security   | authentication, on the stop list                                                                       |
 | `bowser`                                | —                     | Keep — data       | user-agent tables for the session's device label, which change without us                              |
 | `chokidar`                              | —                     | Keep — hold       | unstorage's fs driver loads it undeclared (`@TODO` in the catalog)                                     |
