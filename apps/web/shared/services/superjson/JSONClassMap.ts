@@ -48,16 +48,26 @@ export const JSONClassMap: Record<string, Class<Serializable>> = {
 
 // One process can evaluate this module more than once, as the dev server does, and each evaluation creates its own
 // Classes. Every evaluation's map is published on globalThis under a key that survives the re-evaluation, so a lookup
-// Covers all of them instead of whichever evaluated last, and the transformer looks a class up by name at check time
-// Instead of holding the class itself
-const JSON_CLASS_MAPS_KEY = Symbol.for("JSONClassMaps");
-const jsonClassMaps: Record<string, Class<Serializable>>[] = Reflect.get(globalThis, JSON_CLASS_MAPS_KEY) ?? [];
-Object.assign(globalThis, { [JSON_CLASS_MAPS_KEY]: jsonClassMaps });
-jsonClassMaps.push(JSONClassMap);
+// Covers all of them instead of whichever evaluated last. The publication is weak, so an evaluation a hot reload
+// Replaces is released with its classes instead of the list growing on every reload
+const JSON_CLASS_MAP_REFS_KEY = Symbol.for("JSONClassMapRefs");
+const getLiveJSONClassMapRefs = (): WeakRef<Record<string, Class<Serializable>>>[] => {
+  const jsonClassMapRefs: WeakRef<Record<string, Class<Serializable>>>[] =
+    Reflect.get(globalThis, JSON_CLASS_MAP_REFS_KEY) ?? [];
+  const liveJSONClassMapRefs = jsonClassMapRefs.filter((jsonClassMapRef) => jsonClassMapRef.deref());
+  Object.assign(globalThis, { [JSON_CLASS_MAP_REFS_KEY]: liveJSONClassMapRefs });
+  return liveJSONClassMapRefs;
+};
+Object.assign(globalThis, { [JSON_CLASS_MAP_REFS_KEY]: [...getLiveJSONClassMapRefs(), new WeakRef(JSONClassMap)] });
+
+const getJSONClassMaps = (): Record<string, Class<Serializable>>[] =>
+  getLiveJSONClassMapRefs().flatMap((jsonClassMapRef) => jsonClassMapRef.deref() ?? []);
 
 export const getJSONClasses = (name: string): Class<Serializable>[] =>
-  jsonClassMaps.map((jsonClassMap) => takeOne(jsonClassMap, name));
+  getJSONClassMaps().map((jsonClassMap) => takeOne(jsonClassMap, name));
 
 // The newest evaluation's class, which is what a value deserializes into
-export const getJSONClass = (name: string): Class<Serializable> =>
-  takeOne(getJSONClasses(name), jsonClassMaps.length - 1);
+export const getJSONClass = (name: string): Class<Serializable> => {
+  const jsonClasses = getJSONClasses(name);
+  return takeOne(jsonClasses, jsonClasses.length - 1);
+};
