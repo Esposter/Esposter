@@ -76,7 +76,7 @@ describe("uiConfirmDialog", () => {
     test("sends one optimistic answer however many times it is pressed", async () => {
       expect.hasAssertions();
 
-      const confirm = vi.fn(noop);
+      const confirm = vi.fn<() => void>(noop);
       const component = await mountDialog({ confirm, isOptimistic: true });
       // Two presses before the dialog re-renders, as a double click lands inside its close transition
       const confirmButton = getConfirmButton(component).element;
