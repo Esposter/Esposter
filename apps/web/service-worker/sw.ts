@@ -3,13 +3,14 @@ import type { PrecacheEntry } from "workbox-precaching";
 import { cleanupOutdatedCaches, createHandlerBoundToURL, precacheAndRoute } from "workbox-precaching";
 import { NavigationRoute, registerRoute } from "workbox-routing";
 
-// `injectManifest` replaces `__WB_MANIFEST` with the build's precache list, and the home page joins it so an offline
-// navigation to any route is answered by the app shell
+// The build replaces `__WB_MANIFEST` with the precache list, and the home page joins it, so an offline
+// Navigation to any route is answered by the app shell
+// oxlint-disable-next-line no-underscore-dangle -- the build injects this name, and workbox reads it by it
 declare let self: ServiceWorkerGlobalScope & { __WB_MANIFEST: PrecacheEntry[] };
 
 // The wire shape `getPushNotificationPayload` writes, as far as this worker reads it. It mirrors
-// `PushNotificationPayload` in `@esposter/db-schema`, which the worker cannot import: that type reaches the server
-// packages
+// The `PushNotificationPayload` type in `@esposter/db-schema`, which the worker cannot import: that type reaches the
+// Server packages, which this worker's lib does not type
 interface PushPayload {
   body: string;
   data: { url: string };
@@ -18,14 +19,13 @@ interface PushPayload {
 }
 
 cleanupOutdatedCaches();
+// oxlint-disable-next-line no-underscore-dangle -- the build injects this name, and workbox reads it by it
 precacheAndRoute([...self.__WB_MANIFEST, { revision: null, url: "/" }]);
 registerRoute(new NavigationRoute(createHandlerBoundToURL("/")));
 
 // The update prompt in the tab asks a waiting worker to take over, and the reload follows the new worker taking control
 self.addEventListener("message", (event) => {
-  if (event.data?.type === "SKIP_WAITING") {
-    self.skipWaiting();
-  }
+  if (event.data?.type === "SKIP_WAITING") self.skipWaiting();
 });
 
 // https://github.com/vite-pwa/docs/issues/132 — the push handler lives here, typed, rather than in an
@@ -38,6 +38,7 @@ self.addEventListener("push", (event) => {
   event.waitUntil(
     (async () => {
       const clients = await self.clients.matchAll({ includeUncontrolled: true });
+      // oxlint-disable-next-line unicorn/require-post-message-target-origin -- a Client takes no target origin: it is the matched window itself
       for (const client of clients) client.postMessage(payload);
       await self.registration.showNotification(title ?? "", { body, data, icon: icon ?? undefined });
     })(),
