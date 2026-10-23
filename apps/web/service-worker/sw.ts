@@ -1,3 +1,4 @@
+import type { PushNotificationPayload } from "@esposter/db-schema";
 import type { PrecacheEntry } from "workbox-precaching";
 
 import { cleanupOutdatedCaches, createHandlerBoundToURL, precacheAndRoute } from "workbox-precaching";
@@ -7,16 +8,6 @@ import { NavigationRoute, registerRoute } from "workbox-routing";
 // Navigation to any route is answered by the app shell
 // oxlint-disable-next-line no-underscore-dangle -- the build injects this name, and workbox reads it by it
 declare let self: ServiceWorkerGlobalScope & { __WB_MANIFEST: PrecacheEntry[] };
-
-// The wire shape `getPushNotificationPayload` writes, as far as this worker reads it. It mirrors
-// The `PushNotificationPayload` type in `@esposter/db-schema`, which the worker cannot import: that type reaches the
-// Server packages, which this worker's lib does not type
-interface PushPayload {
-  body: string;
-  data: { url: string };
-  icon?: null | string;
-  title?: null | string;
-}
 
 cleanupOutdatedCaches();
 // oxlint-disable-next-line no-underscore-dangle -- the build injects this name, and workbox reads it by it
@@ -33,7 +24,7 @@ self.addEventListener("message", (event) => {
 self.addEventListener("push", (event) => {
   if (!event.data) return;
 
-  const payload: PushPayload = event.data.json();
+  const payload: PushNotificationPayload = event.data.json();
   const { body, data, icon, title } = payload;
   event.waitUntil(
     (async () => {
@@ -47,7 +38,7 @@ self.addEventListener("push", (event) => {
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
-  const { url }: PushPayload["data"] = event.notification.data;
+  const { url }: PushNotificationPayload["data"] = event.notification.data;
   event.waitUntil(
     (async () => {
       const clients = await self.clients.matchAll({ includeUncontrolled: true, type: "window" });
