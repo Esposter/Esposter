@@ -44,3 +44,14 @@ export const JSONClassMap: Record<string, Class<Serializable>> = {
   WebhookMessageEntity,
   WebpageEditor,
 };
+
+// A hot reload re-evaluates these classes without re-running every module that captured one, so a registration
+// Holding a class holds a stale one. The current map is published on globalThis under a key that survives the
+// Re-evaluation, and the transformer looks a class up by name at check time instead of holding the class itself
+const JSON_CLASS_MAP_KEY = Symbol.for("JSONClassMap");
+Object.assign(globalThis, { [JSON_CLASS_MAP_KEY]: JSONClassMap });
+
+export const getJSONClass = (name: string): Class<Serializable> => {
+  const currentJSONClassMap: Record<string, Class<Serializable>> = Reflect.get(globalThis, JSON_CLASS_MAP_KEY);
+  return currentJSONClassMap[name];
+};
