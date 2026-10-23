@@ -34,16 +34,11 @@
       "source": "./src/vueGridLayoutHeadless.ts",
       "default": "./dist/index.js"
     },
-    "./placement": {
-      "source": "./src/placement.ts",
-      "default": "./dist/placement.js"
-    },
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "exports": {
       ".": "./dist/index.js",
-      "./placement": "./dist/placement.js",
       "./package.json": "./package.json"
     },
     "access": "public"

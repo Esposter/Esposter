@@ -63,3 +63,11 @@ Badge ref format (bottom of file):
 [badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/<npm-name>/latest?label=npm
 [badge-npm-downloads]: https://img.shields.io/npm/dm/<npm-name>.svg
 ```
+
+## The experimental notice
+
+Every published package's README carries this one notice under its badges, the same line in every package, since every published package is experimental (`openspec/specs/architecture/monorepo-tooling/design.md`, Stability):
+
+```markdown
+> **Experimental.** Its exports, build entries and files may change or be removed in any release, a minor one included. See [Stability](../../openspec/specs/architecture/monorepo-tooling/design.md#stability-every-published-package-is-experimental).
+```

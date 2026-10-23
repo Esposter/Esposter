@@ -234,6 +234,10 @@ Use normal zipped artifacts unless there is a measured need for direct artifact 
 
 The repository allows only the actions listed in `apps/infra/src/github/actionsPermissions.ts`: GitHub-owned actions, plus the `patternsAlloweds` pinned there. Any other third-party action is refused by GitHub, and a workflow that uses one fails at startup with no job run, so the whole workflow goes red with no log to read. A change that adds a third-party action adds its `owner/repo@*` to that list in the same commit, and the infra change is applied with `pnpm infra:up` after a clean preview.
 
+## Stability: every published package is experimental
+
+Every published package is experimental. Its exports, build entries and files may change or be removed in any release, a minor one included, so a removal is a changelog line rather than a breaking change. Each package's README opens with the experimental notice (`.agents/skills/readme-standards/references/template.md`). A package leaves this state only by a decision written into this spec, and from then on its exports are a contract that changes at a major version.
+
 ## Sources
 
 - [rhysd (the author) inactive. Any active forks?](https://github.com/rhysd/actionlint/issues/719), actionlint — upstream's last release and last commit both in the spring, and the fork named there as the one moving forward.
