@@ -1,6 +1,6 @@
 # Grid layout
 
-The grid's placement and its pointer gestures, as `vue-grid-layout-headless` builds them. The package holds the behaviour and no markup: `useGridLayout` returns the state a consumer draws and the handlers it binds, and the pure functions the composable runs on stay internal to the package under `src/placement/`.
+The grid's placement and its pointer gestures, as `vue-grid-layout-headless` builds them. The package holds the behaviour and no markup: `useGridLayout` returns the state a consumer draws and the handlers it binds, and the `/placement` entry exports the pure functions the composable runs on, so a consumer can place items without a grid.
 
 ## How it works
 
@@ -52,13 +52,14 @@ flowchart TD
 - A press whose release happens outside the grid never reaches the grid's release. A move with no button held ends the gesture, so a press released elsewhere does not start a drag when the pointer comes back.
 - `startExternalDrag` has no drag threshold, so a click on a palette entry drops it at the click point. A consumer that wants a palette entry to need a drag gives it its own threshold before calling it.
 - `startExternalDrag` ends its listeners on either a release or a cancel of its pointer. A cancelled press is discarded without accepting, and the next press's release is the one that drops the entry.
-- The package's main entry is a barrel by design, and its bundle is measured by its size snapshot.
+- The package's main entry is a barrel by design, and its bundle is measured by its size snapshot. The `/placement` entry measures only its re-exports, since the shared code it uses is split into a separate chunk.
 
 ## Key files
 
 | File                                                                  | Role                                                                                              |
 | :-------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------ |
 | `packages/vue-grid-layout-headless/src/vueGridLayoutHeadless.ts`      | The main entry: `useGridLayout`, `startExternalDrag`, and the grid's models                       |
+| `packages/vue-grid-layout-headless/src/placement.ts`                  | The `/placement` entry: the pure functions, framework-free                                        |
 | `packages/vue-grid-layout-headless/src/composables/useGridLayout.ts`  | The gesture state, the preview, the commits and the resize observer                               |
 | `packages/vue-grid-layout-headless/src/services/startExternalDrag.ts` | A drag from outside every grid, such as a palette entry, dropped onto the grid under the pointer  |
 | `packages/vue-grid-layout-headless/src/services/mountedGrids.ts`      | The grids mounted on the page, keyed by root                                                      |

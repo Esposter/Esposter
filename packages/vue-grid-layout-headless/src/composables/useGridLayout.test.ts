@@ -9,7 +9,7 @@ import { useGridLayout } from "#src/composables/useGridLayout";
 import { CollisionMode } from "#src/models/CollisionMode";
 import { CompactType } from "#src/models/CompactType";
 import { ResizeEdge } from "#src/models/ResizeEdge";
-import { getColumnPitch } from "#src/placement/getColumnPitch";
+import { getColumnPitch } from "#src/placement";
 import { startExternalDrag } from "#src/services/startExternalDrag";
 import { flushPromises, mount } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";

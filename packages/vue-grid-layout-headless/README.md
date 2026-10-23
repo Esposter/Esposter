@@ -5,7 +5,7 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-A headless grid: `useGridLayout` returns the placement of items on a grid of cells and the pointer handlers that move, resize, drop and compact them, with no styling.
+A headless grid: `useGridLayout` returns the placement of items on a grid of cells and the pointer handlers that move, resize, drop and compact them, with no styling. The pure placement functions are also exported from its `/placement` entry.
 
 ## Table of Contents
 
