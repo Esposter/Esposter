@@ -19,6 +19,7 @@ export interface PgTable {
   ): PgTableWithColumns<{
     columns: PgBuildColumns<TTableName, ReturnType<typeof createMetadataSchema> & TColumnsMap>;
     dialect: "pg";
+    isAlias: false;
     name: TTableName;
     schema: TSchema;
   }>;
@@ -29,6 +30,7 @@ export interface PgTable {
   ): PgTableWithColumns<{
     columns: PgBuildColumns<TTableName, ReturnType<typeof createMetadataSchema> & TColumnsMap>;
     dialect: "pg";
+    isAlias: false;
     name: TTableName;
     schema: undefined;
   }>;
