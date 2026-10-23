@@ -1,4 +1,4 @@
-import { getJSONClass, JSONClassMap } from "#shared/services/superjson/JSONClassMap";
+import { getJSONClass, getJSONClasses, JSONClassMap } from "#shared/services/superjson/JSONClassMap";
 import { jsonDateParse } from "@esposter/shared";
 import { SuperJSON } from "superjson";
 
@@ -7,7 +7,7 @@ for (const name of Object.keys(JSONClassMap))
   SuperJSON.registerCustom(
     {
       deserialize: (data) => new (getJSONClass(name))(jsonDateParse(data as string)),
-      isApplicable: (value) => value instanceof getJSONClass(name),
+      isApplicable: (value) => getJSONClasses(name).some((jsonClass) => value instanceof jsonClass),
       serialize: (value) => JSON.stringify(value),
     },
     name,
