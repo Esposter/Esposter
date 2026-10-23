@@ -60,6 +60,10 @@
       "source": "./src/runtime/constants.ts",
       "default": "./dist/runtime/constants.js"
     },
+    "./runtime/server/createTRPCEventHandler": {
+      "source": "./src/runtime/server/createTRPCEventHandler.ts",
+      "default": "./dist/runtime/server/createTRPCEventHandler.js"
+    },
     "./runtime/server/models/TRPCWebSocketConnection": {
       "source": "./src/runtime/server/models/TRPCWebSocketConnection.ts",
       "default": "./dist/runtime/server/models/TRPCWebSocketConnection.js"
@@ -79,6 +83,7 @@
       "./runtime/client/httpBatchLink": "./dist/runtime/client/httpBatchLink.js",
       "./runtime/client/httpLink": "./dist/runtime/client/httpLink.js",
       "./runtime/constants": "./dist/runtime/constants.js",
+      "./runtime/server/createTRPCEventHandler": "./dist/runtime/server/createTRPCEventHandler.js",
       "./runtime/server/models/TRPCWebSocketConnection": "./dist/runtime/server/models/TRPCWebSocketConnection.js",
       "./runtime/server/models/WebSocketServerAdapter": "./dist/runtime/server/models/WebSocketServerAdapter.js",
       "./package.json": "./package.json"
