@@ -1,8 +1,10 @@
 // The form the viewer takes a clip's sound in: the WAV file's path, which it plays on the model, or only a compressed
 // Clip, which this build does not write, so the stock player keeps the sound and the viewer shows the bubble alone
-export enum ViewerSoundForm {
+export const ViewerSoundForm = {
   // The viewer takes only a compressed clip, so the stock player plays the sound
-  CompressedOnly = "compressedOnly",
+  CompressedOnly: "compressedOnly",
   // The viewer plays the clip's WAV file on the model
-  WavPath = "wavPath",
-}
+  WavPath: "wavPath",
+} as const;
+
+export type ViewerSoundForm = (typeof ViewerSoundForm)[keyof typeof ViewerSoundForm];

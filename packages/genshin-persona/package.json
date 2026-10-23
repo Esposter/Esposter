@@ -57,8 +57,7 @@
     "@typesafe-ai/sdk": "^0.7.0",
     "@wasm-audio-decoders/ogg-vorbis": "^0.1.20",
     "citty": "^0.2.2",
-    "genshin-db": "^5.2.14",
-    "tsx": "^4.23.15"
+    "genshin-db": "^5.2.14"
   },
   "engines": {
     "node": ">=26.12.1"

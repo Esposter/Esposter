@@ -25,6 +25,15 @@ describe(getPersonaModuleSource, () => {
     );
   });
 
+  test("rewrites each enum as a const object and a type of its name, which plain node runs", () => {
+    expect.hasAssertions();
+
+    expect(getPersonaModuleSource(`export enum A {\n  B = "b",\n  C = 1,\n}\n`)).toBe(
+      "// Copied from `genshin-text` by `pnpm -C scripts genshin:text write`, never edited by hand\n" +
+        `export const A = {\n  B: "b",\n  C: 1,\n} as const;\n\nexport type A = (typeof A)[keyof typeof A];\n`,
+    );
+  });
+
   test.each(PersonaCopiedModules)("the persona's copy of %s is the source's", (modulePath) => {
     expect.hasAssertions();
 

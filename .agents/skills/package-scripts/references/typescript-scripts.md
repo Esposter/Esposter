@@ -27,9 +27,9 @@ each `graph:gen`/`outdated:dependencies`/`ai:*` name there is a bare `pnpm -C sc
 that does.
 
 **The same holds where no package script runs the file.** Where the tool runs a bare `node <path>` — a plugin's hooks
-and commands — the entry is a `.mjs` registering `tsx` ahead of its `.ts`, and `tsx` a runtime dependency; the
-persona plugin is the case, and `openspec/specs/infra/claude-interface/persona-plugin/README.md` says why no flag
-can carry it. Node 26 removed `--experimental-transform-types`, so there is no native route left for an `enum`.
+and commands — the file must run under `node` alone, so it takes no `enum`: the persona plugin writes each as a `const`
+object with a type of the same name, and its copied `genshin-text` enums are rewritten by the copy step. Node 26 removed
+`--experimental-transform-types`, so no loader is left to carry an `enum` into a bare `node` run.
 
 The `db:*` scripts call the `drizzle-kit` bin, which loads `drizzle.config.ts` and the schema itself — there is no
 loader to choose.

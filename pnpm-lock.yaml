@@ -1853,9 +1853,6 @@ importers:
       genshin-db:
         specifier: ^5.2.14
         version: 5.2.14
-      tsx:
-        specifier: ^4.23.15
-        version: 4.23.15
 
   packages/genshin-text:
     dependencies:
@@ -21684,6 +21681,7 @@ snapshots:
       '@esbuild/win32-arm64': 0.28.2
       '@esbuild/win32-ia32': 0.28.2
       '@esbuild/win32-x64': 0.28.2
+    optional: true
 
   escalade@3.2.0: {}
 
@@ -26481,6 +26479,7 @@ snapshots:
       esbuild: 0.28.2
     optionalDependencies:
       fsevents: 2.3.3
+    optional: true
 
   tuf-js@4.1.0(supports-color@8.1.1):
     dependencies:
