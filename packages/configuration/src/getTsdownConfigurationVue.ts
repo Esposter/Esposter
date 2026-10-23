@@ -10,7 +10,7 @@ import AutoImport from "unplugin-auto-import/rolldown";
 import Vue from "unplugin-vue/rolldown";
 
 // The packages that ship `.vue` files build through tsdown like every other: `unplugin-vue` compiles the components and
-// `dts.vue` hands declaration generation to vue-tsc. `vueOptions` reaches the compiler, for a package whose templates
+// `dts.tsc.vue` hands declaration generation to vue-tsc. `vueOptions` reaches the compiler, for a package whose templates
 // Hold elements a renderer rather than Vue resolves, such as TresJS's `TresMesh`. Reaching rolldown through vite would
 // Do the same two jobs behind a second build path, free to drift from this one.
 //
@@ -24,7 +24,9 @@ import Vue from "unplugin-vue/rolldown";
 // A private package keeps the base's `dts: false`, for the reason the base gives: nothing types against its `dist`.
 export const getTsdownConfigurationVue = (vueOptions: Options = {}): UserConfig =>
   mergeConfig(getTsdownConfiguration({ exportsGeneration: "vue" }), {
-    ...(readPackageManifest().private ? {} : { dts: { eager: true, tsconfig: "tsconfig.build.json", vue: true } }),
+    ...(readPackageManifest().private
+      ? {}
+      : { dts: { tsc: { eager: true, vue: true }, tsconfig: "tsconfig.build.json" } }),
     // A stylesheet is compiled into this package's own CSS, a sibling package's that a style block's `src` names
     // Included. Left external, the built JS would import a `.css` file that Node cannot load in a script
     deps: { alwaysBundle: [STYLESHEET_REQUEST_REGEX] },
