@@ -30,6 +30,14 @@ describe("xFDF", () => {
     expect(readXfdf(writeXfdf([note]))).toStrictEqual(ok([note]));
   });
 
+  test("xFDF drops the control characters XML cannot hold, so the file it writes still reads", () => {
+    expect.hasAssertions();
+
+    const note: PdfFreeText = { ...FIRST_NOTE, contents: "A\u000BB" };
+
+    expect(readXfdf(writeXfdf([note]))).toStrictEqual(ok([{ ...FIRST_NOTE, contents: "AB" }]));
+  });
+
   test("a free text with no valid rect is named in the error", () => {
     expect.hasAssertions();
 
