@@ -10,6 +10,10 @@ The CI symptom is not what it looks like: the Lint job has no `timeout-minutes` 
 
 oxlint has no per-file type-aware toggle — `overrides` cannot set `options.typeAware` — so for a hang, `ignorePatterns` is the only lever. A file that finishes but makes one rule expensive takes a per-rule override instead (`references/type-aware-cost.md`). Recheck whether a newer `oxlint-tsgolint` / tsgo fixes it before assuming the exclusion is still needed.
 
+## `ignorePatterns` — the tileset glob is one value for both linters
+
+The Tiled tileset glob is the named export `TILESET_IGNORE_PATTERN` in `oxlint.config.ts`. Its `ignorePatterns` spreads it, and `packages/configuration/eslint/ignores.js` imports it, so a tileset folder that moves is edited in that one line and both passes follow. Never write the glob a second time in either file.
+
 ## `ignorePatterns` — `.agents/worktrees` is load-bearing
 
 Agent worktrees are full parallel checkouts of this monorepo nested at `.agents/worktrees/<name>/`, so without that entry both linters walk a second copy of the whole repo per live worktree and report every diagnostic at another branch's path. It has to be stated here rather than left to git: the only thing hiding those paths from git is the agent harness's machine-local `.git/info/exclude`, which no clone or CI runner has. This one entry covers ESLint too — `eslint-plugin-oxlint`'s `buildFromOxlintConfig` turns `ignorePatterns` into flat-config `ignores`. The path itself is owned by `AGENT_WORKTREES_DIRECTORY` in `@esposter/configuration` (which carries the full rationale) and pinned to this file by `scripts/src/workspace/agentDirectories.test.ts`.

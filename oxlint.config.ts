@@ -5,6 +5,9 @@ import { defineConfig } from "oxlint";
 // The costliest type-aware rules, off in every run: switched to "error" for an occasional pass, the oxlint ledger's
 // Row, then back. See openspec/specs/architecture/lint-toolchain/design.md#what-the-type-aware-pass-costs
 const COSTLY_TYPE_AWARE_SEVERITY = "off";
+// The Tiled tileset `.tsx` files are XML, not code. ESLint's ignores import this glob too,
+// So the two passes never ignore different trees.
+export const TILESET_IGNORE_PATTERN = "**/assets/dungeons/tilesets/**/*.tsx";
 const BROWSER_GLOBAL_MESSAGE = "Prefix browser-only globals with `window.` so browser-only code reads as browser-only.";
 const CONTEXT_MESSAGE =
   "`provide`/`inject` hides an input from a component's signature: no caller sees it, a missing provider silently falls back to the default, and a test must mount the provider. Pass a prop, or read a Pinia store for state the app shares. Only a library whose contract is a subtree's context (a theme scope, a renderer's parent) disables this with its reason.";
@@ -114,7 +117,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
   },
   ignorePatterns: [
     "public",
-    "**/assets/dungeons/tilesets/**/*.tsx",
+    TILESET_IGNORE_PATTERN,
     ".agents/worktrees",
     ".claude",
     "**/auto-imports.d.ts",

@@ -16,7 +16,7 @@ The implementation checks one thing before it lands: oxlint loads a config file 
 
 ## Capabilities
 
-- **architecture/lint-toolchain** (modified, once decided)
+- **architecture/lint-toolchain** (modified: its notes name where the tileset glob lives)
 
 ## Impact
 

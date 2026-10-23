@@ -121,6 +121,7 @@ What stays in ESLint, and why:
 | `packages/configuration/eslint/plugins/scopedStyles.js`             | Such a package's ban on an attribute HTML does not define on a native element, which no utility styles here   |
 | `packages/configuration/eslint/plugins/htmlTagNames.js`             | The HTML standard's tag names that ban reads, with the upstream release and standard date it was crawled from |
 | `packages/configuration/eslint/plugins/htmlElementAttributes.js`    | The attributes each HTML element accepts, that ban's other half, with the same provenance                     |
+| `packages/configuration/eslint/ignores.js`                          | ESLint's shared ignores; the tileset glob is the one `oxlint.config.ts` exports                               |
 | `packages/configuration/eslint/typescriptRules.js`                  | ESLint-only rules oxlint cannot express — just `no-restricted-syntax` (plus the parked `naming-convention`)   |
 
 ## The HTML data behind the scoped-styles ban
