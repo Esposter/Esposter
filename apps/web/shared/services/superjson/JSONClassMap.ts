@@ -61,13 +61,16 @@ const getLiveJSONClassMapRefs = (): WeakRef<Record<string, Class<Serializable>>>
 Object.assign(globalThis, { [JSON_CLASS_MAP_REFS_KEY]: [...getLiveJSONClassMapRefs(), new WeakRef(JSONClassMap)] });
 
 const getJSONClassMaps = (): Record<string, Class<Serializable>>[] =>
-  getLiveJSONClassMapRefs().flatMap((jsonClassMapRef) => jsonClassMapRef.deref() ?? []);
+  getLiveJSONClassMapRefs()
+    .map((jsonClassMapRef) => jsonClassMapRef.deref())
+    .filter((jsonClassMap) => jsonClassMap !== undefined);
 
 export const getJSONClasses = (name: string): Class<Serializable>[] =>
   getJSONClassMaps().map((jsonClassMap) => takeOne(jsonClassMap, name));
 
 // The newest evaluation's class, which is what a value deserializes into
 export const getJSONClass = (name: string): Class<Serializable> => {
-  const jsonClasses = getJSONClasses(name);
-  return takeOne(jsonClasses, jsonClasses.length - 1);
+  const jsonClassMaps = getJSONClassMaps();
+  const newestJSONClassMap = takeOne(jsonClassMaps, jsonClassMaps.length - 1);
+  return takeOne(newestJSONClassMap, name);
 };
