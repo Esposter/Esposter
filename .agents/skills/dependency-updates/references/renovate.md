@@ -29,7 +29,7 @@ Rules are read in order and a later key overrides an earlier one, which is why a
 
 Each rule's `description` is the reason, and the one copy of it: the report prints it, and this page and `SKILL.md` name the keys and point here.
 
-Repo-wide: `rangeStrategy: bump` rewrites the range itself (`^4.13.2` → `^4.13.3`), so the catalog always names the version that is installed; deduplication is `pnpm-workspace.yaml`'s `autoDedupe`, which every non-frozen install applies, the bot's included, so no Renovate post-update step restates it; `osvVulnerabilityAlerts` opens a PR for a known-vulnerable version regardless of anything else, and the dependency dashboard lists the unresolved ones; `configMigration` opens a PR when a Renovate release renames a setting this file uses. `:prHourlyLimit2` is ignored and `:prConcurrentLimit10` from `config:recommended` is kept — the branch limit inherits it — for the reason under "Limits" on this page.
+Repo-wide: `rangeStrategy: bump` rewrites the range itself (`^0.0.0` → `^0.0.1`), so the catalog always names the version that is installed; deduplication is `pnpm-workspace.yaml`'s `autoDedupe`, which every non-frozen install applies, the bot's included, so no Renovate post-update step restates it; `osvVulnerabilityAlerts` opens a PR for a known-vulnerable version regardless of anything else; `configMigration` opens a PR when a Renovate release renames a setting this file uses. `:prHourlyLimit2` is ignored and `:prConcurrentLimit10` from `config:recommended` is kept — the branch limit inherits it — for the reason under "Limits" on this page.
 
 ## Seeing what a rule reaches
 
