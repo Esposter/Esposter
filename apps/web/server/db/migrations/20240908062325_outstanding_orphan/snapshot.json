@@ -1,1497 +1,655 @@
 {
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
   "id": "7de38574-e237-46d3-9cef-c92c1e317945",
   "prevIds": [
     "5277492d-79fa-4f32-b2e1-63f8da99ed1a"
   ],
-  "version": "8",
-  "dialect": "postgres",
-  "ddl": [
+  "footprints": [
     {
-      "isRlsEnabled": false,
-      "name": "Account",
-      "schema": "public",
-      "entityType": "tables"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "createdAt",
-      "schema": "public",
-      "table": "Account",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deletedAt",
-      "schema": "public",
-      "table": "Account",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "updatedAt",
-      "schema": "public",
-      "table": "Account",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "access_token",
-      "schema": "public",
-      "table": "Account",
-      "entityType": "columns"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "expires_at",
-      "schema": "public",
-      "table": "Account",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "id_token",
-      "schema": "public",
-      "table": "Account",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "provider",
-      "schema": "public",
-      "table": "Account",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "providerAccountId",
-      "schema": "public",
-      "table": "Account",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "refresh_token",
-      "schema": "public",
-      "table": "Account",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "scope",
-      "schema": "public",
-      "table": "Account",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "session_state",
-      "schema": "public",
-      "table": "Account",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "token_type",
-      "schema": "public",
-      "table": "Account",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "type",
-      "schema": "public",
-      "table": "Account",
-      "entityType": "columns"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "userId",
-      "schema": "public",
-      "table": "Account",
-      "entityType": "columns"
-    },
-    {
-      "columns": [
-        "provider",
-        "providerAccountId"
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "Authenticator"
       ],
-      "nameExplicit": false,
-      "name": "Account_provider_providerAccountId_pk",
-      "schema": "public",
-      "table": "Account",
-      "entityType": "pks"
+      "writes": [
+        "s|tbl|public.Authenticator",
+        "n|tbl|public.Authenticator",
+        "e|tbl|public.Authenticator",
+        "n|rel|public.Authenticator",
+        "n|type|public.Authenticator",
+        "n|rel|public.Authenticator_userId_credentialID_pk",
+        "n|rel|public.Authenticator_credentialID_unique"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
     },
     {
-      "nameExplicit": false,
-      "columns": [
+      "statementType": "drop_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "Post"
+      ],
+      "writes": [
+        "s|fk|public.Post.Post_creatorId_User_id_fk",
+        "n|fk|public.Post.Post_creatorId_User_id_fk",
+        "e|fk|public.Post.Post_creatorId_User_id_fk",
+        "n|con|public.Post.Post_creatorId_User_id_fk"
+      ],
+      "reads": [
+        "n|tbl|public.Post",
+        "n|sch|public",
+        "e|col|public.Post.creatorId"
+      ]
+    },
+    {
+      "statementType": "drop_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "Room"
+      ],
+      "writes": [
+        "s|fk|public.Room.Room_creatorId_User_id_fk",
+        "n|fk|public.Room.Room_creatorId_User_id_fk",
+        "e|fk|public.Room.Room_creatorId_User_id_fk",
+        "n|con|public.Room.Room_creatorId_User_id_fk"
+      ],
+      "reads": [
+        "n|tbl|public.Room",
+        "n|sch|public",
+        "e|col|public.Room.creatorId"
+      ]
+    },
+    {
+      "statementType": "drop_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "Survey"
+      ],
+      "writes": [
+        "s|fk|public.Survey.Survey_creatorId_User_id_fk",
+        "n|fk|public.Survey.Survey_creatorId_User_id_fk",
+        "e|fk|public.Survey.Survey_creatorId_User_id_fk",
+        "n|con|public.Survey.Survey_creatorId_User_id_fk"
+      ],
+      "reads": [
+        "n|tbl|public.Survey",
+        "n|sch|public",
+        "e|col|public.Survey.creatorId"
+      ]
+    },
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "Post",
         "userId"
       ],
-      "schemaTo": "public",
-      "tableTo": "User",
-      "columnsTo": [
-        "id"
+      "writes": [
+        "s|col|public.Post.userId",
+        "n|col|public.Post.userId",
+        "e|col|public.Post.userId"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "Account_userId_User_id_fk",
-      "schema": "public",
-      "table": "Account",
-      "entityType": "fks"
+      "reads": [
+        "n|tbl|public.Post",
+        "n|sch|public"
+      ]
     },
     {
-      "isRlsEnabled": false,
-      "name": "Authenticator",
-      "schema": "public",
-      "entityType": "tables"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "createdAt",
-      "schema": "public",
-      "table": "Authenticator",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deletedAt",
-      "schema": "public",
-      "table": "Authenticator",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "updatedAt",
-      "schema": "public",
-      "table": "Authenticator",
-      "entityType": "columns"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "counter",
-      "schema": "public",
-      "table": "Authenticator",
-      "entityType": "columns"
-    },
-    {
-      "type": "boolean",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "credentialBackedUp",
-      "schema": "public",
-      "table": "Authenticator",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "credentialDeviceType",
-      "schema": "public",
-      "table": "Authenticator",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "credentialID",
-      "schema": "public",
-      "table": "Authenticator",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "credentialPublicKey",
-      "schema": "public",
-      "table": "Authenticator",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "providerAccountId",
-      "schema": "public",
-      "table": "Authenticator",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "transports",
-      "schema": "public",
-      "table": "Authenticator",
-      "entityType": "columns"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "userId",
-      "schema": "public",
-      "table": "Authenticator",
-      "entityType": "columns"
-    },
-    {
-      "columns": [
-        "userId",
-        "credentialID"
-      ],
-      "nameExplicit": false,
-      "name": "Authenticator_userId_credentialID_pk",
-      "schema": "public",
-      "table": "Authenticator",
-      "entityType": "pks"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "credentialID"
-      ],
-      "nullsNotDistinct": false,
-      "name": "Authenticator_credentialID_unique",
-      "schema": "public",
-      "table": "Authenticator",
-      "entityType": "uniques"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "Room",
         "userId"
       ],
-      "schemaTo": "public",
-      "tableTo": "User",
-      "columnsTo": [
-        "id"
+      "writes": [
+        "s|col|public.Room.userId",
+        "n|col|public.Room.userId",
+        "e|col|public.Room.userId"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "Authenticator_userId_User_id_fk",
-      "schema": "public",
-      "table": "Authenticator",
-      "entityType": "fks"
+      "reads": [
+        "n|tbl|public.Room",
+        "n|sch|public"
+      ]
     },
     {
-      "isRlsEnabled": false,
-      "name": "Post",
-      "schema": "public",
-      "entityType": "tables"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "createdAt",
-      "schema": "public",
-      "table": "Post",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deletedAt",
-      "schema": "public",
-      "table": "Post",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "updatedAt",
-      "schema": "public",
-      "table": "Post",
-      "entityType": "columns"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "0",
-      "generated": null,
-      "identity": null,
-      "name": "depth",
-      "schema": "public",
-      "table": "Post",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "''",
-      "generated": null,
-      "identity": null,
-      "name": "description",
-      "schema": "public",
-      "table": "Post",
-      "entityType": "columns"
-    },
-    {
-      "columns": [
-        "id"
-      ],
-      "nameExplicit": false,
-      "name": "Post_pkey",
-      "schema": "public",
-      "table": "Post",
-      "entityType": "pks"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "gen_random_uuid()",
-      "generated": null,
-      "identity": null,
-      "name": "id",
-      "schema": "public",
-      "table": "Post",
-      "entityType": "columns"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "0",
-      "generated": null,
-      "identity": null,
-      "name": "noComments",
-      "schema": "public",
-      "table": "Post",
-      "entityType": "columns"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "0",
-      "generated": null,
-      "identity": null,
-      "name": "noLikes",
-      "schema": "public",
-      "table": "Post",
-      "entityType": "columns"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "parentId",
-      "schema": "public",
-      "table": "Post",
-      "entityType": "columns"
-    },
-    {
-      "type": "double precision",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "ranking",
-      "schema": "public",
-      "table": "Post",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "''",
-      "generated": null,
-      "identity": null,
-      "name": "title",
-      "schema": "public",
-      "table": "Post",
-      "entityType": "columns"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "userId",
-      "schema": "public",
-      "table": "Post",
-      "entityType": "columns"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "Survey",
         "userId"
       ],
-      "schemaTo": "public",
-      "tableTo": "User",
-      "columnsTo": [
-        "id"
+      "writes": [
+        "s|col|public.Survey.userId",
+        "n|col|public.Survey.userId",
+        "e|col|public.Survey.userId"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "Post_userId_User_id_fk",
-      "schema": "public",
-      "table": "Post",
-      "entityType": "fks"
+      "reads": [
+        "n|tbl|public.Survey",
+        "n|sch|public"
+      ]
     },
     {
-      "isRlsEnabled": false,
-      "name": "Room",
-      "schema": "public",
-      "entityType": "tables"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "createdAt",
-      "schema": "public",
-      "table": "Room",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deletedAt",
-      "schema": "public",
-      "table": "Room",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "updatedAt",
-      "schema": "public",
-      "table": "Room",
-      "entityType": "columns"
-    },
-    {
-      "columns": [
-        "id"
+      "statementType": "drop_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "Post",
+        "creatorId"
       ],
-      "nameExplicit": false,
-      "name": "Room_pkey",
-      "schema": "public",
-      "table": "Room",
-      "entityType": "pks"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "gen_random_uuid()",
-      "generated": null,
-      "identity": null,
-      "name": "id",
-      "schema": "public",
-      "table": "Room",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "image",
-      "schema": "public",
-      "table": "Room",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "name",
-      "schema": "public",
-      "table": "Room",
-      "entityType": "columns"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "userId",
-      "schema": "public",
-      "table": "Room",
-      "entityType": "columns"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "userId"
+      "writes": [
+        "s|col|public.Post.creatorId",
+        "n|col|public.Post.creatorId",
+        "e|col|public.Post.creatorId"
       ],
-      "schemaTo": "public",
-      "tableTo": "User",
-      "columnsTo": [
-        "id"
+      "reads": [
+        "n|tbl|public.Post",
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "drop_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "Room",
+        "creatorId"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "Room_userId_User_id_fk",
-      "schema": "public",
-      "table": "Room",
-      "entityType": "fks"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "Session",
-      "schema": "public",
-      "entityType": "tables"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "createdAt",
-      "schema": "public",
-      "table": "Session",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deletedAt",
-      "schema": "public",
-      "table": "Session",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "updatedAt",
-      "schema": "public",
-      "table": "Session",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "expires",
-      "schema": "public",
-      "table": "Session",
-      "entityType": "columns"
-    },
-    {
-      "columns": [
-        "sessionToken"
+      "writes": [
+        "s|col|public.Room.creatorId",
+        "n|col|public.Room.creatorId",
+        "e|col|public.Room.creatorId"
       ],
-      "nameExplicit": false,
-      "name": "Session_pkey",
-      "schema": "public",
-      "table": "Session",
-      "entityType": "pks"
+      "reads": [
+        "n|tbl|public.Room",
+        "n|sch|public"
+      ]
     },
     {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "sessionToken",
-      "schema": "public",
-      "table": "Session",
-      "entityType": "columns"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "userId",
-      "schema": "public",
-      "table": "Session",
-      "entityType": "columns"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "userId"
+      "statementType": "drop_column",
+      "statementTarget": [
+        "column",
+        "public",
+        "Survey",
+        "creatorId"
       ],
-      "schemaTo": "public",
-      "tableTo": "User",
-      "columnsTo": [
-        "id"
+      "writes": [
+        "s|col|public.Survey.creatorId",
+        "n|col|public.Survey.creatorId",
+        "e|col|public.Survey.creatorId"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "Session_userId_User_id_fk",
-      "schema": "public",
-      "table": "Session",
-      "entityType": "fks"
+      "reads": [
+        "n|tbl|public.Survey",
+        "n|sch|public"
+      ]
     },
     {
-      "isRlsEnabled": false,
-      "name": "Survey",
-      "schema": "public",
-      "entityType": "tables"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "createdAt",
-      "schema": "public",
-      "table": "Survey",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deletedAt",
-      "schema": "public",
-      "table": "Survey",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "updatedAt",
-      "schema": "public",
-      "table": "Survey",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "group",
-      "schema": "public",
-      "table": "Survey",
-      "entityType": "columns"
-    },
-    {
-      "columns": [
-        "id"
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "Authenticator"
       ],
-      "nameExplicit": false,
-      "name": "Survey_pkey",
-      "schema": "public",
-      "table": "Survey",
-      "entityType": "pks"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "gen_random_uuid()",
-      "generated": null,
-      "identity": null,
-      "name": "id",
-      "schema": "public",
-      "table": "Survey",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "''",
-      "generated": null,
-      "identity": null,
-      "name": "model",
-      "schema": "public",
-      "table": "Survey",
-      "entityType": "columns"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "0",
-      "generated": null,
-      "identity": null,
-      "name": "modelVersion",
-      "schema": "public",
-      "table": "Survey",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "name",
-      "schema": "public",
-      "table": "Survey",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "publishedAt",
-      "schema": "public",
-      "table": "Survey",
-      "entityType": "columns"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "0",
-      "generated": null,
-      "identity": null,
-      "name": "publishVersion",
-      "schema": "public",
-      "table": "Survey",
-      "entityType": "columns"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "userId",
-      "schema": "public",
-      "table": "Survey",
-      "entityType": "columns"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "userId"
+      "writes": [
+        "s|fk|public.Authenticator.Authenticator_userId_User_id_fk",
+        "n|fk|public.Authenticator.Authenticator_userId_User_id_fk",
+        "e|fk|public.Authenticator.Authenticator_userId_User_id_fk",
+        "n|con|public.Authenticator.Authenticator_userId_User_id_fk"
       ],
-      "schemaTo": "public",
-      "tableTo": "User",
-      "columnsTo": [
-        "id"
+      "reads": [
+        "n|tbl|public.Authenticator",
+        "n|sch|public",
+        "n|tbl|public.User",
+        "n|sch|public",
+        "n|col|public.Authenticator.userId",
+        "n|col|public.User.id",
+        "e|uniqueness|public.User.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "Post"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "Survey_userId_User_id_fk",
-      "schema": "public",
-      "table": "Survey",
-      "entityType": "fks"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "Like",
-      "schema": "public",
-      "entityType": "tables"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "createdAt",
-      "schema": "public",
-      "table": "Like",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deletedAt",
-      "schema": "public",
-      "table": "Like",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "updatedAt",
-      "schema": "public",
-      "table": "Like",
-      "entityType": "columns"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "postId",
-      "schema": "public",
-      "table": "Like",
-      "entityType": "columns"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "userId",
-      "schema": "public",
-      "table": "Like",
-      "entityType": "columns"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "value",
-      "schema": "public",
-      "table": "Like",
-      "entityType": "columns"
-    },
-    {
-      "columns": [
-        "userId",
-        "postId"
+      "writes": [
+        "s|fk|public.Post.Post_userId_User_id_fk",
+        "n|fk|public.Post.Post_userId_User_id_fk",
+        "e|fk|public.Post.Post_userId_User_id_fk",
+        "n|con|public.Post.Post_userId_User_id_fk"
       ],
-      "nameExplicit": false,
-      "name": "Like_userId_postId_pk",
-      "schema": "public",
-      "table": "Like",
-      "entityType": "pks"
+      "reads": [
+        "n|tbl|public.Post",
+        "n|sch|public",
+        "n|tbl|public.User",
+        "n|sch|public",
+        "n|col|public.Post.userId",
+        "n|col|public.User.id",
+        "e|uniqueness|public.User.id"
+      ]
     },
     {
-      "nameExplicit": false,
-      "columns": [
-        "postId"
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "Room"
       ],
-      "schemaTo": "public",
-      "tableTo": "Post",
-      "columnsTo": [
-        "id"
+      "writes": [
+        "s|fk|public.Room.Room_userId_User_id_fk",
+        "n|fk|public.Room.Room_userId_User_id_fk",
+        "e|fk|public.Room.Room_userId_User_id_fk",
+        "n|con|public.Room.Room_userId_User_id_fk"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "Like_postId_Post_id_fk",
-      "schema": "public",
-      "table": "Like",
-      "entityType": "fks"
+      "reads": [
+        "n|tbl|public.Room",
+        "n|sch|public",
+        "n|tbl|public.User",
+        "n|sch|public",
+        "n|col|public.Room.userId",
+        "n|col|public.User.id",
+        "e|uniqueness|public.User.id"
+      ]
     },
     {
-      "nameExplicit": false,
-      "columns": [
-        "userId"
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "Survey"
       ],
-      "schemaTo": "public",
-      "tableTo": "User",
-      "columnsTo": [
-        "id"
+      "writes": [
+        "s|fk|public.Survey.Survey_userId_User_id_fk",
+        "n|fk|public.Survey.Survey_userId_User_id_fk",
+        "e|fk|public.Survey.Survey_userId_User_id_fk",
+        "n|con|public.Survey.Survey_userId_User_id_fk"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "Like_userId_User_id_fk",
-      "schema": "public",
-      "table": "Like",
-      "entityType": "fks"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "User",
-      "schema": "public",
-      "entityType": "tables"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "createdAt",
-      "schema": "public",
-      "table": "User",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deletedAt",
-      "schema": "public",
-      "table": "User",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "updatedAt",
-      "schema": "public",
-      "table": "User",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "email",
-      "schema": "public",
-      "table": "User",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "emailVerified",
-      "schema": "public",
-      "table": "User",
-      "entityType": "columns"
-    },
-    {
-      "columns": [
-        "id"
-      ],
-      "nameExplicit": false,
-      "name": "User_pkey",
-      "schema": "public",
-      "table": "User",
-      "entityType": "pks"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "gen_random_uuid()",
-      "generated": null,
-      "identity": null,
-      "name": "id",
-      "schema": "public",
-      "table": "User",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "image",
-      "schema": "public",
-      "table": "User",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "name",
-      "schema": "public",
-      "table": "User",
-      "entityType": "columns"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "email"
-      ],
-      "nullsNotDistinct": false,
-      "name": "User_email_unique",
-      "schema": "public",
-      "table": "User",
-      "entityType": "uniques"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "UserToRoom",
-      "schema": "public",
-      "entityType": "tables"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "createdAt",
-      "schema": "public",
-      "table": "UserToRoom",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deletedAt",
-      "schema": "public",
-      "table": "UserToRoom",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "updatedAt",
-      "schema": "public",
-      "table": "UserToRoom",
-      "entityType": "columns"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "roomId",
-      "schema": "public",
-      "table": "UserToRoom",
-      "entityType": "columns"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "userId",
-      "schema": "public",
-      "table": "UserToRoom",
-      "entityType": "columns"
-    },
-    {
-      "columns": [
-        "userId",
-        "roomId"
-      ],
-      "nameExplicit": false,
-      "name": "UserToRoom_userId_roomId_pk",
-      "schema": "public",
-      "table": "UserToRoom",
-      "entityType": "pks"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "roomId"
-      ],
-      "schemaTo": "public",
-      "tableTo": "Room",
-      "columnsTo": [
-        "id"
-      ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "UserToRoom_roomId_Room_id_fk",
-      "schema": "public",
-      "table": "UserToRoom",
-      "entityType": "fks"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "userId"
-      ],
-      "schemaTo": "public",
-      "tableTo": "User",
-      "columnsTo": [
-        "id"
-      ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "UserToRoom_userId_User_id_fk",
-      "schema": "public",
-      "table": "UserToRoom",
-      "entityType": "fks"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "VerificationToken",
-      "schema": "public",
-      "entityType": "tables"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "createdAt",
-      "schema": "public",
-      "table": "VerificationToken",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deletedAt",
-      "schema": "public",
-      "table": "VerificationToken",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "updatedAt",
-      "schema": "public",
-      "table": "VerificationToken",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "expires",
-      "schema": "public",
-      "table": "VerificationToken",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "identifier",
-      "schema": "public",
-      "table": "VerificationToken",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "token",
-      "schema": "public",
-      "table": "VerificationToken",
-      "entityType": "columns"
-    },
-    {
-      "columns": [
-        "identifier",
-        "token"
-      ],
-      "nameExplicit": false,
-      "name": "VerificationToken_identifier_token_pk",
-      "schema": "public",
-      "table": "VerificationToken",
-      "entityType": "pks"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "token"
-      ],
-      "nullsNotDistinct": false,
-      "name": "VerificationToken_token_unique",
-      "schema": "public",
-      "table": "VerificationToken",
-      "entityType": "uniques"
+      "reads": [
+        "n|tbl|public.Survey",
+        "n|sch|public",
+        "n|tbl|public.User",
+        "n|sch|public",
+        "n|col|public.Survey.userId",
+        "n|col|public.User.id",
+        "e|uniqueness|public.User.id"
+      ]
     }
   ],
-  "renames": []
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "Authenticator",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "Authenticator",
+        "name": "createdAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "Authenticator",
+        "name": "deletedAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "Authenticator",
+        "name": "updatedAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "Authenticator",
+        "name": "counter",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "Authenticator",
+        "name": "credentialBackedUp",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "Authenticator",
+        "name": "credentialDeviceType",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "Authenticator",
+        "name": "credentialID",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "Authenticator",
+        "name": "credentialPublicKey",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "Authenticator",
+        "name": "providerAccountId",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "Authenticator",
+        "name": "transports",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "Authenticator",
+        "name": "userId",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "Post",
+        "name": "userId",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "Room",
+        "name": "userId",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "Survey",
+        "name": "userId",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "Authenticator",
+        "name": "Authenticator_userId_User_id_fk",
+        "nameExplicit": false,
+        "columns": [
+          "userId"
+        ],
+        "schemaTo": "public",
+        "tableTo": "User",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "Post",
+        "name": "Post_userId_User_id_fk",
+        "nameExplicit": false,
+        "columns": [
+          "userId"
+        ],
+        "schemaTo": "public",
+        "tableTo": "User",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "Room",
+        "name": "Room_userId_User_id_fk",
+        "nameExplicit": false,
+        "columns": [
+          "userId"
+        ],
+        "schemaTo": "public",
+        "tableTo": "User",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "Survey",
+        "name": "Survey_userId_User_id_fk",
+        "nameExplicit": false,
+        "columns": [
+          "userId"
+        ],
+        "schemaTo": "public",
+        "tableTo": "User",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "Authenticator",
+        "name": "Authenticator_userId_credentialID_pk",
+        "columns": [
+          "userId",
+          "credentialID"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "Authenticator",
+        "name": "Authenticator_credentialID_unique",
+        "nameExplicit": false,
+        "columns": [
+          "credentialID"
+        ],
+        "nullsNotDistinct": false,
+        "entityType": "uniques"
+      }
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Post\",\"creatorId\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Room\",\"creatorId\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Survey\",\"creatorId\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"Post\",\"Post_creatorId_User_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"Room\",\"Room_creatorId_User_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"Survey\",\"Survey_creatorId_User_id_fk\"]"
+    }
+  ]
 }

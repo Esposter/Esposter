@@ -1,1316 +1,2869 @@
 {
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
   "id": "46da94cb-25ac-4a32-b931-b9523d929c72",
   "prevIds": [
     "1cdac7ff-0535-45e2-90b3-e5cd173ae89c"
   ],
-  "version": "8",
-  "dialect": "postgres",
-  "ddl": [
+  "footprints": [
     {
-      "isRlsEnabled": false,
-      "name": "accounts",
-      "schema": "public",
-      "entityType": "tables"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "access_token",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "access_token_expires_at",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "account_id",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "created_at",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deleted_at",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "columns"
-    },
-    {
-      "columns": [
-        "id"
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "accounts"
       ],
-      "nameExplicit": false,
-      "name": "accounts_pkey",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "pks"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "id",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "id_token",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "password",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "provider_id",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "refresh_token",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "refresh_token_expires_at",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "scope",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "updated_at",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "user_id",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "columns"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "user_id"
+      "writes": [
+        "s|tbl|public.accounts",
+        "n|tbl|public.accounts",
+        "e|tbl|public.accounts",
+        "n|rel|public.accounts",
+        "n|type|public.accounts",
+        "n|rel|public.accounts_pkey"
       ],
-      "schemaTo": "public",
-      "tableTo": "users",
-      "columnsTo": [
-        "id"
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "posts"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "NO ACTION",
-      "name": "accounts_user_id_users_id_fk",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "fks"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "posts",
-      "schema": "public",
-      "entityType": "tables"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "createdAt",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deletedAt",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "updatedAt",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "columns"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "0",
-      "generated": null,
-      "identity": null,
-      "name": "depth",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "''",
-      "generated": null,
-      "identity": null,
-      "name": "description",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "columns"
-    },
-    {
-      "columns": [
-        "id"
+      "writes": [
+        "s|tbl|public.posts",
+        "n|tbl|public.posts",
+        "e|tbl|public.posts",
+        "n|rel|public.posts",
+        "n|type|public.posts",
+        "n|rel|public.posts_pkey"
       ],
-      "nameExplicit": false,
-      "name": "posts_pkey",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "pks"
+      "reads": [
+        "n|sch|public"
+      ]
     },
     {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "gen_random_uuid()",
-      "generated": null,
-      "identity": null,
-      "name": "id",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "columns"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "0",
-      "generated": null,
-      "identity": null,
-      "name": "noComments",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "columns"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "0",
-      "generated": null,
-      "identity": null,
-      "name": "noLikes",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "columns"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "parentId",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "columns"
-    },
-    {
-      "type": "double precision",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "ranking",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "''",
-      "generated": null,
-      "identity": null,
-      "name": "title",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "userId",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "columns"
-    },
-    {
-      "value": "LENGTH(\"posts\".\"title\") >= 1 AND LENGTH(\"posts\".\"title\") <= 300",
-      "name": "title",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "checks"
-    },
-    {
-      "value": "LENGTH(\"posts\".\"description\") <= 1000",
-      "name": "description",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "checks"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "userId"
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "rooms"
       ],
-      "schemaTo": "public",
-      "tableTo": "users",
-      "columnsTo": [
-        "id"
+      "writes": [
+        "s|tbl|public.rooms",
+        "n|tbl|public.rooms",
+        "e|tbl|public.rooms",
+        "n|rel|public.rooms",
+        "n|type|public.rooms",
+        "n|rel|public.rooms_pkey"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "posts_userId_users_id_fk",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "fks"
+      "reads": [
+        "n|sch|public"
+      ]
     },
     {
-      "isRlsEnabled": false,
-      "name": "rooms",
-      "schema": "public",
-      "entityType": "tables"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "createdAt",
-      "schema": "public",
-      "table": "rooms",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deletedAt",
-      "schema": "public",
-      "table": "rooms",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "updatedAt",
-      "schema": "public",
-      "table": "rooms",
-      "entityType": "columns"
-    },
-    {
-      "columns": [
-        "id"
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "sessions"
       ],
-      "nameExplicit": false,
-      "name": "rooms_pkey",
-      "schema": "public",
-      "table": "rooms",
-      "entityType": "pks"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "gen_random_uuid()",
-      "generated": null,
-      "identity": null,
-      "name": "id",
-      "schema": "public",
-      "table": "rooms",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "image",
-      "schema": "public",
-      "table": "rooms",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "name",
-      "schema": "public",
-      "table": "rooms",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "userId",
-      "schema": "public",
-      "table": "rooms",
-      "entityType": "columns"
-    },
-    {
-      "value": "LENGTH(\"rooms\".\"name\") >= 1 AND LENGTH(\"rooms\".\"name\") <= 100",
-      "name": "name",
-      "schema": "public",
-      "table": "rooms",
-      "entityType": "checks"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "userId"
+      "writes": [
+        "s|tbl|public.sessions",
+        "n|tbl|public.sessions",
+        "e|tbl|public.sessions",
+        "n|rel|public.sessions",
+        "n|type|public.sessions",
+        "n|rel|public.sessions_pkey",
+        "n|rel|public.sessions_token_unique"
       ],
-      "schemaTo": "public",
-      "tableTo": "users",
-      "columnsTo": [
-        "id"
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "surveys"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "rooms_userId_users_id_fk",
-      "schema": "public",
-      "table": "rooms",
-      "entityType": "fks"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "sessions",
-      "schema": "public",
-      "entityType": "tables"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "created_at",
-      "schema": "public",
-      "table": "sessions",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deleted_at",
-      "schema": "public",
-      "table": "sessions",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "expires_at",
-      "schema": "public",
-      "table": "sessions",
-      "entityType": "columns"
-    },
-    {
-      "columns": [
-        "id"
+      "writes": [
+        "s|tbl|public.surveys",
+        "n|tbl|public.surveys",
+        "e|tbl|public.surveys",
+        "n|rel|public.surveys",
+        "n|type|public.surveys",
+        "n|rel|public.surveys_pkey"
       ],
-      "nameExplicit": false,
-      "name": "sessions_pkey",
-      "schema": "public",
-      "table": "sessions",
-      "entityType": "pks"
+      "reads": [
+        "n|sch|public"
+      ]
     },
     {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "id",
-      "schema": "public",
-      "table": "sessions",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "ip_address",
-      "schema": "public",
-      "table": "sessions",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "token",
-      "schema": "public",
-      "table": "sessions",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "updated_at",
-      "schema": "public",
-      "table": "sessions",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "user_agent",
-      "schema": "public",
-      "table": "sessions",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "user_id",
-      "schema": "public",
-      "table": "sessions",
-      "entityType": "columns"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "token"
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "likes"
       ],
-      "nullsNotDistinct": false,
-      "name": "sessions_token_unique",
-      "schema": "public",
-      "table": "sessions",
-      "entityType": "uniques"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "user_id"
+      "writes": [
+        "s|tbl|public.likes",
+        "n|tbl|public.likes",
+        "e|tbl|public.likes",
+        "n|rel|public.likes",
+        "n|type|public.likes",
+        "n|rel|public.likes_userId_postId_pk"
       ],
-      "schemaTo": "public",
-      "tableTo": "users",
-      "columnsTo": [
-        "id"
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "users"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "NO ACTION",
-      "name": "sessions_user_id_users_id_fk",
-      "schema": "public",
-      "table": "sessions",
-      "entityType": "fks"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "surveys",
-      "schema": "public",
-      "entityType": "tables"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "createdAt",
-      "schema": "public",
-      "table": "surveys",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deletedAt",
-      "schema": "public",
-      "table": "surveys",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "updatedAt",
-      "schema": "public",
-      "table": "surveys",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "group",
-      "schema": "public",
-      "table": "surveys",
-      "entityType": "columns"
-    },
-    {
-      "columns": [
-        "id"
+      "writes": [
+        "s|tbl|public.users",
+        "n|tbl|public.users",
+        "e|tbl|public.users",
+        "n|rel|public.users",
+        "n|type|public.users",
+        "n|rel|public.users_pkey",
+        "n|rel|public.users_email_unique"
       ],
-      "nameExplicit": false,
-      "name": "surveys_pkey",
-      "schema": "public",
-      "table": "surveys",
-      "entityType": "pks"
+      "reads": [
+        "n|sch|public"
+      ]
     },
     {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "gen_random_uuid()",
-      "generated": null,
-      "identity": null,
-      "name": "id",
-      "schema": "public",
-      "table": "surveys",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "''",
-      "generated": null,
-      "identity": null,
-      "name": "model",
-      "schema": "public",
-      "table": "surveys",
-      "entityType": "columns"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "0",
-      "generated": null,
-      "identity": null,
-      "name": "modelVersion",
-      "schema": "public",
-      "table": "surveys",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "name",
-      "schema": "public",
-      "table": "surveys",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "publishedAt",
-      "schema": "public",
-      "table": "surveys",
-      "entityType": "columns"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "0",
-      "generated": null,
-      "identity": null,
-      "name": "publishVersion",
-      "schema": "public",
-      "table": "surveys",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "userId",
-      "schema": "public",
-      "table": "surveys",
-      "entityType": "columns"
-    },
-    {
-      "value": "LENGTH(\"surveys\".\"name\") >= 1 AND LENGTH(\"surveys\".\"name\") <= 100",
-      "name": "name",
-      "schema": "public",
-      "table": "surveys",
-      "entityType": "checks"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "userId"
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "users_to_rooms"
       ],
-      "schemaTo": "public",
-      "tableTo": "users",
-      "columnsTo": [
-        "id"
+      "writes": [
+        "s|tbl|public.users_to_rooms",
+        "n|tbl|public.users_to_rooms",
+        "e|tbl|public.users_to_rooms",
+        "n|rel|public.users_to_rooms",
+        "n|type|public.users_to_rooms",
+        "n|rel|public.users_to_rooms_userId_roomId_pk"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "surveys_userId_users_id_fk",
-      "schema": "public",
-      "table": "surveys",
-      "entityType": "fks"
+      "reads": [
+        "n|sch|public"
+      ]
     },
     {
-      "isRlsEnabled": false,
-      "name": "likes",
-      "schema": "public",
-      "entityType": "tables"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "postId",
-      "schema": "public",
-      "table": "likes",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "userId",
-      "schema": "public",
-      "table": "likes",
-      "entityType": "columns"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "value",
-      "schema": "public",
-      "table": "likes",
-      "entityType": "columns"
-    },
-    {
-      "columns": [
-        "userId",
-        "postId"
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "verifications"
       ],
-      "nameExplicit": false,
-      "name": "likes_userId_postId_pk",
-      "schema": "public",
-      "table": "likes",
-      "entityType": "pks"
-    },
-    {
-      "value": "\"likes\".\"value\" = 1 OR \"likes\".\"value\" = -1",
-      "name": "value",
-      "schema": "public",
-      "table": "likes",
-      "entityType": "checks"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "postId"
+      "writes": [
+        "s|tbl|public.verifications",
+        "n|tbl|public.verifications",
+        "e|tbl|public.verifications",
+        "n|rel|public.verifications",
+        "n|type|public.verifications",
+        "n|rel|public.verifications_pkey"
       ],
-      "schemaTo": "public",
-      "tableTo": "posts",
-      "columnsTo": [
-        "id"
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "drop_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "Account"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "likes_postId_posts_id_fk",
-      "schema": "public",
-      "table": "likes",
-      "entityType": "fks"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "userId"
+      "writes": [
+        "s|fk|public.Account.Account_userId_User_id_fk",
+        "n|fk|public.Account.Account_userId_User_id_fk",
+        "e|fk|public.Account.Account_userId_User_id_fk",
+        "n|con|public.Account.Account_userId_User_id_fk"
       ],
-      "schemaTo": "public",
-      "tableTo": "users",
-      "columnsTo": [
-        "id"
+      "reads": [
+        "n|tbl|public.Account",
+        "n|sch|public",
+        "e|col|public.Account.userId"
+      ]
+    },
+    {
+      "statementType": "drop_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "Session"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "likes_userId_users_id_fk",
-      "schema": "public",
-      "table": "likes",
-      "entityType": "fks"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "users",
-      "schema": "public",
-      "entityType": "tables"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "created_at",
-      "schema": "public",
-      "table": "users",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deleted_at",
-      "schema": "public",
-      "table": "users",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "email",
-      "schema": "public",
-      "table": "users",
-      "entityType": "columns"
-    },
-    {
-      "type": "boolean",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "email_verified",
-      "schema": "public",
-      "table": "users",
-      "entityType": "columns"
-    },
-    {
-      "columns": [
-        "id"
+      "writes": [
+        "s|fk|public.Session.Session_userId_User_id_fk",
+        "n|fk|public.Session.Session_userId_User_id_fk",
+        "e|fk|public.Session.Session_userId_User_id_fk",
+        "n|con|public.Session.Session_userId_User_id_fk"
       ],
-      "nameExplicit": false,
-      "name": "users_pkey",
-      "schema": "public",
-      "table": "users",
-      "entityType": "pks"
+      "reads": [
+        "n|tbl|public.Session",
+        "n|sch|public",
+        "e|col|public.Session.userId"
+      ]
     },
     {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "id",
-      "schema": "public",
-      "table": "users",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "image",
-      "schema": "public",
-      "table": "users",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "name",
-      "schema": "public",
-      "table": "users",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "updated_at",
-      "schema": "public",
-      "table": "users",
-      "entityType": "columns"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "email"
+      "statementType": "drop_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "Like"
       ],
-      "nullsNotDistinct": false,
-      "name": "users_email_unique",
-      "schema": "public",
-      "table": "users",
-      "entityType": "uniques"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "users_to_rooms",
-      "schema": "public",
-      "entityType": "tables"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "roomId",
-      "schema": "public",
-      "table": "users_to_rooms",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "userId",
-      "schema": "public",
-      "table": "users_to_rooms",
-      "entityType": "columns"
-    },
-    {
-      "columns": [
-        "userId",
-        "roomId"
+      "writes": [
+        "s|fk|public.Like.Like_userId_User_id_fk",
+        "n|fk|public.Like.Like_userId_User_id_fk",
+        "e|fk|public.Like.Like_userId_User_id_fk",
+        "n|con|public.Like.Like_userId_User_id_fk"
       ],
-      "nameExplicit": false,
-      "name": "users_to_rooms_userId_roomId_pk",
-      "schema": "public",
-      "table": "users_to_rooms",
-      "entityType": "pks"
+      "reads": [
+        "n|tbl|public.Like",
+        "n|sch|public",
+        "e|col|public.Like.userId"
+      ]
     },
     {
-      "nameExplicit": false,
-      "columns": [
-        "roomId"
+      "statementType": "drop_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "Like"
       ],
-      "schemaTo": "public",
-      "tableTo": "rooms",
-      "columnsTo": [
-        "id"
+      "writes": [
+        "s|fk|public.Like.Like_postId_Post_id_fk",
+        "n|fk|public.Like.Like_postId_Post_id_fk",
+        "e|fk|public.Like.Like_postId_Post_id_fk",
+        "n|con|public.Like.Like_postId_Post_id_fk"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "users_to_rooms_roomId_rooms_id_fk",
-      "schema": "public",
-      "table": "users_to_rooms",
-      "entityType": "fks"
+      "reads": [
+        "n|tbl|public.Like",
+        "n|sch|public",
+        "e|col|public.Like.postId"
+      ]
     },
     {
-      "nameExplicit": false,
-      "columns": [
-        "userId"
+      "statementType": "drop_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "UserToRoom"
       ],
-      "schemaTo": "public",
-      "tableTo": "users",
-      "columnsTo": [
-        "id"
+      "writes": [
+        "s|fk|public.UserToRoom.UserToRoom_userId_User_id_fk",
+        "n|fk|public.UserToRoom.UserToRoom_userId_User_id_fk",
+        "e|fk|public.UserToRoom.UserToRoom_userId_User_id_fk",
+        "n|con|public.UserToRoom.UserToRoom_userId_User_id_fk"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "users_to_rooms_userId_users_id_fk",
-      "schema": "public",
-      "table": "users_to_rooms",
-      "entityType": "fks"
+      "reads": [
+        "n|tbl|public.UserToRoom",
+        "n|sch|public",
+        "e|col|public.UserToRoom.userId"
+      ]
     },
     {
-      "isRlsEnabled": false,
-      "name": "verifications",
-      "schema": "public",
-      "entityType": "tables"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "created_at",
-      "schema": "public",
-      "table": "verifications",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deleted_at",
-      "schema": "public",
-      "table": "verifications",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "expires_at",
-      "schema": "public",
-      "table": "verifications",
-      "entityType": "columns"
-    },
-    {
-      "columns": [
-        "id"
+      "statementType": "drop_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "UserToRoom"
       ],
-      "nameExplicit": false,
-      "name": "verifications_pkey",
-      "schema": "public",
-      "table": "verifications",
-      "entityType": "pks"
+      "writes": [
+        "s|fk|public.UserToRoom.UserToRoom_roomId_Room_id_fk",
+        "n|fk|public.UserToRoom.UserToRoom_roomId_Room_id_fk",
+        "e|fk|public.UserToRoom.UserToRoom_roomId_Room_id_fk",
+        "n|con|public.UserToRoom.UserToRoom_roomId_Room_id_fk"
+      ],
+      "reads": [
+        "n|tbl|public.UserToRoom",
+        "n|sch|public",
+        "e|col|public.UserToRoom.roomId"
+      ]
     },
     {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "id",
-      "schema": "public",
-      "table": "verifications",
-      "entityType": "columns"
+      "statementType": "drop_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "Authenticator"
+      ],
+      "writes": [
+        "s|fk|public.Authenticator.Authenticator_userId_User_id_fk",
+        "n|fk|public.Authenticator.Authenticator_userId_User_id_fk",
+        "e|fk|public.Authenticator.Authenticator_userId_User_id_fk",
+        "n|con|public.Authenticator.Authenticator_userId_User_id_fk"
+      ],
+      "reads": [
+        "n|tbl|public.Authenticator",
+        "n|sch|public",
+        "e|col|public.Authenticator.userId"
+      ]
     },
     {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "identifier",
-      "schema": "public",
-      "table": "verifications",
-      "entityType": "columns"
+      "statementType": "drop_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "Post"
+      ],
+      "writes": [
+        "s|fk|public.Post.Post_userId_User_id_fk",
+        "n|fk|public.Post.Post_userId_User_id_fk",
+        "e|fk|public.Post.Post_userId_User_id_fk",
+        "n|con|public.Post.Post_userId_User_id_fk"
+      ],
+      "reads": [
+        "n|tbl|public.Post",
+        "n|sch|public",
+        "e|col|public.Post.userId"
+      ]
     },
     {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "updated_at",
-      "schema": "public",
-      "table": "verifications",
-      "entityType": "columns"
+      "statementType": "drop_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "Room"
+      ],
+      "writes": [
+        "s|fk|public.Room.Room_userId_User_id_fk",
+        "n|fk|public.Room.Room_userId_User_id_fk",
+        "e|fk|public.Room.Room_userId_User_id_fk",
+        "n|con|public.Room.Room_userId_User_id_fk"
+      ],
+      "reads": [
+        "n|tbl|public.Room",
+        "n|sch|public",
+        "e|col|public.Room.userId"
+      ]
     },
     {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "value",
-      "schema": "public",
-      "table": "verifications",
-      "entityType": "columns"
+      "statementType": "drop_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "Survey"
+      ],
+      "writes": [
+        "s|fk|public.Survey.Survey_userId_User_id_fk",
+        "n|fk|public.Survey.Survey_userId_User_id_fk",
+        "e|fk|public.Survey.Survey_userId_User_id_fk",
+        "n|con|public.Survey.Survey_userId_User_id_fk"
+      ],
+      "reads": [
+        "n|tbl|public.Survey",
+        "n|sch|public",
+        "e|col|public.Survey.userId"
+      ]
+    },
+    {
+      "statementType": "drop_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "Account"
+      ],
+      "writes": [
+        "s|tbl|public.Account",
+        "n|tbl|public.Account",
+        "e|tbl|public.Account",
+        "n|rel|public.Account",
+        "n|type|public.Account"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "drop_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "Post"
+      ],
+      "writes": [
+        "s|tbl|public.Post",
+        "n|tbl|public.Post",
+        "e|tbl|public.Post",
+        "n|rel|public.Post",
+        "n|type|public.Post"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "drop_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "Room"
+      ],
+      "writes": [
+        "s|tbl|public.Room",
+        "n|tbl|public.Room",
+        "e|tbl|public.Room",
+        "n|rel|public.Room",
+        "n|type|public.Room"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "drop_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "Session"
+      ],
+      "writes": [
+        "s|tbl|public.Session",
+        "n|tbl|public.Session",
+        "e|tbl|public.Session",
+        "n|rel|public.Session",
+        "n|type|public.Session"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "drop_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "Survey"
+      ],
+      "writes": [
+        "s|tbl|public.Survey",
+        "n|tbl|public.Survey",
+        "e|tbl|public.Survey",
+        "n|rel|public.Survey",
+        "n|type|public.Survey"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "drop_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "Like"
+      ],
+      "writes": [
+        "s|tbl|public.Like",
+        "n|tbl|public.Like",
+        "e|tbl|public.Like",
+        "n|rel|public.Like",
+        "n|type|public.Like"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "drop_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "User"
+      ],
+      "writes": [
+        "s|tbl|public.User",
+        "n|tbl|public.User",
+        "e|tbl|public.User",
+        "n|rel|public.User",
+        "n|type|public.User"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "drop_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "UserToRoom"
+      ],
+      "writes": [
+        "s|tbl|public.UserToRoom",
+        "n|tbl|public.UserToRoom",
+        "e|tbl|public.UserToRoom",
+        "n|rel|public.UserToRoom",
+        "n|type|public.UserToRoom"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "drop_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "VerificationToken"
+      ],
+      "writes": [
+        "s|tbl|public.VerificationToken",
+        "n|tbl|public.VerificationToken",
+        "e|tbl|public.VerificationToken",
+        "n|rel|public.VerificationToken",
+        "n|type|public.VerificationToken"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "drop_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "Authenticator"
+      ],
+      "writes": [
+        "s|tbl|public.Authenticator",
+        "n|tbl|public.Authenticator",
+        "e|tbl|public.Authenticator",
+        "n|rel|public.Authenticator",
+        "n|type|public.Authenticator"
+      ],
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "accounts"
+      ],
+      "writes": [
+        "s|fk|public.accounts.accounts_user_id_users_id_fk",
+        "n|fk|public.accounts.accounts_user_id_users_id_fk",
+        "e|fk|public.accounts.accounts_user_id_users_id_fk",
+        "n|con|public.accounts.accounts_user_id_users_id_fk"
+      ],
+      "reads": [
+        "n|tbl|public.accounts",
+        "n|sch|public",
+        "n|tbl|public.users",
+        "n|sch|public",
+        "n|col|public.accounts.user_id",
+        "n|col|public.users.id",
+        "e|uniqueness|public.users.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "posts"
+      ],
+      "writes": [
+        "s|fk|public.posts.posts_userId_users_id_fk",
+        "n|fk|public.posts.posts_userId_users_id_fk",
+        "e|fk|public.posts.posts_userId_users_id_fk",
+        "n|con|public.posts.posts_userId_users_id_fk"
+      ],
+      "reads": [
+        "n|tbl|public.posts",
+        "n|sch|public",
+        "n|tbl|public.users",
+        "n|sch|public",
+        "n|col|public.posts.userId",
+        "n|col|public.users.id",
+        "e|uniqueness|public.users.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "rooms"
+      ],
+      "writes": [
+        "s|fk|public.rooms.rooms_userId_users_id_fk",
+        "n|fk|public.rooms.rooms_userId_users_id_fk",
+        "e|fk|public.rooms.rooms_userId_users_id_fk",
+        "n|con|public.rooms.rooms_userId_users_id_fk"
+      ],
+      "reads": [
+        "n|tbl|public.rooms",
+        "n|sch|public",
+        "n|tbl|public.users",
+        "n|sch|public",
+        "n|col|public.rooms.userId",
+        "n|col|public.users.id",
+        "e|uniqueness|public.users.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "sessions"
+      ],
+      "writes": [
+        "s|fk|public.sessions.sessions_user_id_users_id_fk",
+        "n|fk|public.sessions.sessions_user_id_users_id_fk",
+        "e|fk|public.sessions.sessions_user_id_users_id_fk",
+        "n|con|public.sessions.sessions_user_id_users_id_fk"
+      ],
+      "reads": [
+        "n|tbl|public.sessions",
+        "n|sch|public",
+        "n|tbl|public.users",
+        "n|sch|public",
+        "n|col|public.sessions.user_id",
+        "n|col|public.users.id",
+        "e|uniqueness|public.users.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "surveys"
+      ],
+      "writes": [
+        "s|fk|public.surveys.surveys_userId_users_id_fk",
+        "n|fk|public.surveys.surveys_userId_users_id_fk",
+        "e|fk|public.surveys.surveys_userId_users_id_fk",
+        "n|con|public.surveys.surveys_userId_users_id_fk"
+      ],
+      "reads": [
+        "n|tbl|public.surveys",
+        "n|sch|public",
+        "n|tbl|public.users",
+        "n|sch|public",
+        "n|col|public.surveys.userId",
+        "n|col|public.users.id",
+        "e|uniqueness|public.users.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "likes"
+      ],
+      "writes": [
+        "s|fk|public.likes.likes_postId_posts_id_fk",
+        "n|fk|public.likes.likes_postId_posts_id_fk",
+        "e|fk|public.likes.likes_postId_posts_id_fk",
+        "n|con|public.likes.likes_postId_posts_id_fk"
+      ],
+      "reads": [
+        "n|tbl|public.likes",
+        "n|sch|public",
+        "n|tbl|public.posts",
+        "n|sch|public",
+        "n|col|public.likes.postId",
+        "n|col|public.posts.id",
+        "e|uniqueness|public.posts.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "likes"
+      ],
+      "writes": [
+        "s|fk|public.likes.likes_userId_users_id_fk",
+        "n|fk|public.likes.likes_userId_users_id_fk",
+        "e|fk|public.likes.likes_userId_users_id_fk",
+        "n|con|public.likes.likes_userId_users_id_fk"
+      ],
+      "reads": [
+        "n|tbl|public.likes",
+        "n|sch|public",
+        "n|tbl|public.users",
+        "n|sch|public",
+        "n|col|public.likes.userId",
+        "n|col|public.users.id",
+        "e|uniqueness|public.users.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "users_to_rooms"
+      ],
+      "writes": [
+        "s|fk|public.users_to_rooms.users_to_rooms_roomId_rooms_id_fk",
+        "n|fk|public.users_to_rooms.users_to_rooms_roomId_rooms_id_fk",
+        "e|fk|public.users_to_rooms.users_to_rooms_roomId_rooms_id_fk",
+        "n|con|public.users_to_rooms.users_to_rooms_roomId_rooms_id_fk"
+      ],
+      "reads": [
+        "n|tbl|public.users_to_rooms",
+        "n|sch|public",
+        "n|tbl|public.rooms",
+        "n|sch|public",
+        "n|col|public.users_to_rooms.roomId",
+        "n|col|public.rooms.id",
+        "e|uniqueness|public.rooms.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "users_to_rooms"
+      ],
+      "writes": [
+        "s|fk|public.users_to_rooms.users_to_rooms_userId_users_id_fk",
+        "n|fk|public.users_to_rooms.users_to_rooms_userId_users_id_fk",
+        "e|fk|public.users_to_rooms.users_to_rooms_userId_users_id_fk",
+        "n|con|public.users_to_rooms.users_to_rooms_userId_users_id_fk"
+      ],
+      "reads": [
+        "n|tbl|public.users_to_rooms",
+        "n|sch|public",
+        "n|tbl|public.users",
+        "n|sch|public",
+        "n|col|public.users_to_rooms.userId",
+        "n|col|public.users.id",
+        "e|uniqueness|public.users.id"
+      ]
     }
   ],
-  "renames": []
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "accounts",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "posts",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "rooms",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "sessions",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "surveys",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "likes",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "users",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "users_to_rooms",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "name": "verifications",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "accounts",
+        "name": "access_token",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "accounts",
+        "name": "access_token_expires_at",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "accounts",
+        "name": "account_id",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "accounts",
+        "name": "created_at",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "accounts",
+        "name": "deleted_at",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "accounts",
+        "name": "id",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "accounts",
+        "name": "id_token",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "accounts",
+        "name": "password",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "accounts",
+        "name": "provider_id",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "accounts",
+        "name": "refresh_token",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "accounts",
+        "name": "refresh_token_expires_at",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "accounts",
+        "name": "scope",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "accounts",
+        "name": "updated_at",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "accounts",
+        "name": "user_id",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "posts",
+        "name": "createdAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "posts",
+        "name": "deletedAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "posts",
+        "name": "updatedAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "posts",
+        "name": "depth",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "posts",
+        "name": "description",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "''",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "posts",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "posts",
+        "name": "noComments",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "posts",
+        "name": "noLikes",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "posts",
+        "name": "parentId",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "posts",
+        "name": "ranking",
+        "type": "double precision",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "posts",
+        "name": "title",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "''",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "posts",
+        "name": "userId",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "rooms",
+        "name": "createdAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "rooms",
+        "name": "deletedAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "rooms",
+        "name": "updatedAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "rooms",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "rooms",
+        "name": "image",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "rooms",
+        "name": "name",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "rooms",
+        "name": "userId",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "sessions",
+        "name": "created_at",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "sessions",
+        "name": "deleted_at",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "sessions",
+        "name": "expires_at",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "sessions",
+        "name": "id",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "sessions",
+        "name": "ip_address",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "sessions",
+        "name": "token",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "sessions",
+        "name": "updated_at",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "sessions",
+        "name": "user_agent",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "sessions",
+        "name": "user_id",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "surveys",
+        "name": "createdAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "surveys",
+        "name": "deletedAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "surveys",
+        "name": "updatedAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "surveys",
+        "name": "group",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "surveys",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "surveys",
+        "name": "model",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "''",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "surveys",
+        "name": "modelVersion",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "surveys",
+        "name": "name",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "surveys",
+        "name": "publishedAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "surveys",
+        "name": "publishVersion",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "0",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "surveys",
+        "name": "userId",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "likes",
+        "name": "postId",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "likes",
+        "name": "userId",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "likes",
+        "name": "value",
+        "type": "integer",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "users",
+        "name": "created_at",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "users",
+        "name": "deleted_at",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "users",
+        "name": "email",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "users",
+        "name": "email_verified",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "users",
+        "name": "id",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "users",
+        "name": "image",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "users",
+        "name": "name",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "users",
+        "name": "updated_at",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "users_to_rooms",
+        "name": "roomId",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "users_to_rooms",
+        "name": "userId",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "verifications",
+        "name": "created_at",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "verifications",
+        "name": "deleted_at",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "verifications",
+        "name": "expires_at",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "verifications",
+        "name": "id",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "verifications",
+        "name": "identifier",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "verifications",
+        "name": "updated_at",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "verifications",
+        "name": "value",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "accounts",
+        "name": "accounts_user_id_users_id_fk",
+        "nameExplicit": false,
+        "columns": [
+          "user_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "users",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "NO ACTION",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "posts",
+        "name": "posts_userId_users_id_fk",
+        "nameExplicit": false,
+        "columns": [
+          "userId"
+        ],
+        "schemaTo": "public",
+        "tableTo": "users",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "rooms",
+        "name": "rooms_userId_users_id_fk",
+        "nameExplicit": false,
+        "columns": [
+          "userId"
+        ],
+        "schemaTo": "public",
+        "tableTo": "users",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "sessions",
+        "name": "sessions_user_id_users_id_fk",
+        "nameExplicit": false,
+        "columns": [
+          "user_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "users",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "NO ACTION",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "surveys",
+        "name": "surveys_userId_users_id_fk",
+        "nameExplicit": false,
+        "columns": [
+          "userId"
+        ],
+        "schemaTo": "public",
+        "tableTo": "users",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "likes",
+        "name": "likes_postId_posts_id_fk",
+        "nameExplicit": false,
+        "columns": [
+          "postId"
+        ],
+        "schemaTo": "public",
+        "tableTo": "posts",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "likes",
+        "name": "likes_userId_users_id_fk",
+        "nameExplicit": false,
+        "columns": [
+          "userId"
+        ],
+        "schemaTo": "public",
+        "tableTo": "users",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "users_to_rooms",
+        "name": "users_to_rooms_roomId_rooms_id_fk",
+        "nameExplicit": false,
+        "columns": [
+          "roomId"
+        ],
+        "schemaTo": "public",
+        "tableTo": "rooms",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "users_to_rooms",
+        "name": "users_to_rooms_userId_users_id_fk",
+        "nameExplicit": false,
+        "columns": [
+          "userId"
+        ],
+        "schemaTo": "public",
+        "tableTo": "users",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "accounts",
+        "name": "accounts_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "posts",
+        "name": "posts_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "rooms",
+        "name": "rooms_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "sessions",
+        "name": "sessions_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "surveys",
+        "name": "surveys_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "likes",
+        "name": "likes_userId_postId_pk",
+        "columns": [
+          "userId",
+          "postId"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "users",
+        "name": "users_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "users_to_rooms",
+        "name": "users_to_rooms_userId_roomId_pk",
+        "columns": [
+          "userId",
+          "roomId"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "verifications",
+        "name": "verifications_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "sessions",
+        "name": "sessions_token_unique",
+        "nameExplicit": false,
+        "columns": [
+          "token"
+        ],
+        "nullsNotDistinct": false,
+        "entityType": "uniques"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "users",
+        "name": "users_email_unique",
+        "nameExplicit": false,
+        "columns": [
+          "email"
+        ],
+        "nullsNotDistinct": false,
+        "entityType": "uniques"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "posts",
+        "name": "title",
+        "value": "LENGTH(\"posts\".\"title\") >= 1 AND LENGTH(\"posts\".\"title\") <= 300",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "posts",
+        "name": "description",
+        "value": "LENGTH(\"posts\".\"description\") <= 1000",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "rooms",
+        "name": "name",
+        "value": "LENGTH(\"rooms\".\"name\") >= 1 AND LENGTH(\"rooms\".\"name\") <= 100",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "surveys",
+        "name": "name",
+        "value": "LENGTH(\"surveys\".\"name\") >= 1 AND LENGTH(\"surveys\".\"name\") <= 100",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "public",
+        "table": "likes",
+        "name": "value",
+        "value": "\"likes\".\"value\" = 1 OR \"likes\".\"value\" = -1",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"Account\"]"
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"Post\"]"
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"Room\"]"
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"Session\"]"
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"Survey\"]"
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"Like\"]"
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"User\"]"
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"UserToRoom\"]"
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"VerificationToken\"]"
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"Authenticator\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Account\",\"createdAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Account\",\"updatedAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Account\",\"deletedAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Account\",\"userId\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Account\",\"type\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Account\",\"provider\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Account\",\"providerAccountId\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Account\",\"id_token\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Account\",\"refresh_token\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Account\",\"access_token\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Account\",\"scope\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Account\",\"token_type\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Account\",\"session_state\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Account\",\"expires_at\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Post\",\"createdAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Post\",\"updatedAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Post\",\"deletedAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Post\",\"id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Post\",\"parentId\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Post\",\"title\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Post\",\"description\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Post\",\"noLikes\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Post\",\"noComments\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Post\",\"depth\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Post\",\"ranking\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Room\",\"createdAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Room\",\"updatedAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Room\",\"deletedAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Room\",\"id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Room\",\"name\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Room\",\"image\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Session\",\"createdAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Session\",\"updatedAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Session\",\"deletedAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Session\",\"sessionToken\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Session\",\"userId\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Session\",\"expires\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Survey\",\"createdAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Survey\",\"updatedAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Survey\",\"deletedAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Survey\",\"id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Survey\",\"name\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Survey\",\"group\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Survey\",\"model\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Survey\",\"modelVersion\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Survey\",\"publishVersion\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Survey\",\"publishedAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Like\",\"createdAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Like\",\"updatedAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Like\",\"deletedAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Like\",\"userId\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Like\",\"postId\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Like\",\"value\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"User\",\"createdAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"User\",\"updatedAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"User\",\"deletedAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"User\",\"id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"User\",\"name\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"User\",\"email\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"User\",\"emailVerified\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"User\",\"image\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"UserToRoom\",\"createdAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"UserToRoom\",\"updatedAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"UserToRoom\",\"deletedAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"UserToRoom\",\"userId\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"UserToRoom\",\"roomId\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"VerificationToken\",\"createdAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"VerificationToken\",\"updatedAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"VerificationToken\",\"deletedAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"VerificationToken\",\"identifier\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"VerificationToken\",\"token\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"VerificationToken\",\"expires\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Authenticator\",\"createdAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Authenticator\",\"deletedAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Authenticator\",\"updatedAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Authenticator\",\"counter\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Authenticator\",\"credentialBackedUp\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Authenticator\",\"credentialDeviceType\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Authenticator\",\"credentialID\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Authenticator\",\"credentialPublicKey\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Authenticator\",\"providerAccountId\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Authenticator\",\"transports\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Authenticator\",\"userId\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Post\",\"userId\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Room\",\"userId\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"Survey\",\"userId\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"Account\",\"Account_userId_User_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"Session\",\"Session_userId_User_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"Like\",\"Like_userId_User_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"Like\",\"Like_postId_Post_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"UserToRoom\",\"UserToRoom_userId_User_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"UserToRoom\",\"UserToRoom_roomId_Room_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"Authenticator\",\"Authenticator_userId_User_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"Post\",\"Post_userId_User_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"Room\",\"Room_userId_User_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"Survey\",\"Survey_userId_User_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"Account\",\"Account_provider_providerAccountId_pk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"Post\",\"Post_pkey\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"Room\",\"Room_pkey\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"Session\",\"Session_pkey\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"Survey\",\"Survey_pkey\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"Like\",\"Like_userId_postId_pk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"User\",\"User_pkey\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"UserToRoom\",\"UserToRoom_userId_roomId_pk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"VerificationToken\",\"VerificationToken_identifier_token_pk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"Authenticator\",\"Authenticator_userId_credentialID_pk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "uniques\u0000[\"public\",\"User\",\"User_email_unique\"]"
+    },
+    {
+      "op": "drop",
+      "key": "uniques\u0000[\"public\",\"VerificationToken\",\"VerificationToken_token_unique\"]"
+    },
+    {
+      "op": "drop",
+      "key": "uniques\u0000[\"public\",\"Authenticator\",\"Authenticator_credentialID_unique\"]"
+    },
+    {
+      "op": "drop",
+      "key": "checks\u0000[\"public\",\"Like\",\"value\"]"
+    }
+  ]
 }

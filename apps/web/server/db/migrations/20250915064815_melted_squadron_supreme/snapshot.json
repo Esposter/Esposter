@@ -1,1819 +1,1485 @@
 {
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
   "id": "e1df102a-97f8-4931-b5af-0330b83dea98",
   "prevIds": [
     "9b50f9a7-bc82-4b18-92b7-72611fc331ac"
   ],
-  "version": "8",
-  "dialect": "postgres",
-  "ddl": [
+  "footprints": [
     {
-      "name": "message",
-      "entityType": "schemas"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "accounts",
-      "schema": "public",
-      "entityType": "tables"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "access_token",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "access_token_expires_at",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "account_id",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "created_at",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deleted_at",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "columns"
-    },
-    {
-      "columns": [
-        "id"
+      "statementType": "create_schema",
+      "statementTarget": [
+        "schema",
+        "message"
       ],
-      "nameExplicit": false,
-      "name": "accounts_pkey",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "pks"
+      "writes": [
+        "s|sch|message",
+        "n|sch|message",
+        "e|sch|message"
+      ]
     },
     {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "id",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "id_token",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "password",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "provider_id",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "refresh_token",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "refresh_token_expires_at",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "scope",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "updated_at",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "user_id",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "columns"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "user_id"
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "message",
+        "invites"
       ],
-      "schemaTo": "public",
-      "tableTo": "users",
-      "columnsTo": [
-        "id"
+      "writes": [
+        "s|tbl|message.invites",
+        "n|tbl|message.invites",
+        "e|tbl|message.invites",
+        "n|rel|message.invites",
+        "n|type|message.invites",
+        "n|rel|message.invites_pkey",
+        "n|rel|message.invites_code_unique"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "NO ACTION",
-      "name": "accounts_user_id_users_id_fk",
-      "schema": "public",
-      "table": "accounts",
-      "entityType": "fks"
+      "reads": [
+        "n|sch|message"
+      ]
     },
     {
-      "isRlsEnabled": false,
-      "name": "invites",
-      "schema": "message",
-      "entityType": "tables"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "createdAt",
-      "schema": "message",
-      "table": "invites",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deletedAt",
-      "schema": "message",
-      "table": "invites",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "updatedAt",
-      "schema": "message",
-      "table": "invites",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "code",
-      "schema": "message",
-      "table": "invites",
-      "entityType": "columns"
-    },
-    {
-      "columns": [
-        "id"
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "message",
+        "rooms"
       ],
-      "nameExplicit": false,
-      "name": "invites_pkey",
-      "schema": "message",
-      "table": "invites",
-      "entityType": "pks"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "gen_random_uuid()",
-      "generated": null,
-      "identity": null,
-      "name": "id",
-      "schema": "message",
-      "table": "invites",
-      "entityType": "columns"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "roomId",
-      "schema": "message",
-      "table": "invites",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "userId",
-      "schema": "message",
-      "table": "invites",
-      "entityType": "columns"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "code"
+      "writes": [
+        "s|tbl|message.rooms",
+        "n|tbl|message.rooms",
+        "e|tbl|message.rooms",
+        "n|rel|message.rooms",
+        "n|type|message.rooms",
+        "n|rel|message.rooms_pkey"
       ],
-      "nullsNotDistinct": false,
-      "name": "invites_code_unique",
-      "schema": "message",
-      "table": "invites",
-      "entityType": "uniques"
+      "reads": [
+        "n|sch|message"
+      ]
     },
     {
-      "value": "LENGTH(\"message\".\"invites\".\"code\") = 8",
-      "name": "code",
-      "schema": "message",
-      "table": "invites",
-      "entityType": "checks"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "roomId"
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "message",
+        "search_history"
       ],
-      "schemaTo": "message",
-      "tableTo": "rooms",
-      "columnsTo": [
-        "id"
+      "writes": [
+        "s|tbl|message.search_history",
+        "n|tbl|message.search_history",
+        "e|tbl|message.search_history",
+        "n|rel|message.search_history",
+        "n|type|message.search_history",
+        "n|rel|message.search_history_pkey"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "invites_roomId_rooms_id_fk",
-      "schema": "message",
-      "table": "invites",
-      "entityType": "fks"
+      "reads": [
+        "n|sch|message"
+      ]
     },
     {
-      "nameExplicit": false,
-      "columns": [
-        "userId"
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "message",
+        "user_statuses"
       ],
-      "schemaTo": "public",
-      "tableTo": "users",
-      "columnsTo": [
-        "id"
+      "writes": [
+        "s|tbl|message.user_statuses",
+        "n|tbl|message.user_statuses",
+        "e|tbl|message.user_statuses",
+        "n|rel|message.user_statuses",
+        "n|type|message.user_statuses",
+        "n|rel|message.user_statuses_pkey"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "invites_userId_users_id_fk",
-      "schema": "message",
-      "table": "invites",
-      "entityType": "fks"
+      "reads": [
+        "n|sch|message"
+      ]
     },
     {
-      "isRlsEnabled": false,
-      "name": "likes",
-      "schema": "public",
-      "entityType": "tables"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "postId",
-      "schema": "public",
-      "table": "likes",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "userId",
-      "schema": "public",
-      "table": "likes",
-      "entityType": "columns"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "value",
-      "schema": "public",
-      "table": "likes",
-      "entityType": "columns"
-    },
-    {
-      "columns": [
-        "userId",
-        "postId"
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "message",
+        "users_to_rooms"
       ],
-      "nameExplicit": false,
-      "name": "likes_userId_postId_pk",
-      "schema": "public",
-      "table": "likes",
-      "entityType": "pks"
-    },
-    {
-      "value": "\"likes\".\"value\" = 1 OR \"likes\".\"value\" = -1",
-      "name": "value",
-      "schema": "public",
-      "table": "likes",
-      "entityType": "checks"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "postId"
+      "writes": [
+        "s|tbl|message.users_to_rooms",
+        "n|tbl|message.users_to_rooms",
+        "e|tbl|message.users_to_rooms",
+        "n|rel|message.users_to_rooms",
+        "n|type|message.users_to_rooms",
+        "n|rel|message.users_to_rooms_userId_roomId_pk"
       ],
-      "schemaTo": "public",
-      "tableTo": "posts",
-      "columnsTo": [
-        "id"
+      "reads": [
+        "n|sch|message"
+      ]
+    },
+    {
+      "statementType": "drop_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "users_to_rooms"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "likes_postId_posts_id_fk",
-      "schema": "public",
-      "table": "likes",
-      "entityType": "fks"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "userId"
+      "writes": [
+        "s|fk|public.users_to_rooms.users_to_rooms_roomId_rooms_id_fk",
+        "n|fk|public.users_to_rooms.users_to_rooms_roomId_rooms_id_fk",
+        "e|fk|public.users_to_rooms.users_to_rooms_roomId_rooms_id_fk",
+        "n|con|public.users_to_rooms.users_to_rooms_roomId_rooms_id_fk"
       ],
-      "schemaTo": "public",
-      "tableTo": "users",
-      "columnsTo": [
-        "id"
+      "reads": [
+        "n|tbl|public.users_to_rooms",
+        "n|sch|public",
+        "e|col|public.users_to_rooms.roomId"
+      ]
+    },
+    {
+      "statementType": "drop_fk",
+      "statementTarget": [
+        "table",
+        "public",
+        "invites"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "likes_userId_users_id_fk",
-      "schema": "public",
-      "table": "likes",
-      "entityType": "fks"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "posts",
-      "schema": "public",
-      "entityType": "tables"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "createdAt",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deletedAt",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "updatedAt",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "columns"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "0",
-      "generated": null,
-      "identity": null,
-      "name": "depth",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "''",
-      "generated": null,
-      "identity": null,
-      "name": "description",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "columns"
-    },
-    {
-      "columns": [
-        "id"
+      "writes": [
+        "s|fk|public.invites.invites_roomId_rooms_id_fk",
+        "n|fk|public.invites.invites_roomId_rooms_id_fk",
+        "e|fk|public.invites.invites_roomId_rooms_id_fk",
+        "n|con|public.invites.invites_roomId_rooms_id_fk"
       ],
-      "nameExplicit": false,
-      "name": "posts_pkey",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "pks"
+      "reads": [
+        "n|tbl|public.invites",
+        "n|sch|public",
+        "e|col|public.invites.roomId"
+      ]
     },
     {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "gen_random_uuid()",
-      "generated": null,
-      "identity": null,
-      "name": "id",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "columns"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "0",
-      "generated": null,
-      "identity": null,
-      "name": "noComments",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "columns"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "0",
-      "generated": null,
-      "identity": null,
-      "name": "noLikes",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "columns"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "parentId",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "columns"
-    },
-    {
-      "type": "double precision",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "ranking",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "''",
-      "generated": null,
-      "identity": null,
-      "name": "title",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "userId",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "columns"
-    },
-    {
-      "value": "LENGTH(\"posts\".\"title\") <= 300",
-      "name": "title",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "checks"
-    },
-    {
-      "value": "LENGTH(\"posts\".\"description\") <= 1000",
-      "name": "description",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "checks"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "parentId"
+      "statementType": "drop_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "rooms"
       ],
-      "schemaTo": "public",
-      "tableTo": "posts",
-      "columnsTo": [
-        "id"
+      "writes": [
+        "s|tbl|public.rooms",
+        "n|tbl|public.rooms",
+        "e|tbl|public.rooms",
+        "n|rel|public.rooms",
+        "n|type|public.rooms"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "posts_parentId_posts_id_fk",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "fks"
+      "reads": [
+        "n|sch|public"
+      ]
     },
     {
-      "nameExplicit": false,
-      "columns": [
-        "userId"
+      "statementType": "drop_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "users_to_rooms"
       ],
-      "schemaTo": "public",
-      "tableTo": "users",
-      "columnsTo": [
-        "id"
+      "writes": [
+        "s|tbl|public.users_to_rooms",
+        "n|tbl|public.users_to_rooms",
+        "e|tbl|public.users_to_rooms",
+        "n|rel|public.users_to_rooms",
+        "n|type|public.users_to_rooms"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "posts_userId_users_id_fk",
-      "schema": "public",
-      "table": "posts",
-      "entityType": "fks"
+      "reads": [
+        "n|sch|public"
+      ]
     },
     {
-      "isRlsEnabled": false,
-      "name": "rooms",
-      "schema": "message",
-      "entityType": "tables"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "createdAt",
-      "schema": "message",
-      "table": "rooms",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deletedAt",
-      "schema": "message",
-      "table": "rooms",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "updatedAt",
-      "schema": "message",
-      "table": "rooms",
-      "entityType": "columns"
-    },
-    {
-      "columns": [
-        "id"
+      "statementType": "drop_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "invites"
       ],
-      "nameExplicit": false,
-      "name": "rooms_pkey",
-      "schema": "message",
-      "table": "rooms",
-      "entityType": "pks"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "gen_random_uuid()",
-      "generated": null,
-      "identity": null,
-      "name": "id",
-      "schema": "message",
-      "table": "rooms",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "image",
-      "schema": "message",
-      "table": "rooms",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "name",
-      "schema": "message",
-      "table": "rooms",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "userId",
-      "schema": "message",
-      "table": "rooms",
-      "entityType": "columns"
-    },
-    {
-      "value": "LENGTH(\"message\".\"rooms\".\"name\") >= 1 AND LENGTH(\"message\".\"rooms\".\"name\") <= 100",
-      "name": "name",
-      "schema": "message",
-      "table": "rooms",
-      "entityType": "checks"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "userId"
+      "writes": [
+        "s|tbl|public.invites",
+        "n|tbl|public.invites",
+        "e|tbl|public.invites",
+        "n|rel|public.invites",
+        "n|type|public.invites"
       ],
-      "schemaTo": "public",
-      "tableTo": "users",
-      "columnsTo": [
-        "id"
+      "reads": [
+        "n|sch|public"
+      ]
+    },
+    {
+      "statementType": "drop_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "user_statuses"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "rooms_userId_users_id_fk",
-      "schema": "message",
-      "table": "rooms",
-      "entityType": "fks"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "search_history",
-      "schema": "message",
-      "entityType": "tables"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "createdAt",
-      "schema": "message",
-      "table": "search_history",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deletedAt",
-      "schema": "message",
-      "table": "search_history",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "updatedAt",
-      "schema": "message",
-      "table": "search_history",
-      "entityType": "columns"
-    },
-    {
-      "type": "jsonb",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "'[]'",
-      "generated": null,
-      "identity": null,
-      "name": "filters",
-      "schema": "message",
-      "table": "search_history",
-      "entityType": "columns"
-    },
-    {
-      "columns": [
-        "id"
+      "writes": [
+        "s|tbl|public.user_statuses",
+        "n|tbl|public.user_statuses",
+        "e|tbl|public.user_statuses",
+        "n|rel|public.user_statuses",
+        "n|type|public.user_statuses"
       ],
-      "nameExplicit": false,
-      "name": "search_history_pkey",
-      "schema": "message",
-      "table": "search_history",
-      "entityType": "pks"
+      "reads": [
+        "n|sch|public"
+      ]
     },
     {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "gen_random_uuid()",
-      "generated": null,
-      "identity": null,
-      "name": "id",
-      "schema": "message",
-      "table": "search_history",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "''",
-      "generated": null,
-      "identity": null,
-      "name": "query",
-      "schema": "message",
-      "table": "search_history",
-      "entityType": "columns"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "room_id",
-      "schema": "message",
-      "table": "search_history",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "user_id",
-      "schema": "message",
-      "table": "search_history",
-      "entityType": "columns"
-    },
-    {
-      "value": "LENGTH(\"message\".\"search_history\".\"query\") <= 10000",
-      "name": "query",
-      "schema": "message",
-      "table": "search_history",
-      "entityType": "checks"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "room_id"
+      "statementType": "drop_table",
+      "statementTarget": [
+        "table",
+        "public",
+        "search_history"
       ],
-      "schemaTo": "message",
-      "tableTo": "rooms",
-      "columnsTo": [
-        "id"
+      "writes": [
+        "s|tbl|public.search_history",
+        "n|tbl|public.search_history",
+        "e|tbl|public.search_history",
+        "n|rel|public.search_history",
+        "n|type|public.search_history"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "NO ACTION",
-      "name": "search_history_room_id_rooms_id_fk",
-      "schema": "message",
-      "table": "search_history",
-      "entityType": "fks"
+      "reads": [
+        "n|sch|public"
+      ]
     },
     {
-      "nameExplicit": false,
-      "columns": [
-        "user_id"
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "message",
+        "invites"
       ],
-      "schemaTo": "public",
-      "tableTo": "users",
-      "columnsTo": [
-        "id"
+      "writes": [
+        "s|fk|message.invites.invites_roomId_rooms_id_fk",
+        "n|fk|message.invites.invites_roomId_rooms_id_fk",
+        "e|fk|message.invites.invites_roomId_rooms_id_fk",
+        "n|con|message.invites.invites_roomId_rooms_id_fk"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "NO ACTION",
-      "name": "search_history_user_id_users_id_fk",
-      "schema": "message",
-      "table": "search_history",
-      "entityType": "fks"
+      "reads": [
+        "n|tbl|message.invites",
+        "n|sch|message",
+        "n|tbl|message.rooms",
+        "n|sch|message",
+        "n|col|message.invites.roomId",
+        "n|col|message.rooms.id",
+        "e|uniqueness|message.rooms.id"
+      ]
     },
     {
-      "isRlsEnabled": false,
-      "name": "sessions",
-      "schema": "public",
-      "entityType": "tables"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "created_at",
-      "schema": "public",
-      "table": "sessions",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deleted_at",
-      "schema": "public",
-      "table": "sessions",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "expires_at",
-      "schema": "public",
-      "table": "sessions",
-      "entityType": "columns"
-    },
-    {
-      "columns": [
-        "id"
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "message",
+        "invites"
       ],
-      "nameExplicit": false,
-      "name": "sessions_pkey",
-      "schema": "public",
-      "table": "sessions",
-      "entityType": "pks"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "id",
-      "schema": "public",
-      "table": "sessions",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "ip_address",
-      "schema": "public",
-      "table": "sessions",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "token",
-      "schema": "public",
-      "table": "sessions",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "updated_at",
-      "schema": "public",
-      "table": "sessions",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "user_agent",
-      "schema": "public",
-      "table": "sessions",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "user_id",
-      "schema": "public",
-      "table": "sessions",
-      "entityType": "columns"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "token"
+      "writes": [
+        "s|fk|message.invites.invites_userId_users_id_fk",
+        "n|fk|message.invites.invites_userId_users_id_fk",
+        "e|fk|message.invites.invites_userId_users_id_fk",
+        "n|con|message.invites.invites_userId_users_id_fk"
       ],
-      "nullsNotDistinct": false,
-      "name": "sessions_token_unique",
-      "schema": "public",
-      "table": "sessions",
-      "entityType": "uniques"
+      "reads": [
+        "n|tbl|message.invites",
+        "n|sch|message",
+        "n|tbl|public.users",
+        "n|sch|public",
+        "n|col|message.invites.userId",
+        "n|col|public.users.id",
+        "e|uniqueness|public.users.id"
+      ]
     },
     {
-      "nameExplicit": false,
-      "columns": [
-        "user_id"
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "message",
+        "rooms"
       ],
-      "schemaTo": "public",
-      "tableTo": "users",
-      "columnsTo": [
-        "id"
+      "writes": [
+        "s|fk|message.rooms.rooms_userId_users_id_fk",
+        "n|fk|message.rooms.rooms_userId_users_id_fk",
+        "e|fk|message.rooms.rooms_userId_users_id_fk",
+        "n|con|message.rooms.rooms_userId_users_id_fk"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "NO ACTION",
-      "name": "sessions_user_id_users_id_fk",
-      "schema": "public",
-      "table": "sessions",
-      "entityType": "fks"
+      "reads": [
+        "n|tbl|message.rooms",
+        "n|sch|message",
+        "n|tbl|public.users",
+        "n|sch|public",
+        "n|col|message.rooms.userId",
+        "n|col|public.users.id",
+        "e|uniqueness|public.users.id"
+      ]
     },
     {
-      "isRlsEnabled": false,
-      "name": "surveys",
-      "schema": "public",
-      "entityType": "tables"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "createdAt",
-      "schema": "public",
-      "table": "surveys",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deletedAt",
-      "schema": "public",
-      "table": "surveys",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "updatedAt",
-      "schema": "public",
-      "table": "surveys",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "group",
-      "schema": "public",
-      "table": "surveys",
-      "entityType": "columns"
-    },
-    {
-      "columns": [
-        "id"
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "message",
+        "search_history"
       ],
-      "nameExplicit": false,
-      "name": "surveys_pkey",
-      "schema": "public",
-      "table": "surveys",
-      "entityType": "pks"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "gen_random_uuid()",
-      "generated": null,
-      "identity": null,
-      "name": "id",
-      "schema": "public",
-      "table": "surveys",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "''",
-      "generated": null,
-      "identity": null,
-      "name": "model",
-      "schema": "public",
-      "table": "surveys",
-      "entityType": "columns"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "0",
-      "generated": null,
-      "identity": null,
-      "name": "modelVersion",
-      "schema": "public",
-      "table": "surveys",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "name",
-      "schema": "public",
-      "table": "surveys",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "publishedAt",
-      "schema": "public",
-      "table": "surveys",
-      "entityType": "columns"
-    },
-    {
-      "type": "integer",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "0",
-      "generated": null,
-      "identity": null,
-      "name": "publishVersion",
-      "schema": "public",
-      "table": "surveys",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "userId",
-      "schema": "public",
-      "table": "surveys",
-      "entityType": "columns"
-    },
-    {
-      "value": "LENGTH(\"surveys\".\"name\") >= 1 AND LENGTH(\"surveys\".\"name\") <= 100",
-      "name": "name",
-      "schema": "public",
-      "table": "surveys",
-      "entityType": "checks"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "userId"
+      "writes": [
+        "s|fk|message.search_history.search_history_room_id_rooms_id_fk",
+        "n|fk|message.search_history.search_history_room_id_rooms_id_fk",
+        "e|fk|message.search_history.search_history_room_id_rooms_id_fk",
+        "n|con|message.search_history.search_history_room_id_rooms_id_fk"
       ],
-      "schemaTo": "public",
-      "tableTo": "users",
-      "columnsTo": [
-        "id"
+      "reads": [
+        "n|tbl|message.search_history",
+        "n|sch|message",
+        "n|tbl|message.rooms",
+        "n|sch|message",
+        "n|col|message.search_history.room_id",
+        "n|col|message.rooms.id",
+        "e|uniqueness|message.rooms.id"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "message",
+        "search_history"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "surveys_userId_users_id_fk",
-      "schema": "public",
-      "table": "surveys",
-      "entityType": "fks"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "users",
-      "schema": "public",
-      "entityType": "tables"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "created_at",
-      "schema": "public",
-      "table": "users",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deleted_at",
-      "schema": "public",
-      "table": "users",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "email",
-      "schema": "public",
-      "table": "users",
-      "entityType": "columns"
-    },
-    {
-      "type": "boolean",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "email_verified",
-      "schema": "public",
-      "table": "users",
-      "entityType": "columns"
-    },
-    {
-      "columns": [
-        "id"
+      "writes": [
+        "s|fk|message.search_history.search_history_user_id_users_id_fk",
+        "n|fk|message.search_history.search_history_user_id_users_id_fk",
+        "e|fk|message.search_history.search_history_user_id_users_id_fk",
+        "n|con|message.search_history.search_history_user_id_users_id_fk"
       ],
-      "nameExplicit": false,
-      "name": "users_pkey",
-      "schema": "public",
-      "table": "users",
-      "entityType": "pks"
+      "reads": [
+        "n|tbl|message.search_history",
+        "n|sch|message",
+        "n|tbl|public.users",
+        "n|sch|public",
+        "n|col|message.search_history.user_id",
+        "n|col|public.users.id",
+        "e|uniqueness|public.users.id"
+      ]
     },
     {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "id",
-      "schema": "public",
-      "table": "users",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "image",
-      "schema": "public",
-      "table": "users",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "name",
-      "schema": "public",
-      "table": "users",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "updated_at",
-      "schema": "public",
-      "table": "users",
-      "entityType": "columns"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "email"
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "message",
+        "user_statuses"
       ],
-      "nullsNotDistinct": false,
-      "name": "users_email_unique",
-      "schema": "public",
-      "table": "users",
-      "entityType": "uniques"
-    },
-    {
-      "value": "LENGTH(\"users\".\"name\") >= 1 AND LENGTH(\"users\".\"name\") <= 100",
-      "name": "name",
-      "schema": "public",
-      "table": "users",
-      "entityType": "checks"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "user_statuses",
-      "schema": "message",
-      "entityType": "tables"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "now()",
-      "generated": null,
-      "identity": null,
-      "name": "createdAt",
-      "schema": "message",
-      "table": "user_statuses",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deletedAt",
-      "schema": "message",
-      "table": "user_statuses",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "updatedAt",
-      "schema": "message",
-      "table": "user_statuses",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "expiresAt",
-      "schema": "message",
-      "table": "user_statuses",
-      "entityType": "columns"
-    },
-    {
-      "type": "boolean",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "true",
-      "generated": null,
-      "identity": null,
-      "name": "isConnected",
-      "schema": "message",
-      "table": "user_statuses",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": "''",
-      "generated": null,
-      "identity": null,
-      "name": "message",
-      "schema": "message",
-      "table": "user_statuses",
-      "entityType": "columns"
-    },
-    {
-      "type": "user_status",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "status",
-      "schema": "message",
-      "table": "user_statuses",
-      "entityType": "columns"
-    },
-    {
-      "columns": [
-        "userId"
+      "writes": [
+        "s|fk|message.user_statuses.user_statuses_userId_users_id_fk",
+        "n|fk|message.user_statuses.user_statuses_userId_users_id_fk",
+        "e|fk|message.user_statuses.user_statuses_userId_users_id_fk",
+        "n|con|message.user_statuses.user_statuses_userId_users_id_fk"
       ],
-      "nameExplicit": false,
-      "name": "user_statuses_pkey",
-      "schema": "message",
-      "table": "user_statuses",
-      "entityType": "pks"
+      "reads": [
+        "n|tbl|message.user_statuses",
+        "n|sch|message",
+        "n|tbl|public.users",
+        "n|sch|public",
+        "n|col|message.user_statuses.userId",
+        "n|col|public.users.id",
+        "e|uniqueness|public.users.id"
+      ]
     },
     {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "userId",
-      "schema": "message",
-      "table": "user_statuses",
-      "entityType": "columns"
-    },
-    {
-      "value": "LENGTH(\"message\".\"user_statuses\".\"message\") <= 1000",
-      "name": "message",
-      "schema": "message",
-      "table": "user_statuses",
-      "entityType": "checks"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "userId"
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "message",
+        "users_to_rooms"
       ],
-      "schemaTo": "public",
-      "tableTo": "users",
-      "columnsTo": [
-        "id"
+      "writes": [
+        "s|fk|message.users_to_rooms.users_to_rooms_roomId_rooms_id_fk",
+        "n|fk|message.users_to_rooms.users_to_rooms_roomId_rooms_id_fk",
+        "e|fk|message.users_to_rooms.users_to_rooms_roomId_rooms_id_fk",
+        "n|con|message.users_to_rooms.users_to_rooms_roomId_rooms_id_fk"
       ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "user_statuses_userId_users_id_fk",
-      "schema": "message",
-      "table": "user_statuses",
-      "entityType": "fks"
+      "reads": [
+        "n|tbl|message.users_to_rooms",
+        "n|sch|message",
+        "n|tbl|message.rooms",
+        "n|sch|message",
+        "n|col|message.users_to_rooms.roomId",
+        "n|col|message.rooms.id",
+        "e|uniqueness|message.rooms.id"
+      ]
     },
     {
-      "isRlsEnabled": false,
-      "name": "users_to_rooms",
-      "schema": "message",
-      "entityType": "tables"
-    },
-    {
-      "type": "uuid",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "roomId",
-      "schema": "message",
-      "table": "users_to_rooms",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "userId",
-      "schema": "message",
-      "table": "users_to_rooms",
-      "entityType": "columns"
-    },
-    {
-      "columns": [
-        "userId",
-        "roomId"
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "message",
+        "users_to_rooms"
       ],
-      "nameExplicit": false,
-      "name": "users_to_rooms_userId_roomId_pk",
-      "schema": "message",
-      "table": "users_to_rooms",
-      "entityType": "pks"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "roomId"
+      "writes": [
+        "s|fk|message.users_to_rooms.users_to_rooms_userId_users_id_fk",
+        "n|fk|message.users_to_rooms.users_to_rooms_userId_users_id_fk",
+        "e|fk|message.users_to_rooms.users_to_rooms_userId_users_id_fk",
+        "n|con|message.users_to_rooms.users_to_rooms_userId_users_id_fk"
       ],
-      "schemaTo": "message",
-      "tableTo": "rooms",
-      "columnsTo": [
-        "id"
-      ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "users_to_rooms_roomId_rooms_id_fk",
-      "schema": "message",
-      "table": "users_to_rooms",
-      "entityType": "fks"
-    },
-    {
-      "nameExplicit": false,
-      "columns": [
-        "userId"
-      ],
-      "schemaTo": "public",
-      "tableTo": "users",
-      "columnsTo": [
-        "id"
-      ],
-      "onUpdate": "NO ACTION",
-      "onDelete": "CASCADE",
-      "name": "users_to_rooms_userId_users_id_fk",
-      "schema": "message",
-      "table": "users_to_rooms",
-      "entityType": "fks"
-    },
-    {
-      "isRlsEnabled": false,
-      "name": "verifications",
-      "schema": "public",
-      "entityType": "tables"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "created_at",
-      "schema": "public",
-      "table": "verifications",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "deleted_at",
-      "schema": "public",
-      "table": "verifications",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "expires_at",
-      "schema": "public",
-      "table": "verifications",
-      "entityType": "columns"
-    },
-    {
-      "columns": [
-        "id"
-      ],
-      "nameExplicit": false,
-      "name": "verifications_pkey",
-      "schema": "public",
-      "table": "verifications",
-      "entityType": "pks"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "id",
-      "schema": "public",
-      "table": "verifications",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "identifier",
-      "schema": "public",
-      "table": "verifications",
-      "entityType": "columns"
-    },
-    {
-      "type": "timestamp",
-      "typeSchema": null,
-      "notNull": false,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "updated_at",
-      "schema": "public",
-      "table": "verifications",
-      "entityType": "columns"
-    },
-    {
-      "type": "text",
-      "typeSchema": null,
-      "notNull": true,
-      "dimensions": 0,
-      "default": null,
-      "generated": null,
-      "identity": null,
-      "name": "value",
-      "schema": "public",
-      "table": "verifications",
-      "entityType": "columns"
-    },
-    {
-      "values": [
-        "DoNotDisturb",
-        "Idle",
-        "Offline",
-        "Online"
-      ],
-      "name": "user_status",
-      "schema": "public",
-      "entityType": "enums"
+      "reads": [
+        "n|tbl|message.users_to_rooms",
+        "n|sch|message",
+        "n|tbl|public.users",
+        "n|sch|public",
+        "n|col|message.users_to_rooms.userId",
+        "n|col|public.users.id",
+        "e|uniqueness|public.users.id"
+      ]
     }
   ],
-  "renames": []
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "name": "message",
+        "entityType": "schemas"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "name": "invites",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "name": "rooms",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "name": "search_history",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "name": "user_statuses",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "name": "users_to_rooms",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "invites",
+        "name": "createdAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "invites",
+        "name": "deletedAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "invites",
+        "name": "updatedAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "invites",
+        "name": "code",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "invites",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "invites",
+        "name": "roomId",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "invites",
+        "name": "userId",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "rooms",
+        "name": "createdAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "rooms",
+        "name": "deletedAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "rooms",
+        "name": "updatedAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "rooms",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "rooms",
+        "name": "image",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "rooms",
+        "name": "name",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "rooms",
+        "name": "userId",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "search_history",
+        "name": "createdAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "search_history",
+        "name": "deletedAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "search_history",
+        "name": "updatedAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "search_history",
+        "name": "filters",
+        "type": "jsonb",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "'[]'",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "search_history",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "search_history",
+        "name": "query",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "''",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "search_history",
+        "name": "room_id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "search_history",
+        "name": "user_id",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "user_statuses",
+        "name": "createdAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "user_statuses",
+        "name": "deletedAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "user_statuses",
+        "name": "updatedAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "user_statuses",
+        "name": "expiresAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "user_statuses",
+        "name": "isConnected",
+        "type": "boolean",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "true",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "user_statuses",
+        "name": "message",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "''",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "user_statuses",
+        "name": "status",
+        "type": "user_status",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "user_statuses",
+        "name": "userId",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "users_to_rooms",
+        "name": "roomId",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "users_to_rooms",
+        "name": "userId",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "invites",
+        "name": "invites_roomId_rooms_id_fk",
+        "nameExplicit": false,
+        "columns": [
+          "roomId"
+        ],
+        "schemaTo": "message",
+        "tableTo": "rooms",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "invites",
+        "name": "invites_userId_users_id_fk",
+        "nameExplicit": false,
+        "columns": [
+          "userId"
+        ],
+        "schemaTo": "public",
+        "tableTo": "users",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "rooms",
+        "name": "rooms_userId_users_id_fk",
+        "nameExplicit": false,
+        "columns": [
+          "userId"
+        ],
+        "schemaTo": "public",
+        "tableTo": "users",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "search_history",
+        "name": "search_history_room_id_rooms_id_fk",
+        "nameExplicit": false,
+        "columns": [
+          "room_id"
+        ],
+        "schemaTo": "message",
+        "tableTo": "rooms",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "NO ACTION",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "search_history",
+        "name": "search_history_user_id_users_id_fk",
+        "nameExplicit": false,
+        "columns": [
+          "user_id"
+        ],
+        "schemaTo": "public",
+        "tableTo": "users",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "NO ACTION",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "user_statuses",
+        "name": "user_statuses_userId_users_id_fk",
+        "nameExplicit": false,
+        "columns": [
+          "userId"
+        ],
+        "schemaTo": "public",
+        "tableTo": "users",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "users_to_rooms",
+        "name": "users_to_rooms_roomId_rooms_id_fk",
+        "nameExplicit": false,
+        "columns": [
+          "roomId"
+        ],
+        "schemaTo": "message",
+        "tableTo": "rooms",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "users_to_rooms",
+        "name": "users_to_rooms_userId_users_id_fk",
+        "nameExplicit": false,
+        "columns": [
+          "userId"
+        ],
+        "schemaTo": "public",
+        "tableTo": "users",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "invites",
+        "name": "invites_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "rooms",
+        "name": "rooms_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "search_history",
+        "name": "search_history_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "user_statuses",
+        "name": "user_statuses_pkey",
+        "columns": [
+          "userId"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "users_to_rooms",
+        "name": "users_to_rooms_userId_roomId_pk",
+        "columns": [
+          "userId",
+          "roomId"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "invites",
+        "name": "invites_code_unique",
+        "nameExplicit": false,
+        "columns": [
+          "code"
+        ],
+        "nullsNotDistinct": false,
+        "entityType": "uniques"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "invites",
+        "name": "code",
+        "value": "LENGTH(\"message\".\"invites\".\"code\") = 8",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "rooms",
+        "name": "name",
+        "value": "LENGTH(\"message\".\"rooms\".\"name\") >= 1 AND LENGTH(\"message\".\"rooms\".\"name\") <= 100",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "search_history",
+        "name": "query",
+        "value": "LENGTH(\"message\".\"search_history\".\"query\") <= 10000",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "message",
+        "table": "user_statuses",
+        "name": "message",
+        "value": "LENGTH(\"message\".\"user_statuses\".\"message\") <= 1000",
+        "entityType": "checks"
+      }
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"rooms\"]"
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"users_to_rooms\"]"
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"invites\"]"
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"user_statuses\"]"
+    },
+    {
+      "op": "drop",
+      "key": "tables\u0000[\"public\",\"search_history\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"rooms\",\"createdAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"rooms\",\"deletedAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"rooms\",\"updatedAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"rooms\",\"id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"rooms\",\"image\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"rooms\",\"name\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"rooms\",\"userId\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"users_to_rooms\",\"roomId\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"users_to_rooms\",\"userId\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"invites\",\"createdAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"invites\",\"deletedAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"invites\",\"updatedAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"invites\",\"code\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"invites\",\"id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"invites\",\"roomId\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"invites\",\"userId\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"user_statuses\",\"expiresAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"user_statuses\",\"message\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"user_statuses\",\"status\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"user_statuses\",\"userId\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"user_statuses\",\"createdAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"user_statuses\",\"deletedAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"user_statuses\",\"updatedAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"user_statuses\",\"isConnected\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"search_history\",\"createdAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"search_history\",\"deletedAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"search_history\",\"updatedAt\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"search_history\",\"id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"search_history\",\"query\"]"
+    },
+    {
+      "op": "drop",
+      "key": "columns\u0000[\"public\",\"search_history\",\"user_id\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"rooms\",\"rooms_userId_users_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"users_to_rooms\",\"users_to_rooms_roomId_rooms_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"users_to_rooms\",\"users_to_rooms_userId_users_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"invites\",\"invites_roomId_rooms_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"invites\",\"invites_userId_users_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"user_statuses\",\"user_statuses_userId_users_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"public\",\"search_history\",\"search_history_user_id_users_id_fk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"rooms\",\"rooms_pkey\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"users_to_rooms\",\"users_to_rooms_userId_roomId_pk\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"invites\",\"invites_pkey\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"user_statuses\",\"user_statuses_pkey\"]"
+    },
+    {
+      "op": "drop",
+      "key": "pks\u0000[\"public\",\"search_history\",\"search_history_pkey\"]"
+    },
+    {
+      "op": "drop",
+      "key": "uniques\u0000[\"public\",\"invites\",\"invites_code_unique\"]"
+    },
+    {
+      "op": "drop",
+      "key": "checks\u0000[\"public\",\"rooms\",\"name\"]"
+    },
+    {
+      "op": "drop",
+      "key": "checks\u0000[\"public\",\"invites\",\"code\"]"
+    },
+    {
+      "op": "drop",
+      "key": "checks\u0000[\"public\",\"user_statuses\",\"message\"]"
+    },
+    {
+      "op": "drop",
+      "key": "checks\u0000[\"public\",\"search_history\",\"query\"]"
+    }
+  ]
 }
