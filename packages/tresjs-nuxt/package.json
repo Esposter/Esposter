@@ -34,21 +34,11 @@
       "source": "./src/module.ts",
       "default": "./dist/index.js"
     },
-    "./runtime/TresCanvas.client": {
-      "source": "./src/runtime/TresCanvas.client.ts",
-      "default": "./dist/runtime/TresCanvas.client.js"
-    },
-    "./runtime/TresCanvas.server": {
-      "source": "./src/runtime/TresCanvas.server.ts",
-      "default": "./dist/runtime/TresCanvas.server.js"
-    },
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "exports": {
       ".": "./dist/index.js",
-      "./runtime/TresCanvas.client": "./dist/runtime/TresCanvas.client.js",
-      "./runtime/TresCanvas.server": "./dist/runtime/TresCanvas.server.js",
       "./package.json": "./package.json"
     },
     "access": "public"

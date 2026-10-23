@@ -56,113 +56,13 @@
       "source": "./src/runtime/client/httpLink.ts",
       "default": "./dist/runtime/client/httpLink.js"
     },
-    "./runtime/client/models/DecoratedMutation": {
-      "source": "./src/runtime/client/models/DecoratedMutation.ts",
-      "default": "./dist/runtime/client/models/DecoratedMutation.js"
-    },
-    "./runtime/client/models/DecoratedProcedure": {
-      "source": "./src/runtime/client/models/DecoratedProcedure.ts",
-      "default": "./dist/runtime/client/models/DecoratedProcedure.js"
-    },
-    "./runtime/client/models/DecoratedQuery": {
-      "source": "./src/runtime/client/models/DecoratedQuery.ts",
-      "default": "./dist/runtime/client/models/DecoratedQuery.js"
-    },
-    "./runtime/client/models/DecoratedRouterRecord": {
-      "source": "./src/runtime/client/models/DecoratedRouterRecord.ts",
-      "default": "./dist/runtime/client/models/DecoratedRouterRecord.js"
-    },
-    "./runtime/client/models/DecoratedSubscription": {
-      "source": "./src/runtime/client/models/DecoratedSubscription.ts",
-      "default": "./dist/runtime/client/models/DecoratedSubscription.js"
-    },
-    "./runtime/client/models/KeysOf": {
-      "source": "./src/runtime/client/models/KeysOf.ts",
-      "default": "./dist/runtime/client/models/KeysOf.js"
-    },
-    "./runtime/client/models/PickFrom": {
-      "source": "./src/runtime/client/models/PickFrom.ts",
-      "default": "./dist/runtime/client/models/PickFrom.js"
-    },
-    "./runtime/client/models/ProcedureNode": {
-      "source": "./src/runtime/client/models/ProcedureNode.ts",
-      "default": "./dist/runtime/client/models/ProcedureNode.js"
-    },
-    "./runtime/client/models/ProcedurePath": {
-      "source": "./src/runtime/client/models/ProcedurePath.ts",
-      "default": "./dist/runtime/client/models/ProcedurePath.js"
-    },
-    "./runtime/client/models/QueryAsyncData": {
-      "source": "./src/runtime/client/models/QueryAsyncData.ts",
-      "default": "./dist/runtime/client/models/QueryAsyncData.js"
-    },
-    "./runtime/client/models/QueryError": {
-      "source": "./src/runtime/client/models/QueryError.ts",
-      "default": "./dist/runtime/client/models/QueryError.js"
-    },
-    "./runtime/client/models/SubscriptionStatus": {
-      "source": "./src/runtime/client/models/SubscriptionStatus.ts",
-      "default": "./dist/runtime/client/models/SubscriptionStatus.js"
-    },
-    "./runtime/client/models/TRPCNuxtClient": {
-      "source": "./src/runtime/client/models/TRPCNuxtClient.ts",
-      "default": "./dist/runtime/client/models/TRPCNuxtClient.js"
-    },
-    "./runtime/client/models/UseMutationOptions": {
-      "source": "./src/runtime/client/models/UseMutationOptions.ts",
-      "default": "./dist/runtime/client/models/UseMutationOptions.js"
-    },
-    "./runtime/client/models/UseMutationReturn": {
-      "source": "./src/runtime/client/models/UseMutationReturn.ts",
-      "default": "./dist/runtime/client/models/UseMutationReturn.js"
-    },
-    "./runtime/client/models/UseQuery": {
-      "source": "./src/runtime/client/models/UseQuery.ts",
-      "default": "./dist/runtime/client/models/UseQuery.js"
-    },
-    "./runtime/client/models/UseQueryOptions": {
-      "source": "./src/runtime/client/models/UseQueryOptions.ts",
-      "default": "./dist/runtime/client/models/UseQueryOptions.js"
-    },
-    "./runtime/client/models/UseSubscriptionOptions": {
-      "source": "./src/runtime/client/models/UseSubscriptionOptions.ts",
-      "default": "./dist/runtime/client/models/UseSubscriptionOptions.js"
-    },
-    "./runtime/client/models/UseSubscriptionReturn": {
-      "source": "./src/runtime/client/models/UseSubscriptionReturn.ts",
-      "default": "./dist/runtime/client/models/UseSubscriptionReturn.js"
-    },
     "./runtime/constants": {
       "source": "./src/runtime/constants.ts",
       "default": "./dist/runtime/constants.js"
     },
-    "./runtime/server/createTRPCEventHandler": {
-      "source": "./src/runtime/server/createTRPCEventHandler.ts",
-      "default": "./dist/runtime/server/createTRPCEventHandler.js"
-    },
-    "./runtime/server/createTRPCWebSocketHandler": {
-      "source": "./src/runtime/server/createTRPCWebSocketHandler.ts",
-      "default": "./dist/runtime/server/createTRPCWebSocketHandler.js"
-    },
-    "./runtime/server/models/PeerWebSocketAdapter": {
-      "source": "./src/runtime/server/models/PeerWebSocketAdapter.ts",
-      "default": "./dist/runtime/server/models/PeerWebSocketAdapter.js"
-    },
-    "./runtime/server/models/TRPCEventHandlerOptions": {
-      "source": "./src/runtime/server/models/TRPCEventHandlerOptions.ts",
-      "default": "./dist/runtime/server/models/TRPCEventHandlerOptions.js"
-    },
     "./runtime/server/models/TRPCWebSocketConnection": {
       "source": "./src/runtime/server/models/TRPCWebSocketConnection.ts",
       "default": "./dist/runtime/server/models/TRPCWebSocketConnection.js"
-    },
-    "./runtime/server/models/TRPCWebSocketHandler": {
-      "source": "./src/runtime/server/models/TRPCWebSocketHandler.ts",
-      "default": "./dist/runtime/server/models/TRPCWebSocketHandler.js"
-    },
-    "./runtime/server/models/TRPCWebSocketHandlerOptions": {
-      "source": "./src/runtime/server/models/TRPCWebSocketHandlerOptions.ts",
-      "default": "./dist/runtime/server/models/TRPCWebSocketHandlerOptions.js"
     },
     "./runtime/server/models/WebSocketServerAdapter": {
       "source": "./src/runtime/server/models/WebSocketServerAdapter.ts",
@@ -178,33 +78,8 @@
       "./runtime/client/getQueryKey": "./dist/runtime/client/getQueryKey.js",
       "./runtime/client/httpBatchLink": "./dist/runtime/client/httpBatchLink.js",
       "./runtime/client/httpLink": "./dist/runtime/client/httpLink.js",
-      "./runtime/client/models/DecoratedMutation": "./dist/runtime/client/models/DecoratedMutation.js",
-      "./runtime/client/models/DecoratedProcedure": "./dist/runtime/client/models/DecoratedProcedure.js",
-      "./runtime/client/models/DecoratedQuery": "./dist/runtime/client/models/DecoratedQuery.js",
-      "./runtime/client/models/DecoratedRouterRecord": "./dist/runtime/client/models/DecoratedRouterRecord.js",
-      "./runtime/client/models/DecoratedSubscription": "./dist/runtime/client/models/DecoratedSubscription.js",
-      "./runtime/client/models/KeysOf": "./dist/runtime/client/models/KeysOf.js",
-      "./runtime/client/models/PickFrom": "./dist/runtime/client/models/PickFrom.js",
-      "./runtime/client/models/ProcedureNode": "./dist/runtime/client/models/ProcedureNode.js",
-      "./runtime/client/models/ProcedurePath": "./dist/runtime/client/models/ProcedurePath.js",
-      "./runtime/client/models/QueryAsyncData": "./dist/runtime/client/models/QueryAsyncData.js",
-      "./runtime/client/models/QueryError": "./dist/runtime/client/models/QueryError.js",
-      "./runtime/client/models/SubscriptionStatus": "./dist/runtime/client/models/SubscriptionStatus.js",
-      "./runtime/client/models/TRPCNuxtClient": "./dist/runtime/client/models/TRPCNuxtClient.js",
-      "./runtime/client/models/UseMutationOptions": "./dist/runtime/client/models/UseMutationOptions.js",
-      "./runtime/client/models/UseMutationReturn": "./dist/runtime/client/models/UseMutationReturn.js",
-      "./runtime/client/models/UseQuery": "./dist/runtime/client/models/UseQuery.js",
-      "./runtime/client/models/UseQueryOptions": "./dist/runtime/client/models/UseQueryOptions.js",
-      "./runtime/client/models/UseSubscriptionOptions": "./dist/runtime/client/models/UseSubscriptionOptions.js",
-      "./runtime/client/models/UseSubscriptionReturn": "./dist/runtime/client/models/UseSubscriptionReturn.js",
       "./runtime/constants": "./dist/runtime/constants.js",
-      "./runtime/server/createTRPCEventHandler": "./dist/runtime/server/createTRPCEventHandler.js",
-      "./runtime/server/createTRPCWebSocketHandler": "./dist/runtime/server/createTRPCWebSocketHandler.js",
-      "./runtime/server/models/PeerWebSocketAdapter": "./dist/runtime/server/models/PeerWebSocketAdapter.js",
-      "./runtime/server/models/TRPCEventHandlerOptions": "./dist/runtime/server/models/TRPCEventHandlerOptions.js",
       "./runtime/server/models/TRPCWebSocketConnection": "./dist/runtime/server/models/TRPCWebSocketConnection.js",
-      "./runtime/server/models/TRPCWebSocketHandler": "./dist/runtime/server/models/TRPCWebSocketHandler.js",
-      "./runtime/server/models/TRPCWebSocketHandlerOptions": "./dist/runtime/server/models/TRPCWebSocketHandlerOptions.js",
       "./runtime/server/models/WebSocketServerAdapter": "./dist/runtime/server/models/WebSocketServerAdapter.js",
       "./package.json": "./package.json"
     },

@@ -27,12 +27,15 @@ If neither holds, the subpath is a duplicate or a leftover, and it goes.
 
 A removed export breaks any published consumer, so it waits for a major version or a `BREAKING CHANGE` footer, unless the package is experimental and its README says so, in which case it can go in a minor release. Check before removing: no repo consumer (`git grep` for the specifier across `apps`, `packages` and `scripts`), no README naming it, and the entry's own use (a bin or worker keeps its build entry even when the export goes).
 
+A Nuxt module's runtime arms are generated from its unbundled runtime glob, so a removed arm is excluded in the package's `tsdown.config.ts` through `exports.exclude`. Editing `package.json` by hand is undone by the next build. `mergeConfig` replaces the factory's exclude list rather than extending it, so the factory's `runtime/**/services/**` is repeated in each config.
+
 ## Worked decisions
 
-| Package                    | Subpath             | Decision                   | Reason                                                                                                                     |
-| :------------------------- | :------------------ | :------------------------- | :------------------------------------------------------------------------------------------------------------------------- |
-| `vue-pdfjs-headless`       | `xfdf`              | removed                    | rule 1 failed: no consumer, duplicated the barrel                                                                          |
-| `agent-console-server`     | `cli`               | export removed, entry kept | the export ran a program on import; the bin runs `dist/cli.js` by path                                                     |
-| `vue-grid-layout-headless` | `placement`         | removed                    | no consumer once the dashboard moved to `useGridLayout`; the README naming it describes the entry, so it is not a consumer |
-| `genshin-interface`        | `constants`, `save` | kept                       | Node scripts import them without the Vue root                                                                              |
-| `agent-console-server`     | `contracts`         | kept                       | the web app imports the wire contract without the Node half                                                                |
+| Package                                                   | Subpath                                   | Decision                   | Reason                                                                                                                            |
+| :-------------------------------------------------------- | :---------------------------------------- | :------------------------- | :-------------------------------------------------------------------------------------------------------------------------------- |
+| `vue-pdfjs-headless`                                      | `xfdf`                                    | removed                    | rule 1 failed: no consumer, duplicated the barrel                                                                                 |
+| `agent-console-server`                                    | `cli`                                     | export removed, entry kept | the export ran a program on import; the bin runs `dist/cli.js` by path                                                            |
+| `vue-grid-layout-headless`                                | `placement`                               | removed                    | no consumer once the dashboard moved to `useGridLayout`; the README naming it describes the entry, so it is not a consumer        |
+| `genshin-interface`                                       | `constants`, `save`                       | kept                       | Node scripts import them without the Vue root                                                                                     |
+| `agent-console-server`                                    | `contracts`                               | kept                       | the web app imports the wire contract without the Node half                                                                       |
+| `trpc-nuxt-module`, `nuxt-security-module`, `tresjs-nuxt` | 27 runtime arms, see the Nuxt-module note | removed                    | the declarations import the model files relatively, and the modules register runtime files by resolved path; the files still ship |
