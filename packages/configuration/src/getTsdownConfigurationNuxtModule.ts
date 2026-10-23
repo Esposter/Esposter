@@ -12,7 +12,7 @@ import { mergeConfig } from "tsdown";
 // It import it relatively, but it stays out of the `exports` map, so the public surface is the functions a consumer
 // Calls and the `models` that type them. A test, benchmark, fixture or reference beside a runtime file is no entry,
 // By the same list the barrels exclude. A package adds the runtime files its own `exports` map leaves out.
-export const getTsdownConfigurationNuxtModule = (excludedExports: string[] = []): UserConfig =>
+export const getTsdownConfigurationNuxtModule = (excludedExports: string[]): UserConfig =>
   mergeConfig(getTsdownConfigurationNode({ exportsGeneration: "none" }), {
     entry: [
       { index: "src/module.ts" },
