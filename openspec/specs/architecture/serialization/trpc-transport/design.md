@@ -7,7 +7,7 @@ The transformer lives in `apps/web/shared/services/trpc/transformer.ts`. `regist
 ```ts
 SuperJSON.registerCustom(
   {
-    isApplicable: (value) => value instanceof getJSONClass(name),
+    isApplicable: (value) => getJSONClasses(name).some((jsonClass) => value instanceof jsonClass),
     serialize: (value) => JSON.stringify(value),
     deserialize: (data) => new (getJSONClass(name))(jsonDateParse(data as string)),
   },
