@@ -25,7 +25,7 @@ How it works, from a builder's publish to a reader's fetch, the full lifecycle a
 - **A reader is `readGameData(base, key, schema)` or `readGameDataEntry(base, indexKey, id, schema)`**, its key typed off the lock and its schema `satisfies z.ZodType<T>` (the `zod` skill); a record holding several tables is parsed per field, each reader taking only its own.
 - **A record is awaited at a boundary and handed down**, as a prop or an argument, and every function over it stays pure and synchronous: the world's gate (`WorldTables`), `GameOpening`, or the screen or system that first needs it (`references/readers-and-boundaries.md`).
 - **The base is a required `gameDataBaseUrl` prop or argument**, never injected and never defaulted, so a screen mounted without it fails typecheck.
-- **A step in `scripts` reads another step's publish through the lock on disk** (`readPublishedGameData`, or `readWorldData` for a world data file), never through `genshin-world`'s build, which `tsx` may load stale.
+- **A step in `scripts` reads another step's publish through the lock on disk** (`readPublishedGameData`, or `readWorldData` for a world data file), never through `genshin-world`'s build, which `vpx` may load stale.
 - **A suite or fixture reads at `GAME_DATA_LOCAL_BASE_URL`**, which the vitest setup and the parity page's middleware answer from the mirror; CI fills the mirror ahead of the shards, keyed on the lock, so a new key needs nothing of a test but its read.
 - **`pnpm -C scripts genshin:data verify` follows every publish**, and must pass on both accounts (`references/verify-and-retirement.md`).
 

@@ -134,7 +134,7 @@ flowchart TD
   Fetch -->|"HTTP error or timeout"| Failure["rejects: the memo drops it, the caller logs it, and the gate keeps the world shut"]
 ```
 
-A step in `scripts` reads what another step published through the lock on disk, from the dev account (`readPublishedGameData`, or `readPublishedGameDataEntries` for some of an index's entries), never through genshin-world's build, which a step running under `tsx` may load stale. Every such read goes through the machine-wide content cache (`readPublishedGameDataObject`), so the dev account serves an object once per machine however many steps, loops and worktrees read it. A world data file a fit or a parity loop reads is read through the lock first (`readWorldData`): the record the lock names under its path less `.json`, and the file the package keeps only where the lock names nothing, as for the region data and the authored sources.
+A step in `scripts` reads what another step published through the lock on disk, from the dev account (`readPublishedGameData`, or `readPublishedGameDataEntries` for some of an index's entries), never through genshin-world's build, which a step running under `vpx` may load stale. Every such read goes through the machine-wide content cache (`readPublishedGameDataObject`), so the dev account serves an object once per machine however many steps, loops and worktrees read it. A world data file a fit or a parity loop reads is read through the lock first (`readWorldData`): the record the lock names under its path less `.json`, and the file the package keeps only where the lock names nothing, as for the region data and the authored sources.
 
 ## Updating
 

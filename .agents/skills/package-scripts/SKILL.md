@@ -21,9 +21,9 @@ description: Apply when running or recommending any pnpm script. Esposter's pnpm
 
 `pnpm i` after a manifest change, `pnpm test` for the whole suite once (the ban on running it locally is the `testing` skill's, `references/running-the-suite.md`), `build:packages` for the libraries as a set, `pnpm release` for the nightly release CI runs, and `vp run lint:unused` for knip; the `ai:<domain>:<verb>` scripts no human types are `references/ai-scripts.md`.
 
-## A `.ts` script runs under `node` where it can, `tsx` where it cannot — `references/typescript-scripts.md`
+## A `.ts` script runs under `node` where it can, `vpx` where it cannot — `references/typescript-scripts.md`
 
-Node strips types natively; an `enum`, a tsconfig alias or an extensionless import moves the script to `tsx`, and the code is never bent to fit `node`.
+Node strips types natively; an `enum`, a tsconfig alias or an extensionless import moves the script to `vpx`, and the code is never bent to fit `node`.
 
 ## `"scriptsComments"` — `references/scripts-comments.md`
 

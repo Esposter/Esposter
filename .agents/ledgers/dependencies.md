@@ -206,7 +206,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `three-globe`                           | —                     | Keep — engine     | the globe                                                                                              |
 | `three-mesh-bvh`                        | 2026-10-11 · Opus 5.5 | Keep — engine     | the landmark collider's bounding volume hierarchy                                                      |
 | `tsdown`                                | —                     | Keep — tooling    | the package bundler                                                                                    |
-| `tsx`                                   | —                     | Keep — tooling    | runs TypeScript with enums, which node's type stripping refuses                                        |
 | `type-fest`                             | —                     | Keep — types      | type utilities                                                                                         |
 | `typescript`                            | —                     | Keep — tooling    | the compiler                                                                                           |
 | `unicode-emoji-json`                    | —                     | Keep — data       | the emoji list, tracking Unicode                                                                       |
@@ -216,7 +215,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `unstorage`                             | —                     | Keep — hold       | Nitro 3 resolves it from the app for its key-value mounts (`@TODO` in the catalog)                     |
 | `vite`                                  | —                     | Keep — tooling    | the dev server and bundler                                                                             |
 | `vite-plugin-glsl`                      | —                     | Keep — tooling    | the shader plugin the module loads only when its glsl option is on, an optional peer                   |
-| `vite-plus`                             | —                     | Keep — tooling    | the task runner, lint and format                                                                       |
+| `vite-plus`                             | —                     | Keep — tooling    | the task runner, lint, format and the `vpx` script runner                                              |
 | `vitest`                                | —                     | Keep — tooling    | the test runner                                                                                        |
 | `vitest-browser-vue`                    | —                     | Keep — tooling    | browser-mode component tests                                                                           |
 | `vue`                                   | —                     | Keep — framework  | the UI framework                                                                                       |

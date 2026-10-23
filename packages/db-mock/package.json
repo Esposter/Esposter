@@ -56,7 +56,7 @@
     "build": "tsdown",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "snapshot:gen": "tsx scripts/generateSnapshot.ts",
+    "snapshot:gen": "vpx scripts/generateSnapshot.ts",
     "test": "vitest",
     "typecheck": "tsc"
   },
@@ -64,8 +64,7 @@
     "@esposter/configuration": "workspace:*",
     "@types/node": "catalog:",
     "drizzle-kit": "catalog:",
-    "tsdown": "catalog:",
-    "tsx": "catalog:"
+    "tsdown": "catalog:"
   },
   "peerDependencies": {
     "@electric-sql/pglite": "catalog:",

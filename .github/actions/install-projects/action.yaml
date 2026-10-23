@@ -14,7 +14,7 @@ inputs:
 runs:
   using: composite
   steps:
-    # The root `{.}` rides along with any selector, because the toolchain (`vite-plus`, `vitest`, `oxlint`, `tsx`,
+    # The root `{.}` rides along with any selector, because the toolchain (`vite-plus`, `vitest`, `oxlint`,
     # the `typescript` alias) is declared there —
     # `openspec/specs/architecture/monorepo-tooling/design.md` → `## CI job shape` has why `includeWorkspaceRoot`
     # is refused.

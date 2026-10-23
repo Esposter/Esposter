@@ -1,25 +1,25 @@
 # Running a TypeScript Script
 
 Read when adding a `.ts` script to a package or choosing what runs it. The rule itself is in `SKILL.md` — `node`
-where it can, `tsx` where it cannot, and the code is never bent to fit `node`; this page is where the line falls.
+where it can, `vpx` where it cannot, and the code is never bent to fit `node`; this page is where the line falls.
 
-## `node` where it can, `tsx` where it cannot
+## `node` where it can, `vpx` where it cannot
 
 Node strips types natively and runs a plain `.ts` file with no loader and no devDependency, so a new script is
-`node path/to/index.ts` first. What its stripping cannot do, each of which moves the script to `tsx`:
+`node path/to/index.ts` first. What its stripping cannot do, each of which moves the script to `vpx`:
 
 - **An `enum`** — stripping cannot transform one, and the script dies at startup with
   "ERR_UNSUPPORTED_TYPESCRIPT_SYNTAX". An enum is this repo's default shape for a categorical value
   (the `typescript` skill, `references/enums.md`), so this is the common trigger.
 - **A tsconfig `paths` alias** — node resolves `imports` subpaths and nothing else, so `@/models/…` is a bare
   specifier it goes looking for in `node_modules`. `apps/web/scripts/*` reaches app source through the
-  Nuxt-generated `@/*`, `@@/*` and `#shared/*`, so every script there runs under `tsx --tsconfig tsconfig.root.json`.
-- **An extensionless relative import** (`../src/constants`) — node wants the extension, tsx does not. Banned
+  Nuxt-generated `@/*`, `@@/*` and `#shared/*`, so every script there runs under `vpx --tsconfig tsconfig.root.json`.
+- **An extensionless relative import** (`../src/constants`) — node wants the extension, vpx does not. Banned
   anyway, since a script addresses its package through `#src/*` (the `file-organization` skill, `references/import-aliases.md`).
 
 **The code is never bent to reach `node`.** A union written where the enum belonged, or a relative path written
 where the alias belonged, is a convention bent to suit a loader; the runner is picked to fit the code, so the
-script that needs one of these declares `tsx` as a devDependency of its package and runs under it. A script
+script that needs one of these runs under `vpx`, the bin of the root's `vite-plus` devDependency that every workspace script finds on its PATH, so no package declares a runner of its own. A script
 already on `node` moves the day an import it reaches — its own or one several hops away — gains an enum, which
 is a startup crash rather than a type error; `scripts/src/workspace/packageScripts.test.ts` strips every module a
 `node` entry reaches with node's own stripper, and fails on the first one it cannot run. The root declares none: it owns no `.ts` script of its own, and
