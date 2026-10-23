@@ -2376,6 +2376,9 @@ importers:
       '@esposter/shared':
         specifier: workspace:*
         version: link:../shared
+      neverthrow:
+        specifier: 'catalog:'
+        version: 8.2.0
       pdfjs-dist:
         specifier: 'catalog:'
         version: 6.4.299

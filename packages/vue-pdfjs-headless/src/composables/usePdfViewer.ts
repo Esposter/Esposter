@@ -12,6 +12,7 @@ import type {
 import type { MaybeRefOrGetter } from "vue";
 
 import { usePdfZoomGesture } from "#src/composables/usePdfZoomGesture";
+import { PdfEditorMode } from "#src/models/PdfEditorMode";
 import {
   PDF_FULL_TURN,
   PDF_MAX_CANVAS_AREA,
@@ -19,6 +20,7 @@ import {
   PDF_MIME_TYPE,
   PDF_ROTATION_STEP,
 } from "#src/services/constants";
+import { getDownloadBytes } from "#src/services/getDownloadBytes";
 import { renderPrintSheets } from "#src/services/renderPrintSheets";
 import { downloadFile, getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 import { computed, onScopeDispose, ref, shallowRef, toValue, watch } from "vue";
@@ -37,6 +39,8 @@ interface UsePdfViewerOptions {
   viewer: MaybeRefOrGetter<HTMLDivElement | undefined>;
   // The renderer's viewer module, the components its viewer is built from
   viewerApi: MaybeRefOrGetter<PdfViewerApi | undefined>;
+  // The text stamped on every page of a download, which the document on screen does not carry
+  watermark?: MaybeRefOrGetter<string | undefined>;
 }
 
 // Builds the renderer's viewer for a loaded document on the consumer's container.
@@ -47,8 +51,10 @@ export const usePdfViewer = ({
   pdfDocument,
   viewer,
   viewerApi,
+  watermark,
 }: UsePdfViewerOptions): PdfViewerState => {
   const currentPageNumber = ref(0);
+  const editorMode = ref(PdfEditorMode.None);
   const isFullscreen = ref(false);
   const isMatchCase = ref(false);
   const isNotFound = ref(false);
@@ -179,6 +185,8 @@ export const usePdfViewer = ({
     isNotFound.value = false;
     if (!loaded) return;
 
+    // The renderer's mode is reset with its document, so the mode the consumer chose is set again on each one
+    pdfViewer.annotationEditorMode = { mode: editorMode.value };
     loadOutline(loaded);
     const terms = toValue(highlightTerms);
     if (terms.length > 0) findText({ query: terms });
@@ -252,8 +260,7 @@ export const usePdfViewer = ({
     if (!downloaded) return;
 
     await getResultAsync(async () => {
-      // The bytes may sit on a shared buffer, which a Blob does not take, so the download is a copy
-      downloadFile(filename, new Uint8Array(await downloaded.getData()), PDF_MIME_TYPE);
+      downloadFile(filename, await getDownloadBytes(downloaded, toValue(watermark)), PDF_MIME_TYPE);
     }).match(noop, console.error);
   });
   const print = getSynchronizedFunction(async () => {
@@ -288,6 +295,10 @@ export const usePdfViewer = ({
       applyDocument(loaded);
     },
   );
+  watch(editorMode, (mode) => {
+    // The renderer reads its document to leave a mode, so a mode set before a document loads waits for applyDocument
+    if (pdfViewer && toValue(pdfDocument)) pdfViewer.annotationEditorMode = { mode };
+  });
   watch([searchQuery, isMatchCase, isWholeWord], () => {
     findText({ query: searchQuery.value });
   });
@@ -306,6 +317,7 @@ export const usePdfViewer = ({
     actualSize,
     currentPageNumber,
     download,
+    editorMode,
     findNext,
     findPrevious,
     fitPage,

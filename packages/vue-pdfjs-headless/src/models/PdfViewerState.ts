@@ -1,3 +1,4 @@
+import type { PdfEditorMode } from "#src/models/PdfEditorMode";
 import type { PdfMatchesCount } from "#src/models/PdfMatchesCount";
 import type { PdfOutline } from "#src/models/PdfOutline";
 import type { PdfPageOverlay } from "#src/models/PdfPageOverlay";
@@ -7,6 +8,7 @@ export interface PdfViewerState {
   actualSize: () => void;
   currentPageNumber: Ref<number>;
   download: (filename: string) => void;
+  editorMode: Ref<PdfEditorMode>;
   findNext: () => void;
   findPrevious: () => void;
   fitPage: () => void;

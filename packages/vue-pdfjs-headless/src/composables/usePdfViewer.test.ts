@@ -5,11 +5,36 @@ import type { PageViewport, PDFDocumentProxy, PDFPageProxy, RenderTask } from "p
 import type { MaybeRefOrGetter } from "vue";
 
 import { usePdfViewer } from "#src/composables/usePdfViewer";
-import { PDF_MAX_SCALE, PDF_PRINT_CLASS, PDF_ROTATION_STEP } from "#src/services/constants";
+import { PdfEditorMode } from "#src/models/PdfEditorMode";
+import {
+  PDF_MAX_SCALE,
+  PDF_PRINT_CLASS,
+  PDF_ROTATION_STEP,
+  PDF_WATERMARK_COLOR,
+  PDF_WATERMARK_FONT_SIZE,
+} from "#src/services/constants";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 import { effectScope, nextTick, shallowRef } from "vue";
 
+// The renderer's annotation storage: a change or a watermark is written into it, and the save reads it
+const createAnnotationStorage = () => {
+  const entries = new Map<string, unknown>();
+
+  return {
+    entries,
+    remove: (key: string) => {
+      entries.delete(key);
+    },
+    setValue: (key: string, value: unknown) => {
+      entries.set(key, value);
+    },
+    get size() {
+      return entries.size;
+    },
+    [Symbol.iterator]: () => entries.entries(),
+  };
+};
 const stubPrint = () => {
   const print = vi.fn<() => void>();
   vi.stubGlobal("print", print);
@@ -55,12 +80,13 @@ describe(usePdfViewer, () => {
   // The stubs keep the last viewer and link service they made, so a test can move the viewer or read what the composable asked of it
   const stubs: {
     abortSignal?: AbortSignal;
+    editorModes: number[];
     eventBus?: EventBusStub;
     findEvents: unknown[];
     linkService?: LinkServiceStub;
     scaleWrites: unknown[];
     viewer?: PdfViewerStub;
-  } = { findEvents: [], scaleWrites: [] };
+  } = { editorModes: [], findEvents: [], scaleWrites: [] };
   // How many matches the stub document holds for any search
   let matches = 0;
 
@@ -114,6 +140,13 @@ describe(usePdfViewer, () => {
       hasPages = true;
     });
     const viewer = {
+      // The renderer's mode is set as an object, and each mode it is set to is kept for a test to read
+      get annotationEditorMode() {
+        return { mode: stubs.editorModes.at(-1) ?? PdfEditorMode.None };
+      },
+      set annotationEditorMode({ mode }: { mode: number }) {
+        stubs.editorModes.push(mode);
+      },
       get currentPageNumber() {
         return currentPageNumber;
       },
@@ -208,12 +241,18 @@ describe(usePdfViewer, () => {
   // A document with no outline resolves to null, which the viewer reads as no bookmarks
   const createDocument = (numPages: number, page = createPage(), outline: null | PdfOutline = null): PDFDocumentProxy =>
     ({
+      annotationStorage: createAnnotationStorage(),
       getData: vi.fn<PDFDocumentProxy["getData"]>(() => Promise.resolve(new Uint8Array([1, 2, 3]))),
       getOutline: vi.fn<() => Promise<null | PdfOutline>>(() => Promise.resolve(outline)),
       getPage: vi.fn<PDFDocumentProxy["getPage"]>(() => Promise.resolve(page)),
       numPages,
+      saveDocument: vi.fn<PDFDocumentProxy["saveDocument"]>(() => Promise.resolve(new Uint8Array([4, 5, 6]))),
     }) as unknown as PDFDocumentProxy;
-  const mountViewer = (pdfDocument: MaybeRefOrGetter<PDFDocumentProxy | undefined>, highlightTerms: string[] = []) => {
+  const mountViewer = (
+    pdfDocument: MaybeRefOrGetter<PDFDocumentProxy | undefined>,
+    highlightTerms: string[] = [],
+    watermark?: string,
+  ) => {
     const container = window.document.createElement("div");
     const scope = effectScope();
     const state = scope.run(() =>
@@ -223,6 +262,7 @@ describe(usePdfViewer, () => {
         pdfDocument,
         viewer: window.document.createElement("div"),
         viewerApi: createViewerApi(),
+        watermark,
       }),
     );
     assert(state);
@@ -235,6 +275,7 @@ describe(usePdfViewer, () => {
   beforeEach(() => {
     vi.stubGlobal("ResizeObserver", ResizeObserverStub);
     matches = 0;
+    stubs.editorModes = [];
     stubs.findEvents = [];
     stubs.scaleWrites = [];
   });
@@ -372,6 +413,103 @@ describe(usePdfViewer, () => {
 
     expect(downloadName).toBe("report.pdf");
     expect(new Uint8Array(await blob.arrayBuffer())).toStrictEqual(new Uint8Array([1, 2, 3]));
+    scope.stop();
+  });
+
+  test("an unedited document downloads its original bytes", async () => {
+    expect.hasAssertions();
+
+    const createObjectURL = vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:document");
+    vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => {});
+    vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+    const pdfDocument = createDocument(3);
+    const { scope, state } = mountViewer(pdfDocument);
+    state.download("report.pdf");
+    await flushPromises();
+    const [blob] = createObjectURL.mock.calls[0] ?? [];
+    assert(blob instanceof Blob);
+
+    expect(pdfDocument.saveDocument).not.toHaveBeenCalled();
+    expect(new Uint8Array(await blob.arrayBuffer())).toStrictEqual(new Uint8Array([1, 2, 3]));
+    scope.stop();
+  });
+
+  test("#268 Filling a form and downloading it", async () => {
+    expect.hasAssertions();
+
+    const createObjectURL = vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:document");
+    vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => {});
+    vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+    const pdfDocument = createDocument(3);
+    const { scope, state } = mountViewer(pdfDocument);
+    // The renderer keys a field's value by the field's id, which its input writes under that id
+    pdfDocument.annotationStorage.setValue("4R", { value: "Typed" });
+    state.download("report.pdf");
+    await flushPromises();
+    const [blob] = createObjectURL.mock.calls[0] ?? [];
+    assert(blob instanceof Blob);
+
+    expect(pdfDocument.saveDocument).toHaveBeenCalledTimes(1);
+    expect(new Uint8Array(await blob.arrayBuffer())).toStrictEqual(new Uint8Array([4, 5, 6]));
+    scope.stop();
+  });
+
+  test("#37 A watermarked download", async () => {
+    expect.hasAssertions();
+
+    const createObjectURL = vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:document");
+    vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => {});
+    vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => {});
+    const pdfDocument = createDocument(3);
+    // The watermark is stored only while the renderer saves, so the entries it sees are read at the save
+    const storedAtSave: [string, unknown][] = [];
+    vi.mocked(pdfDocument.saveDocument).mockImplementation(() => {
+      storedAtSave.push(...pdfDocument.annotationStorage);
+
+      return Promise.resolve(new Uint8Array([4, 5, 6]));
+    });
+    const { scope, state } = mountViewer(pdfDocument, [], "DRAFT");
+    state.download("report.pdf");
+    await flushPromises();
+
+    // Each page's watermark is centred on the page's height, PAGE_WIDTH wide and the font size tall
+    const watermarkRect = [
+      0,
+      PAGE_HEIGHT / 2 - PDF_WATERMARK_FONT_SIZE / 2,
+      PAGE_WIDTH,
+      PAGE_HEIGHT / 2 + PDF_WATERMARK_FONT_SIZE / 2,
+    ];
+
+    expect(storedAtSave.map(([, entry]) => entry)).toStrictEqual(
+      [0, 1, 2].map((pageIndex) => ({
+        annotationElementId: `watermark${pageIndex}`,
+        annotationType: PdfEditorMode.FreeText,
+        color: PDF_WATERMARK_COLOR,
+        deleted: false,
+        fontSize: PDF_WATERMARK_FONT_SIZE,
+        id: `watermark${pageIndex}`,
+        pageIndex,
+        rect: watermarkRect,
+        rotation: 0,
+        value: "DRAFT",
+      })),
+    );
+    expect(pdfDocument.annotationStorage.size).toBe(0);
+    expect(createObjectURL).toHaveBeenCalledTimes(1);
+    scope.stop();
+  });
+
+  test("#68 Switching the editor mode", async () => {
+    expect.hasAssertions();
+
+    const { scope, state } = mountViewer(createDocument(3));
+    state.editorMode.value = PdfEditorMode.Ink;
+    await nextTick();
+    state.editorMode.value = PdfEditorMode.None;
+    await nextTick();
+
+    // The document's load sets the mode it starts from, which is none
+    expect(stubs.editorModes).toStrictEqual([PdfEditorMode.None, PdfEditorMode.Ink, PdfEditorMode.None]);
     scope.stop();
   });
 

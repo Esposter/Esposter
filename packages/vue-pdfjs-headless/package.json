@@ -36,11 +36,16 @@
       "source": "./src/index.ts",
       "default": "./dist/index.js"
     },
+    "./xfdf": {
+      "source": "./src/xfdf/index.ts",
+      "default": "./dist/xfdf.js"
+    },
     "./package.json": "./package.json"
   },
   "publishConfig": {
     "exports": {
       ".": "./dist/index.js",
+      "./xfdf": "./dist/xfdf.js",
       "./package.json": "./package.json"
     },
     "access": "public"
@@ -53,7 +58,8 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@esposter/shared": "workspace:*"
+    "@esposter/shared": "workspace:*",
+    "neverthrow": "catalog:"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",

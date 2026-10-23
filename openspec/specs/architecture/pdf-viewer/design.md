@@ -28,7 +28,7 @@ flowchart TD
 - **The renderer loads after mount.** `loadPdfRenderer` imports `pdfjs-dist` in the browser only, so nothing renders on the server and no module import runs at load. The viewer's components load only when a viewer mounts, so an attachment that is never opened loads no viewer code.
 - **The renderer's data is served from its own install.** The character maps, the standard fonts and the image decoders' WebAssembly are Nitro public assets mounted from `pdfjs-dist`'s own folders, as the Temporal polyfill is mounted from its install, under base URLs named once as constants the loader reads too. They move with the renderer's version in the lockfile, so no committed copy is kept, and the control-character sweep needs no exclusion for one. Rejected: copying the folders in a build step, which is the committed copy again under another name.
 - **The page itself is drawn as authored in either theme, and the chrome around it follows the app's.**
-- **The dialog draws the controls an attachment's reader uses.** Download and print are the package's, and the toolbar's buttons call them. The thumbnail sidebar, bookmarks and fullscreen are built by the package and drawn by the dialog once an attachment needs them. Annotation editing and comments are the [PDF annotations change](../../../changes/vue-pdfjs-headless-annotations/design.md)'s.
+- **The dialog draws the controls an attachment's reader uses.** Download and print are the package's, and the toolbar's buttons call them. The thumbnail sidebar, bookmarks and fullscreen are built by the package and drawn by the dialog once an attachment needs them. Annotation editing and comments are the [PDF annotations change](../../vue-pdfjs-headless/annotations/design.md)'s.
 
 ## Key files
 
