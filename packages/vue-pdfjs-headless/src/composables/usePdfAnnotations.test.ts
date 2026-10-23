@@ -3,6 +3,7 @@ import type { PdfAnnotationChange } from "#src/models/PdfAnnotationChange";
 import type { PdfViewerState } from "#src/models/PdfViewerState";
 import type { PDFDocumentProxy } from "pdfjs-dist";
 
+import { createAnnotationStorage } from "#src/composables/createAnnotationStorage.fixture";
 import { usePdfAnnotations } from "#src/composables/usePdfAnnotations";
 import { PdfEditorMode } from "#src/models/PdfEditorMode";
 import { writeXfdf } from "#src/xfdf/writeXfdf";
@@ -16,20 +17,6 @@ interface TestAnnotation {
   subtype: string;
 }
 
-// The renderer's annotation storage, which an editor is stored in as it is drawn and an imported free text is written into
-const createAnnotationStorage = () => {
-  const entries = new Map<string, unknown>();
-
-  return {
-    setValue: (key: string, value: unknown) => {
-      entries.set(key, value);
-    },
-    get size() {
-      return entries.size;
-    },
-    [Symbol.iterator]: () => entries.entries(),
-  };
-};
 // A document whose pages hold the given annotations, and whose storage the composable can take the editor hook of
 const createDocument = (pagesAnnotations: TestAnnotation[][]) =>
   ({

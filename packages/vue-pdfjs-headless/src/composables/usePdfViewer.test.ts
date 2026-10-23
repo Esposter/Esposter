@@ -4,6 +4,7 @@ import type { PdfViewerApi } from "#src/models/PdfViewerApi";
 import type { PageViewport, PDFDocumentProxy, PDFPageProxy, RenderTask } from "pdfjs-dist";
 import type { MaybeRefOrGetter } from "vue";
 
+import { createAnnotationStorage } from "#src/composables/createAnnotationStorage.fixture";
 import { usePdfViewer } from "#src/composables/usePdfViewer";
 import { PdfEditorMode } from "#src/models/PdfEditorMode";
 import {
@@ -17,24 +18,6 @@ import { flushPromises } from "@vue/test-utils";
 import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 import { effectScope, nextTick, shallowRef } from "vue";
 
-// The renderer's annotation storage: a change or a watermark is written into it, and the save reads it
-const createAnnotationStorage = () => {
-  const entries = new Map<string, unknown>();
-
-  return {
-    entries,
-    remove: (key: string) => {
-      entries.delete(key);
-    },
-    setValue: (key: string, value: unknown) => {
-      entries.set(key, value);
-    },
-    get size() {
-      return entries.size;
-    },
-    [Symbol.iterator]: () => entries.entries(),
-  };
-};
 const stubPrint = () => {
   const print = vi.fn<() => void>();
   vi.stubGlobal("print", print);
