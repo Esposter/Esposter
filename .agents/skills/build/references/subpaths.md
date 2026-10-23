@@ -2,13 +2,12 @@
 
 Read when adding a subpath export or entry to a package, removing one, or a review asks why a package has one. The flat `.` export is the default (`references/barrels.md`); a subpath has to earn its place by one of the reasons below. `SKILL.md` says only that the default is the shape; this page is the test.
 
-## A subpath earns its place by one of three things
+## A subpath earns its place by one of two things
 
-1. **A consumer needs part of the package without the rest, and the rest costs it something.** The cost is concrete: a framework or peer it does not have (a Node script or a server importing a module that pulls in Vue), a heavy dependency, a bundle size a worker must stay under, or a browser-only or Node-only half a sibling must not load. Name the consumer. `packages/genshin-interface/constants` is imported by `scripts/` and `packages/genshin-world/parity/*` by `scripts/`, both in Node, neither able to load the Vue components the root entry carries.
+1. **A consumer needs part of the package without the rest, and the rest costs it something.** The cost is concrete: a framework or peer it does not have (a Node script or a server importing a module that pulls in Vue), a heavy dependency, a bundle size a worker must stay under, or a browser-only or Node-only half a sibling must not load. Name the consumer. The `constants` subpath of `genshin-interface` and the `parity` subpaths of `genshin-world` are imported by `scripts/`, which runs in Node and cannot load the Vue components the root entry carries.
 2. **The entry is loaded by path, not imported.** A worker loaded by URL, a bin's compiled file, a Nuxt module's runtime, a Vitest reporter or bench file. These need an entry in the build, and some need an export arm too (`genshin-engine/terrainWorker`, `shared-node/reporter`). The consumer names the file, so the entry is the contract.
-3. **It is already public and documented.** A subpath a package's README names as a public entry stays until a major version says otherwise. `vue-grid-layout-headless/placement` is documented as the pure placement functions' entry, so it stays.
 
-If none of the three holds, the subpath is a duplicate or a leftover, and it goes.
+If neither holds, the subpath is a duplicate or a leftover, and it goes.
 
 ## What never earns one
 
@@ -26,14 +25,14 @@ If none of the three holds, the subpath is a duplicate or a leftover, and it goe
 
 ## Removing one
 
-A removed export is a breaking change for any published consumer, so it is a major version or a `BREAKING CHANGE` footer, and the commit says which consumer it checked. Check three things before removing: no repo consumer (`git grep` for the specifier across `apps`, `packages` and `scripts`), no README naming it, and the entry's own use (a bin or worker keeps its build entry even when the export goes).
+A removed export breaks any published consumer, so it waits for a major version or a `BREAKING CHANGE` footer, unless the package is experimental and its README says so, in which case it can go in a minor release. Check before removing: no repo consumer (`git grep` for the specifier across `apps`, `packages` and `scripts`), no README naming it, and the entry's own use (a bin or worker keeps its build entry even when the export goes).
 
 ## Worked decisions
 
-| Package                    | Subpath             | Decision                   | Reason                                                                 |
-| :------------------------- | :------------------ | :------------------------- | :--------------------------------------------------------------------- |
-| `vue-pdfjs-headless`       | `xfdf`              | removed                    | rule 1 failed: no consumer, duplicated the barrel                      |
-| `agent-console-server`     | `cli`               | export removed, entry kept | the export ran a program on import; the bin runs `dist/cli.js` by path |
-| `vue-grid-layout-headless` | `placement`         | kept                       | documented public entry; no repo consumer but the README names it      |
-| `genshin-interface`        | `constants`, `save` | kept                       | Node scripts import them without the Vue root                          |
-| `agent-console-server`     | `contracts`         | kept                       | the web app imports the wire contract without the Node half            |
+| Package                    | Subpath             | Decision                   | Reason                                                                                                                     |
+| :------------------------- | :------------------ | :------------------------- | :------------------------------------------------------------------------------------------------------------------------- |
+| `vue-pdfjs-headless`       | `xfdf`              | removed                    | rule 1 failed: no consumer, duplicated the barrel                                                                          |
+| `agent-console-server`     | `cli`               | export removed, entry kept | the export ran a program on import; the bin runs `dist/cli.js` by path                                                     |
+| `vue-grid-layout-headless` | `placement`         | removed                    | no consumer once the dashboard moved to `useGridLayout`; the README naming it describes the entry, so it is not a consumer |
+| `genshin-interface`        | `constants`, `save` | kept                       | Node scripts import them without the Vue root                                                                              |
+| `agent-console-server`     | `contracts`         | kept                       | the web app imports the wire contract without the Node half                                                                |

@@ -126,7 +126,7 @@ The declaration build seeds its program from the entry files and follows imports
 
 ## A subpath needs a consumer, a load by path, or a public contract
 
-A package keeps the flat `.` export by default. A subpath export or entry is added only when a consumer needs part of the package without the rest, when the entry is loaded by path (a worker, a bin, a Nuxt runtime, a reporter), or when the subpath is already public and documented. A second bundle that repeats functions the barrel already exports is removed, and so is a program exposed as an export, since importing it would run it. A removed export is a breaking change for published consumers, so it is a major version. `.agents/skills/build/references/subpaths.md` holds the test and the worked decisions.
+A package keeps the flat `.` export by default, and a subpath earns its entry by the test in `.agents/skills/build/references/subpaths.md`: a consumer that cannot take the whole package, or an entry something loads by path (a worker, a bin, a Nuxt runtime, a reporter). A second bundle that repeats functions the barrel already exports is removed, and so is a program exposed as an export, since importing it would run it. A removed export is a breaking change for published consumers, so it waits for a major version unless the package is experimental. `.agents/skills/build/references/subpaths.md` holds the test and the worked decisions.
 
 ## Key files
 
