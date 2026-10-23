@@ -310,4 +310,24 @@ describe(sanitizeHtml, () => {
       }),
     ).toBe("");
   });
+
+  test("ghsa-cg2g-xh64-v4q7: a template expression inside a shadow root is text, and its markup is dropped", () => {
+    expect.hasAssertions();
+
+    expect(
+      sanitizeHtml(`<div><template shadowrootmode="open">{{ 7 * 7 }}<img src=x onerror=alert(1)></template></div>`),
+    ).toBe("<div>{{ 7 * 7 }}</div>");
+  });
+
+  test("ghsa-mrv2-3pqr-j5jr: an event handler is never kept on an allowed element, so no detached subtree keeps one armed", () => {
+    expect.hasAssertions();
+
+    expect(sanitizeHtml(`<p onmouseover="alert(1)">x</p>`)).toBe("<p>x</p>");
+  });
+
+  test("ghsa-c6gr-qvv4-5v3f: an SMIL set of a link's href is dropped with its foreign elements, whatever the media type", () => {
+    expect.hasAssertions();
+
+    expect(sanitizeHtml(`<svg><a><set attributeName="href" to="javascript:alert(1)"></set>x</a></svg>`)).toBe("x");
+  });
 });
