@@ -81,13 +81,12 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
 
 ### Key exports
 
-| Export                                                   | Description                                                                                                     |
-| -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
-| `trpc-nuxt-module`                                       | The module — `router`, `createContext`, `endpoint` and `webSocket` options                                      |
-| `createTRPCNuxtClient`                                   | The typed client, every procedure decorated with `useQuery`, `useLazyQuery`, `useMutation` or `useSubscription` |
-| `httpLink`, `httpBatchLink`                              | tRPC's links, sending through the request event during server rendering                                         |
-| `getQueryKey`, `getMutationKey`                          | The `useAsyncData` keys a procedure's data is cached under, for `useNuxtData` and `refreshNuxtData`             |
-| `trpc-nuxt-module/runtime/server/createTRPCEventHandler` | The HTTP handler over tRPC's fetch adapter, for a Nitro app without Nuxt                                        |
+| Export                          | Description                                                                                                     |
+| ------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| `trpc-nuxt-module`              | The module — `router`, `createContext`, `endpoint` and `webSocket` options                                      |
+| `createTRPCNuxtClient`          | The typed client, every procedure decorated with `useQuery`, `useLazyQuery`, `useMutation` or `useSubscription` |
+| `httpLink`, `httpBatchLink`     | tRPC's links, sending through the request event during server rendering                                         |
+| `getQueryKey`, `getMutationKey` | The `useAsyncData` keys a procedure's data is cached under, for `useNuxtData` and `refreshNuxtData`             |
 
 A WebSocket connection's open and close call the `trpc-nuxt-module:webSocket:open` and `trpc-nuxt-module:webSocket:close` Nitro runtime hooks with its context, typed off your router.
 

@@ -12,7 +12,7 @@ describe("trpc-nuxt-module", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 2.30 KB (2358 bytes)"`);
+    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 2.57 KB (2633 bytes)"`);
   });
 
   test("types size", () => {
