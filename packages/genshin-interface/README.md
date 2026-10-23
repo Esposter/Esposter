@@ -5,8 +5,6 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-> **Experimental.** Its exports, build entries and files may change or be removed in any release, a minor one included. See [Stability](../../openspec/specs/architecture/monorepo-tooling/design.md#stability-every-published-package-is-experimental).
-
 Genshin Impact's interface, rebuilt as an unofficial, non-commercial fan work and not affiliated with HoYoverse. It holds the pieces every screen of the game's is made from, as presentational Vue components:
 
 - `GameScreen`, the root a screen is drawn in: the game's 1920 by 1080 unit, its face and its pointer;

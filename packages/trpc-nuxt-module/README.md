@@ -5,8 +5,6 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-> **Experimental.** Its exports, build entries and files may change or be removed in any release, a minor one included. See [Stability](../../openspec/specs/architecture/monorepo-tooling/design.md#stability-every-published-package-is-experimental).
-
 tRPC for [Nuxt](https://nuxt.com). A Nuxt module that registers your router's HTTP handler — and, when you ask for it, a WebSocket handler over Nitro's own WebSockets — fetches through the request event during server rendering so a call never leaves the process, and decorates the typed client with `useQuery`, `useLazyQuery`, `useMutation` and `useSubscription`, each a composable over Nuxt's own `useAsyncData`.
 
 ## Table of Contents

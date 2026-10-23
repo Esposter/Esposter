@@ -5,8 +5,6 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-> **Experimental.** Its exports, build entries and files may change or be removed in any release, a minor one included. See [Stability](../../openspec/specs/architecture/monorepo-tooling/design.md#stability-every-published-package-is-experimental).
-
 TresJS for Nuxt — a Nuxt module that auto-imports the TresJS core API, registers TresCanvas for client and server, and registers every installed @tresjs package's components and composables, with no devtools UI of its own.
 
 ## Table of Contents

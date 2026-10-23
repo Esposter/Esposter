@@ -5,8 +5,6 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-> **Experimental.** Its exports, build entries and files may change or be removed in any release, a minor one included. See [Stability](../../openspec/specs/architecture/monorepo-tooling/design.md#stability-every-published-package-is-experimental).
-
 A Claude Code plugin of mods: five drawn as one band above the prompt, in the session character's colour (the next steps one press away, what the session is spending with a one-press handoff, recording mode, a goal's task list and clock, and a question before editing a file another session just changed), a delegation guard that refuses any subagent not on haiku and nudges a run of lookups toward a haiku agent, a disk-scan guard that refuses a Bash scan from a root or a home folder, and a whole-index guard that refuses a git command over the whole index while another session shares the checkout.
 
 - **Waypoints** — after each answered turn, up to three next steps the session suggests, each a button that sends it as the next prompt.

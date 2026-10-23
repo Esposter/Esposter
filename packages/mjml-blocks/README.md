@@ -5,8 +5,6 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-> **Experimental.** Its exports, build entries and files may change or be removed in any release, a minor one included. See [Stability](../../openspec/specs/architecture/monorepo-tooling/design.md#stability-every-published-package-is-experimental).
-
 MJML's components as block types on the headless block editor — each component's attributes, defaults and nesting rules, a render to MJML's JSON form and source, and a read back from MJML, with no framework, DOM or MJML runtime.
 
 ## Table of Contents

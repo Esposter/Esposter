@@ -5,8 +5,6 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-> **Experimental.** Its exports, build entries and files may change or be removed in any release, a minor one included. See [Stability](../../openspec/specs/architecture/monorepo-tooling/design.md#stability-every-published-package-is-experimental).
-
 The parts of Azure's wire contract that both a real client and a fake one have to agree on: the OData filter
 clause vocabulary shared by Table Storage and Search, the entity key casing convention, and the service limits.
 No SDK client is constructed here and no credential is read — this package is pure data and pure functions, so

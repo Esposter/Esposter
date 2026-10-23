@@ -5,8 +5,6 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-> **Experimental.** Its exports, build entries and files may change or be removed in any release, a minor one included. See [Stability](../../openspec/specs/architecture/monorepo-tooling/design.md#stability-every-published-package-is-experimental).
-
 Runs your Claude Code sessions on your own machine and serves them to the [Esposter agent console](https://esposter.com/agent-console) over one WebSocket that admits only the browsers paired with it. Sessions go through the Claude Agent SDK with your own settings, CLAUDE.md, skills, hooks and plugins, and they are written where the terminal writes them, so `claude --resume <id>` picks up a console session and the console picks up a terminal one. The wire is Zod contracts, exported as the `contracts` subpath.
 
 ## Table of Contents

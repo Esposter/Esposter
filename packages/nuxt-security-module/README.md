@@ -5,8 +5,6 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-> **Experimental.** Its exports, build entries and files may change or be removed in any release, a minor one included. See [Stability](../../openspec/specs/architecture/monorepo-tooling/design.md#stability-every-published-package-is-experimental).
-
 Nuxt security module for [Nitro 3](https://nitro.build) and h3 2. It sets security headers on rendered pages, a per-request nonce Content Security Policy with the nonce written onto the page's own tags, subresource integrity, a prerender policy as a `<meta>` element, the framework's `X-Powered-By` header removed, CORS, allowed methods, basic auth and a request size limit.
 
 It replaces [nuxt-security](https://github.com/Baroshem/nuxt-security). Its upstream audit, every issue it was held to, and the defaults it ships are on the documentation page: [nuxt-security-module](https://github.com/Esposter/Esposter/blob/main/openspec/specs/nuxt-security-module/README.md).
