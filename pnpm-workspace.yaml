@@ -187,7 +187,7 @@ catalog:
   jscpd: ^5.4.2
   knip: ^6.42.1
   link-preview-js: ^5.0.1
-  linkifyjs: ^4.3.3
+  linkifyjs: ^4.4.0
   livekit-client: ^2.23.0
   livekit-server-sdk: ^2.19.2
   lowlight: ^3.3.0

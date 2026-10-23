@@ -595,8 +595,8 @@ catalogs:
       specifier: ^5.0.1
       version: 5.0.1
     linkifyjs:
-      specifier: ^4.3.3
-      version: 4.3.3
+      specifier: ^4.4.0
+      version: 4.4.0
     livekit-client:
       specifier: ^2.23.0
       version: 2.23.0
@@ -1693,7 +1693,7 @@ importers:
         version: 5.0.1
       linkifyjs:
         specifier: 'catalog:'
-        version: 4.3.3
+        version: 4.4.0
       node-html-parser:
         specifier: 'catalog:'
         version: 9.0.5
@@ -10613,8 +10613,8 @@ packages:
     resolution: {integrity: sha512-Ed+VzWurNu8dIqJUFYtdRCvDW1HsJOE4k0srJrynbhal+xgCaET0z4VP7JOLN6OuxXEFUZLRp8BQiCw6xweehg==}
     engines: {node: '>=22'}
 
-  linkifyjs@4.3.3:
-    resolution: {integrity: sha512-P8aEP5U/D1/IlTY2OeYsErdwh9bGuLE30NcXtKEjgdHcahveQoQwM2yZNsioQHsWFz0P7KKudisbrzCgR0sDHg==}
+  linkifyjs@4.4.0:
+    resolution: {integrity: sha512-InTexvtbai+2c+dEVGcc6O6P2DMVIiwD9a/i4zFroazOIYLOS6FSVmAJ7kFeumnCMx6/gQqNAkbUvgMubV4+MA==}
 
   livekit-client@2.23.0:
     resolution: {integrity: sha512-j9Kg86nJjBjNFUD+ukp2jwMCGa0k+YD5gU//RzAM+ZY3pbG631QCte7fQjwqWMmtBzhDJL9nKYuOLMv/9IbAxg==}
@@ -19021,7 +19021,7 @@ snapshots:
     dependencies:
       '@tiptap/core': 3.32.0(@tiptap/pm@3.32.0)
       '@tiptap/pm': 3.32.0
-      linkifyjs: 4.3.3
+      linkifyjs: 4.4.0
 
   '@tiptap/extension-list-item@3.32.0(@tiptap/extension-list@3.32.0(@tiptap/core@3.32.0(@tiptap/pm@3.32.0))(@tiptap/pm@3.32.0))':
     dependencies:
@@ -23273,7 +23273,7 @@ snapshots:
       cheerio: 1.0.0-rc.11
       undici: 8.12.3
 
-  linkifyjs@4.3.3: {}
+  linkifyjs@4.4.0: {}
 
   livekit-client@2.23.0(@types/dom-mediacapture-record@1.0.22):
     dependencies:
