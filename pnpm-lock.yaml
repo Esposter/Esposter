@@ -792,6 +792,12 @@ catalogs:
     web-push:
       specifier: ^3.6.7
       version: 3.6.7
+    workbox-precaching:
+      specifier: ^7.4.1
+      version: 7.4.1
+    workbox-routing:
+      specifier: ^7.4.1
+      version: 7.4.1
     write-excel-file:
       specifier: ^4.1.1
       version: 4.1.1
@@ -1456,6 +1462,12 @@ importers:
       vue-tsc:
         specifier: 'catalog:'
         version: 3.3.11(typescript-native-bridge@6.0.3-bridge.18.tsgo.7.0.2)
+      workbox-precaching:
+        specifier: 'catalog:'
+        version: 7.4.1
+      workbox-routing:
+        specifier: 'catalog:'
+        version: 7.4.1
 
   packages/agent-console-server:
     dependencies:

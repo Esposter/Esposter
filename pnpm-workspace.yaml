@@ -268,6 +268,8 @@ catalog:
   # dropped, once a release fixes it: 3.3.12 reports `Property 'value' does not exist` on imported refs used in templates
   vue-tsc: 3.3.11
   web-push: ^3.6.7
+  workbox-precaching: ^7.4.1
+  workbox-routing: ^7.4.1
   write-excel-file: ^4.1.1
   ws: ^8.22.0
   zod: ^4.6.7

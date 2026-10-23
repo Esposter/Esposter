@@ -1,0 +1,61 @@
+import type { PrecacheEntry } from "workbox-precaching";
+
+import { cleanupOutdatedCaches, createHandlerBoundToURL, precacheAndRoute } from "workbox-precaching";
+import { NavigationRoute, registerRoute } from "workbox-routing";
+
+// `injectManifest` replaces `__WB_MANIFEST` with the build's precache list, and the home page joins it so an offline
+// navigation to any route is answered by the app shell
+declare let self: ServiceWorkerGlobalScope & { __WB_MANIFEST: PrecacheEntry[] };
+
+// The wire shape `getPushNotificationPayload` writes, as far as this worker reads it. It mirrors
+// `PushNotificationPayload` in `@esposter/db-schema`, which the worker cannot import: that type reaches the server
+// packages
+interface PushPayload {
+  body: string;
+  data: { url: string };
+  icon?: null | string;
+  title?: null | string;
+}
+
+cleanupOutdatedCaches();
+precacheAndRoute([...self.__WB_MANIFEST, { revision: null, url: "/" }]);
+registerRoute(new NavigationRoute(createHandlerBoundToURL("/")));
+
+// The update prompt in the tab asks a waiting worker to take over, and the reload follows the new worker taking control
+self.addEventListener("message", (event) => {
+  if (event.data?.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
+});
+
+// https://github.com/vite-pwa/docs/issues/132 — the push handler lives here, typed, rather than in an
+// `importScripts` file
+self.addEventListener("push", (event) => {
+  if (!event.data) return;
+
+  const payload: PushPayload = event.data.json();
+  const { body, data, icon, title } = payload;
+  event.waitUntil(
+    (async () => {
+      const clients = await self.clients.matchAll({ includeUncontrolled: true });
+      for (const client of clients) client.postMessage(payload);
+      await self.registration.showNotification(title ?? "", { body, data, icon: icon ?? undefined });
+    })(),
+  );
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const { url }: PushPayload["data"] = event.notification.data;
+  event.waitUntil(
+    (async () => {
+      const clients = await self.clients.matchAll({ includeUncontrolled: true, type: "window" });
+      for (const client of clients)
+        if (client.url === url) {
+          await client.focus();
+          return;
+        }
+      await self.clients.openWindow(url);
+    })(),
+  );
+});

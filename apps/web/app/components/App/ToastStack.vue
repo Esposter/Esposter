@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { useAlertStore } from "@/store/alert";
 import { useClipboardStore } from "@/store/clipboard";
 
@@ -10,6 +11,10 @@ const { dismissAlert } = alertStore;
 // Timer or dismissal of its own
 const clipboardStore = useClipboardStore();
 const { copied, text } = storeToRefs(clipboardStore);
+// The update waits for the reader rather than reloading under them. Closing it hides it for this page load, and a
+// Reload brings it back if the update is still waiting
+const { $pwa } = useNuxtApp();
+const isUpdateDismissed = ref(false);
 </script>
 
 <!-- Every source of a toast, drawn in the one stack: the alerts, what was copied, the notification at the head of its
@@ -30,6 +35,17 @@ const { copied, text } = storeToRefs(clipboardStore);
     </UiToast>
     <UiToast v-if="copied" status="success">
       Copied <code text-info>{{ text }}</code>
+    </UiToast>
+    <UiToast
+      v-if="$pwa?.needRefresh && !isUpdateDismissed"
+      is-dismissible
+      status="info"
+      @close="isUpdateDismissed = true"
+    >
+      A new version is ready.
+      <template #actions>
+        <UiButton :variant="UiButtonVariant.Accent" @click="$pwa?.updateServiceWorker(true)">Reload</UiButton>
+      </template>
     </UiToast>
     <AppNotificationToast v-if="session" />
     <AchievementNotificationToastList v-if="session" />

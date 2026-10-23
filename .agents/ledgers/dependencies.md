@@ -224,6 +224,8 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `vue-router`                            | —                     | Keep — framework  | routing                                                                                                |
 | `vue-tsc`                               | —                     | Keep — tooling    | Vue's typecheck                                                                                        |
 | `web-push`                              | —                     | Keep — security   | push encryption, on the stop list                                                                      |
+| `workbox-precaching`                    | —                     | Keep — framework  | the service worker's precache of the app shell                                                         |
+| `workbox-routing`                       | —                     | Keep — framework  | the service worker's offline navigation route                                                          |
 | `write-excel-file`                      | —                     | Keep — spec       | the spreadsheet format                                                                                 |
 | `ws`                                    | —                     | Keep — engine     | the agent console's WebSocket server                                                                   |
 | `zod`                                   | —                     | Keep — framework  | the schema library                                                                                     |

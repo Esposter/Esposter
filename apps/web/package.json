@@ -58,7 +58,7 @@
     "start": "node --env-file-if-exists=.env .output/server/index.mjs",
     "test": "vitest",
     "tiled:gen": "tsx --tsconfig tsconfig.root.json scripts/tiled/index.ts",
-    "typecheck": "nuxt typecheck",
+    "typecheck": "nuxt typecheck && tsc --noEmit -p service-worker/tsconfig.json",
     "zstd:gen": "tsx --tsconfig tsconfig.root.json scripts/zstd/index.ts"
   },
   "dependencies": {
@@ -222,6 +222,8 @@
     "unstorage": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
-    "vue-tsc": "catalog:"
+    "vue-tsc": "catalog:",
+    "workbox-precaching": "catalog:",
+    "workbox-routing": "catalog:"
   }
 }
