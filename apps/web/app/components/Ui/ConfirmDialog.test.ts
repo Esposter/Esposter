@@ -72,6 +72,19 @@ describe("uiConfirmDialog", () => {
       expect(component.emitted("update:modelValue")).toStrictEqual([[false]]);
     });
 
+    test("sends one optimistic answer however many times it is pressed", async () => {
+      expect.hasAssertions();
+
+      const confirm = vi.fn<() => undefined>(noop);
+      const component = await mountDialog({ confirm, isOptimistic: true });
+      // Two presses before the dialog re-renders, as a double click lands inside its close transition
+      const confirmButton = getConfirmButton(component).element;
+      confirmButton.click();
+      confirmButton.click();
+
+      expect(confirm).toHaveBeenCalledTimes(1);
+    });
+
     test("holds a guarded answer until the name is typed", async () => {
       expect.hasAssertions();
 

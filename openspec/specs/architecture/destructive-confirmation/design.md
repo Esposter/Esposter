@@ -7,7 +7,7 @@ Every delete asks first, through one shape of dialog: `UiConfirmDialog`, the UI 
 The dialog shows what the action is about in its default slot, then Cancel and one answer in the danger variant, named by `confirmLabel` (`Delete`, `Leave`, `Revoke`). It opens onto Cancel, or the guarded variant onto its name field, so a stray Enter never destroys anything. The answer is the `confirm` prop, a function the dialog calls and owns the outcome of through `useDialogAnswer`, so no caller decides when it closes:
 
 - **Awaited**, the default: the answer is pending and the dialog locked until the function settles. It closes then, unless the function resolved `false`, which keeps it open with the answer ready to try again. Deleting a room waits for the server this way.
-- **Optimistic**, with `isOptimistic`: the dialog calls the function and closes at once, because an [optimistic](../client-data/design.md) write has already changed the list, and a rejection is answered by the write's rollback and error toast. The dialog calls the function first and closes second, since closing a singleton dialog clears the target its handler reads.
+- **Optimistic**, with `isOptimistic`: the dialog calls the function and closes at once, because an [optimistic](../client-data/design.md) write has already changed the list, and a rejection is answered by the write's rollback and error toast. The dialog calls the function first and closes second, since closing a singleton dialog clears the target its handler reads. A press once the dialog is closed is ignored, so a double click inside the close transition sends one write, never two.
 
 ```mermaid
 flowchart TD

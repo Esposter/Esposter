@@ -7,6 +7,9 @@ export const useDialogAnswer = (isOpen: Ref<boolean>) => {
   const { executeMutation, isPending } = useMutation();
   const key = Symbol("answer");
   const answer = async (write: () => Promisable<unknown>, isOptimistic?: true) => {
+    // A closed dialog has already answered: an optimistic answer closes it before the next press, so a double click
+    // In the close transition is one answer rather than a second write
+    if (!isOpen.value) return;
     if (isOptimistic) {
       // Called before the close, so a singleton dialog's handler reads its target before closing clears it
       const result = write();
