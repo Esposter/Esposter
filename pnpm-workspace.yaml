@@ -279,7 +279,9 @@ cleanupUnusedCatalogs: true
 
 minimumReleaseAge: 0
 
-nodeOptions: --max-old-space-size=8192
+# Node prints the stack behind each warning (a MaxListenersExceededWarning names the emitter but not who added the listener),
+# So every script run through pnpm traces its warnings
+nodeOptions: --max-old-space-size=8192 --trace-warnings
 
 overrides:
   # @TODO: https://github.com/nitrojs/nitro/pull/4647 — back to a `^3` range once a Nitro release carries it: the
