@@ -11,8 +11,8 @@ import { mergeConfig } from "tsdown";
 // `exports` entry with nothing to add by hand. A `services` file is the runtime's own: it ships, since the files beside
 // It import it relatively, but it stays out of the `exports` map, so the public surface is the functions a consumer
 // Calls and the `models` that type them. A test, benchmark, fixture or reference beside a runtime file is no entry,
-// By the same list the barrels exclude
-export const getTsdownConfigurationNuxtModule = (): UserConfig =>
+// By the same list the barrels exclude. A package adds the runtime files its own `exports` map leaves out.
+export const getTsdownConfigurationNuxtModule = (excludedExports: string[] = []): UserConfig =>
   mergeConfig(getTsdownConfigurationNode({ exportsGeneration: "none" }), {
     entry: [
       { index: "src/module.ts" },
@@ -20,7 +20,7 @@ export const getTsdownConfigurationNuxtModule = (): UserConfig =>
       ...NON_SOURCE_SUFFIXES.map((suffix) => `!src/**/*${suffix}`),
       "!src/**/*.d.ts",
     ],
-    exports: { exclude: ["runtime/**/services/**"] },
+    exports: { exclude: ["runtime/**/services/**", ...excludedExports] },
     root: "src",
     unbundle: true,
   });
