@@ -236,7 +236,7 @@ The repository allows only the actions listed in `apps/infra/src/github/actionsP
 
 ## Stability: every published package is experimental
 
-Every published package is experimental. Its exports, build entries and files may change or be removed in any release, a minor one included, so a removal is a changelog line rather than a breaking change. Each package's README opens with the experimental notice (`.agents/skills/readme-standards/references/template.md`). A package leaves this state only by a decision written into this spec, and from then on its exports are a contract that changes at a major version.
+Every published package is experimental. Its exports, build entries and files may change or be removed in any release, a minor one included, so a removal is a changelog line rather than a breaking change. The root README states it once. A package leaves this state only by a decision written into this spec, and from then on its exports are a contract that changes at a major version.
 
 ## Sources
 

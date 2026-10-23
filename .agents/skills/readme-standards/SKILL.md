@@ -30,7 +30,7 @@ Two lists exist on purpose and are edited together: `AGENTS.md` pairs each path 
 
 Lead with what it does; Getting Started only where it is installed or run; link to the package's specs when they exist and otherwise the specs root; the package's own scripts; `blob/main` and `tree/main` URLs (`references/content-rules.md`).
 
-Every published package's README opens with the experimental notice under its badges, from `references/template.md`.
+Package READMEs carry no experimental notice: the root README states it once (`openspec/specs/architecture/monorepo-tooling/design.md`, Stability).
 
 ## Reference pages
 

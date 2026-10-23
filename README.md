@@ -7,6 +7,8 @@
 [![skills.sh installs][badge-skills]][url-skills]
 [![Apache-2.0 licensed][badge-license]][url-license]
 
+> **Experimental.** Every published package in this repository is experimental: its exports, build entries and files may change or be removed in any release, a minor one included. See [Stability](openspec/specs/architecture/monorepo-tooling/design.md#stability-every-published-package-is-experimental).
+
 ## Table of Contents
 
 - 📖 [Documentation](#documentation)
