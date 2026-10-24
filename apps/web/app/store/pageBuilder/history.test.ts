@@ -17,6 +17,7 @@ import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { InvalidOperationError, JsonPatchOperationType, noop, Operation } from "@esposter/shared";
 import { applyBlockEdit, moveBlockNode, updateBlockNodeProps } from "headless-block-editor";
 import { describe, expect, test, vi } from "vitest";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 const insertAtFirstIndex = (id: string): JsonPatchOperation[] => [
   { op: JsonPatchOperationType.Add, path: "/content/1", value: createButton(id) },
@@ -38,7 +39,7 @@ describe(usePageBuilderHistoryStore, () => {
     const resourceId = crypto.randomUUID();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { loadDocument } = pageBuilderDocumentStore;
-    await loadDocument(resourceId, () => Promise.resolve(TEST_DOCUMENT));
+    await loadDocument(resourceId, webpageKind, () => Promise.resolve(TEST_DOCUMENT));
     return resourceId;
   };
   const moveFirstToEnd = () =>
@@ -96,7 +97,7 @@ describe(usePageBuilderHistoryStore, () => {
     };
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { getDocument, loadDocument } = pageBuilderDocumentStore;
-    await loadDocument(resourceId, () => Promise.resolve(textDocument));
+    await loadDocument(resourceId, webpageKind, () => Promise.resolve(textDocument));
     const interactionId = crypto.randomUUID();
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
     const { applyEdit, undo } = pageBuilderHistoryStore;

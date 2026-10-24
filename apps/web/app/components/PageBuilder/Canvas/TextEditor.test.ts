@@ -10,6 +10,7 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { EditorContent } from "@tiptap/vue-3";
 import { assert, describe, expect, test } from "vitest";
 import { nextTick } from "vue";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 describe("pageBuilderCanvasTextEditor", () => {
   test("enter edits a text node in place", async () => {
@@ -17,7 +18,7 @@ describe("pageBuilderCanvasTextEditor", () => {
 
     const resourceId = crypto.randomUUID();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, {
+    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
       root: TEST_ROOT,
     });
@@ -38,7 +39,7 @@ describe("pageBuilderCanvasTextEditor", () => {
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
-    pageBuilderDocumentStore.setDocument(resourceId, {
+    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
       root: TEST_ROOT,
     });
@@ -70,7 +71,7 @@ describe("pageBuilderCanvasTextEditor", () => {
     const resourceId = crypto.randomUUID();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
-    pageBuilderDocumentStore.setDocument(resourceId, {
+    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: WebpageNodeType.Text }],
       root: TEST_ROOT,
     });

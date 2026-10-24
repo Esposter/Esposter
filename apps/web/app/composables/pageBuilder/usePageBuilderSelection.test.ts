@@ -10,13 +10,14 @@ import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { createPinia, setActivePinia } from "pinia";
 import { describe, expect, test } from "vitest";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 describe(usePageBuilderSelection, () => {
   // The document is the webpage fixture: a section holding a text node, then a text node at the root
   const setup = (selectedNodeId: string) => {
     setActivePinia(createPinia());
     const resourceId = crypto.randomUUID();
-    usePageBuilderDocumentStore().setDocument(resourceId, TEST_WEBPAGE);
+    usePageBuilderDocumentStore().setDocument(resourceId, webpageKind, TEST_WEBPAGE);
     usePageBuilderCanvasStore().setSelectedNodeId(resourceId, selectedNodeId);
     const selection = usePageBuilderSelection(resourceId);
     const getSelectedNodeId = () => usePageBuilderCanvasStore().getSelectedNodeId(resourceId);

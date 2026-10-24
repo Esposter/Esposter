@@ -11,6 +11,7 @@ import { useResourceStore } from "@/store/resource";
 import { useWebpageEditorStore } from "@/store/webpageEditor";
 import { ResourceType } from "@esposter/db-schema";
 import { beforeEach, describe, expect, test, vi } from "vitest";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 describe(useWebpageEditorStore, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -47,7 +48,7 @@ describe(useWebpageEditorStore, () => {
     await loadContent();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { setDocument } = pageBuilderDocumentStore;
-    setDocument(resourceId, {
+    setDocument(resourceId, webpageKind, {
       content: [{ props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button }],
       root: TEST_ROOT,
     });

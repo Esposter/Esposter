@@ -6,6 +6,7 @@ import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 describe("pageBuilderLayers", () => {
   test("arrow keys walk the layers tree and select the focused node", async () => {
@@ -13,7 +14,7 @@ describe("pageBuilderLayers", () => {
 
     const resourceId = crypto.randomUUID();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, TEST_WEBPAGE);
+    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, TEST_WEBPAGE);
     const component = await mountSuspended(PageBuilderLayers, { attachTo: document.body, props: { resourceId } });
     component.get<HTMLElement>(`[data-item-id="${TEST_SECTION_ID}"]`).element.focus();
 
@@ -30,7 +31,7 @@ describe("pageBuilderLayers", () => {
 
     const resourceId = crypto.randomUUID();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, TEST_WEBPAGE);
+    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, TEST_WEBPAGE);
     const component = await mountSuspended(PageBuilderLayers, { attachTo: document.body, props: { resourceId } });
     component.get<HTMLElement>(`[data-item-id="${TEST_SECTION_ID}"]`).element.focus();
 

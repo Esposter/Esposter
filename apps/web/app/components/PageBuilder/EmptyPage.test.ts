@@ -4,6 +4,7 @@ import PageBuilderEmptyPage from "@/components/PageBuilder/EmptyPage.vue";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test, vi } from "vitest";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 describe("pageBuilderEmptyPage", () => {
   test("an empty page offers the palette", async () => {
@@ -11,7 +12,7 @@ describe("pageBuilderEmptyPage", () => {
 
     const resourceId = crypto.randomUUID();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, { content: [], root: TEST_ROOT });
+    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, { content: [], root: TEST_ROOT });
     const component = await mountSuspended(PageBuilderEmptyPage, {
       attachTo: document.body,
       props: { announce: vi.fn<(message: string) => void>(), resourceId },

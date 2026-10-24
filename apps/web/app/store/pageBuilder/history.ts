@@ -1,8 +1,8 @@
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 import type { PageBuilderHistoryEntry } from "@/models/pageBuilder/PageBuilderHistoryEntry";
+import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
 import type { History, JsonPatchOperation } from "@esposter/shared";
 
-import { webpageDocumentSchema } from "#shared/services/pageBuilder/webpageDocumentSchema";
 import { MAX_PAGE_BUILDER_HISTORY_SIZE } from "@/services/pageBuilder/constants";
 import { getRecordedHistory } from "@/services/pageBuilder/getRecordedHistory";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
@@ -22,7 +22,7 @@ import { applyBlockEdit } from "headless-block-editor";
 // Merges into that entry, so a drag of a value is one entry
 export const usePageBuilderHistoryStore = defineStore("pageBuilder/history", () => {
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-  const { getDocument, setDocument } = pageBuilderDocumentStore;
+  const { getOpenDocument, setDocument } = pageBuilderDocumentStore;
   const emptyHistory = createHistory<PageBuilderHistoryEntry>(MAX_PAGE_BUILDER_HISTORY_SIZE);
   // Replaced rather than mutated, so every reader of the map is told of each change
   const historyMap = shallowRef(new Map<string, History<PageBuilderHistoryEntry>>());
@@ -30,13 +30,16 @@ export const usePageBuilderHistoryStore = defineStore("pageBuilder/history", () 
   const setHistory = (resourceId: string, history: History<PageBuilderHistoryEntry>) => {
     historyMap.value = new Map(historyMap.value).set(resourceId, history);
   };
-  // The one place a document changes: the operations apply to the document held, or the edit is refused
+  // The one place a document changes: the operations apply to the document held under its kind, or the edit is refused.
+  // The kind travels with the result, so the commit that lands the edit holds the document under the same kind
   const applyOperations = (resourceId: string, operations: JsonPatchOperation[]) =>
     getResult(() => {
-      const document = getDocument(resourceId);
-      if (!document) throw new InvalidOperationError(Operation.Update, resourceId, "has no document held");
-      return document;
-    }).andThen((document) => applyBlockEdit(webpageDocumentSchema, document, operations));
+      const open = getOpenDocument(resourceId);
+      if (!open) throw new InvalidOperationError(Operation.Update, resourceId, "has no document held");
+      return open;
+    }).andThen(({ document, kind }) =>
+      applyBlockEdit(kind.documentSchema, document, operations).map((edit) => ({ ...edit, kind })),
+    );
   // The document an edit in progress would leave, drawn in place of the held one until an edit commits. It enters no
   // History, so a drag of a value previews as it moves and records once when it settles
   const previewMap = shallowRef(new Map<string, WebpageDocument>());
@@ -54,8 +57,13 @@ export const usePageBuilderHistoryStore = defineStore("pageBuilder/history", () 
     }, console.error);
   };
   // The document and the history an edit leaves land together, so neither is ever ahead of the other, and a preview ends
-  const commitEdit = (resourceId: string, document: WebpageDocument, history: History<PageBuilderHistoryEntry>) => {
-    setDocument(resourceId, document);
+  const commitEdit = (
+    resourceId: string,
+    kind: PageBuilderKind,
+    document: WebpageDocument,
+    history: History<PageBuilderHistoryEntry>,
+  ) => {
+    setDocument(resourceId, kind, document);
     setHistory(resourceId, history);
     clearPreview(resourceId);
   };
@@ -66,12 +74,13 @@ export const usePageBuilderHistoryStore = defineStore("pageBuilder/history", () 
     history: History<PageBuilderHistoryEntry>,
   ) =>
     applyOperations(resourceId, operations)
-      .map(({ document }) => commitEdit(resourceId, document, history))
+      .map(({ document, kind }) => commitEdit(resourceId, kind, document, history))
       .match(noop, console.error);
   const applyEdit = (resourceId: string, operations: JsonPatchOperation[], label: string, interactionId?: string) =>
-    applyOperations(resourceId, operations).map(({ document, inverses }) =>
+    applyOperations(resourceId, operations).map(({ document, inverses, kind }) =>
       commitEdit(
         resourceId,
+        kind,
         document,
         getRecordedHistory(getHistory(resourceId), { interactionId, inverses, label, operations }),
       ),

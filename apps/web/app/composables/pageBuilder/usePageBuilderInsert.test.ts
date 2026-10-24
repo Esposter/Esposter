@@ -11,13 +11,14 @@ import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { createPinia, setActivePinia } from "pinia";
 import { describe, expect, test, vi } from "vitest";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 const setup = (selectedNodeId: string, content: WebpageDocument["content"]) => {
   setActivePinia(createPinia());
   const resourceId = crypto.randomUUID();
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-  pageBuilderDocumentStore.setDocument(resourceId, { content, root: TEST_ROOT });
+  pageBuilderDocumentStore.setDocument(resourceId, webpageKind, { content, root: TEST_ROOT });
   pageBuilderCanvasStore.setSelectedNodeId(resourceId, selectedNodeId);
   const announce = vi.fn<(message: string) => void>();
   const { insert } = usePageBuilderInsert(resourceId, announce);

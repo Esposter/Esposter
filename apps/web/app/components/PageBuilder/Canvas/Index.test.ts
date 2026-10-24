@@ -7,6 +7,7 @@ import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test, vi } from "vitest";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 describe("pageBuilderCanvas", () => {
   test("switching to tablet draws the page at tablet width", async () => {
@@ -14,7 +15,7 @@ describe("pageBuilderCanvas", () => {
 
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-    pageBuilderDocumentStore.setDocument(TEST_ID, {
+    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
       content: [
         {
           props: {

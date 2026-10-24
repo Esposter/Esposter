@@ -9,6 +9,7 @@ import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 describe("pageBuilderStylePanel", () => {
   test("drawing a node whose choices are unset records no edit", async () => {
@@ -16,7 +17,7 @@ describe("pageBuilderStylePanel", () => {
 
     const resourceId = crypto.randomUUID();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, {
+    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [{ props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button }],
       root: TEST_ROOT,
     });
@@ -41,7 +42,7 @@ describe("pageBuilderStylePanel", () => {
       props: { alt: "", decorative: true, id, src: "https://example.com/a.png" },
       type: WebpageNodeType.Image,
     });
-    pageBuilderDocumentStore.setDocument(TEST_ID, {
+    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
       content: [createImage(TEST_OTHER_ID), createImage(SECOND_ID)],
       root: TEST_ROOT,
     });

@@ -6,13 +6,14 @@ import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { createPinia, setActivePinia } from "pinia";
 import { describe, expect, test, vi } from "vitest";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 describe(insertAt, () => {
   // The id the insert gives its new node is fixed, so a test reads it exactly
   const setup = () => {
     setActivePinia(createPinia());
     const resourceId = crypto.randomUUID();
-    usePageBuilderDocumentStore().setDocument(resourceId, TEST_WEBPAGE);
+    usePageBuilderDocumentStore().setDocument(resourceId, webpageKind, TEST_WEBPAGE);
     const insertedId = crypto.randomUUID();
     vi.spyOn(crypto, "randomUUID").mockReturnValueOnce(insertedId);
     return { insertedId, resourceId };

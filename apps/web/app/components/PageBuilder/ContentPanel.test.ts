@@ -13,6 +13,7 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 import { defineComponent, h } from "vue";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 const createButtonDocument = (): WebpageDocument => ({
   content: [{ props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button }],
@@ -25,7 +26,7 @@ describe("pageBuilderContentPanel", () => {
 
     const resourceId = crypto.randomUUID();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, createButtonDocument());
+    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, createButtonDocument());
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
     const component = await mountSuspended(PageBuilderContentPanel, { props: { resourceId } });
@@ -48,7 +49,7 @@ describe("pageBuilderContentPanel", () => {
 
     const resourceId = crypto.randomUUID();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, createButtonDocument());
+    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, createButtonDocument());
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
     const component = await mountSuspended(PageBuilderContentPanel, { props: { resourceId } });
@@ -65,7 +66,7 @@ describe("pageBuilderContentPanel", () => {
 
     const resourceId = crypto.randomUUID();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, createButtonDocument());
+    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, createButtonDocument());
     const component = await mountSuspended(PageBuilderContentPanel, { props: { resourceId } });
 
     component.getComponent(UiSchemaForm).vm.$emit("update:modelValue", { lang: "fr" });

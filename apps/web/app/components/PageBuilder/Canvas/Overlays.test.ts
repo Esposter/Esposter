@@ -4,6 +4,7 @@ import PageBuilderCanvasOverlays from "@/components/PageBuilder/Canvas/Overlays.
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, describe, expect, test, vi } from "vitest";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -21,7 +22,10 @@ describe("pageBuilderCanvasOverlays", () => {
     const element = document.createElement("div");
     vi.spyOn(element, "getBoundingClientRect").mockReturnValue(new DOMRect(120, 40, 80, 20));
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(TEST_ID, { content: [], root: { props: { lang: "en", tokens: {} } } });
+    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
+      content: [],
+      root: { props: { lang: "en", tokens: {} } },
+    });
 
     const component = await mountSuspended(PageBuilderCanvasOverlays, {
       props: {
@@ -49,7 +53,10 @@ describe("pageBuilderCanvasOverlays", () => {
     const element = document.createElement("div");
     vi.spyOn(element, "getBoundingClientRect").mockReturnValue(new DOMRect(120, 40, 80, 20));
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(TEST_ID, { content: [], root: { props: { lang: "en", tokens: {} } } });
+    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
+      content: [],
+      root: { props: { lang: "en", tokens: {} } },
+    });
 
     const component = await mountSuspended(PageBuilderCanvasOverlays, {
       props: {

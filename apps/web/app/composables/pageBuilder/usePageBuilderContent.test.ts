@@ -6,6 +6,7 @@ import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 describe(usePageBuilderContent, () => {
   beforeEach(() => {
@@ -17,7 +18,7 @@ describe(usePageBuilderContent, () => {
 
     const resourceId = crypto.randomUUID();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(resourceId, {
+    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
       content: [{ props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button }],
       root: TEST_ROOT,
     });

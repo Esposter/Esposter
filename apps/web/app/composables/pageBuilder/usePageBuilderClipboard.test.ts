@@ -15,6 +15,7 @@ import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, describe, expect, test, vi } from "vitest";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 vi.mock(import("@/services/pageBuilder/refuseClipboardPaste"), async (importOriginal) => {
   const { refuseClipboardPaste: original } = await importOriginal();
@@ -44,7 +45,9 @@ const stubClipboard = () => {
 const openResource = async (content: WebpageDocument["content"]) => {
   const resourceId = crypto.randomUUID();
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-  await pageBuilderDocumentStore.loadDocument(resourceId, () => Promise.resolve({ content, root: TEST_ROOT }));
+  await pageBuilderDocumentStore.loadDocument(resourceId, webpageKind, () =>
+    Promise.resolve({ content, root: TEST_ROOT }),
+  );
   return resourceId;
 };
 

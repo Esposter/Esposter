@@ -14,6 +14,7 @@ import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { createPinia, setActivePinia } from "pinia";
 import { describe, expect, test, vi } from "vitest";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 const createSection = (id: string, children: WebpagePlaceableNode[]): SectionNode => ({
   props: { children, id, tag: HtmlTag.Section },
@@ -46,7 +47,7 @@ const setup = async (selectedNodeId: string, document = createFixtureDocument())
   const resourceId = crypto.randomUUID();
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
   const { loadDocument } = pageBuilderDocumentStore;
-  await loadDocument(resourceId, () => Promise.resolve(document));
+  await loadDocument(resourceId, webpageKind, () => Promise.resolve(document));
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
   pageBuilderCanvasStore.setSelectedNodeId(resourceId, selectedNodeId);
   const announce = vi.fn<(message: string) => void>();

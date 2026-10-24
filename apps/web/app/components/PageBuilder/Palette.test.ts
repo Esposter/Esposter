@@ -6,12 +6,13 @@ import { WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test, vi } from "vitest";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 describe("pageBuilderPalette", () => {
   test("a palette click still inserts the block", async () => {
     expect.hasAssertions();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(TEST_ID, { content: [], root: TEST_ROOT });
+    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, { content: [], root: TEST_ROOT });
     const announce = vi.fn<(message: string) => void>();
     const component = await mountSuspended(PageBuilderPalette, { props: { announce, resourceId: TEST_ID } });
 

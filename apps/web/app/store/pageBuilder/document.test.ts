@@ -7,6 +7,7 @@ import { TEST_LANG, TEST_ROOT } from "#shared/services/pageBuilder/constants.tes
 import { TEST_SECTION_ID } from "@/services/pageBuilder/constants.test";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { describe, expect, test, vi } from "vitest";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 describe(usePageBuilderDocumentStore, () => {
   const TEST_OTHER_LANG = "fr";
@@ -22,9 +23,9 @@ describe(usePageBuilderDocumentStore, () => {
     const changedDocument: WebpageDocument = { content: [], root: { props: { lang: TEST_CHANGED_LANG, tokens: {} } } };
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { getDocument, loadDocument, setDocument } = pageBuilderDocumentStore;
-    await loadDocument(firstResourceId, () => Promise.resolve(firstDocument));
-    await loadDocument(secondResourceId, () => Promise.resolve(secondDocument));
-    setDocument(firstResourceId, changedDocument);
+    await loadDocument(firstResourceId, webpageKind, () => Promise.resolve(firstDocument));
+    await loadDocument(secondResourceId, webpageKind, () => Promise.resolve(secondDocument));
+    setDocument(firstResourceId, webpageKind, changedDocument);
 
     expect(getDocument(firstResourceId)).toStrictEqual(changedDocument);
     expect(getDocument(secondResourceId)).toStrictEqual(secondDocument);
@@ -38,7 +39,7 @@ describe(usePageBuilderDocumentStore, () => {
     const { getDocument, loadDocument } = pageBuilderDocumentStore;
 
     await expect(
-      loadDocument(resourceId, () =>
+      loadDocument(resourceId, webpageKind, () =>
         Promise.resolve({
           content: [{ props: { id: TEST_SECTION_ID, tag: HtmlTag.Section }, type: WebpageNodeType.Section }],
           root: TEST_ROOT,
@@ -70,7 +71,7 @@ describe(usePageBuilderDocumentStore, () => {
     const writeDocument = vi.fn<(document: WebpageDocument) => Promise<void>>().mockResolvedValue(undefined);
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { loadDocument, saveDocument } = pageBuilderDocumentStore;
-    await loadDocument(resourceId, () => Promise.resolve(document));
+    await loadDocument(resourceId, webpageKind, () => Promise.resolve(document));
     await saveDocument(resourceId, writeDocument);
 
     expect(writeDocument).toHaveBeenCalledExactlyOnceWith(document);

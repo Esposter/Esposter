@@ -1,5 +1,6 @@
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { createContentData } from "@/services/resource/createContentData";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { useResourceStore } from "@/store/resource";
@@ -22,7 +23,7 @@ export const useWebpageEditorStore = defineStore("webpageEditor", () => {
       const resourceId = resourceStore.resource?.id;
       if (!resourceId) return;
 
-      pageBuilderDocumentStore.setDocument(resourceId, { content: webpage.content, root: webpage.root });
+      pageBuilderDocumentStore.setDocument(resourceId, webpageKind, { content: webpage.content, root: webpage.root });
       pageBuilderHistoryStore.clearHistory(resourceId);
     },
   );

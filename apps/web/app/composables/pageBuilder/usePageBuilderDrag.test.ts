@@ -13,6 +13,7 @@ import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { createPinia, setActivePinia } from "pinia";
 import { describe, expect, test, vi } from "vitest";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 const createText = (id: string): TextNode => ({
   props: { content: TEST_TEXT_CONTENT, id },
@@ -40,7 +41,7 @@ describe("usePageBuilderDrag", () => {
     setActivePinia(createPinia());
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(RESOURCE_ID, document);
+    pageBuilderDocumentStore.setDocument(RESOURCE_ID, webpageKind, document);
     const announce = vi.fn<(message: string) => void>();
     const { isDragging, startPaletteDrag } = usePageBuilderDrag(RESOURCE_ID, announce);
     return { announce, isDragging, pageBuilderCanvasStore, pageBuilderDocumentStore, startPaletteDrag };

@@ -13,6 +13,7 @@ import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { moveBlockNode } from "headless-block-editor";
 import { describe, expect, test } from "vitest";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 describe(usePageBuilderHistoryCommands, () => {
   test("the command bar names the edit it would undo", async () => {
@@ -25,7 +26,7 @@ describe(usePageBuilderHistoryCommands, () => {
     };
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { loadDocument } = pageBuilderDocumentStore;
-    await loadDocument(resourceId, () => Promise.resolve(document));
+    await loadDocument(resourceId, webpageKind, () => Promise.resolve(document));
     const component = await mountSuspended(
       defineComponent({
         setup: () => {

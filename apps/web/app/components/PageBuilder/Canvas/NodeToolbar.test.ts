@@ -8,6 +8,7 @@ import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test, vi } from "vitest";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 describe("pageBuilderCanvasNodeToolbar", () => {
   test("the toolbar offers the node's moves", async () => {
@@ -15,7 +16,7 @@ describe("pageBuilderCanvasNodeToolbar", () => {
 
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(TEST_ID, {
+    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
       content: [
         {
           props: { alt: "", decorative: true, id: TEST_OTHER_ID, src: "https://example.com/a.png" },
@@ -64,7 +65,7 @@ describe("pageBuilderCanvasNodeToolbar", () => {
 
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(TEST_ID, {
+    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
       content: [
         {
           props: { alt: "", decorative: true, id: TEST_OTHER_ID, src: "https://example.com/a.png" },
@@ -93,7 +94,7 @@ describe("pageBuilderCanvasNodeToolbar", () => {
 
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(TEST_ID, TEST_WEBPAGE);
+    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, TEST_WEBPAGE);
     pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_NESTED_TEXT_ID);
 
     const component = await mountSuspended(PageBuilderCanvasNodeToolbar, {
