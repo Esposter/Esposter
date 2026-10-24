@@ -1,5 +1,6 @@
 // @vitest-environment happy-dom
 import UiStyleField from "@/components/PageBuilder/StylePanel/Field.vue";
+import UiSelect from "@/components/Ui/Select/Index.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mount } from "@vue/test-utils";
@@ -94,6 +95,38 @@ describe("styleField", () => {
 
       expect(component.emitted<[string]>("update:modelValue")).toBeUndefined();
       expect((component.get("input").element as HTMLInputElement).value).toBe("red} body { display: none");
+    });
+
+    // Clearing a keyword leaves a draft that is a length, which would swap the text field for the number field
+    // And drop the caret, so the text field holds until focus leaves it
+    test("a keyword cleared to empty keeps its text field focused", async () => {
+      expect.hasAssertions();
+
+      vi.stubGlobal("CSS", { supports: () => true });
+      const component = mount(UiStyleField, {
+        attachTo: document.body,
+        props: { label: "Width", modelValue: "auto", property: "width" },
+      });
+      const input = component.get("input");
+      (input.element as HTMLInputElement).focus();
+
+      await input.setValue("");
+
+      expect(document.activeElement).toBe(input.element);
+      component.unmount();
+    });
+
+    test("a border's width offers every length unit but the percentage", () => {
+      expect.hasAssertions();
+
+      vi.stubGlobal("CSS", { supports: () => true });
+      const component = mount(UiStyleField, {
+        props: { label: "Border width", modelValue: "2px", property: "border-width" },
+      });
+
+      expect(component.findComponent(UiSelect).props("items")).toStrictEqual(
+        ["px", "rem", "em", "vw", "vh"].map((lengthUnit) => ({ title: lengthUnit, value: lengthUnit })),
+      );
     });
   });
 });

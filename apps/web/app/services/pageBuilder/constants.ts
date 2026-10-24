@@ -119,6 +119,8 @@ export const STYLE_LENGTH_PROPERTIES: readonly StyleProperty[] = [
 ];
 // The units a length's select offers, and the one a number with none is shown in
 export const STYLE_LENGTH_UNITS = ["px", "rem", "em", "%", "vw", "vh"];
+// A border is never a share of its box, so its width leaves the percentage out of its unit select and its text
+export const STYLE_BORDER_WIDTH_UNITS = STYLE_LENGTH_UNITS.filter((lengthUnit) => lengthUnit !== "%");
 export const DEFAULT_LENGTH_UNIT = "px";
 // The sectors the style panel groups its properties in, in the order it draws them
 export const STYLE_SECTORS = [
