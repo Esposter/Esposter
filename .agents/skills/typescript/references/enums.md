@@ -91,9 +91,11 @@ export const ThemeMode = { Dark: "dark", Light: "light", System: "system" } as c
 export type ThemeMode = (typeof ThemeMode)[keyof typeof ThemeMode];
 ```
 
-The exception is that graph. A Nuxt module's `module.ts` is loaded the same way, by Node's type stripping, and its native
+The exception is that graph, and the other graph Node's type stripping loads with no loader: a Claude Code plugin's
+hooks and commands run under a bare `node`, so every file they reach declares its closed set the same way (the persona
+plugin's `src/models`). A Nuxt module's `module.ts` is loaded the same way, by Node's type stripping, and its native
 graph must hold no enum: `scripts/src/workspace/nuxtModuleNativeLoad.test.ts` loads each module's entry under plain
 `node` and fails on any unsupported TypeScript syntax, so an enum reached from a value import is caught there rather
-than by a tsconfig flag that would also constrain `@esposter/shared`. Everything else a script runs under `vpx` or
-`node` keeps its enums, and a file that cannot load moves its entry to `vpx`. A `nuxt prepare` printing `NUXT_B5023`
+than by a tsconfig flag that would also constrain `@esposter/shared`. Everything else a script runs under `vpx` keeps
+its enums, and a file that cannot load moves its entry to `vpx`. A `nuxt prepare` printing `NUXT_B5023`
 names the file that brought an enum, or an extensionless relative import, back into the graph.
