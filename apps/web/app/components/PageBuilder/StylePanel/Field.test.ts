@@ -1,0 +1,51 @@
+// @vitest-environment happy-dom
+import UiStyleField from "@/components/PageBuilder/StylePanel/Field.vue";
+import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
+import { UiStyles } from "@/models/ui/UiStyle";
+import { mount } from "@vue/test-utils";
+import { afterEach, describe, expect, test, vi } from "vitest";
+
+describe("styleField", () => {
+  describe.each(UiStyles)("%s", (uiStyle) => {
+    setupUiStyle(uiStyle);
+
+    afterEach(() => {
+      vi.unstubAllGlobals();
+    });
+
+    test("a supported value is saved", async () => {
+      expect.hasAssertions();
+
+      vi.stubGlobal("CSS", { supports: () => true });
+      const component = mount(UiStyleField, { props: { label: "Color", modelValue: "", property: "color" } });
+
+      await component.get("input").setValue("red");
+
+      expect(component.emitted<[string]>("update:modelValue")).toStrictEqual([["red"]]);
+    });
+
+    test("an unsupported style value stays in its field unsaved", async () => {
+      expect.hasAssertions();
+
+      vi.stubGlobal("CSS", { supports: () => false });
+      const component = mount(UiStyleField, { props: { label: "Color", modelValue: "red", property: "color" } });
+
+      await component.get("input").setValue("notacolour");
+
+      expect(component.emitted<[string]>("update:modelValue")).toBeUndefined();
+      expect((component.get("input").element as HTMLInputElement).value).toBe("notacolour");
+    });
+
+    test("a style value with a brace is refused", async () => {
+      expect.hasAssertions();
+
+      vi.stubGlobal("CSS", { supports: () => true });
+      const component = mount(UiStyleField, { props: { label: "Color", modelValue: "red", property: "color" } });
+
+      await component.get("input").setValue("red} body { display: none");
+
+      expect(component.emitted<[string]>("update:modelValue")).toBeUndefined();
+      expect((component.get("input").element as HTMLInputElement).value).toBe("red} body { display: none");
+    });
+  });
+});
