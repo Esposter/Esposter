@@ -8,8 +8,8 @@ import { z } from "zod";
 
 // Tags the clipboard text as page builder nodes, so text copied from anywhere else is ignored on paste
 const CLIPBOARD_MARKER = `${SITE_NAME.toLowerCase()}-page-builder`;
-// The clipboard's shape for a kind, whose registry and children decide which nodes a paste may hold. The kind's titles
-// name every node type it holds, so they are the types a paste accepts
+// The clipboard's shape for a kind, whose registry and children decide which nodes a paste may hold.
+// The kind's titles name every node type it holds, so they are the types a paste accepts
 const getClipboardNodesSchema = <
   TNode extends BlockNode,
   TRoot extends BlockRootProps,
