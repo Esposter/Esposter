@@ -11,7 +11,7 @@ import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { createPinia, setActivePinia } from "pinia";
 import { describe, expect, test } from "vitest";
 
-describe("usePageBuilderSelection", () => {
+describe(usePageBuilderSelection, () => {
   // The document is the webpage fixture: a section holding a text node, then a text node at the root
   const setup = (selectedNodeId: string) => {
     setActivePinia(createPinia());

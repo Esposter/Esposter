@@ -25,16 +25,16 @@ The letters match in either case, and the Ctrl or Cmd modifier matches either ke
 
 ## Key files
 
-| File                                                              | Role                                                                                                |
-| ----------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `apps/web/app/services/pageBuilder/getKeyAction.ts`               | the key table and the one lookup both handlers call                                                 |
-| `apps/web/app/models/pageBuilder/KeyAction.ts`                    | the command a key takes                                                                             |
-| `apps/web/app/models/pageBuilder/KeyScope.ts`                     | the handler a key is offered to: the canvas or the editor                                           |
-| `apps/web/app/models/pageBuilder/KeyBinding.ts`                   | one row of the key table                                                                            |
-| `apps/web/app/components/PageBuilder/Editor.vue`                  | the editor's keydown, mapping each action it takes to its command                                   |
-| `apps/web/app/components/PageBuilder/Canvas/Index.vue`            | the frame's keydown, which takes the canvas's keys and forwards the rest                            |
-| `apps/web/app/composables/pageBuilder/usePageBuilderSelection.ts` | the next, previous and parent selection the canvas's keys move                                      |
-| `apps/web/app/composables/pageBuilder/usePageBuilderFrame.ts`     | the frame's geometry: a node's element, the drop geometry of a palette drag, the toolbar's position |
-| `apps/web/app/composables/pageBuilder/usePageBuilderMoves.ts`     | the Alt moves and the delete the editor's keys run                                                  |
-| `apps/web/app/composables/pageBuilder/usePageBuilderClipboard.ts` | the copy, cut and paste the editor's Ctrl or Cmd keys run                                           |
-| `apps/web/app/util/dom/checkIsEditableTarget.ts`                  | the text fields that take no key                                                                    |
+| File                                                              | Role                                                                                                 |
+| ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `apps/web/app/services/pageBuilder/getKeyAction.ts`               | the key table and the one lookup both handlers call                                                  |
+| `apps/web/app/models/pageBuilder/KeyAction.ts`                    | the command a key takes                                                                              |
+| `apps/web/app/models/pageBuilder/KeyScope.ts`                     | the handler a key is offered to: the canvas or the editor                                            |
+| `apps/web/app/models/pageBuilder/KeyBinding.ts`                   | one row of the key table                                                                             |
+| `apps/web/app/components/PageBuilder/Editor.vue`                  | the editor's keydown, mapping each action it takes to its command                                    |
+| `apps/web/app/components/PageBuilder/Canvas/Index.vue`            | the frame's keydown, which takes the canvas's keys and forwards the rest                             |
+| `apps/web/app/composables/pageBuilder/usePageBuilderSelection.ts` | the next, previous and parent selection the canvas's keys move, and the node toolbar's Select parent |
+| `apps/web/app/composables/pageBuilder/usePageBuilderFrame.ts`     | the frame's geometry: a node's element, the drop geometry of a palette drag, the toolbar's position  |
+| `apps/web/app/composables/pageBuilder/usePageBuilderMoves.ts`     | the Alt moves and the delete the editor's keys run                                                   |
+| `apps/web/app/composables/pageBuilder/usePageBuilderClipboard.ts` | the copy, cut and paste the editor's Ctrl or Cmd keys run                                            |
+| `apps/web/app/util/dom/checkIsEditableTarget.ts`                  | the text fields that take no key                                                                     |

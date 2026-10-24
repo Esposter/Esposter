@@ -3,6 +3,7 @@ import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import PageBuilderCanvasNodeToolbar from "@/components/PageBuilder/Canvas/NodeToolbar.vue";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { TEST_NESTED_TEXT_ID, TEST_SECTION_ID, TEST_WEBPAGE } from "@/services/pageBuilder/constants.test";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -85,5 +86,22 @@ describe("pageBuilderCanvasNodeToolbar", () => {
     await component.get(`button[data-variant="${UiButtonVariant.Danger}"]`).trigger("click");
 
     expect(pageBuilderDocumentStore.getDocument(TEST_ID)?.content).toStrictEqual([]);
+  });
+
+  test("the toolbar's select parent selects the node holding the selected one", async () => {
+    expect.hasAssertions();
+
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setDocument(TEST_ID, TEST_WEBPAGE);
+    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_NESTED_TEXT_ID);
+
+    const component = await mountSuspended(PageBuilderCanvasNodeToolbar, {
+      props: { announce: vi.fn<(message: string) => void>(), position: { left: 0, top: 0 }, resourceId: TEST_ID },
+    });
+
+    await component.get("button[aria-label='Select parent']").trigger("click");
+
+    expect(pageBuilderCanvasStore.getSelectedNodeId(TEST_ID)).toBe(TEST_SECTION_ID);
   });
 });
