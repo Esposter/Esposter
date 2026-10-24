@@ -8,11 +8,11 @@ import { sql } from "drizzle-orm";
 import { readFile } from "node:fs/promises";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
-// The cutover's custom migration, run over the rows it names. The mock database loads a snapshot of the schema rather
-// Than running migrations, so the migration's own SQL is what this test applies
-const MIGRATION_PATH = new URL("migrations/20261024050536_bin_webpage_and_email_rows/migration.sql", import.meta.url);
-
 describe("bin webpage and email rows migration", () => {
+  // The cutover's custom migration, run over the rows it names. The mock database loads a snapshot of the schema rather
+  // than running migrations, so the migration's own SQL is what this test applies
+  const MIGRATION_PATH = new URL("migrations/20261024050536_bin_webpage_and_email_rows/migration.sql", import.meta.url);
+
   let mockContext: Context;
   let ctx: AuthedContext;
 
