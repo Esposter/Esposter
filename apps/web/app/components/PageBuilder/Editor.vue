@@ -53,7 +53,13 @@ const { deleteNode, deleteSelected, moveDown, moveLeft, moveRight, moveUp } = us
   () => resourceId,
   announce,
 );
-const { copySelected, cutSelected, pasteSelected } = usePageBuilderClipboard(() => resourceId, announce, deleteNode);
+const { copySelected, cutSelected, pasteSelected } = usePageBuilderClipboard(
+  webpageKind,
+  () => getDocument(resourceId),
+  () => resourceId,
+  announce,
+  deleteNode,
+);
 usePageBuilderHistoryCommands(() => resourceId);
 usePageBuilderStyleCommands(() => resourceId);
 const { dropTarget, isDragging, startPaletteDrag } = usePageBuilderDrag(() => resourceId, announce);

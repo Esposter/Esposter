@@ -5,10 +5,12 @@ import { emailDocumentSchema } from "#shared/services/pageBuilder/email/emailDoc
 import { emailNodeChildren } from "#shared/services/pageBuilder/email/emailNodeChildren";
 import { emailNodeSchema } from "#shared/services/pageBuilder/email/emailNodeSchema";
 import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry";
+import { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
 
 export const emailKind: EmailKind = {
   children: emailNodeChildren,
   documentSchema: emailDocumentSchema,
+  editor: PageBuilderEditor.Email,
   nodeSchema: emailNodeSchema,
   registry: emailRegistry,
   titles: EMAIL_NODE_TYPE_TITLE_MAP,
