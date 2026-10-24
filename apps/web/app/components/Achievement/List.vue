@@ -4,7 +4,8 @@ import { AchievementStatus, AchievementStatuses } from "@/models/achievement/Ach
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { AchievementSortItems } from "@/services/achievement/AchievementSortItems";
 import { AchievementStatusItems } from "@/services/achievement/AchievementStatusItems";
-import { getUnlockedUserAchievements } from "@/services/achievement/getUnlockedUserAchievements";
+import { getAchievementListMap } from "@/services/achievement/getAchievementListMap";
+import { sortAchievementDefinitions } from "@/services/achievement/sortAchievementDefinitions";
 import { TAB_QUERY_PARAMETER_KEY } from "@/services/route/constants";
 import { useAchievementStore } from "@/store/achievement";
 
@@ -13,37 +14,12 @@ const { achievementDefinitions, statistics, userAchievements } = storeToRefs(ach
 const { $trpc } = useNuxtApp();
 const { data: achievementRarities } = useQuery(() => $trpc.achievement.readAchievementRarities.query());
 const sort = ref(AchievementSort.Category);
-// Rarest first reads the rarity read; until it lands every rarity is 0, so the category order holds
 const displayAchievementDefinitions = computed(() =>
-  sort.value === AchievementSort.RarestFirst
-    ? achievementDefinitions.value.toSorted(
-        (firstAchievement, secondAchievement) =>
-          (achievementRarities.value?.[firstAchievement.name] ?? 0) -
-          (achievementRarities.value?.[secondAchievement.name] ?? 0),
-      )
-    : achievementDefinitions.value,
+  sortAchievementDefinitions(achievementDefinitions.value, sort.value, achievementRarities.value),
 );
-const achievementListMap = computed(() => {
-  const unlockedUserAchievements = getUnlockedUserAchievements(userAchievements.value);
-  return {
-    [AchievementStatus.All]: {
-      achievementDefinitions: displayAchievementDefinitions.value,
-      userAchievements: userAchievements.value,
-    },
-    [AchievementStatus.Locked]: {
-      achievementDefinitions: displayAchievementDefinitions.value.filter(
-        ({ name }) => !unlockedUserAchievements.some(({ achievement }) => achievement.name === name),
-      ),
-      userAchievements: userAchievements.value,
-    },
-    [AchievementStatus.Unlocked]: {
-      achievementDefinitions: displayAchievementDefinitions.value.filter(({ name }) =>
-        unlockedUserAchievements.some(({ achievement }) => achievement.name === name),
-      ),
-      userAchievements: unlockedUserAchievements,
-    },
-  };
-});
+const achievementListMap = computed(() =>
+  getAchievementListMap(displayAchievementDefinitions.value, userAchievements.value),
+);
 const tab = useEnumRouteQuery(TAB_QUERY_PARAMETER_KEY, AchievementStatuses, AchievementStatus.All);
 </script>
 

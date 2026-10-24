@@ -2,6 +2,7 @@
 import type { AchievementDefinitionEntry } from "#shared/models/achievement/AchievementDefinitionEntry";
 import type { UserAchievementWithDefinition } from "@/models/achievement/UserAchievementWithDefinition";
 
+import { checkIsUnlockedUserAchievement } from "@/services/achievement/checkIsUnlockedUserAchievement";
 import { RARE_ACHIEVEMENT_THRESHOLD } from "@/services/achievement/constants";
 import { prettify } from "@/util/text/prettify";
 
@@ -25,7 +26,7 @@ const isRare = computed(() => rarity !== undefined && rarity < RARE_ACHIEVEMENT_
       <!-- The badge: its mark on a raised block, lit in the success colour once it is earned -->
       <div
         class="badge"
-        :data-unlocked="Boolean(userAchievement?.unlockedAt) || undefined"
+        :data-unlocked="checkIsUnlockedUserAchievement(userAchievement) || undefined"
         flex
         shrink-0
         size-10
@@ -47,7 +48,7 @@ const isRare = computed(() => rarity !== undefined && rarity < RARE_ACHIEVEMENT_
       {{ Math.round(rarity * 10) / 10 }}% of users<span v-if="isRare" text-warning> · Rare</span>
     </p>
     <div flex-1 />
-    <p v-if="userAchievement?.unlockedAt" text-sm text-success>
+    <p v-if="checkIsUnlockedUserAchievement(userAchievement)" text-sm text-success>
       Unlocked <NuxtTime :datetime="userAchievement.unlockedAt" day="numeric" month="numeric" year="numeric" />
     </p>
     <div flex gap-2 items-center>

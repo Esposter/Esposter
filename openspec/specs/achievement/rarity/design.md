@@ -30,15 +30,16 @@ flowchart LR
 
 Paths relative to `apps/web`.
 
-| File                                               | Role                                                  |
-| -------------------------------------------------- | ----------------------------------------------------- |
-| `server/trpc/routers/achievement.ts`               | `readAchievementRarities` procedure                   |
-| `app/services/achievement/constants.ts`            | `RARE_ACHIEVEMENT_THRESHOLD`                          |
-| `app/models/achievement/AchievementSort.ts`        | the Category / Rarest first sort                      |
-| `app/services/achievement/AchievementSortItems.ts` | the sort control's items                              |
-| `app/components/Achievement/List.vue`              | the rarity read, the sort control and the sorted list |
-| `app/components/Achievement/Grid.vue`              | passes each achievement's rarity to its card          |
-| `app/components/Achievement/GridItem.vue`          | the percentage and the Rare mark on the card          |
+| File                                                     | Role                                                               |
+| -------------------------------------------------------- | ------------------------------------------------------------------ |
+| `server/trpc/routers/achievement.ts`                     | `readAchievementRarities` procedure                                |
+| `app/services/achievement/constants.ts`                  | `RARE_ACHIEVEMENT_THRESHOLD`                                       |
+| `app/models/achievement/AchievementSort.ts`              | the Category / Rarest first sort                                   |
+| `app/services/achievement/AchievementSortItems.ts`       | the sort control's items                                           |
+| `app/services/achievement/sortAchievementDefinitions.ts` | the rarest-first order, or the category order until the read lands |
+| `app/components/Achievement/List.vue`                    | the rarity read, the sort control and the status tabs              |
+| `app/components/Achievement/Grid.vue`                    | passes each achievement's rarity to its card                       |
+| `app/components/Achievement/GridItem.vue`                | the percentage and the Rare mark on the card                       |
 
 ## Sources
 
