@@ -39,10 +39,6 @@
       "source": "./src/index.ts",
       "default": "./dist/index.js"
     },
-    "./cli": {
-      "source": "./src/cli.ts",
-      "default": "./dist/cli.js"
-    },
     "./contracts": {
       "source": "./src/contracts.ts",
       "default": "./dist/contracts.js"
@@ -52,7 +48,6 @@
   "publishConfig": {
     "exports": {
       ".": "./dist/index.js",
-      "./cli": "./dist/cli.js",
       "./contracts": "./dist/contracts.js",
       "./package.json": "./package.json"
     },
