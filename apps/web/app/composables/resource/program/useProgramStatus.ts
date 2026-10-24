@@ -5,26 +5,22 @@ import { pluralize } from "#shared/util/text/pluralize";
 import { formatTruncationCount } from "@/services/dataset/formatTruncationCount";
 import { createParticipantLinksCsv } from "@/services/resource/program/createParticipantLinksCsv";
 import { getProgramParticipantsFilename } from "@/services/resource/program/getProgramParticipantsFilename";
-import { useNotificationStore } from "@/store/notification";
-import { useResourceStore } from "@/store/resource";
-import { useProgramStore } from "@/store/resource/program";
-import { getRouteParam } from "@/util/router/getRouteParam";
 import { NotificationSeverity } from "@esposter/db-schema";
 import { downloadFile, getResultAsync } from "@esposter/shared";
 
 // The status blade's participants and the command that generates them, which hands the owner the file of links they send
 // From. The invite export reads the same rows, so it is handed them rather than reading them a second time
 export const useProgramStatus = () => {
-  const { currentRoute } = useRouter();
-  const { $trpc } = useNuxtApp();
-  const programStore = useProgramStore();
-  const { programResource } = storeToRefs(programStore);
-  const resourceStore = useResourceStore();
-  const { resource } = storeToRefs(resourceStore);
-  const notificationStore = useNotificationStore();
-  const { createErrorNotification, createNotification, createWarningNotification } = notificationStore;
+  const {
+    $trpc,
+    createErrorNotification,
+    createNotification,
+    createWarningNotification,
+    id,
+    programResource,
+    resource,
+  } = useProgramContext();
   const { executeMutation, isPending: isGeneratePending } = useMutation();
-  const id = computed(() => getRouteParam(currentRoute.value.params, "id"));
   const statusRows = ref<ProgramStatusRow[]>([]);
   // Set when the response scan hit its cap, which makes every count on this blade a floor rather than a total
   const isRespondedPartial = ref(false);
