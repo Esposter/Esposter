@@ -26,6 +26,14 @@ import {
   removeBlockNode,
 } from "headless-block-editor";
 
+// The page builder kind the moves below act on, stated once rather than at every signature that takes it
+type MoveKind<
+  TNode extends BlockNode,
+  TRoot extends BlockRootProps,
+  TDefinition extends BlockTypeDefinition<TNode>,
+  TDocument extends BlockDocument<TNode, TRoot>,
+> = PageBuilderKind<TNode, TRoot, TDefinition, TDocument>;
+
 // The move of a node to the index one away from it in its own slot, or none when no sibling sits at that index
 const getSiblingMoveOperations = <
   TNode extends BlockNode,
@@ -33,7 +41,7 @@ const getSiblingMoveOperations = <
   TDefinition extends BlockTypeDefinition<TNode>,
   TDocument extends BlockDocument<TNode, TRoot>,
 >(
-  kind: PageBuilderKind<TNode, TRoot, TDefinition, TDocument>,
+  kind: MoveKind<TNode, TRoot, TDefinition, TDocument>,
   document: TDocument,
   nodePointer: string,
   offset: number,
@@ -61,7 +69,7 @@ export const usePageBuilderMoves = <
   TDefinition extends BlockTypeDefinition<TNode>,
   TDocument extends BlockDocument<TNode, TRoot>,
 >(
-  kind: PageBuilderKind<TNode, TRoot, TDefinition, TDocument>,
+  kind: MoveKind<TNode, TRoot, TDefinition, TDocument>,
   getDocument: () => TDocument | undefined,
   resourceId: MaybeRefOrGetter<string>,
   announce: (message: string) => void,
@@ -87,7 +95,7 @@ export const usePageBuilderMoves = <
   };
   // Announces where a moved node now sits: its title, its 1-based position among its slot's children and the slot's path
   const announceMove = (
-    kind: PageBuilderKind<TNode, TRoot, TDefinition, TDocument>,
+    kind: MoveKind<TNode, TRoot, TDefinition, TDocument>,
     document: TDocument,
     nodePointer: string,
   ) => {
@@ -105,7 +113,7 @@ export const usePageBuilderMoves = <
   const moveSelected = (
     label: string,
     getOperations: (
-      kind: PageBuilderKind<TNode, TRoot, TDefinition, TDocument>,
+      kind: MoveKind<TNode, TRoot, TDefinition, TDocument>,
       document: TDocument,
       nodePointer: string,
     ) => JsonPatchOperation[],
