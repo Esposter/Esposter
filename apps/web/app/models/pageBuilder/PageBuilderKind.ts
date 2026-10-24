@@ -21,4 +21,6 @@ export interface PageBuilderKind<
   // The schema one node parses by, which a duplicate or a paste checks its copy against before it is written
   nodeSchema: z.ZodType<TNode>;
   registry: BlockRegistry<TNode, TRoot, TDefinition>;
+  // The title each node type is shown by in the layers, the palette and the paths the shell names a slot with
+  titles: Readonly<Record<string, string>>;
 }

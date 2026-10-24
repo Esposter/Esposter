@@ -1,5 +1,6 @@
 import type { EmailKind } from "@/models/pageBuilder/EmailKind";
 
+import { EMAIL_NODE_TYPE_TITLE_MAP } from "#shared/services/pageBuilder/email/constants";
 import { emailDocumentSchema } from "#shared/services/pageBuilder/email/emailDocumentSchema";
 import { emailNodeChildren } from "#shared/services/pageBuilder/email/emailNodeChildren";
 import { emailNodeSchema } from "#shared/services/pageBuilder/email/emailNodeSchema";
@@ -10,4 +11,5 @@ export const emailKind: EmailKind = {
   documentSchema: emailDocumentSchema,
   nodeSchema: emailNodeSchema,
   registry: emailRegistry,
+  titles: EMAIL_NODE_TYPE_TITLE_MAP,
 };
