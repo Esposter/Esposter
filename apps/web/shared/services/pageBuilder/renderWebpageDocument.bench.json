@@ -6,13 +6,13 @@
         {
           "benchmarks": [
             {
-              "mean": 445.7238700000016,
+              "mean": 678.5330519999989,
               "name": "a tenth of the nodes",
-              "p99": 445.7238700000016,
+              "p99": 678.5330519999989,
               "rme": 0,
               "sampleCount": 1
             },
-            { "mean": 5818.961578999999, "name": "all the nodes", "p99": 5818.961578999999, "rme": 0, "sampleCount": 1 }
+            { "mean": 7585.658523000002, "name": "all the nodes", "p99": 7585.658523000002, "rme": 0, "sampleCount": 1 }
           ],
           "fullName": "renderWebpageDocument > 2000 nodes"
         }

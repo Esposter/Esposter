@@ -9,8 +9,8 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-10-24T06:23:34.222Z
-- Commit: a8b3117f
+- Date: 2026-10-24T06:25:26.384Z
+- Commit: 3ba30808
 - Node: v26.12.1
 - OS: linux 6.18.44-fc-v153 (x64)
 - CPU: Intel(R) Xeon(R) Processor @ 2.10GHz × 4
@@ -20,5 +20,5 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 | task                 | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
 | -------------------- | ------- | --------- | ------ | --------- | ------- |
-| a tenth of the nodes | 1.00×   | 445.7239  | ±0.00% | 445.7239  | 1       |
-| all the nodes        | 0.077×  | 5818.9616 | ±0.00% | 5818.9616 | 1       |
+| a tenth of the nodes | 1.00×   | 678.5331  | ±0.00% | 678.5331  | 1       |
+| all the nodes        | 0.089×  | 7585.6585 | ±0.00% | 7585.6585 | 1       |

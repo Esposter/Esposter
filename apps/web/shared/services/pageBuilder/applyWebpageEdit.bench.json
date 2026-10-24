@@ -1,0 +1,28 @@
+{
+  "files": [
+    {
+      "filepath": "shared/services/pageBuilder/applyWebpageEdit.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 0.008904799999913848,
+              "name": "the patch alone",
+              "p99": 0.02963210999982721,
+              "rme": 64.96917291186904,
+              "sampleCount": 10
+            },
+            {
+              "mean": 7.114560800000026,
+              "name": "apply the edit, its inverse recorded",
+              "p99": 16.160840639999932,
+              "rme": 36.067393253306115,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "applyBlockEdit > one edit to 2000 nodes"
+        }
+      ]
+    }
+  ]
+}

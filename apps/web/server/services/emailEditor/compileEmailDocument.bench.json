@@ -1,0 +1,28 @@
+{
+  "files": [
+    {
+      "filepath": "server/services/emailEditor/compileEmailDocument.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 23.592365500000003,
+              "name": "the MJML render alone",
+              "p99": 32.20804814999994,
+              "rme": 11.5004498112248,
+              "sampleCount": 10
+            },
+            {
+              "mean": 36.019666299999976,
+              "name": "compile to HTML",
+              "p99": 61.1713661799997,
+              "rme": 24.143492609751714,
+              "sampleCount": 10
+            }
+          ],
+          "fullName": "compileEmailDocument > the starter email"
+        }
+      ]
+    }
+  ]
+}
