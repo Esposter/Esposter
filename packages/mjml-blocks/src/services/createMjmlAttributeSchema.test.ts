@@ -67,6 +67,12 @@ describe(createMjmlAttributeSchema, () => {
     expect(createMjmlAttributeSchema(grammar, attribute).safeParse(value).success).toBe(false);
   });
 
+  test("a unit refuses the decimal comma that MJML's validator takes", () => {
+    expect.hasAssertions();
+
+    expect(createMjmlAttributeSchema("unit(px)", "width").safeParse("1,5px").success).toBe(false);
+  });
+
   test("an address accepts an allowed scheme", () => {
     expect.hasAssertions();
 

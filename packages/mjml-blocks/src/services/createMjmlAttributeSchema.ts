@@ -8,9 +8,10 @@ import { parseMjmlAttributeType } from "#src/services/parseMjmlAttributeType";
 import { exhaustiveGuard } from "@esposter/shared";
 import { z } from "zod";
 
-// MJML's own pattern for a unit: values of one unit each, or 0, repeated within its count, matched as its validator matches them
+// MJML's own pattern for a unit: values of one unit each, or 0, repeated within its count, matched as its validator matches them.
+// The one departure is the comma: MJML's validator takes it as a digit, but CSS reads "1,5px" as no length, so it is refused
 const createUnitPattern = (units: string[], isNegativeAllowed: boolean, minCount: number, maxCount: number): RegExp => {
-  const numeric = isNegativeAllowed ? String.raw`-|\d|,|\.` : String.raw`\d|,|\.`;
+  const numeric = isNegativeAllowed ? String.raw`-|\d|\.` : String.raw`\d|\.`;
   const filteredUnits = units
     .filter((unit) => unit !== "auto")
     .map((unit) => RegExp.escape(unit))
