@@ -470,7 +470,7 @@ describe("resourceRouter", () => {
     const webpageResource = await webpageCaller.createResource({ name });
     const blobName = createFilesBlobName(webpageResource.id);
     storeAsset(blobName);
-    const imageNode = createTestImageNode(getResourceAssetUrl(blobName));
+    const imageNode = createImageNode(blobName);
     await saveWebpageContent(webpageResource, new WebpageEditor({ content: [imageNode] }));
     await webpageCaller.publishResource({ id: webpageResource.id });
     const duplicatedResource = await caller.duplicateResource({ id: webpageResource.id });

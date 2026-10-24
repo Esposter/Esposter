@@ -8,6 +8,7 @@ import { describe } from "vitest";
 
 export const TEST_ID = "a";
 export const TEST_OTHER_ID = "b";
+export const TEST_THIRD_ID = "c";
 export const TEST_LABEL = "Go";
 export const TEST_LANG = "en";
 export const TEST_ORIGIN = "https://esposter.test";
@@ -22,8 +23,8 @@ export const TEST_EDIT_CONTENT = {
   type: "doc",
 };
 // An image node that loads from the address given, the way a page that names a file asset holds it
-export const createTestImageNode = (src: string): ImageNode => ({
-  props: { alt: "", decorative: true, id: crypto.randomUUID(), src },
+export const createTestImageNode = (src: string, id: string = crypto.randomUUID()): ImageNode => ({
+  props: { alt: "", decorative: true, id, src },
   type: WebpageNodeType.Image,
 });
 
