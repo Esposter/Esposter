@@ -12,7 +12,7 @@ export const writeBlobState = async (
   blobName: string,
   serializedJson: string,
   etag: string | undefined,
-): Promise<string | undefined> => {
+): Promise<string> => {
   const conditions = etag === undefined ? { ifNoneMatch: "*" } : { ifMatch: etag };
   const written = await getResultAsync(() =>
     writeJsonBlob(containerClient, blobName, serializedJson, conditions),
@@ -24,5 +24,8 @@ export const writeBlobState = async (
       throw error;
     },
   );
+  // A write that landed always answers the ETag it was stored under, so an absent one is a service fault, not a result
+  if (written.etag === undefined)
+    throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "The write answered no ETag" });
   return written.etag;
 };

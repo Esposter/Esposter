@@ -14,7 +14,7 @@ export const createSaveBlobStateProcedure = <TData, TDataInput>(
   container: AzureContainer,
   inputSchema: z.ZodType<{ data: TData; etag?: string }, { data: TDataInput; etag?: string }>,
 ) =>
-  standardAuthedProcedure.input(inputSchema).mutation<{ etag?: string }>(async ({ ctx, input }) => {
+  standardAuthedProcedure.input(inputSchema).mutation<{ etag: string }>(async ({ ctx, input }) => {
     const containerClient = await useContainerClient(container);
     const etag = await writeBlobState(
       containerClient,
