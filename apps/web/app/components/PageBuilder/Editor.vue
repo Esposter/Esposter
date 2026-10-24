@@ -8,6 +8,7 @@ import {
   DEFAULT_SIDE_PANE_WIDTH,
   MAX_SIDE_PANE_WIDTH,
   MIN_SIDE_PANE_WIDTH,
+  THEME_PANEL,
 } from "@/services/pageBuilder/constants";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
@@ -20,7 +21,10 @@ interface Props {
   resourceId: string;
 }
 
-const panelItems: UiTabItem<string>[] = [{ title: CONTENT_PANEL, value: CONTENT_PANEL }];
+const panelItems: UiTabItem<string>[] = [
+  { title: CONTENT_PANEL, value: CONTENT_PANEL },
+  { title: THEME_PANEL, value: THEME_PANEL },
+];
 
 const { resourceId } = defineProps<Props>();
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
@@ -175,7 +179,8 @@ const handleEditorKeydown = (event: KeyboardEvent) => {
         :min="MIN_SIDE_PANE_WIDTH"
       />
       <UiTabs v-model="panel" is-filling :items="panelItems" label="Node settings" h-full>
-        <PageBuilderContentPanel :resource-id />
+        <PageBuilderContentPanel v-if="panel === CONTENT_PANEL" :resource-id />
+        <PageBuilderThemePanel v-if="panel === THEME_PANEL" :resource-id />
       </UiTabs>
     </div>
     <div role="status" aria-live="polite" sr-only>{{ announcement }}</div>

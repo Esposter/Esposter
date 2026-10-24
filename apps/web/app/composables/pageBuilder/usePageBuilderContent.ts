@@ -5,7 +5,7 @@ import type { WebpageRootProps } from "#shared/models/pageBuilder/WebpageRootPro
 import type { MaybeRefOrGetter } from "vue";
 import type { z } from "zod";
 
-import { webpageRootPropsSchema } from "#shared/models/pageBuilder/WebpageRootProps";
+import { webpageRootFormSchema, webpageRootPropsSchema } from "#shared/models/pageBuilder/WebpageRootProps";
 import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { ROOT_INTERACTION_ID, ROOT_POINTER } from "@/services/pageBuilder/constants";
@@ -34,7 +34,7 @@ const getContentTarget = (document: WebpageDocument, nodeId: string): ContentTar
   const nodePointer = getNodePointer(document, nodeId);
   if (nodePointer === undefined)
     return {
-      formSchema: webpageRootPropsSchema,
+      formSchema: webpageRootFormSchema,
       interactionId: ROOT_INTERACTION_ID,
       pointer: ROOT_POINTER,
       props: document.root.props,

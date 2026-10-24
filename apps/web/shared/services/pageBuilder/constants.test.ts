@@ -11,6 +11,6 @@ export const TEST_ORIGIN = "https://esposter.test";
 export const TEST_URL = "https://example.com/";
 export const TEST_SURVEY_ID = crypto.randomUUID();
 export const TEST_CONTEXT: RenderContext = { origin: TEST_ORIGIN };
-export const TEST_ROOT: WebpageDocument["root"] = { props: { lang: TEST_LANG } };
+export const TEST_ROOT: WebpageDocument["root"] = { props: { lang: TEST_LANG, tokens: {} } };
 
 describe.todo("constants");

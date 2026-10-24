@@ -63,3 +63,7 @@ export const MAX_SIDE_PANE_WIDTH = 480;
 export const DEFAULT_SIDE_PANE_WIDTH = 260;
 // The content panel's title, which is also its value in the node settings tabs
 export const CONTENT_PANEL = "Content";
+// The theme panel's title, which is also its value in the node settings tabs
+export const THEME_PANEL = "Theme";
+// The colour a new theme colour starts as, until the colour field changes it
+export const DEFAULT_THEME_COLOR = "#000000";

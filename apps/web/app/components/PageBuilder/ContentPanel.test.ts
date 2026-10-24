@@ -70,7 +70,7 @@ describe("pageBuilderContentPanel", () => {
 
     component.getComponent(UiSchemaForm).vm.$emit("update:modelValue", { lang: "fr" });
 
-    expect(pageBuilderDocumentStore.getDocument(resourceId)?.root).toStrictEqual({ props: { lang: "fr" } });
+    expect(pageBuilderDocumentStore.getDocument(resourceId)?.root).toStrictEqual({ props: { lang: "fr", tokens: {} } });
 
     component.unmount();
   });
