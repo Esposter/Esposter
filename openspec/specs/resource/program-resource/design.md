@@ -45,24 +45,27 @@ Plus the full `createResourceProcedures(ResourceType.Program)` set. Token _valid
 
 ## Key files
 
-| File                                                                         | Role                                                 |
-| ---------------------------------------------------------------------------- | ---------------------------------------------------- |
-| `packages/db-schema/src/models/resource/ResourceType.ts`                     | the `Program` type value                             |
-| `packages/db-schema/src/models/program/ProgramParticipantEntity.ts`          | the participant entity + its key                     |
-| `apps/web/shared/models/resource/program/ProgramResource.ts`                 | audience/key/email/survey bindings                   |
-| `apps/web/server/trpc/routers/program.ts`                                    | factory + participants + status                      |
-| `apps/web/server/services/program/generateProgramParticipants.ts`            | idempotent token issuance                            |
-| `apps/web/server/services/program/getProgramParticipantId.ts`                | the key value → rowKey derivation                    |
-| `apps/web/server/services/program/readProgramStatusRows.ts`                  | the server-only participants × responses join        |
-| `apps/web/server/services/dataset/programStatus/readProgramStatusDataset.ts` | the `ProgramStatus` provider                         |
-| `apps/web/app/components/Resource/Program/Setup.vue`                         | the bindings blade                                   |
-| `apps/web/app/components/Resource/Program/BindingSelect.vue`                 | an Email or Survey binding, and its missing note     |
-| `apps/web/app/components/Resource/Program/SurveyModeWarning.vue`             | the shared Anonymous mode warning                    |
-| `apps/web/app/components/Resource/Program/Status.vue`                        | the funnel blade, and the participant links download |
-| `apps/web/app/services/resource/program/createParticipantLinksCsv.ts`        | key value and tokened link per participant           |
-| `apps/web/server/services/program/readProgramInvites.ts`                     | the invite read: email, scoped participants, rows    |
-| `apps/web/app/services/resource/program/createProgramInviteHtml.ts`          | one participant's merge fields and survey token      |
-| `apps/web/app/services/resource/sheet/csv/escapeUntrustedCsvCell.ts`         | formula neutralising for text the owner did not type |
+| File                                                                         | Role                                                                                |
+| ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `packages/db-schema/src/models/resource/ResourceType.ts`                     | the `Program` type value                                                            |
+| `packages/db-schema/src/models/program/ProgramParticipantEntity.ts`          | the participant entity + its key                                                    |
+| `apps/web/shared/models/resource/program/ProgramResource.ts`                 | audience/key/email/survey bindings                                                  |
+| `apps/web/server/trpc/routers/program.ts`                                    | factory + participants + status                                                     |
+| `apps/web/server/services/program/generateProgramParticipants.ts`            | idempotent token issuance                                                           |
+| `apps/web/server/services/program/getProgramParticipantId.ts`                | the key value → rowKey derivation                                                   |
+| `apps/web/server/services/program/readProgramStatusRows.ts`                  | the server-only participants × responses join                                       |
+| `apps/web/server/services/dataset/programStatus/readProgramStatusDataset.ts` | the `ProgramStatus` provider                                                        |
+| `apps/web/app/components/Resource/Program/Setup.vue`                         | the bindings blade                                                                  |
+| `apps/web/app/components/Resource/Program/BindingSelect.vue`                 | an Email or Survey binding, and its missing note                                    |
+| `apps/web/app/components/Resource/Program/SurveyModeWarning.vue`             | the shared Anonymous mode warning                                                   |
+| `apps/web/app/components/Resource/Program/Status.vue`                        | the funnel blade's view, over `useProgramStatus`                                    |
+| `apps/web/app/services/resource/program/createParticipantLinksCsv.ts`        | key value and tokened link per participant                                          |
+| `apps/web/server/services/program/readProgramInvites.ts`                     | the invite read: email, scoped participants, rows                                   |
+| `apps/web/app/services/resource/program/createProgramInviteHtml.ts`          | one participant's merge fields and survey token                                     |
+| `apps/web/app/services/resource/sheet/csv/escapeUntrustedCsvCell.ts`         | formula neutralising for text the owner did not type                                |
+| `apps/web/app/composables/resource/program/useProgramStatus.ts`              | the status blade's rows, the invite and reminder export, and participant generation |
+| `apps/web/app/services/resource/program/getProgramInviteFilename.ts`         | the invite or reminder zip's name, after the program                                |
+| `apps/web/app/services/resource/program/getProgramParticipantsFilename.ts`   | the participant links file's name, after the program                                |
 
 ## Notes
 
