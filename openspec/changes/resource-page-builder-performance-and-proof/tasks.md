@@ -6,11 +6,11 @@
 ## 2. Benchmarks
 
 - [ ] 2.1 Commit a benchmark for rendering a 2,000-node document. Verify: a test named after the scenario 'Rendering a large document stays under the budget'.
-  - Committed as `apps/web/shared/services/pageBuilder/renderWebpageDocument.bench.ts`, which reports 2,000 nodes at about 5.8 seconds against the spec's 20 milliseconds, so the budget is not met. The cost is per text node: `renderNoteHtml` builds its tiptap schema and, on the server, a happy-dom window, on every call. Left open until the render meets the budget.
+  - Committed as `apps/web/shared/services/pageBuilder/renderWebpageDocument.bench.ts`, which reports 2,000 nodes at about 7.6 seconds against the spec's 20 milliseconds, so the budget is not met. The cost is per text node: `renderNoteHtml` builds its tiptap schema and, on the server, a happy-dom window, on every call. Left open until the render meets the budget.
 - [ ] 2.2 Commit a benchmark for applying one edit with its inverse recorded.
   - Committed as `apps/web/shared/services/pageBuilder/applyWebpageEdit.bench.ts`, and the inverse test is `applyWebpageEdit.test.ts`, which passes. The edit takes about 7.1 milliseconds (p99 16) against the spec's 0.5 milliseconds, and the patch alone is 0.009 milliseconds, so the cost is the schema's re-parse of the whole document. Left open until the budget is met. Verify: tests named after the scenarios 'A single edit applies within the budget' and 'An edit's inverse restores the document exactly'.
 - [ ] 2.3 Commit a benchmark for compiling the starter email on the server.
-  - Committed as `apps/web/server/services/emailEditor/compileEmailDocument.bench.ts`: the compile takes about 32 milliseconds (p99 45) against the spec's 250 milliseconds, so the budget is met. Left open until the test named after the scenario exists; the bench carries the number. Verify: a test named after the scenario 'The starter email compiles within the budget'.
+  - Committed as `apps/web/server/services/emailEditor/compileEmailDocument.bench.ts`: the compile takes about 36 milliseconds (p99 61) against the spec's 250 milliseconds, so the budget is met. Left open until the test named after the scenario exists; the bench carries the number. Verify: a test named after the scenario 'The starter email compiles within the budget'.
 
 ## 3. Browser proof
 
