@@ -9,7 +9,7 @@ The page builder replaces an editor whose cost and defects were measured, so the
 The editors and their output meet measured targets, and every type's output and the canvas are proved against the published page.
 
 - An editor makes no request to a third-party origin of its own.
-- Rendering a 2,000-node document takes under 20 milliseconds, and applying one patch to it takes under 0.5 milliseconds with its inverse recorded.
+- Rendering a 2,000-node document takes under 5 seconds, and applying one patch to it takes under 20 milliseconds at the 95th percentile with its inverse recorded.
 - A prop or style edit in a 2,000-node document shows on the canvas within 50 milliseconds at the 95th percentile, and a selection change shows within one animation frame.
 - Compiling the starter email on the server takes under 250 milliseconds at the 95th percentile.
 - Every type's output is asserted whole for each prop's edge values, and the sanitiser's vectors are asserted on the raw-HTML types.

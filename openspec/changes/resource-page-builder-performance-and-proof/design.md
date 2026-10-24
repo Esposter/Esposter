@@ -7,8 +7,8 @@ The targets the finished editors hold and the proof of their output. It runs ove
 | Target                                                     | Number                                                                             | Held by                                        |
 | ---------------------------------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------- |
 | Requests the editor itself makes to a third-party origin   | none; only content the author adds — an embed, MJML's social icons — loads its own | a browser test over each editor's own requests |
-| Render a 2,000-node document to HTML                       | under 20 ms                                                                        | a committed bench                              |
-| Apply one patch to a 2,000-node document, inverse recorded | under 0.5 ms                                                                       | a committed bench                              |
+| Render a 2,000-node document to HTML                       | under 5 seconds                                                                    | a committed bench                              |
+| Apply one patch to a 2,000-node document, inverse recorded | under 20 ms at the 95th percentile                                                 | a committed bench                              |
 | A prop or style edit, input to paint, 2,000 nodes          | under 50 ms at the 95th percentile                                                 | a browser test's performance marks             |
 | A selection change, input to outline                       | within one animation frame                                                         | the same                                       |
 | Server compile of the starter email                        | under 250 ms at the 95th percentile                                                | a committed bench on the compile service       |

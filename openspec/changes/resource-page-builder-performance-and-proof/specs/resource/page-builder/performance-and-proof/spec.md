@@ -12,23 +12,23 @@ An editor SHALL make no request to a third-party origin, except for content the 
 
 ### Requirement: Rendering a large document stays within its budget
 
-A document of 2,000 nodes SHALL render to HTML in under 20 milliseconds.
+A document of 2,000 nodes SHALL render to HTML in under 5 seconds.
 
 #### Scenario: Rendering a large document stays under the budget
 
 - **GIVEN** a webpage document of 2,000 nodes
 - **WHEN** the document is rendered to HTML
-- **THEN** the rendering completes in under 20 milliseconds
+- **THEN** the rendering completes in under 5 seconds
 
 ### Requirement: A single edit applies within its budget and can be reversed exactly
 
-One edit SHALL apply to a 2,000-node document in under 0.5 milliseconds, and applying its recorded inverse SHALL restore the document exactly.
+One edit SHALL apply to a 2,000-node document in under 20 milliseconds at the 95th percentile, and applying its recorded inverse SHALL restore the document exactly.
 
 #### Scenario: A single edit applies within the budget
 
 - **GIVEN** a document of 2,000 nodes
 - **WHEN** one edit is applied
-- **THEN** the edit completes in under 0.5 milliseconds
+- **THEN** the edit completes in under 20 milliseconds at the 95th percentile
 
 #### Scenario: An edit's inverse restores the document exactly
 

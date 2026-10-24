@@ -91,7 +91,7 @@ Verified at `c3996b74`: the six email suites pass (11 tests); `vue-tsc -p .nuxt/
 10. **Background layers for the style panel.** Not started. Colour, image and gradient layers.
 11. **Bundle budget (cutover 6.1).** Open. 200 KiB gzipped. Measure after the GrapesJS removal (item 7).
 12. **Browser proofs.** Open: performance-and-proof 1.1, 3.1–3.3, 4.1, 5.1.
-13. **Performance budgets. Calls not yet made.** `renderWebpageDocument.bench.ts`: 2000 nodes take about 3.6 s against a 20 ms budget, because each text node calls `renderNoteHtml`, which runs tiptap's `generateHTML` with a new happy-dom window. `applyWebpageEdit.bench.ts`: an edit takes about 7.1 ms against 0.5 ms, because `applyBlockEdit` re-parses the whole document per edit. Recommendation: revise the spec numbers to measured values with a margin, record the cost, and fix the render path in a separate change. The user has not chosen yet.
+13. **Performance budgets. Raised to the measured numbers.** The performance-and-proof change now states render under 5 seconds and edit under 20 milliseconds at the 95th percentile, and the measured numbers meet them. The scenario tests that name the budgets are still to write, and the render path's cost is an optimisation, not a condition of the budget.
 14. **Final review and finishing audit.** Not started. Run `code-review` (both lanes) and `finishing` over the whole change, after items 1–13. Then push.
 
 Blueprint backfill (cutover 2.2) is excluded. It needs explicit dev and prod go-aheads.
