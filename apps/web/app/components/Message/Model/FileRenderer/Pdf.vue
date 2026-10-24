@@ -1,16 +1,14 @@
 <script setup lang="ts">
 import type { FileRendererComponentProps } from "@/models/message/file/FileRendererComponentProps";
-import type { PdfRenderer } from "vue-pdfjs-headless";
 
 import { PREVIEW_MAX_HEIGHT } from "@/services/message/file/constants";
 import { loadPdfRenderer } from "@/services/pdf/loadPdfRenderer";
-import { getResultAsync } from "@esposter/shared";
 import { usePdfDocument } from "vue-pdfjs-headless";
 
 const { file, isPreview, url } = defineProps<FileRendererComponentProps>();
 const isOpen = ref(false);
-const renderer = shallowRef<PdfRenderer>();
-const isRendererFailed = ref(false);
+// The renderer loads as the component mounts, and a renderer that never came draws no page either
+const { isFailed: isRendererFailed, loaded: renderer } = useLazyLoad(loadPdfRenderer);
 // The read link is re-minted before it expires, which must not reload a document already open: the viewer would lose
 // Its page, its zoom and the password. A link that has loaded no document yet is followed, so an expired one is retried
 const source = ref(url);
@@ -19,18 +17,6 @@ const { isFailed, isPasswordRequested, isPasswordWrong, pdfDocument, submitPassw
   source,
 });
 const isAnyFailed = computed(() => isFailed.value || isRendererFailed.value);
-
-onMounted(async () => {
-  await getResultAsync(loadPdfRenderer).match(
-    (loaded) => {
-      renderer.value = loaded;
-    },
-    (error) => {
-      isRendererFailed.value = true;
-      console.error(error);
-    },
-  );
-});
 
 watch(
   () => url,

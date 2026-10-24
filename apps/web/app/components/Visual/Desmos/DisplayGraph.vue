@@ -40,11 +40,14 @@ const componentsToRender = computed<Parameters<typeof h>[]>(() => {
 });
 const render = useRender(expressionPanel);
 // The script's own load slot calls back once the API is in, so the calculator waits for that here. A calculator that
-// fails to build shows its failure in place of the drawing, as a script that fails to load does through its status below
-const { isFailed, loaded: calculator } = useLazyLoad(async () => {
+// Fails to build shows its failure in place of the drawing, as a script that fails to load does through its status below
+const { isFailed, loaded: calculator } = useLazyLoad(async (signal) => {
   const { GraphingCalculator } = await new Promise<typeof Desmos>((resolve) => {
     onLoaded(resolve);
   });
+  // A drawing unmounted while the script loaded has no element of its own to draw into, and the element its id names
+  // May be a remount's, so it stops here rather than building a second calculator into it
+  signal.throwIfAborted();
   const element = window.document.getElementById(id) as HTMLDivElement;
   const newCalculator = await GraphingCalculator(element, {
     border: false,
