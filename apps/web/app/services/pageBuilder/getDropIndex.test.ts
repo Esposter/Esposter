@@ -40,6 +40,19 @@ describe(getDropIndex, () => {
     expect(getDropIndex(SINGLE_ROW, { x: 150, y: 20 }, true)).toBe(1);
   });
 
+  test("a drop beside a taller child on the line lands before the shorter child the pointer has passed", () => {
+    expect.hasAssertions();
+
+    // The first child's bottom lies above the pointer, so the pointer's line starts at the taller second child
+    const UNEQUAL_HEIGHTS: OverlayBox[] = [
+      { height: 40, left: 0, top: 0, width: 200 },
+      { height: 100, left: 200, top: 0, width: 200 },
+      { height: 40, left: 0, top: 110, width: 200 },
+    ];
+
+    expect(getDropIndex(UNEQUAL_HEIGHTS, { x: 50, y: 50 }, true)).toBe(0);
+  });
+
   test("a drop in a stack lands by height", () => {
     expect.hasAssertions();
 
