@@ -80,7 +80,7 @@ config loading.
 
 ## The Nuxt configuration, Nuxt modules and bare-`node` plugins are the `as const` exceptions
 
-The Nuxt configuration and Nuxt module graphs hold no enum (`scripts/src/workspace/nuxtModuleNativeLoad.test.ts` enforces it), so a file either imports declares its closed set as an `as const` object with a type of the same name, and its call sites read exactly as an enum's:
+The Nuxt configuration and Nuxt module graphs hold no enum (`scripts/src/workspace/nuxtModuleNativeLoad.test.ts` enforces it), so a file that needs a closed set declares it as an `as const` object with a type of the same name, and its call sites read exactly as an enum's:
 
 ```ts
 export const ThemeMode = { Dark: "dark", Light: "light", System: "system" } as const;
