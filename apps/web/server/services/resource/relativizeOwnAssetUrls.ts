@@ -5,12 +5,15 @@ import { deepReplaceStrings } from "#shared/util/object/deepReplaceStrings";
 // An absolute url of ours is still ours, but the asset regex refuses it on purpose: the lookbehind is what keeps a
 // Foreign absolute url carrying our prefix from being rewritten into a local one. Only the origin tells the two apart,
 // So same-origin urls are relativized rather than the anchor being loosened for both. The app mints this form itself
-// When it absolutizes for email, so exported html pasted back into an editor re-enters content with it.
+// When it absolutizes for email, so exported html pasted back into an editor re-enters content with it
 export const relativizeOwnAssetUrls = <TContent>(content: TContent): TContent => {
   const baseUrl = getBaseUrl();
-  return baseUrl
-    ? deepReplaceStrings(content, (value) =>
-        value.replaceAll(`${baseUrl}${RESOURCE_ASSETS_URL_PREFIX}/`, `${RESOURCE_ASSETS_URL_PREFIX}/`),
-      )
-    : content;
+  if (!baseUrl) return content;
+
+  // The same lookbehind as RESOURCE_ASSET_URL_REGEX, so a foreign url that embeds our origin is not matched
+  const ownAssetUrlRegex = new RegExp(
+    String.raw`(?<![\w.~%/:-])${RegExp.escape(baseUrl)}${RegExp.escape(RESOURCE_ASSETS_URL_PREFIX)}/`,
+    "gu",
+  );
+  return deepReplaceStrings(content, (value) => value.replaceAll(ownAssetUrlRegex, `${RESOURCE_ASSETS_URL_PREFIX}/`));
 };
