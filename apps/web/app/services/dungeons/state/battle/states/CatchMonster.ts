@@ -28,7 +28,10 @@ export const CatchMonster: State<StateName.CatchMonster> = {
       monsters.value.push(activeMonster.value);
       await battleStateMachine.setState(StateName.GainExperience);
     } else {
-      await showMessages(scene, [`Wild ${prettify(activeMonster.value.key)} breaks free!`]);
+      const monsterName = prettify(activeMonster.value.key);
+      // A near miss says how close it was before the monster breaks free
+      const nearMissMessages = captureResult === CaptureResult.NearMiss ? [`You almost caught ${monsterName}!`] : [];
+      await showMessages(scene, [...nearMissMessages, `Wild ${monsterName} breaks free!`]);
       await battleStateMachine.setState(StateName.EnemyInput);
     }
   },
