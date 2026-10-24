@@ -10,7 +10,7 @@ import { getResultAsync, MAX_READ_LIMIT, noop } from "@esposter/shared";
 
 export const useExportResourcesCsv = () => {
   const notificationStore = useNotificationStore();
-  const { createErrorNotification, createNotification } = notificationStore;
+  const { createErrorNotification, createNotification, createWarningNotification } = notificationStore;
   const exportFile = useExportFile();
   const exportResourcesCsv = async (resources: ResourceInResource[]) => {
     const isExported = await exportFile(
@@ -52,10 +52,7 @@ export const useExportResourcesCsv = () => {
       }
       const isExported = await exportResourcesCsv(allResources.slice(0, MAX_CSV_EXPORT_ROWS));
       if (isExported && isTruncated)
-        createNotification({
-          severity: NotificationSeverity.Warning,
-          title: `Export truncated to the first ${MAX_CSV_EXPORT_ROWS} resources`,
-        });
+        createWarningNotification(`Export truncated to the first ${MAX_CSV_EXPORT_ROWS} resources`);
     }).match(noop, createErrorNotification);
   };
   return { exportAllResourcesCsv, exportResourcesCsv };
