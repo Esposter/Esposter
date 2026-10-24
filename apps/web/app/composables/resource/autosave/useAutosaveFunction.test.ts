@@ -57,17 +57,17 @@ describe(useAutosaveFunction, () => {
     expect(save).toHaveBeenCalledExactlyOnceWith();
   });
 
-  // VueUse's debounce arms a bare setTimeout with no scope cleanup, so an unmounted blade's last keystroke
-  // Still fires its save — against whichever resource the app has moved on to
-  test("drops the pending save when its scope is disposed", async () => {
+  // A blade closed while its resource stays open writes the edit it still holds, rather than leaving it to a debounce
+  // That went with the blade's scope
+  test("writes the held edit when its scope is disposed on the resource still open", async () => {
     expect.hasAssertions();
 
     await mountAutosave();
     autosave();
     wrapper.unmount();
-    await elapseDebounce();
+    await waitForSynchronizedFunctions();
 
-    expect(save).not.toHaveBeenCalled();
+    expect(save).toHaveBeenCalledExactlyOnceWith();
   });
 
   // Edits that exist only in the tab are the one thing the toolbar must not call saved, and the debounce

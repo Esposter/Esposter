@@ -5,26 +5,38 @@ import { useResourceStore } from "@/store/resource";
 import { getRouteParam } from "@/util/router/getRouteParam";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
 
-// The one shared autosave cadence, bound to the resource that was open when the edit landed. Both halves
-// Are load-bearing: useTimeoutFn drops its pending timer with the surrounding scope (VueUse's debounce arms a
-// Bare setTimeout that outlives both the watcher and the blade), and the captured id refuses a write that
-// Would land against a different resource — `load()` replaces the loaded resource one await before the store
-// Re-seeds its content ref, so an unbound late save uploads the previous resource's content under this one's
-// Id and contentVersion. Cancellation alone only shortens that window; the id closes it
+// The one shared autosave cadence, bound to the resource that was open when the edit landed. The binding refuses a
+// Write that would land against a different resource — `load()` replaces the loaded resource one await before the store
+// Re-seeds its content ref, so an unbound late save uploads the previous resource's content under this one's id and
+// ContentVersion. Leaving the editor writes the edit still held, before the route changes, so that write still names
+// Its resource: an edit is saved on the way out rather than dropped with the debounce's timer
 export const useAutosaveFunction = (save: () => Promisable<unknown>) => {
   const { currentRoute } = useRouter();
   const resourceStore = useResourceStore();
   const { hasUnwrittenContent } = storeToRefs(resourceStore);
-  const { start } = useTimeoutFn(
-    getSynchronizedFunction((scheduledResourceId: string) =>
-      getResultAsync(async () => {
-        if (getRouteParam(currentRoute.value.params, "id") !== scheduledResourceId) return;
-        await save();
-      }).match(noop, console.error),
-    ),
-    RESOURCE_AUTOSAVE_DEBOUNCE_MS,
-    { immediate: false },
-  );
+  // The resource the held edit was made on, until its write starts
+  let pendingResourceId: string | undefined;
+  const writePending = async () => {
+    const scheduledResourceId = pendingResourceId;
+    pendingResourceId = undefined;
+    if (scheduledResourceId === undefined) return;
+
+    await getResultAsync(async () => {
+      if (getRouteParam(currentRoute.value.params, "id") !== scheduledResourceId) return;
+      await save();
+    }).match(noop, console.error);
+  };
+  const writePendingInBackground = getSynchronizedFunction(writePending);
+  const { start, stop } = useTimeoutFn(writePendingInBackground, RESOURCE_AUTOSAVE_DEBOUNCE_MS, { immediate: false });
+  // A blade closed while its resource stays open writes the edit it holds, so the debounce's timer going with the
+  // Scope does not drop it
+  tryOnScopeDispose(() => {
+    stop();
+    writePendingInBackground();
+  });
+  // Navigating away writes the edit it holds before the route changes, while the route still names its resource
+  onBeforeRouteLeave(writePending);
+
   return () => {
     // The debounce holds this edit for half a second and re-arms for as long as the owner keeps typing, so
     // Between the keystroke and the write there is nothing in flight to read — the toolbar would call a tab
@@ -32,6 +44,7 @@ export const useAutosaveFunction = (save: () => Promisable<unknown>) => {
     // One door every save goes through, so clearing it is its, and a save this refuses never reaches it — which
     // Is the point, since a refused save is an edit that was dropped rather than one that landed
     hasUnwrittenContent.value = true;
-    start(getRouteParam(currentRoute.value.params, "id"));
+    pendingResourceId = getRouteParam(currentRoute.value.params, "id");
+    start();
   };
 };
