@@ -13,7 +13,21 @@ interface Props {
 const { resourceId } = defineProps<Props>();
 const pageBuilderCanvasStore = usePageBuilderCanvasStore();
 const { getStyleState, setStyleState } = pageBuilderCanvasStore;
-const { getField, hasNode, resetField, setField } = usePageBuilderStyle(() => resourceId);
+const { getField, hasNode, previewField, resetField, setField } = usePageBuilderStyle(() => resourceId);
+// The opacity a drag is at while it moves, which the slider shows in place of the value the field holds
+const opacityDrag = ref<number>();
+const opacity = computed({
+  get: () => opacityDrag.value ?? Number(getField("opacity").value || 1),
+  set: (value) => {
+    opacityDrag.value = value;
+    previewField("opacity", String(value));
+  },
+});
+// A drag that settles records its value once; a key's press settles at once, which the slider reports the same way
+const settleOpacity = (value: number) => {
+  opacityDrag.value = undefined;
+  setField("opacity", String(value));
+};
 const { colors } = usePageBuilderTheme(() => resourceId);
 // A colour field shows the value the property sets, else the one it inherits, else black, since a colour input holds a colour
 const getColorValue = (property: StyleProperty) => {
@@ -42,6 +56,16 @@ const openSectors = ref(Object.fromEntries(STYLE_SECTORS.map(({ title }) => [tit
             :model-value="getColorValue(property)"
             :swatches="colors"
             @update:model-value="(value) => setField(property, value)"
+          />
+          <UiSlider
+            v-else-if="property === 'opacity'"
+            v-model="opacity"
+            :label="property"
+            :max="1"
+            :min="0"
+            :step="0.01"
+            :value-text="`${Math.round(opacity * 100)}%`"
+            @end="(value) => settleOpacity(value)"
           />
           <PageBuilderStylePanelField
             v-else

@@ -37,10 +37,27 @@ export const usePageBuilderHistoryStore = defineStore("pageBuilder/history", () 
       if (!document) throw new InvalidOperationError(Operation.Update, resourceId, "has no document held");
       return document;
     }).andThen((document) => applyBlockEdit(webpageDocumentSchema, document, operations));
-  // The document and the history an edit leaves land together, so neither is ever ahead of the other
+  // The document an edit in progress would leave, drawn in place of the held one until an edit commits. It enters no
+  // History, so a drag of a value previews as it moves and records once when it settles
+  const previewMap = shallowRef(new Map<string, WebpageDocument>());
+  const getPreview = (resourceId: string) => previewMap.value.get(resourceId);
+  const clearPreview = (resourceId: string) => {
+    if (!previewMap.value.has(resourceId)) return;
+
+    const previews = new Map(previewMap.value);
+    previews.delete(resourceId);
+    previewMap.value = previews;
+  };
+  const setPreview = (resourceId: string, operations: JsonPatchOperation[]) => {
+    applyOperations(resourceId, operations).match(({ document }) => {
+      previewMap.value = new Map(previewMap.value).set(resourceId, document);
+    }, console.error);
+  };
+  // The document and the history an edit leaves land together, so neither is ever ahead of the other, and a preview ends
   const commitEdit = (resourceId: string, document: WebpageDocument, history: History<PageBuilderHistoryEntry>) => {
     setDocument(resourceId, document);
     setHistory(resourceId, history);
+    clearPreview(resourceId);
   };
   // An undo or a redo moves the history, and the move lands only when the entry's operations apply
   const moveHistory = (
@@ -75,5 +92,5 @@ export const usePageBuilderHistoryStore = defineStore("pageBuilder/history", () 
     moveHistory(resourceId, entry.inverses, history);
   };
 
-  return { applyEdit, clearHistory, getRedoLabel, getUndoLabel, historyMap, redo, undo };
+  return { applyEdit, clearHistory, getPreview, getRedoLabel, getUndoLabel, historyMap, redo, setPreview, undo };
 });

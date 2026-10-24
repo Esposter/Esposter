@@ -437,6 +437,9 @@ describe(usePageBuilderHistoryStore, () => {
     undo(resourceId);
     redo(resourceId);
 
-    expect(getDocument(resourceId)).toStrictEqual({ ...TEST_DOCUMENT, root: { props: { lang: TEST_OTHER_LANG } } });
+    expect(getDocument(resourceId)).toStrictEqual({
+      ...TEST_DOCUMENT,
+      root: { props: { lang: TEST_OTHER_LANG, tokens: {} } },
+    });
   });
 });

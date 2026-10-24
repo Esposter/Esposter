@@ -13,15 +13,17 @@ import { usePageBuilderStyleClipboardStore } from "@/store/pageBuilder/styleClip
 import { JsonPatchOperationType, noop } from "@esposter/shared";
 import { getBlockNode } from "headless-block-editor";
 
-// The style of the selected node at the breakpoint the device edits and the state the style panel edits, one edit per
-// Field and state, so typing a value merges into one history entry and a reset is an entry of its own
+// The style of the selected node at the breakpoint the device edits and the state the style panel edits. A field's edit
+// Merges into one history entry per field, state and breakpoint, and a reset is an entry of its own
 export const usePageBuilderStyle = (resourceId: MaybeRefOrGetter<string>) => {
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
   const { getDocument } = pageBuilderDocumentStore;
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
   const { getDevice, getSelectedNodeId, getStyleState } = pageBuilderCanvasStore;
   const pageBuilderHistoryStore = usePageBuilderHistoryStore();
-  const { applyEdit } = pageBuilderHistoryStore;
+  const { applyEdit, setPreview } = pageBuilderHistoryStore;
+  // The store is read through its object, since destructuring would keep the copied style as it was when this ran
+  const pageBuilderStyleClipboardStore = usePageBuilderStyleClipboardStore();
   const target = computed(() => {
     const resourceIdValue = toValue(resourceId);
     const document = getDocument(resourceIdValue);
@@ -47,25 +49,35 @@ export const usePageBuilderStyle = (resourceId: MaybeRefOrGetter<string>) => {
       value: targetValue?.style?.[breakpoint]?.[state]?.[property] ?? "",
     };
   };
-  const setField = (property: StyleProperty, value: string) => {
-    const resourceIdValue = toValue(resourceId);
+  // The edit that writes a field's value, shared by a commit and a preview so the two never disagree about what is written
+  const getFieldEdit = (property: StyleProperty, value: string) => {
     const targetValue = target.value;
-    if (!targetValue) return;
+    if (!targetValue) return undefined;
 
     const breakpoint = getBreakpoint();
     const state = getState();
-    applyEdit(
-      resourceIdValue,
-      [
+    return {
+      interactionId: value === "" ? undefined : `style:${targetValue.nodeId}:${breakpoint}:${state}:${property}`,
+      label: value === "" ? "Reset style" : "Edit style",
+      operations: [
         {
           op: JsonPatchOperationType.Add,
           path: `${targetValue.pointer}/props/style`,
           value: setStyleProperty(targetValue.style, breakpoint, state, property, value),
         },
       ],
-      value === "" ? "Reset style" : "Edit style",
-      value === "" ? undefined : `style:${targetValue.nodeId}:${breakpoint}:${state}:${property}`,
-    ).match(noop, console.error);
+    };
+  };
+  const setField = (property: StyleProperty, value: string) => {
+    const edit = getFieldEdit(property, value);
+    if (!edit) return;
+
+    applyEdit(toValue(resourceId), edit.operations, edit.label, edit.interactionId).match(noop, console.error);
+  };
+  // A value a drag is passing through: drawn on the canvas at once, and recorded only when the drag settles via setField
+  const previewField = (property: StyleProperty, value: string) => {
+    const edit = getFieldEdit(property, value);
+    if (edit) setPreview(toValue(resourceId), edit.operations);
   };
   const resetField = (property: StyleProperty) => {
     setField(property, "");
@@ -73,24 +85,29 @@ export const usePageBuilderStyle = (resourceId: MaybeRefOrGetter<string>) => {
 
   // Copy takes the selected node's whole style, and paste replaces the selected node's style with the copied one, so the
   // Two nodes match after it. The copied style is shared, never mutated, since every edit above writes a new style
-  // The store is read through its object, since destructuring would keep the copied style as it was when this ran
-  const pageBuilderStyleClipboardStore = usePageBuilderStyleClipboardStore();
   const copyStyle = () => {
     const targetValue = target.value;
     if (targetValue) pageBuilderStyleClipboardStore.setCopiedStyle(targetValue.style ?? {});
   };
   const pasteStyle = () => {
-    const resourceIdValue = toValue(resourceId);
     const targetValue = target.value;
     const { copiedStyle } = pageBuilderStyleClipboardStore;
     if (!targetValue || !copiedStyle) return;
 
     applyEdit(
-      resourceIdValue,
+      toValue(resourceId),
       [{ op: JsonPatchOperationType.Add, path: `${targetValue.pointer}/props/style`, value: copiedStyle }],
       "Paste style",
     ).match(noop, console.error);
   };
 
-  return { copyStyle, getField, hasNode: computed(() => target.value !== undefined), pasteStyle, resetField, setField };
+  return {
+    copyStyle,
+    getField,
+    hasNode: computed(() => target.value !== undefined),
+    pasteStyle,
+    previewField,
+    resetField,
+    setField,
+  };
 };

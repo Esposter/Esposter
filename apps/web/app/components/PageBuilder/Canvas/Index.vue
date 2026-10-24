@@ -12,6 +12,7 @@ import { getNodeIdFromElement } from "@/services/pageBuilder/getNodeIdFromElemen
 import { renderCanvasVNodes } from "@/services/pageBuilder/renderCanvasVNodes";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
+import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 
 interface Props {
   announce: (message: string) => void;
@@ -26,6 +27,8 @@ const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 const { getDocument } = pageBuilderDocumentStore;
 const pageBuilderCanvasStore = usePageBuilderCanvasStore();
 const { getDevice, getEditingNodeId, getSelectedNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
+const pageBuilderHistoryStore = usePageBuilderHistoryStore();
+const { getPreview } = pageBuilderHistoryStore;
 const pageDocument = computed(() => getDocument(resourceId));
 const selectedNodeId = computed(() => getSelectedNodeId(resourceId));
 const editingNodeId = computed(() => getEditingNodeId(resourceId));
@@ -77,8 +80,9 @@ watch(contentRoot, (element, _previousElement, onCleanup) => {
 });
 defineExpose({ getFrameGeometry });
 // While a text node is edited, its rendered content is hidden in the frame: the editor is mounted beside it inside the node
+// The style a drag is previewing is drawn over the document's, so the page follows the drag before it is recorded
 const css = computed(() => {
-  const document = drawnDocument.value;
+  const document = getPreview(resourceId) ?? drawnDocument.value;
   if (!document) return "";
 
   const pageCss = getWebpageCss(document, getPresentDefinitions(document));

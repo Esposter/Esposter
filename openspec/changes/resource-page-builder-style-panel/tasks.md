@@ -13,7 +13,7 @@
 
 - [ ] 3.1 Draw the style sectors with the shared UI library's controls, showing the inherited value and offering reset. The colour field lists the theme's colours as `UiColorField` swatches and stores a picked one as `var(--color-name)`, which closes task 2.2. Verify: tests named after the scenarios 'A field shows the inherited value and where it comes from', 'Reset removes an override' and 'Changing a theme colour recolours every node that uses it'.
 - [x] 3.2 Add Copy style and Paste style as commands. Verify: a test named after the scenario 'Paste style applies copied styles to another node'.
-- [ ] 3.3 Preview slider drags on the canvas and record one undoable change on release. Verify: a test named after the scenario 'Dragging an opacity slider records one undoable change'.
+- [x] 3.3 Preview slider drags on the canvas and record one undoable change on release. Verify: a test named after the scenario 'Dragging an opacity slider records one undoable change'.
 
 ## 4. The record
 

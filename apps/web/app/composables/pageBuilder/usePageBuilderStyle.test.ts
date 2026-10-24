@@ -7,6 +7,7 @@ import { TEST_ID, TEST_LABEL, TEST_OTHER_ID, TEST_ROOT, TEST_URL } from "#shared
 import { usePageBuilderStyle } from "@/composables/pageBuilder/usePageBuilderStyle";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
+import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test } from "vitest";
 
@@ -35,5 +36,33 @@ describe(usePageBuilderStyle, () => {
     usePageBuilderStyle(resourceId).pasteStyle();
 
     expect(pageBuilderDocumentStore.getDocument(resourceId)?.content[1]?.props.style).toStrictEqual(style);
+  });
+
+  test("dragging an opacity slider records one undoable change", () => {
+    expect.hasAssertions();
+
+    const resourceId = crypto.randomUUID();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setDocument(resourceId, {
+      content: [{ props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button }],
+      root: TEST_ROOT,
+    });
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
+    const pageBuilderHistoryStore = usePageBuilderHistoryStore();
+    const { previewField, setField } = usePageBuilderStyle(resourceId);
+
+    previewField("opacity", "0.5");
+    previewField("opacity", "0.4");
+
+    expect(pageBuilderHistoryStore.historyMap.get(resourceId)?.past.length ?? 0).toBe(0);
+    expect(pageBuilderHistoryStore.getPreview(resourceId)?.content[0]?.props.style).toStrictEqual({
+      [StyleBreakpoint.Base]: { [StyleState.Default]: { opacity: "0.4" } },
+    });
+
+    setField("opacity", "0.4");
+
+    expect(pageBuilderHistoryStore.historyMap.get(resourceId)?.past).toHaveLength(1);
+    expect(pageBuilderHistoryStore.getPreview(resourceId)).toBeUndefined();
   });
 });

@@ -17,9 +17,9 @@ describe(usePageBuilderDocumentStore, () => {
 
     const firstResourceId = crypto.randomUUID();
     const secondResourceId = crypto.randomUUID();
-    const firstDocument: WebpageDocument = { content: [], root: { props: { lang: TEST_LANG } } };
-    const secondDocument: WebpageDocument = { content: [], root: { props: { lang: TEST_OTHER_LANG } } };
-    const changedDocument: WebpageDocument = { content: [], root: { props: { lang: TEST_CHANGED_LANG } } };
+    const firstDocument: WebpageDocument = { content: [], root: { props: { lang: TEST_LANG, tokens: {} } } };
+    const secondDocument: WebpageDocument = { content: [], root: { props: { lang: TEST_OTHER_LANG, tokens: {} } } };
+    const changedDocument: WebpageDocument = { content: [], root: { props: { lang: TEST_CHANGED_LANG, tokens: {} } } };
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { getDocument, loadDocument, setDocument } = pageBuilderDocumentStore;
     await loadDocument(firstResourceId, () => Promise.resolve(firstDocument));
@@ -66,7 +66,7 @@ describe(usePageBuilderDocumentStore, () => {
     expect.hasAssertions();
 
     const resourceId = crypto.randomUUID();
-    const document: WebpageDocument = { content: [], root: { props: { lang: TEST_LANG } } };
+    const document: WebpageDocument = { content: [], root: { props: { lang: TEST_LANG, tokens: {} } } };
     const writeDocument = vi.fn<(document: WebpageDocument) => Promise<void>>().mockResolvedValue(undefined);
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { loadDocument, saveDocument } = pageBuilderDocumentStore;
