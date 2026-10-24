@@ -1,6 +1,7 @@
 import { PACKAGE_JSON_FILENAME, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
+import { readJsonFile } from "#src/workspace/readJsonFile.test";
 import { readTsdownPackagePaths } from "#src/workspace/readTsdownPackagePaths.test";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -15,16 +16,17 @@ import { describe, expect, test } from "vitest";
 // Description the audit is checking, not a use of it.
 const readConsumerTexts = (): string[] =>
   readSweepFilePaths("apps", "packages", "scripts")
-    .filter((path) => /\.(?:[cm]?[jt]sx?|vue|ya?ml)$/.test(path) && !path.includes("/dist/"))
+    .filter((path) => /\.(?:[cm]?[jt]sx?|vue|ya?ml)$/u.test(path) && !path.includes("/dist/"))
     .map((path) => readFileSync(resolve(REPOSITORY_ROOT, path), "utf8"));
 const readSubpathSpecifiers = (packagePath: string): string[] => {
-  const manifest: { exports?: Record<string, unknown>; name: string } = JSON.parse(
-    readFileSync(resolve(REPOSITORY_ROOT, packagePath, PACKAGE_JSON_FILENAME), "utf8"),
-  );
+  const manifest = readJsonFile(resolve(REPOSITORY_ROOT, packagePath, PACKAGE_JSON_FILENAME)) as {
+    exports?: Record<string, unknown>;
+    name: string;
+  };
 
   return Object.keys(manifest.exports ?? {})
     .filter((key) => key !== "." && key !== `./${PACKAGE_JSON_FILENAME}`)
-    .map((key) => `${manifest.name}${key.slice(1)}`.replace(/\*.*$/, ""));
+    .map((key) => `${manifest.name}${key.slice(1)}`.replace(/\*.*$/u, ""));
 };
 
 describe("subpathAudit", () => {
@@ -34,8 +36,8 @@ describe("subpathAudit", () => {
     () => {
       expect.hasAssertions();
 
-      // Named rather than counted: the failure lists each subpath with no consumer. The fix is a consumer that names it,
-      // or an `exports.exclude` in the package's `tsdown.config.ts` when a file loads it by path and needs no arm
+      // Named rather than counted: the failure lists each subpath with no consumer. The fix is a consumer that names it.
+      // Or an `exports.exclude` in the package's `tsdown.config.ts`, when a file loads it by path and needs no arm
       // (`.agents/skills/build/references/subpaths.md`).
       const consumerTexts = readConsumerTexts();
       const unconsumedSpecifiers = readTsdownPackagePaths().flatMap((packagePath) =>
