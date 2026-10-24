@@ -3,8 +3,6 @@ import { authClient } from "@/services/auth/authClient";
 import { EMAIL_PREVIEW_TEXT_INBOX_LENGTH, MERGE_FIELD_BLOCK_CATEGORY } from "@/services/emailEditor/constants";
 import { createEmailSurveyInviteBlocks } from "@/services/emailEditor/createEmailSurveyInviteBlocks";
 import { createMergeFieldBlocks } from "@/services/emailEditor/createMergeFieldBlocks";
-import { readEmailPreviewText } from "@/services/emailEditor/readEmailPreviewText";
-import { writeEmailPreviewText } from "@/services/emailEditor/writeEmailPreviewText";
 import { GRAPES_JS_EDITOR_CONTAINER_ID } from "@/services/grapesjs/constants";
 import { setBlocks } from "@/services/grapesjs/setBlocks";
 import { useEmailEditorStore } from "@/store/emailEditor";
@@ -33,17 +31,7 @@ const { editor } = await useGrapesJsEditor(
 watchImmediate(editor, (newEditor) => {
   storeEditor.value = newEditor;
 });
-// The preview text lives in the email's MJML, so the field reads it back after every change — an undo included
-const previewText = ref("");
-watchImmediate(editor, (newEditor, _oldEditor, onCleanup) => {
-  if (!newEditor) return;
-  const readPreviewText = () => {
-    previewText.value = readEmailPreviewText(newEditor);
-  };
-  readPreviewText();
-  newEditor.on("update", readPreviewText);
-  onCleanup(() => newEditor.off("update", readPreviewText));
-});
+const { previewText, setPreviewText } = useEmailPreviewText(editor);
 const emailExportDialogStore = useEmailExportDialogStore();
 const { setPendingDataset } = emailExportDialogStore;
 // The stores outlive the blade, so anything the blade staged or bridged is torn down with it — the staged export by
@@ -82,12 +70,7 @@ useSurveyInviteBlocks(editor, publishedSurveys, createEmailSurveyInviteBlocks);
           "
           label="Preview text"
           :model-value="previewText"
-          @update:model-value="
-            (newPreviewText) => {
-              previewText = newPreviewText;
-              if (editor) writeEmailPreviewText(editor, newPreviewText);
-            }
-          "
+          @update:model-value="(newPreviewText) => setPreviewText(newPreviewText)"
         />
       </div>
     </div>

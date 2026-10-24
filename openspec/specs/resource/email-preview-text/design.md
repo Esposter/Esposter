@@ -19,12 +19,13 @@ Both services are tested against a headless GrapesJS editor with the installed p
 
 ## Key files
 
-| File                                                         | Role                                              |
-| ------------------------------------------------------------ | ------------------------------------------------- |
-| `apps/web/app/components/Resource/Email/Editor.vue`          | The Preview text field in the blade's bar         |
-| `apps/web/app/services/emailEditor/writeEmailPreviewText.ts` | The preview written into the head as markup       |
-| `apps/web/app/services/emailEditor/readEmailPreviewText.ts`  | The preview read back as text                     |
-| `apps/web/app/services/emailEditor/getEmailPreview.ts`       | The `mj-preview` found by its tag inside the head |
+| File                                                             | Role                                                                                           |
+| ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `apps/web/app/components/Resource/Email/Editor.vue`              | The Preview text field in the blade's bar, bridged to the live editor                          |
+| `apps/web/app/services/emailEditor/writeEmailPreviewText.ts`     | The preview written into the head as markup                                                    |
+| `apps/web/app/services/emailEditor/readEmailPreviewText.ts`      | The preview read back as text                                                                  |
+| `apps/web/app/services/emailEditor/getEmailPreview.ts`           | The `mj-preview` found by its tag inside the head                                              |
+| `apps/web/app/composables/resource/email/useEmailPreviewText.ts` | the field's value: read back after every editor change, an undo included, and written on input |
 
 ## Sources
 
