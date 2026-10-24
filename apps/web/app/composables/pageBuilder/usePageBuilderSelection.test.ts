@@ -6,11 +6,11 @@ import {
   TEST_SECTION_ID,
   TEST_WEBPAGE,
 } from "@/services/pageBuilder/constants.test";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { createPinia, setActivePinia } from "pinia";
 import { describe, expect, test } from "vitest";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 describe(usePageBuilderSelection, () => {
   // The document is the webpage fixture: a section holding a text node, then a text node at the root
@@ -19,7 +19,12 @@ describe(usePageBuilderSelection, () => {
     const resourceId = crypto.randomUUID();
     usePageBuilderDocumentStore().setDocument(resourceId, webpageKind, TEST_WEBPAGE);
     usePageBuilderCanvasStore().setSelectedNodeId(resourceId, selectedNodeId);
-    const selection = usePageBuilderSelection(resourceId);
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const selection = usePageBuilderSelection(
+      webpageKind,
+      () => pageBuilderDocumentStore.getDocument(resourceId),
+      resourceId,
+    );
     const getSelectedNodeId = () => usePageBuilderCanvasStore().getSelectedNodeId(resourceId);
     return { ...selection, getSelectedNodeId };
   };

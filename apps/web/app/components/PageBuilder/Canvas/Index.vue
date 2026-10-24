@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { WebpageKind } from "@/models/pageBuilder/WebpageKind";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 import type { DropTarget } from "@/models/pageBuilder/DropTarget";
 import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
+import type { WebpageKind } from "@/models/pageBuilder/WebpageKind";
 
 import { getPresentDefinitions } from "#shared/services/pageBuilder/getPresentDefinitions";
 import { getWebpageCss } from "#shared/services/pageBuilder/getWebpageCss";
@@ -11,6 +11,7 @@ import { KeyScope } from "@/models/pageBuilder/KeyScope";
 import { getKeyAction } from "@/services/pageBuilder/getKeyAction";
 import { getNodeIdFromElement } from "@/services/pageBuilder/getNodeIdFromElement";
 import { renderCanvasVNodes } from "@/services/pageBuilder/renderCanvasVNodes";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
@@ -49,7 +50,11 @@ const { checkIsHorizontalOwner, getElement, getFrameGeometry, toolbarPosition } 
   hoveredNodeId,
   selectionBox,
 );
-const { selectAdjacentNode, selectParent } = usePageBuilderSelection(() => resourceId);
+const { selectAdjacentNode, selectParent } = usePageBuilderSelection(
+  webpageKind,
+  () => getDocument(resourceId),
+  () => resourceId,
+);
 // The node element the editor is mounted in, found once the draw has put it in the frame
 const editingElement = shallowRef<Element | null>(null);
 watch(

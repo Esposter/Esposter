@@ -1,25 +1,38 @@
+import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
+import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "headless-block-editor";
 import type { MaybeRefOrGetter } from "vue";
 
 import { getNodeIdAt } from "@/services/pageBuilder/getNodeIdAt";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { getParentNodeId } from "@/services/pageBuilder/getParentNodeId";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { getAdjacentBlockNodePointer, getBlockLayerRows } from "headless-block-editor";
 
 // The selection the canvas's keys move through one open resource's webpage: the adjacent node in document order and the parent
-export const usePageBuilderSelection = (resourceId: MaybeRefOrGetter<string>) => {
-  const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-  const { getOpenDocument } = pageBuilderDocumentStore;
+export const usePageBuilderSelection = <
+  TNode extends BlockNode,
+  TRoot extends BlockRootProps,
+  TDefinition extends BlockTypeDefinition<TNode>,
+  TDocument extends BlockDocument<TNode, TRoot>,
+>(
+  kind: PageBuilderKind<TNode, TRoot, TDefinition, TDocument>,
+  getDocument: () => TDocument | undefined,
+  resourceId: MaybeRefOrGetter<string>,
+) => {
+  // The document the shell draws, with the kind the shell was given, or none while no document is held
+  const getOpenDocument = () => {
+    const document = getDocument();
+    return document && { document, kind };
+  };
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
   const { getSelectedNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
   // Up and Down select the adjacent node in document order, starting from the first node when none is selected, and stay put past either end
   const selectAdjacentNode = (offset: number) => {
     const resourceIdValue = toValue(resourceId);
-    const open = getOpenDocument(resourceIdValue);
+    const open = getOpenDocument();
     if (!open) return;
 
-    const { document, kind } = open;
+    const { document } = open;
     const nodeId = getSelectedNodeId(resourceIdValue);
     const nodePointer = nodeId ? getNodePointer(kind, document, nodeId) : undefined;
     const adjacentPointer =
@@ -32,10 +45,10 @@ export const usePageBuilderSelection = (resourceId: MaybeRefOrGetter<string>) =>
   // Escape selects the parent of the selected node, or clears the selection when the node is at the root
   const selectParent = () => {
     const resourceIdValue = toValue(resourceId);
-    const open = getOpenDocument(resourceIdValue);
+    const open = getOpenDocument();
     if (!open) return;
 
-    const parentId = getParentNodeId(open.kind, open.document, getSelectedNodeId(resourceIdValue));
+    const parentId = getParentNodeId(kind, open.document, getSelectedNodeId(resourceIdValue));
     setSelectedNodeId(resourceIdValue, parentId ?? "");
   };
 

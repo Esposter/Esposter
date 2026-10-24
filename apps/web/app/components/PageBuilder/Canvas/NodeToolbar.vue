@@ -25,7 +25,11 @@ const { deleteSelected, duplicateSelected, moveDown, moveToScope, moveUp } = use
 );
 // Registered while the toolbar is mounted, so the palette Move to… opens is scoped to this node's slots
 useCommandScope(moveToScope);
-const { selectParent } = usePageBuilderSelection(() => resourceId);
+const { selectParent } = usePageBuilderSelection(
+  webpageKind,
+  () => getDocument(resourceId),
+  () => resourceId,
+);
 const isDeleteOpen = ref(false);
 </script>
 
