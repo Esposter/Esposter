@@ -1,7 +1,7 @@
 ## 1. Purge
 
 - [x] 1.1 Add the custom migration that moves every webpage and email row past the recycle bin's retention, so the daily purge removes it. Verify: a test named after the scenario 'A published webpage is removed by the cutover'. Done in `apps/web/server/db/migrations/20261024050536_bin_webpage_and_email_rows`, tested in `apps/web/server/db/binWebpageAndEmailRows.test.ts`.
-- [ ] 1.2 Run the purge once in each environment straight after the deploy. Verify: a test named after the scenario 'A count confirms the purge removed every pre-cutover row'.
+- [ ] 1.2 Run the purge once in each environment straight after the deploy. Verify: a test named after the scenario 'A count confirms the purge removed every pre-cutover row'. Until it runs, a webpage published before `8c1648f7` still holds a bare body with its CSS apart from it, and its view renders unstyled; the purge is the only thing that retires those snapshots, so no backfill is written.
 
 ## 2. Stored data
 
@@ -15,7 +15,7 @@
 ## 4. Removing the old editor
 
 - [ ] 4.1 Remove the old editor's dependencies, security origins, OSV exception, modules and tests, and replace its skill and ledger with the page-builder ones. Verify: a search of the app and the dependency list for the old editor's names returns no match.
-- [ ] 4.2 Rewrite the specs that name the old editor as built. Verify: a search of `openspec/specs` for the old editor's name returns no match.
+- [ ] 4.2 Rewrite the specs that name the old editor as built. Verify: a search of `openspec/specs` for the old editor's name returns no match. This includes `resource/webpage-plugin-forms/design.md`, which describes `formsPlugin` as the webpage editor's registration and names its deleted files in Key files, and the other `webpage-plugin-*` designs that the staleNames rule flags.
 
 ## 5. Binding the new editors
 
