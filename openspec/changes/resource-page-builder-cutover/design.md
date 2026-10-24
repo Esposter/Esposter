@@ -80,7 +80,7 @@ Each editor's script beyond the explorer is at most 200 KiB gzipped, measured on
 | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
 | `apps/web/shared/models/grapesjs/AGrapesJsEditor.ts`                | deleted                                                                             |
 | `apps/web/app/composables/grapesjs/useGrapesJsEditor.ts`            | deleted                                                                             |
-| `apps/web/app/services/webpageEditor/WebpageEditorPlugins.ts`       | deleted, with the plugin modules and the style manager                              |
+| `"apps/web/app/services/webpageEditor/WebpageEditorPlugins.ts"`     | deleted, with the plugin modules and the style manager                              |
 | `apps/web/app/services/emailEditor/getEmailHtml.ts`                 | deleted; the server compiles                                                        |
 | `apps/web/shared/services/grapesjs/constants.ts`                    | deleted                                                                             |
 | `apps/web/shared/models/webpageEditor/data/WebpageEditor.ts`        | the webpage document, its schema built from the registry                            |

@@ -1,40 +1,39 @@
-# Webpage Survey Invite Blocks
+# Webpage Survey Invite
 
-Both GrapesJS editors offer the owner's published surveys as drag-in invite-button blocks — the email editor for a send ([email personalization](../email-personalization/design.md)), the webpage editor for a landing page that collects responses from anyone who finds it, with zero send infrastructure.
+A webpage offers the owner's published surveys as an invite button, a page-builder node that links to the survey. A landing page collects responses from anyone who finds it, with zero send infrastructure. The email editor's invite is a GrapesJS block, documented in [email personalization](../email-personalization/design.md) until the email cutover.
 
 ## How it works
 
-The two editors differ in exactly one thing: their canvas markup. Email is MJML, webpage is plain HTML. So the block-building code is a shared core producing the survey list, block identity and public URL, plus a thin per-editor wrapper supplying only its button renderer — one primitive with two flavours, never a copy.
+The invite is one node in the page builder's registry, beside the other webpage nodes. Its props are a `label` and a `surveyId`, and the id is declared with `createResourceLinkSchema(ResourceLinkType.Survey)`. The survey is therefore a resource link the index finds on save, so deleting the survey names the page holding the invite.
 
 ```mermaid
 flowchart LR
-  SURVEYS["useReadPublishedSurveys<br/>owner's published surveys"] --> CORE["createSurveyInviteBlocks<br/>shared core — list, ids, public urls"]
-  CORE -->|"createEmailSurveyInviteBlocks<br/>mj-button markup"| EMAILBM["email block manager"]
-  CORE -->|"createWebpageSurveyInviteBlocks<br/>self-styled anchor markup"| WEBBM["webpage block manager"]
-  EMAILBM -->|setBlocks re-sync| EMAILCANVAS["email canvas"]
-  WEBBM -->|setBlocks re-sync| CANVAS["webpage canvas"]
-  CANVAS -->|publish| VIEW["/view/Webpage/[id]<br/>public page with live survey links"]
+  NODE["SurveyInvite node<br/>label and surveyId"] -->|"propsSchema"| LINK["createResourceLinkSchema<br/>declared survey link"]
+  LINK -->|"content schema"| INDEX["ResourceTypeGetLinkTargetsMap<br/>indexed on save"]
+  NODE -->|"render"| ANCHOR["a.survey-invite<br/>href from getSurveyInviteUrl"]
+  ANCHOR --> SURVEY["/view/Survey/[surveyId]"]
 ```
 
-- **Block source** — `useReadPublishedSurveys` reads the owner's surveys and keeps only the published ones: a draft survey has no public URL for a block to link. Both editors share it.
-- **Block content** — a styled button linking `RoutePath.View(ResourceType.Survey, id)`. The webpage flavour carries its own inline styling, since a published page loads no stylesheet of ours. Survey names are HTML-escaped into both the block label and the button markup.
-- **Re-sync** — the block category is replaced wholesale through `setBlocks` whenever the editor or the survey list changes, so no per-block bookkeeping is needed. The watch itself is shared too (`useSurveyInviteBlocks`): each editor hands it the live editor, the survey list and its own renderer, and owns none of the wiring.
-- **No per-recipient identity** — there is no audience row behind an anonymous page visitor, so a webpage block is always the plain published URL. Invite tokens belong to a distribution orchestrator, not a public page.
+- **Render** — the node renders an anchor classed `survey-invite`, its `href` the absolute survey url from `getSurveyInviteUrl(context.origin, surveyId)`. The link is absolute, against the origin the page publishes from, so it works from any page that holds it. A published page loads no stylesheet of ours, so the button's styling is the node's own `css`.
+- **A leaf** — the node is not focusable and has no slots. Its label is its only child text.
+- **Palette** — the node sits in the Survey category and is created with the label "Survey" and an unbound `surveyId`, until the owner picks a survey. Survey names are escaped by the renderer, like every node's text.
+- **No per-recipient identity** — there is no audience row behind an anonymous page visitor, so the link is always the plain published URL. Invite tokens belong to a distribution orchestrator, not a public page.
+- **No form nodes** — the webpage registry has no form nodes. A published page cannot submit a form, so this invite is how a webpage collects answers.
 
 ## Key files
 
-| File                                                                     | Role                                                                                              |
-| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
-| `apps/web/app/services/grapesjs/createSurveyInviteBlocks.ts`             | shared core — survey list to block defs                                                           |
-| `apps/web/app/services/emailEditor/createEmailSurveyInviteBlocks.ts`     | MJML button flavour                                                                               |
-| `apps/web/app/services/webpageEditor/createWebpageSurveyInviteBlocks.ts` | plain-HTML button flavour                                                                         |
-| `apps/web/app/composables/survey/useReadPublishedSurveys.ts`             | the shared block source, filtering the owner's surveys to published ones                          |
-| `apps/web/app/composables/grapesjs/useSurveyInviteBlocks.ts`             | the shared re-sync watch both editors call                                                        |
-| `apps/web/app/services/grapesjs/setBlocks.ts`                            | wholesale block-category re-sync                                                                  |
-| `apps/web/app/composables/survey/useReadSurveys.ts`                      | the one read of the owner's surveys, shared with the published list and the sheet's survey import |
+Paths relative to `apps/web`.
+
+| File                                                             | Role                                                      |
+| ---------------------------------------------------------------- | --------------------------------------------------------- |
+| `shared/services/pageBuilder/surveyInviteNodeType.ts`            | the node: its props schema, its anchor render and its css |
+| `shared/services/pageBuilder/getSurveyInviteUrl.ts`              | the absolute survey url the anchor links to               |
+| `shared/services/pageBuilder/webpageNodeTypeDefinitionMap.ts`    | the registry entry                                        |
+| `app/services/pageBuilder/constants.ts`                          | the Survey palette category                               |
+| `app/services/pageBuilder/webpageNodeDefaults.ts`                | the node a palette drop creates                           |
+| `server/services/resource/link/ResourceTypeGetLinkTargetsMap.ts` | the link index, read off each type's content schema       |
 
 ## Notes
 
-- The webpage editor offers no form blocks. A published page's sandbox cannot submit a form, so a survey invite block is the way it collects answers; the Forms plugin's component types stay registered so a saved form still loads.
-- Embedding a survey _inline_ (an iframe of the respondent page) is deliberately out: iframes inside GrapesJS canvases and published pages bring sizing and sandboxing complexity for marginal gain over a button, and the respondent page is already mobile-friendly. Revisit only on real demand.
-- The full list-to-blocks behaviour is tested once against the shared core; each wrapper test asserts only its own markup flavour.
+- Embedding a survey _inline_ (an iframe of the respondent page) is deliberately out: iframes inside a published page bring sizing and sandboxing complexity for marginal gain over a button, and the respondent page is already mobile-friendly. Revisit only on real demand.
+- The email flavour is `createEmailSurveyInviteBlocks` over the shared core in `apps/web/app/services/grapesjs`. It is the one part of this feature still on GrapesJS, until the email cutover moves it to the page builder.

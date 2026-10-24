@@ -75,11 +75,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Flowchart image export](flowchart-image-export/design.md) — export the whole diagram as PNG or SVG from the resource menu
 - [Resource file assets](resource-file-assets/design.md) — the FileAssets capability: hosted binary assets + GrapesJS Asset Manager
 - [Storage quotas](storage-quotas/design.md) — per-user blob allowance held at SAS issuance and charged by Storage's own `BlobCreated` event, with a usage bar in the explorer shell's header
-- [Webpage survey invite blocks](webpage-survey-invite-blocks/design.md) — published surveys as drag-in invite buttons in both GrapesJS editors
-- [Webpage plugin: countdown](webpage-plugin-countdown/design.md) — the countdown block, our own plugin in place of `grapesjs-component-countdown`
-- [Webpage plugin: custom code](webpage-plugin-custom-code/design.md) — the custom code block, our own plugin in place of `grapesjs-custom-code`
-- [Webpage plugin: forms](webpage-plugin-forms/design.md) — the form components, our own plugin in place of `grapesjs-plugin-forms`
-- [Webpage plugin: basic blocks](webpage-plugin-blocks-basic/design.md) — the webpage editor's layout and content blocks, our own plugin in place of `grapesjs-blocks-basic`
+- [Webpage survey invite](webpage-survey-invite-blocks/design.md) — a published survey as an invite-button node in the page builder
 - [Page builder document model](page-builder/document-model/design.md) — the webpage and email documents as typed node trees, their registries, the webpage renderer and the server's strict email compile
 - [Page builder undo as patches](page-builder/undo-as-patches/design.md) — each open resource's undo and redo as JSON Patch operations with their inverses, one entry per interaction, cleared on reload
 

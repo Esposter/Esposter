@@ -45,7 +45,6 @@ Where a finding's home looked missing, it is settled:
 | `apps/web/app/services/dungeons`                     | 2026-10-14 · Haiku 5.5 |                                    |
 | `apps/web/app/services/message`                      | 2026-10-14 · Haiku 5.5 |                                    |
 | `apps/web/app/services/resource`                     | 2026-10-14 · Haiku 5.5 |                                    |
-| `apps/web/app/services/webpageEditor`                | 2026-10-14 · Haiku 5.5 |                                    |
 | `apps/web/app/store`                                 | 2026-10-14 · Haiku 5.5 |                                    |
 | `apps/web/server`                                    | 2026-10-14 · Haiku 5.5 | the rest, excluding the rows above |
 | `apps/web/server/services`                           | 2026-10-14 · Haiku 5.5 |                                    |

@@ -28,12 +28,12 @@ flowchart TD
 
 ## Key files
 
-| File                                                               | Role after the change                               |
-| ------------------------------------------------------------------ | --------------------------------------------------- |
-| `apps/web/app/components/Ui/ColorField.vue`                        | the page's token swatches before a free colour      |
-| `apps/web/app/components/Ui/Slider.vue`                            | its `end` commits a drag's one history entry        |
-| `apps/web/app/services/webpageEditor/WebpageEditorStyleManager.ts` | the sectors the panel keeps; deleted at the cutover |
-| `apps/web/shared/models/webpageEditor/data/WebpageEditor.ts`       | the root's tokens beside the content                |
+| File                                                                 | Role after the change                               |
+| -------------------------------------------------------------------- | --------------------------------------------------- |
+| `apps/web/app/components/Ui/ColorField.vue`                          | the page's token swatches before a free colour      |
+| `apps/web/app/components/Ui/Slider.vue`                              | its `end` commits a drag's one history entry        |
+| `"apps/web/app/services/webpageEditor/WebpageEditorStyleManager.ts"` | the sectors the panel keeps; deleted at the cutover |
+| `apps/web/shared/models/webpageEditor/data/WebpageEditor.ts`         | the root's tokens beside the content                |
 
 New code lands here:
 

@@ -4,7 +4,7 @@ The email editor joins the data flow: merge-field blocks bound to a `DatasetRefe
 
 ## How it works
 
-An email optionally binds one dataset (`EmailEditor.datasetReference`, stored inside the content blob — every GrapesJS save carries it over since project data doesn't know about it). The bound dataset's columns appear in the block manager as drag-in merge-field blocks (`{{columnName}}`), and the owner's published surveys appear as styled invite-button blocks ([survey invite blocks](../webpage-survey-invite-blocks/design.md), shared with the webpage editor). Export compiles the current MJML to HTML once (`mjml-code-to-html`), then zips one personalized `.html` per dataset row with merge fields substituted.
+An email optionally binds one dataset (`EmailEditor.datasetReference`, stored inside the content blob — every GrapesJS save carries it over since project data doesn't know about it). The bound dataset's columns appear in the block manager as drag-in merge-field blocks (`{{columnName}}`), and the owner's published surveys appear as styled invite-button blocks (`createEmailSurveyInviteBlocks`, over the shared core in `apps/web/app/services/grapesjs`). Export compiles the current MJML to HTML once (`mjml-code-to-html`), then zips one personalized `.html` per dataset row with merge fields substituted.
 
 ```mermaid
 flowchart LR
