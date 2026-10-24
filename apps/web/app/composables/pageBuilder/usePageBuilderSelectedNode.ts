@@ -8,6 +8,8 @@ import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 // The open document a kind's commands act on, and the selected node within it. The document is the one the shell draws,
 // With the kind the shell was given, and the selection is the canvas's, so every command that acts on the selected node
 // Shares this one lookup rather than repeating it
+// The kind's signature, which each composable lists as its own inputs, so the duplicate-code gate skips it
+// jscpd:ignore-start
 export const usePageBuilderSelectedNode = <
   TNode extends BlockNode,
   TRoot extends BlockRootProps,
@@ -18,6 +20,7 @@ export const usePageBuilderSelectedNode = <
   getDocument: () => TDocument | undefined,
   resourceId: MaybeRefOrGetter<string>,
 ) => {
+  // jscpd:ignore-end
   // The document the shell draws, with the kind the shell was given, or none while no document is held
   const getOpenDocument = () => {
     const document = getDocument();

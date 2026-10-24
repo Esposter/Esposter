@@ -166,7 +166,7 @@ The generated barrels travel in the artifact alongside `dist` because `build:pac
 
 ### The duplicate-code gate
 
-The `Duplicate Code` job in `CI.yaml` runs the duplicate-code finder's workspace test, `scripts/src/workspace/duplicateCode.test.ts`, which holds the whole scan of the finder's scopes to no finding. The finder runs jscpd itself, with the scopes, globs and minimums its constants hold, so the gate fails on any clone the sweep reports. `.jscpd.json` must equal those constants, which the same test holds, because the jscpd CLI reads it from the repository root. Changing a threshold means changing the constant, which regenerates nothing by hand.
+The `Duplicate Code` job in `CI.yaml` runs the duplicate-code finder's workspace test, `scripts/src/workspace/duplicateCode.test.ts`, which holds the whole scan of the finder's scopes to no finding. The finder runs jscpd itself, with the scopes, globs and minimums its constants hold, so the gate fails on any clone the sweep reports. `.jscpd.json` must equal those constants, which the same test holds, because the jscpd CLI reads it from the repository root. Changing a threshold means changing the constant, which regenerates nothing by hand. A clone that is a shape the code must repeat, such as a generic signature every composable on one kind takes, is exempted at its site with jscpd's `ignore-start` and `ignore-end` directives around that shape, each with a comment saying why. The directive is per site and reviewed where it is written, so the gate still fails on every other clone. A clone of logic is fixed by moving the logic, never exempted.
 
 ## CI security
 

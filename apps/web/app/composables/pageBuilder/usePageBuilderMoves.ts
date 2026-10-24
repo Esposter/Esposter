@@ -64,6 +64,8 @@ const getSiblingMoveOperations = <
 // Its siblings or into and out of a container, Move to moves it to the end of any slot that accepts it, and Delete removes
 // It. Each edit is one history entry, and a move keeps the node selected; focus is the caller's to move. Each landed edit is
 // Announced once through announce
+// The kind's signature, which each composable lists as its own inputs, so the duplicate-code gate skips it
+// jscpd:ignore-start
 export const usePageBuilderMoves = <
   TNode extends BlockNode,
   TRoot extends BlockRootProps,
@@ -75,6 +77,7 @@ export const usePageBuilderMoves = <
   resourceId: MaybeRefOrGetter<string>,
   announce: (message: string) => void,
 ) => {
+  // jscpd:ignore-end
   const { getOpenDocument, getSelection } = usePageBuilderSelectedNode(kind, getDocument, resourceId);
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
   const { getSelectedNodeId, setSelectedNodeId } = pageBuilderCanvasStore;

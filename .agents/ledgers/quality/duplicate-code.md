@@ -19,6 +19,7 @@ Where a finding's home looked missing, it is settled:
 - **Declarations and component preamble:** a clone made only of imports, interface and type bodies, `defineProps`, `defineEmits` and `defineModel` calls, bare composable bindings, a composable's destructured call (`const { … } = useName(…);`) of bare names or `name: alias` entries, or a `return { … }` of bare names is each file's own list of what it holds, not logic. The finder skips it.
 - **A clone's edges:** a clone runs from token to token, so the finder reads it as the lines it covers whole. A statement it touches only at its first or last token, and a comment left at either edge, are not part of it.
 - **Enum-keyed record rows:** a clone made only of the rows of a `Record` keyed by an enum is data a table holds. The finder skips it.
+- **A kind's generic signature:** every composable that takes a page-builder kind repeats the kind's four generics, so a copy of that signature is a finding by construction. The signature is wrapped in `// jscpd:ignore-start` and `// jscpd:ignore-end`, with a comment above it saying why. Each wrap is one reviewed exemption at its site, and the gate still runs over everything else. A clone of the composables' bodies is not exempt: the body moves into the shared composable (`usePageBuilderSelectedNode`).
 
 | Unit                                                 | Swept                  | Notes                              |
 | :--------------------------------------------------- | :--------------------- | :--------------------------------- |
