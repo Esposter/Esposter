@@ -8,7 +8,7 @@ import { getEmailColumnWidths } from "./getEmailColumnWidths";
 describe(getEmailColumnWidths, () => {
   const TEST_COLUMN_ID = "00000000-0000-4000-8000-000000000002";
   const createColumn = (width?: string): MjmlColumnNode => ({
-    props: { id: TEST_COLUMN_ID, width },
+    props: { children: [], id: TEST_COLUMN_ID, width },
     type: MjmlNodeType.Column,
   });
 
