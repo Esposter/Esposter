@@ -1,25 +1,19 @@
-import type { ProgramInvites } from "#shared/models/resource/program/ProgramInvites";
 import type { ProgramStatusRow } from "#shared/models/resource/program/ProgramStatusRow";
 
 import { MimeType } from "#shared/models/file/MimeType";
-import { ProgramInviteScope } from "#shared/models/resource/program/ProgramInviteScope";
 import { pluralize } from "#shared/util/text/pluralize";
 import { formatTruncationCount } from "@/services/dataset/formatTruncationCount";
-import { exportPersonalizedHtml } from "@/services/emailEditor/exportPersonalizedHtml";
 import { createParticipantLinksCsv } from "@/services/resource/program/createParticipantLinksCsv";
-import { createProgramInviteFiles } from "@/services/resource/program/createProgramInviteFiles";
-import { getMissingProgramInviteBindings } from "@/services/resource/program/getMissingProgramInviteBindings";
-import { getProgramInviteFilename } from "@/services/resource/program/getProgramInviteFilename";
 import { getProgramParticipantsFilename } from "@/services/resource/program/getProgramParticipantsFilename";
 import { useNotificationStore } from "@/store/notification";
 import { useResourceStore } from "@/store/resource";
 import { useProgramStore } from "@/store/resource/program";
 import { getRouteParam } from "@/util/router/getRouteParam";
-import { NotificationSeverity, ResourceType } from "@esposter/db-schema";
-import { downloadFile, getResultAsync, RoutePath } from "@esposter/shared";
+import { NotificationSeverity } from "@esposter/db-schema";
+import { downloadFile, getResultAsync } from "@esposter/shared";
 
-// The status blade's participants and its two commands, the invite export and the participant generation. Both hand
-// The owner a file and report back as notices, so the blade's view only renders what they leave behind
+// The status blade's participants and the command that generates them, which hands the owner the file of links they send
+// From. The invite export reads the same rows, so it is handed them rather than reading them a second time
 export const useProgramStatus = () => {
   const { currentRoute } = useRouter();
   const { $trpc } = useNuxtApp();
@@ -34,49 +28,7 @@ export const useProgramStatus = () => {
   const statusRows = ref<ProgramStatusRow[]>([]);
   // Set when the response scan hit its cap, which makes every count on this blade a floor rather than a total
   const isRespondedPartial = ref(false);
-  const notifyWarning = (title: string) => {
-    createNotification({ severity: NotificationSeverity.Warning, title });
-  };
-  const exportInviteFiles = (scope: ProgramInviteScope, { emailHtml, invites, unmatchedCount }: ProgramInvites) => {
-    const isReminder = scope === ProgramInviteScope.Awaiting;
-    // A participant past the audience read's cap has no row to fill, so the file is never sent without them named
-    if (unmatchedCount > 0)
-      notifyWarning(
-        `${unmatchedCount} ${pluralize("participant", unmatchedCount)} past the audience read limit ${unmatchedCount === 1 ? "was" : "were"} not exported`,
-      );
-    if (invites.length === 0) {
-      notifyWarning(
-        isReminder
-          ? "Every participant has responded, so there are no reminders to export"
-          : "No participant has an audience row to invite",
-      );
-      return;
-    }
-    const { surveyId } = programResource.value;
-    const surveyPath = RoutePath.View(ResourceType.Survey, surveyId);
-    const filename = getProgramInviteFilename(resource.value?.name ?? "", scope);
-    const count = exportPersonalizedHtml(filename, createProgramInviteFiles(emailHtml, surveyPath, invites));
-    createNotification({
-      severity: NotificationSeverity.Success,
-      title: `${count} ${pluralize(isReminder ? "reminder" : "invite", count)} ready`,
-    });
-  };
-  const exportInvites = async (scope: ProgramInviteScope) => {
-    // Each binding an invite reads is named when missing, rather than exporting an empty zip
-    const missingBindings = getMissingProgramInviteBindings(programResource.value);
-    if (missingBindings.length > 0) {
-      notifyWarning(`Bind ${missingBindings.join(", ")} on the Setup blade before exporting invites`);
-      return;
-    }
-    if (statusRows.value.length === 0) {
-      notifyWarning("Generate participants before exporting invites");
-      return;
-    }
-    await getResultAsync(() => $trpc.program.readProgramInvites.query({ id: id.value, scope })).match(
-      (programInvites) => exportInviteFiles(scope, programInvites),
-      createErrorNotification,
-    );
-  };
+  const { exportInvites } = useProgramInviteExport(statusRows);
   const readStatus = async () => {
     await getResultAsync(() => $trpc.program.readProgramStatus.query({ id: id.value })).match((programStatus) => {
       isRespondedPartial.value = programStatus.isRespondedPartial;
@@ -87,7 +39,10 @@ export const useProgramStatus = () => {
     // A participant's link opens the bound survey, so without one there is nothing to hand the owner
     const { keyColumn, surveyId } = programResource.value;
     if (!surveyId) {
-      notifyWarning("Bind a survey on the Setup blade before generating participants");
+      createNotification({
+        severity: NotificationSeverity.Warning,
+        title: "Bind a survey on the Setup blade before generating participants",
+      });
       return;
     }
     // Named before the await, so the file is named after the program the command was run on
@@ -113,9 +68,10 @@ export const useProgramStatus = () => {
         // To send these links
         if (audienceTruncation && audienceTruncation.hiddenRows > 0) {
           const { hiddenRows, isCountCapped } = audienceTruncation;
-          notifyWarning(
-            `${formatTruncationCount(hiddenRows, isCountCapped)} audience ${pluralize("row", hiddenRows)} past the read limit were not checked and may have no participant link`,
-          );
+          createNotification({
+            severity: NotificationSeverity.Warning,
+            title: `${formatTruncationCount(hiddenRows, isCountCapped)} audience ${pluralize("row", hiddenRows)} past the read limit were not checked and may have no participant link`,
+          });
         }
         await readStatus();
       },
