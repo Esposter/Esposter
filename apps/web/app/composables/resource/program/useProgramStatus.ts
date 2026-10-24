@@ -22,7 +22,7 @@ export const useProgramStatus = () => {
   const resourceStore = useResourceStore();
   const { resource } = storeToRefs(resourceStore);
   const notificationStore = useNotificationStore();
-  const { createErrorNotification, createNotification } = notificationStore;
+  const { createErrorNotification, createNotification, createWarningNotification } = notificationStore;
   const { executeMutation, isPending: isGeneratePending } = useMutation();
   const id = computed(() => getRouteParam(currentRoute.value.params, "id"));
   const statusRows = ref<ProgramStatusRow[]>([]);
@@ -39,10 +39,7 @@ export const useProgramStatus = () => {
     // A participant's link opens the bound survey, so without one there is nothing to hand the owner
     const { keyColumn, surveyId } = programResource.value;
     if (!surveyId) {
-      createNotification({
-        severity: NotificationSeverity.Warning,
-        title: "Bind a survey on the Setup blade before generating participants",
-      });
+      createWarningNotification("Bind a survey on the Setup blade before generating participants");
       return;
     }
     // Named before the await, so the file is named after the program the command was run on
@@ -68,10 +65,9 @@ export const useProgramStatus = () => {
         // To send these links
         if (audienceTruncation && audienceTruncation.hiddenRows > 0) {
           const { hiddenRows, isCountCapped } = audienceTruncation;
-          createNotification({
-            severity: NotificationSeverity.Warning,
-            title: `${formatTruncationCount(hiddenRows, isCountCapped)} audience ${pluralize("row", hiddenRows)} past the read limit were not checked and may have no participant link`,
-          });
+          createWarningNotification(
+            `${formatTruncationCount(hiddenRows, isCountCapped)} audience ${pluralize("row", hiddenRows)} past the read limit were not checked and may have no participant link`,
+          );
         }
         await readStatus();
       },

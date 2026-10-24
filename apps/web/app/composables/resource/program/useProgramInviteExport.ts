@@ -24,20 +24,17 @@ export const useProgramInviteExport = (statusRows: Ref<ProgramStatusRow[]>) => {
   const resourceStore = useResourceStore();
   const { resource } = storeToRefs(resourceStore);
   const notificationStore = useNotificationStore();
-  const { createErrorNotification, createNotification } = notificationStore;
+  const { createErrorNotification, createNotification, createWarningNotification } = notificationStore;
   const id = computed(() => getRouteParam(currentRoute.value.params, "id"));
-  const notifyWarning = (title: string) => {
-    createNotification({ severity: NotificationSeverity.Warning, title });
-  };
   const exportInviteFiles = (scope: ProgramInviteScope, { emailHtml, invites, unmatchedCount }: ProgramInvites) => {
     const isReminder = scope === ProgramInviteScope.Awaiting;
     // A participant past the audience read's cap has no row to fill, so the file is never sent without them named
     if (unmatchedCount > 0)
-      notifyWarning(
+      createWarningNotification(
         `${unmatchedCount} ${pluralize("participant", unmatchedCount)} past the audience read limit ${unmatchedCount === 1 ? "was" : "were"} not exported`,
       );
     if (invites.length === 0) {
-      notifyWarning(
+      createWarningNotification(
         isReminder
           ? "Every participant has responded, so there are no reminders to export"
           : "No participant has an audience row to invite",
@@ -57,11 +54,11 @@ export const useProgramInviteExport = (statusRows: Ref<ProgramStatusRow[]>) => {
     // Each binding an invite reads is named when missing, rather than exporting an empty zip
     const missingBindings = getMissingProgramInviteBindings(programResource.value);
     if (missingBindings.length > 0) {
-      notifyWarning(`Bind ${missingBindings.join(", ")} on the Setup blade before exporting invites`);
+      createWarningNotification(`Bind ${missingBindings.join(", ")} on the Setup blade before exporting invites`);
       return;
     }
     if (statusRows.value.length === 0) {
-      notifyWarning("Generate participants before exporting invites");
+      createWarningNotification("Generate participants before exporting invites");
       return;
     }
     await getResultAsync(() => $trpc.program.readProgramInvites.query({ id: id.value, scope })).match(

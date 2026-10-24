@@ -99,6 +99,10 @@ export const useNotificationStore = defineStore("notification", () => {
   const createErrorNotification = (error: Error) => {
     createNotification({ severity: NotificationSeverity.Error, title: error.message });
   };
+  // The one shape a warning surfaces as, so a warning's call sites don't restate it
+  const createWarningNotification = (title: string) => {
+    createNotification({ severity: NotificationSeverity.Warning, title });
+  };
   const dismissSnackbar = (id: string) => {
     snackbarIds.value = snackbarIds.value.filter((snackbarId) => snackbarId !== id);
   };
@@ -188,6 +192,7 @@ export const useNotificationStore = defineStore("notification", () => {
     createErrorNotification,
     createNotification,
     createSnackbar,
+    createWarningNotification,
     dismissNotification,
     dismissNotifications,
     dismissSnackbar,
