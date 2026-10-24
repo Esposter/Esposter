@@ -53,7 +53,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.32.1",
+    "@modelcontextprotocol/sdk": "^1.32.2",
     "@typesafe-ai/sdk": "^0.7.0",
     "@wasm-audio-decoders/ogg-vorbis": "^0.1.20",
     "citty": "^0.2.2",
