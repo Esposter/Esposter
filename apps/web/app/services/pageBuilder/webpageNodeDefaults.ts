@@ -2,12 +2,10 @@ import type { WebpageNode } from "#shared/models/pageBuilder/WebpageNode";
 
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { NO_SURVEY_ID } from "#shared/services/pageBuilder/constants";
+import { PLACEHOLDER_MEDIA_URL } from "#shared/services/pageBuilder/constants";
+import { createSurveyInviteProps } from "#shared/services/pageBuilder/createSurveyInviteProps";
 
 const PLACEHOLDER_URL = "https://example.com/";
-// The picture an inserted image or video shows until its author chooses a file. It is the app's own file, so a page that is
-// Only opened in the editor requests no third-party origin
-const PLACEHOLDER_MEDIA_URL = "/page-builder/placeholder.svg";
 
 // The node a freshly inserted node of each type is, under the id the caller mints for it: each the smallest props its schema accepts,
 // And each keyed by its type so the node it builds is the type it is keyed by
@@ -31,10 +29,7 @@ const webpageNodeDefaultsMap: { [K in WebpageNodeType]: (id: string) => Extract<
     props: { children: [], id, tag: HtmlTag.Section },
     type: WebpageNodeType.Section,
   }),
-  [WebpageNodeType.SurveyInvite]: (id) => ({
-    props: { id, label: "Survey", surveyId: NO_SURVEY_ID },
-    type: WebpageNodeType.SurveyInvite,
-  }),
+  [WebpageNodeType.SurveyInvite]: (id) => ({ props: createSurveyInviteProps(id), type: WebpageNodeType.SurveyInvite }),
   [WebpageNodeType.Tab]: (id) => ({ props: { children: [], id, label: "Tab" }, type: WebpageNodeType.Tab }),
   [WebpageNodeType.Tabs]: (id) => ({ props: { children: [], id }, type: WebpageNodeType.Tabs }),
   [WebpageNodeType.Text]: (id) => ({

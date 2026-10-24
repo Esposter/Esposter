@@ -74,3 +74,6 @@ export const DEVICE_WIDTH_MAP: Readonly<Record<Exclude<PageBuilderDevice, PageBu
 
 // A UUID that names no survey, the one value a survey invite's id takes until its author chooses a survey
 export const NO_SURVEY_ID = "00000000-0000-0000-0000-000000000000";
+// The picture an inserted image or video shows until its author chooses a file. It is the app's own file, so a page that is
+// Only opened in the editor requests no third-party origin
+export const PLACEHOLDER_MEDIA_URL = "/page-builder/placeholder.svg";
