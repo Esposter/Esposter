@@ -103,6 +103,12 @@ The clicker SHALL start a fresh game when a saved game cannot be read in its cur
 - **WHEN** the page loads
 - **THEN** the player starts a fresh game
 
+#### Scenario: Saved game that is not valid JSON
+
+- **GIVEN** a guest's saved game in this browser that is not valid JSON
+- **WHEN** the page loads
+- **THEN** the player starts a fresh game and the page still opens
+
 ### Requirement: A save made against an outdated copy is refused
 
 The clicker SHALL refuse a save when the stored copy has changed since the player last read or saved it, and SHALL reload the page to take the stored copy.

@@ -181,3 +181,9 @@ The store SHALL show large point counts with a long word for their magnitude, su
 - **GIVEN** a player with one million points
 - **WHEN** the point count is displayed
 - **THEN** the count is shown with the word million
+
+#### Scenario: A count past the longest word is shown as infinite
+
+- **GIVEN** a player whose point count is larger than the longest word the store names
+- **WHEN** the point count is displayed
+- **THEN** the count is shown as Infinity
