@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import type { Building } from "#shared/models/clicker/data/building/Building";
-import type { ClickerListItem } from "@/models/clicker/ClickerListItem";
+import type { ClickerBuildingListItem } from "@/models/clicker/ClickerBuildingListItem";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { STORE_ITEM_POSITION_AREA } from "@/services/clicker/constants";
 import { BuildingIconMap } from "@/services/clicker/icon/BuildingIconMap";
 import { useBuildingStore } from "@/store/clicker/building";
 import { usePointStore } from "@/store/clicker/point";
-import { takeOne } from "@esposter/shared";
 
 interface Props {
   buildings: Building[];
@@ -21,10 +20,11 @@ const { getBoughtBuildingAmount, getBuildingPriceForQuantity } = buildingStore;
 const { buyQuantity } = storeToRefs(buildingStore);
 // Each building at the price of the quantity the store buys at, against what the player has
 const items = computed(() =>
-  buildings.map<ClickerListItem>((building) => {
+  buildings.map<ClickerBuildingListItem>((building) => {
     const price = getBuildingPriceForQuantity(building, buyQuantity.value);
     return {
       amount: getBoughtBuildingAmount(building),
+      building,
       id: building.id,
       image: BuildingIconMap[building.id],
       isAffordable: checkIsAffordable(price),
@@ -42,15 +42,8 @@ const items = computed(() =>
     title="Buildings"
   >
     <ClickerModelItemList :items label="Buildings" :position-area="STORE_ITEM_POSITION_AREA">
-      <template #detail="{ id }">
-        <ClickerModelBuildingDetail
-          :building="
-            takeOne(
-              buildings,
-              buildings.findIndex((building) => building.id === id),
-            )
-          "
-        />
+      <template #detail="{ item }">
+        <ClickerModelBuildingDetail :building="item.building" />
       </template>
     </ClickerModelItemList>
   </ClickerModelListGroup>

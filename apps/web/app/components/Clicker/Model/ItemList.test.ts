@@ -20,7 +20,9 @@ describe("clickerModelItemList", () => {
     const component = await mountSuspended(ClickerModelItemList, {
       attachTo: document.body,
       props: { items: [item, otherItem], label: "label", positionArea: "" },
-      slots: { detail: ({ id: detailId }: { id: string }) => h("p", { class: "detail" }, detailId) },
+      slots: {
+        detail: ({ item: detailItem }: { item: typeof otherItem }) => h("p", { class: "detail" }, detailItem.id),
+      },
     });
     component.getComponent(UiList).vm.$emit("select", otherId);
     await nextTick();

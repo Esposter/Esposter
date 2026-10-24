@@ -1,18 +1,18 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends ClickerListItem">
 import type { ClickerListItem } from "@/models/clicker/ClickerListItem";
 import type { UiListItem } from "@/models/ui/UiListItem";
 
 import { takeOne } from "@esposter/shared";
 
 interface Props {
-  items: ClickerListItem[];
+  items: T[];
   label: string;
   // Where an item's details open against its row: toward the page's middle from the side the list stands on
   positionArea: string;
 }
 // The store's and the inventory's rows, as Cookie Clicker's: an item's picture, its name over its price and how many
 // Are owned. A row opens its item's details in the one popover the list keeps, hung off the row pressed
-defineSlots<{ detail: (props: { id: string }) => VNode }>();
+defineSlots<{ detail: (props: { item: T }) => VNode }>();
 const { items, label, positionArea } = defineProps<Props>();
 // Every row is one of the items, so its own is always found
 const getItem = (id: string) =>
@@ -58,6 +58,6 @@ const open = (id: string) => {
     </template>
   </UiList>
   <UiPopover v-model:is-open="isOpen" :anchor :label="selectedId" :position-area>
-    <slot v-if="selectedItem" :id="selectedItem.id" name="detail" />
+    <slot v-if="selectedItem" :item="selectedItem" name="detail" />
   </UiPopover>
 </template>

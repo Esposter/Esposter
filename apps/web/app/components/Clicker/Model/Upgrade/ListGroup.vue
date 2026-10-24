@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import type { Upgrade } from "#shared/models/clicker/data/upgrade/Upgrade";
-import type { ClickerListItem } from "@/models/clicker/ClickerListItem";
+import type { ClickerUpgradeListItem } from "@/models/clicker/ClickerUpgradeListItem";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { INVENTORY_ITEM_POSITION_AREA, STORE_ITEM_POSITION_AREA } from "@/services/clicker/constants";
 import { UpgradeIconMap } from "@/services/clicker/icon/UpgradeIconMap";
 import { usePointStore } from "@/store/clicker/point";
-import { takeOne } from "@esposter/shared";
 
 interface Props {
   // The inventory's, which has nothing left to pay
@@ -18,11 +17,12 @@ const { isBought, upgrades } = defineProps<Props>();
 const pointStore = usePointStore();
 const { checkIsAffordable } = pointStore;
 const items = computed(() =>
-  upgrades.map<ClickerListItem>(({ id, price }) => ({
-    id,
-    image: UpgradeIconMap[id],
-    isAffordable: isBought ? undefined : checkIsAffordable(price),
-    price,
+  upgrades.map<ClickerUpgradeListItem>((upgrade) => ({
+    id: upgrade.id,
+    image: UpgradeIconMap[upgrade.id],
+    isAffordable: isBought ? undefined : checkIsAffordable(upgrade.price),
+    price: upgrade.price,
+    upgrade,
   })),
 );
 </script>
@@ -39,16 +39,8 @@ const items = computed(() =>
       label="Upgrades"
       :position-area="isBought ? INVENTORY_ITEM_POSITION_AREA : STORE_ITEM_POSITION_AREA"
     >
-      <template #detail="{ id }">
-        <ClickerModelUpgradeDetail
-          :upgrade="
-            takeOne(
-              upgrades,
-              upgrades.findIndex((upgrade) => upgrade.id === id),
-            )
-          "
-          :is-bought
-        />
+      <template #detail="{ item }">
+        <ClickerModelUpgradeDetail :upgrade="item.upgrade" :is-bought />
       </template>
     </ClickerModelItemList>
   </ClickerModelListGroup>
