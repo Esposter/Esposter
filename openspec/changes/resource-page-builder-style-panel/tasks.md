@@ -6,12 +6,12 @@
 ## 2. Values and tokens
 
 - [x] 2.1 Check each value the browser accepts as it is typed, refusing braces, angle brackets, comment delimiters and over-long values. Verify: tests named after the scenarios 'An unsupported style value stays in its field unsaved' and 'A style value with a brace is refused'.
-- [x] 2.2 Grow `UiColorField` its token swatches in a commit of its own, then draw the Theme panel and store a colour picked from the theme as a reference to it. Verify: a test named after the scenario 'Changing a theme colour recolours every node that uses it'.
+- [ ] 2.2 Grow `UiColorField` its token swatches in a commit of its own, then draw the Theme panel and store a colour picked from the theme as a reference to it. The Theme panel draws the tokens without swatches, so the reference half waits for the style panel's colour field in task 3.1. Verify: a test named after the scenario 'Changing a theme colour recolours every node that uses it'.
 - [ ] 2.3 Give each token swatch in `UiColorField` the `ui-button` surface its pressed state needs, as the library's rule for anything pressed requires. The button's minimum size, raised shadow and padding change the swatch's 24-pixel size, and its inline fill hides the accent pressed indicator, so decide how the swatch keeps its size, its colour and its pressed mark before adding the class. Verify: the library-layout check in `apps/web/app/templates.test.ts` passes for the swatch.
 
 ## 3. Panel
 
-- [ ] 3.1 Draw the style sectors with the shared UI library's controls, showing the inherited value and offering reset. Verify: tests named after the scenarios 'A field shows the inherited value and where it comes from' and 'Reset removes an override'.
+- [ ] 3.1 Draw the style sectors with the shared UI library's controls, showing the inherited value and offering reset. The colour field lists the theme's colours as `UiColorField` swatches and stores a picked one as `var(--color-name)`, which closes task 2.2. Verify: tests named after the scenarios 'A field shows the inherited value and where it comes from', 'Reset removes an override' and 'Changing a theme colour recolours every node that uses it'.
 - [ ] 3.2 Add Copy style and Paste style as commands. Verify: a test named after the scenario 'Paste style applies copied styles to another node'.
 - [ ] 3.3 Preview slider drags on the canvas and record one undoable change on release. Verify: a test named after the scenario 'Dragging an opacity slider records one undoable change'.
 
