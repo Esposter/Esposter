@@ -13,6 +13,7 @@ Read when a type is awkward: reaching for a cast, re-declaring fields a source t
 | A prototype you are extending                   | `Object.assign(Proto, { method() {} })` — a runtime lookup needs no static claim, so nothing has to be lied to                        |
 | An untyped third-party package                  | An ambient `declare module "pkg"` — one `.d.ts` beats a suppression per import site                                                   |
 | Two shapes that "are really the same"           | One discriminated union, or a `satisfies`-checked adapter at the seam                                                                 |
+| Several helpers repeating one generic header    | A type alias that states the generics once (`PageBuilderHelper<TResult, TArgs>`), so each helper names only its result and arguments  |
 
 What survives is **seams the type system genuinely cannot express**. Most live in a mock or a `.test.ts`:
 

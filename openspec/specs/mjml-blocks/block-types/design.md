@@ -12,6 +12,7 @@ The package's block types as built. The requirements are in [the spec](spec.md),
 - **A source attribute cannot overwrite a prop the node writes.** An attribute named after one of the node's slots, or after its `content` or its `decorative` flag where the node writes those, is kept under `<name>`. The strict props schema refuses that key as unknown, so the prop the node writes is never overwritten.
 - **An image's alternative text is required, or the image is decorative.** `checkMjmlAlternativeText` refuses an image-like node that has neither at its `alt`, the clause "Content is safe before it reaches MJML" states in the spec. A decorative image renders an empty `alt`, and the read back turns an empty `alt` into the decorative flag, so the two are inverses.
 - **A navbar's default icons are the characters they name.** `ico-open` defaults to `☰` and `ico-close` to `⊗`, the characters MJML's entities `&#9776;` and `&#8855;` decode to. The render escapes each attribute value once, so an entity default would reach MJML escaped twice.
+- **A unit's numeric grammar is MJML's, except that a comma is refused.** MJML's validator takes a comma as a digit, so `1,5px` passes it, but CSS reads that as no length. The attribute schema drops the comma from the numeric pattern, and every other form of MJML's grammar is kept as its validator matches it.
 
 ## Key files
 
