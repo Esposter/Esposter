@@ -5,7 +5,7 @@
 
 ## 2. Stored data
 
-- [x] 2.1 Confirm the purge deletes each resource's directory, its activity and view partitions, and its ledger entries before its row. Verify: a test named after the scenario 'Removing an email releases its stored files'.
+- [x] 2.1 Confirm the purge deletes each resource's directory, its activity and view partitions, and its ledger entries. Verify: a test named after the scenario 'Removing an email releases its stored files'.
 - [ ] 2.2 Backfill the Blueprint entries of webpage and email type to drop their content, dev then prod. Verify: tests named after the scenarios 'A Blueprint's webpage entry deploys as a fresh document' and 'A Blueprint revision from before the cutover is refused'.
 
 ## 3. Related data

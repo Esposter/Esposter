@@ -1,15 +1,22 @@
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { incrementResourceViewCount } from "#server/services/resource/incrementResourceViewCount";
 import { createCallerFactory } from "#server/trpc";
 import { emailRouter } from "#server/trpc/routers/email";
 import { resourceRouter } from "#server/trpc/routers/resource";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
-import { AzureContainer, DatabaseEntityType, ResourceType } from "@esposter/db-schema";
+import {
+  AzureContainer,
+  AzureTable,
+  DatabaseEntityType,
+  ResourceType,
+  storageLedgerInStorage,
+} from "@esposter/db-schema";
 import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
-import { MockContainerDatabase } from "azure-mock";
+import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("emailRouter", () => {
@@ -121,6 +128,19 @@ describe("emailRouter", () => {
     assert.exists(container);
     const readResourceBlobNames = () => [...container.keys()].filter((key) => key.startsWith(`${newResource.id}/`));
     const storedBlobNamesBeforePurge = readResourceBlobNames();
+    // The partitions and ledger rows keyed by this email, each read before the purge so it is proved populated
+    const readPartitionEntities = (tableName: AzureTable) =>
+      [...(MockTableDatabase.get(tableName)?.values() ?? [])].filter(
+        ({ partitionKey }) => partitionKey === newResource.id,
+      );
+    const readLedgerEntries = async () =>
+      (await getMockContext().db.select().from(storageLedgerInStorage)).filter(({ blobName }) =>
+        blobName.startsWith(`${newResource.id}/`),
+      );
+    await incrementResourceViewCount(newResource.id);
+    const activityBeforePurge = readPartitionEntities(AzureTable.ResourceActivity);
+    const viewsBeforePurge = readPartitionEntities(AzureTable.ResourceViews);
+    const ledgerBeforePurge = await readLedgerEntries();
     // Deleting is soft, so the purge is what removes the directory and gives its bytes back
     await caller.deleteResource({ id: newResource.id });
     await resourceCaller.purgeResource({ id: newResource.id });
@@ -129,7 +149,13 @@ describe("emailRouter", () => {
     assert.exists(storageBytesUsedWhilePublished);
     expect(storageBytesUsedWhilePublished).toBeGreaterThan(storageBytesUsedBeforePublish);
     expect(storedBlobNamesBeforePurge).not.toStrictEqual([]);
+    expect(activityBeforePurge).not.toStrictEqual([]);
+    expect(viewsBeforePurge).not.toStrictEqual([]);
+    expect(ledgerBeforePurge).not.toStrictEqual([]);
     expect(readResourceBlobNames()).toStrictEqual([]);
+    expect(readPartitionEntities(AzureTable.ResourceActivity)).toStrictEqual([]);
+    expect(readPartitionEntities(AzureTable.ResourceViews)).toStrictEqual([]);
+    await expect(readLedgerEntries()).resolves.toStrictEqual([]);
     await expect(readStorageBytesUsed(newResource.userId)).resolves.toBe(storageBytesUsedBeforePublish);
   });
 });
