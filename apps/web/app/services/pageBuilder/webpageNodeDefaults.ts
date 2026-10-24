@@ -6,6 +6,9 @@ import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 // A UUID that names no survey, the one value a survey invite's id takes until its author chooses a survey
 const NO_SURVEY_ID = "00000000-0000-0000-0000-000000000000";
 const PLACEHOLDER_URL = "https://example.com/";
+// The picture an inserted image or video shows until its author chooses a file. It is the app's own file, so a page that is
+// only opened in the editor requests no third-party origin
+const PLACEHOLDER_MEDIA_URL = "/page-builder/placeholder.svg";
 
 // The node a freshly inserted node of each type is, under the id the caller mints for it: each the smallest props its schema accepts,
 // And each keyed by its type so the node it builds is the type it is keyed by
@@ -22,7 +25,7 @@ const webpageNodeDefaultsMap: { [K in WebpageNodeType]: (id: string) => Extract<
   }),
   [WebpageNodeType.CustomHtml]: (id) => ({ props: { html: "", id }, type: WebpageNodeType.CustomHtml }),
   [WebpageNodeType.Image]: (id) => ({
-    props: { alt: "Image", decorative: false, id, src: PLACEHOLDER_URL },
+    props: { alt: "Image", decorative: false, id, src: PLACEHOLDER_MEDIA_URL },
     type: WebpageNodeType.Image,
   }),
   [WebpageNodeType.Section]: (id) => ({
@@ -45,7 +48,7 @@ const webpageNodeDefaultsMap: { [K in WebpageNodeType]: (id: string) => Extract<
   }),
   [WebpageNodeType.TypedText]: (id) => ({ props: { id, texts: ["Text"] }, type: WebpageNodeType.TypedText }),
   [WebpageNodeType.Video]: (id) => ({
-    props: { id, src: PLACEHOLDER_URL, title: "Video" },
+    props: { id, src: PLACEHOLDER_MEDIA_URL, title: "Video" },
     type: WebpageNodeType.Video,
   }),
 };

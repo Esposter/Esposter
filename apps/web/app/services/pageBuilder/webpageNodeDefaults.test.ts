@@ -15,4 +15,14 @@ describe("webpageNodeDefaults", () => {
       expect(propsSchema.safeParse(createWebpageNode(type, TEST_ID).props).success).toBe(true);
     }
   });
+
+  test("an inserted image and video load from the app's own origin", () => {
+    expect.hasAssertions();
+
+    for (const type of [WebpageNodeType.Image, WebpageNodeType.Video]) {
+      const { props } = createWebpageNode(type, TEST_ID);
+
+      expect("src" in props && props.src.startsWith("/")).toBe(true);
+    }
+  });
 });

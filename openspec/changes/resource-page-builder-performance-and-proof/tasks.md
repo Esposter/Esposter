@@ -1,6 +1,7 @@
 ## 1. Origins
 
 - [ ] 1.1 Keep the editors from requesting any third-party origin. Verify: a browser test whose scenario is 'Opening an editor requests no third-party origin'.
+  - Done: an inserted image or video loads the app's own placeholder (`apps/web/public/page-builder/placeholder.svg`) rather than `example.com`, and the email starter loads no picture. Open: the browser test that opens each editor and records its requests.
 
 ## 2. Benchmarks
 
