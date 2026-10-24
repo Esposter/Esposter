@@ -42,6 +42,7 @@ Paths relative to `apps/web`.
 
 | File                                                | Role                                                    |
 | --------------------------------------------------- | ------------------------------------------------------- |
+| `server/trpc/routers/clicker.ts`                    | `readBuildingMap` and `readUpgradeMap` procedures       |
 | `shared/assets/clicker/data/BuildingMap.ts`         | building definitions                                    |
 | `shared/assets/clicker/data/upgrades/UpgradeMap.ts` | merged upgrade definitions                              |
 | `app/services/clicker/building/getBuildingPrice.ts` | the exponential price curve                             |
