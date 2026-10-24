@@ -2,7 +2,8 @@
 import type { Item } from "@/models/shared/Item";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { getDeleteResourceItem } from "@/services/resource/getDeleteResourceItem";
+import { getRenameResourceItem } from "@/services/resource/getRenameResourceItem";
 import { getResourceLinkItems } from "@/services/resource/getResourceLinkItems";
 import { useBlueprintCaptureDialogStore } from "@/store/resource/blueprint/captureDialog";
 import { useListDialogStore } from "@/store/resource/listDialog";
@@ -24,21 +25,12 @@ export const useResourceListActionItems = () => {
       },
       title: "Save as blueprint",
     },
-    {
-      meaning: UiIconMeaning.Edit,
-      onClick: () => {
-        renamingId.value = resource.id;
-      },
-      title: "Rename",
-    },
-    {
-      isDanger: true,
-      meaning: UiIconMeaning.Delete,
-      onClick: () => {
-        deletingIds.value = [resource.id];
-      },
-      title: "Delete",
-    },
+    getRenameResourceItem(() => {
+      renamingId.value = resource.id;
+    }),
+    getDeleteResourceItem(() => {
+      deletingIds.value = [resource.id];
+    }),
   ];
   return { getActionItems };
 };

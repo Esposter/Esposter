@@ -38,10 +38,13 @@ sequenceDiagram
 
 ## Key files
 
-| File                                       | Role                                                                                     |
-| ------------------------------------------ | ---------------------------------------------------------------------------------------- |
-| `app/components/Resource/Blade/Header.vue` | the one action shown and the overflow menu's `Item` list                                 |
-| `app/store/resource/index.ts`              | refresh/duplicate/delete actions, conflict + outcome notifications, the delete's Restore |
+| File                                             | Role                                                                                     |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| `app/components/Resource/Blade/Header.vue`       | the one action shown; hands its commands to the overflow menu                            |
+| `app/store/resource/index.ts`                    | refresh/duplicate/delete actions, conflict + outcome notifications, the delete's Restore |
+| `app/services/resource/getResourceBladeItems.ts` | the overflow menu's `Item` list, from the commands the header hands it                   |
+| `app/services/resource/getRenameResourceItem.ts` | Rename, one command shared with the list's row menu                                      |
+| `app/services/resource/getDeleteResourceItem.ts` | Delete, one danger command shared with the list's row menu                               |
 
 ## Notes
 

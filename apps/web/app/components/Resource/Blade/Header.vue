@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import type { PortableFormat } from "@/models/resource/PortableFormat";
 import type { Item } from "@/models/shared/Item";
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { exportDatasetCsv } from "@/services/dataset/exportDatasetCsv";
+import { getResourceBladeItems } from "@/services/resource/getResourceBladeItems";
 import { useResourceStore } from "@/store/resource";
 import { RoutePath } from "@esposter/shared";
 
@@ -32,78 +31,31 @@ const ids = computed(() => [resource.id]);
 // No editor at all — the header is the one surface every type has. See openspec/specs/resource/resource-snapshots/design.md
 const { openVersionHistory } = useVersionHistoryRoute();
 const { exportFormats, importFormats } = usePortableFormats(() => resource);
-// A dataset a portable export already covers keeps that export, so the CSV command is for the rest
-const isDatasetExportable = computed(
-  () => checkHasCapability(resource.type, "datasetProvider") && !checkHasCapability(resource.type, "portable"),
-);
-// One command per format, named by its verb and the format, the first opening its group: a submenu is a second
-// Aim the pointer has to hold, where a flat group is read at a glance
-const createFormatItems = (
-  verb: string,
-  meaning: UiIconMeaning,
-  formats: PortableFormat[],
-  getRun: (format: PortableFormat) => (() => Promise<void>) | undefined,
-): Item[] =>
-  formats.map((format, index) => ({
-    isGroupStart: index === 0,
-    meaning,
-    onClick: () => getRun(format)?.(),
-    title: `${verb} ${format.label}`,
-  }));
 // Every command but the lead one, in the overflow menu on every width and on a right-click of the title, so the two
 // Never disagree. Delete comes last, alone, in the danger colour
-const items = computed<Item[]>(() => [
-  { disabled: isPending.value, meaning: UiIconMeaning.Refresh, onClick: () => readResource(), title: "Refresh" },
-  {
-    meaning: UiIconMeaning.Edit,
-    onClick: () => {
-      isRenameOpen.value = true;
+const items = computed<Item[]>(() =>
+  getResourceBladeItems(resource, {
+    commands: {
+      delete: () => {
+        isDeleteOpen.value = true;
+      },
+      duplicate: duplicateResource,
+      exportDatasetCsv: () => exportDatasetCsv(resource),
+      read: readResource,
+      rename: () => {
+        isRenameOpen.value = true;
+      },
+      unpublish: unpublishResource,
+      versionHistory: openVersionHistory,
     },
-    title: "Rename",
-  },
-  {
-    disabled: isDuplicatePending.value,
-    meaning: UiIconMeaning.Copy,
-    onClick: () => duplicateResource(),
-    title: "Duplicate",
-  },
-  // Every type has revisions, so the command is unconditional — recovery is core rather than a capability.
-  // Taking one is not a command at all: revisions accrue on their own, and a Save beside an editor that
-  // Already persists on its own would read as the thing that makes an edit durable
-  { isGroupStart: true, meaning: UiIconMeaning.Recent, onClick: () => openVersionHistory(), title: "Version history" },
-  ...(isPublishable.value && publication.value
-    ? [
-        {
-          disabled: isPublicationPending.value,
-          isGroupStart: true,
-          meaning: UiIconMeaning.Publish,
-          onClick: () => unpublishResource(),
-          title: "Unpublish",
-        },
-      ]
-    : []),
-  ...createFormatItems("Import", UiIconMeaning.Upload, importFormats.value, ({ import: run }) => run),
-  ...createFormatItems("Export", UiIconMeaning.Download, exportFormats.value, ({ export: run }) => run),
-  ...(isDatasetExportable.value
-    ? [
-        {
-          isGroupStart: true,
-          meaning: UiIconMeaning.Download,
-          onClick: () => exportDatasetCsv(resource),
-          title: "Export CSV",
-        },
-      ]
-    : []),
-  {
-    isDanger: true,
-    isGroupStart: true,
-    meaning: UiIconMeaning.Delete,
-    onClick: () => {
-      isDeleteOpen.value = true;
-    },
-    title: "Delete",
-  },
-]);
+    exportFormats: exportFormats.value,
+    importFormats: importFormats.value,
+    isDuplicatePending: isDuplicatePending.value,
+    isPending: isPending.value,
+    isPublicationPending: isPublicationPending.value,
+    isPublished: isPublishable.value && Boolean(publication.value),
+  }),
+);
 </script>
 
 <!-- The resource is what the page is about, so it leads the row as an item in its slot: the type's mark in its
