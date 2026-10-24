@@ -1,23 +1,26 @@
 <script setup lang="ts">
+import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
+import type { WebpageKind } from "@/models/pageBuilder/WebpageKind";
+
 import { getLayerTreeItems } from "@/services/pageBuilder/getLayerTreeItems";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 
 interface Props {
+  getDocument: () => undefined | WebpageDocument;
+  kind: WebpageKind;
   resourceId: string;
 }
-const { resourceId } = defineProps<Props>();
-const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-const { getOpenDocument } = pageBuilderDocumentStore;
+
+const { getDocument, kind, resourceId } = defineProps<Props>();
 const pageBuilderCanvasStore = usePageBuilderCanvasStore();
 const { getSelectedNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
-// Nothing is drawn for a resource whose document is not held, or one the webpage schema refuses
+// Nothing is drawn for a resource whose document is not held, or one the kind's schema refuses
 const layerTreeItems = computed(() => {
-  const open = getOpenDocument(resourceId);
-  if (!open) return undefined;
+  const document = getDocument();
+  if (!document) return undefined;
 
-  const result = open.kind.documentSchema.safeParse(open.document);
-  return result.success ? getLayerTreeItems(open.kind, result.data) : undefined;
+  const result = kind.documentSchema.safeParse(document);
+  return result.success ? getLayerTreeItems(kind, result.data) : undefined;
 });
 const selectedNodeId = computed({
   get: () => getSelectedNodeId(resourceId),

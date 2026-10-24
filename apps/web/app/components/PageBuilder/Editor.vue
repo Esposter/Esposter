@@ -33,6 +33,7 @@ const { resourceId } = defineProps<Props>();
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 const { getDocument, getOpenDocument } = pageBuilderDocumentStore;
 const pageDocument = computed(() => getDocument(resourceId));
+const getPageDocument = () => getDocument(resourceId);
 const pageBuilderCanvasStore = usePageBuilderCanvasStore();
 const { getEditingNodeId, getSelectedNodeId, setEditingNodeId } = pageBuilderCanvasStore;
 const shell = useTemplateRef("shell");
@@ -127,8 +128,15 @@ const handleEditorKeydown = (event: KeyboardEvent) => {
   >
     <div :style="{ width: `${leftWidth}px` }" flex shrink-0 flex-col gap-4 min-h-0 relative>
       <div flex flex-1 flex-col gap-4 min-h-0 of-y-auto>
-        <PageBuilderPalette :announce :get-frame-geometry :resource-id :start-palette-drag />
-        <PageBuilderLayers :resource-id />
+        <PageBuilderPalette
+          :announce
+          :get-document="getPageDocument"
+          :get-frame-geometry
+          :kind="webpageKind"
+          :resource-id
+          :start-palette-drag
+        />
+        <PageBuilderLayers :get-document="getPageDocument" :kind="webpageKind" :resource-id />
       </div>
       <UiResizeHandle
         v-model="leftWidth"
@@ -139,7 +147,13 @@ const handleEditorKeydown = (event: KeyboardEvent) => {
     </div>
     <div flex flex-1 flex-col gap-2 min-h-0 min-w-0>
       <PageBuilderCanvasDeviceToggle :resource-id />
-      <PageBuilderEmptyPage v-if="pageDocument.content.length === 0" :announce :resource-id />
+      <PageBuilderEmptyPage
+        v-if="pageDocument.content.length === 0"
+        :announce
+        :get-document="getPageDocument"
+        :kind="webpageKind"
+        :resource-id
+      />
       <PageBuilderCanvas
         v-else
         ref="canvas"

@@ -2,11 +2,11 @@
 import PageBuilderLayers from "@/components/PageBuilder/Layers.vue";
 import { press } from "@/components/Ui/press.test";
 import { TEST_NESTED_TEXT_ID, TEST_SECTION_ID, TEST_WEBPAGE } from "@/services/pageBuilder/constants.test";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 describe("pageBuilderLayers", () => {
   test("arrow keys walk the layers tree and select the focused node", async () => {
@@ -15,7 +15,10 @@ describe("pageBuilderLayers", () => {
     const resourceId = crypto.randomUUID();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, TEST_WEBPAGE);
-    const component = await mountSuspended(PageBuilderLayers, { attachTo: document.body, props: { resourceId } });
+    const component = await mountSuspended(PageBuilderLayers, {
+      attachTo: document.body,
+      props: { getDocument: () => pageBuilderDocumentStore.getDocument(resourceId), kind: webpageKind, resourceId },
+    });
     component.get<HTMLElement>(`[data-item-id="${TEST_SECTION_ID}"]`).element.focus();
 
     await expect(press("ArrowDown")).resolves.toBe(TEST_NESTED_TEXT_ID);
@@ -32,7 +35,10 @@ describe("pageBuilderLayers", () => {
     const resourceId = crypto.randomUUID();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, TEST_WEBPAGE);
-    const component = await mountSuspended(PageBuilderLayers, { attachTo: document.body, props: { resourceId } });
+    const component = await mountSuspended(PageBuilderLayers, {
+      attachTo: document.body,
+      props: { getDocument: () => pageBuilderDocumentStore.getDocument(resourceId), kind: webpageKind, resourceId },
+    });
     component.get<HTMLElement>(`[data-item-id="${TEST_SECTION_ID}"]`).element.focus();
 
     await press("t");
