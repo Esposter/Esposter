@@ -1,8 +1,8 @@
-import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
-import type { WebpageKind } from "@/models/pageBuilder/WebpageKind";
+import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
 import type { UiCommand } from "@/models/ui/UiCommand";
 import type { UiCommandScope } from "@/models/ui/UiCommandScope";
 import type { JsonPatchOperation } from "@esposter/shared";
+import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "headless-block-editor";
 import type { MaybeRefOrGetter } from "vue";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -13,7 +13,6 @@ import { getNodeSlotPointer } from "@/services/pageBuilder/getNodeSlotPointer";
 import { getNodeTitle } from "@/services/pageBuilder/getNodeTitle";
 import { getSlotPath } from "@/services/pageBuilder/getSlotPath";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { parseArrayIndex, parseJsonPointer, readJsonValue, toJsonPointer } from "@esposter/shared";
 import {
@@ -28,9 +27,14 @@ import {
 } from "headless-block-editor";
 
 // The move of a node to the index one away from it in its own slot, or none when no sibling sits at that index
-const getSiblingMoveOperations = (
-  kind: WebpageKind,
-  document: WebpageDocument,
+const getSiblingMoveOperations = <
+  TNode extends BlockNode,
+  TRoot extends BlockRootProps,
+  TDefinition extends BlockTypeDefinition<TNode>,
+  TDocument extends BlockDocument<TNode, TRoot>,
+>(
+  kind: PageBuilderKind<TNode, TRoot, TDefinition, TDocument>,
+  document: TDocument,
   nodePointer: string,
   offset: number,
 ): JsonPatchOperation[] => {
@@ -51,9 +55,22 @@ const getSiblingMoveOperations = (
 // Its siblings or into and out of a container, Move to moves it to the end of any slot that accepts it, and Delete removes
 // It. Each edit is one history entry, and a move keeps the node selected; focus is the caller's to move. Each landed edit is
 // Announced once through announce
-export const usePageBuilderMoves = (resourceId: MaybeRefOrGetter<string>, announce: (message: string) => void) => {
-  const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-  const { getOpenDocument } = pageBuilderDocumentStore;
+export const usePageBuilderMoves = <
+  TNode extends BlockNode,
+  TRoot extends BlockRootProps,
+  TDefinition extends BlockTypeDefinition<TNode>,
+  TDocument extends BlockDocument<TNode, TRoot>,
+>(
+  kind: PageBuilderKind<TNode, TRoot, TDefinition, TDocument>,
+  getDocument: () => TDocument | undefined,
+  resourceId: MaybeRefOrGetter<string>,
+  announce: (message: string) => void,
+) => {
+  // The document the shell draws, with the kind the shell was given, or none while no document is held
+  const getOpenDocument = () => {
+    const document = getDocument();
+    return document && { document, kind };
+  };
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
   const { getSelectedNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
   const pageBuilderHistoryStore = usePageBuilderHistoryStore();
@@ -61,7 +78,7 @@ export const usePageBuilderMoves = (resourceId: MaybeRefOrGetter<string>, announ
   // The document, its kind and the node the selection holds, or none when nothing is selected or the node is gone
   const getSelection = () => {
     const resourceIdValue = toValue(resourceId);
-    const open = getOpenDocument(resourceIdValue);
+    const open = getOpenDocument();
     const nodeId = getSelectedNodeId(resourceIdValue);
     if (!open || !nodeId) return undefined;
 
@@ -69,7 +86,11 @@ export const usePageBuilderMoves = (resourceId: MaybeRefOrGetter<string>, announ
     return nodePointer === undefined ? undefined : { ...open, nodeId, nodePointer };
   };
   // Announces where a moved node now sits: its title, its 1-based position among its slot's children and the slot's path
-  const announceMove = (kind: WebpageKind, document: WebpageDocument, nodePointer: string) => {
+  const announceMove = (
+    kind: PageBuilderKind<TNode, TRoot, TDefinition, TDocument>,
+    document: TDocument,
+    nodePointer: string,
+  ) => {
     const segments = parseJsonPointer(nodePointer);
     const slotSegments = segments.slice(0, -1);
     const siblings = readJsonValue(document, slotSegments);
@@ -83,7 +104,11 @@ export const usePageBuilderMoves = (resourceId: MaybeRefOrGetter<string>, announ
   // Applies the operations a move makes to the selected node, and keeps that node selected once the edit lands
   const moveSelected = (
     label: string,
-    getOperations: (kind: WebpageKind, document: WebpageDocument, nodePointer: string) => JsonPatchOperation[],
+    getOperations: (
+      kind: PageBuilderKind<TNode, TRoot, TDefinition, TDocument>,
+      document: TDocument,
+      nodePointer: string,
+    ) => JsonPatchOperation[],
   ) => {
     const selection = getSelection();
     if (!selection) return;
@@ -163,7 +188,7 @@ export const usePageBuilderMoves = (resourceId: MaybeRefOrGetter<string>, announ
     const title = getNodeTitle(selection.kind, selection.document, segments);
     applyEdit(toValue(resourceId), operations, "Duplicate block").match(() => {
       const copyPointer = `${getNodeSlotPointer(selection.nodePointer)}/${index + 1}`;
-      const copied = getOpenDocument(toValue(resourceId));
+      const copied = getOpenDocument();
       setSelectedNodeId(toValue(resourceId), copied ? getNodeIdAt(copied.kind, copied.document, copyPointer) : "");
       if (title) announce(`Duplicated ${title}`);
     }, console.error);
@@ -172,7 +197,7 @@ export const usePageBuilderMoves = (resourceId: MaybeRefOrGetter<string>, announ
   // Returns whether the removal landed, so a caller announcing the delete knows a node was actually removed
   const deleteNode = (nodeId: string) => {
     const resourceIdValue = toValue(resourceId);
-    const open = getOpenDocument(resourceIdValue);
+    const open = getOpenDocument();
     const nodePointer = open && getNodePointer(open.kind, open.document, nodeId);
     if (!open || nodePointer === undefined) return false;
 
@@ -181,7 +206,7 @@ export const usePageBuilderMoves = (resourceId: MaybeRefOrGetter<string>, announ
     const title = getNodeTitle(kind, document, parseJsonPointer(nodePointer));
     return applyEdit(resourceIdValue, removeBlockNode(nodePointer), "Delete block").match(
       () => {
-        const focus = getOpenDocument(resourceIdValue);
+        const focus = getOpenDocument();
         setSelectedNodeId(resourceIdValue, focus ? getNodeIdAt(focus.kind, focus.document, focusPointer) : "");
         if (title) announce(`Deleted ${title}`);
         return true;

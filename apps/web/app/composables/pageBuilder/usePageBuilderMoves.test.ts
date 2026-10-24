@@ -53,7 +53,7 @@ const setup = async (selectedNodeId: string, document = createFixtureDocument())
     pageBuilderCanvasStore,
     pageBuilderDocumentStore,
     resourceId,
-    ...usePageBuilderMoves(resourceId, announce),
+    ...usePageBuilderMoves(webpageKind, () => pageBuilderDocumentStore.getDocument(resourceId), resourceId, announce),
   };
 };
 

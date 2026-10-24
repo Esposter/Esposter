@@ -150,7 +150,12 @@ describe(usePageBuilderClipboard, () => {
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const resourceId = await openResource([createTextNode(TEST_ROOT_TEXT_ID), createTextNode(otherNodeId)]);
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
-    const { deleteNode } = usePageBuilderMoves(resourceId, vi.fn<(message: string) => void>());
+    const { deleteNode } = usePageBuilderMoves(
+      webpageKind,
+      () => pageBuilderDocumentStore.getDocument(resourceId),
+      resourceId,
+      vi.fn<(message: string) => void>(),
+    );
     const cut = usePageBuilderClipboard(resourceId, vi.fn<(message: string) => void>(), deleteNode).cutSelected();
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, otherNodeId);
     writeGate.resolve();
@@ -165,9 +170,15 @@ describe(usePageBuilderClipboard, () => {
     const writeGate = Promise.withResolvers<void>();
     vi.stubGlobal("navigator", { clipboard: { writeText: () => writeGate.promise } });
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const resourceId = await openResource([createTextNode(TEST_ROOT_TEXT_ID)]);
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
-    const { deleteNode } = usePageBuilderMoves(resourceId, vi.fn<(message: string) => void>());
+    const { deleteNode } = usePageBuilderMoves(
+      webpageKind,
+      () => pageBuilderDocumentStore.getDocument(resourceId),
+      resourceId,
+      vi.fn<(message: string) => void>(),
+    );
     const announce = vi.fn<(message: string) => void>();
     const cut = usePageBuilderClipboard(resourceId, announce, deleteNode).cutSelected();
     deleteNode(TEST_ROOT_TEXT_ID);

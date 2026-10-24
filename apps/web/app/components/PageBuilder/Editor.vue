@@ -14,6 +14,7 @@ import {
 } from "@/services/pageBuilder/constants";
 import { getKeyAction } from "@/services/pageBuilder/getKeyAction";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { getBlockNode } from "headless-block-editor";
@@ -47,6 +48,8 @@ const announce = (message: string) => {
   });
 };
 const { deleteNode, deleteSelected, moveDown, moveLeft, moveRight, moveUp } = usePageBuilderMoves(
+  webpageKind,
+  () => getDocument(resourceId),
   () => resourceId,
   announce,
 );

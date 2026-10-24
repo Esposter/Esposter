@@ -2,6 +2,8 @@
 import { usePageBuilderMoves } from "@/composables/pageBuilder/usePageBuilderMoves";
 import { usePageBuilderSelection } from "@/composables/pageBuilder/usePageBuilderSelection";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
+import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { useCommandStore } from "@/store/ui/command";
 
 interface Props {
@@ -14,7 +16,10 @@ interface Props {
 const { announce, position, resourceId } = defineProps<Props>();
 const commandStore = useCommandStore();
 const { openCommandPalette } = commandStore;
+const { getDocument } = usePageBuilderDocumentStore();
 const { deleteSelected, duplicateSelected, moveDown, moveToScope, moveUp } = usePageBuilderMoves(
+  webpageKind,
+  () => getDocument(resourceId),
   () => resourceId,
   announce,
 );
