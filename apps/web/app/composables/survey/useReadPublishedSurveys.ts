@@ -10,16 +10,25 @@ export const useReadPublishedSurveys = () => {
   const { readSurveyResources } = useReadSurveys();
   const session = authClient.useSession();
   const publishedSurveys = ref<ResourceInResource[]>([]);
+  const readPublishedSurveys = () =>
+    getResultAsync(async () => {
+      const { items } = await readSurveyResources();
+      publishedSurveys.value = items.filter(({ publication }) => publication);
+    }).match(noop, createErrorAlert);
 
   watchImmediate(
     () => session.value.data,
     async (newSession) => {
       if (!newSession) return;
-      await getResultAsync(async () => {
-        const { items } = await readSurveyResources();
-        publishedSurveys.value = items.filter(({ publication }) => publication);
-      }).match(noop, createErrorAlert);
+      await readPublishedSurveys();
     },
+  );
+  // Coming back to the window re-reads the list, so a survey published or unpublished in another tab reaches the
+  // Invite blocks without the owner reopening the editor. Signed out, there is nothing to read
+  useEventListener(
+    () => window,
+    "focus",
+    () => session.value.data && readPublishedSurveys(),
   );
 
   return { publishedSurveys };

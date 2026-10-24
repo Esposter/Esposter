@@ -81,15 +81,15 @@ The email editor SHALL offer the owner's published surveys as invite blocks, and
 - **WHEN** the owner opens the email editor's blocks
 - **THEN** an invite block for that survey is offered
 
-### Requirement: The email editor reads the survey list once the session is available
+### Requirement: The email editor reads the survey list when the session is available and when the owner returns
 
-The email editor SHALL read the owner's survey list when the owner's session becomes available, and SHALL NOT re-read it while the editor is open.
+The email editor SHALL read the owner's survey list when the owner's session becomes available, and SHALL read it again when the owner returns to the window. A read SHALL NOT happen while the owner is signed out.
 
 #### Scenario: Survey published while the email editor is open
 
 - **GIVEN** the email editor is open
-- **WHEN** the owner publishes a survey
-- **THEN** the survey is not offered until the editor is opened again
+- **WHEN** the owner publishes a survey in another tab and returns to the editor's window
+- **THEN** the survey is offered as an invite block without reopening the editor
 
 ### Requirement: An email invite block shows the survey's name as escaped text
 
