@@ -75,7 +75,7 @@ describe(useVolumeStore, () => {
     expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(39);
   });
 
-  test("right raises the volume and left lowers it, stopping at either end", async () => {
+  test("right raises the volume and left lowers it, stopping at the bottom", async () => {
     expect.hasAssertions();
 
     const settingsStore = useSettingsStore();
@@ -89,6 +89,18 @@ describe(useVolumeStore, () => {
     await volumeStore.updateVolume(Direction.RIGHT, 0);
 
     expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(1);
+  });
+
+  test("right stops at the top of the volume range without saving", async () => {
+    expect.hasAssertions();
+
+    const settingsStore = useSettingsStore();
+    const volumeStore = useVolumeStore();
+    settingsStore.settings[SettingsOption.VolumePercentage] = 100;
+    await volumeStore.updateVolume(Direction.RIGHT, 0);
+
+    expect(settingsStore.settings[SettingsOption.VolumePercentage]).toBe(100);
+    expect(saveDungeons).not.toHaveBeenCalled();
   });
 
   test("up and down leave the volume alone", async () => {
