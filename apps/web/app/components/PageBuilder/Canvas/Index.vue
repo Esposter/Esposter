@@ -5,13 +5,13 @@ import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
 
 import { getPresentDefinitions } from "#shared/services/pageBuilder/getPresentDefinitions";
 import { getWebpageCss } from "#shared/services/pageBuilder/getWebpageCss";
-import { CanvasKeyAction } from "@/models/pageBuilder/CanvasKeyAction";
-import { getCanvasKeyAction } from "@/services/pageBuilder/getCanvasKeyAction";
+import { KeyAction } from "@/models/pageBuilder/KeyAction";
+import { KeyScope } from "@/models/pageBuilder/KeyScope";
+import { getKeyAction } from "@/services/pageBuilder/getKeyAction";
 import { getNodeIdFromElement } from "@/services/pageBuilder/getNodeIdFromElement";
 import { renderCanvasVNodes } from "@/services/pageBuilder/renderCanvasVNodes";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
-import { checkIsEditableTarget } from "@/util/dom/checkIsEditableTarget";
 
 interface Props {
   announce: (message: string) => void;
@@ -57,17 +57,15 @@ watch(
 // The canvas takes its own keys, and forwards every other key to the editor
 // A text edit's own keys stay with it, and a modified key keeps the meaning the editor gives it, so an Alt chord still moves the node
 const onFrameKeydown = (event: KeyboardEvent) => {
-  if (checkIsEditableTarget(event.target)) return;
-
-  const action = event.altKey || event.ctrlKey || event.metaKey ? undefined : getCanvasKeyAction(event.key);
+  const action = getKeyAction(event, KeyScope.Canvas);
   if (!action) {
     emit("canvasKeydown", event);
     return;
   }
 
   event.preventDefault();
-  if (action === CanvasKeyAction.Parent) selectParent();
-  else selectAdjacentNode(action === CanvasKeyAction.Next ? 1 : -1);
+  if (action === KeyAction.ParentNode) selectParent();
+  else selectAdjacentNode(action === KeyAction.NextNode ? 1 : -1);
 };
 // The frame's document is the one the keys are pressed in, so its listener is attached once the page is drawn in it and removed with it
 watch(contentRoot, (element, _previousElement, onCleanup) => {

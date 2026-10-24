@@ -3,6 +3,8 @@ import type { UiTabItem } from "@/models/ui/UiTabItem";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
+import { KeyAction } from "@/models/pageBuilder/KeyAction";
+import { KeyScope } from "@/models/pageBuilder/KeyScope";
 import {
   CONTENT_PANEL,
   DEFAULT_SIDE_PANE_WIDTH,
@@ -11,11 +13,10 @@ import {
   STYLE_PANEL,
   THEME_PANEL,
 } from "@/services/pageBuilder/constants";
+import { getKeyAction } from "@/services/pageBuilder/getKeyAction";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
-import { checkIsEditableTarget } from "@/util/dom/checkIsEditableTarget";
-import { checkIsElementTarget } from "@/util/dom/checkIsElementTarget";
 import { getBlockNode } from "headless-block-editor";
 
 interface Props {
@@ -57,34 +58,6 @@ const canvas = useTemplateRef("canvas");
 // The canvas is mounted only once the page has content, so a palette drag on an empty page finds no frame and stays a click
 const getFrameGeometry = () => canvas.value?.getFrameGeometry();
 
-// The move an Alt chord makes with an arrow key, or none for any other key
-const getAltMove = (key: string) => {
-  switch (key) {
-    case "ArrowDown":
-      return moveDown;
-    case "ArrowLeft":
-      return moveLeft;
-    case "ArrowRight":
-      return moveRight;
-    case "ArrowUp":
-      return moveUp;
-    default:
-      return undefined;
-  }
-};
-// The clipboard command a Ctrl or Cmd chord makes with C, X or V, or none for any other key
-const getClipboardCommand = (key: string) => {
-  switch (key.toLowerCase()) {
-    case "c":
-      return copySelected;
-    case "v":
-      return pasteSelected;
-    case "x":
-      return cutSelected;
-    default:
-      return undefined;
-  }
-};
 // Enter edits the selected node in place when it is a text node, and does nothing for any other node
 const startTextEdit = () => {
   const document = getDocument(resourceId);
@@ -104,36 +77,26 @@ watch(
     shell.value?.querySelector<HTMLElement>(`[role="treeitem"][data-item-id="${CSS.escape(previousNodeId)}"]`)?.focus();
   },
 );
-// A focused button or link takes Enter as its own activation, so the key starts no edit from there
-const checkIsControlTarget = (target: EventTarget | null) =>
-  checkIsElementTarget(target) && target.closest("button, a[href]") !== null;
-// Keys are not taken while the user types in a field, so Delete and the arrows keep their own meaning there
+// The command each key the editor takes runs, by the action the key table gives it. The canvas's own keys are not among them
+const editorKeyCommands: Partial<Record<KeyAction, () => void>> = {
+  [KeyAction.Copy]: copySelected,
+  [KeyAction.Cut]: cutSelected,
+  [KeyAction.Delete]: deleteSelected,
+  [KeyAction.MoveDown]: moveDown,
+  [KeyAction.MoveLeft]: moveLeft,
+  [KeyAction.MoveRight]: moveRight,
+  [KeyAction.MoveUp]: moveUp,
+  [KeyAction.Paste]: pasteSelected,
+  [KeyAction.StartTextEdit]: startTextEdit,
+};
 // The canvas forwards the keys its frame takes no command for, so the frame's keys reach the same handler as the shell's own
 const handleEditorKeydown = (event: KeyboardEvent) => {
-  if (checkIsEditableTarget(event.target)) return;
+  const action = getKeyAction(event, KeyScope.Editor);
+  if (!action) return;
 
-  const clipboardCommand = event.ctrlKey || event.metaKey ? getClipboardCommand(event.key) : undefined;
-  if (clipboardCommand) {
-    event.preventDefault();
-    clipboardCommand();
-    return;
-  }
-  if (event.key === "Enter") {
-    if (!checkIsControlTarget(event.target)) startTextEdit();
-    return;
-  }
-  if (event.altKey) {
-    const move = getAltMove(event.key);
-    if (!move) return;
-
-    event.preventDefault();
-    move();
-    return;
-  }
-  if (event.key !== "Delete" && event.key !== "Backspace") return;
-
-  event.preventDefault();
-  deleteSelected();
+  // Starting a text edit leaves Enter's default alone, while every other command the key takes prevents it
+  if (action !== KeyAction.StartTextEdit) event.preventDefault();
+  editorKeyCommands[action]?.();
 };
 </script>
 
