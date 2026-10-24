@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { WordFilterFormData } from "@/models/message/moderation/WordFilterFormData";
 import type { UiMenuItem } from "@/models/ui/UiMenuItem";
-import type { UiSelectItem } from "@/models/ui/UiSelectItem";
 import type { RoomFilterInMessage } from "@esposter/db-schema";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { TimeoutDurationMap } from "@/services/message/moderation/TimeoutDurationMap";
 import { TimeoutDurationSelectItems } from "@/services/message/moderation/TimeoutDurationSelectItems";
+import { getNumberSelectItems } from "@/services/message/shared/getNumberSelectItems";
 import { WordFilterAction, WordFilterActions } from "@esposter/db-schema";
 import { checkIsDeepEqual, toRawDeep } from "@esposter/shared";
 
@@ -18,12 +18,7 @@ interface Props {
 const { filter, roomId } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 const actionItems = WordFilterActions.map<UiMenuItem<WordFilterAction>>((value) => ({ title: value, value }));
-// A select holds a string, so each duration carries its milliseconds as one and is read back through the list
-const timeoutDurationItems = TimeoutDurationSelectItems.map<UiSelectItem<string>>(({ title, value }) => ({
-  meaning: UiIconMeaning.Timer,
-  title,
-  value: String(value),
-}));
+const timeoutDurationItems = getNumberSelectItems(TimeoutDurationSelectItems, UiIconMeaning.Timer);
 const getWordFilterFormData = (roomFilter: RoomFilterInMessage | undefined): WordFilterFormData => ({
   action: roomFilter?.action ?? WordFilterAction.Reject,
   timeoutDurationMs: roomFilter?.timeoutDurationMs ?? TimeoutDurationMap["5 minutes"],

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { CreateInviteInput } from "#shared/models/db/room/CreateInviteInput";
-import type { UiSelectItem } from "@/models/ui/UiSelectItem";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { DEFAULT_INVITE_EXPIRE_AFTER_MINUTES, INVITE_MAX_USES_OPTIONS } from "#shared/services/room/invite/constants";
@@ -11,6 +10,7 @@ import { UiToken } from "@/models/ui/UiToken";
 import { getInviteLink } from "@/services/message/room/invite/getInviteLink";
 import { InviteExpireAfterSelectItems } from "@/services/message/room/invite/InviteExpireAfterSelectItems";
 import { InviteMaxUsesSelectItems } from "@/services/message/room/invite/InviteMaxUsesSelectItems";
+import { getNumberSelectItems } from "@/services/message/shared/getNumberSelectItems";
 import { useInviteStore } from "@/store/message/room/invite";
 import { getSynchronizedFunction } from "@esposter/shared";
 
@@ -28,31 +28,10 @@ const { invites } = storeToRefs(inviteStore);
 const invite = computed(() => invites.value.get(room.id));
 const expireAfterMinutes = ref<CreateInviteInput["expireAfterMinutes"]>(DEFAULT_INVITE_EXPIRE_AFTER_MINUTES);
 const maxUses = ref<CreateInviteInput["maxUses"]>(0);
-// A select holds a string, so each option carries its number as one and is read back through the list it came from
-const expireAfterItems = InviteExpireAfterSelectItems.map<UiSelectItem<string>>(({ title, value }) => ({
-  meaning: UiIconMeaning.Timer,
-  title,
-  value: String(value),
-}));
-const maxUsesItems = InviteMaxUsesSelectItems.map<UiSelectItem<string>>(({ title, value }) => ({
-  meaning: UiIconMeaning.Members,
-  title,
-  value: String(value),
-}));
-const selectedExpireAfter = computed({
-  get: () => String(expireAfterMinutes.value),
-  set: (newValue) => {
-    const item = InviteExpireAfterSelectItems.find(({ value }) => String(value) === newValue);
-    if (item) expireAfterMinutes.value = item.value;
-  },
-});
-const selectedMaxUses = computed({
-  get: () => String(maxUses.value),
-  set: (newValue) => {
-    const item = InviteMaxUsesSelectItems.find(({ value }) => String(value) === newValue);
-    if (item) maxUses.value = item.value;
-  },
-});
+const expireAfterItems = getNumberSelectItems(InviteExpireAfterSelectItems, UiIconMeaning.Timer);
+const maxUsesItems = getNumberSelectItems(InviteMaxUsesSelectItems, UiIconMeaning.Members);
+const selectedExpireAfter = useNumberSelect(expireAfterMinutes, InviteExpireAfterSelectItems);
+const selectedMaxUses = useNumberSelect(maxUses, InviteMaxUsesSelectItems);
 const createRoomInvite = () =>
   createInvite({ expireAfterMinutes: expireAfterMinutes.value, maxUses: maxUses.value, roomId: room.id });
 useReadMyInvite(room.id, (newInvite) => {

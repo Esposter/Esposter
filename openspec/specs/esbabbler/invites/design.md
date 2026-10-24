@@ -56,28 +56,30 @@ The invite router, `server/trpc/routers/invite.ts`, holds every procedure over t
 
 ## Key files
 
-| File                                                                  | Role                                                          |
-| :-------------------------------------------------------------------- | :------------------------------------------------------------ |
-| `packages/db-schema/src/schema/message/invitesInMessage.ts`           | table + check constraints                                     |
-| `apps/web/shared/services/room/invite/InviteExpireAfterMinutesMap.ts` | Expiry options in minutes (single source)                     |
-| `apps/web/shared/models/db/room/CreateInviteInput.ts`                 | Zod input — only the fixed option values                      |
-| `apps/web/shared/services/room/invite/checkIsInviteUsable.ts`         | shared usability predicate, client included                   |
-| `apps/web/server/trpc/routers/invite.ts`                              | every procedure over the invite table                         |
-| `apps/web/server/services/message/readMyInvite.ts`                    | own-invite read + lazy delete                                 |
-| `apps/web/app/store/message/room/invite.ts`                           | shared per-room invite map                                    |
-| `apps/web/app/store/message/room/roomInvite.ts`                       | the panel's room-keyed list of every link                     |
-| `apps/web/app/services/message/room/invite/inviteCreateHooks.ts`      | create fan-out from the dialog to the panel                   |
-| `apps/web/app/components/Message/Model/Room/Invite/Manager.vue`       | invite manager with option selects                            |
-| `apps/web/app/components/Message/Model/Room/Invite/Dialog.vue`        | the dialog hosting the manager                                |
-| `apps/web/app/components/Message/Model/Room/Invite/Row.vue`           | the settings panel's row for a live link                      |
-| `apps/web/app/components/Message/Model/Room/Invite/FriendList.vue`    | the dialog's friends and group DMs, each with an Invite       |
-| `apps/web/app/services/message/room/invite/getInviteRecipients.ts`    | the friends and group DMs merged and ordered by recency       |
-| `apps/web/app/services/message/room/invite/getFriendRecencyMap.ts`    | each friend's newest direct message, as its place in the list |
-| `apps/web/app/components/Message/Friends/InviteToRoomDialog.vue`      | the friend menu's room picker                                 |
-| `apps/web/app/composables/message/room/useInvitableRooms.ts`          | the rooms a friend can be invited into                        |
-| `apps/web/app/services/message/room/getDirectMessageName.ts`          | a conversation's name, shared by the list and the header      |
-| `apps/web/app/composables/message/room/useReadMyInvite.ts`            | own-invite read every surface seeds from                      |
-| `apps/web/app/pages/messages/invite/[code].vue`                       | invite landing page                                           |
+| File                                                                  | Role                                                                        |
+| :-------------------------------------------------------------------- | :-------------------------------------------------------------------------- |
+| `packages/db-schema/src/schema/message/invitesInMessage.ts`           | table + check constraints                                                   |
+| `apps/web/shared/services/room/invite/InviteExpireAfterMinutesMap.ts` | Expiry options in minutes (single source)                                   |
+| `apps/web/shared/models/db/room/CreateInviteInput.ts`                 | Zod input — only the fixed option values                                    |
+| `apps/web/shared/services/room/invite/checkIsInviteUsable.ts`         | shared usability predicate, client included                                 |
+| `apps/web/server/trpc/routers/invite.ts`                              | every procedure over the invite table                                       |
+| `apps/web/server/services/message/readMyInvite.ts`                    | own-invite read + lazy delete                                               |
+| `apps/web/app/store/message/room/invite.ts`                           | shared per-room invite map                                                  |
+| `apps/web/app/store/message/room/roomInvite.ts`                       | the panel's room-keyed list of every link                                   |
+| `apps/web/app/services/message/room/invite/inviteCreateHooks.ts`      | create fan-out from the dialog to the panel                                 |
+| `apps/web/app/components/Message/Model/Room/Invite/Manager.vue`       | invite manager with option selects                                          |
+| `apps/web/app/components/Message/Model/Room/Invite/Dialog.vue`        | the dialog hosting the manager                                              |
+| `apps/web/app/components/Message/Model/Room/Invite/Row.vue`           | the settings panel's row for a live link                                    |
+| `apps/web/app/components/Message/Model/Room/Invite/FriendList.vue`    | the dialog's friends and group DMs, each with an Invite                     |
+| `apps/web/app/services/message/room/invite/getInviteRecipients.ts`    | the friends and group DMs merged and ordered by recency                     |
+| `apps/web/app/services/message/room/invite/getFriendRecencyMap.ts`    | each friend's newest direct message, as its place in the list               |
+| `apps/web/app/services/message/shared/getNumberSelectItems.ts`        | a number's options as select items, shared with the word filter's durations |
+| `apps/web/app/composables/message/shared/useNumberSelect.ts`          | a number select's string read back to the number chosen                     |
+| `apps/web/app/components/Message/Friends/InviteToRoomDialog.vue`      | the friend menu's room picker                                               |
+| `apps/web/app/composables/message/room/useInvitableRooms.ts`          | the rooms a friend can be invited into                                      |
+| `apps/web/app/services/message/room/getDirectMessageName.ts`          | a conversation's name, shared by the list and the header                    |
+| `apps/web/app/composables/message/room/useReadMyInvite.ts`            | own-invite read every surface seeds from                                    |
+| `apps/web/app/pages/messages/invite/[code].vue`                       | invite landing page                                                         |
 
 ## Decisions
 
