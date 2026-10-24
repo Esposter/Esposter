@@ -15,7 +15,7 @@ flowchart TD
   apply -->|elapsed ≥ MIN_OFFLINE_DIALOG_ELAPSED_MS| dialog[OfflineProgressDialog welcome-back summary]
 ```
 
-The award works because [saving stamps `updatedAt`](../game-loop-and-saves/design.md) on every write and autosave runs every 60 seconds, so the stamp is always within a minute of the real last-played moment. Elapsed time is guarded against clock skew (`elapsed > 0`), and absences under `MIN_OFFLINE_DIALOG_ELAPSED_MS` (one minute) still award silently but skip the dialog — silent point jumps read as a bug, but a dialog for a page refresh is noise.
+The award works because [saving stamps `updatedAt`](../game-loop-and-saves/design.md) on every write and autosave runs every 60 seconds, so the stamp is always within a minute of the real last-played moment. Elapsed time is guarded against clock skew (`elapsed > 0`), and absences under `MIN_OFFLINE_DIALOG_ELAPSED_MS` (one minute) still award silently but skip the dialog — silent point jumps read as a bug, but a dialog for a page refresh is noise. The dialog reads the store through `storeToRefs`, and dismissing it clears the award and the elapsed time, so the summary is shown once.
 
 ## Key files
 

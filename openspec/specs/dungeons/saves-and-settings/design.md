@@ -20,7 +20,7 @@ flowchart TD
   write -->|"trigger path"| achievements["achievements — save counts, and milestones read from the saved run"]
 ```
 
-A `Save` is the full run state: `player` (position, direction, party monsters, inventory, respawn location), the active `tilemapKey`, and per-map `world` state (chest opened-flags). `useReadDungeons` loads the blob at page setup (authed: `dungeons.readDungeons`; anonymous: localStorage `DungeonsStore`); the Title scene's Continue resumes `dungeons.save` (enabled only when one exists), New Game starts from a fresh `Save`. Saving is **manual** — the world menu's Save option calls `saveData`, which assigns the active save onto `dungeons.save` and persists via `useSave` — there is no autosave.
+A `Save` is the full run state: `player` (position, direction, party monsters, inventory, respawn location), the active `tilemapKey`, and per-map `world` state (chest opened-flags). `useReadDungeons` loads the blob at page setup (authed: `dungeons.readDungeons`; anonymous: localStorage `DungeonsStore`, parsed by `toLocalDungeons`, so a stored value that is not a save starts a fresh run rather than failing the page); the Title scene's Continue resumes `dungeons.save` (enabled only when one exists), New Game starts from a fresh `Save`. Saving is **manual** — the world menu's Save option calls `saveData`, which assigns the active save onto `dungeons.save` and persists via `useSave` — there is no autosave.
 
 **No legacy shapes** — per the [latest-shape-only convention](../../architecture/persisted-data-latest-shape-only/design.md), `dungeonsSchema` and the `Dungeons` constructor accept only the current single-`save` shape; a blob that fails to parse starts fresh. If real save slots are ever wanted, design them as slots (their own ids, names, timestamps) rather than as a bare array of saves.
 
@@ -62,18 +62,19 @@ Three things stay outside the helper. The experience bar's fast-forward is a pla
 
 Paths relative to `apps/web`.
 
-| File                                                                          | Role                          |
-| ----------------------------------------------------------------------------- | ----------------------------- |
-| `shared/models/dungeons/data/Dungeons.ts`                                     | root entity (save + settings) |
-| `shared/models/dungeons/data/Save.ts`                                         | one run's full state          |
-| `app/store/dungeons/index.ts`                                                 | `useSave` wiring, `saveData`  |
-| `app/composables/dungeons/useReadDungeons.ts`                                 | load on page setup            |
-| `app/store/dungeons/settings/`                                                | settings scene stores         |
-| `app/store/dungeons/settings/scene.ts`                                        | the cursor's four actions     |
-| `app/services/dungeons/scene/settings/SettingsOptionGrid.ts`                  | the option grid and its cells |
-| `app/composables/dungeons/scene/settings/useSettingsOnGridClick.ts`           | a click on a row or cell      |
-| `app/composables/dungeons/animation/useSkippableAnimation.ts`                 | the one Animations-off branch |
-| `shared/services/achievement/definitions/DungeonsAchievementDefinitionMap.ts` | achievements                  |
+| File                                                                          | Role                                     |
+| ----------------------------------------------------------------------------- | ---------------------------------------- |
+| `shared/models/dungeons/data/Dungeons.ts`                                     | root entity (save + settings)            |
+| `shared/models/dungeons/data/Save.ts`                                         | one run's full state                     |
+| `app/store/dungeons/index.ts`                                                 | `useSave` wiring, `saveData`             |
+| `app/composables/dungeons/useReadDungeons.ts`                                 | load on page setup                       |
+| `app/services/dungeons/toLocalDungeons.ts`                                    | the anonymous read, fresh on a bad value |
+| `app/store/dungeons/settings/`                                                | settings scene stores                    |
+| `app/store/dungeons/settings/scene.ts`                                        | the cursor's four actions                |
+| `app/services/dungeons/scene/settings/SettingsOptionGrid.ts`                  | the option grid and its cells            |
+| `app/composables/dungeons/scene/settings/useSettingsOnGridClick.ts`           | a click on a row or cell                 |
+| `app/composables/dungeons/animation/useSkippableAnimation.ts`                 | the one Animations-off branch            |
+| `shared/services/achievement/definitions/DungeonsAchievementDefinitionMap.ts` | achievements                             |
 
 ## Notes
 
