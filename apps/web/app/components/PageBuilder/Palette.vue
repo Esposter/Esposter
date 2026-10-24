@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
-import type { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
+import type { AnyPageBuilderDocument } from "@/models/pageBuilder/AnyPageBuilderDocument";
+import type { AnyPageBuilderKind } from "@/models/pageBuilder/AnyPageBuilderKind";
 import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
-import type { WebpageKind } from "@/models/pageBuilder/WebpageKind";
+import type { BlockNode } from "headless-block-editor";
 
 interface Props {
   announce: (message: string) => void;
-  getDocument: () => undefined | WebpageDocument;
+  getDocument: () => AnyPageBuilderDocument | undefined;
   // Both are the editor's, so a palette with no canvas beside it, as on an empty page, takes clicks alone
   getFrameGeometry?: () => FrameGeometry | undefined;
-  kind: WebpageKind;
+  kind: AnyPageBuilderKind;
   resourceId: string;
   startPaletteDrag?: (
-    type: WebpageNodeType,
+    type: BlockNode["type"],
     event: PointerEvent,
     getFrameGeometry: () => FrameGeometry | undefined,
   ) => void;
@@ -21,7 +21,7 @@ const { announce, getDocument, getFrameGeometry, kind, resourceId, startPaletteD
 const { insert } = usePageBuilderInsert(kind, getDocument, () => resourceId, announce);
 
 // A press starts a drag only where a frame can take the block, so a press that has no frame stays a click
-const startDrag = (type: WebpageNodeType, event: PointerEvent) => {
+const startDrag = (type: BlockNode["type"], event: PointerEvent) => {
   if (!getFrameGeometry || !startPaletteDrag || getFrameGeometry() === undefined) return;
 
   startPaletteDrag(type, event, getFrameGeometry);

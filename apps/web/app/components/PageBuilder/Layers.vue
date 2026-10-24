@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
-import type { WebpageKind } from "@/models/pageBuilder/WebpageKind";
+import type { AnyPageBuilderDocument } from "@/models/pageBuilder/AnyPageBuilderDocument";
+import type { AnyPageBuilderKind } from "@/models/pageBuilder/AnyPageBuilderKind";
 
 import { getLayerTreeItems } from "@/services/pageBuilder/getLayerTreeItems";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 
 interface Props {
-  getDocument: () => undefined | WebpageDocument;
-  kind: WebpageKind;
+  getDocument: () => AnyPageBuilderDocument | undefined;
+  kind: AnyPageBuilderKind;
   resourceId: string;
 }
 

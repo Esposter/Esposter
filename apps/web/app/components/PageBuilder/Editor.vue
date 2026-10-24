@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { AnyPageBuilderKind } from "@/models/pageBuilder/AnyPageBuilderKind";
 import type { UiTabItem } from "@/models/ui/UiTabItem";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
@@ -14,12 +15,13 @@ import {
 } from "@/services/pageBuilder/constants";
 import { getKeyAction } from "@/services/pageBuilder/getKeyAction";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { getBlockNode } from "headless-block-editor";
 
 interface Props {
+  // The kind the resource's document is edited through, which the page builder's kind holds with the document
+  kind: AnyPageBuilderKind;
   resourceId: string;
 }
 
@@ -29,11 +31,12 @@ const panelItems: UiTabItem<string>[] = [
   { title: THEME_PANEL, value: THEME_PANEL },
 ];
 
-const { resourceId } = defineProps<Props>();
+const { kind, resourceId } = defineProps<Props>();
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-const { getDocument, getOpenDocument } = pageBuilderDocumentStore;
-const pageDocument = computed(() => getDocument(resourceId));
-const getPageDocument = () => getDocument(resourceId);
+const { getHeldDocument } = pageBuilderDocumentStore;
+// The document the resource holds under either kind, read through the kind the shell is given
+const getPageDocument = () => getHeldDocument(resourceId)?.document;
+const pageDocument = computed(getPageDocument);
 const pageBuilderCanvasStore = usePageBuilderCanvasStore();
 const { getEditingNodeId, getSelectedNodeId, setEditingNodeId } = pageBuilderCanvasStore;
 const shell = useTemplateRef("shell");
@@ -49,14 +52,14 @@ const announce = (message: string) => {
   });
 };
 const { deleteNode, deleteSelected, moveDown, moveLeft, moveRight, moveUp } = usePageBuilderMoves(
-  webpageKind,
-  () => getDocument(resourceId),
+  kind,
+  getPageDocument,
   () => resourceId,
   announce,
 );
 const { copySelected, cutSelected, pasteSelected } = usePageBuilderClipboard(
-  webpageKind,
-  () => getDocument(resourceId),
+  kind,
+  getPageDocument,
   () => resourceId,
   announce,
   deleteNode,
@@ -64,8 +67,8 @@ const { copySelected, cutSelected, pasteSelected } = usePageBuilderClipboard(
 usePageBuilderHistoryCommands(() => resourceId);
 usePageBuilderStyleCommands(() => resourceId);
 const { dropTarget, isDragging, startPaletteDrag } = usePageBuilderDrag(
-  webpageKind,
-  () => getDocument(resourceId),
+  kind,
+  getPageDocument,
   () => resourceId,
   announce,
 );
@@ -75,11 +78,11 @@ const getFrameGeometry = () => canvas.value?.getFrameGeometry();
 
 // Enter edits the selected node in place when it is a text node, and does nothing for any other node
 const startTextEdit = () => {
-  const open = getOpenDocument(resourceId);
+  const currentDocument = getPageDocument();
   const nodeId = getSelectedNodeId(resourceId);
-  const nodePointer = open && getNodePointer(open.kind, open.document, nodeId);
-  if (!open || nodePointer === undefined) return;
-  if (getBlockNode(open.document, nodePointer, open.kind.children)?.type !== WebpageNodeType.Text) return;
+  const nodePointer = currentDocument && getNodePointer(kind, currentDocument, nodeId);
+  if (!currentDocument || nodePointer === undefined) return;
+  if (getBlockNode(currentDocument, nodePointer, kind.children)?.type !== WebpageNodeType.Text) return;
 
   setEditingNodeId(resourceId, nodeId);
 };
@@ -132,11 +135,11 @@ const handleEditorKeydown = (event: KeyboardEvent) => {
           :announce
           :get-document="getPageDocument"
           :get-frame-geometry
-          :kind="webpageKind"
+          :kind
           :resource-id
           :start-palette-drag
         />
-        <PageBuilderLayers :get-document="getPageDocument" :kind="webpageKind" :resource-id />
+        <PageBuilderLayers :get-document="getPageDocument" :kind :resource-id />
       </div>
       <UiResizeHandle
         v-model="leftWidth"
@@ -151,7 +154,7 @@ const handleEditorKeydown = (event: KeyboardEvent) => {
         v-if="pageDocument.content.length === 0"
         :announce
         :get-document="getPageDocument"
-        :kind="webpageKind"
+        :kind
         :resource-id
       />
       <PageBuilderCanvas

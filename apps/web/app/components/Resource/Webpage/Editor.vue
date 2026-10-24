@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { useResourceStore } from "@/store/resource";
 import { useWebpageEditorStore } from "@/store/webpageEditor";
@@ -19,5 +20,5 @@ watchAutosave(
 </script>
 
 <template>
-  <PageBuilderEditor :resource-id />
+  <PageBuilderEditor :kind="webpageKind" :resource-id />
 </template>

@@ -12,12 +12,12 @@ import {
   TEST_TEXT_CONTENT,
 } from "@/services/pageBuilder/constants.test";
 import { parseClipboardNodes } from "@/services/pageBuilder/serializeClipboardNodes";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { nextTick } from "vue";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 describe("pageBuilderEditor", () => {
   afterEach(() => {
@@ -43,7 +43,7 @@ describe("pageBuilderEditor", () => {
       root: TEST_ROOT,
     });
 
-    const component = await mountSuspended(PageBuilderEditor, { props: { resourceId } });
+    const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
     expect(component.findAll("h3").map((heading) => heading.text())).toStrictEqual(
       WEBPAGE_PALETTE_CATEGORIES.map(({ category }) => category),
@@ -66,7 +66,7 @@ describe("pageBuilderEditor", () => {
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
-    const component = await mountSuspended(PageBuilderEditor, { props: { resourceId } });
+    const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
     await component.trigger("keydown", { altKey: true, key: "ArrowDown" });
 
@@ -90,7 +90,7 @@ describe("pageBuilderEditor", () => {
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
-    const component = await mountSuspended(PageBuilderEditor, { props: { resourceId } });
+    const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
     await component.trigger("keydown", { key: "Delete" });
 
@@ -113,7 +113,7 @@ describe("pageBuilderEditor", () => {
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
-    const component = await mountSuspended(PageBuilderEditor, { props: { resourceId } });
+    const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
     await component.trigger("keydown", { altKey: true, key: "ArrowDown" });
     await nextTick();
@@ -134,7 +134,7 @@ describe("pageBuilderEditor", () => {
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
-    const component = await mountSuspended(PageBuilderEditor, { props: { resourceId } });
+    const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
     await component.trigger("keydown", { key: "Enter" });
 
@@ -152,7 +152,7 @@ describe("pageBuilderEditor", () => {
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
-    const component = await mountSuspended(PageBuilderEditor, { props: { resourceId } });
+    const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
     await component.trigger("keydown", { key: "Enter" });
 
@@ -170,7 +170,7 @@ describe("pageBuilderEditor", () => {
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
-    const component = await mountSuspended(PageBuilderEditor, { props: { resourceId } });
+    const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
     await component.get("button").trigger("keydown", { key: "Enter" });
 
@@ -188,7 +188,7 @@ describe("pageBuilderEditor", () => {
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
-    const component = await mountSuspended(PageBuilderEditor, { props: { resourceId } });
+    const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
     // An element of the frame's document comes from another realm, so it fails instanceof Element against this window's
     const frameButton: { closest: () => unknown; tagName: string } = { closest: () => frameButton, tagName: "BUTTON" };
     const event = new KeyboardEvent("keydown", { key: "Enter" });
@@ -210,7 +210,10 @@ describe("pageBuilderEditor", () => {
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
-    const component = await mountSuspended(PageBuilderEditor, { attachTo: document.body, props: { resourceId } });
+    const component = await mountSuspended(PageBuilderEditor, {
+      attachTo: document.body,
+      props: { kind: webpageKind, resourceId },
+    });
     pageBuilderCanvasStore.setEditingNodeId(resourceId, TEST_ROOT_TEXT_ID);
     await nextTick();
 
@@ -235,7 +238,7 @@ describe("pageBuilderEditor", () => {
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
-    const component = await mountSuspended(PageBuilderEditor, { props: { resourceId } });
+    const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
     component
       .findComponent(PageBuilderCanvas)
@@ -257,7 +260,7 @@ describe("pageBuilderEditor", () => {
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
-    const component = await mountSuspended(PageBuilderEditor, { props: { resourceId } });
+    const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
     component
       .findComponent(PageBuilderCanvas)
@@ -279,7 +282,7 @@ describe("pageBuilderEditor", () => {
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ROOT_TEXT_ID);
-    const component = await mountSuspended(PageBuilderEditor, { props: { resourceId } });
+    const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
     await component.trigger("keydown", { ctrlKey: true, key: "c" });
 
@@ -295,7 +298,7 @@ describe("pageBuilderEditor", () => {
     const resourceId = crypto.randomUUID();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, { content: [], root: TEST_ROOT });
 
-    const component = await mountSuspended(PageBuilderEditor, { props: { resourceId } });
+    const component = await mountSuspended(PageBuilderEditor, { props: { kind: webpageKind, resourceId } });
 
     expect(component.find("iframe").exists()).toBe(false);
     expect(component.text()).toContain("This page is empty");
