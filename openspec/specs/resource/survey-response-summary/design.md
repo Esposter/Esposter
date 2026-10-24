@@ -41,11 +41,13 @@ flowchart LR
 
 ## Key files
 
-| File                                                              | Role                                       |
-| ----------------------------------------------------------------- | ------------------------------------------ |
-| `apps/web/app/components/Resource/Survey/Responses.vue`           | The Summary and Individual views           |
-| `apps/web/app/components/Resource/Survey/ResponseSummaryCard.vue` | One question's card                        |
-| `apps/web/app/services/survey/summary/getSurveySummaryCards.ts`   | The cards, from the questions and the rows |
+| File                                                                     | Role                                                                             |
+| ------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
+| `apps/web/app/components/Resource/Survey/Responses.vue`                  | The Summary and Individual views, and the empty state both share                 |
+| `apps/web/app/components/Resource/Survey/ResponseSummaryCard.vue`        | One question's card                                                              |
+| `apps/web/app/services/survey/summary/getSurveySummaryCards.ts`          | The cards, from the questions and the rows                                       |
+| `apps/web/app/composables/resource/survey/useReadSurveyResponses.ts`     | the records and the summary's reads; a failed survey read fails only the Summary |
+| `apps/web/app/services/resource/survey/getSurveyResponseSummaryCards.ts` | the survey's questions from its model, without the theme, for the cards          |
 
 ## Sources
 
