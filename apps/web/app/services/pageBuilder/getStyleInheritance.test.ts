@@ -15,6 +15,20 @@ describe(getStyleInheritance, () => {
     });
   });
 
+  test("a hover field inherits a wider breakpoint's hover before its own breakpoint's default", () => {
+    expect.hasAssertions();
+
+    const style = {
+      [StyleBreakpoint.Base]: { [StyleState.Hover]: { color: "red" } },
+      [StyleBreakpoint.Tablet]: { [StyleState.Default]: { color: "green" } },
+    };
+
+    expect(getStyleInheritance(style, StyleBreakpoint.Tablet, StyleState.Hover, "color")).toStrictEqual({
+      from: "Desktop",
+      value: "red",
+    });
+  });
+
   test("a hover field with no hover of its own falls back to its default", () => {
     expect.hasAssertions();
 

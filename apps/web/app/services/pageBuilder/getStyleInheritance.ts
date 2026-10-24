@@ -13,7 +13,8 @@ export interface StyleInheritance {
 }
 
 // The value a field inherits when it sets none at its breakpoint and state: the nearest one the cascade applies there.
-// A hover reaches the default of its own breakpoint after its own hover, and each wider breakpoint's hover and default
+// A hover rule has a class and a pseudo-class, which outweighs every default rule whatever its breakpoint, so every
+// Hover in the cascade comes before any default, and the defaults follow in the order their breakpoints win
 export const getStyleInheritance = (
   style: NodeStyle,
   breakpoint: StyleBreakpoint,
@@ -22,8 +23,8 @@ export const getStyleInheritance = (
 ): StyleInheritance | undefined => {
   const states = state === StyleState.Hover ? [StyleState.Hover, StyleState.Default] : [StyleState.Default];
   const cascade = STYLE_BREAKPOINT_ORDER.slice(0, STYLE_BREAKPOINT_ORDER.indexOf(breakpoint) + 1).toReversed();
-  const sources = cascade.flatMap((source) =>
-    states.map((sourceState) => ({ breakpoint: source, state: sourceState })),
+  const sources = states.flatMap((sourceState) =>
+    cascade.map((source) => ({ breakpoint: source, state: sourceState })),
   );
   const inherited = sources.find(
     (source) =>
