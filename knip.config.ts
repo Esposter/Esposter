@@ -20,7 +20,15 @@ const knipConfiguration: KnipConfig = {
     "apps/infra": { entry: ["src/**/*.ts"] },
     "apps/web": {
       // A development route is registered by its path from a module under `nuxt dev` alone, so nothing imports it
-      entry: ["app/App.vue", "app/components/**/*.vue", "server/development/*.ts"],
+      // `scripts/*/index.ts` is launched by path through `vpx` in `apps/web/package.json`, and `service-worker/sw.ts` by the
+      // PWA module from `srcDir`, which knip does not follow
+      entry: [
+        "app/App.vue",
+        "app/components/**/*.vue",
+        "scripts/*/index.ts",
+        "server/development/*.ts",
+        "service-worker/sw.ts",
+      ],
       ignore: ["public/**", "shared/generated/**"],
       ignoreDependencies: [
         "@iconify-json/.+",
@@ -83,14 +91,22 @@ const knipConfiguration: KnipConfig = {
     // The benchmark reporter imports vitest's types alone, so a consumer that never benches needs no vitest: the peer is
     // Optional on purpose
     "packages/shared-node": { ignoreDependencies: ["vitest"] },
+    "packages/db-mock": { entry: ["scripts/**/*.ts", "src/index.ts"] },
+    "packages/nuxt-security-module": {
+      // Nitro loads these by the paths `module.ts` resolves, so nothing imports them
+      entry: ["src/runtime/nitro/plugins/*.ts", "src/runtime/server/middleware/*.ts"],
+    },
     "packages/tresjs-nuxt": {
+      // The components are registered by path, so nothing imports them
+      entry: ["src/runtime/TresCanvas.*.ts"],
       // The module imports its optional peer by the name held in GLSL_PACKAGE_NAME when the glsl option is enabled
       ignoreDependencies: ["vite-plugin-glsl"],
     },
     "packages/trpc-nuxt-module": { entry: ["test/fixture/nuxt.config.ts"] },
     scripts: {
-      // The shell wrapper starts the slot gate by its path, so nothing imports it
-      entry: ["src/oxlint/**/*.ts"],
+      // Every command is launched by path through `vpx` (`scripts/package.json`), which knip does not trace, so each
+      // Command entry and the shell wrapper's slot gate are named here
+      entry: ["src/**/index.ts", "src/oxlint/**/*.ts", "src/services/genshinAssets/kits/gcsim/checkGcsimConfigs.ts"],
       // Loaded by path through createRequire, which knip cannot follow
       ignoreDependencies: ["@wasm-audio-decoders/ogg-vorbis", "jscpd"],
     },

@@ -35,9 +35,6 @@ export const NONCE_PLACEHOLDER = "'nonce-{{nonce}}'";
 // The hash algorithm a subresource's integrity attribute is computed with, and a script or style hash in a policy
 export const SRI_HASH_ALGORITHM = "SHA-384";
 export const CSP_HASH_ALGORITHM = "SHA-256";
-// The directory beside the build where the prerendered headers are written, and the asset storage they are read from
-export const PRERENDERED_HEADERS_DIRECTORY_NAME = "nuxt-security";
-export const PRERENDERED_HEADERS_FILE_NAME = "headers.json";
 // One attribute of a start tag: a name with an optional value, the value quoted or bare.
 // A quoted value is read whole, so markup inside it is never a token of its own
 const HTML_ATTRIBUTE_PATTERN = String.raw`\s+[^\s"'<>/=]+(?:\s*=\s*(?:"[^"]*"|'[^']*'|[^\s"'<>=]+))?`;
