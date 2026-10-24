@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T extends string">
-import type { UiSelectItem } from "@/models/ui/UiSelectItem";
+import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -7,7 +7,7 @@ import { POPOVER_POSITION_AREA, POPOVER_POSITION_TRY, SELECT_TRIGGER_TITLE_LIMIT
 import { Select, useSelectContext } from "@vuetify/v0";
 
 interface Props {
-  items: UiSelectItem<T>[];
+  items: UiMenuItem<T>[];
   label: string;
 }
 

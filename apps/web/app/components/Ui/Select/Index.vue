@@ -1,12 +1,12 @@
 <script setup lang="ts" generic="T extends string, TModel extends T | T[] = T">
-import type { UiSelectItem } from "@/models/ui/UiSelectItem";
+import type { UiMenuItem } from "@/models/ui/UiMenuItem";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { checkIsDeepEqual } from "@esposter/shared";
 import { Select } from "@vuetify/v0";
 
 interface Props {
-  items: UiSelectItem<T>[];
+  items: UiMenuItem<T>[];
   label: string;
 }
 // Bound to an array, it holds several choices: a pick toggles an option and the list stays open while the reader picks
