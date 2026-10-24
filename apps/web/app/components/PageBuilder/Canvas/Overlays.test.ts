@@ -38,4 +38,31 @@ describe("pageBuilderCanvasOverlays", () => {
     expect(outline.style.left).toBe("120px");
     expect(outline.style.top).toBe("40px");
   });
+
+  test("a selected node is outlined in the selection's colour", async () => {
+    expect.hasAssertions();
+
+    vi.stubGlobal("requestAnimationFrame", (callback: FrameRequestCallback) => {
+      callback(0);
+      return 0;
+    });
+    const element = document.createElement("div");
+    vi.spyOn(element, "getBoundingClientRect").mockReturnValue(new DOMRect(120, 40, 80, 20));
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setDocument(TEST_ID, { content: [], root: { props: { lang: "en", tokens: {} } } });
+
+    const component = await mountSuspended(PageBuilderCanvasOverlays, {
+      props: {
+        checkIsHorizontalOwner: () => false,
+        getElement: () => element,
+        hoveredNodeId: "",
+        resourceId: TEST_ID,
+        selectedNodeId: TEST_ID,
+      },
+    });
+    await nextTick();
+
+    expect(component.find("[data-outline='selection']").exists()).toBe(true);
+    expect(component.find("[data-outline='hover']").exists()).toBe(false);
+  });
 });
