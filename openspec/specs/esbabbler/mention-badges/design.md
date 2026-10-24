@@ -4,7 +4,7 @@ Red count chips in the room sidebar for rooms with unread `@mentions` of the cur
 
 ## How it works
 
-A per-user, per-room counter (`usersToRooms.mentionCount`) increments when a message mentioning the user arrives and resets when the user views the room. The room list item renders it as a red chip, taking precedence over the plain unread bold — Discord behaviour.
+A per-user, per-room counter (`usersToRooms.mentionCount`) increments when a message mentioning the user arrives and resets when the user views the room. The room list item renders it as a red chip, taking precedence over the plain unread name colour — Discord behaviour.
 
 `createMessage` classifies the message's mentions (`classifyMentions`) and bumps every targeted member's counter in a single batched UPDATE (`incrementMentionCounts`): direct and role mentions badge unconditionally; `@everyone`/`@here` follow each member's notification rules (`Never` opts out; `@here` requires online, with no status row treated as online — the same broadcast targeting as [push notifications](../push-notifications/design.md)); the sender is always excluded. The increment runs best-effort after the Table write — a failed increment loses one badge count, never a message, so there is no retry.
 
@@ -47,8 +47,8 @@ flowchart LR
 | `apps/web/server/trpc/routers/userToRoom.ts`                     | `clearMentionCount`                                       |
 | `apps/web/app/pages/messages/[id]/index.vue`                     | clears the count on room view                             |
 | `apps/web/app/components/Message/Model/Room/List/Item.vue`       | red count chip                                            |
-| `apps/web/app/services/message/room/list/checkIsRoomUnread.ts`   | the unread flag that bolds the row, beside the chip       |
+| `apps/web/app/services/message/room/list/checkIsRoomUnread.ts`   | the unread flag that un-mutes the row, beside the chip    |
 
 ## Notes
 
-Mentions arriving while the room is being viewed are suppressed in the sidebar (`isActive`), matching the unread-bold behaviour beside them; the stored count still clears on the next room view.
+Mentions arriving while the room is being viewed are suppressed in the sidebar (`isActive`), matching the unread name-colour behaviour beside them; the stored count still clears on the next room view.
