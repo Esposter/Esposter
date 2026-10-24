@@ -85,7 +85,7 @@ export const DEVICE_BREAKPOINT_MAP = {
   [PageBuilderDevice.Tablet]: StyleBreakpoint.Tablet,
 } satisfies Record<PageBuilderDevice, StyleBreakpoint>;
 // The properties the style panel draws as a colour field, which offers the page's theme colours as swatches
-export const STYLE_COLOR_PROPERTIES = ["color", "background-color", "border-color"] satisfies StyleProperty[];
+export const STYLE_COLOR_PROPERTIES: readonly StyleProperty[] = ["color", "background-color", "border-color"];
 // The properties the style panel draws as a choice of a few values, each value a segment of a toggle group
 export const STYLE_CHOICES: Partial<Record<StyleProperty, string[]>> = {
   "align-items": ["flex-start", "center", "flex-end", "stretch"],

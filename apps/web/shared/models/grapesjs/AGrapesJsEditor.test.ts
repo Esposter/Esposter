@@ -2,7 +2,6 @@ import type { z } from "zod";
 
 import { EmailEditor, emailEditorSchema } from "#shared/models/emailEditor/data/EmailEditor";
 import { grapesJsEditorSchema } from "#shared/models/grapesjs/AGrapesJsEditor";
-import { WebpageEditor, webpageEditorSchema } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { describe, expect, test } from "vitest";
 
 // A GrapesJS project carries far more than the models name — styles, assets, symbols, dataSources — which is
@@ -11,9 +10,8 @@ import { describe, expect, test } from "vitest";
 describe("grapesJs editor schemas", () => {
   const grapesJsState = { assets: [{ src: "" }], styles: [{ selectors: [""] }] };
   const editorSchemas: [string, z.ZodType, object][] = [
-    ["grapesJsEditorSchema", grapesJsEditorSchema, structuredClone(new WebpageEditor())],
+    ["grapesJsEditorSchema", grapesJsEditorSchema, structuredClone(new EmailEditor())],
     ["emailEditorSchema", emailEditorSchema, structuredClone(new EmailEditor())],
-    ["webpageEditorSchema", webpageEditorSchema, structuredClone(new WebpageEditor())],
   ];
 
   test.each(editorSchemas)("%s keeps the keys it does not name", (_name, schema, editor) => {

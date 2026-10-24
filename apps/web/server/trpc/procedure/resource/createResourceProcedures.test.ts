@@ -19,6 +19,7 @@ import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { MimeType } from "#shared/models/file/MimeType";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
+import { createTestImageNode } from "#shared/services/pageBuilder/constants.test";
 import {
   CONTENT_BASELINE_MISMATCH_ERROR_MESSAGE,
   MAX_RESOURCE_CONTENT_SIZE,
@@ -736,7 +737,7 @@ describe(createResourceProcedures, () => {
     const blobName = `${getFilesDirectoryName(newResource.id)}/${hash}`;
     MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
     await webpageCaller.saveResourceContent({
-      content: new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(blobName)}">` }),
+      content: new WebpageEditor({ content: [createTestImageNode(getResourceAssetUrl(blobName))] }),
       contentVersion: 0,
       id: newResource.id,
     });
@@ -755,7 +756,7 @@ describe(createResourceProcedures, () => {
     const blobName = `${getFilesDirectoryName(newResource.id)}/${hash}`;
     MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
     await webpageCaller.saveResourceContent({
-      content: new WebpageEditor({ css: "a", html: `<img src="${getResourceAssetUrl(blobName)}">` }),
+      content: new WebpageEditor({ content: [createTestImageNode(getResourceAssetUrl(blobName))] }),
       contentVersion: 0,
       id: newResource.id,
     });

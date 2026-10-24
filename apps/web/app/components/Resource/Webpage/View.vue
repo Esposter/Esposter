@@ -13,8 +13,8 @@ const { content, name } = await useReadPublishedResourceContent(
   () => $trpc.webpage.readPublishedResourceContent.query(id),
   (version) => $trpc.webpage.readPublishedVersionContent.query({ id, version }),
 );
-// The standalone render is captured at save time, so the published webpage serves without GrapesJS
-const srcdoc = `<style>${content.css ?? ""}</style>${content.html ?? ""}`;
+// The server bakes the whole document at publish, so the published webpage serves it as it is
+const srcdoc = content.html ?? "";
 // The share preview the owner set over the site's own: an empty one leaves the site's description and logo standing.
 // The image is a relative asset url, and an Open Graph image must be absolute, so it resolves against this request
 if (content.description) useSeoMeta({ description: content.description, ogDescription: content.description });

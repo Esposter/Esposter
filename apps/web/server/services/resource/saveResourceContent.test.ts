@@ -16,6 +16,7 @@ import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregatio
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
+import { createTestImageNode } from "#shared/services/pageBuilder/constants.test";
 import { ASSET_GRACE_MS, SNAPSHOT_INTERVAL_MS } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { getResourceFileBlobName } from "#shared/services/resource/getResourceFileBlobName";
@@ -68,7 +69,7 @@ const readActivityTypes = () =>
 // Each page names an image by the url of its own blob, so the content and the blobs are built from one resource id
 const createWebpageContent = (resourceId: ResourceInResource["id"], hashes: string[]) =>
   new WebpageEditor({
-    pages: hashes.map((hash) => ({ image: getResourceAssetUrl(getResourceFileBlobName(resourceId, hash)) })),
+    content: hashes.map((hash) => createTestImageNode(getResourceAssetUrl(getResourceFileBlobName(resourceId, hash)))),
   });
 
 describe(saveResourceContent, () => {

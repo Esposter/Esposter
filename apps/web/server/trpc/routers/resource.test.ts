@@ -19,6 +19,7 @@ import { webpageRouter } from "#server/trpc/routers/webpage";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
+import { createTestImageNode } from "#shared/services/pageBuilder/constants.test";
 import { MAX_RESOURCE_CONTENT_SIZE, STALE_CONTENT_VERSION_ERROR_MESSAGE } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
@@ -71,8 +72,8 @@ const storeAsset = (blobName: string) => {
   MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
 };
 // The one reference a page makes to an asset, read back the same way after a clone rewrote it
-const createImageHtml = (blobName: string) => `<img src="${getResourceAssetUrl(blobName)}">`;
-const createImageEditor = (blobName: string) => new WebpageEditor({ css: "a", html: createImageHtml(blobName) });
+const createImageNode = (blobName: string) => createTestImageNode(getResourceAssetUrl(blobName));
+const createImageEditor = (blobName: string) => new WebpageEditor({ content: [createImageNode(blobName)] });
 
 // An asset lives under the resource's files directory, named by the hash of its bytes
 const createFilesBlobName = (id: ResourceInResource["id"]) =>
@@ -89,8 +90,8 @@ describe("resourceRouter", () => {
   let webpageCaller: DecorateRouterRecord<TRPCRouter["webpage"]>;
   const name = "name";
   const updatedName = "updatedName";
-  const webpageEditor = new WebpageEditor({ css: "a", html: "a" });
-  const updatedWebpageEditor = new WebpageEditor({ css: "b", html: "b" });
+  const webpageEditor = new WebpageEditor({ description: "a" });
+  const updatedWebpageEditor = new WebpageEditor({ description: "b" });
   const tags = { a: "" };
   // The clock is pinned at the epoch, so the smallest future instant is all a reminder needs to be scheduled
   const dueAt = new Date(Temporal.Duration.from({ days: 1 }).total("milliseconds"));
@@ -469,7 +470,8 @@ describe("resourceRouter", () => {
     const webpageResource = await webpageCaller.createResource({ name });
     const blobName = createFilesBlobName(webpageResource.id);
     storeAsset(blobName);
-    await saveWebpageContent(webpageResource, createImageEditor(blobName));
+    const imageNode = createTestImageNode(getResourceAssetUrl(blobName));
+    await saveWebpageContent(webpageResource, new WebpageEditor({ content: [imageNode] }));
     await webpageCaller.publishResource({ id: webpageResource.id });
     const duplicatedResource = await caller.duplicateResource({ id: webpageResource.id });
     const content = await webpageCaller.readResourceContent({ id: duplicatedResource.id });
@@ -485,7 +487,12 @@ describe("resourceRouter", () => {
     expect(duplicatedResource.type).toBe(ResourceType.Webpage);
     expect(content).toStrictEqual(
       jsonDateParse(
-        JSON.stringify(new WebpageEditor({ css: "a", html: createImageHtml(duplicatedBlobName), id: content.id })),
+        JSON.stringify(
+          new WebpageEditor({
+            content: [{ ...imageNode, props: { ...imageNode.props, src: getResourceAssetUrl(duplicatedBlobName) } }],
+            id: content.id,
+          }),
+        ),
       ),
     );
     expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(duplicatedBlobName)).toBe(true);
@@ -501,7 +508,7 @@ describe("resourceRouter", () => {
     storeAsset(blobName);
     await saveWebpageContent(
       webpageResource,
-      new WebpageEditor({ css: "a", html: `${createImageHtml(blobName)}${createImageHtml(missingBlobName)}` }),
+      new WebpageEditor({ content: [createImageNode(blobName), createImageNode(missingBlobName)] }),
     );
     const duplicatedResource = await caller.duplicateResource({ id: webpageResource.id });
     const content = await webpageCaller.readResourceContent({ id: duplicatedResource.id });
@@ -511,7 +518,8 @@ describe("resourceRouter", () => {
 
     // The existing asset is cloned and rewritten; the dangling url is data, carried verbatim instead of
     // Failing the whole clone
-    expect(content.html).toBe(`${createImageHtml(duplicatedBlobName)}${createImageHtml(missingBlobName)}`);
+    expect(JSON.stringify(content.content)).toContain(getResourceAssetUrl(duplicatedBlobName));
+    expect(JSON.stringify(content.content)).toContain(getResourceAssetUrl(missingBlobName));
     expect(duplicatedBlobName).toBe(`${getFilesDirectoryName(duplicatedResource.id)}/${getAssetHash(blobName)}`);
   });
 
@@ -529,7 +537,7 @@ describe("resourceRouter", () => {
     const content = await webpageCaller.readResourceContent({ id: webpageResource.id });
     assert.exists(content);
 
-    expect(content.html).toBe(createImageHtml(blobName));
+    expect(JSON.stringify(content.content)).toContain(getResourceAssetUrl(blobName));
     expect(readFilesBlobNames(webpageResource.id)).toStrictEqual([blobName]);
   });
 
@@ -838,7 +846,7 @@ describe("resourceRouter", () => {
     // Which number this one lands on is the mechanism's business
     const revisionVersion = await caller.saveResourceRevision({ id: webpageResource.id });
     assert.exists(revisionVersion);
-    await saveWebpageContent(webpageResource, new WebpageEditor({ css: "c", html: "c" }), 2);
+    await saveWebpageContent(webpageResource, new WebpageEditor({ description: "c" }), 2);
     await caller.restoreSnapshotVersion({
       channel: SnapshotChannel.Revisions,
       id: webpageResource.id,
@@ -867,7 +875,7 @@ describe("resourceRouter", () => {
     const content = await webpageCaller.readResourceContent({ id: webpageResource.id });
     assert.exists(content);
 
-    expect(content.html).toBe(createImageHtml(blobName));
+    expect(JSON.stringify(content.content)).toContain(getResourceAssetUrl(blobName));
     expect(readFilesBlobNames(webpageResource.id)).toStrictEqual([blobName]);
   });
 

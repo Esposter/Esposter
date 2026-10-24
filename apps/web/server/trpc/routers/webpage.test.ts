@@ -4,6 +4,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { webpageRouter } from "#server/trpc/routers/webpage";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
+import { createTestImageNode } from "#shared/services/pageBuilder/constants.test";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { AzureContainer, ResourceType } from "@esposter/db-schema";
@@ -40,8 +41,8 @@ describe("webpageRouter", () => {
 
     expect(newResource.type).toBe(ResourceType.Webpage);
 
-    // The captured standalone render is part of the round-trip so the schema provably preserves it
-    const webpageEditor = new WebpageEditor({ css: "a", html: "a" });
+    // The page is part of the round-trip so the schema provably preserves it
+    const webpageEditor = new WebpageEditor({ description: "a" });
     await caller.saveResourceContent({
       content: webpageEditor,
       contentVersion: newResource.contentVersion,
@@ -57,9 +58,8 @@ describe("webpageRouter", () => {
 
     const newResource = await caller.createResource({ name });
     const url = addAsset(newResource.id);
-    const html = `<img src="${url}">`;
     await caller.saveResourceContent({
-      content: new WebpageEditor({ html }),
+      content: new WebpageEditor({ content: [createTestImageNode(url)] }),
       contentVersion: newResource.contentVersion,
       id: newResource.id,
     });
@@ -69,7 +69,7 @@ describe("webpageRouter", () => {
     const publishedContent = await caller.readPublishedResourceContent(newResource.id);
 
     expect(copyBlobSpy).not.toHaveBeenCalled();
-    expect(publishedContent.content.html).toBe(html);
+    expect(publishedContent.content.html).toContain(url);
   });
 
   // The working copy's image is the one the published page names, so unpublishing leaves the file for the owner's editor
@@ -78,9 +78,8 @@ describe("webpageRouter", () => {
 
     const newResource = await caller.createResource({ name });
     const url = addAsset(newResource.id);
-    const html = `<img src="${url}">`;
     await caller.saveResourceContent({
-      content: new WebpageEditor({ html }),
+      content: new WebpageEditor({ content: [createTestImageNode(url)] }),
       contentVersion: newResource.contentVersion,
       id: newResource.id,
     });
@@ -91,6 +90,6 @@ describe("webpageRouter", () => {
     const assetBlobName = `${getFilesDirectoryName(newResource.id)}/${hash}`;
 
     expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(assetBlobName)).toBe(true);
-    expect((await caller.readResourceContent({ id: newResource.id }))?.html).toBe(html);
+    expect(JSON.stringify(await caller.readResourceContent({ id: newResource.id }))).toContain(url);
   });
 });

@@ -1,4 +1,5 @@
 import type { StyleProperty } from "#shared/models/pageBuilder/StyleProperty";
+import type { JsonPatchOperation } from "@esposter/shared";
 import type { MaybeRefOrGetter } from "vue";
 
 import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
@@ -56,16 +57,17 @@ export const usePageBuilderStyle = (resourceId: MaybeRefOrGetter<string>) => {
 
     const breakpoint = getBreakpoint();
     const state = getState();
+    const operations: JsonPatchOperation[] = [
+      {
+        op: JsonPatchOperationType.Add,
+        path: `${targetValue.pointer}/props/style`,
+        value: setStyleProperty(targetValue.style, breakpoint, state, property, value),
+      },
+    ];
     return {
       interactionId: value === "" ? undefined : `style:${targetValue.nodeId}:${breakpoint}:${state}:${property}`,
       label: value === "" ? "Reset style" : "Edit style",
-      operations: [
-        {
-          op: JsonPatchOperationType.Add,
-          path: `${targetValue.pointer}/props/style`,
-          value: setStyleProperty(targetValue.style, breakpoint, state, property, value),
-        },
-      ],
+      operations,
     };
   };
   const setField = (property: StyleProperty, value: string) => {

@@ -7,11 +7,12 @@ import { useWebpageEditorStore } from "@/store/webpageEditor";
 import { ResourceType } from "@esposter/db-schema";
 
 const webpageEditorStore = useWebpageEditorStore();
-const { loadContent, saveContent } = webpageEditorStore;
+const { loadContent, saveWebpage } = webpageEditorStore;
 const { webpageEditor } = storeToRefs(webpageEditorStore);
 const resourceStore = useResourceStore();
 const { resource } = storeToRefs(resourceStore);
-const uploadFile = useUploadResourceFile(ResourceType.Webpage, () => resource.value?.id ?? "");
+const resourceId = computed(() => resource.value?.id ?? "");
+const uploadFile = useUploadResourceFile(ResourceType.Webpage, () => resourceId.value);
 const shareImageFiles = ref<File[]>([]);
 // A picked image uploads at once and only its url is kept, so the file never waits in the form
 watch(shareImageFiles, async (files) => {
@@ -20,8 +21,9 @@ watch(shareImageFiles, async (files) => {
   shareImageFiles.value = [];
   webpageEditor.value.imageUrl = await uploadFile(file);
 });
-// Autosave the share preview as it is edited, the same as the Sheet's Settings blade
-watchAutosave(webpageEditor, saveContent);
+// Autosave the share preview as it is edited, the same as the Sheet's Settings blade. The save writes the page builder's
+// Document too, so an unsaved edit of the page is never written over by the share preview's older tree
+watchAutosave(webpageEditor, () => saveWebpage(resourceId.value));
 await loadContent();
 </script>
 

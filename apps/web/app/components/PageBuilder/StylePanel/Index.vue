@@ -48,13 +48,22 @@ const stateItems = [
   { title: "Hover", value: StyleState.Hover },
 ];
 // Every sector starts open, and a reader closes the ones they are not editing
-const openSectors = ref(Object.fromEntries(STYLE_SECTORS.map(({ title }) => [title, true])));
+const closedSectors = ref(new Set<string>());
+const setSectorOpen = (title: string, isOpen: boolean) => {
+  if (isOpen) closedSectors.value.delete(title);
+  else closedSectors.value.add(title);
+};
 </script>
 
 <template>
   <div v-if="hasNode" flex flex-col gap-4>
     <UiToggleGroup v-model="styleState" :items="stateItems" label="Style state" />
-    <UiCollapsible v-for="sector in STYLE_SECTORS" :key="sector.title" v-model="openSectors[sector.title]">
+    <UiCollapsible
+      v-for="sector in STYLE_SECTORS"
+      :key="sector.title"
+      :model-value="!closedSectors.has(sector.title)"
+      @update:model-value="(isOpen) => setSectorOpen(sector.title, isOpen)"
+    >
       <template #title>{{ sector.title }}</template>
       <div flex flex-col gap-3>
         <div v-for="property in sector.properties" :key="property" flex gap-2 items-end>

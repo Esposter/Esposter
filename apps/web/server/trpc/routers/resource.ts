@@ -29,6 +29,7 @@ import { getFavoriteJoin } from "#server/services/resource/getFavoriteJoin";
 import { getLastAccessedJoin } from "#server/services/resource/getLastAccessedJoin";
 import { getResourcesWhere } from "#server/services/resource/getResourcesWhere";
 import { getSearchSimilarity } from "#server/services/resource/getSearchSimilarity";
+import { omitDerivedContent } from "#server/services/resource/omitDerivedContent";
 import { readContentAtPointer } from "#server/services/resource/readContentAtPointer";
 import { readResourceConsumers } from "#server/services/resource/readResourceConsumers";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
@@ -430,7 +431,10 @@ export const resourceRouter = router({
     // Write boundary makes authorization decisions on, with nothing in the restore or its confirmation saying
     // It would happen. The declaration is `ResourceLiveContentMap`, and it is the same one the public read and
     // The version preview reconstitute through
-    const reappliedContent = await reapplyLiveResourceContent(ctx.resource, snapshotContent);
+    const reappliedContent = omitDerivedContent(
+      ctx.resource,
+      await reapplyLiveResourceContent(ctx.resource, snapshotContent),
+    );
     // Nothing is copied: the save below reserves the objects the restored content names, so they stay alive, and they
     // Are this Resource's own objects, so a restore holds no second copy of any asset. A version's asset an eviction
     // Above released is not refused: the save reserves it like any other name, so the working copy names a gone file,

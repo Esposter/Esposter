@@ -1,43 +1,23 @@
 <script setup lang="ts">
-import { GRAPES_JS_EDITOR_CONTAINER_ID } from "@/services/grapesjs/constants";
-import { createWebpageSurveyInviteBlocks } from "@/services/webpageEditor/createWebpageSurveyInviteBlocks";
-import { WebpageEditorPlugins } from "@/services/webpageEditor/WebpageEditorPlugins";
-import { WebpageEditorStyleManager } from "@/services/webpageEditor/WebpageEditorStyleManager";
+import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { useResourceStore } from "@/store/resource";
 import { useWebpageEditorStore } from "@/store/webpageEditor";
-import { ResourceType } from "@esposter/db-schema";
-import "grapesjs/dist/css/grapes.min.css";
 
 const resourceStore = useResourceStore();
 const { resource } = storeToRefs(resourceStore);
 const webpageEditorStore = useWebpageEditorStore();
-const { readWebpageEditor, saveWebpageEditor } = webpageEditorStore;
-const uploadFile = useUploadResourceFile(ResourceType.Webpage, () => resource.value?.id ?? "");
-const { publishedSurveys } = useReadPublishedSurveys();
-const { editor } = await useGrapesJsEditor(
-  ResourceType.Webpage,
-  {
-    load: () => readWebpageEditor(),
-    store: (data, storeEditor) => saveWebpageEditor(data, { css: storeEditor.getCss(), html: storeEditor.getHtml() }),
-  },
-  {
-    plugins: WebpageEditorPlugins,
-    selectorManager: { componentFirst: true },
-    showOffsets: true,
-    styleManager: WebpageEditorStyleManager,
-  },
-  { upload: uploadFile },
+const { loadContent, saveWebpage } = webpageEditorStore;
+const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+const { getDocument } = pageBuilderDocumentStore;
+await loadContent();
+const resourceId = computed(() => resource.value?.id ?? "");
+// The page builder's edits are saved through the content store's own autosave cadence, which the document's deep watch drives
+watchAutosave(
+  computed(() => getDocument(resourceId.value)),
+  () => saveWebpage(resourceId.value),
 );
-
-useSurveyInviteBlocks(editor, publishedSurveys, createWebpageSurveyInviteBlocks);
 </script>
 
 <template>
-  <div :id="GRAPES_JS_EDITOR_CONTAINER_ID" h-full of-hidden />
+  <PageBuilderEditor :resource-id />
 </template>
-
-<style scoped>
-:deep(.gjs-mdl-container) {
-  z-index: 2000;
-}
-</style>

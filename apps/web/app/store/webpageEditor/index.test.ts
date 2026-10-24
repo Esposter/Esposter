@@ -1,10 +1,12 @@
 // @vitest-environment nuxt
 import type { ResourceInResource } from "@esposter/db-schema";
-import type { ProjectData } from "grapesjs";
 
+import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
+import { TEST_ID, TEST_LABEL, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { useResourceStore } from "@/store/resource";
 import { useWebpageEditorStore } from "@/store/webpageEditor";
 import { ResourceType } from "@esposter/db-schema";
@@ -13,24 +15,22 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 describe(useWebpageEditorStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const resourceId = crypto.randomUUID();
-  const projectData: ProjectData = { pages: [{ component: "" }] };
-  const render = { css: "", html: "" };
   const createResource = (contentVersion = 0) =>
     createResourceListItem({ contentVersion, id: resourceId, type: ResourceType.Webpage });
   let content: WebpageEditor;
-  let savedContentIds: string[];
+  let savedContents: unknown[];
   let saveResourceContent: ReturnType<typeof vi.fn<() => ResourceInResource>>;
 
   beforeEach(async () => {
     Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
     content = new WebpageEditor();
-    savedContentIds = [];
+    savedContents = [];
     saveResourceContent = vi.fn<() => ResourceInResource>(() => createResource(1));
     trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null }));
     trpcMsw.webpage.readResourceContent.query(() => content);
     trpcMsw.webpage.readResourcePublication.query(() => undefined);
     trpcMsw.webpage.saveResourceContent.mutation(({ input }) => {
-      savedContentIds.push(input.content.id);
+      savedContents.push(input.content);
       return saveResourceContent();
     });
     // The page reads the row before any blade mounts, and a content load reads only the blob
@@ -39,27 +39,33 @@ describe(useWebpageEditorStore, () => {
     await readResource();
   });
 
-  test("carries the loaded content identity into the save", async () => {
+  test("a page edit is saved as the content's tree and root, under the loaded identity", async () => {
     expect.hasAssertions();
 
     const webpageEditorStore = useWebpageEditorStore();
-    const { readWebpageEditor, saveWebpageEditor } = webpageEditorStore;
-    await readWebpageEditor();
-    await saveWebpageEditor(projectData, render);
+    const { loadContent, saveWebpage } = webpageEditorStore;
+    await loadContent();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { setDocument } = pageBuilderDocumentStore;
+    setDocument(resourceId, {
+      content: [{ props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button }],
+      root: TEST_ROOT,
+    });
+    await saveWebpage(resourceId);
 
-    expect(savedContentIds).toStrictEqual([content.id]);
+    expect(savedContents[0]).toMatchObject({ content: [expect.anything()], id: content.id });
   });
 
-  test("carries the share preview across an editor save", async () => {
+  test("carries the share preview across a page save", async () => {
     expect.hasAssertions();
 
     const description = "A short share description";
     const imageUrl = "/api/resource-assets/files/share.png";
     content = new WebpageEditor({ description, imageUrl });
     const webpageEditorStore = useWebpageEditorStore();
-    const { readWebpageEditor, saveWebpageEditor } = webpageEditorStore;
-    await readWebpageEditor();
-    await saveWebpageEditor(projectData, render);
+    const { loadContent, saveWebpage } = webpageEditorStore;
+    await loadContent();
+    await saveWebpage(resourceId);
 
     expect(webpageEditorStore.webpageEditor.description).toBe(description);
     expect(webpageEditorStore.webpageEditor.imageUrl).toBe(imageUrl);
@@ -68,11 +74,10 @@ describe(useWebpageEditorStore, () => {
   test("skips the store echo that follows the load", async () => {
     expect.hasAssertions();
 
-    content = new WebpageEditor({ ...projectData, ...render });
     const webpageEditorStore = useWebpageEditorStore();
-    const { readWebpageEditor, saveWebpageEditor } = webpageEditorStore;
-    await readWebpageEditor();
-    await saveWebpageEditor(projectData, render);
+    const { loadContent, saveWebpage } = webpageEditorStore;
+    await loadContent();
+    await saveWebpage(resourceId);
 
     expect(saveResourceContent).not.toHaveBeenCalled();
   });

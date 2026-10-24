@@ -7,13 +7,15 @@ import { useResourceStore } from "@/store/resource";
 // The load/save half every content store shares: rebuild the content from the open resource's blob, and seed
 // The dirty check so the editor's own load echo compares equal instead of writing back and bumping
 // ContentVersion for nothing. `createContent` is the one place a type says what its blob means — called with
-// No data for the empty document a store holds before its first load
+// No data for the empty document a store holds before its first load. `onRead` runs after each read, the first load and a
+// Reload alike, for a store that holds a copy of the content it has to hand over again
 export const createContentData = <
   TType extends ResourceType,
   TContent extends ResourceContent<TType> = ResourceContent<TType>,
 >(
   type: TType,
   createContent: (data?: ResourceContent<TType>) => TContent,
+  onRead?: (content: TContent) => void,
 ) => {
   const resourceStore = useResourceStore();
   const {
@@ -29,6 +31,7 @@ export const createContentData = <
     readContent<TType>((data) => {
       content.value = createContent(data);
       setPersistedContent(content.value);
+      onRead?.(content.value);
     });
   // The page has already read the resource row, so a blade mounting over content it holds renders at once
   const loadContent = async () => {
