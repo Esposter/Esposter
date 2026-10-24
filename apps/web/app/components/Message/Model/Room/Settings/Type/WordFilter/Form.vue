@@ -27,13 +27,14 @@ const getWordFilterFormData = (roomFilter: RoomFilterInMessage | undefined): Wor
 const initialFormData = ref(getWordFilterFormData(filter));
 const { cloned: editedFormData, sync } = useCloned(initialFormData, { manual: true });
 const isTimeout = computed(() => editedFormData.value.action === WordFilterAction.Timeout);
-const selectedTimeoutDuration = computed({
-  get: () => String(editedFormData.value.timeoutDurationMs),
+// A computed rather than a toRef on the snapshot, since sync() replaces the cloned object
+const timeoutDurationMs = computed({
+  get: () => editedFormData.value.timeoutDurationMs,
   set: (newValue) => {
-    const item = TimeoutDurationSelectItems.find(({ value }) => String(value) === newValue);
-    if (item) editedFormData.value.timeoutDurationMs = item.value;
+    editedFormData.value.timeoutDurationMs = newValue;
   },
 });
+const selectedTimeoutDuration = useNumberSelect(timeoutDurationMs, TimeoutDurationSelectItems);
 const isDirty = computed(
   () =>
     !checkIsDeepEqual(editedFormData.value.words, initialFormData.value.words) ||
