@@ -7,14 +7,12 @@ describe(checkIsSameBatch, () => {
   const roomId = crypto.randomUUID();
   const userId = crypto.randomUUID();
   const createdAt = new Date(0);
+  const withCreatedAt = (message: ReturnType<typeof createMessageEntity>, messageCreatedAt: Date) =>
+    Object.assign(message, { createdAt: messageCreatedAt });
   const createStandardMessage = (messageUserId: string, messageCreatedAt: Date) =>
-    Object.assign(createMessageEntity({ roomId, type: MessageType.Message, userId: messageUserId }), {
-      createdAt: messageCreatedAt,
-    });
+    withCreatedAt(createMessageEntity({ roomId, type: MessageType.Message, userId: messageUserId }), messageCreatedAt);
   const createWebhookMessage = (appId: string, messageCreatedAt: Date) =>
-    Object.assign(createMessageEntity({ appUser: { id: appId }, roomId, type: MessageType.Webhook }), {
-      createdAt: messageCreatedAt,
-    });
+    withCreatedAt(createMessageEntity({ appUser: { id: appId }, roomId, type: MessageType.Webhook }), messageCreatedAt);
 
   test("batches an author's consecutive messages within the window", () => {
     expect.hasAssertions();

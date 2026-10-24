@@ -48,7 +48,7 @@ vi.mock("@/store/dungeons", async () => {
   return { useDungeonsStore: () => dungeonsStore };
 });
 
-describe("catchMonster", () => {
+describe("CatchMonster", () => {
   const scene = {} as SceneWithPlugins;
   const wildMonsterName = prettify(MonsterKey.Iguanignite);
 

@@ -11,6 +11,8 @@ import { usePostStore } from "@/store/post";
 import { noop } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
+type ReadPostsQuery = NonNullable<z.input<typeof readPostsInputSchema>>;
+
 describe(usePagedPostRead, () => {
   const { trpcMsw } = setupMswTrpc();
   const userId = crypto.randomUUID();
@@ -22,7 +24,7 @@ describe(usePagedPostRead, () => {
   test("reads the first page with the query it is given", async () => {
     expect.hasAssertions();
 
-    const sentQueries: NonNullable<z.input<typeof readPostsInputSchema>>[] = [];
+    const sentQueries: ReadPostsQuery[] = [];
     trpcMsw.post.readPosts.query(({ input }) => {
       if (input) sentQueries.push(input);
       return { hasMore: false, items: [createPost({ userId })], nextCursor: "" };
@@ -37,7 +39,7 @@ describe(usePagedPostRead, () => {
   test("reads each later page on the cursor the page before it left", async () => {
     expect.hasAssertions();
 
-    const sentQueries: NonNullable<z.input<typeof readPostsInputSchema>>[] = [];
+    const sentQueries: ReadPostsQuery[] = [];
     trpcMsw.post.readPosts.query(({ input }) => {
       if (input) sentQueries.push(input);
       return input?.cursor
