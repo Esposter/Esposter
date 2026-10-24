@@ -40,7 +40,7 @@ const componentsToRender = computed<Parameters<typeof h>[]>(() => {
 });
 const render = useRender(expressionPanel);
 // The script's own load slot calls back once the API is in, so the calculator waits for that here. A calculator that
-// fails to build, or a script that never arrives, shows its failure in place of the drawing rather than breaking the page
+// fails to build shows its failure in place of the drawing, as a script that fails to load does through its status below
 const { isFailed, loaded: calculator } = useLazyLoad(async () => {
   const { GraphingCalculator } = await new Promise<typeof Desmos>((resolve) => {
     onLoaded(resolve);
