@@ -3,8 +3,8 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import { authClient } from "@/services/auth/authClient";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 
-// The owner's published surveys — the invite-block source for the email editor's GrapesJS blocks. Only published
-// Surveys are listed: a draft survey has no public url for a block to link
+// The owner's published surveys, which the email's survey invite picks from. Only published surveys are listed: a draft
+// Survey has no public url for an invite to link
 export const useReadPublishedSurveys = () => {
   const { readSurveyResources } = useReadSurveys();
   const { executeQuery } = useMutation();

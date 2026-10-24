@@ -22,6 +22,12 @@ const isOpen = computed({
     pendingDataset.value = undefined;
   },
 });
+// The rows are read before the dialog closes, since closing clears the staged dataset they come from
+const exportAnyway = async () => {
+  const rows = pendingDataset.value?.rows ?? [];
+  isOpen.value = false;
+  await exportPersonalizedHtml(currentResourceId.value, rows);
+};
 </script>
 
 <template>
@@ -46,17 +52,7 @@ const isOpen = computed({
     </div>
     <footer p-3 flex gap-2 justify-end>
       <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
-      <UiButton
-        :variant="UiButtonVariant.Accent"
-        @click="
-          () => {
-            exportPersonalizedHtml(currentResourceId, pendingDataset?.rows ?? []);
-            isOpen = false;
-          }
-        "
-      >
-        Export anyway
-      </UiButton>
+      <UiButton :variant="UiButtonVariant.Accent" @click="exportAnyway()"> Export anyway </UiButton>
     </footer>
   </UiDialog>
 </template>

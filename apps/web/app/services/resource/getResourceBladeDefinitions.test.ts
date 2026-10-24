@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-// The editor component map reaches GrapesJS, which touches `window` at import time
+// The editor component map reaches browser-only editors, which touch `window` at import time
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { ResourceBladeType } from "@/models/resource/ResourceBladeType";
 import { checkIsValidResourceBlade } from "@/services/resource/checkIsValidResourceBlade";

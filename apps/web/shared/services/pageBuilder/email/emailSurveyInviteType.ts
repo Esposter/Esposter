@@ -12,6 +12,8 @@ import { escapeAttribute, escapeText } from "@esposter/shared";
 export const emailSurveyInviteType = {
   allowedAttributes: {},
   defaultAttributes: {},
+  // The survey is chosen through the same resource-link field the webpage's invite uses
+  formSchema: surveyInviteNodeType.formSchema,
   hasAlternativeText: false,
   propsSchema: surveyInviteNodeType.propsSchema,
   render: (node, _slots, context) => {

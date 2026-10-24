@@ -168,17 +168,6 @@ catalog:
   eslint-plugin-vuejs-accessibility: ^2.6.3
   fake-indexeddb: ^6.2.6
   fflate: ^0.8.3
-  grapesjs: ^0.23.8
-  grapesjs-mjml: ^1.0.8
-  grapesjs-parser-postcss: ^1.0.3
-  grapesjs-plugin-export: ^1.0.12
-  grapesjs-preset-webpage: ^1.0.3
-  grapesjs-style-bg: ^2.0.2
-  grapesjs-tabs: ^1.0.6
-  grapesjs-tooltip: ^0.1.8
-  grapesjs-touch: ^0.1.1
-  grapesjs-tui-image-editor: ^1.0.2
-  grapesjs-typed: ^2.0.1
   grid-engine: ^2.53.0
   h3: ^2.0.8
   happy-dom: ^21.0.4

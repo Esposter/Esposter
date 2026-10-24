@@ -16,6 +16,7 @@ import { useEmailEditorStore } from "@/store/emailEditor";
 import { useEmailExportDialogStore } from "@/store/emailEditor/exportDialog";
 import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 import { useFlowchartExportStore } from "@/store/flowchartEditor/export";
+import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { useResourceStore } from "@/store/resource";
 import { useSheetStore } from "@/store/resource/sheet";
 import { useSheetPortableDialogStore } from "@/store/resource/sheet/portableDialog";
@@ -94,17 +95,19 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
         const { $trpc } = useNuxtApp();
         const alertStore = useAlertStore();
         const { createAlert } = alertStore;
-        // The live editor + bound dataset live on the email store (set by the blade); the row it belongs to is
-        // The blade's own, so the export takes each from the store that owns it
+        // The bound dataset lives on the email store, and the document the export compiles is the one the page builder
+        // holds for the resource the blade shows, so the export takes each from the store that owns it
         const emailEditorStore = useEmailEditorStore();
-        const { datasetReference, editor } = storeToRefs(emailEditorStore);
+        const { datasetReference } = storeToRefs(emailEditorStore);
         const resourceStore = useResourceStore();
         const { resource } = storeToRefs(resourceStore);
+        const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+        const { getEmailDocument } = pageBuilderDocumentStore;
         const emailExportDialogStore = useEmailExportDialogStore();
         const { setPendingDataset } = emailExportDialogStore;
         const exportPersonalizedHtml = useExportPersonalizedHtml();
         const referenceValue = datasetReference.value;
-        if (!editor.value || !resource.value) {
+        if (!resource.value || !getEmailDocument(resource.value.id)) {
           createAlert(OPEN_EMAIL_EDITOR_MESSAGE, "warning");
           return;
         }
@@ -124,7 +127,7 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
           // Silently mailing a truncated audience is the one failure the sender can never take back,
           // So a capped read hands the decision to the Editor blade's confirm instead of exporting
           if (getDatasetTruncation(dataset)) setPendingDataset(resourceId, dataset);
-          else exportPersonalizedHtml(resourceId, dataset.rows);
+          else await exportPersonalizedHtml(resourceId, dataset.rows);
         }).match(noop, (error) => createErrorAlert(error, getDatasetErrorMessage(error)));
       },
       icon: "i-mdi:language-html5",

@@ -228,7 +228,7 @@ export const useResourceStore = defineStore("resource", () => {
   // Store without a re-read: the store's own saves, a type's live subscription, and a restore through
   // `reloadResourceContent`. Closing the resource resets it, so reopening reads afresh
   const checkIsContentRead = () => contentResourceId === resource.value?.id;
-  // Every content store calls this once its load has hydrated, and the two GrapesJS ones have to: the editor
+  // Every content store calls this once its load has hydrated, and the editors' stores have to: the editor
   // Stores as soon as it finishes loading, so the first save of a session is an echo of what was just read.
   // Unseeded, that echo counts as a change — it bumps contentVersion for content nobody edited, and every
   // Other client holding the page open is then told its version is stale
