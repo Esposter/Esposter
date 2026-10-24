@@ -2,6 +2,7 @@ import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
 import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "headless-block-editor";
 import type { MaybeRefOrGetter } from "vue";
 
+import { usePageBuilderSelectedNode } from "@/composables/pageBuilder/usePageBuilderSelectedNode";
 import { CANNOT_GO_HERE_MESSAGE } from "@/services/pageBuilder/constants";
 import { getInsertTarget } from "@/services/pageBuilder/getInsertTarget";
 import { getNodeIdAt } from "@/services/pageBuilder/getNodeIdAt";
@@ -29,24 +30,17 @@ export const usePageBuilderClipboard = <
   announce: (message: string) => void,
   deleteNode: (nodeId: string) => boolean,
 ) => {
-  // The document the shell draws, with the kind the shell was given, or none while no document is held
-  const getOpenDocument = () => {
-    const document = getDocument();
-    return document && { document, kind };
-  };
+  const { getOpenDocument, getSelection } = usePageBuilderSelectedNode(kind, getDocument, resourceId);
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
   const { getSelectedNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
   const pageBuilderHistoryStore = usePageBuilderHistoryStore();
   const { applyEdit } = pageBuilderHistoryStore;
   // The selected node with its id and title, or none when nothing is selected or the node is gone
   const getSelectedNode = () => {
-    const resourceIdValue = toValue(resourceId);
-    const open = getOpenDocument();
-    const nodeId = getSelectedNodeId(resourceIdValue);
-    const nodePointer = open && nodeId ? getNodePointer(open.kind, open.document, nodeId) : undefined;
-    if (!open || nodePointer === undefined) return undefined;
+    const selection = getSelection();
+    if (!selection) return undefined;
 
-    const { document } = open;
+    const { document, nodeId, nodePointer } = selection;
     const node = getBlockNode(document, nodePointer, kind.children);
     return node && { node, nodeId, title: getNodeTitle(kind, document, parseJsonPointer(nodePointer)) };
   };

@@ -5,6 +5,7 @@ import type { JsonPatchOperation } from "@esposter/shared";
 import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "headless-block-editor";
 import type { MaybeRefOrGetter } from "vue";
 
+import { usePageBuilderSelectedNode } from "@/composables/pageBuilder/usePageBuilderSelectedNode";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { PAGE_BUILDER_COMMAND_GROUP } from "@/services/pageBuilder/constants";
 import { getNodeIdAt } from "@/services/pageBuilder/getNodeIdAt";
@@ -74,25 +75,11 @@ export const usePageBuilderMoves = <
   resourceId: MaybeRefOrGetter<string>,
   announce: (message: string) => void,
 ) => {
-  // The document the shell draws, with the kind the shell was given, or none while no document is held
-  const getOpenDocument = () => {
-    const document = getDocument();
-    return document && { document, kind };
-  };
+  const { getOpenDocument, getSelection } = usePageBuilderSelectedNode(kind, getDocument, resourceId);
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
   const { getSelectedNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
   const pageBuilderHistoryStore = usePageBuilderHistoryStore();
   const { applyEdit } = pageBuilderHistoryStore;
-  // The document, its kind and the node the selection holds, or none when nothing is selected or the node is gone
-  const getSelection = () => {
-    const resourceIdValue = toValue(resourceId);
-    const open = getOpenDocument();
-    const nodeId = getSelectedNodeId(resourceIdValue);
-    if (!open || !nodeId) return undefined;
-
-    const nodePointer = getNodePointer(open.kind, open.document, nodeId);
-    return nodePointer === undefined ? undefined : { ...open, nodeId, nodePointer };
-  };
   // Announces where a moved node now sits: its title, its 1-based position among its slot's children and the slot's path
   const announceMove = (
     kind: MoveKind<TNode, TRoot, TDefinition, TDocument>,

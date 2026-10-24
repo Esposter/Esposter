@@ -2,6 +2,7 @@ import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
 import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "headless-block-editor";
 import type { MaybeRefOrGetter } from "vue";
 
+import { usePageBuilderSelectedNode } from "@/composables/pageBuilder/usePageBuilderSelectedNode";
 import { getNodeIdAt } from "@/services/pageBuilder/getNodeIdAt";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { getParentNodeId } from "@/services/pageBuilder/getParentNodeId";
@@ -19,11 +20,7 @@ export const usePageBuilderSelection = <
   getDocument: () => TDocument | undefined,
   resourceId: MaybeRefOrGetter<string>,
 ) => {
-  // The document the shell draws, with the kind the shell was given, or none while no document is held
-  const getOpenDocument = () => {
-    const document = getDocument();
-    return document && { document, kind };
-  };
+  const { getOpenDocument } = usePageBuilderSelectedNode(kind, getDocument, resourceId);
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
   const { getSelectedNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
   // Up and Down select the adjacent node in document order, starting from the first node when none is selected, and stay put past either end
