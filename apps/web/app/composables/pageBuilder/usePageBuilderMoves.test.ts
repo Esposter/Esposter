@@ -8,13 +8,13 @@ import type { WebpagePlaceableNode } from "#shared/models/pageBuilder/WebpagePla
 
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
+import { createTestImageNode, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import { usePageBuilderMoves } from "@/composables/pageBuilder/usePageBuilderMoves";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { createPinia, setActivePinia } from "pinia";
 import { describe, expect, test, vi } from "vitest";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 const createSection = (id: string, children: WebpagePlaceableNode[]): SectionNode => ({
   props: { children, id, tag: HtmlTag.Section },
@@ -28,10 +28,7 @@ const createColumn = (id: string, children: WebpagePlaceableNode[]): ColumnNode 
   props: { children, id },
   type: WebpageNodeType.Column,
 });
-const createImage = (id: string): ImageNode => ({
-  props: { alt: "", decorative: true, id, src: "https://example.com/a.png" },
-  type: WebpageNodeType.Image,
-});
+const createImage = (id: string): ImageNode => createTestImageNode("https://example.com/a.png", id);
 
 // Section 1 holds Columns with one Column; Section 2 holds an image; the image sits in Section 2
 const createFixtureDocument = (): WebpageDocument => ({
@@ -46,8 +43,8 @@ const setup = async (selectedNodeId: string, document = createFixtureDocument())
   setActivePinia(createPinia());
   const resourceId = crypto.randomUUID();
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-  const { loadDocument } = pageBuilderDocumentStore;
-  await loadDocument(resourceId, webpageKind, () => Promise.resolve(document));
+  const { setDocument } = pageBuilderDocumentStore;
+  setDocument(resourceId, webpageKind, document);
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
   pageBuilderCanvasStore.setSelectedNodeId(resourceId, selectedNodeId);
   const announce = vi.fn<(message: string) => void>();

@@ -11,11 +11,11 @@ import { CANNOT_GO_HERE_MESSAGE } from "@/services/pageBuilder/constants";
 import { TEST_ROOT_TEXT_ID, TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
 import { refuseClipboardPaste } from "@/services/pageBuilder/refuseClipboardPaste";
 import { serializeClipboardNodes } from "@/services/pageBuilder/serializeClipboardNodes";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { createPinia, setActivePinia } from "pinia";
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 vi.mock(import("@/services/pageBuilder/refuseClipboardPaste"), async (importOriginal) => {
   const { refuseClipboardPaste: original } = await importOriginal();
@@ -42,12 +42,10 @@ const stubClipboard = () => {
   return clipboard;
 };
 
-const openResource = async (content: WebpageDocument["content"]) => {
+const openResource = (content: WebpageDocument["content"]) => {
   const resourceId = crypto.randomUUID();
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-  await pageBuilderDocumentStore.loadDocument(resourceId, webpageKind, () =>
-    Promise.resolve({ content, root: TEST_ROOT }),
-  );
+  pageBuilderDocumentStore.setDocument(resourceId, webpageKind, { content, root: TEST_ROOT });
   return resourceId;
 };
 

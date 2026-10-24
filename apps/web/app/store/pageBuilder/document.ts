@@ -1,7 +1,5 @@
-import type { WebpageKind } from "@/models/pageBuilder/WebpageKind";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
-
-import { getResult } from "@esposter/shared";
+import type { WebpageKind } from "@/models/pageBuilder/WebpageKind";
 
 // A document the page builder holds, beside the kind it was opened as, which the shell reads the document through
 export interface OpenPageBuilderDocument {
@@ -23,23 +21,10 @@ export const usePageBuilderDocumentStore = defineStore("pageBuilder/document", (
   const setDocument = (resourceId: string, kind: WebpageKind, document: WebpageDocument) => {
     documentMap.value.set(resourceId, { document, kind: markRaw(kind) });
   };
-  // The one place a document enters the store from a read: the value read is parsed by its kind's schema first.
-  // A value the schema refuses is thrown rather than held, so the canvas never draws a document it cannot walk
-  const loadDocument = async (resourceId: string, kind: WebpageKind, readDocument: () => Promise<unknown>) => {
-    const value = await readDocument();
-    getResult(() => kind.documentSchema.parse(value)).match(
-      (document) => {
-        setDocument(resourceId, kind, document);
-      },
-      (error) => {
-        throw error;
-      },
-    );
-  };
   // Nothing is written for a resource whose document is not held, since there is no document to write
   const saveDocument = async (resourceId: string, writeDocument: (document: WebpageDocument) => Promise<void>) => {
     const document = getDocument(resourceId);
     if (document) await writeDocument(document);
   };
-  return { documentMap, getDocument, getKind, getOpenDocument, loadDocument, saveDocument, setDocument };
+  return { documentMap, getDocument, getKind, getOpenDocument, saveDocument, setDocument };
 });

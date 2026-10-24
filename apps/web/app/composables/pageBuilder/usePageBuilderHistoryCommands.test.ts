@@ -6,6 +6,7 @@ import { createButton } from "#shared/services/pageBuilder/createButton.test";
 import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { usePageBuilderHistoryCommands } from "@/composables/pageBuilder/usePageBuilderHistoryCommands";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { useCommandStore } from "@/store/ui/command";
@@ -13,7 +14,6 @@ import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { moveBlockNode } from "headless-block-editor";
 import { describe, expect, test } from "vitest";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 describe(usePageBuilderHistoryCommands, () => {
   test("the command bar names the edit it would undo", async () => {
@@ -25,8 +25,8 @@ describe(usePageBuilderHistoryCommands, () => {
       root: TEST_ROOT,
     };
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    const { loadDocument } = pageBuilderDocumentStore;
-    await loadDocument(resourceId, webpageKind, () => Promise.resolve(document));
+    const { setDocument } = pageBuilderDocumentStore;
+    setDocument(resourceId, webpageKind, document);
     const component = await mountSuspended(
       defineComponent({
         setup: () => {

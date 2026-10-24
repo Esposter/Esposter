@@ -1,14 +1,13 @@
 // @vitest-environment nuxt
-import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { TEST_ID, TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
+import { createTestImageNode, TEST_ID, TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import PageBuilderCanvasNodeToolbar from "@/components/PageBuilder/Canvas/NodeToolbar.vue";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { TEST_NESTED_TEXT_ID, TEST_SECTION_ID, TEST_WEBPAGE } from "@/services/pageBuilder/constants.test";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test, vi } from "vitest";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 describe("pageBuilderCanvasNodeToolbar", () => {
   test("the toolbar offers the node's moves", async () => {
@@ -17,12 +16,7 @@ describe("pageBuilderCanvasNodeToolbar", () => {
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
-      content: [
-        {
-          props: { alt: "", decorative: true, id: TEST_OTHER_ID, src: "https://example.com/a.png" },
-          type: WebpageNodeType.Image,
-        },
-      ],
+      content: [createTestImageNode("https://example.com/a.png", TEST_OTHER_ID)],
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
@@ -49,14 +43,8 @@ describe("pageBuilderCanvasNodeToolbar", () => {
     const copyId = pageBuilderCanvasStore.getSelectedNodeId(TEST_ID);
 
     expect(pageBuilderDocumentStore.getDocument(TEST_ID)?.content).toStrictEqual([
-      {
-        props: { alt: "", decorative: true, id: TEST_OTHER_ID, src: "https://example.com/a.png" },
-        type: WebpageNodeType.Image,
-      },
-      {
-        props: { alt: "", decorative: true, id: copyId, src: "https://example.com/a.png" },
-        type: WebpageNodeType.Image,
-      },
+      createTestImageNode("https://example.com/a.png", TEST_OTHER_ID),
+      createTestImageNode("https://example.com/a.png", copyId),
     ]);
   });
 
@@ -66,12 +54,7 @@ describe("pageBuilderCanvasNodeToolbar", () => {
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
-      content: [
-        {
-          props: { alt: "", decorative: true, id: TEST_OTHER_ID, src: "https://example.com/a.png" },
-          type: WebpageNodeType.Image,
-        },
-      ],
+      content: [createTestImageNode("https://example.com/a.png", TEST_OTHER_ID)],
       root: TEST_ROOT,
     });
     pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);

@@ -12,12 +12,12 @@ import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChi
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { MAX_PAGE_BUILDER_HISTORY_SIZE } from "@/services/pageBuilder/constants";
 import { TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { InvalidOperationError, JsonPatchOperationType, noop, Operation } from "@esposter/shared";
 import { applyBlockEdit, moveBlockNode, updateBlockNodeProps } from "headless-block-editor";
 import { describe, expect, test, vi } from "vitest";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 const insertAtFirstIndex = (id: string): JsonPatchOperation[] => [
   { op: JsonPatchOperationType.Add, path: "/content/1", value: createButton(id) },
@@ -38,8 +38,8 @@ describe(usePageBuilderHistoryStore, () => {
   const setupDocument = async () => {
     const resourceId = crypto.randomUUID();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    const { loadDocument } = pageBuilderDocumentStore;
-    await loadDocument(resourceId, webpageKind, () => Promise.resolve(TEST_DOCUMENT));
+    const { setDocument } = pageBuilderDocumentStore;
+    setDocument(resourceId, webpageKind, TEST_DOCUMENT);
     return resourceId;
   };
   const moveFirstToEnd = () =>
@@ -96,8 +96,8 @@ describe(usePageBuilderHistoryStore, () => {
       root: TEST_ROOT,
     };
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    const { getDocument, loadDocument } = pageBuilderDocumentStore;
-    await loadDocument(resourceId, webpageKind, () => Promise.resolve(textDocument));
+    const { getDocument, setDocument } = pageBuilderDocumentStore;
+    setDocument(resourceId, webpageKind, textDocument);
     const interactionId = crypto.randomUUID();
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
     const { applyEdit, undo } = pageBuilderHistoryStore;
