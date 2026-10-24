@@ -88,6 +88,7 @@ These pages explain the durable, cross-cutting mechanisms that span multiple pac
 | [SQL highlighting](sql-highlight/design.md)                                      | `highlightSql`, the dev query log's colours, replacing `sql-highlight`                                                                                                             |
 | [Charts](charts/design.md)                                                       | `StyledApexChart`, the app's one chart, mounting ApexCharts itself in place of `vue3-apexcharts`                                                                                   |
 | [PDF viewer](pdf-viewer/design.md)                                               | The app's own PDF thumbnail and viewer over `pdfjs-dist`'s renderer and its viewer components                                                                                      |
+| [Card carousel](visual-card-carousel/design.md)                                  | The About page's supporter cards as a stacked carousel — one card's turn on a timer, the stack's geometry per breakpoint, and each card's animation class                          |
 
 Cross-cutting standards we decided against are recorded in [rejected](../../rejected/architecture/) — check it before proposing a new one. Ones we chose not to build yet, each with a revisit trigger, are in [deferred](../../deferred/architecture/).
 
