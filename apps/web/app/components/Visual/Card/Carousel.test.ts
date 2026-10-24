@@ -25,10 +25,10 @@ describe("carousel", () => {
     expect.hasAssertions();
 
     const component = await mountCarousel();
-    const [first, second] = Array.from(component.element.children);
+    const [first, second] = Array.from((component.element as HTMLElement).children);
 
-    expect(first.classList).toContain("active-card");
-    expect(second.classList).not.toContain("active-card");
+    expect(first?.classList).toContain("active-card");
+    expect(second?.classList).not.toContain("active-card");
   });
 
   // Each step moves the stack on, so the card after the first takes its turn once a duration has passed
@@ -38,9 +38,9 @@ describe("carousel", () => {
     const component = await mountCarousel();
     vi.advanceTimersByTime(DURATION);
     await flushPromises();
-    const [first, second] = Array.from(component.element.children);
+    const [first, second] = Array.from((component.element as HTMLElement).children);
 
-    expect(second.classList).toContain("active-card");
-    expect(first.classList).toContain("inactive-card");
+    expect(second?.classList).toContain("active-card");
+    expect(first?.classList).toContain("inactive-card");
   });
 });

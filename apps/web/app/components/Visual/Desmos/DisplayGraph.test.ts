@@ -1,4 +1,5 @@
 // @vitest-environment nuxt
+import type { useDesmos } from "@/composables/desmos/useDesmos";
 import type { Expression } from "@/models/desmos/Expression";
 
 import VisualDesmosDisplayGraph from "@/components/Visual/Desmos/DisplayGraph.vue";
@@ -13,12 +14,12 @@ const { GraphingCalculator } = vi.hoisted(() => ({
   GraphingCalculator: vi.fn<(element: HTMLElement, options: object) => Promise<unknown>>(),
 }));
 vi.mock(import("@/composables/desmos/useDesmos"), () => ({
-  useDesmos: () => ({
-    onLoaded: (callback: (desmos: { GraphingCalculator: typeof GraphingCalculator }) => void) => {
+  useDesmos: (() => ({
+    onLoaded: (callback: (desmos: unknown) => void) => {
       callback({ GraphingCalculator });
     },
     status: "success",
-  }),
+  })) as unknown as typeof useDesmos,
 }));
 
 const mountGraph = (expressions: Expression[]) =>
