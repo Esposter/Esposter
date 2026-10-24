@@ -1,9 +1,8 @@
 import type { MjmlColumnNode } from "mjml-blocks";
 
+import { getEmailColumnWidths } from "#shared/services/pageBuilder/email/getEmailColumnWidths";
 import { MjmlNodeType } from "mjml-blocks";
 import { describe, expect, test } from "vitest";
-
-import { getEmailColumnWidths } from "./getEmailColumnWidths";
 
 describe(getEmailColumnWidths, () => {
   const TEST_COLUMN_ID = crypto.randomUUID();
@@ -16,6 +15,16 @@ describe(getEmailColumnWidths, () => {
     expect.hasAssertions();
 
     expect(getEmailColumnWidths([createColumn(), createColumn()])).toStrictEqual(["50%", "50%"]);
+  });
+
+  test("unset columns take no share when the set widths overshoot the section", () => {
+    expect.hasAssertions();
+
+    expect(getEmailColumnWidths([createColumn("60%"), createColumn("60%"), createColumn()])).toStrictEqual([
+      "60%",
+      "60%",
+      "0%",
+    ]);
   });
 
   test("a column's own percentage is kept and the unset columns split what it leaves", () => {

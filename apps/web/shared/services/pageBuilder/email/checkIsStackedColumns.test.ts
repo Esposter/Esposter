@@ -1,13 +1,12 @@
+import { checkIsStackedColumns } from "#shared/services/pageBuilder/email/checkIsStackedColumns";
 import { describe, expect, test } from "vitest";
-
-import { checkIsStackedColumns } from "./checkIsStackedColumns";
 
 describe(checkIsStackedColumns, () => {
   test("columns stack below the mobile breakpoint", () => {
     expect.hasAssertions();
 
     expect(checkIsStackedColumns(375)).toBe(true);
-    expect(checkIsStackedColumns(480)).toBe(true);
-    expect(checkIsStackedColumns(481)).toBe(false);
+    expect(checkIsStackedColumns(479)).toBe(true);
+    expect(checkIsStackedColumns(480)).toBe(false);
   });
 });

@@ -1,8 +1,8 @@
 import type { EmailDocument } from "@/models/pageBuilder/EmailDocument";
 import type { EmailKind } from "@/models/pageBuilder/EmailKind";
-import type { MjmlColumnNode, MjmlNode } from "mjml-blocks";
 import type { VNode } from "vue";
 
+import { checkIsColumn } from "#shared/services/pageBuilder/email/checkIsColumn";
 import { checkIsStackedColumns } from "#shared/services/pageBuilder/email/checkIsStackedColumns";
 import { getEmailAttributeValue } from "#shared/services/pageBuilder/email/getEmailAttributeValue";
 import { getEmailColumnWidths } from "#shared/services/pageBuilder/email/getEmailColumnWidths";
@@ -11,8 +11,6 @@ import { takeOne } from "@esposter/shared";
 import { getBlockSlots, renderBlockNodes } from "headless-block-editor";
 import { MjmlNodeType } from "mjml-blocks";
 import { h } from "vue";
-
-const checkIsColumn = (node: MjmlNode): node is MjmlColumnNode => node.type === MjmlNodeType.Column;
 
 // The design canvas's view of an email: each node drawn as the element it becomes.
 // Every attribute is the one the MJML cascade resolves for it.
@@ -27,10 +25,11 @@ export const renderEmailCanvasVNodes = (kind: EmailKind, document: EmailDocument
     const childNodes = Object.values(slots).flat();
 
     if (node.type === MjmlNodeType.Section) {
-      const columns = Object.values(getBlockSlots(kind.children, node))
-        .flat()
-        .filter((child) => checkIsColumn(child));
+      const children = Object.values(getBlockSlots(kind.children, node)).flat();
+      const columns = children.filter((child) => checkIsColumn(child));
       const widths = getEmailColumnWidths(columns);
+      // A child that is not a column takes the whole row, and a column takes the width of its own place among the columns
+      const childWidths = children.map((child) => (checkIsColumn(child) ? takeOne(widths, columns.indexOf(child)) : "100%"));
 
       return h(
         "div",
@@ -42,8 +41,8 @@ export const renderEmailCanvasVNodes = (kind: EmailKind, document: EmailDocument
             padding: attribute("padding"),
           },
         },
-        childNodes.map((column, index) =>
-          h("div", { style: { minWidth: 0, width: isStacked ? "100%" : takeOne(widths, index) } }, [column]),
+        childNodes.map((child, index) =>
+          h("div", { style: { minWidth: 0, width: isStacked ? "100%" : takeOne(childWidths, index) } }, [child]),
         ),
       );
     }

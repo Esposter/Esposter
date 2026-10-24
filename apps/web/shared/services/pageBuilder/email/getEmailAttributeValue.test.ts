@@ -1,9 +1,8 @@
 import type { MjmlTextNode } from "mjml-blocks";
 
+import { getEmailAttributeValue } from "#shared/services/pageBuilder/email/getEmailAttributeValue";
 import { MjmlNodeType } from "mjml-blocks";
 import { describe, expect, test } from "vitest";
-
-import { getEmailAttributeValue } from "./getEmailAttributeValue";
 
 describe(getEmailAttributeValue, () => {
   const TEST_TEXT_ID = crypto.randomUUID();
