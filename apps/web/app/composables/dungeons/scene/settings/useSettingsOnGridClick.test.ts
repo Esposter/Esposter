@@ -24,23 +24,6 @@ vi.mock("@/store/dungeons", async () => {
   return { useDungeonsStore: () => ({ dungeons, fadeSwitchToScene: vi.fn<() => void>(), saveDungeons }) };
 });
 
-// Grid-engine loads Phaser when it is imported, which cannot initialise under the test environment. Only its direction
-// Values are read here, and they are the same strings the library defines
-// oxlint-disable-next-line vitest/prefer-import-in-mock -- The typed module loads Phaser, so only its direction values are stated
-vi.mock("grid-engine", () => ({
-  Direction: {
-    DOWN: "down",
-    DOWN_LEFT: "down-left",
-    DOWN_RIGHT: "down-right",
-    LEFT: "left",
-    NONE: "none",
-    RIGHT: "right",
-    UP: "up",
-    UP_LEFT: "up-left",
-    UP_RIGHT: "up-right",
-  },
-}));
-
 const getRowPosition = (settingsOption: SettingsOption) => {
   const position = SettingsOptionGrid.getPosition(settingsOption);
   if (!position) throw new NotFoundError(getRowPosition.name, settingsOption);

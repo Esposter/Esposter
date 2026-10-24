@@ -72,6 +72,21 @@ vi.mock(
 // The better-auth session is one of them: registered beside the context helpers it reached a suite only when that
 // Module happened to load before the suite's router did.
 vi.mock(import("#server/auth"), () => import("#server/auth.test"));
+// `grid-engine` re-exports Phaser, which touches `window` and a canvas context at import. Every dungeon suite that
+// Reaches its direction enum through a module needs only that enum, so it is registered once here rather than per file
+vi.mock(import("grid-engine"), () => ({
+  Direction: {
+    DOWN: "down",
+    DOWN_LEFT: "down-left",
+    DOWN_RIGHT: "down-right",
+    LEFT: "left",
+    NONE: "none",
+    RIGHT: "right",
+    UP: "up",
+    UP_LEFT: "up-left",
+    UP_RIGHT: "up-right",
+  } as typeof import("grid-engine").Direction,
+}));
 // oxlint-disable-next-line vitest/prefer-import-in-mock -- the stubbed `useRuntimeConfig` returns a fraction of the config, which the typed `import()` form holds to the real return type
 vi.mock("nuxt/server", async (importOriginal) => ({
   ...(await importOriginal<object>()),

@@ -27,24 +27,6 @@ vi.mock("@/store/dungeons", async () => {
   return { useDungeonsStore: () => dungeonsStore };
 });
 
-// `grid-engine` re-exports Phaser, which touches `window` and a canvas context at import. Only the direction enum is
-// Real machinery here, so it is the only thing the mock supplies
-vi.mock(import("grid-engine"), () => ({
-  Direction: {
-    DOWN: "down",
-    DOWN_LEFT: "down-left",
-    DOWN_RIGHT: "down-right",
-    LEFT: "left",
-    NONE: "none",
-    RIGHT: "right",
-    UP: "up",
-    UP_LEFT: "up-left",
-    UP_RIGHT: "up-right",
-    // The dynamic-import form types the factory against the real module, and these literals are the enum's own
-    // Values rather than its members
-  } as typeof import("grid-engine").Direction,
-}));
-
 const getOptionPosition = (option: PlayerTitleMenuOption) => {
   const position = PlayerTitleMenuOptionGrid.getPosition(option);
   if (!position) throw new NotFoundError(getOptionPosition.name, option);

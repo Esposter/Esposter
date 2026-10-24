@@ -1,24 +1,6 @@
 import { Grid } from "@/models/dungeons/Grid";
 import { Direction } from "grid-engine";
-import { describe, expect, test, vi } from "vitest";
-
-// `grid-engine` re-exports Phaser, which touches `window` and a canvas context at import — neither of which this
-// Class uses. Only the direction enum is real machinery here, so it is the only thing the mock supplies
-vi.mock(import("grid-engine"), () => ({
-  Direction: {
-    DOWN: "down",
-    DOWN_LEFT: "down-left",
-    DOWN_RIGHT: "down-right",
-    LEFT: "left",
-    NONE: "none",
-    RIGHT: "right",
-    UP: "up",
-    UP_LEFT: "up-left",
-    UP_RIGHT: "up-right",
-    // The dynamic-import form types the factory against the real module, and these literals are the enum's own
-    // Values rather than its members
-  } as typeof Direction,
-}));
+import { describe, expect, test } from "vitest";
 
 // The invariants every dungeons menu navigates by, rather than a description of how the walk is written.
 describe(Grid, () => {
