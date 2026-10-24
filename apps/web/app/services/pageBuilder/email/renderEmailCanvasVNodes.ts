@@ -29,7 +29,9 @@ export const renderEmailCanvasVNodes = (kind: EmailKind, document: EmailDocument
       const columns = children.filter((child) => checkIsColumn(child));
       const widths = getEmailColumnWidths(columns);
       // A child that is not a column takes the whole row, and a column takes the width of its own place among the columns
-      const childWidths = children.map((child) => (checkIsColumn(child) ? takeOne(widths, columns.indexOf(child)) : "100%"));
+      const childWidths = children.map((child) =>
+        checkIsColumn(child) ? takeOne(widths, columns.indexOf(child)) : "100%",
+      );
 
       return h(
         "div",
