@@ -1,4 +1,6 @@
 // @vitest-environment nuxt
+import type { WebpageNode } from "#shared/models/pageBuilder/WebpageNode";
+
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_LABEL, TEST_OTHER_ID, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
 import PageBuilderStylePanel from "@/components/PageBuilder/StylePanel/Index.vue";
@@ -35,7 +37,7 @@ describe("pageBuilderStylePanel", () => {
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const SECOND_ID = "c";
-    const createImage = (id: string) => ({
+    const createImage = (id: string): WebpageNode => ({
       props: { alt: "", decorative: true, id, src: "https://example.com/a.png" },
       type: WebpageNodeType.Image,
     });

@@ -14,6 +14,13 @@ import { usePageBuilderStyleClipboardStore } from "@/store/pageBuilder/styleClip
 import { JsonPatchOperationType, noop } from "@esposter/shared";
 import { getBlockNode } from "headless-block-editor";
 
+// What one field edit writes: the operations, and the history entry they record as. Typed so the operations take their op literals
+interface FieldEdit {
+  interactionId?: string;
+  label: string;
+  operations: JsonPatchOperation[];
+}
+
 // The style of the selected node at the breakpoint the device edits and the state the style panel edits. A field's edit
 // Merges into one history entry per field, state and breakpoint, and a reset is an entry of its own
 export const usePageBuilderStyle = (resourceId: MaybeRefOrGetter<string>) => {
@@ -51,7 +58,7 @@ export const usePageBuilderStyle = (resourceId: MaybeRefOrGetter<string>) => {
     };
   };
   // The edit that writes a field's value, shared by a commit and a preview so the two never disagree about what is written
-  const getFieldEdit = (property: StyleProperty, value: string) => {
+  const getFieldEdit = (property: StyleProperty, value: string): FieldEdit | undefined => {
     const targetValue = target.value;
     if (!targetValue) return undefined;
 
