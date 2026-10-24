@@ -46,7 +46,7 @@ What goes with GrapesJS: Backbone, underscore, `backbone-undo`, CodeMirror 5, th
 
 ## What the editors use today
 
-The editors reach GrapesJS through a small surface, which is what makes the replacement's scope countable. A couple of dozen files import it, mostly the absorbed plugin modules and their tests.
+The editors reach GrapesJS through a small surface, which is what makes the replacement's scope countable. Fifteen files import it today, none of them a plugin module. The table describes that surface before the webpage editor left GrapesJS in 8c1648f7, so its webpage rows are history and its email rows still hold.
 
 | GrapesJS module                   | What the app uses it for                                                                                                                   | Replaced by                                      |
 | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------ |
@@ -63,7 +63,7 @@ The editors reach GrapesJS through a small surface, which is what makes the repl
 | Events                            | `update`, to read the preview text back after every change                                                                                 | nothing — the field binds the root prop          |
 | I18n, Pages, Symbols, DataSources | unused                                                                                                                                     | —                                                |
 
-The published views render nothing of GrapesJS: `apps/web/app/components/Resource/Webpage/View.vue` and `apps/web/app/components/Resource/Email/View.vue` serve the HTML a save captured, through `apps/web/app/components/Resource/SrcdocIframe.vue`. That capture exists only because GrapesJS runs in the browser, and it goes.
+The published views render nothing of GrapesJS: `apps/web/app/components/Resource/Email/View.vue` serves the HTML a save captured, and `apps/web/app/components/Resource/Webpage/View.vue` the HTML baked at publish, both through `apps/web/app/components/Resource/SrcdocIframe.vue`. The email's capture exists only because GrapesJS runs in the browser, and it goes.
 
 ## What GrapesJS costs
 
@@ -79,7 +79,7 @@ The editor shell is library parts: `UiTabs` over the Content, Style and Theme pa
 
 ## Phases
 
-Phases one to four build behind the Editor blade, as the admission page asks of a replacement: each ships green and tested, mounted by its own tests, while `ResourceEditorComponentMap` still mounts GrapesJS. The fifth is the swap. Nothing in the first four touches what GrapesJS reads or writes: the new documents, their stores and their renderers sit beside `WebpageEditor`, `EmailEditor` and the two editors' stores, each store loaded and saved through functions its tests pass in, and the cutover binds them to the two resource types — the content classes, the content stores and their hooks, the views, publishing and the exports — in the change that removes GrapesJS. Binding any of it earlier would leave GrapesJS saving documents the new schemas refuse, with every webpage and email broken until the swap.
+Phases one to four build behind the Editor blade, as the admission page asks of a replacement: each ships green and tested, mounted by its own tests, while `ResourceEditorComponentMap` still mounts GrapesJS. The fifth is the swap. Nothing in the first four touches what GrapesJS reads or writes for Email: the new documents, their stores and their renderers sit beside `WebpageEditor`, `EmailEditor` and the two editors' stores, each store loaded and saved through functions its tests pass in, and the cutover binds them to the two resource types — the content classes, the content stores and their hooks, the views, publishing and the exports — in the change that removes GrapesJS. Binding any of it earlier would leave GrapesJS saving documents the new schemas refuse, with every email broken until the swap. The webpage type was bound early, in 8c1648f7 (cutover tasks 5.1).
 
 1. **The model and its output.** The headless core first, with the tree, the registry contract, the recursive document schema, the commands and the history; then its declared root and render fold; then the MJML blocks package, holding MJML's components with their attribute tables and nesting held equal to the installed release; then the webpage node types and the email registry over them; the element tree, its serialiser and the CSS emitter; patches, inverses and history; every webpage type's `render` and the survey invite's MJML; the server's compile service on MJML's Node package. Unit tests throughout.
 2. **The webpage editor.** The canvas frame, overlays and toolbar; the pointer drag and every keyboard path; the layers tree; the palette; the content, style and theme panels; text editing; device widths; Export. Component tests and the browser suite that [the canvas proposal](../resource-page-builder-canvas/proposal.md) sets out.
@@ -102,7 +102,7 @@ The small-plugin absorption stops now: every module it produces is deleted at th
 
 - [Webpage social preview](../../specs/resource/webpage-social-preview/design.md) shipped its description and share image on the Webpage content. The cutover moves those two fields to root props.
 - Video ships as an uploaded file, and the provider embeds GrapesJS's Video and Map blocks offered wait on the content policy, as [provider embeds](../../deferred/resource/page-builder-provider-embeds/design.md) records.
-- An external image loads in the canvas and on the published page only from the hosts the image whitelist names, for the same reason, so the image field offers upload first and says why a pasted address from elsewhere shows nothing.
+- An external image loads in the canvas and on the published page only from the hosts an image allowlist names (the security config allows any `https:` image today), for the same reason, so the image field offers upload first and says why a pasted address from elsewhere shows nothing.
 - [Program invites](../../specs/resource/program-resource/design.md) (shipped) took the compile per participant from the live editor: the bound email's captured html is read server-side, so the export needs no mounted editor.
 - [AI-native resources](../architecture-ai-native-resources-program/design.md) is this editor's agent surface. Its content tools apply the same JSON Patch operations an edit here records, on the server and through the same document schema, so a webpage or an email is an agent's to edit the day the cutover lands, with nothing built for it here. `applyPatches` is written once for all three of its consumers, in `@esposter/shared`, since the headless core is a package and cannot import the app.
 

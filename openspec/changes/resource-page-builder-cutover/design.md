@@ -33,9 +33,9 @@ Two things stay, deliberately. A Program bound to a deleted email keeps its `ema
 **What leaves with GrapesJS**, in the same change:
 
 - the catalog entries and `apps/web/package.json` dependencies for `grapesjs` and every `grapesjs-` plugin, `js-beautify` and `@types/js-beautify`;
-- `useGrapesJsEditor`, `useSurveyInviteBlocks`, `setBlocks`, `readUploadFiles`, `GrapesJsBlock`, the plugin modules and their tests, `WebpageEditorPlugins`, `WebpageEditorStyleManager`, `FlexAlignmentItems`, `getEmailHtml`, `getEmailPreview`, `readEmailPreviewText`, `writeEmailPreviewText`, `createMergeFieldBlocks`, the survey invite block builders, the type shim for the two untyped plugins, `AGrapesJsEditor` and the two stock templates;
+- `useGrapesJsEditor`, `useSurveyInviteBlocks`, `setBlocks`, `readUploadFiles`, `GrapesJsBlock`, the plugin modules and their tests, `getEmailHtml`, `getEmailPreview`, `readEmailPreviewText`, `writeEmailPreviewText`, `createMergeFieldBlocks`, the survey invite block builders, the type shim for the two untyped plugins, `AGrapesJsEditor` and the two stock templates;
 - the `grapesjs` exception in `osv-scanner.toml`, whose advisory names a range the locked release was already outside;
-- the TUI and cdnjs entries in the security config, and the stock hosts in `apps/web/shared/services/grapesjs/constants.ts` and the image whitelist, keeping Mailjet's for MJML's social icons beside the email types; the `.gjs-mdl-container` override; the comments naming GrapesJS in `ResourceEditorComponentMap`;
+- the TUI and cdnjs entries in the security config, and the stock hosts in `apps/web/shared/services/grapesjs/constants.ts`; the comments naming GrapesJS in `ResourceEditorComponentMap`;
 - the `grapesjs` skill, replaced by a page-builder skill, and the `grapesjs` ledger;
 - the live references outside those: the GrapesJS and `grapesjs-` plugin rows of the dependency ledger, the `grapes.min.css` import in the styling skill's style-blocks reference, the GrapesJS mention in the `useAdoptResourceContent` row of the vue-composable-patterns skill, and the `grapesjs` store row of the resource security ledger;
 - the docs: the GrapesJS row of [third-party document adapters](../../specs/architecture/third-party-document-adapters/design.md); the page-builder engine and the plugin-belt paragraph of [dependency admission](../../specs/architecture/dependency-admission/design.md), whose precedent section gains `mjml-blocks` as the adapter `grapesjs-mjml` became; the CDN mentions in the security posture and the security module's defaults review; [email web view](../../specs/resource/email-web-view/design.md), [email preview text](../../specs/resource/email-preview-text/design.md), [email personalization](../../specs/resource/email-personalization/design.md), [webpage survey invite blocks](../../specs/resource/webpage-survey-invite-blocks/design.md) and [resource file assets](../../specs/resource/resource-file-assets/design.md) rewritten as built, with the explorer's blade table and the resource index's lines naming GrapesJS; the absorbed plugins' pages deleted, their upstream verdicts gone with the code; and this proposal rewritten as the page builder's feature page.
@@ -61,7 +61,7 @@ sequenceDiagram
 
 ## Binding the new editors
 
-The earlier changes build the documents, stores and renderers beside what GrapesJS reads and writes, so this change is the one that binds them to the Webpage and Email resource types:
+The earlier changes build the documents, stores and renderers beside what GrapesJS reads and writes, so this change binds them to the Email resource type, the Webpage type having been bound early, in 8c1648f7 (tasks 5.1):
 
 - **The content classes.** `WebpageEditor` and `EmailEditor` keep their names and their place in `JSONClassMap` and become the [document model](../../specs/resource/page-builder/document-model/design.md)'s documents, with the Email's `datasetReference` and, on a published snapshot only, the baked HTML.
 - **The stores and hooks.** The two types' content data, autosave and `ResourceContentHookMap` entries move to the page builder's document store, whose load and save were passed in by tests until now, and its reload, registered on `ResourceContentHookMap.Reload`, clears the resource's history, as [undo as patches](../../specs/resource/page-builder/undo-as-patches/design.md) designs it. `ResourceEditorComponentMap` mounts the new editors.
@@ -80,7 +80,6 @@ Each editor's script beyond the explorer is at most 200 KiB gzipped, measured on
 | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
 | `apps/web/shared/models/grapesjs/AGrapesJsEditor.ts`                | deleted                                                                             |
 | `apps/web/app/composables/grapesjs/useGrapesJsEditor.ts`            | deleted                                                                             |
-| `"apps/web/app/services/webpageEditor/WebpageEditorPlugins.ts"`     | deleted, with the plugin modules and the style manager                              |
 | `apps/web/app/services/emailEditor/getEmailHtml.ts`                 | deleted; the server compiles                                                        |
 | `apps/web/shared/services/grapesjs/constants.ts`                    | deleted                                                                             |
 | `apps/web/shared/models/webpageEditor/data/WebpageEditor.ts`        | the webpage document, its schema built from the registry                            |

@@ -19,17 +19,18 @@ flowchart LR
 
 ## Key files
 
-| File                                                       | Role                                                                          |
-| ---------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| `app/services/emailEditor/toMergeField.ts`                 | canonical `{{columnName}}` token                                              |
-| `app/services/emailEditor/createMergeFieldBlocks.ts`       | bound columns → mj-text blocks carrying the escaped token                     |
-| `app/services/emailEditor/substituteMergeFields.ts`        | per-row substitution, HTML-escaped                                            |
-| `app/services/emailEditor/getEmailHtml.ts`                 | the one MJML compile, shared with the [web view](../email-web-view/design.md) |
-| `app/services/emailEditor/exportPersonalizedHtml.ts`       | compiled HTML + rows → one zip of personalized `.html` files                  |
-| `app/services/grapesjs/setBlocks.ts`                       | wholesale block-category re-sync in the block manager                         |
-| `app/composables/grapesjs/useGrapesJsEditor.ts`            | shared GrapesJS init + resource storage adapter (email/webpage)               |
-| `app/components/Resource/Email/Editor.vue`                 | inline Editor blade bridging the live editor onto the email store             |
-| `app/components/Resource/Email/ExportTruncationDialog.vue` | the confirm a capped dataset read routes through before exporting             |
+| File                                                        | Role                                                                          |
+| ----------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `app/services/emailEditor/toMergeField.ts`                  | canonical `{{columnName}}` token                                              |
+| `app/services/emailEditor/createMergeFieldBlocks.ts`        | bound columns → mj-text blocks carrying the escaped token                     |
+| `app/services/emailEditor/createEmailSurveyInviteBlocks.ts` | the email's survey invite blocks, over the shared core                        |
+| `app/services/emailEditor/substituteMergeFields.ts`         | per-row substitution, HTML-escaped                                            |
+| `app/services/emailEditor/getEmailHtml.ts`                  | the one MJML compile, shared with the [web view](../email-web-view/design.md) |
+| `app/services/emailEditor/exportPersonalizedHtml.ts`        | compiled HTML + rows → one zip of personalized `.html` files                  |
+| `app/services/grapesjs/setBlocks.ts`                        | wholesale block-category re-sync in the block manager                         |
+| `app/composables/grapesjs/useGrapesJsEditor.ts`             | shared GrapesJS init + resource storage adapter (email/webpage)               |
+| `app/components/Resource/Email/Editor.vue`                  | inline Editor blade bridging the live editor onto the email store             |
+| `app/components/Resource/Email/ExportTruncationDialog.vue`  | the confirm a capped dataset read routes through before exporting             |
 
 ## Notes
 
