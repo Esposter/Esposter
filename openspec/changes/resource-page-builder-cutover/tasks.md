@@ -1,6 +1,6 @@
 ## 1. Purge
 
-- [ ] 1.1 Add the custom migration that moves every webpage and email row past the recycle bin's retention, so the daily purge removes it. Verify: a test named after the scenario 'A published webpage is removed by the cutover'.
+- [x] 1.1 Add the custom migration that moves every webpage and email row past the recycle bin's retention, so the daily purge removes it. Verify: a test named after the scenario 'A published webpage is removed by the cutover'. Done in `apps/web/server/db/migrations/20261024050536_bin_webpage_and_email_rows`, tested in `apps/web/server/db/binWebpageAndEmailRows.test.ts`.
 - [ ] 1.2 Run the purge once in each environment straight after the deploy. Verify: a test named after the scenario 'A count confirms the purge removed every pre-cutover row'.
 
 ## 2. Stored data
@@ -20,6 +20,7 @@
 ## 5. Binding the new editors
 
 - [ ] 5.1 Make the two content classes the new documents, move the two types' stores, hooks and editors to the page builder's, and index a survey invite's survey as a resource link. Verify: tests named after the scenarios 'Deleting a surveyed invite's survey names the webpage' and 'Restoring a version leaves nothing to undo'.
+  - Done for webpages: the content class, store, editor, publish bake and restore (`8c1648f7`). Email is still open: its content class, store and editor move to the page builder once the shell takes a document kind (`apps/web/app/components/PageBuilder/Editor.vue` is webpage-only today).
 - [ ] 5.2 Bake each type's output at publish on the server and serve it whole from the views, refusing an email whose markup fails strict validation. Verify: tests named after the scenarios 'A published webpage is one HTML document', 'An email with invalid markup is refused at publish' and 'A valid email publishes its compiled HTML'.
 - [ ] 5.3 Export a webpage as one HTML file, and an email from the stored working copy with the editor closed. Verify: tests named after the scenarios 'Exporting a webpage downloads one HTML file' and 'A personalised export runs with the editor closed'.
 
