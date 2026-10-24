@@ -1,3 +1,4 @@
+import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
 import type { HtmlElement } from "#shared/models/pageBuilder/HtmlElement";
 import type { HtmlNode } from "#shared/models/pageBuilder/HtmlNode";
 import type { HtmlRawNode } from "#shared/models/pageBuilder/HtmlRawNode";
@@ -7,8 +8,6 @@ import type { VNode } from "vue";
 
 import { renderWebpageNode } from "#shared/services/pageBuilder/renderWebpageNode";
 import { serializeHtml } from "#shared/services/pageBuilder/serializeHtml";
-import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
-import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { renderBlockNodes } from "headless-block-editor";
 import { createStaticVNode, createTextVNode, h } from "vue";
 
@@ -18,12 +17,16 @@ const checkIsRawNode = (node: HtmlNode): node is HtmlRawNode => typeof node !== 
 // Renders a webpage's document as the canvas's VNodes, folding its nodes through the same registry and render the published
 // Page uses, so the canvas shows the layout the page has. Each node's root element carries its id in the canvas only, so an
 // Overlay can find the node's box, and no script runs there, since the raw type's markup is inserted as inner HTML
-export const renderCanvasVNodes = (document: WebpageDocument, context: RenderContext): VNode[] => {
+export const renderCanvasVNodes = (
+  kind: PageBuilderKind,
+  document: WebpageDocument,
+  context: RenderContext,
+): VNode[] => {
   const nodeIds = new WeakMap<HtmlElement, string>();
   const content: HtmlNode[] = renderBlockNodes(
     document.content,
-    webpageRegistry,
-    webpageNodeChildren,
+    kind.registry,
+    kind.children,
     (node, _definition, slots) => {
       const rendered = renderWebpageNode(node, slots, context);
       if (checkIsElement(rendered)) nodeIds.set(rendered, node.props.id);

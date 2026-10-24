@@ -2,7 +2,6 @@ import type { StyleProperty } from "#shared/models/pageBuilder/StyleProperty";
 import type { JsonPatchOperation } from "@esposter/shared";
 import type { MaybeRefOrGetter } from "vue";
 
-import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { DEVICE_BREAKPOINT_MAP } from "@/services/pageBuilder/constants";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { getStyleInheritance } from "@/services/pageBuilder/getStyleInheritance";
@@ -25,7 +24,7 @@ interface FieldEdit {
 // Merges into one history entry per field, state and breakpoint, and a reset is an entry of its own
 export const usePageBuilderStyle = (resourceId: MaybeRefOrGetter<string>) => {
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-  const { getDocument } = pageBuilderDocumentStore;
+  const { getOpenDocument } = pageBuilderDocumentStore;
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
   const { getDevice, getSelectedNodeId, getStyleState } = pageBuilderCanvasStore;
   const pageBuilderHistoryStore = usePageBuilderHistoryStore();
@@ -34,13 +33,14 @@ export const usePageBuilderStyle = (resourceId: MaybeRefOrGetter<string>) => {
   const pageBuilderStyleClipboardStore = usePageBuilderStyleClipboardStore();
   const target = computed(() => {
     const resourceIdValue = toValue(resourceId);
-    const document = getDocument(resourceIdValue);
-    if (!document) return undefined;
+    const open = getOpenDocument(resourceIdValue);
+    if (!open) return undefined;
 
-    const pointer = getNodePointer(document, getSelectedNodeId(resourceIdValue));
+    const { document, kind } = open;
+    const pointer = getNodePointer(kind, document, getSelectedNodeId(resourceIdValue));
     if (pointer === undefined) return undefined;
 
-    const node = getBlockNode(document, pointer, webpageNodeChildren);
+    const node = getBlockNode(document, pointer, kind.children);
     return node && { nodeId: node.props.id, pointer, style: node.props.style };
   });
   const getBreakpoint = () => DEVICE_BREAKPOINT_MAP[getDevice(toValue(resourceId))];

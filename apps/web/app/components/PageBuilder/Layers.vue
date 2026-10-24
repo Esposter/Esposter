@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { webpageDocumentSchema } from "#shared/services/pageBuilder/webpageDocumentSchema";
 import { getLayerTreeItems } from "@/services/pageBuilder/getLayerTreeItems";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
@@ -9,13 +8,16 @@ interface Props {
 }
 const { resourceId } = defineProps<Props>();
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-const { getDocument } = pageBuilderDocumentStore;
+const { getOpenDocument } = pageBuilderDocumentStore;
 const pageBuilderCanvasStore = usePageBuilderCanvasStore();
 const { getSelectedNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
 // Nothing is drawn for a resource whose document is not held, or one the webpage schema refuses
 const layerTreeItems = computed(() => {
-  const result = webpageDocumentSchema.safeParse(getDocument(resourceId));
-  return result.success ? getLayerTreeItems(result.data) : undefined;
+  const open = getOpenDocument(resourceId);
+  if (!open) return undefined;
+
+  const result = open.kind.documentSchema.safeParse(open.document);
+  return result.success ? getLayerTreeItems(open.kind, result.data) : undefined;
 });
 const selectedNodeId = computed({
   get: () => getSelectedNodeId(resourceId),

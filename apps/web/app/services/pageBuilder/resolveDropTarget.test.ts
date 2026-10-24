@@ -6,6 +6,7 @@ import { TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import { TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
 import { resolveDropTarget } from "@/services/pageBuilder/resolveDropTarget";
 import { describe, expect, test } from "vitest";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 const createText = (id: string): TextNode => ({
   props: { content: TEST_TEXT_CONTENT, id },
@@ -57,7 +58,7 @@ describe(resolveDropTarget, () => {
     expect.hasAssertions();
 
     expect(
-      resolveDropTarget({
+      resolveDropTarget(webpageKind, {
         checkIsHorizontalOwner: () => false,
         document: COLUMN_DOCUMENT,
         draggedType: WebpageNodeType.Text,
@@ -72,7 +73,7 @@ describe(resolveDropTarget, () => {
     expect.hasAssertions();
 
     expect(
-      resolveDropTarget({
+      resolveDropTarget(webpageKind, {
         checkIsHorizontalOwner: () => false,
         document: ROOT_DOCUMENT,
         draggedType: WebpageNodeType.Column,
@@ -87,7 +88,7 @@ describe(resolveDropTarget, () => {
     expect.hasAssertions();
 
     expect(
-      resolveDropTarget({
+      resolveDropTarget(webpageKind, {
         checkIsHorizontalOwner: () => false,
         document: ROOT_DOCUMENT,
         draggedType: WebpageNodeType.Text,
@@ -103,7 +104,7 @@ describe(resolveDropTarget, () => {
 
     // The pointer is in the column's top half, where a column's stacked axis would resolve the drop before it
     expect(
-      resolveDropTarget({
+      resolveDropTarget(webpageKind, {
         checkIsHorizontalOwner: (ownerId) => ownerId === "columns",
         document: LONE_COLUMN_DOCUMENT,
         draggedType: WebpageNodeType.Column,

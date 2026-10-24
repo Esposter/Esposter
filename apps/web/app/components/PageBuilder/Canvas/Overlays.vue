@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 import type { DropIndicator } from "@/models/pageBuilder/DropIndicator";
 import type { DropTarget } from "@/models/pageBuilder/DropTarget";
@@ -25,8 +26,8 @@ const { checkIsHorizontalOwner, dropTarget, getElement, hoveredNodeId, resourceI
 // The box of the selected node, kept for the node toolbar placed in the app's own document
 const selectionBox = defineModel<OverlayBox>("selectionBox");
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-const { getDocument } = pageBuilderDocumentStore;
-const pageDocument = computed(() => getDocument(resourceId));
+const { getOpenDocument } = pageBuilderDocumentStore;
+const pageOpen = computed(() => getOpenDocument(resourceId));
 const layer = useTemplateRef("layer");
 const hoverBox = shallowRef<OverlayBox>();
 const dropIndicator = shallowRef<DropIndicator>();
@@ -51,25 +52,30 @@ const getNodeBox = (nodeId: string | undefined): OverlayBox | undefined => {
   return getOverlayBox(element.getBoundingClientRect(), layer.value.getBoundingClientRect());
 };
 // The box an empty slot's indicator outlines: the node holding the slot, or the whole layer when the slot is the page's content
-const getSlotOwnerBox = (document: WebpageDocument, slotPointer: string): OverlayBox | undefined => {
+const getSlotOwnerBox = (
+  kind: PageBuilderKind,
+  document: WebpageDocument,
+  slotPointer: string,
+): OverlayBox | undefined => {
   if (slotPointer === "/content") {
     const layerRect = layer.value?.getBoundingClientRect();
     return layerRect === undefined ? undefined : { height: layerRect.height, left: 0, top: 0, width: layerRect.width };
   }
 
-  return getNodeBox(getSlotOwnerId(document, slotPointer));
+  return getNodeBox(getSlotOwnerId(kind, document, slotPointer));
 };
 // The indicator of the drop target, drawn among the boxes of its slot's children that are in the frame
 const getDropIndicator = (): DropIndicator | undefined => {
-  const document = pageDocument.value;
-  if (!dropTarget || !document) return undefined;
+  const open = pageOpen.value;
+  if (!dropTarget || !open) return undefined;
 
-  const childBoxes = getSlotChildIds(document, dropTarget.slotPointer).map((childId) => getNodeBox(childId));
+  const { document, kind } = open;
+  const childBoxes = getSlotChildIds(kind, document, dropTarget.slotPointer).map((childId) => getNodeBox(childId));
   return getDropIndicatorBox({
     childBoxes,
     index: dropTarget.index,
-    isHorizontal: checkIsHorizontalOwner(getSlotOwnerId(document, dropTarget.slotPointer)),
-    ownerBox: getSlotOwnerBox(document, dropTarget.slotPointer),
+    isHorizontal: checkIsHorizontalOwner(getSlotOwnerId(kind, document, dropTarget.slotPointer)),
+    ownerBox: getSlotOwnerBox(kind, document, dropTarget.slotPointer),
   });
 };
 const redraw = () => {
@@ -85,7 +91,7 @@ const scheduleRedraw = () => {
 
 useEventListener(() => layer.value?.ownerDocument.defaultView, "scroll", scheduleRedraw, { passive: true });
 useResizeObserver(() => layer.value?.ownerDocument.body, scheduleRedraw);
-watch([() => hoveredNodeId, () => selectedNodeId, () => dropTarget, pageDocument], scheduleRedraw, { flush: "post" });
+watch([() => hoveredNodeId, () => selectedNodeId, () => dropTarget, pageOpen], scheduleRedraw, { flush: "post" });
 onMounted(scheduleRedraw);
 onScopeDispose(() => cancelAnimationFrame(pendingFrame));
 </script>

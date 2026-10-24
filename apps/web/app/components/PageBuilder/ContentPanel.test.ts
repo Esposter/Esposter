@@ -37,7 +37,9 @@ describe("pageBuilderContentPanel", () => {
     expect(document.content).toStrictEqual([
       { props: { href: TEST_URL, id: TEST_ID, label: "Open" }, type: WebpageNodeType.Button },
     ]);
-    const canvas = mount(defineComponent({ render: () => h("div", renderCanvasVNodes(document, TEST_CONTEXT)) }));
+    const canvas = mount(
+      defineComponent({ render: () => h("div", renderCanvasVNodes(webpageKind, document, TEST_CONTEXT)) }),
+    );
     expect(canvas.text()).toBe("Open");
 
     canvas.unmount();

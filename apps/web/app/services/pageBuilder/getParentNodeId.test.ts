@@ -5,6 +5,7 @@ import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import { getParentNodeId } from "@/services/pageBuilder/getParentNodeId";
 import { describe, expect, test } from "vitest";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 describe(getParentNodeId, () => {
   const TEST_CONTAINER_ID = "cs";
@@ -38,13 +39,13 @@ describe(getParentNodeId, () => {
 
     const document = createDocument();
 
-    expect(getParentNodeId(document, TEST_NODE_ID)).toBe(TEST_CONTAINER_ID);
-    expect(getParentNodeId(document, TEST_SECTION_ID)).toBe("");
+    expect(getParentNodeId(webpageKind, document, TEST_NODE_ID)).toBe(TEST_CONTAINER_ID);
+    expect(getParentNodeId(webpageKind, document, TEST_SECTION_ID)).toBe("");
   });
 
   test("a node the document does not hold has no parent", () => {
     expect.hasAssertions();
 
-    expect(getParentNodeId(createDocument(), "missing")).toBeUndefined();
+    expect(getParentNodeId(webpageKind, createDocument(), "missing")).toBeUndefined();
   });
 });

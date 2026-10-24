@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 import type { DropTarget } from "@/models/pageBuilder/DropTarget";
 import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
@@ -24,12 +25,13 @@ const { announce, dropTarget, resourceId } = defineProps<Props>();
 const emit = defineEmits<{ canvasKeydown: [event: KeyboardEvent] }>();
 const { origin } = useRequestURL();
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-const { getDocument } = pageBuilderDocumentStore;
+const { getDocument, getKind } = pageBuilderDocumentStore;
 const pageBuilderCanvasStore = usePageBuilderCanvasStore();
 const { getDevice, getEditingNodeId, getSelectedNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
 const pageBuilderHistoryStore = usePageBuilderHistoryStore();
 const { getPreview } = pageBuilderHistoryStore;
 const pageDocument = computed(() => getDocument(resourceId));
+const pageKind = computed(() => getKind(resourceId));
 const selectedNodeId = computed(() => getSelectedNodeId(resourceId));
 const editingNodeId = computed(() => getEditingNodeId(resourceId));
 // The document the frame draws. While a text node is edited it stays as it was when the edit began.
@@ -92,8 +94,8 @@ const css = computed(() => {
 });
 const device = computed(() => getDevice(resourceId));
 // The nodes are rendered by the frame's content, so the render is a functional component over the document it draws
-const CanvasNodes = (props: { document: WebpageDocument; origin: string }) =>
-  renderCanvasVNodes(props.document, { origin: props.origin });
+const CanvasNodes = (props: { document: WebpageDocument; kind: PageBuilderKind; origin: string }) =>
+  renderCanvasVNodes(props.kind, props.document, { origin: props.origin });
 </script>
 
 <template>
@@ -105,7 +107,7 @@ const CanvasNodes = (props: { document: WebpageDocument; origin: string }) =>
       @pointerleave="hoveredNodeId = ''"
       @pointerover="hoveredNodeId = getNodeIdFromElement($event.target) ?? ''"
     >
-      <CanvasNodes v-if="drawnDocument" :document="drawnDocument" :origin />
+      <CanvasNodes v-if="drawnDocument && pageKind" :document="drawnDocument" :kind="pageKind" :origin />
       <Teleport v-if="editingElement && editingNodeId" :to="editingElement">
         <PageBuilderCanvasTextEditor :key="editingNodeId" :node-id="editingNodeId" :resource-id />
       </Teleport>

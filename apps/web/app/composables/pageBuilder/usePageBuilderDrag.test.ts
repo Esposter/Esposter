@@ -91,7 +91,11 @@ describe("usePageBuilderDrag", () => {
 
     const insertedId = pageBuilderCanvasStore.getSelectedNodeId(RESOURCE_ID);
     const document = pageBuilderDocumentStore.getDocument(RESOURCE_ID);
-    expect(document && getSlotChildIds(document, COLUMN_SLOT)).toStrictEqual([TEXT_ONE, insertedId, TEXT_TWO]);
+    expect(document && getSlotChildIds(webpageKind, document, COLUMN_SLOT)).toStrictEqual([
+      TEXT_ONE,
+      insertedId,
+      TEXT_TWO,
+    ]);
     expect(announce.mock.calls).toStrictEqual([[`Inserted ${TEXT_TITLE}`]]);
   });
 

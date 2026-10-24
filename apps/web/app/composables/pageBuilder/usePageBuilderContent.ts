@@ -1,3 +1,4 @@
+import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 import type { WebpageNode } from "#shared/models/pageBuilder/WebpageNode";
 import type { WebpageNodeDefinition } from "#shared/models/pageBuilder/WebpageNodeDefinition";
@@ -6,8 +7,6 @@ import type { MaybeRefOrGetter } from "vue";
 import type { z } from "zod";
 
 import { webpageRootFormSchema, webpageRootPropsSchema } from "#shared/models/pageBuilder/WebpageRootProps";
-import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
-import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { ROOT_INTERACTION_ID, ROOT_POINTER } from "@/services/pageBuilder/constants";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
@@ -30,8 +29,12 @@ type ContentValue = WebpageRootProps | z.output<WebpageNodeDefinition["propsSche
 
 // The target a selection edits: the selected node, or the root when nothing is selected or the id is not found.
 // The target is undefined when the node's type is not in the registry
-const getContentTarget = (document: WebpageDocument, nodeId: string): ContentTarget | undefined => {
-  const nodePointer = getNodePointer(document, nodeId);
+const getContentTarget = (
+  kind: PageBuilderKind,
+  document: WebpageDocument,
+  nodeId: string,
+): ContentTarget | undefined => {
+  const nodePointer = getNodePointer(kind, document, nodeId);
   if (nodePointer === undefined)
     return {
       formSchema: webpageRootFormSchema,
@@ -41,8 +44,8 @@ const getContentTarget = (document: WebpageDocument, nodeId: string): ContentTar
       propsSchema: webpageRootPropsSchema,
     };
 
-  const node = getBlockNode(document, nodePointer, webpageNodeChildren);
-  const definition = node && getBlockTypeDefinition(webpageRegistry, node.type);
+  const node = getBlockNode(document, nodePointer, kind.children);
+  const definition = node && getBlockTypeDefinition(kind.registry, node.type);
   if (!node || !definition) return undefined;
 
   return {
@@ -58,15 +61,15 @@ const getContentTarget = (document: WebpageDocument, nodeId: string): ContentTar
 // Shown by the form but not applied, and a value applies as one edit of the props it changes
 export const usePageBuilderContent = (resourceId: MaybeRefOrGetter<string>) => {
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-  const { getDocument } = pageBuilderDocumentStore;
+  const { getOpenDocument } = pageBuilderDocumentStore;
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
   const { getSelectedNodeId } = pageBuilderCanvasStore;
   const pageBuilderHistoryStore = usePageBuilderHistoryStore();
   const { applyEdit } = pageBuilderHistoryStore;
   const target = computed(() => {
     const resourceIdValue = toValue(resourceId);
-    const document = getDocument(resourceIdValue);
-    return document && getContentTarget(document, getSelectedNodeId(resourceIdValue));
+    const open = getOpenDocument(resourceIdValue);
+    return open && getContentTarget(open.kind, open.document, getSelectedNodeId(resourceIdValue));
   });
   // The form's value as the document holds it, which the form's draft follows whenever the document changes
   const savedValue = computed(() => {

@@ -12,16 +12,17 @@ import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 // Does nothing and announces nothing. A landed insert is one history entry, selects the new node and is announced once
 export const usePageBuilderInsert = (resourceId: MaybeRefOrGetter<string>, announce: (message: string) => void) => {
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-  const { getDocument } = pageBuilderDocumentStore;
+  const { getOpenDocument } = pageBuilderDocumentStore;
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
   const { getSelectedNodeId } = pageBuilderCanvasStore;
   const insert = (type: WebpageNodeType) => {
     const resourceIdValue = toValue(resourceId);
-    const document = getDocument(resourceIdValue);
-    if (!document) return;
+    const open = getOpenDocument(resourceIdValue);
+    if (!open) return;
 
+    const { document, kind } = open;
     const nodeId = getSelectedNodeId(resourceIdValue);
-    const target = getInsertTarget(document, type, nodeId ? getNodePointer(document, nodeId) : undefined);
+    const target = getInsertTarget(kind, document, type, nodeId ? getNodePointer(kind, document, nodeId) : undefined);
     if (target && insertAt(resourceIdValue, target.slotPointer, target.index, type))
       announce(`Inserted ${WEBPAGE_NODE_TYPE_TITLE_MAP[type]}`);
   };

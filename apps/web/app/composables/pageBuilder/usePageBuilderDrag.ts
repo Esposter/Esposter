@@ -1,4 +1,3 @@
-import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 import type { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import type { DropTarget } from "@/models/pageBuilder/DropTarget";
 import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
@@ -8,6 +7,8 @@ import { DRAG_THRESHOLD, WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuil
 import { insertAt } from "@/services/pageBuilder/insertAt";
 import { resolveDropTarget } from "@/services/pageBuilder/resolveDropTarget";
 import { toFramePoint } from "@/services/pageBuilder/toFramePoint";
+import type { OpenPageBuilderDocument } from "@/store/pageBuilder/document";
+
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 
 const checkIsInsideFrame = (point: { x: number; y: number }, frameRect: FrameGeometry["frameRect"]) =>
@@ -19,16 +20,16 @@ const checkIsInsideFrame = (point: { x: number; y: number }, frameRect: FrameGeo
 // The slot a block of the type dropped at a viewport point lands in, or none when the point is outside the frame, or when
 // The document is not held or no slot takes the type
 const getDropTargetAt = (
-  document: undefined | WebpageDocument,
+  open: undefined | OpenPageBuilderDocument,
   type: WebpageNodeType,
   point: { x: number; y: number },
   geometry: FrameGeometry | undefined,
 ): DropTarget | undefined => {
-  if (!document || !geometry || !checkIsInsideFrame(point, geometry.frameRect)) return undefined;
+  if (!open || !geometry || !checkIsInsideFrame(point, geometry.frameRect)) return undefined;
 
-  return resolveDropTarget({
+  return resolveDropTarget(open.kind, {
     checkIsHorizontalOwner: geometry.checkIsHorizontalOwner,
-    document,
+    document: open.document,
     draggedType: type,
     getChildRect: geometry.getChildRect,
     hoveredNodeId: geometry.hoveredNodeId,
@@ -41,7 +42,7 @@ const getDropTargetAt = (
 // That the block's own button handles, so the drag does nothing; Escape, a cancel or a release with no target inserts nothing
 export const usePageBuilderDrag = (resourceId: MaybeRefOrGetter<string>, announce: (message: string) => void) => {
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-  const { getDocument } = pageBuilderDocumentStore;
+  const { getOpenDocument } = pageBuilderDocumentStore;
   const dropTarget = shallowRef<DropTarget>();
   // Set once a drag passes the threshold, so the editor can let the pointer pass through the canvas frame, whose document would take it
   const isDragging = ref(false);
@@ -63,7 +64,7 @@ export const usePageBuilderDrag = (resourceId: MaybeRefOrGetter<string>, announc
       if (Math.hypot(point.x - startX, point.y - startY) >= DRAG_THRESHOLD) isDragging.value = true;
       if (!isDragging.value) return;
 
-      dropTarget.value = getDropTargetAt(getDocument(toValue(resourceId)), type, point, getFrameGeometry());
+      dropTarget.value = getDropTargetAt(getOpenDocument(toValue(resourceId)), type, point, getFrameGeometry());
     };
     const onPointerUp = () => {
       const wasDragging = isDragging.value;

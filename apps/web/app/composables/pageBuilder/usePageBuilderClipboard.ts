@@ -1,9 +1,7 @@
 import type { WebpageNode } from "#shared/models/pageBuilder/WebpageNode";
 import type { MaybeRefOrGetter } from "vue";
 
-import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { webpageNodeSchema } from "#shared/services/pageBuilder/webpageNodeSchema";
-import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
 import { CANNOT_GO_HERE_MESSAGE } from "@/services/pageBuilder/constants";
 import { getInsertTarget } from "@/services/pageBuilder/getInsertTarget";
@@ -26,7 +24,7 @@ export const usePageBuilderClipboard = (
   deleteNode: (nodeId: string) => boolean,
 ) => {
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-  const { getDocument } = pageBuilderDocumentStore;
+  const { getOpenDocument } = pageBuilderDocumentStore;
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
   const { getSelectedNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
   const pageBuilderHistoryStore = usePageBuilderHistoryStore();
@@ -34,13 +32,14 @@ export const usePageBuilderClipboard = (
   // The selected node with its id and title, or none when nothing is selected or the node is gone
   const getSelectedNode = () => {
     const resourceIdValue = toValue(resourceId);
-    const document = getDocument(resourceIdValue);
+    const open = getOpenDocument(resourceIdValue);
     const nodeId = getSelectedNodeId(resourceIdValue);
-    const nodePointer = document && nodeId ? getNodePointer(document, nodeId) : undefined;
-    if (!document || nodePointer === undefined) return undefined;
+    const nodePointer = open && nodeId ? getNodePointer(open.kind, open.document, nodeId) : undefined;
+    if (!open || nodePointer === undefined) return undefined;
 
-    const node = getBlockNode(document, nodePointer, webpageNodeChildren);
-    return node && { node, nodeId, title: getNodeTitle(document, parseJsonPointer(nodePointer)) };
+    const { document, kind } = open;
+    const node = getBlockNode(document, nodePointer, kind.children);
+    return node && { node, nodeId, title: getNodeTitle(kind, document, parseJsonPointer(nodePointer)) };
   };
   // Writes the node to the system clipboard and reports whether it landed; a clipboard that refuses announces that instead
   const writeToClipboard = (node: WebpageNode) =>
@@ -83,9 +82,12 @@ export const usePageBuilderClipboard = (
   const pasteSelected = async () => {
     const resourceIdValue = toValue(resourceId);
     const text = await readFromClipboard();
-    if (text === undefined) return;
+    // The document is read once the clipboard has answered, since the clipboard read waits and the document may have moved on
+    const open = getOpenDocument(resourceIdValue);
+    if (text === undefined || !open) return;
 
-    const clipboard = parseClipboardNodes(text);
+    const { document, kind } = open;
+    const clipboard = parseClipboardNodes(kind, text);
     if (!clipboard) {
       announce(CANNOT_GO_HERE_MESSAGE);
       return;
@@ -97,22 +99,25 @@ export const usePageBuilderClipboard = (
       return;
     }
 
-    const document = getDocument(resourceIdValue);
     const [firstNode] = clipboard.nodes;
-    if (!document) return;
     if (!firstNode) {
       announce(CANNOT_GO_HERE_MESSAGE);
       return;
     }
 
     const nodeId = getSelectedNodeId(resourceIdValue);
-    const target = getInsertTarget(document, firstNode.type, nodeId ? getNodePointer(document, nodeId) : undefined);
+    const target = getInsertTarget(
+      kind,
+      document,
+      firstNode.type,
+      nodeId ? getNodePointer(kind, document, nodeId) : undefined,
+    );
     if (!target) return;
 
     const operations = pasteBlockNodes(
       document,
-      webpageRegistry,
-      webpageNodeChildren,
+      kind.registry,
+      kind.children,
       webpageNodeSchema,
       clipboard.nodes,
       target.slotPointer,
@@ -125,10 +130,10 @@ export const usePageBuilderClipboard = (
 
     const pastedPointer = `${target.slotPointer}/${target.index}`;
     applyEdit(resourceIdValue, operations, "Paste block").match(() => {
-      const pastedDocument = getDocument(resourceIdValue);
-      const pastedId = getNodeIdAt(pastedDocument, pastedPointer);
+      const pasted = getOpenDocument(resourceIdValue);
+      const pastedId = pasted ? getNodeIdAt(pasted.kind, pasted.document, pastedPointer) : "";
       if (pastedId) setSelectedNodeId(resourceIdValue, pastedId);
-      const title = pastedDocument ? getNodeTitle(pastedDocument, parseJsonPointer(pastedPointer)) : "";
+      const title = pasted ? getNodeTitle(pasted.kind, pasted.document, parseJsonPointer(pastedPointer)) : "";
       if (title) announce(`Pasted ${title}`);
     }, console.error);
   };

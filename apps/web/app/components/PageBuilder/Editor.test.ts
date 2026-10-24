@@ -284,7 +284,7 @@ describe("pageBuilderEditor", () => {
     await component.trigger("keydown", { ctrlKey: true, key: "c" });
 
     expect(
-      writeText.mock.calls.map(([text]) => parseClipboardNodes(text)?.nodes.map(({ props }) => props.id)),
+      writeText.mock.calls.map(([text]) => parseClipboardNodes(webpageKind, text)?.nodes.map(({ props }) => props.id)),
     ).toStrictEqual([[TEST_ROOT_TEXT_ID]]);
   });
 

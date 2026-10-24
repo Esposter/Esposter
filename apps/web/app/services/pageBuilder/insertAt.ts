@@ -1,7 +1,5 @@
 import type { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 
-import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
-import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { createWebpageNode } from "@/services/pageBuilder/webpageNodeDefaults";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
@@ -12,14 +10,15 @@ import { insertBlockNode } from "headless-block-editor";
 // Edit applied. A slot that refuses the type, or a resource with no document held, applies nothing
 export const insertAt = (resourceId: string, slotPointer: string, index: number, type: WebpageNodeType): boolean => {
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-  const document = pageBuilderDocumentStore.getDocument(resourceId);
-  if (!document) return false;
+  const open = pageBuilderDocumentStore.getOpenDocument(resourceId);
+  if (!open) return false;
 
+  const { document, kind } = open;
   const insertedId = crypto.randomUUID();
   const operations = insertBlockNode(
     document,
-    webpageRegistry,
-    webpageNodeChildren,
+    kind.registry,
+    kind.children,
     slotPointer,
     index,
     createWebpageNode(type, insertedId),

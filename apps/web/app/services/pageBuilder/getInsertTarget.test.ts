@@ -6,6 +6,7 @@ import { TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import { TEST_SECTION_ID, TEST_WEBPAGE } from "@/services/pageBuilder/constants.test";
 import { getInsertTarget } from "@/services/pageBuilder/getInsertTarget";
 import { describe, expect, test } from "vitest";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 describe(getInsertTarget, () => {
   const TEST_COLUMNS_DOCUMENT: WebpageDocument = {
@@ -25,24 +26,23 @@ describe(getInsertTarget, () => {
   test("a column goes to the start of the empty columns it is selected in", () => {
     expect.hasAssertions();
 
-    expect(getInsertTarget(TEST_COLUMNS_DOCUMENT, WebpageNodeType.Column, "/content/0/props/children/0")).toStrictEqual(
-      { index: 0, slotPointer: "/content/0/props/children/0/props/children" },
-    );
+    expect(
+      getInsertTarget(webpageKind, TEST_COLUMNS_DOCUMENT, WebpageNodeType.Column, "/content/0/props/children/0"),
+    ).toStrictEqual({ index: 0, slotPointer: "/content/0/props/children/0/props/children" });
   });
 
   test("a node the selected container's slot refuses goes straight after the container", () => {
     expect.hasAssertions();
 
-    expect(getInsertTarget(TEST_COLUMNS_DOCUMENT, WebpageNodeType.Text, "/content/0/props/children/0")).toStrictEqual({
-      index: 1,
-      slotPointer: "/content/0/props/children",
-    });
+    expect(
+      getInsertTarget(webpageKind, TEST_COLUMNS_DOCUMENT, WebpageNodeType.Text, "/content/0/props/children/0"),
+    ).toStrictEqual({ index: 1, slotPointer: "/content/0/props/children" });
   });
 
   test("with no node selected, a node goes to the end of the page", () => {
     expect.hasAssertions();
 
-    expect(getInsertTarget(TEST_WEBPAGE, WebpageNodeType.Text, undefined)).toStrictEqual({
+    expect(getInsertTarget(webpageKind, TEST_WEBPAGE, WebpageNodeType.Text, undefined)).toStrictEqual({
       index: 2,
       slotPointer: "/content",
     });
@@ -51,9 +51,8 @@ describe(getInsertTarget, () => {
   test("a selected node places the new node straight after it in its own slot", () => {
     expect.hasAssertions();
 
-    expect(getInsertTarget(TEST_WEBPAGE, WebpageNodeType.Text, "/content/0/props/children/0")).toStrictEqual({
-      index: 1,
-      slotPointer: "/content/0/props/children",
-    });
+    expect(
+      getInsertTarget(webpageKind, TEST_WEBPAGE, WebpageNodeType.Text, "/content/0/props/children/0"),
+    ).toStrictEqual({ index: 1, slotPointer: "/content/0/props/children" });
   });
 });

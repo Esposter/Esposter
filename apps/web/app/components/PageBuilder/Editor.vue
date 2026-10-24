@@ -2,7 +2,6 @@
 import type { UiTabItem } from "@/models/ui/UiTabItem";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { KeyAction } from "@/models/pageBuilder/KeyAction";
 import { KeyScope } from "@/models/pageBuilder/KeyScope";
 import {
@@ -31,7 +30,7 @@ const panelItems: UiTabItem<string>[] = [
 
 const { resourceId } = defineProps<Props>();
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-const { getDocument } = pageBuilderDocumentStore;
+const { getDocument, getOpenDocument } = pageBuilderDocumentStore;
 const pageDocument = computed(() => getDocument(resourceId));
 const pageBuilderCanvasStore = usePageBuilderCanvasStore();
 const { getEditingNodeId, getSelectedNodeId, setEditingNodeId } = pageBuilderCanvasStore;
@@ -61,11 +60,11 @@ const getFrameGeometry = () => canvas.value?.getFrameGeometry();
 
 // Enter edits the selected node in place when it is a text node, and does nothing for any other node
 const startTextEdit = () => {
-  const document = getDocument(resourceId);
+  const open = getOpenDocument(resourceId);
   const nodeId = getSelectedNodeId(resourceId);
-  const nodePointer = document && getNodePointer(document, nodeId);
-  if (!document || nodePointer === undefined) return;
-  if (getBlockNode(document, nodePointer, webpageNodeChildren)?.type !== WebpageNodeType.Text) return;
+  const nodePointer = open && getNodePointer(open.kind, open.document, nodeId);
+  if (!open || nodePointer === undefined) return;
+  if (getBlockNode(open.document, nodePointer, open.kind.children)?.type !== WebpageNodeType.Text) return;
 
   setEditingNodeId(resourceId, nodeId);
 };

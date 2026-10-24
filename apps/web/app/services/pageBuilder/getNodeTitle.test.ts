@@ -7,6 +7,7 @@ import { WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
 import { TEST_WEBPAGE } from "@/services/pageBuilder/constants.test";
 import { getNodeTitle } from "@/services/pageBuilder/getNodeTitle";
 import { describe, expect, test } from "vitest";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 describe(getNodeTitle, () => {
   const createColumnsDocument = (): WebpageDocument => ({
@@ -37,7 +38,9 @@ describe(getNodeTitle, () => {
   test("a node with no other node of its type beside it is titled by its type", () => {
     expect.hasAssertions();
 
-    expect(getNodeTitle(TEST_WEBPAGE, ["content", "1"])).toBe(WEBPAGE_NODE_TYPE_TITLE_MAP[WebpageNodeType.Text]);
+    expect(getNodeTitle(webpageKind, TEST_WEBPAGE, ["content", "1"])).toBe(
+      WEBPAGE_NODE_TYPE_TITLE_MAP[WebpageNodeType.Text],
+    );
   });
 
   test("a node with others of its type beside it is numbered by its position among them", () => {
@@ -45,10 +48,10 @@ describe(getNodeTitle, () => {
 
     const columnsSegments = ["content", "0", "props", "children", "0", "props", "children"];
 
-    expect(getNodeTitle(createColumnsDocument(), [...columnsSegments, "0"])).toBe(
+    expect(getNodeTitle(webpageKind, createColumnsDocument(), [...columnsSegments, "0"])).toBe(
       `${WEBPAGE_NODE_TYPE_TITLE_MAP[WebpageNodeType.Column]} 1`,
     );
-    expect(getNodeTitle(createColumnsDocument(), [...columnsSegments, "1"])).toBe(
+    expect(getNodeTitle(webpageKind, createColumnsDocument(), [...columnsSegments, "1"])).toBe(
       `${WEBPAGE_NODE_TYPE_TITLE_MAP[WebpageNodeType.Column]} 2`,
     );
   });
@@ -56,6 +59,6 @@ describe(getNodeTitle, () => {
   test("a pointer that names no node has no title", () => {
     expect.hasAssertions();
 
-    expect(getNodeTitle(TEST_WEBPAGE, ["content", "9"])).toBe("");
+    expect(getNodeTitle(webpageKind, TEST_WEBPAGE, ["content", "9"])).toBe("");
   });
 });

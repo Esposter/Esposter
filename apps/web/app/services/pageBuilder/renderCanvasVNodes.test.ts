@@ -5,6 +5,7 @@ import { renderCanvasVNodes } from "@/services/pageBuilder/renderCanvasVNodes";
 import { takeOne } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
 import { isVNode } from "vue";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 describe(renderCanvasVNodes, () => {
   test("a section holding a text node stamps each node's id on its own root element", () => {
@@ -13,6 +14,7 @@ describe(renderCanvasVNodes, () => {
     const content = { content: [{ content: [{ text: "a", type: "text" }], type: "paragraph" }], type: "doc" };
     const section = takeOne(
       renderCanvasVNodes(
+        webpageKind,
         {
           content: [
             {
@@ -43,6 +45,7 @@ describe(renderCanvasVNodes, () => {
 
     const custom = takeOne(
       renderCanvasVNodes(
+        webpageKind,
         {
           content: [
             {

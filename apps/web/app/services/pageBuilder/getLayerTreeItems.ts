@@ -1,19 +1,19 @@
+import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 import type { UiTreeItem } from "@/models/ui/UiTreeItem";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
 import { getBlockLayerRows, getBlockNode } from "headless-block-editor";
 
 // The layers tree's items: each row is a child of the nearest earlier row one depth up, labelled by its type's title.
 // A row whose node or title cannot be read is skipped
-export const getLayerTreeItems = (document: WebpageDocument): UiTreeItem[] => {
+export const getLayerTreeItems = (kind: PageBuilderKind, document: WebpageDocument): UiTreeItem[] => {
   const roots: UiTreeItem[] = [];
   // The open ancestors of the row being placed, the deepest last
   const ancestors: { depth: number; item: UiTreeItem }[] = [];
-  for (const row of getBlockLayerRows(document, webpageNodeChildren)) {
-    const node = getBlockNode(document, row.nodePointer, webpageNodeChildren);
+  for (const row of getBlockLayerRows(document, kind.children)) {
+    const node = getBlockNode(document, row.nodePointer, kind.children);
     // A row's type is a string the document holds, so its title is looked up only for a type the enum names
     const nodeType = Object.values(WebpageNodeType).find((type) => type === row.type);
     const id = node?.props.id;
