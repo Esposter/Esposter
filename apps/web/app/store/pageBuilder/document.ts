@@ -38,7 +38,6 @@ export const usePageBuilderDocumentStore = defineStore("pageBuilder/document", (
   // The document held under either type, for the edit path that applies to a webpage or an email alike
   const getHeldDocument = (resourceId: string) => documentMap.value.get(resourceId);
   const getDocument = (resourceId: string) => getOpenDocument(resourceId)?.document;
-  const getKind = (resourceId: string) => getOpenDocument(resourceId)?.kind;
   const getEmailDocument = (resourceId: string) => getOpenEmailDocument(resourceId)?.document;
   // The one place a document is held: the kind it is opened as is held with it, and a document replaced keeps the kind
   // It was opened as only when the caller passes that kind again
@@ -59,7 +58,6 @@ export const usePageBuilderDocumentStore = defineStore("pageBuilder/document", (
     getDocument,
     getEmailDocument,
     getHeldDocument,
-    getKind,
     getOpenDocument,
     saveDocument,
     setDocument,

@@ -1,27 +1,21 @@
 import type { StyleProperty } from "#shared/models/pageBuilder/StyleProperty";
 import type { PageBuilderHistoryEntry } from "@/models/pageBuilder/PageBuilderHistoryEntry";
-import type { JsonPatchOperation } from "@esposter/shared";
 import type { MaybeRefOrGetter } from "vue";
 
 import { DEVICE_BREAKPOINT_MAP } from "@/services/pageBuilder/constants";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { getStyleInheritance } from "@/services/pageBuilder/getStyleInheritance";
+import { getStyleOperation } from "@/services/pageBuilder/getStyleOperation";
 import { setStyleProperty } from "@/services/pageBuilder/setStyleProperty";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { usePageBuilderStyleClipboardStore } from "@/store/pageBuilder/styleClipboard";
-import { JsonPatchOperationType, noop } from "@esposter/shared";
+import { noop } from "@esposter/shared";
 import { getBlockNode } from "headless-block-editor";
 
 // What one field edit writes: the operations, and the history entry they record as
 type FieldEdit = Pick<PageBuilderHistoryEntry, "interactionId" | "label" | "operations">;
-// The operation that writes a node's style, so a field's edit and a paste write it the same way
-const getStyleOperation = (pointer: string, style: unknown): JsonPatchOperation => ({
-  op: JsonPatchOperationType.Add,
-  path: `${pointer}/props/style`,
-  value: style,
-});
 
 // The style of the selected node at the breakpoint the device edits and the state the style panel edits. A field's edit
 // Merges into one history entry per field, state and breakpoint, and a reset is an entry of its own

@@ -26,13 +26,14 @@ const { announce, dropTarget, resourceId } = defineProps<Props>();
 const emit = defineEmits<{ canvasKeydown: [event: KeyboardEvent] }>();
 const { origin } = useRequestURL();
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-const { getDocument, getKind } = pageBuilderDocumentStore;
+const { getOpenDocument } = pageBuilderDocumentStore;
 const pageBuilderCanvasStore = usePageBuilderCanvasStore();
 const { getDevice, getEditingNodeId, getSelectedNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
 const pageBuilderHistoryStore = usePageBuilderHistoryStore();
 const { getPreview } = pageBuilderHistoryStore;
-const pageDocument = computed(() => getDocument(resourceId));
-const pageKind = computed(() => getKind(resourceId));
+const pageOpen = computed(() => getOpenDocument(resourceId));
+const pageDocument = computed(() => pageOpen.value?.document);
+const pageKind = computed(() => pageOpen.value?.kind);
 const selectedNodeId = computed(() => getSelectedNodeId(resourceId));
 const editingNodeId = computed(() => getEditingNodeId(resourceId));
 // The document the frame draws. While a text node is edited it stays as it was when the edit began.
