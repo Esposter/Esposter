@@ -7,6 +7,7 @@ import { checkIsStackedColumns } from "#shared/services/pageBuilder/email/checkI
 import { getEmailAttributeValue } from "#shared/services/pageBuilder/email/getEmailAttributeValue";
 import { getEmailColumnWidths } from "#shared/services/pageBuilder/email/getEmailColumnWidths";
 import { renderNoteHtml } from "#shared/services/resource/note/renderNoteHtml";
+import { takeOne } from "@esposter/shared";
 import { getBlockSlots, renderBlockNodes } from "headless-block-editor";
 import { MjmlNodeType } from "mjml-blocks";
 import { h } from "vue";
@@ -42,7 +43,7 @@ export const renderEmailCanvasVNodes = (kind: EmailKind, document: EmailDocument
           },
         },
         childNodes.map((column, index) =>
-          h("div", { style: { minWidth: 0, width: isStacked ? "100%" : widths[index] } }, [column]),
+          h("div", { style: { minWidth: 0, width: isStacked ? "100%" : takeOne(widths, index) } }, [column]),
         ),
       );
     }
