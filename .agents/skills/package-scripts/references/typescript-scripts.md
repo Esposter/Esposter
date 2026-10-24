@@ -23,8 +23,8 @@ script that needs one of these runs under `vpx`, the bin of the root's `vite-plu
 already on `node` moves the day an import it reaches — its own or one several hops away — gains an enum, which
 is a startup crash rather than a type error; `scripts/src/workspace/packageScripts.test.ts` strips every module a
 `node` entry reaches with node's own stripper, and fails on the first one it cannot run. The root declares none: it owns no `.ts` script of its own, and
-each `graph:gen`/`outdated:dependencies`/`ai:*` name there is a bare `pnpm -C scripts <name>` delegation to the package
-that does.
+each `graph:gen`/`outdated:dependencies`/`ai:*` name there is a bare `pnpm -C <package> <name>` delegation to the package
+that does: `scripts`, or `apps/web` for `ai:unocss:generate`.
 
 **The same holds where no package script runs the file.** Where the tool runs a bare `node <path>` — a plugin's hooks
 and commands — the file must run under `node` alone, so it takes no `enum`: the persona plugin writes each as an

@@ -1,6 +1,6 @@
 # GrapesJS
 
-The init composable, the storage and asset adapters, block re-sync, and save-time HTML and CSS capture.
+The init composable, the storage and asset adapters, block re-sync, and the email editor's save-time HTML capture.
 
 | Unit                                                                                                                                                | Swept                  | Notes |
 | --------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- | ----- |

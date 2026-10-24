@@ -34,7 +34,7 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 - **`private` → ECMAScript `#`** (`no-restricted-syntax` in `packages/configuration/eslint/typescriptRules.js`). Keep `readonly` when converting (`private readonly foo` → `readonly #foo`); `protected` stays, as `#` is inaccessible to subclasses.
 - `.forEach()` is **banned** — use `for...of` (`references/loops.md`); `unicorn/no-array-for-each` enforces it in script, `vue/no-restricted-syntax` in templates.
 - `type` aliases for object shapes → `interface` (`consistent-type-definitions`).
-- **The newest platform API, always, and the form it replaces is banned** — every `unicorn/prefer-*` rule is on repo-wide for that reason, so a legacy form fails lint rather than review; one no rule decides is a finding, and a new replacement earns a `no-restricted-syntax` entry the first time it is re-found.
+- **The newest platform API, always, and the form it replaces is banned** — every `unicorn/prefer-*` rule not turned off in `oxlint.config.ts` is on repo-wide for that reason, so a legacy form fails lint rather than review; one no rule decides is a finding, and a new replacement earns a `no-restricted-syntax` entry the first time it is re-found.
 - **Non-mutating array methods, enforced** — `sort()`, `reverse()` and `splice()` are lint errors; write `toSorted`/`toReversed`/`toSpliced` and assign the result back (`references/collections.md`).
 - **Never hand-roll read-or-insert on a `Map`** — `getOrCreate(map, key, () => new Set())` from `@esposter/shared` (`references/collections.md`).
 - **Never declare what nothing uses** — every export (schema, type, constant, pluralized enum array) earns its existence with a call site; no speculative API. When removing the last consumer of an export, cascade-delete the newly orphaned export and its now-unused imports too.
@@ -48,7 +48,7 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 - **`as unknown as T` is `any` with extra steps** — a `no-restricted-syntax` error in source (`restrictedSourceSyntaxes.js`; a suite's fakes are exempt), so a surviving one is a disable naming what the compiler cannot see — never "this is safe"; the seams that earn one are `references/type-modelling.md`.
 - **A compiler limit (TS2590) is a tagged `@ts-expect-error` in place, not a redesign** (`references/type-modelling.md`).
 - **Never `Object.values(SomeEnum)` inline**, and never abbreviate an enum value name (`Configuration`, not `Config`).
-- **A union of string literals is an enum** — `"delete" | "get"` becomes `enum HttpMethod` in its own model file and the annotation names it, enforced repo-wide by `literal-union/no-string-literal-union`; the unions that are not sets, and the `as const` exceptions (the Nuxt configuration's graph and bare-`node` plugin code), are `references/enums.md`.
+- **A union of string literals is an enum** — `"delete" | "get"` becomes `enum HttpMethod` in its own model file and the annotation names it, enforced repo-wide by `literal-union/no-string-literal-union`; the unions that are not sets, and the `as const` exceptions (the Nuxt configuration's and a Nuxt module's graphs, and bare-`node` plugin code), are `references/enums.md`.
 - **Track selections by stable ID, not name or index** — names change, indices shift on delete/reorder. Use `entity.id` (UUID) as the key for selected/active items. A stale ID is harmless; a stale name/index is a bug.
 
 ## Functions

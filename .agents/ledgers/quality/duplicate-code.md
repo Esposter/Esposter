@@ -10,7 +10,7 @@ Where a finding's home looked missing, it is settled:
 
 - **Across packages:** isomorphic code goes to `@esposter/shared`, and server-only code to `@esposter/shared-node`. Otherwise it goes to the lowest package both sides already depend on. A gap there is filled, not worked around.
 - **Parallel Drizzle tables:** they share column builders, as the metadata columns already do. Where two tables name one concept differently, a `db:gen` migration renames the columns to the shared builder's names.
-- **The standalone plugins** (`follow-ups`, `genshin-persona`): they import `@esposter/shared` as a devDependency, which tsdown bundles into the plugin, so a standalone install still carries it.
+- **The standalone plugins** (`follow-ups`, `genshin-persona`): they carry no `@esposter/shared`, since each installs with no build, so a helper one needs is written in its own package.
 - **Claude mods:** a pure helper is shared through a relative import inside the plugin. Only a function calling `$`, or making an atom, stays in its register file, as the engine requires.
 - **Styles:** they are shared through a shared component or stylesheet, and the visual suites stay unchanged. A style edit is never landed through a `-u`.
 - **Measured data:** a clone made only of numeric literal rows, or of keyed empty collections (`key: [],`, `key: {},`, an object of only those), is data, not code. The finder skips it.

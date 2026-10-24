@@ -44,7 +44,7 @@ export const fooTypeSchema = z.enum(FooType) satisfies z.ZodType<FooType>;
 ## Values array
 
 - **Export a pluralized values collection from the enum file only when it's actually used** — at the bottom, after the Zod schema. Never pre-emptively: an export with zero call sites is dead code.
-- **Plain `Object.values` array by default, `new Set` only when Set functionality is genuinely used** — enum values are unique by construction, so a Set adds nothing for iteration and forces `[...EnumNames]` spreads at every array call site (`v-for`, `.map`, `.filter`, `.join` all want arrays). Reach for a Set only when call sites actually use `.has()`/`.difference()`, or the source can contain duplicates (e.g. `BazTypes` dedupes mime-type values):
+- **Plain `Object.values` array by default, `new Set` only when Set functionality is genuinely used** — enum values are unique by construction, so a Set adds nothing for iteration and forces `[...EnumNames]` spreads at every array call site (`v-for`, `.map`, `.filter`, `.join` all want arrays). Reach for a Set only when call sites actually use `.has()`/`.difference()`, or the source can contain duplicates (e.g. a list of mime-type values, where several entries share one value):
 
   ```ts
   // Default — plain array; iterate, map, filter, join directly with no spreads
@@ -74,11 +74,11 @@ model file and the annotation names the enum. These unions are **not** sets: `""
 discriminant (`type: "ApiConnection"`), a numeric union, and a union passed as a type argument
 (`Pick<Foo, "a" | "b">` names keys).
 
-`literal-union/no-string-literal-union` (`scripts/src/oxlint/literalUnion.ts`) enforces it repo-wide; a site that
+`literal-union/no-string-literal-union` (`scripts/src/oxlint/literalUnion.ts`) enforces it repo-wide, except in declaration files; a site that
 genuinely cannot be an enum carries a disable stating why, as `ExportsGeneration` does for tsdown's strip-only
 config loading.
 
-## The Nuxt configuration and bare-`node` plugins are the `as const` exceptions
+## The Nuxt configuration, Nuxt modules and bare-`node` plugins are the `as const` exceptions
 
 Nuxt loads `apps/web/nuxt.config.ts` with Node's own strip-only type stripping and falls back to jiti only when that
 fails, and jiti transforms every file of the configuration's graph on every load — every `nuxt prepare`, `dev`,
@@ -91,7 +91,7 @@ export const ThemeMode = { Dark: "dark", Light: "light", System: "system" } as c
 export type ThemeMode = (typeof ThemeMode)[keyof typeof ThemeMode];
 ```
 
-The exceptions are those two graphs, which Node's type stripping loads with no loader: the Nuxt configuration's, and a
+The exceptions are those graphs, which Node's type stripping loads with no loader: the Nuxt configuration's, a Nuxt module's, and a
 Claude Code plugin's hooks and commands, which run under a bare `node`, so every file they reach declares its closed set
 the same way (the persona plugin's `src/models`). A Nuxt module's `module.ts` is loaded the same way, by Node's type stripping, and its native
 graph must hold no enum: `scripts/src/workspace/nuxtModuleNativeLoad.test.ts` loads each module's entry under plain
