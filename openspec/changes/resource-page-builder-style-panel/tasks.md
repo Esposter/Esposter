@@ -1,7 +1,7 @@
 ## 1. Storage and output
 
-- [ ] 1.1 Store each node's styles per breakpoint and state, with no shared class and no free stylesheet. Verify: a test named after the scenario 'A style applies only to the node it was set on'.
-- [ ] 1.2 Emit the breakpoint rules desktop first, with each override applying at its width and below, and the hover rule also on keyboard focus. Verify: tests named after the scenarios 'A tablet override applies at 991 pixels and below', 'A mobile override wins over a tablet override' and 'A hover style also applies when a reader tabs to a button'.
+- [x] 1.1 Store each node's styles per breakpoint and state, with no shared class and no free stylesheet. Verify: a test named after the scenario 'A style applies only to the node it was set on'.
+- [x] 1.2 Emit the breakpoint rules desktop first, with each override applying at its width and below, and the hover rule also on keyboard focus. Verify: tests named after the scenarios 'A tablet override applies at 991 pixels and below', 'A mobile override wins over a tablet override' and 'A hover style also applies when a reader tabs to a button'.
 
 ## 2. Values and tokens
 
