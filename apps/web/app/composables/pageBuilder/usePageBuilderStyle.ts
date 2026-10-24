@@ -1,4 +1,5 @@
 import type { StyleProperty } from "#shared/models/pageBuilder/StyleProperty";
+import type { PageBuilderHistoryEntry } from "@/models/pageBuilder/PageBuilderHistoryEntry";
 import type { JsonPatchOperation } from "@esposter/shared";
 import type { MaybeRefOrGetter } from "vue";
 
@@ -13,12 +14,14 @@ import { usePageBuilderStyleClipboardStore } from "@/store/pageBuilder/styleClip
 import { JsonPatchOperationType, noop } from "@esposter/shared";
 import { getBlockNode } from "headless-block-editor";
 
-// What one field edit writes: the operations, and the history entry they record as. Typed so the operations take their op literals
-interface FieldEdit {
-  interactionId?: string;
-  label: string;
-  operations: JsonPatchOperation[];
-}
+// What one field edit writes: the operations, and the history entry they record as
+type FieldEdit = Pick<PageBuilderHistoryEntry, "interactionId" | "label" | "operations">;
+// The operation that writes a node's style, so a field's edit and a paste write it the same way
+const getStyleOperation = (pointer: string, style: unknown): JsonPatchOperation => ({
+  op: JsonPatchOperationType.Add,
+  path: `${pointer}/props/style`,
+  value: style,
+});
 
 // The style of the selected node at the breakpoint the device edits and the state the style panel edits. A field's edit
 // Merges into one history entry per field, state and breakpoint, and a reset is an entry of its own
@@ -64,12 +67,8 @@ export const usePageBuilderStyle = (resourceId: MaybeRefOrGetter<string>) => {
 
     const breakpoint = getBreakpoint();
     const state = getState();
-    const operations: JsonPatchOperation[] = [
-      {
-        op: JsonPatchOperationType.Add,
-        path: `${targetValue.pointer}/props/style`,
-        value: setStyleProperty(targetValue.style, breakpoint, state, property, value),
-      },
+    const operations = [
+      getStyleOperation(targetValue.pointer, setStyleProperty(targetValue.style, breakpoint, state, property, value)),
     ];
     return {
       interactionId: value === "" ? undefined : `style:${targetValue.nodeId}:${breakpoint}:${state}:${property}`,
@@ -103,11 +102,10 @@ export const usePageBuilderStyle = (resourceId: MaybeRefOrGetter<string>) => {
     const { copiedStyle } = pageBuilderStyleClipboardStore;
     if (!targetValue || !copiedStyle) return;
 
-    applyEdit(
-      toValue(resourceId),
-      [{ op: JsonPatchOperationType.Add, path: `${targetValue.pointer}/props/style`, value: copiedStyle }],
-      "Paste style",
-    ).match(noop, console.error);
+    applyEdit(toValue(resourceId), [getStyleOperation(targetValue.pointer, copiedStyle)], "Paste style").match(
+      noop,
+      console.error,
+    );
   };
 
   return {
