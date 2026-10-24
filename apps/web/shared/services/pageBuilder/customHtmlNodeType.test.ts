@@ -38,7 +38,7 @@ describe("customHtmlNodeType", () => {
       renderCustomHtml(
         '<img src="x" onerror="alert(1)"><script>alert(1)</script><iframe src="https://example.com"></iframe>',
       ),
-    ).not.toMatch(/onerror|<script|<iframe/u);
+    ).toBe('<div class="custom-html"></div>');
   });
 
   test("an svg xlink href is removed", () => {
