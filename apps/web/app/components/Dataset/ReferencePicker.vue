@@ -7,6 +7,7 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { authClient } from "@/services/auth/authClient";
 import { DatasetProviderTypeIconMeaningMap } from "@/services/dataset/DatasetProviderTypeIconMeaningMap";
 import { DatasetProviderTypeItemCategoryDefinitions } from "@/services/dataset/DatasetProviderTypeItemCategoryDefinitions";
+import { DatasetProviderTypeSourceRouterMap } from "@/services/dataset/DatasetProviderTypeSourceRouterMap";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { getResultAsync, MAX_READ_LIMIT, noop } from "@esposter/shared";
 
@@ -20,12 +21,12 @@ const modelValue = defineModel<DatasetReference | undefined>({ required: true })
 const { $trpc } = useNuxtApp();
 const session = authClient.useSession();
 const type = ref(modelValue.value?.type ?? DatasetProviderType.SurveyResponses);
-const datasetProviderTypeSourceReaderMap: Record<DatasetProviderType, () => Promise<{ id: string; name: string }[]>> = {
-  [DatasetProviderType.ProgramStatus]: async () =>
-    (await $trpc.program.readResources.query({ limit: MAX_READ_LIMIT })).items,
-  [DatasetProviderType.Sheet]: async () => (await $trpc.sheet.readResources.query({ limit: MAX_READ_LIMIT })).items,
-  [DatasetProviderType.SurveyResponses]: async () =>
-    (await $trpc.survey.readResources.query({ limit: MAX_READ_LIMIT })).items,
+// Every provider type lists its sources the one way, a page of its router's resources
+const readSources = async (providerType: DatasetProviderType): Promise<{ id: string; name: string }[]> => {
+  const { items } = await $trpc[DatasetProviderTypeSourceRouterMap[providerType]].readResources.query({
+    limit: MAX_READ_LIMIT,
+  });
+  return items;
 };
 // Filed under the provider type they were read for rather than in one list, because a read of the type left behind
 // Can land after the one picked now: listed under it, a survey would be offered as a sheet, and picking it would bind
@@ -36,7 +37,7 @@ const sourceItems = computed(() => typeSourceItemsMap.value.get(type.value) ?? [
 watchImmediate([() => session.value.data, type], async ([newSession, newType]) => {
   if (!newSession) return;
   await getResultAsync(async () => {
-    const sources = await datasetProviderTypeSourceReaderMap[newType]();
+    const sources = await readSources(newType);
     typeSourceItemsMap.value.set(
       newType,
       sources.map(({ id, name }) => ({ meaning: DatasetProviderTypeIconMeaningMap[newType], title: name, value: id })),
