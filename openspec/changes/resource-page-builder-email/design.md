@@ -66,7 +66,7 @@ Verified at `c3996b74`: the six email suites pass (11 tests); `vue-tsc -p .nuxt/
 ### Calls already made
 
 - The email document type is `z.output<typeof emailDocumentSchema>`, derived from the app's schema, not `MjmlDocument` from `mjml-blocks`. Importing `MjmlDocument` gives `never` leaves in the app program, because `apps/web/shared/models/pageBuilder/EmailSurveyInviteNode.ts` augments `MjmlLeafNodes`.
-- The document store holds an email beside a webpage under its resource type. The webpage getters (`getDocument`, `getKind`, `getOpenDocument`) still read webpages only, and `getEmailDocument` reads emails. The history store applies and commits either by type (`applyEdit` dispatches on it), and its tests cover an email edit and its undo. Widening the webpage getters to the union was tried twice (8 errors, then 59 to 61) and reverted, since each composable still takes a webpage.
+- The document store holds an email beside a webpage under its resource type. The webpage getters (`getDocument`, `getOpenDocument`) still read webpages only, and `getEmailDocument` reads emails. The history store applies and commits either by type (`applyEdit` dispatches on it), and its tests cover an email edit and its undo. Widening the webpage getters to the union was tried twice (8 errors, then 59 to 61) and reverted, since each composable still takes a webpage.
 
 ### Open items
 
