@@ -47,6 +47,7 @@ flowchart LR
 | `apps/web/server/trpc/routers/userToRoom.ts`                     | `clearMentionCount`                                       |
 | `apps/web/app/pages/messages/[id]/index.vue`                     | clears the count on room view                             |
 | `apps/web/app/components/Message/Model/Room/List/Item.vue`       | red count chip                                            |
+| `apps/web/app/services/message/room/list/checkIsRoomUnread.ts`   | the unread marker the chip takes precedence over          |
 
 ## Notes
 

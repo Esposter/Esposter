@@ -17,7 +17,7 @@ Scheduled rows come from `message.scheduledMessageJob.readMyScheduledMessageJobs
 ## Sidebar indicators
 
 - Draft count: `i-mdi:pencil` immediately followed by the number; scheduled count: `i-mdi:clock-outline` + number.
-- Room list items with drafts show a right-side `i-mdi:pencil` indicator and bold the room name (no `- Draft` suffix).
+- Room list items with drafts show a right-side `i-mdi:pencil` indicator and bold the room name (no `- Draft` suffix). The rule is `checkHasRoomDraft`, which counts a thread's draft as its room's.
 
 ## Row actions
 

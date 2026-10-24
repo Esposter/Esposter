@@ -5,7 +5,8 @@ import type { RoomInMessage } from "@esposter/db-schema";
 import { pluralize } from "#shared/util/text/pluralize";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getComposerTarget } from "@/services/message/composer/getComposerTarget";
+import { checkHasRoomDraft } from "@/services/message/room/list/checkHasRoomDraft";
+import { checkIsRoomUnread } from "@/services/message/room/list/checkIsRoomUnread";
 import { useInputStore } from "@/store/message/input";
 import { useRoomStore } from "@/store/message/room";
 import { useRoomDialogStore } from "@/store/message/room/dialog";
@@ -29,25 +30,18 @@ const { checkHasMyPermission, checkIsManageable } = roleStore;
 const roomDialogStore = useRoomDialogStore();
 const { inviteRoomId, settingsRoomId } = storeToRefs(roomDialogStore);
 const isActive = computed(() => room.id === currentRoomId.value);
-// A thread's draft counts as the room's, because the room list is the only place either is surfaced — a reply
-// Half-written in a thread pane is otherwise invisible until the drafts page is opened
-const hasDraft = computed(
-  () =>
-    !isActive.value &&
-    [...drafts.value.keys()].some((composerKey) => getComposerTarget(composerKey)?.roomId === room.id),
-);
+const hasDraft = computed(() => !isActive.value && checkHasRoomDraft([...drafts.value.keys()], room.id));
 const userToRoomStore = useUserToRoomStore();
 const { getMyUserToRoom } = userToRoomStore;
 const myUserToRoom = computed(() => getMyUserToRoom(room.id));
-const hasUnread = computed(() => {
-  if (isActive.value) return false;
-  if (!myUserToRoom.value) return false;
-  // A member who has never read the room has read nothing since joining it
-  const lastReadAt = myUserToRoom.value.lastReadAt ?? myUserToRoom.value.createdAt;
-  return lastReadAt < room.updatedAt;
-});
+const hasUnread = computed(
+  () => !isActive.value && myUserToRoom.value !== undefined && checkIsRoomUnread(myUserToRoom.value, room.updatedAt),
+);
 const mentionCount = computed(() => (isActive.value ? 0 : (myUserToRoom.value?.mentionCount ?? 0)));
 const isSettingsVisible = computed(() => room.userId === session.value?.user.id || checkIsManageable(room.id));
+const openSettings = () => {
+  settingsRoomId.value = room.id;
+};
 // Discord's channel menu, cut to what this room can do: inviting where the reader may mint a link, and its settings
 // Where the reader may change them — the same settings the row's own button opens
 const contextMenuItems = computed<Item[]>(() => [
@@ -63,15 +57,7 @@ const contextMenuItems = computed<Item[]>(() => [
       ]
     : []),
   ...(isSettingsVisible.value
-    ? [
-        {
-          meaning: UiIconMeaning.Settings,
-          onClick: () => {
-            settingsRoomId.value = room.id;
-          },
-          title: "Room settings",
-        },
-      ]
+    ? [{ meaning: UiIconMeaning.Settings, onClick: openSettings, title: "Room settings" }]
     : []),
 ]);
 </script>
@@ -103,7 +89,7 @@ const contextMenuItems = computed<Item[]>(() => [
         label="Room settings"
         :meaning="UiIconMeaning.Settings"
         :variant="UiButtonVariant.Quiet"
-        @click="settingsRoomId = room.id"
+        @click="openSettings()"
       />
     </template>
   </MessageModelRoomBaseListItem>
