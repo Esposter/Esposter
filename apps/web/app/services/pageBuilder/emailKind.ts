@@ -9,6 +9,7 @@ import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry"
 import { emailRootFormSchema } from "#shared/services/pageBuilder/email/emailRootFormSchema";
 import { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
 import { EMAIL_PALETTE_CATEGORIES } from "@/services/pageBuilder/email/constants";
+import { MjmlNodeType } from "mjml-blocks";
 
 export const emailKind: EmailKind = {
   children: emailNodeChildren,
@@ -19,5 +20,6 @@ export const emailKind: EmailKind = {
   paletteCategories: EMAIL_PALETTE_CATEGORIES,
   registry: emailRegistry,
   rootFormSchema: emailRootFormSchema,
+  textType: MjmlNodeType.Text,
   titles: EMAIL_NODE_TYPE_TITLE_MAP,
 };

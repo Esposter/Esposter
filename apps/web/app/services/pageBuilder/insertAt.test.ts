@@ -12,7 +12,10 @@ import { describe, expect, test, vi } from "vitest";
 const insertIntoResource = (resourceId: string, slotPointer: string, index: number, type: WebpageNodeType) => {
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
   const document = pageBuilderDocumentStore.getDocument(resourceId);
-  return document !== undefined && insertAt(webpageKind, document, resourceId, slotPointer, index, type);
+  return (
+    document !== undefined &&
+    insertAt(webpageKind, document, resourceId, slotPointer, index, (id) => webpageKind.createNode(type, id))
+  );
 };
 
 // The id the insert gives its new node is fixed, so a test reads it exactly

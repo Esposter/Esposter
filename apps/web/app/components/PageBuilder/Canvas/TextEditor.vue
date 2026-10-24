@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { TextNodeProps } from "#shared/models/pageBuilder/TextNodeProps";
+import type { AnyPageBuilderKind } from "@/models/pageBuilder/AnyPageBuilderKind";
 
-import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensions";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
+import { MergeFieldExtension } from "@/services/pageBuilder/MergeFieldExtension";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
@@ -12,33 +13,35 @@ import { EditorContent, useEditor } from "@tiptap/vue-3";
 import { getBlockNode, updateBlockNodeProps } from "headless-block-editor";
 
 interface Props {
+  // The kind the resource's document is edited through, which names the type of the node whose content is edited here
+  kind: AnyPageBuilderKind;
   nodeId: string;
   resourceId: string;
 }
 
-const { nodeId, resourceId } = defineProps<Props>();
+const { kind, nodeId, resourceId } = defineProps<Props>();
 const pageBuilderCanvasStore = usePageBuilderCanvasStore();
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 const pageBuilderHistoryStore = usePageBuilderHistoryStore();
-const { getOpenDocument } = pageBuilderDocumentStore;
+const { getHeldDocument } = pageBuilderDocumentStore;
 const { setEditingNodeId } = pageBuilderCanvasStore;
 const { applyEdit } = pageBuilderHistoryStore;
 const getNodeContent = () => {
-  const open = getOpenDocument(resourceId);
-  const nodePointer = open && getNodePointer(open.kind, open.document, nodeId);
-  const node =
-    open && nodePointer !== undefined ? getBlockNode(open.document, nodePointer, open.kind.children) : undefined;
-  return node?.type === WebpageNodeType.Text ? node.props.content : undefined;
+  const document = getHeldDocument(resourceId)?.document;
+  const nodePointer = document && getNodePointer(kind, document, nodeId);
+  const node = document && nodePointer !== undefined ? getBlockNode(document, nodePointer, kind.children) : undefined;
+  return node?.type === kind.textType ? (node.props as TextNodeProps).content : undefined;
 };
 // Each session is its own interaction, so its changes are one history entry and the next session is another one
 const interactionId = crypto.randomUUID();
+const mergeFieldColumns = useMergeFieldColumns();
 const editor = useEditor({
   autofocus: "end",
   content: getNodeContent(),
-  extensions: getNoteExtensions(),
+  extensions: [...getNoteExtensions(), MergeFieldExtension.configure({ getColumns: () => mergeFieldColumns.value })],
   onUpdate: ({ editor: currentEditor }) => {
-    const open = getOpenDocument(resourceId);
-    const nodePointer = open && getNodePointer(open.kind, open.document, nodeId);
+    const document = getHeldDocument(resourceId)?.document;
+    const nodePointer = document && getNodePointer(kind, document, nodeId);
     if (nodePointer === undefined) return;
 
     applyEdit(
@@ -61,5 +64,6 @@ const onKeydown = (event: KeyboardEvent) => {
 <template>
   <div data-text-editor="true" @keydown="onKeydown($event)">
     <EditorContent :editor />
+    <RichTextEditorSuggestions :editor />
   </div>
 </template>

@@ -89,7 +89,12 @@ export const usePageBuilderDrag = <
       if (!wasDragging || landing === undefined || !document) return;
 
       const title = kind.titles[type];
-      if (insertAt(kind, document, toValue(resourceId), landing.slotPointer, landing.index, type) && title)
+      if (
+        insertAt(kind, document, toValue(resourceId), landing.slotPointer, landing.index, (id) =>
+          kind.createNode(type, id),
+        ) &&
+        title
+      )
         announce(`Inserted ${title}`);
     };
     const onKeydown = (keyEvent: KeyboardEvent) => {

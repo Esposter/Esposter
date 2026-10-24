@@ -5,8 +5,8 @@ import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { insertBlockNode } from "headless-block-editor";
 
-// Inserts a new block of a type at an index of a slot in one open resource's document, selects it, and reports whether the
-// Edit applied. A slot that refuses the type applies nothing
+// Inserts a new block at an index of a slot in one open resource's document, selects it, and reports whether the edit
+// applied. The block is built from the id the insert mints for it, and a slot that refuses its type applies nothing
 export const insertAt = <
   TNode extends BlockNode,
   TRoot extends BlockRootProps,
@@ -18,7 +18,7 @@ export const insertAt = <
   resourceId: string,
   slotPointer: string,
   index: number,
-  type: TNode["type"],
+  createNode: (id: string) => TNode,
 ): boolean => {
   const insertedId = crypto.randomUUID();
   const operations = insertBlockNode(
@@ -27,7 +27,7 @@ export const insertAt = <
     kind.children,
     slotPointer,
     index,
-    kind.createNode(type, insertedId),
+    createNode(insertedId),
   );
   if (operations.length === 0) return false;
 

@@ -25,7 +25,8 @@ export const usePageBuilderInsert = <
   // jscpd:ignore-end
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
   const { getSelectedNodeId } = pageBuilderCanvasStore;
-  const insert = (type: TNode["type"]) => {
+  // A palette item may insert a block its type builds differently, such as a merge field's text, so its node is built by the caller
+  const insert = (type: TNode["type"], createNode: (id: string) => TNode = (id) => kind.createNode(type, id)) => {
     const resourceIdValue = toValue(resourceId);
     const document = getDocument();
     if (!document) return;
@@ -33,7 +34,7 @@ export const usePageBuilderInsert = <
     const nodeId = getSelectedNodeId(resourceIdValue);
     const target = getInsertTarget(kind, document, type, nodeId ? getNodePointer(kind, document, nodeId) : undefined);
     const title = kind.titles[type];
-    if (target && insertAt(kind, document, resourceIdValue, target.slotPointer, target.index, type) && title)
+    if (target && insertAt(kind, document, resourceIdValue, target.slotPointer, target.index, createNode) && title)
       announce(`Inserted ${title}`);
   };
 

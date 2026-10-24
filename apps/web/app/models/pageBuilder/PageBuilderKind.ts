@@ -33,6 +33,8 @@ export interface PageBuilderKind<
   registry: BlockRegistry<TNode, TRoot, TDefinition>;
   // The form the root's props are edited through, a subset of the props the registry's root schema holds
   rootFormSchema: z.ZodType;
+  // The type of the node whose content is rich text, which the canvas edits in place
+  textType: TNode["type"];
   // The title each node type is shown by in the layers, the palette and the paths the shell names a slot with
   titles: Readonly<Record<string, string>>;
 }

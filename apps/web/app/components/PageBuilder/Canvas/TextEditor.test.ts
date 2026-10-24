@@ -3,14 +3,20 @@ import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import PageBuilderCanvasTextEditor from "@/components/PageBuilder/Canvas/TextEditor.vue";
 import { TEST_ROOT_TEXT_ID, TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
+import { TEST_SECTION_ID } from "@/services/pageBuilder/constants.test";
+import { emailKind } from "@/services/pageBuilder/emailKind";
+import { MERGE_FIELD_COLUMNS_KEY } from "@/services/pageBuilder/mergeFieldColumnsKey";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
+import { useRichTextSuggestionStore } from "@/store/richTextEditor/suggestion";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { EditorContent } from "@tiptap/vue-3";
-import { assert, describe, expect, test } from "vitest";
+import { MjmlNodeType } from "mjml-blocks";
+import { assert, describe, expect, test, vi } from "vitest";
+import { computed } from "vue";
 import { nextTick } from "vue";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 describe("pageBuilderCanvasTextEditor", () => {
   test("enter edits a text node in place", async () => {
@@ -24,7 +30,7 @@ describe("pageBuilderCanvasTextEditor", () => {
     });
 
     const component = await mountSuspended(PageBuilderCanvasTextEditor, {
-      props: { nodeId: TEST_ROOT_TEXT_ID, resourceId },
+      props: { kind: webpageKind, nodeId: TEST_ROOT_TEXT_ID, resourceId },
     });
     await nextTick();
 
@@ -46,7 +52,7 @@ describe("pageBuilderCanvasTextEditor", () => {
     pageBuilderCanvasStore.setEditingNodeId(resourceId, TEST_ROOT_TEXT_ID);
     const pastLengthBefore = pageBuilderHistoryStore.historyMap.get(resourceId)?.past.length ?? 0;
     const component = await mountSuspended(PageBuilderCanvasTextEditor, {
-      props: { nodeId: TEST_ROOT_TEXT_ID, resourceId },
+      props: { kind: webpageKind, nodeId: TEST_ROOT_TEXT_ID, resourceId },
     });
     await nextTick();
     const editor = component.getComponent(EditorContent).props("editor");
@@ -78,7 +84,7 @@ describe("pageBuilderCanvasTextEditor", () => {
     const pastLengthBefore = pageBuilderHistoryStore.historyMap.get(resourceId)?.past.length ?? 0;
     const editSession = async (text: string) => {
       const component = await mountSuspended(PageBuilderCanvasTextEditor, {
-        props: { nodeId: TEST_ROOT_TEXT_ID, resourceId },
+        props: { kind: webpageKind, nodeId: TEST_ROOT_TEXT_ID, resourceId },
       });
       await nextTick();
       const editor = component.getComponent(EditorContent).props("editor");
@@ -93,5 +99,51 @@ describe("pageBuilderCanvasTextEditor", () => {
     await editSession("b");
 
     expect(pageBuilderHistoryStore.historyMap.get(resourceId)?.past.length).toBe(pastLengthBefore + 2);
+  });
+
+  test("typing two braces offers the dataset's columns, and a chosen one is inserted as its merge field", async () => {
+    expect.hasAssertions();
+
+    const columnId = crypto.randomUUID();
+    const resourceId = crypto.randomUUID();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, {
+      content: [
+        {
+          props: {
+            children: [
+              {
+                props: {
+                  children: [{ props: { content: TEST_TEXT_CONTENT, id: TEST_ROOT_TEXT_ID }, type: MjmlNodeType.Text }],
+                  id: columnId,
+                },
+                type: MjmlNodeType.Column,
+              },
+            ],
+            id: TEST_SECTION_ID,
+          },
+          type: MjmlNodeType.Section,
+        },
+      ],
+      root: { props: {} },
+    });
+    const component = await mountSuspended(PageBuilderCanvasTextEditor, {
+      global: { provide: { [MERGE_FIELD_COLUMNS_KEY]: computed(() => ["first_name", "last_name"]) } },
+      props: { kind: emailKind, nodeId: TEST_ROOT_TEXT_ID, resourceId },
+    });
+    await nextTick();
+    const editor = component.getComponent(EditorContent).props("editor");
+    assert.exists(editor);
+
+    // The braces open after a space, as the suggestion only opens where a word begins
+    editor.commands.insertContent(" {{");
+    // The suggestion's items resolve after the keystroke, so the list is read once they have
+    await vi.waitFor(() =>
+      expect(useRichTextSuggestionStore().suggestion?.props.items).toStrictEqual(["first_name", "last_name"]),
+    );
+
+    useRichTextSuggestionStore().suggestion?.props.command("last_name");
+    expect(editor.getText()).toBe(`${TEST_ID} {{last_name}}`);
+    component.unmount();
   });
 });

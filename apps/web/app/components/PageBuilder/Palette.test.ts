@@ -3,10 +3,16 @@ import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import PageBuilderPalette from "@/components/PageBuilder/Palette.vue";
 import { WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
+import { TEST_SECTION_ID } from "@/services/pageBuilder/constants.test";
+import { emailKind } from "@/services/pageBuilder/emailKind";
+import { MERGE_FIELD_COLUMNS_KEY } from "@/services/pageBuilder/mergeFieldColumnsKey";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
+import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { MjmlNodeType } from "mjml-blocks";
 import { describe, expect, test, vi } from "vitest";
+import { computed } from "vue";
 
 describe("pageBuilderPalette", () => {
   test("a palette click still inserts the block", async () => {
@@ -30,6 +36,59 @@ describe("pageBuilderPalette", () => {
 
     expect(pageBuilderDocumentStore.getDocument(TEST_ID)?.content.map(({ type }) => type)).toStrictEqual([
       WebpageNodeType.Text,
+    ]);
+  });
+
+  test("a merge field inserts a text carrying its column's token into the selected column", async () => {
+    expect.hasAssertions();
+
+    const columnId = crypto.randomUUID();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setEmailDocument(TEST_ID, emailKind, {
+      content: [
+        {
+          props: {
+            children: [{ props: { children: [], id: columnId }, type: MjmlNodeType.Column }],
+            id: TEST_SECTION_ID,
+          },
+          type: MjmlNodeType.Section,
+        },
+      ],
+      root: { props: {} },
+    });
+    usePageBuilderCanvasStore().setSelectedNodeId(TEST_ID, columnId);
+    const component = await mountSuspended(PageBuilderPalette, {
+      global: { provide: { [MERGE_FIELD_COLUMNS_KEY]: computed(() => ["first_name"]) } },
+      props: {
+        announce: vi.fn<(message: string) => void>(),
+        getDocument: () => pageBuilderDocumentStore.getEmailDocument(TEST_ID),
+        kind: emailKind,
+        resourceId: TEST_ID,
+      },
+    });
+
+    await component
+      .findAll("button")
+      .find((button) => button.text() === "first_name")
+      ?.trigger("click");
+
+    expect(pageBuilderDocumentStore.getEmailDocument(TEST_ID)?.content).toMatchObject([
+      {
+        props: {
+          children: [
+            {
+              props: {
+                children: [
+                  {
+                    props: { content: { content: [{ content: [{ text: "{{first_name}}" }] }] } },
+                    type: MjmlNodeType.Text,
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      },
     ]);
   });
 });

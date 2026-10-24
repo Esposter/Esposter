@@ -1,5 +1,6 @@
 import type { WebpageKind } from "@/models/pageBuilder/WebpageKind";
 
+import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { webpageRootFormSchema } from "#shared/models/pageBuilder/WebpageRootProps";
 import { webpageDocumentSchema } from "#shared/services/pageBuilder/webpageDocumentSchema";
 import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
@@ -18,5 +19,6 @@ export const webpageKind: WebpageKind = {
   paletteCategories: WEBPAGE_PALETTE_CATEGORIES,
   registry: webpageRegistry,
   rootFormSchema: webpageRootFormSchema,
+  textType: WebpageNodeType.Text,
   titles: WEBPAGE_NODE_TYPE_TITLE_MAP,
 };

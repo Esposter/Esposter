@@ -133,7 +133,7 @@ const CanvasNodes = (props: { open: OpenPageBuilderDocument; origin: string }) =
     >
       <CanvasNodes v-if="drawnOpen" :open="drawnOpen" :origin />
       <Teleport v-if="editingElement && editingNodeId" :to="editingElement">
-        <PageBuilderCanvasTextEditor :key="editingNodeId" :node-id="editingNodeId" :resource-id />
+        <PageBuilderCanvasTextEditor :key="editingNodeId" :kind :node-id="editingNodeId" :resource-id />
       </Teleport>
       <PageBuilderCanvasOverlays
         v-model:selection-box="selectionBox"
