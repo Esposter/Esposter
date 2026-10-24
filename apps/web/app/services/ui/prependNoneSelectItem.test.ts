@@ -21,4 +21,12 @@ describe(prependNoneSelectItem, () => {
 
     expect(prependNoneSelectItem(items).map(({ title }) => title)).toStrictEqual(["None", "Name", "Age"]);
   });
+
+  test("the empty choice takes the title its select gives it", () => {
+    expect.hasAssertions();
+
+    expect(prependNoneSelectItem([], "Never")).toStrictEqual([
+      { meaning: UiIconMeaning.None, title: "Never", value: "" },
+    ]);
+  });
 });

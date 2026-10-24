@@ -7,6 +7,7 @@ import { TODO_LIST_RECURRENCE_INTERVAL_MAX } from "#shared/services/resource/ite
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 import { RecurrenceUnitLabelMap } from "@/services/resource/todoList/RecurrenceUnitLabelMap";
+import { prependNoneSelectItem } from "@/services/ui/prependNoneSelectItem";
 import { UiRules } from "@/services/ui/UiRules";
 
 interface Props {
@@ -16,14 +17,14 @@ interface Props {
 
 const modelValue = defineModel<Recurrence | undefined>({ required: true });
 const { dueAt } = defineProps<Props>();
-const unitItems: UiSelectItem<"" | RecurrenceUnit>[] = [
-  { meaning: UiIconMeaning.None, title: "Never", value: "" },
-  ...Object.values(RecurrenceUnit).map((unit) => ({
+const unitItems: UiSelectItem<"" | RecurrenceUnit>[] = prependNoneSelectItem(
+  Object.values(RecurrenceUnit).map((unit) => ({
     meaning: UiIconMeaning.Refresh,
     title: RecurrenceUnitLabelMap[unit],
     value: unit,
   })),
-];
+  "Never",
+);
 // Never clears the repeat; a unit keeps the interval already set and the day it started, or starts from the due date
 const unit = computed({
   get: () => modelValue.value?.unit ?? "",

@@ -3,6 +3,7 @@ import type { UiSelectItem } from "@/models/ui/UiSelectItem";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { prependNoneSelectItem } from "@/services/ui/prependNoneSelectItem";
 import { useRoomCategoryStore } from "@/store/message/roomCategory";
 import { selectRoomInMessageSchema } from "@esposter/db-schema";
 
@@ -21,10 +22,12 @@ const editedCategoryId = ref(room.categoryId);
 const editedIsReadOnly = ref(room.isReadOnly);
 const editedSlowmodeMs = ref(room.slowmodeMs);
 const editedTopic = ref(room.topic);
-const categoryItems = computed<UiSelectItem<string>[]>(() => [
-  { meaning: UiIconMeaning.None, title: "None (uncategorized)", value: "" },
-  ...roomCategories.value.map(({ id, name }) => ({ meaning: UiIconMeaning.Folder, title: name, value: id })),
-]);
+const categoryItems = computed<UiSelectItem<string>[]>(() =>
+  prependNoneSelectItem(
+    roomCategories.value.map(({ id, name }) => ({ meaning: UiIconMeaning.Folder, title: name, value: id })),
+    "None (uncategorized)",
+  ),
+);
 const isDirty = computed(
   () =>
     editedCategoryId.value !== room.categoryId ||
