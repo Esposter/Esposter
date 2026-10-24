@@ -3,12 +3,12 @@ import type { DatasetReference } from "#shared/models/dataset/DatasetReference";
 import type { UiSelectItem } from "@/models/ui/UiSelectItem";
 
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { authClient } from "@/services/auth/authClient";
 import { DatasetProviderTypeIconMeaningMap } from "@/services/dataset/DatasetProviderTypeIconMeaningMap";
 import { DatasetProviderTypeItemCategoryDefinitions } from "@/services/dataset/DatasetProviderTypeItemCategoryDefinitions";
 import { DatasetProviderTypeSourceRouterMap } from "@/services/dataset/DatasetProviderTypeSourceRouterMap";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
+import { prependNoneSelectItem } from "@/services/ui/prependNoneSelectItem";
 import { getResultAsync, MAX_READ_LIMIT, noop } from "@esposter/shared";
 
 interface Props {
@@ -60,7 +60,7 @@ watchImmediate([() => session.value.data, type], async ([newSession, newType]) =
     <div flex flex-col gap-1>
       <span text-sm text-muted>Source</span>
       <UiSelect
-        :items="[{ meaning: UiIconMeaning.None, title: 'None', value: '' }, ...sourceItems]"
+        :items="prependNoneSelectItem(sourceItems)"
         label="Source"
         :model-value="modelValue?.id ?? ''"
         @update:model-value="modelValue = $event ? { id: $event, type } : undefined"

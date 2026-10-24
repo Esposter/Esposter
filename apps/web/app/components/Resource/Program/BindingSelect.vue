@@ -2,8 +2,8 @@
 import type { OffsetPaginationData } from "#shared/models/pagination/offset/OffsetPaginationData";
 import type { UiSelectItem } from "@/models/ui/UiSelectItem";
 
-import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getMissingResourceMessage } from "@/services/resource/getMissingResourceMessage";
+import { prependNoneSelectItem } from "@/services/ui/prependNoneSelectItem";
 
 interface Props {
   label: string;
@@ -13,7 +13,7 @@ interface Props {
 
 const modelValue = defineModel<string>({ required: true });
 const { label, resources } = defineProps<Props>();
-const items = computed(() => [{ meaning: UiIconMeaning.None, title: "None", value: "" }, ...(resources?.items ?? [])]);
+const items = computed(() => prependNoneSelectItem(resources?.items ?? []));
 // A deleted or binned resource is gone from the owner's list while the program still holds its id, so the select
 // Would show nothing at all — the binding is kept, and said to be missing where it is picked. Only a whole list can
 // Say so: past the read cap, the bound one may be among those it left out

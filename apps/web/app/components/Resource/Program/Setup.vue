@@ -3,6 +3,7 @@ import type { OffsetPaginationData } from "#shared/models/pagination/offset/Offs
 import type { UiSelectItem } from "@/models/ui/UiSelectItem";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { prependNoneSelectItem } from "@/services/ui/prependNoneSelectItem";
 import { useProgramStore } from "@/store/resource/program";
 import { SurveyResponseMode } from "@esposter/db-schema";
 import { getResultAsync, MAX_READ_LIMIT, noop } from "@esposter/shared";
@@ -81,7 +82,7 @@ watchAutosave(programResource, saveProgram);
         <span text-sm text-muted>Key column</span>
         <UiSelect
           v-model="programResource.keyColumn"
-          :items="[{ meaning: UiIconMeaning.None, title: 'None', value: '' }, ...keyColumnItems]"
+          :items="prependNoneSelectItem(keyColumnItems)"
           label="Key column"
         />
       </div>
