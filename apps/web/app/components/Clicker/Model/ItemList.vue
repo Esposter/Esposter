@@ -2,8 +2,6 @@
 import type { ClickerListItem } from "@/models/clicker/ClickerListItem";
 import type { UiListItem } from "@/models/ui/UiListItem";
 
-import { takeOne } from "@esposter/shared";
-
 interface Props {
   items: T[];
   label: string;
@@ -14,14 +12,9 @@ interface Props {
 // Are owned. A row opens its item's details in the one popover the list keeps, hung off the row pressed
 defineSlots<{ detail: (props: { item: T }) => VNode }>();
 const { items, label, positionArea } = defineProps<Props>();
-// Every row is one of the items, so its own is always found
-const getItem = (id: string) =>
-  takeOne(
-    items,
-    items.findIndex((item) => item.id === id),
-  );
+// Each row carries its item, so the slots draw from it without finding it again
 const listItems = computed(() =>
-  items.map<UiListItem<string>>(({ id }) => ({ hasMarkSlot: true, title: id, value: id })),
+  items.map<UiListItem<string> & { item: T }>((item) => ({ hasMarkSlot: true, item, title: item.id, value: item.id })),
 );
 const anchor = ref<HTMLElement>();
 const selectedId = ref("");
@@ -47,14 +40,14 @@ const open = (id: string) => {
     select-none
     @select="open($event)"
   >
-    <template #mark="{ item }">
-      <NuxtImg size-6 object-contain :src="getItem(item.value).image" alt="" />
+    <template #mark="{ item: { item } }">
+      <NuxtImg size-6 object-contain :src="item.image" alt="" />
     </template>
-    <template #title="{ item }">
-      <ClickerModelItemListTitle :item="getItem(item.value)" />
+    <template #title="{ item: { item } }">
+      <ClickerModelItemListTitle :item />
     </template>
-    <template #append="{ item }">
-      <span v-if="getItem(item.value).amount" ui-title>{{ getItem(item.value).amount }}</span>
+    <template #append="{ item: { item } }">
+      <span v-if="item.amount" ui-title>{{ item.amount }}</span>
     </template>
   </UiList>
   <UiPopover v-model:is-open="isOpen" :anchor :label="selectedId" :position-area>
