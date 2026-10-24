@@ -6,7 +6,7 @@ Buildings are the passive producers (Cookie Clicker's tiers, Cursor → Idlevers
 
 The store list (`ClickerModelStoreList`) fetches `BuildingMap` and `UpgradeMap` through the clicker router on setup and hands them to the building/upgrade stores. Buildings are always visible; upgrades appear only when **unlocked** and disappear once bought, sorted by price.
 
-- **Unlock conditions** — every upgrade carries `UnlockCondition[]`: own at least N of a building (`Target.Building` + amount), or own another upgrade (`Target.Upgrade`). `availableUpgrades` in the upgrade store evaluates all conditions against the save and drops the bought ones; `boughtUpgrades` feeds the inventory.
+- **Unlock conditions** — every upgrade carries `UnlockCondition[]`: own at least N of a building (`Target.Building` + amount), or own another upgrade (`Target.Upgrade`). `getUnlockedUpgrades` evaluates all conditions against the save, and `availableUpgrades` in the upgrade store drops the bought ones from what it finds unlocked; `boughtUpgrades` feeds the inventory.
 - **Price scaling** — buildings cost `trunc(basePrice * 1.15 ** owned)` (`PRICE_GROWTH` in `services/clicker/constants.ts`), the idle-game-standard exponential curve Cookie Clicker's `basePrice` tiers were designed for, recomputed from the owned count; upgrades have fixed prices. Selling does not exist.
 - **Buying** — `createBoughtBuilding` / `createBoughtUpgrade` push into the save's `boughtBuildings` / `boughtUpgrades` arrays and decrement points. Affordability is one reading, `checkIsAffordable` in the point store: the rows colour their price by it and the Buy button disables on it, and the store actions refuse a purchase it rejects — and an upgrade already bought — so no caller has to remember the check. An item that leaves its list while its details are open, as an upgrade does once bought, closes the popover with it.
 - **Bulk buy** — a ×1/×10/×100 quantity toggle in the store header (`BUY_QUANTITIES`, `buyQuantity` in the building store). `getBuildingPriceForQuantity` sums the per-unit price over `owned … owned + quantity - 1` — summing the loop stays exact under any price formula — and `createBoughtBuilding` applies the whole batch as one mutation (one save trigger). Upgrades are unaffected (they're one-shot).
@@ -40,21 +40,24 @@ flowchart LR
 
 Paths relative to `apps/web`.
 
-| File                                                | Role                                                    |
-| --------------------------------------------------- | ------------------------------------------------------- |
-| `server/trpc/routers/clicker.ts`                    | `readBuildingMap` and `readUpgradeMap` procedures       |
-| `shared/assets/clicker/data/BuildingMap.ts`         | building definitions                                    |
-| `shared/assets/clicker/data/upgrades/UpgradeMap.ts` | merged upgrade definitions                              |
-| `app/services/clicker/building/getBuildingPrice.ts` | the exponential price curve                             |
-| `app/store/clicker/building.ts`                     | prices, per-building power, stats, buying               |
-| `app/store/clicker/upgrade.ts`                      | unlock evaluation, buying                               |
-| `app/store/clicker/point.ts`                        | points in and out, and whether a price can be paid      |
-| `app/components/Clicker/Model/Store/List.vue`       | store panel; fetches + initializes both maps            |
-| `app/components/Clicker/Model/Store/Header.vue`     | ×1/×10/×100 buy-quantity toggle                         |
-| `app/components/Clicker/Model/ItemList.vue`         | a group's rows, and the one popover a pressed row opens |
-| `app/components/Clicker/Model/Building/Detail.vue`  | a building's stats + Buy, in that popover               |
-| `app/components/Clicker/Model/Upgrade/Detail.vue`   | an upgrade's description + Buy, in that popover         |
-| `app/services/clicker/formatNumberLong.ts`          | long-word number notation (`formatNumberLong`)          |
+| File                                                  | Role                                                        |
+| ----------------------------------------------------- | ----------------------------------------------------------- |
+| `server/trpc/routers/clicker.ts`                      | `readBuildingMap` and `readUpgradeMap` procedures           |
+| `shared/assets/clicker/data/BuildingMap.ts`           | building definitions                                        |
+| `shared/assets/clicker/data/upgrades/UpgradeMap.ts`   | merged upgrade definitions                                  |
+| `app/services/clicker/building/getBuildingPrice.ts`   | the exponential price curve                                 |
+| `app/services/clicker/upgrade/getUnlockedUpgrades.ts` | the unlock evaluation over the save                         |
+| `app/store/clicker/building.ts`                       | prices, per-building power, stats, buying                   |
+| `app/store/clicker/upgrade.ts`                        | the available upgrades, buying                              |
+| `app/store/clicker/point.ts`                          | points in and out, and whether a price can be paid          |
+| `app/components/Clicker/Model/Store/List.vue`         | store panel; fetches + initializes both maps                |
+| `app/components/Clicker/Model/Store/Header.vue`       | ×1/×10/×100 buy-quantity toggle                             |
+| `app/components/Clicker/Model/ItemList.vue`           | a group's rows, and the one popover a pressed row opens     |
+| `app/models/clicker/ClickerBuildingListItem.ts`       | a building's row, carrying the building its details open on |
+| `app/models/clicker/ClickerUpgradeListItem.ts`        | an upgrade's row, carrying the upgrade its details open on  |
+| `app/components/Clicker/Model/Building/Detail.vue`    | a building's stats + Buy, in that popover                   |
+| `app/components/Clicker/Model/Upgrade/Detail.vue`     | an upgrade's description + Buy, in that popover             |
+| `app/services/clicker/formatNumberLong.ts`            | long-word number notation (`formatNumberLong`)              |
 
 ## Notes
 
