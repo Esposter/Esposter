@@ -4,6 +4,7 @@ import type { Card } from "@/models/visual/Card";
 import type { CardStyleVariables } from "@/models/visual/CardStyleVariables";
 
 import CardBase from "@/components/Visual/Card/Base.vue";
+import { CardStackClass } from "@/models/visual/CardStackClass";
 import { takeOne } from "@esposter/shared";
 
 interface Props {
@@ -47,14 +48,14 @@ const classes = computed(() => cardIds.value.map((cardId) => getClass(cardId)));
 // - Normal: a right-stack card making its way to become active.
 const getClass = (cardId: number) => {
   const offset = cardIds.value.indexOf(cardId);
-  if (cardId === activeCardId.value) return "active-card";
+  if (cardId === activeCardId.value) return CardStackClass.Active;
   // In the initial state, set the last card as inactive.
   else if ((inactiveCardId.value === undefined && cardId === maxShownCards) || cardId === inactiveCardId.value)
-    return "inactive-card";
-  else if (offset > maxShownCards - 2) return "of-card";
+    return CardStackClass.Inactive;
+  else if (offset > maxShownCards - 2) return CardStackClass.Overflow;
   // An animation restarts only when its name changes, and a card moves one offset a step, so the name alternates
   // With the offset's parity while the offset's own values ride on the card (`cardStyles`)
-  else return `normal-card normal-card-${offset % 2 === 0 ? "even" : "odd"}`;
+  else return `${CardStackClass.Normal} ${offset % 2 === 0 ? CardStackClass.NormalEven : CardStackClass.NormalOdd}`;
 };
 // Main timer driving card movement.
 const moveCardsTimer = ref<number>();
