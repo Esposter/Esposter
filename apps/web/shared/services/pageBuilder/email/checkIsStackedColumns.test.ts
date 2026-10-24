@@ -3,7 +3,7 @@ import { describe, expect, test } from "vitest";
 import { checkIsStackedColumns } from "./checkIsStackedColumns";
 
 describe(checkIsStackedColumns, () => {
-  test("Columns stack below the mobile breakpoint", () => {
+  test("columns stack below the mobile breakpoint", () => {
     expect.hasAssertions();
 
     expect(checkIsStackedColumns(375)).toBe(true);

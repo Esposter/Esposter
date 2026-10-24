@@ -1,6 +1,6 @@
 ## 1. Design canvas
 
-- [ ] 1.1 Draw sections, columns and leaves on the design canvas, stacking columns below 480 pixels, each leaf with the attributes the MJML blocks' cascade resolves. Verify: tests named after the scenarios 'Columns stack below the mobile breakpoint' and 'A new text shows the default font and padding'.
+- [ ] 1.1 Draw sections, columns and leaves on the design canvas, stacking columns below 480 pixels, each leaf with the attributes the MJML blocks' cascade resolves. Verify: tests named after the scenarios 'columns stack below the mobile breakpoint' and 'a new text shows the default font and padding'.
 
 ## 2. Preview
 

@@ -4,7 +4,7 @@
 
 The design canvas SHALL draw a section's columns side by side at desktop width and SHALL stack them below 480 pixels.
 
-#### Scenario: Columns stack below the mobile breakpoint
+#### Scenario: columns stack below the mobile breakpoint
 
 - **GIVEN** a section with two columns in an email
 - **WHEN** the owner views the design canvas at desktop width and then at mobile width
@@ -15,7 +15,7 @@ The design canvas SHALL draw a section's columns side by side at desktop width a
 
 Each element on the design canvas SHALL show what its attributes resolve to: its own value, else the email's default for its kind or for all elements, else the email engine's default look.
 
-#### Scenario: A new text shows the default font and padding
+#### Scenario: a new text shows the default font and padding
 
 - **GIVEN** a new text element in an email
 - **WHEN** the owner views the design canvas

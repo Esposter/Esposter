@@ -12,7 +12,7 @@ describe(getEmailAttributeValue, () => {
     type: MjmlNodeType.Text,
   });
 
-  test("A new text shows the default font and padding", () => {
+  test("a new text shows the default font and padding", () => {
     expect.hasAssertions();
 
     const text = createText();
