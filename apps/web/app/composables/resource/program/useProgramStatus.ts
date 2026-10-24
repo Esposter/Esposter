@@ -1,30 +1,39 @@
+import type { ProgramInvites } from "#shared/models/resource/program/ProgramInvites";
 import type { ProgramStatusRow } from "#shared/models/resource/program/ProgramStatusRow";
 
 import { MimeType } from "#shared/models/file/MimeType";
+import { ProgramInviteScope } from "#shared/models/resource/program/ProgramInviteScope";
 import { pluralize } from "#shared/util/text/pluralize";
 import { formatTruncationCount } from "@/services/dataset/formatTruncationCount";
+import { exportPersonalizedHtml } from "@/services/emailEditor/exportPersonalizedHtml";
 import { createParticipantLinksCsv } from "@/services/resource/program/createParticipantLinksCsv";
+import { createProgramInviteFiles } from "@/services/resource/program/createProgramInviteFiles";
+import { getMissingProgramInviteBindings } from "@/services/resource/program/getMissingProgramInviteBindings";
+import { getProgramInviteFilename } from "@/services/resource/program/getProgramInviteFilename";
 import { getProgramParticipantsFilename } from "@/services/resource/program/getProgramParticipantsFilename";
-import { NotificationSeverity } from "@esposter/db-schema";
-import { downloadFile, getResultAsync } from "@esposter/shared";
+import { useNotificationStore } from "@/store/notification";
+import { useResourceStore } from "@/store/resource";
+import { useProgramStore } from "@/store/resource/program";
+import { getRouteParam } from "@/util/router/getRouteParam";
+import { NotificationSeverity, ResourceType } from "@esposter/db-schema";
+import { downloadFile, getResultAsync, RoutePath } from "@esposter/shared";
 
-// The status blade's participants and the command that generates them, which hands the owner the file of links they send
-// From. The invite export reads the same rows, so it is handed them rather than reading them a second time
+// The status blade's participants, the command that generates them, and the invite files exported from the same rows.
+// The blade reads its rows once, and the export checks against those rows rather than reading them a second time
 export const useProgramStatus = () => {
-  const {
-    $trpc,
-    createErrorNotification,
-    createNotification,
-    createWarningNotification,
-    id,
-    programResource,
-    resource,
-  } = useProgramContext();
+  const { $trpc } = useNuxtApp();
+  const { currentRoute } = useRouter();
+  const id = computed(() => getRouteParam(currentRoute.value.params, "id"));
+  const programStore = useProgramStore();
+  const { programResource } = storeToRefs(programStore);
+  const resourceStore = useResourceStore();
+  const { resource } = storeToRefs(resourceStore);
+  const notificationStore = useNotificationStore();
+  const { createErrorNotification, createNotification, createWarningNotification } = notificationStore;
   const { executeMutation, isPending: isGeneratePending } = useMutation();
   const statusRows = ref<ProgramStatusRow[]>([]);
   // Set when the response scan hit its cap, which makes every count on this blade a floor rather than a total
   const isRespondedPartial = ref(false);
-  const { exportInvites } = useProgramInviteExport(statusRows);
   const readStatus = async () => {
     await getResultAsync(() => $trpc.program.readProgramStatus.query({ id: id.value })).match((programStatus) => {
       isRespondedPartial.value = programStatus.isRespondedPartial;
@@ -68,6 +77,48 @@ export const useProgramStatus = () => {
         await readStatus();
       },
     });
+  };
+  // The owner's invite export, the invites for everyone or the reminders for those still awaiting. It hands over a file of
+  // Personalised emails and reports back as notices
+  const exportInviteFiles = (scope: ProgramInviteScope, { emailHtml, invites, unmatchedCount }: ProgramInvites) => {
+    const isReminder = scope === ProgramInviteScope.Awaiting;
+    // A participant past the audience read's cap has no row to fill, so the file is never sent without them named
+    if (unmatchedCount > 0)
+      createWarningNotification(
+        `${unmatchedCount} ${pluralize("participant", unmatchedCount)} past the audience read limit ${unmatchedCount === 1 ? "was" : "were"} not exported`,
+      );
+    if (invites.length === 0) {
+      createWarningNotification(
+        isReminder
+          ? "Every participant has responded, so there are no reminders to export"
+          : "No participant has an audience row to invite",
+      );
+      return;
+    }
+    const { surveyId } = programResource.value;
+    const surveyPath = RoutePath.View(ResourceType.Survey, surveyId);
+    const filename = getProgramInviteFilename(resource.value?.name ?? "", scope);
+    const count = exportPersonalizedHtml(filename, createProgramInviteFiles(emailHtml, surveyPath, invites));
+    createNotification({
+      severity: NotificationSeverity.Success,
+      title: `${count} ${pluralize(isReminder ? "reminder" : "invite", count)} ready`,
+    });
+  };
+  const exportInvites = async (scope: ProgramInviteScope) => {
+    // Each binding an invite reads is named when missing, rather than exporting an empty zip
+    const missingBindings = getMissingProgramInviteBindings(programResource.value);
+    if (missingBindings.length > 0) {
+      createWarningNotification(`Bind ${missingBindings.join(", ")} on the Setup blade before exporting invites`);
+      return;
+    }
+    if (statusRows.value.length === 0) {
+      createWarningNotification("Generate participants before exporting invites");
+      return;
+    }
+    await getResultAsync(() => $trpc.program.readProgramInvites.query({ id: id.value, scope })).match(
+      (programInvites) => exportInviteFiles(scope, programInvites),
+      createErrorNotification,
+    );
   };
 
   return { exportInvites, generateParticipants, isGeneratePending, isRespondedPartial, readStatus, statusRows };
