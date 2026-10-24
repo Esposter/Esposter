@@ -49,6 +49,7 @@ const hoveredNodeId = ref("");
 const selectionBox = ref<OverlayBox>();
 const getElement = (nodeId: string) =>
   contentRoot.value?.ownerDocument.querySelector(`[data-node-id="${CSS.escape(nodeId)}"]`) ?? null;
+const checkIsHorizontalOwner = (ownerId: string) => checkIsHorizontalFlow(getElement(ownerId));
 // The node element the editor is mounted in, found once the draw has put it in the frame
 const editingElement = shallowRef<Element | null>(null);
 watch(
@@ -86,7 +87,7 @@ const getFrameGeometry = (): FrameGeometry | undefined => {
 
   const frameRect = frameElement.getBoundingClientRect();
   return {
-    checkIsHorizontalOwner: (ownerId) => checkIsHorizontalFlow(getElement(ownerId)),
+    checkIsHorizontalOwner,
     frameRect: { height: frameRect.height, left: frameRect.left, top: frameRect.top, width: frameRect.width },
     getChildRect: (nodeId) => getElement(nodeId)?.getBoundingClientRect(),
     hoveredNodeId: hoveredNodeId.value,
@@ -169,6 +170,7 @@ const CanvasNodes = (props: { document: WebpageDocument; origin: string }) =>
       </Teleport>
       <PageBuilderCanvasOverlays
         v-model:selection-box="selectionBox"
+        :check-is-horizontal-owner
         :get-element
         :drop-target
         :hovered-node-id

@@ -24,7 +24,13 @@ describe("pageBuilderCanvasOverlays", () => {
     pageBuilderDocumentStore.setDocument(TEST_ID, { content: [], root: { props: { lang: "en" } } });
 
     const component = await mountSuspended(PageBuilderCanvasOverlays, {
-      props: { getElement: () => element, hoveredNodeId: TEST_ID, resourceId: TEST_ID, selectedNodeId: "" },
+      props: {
+        checkIsHorizontalOwner: () => false,
+        getElement: () => element,
+        hoveredNodeId: TEST_ID,
+        resourceId: TEST_ID,
+        selectedNodeId: "",
+      },
     });
     await nextTick();
 

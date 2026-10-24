@@ -5,7 +5,6 @@ import type { DropTarget } from "@/models/pageBuilder/DropTarget";
 import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
 
 import { DropIndicatorKind } from "@/models/pageBuilder/DropIndicatorKind";
-import { checkIsHorizontalFlow } from "@/services/pageBuilder/checkIsHorizontalFlow";
 import { getDropIndicatorBox } from "@/services/pageBuilder/getDropIndicatorBox";
 import { getOverlayBox } from "@/services/pageBuilder/getOverlayBox";
 import { getSlotChildIds } from "@/services/pageBuilder/getSlotChildIds";
@@ -13,6 +12,7 @@ import { getSlotOwnerId } from "@/services/pageBuilder/getSlotOwnerId";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 
 interface Props {
+  checkIsHorizontalOwner: (ownerId: string) => boolean;
   dropTarget?: DropTarget;
   getElement: (nodeId: string) => Element | null;
   hoveredNodeId?: string;
@@ -20,7 +20,8 @@ interface Props {
   selectedNodeId: string;
 }
 
-const { dropTarget, getElement, hoveredNodeId, resourceId, selectedNodeId } = defineProps<Props>();
+const { checkIsHorizontalOwner, dropTarget, getElement, hoveredNodeId, resourceId, selectedNodeId } =
+  defineProps<Props>();
 // The box of the selected node, kept for the node toolbar placed in the app's own document
 const selectionBox = defineModel<OverlayBox>("selectionBox");
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
@@ -67,7 +68,7 @@ const getDropIndicator = (): DropIndicator | undefined => {
   return getDropIndicatorBox({
     childBoxes,
     index: dropTarget.index,
-    isHorizontal: checkIsHorizontalFlow(getElement(getSlotOwnerId(document, dropTarget.slotPointer))),
+    isHorizontal: checkIsHorizontalOwner(getSlotOwnerId(document, dropTarget.slotPointer)),
     ownerBox: getSlotOwnerBox(document, dropTarget.slotPointer),
   });
 };
