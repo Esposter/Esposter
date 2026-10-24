@@ -88,7 +88,7 @@ flowchart TD
   BAKE --> VIEW
 ```
 
-The document store, `usePageBuilderDocumentStore`, holds each open document under its resource in a `documentMap`. A document is loaded and saved through the functions its caller passes, and each open webpage keeps its own, so editing one leaves the other unchanged. The store reads and writes nothing the GrapesJS editors read.
+The document store, `usePageBuilderDocumentStore`, holds each open document under its resource in a `documentMap`, beside the resource type it is opened as: a webpage or an email. The webpage getters read only webpages and the email getter only emails, so a webpage's document never reaches email code. A document is loaded and saved through the functions its caller passes, and each open document keeps its own, so editing one leaves the others unchanged. The store reads and writes nothing the GrapesJS editors read.
 
 ## Key files
 

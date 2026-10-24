@@ -35,6 +35,8 @@ export const usePageBuilderDocumentStore = defineStore("pageBuilder/document", (
     const open = documentMap.value.get(resourceId);
     return open?.type === ResourceType.Email ? open : undefined;
   };
+  // The document held under either type, for the edit path that applies to a webpage or an email alike
+  const getHeldDocument = (resourceId: string) => documentMap.value.get(resourceId);
   const getDocument = (resourceId: string) => getOpenDocument(resourceId)?.document;
   const getKind = (resourceId: string) => getOpenDocument(resourceId)?.kind;
   const getEmailDocument = (resourceId: string) => getOpenEmailDocument(resourceId)?.document;
@@ -56,6 +58,7 @@ export const usePageBuilderDocumentStore = defineStore("pageBuilder/document", (
     documentMap,
     getDocument,
     getEmailDocument,
+    getHeldDocument,
     getKind,
     getOpenDocument,
     saveDocument,

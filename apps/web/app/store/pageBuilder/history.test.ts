@@ -7,16 +7,22 @@ import type { JsonPatchOperation } from "@esposter/shared";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import { createButton } from "#shared/services/pageBuilder/createButton.test";
+import { MAX_EMAIL_NODES } from "#shared/services/pageBuilder/email/constants";
+import { emailBodyChildrenSchema } from "#shared/services/pageBuilder/email/emailNodeSchema";
+import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry";
+import { noteRichText } from "#shared/services/pageBuilder/email/noteRichText";
 import { webpageDocumentSchema } from "#shared/services/pageBuilder/webpageDocumentSchema";
 import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { MAX_PAGE_BUILDER_HISTORY_SIZE } from "@/services/pageBuilder/constants";
 import { TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
+import { emailKind } from "@/services/pageBuilder/emailKind";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { InvalidOperationError, JsonPatchOperationType, noop, Operation } from "@esposter/shared";
 import { applyBlockEdit, moveBlockNode, updateBlockNodeProps } from "headless-block-editor";
+import { parseMjmlDocument } from "mjml-blocks";
 import { describe, expect, test, vi } from "vitest";
 
 const insertAtFirstIndex = (id: string): JsonPatchOperation[] => [
@@ -442,5 +448,37 @@ describe(usePageBuilderHistoryStore, () => {
       ...TEST_DOCUMENT,
       root: { props: { lang: TEST_OTHER_LANG, tokens: {} } },
     });
+  });
+});
+
+describe("usePageBuilderHistoryStore over an email", () => {
+  test("an email edit lands on the email, and undo restores it", () => {
+    expect.hasAssertions();
+
+    const result = parseMjmlDocument(
+      `<mjml><mj-body><mj-section><mj-column><mj-text>Hello</mj-text></mj-column></mj-section></mj-body></mjml>`,
+      emailRegistry,
+      emailBodyChildrenSchema,
+      noteRichText,
+      MAX_EMAIL_NODES,
+    );
+    if (!result.success) throw new Error("the test email should parse");
+
+    const resourceId = crypto.randomUUID();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const pageBuilderHistoryStore = usePageBuilderHistoryStore();
+    pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, result.data);
+    pageBuilderHistoryStore.applyEdit(
+      resourceId,
+      [{ op: JsonPatchOperationType.Add, path: "/root/props/title", value: "Edited" }],
+      "Change title",
+    );
+
+    expect(pageBuilderDocumentStore.getEmailDocument(resourceId)?.root.props.title).toBe("Edited");
+    expect(pageBuilderDocumentStore.getDocument(resourceId)).toBeUndefined();
+
+    pageBuilderHistoryStore.undo(resourceId);
+
+    expect(pageBuilderDocumentStore.getEmailDocument(resourceId)?.root.props.title).toBeUndefined();
   });
 });

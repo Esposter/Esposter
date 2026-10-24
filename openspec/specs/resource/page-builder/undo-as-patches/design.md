@@ -1,6 +1,6 @@
 # Undo as patches
 
-The page builder's undo and redo: each open resource's document is held in the page builder's document store, and every edit to it is a list of [JSON Patch](https://www.rfc-editor.org/rfc/rfc6902.html) operations applied through the [headless core](../../../headless-block-editor/editor-core/design.md)'s block edit, with the inverses that undo it kept beside the operations that redo it. The [document model](../document-model/design.md) holds the documents this runs over.
+The page builder's undo and redo: each open resource's document is held in the page builder's document store, and every edit to it is a list of [JSON Patch](https://www.rfc-editor.org/rfc/rfc6902.html) operations applied through the [headless core](../../../headless-block-editor/editor-core/design.md)'s block edit, with the inverses that undo it kept beside the operations that redo it. The [document model](../document-model/design.md) holds the documents this runs over. A webpage and an email are edited and undone the same way, and each commit writes the document back under the resource type it was opened as.
 
 ## Undo and redo as patches
 
