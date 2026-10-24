@@ -53,6 +53,10 @@ export const usePageBuilderDocumentStore = defineStore("pageBuilder/document", (
     const document = getDocument(resourceId);
     if (document) await writeDocument(document);
   };
+  const saveEmailDocument = async (resourceId: string, writeDocument: (document: EmailDocument) => Promise<void>) => {
+    const document = getEmailDocument(resourceId);
+    if (document) await writeDocument(document);
+  };
   return {
     documentMap,
     getDocument,
@@ -60,6 +64,7 @@ export const usePageBuilderDocumentStore = defineStore("pageBuilder/document", (
     getHeldDocument,
     getOpenDocument,
     saveDocument,
+    saveEmailDocument,
     setDocument,
     setEmailDocument,
   };

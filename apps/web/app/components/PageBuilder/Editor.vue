@@ -162,6 +162,7 @@ const handleEditorKeydown = (event: KeyboardEvent) => {
         ref="canvas"
         :announce
         :drop-target
+        :kind
         :resource-id
         @canvas-keydown="handleEditorKeydown($event)"
       />

@@ -1,50 +1,46 @@
 import type { DatasetReference } from "#shared/models/dataset/DatasetReference";
-import type { Editor, ProjectData } from "grapesjs";
 
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
-import { getEmailHtml } from "@/services/emailEditor/getEmailHtml";
-import { getItemMetadata } from "@/services/entity/getItemMetadata";
+import { emailKind } from "@/services/pageBuilder/emailKind";
 import { createContentData } from "@/services/resource/createContentData";
-import { useAlertStore } from "@/store/alert";
+import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
+import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
+import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
-import { getResult } from "@esposter/shared";
 
 export const useEmailEditorStore = defineStore("emailEditor", () => {
-  const alertStore = useAlertStore();
-  const { createAlert } = alertStore;
-  const { content, loadContent, saveContent } = createContentData(ResourceType.Email, (data) => new EmailEditor(data));
-  // The live GrapesJS editor, set by the blade — the export command (command bar) reads it from here
-  const editor = shallowRef<Editor>();
-  const datasetReference = computed(() => content.value.datasetReference);
-  // The editor is rebuilt on every mount of its blade and on a restore, and loads from here each time
-  const readEmailEditor = async () => {
-    await loadContent();
-    return content.value;
-  };
-  // GrapesJS project data doesn't know about the dataset binding or the loaded content's own metadata, so
-  // Saves carry both over; the compiled MJML is captured alongside them because only the client editor can
-  // Compile it for the published web view. A failed compile must not drop the save, so the last captured
-  // Html rides along instead, and the author is told the published view now lags the project
-  const saveEmailEditor = (projectData: ProjectData, editorInstance: Editor) => {
-    const html = getResult(() => getEmailHtml(editorInstance))
-      .orTee((error) => {
-        console.error(error);
-        createAlert("The email failed to compile, so its published view keeps the last version that did", "warning");
-      })
-      .unwrapOr(content.value.html);
-    content.value = new EmailEditor({
-      ...projectData,
-      ...getItemMetadata(content.value),
-      datasetReference: datasetReference.value,
-      html,
+  const resourceStore = useResourceStore();
+  const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+  const pageBuilderHistoryStore = usePageBuilderHistoryStore();
+  const {
+    content: emailEditor,
+    loadContent,
+    saveContent,
+  } = createContentData(
+    ResourceType.Email,
+    (data) => new EmailEditor(data),
+    // The page builder edits the body and head the content holds, so every read hands them over, and a reload drops the
+    // history of the document it replaces
+    (email) => {
+      const resourceId = resourceStore.resource?.id;
+      if (!resourceId) return;
+
+      pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, { content: email.content, root: email.root });
+      pageBuilderHistoryStore.clearHistory(resourceId);
+    },
+  );
+  const datasetReference = computed(() => emailEditor.value.datasetReference);
+  // The document the page builder holds is written back as the content's body and head, with the dataset binding the
+  // content keeps beside them. Nothing is written for a resource whose document is not held
+  const saveEmail = (resourceId: string) =>
+    pageBuilderDocumentStore.saveEmailDocument(resourceId, async (document) => {
+      emailEditor.value.content = document.content;
+      emailEditor.value.root = document.root;
+      await saveContent();
     });
-    return saveContent();
-  };
   const saveDatasetReference = async (newDatasetReference: DatasetReference | undefined) => {
-    const emailEditor = new EmailEditor(content.value);
-    emailEditor.datasetReference = newDatasetReference;
-    content.value = emailEditor;
+    emailEditor.value.datasetReference = newDatasetReference;
     await saveContent();
   };
-  return { datasetReference, editor, readEmailEditor, saveDatasetReference, saveEmailEditor };
+  return { datasetReference, loadContent, saveDatasetReference, saveEmail };
 });

@@ -1,112 +1,56 @@
 import type { DatasetReference } from "#shared/models/dataset/DatasetReference";
 import type { ToData } from "@esposter/shared";
+import type { MjmlNode, MjmlRootProps } from "mjml-blocks";
 
 import { datasetReferenceSchema } from "#shared/models/dataset/DatasetReference";
-import { AGrapesJsEditor, grapesJsEditorSchema } from "#shared/models/grapesjs/AGrapesJsEditor";
-import {
-  BLOGSPOT_BASE_URL,
-  PLACEHOLD_BASE_URL,
-  WORDPRESS_DESIGNSPELL_BASE_URL,
-} from "#shared/services/grapesjs/constants";
+import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
+import { MAX_EMAIL_NODES } from "#shared/services/pageBuilder/email/constants";
+import { emailDocumentSchema } from "#shared/services/pageBuilder/email/emailDocumentSchema";
+import { emailBodyChildrenSchema } from "#shared/services/pageBuilder/email/emailNodeSchema";
+import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry";
+import { noteRichText } from "#shared/services/pageBuilder/email/noteRichText";
+import { STARTER_EMAIL_SOURCE } from "#shared/services/pageBuilder/email/starterEmailSource";
 import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
-import { html } from "@esposter/shared";
+import { parseMjmlDocument } from "mjml-blocks";
 import { z } from "zod";
 
-export class EmailEditor extends AGrapesJsEditor {
-  // The bound dataset whose columns become merge-field blocks and drive personalized export
+// The document a new email is written from, read back from the MJML it is written in. The starter is ours, so a failure
+// to read it is a broken build, which the starter's own test catches before it ships
+const readStarterEmail = () => {
+  const result = parseMjmlDocument(
+    STARTER_EMAIL_SOURCE,
+    emailRegistry,
+    emailBodyChildrenSchema,
+    noteRichText,
+    MAX_EMAIL_NODES,
+  );
+  if (!result.success) throw new Error("The starter email does not read back as an email");
+
+  return result.data;
+};
+
+// An email's working copy: the MJML document the page builder edits, its body and head, with the bound dataset that its
+// Merge fields and personalised export read. The published snapshot carries the html the server compiled at publish
+export class EmailEditor extends AItemEntity {
+  content: MjmlNode[] = [];
+  // The bound dataset whose columns become merge fields and drive personalised export
   datasetReference?: DatasetReference;
-  // The compiled MJML captured at save time — MJML compiles in the client editor, so the published
-  // Web view has no way to derive it server-side. Unpersonalized: merge-field tokens stay as authored
+  // The compiled html of a published snapshot. The server compiles the document at publish, so no working copy holds it
   html?: string;
-  pages: unknown[] = [
-    {
-      component: html`
-        <mjml>
-          <mj-body>
-            <mj-section background-color="#f0f0f0">
-              <mj-column>
-                <mj-text font-style="italic" font-size="20px" color="#626262">My Company</mj-text>
-              </mj-column>
-            </mj-section>
-            <mj-section
-              background-url="${BLOGSPOT_BASE_URL}/-TPrfhxbYpDY/Uh3Refzk02I/AAAAAAAALw8/5sUJ0UUGYuw/s1600/New+York+in+The+1960's+-+70's+(2).jpg"
-              background-size="cover"
-              background-repeat="no-repeat"
-            >
-              <mj-column>
-                <mj-text align="center" color="#fff" font-size="40px" font-family="Helvetica Neue"
-                  >Slogan here
-                </mj-text>
-                <mj-button background-color="#F63A4D" href="#"> Promotion </mj-button>
-              </mj-column>
-            </mj-section>
-            <mj-section background-color="#fafafa">
-              <mj-column width="400px">
-                <mj-text font-style="italic" font-size="20px" font-family="Helvetica Neue" color="#626262"
-                  >My Awesome Text
-                </mj-text>
-                <mj-text color="#525252">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin rutrum enim eget magna efficitur, eu
-                  semper augue semper. Aliquam erat volutpat. Cras id dui lectus. Vestibulum sed finibus lectus, sit
-                  amet suscipit nibh. Proin nec commodo purus. Sed eget nulla elit. Nulla aliquet mollis faucibus.
-                </mj-text>
-                <mj-button background-color="#F45E43" href="#">Learn more </mj-button>
-              </mj-column>
-            </mj-section>
-            <mj-section background-color="white">
-              <mj-column>
-                <mj-image
-                  width="200px"
-                  src="${WORDPRESS_DESIGNSPELL_BASE_URL}/wp-content/uploads/2012/01/sciolino-paris-bw.jpg"
-                ></mj-image>
-              </mj-column>
-              <mj-column>
-                <mj-text font-style="italic" font-size="20px" font-family="Helvetica Neue" color="#626262">
-                  Find amazing places
-                </mj-text>
-                <mj-text color="#525252">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin rutrum enim eget magna efficitur, eu
-                  semper augue semper. Aliquam erat volutpat. Cras id dui lectus. Vestibulum sed finibus lectus.
-                </mj-text>
-              </mj-column>
-            </mj-section>
-            <mj-section background-color="#fbfbfb">
-              <mj-column>
-                <mj-image width="100px" src="${PLACEHOLD_BASE_URL}/100x30/459ba8/fff"></mj-image>
-              </mj-column>
-              <mj-column>
-                <mj-image width="100px" src="${PLACEHOLD_BASE_URL}/100x30/79c267/fff"></mj-image>
-              </mj-column>
-              <mj-column>
-                <mj-image width="100px" src="${PLACEHOLD_BASE_URL}/100x30/c5d647/fff"></mj-image>
-              </mj-column>
-            </mj-section>
-            <mj-section background-color="#e7e7e7">
-              <mj-column>
-                <mj-button href="#">Hello There!</mj-button>
-                <mj-social font-size="15px" icon-size="30px" mode="horizontal">
-                  <mj-social-element name="facebook" href="https://mjml.io">Facebook</mj-social-element>
-                  <mj-social-element name="google" href="https://mjml.io">Google</mj-social-element>
-                  <mj-social-element name="twitter" href="https://mjml.io">Twitter</mj-social-element>
-                </mj-social>
-              </mj-column>
-            </mj-section>
-          </mj-body>
-        </mjml>
-      `,
-    },
-  ];
+  root: { props: MjmlRootProps } = { props: {} };
 
   constructor(init?: Partial<EmailEditor>) {
     super();
     Object.assign(this, init);
+    if (init?.content === undefined) Object.assign(this, readStarterEmail());
   }
 }
 
-export const emailEditorSchema = z
-  .object({
-    ...grapesJsEditorSchema.shape,
+// The document's schema, which takes the body and head alone, with the dataset binding and the published html beside them
+export const emailEditorSchema = emailDocumentSchema.and(
+  z.object({
+    ...aItemEntitySchema.shape,
     datasetReference: datasetReferenceSchema.optional(),
     html: z.string().max(MAX_RESOURCE_CONTENT_SIZE).meta({ readOnly: true }).optional(),
-  })
-  .catchall(z.unknown()) satisfies z.ZodType<ToData<EmailEditor>>;
+  }),
+) satisfies z.ZodType<ToData<Omit<EmailEditor, "content" | "root">>>;

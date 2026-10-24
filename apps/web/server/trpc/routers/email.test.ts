@@ -8,14 +8,8 @@ import { resourceRouter } from "#server/trpc/routers/resource";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
-import {
-  AzureContainer,
-  AzureTable,
-  DatabaseEntityType,
-  ResourceType,
-  storageLedgerInStorage,
-} from "@esposter/db-schema";
-import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
+import { AzureContainer, AzureTable, ResourceType, storageLedgerInStorage } from "@esposter/db-schema";
+import { jsonDateParse } from "@esposter/shared";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { assert, beforeAll, describe, expect, test } from "vitest";
 
@@ -62,21 +56,6 @@ describe("emailRouter", () => {
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(emailEditor)));
   });
 
-  test("rejects publishing an email without compiled html", async () => {
-    expect.hasAssertions();
-
-    const newResource = await caller.createResource({ name });
-    await caller.saveResourceContent({
-      content: new EmailEditor(),
-      contentVersion: newResource.contentVersion,
-      id: newResource.id,
-    });
-
-    await expect(caller.publishResource({ id: newResource.id })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new InvalidOperationError(Operation.Update, DatabaseEntityType.Resource, "cannot publish email without compiled html").message}]`,
-    );
-  });
-
   test("strips the owner-only dataset binding from the published snapshot", async () => {
     expect.hasAssertions();
 
@@ -93,7 +72,6 @@ describe("emailRouter", () => {
     const publishedContent = await caller.readPublishedResourceContent(newResource.id);
 
     expect(publishedContent.content.datasetReference).toBeUndefined();
-    expect(publishedContent.content.html).toBe(html);
   });
 
   test("serves the compiled html to the published web view", async () => {
@@ -109,7 +87,9 @@ describe("emailRouter", () => {
     const publishedContent = await caller.readPublishedResourceContent(newResource.id);
 
     expect(publishedContent.name).toBe(name);
-    expect(publishedContent.content.html).toBe(html);
+    // The html the caller saved is replaced by the one the server compiles at publish
+    expect(publishedContent.content.html).not.toBe(html);
+    expect(publishedContent.content.html).toMatch(/^<!doctype html>/iu);
   });
 
   test("removing an email releases its stored files", async () => {

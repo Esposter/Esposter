@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { WebpageKind } from "@/models/pageBuilder/WebpageKind";
-import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
+import type { AnyPageBuilderDocument } from "@/models/pageBuilder/AnyPageBuilderDocument";
+import type { AnyPageBuilderKind } from "@/models/pageBuilder/AnyPageBuilderKind";
 import type { DropIndicator } from "@/models/pageBuilder/DropIndicator";
 import type { DropTarget } from "@/models/pageBuilder/DropTarget";
 import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
@@ -26,8 +26,8 @@ const { checkIsHorizontalOwner, dropTarget, getElement, hoveredNodeId, resourceI
 // The box of the selected node, kept for the node toolbar placed in the app's own document
 const selectionBox = defineModel<OverlayBox>("selectionBox");
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-const { getOpenDocument } = pageBuilderDocumentStore;
-const pageOpen = computed(() => getOpenDocument(resourceId));
+const { getHeldDocument } = pageBuilderDocumentStore;
+const pageOpen = computed(() => getHeldDocument(resourceId));
 const layer = useTemplateRef("layer");
 const hoverBox = shallowRef<OverlayBox>();
 const dropIndicator = shallowRef<DropIndicator>();
@@ -52,7 +52,11 @@ const getNodeBox = (nodeId: string | undefined): OverlayBox | undefined => {
   return getOverlayBox(element.getBoundingClientRect(), layer.value.getBoundingClientRect());
 };
 // The box an empty slot's indicator outlines: the node holding the slot, or the whole layer when the slot is the page's content
-const getSlotOwnerBox = (kind: WebpageKind, document: WebpageDocument, slotPointer: string): OverlayBox | undefined => {
+const getSlotOwnerBox = (
+  kind: AnyPageBuilderKind,
+  document: AnyPageBuilderDocument,
+  slotPointer: string,
+): OverlayBox | undefined => {
   if (slotPointer === "/content") {
     const layerRect = layer.value?.getBoundingClientRect();
     return layerRect === undefined ? undefined : { height: layerRect.height, left: 0, top: 0, width: layerRect.width };

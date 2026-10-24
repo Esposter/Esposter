@@ -1,39 +1,36 @@
 // @vitest-environment nuxt
 import type { ResourceInResource } from "@esposter/db-schema";
-import type { Editor, ProjectData } from "grapesjs";
 
+import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
+import { emailKind } from "@/services/pageBuilder/emailKind";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { useAlertStore } from "@/store/alert";
 import { useEmailEditorStore } from "@/store/emailEditor";
+import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(useEmailEditorStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const resourceId = crypto.randomUUID();
-  const html = "";
-  const projectData: ProjectData = { pages: [{ component: "" }] };
-  // Only the MJML compile command is reached
-  const editor = { runCommand: (_id: string) => ({ html }) } as Editor;
   const createResource = (contentVersion = 0) =>
     createResourceListItem({ contentVersion, id: resourceId, type: ResourceType.Email });
   let content: EmailEditor;
-  let savedContentIds: string[];
+  let savedContents: unknown[];
   let saveResourceContent: ReturnType<typeof vi.fn<() => ResourceInResource>>;
 
   beforeEach(async () => {
     Object.assign(useRouter().currentRoute.value.params, { id: resourceId });
-    content = new EmailEditor();
-    savedContentIds = [];
+    content = new EmailEditor({ content: [], root: { props: {} } });
+    savedContents = [];
     saveResourceContent = vi.fn<() => ResourceInResource>(() => createResource(1));
     trpcMsw.resource.readResource.query(() => ({ ...createResource(), publication: null }));
     trpcMsw.email.readResourceContent.query(() => content);
     trpcMsw.email.readResourcePublication.query(() => undefined);
     trpcMsw.email.saveResourceContent.mutation(({ input }) => {
-      savedContentIds.push(input.content.id);
+      savedContents.push(input.content);
       return saveResourceContent();
     });
     // The page reads the row before any blade mounts, and a content load reads only the blob
@@ -42,57 +39,44 @@ describe(useEmailEditorStore, () => {
     await readResource();
   });
 
-  afterEach(() => {
-    vi.restoreAllMocks();
-  });
-
-  test("carries the loaded content identity into the save", async () => {
+  test("an email edit is saved as the content's body and head, under the loaded identity", async () => {
     expect.hasAssertions();
 
     const emailEditorStore = useEmailEditorStore();
-    const { readEmailEditor, saveEmailEditor } = emailEditorStore;
-    await readEmailEditor();
-    await saveEmailEditor(projectData, editor);
+    const { loadContent, saveEmail } = emailEditorStore;
+    await loadContent();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { setEmailDocument } = pageBuilderDocumentStore;
+    setEmailDocument(resourceId, emailKind, { content: [], root: { props: { attributes: {} } } });
+    await saveEmail(resourceId);
 
-    expect(savedContentIds).toStrictEqual([content.id]);
+    expect(savedContents[0]).toMatchObject({ content: [], id: content.id });
+  });
+
+  test("carries the dataset binding across an email save", async () => {
+    expect.hasAssertions();
+
+    const datasetReference = { id: crypto.randomUUID(), type: DatasetProviderType.Sheet };
+    content = new EmailEditor({ content: [], datasetReference, root: { props: {} } });
+    const emailEditorStore = useEmailEditorStore();
+    const { loadContent, saveEmail } = emailEditorStore;
+    await loadContent();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { setEmailDocument } = pageBuilderDocumentStore;
+    setEmailDocument(resourceId, emailKind, { content: [], root: { props: {} } });
+    await saveEmail(resourceId);
+
+    expect(emailEditorStore.datasetReference).toStrictEqual(datasetReference);
   });
 
   test("skips the store echo that follows the load", async () => {
     expect.hasAssertions();
 
-    content = new EmailEditor({ ...projectData, html });
     const emailEditorStore = useEmailEditorStore();
-    const { readEmailEditor, saveEmailEditor } = emailEditorStore;
-    await readEmailEditor();
-    await saveEmailEditor(projectData, editor);
+    const { loadContent, saveEmail } = emailEditorStore;
+    await loadContent();
+    await saveEmail(resourceId);
 
     expect(saveResourceContent).not.toHaveBeenCalled();
-  });
-
-  test("keeps the last compiled html and tells the author when a compile fails", async () => {
-    expect.hasAssertions();
-
-    const lastHtml = " ";
-    content = new EmailEditor({ ...projectData, html: lastHtml });
-    const failingEditor = {
-      runCommand: (_id: string): unknown => {
-        throw new Error(" ");
-      },
-    } as Editor;
-    const savedHtmls: (string | undefined)[] = [];
-    trpcMsw.email.saveResourceContent.mutation(({ input }) => {
-      savedHtmls.push(input.content.html);
-      return saveResourceContent();
-    });
-    vi.spyOn(console, "error").mockImplementation(() => {});
-    const alertStore = useAlertStore();
-    const { alerts } = storeToRefs(alertStore);
-    const emailEditorStore = useEmailEditorStore();
-    const { readEmailEditor, saveEmailEditor } = emailEditorStore;
-    await readEmailEditor();
-    await saveEmailEditor({ pages: [{ component: " " }] }, failingEditor);
-
-    expect(savedHtmls).toStrictEqual([lastHtml]);
-    expect(alerts.value.map(({ type }) => type)).toStrictEqual(["warning"]);
   });
 });
