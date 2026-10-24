@@ -7,6 +7,7 @@
 
 - [x] 2.1 Check each value the browser accepts as it is typed, refusing braces, angle brackets, comment delimiters and over-long values. Verify: tests named after the scenarios 'An unsupported style value stays in its field unsaved' and 'A style value with a brace is refused'.
 - [x] 2.2 Grow `UiColorField` its token swatches in a commit of its own, then draw the Theme panel and store a colour picked from the theme as a reference to it. Verify: a test named after the scenario 'Changing a theme colour recolours every node that uses it'.
+- [ ] 2.3 Give each token swatch in `UiColorField` the `ui-button` surface its pressed state needs, as the library's rule for anything pressed requires. The button's minimum size, raised shadow and padding change the swatch's 24-pixel size, and its inline fill hides the accent pressed indicator, so decide how the swatch keeps its size, its colour and its pressed mark before adding the class. Verify: the library-layout check in `apps/web/app/templates.test.ts` passes for the swatch.
 
 ## 3. Panel
 
