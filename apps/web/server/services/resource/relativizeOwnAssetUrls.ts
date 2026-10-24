@@ -1,3 +1,4 @@
+import { getBaseUrl } from "#server/services/app/getBaseUrl";
 import { RESOURCE_ASSETS_URL_PREFIX } from "#shared/services/resource/constants";
 import { deepReplaceStrings } from "#shared/util/object/deepReplaceStrings";
 
@@ -8,13 +9,10 @@ import { deepReplaceStrings } from "#shared/util/object/deepReplaceStrings";
 // Environment rather than through `useRuntimeConfig`, because this is a plain service called from tests that hold no
 // Nuxt app
 export const relativizeOwnAssetUrls = <TContent>(content: TContent): TContent => {
-  const baseUrl = process.env.BASE_URL;
+  const baseUrl = getBaseUrl();
   return baseUrl
     ? deepReplaceStrings(content, (value) =>
-        value.replaceAll(
-          `${baseUrl.replace(/\/$/u, "")}${RESOURCE_ASSETS_URL_PREFIX}/`,
-          `${RESOURCE_ASSETS_URL_PREFIX}/`,
-        ),
+        value.replaceAll(`${baseUrl}${RESOURCE_ASSETS_URL_PREFIX}/`, `${RESOURCE_ASSETS_URL_PREFIX}/`),
       )
     : content;
 };
