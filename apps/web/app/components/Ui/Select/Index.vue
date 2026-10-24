@@ -6,12 +6,13 @@ import { checkIsDeepEqual } from "@esposter/shared";
 import { Select } from "@vuetify/v0";
 
 interface Props {
+  disabled?: boolean;
   items: UiMenuItem<T>[];
   label: string;
 }
 // Bound to an array, it holds several choices: a pick toggles an option and the list stays open while the reader picks
 const modelValue = defineModel<TModel>({ required: true });
-const { items, label } = defineProps<Props>();
+const { disabled, items, label } = defineProps<Props>();
 </script>
 
 <!-- A pick of one clears the old choice before it selects the new one, and the model passes on only the choice itself,
@@ -19,6 +20,7 @@ const { items, label } = defineProps<Props>();
   register, which passes on only once the choices differ -->
 <template>
   <Select.Root
+    :disabled
     :model-value
     :multiple="Array.isArray(modelValue)"
     @update:model-value="

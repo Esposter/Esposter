@@ -68,6 +68,7 @@ watch(draft, (value) => {
       @update:model-value="(amount) => setAmount(amount)"
     />
     <UiSelect
+      :disabled="lengthParts.amount === ''"
       :items="unitItems"
       :label="`${label} unit`"
       :model-value="unit"
