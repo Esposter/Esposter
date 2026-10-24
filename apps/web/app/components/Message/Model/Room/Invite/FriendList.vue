@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import type { InviteRecipient } from "@/models/message/room/invite/InviteRecipient";
-import type { PublicUser, RoomInMessage } from "@esposter/db-schema";
+import type { RoomInMessage } from "@esposter/db-schema";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
-import { getDirectMessageName } from "@/services/message/room/getDirectMessageName";
+import { getInviteRecipients } from "@/services/message/room/invite/getInviteRecipients";
 import { searchItems } from "@/services/search/searchItems";
 import { useDirectMessageStore } from "@/store/message/room/directMessage";
 import { useInviteStore } from "@/store/message/room/invite";
@@ -47,42 +47,9 @@ const sendInvite = async (recipient: InviteRecipient) => {
 const checkIsRecipientPending = ({ id, isGroup }: InviteRecipient) =>
   isGroup ? checkIsInviteDirectMessagePending(id) : checkIsInviteFriendPending(id);
 const searchQuery = ref("");
-// Ranks each friend by the newest direct message they are in, so the friend the reader talked to last leads, as
-// Discord's dialog does. A friend with none keeps their place in the friends list behind every one who has one
-const friendRecencyMap = computed(() => {
-  const recencyMap = new Map<PublicUser["id"], number>();
-  for (const [index, { id }] of directMessages.value.entries())
-    for (const { id: participantId } of getDirectMessageParticipants(id))
-      if (!recencyMap.has(participantId)) recencyMap.set(participantId, index);
-  return recencyMap;
-});
-const getFriendRecency = (userId: PublicUser["id"]) => friendRecencyMap.value.get(userId) ?? Number.MAX_SAFE_INTEGER;
-// A group's recency is its own place in the direct message list, which is the same order a friend's recency is read in
-const recipients = computed<InviteRecipient[]>(() => {
-  const friendRecipients = friends.value.map(({ id, image, name }) => ({
-    id,
-    image,
-    isGroup: false,
-    name,
-    recency: getFriendRecency(id),
-  }));
-  const groupRecipients = directMessages.value.flatMap((directMessage, index) =>
-    checkIsGroupDirectMessage(directMessage.id)
-      ? [
-          {
-            id: directMessage.id,
-            image: directMessage.image,
-            isGroup: true,
-            name: getDirectMessageName(directMessage, getDirectMessageParticipants(directMessage.id)),
-            recency: index,
-          },
-        ]
-      : [],
-  );
-  return [...friendRecipients, ...groupRecipients].toSorted(
-    (firstRecipient, secondRecipient) => firstRecipient.recency - secondRecipient.recency,
-  );
-});
+const recipients = computed(() =>
+  getInviteRecipients(friends.value, directMessages.value, checkIsGroupDirectMessage, getDirectMessageParticipants),
+);
 const recipientItems = computed(() => searchItems(recipients.value, searchQuery.value, ({ name }) => ({ name })));
 // Which friends are already members is read once the friends are, since a member row reads Joined and is disabled. With
 // No friends there is nobody to ask about, and the read would refuse an empty list
