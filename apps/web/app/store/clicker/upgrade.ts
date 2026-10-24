@@ -2,11 +2,10 @@ import type { UpgradeMap } from "#shared/assets/clicker/data/upgrades/UpgradeMap
 import type { Upgrade } from "#shared/models/clicker/data/upgrade/Upgrade";
 import type { UpgradeId } from "#shared/models/clicker/data/upgrade/UpgradeId";
 
-import { Target } from "#shared/models/clicker/data/Target";
 import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
+import { getUnlockedUpgrades } from "@/services/clicker/upgrade/getUnlockedUpgrades";
 import { useClickerStore } from "@/store/clicker";
 import { usePointStore } from "@/store/clicker/point";
-import { exhaustiveGuard } from "@esposter/shared";
 
 const sortByPrice = (upgradesToSort: Upgrade[]) =>
   upgradesToSort.toSorted((firstUpgrade, secondUpgrade) => firstUpgrade.price - secondUpgrade.price);
@@ -21,23 +20,7 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
     upgradeMap.value = newUpgradeMap;
   };
   const unlockedUpgrades = computed<Upgrade[]>(() =>
-    upgrades.value.filter(({ unlockConditions }) =>
-      unlockConditions.every((unlockCondition) => {
-        const { type } = unlockCondition;
-
-        switch (type) {
-          case Target.Building: {
-            const foundBuilding = clickerStore.clicker.boughtBuildings.find(({ id }) => id === unlockCondition.id);
-            if (foundBuilding) return foundBuilding.amount >= unlockCondition.amount;
-            else return false;
-          }
-          case Target.Upgrade:
-            return clickerStore.clicker.boughtUpgrades.some(({ id }) => id === unlockCondition.id);
-          default:
-            return exhaustiveGuard(type);
-        }
-      }),
-    ),
+    getUnlockedUpgrades(upgrades.value, clickerStore.clicker.boughtBuildings, clickerStore.clicker.boughtUpgrades),
   );
 
   const checkIsBought = (upgradeId: UpgradeId) =>
