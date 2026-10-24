@@ -3,6 +3,7 @@ import type { PdfAnnotationsState } from "#src/models/PdfAnnotationsState";
 import type { PdfComment } from "#src/models/PdfComment";
 import type { PdfFreeText } from "#src/models/PdfFreeText";
 import type { PdfViewerState } from "#src/models/PdfViewerState";
+import type { Result } from "neverthrow";
 import type { PDFDocumentProxy } from "pdfjs-dist";
 import type { MaybeRefOrGetter } from "vue";
 
@@ -12,7 +13,6 @@ import { createFreeTextEntry } from "#src/services/createFreeTextEntry";
 import { readXfdf } from "#src/xfdf/readXfdf";
 import { writeXfdf } from "#src/xfdf/writeXfdf";
 import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared";
-import type { Result } from "neverthrow";
 import { err, ok } from "neverthrow";
 import { shallowRef, toValue, watch } from "vue";
 
