@@ -8,7 +8,7 @@
 
 ## 3. Fields
 
-- [ ] 3.1 Bind the preview text to the root's field, so every change updates the compiled email. Verify: a test named after the scenario 'Editing the preview text updates the compiled email'.
+- [x] 3.1 Bind the preview text to the root's field, so every change updates the compiled email. Verify: a test named after the scenario 'Editing the preview text updates the compiled email'.
 - [ ] 3.2 Insert merge fields by typing two braces or by dragging a column into a text. Verify: tests named after the scenarios 'Typing two braces offers the dataset's columns' and 'Dragging a column into a text inserts a merge field'.
 - [ ] 3.3 Give email nodes their attribute fields from the MJML blocks' field descriptors, drawn by the style panel's field components, each unset field showing the cascade's value, with no breakpoints or states. Verify: tests named after the scenarios 'An email text has no breakpoint or state choice' and 'Clearing a field restores the root's default'.
 

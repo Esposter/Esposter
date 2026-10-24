@@ -42,7 +42,12 @@ export class EmailEditor extends AItemEntity {
   constructor(init?: Partial<EmailEditor>) {
     super();
     Object.assign(this, init);
-    if (init?.content === undefined) Object.assign(this, readStarterEmail());
+    // The starter fills only the document the caller left unset, so a root it was given keeps its props
+    if (init?.content === undefined || init?.root === undefined) {
+      const starter = readStarterEmail();
+      this.content = init?.content ?? starter.content;
+      this.root = init?.root ?? starter.root;
+    }
   }
 }
 

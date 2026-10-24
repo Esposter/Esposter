@@ -176,7 +176,7 @@ const handleEditorKeydown = (event: KeyboardEvent) => {
         :min="MIN_SIDE_PANE_WIDTH"
       />
       <UiTabs v-model="panel" is-filling :items="panelItems" label="Node settings" h-full>
-        <PageBuilderContentPanel v-if="panel === CONTENT_PANEL" :resource-id />
+        <PageBuilderContentPanel v-if="panel === CONTENT_PANEL" :kind :resource-id />
         <PageBuilderStylePanel v-if="panel === STYLE_PANEL" :resource-id />
         <PageBuilderThemePanel v-if="panel === THEME_PANEL" :resource-id />
       </UiTabs>

@@ -92,6 +92,22 @@ describe("emailRouter", () => {
     expect(publishedContent.content.html).toMatch(/^<!doctype html>/iu);
   });
 
+  test("Editing the preview text updates the compiled email", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    const preview = "Your order has shipped";
+    await caller.saveResourceContent({
+      content: new EmailEditor({ html, root: { props: { preview } } }),
+      contentVersion: newResource.contentVersion,
+      id: newResource.id,
+    });
+    await caller.publishResource({ id: newResource.id });
+    const publishedContent = await caller.readPublishedResourceContent(newResource.id);
+
+    expect(publishedContent.content.html).toContain(preview);
+  });
+
   test("removing an email releases its stored files", async () => {
     expect.hasAssertions();
 

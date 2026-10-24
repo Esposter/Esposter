@@ -6,14 +6,15 @@ import { TEST_CONTEXT, TEST_ID, TEST_LABEL, TEST_ROOT, TEST_URL } from "#shared/
 import { webpageDocumentSchema } from "#shared/services/pageBuilder/webpageDocumentSchema";
 import PageBuilderContentPanel from "@/components/PageBuilder/ContentPanel.vue";
 import UiSchemaForm from "@/components/Ui/SchemaForm/Index.vue";
+import { emailKind } from "@/services/pageBuilder/emailKind";
 import { renderCanvasVNodes } from "@/services/pageBuilder/renderCanvasVNodes";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 import { defineComponent, h } from "vue";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 const createButtonDocument = (): WebpageDocument => ({
   content: [{ props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button }],
@@ -29,7 +30,7 @@ describe("pageBuilderContentPanel", () => {
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, createButtonDocument());
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
-    const component = await mountSuspended(PageBuilderContentPanel, { props: { resourceId } });
+    const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: webpageKind, resourceId } });
 
     component.getComponent(UiSchemaForm).vm.$emit("update:modelValue", { href: TEST_URL, label: "Open" });
 
@@ -54,7 +55,7 @@ describe("pageBuilderContentPanel", () => {
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, createButtonDocument());
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
-    const component = await mountSuspended(PageBuilderContentPanel, { props: { resourceId } });
+    const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: webpageKind, resourceId } });
 
     component.getComponent(UiSchemaForm).vm.$emit("update:modelValue", { href: TEST_URL, label: "" });
 
@@ -69,11 +70,26 @@ describe("pageBuilderContentPanel", () => {
     const resourceId = crypto.randomUUID();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, createButtonDocument());
-    const component = await mountSuspended(PageBuilderContentPanel, { props: { resourceId } });
+    const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: webpageKind, resourceId } });
 
     component.getComponent(UiSchemaForm).vm.$emit("update:modelValue", { lang: "fr" });
 
     expect(pageBuilderDocumentStore.getDocument(resourceId)?.root).toStrictEqual({ props: { lang: "fr", tokens: {} } });
+
+    component.unmount();
+  });
+
+  test("editing an email's preview text writes the root's preview", async () => {
+    expect.hasAssertions();
+
+    const resourceId = crypto.randomUUID();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, { content: [], root: { props: {} } });
+    const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: emailKind, resourceId } });
+
+    component.getComponent(UiSchemaForm).vm.$emit("update:modelValue", { preview: "Your order has shipped" });
+
+    expect(pageBuilderDocumentStore.getEmailDocument(resourceId)?.root.props.preview).toBe("Your order has shipped");
 
     component.unmount();
   });
