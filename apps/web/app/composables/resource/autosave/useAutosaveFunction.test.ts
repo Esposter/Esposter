@@ -180,4 +180,33 @@ describe(useAutosaveFunction, () => {
     expect(save).toHaveBeenCalledExactlyOnceWith();
     expect(pathAtSave).toBe(hostPath);
   });
+
+  // The owner keeps typing while the leaving write is in flight, so the edit made meanwhile is still held for the route
+  // The guard runs on, and it is written before the route changes rather than dropped with the blade's scope
+  test("writes an edit made while the leaving write is in flight", async () => {
+    expect.hasAssertions();
+
+    const hostPath = `/autosave-host/${resourceId}`;
+    let isTyping = true;
+    save.mockImplementation(async () => {
+      if (isTyping) {
+        isTyping = false;
+        autosave();
+      }
+    });
+    router.addRoute({
+      component: defineComponent({
+        render: () => h("div"),
+        setup: () => {
+          autosave = useAutosaveFunction(save);
+        },
+      }),
+      path: "/autosave-host/:id",
+    });
+    await mountSuspended(defineComponent({ render: () => h(RouterView) }), { route: hostPath });
+    autosave();
+    await navigateTo(`/autosave-host/${otherResourceId}`, { replace: true });
+
+    expect(save).toHaveBeenCalledTimes(2);
+  });
 });

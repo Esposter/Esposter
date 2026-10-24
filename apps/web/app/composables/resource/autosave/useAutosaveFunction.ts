@@ -27,16 +27,18 @@ export const useAutosaveFunction = (save: () => Promisable<unknown>) => {
     }).match(noop, console.error);
   };
   const writePendingInBackground = getSynchronizedFunction(writePending);
-  const { start, stop } = useTimeoutFn(writePendingInBackground, RESOURCE_AUTOSAVE_DEBOUNCE_MS, { immediate: false });
+  const { start } = useTimeoutFn(writePendingInBackground, RESOURCE_AUTOSAVE_DEBOUNCE_MS, { immediate: false });
   // A blade closed while its resource stays open writes the edit it holds, so the debounce's timer going with the
   // Scope does not drop it
-  tryOnScopeDispose(() => {
-    stop();
-    writePendingInBackground();
-  });
+  tryOnScopeDispose(writePendingInBackground);
   // Every navigation writes the edit it holds before the route changes, whether it leaves the resource or only
-  // Changes the one it names, since a leave guard alone misses a change of id within the same route
-  tryOnScopeDispose(beforeEach(writePending));
+  // Changes the one it names, since a leave guard alone misses a change of id within the same route. An edit typed
+  // While that write is in flight is still held for the route the guard runs on, so the guard writes until none is left
+  tryOnScopeDispose(
+    beforeEach(async () => {
+      while (pendingResourceId !== undefined) await writePending();
+    }),
+  );
 
   return () => {
     // The debounce holds this edit for half a second and re-arms for as long as the owner keeps typing, so
