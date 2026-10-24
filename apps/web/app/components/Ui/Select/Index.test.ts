@@ -43,6 +43,25 @@ describe("uiSelect", () => {
       expect(activator.attributes("aria-haspopup")).toBe("listbox");
     });
 
+    test("keeps no mark column on a trigger whose chosen option carries no mark", () => {
+      expect.hasAssertions();
+
+      const component = mount(UiSelect, { props: { items, label, modelValue: "plan" } });
+      const activator = component.get('[role="combobox"]');
+
+      expect(activator.element.firstElementChild?.textContent.trim()).toBe("Plan");
+    });
+
+    test("draws the chosen option's mark in the trigger's column", () => {
+      expect.hasAssertions();
+
+      const marked: UiSelectItem<string>[] = [{ icon: "i-test-plan", title: "Plan", value: "plan" }];
+      const component = mount(UiSelect, { props: { items: marked, label, modelValue: "plan" } });
+      const activator = component.get('[role="combobox"]');
+
+      expect(activator.element.querySelector(".i-test-plan")).not.toBeNull();
+    });
+
     test("opens onto the selected option, walks by arrow, Home and End, and jumps by a title's first letters", async () => {
       expect.hasAssertions();
 

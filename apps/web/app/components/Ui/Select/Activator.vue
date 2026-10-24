@@ -27,6 +27,10 @@ const selectedItems = computed(() =>
 // The one chosen option as its row shows it; several by their titles, past a few by how many, and the label while
 // Nothing is chosen
 const selectedItem = computed(() => (selectedItems.value.length === 1 ? selectedItems.value[0] : undefined));
+// A chosen option with no mark leaves the trigger no column for one, so its title starts at the field's edge
+const isMarkless = computed(() =>
+  selectedItem.value?.icon || selectedItem.value?.image || selectedItem.value?.meaning ? undefined : true,
+);
 const title = computed(() => {
   if (selectedItems.value.length === 0) return label;
   else if (selectedItems.value.length > SELECT_TRIGGER_TITLE_LIMIT) return `${selectedItems.value.length} selected`;
@@ -50,7 +54,13 @@ popover.positionTry.value = POPOVER_POSITION_TRY;
       }
     "
   >
-    <UiItemContent :icon="selectedItem?.icon" :image="selectedItem?.image" :meaning="selectedItem?.meaning" :title>
+    <UiItemContent
+      :icon="selectedItem?.icon"
+      :image="selectedItem?.image"
+      :is-markless
+      :meaning="selectedItem?.meaning"
+      :title
+    >
       <template #append>
         <!-- Points down to the list it opens, and turns over while the list is open -->
         <UiIcon :class="{ 'rotate-180': isOpen }" :meaning="UiIconMeaning.Dropdown" />
