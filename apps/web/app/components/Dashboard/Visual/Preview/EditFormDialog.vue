@@ -5,11 +5,11 @@ import { VisualDatasetShape } from "@/models/dashboard/VisualDatasetShape";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { VisualTypeChartTypesMap } from "@/services/dashboard/chart/VisualTypeChartTypesMap";
 import { VisualTypeDatasetShapeMap } from "@/services/dashboard/dataset/VisualTypeDatasetShapeMap";
+import { setVisualType } from "@/services/dashboard/setVisualType";
 import { VisualTypeItemCategoryDefinitions } from "@/services/dashboard/VisualTypeItemCategoryDefinitions";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { useVisualStore } from "@/store/dashboard/visual";
 import { prettify } from "@/util/text/prettify";
-import { takeOne } from "@esposter/shared";
 
 const editedItem = defineModel<Visual>({ required: true });
 const visualStore = useVisualStore();
@@ -54,18 +54,7 @@ const chartTypeItems = computed(() =>
             :items="VisualTypeItemCategoryDefinitions"
             label="Visual type"
             :model-value="editedItem.type"
-            @update:model-value="
-              (type) => {
-                editedItem.type = type;
-                // Chart types are per visual type, so a switch that leaves the old one unavailable falls back to
-                // The first the new type offers rather than keeping a value its own schema does not accept
-                const chartTypes = VisualTypeChartTypesMap[type];
-                if (!chartTypes.includes(editedItem.chart.type)) editedItem.chart.type = takeOne(chartTypes);
-                // A type that draws several values per point has nothing a binding could give it, so the binding goes
-                // With the switch rather than staying saved behind a chart that cannot draw it
-                if (VisualTypeDatasetShapeMap[type] === VisualDatasetShape.None) editedItem.dataset = undefined;
-              }
-            "
+            @update:model-value="(type) => setVisualType(editedItem, type)"
           />
         </div>
         <div flex flex-col gap-1 w-64>
