@@ -5,12 +5,12 @@
 
 ## 2. Stored data
 
-- [ ] 2.1 Confirm the purge deletes each resource's directory, its activity and view partitions, and its ledger entries before its row. Verify: a test named after the scenario 'Removing an email releases its stored files'.
+- [x] 2.1 Confirm the purge deletes each resource's directory, its activity and view partitions, and its ledger entries before its row. Verify: a test named after the scenario 'Removing an email releases its stored files'.
 - [ ] 2.2 Backfill the Blueprint entries of webpage and email type to drop their content, dev then prod. Verify: tests named after the scenarios 'A Blueprint's webpage entry deploys as a fresh document' and 'A Blueprint revision from before the cutover is refused'.
 
 ## 3. Related data
 
-- [ ] 3.1 Leave a program's invite reference and every earned achievement in place. Verify: tests named after the scenarios 'A program keeps its reference to a deleted email' and 'An earned achievement survives the cutover'.
+- [x] 3.1 Leave a program's invite reference and every earned achievement in place. Verify: tests named after the scenarios 'A program keeps its reference to a deleted email' and 'An earned achievement survives the cutover'.
 
 ## 4. Removing the old editor
 

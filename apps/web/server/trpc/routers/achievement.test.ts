@@ -121,6 +121,27 @@ describe("achievementRouter", () => {
     expect(leaderboard.myEntry).toStrictEqual(leaderboardEntry);
   });
 
+  test("an earned achievement survives the cutover", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.webpage.createResource({ name });
+    await caller.webpage.saveResourceContent({
+      content: new WebpageEditor(),
+      contentVersion: newResource.contentVersion,
+      id: newResource.id,
+    });
+    const readUnlockedAchievementIds = async () =>
+      (await caller.achievement.readUserAchievements())
+        .filter(({ unlockedAt }) => unlockedAt)
+        .map(({ achievementId }) => achievementId);
+    const unlockedBeforePurge = await readUnlockedAchievementIds();
+    await caller.resource.deleteResources({ ids: [newResource.id] });
+    await caller.resource.purgeResource({ id: newResource.id });
+
+    expect(unlockedBeforePurge).not.toStrictEqual([]);
+    await expect(readUnlockedAchievementIds()).resolves.toStrictEqual(unlockedBeforePurge);
+  });
+
   test("readAchievementRarities reports the share of users who have unlocked each achievement", async () => {
     expect.hasAssertions();
 

@@ -1,22 +1,35 @@
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { createCallerFactory } from "#server/trpc";
 import { emailRouter } from "#server/trpc/routers/email";
+import { resourceRouter } from "#server/trpc/routers/resource";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
-import { DatabaseEntityType, ResourceType } from "@esposter/db-schema";
+import { AzureContainer, DatabaseEntityType, ResourceType } from "@esposter/db-schema";
 import { InvalidOperationError, jsonDateParse, Operation } from "@esposter/shared";
-import { beforeAll, describe, expect, test } from "vitest";
+import { MockContainerDatabase } from "azure-mock";
+import { assert, beforeAll, describe, expect, test } from "vitest";
 
 describe("emailRouter", () => {
-  const { getCaller } = setupResourceSuite(emailRouter);
+  const { getCaller, getMockContext } = setupResourceSuite(emailRouter);
   let caller: DecorateRouterRecord<TRPCRouter["email"]>;
+  let resourceCaller: DecorateRouterRecord<TRPCRouter["resource"]>;
   const name = "name";
   const html = "html";
 
+  const readStorageBytesUsed = async (userId: string) =>
+    (
+      await getMockContext().db.query.usersInAuth.findFirst({
+        columns: { storageBytesUsed: true },
+        where: { id: { eq: userId } },
+      })
+    )?.storageBytesUsed;
+
   beforeAll(() => {
     caller = getCaller();
+    resourceCaller = createCallerFactory(resourceRouter)(getMockContext());
   });
 
   test("saves and reads content", async () => {
@@ -90,5 +103,33 @@ describe("emailRouter", () => {
 
     expect(publishedContent.name).toBe(name);
     expect(publishedContent.content.html).toBe(html);
+  });
+
+  test("removing an email releases its stored files", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    const storageBytesUsedBeforePublish = await readStorageBytesUsed(newResource.userId);
+    await caller.saveResourceContent({
+      content: new EmailEditor({ html }),
+      contentVersion: newResource.contentVersion,
+      id: newResource.id,
+    });
+    await caller.publishResource({ id: newResource.id });
+    const storageBytesUsedWhilePublished = await readStorageBytesUsed(newResource.userId);
+    const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
+    assert.exists(container);
+    const readResourceBlobNames = () => [...container.keys()].filter((key) => key.startsWith(`${newResource.id}/`));
+    const storedBlobNamesBeforePurge = readResourceBlobNames();
+    // Deleting is soft, so the purge is what removes the directory and gives its bytes back
+    await caller.deleteResource({ id: newResource.id });
+    await resourceCaller.purgeResource({ id: newResource.id });
+
+    assert.exists(storageBytesUsedBeforePublish);
+    assert.exists(storageBytesUsedWhilePublished);
+    expect(storageBytesUsedWhilePublished).toBeGreaterThan(storageBytesUsedBeforePublish);
+    expect(storedBlobNamesBeforePurge).not.toStrictEqual([]);
+    expect(readResourceBlobNames()).toStrictEqual([]);
+    await expect(readStorageBytesUsed(newResource.userId)).resolves.toBe(storageBytesUsedBeforePublish);
   });
 });

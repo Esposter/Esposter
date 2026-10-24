@@ -422,6 +422,22 @@ describe("programRouter", () => {
     expect(remainingParticipants).toStrictEqual([]);
   });
 
+  test("a program keeps its reference to a deleted email", async () => {
+    expect.hasAssertions();
+
+    const { program } = await createInviteProgram((surveyPath) => `<a href="${surveyPath}">Take the survey</a>`);
+    const { emailId } = await caller.readResourceContent({ id: program.id });
+    await resourceCaller.deleteResources({ ids: [emailId] });
+    await resourceCaller.purgeResource({ id: emailId });
+    const { emailId: keptEmailId } = await caller.readResourceContent({ id: program.id });
+    const { dependencies, missingDependencyCount } = await resourceCaller.readResourceReferences({ id: program.id });
+
+    // The email's row and its content are gone, so the invite's reference to it is the only record left of it
+    expect(keptEmailId).toBe(emailId);
+    expect(dependencies.map(({ id }) => id)).not.toContain(emailId);
+    expect(missingDependencyCount).toBe(1);
+  });
+
   // A program whose email is captured with the survey link the invite button writes, so every test reads one bound email
   const createInviteProgram = async (emailHtml: (surveyPath: string) => string, audienceKeyValues = ["a", "b"]) => {
     const survey = await createSurvey(surveyCaller, name, { model, settings: identifiedSettings });
