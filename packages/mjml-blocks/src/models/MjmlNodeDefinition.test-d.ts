@@ -11,12 +11,6 @@ declare const buttonDefinition: MjmlBlockTypeDefinition<MjmlButtonNode>;
 declare const textPropsSchema: z.ZodType<OwnProps<MjmlTextProps>>;
 
 describe("mjmlNodeDefinition type", () => {
-  test("a node's definition is the definition of its own type", () => {
-    expect.hasAssertions();
-
-    expectTypeOf<MjmlNodeDefinition<MjmlButtonNode>>().toEqualTypeOf<MjmlBlockTypeDefinition<MjmlButtonNode>>();
-  });
-
   test("a button definition given the text props schema is refused", () => {
     expect.hasAssertions();
 

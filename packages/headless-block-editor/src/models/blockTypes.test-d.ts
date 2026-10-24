@@ -1,6 +1,5 @@
 import type { BlockChildren } from "#src/models/BlockChildren";
 import type { BlockNode } from "#src/models/BlockNode";
-import type { BlockNodeProps } from "#src/models/BlockNodeProps";
 import type { BlockTypeDefinition } from "#src/models/BlockTypeDefinition";
 import type { OwnProps } from "#src/models/OwnProps";
 import type { SlotKeys } from "#src/models/SlotKeys";
@@ -20,13 +19,6 @@ declare const section: SectionNode;
 declare const sectionChildren: BlockChildren<SectionNode>;
 
 describe("blockTypes type", () => {
-  test("a node's props default to the id alone", () => {
-    expect.hasAssertions();
-
-    expectTypeOf<BlockNode["props"]>().toEqualTypeOf<BlockNodeProps>();
-    expectTypeOf<BlockNode["type"]>().toEqualTypeOf<string>();
-  });
-
   test("a slot key is the prop holding a list of nodes", () => {
     expect.hasAssertions();
 

@@ -1,0 +1,35 @@
+# Type-level tests and type benches
+
+Each `*.test-d.ts` and `*.typebench.ts` kept for what it guards: a refusal the typechecker would not otherwise catch, or a compiler cost a deep type can regress. A positive assertion that only restates an alias earns nothing, and a type bench earns its place only where a deep type has already caused a failure. the `testing` skill (`references/what-earns-a-test.md` and `references/type-tests.md`) owns the rules; `bench` skill (`references/type-benches.md`) owns the bench files.
+
+| Unit                                                                                     | Swept      | Notes                                                                                                    |
+| ---------------------------------------------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------------------- |
+| `packages/headless-block-editor/src/models/blockTypes.test-d.ts`                         | 2026-10-24 | dropped the alias-identity check of a node's props; the refusals and the helper shapes they rely on stay |
+| `packages/headless-block-editor/src/services/getSlotPointer.test-d.ts`                   | 2026-10-24 | kept: the misspelt-slot refusal                                                                          |
+| `packages/headless-block-editor/src/models/BlockChildren.typebench.ts`                   | 2026-10-24 | kept: the children port over the whole node union is the deep type behind the email's TS2589             |
+| `packages/mjml-blocks/src/models/MjmlBlockTypeDefinition.test-d.ts`                      | 2026-10-24 | kept: the content-kind refusals and the one accepted pairing that proves the refusals can pass           |
+| `packages/mjml-blocks/src/models/MjmlNodeDefinition.test-d.ts`                           | 2026-10-24 | dropped the alias-identity check; the button refusal stays                                               |
+| `apps/web/shared/models/resource/ResourceContent.test-d.ts`                              | open       |                                                                                                          |
+| `apps/web/shared/models/trpc/TRPCProcedureInputs.test-d.ts`                              | open       |                                                                                                          |
+| `apps/web/shared/models/db/moderation/ExecuteAdminActionInput.test-d.ts`                 | open       |                                                                                                          |
+| `apps/web/shared/services/achievement/definitions/defineAchievementDefinition.test-d.ts` | open       |                                                                                                          |
+| `apps/web/app/models/dungeons/keys/TilesetKey.test-d.ts`                                 | open       |                                                                                                          |
+| `apps/web/app/models/message/slashCommands/SlashCommandParameters.test-d.ts`             | open       |                                                                                                          |
+| `apps/web/app/util/types/SpaceWordBoundaries.test-d.ts`                                  | open       |                                                                                                          |
+| `packages/nuxt-security-module/src/module.test-d.ts`                                     | open       |                                                                                                          |
+| `packages/shared/src/models/eventEmitter/TypedEventEmitter.test-d.ts`                    | open       |                                                                                                          |
+| `packages/shared/src/models/indexedDb/Database.test-d.ts`                                | open       |                                                                                                          |
+| `packages/shared/src/services/zod/createUniqueArraySchema.test-d.ts`                     | open       |                                                                                                          |
+| `packages/shared/src/util/function/getSynchronizedFunction.test-d.ts`                    | open       |                                                                                                          |
+| `packages/shared/src/util/types/DeepOmit.test-d.ts`                                      | open       |                                                                                                          |
+| `packages/shared/src/util/types/DeepOmit.typebench.ts`                                   | open       |                                                                                                          |
+| `packages/shared/src/util/types/DeepOptionalUndefined.test-d.ts`                         | open       |                                                                                                          |
+| `packages/shared/src/util/types/DeepOptionalUndefined.typebench.ts`                      | open       |                                                                                                          |
+| `packages/shared/src/util/types/GetPaths.test-d.ts`                                      | open       |                                                                                                          |
+| `packages/shared/src/util/types/GetPaths.typebench.ts`                                   | open       |                                                                                                          |
+| `packages/shared/src/util/types/GetProperties.test-d.ts`                                 | open       |                                                                                                          |
+| `packages/trpc-msw/src/models/TRPCMswRouterRecord.test-d.ts`                             | open       |                                                                                                          |
+| `packages/trpc-nuxt-module/src/runtime/client/models/TRPCNuxtClient.test-d.ts`           | open       |                                                                                                          |
+| `packages/trpc-nuxt-module/src/runtime/server/models/TRPCEventHandlerOptions.test-d.ts`  | open       |                                                                                                          |
+
+Still to decide, not in this sweep: whether the page builder's runtime benches earn their place. `renderWebpageDocument.bench.ts`, `applyWebpageEdit.bench.ts` and `compileEmailDocument.bench.ts` report timings nothing reads, and their budgets are now stated as reported and not asserted. A bench stays only if a change will act on what it reports. The render bench is the candidate for that, through a schema cache or a note-kit serialiser.
