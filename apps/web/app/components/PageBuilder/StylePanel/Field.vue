@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { StyleProperty } from "#shared/models/pageBuilder/StyleProperty";
 
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 import { DEFAULT_LENGTH_UNIT, STYLE_LENGTH_PROPERTIES, STYLE_LENGTH_UNITS } from "@/services/pageBuilder/constants";
 import { getStyleValueError } from "@/services/pageBuilder/getStyleValueError";
@@ -24,7 +25,11 @@ const lengthParts = computed(() =>
   STYLE_LENGTH_PROPERTIES.includes(property) ? splitStyleLength(draft.value) : undefined,
 );
 const unit = computed(() => lengthParts.value?.unit || DEFAULT_LENGTH_UNIT);
-const unitItems = STYLE_LENGTH_UNITS.map((lengthUnit) => ({ title: lengthUnit, value: lengthUnit }));
+const unitItems = STYLE_LENGTH_UNITS.map((lengthUnit) => ({
+  meaning: UiIconMeaning.None,
+  title: lengthUnit,
+  value: lengthUnit,
+}));
 // An empty number is an empty draft, which saves as no declaration, so clearing a length restores what it inherits
 const getDraft = (amount: string, lengthUnit: string) => (amount === "" ? "" : `${amount}${lengthUnit}`);
 const setAmount = (amount: string) => {
@@ -59,7 +64,7 @@ watch(draft, (value) => {
       :placeholder
       :rules
       :type="UiTextFieldType.Number"
-      @keydown="stepAmount($event)"
+      @keydown="(event) => stepAmount(event)"
       @update:model-value="(amount) => setAmount(amount)"
     />
     <UiSelect

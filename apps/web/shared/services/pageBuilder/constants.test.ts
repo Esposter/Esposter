@@ -1,3 +1,4 @@
+import type { ImageNode } from "#shared/models/pageBuilder/ImageNode";
 import type { RenderContext } from "#shared/models/pageBuilder/RenderContext";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 
@@ -14,7 +15,7 @@ export const TEST_SURVEY_ID = crypto.randomUUID();
 export const TEST_CONTEXT: RenderContext = { origin: TEST_ORIGIN };
 export const TEST_ROOT: WebpageDocument["root"] = { props: { lang: TEST_LANG, tokens: {} } };
 // An image node that loads from the address given, the way a page that names a file asset holds it
-export const createTestImageNode = (src: string) => ({
+export const createTestImageNode = (src: string): ImageNode => ({
   props: { alt: "", decorative: true, id: crypto.randomUUID(), src },
   type: WebpageNodeType.Image,
 });

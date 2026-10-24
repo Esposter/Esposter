@@ -426,10 +426,13 @@ describe("programRouter", () => {
     expect.hasAssertions();
 
     const { program } = await createInviteProgram((surveyPath) => `<a href="${surveyPath}">Take the survey</a>`);
-    const { emailId } = await caller.readResourceContent({ id: program.id });
+    const readEmailId = async () => (await caller.readResourceContent({ id: program.id }))?.emailId;
+    const emailId = await readEmailId();
+    if (!emailId) throw new Error("the program holds no email");
+
     await resourceCaller.deleteResources({ ids: [emailId] });
     await resourceCaller.purgeResource({ id: emailId });
-    const { emailId: keptEmailId } = await caller.readResourceContent({ id: program.id });
+    const keptEmailId = await readEmailId();
     const { dependencies, missingDependencyCount } = await resourceCaller.readResourceReferences({ id: program.id });
 
     // The email's row and its content are gone, so the invite's reference to it is the only record left of it
