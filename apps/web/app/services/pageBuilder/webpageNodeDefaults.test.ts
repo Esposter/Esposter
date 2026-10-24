@@ -16,13 +16,13 @@ describe("webpageNodeDefaults", () => {
     }
   });
 
-  test("an inserted image and video load from the app's own origin", () => {
+  test("an inserted image and video load the app's own placeholder", () => {
     expect.hasAssertions();
 
     for (const type of [WebpageNodeType.Image, WebpageNodeType.Video]) {
       const { props } = createWebpageNode(type, TEST_ID);
 
-      expect("src" in props && props.src.startsWith("/")).toBe(true);
+      expect(props).toHaveProperty("src", "/page-builder/placeholder.svg");
     }
   });
 });
