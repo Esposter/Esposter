@@ -40,7 +40,7 @@ What is kept, and why:
 - **MJML** stays the email engine. Email-client HTML is a decade of table and conditional-comment workarounds MJML encodes; we write the MJML, it writes the HTML. Its components become block types in a package of their own, `mjml-blocks`, in place of `grapesjs-mjml`, and its compile moves to the server, where its weight costs the reader nothing.
 - **TipTap and ProseMirror** hold the text inside a text block, in the ProseMirror JSON the Note already stores and renders server-side through `@tiptap/html`. Rich text is on the stop list for good reason, and the app already pays for it.
 - **CodeMirror** edits the raw-HTML block, through the code viewer the app already themes.
-- **The shared sanitiser** cleans the raw-HTML block, in place of GrapesJS's parser, whose checks the custom code plugin's page, deleted at the cutover, recorded as weaker than they look.
+- **The shared sanitiser** cleans the raw-HTML block, in place of GrapesJS's parser; its vectors are pinned by `packages/shared/src/services/sanitizeHtml/sanitizeHtml.advisories.test.ts`.
 
 What goes with GrapesJS: Backbone, underscore, `backbone-undo`, CodeMirror 5, the vendored keymaster, every plugin package, `js-beautify`, the TUI image editor and the two CDN origins. An HTML or CSS parser does not stay either, because nothing imports HTML any more (see "What is deliberately not in it").
 
