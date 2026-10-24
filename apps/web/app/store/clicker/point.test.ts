@@ -4,8 +4,7 @@ import { usePointStore } from "@/store/clicker/point";
 import { describe, expect, test } from "vitest";
 
 describe(usePointStore, () => {
-  // A price is paid when the points meet it, so the one reading the rows and the buttons share has no off-by-one at
-  // Its edge
+  // A price is paid once the points meet it, so the reading the rows and buttons share has no off-by-one at its edge
   test("can pay a price it exactly meets, and not one point more", () => {
     expect.hasAssertions();
 
