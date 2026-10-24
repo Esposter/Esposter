@@ -12,7 +12,7 @@ import {
 import { z } from "zod";
 
 // A webpage's working copy: the page builder's document, its tree and root, with the share preview the published page
-// Unfurls with over the site's own. The image is one of the webpage's file assets, so publishing clones it with the rest
+// Unfurls with over the site's own. The image is one of the webpage's file assets, so duplicating the page clones it with the rest
 export class WebpageEditor extends AItemEntity {
   content: WebpageNode[] = [];
   description = "";
