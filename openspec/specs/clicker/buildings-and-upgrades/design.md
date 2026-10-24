@@ -23,6 +23,14 @@ Content lives in `shared/assets/clicker/data/` as constant maps, typed by `satis
 
 ## Procedures
 
+```mermaid
+flowchart LR
+  list["Store/List.vue<br/>awaits both on setup"] -->|"clicker.readBuildingMap"| buildings["BuildingMap<br/>via the clicker router"]
+  list -->|"clicker.readUpgradeMap"| upgrades["UpgradeMap<br/>via the clicker router"]
+  buildings -->|"initializeBuildingMap"| buildingStore["building store"]
+  upgrades -->|"initializeUpgradeMap"| upgradeStore["upgrade store"]
+```
+
 | Procedure                 | Auth         | Input | Purpose                        |
 | ------------------------- | ------------ | ----- | ------------------------------ |
 | `clicker.readBuildingMap` | rate-limited | —     | serve the building definitions |
