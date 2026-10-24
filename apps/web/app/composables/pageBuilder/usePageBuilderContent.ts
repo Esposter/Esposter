@@ -1,4 +1,4 @@
-import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
+import type { WebpageKind } from "@/models/pageBuilder/WebpageKind";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 import type { WebpageNode } from "#shared/models/pageBuilder/WebpageNode";
 import type { WebpageNodeDefinition } from "#shared/models/pageBuilder/WebpageNodeDefinition";
@@ -29,11 +29,7 @@ type ContentValue = WebpageRootProps | z.output<WebpageNodeDefinition["propsSche
 
 // The target a selection edits: the selected node, or the root when nothing is selected or the id is not found.
 // The target is undefined when the node's type is not in the registry
-const getContentTarget = (
-  kind: PageBuilderKind,
-  document: WebpageDocument,
-  nodeId: string,
-): ContentTarget | undefined => {
+const getContentTarget = (kind: WebpageKind, document: WebpageDocument, nodeId: string): ContentTarget | undefined => {
   const nodePointer = getNodePointer(kind, document, nodeId);
   if (nodePointer === undefined)
     return {

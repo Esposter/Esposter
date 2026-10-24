@@ -1,6 +1,6 @@
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 import type { PageBuilderHistoryEntry } from "@/models/pageBuilder/PageBuilderHistoryEntry";
-import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
+import type { WebpageKind } from "@/models/pageBuilder/WebpageKind";
 import type { History, JsonPatchOperation } from "@esposter/shared";
 
 import { MAX_PAGE_BUILDER_HISTORY_SIZE } from "@/services/pageBuilder/constants";
@@ -59,7 +59,7 @@ export const usePageBuilderHistoryStore = defineStore("pageBuilder/history", () 
   // The document and the history an edit leaves land together, so neither is ever ahead of the other, and a preview ends
   const commitEdit = (
     resourceId: string,
-    kind: PageBuilderKind,
+    kind: WebpageKind,
     document: WebpageDocument,
     history: History<PageBuilderHistoryEntry>,
   ) => {

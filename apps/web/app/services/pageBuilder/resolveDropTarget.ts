@@ -1,4 +1,4 @@
-import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
+import type { WebpageKind } from "@/models/pageBuilder/WebpageKind";
 import type { DropTarget } from "@/models/pageBuilder/DropTarget";
 import type { DropTargetInput } from "@/models/pageBuilder/DropTargetInput";
 
@@ -13,7 +13,7 @@ import { getAcceptedTypes } from "headless-block-editor";
 // The index is the one the pointer resolves to among that slot's children, along the axis its owner lays them out on,
 // And undefined when no slot accepts the type
 export const resolveDropTarget = (
-  kind: PageBuilderKind,
+  kind: WebpageKind,
   { checkIsHorizontalOwner, document, draggedType, getChildRect, hoveredNodeId, pointer }: DropTargetInput,
 ): DropTarget | undefined => {
   const hoveredNodePointer = hoveredNodeId === undefined ? undefined : getNodePointer(kind, document, hoveredNodeId);

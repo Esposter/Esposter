@@ -1,4 +1,4 @@
-import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
+import type { WebpageKind } from "@/models/pageBuilder/WebpageKind";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 
 import { getHoldingSlotPointers } from "@/services/pageBuilder/getHoldingSlotPointers";
@@ -6,7 +6,7 @@ import { getBlockNode, getBlockPropPointer, getBlockTypeDefinition } from "headl
 
 // The pointers of the slots a node holds its own children in, then the slot holding the node and each ancestor's slot in turn
 export const getCandidateSlotPointers = (
-  kind: PageBuilderKind,
+  kind: WebpageKind,
   document: WebpageDocument,
   nodePointer: string,
 ): string[] => {

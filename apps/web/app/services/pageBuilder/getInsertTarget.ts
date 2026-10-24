@@ -1,4 +1,4 @@
-import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
+import type { WebpageKind } from "@/models/pageBuilder/WebpageKind";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 import type { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 
@@ -10,7 +10,7 @@ import { getAcceptedTypes } from "headless-block-editor";
 // Where a node of the type goes: the first slot of the selected container when that slot is empty and accepts the type,
 // Else straight after the selected node in its own slot, or the end of the root's content when no node is selected
 export const getInsertTarget = (
-  kind: PageBuilderKind,
+  kind: WebpageKind,
   document: WebpageDocument,
   type: WebpageNodeType,
   nodePointer: string | undefined,

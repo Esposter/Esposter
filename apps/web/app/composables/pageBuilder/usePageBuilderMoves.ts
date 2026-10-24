@@ -1,4 +1,4 @@
-import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
+import type { WebpageKind } from "@/models/pageBuilder/WebpageKind";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 import type { UiCommand } from "@/models/ui/UiCommand";
 import type { UiCommandScope } from "@/models/ui/UiCommandScope";
@@ -30,7 +30,7 @@ import {
 
 // The move of a node to the index one away from it in its own slot, or none when no sibling sits at that index
 const getSiblingMoveOperations = (
-  kind: PageBuilderKind,
+  kind: WebpageKind,
   document: WebpageDocument,
   nodePointer: string,
   offset: number,
@@ -70,7 +70,7 @@ export const usePageBuilderMoves = (resourceId: MaybeRefOrGetter<string>, announ
     return nodePointer === undefined ? undefined : { ...open, nodeId, nodePointer };
   };
   // Announces where a moved node now sits: its title, its 1-based position among its slot's children and the slot's path
-  const announceMove = (kind: PageBuilderKind, document: WebpageDocument, nodePointer: string) => {
+  const announceMove = (kind: WebpageKind, document: WebpageDocument, nodePointer: string) => {
     const segments = parseJsonPointer(nodePointer);
     const slotSegments = segments.slice(0, -1);
     const siblings = readJsonValue(document, slotSegments);
@@ -84,7 +84,7 @@ export const usePageBuilderMoves = (resourceId: MaybeRefOrGetter<string>, announ
   // Applies the operations a move makes to the selected node, and keeps that node selected once the edit lands
   const moveSelected = (
     label: string,
-    getOperations: (kind: PageBuilderKind, document: WebpageDocument, nodePointer: string) => JsonPatchOperation[],
+    getOperations: (kind: WebpageKind, document: WebpageDocument, nodePointer: string) => JsonPatchOperation[],
   ) => {
     const selection = getSelection();
     if (!selection) return;

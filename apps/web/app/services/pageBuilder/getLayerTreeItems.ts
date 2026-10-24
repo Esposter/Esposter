@@ -1,4 +1,4 @@
-import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
+import type { WebpageKind } from "@/models/pageBuilder/WebpageKind";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 import type { UiTreeItem } from "@/models/ui/UiTreeItem";
 
@@ -8,7 +8,7 @@ import { getBlockLayerRows, getBlockNode } from "headless-block-editor";
 
 // The layers tree's items: each row is a child of the nearest earlier row one depth up, labelled by its type's title.
 // A row whose node or title cannot be read is skipped
-export const getLayerTreeItems = (kind: PageBuilderKind, document: WebpageDocument): UiTreeItem[] => {
+export const getLayerTreeItems = (kind: WebpageKind, document: WebpageDocument): UiTreeItem[] => {
   const roots: UiTreeItem[] = [];
   // The open ancestors of the row being placed, the deepest last
   const ancestors: { depth: number; item: UiTreeItem }[] = [];

@@ -1,4 +1,4 @@
-import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
+import type { WebpageKind } from "@/models/pageBuilder/WebpageKind";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 
 import { WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
@@ -7,7 +7,7 @@ import { getBlockNode } from "headless-block-editor";
 
 // A node's title, suffixed by its 1-based position among its siblings of the same type when there is more than one such
 // Sibling, so a path can tell "Column 1" from "Column 2" in the same slot. Empty when the node is not of a known type
-export const getNodeTitle = (kind: PageBuilderKind, document: WebpageDocument, nodeSegments: string[]): string => {
+export const getNodeTitle = (kind: WebpageKind, document: WebpageDocument, nodeSegments: string[]): string => {
   const node = getBlockNode(document, toJsonPointer(nodeSegments), kind.children);
   const nodeType = node?.type;
   const index = parseArrayIndex(nodeSegments.at(-1) ?? "", Number.MAX_SAFE_INTEGER);

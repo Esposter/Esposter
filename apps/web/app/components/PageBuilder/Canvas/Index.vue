@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
+import type { WebpageKind } from "@/models/pageBuilder/WebpageKind";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 import type { DropTarget } from "@/models/pageBuilder/DropTarget";
 import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
@@ -94,7 +94,7 @@ const css = computed(() => {
 });
 const device = computed(() => getDevice(resourceId));
 // The nodes are rendered by the frame's content, so the render is a functional component over the document it draws
-const CanvasNodes = (props: { document: WebpageDocument; kind: PageBuilderKind; origin: string }) =>
+const CanvasNodes = (props: { document: WebpageDocument; kind: WebpageKind; origin: string }) =>
   renderCanvasVNodes(props.kind, props.document, { origin: props.origin });
 </script>
 

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
+import type { WebpageKind } from "@/models/pageBuilder/WebpageKind";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 import type { DropIndicator } from "@/models/pageBuilder/DropIndicator";
 import type { DropTarget } from "@/models/pageBuilder/DropTarget";
@@ -52,11 +52,7 @@ const getNodeBox = (nodeId: string | undefined): OverlayBox | undefined => {
   return getOverlayBox(element.getBoundingClientRect(), layer.value.getBoundingClientRect());
 };
 // The box an empty slot's indicator outlines: the node holding the slot, or the whole layer when the slot is the page's content
-const getSlotOwnerBox = (
-  kind: PageBuilderKind,
-  document: WebpageDocument,
-  slotPointer: string,
-): OverlayBox | undefined => {
+const getSlotOwnerBox = (kind: WebpageKind, document: WebpageDocument, slotPointer: string): OverlayBox | undefined => {
   if (slotPointer === "/content") {
     const layerRect = layer.value?.getBoundingClientRect();
     return layerRect === undefined ? undefined : { height: layerRect.height, left: 0, top: 0, width: layerRect.width };

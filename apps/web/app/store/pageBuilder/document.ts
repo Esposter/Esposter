@@ -1,4 +1,4 @@
-import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
+import type { WebpageKind } from "@/models/pageBuilder/WebpageKind";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 
 import { getResult } from "@esposter/shared";
@@ -6,7 +6,7 @@ import { getResult } from "@esposter/shared";
 // A document the page builder holds, beside the kind it was opened as, which the shell reads the document through
 export interface OpenPageBuilderDocument {
   document: WebpageDocument;
-  kind: PageBuilderKind;
+  kind: WebpageKind;
 }
 
 // The open documents of the page builder, each held under its resource, so two webpages open at once keep their own.
@@ -20,12 +20,12 @@ export const usePageBuilderDocumentStore = defineStore("pageBuilder/document", (
   // The one place a document is held: the kind it is opened as is held with it, and a document replaced keeps the kind
   // It was opened as only when the caller passes that kind again
   // A kind is a constant holding a schema, which a reactive proxy would break, so it is held raw
-  const setDocument = (resourceId: string, kind: PageBuilderKind, document: WebpageDocument) => {
+  const setDocument = (resourceId: string, kind: WebpageKind, document: WebpageDocument) => {
     documentMap.value.set(resourceId, { document, kind: markRaw(kind) });
   };
   // The one place a document enters the store from a read: the value read is parsed by its kind's schema first.
   // A value the schema refuses is thrown rather than held, so the canvas never draws a document it cannot walk
-  const loadDocument = async (resourceId: string, kind: PageBuilderKind, readDocument: () => Promise<unknown>) => {
+  const loadDocument = async (resourceId: string, kind: WebpageKind, readDocument: () => Promise<unknown>) => {
     const value = await readDocument();
     getResult(() => kind.documentSchema.parse(value)).match(
       (document) => {
