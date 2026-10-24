@@ -3,7 +3,10 @@ import { zonedCreateMessageInputSchema } from "#shared/models/db/message/ZonedCr
 import { isAtLeast } from "#shared/services/achievement/conditions/isAtLeast";
 import { length } from "#shared/services/achievement/conditions/length";
 import { property } from "#shared/services/achievement/conditions/property";
-import { defineAchievementDefinition } from "#shared/services/achievement/definitions/defineAchievementDefinition";
+import {
+  defineAchievementDefinition,
+  defineTriggerAchievementDefinition,
+} from "#shared/services/achievement/definitions/defineAchievementDefinition";
 import { describe, expect, expectTypeOf, test } from "vitest";
 
 describe(defineAchievementDefinition, () => {
@@ -33,6 +36,14 @@ describe(defineAchievementDefinition, () => {
       points: 0,
       triggerPath: "message.createMessage",
     });
+  });
+
+  // A factory binds the schema once, so the check against the trigger must survive the second generic layer
+  test("rejects a schema that belongs to another procedure when the trigger is bound once", () => {
+    expect.hasAssertions();
+
+    // @ts-expect-error the clicker save schema is not the input of the message trigger
+    defineTriggerAchievementDefinition("message.createMessage", saveClickerInputSchema);
   });
 
   test("rejects a path the trigger's input does not have", () => {

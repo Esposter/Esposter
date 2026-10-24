@@ -1,3 +1,5 @@
+import { zonedCreateMessageInputSchema } from "#shared/models/db/message/ZonedCreateMessageInput";
+import { defineTriggerAchievementDefinition } from "#shared/services/achievement/definitions/defineAchievementDefinition";
 import { MessageAchievementDefinitionMap } from "#shared/services/achievement/definitions/MessageAchievementDefinitionMap";
 import { MessageAchievementName } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
@@ -8,6 +10,24 @@ describe("defineAchievementDefinition", () => {
   const { check } = MessageAchievementDefinitionMap[MessageAchievementName.EssayWriter];
   // EssayWriter unlocks at 1,000 characters, so a message one short is the case the condition must reject
   const message = "a".repeat(1000);
+
+  // A map bound once to its trigger hands each entry the trigger and the schema it was bound with
+  test("binds the trigger and its schema into every definition it makes", () => {
+    expect.hasAssertions();
+
+    const defineMessageAchievementDefinition = defineTriggerAchievementDefinition(
+      "message.createMessage",
+      zonedCreateMessageInputSchema,
+    );
+    const { check: checkBound, triggerPath } = defineMessageAchievementDefinition({
+      description: "",
+      icon: "",
+      points: 0,
+    });
+
+    expect(triggerPath).toBe("message.createMessage");
+    expect(checkBound({ message, roomId, timeZone })).toBe(true);
+  });
 
   test("fires on valid input", () => {
     expect.hasAssertions();

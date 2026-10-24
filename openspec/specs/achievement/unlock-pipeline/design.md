@@ -32,16 +32,16 @@ The achievement router sits in the one root router beside the others. Each trigg
 
 Paths relative to `apps/web`; `packages/` ones to the repo root.
 
-| File                                                                         | Role                               |
-| ---------------------------------------------------------------------------- | ---------------------------------- |
-| `server/trpc/plugins/achievementPlugin.ts`                                   | the middleware                     |
-| `shared/services/achievement/definitions/defineAchievementDefinition.ts`     | the per-definition `check`         |
-| `shared/services/achievement/conditions/`                                    | typed predicate helpers            |
-| `shared/models/db/message/ZonedCreateMessageInput.ts`                        | a send with the sender's time zone |
-| `shared/services/achievement/achievementDefinitions.ts`                      | merged definition map              |
-| `server/trpc/routers/achievement.ts`                                         | read + subscription procedures     |
-| `app/components/Achievement/`                                                | gallery grid + notification toasts |
-| `packages/db-schema/src/schema/achievement/userAchievementsInAchievement.ts` | progress rows                      |
+| File                                                                         | Role                                                                                           |
+| ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `server/trpc/plugins/achievementPlugin.ts`                                   | the middleware                                                                                 |
+| `shared/services/achievement/definitions/defineAchievementDefinition.ts`     | the per-definition `check`, and the per-trigger binding (`defineTriggerAchievementDefinition`) |
+| `shared/services/achievement/conditions/`                                    | typed predicate helpers                                                                        |
+| `shared/models/db/message/ZonedCreateMessageInput.ts`                        | a send with the sender's time zone                                                             |
+| `shared/services/achievement/achievementDefinitions.ts`                      | merged definition map                                                                          |
+| `server/trpc/routers/achievement.ts`                                         | read + subscription procedures                                                                 |
+| `app/components/Achievement/`                                                | gallery grid + notification toasts                                                             |
+| `packages/db-schema/src/schema/achievement/userAchievementsInAchievement.ts` | progress rows                                                                                  |
 
 ## Notes
 

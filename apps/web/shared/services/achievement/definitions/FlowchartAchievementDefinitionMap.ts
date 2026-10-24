@@ -4,7 +4,7 @@ import { createSaveResourceContentInputSchema } from "#shared/models/db/resource
 import { isGreaterThan } from "#shared/services/achievement/conditions/isGreaterThan";
 import { length } from "#shared/services/achievement/conditions/length";
 import { property } from "#shared/services/achievement/conditions/property";
-import { defineAchievementDefinition } from "#shared/services/achievement/definitions/defineAchievementDefinition";
+import { defineTriggerAchievementDefinition } from "#shared/services/achievement/definitions/defineAchievementDefinition";
 import { defineAchievementDefinitionMap } from "#shared/services/achievement/definitions/defineAchievementDefinitionMap";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { FlowchartAchievementName, ResourceType } from "@esposter/db-schema";
@@ -12,32 +12,30 @@ import { FlowchartAchievementName, ResourceType } from "@esposter/db-schema";
 const saveFlowchartInputSchema = createSaveResourceContentInputSchema(
   ResourceDefinitionMap[ResourceType.Flowchart].contentSchema,
 );
+const defineFlowchartAchievementDefinition = defineTriggerAchievementDefinition(
+  "flowchart.saveResourceContent",
+  saveFlowchartInputSchema,
+);
 
 export const FlowchartAchievementDefinitionMap = defineAchievementDefinitionMap(AchievementCategory.Flowchart, {
-  [FlowchartAchievementName.ComplexFlow]: defineAchievementDefinition({
+  [FlowchartAchievementName.ComplexFlow]: defineFlowchartAchievementDefinition({
     amount: 1,
     condition: property("content.edges", length(isGreaterThan(20))),
     description: "Save a flowchart with more than 20 edges",
     icon: "i-mdi:chart-timeline-variant-shimmer",
-    inputSchema: saveFlowchartInputSchema,
     points: 40,
-    triggerPath: "flowchart.saveResourceContent",
   }),
-  [FlowchartAchievementName.Flowcharter]: defineAchievementDefinition({
+  [FlowchartAchievementName.Flowcharter]: defineFlowchartAchievementDefinition({
     amount: 1,
     description: "Save a flowchart",
     icon: "i-mdi:chart-timeline-variant",
-    inputSchema: saveFlowchartInputSchema,
     points: 20,
-    triggerPath: "flowchart.saveResourceContent",
   }),
-  [FlowchartAchievementName.SystemArchitect]: defineAchievementDefinition({
+  [FlowchartAchievementName.SystemArchitect]: defineFlowchartAchievementDefinition({
     amount: 1,
     condition: property("content.nodes", length(isGreaterThan(10))),
     description: "Save a flowchart with more than 10 nodes",
     icon: "i-mdi:sitemap",
-    inputSchema: saveFlowchartInputSchema,
     points: 30,
-    triggerPath: "flowchart.saveResourceContent",
   }),
 });

@@ -5,98 +5,84 @@ import { BuildingIds } from "#shared/models/clicker/data/building/BuildingId";
 import { saveClickerInputSchema } from "#shared/models/db/clicker/SaveClickerInput";
 import { isAtLeast } from "#shared/services/achievement/conditions/isAtLeast";
 import { property } from "#shared/services/achievement/conditions/property";
-import { defineAchievementDefinition } from "#shared/services/achievement/definitions/defineAchievementDefinition";
+import { defineTriggerAchievementDefinition } from "#shared/services/achievement/definitions/defineAchievementDefinition";
 import { defineAchievementDefinitionMap } from "#shared/services/achievement/definitions/defineAchievementDefinitionMap";
 import { ClickerAchievementName } from "@esposter/db-schema";
 
+// Every clicker achievement unlocks on a save of the clicker game
+const defineClickerAchievementDefinition = defineTriggerAchievementDefinition(
+  "clicker.saveClicker",
+  saveClickerInputSchema,
+);
+
 export const ClickerAchievementDefinitionMap = defineAchievementDefinitionMap(AchievementCategory.Clicker, {
-  [ClickerAchievementName.ClickerAddict]: defineAchievementDefinition({
+  [ClickerAchievementName.ClickerAddict]: defineClickerAchievementDefinition({
     amount: 100,
     description: "Save your clicker game 100 times",
     icon: "i-mdi:cursor-pointer",
-    inputSchema: saveClickerInputSchema,
     points: 50,
-    triggerPath: "clicker.saveClicker",
   }),
-  [ClickerAchievementName.ClickerArchitect]: defineAchievementDefinition({
+  [ClickerAchievementName.ClickerArchitect]: defineClickerAchievementDefinition({
     amount: 1,
     condition: property("data.boughtBuildings", (value) =>
       BuildingIds.every((buildingId) => value.some(({ id }) => id === buildingId)),
     ),
     description: "Own every building in your clicker game",
     icon: "i-mdi:city",
-    inputSchema: saveClickerInputSchema,
     points: 100,
-    triggerPath: "clicker.saveClicker",
   }),
-  [ClickerAchievementName.ClickerBillionaire]: defineAchievementDefinition({
+  [ClickerAchievementName.ClickerBillionaire]: defineClickerAchievementDefinition({
     amount: 1,
     condition: property("data.pointCount", isAtLeast(1e9)),
     description: "Hold 1,000,000,000 points in your clicker game",
     icon: "i-mdi:cash-multiple",
-    inputSchema: saveClickerInputSchema,
     points: 150,
-    triggerPath: "clicker.saveClicker",
   }),
-  [ClickerAchievementName.ClickerChampion]: defineAchievementDefinition({
+  [ClickerAchievementName.ClickerChampion]: defineClickerAchievementDefinition({
     amount: 1000,
     description: "Save your clicker game 1000 times",
     icon: "i-mdi:crown",
-    inputSchema: saveClickerInputSchema,
     points: 500,
-    triggerPath: "clicker.saveClicker",
   }),
-  [ClickerAchievementName.ClickerCompletionist]: defineAchievementDefinition({
+  [ClickerAchievementName.ClickerCompletionist]: defineClickerAchievementDefinition({
     amount: 1,
     condition: property("data.boughtUpgrades", (value) =>
       Object.keys(UpgradeMap).every((upgradeId) => value.some((id) => id === upgradeId)),
     ),
     description: "Buy every upgrade in your clicker game",
     icon: "i-mdi:check-decagram",
-    inputSchema: saveClickerInputSchema,
     points: 500,
-    triggerPath: "clicker.saveClicker",
   }),
-  [ClickerAchievementName.ClickerMillionaire]: defineAchievementDefinition({
+  [ClickerAchievementName.ClickerMillionaire]: defineClickerAchievementDefinition({
     amount: 1,
     condition: property("data.pointCount", isAtLeast(1e6)),
     description: "Hold 1,000,000 points in your clicker game",
     icon: "i-mdi:cash",
-    inputSchema: saveClickerInputSchema,
     points: 50,
-    triggerPath: "clicker.saveClicker",
   }),
-  [ClickerAchievementName.ClickerNovice]: defineAchievementDefinition({
+  [ClickerAchievementName.ClickerNovice]: defineClickerAchievementDefinition({
     amount: 1,
     description: "Save your clicker game for the first time",
     icon: "i-mdi:cursor-default-outline",
-    inputSchema: saveClickerInputSchema,
     points: 5,
-    triggerPath: "clicker.saveClicker",
   }),
-  [ClickerAchievementName.ClickerPro]: defineAchievementDefinition({
+  [ClickerAchievementName.ClickerPro]: defineClickerAchievementDefinition({
     amount: 10,
     description: "Save your clicker game 10 times",
     icon: "i-mdi:cursor-default-click",
-    inputSchema: saveClickerInputSchema,
     points: 20,
-    triggerPath: "clicker.saveClicker",
   }),
-  [ClickerAchievementName.ClickerSaver]: defineAchievementDefinition({
+  [ClickerAchievementName.ClickerSaver]: defineClickerAchievementDefinition({
     amount: 5,
     description: "Save your clicker game 5 times",
     icon: "i-mdi:content-save-all",
-    inputSchema: saveClickerInputSchema,
     points: 10,
-    triggerPath: "clicker.saveClicker",
   }),
-  [ClickerAchievementName.ClickerTrillionaire]: defineAchievementDefinition({
+  [ClickerAchievementName.ClickerTrillionaire]: defineClickerAchievementDefinition({
     amount: 1,
     condition: property("data.pointCount", isAtLeast(1e12)),
     description: "Hold 1,000,000,000,000 points in your clicker game",
     icon: "i-mdi:treasure-chest",
-    inputSchema: saveClickerInputSchema,
     points: 400,
-    triggerPath: "clicker.saveClicker",
   }),
 });

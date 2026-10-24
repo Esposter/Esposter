@@ -6,14 +6,19 @@ import type { z } from "zod";
 // The category comes from the map this definition is declared in (defineAchievementDefinitionMap). The input schema
 // Is constrained to the trigger's input type, and the condition receives what that schema parses, so a predicate is
 // Typed by the procedure that triggers it
+export type AchievementDefinitionInput<
+  TPath extends TRPCPath,
+  TSchema extends z.ZodType<TRPCProcedureInputs[TPath]>,
+> = Except<AchievementDefinition<TPath>, "category" | "inputSchema" | "name"> & {
+  condition?: (input: z.output<TSchema>) => boolean;
+  inputSchema: TSchema;
+};
+
 export const defineAchievementDefinition = <
   TPath extends TRPCPath,
   TSchema extends z.ZodType<TRPCProcedureInputs[TPath]>,
 >(
-  definition: Except<AchievementDefinition<TPath>, "category" | "inputSchema" | "name"> & {
-    condition?: (input: z.output<TSchema>) => boolean;
-    inputSchema: TSchema;
-  },
+  definition: AchievementDefinitionInput<TPath, TSchema>,
 ) => ({
   ...definition,
   // A call the schema rejects is not an unlock. The trigger only reaches here after tRPC accepted the call, so this is
@@ -25,3 +30,13 @@ export const defineAchievementDefinition = <
     return definition.condition(parsedInput.data);
   },
 });
+
+// A map of several entries on one procedure binds that trigger and its input schema once, so each entry states only
+// What it unlocks. The schema is still checked against the trigger, here where it is bound
+export const defineTriggerAchievementDefinition =
+  <TPath extends TRPCPath, TSchema extends z.ZodType<TRPCProcedureInputs[TPath]>>(
+    triggerPath: TPath,
+    inputSchema: TSchema,
+  ) =>
+  (definition: Except<AchievementDefinitionInput<TPath, TSchema>, "inputSchema" | "triggerPath">) =>
+    defineAchievementDefinition({ ...definition, inputSchema, triggerPath });
