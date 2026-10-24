@@ -1,0 +1,22 @@
+{
+  "files": [
+    {
+      "filepath": "shared/services/pageBuilder/renderWebpageDocument.bench.ts",
+      "groups": [
+        {
+          "benchmarks": [
+            {
+              "mean": 445.7238700000016,
+              "name": "a tenth of the nodes",
+              "p99": 445.7238700000016,
+              "rme": 0,
+              "sampleCount": 1
+            },
+            { "mean": 5818.961578999999, "name": "all the nodes", "p99": 5818.961578999999, "rme": 0, "sampleCount": 1 }
+          ],
+          "fullName": "renderWebpageDocument > 2000 nodes"
+        }
+      ]
+    }
+  ]
+}
