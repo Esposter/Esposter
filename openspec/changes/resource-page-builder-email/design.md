@@ -54,7 +54,7 @@ Written at the end of a session that stopped under the usage reserve (no code-wr
 - `0a740f51` — `checkIsStackedColumns` at `EMAIL_MOBILE_BREAKPOINT = 480`. Call made: the breakpoint is inclusive (`<= 480`), following MJML's `max-width: 480px` media query, not the design note's "below 480".
 - `1cdfbdd0` — the root's `attributes` join the cascade: node prop → root `attributes[node.type]` → root `attributes["mj-all"]` → component default. The helper now takes the root's `attributes` as its third argument. Its only caller is its test.
 - `c6eb6f5a` — `getEmailColumnWidths`: a column's own width when it sets one, else an equal share of the percentage the set widths leave; a pixel width is kept and takes none of the share. Its four tests pass, and an overflowing set width leaves the unset columns `0%` rather than a negative share; nothing renders it yet.
-- `c3996b74` — lint and naming. Email test titles are lowercase, so the scenario names in `spec.md` and above are lowercase too. The starter email comment is rewrapped with capitalised continuation lines.
+- `c3996b74` — lint and naming. Email test titles are lowercase, so the two scenario names that have tests (`columns stack below the mobile breakpoint`, `a new text shows the default font and padding`) are lowercase in `spec.md` and `tasks.md`. The other scenario names stay capitalised there until their tests exist; each is lowercased in the commit that writes its test, so the names and the test titles match. The starter email comment is rewrapped with capitalised continuation lines.
 
 Verified at `c3996b74`: the six email suites pass (11 tests); `vue-tsc -p .nuxt/tsconfig.app.json` exits 0; oxlint and ESLint are clean on `apps/web/shared/services/pageBuilder/email/`.
 
