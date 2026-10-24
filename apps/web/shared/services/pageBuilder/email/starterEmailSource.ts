@@ -1,4 +1,4 @@
-// The MJML a new email starts from. It is a tour of what an email can hold, one part a beginner can change or delete.
+// The MJML a new email starts from, a tour of what an email can hold. Each part is one a beginner can change or delete.
 // The parts are the navbar, a hero, text with a merge field, columns, a divider, a table, an accordion, a button, a
 // Wrapper, a group, a raw HTML block and social links. It loads no picture or font from any origin, so the editors
 // Request nothing a reader has not chosen, and a survey invite is left out since it needs a published survey to link to
