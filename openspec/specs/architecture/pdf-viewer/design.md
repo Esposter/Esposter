@@ -32,18 +32,19 @@ flowchart TD
 
 ## Key files
 
-| File                                                         | Role                                                                                                           |
-| :----------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------- |
-| `apps/web/app/components/Message/Model/FileRenderer/Pdf.vue` | The attachment: loads the renderer and the document, then the thumbnail and the dialog holding the viewer      |
-| `apps/web/app/components/Pdf/Thumbnail.vue`                  | The row's canvas over `usePdfPage`, with the failure text in place of the page                                 |
-| `apps/web/app/components/Pdf/Viewer.vue`                     | The pages' container and the app's toolbar over `usePdfViewer`, the password field, the viewer module on mount |
-| `apps/web/app/services/pdf/loadPdfRenderer.ts`               | `pdfjs-dist`, imported after mount, with the worker from the app's URL                                         |
-| `apps/web/app/services/pdf/loadPdfViewer.ts`                 | The viewer's components and stylesheet, imported when a viewer mounts                                          |
-| `apps/web/app/services/pdf/constants.ts`                     | The served folder paths the renderer's maps, fonts and decoders are read from                                  |
-| `apps/web/configuration/nitro.ts`                            | The renderer's maps, standard fonts and decoders, mounted from its install                                     |
-| `apps/web/configuration/security.ts`                         | `worker-src 'self'` for the renderer's worker, with no `data:` script source                                   |
-| `apps/web/configuration/vite.ts`                             | `pdfjs-dist/web/pdf_viewer.mjs` pre-bundled, since the dialog loads it mid-session                             |
-| `packages/vue-pdfjs-headless/`                               | The loading, the page drawing and the viewer's state, see the [package](../../vue-pdfjs-headless/README.md)    |
+| File                                                         | Role                                                                                                                        |
+| :----------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------- |
+| `apps/web/app/components/Message/Model/FileRenderer/Pdf.vue` | The attachment: loads the renderer and the document, then the thumbnail and the dialog holding the viewer                   |
+| `apps/web/app/components/Pdf/Thumbnail.vue`                  | The row's canvas over `usePdfPage`, with the failure text in place of the page                                              |
+| `apps/web/app/components/Pdf/Viewer.vue`                     | The pages' container and the app's toolbar over `usePdfViewer`, the password field, the viewer module on mount              |
+| `apps/web/app/composables/shared/useLazyLoad.ts`             | The mount-time load the viewer's module goes through: the value kept, and a failure logged and flagged for the failure text |
+| `apps/web/app/services/pdf/loadPdfRenderer.ts`               | `pdfjs-dist`, imported after mount, with the worker from the app's URL                                                      |
+| `apps/web/app/services/pdf/loadPdfViewer.ts`                 | The viewer's components and stylesheet, imported when a viewer mounts                                                       |
+| `apps/web/app/services/pdf/constants.ts`                     | The served folder paths the renderer's maps, fonts and decoders are read from                                               |
+| `apps/web/configuration/nitro.ts`                            | The renderer's maps, standard fonts and decoders, mounted from its install                                                  |
+| `apps/web/configuration/security.ts`                         | `worker-src 'self'` for the renderer's worker, with no `data:` script source                                                |
+| `apps/web/configuration/vite.ts`                             | `pdfjs-dist/web/pdf_viewer.mjs` pre-bundled, since the dialog loads it mid-session                                          |
+| `packages/vue-pdfjs-headless/`                               | The loading, the page drawing and the viewer's state, see the [package](../../vue-pdfjs-headless/README.md)                 |
 
 ## Notes
 

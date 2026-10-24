@@ -6,7 +6,7 @@ import WindowControls from "@/components/Visual/Desmos/WindowControls.vue";
 import { Colors } from "@/models/desmos/Colors";
 import { useThemeModeStore } from "@/store/ui/themeMode";
 import { ignoreWarn } from "@/util/console/ignoreWarn";
-import { getResultAsync, noop, takeOne } from "@esposter/shared";
+import { takeOne } from "@esposter/shared";
 
 interface Props {
   expressions: Expression[];
@@ -19,10 +19,8 @@ const { onLoaded, status } = useDesmos();
 const themeModeStore = useThemeModeStore();
 const { isDark } = storeToRefs(themeModeStore);
 const isAnimating = ref(false);
-// Whether the calculator has drawn, or failed to: the script's own status covers it never arriving
+// Whether the calculator has drawn: the drawing's shape stands over the element until then
 const isDrawn = ref(false);
-const isFailed = ref(false);
-let calculator: Desmos.Calculator | undefined;
 const expressionPanel = ref<HTMLDivElement>();
 const componentsToRender = computed<Parameters<typeof h>[]>(() => {
   const WindowControlsComponent: Parameters<typeof h> = [
@@ -41,22 +39,51 @@ const componentsToRender = computed<Parameters<typeof h>[]>(() => {
     : [[AnimateButton, { onClick: animate }], WindowControlsComponent];
 });
 const render = useRender(expressionPanel);
+// The script's own load slot calls back once the API is in, so the calculator waits for that here. A calculator that
+// fails to build, or a script that never arrives, shows its failure in place of the drawing rather than breaking the page
+const { isFailed, loaded: calculator } = useLazyLoad(async () => {
+  const { GraphingCalculator } = await new Promise<typeof Desmos>((resolve) => {
+    onLoaded(resolve);
+  });
+  const element = window.document.getElementById(id) as HTMLDivElement;
+  const newCalculator = await GraphingCalculator(element, {
+    border: false,
+    expressionsCollapsed: true,
+    invertedColors: isDark.value,
+    keypad: false,
+    showGrid: false,
+    showXAxis: false,
+    showYAxis: false,
+    trace: false,
+  });
+  newCalculator.setExpressions(
+    expressions.map((expression) => Object.assign(expression, { color: expression.color ?? Colors.Black })),
+  );
+  isDrawn.value = true;
+  const newExpressionPanel = element.querySelector<HTMLDivElement>(".dcg-exppanel-outer");
+  if (newExpressionPanel) {
+    expressionPanel.value = newExpressionPanel;
+    render(componentsToRender.value);
+  }
+
+  return newCalculator;
+});
 
 const animate = () => {
-  if (!calculator) return;
+  if (!calculator.value) return;
   isAnimating.value = true;
-  const savedSettings = { ...calculator.settings };
-  calculator.setBlank();
+  const savedSettings = { ...calculator.value.settings };
+  calculator.value.setBlank();
   // Ignore updateSettings warnings about unsupported extraneous calculator settings.
   ignoreWarn(() => {
-    calculator?.updateSettings(savedSettings);
+    calculator.value?.updateSettings(savedSettings);
   });
 
   const drawingTime = Temporal.Duration.from({ seconds: 5 }).total("milliseconds");
   let expressionIndex = 0;
   const { pause } = useIntervalFn(() => {
     const expression = takeOne(expressions, expressionIndex++);
-    calculator?.setExpression({ ...expression, color: expression.color ?? Colors.Black });
+    calculator.value?.setExpression({ ...expression, color: expression.color ?? Colors.Black });
     if (expressionIndex === expressions.length) {
       pause();
       isAnimating.value = false;
@@ -65,44 +92,12 @@ const animate = () => {
 };
 
 watch(isDark, (newIsDark) => {
-  if (!calculator) return;
-  calculator.updateSettings({ invertedColors: newIsDark });
+  if (!calculator.value) return;
+  calculator.value.updateSettings({ invertedColors: newIsDark });
 });
 
 watch(componentsToRender, (newComponentsToRender) => {
   render(newComponentsToRender);
-});
-
-onMounted(() => {
-  const element = window.document.getElementById(id) as HTMLDivElement;
-  // The script's own load slot calls this and drops what it returns, so the calculator's construction reports
-  // Here or nowhere — a graph that never builds shows the failure in its place rather than breaking the page
-  onLoaded(({ GraphingCalculator }) =>
-    getResultAsync(async () => {
-      calculator = await GraphingCalculator(element, {
-        border: false,
-        expressionsCollapsed: true,
-        invertedColors: isDark.value,
-        keypad: false,
-        showGrid: false,
-        showXAxis: false,
-        showYAxis: false,
-        trace: false,
-      });
-      calculator.setExpressions(
-        expressions.map((expression) => Object.assign(expression, { color: expression.color ?? Colors.Black })),
-      );
-      isDrawn.value = true;
-      const newExpressionPanel = element.querySelector<HTMLDivElement>(".dcg-exppanel-outer");
-      if (!newExpressionPanel) return;
-
-      expressionPanel.value = newExpressionPanel;
-      render(componentsToRender.value);
-    }).match(noop, (error) => {
-      console.error(error);
-      isFailed.value = true;
-    }),
-  );
 });
 </script>
 

@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import type { PDFDocumentProxy } from "pdfjs-dist";
-import type { PdfViewerApi } from "vue-pdfjs-headless";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
 import { loadPdfViewer } from "@/services/pdf/loadPdfViewer";
-import { getResultAsync } from "@esposter/shared";
 import { usePdfViewer } from "vue-pdfjs-headless";
 
 interface Props {
@@ -21,9 +19,9 @@ const { filename, isFailed, isPasswordRequested, isPasswordWrong, pdfDocument } 
 const emit = defineEmits<{ submitPassword: [password: string] }>();
 const container = useTemplateRef("container");
 const viewer = useTemplateRef("viewer");
-const viewerApi = shallowRef<PdfViewerApi>();
-const isViewerFailed = ref(false);
 const passwordInput = ref("");
+// The viewer's module loads as the component mounts, and a viewer whose module never came draws no page either
+const { isFailed: isViewerFailed, loaded: viewerApi } = useLazyLoad(loadPdfViewer);
 const {
   actualSize,
   currentPageNumber,
@@ -63,18 +61,6 @@ const matchesText = computed(() => {
 const submitPassword = () => {
   emit("submitPassword", passwordInput.value);
 };
-
-onMounted(async () => {
-  await getResultAsync(loadPdfViewer).match(
-    (loaded) => {
-      viewerApi.value = loaded;
-    },
-    (error) => {
-      isViewerFailed.value = true;
-      console.error(error);
-    },
-  );
-});
 </script>
 
 <template>
