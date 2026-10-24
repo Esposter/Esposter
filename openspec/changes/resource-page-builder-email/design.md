@@ -22,6 +22,14 @@ The preview text is a root prop, so the bar's field binds it through a patch lik
 
 The compile runs in the app server, on MJML's Node package in place of the browser build bundled inside `grapesjs-mjml`. Its weight — a CSS minifier, an HTML minifier, an inliner and a DOM parser — lands in the server, where no reader downloads it.
 
+## The shell's document kind
+
+The shell is one set of components and composables for both documents, so the email is not a second editor. What differs between the two is the document kind, one object per kind, which the document store records beside each open document. The kind holds the parts the shell reads and no more: the document's schema, its block registry and children port, the defaults a new node of each type is inserted with, the titles its node types show, the palette's categories and the root's defaults. A composable reads the kind of the resource it edits, the same resource id it already takes, so no composable imports a kind's constants.
+
+Two parts are not data and are chosen by kind in the shell instead: the canvas, which draws a webpage in its frame and an email in the design canvas, and the settings tab's style panel, which draws a webpage's breakpoints and states and an email's attribute fields. Everything else in the shell is shared, so the webpage's behaviour is the one behaviour both documents keep.
+
+The kind's document type is the union of the two node types the registry holds, with the webpage and email each narrowed where a composable reads its own type's props. The store keeps the document under the union, and a kind's functions take the narrowed type, so a composable that reads a webpage's `style` never reads it from an email.
+
 ## Key files
 
 | File                                                       | Role after the change                                                                 |
