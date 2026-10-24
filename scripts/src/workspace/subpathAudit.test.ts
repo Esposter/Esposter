@@ -13,10 +13,9 @@ import { describe, expect, test } from "vitest";
 // A file reads a subpath only when its text names the specifier, so the text is searched for the specifier rather than
 // Parsed. Docs and manifests are no consumer: a README that names an entry, or the manifest that declares it, is the
 // Description the audit is checking, not a use of it.
-const CONSUMER_SOURCE_PATTERN = /\.(?:[cm]?[jt]sx?|vue|ya?ml)$/;
 const readConsumerTexts = (): string[] =>
   readSweepFilePaths("apps", "packages", "scripts")
-    .filter((path) => CONSUMER_SOURCE_PATTERN.test(path) && !path.includes("/dist/"))
+    .filter((path) => /\.(?:[cm]?[jt]sx?|vue|ya?ml)$/.test(path) && !path.includes("/dist/"))
     .map((path) => readFileSync(resolve(REPOSITORY_ROOT, path), "utf8"));
 const readSubpathSpecifiers = (packagePath: string): string[] => {
   const manifest: { exports?: Record<string, unknown>; name: string } = JSON.parse(
