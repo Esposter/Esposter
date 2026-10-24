@@ -27,6 +27,7 @@ const getDropTargetAt = (
   if (!document || !geometry || !checkIsInsideFrame(point, geometry.frameRect)) return undefined;
 
   return resolveDropTarget({
+    checkIsHorizontalOwner: geometry.checkIsHorizontalOwner,
     document,
     draggedType: type,
     getChildRect: geometry.getChildRect,

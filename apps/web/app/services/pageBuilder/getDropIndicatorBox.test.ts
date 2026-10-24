@@ -10,24 +10,28 @@ describe(getDropIndicatorBox, () => {
   test("an indicator between two children sits in the gap between them", () => {
     expect.hasAssertions();
 
-    expect(getDropIndicatorBox({ childBoxes: [FIRST_BOX, SECOND_BOX], index: 1, ownerBox: OWNER_BOX })).toStrictEqual({
-      box: { height: 2, left: 0, top: 44, width: 200 },
-      kind: DropIndicatorKind.Line,
-    });
+    expect(
+      getDropIndicatorBox({ childBoxes: [FIRST_BOX, SECOND_BOX], index: 1, isHorizontal: false, ownerBox: OWNER_BOX }),
+    ).toStrictEqual({ box: { height: 2, left: 0, top: 44, width: 200 }, kind: DropIndicatorKind.Line });
   });
 
   test("an indicator skips an unmeasured child to sit in the gap between the measured ones", () => {
     expect.hasAssertions();
 
     expect(
-      getDropIndicatorBox({ childBoxes: [FIRST_BOX, undefined, SECOND_BOX], index: 2, ownerBox: OWNER_BOX }),
+      getDropIndicatorBox({
+        childBoxes: [FIRST_BOX, undefined, SECOND_BOX],
+        index: 2,
+        isHorizontal: false,
+        ownerBox: OWNER_BOX,
+      }),
     ).toStrictEqual({ box: { height: 2, left: 0, top: 44, width: 200 }, kind: DropIndicatorKind.Line });
   });
 
   test("an indicator in an empty slot outlines its owner", () => {
     expect.hasAssertions();
 
-    expect(getDropIndicatorBox({ childBoxes: [], index: 0, ownerBox: OWNER_BOX })).toStrictEqual({
+    expect(getDropIndicatorBox({ childBoxes: [], index: 0, isHorizontal: false, ownerBox: OWNER_BOX })).toStrictEqual({
       box: OWNER_BOX,
       kind: DropIndicatorKind.Outline,
     });

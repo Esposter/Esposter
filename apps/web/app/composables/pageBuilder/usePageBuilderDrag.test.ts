@@ -30,6 +30,7 @@ describe("usePageBuilderDrag", () => {
   };
   const RESOURCE_ID = "resource";
   const createGeometry = (hoveredNodeId?: string): FrameGeometry => ({
+    checkIsHorizontalOwner: () => false,
     frameRect: { height: 500, left: 0, top: 0, width: 500 },
     getChildRect: (nodeId) => RECTS[nodeId],
     hoveredNodeId,
@@ -79,7 +80,7 @@ describe("usePageBuilderDrag", () => {
     expect(announce).not.toHaveBeenCalled();
   });
 
-  test("a drag dropped into a column inserts the block there", () => {
+  test("dragging a block into a column inserts it there", () => {
     expect.hasAssertions();
     const { announce, pageBuilderCanvasStore, pageBuilderDocumentStore, startPaletteDrag } = setup(COLUMN_DOCUMENT);
 
@@ -93,7 +94,7 @@ describe("usePageBuilderDrag", () => {
     expect(announce.mock.calls).toStrictEqual([[`Inserted ${TEXT_TITLE}`]]);
   });
 
-  test("a drag dropped where no slot accepts it cancels the drop", () => {
+  test("dropping a block where no slot accepts it cancels the drop", () => {
     expect.hasAssertions();
     const { announce, pageBuilderDocumentStore, startPaletteDrag } = setup(ROOT_DOCUMENT);
 

@@ -1,7 +1,6 @@
 import type { DropIndicatorInput } from "@/models/pageBuilder/DropIndicatorInput";
 import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
 
-import { checkIsHorizontalSlot } from "@/services/pageBuilder/checkIsHorizontalSlot";
 import { LINE_THICKNESS } from "@/services/pageBuilder/constants";
 import { getGapPosition } from "@/services/pageBuilder/getGapPosition";
 
@@ -9,7 +8,8 @@ import { getGapPosition } from "@/services/pageBuilder/getGapPosition";
 export const getLineBox = ({
   childBoxes,
   index,
-}: Pick<DropIndicatorInput, "childBoxes" | "index">): OverlayBox | undefined => {
+  isHorizontal,
+}: Pick<DropIndicatorInput, "childBoxes" | "index" | "isHorizontal">): OverlayBox | undefined => {
   const measured = childBoxes.filter((box) => box !== undefined);
   if (measured.length === 0) return undefined;
 
@@ -17,7 +17,7 @@ export const getLineBox = ({
   const next = childBoxes.slice(index).find((box) => box !== undefined);
   const left = Math.min(...measured.map((box) => box.left));
   const top = Math.min(...measured.map((box) => box.top));
-  if (checkIsHorizontalSlot(childBoxes)) {
+  if (isHorizontal) {
     const gapLeft = getGapPosition(previous ? previous.left + previous.width : undefined, next?.left);
     if (gapLeft === undefined) return undefined;
 

@@ -3,6 +3,7 @@ import type { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType
 import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
 
 export interface DropTargetInput {
+  checkIsHorizontalOwner: (ownerId: string) => boolean;
   document: WebpageDocument;
   draggedType: WebpageNodeType;
   getChildRect: (nodeId: string) => OverlayBox | undefined;

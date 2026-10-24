@@ -8,6 +8,7 @@ import { getPresentDefinitions } from "#shared/services/pageBuilder/getPresentDe
 import { getWebpageCss } from "#shared/services/pageBuilder/getWebpageCss";
 import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChildren";
 import { CanvasKeyAction } from "@/models/pageBuilder/CanvasKeyAction";
+import { checkIsHorizontalFlow } from "@/services/pageBuilder/checkIsHorizontalFlow";
 import { getCanvasKeyAction } from "@/services/pageBuilder/getCanvasKeyAction";
 import { getNodeIdAt } from "@/services/pageBuilder/getNodeIdAt";
 import { getNodeIdFromElement } from "@/services/pageBuilder/getNodeIdFromElement";
@@ -85,6 +86,7 @@ const getFrameGeometry = (): FrameGeometry | undefined => {
 
   const frameRect = frameElement.getBoundingClientRect();
   return {
+    checkIsHorizontalOwner: (ownerId) => checkIsHorizontalFlow(getElement(ownerId)),
     frameRect: { height: frameRect.height, left: frameRect.left, top: frameRect.top, width: frameRect.width },
     getChildRect: (nodeId) => getElement(nodeId)?.getBoundingClientRect(),
     hoveredNodeId: hoveredNodeId.value,

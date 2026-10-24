@@ -33,8 +33,22 @@ describe(resolveDropTarget, () => {
     ],
     root: TEST_ROOT,
   };
+  const LONE_COLUMN = "lone-column";
+  const LONE_COLUMN_DOCUMENT: WebpageDocument = {
+    content: [
+      {
+        props: {
+          children: [{ props: { children: [createText(TEXT_ONE)], id: LONE_COLUMN }, type: WebpageNodeType.Column }],
+          id: "columns",
+        },
+        type: WebpageNodeType.Columns,
+      },
+    ],
+    root: TEST_ROOT,
+  };
   const ROOT_DOCUMENT: WebpageDocument = { content: [createText(TEXT_ONE), createText(TEXT_TWO)], root: TEST_ROOT };
   const RECTS: Record<string, { height: number; left: number; top: number; width: number }> = {
+    [LONE_COLUMN]: { height: 40, left: 0, top: 0, width: 200 },
     [TEXT_ONE]: { height: 40, left: 0, top: 0, width: 200 },
     [TEXT_TWO]: { height: 40, left: 0, top: 40, width: 200 },
   };
@@ -44,6 +58,7 @@ describe(resolveDropTarget, () => {
 
     expect(
       resolveDropTarget({
+        checkIsHorizontalOwner: () => false,
         document: COLUMN_DOCUMENT,
         draggedType: WebpageNodeType.Text,
         getChildRect: (nodeId) => RECTS[nodeId],
@@ -58,6 +73,7 @@ describe(resolveDropTarget, () => {
 
     expect(
       resolveDropTarget({
+        checkIsHorizontalOwner: () => false,
         document: ROOT_DOCUMENT,
         draggedType: WebpageNodeType.Column,
         getChildRect: (nodeId) => RECTS[nodeId],
@@ -72,6 +88,7 @@ describe(resolveDropTarget, () => {
 
     expect(
       resolveDropTarget({
+        checkIsHorizontalOwner: () => false,
         document: ROOT_DOCUMENT,
         draggedType: WebpageNodeType.Text,
         getChildRect: (nodeId) => RECTS[nodeId],
@@ -79,5 +96,21 @@ describe(resolveDropTarget, () => {
         pointer: { x: 100, y: 30 },
       }),
     ).toStrictEqual({ index: 1, slotPointer: "/content" });
+  });
+
+  test("dropping right of a lone column in a row lands after it", () => {
+    expect.hasAssertions();
+
+    // The pointer is in the column's top half, where a column's stacked axis would resolve the drop before it
+    expect(
+      resolveDropTarget({
+        checkIsHorizontalOwner: (ownerId) => ownerId === "columns",
+        document: LONE_COLUMN_DOCUMENT,
+        draggedType: WebpageNodeType.Column,
+        getChildRect: (nodeId) => RECTS[nodeId],
+        hoveredNodeId: LONE_COLUMN,
+        pointer: { x: 300, y: 5 },
+      }),
+    ).toStrictEqual({ index: 1, slotPointer: "/content/0/props/children" });
   });
 });

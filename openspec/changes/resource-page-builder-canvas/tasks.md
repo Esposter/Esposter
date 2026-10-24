@@ -10,26 +10,26 @@
 
 ## 3. Pointer
 
-- [ ] 3.1 Drag a palette block into the slot under the pointer, cancelling where none accepts it, and let Escape cancel a drag. Verify: tests named after the scenarios 'Dragging a block into a column inserts it there', 'Dropping a block where no slot accepts it cancels the drop' and 'Escape cancels a drag'.
-- [ ] 3.2 Resolve a drop into a slot holding one child along the slot's own axis, since one child's position cannot show it: a drop right of a lone Column in a row lands after it, not before. Decide in the design whether the axis is declared on the slot's type or read from the slot's laid-out flow, then build it. Verify: a test named 'Dropping right of a lone column in a row lands after it' in apps/web/app/services/pageBuilder/resolveDropTarget.test.ts.
+- [x] 3.1 Drag a palette block into the slot under the pointer, cancelling where none accepts it, and let Escape cancel a drag. Verify: tests named after the scenarios 'Dragging a block into a column inserts it there', 'Dropping a block where no slot accepts it cancels the drop' and 'Escape cancels a drag'.
+- [x] 3.2 Resolve a drop into a slot holding one child along the slot's own axis, since one child's position cannot show it: a drop right of a lone Column in a row lands after it, not before. Decide in the design whether the axis is declared on the slot's type or read from the slot's laid-out flow, then build it. Verify: a test named 'Dropping right of a lone column in a row lands after it' in apps/web/app/services/pageBuilder/resolveDropTarget.test.ts.
 
 ## 4. Keyboard moves
 
 - [x] 4.1 Add to the headless core the previous and next node in document order, the slots in a document that accept a node, a move out after the parent, the layers rows and duplicate, each a pure function with its package test in the plain Node environment. Verify: a test named after the scenario 'Duplicating a node places its copy after it', and a package test per function.
-- [ ] 4.2 Add the Alt-arrow moves with their announcement, keeping focus on the node. Verify: tests named after the scenarios 'Alt Down moves the selected node after its next sibling', 'Alt Right moves a node into the previous sibling' and 'Alt Left moves a node out after its parent'.
-- [ ] 4.3 Add Move to, listing only the slots that accept the node by path. Verify: tests named after the scenarios 'Move to lists every slot that accepts the node' and 'Move to offers no slot that refuses the node'.
-- [ ] 4.4 Move selection and focus to a neighbour when a node is deleted. Verify: a test named after the scenario 'Deleting a node moves focus to a neighbour'.
+- [x] 4.2 Add the Alt-arrow moves with their announcement, keeping focus on the node. Verify: tests named after the scenarios 'Alt Down moves the selected node after its next sibling', 'Alt Right moves a node into the previous sibling' and 'Alt Left moves a node out after its parent'.
+- [x] 4.3 Add Move to, listing only the slots that accept the node by path. Verify: tests named after the scenarios 'Move to lists every slot that accepts the node' and 'Move to offers no slot that refuses the node'.
+- [x] 4.4 Move selection and focus to a neighbour when a node is deleted. Verify: a test named after the scenario 'Deleting a node moves focus to a neighbour'.
 
 ## 5. Layers and text
 
 - [x] 5.1 Build the layers tree on the shared UI library's tree component, with arrows, Home, End and type-ahead. Verify: tests named after the scenarios 'Arrow keys walk the layers tree and select the focused node' and 'Typing a label in the tree moves focus to that node'.
-- [ ] 5.2 Mount the text editor on the selected text node on Enter, and return focus to the tree on Escape. Verify: tests named after the scenarios 'Enter edits a text node in place' and 'Escape leaves a text node being edited'.
+- [x] 5.2 Mount the text editor on the selected text node on Enter, and return focus to the tree on Escape. Verify: tests named after the scenarios 'Enter edits a text node in place' and 'Escape leaves a text node being edited'.
 
 ## 6. Clipboard
 
-- [ ] 6.1 Paste a copied node into another webpage as a separate copy, and refuse a webpage node pasted into an email. The refusal is open: the clipboard composable pastes only into a webpage, so no path reaches it until the email editor pastes through the same clipboard. Verify: tests named after the scenarios 'A node pasted into another webpage appears as a copy' and 'Pasting a webpage node into an email is refused'.
+- [x] 6.1 Paste a copied node into another webpage as a separate copy, and refuse a webpage node pasted into an email. The refusal is open: the clipboard composable pastes only into a webpage, so no path reaches it until the email editor pastes through the same clipboard. Verify: tests named after the scenarios 'A node pasted into another webpage appears as a copy' and 'Pasting a webpage node into an email is refused'.
 
 ## 7. Shell
 
-- [ ] 7.1 Draw the editor's panes and the Content, Style and Theme tabs, with the Content panel a schema form over the selected node's type and an image field's upload. Verify: a test named after the scenario 'Editing a button's label in the Content panel shows on the canvas'.
-- [ ] 7.2 Draw an empty page's one action as the design records: an Insert a block button in `UiEmptyState` that opens the palette's blocks as a `UiCommandScope`, in place of the palette in the slot. Verify: a test named after the scenario 'An empty page offers the palette' passes against that surface.
+- [x] 7.1 Draw the editor's panes and the Content, Style and Theme tabs, with the Content panel a schema form over the selected node's type and an image field's upload. Verify: a test named after the scenario 'Editing a button's label in the Content panel shows on the canvas'.
+- [x] 7.2 Draw an empty page's one action as the design records: an Insert a block button in `UiEmptyState` that opens the palette's blocks as a `UiCommandScope`, in place of the palette in the slot. Verify: a test named after the scenario 'An empty page offers the palette' passes against that surface.
