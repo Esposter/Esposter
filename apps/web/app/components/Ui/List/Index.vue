@@ -1,4 +1,4 @@
-<script setup lang="ts" generic="T extends string">
+<script setup lang="ts" generic="T extends string, TExtra = unknown">
 import type { UiListItem } from "@/models/ui/UiListItem";
 
 import { takeOne } from "@esposter/shared";
@@ -6,12 +6,13 @@ import { useRovingFocus } from "@vuetify/v0";
 
 interface Props {
   // Anything a row takes beside what the list gives it, such as the props that open its context menu
-  getRowProps?: (item: UiListItem<T>) => Record<string, unknown>;
+  getRowProps?: (item: TExtra & UiListItem<T>) => Record<string, unknown>;
   // Lets more than one row be selected at once, in a list that holds a selection
   isMultiple?: true;
   // Lets the rows be put in another order, by dragging a row or by Alt+Up and Alt+Down, each move within its group
   isReorderable?: true;
-  items: UiListItem<T>[];
+  // A row may carry more than the list's own fields, which its slots then receive whole, as the list's item
+  items: (TExtra & UiListItem<T>)[];
   // The list's accessible name: what its rows are
   label: string;
 }
@@ -21,11 +22,11 @@ interface Props {
 // Something to do, and where the reader is marks its row as current. A row's actions sit beside it in the list, never
 // Inside it, where a listbox has none, since an option holds nothing interactive
 defineSlots<{
-  actions?: (props: { item: UiListItem<T> }) => VNode;
-  append?: (props: { item: UiListItem<T> }) => VNode;
-  leading?: (props: { item: UiListItem<T> }) => VNode;
-  mark?: (props: { item: UiListItem<T> }) => VNode;
-  title?: (props: { item: UiListItem<T> }) => VNode;
+  actions?: (props: { item: TExtra & UiListItem<T> }) => VNode;
+  append?: (props: { item: TExtra & UiListItem<T> }) => VNode;
+  leading?: (props: { item: TExtra & UiListItem<T> }) => VNode;
+  mark?: (props: { item: TExtra & UiListItem<T> }) => VNode;
+  title?: (props: { item: TExtra & UiListItem<T> }) => VNode;
 }>();
 const modelValue = defineModel<T[]>();
 const { getRowProps, isMultiple, isReorderable, items, label } = defineProps<Props>();
@@ -42,7 +43,7 @@ const getDragReorderProps = useDragReorder();
 
 // Rows sharing a group sit together under its heading, in the order they come
 const groups = computed(() => {
-  const rowGroups: { group?: string; items: UiListItem<T>[] }[] = [];
+  const rowGroups: { group?: string; items: (TExtra & UiListItem<T>)[] }[] = [];
   for (const item of items) {
     const lastRowGroup = rowGroups.at(-1);
     if (lastRowGroup && lastRowGroup.group === item.group) lastRowGroup.items.push(item);
@@ -65,7 +66,7 @@ const reorder = (groupIndex: number, groupValues: T[]) => {
   emit("reorder", values);
 };
 // What a group's rows take while they drag: their new order is handed back as the whole list's
-const getReorderProps = (groupIndex: number, groupItems: UiListItem<T>[]) =>
+const getReorderProps = (groupIndex: number, groupItems: (TExtra & UiListItem<T>)[]) =>
   getDragReorderProps(groupItems, (newGroupItems) => {
     reorder(
       groupIndex,
