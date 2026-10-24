@@ -37,16 +37,16 @@ interface VisualDatasetBinding {
 
 ## Key files
 
-| File                                                                  | Role                                                                            |
-| --------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `shared/models/dashboard/data/VisualDatasetBinding.ts`                | binding shape — reference + query, plus the optional publish-time snapshot      |
-| `shared/models/dataset/DatasetQuery.ts`                               | x column + aggregated series                                                    |
-| `app/services/dashboard/dataset/VisualTypeDatasetShapeMap.ts`         | how each visual type draws a query's result, or that it cannot                  |
-| `app/services/dashboard/setVisualType.ts`                             | the type switch: chart fallback and the binding clear                           |
-| `app/components/Resource/Dashboard/Editor.vue`                        | canvas incl. bind-to-data flow                                                  |
-| `app/components/Resource/Dashboard/View.vue`                          | published renderer over baked data                                              |
-| `app/components/Dataset/ReferencePicker.vue`                          | shared provider/resource picker; one reader lists every provider type's sources |
-| `apps/web/app/services/dataset/DatasetProviderTypeSourceRouterMap.ts` | the router each provider type lists its sources from                            |
+| File                                                          | Role                                                                            |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| `shared/models/dashboard/data/VisualDatasetBinding.ts`        | binding shape — reference + query, plus the optional publish-time snapshot      |
+| `shared/models/dataset/DatasetQuery.ts`                       | x column + aggregated series                                                    |
+| `app/services/dashboard/dataset/VisualTypeDatasetShapeMap.ts` | how each visual type draws a query's result, or that it cannot                  |
+| `app/services/dashboard/setVisualType.ts`                     | the type switch: chart fallback and the binding clear                           |
+| `app/components/Resource/Dashboard/Editor.vue`                | canvas incl. bind-to-data flow                                                  |
+| `app/components/Resource/Dashboard/View.vue`                  | published renderer over baked data                                              |
+| `app/components/Dataset/ReferencePicker.vue`                  | shared provider/resource picker; one reader lists every provider type's sources |
+| `app/services/dataset/DatasetProviderTypeSourceRouterMap.ts`  | the router each provider type lists its sources from                            |
 
 ## Notes
 
