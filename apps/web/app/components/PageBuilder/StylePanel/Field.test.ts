@@ -61,6 +61,18 @@ describe("styleField", () => {
       expect(component.get('[role="combobox"]').attributes("aria-disabled")).toBe("false");
     });
 
+    test("a cleared number keeps the length's unit for the next number", async () => {
+      expect.hasAssertions();
+
+      vi.stubGlobal("CSS", { supports: () => true });
+      const component = mount(UiStyleField, { props: { label: "Width", modelValue: "10rem", property: "width" } });
+
+      await component.get("input").setValue("");
+      await component.get("input").setValue("5");
+
+      expect(component.emitted<[string]>("update:modelValue")).toStrictEqual([[""], ["5rem"]]);
+    });
+
     test("a style value with a brace is refused", async () => {
       expect.hasAssertions();
 

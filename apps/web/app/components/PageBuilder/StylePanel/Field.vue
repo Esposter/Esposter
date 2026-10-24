@@ -24,7 +24,8 @@ const rules = [() => getStyleValueError(property, draft.value) ?? true];
 const lengthParts = computed(() =>
   STYLE_LENGTH_PROPERTIES.includes(property) ? splitStyleLength(draft.value) : undefined,
 );
-const unit = computed(() => lengthParts.value?.unit || DEFAULT_LENGTH_UNIT);
+// The unit is held apart from the draft, since an empty number drafts no unit, so clearing a number keeps the one chosen
+const unit = ref(splitStyleLength(draft.value)?.unit || DEFAULT_LENGTH_UNIT);
 const unitItems = STYLE_LENGTH_UNITS.map((lengthUnit) => ({
   meaning: UiIconMeaning.None,
   title: lengthUnit,
@@ -36,6 +37,7 @@ const setAmount = (amount: string) => {
   draft.value = getDraft(amount, unit.value);
 };
 const setUnit = (lengthUnit: string) => {
+  unit.value = lengthUnit;
   draft.value = getDraft(lengthParts.value?.amount ?? "", lengthUnit);
 };
 // The arrows step the number and keep its unit, and Shift steps it by ten
@@ -52,6 +54,8 @@ watch(modelValue, (value) => {
   draft.value = value;
 });
 watch(draft, (value) => {
+  const lengthUnit = splitStyleLength(value)?.unit;
+  if (lengthUnit) unit.value = lengthUnit;
   if (getStyleValueError(property, value) === undefined) modelValue.value = value;
 });
 </script>
