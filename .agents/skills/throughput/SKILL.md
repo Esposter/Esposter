@@ -28,7 +28,7 @@ Time and effort are the limit, so every resource the session holds works at once
 
 Each usage window keeps part of its end for the compute queue's runners, and what the session does at each of the window's lines is `references/usage-reserve.md`.
 
-The reserve guards a local plan's window. The cloud case, and the gap in the mod that still applies the reserve there, is in `references/usage-reserve.md`'s Scope paragraph.
+The reserve guards a local plan's window. A cloud session spends the account's API cloud credit instead, so it keeps working to the end of its task and never stops at a window's line; the mod's gap that still shows it the reserve, and what to do under that notice, is in `references/usage-reserve.md`'s Scope paragraph.
 
 ## Deep Dives
 
