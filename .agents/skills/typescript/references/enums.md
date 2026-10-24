@@ -78,7 +78,7 @@ discriminant (`type: "ApiConnection"`), a numeric union, and a union passed as a
 genuinely cannot be an enum carries a disable stating why, as `ExportsGeneration` does for tsdown's strip-only
 config loading.
 
-## The Nuxt configuration's imports are the one `as const` exception
+## The Nuxt configuration and bare-`node` plugins are the `as const` exceptions
 
 Nuxt loads `apps/web/nuxt.config.ts` with Node's own strip-only type stripping and falls back to jiti only when that
 fails, and jiti transforms every file of the configuration's graph on every load — every `nuxt prepare`, `dev`,
@@ -91,9 +91,9 @@ export const ThemeMode = { Dark: "dark", Light: "light", System: "system" } as c
 export type ThemeMode = (typeof ThemeMode)[keyof typeof ThemeMode];
 ```
 
-The exception is that graph, and the other graph Node's type stripping loads with no loader: a Claude Code plugin's
-hooks and commands run under a bare `node`, so every file they reach declares its closed set the same way (the persona
-plugin's `src/models`). A Nuxt module's `module.ts` is loaded the same way, by Node's type stripping, and its native
+The exceptions are those two graphs, which Node's type stripping loads with no loader: the Nuxt configuration's, and a
+Claude Code plugin's hooks and commands, which run under a bare `node`, so every file they reach declares its closed set
+the same way (the persona plugin's `src/models`). A Nuxt module's `module.ts` is loaded the same way, by Node's type stripping, and its native
 graph must hold no enum: `scripts/src/workspace/nuxtModuleNativeLoad.test.ts` loads each module's entry under plain
 `node` and fails on any unsupported TypeScript syntax, so an enum reached from a value import is caught there rather
 than by a tsconfig flag that would also constrain `@esposter/shared`. Everything else a script runs under `vpx` keeps
