@@ -1,6 +1,7 @@
 import type { DropIndicatorInput } from "@/models/pageBuilder/DropIndicatorInput";
 import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
 
+import { checkIsSameLine } from "@/services/pageBuilder/checkIsSameLine";
 import { LINE_THICKNESS } from "@/services/pageBuilder/constants";
 import { getGapPosition } from "@/services/pageBuilder/getGapPosition";
 
@@ -15,16 +16,23 @@ export const getLineBox = ({
 
   const previous = childBoxes.slice(0, index).findLast((box) => box !== undefined);
   const next = childBoxes.slice(index).find((box) => box !== undefined);
-  const left = Math.min(...measured.map((box) => box.left));
-  const top = Math.min(...measured.map((box) => box.top));
   if (isHorizontal) {
-    const gapLeft = getGapPosition(previous ? previous.left + previous.width : undefined, next?.left);
-    if (gapLeft === undefined) return undefined;
+    // A row that wraps starts a line at the child the drop lands before, so the line stands at that child's edge
+    const isNextOnNewLine = previous !== undefined && next !== undefined && !checkIsSameLine(previous, next);
+    const lineBox = isNextOnNewLine || previous === undefined ? next : previous;
+    const gapLeft = getGapPosition(
+      isNextOnNewLine || previous === undefined ? undefined : previous.left + previous.width,
+      next?.left,
+    );
+    if (gapLeft === undefined || lineBox === undefined) return undefined;
 
-    const bottom = Math.max(...measured.map((box) => box.top + box.height));
+    const lineChildren = measured.filter((box) => checkIsSameLine(box, lineBox));
+    const top = Math.min(...lineChildren.map((box) => box.top));
+    const bottom = Math.max(...lineChildren.map((box) => box.top + box.height));
     return { height: bottom - top, left: gapLeft - LINE_THICKNESS / 2, top, width: LINE_THICKNESS };
   }
 
+  const left = Math.min(...measured.map((box) => box.left));
   const gapTop = getGapPosition(previous ? previous.top + previous.height : undefined, next?.top);
   if (gapTop === undefined) return undefined;
 
