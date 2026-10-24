@@ -3,25 +3,25 @@ import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
 import { getDropIndex } from "@/services/pageBuilder/getDropIndex";
 import { describe, expect, test } from "vitest";
 
-// Three columns in a row of 200 pixels each, the last two wrapped onto a line below the first
-const WRAPPED_ROW: OverlayBox[] = [
-  { height: 40, left: 0, top: 0, width: 200 },
-  { height: 40, left: 200, top: 0, width: 200 },
-  { height: 40, left: 400, top: 0, width: 200 },
-  { height: 40, left: 0, top: 60, width: 200 },
-  { height: 40, left: 200, top: 60, width: 200 },
-];
-const SINGLE_ROW: OverlayBox[] = [
-  { height: 40, left: 0, top: 0, width: 200 },
-  { height: 40, left: 200, top: 0, width: 200 },
-  { height: 40, left: 400, top: 0, width: 200 },
-];
-const STACK: OverlayBox[] = [
-  { height: 40, left: 0, top: 0, width: 600 },
-  { height: 40, left: 0, top: 60, width: 600 },
-];
-
 describe(getDropIndex, () => {
+  // Three columns in a row of 200 pixels each, the last two wrapped onto a line below the first
+  const WRAPPED_ROW: OverlayBox[] = [
+    { height: 40, left: 0, top: 0, width: 200 },
+    { height: 40, left: 200, top: 0, width: 200 },
+    { height: 40, left: 400, top: 0, width: 200 },
+    { height: 40, left: 0, top: 60, width: 200 },
+    { height: 40, left: 200, top: 60, width: 200 },
+  ];
+  const SINGLE_ROW: OverlayBox[] = [
+    { height: 40, left: 0, top: 0, width: 200 },
+    { height: 40, left: 200, top: 0, width: 200 },
+    { height: 40, left: 400, top: 0, width: 200 },
+  ];
+  const STACK: OverlayBox[] = [
+    { height: 40, left: 0, top: 0, width: 600 },
+    { height: 40, left: 0, top: 60, width: 600 },
+  ];
+
   test("a drop on the second line of a wrapped row lands on that line", () => {
     expect.hasAssertions();
 
