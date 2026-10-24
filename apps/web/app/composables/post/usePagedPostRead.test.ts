@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
-import type { ReadPostsInput } from "#shared/models/db/post/ReadPostsInput";
+import type { readPostsInputSchema } from "#shared/models/db/post/ReadPostsInput";
+import type { z } from "zod";
 
 import { usePagedPostRead } from "@/composables/post/usePagedPostRead";
 import { PostSortType } from "@/models/post/PostSortType";
@@ -21,9 +22,9 @@ describe(usePagedPostRead, () => {
   test("reads the first page with the query it is given", async () => {
     expect.hasAssertions();
 
-    const sentQueries: ReadPostsInput[] = [];
+    const sentQueries: NonNullable<z.input<typeof readPostsInputSchema>>[] = [];
     trpcMsw.post.readPosts.query(({ input }) => {
-      sentQueries.push(input);
+      if (input) sentQueries.push(input);
       return { hasMore: false, items: [createPost({ userId })], nextCursor: "" };
     });
     const { readFirstPage } = createPagedRead();
@@ -36,10 +37,10 @@ describe(usePagedPostRead, () => {
   test("reads each later page on the cursor the page before it left", async () => {
     expect.hasAssertions();
 
-    const sentQueries: ReadPostsInput[] = [];
+    const sentQueries: NonNullable<z.input<typeof readPostsInputSchema>>[] = [];
     trpcMsw.post.readPosts.query(({ input }) => {
-      sentQueries.push(input);
-      return input.cursor
+      if (input) sentQueries.push(input);
+      return input?.cursor
         ? { hasMore: false, items: [createPost()], nextCursor: "" }
         : { hasMore: true, items: [createPost()], nextCursor: "cursor" };
     });

@@ -35,10 +35,10 @@ vi.mock("@/store/dungeons", async () => {
 // The scene switch belongs to Phaser, so only its calls are recorded
 vi.mock(import("@/composables/dungeons/usePreviousScene"), async () => {
   const { SceneKey } = await import("@/models/dungeons/keys/SceneKey");
-  const { ref } = await import("vue");
+  const { computed } = await import("vue");
   const usePreviousSceneMock = {
     launchScene: vi.fn<() => void>(),
-    previousSceneKey: ref(SceneKey.Battle),
+    previousSceneKey: computed(() => SceneKey.Battle),
     removeScenesAbove: vi.fn<() => void>(),
     switchToPreviousScene: vi.fn<() => void>(),
   };
@@ -57,7 +57,6 @@ describe(useMonsterPartyInputStore, () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     useDungeonsStore().save = new Save();
-    usePreviousScene(SceneKey.MonsterParty).previousSceneKey.value = SceneKey.Battle;
     emitSpy = vi.spyOn(phaserEventEmitter, "emit");
   });
 

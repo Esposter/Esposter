@@ -28,7 +28,8 @@ vi.mock("@/store/dungeons", async () => {
 });
 
 // The dialog is UI over the scene, so only the messages it is asked to show are recorded
-vi.mock(import("@/store/dungeons/world/dialog"), () => ({ useWorldDialogStore: () => ({ showMessages }) }));
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed store has members this test never reads
+vi.mock("@/store/dungeons/world/dialog", () => ({ useWorldDialogStore: () => ({ showMessages }) }));
 
 // The scene's camera and timing are Phaser's, and only the fade effect reaches them, which these tests do not run
 // oxlint-disable-next-line vitest/prefer-import-in-mock -- Phaser cannot initialise under the test environment, and no test reads its values

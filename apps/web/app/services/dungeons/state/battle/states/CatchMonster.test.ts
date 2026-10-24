@@ -20,8 +20,10 @@ const { setState, showMessages } = vi.hoisted(() => ({
 }));
 
 // The state machine holds every battle state, and the dialog is UI over the scene, so only their calls are recorded
-vi.mock(import("@/services/dungeons/scene/battle/battleStateMachine"), () => ({ battleStateMachine: { setState } }));
-vi.mock(import("@/store/dungeons/battle/dialog"), () => ({ useBattleDialogStore: () => ({ showMessages }) }));
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed state machine has members this test never reads
+vi.mock("@/services/dungeons/scene/battle/battleStateMachine", () => ({ battleStateMachine: { setState } }));
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed store has members this test never reads
+vi.mock("@/store/dungeons/battle/dialog", () => ({ useBattleDialogStore: () => ({ showMessages }) }));
 
 // The ball's flight and the monster's fall are Phaser tweens, and the outcome the ball is thrown for is decided by the
 // Capture roll, which is tested apart
@@ -46,7 +48,7 @@ vi.mock("@/store/dungeons", async () => {
   return { useDungeonsStore: () => dungeonsStore };
 });
 
-describe(CatchMonster, () => {
+describe("catchMonster", () => {
   const scene = {} as SceneWithPlugins;
   const wildMonsterName = prettify(MonsterKey.Iguanignite);
 

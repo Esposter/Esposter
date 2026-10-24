@@ -29,10 +29,12 @@ vi.mock("@/store/dungeons", async () => {
 });
 
 // The dialog is UI over the scene, so only the messages it is asked to show are recorded
-vi.mock(import("@/store/dungeons/world/dialog"), () => ({ useWorldDialogStore: () => ({ showMessages }) }));
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed store has members this test never reads
+vi.mock("@/store/dungeons/world/dialog", () => ({ useWorldDialogStore: () => ({ showMessages }) }));
 
 // Sound plays through Phaser's scene, which is not run here
-vi.mock(import("@/services/dungeons/sound/getDungeonsSoundEffect"), () => ({
+// oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed sound has members this test never reads
+vi.mock("@/services/dungeons/sound/getDungeonsSoundEffect", () => ({
   getDungeonsSoundEffect: () => ({ play: () => undefined }),
 }));
 
@@ -41,7 +43,10 @@ describe(chestInteractionEffect, () => {
   const chestPosition = { x: 3, y: 4 };
 
   const getChestObject = (x: number, y: number): Types.Tilemaps.TiledObject & { x: number; y: number } => ({
+    id: 0,
+    name: "",
     properties: [{ name: ChestObjectProperty.ItemId, type: "string", value: ItemId.Potion }],
+    type: "",
     x,
     y,
   });

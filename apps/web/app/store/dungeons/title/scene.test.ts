@@ -46,7 +46,7 @@ describe(useTitleSceneStore, () => {
     const dungeonsStore = useDungeonsStore();
     dungeonsStore.dungeons.save = undefined;
     dungeonsStore.save = new Save();
-    dungeonsStore.fadeSwitchToScene.mockClear();
+    vi.mocked(dungeonsStore.fadeSwitchToScene).mockClear();
   });
 
   test("continuing loads the stored save and fades into the world with it", () => {
