@@ -42,7 +42,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Resource snapshots](resource-snapshots/design.md) — published versions and revisions of the working copy in one version history panel, with preview, restore and undo
 - [Resource version store](resource-version-store/design.md) — every retained version as a content-addressed keyframe or delta, so a run of edits costs a compressed copy plus the edits rather than a copy per version
 - [Content-addressed assets](content-addressed-assets/design.md) — uploaded files addressed by the hash of their bytes, so a publish, a revision and the working copy share one file and nothing is copied when a page is published
-- [Resource save state](resource-save-state/design.md) — one derived state in the blade toolbar saying whether the open resource's edits have reached the server, and when
+- [Resource save state](resource-save-state/design.md) — one derived state on the page header's title row saying whether the open resource's edits have reached the server, and when
 - [Delta content saves](delta-content-saves/design.md) — a large document's save as a zstd delta against the bytes the server stores, falling back to a full save on any mismatch
 - [Shell cohesion](shell-cohesion/design.md) — the shared chrome primitives (page header, breadcrumbs, empty/loading states, launcher)
 - [Breadcrumb trail](breadcrumb-trail/design.md) — crumbs are the click path, the current page is the title, and a direct link shows no ancestor at all
@@ -88,7 +88,7 @@ what the whole program cost: one Azure Table for the activity blade, one Service
 Event Grid subscription on a system topic that already existed, and a handful of Postgres migrations — no new
 Azure service at any point.
 
-- **Resource Explorer consolidation** — every product became a resource behind one explorer: the `resources` and `resource_publications` tables, one `ResourceAssets` container replacing six, the `createResourceProcedures` factory, and every per-editor page, picker and hub deleted.
+- **Resource Explorer consolidation** — every product became a resource behind one explorer: the `resources` and `resourcePublications` tables, one `ResourceAssets` container replacing six, the `createResourceProcedures` factory, and every per-editor page, picker and hub deleted.
 - **Capabilities** — Publishable, DatasetProvider, Portable and FileAssets, each adopted by the types that declare them rather than rebuilt per type.
 - **Explorer surface** — the list workbench, summary view, service menu, command-bar parity, global search and its trigram ranking, favorites, recents, tags, the recycle bin, activity log, and version history.
 - **Resource types** — Sheet (renamed from File), Survey, Program, Note and Blueprint, plus publish parity for Email and Flowchart.

@@ -26,9 +26,9 @@ flowchart LR
 | `app/services/emailEditor/createEmailSurveyInviteBlocks.ts` | the email's survey invite blocks, over the shared core                        |
 | `app/services/emailEditor/substituteMergeFields.ts`         | per-row substitution, HTML-escaped                                            |
 | `app/services/emailEditor/getEmailHtml.ts`                  | the one MJML compile, shared with the [web view](../email-web-view/design.md) |
-| `app/services/emailEditor/exportPersonalizedHtml.ts`        | compiled HTML + rows → one zip of personalized `.html` files                  |
+| `app/services/emailEditor/exportPersonalizedHtml.ts`        | personalized HTML files → one zip, shared with the program's invites          |
 | `app/services/grapesjs/setBlocks.ts`                        | wholesale block-category re-sync in the block manager                         |
-| `app/composables/grapesjs/useGrapesJsEditor.ts`             | shared GrapesJS init + resource storage adapter (email/webpage)               |
+| `app/composables/grapesjs/useGrapesJsEditor.ts`             | shared GrapesJS init + resource storage adapter (email)                       |
 | `app/components/Resource/Email/Editor.vue`                  | inline Editor blade bridging the live editor onto the email store             |
 | `app/components/Resource/Email/ExportTruncationDialog.vue`  | the confirm a capped dataset read routes through before exporting             |
 
@@ -38,6 +38,5 @@ flowchart LR
 - Merge-field and survey-invite block categories re-sync wholesale whenever their reactive source changes (bound dataset columns, published surveys) — no per-block bookkeeping.
 - Substituted values are HTML-escaped: merge fields personalize text, never inject markup. Tokens are inserted escaped and substitution matches both raw and escaped token forms, since the canvas entity-encodes special characters (e.g. a "P&L" column) on serialization.
 - Export is fully client-side: the personalized files are zipped in the browser and handed over as one download, so no directory permission prompt stands between the sender and the artifact.
-- A capped dataset read never exports silently — the command stages the dataset and the Editor blade's truncation confirm owns the decision ([dataset row cap warning](../dataset-row-cap-warning/design.md)).
 - Exported files keep app-origin asset urls (`/api/resource-assets/…`), which resolve only for a request carrying the owner's session cookie — images are blank in a file opened straight off disk. Durable public asset urls come with [email sending](../../../deferred/resource/email-sending/design.md).
 - The `EmailEditor` content class name is frozen (registered in `JSONClassMap` — renaming breaks superjson deserialization of persisted blobs).

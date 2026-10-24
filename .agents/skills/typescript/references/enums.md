@@ -55,7 +55,7 @@ export const fooTypeSchema = z.enum(FooType) satisfies z.ZodType<FooType>;
   BarTypes.has(barType); // O(1)
   ```
 
-  In published packages (`db-schema` etc., isolatedDeclarations) annotate the array explicitly: `export const FooTypes: readonly FooType[] = Object.values(FooType);`. In the app, let it infer.
+  In published packages (packages extending `tsconfig.library.json`, e.g. `packages/shared`) annotate the array explicitly: `export const FooTypes: readonly FooType[] = Object.values(FooType);`. In the app, let it infer.
 
 - **Never write `Object.values(SomeEnum)` inline** — use the exported array.
 - **The values array lives in the source's own file, never at a consumption site** — a `const FooTypes = Object.values(FooType)` declared locally in a service/component (or duplicated across two consumers) is the violation shape even when typed and named correctly; move it to the enum's file and import it. Same rule for map-derived collections: `export const FooDefinitions = Object.values(FooDefinitionMap)` sits at the bottom of the map's file. Exception: test files may derive values locally when the point of the test is independently re-deriving them (e.g. exhaustiveness assertions against a map).
@@ -80,11 +80,7 @@ config loading.
 
 ## The Nuxt configuration, Nuxt modules and bare-`node` plugins are the `as const` exceptions
 
-Nuxt loads `apps/web/nuxt.config.ts` with Node's own strip-only type stripping and falls back to jiti only when that
-fails, and jiti transforms every file of the configuration's graph on every load — every `nuxt prepare`, `dev`,
-`build` and Vitest start. An enum anywhere in that graph is what makes it fail (`TypeScript enum is not supported in
-strip-only mode`), so a file the configuration imports declares its closed set as an `as const` object with a type of
-the same name, and its call sites read exactly as an enum's:
+The Nuxt configuration and Nuxt module graphs hold no enum (`scripts/src/workspace/nuxtModuleNativeLoad.test.ts` enforces it), so a file either imports declares its closed set as an `as const` object with a type of the same name, and its call sites read exactly as an enum's:
 
 ```ts
 export const ThemeMode = { Dark: "dark", Light: "light", System: "system" } as const;
@@ -93,9 +89,6 @@ export type ThemeMode = (typeof ThemeMode)[keyof typeof ThemeMode];
 
 The exceptions are those graphs, which Node's type stripping loads with no loader: the Nuxt configuration's, a Nuxt module's, and a
 Claude Code plugin's hooks and commands, which run under a bare `node`, so every file they reach declares its closed set
-the same way (the persona plugin's `src/models`). A Nuxt module's `module.ts` is loaded the same way, by Node's type stripping, and its native
-graph must hold no enum: `scripts/src/workspace/nuxtModuleNativeLoad.test.ts` loads each module's entry under plain
-`node` and fails on any unsupported TypeScript syntax, so an enum reached from a value import is caught there rather
-than by a tsconfig flag that would also constrain `@esposter/shared`. Everything else a script runs under `vpx` keeps
+the same way (the persona plugin's `src/models`). Everything else a script runs under `vpx` keeps
 its enums, and a file that cannot load moves its entry to `vpx`. A `nuxt prepare` printing `NUXT_B5023`
 names the file that brought an enum, or an extensionless relative import, back into the graph.

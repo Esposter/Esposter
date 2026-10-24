@@ -8,7 +8,7 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 ## Settled — do not re-propose
 
 - **Turning `typescript/consistent-type-imports` on for `.vue`** — oxlint skips the rule there, since it cannot tell from the script block whether the template uses an import as a value, and nothing in the ESLint config reaches it; the `.ts` half is on (`disallowTypeAnnotations` off, because `vi.mock(import(…))` is the sanctioned Vitest idiom), so a class used only in type position takes `import type` by lint, and a `.vue` file keeps it by reading.
-- **A raw non-printing byte in a literal** — it renders as nothing in a diff, a terminal or an editor, so no reader can tell it from an empty string or its neighbour; the `\uXXXX` escape wins (`references/non-printing-characters.md`).
+- **A raw non-printing byte in a literal** — it renders as nothing in a diff, a terminal or an editor, so no reader can tell it from an empty string or its neighbour; the `\uXXXX` escape wins (`scripts/src/workspace/controlCharacters.test.ts`, `references/non-printing-characters.md`).
 - **Writing the older API a newer one replaces, for compatibility** — the app supports the current release of each browser engine only, and a global one of them lacks is polyfilled rather than avoided (`openspec/specs/architecture/polyfills/design.md`).
 
 ## Deep dives
@@ -43,7 +43,6 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 - **Boolean casting** — never `!!`; always `Boolean(value)`.
 - **Interpolation coerces** — `${x}`, never `${x.toString()}`; `no-restricted-syntax` enforces it (a radix `toString(16)` stays). `String(x)` inside a template is only for the types `restrict-template-expressions` rejects (`unknown`, `symbol`).
 - **Regex** — literals for static patterns, `new RegExp(template, flags)` only when the pattern interpolates, and always the `u` flag; all three are lint errors otherwise (`prefer-regex-literals`, `require-unicode-regexp`). Naming (`_REGEX`) is the `naming` skill's rule ("Constants").
-- **A non-printing character is written as its `\uXXXX` escape, never the raw byte** (`scripts/src/workspace/controlCharacters.test.ts`, `references/non-printing-characters.md`).
 - **Prefer the shortened assignment forms** — compound (`x += y`, `x ??= y`) over `x = x + y`, chained (`a.value = b.value = value`) over repeating the right-hand side. `restrict-plus-operands` and `no-multi-assign` are off for exactly this reason: a cast to silence a lint rule is strictly worse than the operator it replaces.
 - **`as unknown as T` is `any` with extra steps** — a `no-restricted-syntax` error in source (`restrictedSourceSyntaxes.js`; a suite's fakes are exempt), so a surviving one is a disable naming what the compiler cannot see — never "this is safe"; the seams that earn one are `references/type-modelling.md`.
 - **A compiler limit (TS2590) is a tagged `@ts-expect-error` in place, not a redesign** (`references/type-modelling.md`).

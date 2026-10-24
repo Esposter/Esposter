@@ -2,7 +2,7 @@
 
 Every run of code two files share, found by `pnpm ai:sweep:duplicate-code` over the code scopes, with tests, generated
 output, declarations, import blocks, drawn assets and the Azure resource declarations left out (the finder's
-`constants.ts` says why for each). The workspace suite's zero test (`scripts/src/workspace/duplicateCode.test.ts`)
+`constants.ts` says why for each, except import blocks, which `scripts/src/services/sweeps/duplicateCode/getDuplicateCodeFindings.ts` explains). The workspace suite's zero test (`scripts/src/workspace/duplicateCode.test.ts`)
 holds the whole scan to no finding, and CI's Duplicate Code job runs that file as the gate. Its config test holds
 `.jscpd.json` to the finder's constants.
 
@@ -10,8 +10,8 @@ Where a finding's home looked missing, it is settled:
 
 - **Across packages:** isomorphic code goes to `@esposter/shared`, and server-only code to `@esposter/shared-node`. Otherwise it goes to the lowest package both sides already depend on. A gap there is filled, not worked around.
 - **Parallel Drizzle tables:** they share column builders, as the metadata columns already do. Where two tables name one concept differently, a `db:gen` migration renames the columns to the shared builder's names.
-- **The standalone plugins** (`follow-ups`, `genshin-persona`): they carry no `@esposter/shared`, since each installs with no build, so a helper one needs is written in its own package.
-- **Claude mods:** a pure helper is shared through a relative import inside the plugin. Only a function calling `$`, or making an atom, stays in its register file, as the engine requires.
+- **The standalone plugins** (`follow-ups`, `genshin-persona`): they carry no `@esposter/shared`, so a helper one needs is written in its own package.
+- **Claude mods:** a pure helper is shared through a relative import inside the plugin (the register exception is below).
 - **Styles:** they are shared through a shared component or stylesheet, and the visual suites stay unchanged. A style edit is never landed through a `-u`.
 - **Measured data:** a clone made only of numeric literal rows, or of keyed empty collections (`key: [],`, `key: {},`, an object of only those), is data, not code. The finder skips it.
 - **Across Claude plugins:** a clone whose two sides sit in two different plugins (a package with a `.claude-plugin` folder) is not a finding, since each plugin installs standalone with no build and cannot share a file.

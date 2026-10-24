@@ -20,7 +20,7 @@ The preview text is a root prop, so the bar's field binds it through a patch lik
 
 **Preview** is the truth: a toggle beside the device widths shows the open document compiled by the server, through a query that passes the document to the document model's compile service, debounced like the autosave so Preview shows an edit before it is saved and reads nothing GrapesJS still writes. It draws in the sandboxed frame the published view uses, at desktop and mobile width, with MJML's validation messages above it as an alert. The design canvas is where an email is edited and Preview is what a client receives, because email-client HTML — nested tables and conditional comments — is output to inspect, not a surface to edit in place.
 
-The compile runs in the app server, on MJML's Node package in place of the browser build bundled inside `grapesjs-mjml`. Its weight — a CSS minifier, an HTML minifier, an inliner and a DOM parser — lands in the server, where no reader downloads it.
+The compile runs in the app server, on MJML's Node package in place of the browser build bundled inside `grapesjs-mjml`.
 
 ## The shell's document kind
 
@@ -47,4 +47,4 @@ apps/web/app/components/PageBuilder/Email/      the design canvas's email types,
 ## Sources
 
 - [MJML documentation](https://documentation.mjml.io/) — `mj-column`'s stacking below the body breakpoint and the default attributes the canvas draws with until a node sets its own.
-- [MJML 5.0.0 release](https://github.com/mjmlio/mjml/releases/tag/v5.0.0) — the major the server moves to, its new minifiers, and the browser build's size.
+- [MJML 5.0.0 release](https://github.com/mjmlio/mjml/releases/tag/v5.0.0) — the major the server compiles on (5.4.1 installed), its new minifiers, and the browser build's size.

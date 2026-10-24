@@ -16,7 +16,7 @@ flowchart LR
 
 - **Render** — the node renders an anchor classed `survey-invite`, its `href` the absolute survey url from `getSurveyInviteUrl(context.origin, surveyId)`. The link is absolute, against the origin the page publishes from, so it works from any page that holds it. A published page loads no stylesheet of ours, so the button's styling is the node's own `css`.
 - **A leaf** — the node is not focusable and has no slots. Its label is its only child text.
-- **Palette** — the node sits in the Survey category and is created with the label "Survey" and an unbound `surveyId`, until the owner picks a survey. Survey names are escaped by the renderer, like every node's text.
+- **Palette** — the node sits in the Survey category and is created with the label "Survey" and an unbound `surveyId`, until the owner picks a survey. The survey's name is never rendered; the label is the button's text.
 - **No per-recipient identity** — there is no audience row behind an anonymous page visitor, so the link is always the plain published URL. Invite tokens belong to a distribution orchestrator, not a public page.
 - **No form nodes** — the webpage registry has no form nodes. A published page cannot submit a form, so this invite is how a webpage collects answers.
 
@@ -36,4 +36,3 @@ Paths relative to `apps/web`.
 ## Notes
 
 - Embedding a survey _inline_ (an iframe of the respondent page) is deliberately out: iframes inside a published page bring sizing and sandboxing complexity for marginal gain over a button, and the respondent page is already mobile-friendly. Revisit only on real demand.
-- The email flavour is `createEmailSurveyInviteBlocks` over the shared core in `apps/web/app/services/grapesjs`. It is the one part of this feature still on GrapesJS, until the email cutover moves it to the page builder.

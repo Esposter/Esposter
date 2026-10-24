@@ -22,7 +22,7 @@ where the alias belonged, is a convention bent to suit a loader; the runner is p
 script that needs one of these runs under `vpx`, the bin of the root's `vite-plus` devDependency that every workspace script finds on its PATH, so no package declares a runner of its own. A script
 already on `node` moves the day an import it reaches — its own or one several hops away — gains an enum, which
 is a startup crash rather than a type error; `scripts/src/workspace/packageScripts.test.ts` strips every module a
-`node` entry reaches with node's own stripper, and fails on the first one it cannot run. The root declares none: it owns no `.ts` script of its own, and
+`node` entry reaches with node's own stripper, and fails naming the first module it cannot run in each script. The root declares none: it owns no `.ts` script of its own, and
 each `graph:gen`/`outdated:dependencies`/`ai:*` name there is a bare `pnpm -C <package> <name>` delegation to the package
 that does: `scripts`, or `apps/web` for `ai:unocss:generate`.
 
