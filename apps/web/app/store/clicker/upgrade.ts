@@ -1,5 +1,6 @@
 import type { UpgradeMap } from "#shared/assets/clicker/data/upgrades/UpgradeMap";
 import type { Upgrade } from "#shared/models/clicker/data/upgrade/Upgrade";
+import type { UpgradeId } from "#shared/models/clicker/data/upgrade/UpgradeId";
 
 import { Target } from "#shared/models/clicker/data/Target";
 import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
@@ -36,17 +37,20 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
     ),
   );
 
+  const checkIsBought = (upgradeId: UpgradeId) =>
+    clickerStore.clicker.boughtUpgrades.some(({ id }) => id === upgradeId);
+  const sortByPrice = (upgradesToSort: Upgrade[]) =>
+    upgradesToSort.toSorted((firstUpgrade, secondUpgrade) => firstUpgrade.price - secondUpgrade.price);
+  const availableUpgrades = computed(() => sortByPrice(unlockedUpgrades.value.filter(({ id }) => !checkIsBought(id))));
+  const boughtUpgrades = computed(() => sortByPrice(clickerStore.clicker.boughtUpgrades));
+
   // An upgrade is bought once, and only with the points to pay for it
   const createBoughtUpgrade = (newUpgrade: Upgrade) => {
-    if (
-      !checkIsAffordable(newUpgrade.price) ||
-      clickerStore.clicker.boughtUpgrades.some(({ id }) => id === newUpgrade.id)
-    )
-      return;
+    if (!checkIsAffordable(newUpgrade.price) || checkIsBought(newUpgrade.id)) return;
 
     clickerStore.clicker.boughtUpgrades.push(newUpgrade);
     decrementPoints(newUpgrade.price);
   };
 
-  return { createBoughtUpgrade, initializeUpgradeMap, unlockedUpgrades, upgrades };
+  return { availableUpgrades, boughtUpgrades, createBoughtUpgrade, initializeUpgradeMap, upgrades };
 });

@@ -12,6 +12,11 @@ export const useOfflineProgressStore = defineStore("clicker/offlineProgress", ()
   const { incrementPoints } = pointStore;
   const awardedPoints = ref(0);
   const elapsedMs = ref(0);
+  const isCapped = computed(() => elapsedMs.value > OFFLINE_CAP_MS);
+  const dismiss = () => {
+    awardedPoints.value = 0;
+    elapsedMs.value = 0;
+  };
   // Awards capped production for the time elapsed since the save was last stamped.
   // Guard elapsed > 0 against clock skew; the dialog is skipped for absences under a minute.
   const applyOfflineProgress = async () => {
@@ -36,5 +41,5 @@ export const useOfflineProgressStore = defineStore("clicker/offlineProgress", ()
     awardedPoints.value = newAwardedPoints;
     elapsedMs.value = newElapsedMs;
   };
-  return { applyOfflineProgress, awardedPoints, elapsedMs };
+  return { applyOfflineProgress, awardedPoints, dismiss, elapsedMs, isCapped };
 });

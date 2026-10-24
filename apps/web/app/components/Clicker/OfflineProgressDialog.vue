@@ -10,13 +10,13 @@ import { formatDuration } from "@/util/date/formatDuration";
 const clickerStore = useClickerStore();
 const { clickerItemProperties } = storeToRefs(clickerStore);
 const offlineProgressStore = useOfflineProgressStore();
-const { awardedPoints, elapsedMs } = storeToRefs(offlineProgressStore);
+const { awardedPoints, elapsedMs, isCapped } = storeToRefs(offlineProgressStore);
+const { dismiss } = offlineProgressStore;
 const isOpen = computed({
   get: () => awardedPoints.value > 0,
   set: (value) => {
     if (value) return;
-    awardedPoints.value = 0;
-    elapsedMs.value = 0;
+    dismiss();
   },
 });
 const displayElapsedDuration = computed(() => formatDuration(elapsedMs.value));
@@ -32,7 +32,7 @@ const displayOfflineCap = formatDuration(OFFLINE_CAP_MS);
         While you were away for {{ displayElapsedDuration }}, your buildings produced
         <span :style="{ color: clickerItemProperties.color }">{{ displayAwardedPoints }}</span>
         {{ clickerItemProperties.pluralName
-        }}<template v-if="elapsedMs > OFFLINE_CAP_MS"> (production is capped at {{ displayOfflineCap }})</template>.
+        }}<template v-if="isCapped"> (production is capped at {{ displayOfflineCap }})</template>.
       </p>
       <footer flex justify-end>
         <UiButton :variant="UiButtonVariant.Accent" @click="isOpen = false">Collect</UiButton>
