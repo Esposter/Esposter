@@ -1,14 +1,24 @@
-import type { MjmlNode } from "mjml-blocks";
+import type { MjmlNode, MjmlRootProps } from "mjml-blocks";
 
 import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry";
 import { getBlockPropValue, getBlockTypeDefinition } from "headless-block-editor";
 
-// The value an email node's attribute resolves to: the node's own prop when it sets one, else the default MJML's component
-// Carries for it. The root's mj-attributes sit between the two once the root's head is read; until then a node's own
-// Value and its component's default are the whole cascade
-export const getEmailAttributeValue = (node: MjmlNode, attribute: string): string | undefined => {
+// The key the root's mj-attributes hold the attributes of every component under, which a component's own tag overrides
+const ALL_ATTRIBUTES_KEY = "mj-all";
+
+// The value an email node's attribute resolves to, in MJML's order: the node's own prop, then the root's mj-attributes for
+// its tag, then the root's mj-all, then the default its component carries
+export const getEmailAttributeValue = (
+  node: MjmlNode,
+  attribute: string,
+  rootAttributes: MjmlRootProps["attributes"],
+): string | undefined => {
   const own = getBlockPropValue(node.props, attribute);
   if (typeof own === "string") return own;
 
-  return getBlockTypeDefinition(emailRegistry, node.type)?.defaultAttributes[attribute];
+  return (
+    rootAttributes?.[node.type]?.[attribute] ??
+    rootAttributes?.[ALL_ATTRIBUTES_KEY]?.[attribute] ??
+    getBlockTypeDefinition(emailRegistry, node.type)?.defaultAttributes[attribute]
+  );
 };
