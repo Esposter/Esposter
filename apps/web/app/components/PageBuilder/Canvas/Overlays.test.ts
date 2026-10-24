@@ -21,7 +21,7 @@ describe("pageBuilderCanvasOverlays", () => {
     const element = document.createElement("div");
     vi.spyOn(element, "getBoundingClientRect").mockReturnValue(new DOMRect(120, 40, 80, 20));
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    pageBuilderDocumentStore.setDocument(TEST_ID, { content: [], root: { props: { lang: "en" } } });
+    pageBuilderDocumentStore.setDocument(TEST_ID, { content: [], root: { props: { lang: "en", tokens: {} } } });
 
     const component = await mountSuspended(PageBuilderCanvasOverlays, {
       props: {

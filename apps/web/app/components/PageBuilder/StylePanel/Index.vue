@@ -4,7 +4,12 @@ import type { StyleProperty } from "#shared/models/pageBuilder/StyleProperty";
 import { StyleState } from "#shared/models/pageBuilder/StyleState";
 import { usePageBuilderStyle } from "@/composables/pageBuilder/usePageBuilderStyle";
 import { usePageBuilderTheme } from "@/composables/pageBuilder/usePageBuilderTheme";
-import { DEFAULT_THEME_COLOR, STYLE_COLOR_PROPERTIES, STYLE_SECTORS } from "@/services/pageBuilder/constants";
+import {
+  DEFAULT_THEME_COLOR,
+  STYLE_CHOICES,
+  STYLE_COLOR_PROPERTIES,
+  STYLE_SECTORS,
+} from "@/services/pageBuilder/constants";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 
 interface Props {
@@ -34,6 +39,9 @@ const getColorValue = (property: StyleProperty) => {
   const { inheritedValue, value } = getField(property);
   return value || inheritedValue || DEFAULT_THEME_COLOR;
 };
+// Each choice of a property is a segment of its toggle group, titled as the value it sets
+const getChoiceItems = (property: StyleProperty) =>
+  (STYLE_CHOICES[property] ?? []).map((choice) => ({ title: choice, value: choice }));
 const styleState = computed({ get: () => getStyleState(resourceId), set: (value) => setStyleState(resourceId, value) });
 const stateItems = [
   { title: "Default", value: StyleState.Default },
@@ -55,6 +63,13 @@ const openSectors = ref(Object.fromEntries(STYLE_SECTORS.map(({ title }) => [tit
             :label="property"
             :model-value="getColorValue(property)"
             :swatches="colors"
+            @update:model-value="(value) => setField(property, value)"
+          />
+          <UiToggleGroup
+            v-else-if="property in STYLE_CHOICES"
+            :items="getChoiceItems(property)"
+            :label="property"
+            :model-value="getField(property).value"
             @update:model-value="(value) => setField(property, value)"
           />
           <UiSlider
