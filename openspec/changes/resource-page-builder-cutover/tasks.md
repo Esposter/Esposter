@@ -15,7 +15,8 @@
 ## 4. Removing the old editor
 
 - [ ] 4.1 Remove the old editor's dependencies, security origins, OSV exception, modules and tests, and replace its skill and ledger with the page-builder ones. Verify: a search of the app and the dependency list for the old editor's names returns no match.
-- [x] 4.2 Delete the absorbed plugins' pages (`webpage-plugin-blocks-basic`, `webpage-plugin-countdown`, `webpage-plugin-custom-code`, `webpage-plugin-forms`) and rewrite `resource/webpage-survey-invite-blocks` as built, as the design says. Verify: a search of `openspec/specs` for the old editor's name returns no match.
+- [ ] 4.2 Delete the absorbed plugins' pages (`webpage-plugin-blocks-basic`, `webpage-plugin-countdown`, `webpage-plugin-custom-code`, `webpage-plugin-forms`) and rewrite `resource/webpage-survey-invite-blocks` as built, as the design says. Verify: a search of `openspec/specs` for the old editor's name returns no match.
+  - Done: the four plugin pages are deleted, and no spec names `webpage-plugin-*`. Still open: the old editor's name appears in 16 files under `openspec/specs` (`grep -ril grapes openspec/specs`), so the verify search fails.
 
 ## 5. Binding the new editors
 
