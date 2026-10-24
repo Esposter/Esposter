@@ -7,6 +7,7 @@
 ## 2. Selection and overlays
 
 - [ ] 2.1 Draw the hover outline, the selection outline and the node toolbar over the frame. Verify: a test named after the scenario 'Hovering a node outlines it and clicking selects it'.
+  - Covered in part: `Overlays.test.ts` draws the hover and selection outlines, and `NodeToolbar.test.ts` covers the toolbar's commands. Not closed: the frame's document is taken on its iframe's load event, which the test environment does not fire for the srcdoc frame, so a component test cannot reach a node inside it, even when `load` is dispatched by hand. The scenario's pointer path (`pointerover` and `click` on the content root in `Canvas/Index.vue`) has no test, so it needs a browser proof, alongside performance-and-proof 3.2.
 
 ## 3. Pointer
 
