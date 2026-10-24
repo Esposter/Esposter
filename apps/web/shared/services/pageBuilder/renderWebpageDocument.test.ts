@@ -3,6 +3,7 @@ import { StyleBreakpoint } from "#shared/models/pageBuilder/StyleBreakpoint";
 import { StyleState } from "#shared/models/pageBuilder/StyleState";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { buttonNodeType } from "#shared/services/pageBuilder/buttonNodeType";
+import { MAX_WEBPAGE_NODES } from "#shared/services/pageBuilder/constants";
 import {
   TEST_CONTEXT,
   TEST_ID,
@@ -149,5 +150,32 @@ describe(renderWebpageDocument, () => {
         }
       ]]
     `);
+  });
+
+  test("every node of a 2,000-node document renders, in document order", () => {
+    expect.hasAssertions();
+
+    const html = renderWebpageDocument(
+      {
+        content: Array.from({ length: MAX_WEBPAGE_NODES }, (_value, index) => ({
+          props: {
+            content: {
+              content: [{ content: [{ text: `node ${index}`, type: "text" }], type: "paragraph" }],
+              type: "doc",
+            },
+            id: `node-${index}`,
+          },
+          type: WebpageNodeType.Text,
+        })),
+        root: TEST_ROOT,
+      },
+      TEST_CONTEXT,
+    );
+
+    const positions = Array.from({ length: MAX_WEBPAGE_NODES }, (_value, index) => html.indexOf(`node ${index}<`));
+    expect(positions.every((position) => position >= 0)).toBe(true);
+    expect(positions).toStrictEqual(
+      positions.toSorted((earlierPosition, laterPosition) => earlierPosition - laterPosition),
+    );
   });
 });

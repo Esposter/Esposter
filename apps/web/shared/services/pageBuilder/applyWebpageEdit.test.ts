@@ -29,4 +29,25 @@ describe(applyBlockEdit, () => {
       },
     );
   });
+
+  test("a single edit to a 2,000-node document changes the node it names and no other", () => {
+    expect.hasAssertions();
+
+    const document = createTestTextDocument(MAX_WEBPAGE_NODES);
+    const editedIndex = MAX_WEBPAGE_NODES / 2;
+    applyBlockEdit(webpageDocumentSchema, document, [
+      { op: JsonPatchOperationType.Replace, path: TEST_EDIT_POINTER, value: TEST_EDIT_CONTENT },
+    ]).match(
+      ({ document: edited }) => {
+        const expected = createTestTextDocument(MAX_WEBPAGE_NODES);
+        expect(edited.content[editedIndex]?.props.content).toStrictEqual(TEST_EDIT_CONTENT);
+        expect(edited.content.filter((_node, index) => index !== editedIndex)).toStrictEqual(
+          expected.content.filter((_node, index) => index !== editedIndex),
+        );
+      },
+      (error) => {
+        throw error;
+      },
+    );
+  });
 });

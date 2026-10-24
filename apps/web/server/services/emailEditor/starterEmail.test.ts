@@ -10,7 +10,7 @@ import { describe, expect, test } from "vitest";
 import { compileEmailDocument } from "./compileEmailDocument";
 
 describe("starterEmail", () => {
-  test("the starter reads back as a valid email that compiles under strict validation", async () => {
+  test("the starter email compiles under strict validation", async () => {
     expect.hasAssertions();
 
     const result = parseMjmlDocument(

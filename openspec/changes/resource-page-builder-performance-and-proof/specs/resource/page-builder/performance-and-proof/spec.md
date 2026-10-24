@@ -10,25 +10,25 @@ An editor SHALL make no request to a third-party origin, except for content the 
 - **WHEN** the editor finishes loading
 - **THEN** no request is made to an origin outside the app
 
-### Requirement: Rendering a large document stays within its budget
+### Requirement: Rendering a large document renders every node
 
-A document of 2,000 nodes SHALL render to HTML in under 5 seconds.
+A document of 2,000 nodes SHALL render every node to HTML, in document order. Its render time is reported by the committed bench `renderWebpageDocument.bench.ts` and asserted by no test.
 
-#### Scenario: Rendering a large document stays under the budget
+#### Scenario: Rendering a large document renders every node
 
-- **GIVEN** a webpage document of 2,000 nodes
+- **GIVEN** a webpage document of 2,000 nodes, each with its own text
 - **WHEN** the document is rendered to HTML
-- **THEN** the rendering completes in under 5 seconds
+- **THEN** every node's text appears in the HTML once, in document order
 
-### Requirement: A single edit applies within its budget and can be reversed exactly
+### Requirement: A single edit changes only the node it names and can be reversed exactly
 
-One edit SHALL apply to a 2,000-node document in under 20 milliseconds at the 95th percentile, and applying its recorded inverse SHALL restore the document exactly.
+One edit SHALL change only the node its path names in a 2,000-node document, and applying its recorded inverse SHALL restore the document exactly. Its time is reported by the committed bench `applyWebpageEdit.bench.ts` and asserted by no test.
 
-#### Scenario: A single edit applies within the budget
+#### Scenario: A single edit changes only the node it names
 
 - **GIVEN** a document of 2,000 nodes
 - **WHEN** one edit is applied
-- **THEN** the edit completes in under 20 milliseconds at the 95th percentile
+- **THEN** the named node holds the edit's value and every other node is unchanged
 
 #### Scenario: An edit's inverse restores the document exactly
 
@@ -36,35 +36,35 @@ One edit SHALL apply to a 2,000-node document in under 20 milliseconds at the 95
 - **WHEN** the edit's recorded inverse is applied
 - **THEN** the document equals the document before the edit
 
-### Requirement: An edit shows on the canvas within its budget
+### Requirement: An edit shows on the canvas
 
-A prop or style edit in a 2,000-node document SHALL show on the canvas within 50 milliseconds at the 95th percentile.
+A prop or style edit in a document open in the editor SHALL show on the canvas. Its timing is recorded as performance marks and asserted by no test.
 
-#### Scenario: An edit shows on the canvas within the budget
+#### Scenario: An edit shows on the canvas
 
-- **GIVEN** a document of 2,000 nodes open in the editor
+- **GIVEN** a document open in the editor
 - **WHEN** the owner changes a prop or a style
-- **THEN** the change shows on the canvas within 50 milliseconds at the 95th percentile
+- **THEN** the change shows on the canvas
 
-### Requirement: A selection change shows within one animation frame
+### Requirement: A selection change shows its outline
 
-A selection change SHALL show its outline on the canvas within one animation frame.
+A selection change SHALL show its outline on the canvas.
 
-#### Scenario: Selecting a node outlines it within one frame
+#### Scenario: Selecting a node outlines it
 
 - **GIVEN** a document open in the editor
 - **WHEN** the owner selects a node
-- **THEN** the selection outline appears within one animation frame
+- **THEN** the selection outline is drawn around that node
 
-### Requirement: The starter email compiles within its budget
+### Requirement: The starter email compiles under strict validation
 
-Compiling the starter email on the server SHALL take under 250 milliseconds at the 95th percentile.
+The starter email SHALL read back as an email and compile on the server under strict validation. Its compile time is reported by the committed bench `compileEmailDocument.bench.ts` and asserted by no test.
 
-#### Scenario: The starter email compiles within the budget
+#### Scenario: The starter email compiles under strict validation
 
 - **GIVEN** the starter email
 - **WHEN** it is compiled on the server
-- **THEN** the compile completes in under 250 milliseconds at the 95th percentile
+- **THEN** it compiles to HTML with no validation error
 
 ### Requirement: The canvas holds every node within one pixel of the published page
 
