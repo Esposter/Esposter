@@ -3,7 +3,7 @@ import type { Expression } from "@/models/desmos/Expression";
 
 import AnimateButton from "@/components/Visual/Desmos/AnimateButton.vue";
 import WindowControls from "@/components/Visual/Desmos/WindowControls.vue";
-import { Colors } from "@/models/desmos/Colors";
+import { withDefaultExpressionColor } from "@/services/visual/withDefaultExpressionColor";
 import { useThemeModeStore } from "@/store/ui/themeMode";
 import { ignoreWarn } from "@/util/console/ignoreWarn";
 import { takeOne } from "@esposter/shared";
@@ -56,9 +56,7 @@ const { isFailed, loaded: calculator } = useLazyLoad(async () => {
     showYAxis: false,
     trace: false,
   });
-  newCalculator.setExpressions(
-    expressions.map((expression) => Object.assign(expression, { color: expression.color ?? Colors.Black })),
-  );
+  newCalculator.setExpressions(expressions.map((expression) => withDefaultExpressionColor(expression)));
   isDrawn.value = true;
   const newExpressionPanel = element.querySelector<HTMLDivElement>(".dcg-exppanel-outer");
   if (newExpressionPanel) {
@@ -83,7 +81,7 @@ const animate = () => {
   let expressionIndex = 0;
   const { pause } = useIntervalFn(() => {
     const expression = takeOne(expressions, expressionIndex++);
-    calculator.value?.setExpression({ ...expression, color: expression.color ?? Colors.Black });
+    calculator.value?.setExpression(withDefaultExpressionColor(expression));
     if (expressionIndex === expressions.length) {
       pause();
       isAnimating.value = false;

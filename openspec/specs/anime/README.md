@@ -18,5 +18,6 @@ Paths relative to `apps/web/app`.
 
 ## Notes
 
+- The drawing gives each expression its default colour on a copy, so the expression sets stay as authored and every mount reads them unchanged.
 - Adding a drawing is an expressions file, a component thin enough to be all boilerplate, and a `DRAWINGS` entry.
 - The area is a finished gallery with no roadmap — it grows when someone makes new art, which is an authoring act, not a feature.
