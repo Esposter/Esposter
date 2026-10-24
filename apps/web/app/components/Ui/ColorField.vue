@@ -32,6 +32,7 @@ const getReference = (name: string) => `var(--${name})`;
         outline-offset-2
         outline-solid
         rd-full
+        size-6
         class="aria-pressed:outline-accent"
         :aria-label="swatch.name"
         :aria-pressed="modelValue === getReference(swatch.name)"
