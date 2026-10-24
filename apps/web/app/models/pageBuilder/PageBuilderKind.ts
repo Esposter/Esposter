@@ -5,7 +5,7 @@ import type {
   BlockRootProps,
   BlockTypeDefinition,
 } from "headless-block-editor";
-import type { ZodType } from "zod";
+import type { z } from "zod";
 
 // A kind of document the page builder shell edits, over its node, root props, node definition and document types. The
 // Shell reads a document through its kind: the schema a loaded document is parsed by, the registry of its block types and
@@ -17,6 +17,8 @@ export interface PageBuilderKind<
   TDocument,
 > {
   children: BlockChildren<TNode>;
-  documentSchema: ZodType<TDocument>;
+  documentSchema: z.ZodType<TDocument>;
+  // The schema one node parses by, which a duplicate or a paste checks its copy against before it is written
+  nodeSchema: z.ZodType<TNode>;
   registry: BlockRegistry<TNode, TRoot, TDefinition>;
 }

@@ -1,8 +1,7 @@
-import type { WebpageKind } from "@/models/pageBuilder/WebpageKind";
 import type { WebpageNode } from "#shared/models/pageBuilder/WebpageNode";
+import type { WebpageKind } from "@/models/pageBuilder/WebpageKind";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { webpageNodeSchema } from "#shared/services/pageBuilder/webpageNodeSchema";
 import { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
 import { getResult, SITE_NAME } from "@esposter/shared";
 import { createBlockNodesSchema } from "headless-block-editor";
@@ -16,7 +15,7 @@ const getClipboardNodesSchema = (kind: WebpageKind) =>
     editor: z.enum(PageBuilderEditor),
     marker: z.literal(CLIPBOARD_MARKER),
     nodes: createBlockNodesSchema<WebpageNode>(
-      webpageNodeSchema,
+      kind.nodeSchema,
       kind.registry,
       kind.children,
       Object.values(WebpageNodeType),

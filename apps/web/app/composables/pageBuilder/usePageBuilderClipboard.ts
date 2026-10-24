@@ -1,7 +1,6 @@
 import type { WebpageNode } from "#shared/models/pageBuilder/WebpageNode";
 import type { MaybeRefOrGetter } from "vue";
 
-import { webpageNodeSchema } from "#shared/services/pageBuilder/webpageNodeSchema";
 import { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
 import { CANNOT_GO_HERE_MESSAGE } from "@/services/pageBuilder/constants";
 import { getInsertTarget } from "@/services/pageBuilder/getInsertTarget";
@@ -118,7 +117,7 @@ export const usePageBuilderClipboard = (
       document,
       kind.registry,
       kind.children,
-      webpageNodeSchema,
+      kind.nodeSchema,
       clipboard.nodes,
       target.slotPointer,
       target.index,

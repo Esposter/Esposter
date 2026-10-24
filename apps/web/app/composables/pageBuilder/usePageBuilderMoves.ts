@@ -1,11 +1,10 @@
-import type { WebpageKind } from "@/models/pageBuilder/WebpageKind";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
+import type { WebpageKind } from "@/models/pageBuilder/WebpageKind";
 import type { UiCommand } from "@/models/ui/UiCommand";
 import type { UiCommandScope } from "@/models/ui/UiCommandScope";
 import type { JsonPatchOperation } from "@esposter/shared";
 import type { MaybeRefOrGetter } from "vue";
 
-import { webpageNodeSchema } from "#shared/services/pageBuilder/webpageNodeSchema";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { PAGE_BUILDER_COMMAND_GROUP } from "@/services/pageBuilder/constants";
 import { getNodeIdAt } from "@/services/pageBuilder/getNodeIdAt";
@@ -154,7 +153,7 @@ export const usePageBuilderMoves = (resourceId: MaybeRefOrGetter<string>, announ
       selection.document,
       selection.kind.registry,
       selection.kind.children,
-      webpageNodeSchema,
+      selection.kind.nodeSchema,
       selection.nodePointer,
     );
     const segments = parseJsonPointer(selection.nodePointer);
