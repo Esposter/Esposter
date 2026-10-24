@@ -13,27 +13,19 @@ interface Props {
 
 const { post, value } = defineProps<Props>();
 const likeStore = useLikeStore();
-const { createLike, deleteLike, updateLike } = likeStore;
+const { vote } = likeStore;
 const isCast = computed(() => post.viewerLike?.value === value);
 const voteDefinition = computed(() => PostVoteDefinitionMap[value]);
 </script>
 
 <template>
   <!-- A toggle: pressed while it is the reader's vote, which pressing again withdraws -->
-  <!-- eslint-disable vue/no-restricted-syntax -- withdrawing a vote is pressing the toggle again, not deleting anything a person made -->
   <UiIconButton
     :aria-pressed="isCast"
     :label="voteDefinition.label"
     :meaning="voteDefinition.meaning"
     :variant="isCast ? voteDefinition.castVariant : UiButtonVariant.Quiet"
     ui-pill
-    @click="
-      isCast
-        ? deleteLike(post.id)
-        : post.viewerLike
-          ? updateLike({ postId: post.id, value })
-          : createLike({ postId: post.id, value })
-    "
+    @click="vote(post, value)"
   />
-  <!-- eslint-enable vue/no-restricted-syntax -->
 </template>

@@ -31,7 +31,7 @@ The server is the only writer of `likeCount`. The client reads it back with `pos
 
 **Viewer-scoped reads** — every procedure that returns a post (reads and mutations alike) carries `viewerLike: Like | undefined` on `PostInPostWithRelations`: at most the viewer's own like row, never the full list, since the net count already lives in the denormalized `likeCount`. The `likes` relation is only the server-side fetch strategy — `getViewerPostRelations` filters it to the caller, and `getPostWithViewerLike` maps the result. Unauthenticated rate-limited reads have no viewer, so they skip the like lookup entirely and neither arrow is pressed. A hot feed page's payload is O(posts) instead of O(total likes).
 
-**Client** — the vote pill (`PostLikeSection`) holds two toggles, each pressed while it is the viewer's vote; `PostVoteButton` reads that from `viewerLike` and maps a press to the right mutation (up while unliked = flip, up while liked = retract, …). One like store, `useLikeStore`, is the only write path: `useLikeOperations` applies the viewer's own vote optimistically to **every copy of the post the client holds** — the feed's row and a post page's own read of it are separate objects, as are the thread's comments — patching each copy's `viewerLike` in place and rolling it back against what it held, so a vote cast on a post's page is already on its feed card and no component says which list a post came from. The count is never moved by the client: once a vote settles, both counts are read back from `post.readPostCounts` by `usePostCountStore`, and the feed and the thread each apply that one read to their own copies, because another viewer's vote changes the count too and the server's adjustment is the only exact value. A count shown while a vote is in flight is therefore the one before it, not a prediction.
+**Client** — the vote pill (`PostLikeSection`) holds two toggles, each pressed while it is the viewer's vote; `PostVoteButton` reads that from `viewerLike` and hands each press to `vote`, which maps it to the right mutation (up with no vote held = create, up over a down vote = flip, up over an up vote = retract, …). One like store, `useLikeStore`, is the only write path: `useLikeOperations` applies the viewer's own vote optimistically to **every copy of the post the client holds** — the feed's row and a post page's own read of it are separate objects, as are the thread's comments — patching each copy's `viewerLike` in place and rolling it back against what it held, so a vote cast on a post's page is already on its feed card and no component says which list a post came from. The count is never moved by the client: once a vote settles, both counts are read back from `post.readPostCounts` by `usePostCountStore`, and the feed and the thread each apply that one read to their own copies, because another viewer's vote changes the count too and the server's adjustment is the only exact value. A count shown while a vote is in flight is therefore the one before it, not a prediction.
 
 ## Procedures
 
@@ -45,17 +45,17 @@ The server is the only writer of `likeCount`. The client reads it back with `pos
 
 Paths are `apps/web`-relative; a `packages/` path is repo-relative.
 
-| File                                                           | Role                                                               |
-| -------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `packages/db-schema/src/schema/post/likesInPost.ts`            | table + ±1 check                                                   |
-| `packages/db-schema/src/relations/post/postsInPostRelation.ts` | `PostInPostWithRelations` + `viewerLike`                           |
-| `server/trpc/routers/like.ts`                                  | transactional mutations                                            |
-| `server/services/post/getViewerPostRelations.ts`               | viewer-filtered likes fetch strategy                               |
-| `server/services/post/getPostWithViewerLike.ts`                | maps the fetched row to `viewerLike`                               |
-| `app/components/Post/VoteButton.vue`                           | one arrow: its toggle and its write                                |
-| `app/composables/post/useLikeOperations.ts`                    | optimistic vote patching, which calls the count re-read            |
-| `app/store/post/count.ts`                                      | the one owner of the post count re-read, and its fan-out to copies |
-| `app/store/post/like.ts`                                       | the one like store, over every list                                |
+| File                                                           | Role                                                                    |
+| -------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `packages/db-schema/src/schema/post/likesInPost.ts`            | table + ±1 check                                                        |
+| `packages/db-schema/src/relations/post/postsInPostRelation.ts` | `PostInPostWithRelations` + `viewerLike`                                |
+| `server/trpc/routers/like.ts`                                  | transactional mutations                                                 |
+| `server/services/post/getViewerPostRelations.ts`               | viewer-filtered likes fetch strategy                                    |
+| `server/services/post/getPostWithViewerLike.ts`                | maps the fetched row to `viewerLike`                                    |
+| `app/components/Post/VoteButton.vue`                           | one arrow: its toggle and the press it hands the store                  |
+| `app/composables/post/useLikeOperations.ts`                    | `vote`, the press-to-write decision; optimistic patching; count re-read |
+| `app/store/post/count.ts`                                      | the one owner of the post count re-read, and its fan-out to copies      |
+| `app/store/post/like.ts`                                       | the one like store, over every list                                     |
 
 ## Notes
 

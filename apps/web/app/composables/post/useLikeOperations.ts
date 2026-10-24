@@ -92,5 +92,14 @@ export const useLikeOperations = (allPosts: MaybeRefOrGetter<PostInPostWithRelat
     await refreshPostCounts([postId]);
   };
 
-  return { createLike, deleteLike, updateLike };
+  // The press a vote button makes: the vote the reader already holds is withdrawn, the other one is switched to, and
+  // no vote yet casts one. A withdrawal is the toggle pressed again rather than a delete of anything a person made, so
+  // it does not ask first
+  const vote = (post: PostInPostWithRelations, value: CreateLikeInput["value"]) => {
+    if (post.viewerLike?.value === value) return deleteLike(post.id);
+
+    return post.viewerLike ? updateLike({ postId: post.id, value }) : createLike({ postId: post.id, value });
+  };
+
+  return { createLike, deleteLike, updateLike, vote };
 };

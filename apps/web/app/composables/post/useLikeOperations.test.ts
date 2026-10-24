@@ -66,4 +66,40 @@ describe(useLikeOperations, () => {
     expect(post.viewerLike).toBeUndefined();
     expect(post.likeCount).toBe(0);
   });
+
+  // The press decides which write goes out: a vote is cast over none, switched over the vote held the other way, and
+  // withdrawn when it is the vote already held
+  test.each([
+    { expectedMutation: "createLike", value: 1 as const, viewerLike: undefined },
+    { expectedMutation: "createLike", value: -1 as const, viewerLike: undefined },
+    { expectedMutation: "deleteLike", value: 1 as const, viewerLike: createLike(1) },
+    { expectedMutation: "deleteLike", value: -1 as const, viewerLike: createLike(-1) },
+    { expectedMutation: "updateLike", value: 1 as const, viewerLike: createLike(-1) },
+    { expectedMutation: "updateLike", value: -1 as const, viewerLike: createLike(1) },
+  ])("sends $expectedMutation on a $value vote", async ({ expectedMutation, value, viewerLike }) => {
+    expect.hasAssertions();
+
+    const sentMutations: string[] = [];
+    trpcMsw.like.createLike.mutation(({ input }) => {
+      sentMutations.push("createLike");
+      return createLike(input.value);
+    });
+    trpcMsw.like.updateLike.mutation(({ input }) => {
+      sentMutations.push("updateLike");
+      return createLike(input.value);
+    });
+    trpcMsw.like.deleteLike.mutation(() => {
+      sentMutations.push("deleteLike");
+      return createLike(1);
+    });
+    serveLikeCount(0);
+    const post = createPost({ id: postId, viewerLike });
+    const postStore = usePostStore();
+    const { items } = storeToRefs(postStore);
+    items.value = [post];
+    const { vote } = useLikeOperations(items);
+    await vote(post, value);
+
+    expect(sentMutations).toStrictEqual([expectedMutation]);
+  });
 });
