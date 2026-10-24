@@ -98,13 +98,19 @@ export const useResourceStore = defineStore("resource", () => {
   // Whether the last content write was rejected for any other reason. Its notification is a one-shot the owner
   // Dismisses; this is what keeps saying so afterwards, because a failed save leaves work only in the tab
   const hasSaveContentFailed = ref(false);
-  // An edit the debounce is holding that no write has taken yet. A flag rather than a count of armed
-  // Debounces: a save writes the whole content blob, so one write cleans every edit waiting on this resource
-  // However many watchers observed them — a count would claim two pending saves where there is one. Set where
-  // The edit is seen rather than derived from the content, because deriving it means serializing the whole blob
+  // The resource an edit the debounce is holding was made on, until a write of that resource takes it. A flag rather
+  // Than a count of armed debounces: a save writes the whole content blob, so one write cleans every edit waiting on
+  // This resource however many watchers observed them — a count would claim two pending saves where there is one. Set
+  // Where the edit is seen rather than derived from the content, because deriving it means serializing the whole blob
   // On every keystroke, which is the cost the debounce exists to avoid; the write clears it and
-  // `persistedContentJson` takes over from there
-  const hasUnwrittenContent = ref(false);
+  // `persistedContentJson` takes over from there. Keyed by resource so that loading another one cannot clear it, which
+  // Would report an edit the app never wrote as saved
+  const unwrittenContentResourceId = ref("");
+  // Whether the loaded resource is the one an edit is held for. The empty sentinel is no edit, and it is also what
+  // The current resource id reads when none is loaded, so it is excluded rather than matched
+  const hasUnwrittenContent = computed(
+    () => unwrittenContentResourceId.value !== "" && unwrittenContentResourceId.value === currentResourceId.value,
+  );
   // Every type's edits land through saveContent, so the state every type shows is derived here rather than
   // Declared per type — a third-party editor autosaving on its own cadence, a toolbar command and a dialog's
   // Save are the same write. See openspec/specs/resource/resource-save-state/design.md
@@ -141,10 +147,9 @@ export const useResourceStore = defineStore("resource", () => {
         resource.value = newResource;
         publication.value = newPublication ?? undefined;
         // A fresh read carries the current contentVersion, so saving is meaningful again, and the row it
-        // Carries is by definition what is written — whatever a closed blade left armed is not this one's
+        // Carries is by definition what is written
         isContentStale.value = false;
         hasSaveContentFailed.value = false;
-        hasUnwrittenContent.value = false;
       },
       () => {
         isPending.value = false;
@@ -165,7 +170,7 @@ export const useResourceStore = defineStore("resource", () => {
     contentBaseline = undefined;
     isContentStale.value = false;
     hasSaveContentFailed.value = false;
-    hasUnwrittenContent.value = false;
+    unwrittenContentResourceId.value = "";
   };
   // This resource's content was replaced underneath whatever blade is open — a restore is the one write that
   // Does that. The row is re-read here and the content stores re-read themselves through the hook registry,
@@ -246,7 +251,7 @@ export const useResourceStore = defineStore("resource", () => {
     // Through — a dialog's Save arms nothing, and a debounce clearing its own would call a save it then refuses
     // Saved (openspec/specs/resource/resource-save-state/design.md). The unchanged-content path below is a save all the same: it
     // Wrote nothing because there was nothing left to write
-    hasUnwrittenContent.value = false;
+    if (unwrittenContentResourceId.value === resourceValue.id) unwrittenContentResourceId.value = "";
     const contentJson = JSON.stringify(content);
     if (contentJson === persistedContentJson) return true;
     // The serialization already made for the dirty check is what sizes the document, so a document no resource
@@ -484,7 +489,6 @@ export const useResourceStore = defineStore("resource", () => {
     deleteResource,
     duplicateResource,
     getOpening,
-    hasUnwrittenContent,
     isDuplicatePending,
     isPending,
     isPublicationPending,
@@ -500,6 +504,7 @@ export const useResourceStore = defineStore("resource", () => {
     setPersistedContent,
     storeContentVersion,
     unpublishResource,
+    unwrittenContentResourceId,
     updateResourceTags,
   };
 });

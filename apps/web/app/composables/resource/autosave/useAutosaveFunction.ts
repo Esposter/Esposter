@@ -11,9 +11,9 @@ import { getResultAsync, getSynchronizedFunction, noop } from "@esposter/shared"
 // ContentVersion. Leaving the editor writes the edit still held, before the route changes, so that write still names
 // Its resource: an edit is saved on the way out rather than dropped with the debounce's timer
 export const useAutosaveFunction = (save: () => Promisable<unknown>) => {
-  const { currentRoute } = useRouter();
+  const { beforeEach, currentRoute } = useRouter();
   const resourceStore = useResourceStore();
-  const { hasUnwrittenContent } = storeToRefs(resourceStore);
+  const { unwrittenContentResourceId } = storeToRefs(resourceStore);
   // The resource the held edit was made on, until its write starts
   let pendingResourceId: string | undefined;
   const writePending = async () => {
@@ -34,8 +34,9 @@ export const useAutosaveFunction = (save: () => Promisable<unknown>) => {
     stop();
     writePendingInBackground();
   });
-  // Navigating away writes the edit it holds before the route changes, while the route still names its resource
-  onBeforeRouteLeave(writePending);
+  // Every navigation writes the edit it holds before the route changes, whether it leaves the resource or only
+  // Changes the one it names, since a leave guard alone misses a change of id within the same route
+  tryOnScopeDispose(beforeEach(writePending));
 
   return () => {
     // The debounce holds this edit for half a second and re-arms for as long as the owner keeps typing, so
@@ -43,8 +44,9 @@ export const useAutosaveFunction = (save: () => Promisable<unknown>) => {
     // Full of unwritten edits saved (openspec/specs/resource/resource-save-state/design.md). Only set here: `saveContent` is the
     // One door every save goes through, so clearing it is its, and a save this refuses never reaches it — which
     // Is the point, since a refused save is an edit that was dropped rather than one that landed
-    hasUnwrittenContent.value = true;
-    pendingResourceId = getRouteParam(currentRoute.value.params, "id");
+    const resourceId = getRouteParam(currentRoute.value.params, "id");
+    unwrittenContentResourceId.value = resourceId;
+    pendingResourceId = resourceId;
     start();
   };
 };

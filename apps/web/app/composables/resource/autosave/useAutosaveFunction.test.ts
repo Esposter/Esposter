@@ -2,12 +2,15 @@
 import type { VueWrapper } from "@vue/test-utils";
 import type { Router } from "vue-router";
 
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
 import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "@/services/resource/constants";
 import { useResourceStore } from "@/store/resource";
+import { ResourceType } from "@esposter/db-schema";
 import { waitForSynchronizedFunctions } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { RouterView } from "vue-router";
 
 const elapseDebounce = async () => {
   vi.advanceTimersByTime(RESOURCE_AUTOSAVE_DEBOUNCE_MS);
@@ -30,6 +33,8 @@ describe(useAutosaveFunction, () => {
         },
       }),
     );
+    // Mounting resets the route, so the resource the edit is made on is named once the blade is up
+    Object.assign(router.currentRoute.value.params, { id: resourceId });
     vi.useFakeTimers({ now: 0 });
   };
 
@@ -39,11 +44,14 @@ describe(useAutosaveFunction, () => {
 
   beforeEach(() => {
     save = vi.fn<() => Promise<void>>().mockResolvedValue(undefined);
-    Object.assign(router.currentRoute.value.params, { id: resourceId });
+    // The indicator reads the resource on screen, so an edit is only ever held for a loaded one
+    const { resource } = storeToRefs(useResourceStore());
+    resource.value = createResourceListItem({ id: resourceId, type: ResourceType.Sheet });
   });
 
   afterEach(() => {
     vi.useRealTimers();
+    useResourceStore().clearResource(resourceId);
   });
 
   test("saves once the debounce elapses", async () => {
@@ -114,5 +122,62 @@ describe(useAutosaveFunction, () => {
     await elapseDebounce();
 
     expect(save).not.toHaveBeenCalled();
+  });
+
+  // Navigating away runs the leave guard before the route changes, so the held edit is written while the route still
+  // Names its resource, and the write lands against that resource rather than the one navigated to
+  test("writes the held edit before navigating away from its resource", async () => {
+    expect.hasAssertions();
+
+    const hostPath = `/autosave-host/${resourceId}`;
+    const elsewherePath = "/autosave-elsewhere";
+    let pathAtSave: string | undefined;
+    save.mockImplementation(async () => {
+      pathAtSave = router.currentRoute.value.path;
+    });
+    router.addRoute({
+      component: defineComponent({
+        render: () => h("div"),
+        setup: () => {
+          autosave = useAutosaveFunction(save);
+        },
+      }),
+      path: "/autosave-host/:id",
+    });
+    router.addRoute({ component: defineComponent({ render: () => h("div") }), path: elsewherePath });
+    await mountSuspended(defineComponent({ render: () => h(RouterView) }), { route: hostPath });
+    autosave();
+    await navigateTo(elsewherePath, { replace: true });
+
+    expect(save).toHaveBeenCalledExactlyOnceWith();
+    expect(pathAtSave).toBe(hostPath);
+    expect(router.currentRoute.value.path).toBe(elsewherePath);
+  });
+
+  // A change of id within the same route is no leave, so only the navigation guard sees it, and the edit is still
+  // Written against the resource it was made on
+  test("writes the held edit before changing the resource id within the same route", async () => {
+    expect.hasAssertions();
+
+    const hostPath = `/autosave-host/${resourceId}`;
+    let pathAtSave: string | undefined;
+    save.mockImplementation(async () => {
+      pathAtSave = router.currentRoute.value.path;
+    });
+    router.addRoute({
+      component: defineComponent({
+        render: () => h("div"),
+        setup: () => {
+          autosave = useAutosaveFunction(save);
+        },
+      }),
+      path: "/autosave-host/:id",
+    });
+    await mountSuspended(defineComponent({ render: () => h(RouterView) }), { route: hostPath });
+    autosave();
+    await navigateTo(`/autosave-host/${otherResourceId}`, { replace: true });
+
+    expect(save).toHaveBeenCalledExactlyOnceWith();
+    expect(pathAtSave).toBe(hostPath);
   });
 });

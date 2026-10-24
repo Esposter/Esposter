@@ -380,17 +380,39 @@ describe(useResourceStore, () => {
     expect.hasAssertions();
 
     const resourceStore = useResourceStore();
-    const { hasUnwrittenContent, saveState } = storeToRefs(resourceStore);
+    const { saveState, unwrittenContentResourceId } = storeToRefs(resourceStore);
     const { readContent, readResource, saveContent, setPersistedContent } = resourceStore;
     await readResource();
     await readContent(noop);
     setPersistedContent(createDefaultSheetResource());
-    hasUnwrittenContent.value = true;
+    unwrittenContentResourceId.value = resourceStore.currentResourceId;
     const isSuccessful = await saveContent(createDefaultSheetResource());
 
     expect(isSuccessful).toBe(true);
     expect(saveResourceContent).not.toHaveBeenCalled();
     expect(saveState.value).toBe(ResourceSaveState.Saved);
+  });
+
+  // The signal belongs to the resource its edit was made on. Loading another resource must leave it standing, or an
+  // Edit the app never wrote would read as saved the moment the owner navigated away from it
+  test("keeps the unwritten-edit signal when another resource is loaded", async () => {
+    expect.hasAssertions();
+
+    const resourceStore = useResourceStore();
+    const { saveState, unwrittenContentResourceId } = storeToRefs(resourceStore);
+    const { readResource } = resourceStore;
+    await readResource();
+    const heldResourceId = resourceStore.currentResourceId;
+    unwrittenContentResourceId.value = heldResourceId;
+    setRouteId(otherResourceId);
+    await readResource();
+
+    expect(saveState.value).toBe(ResourceSaveState.Saved);
+
+    setRouteId(heldResourceId);
+    await readResource();
+
+    expect(saveState.value).toBe(ResourceSaveState.Saving);
   });
 
   // Saves of different resources are different single-flight keys, so one settles after the blade has moved on.

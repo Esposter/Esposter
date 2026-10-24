@@ -17,7 +17,7 @@ flowchart TD
   LIB["a third-party editor's own cadence<br/>GrapesJS storage, SurveyJS creator"] --> DOOR
   DOOR["resourceStore.saveContent<br/>dirty check, queue, contentVersion guard"]
 
-  AUTO -.->|"arms"| ARMED(["hasUnwrittenContent"])
+  AUTO -.->|"arms"| ARMED(["unwrittenContentResourceId"])
   DOOR -.->|"clears"| ARMED
   DOOR -.->|"in flight"| PENDING(["isSaveContentPending"])
   DOOR -.->|"rejected as stale"| STALE(["isContentStale"])
@@ -41,13 +41,13 @@ flowchart TD
 | `Failed` | Not saved         | the last write was rejected for any other reason                      | retry the edit, or copy it out |
 | `Saved`  | Saved, and _when_ | none of the above                                                     | nothing                        |
 
-**An edit the debounce is still holding counts as saving.** The debounce re-arms on every keystroke, so nothing is in flight for as long as the owner keeps typing — a state read from the write alone would call a tab full of unwritten edits `Saved`, for however long the typing lasts. That is the one lie the indicator must not tell, so `hasUnwrittenContent` is set where the edit is seen and cleared by `saveContent` itself, with the mutation's own pending flag taking over from there. Folding it into `Saving` rather than giving unwritten edits a state of their own also keeps a word off the screen that would appear and vanish between keystrokes.
+**An edit the debounce is still holding counts as saving.** The debounce re-arms on every keystroke, so nothing is in flight for as long as the owner keeps typing — a state read from the write alone would call a tab full of unwritten edits `Saved`, for however long the typing lasts. That is the one lie the indicator must not tell, so `unwrittenContentResourceId` is set where the edit is seen, to the resource it was made on, and cleared by `saveContent` itself once that resource is written, with the mutation's own pending flag taking over from there. Folding it into `Saving` rather than giving unwritten edits a state of their own also keeps a word off the screen that would appear and vanish between keystrokes.
 
-**Leaving writes the edit still held.** An edit the debounce holds is written when its editor's scope ends with its resource still open, and before the route changes when the app navigates away, so the write names the resource the edit was made on. Nothing is confirmed with the owner, and the one refused write is discarded rather than sent: it is scheduled against a resource the route no longer names. Its edit stays unwritten, so the state reads `Saving`, never `Saved`, until the navigation's `readResource()` clears the flag.
+**Leaving writes the edit still held.** An edit the debounce holds is written when its editor's scope ends with its resource still open, and before the route changes for any navigation, so the write names the resource the edit was made on. Nothing is confirmed with the owner. A write the route no longer names is refused, and its edit stays flagged on the resource it was made on rather than on the one on screen, so the screen does not report it as saved.
 
 **The in-flight half is asked of the resource, not of the executor.** Content saves are keyed by the resource they write, so a save issued before the blade moved on is still in flight under its own key while the next resource is loading. Read in aggregate, the mutation's pending flag would have the resource now on screen report `Saving` for work that belongs to another — and then settle to `Saved` at a moment that says nothing about it. The state asks `checkIsPending` for the loaded resource's own id, which is the same scoping every one of `saveContent`'s callbacks applies to what it writes back.
 
-**The clear belongs to the door, not to the trigger that armed it.** A dialog's Save arms nothing and would leave a flag it never set standing; a debounce that cleared its own would clear it for a save it then refuses — one scheduled against a resource the app has since navigated away from — and so report a dropped edit as `Saved`. The door is the one place that knows the edit was actually taken, and the navigation that refused it clears the flag through the `readResource()` its own page awaits.
+**The clear belongs to the door, not to the trigger that armed it.** A dialog's Save arms nothing and would leave a flag it never set standing; a debounce that cleared its own would clear it for a save it then refuses — one scheduled against a resource the app has since navigated away from — and so report a dropped edit as `Saved`. The door is the one place that knows the edit was actually taken. The flag names the resource it was armed for, so loading another resource leaves it standing: a read is not a write, and clearing on it would report an edit the app never wrote as saved.
 
 **It is a flag, not a count of armed debounces.** A save writes the whole content blob, so one write cleans every edit waiting on the resource however many watchers observed them — a count would claim two pending saves where there is one, and would need a per-instance guard and a disposal hook to stay honest about a number nothing reads. A pair of counters beside a ref in a store is the shape the [async sequencing rule](../../architecture/async-operations/design.md) names as the tell for ordering done by hand.
 
@@ -59,7 +59,7 @@ It is also never derived by comparing the content against what was persisted, th
 
 `Failed` exists for the same reason: a notification is a one-shot the owner dismisses, and the fact that their work is not durable outlives it.
 
-**A document too large to hold is refused before it is sent.** `saveContent` sizes the serialization it already made for the dirty check, and one over `MAX_RESOURCE_CONTENT_SIZE` raises an error notification naming its size and the limit and sets `hasSaveContentFailed`, with no request made — the server would refuse it only after the whole upload. So the resource reads `Not saved` until a save that fits lands, which is the owner's cue to cut the document down. A document under that limit but too large for one request body is still saved, staged through Blob Storage ([file uploads](../../architecture/file-uploads/design.md)).
+**A document too large to hold is refused before it is sent.** `saveContent` sizes the serialization it already made for the dirty check, and one over `MAX_RESOURCE_CONTENT_SIZE` raises an error notification naming its size and the limit and sets `hasSaveContentFailed`, with no request made — the server would refuse it only after the whole upload. So the resource reads `Not saved` until a save that fits lands, which is the owner's cue to cut the document down. A document under that limit but too large for one request body is still saved: as a delta against the stored bytes when this client holds them, and staged through Blob Storage otherwise ([file uploads](../../architecture/file-uploads/design.md)).
 
 ## Where it sits
 
@@ -80,5 +80,5 @@ The indicator is a readout, never a control. Pending state that gates a _trigger
 ## Notes
 
 - The colour rides the icon rather than the text, as a whole class in each state's definition: a UnoCSS class built from a state name is a class the scanner never sees.
-- A save reports the resource that issued it. Saves of different resources are different single-flight keys, so one can settle after the blade has moved on — its rejection, its `contentVersion` and its persisted-content baseline all belong to the resource it was for, and every one of them is applied only while that resource is still the loaded one. Its notification is not scoped: the write failed for the owner either way.
+- A save reports the resource that issued it. One that settles after the blade has moved on has its rejection, its `contentVersion` and its persisted-content baseline applied only while its own resource is still the loaded one. Its notification is not scoped: the write failed for the owner either way.
 - Recovery points are [resource snapshots](../resource-snapshots/design.md), a separate mechanism on a separate clock. This page answers "did my edit land"; that one answers "can I go back".
