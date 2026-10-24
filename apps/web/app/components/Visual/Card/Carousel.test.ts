@@ -6,13 +6,12 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-const DURATION = 1000;
-const cards: Card[] = [{ text: "a" }, { text: "b" }, { text: "c" }];
-
-// The cards are the root's children in the order given, so each card's classes are read where it sits
-const mountCarousel = () => mountSuspended(VisualCardCarousel, { props: { cards, duration: DURATION } });
-
 describe("carousel", () => {
+  const DURATION = 1000;
+  const cards: Card[] = [{ text: "a" }, { text: "b" }, { text: "c" }];
+  // The cards are the root's children in the order given, so each card's classes are read where it sits
+  const mountCarousel = () => mountSuspended(VisualCardCarousel, { props: { cards, duration: DURATION } });
+
   beforeEach(() => {
     vi.useFakeTimers();
   });
