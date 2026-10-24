@@ -17,7 +17,7 @@ describe(renderWebpageDocument, () => {
       bench("all the nodes", () => {
         renderWebpageDocument(document, { origin: ORIGIN });
       }),
-      { ...BENCHMARK_RUN_OPTIONS, iterations: 1 },
+      { ...BENCHMARK_RUN_OPTIONS, iterations: 3, warmupIterations: 0 },
     );
   });
 });

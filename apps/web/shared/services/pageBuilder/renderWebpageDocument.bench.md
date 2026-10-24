@@ -9,16 +9,16 @@ Numbers are machine- and commit-dependent (see Environment); only compare runs f
 
 ## Environment
 
-- Date: 2026-10-24T06:25:26.384Z
-- Commit: 3ba30808
+- Date: 2026-10-24T06:31:23.822Z
+- Commit: 24af351dc5
 - Node: v26.12.1
-- OS: linux 6.18.44-fc-v153 (x64)
-- CPU: Intel(R) Xeon(R) Processor @ 2.10GHz × 4
-- RAM: 15.7 GiB
+- OS: linux 6.17.0-1022-azure (x64)
+- CPU: INTEL(R) XEON(R) PLATINUM 8573C × 4
+- RAM: 15.6 GiB
 
 ## renderWebpageDocument > 2000 nodes
 
-| task                 | vs base | mean (ms) | ±rme   | p99 (ms)  | samples |
-| -------------------- | ------- | --------- | ------ | --------- | ------- |
-| a tenth of the nodes | 1.00×   | 678.5331  | ±0.00% | 678.5331  | 1       |
-| all the nodes        | 0.089×  | 7585.6585 | ±0.00% | 7585.6585 | 1       |
+| task                 | vs base | mean (ms) | ±rme    | p99 (ms)  | samples |
+| -------------------- | ------- | --------- | ------- | --------- | ------- |
+| a tenth of the nodes | 1.00×   | 414.2109  | ±52.43% | 476.2164  | 3       |
+| all the nodes        | 0.12×   | 3585.9958 | ±43.72% | 4292.7380 | 3       |
