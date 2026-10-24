@@ -1,8 +1,7 @@
-import type { emailDocumentSchema } from "#shared/services/pageBuilder/email/emailDocumentSchema";
+import type { EmailDocument } from "@/models/pageBuilder/EmailDocument";
 import type { EmailKind } from "@/models/pageBuilder/EmailKind";
 import type { MjmlColumnNode, MjmlNode } from "mjml-blocks";
 import type { VNode } from "vue";
-import type { z } from "zod";
 
 import { checkIsStackedColumns } from "#shared/services/pageBuilder/email/checkIsStackedColumns";
 import { getEmailAttributeValue } from "#shared/services/pageBuilder/email/getEmailAttributeValue";
@@ -11,8 +10,6 @@ import { renderNoteHtml } from "#shared/services/resource/note/renderNoteHtml";
 import { getBlockSlots, renderBlockNodes } from "headless-block-editor";
 import { MjmlNodeType } from "mjml-blocks";
 import { h } from "vue";
-
-type EmailDocument = z.output<typeof emailDocumentSchema>;
 
 const checkIsColumn = (node: MjmlNode): node is MjmlColumnNode => node.type === MjmlNodeType.Column;
 
