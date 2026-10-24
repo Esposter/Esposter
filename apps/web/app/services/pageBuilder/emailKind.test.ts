@@ -7,7 +7,7 @@ import { emailKind } from "@/services/pageBuilder/emailKind";
 import { parseMjmlDocument } from "mjml-blocks";
 import { describe, expect, test } from "vitest";
 
-describe(emailKind, () => {
+describe("emailKind", () => {
   test("the email kind's schema accepts the starter email read back through its registry", () => {
     expect.hasAssertions();
 
