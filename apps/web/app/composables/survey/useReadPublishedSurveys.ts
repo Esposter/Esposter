@@ -2,19 +2,30 @@ import type { ResourceInResource } from "@esposter/db-schema";
 
 import { authClient } from "@/services/auth/authClient";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
-import { getResultAsync, noop } from "@esposter/shared";
 
 // The owner's published surveys — the invite-block source for the email editor's GrapesJS blocks. Only published
 // Surveys are listed: a draft survey has no public url for a block to link
 export const useReadPublishedSurveys = () => {
   const { readSurveyResources } = useReadSurveys();
+  const { executeQuery } = useMutation();
   const session = authClient.useSession();
   const publishedSurveys = ref<ResourceInResource[]>([]);
+  // The list is one target, so a re-read supersedes the one still in flight and a stale response lands nowhere
+  const key = Symbol("useReadPublishedSurveys");
   const readPublishedSurveys = () =>
-    getResultAsync(async () => {
-      const { items } = await readSurveyResources();
-      publishedSurveys.value = items.filter(({ publication }) => publication);
-    }).match(noop, createErrorAlert);
+    executeQuery(
+      async () => {
+        const { items } = await readSurveyResources();
+        return items.filter(({ publication }) => publication);
+      },
+      {
+        key,
+        onError: createErrorAlert,
+        onSuccess: (surveys) => {
+          publishedSurveys.value = surveys;
+        },
+      },
+    );
 
   watchImmediate(
     () => session.value.data,

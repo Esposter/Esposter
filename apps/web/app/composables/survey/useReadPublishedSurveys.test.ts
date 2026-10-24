@@ -7,6 +7,7 @@ import { useSession } from "@/services/auth/authClient.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { ResourceType } from "@esposter/db-schema";
 import { flushPromises } from "@vue/test-utils";
+import { until } from "@vueuse/core";
 import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
@@ -61,6 +62,38 @@ describe(useReadPublishedSurveys, () => {
     items = [draft, newlyPublished];
     window.dispatchEvent(new Event("focus"));
     await vi.waitFor(() => expect(publishedSurveys.value.map(({ id }) => id)).toStrictEqual([newlyPublished.id]));
+  });
+
+  // The focus re-read lands while the watch read is still in flight, so the watch read's response arrives last.
+  // It must not write its older list over the newer one
+  test("keeps the newest list when an earlier read's response lands after a later one", async () => {
+    expect.hasAssertions();
+
+    useSession.mockReturnValue(ref({ data: { user: { id: crypto.randomUUID() } } }));
+    const draft = createSurvey(false);
+    const newlyPublished = createSurvey(true);
+    const { promise: firstReadStarted, resolve: markFirstReadStarted } = Promise.withResolvers<void>();
+    const { promise: firstRead, resolve: releaseFirstRead } = Promise.withResolvers<void>();
+    let reads = 0;
+    trpcMsw.survey.readResources.query(async () => {
+      reads += 1;
+      if (reads > 1) return { hasMore: false, items: [draft, newlyPublished] };
+
+      markFirstReadStarted();
+      await firstRead;
+      return { hasMore: false, items: [draft] };
+    });
+    const composable = scope.run(useReadPublishedSurveys);
+    assert.exists(composable);
+    const { publishedSurveys } = composable;
+    await firstReadStarted;
+
+    window.dispatchEvent(new Event("focus"));
+    await until(publishedSurveys).toMatch((surveys) => surveys.length > 0);
+    releaseFirstRead();
+    await flushPromises();
+
+    expect(publishedSurveys.value.map(({ id }) => id)).toStrictEqual([newlyPublished.id]);
   });
 
   test("does not read the survey list on focus while signed out", async () => {
