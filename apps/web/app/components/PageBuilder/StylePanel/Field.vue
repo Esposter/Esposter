@@ -64,7 +64,7 @@ watch(draft, (value) => {
       :placeholder
       :rules
       :type="UiTextFieldType.Number"
-      @keydown="(event) => stepAmount(event)"
+      @keydown="(event: KeyboardEvent) => stepAmount(event)"
       @update:model-value="(amount) => setAmount(amount)"
     />
     <UiSelect
