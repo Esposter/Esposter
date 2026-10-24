@@ -9,6 +9,7 @@ import { setStyleProperty } from "@/services/pageBuilder/setStyleProperty";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
+import { usePageBuilderStyleClipboardStore } from "@/store/pageBuilder/styleClipboard";
 import { JsonPatchOperationType, noop } from "@esposter/shared";
 import { getBlockNode } from "headless-block-editor";
 
@@ -70,5 +71,26 @@ export const usePageBuilderStyle = (resourceId: MaybeRefOrGetter<string>) => {
     setField(property, "");
   };
 
-  return { getField, hasNode: computed(() => target.value !== undefined), resetField, setField };
+  // Copy takes the selected node's whole style, and paste replaces the selected node's style with the copied one, so the
+  // Two nodes match after it. The copied style is shared, never mutated, since every edit above writes a new style
+  // The store is read through its object, since destructuring would keep the copied style as it was when this ran
+  const pageBuilderStyleClipboardStore = usePageBuilderStyleClipboardStore();
+  const copyStyle = () => {
+    const targetValue = target.value;
+    if (targetValue) pageBuilderStyleClipboardStore.setCopiedStyle(targetValue.style ?? {});
+  };
+  const pasteStyle = () => {
+    const resourceIdValue = toValue(resourceId);
+    const targetValue = target.value;
+    const { copiedStyle } = pageBuilderStyleClipboardStore;
+    if (!targetValue || !copiedStyle) return;
+
+    applyEdit(
+      resourceIdValue,
+      [{ op: JsonPatchOperationType.Add, path: `${targetValue.pointer}/props/style`, value: copiedStyle }],
+      "Paste style",
+    ).match(noop, console.error);
+  };
+
+  return { copyStyle, getField, hasNode: computed(() => target.value !== undefined), pasteStyle, resetField, setField };
 };
