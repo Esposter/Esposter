@@ -59,6 +59,11 @@ const { isFailed, loaded: calculator } = useLazyLoad(async (signal) => {
     showYAxis: false,
     trace: false,
   });
+  // Built while the drawing unmounted, it has no owner to tear it down, so it is destroyed here rather than left running
+  if (signal.aborted) {
+    newCalculator.destroy();
+    signal.throwIfAborted();
+  }
   newCalculator.setExpressions(expressions.map((expression) => withDefaultExpressionColor(expression)));
   isDrawn.value = true;
   const newExpressionPanel = element.querySelector<HTMLDivElement>(".dcg-exppanel-outer");
