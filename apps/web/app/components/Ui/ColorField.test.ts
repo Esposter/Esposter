@@ -23,5 +23,17 @@ describe("uiColorField", () => {
 
       expect(component.emitted<[string]>("update:modelValue")).toStrictEqual([["#ffffff"]]);
     });
+
+    test("picking a swatch stores a reference to its colour rather than the colour", async () => {
+      expect.hasAssertions();
+
+      const component = mount(UiColorField, {
+        props: { label: "label", modelValue: "#000000", swatches: [{ name: "color-brand", value: "#ff0000" }] },
+      });
+
+      await component.get('button[aria-label="color-brand"]').trigger("click");
+
+      expect(component.emitted<[string]>("update:modelValue")).toStrictEqual([["var(--color-brand)"]]);
+    });
   });
 });
