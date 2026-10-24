@@ -5,12 +5,14 @@ import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadataPro
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { authClient } from "@/services/auth/authClient";
 import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
+import { checkIsTRPCConflict } from "@/services/trpc/checkIsTRPCConflict";
 
 // What saving stamps, which every saved state carries whether it is a content item or a row
 type SavedMetadata = Pick<ItemMetadata, "updatedAt">;
 
 interface UseSaveAuthOptions<T extends SavedMetadata> {
-  save: (value: T) => Promise<unknown>;
+  // Writes the value under the etag the state was last read or written under, and answers the etag the write produced
+  save: (value: T, etag: string | undefined) => Promise<{ etag: string }>;
 }
 
 interface UseSaveOptions<TState extends SavedMetadata, T extends SavedMetadata> {
@@ -36,6 +38,8 @@ export const useSave = <TState extends SavedMetadata, T extends SavedMetadata = 
   const session = authClient.useSession();
   const { executeMutation: executeSaveMutation } = useMutation();
   const saveToLocalStorage = useSaveToLocalStorage();
+  // The etag of the save the state was last read or written under, which the next remote save is sent under
+  let etag: string | undefined;
   // T defaults to TState when toSave is omitted, which TypeScript cannot follow — the single `as never` is the
   // Centralized cost
   const getSaveValue = (): T => (toSave ? toSave(state.value) : (state.value as never));
@@ -50,7 +54,16 @@ export const useSave = <TState extends SavedMetadata, T extends SavedMetadata = 
     let isSuccessful = false;
     if (session.value.data && auth) {
       // This composable persists a single state, so its saves supersede one another under a stable key
-      const outcome = await executeSaveMutation(() => auth.save(value), { key: "save" });
+      const outcome = await executeSaveMutation(() => auth.save(value, etag), {
+        key: "save",
+        // Another session wrote the save since it was read, so the page reloads and takes the server's copy
+        onError: (error) => {
+          if (checkIsTRPCConflict(error)) window.location.reload();
+        },
+        onSuccess: (result) => {
+          etag = result.etag;
+        },
+      });
       isSuccessful = outcome.status === MutationStatus.Succeeded;
     } else if (unauth) isSuccessful = saveToLocalStorage(unauth.key, unauth.schema, value);
 
@@ -59,8 +72,9 @@ export const useSave = <TState extends SavedMetadata, T extends SavedMetadata = 
   };
   // Loading a persisted state must go through here so the snapshot resets — load-triggered watches/autosave ticks then
   // Skip
-  const setState = (newState: TState) => {
+  const setState = (newState: TState, newEtag?: string) => {
     state.value = newState;
+    etag = newEtag;
     lastSavedJson = getSnapshotJson(getSaveValue());
   };
   return { save, setState };
