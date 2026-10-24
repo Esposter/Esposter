@@ -28,7 +28,7 @@ Time and effort are the limit, so every resource the session holds works at once
 
 Each usage window keeps part of its end for the compute queue's runners, and what the session does at each of the window's lines is `references/usage-reserve.md`.
 
-The reserve guards a local plan's window. A cloud session draws on cloud credit, which the window's percentages do not measure, so the reserve does not apply there: a cloud session runs its work to the end without winding down or refusing a launch. The enforcement still lives in the local resin mod, which cannot yet tell the two apart (`openspec/specs/infra/claude-interface/genshin-mods/resin/design.md`, "Usage reserve").
+The reserve guards a local plan's window. The cloud case, and the gap in the mod that still applies the reserve there, is in `references/usage-reserve.md`'s Scope paragraph.
 
 ## Deep Dives
 
