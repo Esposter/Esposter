@@ -1,5 +1,7 @@
 // @vitest-environment nuxt
+import type { ProgramInvites } from "#shared/models/resource/program/ProgramInvites";
 import type { ProgramStatusRow } from "#shared/models/resource/program/ProgramStatusRow";
+import type { VueWrapper } from "@vue/test-utils";
 
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { MimeType } from "#shared/models/file/MimeType";
@@ -10,6 +12,7 @@ import { useSession } from "@/services/auth/authClient.test";
 import { createParticipantLinksCsv } from "@/services/resource/program/createParticipantLinksCsv";
 import { createProgramInviteHtml } from "@/services/resource/program/createProgramInviteHtml";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import { useNotificationStore } from "@/store/notification";
 import { useResourceStore } from "@/store/resource";
 import { ResourceType, SurveyResponseMode } from "@esposter/db-schema";
 import { downloadFile, RoutePath, takeOne } from "@esposter/shared";
@@ -178,5 +181,138 @@ describe("resourceProgramStatus", () => {
     expect(unzipSync(invitesZip)).toStrictEqual({
       [`${keyValue}.html`]: strToU8(createProgramInviteHtml(emailHtml, surveyPath, invite)),
     });
+  });
+
+  // Each guard answers before any file is built, so a refused export names what the owner must fix and downloads
+  // Nothing. The notices are the whole visible outcome, so they are what each test reads back
+  const findButton = (component: VueWrapper, label: string) => {
+    const button = component.findAll("button").find((candidate) => candidate.text() === label);
+    assert.exists(button);
+    return button;
+  };
+  const getNotificationTitles = () => useNotificationStore().notifications.map(({ title }) => title);
+  // The click's last call is the invite read, so the test holds until it lands rather than ending with it in flight
+  const clickExportWithInvites = async (component: VueWrapper, label: string, invites: ProgramInvites) => {
+    const { promise: isInviteRead, resolve: onInviteRead } = Promise.withResolvers<void>();
+    trpcMsw.program.readProgramInvites.query(() => {
+      onInviteRead();
+      return invites;
+    });
+    await findButton(component, label).trigger("click");
+    await isInviteRead;
+    await flushPromises();
+  };
+
+  test("names the bindings still missing and exports nothing", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.program.readResourceContent.query(() => ({ emailId: "", keyColumn, surveyId }));
+    setStatus(false);
+    const component = await mountSuspended(ResourceProgramStatus, { route: RoutePath.Resource(resourceId) });
+    await findButton(component, "Export invites").trigger("click");
+    await flushPromises();
+
+    expect(downloadFile).not.toHaveBeenCalled();
+    expect(getNotificationTitles()).toContain("Bind an email, an audience on the Setup blade before exporting invites");
+  });
+
+  test("asks for participants to be generated before exporting invites", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.program.readResourceContent.query(() => ({
+      audience: { id: crypto.randomUUID(), type: DatasetProviderType.Sheet },
+      emailId: crypto.randomUUID(),
+      keyColumn,
+      surveyId,
+    }));
+    trpcMsw.program.readProgramStatus.query(() => ({ isRespondedPartial: false, rows: [] }));
+    const component = await mountSuspended(ResourceProgramStatus, { route: RoutePath.Resource(resourceId) });
+    await findButton(component, "Export invites").trigger("click");
+    await flushPromises();
+
+    expect(downloadFile).not.toHaveBeenCalled();
+    expect(getNotificationTitles()).toContain("Generate participants before exporting invites");
+  });
+
+  test("says no participant has an audience row when the invite read finds none", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.program.readResourceContent.query(() => ({
+      audience: { id: crypto.randomUUID(), type: DatasetProviderType.Sheet },
+      emailId: crypto.randomUUID(),
+      keyColumn,
+      surveyId,
+    }));
+    setStatus(false);
+    const component = await mountSuspended(ResourceProgramStatus, { route: RoutePath.Resource(resourceId) });
+    await clickExportWithInvites(component, "Export invites", { emailHtml: "", invites: [], unmatchedCount: 0 });
+
+    expect(downloadFile).not.toHaveBeenCalled();
+    expect(getNotificationTitles()).toContain("No participant has an audience row to invite");
+  });
+
+  test("says every participant has responded when there are no reminders to export", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.program.readResourceContent.query(() => ({
+      audience: { id: crypto.randomUUID(), type: DatasetProviderType.Sheet },
+      emailId: crypto.randomUUID(),
+      keyColumn,
+      surveyId,
+    }));
+    setStatus(false);
+    const component = await mountSuspended(ResourceProgramStatus, { route: RoutePath.Resource(resourceId) });
+    await clickExportWithInvites(component, "Export reminders", { emailHtml: "", invites: [], unmatchedCount: 0 });
+
+    expect(downloadFile).not.toHaveBeenCalled();
+    expect(getNotificationTitles()).toContain("Every participant has responded, so there are no reminders to export");
+  });
+
+  // A participant past the audience read's cap has no row to fill, so the file is named as short rather than sent
+  // Quietly without them
+  test("names the participants left out of the file and still exports the rest", async () => {
+    expect.hasAssertions();
+
+    const invite = { keyValue, row: { [keyColumn]: keyValue }, token: crypto.randomUUID() };
+    trpcMsw.program.readResourceContent.query(() => ({
+      audience: { id: crypto.randomUUID(), type: DatasetProviderType.Sheet },
+      emailId: crypto.randomUUID(),
+      keyColumn,
+      surveyId,
+    }));
+    setStatus(false);
+    const component = await mountSuspended(ResourceProgramStatus, { route: RoutePath.Resource(resourceId) });
+    await clickExportWithInvites(component, "Export invites", {
+      emailHtml: "<p>Hello</p>",
+      invites: [invite],
+      unmatchedCount: 2,
+    });
+
+    expect(downloadFile).toHaveBeenCalledOnce();
+    expect(getNotificationTitles()).toEqual(
+      expect.arrayContaining(["2 participants past the audience read limit were not exported", "1 invite ready"]),
+    );
+  });
+
+  test("reports the reminders ready when the export is for those still awaiting", async () => {
+    expect.hasAssertions();
+
+    const invite = { keyValue, row: { [keyColumn]: keyValue }, token: crypto.randomUUID() };
+    trpcMsw.program.readResourceContent.query(() => ({
+      audience: { id: crypto.randomUUID(), type: DatasetProviderType.Sheet },
+      emailId: crypto.randomUUID(),
+      keyColumn,
+      surveyId,
+    }));
+    setStatus(false);
+    const component = await mountSuspended(ResourceProgramStatus, { route: RoutePath.Resource(resourceId) });
+    await clickExportWithInvites(component, "Export reminders", {
+      emailHtml: "<p>Hello</p>",
+      invites: [invite],
+      unmatchedCount: 0,
+    });
+
+    expect(downloadFile).toHaveBeenCalledOnce();
+    expect(getNotificationTitles()).toContain("1 reminder ready");
   });
 });

@@ -12,6 +12,7 @@ describe("resourceTypeGetLinkTargetsMap", () => {
       ResourceType.Dashboard,
       ResourceType.Email,
       ResourceType.Program,
+      ResourceType.Webpage,
     ]);
   });
 });
