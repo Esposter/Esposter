@@ -42,16 +42,17 @@ The log term means early likes matter most; the time term gives newer posts a co
 
 Paths relative to `apps/web`.
 
-| File                                         | Role                                 |
-| -------------------------------------------- | ------------------------------------ |
-| `app/pages/index.vue`                        | the feed page                        |
-| `app/components/Post/List.vue`               | the toolbar, the cards, the waypoint |
-| `app/composables/post/useReadPosts.ts`       | initial read + read-more, `sortBy`   |
-| `app/store/post/index.ts`                    | feed items store + `sortType`        |
-| `app/services/post/PostSortTypeSortByMap.ts` | sort → `sortBy` mapping              |
-| `server/trpc/routers/post.ts`                | `readPosts` / `readPost`             |
-| `server/services/post/getPostRanking.ts`     | the hot score                        |
-| `server/services/pagination/cursor/`         | shared cursor pagination helpers     |
+| File                                         | Role                                                              |
+| -------------------------------------------- | ----------------------------------------------------------------- |
+| `app/pages/index.vue`                        | the feed page                                                     |
+| `app/components/Post/List.vue`               | the toolbar, the cards, the waypoint                              |
+| `app/composables/post/useReadPosts.ts`       | initial read + read-more, `sortBy`                                |
+| `app/composables/post/usePagedPostRead.ts`   | the first page and cursor pages, shared with the comment branches |
+| `app/store/post/index.ts`                    | feed items store + `sortType`                                     |
+| `app/services/post/PostSortTypeSortByMap.ts` | sort → `sortBy` mapping                                           |
+| `server/trpc/routers/post.ts`                | `readPosts` / `readPost`                                          |
+| `server/services/post/getPostRanking.ts`     | the hot score                                                     |
+| `server/services/pagination/cursor/`         | shared cursor pagination helpers                                  |
 
 ## Notes
 

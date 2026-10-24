@@ -61,15 +61,16 @@ flowchart TD
 
 Paths relative to `apps/web`; `packages/` ones to the repo root.
 
-| File                                                   | Role                                   |
-| ------------------------------------------------------ | -------------------------------------- |
-| `packages/db-schema/src/schema/post/postsInPost.ts`    | table + length checks + select schemas |
-| `server/trpc/routers/post.ts`                          | all CRUD procedures                    |
-| `server/trpc/procedure/getProfanityFilterProcedure.ts` | text censoring middleware              |
-| `app/pages/post/create.vue`, `app/pages/post/[id].vue` | create + detail pages                  |
-| `app/components/Post/`                                 | card, forms, comment components        |
-| `app/components/Post/Comment/Branch.vue`               | one node's replies — the recursion     |
-| `app/store/post/comment/index.ts`                      | the branch-keyed comment map           |
+| File                                                   | Role                                           |
+| ------------------------------------------------------ | ---------------------------------------------- |
+| `packages/db-schema/src/schema/post/postsInPost.ts`    | table + length checks + select schemas         |
+| `server/trpc/routers/post.ts`                          | all CRUD procedures                            |
+| `server/trpc/procedure/getProfanityFilterProcedure.ts` | text censoring middleware                      |
+| `app/pages/post/create.vue`, `app/pages/post/[id].vue` | create + detail pages                          |
+| `app/components/Post/`                                 | card, forms, comment components                |
+| `app/components/Post/Comment/Branch.vue`               | one node's replies — the recursion             |
+| `app/store/post/comment/index.ts`                      | the branch-keyed comment map                   |
+| `app/composables/post/usePagedPostRead.ts`             | the paging each branch's replies are read with |
 
 ## Notes
 
