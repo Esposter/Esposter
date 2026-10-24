@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import type { MemberDialogType } from "@/models/message/user/MemberDialogType";
 import type { Item } from "@/models/shared/Item";
-import type { UiListItem } from "@/models/ui/UiListItem";
 
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { MEMBER_PROFILE_POSITION_AREA } from "@/services/message/member/constants";
 import { getMemberGroups } from "@/services/message/member/getMemberGroups";
+import { getMemberListItems } from "@/services/message/member/getMemberListItems";
 import { getTopRole } from "@/services/message/member/getTopRole";
 import { useRoomStore } from "@/store/message/room";
 import { useRoleStore } from "@/store/message/room/role";
@@ -24,38 +24,14 @@ const { getMemberRoles } = roleStore;
 const statusStore = useStatusStore();
 const { getStatusMessage } = statusStore;
 const memberMap = computed(() => new Map(members.value.map((member) => [member.id, member])));
-const roleIdMemberCountMap = computed(
-  () => new Map(memberCountsByTopRole.value.map((countByTopRole) => [countByTopRole.roleId, countByTopRole.count])),
-);
-// Derived from the running total so member join/leave subscription updates keep the roleless group current
-const rolelessMemberCount = computed(
-  () => memberCount.value - memberCountsByTopRole.value.reduce((sum, countByTopRole) => sum + countByTopRole.count, 0),
-);
-const getMemberCountSuffix = (roleId: string) => {
-  const groupMemberCount = roleId ? roleIdMemberCountMap.value.get(roleId) : rolelessMemberCount.value;
-  return groupMemberCount === undefined ? "" : ` — ${groupMemberCount}`;
-};
-// Discord's member list: one group per top role, headed by its name and how many hold it, each member's avatar with
-// Their status as the mark and their status message after the name
 const memberItems = computed(() => {
   const room = currentRoom.value;
   if (!room) return [];
-  return getMemberGroups(members.value, (userId) => getMemberRoles(room.id, userId)).flatMap(
-    ({ members: groupMembers, role }) => {
-      const group = `${role?.name ?? "Members"}${getMemberCountSuffix(role?.id ?? "")}`;
-      return groupMembers.map<UiListItem<string>>((member) => {
-        const details = [member.name === member.displayName ? "" : member.name, getStatusMessage(member.id) ?? ""]
-          .filter(Boolean)
-          .join(" · ");
-        return {
-          description: details || undefined,
-          group,
-          hasMarkSlot: true,
-          title: member.displayName,
-          value: member.id,
-        };
-      });
-    },
+  return getMemberListItems(
+    getMemberGroups(members.value, (userId) => getMemberRoles(room.id, userId)),
+    memberCount.value,
+    memberCountsByTopRole.value,
+    getStatusMessage,
   );
 });
 // Discord tints the display name with the member's top role color

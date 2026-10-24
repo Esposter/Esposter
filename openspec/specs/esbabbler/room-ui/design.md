@@ -4,7 +4,7 @@ One cohesive polish pass over the room shell, matching Discord's refinements. Vi
 
 ## Role-grouped member list
 
-The member sidebar groups members Discord-style: one group per top hoisted role ordered by role position (highest first), with roleless members trailing in a single "Members" group. A member's display name is tinted with their top role's color; the implicit `@everyone` role never groups or tints. Grouping and top-role resolution are pure services (`getMemberGroups`, `getTopRole`) with co-located tests.
+The member sidebar groups members Discord-style: one group per top hoisted role ordered by role position (highest first), with roleless members trailing in a single "Members" group. A member's display name is tinted with their top role's color; the implicit `@everyone` role never groups or tints. Grouping and top-role resolution are pure services (`getMemberGroups`, `getTopRole`). The rows are built by `getMemberListItems` from those groups, and each heading, count and description rule is its own pure service; all carry co-located tests.
 
 ### Group counts
 
@@ -64,6 +64,10 @@ Room categories in the left sidebar reorder by dragging their headers by the UI 
 | File                                                                           | Role                                                          |
 | ------------------------------------------------------------------------------ | ------------------------------------------------------------- |
 | `apps/web/app/services/message/member/getMemberGroups.ts`                      | Discord-style member grouping by top role                     |
+| `apps/web/app/services/message/member/getMemberListItems.ts`                   | The member list's rows, each under its group's heading        |
+| `apps/web/app/services/message/member/getMemberGroupTitle.ts`                  | A group's heading: its role's name and how many hold it       |
+| `apps/web/app/services/message/member/getRolelessMemberCount.ts`               | The roleless group's count: the total less the role groups    |
+| `apps/web/app/services/message/member/getMemberDescription.ts`                 | A row's account name, when the room shows another, and status |
 | `apps/web/app/services/message/member/getTopRole.ts`                           | Top hoisted role for grouping + name tint                     |
 | `apps/web/app/services/message/member/memberRoleChangeHooks.ts`                | Role store → member store totals re-read hook                 |
 | `apps/web/shared/models/db/room/MemberCountByTopRole.ts`                       | Per-top-role count row from the server                        |
