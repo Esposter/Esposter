@@ -16,7 +16,7 @@ export const getEmailColumnWidths = (columns: MjmlColumnNode[]): string[] => {
     0,
   );
   const unsetCount = widths.filter((width) => width === undefined).length;
-  const share = unsetCount === 0 ? 0 : (100 - setPercent) / unsetCount;
+  const share = unsetCount === 0 ? 0 : Math.max(0, 100 - setPercent) / unsetCount;
 
   return widths.map((width) => width ?? `${share}${PERCENT_UNIT}`);
 };
