@@ -20,7 +20,7 @@ const EmailNodes = () => renderEmailCanvasVNodes(emailKind, email, width.value);
 
 <template>
   <PageBuilderCanvasFrame css="" :device title="Email">
-    <div :style="{ margin: '0 auto', maxWidth: '600px' }">
+    <div :style="{ margin: '0 auto', maxWidth: '37.5rem' }">
       <EmailNodes />
     </div>
   </PageBuilderCanvasFrame>
