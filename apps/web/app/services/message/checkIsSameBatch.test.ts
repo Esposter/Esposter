@@ -3,16 +3,16 @@ import { SAME_BATCH_WINDOW_MS } from "@/services/message/constants";
 import { MessageType } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
-const createdAt = new Date("2026-01-01T00:00:00Z");
-const createMessage = (overrides: Partial<Parameters<typeof checkIsSameBatch>[0]> = {}) => ({
-  appUser: { id: "app" },
-  createdAt,
-  type: MessageType.Text,
-  userId: "author",
-  ...overrides,
-});
-
 describe(checkIsSameBatch, () => {
+  const createdAt = new Date("2026-01-01T00:00:00Z");
+  const createMessage = (overrides: Partial<Parameters<typeof checkIsSameBatch>[0]> = {}) => ({
+    appUser: { id: "app" },
+    createdAt,
+    type: MessageType.Text,
+    userId: "author",
+    ...overrides,
+  });
+
   test("batches an author's consecutive messages within the window", () => {
     expect.hasAssertions();
 
