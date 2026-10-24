@@ -1,5 +1,7 @@
 import type { NuxtConfig } from "nuxt/schema";
 
+import { fileURLToPath } from "node:url";
+
 import { ThemeMode } from "../app/models/ui/ThemeMode.ts";
 import { UiToken } from "../app/models/ui/UiToken.ts";
 import { PWA_PUBLIC_FOLDER_PATH, SITE_DESCRIPTION, SITE_NAME } from "../shared/services/app/constants.ts";
@@ -51,6 +53,7 @@ export const pwa: NuxtConfig["pwa"] = {
   // A new worker waits until the reader takes the update, since a reload mid-call or mid-message would lose it. The
   // Update toast in `ToastStack` is that choice
   registerType: "prompt",
-  srcDir: "service-worker",
+  // Absolute, since the module resolves a relative `srcDir` against Vite's root, which is Nuxt's `app/` and not the app
+  srcDir: fileURLToPath(new URL("../service-worker", import.meta.url)),
   strategies: "injectManifest",
 };
