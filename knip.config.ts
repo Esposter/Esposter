@@ -60,6 +60,7 @@ const knipConfiguration: KnipConfig = {
         "vue-tsc",
       ],
     },
+    "packages/db-mock": { entry: ["scripts/**/*.ts", "src/index.ts"] },
     "packages/follow-ups": { entry: ["scripts/**/*.ts"] },
     "packages/genshin-interface": {
       entry: ["src/index.ts", "src/**/*.reference.ts", "src/**/*.visual.ts"],
@@ -87,15 +88,14 @@ const knipConfiguration: KnipConfig = {
     // The components suite loads MJML's preset through createRequire, since the preset ships no types, and knip cannot
     // Follow it
     "packages/mjml-blocks": { ignoreDependencies: ["mjml-preset-core"] },
-    "packages/shared": { entry: ["src/index.ts", "src/**/*.typebench.ts"] },
-    // The benchmark reporter imports vitest's types alone, so a consumer that never benches needs no vitest: the peer is
-    // Optional on purpose
-    "packages/shared-node": { ignoreDependencies: ["vitest"] },
-    "packages/db-mock": { entry: ["scripts/**/*.ts", "src/index.ts"] },
     "packages/nuxt-security-module": {
       // Nitro loads these by the paths `module.ts` resolves, so nothing imports them
       entry: ["src/runtime/nitro/plugins/*.ts", "src/runtime/server/middleware/*.ts"],
     },
+    "packages/shared": { entry: ["src/index.ts", "src/**/*.typebench.ts"] },
+    // The benchmark reporter imports vitest's types alone, so a consumer that never benches needs no vitest: the peer is
+    // Optional on purpose
+    "packages/shared-node": { ignoreDependencies: ["vitest"] },
     "packages/tresjs-nuxt": {
       // The components are registered by path, so nothing imports them
       entry: ["src/runtime/TresCanvas.*.ts"],
