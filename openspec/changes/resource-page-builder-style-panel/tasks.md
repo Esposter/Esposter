@@ -12,9 +12,13 @@
 ## 3. Panel
 
 - [ ] 3.1 Draw the style sectors with the shared UI library's controls, showing the inherited value and offering reset. The colour field lists the theme's colours as `UiColorField` swatches and stores a picked one as `var(--color-name)`, which closes task 2.2. Verify: tests named after the scenarios 'A field shows the inherited value and where it comes from', 'Reset removes an override' and 'Changing a theme colour recolours every node that uses it'.
+  - Done: the sectors, the Default/Hover state toggle, the colour fields with theme swatches, the opacity slider, the Reset button and the inherited placeholder. Files: `apps/web/app/components/PageBuilder/StylePanel/Index.vue`, `apps/web/app/components/Ui/ColorField.vue`, `apps/web/app/services/pageBuilder/constants.ts` (`STYLE_SECTORS`, `STYLE_COLOR_PROPERTIES`).
+  - Open: the alignment and direction choices (`flex-direction`, `justify-content`, `align-items`, `text-align`) as `UiToggleGroup`. Blocker: `UiToggleGroup` (`apps/web/app/components/Ui/ToggleGroup.vue`) is mandatory, so it cannot show an unset property, and it may select its first item on mount, which `setField` would write into the node. Before wiring it, mount the panel in a test on a node with no style and assert no edit is recorded. Only then add a choice table in `constants.ts` and a `v-else-if` branch in the panel.
+  - Open: the length unit as a `UiSelect` with arrow stepping, and background layers. Neither is started.
 - [x] 3.2 Add Copy style and Paste style as commands. Verify: a test named after the scenario 'Paste style applies copied styles to another node'.
 - [x] 3.3 Preview slider drags on the canvas and record one undoable change on release. Verify: a test named after the scenario 'Dragging an opacity slider records one undoable change'.
 
 ## 4. The record
 
 - [ ] 4.1 Describe the style storage, the emitted rules and the two panels as built, then archive this change. Verify: the checks task 5.1 of [performance and proof](../resource-page-builder-performance-and-proof/tasks.md) names pass.
+  - Owed before archiving: the finishing audit on `d222a7a7`, `f0b3fea8`, `10d898c8`, `7c12218a` and `19578585`. The `code-review` pass over both lanes has not run on them, and `document-model/design.md` still needs its prose checked against the cascade.
