@@ -74,7 +74,9 @@ describe("trpcRouter", () => {
         if (JSON.stringify(jsonSchema).includes(`"${OPAQUE_KEY}":true`)) opaqueProcedurePaths.add(procedurePath);
       }
 
-    expect([...unboundedProcedurePaths]).toStrictEqual([]);
+    expect(
+      [...unboundedProcedurePaths].filter((procedurePath) => !opaqueProcedurePaths.has(procedurePath)),
+    ).toStrictEqual([]);
     // An opaque value holds whatever strings and arrays it is sent, so these are the procedures where only the body
     // Limit bounds them: each carries a document whose shape another library or resource owns (TipTap,
     // SurveyJS answers, a blueprint's entries), or a patch's values, which the resource's own schema parses once
@@ -82,6 +84,7 @@ describe("trpcRouter", () => {
     expect([...opaqueProcedurePaths]).toStrictEqual([
       "blueprint.saveResourceContent",
       "email.saveResourceContent",
+      "email.compile",
       "note.saveResourceContent",
       "resource.updateResourceContent",
       "survey.createSurveyResponse",
