@@ -1,5 +1,8 @@
+import type { StyleProperty } from "#shared/models/pageBuilder/StyleProperty";
 import type { WebpagePaletteCategory } from "@/models/pageBuilder/WebpagePaletteCategory";
 
+import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice";
+import { StyleBreakpoint } from "#shared/models/pageBuilder/StyleBreakpoint";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 
 // The most edits one open resource's undo history keeps, the oldest dropping first
@@ -67,3 +70,58 @@ export const CONTENT_PANEL = "Content";
 export const THEME_PANEL = "Theme";
 // The colour a new theme colour starts as, until the colour field changes it
 export const DEFAULT_THEME_COLOR = "#000000";
+// The style panel's title, which is also its value in the node settings tabs
+export const STYLE_PANEL = "Style";
+// The name each breakpoint's override is shown under, where the base is the desktop
+export const STYLE_BREAKPOINT_TITLE_MAP = {
+  [StyleBreakpoint.Base]: "Desktop",
+  [StyleBreakpoint.Mobile]: "Mobile",
+  [StyleBreakpoint.Tablet]: "Tablet",
+} satisfies Record<StyleBreakpoint, string>;
+// The breakpoints whose overrides reach a breakpoint, its own first and then each wider one, in the order their rules win
+export const STYLE_BREAKPOINT_CASCADE = {
+  [StyleBreakpoint.Base]: [StyleBreakpoint.Base],
+  [StyleBreakpoint.Mobile]: [StyleBreakpoint.Mobile, StyleBreakpoint.Tablet, StyleBreakpoint.Base],
+  [StyleBreakpoint.Tablet]: [StyleBreakpoint.Tablet, StyleBreakpoint.Base],
+} satisfies Record<StyleBreakpoint, StyleBreakpoint[]>;
+// The breakpoint each device's edits write their overrides to
+export const DEVICE_BREAKPOINT_MAP = {
+  [PageBuilderDevice.Desktop]: StyleBreakpoint.Base,
+  [PageBuilderDevice.Mobile]: StyleBreakpoint.Mobile,
+  [PageBuilderDevice.Tablet]: StyleBreakpoint.Tablet,
+} satisfies Record<PageBuilderDevice, StyleBreakpoint>;
+// The sectors the style panel groups its properties in, in the order it draws them
+export const STYLE_SECTORS = [
+  { properties: ["display", "flex-direction", "justify-content", "align-items", "gap"], title: "Layout" },
+  {
+    properties: [
+      "margin-top",
+      "margin-right",
+      "margin-bottom",
+      "margin-left",
+      "padding-top",
+      "padding-right",
+      "padding-bottom",
+      "padding-left",
+    ],
+    title: "Spacing",
+  },
+  { properties: ["width", "height", "max-width"], title: "Size" },
+  { properties: ["position", "top", "right", "bottom", "left"], title: "Position" },
+  {
+    properties: [
+      "font-family",
+      "font-size",
+      "font-weight",
+      "line-height",
+      "letter-spacing",
+      "text-align",
+      "text-decoration",
+      "color",
+    ],
+    title: "Typography",
+  },
+  { properties: ["background-color", "background-image"], title: "Background" },
+  { properties: ["border-width", "border-style", "border-color", "border-radius"], title: "Border" },
+  { properties: ["opacity", "box-shadow"], title: "Effects" },
+] satisfies { properties: StyleProperty[]; title: string }[];

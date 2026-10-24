@@ -8,6 +8,7 @@ import {
   DEFAULT_SIDE_PANE_WIDTH,
   MAX_SIDE_PANE_WIDTH,
   MIN_SIDE_PANE_WIDTH,
+  STYLE_PANEL,
   THEME_PANEL,
 } from "@/services/pageBuilder/constants";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
@@ -23,6 +24,7 @@ interface Props {
 
 const panelItems: UiTabItem<string>[] = [
   { title: CONTENT_PANEL, value: CONTENT_PANEL },
+  { title: STYLE_PANEL, value: STYLE_PANEL },
   { title: THEME_PANEL, value: THEME_PANEL },
 ];
 
@@ -180,6 +182,7 @@ const handleEditorKeydown = (event: KeyboardEvent) => {
       />
       <UiTabs v-model="panel" is-filling :items="panelItems" label="Node settings" h-full>
         <PageBuilderContentPanel v-if="panel === CONTENT_PANEL" :resource-id />
+        <PageBuilderStylePanel v-if="panel === STYLE_PANEL" :resource-id />
         <PageBuilderThemePanel v-if="panel === THEME_PANEL" :resource-id />
       </UiTabs>
     </div>
