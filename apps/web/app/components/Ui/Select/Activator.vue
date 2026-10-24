@@ -29,7 +29,7 @@ const selectedItems = computed(() =>
 const selectedItem = computed(() => (selectedItems.value.length === 1 ? selectedItems.value[0] : undefined));
 // A chosen option with no mark leaves the trigger no column for one, so its title starts at the field's edge
 const isMarkless = computed(() =>
-  selectedItem.value?.icon || selectedItem.value?.image || selectedItem.value?.meaning ? undefined : true,
+  selectedItem.value?.icon || selectedItem.value?.image !== undefined || selectedItem.value?.meaning ? undefined : true,
 );
 const title = computed(() => {
   if (selectedItems.value.length === 0) return label;

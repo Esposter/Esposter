@@ -62,6 +62,16 @@ describe("uiSelect", () => {
       expect(activator.element.querySelector(".i-test-plan")).not.toBeNull();
     });
 
+    test("keeps the mark column on a trigger whose chosen option has an empty image, the title's first letter", () => {
+      expect.hasAssertions();
+
+      const lettered: UiSelectItem<string>[] = [{ image: "", title: "Room", value: "room" }];
+      const component = mount(UiSelect, { props: { items: lettered, label, modelValue: "room" } });
+      const activator = component.get('[role="combobox"]');
+
+      expect(activator.element.firstElementChild?.textContent.trim()).toBe("R");
+    });
+
     test("opens onto the selected option, walks by arrow, Home and End, and jumps by a title's first letters", async () => {
       expect.hasAssertions();
 
