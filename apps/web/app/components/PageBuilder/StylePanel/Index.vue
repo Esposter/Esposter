@@ -17,7 +17,12 @@ interface Props {
 }
 const { resourceId } = defineProps<Props>();
 const pageBuilderCanvasStore = usePageBuilderCanvasStore();
-const { getStyleState, setStyleState } = pageBuilderCanvasStore;
+const { getDevice, getSelectedNodeId, getStyleState, setStyleState } = pageBuilderCanvasStore;
+// A text field keeps a draft it refused, which belongs to the node, breakpoint and state it was typed for, so every row
+// Remounts when any of them changes, rather than showing that draft against the one now selected
+const editTarget = computed(
+  () => `${getSelectedNodeId(resourceId)}:${getDevice(resourceId)}:${getStyleState(resourceId)}`,
+);
 const { getField, hasNode, previewField, resetField, setField } = usePageBuilderStyle(() => resourceId);
 // The opacity a drag is at while it moves, which the slider shows in place of the value the field holds
 const opacityDrag = ref<number>();
@@ -66,7 +71,7 @@ const setSectorOpen = (title: string, isOpen: boolean) => {
     >
       <template #title>{{ sector.title }}</template>
       <div flex flex-col gap-3>
-        <div v-for="property in sector.properties" :key="property" flex gap-2 items-end>
+        <div v-for="property in sector.properties" :key="`${editTarget}/${property}`" flex gap-2 items-end>
           <UiColorField
             v-if="STYLE_COLOR_PROPERTIES.includes(property)"
             :label="property"

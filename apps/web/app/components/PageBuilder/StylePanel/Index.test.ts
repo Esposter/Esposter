@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { TEST_ID, TEST_LABEL, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
+import { TEST_ID, TEST_LABEL, TEST_OTHER_ID, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
 import PageBuilderStylePanel from "@/components/PageBuilder/StylePanel/Index.vue";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
@@ -27,5 +27,37 @@ describe("pageBuilderStylePanel", () => {
     // A mandatory toggle group may pick its first choice on mount, which an edit would then record against the node
     expect(component.text()).toContain("column");
     expect(pageBuilderHistoryStore.historyMap.get(resourceId)).toBeUndefined();
+  });
+
+  test("a refused draft is not shown on the node selected after it", async () => {
+    expect.hasAssertions();
+
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const SECOND_ID = "c";
+    const createImage = (id: string) => ({
+      props: { alt: "", decorative: true, id, src: "https://example.com/a.png" },
+      type: WebpageNodeType.Image,
+    });
+    pageBuilderDocumentStore.setDocument(TEST_ID, {
+      content: [createImage(TEST_OTHER_ID), createImage(SECOND_ID)],
+      root: TEST_ROOT,
+    });
+    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
+
+    const component = await mountSuspended(PageBuilderStylePanel, { props: { resourceId: TEST_ID } });
+    const getWidthInput = () => {
+      const forId = component
+        .findAll("label")
+        .find((label) => label.text() === "width")
+        ?.attributes("for");
+      return component.get(`input[id="${forId}"]`);
+    };
+    await getWidthInput().setValue("10px}");
+
+    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, SECOND_ID);
+    await component.vm.$nextTick();
+
+    expect((getWidthInput().element as HTMLInputElement).value).toBe("");
   });
 });
