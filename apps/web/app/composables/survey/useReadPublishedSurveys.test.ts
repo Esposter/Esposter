@@ -1,5 +1,4 @@
 // @vitest-environment nuxt
-import type { ResourceInResource } from "@esposter/db-schema";
 import type { EffectScope } from "vue";
 
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
@@ -8,7 +7,7 @@ import { useSession } from "@/services/auth/authClient.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { ResourceType } from "@esposter/db-schema";
 import { flushPromises } from "@vue/test-utils";
-import { assert, afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
@@ -23,12 +22,20 @@ describe(useReadPublishedSurveys, () => {
   afterEach(() => {
     scope.stop();
   });
-  const createSurvey = (isPublished: boolean): ResourceInResource => {
+  const createSurvey = (isPublished: boolean) => {
     const survey = createResourceListItem({ type: ResourceType.Survey });
     return {
       ...survey,
       publication: isPublished
-        ? { publishedAt: new Date(0), publishedContentVersion: 0, publishVersion: 1, resourceId: survey.id }
+        ? {
+            createdAt: new Date(0),
+            deletedAt: null,
+            publishedAt: new Date(0),
+            publishedContentVersion: 0,
+            publishVersion: 1,
+            resourceId: survey.id,
+            updatedAt: new Date(0),
+          }
         : null,
     };
   };
