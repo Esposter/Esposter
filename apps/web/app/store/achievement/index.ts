@@ -4,6 +4,7 @@ import type { UserAchievementWithDefinition } from "@/models/achievement/UserAch
 import type { AchievementName, UserAchievementInAchievementWithRelations } from "@esposter/db-schema";
 
 import { parseDictionaryToArray } from "#shared/util/object/parseDictionaryToArray";
+import { checkIsUnlockedUserAchievement } from "@/services/achievement/checkIsUnlockedUserAchievement";
 import { getUnlockedUserAchievements } from "@/services/achievement/getUnlockedUserAchievements";
 import { toUserAchievementWithDefinition } from "@/services/achievement/toUserAchievementWithDefinition";
 
@@ -44,7 +45,7 @@ export const useAchievementStore = defineStore("achievement", () => {
     );
     if (index === -1) userAchievements.value.push(userAchievementWithDefinition);
     else userAchievements.value[index] = userAchievementWithDefinition;
-    if (userAchievementWithDefinition.unlockedAt !== null)
+    if (checkIsUnlockedUserAchievement(userAchievementWithDefinition))
       recentlyUnlockedUserAchievements.value.push(userAchievementWithDefinition);
   };
   return {
