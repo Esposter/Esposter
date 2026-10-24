@@ -8,6 +8,9 @@ import { useClickerStore } from "@/store/clicker";
 import { usePointStore } from "@/store/clicker/point";
 import { exhaustiveGuard } from "@esposter/shared";
 
+const sortByPrice = (upgradesToSort: Upgrade[]) =>
+  upgradesToSort.toSorted((firstUpgrade, secondUpgrade) => firstUpgrade.price - secondUpgrade.price);
+
 export const useUpgradeStore = defineStore("clicker/upgrade", () => {
   const clickerStore = useClickerStore();
   const pointStore = usePointStore();
@@ -39,8 +42,6 @@ export const useUpgradeStore = defineStore("clicker/upgrade", () => {
 
   const checkIsBought = (upgradeId: UpgradeId) =>
     clickerStore.clicker.boughtUpgrades.some(({ id }) => id === upgradeId);
-  const sortByPrice = (upgradesToSort: Upgrade[]) =>
-    upgradesToSort.toSorted((firstUpgrade, secondUpgrade) => firstUpgrade.price - secondUpgrade.price);
   const availableUpgrades = computed(() => sortByPrice(unlockedUpgrades.value.filter(({ id }) => !checkIsBought(id))));
   const boughtUpgrades = computed(() => sortByPrice(clickerStore.clicker.boughtUpgrades));
 

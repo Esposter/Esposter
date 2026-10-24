@@ -3,14 +3,14 @@ import { toLocalDungeons } from "@/services/dungeons/toLocalDungeons";
 import { describe, expect, test } from "vitest";
 
 // The read runs on every load, so a save that cannot be parsed must start a fresh game rather than leave the page with
-// nothing to show. A fresh game carries a new id, so it is checked by its shape rather than compared whole
+// Nothing to show. A fresh game carries a new id, so it is checked by its settings and its missing save, not compared whole
 describe(toLocalDungeons, () => {
   test("starts a fresh game when nothing is stored", () => {
     expect.hasAssertions();
 
     const dungeons = toLocalDungeons(null);
 
-    expect(dungeons).toBeInstanceOf(Dungeons);
+    expect(dungeons.settings).toStrictEqual(new Dungeons().settings);
     expect(dungeons.save).toBeUndefined();
   });
 
@@ -19,7 +19,7 @@ describe(toLocalDungeons, () => {
 
     const dungeons = toLocalDungeons("{not json");
 
-    expect(dungeons).toBeInstanceOf(Dungeons);
+    expect(dungeons.settings).toStrictEqual(new Dungeons().settings);
     expect(dungeons.save).toBeUndefined();
   });
 
@@ -28,7 +28,7 @@ describe(toLocalDungeons, () => {
 
     const dungeons = toLocalDungeons(JSON.stringify({ settings: "not settings" }));
 
-    expect(dungeons).toBeInstanceOf(Dungeons);
+    expect(dungeons.settings).toStrictEqual(new Dungeons().settings);
     expect(dungeons.save).toBeUndefined();
   });
 
