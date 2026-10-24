@@ -19,7 +19,7 @@ flowchart TD
 
   AUTO -.->|"arms"| ARMED(["unwrittenContentResourceId"])
   DOOR -.->|"clears"| ARMED
-  DOOR -.->|"in flight"| PENDING(["isSaveContentPending"])
+  DOOR -.->|"in flight"| PENDING(["checkIsSaveContentPending"])
   DOOR -.->|"rejected as stale"| STALE(["isContentStale"])
   DOOR -.->|"rejected otherwise"| FAILED(["hasSaveContentFailed"])
 

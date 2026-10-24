@@ -5,9 +5,8 @@ import { escapeHtml } from "#shared/util/text/escapeHtml";
 import { ResourceType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
-// The shared core behind the invite blocks both GrapesJS editors offer: block identity plus the survey's
-// Public url. Only the button markup differs per surface (MJML for email, plain HTML for webpage),
-// So each editor passes just its renderer rather than owning a copy of the list-to-blocks mapping.
+// The core behind the email editor's invite blocks: block identity plus the survey's public url. The caller passes
+// The button's markup, so the list-to-blocks mapping owns none of it.
 export const createSurveyInviteBlocks = (
   surveys: ResourceInResource[],
   renderButton: (button: { label: string; url: string }) => string,

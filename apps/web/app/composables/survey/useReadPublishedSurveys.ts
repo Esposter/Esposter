@@ -4,7 +4,7 @@ import { authClient } from "@/services/auth/authClient";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { getResultAsync, noop } from "@esposter/shared";
 
-// The owner's published surveys — the invite-block source for both GrapesJS editors. Only published
+// The owner's published surveys — the invite-block source for the email editor's GrapesJS blocks. Only published
 // Surveys are listed: a draft survey has no public url for a block to link
 export const useReadPublishedSurveys = () => {
   const { readSurveyResources } = useReadSurveys();

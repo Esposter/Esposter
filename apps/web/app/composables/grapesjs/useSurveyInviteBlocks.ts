@@ -5,8 +5,8 @@ import type { Editor } from "grapesjs";
 import { SURVEY_INVITE_BLOCK_CATEGORY } from "@/services/grapesjs/constants";
 import { setBlocks } from "@/services/grapesjs/setBlocks";
 
-// Both GrapesJS editors offer the owner's published surveys as invite blocks and differ in nothing but the
-// Button markup, so the category re-sync lives here and each editor passes only its block renderer.
+// The email editor offers the owner's published surveys as invite blocks. The category re-sync lives here, and the
+// Editor passes its block renderer.
 // The editor is watched alongside the surveys because a session-driven re-init drops every registered block
 export const useSurveyInviteBlocks = (
   editor: Ref<Editor | undefined>,
