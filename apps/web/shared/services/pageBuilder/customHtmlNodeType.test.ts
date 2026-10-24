@@ -31,6 +31,16 @@ describe("customHtmlNodeType", () => {
     expect(renderCustomHtml('<div srcdoc="<b>x</b>">y</div>')).toBe('<div class="custom-html"><div>y</div></div>');
   });
 
+  test("a script, an iframe and an image's error handler are removed", () => {
+    expect.hasAssertions();
+
+    expect(
+      renderCustomHtml(
+        '<img src="x" onerror="alert(1)"><script>alert(1)</script><iframe src="https://example.com"></iframe>',
+      ),
+    ).not.toMatch(/onerror|<script|<iframe/u);
+  });
+
   test("an svg xlink href is removed", () => {
     expect.hasAssertions();
 
