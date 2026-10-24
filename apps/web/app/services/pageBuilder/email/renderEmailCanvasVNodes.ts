@@ -13,9 +13,10 @@ import { h } from "vue";
 
 const checkIsColumn = (node: MjmlNode): node is MjmlColumnNode => node.type === MjmlNodeType.Column;
 
-// The design canvas's view of an email: each node drawn as the element it becomes, with every attribute the MJML cascade
-// Resolves for it. A section lays its columns side by side, and stacks them at the canvas width the mobile breakpoint
-// Covers. A leaf without a drawing of its own is labelled with its type, so the tree stays visible while it is drawn
+// The design canvas's view of an email: each node drawn as the element it becomes.
+// Every attribute is the one the MJML cascade resolves for it.
+// A section lays its columns side by side, and stacks them at the canvas width the mobile breakpoint covers.
+// A leaf without a drawing of its own is labelled with its type, so the tree stays visible while it is drawn
 export const renderEmailCanvasVNodes = (kind: EmailKind, document: EmailDocument, width: number): VNode[] => {
   const rootAttributes = document.root.props.attributes;
   const isStacked = checkIsStackedColumns(width);
