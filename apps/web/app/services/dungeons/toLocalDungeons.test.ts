@@ -3,7 +3,7 @@ import { toLocalDungeons } from "@/services/dungeons/toLocalDungeons";
 import { describe, expect, test } from "vitest";
 
 // The read runs on every load, so a save that cannot be parsed must start a fresh game rather than leave the page with
-// Nothing to show. A fresh game carries a new id, so it is checked by its settings and its missing save, not compared whole
+// Nothing to show. A fresh game gets a new id, so it is checked by its settings and missing save, not compared whole
 describe(toLocalDungeons, () => {
   test("starts a fresh game when nothing is stored", () => {
     expect.hasAssertions();

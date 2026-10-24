@@ -36,7 +36,7 @@ describe("subpathAudit", () => {
     () => {
       expect.hasAssertions();
 
-      // Named rather than counted: the failure lists each subpath with no consumer. The fix is a consumer that names it.
+      // Named rather than counted: the failure lists each subpath with no consumer. The fix: a consumer that names it.
       // Or an `exports.exclude` in the package's `tsdown.config.ts`, when a file loads it by path and needs no arm
       // (`.agents/skills/build/references/subpaths.md`).
       const consumerTexts = readConsumerTexts();
