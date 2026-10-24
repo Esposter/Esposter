@@ -29,6 +29,8 @@ export interface PageBuilderKind<
   // The groups the palette lists the node types in, in the order shown
   paletteCategories: readonly PageBuilderPaletteCategory<TNode>[];
   registry: BlockRegistry<TNode, TRoot, TDefinition>;
+  // The form the root's props are edited through, a subset of the props the registry's root schema holds
+  rootFormSchema: z.ZodType;
   // The title each node type is shown by in the layers, the palette and the paths the shell names a slot with
   titles: Readonly<Record<string, string>>;
 }

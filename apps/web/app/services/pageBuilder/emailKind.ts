@@ -6,6 +6,7 @@ import { emailDocumentSchema } from "#shared/services/pageBuilder/email/emailDoc
 import { emailNodeChildren } from "#shared/services/pageBuilder/email/emailNodeChildren";
 import { emailNodeSchema } from "#shared/services/pageBuilder/email/emailNodeSchema";
 import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry";
+import { emailRootFormSchema } from "#shared/services/pageBuilder/email/emailRootFormSchema";
 import { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
 import { EMAIL_PALETTE_CATEGORIES } from "@/services/pageBuilder/email/constants";
 
@@ -17,5 +18,6 @@ export const emailKind: EmailKind = {
   nodeSchema: emailNodeSchema,
   paletteCategories: EMAIL_PALETTE_CATEGORIES,
   registry: emailRegistry,
+  rootFormSchema: emailRootFormSchema,
   titles: EMAIL_NODE_TYPE_TITLE_MAP,
 };
