@@ -13,6 +13,7 @@ import {
   TEST_ROOT,
   TEST_URL,
 } from "#shared/services/pageBuilder/constants.test";
+import { createTestTextDocument } from "#shared/services/pageBuilder/createTestTextDocument.test";
 import { renderWebpageDocument } from "#shared/services/pageBuilder/renderWebpageDocument";
 import { describe, expect, test } from "vitest";
 
@@ -155,22 +156,7 @@ describe(renderWebpageDocument, () => {
   test("every node of a 2,000-node document renders, in document order", () => {
     expect.hasAssertions();
 
-    const html = renderWebpageDocument(
-      {
-        content: Array.from({ length: MAX_WEBPAGE_NODES }, (_value, index) => ({
-          props: {
-            content: {
-              content: [{ content: [{ text: `node ${index}`, type: "text" }], type: "paragraph" }],
-              type: "doc",
-            },
-            id: `node-${index}`,
-          },
-          type: WebpageNodeType.Text,
-        })),
-        root: TEST_ROOT,
-      },
-      TEST_CONTEXT,
-    );
+    const html = renderWebpageDocument(createTestTextDocument(MAX_WEBPAGE_NODES), TEST_CONTEXT);
 
     const positions = Array.from({ length: MAX_WEBPAGE_NODES }, (_value, index) => html.indexOf(`node ${index}<`));
     expect(positions.every((position) => position >= 0)).toBe(true);
