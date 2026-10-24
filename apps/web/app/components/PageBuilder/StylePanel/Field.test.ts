@@ -124,9 +124,9 @@ describe("styleField", () => {
         props: { label: "Border width", modelValue: "2px", property: "border-width" },
       });
 
-      expect(component.findComponent(UiSelect).props("items")).toStrictEqual(
-        ["px", "rem", "em", "vw", "vh"].map((lengthUnit) => ({ title: lengthUnit, value: lengthUnit })),
-      );
+      expect(component.findComponent(UiSelect).vm.$props).toMatchObject({
+        items: ["px", "rem", "em", "vw", "vh"].map((lengthUnit) => ({ title: lengthUnit, value: lengthUnit })),
+      });
     });
   });
 });
