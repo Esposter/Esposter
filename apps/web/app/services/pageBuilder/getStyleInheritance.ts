@@ -3,7 +3,8 @@ import type { StyleBreakpoint } from "#shared/models/pageBuilder/StyleBreakpoint
 import type { StyleProperty } from "#shared/models/pageBuilder/StyleProperty";
 
 import { StyleState } from "#shared/models/pageBuilder/StyleState";
-import { STYLE_BREAKPOINT_CASCADE, STYLE_BREAKPOINT_TITLE_MAP } from "@/services/pageBuilder/constants";
+import { STYLE_BREAKPOINT_ORDER } from "#shared/services/pageBuilder/constants";
+import { STYLE_BREAKPOINT_TITLE_MAP } from "@/services/pageBuilder/constants";
 
 export interface StyleInheritance {
   // Where the value is set: a breakpoint's name, or the default state of the field's own breakpoint
@@ -20,7 +21,8 @@ export const getStyleInheritance = (
   property: StyleProperty,
 ): StyleInheritance | undefined => {
   const states = state === StyleState.Hover ? [StyleState.Hover, StyleState.Default] : [StyleState.Default];
-  const sources = STYLE_BREAKPOINT_CASCADE[breakpoint].flatMap((source) =>
+  const cascade = STYLE_BREAKPOINT_ORDER.slice(0, STYLE_BREAKPOINT_ORDER.indexOf(breakpoint) + 1).toReversed();
+  const sources = cascade.flatMap((source) =>
     states.map((sourceState) => ({ breakpoint: source, state: sourceState })),
   );
   const inherited = sources.find(

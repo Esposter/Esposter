@@ -78,12 +78,6 @@ export const STYLE_BREAKPOINT_TITLE_MAP = {
   [StyleBreakpoint.Mobile]: "Mobile",
   [StyleBreakpoint.Tablet]: "Tablet",
 } satisfies Record<StyleBreakpoint, string>;
-// The breakpoints whose overrides reach a breakpoint, its own first and then each wider one, in the order their rules win
-export const STYLE_BREAKPOINT_CASCADE = {
-  [StyleBreakpoint.Base]: [StyleBreakpoint.Base],
-  [StyleBreakpoint.Mobile]: [StyleBreakpoint.Mobile, StyleBreakpoint.Tablet, StyleBreakpoint.Base],
-  [StyleBreakpoint.Tablet]: [StyleBreakpoint.Tablet, StyleBreakpoint.Base],
-} satisfies Record<StyleBreakpoint, StyleBreakpoint[]>;
 // The breakpoint each device's edits write their overrides to
 export const DEVICE_BREAKPOINT_MAP = {
   [PageBuilderDevice.Desktop]: StyleBreakpoint.Base,

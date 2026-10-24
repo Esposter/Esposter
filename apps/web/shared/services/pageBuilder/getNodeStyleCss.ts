@@ -5,17 +5,18 @@ import { StyleBreakpoint } from "#shared/models/pageBuilder/StyleBreakpoint";
 import { StyleState } from "#shared/models/pageBuilder/StyleState";
 import {
   MOBILE_BREAKPOINT_WIDTH,
+  STYLE_BREAKPOINT_ORDER,
   STYLE_PROPERTY_NAMES,
   TABLET_BREAKPOINT_WIDTH,
 } from "#shared/services/pageBuilder/constants";
 import { getNodeStyleClass } from "#shared/services/pageBuilder/getNodeStyleClass";
 
-// Each breakpoint's media query in cascade order, the base having none, so a narrower override comes after a wider one
-const BREAKPOINT_MEDIA_QUERIES = [
-  [StyleBreakpoint.Base, undefined],
-  [StyleBreakpoint.Tablet, `(max-width: ${TABLET_BREAKPOINT_WIDTH}px)`],
-  [StyleBreakpoint.Mobile, `(max-width: ${MOBILE_BREAKPOINT_WIDTH}px)`],
-] as const;
+// Each breakpoint's media query, the base having none
+const BREAKPOINT_MEDIA_QUERIES: Record<StyleBreakpoint, string | undefined> = {
+  [StyleBreakpoint.Base]: undefined,
+  [StyleBreakpoint.Mobile]: `(max-width: ${MOBILE_BREAKPOINT_WIDTH}px)`,
+  [StyleBreakpoint.Tablet]: `(max-width: ${TABLET_BREAKPOINT_WIDTH}px)`,
+};
 
 // The rules of one node's style, a rule per breakpoint and state that sets any property. On a focusable node the hover
 // Rule also matches keyboard focus, so the hover style is not mouse-only
@@ -29,8 +30,9 @@ export const getNodeStyleCss = (node: WebpageNode, definition: WebpageNodeDefini
     [StyleState.Hover]: definition.isFocusable ? `${selector}:hover, ${selector}:focus-visible` : `${selector}:hover`,
   } satisfies Record<StyleState, string>;
 
-  return BREAKPOINT_MEDIA_QUERIES.flatMap(([breakpoint, mediaQuery]) =>
-    Object.values(StyleState).flatMap((state) => {
+  return STYLE_BREAKPOINT_ORDER.flatMap((breakpoint) => {
+    const mediaQuery = BREAKPOINT_MEDIA_QUERIES[breakpoint];
+    return Object.values(StyleState).flatMap((state) => {
       const declarations = STYLE_PROPERTY_NAMES.flatMap((property) => {
         const value = style[breakpoint]?.[state]?.[property];
         return value ? [`  ${property}: ${value};`] : [];
@@ -39,6 +41,6 @@ export const getNodeStyleCss = (node: WebpageNode, definition: WebpageNodeDefini
 
       const rule = [`${selectors[state]} {`, ...declarations, "}"].join("\n");
       return [mediaQuery ? `@media ${mediaQuery} {\n  ${rule.replaceAll("\n", "\n  ")}\n}` : rule];
-    }),
-  ).join("\n");
+    });
+  }).join("\n");
 };
