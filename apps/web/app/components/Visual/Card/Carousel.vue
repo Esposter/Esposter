@@ -1,10 +1,16 @@
 <!-- @BIG CREDIT TO Braedon Wooding for providing the base animation code for this AMAZING card carousel -->
 <script setup lang="ts">
 import type { Card } from "@/models/visual/Card";
+import type { CardStackGeometry } from "@/models/visual/CardStackGeometry";
+import type { CardStackState } from "@/models/visual/CardStackState";
 import type { CardStyleVariables } from "@/models/visual/CardStyleVariables";
 
 import CardBase from "@/components/Visual/Card/Base.vue";
-import { CardStackClass } from "@/models/visual/CardStackClass";
+import { useCardCarousel } from "@/composables/visual/useCardCarousel";
+import { getCardStackClass } from "@/services/visual/getCardStackClass";
+import { getCardStyles } from "@/services/visual/getCardStyles";
+import { getInactiveCardScaleY } from "@/services/visual/getInactiveCardScaleY";
+import { getNormalCardStyles } from "@/services/visual/getNormalCardStyles";
 import { takeOne } from "@esposter/shared";
 
 interface Props {
@@ -34,48 +40,7 @@ const {
 // - Hide the old last card behind the second-last one.
 // - Slide the left card to the far right.
 // - Shuffle every other right card left, exposing a new card atop the second right-most.
-// Fake card ids are just the card indexes, so we can "rotate" by incrementing the whole list by 1.
-// They double as a z-index.
-const cardIds = ref<number[]>(cards.map((_card, index) => index));
-// The active card is the card that's moving from right -> left -> right.
-const activeCardId = ref<number>();
-const inactiveCardId = ref<number>();
-const classes = computed(() => cardIds.value.map((cardId) => getClass(cardId)));
-// Four card classes:
-// - Active: moving right -> left -> right.
-// - Overflow: hidden behind the second-last card, no animation.
-// - Inactive: was active, now the right-most card, animating to overflow (in some cases).
-// - Normal: a right-stack card making its way to become active.
-const getClass = (cardId: number) => {
-  const offset = cardIds.value.indexOf(cardId);
-  if (cardId === activeCardId.value) return CardStackClass.Active;
-  // In the initial state, set the last card as inactive.
-  else if ((inactiveCardId.value === undefined && cardId === maxShownCards) || cardId === inactiveCardId.value)
-    return CardStackClass.Inactive;
-  else if (offset > maxShownCards - 2) return CardStackClass.Overflow;
-  // An animation restarts only when its name changes, and a card moves one offset a step, so the name alternates
-  // With the offset's parity while the offset's own values ride on the card (`cardStyles`)
-  else return `${CardStackClass.Normal} ${offset % 2 === 0 ? CardStackClass.NormalEven : CardStackClass.NormalOdd}`;
-};
-// Main timer driving card movement.
-const moveCardsTimer = ref<number>();
-// Mark the top-right card active, move it to the end of the array, then unmark it after a timeout.
-const moveCards = () => {
-  if (cards.length === 0) return;
-  else if (cards.length === 1) moveOneCard();
-  else {
-    inactiveCardId.value = activeCardId.value;
-    activeCardId.value = takeOne(cardIds.value);
-    // "Rotate" the cards.
-    cardIds.value = cardIds.value.map((id) => (id + 1) % cards.length);
-  }
-};
-
-const moveOneCard = () => {
-  inactiveCardId.value = activeCardId.value;
-  if (activeCardId.value === undefined) activeCardId.value = cardIds.value[0];
-  else activeCardId.value = undefined;
-};
+const { activeCardId, cardIds, inactiveCardId } = useCardCarousel({ cards: () => cards, duration });
 // Re-animate on every screen change to avoid cards getting stuck in weird positions.
 const { breakpoints, width } = useUiDisplay();
 const gap = computed<string>(() => {
@@ -91,69 +56,25 @@ const scale = computed<number>(() => {
   else if (width.value >= breakpoints.xl) scaleFactor = 1.25;
   return scaleFactor;
 });
-const normalCardStyles = computed<CardStyleVariables[]>(() => {
-  // Count the cards we care about, ignoring the moving card.
-  const numberOfCards = Math.min(maxShownCards, cards.length - 1);
-  const items: CardStyleVariables[] = [];
-  // Walk from the right-most card leftwards so each card reuses its right neighbour's margin and scale
-  // As its own "old" values (animation flows right -> left); reversed at the end for LTR order.
-  for (let index = 0; index < numberOfCards; index++)
-    items.push({
-      marginRight: `${index * scale.value}rem`,
-      oldMarginRight: index === 0 ? inactiveCardStyle.value.marginRight : takeOne(items, items.length - 1).marginRight,
-      oldScaleY: index === 0 ? inactiveCardStyle.value.scaleY : takeOne(items, items.length - 1).scaleY,
-      scaleY: `${1 - Math.max(0, cardScaleYRatioLoss * (numberOfCards - 1 - index))}`,
-    });
-
-  const reversedItems = items.toReversed();
-  // Pad the rest so we don't operate on undefined.
-  for (let index = numberOfCards; index < maxShownCards; index++) reversedItems.push({});
-  return reversedItems;
-});
-// Each card's stacking and its offset's values, as custom properties the one normal-card rule reads — so the stack
-// Is as deep as `maxShownCards` says rather than as deep as the stylesheet was written for
-const cardStyles = computed(() =>
-  cardIds.value.map((_cardId, offset) => {
-    const { marginRight, oldMarginRight, oldScaleY, scaleY } = normalCardStyles.value[offset] ?? {};
-    return {
-      "--margin-right": marginRight,
-      "--old-margin-right": oldMarginRight,
-      "--old-scale-y": oldScaleY,
-      "--scale-y": scaleY,
-      zIndex: cardIds.value.length - offset,
-    };
-  }),
-);
+const geometry = computed<CardStackGeometry>(() => ({
+  cardCount: cards.length,
+  cardScaleYRatioLoss,
+  maxShownCards,
+  scale: scale.value,
+}));
+const state = computed<CardStackState>(() => ({
+  activeCardId: activeCardId.value,
+  cardIds: cardIds.value,
+  inactiveCardId: inactiveCardId.value,
+  maxShownCards,
+}));
+const classes = computed(() => cardIds.value.map((cardId) => getCardStackClass(cardId, state.value)));
+const normalCardStyles = computed(() => getNormalCardStyles(geometry.value));
+const cardStyles = computed(() => getCardStyles(cardIds.value, normalCardStyles.value));
 const activeCardStyle = computed<CardStyleVariables>(() => ({
   oldMarginRight: normalCardStyles.value.length > 0 ? takeOne(normalCardStyles.value).marginRight : "0",
 }));
-const inactiveCardStyle = computed<CardStyleVariables>(() => {
-  // Size is irrelevant with a single card.
-  if (cards.length === 1) return { scaleY: "1" };
-  else return { scaleY: `${1 - cardScaleYRatioLoss * (Math.min(maxShownCards, cards.length - 1) - 1)}` };
-});
-
-onMounted(() => {
-  // Comment this line out when debugging animations so the cards stop moving on you.
-  if (duration > 0)
-    moveCardsTimer.value = window.setInterval(() => {
-      moveCards();
-    }, duration);
-  moveCards();
-});
-
-onUnmounted(() => {
-  clearInterval(moveCardsTimer.value);
-});
-// Refresh the entire display back to the first step whenever cards update.
-watch(
-  () => cards,
-  (newCards) => {
-    cardIds.value = newCards.map((_card, index) => index);
-    inactiveCardId.value = undefined;
-    activeCardId.value = 0;
-  },
-);
+const inactiveCardStyle = computed<CardStyleVariables>(() => ({ scaleY: getInactiveCardScaleY(geometry.value) }));
 </script>
 
 <template>
