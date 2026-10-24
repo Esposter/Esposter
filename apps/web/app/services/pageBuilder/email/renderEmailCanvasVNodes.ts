@@ -1,5 +1,6 @@
 import type { EmailDocument } from "@/models/pageBuilder/EmailDocument";
 import type { EmailKind } from "@/models/pageBuilder/EmailKind";
+import type { MjmlNode } from "mjml-blocks";
 import type { VNode } from "vue";
 
 import { checkIsColumn } from "#shared/services/pageBuilder/email/checkIsColumn";
@@ -25,7 +26,7 @@ export const renderEmailCanvasVNodes = (kind: EmailKind, document: EmailDocument
     const childNodes = Object.values(slots).flat();
 
     if (node.type === MjmlNodeType.Section) {
-      const children = Object.values(getBlockSlots(kind.children, node)).flat();
+      const children = Object.values(getBlockSlots<MjmlNode>(kind.children, node)).flat();
       const columns = children.filter((child) => checkIsColumn(child));
       const widths = getEmailColumnWidths(columns);
       // A child that is not a column takes the whole row, and a column takes the width of its own place among the columns

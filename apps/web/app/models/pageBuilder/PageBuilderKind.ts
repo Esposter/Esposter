@@ -5,6 +5,7 @@ import type {
   BlockNode,
   BlockRegistry,
   BlockRootProps,
+  BlockSlots,
   BlockTypeDefinition,
 } from "headless-block-editor";
 import type { z } from "zod";
@@ -18,9 +19,10 @@ export interface PageBuilderKind<
   TDefinition extends BlockTypeDefinition<TNode>,
   TDocument,
 > {
-  children: BlockChildren<TNode>;
+  // Method syntax, so a kind over a narrower node type still assigns to the shared kind a shell holds of any node type
+  children(node: TNode): BlockSlots<TNode>;
   // The node a freshly inserted block of a type is, under the id the shell mints for it
-  createNode: (type: TNode["type"], id: string) => TNode;
+  createNode(type: TNode["type"], id: string): TNode;
   documentSchema: z.ZodType<TDocument>;
   // The editor a copied node is tagged with, so a paste can refuse a node from an editor the target does not take
   editor: PageBuilderEditor;
