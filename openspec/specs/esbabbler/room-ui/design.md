@@ -4,7 +4,7 @@ One cohesive polish pass over the room shell, matching Discord's refinements. Vi
 
 ## Role-grouped member list
 
-The member sidebar groups members Discord-style: one group per top hoisted role ordered by role position (highest first), with roleless members trailing in a single "Members" group. A member's display name is tinted with their top role's color; the implicit `@everyone` role never groups or tints. Grouping and top-role resolution are pure services (`getMemberGroups`, `getTopRole`). The rows are built by `getMemberListItems` from those groups, and each heading, count and description rule is its own pure service; all carry co-located tests.
+The member sidebar groups members Discord-style: one group per top hoisted role ordered by role position (highest first), with roleless members trailing in a single "Members" group. A member's display name is tinted with their top role's color; the implicit `@everyone` role never groups or tints. Grouping and top-role resolution are pure services (`getMemberGroups`, `getTopRole`). The rows are built by `getMemberListItems` from those groups, which takes each heading, count and description rule from its own pure service. The list and the description have co-located tests; the heading and the roleless count are tested through the list.
 
 ### Group counts
 
