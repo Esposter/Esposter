@@ -1,3 +1,4 @@
+import { TEST_ORIGIN } from "#shared/services/pageBuilder/constants.test";
 import { MAX_EMAIL_NODES } from "#shared/services/pageBuilder/email/constants";
 import { emailBodyChildrenSchema } from "#shared/services/pageBuilder/email/emailNodeSchema";
 import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry";
@@ -22,7 +23,7 @@ describe("starterEmail", () => {
     expect(result.success).toBe(true);
     if (!result.success) return;
 
-    await compileEmailDocument(result.data, { origin: "https://esposter.test" }).match(
+    await compileEmailDocument(result.data, { origin: TEST_ORIGIN }).match(
       (html) => {
         expect(html).toContain("Welcome aboard");
       },
