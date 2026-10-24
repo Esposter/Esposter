@@ -3,14 +3,13 @@ import type { Creator } from "@/models/message/Creator";
 import type { MessageEntity } from "@esposter/db-schema";
 
 import { MessageDisplayMode } from "@/models/message/MessageDisplayMode";
-import { SAME_BATCH_WINDOW_MS } from "@/services/message/constants";
+import { checkIsSameBatch } from "@/services/message/checkIsSameBatch";
 import { MessageComponentMap } from "@/services/message/MessageComponentMap";
 import { useMessageStore } from "@/store/message";
 import { useMessageDialogStore } from "@/store/message/dialog";
 import { useAppearanceStore } from "@/store/message/ui/appearance";
 import { useScrollStore } from "@/store/message/ui/scroll";
 import { useContextMenuStore } from "@/store/ui/contextMenu";
-import { MessageType } from "@esposter/db-schema";
 
 interface Props {
   creator: Creator;
@@ -19,15 +18,7 @@ interface Props {
 }
 
 const { creator, message, nextMessage } = defineProps<Props>();
-const isSameBatch = computed(
-  () =>
-    nextMessage &&
-    ((message.type === MessageType.Webhook &&
-      nextMessage.type === MessageType.Webhook &&
-      message.appUser.id === nextMessage.appUser.id) ||
-      message.userId === nextMessage.userId) &&
-    message.createdAt.getTime() - nextMessage.createdAt.getTime() <= SAME_BATCH_WINDOW_MS,
-);
+const isSameBatch = computed(() => checkIsSameBatch(message, nextMessage));
 const appearanceStore = useAppearanceStore();
 const { messageDisplayMode } = storeToRefs(appearanceStore);
 // Compact mode halves the batch gap and per-message padding so more messages fit on screen

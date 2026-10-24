@@ -57,6 +57,7 @@ The emoji index follows the same once-for-the-whole-list rule from the other dir
 | File                                                                    | Role                                                                                     |
 | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
 | `apps/web/app/components/Message/Model/Message/List/Item.vue`           | Hover wrapper, lazy options menu mount, context-menu handling                            |
+| `apps/web/app/services/message/checkIsSameBatch.ts`                     | The same-batch rule: one author's messages within the batch window                       |
 | `apps/web/app/components/Message/Model/Message/Type/Body.vue`           | Shared authored-message body, edited marker, editor slot                                 |
 | `apps/web/app/components/Message/Model/Message/Type/SystemLine.vue`     | Shared shell for the unauthored message lines                                            |
 | `apps/web/app/components/Message/Model/Message/OptionsMenu/Index.vue`   | The hover bar, and the context menu it opens with its items                              |
