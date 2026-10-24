@@ -16,6 +16,12 @@ describe(checkIsHorizontalFlow, () => {
     expect(checkIsHorizontalFlow(createElement({ display: "flex", flexDirection: "row" }))).toBe(true);
   });
 
+  test("an inline flex container laid out in a row is horizontal", () => {
+    expect.hasAssertions();
+
+    expect(checkIsHorizontalFlow(createElement({ display: "inline-flex", flexDirection: "row" }))).toBe(true);
+  });
+
   test("a flex column and a block are not horizontal", () => {
     expect.hasAssertions();
 
