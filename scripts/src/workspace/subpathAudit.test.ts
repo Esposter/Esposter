@@ -1,4 +1,4 @@
-import { REPOSITORY_ROOT, PACKAGE_JSON_FILENAME } from "#src/services/shared/constants";
+import { PACKAGE_JSON_FILENAME, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { TREE_READ_TIMEOUT_MS } from "#src/workspace/constants.test";
 import { readTsdownPackagePaths } from "#src/workspace/readTsdownPackagePaths.test";
