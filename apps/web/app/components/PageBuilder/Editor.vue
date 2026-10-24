@@ -62,7 +62,12 @@ const { copySelected, cutSelected, pasteSelected } = usePageBuilderClipboard(
 );
 usePageBuilderHistoryCommands(() => resourceId);
 usePageBuilderStyleCommands(() => resourceId);
-const { dropTarget, isDragging, startPaletteDrag } = usePageBuilderDrag(() => resourceId, announce);
+const { dropTarget, isDragging, startPaletteDrag } = usePageBuilderDrag(
+  webpageKind,
+  () => getDocument(resourceId),
+  () => resourceId,
+  announce,
+);
 const canvas = useTemplateRef("canvas");
 // The canvas is mounted only once the page has content, so a palette drag on an empty page finds no frame and stays a click
 const getFrameGeometry = () => canvas.value?.getFrameGeometry();

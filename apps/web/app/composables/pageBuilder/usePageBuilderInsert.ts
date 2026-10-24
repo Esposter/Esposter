@@ -1,30 +1,37 @@
-import type { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
+import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
+import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "headless-block-editor";
 import type { MaybeRefOrGetter } from "vue";
 
-import { WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
 import { getInsertTarget } from "@/services/pageBuilder/getInsertTarget";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { insertAt } from "@/services/pageBuilder/insertAt";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 
-// Inserts a new block of a type into one open resource's webpage, at the selection's place. An edit the slot refuses
+// Inserts a new block of a type into one open resource's document, at the selection's place. An edit the slot refuses
 // Does nothing and announces nothing. A landed insert is one history entry, selects the new node and is announced once
-export const usePageBuilderInsert = (resourceId: MaybeRefOrGetter<string>, announce: (message: string) => void) => {
-  const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-  const { getOpenDocument } = pageBuilderDocumentStore;
+export const usePageBuilderInsert = <
+  TNode extends BlockNode,
+  TRoot extends BlockRootProps,
+  TDefinition extends BlockTypeDefinition<TNode>,
+  TDocument extends BlockDocument<TNode, TRoot>,
+>(
+  kind: PageBuilderKind<TNode, TRoot, TDefinition, TDocument>,
+  getDocument: () => TDocument | undefined,
+  resourceId: MaybeRefOrGetter<string>,
+  announce: (message: string) => void,
+) => {
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
   const { getSelectedNodeId } = pageBuilderCanvasStore;
-  const insert = (type: WebpageNodeType) => {
+  const insert = (type: TNode["type"]) => {
     const resourceIdValue = toValue(resourceId);
-    const open = getOpenDocument(resourceIdValue);
-    if (!open) return;
+    const document = getDocument();
+    if (!document) return;
 
-    const { document, kind } = open;
     const nodeId = getSelectedNodeId(resourceIdValue);
     const target = getInsertTarget(kind, document, type, nodeId ? getNodePointer(kind, document, nodeId) : undefined);
-    if (target && insertAt(resourceIdValue, target.slotPointer, target.index, type))
-      announce(`Inserted ${WEBPAGE_NODE_TYPE_TITLE_MAP[type]}`);
+    const title = kind.titles[type];
+    if (target && insertAt(kind, document, resourceIdValue, target.slotPointer, target.index, type) && title)
+      announce(`Inserted ${title}`);
   };
 
   return { insert };

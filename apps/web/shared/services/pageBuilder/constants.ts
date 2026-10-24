@@ -71,3 +71,6 @@ export const STYLE_BREAKPOINT_ORDER = [StyleBreakpoint.Base, StyleBreakpoint.Tab
 // The pixel width each device other than desktop draws the page at, inside its own breakpoint
 export const DEVICE_WIDTH_MAP: Readonly<Record<Exclude<PageBuilderDevice, PageBuilderDevice.Desktop>, number>> =
   Object.freeze({ [PageBuilderDevice.Mobile]: 375, [PageBuilderDevice.Tablet]: 768 });
+
+// A UUID that names no survey, the one value a survey invite's id takes until its author chooses a survey
+export const NO_SURVEY_ID = "00000000-0000-0000-0000-000000000000";

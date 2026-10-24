@@ -1,11 +1,9 @@
-import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
-import type { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
 
-export interface DropTargetInput {
+export interface DropTargetInput<TDocument, TType> {
   checkIsHorizontalOwner: (ownerId: string) => boolean;
-  document: WebpageDocument;
-  draggedType: WebpageNodeType;
+  document: TDocument;
+  draggedType: TType;
   getChildRect: (nodeId: string) => OverlayBox | undefined;
   hoveredNodeId?: string;
   pointer: { x: number; y: number };

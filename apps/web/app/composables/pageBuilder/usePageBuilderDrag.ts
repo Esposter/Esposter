@@ -1,14 +1,13 @@
-import type { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import type { DropTarget } from "@/models/pageBuilder/DropTarget";
 import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
-import type { OpenWebpageDocument } from "@/store/pageBuilder/document";
+import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
+import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "headless-block-editor";
 import type { MaybeRefOrGetter } from "vue";
 
-import { DRAG_THRESHOLD, WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
+import { DRAG_THRESHOLD } from "@/services/pageBuilder/constants";
 import { insertAt } from "@/services/pageBuilder/insertAt";
 import { resolveDropTarget } from "@/services/pageBuilder/resolveDropTarget";
 import { toFramePoint } from "@/services/pageBuilder/toFramePoint";
-import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 
 const checkIsInsideFrame = (point: { x: number; y: number }, frameRect: FrameGeometry["frameRect"]) =>
   point.x >= frameRect.left &&
@@ -18,17 +17,23 @@ const checkIsInsideFrame = (point: { x: number; y: number }, frameRect: FrameGeo
 
 // The slot a block of the type dropped at a viewport point lands in, or none when the point is outside the frame, or when
 // The document is not held or no slot takes the type
-const getDropTargetAt = (
-  open: OpenWebpageDocument | undefined,
-  type: WebpageNodeType,
+const getDropTargetAt = <
+  TNode extends BlockNode,
+  TRoot extends BlockRootProps,
+  TDefinition extends BlockTypeDefinition<TNode>,
+  TDocument extends BlockDocument<TNode, TRoot>,
+>(
+  kind: PageBuilderKind<TNode, TRoot, TDefinition, TDocument>,
+  document: TDocument | undefined,
+  type: TNode["type"],
   point: { x: number; y: number },
   geometry: FrameGeometry | undefined,
 ): DropTarget | undefined => {
-  if (!open || !geometry || !checkIsInsideFrame(point, geometry.frameRect)) return undefined;
+  if (!document || !geometry || !checkIsInsideFrame(point, geometry.frameRect)) return undefined;
 
-  return resolveDropTarget(open.kind, {
+  return resolveDropTarget(kind, {
     checkIsHorizontalOwner: geometry.checkIsHorizontalOwner,
-    document: open.document,
+    document,
     draggedType: type,
     getChildRect: geometry.getChildRect,
     hoveredNodeId: geometry.hoveredNodeId,
@@ -39,15 +44,23 @@ const getDropTargetAt = (
 // A palette block dragged into the slot under the pointer. The drop indicator's target is held here for the canvas to draw,
 // And a release with a target inserts the block there, announced once. A press that never moves past the threshold is a click
 // That the block's own button handles, so the drag does nothing; Escape, a cancel or a release with no target inserts nothing
-export const usePageBuilderDrag = (resourceId: MaybeRefOrGetter<string>, announce: (message: string) => void) => {
-  const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-  const { getOpenDocument } = pageBuilderDocumentStore;
+export const usePageBuilderDrag = <
+  TNode extends BlockNode,
+  TRoot extends BlockRootProps,
+  TDefinition extends BlockTypeDefinition<TNode>,
+  TDocument extends BlockDocument<TNode, TRoot>,
+>(
+  kind: PageBuilderKind<TNode, TRoot, TDefinition, TDocument>,
+  getDocument: () => TDocument | undefined,
+  resourceId: MaybeRefOrGetter<string>,
+  announce: (message: string) => void,
+) => {
   const dropTarget = shallowRef<DropTarget>();
   // Set once a drag passes the threshold, so the editor can let the pointer pass through the canvas frame, whose document would take it
   const isDragging = ref(false);
 
   const startPaletteDrag = (
-    type: WebpageNodeType,
+    type: TNode["type"],
     event: PointerEvent,
     getFrameGeometry: () => FrameGeometry | undefined,
   ) => {
@@ -63,16 +76,18 @@ export const usePageBuilderDrag = (resourceId: MaybeRefOrGetter<string>, announc
       if (Math.hypot(point.x - startX, point.y - startY) >= DRAG_THRESHOLD) isDragging.value = true;
       if (!isDragging.value) return;
 
-      dropTarget.value = getDropTargetAt(getOpenDocument(toValue(resourceId)), type, point, getFrameGeometry());
+      dropTarget.value = getDropTargetAt(kind, getDocument(), type, point, getFrameGeometry());
     };
     const onPointerUp = () => {
       const wasDragging = isDragging.value;
       const landing = dropTarget.value;
       endDrag();
-      if (!wasDragging || landing === undefined) return;
+      const document = getDocument();
+      if (!wasDragging || landing === undefined || !document) return;
 
-      if (insertAt(toValue(resourceId), landing.slotPointer, landing.index, type))
-        announce(`Inserted ${WEBPAGE_NODE_TYPE_TITLE_MAP[type]}`);
+      const title = kind.titles[type];
+      if (insertAt(kind, document, toValue(resourceId), landing.slotPointer, landing.index, type) && title)
+        announce(`Inserted ${title}`);
     };
     const onKeydown = (keyEvent: KeyboardEvent) => {
       if (keyEvent.key === "Escape") endDrag();

@@ -6,12 +6,12 @@ import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import { createButton } from "#shared/services/pageBuilder/createButton.test";
 import { usePageBuilderInsert } from "@/composables/pageBuilder/usePageBuilderInsert";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { createWebpageNode } from "@/services/pageBuilder/webpageNodeDefaults";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { createPinia, setActivePinia } from "pinia";
 import { describe, expect, test, vi } from "vitest";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 const setup = (selectedNodeId: string, content: WebpageDocument["content"]) => {
   setActivePinia(createPinia());
@@ -21,7 +21,12 @@ const setup = (selectedNodeId: string, content: WebpageDocument["content"]) => {
   pageBuilderDocumentStore.setDocument(resourceId, webpageKind, { content, root: TEST_ROOT });
   pageBuilderCanvasStore.setSelectedNodeId(resourceId, selectedNodeId);
   const announce = vi.fn<(message: string) => void>();
-  const { insert } = usePageBuilderInsert(resourceId, announce);
+  const { insert } = usePageBuilderInsert(
+    webpageKind,
+    () => pageBuilderDocumentStore.getDocument(resourceId),
+    resourceId,
+    announce,
+  );
   // The id the insert gives its new node, fixed so a test reads it exactly
   const insertedId = crypto.randomUUID();
   vi.spyOn(crypto, "randomUUID").mockReturnValueOnce(insertedId);

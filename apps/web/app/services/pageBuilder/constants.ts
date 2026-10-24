@@ -1,5 +1,6 @@
 import type { StyleProperty } from "#shared/models/pageBuilder/StyleProperty";
-import type { WebpagePaletteCategory } from "@/models/pageBuilder/WebpagePaletteCategory";
+import type { WebpageNode } from "#shared/models/pageBuilder/WebpageNode";
+import type { PageBuilderPaletteCategory } from "@/models/pageBuilder/PageBuilderPaletteCategory";
 
 import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice";
 import { StyleBreakpoint } from "#shared/models/pageBuilder/StyleBreakpoint";
@@ -34,7 +35,7 @@ export const LINE_THICKNESS = 2;
 export const DRAG_THRESHOLD = 4;
 // The palette's categories in the order shown, each with the node types it lists in the order shown. Column and Tab are not
 // Listed, since only Columns and Tabs hold them
-export const WEBPAGE_PALETTE_CATEGORIES: readonly WebpagePaletteCategory[] = Object.freeze([
+export const WEBPAGE_PALETTE_CATEGORIES: readonly PageBuilderPaletteCategory<WebpageNode>[] = Object.freeze([
   Object.freeze({ category: "Layout", types: Object.freeze([WebpageNodeType.Section, WebpageNodeType.Columns]) }),
   Object.freeze({
     category: "Content",

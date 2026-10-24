@@ -1,4 +1,5 @@
 import type { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
+import type { PageBuilderPaletteCategory } from "@/models/pageBuilder/PageBuilderPaletteCategory";
 import type {
   BlockChildren,
   BlockNode,
@@ -18,11 +19,15 @@ export interface PageBuilderKind<
   TDocument,
 > {
   children: BlockChildren<TNode>;
+  // The node a freshly inserted block of a type is, under the id the shell mints for it
+  createNode: (type: TNode["type"], id: string) => TNode;
   documentSchema: z.ZodType<TDocument>;
   // The editor a copied node is tagged with, so a paste can refuse a node from an editor the target does not take
   editor: PageBuilderEditor;
   // The schema one node parses by, which a duplicate or a paste checks its copy against before it is written
   nodeSchema: z.ZodType<TNode>;
+  // The groups the palette lists the node types in, in the order shown
+  paletteCategories: readonly PageBuilderPaletteCategory<TNode>[];
   registry: BlockRegistry<TNode, TRoot, TDefinition>;
   // The title each node type is shown by in the layers, the palette and the paths the shell names a slot with
   titles: Readonly<Record<string, string>>;

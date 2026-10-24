@@ -53,7 +53,7 @@ const { checkIsHorizontalOwner, getElement, getFrameGeometry, toolbarPosition } 
 );
 const { selectAdjacentNode, selectParent } = usePageBuilderSelection(
   webpageKind,
-  () => getDocument(resourceId),
+  () => pageDocument.value,
   () => resourceId,
 );
 // The node element the editor is mounted in, found once the draw has put it in the frame

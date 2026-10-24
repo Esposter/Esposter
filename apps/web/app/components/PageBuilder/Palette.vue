@@ -3,6 +3,8 @@ import type { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType
 import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
 
 import { WEBPAGE_NODE_TYPE_TITLE_MAP, WEBPAGE_PALETTE_CATEGORIES } from "@/services/pageBuilder/constants";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
+import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 
 interface Props {
   announce: (message: string) => void;
@@ -16,7 +18,14 @@ interface Props {
   ) => void;
 }
 const { announce, getFrameGeometry, resourceId, startPaletteDrag } = defineProps<Props>();
-const { insert } = usePageBuilderInsert(() => resourceId, announce);
+const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+const { getDocument } = pageBuilderDocumentStore;
+const { insert } = usePageBuilderInsert(
+  webpageKind,
+  () => getDocument(resourceId),
+  () => resourceId,
+  announce,
+);
 
 // A press starts a drag only where a frame can take the block, so a press that has no frame stays a click
 const startDrag = (type: WebpageNodeType, event: PointerEvent) => {

@@ -9,11 +9,11 @@ import { usePageBuilderDrag } from "@/composables/pageBuilder/usePageBuilderDrag
 import { WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
 import { TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
 import { getSlotChildIds } from "@/services/pageBuilder/getSlotChildIds";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { createPinia, setActivePinia } from "pinia";
 import { describe, expect, test, vi } from "vitest";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 const createText = (id: string): TextNode => ({
   props: { content: TEST_TEXT_CONTENT, id },
@@ -43,7 +43,12 @@ describe("usePageBuilderDrag", () => {
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(RESOURCE_ID, webpageKind, document);
     const announce = vi.fn<(message: string) => void>();
-    const { isDragging, startPaletteDrag } = usePageBuilderDrag(RESOURCE_ID, announce);
+    const { isDragging, startPaletteDrag } = usePageBuilderDrag(
+      webpageKind,
+      () => pageBuilderDocumentStore.getDocument(RESOURCE_ID),
+      RESOURCE_ID,
+      announce,
+    );
     return { announce, isDragging, pageBuilderCanvasStore, pageBuilderDocumentStore, startPaletteDrag };
   };
 

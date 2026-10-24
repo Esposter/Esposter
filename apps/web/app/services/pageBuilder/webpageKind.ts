@@ -5,13 +5,16 @@ import { webpageNodeChildren } from "#shared/services/pageBuilder/webpageNodeChi
 import { webpageNodeSchema } from "#shared/services/pageBuilder/webpageNodeSchema";
 import { webpageRegistry } from "#shared/services/pageBuilder/webpageRegistry";
 import { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
-import { WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
+import { WEBPAGE_NODE_TYPE_TITLE_MAP, WEBPAGE_PALETTE_CATEGORIES } from "@/services/pageBuilder/constants";
+import { createWebpageNode } from "@/services/pageBuilder/webpageNodeDefaults";
 
 export const webpageKind: WebpageKind = {
   children: webpageNodeChildren,
+  createNode: createWebpageNode,
   documentSchema: webpageDocumentSchema,
   editor: PageBuilderEditor.Webpage,
   nodeSchema: webpageNodeSchema,
+  paletteCategories: WEBPAGE_PALETTE_CATEGORIES,
   registry: webpageRegistry,
   titles: WEBPAGE_NODE_TYPE_TITLE_MAP,
 };
