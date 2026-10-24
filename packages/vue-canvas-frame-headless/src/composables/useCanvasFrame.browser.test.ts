@@ -80,7 +80,7 @@ describe(useCanvasFrame, () => {
     expect(frame.contentWindow?.innerWidth).toBe(768);
   });
 
-  test("a page's body style does not restyle the host", async () => {
+  test("a page's body style does not restyle the editor", async () => {
     expect.hasAssertions();
     const frame = await settleFrame(
       mountCanvasFrame({ css: "body { background-color: rgb(255, 0, 0) }", paneWidth: 600, width: 992 }),
@@ -91,7 +91,7 @@ describe(useCanvasFrame, () => {
     expect(getComputedStyle(document.body).backgroundColor).not.toBe("rgb(255, 0, 0)");
   });
 
-  test("a script inside injected markup does not run", async () => {
+  test("a script inside a custom HTML block does not run in the canvas", async () => {
     expect.hasAssertions();
     const frame = await settleFrame(
       mountCanvasFrame({ paneWidth: 600, width: 992 }, () =>
