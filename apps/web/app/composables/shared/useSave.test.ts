@@ -1,10 +1,12 @@
 // @vitest-environment nuxt
+import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { TRPCClientError } from "@trpc/client";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock("@/services/auth/authClient", () => ({
   authClient: { useSession: () => ({ value: { data: { user: {} } } }) },
 }));
+vi.mock(import("@/services/trpc/createErrorAlert"));
 
 interface Counter {
   count: number;
@@ -60,7 +62,7 @@ describe(useSave, () => {
   test("reloads the page when the save is refused as a conflict", async () => {
     expect.hasAssertions();
 
-    const reload = vi.fn();
+    const reload = vi.fn<() => void>();
     vi.stubGlobal("location", { reload });
     const state = ref(createCounter());
     const save = vi.fn<(value: Counter, etag: string | undefined) => Promise<{ etag: string }>>(() =>
@@ -71,5 +73,23 @@ describe(useSave, () => {
     await saveState();
 
     expect(reload).toHaveBeenCalledOnce();
+  });
+
+  // A save that fails for any other reason is not a conflict, so the user is told rather than left with a silent loss
+  test("alerts the user and does not reload when the save fails for any other reason", async () => {
+    expect.hasAssertions();
+
+    const reload = vi.fn<() => void>();
+    vi.stubGlobal("location", { reload });
+    const state = ref(createCounter());
+    const save = vi.fn<(value: Counter, etag: string | undefined) => Promise<{ etag: string }>>(() =>
+      Promise.reject(new Error("network")),
+    );
+    const { save: saveState } = useSave(state, { auth: { save } });
+    state.value.count = 1;
+    await saveState();
+
+    expect(createErrorAlert).toHaveBeenCalledTimes(1);
+    expect(reload).not.toHaveBeenCalled();
   });
 });
