@@ -36,6 +36,18 @@ describe("styleField", () => {
       expect((component.get("input").element as HTMLInputElement).value).toBe("notacolour");
     });
 
+    test("the arrows step a length by one and Shift by ten, keeping its unit", async () => {
+      expect.hasAssertions();
+
+      vi.stubGlobal("CSS", { supports: () => true });
+      const component = mount(UiStyleField, { props: { label: "Width", modelValue: "10rem", property: "width" } });
+
+      await component.get("input").trigger("keydown", { key: "ArrowUp" });
+      await component.get("input").trigger("keydown", { key: "ArrowDown", shiftKey: true });
+
+      expect(component.emitted<[string]>("update:modelValue")).toStrictEqual([["11rem"], ["1rem"]]);
+    });
+
     test("a style value with a brace is refused", async () => {
       expect.hasAssertions();
 

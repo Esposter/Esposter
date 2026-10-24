@@ -93,6 +93,32 @@ export const STYLE_CHOICES: Partial<Record<StyleProperty, string[]>> = {
   "justify-content": ["flex-start", "center", "flex-end", "space-between"],
   "text-align": ["left", "center", "right", "justify"],
 };
+// The properties the style panel draws as a length, a number with a unit its select offers
+export const STYLE_LENGTH_PROPERTIES: readonly StyleProperty[] = [
+  "margin-top",
+  "margin-right",
+  "margin-bottom",
+  "margin-left",
+  "padding-top",
+  "padding-right",
+  "padding-bottom",
+  "padding-left",
+  "width",
+  "height",
+  "max-width",
+  "top",
+  "right",
+  "bottom",
+  "left",
+  "gap",
+  "font-size",
+  "letter-spacing",
+  "border-width",
+  "border-radius",
+];
+// The units a length's select offers, and the one a number with none is shown in
+export const STYLE_LENGTH_UNITS = ["px", "rem", "em", "%", "vw", "vh"];
+export const DEFAULT_LENGTH_UNIT = "px";
 // The sectors the style panel groups its properties in, in the order it draws them
 export const STYLE_SECTORS = [
   { properties: ["display", "flex-direction", "justify-content", "align-items", "gap"], title: "Layout" },
