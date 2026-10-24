@@ -62,7 +62,12 @@ watch(draft, (value) => {
       @keydown="stepAmount($event)"
       @update:model-value="(amount) => setAmount(amount)"
     />
-    <UiSelect :items="unitItems" :label="`${label} unit`" :model-value="unit" @update:model-value="setUnit" />
+    <UiSelect
+      :items="unitItems"
+      :label="`${label} unit`"
+      :model-value="unit"
+      @update:model-value="(lengthUnit) => setUnit(lengthUnit)"
+    />
   </div>
   <UiTextField v-else v-model="draft" :label :placeholder :rules />
 </template>

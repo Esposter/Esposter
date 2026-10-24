@@ -27,12 +27,12 @@ const getReference = (name: string) => `var(--${name})`;
         :key="swatch.name"
         type="button"
         ui-button
-        rd-full
         outline-2
-        outline-offset-2
         outline-transparent
+        outline-offset-2
         outline-solid
-        aria-pressed:outline-accent
+        rd-full
+        class="aria-pressed:outline-accent"
         :aria-label="swatch.name"
         :aria-pressed="modelValue === getReference(swatch.name)"
         :style="{ backgroundColor: swatch.value }"
