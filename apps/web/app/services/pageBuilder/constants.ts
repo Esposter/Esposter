@@ -90,6 +90,8 @@ export const DEVICE_BREAKPOINT_MAP = {
   [PageBuilderDevice.Mobile]: StyleBreakpoint.Mobile,
   [PageBuilderDevice.Tablet]: StyleBreakpoint.Tablet,
 } satisfies Record<PageBuilderDevice, StyleBreakpoint>;
+// The properties the style panel draws as a colour field, which offers the page's theme colours as swatches
+export const STYLE_COLOR_PROPERTIES = ["color", "background-color", "border-color"] satisfies StyleProperty[];
 // The sectors the style panel groups its properties in, in the order it draws them
 export const STYLE_SECTORS = [
   { properties: ["display", "flex-direction", "justify-content", "align-items", "gap"], title: "Layout" },

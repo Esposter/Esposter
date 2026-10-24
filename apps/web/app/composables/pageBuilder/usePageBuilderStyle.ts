@@ -41,6 +41,7 @@ export const usePageBuilderStyle = (resourceId: MaybeRefOrGetter<string>) => {
     const state = getState();
     const inheritance = getStyleInheritance(targetValue?.style ?? {}, breakpoint, state, property);
     return {
+      inheritedValue: inheritance?.value,
       placeholder: inheritance ? `${inheritance.value}, from ${inheritance.from}` : undefined,
       value: targetValue?.style?.[breakpoint]?.[state]?.[property] ?? "",
     };
