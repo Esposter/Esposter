@@ -2,10 +2,12 @@ import type { ResourceInResource } from "@esposter/db-schema";
 
 import { ResourceType } from "@esposter/db-schema";
 
-const DERIVED_CONTENT_TYPES = new Set<ResourceType>([ResourceType.Email, ResourceType.Webpage]);
+const DERIVED_CONTENT_TYPES = new Set<ResourceType>([ResourceType.Webpage]);
 
-// A published snapshot holds the html its type baked at publish, which the working copy never does: the tree is what
-// Publish renders from. A restore writes a snapshot back into the working copy, so the baked html is left out of it
+// A published webpage holds the html the server baked at publish from its tree, which the working copy never holds: the
+// Tree is what Publish renders from. A restore writes a snapshot back into the working copy, so the baked html is left
+// Out of it. An email's working copy does hold its compiled html, captured on every save, so a restore keeps it, since
+// Nothing re-derives it before the next publish
 export const omitDerivedContent = (resource: ResourceInResource, content: unknown): unknown => {
   if (!DERIVED_CONTENT_TYPES.has(resource.type) || typeof content !== "object" || content === null) return content;
 
