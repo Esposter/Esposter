@@ -48,6 +48,17 @@ describe("styleField", () => {
       expect(component.emitted<[string]>("update:modelValue")).toStrictEqual([["11rem"], ["1rem"]]);
     });
 
+    test("the arrows step a decimal length without float noise", async () => {
+      expect.hasAssertions();
+
+      vi.stubGlobal("CSS", { supports: () => true });
+      const component = mount(UiStyleField, { props: { label: "Width", modelValue: "0.14rem", property: "width" } });
+
+      await component.get("input").trigger("keydown", { key: "ArrowUp" });
+
+      expect(component.emitted<[string]>("update:modelValue")).toStrictEqual([["1.14rem"]]);
+    });
+
     test("a length with no number has its unit select disabled until a number is typed", async () => {
       expect.hasAssertions();
 

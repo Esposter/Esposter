@@ -42,7 +42,8 @@ const stepAmount = (event: KeyboardEvent) => {
   event.preventDefault();
   const step = (event.key === "ArrowUp" ? 1 : -1) * (event.shiftKey ? 10 : 1);
   const amount = Number(lengthParts.value?.amount) || 0;
-  draft.value = getDraft(String(amount + step), unit.value);
+  // Rounded, since a decimal amount plus a step can carry float noise, such as 0.14 + 1
+  draft.value = getDraft(String(Number((amount + step).toFixed(6))), unit.value);
 };
 
 watch(modelValue, (value) => {
@@ -67,7 +68,7 @@ watch(draft, (value) => {
       @update:model-value="(amount) => setAmount(amount)"
     />
     <UiSelect
-      :disabled="lengthParts.amount === ''"
+      :is-disabled="lengthParts.amount === ''"
       :items="unitItems"
       :label="`${label} unit`"
       :model-value="unit"
