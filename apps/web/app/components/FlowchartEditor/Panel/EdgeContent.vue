@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import type { GraphEdge } from "#shared/models/flowchartEditor/data/GraphEdge";
+import type { GraphEdgePatch } from "@/services/flowchartEditor/patchEdge";
 
 import { EDGE_PATH_TYPE_ITEMS } from "@/services/flowchartEditor/constants";
+import { patchEdge } from "@/services/flowchartEditor/patchEdge";
 import { useVueFlow } from "@vue-flow/core";
 
 // @TODO: https://github.com/vuejs/core/issues/11371
@@ -13,8 +15,7 @@ interface Props {
 
 const { id, label, type } = defineProps<Props>();
 const { setEdges } = useVueFlow();
-const updateEdge = (patch: Partial<Pick<GraphEdge, "label" | "type">>) =>
-  setEdges((edges) => edges.map((edge) => (edge.id === id ? { ...edge, ...patch } : edge)));
+const updateEdge = (patch: GraphEdgePatch) => setEdges((edges) => patchEdge(edges, id, patch));
 const edgeLabel = computed({ get: () => label || "", set: (newLabel) => updateEdge({ label: newLabel }) });
 const pathType = computed({ get: () => type, set: (newType) => updateEdge({ type: newType }) });
 </script>

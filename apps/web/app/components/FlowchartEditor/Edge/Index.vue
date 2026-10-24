@@ -4,6 +4,7 @@ import type { Position } from "@vue-flow/core";
 import type { CSSProperties } from "vue";
 
 import { EdgePathMap } from "@/services/flowchartEditor/EdgePathMap";
+import { patchEdge } from "@/services/flowchartEditor/patchEdge";
 import { BaseEdge, EdgeLabelRenderer, useVueFlow } from "@vue-flow/core";
 
 // @TODO: https://github.com/vuejs/core/issues/11371
@@ -44,7 +45,7 @@ const commitLabel = () => {
   if (!isEditing.value) return;
 
   isEditing.value = false;
-  setEdges((edges) => edges.map((edge) => (edge.id === id ? { ...edge, label: editedLabel.value } : edge)));
+  setEdges((edges) => patchEdge(edges, id, { label: editedLabel.value }));
 };
 </script>
 

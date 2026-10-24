@@ -26,7 +26,7 @@ flowchart LR
 
 - **Path choices.** The panel offers curved, right-angled and straight. Vue Flow's step and simple-bezier types stay valid in the schema, since a stored edge may hold either, but the panel does not offer them.
 - **Legacy edges.** An edge saved before this change has no `markerEnd`, so it draws the default arrow the moment the canvas loads it.
-- **One write path.** Label and path edits go through `setEdges`, so they reach the same `update:edges` autosave as a drag does.
+- **One write path.** Label and path edits go through `setEdges`, so they reach the same `update:edges` autosave as a drag does. Both hand their patch to `patchEdge`, which lays it over the one edge it names, so the two fields cannot drift apart.
 - **One panel at a time.** A node selected together with an edge keeps the node's panel, so the two never stack.
 
 ## Left out
@@ -42,6 +42,7 @@ flowchart LR
 | `apps/web/app/services/flowchartEditor/constants.ts`            | `DEFAULT_EDGE_OPTIONS` and the path toggle items        |
 | `apps/web/app/services/flowchartEditor/EdgeTypeMap.ts`          | every path type drawn through the labelled edge         |
 | `apps/web/app/services/flowchartEditor/EdgePathMap.ts`          | each path type's path function                          |
+| `apps/web/app/services/flowchartEditor/patchEdge.ts`            | the one edge patch that label and path edits both write |
 | `apps/web/app/components/FlowchartEditor/Edge/Index.vue`        | the labelled edge and its inline label editor           |
 | `apps/web/app/components/FlowchartEditor/Panel/Index.vue`       | the properties panel, for a node or an edge             |
 | `apps/web/app/components/FlowchartEditor/Panel/EdgeContent.vue` | the edge's label and path fields                        |
