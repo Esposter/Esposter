@@ -31,5 +31,7 @@
   "frames.solarIsotomaDuration": { "file": "skill.go", "line": 68, "source": "Gcsim", "value": 1800 },
   "frames.transientBlossomCooldown": { "file": "skill.go", "line": 129, "source": "Gcsim", "value": 120 },
   "parameters.solarIsotomaAheadMetres": { "file": "skill.go", "line": 52, "source": "Gcsim", "value": 3 },
-  "parameters.solarIsotomaRadius": { "file": "skill.go", "line": 53, "source": "Gcsim", "value": 10 }
+  "parameters.solarIsotomaRadius": { "file": "skill.go", "line": 53, "source": "Gcsim", "value": 10 },
+  "chargedAttack.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 5, "proudSkillGroupId": 3831 } },
+  "chargedAttack.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 6, "proudSkillGroupId": 3831 } }
 }
