@@ -2,7 +2,7 @@
 
 ## Why
 
-A blueprint is the one resource whose purpose is reuse. Capture gathers a working setup into a manifest and deploy turns the manifest into resources, but the manifest leaves the app only as the text of the Editor blade. Every other resource with a reusable form already has a file through the Portable capability: a Sheet exports CSV, JSON and XLSX, a Note exports Markdown, a Flowchart exports PNG and SVG. The resource roadmap names the Azure portal's template deployment as the Blueprint's reference, and that product exports and imports the template. This is gap 9 of the [gap survey](../gap-survey-2026-10-25/proposal.md).
+A blueprint is the one resource whose purpose is reuse. Capture gathers a working setup into a manifest and deploy turns the manifest into resources, but the manifest leaves the app only as the text of the Editor blade. Every other resource with a reusable form already has a file through the Portable capability: a Sheet exports CSV, JSON and XLSX, a Note exports Markdown, a Flowchart exports PNG and SVG. The resource roadmap names the Azure portal's template deployment as the Blueprint's reference, and that product exports and imports the template. This is gap 9 of the [gap survey](../2026-10-25-gap-survey-2026-10-25/proposal.md).
 
 ## What Changes
 
