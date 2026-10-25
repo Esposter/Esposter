@@ -13,6 +13,27 @@ const SKILL = CombatTalent.ElementalSkill;
 // Hold is his skill's hold, read from its Hold DMG label. Vesna's skill tag is the wiki's, so her skill reads its label
 // Here like her burst
 export const CharacterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = new Map<number, KitSlotLabels>([
+  // Bennett. Fantastic Voyage's healing reads its burst's Continuous Regeneration label, the share of Max HP and the flat
+  // Amount at its positions, and its ATK share, field seconds read its ATK Bonus Ratio and Duration labels
+  [
+    10_000_032,
+    {
+      values: {
+        "parameters.fantasticVoyageBaseAttackShare": { combatTalent: BURST, label: "ATK Bonus Ratio" },
+        "parameters.fantasticVoyageFieldSeconds": { combatTalent: BURST, label: "Duration" },
+        "parameters.fantasticVoyageFlatHeal": {
+          combatTalent: BURST,
+          label: "Continuous Regeneration Per Sec",
+          position: 1,
+        },
+        "parameters.fantasticVoyageMaxHealthHealShare": {
+          combatTalent: BURST,
+          label: "Continuous Regeneration Per Sec",
+          position: 0,
+        },
+      },
+    },
+  ],
   // Diona. Icy Paws' hold shield multiplier reads its skill's Duration label at its position, and Signature Mix's
   // Duration reads her burst's, the field's seconds the burst's Duration label gives
   [

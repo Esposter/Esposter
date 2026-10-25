@@ -2,19 +2,10 @@
   "frames.fantasticVoyageFieldBuff": { "file": "burst.go", "line": 20, "source": "Gcsim", "value": 126 },
   "frames.fantasticVoyageFieldFirstTick": { "file": "burst.go", "line": 19, "source": "Gcsim", "value": 34 },
   "frames.fantasticVoyageFieldStart": { "file": "burst.go", "line": 19, "source": "Gcsim", "value": 34 },
-  "parameters.fantasticVoyageFlatHeal": { "cause": "Unclassified", "value": { "index": 2, "proudSkillGroupId": 3239 } },
-  "parameters.fantasticVoyageMaxHealthHealShare": {
-    "cause": "Unclassified",
-    "value": { "index": 1, "proudSkillGroupId": 3239 }
-  },
-  "parameters.fantasticVoyageBaseAttackShare": {
-    "cause": "Unclassified",
-    "value": { "index": 3, "proudSkillGroupId": 3239 }
-  },
-  "parameters.fantasticVoyageFieldSeconds": {
-    "cause": "Unclassified",
-    "value": { "index": 4, "proudSkillGroupId": 3239 }
-  },
+  "parameters.fantasticVoyageFlatHeal": { "source": "Tables" },
+  "parameters.fantasticVoyageMaxHealthHealShare": { "source": "Tables" },
+  "parameters.fantasticVoyageBaseAttackShare": { "source": "Tables" },
+  "parameters.fantasticVoyageFieldSeconds": { "source": "Tables" },
   "skillHolds.0.action.animationFrames": { "file": "skill.go", "line": 37, "source": "Gcsim", "value": 98 },
   "skillHolds.0.action.hits.0.area": {
     "cause": "Unclassified",
