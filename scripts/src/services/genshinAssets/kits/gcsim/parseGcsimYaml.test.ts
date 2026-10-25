@@ -6,13 +6,13 @@ describe(parseGcsimYaml, () => {
     expect.hasAssertions();
 
     expect(() => parseGcsimYaml("box: [1:2]")).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: parseGcsimYaml, unreadable flow collection "[1:2]"]`,
+      `[InvalidOperationError: Invalid operation: Read, name: parseFlow, unreadable flow collection "[1:2]"]`,
     );
     expect(() => parseGcsimYaml("box: [1.2, 3")).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: parseGcsimYaml, unreadable flow collection "[1.2, 3"]`,
+      `[InvalidOperationError: Invalid operation: Read, name: parseFlow, unreadable flow collection "[1.2, 3"]`,
     );
     expect(() => parseGcsimYaml("hitlag: { time: 0.03")).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Read, name: parseGcsimYaml, unreadable flow collection "{ time: 0.03"]`,
+      `[InvalidOperationError: Invalid operation: Read, name: parseFlow, unreadable flow collection "{ time: 0.03"]`,
     );
   });
 

@@ -1,4 +1,3 @@
-import { parseGcsimYaml } from "#src/services/genshinAssets/kits/gcsim/parseGcsimYaml";
 import { parseScalar } from "#src/services/genshinAssets/kits/gcsim/parseScalar";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
@@ -47,7 +46,7 @@ export const parseFlow = (text: string): unknown => {
     while (position < text.length && !FLOW_DELIMITER_REGEX.test(text[position] ?? "")) position++;
     // A value with no characters, at a delimiter or the end of the text, would leave every loop above where it found it
     if (position === start)
-      throw new InvalidOperationError(Operation.Read, parseGcsimYaml.name, `unreadable flow collection "${text}"`);
+      throw new InvalidOperationError(Operation.Read, parseFlow.name, `unreadable flow collection "${text}"`);
     return parseScalar(text.slice(start, position).trim());
   };
   return readValue();

@@ -1,4 +1,3 @@
-import { readSerializedBlobChunk } from "#src/services/genshinAssets/materials/readSerializedBlobChunk";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 const DXBC_MAGIC = "DXBC";
@@ -9,6 +8,6 @@ export const readContainer = (payload: Buffer): Buffer => {
   if (payload.length === 0) return payload;
   const magicOffset = payload.indexOf(DXBC_MAGIC);
   if (magicOffset === -1 || magicOffset >= DXBC_SEARCH_BYTES)
-    throw new InvalidOperationError(Operation.Read, readSerializedBlobChunk.name, "a program holds no DXBC container");
+    throw new InvalidOperationError(Operation.Read, readContainer.name, "a program holds no DXBC container");
   return payload.subarray(magicOffset);
 };
