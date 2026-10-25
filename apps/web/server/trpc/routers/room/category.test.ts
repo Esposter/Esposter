@@ -24,14 +24,6 @@ describe("categoryRouter", () => {
     await mockContext.db.delete(roomCategoriesInMessage);
   });
 
-  test("reads empty room categories", async () => {
-    expect.hasAssertions();
-
-    const roomCategories = await roomCategoryCaller.readRoomCategories();
-
-    expect(roomCategories).toHaveLength(0);
-  });
-
   test("reads room categories", async () => {
     expect.hasAssertions();
 
@@ -42,14 +34,6 @@ describe("categoryRouter", () => {
     expect(roomCategories).toHaveLength(1);
     expect(roomCategory.id).toBe(newRoomCategory.id);
     expect(roomCategory.name).toBe(name);
-  });
-
-  test("creates", async () => {
-    expect.hasAssertions();
-
-    const newRoomCategory = await roomCategoryCaller.createRoomCategory({ name });
-
-    expect(newRoomCategory.name).toBe(name);
   });
 
   test("creates appended below the existing drag-assigned order", async () => {

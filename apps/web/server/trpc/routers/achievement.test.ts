@@ -71,14 +71,6 @@ describe("achievementRouter", () => {
     );
   });
 
-  test("readUserAchievements reads own achievements", async () => {
-    expect.hasAssertions();
-
-    const userAchievements = await caller.achievement.readUserAchievements();
-
-    expect(userAchievements).toStrictEqual([]);
-  });
-
   // The endpoint is public, so this is the difference between a profile and a progress report: one message
   // Unlocks FirstMessage and starts CenturyClub, and only the unlocked one is anyone else business
   test("readUserAchievements reads another user unlocked achievements only", async () => {

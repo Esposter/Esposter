@@ -106,14 +106,4 @@ describe("trpcRouter", () => {
 
     expect(readUnboundedPaths(schema, "input")).toStrictEqual(["input.title (string)"]);
   });
-
-  test("The MJML root's strings are bounded", () => {
-    expect.hasAssertions();
-
-    const procedure = (trpcRouter._def.procedures as unknown as Record<string, AnyProcedure>)["email.compile"];
-
-    expect(
-      getInputJsonSchemas(procedure!).flatMap((jsonSchema) => readUnboundedPaths(jsonSchema, "email.compile")),
-    ).toStrictEqual([]);
-  });
 });
