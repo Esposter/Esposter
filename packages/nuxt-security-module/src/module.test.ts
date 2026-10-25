@@ -15,7 +15,11 @@ vi.mock(import("@nuxt/kit"), async (importOriginal) => ({
   addNitroPlugin: vi.fn<typeof import("@nuxt/kit").addNitroPlugin>(),
   addServerHandler: vi.fn<typeof import("@nuxt/kit").addServerHandler>(),
   addServerTemplate: vi.fn<typeof import("@nuxt/kit").addServerTemplate>(),
-  addTypeTemplate: vi.fn<typeof import("@nuxt/kit").addTypeTemplate>(),
+  // A generic kit function's signature is not one a Mock can carry, so the mock is cast to it, as the typescript skill's type-modelling reference allows
+  // A Mock cannot carry a generic kit function's signature, so the mock is cast to it
+  addTypeTemplate: vi.fn<
+    typeof import("@nuxt/kit").addTypeTemplate
+  >() as unknown as typeof import("@nuxt/kit").addTypeTemplate,
 }));
 
 describe(securityModule, () => {
