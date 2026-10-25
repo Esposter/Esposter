@@ -21,24 +21,27 @@ import { createMockDb } from "@esposter/db-mock";
 import {
   accountsInAuth,
   AdminActionType,
+  apiKeysInAuth,
   AzureContainer,
   AzureTable,
   getReverseTickedTimestamp,
   MessageMetadataType,
   MessageType,
+  ProgramParticipantEntity,
   ResourceActivityEntity,
   ResourceActivityType,
   resourcesInResource,
   ResourceType,
   resourceVersionsInResource,
   roomsInMessage,
-  SnapshotChannel,
   sessionsInAuth,
+  SnapshotChannel,
   storageLedgerInStorage,
+  SurveyResponseEntity,
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
+import { jsonDateParse, takeOne } from "@esposter/shared";
 import { MockContainerDatabase, MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
@@ -57,6 +60,19 @@ vi.mock(
   () => import("#src/services/azure/getWebPubSubServiceClient.test"),
 );
 
+const readPartitionEntities = (tableName: AzureTable, partitionKey: string) =>
+  [...(MockTableDatabase.get(tableName)?.values() ?? [])].filter((entity) => entity.partitionKey === partitionKey);
+const readBlobNamesUnder = (containerName: AzureContainer, prefix: string) =>
+  readBlobNames(containerName).filter((blobName) => blobName.startsWith(prefix));
+const readLedgerRows = (userId: string) =>
+  mockDb
+    .select({ blobName: storageLedgerInStorage.blobName, containerName: storageLedgerInStorage.containerName })
+    .from(storageLedgerInStorage)
+    .where(eq(storageLedgerInStorage.userId, userId));
+const readUserRows = (userId: string) =>
+  mockDb.select({ id: usersInAuth.id }).from(usersInAuth).where(eq(usersInAuth.id, userId));
+const readApiKeyRows = (userId: string) =>
+  mockDb.select({ id: apiKeysInAuth.id }).from(apiKeysInAuth).where(eq(apiKeysInAuth.referenceId, userId));
 describe(deleteAccountHandler, () => {
   const context = new InvocationContext({ logHandler: () => {} });
   const content = JSON.stringify({});
@@ -81,17 +97,6 @@ describe(deleteAccountHandler, () => {
     await mockDb.delete(usersInAuth);
   });
 
-  const readPartitionEntities = (tableName: AzureTable, partitionKey: string) =>
-    [...(MockTableDatabase.get(tableName)?.values() ?? [])].filter((entity) => entity.partitionKey === partitionKey);
-  const readBlobNamesUnder = (containerName: AzureContainer, prefix: string) =>
-    readBlobNames(containerName).filter((blobName) => blobName.startsWith(prefix));
-  const readLedgerRows = (userId: string) =>
-    mockDb
-      .select({ blobName: storageLedgerInStorage.blobName, containerName: storageLedgerInStorage.containerName })
-      .from(storageLedgerInStorage)
-      .where(eq(storageLedgerInStorage.userId, userId));
-  const readUserRows = (userId: string) =>
-    mockDb.select({ id: usersInAuth.id }).from(usersInAuth).where(eq(usersInAuth.id, userId));
   const seedChargedBlob = async (userId: string, containerName: AzureContainer, blobName: string) => {
     await seedBlob(containerName, blobName);
     await chargeStorageLedgerEntry(mockDb, userId, containerName, blobName, countedBytes);
@@ -120,7 +125,7 @@ describe(deleteAccountHandler, () => {
     await seedChargedBlob(userId, AzureContainer.MessageAssets, ownedRoomAttachmentBlobName);
 
     // A room the account is a member of but does not own, with the account's messages, a charged attachment, and the
-    // other account's message and attachment beside them
+    // Other account's message and attachment beside them
     const memberRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
     await mockDb.insert(usersToRoomsInMessage).values([
       { roomId: memberRoom.id, userId },
@@ -160,7 +165,7 @@ describe(deleteAccountHandler, () => {
     });
 
     // Reactions are one row per emoji that its reactors share. The account alone holds the first, which goes; it shares
-    // the second with the other account, which keeps its id; and the other account alone holds the third, which is kept.
+    // The second with the other account, which keeps its id; the other account alone holds the third, which is kept.
     // The fourth is the account's in the owned room, which goes with the room's partition
     const messagesMetadataClient = await getTableClient(AzureTable.MessagesMetadata);
     const createReaction = (roomId: string, reactorUserIds: string[]) => {
@@ -212,6 +217,26 @@ describe(deleteAccountHandler, () => {
       }),
     );
 
+    // The account's owned survey and program, each with a row in the partition its type owns, and an API key.
+    // The user row's cascade takes the API key
+    const ownedSurvey = takeOne(
+      await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Survey, userId }).returning(),
+    );
+    await createEntity(
+      await getTableClient(AzureTable.SurveyResponses),
+      new SurveyResponseEntity({ partitionKey: ownedSurvey.id, rowKey: crypto.randomUUID() }),
+    );
+    const ownedProgram = takeOne(
+      await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Program, userId }).returning(),
+    );
+    await createEntity(
+      await getTableClient(AzureTable.ProgramParticipants),
+      new ProgramParticipantEntity({ partitionKey: ownedProgram.id, rowKey: crypto.randomUUID() }),
+    );
+    await mockDb
+      .insert(apiKeysInAuth)
+      .values({ id: crypto.randomUUID(), key: crypto.randomUUID(), referenceId: userId });
+
     // A resource the account does not own, with the account's own activity on it, which is kept
     const otherResource = takeOne(
       await mockDb
@@ -239,6 +264,10 @@ describe(deleteAccountHandler, () => {
     await seedBlob(AzureContainer.GenshinAssets, `character-packs/files/${sharedPackHash}`);
 
     const otherUserRowBefore = await mockDb.select().from(usersInAuth).where(eq(usersInAuth.id, otherUserId));
+    // Each seeded row is present before the deletion, so the empty checks below cannot pass vacuously
+    expect(readPartitionEntities(AzureTable.SurveyResponses, ownedSurvey.id)).toHaveLength(1);
+    expect(readPartitionEntities(AzureTable.ProgramParticipants, ownedProgram.id)).toHaveLength(1);
+    await expect(readApiKeyRows(userId)).resolves.toHaveLength(1);
     await deleteAccountHandler(context, userId);
 
     // The user row is last, and the sign-in rows that cascade from it go with it
@@ -280,6 +309,12 @@ describe(deleteAccountHandler, () => {
     expect(readBlobNamesUnder(AzureContainer.ResourceAssets, `${ownedResource.id}/`)).toStrictEqual([]);
     expect(readPartitionEntities(AzureTable.ResourceActivity, ownedResource.id)).toStrictEqual([]);
 
+    // The owned survey's responses and the owned program's participants go with their resources
+    // The API key goes with the user row
+    expect(readPartitionEntities(AzureTable.SurveyResponses, ownedSurvey.id)).toStrictEqual([]);
+    expect(readPartitionEntities(AzureTable.ProgramParticipants, ownedProgram.id)).toStrictEqual([]);
+    await expect(readApiKeyRows(userId)).resolves.toStrictEqual([]);
+
     // The account's messages in the room it is a member of are soft-deleted, and its charged attachment is gone
     const readDeletedAt = async (roomMessage: StandardMessageEntity) =>
       (await messageClient.getEntity<StandardMessageEntity>(roomMessage.partitionKey, roomMessage.rowKey)).deletedAt;
@@ -291,7 +326,7 @@ describe(deleteAccountHandler, () => {
     // The reaction the account held alone is gone, and its id is taken out of the reaction it shared
     expect(
       readPartitionEntities(AzureTable.MessagesMetadata, memberRoom.id).map(({ userIds }) =>
-        JSON.parse(String(userIds)),
+        jsonDateParse(String(userIds)),
       ),
     ).toStrictEqual([[otherUserId], [otherUserId]]);
 
@@ -304,7 +339,7 @@ describe(deleteAccountHandler, () => {
     expect(readBlobNamesUnder(AzureContainer.GenshinAssets, getCharacterPackStagingPrefix(userId))).toStrictEqual([]);
 
     // Kept: the shared character-pack file, the moderation record that names the account, and the account's activity on
-    // a resource it does not own
+    // A resource it does not own
     expect(readBlobNamesUnder(AzureContainer.GenshinAssets, "character-packs/files/")).toStrictEqual([
       `character-packs/files/${sharedPackHash}`,
     ]);
