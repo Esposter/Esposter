@@ -26,6 +26,7 @@ import { checkIsKitHold } from "#src/services/kit/effects/checkIsKitHold";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { countKitHolds } from "#src/services/kit/effects/countKitHolds";
 import { getKitHitElement } from "#src/services/kit/getKitHitElement";
+import { scheduleKitHitStrike } from "#src/services/kit/scheduleKitHitStrike";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { getMoonsignLevel } from "#src/services/party/getMoonsignLevel";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
@@ -223,19 +224,21 @@ const applyConstellation2 = (context: KitContext, combatant: Combatant, reaction
   });
 };
 
-// A Gravity Ripple fires on the reaction its gravity picks, clearing the gravity if it is the one that clears it. Its hit is not
-// Built, as the record holds none of the ripple's multipliers or hitmarks, but Ascension 1's Lunacy and the constellations' effects run on it
+// A Gravity Ripple fires on the reaction its gravity picks, clearing the gravity if it is the one that clears it. Ascension 1's
+// Lunacy and the constellations' effects run on it, and each hit of the reaction strikes the enemies in its circle at its hitmark
 const fireGravityRipple = (
   context: KitContext,
   combatant: Combatant,
   gravity: Gravity,
   clearsGravity: boolean,
+  readRippleHits: (reactionType: LunarReactionType) => KitHit[],
 ): void => {
   const reactionType = pickGravityReaction(gravity, context);
   if (clearsGravity) for (const gravityReactionType of GRAVITY_REACTION_TYPES) gravity.amounts[gravityReactionType] = 0;
   if (combatant.ascension >= ASCENSION_1) gainLunacy(context.kitEffectState, combatant.characterId);
   if (combatant.constellationCount >= CONSTELLATION_1) applyConstellation1(context, combatant, reactionType);
   if (combatant.constellationCount >= CONSTELLATION_2) applyConstellation2(context, combatant, reactionType);
+  for (const hit of readRippleHits(reactionType)) scheduleKitHitStrike(context.kitEffectState, combatant, hit);
 };
 
 // Constellation 6's CRIT DMG on a strike, from each buff its striker holds that covers the hit's element, one buff each
@@ -255,14 +258,14 @@ const getConstellation6CriticalDamage = (strike: KitStrike, effects: readonly Ki
 // That curve sits in columbinaBenediction.ts. Ascension 1's Lunacy gains a stack on each tick, and its CRIT Rate is the stacks' share.
 // The burst's field is not built yet
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/columbina/skill.go
-// The Gravity Ripple's hit is not built, as the record holds none of its multipliers or hitmarks, so the ripple runs its
-// Lunacy and constellation effects without the hit. Constellation 4 needs the ripple's hits, its energy for each and its flat DMG
+// Constellation 4 needs its energy for each ripple hit and its flat DMG, which are not built
 // Constellation 6's CRIT DMG on strikes is built on the burst's window, but its CRIT DMG on the Lunar reaction's own damage
 // Needs the reaction's element, which KitReaction does not carry. The window's Lunar damage bonus itself is not built
 // Ascension 4 needs the Lunar reactions hook, as the team's Lunar reactions are not read yet
 export const createColumbinaKitBehaviour = ({
   kit,
   readHit,
+  readHits,
   readParameter,
   readSeconds,
 }: KitRecordReader): KitBehaviour => {
@@ -277,6 +280,15 @@ export const createColumbinaKitBehaviour = ({
       ? { ...skillDotHit, hitArea: { ...skillDotHit.hitArea, radius: ASCENDANT_GLEAM_SKILL_DOT_RADIUS } }
       : skillDotHit;
 
+  // A Gravity Ripple's hits by the reaction it fires, read as it fires, since its records are published with the kit's
+  const readRippleHits = (reactionType: LunarReactionType): KitHit[] => {
+    if (reactionType === LunarReactionType.LunarBloom) return readHits("gravityRippleLunarBloom");
+    return [
+      readHit(
+        reactionType === LunarReactionType.LunarCharged ? "gravityRippleLunarCharged" : "gravityRippleLunarCrystallize",
+      ),
+    ];
+  };
   // The DoT's field follows her body, and each tick deals its hit round the field's centre, priced by her as she cast it.
   // The field also builds gravity from the team's Lunar reactions, which a Gravity Ripple fires once it reaches its maximum
   const castSkillField = (kitEffectState: KitEffectState, body: KitBody, combatant: Combatant): Gravity => {
@@ -295,7 +307,8 @@ export const createColumbinaKitBehaviour = ({
       },
       onStep: (context, _field, stepSeconds) => {
         accrueGravity(gravity, stepSeconds, getGravityRate(combatant));
-        if (getTotalGravity(gravity) >= GRAVITY_MAX) fireGravityRipple(context, combatant, gravity, true);
+        if (getTotalGravity(gravity) >= GRAVITY_MAX)
+          fireGravityRipple(context, combatant, gravity, true, readRippleHits);
       },
       onTick: (tickContext) =>
         castKitSummon(tickContext.kitEffectState, { facing: 0, height: 0, position: field.centre }, combatant, [
@@ -362,7 +375,7 @@ export const createColumbinaKitBehaviour = ({
           combatant.constellationCount >= CONSTELLATION_1 &&
           !checkIsKitStatusActive(kitEffectState.effects, combatant.characterId, CONSTELLATION_1_ICD_ID)
         ) {
-          fireGravityRipple(context, combatant, gravity, false);
+          fireGravityRipple(context, combatant, gravity, false, readRippleHits);
           addKitStatus(kitEffectState, combatant.characterId, {
             id: CONSTELLATION_1_ICD_ID,
             secondsRemaining: CONSTELLATION_1_ICD_SECONDS,

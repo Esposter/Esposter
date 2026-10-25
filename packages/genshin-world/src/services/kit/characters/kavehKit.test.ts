@@ -4,8 +4,10 @@ import type { KitStance } from "#src/models/kit/KitStance";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
@@ -18,6 +20,27 @@ import { describe, expect, test } from "vitest";
 
 const KAVEH_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, KAVEH_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
+
+// A hit Kaveh's strike lands on an enemy, which his Constellation 6 answers during Painted Dome
+const landHit = (
+  combatant: Combatant,
+  kitEffectState: KitEffectState,
+  attackTag: AttackTag | undefined,
+  striker: Combatant = combatant,
+) =>
+  KAVEH_KIT.onKitEvent?.(
+    {
+      attackTag,
+      element: Element.Dendro,
+      enemy: createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""),
+      kind: KitEventKind.EnemyHit,
+      striker,
+    },
+    createKitTestContext(combatant, { kitEffectState }),
+    combatant,
+  );
+const countFields = (kitEffectState: KitEffectState) =>
+  kitEffectState.effects.filter(({ kind }) => kind === "field").length;
 
 describe(createKavehKitBehaviour, () => {
   // The effects the burst's start adds to the team's, which its owner holds
@@ -164,5 +187,48 @@ describe(createKavehKitBehaviour, () => {
     KAVEH_KIT.elementalSkill.onStart?.(createKitTestContext(createKavehCombatant(), { kitEffectState }));
 
     expect(kitEffectState.effects).toStrictEqual([]);
+  });
+
+  test("a Constellation 6 Kaveh's Normal, Charged or Plunging Attack that hits during Painted Dome schedules one Pairidaeza's Light, and his skill or burst hit schedules none", () => {
+    expect.hasAssertions();
+    const kaveh = { ...createKavehCombatant(), constellationCount: 6 };
+    const schedulesOn = (attackTag: AttackTag) => {
+      const kitEffectState = castBurst();
+      landHit(kaveh, kitEffectState, attackTag);
+      return countFields(kitEffectState);
+    };
+
+    expect(
+      [
+        AttackTag.NormalAttack,
+        AttackTag.ChargedAttack,
+        AttackTag.PlungingAttack,
+        AttackTag.ElementalSkill,
+        AttackTag.ElementalBurst,
+      ].map((attackTag) => schedulesOn(attackTag)),
+    ).toStrictEqual([1, 1, 1, 0, 0]);
+  });
+
+  test("a Pairidaeza's Light waits three seconds after the last one, and a Constellation 5 Kaveh schedules none", () => {
+    expect.hasAssertions();
+    const kaveh = { ...createKavehCombatant(), constellationCount: 6 };
+    const kitEffectState = castBurst();
+    landHit(kaveh, kitEffectState, AttackTag.NormalAttack);
+    landHit(kaveh, kitEffectState, AttackTag.NormalAttack);
+    const constellation5 = castBurst();
+    landHit({ ...kaveh, constellationCount: 5 }, constellation5, AttackTag.NormalAttack);
+
+    expect([countFields(kitEffectState), countFields(constellation5)]).toStrictEqual([1, 0]);
+  });
+
+  test("a hit outside Painted Dome, or a teammate's, schedules no Pairidaeza's Light", () => {
+    expect.hasAssertions();
+    const kaveh = { ...createKavehCombatant(), constellationCount: 6 };
+    const outsideDome: KitEffectState = { effects: [] };
+    landHit(kaveh, outsideDome, AttackTag.NormalAttack);
+    const teammateHit = castBurst();
+    landHit(kaveh, teammateHit, AttackTag.NormalAttack, { ...kaveh, characterId: 10_000_001 });
+
+    expect([countFields(outsideDome), countFields(teammateHit)]).toStrictEqual([0, 0]);
   });
 });

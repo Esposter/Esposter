@@ -98,6 +98,9 @@ const readOwnCriticalDamage = (context: KitContext, columbina: Combatant, elemen
 
 // The seconds of Lunar gravity a Gravity Ripple takes to build, at ten a second
 const GRAVITY_SECONDS_PER_RIPPLE = 6;
+// The field effects a kit context holds, which a scheduled strike is among
+const countKitFields = (kitEffectState: KitEffectState): number =>
+  kitEffectState.effects.filter((effect) => effect.kind === "field").length;
 // The Lunacy CRIT Rate her charged attack gains from the stacks the effects hold, for the combatant
 const readLunacyCriticalRate = (combatant: Combatant, effects: readonly KitEffect[]): number =>
   COLUMBINA_KIT.getStrikeCriticalRateBonus?.(
@@ -299,6 +302,30 @@ describe(createColumbinaKitBehaviour, () => {
   });
 
   describe("gravity interference", () => {
+    test("a Gravity Ripple of Lunar-Charged schedules its one hit as a strike at its hitmark", () => {
+      expect.hasAssertions();
+
+      const kitEffectState: KitEffectState = { effects: [] };
+      const { context, field, pressed } = pressSkill(kitEffectState, 0, 1);
+      const fieldsBefore = countKitFields(kitEffectState);
+      for (let second = 0; second < GRAVITY_SECONDS_PER_RIPPLE; second++)
+        feedGravitySecond(field, context, pressed, LunarReactionType.LunarCharged);
+
+      expect(countKitFields(kitEffectState) - fieldsBefore).toBe(1);
+    });
+
+    test("a Gravity Ripple of Lunar-Bloom schedules its five hits as strikes at their hitmarks", () => {
+      expect.hasAssertions();
+
+      const kitEffectState: KitEffectState = { effects: [] };
+      const { context, field, pressed } = pressSkill(kitEffectState, 0, 1);
+      const fieldsBefore = countKitFields(kitEffectState);
+      for (let second = 0; second < GRAVITY_SECONDS_PER_RIPPLE; second++)
+        feedGravitySecond(field, context, pressed, LunarReactionType.LunarBloom);
+
+      expect(countKitFields(kitEffectState) - fieldsBefore).toBe(5);
+    });
+
     test("a Lunar reaction builds ten gravity a second for the two seconds after it, so six seconds of it fire a Gravity Ripple", () => {
       expect.hasAssertions();
 
