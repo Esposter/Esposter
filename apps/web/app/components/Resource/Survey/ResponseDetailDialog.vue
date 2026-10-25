@@ -24,7 +24,7 @@ const { isOpen, item } = useSingletonDialog(detailRowKey, () =>
 <template>
   <UiDialog v-if="item" v-model="isOpen" :placement="UiDialogPlacement.Middle" title="Response" w="[min(40rem,90vw)]">
     <!-- The dataset row rendered vertically — answers already arrive flattened, so there is no new read path -->
-    <dl p-3 gap-x-6 gap-y-3 grid grid-cols="[auto_1fr]" of-y-auto>
+    <dl p-3 gap-x-6 gap-y-3 grid cols="[auto_1fr]" of-y-auto>
       <template v-for="{ name } of columns" :key="name">
         <dt text-muted>{{ name }}</dt>
         <dd v-if="item[name] === null || item[name] === ''" text-muted>—</dd>
