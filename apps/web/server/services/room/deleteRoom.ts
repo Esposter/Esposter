@@ -30,8 +30,7 @@ export const deleteRoom = async (db: Context["db"], { session, user }: GetSessio
     // Prefix and this is its only teardown — a `createdBefore` cutoff would permanently strand the attachment
     // Of any member still holding a write SAS when the owner deleted, billed and downloadable forever
     publishBlobPrefixDeletion(id, AzureContainer.MessageAssets, id, undefined).match(noop, console.error),
-    // Profile images are a handful, and their listing has to reach a pre-cutover flat name the prefix walk
-    // Would not cover, so this one stays a resolved list
+    // Profile images are a handful, so their listing stays a resolved list rather than a prefix walk
     publishBlobDeletion(id, AzureContainer.PublicUserAssets, async () => {
       const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
       return listRoomProfileImageBlobNames(containerClient, id);

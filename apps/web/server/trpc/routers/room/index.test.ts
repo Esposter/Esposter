@@ -439,29 +439,19 @@ describe("roomRouter", () => {
 
     const newRoom = await roomCaller.createRoom({ name });
     const blobName = `rooms/${newRoom.id}/ProfileImage/${crypto.randomUUID()}`;
-    // Images uploaded before the per-upload prefix existed sit at the flat name and are swept alongside it
-    const legacyBlobName = `${newRoom.id}/ProfileImage`;
-    MockContainerDatabase.set(
-      AzureContainer.PublicUserAssets,
-      new Map([
-        [blobName, Buffer.alloc(0)],
-        [legacyBlobName, Buffer.alloc(0)],
-      ]),
-    );
+    MockContainerDatabase.set(AzureContainer.PublicUserAssets, new Map([[blobName, Buffer.alloc(0)]]));
     await roomCaller.deleteRoom(newRoom.id);
     const blobDeletionEvents = MockEventGridDatabase.get("");
     assert.exists(blobDeletionEvents);
 
-    // Profile images stay a resolved list — they are a handful, and their sweep reaches a pre-cutover flat
-    // Name that sits outside the room's prefix, so a prefix walk would miss it. The room's attachments go
-    // Out as the prefix event alongside it.
+    // Profile images stay a resolved list, since they are a handful. The room's attachments go out as the prefix event
     const profileImageDeletionEvents = blobDeletionEvents.filter(
       ({ data }) => (data as BlobDeletionEventGridData).containerName === AzureContainer.PublicUserAssets,
     );
 
     expect(profileImageDeletionEvents).toHaveLength(1);
     expect(takeOne(profileImageDeletionEvents).data as BlobDeletionEventGridData).toStrictEqual({
-      blobNames: [blobName, legacyBlobName],
+      blobNames: [blobName],
       containerName: AzureContainer.PublicUserAssets,
     });
   });

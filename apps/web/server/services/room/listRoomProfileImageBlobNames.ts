@@ -2,16 +2,11 @@ import type { ContainerClient } from "@azure/storage-blob";
 import type { ListBlobNamesOptions } from "@esposter/db";
 import type { RoomInMessage } from "@esposter/db-schema";
 
-import { getRoomProfileImageBlobPrefixes } from "#server/services/room/getRoomProfileImageBlobPrefixes";
+import { getRoomProfileImageBlobPrefix } from "#server/services/room/getRoomProfileImageBlobPrefix";
 import { listBlobNames } from "@esposter/db";
 
-export const listRoomProfileImageBlobNames = async (
+export const listRoomProfileImageBlobNames = (
   containerClient: ContainerClient,
   roomId: RoomInMessage["id"],
   { createdBefore }: ListBlobNamesOptions = {},
-): Promise<string[]> => {
-  const blobNamesList = await Promise.all(
-    getRoomProfileImageBlobPrefixes(roomId).map((prefix) => listBlobNames(containerClient, prefix, { createdBefore })),
-  );
-  return blobNamesList.flat();
-};
+): Promise<string[]> => listBlobNames(containerClient, getRoomProfileImageBlobPrefix(roomId), { createdBefore });

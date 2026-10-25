@@ -72,5 +72,5 @@ Soft-deleting a resource deliberately keeps every `ResourceAssets` blob — rest
 ## Notes
 
 - The `MessageAssets` room-level and `PublicUserAssets` room-profile-image sweeps both run in `deleteRoom` — a room delete owns every prefix keyed by its room id, across containers.
-- Some room profile images sit at the flat `{roomId}/ProfileImage` name rather than under the per-upload prefix. Nothing writes that name, but blobs remain at it, so `listRoomProfileImageBlobNames` lists it alongside the current prefix. `updateRoom` collects whatever that listing returns minus the url the room now points at and anything younger than the write-SAS window; `deleteRoom` collects all of it.
+- `updateRoom` collects whatever `listRoomProfileImageBlobNames` returns under the room's per-upload prefix, minus the url the room now points at and anything younger than the write-SAS window; `deleteRoom` collects all of it.
 - `DeadLetter` is not user data and is swept by its 30-day lifecycle rule, not by a mutation ([Event Grid dead-letter](../../infra/eventgrid-dead-letter/design.md)).
