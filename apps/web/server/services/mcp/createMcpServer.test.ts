@@ -4,7 +4,6 @@ import type { AnyRouter } from "@trpc/server";
 import { createMcpServer } from "#server/services/mcp/createMcpServer";
 import { publicProcedure, router } from "#server/trpc";
 import { createMockContext } from "#server/trpc/context.test";
-import { trpcRouter } from "#server/trpc/routers";
 import { McpScope, McpScopes } from "#shared/models/auth/McpScope";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
@@ -175,16 +174,23 @@ describe(createMcpServer, () => {
     );
   });
 
-  // Purging is human-only, so a key holding every scope is refused the tool by name before the procedure is reached
+  // A procedure the owner alone performs is refused by name to a key holding every scope, as though it did not exist, so
+  // the mutation that would purge is never reached. Its opt-in is set here, so the refusal is the declaration's alone
   test("A key cannot call a human-only operation by name", async () => {
     expect.hasAssertions();
 
-    const client = await createConnectedClient(McpScopes, trpcRouter);
+    const humanOnlyRouter = router({
+      purgeResource: publicProcedure
+        .meta({ humanOnly: "Nothing restores it", mcp: { description, scope: McpScope.Resources } })
+        .input(z.object({ id: z.string() }))
+        .mutation<string>(({ input: { id } }) => id),
+    });
+    const client = await createConnectedClient(McpScopes, humanOnlyRouter);
 
     await expect(
-      client.callTool({ arguments: { id: "-1" }, name: "resource_purgeResource" }),
+      client.callTool({ arguments: { id: "-1" }, name: "purgeResource" }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[McpError: MCP error -32602: MCP error -32602: Unknown tool: resource_purgeResource]`,
+      `[McpError: MCP error -32602: MCP error -32602: Unknown tool: purgeResource]`,
     );
   });
 });
