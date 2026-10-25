@@ -8,7 +8,7 @@ The open work of [nuxt-security-module](../../specs/nuxt-security-module/README.
   - Verify: the rendered page's response headers and its nonce and integrity attributes match the expected values, with the `X-Powered-By` header absent.
 - [x] Verify the SRI behaviour on preload links (#655) and on entry import maps (#657) against a built app. Both are kept as they are until then. Source: [what our configuration triggers](../../specs/nuxt-security-module/upstream/design.md#what-our-configuration-triggers).
   - Verify: each issue is marked reproduced or not reproduced in the upstream audit's verdict table, with the built app as the evidence.
-- [ ] Hash the client bundles and stylesheets the build writes, so the app's own scripts, stylesheets and preload links carry integrity attributes. The module computes its hashes before the client bundles exist. Source: [what our configuration triggers](../../specs/nuxt-security-module/upstream/design.md#what-our-configuration-triggers).
+- [x] Hash the client bundles and stylesheets the build writes, so the app's own scripts, stylesheets and preload links carry integrity attributes. The module computes its hashes before the client bundles exist. Source: [what our configuration triggers](../../specs/nuxt-security-module/upstream/design.md#what-our-configuration-triggers).
   - Verify: each `/_nuxt` script, stylesheet and preload link in a built app's rendered page carries an integrity attribute that matches its served bytes, and #655 is checked again on that page.
 
 ## Later
