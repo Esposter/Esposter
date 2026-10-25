@@ -57,7 +57,7 @@ A component that gains a folder moves into it as `Index.vue`, never beside the f
 
 ## File Length
 
-Line-count target and exceptions — the `file-organization` skill, "File Length". Extracting a slot's content into its own component is `references/slots.md`; grouped controls go into their own focused component.
+Line-count target and exceptions — the `file-organization` skill, "File Length". A `.vue` that runs consistently over 100 lines is due an extraction: a slot whose content has grown non-trivial becomes its own component, named after the slot it fills (`#no-data` → `NoDataSlot.vue`) and kept in the parent's folder (`references/slots.md`); grouped controls go into their own focused component; reusable state goes into a composable.
 
 ## Slots
 
