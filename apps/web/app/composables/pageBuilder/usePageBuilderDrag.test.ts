@@ -2,6 +2,7 @@
 import type { TextNode } from "#shared/models/pageBuilder/TextNode";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
+import type { MjmlDocument } from "mjml-blocks";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
@@ -81,7 +82,7 @@ describe("usePageBuilderDrag", () => {
     setActivePinia(createPinia());
     const COLUMN_NAME = "first_name";
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    const EMAIL_TEXT_DOCUMENT = {
+    const EMAIL_TEXT_DOCUMENT: MjmlDocument = {
       content: [
         {
           props: {

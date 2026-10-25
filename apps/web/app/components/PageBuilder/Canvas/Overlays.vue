@@ -69,7 +69,9 @@ const getDropIndicator = (): DropIndicator | undefined => {
   const open = pageOpen.value;
   if (!dropTarget || !open) return undefined;
 
-  const { document, kind } = open;
+  // The shell reads a document of either kind through the kind any of them assigns to, so the pair is typed as that
+  const document: AnyPageBuilderDocument = open.document;
+  const kind: AnyPageBuilderKind = open.kind;
   const childBoxes = getSlotChildIds(kind, document, dropTarget.slotPointer).map((childId) => getNodeBox(childId));
   return getDropIndicatorBox({
     childBoxes,

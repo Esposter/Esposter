@@ -1,4 +1,6 @@
 // @vitest-environment nuxt
+import type { MjmlDocument } from "mjml-blocks";
+
 import { TEST_ID, TEST_OTHER_ID, TEST_THIRD_ID, TEST_URL } from "#shared/services/pageBuilder/constants.test";
 import PageBuilderEmailImageUploadField from "@/components/PageBuilder/Email/ImageUploadField.vue";
 import PageBuilderEmailStylePanel from "@/components/PageBuilder/Email/StylePanel.vue";
@@ -11,7 +13,7 @@ import { describe, expect, test } from "vitest";
 
 describe("pageBuilderEmailStylePanel", () => {
   const TEXT_CONTENT = { content: [{ content: [{ text: "Hello", type: "text" }], type: "paragraph" }], type: "doc" };
-  const createTextDocument = (fontSize: string, rootFontSize: string) => ({
+  const createTextDocument = (fontSize: string, rootFontSize: string): MjmlDocument => ({
     content: [
       {
         props: {
@@ -76,7 +78,7 @@ describe("pageBuilderEmailStylePanel", () => {
   test("an uploaded image becomes the image's source", async () => {
     expect.hasAssertions();
 
-    const imageDocument = {
+    const imageDocument: MjmlDocument = {
       content: [
         {
           props: {

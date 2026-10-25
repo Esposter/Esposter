@@ -2,7 +2,6 @@
 import type { EmailStyleField } from "@/models/pageBuilder/EmailStyleField";
 
 import UiColorField from "@/components/Ui/ColorField.vue";
-import UiSelect from "@/components/Ui/Select/Index.vue";
 import UiSwitch from "@/components/Ui/Switch.vue";
 import PageBuilderEmailStyleField from "@/components/PageBuilder/Email/StyleField.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -31,7 +30,7 @@ describe("pageBuilderEmailStyleField", () => {
       props: { field: createField({ kind: MjmlAttributeKind.Enum, options: [ENUM_OPTION, ENUM_OTHER_OPTION] }) },
     });
 
-    expect(component.findComponent(UiSelect).props("items")).toStrictEqual([
+    expect(component.findComponent({ name: "UiSelect" }).props("items")).toStrictEqual([
       { title: ENUM_OPTION, value: ENUM_OPTION },
       { title: ENUM_OTHER_OPTION, value: ENUM_OTHER_OPTION },
     ]);

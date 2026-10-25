@@ -21,7 +21,7 @@ const { fields, hasNode, setField } = useEmailStyle(() => resourceId);
     <PageBuilderEmailImageUploadField
       v-if="fields.some((field) => field.name === 'src')"
       :resource-id
-      @update="(src) => setField('src', src)"
+      @update="(src: string) => setField('src', src)"
     />
   </div>
   <p v-else text-muted>Select a block to style it</p>
