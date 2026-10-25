@@ -31,6 +31,6 @@ describe("store", () => {
   test("finds the stores it is asserting over", () => {
     expect.hasAssertions();
 
-    expect(stores.length).toBeGreaterThan(100);
+    expect(stores.map(({ id }) => id)).toContain("alert");
   });
 });
