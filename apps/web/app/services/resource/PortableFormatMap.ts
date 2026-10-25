@@ -8,7 +8,7 @@ import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSou
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
 import { FlowchartExportFormat } from "@/models/resource/FlowchartExportFormat";
 import { getDatasetErrorMessage } from "@/services/dataset/getDatasetErrorMessage";
-import { OPEN_EMAIL_EDITOR_MESSAGE } from "@/services/emailEditor/constants";
+import { REOPEN_EMAIL_MESSAGE } from "@/services/emailEditor/constants";
 import { exportWebpageHtml } from "@/services/pageBuilder/exportWebpageHtml";
 import { deserializeNoteMarkdown } from "@/services/resource/note/deserializeNoteMarkdown";
 import { serializeNoteMarkdown } from "@/services/resource/note/serializeNoteMarkdown";
@@ -180,7 +180,7 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
         const pageBuilderDocumentStore = usePageBuilderDocumentStore();
         const { getEmailDocument } = pageBuilderDocumentStore;
         if (!resource.value || !getEmailDocument(resource.value.id)) {
-          createAlert(OPEN_EMAIL_EDITOR_MESSAGE, "warning");
+          createAlert(REOPEN_EMAIL_MESSAGE, "warning");
           return;
         }
 
