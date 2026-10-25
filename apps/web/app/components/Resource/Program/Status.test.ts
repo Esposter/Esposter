@@ -288,9 +288,10 @@ describe("resourceProgramStatus", () => {
     });
 
     expect(downloadFile).toHaveBeenCalledOnce();
-    expect(getNotificationTitles()).toEqual(
-      expect.arrayContaining(["2 participants past the audience read limit were not exported", "1 invite ready"]),
-    );
+    expect(getNotificationTitles()).toStrictEqual([
+      "1 invite ready",
+      "2 participants past the audience read limit were not exported",
+    ]);
   });
 
   test("reports the reminders ready when the export is for those still awaiting", async () => {

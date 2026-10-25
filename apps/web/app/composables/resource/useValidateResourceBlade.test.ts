@@ -23,7 +23,9 @@ describe(useValidateResourceBlade, () => {
       useValidateResourceBlade(ref<ResourceInResource | undefined>(resource), ref(ResourceBladeSlug.Items));
     });
 
-    expect(showErrorMock).toHaveBeenCalledTimes(1);
+    expect(showErrorMock).toHaveBeenCalledExactlyOnceWith(
+      createError({ status: 404, statusText: "Resource blade not found" }),
+    );
 
     scope.stop();
   });

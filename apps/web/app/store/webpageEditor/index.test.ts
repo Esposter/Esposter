@@ -54,7 +54,10 @@ describe(useWebpageEditorStore, () => {
     });
     await saveWebpage(resourceId);
 
-    expect(savedContents[0]).toMatchObject({ content: [expect.anything()], id: content.id });
+    expect(savedContents[0]).toMatchObject({
+      content: [{ props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button }],
+      id: content.id,
+    });
   });
 
   test("carries the share preview across a page save", async () => {

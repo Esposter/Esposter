@@ -4,6 +4,7 @@ import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import { datasetToDataSource } from "@/services/resource/sheet/dataSource/datasetToDataSource";
 import { reconcileDataSource } from "@/services/resource/sheet/dataSource/reconcileDataSource";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(reconcileDataSource, () => {
@@ -20,12 +21,12 @@ describe(reconcileDataSource, () => {
       "",
     );
     reconcileDataSource(dataSource, structuredClone(previousDataSource));
-    const [unchangedRow, changedRow, appendedRow] = dataSource.rows;
+    const [unchangedRow, changedRow] = dataSource.rows;
     const [previousUnchangedRow, previousChangedRow] = previousDataSource.rows;
 
     expect(dataSource.columns.map(({ id }) => id)).toStrictEqual(previousDataSource.columns.map(({ id }) => id));
     expect(JSON.stringify(unchangedRow)).toBe(JSON.stringify(previousUnchangedRow));
     expect(changedRow?.id).toBe(previousChangedRow?.id);
-    expect(appendedRow?.id).not.toBe(previousChangedRow?.id);
+    expect(takeOne(dataSource.rows, 2).id).not.toBe(takeOne(previousDataSource.rows, 1).id);
   });
 });

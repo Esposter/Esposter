@@ -120,10 +120,10 @@ describe(usePasteRangeFromClipboard, () => {
   // A computed column stores nothing, so a pasted value landing on one — over an existing row, in a row appended past
   // The end or in one inserted by a shift-down — is dropped rather than stored under its name
   test.each([
-    ["over an existing row", PasteMode.Overwrite, 0],
-    ["into an appended row", PasteMode.Overwrite, 1],
-    ["into a shifted-down row", PasteMode.ShiftDown, 0],
-  ])("stores nothing for a computed column %s", async (_title, pasteMode, anchorRowIndex) => {
+    ["over an existing row", PasteMode.Overwrite, 0, [{ a: "2" }]],
+    ["into an appended row", PasteMode.Overwrite, 1, [{ a: "1" }, { a: "2" }]],
+    ["into a shifted-down row", PasteMode.ShiftDown, 0, [{ a: "2" }, { a: "1" }]],
+  ])("stores nothing for a computed column %s", async (_title, pasteMode, anchorRowIndex, expectedRows) => {
     expect.hasAssertions();
 
     const column = createColumn("a");
@@ -135,7 +135,7 @@ describe(usePasteRangeFromClipboard, () => {
     const pasteRangeFromClipboard = usePasteRangeFromClipboard();
     await pasteRangeFromClipboard(pasteMode);
 
-    expect(dataSource.rows.every(({ data }) => !Object.hasOwn(data, "b"))).toBe(true);
+    expect(dataSource.rows.map(({ data }) => data)).toStrictEqual(expectedRows);
   });
 
   test("writes nothing when the clipboard text is empty", async () => {

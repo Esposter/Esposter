@@ -1,7 +1,7 @@
 import { createNumberColumn } from "#shared/models/resource/sheet/column/createNumberColumn.test";
 import { NumberFormat } from "#shared/models/resource/sheet/column/NumberFormat";
+import { USD_CURRENCY_FORMATTER } from "#shared/services/intl/constants";
 import { formatOptionalColumnValue } from "@/services/resource/sheet/column/formatOptionalColumnValue";
-import { getDisplayText } from "@/services/resource/sheet/column/getDisplayText";
 import { describe, expect, test } from "vitest";
 
 describe(formatOptionalColumnValue, () => {
@@ -13,7 +13,7 @@ describe(formatOptionalColumnValue, () => {
   test("shows a statistic in the units its column's cells are shown in", () => {
     expect.hasAssertions();
 
-    expect(formatOptionalColumnValue(0.1, column)).toBe(getDisplayText(0.1, column));
+    expect(formatOptionalColumnValue(0.1, column)).toBe(USD_CURRENCY_FORMATTER.format(0.1));
   });
 
   test("shows an em dash for a statistic that has no value", () => {
