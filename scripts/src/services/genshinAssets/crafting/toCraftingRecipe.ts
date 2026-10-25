@@ -3,28 +3,14 @@ import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 import type { CraftingRecipe } from "genshin-world";
 
 import {
-  COMBINE_RECIPE_TYPE,
-  CombineTypeCraftingRecipeKindMap,
   CONDENSED_RESIN_CRYSTAL_CORE_ITEM_ID,
   CONDENSED_RESIN_ITEM_ID,
   CONDENSED_RESIN_ORIGINAL_RESIN_COUNT,
-  CONVERT_COMBINE_TYPES,
-  CONVERT_RECIPE_TYPE,
   TIER_MATERIAL_COUNT,
 } from "#src/services/genshinAssets/crafting/constants";
+import { toRecipeKind } from "#src/services/genshinAssets/crafting/toRecipeKind";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { CraftingRecipeKind, ORIGINAL_RESIN_ITEM_ID } from "genshin-world";
-
-// The kind of a row the bench holds, or undefined for one it does not: a conversion of one of the combine types it lists,
-// Or a craft of a combine type the bench's table names
-const toRecipeKind = (row: ExcelCombineRow): CraftingRecipeKind | undefined => {
-  if (row.recipeType === CONVERT_RECIPE_TYPE)
-    return CONVERT_COMBINE_TYPES.includes(row.combineType) ? CraftingRecipeKind.Convert : undefined;
-  if (row.recipeType !== COMBINE_RECIPE_TYPE) return undefined;
-  return row.resultItemId === CONDENSED_RESIN_ITEM_ID
-    ? CraftingRecipeKind.CondensedResin
-    : CombineTypeCraftingRecipeKindMap[row.combineType];
-};
 
 // One bench recipe from its combine row and the instruction items that open it, or undefined for a row the bench does not
 // Hold. A tier takes exactly three of one material for one of the next, Condensed Resin exactly its crystal core and its

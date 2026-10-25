@@ -2,10 +2,7 @@ import type { StrongboxTables } from "#src/models/genshinAssets/crafting/Strongb
 import type { CraftingStrongboxData } from "genshin-world";
 
 import { RELIQUARY_SMELT_DISPLAY_TYPE } from "#src/services/genshinAssets/crafting/constants";
-
-// A pair of item ids under one of an offer row's keys, which the offer's per-slot lists are, read by shape
-const checkIsItemIdPair = (value: unknown): value is number[] =>
-  Array.isArray(value) && value.length === 2 && value.every((item) => typeof item === "number");
+import { checkIsItemIdPair } from "#src/services/genshinAssets/crafting/checkIsItemIdPair";
 
 // The strongboxes the Mystic Offering makes, one per set a display item names. Each is joined from the decompose row that
 // Recipes it, the reward preview of that row, the display item its first item shows and the offer row linked to the set.
