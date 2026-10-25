@@ -10,5 +10,8 @@
   },
   "hitFields.dragonBreath.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 10139 } },
   "plungeCollision.poiseDamage": { "source": "Wiki", "value": 35 },
-  "skill.hits.length": { "cause": "Unsourced", "value": 0 }
+  "skill.hits.length": { "cause": "Unsourced", "value": 0 },
+  "chargedAttack.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 3, "proudSkillGroupId": 10131 } },
+  "chargedAttack.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 3, "proudSkillGroupId": 10131 } },
+  "chargedAttack.hits.2.multiplier": { "source": "Gcsim", "value": { "index": 3, "proudSkillGroupId": 10131 } }
 }
