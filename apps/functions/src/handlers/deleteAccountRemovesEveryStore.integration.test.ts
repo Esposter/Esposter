@@ -13,6 +13,7 @@ import {
   createMessage,
   getCharacterPackStagingPrefix,
   getContentBlobName,
+  serializeEntity,
   writeJsonBlob,
   writeModerationLogEntry,
 } from "@esposter/db";
@@ -23,6 +24,7 @@ import {
   AzureContainer,
   AzureTable,
   getReverseTickedTimestamp,
+  MessageMetadataType,
   MessageType,
   ResourceActivityEntity,
   ResourceActivityType,
@@ -157,6 +159,26 @@ describe(deleteAccountHandler, () => {
       type: AdminActionType.Warn,
     });
 
+    // Reactions are one row per emoji that its reactors share. The account alone holds the first, which goes; it shares
+    // the second with the other account, which keeps its id; and the other account alone holds the third, which is kept.
+    // The fourth is the account's in the owned room, which goes with the room's partition
+    const messagesMetadataClient = await getTableClient(AzureTable.MessagesMetadata);
+    const createReaction = (roomId: string, reactorUserIds: string[]) => {
+      const reaction = {
+        emojiTag: "",
+        messageRowKey: memberRoomMessage.rowKey,
+        partitionKey: roomId,
+        rowKey: getReverseTickedTimestamp(),
+        type: MessageMetadataType.Emoji,
+        userIds: reactorUserIds,
+      };
+      return messagesMetadataClient.createEntity(serializeEntity(reaction));
+    };
+    await createReaction(memberRoom.id, [userId]);
+    await createReaction(memberRoom.id, [userId, otherUserId]);
+    await createReaction(memberRoom.id, [otherUserId]);
+    await createReaction(ownedRoom.id, [userId]);
+
     // The account's owned resource, with a working copy, a version and its activity trail
     const ownedResource = takeOne(
       await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Note, userId }).returning(),
@@ -266,6 +288,12 @@ describe(deleteAccountHandler, () => {
       otherMemberRoomAttachmentBlobName,
     ]);
     await expect(readLedgerRows(userId)).resolves.toStrictEqual([]);
+    // The reaction the account held alone is gone, and its id is taken out of the reaction it shared
+    expect(
+      readPartitionEntities(AzureTable.MessagesMetadata, memberRoom.id).map(({ userIds }) =>
+        JSON.parse(String(userIds)),
+      ),
+    ).toStrictEqual([[otherUserId], [otherUserId]]);
 
     // The account's blob prefixes in every container the inventory keys to it
     expect(readBlobNamesUnder(AzureContainer.PublicUserAssets, `${userId}/`)).toStrictEqual([]);

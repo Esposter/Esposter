@@ -3,6 +3,7 @@ import type { UserInAuth } from "@esposter/db-schema";
 
 import { deleteAccountBlobDirectories } from "#src/services/account/deleteAccountBlobDirectories";
 import { deleteAccountChargedBlobs } from "#src/services/account/deleteAccountChargedBlobs";
+import { deleteAccountMemberRoomReactions } from "#src/services/account/deleteAccountMemberRoomReactions";
 import { deleteAccountOwnedResources } from "#src/services/account/deleteAccountOwnedResources";
 import { deleteAccountOwnedRooms } from "#src/services/account/deleteAccountOwnedRooms";
 import { softDeleteAccountMessages } from "#src/services/account/softDeleteAccountMessages";
@@ -17,6 +18,7 @@ export const deleteAccountHandler = async (context: InvocationContext, userId: U
   await deleteAccountOwnedRooms(context, userId);
   await deleteAccountOwnedResources(context, userId);
   await softDeleteAccountMessages(userId);
+  await deleteAccountMemberRoomReactions(userId);
   await deleteAccountChargedBlobs(context, userId);
   await deleteAccountBlobDirectories(userId);
   await db.delete(usersInAuth).where(eq(usersInAuth.id, userId));
