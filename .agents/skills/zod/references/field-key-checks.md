@@ -16,4 +16,4 @@ So the computed key `[src.keyof().enum.field]: src.shape.field.optional()` is **
 
 ## A key mirroring a table, not a schema
 
-An attribute table is a runtime record, so no schema is checked against its keys. Each `mjml-blocks` props schema spreads `createMjmlAttributeShape(table)` (`packages/mjml-blocks/src/services/createMjmlAttributeShape.ts`), which types its keys from the table's own type, so the names survive into the schema. `satisfies` does not refuse a key that matches no field, so a key test compares the schema's keys with the table's keys (`packages/mjml-blocks/src/services/components/componentPropsSchema.test.ts`).
+An attribute table is a runtime record, so no schema is checked against its keys. Each `mjml-blocks` props schema spreads `createMjmlAttributeShape(table)` (`packages/mjml-blocks/src/services/createMjmlAttributeShape.ts`), which types its keys from the table's own type, so the names survive into the schema. `satisfies` does not refuse a key that matches no field, so a key test compares the schema's keys with the table's keys.
