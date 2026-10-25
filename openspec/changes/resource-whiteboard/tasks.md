@@ -28,6 +28,7 @@
 - [ ] 4.1 Describe the content as JSON Schema with the binding rules and the derived fields read-only, and expose the typed move. Verify: tests named after the scenarios 'An agent adds an arrow bound to a shape by patch' and 'A patch leaving a dangling binding is refused'.
 - [ ] 4.2 Add the `Whiteboard` value to the resource type enum through a migration the drizzle skill generates. No row holds the value yet, so the migration is the add alone. Verify: the migration applies on a database holding no whiteboard row, and the enum lists the `Whiteboard` value, shown by the migration check in `packages/db-schema`.
 - [ ] 4.3 Confirm the flowchart retirement change is ready to run after this change ships, with the owner's confirmation of its feature check. Verify: the retirement change links this folder as the change it waits on, and its own tasks run no step before this change is in the app.
+- [ ] 4.4 Decide how an agent reaches the typed move: the spec gives the agent only the generic JSON Patch tools, and design's Notes say a patch cannot compute a reroute, so the spec and the move disagree. Verify: the spec names the route an agent takes to the move, and a test drives an agent's move of a bound shape through that route.
 
 ## 5. Names and specs
 
