@@ -1,5 +1,6 @@
 import type { EmailCanvasDrawing, EmailCanvasType } from "@/models/pageBuilder/EmailCanvasDrawing";
 
+import { EmailNodeType } from "#shared/models/pageBuilder/EmailNodeType";
 import { drawButton } from "@/services/pageBuilder/email/canvasDrawing/drawButton";
 import { drawContainer } from "@/services/pageBuilder/email/canvasDrawing/drawContainer";
 import { drawDivider } from "@/services/pageBuilder/email/canvasDrawing/drawDivider";
@@ -8,12 +9,12 @@ import { drawNavbarLink } from "@/services/pageBuilder/email/canvasDrawing/drawN
 import { drawSection } from "@/services/pageBuilder/email/canvasDrawing/drawSection";
 import { drawSurveyInvite } from "@/services/pageBuilder/email/canvasDrawing/drawSurveyInvite";
 import { drawText } from "@/services/pageBuilder/email/canvasDrawing/drawText";
-import { EmailNodeType } from "#shared/models/pageBuilder/EmailNodeType";
 import { MjmlNodeType } from "mjml-blocks";
 
-// Every email node type names its drawing here, keyed by the type, so a type with no drawing fails the typecheck. A
-// Consumer's own leaf type takes the labelled box in the renderer
+// Every email node type names its drawing here, keyed by the type, so a type with no drawing fails the typecheck and
+// The renderer has no fallback for it
 export const EmailCanvasDrawingMap = {
+  [EmailNodeType.SurveyInvite]: drawSurveyInvite,
   [MjmlNodeType.Accordion]: drawContainer,
   [MjmlNodeType.AccordionElement]: drawContainer,
   [MjmlNodeType.AccordionText]: drawLeaf,
@@ -36,5 +37,4 @@ export const EmailCanvasDrawingMap = {
   [MjmlNodeType.Table]: drawLeaf,
   [MjmlNodeType.Text]: drawText,
   [MjmlNodeType.Wrapper]: drawContainer,
-  [EmailNodeType.SurveyInvite]: drawSurveyInvite,
 } as const satisfies { [TType in EmailCanvasType]: EmailCanvasDrawing<TType> };
