@@ -113,5 +113,7 @@
   },
   "parameters.breastplateShieldSeconds": { "cause": "Unsourced", "value": { "index": 3, "proudSkillGroupId": 3432 } },
   "skill.hits.0.healParty.defenseShare": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3432 } },
-  "skill.hits.0.healParty.flatHealth": { "cause": "Unsourced", "value": { "index": 7, "proudSkillGroupId": 3432 } }
+  "skill.hits.0.healParty.flatHealth": { "cause": "Unsourced", "value": { "index": 7, "proudSkillGroupId": 3432 } },
+  "chargedAttack.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 4, "proudSkillGroupId": 3431 } },
+  "chargedAttack.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 5, "proudSkillGroupId": 3431 } }
 }
