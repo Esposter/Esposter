@@ -52,6 +52,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Survey resource](survey-resource/design.md) — SurveyJS authoring, public respondent page, responses dataset
 - [Program resource](program-resource/design.md) — the distribution orchestrator: audience + email + survey bindings, opaque participant tokens, funnel status
 - [Note resource](note-resource/design.md) — a rich-text document type on Tiptap: JSON at rest, publishable `generateHTML` read view
+- [Note Markdown portability](note-markdown-portability/design.md) — a note exports to and imports from a `.md` file on its overflow menu, through a converter over the catalog's `marked`, saving an import only on confirm
 - [Note slash menu](note-slash-menu/design.md) — `/` opens a filterable block menu at the caret, drawn by the editor on the composer's suggestion stack
 - [Blueprint resource](blueprint-resource/design.md) — a parameterized manifest of resources: deploy one blueprint, get a fully wired set with all the right cross-references
 - [Blueprint capture](blueprint-capture/design.md) — Save as blueprint on selected resources: contents captured, cross-resource ids rewritten to aliases automatically

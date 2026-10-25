@@ -96,7 +96,7 @@ The generic tools reach every type at once, so ordering by value is ordering the
 2. **Live edits**, so an agent's write never strands a person's open editor behind a refresh.
 3. **Lifecycle tools** — publishing, links, history and each type's own procedures.
 4. **Schema fidelity** — shipped: Flowchart node labels, Note document validation, Survey JSON-object validation, and read-only captured GrapesJS output ([agent content tools](../../specs/architecture/agent-content-tools/design.md)).
-5. **Typed commands** — the Sheet's column commands, a repeating todo's tick, and a Note written as Markdown once [Note Markdown portability](../resource-note-markdown-portability/design.md) ships its converter.
+5. **Typed commands** — the Sheet's column commands, a repeating todo's tick, and a Note written as Markdown once [Note Markdown portability](../archive/2026-10-25-resource-note-markdown-portability/design.md) ships its converter.
 6. **The in-product assistant**, once the agent console pairs a host again.
 7. **The page builder's cutover.** Its document is a typed node tree whose schema the registry builds, its edits are JSON Patch operations, and it renders on the server at publish. So at the cutover the Webpage and the Email are described all the way down, their captured HTML goes, and the generic tools reach them whole with no unit of their own; the content tools apply the page builder's `applyPatches`, which lives in `@esposter/shared` beside the headless core that applies it too.
 

@@ -8,7 +8,6 @@ Every product is already a resource behind one [explorer](../../specs/resource/e
 - [ ] [Flowchart shapes](../resource-flowchart-shapes/design.md) — the standard flowchart symbols instead of one rectangle, four handles each, labels edited in place; waits on the [flowchart's future](../../deferred/resource/flowchart-on-editor-core/design.md), since a rebuild or a removal discards Vue Flow work
 - [ ] [Dashboard card and table visuals](../resource-dashboard-card-and-table-visuals/design.md) — a single aggregated number and a table of exact values beside the charts, over the same binding
 - [ ] [Note images](../resource-note-images/design.md) — upload, paste or drop an image into a Note as its own file asset, with alt text; the published view draws only asset urls
-- [ ] [Note Markdown portability](../resource-note-markdown-portability/design.md) — import and export a Note as a `.md` file
 
 ## Later
 

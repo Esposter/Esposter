@@ -21,7 +21,7 @@ A small set of typed commands serves the acts a patch fits badly, running the ed
 
 ## Waiting on
 
-- `openspec/changes/resource-note-markdown-portability/`: the Markdown command for Notes waits on its converter. The rest of this change does not.
+- None. The converter this change waited on has shipped in [Note Markdown portability](../archive/2026-10-25-resource-note-markdown-portability/design.md).
 
 ## Impact
 
