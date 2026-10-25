@@ -38,4 +38,4 @@ Name the gate the test actually exercises — `fails update for a member without
 
 ## Error assertions
 
-`toThrowErrorMatchingInlineSnapshot` is the only accepted error assertion (`toBeInstanceOf` is banned), and the TRPCError snapshot format is `[TRPCError: <message>]` — the prefix comes from TRPCError's `toString()`.
+The error assertion is the `testing` skill's (`references/error-assertions.md`). A TRPCError snapshot reads `[TRPCError: <message>]` — the prefix comes from TRPCError's `toString()`.
