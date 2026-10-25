@@ -17,7 +17,7 @@ Decided not to build, with the reason on the [upstream audit](upstream/design.md
 
 - The XSS validator, as its filter rejects ordinary text and passes a script once escaping is off.
 
-What is not built yet, and in what order, is listed on the [nuxt-security-module roadmap](../../changes/nuxt-security-module-roadmap/tasks.md).
+What is decided against is in [rejected](../../rejected/nuxt-security-module/), and what is deferred, with the trigger that reopens it, is in [deferred](../../deferred/nuxt-security-module/).
 
 ## Per-request cost
 

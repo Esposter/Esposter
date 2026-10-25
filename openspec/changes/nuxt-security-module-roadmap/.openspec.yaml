@@ -1,4 +1,0 @@
-schema: spec-driven
-created: 2026-10-25
-affected_areas: [nuxt-security-module]
-skip_specs: true
