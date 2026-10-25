@@ -19,7 +19,7 @@ flowchart LR
   W -->|"similarity(name, query) > threshold"| OR
   W -->|"EXISTS a tag whose name or value ilike %query%"| OR
   OR --> IDX[("resources_name_trgm_index<br/>GIN (name gin_trgm_ops)")]
-  IDX --> RANK["order by name match desc, then similarity desc<br/>(0 for a tag-only row), then prefix desc, then updatedAt desc"]
+  IDX --> RANK["name match desc, similarity desc (0 for tag-only), prefix desc, updatedAt desc"]
   RANK --> LIST["readResources"]
   W --> CNT["readResourcesCount<br/>same predicate, never drifts"]
 ```
