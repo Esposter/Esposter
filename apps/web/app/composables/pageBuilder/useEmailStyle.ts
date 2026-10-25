@@ -14,7 +14,7 @@ import { getBlockNode, getBlockPropValue, getBlockTypeDefinition } from "headles
 import { getMjmlAttributeFields } from "mjml-blocks";
 
 // The style fields of the selected email node: one per attribute its type takes. A field holds the value the node sets,
-// and shows the cascade's value as its placeholder, so clearing a field restores what the root or MJML gives it
+// And shows the cascade's value as its placeholder, so clearing a field restores what the root or MJML gives it
 export const useEmailStyle = (resourceId: MaybeRefOrGetter<string>) => {
   const pageBuilderDocumentStore = usePageBuilderDocumentStore();
   const { getEmailDocument } = pageBuilderDocumentStore;
@@ -40,12 +40,13 @@ export const useEmailStyle = (resourceId: MaybeRefOrGetter<string>) => {
 
     return getMjmlAttributeFields(definition).map(({ name, type }): EmailStyleField => {
       const own = getBlockPropValue(current.node.props, name);
+      const isSet = typeof own === "string";
       return {
-        isSet: typeof own === "string",
+        isSet,
         name,
         placeholder: getEmailAttributeValue(current.node, name, current.rootAttributes) ?? "",
         type,
-        value: typeof own === "string" ? own : "",
+        value: isSet ? own : "",
       };
     });
   });
