@@ -23,7 +23,7 @@ describe(getPageIcon, () => {
     );
   });
 
-  test("leaves any other page to its title's first letter", () => {
+  test("leaves any other page without an icon", () => {
     expect.hasAssertions();
 
     expect(getPageIcon({ path: RoutePath.Messages(crypto.randomUUID()) })).toBeUndefined();
