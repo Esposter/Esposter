@@ -109,5 +109,7 @@
   "normalAttacks.1.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 1531 } },
   "normalAttacks.2.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 1531 } },
   "normalAttacks.3.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 3, "proudSkillGroupId": 1531 } },
-  "normalAttacks.4.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 4, "proudSkillGroupId": 1531 } }
+  "normalAttacks.4.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 4, "proudSkillGroupId": 1531 } },
+  "chargedAttack.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 5, "proudSkillGroupId": 1531 } },
+  "chargedAttack.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 6, "proudSkillGroupId": 1531 } }
 }
