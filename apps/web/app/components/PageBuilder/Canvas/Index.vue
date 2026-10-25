@@ -149,6 +149,7 @@ const CanvasNodes = (props: { open: OpenPageBuilderDocument; origin: string }) =
   <PageBuilderCanvasNodeToolbar
     v-if="selectedNodeId && toolbarPosition"
     :announce
+    :kind
     :position="toolbarPosition"
     :resource-id
   />

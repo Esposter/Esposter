@@ -22,7 +22,12 @@ describe("pageBuilderCanvasNodeToolbar", () => {
     pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
 
     const component = await mountSuspended(PageBuilderCanvasNodeToolbar, {
-      props: { announce: vi.fn<(message: string) => void>(), position: { left: 0, top: 0 }, resourceId: TEST_ID },
+      props: {
+        announce: vi.fn<(message: string) => void>(),
+        kind: webpageKind,
+        position: { left: 0, top: 0 },
+        resourceId: TEST_ID,
+      },
     });
 
     // The delete's confirm dialog renders inline with the toolbar, so its buttons are left out
@@ -60,7 +65,12 @@ describe("pageBuilderCanvasNodeToolbar", () => {
     pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
 
     const component = await mountSuspended(PageBuilderCanvasNodeToolbar, {
-      props: { announce: vi.fn<(message: string) => void>(), position: { left: 0, top: 0 }, resourceId: TEST_ID },
+      props: {
+        announce: vi.fn<(message: string) => void>(),
+        kind: webpageKind,
+        position: { left: 0, top: 0 },
+        resourceId: TEST_ID,
+      },
     });
 
     await component.get("button[aria-label='Delete']").trigger("click");
@@ -81,7 +91,12 @@ describe("pageBuilderCanvasNodeToolbar", () => {
     pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, TEST_NESTED_TEXT_ID);
 
     const component = await mountSuspended(PageBuilderCanvasNodeToolbar, {
-      props: { announce: vi.fn<(message: string) => void>(), position: { left: 0, top: 0 }, resourceId: TEST_ID },
+      props: {
+        announce: vi.fn<(message: string) => void>(),
+        kind: webpageKind,
+        position: { left: 0, top: 0 },
+        resourceId: TEST_ID,
+      },
     });
 
     await component.get("button[aria-label='Select parent']").trigger("click");

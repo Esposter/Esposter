@@ -1,24 +1,27 @@
 <script setup lang="ts">
+import type { AnyPageBuilderKind } from "@/models/pageBuilder/AnyPageBuilderKind";
+
 import { usePageBuilderMoves } from "@/composables/pageBuilder/usePageBuilderMoves";
 import { usePageBuilderSelection } from "@/composables/pageBuilder/usePageBuilderSelection";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { useCommandStore } from "@/store/ui/command";
 
 interface Props {
   announce: (message: string) => void;
+  // The kind the resource's document is edited through, which the shell passes beside the resource
+  kind: AnyPageBuilderKind;
   // Where the toolbar's top left sits in the app's document
   position: { left: number; top: number };
   resourceId: string;
 }
 
-const { announce, position, resourceId } = defineProps<Props>();
+const { announce, kind, position, resourceId } = defineProps<Props>();
 const commandStore = useCommandStore();
 const { openCommandPalette } = commandStore;
 const { getDocument } = usePageBuilderDocumentStore();
 const { deleteSelected, duplicateSelected, moveDown, moveToScope, moveUp } = usePageBuilderMoves(
-  webpageKind,
+  kind,
   () => getDocument(resourceId),
   () => resourceId,
   announce,
@@ -26,7 +29,7 @@ const { deleteSelected, duplicateSelected, moveDown, moveToScope, moveUp } = use
 // Registered while the toolbar is mounted, so the palette Move to… opens is scoped to this node's slots
 useCommandScope(moveToScope);
 const { selectParent } = usePageBuilderSelection(
-  webpageKind,
+  kind,
   () => getDocument(resourceId),
   () => resourceId,
 );
