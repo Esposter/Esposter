@@ -5,5 +5,6 @@
   "skill.hits.length": { "cause": "Unsourced", "value": 0 },
   "chargedAttack.animationFrames": { "cause": "DiffersFromSource", "value": 113 },
   "chargedAttack.hits.length": { "cause": "Unsourced", "value": 1 },
-  "chargedAttack.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 84 }
+  "chargedAttack.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 84 },
+  "chargedAttack.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 3, "proudSkillGroupId": 10231 } }
 }
