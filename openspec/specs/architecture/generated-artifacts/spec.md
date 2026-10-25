@@ -66,9 +66,9 @@ A dataset that a browser fetches SHALL be published as content-addressed objects
 - **THEN** its objects are published to storage
 - **AND** only the lock naming each object's hash is committed
 
-### Requirement: A generated source file keeps the formatter's shape
+### Requirement: A generator writes deterministically
 
-A generated source file SHALL already be in the formatter's own shape, so that a re-run with unchanged data leaves the tree unchanged.
+A generator SHALL write the same bytes for the same data, so that a re-run with unchanged data leaves the tree unchanged.
 
 #### Scenario: A re-run with unchanged data
 

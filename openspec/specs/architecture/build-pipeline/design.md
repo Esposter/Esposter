@@ -33,15 +33,16 @@ The only data JSON `genshin-world` imports is its lock and one save bound: every
 
 `@esposter/configuration` owns every build input. A package's config is a factory call plus what is genuinely its own, and the factories compose with `mergeConfig` rather than by spreading — a spread replaces a whole key, so a config adding one `deps` field would silently drop everything the base set there.
 
-| Factory                         | For                                                                                                           |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------------- |
-| `getTsdownConfiguration`        | The base — `platform: "neutral"`                                                                              |
-| `getTsdownConfigurationNode`    | The base plus `platform: "node"`                                                                              |
-| `getTsdownConfigurationVue`     | The base plus SFC compilation and `dts.vue`                                                                   |
-| `getVuePlugins`                 | The SFC plugin pair, shared with the Vitest run                                                               |
-| `getVitestConfiguration`        | The Vitest config every member's tests run on; the app takes its `test` options alone                         |
-| `getBenchmarkTestConfiguration` | Just the bench wiring, spread by `getVitestConfiguration` over the member's own test options                  |
-| `getVueTestConfiguration`       | Every worker's Vue with the Options API compiled out, as the app ships it; spread by `getVitestConfiguration` |
+| Factory                            | For                                                                                                                                     |
+| ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `getTsdownConfiguration`           | The base — `platform: "neutral"`                                                                                                        |
+| `getTsdownConfigurationNode`       | The base plus `platform: "node"`                                                                                                        |
+| `getTsdownConfigurationVue`        | The base plus SFC compilation and `dts.vue`                                                                                             |
+| `getVuePlugins`                    | The SFC plugin pair, shared with the Vitest run                                                                                         |
+| `getVitestConfiguration`           | The Vitest config every member's tests run on; the app takes its `test` options alone                                                   |
+| `getBenchmarkTestConfiguration`    | Just the bench wiring, spread by `getVitestConfiguration` over the member's own test options                                            |
+| `getVueTestConfiguration`          | Every worker's Vue with the Options API compiled out, as the app ships it; spread by `getVitestConfiguration`                           |
+| `getTsdownConfigurationNuxtModule` | The Node base, unbundled, with the module's entry and its runtime files, for a [Nuxt module package](../nuxt-module-packages/design.md) |
 
 Which package calls which factory is a question the repo answers — read the `tsdown.config.ts` files rather than a table that goes stale.
 
