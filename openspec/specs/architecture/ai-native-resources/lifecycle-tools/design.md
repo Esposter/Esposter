@@ -1,6 +1,6 @@
 # Lifecycle tools
 
-Ships beside the owner's-alone declaration in [agent keys](../architecture-ai-native-resources-agent-keys/design.md). An edit to a document is only half of what a person does with a resource: they create it, name and tag it, bin and restore it, publish it, follow what links to it and roll it back. Each of those already has a procedure, and most of them are typeless, on the cross-type `resource` router. This unit serves them as one tool per operation, under the `Resources` scope a key is made with ([agent access](../../specs/architecture/agent-access/design.md)), so the tool list does not grow with the number of types.
+Ships beside the owner's-alone declaration in [agent keys](../agent-keys/design.md). An edit to a document is only half of what a person does with a resource: they create it, name and tag it, bin and restore it, publish it, follow what links to it and roll it back. Each of those already has a procedure, and most of them are typeless, on the cross-type `resource` router. This unit serves them as one tool per operation, under the `Resources` scope a key is made with ([agent access](../../agent-access/design.md)), so the tool list does not grow with the number of types.
 
 ## One tool per operation
 
@@ -18,7 +18,7 @@ Ships beside the owner's-alone declaration in [agent keys](../architecture-ai-na
 | History                   | `resource.readSnapshotHistory`, `resource.restoreSnapshotVersion` | opted in — a restore takes a revision first, so it is undone as easily             |
 | Datasets                  | `dataset.readDataset`                                             | opted in — a Sheet's rows, a Survey's responses or a Program's status as one table |
 
-Linking needs no tool: a reference is a field declared with `createResourceLinkSchema`, so writing it through the content tools is linking, and the save projects it into the [resource-link index](../../specs/architecture/resource-links/design.md).
+Linking needs no tool: a reference is a field declared with `createResourceLinkSchema`, so writing it through the content tools is linking, and the save projects it into the [resource-link index](../../resource-links/design.md).
 
 ## Dispatch to the type's own procedure
 
@@ -37,7 +37,7 @@ flowchart TD
 
 ## Each type's own procedures
 
-A procedure only one type has stays on that type's router, opted in where it is the owner's act; the rest are declared the owner's alone in [agent keys](../architecture-ai-native-resources-agent-keys/design.md).
+A procedure only one type has stays on that type's router, opted in where it is the owner's act; the rest are declared the owner's alone in [agent keys](../agent-keys/design.md).
 
 | Type      | Procedures                                                            | Why an agent may call them                                                 |
 | --------- | --------------------------------------------------------------------- | -------------------------------------------------------------------------- |
