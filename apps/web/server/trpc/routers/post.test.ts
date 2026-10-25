@@ -121,6 +121,9 @@ describe("postRouter", () => {
     const deletedPost = await postCaller.deletePost(newPost.id);
 
     expect(deletedPost.id).toBe(newPost.id);
+    await expect(postCaller.readPost(newPost.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Post, newPost.id).message}]`,
+    );
   });
 
   test("fails delete with wrong user", async () => {

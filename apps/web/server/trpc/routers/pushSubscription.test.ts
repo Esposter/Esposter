@@ -61,8 +61,10 @@ describe("pushSubscriptionRouter", () => {
 
     const newPushSubscription = await pushSubscriptionCaller.subscribe({ endpoint, keys: { auth, p256dh } });
     const deletedPushSubscription = await pushSubscriptionCaller.unsubscribe(endpoint);
+    const pushSubscription = await mockContext.db.query.pushSubscriptionsInNotification.findFirst();
 
     expect(deletedPushSubscription.id).toBe(newPushSubscription.id);
     expect(deletedPushSubscription.endpoint).toBe(endpoint);
+    expect(pushSubscription).toBeUndefined();
   });
 });
