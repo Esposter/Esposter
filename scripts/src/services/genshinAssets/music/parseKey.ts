@@ -6,11 +6,13 @@ const NOTE_LETTER_SEMITONES: Record<string, number> = { a: 9, b: 11, c: 0, d: 2,
 // A key is a MIDI number or a note name, middle C being `c4`, 60
 export const parseKey = (value: string): number => {
   const groups = NOTE_NAME_REGEX.exec(value)?.groups;
+  const accidental = groups?.accidental?.toLowerCase();
   const key = groups
     ? 12 * (Number(groups.octave) + 1) +
       (NOTE_LETTER_SEMITONES[groups.letter?.toLowerCase() ?? ""] ?? Number.NaN) +
-      (groups.accidental === "#" ? 1 : groups.accidental === "b" ? -1 : 0)
+      (accidental === "#" ? 1 : accidental === "b" ? -1 : 0)
     : Number(value);
-  if (!Number.isInteger(key)) throw new InvalidOperationError(Operation.Read, value, "not a key");
+  if (!Number.isInteger(key) || value.trim() === "")
+    throw new InvalidOperationError(Operation.Read, value, "not a key");
   return key;
 };
