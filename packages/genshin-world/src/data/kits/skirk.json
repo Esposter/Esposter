@@ -202,5 +202,7 @@
     "value": { "index": 6, "proudSkillGroupId": 11432 }
   },
   "stances.sevenPhaseFlash.normalAttacks.4.hits.0.poiseDamage": { "cause": "Unsourced", "value": 0 },
-  "stances.sevenPhaseFlash.normalAttacks.4.targeting": { "cause": "Unsourced", "value": "Strike" }
+  "stances.sevenPhaseFlash.normalAttacks.4.targeting": { "cause": "Unsourced", "value": "Strike" },
+  "chargedAttack.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 6, "proudSkillGroupId": 11431 } },
+  "chargedAttack.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 6, "proudSkillGroupId": 11431 } }
 }
