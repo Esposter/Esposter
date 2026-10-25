@@ -99,5 +99,11 @@
     "source": "Gcsim",
     "value": 20
   },
-  "stances.nightVigil.skill.animationFrames": { "file": "skill.go", "line": 39, "source": "Gcsim", "value": 43 }
+  "stances.nightVigil.skill.animationFrames": { "file": "skill.go", "line": 39, "source": "Gcsim", "value": 43 },
+  "hits.swiftHuntNormalShot.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 9832 } },
+  "hits.swiftHuntNormalShot.1.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 9832 } },
+  "hits.swiftHuntNormalShot.2.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 9832 } },
+  "hits.swiftHuntPiercingShot.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 9832 } },
+  "hits.swiftHuntPiercingShot.1.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 9832 } },
+  "hits.swiftHuntPiercingShot.2.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 9832 } }
 }
