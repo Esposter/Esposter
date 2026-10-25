@@ -3,6 +3,7 @@ import type { Editor } from "@tiptap/vue-3";
 import { NOTE_IMAGE_MIME_TYPES } from "#shared/services/resource/note/constants";
 import { useUploadResourceFile } from "@/composables/resource/useUploadResourceFile";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
+import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 
@@ -10,7 +11,8 @@ import { getResultAsync } from "@esposter/shared";
 // The node only ever names the stable asset url the upload returns, and the bytes never reach the document. An upload
 // The server refuses alerts and adds nothing, and the other images still go in
 export const useInsertNoteImages = () => {
-  const { resource } = storeToRefs(useResourceStore());
+  const resourceStore = useResourceStore();
+  const { resource } = storeToRefs(resourceStore);
   const uploadFile = useUploadResourceFile(ResourceType.Note, () => resource.value?.id ?? "");
   return async (editor: Editor, files: File[], position?: number) => {
     const imageFiles = files.filter((file) => NOTE_IMAGE_MIME_TYPES.includes(file.type));
