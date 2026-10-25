@@ -3,17 +3,10 @@ import type { CookRecipeRow } from "#src/models/genshinAssets/cooking/CookRecipe
 import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 import type { CookingRecipe, CookingSpecialty } from "genshin-world";
 
-import { COOK_BONUS_REPLACE_TYPE, FoodQualityCookingQualityMap } from "#src/services/genshinAssets/cooking/constants";
+import { COOK_BONUS_REPLACE_TYPE } from "#src/services/genshinAssets/cooking/constants";
+import { toResultQuality } from "#src/services/genshinAssets/cooking/toResultQuality";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { cookingFoodTypeSchema, CookingQuality } from "genshin-world";
-
-// The quality a dish's result is, read off the food quality of its item row
-const toResultQuality = (itemId: number, materialMap: Map<number, MaterialRow>): CookingQuality => {
-  const foodQuality = materialMap.get(itemId)?.foodQuality;
-  const quality = foodQuality === undefined ? undefined : FoodQualityCookingQualityMap[foodQuality];
-  if (quality === undefined) throw new InvalidOperationError(Operation.Read, String(itemId), "is no dish's result");
-  return quality;
-};
 
 // One dish from its cook recipe row: its ingredients, the item each quality of its result is, its proficiency, its zone
 // Parameters, its rarity, its specialties, and the instructions that teach it. The results' qualities come from their
