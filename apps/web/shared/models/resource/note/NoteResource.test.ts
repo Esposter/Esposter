@@ -2,17 +2,7 @@ import { noteResourceSchema } from "#shared/models/resource/note/NoteResource";
 import { describe, expect, test } from "vitest";
 
 describe("noteResourceSchema", () => {
-  test("accepts a document supported by the Note writing kit", () => {
-    expect.hasAssertions();
-
-    expect(
-      noteResourceSchema.safeParse({
-        doc: { content: [{ content: [{ text: "note", type: "text" }], type: "paragraph" }], type: "doc" },
-      }).success,
-    ).toBe(true);
-  });
-
-  test("accepts table nodes supported by the Note writing kit", () => {
+  test("accepts a paragraph with text and table nodes supported by the Note writing kit", () => {
     expect.hasAssertions();
 
     expect(
@@ -23,7 +13,10 @@ describe("noteResourceSchema", () => {
               content: [
                 {
                   content: [
-                    { content: [{ type: "paragraph" }], type: "tableHeader" },
+                    {
+                      content: [{ content: [{ text: "note", type: "text" }], type: "paragraph" }],
+                      type: "tableHeader",
+                    },
                     { content: [{ type: "paragraph" }], type: "tableHeader" },
                   ],
                   type: "tableRow",
