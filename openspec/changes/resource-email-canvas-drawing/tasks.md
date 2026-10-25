@@ -5,13 +5,13 @@
 
 ## 2. One drawing per node type
 
-- [ ] 2.1 Move the render callback's type checks into a table keyed by `MjmlNodeType`, typed `Record<MjmlNodeType, EmailCanvasRenderer>`, so a missing type fails the typecheck. Verify: a test named after the scenario 'every email node type has a drawing', seen failing first (the test lists each type of the enum and asserts a drawing for each).
-- [ ] 2.2 Remove the fallback that draws a type-name box for an unnamed type. Verify: the same test, plus the scenario 'a content-less type draws the box its table entry names'.
+- [x] 2.1 Key the drawings by `MjmlNodeType` in one map, each drawing in its own file, dispatched by one expression. Verify: the map is typed `as const satisfies { [TType in MjmlNodeType]: EmailCanvasDrawing<TType> }`, so a built-in type with no drawing fails the typecheck. A test would repeat that check, so none is written.
+- [x] 2.2 Remove the fallback that draws a type-name box for an unnamed built-in type. Verify: the same typecheck as 2.1; the labelled box stays only as the drawing of the leaf types the map names.
 
 ## 3. The starter draws whole
 
-- [ ] 3.1 Draw each part of the starter email with its own content. Verify: a test named after the scenario 'the starter email draws every part with its content', seen failing first.
+- [ ] 3.1 Draw each part of the starter email with its own content. Verify: a test named after the scenario 'the starter email draws every part with its content', seen failing first. Open: the starter's render has no test yet.
 
 ## 4. Sweep
 
-- [ ] 4.1 Update the [email page builder design](../../specs/resource/page-builder/email/design.md) Key files row for `renderEmailCanvasVNodes.ts` to name the table, and fix any prose that describes the labelled fallback. Verify: the spec tests in `scripts` pass.
+- [ ] 4.1 Update the [email page builder design](../../specs/resource/page-builder/email/design.md) Key files row for `renderEmailCanvasVNodes.ts` to name the map, and fix any prose that describes the labelled fallback. Verify: the spec tests in `scripts` pass.

@@ -63,7 +63,7 @@ describe("renderEmailCanvasVNodes", () => {
     expect(styleOf(text).padding).toBe("10px 25px");
   });
 
-  test("a labelled leaf draws the attributes its component takes", () => {
+  test("a button draws the attributes its component takes, and its words", () => {
     expect.hasAssertions();
 
     const section = takeOne(
@@ -85,7 +85,7 @@ describe("renderEmailCanvasVNodes", () => {
       fontFamily: "Ubuntu, Helvetica, Arial, sans-serif",
       fontSize: "13px",
       fontWeight: "normal",
-      height: undefined,
+      height: "",
       lineHeight: "120%",
       padding: "10px 25px",
       textAlign: "center",
