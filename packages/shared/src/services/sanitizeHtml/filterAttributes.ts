@@ -6,10 +6,7 @@ import { SRCSET_ATTRIBUTE, URL_ATTRIBUTES } from "#src/services/sanitizeHtml/con
 import { filterClasses } from "#src/services/sanitizeHtml/filterClasses";
 import { filterSrcset } from "#src/services/sanitizeHtml/filterSrcset";
 import { filterStyle } from "#src/services/sanitizeHtml/filterStyle";
-
-// The entry a tag's policy names, or undefined when the policy names none for that tag
-const getTagPolicy = <T>(tagPolicies: Record<string, T>, tagName: string): T | undefined =>
-  Object.hasOwn(tagPolicies, tagName) ? tagPolicies[tagName] : undefined;
+import { getTagPolicy } from "#src/services/sanitizeHtml/getTagPolicy";
 
 // A meta refresh navigates to the URL its content names, so that content is never kept: without it the refresh does nothing
 const checkIsMetaRefresh = (tagName: string, attributes: Record<string, string>): boolean =>
