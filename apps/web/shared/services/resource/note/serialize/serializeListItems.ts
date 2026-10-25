@@ -1,7 +1,7 @@
-import type { NodesSerializer } from "@/models/resource/note/serialize/NodesSerializer";
+import type { NodesSerializer } from "#shared/models/resource/note/serialize/NodesSerializer";
 import type { JSONContent } from "@tiptap/core";
 
-import { prefixLines } from "@/services/resource/note/serialize/prefixLines";
+import { prefixLines } from "#shared/services/resource/note/serialize/prefixLines";
 
 export const serializeListItems = (
   items: JSONContent[],

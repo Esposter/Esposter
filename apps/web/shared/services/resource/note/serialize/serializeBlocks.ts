@@ -1,6 +1,6 @@
 import type { JSONContent } from "@tiptap/core";
 
-import { serializeBlock } from "@/services/resource/note/serialize/serializeBlock";
+import { serializeBlock } from "#shared/services/resource/note/serialize/serializeBlock";
 
 export const serializeBlocks = (nodes: JSONContent[]): string =>
   nodes

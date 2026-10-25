@@ -78,7 +78,7 @@ describe("resourceNoteDialogs", () => {
     trpcMsw.resource.saveResourceRevision.mutation(() => {
       revisionSaves.push(resourceId);
       onRevisionSaved();
-      return { id: resourceId };
+      return 1;
     });
     const { promise: isContentSaved, resolve: onContentSaved } = Promise.withResolvers<void>();
     trpcMsw.note.saveResourceContent.mutation(() => {

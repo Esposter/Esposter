@@ -1,6 +1,6 @@
-import type { MarkWrapper } from "@/models/resource/note/serialize/MarkWrapper";
+import type { MarkWrapper } from "#shared/models/resource/note/serialize/MarkWrapper";
 
-import { formatDestination } from "@/services/resource/note/serialize/formatDestination";
+import { formatDestination } from "#shared/services/resource/note/serialize/formatDestination";
 
 export const SPECIAL_CHARACTER_REGEX = /[\\`*_[\]<>~&!]/gu;
 // The marker's own character is escaped (`1\.`, `\#`), so the line reads as its text.

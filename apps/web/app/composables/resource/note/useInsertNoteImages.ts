@@ -1,4 +1,4 @@
-import type { Editor } from "@tiptap/vue-3";
+import type { Editor } from "@tiptap/core";
 
 import { NOTE_IMAGE_MIME_TYPES } from "#shared/services/resource/note/constants";
 import { useUploadResourceFile } from "@/composables/resource/useUploadResourceFile";

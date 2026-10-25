@@ -1,6 +1,6 @@
 import type { JSONContent } from "@tiptap/core";
 
-import { longestBacktickRun } from "@/services/resource/note/serialize/longestBacktickRun";
+import { longestBacktickRun } from "#shared/services/resource/note/serialize/longestBacktickRun";
 
 export const serializeCodeBlock = (node: JSONContent) => {
   const text = (node.content ?? []).map(({ text: content }) => content ?? "").join("");

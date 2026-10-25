@@ -1,4 +1,7 @@
-import { LINE_START_MARKER_REGEX, LINE_START_WHITESPACE_REGEX } from "@/services/resource/note/serialize/constants";
+import {
+  LINE_START_MARKER_REGEX,
+  LINE_START_WHITESPACE_REGEX,
+} from "#shared/services/resource/note/serialize/constants";
 
 // Four columns of leading whitespace read back as a code block, so it is written as references first.
 // A paragraph line that begins with a block marker reads back as that block, so the marker is escaped

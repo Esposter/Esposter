@@ -1,7 +1,7 @@
 import type { JSONContent } from "@tiptap/core";
 
-import { createParagraph } from "@/services/resource/note/deserialize/createParagraph";
-import { mapBlockTokens } from "@/services/resource/note/deserialize/mapBlockTokens";
+import { createParagraph } from "#shared/services/resource/note/deserialize/createParagraph";
+import { mapBlockTokens } from "#shared/services/resource/note/deserialize/mapBlockTokens";
 import { marked } from "marked";
 
 // The note a Markdown file imports as. Its shape is what the kit can hold, which the caller checks against the note's

@@ -1,9 +1,9 @@
-import type { NodesSerializer } from "@/models/resource/note/serialize/NodesSerializer";
+import type { NodesSerializer } from "#shared/models/resource/note/serialize/NodesSerializer";
 import type { JSONContent } from "@tiptap/core";
 
-import { MARK_WRAPPERS } from "@/services/resource/note/serialize/constants";
-import { escapeText } from "@/services/resource/note/serialize/escapeText";
-import { formatCodeSpan } from "@/services/resource/note/serialize/formatCodeSpan";
+import { MARK_WRAPPERS } from "#shared/services/resource/note/serialize/constants";
+import { escapeText } from "#shared/services/resource/note/serialize/escapeText";
+import { formatCodeSpan } from "#shared/services/resource/note/serialize/formatCodeSpan";
 
 export const serializeInlineNode = (node: JSONContent, serializeInline: NodesSerializer): string => {
   if (node.type === "hardBreak") return "\\\n";

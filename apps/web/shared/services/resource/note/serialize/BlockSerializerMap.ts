@@ -1,11 +1,11 @@
-import type { NodesSerializer } from "@/models/resource/note/serialize/NodesSerializer";
+import type { NodesSerializer } from "#shared/models/resource/note/serialize/NodesSerializer";
 import type { JSONContent } from "@tiptap/core";
 
-import { prefixLines } from "@/services/resource/note/serialize/prefixLines";
-import { serializeCodeBlock } from "@/services/resource/note/serialize/serializeCodeBlock";
-import { serializeInline } from "@/services/resource/note/serialize/serializeInline";
-import { serializeListItems } from "@/services/resource/note/serialize/serializeListItems";
-import { serializeParagraph } from "@/services/resource/note/serialize/serializeParagraph";
+import { prefixLines } from "#shared/services/resource/note/serialize/prefixLines";
+import { serializeCodeBlock } from "#shared/services/resource/note/serialize/serializeCodeBlock";
+import { serializeInline } from "#shared/services/resource/note/serialize/serializeInline";
+import { serializeListItems } from "#shared/services/resource/note/serialize/serializeListItems";
+import { serializeParagraph } from "#shared/services/resource/note/serialize/serializeParagraph";
 
 // The writing kit's blocks as CommonMark's. A node with no form here keeps its text as a paragraph, so the reader's
 // words survive the export even where the structure does not

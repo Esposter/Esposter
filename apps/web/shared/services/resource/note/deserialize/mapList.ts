@@ -1,8 +1,8 @@
-import type { TokensMapper } from "@/models/resource/note/deserialize/TokensMapper";
+import type { TokensMapper } from "#shared/models/resource/note/deserialize/TokensMapper";
 import type { JSONContent } from "@tiptap/core";
 import type { Tokens } from "marked";
 
-import { mapListItem } from "@/services/resource/note/deserialize/mapListItem";
+import { mapListItem } from "#shared/services/resource/note/deserialize/mapListItem";
 
 export const mapList = (token: Tokens.List, mapBlockTokens: TokensMapper): JSONContent => {
   // A task list holds only task items, so a list mixing both reads as the list it is and its checkboxes are dropped
