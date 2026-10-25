@@ -3,12 +3,9 @@ import type { DialogTarget } from "@/models/dungeons/UI/dialog/DialogTarget";
 import type { PlayerInput } from "@/models/dungeons/UI/input/PlayerInput";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { useAnimateText } from "@/composables/dungeons/text/useAnimateText";
-import { SceneEventKey } from "@/models/dungeons/scene/SceneEventKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
-import { getDialogTargetText } from "@/services/dungeons/dialog/getDialogTargetText";
+import { animateDialogMessage } from "@/services/dungeons/dialog/animateDialogMessage";
 import { showMessageNoInputRequired } from "@/services/dungeons/dialog/showMessageNoInputRequired";
-import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
 import { getResultAsync, getSynchronizedFunction, noop, withFinalizerAsync } from "@esposter/shared";
 
 export const useDialogStore = defineStore("dungeons/dialog", () => {
@@ -61,14 +58,10 @@ export const useDialogStore = defineStore("dungeons/dialog", () => {
       queuedOnComplete?.();
       return;
     }
-    // Signal other components that we're ready to show our message.
-    phaserEventEmitter.emit(`${SceneEventKey.ShowMessage}${scene.scene.key}`);
-
-    dialogTarget.message.value.title = message.title;
     isQueuedMessagesAnimationPlaying.value = true;
     // The flag gates player input, so an animation that rejects has to clear it or input stays blocked forever
     await withFinalizerAsync(
-      () => useAnimateText(scene, getDialogTargetText(dialogTarget), message.text),
+      () => animateDialogMessage(scene, dialogTarget, message),
       () => {
         isQueuedMessagesAnimationPlaying.value = false;
       },
