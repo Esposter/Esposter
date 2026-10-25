@@ -8,7 +8,7 @@ A Note can hold text, lists and links, and nothing else ([note resource](../../s
 - **The Image node** (`@tiptap/extension-image`) joins `getNoteExtensions`, so the editor, the `generateHTML` render and the Note validator share it. The node holds `src`, `alt` and `title`.
 - **Three ways in**, all through `useUploadResourceFile`: an **Image** button in the menu bar that opens the file picker, a paste, and a drop. The paste and the drop run through `@tiptap/extension-file-handler`, which the message composer already uses. The uploaded file becomes an image node whose `src` is the stable `/api/resource-assets/…` url, never a data url.
 - **Alt text** is set from a popover on a selected image, shaped like the link popover, following Notion's `•••` → **Alt text**.
-- **The published view allows `img` only for a resource asset url.** `sanitizeTextHtml` is shared with the message composer, so the Note's render passes it a Note-only allowance: an `img` whose `src` starts with the resource assets prefix, keeping `alt` and `title`. An image from any other origin is dropped, which keeps tracking pixels and hotlinks out of a published page.
+- **The published view allows `img` only for a resource asset url.** `sanitizeTextHtml` is shared with the message composer, so `renderNoteHtml` passes it a Note-only allowance: an `img` whose `src` starts with the resource assets prefix, keeping `alt` and `title`. An image from any other origin is dropped, which keeps tracking pixels and hotlinks out of a published page. `renderNoteHtml` is also the render of the page builder's text and of an email's rich text, so those share the allowance: a resource image shows in them, and any other is dropped as it is in a note.
 - **The rich-text typography** caps an image at the column width.
 
 Unpublishing already releases the files a publication's versions name, and the storage quota already charges an uploaded file, so neither needs changing.
@@ -27,7 +27,7 @@ Unpublishing already releases the files a publication's versions name, and the s
 | `apps/web/shared/services/resource/note/getNoteExtensions.ts`   | the Image node, shared by the editor, render and validator  |
 | `apps/web/app/components/Resource/Note/Editor.vue`              | the file handler, uploading through `useUploadResourceFile` |
 | `apps/web/app/components/Resource/Note/EditorMenuBar.vue`       | the Image button                                            |
-| `apps/web/app/components/Resource/Note/View.vue`                | passes the Note-only `img` allowance to the sanitizer       |
+| `apps/web/shared/services/resource/note/renderNoteHtml.ts`      | passes the Note-only `img` allowance to the sanitizer       |
 | `packages/shared/src/services/sanitizeHtml/sanitizeTextHtml.ts` | takes the extra allowance without widening the composer's   |
 | `apps/web/app/assets/css/globals.css`                           | the image rule in the rich-text typography                  |
 | `apps/web/package.json`                                         | gains `@tiptap/extension-image` from the catalog            |
