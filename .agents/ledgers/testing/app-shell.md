@@ -7,7 +7,7 @@ composable and store layers no single feature claims.
 | ------------------------------------------------------------------------- | ---------------------- | -------------------------------------------------------- |
 | `composables/data`                                                        | —                      | one of the two pagination cores                          |
 | `composables/shared`                                                      | —                      | the other pagination core                                |
-| `services/{app,auth,login,google}`                                        | —                      |                                                          |
+| `services/{app,auth,login,google}`                                        | 2026-10-25 · Haiku 5.5 |                                                          |
 | `services/{route,router,notification}`                                    | —                      |                                                          |
 | `services/trpc`                                                           | —                      |                                                          |
 | `services/{azure,cache}`                                                  | 2026-10-25 · Haiku 5.5 |                                                          |

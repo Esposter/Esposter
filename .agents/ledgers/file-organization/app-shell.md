@@ -17,7 +17,7 @@ Everything a product mounts inside rather than owns: the chrome, the routes, and
 | `app/services/resource/tag`                                                         | —                      |                                                                                                 |
 | `app/services/resource/todoList`                                                    | 2026-10-25 · Haiku 5.5 |                                                                                                 |
 | `app/services/message`                                                              | 2026-10-25 · Haiku 5.5 |                                                                                                 |
-| `app/services/dungeons`                                                             | —                      |                                                                                                 |
+| `app/services/dungeons`                                                             | 2026-10-25 · Haiku 5.5 |                                                                                                 |
 | `app/services/agentConsole`                                                         | —                      |                                                                                                 |
 | `app/services` — the rest                                                           | —                      | a file is named for its export, and a second map is a second file                               |
 | `app/models` — the rest                                                             | —                      | the resolver class hierarchies stay models, like the sheet commands                             |
@@ -28,7 +28,7 @@ Everything a product mounts inside rather than owns: the chrome, the routes, and
 | `app/composables/dungeons`                                                          | —                      |                                                                                                 |
 | `app/composables` — the rest                                                        | —                      | sole-consumer subfolders                                                                        |
 | `app/store/message`                                                                 | 2026-10-25 · Haiku 5.5 |                                                                                                 |
-| `app/store/dungeons`                                                                | —                      |                                                                                                 |
+| `app/store/dungeons`                                                                | 2026-10-25 · Haiku 5.5 |                                                                                                 |
 | `app/store/resource`                                                                | —                      |                                                                                                 |
 | `app/store` — the rest                                                              | —                      | a store's file is named for its domain, so the filename never matches its `use*Store` export    |
 | `app/pages`, `app/layouts`, `app/middleware`, `app/plugins`                         | —                      | a route file's name is the router's, and a layout's name is the `NuxtLayout` key                |

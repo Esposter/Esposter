@@ -6,10 +6,10 @@ Every workspace package outside `apps/web`.
 | ---------------------------- | ---------------------- | ------------------------------------------------------ |
 | `azure-functions`            | —                      | every `mockDb` stays — hoisted factory, see the README |
 | `azure`, `azure-mock`        | 2026-10-25 · Haiku 5.5 |                                                        |
-| `db`, `db-schema`, `db-mock` | —                      |                                                        |
+| `db`, `db-schema`, `db-mock` | 2026-10-25 · Haiku 5.5 |                                                        |
 | `shared`, `shared-node`      | 2026-10-25 · Haiku 5.5 |                                                        |
-| `parse-tmx`                  | —                      |                                                        |
-| `vue-phaserjs`               | —                      |                                                        |
+| `parse-tmx`                  | 2026-10-25 · Haiku 5.5 |                                                        |
+| `vue-phaserjs`               | 2026-10-25 · Haiku 5.5 |                                                        |
 | `configuration`, `infra`     | —                      |                                                        |
 | `keyframe-store`             | 2026-10-25 · Haiku 5.5 |                                                        |
 | `agent-console-server`       | —                      |                                                        |
@@ -17,9 +17,9 @@ Every workspace package outside `apps/web`.
 | `genshin-engine`             | —                      |                                                        |
 | `genshin-world`              | —                      |                                                        |
 | `genshin-interface`          | —                      |                                                        |
-| `genshin-text`               | —                      |                                                        |
+| `genshin-text`               | 2026-10-25 · Haiku 5.5 |                                                        |
 | `genshin-mods`               | 2026-10-25 · Haiku 5.5 |                                                        |
-| `pitch-transcription`        | —                      |                                                        |
+| `pitch-transcription`        | 2026-10-25 · Haiku 5.5 |                                                        |
 | `trpc-msw`                   | —                      |                                                        |
 | `trpc-nuxt-module`           | —                      |                                                        |
 | `follow-ups`                 | —                      |                                                        |

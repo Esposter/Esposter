@@ -4,21 +4,21 @@
 
 | Unit                                                                                      | Swept                  | Notes    |
 | ----------------------------------------------------------------------------------------- | ---------------------- | -------- |
-| `scripts/src/animeStudio`                                                                 | —                      | 1 file   |
-| `scripts/src/benchTypes`                                                                  | —                      | 1 file   |
-| `scripts/src/ci`                                                                          | —                      | 1 file   |
-| `scripts/src/citations`                                                                   | —                      | 1 file   |
-| `scripts/src/crossOS`                                                                     | —                      | 1 file   |
-| `scripts/src/dependencies`                                                                | —                      | 1 file   |
-| `scripts/src/dependencyGraph`                                                             | —                      | 1 file   |
-| `scripts/src/editorBudget`                                                                | —                      | 1 file   |
-| `scripts/src/fleet`                                                                       | —                      | 7 files  |
-| `scripts/src/gameData`                                                                    | —                      | 1 file   |
+| `scripts/src/animeStudio`                                                                 | 2026-10-25 · Haiku 5.5 | 1 file   |
+| `scripts/src/benchTypes`                                                                  | 2026-10-25 · Haiku 5.5 | 1 file   |
+| `scripts/src/ci`                                                                          | 2026-10-25 · Haiku 5.5 | 1 file   |
+| `scripts/src/citations`                                                                   | 2026-10-25 · Haiku 5.5 | 1 file   |
+| `scripts/src/crossOS`                                                                     | 2026-10-25 · Haiku 5.5 | 1 file   |
+| `scripts/src/dependencies`                                                                | 2026-10-25 · Haiku 5.5 | 1 file   |
+| `scripts/src/dependencyGraph`                                                             | 2026-10-25 · Haiku 5.5 | 1 file   |
+| `scripts/src/editorBudget`                                                                | 2026-10-25 · Haiku 5.5 | 1 file   |
+| `scripts/src/fleet`                                                                       | 2026-10-25 · Haiku 5.5 | 7 files  |
+| `scripts/src/gameData`                                                                    | 2026-10-25 · Haiku 5.5 | 1 file   |
 | `scripts/src/genshinAssets`                                                               | 2026-10-25 · Haiku 5.5 | 1 file   |
 | `scripts/src/genshinParity`                                                               | 2026-10-25 · Haiku 5.5 | 1 file   |
 | `scripts/src/genshinText`                                                                 | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/identifiers`                                                                 | —                      | 1 file   |
-| `scripts/src/machine`                                                                     | —                      | 1 file   |
+| `scripts/src/identifiers`                                                                 | 2026-10-25 · Haiku 5.5 | 1 file   |
+| `scripts/src/machine`                                                                     | 2026-10-25 · Haiku 5.5 | 1 file   |
 | `scripts/src/models/benchTypes`                                                           | —                      | 6 files  |
 | `scripts/src/models/ci`                                                                   | —                      | 1 file   |
 | `scripts/src/models/citations`                                                            | —                      | 2 files  |
@@ -53,7 +53,7 @@
 | `scripts/src/models/genshinAssets/kits/KitCandidate.ts`                                   | —                      | 1 file   |
 | `scripts/src/models/genshinAssets/kits/KitCandidateSources.ts`                            | —                      | 1 file   |
 | `scripts/src/models/genshinAssets/kits/KitOverlay.ts`                                     | —                      | 1 file   |
-| `scripts/src/models/genshinAssets/kits/KitOverlayEntry.ts`                                | —                      | 1 file   |
+| `scripts/src/models/genshinAssets/kits/KitOverlayEntry.ts`                                | 2026-10-25 · Haiku 5.5 | 1 file   |
 | `scripts/src/models/genshinAssets/kits/KitProvisionalCause.ts`                            | —                      | 1 file   |
 | `scripts/src/models/genshinAssets/kits/KitRule.ts`                                        | —                      | 1 file   |
 | `scripts/src/models/genshinAssets/kits/KitSource.ts`                                      | —                      | 1 file   |
@@ -75,7 +75,7 @@
 | `scripts/src/models/genshinAssets/offerings`                                              | —                      | 3 files  |
 | `scripts/src/models/genshinAssets/palette`                                                | —                      | 2 files  |
 | `scripts/src/models/genshinAssets/points`                                                 | —                      | 12 files |
-| `scripts/src/models/genshinAssets/profile`                                                | —                      | 3 files  |
+| `scripts/src/models/genshinAssets/profile`                                                | 2026-10-25 · Haiku 5.5 | 3 files  |
 | `scripts/src/models/genshinAssets/puzzles`                                                | —                      | 1 file   |
 | `scripts/src/models/genshinAssets/reputation`                                             | —                      | 7 files  |
 | `scripts/src/models/genshinAssets/residents`                                              | —                      | 3 files  |
@@ -83,13 +83,13 @@
 | `scripts/src/models/genshinAssets/scene`                                                  | —                      | 13 files |
 | `scripts/src/models/genshinAssets/sceneGroups`                                            | —                      | 1 file   |
 | `scripts/src/models/genshinAssets/sceneNpcBorn`                                           | —                      | 2 files  |
-| `scripts/src/models/genshinAssets/shared`                                                 | —                      | 37 files |
+| `scripts/src/models/genshinAssets/shared`                                                 | 2026-10-25 · Haiku 5.5 | 37 files |
 | `scripts/src/models/genshinAssets/shops`                                                  | —                      | 6 files  |
 | `scripts/src/models/genshinAssets/skillGlyphs`                                            | —                      | 1 file   |
 | `scripts/src/models/genshinAssets/sound`                                                  | —                      | 4 files  |
 | `scripts/src/models/genshinAssets/spiralAbyss`                                            | —                      | 5 files  |
 | `scripts/src/models/genshinAssets/stats`                                                  | —                      | 20 files |
-| `scripts/src/models/genshinAssets/statues`                                                | —                      | 2 files  |
+| `scripts/src/models/genshinAssets/statues`                                                | 2026-10-25 · Haiku 5.5 | 2 files  |
 | `scripts/src/models/genshinAssets/timings`                                                | —                      | 3 files  |
 | `scripts/src/models/genshinAssets/tips`                                                   | —                      | 1 file   |
 | `scripts/src/models/genshinAssets/transPoints`                                            | —                      | 4 files  |
@@ -107,7 +107,7 @@
 | `scripts/src/models/genshinParity/page`                                                   | —                      | 3 files  |
 | `scripts/src/models/genshinParity/passes`                                                 | —                      | 9 files  |
 | `scripts/src/models/genshinParity/reference`                                              | —                      | 7 files  |
-| `scripts/src/models/genshinParity/shared`                                                 | —                      | 32 files |
+| `scripts/src/models/genshinParity/shared`                                                 | 2026-10-25 · Haiku 5.5 | 32 files |
 | `scripts/src/models/genshinParity/sky`                                                    | —                      | 10 files |
 | `scripts/src/models/genshinParity/sound`                                                  | —                      | 1 file   |
 | `scripts/src/models/genshinParity/witness`                                                | —                      | 17 files |
@@ -119,7 +119,7 @@
 | `scripts/src/models/package`                                                              | —                      | 2 files  |
 | `scripts/src/models/producerStamp`                                                        | —                      | 2 files  |
 | `scripts/src/models/proposals`                                                            | —                      | 5 files  |
-| `scripts/src/models/recreation`                                                           | —                      | 25 files |
+| `scripts/src/models/recreation`                                                           | 2026-10-25 · Haiku 5.5 | 25 files |
 | `scripts/src/models/resume`                                                               | —                      | 3 files  |
 | `scripts/src/models/review`                                                               | —                      | 24 files |
 | `scripts/src/models/semver`                                                               | —                      | 6 files  |
@@ -149,16 +149,16 @@
 | `scripts/src/services/dependencyGraph`                                                    | 2026-10-25 · Haiku 5.5 | 22 files |
 | `scripts/src/services/fleet/checkIsHeldBy.ts`                                             | —                      | 1 file   |
 | `scripts/src/services/fleet/checkTouchesOverlap.test.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/fleet/checkTouchesOverlap.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/fleet/claimFleetEntry.ts`                                           | —                      | 1 file   |
+| `scripts/src/services/fleet/checkTouchesOverlap.ts`                                       | 2026-10-25 · Haiku 5.5 | 1 file   |
+| `scripts/src/services/fleet/claimFleetEntry.ts`                                           | 2026-10-25 · Haiku 5.5 | 1 file   |
 | `scripts/src/services/fleet/claimFleetEntryHere.ts`                                       | —                      | 1 file   |
 | `scripts/src/services/fleet/claimNextFleetEntry.ts`                                       | —                      | 1 file   |
 | `scripts/src/services/fleet/constants.ts`                                                 | —                      | 1 file   |
 | `scripts/src/services/fleet/createFleetCommit.ts`                                         | —                      | 1 file   |
 | `scripts/src/services/fleet/createFleetWorker.ts`                                         | —                      | 1 file   |
-| `scripts/src/services/fleet/data`                                                         | —                      | 37 files |
+| `scripts/src/services/fleet/data`                                                         | 2026-10-25 · Haiku 5.5 | 37 files |
 | `scripts/src/services/fleet/filterFleetEntries.test.ts`                                   | —                      | 1 file   |
-| `scripts/src/services/fleet/filterFleetEntries.ts`                                        | —                      | 1 file   |
+| `scripts/src/services/fleet/filterFleetEntries.ts`                                        | 2026-10-25 · Haiku 5.5 | 1 file   |
 | `scripts/src/services/fleet/formatClaimHolder.ts`                                         | —                      | 1 file   |
 | `scripts/src/services/fleet/formatFleetTable.test.ts`                                     | —                      | 1 file   |
 | `scripts/src/services/fleet/formatFleetTable.ts`                                          | —                      | 1 file   |
@@ -175,18 +175,18 @@
 | `scripts/src/services/fleet/getOperatingSystemCapability.ts`                              | —                      | 1 file   |
 | `scripts/src/services/fleet/getRenewalDecision.test.ts`                                   | —                      | 1 file   |
 | `scripts/src/services/fleet/getRenewalDecision.ts`                                        | —                      | 1 file   |
-| `scripts/src/services/fleet/holdFleetEntry.ts`                                            | —                      | 1 file   |
+| `scripts/src/services/fleet/holdFleetEntry.ts`                                            | 2026-10-25 · Haiku 5.5 | 1 file   |
 | `scripts/src/services/fleet/mergeMachineProfile.test.ts`                                  | —                      | 1 file   |
 | `scripts/src/services/fleet/mergeMachineProfile.ts`                                       | —                      | 1 file   |
 | `scripts/src/services/fleet/missFleetEntry.ts`                                            | —                      | 1 file   |
 | `scripts/src/services/fleet/parseClaimMessage.test.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/fleet/parseClaimMessage.ts`                                         | —                      | 1 file   |
+| `scripts/src/services/fleet/parseClaimMessage.ts`                                         | 2026-10-25 · Haiku 5.5 | 1 file   |
 | `scripts/src/services/fleet/parseComputeQueue.test.ts`                                    | —                      | 1 file   |
-| `scripts/src/services/fleet/parseComputeQueue.ts`                                         | —                      | 1 file   |
+| `scripts/src/services/fleet/parseComputeQueue.ts`                                         | 2026-10-25 · Haiku 5.5 | 1 file   |
 | `scripts/src/services/fleet/parseComputeQueueItem.test.ts`                                | —                      | 1 file   |
-| `scripts/src/services/fleet/parseComputeQueueItem.ts`                                     | —                      | 1 file   |
+| `scripts/src/services/fleet/parseComputeQueueItem.ts`                                     | 2026-10-25 · Haiku 5.5 | 1 file   |
 | `scripts/src/services/fleet/parseForEachRefLine.test.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/fleet/parseForEachRefLine.ts`                                       | —                      | 1 file   |
+| `scripts/src/services/fleet/parseForEachRefLine.ts`                                       | 2026-10-25 · Haiku 5.5 | 1 file   |
 | `scripts/src/services/fleet/parseHardwareAccelerations.test.ts`                           | —                      | 1 file   |
 | `scripts/src/services/fleet/parseHardwareAccelerations.ts`                                | —                      | 1 file   |
 | `scripts/src/services/fleet/parseKeyFilePaths.test.ts`                                    | —                      | 1 file   |
@@ -194,20 +194,20 @@
 | `scripts/src/services/fleet/parseLsRemoteSha.test.ts`                                     | —                      | 1 file   |
 | `scripts/src/services/fleet/parseLsRemoteSha.ts`                                          | —                      | 1 file   |
 | `scripts/src/services/fleet/parseMachineHeartbeat.test.ts`                                | —                      | 1 file   |
-| `scripts/src/services/fleet/parseMachineHeartbeat.ts`                                     | —                      | 1 file   |
+| `scripts/src/services/fleet/parseMachineHeartbeat.ts`                                     | 2026-10-25 · Haiku 5.5 | 1 file   |
 | `scripts/src/services/fleet/parseMachineProfile.test.ts`                                  | —                      | 1 file   |
-| `scripts/src/services/fleet/parseMachineProfile.ts`                                       | —                      | 1 file   |
+| `scripts/src/services/fleet/parseMachineProfile.ts`                                       | 2026-10-25 · Haiku 5.5 | 1 file   |
 | `scripts/src/services/fleet/parseProposalMetadata.test.ts`                                | —                      | 1 file   |
-| `scripts/src/services/fleet/parseProposalMetadata.ts`                                     | —                      | 1 file   |
+| `scripts/src/services/fleet/parseProposalMetadata.ts`                                     | 2026-10-25 · Haiku 5.5 | 1 file   |
 | `scripts/src/services/fleet/pushFleetRef.test.ts`                                         | —                      | 1 file   |
 | `scripts/src/services/fleet/pushFleetRef.ts`                                              | —                      | 1 file   |
 | `scripts/src/services/fleet/pushMachineHeartbeat.ts`                                      | —                      | 1 file   |
 | `scripts/src/services/fleet/readClaimedRefs.ts`                                           | —                      | 1 file   |
 | `scripts/src/services/fleet/readComputeQueue.test.ts`                                     | —                      | 1 file   |
 | `scripts/src/services/fleet/readComputeQueue.ts`                                          | —                      | 1 file   |
-| `scripts/src/services/fleet/readDetectedCapabilities.ts`                                  | —                      | 1 file   |
+| `scripts/src/services/fleet/readDetectedCapabilities.ts`                                  | 2026-10-25 · Haiku 5.5 | 1 file   |
 | `scripts/src/services/fleet/readFleetEntries.ts`                                          | —                      | 1 file   |
-| `scripts/src/services/fleet/readFleetRefLines.ts`                                         | —                      | 1 file   |
+| `scripts/src/services/fleet/readFleetRefLines.ts`                                         | 2026-10-25 · Haiku 5.5 | 1 file   |
 | `scripts/src/services/fleet/readMachineHeartbeats.ts`                                     | —                      | 1 file   |
 | `scripts/src/services/fleet/readMachineProfile.ts`                                        | —                      | 1 file   |
 | `scripts/src/services/fleet/readMachineSample.ts`                                         | —                      | 1 file   |
@@ -225,9 +225,9 @@
 | `scripts/src/services/fleet/writeHoldFile.ts`                                             | —                      | 1 file   |
 | `scripts/src/services/fleet/writeMachineProfile.ts`                                       | —                      | 1 file   |
 | `scripts/src/services/gameData`                                                           | —                      | 42 files |
-| `scripts/src/services/genshinAssets/achievements`                                         | —                      | 7 files  |
+| `scripts/src/services/genshinAssets/achievements`                                         | 2026-10-25 · Haiku 5.5 | 7 files  |
 | `scripts/src/services/genshinAssets/adventureRank`                                        | —                      | 3 files  |
-| `scripts/src/services/genshinAssets/archive`                                              | —                      | 20 files |
+| `scripts/src/services/genshinAssets/archive`                                              | 2026-10-25 · Haiku 5.5 | 20 files |
 | `scripts/src/services/genshinAssets/avatar`                                               | —                      | 36 files |
 | `scripts/src/services/genshinAssets/blocks`                                               | —                      | 28 files |
 | `scripts/src/services/genshinAssets/camera`                                               | —                      | 4 files  |
@@ -311,14 +311,14 @@
 | `scripts/src/services/genshinAssets/commands/wildlifeCommand.ts`                          | —                      | 1 file   |
 | `scripts/src/services/genshinAssets/commands/wishScheduleCommand.ts`                      | —                      | 1 file   |
 | `scripts/src/services/genshinAssets/commands/witnessCommand.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/commissions`                                          | —                      | 6 files  |
-| `scripts/src/services/genshinAssets/cooking`                                              | —                      | 17 files |
-| `scripts/src/services/genshinAssets/crafting`                                             | —                      | 13 files |
+| `scripts/src/services/genshinAssets/commissions`                                          | 2026-10-25 · Haiku 5.5 | 6 files  |
+| `scripts/src/services/genshinAssets/cooking`                                              | 2026-10-25 · Haiku 5.5 | 17 files |
+| `scripts/src/services/genshinAssets/crafting`                                             | 2026-10-25 · Haiku 5.5 | 13 files |
 | `scripts/src/services/genshinAssets/domains`                                              | —                      | 27 files |
-| `scripts/src/services/genshinAssets/enemies`                                              | —                      | 5 files  |
+| `scripts/src/services/genshinAssets/enemies`                                              | 2026-10-25 · Haiku 5.5 | 5 files  |
 | `scripts/src/services/genshinAssets/expeditions`                                          | —                      | 13 files |
 | `scripts/src/services/genshinAssets/exploration`                                          | —                      | 5 files  |
-| `scripts/src/services/genshinAssets/fishing`                                              | —                      | 7 files  |
+| `scripts/src/services/genshinAssets/fishing`                                              | 2026-10-25 · Haiku 5.5 | 7 files  |
 | `scripts/src/services/genshinAssets/fit/DerivedAssetFitMap.ts`                            | —                      | 1 file   |
 | `scripts/src/services/genshinAssets/fit/LoginStoneFamilyMaterialRegexMap.ts`              | —                      | 1 file   |
 | `scripts/src/services/genshinAssets/fit/RegionCapitalMap.ts`                              | —                      | 1 file   |
@@ -588,13 +588,13 @@
 | `scripts/src/services/genshinAssets/fit/writeRegionKey.ts`                                | —                      | 1 file   |
 | `scripts/src/services/genshinAssets/forging`                                              | —                      | 6 files  |
 | `scripts/src/services/genshinAssets/friendship`                                           | —                      | 6 files  |
-| `scripts/src/services/genshinAssets/gadgets`                                              | —                      | 7 files  |
-| `scripts/src/services/genshinAssets/gathering`                                            | —                      | 4 files  |
-| `scripts/src/services/genshinAssets/gcg`                                                  | —                      | 14 files |
+| `scripts/src/services/genshinAssets/gadgets`                                              | 2026-10-25 · Haiku 5.5 | 7 files  |
+| `scripts/src/services/genshinAssets/gathering`                                            | 2026-10-25 · Haiku 5.5 | 4 files  |
+| `scripts/src/services/genshinAssets/gcg`                                                  | 2026-10-25 · Haiku 5.5 | 14 files |
 | `scripts/src/services/genshinAssets/home`                                                 | —                      | 10 files |
 | `scripts/src/services/genshinAssets/imaginarium`                                          | —                      | 10 files |
 | `scripts/src/services/genshinAssets/interface`                                            | —                      | 18 files |
-| `scripts/src/services/genshinAssets/items`                                                | —                      | 6 files  |
+| `scripts/src/services/genshinAssets/items`                                                | 2026-10-25 · Haiku 5.5 | 6 files  |
 | `scripts/src/services/genshinAssets/kits/buildKitPublication.test.ts`                     | —                      | 1 file   |
 | `scripts/src/services/genshinAssets/kits/buildKitPublication.ts`                          | —                      | 1 file   |
 | `scripts/src/services/genshinAssets/kits/buildKitRecordWithDonors.ts`                     | —                      | 1 file   |
@@ -773,19 +773,19 @@
 | `scripts/src/services/genshinAssets/measure`                                              | —                      | 4 files  |
 | `scripts/src/services/genshinAssets/miningOutcrops`                                       | —                      | 2 files  |
 | `scripts/src/services/genshinAssets/music`                                                | —                      | 61 files |
-| `scripts/src/services/genshinAssets/namecards`                                            | —                      | 6 files  |
+| `scripts/src/services/genshinAssets/namecards`                                            | 2026-10-25 · Haiku 5.5 | 6 files  |
 | `scripts/src/services/genshinAssets/oculi`                                                | —                      | 2 files  |
-| `scripts/src/services/genshinAssets/offerings`                                            | —                      | 10 files |
-| `scripts/src/services/genshinAssets/palette`                                              | —                      | 7 files  |
+| `scripts/src/services/genshinAssets/offerings`                                            | 2026-10-25 · Haiku 5.5 | 10 files |
+| `scripts/src/services/genshinAssets/palette`                                              | 2026-10-25 · Haiku 5.5 | 7 files  |
 | `scripts/src/services/genshinAssets/points`                                               | —                      | 26 files |
 | `scripts/src/services/genshinAssets/profile`                                              | —                      | 8 files  |
-| `scripts/src/services/genshinAssets/puzzles`                                              | —                      | 10 files |
+| `scripts/src/services/genshinAssets/puzzles`                                              | 2026-10-25 · Haiku 5.5 | 10 files |
 | `scripts/src/services/genshinAssets/reputation`                                           | —                      | 9 files  |
 | `scripts/src/services/genshinAssets/residents`                                            | —                      | 17 files |
 | `scripts/src/services/genshinAssets/rewards`                                              | —                      | 6 files  |
 | `scripts/src/services/genshinAssets/scene`                                                | —                      | 40 files |
-| `scripts/src/services/genshinAssets/sceneGroups`                                          | —                      | 6 files  |
-| `scripts/src/services/genshinAssets/sceneNpcBorn`                                         | —                      | 2 files  |
+| `scripts/src/services/genshinAssets/sceneGroups`                                          | 2026-10-25 · Haiku 5.5 | 6 files  |
+| `scripts/src/services/genshinAssets/sceneNpcBorn`                                         | 2026-10-25 · Haiku 5.5 | 2 files  |
 | `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.test.ts`              | —                      | 1 file   |
 | `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts`                   | —                      | 1 file   |
 | `scripts/src/services/genshinAssets/shared/applySpawns.test.ts`                           | —                      | 1 file   |
@@ -885,7 +885,7 @@
 | `scripts/src/services/genshinAssets/shared/toSceneObjects.ts`                             | —                      | 1 file   |
 | `scripts/src/services/genshinAssets/shared/writeWorldData.test.ts`                        | —                      | 1 file   |
 | `scripts/src/services/genshinAssets/shared/writeWorldData.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/shops`                                                | —                      | 23 files |
+| `scripts/src/services/genshinAssets/shops`                                                | 2026-10-25 · Haiku 5.5 | 23 files |
 | `scripts/src/services/genshinAssets/skillGlyphs`                                          | —                      | 7 files  |
 | `scripts/src/services/genshinAssets/sound`                                                | —                      | 15 files |
 | `scripts/src/services/genshinAssets/spiralAbyss`                                          | —                      | 16 files |
@@ -993,7 +993,7 @@
 | `scripts/src/services/genshinAssets/world/toDumpedVector.ts`                              | —                      | 1 file   |
 | `scripts/src/services/genshinAssets/world/toPointExtent.ts`                               | —                      | 1 file   |
 | `scripts/src/services/genshinAssets/world/toWorldQuaternion.ts`                           | —                      | 1 file   |
-| `scripts/src/services/genshinParity/commands`                                             | —                      | 57 files |
+| `scripts/src/services/genshinParity/commands`                                             | 2026-10-25 · Haiku 5.5 | 57 files |
 | `scripts/src/services/genshinParity/display`                                              | —                      | 13 files |
 | `scripts/src/services/genshinParity/game`                                                 | —                      | 3 files  |
 | `scripts/src/services/genshinParity/image`                                                | —                      | 6 files  |
@@ -1098,7 +1098,7 @@
 | `scripts/src/services/genshinParity/shared/describePasses.ts`                             | —                      | 1 file   |
 | `scripts/src/services/genshinParity/shared/fetchReferences.ts`                            | —                      | 1 file   |
 | `scripts/src/services/genshinParity/shared/formatCrossing.ts`                             | —                      | 1 file   |
-| `scripts/src/services/genshinParity/shared/formatFigure.ts`                               | —                      | 1 file   |
+| `scripts/src/services/genshinParity/shared/formatFigure.ts`                               | 2026-10-25 · Haiku 5.5 | 1 file   |
 | `scripts/src/services/genshinParity/shared/formatLoadMeter.test.ts`                       | —                      | 1 file   |
 | `scripts/src/services/genshinParity/shared/formatLoadMeter.ts`                            | —                      | 1 file   |
 | `scripts/src/services/genshinParity/shared/formatMeasures.ts`                             | —                      | 1 file   |
@@ -1307,11 +1307,11 @@
 | `scripts/src/services/genshinText/fillDumpDefaults.test.ts`                               | —                      | 1 file   |
 | `scripts/src/services/genshinText/fillDumpDefaults.ts`                                    | —                      | 1 file   |
 | `scripts/src/services/genshinText/findGameText.ts`                                        | —                      | 1 file   |
-| `scripts/src/services/genshinText/getCharacterLinesLoaderMapSource.ts`                    | —                      | 1 file   |
+| `scripts/src/services/genshinText/getCharacterLinesLoaderMapSource.ts`                    | 2026-10-25 · Haiku 5.5 | 1 file   |
 | `scripts/src/services/genshinText/getDefaultValue.ts`                                     | —                      | 1 file   |
 | `scripts/src/services/genshinText/getGameTextHash.test.ts`                                | —                      | 1 file   |
 | `scripts/src/services/genshinText/getGameTextHash.ts`                                     | —                      | 1 file   |
-| `scripts/src/services/genshinText/getGameTextLoaderMapSource.ts`                          | —                      | 1 file   |
+| `scripts/src/services/genshinText/getGameTextLoaderMapSource.ts`                          | 2026-10-25 · Haiku 5.5 | 1 file   |
 | `scripts/src/services/genshinText/getHighHalfWord.ts`                                     | —                      | 1 file   |
 | `scripts/src/services/genshinText/getHighWord.ts`                                         | —                      | 1 file   |
 | `scripts/src/services/genshinText/getInterfaceGameText.test.ts`                           | —                      | 1 file   |
@@ -1519,7 +1519,7 @@
 | `scripts/src/services/shared/fetchOk.ts`                                                  | —                      | 1 file   |
 | `scripts/src/services/shared/fetchRegistry.ts`                                            | —                      | 1 file   |
 | `scripts/src/services/shared/findExecutable.ts`                                           | —                      | 1 file   |
-| `scripts/src/services/shared/findRepositoryRoot.ts`                                       | —                      | 1 file   |
+| `scripts/src/services/shared/findRepositoryRoot.ts`                                       | 2026-10-25 · Haiku 5.5 | 1 file   |
 | `scripts/src/services/shared/fixtureConstants.test.ts`                                    | —                      | 1 file   |
 | `scripts/src/services/shared/forEachConcurrently.ts`                                      | —                      | 1 file   |
 | `scripts/src/services/shared/formatAge.test.ts`                                           | —                      | 1 file   |
@@ -1573,12 +1573,12 @@
 | `scripts/src/services/shared/writeJsonFile.ts`                                            | —                      | 1 file   |
 | `scripts/src/services/skills`                                                             | 2026-10-25 · Haiku 5.5 | 11 files |
 | `scripts/src/services/sweeps/constantScope`                                               | —                      | 8 files  |
-| `scripts/src/services/sweeps/constants.ts`                                                | —                      | 1 file   |
-| `scripts/src/services/sweeps/controlCharacters`                                           | —                      | 3 files  |
+| `scripts/src/services/sweeps/constants.ts`                                                | 2026-10-25 · Haiku 5.5 | 1 file   |
+| `scripts/src/services/sweeps/controlCharacters`                                           | 2026-10-25 · Haiku 5.5 | 3 files  |
 | `scripts/src/services/sweeps/duplicateCode`                                               | 2026-10-25 · Haiku 5.5 | 31 files |
 | `scripts/src/services/sweeps/duplicateProse`                                              | —                      | 20 files |
 | `scripts/src/services/sweeps/fileOrganization`                                            | —                      | 12 files |
-| `scripts/src/services/sweeps/gcsimLinks`                                                  | —                      | 1 file   |
+| `scripts/src/services/sweeps/gcsimLinks`                                                  | 2026-10-25 · Haiku 5.5 | 1 file   |
 | `scripts/src/services/sweeps/getDescendants.ts`                                           | —                      | 1 file   |
 | `scripts/src/services/sweeps/ledgerCoverage`                                              | —                      | 11 files |
 | `scripts/src/services/sweeps/readSweepFilePaths.bench.json`                               | —                      | 1 file   |
@@ -1591,7 +1591,7 @@
 | `scripts/src/services/sweeps/sharedExportConsumers`                                       | —                      | 11 files |
 | `scripts/src/services/sweeps/skillDocs`                                                   | —                      | 28 files |
 | `scripts/src/services/sweeps/staleNames`                                                  | —                      | 24 files |
-| `scripts/src/services/sweeps/todos`                                                       | —                      | 5 files  |
+| `scripts/src/services/sweeps/todos`                                                       | 2026-10-25 · Haiku 5.5 | 5 files  |
 | `scripts/src/services/sweeps/unterminatedResults`                                         | —                      | 9 files  |
 | `scripts/src/services/timing`                                                             | —                      | 7 files  |
 | `scripts/src/services/triage`                                                             | —                      | 3 files  |
