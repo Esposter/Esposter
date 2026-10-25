@@ -94,7 +94,7 @@ export class MockQueueClient implements Except<QueueClient, "accountName"> {
   }
 
   generateSasUrl(options: QueueGenerateSasUrlOptions): string {
-    return getMockSasUrl(this.url, options.permissions);
+    return getMockSasUrl(this.url, options.permissions, undefined, options.expiresOn);
   }
 
   generateUserDelegationSasUrl(): string {

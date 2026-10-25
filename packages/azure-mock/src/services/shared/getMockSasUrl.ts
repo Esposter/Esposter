@@ -7,4 +7,4 @@ export const getMockSasUrl = (
   resourceType?: string,
   expiresOn: Date = MOCK_SAS_FAR_FUTURE_EXPIRY,
 ): string =>
-  `${url}?sv=2025-11-05&${resourceType ? `sr=${resourceType}&` : ""}sig=mock-signature&st=1970-01-01T00:00:00Z&se=${expiresOn.toISOString().replace(".000Z", "Z")}&sp=${permissions?.toString() ?? "r"}`;
+  `${url}?sv=2025-11-05&${resourceType ? `sr=${resourceType}&` : ""}sig=mock-signature&st=1970-01-01T00:00:00Z&se=${expiresOn.toISOString().replace(/\.\d{3}Z$/u, "Z")}&sp=${permissions?.toString() ?? "r"}`;

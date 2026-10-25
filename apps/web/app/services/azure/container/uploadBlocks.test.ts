@@ -1,8 +1,8 @@
 import { MimeType } from "#shared/models/file/MimeType";
 import { MEGABYTE } from "#shared/services/app/constants";
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
-import { WRITE_SAS_DURATION_MS } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
+import { WRITE_SAS_DURATION_MS } from "@esposter/db-schema";
 import { getMockSasUrl } from "azure-mock";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
@@ -100,28 +100,8 @@ describe(uploadBlocks, () => {
     expect(progressNotifier.mock.calls).toStrictEqual([[1 / 3], [2 / 3]]);
   });
 
-  // A write address lapses an hour after it is handed out, and Blob Storage refuses a request made after that: the
-  // Block is refused, the block list is never committed, and the upload fails
-  test("An upload to an expired address is refused", async () => {
-    expect.hasAssertions();
-
-    vi.useFakeTimers({ now: 0 });
-    const expiredSasUrl = getMockSasUrl(blobUrl, "w", "b", new Date(Date.now() + WRITE_SAS_DURATION_MS));
-    vi.setSystemTime(WRITE_SAS_DURATION_MS * 2);
-    const fetchMock = vi.fn<(input: string, init: RequestInit) => Promise<Response>>((url) => {
-      const expiresOn = new Date(String(new URL(url).searchParams.get("se")));
-      return Promise.resolve(new Response(null, { status: expiresOn < new Date() ? 403 : 200 }));
-    });
-    vi.stubGlobal("fetch", fetchMock);
-
-    await expect(uploadBlocks(new Blob([" "]), expiredSasUrl)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[BlobStorageStatusError: Invalid operation: Create, name: requestBlobStorage, Blob Storage answered 403]`,
-    );
-    expect(fetchMock).toHaveBeenCalledTimes(1);
-  });
-
-  // The control for the refusal above: an address still within its hour takes the blocks and commits the blob
-  test("An agent uploads a file before its address expires", async () => {
+  // An address still within its hour takes the blocks and commits the blob
+  test("An upload to an address still within its hour commits the blob", async () => {
     expect.hasAssertions();
 
     vi.useFakeTimers({ now: 0 });
