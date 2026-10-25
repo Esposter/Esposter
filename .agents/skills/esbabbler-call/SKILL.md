@@ -13,7 +13,7 @@ A call is one persistent `callSessionsInMessage` row whose `id` is the join code
 
 ## Random id terminology
 
-A call's join code is the row's `id`, made by `createId(CALL_ID_LENGTH)` — the random-id key rule is the `drizzle` skill's (`references/primary-keys.md`).
+A call's join code is the row's `id`, made by `createId(CALL_ID_LENGTH)` — the random-id key rule is in the `drizzle` skill, `references/primary-keys.md`.
 
 ## Standalone vs room calls
 
