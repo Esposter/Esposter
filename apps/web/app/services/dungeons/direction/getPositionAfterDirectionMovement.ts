@@ -1,12 +1,8 @@
 import type { Position } from "grid-engine";
 
 import { InteractableDirection } from "@/models/dungeons/direction/InteractableDirection";
+import { addPositions } from "@/services/dungeons/direction/addPositions";
 import { Direction } from "grid-engine";
-
-const addPositions = (first: Position, second: Position): Position => ({
-  x: first.x + second.x,
-  y: first.y + second.y,
-});
 
 const BaseDirectionPositionOffsetMap = {
   [Direction.DOWN]: { x: 0, y: 1 },

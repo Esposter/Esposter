@@ -2,12 +2,7 @@ import type { InteractableDirectionMap } from "@/models/dungeons/direction/Inter
 import type { Direction, Position } from "grid-engine";
 
 import { getPositionAfterDirectionMovement } from "@/services/dungeons/direction/getPositionAfterDirectionMovement";
-
-// The player may be facing a diagonal or standing still, neither of which the map holds an entry for
-const checkIsInteractableDirection = (
-  interactableDirectionMap: Partial<Record<Direction, boolean>>,
-  direction: Direction,
-) => interactableDirectionMap[direction] === true;
+import { checkIsInteractableDirection } from "@/services/dungeons/scene/world/interaction/checkIsInteractableDirection";
 
 export const checkIsInteractiveObjectPosition = (
   playerPosition: Position,

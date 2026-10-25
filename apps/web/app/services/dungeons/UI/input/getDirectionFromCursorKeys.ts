@@ -1,19 +1,12 @@
 import type { InteractableDirection } from "@/models/dungeons/direction/InteractableDirection";
 import type { BaseCursorKeys } from "@/models/dungeons/input/BaseCursorKeys";
 
+import { getDirectionCursorKeyMap } from "@/services/dungeons/UI/input/getDirectionCursorKeyMap";
 import { Direction } from "grid-engine";
 import { Input } from "phaser";
 
-// Four directions and no diagonals, on purpose (openspec/rejected/dungeons/diagonal-movement/design.md): one key per direction
-const getDirectionCursorKeyMap = (cursorKeys: BaseCursorKeys): Record<InteractableDirection, Input.Keyboard.Key> => ({
-  [Direction.DOWN]: cursorKeys.down,
-  [Direction.LEFT]: cursorKeys.left,
-  [Direction.RIGHT]: cursorKeys.right,
-  [Direction.UP]: cursorKeys.up,
-});
-
 export const getDirectionFromCursorKeys = (cursorKeys: BaseCursorKeys, isJustDown?: true) => {
-  // Object.entries widens its keys to string, and the record it reads is keyed by the directions right above
+  // Object.entries widens its keys to string, and the record it reads is keyed by the directions in getDirectionCursorKeyMap
   const directionCursorKeyEntries = Object.entries(getDirectionCursorKeyMap(cursorKeys)) as [
     InteractableDirection,
     Input.Keyboard.Key,
