@@ -113,7 +113,7 @@ flowchart TD
 
 ## Scope and order
 
-**Today:** each weapon's passive rows are read from its skill affix into the hosted weapons record, which is republished, and the weapon screen lists the passive's name and each rank's description with the held rank marked. The weapon's passive joins its wielder's kit at the rank the weapon holds, and only Full HP Critic Up has its module; the other passives' modules are not yet written.
+**Today:** each weapon's passive rows are read from its skill affix into the hosted weapons record, which is republished, and the weapon screen does not list the passive yet: its name and each rank's description were listed beneath the ores and withdrawn until the screen's layout is measured (the [weapon screen](../genshin-weapon-screen/design.md)'s task 4.1). The weapon's passive joins its wielder's kit at the rank the weapon holds, and only Full HP Critic Up has its module; the other passives' modules are not yet written.
 
 **This adds, in order:**
 
