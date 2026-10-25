@@ -34,8 +34,7 @@ Two things stay, deliberately. A Program bound to a deleted email keeps its `ema
 
 - the catalog entries and `apps/web/package.json` dependencies for `grapesjs` and every `grapesjs-` plugin, `js-beautify` and `@types/js-beautify`;
 - `useGrapesJsEditor`, `useSurveyInviteBlocks`, `setBlocks`, `readUploadFiles`, `GrapesJsBlock`, `getEmailHtml`, `getEmailPreview`, `readEmailPreviewText`, `writeEmailPreviewText`, `createMergeFieldBlocks`, the survey invite block builders, the type shim for the two untyped plugins, `AGrapesJsEditor` and the two stock templates;
-- the `grapesjs` exception in `osv-scanner.toml`, whose advisory names a range the locked release was already outside;
-- the TUI and cdnjs entries in the security config, and the stock hosts in "apps/web/shared/services/grapesjs/constants.ts", deleted in ccebd1e268; the comments naming GrapesJS in `ResourceEditorComponentMap`;
+- the TUI and cdnjs entries in the security config, the stock hosts GrapesJS's constants named, and the comments naming GrapesJS in `ResourceEditorComponentMap`;
 - the GrapesJS skill, replaced by a page-builder skill, and the GrapesJS ledger;
 - the live references outside those: the GrapesJS and `grapesjs-` plugin rows of the dependency ledger, the `grapes.min.css` import in the styling skill's style-blocks reference, the GrapesJS mention in the `useAdoptResourceContent` row of the vue-composable-patterns skill, and the `grapesjs` store row of the resource security ledger;
 - the docs: the GrapesJS row of [third-party document adapters](../../specs/architecture/third-party-document-adapters/design.md); the page-builder engine and the plugin-belt paragraph of [dependency admission](../../specs/architecture/dependency-admission/design.md), whose precedent section gains `mjml-blocks` as the adapter `grapesjs-mjml` became; the CDN mentions in the security posture and the security module's defaults review; [email web view](../../specs/resource/email-web-view/design.md), [email preview text](../../specs/resource/email-preview-text/design.md), [email personalization](../../specs/resource/email-personalization/design.md), [webpage survey invite blocks](../../specs/resource/webpage-survey-invite-blocks/design.md) and [resource file assets](../../specs/resource/resource-file-assets/design.md) rewritten as built, with the explorer's blade table and the resource index's lines naming GrapesJS; the absorbed plugins' pages deleted, their upstream verdicts gone with the code; and this proposal rewritten as the page builder's feature page.
@@ -78,10 +77,6 @@ Each editor's script beyond the explorer is at most 200 KiB gzipped, measured on
 
 | File                                                                | Role after the change                                                               |
 | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| "apps/web/shared/models/grapesjs/AGrapesJsEditor.ts"                | deleted in ccebd1e268                                                               |
-| "apps/web/app/composables/grapesjs/useGrapesJsEditor.ts"            | deleted in ccebd1e268                                                               |
-| "apps/web/app/services/emailEditor/getEmailHtml.ts"                 | deleted in ccebd1e268; the server compiles                                          |
-| "apps/web/shared/services/grapesjs/constants.ts"                    | deleted in ccebd1e268                                                               |
 | `apps/web/shared/models/webpageEditor/data/WebpageEditor.ts`        | the webpage document, its schema built from the registry                            |
 | `apps/web/shared/models/emailEditor/data/EmailEditor.ts`            | the email document, its dataset reference, and baked HTML on a published snapshot   |
 | `apps/web/shared/services/superjson/JSONClassMap.ts`                | the two content classes, same names                                                 |
@@ -103,7 +98,6 @@ Each editor's script beyond the explorer is at most 200 KiB gzipped, measured on
 | `apps/web/server/db/migrations`                                     | the custom migration binning every Email and Webpage row                            |
 | `apps/web/package.json`                                             | GrapesJS and its plugins out                                                        |
 | `pnpm-workspace.yaml`                                               | the catalog entries                                                                 |
-| `osv-scanner.toml`                                                  | without the `grapesjs` exception                                                    |
 
 ## Sources
 
