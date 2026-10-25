@@ -2,7 +2,7 @@
 
 ### Requirement: A member with the display-names permission sets another member's nickname
 
-A member who holds the display-names permission in a room SHALL be able to set the nickname of a member the permission lets them manage, and every member of the room SHALL see the new nickname.
+A member who holds the display-names permission in a room SHALL be able to set the nickname of a member the permission lets them manage. Every member of the room sees the new nickname.
 
 #### Scenario: A moderator sets a lower-ranked member's nickname
 
