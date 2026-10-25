@@ -2,8 +2,8 @@ import type { AttackArea } from "genshin-world";
 
 import { readConstructorText } from "#src/services/genshinAssets/kits/gcsim/readConstructorText";
 import { readGcsimCitedArea } from "#src/services/genshinAssets/kits/gcsim/readGcsimCitedArea";
-import { substituteGoTableCells } from "#src/services/genshinAssets/kits/gcsim/substituteGoTableCells";
 import { resolveGoLocals } from "#src/services/genshinAssets/kits/gcsim/resolveGoLocals";
+import { substituteGoTableCells } from "#src/services/genshinAssets/kits/gcsim/substituteGoTableCells";
 
 // The area a cited constructor gives, read across its lines, with its line: the row of the table whose cell is the
 // Area's radius where the constructor reads a table, else the first table cell it reads, else the constructor's own line.

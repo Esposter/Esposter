@@ -13,7 +13,6 @@ import { readSilhouetteInks } from "#src/services/genshinParity/reference/readSi
 import { scoreLayers } from "#src/services/genshinParity/reference/scoreLayers";
 import { scoreStructure } from "#src/services/genshinParity/reference/scoreStructure";
 import { toPercent } from "#src/services/genshinParity/reference/toPercent";
-import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import {
   COMPARISON_HEIGHT,
   COMPARISONS_DIRECTORY,
@@ -21,6 +20,7 @@ import {
   STRUCTURE_WIDTH,
 } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
+import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { readFlipErrorMap } from "#src/services/genshinParity/shared/readFlipErrorMap";
 import { readReferenceGbuffer } from "#src/services/genshinParity/shared/readReferenceGbuffer";
 import { shootScreen } from "#src/services/genshinParity/shared/shootScreen";

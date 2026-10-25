@@ -1,6 +1,6 @@
+import type { WikiImagePageMap } from "#src/models/genshinParity/shared/WikiImagePageMap";
 import type { WholeScreenImage } from "#src/models/genshinParity/WholeScreenImage";
 import type { WikiImagesResponse } from "#src/models/genshinParity/WikiImagesResponse";
-import type { WikiImagePageMap } from "#src/models/genshinParity/shared/WikiImagePageMap";
 
 import { getWholeScreenImages } from "#src/services/genshinParity/shared/getWholeScreenImages";
 import { InvalidOperationError, Operation } from "@esposter/shared";

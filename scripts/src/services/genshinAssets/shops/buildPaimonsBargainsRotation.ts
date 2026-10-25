@@ -3,6 +3,7 @@ import type { ExcelShopRotateRow } from "#src/models/genshinAssets/shops/ExcelSh
 import type { PaimonsBargainsPrice } from "#src/models/genshinAssets/shops/PaimonsBargainsPrice";
 import type { ExcelMaterialRow } from "#src/models/genshinAssets/stats/ExcelMaterialRow";
 
+import { checkIsSamePrice } from "#src/services/genshinAssets/shops/checkIsSamePrice";
 import {
   GAIN_AVATAR_ITEM_USE,
   PAIMON_BARGAINS_BLACKCLIFF_ORDER,
@@ -14,7 +15,6 @@ import {
   SHOP_REFRESH_BY_TABLE_TYPE,
   SHOP_REFRESH_NONE_TABLE_TYPE,
 } from "#src/services/genshinAssets/shops/constants";
-import { checkIsSamePrice } from "#src/services/genshinAssets/shops/checkIsSamePrice";
 import { getShopGoodCosts } from "#src/services/genshinAssets/shops/getShopGoodCosts";
 import { SHOP_GOODS_TABLE_NAME } from "#src/services/genshinText/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";

@@ -1,9 +1,9 @@
 import type { CookProudSkillRow } from "#src/models/genshinAssets/cooking/CookProudSkillRow";
 import type { CookingTalent } from "genshin-world";
 
+import { PERCENT_TOTAL } from "#src/services/genshinAssets/cooking/constants";
 import { CookTalentEffectMap } from "#src/services/genshinAssets/cooking/CookTalentEffectMap";
 import { CookTalentFoodTypeMap } from "#src/services/genshinAssets/cooking/CookTalentFoodTypeMap";
-import { PERCENT_TOTAL } from "#src/services/genshinAssets/cooking/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // A cooking talent from its proud skill row: its chance in percent, the effect the row names, and the kinds of dish its

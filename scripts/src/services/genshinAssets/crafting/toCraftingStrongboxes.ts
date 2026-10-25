@@ -1,8 +1,8 @@
 import type { StrongboxTables } from "#src/models/genshinAssets/crafting/StrongboxTables";
 import type { CraftingStrongboxData } from "genshin-world";
 
-import { RELIQUARY_SMELT_DISPLAY_TYPE } from "#src/services/genshinAssets/crafting/constants";
 import { checkIsItemIdPair } from "#src/services/genshinAssets/crafting/checkIsItemIdPair";
+import { RELIQUARY_SMELT_DISPLAY_TYPE } from "#src/services/genshinAssets/crafting/constants";
 
 // The strongboxes the Mystic Offering makes, one per set a display item names. Each is joined from the decompose row that
 // Recipes it, the reward preview of that row, the display item its first item shows and the offer row linked to the set.

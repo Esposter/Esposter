@@ -1,5 +1,5 @@
-import { createHash } from "node:crypto";
 import { DIGEST_LENGTH } from "#src/services/genshinParity/reference/constants";
+import { createHash } from "node:crypto";
 import { createReadStream } from "node:fs";
 
 // The SHA-256 of a file's bytes, streamed, its first digits as the reference cache names it

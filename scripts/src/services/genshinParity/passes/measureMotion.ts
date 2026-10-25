@@ -3,8 +3,8 @@ import type { ParityPassMeasure } from "#src/models/genshinParity/passes/ParityP
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { readLoginDoorPieces } from "#src/services/genshinAssets/fit/readLoginDoorPieces";
-import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { LOGIN_DOOR_MESH } from "#src/services/genshinAssets/shared/constants";
+import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readComponentClips } from "#src/services/genshinAssets/shared/readComponentClips";
 import { readComponentPlacements } from "#src/services/genshinAssets/shared/readComponentPlacements";

@@ -1,7 +1,7 @@
 import type { QuestStep } from "genshin-world";
 
-import { QuestContentObjectiveMap } from "#src/services/genshinText/QuestContentObjectiveMap";
 import { countConditioned } from "#src/services/genshinText/countConditioned";
+import { QuestContentObjectiveMap } from "#src/services/genshinText/QuestContentObjectiveMap";
 import { readQuestBanType } from "#src/services/genshinText/readQuestBanType";
 import { readQuestConditions } from "#src/services/genshinText/readQuestConditions";
 import { readQuestGuideNpcId } from "#src/services/genshinText/readQuestGuideNpcId";

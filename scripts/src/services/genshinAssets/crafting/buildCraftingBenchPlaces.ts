@@ -1,13 +1,13 @@
 import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
+import type { SceneGroups } from "genshin-world";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import { toCraftingBenchPlaces } from "#src/services/genshinAssets/crafting/toCraftingBenchPlaces";
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
+import { toCraftingBenchPlaces } from "#src/services/genshinAssets/crafting/toCraftingBenchPlaces";
 import { readFittedMapPoints } from "#src/services/genshinAssets/points/readFittedMapPoints";
 import { toFittedMapPoints } from "#src/services/genshinAssets/residents/toFittedMapPoints";
 import { SCENE_GROUPS_KEY } from "#src/services/genshinAssets/sceneGroups/constants";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
-import type { SceneGroups } from "genshin-world";
 
 export const buildCraftingBenchPlaces = async (): Promise<GameDataBuild> => {
   const [origin, fittedMapPoints, sceneGroups] = await Promise.all([

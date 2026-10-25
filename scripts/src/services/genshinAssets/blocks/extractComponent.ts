@@ -6,7 +6,6 @@ import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { EXTRACT_PRODUCER_PATHS, GROUP_BY_TYPE } from "#src/services/genshinAssets/blocks/constants";
 import { exportResolvedAssets } from "#src/services/genshinAssets/blocks/exportResolvedAssets";
 import { walkAssetClosure } from "#src/services/genshinAssets/blocks/walkAssetClosure";
-import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import {
   CAB_MAP_PATH,
   EXPORTED_ASSET_TYPES,
@@ -14,6 +13,7 @@ import {
   INSTALLED_BLOCKS_DIRECTORY,
   LAYOUT_ASSET_TYPES,
 } from "#src/services/genshinAssets/shared/constants";
+import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { exportBlockBySource } from "#src/services/genshinAssets/shared/exportBlockBySource";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readAssetBlocks } from "#src/services/genshinAssets/shared/readAssetBlocks";

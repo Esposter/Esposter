@@ -2,8 +2,8 @@ import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
 import type { DumpedSceneNpcBornFile } from "#src/models/genshinAssets/sceneNpcBorn/DumpedSceneNpcBornFile";
 
 import { NPC_BORN_PATH, SCENE_NPC_BORN_KEY } from "#src/services/genshinAssets/sceneNpcBorn/constants";
-import { OPEN_WORLD_SCENE_ID } from "#src/services/genshinAssets/shared/constants";
 import { toSceneNpcBorn } from "#src/services/genshinAssets/sceneNpcBorn/toSceneNpcBorn";
+import { OPEN_WORLD_SCENE_ID } from "#src/services/genshinAssets/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { readFileSync } from "node:fs";

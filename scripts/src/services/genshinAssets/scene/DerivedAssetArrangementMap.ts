@@ -8,11 +8,11 @@ import type { Vector } from "#src/models/shared/Vector";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { composeLatheAxisPoint } from "#src/services/genshinAssets/fit/composeLatheAxisPoint";
 import { readTowerProfiles } from "#src/services/genshinAssets/fit/readTowerProfiles";
-import { WindrisePlantArrangementFamilies } from "#src/services/genshinAssets/scene/WindrisePlantArrangementFamilies";
 import { computeOutlineCrossings } from "#src/services/genshinAssets/scene/computeOutlineCrossings";
 import { readObjectPositions } from "#src/services/genshinAssets/scene/readObjectPositions";
 import { readTowersRow } from "#src/services/genshinAssets/scene/readTowersRow";
 import { readWalkwayLift } from "#src/services/genshinAssets/scene/readWalkwayLift";
+import { WindrisePlantArrangementFamilies } from "#src/services/genshinAssets/scene/WindrisePlantArrangementFamilies";
 import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData";
 import { Quaternion, Vector3 } from "three";
 

@@ -5,10 +5,10 @@ import type { Vector } from "#src/models/shared/Vector";
 
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { SHADOW_WIDTH } from "#src/services/genshinParity/passes/constants";
-import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { PARITY_DIRECTORY, REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
+import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitnessTargets";
 import { removeMaskSpecks } from "#src/services/genshinParity/shared/removeMaskSpecks";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";

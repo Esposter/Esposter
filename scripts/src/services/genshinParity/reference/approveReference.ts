@@ -3,13 +3,13 @@ import { ParityApprovalMeasure } from "#src/models/genshinParity/reference/Parit
 import { decideApproval } from "#src/services/genshinParity/reference/decideApproval";
 import { readScore } from "#src/services/genshinParity/reference/readScore";
 import { writeParityScores } from "#src/services/genshinParity/reference/writeParityScores";
-import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import {
   DEFAULT_APPROVAL,
   GENSHIN_WORLD_DIRECTORY,
   REFERENCES_DIRECTORY,
 } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
+import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { PNPM_ARGS, PNPM_FILE } from "#src/services/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "@esposter/shared-node/child-process";

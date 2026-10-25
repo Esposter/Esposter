@@ -1,8 +1,8 @@
+import type { ResolvedKitValues } from "#src/models/genshinAssets/kits/build/ResolvedKitValues";
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
 import type { KitValueSource } from "#src/models/genshinAssets/kits/KitValueSource";
 import type { NamedHitCandidateMap } from "#src/models/genshinAssets/kits/NamedHitCandidateMap";
-import type { ResolvedKitValues } from "#src/models/genshinAssets/kits/build/ResolvedKitValues";
 import type { KitOverlayChoice } from "#src/models/genshinAssets/kits/record/KitOverlayChoice";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 

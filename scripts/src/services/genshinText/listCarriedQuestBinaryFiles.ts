@@ -1,6 +1,6 @@
-import type { DumpFile } from "#src/models/genshinText/DumpFile";
 import type { DumpedMainQuest } from "#src/models/genshinText/DumpedMainQuest";
 import type { DumpedSubQuest } from "#src/models/genshinText/DumpedSubQuest";
+import type { DumpFile } from "#src/models/genshinText/DumpFile";
 
 import {
   MAIN_QUEST_TABLE_NAME,

@@ -5,7 +5,6 @@ import type { TowerSlab } from "#src/models/genshinAssets/fit/TowerSlab";
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
 import type { Vector } from "#src/models/shared/Vector";
 
-import { LoginStoneFamilyMaterialRegexMap } from "#src/services/genshinAssets/fit/LoginStoneFamilyMaterialRegexMap";
 import { classifyFacadeCells } from "#src/services/genshinAssets/fit/classifyFacadeCells";
 import { computeCellMean } from "#src/services/genshinAssets/fit/computeCellMean";
 import { findCellComponents } from "#src/services/genshinAssets/fit/findCellComponents";
@@ -13,6 +12,7 @@ import { findCellRectangles } from "#src/services/genshinAssets/fit/findCellRect
 import { fitAlbedo } from "#src/services/genshinAssets/fit/fitAlbedo";
 import { fitLatheProfile } from "#src/services/genshinAssets/fit/fitLatheProfile";
 import { getTexel } from "#src/services/genshinAssets/fit/getTexel";
+import { LoginStoneFamilyMaterialRegexMap } from "#src/services/genshinAssets/fit/LoginStoneFamilyMaterialRegexMap";
 import { mergeFacadeBands } from "#src/services/genshinAssets/fit/mergeFacadeBands";
 import { rasterizeTopFaces } from "#src/services/genshinAssets/fit/rasterizeTopFaces";
 import { readLevelOfDetailParts } from "#src/services/genshinAssets/fit/readLevelOfDetailParts";

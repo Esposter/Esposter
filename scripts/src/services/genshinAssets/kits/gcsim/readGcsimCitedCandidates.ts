@@ -1,6 +1,6 @@
+import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
-import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";

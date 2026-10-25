@@ -2,8 +2,8 @@ import type { GroundLayerCellTile } from "#src/models/genshinAssets/fit/GroundLa
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { TerrainSplatLayer } from "#src/models/genshinAssets/world/TerrainSplatLayer";
 
-import { TerrainSplatKindGroundLayerMap } from "#src/services/genshinAssets/fit/TerrainSplatKindGroundLayerMap";
 import { checkIsTerrainSplatKind } from "#src/services/genshinAssets/fit/checkIsTerrainSplatKind";
+import { TerrainSplatKindGroundLayerMap } from "#src/services/genshinAssets/fit/TerrainSplatKindGroundLayerMap";
 import { TERRAIN_PATH_DIFFUSE } from "#src/services/genshinAssets/shared/constants";
 import { readAssetNames } from "#src/services/genshinAssets/shared/readAssetNames";
 import { readTerrainSplats } from "#src/services/genshinAssets/world/readTerrainSplats";

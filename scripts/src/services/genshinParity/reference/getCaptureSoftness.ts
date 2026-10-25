@@ -1,7 +1,7 @@
 import { hashFile } from "#src/services/genshinParity/reference/hashFile";
 import { measureCapture } from "#src/services/genshinParity/reference/measureCapture";
-import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { CAPTURES_DIRECTORY, REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { readFile } from "node:fs/promises";

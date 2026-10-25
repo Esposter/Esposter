@@ -2,10 +2,10 @@ import type { FittedStone } from "#src/models/genshinAssets/fit/FittedStone";
 import type { MaterialValues } from "#src/models/genshinAssets/shared/MaterialValues";
 import type { Vector } from "#src/models/shared/Vector";
 
-import { LoginStoneFamilyMaterialRegexMap } from "#src/services/genshinAssets/fit/LoginStoneFamilyMaterialRegexMap";
 import { computeMeanValue } from "#src/services/genshinAssets/fit/computeMeanValue";
 import { computeVectorMean } from "#src/services/genshinAssets/fit/computeVectorMean";
 import { fitAlbedo } from "#src/services/genshinAssets/fit/fitAlbedo";
+import { LoginStoneFamilyMaterialRegexMap } from "#src/services/genshinAssets/fit/LoginStoneFamilyMaterialRegexMap";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { readAssetNames } from "#src/services/genshinAssets/shared/readAssetNames";
 import { computeUpperMedian } from "#src/services/recreation/statistics/computeUpperMedian";

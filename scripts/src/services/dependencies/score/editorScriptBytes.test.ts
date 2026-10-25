@@ -2,8 +2,8 @@ import { assertEditorScriptsWithinBudget } from "#src/services/dependencies/scor
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { z } from "zod";
 import { describe, expect, test } from "vitest";
+import { z } from "zod";
 
 describe(assertEditorScriptsWithinBudget, () => {
   test("An editor's script loads within the budget", () => {

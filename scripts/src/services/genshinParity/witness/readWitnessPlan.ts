@@ -1,10 +1,10 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
-import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { INTERFACE_HEIGHT } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openParityPage } from "#src/services/genshinParity/shared/openParityPage";
+import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitnessTargets";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { gcd } from "#src/services/genshinParity/witness/gcd";

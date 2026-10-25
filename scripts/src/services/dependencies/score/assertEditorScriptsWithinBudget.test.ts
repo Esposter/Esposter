@@ -1,5 +1,5 @@
-import { EDITOR_SCRIPT_BUDGET } from "@esposter/configuration";
 import { assertEditorScriptsWithinBudget } from "#src/services/dependencies/score/assertEditorScriptsWithinBudget";
+import { EDITOR_SCRIPT_BUDGET } from "@esposter/configuration";
 import { describe, expect, test } from "vitest";
 
 describe(assertEditorScriptsWithinBudget, () => {

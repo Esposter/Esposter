@@ -44,14 +44,14 @@ export const noCountWriteBeforeSettle: Rule = defineRule({
         // Every function around the call holds it, so each one's first mutation is the earliest call in its body
         if (checkIsMutationCall(node)) for (const frame of frameStack) frame.mutationStart ??= node.start;
       },
-      FunctionDeclaration: enterFunction,
-      "FunctionDeclaration:exit": exitFunction,
-      FunctionExpression: enterFunction,
-      "FunctionExpression:exit": exitFunction,
       ForOfStatement(node) {
         // Only `for await` suspends, and it does so on its iterable before the first body
         if (node.await) frameStack.at(-1)?.awaitEnds.push(node.right.end);
       },
+      FunctionDeclaration: enterFunction,
+      "FunctionDeclaration:exit": exitFunction,
+      FunctionExpression: enterFunction,
+      "FunctionExpression:exit": exitFunction,
       UpdateExpression(node) {
         if (checkIsCountTarget(node.argument)) frameStack.at(-1)?.writes.push(node);
       },

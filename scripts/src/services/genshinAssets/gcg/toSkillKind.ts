@@ -1,6 +1,5 @@
-import { GcgSkillKind } from "genshin-world";
-
 import { invalidRead } from "#src/services/genshinAssets/gcg/invalidRead";
+import { GcgSkillKind } from "genshin-world";
 
 // The skill tag the card gives a skill: A for a normal attack, E for an elemental skill, Q for a burst, and PASSIVE for a
 // Passive the character holds
