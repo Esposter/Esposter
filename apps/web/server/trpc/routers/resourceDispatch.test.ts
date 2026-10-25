@@ -103,4 +103,25 @@ describe("resourceDispatchRouter", () => {
     ]);
     expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(blobName)).not.toBe(true);
   });
+
+  test("An agent uploads a file before its address expires", async () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
+    const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
+    const webpageResource = await webpageCaller.createResource({ name });
+    const blobName = `${getFilesDirectoryName(webpageResource.id)}/${hash}`;
+    const requestUploadAddress = () =>
+      callAgentTool<ResourceFileSasEntity[]>("resource_generateUploadFileSasEntities", {
+        files: [{ hash, mimetype, size }],
+        id: webpageResource.id,
+      });
+
+    expect(await requestUploadAddress()).toMatchObject([{ id: hash, isHeld: false }]);
+    // The agent's shell sends the bytes inside the address's hour, and the blob lands under the file's hash
+    vi.setSystemTime(WRITE_SAS_DURATION_MS / 2);
+    MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
+
+    expect(await requestUploadAddress()).toStrictEqual([{ id: hash, isHeld: true, sasUrl: "" }]);
+  });
 });
