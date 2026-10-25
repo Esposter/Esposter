@@ -55,6 +55,7 @@
   "scripts": {
     "build": "pnpm registry:gen && tsdown",
     "db:gen": "pnpm registry:gen && drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
     "db:pull": "drizzle-kit pull",
     "db:studio": "drizzle-kit studio",
     "db:up": "drizzle-kit up",
