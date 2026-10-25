@@ -4,7 +4,6 @@ Read when typing, resetting or checking an app-owned string that may be empty �
 
 Prefer `string` with `""` as the absent/empty sentinel. Do not use `string | undefined` for any app-owned string value.
 
-- **`ref<string>()` is banned** — always `ref("")` (`no-restricted-syntax`).
 - **`useDataMap<string | undefined>(..., undefined)` is banned** — use `useDataMap(..., "")`.
 - **`MaybeRefOrGetter<string | undefined>` is banned for currentId params** — always `MaybeRefOrGetter<string>`; internal `if (!currentIdValue)` guards handle `""`.
 - **`cursor?: string` is banned** — always `cursor: string` with `z.string().default("")`; the server checks `if (cursor)` so `""` means no cursor.
