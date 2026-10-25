@@ -23,7 +23,7 @@ export const useUserToRoomSubscribables = () => {
         $trpc.userToRoom.onUpdateUserToRoom.subscribe(roomIdsString.split(","), {
           onData: (userToRoom) => {
             setMyUserToRoom(userToRoom.roomId, userToRoom);
-            // A nickname is a server row, so the room's copy of this member is re-read rather than written here
+            // A display name is a server row, so the room's copy of this member is re-read rather than written here
             getResultAsync(async () => {
               const members = await $trpc.room.readMembersByIds.query({
                 roomId: userToRoom.roomId,

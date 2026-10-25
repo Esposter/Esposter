@@ -17,7 +17,7 @@ const save = () => {
     v-model="modelValue"
     :counter="DISPLAY_NAME_MAX_LENGTH"
     hint="Overrides your global username within this room. Leave blank to use your global username."
-    label="Nickname"
+    label="Display name"
     :rules="displayNameRules"
     @focusout="save()"
     @keydown.enter.prevent="save()"
