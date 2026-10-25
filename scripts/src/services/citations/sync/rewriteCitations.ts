@@ -1,15 +1,9 @@
 import type { PathRename } from "#src/models/citations/PathRename";
 
-import { APP_RELATIVE_PREFIXES } from "@esposter/configuration";
+import { getAppRelative } from "#src/services/citations/sync/getAppRelative";
 
-const APP_DIRECTORY = "apps/web/";
 const CITATION_REGEX = /`(?<citation>[^`\s]+)`/gu;
 
-const getAppRelative = (path: string) => {
-  if (!path.startsWith(APP_DIRECTORY)) return undefined;
-  const relative = path.slice(APP_DIRECTORY.length);
-  return APP_RELATIVE_PREFIXES.some((prefix) => relative.startsWith(prefix)) ? relative : undefined;
-};
 // A citation is the backticked path a reader greps (`skill-authoring`), and it names the moved prefix either
 // In full or in the app-relative form the docs' Key Files tables use — so each rename is applied in both spellings,
 // And a citation whose target left `apps/web` is rewritten to the full path since no short form reaches it.
