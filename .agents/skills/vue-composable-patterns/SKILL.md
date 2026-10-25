@@ -24,7 +24,7 @@ that spans an `await`, a tick or a mount, find the row.**
 | run something on an interval for a component's life    | `useWorkerInterval`                                                                | `setInterval` in `onMounted` + `clearInterval` in `onUnmounted`                                  |
 | pan and zoom a surface                                 | `usePanZoom`                                                                       | scale/offset refs and pointer handlers                                                           |
 | read or insert into a `Map`                            | `getOrCreate` (`@esposter/shared`)                                                 | `let x = map.get(k); if (!x) …`                                                                  |
-| let a restore reach an editor that holds the document  | `useAdoptResourceContent` (Tiptap, SurveyJS, GrapesJS)                             | a `:key` remount, or trusting the store's ref to reach a library that parsed it once             |
+| let a restore reach an editor that holds the document  | `useAdoptResourceContent` (Tiptap, SurveyJS)                                       | a `:key` remount, or trusting the store's ref to reach a library that parsed it once             |
 | load, re-read on restore and save a resource's content | `createContentData` — the base of every content store, read once per open resource | `readResource` + `readContent` hand-rolled in a store, or a blade's own `isLoading` and skeleton |
 | write a resource's content after an await              | `createContentData`'s `getContentWriter()`, taken where the operation is issued    | `content.value = …` in the callback that lands, filed under whichever resource is open by then   |
 

@@ -6,7 +6,7 @@ Read when a composable `await`s before registering hooks or watchers, or when wi
 
 `<script setup>` top-level `await` is compiled with `withAsyncContext`, so pages/components may freely register hooks and watchers after an `await`. **Composable bodies get no such treatment** — after the first `await` inside an async composable, `getCurrentInstance()` is `null`, lifecycle hooks warn ("no active component instance") and watchers are no longer bound to the component scope.
 
-Pattern from the article the snippet's comment links — see `useReadData` and `useGrapesJsEditor`:
+Pattern from the article the snippet's comment links — see `useReadData`:
 
 ```ts
 export const useFoo = async () => {
@@ -31,7 +31,7 @@ export const useFoo = async () => {
 - Capture `getCurrentInstance()` into a `const` **before** the first `await`; pass it as the second argument to every lifecycle hook registered after the await.
 - **Every injecting composable goes before the first `await` too** — a store, `useRouter`, anything built on `inject`. After it there is no instance to inject from, and the injection throws or silently reads nothing the first time the component renders, which no typecheck sees. Order the body: injections, then the `await`, then what reads the awaited value (`useAccountCommands`).
 - Watchers created after an `await` are not auto-disposed — keep the `stop` handle and call it in `onUnmounted`.
-- Subscribable composables use `getOnlineSubscribableContext()` (`.agents/skills/esbabbler/references/client-state.md`), which packages this capture.
+- Subscribable composables use `getOnlineSubscribableContext()` (the `esbabbler` skill, `references/client-state.md`), which packages this capture.
 
 ## Subscribable composables (`use*Subscribables`)
 
