@@ -9,7 +9,8 @@ import { createUser } from "@/services/message/user/createUser.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useRoleStore } from "@/store/message/room/role";
 import { useMemberStore } from "@/store/message/user/member";
-import { beforeEach, describe, expect, test } from "vitest";
+import { TRPCError } from "@trpc/server";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 // Resolves on the next write of the room's group totals, the store's own signal that a re-read has landed
 const waitForCounts = (readRoomId: string) => {
@@ -96,6 +97,41 @@ describe(useMemberStore, () => {
     const countsWritten = waitForCounts(roomId);
     storeDeleteMember(roomId, member.id);
     await countsWritten;
+
+    expect(memberCount.value).toBe(1);
+    expect(memberCountsByTopRole.value).toStrictEqual([{ count: 1, roleId: role.id }]);
+  });
+
+  // A group read that fails leaves the pair the last settled read wrote standing: the total is written only with the
+  // Groups it was read beside, so a failed run changes neither. The retry the batched refresh schedules then lands the
+  // Server's totals, and they equal the members left in the room
+  test("a failed count re-read keeps the pre-leave counts, then every group count equal to its members once the retry lands", async () => {
+    expect.hasAssertions();
+
+    const memberStore = useMemberStore();
+    const { getMemberCountsRef, storeDeleteMember } = memberStore;
+    const { memberCount, memberCountsByTopRole } = storeToRefs(memberStore);
+    const { promise: isFailureLogged, resolve: onFailureLogged } = Promise.withResolvers<void>();
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => {
+      onFailureLogged();
+    });
+    let hasGroupReadFailed = false;
+    getMemberCountsRef(roomId).value.memberCount = 2;
+    getMemberCountsRef(roomId).value.countsByTopRole = [{ count: 2, roleId: role.id }];
+    trpcMsw.room.readMembersCount.query(() => 1);
+    trpcMsw.room.readMemberCountsByTopRole.query(() => {
+      if (hasGroupReadFailed) return [{ count: 1, roleId: role.id }];
+      hasGroupReadFailed = true;
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
+    });
+    storeDeleteMember(roomId, member.id);
+    await isFailureLogged;
+    consoleError.mockRestore();
+
+    expect(memberCount.value).toBe(2);
+    expect(memberCountsByTopRole.value).toStrictEqual([{ count: 2, roleId: role.id }]);
+
+    await waitForCounts(roomId);
 
     expect(memberCount.value).toBe(1);
     expect(memberCountsByTopRole.value).toStrictEqual([{ count: 1, roleId: role.id }]);
