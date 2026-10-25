@@ -1,7 +1,8 @@
 import { at } from "#src/services/shared/at";
-import { OFF_DIAGONAL_TOLERANCE, SWEEP_LIMIT } from "#src/services/shared/constants";
 import { set } from "#src/services/shared/set";
 
+const SWEEP_LIMIT = 100;
+const OFF_DIAGONAL_TOLERANCE = 1e-12;
 // A symmetric matrix's eigenvalues and their eigenvectors, by cyclic Jacobi rotations until the off-diagonal entries
 // Vanish: the eigenvalue at each index belongs to the eigenvector at that index, in no particular order
 export const computeSymmetricEigen = (symmetric: readonly number[][]): { values: number[]; vectors: number[][] } => {
