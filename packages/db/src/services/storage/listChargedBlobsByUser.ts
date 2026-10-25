@@ -13,7 +13,8 @@ export const listChargedBlobsByUser = async (
   });
   const storageLedgerEntriesByContainer = Map.groupBy(storageLedgerEntries, ({ containerName }) => containerName);
   return new Map(
-    [...storageLedgerEntriesByContainer].map(
+    Array.from(
+      storageLedgerEntriesByContainer,
       ([containerName, storageLedgerEntriesInContainer]) =>
         [containerName, storageLedgerEntriesInContainer.map(({ blobName }) => blobName)] as const,
     ),
