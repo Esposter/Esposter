@@ -9,7 +9,14 @@ export const toReliquaryPiece = ({
   nameTextMapHash,
   rank,
   rankLevel,
-}: ExcelReliquaryRow) => ({
+}: ExcelReliquaryRow): {
+  itemId: number;
+  nameTextId: string;
+  rank: number;
+  rarity: number;
+  slot: string;
+  startingMinorCount: number;
+} => ({
   itemId: id,
   nameTextId: String(nameTextMapHash),
   rank,

@@ -8,7 +8,7 @@ export const toGatherItemId = (
   id: string,
   { gatherPointType }: ConfigWidgetRow,
   pointTypeItemIdMap: ReadonlyMap<number, number>,
-) => {
+): number => {
   const itemId = gatherPointType === undefined ? undefined : pointTypeItemIdMap.get(gatherPointType);
   if (itemId === undefined)
     throw new InvalidOperationError(

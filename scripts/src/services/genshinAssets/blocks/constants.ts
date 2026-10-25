@@ -10,6 +10,6 @@ export const EXTRACT_PRODUCER_PATHS: string[] = [
   "scripts/src/services/genshinAssets/world",
 ];
 
-export const GROUP_BY_TYPE = ["--group_assets", AnimeStudioGroupType.ByType];
+export const GROUP_BY_TYPE: string[] = ["--group_assets", AnimeStudioGroupType.ByType];
 
 export const SOURCE_PREFIX = '"Source": "';

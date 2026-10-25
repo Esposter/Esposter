@@ -239,7 +239,7 @@ export const SOUND_SCORE_HOP_LENGTH = 240;
 export const SOUND_SCORE_RANGE_DECIBELS = 40;
 // The power a sound's level is read from when it is silent: the smallest positive float, so a silent cell reads as the
 // Least decibels a float holds rather than minus infinity
-export const SOUND_POWER_FLOOR = Number.MIN_VALUE;
+export const SOUND_POWER_FLOOR: number = Number.MIN_VALUE;
 // A terminal's colour and style codes, which Vite wraps the address it prints in
 // oxlint-disable-next-line typescript/no-inferrable-types, no-control-regex -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer, and the escape is the control character itself
 export const ANSI_ESCAPE_REGEX: RegExp = /\u001B\[[\d;]*m/gu;
