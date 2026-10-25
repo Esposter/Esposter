@@ -17,6 +17,12 @@ import { ResourceType } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
 import { beforeAll, describe, expect, test } from "vitest";
 
+// The content of a Sheet of the given columns and rows, with the metadata and settings every Sheet carries
+const createSheetResource = (columns: Column[], rows: Row[]): SheetResource => ({
+  data: { columns, metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(0), name: "", size: 0 }, rows },
+  settings: { configuration: { delimiter: CsvDelimiter.Comma }, type: DataSourceType.Csv },
+});
+
 describe("sheetRouter", () => {
   const { getCaller } = setupResourceSuite(sheetRouter);
   let caller: DecorateRouterRecord<TRPCRouter["sheet"]>;
@@ -79,16 +85,6 @@ describe("sheetRouter", () => {
     expect(content?.data.rows[0]?.data[column.id]).toBe(cell);
   });
 
-  // The content of a Sheet of the given columns and rows, with the metadata and settings every Sheet carries
-  const createSheetResource = (columns: Column[], rows: Row[]): SheetResource => ({
-    data: {
-      columns,
-      metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(0), name: "", size: 0 },
-      rows,
-    },
-    settings: { configuration: { delimiter: CsvDelimiter.Comma }, type: DataSourceType.Csv },
-  });
-
   // A Sheet saved as the first content of a new resource, for a command to run on; answers the saved resource
   const createSheet = async (columns: Column[], rows: Row[]) => {
     const newResource = await caller.createResource({ name });
@@ -99,7 +95,7 @@ describe("sheetRouter", () => {
     });
   };
 
-  test("Column rename re-keys every row", async () => {
+  test("column rename re-keys every row", async () => {
     expect.hasAssertions();
 
     const { id } = await createSheet([new StringColumn({ name: "old" })], [new Row({ data: { old: "value" } })]);
@@ -136,7 +132,7 @@ describe("sheetRouter", () => {
     expect(content?.data.rows.map(({ data }) => data)).toStrictEqual([{ a: "1", b: "2" }]);
   });
 
-  test("Column type change converts every cell", async () => {
+  test("column type change converts every cell", async () => {
     expect.hasAssertions();
 
     const { id } = await createSheet(
@@ -153,7 +149,7 @@ describe("sheetRouter", () => {
     expect(content?.data.rows.map(({ data }) => data.amount)).toStrictEqual([12, null]);
   });
 
-  test("Date format change rewrites every date", async () => {
+  test("date format change rewrites every date", async () => {
     expect.hasAssertions();
 
     const { id } = await createSheet(
@@ -174,7 +170,7 @@ describe("sheetRouter", () => {
     expect(content?.data.rows.map(({ data }) => data.day)).toStrictEqual(["25-10-2026"]);
   });
 
-  test("A command lands on its row after a row is inserted above it", async () => {
+  test("a command lands on its row after a row is inserted above it", async () => {
     expect.hasAssertions();
 
     const column = new StringColumn({ name: "status" });
@@ -198,7 +194,7 @@ describe("sheetRouter", () => {
     expect(content?.data.rows.map(({ data }) => data.status)).toStrictEqual(["inserted", "open", "done"]);
   });
 
-  test("A command based on older content applies to the newer content", async () => {
+  test("a command based on older content applies to the newer content", async () => {
     expect.hasAssertions();
 
     const column = new StringColumn({ name: "status" });

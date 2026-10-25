@@ -131,7 +131,7 @@ describe(getMcpTools, () => {
 
   // A type's procedure the factory did not generate, declaring nothing, is found by its path under the type's name, so
   // A router holding one fails the check until its author declares it
-  test("A new type-specific procedure without a declaration fails CI", () => {
+  test("a new type-specific procedure without a declaration fails CI", () => {
     expect.hasAssertions();
 
     const undeclaredRouter = router({ webpage: router({ undeclared: publicProcedure.query<void>(() => undefined) }) });

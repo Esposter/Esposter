@@ -66,7 +66,7 @@ describe("knockerRouter", () => {
   });
 
   // The same device knocking again after renaming itself: the entry it left behind is replaced, so the doorkeeper
-  // reads the name it knocked with last rather than the one it knocked with first
+  // Reads the name it knocked with last rather than the one it knocked with first
   test("knockCall overwrites the existing entry on a duplicate knock", async () => {
     expect.hasAssertions();
 

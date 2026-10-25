@@ -197,7 +197,7 @@ describe("datasetRouter", () => {
     expect(dataset.totalRows).toBe(1);
   });
 
-  test("An agent reads a Sheet's rows as one table", async () => {
+  test("an agent reads a Sheet's rows as one table", async () => {
     expect.hasAssertions();
 
     const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);

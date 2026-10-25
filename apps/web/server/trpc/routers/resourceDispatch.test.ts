@@ -44,19 +44,19 @@ describe("resourceDispatchRouter", () => {
   const readPublication = (resourceId: string) =>
     mockContext.db.query.resourcePublicationsInResource.findFirst({ where: { resourceId: { eq: resourceId } } });
 
-  test("A type that does not publish is refused in words", async () => {
+  test("a type that does not publish is refused in words", async () => {
     expect.hasAssertions();
 
     const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
     const sheetResource = await sheetCaller.createResource({ name });
 
-    await expect(callAgentTool("resource_publishResource", { id: sheetResource.id })).rejects.toThrow(
-      "does not publish",
-    );
-    expect(await readPublication(sheetResource.id)).toBeUndefined();
+    await expect(
+      callAgentTool("resource_publishResource", { id: sheetResource.id }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[Error: Invalid operation: Update, name: Sheet, does not publish]`);
+    await expect(readPublication(sheetResource.id)).resolves.toBeUndefined();
   });
 
-  test("An agent publishes and unpublishes a resource of a publishing type", async () => {
+  test("an agent publishes and unpublishes a resource of a publishing type", async () => {
     expect.hasAssertions();
 
     const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
@@ -73,7 +73,7 @@ describe("resourceDispatchRouter", () => {
     await callAgentTool("resource_unpublishResource", { id: webpageResource.id });
     const publishedAfterUnpublish = await readPublication(webpageResource.id);
 
-    expect(publication).toMatchObject({ resourceId: webpageResource.id });
+    expect(publication.resourceId).toStrictEqual(webpageResource.id);
     expect(publishedAfterPublish).toBeDefined();
     expect(publishedAfterUnpublish).toBeUndefined();
   });
@@ -96,7 +96,7 @@ describe("resourceDispatchRouter", () => {
     expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(blobName)).not.toBe(true);
   });
 
-  test("An agent uploads a file before its address expires", async () => {
+  test("an agent uploads a file before its address expires", async () => {
     expect.hasAssertions();
 
     vi.useFakeTimers({ now: 0, toFake: ["Date"] });
@@ -109,11 +109,13 @@ describe("resourceDispatchRouter", () => {
         id: webpageResource.id,
       });
 
-    expect(await requestUploadAddress()).toMatchObject([{ id: hash, isHeld: false }]);
+    await expect(requestUploadAddress()).resolves.toStrictEqual([
+      { id: hash, isHeld: false, sasUrl: getExpectedWriteSasUrl(getBlobUrl(AzureContainer.ResourceAssets, blobName)) },
+    ]);
     // The agent's shell sends the bytes inside the address's hour, and the blob lands under the file's hash
     vi.setSystemTime(WRITE_SAS_DURATION_MS / 2);
     MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(1)]]));
 
-    expect(await requestUploadAddress()).toStrictEqual([{ id: hash, isHeld: true, sasUrl: "" }]);
+    await expect(requestUploadAddress()).resolves.toStrictEqual([{ id: hash, isHeld: true, sasUrl: "" }]);
   });
 });

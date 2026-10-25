@@ -63,7 +63,7 @@ describe("webpageRouter", () => {
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(webpageEditor)));
   });
 
-  test("A published webpage is one HTML document", async () => {
+  test("a published webpage is one HTML document", async () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
@@ -121,7 +121,7 @@ describe("webpageRouter", () => {
   });
 
   // The survey invite's survey is indexed as a link when the page saves, so the survey's own delete reads the page as its consumer
-  test("Deleting a surveyed invite's survey names the webpage", async () => {
+  test("deleting a surveyed invite's survey names the webpage", async () => {
     expect.hasAssertions();
 
     const newSurvey = await createSurvey(surveyCaller, name, {

@@ -408,7 +408,7 @@ describe("postRouter", () => {
   const setReplyColumns = (id: string, columns: Partial<Pick<PostInPost, "createdAt" | "likeCount" | "ranking">>) =>
     mockContext.db.update(postsInPost).set(columns).where(eq(postsInPost.id, id));
 
-  test("Hot keeps the ranked reply order", async () => {
+  test("hot keeps the ranked reply order", async () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
@@ -421,7 +421,7 @@ describe("postRouter", () => {
     expect(items.map(({ id }) => id)).toStrictEqual([firstId, thirdId, secondId]);
   });
 
-  test("Top lists the most-liked reply first", async () => {
+  test("top lists the most-liked reply first", async () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
@@ -433,7 +433,7 @@ describe("postRouter", () => {
     expect(items.map(({ id }) => id)).toStrictEqual([secondId, thirdId, firstId]);
   });
 
-  test("New lists the newest reply first", async () => {
+  test("new lists the newest reply first", async () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
@@ -446,7 +446,7 @@ describe("postRouter", () => {
     expect(items.map(({ id }) => id)).toStrictEqual([thirdId, secondId, firstId]);
   });
 
-  test("Old lists the oldest reply first", async () => {
+  test("old lists the oldest reply first", async () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
@@ -459,7 +459,7 @@ describe("postRouter", () => {
     expect(items.map(({ id }) => id)).toStrictEqual([firstId, secondId, thirdId]);
   });
 
-  test("Paging Old reaches every reply once", async () => {
+  test("paging Old reaches every reply once", async () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
@@ -467,13 +467,12 @@ describe("postRouter", () => {
     await setReplyColumns(firstId, { createdAt: new Date(0) });
     await setReplyColumns(secondId, { createdAt: new Date(ONE_SECOND) });
     await setReplyColumns(thirdId, { createdAt: new Date(ONE_SECOND * 2) });
-    const sortBy = OLD_SORT_BY;
-    const firstPage = await postCaller.readPosts({ limit: 2, parentId: newPost.id, sortBy });
+    const firstPage = await postCaller.readPosts({ limit: 2, parentId: newPost.id, sortBy: OLD_SORT_BY });
     const secondPage = await postCaller.readPosts({
       cursor: firstPage.nextCursor,
       limit: 2,
       parentId: newPost.id,
-      sortBy,
+      sortBy: OLD_SORT_BY,
     });
 
     expect([...firstPage.items, ...secondPage.items].map(({ id }) => id)).toStrictEqual([firstId, secondId, thirdId]);

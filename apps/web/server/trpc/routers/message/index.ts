@@ -97,7 +97,7 @@ import {
   StandardMessageEntity,
   StandardMessageEntityPropertyNames,
 } from "@esposter/db-schema";
-import { getResult, jsonDateParse, MAX_READ_LIMIT, noop, Operation, takeOne } from "@esposter/shared";
+import { getResult, getResultAsync, jsonDateParse, MAX_READ_LIMIT, noop, Operation, takeOne } from "@esposter/shared";
 import { tracked, TRPCError } from "@trpc/server";
 import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 
@@ -283,7 +283,9 @@ export const baseMessageRouter = router({
         }),
       );
       // Every copy that landed was charged to the forwarder, so the meter is read once the rooms have settled
-      if (messageEntity.files.length > 0) await emitStorageUsage(ctx.db, ctx.getSessionPayload.user.id);
+      // The meter is best-effort: a failed read loses one usage update, never the forward the rooms already posted
+      if (messageEntity.files.length > 0)
+        await getResultAsync(() => emitStorageUsage(ctx.db, ctx.getSessionPayload.user.id)).match(noop, console.error);
       // Surface the first per-room block like a single blocked send does, after the unblocked rooms posted.
       // Only one rejection can be surfaced, so every rejection is logged with the room it belongs to first —
       // Otherwise a transient failure behind a blocked room leaves that room silently without the forward and
@@ -328,7 +330,7 @@ export const baseMessageRouter = router({
       if (size > maxFileSizeBytes || !room.allowedMimeCategories.includes(getMimeCategory(mimetype)))
         throw getInvalidOperationError(Operation.Create, AzureEntityType.File, JSON.stringify({ mimetype, size }));
     // A write target is minted only after its bytes are reserved against the uploader's allowance: the bytes belong to
-    // whoever sent them, wherever the room is. See openspec/specs/resource/storage-quotas/design.md
+    // Whoever sent them, wherever the room is. See openspec/specs/resource/storage-quotas/design.md
     const fileSasEntities = await generateReservedMessageFileSasEntities(
       ctx.db,
       ctx.getSessionPayload.user.id,

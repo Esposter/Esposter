@@ -241,7 +241,7 @@ describe("resourceRouter", () => {
     expect(items.map(({ id }) => id)).toStrictEqual([newerResource.id, olderResource.id]);
   });
 
-  test("A tag value finds its resource", async () => {
+  test("a tag value finds its resource", async () => {
     expect.hasAssertions();
 
     const taggedResource = await dashboardCaller.createResource({ name: "a" });
@@ -252,7 +252,7 @@ describe("resourceRouter", () => {
     expect(items.map(({ id }) => id)).toStrictEqual([taggedResource.id]);
   });
 
-  test("A tag name finds its resource", async () => {
+  test("a tag name finds its resource", async () => {
     expect.hasAssertions();
 
     const taggedResource = await dashboardCaller.createResource({ name: "a" });
@@ -263,7 +263,7 @@ describe("resourceRouter", () => {
     expect(items.map(({ id }) => id)).toStrictEqual([taggedResource.id]);
   });
 
-  test("A tag match is counted with the list", async () => {
+  test("a tag match is counted with the list", async () => {
     expect.hasAssertions();
 
     const taggedResource = await dashboardCaller.createResource({ name: "a" });
@@ -274,7 +274,7 @@ describe("resourceRouter", () => {
     expect(count).toBe(1);
   });
 
-  test("A name match ranks above a tag-only match", async () => {
+  test("a name match ranks above a tag-only match", async () => {
     expect.hasAssertions();
 
     // "Email" holds the query as a substring and shares no trigram with it, while "Ask" shares one, so the
@@ -288,7 +288,7 @@ describe("resourceRouter", () => {
     expect(items.map(({ id }) => id)).toStrictEqual([nameResource.id, taggedResource.id]);
   });
 
-  test("Tag-only matches list newest first", async () => {
+  test("tag-only matches list newest first", async () => {
     expect.hasAssertions();
 
     // The older tagged resource is the closer name, so only the newest-first key puts the newer one first
@@ -302,7 +302,7 @@ describe("resourceRouter", () => {
     expect(items.map(({ id }) => id)).toStrictEqual([newerResource.id, olderResource.id]);
   });
 
-  test("A wildcard in the query matches only itself", async () => {
+  test("a wildcard in the query matches only itself", async () => {
     expect.hasAssertions();
 
     const resource = await dashboardCaller.createResource({ name });
@@ -518,7 +518,7 @@ describe("resourceRouter", () => {
     });
   });
 
-  test("An agent reads what links to a resource", async () => {
+  test("an agent reads what links to a resource", async () => {
     expect.hasAssertions();
 
     const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
@@ -534,7 +534,7 @@ describe("resourceRouter", () => {
     expect(references.consumers).toStrictEqual([{ id: emailResource.id, name, type: ResourceType.Email }]);
   });
 
-  test("A link written into a document appears in references", async () => {
+  test("a link written into a document appears in references", async () => {
     expect.hasAssertions();
 
     const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
@@ -557,16 +557,16 @@ describe("resourceRouter", () => {
     expect(references.dependencies).toStrictEqual([{ id: sheet.id, name, type: ResourceType.Sheet }]);
   });
 
-  test("A restore keeps the version it replaces as a revision", async () => {
+  test("a restore keeps the version it replaces as a revision", async () => {
     expect.hasAssertions();
 
     const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
     const webpageResource = await webpageCaller.createResource({ name });
     await saveWebpageContent(webpageResource, webpageEditor);
     await webpageCaller.publishResource({ id: webpageResource.id });
-    const [publishedVersion] = (
+    const publishedVersion = (
       await callAgentTool<SnapshotVersion[]>("resource_readSnapshotHistory", { id: webpageResource.id })
-    ).filter(({ channel }) => channel === SnapshotChannel.Published);
+    ).find(({ channel }) => channel === SnapshotChannel.Published);
     const draftWebpageResource = await caller.readResource({ id: webpageResource.id });
     await saveWebpageContent(draftWebpageResource, updatedWebpageEditor);
     const draftContent = await webpageCaller.readResourceContent({ id: webpageResource.id });
@@ -831,16 +831,17 @@ describe("resourceRouter", () => {
     expect(updatedResource.tags).toStrictEqual(tags);
   });
 
-  test("An agent creates a resource of a named type", async () => {
+  test("an agent creates a resource of a named type", async () => {
     expect.hasAssertions();
 
     const createdResource = await caller.createResource({ name, type: ResourceType.Sheet });
-    const readResource = await caller.readResource({ id: createdResource.id });
+    const resource = await caller.readResource({ id: createdResource.id });
 
-    expect(readResource).toMatchObject({ name, type: ResourceType.Sheet });
+    expect(resource.name).toStrictEqual(name);
+    expect(resource.type).toStrictEqual(ResourceType.Sheet);
   });
 
-  test("An agent renames and tags a resource", async () => {
+  test("an agent renames and tags a resource", async () => {
     expect.hasAssertions();
 
     const webpageResource = await webpageCaller.createResource({ name });
@@ -849,7 +850,8 @@ describe("resourceRouter", () => {
     const updatedResource = await caller.updateResource({ id: webpageResource.id, name: updatedName, tags });
     const contentAfter = await webpageCaller.readResourceContent({ id: webpageResource.id });
 
-    expect(updatedResource).toMatchObject({ name: updatedName, tags });
+    expect(updatedResource.name).toStrictEqual(updatedName);
+    expect(updatedResource.tags).toStrictEqual(tags);
     expect(contentAfter).toStrictEqual(contentBefore);
   });
 
@@ -906,7 +908,7 @@ describe("resourceRouter", () => {
     expect(deletedCount).toBe(0);
   });
 
-  test("A resource moved to the bin and restored comes back whole", async () => {
+  test("a resource moved to the bin and restored comes back whole", async () => {
     expect.hasAssertions();
 
     const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
@@ -920,11 +922,13 @@ describe("resourceRouter", () => {
     });
     const contentAfter = await webpageCaller.readResourceContent({ id: webpageResource.id });
 
-    expect(restoredResource).toMatchObject({ deletedAt: null, name, tags });
+    expect(restoredResource?.deletedAt).toBeNull();
+    expect(restoredResource?.name).toStrictEqual(name);
+    expect(restoredResource?.tags).toStrictEqual(tags);
     expect(contentAfter).toStrictEqual(contentBefore);
   });
 
-  test("An agent duplicates a resource", async () => {
+  test("an agent duplicates a resource", async () => {
     expect.hasAssertions();
 
     const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);

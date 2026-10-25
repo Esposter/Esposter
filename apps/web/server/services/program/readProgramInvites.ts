@@ -36,7 +36,7 @@ export const readProgramInvites = async (
   ]);
   if (!email || !emailContent || !survey) throw getDanglingProgramBindingError();
   // The email as the server compiles it from its stored working copy, the same compile the publish and the personalised
-  // export run, since no working copy holds html of its own
+  // Export run, since no working copy holds html of its own
   const emailHtml = (await compileEmailContent(emailContent)).match(
     (html) => html,
     (error) => {

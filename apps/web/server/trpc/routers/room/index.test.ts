@@ -51,7 +51,6 @@ describe("roomRouter", () => {
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   let roleCaller: DecorateRouterRecord<TRPCRouter["role"]>;
   let inviteCaller: DecorateRouterRecord<TRPCRouter["invite"]>;
-  const roomId = crypto.randomUUID();
   const name = "name";
   const expireAfterMinutes = InviteExpireAfterMinutesMap["30 minutes"];
   const updatedName = "updatedName";

@@ -4,13 +4,14 @@ import { createMcpServer } from "#server/services/mcp/createMcpServer";
 import { createMockContext } from "#server/trpc/context.test";
 import { trpcRouter } from "#server/trpc/routers";
 import { McpScope } from "#shared/models/auth/McpScope";
+import { jsonDateParse } from "@esposter/shared";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { CallToolResultSchema } from "@modelcontextprotocol/sdk/types.js";
 import { beforeAll, describe, expect, onTestFinished, test } from "vitest";
 
 // A key holding these scopes, connected to the MCP server an agent reaches. Each tool it calls is answered as the agent
-// reads it: the data as parsed JSON, and a refused call as a rejection carrying the words it is refused in
+// Reads it: the data as parsed JSON, and a refused call as a rejection carrying the words it is refused in
 export const connectAgentKey = async (ctx: Context, mcpScopes: McpScope[]) => {
   const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
   const client = new Client({ name: "", version: "" });
@@ -23,7 +24,7 @@ export const connectAgentKey = async (ctx: Context, mcpScopes: McpScope[]) => {
     const [answer] = content;
     if (answer?.type !== "text") throw new Error(`${name} answered without text`);
     if (isError) throw new Error(answer.text);
-    return JSON.parse(answer.text);
+    return jsonDateParse(answer.text);
   };
 };
 
@@ -39,6 +40,27 @@ describe(connectAgentKey, () => {
 
     const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
 
-    await expect(callAgentTool("resource_deleteResources", { ids: "" })).rejects.toThrow('"expected": "array"');
+    await expect(callAgentTool("resource_deleteResources", { ids: "" })).rejects.toThrowErrorMatchingInlineSnapshot(`
+      [Error: [
+        {
+          "expected": "array",
+          "code": "invalid_type",
+          "path": [
+            "ids"
+          ],
+          "message": "Invalid input: expected array, received string"
+        },
+        {
+          "origin": "string",
+          "code": "too_small",
+          "minimum": 1,
+          "inclusive": true,
+          "path": [
+            "ids"
+          ],
+          "message": "Too small: expected string to have >=1 characters"
+        }
+      ]]
+    `);
   });
 });

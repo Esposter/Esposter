@@ -66,7 +66,6 @@ describe(createResourceProcedures, () => {
   const name = "name";
   const apiKeyName = "apiKeyName";
   const updatedName = "updatedName";
-  const filename = "filename";
   const hash = "a".repeat(64);
   const mimetype = MimeType.Png;
   const size = 1;
@@ -230,7 +229,7 @@ describe(createResourceProcedures, () => {
   });
 
   // An agent writes through its key, so the stream names the key rather than leaving the save to read as the person's own
-  test("A save made with a key is named by that key", async () => {
+  test("a save made with a key is named by that key", async () => {
     expect.hasAssertions();
 
     const newResource = await dashboardCaller.createResource({ name });
@@ -249,8 +248,8 @@ describe(createResourceProcedures, () => {
   });
 
   // One user on two sessions is two devices: the first save the subscriber made is filtered out, so the first save
-  // it hears is the other session's, at the version that save landed on
-  test("A device does not hear its own save", async () => {
+  // It hears is the other session's, at the version that save landed on
+  test("a device does not hear its own save", async () => {
     expect.hasAssertions();
 
     const ownPayload: GetSessionPayload = { session: createMockSession(authMocks.user.id), user: authMocks.user };

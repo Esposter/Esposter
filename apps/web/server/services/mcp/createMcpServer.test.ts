@@ -39,10 +39,10 @@ describe(createMcpServer, () => {
     mockContext = await createMockContext();
   });
 
-  const createConnectedClient = async (mcpScopes: McpScope[] = McpScopes, router: AnyRouter = testRouter) => {
+  const createConnectedClient = async (mcpScopes: McpScope[] = McpScopes, mcpRouter: AnyRouter = testRouter) => {
     const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
     const client = new Client({ name: "", version: "" });
-    await createMcpServer(router, mockContext, mcpScopes).connect(serverTransport);
+    await createMcpServer(mcpRouter, mockContext, mcpScopes).connect(serverTransport);
     await client.connect(clientTransport);
     onTestFinished(() => client.close());
     return client;
@@ -169,7 +169,7 @@ describe(createMcpServer, () => {
     );
   });
 
-  test("Human-only operations are not listed to a key with every scope", async () => {
+  test("human-only operations are not listed to a key with every scope", async () => {
     expect.hasAssertions();
 
     const client = await createConnectedClient(McpScopes, humanOnlyRouter);
@@ -180,8 +180,8 @@ describe(createMcpServer, () => {
   });
 
   // A procedure the owner alone performs is refused by name to a key holding every scope, as though it did not exist, so
-  // the mutation that would purge is never reached. Its opt-in is set here, so the refusal is the declaration's alone
-  test("A key cannot call a human-only operation by name", async () => {
+  // The mutation that would purge is never reached. Its opt-in is set here, so the refusal is the declaration's alone
+  test("a key cannot call a human-only operation by name", async () => {
     expect.hasAssertions();
 
     const client = await createConnectedClient(McpScopes, humanOnlyRouter);

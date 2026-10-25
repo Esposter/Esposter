@@ -157,7 +157,9 @@ describe("userToRoomRouter", () => {
       targetUserId: member.id,
     });
 
-    expect(updatedUserToRoom).toMatchObject({ displayName, roomId: newRoom.id, userId: member.id });
+    expect(updatedUserToRoom.displayName).toStrictEqual(displayName);
+    expect(updatedUserToRoom.roomId).toStrictEqual(newRoom.id);
+    expect(updatedUserToRoom.userId).toStrictEqual(member.id);
   });
 
   // The slowmode clock is what the next send is checked against, so a client able to write it could reset its own

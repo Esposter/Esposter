@@ -57,18 +57,19 @@ const readUnwritablePaths = (
 const readOneOf = (schema: JSONSchema._JSONSchema | undefined): JSONSchema._JSONSchema[] =>
   schema === undefined || typeof schema === "boolean" ? [] : (schema.oneOf ?? []);
 
+// The paths a page builder rich text node leaves undescribed, under the pointer of the node holding it
+const richTextPaths = (pointer: string) => [
+  `${pointer}/props/content/*`,
+  `${pointer}/props/content/attrs/*`,
+  `${pointer}/props/content/marks/-/*`,
+  `${pointer}/props/content/marks/-/attrs/*`,
+];
+
 describe(getAgentJsonSchema, () => {
-  // The paths a page builder rich text node leaves undescribed, under the pointer of the node holding it
-  const richTextPaths = (pointer: string) => [
-    `${pointer}/props/content/*`,
-    `${pointer}/props/content/attrs/*`,
-    `${pointer}/props/content/marks/-/*`,
-    `${pointer}/props/content/marks/-/attrs/*`,
-  ];
   // An email nests its body one more child deep each level, and each level holds rich text
   const childRichTextPaths = Array.from(
     { length: 6 },
-    (_value, index) => "/content/-" + "/props/children/-".repeat(index + 1),
+    (_value, index) => `/content/-${"/props/children/-".repeat(index + 1)}`,
   ).flatMap((pointer) => richTextPaths(pointer));
   // What each type's agent may not write: a new undescribed or read-only node fails here until it is described or
   // Recorded, so no type's reach widens or narrows unseen
@@ -90,13 +91,13 @@ describe(getAgentJsonSchema, () => {
     Webpage: [...richTextPaths("/content/-"), "/html"],
   } as const satisfies Record<ResourceType, string[]>;
 
-  test.each(ResourceTypes)("A type whose content schema is not an object fails CI: %s", (type) => {
+  test.each(ResourceTypes)("a type whose content schema is not an object fails CI: %s", (type) => {
     expect.hasAssertions();
 
     expect(getAgentJsonSchema(ResourceDefinitionMap[type].contentSchema).type).toBe("object");
   });
 
-  test.each(ResourceTypes)("A change to a type's described surface fails CI until it is recorded: %s", (type) => {
+  test.each(ResourceTypes)("a change to a type's described surface fails CI until it is recorded: %s", (type) => {
     expect.hasAssertions();
 
     const jsonSchema = getAgentJsonSchema(ResourceDefinitionMap[type].contentSchema);

@@ -11,7 +11,7 @@ import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("api keys follow-ups scope migration", () => {
   // The startup migration's own SQL, run over the keys it names. The mock database loads a snapshot of the schema rather
-  // than running migrations, so the migration's SQL is what this test applies
+  // Than running migrations, so the migration's SQL is what this test applies
   const MIGRATION_PATH = new URL("migrations/20261013003850_api_keys_follow_ups_scope/migration.sql", import.meta.url);
 
   let mockContext: Context;
@@ -44,17 +44,17 @@ describe("api keys follow-ups scope migration", () => {
     return key.permissions;
   };
 
-  test("A key created before scopes can run the follow-ups", async () => {
+  test("a key created before scopes can run the follow-ups", async () => {
     expect.hasAssertions();
 
     const id = await insertKey(null);
 
     await mockContext.db.execute(sql.raw(await readFile(MIGRATION_PATH, "utf8")));
 
-    expect(await readKeyPermissions(id)).toBe(JSON.stringify({ mcp: [McpScope.FollowUps] }));
+    await expect(readKeyPermissions(id)).resolves.toBe(JSON.stringify({ mcp: [McpScope.FollowUps] }));
   });
 
-  test("A key that already holds scopes keeps them", async () => {
+  test("a key that already holds scopes keeps them", async () => {
     expect.hasAssertions();
 
     const permissions = JSON.stringify({ mcp: [McpScope.Resources] });
@@ -62,6 +62,6 @@ describe("api keys follow-ups scope migration", () => {
 
     await mockContext.db.execute(sql.raw(await readFile(MIGRATION_PATH, "utf8")));
 
-    expect(await readKeyPermissions(id)).toBe(permissions);
+    await expect(readKeyPermissions(id)).resolves.toBe(permissions);
   });
 });

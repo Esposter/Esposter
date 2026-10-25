@@ -767,7 +767,7 @@ describe("messageRouter", () => {
 
     await messageCaller.forwardMessage({ ...getCompositeKey(newMessage), roomIds: [forwardedRoom.id] });
 
-    expect(await readStorageBytesUsed()).toBe(bytesBeforeForward + size);
+    await expect(readStorageBytesUsed()).resolves.toBe(bytesBeforeForward + size);
   });
 
   // A copy that fails gives the forwarder back what it was charged, and the forward posts nothing to the room
@@ -789,7 +789,7 @@ describe("messageRouter", () => {
       messageCaller.forwardMessage({ ...getCompositeKey(newMessage), roomIds: [forwardedRoom.id] }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError:  ]`);
 
-    expect(await readStorageBytesUsed()).toBe(bytesBeforeForward);
+    await expect(readStorageBytesUsed()).resolves.toBe(bytesBeforeForward);
     await expect(mockContext.db.query.storageLedgerInStorage.findMany()).resolves.toStrictEqual([]);
     const forwardedMessages = await messageCaller.readMessages({ roomId: forwardedRoom.id });
     expect(forwardedMessages.items).toHaveLength(0);
@@ -927,16 +927,16 @@ describe("messageRouter", () => {
   });
 
   // A drop of one image holds its original and its thumbnail against the uploader, so the allowance covers what the
-  // upload will store before either target is handed out
+  // Upload will store before either target is handed out
   test("attachment uploaded within the allowance is reserved against the uploader", async () => {
     expect.hasAssertions();
 
     await messageCaller.generateUploadFileSasEntities({ files: [{ filename, mimetype, size }], roomId });
     const ledgerEntries = await mockContext.db.query.storageLedgerInStorage.findMany();
 
-    expect(ledgerEntries.map(({ declaredBytes }) => declaredBytes).toSorted()).toStrictEqual(
-      [size, MAX_THUMBNAIL_BYTES].toSorted(),
-    );
+    expect(
+      ledgerEntries.map(({ declaredBytes }) => declaredBytes).toSorted((left, right) => left - right),
+    ).toStrictEqual([size, MAX_THUMBNAIL_BYTES].toSorted((left, right) => left - right));
     expect(ledgerEntries.every(({ userId }) => userId === getMockSession().user.id)).toBe(true);
   });
 
@@ -1049,8 +1049,8 @@ describe("messageRouter", () => {
   });
 
   // Each give-back below runs the work a blob-deletion event does once the functions host takes it: the names the event
-  // carries, or every blob under its prefix, released through the same `deleteStorageBlobs`. The bytes are read after
-  // that, so a case proves the release path returned them rather than the procedure that published it
+  // Carries, or every blob under its prefix, released through the same `deleteStorageBlobs`. The bytes are read after
+  // That, so a case proves the release path returned them rather than the procedure that published it
   const runBlobDeletionEvents = async () => {
     const containerClient = await useContainerClient(AzureContainer.MessageAssets);
     const blobDeletions = (MockEventGridDatabase.get("") ?? [])
@@ -1060,7 +1060,7 @@ describe("messageRouter", () => {
       await Promise.all(
         blobDeletions.map((blobDeletion) =>
           blobDeletion.prefix === undefined
-            ? blobDeletion.blobNames
+            ? Promise.resolve(blobDeletion.blobNames)
             : listBlobNames(containerClient, blobDeletion.prefix),
         ),
       )
@@ -1097,12 +1097,12 @@ describe("messageRouter", () => {
       roomId,
       timeZone,
     });
-    expect(await readStorageBytesUsed()).toBe(bytesBeforeUpload + size);
+    await expect(readStorageBytesUsed()).resolves.toBe(bytesBeforeUpload + size);
 
     await messageCaller.deleteFile({ id: sasEntity.id, ...getCompositeKey(newMessage) });
     await runBlobDeletionEvents();
 
-    expect(await readStorageBytesUsed()).toBe(bytesBeforeUpload);
+    await expect(readStorageBytesUsed()).resolves.toBe(bytesBeforeUpload);
   });
 
   test("gives an upload's bytes back when the composer discards it", async () => {
@@ -1116,12 +1116,12 @@ describe("messageRouter", () => {
     });
     assert(sasEntity);
     await reportStoredUpload(getBlobName(`${roomId}/${sasEntity.id}`, filename));
-    expect(await readStorageBytesUsed()).toBe(bytesBeforeUpload + size);
+    await expect(readStorageBytesUsed()).resolves.toBe(bytesBeforeUpload + size);
 
     await messageCaller.deleteUploadFiles({ files: [{ filename, id: sasEntity.id, token: sasEntity.token }], roomId });
     await runBlobDeletionEvents();
 
-    expect(await readStorageBytesUsed()).toBe(bytesBeforeUpload);
+    await expect(readStorageBytesUsed()).resolves.toBe(bytesBeforeUpload);
   });
 
   test("gives every attachment's bytes back when its room is deleted", async () => {
@@ -1136,12 +1136,12 @@ describe("messageRouter", () => {
     assert(sasEntity);
     setMessageAssetBlob(sasEntity.id);
     await reportStoredUpload(getBlobName(`${roomId}/${sasEntity.id}`, filename));
-    expect(await readStorageBytesUsed()).toBe(bytesBeforeUpload + size);
+    await expect(readStorageBytesUsed()).resolves.toBe(bytesBeforeUpload + size);
 
     await roomCaller.deleteRoom(roomId);
     await runBlobDeletionEvents();
 
-    expect(await readStorageBytesUsed()).toBe(bytesBeforeUpload);
+    await expect(readStorageBytesUsed()).resolves.toBe(bytesBeforeUpload);
   });
 
   test("deletes file", async () => {

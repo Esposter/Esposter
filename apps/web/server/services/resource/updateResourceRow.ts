@@ -1,6 +1,7 @@
 import type { AuthedContext } from "#server/models/auth/AuthedContext";
 import type { UpdateResourceInput } from "#shared/models/db/resource/UpdateResourceInput";
 import type { ResourceInResource } from "@esposter/db-schema";
+import type { Except } from "type-fest";
 
 import { writeResourceActivity } from "#server/services/resource/writeResourceActivity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
@@ -13,7 +14,7 @@ import { eq } from "drizzle-orm";
 export const updateResourceRow = async (
   ctx: AuthedContext,
   resource: ResourceInResource,
-  values: Omit<UpdateResourceInput, "id">,
+  values: Except<UpdateResourceInput, "id">,
 ): Promise<ResourceInResource> => {
   const oldName = resource.name;
   const updatedResource = requireMutation(

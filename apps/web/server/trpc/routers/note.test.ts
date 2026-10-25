@@ -78,7 +78,7 @@ describe("noteRouter", () => {
   // A Note saved with one paragraph, for a Markdown write to replace or follow
   const oldNote = { doc: { content: [{ content: [{ text: "old", type: "text" }], type: "paragraph" }], type: "doc" } };
 
-  test("A Note written from Markdown replaces its content", async () => {
+  test("a Note written from Markdown replaces its content", async () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
@@ -95,13 +95,16 @@ describe("noteRouter", () => {
     });
     const content = await caller.readResourceContent({ id: newResource.id });
 
-    expect(content?.doc.content).toMatchObject([
-      { attrs: { level: 1 }, content: [{ text: "Title", type: "text" }], type: "heading" },
-      { content: [{ marks: [{ type: "link" }], text: "link", type: "text" }], type: "paragraph" },
+    expect(content?.doc.content).toStrictEqual([
+      { attrs: { level: 1 }, content: [{ marks: [], text: "Title", type: "text" }], type: "heading" },
+      {
+        content: [{ marks: [{ attrs: { href: "https://example.com" }, type: "link" }], text: "link", type: "text" }],
+        type: "paragraph",
+      },
     ]);
   });
 
-  test("A Note written from Markdown appends to its content", async () => {
+  test("a Note written from Markdown appends to its content", async () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
@@ -114,9 +117,9 @@ describe("noteRouter", () => {
     await caller.writeNoteMarkdown({ id: newResource.id, markdown: "## Next", mode: NoteMarkdownWriteMode.Append });
     const content = await caller.readResourceContent({ id: newResource.id });
 
-    expect(content?.doc.content).toMatchObject([
+    expect(content?.doc.content).toStrictEqual([
       { content: [{ text: "old", type: "text" }], type: "paragraph" },
-      { attrs: { level: 2 }, content: [{ text: "Next", type: "text" }], type: "heading" },
+      { attrs: { level: 2 }, content: [{ marks: [], text: "Next", type: "text" }], type: "heading" },
     ]);
   });
 });

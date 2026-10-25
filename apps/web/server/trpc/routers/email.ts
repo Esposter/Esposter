@@ -24,14 +24,14 @@ export const emailRouter = router({
   compile: standardAuthedProcedure
     .input(emailDocumentSchema)
     .meta({ humanOnly: "The editor's own preview of the document open in it, compiled as its owner edits" })
-    .mutation(({ input }) =>
+    .mutation<{ html: string } | { message: string }>(({ input }) =>
       compileEmailDocument(input, { origin: getBaseUrl() }).match(
         (html) => ({ html }),
         (error) => ({ message: error.message }),
       ),
     ),
   // The personalised export's compile, over the stored working copy so it runs with the editor closed and includes the
-  // latest saved edit. The bound dataset comes back beside the html, since the export reads its rows from it
+  // Latest saved edit. The bound dataset comes back beside the html, since the export reads its rows from it
   generateEmailHtml: getOwnerProcedure(ResourceType.Email, resourceIdInputSchema, "id")
     .meta({ humanOnly: "The personalised export a person sends, which nothing recalls once it is sent" })
     .query<{ datasetReference?: DatasetReference; html: string }>(async ({ input: { id } }) => {

@@ -320,9 +320,9 @@ export const resourceRouter = router({
       const where = getResourcesWhere(ctx.db, userId, filter);
       const orderBy = [
         // Relevance ladder, every search value bound through the query builder. A name match comes before a row matched
-        // only by a tag, so a tag never outranks a name. Among the names, the closest trigram match comes first so a typo
-        // still ranks its resource top; a tag-only row scores 0 there, which leaves the tag matches newest-first. Then
-        // prefix matches above the remaining substring matches (true sorts before false under desc), then newest-first
+        // Only by a tag, so a tag never outranks a name. Among the names, the closest trigram match comes first so a typo
+        // Still ranks its resource top; a tag-only row scores 0 there, which leaves the tag matches newest-first. Then
+        // Prefix matches above the remaining substring matches (true sorts before false under desc), then newest-first
         ...(filter.searchQuery
           ? [
               desc(getSearchNameMatch(filter.searchQuery)),

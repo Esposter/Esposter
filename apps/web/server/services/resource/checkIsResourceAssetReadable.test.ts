@@ -38,7 +38,7 @@ describe(checkIsResourceAssetReadable, () => {
   });
 
   // Unpublishing drops the publication row, so a resource with no current publication answers no asset to a stranger
-  // without the per-asset lookup being issued at all
+  // Without the per-asset lookup being issued at all
   test("refuses a stranger's asset when the resource has no current publication, without a lookup", async () => {
     expect.hasAssertions();
 

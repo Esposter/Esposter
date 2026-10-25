@@ -33,7 +33,7 @@ export const getResourcesWhere = (
     // Soft-deleted resources live on for the Recycle bin window, so every normal read excludes them
     isDeletedOnly ? isNotNull(resourcesInResource.deletedAt) : isNull(resourcesInResource.deletedAt),
     // The name arm keeps exact substrings that trigram similarity would miss on very short queries; the tag arm finds a
-    // resource by a label the owner remembers rather than its name
+    // Resource by a label the owner remembers rather than its name
     searchQuery ? or(getSearchNameMatch(searchQuery), getSearchTagMatch(searchQuery)) : undefined,
     ids ? inArray(resourcesInResource.id, ids) : undefined,
     tags && Object.keys(tags).length > 0

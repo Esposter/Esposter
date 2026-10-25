@@ -8,8 +8,8 @@ import { DatabaseEntityType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 
 // The published web view serves the compiled html, so the email is compiled here under strict validation: markup MJML
-// refuses is not published, with the validator's own message. The dataset binding is owner-only state, stripped from
-// the snapshot so the anonymous public read can never leak it
+// Refuses is not published, with the validator's own message. The dataset binding is owner-only state, stripped from
+// The snapshot so the anonymous public read can never leak it
 export const transformPublishedEmail: NonNullable<
   PublishableResourceProcedureOptions<z.output<typeof emailEditorSchema>>["transformPublishedContent"]
 > = async (_ctx, _resource, content) =>

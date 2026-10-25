@@ -55,7 +55,7 @@ export const achievementRouter = router({
           },
         ],
       ),
-    ) as AchievementDefinitionViewMap;
+    );
   }),
   // The share of registered users who have unlocked each achievement, as a percentage. Every definition is keyed, so
   // One nobody has earned reads 0 rather than being absent

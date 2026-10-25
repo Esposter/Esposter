@@ -136,7 +136,7 @@ describe("todoListRouter", () => {
     return { id, item };
   };
 
-  test("An agent ticks a repeating todo", async () => {
+  test("an agent ticks a repeating todo", async () => {
     expect.hasAssertions();
 
     const { id, item } = await createRepeatingTodo();
@@ -149,7 +149,7 @@ describe("todoListRouter", () => {
   });
 
   // A follow-ups key holds the FollowUps scope alone, so the tick is refused as a tool it does not have
-  test("A follow-ups key cannot tick a todo the owner wrote", async () => {
+  test("a follow-ups key cannot tick a todo the owner wrote", async () => {
     expect.hasAssertions();
 
     const { id, item } = await createRepeatingTodo();

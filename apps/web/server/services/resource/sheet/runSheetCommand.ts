@@ -12,7 +12,7 @@ import { sheetResourceSchema } from "#shared/models/resource/sheet/SheetResource
 import { exhaustiveGuard, Operation, takeOne, toRawDeep } from "@esposter/shared";
 
 // Runs the editor's own command over the Sheet as `updateResourceContent` hands it, so a command naming a column or
-// a row by id lands on the content the owner has now. A pinned version refuses it once the Sheet has moved past it.
+// A row by id lands on the content the owner has now. A pinned version refuses it once the Sheet has moved past it.
 // Answers the Sheet's new contentVersion
 export const runSheetCommand = async (
   ctx: AuthedContext,

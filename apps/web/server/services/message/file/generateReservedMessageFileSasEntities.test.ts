@@ -45,9 +45,9 @@ describe(generateReservedMessageFileSasEntities, () => {
 
     expect(sasEntity?.thumbnailSasUrl).toBeDefined();
     expect(ledgerEntries).toHaveLength(2);
-    expect(ledgerEntries.map(({ declaredBytes }) => declaredBytes).toSorted()).toStrictEqual(
-      [size, MAX_THUMBNAIL_BYTES].toSorted(),
-    );
+    expect(
+      ledgerEntries.map(({ declaredBytes }) => declaredBytes).toSorted((left, right) => left - right),
+    ).toStrictEqual([size, MAX_THUMBNAIL_BYTES].toSorted((left, right) => left - right));
     expect(ledgerEntries.every((entry) => entry.userId === userId)).toBe(true);
     expect(ledgerEntries.every((entry) => entry.containerName === AzureContainer.MessageAssets)).toBe(true);
   });

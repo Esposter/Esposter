@@ -93,7 +93,7 @@ describe("trpcRouter", () => {
     ]);
   });
 
-  test("An unbounded string beside an opaque document fails the guard", () => {
+  test("an unbounded string beside an opaque document fails the guard", () => {
     expect.hasAssertions();
 
     const schema = z.toJSONSchema(z.object({ document: z.unknown(), title: z.string() }), {

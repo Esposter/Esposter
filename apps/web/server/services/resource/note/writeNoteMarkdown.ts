@@ -13,7 +13,7 @@ import { deserializeNoteMarkdown } from "#shared/services/resource/note/deserial
 import { Operation } from "@esposter/shared";
 
 // The Markdown parsed here into the note's own nodes, then written over the content as it stands when the write lands,
-// or after it. The document is checked against the kit the note is built on before it is saved, and the save reserves
+// Or after it. The document is checked against the kit the note is built on before it is saved, and the save reserves
 // The assets it embeds like any other content write. Answers the Note's new contentVersion
 export const writeNoteMarkdown = async (
   ctx: AuthedContext,

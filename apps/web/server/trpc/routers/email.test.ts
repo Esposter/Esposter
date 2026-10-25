@@ -78,7 +78,7 @@ describe("emailRouter", () => {
     expect(publishedContent.content.datasetReference).toBeUndefined();
   });
 
-  test("A valid email publishes its compiled HTML", async () => {
+  test("a valid email publishes its compiled HTML", async () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
@@ -96,12 +96,12 @@ describe("emailRouter", () => {
     expect(publishedContent.content.html).toMatch(/^<!doctype html>/iu);
   });
 
-  test("An email with invalid markup is refused at publish", async () => {
+  test("an email with invalid markup is refused at publish", async () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
     // The save path refuses a five-value padding by its schema before publish ever sees it, and no value the schema
-    // admits is refused by the validator, so the publish transform is run on the working copy directly
+    // Admits is refused by the validator, so the publish transform is run on the working copy directly
     const invalidEmail = new EmailEditor({
       content: [
         {
@@ -136,7 +136,7 @@ describe("emailRouter", () => {
     `);
   });
 
-  test("A personalised export runs with the editor closed", async () => {
+  test("a personalised export runs with the editor closed", async () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
@@ -159,7 +159,7 @@ describe("emailRouter", () => {
     expect(exportedEmail.html).toContain(preview);
   });
 
-  test("Editing the preview text updates the compiled email", async () => {
+  test("editing the preview text updates the compiled email", async () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });

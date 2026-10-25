@@ -126,7 +126,7 @@ describe("blueprintRouter", () => {
     expect(programs.items).toStrictEqual([]);
   });
 
-  test("A Blueprint's webpage entry deploys as a fresh document", async () => {
+  test("a Blueprint's webpage entry deploys as a fresh document", async () => {
     expect.hasAssertions();
 
     // The backfill's output: the entry keeps no content, so it deploys to a resource whose content was never written
@@ -142,7 +142,7 @@ describe("blueprintRouter", () => {
     await expect(webpageCaller.readResourceContent({ id: deployment.resource.id })).resolves.toBeUndefined();
   });
 
-  test("A Blueprint revision from before the cutover is refused", async () => {
+  test("a Blueprint revision from before the cutover is refused", async () => {
     expect.hasAssertions();
 
     const blueprint = await createBlueprint({
