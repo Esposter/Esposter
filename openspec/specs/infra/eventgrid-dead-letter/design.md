@@ -125,7 +125,8 @@ stateDiagram-v2
 | `apps/functions/src/services/deadLetter/formatReplayId.ts`                                                       | Write the `<eventId>\|<attempt>` id a republished event is sent with                |
 | `apps/functions/src/services/deadLetter/constants.ts`                                                            | `MAX_DEAD_LETTER_REPLAY_ATTEMPTS`                                                   |
 | `apps/functions/src/models/deadLetter/ReplayId.ts`                                                               | The parsed `{ eventId, replayAttempts }` pair                                       |
-| `packages/db-schema/src/models/azure/eventGrid/EventGridEventInput.ts`                                           | The shared event envelope and its `createEventGridEventSchema` factory              |
+| `packages/db-schema/src/models/azure/eventGrid/EventGridEventInput.ts`                                           | The shared event envelope type, picked from the SDK's event                         |
+| `packages/db-schema/src/services/azure/eventGrid/createEventGridEventSchema.ts`                                  | The envelope schema factory the consumers parse with                                |
 | `packages/db-schema/src/services/azure/container/constants.ts`                                                   | Subject, `archived/`, and `quarantine/` prefixes shared with the infra code         |
 | `apps/infra/src/azure/resources/Microsoft.EventGrid/systemTopics/`                                               | Per-environment system topic over the storage account                               |
 | `apps/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/`                                         | The application subscriptions and the filtered replay subscription, per environment |
