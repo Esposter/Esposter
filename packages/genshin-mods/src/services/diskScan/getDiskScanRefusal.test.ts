@@ -6,39 +6,40 @@ import { getDiskScanRefusal } from "./getDiskScanRefusal";
 // oxlint-disable naming/no-site-name-literal -- The allowed cases are the repo's and the game's own folders, named as they are on disk
 
 describe(getDiskScanRefusal, () => {
+  // The refusal names the scan it refuses, so each case pins which command the refusal is for
   test.each([
-    ["find from /", "find / -maxdepth 6 -name yt-dlp.exe"],
-    ["find from /c", "find /c -name model.onnx"],
-    ["find from a drive's root with a Windows spelling", String.raw`find 'C:\' -name capture.wav`],
-    ["find from the home folder", "find ~ -name yt-dlp"],
-    ["find from $HOME", 'find "$HOME" -type f'],
-    ["find from /Users/<name>", "find /Users/jimmy -name package.json"],
-    ["find from the drive's home folder", "find /c/Users/jimmy -maxdepth 4"],
-    ["find from a home folder with a trailing slash", "find ~/ -name x"],
-    ["find with the depth flag before its root", "find -maxdepth 6 /"],
-    ["du over the root", "du -s /"],
-    ["du over a home folder", "du -sh /c/Users/jimmy"],
-    ["grep -r from the root", "grep -r needle /"],
-    ["grep -R from the home folder", "grep -R needle ~"],
-    ["grep -rn with the root after a pattern flag", "grep -rn -e needle /c"],
-    ["ls -R from the root", "ls -R /"],
-    ["ls --recursive from the home folder", "ls --recursive ~"],
-    ["ls with the recursive long form abbreviated", "ls --rec ~"],
-    ["grep with the recursive long form abbreviated", "grep --recurs needle /"],
-    ["a scan behind a pipe", "ls packages | xargs find /"],
-    ["a scan behind an AND", "cd packages && du -s ~"],
-    ["a scan inside a shell command", 'bash -c "find / -name yt-dlp"'],
-    ["a scan inside a shell command with a separator of its own", 'bash -c "find /; echo done"'],
-    ["a scan inside a command substitution in double quotes", 'echo "$(find / -name x)"'],
-    ["find from the root's glob", "find /* -name x"],
-    ["find from a drive's glob", "find /c/* -name x"],
-    ["grep -r from the root after a long pattern flag", "grep -r --regexp=needle /"],
-    ["grep -r from the root after the options end, its pattern a dash", "grep -r -- -e /"],
-    ["a scan inside a command substitution whose body quotes a parenthesis", `echo "$(find / -name '(x)')"`],
-  ])("refuses %s", (_description, command) => {
+    ["find from /", "find / -maxdepth 6 -name yt-dlp.exe", "find"],
+    ["find from /c", "find /c -name model.onnx", "find"],
+    ["find from a drive's root with a Windows spelling", String.raw`find 'C:\' -name capture.wav`, "find"],
+    ["find from the home folder", "find ~ -name yt-dlp", "find"],
+    ["find from $HOME", 'find "$HOME" -type f', "find"],
+    ["find from /Users/<name>", "find /Users/jimmy -name package.json", "find"],
+    ["find from the drive's home folder", "find /c/Users/jimmy -maxdepth 4", "find"],
+    ["find from a home folder with a trailing slash", "find ~/ -name x", "find"],
+    ["find with the depth flag before its root", "find -maxdepth 6 /", "find"],
+    ["du over the root", "du -s /", "du"],
+    ["du over a home folder", "du -sh /c/Users/jimmy", "du"],
+    ["grep -r from the root", "grep -r needle /", "grep"],
+    ["grep -R from the home folder", "grep -R needle ~", "grep"],
+    ["grep -rn with the root after a pattern flag", "grep -rn -e needle /c", "grep"],
+    ["ls -R from the root", "ls -R /", "ls"],
+    ["ls --recursive from the home folder", "ls --recursive ~", "ls"],
+    ["ls with the recursive long form abbreviated", "ls --rec ~", "ls"],
+    ["grep with the recursive long form abbreviated", "grep --recurs needle /", "grep"],
+    ["a scan behind a pipe", "ls packages | xargs find /", "find"],
+    ["a scan behind an AND", "cd packages && du -s ~", "du"],
+    ["a scan inside a shell command", 'bash -c "find / -name yt-dlp"', "find"],
+    ["a scan inside a shell command with a separator of its own", 'bash -c "find /; echo done"', "find"],
+    ["a scan inside a command substitution in double quotes", 'echo "$(find / -name x)"', "find"],
+    ["find from the root's glob", "find /* -name x", "find"],
+    ["find from a drive's glob", "find /c/* -name x", "find"],
+    ["grep -r from the root after a long pattern flag", "grep -r --regexp=needle /", "grep"],
+    ["grep -r from the root after the options end, its pattern a dash", "grep -r -- -e /", "grep"],
+    ["a scan inside a command substitution whose body quotes a parenthesis", `echo "$(find / -name '(x)')"`, "find"],
+  ])("refuses %s", (_description, command, scanName) => {
     expect.hasAssertions();
 
-    expect(getDiskScanRefusal(command)).toBeDefined();
+    expect(getDiskScanRefusal(command)).toBe(scanName);
   });
 
   test.each([
