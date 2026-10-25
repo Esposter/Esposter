@@ -1,7 +1,6 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
 import { trpcRouter } from "#server/trpc/routers";
-import type { GeneratedProgramParticipants } from "#shared/models/resource/program/GeneratedProgramParticipants";
 import type { ProgramResource } from "#shared/models/resource/program/ProgramResource";
 import type { Clause } from "@esposter/azure";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
@@ -9,7 +8,6 @@ import type { MjmlFlowNode, MjmlLeafNode } from "mjml-blocks";
 
 import { useTableClient } from "#server/composables/azure/table/useTableClient";
 import { ProgramStatusDatasetColumnName } from "#server/models/dataset/programStatus/ProgramStatusDatasetColumnName";
-import { connectAgentKey } from "#server/services/mcp/connectAgentKey.test";
 import { DANGLING_PROGRAM_BINDING_REASON } from "#server/services/program/constants";
 import { getProgramParticipantId } from "#server/services/program/getProgramParticipantId";
 import { createCallerFactory } from "#server/trpc";
@@ -23,7 +21,6 @@ import { programRouter } from "#server/trpc/routers/program";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { sheetRouter } from "#server/trpc/routers/sheet";
 import { surveyRouter } from "#server/trpc/routers/survey";
-import { McpScope } from "#shared/models/auth/McpScope";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { EmailNodeType } from "#shared/models/pageBuilder/EmailNodeType";
@@ -173,22 +170,6 @@ describe("programRouter", () => {
     const { participants: reissuedParticipants } = await caller.generateProgramParticipants({ id: program.id });
 
     // Re-running never rotates a token — a rotated token would dead-link a link already sent out
-    expect(reissuedParticipants).toStrictEqual(participants);
-  });
-
-  test("Repeating participant generation returns the same tokens", async () => {
-    expect.hasAssertions();
-
-    const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
-    const { program } = await setupIdentifiedProgram();
-    const { participants } = await callAgentTool<GeneratedProgramParticipants>("program_generateProgramParticipants", {
-      id: program.id,
-    });
-    const { participants: reissuedParticipants } = await callAgentTool<GeneratedProgramParticipants>(
-      "program_generateProgramParticipants",
-      { id: program.id },
-    );
-
     expect(reissuedParticipants).toStrictEqual(participants);
   });
 

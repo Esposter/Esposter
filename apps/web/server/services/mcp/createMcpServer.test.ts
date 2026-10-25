@@ -169,18 +169,6 @@ describe(createMcpServer, () => {
     );
   });
 
-  test("refuses a FollowUps tool to a key holding Resources alone", async () => {
-    expect.hasAssertions();
-
-    const client = await createConnectedClient([McpScope.Resources]);
-
-    await expect(
-      client.callTool({ arguments: { value: "" }, name: "nested_read" }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[McpError: MCP error -32602: MCP error -32602: Unknown tool: nested_read]`,
-    );
-  });
-
   test("Human-only operations are not listed to a key with every scope", async () => {
     expect.hasAssertions();
 

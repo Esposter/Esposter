@@ -24,7 +24,7 @@ describe("noteRouter", () => {
     caller = getCaller();
   });
 
-  test("choosing an image from the menu adds it to the note", async () => {
+  test("an image upload is given a write address under the resource's files directory", async () => {
     expect.hasAssertions();
 
     const newResource = await caller.createResource({ name });
