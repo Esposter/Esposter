@@ -12,7 +12,7 @@ Each is a unit built on its own, listed in build order:
 - [Live edits](../architecture-ai-native-resources-live-edits/design.md) — an open editor adopts an agent's save, and an unsaved edit meets it as a choice shown at once
 - [Lifecycle tools](../architecture-ai-native-resources-lifecycle-tools/design.md) — create, rename, tag, delete, restore, publish, references, history and datasets, plus each type's own procedures
 - Schema fidelity — shipped in [agent content tools](../../specs/architecture/agent-content-tools/design.md): Flowchart labels, Note documents, Survey models and the captured HTML of Webpages and Emails now follow their editors' rules
-- [Typed commands](../architecture-ai-native-resources-typed-commands/design.md) — the per-type operations a patch fits badly, the Sheet's own command classes first
+- [Typed commands](../../specs/architecture/ai-native-resources/typed-commands/design.md) — the per-type operations a patch fits badly, the Sheet's own command classes first
 - [In-product assistant](../architecture-ai-native-resources-in-product-assistant/design.md) — an editor's Ask Claude, handed to the person's own session so it takes the same path as any agent
 
 ## The standard
@@ -26,7 +26,7 @@ Every edit a person makes in any editor ends in one of two places: a new documen
 3. **Edit.** RFC 6902 operations applied on the server, the result parsed by the type's own schema and saved through the existing door at a content version, so a concurrent edit is refused or guarded rather than overwritten.
 4. **Lifecycle.** The resource's lifecycle — create, rename, tag, delete, restore, publish, references — as typeless tools, the type read off the row.
 
-A type earns an operation of its own only where a patch fits badly ([typed commands](../architecture-ai-native-resources-typed-commands/design.md)), and the TodoList's follow-ups are that layer's first entry, kept as they are.
+A type earns an operation of its own only where a patch fits badly ([typed commands](../../specs/architecture/ai-native-resources/typed-commands/design.md)), and the TodoList's follow-ups are that layer's first entry, kept as they are.
 
 **Neither a capability nor generated per-type tools.** A capability is opt-in by the [resources](../../specs/architecture/resource/design.md) admission rule, and this must hold for every type, so there is nothing to declare: the content schema it reads exists for every type already. Generated per-type procedures would multiply the tool list by the number of types and embed each content schema in a tool's input. The id already names the type, so one tool serves all of them. Per-type tools are what reached a single type. The [write-once](../../specs/architecture/write-once/design.md) test decides it: the mechanism's input already exists uniformly, so the mechanism is written once, from the first case.
 
@@ -74,7 +74,7 @@ The generic tools reach exactly as far as a type's content schema describes its 
 - **A document inside a string.** A Survey's questions are SurveyJS's JSON stored as one string, so an agent replaces the model whole. The server checks a non-empty model parses to an object, while keeping the empty string as the existing empty-model sentinel; SurveyJS-specific requirements such as question types and unique names stay unchecked.
 - **Binary content.** A file asset is uploaded by an HTTP PUT to a short-lived signed URL. An agent with a shell, as a Claude Code session has, makes that request itself; a client that can only call tools cannot upload, and no tool carries bytes, since a body is capped at `MAX_REQUEST_SIZE`.
 - **Work only the browser does.** Import and export are handlers in the browser. An agent needs no import, since it writes the content, and reads in place of exporting; the Email's personalized export compiles on the server from the saved email, so it needs no open editor.
-- **An edit whose effect is computed.** Renaming a Sheet column re-keys every row, and changing its type re-coerces every cell. A patch can only restate that by hand, so these are [typed commands](../architecture-ai-native-resources-typed-commands/design.md).
+- **An edit whose effect is computed.** Renaming a Sheet column re-keys every row, and changing its type re-coerces every cell. A patch can only restate that by hand, so these are [typed commands](../../specs/architecture/ai-native-resources/typed-commands/design.md).
 - **A document larger than an agent's context.** A Sheet may hold far more than any context window, so a large document is read by pointer and in pages, never whole.
 - **View state.** Selection, scroll and zoom are not the resource, so no tool reaches them.
 

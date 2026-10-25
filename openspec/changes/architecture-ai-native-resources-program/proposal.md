@@ -24,7 +24,7 @@ None of its own: each part's change carries its capability under `architecture/a
 - `openspec/changes/architecture-ai-native-resources-agent-keys/`: the keys made before scopes and the operations that stay the owner's.
 - `openspec/changes/architecture-ai-native-resources-live-edits/`: the open editor adopting an agent's save.
 - `openspec/changes/architecture-ai-native-resources-lifecycle-tools/`: create, rename, tag, delete, restore, publish, references, history and each type's own procedures.
-- `openspec/changes/architecture-ai-native-resources-typed-commands/`: the Sheet's column commands, a repeating todo's tick, and a Note written as Markdown.
+- `openspec/specs/architecture/ai-native-resources/typed-commands/`: the Sheet's column commands, a repeating todo's tick, and a Note written as Markdown.
 - `openspec/changes/architecture-ai-native-resources-in-product-assistant/`: Ask Claude, once the agent console pairs a host again.
 - `openspec/changes/resource-page-builder-program/`: its cutover makes the Webpage and the Email described all the way down, with no unit of this program's own.
 
