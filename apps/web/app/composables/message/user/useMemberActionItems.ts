@@ -102,9 +102,22 @@ export const useMemberActionItems = (
   const isBannable = computed(() => checkHasManageablePermission(RoomPermission.BanMembers));
   const isKickable = computed(() => checkHasManageablePermission(RoomPermission.KickMembers));
   const isWarnable = computed(() => checkHasManageablePermission(RoomPermission.ManageMessages));
-  // Mildest first, as Discord orders them: a note, a warning, a timeout, then the three that remove the member
+  const isDisplayNameable = computed(() => checkHasManageablePermission(RoomPermission.ManageDisplayNames));
+  // The display name leads, since it is the one action here that punishes no one. The rest run mildest first, as Discord
+  // Orders them: a note, a warning, a timeout, then the three that remove the member
   const moderationItems = computed(() => {
     const items: Item[] = [
+      ...(isDisplayNameable.value
+        ? [
+            {
+              meaning: UiIconMeaning.Edit,
+              onClick: () => {
+                openDialog(MemberDialogType.DisplayName);
+              },
+              title: "Display name",
+            },
+          ]
+        : []),
       ...(isKickable.value
         ? [
             {

@@ -22,8 +22,8 @@ Fix the guard in the same change as the surface. The surface alone would ship a 
 
 Two decisions the brief left open:
 
-- **No audit entry.** A rename is recorded in neither the moderation log nor the audit log. Adding a value to the moderation action type touches every place its design lists, and a display name is not a sanction. The rename is visible to the room at once, which is the record the feature needs. An audit entry is a follow-up for the moderation owner if the room asks for one.
-- **Last write wins.** A moderator's name and a member's own name are one field, so the later save stands. The member is not notified; the name simply changes in every view, as a self-service change does.
+- **No audit entry.** A rename is recorded in neither the moderation log nor the audit log. Adding a value to the moderation action type touches every place its design lists, and a display name is not a sanction. The rename shows in the room's own views, which is the record the feature needs. An audit entry is a follow-up for the moderation owner if the room asks for one.
+- **Last write wins.** A moderator's name and a member's own name are one field, so the later save stands. The member is not notified. The name changes at once in the moderator's list and in the renamed member's, and reaches other members on their next read of the room's members, as a self-service change does.
 
 ## Capabilities
 

@@ -58,4 +58,11 @@ const isOpen = computed({
     :room-id
     :user
   />
+  <MessageModelMemberActionDialogDisplayName
+    v-else-if="type === MemberDialogType.DisplayName"
+    v-model="isOpen"
+    :display-name
+    :room-id
+    :user
+  />
 </template>

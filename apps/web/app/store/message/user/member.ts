@@ -18,7 +18,7 @@ export const useMemberStore = defineStore("message/user/member", () => {
   const roleStore = useRoleStore();
   const { mutateMemberRoles } = roleStore;
   const userStore = useUserStore();
-  const { storeUser } = userStore;
+  const { storeRoomMembers, storeUser, storeUsers } = userStore;
   // Keyed by room, like messages. A single global list would still hold the previous room's members after a
   // Switch, which is unreadable state for anything asking "are these rows this room's" — the offline cache asks
   // Exactly that before it hydrates or persists, and cannot answer it from a list that outlives the partition
@@ -81,6 +81,13 @@ export const useMemberStore = defineStore("message/user/member", () => {
     mutateMemberRoles(roomId, id, []);
     getRoomOperationData(roomId).deleteMember({ id });
   };
+  // A row the server read back after a change to its display name. The room's list and its names take the server's
+  // Resolved name together, so the two cannot disagree about who a member is shown as
+  const storeUpdateMembers = (roomId: string, members: MemberInRoom[]) => {
+    storeUsers(members);
+    storeRoomMembers(roomId, members);
+    for (const member of members) getRoomOperationData(roomId).updateMember(member);
+  };
   return {
     getMemberCountsRef,
     getSlice,
@@ -91,5 +98,6 @@ export const useMemberStore = defineStore("message/user/member", () => {
     ...restData,
     storeCreateMember,
     storeDeleteMember,
+    storeUpdateMembers,
   };
 });

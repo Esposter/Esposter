@@ -60,18 +60,62 @@ The quick switcher needs to search and page direct messages by the same name it 
 
 Room settings → **My Profile** tab (visible to all members, no permission required). The field is labeled **Display name** in the UI; it edits `displayName`, and an empty value falls back to the account name. Saves via `updateUserToRoom({ roomId, displayName })`; the update propagates via the `onUpdateUserToRoom` subscription into both maps.
 
+## Setting another member's display name
+
+A member holding `ManageDisplayNames` sets the name of a member they outrank from that member's menu. The member list's row menu and the profile card's overflow menu both read the one list `useMemberActionItems` builds, and its **Display name** item is offered only where the server would accept the write: the actor holds the permission, the target is not the actor, and `checkIsMemberManageable` allows it. The item opens a dialog over the same field the self-service form uses, so the length limit and the empty-clears rule are the same.
+
+The save is `updateUserToRoom` with `targetUserId`. The server checks the permission, then `assertIsManageable`, the hierarchy guard the moderation and role procedures share, so a refused target is `UNAUTHORIZED` whatever the client shows. The input rule admits a targeted write only when it sets a display name and nothing else. A self-edit needs no permission and carries the caller's own id, or none.
+
+After the write the dialog reads the target's row back with `room.readMembersByIds`, and the member store and the room's names take the resolved name, so the moderator's own list is current at once. The renamed member's client receives the row on `onUpdateUserToRoom` and takes it the same way.
+
+```mermaid
+sequenceDiagram
+  participant A as Actor with ManageDisplayNames
+  participant M as useMemberActionItems
+  participant D as DisplayName dialog
+  participant R as userToRoom.updateUserToRoom
+  participant G as assertIsManageable
+  participant DB as usersToRoomsInMessage
+  participant E as userToRoomEventEmitter
+  participant Q as room.readMembersByIds
+  participant T as Renamed member's client
+  A->>M: opens a member's menu
+  M-->>A: Display name only if permitted and manageable
+  A->>D: enters a name and saves
+  D->>R: displayName with targetUserId
+  R->>R: checkHasPermission ManageDisplayNames
+  R->>G: actor outranks target, owner immune
+  alt refused
+    G-->>A: UNAUTHORIZED
+  else allowed
+    R->>DB: set displayName on the target's row
+    DB->>E: updated row
+    E-->>T: onUpdateUserToRoom, to the target only
+    D->>Q: read the target's row back
+    Q-->>D: resolved displayName
+    D-->>A: the member list and the room's names take it
+  end
+```
+
 ## Key files
 
-| File                                                                       | Role                                                                       |
-| :------------------------------------------------------------------------- | :------------------------------------------------------------------------- |
-| `apps/web/app/store/message/room/userToRoom.ts`                            | `useUserToRoomStore`, the current user's own row                           |
-| `apps/web/app/store/message/user/index.ts`                                 | `useUserStore`, `getRoomMemberName`                                        |
-| `apps/web/app/composables/message/room/useCreator.ts`                      | message author, display name already applied                               |
-| `apps/web/app/composables/message/useMessageHtml.ts`                       | mention label resolution                                                   |
-| `apps/web/app/services/message/member/getMemberDescription.ts`             | The account name beside a display name, only where they differ             |
-| `apps/web/app/components/Message/Model/Message/Suggestion/MentionList.vue` | @-mention list: display name, the account name beside it where they differ |
-| `apps/web/app/components/Message/Model/Room/Settings/Type/Profile/`        | My Profile tab + display name field (labeled Display name)                 |
+| File                                                                        | Role                                                                              |
+| :-------------------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
+| `apps/web/app/store/message/room/userToRoom.ts`                             | `useUserToRoomStore`, the current user's own row                                  |
+| `apps/web/app/store/message/user/index.ts`                                  | `useUserStore`, `getRoomMemberName`                                               |
+| `apps/web/app/composables/message/room/useCreator.ts`                       | message author, display name already applied                                      |
+| `apps/web/app/composables/message/useMessageHtml.ts`                        | mention label resolution                                                          |
+| `apps/web/app/services/message/member/getMemberDescription.ts`              | The account name beside a display name, only where they differ                    |
+| `apps/web/app/components/Message/Model/Message/Suggestion/MentionList.vue`  | @-mention list: display name, the account name beside it where they differ        |
+| `apps/web/app/components/Message/Model/Room/Settings/Type/Profile/`         | My Profile tab + display name field (labeled Display name)                        |
+| `apps/web/server/services/message/updateUserToRoom.ts`                      | the display-name path; the hierarchy guard for a target other than the actor      |
+| `apps/web/server/services/room/rbac/assertIsManageable.ts`                  | the hierarchy guard the path calls                                                |
+| `apps/web/app/composables/message/user/useMemberActionItems.ts`             | the one list both member menus read; offers the Display name item                 |
+| `apps/web/app/components/Message/Model/Member/ActionDialog/DisplayName.vue` | the moderator's dialog over `DisplayNameField`, mounted by the member dialog host |
+| `apps/web/app/store/message/user/member.ts`                                 | `storeUpdateMembers`, the read-back row into the room's list and names            |
 
 ## Notes
 
-Setting other members' display names via the `ManageDisplayNames` permission bit is not wired to a UI yet — the bit exists in `RoomPermission` (see [RBAC](../rbac/design.md)) but only self-service editing is built.
+- **Other members see a moderator's rename when they next read the room's members, not at once.** The caller's list and the renamed member's list are current when the write lands, but no subscription carries the change to the rest of the room: `onUpdateUserToRoom` reaches only the row's own member, and a row already held is not read again. A self-service rename reaches the room the same way.
+- **A rename is in neither the moderation log nor the audit log.** A display name is not a sanction, and a moderation action type would be enumerated across the [moderation design](../moderation/design.md). An audit entry is a follow-up for the moderation owner if the room asks for one.
+- **Last write wins.** The field holds one name, so a moderator's rename and the member's own edit overwrite each other, and the later save is the one the room sees.

@@ -8,9 +8,10 @@ import { createMockContext, getMockSession, mockSessionOnce } from "#server/trpc
 import { createMentionMessage } from "#server/trpc/routers/createMentionMessage.test";
 import { createRoomMember } from "#server/trpc/routers/createRoomMember.test";
 import { messageRouter } from "#server/trpc/routers/message";
+import { roleRouter } from "#server/trpc/routers/role";
 import { roomRouter } from "#server/trpc/routers/room";
 import { userToRoomRouter } from "#server/trpc/routers/userToRoom";
-import { NotificationType, roomsInMessage, usersToRoomsInMessage } from "@esposter/db-schema";
+import { NotificationType, RoomPermission, roomsInMessage, usersToRoomsInMessage } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
@@ -19,8 +20,11 @@ describe("userToRoomRouter", () => {
   let mockContext: Context;
   let userToRoomCaller: DecorateRouterRecord<TRPCRouter["userToRoom"]>;
   let messageCaller: DecorateRouterRecord<TRPCRouter["message"]>;
+  let roleCaller: DecorateRouterRecord<TRPCRouter["role"]>;
   let roomCaller: DecorateRouterRecord<TRPCRouter["room"]>;
   const name = "name";
+  const displayName = "displayName";
+  const position = 1;
   const timeZone = "UTC";
   // Creates a room as the owner plus a second member whose mention count the tests exercise.
   const setupMentionedMember = async () => {
@@ -39,6 +43,7 @@ describe("userToRoomRouter", () => {
     mockContext = await createMockContext();
     userToRoomCaller = createCallerFactory(userToRoomRouter)(mockContext);
     messageCaller = createCallerFactory(messageRouter)(mockContext);
+    roleCaller = createCallerFactory(roleRouter)(mockContext);
     roomCaller = createCallerFactory(roomRouter)(mockContext);
   });
 
@@ -105,6 +110,54 @@ describe("userToRoomRouter", () => {
     });
 
     expect(updatedUserToRoom.notificationType).toBe(NotificationType.Never);
+  });
+
+  // A targeted write is a display name and nothing else: the input rule refuses a target with any other setting, so a
+  // Holder of the permission cannot move another member's notifications or read marker through the same path
+  test("refuses a targeted update that sets anything but a display name", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const member = await createRoomMember(mockContext, newRoom.id);
+
+    await expect(
+      userToRoomCaller.updateUserToRoom({
+        notificationType: NotificationType.Never,
+        roomId: newRoom.id,
+        targetUserId: member.id,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`
+      [TRPCError: [
+        {
+          "code": "custom",
+          "path": [],
+          "message": "targetUserId requires displayName and must not include notificationType or lastReadAt"
+        }
+      ]]
+    `);
+  });
+
+  test("a moderator's targeted update returns the renamed member's row", async () => {
+    expect.hasAssertions();
+
+    const newRoom = await roomCaller.createRoom({ name });
+    const moderator = await createRoomMember(mockContext, newRoom.id);
+    const member = await createRoomMember(mockContext, newRoom.id);
+    const role = await roleCaller.createRole({
+      name,
+      permissions: RoomPermission.ManageDisplayNames,
+      position,
+      roomId: newRoom.id,
+    });
+    await roleCaller.assignRole({ roleId: role.id, roomId: newRoom.id, userId: moderator.id });
+    await mockSessionOnce(mockContext.db, moderator);
+    const updatedUserToRoom = await userToRoomCaller.updateUserToRoom({
+      displayName,
+      roomId: newRoom.id,
+      targetUserId: member.id,
+    });
+
+    expect(updatedUserToRoom).toMatchObject({ displayName, roomId: newRoom.id, userId: member.id });
   });
 
   // The slowmode clock is what the next send is checked against, so a client able to write it could reset its own

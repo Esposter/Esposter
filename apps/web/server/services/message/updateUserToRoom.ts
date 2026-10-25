@@ -5,6 +5,7 @@ import type { UserInAuth, UserToRoomInMessage } from "@esposter/db-schema";
 
 import { userToRoomEventEmitter } from "#server/services/message/events/userToRoomEventEmitter";
 import { getRoomMembershipWhere } from "#server/services/room/getRoomMembershipWhere";
+import { assertIsManageable } from "#server/services/room/rbac/assertIsManageable";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
 import { checkHasPermission } from "@esposter/db";
 import { DatabaseEntityType, RoomPermission, usersToRoomsInMessage } from "@esposter/db-schema";
@@ -21,7 +22,10 @@ export const updateUserToRoom = async (
   const effectiveUserId = targetUserId ?? userId;
 
   if (targetUserId && targetUserId !== userId) {
-    const isPermitted = await checkHasPermission(db, userId, roomId, RoomPermission.ManageDisplayNames);
+    const [isPermitted] = await Promise.all([
+      checkHasPermission(db, userId, roomId, RoomPermission.ManageDisplayNames),
+      assertIsManageable(db, userId, targetUserId, roomId),
+    ]);
     if (!isPermitted) throw new TRPCError({ code: "UNAUTHORIZED" });
   }
 

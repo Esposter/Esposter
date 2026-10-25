@@ -4,7 +4,7 @@ A holder of `ManageDisplayNames` sets another member's room display name through
 
 ## Scope
 
-Today `updateUserToRoom` accepts a `targetUserId` with a display name, checks the permission, and writes the row. The path has no hierarchy check and no interface. The change adds the hierarchy guard the moderation procedures already use, one menu item, and a dialog. It changes no schema and adds no procedure.
+Today `updateUserToRoom` accepts a `targetUserId` with a display name, checks the permission, and writes the row. The path has no hierarchy check and no interface. The change adds the hierarchy guard the moderation procedures already use, one menu item, a dialog, and the read-back the dialog and the subscription share. It changes no schema and adds no procedure.
 
 ## Decisions
 
@@ -12,8 +12,9 @@ Today `updateUserToRoom` accepts a `targetUserId` with a display name, checks th
 - **The guard runs for a target other than the actor.** A self-edit keeps the path it has today, with no permission required, since a member always may name themselves.
 - **The item lives in `useMemberActionItems`.** That composable already builds the list for both the profile's overflow menu and the row's context menu, and it already gates kick and ban by permission and manageability on the client. The display name item joins it, so it cannot appear on one surface and not the other.
 - **The dialog reuses `DisplayNameField`.** The field already carries the length limit and the rule that an empty value falls back to the account name. A second field would drift from the first.
+- **The caller reads its row back.** `onUpdateUserToRoom` delivers a row only to its own member, so a moderator's list would never hear of the moderator's own write. The dialog reads the target's row back with `room.readMembersByIds` after the write, and the member store takes the server's resolved name. The renamed member's client takes the same path from its subscription, which is why the subscription handler now writes through the same store action.
 - **No moderation audit entry.** The alternative is a new admin action type. That type is enumerated in the moderation design across several places, and a display name is not a sanction the moderation log exists to record. The decision is recorded here, so a later reader does not take its absence for an oversight.
-- **Last write wins.** The field holds one name, so a moderator's rename and the member's own edit overwrite each other, and the later save is the one every member sees.
+- **Last write wins.** The field holds one name, so a moderator's rename and the member's own edit overwrite each other, and the later save is the one the room shows once each member reads it again.
 
 ## How it works
 
@@ -26,6 +27,8 @@ sequenceDiagram
   participant G as assertIsManageable
   participant DB as usersToRoomsInMessage
   participant E as userToRoomEventEmitter
+  participant Q as room.readMembersByIds
+  participant T as Renamed member's client
   A->>M: opens a member's menu
   M-->>A: Display name only if permitted and manageable
   A->>D: enters a name and saves
@@ -37,7 +40,10 @@ sequenceDiagram
   else allowed
     R->>DB: set displayName on the target's row
     DB->>E: updated row
-    E-->>A: onUpdateUserToRoom to every open room
+    E-->>T: onUpdateUserToRoom, to the target only
+    D->>Q: read the target's row back
+    Q-->>D: resolved displayName
+    D-->>A: the caller's member list takes it
   end
 ```
 
@@ -55,17 +61,21 @@ The client's check and the server's check read the same rule, `checkIsMemberMana
 | `apps/web/app/composables/message/user/useMemberActionItems.ts`                         | the one list both member menus read; gains the Display name item                   |
 | `apps/web/app/models/message/user/MemberDialogType.ts`                                  | gains the display-name dialog's value                                              |
 | `apps/web/app/store/message/room/role.ts`                                               | the actor's own permissions and standing on the client                             |
+| `apps/web/app/store/message/user/member.ts`                                             | gains `storeUpdateMembers`, the read-back row into the room's list and names       |
+| `apps/web/app/composables/message/subscribables/useUserToRoomSubscribables.ts`          | the renamed member's own subscription, now writing through `storeUpdateMembers`    |
 | `apps/web/app/components/Message/Model/Room/Settings/Type/Profile/DisplayNameField.vue` | the field the dialog reuses                                                        |
-| `apps/web/app/components/Message/Model/Room/Settings/Type/Member/List.vue`              | the members panel, whose row menu shows the item                                   |
+| `apps/web/app/components/Message/Model/Member/List.vue`                                 | the member list, whose row menu shows the item and mounts the dialog host          |
 
 A new file, in the tree form the design template asks for:
 
 ```text
-apps/web/app/components/Message/Model/Room/Member/DisplayNameDialog.vue   the display name dialog, mounted once by the member dialog host
+apps/web/app/components/Message/Model/Member/ActionDialog/DisplayName.vue   the display name dialog, mounted by the member dialog host beside its siblings
 ```
+
+It takes the name of its siblings in `ActionDialog/` (`Timeout.vue`, `Warn.vue`), so the host's `MessageModelMemberActionDialogDisplayName` reads like theirs.
 
 ## Notes
 
-- Nothing notifies the renamed member. The new name reaches every open view of the room through the same subscription a self-service change uses.
+- Nothing notifies the renamed member. Their own list takes the new name through the same subscription a self-service change uses. Other members see it on their next read of the room's members, as they do for a self-service change.
 - The display name item is not offered to a holder of the permission who targets themselves. A self-edit is already on the My Profile tab, and offering it twice would show two entries for one field.
-- The [display names design](../../specs/esbabbler/display-names/design.md) line that admits the surface is missing is rewritten when this change archives.
+- The [display names design](../../specs/esbabbler/display-names/design.md) line that admitted the surface was missing is rewritten in this change, with its Key files.
