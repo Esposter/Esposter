@@ -11,7 +11,7 @@ Build order. Section 1 lands the schema the rest reads, section 2 moves the shar
 
 - [x] 2.1 Move the per-user soft delete inside one room from "apps/web/server/services/message/moderation/softDeleteRoomMessagesByUser.ts" into `packages/db`, so the functions app and the web app share one implementation. Test first in the moved file's test: only the target user's messages in that room are soft-deleted.
       Verify: the web's moderation tests pass unchanged, and no copy of the soft delete remains outside `packages/db`.
-- [ ] 2.2 Add `deleteUserDirectories` in `packages/db`: it removes every blob under `{userId}/` in the given containers, and treats an empty directory as done. Test first: a directory with two blobs is removed, and a second call finds nothing and succeeds. The staged uploads under `character-packs/staging/{userId}/` are a separate sweep, `deleteCharacterPackStaging`, in the same package, with the same test shape.
+- [x] 2.2 Add `deleteUserDirectories` in `packages/db`: it removes every blob under `{userId}/` in the given containers, and treats an empty directory as done. Test first: a directory with two blobs is removed, and a second call finds nothing and succeeds. The staged uploads under `character-packs/staging/{userId}/` are a separate sweep, `deleteCharacterPackStaging`, in the same package, with the same test shape.
       Verify: the tests pass, and the function's container list is the inventory's list for user prefixes.
 - [x] 2.3 Add `listChargedBlobsByUser` in `packages/db`: it reads the storage ledger rows for one user, grouped by container. Test first: a user with two charged blobs in two containers gets both, and another user's rows are not among them.
       Verify: the test passes against the ledger table, not against a list of blob names.
@@ -29,9 +29,9 @@ Build order. Section 1 lands the schema the rest reads, section 2 moves the shar
 
 - [x] 4.1 Add the `user.deleteAccount` mutation. It ends the caller's sessions, sets `deletionRequestedAt`, and publishes the Event Grid event after the write, as the room and resource deletions publish. Test first in the user router's test file: the caller's sessions are gone, the marker is set, and the publish happens once.
       Verify: the router test passes, and the mutation's input has no field that could bypass the typed confirmation.
-- [ ] 4.2 Add the Delete account flow to `apps/web/app/pages/user/settings.vue`. It opens a confirmation that names what is kept, requires the person to type their display name, and calls the mutation. Test first: the button does not call the mutation until the typed name matches.
+- [x] 4.2 Add the Delete account flow to `apps/web/app/pages/user/settings.vue`. It opens a confirmation that names what is kept, requires the person to type their display name, and calls the mutation. Test first: the button does not call the mutation until the typed name matches.
       Verify: the settings test shows the kept list and the refusal to call the mutation on a click alone.
-- [ ] 4.3 Subscribe the new event type in both environments' Event Grid subscription files under `apps/infra`.
+- [x] 4.3 Subscribe the new event type in both environments' Event Grid subscription files under `apps/infra`.
       Verify: the dev and prod subscription files each list `AzureFunction.DeleteAccount`, and the infra test passes.
 
 ## 5. Sweep, inventory and specs
