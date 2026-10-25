@@ -58,38 +58,24 @@ const readOneOf = (schema: JSONSchema._JSONSchema | undefined): JSONSchema._JSON
   schema === undefined || typeof schema === "boolean" ? [] : (schema.oneOf ?? []);
 
 describe(getAgentJsonSchema, () => {
+  // The paths a page builder rich text node leaves undescribed, under the pointer of the node holding it
+  const richTextPaths = (pointer: string) => [
+    `${pointer}/props/content/*`,
+    `${pointer}/props/content/attrs/*`,
+    `${pointer}/props/content/marks/-/*`,
+    `${pointer}/props/content/marks/-/attrs/*`,
+  ];
+  // An email nests its body one more child deep each level, and each level holds rich text
+  const childRichTextPaths = Array.from(
+    { length: 6 },
+    (_, index) => "/content/-" + "/props/children/-".repeat(index + 1),
+  ).flatMap(richTextPaths);
   // What each type's agent may not write: a new undescribed or read-only node fails here until it is described or
   // Recorded, so no type's reach widens or narrows unseen
   const ResourceTypeUnwritablePathsMap = {
     Blueprint: ["/entries/-/content"],
     Dashboard: [],
-    Email: [
-      "/content/-/props/children/-/props/children/-/props/children/-/props/children/-/props/children/-/props/children/-/props/content/*",
-      "/content/-/props/children/-/props/children/-/props/children/-/props/children/-/props/children/-/props/children/-/props/content/attrs/*",
-      "/content/-/props/children/-/props/children/-/props/children/-/props/children/-/props/children/-/props/children/-/props/content/marks/-/*",
-      "/content/-/props/children/-/props/children/-/props/children/-/props/children/-/props/children/-/props/children/-/props/content/marks/-/attrs/*",
-      "/content/-/props/children/-/props/children/-/props/children/-/props/children/-/props/children/-/props/content/*",
-      "/content/-/props/children/-/props/children/-/props/children/-/props/children/-/props/children/-/props/content/attrs/*",
-      "/content/-/props/children/-/props/children/-/props/children/-/props/children/-/props/children/-/props/content/marks/-/*",
-      "/content/-/props/children/-/props/children/-/props/children/-/props/children/-/props/children/-/props/content/marks/-/attrs/*",
-      "/content/-/props/children/-/props/children/-/props/children/-/props/children/-/props/content/*",
-      "/content/-/props/children/-/props/children/-/props/children/-/props/children/-/props/content/attrs/*",
-      "/content/-/props/children/-/props/children/-/props/children/-/props/children/-/props/content/marks/-/*",
-      "/content/-/props/children/-/props/children/-/props/children/-/props/children/-/props/content/marks/-/attrs/*",
-      "/content/-/props/children/-/props/children/-/props/children/-/props/content/*",
-      "/content/-/props/children/-/props/children/-/props/children/-/props/content/attrs/*",
-      "/content/-/props/children/-/props/children/-/props/children/-/props/content/marks/-/*",
-      "/content/-/props/children/-/props/children/-/props/children/-/props/content/marks/-/attrs/*",
-      "/content/-/props/children/-/props/children/-/props/content/*",
-      "/content/-/props/children/-/props/children/-/props/content/attrs/*",
-      "/content/-/props/children/-/props/children/-/props/content/marks/-/*",
-      "/content/-/props/children/-/props/children/-/props/content/marks/-/attrs/*",
-      "/content/-/props/children/-/props/content/*",
-      "/content/-/props/children/-/props/content/attrs/*",
-      "/content/-/props/children/-/props/content/marks/-/*",
-      "/content/-/props/children/-/props/content/marks/-/attrs/*",
-      "/html",
-    ],
+    Email: [...childRichTextPaths, "/html"],
     Flowchart: [],
     Note: ["/doc/*", "/doc/attrs/*", "/doc/marks/-/*", "/doc/marks/-/attrs/*"],
     Program: [],
@@ -101,13 +87,7 @@ describe(getAgentJsonSchema, () => {
     ],
     Survey: [],
     TodoList: [],
-    Webpage: [
-      "/content/-/props/content/*",
-      "/content/-/props/content/attrs/*",
-      "/content/-/props/content/marks/-/*",
-      "/content/-/props/content/marks/-/attrs/*",
-      "/html",
-    ],
+    Webpage: [...richTextPaths("/content/-"), "/html"],
   } as const satisfies Record<ResourceType, string[]>;
 
   test.each(ResourceTypes)("A type whose content schema is not an object fails CI: %s", (type) => {
