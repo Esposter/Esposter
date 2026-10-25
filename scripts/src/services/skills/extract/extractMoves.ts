@@ -5,14 +5,10 @@ import { collapseBlankLinesAt } from "#src/services/skills/extract/collapseBlank
 import { getHeadingLevels } from "#src/services/skills/extract/getHeadingLevels";
 import { getMarkdownBlockRange } from "#src/services/skills/extract/getMarkdownBlockRange";
 import { toText } from "#src/services/skills/extract/toText";
+import { trimBlankLines } from "#src/services/skills/extract/trimBlankLines";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
 
 const READ_OPENING = "Read ";
-const trimBlankLines = (lines: string[]) => {
-  const first = lines.findIndex((line) => line.trim() !== "");
-  const last = lines.findLastIndex((line) => line.trim() !== "");
-  return first === -1 ? [] : lines.slice(first, last + 1);
-};
 // Moves each block of a skill file — its SKILL.md, or one of its pages being split — verbatim onto its reference page,
 // Leaving the one-line rule in its place, and returns the index line of every page it creates for `indexPages`. A page
 // That exists is appended to, under the move's subheading; a new one opens on its title and its "Read when…" line,
