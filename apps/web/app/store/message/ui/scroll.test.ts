@@ -29,7 +29,6 @@ describe(useScrollStore, () => {
 
   afterEach(() => {
     vi.useRealTimers();
-    vi.resetAllMocks();
   });
 
   test("setActiveRowKey clears activeRowKey after highlight delay", () => {

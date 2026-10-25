@@ -18,6 +18,14 @@ describe(useFileStore, () => {
   const filename = "a";
   const staleUrl = "staleUrl";
   const freshUrl = "freshUrl";
+  const plainTextFile = {
+    filename,
+    hasThumbnail: false,
+    id: fileId,
+    isSpoiler: false,
+    mimetype: MimeType.PlainText,
+    size: 1,
+  };
 
   beforeEach(() => {
     setCurrentRoomId(roomId);
@@ -44,7 +52,7 @@ describe(useFileStore, () => {
     const { getSlice } = dataStore;
     getSlice(roomId).items.value.push(
       createMessageEntity({
-        files: [{ filename, hasThumbnail: false, id: fileId, isSpoiler: false, mimetype: MimeType.PlainText, size: 1 }],
+        files: [plainTextFile],
         message: filename,
         roomId,
         type: MessageType.Message,
@@ -193,7 +201,7 @@ describe(useFileStore, () => {
     useFileStore();
     await MessageHookMap[Operation.Create].run(
       createMessageEntity({
-        files: [{ filename, hasThumbnail: false, id: fileId, isSpoiler: false, mimetype: MimeType.PlainText, size: 1 }],
+        files: [plainTextFile],
         message: filename,
         roomId: otherRoomId,
         type: MessageType.Message,
@@ -214,7 +222,7 @@ describe(useFileStore, () => {
     const { fileUrlMap } = storeToRefs(fileStore);
     const { getSlice } = dataStore;
     const message = createMessageEntity({
-      files: [{ filename, hasThumbnail: false, id: fileId, isSpoiler: false, mimetype: MimeType.PlainText, size: 1 }],
+      files: [plainTextFile],
       message: filename,
       roomId,
       type: MessageType.Message,

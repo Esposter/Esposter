@@ -5,9 +5,13 @@ import { useMediaStore } from "@/store/message/room/call/media";
 import { useLiveKitStore } from "@/store/message/room/liveKit";
 import { noop } from "@esposter/shared";
 import { Room, RoomEvent, Track } from "livekit-client";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(useLiveKitStore, () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   test("startAudio plays the blocked sound and keeps a deafened reader muted", async () => {
     expect.hasAssertions();
 

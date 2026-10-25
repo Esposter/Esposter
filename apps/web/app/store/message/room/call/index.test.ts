@@ -14,13 +14,9 @@ import { useLiveKitStore } from "@/store/message/room/liveKit";
 import { AdminActionType, CALL_ID_LENGTH, getReverseTickedTimestamp } from "@esposter/db-schema";
 import { RoutePath, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
-
-beforeEach(() => {
-  useSession.mockReturnValue(ref({ data: getMockSession() }));
-});
 
 describe(useCallStore, () => {
   const { trpcMsw } = setupMswTrpc();
@@ -28,6 +24,14 @@ describe(useCallStore, () => {
   const imagePath = "imagePath";
   const roomId = crypto.randomUUID();
   const threadRootRowKey = getReverseTickedTimestamp();
+
+  beforeEach(() => {
+    useSession.mockReturnValue(ref({ data: getMockSession() }));
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
 
   // The camera flag is a participant row like any other, so the primitive unwinds and reports its rejection.
   // Rethrowing lets a rejected server write cancel the local work it is composed with — the picked background

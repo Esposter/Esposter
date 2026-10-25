@@ -136,7 +136,7 @@ describe(useDataStore, () => {
     const resetSendSpy = vi.spyOn(MessageHookMap.ResetSend, "run");
     await sendMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
 
-    expect(resetSendSpy).toHaveBeenCalledWith(target, [], undefined);
+    expect(resetSendSpy).toHaveBeenCalledExactlyOnceWith(target, [], undefined);
   });
 
   // The composer keeps accepting Enter for the whole round trip, so the attachments a send took leave it at the
@@ -228,7 +228,7 @@ describe(useDataStore, () => {
     const commitSendSpy = vi.spyOn(MessageHookMap.CommitSend, "run");
     await createMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
 
-    expect(commitSendSpy).toHaveBeenCalledWith(target, []);
+    expect(commitSendSpy).toHaveBeenCalledExactlyOnceWith(target, []);
   });
 
   // The commit runs behind the send, so the composer keeps taking uploads for the whole round trip. Releasing
