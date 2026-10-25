@@ -1,11 +1,12 @@
 import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
 import type { ExcelTriggerRow } from "#src/models/genshinAssets/sceneGroups/ExcelTriggerRow";
-import type { SceneGroupMember, SceneNpcBorn } from "genshin-world";
+import type { SceneGroupMember } from "genshin-world";
 
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
 import { SCENE_GROUPS_KEY } from "#src/services/genshinAssets/sceneGroups/constants";
 import { readSceneBuildingPoints } from "#src/services/genshinAssets/sceneGroups/readSceneBuildingPoints";
 import { readViewpointMembers } from "#src/services/genshinAssets/sceneGroups/readViewpointMembers";
+import { toNpcMember } from "#src/services/genshinAssets/sceneGroups/toNpcMember";
 import { SCENE_NPC_BORN_KEY } from "#src/services/genshinAssets/sceneNpcBorn/constants";
 import { OPEN_WORLD_SCENE_ID } from "#src/services/genshinAssets/shared/constants";
 import { TRIGGER_TABLE_NAME } from "#src/services/genshinText/constants";
@@ -13,20 +14,6 @@ import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { getOrCreate } from "@esposter/shared";
 import { SceneGroupMemberKind, SceneGroupSource, sceneGroupsSchema, sceneNpcBornSchema } from "genshin-world";
 import { z } from "zod";
-
-// One NPC birth as a member of its group: the NPC it places, its place and turn, and the suites it is born in
-const toNpcMember = ({ configId, position, rotationY, suiteIds }: SceneNpcBorn): SceneGroupMember => ({
-  kind: SceneGroupMemberKind.Npc,
-  objectId: configId,
-  place: {
-    height: position.y,
-    position: { x: position.x, z: position.z },
-    ...(rotationY === undefined ? {} : { rotationY }),
-    source: SceneGroupSource.NpcBirths,
-  },
-  source: SceneGroupSource.NpcBirths,
-  suiteIds,
-});
 
 // The open world's scene group record, each field filled from the best source that holds it today: the NPCs and their
 // Places and suites from the hosted NPC births, the viewpoints from the codex placed by the official map's points, the
