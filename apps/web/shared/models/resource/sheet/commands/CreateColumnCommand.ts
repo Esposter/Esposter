@@ -3,13 +3,14 @@ import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSo
 
 import { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";
+import { getCreateColumnDescription } from "#shared/services/resource/sheet/commands/getCreateColumnDescription";
 import { getValueSize } from "#shared/services/resource/sheet/commands/getValueSize";
 
 export class CreateColumnCommand extends ADataSourceCommand<CommandType.CreateColumn> {
   readonly type = CommandType.CreateColumn;
 
   get description() {
-    return `Create "${this.#newColumn.name}" Column`;
+    return getCreateColumnDescription(this.#newColumn.name);
   }
 
   readonly #columnIndex: number;
