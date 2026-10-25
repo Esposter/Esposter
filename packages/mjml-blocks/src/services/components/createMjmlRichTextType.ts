@@ -7,6 +7,7 @@ import type { MjmlTextNode } from "#src/models/MjmlTextNode";
 
 import { MjmlContentKind } from "#src/models/MjmlContentKind";
 import { renderMjmlNode } from "#src/services/renderMjmlNode";
+import { z } from "zod";
 
 // A rich-text component's type: its attributes, defaults, props schema and slots, and a render of its content through the consumer's rich text
 export const createMjmlRichTextType = <
@@ -19,6 +20,7 @@ export const createMjmlRichTextType = <
   allowedAttributes,
   contentKind: MjmlContentKind.RichText,
   defaultAttributes,
+  formSchema: z.strictObject({}),
   hasAlternativeText: false,
   propsSchema,
   render: renderMjmlNode(

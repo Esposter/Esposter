@@ -63,6 +63,7 @@ const mjmlTableTypeFields = {
   },
   hasAlternativeText: false,
   propsSchema: tablePropsSchema,
+  formSchema: z.strictObject({ content: MjmlContentKindSchemaMap[MjmlContentKind.Raw] }),
   slots: {},
   type: MjmlNodeType.Table,
 } satisfies Partial<MjmlBlockTypeDefinition<MjmlTableNode>>;

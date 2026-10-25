@@ -81,6 +81,7 @@ const mjmlButtonTypeFields = {
   },
   hasAlternativeText: false,
   propsSchema: buttonPropsSchema,
+  formSchema: z.strictObject({ content: MjmlContentKindSchemaMap[MjmlContentKind.Label] }),
   slots: {},
   type: MjmlNodeType.Button,
 } satisfies Partial<MjmlBlockTypeDefinition<MjmlButtonNode>>;

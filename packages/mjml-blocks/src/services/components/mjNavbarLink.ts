@@ -60,6 +60,7 @@ const mjmlNavbarLinkTypeFields = {
   },
   hasAlternativeText: false,
   propsSchema: navbarLinkPropsSchema,
+  formSchema: z.strictObject({ content: MjmlContentKindSchemaMap[MjmlContentKind.Label] }),
   slots: {},
   type: MjmlNodeType.NavbarLink,
 } satisfies Partial<MjmlBlockTypeDefinition<MjmlNavbarLinkNode>>;

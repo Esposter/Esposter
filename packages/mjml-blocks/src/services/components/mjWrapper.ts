@@ -33,6 +33,7 @@ const mjmlWrapperTypeFields = {
   defaultAttributes: sectionAttributes.defaultAttributes,
   hasAlternativeText: false,
   propsSchema: wrapperPropsSchema,
+  formSchema: z.strictObject({}),
   slots: { children: [MjmlNodeType.Hero, MjmlNodeType.Raw, MjmlNodeType.Section] },
   type: MjmlNodeType.Wrapper,
 } satisfies Partial<MjmlBlockTypeDefinition<MjmlWrapperNode>>;

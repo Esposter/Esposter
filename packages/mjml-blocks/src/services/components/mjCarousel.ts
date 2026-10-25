@@ -57,6 +57,7 @@ const mjmlCarouselTypeFields = {
   },
   hasAlternativeText: false,
   propsSchema: carouselPropsSchema,
+  formSchema: z.strictObject({}),
   slots: { children: [MjmlNodeType.CarouselImage] },
   type: MjmlNodeType.Carousel,
 } satisfies Partial<MjmlBlockTypeDefinition<MjmlCarouselNode>>;

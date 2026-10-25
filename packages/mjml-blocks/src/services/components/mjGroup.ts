@@ -29,6 +29,7 @@ const mjmlGroupTypeFields = {
   defaultAttributes: { direction: "ltr" },
   hasAlternativeText: false,
   propsSchema: groupPropsSchema,
+  formSchema: z.strictObject({}),
   slots: { children: [MjmlNodeType.Column, MjmlNodeType.Raw] },
   type: MjmlNodeType.Group,
 } satisfies Partial<MjmlBlockTypeDefinition<MjmlGroupNode>>;

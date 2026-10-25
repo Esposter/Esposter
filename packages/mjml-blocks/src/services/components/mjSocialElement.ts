@@ -78,6 +78,7 @@ const mjmlSocialElementTypeFields = {
   },
   hasAlternativeText: false,
   propsSchema: socialElementPropsSchema,
+  formSchema: z.strictObject({ content: MjmlContentKindSchemaMap[MjmlContentKind.Label] }),
   slots: {},
   type: MjmlNodeType.SocialElement,
 } satisfies Partial<MjmlBlockTypeDefinition<MjmlSocialElementNode>>;

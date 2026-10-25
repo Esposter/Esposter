@@ -24,6 +24,7 @@ const mjmlSectionTypeFields = {
   defaultAttributes: sectionAttributes.defaultAttributes,
   hasAlternativeText: false,
   propsSchema: sectionPropsSchema,
+  formSchema: z.strictObject({}),
   slots: { children: [MjmlNodeType.Column, MjmlNodeType.Group, MjmlNodeType.Raw] },
   type: MjmlNodeType.Section,
 } satisfies Partial<MjmlBlockTypeDefinition<MjmlSectionNode>>;

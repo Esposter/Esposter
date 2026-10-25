@@ -62,6 +62,7 @@ const mjmlSocialTypeFields = {
   },
   hasAlternativeText: false,
   propsSchema: socialPropsSchema,
+  formSchema: z.strictObject({}),
   slots: { children: [MjmlNodeType.SocialElement, MjmlNodeType.Raw] },
   type: MjmlNodeType.Social,
 } satisfies Partial<MjmlBlockTypeDefinition<MjmlSocialNode>>;

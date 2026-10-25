@@ -38,6 +38,7 @@ const mjmlAccordionElementTypeFields = {
   defaultAttributes: {},
   hasAlternativeText: false,
   propsSchema: accordionElementPropsSchema,
+  formSchema: z.strictObject({}),
   slots: { children: [MjmlNodeType.AccordionTitle, MjmlNodeType.AccordionText, MjmlNodeType.Raw] },
   type: MjmlNodeType.AccordionElement,
 } satisfies Partial<MjmlBlockTypeDefinition<MjmlAccordionElementNode>>;

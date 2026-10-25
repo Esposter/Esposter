@@ -54,6 +54,7 @@ export const createMjmlHeroType = (leafTypes: MjmlLeafNode["type"][]): MjmlBlock
     },
     hasAlternativeText: false,
     propsSchema: heroPropsSchema,
+    formSchema: z.strictObject({}),
     slots: {
       children: [
         MjmlNodeType.Accordion,

@@ -51,6 +51,7 @@ export const createMjmlColumnType = (leafTypes: MjmlLeafNode["type"][]): MjmlBlo
     defaultAttributes: { direction: "ltr", "vertical-align": "top" },
     hasAlternativeText: false,
     propsSchema: columnPropsSchema,
+    formSchema: z.strictObject({}),
     slots: {
       children: [
         MjmlNodeType.Accordion,

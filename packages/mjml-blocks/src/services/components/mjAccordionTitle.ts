@@ -42,6 +42,7 @@ const mjmlAccordionTitleTypeFields = {
   defaultAttributes: { "font-size": "13px", padding: "16px" },
   hasAlternativeText: false,
   propsSchema: accordionTitlePropsSchema,
+  formSchema: z.strictObject({ content: MjmlContentKindSchemaMap[MjmlContentKind.Label] }),
   slots: {},
   type: MjmlNodeType.AccordionTitle,
 } satisfies Partial<MjmlBlockTypeDefinition<MjmlAccordionTitleNode>>;

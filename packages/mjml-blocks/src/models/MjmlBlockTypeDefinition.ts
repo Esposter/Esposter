@@ -15,6 +15,8 @@ export type MjmlBlockTypeDefinition<TNode extends BlockNode = BlockNode, TContex
 type MjmlBlockTypeFields<TNode extends BlockNode, TContext> = Pick<BlockTypeDefinition<TNode>, "slots" | "type"> & {
   allowedAttributes: Record<string, string>;
   defaultAttributes: Record<string, string>;
+  // The form the node's props are edited through in the content panel, which holds what the style panel and the canvas do not edit
+  formSchema: z.ZodType;
   hasAlternativeText: boolean;
   render: (node: BlockNode, slots: Record<string, MjmlJson[]>, context: TContext) => MjmlJson;
 };

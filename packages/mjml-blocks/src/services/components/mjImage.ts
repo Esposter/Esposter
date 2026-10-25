@@ -66,6 +66,7 @@ const mjmlImageTypeFields = {
   },
   hasAlternativeText: true,
   propsSchema: imagePropsSchema,
+  formSchema: z.strictObject({}),
   slots: {},
   type: MjmlNodeType.Image,
 } satisfies Partial<MjmlBlockTypeDefinition<MjmlImageNode>>;

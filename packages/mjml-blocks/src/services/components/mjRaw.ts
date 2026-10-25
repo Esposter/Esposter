@@ -29,6 +29,7 @@ const mjmlRawTypeFields = {
   defaultAttributes: {},
   hasAlternativeText: false,
   propsSchema: rawPropsSchema,
+  formSchema: z.strictObject({ content: MjmlContentKindSchemaMap[MjmlContentKind.Raw] }),
   slots: {},
   type: MjmlNodeType.Raw,
 } satisfies Partial<MjmlBlockTypeDefinition<MjmlRawNode>>;

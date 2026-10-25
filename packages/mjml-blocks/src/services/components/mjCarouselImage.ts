@@ -38,6 +38,7 @@ const mjmlCarouselImageTypeFields = {
   defaultAttributes: { alt: "", target: "_blank" },
   hasAlternativeText: true,
   propsSchema: carouselImagePropsSchema,
+  formSchema: z.strictObject({}),
   slots: {},
   type: MjmlNodeType.CarouselImage,
 } satisfies Partial<MjmlBlockTypeDefinition<MjmlCarouselImageNode>>;
