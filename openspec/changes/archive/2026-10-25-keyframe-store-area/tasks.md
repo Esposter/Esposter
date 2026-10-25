@@ -16,7 +16,7 @@
 
 ## 4. Package and pointers
 
-- [ ] 4.1 Move the How it works section out of `packages/keyframe-store/README.md`, leaving the install page and a link to the area. Verify: `grep -n "How it works" packages/keyframe-store/README.md` returns nothing, and the duplicate-prose check in `scripts` passes.
+- [x] 4.1 Move the How it works section out of `packages/keyframe-store/README.md`, leaving the install page and a link to the area. Verify: `grep -n "How it works" packages/keyframe-store/README.md` returns nothing, and the duplicate-prose check in `scripts` passes.
 - [x] 4.2 Repoint `openspec/specs/architecture/compression/design.md` and `openspec/specs/resource/resource-version-store/design.md` at the object format page instead of the README. Verify: `grep -rn "keyframe-store/README" openspec` returns nothing outside the package.
 
 ## 5. Archive
