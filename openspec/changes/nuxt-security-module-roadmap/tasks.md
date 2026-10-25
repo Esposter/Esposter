@@ -1,0 +1,15 @@
+# Nuxt security module roadmap
+
+The open work of [nuxt-security-module](../../specs/nuxt-security-module/README.md). Each item names the page that holds its source, and its own change is written when it is picked up. Each item's verification is its nested sub-step.
+
+## Next
+
+- [ ] Run the plugins in a Nuxt app, and check the headers, the nonce and the integrity attributes in a rendered page, including the `X-Powered-By` removal. Source: [the package's status](../../specs/nuxt-security-module/README.md#status).
+  - Verify: the rendered page's response headers and its nonce and integrity attributes match the expected values, with the `X-Powered-By` header absent.
+- [ ] Verify the SRI behaviour on preload links (#655) and on entry import maps (#657) against a built app. Both are kept as they are until then. Source: [what our configuration triggers](../../specs/nuxt-security-module/upstream/design.md#what-our-configuration-triggers).
+  - Verify: each issue is marked reproduced or not reproduced in the upstream audit's verdict table, with the built app as the evidence.
+
+## Later
+
+- [ ] Run each regression test against the upstream package, and confirm it fails there first, where the reproduction is cheap. Source: [fail-first results](../../specs/nuxt-security-module/upstream/design.md#fail-first-results).
+  - Verify: each regression test is run against the installed upstream version, and the run is recorded in the fail-first results.
