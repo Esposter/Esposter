@@ -57,6 +57,7 @@ flowchart LR
   shell --> route_resource_explorer
   shell --> route_resource_explorer_all
   shell --> route_user_settings
+  shell --> route_view_type_id_
   route_ --> route_post_create
   route_ --> route_post_id_
   route_ --> route_post_update_id_
