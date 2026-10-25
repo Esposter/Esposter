@@ -104,4 +104,25 @@ describe(serializeNoteMarkdown, () => {
       }),
     ).toBe("A cat\n");
   });
+
+  // A line that CommonMark would read as a rule, a setext underline or an indented block is escaped, so it reads back
+  test("a paragraph that starts like a block reads back as the text it holds", () => {
+    expect.hasAssertions();
+
+    const noteSchema = getSchema(getNoteExtensions());
+    const doc: JSONContent = {
+      content: [
+        { content: [{ text: "---", type: "text" }], type: "paragraph" },
+        { content: [{ text: "    indented", type: "text" }], type: "paragraph" },
+        {
+          content: [{ text: "foo", type: "text" }, { type: "hardBreak" }, { text: "===", type: "text" }],
+          type: "paragraph",
+        },
+      ],
+      type: "doc",
+    };
+    const imported = deserializeNoteMarkdown(serializeNoteMarkdown(doc));
+
+    expect(noteSchema.nodeFromJSON(imported).toJSON()).toStrictEqual(noteSchema.nodeFromJSON(doc).toJSON());
+  });
 });
