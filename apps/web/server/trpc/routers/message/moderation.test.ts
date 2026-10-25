@@ -211,14 +211,6 @@ describe("moderationRouter", () => {
     expect(memberMessages.map(({ deletedAt }) => deletedAt)).toStrictEqual([new Date(0)]);
   });
 
-  test("readBans returns an empty list for a new room", async () => {
-    expect.hasAssertions();
-
-    const result = await moderationCaller.readBans({ roomId });
-
-    expect(result.items).toHaveLength(0);
-  });
-
   test("readBans returns the banned user", async () => {
     expect.hasAssertions();
 

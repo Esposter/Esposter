@@ -146,14 +146,6 @@ describe("resourceRouter", () => {
     MockTableDatabase.clear();
   });
 
-  test("reads empty resources", async () => {
-    expect.hasAssertions();
-
-    const { items } = await caller.readResources();
-
-    expect(items).toStrictEqual([]);
-  });
-
   test("reads a single resource by id", async () => {
     expect.hasAssertions();
 

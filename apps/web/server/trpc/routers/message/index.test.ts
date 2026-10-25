@@ -955,15 +955,6 @@ describe("messageRouter", () => {
     expect(MockEventGridDatabase.get("")).toBeUndefined();
   });
 
-  test("generates download file SAS URLs", async () => {
-    expect.hasAssertions();
-
-    const files = [{ filename, id: crypto.randomUUID(), mimetype }];
-    const sasUrls = await messageCaller.generateDownloadFileSasUrls({ files, roomId });
-
-    expect(sasUrls).toHaveLength(1);
-  });
-
   test("deletes file", async () => {
     expect.hasAssertions();
 

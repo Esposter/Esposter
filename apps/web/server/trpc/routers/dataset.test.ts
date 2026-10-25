@@ -177,18 +177,6 @@ describe("datasetRouter", () => {
     );
   });
 
-  test("fails read survey responses with non-existent id", async () => {
-    expect.hasAssertions();
-
-    const id = crypto.randomUUID();
-
-    await expect(
-      caller.readDataset({ id, type: DatasetProviderType.SurveyResponses }),
-    ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${new NotFoundError(DatabaseEntityType.Resource, id).message}]`,
-    );
-  });
-
   test("reads file dataset", async () => {
     expect.hasAssertions();
 

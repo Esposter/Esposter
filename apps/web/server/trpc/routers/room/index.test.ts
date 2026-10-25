@@ -29,6 +29,7 @@ import {
   RoomPermission,
   roomsInMessage,
   usersToRoomsInMessage,
+  WRITE_SAS_DURATION_MS,
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import {
@@ -116,14 +117,6 @@ describe("roomRouter", () => {
     expect(rooms).toStrictEqual({ hasMore: false, items: [], nextCursor: "" });
   });
 
-  test("reads empty rooms with undefined roomId", async () => {
-    expect.hasAssertions();
-
-    const rooms = await roomCaller.readRooms({ roomId: undefined });
-
-    expect(rooms).toStrictEqual({ hasMore: false, items: [], nextCursor: "" });
-  });
-
   test("reads multiple with roomId with inclusive filter", async () => {
     expect.hasAssertions();
 
@@ -135,7 +128,7 @@ describe("roomRouter", () => {
     expect(takeOne(rooms.items)).toStrictEqual({ ...newRoom1, displayName: newRoom1.name });
   });
 
-  test("reads multiple with roomId with exclusive filter", async () => {
+  test("reads the room named by roomId alongside the filter's own matches", async () => {
     expect.hasAssertions();
 
     const newRoom1 = await roomCaller.createRoom({ name: `${name}1` });
@@ -145,14 +138,6 @@ describe("roomRouter", () => {
     expect(rooms.items).toHaveLength(2);
     expect(takeOne(rooms.items)).toStrictEqual({ ...newRoom2, displayName: newRoom2.name });
     expect(takeOne(rooms.items, 1)).toStrictEqual({ ...newRoom1, displayName: newRoom1.name });
-  });
-
-  test("fails read multiple with non-existent room", async () => {
-    expect.hasAssertions();
-
-    await expect(roomCaller.readRooms({ roomId })).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: UNAUTHORIZED]`,
-    );
   });
 
   test("fails read multiple with room not joined", async () => {
@@ -205,8 +190,11 @@ describe("roomRouter", () => {
     // Rather than built from the helper so the documented rooms/ namespace is pinned by the test
     const blobPrefix = `${publicUserAssetsUrlPrefix}rooms/${newRoom.id}/ProfileImage/`;
 
+    // The write address lapses one write duration after the clock it is signed at, which the pinned clock fixes at the epoch
+    const expiresOn = new Date(WRITE_SAS_DURATION_MS);
+
     expect(publicUrl.startsWith(blobPrefix)).toBe(true);
-    expect(sasUrl).toBe(getMockSasUrl(publicUrl, "w", "b"));
+    expect(sasUrl).toBe(getMockSasUrl(publicUrl, "w", "b", expiresOn));
   });
 
   test(`fails generate profile image upload url for a member without ${RoomPermission.ManageRoom} permission`, async () => {

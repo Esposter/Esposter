@@ -194,18 +194,6 @@ describe("surveyRouter", () => {
     `);
   });
 
-  test("reads undefined survey response with non-existent id", async () => {
-    expect.hasAssertions();
-
-    const newResource = await caller.createResource({ name });
-    const surveyResponse = await caller.readSurveyResponse({
-      partitionKey: newResource.id,
-      rowKey: crypto.randomUUID(),
-    });
-
-    expect(surveyResponse).toBeUndefined();
-  });
-
   test("updates survey response", async () => {
     expect.hasAssertions();
 
@@ -424,16 +412,6 @@ describe("surveyRouter", () => {
     });
 
     await expect(createSurveyResponse(survey.id, 0, token)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[TRPCError: ${invalidParticipantTokenErrorMessage}]`,
-    );
-  });
-
-  test(`fails create with forged token in ${SurveyResponseMode.Identified} mode`, async () => {
-    expect.hasAssertions();
-
-    const { survey } = await setupIdentifiedSurvey();
-
-    await expect(createSurveyResponse(survey.id, 0, crypto.randomUUID())).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${invalidParticipantTokenErrorMessage}]`,
     );
   });

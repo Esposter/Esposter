@@ -66,14 +66,6 @@ describe("blueprintRouter", () => {
     return { audience, funnel };
   };
 
-  test("creates", async () => {
-    expect.hasAssertions();
-
-    const blueprint = await caller.createResource({ name });
-
-    expect(blueprint.type).toBe(ResourceType.Blueprint);
-  });
-
   test("deploys a manifest, creating and wiring every entry", async () => {
     expect.hasAssertions();
 

@@ -62,7 +62,7 @@ describe("surveyFunnel", () => {
     await mockContext.db.delete(resourcesInResource);
   });
 
-  test("the whole chain", async () => {
+  test("the audience's responses reach the status and a published chart without naming who was added", async () => {
     expect.hasAssertions();
 
     // 1. The audience — a Sheet of customers, keyed by the audience column
