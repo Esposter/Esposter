@@ -8,18 +8,18 @@ This proposal wires the agent surface once, at the resource layer. A resource ty
 
 Each is a unit built on its own, listed in build order:
 
-- [Agent keys](../../architecture-ai-native-resources-agent-keys/design.md) — the keys made before scopes given the follow-ups scope, and the operations that stay the owner's; scopes, read-only hints and per-key attribution shipped ([agent access](../../../specs/architecture/agent-access/design.md)), and the content tools after them ([agent content tools](../../../specs/architecture/agent-content-tools/design.md))
-- [Live edits](../../architecture-ai-native-resources-live-edits/design.md) — an open editor adopts an agent's save, and an unsaved edit meets it as a choice shown at once
-- [Lifecycle tools](../../architecture-ai-native-resources-lifecycle-tools/design.md) — create, rename, tag, delete, restore, publish, references, history and datasets, plus each type's own procedures
+- [Agent keys](../2026-10-25-architecture-ai-native-resources-agent-keys/design.md) — the keys made before scopes given the follow-ups scope, and the operations that stay the owner's; scopes, read-only hints and per-key attribution shipped ([agent access](../../../specs/architecture/agent-access/design.md)), and the content tools after them ([agent content tools](../../../specs/architecture/agent-content-tools/design.md))
+- [Live edits](../2026-10-25-architecture-ai-native-resources-live-edits/design.md) — an open editor adopts an agent's save, and an unsaved edit meets it as a choice shown at once
+- [Lifecycle tools](../2026-10-25-architecture-ai-native-resources-lifecycle-tools/design.md) — create, rename, tag, delete, restore, publish, references, history and datasets, plus each type's own procedures
 - Schema fidelity — shipped in [agent content tools](../../../specs/architecture/agent-content-tools/design.md): Flowchart labels, Note documents, Survey models and the captured HTML of Webpages and Emails now follow their editors' rules
 - [Typed commands](../../../specs/architecture/ai-native-resources/typed-commands/design.md) — the per-type operations a patch fits badly, the Sheet's own command classes first
-- [In-product assistant](../../architecture-ai-native-resources-in-product-assistant/design.md) — an editor's Ask Claude, handed to the person's own session so it takes the same path as any agent
+- [In-product assistant](../2026-10-25-architecture-ai-native-resources-in-product-assistant/design.md) — an editor's Ask Claude, handed to the person's own session so it takes the same path as any agent
 
 ## The standard
 
 > Whatever a person can do in an editor, an agent can do through a typed procedure — derived from what the type already declares, never written per type.
 
-Every edit a person makes in any editor ends in one of two places: a new document through the content door, or a lifecycle procedure such as publish. So the contract every type meets covers both, read off its existing declaration — three parts for the document, which the [agent content tools](../../../specs/architecture/agent-content-tools/design.md) meet, and one for its lifecycle, which [lifecycle tools](../../architecture-ai-native-resources-lifecycle-tools/design.md) will:
+Every edit a person makes in any editor ends in one of two places: a new document through the content door, or a lifecycle procedure such as publish. So the contract every type meets covers both, read off its existing declaration — three parts for the document, which the [agent content tools](../../../specs/architecture/agent-content-tools/design.md) meet, and one for its lifecycle, which [lifecycle tools](../2026-10-25-architecture-ai-native-resources-lifecycle-tools/design.md) will:
 
 1. **Describe.** The type's content schema as JSON Schema, carrying its enums, limits and nesting, with the paths an agent may not write marked.
 2. **Read.** The content as the JSON the blob already stores, whole or at a JSON Pointer.
@@ -84,7 +84,7 @@ The generic tools reach exactly as far as a type's content schema describes its 
 
 **Then one test, over `ResourceTypes` with no roster.** It holds the content already: every type converts to a root object, and the paths it marks undescribed or read-only match the record the test keeps per type, so a partial surface is never silent and the record shrinks only by a source fix ([agent content tools](../../../specs/architecture/agent-content-tools/design.md)).
 
-A second test holds the procedures beyond the content: every procedure on a type's router that the factory did not generate declares either an MCP description or a human-only reason, so a new editor's own procedure cannot ship without a decision ([agent keys](../../architecture-ai-native-resources-agent-keys/design.md)).
+A second test holds the procedures beyond the content: every procedure on a type's router that the factory did not generate declares either an MCP description or a human-only reason, so a new editor's own procedure cannot ship without a decision ([agent keys](../2026-10-25-architecture-ai-native-resources-agent-keys/design.md)).
 
 There is deliberately no per-type patch round trip. It would need a fixture document per type — a roster by another name — and the content door already makes every stored document a JSON round trip: it stores `JSON.stringify` of the parsed content and reads it back through the schema. What a patch adds is the applier, and its own tests hold that an edit followed by its inverse returns the original, which is the page builder's proof as well.
 
@@ -92,7 +92,7 @@ There is deliberately no per-type patch round trip. It would need a fixture docu
 
 The generic tools reach every type at once, so ordering by value is ordering the units and the source fixes. The app keeps no usage figures by type that a session can read, so value is read from what the owner works in — the TodoList daily, per [TodoList agent follow-ups](../../../specs/resource/todolist-agent-follow-ups/design.md) — and from which types the generic tools reach whole.
 
-1. **Agent keys, then content tools** — shipped ([agent access](../../../specs/architecture/agent-access/design.md), [agent content tools](../../../specs/architecture/agent-content-tools/design.md)). Every type is found, described, read and edited, and the TodoList, Sheet, Dashboard and Program are reached whole, since their schemas describe everything. What [agent keys](../../architecture-ai-native-resources-agent-keys/design.md) leaves — the keys made before scopes, and the operations that stay the owner's — is its own unit.
+1. **Agent keys, then content tools** — shipped ([agent access](../../../specs/architecture/agent-access/design.md), [agent content tools](../../../specs/architecture/agent-content-tools/design.md)). Every type is found, described, read and edited, and the TodoList, Sheet, Dashboard and Program are reached whole, since their schemas describe everything. What [agent keys](../2026-10-25-architecture-ai-native-resources-agent-keys/design.md) leaves — the keys made before scopes, and the operations that stay the owner's — is its own unit.
 2. **Live edits**, so an agent's write never strands a person's open editor behind a refresh.
 3. **Lifecycle tools** — publishing, links, history and each type's own procedures.
 4. **Schema fidelity** — shipped: Flowchart node labels, Note document validation, Survey JSON-object validation, and read-only captured HTML ([agent content tools](../../../specs/architecture/agent-content-tools/design.md)).
