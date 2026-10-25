@@ -107,3 +107,19 @@ Each node type's published output SHALL match its expected output for every edge
 - **GIVEN** custom HTML containing a hostile markup vector
 - **WHEN** the block's output is produced
 - **THEN** the vector is removed from the output
+
+### Requirement: Every string and array in a document's input is bounded, or is named as opaque
+
+A procedure whose input holds a resource-owned document SHALL bound every string and array outside that document, and the bounds guard SHALL fail on an unbounded string or array anywhere in the input except inside the opaque subschema it names. The starter document's own strings (the MJML root's language, preview and title, and its attribute and body values) SHALL carry length limits in the shared schema, so the email and webpage procedures pass the guard without an opaque exemption that hides the document's fields.
+
+#### Scenario: An unbounded string beside an opaque document fails the guard
+
+- **GIVEN** a procedure whose input is an opaque document alongside a plain string with no length limit
+- **WHEN** the bounds guard runs over that procedure
+- **THEN** the guard reports the plain string's path
+
+#### Scenario: The MJML root's strings are bounded
+
+- **GIVEN** the email compile input with its root's language, preview and title, and its attribute and body strings
+- **WHEN** the bounds guard runs over `email.compile`
+- **THEN** no unbounded path is reported for the document's own fields

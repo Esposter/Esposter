@@ -21,6 +21,7 @@
 ## 4. Output proof
 
 - [x] 4.1 Assert each type's output whole across its edge values, and assert the sanitiser's vectors on the raw-HTML types. Verify: tests named after the scenarios 'A type's output matches for every edge value' and 'A hostile markup vector in custom HTML is removed'.
+- [ ] 4.2 Bound the MJML root's and the documents' strings in the shared schema, and make the bounds guard skip only the opaque subschema rather than the whole procedure. Verify: tests named after the scenarios 'An unbounded string beside an opaque document fails the guard' and 'The MJML root's strings are bounded'.
 
 ## 5. The record
 
