@@ -22,12 +22,12 @@ Build order. Section 1 lands the schema the rest reads, section 2 moves the shar
       Verify: every step test passes, and a test that fails the blob step asserts the user row still exists.
 - [x] 3.2 Make the handler idempotent: a second run over a finished sweep finds nothing and succeeds. Test first: running the handler twice leaves the same final state and returns success both times.
       Verify: the replay test passes.
-- [ ] 3.3 Register the handler as `AzureFunction.DeleteAccount` in `apps/functions/src/functions/`, and add the event type to `AzureFunction` in `packages/db-schema`.
+- [x] 3.3 Register the handler as `AzureFunction.DeleteAccount` in `apps/functions/src/functions/`, and add the event type to `AzureFunction` in `packages/db-schema`.
       Verify: the function index test lists the new function, and the enum entry is the one the web publisher imports.
 
 ## 4. Trigger and settings
 
-- [ ] 4.1 Add the `user.deleteAccount` mutation. It ends the caller's sessions, sets `deletionRequestedAt`, and publishes the Event Grid event after the write, as the room and resource deletions publish. Test first in the user router's test file: the caller's sessions are gone, the marker is set, and the publish happens once.
+- [x] 4.1 Add the `user.deleteAccount` mutation. It ends the caller's sessions, sets `deletionRequestedAt`, and publishes the Event Grid event after the write, as the room and resource deletions publish. Test first in the user router's test file: the caller's sessions are gone, the marker is set, and the publish happens once.
       Verify: the router test passes, and the mutation's input has no field that could bypass the typed confirmation.
 - [ ] 4.2 Add the Delete account flow to `apps/web/app/pages/user/settings.vue`. It opens a confirmation that names what is kept, requires the person to type their display name, and calls the mutation. Test first: the button does not call the mutation until the typed name matches.
       Verify: the settings test shows the kept list and the refusal to call the mutation on a click alone.
