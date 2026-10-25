@@ -40,7 +40,10 @@ export const todoListItemSchema = z.object({
   completedAt: z.coerce.date().optional(),
   dueAt: z.coerce.date().optional(),
   isImportant: z.literal(true).optional(),
-  notes: z.string().transform(sanitizeTextHtml).pipe(z.string().max(TODO_LIST_ITEM_NOTES_MAX_LENGTH)),
+  notes: z
+    .string()
+    .transform((html) => sanitizeTextHtml(html))
+    .pipe(z.string().max(TODO_LIST_ITEM_NOTES_MAX_LENGTH)),
   origin: todoListItemOriginSchema.optional(),
   recurrence: recurrenceSchema.optional(),
   steps: createUniqueArraySchema(todoListStepSchema, "id").min(1).max(TODO_LIST_ITEM_STEPS_MAX_LENGTH).optional(),

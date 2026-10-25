@@ -15,6 +15,9 @@ export const webhookPayloadSchema = z.strictObject({
   avatar_url: z.url().optional(),
   // Rendered as message markup like every other message body, so it is sanitized the same way before it is
   // Stored — the one message a caller outside the app writes cannot be the one that skips it
-  content: z.string().transform(sanitizeTextHtml).pipe(z.string().min(1).max(WEBHOOK_CONTENT_MAX_LENGTH)),
+  content: z
+    .string()
+    .transform((html) => sanitizeTextHtml(html))
+    .pipe(z.string().min(1).max(WEBHOOK_CONTENT_MAX_LENGTH)),
   username: z.string().max(USER_NAME_MAX_LENGTH).optional(),
 }) satisfies z.ZodType<WebhookPayload>;
