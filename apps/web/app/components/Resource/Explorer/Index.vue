@@ -27,6 +27,7 @@ useResourceSaveSubscribable(resource.type);
       <div flex-1 min-w-0 of-auto>
         <!-- Preview in place: the version renders where the blade was, so stepping through candidates never
           leaves the resource -->
+        <ResourceOtherSaveNotice />
         <ResourceVersionHistoryPreview
           v-if="previewSnapshotVersionId"
           :key="previewSnapshotVersionId"

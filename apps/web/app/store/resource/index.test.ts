@@ -869,6 +869,32 @@ describe(useResourceStore, () => {
       expect(reload).toHaveBeenCalledExactlyOnceWith(type);
     },
   );
+  // An unwritten edit is the person's, and another device's save must not replace it. The save is held behind the
+  // Stale latch, which holds autosave too, until the person answers
+  test("An unsaved edit stays on screen when another device saves", async () => {
+    expect.hasAssertions();
+
+    const resourceStore = useResourceStore();
+    const { heldSave, resource, saveState, unwrittenContentResourceId } = storeToRefs(resourceStore);
+    await resourceStore.readResource();
+    assert.exists(resource.value);
+    const { contentVersion, id } = resource.value;
+    const reload = vi.fn<(type: ResourceType) => void>();
+    const unregisterReload = ResourceContentHookMap.Reload.register(reload);
+    unwrittenContentResourceId.value = id;
+    await withFinalizerAsync(
+      () => resourceStore.storeSaveResourceContent({ contentVersion: contentVersion + 1, device }),
+      unregisterReload,
+    );
+    const isSaved = await resourceStore.saveContent(createDefaultSheetResource());
+
+    expect(reload).not.toHaveBeenCalled();
+    expect(heldSave.value).toStrictEqual({ contentVersion: contentVersion + 1, device });
+    expect(saveState.value).toBe(ResourceSaveState.Stale);
+    expect(isSaved).toBe(false);
+    expect(saveResourceContent).not.toHaveBeenCalled();
+  });
+
   // The save stream names the version and the device only, so an editor with nothing unwritten re-reads the document
   // through the reload stage and lets its library adopt it — the same two stages a restore runs
   test("An editor with nothing unsaved adopts a save in place", async () => {

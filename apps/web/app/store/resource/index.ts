@@ -96,6 +96,9 @@ export const useResourceStore = defineStore("resource", () => {
   // One-shot) until the next readResource() reads a fresh version. A ref because the toolbar renders it:
   // "out of date" is the one save state the owner has to act on
   const isContentStale = ref(false);
+  // Another device's save held behind an unwritten edit, until the person answers the notice. The stale latch holds
+  // autosave in the meantime; this is what the notice shows and answers
+  const heldSave = ref<ResourceSave>();
   // Whether the last content write was rejected for any other reason. Its notification is a one-shot the owner
   // Dismisses; this is what keeps saying so afterwards, because a failed save leaves work only in the tab
   const hasSaveContentFailed = ref(false);
@@ -150,6 +153,7 @@ export const useResourceStore = defineStore("resource", () => {
         // A fresh read carries the current contentVersion, so saving is meaningful again, and the row it
         // Carries is by definition what is written
         isContentStale.value = false;
+        heldSave.value = undefined;
         hasSaveContentFailed.value = false;
       },
       () => {
@@ -170,6 +174,7 @@ export const useResourceStore = defineStore("resource", () => {
     persistedContentJson = "";
     contentBaseline = undefined;
     isContentStale.value = false;
+    heldSave.value = undefined;
     hasSaveContentFailed.value = false;
     unwrittenContentResourceId.value = "";
   };
@@ -243,8 +248,16 @@ export const useResourceStore = defineStore("resource", () => {
   };
   // Another device saved this resource. Taken through the two stages a restore runs, which the reload leaves to
   // Adopt the document (openspec/changes/architecture-ai-native-resources-live-edits/design.md)
-  const storeSaveResourceContent = async ({ contentVersion }: ResourceSave) => {
+  const storeSaveResourceContent = async ({ contentVersion, device }: ResourceSave) => {
     if (!resource.value || contentVersion <= resource.value.contentVersion) return;
+
+    if (hasUnwrittenContent.value || checkIsSaveContentPending(currentResourceId.value)) {
+      // The unwritten edit is the person's, so the save waits for their answer, and the stale latch holds autosave
+      // until then
+      heldSave.value = { contentVersion, device };
+      isContentStale.value = true;
+      return;
+    }
 
     await reloadResourceContent();
     // The bytes this client held name a document the save replaced, so the next large save crosses whole. Cleared
@@ -500,6 +513,7 @@ export const useResourceStore = defineStore("resource", () => {
     deleteResource,
     duplicateResource,
     getOpening,
+    heldSave,
     isDuplicatePending,
     isPending,
     isPublicationPending,
