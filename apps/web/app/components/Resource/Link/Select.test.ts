@@ -1,11 +1,11 @@
 // @vitest-environment nuxt
-import ResourceProgramBindingSelect from "@/components/Resource/Program/BindingSelect.vue";
+import ResourceLinkSelect from "@/components/Resource/Link/Select.vue";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getMissingResourceMessage } from "@/services/resource/getMissingResourceMessage";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 
-describe("resourceProgramBindingSelect", () => {
+describe("resourceLinkSelect", () => {
   const label = "Email";
   const items = [{ meaning: UiIconMeaning.Email, title: "", value: crypto.randomUUID() }];
 
@@ -13,7 +13,7 @@ describe("resourceProgramBindingSelect", () => {
   test("says a binding whose resource is gone can't be found", async () => {
     expect.hasAssertions();
 
-    const wrapper = await mountSuspended(ResourceProgramBindingSelect, {
+    const wrapper = await mountSuspended(ResourceLinkSelect, {
       props: { label, modelValue: crypto.randomUUID(), resources: { hasMore: false, items } },
     });
 
@@ -28,7 +28,7 @@ describe("resourceProgramBindingSelect", () => {
   ])("claims nothing %s", async (_title, resources) => {
     expect.hasAssertions();
 
-    const wrapper = await mountSuspended(ResourceProgramBindingSelect, {
+    const wrapper = await mountSuspended(ResourceLinkSelect, {
       props: { label, modelValue: crypto.randomUUID(), resources },
     });
 

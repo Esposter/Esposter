@@ -89,12 +89,12 @@ watchAutosave(programResource, saveProgram);
     </UiFrame>
     <UiFrame title="Bindings">
       <p text-muted>The email that invites participants, and the survey their link opens.</p>
-      <ResourceProgramBindingSelect v-model="programResource.emailId" :resources="emailResources" label="Email" />
-      <ResourceProgramBindingSelect v-model="programResource.surveyId" :resources="surveyResources" label="Survey">
+      <ResourceLinkSelect v-model="programResource.emailId" :resources="emailResources" label="Email" />
+      <ResourceLinkSelect v-model="programResource.surveyId" :resources="surveyResources" label="Survey">
         <template #warning>
           <ResourceProgramSurveyModeWarning v-if="isAnonymousSurvey" />
         </template>
-      </ResourceProgramBindingSelect>
+      </ResourceLinkSelect>
     </UiFrame>
   </div>
 </template>
