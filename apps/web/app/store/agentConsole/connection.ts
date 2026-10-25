@@ -1,3 +1,4 @@
+import type { AssistantLine } from "@/models/agentConsole/AssistantLine";
 import type { Connection } from "@/models/agentConsole/Connection";
 import type { ConnectionSocket } from "@/models/agentConsole/ConnectionSocket";
 import type { Pairing } from "@/models/agentConsole/Pairing";
@@ -77,6 +78,8 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
   // The forks the side chat sent, which open its session rather than moving the tab to one, each with the question it
   // Was sent to ask, so a fork that fails clears only its own question
   const sideChatCommandIds = new Map<string, SideChatQuestion | undefined>();
+  // The Ask Claude lines a new session was started with, held until that session opens so the line is its first prompt
+  const assistantLineCommandIds = new Map<string, string>();
   const connectionSocketMap = new Map<string, ConnectionSocket>();
   const getConnectionSocket = (connectionId: string) =>
     getOrCreate(connectionSocketMap, connectionId, (): ConnectionSocket => ({
@@ -111,6 +114,7 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
         break;
       case ServerMessageType.CommandError: {
         openingCommandIds.delete(serverMessage.commandId);
+        assistantLineCommandIds.delete(serverMessage.commandId);
         // A fork that failed to open leaves its question unasked, so the reader can send it again. A question the
         // Drawer has held since, which this fork never carried, is not this fork's to clear
         const failedQuestion = sideChatCommandIds.get(serverMessage.commandId);
@@ -155,9 +159,15 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
         );
         break;
       case ServerMessageType.SessionOpened:
-        if (openingCommandIds.delete(serverMessage.commandId))
+        if (openingCommandIds.delete(serverMessage.commandId)) {
           agentConsoleSessionStore.currentSessionId = serverMessage.sessionId;
-        else if (sideChatCommandIds.delete(serverMessage.commandId))
+          // A line held for the session this command started is its first prompt, sent once the session is open
+          const assistantLine = assistantLineCommandIds.get(serverMessage.commandId);
+          if (assistantLine !== undefined) {
+            assistantLineCommandIds.delete(serverMessage.commandId);
+            sendCommand(toPromptCommand(serverMessage.sessionId, assistantLine, []), connectionId);
+          }
+        } else if (sideChatCommandIds.delete(serverMessage.commandId))
           storeSideChatOpened(connectionId, serverMessage.sessionId);
         break;
       case ServerMessageType.SessionReset:
@@ -408,7 +418,11 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
       : undefined);
   // A command about a session or a shell goes to the host holding it; one that opens a session goes where the reader
   // Chose, or to the first host reached. Returns whether the command was sent
-  const sendCommand = (command: DistributedOmit<Command, "id">, connectionId?: string) => {
+  const sendCommand = (
+    command: DistributedOmit<Command, "id">,
+    connectionId?: string,
+    commandId = crypto.randomUUID(),
+  ) => {
     const targetConnectionId =
       connectionId ??
       ("sessionId" in command ? getSessionConnectionId(command.sessionId) : undefined) ??
@@ -426,7 +440,7 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
       return false;
     }
 
-    const id = crypto.randomUUID();
+    const id = commandId;
     if (command.type === CommandType.Fork && command.isSideChat)
       sideChatCommandIds.set(id, agentConsoleSideChatStore.pendingQuestion);
     else if (
@@ -482,6 +496,18 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
     return isForkSent;
   };
 
+  // Ask Claude's line goes to the session the reader picked, or starts a new one in its folder, and the line is held
+  // until that session opens. Returns whether the line was sent, so a line refused while no host is reached is kept
+  const askAssistant = (line: AssistantLine, connectionId?: string) => {
+    if (line.sessionId) return sendCommand(toPromptCommand(line.sessionId, line.text, []), connectionId);
+
+    const commandId = crypto.randomUUID();
+    assistantLineCommandIds.set(commandId, line.text);
+    const isSessionSent = sendCommand({ cwd: line.cwd, type: CommandType.CreateSession }, connectionId, commandId);
+    if (!isSessionSent) assistantLineCommandIds.delete(commandId);
+    return isSessionSent;
+  };
+
   // Closing the drawer closes its fork on the host and discards its answers, which were never in the main conversation.
   // A fork still opening is left to storeSideChatOpened, which closes it as it arrives
   const closeSideChat = () => {
@@ -499,6 +525,7 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
   };
 
   return {
+    askAssistant,
     askSideChat,
     closeSideChat,
     connect,

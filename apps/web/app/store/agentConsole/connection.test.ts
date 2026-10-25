@@ -445,4 +445,54 @@ describe(useAgentConsoleConnectionStore, () => {
     });
     expect(id).toBeTypeOf("string");
   });
+
+  test("The line reaches an open session", async () => {
+    expect.hasAssertions();
+
+    const { agentConsoleConnectionStore, sessionId, socket } = await openConsole();
+    const isSent = agentConsoleConnectionStore.askAssistant({ cwd: "", sessionId, text: "rename the heading" });
+
+    const { id, ...prompt } = readLastCommand(socket);
+    expect(isSent).toBe(true);
+    expect(prompt).toStrictEqual({ attachments: [], sessionId, text: "rename the heading", type: CommandType.Prompt });
+    expect(id).toBeTypeOf("string");
+  });
+
+  test("A new session starts when none is open", async () => {
+    expect.hasAssertions();
+
+    const { agentConsoleConnectionStore, agentConsoleSessionStore, socket } = await openConsole();
+    agentConsoleSessionStore.sessions = [];
+    const newSessionId = crypto.randomUUID();
+    agentConsoleConnectionStore.askAssistant({ cwd: "C:/repo", sessionId: "", text: "rename the heading" });
+
+    const { id: createCommandId, ...createCommand } = readLastCommand(socket);
+    expect(createCommand).toStrictEqual({ cwd: "C:/repo", type: CommandType.CreateSession });
+    expect(createCommandId).toBeTypeOf("string");
+    dispatchMessage(socket, {
+      commandId: createCommandId,
+      sessionId: newSessionId,
+      type: ServerMessageType.SessionOpened,
+    });
+
+    const { id: promptId, ...prompt } = readLastCommand(socket);
+    expect(prompt).toStrictEqual({
+      attachments: [],
+      sessionId: newSessionId,
+      text: "rename the heading",
+      type: CommandType.Prompt,
+    });
+    expect(promptId).toBeTypeOf("string");
+  });
+
+  test("A turn runs in the person's session", async () => {
+    expect.hasAssertions();
+
+    const { agentConsoleConnectionStore, sessionId, socket } = await openConsole();
+    const sentBefore = socket.send.mock.calls.length;
+    agentConsoleConnectionStore.askAssistant({ cwd: "", sessionId, text: "rename the heading" });
+
+    expect(socket.send.mock.calls).toHaveLength(sentBefore + 1);
+    expect(readLastCommand(socket).type).toBe(CommandType.Prompt);
+  });
 });
