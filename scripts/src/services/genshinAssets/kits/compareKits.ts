@@ -4,7 +4,10 @@ import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
-import { buildKitRecordWithDonors } from "#src/services/genshinAssets/kits/buildKitRecordWithDonors";
+import {
+  buildKitRecordWithDonors,
+  readBuiltDonorRecordMap,
+} from "#src/services/genshinAssets/kits/buildKitRecordWithDonors";
 import {
   GCSIM_PLUNGE_FALLBACK_FOLDER,
   GCSIM_TAG,
@@ -17,7 +20,6 @@ import { getGcsimKitCandidates } from "#src/services/genshinAssets/kits/gcsim/ge
 import { readGcsimMainCharacters } from "#src/services/genshinAssets/kits/gcsim/readGcsimMainCharacters";
 import { toGcsimFolderName } from "#src/services/genshinAssets/kits/gcsim/toGcsimFolderName";
 import { getKitBagPaths } from "#src/services/genshinAssets/kits/getKitBagPaths";
-import { readDonorRecordMap } from "#src/services/genshinAssets/kits/readDonorRecordMap";
 import { readKitOverlayFile } from "#src/services/genshinAssets/kits/readKitOverlay";
 import { compareKitRecord } from "#src/services/genshinAssets/kits/record/compareKitRecord";
 import { getMismatchedKitPaths } from "#src/services/genshinAssets/kits/record/getMismatchedKitPaths";
@@ -68,11 +70,7 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
     }
     // A borrowed value is seeded from its donor's record, so a kit whose donor fails to build is reported, not seeded
     const donorRecordMap = getResult(() =>
-      readDonorRecordMap(
-        characterId,
-        committedOverlay,
-        (donorId, chain) => buildKitRecordWithDonors(donorId, inputMap, builtMap, chain).record,
-      ),
+      readBuiltDonorRecordMap(characterId, committedOverlay, inputMap, builtMap),
     ).match(
       (recordMap) => recordMap,
       (error) => {
