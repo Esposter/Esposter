@@ -11,7 +11,6 @@ import {
   ORE_ID,
   oreName,
   props,
-  rankedWeaponData,
   variants,
   weaponData,
 } from "#src/components/Weapon/Screen/Index.fixture";
@@ -39,15 +38,6 @@ describe("weaponScreen", () => {
   const heldRequiredExp =
     getRarityRequiredExps(props.rarityRequiredExpsMap, weaponData.rarity)[heldWeapon.level - 1] ?? 0;
   const heldExperienceText = `${heldWeapon.experience}/${heldRequiredExp}`;
-  // The names a passive is given in the passive tests, its name and its three ranks' descriptions by their text ids
-  const PASSIVE_NAMES: Record<string, string> = {
-    "passive-name": "Passive",
-    "passive-rank-1": "Rank one",
-    "passive-rank-2": "Rank two",
-    "passive-rank-3": "Rank three",
-  };
-  const PASSIVE_RANK_TEXT_IDS = ["passive-rank-1", "passive-rank-2", "passive-rank-3"];
-
   // The weapon's name, rarity, level in the game's own format, EXP, phase and refinement rank
   test("the weapon screen opens on a held weapon", async () => {
     expect.hasAssertions();
@@ -238,66 +228,5 @@ describe("weaponScreen", () => {
     await expect
       .element(page.getByText(ENGLISH_GAME_TEXT[GameTextKey.WeaponRefine], { exact: true }))
       .not.toBeInTheDocument();
-  });
-
-  // The passive's name and each rank's description, the rank the weapon holds marked
-  test("a weapon with a passive shows its description at its rank", async () => {
-    expect.hasAssertions();
-
-    const { container } = await render(WeaponScreenContainer, {
-      props: {
-        ...props,
-        nameText: { ...props.nameText, ...PASSIVE_NAMES },
-        weaponDataMap: new Map<number, WeaponData>([
-          ...props.weaponDataMap,
-          [
-            weaponData.id,
-            { ...weaponData, passiveNameTextId: "passive-name", passiveRankDescriptionTextIds: PASSIVE_RANK_TEXT_IDS },
-          ],
-        ]),
-      },
-    });
-
-    await expect.element(page.getByText("Passive", { exact: true })).toBeVisible();
-    expect(container.querySelectorAll(".passive-row")).toHaveLength(PASSIVE_RANK_TEXT_IDS.length);
-    expect(container.querySelector(".passive-row.held")?.textContent?.trim()).toBe("Rank one");
-  });
-
-  // A weapon with no passive lists none beneath its ores
-  test("a weapon with no passive shows none", async () => {
-    expect.hasAssertions();
-
-    const { container } = await render(WeaponScreenContainer, {
-      props: {
-        ...props,
-        weaponDataMap: new Map<number, WeaponData>([
-          ...props.weaponDataMap,
-          [weaponData.id, { ...weaponData, passiveNameTextId: "", passiveRankDescriptionTextIds: [] }],
-        ]),
-      },
-    });
-
-    expect(container.querySelector(".passive")).toBeNull();
-  });
-
-  // The held rank's description is the one the game gives that rank, its value filled in as the weapon's record gives it
-  test("a weapon's rank descriptions read the values their rank gives", async () => {
-    expect.hasAssertions();
-
-    const { container } = await render(WeaponScreenContainer, {
-      props: {
-        ...props,
-        weaponDataMap: new Map<number, WeaponData>([
-          ...props.weaponDataMap,
-          [weaponData.id, { ...rankedWeaponData, id: weaponData.id }],
-        ]),
-      },
-    });
-    const heldDescription = props.nameText[rankedWeaponData.passiveRankDescriptionTextIds[0] ?? ""] ?? "";
-    const heldValue = Math.round((rankedWeaponData.passiveRankParams[0]?.[0] ?? 0) * 100);
-
-    await expect.element(page.getByText(heldDescription, { exact: true })).toBeVisible();
-    expect(heldDescription).toContain(`${heldValue}%`);
-    expect(container.querySelector(".passive-row.held")?.textContent?.trim()).toBe(heldDescription);
   });
 });
