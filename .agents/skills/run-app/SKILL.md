@@ -29,11 +29,11 @@ No headless Chrome, no CDP, no screenshot after each edit, no poll loop for asyn
 3. **Otherwise nothing, and say so.** A component test that only exists after mocking a large surface — a store graph, the tRPC client, a third-party component's internals, a browser API per assertion — is not worth its weight: it pins the mocks rather than the component, and it is the maintenance the next change pays. **Not adding the test is the correct outcome there** and needs no apology; the layout is the user's to eyeball.
 4. **The user's own eyes** are the acceptance check for layout. Hand over what changed and what to look at, rather than claiming a look you did not take.
 
-Never report a visual change as verified on the strength of typecheck, lint or a passing suite. Say which of the four above happened.
+Never report a visual change as verified on the strength of typecheck, lint or a passing suite. Say which of the steps above happened.
 
 ## Launching the dev server (for the user, not for a driver)
 
-`pnpm dev --port 3001` from `apps/web` — 3000 is the user's; one server per directory, it binds `::1`, and never a temp script under `apps/web` while it runs (`references/dev-server.md`).
+`pnpm dev --port 3001` from `apps/web`, since port 3000 is the user's; the lock, the bind address and the temp-script hazard are in `references/dev-server.md`.
 
 ## Reference pages
 
