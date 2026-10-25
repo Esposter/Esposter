@@ -3,6 +3,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 
 import { noteRouter } from "#server/trpc/routers/note";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
+import { MimeType } from "#shared/models/file/MimeType";
 import { EMPTY_NOTE_DOC } from "#shared/services/resource/constants";
 import { ResourceType } from "@esposter/db-schema";
 import { beforeAll, describe, expect, test } from "vitest";
@@ -12,9 +13,24 @@ describe("noteRouter", () => {
   let caller: DecorateRouterRecord<TRPCRouter["note"]>;
   const name = "name";
   const note = { doc: EMPTY_NOTE_DOC };
+  const hash = "a".repeat(64);
+  const mimetype = MimeType.Png;
+  const size = 1;
 
   beforeAll(() => {
     caller = getCaller();
+  });
+
+  test("choosing an image from the menu adds it to the note", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    const sasEntities = await caller.generateUploadFileSasEntities({
+      files: [{ hash, mimetype, size }],
+      id: newResource.id,
+    });
+
+    expect(sasEntities).toStrictEqual([{ id: hash, isHeld: false, sasUrl: expect.any(String) }]);
   });
 
   test("saves and reads content", async () => {

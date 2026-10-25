@@ -21,7 +21,7 @@ export const ResourceDefinitionMap = {
     title: ResourceType.Blueprint,
   },
   [ResourceType.Dashboard]: {
-    capabilities: { publishable: true },
+    capabilities: { fileAssets: true, publishable: true },
     contentSchema: dashboardSchema,
     icon: "i-mdi:view-dashboard-edit",
     title: ResourceType.Dashboard,
@@ -39,7 +39,7 @@ export const ResourceDefinitionMap = {
     title: ResourceType.Flowchart,
   },
   [ResourceType.Note]: {
-    capabilities: { publishable: true },
+    capabilities: { fileAssets: true, publishable: true },
     contentSchema: noteResourceSchema,
     icon: "i-mdi:note-text",
     title: ResourceType.Note,

@@ -1,6 +1,6 @@
 ## 1. Storage
 
-- [ ] 1.1 Declare the note as holding file assets, so it gains the upload and file delete procedures. Verify: a test named after the scenario 'Choosing an image from the menu adds it to the note'.
+- [x] 1.1 Declare the note as holding file assets, so it gains the upload and file delete procedures. Verify: a test named after the scenario 'Choosing an image from the menu adds it to the note'.
 
 ## 2. Insertion
 
