@@ -11,7 +11,7 @@ This proposal replaces the engine rather than thinning it. The document becomes 
 - [MJML blocks](../../specs/mjml-blocks/README.md) — MJML's components as block types in the `mjml-blocks` package: their attributes, nesting, cascade, render and read back
 - [Document model](../../specs/resource/page-builder/document-model/design.md) — the typed node tree, the node types a registry holds for each editor, and how a document renders and publishes
 - [Canvas](../../specs/resource/page-builder/canvas/design.md) — the same-origin frame, its overlays, and the pointer, keyboard and layers paths that select and move nodes
-- [Style panel](../resource-page-builder-style-panel/design.md) — styles kept on each node per breakpoint and state, drawn by the library's controls
+- [Style panel](../../specs/resource/page-builder/style-panel/design.md) — styles kept on each node per breakpoint and state, drawn by the library's controls
 - [Undo as patches](../../specs/resource/page-builder/undo-as-patches/design.md) — every edit a JSON Patch with its inverse, so undo and redo are patch lists
 - [Email](../resource-page-builder-email/design.md) — the email editor over the MJML blocks: the design canvas, Preview compiled on the server, merge fields and the MJML import
 - [Performance and proof](../resource-page-builder-performance-and-proof/design.md) — the targets the editors hold, and how their output is proved against the published page

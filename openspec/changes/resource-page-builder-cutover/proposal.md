@@ -30,7 +30,7 @@ The new editors ship, every existing webpage and email is deleted, and the old e
 The page builder's phases one to four, which this change swaps in:
 
 - `openspec/specs/resource/page-builder/canvas/`, the webpage editor's canvas.
-- `openspec/changes/resource-page-builder-style-panel/`, the style panel.
+- `openspec/specs/resource/page-builder/style-panel/`, the style panel.
 - `openspec/changes/resource-page-builder-email/`, the email editor.
 - `openspec/changes/resource-page-builder-performance-and-proof/`, whose benches and proofs the editors pass before the swap.
 

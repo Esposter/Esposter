@@ -1,6 +1,6 @@
 # Style panel
 
-The webpage editor's Style and Theme panels, built once the [canvas](../../specs/resource/page-builder/canvas/design.md) draws the page and its tabs and [undo as patches](../../specs/resource/page-builder/undo-as-patches/design.md) records an edit.
+The webpage editor's Style and Theme panels, built once the [canvas](../../../specs/resource/page-builder/canvas/design.md) draws the page and its tabs and [undo as patches](../../../specs/resource/page-builder/undo-as-patches/design.md) records an edit.
 
 ## The style panel
 
@@ -9,11 +9,11 @@ A style belongs to the node it styles. Each webpage node carries a `style` prop:
 - **Breakpoints** are three, after Webflow's: base, tablet at 991 pixels and below, mobile at 478 and below, read from the module the canvas names its device widths in. The device toggle is the active breakpoint: editing at tablet writes the tablet override. Base is desktop and names no width; the canvas keeps its desktop frame at 992 pixels or wider, so base is what it shows.
 - **States** are default and hover. Hover on a type a reader can focus emits for `:focus-visible` too, so no hover-only affordance ships.
 - **Tokens** are the page's own, on the root: named colours, emitted as custom properties and edited in the Theme panel. Font stacks are tokens too and come with the typography sector (task 3.1), which widens the names the root accepts beyond `color-`. A colour field lists them as swatches first and a free colour second, and picking one stores `var(--color-name)`, so editing the token recolours everything that uses it. These are the page's tokens, not the app's palette: the app's tokens theme the editor around the canvas, while a published page has one look of its author's.
-- **Values** are free CSS within the property, checked with `CSS.supports` as they are typed; an invalid value stays in its field with the field's error and writes nothing. At the schema, a value is length-limited and excludes `<`, `{` and `}`, as [the canvas](../../specs/resource/page-builder/canvas/design.md) section says, and `/*` and `*/`.
+- **Values** are free CSS within the property, checked with `CSS.supports` as they are typed; an invalid value stays in its field with the field's error and writes nothing. At the schema, a value is length-limited and excludes `<`, `{` and `}`, as [the canvas](../../../specs/resource/page-builder/canvas/design.md) section says, and `/*` and `*/`.
 
 The panel is grouped in eight sectors, not the six that `WebpageEditorStyleManager` used before 8c1648f7, each sector a `UiCollapsible` titled with its name: layout and flex, spacing as its eight margin and padding fields, size, position, typography, background as a list of colour, image and gradient layers (what `grapesjs-style-bg` added), border, and effects. Each field shows the value at the active breakpoint and state, or the inherited one as a placeholder saying where it comes from ("from Desktop"), with a reset that removes the override. The controls are the library's: `UiTextField` with a unit `UiSelect` for a length, where the arrows step the number and keep the unit, Shift by ten, and a border's width leaves the percentage out of its units, since a border is never a share of its box; `UiToggleGroup` for alignment and direction, icon-only with their titles as their names; `UiColorField` with the token swatches, which the library grows first, in a commit of its own; `UiSlider` for opacity. A drag on a slider previews in the canvas without writing history and commits one entry when it settles, which the slider's `end` already reports for a key too. Copy style and Paste style are commands, the reuse a shared class would otherwise give.
 
-The field components take a value and its inherited placeholder, with no breakpoint of their own, so the [email editor](../resource-page-builder-email/design.md) draws its attribute fields with them.
+The field components take a value and its inherited placeholder, with no breakpoint of their own, so the [email editor](../../resource-page-builder-email/design.md) draws its attribute fields with them.
 
 ```mermaid
 flowchart TD

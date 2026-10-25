@@ -15,11 +15,12 @@
   - Done: the sectors, the Default/Hover state toggle, the colour fields with theme swatches, the opacity slider, the Reset button and the inherited placeholder. Files: `apps/web/app/components/PageBuilder/StylePanel/Index.vue`, `apps/web/app/components/Ui/ColorField.vue`, `apps/web/app/services/pageBuilder/constants.ts` (`STYLE_SECTORS`, `STYLE_COLOR_PROPERTIES`).
   - Done: the alignment and direction choices (`flex-direction`, `justify-content`, `align-items`, `text-align`) as `UiToggleGroup` segments, from `STYLE_CHOICES` in `constants.ts`. A mandatory group does not write on mount: `apps/web/app/components/PageBuilder/StylePanel/Index.test.ts` draws a node whose choices are unset and asserts no edit is recorded. A mandatory group still cannot show an unset choice, so an unset one reads as no segment chosen; the Reset button clears a set one.
   - Done: the length unit as a `UiSelect` beside the number, which the arrows step and Shift steps by ten, keeping the unit, and which a cleared number keeps. Files: `apps/web/app/components/PageBuilder/StylePanel/Field.vue`.
-  - Open: background layers. Not started.
+  - Owed, not built: the background sector's layer list (colour, image and gradient layers), not started. Its named scenarios are ticked above; the sector's layer list is not.
+  - Owed, not built: font-stack tokens. The design's typography sector was to widen the root's tokens beyond `color-` names, and the root still accepts only those.
 - [x] 3.2 Add Copy style and Paste style as commands. Verify: a test named after the scenario 'Paste style applies copied styles to another node'.
 - [x] 3.3 Preview slider drags on the canvas and record one undoable change on release. Verify: a test named after the scenario 'Dragging an opacity slider records one undoable change'.
 
 ## 4. The record
 
-- [ ] 4.1 Describe the style storage, the emitted rules and the two panels as built, then archive this change. Verify: the checks task 5.1 of [performance and proof](../resource-page-builder-performance-and-proof/tasks.md) names pass.
-  - Owed before archiving: the finishing audit on `d222a7a7`, `f0b3fea8`, `10d898c8`, `7c12218a` and `19578585`. The `code-review` pass over both lanes has not run on them, and `document-model/design.md` still needs its prose checked against the cascade.
+- [ ] 4.1 Describe the style storage, the emitted rules and the two panels as built, then archive this change. Verify: the checks task 5.1 of [performance and proof](../../resource-page-builder-performance-and-proof/tasks.md) names pass.
+  - Owed, not ticked: the finishing audit on `d222a7a7`, `f0b3fea8`, `10d898c8`, `7c12218a` and `19578585`. The `code-review` pass over both lanes has not run on them, and `document-model/design.md` still needs its prose checked against the cascade. Its verify also waits on performance and proof 5.1, which is unticked.
