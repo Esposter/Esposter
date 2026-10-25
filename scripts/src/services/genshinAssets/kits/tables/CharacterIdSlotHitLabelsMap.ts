@@ -45,6 +45,33 @@ export const CharacterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = n
       },
     },
   ],
+  // Xinyan. Each of her three shields reads its level's DMG Absorption label, the Defense share at the first position and
+  // The flat amount at the second
+  [
+    10_000_044,
+    {
+      values: {
+        "parameters.shieldDefenseShares.0": {
+          combatTalent: SKILL,
+          label: "Shield Level 1 DMG Absorption",
+          position: 0,
+        },
+        "parameters.shieldDefenseShares.1": {
+          combatTalent: SKILL,
+          label: "Shield Level 2 DMG Absorption",
+          position: 0,
+        },
+        "parameters.shieldDefenseShares.2": {
+          combatTalent: SKILL,
+          label: "Shield Level 3 DMG Absorption",
+          position: 0,
+        },
+        "parameters.shieldFlatHealths.0": { combatTalent: SKILL, label: "Shield Level 1 DMG Absorption", position: 1 },
+        "parameters.shieldFlatHealths.1": { combatTalent: SKILL, label: "Shield Level 2 DMG Absorption", position: 1 },
+        "parameters.shieldFlatHealths.2": { combatTalent: SKILL, label: "Shield Level 3 DMG Absorption", position: 1 },
+      },
+    },
+  ],
   // Rosaria. Rites of Termination's field seconds read its burst's Duration label
   [10_000_045, { values: { "parameters.ritesOfTerminationSeconds": { combatTalent: BURST, label: "Duration" } } }],
   // Yanfei. Done Deal's charged attack damage bonus reads its burst's Charged Attack DMG Bonus label
