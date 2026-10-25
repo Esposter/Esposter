@@ -25,6 +25,13 @@ describe(createMcpServer, () => {
         .mutation<string>(({ input: { value } }) => value),
     }),
   });
+  // A procedure the owner alone performs, opted in under a scope, so the refusal is the declaration's alone
+  const humanOnlyRouter = router({
+    purgeResource: publicProcedure
+      .meta({ humanOnly: "Nothing restores it", mcp: { description, scope: McpScope.Resources } })
+      .input(z.object({ id: z.string() }))
+      .mutation<string>(({ input: { id } }) => id),
+  });
 
   let mockContext: Context;
 
@@ -174,17 +181,21 @@ describe(createMcpServer, () => {
     );
   });
 
+  test("Human-only operations are not listed to a key with every scope", async () => {
+    expect.hasAssertions();
+
+    const client = await createConnectedClient(McpScopes, humanOnlyRouter);
+
+    const { tools } = await client.listTools();
+
+    expect(tools).toStrictEqual([]);
+  });
+
   // A procedure the owner alone performs is refused by name to a key holding every scope, as though it did not exist, so
   // the mutation that would purge is never reached. Its opt-in is set here, so the refusal is the declaration's alone
   test("A key cannot call a human-only operation by name", async () => {
     expect.hasAssertions();
 
-    const humanOnlyRouter = router({
-      purgeResource: publicProcedure
-        .meta({ humanOnly: "Nothing restores it", mcp: { description, scope: McpScope.Resources } })
-        .input(z.object({ id: z.string() }))
-        .mutation<string>(({ input: { id } }) => id),
-    });
     const client = await createConnectedClient(McpScopes, humanOnlyRouter);
 
     await expect(
