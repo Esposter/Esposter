@@ -4,7 +4,17 @@ import type { Database } from "@esposter/db-schema";
 import { cloneContentAssets } from "#server/services/resource/cloneContentAssets";
 import { FILES_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import { AzureContainer } from "@esposter/db-schema";
+import { createMockDb } from "@esposter/db-mock";
+import {
+  AzureContainer,
+  resourcePublicationsInResource,
+  resourcesInResource,
+  ResourceType,
+  resourceVersionAssetsInResource,
+  resourceVersionsInResource,
+  SnapshotChannel,
+  usersInAuth,
+} from "@esposter/db-schema";
 import { MockContainerClient, MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -30,6 +40,15 @@ describe(cloneContentAssets, () => {
   const sourceBlobName = `${sourceResourceId}/${FILES_DIRECTORY_SEGMENT}/${hash}`;
   const otherSourceBlobName = `${sourceResourceId}/${FILES_DIRECTORY_SEGMENT}/${otherHash}`;
   const destinationBlobName = `${destinationResourceId}/${FILES_DIRECTORY_SEGMENT}/${hash}`;
+  const thirdHash = "c".repeat(64);
+  const thirdBlobName = `${sourceResourceId}/${FILES_DIRECTORY_SEGMENT}/${thirdHash}`;
+  const publishVersion = 1;
+  // Three assets of one resource, the shape where a per-url query multiplies
+  const threeAssetContent = {
+    html: [sourceBlobName, otherSourceBlobName, thirdBlobName]
+      .map((blobName) => `<img src="${getResourceAssetUrl(blobName)}">`)
+      .join(""),
+  };
   // The clone asks the same question the serving endpoint does, so the rows that answer it are what a case varies: an
   // Owned working copy is readable to its owner, and an unowned one is readable to nobody
   const createDatabase = (isOwned: boolean) =>
@@ -47,7 +66,7 @@ describe(cloneContentAssets, () => {
     containerClient = new MockContainerClient("", AzureContainer.ResourceAssets);
     containerClientMock.current = containerClient as unknown as ContainerClient;
     await Promise.all(
-      [sourceBlobName, otherSourceBlobName].map((blobName) =>
+      [sourceBlobName, otherSourceBlobName, thirdBlobName].map((blobName) =>
         containerClient.getBlockBlobClient(blobName).upload(blobName, 1),
       ),
     );
@@ -122,6 +141,90 @@ describe(cloneContentAssets, () => {
 
     expect((await getBlobNames(`${destinationResourceId}/`)).toSorted()).toStrictEqual(
       [destinationBlobName, `${destinationResourceId}/${FILES_DIRECTORY_SEGMENT}/${otherHash}`].toSorted(),
+    );
+  });
+
+  // The rows the readability answer reads, in a real database, so the counts below are the queries production runs
+  const createSeededDatabase = async ({ isPublished, ownerId }: { isPublished: boolean; ownerId: string }) => {
+    const db = await createMockDb();
+    const createdAt = new Date(0);
+    await db
+      .insert(usersInAuth)
+      .values({
+        biography: "",
+        createdAt,
+        email: "email",
+        emailVerified: true,
+        id: ownerId,
+        name: "name",
+        updatedAt: createdAt,
+      });
+    await db
+      .insert(resourcesInResource)
+      .values({ id: sourceResourceId, name: "name", type: ResourceType.Webpage, userId: ownerId });
+    if (isPublished) {
+      await db
+        .insert(resourceVersionsInResource)
+        .values({
+          channel: SnapshotChannel.Published,
+          hash: "",
+          plaintextBytes: 0,
+          resourceId: sourceResourceId,
+          storedBytes: 0,
+          version: publishVersion,
+        });
+      await db.insert(resourcePublicationsInResource).values({ publishVersion, resourceId: sourceResourceId });
+      await db
+        .insert(resourceVersionAssetsInResource)
+        .values(
+          [hash, otherHash, thirdHash].map((assetHash) => ({
+            assetHash,
+            channel: SnapshotChannel.Published,
+            resourceId: sourceResourceId,
+            version: publishVersion,
+          })),
+        );
+    }
+    return db;
+  };
+
+  test("asks ownership once for a resource its caller owns, however many of its assets it copies", async () => {
+    expect.hasAssertions();
+
+    const db = await createSeededDatabase({ isPublished: false, ownerId: userId });
+    const findFirstResource = vi.spyOn(db.query.resourcesInResource, "findFirst");
+    const findFirstPublication = vi.spyOn(db.query.resourcePublicationsInResource, "findFirst");
+    const findFirstPublishedAsset = vi.spyOn(db.query.resourceVersionAssetsInResource, "findFirst");
+
+    await cloneContentAssets(db, userId, threeAssetContent, destinationResourceId);
+
+    expect(findFirstResource).toHaveBeenCalledTimes(1);
+    expect(findFirstPublication).not.toHaveBeenCalled();
+    expect(findFirstPublishedAsset).not.toHaveBeenCalled();
+    expect((await getBlobNames(`${destinationResourceId}/`)).toSorted()).toStrictEqual(
+      [hash, otherHash, thirdHash]
+        .map((assetHash) => `${destinationResourceId}/${FILES_DIRECTORY_SEGMENT}/${assetHash}`)
+        .toSorted(),
+    );
+  });
+
+  test("asks ownership and publication once each for a published resource a stranger clones, and the published lookup once per asset", async () => {
+    expect.hasAssertions();
+
+    const db = await createSeededDatabase({ isPublished: true, ownerId: crypto.randomUUID() });
+    const findFirstResource = vi.spyOn(db.query.resourcesInResource, "findFirst");
+    const findFirstPublication = vi.spyOn(db.query.resourcePublicationsInResource, "findFirst");
+    const findFirstPublishedAsset = vi.spyOn(db.query.resourceVersionAssetsInResource, "findFirst");
+
+    await cloneContentAssets(db, userId, threeAssetContent, destinationResourceId);
+
+    expect(findFirstResource).toHaveBeenCalledTimes(1);
+    expect(findFirstPublication).toHaveBeenCalledTimes(1);
+    expect(findFirstPublishedAsset).toHaveBeenCalledTimes(3);
+    expect((await getBlobNames(`${destinationResourceId}/`)).toSorted()).toStrictEqual(
+      [hash, otherHash, thirdHash]
+        .map((assetHash) => `${destinationResourceId}/${FILES_DIRECTORY_SEGMENT}/${assetHash}`)
+        .toSorted(),
     );
   });
 });

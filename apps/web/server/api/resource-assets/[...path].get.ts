@@ -10,6 +10,7 @@ import {
   RESOURCE_ASSET_CACHE_MAX_AGE_SECONDS,
   RESOURCE_ASSET_SAS_DURATION_MS,
 } from "#server/services/resource/constants";
+import { readResourceAccess } from "#server/services/resource/readResourceAccess";
 import { RESOURCE_ASSETS_URL_PREFIX } from "#shared/services/resource/constants";
 import { parseResourceAssetPath } from "#shared/services/resource/parseResourceAssetPath";
 import { IS_PRODUCTION } from "#shared/util/environment/constants";
@@ -49,7 +50,8 @@ export default defineEventHandler(async (event) => {
   // Owner's own render inside that iframe is refused the same way; only a direct request for the asset url reaches the
   // Owner fallback. That is what unpublish revoking anonymous access costs, and the point of the control
   const userId = getSessionPayload?.user.id;
-  if (!(await checkIsResourceAssetReadable(db, resourceAssetPath, userId)))
+  const resourceAccess = await readResourceAccess(db, resourceAssetPath.resourceId, userId);
+  if (!(await checkIsResourceAssetReadable(db, resourceAssetPath, resourceAccess)))
     throw createError({ status: userId ? 404 : 401 });
   // No existence probe — Azure itself 404s a missing blob when the redirect is followed
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);

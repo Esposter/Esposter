@@ -1,8 +1,10 @@
+import type { ResourceAccess } from "#server/models/resource/ResourceAccess";
 import type { ContainerClient } from "@azure/storage-blob";
 import type { Database, ResourceInResource } from "@esposter/db-schema";
 
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { checkIsResourceAssetReadable } from "#server/services/resource/checkIsResourceAssetReadable";
+import { readResourceAccess } from "#server/services/resource/readResourceAccess";
 import { relativizeOwnAssetUrls } from "#server/services/resource/relativizeOwnAssetUrls";
 import { emitStorageUsage } from "#server/services/storage/emitStorageUsage";
 import { RESOURCE_ASSET_URL_REGEX, RESOURCE_ASSETS_URL_PREFIX } from "#shared/services/resource/constants";
@@ -13,7 +15,7 @@ import { deepReplaceStrings } from "#shared/util/object/deepReplaceStrings";
 import { deepVisitStrings } from "#shared/util/object/deepVisitStrings";
 import { chargeStorageLedgerEntry, copyBlob, releaseStorageLedgerEntries } from "@esposter/db";
 import { AzureContainer, MAX_CONCURRENT_BLOB_COPIES } from "@esposter/db-schema";
-import { getResultAsync, noop, settleAll } from "@esposter/shared";
+import { getOrCreate, getResultAsync, noop, settleAll } from "@esposter/shared";
 
 // Copies one asset to the destination under the same hash. A destination that already holds the hash is the same bytes,
 // So nothing is copied or charged. Returns whether the destination now holds the asset: a source Azure cannot find reads as
@@ -62,11 +64,17 @@ export const cloneContentAssets = async <TContent>(
   if (urls.size === 0) return relativizedContent;
 
   const containerClient = await useContainerClient(AzureContainer.ResourceAssets);
+  // The promise is stored rather than its value, so the assets checked concurrently below share one read per resource
+  const resourceIdAccessMap = new Map<ResourceInResource["id"], Promise<ResourceAccess>>();
   const clonableAssets = (
     await Promise.all(
       Array.from(urls, async (url) => {
         const resourceAssetPath = parseResourceAssetPath(url.slice(`${RESOURCE_ASSETS_URL_PREFIX}/`.length));
-        if (!resourceAssetPath || !(await checkIsResourceAssetReadable(db, resourceAssetPath, userId))) return [];
+        if (!resourceAssetPath) return [];
+        const resourceAccess = await getOrCreate(resourceIdAccessMap, resourceAssetPath.resourceId, () =>
+          readResourceAccess(db, resourceAssetPath.resourceId, userId),
+        );
+        if (!(await checkIsResourceAssetReadable(db, resourceAssetPath, resourceAccess))) return [];
         return [
           {
             blobName: resourceAssetPath.blobName,
