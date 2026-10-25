@@ -22,7 +22,6 @@ Structure and helpers:
 - `references/case-tables.md` — when a test runs over a table of cases.
 - `references/test-helper-files.md` — when a helper, fixture or hook block is shared between suites: one function per file, `constants.test.ts`, `setup*` fixtures.
 - `references/wrapper-suites.md` — when two suites match modulo constants, or a suite tests a thin wrapper.
-- `references/fixture-paths.md` — when a test creates, reads or names a real filesystem path.
 - `references/type-tests.md` — when writing a `.test-d.ts`, or asserting a `void` return.
 - `references/router-test-setup.md` — when writing a tRPC router test: callers, mock sessions, seeded rows, naming.
 
@@ -51,6 +50,7 @@ Environment and running:
 - `references/bundle-size.md` — when a size snapshot fails or moves, or a new library package needs one.
 - `references/running-the-suite.md` — when narrowing a run with `-t` or `-u`, or reading a failure only the full parallel run produces.
 - `references/timeouts.md` — when a test, suite or config sets a timeout, or a test fails with `Test timed out`: the measurement and the ladder that decide whether a timeout is earned at all.
+- `references/regression-proof.md` — when a regression test is about to be kept, and its fix is reverted for the end-of-work run.
 
 ## Structure
 
@@ -100,6 +100,6 @@ Every literal, id, date, path and fixture a test writes is that skill's: the can
 
 **Every test earns its line or it is deleted** — the keep test in `references/what-earns-a-test.md` decides it.
 
-- **A regression test is proven to fail before it is kept** — the one end-of-work run (the `running-checks` skill) is made with the fix it guards reverted, the test is watched failing for the reason it names, and the fix is restored only after that run's exit line is in its log, never while it is still in flight, since a test file imported after the restore runs the fixed code; the commit follows the restore. No second run follows the restore. A test that has only passed against fixed code has shown that it passes; the un-awaited form in `references/awaiting-a-double.md` is the same step for an ordering contract.
+- **A regression test is proven to fail before it is kept** — the end-of-work run that shows it is `references/regression-proof.md`.
 
 - What never earns a line, and the subjects already decided: `references/what-earns-a-test.md`.
