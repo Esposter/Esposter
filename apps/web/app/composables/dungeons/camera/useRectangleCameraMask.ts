@@ -2,8 +2,8 @@ import type { CameraMask } from "@/models/dungeons/camera/CameraMask";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { useSkippableAnimation } from "@/composables/dungeons/animation/useSkippableAnimation";
-import { removeCameraMask } from "@/composables/dungeons/camera/removeCameraMask";
 import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
+import { removeCameraMask } from "@/services/dungeons/camera/removeCameraMask";
 import { Geom, Math } from "phaser";
 
 const maskMap = new WeakMap<SceneWithPlugins, CameraMask>();
