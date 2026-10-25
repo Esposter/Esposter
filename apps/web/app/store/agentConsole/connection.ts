@@ -440,9 +440,8 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
       return false;
     }
 
-    const id = commandId;
     if (command.type === CommandType.Fork && command.isSideChat)
-      sideChatCommandIds.set(id, agentConsoleSideChatStore.pendingQuestion);
+      sideChatCommandIds.set(commandId, agentConsoleSideChatStore.pendingQuestion);
     else if (
       [
         CommandType.CreateSession,
@@ -452,8 +451,8 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
         CommandType.ResumeAt,
       ].includes(command.type)
     )
-      openingCommandIds.add(id);
-    webSocket.send(JSON.stringify({ ...command, id }));
+      openingCommandIds.add(commandId);
+    webSocket.send(JSON.stringify({ ...command, id: commandId }));
     return true;
   };
 
