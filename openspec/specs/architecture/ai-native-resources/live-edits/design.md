@@ -18,7 +18,7 @@ The TodoList saves each edit as it happens, so it rarely holds an unwritten one,
 
 ## Meeting an unsaved edit
 
-An editor holding an unwritten edit overwrites nothing in either direction. The notice comes the moment the other save lands, saying where the save came from — another device, or an agent by its key's name from the owner's key list — with two answers:
+An editor holding an unwritten edit overwrites nothing in either direction. The notice comes the moment the other save lands, saying where the save came from — another device, or an agent by the key name its save carried — with two answers:
 
 - **Take theirs** adopts as above and drops the local edit.
 - **Keep mine** re-saves the local document through the existing save mutation at the newer version, replacing the other write, which stays in version history.
