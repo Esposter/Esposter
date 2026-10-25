@@ -58,7 +58,7 @@ Rate limiting and verification rows also carry the user id, and both expire on t
 
 A deletion or an export cannot be complete while these hold, and each one is named where it is decided.
 
-1. A deleted room's message index, `MessagesAscending`, outlives the room. The sweep clears the four partitions the design names, and this index is not one of them (`user-account-deletion/design.md`, "Owned rooms are deleted, as an owner's departure already deletes them").
+1. A deleted room's message index, `MessagesAscending`, outlives the room. The sweep clears the four partitions the design names, and this index is not one of them (`user-account-deletion/design.md`, the decision on owned rooms).
 2. Messages a user wrote in rooms they have since left stay attributed to them, because membership is the only index (`user-account-deletion/design.md`, "Limits the spec states").
 3. Moderation logs and notes that name the user in rooms it does not own, and the user's activity on other people's resources, are kept (`user-account-deletion/specs/user/account-deletion/spec.md`, "The deletion states what it does not remove").
 4. The shared character-pack files are kept, and have no owner to attribute them to (`user-account-deletion/specs/user/account-deletion/spec.md`, "The deletion states what it does not remove").
