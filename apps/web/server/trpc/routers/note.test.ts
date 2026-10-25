@@ -7,9 +7,9 @@ import { MimeType } from "#shared/models/file/MimeType";
 import { NoteMarkdownWriteMode } from "#shared/models/resource/note/NoteMarkdownWriteMode";
 import { EMPTY_NOTE_DOC } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
-import { AzureContainer, ResourceType } from "@esposter/db-schema";
+import { AzureContainer, ResourceType, WRITE_SAS_DURATION_MS } from "@esposter/db-schema";
 import { getBlobUrl, getMockSasUrl } from "azure-mock";
-import { beforeAll, describe, expect, test } from "vitest";
+import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 describe("noteRouter", () => {
   const { getCaller } = setupResourceSuite(noteRouter);
@@ -24,9 +24,14 @@ describe("noteRouter", () => {
     caller = getCaller();
   });
 
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   test("an image upload is given a write address under the resource's files directory", async () => {
     expect.hasAssertions();
 
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     const newResource = await caller.createResource({ name });
     const sasEntities = await caller.generateUploadFileSasEntities({
       files: [{ hash, mimetype, size }],
@@ -34,9 +39,14 @@ describe("noteRouter", () => {
     });
 
     const blobName = `${getFilesDirectoryName(newResource.id)}/${hash}`;
+    const expiresOn = new Date(WRITE_SAS_DURATION_MS);
 
     expect(sasEntities).toStrictEqual([
-      { id: hash, isHeld: false, sasUrl: getMockSasUrl(getBlobUrl(AzureContainer.ResourceAssets, blobName), "w", "b") },
+      {
+        id: hash,
+        isHeld: false,
+        sasUrl: getMockSasUrl(getBlobUrl(AzureContainer.ResourceAssets, blobName), "w", "b", expiresOn),
+      },
     ]);
   });
 
