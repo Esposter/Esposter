@@ -1,3 +1,4 @@
+import type { DominantColour } from "#src/models/genshinAssets/palette/DominantColour";
 import type { Vector } from "#src/models/shared/Vector";
 
 import { clusterColours } from "#src/services/genshinAssets/fit/clusterColours";
@@ -7,12 +8,6 @@ import { computeSquaredDistance } from "#src/services/genshinAssets/fit/computeS
 const PALETTE_CLUSTER_COUNT = 4;
 // The channels a texel is measured over, so the scatter is per channel rather than over all three at once
 const CHANNEL_COUNT = 3;
-
-export interface DominantColour {
-  linear: Vector;
-  spread: number;
-  texelCount: number;
-}
 
 // The colour a family paints its part with: the mean of its largest cluster of linear texels, so the most common tone
 // Wins over the lines and wear its texture carries. The spread is the root mean square difference of that cluster's texels
