@@ -1,4 +1,3 @@
-// @vitest-environment nuxt
 import type { Editor } from "@tiptap/core";
 
 import { waitForSynchronizedFunctions } from "@esposter/shared";

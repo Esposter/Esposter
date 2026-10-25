@@ -7,9 +7,13 @@ import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { useAgentConsoleSideChatStore } from "@/store/agentConsole/sideChat";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { CommandType } from "agent-console-server/contracts";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(AgentConsoleMarkdown, () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   test("opens a link to a page of the app in the side pane, and leaves an anchor on this page to the browser", async () => {
     expect.hasAssertions();
 

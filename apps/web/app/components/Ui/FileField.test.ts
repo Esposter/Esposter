@@ -5,7 +5,7 @@ import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { getFileSize } from "@/services/file/getFileSize";
 import { flushPromises, mount } from "@vue/test-utils";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 const createDropEvent = (files: File[]) => {
   const event = new Event("drop", { bubbles: true, cancelable: true });
@@ -18,6 +18,10 @@ const createDropEvent = (files: File[]) => {
 describe("uiFileField", () => {
   describe.each(UiStyles)("%s", (uiStyle) => {
     setupUiStyle(uiStyle);
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
 
     const label = "label";
     const accept = "image/*";

@@ -7,11 +7,15 @@ import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { useAgentConsoleSideChatStore } from "@/store/agentConsole/sideChat";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { CommandType } from "agent-console-server/contracts";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(AgentConsolePanelMessageActions, () => {
   const sessionId = crypto.randomUUID();
   const messageUuid = crypto.randomUUID();
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
 
   test("fork on a side chat's message forks it as a side chat", async () => {
     expect.hasAssertions();

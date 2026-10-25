@@ -1,8 +1,12 @@
 import { ignoreWarn } from "@/util/console/ignoreWarn";
 import { noop } from "@esposter/shared";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(ignoreWarn, () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   test("ignores warn", () => {
     expect.hasAssertions();
 
@@ -12,7 +16,5 @@ describe(ignoreWarn, () => {
     });
 
     expect(warn).not.toHaveBeenCalled();
-
-    warn.mockRestore();
   });
 });

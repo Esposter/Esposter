@@ -6,7 +6,7 @@ import { useAgentConsoleSessionStore } from "@/store/agentConsole/session";
 import { useAgentConsoleSideChatStore } from "@/store/agentConsole/sideChat";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { AgentEventType, CommandType, SessionState } from "agent-console-server/contracts";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 const pairConsole = () => {
   const agentConsoleConnectionStore = useAgentConsoleConnectionStore();
@@ -31,6 +31,10 @@ const runSession = (sessionId: string) => {
 };
 
 describe(AgentConsoleSheet, () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   test("the chord opens the side chat", async () => {
     expect.hasAssertions();
 

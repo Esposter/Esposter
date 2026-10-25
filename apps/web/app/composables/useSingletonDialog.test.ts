@@ -1,4 +1,3 @@
-// @vitest-environment nuxt
 import { useSingletonDialog } from "@/composables/useSingletonDialog";
 import { DIALOG_CLOSE_DURATION_MS } from "@/services/ui/constants";
 import { describe, expect, onTestFinished, test, vi } from "vitest";

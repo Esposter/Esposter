@@ -1,4 +1,3 @@
-// @vitest-environment nuxt
 import { useAutoSearch } from "@/composables/useAutoSearch";
 import { AUTO_SEARCH_THROTTLE_MS } from "@/services/shared/constants";
 import { flushPromises } from "@vue/test-utils";

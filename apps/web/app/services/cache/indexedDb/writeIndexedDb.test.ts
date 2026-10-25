@@ -17,16 +17,6 @@ describe(writeIndexedDb, () => {
     vi.restoreAllMocks();
   });
 
-  test("writes items for a given partitionKey successfully", async () => {
-    expect.hasAssertions();
-
-    const messages = [message1, message3];
-    await writeIndexedDb(MessageIndexedDbStoreConfiguration, messages, message1.partitionKey);
-    const result = await readIndexedDb(MessageIndexedDbStoreConfiguration, message1.partitionKey);
-
-    expect(result).toHaveLength(2);
-  });
-
   test("replaces existing items on re-write", async () => {
     expect.hasAssertions();
 

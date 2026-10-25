@@ -1,7 +1,7 @@
 import { signOut } from "@/services/auth/authClient.test";
 import { signOutOfBrowser } from "@/services/auth/signOutOfBrowser";
 import { noop, RoutePath } from "@esposter/shared";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
@@ -10,6 +10,11 @@ describe(signOutOfBrowser, () => {
 
   beforeEach(() => {
     vi.stubGlobal("window", { location: { href: "", reload: reloadMock } });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
 
   test("lands on the given path", async () => {

@@ -1,7 +1,7 @@
 // @vitest-environment nuxt
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { TRPCClientError } from "@trpc/client";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 vi.mock("@/services/auth/authClient", () => ({
   authClient: { useSession: () => ({ value: { data: { user: {} } } }) },
@@ -20,7 +20,7 @@ const createConflictError = () =>
   TRPCClientError.from<never>({ error: { code: -32_009, data: { code: "CONFLICT" }, message: "conflict" } });
 
 describe(useSave, () => {
-  beforeEach(() => {
+  afterEach(() => {
     vi.unstubAllGlobals();
   });
 

@@ -190,19 +190,7 @@ describe(useMutation, () => {
     expect(alerts.value).toHaveLength(1);
   });
 
-  test("reports a superseded write as stale rather than succeeded", async () => {
-    expect.hasAssertions();
-
-    const { executeMutation } = useMutation();
-    const { promise: supersededPromise, resolve: resolveSuperseded } = Promise.withResolvers<void>();
-    const supersededWrite = executeMutation(() => supersededPromise, { isSupersede: true, key });
-    await executeMutation(() => Promise.resolve(), { isSupersede: true, key });
-    resolveSuperseded();
-
-    await expect(supersededWrite).resolves.toStrictEqual({ status: MutationStatus.Stale });
-  });
-
-  test("drops the superseded onSuccess for overlapping supersede writes with the same key", async () => {
+  test("reports a superseded write as stale and drops its onSuccess when an overlapping supersede write lands", async () => {
     expect.hasAssertions();
 
     const supersededOnSuccess = vi.fn<() => void>();
@@ -216,8 +204,8 @@ describe(useMutation, () => {
     });
     await executeMutation(() => Promise.resolve(), { isSupersede: true, key, onSuccess: freshOnSuccess });
     resolveSuperseded();
-    await supersededWrite;
 
+    await expect(supersededWrite).resolves.toStrictEqual({ status: MutationStatus.Stale });
     expect(supersededOnSuccess).not.toHaveBeenCalled();
     expect(freshOnSuccess).toHaveBeenCalledTimes(1);
   });
@@ -352,33 +340,20 @@ describe(useMutation, () => {
     expect(alerts.value).toHaveLength(1);
   });
 
-  test("tracks pending state across a call's lifecycle", async () => {
-    expect.hasAssertions();
-
-    const { executeMutation, isPending } = useMutation();
-    const { promise: mutatePromise, resolve: resolveMutate } = Promise.withResolvers<void>();
-    const pendingWrite = executeMutation(() => mutatePromise, { key });
-    const isPendingWhileInFlight = isPending.value;
-    await flushPromises();
-    resolveMutate();
-    await pendingWrite;
-
-    expect(isPendingWhileInFlight).toBe(true);
-    expect(isPending.value).toBe(false);
-  });
-
-  test("scopes checkIsPending to its key while isPending aggregates", async () => {
+  test("tracks pending state across a call's lifecycle, scoped to its key while isPending aggregates", async () => {
     expect.hasAssertions();
 
     const { checkIsPending, executeMutation, isPending } = useMutation();
     const { promise: mutatePromise, resolve: resolveMutate } = Promise.withResolvers<void>();
     const pendingWrite = executeMutation(() => mutatePromise, { key });
+    const isPendingWhileInFlight = isPending.value;
     const isKeyPendingWhileInFlight = checkIsPending(key);
     const isOtherKeyPendingWhileInFlight = checkIsPending(otherKey);
     await flushPromises();
     resolveMutate();
     await pendingWrite;
 
+    expect(isPendingWhileInFlight).toBe(true);
     expect(isKeyPendingWhileInFlight).toBe(true);
     expect(isOtherKeyPendingWhileInFlight).toBe(false);
     expect(isPending.value).toBe(false);
@@ -476,21 +451,7 @@ describe(useMutation, () => {
     expect(outcome).toStrictEqual({ error, status: MutationStatus.Failed });
   });
 
-  test("reports a dropped exclusive call as distinct from success", async () => {
-    expect.hasAssertions();
-
-    const { executeMutation } = useMutation();
-    const { promise: firstPromise, resolve: resolveFirst } = Promise.withResolvers<void>();
-    const first = executeMutation(() => firstPromise, { isExclusive: true, key });
-    await flushPromises();
-    const outcome = await executeMutation(() => Promise.resolve(), { isExclusive: true, key });
-    resolveFirst();
-    await first;
-
-    expect(outcome).toStrictEqual({ status: MutationStatus.Dropped });
-  });
-
-  test("drops a concurrent exclusive call with the same key", async () => {
+  test("drops a concurrent exclusive call with the same key, reporting it as distinct from success", async () => {
     expect.hasAssertions();
 
     const { executeMutation } = useMutation();
@@ -498,11 +459,12 @@ describe(useMutation, () => {
     const mutate = vi.fn<() => Promise<void>>();
     mutate.mockReturnValueOnce(firstPromise);
     const first = executeMutation(mutate, { isExclusive: true, key });
-    await executeMutation(mutate, { isExclusive: true, key });
     await flushPromises();
+    const outcome = await executeMutation(mutate, { isExclusive: true, key });
     resolveFirst();
     await first;
 
+    expect(outcome).toStrictEqual({ status: MutationStatus.Dropped });
     expect(mutate).toHaveBeenCalledTimes(1);
   });
 
