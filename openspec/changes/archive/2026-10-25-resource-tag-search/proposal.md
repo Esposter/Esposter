@@ -2,7 +2,7 @@
 
 ## Why
 
-Global search matches resource names only. The tags spec says so as an open gap: free-text tag search inside global search is not wired up, and tags are reached through the `/all` filter pill and the tags list instead. An owner who remembers a label, such as `environment: production`, and not the resource's name cannot find it from the palette. The resource roadmap does not name this gap. It is gap 10 of the [gap survey](../gap-survey-2026-10-25/proposal.md).
+Global search matches resource names only. The tags spec says so as an open gap: free-text tag search inside global search is not wired up, and tags are reached through the `/all` filter pill and the tags list instead. An owner who remembers a label, such as `environment: production`, and not the resource's name cannot find it from the palette. The resource roadmap does not name this gap. It is gap 10 of the [gap survey](../2026-10-25-gap-survey-2026-10-25/proposal.md).
 
 ## What Changes
 
