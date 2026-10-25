@@ -1,6 +1,8 @@
+import type { Drag } from "@/models/ui/Drag";
+import type { Press } from "@/models/ui/Press";
+
 import { getMovedItems } from "@/services/shared/getMovedItems";
 import {
-  DRAG_AUTOSCROLL_EDGE,
   DRAG_AUTOSCROLL_SPEED,
   DRAG_IGNORE_SELECTOR,
   DRAG_START_DISTANCE,
@@ -9,87 +11,15 @@ import {
   REORDER_SLIDE_TRANSITION,
   TOUCH_DRAG_DELAY_MS,
 } from "@/services/ui/constants";
+import { getAutoscroll } from "@/services/ui/getAutoscroll";
+import { getChildOf } from "@/services/ui/getChildOf";
+import { getScrollers } from "@/services/ui/getScrollers";
+import { swallowClick } from "@/services/ui/swallowClick";
 import { takeOne } from "@esposter/shared";
-
-interface Drag {
-  // Where the held row sat when the drag started, so a scroll under it since is added back to the pointer's travel
-  layoutTop: number;
-  // The offset that sits the held row in each slot, from where the rows sat when the drag started
-  offsets: number[];
-  // The container's scale on screen, so an offset measured on screen is written in the container's own pixels
-  scale: number;
-  // Each ancestor that may scroll, innermost first and the page last
-  scrollers: Element[];
-  // How far a row the held one passes moves aside: the held row's height and the gap after it
-  shift: number;
-  targetIndex: number;
-  // How far the held row is from its own slot, on screen
-  translate: number;
-}
-
-interface Press {
-  container: HTMLElement;
-  drag?: Drag;
-  index: number;
-  // A drag Escape cancelled while the pointer stays down, whose release still raises a click
-  isCancelled: boolean;
-  items: HTMLElement[];
-  // Ends the listeners the press holds
-  listeners: AbortController;
-  observer?: MutationObserver;
-  pointerId: number;
-  pointerType: string;
-  pointerY: number;
-  reorder: (toIndex: number) => void;
-  startX: number;
-  startY: number;
-}
 
 // A press an inner container took, so an outer one it bubbles through leaves it alone
 const claimedPresses = new WeakSet<PointerEvent>();
 
-const getChildOf = (container: HTMLElement, target: Element) => {
-  let element: Element | null = target;
-  while (element && element.parentElement !== container) element = element.parentElement;
-  return element;
-};
-
-const getScrollers = (container: HTMLElement) => {
-  const scrollers: Element[] = [];
-  for (
-    let element: HTMLElement | null = container;
-    element && element !== window.document.body && element !== window.document.documentElement;
-    element = element.parentElement
-  ) {
-    const { overflowY } = getComputedStyle(element);
-    if (overflowY === "auto" || overflowY === "overlay" || overflowY === "scroll") scrollers.push(element);
-  }
-  scrollers.push(window.document.scrollingElement ?? window.document.documentElement);
-  return scrollers;
-};
-// The innermost scroller the pointer is near the top or bottom edge of, or past it, that can still scroll that way,
-// And how fast as a share of the full speed. Its edge is where it is seen, so one running past the window's edge
-// Scrolls from the window's
-const getAutoscroll = (scrollers: Element[], pointerY: number) => {
-  for (const scroller of scrollers) {
-    const { bottom, top } =
-      scroller === window.document.scrollingElement
-        ? { bottom: window.innerHeight, top: 0 }
-        : scroller.getBoundingClientRect();
-    const upDepth = Math.max(top, 0) + DRAG_AUTOSCROLL_EDGE - pointerY;
-    if (upDepth > 0 && scroller.scrollTop > 0) return { scroller, speed: -Math.min(upDepth / DRAG_AUTOSCROLL_EDGE, 1) };
-    const downDepth = pointerY - Math.min(bottom, window.innerHeight) + DRAG_AUTOSCROLL_EDGE;
-    // A scroller at its end can land a fraction of a pixel short of it
-    if (downDepth > 0 && scroller.scrollTop + scroller.clientHeight < scroller.scrollHeight - 1)
-      return { scroller, speed: Math.min(downDepth / DRAG_AUTOSCROLL_EDGE, 1) };
-  }
-  return undefined;
-};
-
-const swallowClick = (event: MouseEvent) => {
-  event.preventDefault();
-  event.stopPropagation();
-};
 // Reorders a container's children by dragging one, as the pointer half of a reorderable list, whose keyboard half is
 // `useReorder`. The props go on the container, whose element children are the rows, one for each value in order. A
 // Mouse or pen drags once the press moves a few pixels, a finger once it rests, so a swipe still scrolls. The held row

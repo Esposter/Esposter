@@ -1,16 +1,7 @@
+import type { HistoryCommandOptions } from "@/models/ui/HistoryCommandOptions";
 import type { UiCommand } from "@/models/ui/UiCommand";
-import type { Promisable } from "type-fest";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-
-interface HistoryCommandOptions {
-  group: string;
-  idPrefix: string;
-  redo: () => Promisable<void>;
-  redoTitle: string;
-  undo: () => Promisable<void>;
-  undoTitle: string;
-}
 
 // Undo and redo for an editor's history, with the redo's Y shortcut beside its usual one so both keyboards reach it.
 // Each editor names its commands by its own prefix, and titles them by what its history would act on
