@@ -7,9 +7,9 @@ import { readdir, readFile } from "node:fs/promises";
 import { join, posix, relative, sep } from "node:path";
 
 // The integrity hash of every file the build serves from its public directory, keyed by the url the page names it by.
-// The client bundles are written into that directory, not into a public asset Nitro copies from, so the hashes are
-// read from it once Nitro has copied the public assets. The url takes the app's CDN when one is set, and the app's
-// base url otherwise
+// The client bundles are written under `.nuxt/dist/client`, which Nuxt registers as a Nitro public asset. Nitro copies
+// that into the public directory before this hook runs, so the hashes are read from that copy. The url takes the app's
+// CDN when one is set, and the app's base url otherwise
 export const computeSubresourceIntegrityHashes = async (nitro: Nitro): Promise<Record<string, string>> => {
   const { baseURL: appBaseUrl, cdnURL: appCdnUrl } = nitro.options.runtimeConfig.app;
   const { publicDir } = nitro.options.output;

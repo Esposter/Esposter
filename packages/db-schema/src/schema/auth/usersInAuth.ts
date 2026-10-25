@@ -17,8 +17,8 @@ export const usersInAuth = pgTable(
   "users",
   {
     biography: text().notNull().default(""),
-    // Set when the person asks to delete their account. The row is the marker the deletion sweep resumes from, so
-    // It is removed last, and a row still carrying this stamp is an account whose sweep has not finished
+    // When the person asked to delete their account. The sweep does not read it: its key is the user id on the event,
+    // And the row goes last, so a row still carrying this stamp is an account whose sweep has not finished
     deletionRequestedAt: timestamp(),
     email: text().notNull().unique(),
     emailVerified: boolean().notNull(),
