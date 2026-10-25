@@ -6,6 +6,7 @@ import { checkIsOpenFollowUp } from "#server/services/resource/todoList/checkIsO
 import { requireOpenFollowUp } from "#server/services/resource/todoList/requireOpenFollowUp";
 import { updateTodoListContent } from "#server/services/resource/todoList/updateTodoListContent";
 import { router } from "#server/trpc";
+import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
 import { McpScope } from "#shared/models/auth/McpScope";
@@ -13,8 +14,10 @@ import { addFollowUpInputSchema } from "#shared/models/db/resource/todoList/AddF
 import { completeFollowUpInputSchema } from "#shared/models/db/resource/todoList/CompleteFollowUpInput";
 import { handBackFollowUpInputSchema } from "#shared/models/db/resource/todoList/HandBackFollowUpInput";
 import { readFollowUpsInputSchema } from "#shared/models/db/resource/todoList/ReadFollowUpsInput";
+import { toggleTodoCompletedInputSchema } from "#shared/models/db/resource/todoList/ToggleTodoCompletedInput";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
+import { checkRollsOnTick } from "#shared/services/resource/todoList/checkRollsOnTick";
 import { rollRecurringItem } from "#shared/services/resource/todoList/rollRecurringItem";
 import { ResourceType } from "@esposter/db-schema";
 
@@ -24,6 +27,23 @@ import { ResourceType } from "@esposter/db-schema";
 // Wrote, and none deletes one
 export const todoListRouter = router({
   ...createResourceProcedures(ResourceType.TodoList),
+  // The checkbox's tick for any todo, as the browser takes it: a repeating one rolls on, and any other completes or reopens
+  toggleTodoCompleted: getOwnerProcedure(ResourceType.TodoList, toggleTodoCompletedInputSchema, "id")
+    .meta({
+      mcp: {
+        description:
+          "Tick a todo as its checkbox does: a repeating todo with a due date rolls to its next due date in the time zone given rather than completing, and any other todo completes, or reopens if it already is completed. Answers nothing.",
+        scope: McpScope.Resources,
+      },
+    })
+    .mutation<void>(async ({ ctx, input: { itemId, timeZone } }) => {
+      await updateTodoListContent(ctx, ctx.resource, (todoList) => {
+        const item = todoList.items.find(({ id }) => id === itemId);
+        if (!item) throw getNotFoundError("Todo", itemId);
+        if (checkRollsOnTick(item)) rollRecurringItem(item, item.dueAt, item.recurrence, timeZone);
+        else item.completedAt = item.completedAt ? undefined : new Date();
+      });
+    }),
   addFollowUp: getOwnerProcedure(ResourceType.TodoList, addFollowUpInputSchema, "id")
     .meta({
       mcp: {

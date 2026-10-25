@@ -69,6 +69,7 @@ describe(getMcpTools, () => {
           "resource_updateResource",
           "resource_updateResourceContent",
           "sheet_runSheetCommand",
+          "todoList_toggleTodoCompleted",
         ],
       }
     `);

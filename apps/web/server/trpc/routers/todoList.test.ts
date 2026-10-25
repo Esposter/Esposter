@@ -2,15 +2,20 @@ import type { TRPCRouter } from "#server/trpc/routers";
 import type { TodoListResource } from "#shared/models/resource/todoList/TodoListResource";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { createMcpServer } from "#server/services/mcp/createMcpServer";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { todoListRouter } from "#server/trpc/routers/todoList";
+import { McpScope } from "#shared/models/auth/McpScope";
+import { RecurrenceUnit } from "#shared/models/resource/todoList/RecurrenceUnit";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { ResourceType } from "@esposter/db-schema";
 import { jsonDateParse, NotFoundError } from "@esposter/shared";
-import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
+import { afterEach, beforeAll, beforeEach, describe, expect, onTestFinished, test, vi } from "vitest";
 
 describe("todoListRouter", () => {
-  const { getCaller } = setupResourceSuite(todoListRouter);
+  const { getCaller, getMockContext } = setupResourceSuite(todoListRouter);
   let caller: DecorateRouterRecord<TRPCRouter["todoList"]>;
   const name = "name";
   const repository = "a/a";
@@ -117,5 +122,50 @@ describe("todoListRouter", () => {
     await expect(caller.handBackFollowUp({ id, itemId, reason: " " })).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new NotFoundError("FollowUp", itemId).message}]`,
     );
+  });
+
+  // A repeating todo the owner wrote, due on the epoch and repeating daily, for a tick to roll
+  const createRepeatingTodo = async () => {
+    const { contentVersion, id } = await caller.createResource({ name });
+    const item = new TodoListItem({
+      dueAt: new Date(0),
+      name,
+      recurrence: { interval: 1, startsAt: new Date(0), unit: RecurrenceUnit.Day },
+    });
+    await caller.saveResourceContent({ content: { items: [item] }, contentVersion, id });
+    return { id, item };
+  };
+
+  test("An agent ticks a repeating todo", async () => {
+    expect.hasAssertions();
+
+    const { id, item } = await createRepeatingTodo();
+
+    await caller.toggleTodoCompleted({ id, itemId: item.id, timeZone });
+    const content = await caller.readResourceContent({ id });
+
+    expect(content?.items[0]?.dueAt).toStrictEqual(new Date(Date.UTC(1970, 0, 2)));
+    expect(content?.items[0]?.completedAt).toBeUndefined();
+  });
+
+  // A follow-ups key holds the FollowUps scope alone, so the tick is refused as a tool it does not have
+  test("A follow-ups key cannot tick a todo the owner wrote", async () => {
+    expect.hasAssertions();
+
+    const { id, item } = await createRepeatingTodo();
+    const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
+    const client = new Client({ name: "", version: "" });
+    await createMcpServer(todoListRouter, getMockContext(), [McpScope.FollowUps]).connect(serverTransport);
+    await client.connect(clientTransport);
+    onTestFinished(() => client.close());
+
+    await expect(
+      client.callTool({ arguments: { id, itemId: item.id, timeZone }, name: "toggleTodoCompleted" }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[McpError: MCP error -32602: MCP error -32602: Unknown tool: toggleTodoCompleted]`,
+    );
+    const content = await caller.readResourceContent({ id });
+
+    expect(content?.items[0]?.dueAt).toStrictEqual(new Date(0));
   });
 });

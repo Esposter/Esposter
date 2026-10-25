@@ -6,8 +6,8 @@
 
 ## 2. Repeating todo tick
 
-- [ ] 2.1 Add the tick procedure on the todo list router, rolling through the shared recurring-item roll under the Resources scope. Verify: a test whose scenario is 'An agent ticks a repeating todo', failing first, then passing.
-- [ ] 2.2 Refuse a follow-ups key ticking a todo the owner wrote. Verify: a test named after the scenario 'A follow-ups key cannot tick a todo the owner wrote', failing first, then passing.
+- [x] 2.1 Add the tick procedure on the todo list router, rolling through the shared recurring-item roll under the Resources scope. Verify: a test whose scenario is 'An agent ticks a repeating todo', failing first, then passing.
+- [x] 2.2 Refuse a follow-ups key ticking a todo the owner wrote. Verify: a test named after the scenario 'A follow-ups key cannot tick a todo the owner wrote', failing first, then passing.
 
 ## 3. Note written as Markdown
 

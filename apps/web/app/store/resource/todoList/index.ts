@@ -3,6 +3,7 @@ import type { ResourceInResource } from "@esposter/db-schema";
 
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { ITEM_NAME_MAX_LENGTH } from "#shared/services/resource/item/constants";
+import { checkRollsOnTick } from "#shared/services/resource/todoList/checkRollsOnTick";
 import { rollRecurringItem } from "#shared/services/resource/todoList/rollRecurringItem";
 import { TodoListSort } from "@/models/resource/todoList/TodoListSort";
 import { createContentData } from "@/services/resource/createContentData";
@@ -121,7 +122,7 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
   // Adopted mid-flight
   const toggleCompleted = async (id: TodoListItem["id"]) => {
     const item = items.value.find((todo) => todo.id === id);
-    if (!item?.recurrence || !item.dueAt || item.completedAt)
+    if (!item || !checkRollsOnTick(item))
       return setItemValue(id, "completedAt", ({ completedAt }) => (completedAt ? undefined : new Date()));
 
     const { dueAt, recurrence, steps } = item;
