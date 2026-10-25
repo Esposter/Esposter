@@ -19,7 +19,7 @@ import { computed } from "vue";
 import { nextTick } from "vue";
 
 describe("pageBuilderCanvasTextEditor", () => {
-  test("enter edits a text node in place", async () => {
+  test("a text node being edited shows its own text in the editor", async () => {
     expect.hasAssertions();
 
     const resourceId = crypto.randomUUID();
