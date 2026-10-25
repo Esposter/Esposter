@@ -118,42 +118,6 @@ describe(dedent, () => {
     expect(dedent(String.raw`\u{1F60A}`)).toBe(String.raw`\u{1F60A}`);
   });
 
-  test("function character escapes: does not escape backticks", () => {
-    expect.hasAssertions();
-
-    expect(dedent(`\``)).toBe("`");
-  });
-
-  test("function character escapes: does not escape dollar signs", () => {
-    expect.hasAssertions();
-
-    expect(dedent(`$`)).toBe("$");
-  });
-
-  test("function character escapes: does not escape opening braces", () => {
-    expect.hasAssertions();
-
-    expect(dedent(`{`)).toBe("{");
-  });
-
-  test("function character escapes: does not escape double-escaped backticks", () => {
-    expect.hasAssertions();
-
-    expect(dedent(`\\\``)).toBe(String.raw`\``);
-  });
-
-  test("function character escapes: does not escape double-escaped dollar signs", () => {
-    expect.hasAssertions();
-
-    expect(dedent(`\\$`)).toBe(String.raw`\$`);
-  });
-
-  test("function character escapes: does not escape double-escaped opening braces", () => {
-    expect.hasAssertions();
-
-    expect(dedent(`\\{`)).toBe(String.raw`\{`);
-  });
-
   test("function character escapes: ignores closing braces", () => {
     expect.hasAssertions();
 

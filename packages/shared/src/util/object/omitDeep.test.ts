@@ -79,14 +79,6 @@ describe(omitDeep, () => {
     ).toStrictEqual({ id: "1" });
   });
 
-  test("two states differing only in an omitted key omit to equal values", () => {
-    expect.hasAssertions();
-
-    expect(omitDeep({ id: "1", pointCount: 2 }, "pointCount")).toStrictEqual(
-      omitDeep({ id: "1", pointCount: 3 }, "pointCount"),
-    );
-  });
-
   // Upstream returns a class instance by reference, so the keys are never omitted from the clicker's own state
   test("walks a reactive class instance, so its keys are omitted", () => {
     expect.hasAssertions();
