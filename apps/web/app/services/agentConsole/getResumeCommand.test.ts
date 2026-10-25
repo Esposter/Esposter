@@ -10,9 +10,16 @@ describe(getResumeCommand, () => {
     ],
     [String.raw`\\a\b`, String.raw`Set-Location -LiteralPath '\\a\b' -ErrorAction Stop; claude --resume 'c'`],
     ["/a\nb", ""],
+    ["/a\rb", ""],
   ])("quotes %s for its own shell", (cwd, expected) => {
     expect.hasAssertions();
 
     expect(getResumeCommand(cwd, "c")).toBe(expected);
+  });
+
+  test("refuses a newline in the session id", () => {
+    expect.hasAssertions();
+
+    expect(getResumeCommand("/a", "b\nc")).toBe("");
   });
 });
