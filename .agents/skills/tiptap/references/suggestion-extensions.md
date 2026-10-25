@@ -50,6 +50,6 @@ An extension that wires nothing but its own component's callbacks stays inline i
 
 ## SuggestionTrigger enum
 
-Trigger characters live in `apps/web/app/services/message/SuggestionTrigger.ts`. Never hardcode a trigger character as a string literal in a suggestion config or a component template.
+Trigger characters live in `apps/web/app/models/shared/SuggestionTrigger.ts`. Never hardcode a trigger character as a string literal in a suggestion config or a component template.
 
 Use in suggestion config (`char: SuggestionTrigger.Emoji`) and in templates (`{{ SuggestionTrigger.Emoji }}{{ name }}{{ SuggestionTrigger.Emoji }}`).

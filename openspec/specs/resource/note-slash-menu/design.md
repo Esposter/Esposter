@@ -48,7 +48,7 @@ flowchart LR
 | `apps/web/app/components/Resource/Note/BlockList.vue`             | the list drawn in the caret popover                                |
 | `apps/web/app/components/Resource/Note/Editor.vue`                | adds the extension and hosts the suggestion list                   |
 | `apps/web/app/components/Resource/Note/EditorMenuBar.vue`         | the menu bar, now built from `getNoteBlockMenuItems`               |
-| `apps/web/app/services/message/SuggestionTrigger.ts`              | the `Slash` trigger the Note shares with the slash commands        |
+| `apps/web/app/models/shared/SuggestionTrigger.ts`                 | the `Slash` trigger the Note shares with the slash commands        |
 | `apps/web/app/models/resource/note/NoteSlashItem.ts`              | the item type: a menu item with its aliases                        |
 
 ## Sources
