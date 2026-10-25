@@ -1,28 +1,10 @@
 import type { SoundEffectScore } from "#src/models/genshinParity/sound/SoundEffectScore";
 
-import { computeStereoSoundBandPowers } from "#src/services/genshinAssets/sound/computeStereoSoundBandPowers";
-import { SOUND_SCORE_HOP_LENGTH, SOUND_SCORE_RANGE_DECIBELS } from "#src/services/genshinParity/shared/constants";
+import { SOUND_SCORE_RANGE_DECIBELS } from "#src/services/genshinParity/shared/constants";
+import { computeChannelLevels } from "#src/services/genshinParity/sound/computeChannelLevels";
+import { computeCorrelation } from "#src/services/genshinParity/sound/computeCorrelation";
+import { toDecibels } from "#src/services/genshinParity/sound/toDecibels";
 
-const toDecibels = (power: number): number => 10 * Math.log10(Math.max(power, Number.MIN_VALUE));
-// Each channel's level in each band frame by frame, its own power and the shared one's together
-const computeChannelLevels = (left: Float32Array, right: Float32Array): number[][][] => {
-  const powers = computeStereoSoundBandPowers(left, right, SOUND_SCORE_HOP_LENGTH);
-  return [powers.left, powers.right].map((frames) =>
-    frames.map((bands, frame) => bands.map((power, band) => toDecibels(power + (powers.shared[frame]?.[band] ?? 0)))),
-  );
-};
-const computeCorrelation = (left: Float32Array, right: Float32Array): number => {
-  let product = 0;
-  let leftPower = 0;
-  let rightPower = 0;
-  for (const [index, sample] of left.entries()) {
-    const other = right[index] ?? 0;
-    product += sample * other;
-    leftPower += sample * sample;
-    rightPower += other * other;
-  }
-  return product / Math.sqrt(leftPower * rightPower);
-};
 // A sound effect as the engine renders it (`computeSoundEffectSamples`) against the game's sound it was fitted from, or
 // Against another render of its own, both channels, in its own bands every `SOUND_SCORE_HOP_LENGTH`: finer than the
 // Fit's frames, so a level the frames smooth over shows. Only the cells within `SOUND_SCORE_RANGE_DECIBELS` of the

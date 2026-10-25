@@ -1,19 +1,17 @@
-import type { ParityScore } from "#src/models/genshinParity/reference/ParityScore";
-
 import { ApprovalOutcome } from "#src/models/genshinParity/reference/ApprovalOutcome";
 import { ParityApprovalMeasure } from "#src/models/genshinParity/reference/ParityApprovalMeasure";
-import { compareScreen } from "#src/services/genshinParity/reference/compareScreen";
 import { decideApproval } from "#src/services/genshinParity/reference/decideApproval";
+import { readScore } from "#src/services/genshinParity/reference/readScore";
 import { writeParityScores } from "#src/services/genshinParity/reference/writeParityScores";
+import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import {
   DEFAULT_APPROVAL,
   GENSHIN_WORLD_DIRECTORY,
   REFERENCES_DIRECTORY,
 } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
-import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { PNPM_ARGS, PNPM_FILE } from "#src/services/shared/constants";
-import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { spawnSync } from "@esposter/shared-node/child-process";
 import { FIXTURE_VARIANT_SEPARATOR } from "genshin-interface/constants";
 import { existsSync } from "node:fs";
@@ -21,15 +19,6 @@ import { join } from "node:path";
 
 // The visual suite's file, whose tests are titled by their screen's name
 const VISUAL_SUITE_FILE = "parity/screens.visual.ts";
-
-const readScore = async (referenceId: string): Promise<ParityScore | undefined> =>
-  (await getResultAsync(() => compareScreen(referenceId))).match(
-    (score) => score,
-    (error) => {
-      console.log(`failed: ${error.message}`);
-      return undefined;
-    },
-  );
 
 // Approves a screen's image: its compare against the stored reference must score under the bar, and only then is the
 // Visual suite run with `-u` for that one screen (its base image, or the variant's named by `variant`). A reference

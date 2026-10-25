@@ -1,20 +1,12 @@
+import { computeTerms } from "#src/services/genshinParity/sky/computeTerms";
 import { solveLinearSystem } from "#src/services/recreation/solve/solveLinearSystem";
 
-// The polynomial's degree across and up the frame: a sky's gradient bends up the frame toward its horizon and across it
-// Toward its sun, smoothly, and a cubic holds both while no cloud's few hundred pixels fit into it
-const DEGREE = 3;
 // The share of the fit's error weighted where a pixel stands over it rather than under it, short of the cloud's ratio:
 // Clouds only ever stand over their sky, so a fit weighing them a tenth as much as the sky under it settles on the
 // Clear tail, and a pixel past the ratio, a cloud, is not weighed at all
 const OVER_WEIGHT = 0.1;
 const ITERATION_COUNT = 12;
-// The terms of a cubic in a pixel's place, each axis scaled to [-1, 1]
-const computeTerms = (x: number, y: number): number[] => {
-  const terms: number[] = [];
-  for (let yPower = 0; yPower <= DEGREE; yPower++)
-    for (let xPower = 0; xPower + yPower <= DEGREE; xPower++) terms.push(x ** xPower * y ** yPower);
-  return terms;
-};
+
 // A sky's clear luminance at every pixel, as the logarithm a smooth surface fits to its masked pixels' logarithms by
 // Asymmetric least squares: each pass weighs a pixel over the surface a tenth as much as one under it and a cloud, past
 // The ratio, not at all, so the surface sinks through the clouds to the clear sky between them however the sky's

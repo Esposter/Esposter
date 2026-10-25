@@ -1,10 +1,10 @@
+import { toHex } from "#src/services/genshinParity/image/toHex";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import sharp from "sharp";
 
 // Alpha under which a pixel is paper rather than the mark's ink, so a cell's colour is its ink's alone
 const INK_ALPHA = 32;
-const toHex = (channels: number[]): string =>
-  `#${channels.map((channel) => Math.round(channel).toString(16).padStart(2, "0")).join("")}`;
+
 // A ring mark's colours, sampled about the image's centre in both dimensions: `bands` rings from the ink's inner edge
 // To its outer, or to the circle the image's square holds where the ink runs on into its corners, each cut into
 // `angles` cells clockwise from the top, and each cell the mean of the ink inside it, weighted by its alpha. A cell

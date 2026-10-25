@@ -1,15 +1,10 @@
 import type { CpuCapture } from "#src/models/genshinParity/shared/CpuCapture";
 
+import { MICROSECONDS_PER_MS } from "#src/services/genshinParity/shared/constants";
+import { describeFunction } from "#src/services/genshinParity/shared/describeFunction";
+
 // How many of the window's main-thread samples name a function, at most, the rest being left to the frame's total
 const LISTED_FUNCTIONS = 4;
-const MICROSECONDS_PER_MS = 1000;
-
-const describeFunction = (node: CpuCapture["nodes"][number]): string => {
-  const { functionName, lineNumber, url } = node.callFrame;
-  const place = url ? `${url.split("/").slice(-2).join("/")}:${lineNumber}` : "native";
-
-  return `${functionName || "(anonymous)"} ${place}`;
-};
 
 // The functions the main thread ran in the window, by the samples that held each: a frame that waits on the GPU reads as the
 // Native call it waited in, and one that builds shaders or geometry as the functions doing it

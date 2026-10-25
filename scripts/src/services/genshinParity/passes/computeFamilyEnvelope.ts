@@ -1,16 +1,10 @@
+import type { FamilyEnvelope } from "#src/models/genshinParity/passes/FamilyEnvelope";
 import type { Vector } from "#src/models/shared/Vector";
 
 import { closeFamilyMask } from "#src/services/genshinParity/passes/closeFamilyMask";
 import { readFamilyMask } from "#src/services/genshinParity/passes/readFamilyMask";
 import { computeBoxSums } from "#src/services/recreation/image/computeBoxSums";
 
-// A family's envelope at a radius: its pixels closed, its depth averaged over the family within the radius, and its
-// Normals averaged there and normalised, so a scattered family reads as the mass its cards make
-export interface FamilyEnvelope {
-  depth: Float64Array;
-  mask: Uint8Array;
-  normal: Float64Array;
-}
 export const computeFamilyEnvelope = (
   targets: { depth: Float32Array; normal: Float32Array; part: Float32Array },
   family: number,

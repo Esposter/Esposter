@@ -4,10 +4,11 @@ import type { ParityPassReading } from "#src/models/genshinParity/passes/ParityP
 
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { compareFamilyColour } from "#src/services/genshinParity/passes/compareFamilyColour";
+import { computeFamilyMask } from "#src/services/genshinParity/passes/computeFamilyMask";
 import { computeStructureError } from "#src/services/genshinParity/passes/computeStructureError";
-import { COLOUR_GATE, SPLIT_BLOCK_PIXELS } from "#src/services/genshinParity/passes/constants";
+import { COLOUR_GATE } from "#src/services/genshinParity/passes/constants";
+import { formatScales } from "#src/services/genshinParity/passes/formatScales";
 import { measureFamilyTargets } from "#src/services/genshinParity/passes/measureFamilyTargets";
-import { readTargetFamily } from "#src/services/genshinParity/passes/readTargetFamily";
 import { readTargetLightness } from "#src/services/genshinParity/passes/readTargetLightness";
 import { writeStructureDiff } from "#src/services/genshinParity/passes/writeStructureDiff";
 import { writeSurfaceDiff } from "#src/services/genshinParity/passes/writeSurfaceDiff";
@@ -17,26 +18,9 @@ import { withFinalizerAsync } from "@esposter/shared";
 import { SURFACE_DETAIL_BAND_SIGMAS } from "genshin-engine";
 
 const TARGET_NAMES = [WitnessTargetName.Part, WitnessTargetName.Albedo];
-// A family's structure at each scale, finest first, to three places
-const formatScales = (scales: readonly number[]): string => scales.map((scale) => scale.toFixed(3)).join(" ");
 // The reason a family's structure is read as when the exports draw it within one half of the blocks, so no gate is read
 const NO_GATE_REASON = "no gate: the family lies within one half";
-// The pixels both part targets draw a family at, as a mask over the pixels, and the half of it ('even' or 'odd' blocks)
-const computeFamilyMask = (
-  firstPart: Float32Array,
-  secondPart: Float32Array,
-  family: number,
-  width: number,
-  half?: 0 | 1,
-): Uint8Array =>
-  Uint8Array.from({ length: firstPart.length / 4 }, (_value, pixel) => {
-    const isDrawn = readTargetFamily(firstPart, pixel) === family && readTargetFamily(secondPart, pixel) === family;
-    if (!isDrawn) return 0;
-    if (half === undefined) return 1;
-    const blockX = Math.floor((pixel % width) / SPLIT_BLOCK_PIXELS);
-    const blockY = Math.floor(Math.floor(pixel / width) / SPLIT_BLOCK_PIXELS);
-    return (blockX + blockY) % 2 === half ? 1 : 0;
-  });
+
 // The surface pass: each family's unlit colour of ours against the exports' it stands for, where both draw it, and how
 // Unlike their structure is. The colour is gated where two colours side by side are just told apart. The structure is
 // Statistical: over the pixels both draw the family, the luminance's variance and each octave band's detail energy of

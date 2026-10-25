@@ -1,12 +1,13 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
+import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { INTERFACE_HEIGHT } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openParityPage } from "#src/services/genshinParity/shared/openParityPage";
-import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitnessTargets";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
+import { gcd } from "#src/services/genshinParity/witness/gcd";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { MathUtils } from "three";
 
@@ -16,7 +17,7 @@ const PLAN_EYE_HEIGHT = 200;
 // The pixels a drawn row's width is a multiple of: WebGPU reads a target back in rows padded to 256 bytes, sixteen of
 // Its pixels of four floats, and a narrower row comes back mixed into its neighbours
 const ROW_PIXEL_MULTIPLE = 16;
-const gcd = (first: number, second: number): number => (second === 0 ? first : gcd(second, first % second));
+
 // A family's parts seen from straight above over a rectangle of the ground, in the state a reference stands them in,
 // Drawn at so many pixels a metre: the unlit albedo its exported materials draw, its fourth channel 1 where a part is
 // Drawn, the columns running toward +x and the rows toward +z from the rectangle's least corner. The rectangle is

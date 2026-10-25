@@ -9,21 +9,15 @@ import { measureEachReference } from "#src/services/genshinParity/passes/measure
 import { readTargetFamily } from "#src/services/genshinParity/passes/readTargetFamily";
 import { shiftTargetAcross } from "#src/services/genshinParity/passes/shiftTargetAcross";
 import { solveReferenceCamera } from "#src/services/genshinParity/passes/solveReferenceCamera";
+import { toColourTarget } from "#src/services/genshinParity/passes/toColourTarget";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitnessTargets";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { toPageCamera } from "#src/services/genshinParity/shared/toPageCamera";
-import { getPixelDisplayColor } from "#src/services/genshinParity/sky/getPixelDisplayColor";
 import { computeLabelSimilarity } from "#src/services/genshinParity/witness/computeLabelSimilarity";
 import { shootWitnessFamilies } from "#src/services/genshinParity/witness/shootWitnessFamilies";
 import sharp from "sharp";
 
-// A shot's pixels as linear colours in a four-float target, which `compareFamilyColour` reads as it reads a surface's
-const toColourTarget = (shot: Buffer, pixelCount: number): Float32Array => {
-  const colour = new Float32Array(pixelCount * 4);
-  for (let pixel = 0; pixel < pixelCount; pixel++) colour.set(getPixelDisplayColor(shot, pixel), pixel * 4);
-  return colour;
-};
 // The glow, read where the light pass reads the frame: at each current build's reference under the scene's pose for it,
 // The pixels of each family the exports' materials add a glow over their lit colour to (their emission, cut where the
 // Stone program cuts it), the reference's frame there against the frame our stand-in lights under the same camera. Each

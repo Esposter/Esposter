@@ -1,4 +1,6 @@
 import type { ParityPassReading } from "#src/models/genshinParity/passes/ParityPassReading";
+import type { Targets } from "#src/models/genshinParity/passes/Targets";
+import type { WitnessTargetsRead } from "#src/models/genshinParity/passes/WitnessTargetsRead";
 import type { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import type { WitnessView } from "genshin-world/parity/models/witness/WitnessView";
 import type { Page } from "playwright";
@@ -9,24 +11,14 @@ import { computeEnvelopeRadius } from "#src/services/genshinParity/passes/comput
 import { computeFamilyEnvelope } from "#src/services/genshinParity/passes/computeFamilyEnvelope";
 import { readFamilyMask } from "#src/services/genshinParity/passes/readFamilyMask";
 import { toShapeReading } from "#src/services/genshinParity/passes/toShapeReading";
+import { toTargets } from "#src/services/genshinParity/passes/toTargets";
 import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitnessTargets";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { WindrisePartFamily } from "genshin-world";
 
-interface Targets {
-  depth: Float32Array;
-  normal: Float32Array;
-  part: Float32Array;
-}
-type WitnessTargetsRead = Awaited<ReturnType<typeof readWitnessTargets>>;
 const TARGET_NAMES: WitnessTargetName[] = [TargetName.Part, TargetName.Depth, TargetName.GeometryNormal];
-// The normal is the geometry's, before the exports' normal maps bend it, as the shape pass reads every family's
-const toTargets = ({ targets }: WitnessTargetsRead): Targets => ({
-  depth: targets.depth ?? new Float32Array(),
-  normal: targets.geometryNormal ?? new Float32Array(),
-  part: targets.part ?? new Float32Array(),
-});
+
 // The Oak's shape read on its envelope, a family of scattered cards: the exports' and ours at the reference's camera
 // Each closed at the cards' spacing (`computeEnvelopeRadius`), against a gate read off the exports themselves. The
 // Exports' cards are split in two halves (each card whole in one of them, `WitnessView.leafHalf`), and the gate is how

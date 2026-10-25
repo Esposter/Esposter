@@ -1,17 +1,9 @@
+import { findCrossing } from "#src/services/genshinParity/reference/findCrossing";
+
 // The 10% to 90% spread of a Gaussian edge is its sigma times twice the standard normal's 90% quantile
 const SPREAD_PER_SIGMA = 2 * 1.2815515655446004;
 const LOWER_LEVEL = 0.1;
 const UPPER_LEVEL = 0.9;
-
-// The place along the profile where it first reaches the level, between the two samples that straddle it
-const findCrossing = (levels: readonly number[], level: number): number | undefined => {
-  const index = levels.findIndex((value) => value >= level);
-  if (index === -1) return undefined;
-  if (index === 0) return 0;
-  const before = levels[index - 1] ?? 0;
-  const after = levels[index] ?? 0;
-  return index - 1 + (level - before) / (after - before);
-};
 
 // The Gaussian sigma of one edge read off a profile of samples across it, one per pixel: the 10% to 90% spread of its
 // Rise between the profile's lowest and highest sample. A falling edge reads the same as a rising one, and a profile

@@ -8,23 +8,16 @@ import { readWitnessFamilies } from "#src/services/genshinParity/shared/readWitn
 import { readWitnessPartTarget } from "#src/services/genshinParity/shared/readWitnessPartTarget";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { computeLabelSimilarity } from "#src/services/genshinParity/witness/computeLabelSimilarity";
+import { readGrey } from "#src/services/genshinParity/witness/readGrey";
 import { shootWitnessFamilies } from "#src/services/genshinParity/witness/shootWitnessFamilies";
-import { BYTE } from "#src/services/shared/constants";
 import { getOrCreate, withFinalizerAsync } from "@esposter/shared";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
 
-const readGrey = async (input: Buffer, width: number, height: number): Promise<Float32Array> => {
-  const { data } = await sharp(input)
-    .resize(width, height, { fit: "fill" })
-    .greyscale()
-    .raw()
-    .toBuffer({ resolveWithObject: true });
-  return Float32Array.from(data, (value) => value / BYTE);
-};
 // Wide enough that a tower's windows, its gold bands and the door's relief span several pixels
 const STAND_IN_WIDTH = 960;
+
 // Each family's stand-in against the game's own exports, both drawn by the one page at the reference's camera, moment,
 // Light and haze: FLIP between the two over the exports' pixels of the family, where every pixel lines up and only the
 // Stand-in differs. It chooses between representations of a stand-in rank's own table already ranks and orders

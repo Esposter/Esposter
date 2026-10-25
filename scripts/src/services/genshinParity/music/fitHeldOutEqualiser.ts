@@ -2,15 +2,10 @@ import type { BandLevels } from "#src/models/genshinParity/music/BandLevels";
 import type { HeldOutEqualiser } from "#src/models/genshinParity/music/HeldOutEqualiser";
 
 import { computeBandGaps } from "#src/services/genshinParity/music/computeBandGaps";
+import { computeMeanDistance } from "#src/services/genshinParity/music/computeMeanDistance";
 import { fitBandGain } from "#src/services/genshinParity/music/fitBandGain";
+import { sliceBandLevels } from "#src/services/genshinParity/music/sliceBandLevels";
 
-const computeMeanDistance = (gaps: number[]): number =>
-  gaps.reduce((sum, gap) => sum + Math.abs(gap), 0) / Math.max(gaps.length, 1);
-const sliceBandLevels = ({ floor, game, ours }: BandLevels, start: number, end?: number): BandLevels => ({
-  floor,
-  game: game.slice(start, end),
-  ours: ours.slice(start, end),
-});
 // A fixed equaliser fitted to a render's bands (`fitBandGain`, each band's gain exact in the score's measure) and
 // Scored held out across time: each band's gain fitted on the first half of the frames is scored on the second and the
 // Second's on the first, since a gain that only fits the frames it was fitted on is no balance of the music's. The

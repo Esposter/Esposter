@@ -1,4 +1,5 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import type { WitnessTargetsRead } from "#src/models/genshinParity/passes/WitnessTargetsRead";
 import type { ParityPassMeasure } from "#src/models/genshinParity/passes/ParityPassMeasure";
 import type { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import type { WitnessView } from "genshin-world/parity/models/witness/WitnessView";
@@ -13,7 +14,6 @@ import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitne
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { toPageCamera } from "#src/services/genshinParity/shared/toPageCamera";
 
-type WitnessTargetsRead = Awaited<ReturnType<typeof readWitnessTargets>>;
 // A pass judged on the witness's targets: at each current build's reference's camera (`solveReferenceCamera`), the
 // Exports' families and then our own drawn alone into the targets named, at the shape's width, and the two handed to
 // The pass's own comparison, whose readings and notes are gathered over every reference

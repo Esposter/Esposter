@@ -2,7 +2,6 @@ import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/Der
 import type { ParityPassMeasure } from "#src/models/genshinParity/passes/ParityPassMeasure";
 import type { Vector } from "#src/models/shared/Vector";
 import type { WitnessView } from "genshin-world/parity/models/witness/WitnessView";
-import type { Page } from "playwright";
 
 import { checkArrangement } from "#src/services/genshinAssets/scene/checkArrangement";
 import { checkLandmarkRoots } from "#src/services/genshinAssets/scene/checkLandmarkRoots";
@@ -12,6 +11,8 @@ import { computeProjectedGaps } from "#src/services/genshinParity/passes/compute
 import { LANDMARK_ROOT_GATE_METRES, PART_GATE_METRES } from "#src/services/genshinParity/passes/constants";
 import { getCurrentBuildReferenceIds } from "#src/services/genshinParity/passes/getCurrentBuildReferenceIds";
 import { openComponentWitnessPage } from "#src/services/genshinParity/passes/openComponentWitnessPage";
+import { readFamilyOffsets } from "#src/services/genshinParity/passes/readFamilyOffsets";
+import { shift } from "#src/services/genshinParity/passes/shift";
 import { REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { fromPageCamera } from "#src/services/genshinParity/shared/fromPageCamera";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
@@ -19,13 +20,6 @@ import { withFinalizerAsync } from "@esposter/shared";
 import { join } from "node:path";
 import sharp from "sharp";
 
-const readFamilyOffsets = (page: Page): Promise<Record<string, Vector>> =>
-  page.evaluate(() => (Reflect.get(window, "getWitnessFamilyOffsets") as () => Record<string, Vector>)());
-const shift = (point: Readonly<Vector>, [x, y, z]: Readonly<Vector>): Vector => [
-  point[0] + x,
-  point[1] + y,
-  point[2] + z,
-];
 // The layout pass: each ratio its references show between parts that meet against the fitted data's, each fitted
 // Family's furthest part from the exports' objects it stands for, and how far across and up the scene stands each
 // Family of the witness off its laid-out place past what the game's own data explains (along the glide is its motion);

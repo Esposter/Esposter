@@ -4,6 +4,7 @@ import type { ImageRegion } from "#src/models/recreation/image/ImageRegion";
 import type { Vector } from "#src/models/shared/Vector";
 
 import { computeLayerMasks } from "#src/services/genshinParity/reference/computeLayerMasks";
+import { readPixels } from "#src/services/genshinParity/reference/readPixels";
 import { scoreDetail } from "#src/services/genshinParity/reference/scoreDetail";
 import { scoreStructure } from "#src/services/genshinParity/reference/scoreStructure";
 import { STRUCTURE_WIDTH } from "#src/services/genshinParity/shared/constants";
@@ -14,9 +15,6 @@ import { toLinear } from "#src/services/shared/toLinear";
 import { toXyz } from "#src/services/shared/toXyz";
 import sharp from "sharp";
 
-// An image's pixels at the structure's size, three channels each
-const readPixels = (image: Buffer, height: number): Promise<Buffer> =>
-  sharp(image).resize(STRUCTURE_WIDTH, height, { fit: "fill" }).removeAlpha().raw().toBuffer();
 // A shot scored against its reference layer by layer, both cut to the reference's scored region and read at the
 // Structure's width as `compare` scores its row, so the frame's layer is that row, each other layer over its own pixels
 // (`computeLayerMasks`): the CIELab distance between their mean colours, its shape, tone and detail over its pixels

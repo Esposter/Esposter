@@ -8,8 +8,8 @@ import type { Page } from "playwright";
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { ATMOSPHERE_SPLIT_BLOCK_SIZES } from "#src/services/genshinParity/passes/constants";
 import { solveReferenceCamera } from "#src/services/genshinParity/passes/solveReferenceCamera";
-import { LUMINANCE } from "#src/services/genshinParity/shared/constants";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
+import { LUMINANCE } from "#src/services/genshinParity/shared/constants";
 import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitnessTargets";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { toPageCamera } from "#src/services/genshinParity/shared/toPageCamera";
@@ -17,17 +17,11 @@ import { compareSkyStatistics } from "#src/services/genshinParity/sky/compareSky
 import { computeSkySplitSpread } from "#src/services/genshinParity/sky/computeSkySplitSpread";
 import { measureClouds } from "#src/services/genshinParity/sky/measureClouds";
 import { readCloudSky } from "#src/services/genshinParity/sky/readCloudSky";
+import { toMeanLab } from "#src/services/genshinParity/sky/toMeanLab";
 import { BYTE } from "#src/services/shared/constants";
-import { toLab } from "#src/services/shared/toLab";
 import { toLinear } from "#src/services/shared/toLinear";
-import { toXyz } from "#src/services/shared/toXyz";
 import sharp from "sharp";
 
-// The mean of a sum of linear colours over so many pixels, in CIELab
-const toMeanLab = (sum: Vector, count: number): Vector => {
-  const [red = 0, green = 0, blue = 0] = sum.map((channelSum) => channelSum / Math.max(count, 1));
-  return toLab(toXyz([red, green, blue]));
-};
 // A witness page's reference and the scene's sky beside it as statistics blind to where their clouds stand
 // (`SkyStatistics`), since the game scatters its clouds and drifts its cloud layer, so no score by pixels judges ours:
 // At the reference's camera, solved on its landmarks where it has them (`solveReferenceCamera`) and the scene's own in

@@ -83,3 +83,6 @@ export const PARITY_PASSES_DIRECTORY: string = join(
   "passes",
   "snapshots",
 );
+
+// The reason a family's depth or normal is read as when ours draws none of it where the exports do
+export const NO_OVERLAP_REASON = "no overlap";

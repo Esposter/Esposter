@@ -1,5 +1,6 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ParityPassMeasure } from "#src/models/genshinParity/passes/ParityPassMeasure";
+import type { CloudLayer } from "#src/models/genshinParity/sky/CloudLayer";
 import type { SetCloudColors } from "#src/models/genshinParity/sky/SetCloudColors";
 import type { SetCloudCover } from "#src/models/genshinParity/sky/SetCloudCover";
 import type { SetCloudLayer } from "#src/models/genshinParity/sky/SetCloudLayer";
@@ -8,15 +9,16 @@ import { CLOUDS_WIDTH, WITNESS_PATH_PREFIX } from "#src/services/genshinParity/s
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
+import { COMPONENT_REGEX } from "#src/services/genshinParity/sky/constants";
 import { formatSkyComparison } from "#src/services/genshinParity/sky/formatSkyComparison";
 import { readSkyComparison } from "#src/services/genshinParity/sky/readSkyComparison";
+import { readSolvedSetting } from "#src/services/genshinParity/sky/readSolvedSetting";
 import { toSkyReadings } from "#src/services/genshinParity/sky/toSkyReadings";
 import { writeCloudSheet } from "#src/services/genshinParity/sky/writeCloudSheet";
 import { minimizeNelderMead } from "#src/services/recreation/solve/minimizeNelderMead";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { Color } from "three";
 
-type CloudLayer = Parameters<SetCloudLayer>[0];
 // The game's own textures the cloud layer's program samples, by its slot (Login/Scene/Index.reference.ts, source
 // `cloudLayerShader`), served from the extraction with the witness's exports: a reference the layer is drawn over to read
 // What its settings can recover before textures of ours stand in for them, never shipped
@@ -31,18 +33,9 @@ const GAME_CLOUD_LAYER_TEXTURES: NonNullable<CloudLayer["textures"]> = {
 const COVERAGE_SETTING = "coverage";
 const BAND_SETTING_PREFIX = "cover.";
 const COLOR_SETTINGS = ["lit", "shade"] as const;
-// A solved name that is no setting of its own is a vector setting's component by its index
-const COMPONENT_REGEX = /^(?<name>.+)\.(?<index>\d+)$/u;
-// A setting's number by a solved name: the setting's own, or a vector setting's component the name addresses
-const readSolvedSetting = (settings: Record<string, number | number[]>, name: string): number | undefined => {
-  const whole = settings[name];
-  if (typeof whole === "number") return whole;
-  const groups = COMPONENT_REGEX.exec(name)?.groups;
-  const vector = groups?.name === undefined ? undefined : settings[groups.name];
-  return Array.isArray(vector) ? vector[Number(groups?.index)] : undefined;
-};
 // Each solved setting's first step, a tenth of the shares most of them are
 const SETTING_STEP = 0.1;
+
 // A reference's sky drawn with the scene's cloud layer over the game's own textures, or told to over the ones the scene
 // Synthesizes, at the settings given, read against
 // The reference's as the atmosphere pass reads it (`readSkyComparison`): each setting a cloud layer's uniform by its

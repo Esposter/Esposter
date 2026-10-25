@@ -5,25 +5,25 @@ import type { ParityScore } from "#src/models/genshinParity/reference/ParityScor
 import { computeUnderBlackShare } from "#src/services/genshinParity/display/computeUnderBlackShare";
 import { formatUnderBlackShare } from "#src/services/genshinParity/display/formatUnderBlackShare";
 import { getCaptureSoftness } from "#src/services/genshinParity/reference/getCaptureSoftness";
+import { getCeiling } from "#src/services/genshinParity/reference/getCeiling";
 import { getCleanPlatePath } from "#src/services/genshinParity/reference/getCleanPlatePath";
 import { getLayerComponent } from "#src/services/genshinParity/reference/getLayerComponent";
 import { readScoredMask } from "#src/services/genshinParity/reference/readScoredMask";
 import { readSilhouetteInks } from "#src/services/genshinParity/reference/readSilhouetteInks";
 import { scoreLayers } from "#src/services/genshinParity/reference/scoreLayers";
 import { scoreStructure } from "#src/services/genshinParity/reference/scoreStructure";
+import { toPercent } from "#src/services/genshinParity/reference/toPercent";
+import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import {
   COMPARISON_HEIGHT,
   COMPARISONS_DIRECTORY,
-  FRAME_LAYER,
   REFERENCES_DIRECTORY,
   STRUCTURE_WIDTH,
 } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
-import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { readFlipErrorMap } from "#src/services/genshinParity/shared/readFlipErrorMap";
 import { readReferenceGbuffer } from "#src/services/genshinParity/shared/readReferenceGbuffer";
 import { shootScreen } from "#src/services/genshinParity/shared/shootScreen";
-import { BYTE } from "#src/services/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { mkdir } from "node:fs/promises";
@@ -33,10 +33,7 @@ import sharp from "sharp";
 const GRID_SIZE = 6;
 // The least Gaussian sigma sharp blurs by, below which a recording's softness is too slight to draw
 const MIN_BLUR_SIGMA = 0.3;
-// The frame's FLIP is its pixels' mean, so a layer drawn exactly would take its share times its own FLIP off the
-// Frame's: its ceiling, which ranks the layers by the most work on each could recover, largest first
-const getCeiling = ({ coverage, flip, name }: LayerScore): number => (name === FRAME_LAYER ? flip : coverage * flip);
-const toPercent = (sum: number, count: number): number => (sum / Math.max(count, 1) / BYTE) * 100;
+
 // The reference, ours and their difference side by side in one image, and how far apart they are: the mean over the
 // Compared region, then the same over a grid of cells, row by row, so where they differ is read without looking; the
 // Scores are handed back for the committed report, FLIP's perceptual error among them. A scene's shot is scored again

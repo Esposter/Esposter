@@ -1,12 +1,10 @@
 import type { ParityPageOptions } from "#src/models/genshinParity/shared/ParityPageOptions";
 import type { SceneBench } from "genshin-world/parity/models/SceneBench";
 
+import { getQuantile } from "#src/services/genshinParity/page/getQuantile";
 import { openParityPage } from "#src/services/genshinParity/shared/openParityPage";
 import { withFinalizerAsync } from "@esposter/shared";
 
-// The share of the frames read off their sorted times
-const getQuantile = (sorted: readonly number[], share: number): number =>
-  sorted[Math.min(Math.floor(sorted.length * share), sorted.length - 1)] ?? 0;
 // A scene's cost on the parity page, warmed until its pipelines have compiled: its frame time's median, its slow
 // Tenth's and its slowest, against the main thread's busy time a frame, which tells a scene held up on the CPU from one
 // Held up on the GPU; then the renderer's passes, draw calls and triangles a frame, and the pipelines, geometries and

@@ -1,21 +1,13 @@
 import type { Vector } from "#src/models/shared/Vector";
 import type { SkyShape } from "genshin-engine";
 
+import { dot } from "#src/services/genshinParity/sky/dot";
+import { getCurve } from "#src/services/genshinParity/sky/getCurve";
+import { saturate } from "#src/services/genshinParity/sky/saturate";
+import { smoothstep } from "#src/services/genshinParity/sky/smoothstep";
+
 const LEAST_DIVISOR = 1e-4;
-const dot = (first: Vector, second: Vector): number =>
-  first[0] * second[0] + first[1] * second[1] + first[2] * second[2];
-const smoothstep = (value: number): number => {
-  const clamped = Math.min(Math.max(value, 0), 1);
-  return clamped * clamped * (3 - 2 * clamped);
-};
-const saturate = (value: number): number => Math.min(Math.max(value, 0), 1);
-// A curve of evenly spaced samples read linearly at a share from 0 to 1, clamped at its ends
-const getCurve = (samples: readonly number[], share: number): number => {
-  const position = saturate(share) * (samples.length - 1);
-  const left = Math.floor(position);
-  const right = Math.min(left + 1, samples.length - 1);
-  return (samples[left] ?? 0) + ((samples[right] ?? 0) - (samples[left] ?? 0)) * (position - left);
-};
+
 // Each term's weight at a ray, as the game's sky shader sums them: the sky's colour from its gradient, blended from
 // Away from the sun to toward it, the halo over its reach toward the sun and all round once the sun is up, the sun's
 // Halo as three widening lobes and the moon's glow

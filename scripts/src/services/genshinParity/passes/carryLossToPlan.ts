@@ -1,9 +1,8 @@
 import type { SimilarityTermMap } from "#src/models/genshinParity/witness/SimilarityTermMap";
 
 import { readTargetFamily } from "#src/services/genshinParity/passes/readTargetFamily";
+import { wrap } from "#src/services/genshinParity/passes/wrap";
 
-// A length along a plan wrapped into its rectangle, as the plan repeats past it
-const wrap = (value: number, length: number): number => ((value % length) + length) % length;
 // Where on a family's plan its surface's structure is lost: each pixel the family draws where the exports' does too, its
 // Loss (one less its term at each scale `scoreLabelSimilarity` reads, each scale's cell under the pixel, averaged over
 // The scales that read it) carried to the place on our part's own geometry it shows (the position target) along the

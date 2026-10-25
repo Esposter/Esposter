@@ -1,6 +1,9 @@
-import type { LayerScore } from "#src/models/genshinParity/reference/LayerScore";
 import type { ParityScore } from "#src/models/genshinParity/reference/ParityScore";
 import type { ParityReference } from "#src/models/genshinParity/shared/ParityReference";
+
+import { toLayerRow } from "#src/services/genshinParity/reference/toLayerRow";
+import { toPendingRow } from "#src/services/genshinParity/reference/toPendingRow";
+import { toRow } from "#src/services/genshinParity/reference/toRow";
 
 const HEADER = [
   "# Parity scores",
@@ -29,12 +32,7 @@ const LAYER_HEADER = [
 // Slash
 const ROW_REGEX = /^\| `(?<key>[^`]+)` \|/u;
 const LAYER_SEPARATOR = "/";
-const toRow = (referenceId: string, { edgeScore, flip, meanDifference, screen, toneDifference }: ParityScore): string =>
-  `| \`${referenceId}\` | \`${screen}\` | ${meanDifference.toFixed(2)}% | ${edgeScore.toFixed(3)} | ${toneDifference.toFixed(2)}% | ${flip.toFixed(4)} |`;
-const toLayerRow = (key: string, { colour, coverage, flip, tone }: LayerScore): string =>
-  `| \`${key}\` | ${(coverage * 100).toFixed(1)}% | ${colour.toFixed(2)} | ${tone.toFixed(2)}% | ${flip.toFixed(4)} |`;
-const toPendingRow = (referenceId: string, screen: string, reason: string): string =>
-  `| \`${referenceId}\` | \`${screen}\` | pending: ${reason} | | | |`;
+
 // The report of every reference's scores and its scene's layers from the report's lines as they were, the given ones
 // Rewritten and the rest kept as they were last scored, in the references' order, a reference not among them dropped
 // With its layers. A pending reference's row says so with its reason, in its place, and it has no layers

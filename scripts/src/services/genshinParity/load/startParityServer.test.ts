@@ -1,4 +1,4 @@
-import { getParityServerArgs } from "#src/services/genshinParity/load/startParityServer";
+import { getParityServerArgs } from "#src/services/genshinParity/load/getParityServerArgs";
 import {
   PARITY_BUILD_DIRECTORY_NAME,
   PARITY_CONFIG_PATH,

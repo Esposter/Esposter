@@ -4,6 +4,8 @@ import type { StoneLight } from "genshin-engine";
 import { publishGameDataRecord } from "#src/services/gameData/publishGameDataRecord";
 import { readGameDataLock } from "#src/services/gameData/readGameDataLock";
 import { readPublishedGameData } from "#src/services/gameData/readPublishedGameData";
+import { formatColor } from "#src/services/genshinParity/commands/formatColor";
+import { roundColor } from "#src/services/genshinParity/commands/roundColor";
 import { witnessArg } from "#src/services/genshinParity/commands/witnessArg";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { STONE_LIGHT_KEY } from "#src/services/genshinParity/witness/constants";
@@ -12,11 +14,6 @@ import { solveReferenceStoneLight } from "#src/services/genshinParity/witness/so
 import { parseNames } from "#src/services/shared/parseNames";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
-
-// The decimals a published light keeps, past which its colours move nothing the screen shows
-const LIGHT_DECIMALS = 4;
-const formatColor = (color: readonly number[]): string => color.map((value) => value.toFixed(3)).join(" ");
-const roundColor = (color: readonly number[]): number[] => color.map((value) => Number(value.toFixed(LIGHT_DECIMALS)));
 
 export const calibrateCommand: SubCommandsDef[string] = defineCommand({
   args: {

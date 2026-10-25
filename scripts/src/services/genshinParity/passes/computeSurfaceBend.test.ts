@@ -1,5 +1,6 @@
-import { computeSurfaceBend, getSurfaceBendReading } from "#src/services/genshinParity/passes/computeSurfaceBend";
+import { computeSurfaceBend } from "#src/services/genshinParity/passes/computeSurfaceBend";
 import { SHAPE_NORMAL_RESOLUTION_DEGREES, SPLIT_BLOCK_PIXELS } from "#src/services/genshinParity/passes/constants";
+import { getSurfaceBendReading } from "#src/services/genshinParity/passes/getSurfaceBendReading";
 import { describe, expect, test } from "vitest";
 
 describe(computeSurfaceBend, () => {

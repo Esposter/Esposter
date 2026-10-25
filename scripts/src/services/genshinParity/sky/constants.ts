@@ -10,3 +10,10 @@ export const SKY_TERMS: readonly [...typeof SKY_GRADIENT_TERMS, "halo", "sunHalo
   "sunHalo",
   "moonGlow",
 ];
+
+// A solved name that is no setting of its own is a vector setting's component by its index
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
+export const COMPONENT_REGEX: RegExp = /^(?<name>.+)\.(?<index>\d+)$/u;
+
+// Every this many pixels across and down is a sample: the sky changes slowly, and a solve reads it many times
+export const SAMPLE_STRIDE = 4;

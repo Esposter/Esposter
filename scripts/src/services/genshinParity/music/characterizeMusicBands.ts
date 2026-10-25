@@ -4,6 +4,7 @@ import type { MusicNote } from "genshin-engine";
 import { computePartialBinRanges } from "#src/services/genshinAssets/shared/computePartialBinRanges";
 import { computeChroma } from "#src/services/genshinParity/music/computeChroma";
 import { getFrameSeconds } from "#src/services/genshinParity/music/getFrameSeconds";
+import { sum } from "#src/services/genshinParity/music/sum";
 import {
   BANDS_ONSET_RISE,
   CHROMA_FRAME_LENGTH,
@@ -15,11 +16,6 @@ import { computeBandBins } from "#src/services/recreation/signal/computeBandBins
 import { computeMedianFlatness } from "#src/services/recreation/signal/computeMedianFlatness";
 import { computeSpectrogram } from "#src/services/recreation/signal/computeSpectrogram";
 
-const sum = (values: Iterable<number>): number => {
-  let total = 0;
-  for (const value of values) total += value;
-  return total;
-};
 // What each octave band of a sound holds, over the frames `listen` scores, the pitch classes' own: how much of the
 // Sound it is, whether it is partials or noise, whether it comes with the attacks, and how much of it lies on a
 // Partial of the notes sounding there. A band short in the score whose power lies off every partial holds what no note

@@ -1,4 +1,4 @@
-import type { FamilyEnvelope } from "#src/services/genshinParity/passes/computeFamilyEnvelope";
+import type { FamilyEnvelope } from "#src/models/genshinParity/passes/FamilyEnvelope";
 
 // Two families' envelopes compared at their common frame: the pixels the closed masks hold apart over the first's
 // Closed outline, the depth's gap as a share of the first's and the normals' angle in degrees, each on average where

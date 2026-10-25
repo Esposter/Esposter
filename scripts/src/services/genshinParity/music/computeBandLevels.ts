@@ -3,8 +3,8 @@ import type { Spectrogram } from "#src/models/recreation/signal/Spectrogram";
 
 import { computeBandEnergies } from "#src/services/genshinParity/music/computeBandEnergies";
 import { computeBandFloor } from "#src/services/genshinParity/music/computeBandFloor";
+import { toDecibels } from "#src/services/genshinParity/music/toDecibels";
 
-const toDecibels = (energy: number): number => 10 * Math.log10(energy);
 // Each octave band's levels in our render and the game's sound over `frames`, the frames a score reads
 export const computeBandLevels = (ours: Spectrogram, game: Spectrogram, frames: number[]): BandLevels[] => {
   const ourBands = computeBandEnergies(ours);

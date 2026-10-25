@@ -1,7 +1,7 @@
 import type { ParityPassReading } from "#src/models/genshinParity/passes/ParityPassReading";
 
-// The reason a family's depth or normal is read as when ours draws none of it where the exports do
-export const NO_OVERLAP_REASON = "no overlap";
+import { NO_OVERLAP_REASON } from "#src/services/genshinParity/passes/constants";
+
 // A reading of a family's shape, or the reason it has none where the two draw no pixel of it in common
 export const toShapeReading = (
   name: string,

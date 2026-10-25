@@ -7,7 +7,9 @@ import { CLOUDS_WIDTH } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
+import { computeSquaredResidual } from "#src/services/genshinParity/sky/computeSquaredResidual";
 import { readCloudSky } from "#src/services/genshinParity/sky/readCloudSky";
+import { toShare } from "#src/services/genshinParity/sky/toShare";
 import { minimizeNelderMead } from "#src/services/recreation/solve/minimizeNelderMead";
 import { withFinalizerAsync } from "@esposter/shared";
 
@@ -21,9 +23,7 @@ const ITERATION_COUNT = 40;
 const HEIGHT_SPAN_SHARE = 0.5;
 const LOG_SPAN_STEP = 0.4;
 const HEIGHT_ITERATION_COUNT = 60;
-const toShare = (logit: number): number => 1 / (1 + Math.exp(-logit));
-const computeSquaredResidual = (ours: readonly number[], reference: readonly number[]): number =>
-  ours.reduce((sum, value, index) => sum + (value - (reference[index] ?? 0)) ** 2, 0);
+
 // The share of each band's clouds the scene should draw at each reference's hour, by the sky's cover band by band of
 // Its height over the horizon: our sky drawn at each guess and its clouds read where it draws them against the same sky
 // With none (`readCloudSky`), the reference's at its own split between cloud and clear sky, the shares solved by the simplex in their logits so each

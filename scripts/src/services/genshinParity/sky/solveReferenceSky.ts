@@ -1,132 +1,31 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import type { SetCloudCover } from "#src/models/genshinParity/sky/SetCloudCover";
+import type { SkyReading } from "#src/models/genshinParity/sky/SkyReading";
 import type { Vector } from "#src/models/shared/Vector";
 import type { SkyShape } from "genshin-engine";
 
 import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData";
-import { getToneSlope } from "#src/services/genshinParity/display/getToneSlope";
 import { CHANNELS, PARITY_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
-import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
-import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { writeSideBySide } from "#src/services/genshinParity/shared/writeSideBySide";
 import { computeSkyWeights } from "#src/services/genshinParity/sky/computeSkyWeights";
-import { SKY_TERMS } from "#src/services/genshinParity/sky/constants";
+import { SAMPLE_STRIDE, SKY_TERMS } from "#src/services/genshinParity/sky/constants";
 import { fitSky } from "#src/services/genshinParity/sky/fitSky";
 import { getPixelDisplayColor } from "#src/services/genshinParity/sky/getPixelDisplayColor";
-import { getPixelSceneColor } from "#src/services/genshinParity/sky/getPixelSceneColor";
-import { readCloudSky } from "#src/services/genshinParity/sky/readCloudSky";
+import { readSky } from "#src/services/genshinParity/sky/readSky";
 import { toDisplayHex } from "#src/services/genshinParity/sky/toDisplayHex";
+import { toShape } from "#src/services/genshinParity/sky/toShape";
 import { minimizeNelderMead } from "#src/services/recreation/solve/minimizeNelderMead";
-import { withFinalizerAsync } from "@esposter/shared";
 import { toneMapGenshin } from "genshin-engine";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
-import { Color, Matrix4, Vector3, Vector4 } from "three";
+import { Color } from "three";
 
-// Every this many pixels across and down is a sample: the sky changes slowly, and a solve reads it many times
-const SAMPLE_STRIDE = 4;
-// The least a ray looks up to be read as sky, clear of the cloud sea and the haze over the horizon
-const MIN_SKY_HEIGHT = 0.02;
 const SHAPE_START: SkyShape = { frontBackBlend: 1, haloHeight: 0.3, horizonBand: 0.45, moonSize: 1, sunHaloSize: 4 };
 const SHAPE_KEYS = ["frontBackBlend", "haloHeight", "horizonBand", "moonSize", "sunHaloSize"] as const;
-// The least a reach or a size is held at, as the shader divides by it, and the least the sun's halo and the moon are:
-// Smaller, a halo or a glow spreads over the whole sky and stands in for its colours, as clouds pull it
-const LEAST_SHAPE = 1e-3;
-const LEAST_SUN_HALO_SIZE = 1;
-const LEAST_MOON_SIZE = 0.1;
-// The blend between the colours toward the sun and away from it is a share, as the shader reads it
-const toShape = ([
-  frontBackBlend = 0,
-  haloHeight = 0,
-  horizonBand = 0,
-  moonSize = 0,
-  sunHaloSize = 0,
-]: readonly number[]): SkyShape => ({
-  frontBackBlend: Math.min(Math.max(frontBackBlend, 0), 1),
-  haloHeight: Math.max(haloHeight, LEAST_SHAPE),
-  horizonBand: Math.max(horizonBand, LEAST_SHAPE),
-  moonSize: Math.max(moonSize, LEAST_MOON_SIZE),
-  sunHaloSize: Math.max(sunHaloSize, LEAST_SUN_HALO_SIZE),
-});
 const SHAPE_STEPS = [0.3, 0.1, 0.15, 0.5, 2];
 const SHAPE_ITERATIONS = 80;
-// One reference's clear sky as the solve reads it, and the scene's own sky drawn with no cloud beside it
-interface SkyReading {
-  data: Buffer;
-  height: number;
-  image: Buffer;
-  ourShot: Buffer;
-  pixels: { color: Vector; direction: Vector; pixel: number; slope: Vector }[];
-  referenceId: string;
-  sky: { moonDirection: Vector; sunDirection: Vector };
-  width: number;
-}
-// A reference's pixels where the witness draws no part, the ray looks up and no cloud stands (`readCloudSky`, the clear
-// Sky fitted under its clouds, so a sky more cloud than clear is not solved as their mean), each turned into its ray
-// Through the scene's own camera and into scene colour through the tone mapping's inverse, under the sun and moon the
-// Scene draws its sky with, and the scene's own sky drawn with no cloud over the same frame: what the scene draws where
-// The solve reads, so a sky solved well and drawn otherwise (a haze, a grade or a pass over it) shows as its own residual
-const readSky = async (referenceId: string, witness: DerivedAssetComponent): Promise<SkyReading> => {
-  const { checkIsScored, close, height, image, page } = await openWitnessPage(referenceId, witness);
-  return withFinalizerAsync(
-    async () => {
-      const { computeClouds, readLuminance, skyMask, width } = await readCloudSky(page, { checkIsScored, height });
-      const clouds = computeClouds(await readLuminance(image));
-      const sky = await page.evaluate(() =>
-        (
-          Reflect.get(window, "getSceneSky") as () => {
-            matrixWorld: number[];
-            moonDirection: Vector;
-            projectionMatrixInverse: number[];
-            sunDirection: Vector;
-          }
-        )(),
-      );
-      const projectionInverse = new Matrix4().fromArray(sky.projectionMatrixInverse);
-      const world = new Matrix4().fromArray(sky.matrixWorld);
-      const data = await sharp(image).resize(width, height, { fit: "fill" }).removeAlpha().raw().toBuffer();
-      const pixels: SkyReading["pixels"] = [];
-      for (let y = 0; y < height; y += SAMPLE_STRIDE)
-        for (let x = 0; x < width; x += SAMPLE_STRIDE) {
-          const pixel = y * width + x;
-          if (!skyMask[pixel] || clouds[pixel]) continue;
-          const view = new Vector4(((x + 0.5) / width) * 2 - 1, 1 - ((y + 0.5) / height) * 2, 0.5, 1).applyMatrix4(
-            projectionInverse,
-          );
-          const direction = new Vector3(view.x / view.w, view.y / view.w, view.z / view.w)
-            .transformDirection(world)
-            .normalize();
-          if (direction.y < MIN_SKY_HEIGHT) continue;
-          const color = getPixelSceneColor(data, pixel);
-          pixels.push({ color, direction: direction.toArray(), pixel, slope: getToneSlope(color) });
-        }
-      const bands = await page.evaluate(() => (Reflect.get(window, "setSceneCloudCover") as SetCloudCover)());
-      await page.evaluate(
-        (covers) => (Reflect.get(window, "setSceneCloudCover") as SetCloudCover)(covers),
-        Object.fromEntries(bands.map((band) => [band, 0])),
-      );
-      await setPageWitnessView(page, { families: [] });
-      const ourShot = await sharp(await page.screenshot())
-        .resize(width, height, { fit: "fill" })
-        .removeAlpha()
-        .raw()
-        .toBuffer();
-      return {
-        data,
-        height,
-        image,
-        ourShot,
-        pixels,
-        referenceId,
-        sky: { moonDirection: sky.moonDirection, sunDirection: sky.sunDirection },
-        width,
-      };
-    },
-    () => close(),
-  );
-};
+
 // One hour's sky solved as the game's sky shader draws it, the way `calibrate` solves the light, over the clear sky of
 // Every reference given at once (`readSky`): each frame shows its own patch of one sky, and solved alone the day's
 // Title and its door frame read two skies far apart, each drawing the other's patch wrong. The colours by least squares

@@ -3,6 +3,7 @@ import type { LabelSimilarityInput } from "#src/models/genshinParity/witness/Lab
 import type { LabelSimilarityResult } from "#src/models/genshinParity/witness/LabelSimilarityResult";
 
 import { blurGrey } from "#src/services/genshinParity/shared/blurGrey";
+import { halve } from "#src/services/genshinParity/witness/halve";
 
 // The CPU reference of each label's similarity, which the parity page computes on its GPU (`computeLabelSimilarity`).
 // Only the unit test reads it, to check the definition the page must agree with
@@ -16,21 +17,7 @@ const SCALE_WEIGHTS = [0.0448, 0.2856, 0.3001, 0.2363, 0.1333];
 const WINDOW_SIGMA = 1.5;
 const LUMINANCE_CONSTANT = 0.01 ** 2;
 const CONTRAST_CONSTANT = 0.03 ** 2;
-// Half the size, each pixel the mean of the four it covers
-const halve = (values: Float32Array, width: number, height: number): Float32Array => {
-  const halfWidth = Math.floor(width / 2);
-  return Float32Array.from({ length: halfWidth * Math.floor(height / 2) }, (_value, index) => {
-    const x = (index % halfWidth) * 2;
-    const y = Math.floor(index / halfWidth) * 2;
-    return (
-      ((values[y * width + x] ?? 0) +
-        (values[y * width + x + 1] ?? 0) +
-        (values[(y + 1) * width + x] ?? 0) +
-        (values[(y + 1) * width + x + 1] ?? 0)) /
-      4
-    );
-  });
-};
+
 // Each label's similarity between two grey images in [0, 1] of one size, a label of -1 read by none, beside its term at
 // Each scale it has pixels at, finest first, so where its structure is lost can be read: at the finest, its detail; at
 // The coarsest, its layout and its luminance. A label with no pixel left at a scale keeps the terms it had. A coarser

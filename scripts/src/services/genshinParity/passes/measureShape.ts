@@ -3,12 +3,13 @@ import type { ParityPassMeasure } from "#src/models/genshinParity/passes/ParityP
 
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { compareFamilyTargets } from "#src/services/genshinParity/passes/compareFamilyTargets";
-import { computeSurfaceBend, getSurfaceBendReading } from "#src/services/genshinParity/passes/computeSurfaceBend";
+import { computeSurfaceBend } from "#src/services/genshinParity/passes/computeSurfaceBend";
 import {
   SHAPE_DEPTH_GATE,
   SHAPE_NORMAL_GATE_DEGREES,
   SHAPE_OUTLINE_GATE_PIXELS,
 } from "#src/services/genshinParity/passes/constants";
+import { getSurfaceBendReading } from "#src/services/genshinParity/passes/getSurfaceBendReading";
 import { measureEnvelope } from "#src/services/genshinParity/passes/measureEnvelope";
 import { measureFamilyTargets } from "#src/services/genshinParity/passes/measureFamilyTargets";
 import { toShapeReading } from "#src/services/genshinParity/passes/toShapeReading";

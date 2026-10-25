@@ -1,12 +1,11 @@
 import type { WholeScreenImage } from "#src/models/genshinParity/WholeScreenImage";
 import type { WikiImagesResponse } from "#src/models/genshinParity/WikiImagesResponse";
+import type { WikiImagePageMap } from "#src/models/genshinParity/shared/WikiImagePageMap";
 
 import { getWholeScreenImages } from "#src/services/genshinParity/shared/getWholeScreenImages";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { WIKI_ORIGIN } from "genshin-persona/src/services/constants.ts";
 import { readWikiJson } from "genshin-persona/src/services/readWikiJson.ts";
-
-type WikiImagePageMap = NonNullable<NonNullable<WikiImagesResponse["query"]>["pages"]>;
 
 // The whole-screen screenshots of one wiki article, read through the same wiki client `fetch` reads its references by.
 // An article holding more images than one response answers is read batch after batch by the continuation each gives,

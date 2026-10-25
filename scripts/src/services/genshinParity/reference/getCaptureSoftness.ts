@@ -1,21 +1,14 @@
 import { hashFile } from "#src/services/genshinParity/reference/hashFile";
-import { measureFrameSoftness } from "#src/services/genshinParity/reference/measureFrameSoftness";
-import { CAPTURES_DIRECTORY, REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { measureCapture } from "#src/services/genshinParity/reference/measureCapture";
 import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
+import { CAPTURES_DIRECTORY, REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
-import { readFile, writeFile } from "node:fs/promises";
+import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
 // The softness of each capture read this run, so a run over many references hashes each recording once
 const captureSoftnessMap = new Map<string, number>();
-
-// Measures a capture's frame into its cache file, so the next run reads it instead
-const measureCapture = async (framePath: string, cachePath: string): Promise<number> => {
-  const softness = await measureFrameSoftness(framePath);
-  await writeFile(cachePath, String(softness));
-  return softness;
-};
 
 // The Gaussian sigma of a capture video's own blur, measured off the first reference's frame taken from it and cached
 // Beside the references under the file's hash, so a changed recording is measured again. Only a reference taken from a

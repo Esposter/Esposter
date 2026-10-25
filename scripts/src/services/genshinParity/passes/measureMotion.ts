@@ -3,8 +3,8 @@ import type { ParityPassMeasure } from "#src/models/genshinParity/passes/ParityP
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { readLoginDoorPieces } from "#src/services/genshinAssets/fit/readLoginDoorPieces";
-import { LOGIN_DOOR_MESH } from "#src/services/genshinAssets/shared/constants";
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
+import { LOGIN_DOOR_MESH } from "#src/services/genshinAssets/shared/constants";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readComponentClips } from "#src/services/genshinAssets/shared/readComponentClips";
 import { readComponentPlacements } from "#src/services/genshinAssets/shared/readComponentPlacements";
@@ -15,33 +15,18 @@ import {
   MOTION_WIDTH,
   PART_GATE_METRES,
 } from "#src/services/genshinParity/passes/constants";
+import { interpolatePose } from "#src/services/genshinParity/passes/interpolatePose";
 import { PARITY_FRAME_MS } from "#src/services/genshinParity/shared/constants";
 import { openParityPage } from "#src/services/genshinParity/shared/openParityPage";
 import { InvalidOperationError, Operation, withFinalizerAsync } from "@esposter/shared";
 import { join } from "node:path";
-import { Box3, Matrix4, Quaternion, Vector3 } from "three";
+import { Box3, Matrix4, Vector3 } from "three";
 
 // The family whose pieces a clip moves, and the stages the scene stands still in and plays it at
 const DOOR_FAMILY = "Door";
 const STILL_STAGE = "Title";
 const DOOR_STAGE = "Door";
-// A pose between two of a clip's samples, its place along the line between theirs and its turn along the arc
-const interpolatePose = (poses: readonly Matrix4[], sample: number): Matrix4 => {
-  const last = poses.length - 1;
-  const clamped = Math.min(Math.max(sample, 0), last);
-  const index = Math.floor(clamped);
-  const [startPosition, endPosition] = [new Vector3(), new Vector3()];
-  const [startTurn, endTurn] = [new Quaternion(), new Quaternion()];
-  const scale = new Vector3();
-  poses[index]?.decompose(startPosition, startTurn, scale);
-  poses[Math.min(index + 1, last)]?.decompose(endPosition, endTurn, scale);
-  const share = clamped - index;
-  return new Matrix4().compose(
-    startPosition.lerp(endPosition, share),
-    startTurn.slerp(endTurn, share),
-    new Vector3(1, 1, 1),
-  );
-};
+
 // The motion pass: the door's pieces as the scene plays their lift, read frame by frame on a faked clock from the
 // Frame its stage turns to the door's, held against where the game's own lift clip carries each piece: its path, the
 // Furthest any vertex of a piece stands from the clip's place at the frame's moment in metres, through the lift and at

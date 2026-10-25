@@ -3,14 +3,8 @@ import type { LabelSimilarityInput } from "#src/models/genshinParity/witness/Lab
 import type { LabelSimilarityResult } from "#src/models/genshinParity/witness/LabelSimilarityResult";
 import type { Page } from "playwright";
 
-// The bytes of a base64 float array, read as the host's floats
-const decodeFloat32 = (encoded: string): Float32Array => {
-  const bytes = Buffer.from(encoded, "base64");
-  return new Float32Array(bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength));
-};
-// A float array's bytes as base64, for the page to read
-const encodeFloat32 = (values: Float32Array): string =>
-  Buffer.from(values.buffer, values.byteOffset, values.byteLength).toString("base64");
+import { decodeFloat32 } from "#src/services/genshinParity/witness/decodeFloat32";
+import { encodeFloat32 } from "#src/services/genshinParity/witness/encodeFloat32";
 
 // Each label's similarity between two grey images, reduced on the parity page's GPU (`computeLabelSimilarity` there),
 // Which the page serves beside its surface statistics. It agrees with `scoreLabelSimilarity`, the CPU reference

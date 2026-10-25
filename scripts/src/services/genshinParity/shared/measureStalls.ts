@@ -1,18 +1,19 @@
 /* oxlint-disable no-underscore-dangle -- the names are the page's own globals: the window fields the page keeps and the devtools messenger three publishes */
-import type { CpuCapture } from "#src/models/genshinParity/shared/CpuCapture";
+
+import type { DevtoolsMessage } from "#src/models/genshinParity/shared/DevtoolsMessage";
 import type { FrameSample } from "#src/models/genshinParity/shared/FrameSample";
 import type { GpuCall } from "#src/models/genshinParity/shared/GpuCall";
 import type { GpuPass } from "#src/models/genshinParity/shared/GpuPass";
 import type { GpuTrace } from "#src/models/genshinParity/shared/GpuTrace";
 import type { StallOptions } from "#src/models/genshinParity/shared/StallOptions";
-import type { StallState } from "#src/models/genshinParity/shared/StallState";
-import type { TracedState } from "#src/models/genshinParity/shared/TracedState";
-import type { BrowserContext, Page } from "playwright";
+import type { StallRenderer } from "#src/models/genshinParity/shared/StallRenderer";
 
 import { PARITY_PAGE_URL, STALLS_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { hookRenderer } from "#src/services/genshinParity/shared/hookRenderer";
 import { measureSceneKinds } from "#src/services/genshinParity/shared/measureSceneKinds";
+import { measureStates } from "#src/services/genshinParity/shared/measureStates";
+import { startCpuProfile } from "#src/services/genshinParity/shared/startCpuProfile";
 import { summarizeGpuTrace } from "#src/services/genshinParity/shared/summarizeGpuTrace";
-import { summarizeStallState } from "#src/services/genshinParity/shared/summarizeStallState";
 import { TRACE_GPU_PASSES_SCRIPT } from "#src/services/genshinParity/shared/traceGpuPassesScript";
 import { TRACE_GPU_SCRIPT } from "#src/services/genshinParity/shared/traceGpuScript";
 import { TRACE_NODES_SCRIPT } from "#src/services/genshinParity/shared/traceNodesScript";
@@ -20,17 +21,6 @@ import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shar
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { chromium } from "playwright";
-
-interface DevtoolsMessage {
-  data: { renderer: { instance?: StallRenderer; value?: { instance?: StallRenderer } }; scene?: { value?: unknown } };
-  type: string;
-}
-
-// The window fields the page keeps for the run: the frames it drew, the renderer it hands over and the pointer lock the orbit fakes
-// The renderer as the run reads it: its program count is what grows as a pipeline first draws
-interface StallRenderer {
-  info: { memory: { programs: number } };
-}
 
 declare global {
   interface Window {
@@ -47,18 +37,8 @@ declare global {
   }
 }
 
-// Mouse look turns 0.002 radians a pixel, and a full turn is spread over six seconds of events every 16 milliseconds
-const MOUSE_LOOK_RADIANS_PER_PIXEL = 0.002;
-const ORBIT_EVENT_MS = 16;
-const ORBIT_MS = 6000;
-const ORBIT_MOUSE_PIXELS = (2 * Math.PI) / MOUSE_LOOK_RADIANS_PER_PIXEL;
-const PAUSE_MS = 1000;
-const WALK_MS = 20_000;
 const LOAD_TIMEOUT_MS = 300_000;
 const HOOK_TIMEOUT_MS = 60_000;
-const CPU_SAMPLE_MICROSECONDS = 200;
-const MICROSECONDS_PER_MS = 1000;
-
 // Records every animation frame with the renderer's program count, from before the page's first frame. A script string rather
 // Than a function: the TypeScript runner rewrites a named inner function with a helper the page does not have
 const RECORD_FRAMES_SCRIPT = `
@@ -76,109 +56,6 @@ const RECORD_FRAMES_SCRIPT = `
     },
   });
 `;
-
-// Hands the renderer and the scene over as soon as the devtools messenger publishes its context, before the first frame
-// It draws
-const hookRenderer = () => {
-  window.__hooked = false;
-  window.__TRES__DEVTOOLS__?.subscribers.add((message) => {
-    if (message.type !== "context" || window.__hooked) return;
-    const holder = message.data.renderer;
-    const renderer = holder.instance ?? holder.value?.instance;
-    if (!renderer) return;
-    window.__hooked = true;
-    window.__renderer = renderer;
-    window.__scene = message.data.scene?.value;
-  });
-};
-
-const orbit = (page: Page, orbitDurationMs: number) =>
-  page.evaluate(
-    ({ durationMs, eventMs, mousePixels }) =>
-      new Promise<void>((resolve) => {
-        window.__fakeLock = true;
-        const startMs = performance.now();
-        let sentPixels = 0;
-        // The browser truncates an event's movement to whole pixels, so each event sends the whole pixels the turn owes by
-        // Its time, and a late timer neither truncates nor drops any of the turn
-        const timer = setInterval(() => {
-          const progress = Math.min((performance.now() - startMs) / durationMs, 1);
-          const movementX = Math.round(mousePixels * progress) - sentPixels;
-          sentPixels += movementX;
-          window.dispatchEvent(new MouseEvent("mousemove", { bubbles: true, movementX, movementY: 0 }));
-          if (progress < 1) return;
-          clearInterval(timer);
-          window.__fakeLock = false;
-          resolve();
-        }, eventMs);
-      }),
-    { durationMs: orbitDurationMs, eventMs: ORBIT_EVENT_MS, mousePixels: ORBIT_MOUSE_PIXELS },
-  );
-
-const walk = async (page: Page, durationMs: number) => {
-  await page.evaluate(() =>
-    window.dispatchEvent(new KeyboardEvent("keydown", { bubbles: true, code: "KeyW", key: "w" })),
-  );
-  await page.waitForTimeout(durationMs);
-  await page.evaluate(() =>
-    window.dispatchEvent(new KeyboardEvent("keyup", { bubbles: true, code: "KeyW", key: "w" })),
-  );
-};
-
-const readPrograms = (page: Page): Promise<null | number> =>
-  page.evaluate(() => window.__renderer?.info.memory.programs ?? null);
-
-// One state: the frames drawn while its drive runs, summarised with the programs held before and after it
-const measureState = async (
-  page: Page,
-  name: string,
-  drive: () => Promise<void>,
-): Promise<TracedState & { state: StallState }> => {
-  await page.evaluate(() => {
-    window.__frameTimes = [];
-  });
-  const programsBefore = await readPrograms(page);
-  await drive();
-  const frames = await page.evaluate(() => window.__frameTimes);
-  const programsAfter = await readPrograms(page);
-
-  return { frames, name, state: summarizeStallState(name, frames, programsBefore, programsAfter) };
-};
-
-// The states of one run, in order: the cold orbit straight after load, where the first sight of each pipeline lands, then
-// A second orbit, then a walk, each after a pause so one state's frames do not run into the next
-const measureStates = async (page: Page): Promise<(TracedState & { state: StallState })[]> => {
-  const coldOrbit = await measureState(page, "cold orbit", () => orbit(page, ORBIT_MS));
-  await page.waitForTimeout(PAUSE_MS);
-  const secondOrbit = await measureState(page, "second orbit", () => orbit(page, ORBIT_MS));
-  await page.waitForTimeout(PAUSE_MS);
-  const walked = await measureState(page, `walk ${WALK_MS / 1000} s`, () => walk(page, WALK_MS));
-
-  return [coldOrbit, secondOrbit, walked];
-};
-
-// The page's main-thread samples over the run, which a slow frame with no GPU call in it is named by. The profile's clock is
-// Read against the page's own clock at the start, so each sample's time is the frame times' time
-const startCpuProfile = async (context: BrowserContext, page: Page) => {
-  const session = await context.newCDPSession(page);
-  await session.send("Profiler.enable");
-  await session.send("Profiler.setSamplingInterval", { interval: CPU_SAMPLE_MICROSECONDS });
-  const pageNowMs = await page.evaluate(() => performance.now());
-  await session.send("Profiler.start");
-
-  return {
-    stop: async (): Promise<CpuCapture> => {
-      const { profile } = await session.send("Profiler.stop");
-      return {
-        nodes: profile.nodes ?? [],
-        offsetMs: profile.startTime / MICROSECONDS_PER_MS - pageNowMs,
-        samples: profile.samples ?? [],
-        startTime: profile.startTime,
-        timeDeltas: profile.timeDeltas ?? [],
-      };
-    },
-  };
-};
 
 // Opens the screen on the parity page at a viewport and device ratio, runs the orbit and walk states, prints a row a state,
 // And writes the run beside the rest of the parity tool's output. Its page is the one `genshin:parity` serves. With a trace,

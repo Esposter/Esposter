@@ -1,33 +1,13 @@
-import type { FrameRange } from "#src/models/genshinParity/shared/FrameRange";
 import type { GpuPass } from "#src/models/genshinParity/shared/GpuPass";
 import type { SceneKindTrace } from "#src/models/genshinParity/shared/SceneKindTrace";
 
-const MS_DECIMALS = 100;
+import { getFrameCount } from "#src/services/genshinParity/shared/getFrameCount";
+import { getLetter } from "#src/services/genshinParity/shared/getLetter";
+import { readPassUseMap } from "#src/services/genshinParity/shared/readPassUseMap";
+import { roundHundredths } from "#src/services/genshinParity/shared/roundHundredths";
+import { sumMs } from "#src/services/genshinParity/shared/sumMs";
+
 const MS_PER_SECOND = 1000;
-const FIRST_LETTER_CODE = 65;
-
-const roundMs = (ms: number): number => Math.round(ms * MS_DECIMALS) / MS_DECIMALS;
-
-const getLetter = (index: number): string => String.fromCodePoint(FIRST_LETTER_CODE + index);
-
-const getFrameCount = (ranges: FrameRange[]): number =>
-  ranges.reduce((total, { endFrame, firstFrame }) => total + endFrame - firstFrame, 0);
-
-// Each kind of pass over the frames of some ranges, by its encoder and attachment: its GPU time and its count a frame
-const readPassUseMap = (passes: GpuPass[], ranges: FrameRange[]): Map<string, { count: number; ms: number }> => {
-  const frameCount = getFrameCount(ranges);
-  const passUseMap = new Map<string, { count: number; ms: number }>();
-  for (const { detail, frame, gpuMs, label } of passes) {
-    if (!ranges.some(({ endFrame, firstFrame }) => frame >= firstFrame && frame < endFrame)) continue;
-    const key = `${label} | ${detail}`;
-    const use = passUseMap.get(key) ?? { count: 0, ms: 0 };
-    passUseMap.set(key, { count: use.count + 1 / frameCount, ms: use.ms + gpuMs / frameCount });
-  }
-  return passUseMap;
-};
-
-const sumMs = (passUseMap: Map<string, { ms: number }>): number =>
-  [...passUseMap.values()].reduce((total, { ms }) => total + ms, 0);
 
 // Each kind of the scene's objects priced on each pass by the GPU's time a frame its hiding saved there, against the
 // Ranges with every kind drawn either side of it, so the GPU's drift over the run cancels: first the passes, lettered,
@@ -52,10 +32,10 @@ export const summarizeSceneKinds = (
   const baselineMs = baselines.map((baseline) => sumMs(readPassUseMap(passes, [baseline])));
 
   return [
-    `kinds, camera still: ${roundMs(sumMs(baselineUseMap))} ms a frame on the GPU with every kind drawn (${roundMs(Math.min(...baselineMs))} to ${roundMs(Math.max(...baselineMs))} across its ${baselines.length} ranges), at ${Math.round(framesPerSecond)} frames a second`,
+    `kinds, camera still: ${roundHundredths(sumMs(baselineUseMap))} ms a frame on the GPU with every kind drawn (${roundHundredths(Math.min(...baselineMs))} to ${roundHundredths(Math.max(...baselineMs))} across its ${baselines.length} ranges), at ${Math.round(framesPerSecond)} frames a second`,
     ...passKeys.map((key, index) => {
       const { count = 0, ms = 0 } = baselineUseMap.get(key) ?? {};
-      return `  ${getLetter(index)} ${roundMs(ms)} ms a frame, ${roundMs(count)} passes a frame, ${Math.round(count * framesPerSecond)} a second: ${key}`;
+      return `  ${getLetter(index)} ${roundHundredths(ms)} ms a frame, ${roundHundredths(count)} passes a frame, ${Math.round(count * framesPerSecond)} a second: ${key}`;
     }),
     `kind | drawables | ms a frame saved | ${passKeys.map((_key, index) => getLetter(index)).join(" | ")}`,
     ...kinds
@@ -68,7 +48,7 @@ export const summarizeSceneKinds = (
       .toSorted((firstKind, secondKind) => secondKind.totalMs - firstKind.totalMs)
       .map(
         ({ drawables, kind, savedMs, totalMs }) =>
-          `${kind} | ${drawables} | ${roundMs(totalMs)} | ${savedMs.map((ms) => roundMs(ms)).join(" | ")}`,
+          `${kind} | ${drawables} | ${roundHundredths(totalMs)} | ${savedMs.map((ms) => roundHundredths(ms)).join(" | ")}`,
       ),
   ];
 };

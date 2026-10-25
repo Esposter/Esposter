@@ -1,22 +1,10 @@
+import type { SurfaceBend } from "#src/models/genshinParity/passes/SurfaceBend";
+import type { SurfaceBendSide } from "#src/models/genshinParity/passes/SurfaceBendSide";
+
 import { computeNormalAngle } from "#src/services/genshinParity/passes/computeNormalAngle";
-import { SHAPE_NORMAL_RESOLUTION_DEGREES, SPLIT_BLOCK_PIXELS } from "#src/services/genshinParity/passes/constants";
+import { SPLIT_BLOCK_PIXELS } from "#src/services/genshinParity/passes/constants";
 import { readTargetFamily } from "#src/services/genshinParity/passes/readTargetFamily";
 
-// How far each family's normals bend off their geometry's, per side, over the pixels both sides draw: the mean bend of
-// Each side, and the exports' bend over each half of the family's blocks of `SPLIT_BLOCK_PIXELS` as a chequerboard. The
-// Two halves read against each other are the floor a bend matched in distribution is gated at
-export interface SurfaceBend {
-  exportsAngle: number;
-  family: number;
-  halves: [number, number];
-  oursAngle: number;
-}
-// One side of a view's shape: its normal target as drawn, its normal target before any normal detail, and its part target
-export interface SurfaceBendSide {
-  geometryNormal: Float32Array;
-  normal: Float32Array;
-  part: Float32Array;
-}
 // The bend of each family's surface detail, from the exports' and ours' normal and geometry normal targets. A family
 // Both sides draw no pixel of is left out
 export const computeSurfaceBend = (
@@ -63,14 +51,3 @@ export const computeSurfaceBend = (
           ],
   );
 };
-// The bend reading a family is gated on: ours' bend less the exports', in degrees, against the floor the exports' own
-// Two halves stand apart by, never below what a normal's float target resolves. A family whose exports and ours both
-// Bend nothing reads its noise against that resolution, not against its halves' float noise
-export const getSurfaceBendReading = ({
-  exportsAngle,
-  halves: [firstHalf, secondHalf],
-  oursAngle,
-}: SurfaceBend): { gate: number; value: number } => ({
-  gate: Math.max(Math.abs(firstHalf - secondHalf), SHAPE_NORMAL_RESOLUTION_DEGREES),
-  value: Math.abs(oursAngle - exportsAngle),
-});

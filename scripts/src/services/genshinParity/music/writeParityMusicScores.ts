@@ -1,9 +1,9 @@
 import type { MusicScore } from "#src/models/genshinParity/music/MusicScore";
 
+import { formatBand } from "#src/services/genshinParity/music/formatBand";
 import { LISTEN_BAND_CENTRES, PARITY_MUSIC_SCORES_PATH } from "#src/services/genshinParity/shared/constants";
 import { writeFile } from "node:fs/promises";
 
-const formatBand = (centre: number): string => (centre >= 1000 ? `${centre / 1000} kHz` : `${centre} Hz`);
 // The committed report of the music's last `listen`, every segment that plays anything, rewritten whole each run
 export const writeParityMusicScores = (screen: string, scores: { id: number; score: MusicScore }[]): Promise<void> =>
   writeFile(

@@ -4,94 +4,28 @@
 // Luminance's edges and points (a Gaussian's first and second derivatives) compared beside it; and each pixel's error
 // The colour difference raised to one less the feature difference. The mean of the error map is the one number a scene
 // Is approved by, 0 identical and 1 as far apart as two images can be
+
 import type { Vector } from "#src/models/shared/Vector";
 
+import { clamp } from "#src/services/genshinParity/shared/clamp";
 import { FLIP_PIXELS_PER_DEGREE } from "#src/services/genshinParity/shared/constants";
-import { D65_WHITE } from "#src/services/shared/constants";
-import { toLab } from "#src/services/shared/toLab";
+import { createFeatureFilter } from "#src/services/genshinParity/shared/createFeatureFilter";
+import { createSpatialFilters } from "#src/services/genshinParity/shared/createSpatialFilters";
+import { getHyab } from "#src/services/genshinParity/shared/getHyab";
+import { toHuntLab } from "#src/services/genshinParity/shared/toHuntLab";
+import { xyzToLinear } from "#src/services/genshinParity/shared/xyzToLinear";
+import { xyzToYcxcz } from "#src/services/genshinParity/shared/xyzToYcxcz";
+import { ycxczToXyz } from "#src/services/genshinParity/shared/ycxczToXyz";
 import { toLinear } from "#src/services/shared/toLinear";
 import { toXyz } from "#src/services/shared/toXyz";
 
 const QC = 0.7;
 const PC = 0.4;
 const PT = 0.95;
-const W = 0.082;
 const QF = 0.5;
-const GAUSSIAN_A1: Vector = [1, 1, 34.1];
-const GAUSSIAN_B1: Vector = [0.0047, 0.0053, 0.04];
-const GAUSSIAN_A2: Vector = [0, 0, 13.5];
-const GAUSSIAN_B2: Vector = [1e-5, 1e-5, 0.025];
-
-const xyzToLinear = ([x, y, z]: Vector): Vector => [
-  3.241003275 * x - 1.537398934 * y - 0.498615861 * z,
-  -0.969224334 * x + 1.875930071 * y + 0.041554224 * z,
-  0.055639423 * x - 0.204011202 * y + 1.057148933 * z,
-];
-const xyzToYcxcz = ([x, y, z]: Vector): Vector => {
-  const [nx, ny, nz] = [x / D65_WHITE[0], y / D65_WHITE[1], z / D65_WHITE[2]];
-  return [116 * ny - 16, 500 * (nx - ny), 200 * (ny - nz)];
-};
-const ycxczToXyz = ([luminance, cx, cz]: Vector): Vector => {
-  const y = (luminance + 16) / 116;
-  return [(y + cx / 500) * D65_WHITE[0], y * D65_WHITE[1], (y - cz / 200) * D65_WHITE[2]];
-};
-const clamp = (value: number): number => Math.min(Math.max(value, 0), 1);
-const toHuntLab = (linear: Vector): Vector => {
-  const [l, a, b] = toLab(toXyz(linear));
-  return [l, 0.01 * l * a, 0.01 * l * b];
-};
-const getHyab = ([l1, a1, b1]: Vector, [l2, a2, b2]: Vector): number =>
-  Math.abs(l1 - l2) + Math.hypot(a1 - a2, b1 - b2);
 // The farthest two colours can be, green from blue, compressed as every difference is
 const MAX_DISTANCE = getHyab(toHuntLab([0, 1, 0]), toHuntLab([0, 0, 1])) ** QC;
-const getGaussian = (x2: number, a: number, b: number): number =>
-  a * Math.sqrt(Math.PI / b) * Math.exp((-Math.PI * Math.PI * x2) / b);
-const getGaussianSqrt = (x2: number, a: number, b: number): number =>
-  Math.sqrt(a * Math.sqrt(Math.PI / b)) * Math.exp((-Math.PI * Math.PI * x2) / b);
-// The contrast sensitivity filters, separated: one for the achromatic and red-green channels, and the blue-yellow's sum
-// Of two Gaussians as two filters whose squares sum to it
-const createSpatialFilters = (pixelsPerDegree: number): { cz: [number, number][]; ycx: [number, number][] } => {
-  const largest = Math.max(...GAUSSIAN_B1, GAUSSIAN_B2[0], GAUSSIAN_B2[1], GAUSSIAN_B2[2]);
-  const radius = Math.ceil(3 * Math.sqrt(largest / (2 * Math.PI * Math.PI)) * pixelsPerDegree);
-  const ycx: [number, number][] = [];
-  const cz: [number, number][] = [];
-  for (let offset = -radius; offset <= radius; offset++) {
-    const x2 = (offset / pixelsPerDegree) ** 2;
-    ycx.push([getGaussian(x2, GAUSSIAN_A1[0], GAUSSIAN_B1[0]), getGaussian(x2, GAUSSIAN_A1[1], GAUSSIAN_B1[1])]);
-    cz.push([getGaussianSqrt(x2, GAUSSIAN_A1[2], GAUSSIAN_B1[2]), getGaussianSqrt(x2, GAUSSIAN_A2[2], GAUSSIAN_B2[2])]);
-  }
-  const [sumY, sumCx] = ycx.reduce(([y, x], [wy, wx]) => [y + wy, x + wx], [0, 0]);
-  const [sumCz1, sumCz2] = cz.reduce(([first, second], [w1, w2]) => [first + w1, second + w2], [0, 0]);
-  const czNorm = 1 / Math.hypot(sumCz1, sumCz2);
-  return { cz: cz.map(([w1, w2]) => [w1 * czNorm, w2 * czNorm]), ycx: ycx.map(([wy, wx]) => [wy / sumY, wx / sumCx]) };
-};
-// The edge and point filters: a Gaussian, its first and its second derivative, each normalised as FLIP normalises them
-const createFeatureFilter = (pixelsPerDegree: number): Vector[] => {
-  const deviation = 0.5 * W * pixelsPerDegree;
-  const radius = Math.ceil(3 * deviation);
-  const weights: Vector[] = [];
-  let gaussianSum = 0;
-  let firstPositive = 0;
-  let firstNegative = 0;
-  let secondPositive = 0;
-  let secondNegative = 0;
-  for (let offset = -radius; offset <= radius; offset++) {
-    const gaussian = Math.exp(-(offset * offset) / (2 * deviation * deviation));
-    const first = -offset * gaussian;
-    const second = ((offset * offset) / (deviation * deviation) - 1) * gaussian;
-    gaussianSum += gaussian;
-    if (first > 0) firstPositive += first;
-    else firstNegative -= first;
-    if (second > 0) secondPositive += second;
-    else secondNegative -= second;
-    weights.push([gaussian, first, second]);
-  }
-  return weights.map(([gaussian, first, second]) => [
-    gaussian / gaussianSum,
-    first / (first > 0 ? firstPositive : firstNegative),
-    second / (second > 0 ? secondPositive : secondNegative),
-  ]);
-};
+
 // The FLIP error map of a test image against a reference, both sRGB with three channels a pixel in [0, 1], and its mean
 export const scoreFlip = (
   reference: Float32Array,

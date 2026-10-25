@@ -1,8 +1,10 @@
 import type { WitnessGbuffer } from "#src/models/genshinParity/shared/WitnessGbuffer";
 import type { Vector } from "#src/models/shared/Vector";
 
-import { CHANNELS, LUMINANCE } from "#src/services/genshinParity/shared/constants";
+import { CHANNELS } from "#src/services/genshinParity/shared/constants";
 import { readFlipErrorMap } from "#src/services/genshinParity/shared/readFlipErrorMap";
+import { countPassed } from "#src/services/genshinParity/witness/countPassed";
+import { readLuminance } from "#src/services/genshinParity/witness/readLuminance";
 import { BYTE } from "#src/services/shared/constants";
 import { toLinear } from "#src/services/shared/toLinear";
 import { toSrgb } from "#src/services/shared/toSrgb";
@@ -24,9 +26,7 @@ const MIN_DENOMINATOR = 1e-6;
 const RATIO_MAP_STOPS = 1;
 // How bright the reference shows round the parts on the map, a share of its own brightness
 const RATIO_MAP_BACKDROP = 0.4;
-const countPassed = (edges: readonly number[], value: number): number => edges.filter((edge) => value > edge).length;
-const readLuminance = (linear: Float32Array, pixel: number): number =>
-  LUMINANCE.reduce((sum, weight, channel) => sum + weight * (linear[pixel * CHANNELS.length + channel] ?? 0), 0);
+
 // What any light could still recover of a reference's frame: the exports' frame corrected, channel by channel in linear
 // Colour, to the reference's own mean over every part pixel of a bin, and scored again. A light, a haze or a grade
 // That depends only on what a bin holds can recover no more than its row, so a row that recovers little says the light

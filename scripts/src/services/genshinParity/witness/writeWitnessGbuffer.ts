@@ -2,6 +2,7 @@ import type { WitnessGbuffer } from "#src/models/genshinParity/shared/WitnessGbu
 
 import { GBUFFER_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { writeSideBySide } from "#src/services/genshinParity/shared/writeSideBySide";
+import { getColor } from "#src/services/genshinParity/witness/getColor";
 import { getFamilyColor } from "#src/services/genshinParity/witness/getFamilyColor";
 import { drawPixels } from "#src/services/recreation/image/drawPixels";
 import { toByte } from "#src/services/shared/toByte";
@@ -11,16 +12,7 @@ import sharp from "sharp";
 
 // A depth this many metres off reads half as bright in its preview, so the near parts and the far towers both show
 const DEPTH_PREVIEW_HALF = 100;
-// A pixel's first three floats of a target as a colour, each through the given map to a share of full brightness
-const getColor = (
-  values: Float32Array,
-  pixel: number,
-  toShare: (value: number) => number,
-): [number, number, number] => [
-  toByte(toShare(values[pixel * 4] ?? 0)),
-  toByte(toShare(values[pixel * 4 + 1] ?? 0)),
-  toByte(toShare(values[pixel * 4 + 2] ?? 0)),
-];
+
 // One reference's witness G-buffer beside the references, outside the repository: each target as its raw floats, a
 // Header naming each part by its identifier, and a preview to check them by, the colour shot beside the parts coloured
 // By family, the normals and the depth. Returns the preview's path

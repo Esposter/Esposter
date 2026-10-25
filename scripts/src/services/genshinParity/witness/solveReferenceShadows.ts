@@ -1,13 +1,14 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import type { PricedDirection } from "#src/models/genshinParity/witness/PricedDirection";
 import type { SetLights } from "#src/models/genshinParity/witness/SetLights";
 import type { Vector } from "#src/models/shared/Vector";
 
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { SHADOW_WIDTH } from "#src/services/genshinParity/passes/constants";
-import { LUMINANCE, PARITY_DIRECTORY, REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
+import { PARITY_DIRECTORY, REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { fetchReferences } from "#src/services/genshinParity/shared/fetchReferences";
 import { openWitnessPage } from "#src/services/genshinParity/shared/openWitnessPage";
-import { ParityReferenceMap } from "#src/services/genshinParity/shared/ParityReferenceMap";
 import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitnessTargets";
 import { removeMaskSpecks } from "#src/services/genshinParity/shared/removeMaskSpecks";
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
@@ -15,10 +16,13 @@ import { toPageCamera } from "#src/services/genshinParity/shared/toPageCamera";
 import { checkIsPartInterior } from "#src/services/genshinParity/sky/checkIsPartInterior";
 import { getPixelDisplayColor } from "#src/services/genshinParity/sky/getPixelDisplayColor";
 import { computeEdgeDistance } from "#src/services/genshinParity/witness/computeEdgeDistance";
+import { countSetPixels } from "#src/services/genshinParity/witness/countSetPixels";
 import { findShadowEdges } from "#src/services/genshinParity/witness/findShadowEdges";
 import { getSkyGridDirections } from "#src/services/genshinParity/witness/getSkyGridDirections";
 import { readReferenceLandmarks } from "#src/services/genshinParity/witness/readReferenceLandmarks";
 import { solveCameraPose } from "#src/services/genshinParity/witness/solveCameraPose";
+import { toAngles } from "#src/services/genshinParity/witness/toAngles";
+import { toLuminance } from "#src/services/genshinParity/witness/toLuminance";
 import { toSunDirection } from "#src/services/genshinParity/witness/toSunDirection";
 import { minimizeNelderMead } from "#src/services/recreation/solve/minimizeNelderMead";
 import { computeOtsuThreshold } from "#src/services/recreation/statistics/computeOtsuThreshold";
@@ -27,7 +31,6 @@ import { withFinalizerAsync } from "@esposter/shared";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
-import { MathUtils } from "three";
 
 // A flat receiver is a face turned within about 25 degrees of up, past what the walkway's carved relief bends its
 // Normals by, so a shadow's edge across it is the occluder's and not the face's own turn
@@ -51,19 +54,7 @@ const PROBE_TURNS_DEGREES: readonly [number, number][] = [
   [0, -10],
   [0, 10],
 ];
-// A sun direction priced: its edges' distance from the reference's and how many edge pixels ours draws
-interface PricedDirection {
-  direction: Vector;
-  distance: number;
-  ourEdgeCount: number;
-}
-const toAngles = ([x, y, z]: Readonly<Vector>): number[] => [
-  MathUtils.radToDeg(Math.atan2(z, x)),
-  MathUtils.radToDeg(Math.asin(y / Math.hypot(x, y, z))),
-];
-const countSetPixels = (mask: Uint8Array): number => mask.reduce((count, isSet) => count + isSet, 0);
-const toLuminance = (red: number, green: number, blue: number): number =>
-  LUMINANCE[0] * red + LUMINANCE[1] * green + LUMINANCE[2] * blue;
+
 // The light pass's shadows on a reference: its flat receivers are the interior pixels of the exports' parts that face
 // Up, where the reference's shading, its colour over the exports' albedo, splits by Otsu's threshold into shadow and
 // Light, and the shadow's edges are those (`findShadowEdges`). The exports' occluders are cast onto the same receivers

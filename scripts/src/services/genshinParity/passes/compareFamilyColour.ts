@@ -2,20 +2,13 @@ import type { LabelSimilarityScorer } from "#src/models/genshinParity/witness/La
 import type { SimilarityTermMap } from "#src/models/genshinParity/witness/SimilarityTermMap";
 import type { Vector } from "#src/models/shared/Vector";
 
+import { addColours } from "#src/services/genshinParity/passes/addColours";
+import { readColour } from "#src/services/genshinParity/passes/readColour";
 import { readTargetFamily } from "#src/services/genshinParity/passes/readTargetFamily";
 import { readTargetLightness } from "#src/services/genshinParity/passes/readTargetLightness";
 import { toLab } from "#src/services/shared/toLab";
 import { toXyz } from "#src/services/shared/toXyz";
 
-const readColour = (colour: Float32Array, pixel: number): Vector => [
-  colour[pixel * 4] ?? 0,
-  colour[pixel * 4 + 1] ?? 0,
-  colour[pixel * 4 + 2] ?? 0,
-];
-const addColours = (
-  [firstRed, firstGreen, firstBlue]: Vector,
-  [secondRed, secondGreen, secondBlue]: Vector,
-): Vector => [firstRed + secondRed, firstGreen + secondGreen, firstBlue + secondBlue];
 // Each family's colour in one of the witness's colour targets (its unlit albedo, its glow), ours against the exports',
 // From the part target and that colour target the witness drew of each at one view, four floats a pixel, over the pixels both draw it: the CIELab distance between their mean colours, and how
 // Unlike their lightness is in structure (`scoreSimilarity`, 0 alike and 1 nothing alike), which a painted detail
