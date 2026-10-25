@@ -58,11 +58,13 @@ Rate limiting and verification rows also carry the user id, and both expire on t
 
 A deletion or an export cannot be complete while these hold, and each one is named where it is decided.
 
-1. A deleted room's message index, `MessagesAscending`, outlives the room. The sweep clears the four partitions the design names, and this index is not one of them (`user-account-deletion/design.md`, the decision on owned rooms).
+1. A deleted room's message index, `MessagesAscending`, outlives the room. The sweep clears the four partitions the design names, and this index is not one of them. It is not in the Azure Table rows above either, so the inventory does not list it. Owner decision: whether it is a store the deletion must sweep (`user-account-deletion/design.md`, the decision on owned rooms).
 2. Messages a user wrote in rooms they have since left stay attributed to them, because membership is the only index (`user-account-deletion/design.md`, "Limits the spec states").
 3. Moderation logs and notes that name the user in rooms it does not own, and the user's activity on other people's resources, are kept (`user-account-deletion/specs/user/account-deletion/spec.md`, "The deletion states what it does not remove").
 4. The shared character-pack files are kept, and have no owner to attribute them to (`user-account-deletion/specs/user/account-deletion/spec.md`, "The deletion states what it does not remove").
 5. Azure AI Search keeps a copy of message text whose removal path is unverified (`user-account-deletion/design.md`, "Limits the spec states").
+6. A write SAS minted before the deletion can land a blob under the deleted user's prefix after the directory sweep has listed it, and no later step sweeps that blob. The write window (one hour) bounds how long this can happen. Owner decision: whether to sweep again after the window (`user-account-deletion/design.md`, "Limits the spec states").
+7. The sweep removes the account from reactions in shared rooms without a live announcement, so open rooms show the reaction until reload. The reaction removal's live announcement is owed (`user-account-deletion/design.md`, "The soft delete owes live views an announcement, and the sweep does not yet give one.").
 
 ## Key files
 
