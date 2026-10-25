@@ -70,6 +70,7 @@ describe(sendNotification, () => {
 
   afterEach(async () => {
     await mockDb.delete(notificationsInNotification);
+    vi.restoreAllMocks();
   });
 
   test("returns early when a message has no text content", async () => {
@@ -119,8 +120,6 @@ describe(sendNotification, () => {
     ).resolves.toBeUndefined();
     await expect(mockDb.select().from(notificationsInNotification)).resolves.toHaveLength(1);
     expect(trim).toHaveBeenCalledTimes(1);
-
-    trim.mockRestore();
   });
 
   test("a resource operation writes a bell row and skips the session that caused it", async () => {

@@ -12,6 +12,7 @@ describe(writeDeadLetterBlob, () => {
 
   afterEach(() => {
     MockContainerDatabase.clear();
+    vi.restoreAllMocks();
   });
 
   test("copies under every prefix and leaves the source untouched", async () => {
