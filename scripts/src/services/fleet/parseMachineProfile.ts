@@ -1,10 +1,8 @@
 import type { MachineProfile } from "#src/models/fleet/MachineProfile";
 
+import { checkIsStringArray } from "#src/services/fleet/checkIsStringArray";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { getResult } from "@esposter/shared";
-
-const checkIsStringArray = (value: unknown): value is string[] =>
-  Array.isArray(value) && value.every((item) => typeof item === "string");
 
 // The profile a machine file holds, or undefined for a file missing its id, areas or capabilities
 export const parseMachineProfile = (json: string): MachineProfile | undefined =>
