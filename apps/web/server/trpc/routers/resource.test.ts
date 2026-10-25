@@ -1,5 +1,6 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
+import { trpcRouter } from "#server/trpc/routers";
 import type { ResourceReferences } from "#shared/models/resource/ResourceReferences";
 import type { SnapshotRestoration } from "#shared/models/resource/SnapshotRestoration";
 import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
@@ -90,7 +91,7 @@ const createFilesBlobName = (id: ResourceInResource["id"]) =>
 const getAssetHash = (blobName: string) => blobName.slice(blobName.lastIndexOf("/") + 1);
 
 describe("resourceRouter", () => {
-  const { getCaller, getMockContext } = setupResourceSuite(resourceRouter);
+  const { getMockContext } = setupResourceSuite(resourceRouter);
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["resource"]>;
   let dashboardCaller: DecorateRouterRecord<TRPCRouter["dashboard"]>;
@@ -124,7 +125,7 @@ describe("resourceRouter", () => {
 
   beforeAll(() => {
     mockContext = getMockContext();
-    caller = getCaller();
+    caller = createCallerFactory(trpcRouter)(mockContext).resource;
     dashboardCaller = createCallerFactory(dashboardRouter)(mockContext);
     emailCaller = createCallerFactory(emailRouter)(mockContext);
     sheetCaller = createCallerFactory(sheetRouter)(mockContext);

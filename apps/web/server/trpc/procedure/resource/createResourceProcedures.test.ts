@@ -1,5 +1,6 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
+import { trpcRouter } from "#server/trpc/routers";
 import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { Clause } from "@esposter/azure";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
@@ -13,7 +14,6 @@ import { createMockContext, mockSessionOnce, replayMockSession } from "#server/t
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { dashboardRouter } from "#server/trpc/routers/dashboard";
 import { getFirstEmit } from "#server/trpc/routers/getFirstEmit.test";
-import { resourceRouter } from "#server/trpc/routers/resource";
 import { sheetRouter } from "#server/trpc/routers/sheet";
 import { webpageRouter } from "#server/trpc/routers/webpage";
 import { Dashboard } from "#shared/models/dashboard/data/Dashboard";
@@ -85,7 +85,7 @@ describe(createResourceProcedures, () => {
   beforeAll(async () => {
     mockContext = await createMockContext();
     dashboardCaller = createCallerFactory(dashboardRouter)(mockContext);
-    resourceCaller = createCallerFactory(resourceRouter)(mockContext);
+    resourceCaller = createCallerFactory(trpcRouter)(mockContext).resource;
     webpageCaller = createCallerFactory(webpageRouter)(mockContext);
   });
 

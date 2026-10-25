@@ -1,9 +1,9 @@
 import type { TRPCRouter } from "#server/trpc/routers";
+import { trpcRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "#server/trpc";
 import { createSurvey } from "#server/trpc/routers/createSurvey.test";
-import { resourceRouter } from "#server/trpc/routers/resource";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { surveyRouter } from "#server/trpc/routers/survey";
 import { webpageRouter } from "#server/trpc/routers/webpage";
@@ -28,7 +28,7 @@ describe("webpageRouter", () => {
 
   beforeAll(() => {
     caller = getCaller();
-    resourceCaller = createCallerFactory(resourceRouter)(getMockContext());
+    resourceCaller = createCallerFactory(trpcRouter)(getMockContext()).resource;
     surveyCaller = createCallerFactory(surveyRouter)(getMockContext());
   });
 

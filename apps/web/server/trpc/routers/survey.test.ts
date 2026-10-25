@@ -1,5 +1,6 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
+import { trpcRouter } from "#server/trpc/routers";
 import type { ProgramResource } from "#shared/models/resource/program/ProgramResource";
 import type { SurveyResource } from "#shared/models/resource/survey/SurveyResource";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
@@ -10,7 +11,6 @@ import { mockSessionOnce } from "#server/trpc/context.test";
 import { createBoundProgram } from "#server/trpc/routers/createBoundProgram.test";
 import { createSurvey } from "#server/trpc/routers/createSurvey.test";
 import { programRouter } from "#server/trpc/routers/program";
-import { resourceRouter } from "#server/trpc/routers/resource";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { sheetRouter } from "#server/trpc/routers/sheet";
 import { surveyRouter } from "#server/trpc/routers/survey";
@@ -94,7 +94,7 @@ describe("surveyRouter", () => {
     mockContext = getMockContext();
     caller = getCaller();
     programCaller = createCallerFactory(programRouter)(mockContext);
-    resourceCaller = createCallerFactory(resourceRouter)(mockContext);
+    resourceCaller = createCallerFactory(trpcRouter)(mockContext).resource;
     sheetCaller = createCallerFactory(sheetRouter)(mockContext);
   });
 
