@@ -15,7 +15,7 @@ describe(parseTmx, () => {
   const name = "name";
   const value = "value";
 
-  test("empty", async () => {
+  test("a map with no properties or layers parses to an empty map", async () => {
     expect.hasAssertions();
 
     const tmxParsed = await parseTmx("<map><data/></map>");
