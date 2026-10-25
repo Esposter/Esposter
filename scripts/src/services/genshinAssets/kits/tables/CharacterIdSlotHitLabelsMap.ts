@@ -13,6 +13,21 @@ const SKILL = CombatTalent.ElementalSkill;
 // Hold is his skill's hold, read from its Hold DMG label. Vesna's skill tag is the wiki's, so her skill reads its label
 // Here like her burst
 export const CharacterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = new Map<number, KitSlotLabels>([
+  // Xingqiu. Each rainscreen's two hits read the Skill DMG label's two multipliers, the first and second positions, and
+  // Rain Sword and Raincutter's seconds read their skill's and burst's Duration labels
+  [
+    10_000_025,
+    {
+      values: {
+        "hits.evilsootherRainscreen.0.multiplier": { combatTalent: SKILL, label: "Skill DMG", position: 0 },
+        "hits.evilsootherRainscreen.1.multiplier": { combatTalent: SKILL, label: "Skill DMG", position: 1 },
+        "hits.rainscreen.0.multiplier": { combatTalent: SKILL, label: "Skill DMG", position: 0 },
+        "hits.rainscreen.1.multiplier": { combatTalent: SKILL, label: "Skill DMG", position: 1 },
+        "parameters.rainSwordsSeconds": { combatTalent: SKILL, label: "Duration" },
+        "parameters.raincutterSeconds": { combatTalent: BURST, label: "Duration" },
+      },
+    },
+  ],
   // Bennett. Fantastic Voyage's healing reads its burst's Continuous Regeneration label, the share of Max HP and the flat
   // Amount at its positions, and its ATK share, field seconds read its ATK Bonus Ratio and Duration labels
   [
