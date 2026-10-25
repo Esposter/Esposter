@@ -1,4 +1,5 @@
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { BINARY_BYTE, CLAUDE_PATHSPEC_EXCLUDE } from "#src/services/sweeps/constants";
 import { getControlCharacters } from "#src/services/sweeps/controlCharacters/getControlCharacters";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { readFileSync } from "node:fs";
@@ -10,15 +11,10 @@ import { resolve } from "node:path";
 //
 // Generated files are read too, where a scan over source skips them — this one asks what a committed file holds
 // Rather than what a source vouches for, which is the carve-out the `runtime-efficiency` skill names.
-const BINARY_BYTE = 0;
-// `.claude` is the symlink to `.agents`, which this scan already walks, and reading it throws rather than returning
-// Bytes. It is excluded as a pathspec so that Git never lists it: testing every entry of the tree for a directory
-// Costs a `stat` each, to catch the one entry named here.
-const EXCLUDED_PATHSPECS = [":(exclude).claude"];
 // Every tracked file in the repository but a vendored skill's (`readSweepFilePaths`), scanned, one `path:line: U+XXXX`
 // Per character that renders as nothing.
 export const readControlCharacterFindings = (): string[] =>
-  readSweepFilePaths(...EXCLUDED_PATHSPECS).flatMap((path) => {
+  readSweepFilePaths(CLAUDE_PATHSPEC_EXCLUDE).flatMap((path) => {
     const contents = readFileSync(resolve(REPOSITORY_ROOT, path));
     if (contents.includes(BINARY_BYTE)) return [];
 
