@@ -1,7 +1,7 @@
 ## 1. Shared sort options
 
-- [ ] 1.1 Add Old to the shared comment sort type and its sort mapping, and give Old its mark in the icon map. Verify: a test named after the scenario 'Comment sort lists Hot, Top, New and Old', written first and seen failing.
-- [ ] 1.2 Keep the feed's Sort by control at Hot, New and Top. Verify: a test named after the scenario 'Feed Sort by omits Old', written first and seen failing.
+- [x] 1.1 Add Old to the shared comment sort type and its sort mapping, and give Old its mark in the icon map. Verify: a test named after the scenario 'Comment sort lists Hot, Top, New and Old', written first and seen failing.
+- [x] 1.2 Keep the feed's Sort by control at Hot, New and Top. Verify: a test named after the scenario 'Feed Sort by omits Old', written first and seen failing.
 
 ## 2. Comment ordering
 

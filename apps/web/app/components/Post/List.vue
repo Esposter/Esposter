@@ -1,16 +1,12 @@
 <script setup lang="ts">
-import { PostSortTypes } from "@/models/post/PostSortType";
+import { PostFeedSortTypes } from "@/models/post/PostSortType";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { PostSortTypeIconMeaningMap } from "@/services/post/PostSortTypeIconMeaningMap";
+import { getPostSortTypeItems } from "@/services/post/getPostSortTypeItems";
 import { usePostStore } from "@/store/post";
 import { RoutePath } from "@esposter/shared";
 
-const postSortTypeItems = PostSortTypes.map((postSortType) => ({
-  meaning: PostSortTypeIconMeaningMap[postSortType],
-  title: postSortType,
-  value: postSortType,
-}));
+const postSortTypeItems = getPostSortTypeItems(PostFeedSortTypes);
 const postStore = usePostStore();
 const { sortType } = storeToRefs(postStore);
 const { resetCursorPaginationData } = postStore;
