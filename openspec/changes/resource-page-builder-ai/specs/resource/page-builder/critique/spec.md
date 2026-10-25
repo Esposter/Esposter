@@ -97,6 +97,13 @@ The read tool SHALL answer the critique of the saved content of a resource the k
 - **THEN** the answer lists the one finding with its node
 - **AND** the answer carries the content version it was read at
 
+#### Scenario: an agent's read reports colour checks as unchecked
+
+- **GIVEN** a key holding the Resources scope and a saved webpage with a text whose contrast is low in the editor
+- **WHEN** the agent reads the critique of that webpage
+- **THEN** the answer lists that text as unchecked
+- **AND** the answer does not list that text as low contrast
+
 #### Scenario: a type without a critique is refused, naming the type
 
 - **GIVEN** a key holding the Resources scope and a saved resource of a type with no critique

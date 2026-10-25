@@ -74,5 +74,5 @@ This change ships the critique pass for webpages, and nothing else.
 - The resource definition, which gains an optional critique per type, and the generic resource router, which gains the read tool.
 - The MCP tool listing, which gains the tool under the Resources scope.
 - The webpage editor's panel tabs.
-- A colour-reading dependency, admitted through the dependency admission gate with its ledger row, before any colour is read.
+- No new dependency: the browser reads each colour through a probe element, and a colour it cannot compute is reported as unchecked.
 - The page builder README and the page builder skill, which list the new capability.

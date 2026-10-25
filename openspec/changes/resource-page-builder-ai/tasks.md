@@ -1,6 +1,6 @@
 ## 1. Reading colours
 
-- [ ] 1.1 Admit a CSS colour parser through the dependency admission gate, with its ledger row, and read each colour's sRGB value and its contrast ratio against another colour in the critique module. Verify: tests named after the scenarios 'an unreadable colour is reported unchecked' and 'text at exactly 4.5 to 1 is not reported', in a test file beside the critique module, failing before the parser is wired.
+- [ ] 1.1 Read each colour's computed value in the editor through a probe element, converting it to an sRGB triple through a one-pixel canvas where the computed form is not sRGB, and compute the contrast ratio of two sRGB triples in the critique module. No dependency is added. Verify: tests named after the scenarios 'an unreadable colour is reported unchecked' and 'text at exactly 4.5 to 1 is not reported', in a test file beside the critique module, seen failing first.
 
 ## 2. Contrast
 
@@ -19,7 +19,7 @@
 
 ## 5. The agent read
 
-- [ ] 5.1 Add the read tool to the resource router under the owner guard, answering the critique of the saved content at its version to a key holding the Resources scope, and list it in the tool listing for that scope. Verify: tests named after the scenarios 'an agent reads the critique of a saved webpage' and 'a resource the key does not own is refused', in the resource router's test file, seen failing first.
+- [ ] 5.1 Add the read tool to the resource router under the owner guard, answering the critique of the saved content at its version to a key holding the Resources scope, and list it in the tool listing for that scope. Verify: tests named after the scenarios 'an agent reads the critique of a saved webpage', 'an agent's read reports colour checks as unchecked' and 'a resource the key does not own is refused', in the resource router's test file, seen failing first.
 
 ## 6. The editor
 
