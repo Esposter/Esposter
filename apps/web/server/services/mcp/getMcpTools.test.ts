@@ -53,9 +53,11 @@ describe(getMcpTools, () => {
           "todoList_readFollowUps",
         ],
         "Resources": [
+          "resource_createResource",
           "resource_readResourceContent",
           "resource_readResourceContentSchema",
           "resource_readResources",
+          "resource_updateResource",
           "resource_updateResourceContent",
         ],
       }
