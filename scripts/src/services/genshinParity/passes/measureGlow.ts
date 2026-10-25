@@ -4,6 +4,7 @@ import type { ParityPassMeasure } from "#src/models/genshinParity/passes/ParityP
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { compareFamilyColour } from "#src/services/genshinParity/passes/compareFamilyColour";
 import { COLOUR_GATE, FRAME_GATE_PIXELS, SHAPE_WIDTH } from "#src/services/genshinParity/passes/constants";
+import { formatScales } from "#src/services/genshinParity/passes/formatScales";
 import { getCurrentBuildReferenceIds } from "#src/services/genshinParity/passes/getCurrentBuildReferenceIds";
 import { measureEachReference } from "#src/services/genshinParity/passes/measureEachReference";
 import { readTargetFamily } from "#src/services/genshinParity/passes/readTargetFamily";
@@ -74,7 +75,7 @@ export const measureGlow = async (component: DerivedAssetComponent): Promise<Par
       return {
         notes: glow.comparisons.map(
           ({ family, scales }) =>
-            `${referenceId} ${families[family] ?? family} glow structure by scale, finest first: ${scales.map((scale) => scale.toFixed(3)).join(" ")}`,
+            `${referenceId} ${families[family] ?? family} glow structure by scale, finest first: ${formatScales(scales)}`,
         ),
         readings: glow.comparisons.flatMap(({ colour, family, structure }) => {
           const name = `${referenceId} ${families[family] ?? family}`;
