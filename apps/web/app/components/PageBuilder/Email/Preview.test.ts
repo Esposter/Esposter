@@ -19,7 +19,7 @@ describe("pageBuilderEmailPreview", () => {
   test("preview shows the compiled email at mobile width", async () => {
     expect.hasAssertions();
 
-    trpcMsw.email.compile.query(() => ({ html }));
+    trpcMsw.email.compile.mutation(() => ({ html }));
     const wrapper = await mountSuspended(PageBuilderEmailPreview, {
       props: { device: PageBuilderDevice.Mobile, emailDocument },
     });
@@ -35,7 +35,7 @@ describe("pageBuilderEmailPreview", () => {
   test("validator messages show above the preview", async () => {
     expect.hasAssertions();
 
-    trpcMsw.email.compile.query(() => ({ message }));
+    trpcMsw.email.compile.mutation(() => ({ message }));
     const wrapper = await mountSuspended(PageBuilderEmailPreview, {
       props: { device: PageBuilderDevice.Desktop, emailDocument },
     });
@@ -51,7 +51,7 @@ describe("pageBuilderEmailPreview", () => {
   test("the preview frame is sandboxed to scripts with no same-origin access", async () => {
     expect.hasAssertions();
 
-    trpcMsw.email.compile.query(() => ({ html }));
+    trpcMsw.email.compile.mutation(() => ({ html }));
     const wrapper = await mountSuspended(PageBuilderEmailPreview, {
       props: { device: PageBuilderDevice.Desktop, emailDocument },
     });

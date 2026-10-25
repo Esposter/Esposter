@@ -18,7 +18,7 @@ The preview text is a root prop, so the bar's field binds it through a patch lik
 
 **Import MJML** is the one import the editor offers. Because the types are MJML's own components, MJML source from another tool reads back faithfully through the package's `parseMjmlDocument`, unlike the HTML import the [program](../../../../changes/resource-page-builder-program/design.md) leaves out. The command opens a code field. An accepted import replaces the document as one history entry. A refused one leaves the document as it was and names the tag or attribute that did not fit.
 
-**Preview** is the truth: the email editor's header holds a Design / Preview toggle beside the dataset picker, and Preview takes the design's place, with the canvas's device toggle above it. Preview shows the open document compiled by the server, through a query that passes the document to the document model's compile service, debounced like the autosave so Preview shows an edit before it is saved. It draws in the sandboxed frame the published view uses, at desktop and mobile width, with MJML's validation messages above it as an alert. The design stays mounted beneath Preview, so an edit and a selection survive the toggle. The design canvas is where an email is edited and Preview is what a client receives, because email-client HTML — nested tables and conditional comments — is output to inspect, not a surface to edit in place.
+**Preview** is the truth: the email editor's header holds a Design / Preview toggle beside the dataset picker, and Preview takes the design's place, with the canvas's device toggle above it. Preview shows the open document compiled by the server, through a mutation that carries the document in its request body to the document model's compile service, debounced like the autosave so Preview shows an edit before it is saved. It draws in the sandboxed frame the published view uses, at desktop and mobile width, with MJML's validation messages above it as an alert. The design stays mounted beneath Preview, so an edit and a selection survive the toggle. The design canvas is where an email is edited and Preview is what a client receives, because email-client HTML — nested tables and conditional comments — is output to inspect, not a surface to edit in place.
 
 The compile runs in the app server, on MJML's Node package in place of the browser build bundled inside `grapesjs-mjml`.
 
@@ -32,22 +32,22 @@ The kind's document type is the union of the two node types the registry holds, 
 
 ## Key files
 
-| File                                                                 | Role                                                                                  |
-| -------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `apps/web/server/trpc/routers/email.ts`                              | the query compiling an open email document for Preview, with the validator's messages |
-| `apps/web/app/components/PageBuilder/Email/Preview.vue`              | Preview, the compiled email in a sandboxed frame at the canvas's device width         |
-| `apps/web/app/components/Resource/Email/Editor.vue`                  | the email editor blade: the dataset picker, the Design / Preview toggle and the shell |
-| `apps/web/app/services/pageBuilder/email/renderEmailCanvasVNodes.ts` | the design canvas's drawing of each section, column and leaf from the MJML cascade    |
-| `apps/web/app/components/PageBuilder/Email/StyleField.vue`           | one style field: the control its attribute's kind draws, and its reset                |
-| `apps/web/app/composables/pageBuilder/useEmailStyle.ts`              | the selected node's style fields and the edit that sets or clears one                 |
-| `apps/web/app/composables/pageBuilder/usePageBuilderDrag.ts`         | a palette block or a merge field dragged to a slot or onto a text                     |
-| `apps/web/app/services/pageBuilder/insertMergeFieldAt.ts`            | the one edit a merge field's drop makes: the text under the point, its token appended |
-| `apps/web/app/services/pageBuilder/getTextNodeIdAt.ts`               | the text under a drop point, the only node a merge field drops into                   |
-| `apps/web/app/services/pageBuilder/email/appendMergeFieldToText.ts`  | a text's rich text with a merge field's token appended                                |
-| `apps/web/app/services/emailEditor/toMergeField.ts`                  | the `{{column}}` token a merge field renders as                                       |
-| `apps/web/app/services/emailEditor/substituteMergeFields.ts`         | the one form of a merge token the compiled html is substituted at                     |
-| `apps/web/app/models/richTextEditor/RichTextSuggestion.ts`           | the mention suggestion typing two braces opens                                        |
-| `apps/web/shared/services/pageBuilder/email/emailRootFormSchema.ts`  | the root form: the preview text, limited to the schema's constant                     |
+| File                                                                 | Role                                                                                     |
+| -------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `apps/web/server/trpc/routers/email.ts`                              | the mutation compiling an open email document for Preview, with the validator's messages |
+| `apps/web/app/components/PageBuilder/Email/Preview.vue`              | Preview, the compiled email in a sandboxed frame at the canvas's device width            |
+| `apps/web/app/components/Resource/Email/Editor.vue`                  | the email editor blade: the dataset picker, the Design / Preview toggle and the shell    |
+| `apps/web/app/services/pageBuilder/email/renderEmailCanvasVNodes.ts` | the design canvas's drawing of each section, column and leaf from the MJML cascade       |
+| `apps/web/app/components/PageBuilder/Email/StyleField.vue`           | one style field: the control its attribute's kind draws, and its reset                   |
+| `apps/web/app/composables/pageBuilder/useEmailStyle.ts`              | the selected node's style fields and the edit that sets or clears one                    |
+| `apps/web/app/composables/pageBuilder/usePageBuilderDrag.ts`         | a palette block or a merge field dragged to a slot or onto a text                        |
+| `apps/web/app/services/pageBuilder/insertMergeFieldAt.ts`            | the one edit a merge field's drop makes: the text under the point, its token appended    |
+| `apps/web/app/services/pageBuilder/getTextNodeIdAt.ts`               | the text under a drop point, the only node a merge field drops into                      |
+| `apps/web/app/services/pageBuilder/email/appendMergeFieldToText.ts`  | a text's rich text with a merge field's token appended                                   |
+| `apps/web/app/services/emailEditor/toMergeField.ts`                  | the `{{column}}` token a merge field renders as                                          |
+| `apps/web/app/services/emailEditor/substituteMergeFields.ts`         | the one form of a merge token the compiled html is substituted at                        |
+| `apps/web/app/models/richTextEditor/RichTextSuggestion.ts`           | the mention suggestion typing two braces opens                                           |
+| `apps/web/shared/services/pageBuilder/email/emailRootFormSchema.ts`  | the root form: the preview text, limited to the schema's constant                        |
 
 ## Decisions
 

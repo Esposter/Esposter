@@ -16,7 +16,7 @@ const { device, emailDocument } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 // The last html the server compiled. A refused compile keeps it, so the validator's alert sits above the preview it did not replace
 const html = shallowRef<string>();
-const { data, error, refresh } = useQuery(() => $trpc.email.compile.query(emailDocument), {
+const { data, error, refresh } = useQuery(() => $trpc.email.compile.mutate(emailDocument), {
   isInlineError: true,
   onSuccess: (result) => {
     if ("html" in result) html.value = result.html;
