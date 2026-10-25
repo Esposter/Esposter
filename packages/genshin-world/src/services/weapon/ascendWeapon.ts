@@ -3,37 +3,25 @@ import type { Wallet } from "#src/models/inventory/Wallet";
 import type { Weapon } from "#src/models/weapon/Weapon";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 
-import { Currency } from "#src/models/inventory/Currency";
-import { getAscendableNextPhase } from "#src/services/character/getAscendableNextPhase";
-import { takeInventoryItems } from "#src/services/inventory/takeInventoryItems";
+import { ascendToNextPhase } from "#src/services/character/ascendToNextPhase";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// A weapon ascended at its phase's cap into the next phase, as the game takes it: the next phase's Mora and items are
-// Taken from the wallet and the bag, once the player's Adventure Rank reaches the phase's requirement. Its level stays
-// At the cap, which the next phase starts from
+// A weapon ascended at its phase's cap into the next phase, through the rule a character's ascension shares. A refusal
+// Throws the reason it is refused now, before anything is taken, as the weapon's screen reports it
 export const ascendWeapon = (
   weapon: Weapon,
   weaponData: WeaponData,
   { adventureRank, inventory, wallet }: { adventureRank: number; inventory: Inventory; wallet: Wallet },
 ): { inventory: Inventory; wallet: Wallet; weapon: Weapon } => {
-  const nextPhase = getAscendableNextPhase(weaponData.ascensionPhases, weapon.ascension, weapon.level);
-  if (!nextPhase)
-    throw new InvalidOperationError(
-      Operation.Update,
-      ascendWeapon.name,
-      `level ${weapon.level} is not at a phase's cap`,
-    );
-  if (adventureRank < nextPhase.requiredPlayerLevel)
-    throw new InvalidOperationError(Operation.Update, ascendWeapon.name, `Adventure Rank ${adventureRank}`);
-  if (wallet[Currency.Mora] < nextPhase.coinCost)
-    throw new InvalidOperationError(Operation.Update, ascendWeapon.name, `${nextPhase.coinCost} Mora`);
-  const items = nextPhase.costItems.reduce(
-    (bagItems, { count, id }) => takeInventoryItems(bagItems, id, count),
-    inventory.items,
-  );
+  const ascended = ascendToNextPhase(weapon.ascension, weapon.level, weaponData.ascensionPhases, {
+    adventureRank,
+    inventory,
+    wallet,
+  });
+  if (typeof ascended === "string") throw new InvalidOperationError(Operation.Update, ascendWeapon.name, ascended);
   return {
-    inventory: { ...inventory, items },
-    wallet: { ...wallet, [Currency.Mora]: wallet[Currency.Mora] - nextPhase.coinCost },
-    weapon: { ...weapon, ascension: weapon.ascension + 1 },
+    inventory: ascended.inventory,
+    wallet: ascended.wallet,
+    weapon: { ...weapon, ascension: ascended.ascension },
   };
 };

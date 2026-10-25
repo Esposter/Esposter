@@ -37,6 +37,7 @@ flowchart TD
 
 - **A weapon ascends at its cap.** Its level must be its phase's cap, and the next phase must exist. It stays at that level, which the next phase starts from.
 - **The Adventure Rank and the bag are checked before anything is taken.** The player's Adventure Rank must reach the next phase's requirement, the wallet must hold its Mora, and the bag must hold each of its items. Each leaves the bag's stacks as [inventory](../inventory/design.md) describes.
+- **A character and a weapon ascend through one rule.** `ascendToNextPhase` makes the checks and the takes both `ascendCharacter` and `ascendWeapon` call, so the same phase costs the same whichever it is, and it names the one reason a refusal holds. A character's ascension answers an `undefined`, which its Ascend button reads; a weapon's throws that reason, which its screen reports, and nothing is taken.
 
 ## Refinement
 
@@ -57,8 +58,9 @@ A bag weapon's entry holds its level, EXP, ascension and refinement, so the [wea
 | `packages/genshin-world/src/models/weapon/RarityRequiredExpsMap.ts`         | Each rarity's EXP to rise past each level                                               |
 | `packages/genshin-world/src/services/weapon/enhanceWeapon.ts`               | Paid EXP at Mora, levels gained, and the excess returned as ores                        |
 | `packages/genshin-world/src/services/character/getAscendableNextPhase.ts`   | The next phase an ascension may enter, the one gate the offer and the ascension share   |
+| `packages/genshin-world/src/services/character/ascendToNextPhase.ts`        | The gate, the Mora and items taken and the phase entered, both ascensions share         |
 | `packages/genshin-world/src/services/weapon/checkCanRefineWeapon.ts`        | Whether a weapon can be refined at all, the one gate the offer and the refinement share |
-| `packages/genshin-world/src/services/weapon/ascendWeapon.ts`                | The next phase's gate, and its Mora and items taken                                     |
+| `packages/genshin-world/src/services/weapon/ascendWeapon.ts`                | The ascension at the cap, through the one rule a character's ascension shares           |
 | `packages/genshin-world/src/services/weapon/refineWeapon.ts`                | Ranks gained at each rank's Mora, past the fifth lost                                   |
 | `packages/genshin-world/src/services/weapon/readWeaponLevelRequiredExps.ts` | The levelling table, fetched by its key and checked against its shape                   |
 | `packages/genshin-world/src/services/inventory/takeInventoryItems.ts`       | Items taken out of the bag's stacks, refused when the bag holds too few                 |

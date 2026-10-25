@@ -1,9 +1,12 @@
+import type { Character } from "#src/models/character/Character";
 import type { ItemDefinition } from "#src/models/inventory/ItemDefinition";
 import type { WeaponData } from "#src/models/weapon/WeaponData";
 
+import { CombatTalent } from "#src/models/character/CombatTalent";
 import { Currency } from "#src/models/inventory/Currency";
 import { DestroyRule } from "#src/models/inventory/DestroyRule";
 import { WeaponType } from "#src/models/weapon/WeaponType";
+import { ascendCharacter } from "#src/services/character/ascendCharacter";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { ascendWeapon } from "#src/services/weapon/ascendWeapon";
 import { ItemCategory } from "genshin-interface";
@@ -36,6 +39,21 @@ describe(ascendWeapon, () => {
     refinementCosts: [500, 1000, 2000, 4000],
     refinementMaterialId: 0,
     weaponType: WeaponType.Sword,
+  };
+  const CHARACTER: Character = {
+    artifacts: [],
+    ascension: 0,
+    constellationCount: 0,
+    friendshipExp: 0,
+    id: 1,
+    level: 20,
+    stellaFortunaCount: 0,
+    talentLevels: {
+      [CombatTalent.ElementalBurst]: 1,
+      [CombatTalent.ElementalSkill]: 1,
+      [CombatTalent.NormalAttack]: 1,
+    },
+    weapon: { ascension: 0, experience: 0, id: 1, level: 1, refinement: 1 },
   };
   const MATERIAL: ItemDefinition = {
     category: ItemCategory.Material,
@@ -94,7 +112,7 @@ describe(ascendWeapon, () => {
         wallet: { ...EMPTY_WALLET, [Currency.Mora]: 500 },
       }),
     ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Update, name: ascendWeapon, Adventure Rank 14]`,
+      `[InvalidOperationError: Invalid operation: Update, name: ascendWeapon, AdventureRank]`,
     );
   });
 
@@ -107,8 +125,39 @@ describe(ascendWeapon, () => {
         inventory: { items: [{ definition: MATERIAL, id: 0, quantity: 5 }], nextId: 1, quickSwapItemIds: [] },
         wallet: { ...EMPTY_WALLET, [Currency.Mora]: 500 },
       }),
+    ).toThrowErrorMatchingInlineSnapshot(`[InvalidOperationError: Invalid operation: Update, name: ascendWeapon, Cap]`);
+  });
+
+  test("a character and a weapon at their cap pay the same phase cost through one rule", () => {
+    expect.hasAssertions();
+    const wallet = { ...EMPTY_WALLET, [Currency.Mora]: 500 };
+    const inventory = { items: [{ definition: MATERIAL, id: 0, quantity: 3 }], nextId: 1, quickSwapItemIds: [] };
+    const weapon = { ascension: 0, experience: 0, id: 1, level: 20, refinement: 1 };
+    expect(
+      ascendCharacter(CHARACTER, { adventureRank: 15, inventory, phases: WEAPON_DATA.ascensionPhases, wallet }),
+    ).toStrictEqual({
+      character: { ...CHARACTER, ascension: 1 },
+      inventory: { items: [], nextId: 1, quickSwapItemIds: [] },
+      wallet: EMPTY_WALLET,
+    });
+    expect(ascendWeapon(weapon, WEAPON_DATA, { adventureRank: 15, inventory, wallet })).toStrictEqual({
+      inventory: { items: [], nextId: 1, quickSwapItemIds: [] },
+      wallet: EMPTY_WALLET,
+      weapon: { ascension: 1, experience: 0, id: 1, level: 20, refinement: 1 },
+    });
+    const shortInventory = { items: [{ definition: MATERIAL, id: 0, quantity: 2 }], nextId: 1, quickSwapItemIds: [] };
+    expect(
+      ascendCharacter(CHARACTER, {
+        adventureRank: 15,
+        inventory: shortInventory,
+        phases: WEAPON_DATA.ascensionPhases,
+        wallet,
+      }),
+    ).toBeUndefined();
+    expect(() =>
+      ascendWeapon(weapon, WEAPON_DATA, { adventureRank: 15, inventory: shortInventory, wallet }),
     ).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Update, name: ascendWeapon, level 19 is not at a phase's cap]`,
+      `[InvalidOperationError: Invalid operation: Update, name: ascendWeapon, Materials]`,
     );
   });
 });

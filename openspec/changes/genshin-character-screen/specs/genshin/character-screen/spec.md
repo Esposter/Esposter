@@ -80,6 +80,12 @@ Ascend SHALL raise the chosen character past a phase's level cap only when the c
 - **WHEN** the player presses Ascend
 - **THEN** the character does not ascend
 
+#### Scenario: a character and a weapon at their cap pay the same phase cost through one rule
+
+- **GIVEN** a character and a weapon at their phase's level cap, with the same next phase
+- **WHEN** each ascends from a bag and a wallet that cover the phase's Mora and items, and then from a bag short of one of its items
+- **THEN** both take the same Mora and items, and the short bag refuses both with nothing taken
+
 ### Requirement: Masterless Stella Fortuna Levels
 
 Masterless Stella Fortuna SHALL lift a character past level 90 to the next level cap at once, with 95 and then 100 available.
