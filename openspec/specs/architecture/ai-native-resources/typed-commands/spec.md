@@ -2,7 +2,7 @@
 
 ## Purpose
 
-TBD - created by archiving change architecture-ai-native-resources-typed-commands. Update Purpose after archive.
+The named commands an agent sends to a resource where a JSON Patch would be wrong: a Sheet column rename, type or date-format change, a Sheet row's cell edit by id, a repeating todo's tick and a Note written from Markdown, each running the editor's own code on the server so the agent gets the rows and values the editor gives.
 
 ## Requirements
 
