@@ -34,12 +34,12 @@ Nothing is dropped unnoticed: each feature the Flowchart has is checked against 
 | Four connection points per node, loose connection | Arrows bound to a shape, with no fixed points                          | Owner confirms                                      |
 | Arrowhead on every connector                      | Arrow end head                                                         | Covered; verify in the whiteboard's build           |
 | Connector labels, edited inline                   | Text bound to an arrow                                                 | Covered; verify                                     |
-| Curved, right-angled and straight paths           | The engine's arrow kinds                                               | Owner confirms                                      |
-| Palette of node types, dropped on the canvas      | The engine's toolbar                                                   | Covered                                             |
-| Minimap                                           | None in the engine                                                     | Owner confirms: dropped, or added to the whiteboard |
-| Dot grid and snap to grid                         | The engine's grid                                                      | Verify                                              |
-| Pan, zoom and fit                                 | The engine's viewport                                                  | Covered                                             |
-| Delete by keyboard                                | The engine's shortcuts                                                 | Verify                                              |
+| Curved, right-angled and straight paths           | The whiteboard's arrow kinds                                           | Owner confirms                                      |
+| Palette of node types, dropped on the canvas      | The whiteboard's toolbar                                               | Covered                                             |
+| Minimap                                           | None in the whiteboard                                                 | Owner confirms: dropped, or added to the whiteboard |
+| Dot grid and snap to grid                         | The whiteboard's grid                                                  | Verify                                              |
+| Pan, zoom and fit                                 | The whiteboard's viewport                                              | Covered                                             |
+| Delete by keyboard                                | The whiteboard's shortcuts                                             | Verify                                              |
 | Export to PNG and SVG, fonts and theme background | The Portable formats, from stored elements                             | Covered; verify export without an open editor       |
 | Read-only published view                          | None: publishing is not in the whiteboard's first version              | Owner confirms the loss                             |
 | Agent reads and patches of flowchart content      | The whiteboard's content schema, read and patched by the generic tools | Covered                                             |

@@ -2,7 +2,7 @@
 
 ## Why
 
-The Flowchart is a resource type that draws connected steps on Vue Flow. The [design canvas](../resource-design-canvas/proposal.md), a freeform whiteboard on the Excalidraw engine, covers the flowchart's work, and the owner has decided the Flowchart goes. Keeping two diagram types means two editors, two export paths, two agent surfaces and a second canvas engine, all for one type whose work the whiteboard now does.
+The Flowchart is a resource type that draws connected steps on Vue Flow. The [design canvas](../resource-design-canvas/proposal.md), our own freeform whiteboard, built in Vue 3 to Excalidraw's feel, with no Excalidraw dependency, covers the flowchart's work, and the owner has decided the Flowchart goes. Keeping two diagram types means two editors, two export paths, two agent surfaces and a second canvas engine, all for one type whose work the whiteboard now does.
 
 ## What Changes
 
@@ -10,7 +10,7 @@ The Flowchart type is removed completely, with its stored data. Nothing is migra
 
 - **The type**: the `Flowchart` value of the resource type, its content schema, its server router and its dispatch entry, its tRPC procedure inputs, its blade, editor, view, dialogs, export and portable formats.
 - **Its editor and its canvas**: every component, composable, store and service under the flowchart's names, and the shared models of its graph.
-- **Vue Flow**: all five `@vue-flow` packages, with their stylesheets, their catalog entries and their ledger rows. The engine is removed with the type, in the same release, and not in a later step.
+- **Vue Flow**: all five `@vue-flow` packages, with their stylesheets, their catalog entries and their ledger rows. Vue Flow is removed with the type, in the same release, and not in a later step.
 - **Its public view**: the published flowchart's view component, which the generic view map routes to. Publishing is then a capability no type holds, since the flowchart is its only publishable type.
 - **Its agent surface**: the flowchart's rows in the generic agent tools' content documentation. Agents reach no flowchart procedure after the change.
 - **The flowchart achievement**: the achievement name and its category, and the earned rows that name it.
