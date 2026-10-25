@@ -24,6 +24,13 @@ describe(substituteMergeFields, () => {
     expect(substituteMergeFields(`{{${columnName}}}`, { [columnName]: "<b>" })).toBe("&lt;b&gt;");
   });
 
+  test("writes a value's $ patterns as text rather than expanding them", () => {
+    expect.hasAssertions();
+
+    expect(substituteMergeFields(`{{${columnName}}}`, { [columnName]: "$&" })).toBe("$&amp;");
+    expect(substituteMergeFields(`{{${columnName}}}`, { [columnName]: "Save $$" })).toBe("Save $$");
+  });
+
   test("substitutes null as empty string", () => {
     expect.hasAssertions();
 

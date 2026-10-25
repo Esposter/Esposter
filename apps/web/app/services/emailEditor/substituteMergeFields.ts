@@ -9,6 +9,6 @@ import { toMergeField } from "@/services/emailEditor/toMergeField";
 export const substituteMergeFields = (html: string, row: Record<string, ColumnValue>) =>
   Object.entries(row).reduce(
     (personalizedHtml, [columnName, value]) =>
-      personalizedHtml.replaceAll(escapeXml(toMergeField(columnName)), escapeHtml(String(value ?? ""))),
+      personalizedHtml.replaceAll(escapeXml(toMergeField(columnName)), () => escapeHtml(String(value ?? ""))),
     html,
   );
