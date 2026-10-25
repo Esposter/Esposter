@@ -4,7 +4,7 @@ import type { EmojiIndex } from "@/models/message/emoji/EmojiIndex";
 
 import { EmojiGroups } from "@/models/message/emoji/EmojiGroup";
 import { EmojiType } from "@/models/message/emoji/EmojiType";
-import { EmojiGroupValues } from "@/services/message/emoji/constants";
+import { EMOJI_GROUP_VALUES } from "@/services/message/emoji/constants";
 import { getEmojiCharacterKey } from "@/services/message/emoji/getEmojiCharacterKey";
 import characterEmojiRecordMap from "unicode-emoji-json/data-by-emoji.json";
 
@@ -23,7 +23,7 @@ export const createEmojiIndex = (): EmojiIndex => {
     // A group the enum does not list has no tab to render under. Nothing is filtered today — the dataset ships
     // Exactly these nine, keeping its skin-tone modifiers in a separate file — so this is the guard that makes
     // A tenth group appearing upstream a missing tab rather than an unreachable category
-    if (!EmojiGroupValues.has(record.group)) continue;
+    if (!EMOJI_GROUP_VALUES.has(record.group)) continue;
 
     const group = record.group as EmojiGroup;
     const emoji: Emoji = {

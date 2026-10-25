@@ -29,6 +29,6 @@ export const CUSTOM_EMOJI_TYPE = "customEmoji";
 
 export const EMOJI_SUGGESTION_MIN_QUERY_LENGTH = 2;
 // The groups the enum lists, which a dataset record's group must be one of to get a tab
-export const EmojiGroupValues = new Set<string>(EmojiGroups);
+export const EMOJI_GROUP_VALUES = new Set<string>(EmojiGroups);
 // The tone modifiers a character key drops, so a toned pick keys as its base emoji
-export const SkinToneModifiers = new Set<string>(SkinTones);
+export const SKIN_TONE_MODIFIERS = new Set<string>(SkinTones);
