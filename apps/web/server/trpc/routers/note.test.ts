@@ -4,6 +4,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { noteRouter } from "#server/trpc/routers/note";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { MimeType } from "#shared/models/file/MimeType";
+import { NoteMarkdownWriteMode } from "#shared/models/resource/note/NoteMarkdownWriteMode";
 import { EMPTY_NOTE_DOC } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { AzureContainer, ResourceType } from "@esposter/db-schema";
@@ -62,5 +63,50 @@ describe("noteRouter", () => {
 
     expect(publishedContent.name).toBe(name);
     expect(publishedContent.content).toStrictEqual(note);
+  });
+
+  // A Note saved with one paragraph, for a Markdown write to replace or follow
+  const oldNote = { doc: { content: [{ content: [{ text: "old", type: "text" }], type: "paragraph" }], type: "doc" } };
+
+  test("A Note written from Markdown replaces its content", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    await caller.saveResourceContent({
+      content: oldNote,
+      contentVersion: newResource.contentVersion,
+      id: newResource.id,
+    });
+
+    await caller.writeNoteMarkdown({
+      id: newResource.id,
+      markdown: "# Title\n\n[link](https://example.com)",
+      mode: NoteMarkdownWriteMode.Replace,
+    });
+    const content = await caller.readResourceContent({ id: newResource.id });
+
+    expect(content?.doc.content).toMatchObject([
+      { attrs: { level: 1 }, content: [{ text: "Title", type: "text" }], type: "heading" },
+      { content: [{ marks: [{ type: "link" }], text: "link", type: "text" }], type: "paragraph" },
+    ]);
+  });
+
+  test("A Note written from Markdown appends to its content", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    await caller.saveResourceContent({
+      content: oldNote,
+      contentVersion: newResource.contentVersion,
+      id: newResource.id,
+    });
+
+    await caller.writeNoteMarkdown({ id: newResource.id, markdown: "## Next", mode: NoteMarkdownWriteMode.Append });
+    const content = await caller.readResourceContent({ id: newResource.id });
+
+    expect(content?.doc.content).toMatchObject([
+      { content: [{ text: "old", type: "text" }], type: "paragraph" },
+      { attrs: { level: 2 }, content: [{ text: "Next", type: "text" }], type: "heading" },
+    ]);
   });
 });

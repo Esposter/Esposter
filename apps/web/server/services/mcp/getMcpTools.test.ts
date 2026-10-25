@@ -54,6 +54,7 @@ describe(getMcpTools, () => {
         ],
         "Resources": [
           "dataset_readDataset",
+          "note_writeNoteMarkdown",
           "resource_createResource",
           "resource_deleteResources",
           "resource_duplicateResource",

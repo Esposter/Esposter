@@ -11,4 +11,4 @@
 
 ## 3. Note written as Markdown
 
-- [ ] 3.1 Add the Markdown write procedure on the note router, parsing on the server against the writing kit's own extensions, once the converter from the note Markdown portability change ships. Verify: a test named after the scenario 'A Note written from Markdown replaces its content', failing first, then passing; and the scenario 'A Note written from Markdown appends to its content'.
+- [x] 3.1 Add the Markdown write procedure on the note router, parsing on the server against the writing kit's own extensions, once the converter from the note Markdown portability change ships. Verify: a test named after the scenario 'A Note written from Markdown replaces its content', failing first, then passing; and the scenario 'A Note written from Markdown appends to its content'.
