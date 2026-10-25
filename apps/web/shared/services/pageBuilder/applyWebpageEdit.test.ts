@@ -40,7 +40,7 @@ describe(applyBlockEdit, () => {
     ]).match(
       ({ document: edited }) => {
         const expected = createTestTextDocument(MAX_WEBPAGE_NODES);
-        expect(edited.content[editedIndex]?.props.content).toStrictEqual(TEST_EDIT_CONTENT);
+        expect(edited.content[editedIndex]?.props).toMatchObject({ content: TEST_EDIT_CONTENT });
         expect(edited.content.filter((_node, index) => index !== editedIndex)).toStrictEqual(
           expected.content.filter((_node, index) => index !== editedIndex),
         );

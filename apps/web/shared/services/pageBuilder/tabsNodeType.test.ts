@@ -2,7 +2,7 @@
 import type { TabNode } from "#shared/models/pageBuilder/TabNode";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { TEST_CONTEXT, TEST_ID, TEST_LABEL, TEST_OTHER_ID } from "#shared/services/pageBuilder/constants.test";
+import { TEST_ID, TEST_LABEL, TEST_OTHER_ID } from "#shared/services/pageBuilder/constants.test";
 import { serializeHtml } from "#shared/services/pageBuilder/serializeHtml";
 import { tabNodeType } from "#shared/services/pageBuilder/tabNodeType";
 import { tabsNodeType } from "#shared/services/pageBuilder/tabsNodeType";
@@ -49,17 +49,12 @@ describe("tabsNodeType", () => {
 
     expect([
       serializeHtml([
-        tabsNodeType.render(
-          { props: { children: [], id: TEST_ID }, type: WebpageNodeType.Tabs },
-          { children: [] },
-          TEST_CONTEXT,
-        ),
+        tabsNodeType.render({ props: { children: [], id: TEST_ID }, type: WebpageNodeType.Tabs }, { children: [] }),
       ]),
       serializeHtml([
         tabsNodeType.render(
           { props: { children: tabs, id: TEST_ID }, type: WebpageNodeType.Tabs },
-          { children: tabs.map((tab) => tabNodeType.render(tab, { children: [] }, TEST_CONTEXT)) },
-          TEST_CONTEXT,
+          { children: tabs.map((tab) => tabNodeType.render(tab, { children: [] })) },
         ),
       ]),
     ]).toStrictEqual([

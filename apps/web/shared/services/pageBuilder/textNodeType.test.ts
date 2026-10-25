@@ -1,7 +1,7 @@
 import type { TextNode } from "#shared/models/pageBuilder/TextNode";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { TEST_CONTEXT, TEST_ID, TEST_LABEL } from "#shared/services/pageBuilder/constants.test";
+import { TEST_ID, TEST_LABEL } from "#shared/services/pageBuilder/constants.test";
 import { serializeHtml } from "#shared/services/pageBuilder/serializeHtml";
 import { textNodeType } from "#shared/services/pageBuilder/textNodeType";
 import { describe, expect, test } from "vitest";
@@ -25,7 +25,7 @@ describe("textNodeType", () => {
       },
     ];
 
-    expect(texts.map((text) => serializeHtml([textNodeType.render(text, {}, TEST_CONTEXT)]))).toStrictEqual([
+    expect(texts.map((text) => serializeHtml([textNodeType.render(text)]))).toStrictEqual([
       '<div class="text"></div>',
       `<div class="text"><p>${TEST_LABEL} &lt;b&gt;&amp;</p></div>`,
     ]);

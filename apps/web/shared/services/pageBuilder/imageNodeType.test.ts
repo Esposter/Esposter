@@ -1,7 +1,7 @@
 import type { ImageNode } from "#shared/models/pageBuilder/ImageNode";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { TEST_CONTEXT, TEST_ID, TEST_LABEL, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
+import { TEST_ID, TEST_LABEL, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
 import { imageNodeType } from "#shared/services/pageBuilder/imageNodeType";
 import { serializeHtml } from "#shared/services/pageBuilder/serializeHtml";
 import { webpageDocumentSchema } from "#shared/services/pageBuilder/webpageDocumentSchema";
@@ -29,7 +29,7 @@ describe("imageNodeType", () => {
       { props: { alt: `"&`, decorative: false, id: TEST_ID, src: TEST_URL }, type: WebpageNodeType.Image },
     ];
 
-    expect(images.map((image) => serializeHtml([imageNodeType.render(image, {}, TEST_CONTEXT)]))).toStrictEqual([
+    expect(images.map((image) => serializeHtml([imageNodeType.render(image)]))).toStrictEqual([
       `<img alt="" class="image" role="presentation" src="${TEST_URL}">`,
       `<img alt="${TEST_LABEL}" class="image" src="${TEST_URL}">`,
       `<img alt="&quot;&amp;" class="image" src="${TEST_URL}">`,
