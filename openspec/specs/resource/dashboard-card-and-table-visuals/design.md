@@ -1,6 +1,6 @@
 # Dashboard Card and Table Visuals
 
-A dashboard visual is an ApexCharts chart — `VisualType` runs from Area to Treemap — or one of two plain kinds that lead the picker: a Card and a Table. Every visual is bound to a dataset through one query of an x column and aggregated series ([dashboard data binding](../dashboard-data-binding/design.md)). The two kinds answer the questions a report is most often opened for: **the number** ("412 responses", "average rating 4.3") and **the exact values** behind a chart. In Power BI those are the Card — a measure's value as a large callout with its label — and the Table — rows and columns with headers and a totals row, for "reviewing and comparing detailed data and exact values rather than visual representations".
+A dashboard visual is an ApexCharts chart — `VisualType` runs from Area to Treemap — or one of two plain kinds that lead the picker: a Card and a Table. A visual reads a dataset through one query of an x column and aggregated series ([dashboard data binding](../dashboard-data-binding/design.md)), and shows demo data until it is bound. The two kinds answer the questions a report is most often opened for: **the number** ("412 responses", "average rating 4.3") and **the exact values** behind a chart. In Power BI those are the Card — a measure's value as a large callout with its label — and the Table — rows and columns with headers and a totals row, for "reviewing and comparing detailed data and exact values rather than visual representations".
 
 ## What it adds
 
