@@ -13,6 +13,3 @@ export const DASHBOARD_BREAKPOINTS = [
   { columnNumber: 4, minimumWidth: 480 },
   { columnNumber: 2, minimumWidth: 0 },
 ] as const;
-
-// A card's and a table's numbers read exactly to two places, so an average is written as the value it is and not rounded to a whole
-export const DASHBOARD_NUMBER_FORMATTER = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 });

@@ -2,8 +2,7 @@
 import type { Visual } from "#shared/models/dashboard/data/Visual";
 import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 
-import { COMPACT_NUMBER_FORMATTER } from "#shared/services/intl/constants";
-import { DASHBOARD_NUMBER_FORMATTER } from "@/services/dashboard/constants";
+import { COMPACT_NUMBER_FORMATTER, NUMBER_FORMATTER } from "#shared/services/intl/constants";
 import { takeOne } from "@esposter/shared";
 
 interface Props {
@@ -19,7 +18,7 @@ const value = computed(() => Number(takeOne(series.value.data)));
 const label = computed(() => visual.chart.configuration.title || `${series.value.name}`);
 // A value of a thousand or more reads in the compact form a reader scans, and a smaller one keeps its decimals
 const displayValue = computed(() =>
-  value.value >= 1000 ? COMPACT_NUMBER_FORMATTER.format(value.value) : DASHBOARD_NUMBER_FORMATTER.format(value.value),
+  value.value >= 1000 ? COMPACT_NUMBER_FORMATTER.format(value.value) : NUMBER_FORMATTER.format(value.value),
 );
 </script>
 

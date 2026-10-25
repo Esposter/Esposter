@@ -4,7 +4,7 @@ import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
 import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
 
 import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
-import { DASHBOARD_NUMBER_FORMATTER } from "@/services/dashboard/constants";
+import { NUMBER_FORMATTER } from "#shared/services/intl/constants";
 import { takeOne } from "@esposter/shared";
 
 interface Props {
@@ -39,7 +39,7 @@ const columns = computed<UiDataTableColumn<TableRow, string>[]>(() => [
   },
   ...data.series.map((series, index) => ({
     compare: (first: TableRow, second: TableRow) => takeOne(first.values, index) - takeOne(second.values, index),
-    getValue: ({ values }: TableRow) => DASHBOARD_NUMBER_FORMATTER.format(takeOne(values, index)),
+    getValue: ({ values }: TableRow) => NUMBER_FORMATTER.format(takeOne(values, index)),
     key: `series${index}`,
     title: `${series.name}`,
   })),
@@ -55,7 +55,7 @@ const columnKeyTotalMap = computed(
         if (aggregation !== DatasetAggregationType.Count && aggregation !== DatasetAggregationType.Sum) return [];
 
         const total = rows.value.reduce((sum, row) => sum + takeOne(row.values, index), 0);
-        return [[`series${index}`, DASHBOARD_NUMBER_FORMATTER.format(total)]];
+        return [[`series${index}`, NUMBER_FORMATTER.format(total)]];
       }),
     ]),
 );
