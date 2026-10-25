@@ -190,20 +190,26 @@ export const resourceRouter = router({
       });
       return ctx.resource;
     }),
-  readActivities: getOwnerProcedure(undefined, readActivitiesInputSchema, "id").query<
-    CursorPaginationData<ResourceActivityEntity>
-  >(async ({ input: { cursor, id, limit } }) => {
-    const clauses: Clause<ResourceActivityEntity>[] = [
-      { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: id },
-    ];
-    const resourceActivityClient = await useTableClient(AzureTable.ResourceActivity);
-    return readCursorPaginationDataAzureTable(resourceActivityClient, ResourceActivityEntity, {
-      clauses,
-      cursor,
-      limit,
-      sortBy: [MESSAGE_ROW_KEY_SORT_ITEM],
-    });
-  }),
+  readActivities: getOwnerProcedure(undefined, readActivitiesInputSchema, "id")
+    .meta({
+      mcp: {
+        description:
+          "Read a resource's activity trail a page at a time, newest first: each save, rename, restore and the rest, with the cursor for the next page. Answers the entries.",
+        scope: McpScope.Resources,
+      },
+    })
+    .query<CursorPaginationData<ResourceActivityEntity>>(async ({ input: { cursor, id, limit } }) => {
+      const clauses: Clause<ResourceActivityEntity>[] = [
+        { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: id },
+      ];
+      const resourceActivityClient = await useTableClient(AzureTable.ResourceActivity);
+      return readCursorPaginationDataAzureTable(resourceActivityClient, ResourceActivityEntity, {
+        clauses,
+        cursor,
+        limit,
+        sortBy: [MESSAGE_ROW_KEY_SORT_ITEM],
+      });
+    }),
   readDeletedResources: standardAuthedProcedure
     .input(readDeletedResourcesInputSchema)
     .query<OffsetPaginationData<ResourceListItem>>(({ ctx, input: { limit, offset, sortBy } }) => {
@@ -237,15 +243,21 @@ export const resourceRouter = router({
   }),
   // Publish state rides the row rather than answering a second request: `resourcePublications` is one table
   // For every type, so this cross-type read resolves it whatever the resource turns out to be
-  readResource: getOwnerProcedure(undefined, resourceIdInputSchema, "id").query<ResourceWithPublication>(
-    async ({ ctx }) => ({
+  readResource: getOwnerProcedure(undefined, resourceIdInputSchema, "id")
+    .meta({
+      mcp: {
+        description:
+          "Read one of the owner's resources by its id, with its name, type, tags and publication, and a deleted one not at all. Answers the resource.",
+        scope: McpScope.Resources,
+      },
+    })
+    .query<ResourceWithPublication>(async ({ ctx }) => ({
       ...ctx.resource,
       publication:
         (await ctx.db.query.resourcePublicationsInResource.findFirst({
           where: { resourceId: { eq: ctx.resource.id } },
         })) ?? null,
-    }),
-  ),
+    })),
   // What a delete leaves dangling, named in its confirmation
   readResourceConsumers: standardAuthedProcedure
     .input(readResourceConsumersInputSchema)
@@ -278,15 +290,21 @@ export const resourceRouter = router({
       contentSchema: getAgentJsonSchema(ResourceDefinitionMap[type].contentSchema),
     })),
   // Both directions of the link index around one resource for its Overview, in one round trip
-  readResourceReferences: getOwnerProcedure(undefined, resourceIdInputSchema, "id").query<ResourceReferences>(
-    async ({ ctx }) => {
+  readResourceReferences: getOwnerProcedure(undefined, resourceIdInputSchema, "id")
+    .meta({
+      mcp: {
+        description:
+          "Read what a resource links to and what links to it, among the owner's own resources. A link written into a document is a reference once the document is saved. Answers the consumers, the dependencies and how many links point at a missing resource.",
+        scope: McpScope.Resources,
+      },
+    })
+    .query<ResourceReferences>(async ({ ctx }) => {
       const [consumers, dependencyReferences] = await Promise.all([
         readResourceConsumers(ctx, [ctx.resource.id]),
         readResourceDependencies(ctx, ctx.resource.id),
       ]);
       return { consumers, ...dependencyReferences };
-    },
-  ),
+    }),
   readResources: standardAuthedProcedure
     .input(readResourceListInputSchema.prefault({}))
     .meta({

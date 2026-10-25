@@ -1,5 +1,7 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
+import type { ResourceReferences } from "#shared/models/resource/ResourceReferences";
+import type { UpdateResourceContentResult } from "#shared/models/resource/UpdateResourceContentResult";
 import type { ResourceInResource } from "@esposter/db-schema";
 import type { JsonPatchOperation } from "@esposter/shared";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
@@ -12,12 +14,15 @@ import { getSnapshotObjectBlobName } from "#server/services/resource/snapshot/ge
 import { createCallerFactory } from "#server/trpc";
 import { mockSessionOnce } from "#server/trpc/context.test";
 import { dashboardRouter } from "#server/trpc/routers/dashboard";
+import { emailRouter } from "#server/trpc/routers/email";
 import { resourceRouter } from "#server/trpc/routers/resource";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { sheetRouter } from "#server/trpc/routers/sheet";
 import { todoListRouter } from "#server/trpc/routers/todoList";
 import { webpageRouter } from "#server/trpc/routers/webpage";
 import { McpScope } from "#shared/models/auth/McpScope";
+import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
+import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
@@ -87,6 +92,7 @@ describe("resourceRouter", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["resource"]>;
   let dashboardCaller: DecorateRouterRecord<TRPCRouter["dashboard"]>;
+  let emailCaller: DecorateRouterRecord<TRPCRouter["email"]>;
   let sheetCaller: DecorateRouterRecord<TRPCRouter["sheet"]>;
   let todoListCaller: DecorateRouterRecord<TRPCRouter["todoList"]>;
   let webpageCaller: DecorateRouterRecord<TRPCRouter["webpage"]>;
@@ -118,6 +124,7 @@ describe("resourceRouter", () => {
     mockContext = getMockContext();
     caller = getCaller();
     dashboardCaller = createCallerFactory(dashboardRouter)(mockContext);
+    emailCaller = createCallerFactory(emailRouter)(mockContext);
     sheetCaller = createCallerFactory(sheetRouter)(mockContext);
     todoListCaller = createCallerFactory(todoListRouter)(mockContext);
     webpageCaller = createCallerFactory(webpageRouter)(mockContext);
@@ -443,6 +450,45 @@ describe("resourceRouter", () => {
       dependencies: [{ id: target.id, name, type: ResourceType.Sheet }],
       missingDependencyCount: 2,
     });
+  });
+
+  test("An agent reads what links to a resource", async () => {
+    expect.hasAssertions();
+
+    const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
+    const sheet = await sheetCaller.createResource({ name });
+    const emailResource = await caller.createResource({ name, type: ResourceType.Email });
+    await emailCaller.saveResourceContent({
+      content: new EmailEditor({ datasetReference: { id: sheet.id, type: DatasetProviderType.Sheet } }),
+      contentVersion: emailResource.contentVersion,
+      id: emailResource.id,
+    });
+    const references = await callAgentTool<ResourceReferences>("resource_readResourceReferences", { id: sheet.id });
+
+    expect(references.consumers).toStrictEqual([{ id: emailResource.id, name, type: ResourceType.Email }]);
+  });
+
+  test("A link written into a document appears in references", async () => {
+    expect.hasAssertions();
+
+    const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
+    const sheet = await sheetCaller.createResource({ name });
+    const emailResource = await caller.createResource({ name, type: ResourceType.Email });
+    const savedResource = await emailCaller.saveResourceContent({
+      content: new EmailEditor({}),
+      contentVersion: emailResource.contentVersion,
+      id: emailResource.id,
+    });
+    await callAgentTool<UpdateResourceContentResult>("resource_updateResourceContent", {
+      contentVersion: savedResource.contentVersion,
+      id: emailResource.id,
+      operations: [{ op: "add", path: "/datasetReference", value: { id: sheet.id, type: DatasetProviderType.Sheet } }],
+    });
+    const references = await callAgentTool<ResourceReferences>("resource_readResourceReferences", {
+      id: emailResource.id,
+    });
+
+    expect(references.dependencies).toStrictEqual([{ id: sheet.id, name, type: ResourceType.Sheet }]);
   });
 
   // A snapshot is stored bytes the owner keeps, and nothing else charges it: a server-side write raises a BlobCreated for
