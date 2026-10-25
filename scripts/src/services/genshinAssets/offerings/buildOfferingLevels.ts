@@ -1,6 +1,5 @@
 import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
 import type { ExcelOfferingLevelupRow } from "#src/models/genshinAssets/offerings/ExcelOfferingLevelupRow";
-import type { ExcelRewardRow } from "#src/models/genshinAssets/rewards/ExcelRewardRow";
 
 import { OfferingKind } from "#src/models/genshinAssets/offerings/OfferingKind";
 import {
@@ -10,28 +9,13 @@ import {
   PRIMAL_FLAME_RESONANCE_LEVEL_COUNT,
 } from "#src/services/genshinAssets/offerings/constants";
 import { OfferingIdKindMap } from "#src/services/genshinAssets/offerings/OfferingIdKindMap";
+import { readReward } from "#src/services/genshinAssets/offerings/readReward";
 import { toOfferingLevelRow } from "#src/services/genshinAssets/offerings/toOfferingLevelRow";
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
 import { toRewardItems } from "#src/services/genshinAssets/rewards/toRewardItems";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
-
-// A reward row the reward table must hold, read for the level or the pool that names it
-const readReward = (
-  rewardMap: ReadonlyMap<number, ExcelRewardRow>,
-  rewardId: number,
-  named: string,
-): ExcelRewardRow => {
-  const reward = rewardMap.get(rewardId);
-  if (!reward)
-    throw new InvalidOperationError(
-      Operation.Read,
-      "offering reward",
-      `${named} names reward ${rewardId}, which the reward table does not hold`,
-    );
-  return reward;
-};
 
 // Every offering's levels, each row's items and reward joined from the level table and the reward table, as one record per
 // Offering under its kind. A row at level 0 is the unstarted state and is left out. An offering id the kind map does not
