@@ -31,7 +31,7 @@ const { id } = route.params;
 
 ## Where Navigation State Lives — `references/navigation-state.md`
 
-Decide by what the value **is**: part of what the page shows (a filter, a page number, a tab) → the **URL**; how the visitor got here (a breadcrumb trail, a drill-down) → the **history entry**, written in one `router.afterEach` hook and never at each link; what the visitor prefers → **`localStorage`** through the `LocalStorageKey` registry. The history-entry mechanics, and why nothing reactive may enter it, are that page.
+Decide by what the value **is**: part of what the page shows (a filter, a page number, a tab) → the **URL**; how the visitor got here (a breadcrumb trail, a drill-down) → the **history entry**, written in one `router.afterEach` hook and never at each link; what the visitor prefers → **`localStorage`** through the `LocalStorageKey` registry. The history-entry mechanics, and why nothing reactive may enter it, are in `references/navigation-state.md`.
 
 ## Route-Synced Tabs — `references/route-synced-tabs.md`
 

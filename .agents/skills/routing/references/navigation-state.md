@@ -1,6 +1,6 @@
 # Where navigation state lives — URL, history entry or storage
 
-Read when deciding where a filter, a tab, a breadcrumb trail or a preference is kept, or when writing state into a history entry. The three-way split is in `SKILL.md`; this page is the history-entry mechanics, why the middle case is mis-filed, and the one place that state is written.
+Read when deciding where a filter, a tab, a breadcrumb trail or a preference is kept, or when writing state into a history entry. The split is in `SKILL.md`; this page is the history-entry mechanics, why the middle case is mis-filed, and the one place that state is written.
 
 Decide by what the value **is**, not by what is reachable:
 
