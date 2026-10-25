@@ -5,6 +5,12 @@ import type { ModuleOptions } from "#src/models/ModuleOptions";
 import type { SecurityRouteRules } from "#src/models/SecurityRouteRules";
 import type { NuxtModule } from "@nuxt/schema";
 
+import {
+  ROUTE_RULES_PLUGIN_FILENAME,
+  ROUTE_RULES_TEMPLATE_FILENAME,
+  SRI_HASHES_TEMPLATE_FILENAME,
+  SRI_PLUGIN_FILENAME,
+} from "#src/constants";
 import { MODULE_NAME } from "#src/runtime/constants";
 import { checkIsRecord } from "#src/runtime/services/checkIsRecord";
 import { computeSubresourceIntegrityHashes } from "#src/services/computeSubresourceIntegrityHashes";
@@ -43,11 +49,6 @@ declare module "h3/rules" {
     security?: SecurityRouteRules;
   }
 }
-
-const ROUTE_RULES_TEMPLATE_FILENAME = `#${MODULE_NAME}/route-rules.mjs`;
-const SRI_HASHES_TEMPLATE_FILENAME = `#${MODULE_NAME}/sri-hashes.mjs`;
-const ROUTE_RULES_PLUGIN_FILENAME = `#${MODULE_NAME}/route-rules-plugin.mjs`;
-const SRI_PLUGIN_FILENAME = `#${MODULE_NAME}/sri-plugin.mjs`;
 
 const securityModule: NuxtModule<Partial<ModuleOptions>> = defineNuxtModule<Partial<ModuleOptions>>({
   meta: { compatibility: { nuxt: ">=5.0.0-0" }, configKey: "security", name: MODULE_NAME },

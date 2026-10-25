@@ -1,13 +1,14 @@
 import type { Nuxt } from "@nuxt/schema";
 import type { Nitro } from "nitro/types";
 
+import { SRI_HASHES_TEMPLATE_FILENAME } from "#src/constants";
+import { SCRIPT_HASH } from "#src/constants.test";
 import securityModule from "#src/module";
-import { MODULE_NAME } from "#src/runtime/constants";
+import { setupTemporaryDirectory } from "#src/setupTemporaryDirectory.test";
 import { addServerTemplate } from "@nuxt/kit";
-import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
+import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, describe, expect, test, vi } from "vitest";
 
 vi.mock("@nuxt/kit", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@nuxt/kit")>()),
@@ -18,17 +19,10 @@ vi.mock("@nuxt/kit", async (importOriginal) => ({
 }));
 
 describe(securityModule, () => {
-  const SRI_HASHES_FILENAME = `#${MODULE_NAME}/sri-hashes.mjs`;
-  const SCRIPT_HASH = "sha384-62uBgnG6+YTGQNMl+obi6qVkdGZnlhGcgfthFhDiF516gWydfNbHtTpyulxi7Aeh";
-  let directory: string;
+  const getDirectory = setupTemporaryDirectory();
 
-  beforeEach(async () => {
-    directory = await mkdtemp(join(tmpdir(), "nuxt-security-module-"));
-  });
-
-  afterEach(async () => {
+  afterEach(() => {
     vi.clearAllMocks();
-    await rm(directory, { force: true, recursive: true });
   });
 
   test("the client bundles the build writes are hashed once Nitro has copied its public assets, into the template the plugin reads", async () => {
@@ -44,18 +38,18 @@ describe(securityModule, () => {
     await securityModule({}, nuxt);
 
     // The module is set up before the build writes its client bundles, so the bundles are written after setup
-    await mkdir(join(directory, "_nuxt"), { recursive: true });
-    await writeFile(join(directory, "_nuxt", "entry.js"), "entry");
+    await mkdir(join(getDirectory(), "_nuxt"), { recursive: true });
+    await writeFile(join(getDirectory(), "_nuxt", "entry.js"), "entry");
     const publicAssetsHook = hooks.get("nitro:build:public-assets");
     assert.exists(publicAssetsHook);
     await publicAssetsHook({
-      options: { output: { publicDir: directory }, runtimeConfig: { app: { baseURL: "/", cdnURL: "" } } },
+      options: { output: { publicDir: getDirectory() }, runtimeConfig: { app: { baseURL: "/", cdnURL: "" } } },
     } as unknown as Nitro);
 
     const sriHashesTemplate = vi
       .mocked(addServerTemplate)
       .mock.calls.map(([template]) => template)
-      .find((template) => template.filename === SRI_HASHES_FILENAME);
+      .find((template) => template.filename === SRI_HASHES_TEMPLATE_FILENAME);
     assert.exists(sriHashesTemplate);
     const contents = await sriHashesTemplate.getContents();
 
