@@ -4,6 +4,7 @@ import { deleteAccountHandler } from "#src/handlers/deleteAccountHandler";
 import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { getTableClient } from "#src/services/azure/getTableClient";
 import { readBlobNames } from "#src/services/azure/readBlobNames.test";
+import { readPartitionEntities } from "#src/services/azure/readPartitionEntities.test";
 import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { InvocationContext } from "@azure/functions";
@@ -60,8 +61,6 @@ vi.mock(
   () => import("#src/services/azure/getWebPubSubServiceClient.test"),
 );
 
-const readPartitionEntities = (tableName: AzureTable, partitionKey: string) =>
-  [...(MockTableDatabase.get(tableName)?.values() ?? [])].filter((entity) => entity.partitionKey === partitionKey);
 const readBlobNamesUnder = (containerName: AzureContainer, prefix: string) =>
   readBlobNames(containerName).filter((blobName) => blobName.startsWith(prefix));
 const readLedgerRows = (userId: string) =>

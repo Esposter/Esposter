@@ -2,6 +2,7 @@ import type { Database } from "@esposter/db-schema";
 
 import { deleteAccountOwnedRooms } from "#src/services/account/deleteAccountOwnedRooms";
 import { readBlobNames } from "#src/services/azure/readBlobNames.test";
+import { readPartitionEntities } from "#src/services/azure/readPartitionEntities.test";
 import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { InvocationContext } from "@azure/functions";
@@ -28,8 +29,6 @@ vi.mock(
 // A partition's rows are only ever read by their partition key, so one row keyed by the room is the whole fixture
 const seedPartitionRow = (tableName: AzureTable, partitionKey: string) =>
   new MockTableClient("", tableName).createEntity({ partitionKey, rowKey: crypto.randomUUID() });
-const readPartitionRows = (tableName: AzureTable, partitionKey: string) =>
-  [...(MockTableDatabase.get(tableName)?.values() ?? [])].filter((entity) => entity.partitionKey === partitionKey);
 
 describe(deleteAccountOwnedRooms, () => {
   const context = new InvocationContext({ logHandler: () => {} });
@@ -74,8 +73,8 @@ describe(deleteAccountOwnedRooms, () => {
 
     await deleteAccountOwnedRooms(context, userId);
 
-    expect(roomTableNames.flatMap((tableName) => readPartitionRows(tableName, ownedRoom.id))).toStrictEqual([]);
-    expect(roomTableNames.flatMap((tableName) => readPartitionRows(tableName, otherRoom.id))).toHaveLength(
+    expect(roomTableNames.flatMap((tableName) => readPartitionEntities(tableName, ownedRoom.id))).toStrictEqual([]);
+    expect(roomTableNames.flatMap((tableName) => readPartitionEntities(tableName, otherRoom.id))).toHaveLength(
       roomTableNames.length,
     );
     expect(readBlobNames(AzureContainer.MessageAssets)).toStrictEqual([`${otherRoom.id}/${fileId}`]);
