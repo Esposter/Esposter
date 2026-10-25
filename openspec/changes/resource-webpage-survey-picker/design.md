@@ -58,6 +58,10 @@ New files, laid out as the design template's tree:
 apps/web/app/components/Resource/Link/Select.vue   the shared select, the moved BindingSelect under the name it has everywhere
 apps/web/app/components/Ui/SchemaForm/ResourceLink.vue   the schema-form renderer that draws a link field with the shared select
 apps/web/server/services/resource/getPublicationWhere.ts   the publication row check, shared by the resource list's filter and the published read
+apps/web/app/models/resource/link/ResourceLinkSource.ts   the shape of a link type's source: its router, mark, empty message and unbound id
+apps/web/app/services/resource/link/ResourceLinkTypeSourceMap.ts   each link type's source, the survey's list published alone
+apps/web/app/services/resource/link/getResourceLinkSource.ts   the source a schema field's link type is listed from, read off its JSON Schema
+apps/web/app/services/resource/getUnpublishedResourceMessage.ts   the wording a bound survey that is no longer published is flagged with
 ```
 
 ## Notes

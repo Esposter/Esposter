@@ -12,6 +12,7 @@ flowchart TD
   D -->|"a fixed value, or no renderer ranks the node"| N[Nothing drawn]
   D -->|"an enum, a titled enum, a field naming a context key"| S["UiSelect over mapStateToControlProps"]
   D -->|"a union of objects"| O["The variant choice over mapStateToOneOfProps"]
+  D -->|"a string declared as a link to a resource"| R["The shared select over the owner's resources of that type"]
   D -->|"a string or a number"| T["UiTextField over mapStateToControlProps"]
   D -->|"a boolean"| C["UiCheckbox over mapStateToControlProps"]
   D -->|"a layout, or a nested object over its detail mapping"| L["The fields stacked, under a label when nested"]
@@ -20,6 +21,7 @@ flowchart TD
   A -->|"form, as a prop"| D
   S -->|"handleChange"| W["The core reduces the change, and the value is written back once"]
   O -->|"handleChange"| W
+  R -->|"handleChange"| W
   T -->|"handleChange"| W
   C -->|"handleChange"| W
   W --> Q[The Zod schema validates the whole value]
@@ -157,6 +159,9 @@ Every issue and pull request the audit of @jsonforms/vue selected from [eclipses
 | `apps/web/app/components/Ui/SchemaForm/Object.vue`                 | A nested object as its own fields                                                           |
 | `apps/web/app/components/Ui/SchemaForm/Array.vue`                  | A list's items, added, moved and removed                                                    |
 | `apps/web/app/components/Ui/SchemaForm/OneOf.vue`                  | A union's variant, chosen in the library's select, over the chosen variant's fields         |
+| `apps/web/app/components/Ui/SchemaForm/ResourceLink.vue`           | A link field drawn as the shared select over the owner's resources of its type              |
+| `apps/web/app/services/resource/link/getResourceLinkSource.ts`     | The source a field's link type is listed from, read off its JSON Schema                     |
+| `apps/web/app/services/resource/link/ResourceLinkTypeSourceMap.ts` | Each link type's router, mark, empty message and unbound id                                 |
 | `apps/web/app/components/Ui/SchemaForm/Index.test.ts`              | The form's suite, mounted through the root                                                  |
 | `apps/web/app/composables/ui/useSchemaFormControl.ts`              | What every field reads: its control over the core's mapping, its layout meta and its issue  |
 | `apps/web/app/models/ui/UiSchemaFormBinding.ts`                    | The form a renderer takes: the core state it maps, and the dispatch its changes go through  |

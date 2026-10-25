@@ -25,18 +25,19 @@ flowchart LR
 
 Paths relative to `apps/web`.
 
-| File                                                               | Role                                                            |
-| ------------------------------------------------------------------ | --------------------------------------------------------------- |
-| `shared/services/pageBuilder/surveyInviteNodeType.ts`              | the node: its props schema, its anchor render and its css       |
-| `shared/services/pageBuilder/getSurveyInviteUrl.ts`                | the absolute survey url the anchor and the email button link to |
-| `shared/services/pageBuilder/webpageNodeTypeDefinitionMap.ts`      | the webpage registry entry                                      |
-| `shared/services/pageBuilder/email/emailSurveyInviteType.ts`       | the email node's `mj-button` render                             |
-| `shared/services/pageBuilder/email/emailSurveyInviteNodeSchema.ts` | the email node's schema, the webpage props under the email tag  |
-| `app/services/pageBuilder/constants.ts`                            | the webpage palette's Survey category                           |
-| `app/services/pageBuilder/webpageNodeDefaults.ts`                  | the node a palette drop creates                                 |
-| `server/services/resource/link/ResourceTypeGetLinkTargetsMap.ts`   | the link index, read off each type's content schema             |
+| File                                                               | Role                                                                      |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------- |
+| `shared/services/pageBuilder/surveyInviteNodeType.ts`              | the node: its props schema, its anchor render and its css                 |
+| `shared/services/pageBuilder/getSurveyInviteUrl.ts`                | the absolute survey url the anchor and the email button link to           |
+| `shared/services/pageBuilder/webpageNodeTypeDefinitionMap.ts`      | the webpage registry entry                                                |
+| `shared/services/pageBuilder/email/emailSurveyInviteType.ts`       | the email node's `mj-button` render                                       |
+| `shared/services/pageBuilder/email/emailSurveyInviteNodeSchema.ts` | the email node's schema, the webpage props under the email tag            |
+| `app/services/pageBuilder/constants.ts`                            | the webpage palette's Survey category                                     |
+| `app/services/pageBuilder/webpageNodeDefaults.ts`                  | the node a palette drop creates                                           |
+| `server/services/resource/link/ResourceTypeGetLinkTargetsMap.ts`   | the link index, read off each type's content schema                       |
+| `apps/web/app/components/Ui/SchemaForm/ResourceLink.vue`           | the picker the `surveyId` is drawn by, over the owner's published surveys |
 
 ## Notes
 
-- The survey picker is owed, not built. No component reads the owner's published surveys, so the node's `surveyId` is the bare id field its schema declares. A picker is a new change that reads the owner's published surveys and adds the palette choice this spec no longer describes.
+- The survey is chosen from a picker of the owner's published surveys. The schema form draws the `surveyId` as the shared resource-link select over the publication-filtered list ([schema forms](../../architecture/schema-forms/design.md)). A survey bound to an invite that is later unpublished stays bound, and the picker flags it rather than offering it again. The picker is built by [resource-webpage-survey-picker](../../../changes/resource-webpage-survey-picker/proposal.md) and ships when its purge gate closes.
 - Embedding a survey _inline_ (an iframe of the respondent page) is deliberately out: iframes inside a published page bring sizing and sandboxing complexity for marginal gain over a button, and the respondent page is already mobile-friendly. Revisit only on real demand.

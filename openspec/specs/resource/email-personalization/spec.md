@@ -22,7 +22,7 @@ The email author SHALL be able to bind an email to one dataset, after which each
 
 ### Requirement: A survey invite is a button to a bound survey
 
-The email author SHALL be able to add a survey invite, a button that links recipients to the survey it is bound to. The survey is bound by its id, since no picker lists the author's published surveys yet.
+The email author SHALL be able to add a survey invite, a button that links recipients to the survey it is bound to. The survey is chosen from a picker of the author's published surveys.
 
 #### Scenario: A recipient follows a survey invite
 

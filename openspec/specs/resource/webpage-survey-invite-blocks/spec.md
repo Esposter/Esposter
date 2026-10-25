@@ -6,7 +6,7 @@ A survey offered as an invite button. A webpage's invite is a page-builder node 
 
 ### Requirement: A webpage offers a survey invite as a page-builder node
 
-The webpage editor SHALL offer a survey invite node in its Survey palette category, created with the label "Survey" and no survey bound. The owner binds a survey by its id, since no picker lists the owner's published surveys yet.
+The webpage editor SHALL offer a survey invite node in its Survey palette category, created with the label "Survey" and no survey bound.
 
 #### Scenario: Owner drops a survey invite
 
