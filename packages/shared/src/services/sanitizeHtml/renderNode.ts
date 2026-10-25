@@ -1,11 +1,11 @@
 import type { SanitizePolicy } from "#src/models/sanitizeHtml/SanitizePolicy";
 import type { DefaultTreeAdapterTypes } from "parse5";
 
+import { checkIsSourceAllowed } from "#src/services/sanitizeHtml/checkIsSourceAllowed";
 import { HTML_NAMESPACE, MAX_NESTING_DEPTH, NON_TEXT_TAGS, VOID_TAGS } from "#src/services/sanitizeHtml/constants";
 import { escapeAttribute } from "#src/services/sanitizeHtml/escapeAttribute";
 import { escapeText } from "#src/services/sanitizeHtml/escapeText";
 import { filterAttributes } from "#src/services/sanitizeHtml/filterAttributes";
-import { checkIsSourceAllowed } from "#src/services/sanitizeHtml/checkIsSourceAllowed";
 import { getChildNodes } from "#src/services/sanitizeHtml/getChildNodes";
 
 // Renders a parsed node as the markup it is allowed to be. Anything the policy does not name is unwrapped to its text,
