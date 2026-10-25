@@ -4,6 +4,7 @@ import type { ProgramInvites } from "#shared/models/resource/program/ProgramInvi
 import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 import type { ResourceInResource } from "@esposter/db-schema";
 
+import { compileEmailContent } from "#server/services/emailEditor/compileEmailContent";
 import { getDanglingProgramBindingError } from "#server/services/program/getDanglingProgramBindingError";
 import { readProgramAudienceDataset } from "#server/services/program/readProgramAudienceDataset";
 import { readProgramParticipantEntities } from "#server/services/program/readProgramParticipantEntities";
@@ -33,11 +34,19 @@ export const readProgramInvites = async (
     readResourceContent(emailEditorSchema, emailId),
     readOwnedResource(ctx, surveyId, ResourceType.Survey),
   ]);
-  if (!email || !survey) throw getDanglingProgramBindingError();
+  if (!email || !emailContent || !survey) throw getDanglingProgramBindingError();
+  // The email as the server compiles it from its stored working copy, the same compile the publish and the personalised
+  // export run, since no working copy holds html of its own
+  const emailHtml = (await compileEmailContent(emailContent)).match(
+    (html) => html,
+    (error) => {
+      throw getInvalidOperationError(Operation.Read, DatabaseEntityType.Resource, error.message);
+    },
+  );
   // An invite whose button points nowhere would send every participant to a survey they cannot answer, so the
   // Email is refused before the audience or the participants are read
   const surveyPath = RoutePath.View(ResourceType.Survey, surveyId);
-  if (!emailContent?.html?.includes(surveyPath))
+  if (!emailHtml.includes(surveyPath))
     throw getInvalidOperationError(Operation.Read, DatabaseEntityType.Resource, "the email has no link to the survey");
   const [audienceDataset, participants, statusRows] = await Promise.all([
     readProgramAudienceDataset(ctx, audience),
@@ -60,5 +69,5 @@ export const readProgramInvites = async (
     if (row) invites.push({ keyValue, row, token });
     else unmatchedCount++;
   }
-  return { emailHtml: emailContent.html, invites, unmatchedCount };
+  return { emailHtml, invites, unmatchedCount };
 };
