@@ -6,7 +6,7 @@
 
 ## What Changes
 
-The package gets an area, `openspec/specs/keyframe-store/`, with an index and two capability pages.
+The package gets an area, `openspec/changes/keyframe-store-area/specs/keyframe-store/`, with an index and two capability pages.
 
 - **`keyframe-store/object-format`**: what an object is on disk. Its address, its keyframe and delta forms, the promotion ratio and segment budget that choose between them, the header that a stranger's bytes are refused by, and the hash check every read makes.
 - **`keyframe-store/version-store`**: the contract a caller writes and reads through. The anchor it passes, the base a write reports, the two-read reconstruction, the collection rule and the backend contract.
@@ -25,7 +25,7 @@ None.
 
 ## Impact
 
-- `openspec/specs/keyframe-store/`, a new area with its index.
+- `openspec/changes/keyframe-store-area/specs/keyframe-store/`, a new area with its index.
 - `packages/keyframe-store/README.md`, whose How it works section is replaced by a pointer.
 - `openspec/specs/architecture/compression/design.md` and `openspec/specs/resource/resource-version-store/design.md`, which point at the object format page instead of the README.
 - No package code, no manifest, no migration.
