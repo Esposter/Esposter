@@ -1,5 +1,5 @@
-import type { AchievementDefinitionMap } from "#shared/services/achievement/AchievementDefinitionMap";
-import type { achievementDefinitions as baseAchievementDefinitions } from "#shared/services/achievement/achievementDefinitions";
+import type { AchievementDefinitionEntry } from "#shared/models/achievement/AchievementDefinitionEntry";
+import type { AchievementDefinitionViewMap } from "#shared/models/achievement/AchievementDefinitionViewMap";
 import type { UserAchievementWithDefinition } from "@/models/achievement/UserAchievementWithDefinition";
 import type { AchievementName, UserAchievementInAchievementWithRelations } from "@esposter/db-schema";
 
@@ -9,11 +9,11 @@ import { getUnlockedUserAchievements } from "@/services/achievement/getUnlockedU
 import { toUserAchievementWithDefinition } from "@/services/achievement/toUserAchievementWithDefinition";
 
 export const useAchievementStore = defineStore("achievement", () => {
-  const achievementDefinitionMap = ref<typeof AchievementDefinitionMap>();
-  const achievementDefinitions = computed<typeof baseAchievementDefinitions>(() =>
+  const achievementDefinitionMap = ref<AchievementDefinitionViewMap>();
+  const achievementDefinitions = computed<AchievementDefinitionEntry[]>(() =>
     achievementDefinitionMap.value ? parseDictionaryToArray(achievementDefinitionMap.value, "name") : [],
   );
-  const initializeAchievementDefinitionMap = (newAchievementDefinitionMap: typeof AchievementDefinitionMap) => {
+  const initializeAchievementDefinitionMap = (newAchievementDefinitionMap: AchievementDefinitionViewMap) => {
     achievementDefinitionMap.value = newAchievementDefinitionMap;
   };
   const userAchievements = ref<UserAchievementWithDefinition[]>([]);

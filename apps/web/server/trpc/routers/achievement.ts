@@ -1,3 +1,4 @@
+import type { AchievementDefinitionViewMap } from "#shared/models/achievement/AchievementDefinitionViewMap";
 import type { PointsLeaderboard } from "#shared/models/achievement/PointsLeaderboard";
 import type { AchievementName, UserAchievementInAchievementWithRelations } from "@esposter/db-schema";
 
@@ -29,7 +30,7 @@ export const achievementRouter = router({
       if (updatedUserAchievements.length > 0) yield updatedUserAchievements;
     }
   }),
-  readAchievementMap: standardAuthedProcedure.query<typeof AchievementDefinitionMap>(async ({ ctx }) => {
+  readAchievementMap: standardAuthedProcedure.query<AchievementDefinitionViewMap>(async ({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
     const unlockedUserAchievements = await ctx.db.query.userAchievementsInAchievement.findMany({
       where: { unlockedAt: { isNotNull: true }, userId: { eq: userId } },
@@ -54,7 +55,7 @@ export const achievementRouter = router({
           },
         ],
       ),
-    ) as typeof AchievementDefinitionMap;
+    ) as AchievementDefinitionViewMap;
   }),
   // The share of registered users who have unlocked each achievement, as a percentage. Every definition is keyed, so
   // One nobody has earned reads 0 rather than being absent

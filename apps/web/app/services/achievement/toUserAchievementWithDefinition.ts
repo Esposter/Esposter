@@ -1,10 +1,10 @@
-import type { AchievementDefinitionMap } from "#shared/services/achievement/AchievementDefinitionMap";
+import type { AchievementDefinitionView } from "#shared/models/achievement/AchievementDefinitionView";
 import type { UserAchievementWithDefinition } from "@/models/achievement/UserAchievementWithDefinition";
-import type { AchievementName, UserAchievementInAchievementWithRelations } from "@esposter/db-schema";
+import type { UserAchievementInAchievementWithRelations } from "@esposter/db-schema";
 
 export const toUserAchievementWithDefinition = (
   userAchievement: UserAchievementInAchievementWithRelations,
-  achievementDefinition: (typeof AchievementDefinitionMap)[AchievementName],
+  achievementDefinition: AchievementDefinitionView,
 ): UserAchievementWithDefinition => ({
   ...userAchievement,
   achievement: { ...achievementDefinition, name: userAchievement.achievement.name },
