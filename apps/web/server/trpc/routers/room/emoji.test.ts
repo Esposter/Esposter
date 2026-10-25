@@ -91,7 +91,7 @@ describe("emojiRouter", () => {
 
     expect(roomEmoji.name).toBe(name);
     expect(roomEmoji.roomId).toBe(roomId);
-    expect(roomEmoji.sasUrl).not.toBe("");
+    expect(roomEmoji.sasUrl).toContain(getRoomEmojiBlobName(roomId, roomEmoji.id));
   });
 
   test("fails createRoomEmoji with an id whose blob never landed", async () => {
@@ -224,12 +224,12 @@ describe("emojiRouter", () => {
   test("readRoomEmojis returns the room's set with a url per entry", async () => {
     expect.hasAssertions();
 
-    await createRoomEmoji();
+    const roomEmoji = await createRoomEmoji();
     const member = await createMember();
     await mockSessionOnce(mockContext.db, member);
     const roomEmojis = await roomEmojiCaller.readRoomEmojis({ roomId });
 
     expect(roomEmojis).toHaveLength(1);
-    expect(takeOne(roomEmojis).sasUrl).not.toBe("");
+    expect(takeOne(roomEmojis).sasUrl).toContain(getRoomEmojiBlobName(roomId, roomEmoji.id));
   });
 });

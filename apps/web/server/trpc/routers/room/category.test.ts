@@ -127,7 +127,9 @@ describe("categoryRouter", () => {
 
     const newRoomCategory = await roomCategoryCaller.createRoomCategory({ name });
     const deletedRoomCategory = await roomCategoryCaller.deleteRoomCategory(newRoomCategory.id);
+    const roomCategories = await roomCategoryCaller.readRoomCategories();
 
     expect(deletedRoomCategory.id).toBe(newRoomCategory.id);
+    expect(roomCategories).toHaveLength(0);
   });
 });
