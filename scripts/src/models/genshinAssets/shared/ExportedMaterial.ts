@@ -1,3 +1,5 @@
+import type { AssetReference } from "#src/models/genshinAssets/shared/AssetReference";
+
 // A material as AnimeStudio exports it: the shader it draws with and its saved properties, each texture slot a
 // Reference to a texture by path ID (null when the slot is empty), with its tiling, and each float and colour by name
 export interface ExportedMaterial {
@@ -11,9 +13,4 @@ export interface ExportedMaterial {
     >;
   };
   m_Shader: AssetReference;
-}
-interface AssetReference {
-  IsNull: boolean;
-  m_FileID: number;
-  m_PathID: string;
 }

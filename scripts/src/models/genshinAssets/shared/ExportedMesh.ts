@@ -1,3 +1,5 @@
+import type { MatrixIndex } from "#src/models/genshinAssets/shared/MatrixIndex";
+
 // A mesh as AnimeStudio exports it as JSON, as far as it is read: each vertex's bones and their weights, in the Order
 // The OBJ beside it holds its vertices, each bone's bind pose (a matrix whose fields are named by column, then Row) and
 // The CRC32 of each bone's path, which a clip's bindings name it by; and its vertices' positions, normals and first
@@ -12,4 +14,3 @@ export interface ExportedMesh {
   m_UV2: null | number[];
   m_Vertices: number[];
 }
-type MatrixIndex = 0 | 1 | 2 | 3;
