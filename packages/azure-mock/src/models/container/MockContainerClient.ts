@@ -109,7 +109,7 @@ export class MockContainerClient implements Except<ContainerClient, "accountName
   }
 
   generateSasUrl(options: ContainerGenerateSasUrlOptions): Promise<string> {
-    return Promise.resolve(getMockSasUrl(this.url, options.permissions, "c"));
+    return Promise.resolve(getMockSasUrl(this.url, options.permissions, "c", options.expiresOn));
   }
 
   generateUserDelegationSasStringToSign(): string {

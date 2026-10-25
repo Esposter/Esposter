@@ -149,7 +149,7 @@ export class MockBlobClient implements Except<BlobClient, "accountName"> {
   }
 
   generateSasUrl(options: BlobGenerateSasUrlOptions): Promise<string> {
-    return Promise.resolve(getMockSasUrl(this.url, options.permissions, "b"));
+    return Promise.resolve(getMockSasUrl(this.url, options.permissions, "b", options.expiresOn));
   }
 
   generateUserDelegationSasStringToSign(): string {

@@ -1,6 +1,7 @@
 import { MimeType } from "#shared/models/file/MimeType";
 import { MEGABYTE } from "#shared/services/app/constants";
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
+import { WRITE_SAS_DURATION_MS } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { getMockSasUrl } from "azure-mock";
 import { afterEach, describe, expect, test, vi } from "vitest";
@@ -16,10 +17,12 @@ const stubFetch = () => {
 const getCommitCall = (fetchMock: ReturnType<typeof stubFetch>) => takeOne(fetchMock.mock.calls.slice(-1));
 
 describe(uploadBlocks, () => {
+  const blobUrl = "https://storage.test/container/blob";
   const sasUrl = getMockSasUrl("", "w", "b");
 
   afterEach(() => {
     vi.unstubAllGlobals();
+    vi.useRealTimers();
   });
 
   // Put Block List is the only request in the upload that sets the blob's own headers, so sending its XML
@@ -95,6 +98,45 @@ describe(uploadBlocks, () => {
       `[BlobStorageStatusError: Invalid operation: Create, name: requestBlobStorage, Blob Storage answered 403]`,
     );
     expect(progressNotifier.mock.calls).toStrictEqual([[1 / 3], [2 / 3]]);
+  });
+
+  // A write address lapses an hour after it is handed out, and Blob Storage refuses a request made after that: the
+  // Block is refused, the block list is never committed, and the upload fails
+  test("An upload to an expired address is refused", async () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers({ now: 0 });
+    const expiredSasUrl = getMockSasUrl(blobUrl, "w", "b", new Date(Date.now() + WRITE_SAS_DURATION_MS));
+    vi.setSystemTime(WRITE_SAS_DURATION_MS * 2);
+    const fetchMock = vi.fn<(input: string, init: RequestInit) => Promise<Response>>((url) => {
+      const expiresOn = new Date(String(new URL(url).searchParams.get("se")));
+      return Promise.resolve(new Response(null, { status: expiresOn < new Date() ? 403 : 200 }));
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(uploadBlocks(new Blob([" "]), expiredSasUrl)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[BlobStorageStatusError: Invalid operation: Create, name: requestBlobStorage, Blob Storage answered 403]`,
+    );
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  // The control for the refusal above: an address still within its hour takes the blocks and commits the blob
+  test("An agent uploads a file before its address expires", async () => {
+    expect.hasAssertions();
+
+    vi.useFakeTimers({ now: 0 });
+    const liveSasUrl = getMockSasUrl(blobUrl, "w", "b", new Date(Date.now() + WRITE_SAS_DURATION_MS));
+    vi.setSystemTime(WRITE_SAS_DURATION_MS / 2);
+    const fetchMock = vi.fn<(input: string, init: RequestInit) => Promise<Response>>((url) => {
+      const expiresOn = new Date(String(new URL(url).searchParams.get("se")));
+      return Promise.resolve(new Response(null, { status: expiresOn < new Date() ? 403 : 200 }));
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await uploadBlocks(new Blob([" "]), liveSasUrl);
+    const [commitUrl] = getCommitCall(fetchMock);
+
+    expect(commitUrl).toBe(`${liveSasUrl}&comp=blocklist`);
   });
 
   // An empty file has no block to land, so it reports its completion alone

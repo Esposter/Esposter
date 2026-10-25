@@ -14,9 +14,9 @@ import { McpScope } from "#shared/models/auth/McpScope";
 import { MimeType } from "#shared/models/file/MimeType";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
-import { AzureContainer } from "@esposter/db-schema";
+import { AzureContainer, WRITE_SAS_DURATION_MS } from "@esposter/db-schema";
 import { getBlobUrl, getMockSasUrl, MockContainerDatabase } from "azure-mock";
-import { afterEach, beforeAll, describe, expect, test } from "vitest";
+import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 describe("resourceDispatchRouter", () => {
   const { getMockContext } = setupResourceSuite(resourceDispatchRouter);
@@ -36,6 +36,7 @@ describe("resourceDispatchRouter", () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     MockContainerDatabase.clear();
   });
 
@@ -79,6 +80,7 @@ describe("resourceDispatchRouter", () => {
   test("an agent is given a write address for the file's hash, and the store holds nothing until the bytes are sent", async () => {
     expect.hasAssertions();
 
+    vi.useFakeTimers({ now: 0, toFake: ["Date"] });
     const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
     const webpageResource = await webpageCaller.createResource({ name });
     const sasEntities = await callAgentTool<ResourceFileSasEntity[]>("resource_generateUploadFileSasEntities", {
@@ -88,7 +90,16 @@ describe("resourceDispatchRouter", () => {
     const blobName = `${getFilesDirectoryName(webpageResource.id)}/${hash}`;
 
     expect(sasEntities).toStrictEqual([
-      { id: hash, isHeld: false, sasUrl: getMockSasUrl(getBlobUrl(AzureContainer.ResourceAssets, blobName), "w", "b") },
+      {
+        id: hash,
+        isHeld: false,
+        sasUrl: getMockSasUrl(
+          getBlobUrl(AzureContainer.ResourceAssets, blobName),
+          "w",
+          "b",
+          new Date(Date.now() + WRITE_SAS_DURATION_MS),
+        ),
+      },
     ]);
     expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(blobName)).not.toBe(true);
   });

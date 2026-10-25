@@ -39,6 +39,7 @@ import {
   ResourceType,
   ResourceViewEntity,
   storageLedgerInStorage,
+  WRITE_SAS_DURATION_MS,
 } from "@esposter/db-schema";
 import { jsonDateParse, noop, NotFoundError, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import {
@@ -741,7 +742,16 @@ describe(createResourceProcedures, () => {
     const blobName = `${getFilesDirectoryName(newResource.id)}/${hash}`;
 
     expect(sasEntities).toStrictEqual([
-      { id: hash, isHeld: false, sasUrl: getMockSasUrl(getBlobUrl(AzureContainer.ResourceAssets, blobName), "w", "b") },
+      {
+        id: hash,
+        isHeld: false,
+        sasUrl: getMockSasUrl(
+          getBlobUrl(AzureContainer.ResourceAssets, blobName),
+          "w",
+          "b",
+          new Date(Date.now() + WRITE_SAS_DURATION_MS),
+        ),
+      },
     ]);
   });
 
