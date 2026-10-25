@@ -64,7 +64,7 @@ await readFoos();
 
 ## A keyed write names its key when the operation is issued, not when it lands
 
-`useCursorPaginationDataMap`'s ambient `items` is the reading view and is `readonly`; a writer comes from `getSlice(key)`, and why the write must name its key is the `pinia` skill's (`references/keyed-state-and-pagination.md`). A `useRead*` composable gets this for free, since `readItems`/`readMoreItems` bind the current key up front. Two corollaries that are easy to get backwards:
+Why a keyed write names its key is the `pinia` skill's (`references/keyed-state-and-pagination.md`). A `useRead*` composable gets this for free, since `readItems`/`readMoreItems` bind the current key up front. Two corollaries that are easy to get backwards:
 
 - **Resolve per operation, never per composable.** A composable that outlives one target (`useMessageCache` is constructed once and lives across every room switch) would bind to the first key and stay there forever, which is worse than not binding at all — so a long-lived consumer takes `getSlice` itself and resolves inside the operation.
 - **A partition that has already been named needs no re-check.** `usePaginationCache` hydrates `getSlice(partitionKey)` unconditionally, so a write that lands after the partition has moved on is still filed under the partition it was read for, and re-opening that partition shows it. A staleness guard on top of that — bailing because the current partition is no longer the one being hydrated — drops rows that are correctly filed.
