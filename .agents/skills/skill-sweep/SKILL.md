@@ -29,21 +29,21 @@ The runnable form of the skill pass over the whole tree. What one skill's pass d
 
 ## The audit
 
-| A skill may owe                                                                         | Owner                                                   |
-| --------------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| **One topic per page**, and a mixed page split                                          | `skill-authoring` (`references/splitting-a-skill.md`)   |
-| **`SKILL.md` as one-line rules plus an index whose lines name the trigger**             | `skill-authoring` (`references/splitting-a-skill.md`)   |
-| **A page opening `Read when …`**                                                        | `skill-authoring` (`references/splitting-a-skill.md`)   |
-| **A description opening `Apply when …`, naming the domain and never indexing the body** | `skill-authoring` (`references/frontmatter.md`)         |
-| **Citations as backticked repo paths, another skill by name plus page**                 | `skill-authoring` (`references/citations.md`)           |
-| **No positional pointer that does not name its target**                                 | `skill-authoring` (`references/skill-pass.md`)          |
-| **Magnitudes, never counts; no roster or hand copy of a derived fact**                  | `skill-authoring` (`references/derived-surfaces.md`)    |
-| **No restatement of a rule an enforcer owns**                                           | `skill-authoring` (`references/enforced-rules.md`)      |
-| **No line that steers nothing, and no route prescribed where a goal would do**          | `skill-authoring` (`references/degrees-of-freedom.md`)  |
-| **No one-off and no history**                                                           | `skill-authoring` (`references/what-belongs.md`)        |
-| **A Settled list first**                                                                | `skill-authoring` (`references/settled-lists.md`)       |
-| **An exception naming the forcing agent outside our control**                           | `skill-authoring` (`references/exceptions.md`)          |
-| **One owner per rule across skills**                                                    | `skill-authoring` (`references/one-owner-per-topic.md`) |
+| A skill may owe                                                                         | Owner                                                             |
+| --------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| **One topic per page**, and a mixed page split                                          | the `skill-authoring` skill (`references/splitting-a-skill.md`)   |
+| **`SKILL.md` as one-line rules plus an index whose lines name the trigger**             | the `skill-authoring` skill (`references/splitting-a-skill.md`)   |
+| **A page opening `Read when …`**                                                        | the `skill-authoring` skill (`references/splitting-a-skill.md`)   |
+| **A description opening `Apply when …`, naming the domain and never indexing the body** | the `skill-authoring` skill (`references/frontmatter.md`)         |
+| **Citations as backticked repo paths, another skill by name plus page**                 | the `skill-authoring` skill (`references/citations.md`)           |
+| **No positional pointer that does not name its target**                                 | the `skill-authoring` skill (`references/skill-pass.md`)          |
+| **Magnitudes, never counts; no roster or hand copy of a derived fact**                  | the `skill-authoring` skill (`references/derived-surfaces.md`)    |
+| **No restatement of a rule an enforcer owns**                                           | the `skill-authoring` skill (`references/enforced-rules.md`)      |
+| **No line that steers nothing, and no route prescribed where a goal would do**          | the `skill-authoring` skill (`references/degrees-of-freedom.md`)  |
+| **No one-off and no history**                                                           | the `skill-authoring` skill (`references/what-belongs.md`)        |
+| **A Settled list first**                                                                | the `skill-authoring` skill (`references/settled-lists.md`)       |
+| **An exception naming the forcing agent outside our control**                           | the `skill-authoring` skill (`references/exceptions.md`)          |
+| **One owner per rule across skills**                                                    | the `skill-authoring` skill (`references/one-owner-per-topic.md`) |
 
 Every row is answered per skill, and "nothing owed" is an answer.
 
