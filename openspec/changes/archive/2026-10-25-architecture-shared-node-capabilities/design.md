@@ -30,7 +30,7 @@ Each part is a separate flow, drawn together only so the three read as one packa
 
 ## Decisions
 
-- **Three capabilities, not one with sub-capabilities.** A sub-capability is a feature that only exists inside its parent. These three have no shared rule, and each has its own callers, so they are peers ([page shapes](../../specs/architecture/README.md)).
+- **Three capabilities, not one with sub-capabilities.** A sub-capability is a feature that only exists inside its parent. These three have no shared rule, and each has its own callers, so they are peers ([page shapes](../../../specs/architecture/README.md)).
 - **Under `architecture/`, with no area.** The package serves the repo's own tooling and downloads, and an installable library is what earns an area. Nothing here is installed by another project.
 - **Scenario titles are the existing test titles.** A requirement's scenarios match the tests that check it, so a reader can find the proof from the page. Where a rule has no test, the tasks name one to write, and nothing is added to pin a constant.
 - **The cache is one folder per machine.** Every checkout, worktree and ephemeral run reads the same cache root, so a dependency fetched once is not fetched again in a new worktree. The root and the content folder are constants in the cache's constants module, and the design page states them rather than a requirement, since a test would only pin the path.
