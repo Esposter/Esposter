@@ -13,7 +13,7 @@ Zod and Drizzle together, because a table, its select schema and the input schem
 | `shared/models/resource/sheet`                             | 2026-10-05 · Opus 5.5 | the split transformation's form defaults stay on the shared schema — `zod` says why                  |
 | `shared/models/resource` — the rest                        | 2026-10-05 · Opus 5.5 | the per-type content shapes and the capability types                                                 |
 | `shared/models/dungeons`                                   | 2026-10-05 · Opus 5.5 |                                                                                                      |
-| `shared/models` — the editor and game trees                | 2026-10-05 · Opus 5.5 | the GrapesJS subclasses re-declare the catchall a `.shape` spread drops, pinned by a test            |
+| `shared/models` — the page builder and game trees          | —                     |                                                                                                      |
 | `shared/models` — the rest                                 | 2026-10-05 · Opus 5.5 | `achievement`, `message`, `pagination`, `dataset`, `entity`, `compiler` and the singles              |
 | `app/models`, `app/services/*/…` form schemas              | 2026-10-05 · Opus 5.5 | the schema-form ones carry extra rules                                                               |
 | `packages/db`, `packages/db-mock`                          | 2026-10-05 · Opus 5.5 | neither declares a table or a zod schema; the mock's snapshot is generated                           |

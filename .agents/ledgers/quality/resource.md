@@ -13,7 +13,7 @@
 | `app/composables/resource` + `app/services/resource`, less the `sheet` and list units above       | 2026-10-05 · Opus 5.5 |                                                                         |
 | `app/store/resource`, less the `sheet` unit above                                                 | 2026-10-05 · Opus 5.5 |                                                                         |
 | `Dashboard`, `Dataset`, `FlowchartEditor` + their store, composable and service layers            | 2026-10-05 · Opus 5.5 |                                                                         |
-| `emailEditor`, `webpageEditor`, `grapesjs`, `survey` — store, composables, services               | 2026-10-05 · Opus 5.5 | their components are swept above; their shared models are `shared.md`'s |
+| `emailEditor`, `webpageEditor`, `pageBuilder`, `survey` — store, composables, services            | —                     | their components are swept above; their shared models are `shared.md`'s |
 | `Resource/` root files less `Overview.vue`                                                        | 2026-10-05 · Opus 5.5 | the dialogs, toggles and readouts a blade mounts, owned by no blade     |
 | `Resource/Create`, `Home`, `RecycleBin`, `Search`, `VersionHistory`                               | 2026-10-05 · Opus 5.5 |                                                                         |
 | `app/models/resource/sheet`                                                                       | 2026-10-05 · Opus 5.5 |                                                                         |

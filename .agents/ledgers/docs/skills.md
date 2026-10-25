@@ -29,7 +29,6 @@
 | `genshin-text`            | 2026-10-25 · Haiku 5.5 |       |
 | `git`                     | 2026-10-25 · Haiku 5.5 |       |
 | `github-actions`          | 2026-10-25 · Haiku 5.5 |       |
-| `grapesjs`                | 2026-10-21 · Haiku 5.5 |       |
 | `invariants`              | 2026-10-25 · Haiku 5.5 |       |
 | `llm-delegation`          | 2026-10-25 · Haiku 5.5 |       |
 | `naming`                  | 2026-10-25 · Haiku 5.5 |       |
@@ -38,6 +37,7 @@
 | `over-engineering`        | 2026-10-25 · Haiku 5.5 |       |
 | `oxlint`                  | 2026-10-25 · Haiku 5.5 |       |
 | `package-scripts`         | 2026-10-25 · Haiku 5.5 |       |
+| `page-builder`            | —                      |       |
 | `pagination`              | 2026-10-25 · Haiku 5.5 |       |
 | `pinia`                   | 2026-10-25 · Haiku 5.5 |       |
 | `product-review`          | 2026-10-25 · Haiku 5.5 |       |

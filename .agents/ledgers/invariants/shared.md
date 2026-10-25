@@ -25,7 +25,7 @@
 | `shared/models/message` + `services/message`                                    | 2026-10-14 · Haiku 5.5 |       |
 | `shared/models/dashboard` + `dataset` + `services/dataset`                      | 2026-10-14 · Haiku 5.5 |       |
 | `shared/models/flowchartEditor`                                                 | 2026-10-14 · Haiku 5.5 |       |
-| `emailEditor` + `webpageEditor` + `grapesjs`                                    | 2026-10-14 · Haiku 5.5 |       |
+| `emailEditor` + `webpageEditor` + `pageBuilder`                                 | —                      |       |
 | `shared/models/pagination` + `services/pagination`                              | 2026-10-14 · Haiku 5.5 |       |
 | `shared/models/compiler` + `services/compiler`                                  | 2026-10-14 · Haiku 5.5 |       |
 | the small shared roots                                                          | 2026-10-14 · Haiku 5.5 |       |
