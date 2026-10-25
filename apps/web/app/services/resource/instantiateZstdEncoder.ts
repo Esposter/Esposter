@@ -1,24 +1,7 @@
 import type { ZstdEncoder } from "@/models/resource/ZstdEncoder";
 
+import { checkIsZstdEncoder } from "@/services/resource/checkIsZstdEncoder";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-
-// The functions the compressor's own exports are checked for, each by its runtime kind
-const ZSTD_FUNCTION_EXPORTS = [
-  "_initialize",
-  "compressWithDictionary",
-  "free",
-  "malloc",
-  "ZSTD_compressBound",
-  "ZSTD_isError",
-] as const;
-
-// The exports a module's instance carries are a record of every export kind; this narrows it to the compressor by checking
-// Each name it needs, so no cast is needed
-const checkIsZstdEncoder = (
-  moduleExports: WebAssembly.Exports,
-): moduleExports is WebAssembly.Exports & ZstdEncoder & { _initialize: () => void } =>
-  moduleExports.memory instanceof WebAssembly.Memory &&
-  ZSTD_FUNCTION_EXPORTS.every((name) => typeof moduleExports[name] === "function");
 
 // The module is built for WASI and asks the host for one thing, randomness, which the libc seeds its allocator
 // With. A reactor module initializes itself once, before its first export is called

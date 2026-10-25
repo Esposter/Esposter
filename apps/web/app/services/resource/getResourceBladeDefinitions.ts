@@ -5,16 +5,10 @@ import type { Except } from "type-fest";
 
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { ResourceBladeType } from "@/models/resource/ResourceBladeType";
+import { BuiltInBladeDefinitionMap } from "@/services/resource/BuiltInBladeDefinitionMap";
 import { ResourceBladeDefinitionMap } from "@/services/resource/ResourceBladeDefinitionMap";
 import { ResourceEditorComponentMap } from "@/services/resource/ResourceEditorComponentMap";
 
-// How each built-in blade presents itself, in one entry per blade. Editor is the exception that declares no
-// Icon: it renders the type's own editor, so it wears the type's own icon rather than one of its own
-const BuiltInBladeDefinitionMap = {
-  [ResourceBladeType.Activity]: { icon: "i-mdi:history", title: "Activity" },
-  [ResourceBladeType.Editor]: { title: "Editor" },
-  [ResourceBladeType.Overview]: { icon: "i-mdi:information-outline", title: "Overview" },
-} as const satisfies Record<ResourceBladeType, { icon?: string; title: string }>;
 // Which blades a type has, in nav order — the one answer to that question. The built-ins render through the
 // Outlet's own branches rather than a component here, so the shape is the definition minus its component.
 // Overview and Activity are unconditional; Editor exists only for types with an inline editor. Version history

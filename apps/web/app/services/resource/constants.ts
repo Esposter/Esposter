@@ -55,3 +55,15 @@ export const TODO_COMPLETION_CHIME_FREQUENCIES_HZ = [880, 1318.51];
 export const TODO_COMPLETION_CHIME_NOTE_GAP_SECONDS = Temporal.Duration.from({ milliseconds: 70 }).total("seconds");
 export const TODO_COMPLETION_CHIME_RING_SECONDS = Temporal.Duration.from({ milliseconds: 300 }).total("seconds");
 export const TODO_COMPLETION_CHIME_GAIN = 0.15;
+
+export const NOTE_MARKDOWN_ACCEPT = ".md";
+
+// The functions the compressor's own exports are checked for, each by its runtime kind
+export const ZSTD_FUNCTION_EXPORTS = [
+  "_initialize",
+  "compressWithDictionary",
+  "free",
+  "malloc",
+  "ZSTD_compressBound",
+  "ZSTD_isError",
+] as const;
