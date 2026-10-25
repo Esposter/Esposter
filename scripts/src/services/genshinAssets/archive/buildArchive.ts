@@ -2,6 +2,7 @@ import type { ArchiveBook, ArchiveEntry } from "genshin-world";
 
 import { ArchiveSectionKeyMap } from "#src/services/genshinAssets/archive/constants";
 import { getNamedCandidates } from "#src/services/genshinAssets/archive/getNamedCandidates";
+import { parseSectionEntries } from "#src/services/genshinAssets/archive/parseSectionEntries";
 import { readBookCandidates } from "#src/services/genshinAssets/archive/readBookCandidates";
 import { readEquipmentCandidates } from "#src/services/genshinAssets/archive/readEquipmentCandidates";
 import { readGeographyCandidates } from "#src/services/genshinAssets/archive/readGeographyCandidates";
@@ -13,22 +14,7 @@ import { toArchiveEntries } from "#src/services/genshinAssets/archive/toArchiveE
 import { toViewpointEntries } from "#src/services/genshinAssets/archive/toViewpointEntries";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { GameLanguage } from "genshin-text";
-import {
-  archiveBookSchema,
-  archiveEntrySchema,
-  ArchiveSection,
-  archiveViewpointSchema,
-  GameDataset,
-  travelLogEntrySchema,
-} from "genshin-world";
-
-// Each section's entries checked against the world's schema for it, which keeps the fields its own entries carry
-const parseSectionEntries = (section: ArchiveSection, entries: readonly ArchiveEntry[]): ArchiveEntry[] => {
-  if (section === ArchiveSection.Books) return archiveBookSchema.array().parse(entries);
-  if (section === ArchiveSection.Geography) return archiveViewpointSchema.array().parse(entries);
-  if (section === ArchiveSection.TravelLog) return travelLogEntrySchema.array().parse(entries);
-  return archiveEntrySchema.array().parse(entries);
-};
+import { ArchiveSection, GameDataset } from "genshin-world";
 
 // Every section of the Archive from the dump's codex tables, each entry named by the game's English text and checked against
 // The world's own schema for it, published as one record per section. Returns the id of each Volume's body, which the book
