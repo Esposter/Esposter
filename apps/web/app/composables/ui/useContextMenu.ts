@@ -1,5 +1,6 @@
 import type { Item } from "@/models/shared/Item";
 import type { UiContextMenuPoint } from "@/models/ui/UiContextMenuPoint";
+import type { UiContextMenuPress } from "@/models/ui/UiContextMenuPress";
 
 import { CONTEXT_MENU_BROWSER_SELECTOR, LONG_PRESS_MOVE_TOLERANCE, LONG_PRESS_MS } from "@/services/ui/constants";
 import { swallowClick } from "@/services/ui/swallowClick";
@@ -15,7 +16,7 @@ export const useContextMenu = () => {
   const { openContextMenu } = contextMenuStore;
   const checkIsContextMenuOpen = (key: string) => contextMenu.value?.key === key;
   // One finger presses at a time, so one press is tracked across every element
-  let press: (UiContextMenuPoint & { onOpen: (point: UiContextMenuPoint) => void }) | undefined;
+  let press: UiContextMenuPress | undefined;
   // A long press opens the menu under a finger still down, so the click its lifting raises is swallowed. A listener
   // For that one click rather than a prop, since a component that counts a click listener among its props as
   // Clickable, a capture one included, would draw every target as a link

@@ -1,15 +1,9 @@
 import type { UiMenuItem } from "@/models/ui/UiMenuItem";
+import type { UiMenuOptions } from "@/models/ui/UiMenuOptions";
 import type { usePopover } from "@vuetify/v0";
-import type { Promisable } from "type-fest";
 
 import { takeOne } from "@esposter/shared";
 import { useRovingFocus } from "@vuetify/v0";
-
-interface UseMenuOptions<T extends string> {
-  onSelect: (value: T, event: KeyboardEvent | MouseEvent) => Promisable<void>;
-  // What takes focus back as the menu closes: its trigger, or the element a context menu opened over
-  returnFocusTo: () => HTMLElement | undefined;
-}
 
 // A menu's keyboard contract over a popover, as the menu button pattern has it: it opens onto its first item, or its
 // Last when the up arrow opened it; arrows, Home and End walk it and typeahead jumps; Enter or Space picks, Escape
@@ -17,7 +11,7 @@ interface UseMenuOptions<T extends string> {
 export const useMenu = <T extends string>(
   items: MaybeRefOrGetter<UiMenuItem<T>[]>,
   { close, id, isOpen, open }: Pick<ReturnType<typeof usePopover>, "close" | "id" | "isOpen" | "open">,
-  { onSelect, returnFocusTo }: UseMenuOptions<T>,
+  { onSelect, returnFocusTo }: UiMenuOptions<T>,
 ) => {
   const getItemId = (index: number) => `${id}-item-${index}`;
   const {
