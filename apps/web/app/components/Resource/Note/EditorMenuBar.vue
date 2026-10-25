@@ -49,5 +49,6 @@ const items = computed<MenuItem[]>(() => [
     <ResourceNoteTableMenuButton :editor />
     <div aria-hidden="true" mx-1 bg-divider shrink-0 h-6 w="[var(--ui-border-width)]" self-center />
     <ResourceNoteLinkMenuButton :editor />
+    <ResourceNoteAltTextMenuButton :editor />
   </div>
 </template>
