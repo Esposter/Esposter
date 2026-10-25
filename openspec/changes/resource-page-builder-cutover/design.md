@@ -1,6 +1,6 @@
 # Cutover
 
-The page builder's last part, built once the editors it ships exist and are proved: the [canvas](../../specs/resource/page-builder/canvas/design.md), the [style panel](../../specs/resource/page-builder/style-panel/design.md), [undo as patches](../../specs/resource/page-builder/undo-as-patches/design.md), the [email editor](../resource-page-builder-email/design.md), and [performance and proof](../resource-page-builder-performance-and-proof/design.md).
+The page builder's last part, built once the editors it ships exist and are proved: the [canvas](../../specs/resource/page-builder/canvas/design.md), the [style panel](../../specs/resource/page-builder/style-panel/design.md), [undo as patches](../../specs/resource/page-builder/undo-as-patches/design.md), the [email editor](../resource-page-builder-email/design.md), and [performance and proof](../../specs/resource/page-builder/performance-and-proof/design.md).
 
 ## The cutover
 

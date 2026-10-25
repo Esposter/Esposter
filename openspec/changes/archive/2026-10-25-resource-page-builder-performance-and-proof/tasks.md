@@ -1,7 +1,7 @@
 ## 1. Origins
 
 - [ ] 1.1 Keep the editors from requesting any third-party origin. Verify: a browser test whose scenario is 'Opening an editor requests no third-party origin'.
-  - Done: an inserted image or video loads the app's own placeholder (`apps/web/public/page-builder/placeholder.svg`) rather than `example.com`, and the email starter loads no picture. Open: the browser test that opens each editor and records its requests.
+  - Done: an inserted image or video loads the app's own placeholder (`apps/web/public/page-builder/placeholder.svg`) rather than `example.com`, and the email starter loads no picture. Owed, not written: the browser test that opens each editor and records its requests.
 
 ## 2. Benchmarks
 
@@ -15,14 +15,19 @@
 ## 3. Browser proof
 
 - [ ] 3.1 Record the performance marks for prop and style edits at 2,000 nodes and for selection changes, reported and not asserted. Verify: tests named after the scenarios 'An edit shows on the canvas' and 'Selecting a node outlines it'.
+  - Owed, not written: no test records the marks yet. The canvas's own hover and selection proof is owed too (canvas 2.1).
 - [ ] 3.2 Render the starter webpage in the canvas and in the published frame at each width, and compare every node's box within one pixel. Verify: tests named after the scenarios 'The canvas matches the published page within one pixel' and 'A published page's own scripts run under the app's policy'.
+  - Owed, not written: the comparison of the canvas with the published frame at each width, and the policy check. It needs the browser suite in the frame package.
 - [ ] 3.3 Compare the starter email's canvas with its compiled email at desktop and mobile width. Verify: a test named after the scenario 'The email canvas stays close to the compiled email'.
+  - Owed, not written: the email canvas's comparison with its compiled email. The email editor is still unarchived, so this proof waits on its owed items too.
 
 ## 4. Output proof
 
 - [x] 4.1 Assert each type's output whole across its edge values, and assert the sanitiser's vectors on the raw-HTML types. Verify: tests named after the scenarios 'A type's output matches for every edge value' and 'A hostile markup vector in custom HTML is removed'.
 - [ ] 4.2 Bound the MJML root's and the documents' strings in the shared schema, and make the bounds guard skip only the opaque subschema rather than the whole procedure. Verify: tests named after the scenarios 'An unbounded string beside an opaque document fails the guard' and 'The MJML root's strings are bounded'.
+  - Owed, not written: the bounds on the MJML root's and the documents' strings, and the guard change. Nothing here has been checked against the schema.
 
 ## 5. The record
 
 - [ ] 5.1 Record each target with the bench or test that holds it as built, then archive this change. Verify: `pnpm -C scripts exec vitest run src/workspace/citations.test.ts src/workspace/openspecLinks.test.ts src/services/openspec` passes.
+  - Owed, not run: the record is the as-built design, and this verify has not run on the archiving commit. The four unticked tasks above stay owed with it.

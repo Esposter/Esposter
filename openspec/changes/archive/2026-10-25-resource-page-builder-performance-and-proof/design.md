@@ -1,6 +1,6 @@
 # Performance and proof
 
-The targets the finished editors hold and the proof of their output. It runs over the [canvas](../../specs/resource/page-builder/canvas/design.md) and the [email editor](../resource-page-builder-email/design.md), on the [document model](../../specs/resource/page-builder/document-model/design.md)'s nodes and the [undo layer](../../specs/resource/page-builder/undo-as-patches/design.md)'s patches, and its script ceiling is measured on the [cutover](../resource-page-builder-cutover/design.md)'s build.
+The targets the finished editors hold and the proof of their output. It runs over the [canvas](../../../specs/resource/page-builder/canvas/design.md) and the [email editor](../../resource-page-builder-email/design.md), on the [document model](../../../specs/resource/page-builder/document-model/design.md)'s nodes and the [undo layer](../../../specs/resource/page-builder/undo-as-patches/design.md)'s patches, and its script ceiling is measured on the [cutover](../../resource-page-builder-cutover/design.md)'s build.
 
 ## Performance
 
@@ -13,7 +13,7 @@ The targets the finished editors hold and the proof of their output. It runs ove
 | A selection change, input to outline                       | within one animation frame                                                         | the same                                       |
 | Server compile of the starter email                        | under 250 ms at the 95th percentile                                                | a committed bench, reported and not asserted   |
 
-The editors' script ceiling is the [cutover](../resource-page-builder-cutover/design.md)'s own acceptance check, since only its production build holds the editors as a reader loads them.
+The editors' script ceiling is the [cutover](../../resource-page-builder-cutover/design.md)'s own acceptance check, since only its production build holds the editors as a reader loads them.
 
 ## Proof
 

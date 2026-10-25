@@ -14,7 +14,7 @@ This proposal replaces the engine rather than thinning it. The document becomes 
 - [Style panel](../../specs/resource/page-builder/style-panel/design.md) — styles kept on each node per breakpoint and state, drawn by the library's controls
 - [Undo as patches](../../specs/resource/page-builder/undo-as-patches/design.md) — every edit a JSON Patch with its inverse, so undo and redo are patch lists
 - [Email](../resource-page-builder-email/design.md) — the email editor over the MJML blocks: the design canvas, Preview compiled on the server, merge fields and the MJML import
-- [Performance and proof](../resource-page-builder-performance-and-proof/design.md) — the targets the editors hold, and how their output is proved against the published page
+- [Performance and proof](../../specs/resource/page-builder/performance-and-proof/design.md) — the targets the editors hold, and how their output is proved against the published page
 - [Cutover](../resource-page-builder-cutover/design.md) — the one change that ships the editors, deletes every webpage and email, and removes GrapesJS
 
 ## Decision

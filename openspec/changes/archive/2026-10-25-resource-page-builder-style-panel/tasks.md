@@ -22,5 +22,5 @@
 
 ## 4. The record
 
-- [ ] 4.1 Describe the style storage, the emitted rules and the two panels as built, then archive this change. Verify: the checks task 5.1 of [performance and proof](../../resource-page-builder-performance-and-proof/tasks.md) names pass.
+- [ ] 4.1 Describe the style storage, the emitted rules and the two panels as built, then archive this change. Verify: the checks task 5.1 of [performance and proof](../2026-10-25-resource-page-builder-performance-and-proof/tasks.md) names pass.
   - Owed, not ticked: the finishing audit on `d222a7a7`, `f0b3fea8`, `10d898c8`, `7c12218a` and `19578585`. The `code-review` pass over both lanes has not run on them, and `document-model/design.md` still needs its prose checked against the cascade. Its verify also waits on performance and proof 5.1, which is unticked.
