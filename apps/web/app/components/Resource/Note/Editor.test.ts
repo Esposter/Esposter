@@ -6,7 +6,7 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { ResourceType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { Editor } from "@tiptap/vue-3";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 describe("resourceNoteEditor", () => {
   const { trpcMsw } = setupMswTrpc();
@@ -20,6 +20,10 @@ describe("resourceNoteEditor", () => {
     }));
     trpcMsw.note.readResourceContent.query(() => ({ doc: EMPTY_NOTE_DOC }));
     trpcMsw.note.readResourcePublication.query(() => undefined);
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   test("tears the editor down once on unmount", async () => {

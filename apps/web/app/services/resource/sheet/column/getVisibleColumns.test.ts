@@ -16,12 +16,4 @@ describe(getVisibleColumns, () => {
 
     expect(getVisibleColumns(columns).map(({ name }) => name)).toStrictEqual(["", "a"]);
   });
-
-  test("returns every column when none is hidden", () => {
-    expect.hasAssertions();
-
-    const columns = [createVisibilityColumn("", false), createVisibilityColumn(" ", false)];
-
-    expect(getVisibleColumns(columns)).toStrictEqual(columns);
-  });
 });

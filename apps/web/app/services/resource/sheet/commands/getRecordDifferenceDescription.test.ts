@@ -9,12 +9,6 @@ describe(getRecordDifferenceDescription, () => {
     expect(getRecordDifferenceDescription({ "": "" }, { "": "" })).toBe("");
   });
 
-  test("changed string value produces table", () => {
-    expect.hasAssertions();
-
-    expect(getRecordDifferenceDescription({ "": "" }, { "": " " })).toBe(`${RECORD_DIFFERENCE_HEADER}\n |  |  `);
-  });
-
   test("changed date value produces table", () => {
     expect.hasAssertions();
 

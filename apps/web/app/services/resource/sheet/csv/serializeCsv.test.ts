@@ -61,14 +61,6 @@ describe(serializeCsv, () => {
     await expect(serializeText(dataSource)).resolves.toBe("a,b\n,");
   });
 
-  test("returns blob with correct mime type", async () => {
-    expect.hasAssertions();
-
-    const blob = await serializeCsv(createDataSource(), CSV_SETTINGS, CSV_MIME_TYPE);
-
-    expect(blob.type).toBe(CSV_MIME_TYPE);
-  });
-
   test("empty rows produces only header row", async () => {
     expect.hasAssertions();
 

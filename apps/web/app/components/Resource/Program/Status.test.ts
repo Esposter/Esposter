@@ -206,7 +206,6 @@ describe("resourceProgramStatus", () => {
   test("names the bindings still missing and exports nothing", async () => {
     expect.hasAssertions();
 
-    trpcMsw.program.readResourceContent.query(() => ({ emailId: "", keyColumn, surveyId }));
     setStatus(false);
     const component = await mountSuspended(ResourceProgramStatus, { route: RoutePath.Resource(resourceId) });
     await findButton(component, "Export invites").trigger("click");

@@ -4,7 +4,7 @@ import { createDataSource } from "#shared/models/resource/sheet/datasource/creat
 import { createRow } from "#shared/models/resource/sheet/datasource/createRow.test";
 import { copyToClipboard } from "@/services/resource/sheet/commands/copyToClipboard";
 import { takeOne } from "@esposter/shared";
-import { afterAll, assert, beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 // The rich-clipboard path a browser that has `ClipboardItem` takes: installed by the one test that drives it,
 // Because the suite's `beforeEach` stubs are what every other case reads
@@ -41,7 +41,7 @@ describe(copyToClipboard, () => {
     });
   });
 
-  afterAll(() => {
+  afterEach(() => {
     vi.unstubAllGlobals();
   });
 

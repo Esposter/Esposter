@@ -5,7 +5,7 @@ import { getResourceBladeItems } from "@/services/resource/getResourceBladeItems
 import { ResourceType } from "@esposter/db-schema";
 import { describe, expect, test, vi } from "vitest";
 
-describe("getResourceBladeItems", () => {
+describe(getResourceBladeItems, () => {
   const resource = createResourceListItem({ type: ResourceType.Program });
   const createCommands = () => ({
     delete: vi.fn<() => void>(),

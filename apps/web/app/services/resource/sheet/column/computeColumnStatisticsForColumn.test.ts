@@ -236,7 +236,7 @@ describe(computeColumnStatisticsForColumn, () => {
     );
   });
 
-  test("string column with all unique values returns first-encountered mostFrequentValue with count 1", () => {
+  test("string column with all unique values lists each value once in topFrequencies", () => {
     expect.hasAssertions();
 
     const dataSource = createDataSource([createColumn("")], [createRow({ "": "" }), createRow({ "": " " })]);
