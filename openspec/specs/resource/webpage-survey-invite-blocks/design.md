@@ -38,4 +38,5 @@ Paths relative to `apps/web`.
 
 ## Notes
 
+- The survey picker is owed, not built. No component reads the owner's published surveys, so the node's `surveyId` is the bare id field its schema declares. A picker is a new change that reads the owner's published surveys and adds the palette choice this spec no longer describes.
 - Embedding a survey _inline_ (an iframe of the respondent page) is deliberately out: iframes inside a published page bring sizing and sandboxing complexity for marginal gain over a button, and the respondent page is already mobile-friendly. Revisit only on real demand.

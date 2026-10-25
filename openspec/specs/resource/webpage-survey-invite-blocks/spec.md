@@ -1,12 +1,12 @@
 ## Purpose
 
-The owner's published surveys offered as invite buttons. A webpage's invite is a page-builder node that links to the survey, and the email editor holds the same node as an MJML button. A published page becomes a survey distribution surface.
+A survey offered as an invite button. A webpage's invite is a page-builder node that links to the survey, and the email editor holds the same node as an MJML button. A published page becomes a survey distribution surface.
 
 ## Requirements
 
 ### Requirement: A webpage offers a survey invite as a page-builder node
 
-The webpage editor SHALL offer a survey invite node in its Survey palette category, created with the label "Survey" and no survey bound until the owner picks one.
+The webpage editor SHALL offer a survey invite node in its Survey palette category, created with the label "Survey" and no survey bound. The owner binds a survey by its id, since no picker lists the owner's published surveys yet.
 
 #### Scenario: Owner drops a survey invite
 

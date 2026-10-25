@@ -1,34 +1,34 @@
 ## Purpose
 
-Merge-field blocks bound to a dataset, survey invite blocks, and per-row personalized HTML export from the email editor. The personalized export is built entirely in the browser and is one download; sending email is not part of it.
+Merge fields bound to a dataset, survey invite buttons, and per-row personalized HTML export from the email editor. The personalized export compiles the saved email on the server, zips the files in the browser and is one download; sending email is not part of it.
 
 ## Requirements
 
 ### Requirement: An email can be bound to a dataset for merge fields
 
-The email author SHALL be able to bind an email to one dataset, after which each of its columns is available as a merge-field block.
+The email author SHALL be able to bind an email to one dataset, after which each of its columns is available as a merge-field item in the palette.
 
 #### Scenario: Binding a dataset offers its columns as merge fields
 
 - **GIVEN** the author binds an email to a sheet with a name column
-- **WHEN** they open the block manager
-- **THEN** a merge-field block for the name column is available
+- **WHEN** they look at the palette
+- **THEN** a merge-field item for the name column is available
 
 #### Scenario: Dragging a merge field inserts its token
 
-- **GIVEN** a merge-field block is available
+- **GIVEN** a merge-field item is available
 - **WHEN** the author drags it into the email
 - **THEN** the email shows the column's token in place
 
-### Requirement: Survey invites can be added as buttons
+### Requirement: A survey invite is a button to a bound survey
 
-The email author SHALL be able to add a button that invites recipients to one of their published surveys.
+The email author SHALL be able to add a survey invite, a button that links recipients to the survey it is bound to. The survey is bound by its id, since no picker lists the author's published surveys yet.
 
-#### Scenario: A published survey appears as an invite block
+#### Scenario: A recipient follows a survey invite
 
-- **GIVEN** the author has a published survey
-- **WHEN** they open the block manager
-- **THEN** an invite block for that survey is available
+- **GIVEN** an email with a survey invite bound to a survey
+- **WHEN** the recipient clicks the button
+- **THEN** the recipient opens the survey's public page
 
 ### Requirement: Personalized export produces one file per row
 
