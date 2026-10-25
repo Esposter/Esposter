@@ -4,7 +4,7 @@ import { serializeEntity } from "#src/services/azure/transformer/serializeEntity
 import { describe, expect, test } from "vitest";
 
 describe(serializeEntity, () => {
-  test("serializes", () => {
+  test("writes the array and object fields as JSON strings", () => {
     expect.hasAssertions();
 
     const entity = {

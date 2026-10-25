@@ -1,6 +1,6 @@
 import { ContentTypes } from "#src/services/azure/search/ContentTypes";
 import { filtersToClauses } from "#src/services/azure/search/filtersToClauses";
-import { BinaryOperator, CompositeKeyPropertyNames, SearchOperator, serializeValue } from "@esposter/azure";
+import { BinaryOperator, CompositeKeyPropertyNames, SearchOperator } from "@esposter/azure";
 import {
   FileEntityPropertyNames,
   FilterType,
@@ -11,7 +11,7 @@ import {
   MimeCategory,
   StandardMessageEntityPropertyNames,
 } from "@esposter/db-schema";
-import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(filtersToClauses, () => {
@@ -52,7 +52,7 @@ describe(filtersToClauses, () => {
     expect.hasAssertions();
 
     expect(() => filtersToClauses([{ type: FilterType.AuthorType, value: "Bot" }])).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, filtersToClauses.name, serializeValue("Bot")).message}]`,
+      `[InvalidOperationError: Invalid operation: Read, name: filtersToClauses, 'Bot']`,
     );
   });
 

@@ -65,7 +65,7 @@ describe(submitTransactionBatches, () => {
     expect(events).toStrictEqual(["submit", "onSubmit", "submit", "onSubmit", "submit", "onSubmit"]);
   });
 
-  test("fails submit with a rejected batch, leaving later batches unsubmitted", async () => {
+  test("rethrows a rejected batch and submits no batch after it", async () => {
     expect.hasAssertions();
 
     const error = new InvalidOperationError(Operation.Update, submitTransactionBatches.name, partitionKey);

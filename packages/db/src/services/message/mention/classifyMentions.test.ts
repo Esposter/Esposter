@@ -14,14 +14,10 @@ describe(classifyMentions, () => {
   const otherUserId = crypto.randomUUID();
   const roleId = crypto.randomUUID();
 
-  test("empty string", () => {
+  test("reads an empty message as no mentions", () => {
     expect.hasAssertions();
 
-    const classifiedMentions = classifyMentions("");
-
-    expect(classifiedMentions.broadcastIds).toHaveLength(0);
-    expect(classifiedMentions.regularUserIds).toHaveLength(0);
-    expect(classifiedMentions.roleIds).toHaveLength(0);
+    expect(classifyMentions("")).toStrictEqual({ broadcastIds: [], regularUserIds: [], roleIds: [] });
   });
 
   test("multiple mentions of each type", () => {
@@ -45,10 +41,10 @@ describe(classifyMentions, () => {
   test("mention without data-id is ignored", () => {
     expect.hasAssertions();
 
-    const classifiedMentions = classifyMentions(`<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}"></span>`);
-
-    expect(classifiedMentions.broadcastIds).toHaveLength(0);
-    expect(classifiedMentions.regularUserIds).toHaveLength(0);
-    expect(classifiedMentions.roleIds).toHaveLength(0);
+    expect(classifyMentions(`<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}"></span>`)).toStrictEqual({
+      broadcastIds: [],
+      regularUserIds: [],
+      roleIds: [],
+    });
   });
 });

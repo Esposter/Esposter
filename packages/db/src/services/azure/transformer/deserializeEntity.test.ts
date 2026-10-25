@@ -22,7 +22,7 @@ describe(deserializeEntity, () => {
     }
   }
 
-  test("deserializes", () => {
+  test("reads the JSON columns back into their values", () => {
     expect.hasAssertions();
 
     const serializedEntity = {
