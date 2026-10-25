@@ -16,4 +16,4 @@
 ## 4. Index and archive
 
 - [x] 4.1 Add a line for each of the three pages to `openspec/specs/architecture/README.md`. Verify: `openspec validate architecture-shared-node-capabilities --strict --no-interactive` passes, and the index links resolve.
-- [ ] 4.2 Archive the change with `pnpm exec openspec archive architecture-shared-node-capabilities --yes`. Verify: the three capability folders exist under `openspec/specs/architecture/` and the change folder is gone.
+- [x] 4.2 Archive the change with `pnpm exec openspec archive architecture-shared-node-capabilities --yes`. Verify: the three capability folders exist under `openspec/specs/architecture/` and the change folder is gone.
