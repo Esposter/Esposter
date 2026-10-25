@@ -23,5 +23,7 @@
   "hits.autumnWhirlwindTicks.1.element": { "cause": "Unsourced", "value": "Wind" },
   "hits.autumnWhirlwindTicks.2.element": { "cause": "Unsourced", "value": "Wind" },
   "hits.autumnWhirlwindTicks.3.element": { "cause": "Unsourced", "value": "Wind" },
-  "hits.autumnWhirlwindTicks.4.element": { "cause": "Unsourced", "value": "Wind" }
+  "hits.autumnWhirlwindTicks.4.element": { "cause": "Unsourced", "value": "Wind" },
+  "chargedAttack.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 6, "proudSkillGroupId": 4731 } },
+  "chargedAttack.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 7, "proudSkillGroupId": 4731 } }
 }
