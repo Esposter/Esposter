@@ -16,3 +16,4 @@ The open work of [nuxt-security-module](../../specs/nuxt-security-module/README.
 - [ ] Run each regression test against the upstream package, and confirm it fails there first, where the reproduction is cheap. Source: [fail-first results](../../specs/nuxt-security-module/upstream/design.md#fail-first-results).
   - Verify: each regression test is run against the installed upstream version, and the run is recorded in the fail-first results.
   - Status: the one test whose probe needs no Nitro app, #118, ran and passes on upstream, so it is recorded as fixed upstream. The other needs-app tests are not run against upstream, since their probes need a Nitro harness. Whether to build that harness is an owner decision.
+  - Deferred to [openspec/deferred/nuxt-security-module/upstream-regression-harness/design.md](../../deferred/nuxt-security-module/upstream-regression-harness/design.md).
