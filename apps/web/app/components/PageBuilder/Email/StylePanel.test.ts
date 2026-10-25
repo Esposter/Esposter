@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
-import { TEST_ID, TEST_OTHER_ID, TEST_THIRD_ID } from "#shared/services/pageBuilder/constants.test";
+import { TEST_ID, TEST_OTHER_ID, TEST_THIRD_ID, TEST_URL } from "#shared/services/pageBuilder/constants.test";
+import PageBuilderEmailImageUploadField from "@/components/PageBuilder/Email/ImageUploadField.vue";
 import PageBuilderEmailStylePanel from "@/components/PageBuilder/Email/StylePanel.vue";
 import { emailKind } from "@/services/pageBuilder/emailKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
@@ -70,5 +71,42 @@ describe("pageBuilderEmailStylePanel", () => {
 
     expect(startingPlaceholder).toBe("20px");
     expect(getFontSizeInput().attributes("placeholder")).toBe("16px");
+  });
+
+  test("an uploaded image becomes the image's source", async () => {
+    expect.hasAssertions();
+
+    const imageDocument = {
+      content: [
+        {
+          props: {
+            children: [
+              {
+                props: {
+                  children: [{ props: { alt: "Logo", id: TEST_OTHER_ID, src: "" }, type: MjmlNodeType.Image }],
+                  id: TEST_THIRD_ID,
+                },
+                type: MjmlNodeType.Column,
+              },
+            ],
+            id: crypto.randomUUID(),
+          },
+          type: MjmlNodeType.Section,
+        },
+      ],
+      root: { props: {} },
+    };
+    usePageBuilderDocumentStore().setEmailDocument(TEST_ID, emailKind, imageDocument);
+    usePageBuilderCanvasStore().setSelectedNodeId(TEST_ID, TEST_OTHER_ID);
+
+    const component = await mountSuspended(PageBuilderEmailStylePanel, { props: { resourceId: TEST_ID } });
+    component.getComponent(PageBuilderEmailImageUploadField).vm.$emit("update", TEST_URL);
+    await nextTick();
+    const forId = component
+      .findAll("label")
+      .find((label) => label.text() === "src")
+      ?.attributes("for");
+
+    expect(component.get<HTMLInputElement>(`#${forId}`).element.value).toBe(TEST_URL);
   });
 });
