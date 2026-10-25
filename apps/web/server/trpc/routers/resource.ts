@@ -105,6 +105,13 @@ export const resourceRouter = router({
     .mutation<ResourceInResource>(({ ctx, input }) => createResourceRow(ctx, input)),
   deleteResources: standardAuthedProcedure
     .input(deleteResourcesInputSchema)
+    .meta({
+      mcp: {
+        description:
+          "Move resources to the recycle bin by their ids, where each waits whole to be restored. Answers the resources moved.",
+        scope: McpScope.Resources,
+      },
+    })
     // Owner-scoped where so callers can only ever soft-delete their own rows
     .mutation<ResourceInResource[]>(async ({ ctx, input: { ids } }) => {
       const deletedResources = await softDeleteResources(
@@ -125,8 +132,15 @@ export const resourceRouter = router({
         });
       return deletedResources;
     }),
-  duplicateResource: getOwnerProcedure(undefined, resourceIdInputSchema, "id").mutation<ResourceInResource>(
-    async ({ ctx }) => {
+  duplicateResource: getOwnerProcedure(undefined, resourceIdInputSchema, "id")
+    .meta({
+      mcp: {
+        description:
+          "Copy a resource into a new draft beside it, with its tags and its draft content, named as a copy. Answers the copy, whose id the other tools take.",
+        scope: McpScope.Resources,
+      },
+    })
+    .mutation<ResourceInResource>(async ({ ctx }) => {
       const { name, tags, type } = ctx.resource;
       const newResource = await createResourceRow(
         ctx,
@@ -157,8 +171,7 @@ export const resourceRouter = router({
         title: ResourceOperationTitleMap[ResourceOperationType.Duplicated](newResource.name),
       });
       return newResource;
-    },
-  ),
+    }),
   purgeResource: getOwnerProcedure(undefined, resourceIdInputSchema, "id", true)
     .meta({ humanOnly: "The one delete nothing restores, so the owner alone performs it" })
     .mutation<ResourceInResource>(async ({ ctx, input: { id } }) => {
@@ -382,6 +395,13 @@ export const resourceRouter = router({
   // Over the bin only; names are not unique, so a restore can never conflict
   restoreResources: standardAuthedProcedure
     .input(restoreResourcesInputSchema)
+    .meta({
+      mcp: {
+        description:
+          "Restore resources out of the recycle bin by their ids, each back whole with the content and tags it had. Answers the resources restored.",
+        scope: McpScope.Resources,
+      },
+    })
     .mutation<ResourceInResource[]>(async ({ ctx, input: { ids } }) => {
       const userId = ctx.getSessionPayload.user.id;
       const restoredResources = await ctx.db

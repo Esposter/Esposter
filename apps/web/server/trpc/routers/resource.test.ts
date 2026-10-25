@@ -7,6 +7,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { CONTENT_SAVED_COALESCE_WINDOW_MS, DUPLICATE_NAME_SUFFIX } from "#server/services/resource/constants";
 import { resourceEventEmitter } from "#server/services/resource/events/resourceEventEmitter";
+import { connectAgentKey } from "#server/services/mcp/connectAgentKey.test";
 import { getSnapshotObjectBlobName } from "#server/services/resource/snapshot/getSnapshotObjectBlobName";
 import { createCallerFactory } from "#server/trpc";
 import { mockSessionOnce } from "#server/trpc/context.test";
@@ -16,6 +17,7 @@ import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test
 import { sheetRouter } from "#server/trpc/routers/sheet";
 import { todoListRouter } from "#server/trpc/routers/todoList";
 import { webpageRouter } from "#server/trpc/routers/webpage";
+import { McpScope } from "#shared/models/auth/McpScope";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { EN_US_COMPARATOR } from "#shared/services/intl/constants";
@@ -761,6 +763,40 @@ describe("resourceRouter", () => {
     expect(restoredResource?.deletedAt).toBeNull();
     expect(liveCount).toBe(1);
     expect(deletedCount).toBe(0);
+  });
+
+  test("A resource moved to the bin and restored comes back whole", async () => {
+    expect.hasAssertions();
+
+    const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
+    const webpageResource = await webpageCaller.createResource({ name });
+    await saveWebpageContent(webpageResource, webpageEditor);
+    await caller.updateResource({ id: webpageResource.id, name, tags });
+    const contentBefore = await webpageCaller.readResourceContent({ id: webpageResource.id });
+    await callAgentTool("resource_deleteResources", { ids: [webpageResource.id] });
+    const [restoredResource] = await callAgentTool<ResourceInResource[]>("resource_restoreResources", {
+      ids: [webpageResource.id],
+    });
+    const contentAfter = await webpageCaller.readResourceContent({ id: webpageResource.id });
+
+    expect(restoredResource).toMatchObject({ deletedAt: null, name, tags });
+    expect(contentAfter).toStrictEqual(contentBefore);
+  });
+
+  test("An agent duplicates a resource", async () => {
+    expect.hasAssertions();
+
+    const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
+    const webpageResource = await webpageCaller.createResource({ name });
+    await saveWebpageContent(webpageResource, webpageEditor);
+    const duplicatedResource = await callAgentTool<ResourceInResource>("resource_duplicateResource", {
+      id: webpageResource.id,
+    });
+    const contentOfCopy = await webpageCaller.readResourceContent({ id: duplicatedResource.id });
+    const contentOfOriginal = await webpageCaller.readResourceContent({ id: webpageResource.id });
+
+    expect(duplicatedResource.id).not.toBe(webpageResource.id);
+    expect(contentOfCopy).toStrictEqual(contentOfOriginal);
   });
 
   test("restores only what is in the bin", async () => {

@@ -54,9 +54,12 @@ describe(getMcpTools, () => {
         ],
         "Resources": [
           "resource_createResource",
+          "resource_deleteResources",
+          "resource_duplicateResource",
           "resource_readResourceContent",
           "resource_readResourceContentSchema",
           "resource_readResources",
+          "resource_restoreResources",
           "resource_updateResource",
           "resource_updateResourceContent",
           "sheet_runSheetCommand",
