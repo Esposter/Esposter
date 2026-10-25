@@ -25,6 +25,9 @@ export const APP_RELATIVE_PREFIXES = ["app/", "configuration/", "public/", "scri
 export const DISTRIBUTION_DIRECTORY = "dist";
 
 export const KIBIBYTE: number = 2 ** 10;
+// The most gzipped script an editor may add beyond the explorer's to the client bundle, which the resource page
+// Builder cutover is held to before it merges
+export const EDITOR_SCRIPT_BUDGET: number = 200 * KIBIBYTE;
 // Shared by the SFC build and the SFC test run, so a component cannot compile against one set of ambient
 // Imports and be tested against another.
 export const VUE_AUTO_IMPORTS = ["pinia", "vue"] as const;
