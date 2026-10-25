@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { SuggestionTrigger } from "@/services/message/SuggestionTrigger";
+import { SuggestionTrigger } from "@/models/shared/SuggestionTrigger";
 import { UiRules } from "@/services/ui/UiRules";
 import { ROOM_EMOJI_NAME_MAX_LENGTH, ROOM_EMOJI_NAME_REGEX } from "@esposter/db-schema";
 

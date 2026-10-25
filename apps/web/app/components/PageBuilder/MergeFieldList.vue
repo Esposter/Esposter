@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type { SuggestionProps } from "@tiptap/suggestion";
 
+import { SuggestionTrigger } from "@/models/shared/SuggestionTrigger";
 import { getSuggestionListTitle } from "@/services/message/getSuggestionListTitle";
-import { SuggestionTrigger } from "@/services/message/SuggestionTrigger";
 import { takeOne } from "@esposter/shared";
 
 const { command, items, query } = defineProps<Pick<SuggestionProps<string>, "command" | "items" | "query">>();

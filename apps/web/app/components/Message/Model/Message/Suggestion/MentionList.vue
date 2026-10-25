@@ -5,9 +5,9 @@ import type { RoleMentionItem } from "@/models/message/RoleMentionItem";
 import type { PublicUser } from "@esposter/db-schema";
 import type { SuggestionProps } from "@tiptap/suggestion";
 
+import { SuggestionTrigger } from "@/models/shared/SuggestionTrigger";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { getSuggestionListTitle } from "@/services/message/getSuggestionListTitle";
-import { SuggestionTrigger } from "@/services/message/SuggestionTrigger";
 import { MentionType, takeOne } from "@esposter/shared";
 
 const { command, items, query } =

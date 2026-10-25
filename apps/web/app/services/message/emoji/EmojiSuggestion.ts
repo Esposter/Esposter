@@ -3,12 +3,12 @@ import type { SuggestionOptions } from "@tiptap/suggestion";
 import type { Except } from "type-fest";
 
 import EmojiSuggestionList from "@/components/Message/Model/Message/Suggestion/EmojiList.vue";
+import { SuggestionTrigger } from "@/models/shared/SuggestionTrigger";
 import { EMOJI_SUGGESTION_MIN_QUERY_LENGTH, MAX_EMOJI_SUGGESTIONS } from "@/services/message/emoji/constants";
 import { getPickableEmojiContent } from "@/services/message/emoji/getPickableEmojiContent";
 import { getPickableEmojiTag } from "@/services/message/emoji/getPickableEmojiTag";
 import { searchEmojis } from "@/services/message/emoji/searchEmojis";
 import { getRender } from "@/services/message/getRender";
-import { SuggestionTrigger } from "@/services/message/SuggestionTrigger";
 import { useEmojiPickerStore } from "@/store/message/emojiPicker";
 import { useRoomEmojiStore } from "@/store/message/room/emoji";
 import { PluginKey } from "@tiptap/pm/state";

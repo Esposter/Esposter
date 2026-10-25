@@ -3,8 +3,8 @@ import type { SuggestionOptions } from "@tiptap/suggestion";
 import type { Except } from "type-fest";
 
 import NoteBlockList from "@/components/Resource/Note/BlockList.vue";
+import { SuggestionTrigger } from "@/models/shared/SuggestionTrigger";
 import { getRender } from "@/services/message/getRender";
-import { SuggestionTrigger } from "@/services/message/SuggestionTrigger";
 import { getNoteSlashItems } from "@/services/resource/note/getNoteSlashItems";
 import { searchItems } from "@/services/search/searchItems";
 import { PluginKey } from "@tiptap/pm/state";

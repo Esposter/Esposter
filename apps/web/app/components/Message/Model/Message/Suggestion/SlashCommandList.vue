@@ -2,8 +2,8 @@
 import type { SlashCommand } from "@/models/message/slashCommands/SlashCommand";
 import type { SuggestionKeyDownProps, SuggestionProps } from "@tiptap/suggestion";
 
+import { SuggestionTrigger } from "@/models/shared/SuggestionTrigger";
 import { getSuggestionListTitle } from "@/services/message/getSuggestionListTitle";
-import { SuggestionTrigger } from "@/services/message/SuggestionTrigger";
 import { takeOne } from "@esposter/shared";
 
 const { command, items, query } = defineProps<Pick<SuggestionProps<SlashCommand>, "command" | "items" | "query">>();

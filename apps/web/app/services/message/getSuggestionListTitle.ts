@@ -1,4 +1,4 @@
-import type { SuggestionTrigger } from "@/services/message/SuggestionTrigger";
+import type { SuggestionTrigger } from "@/models/shared/SuggestionTrigger";
 
 // Each popover passes its own title, since two popovers can share a trigger character
 export const getSuggestionListTitle = (title: string, trigger: SuggestionTrigger, query: string) =>

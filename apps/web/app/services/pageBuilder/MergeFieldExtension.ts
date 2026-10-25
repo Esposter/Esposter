@@ -1,7 +1,7 @@
 import MergeFieldList from "@/components/PageBuilder/MergeFieldList.vue";
+import { SuggestionTrigger } from "@/models/shared/SuggestionTrigger";
 import { toMergeField } from "@/services/emailEditor/toMergeField";
 import { getRender } from "@/services/message/getRender";
-import { SuggestionTrigger } from "@/services/message/SuggestionTrigger";
 import { Extension } from "@tiptap/core";
 import { PluginKey } from "@tiptap/pm/state";
 import { Suggestion } from "@tiptap/suggestion";

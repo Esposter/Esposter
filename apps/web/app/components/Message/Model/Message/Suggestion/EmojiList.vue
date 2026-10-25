@@ -2,9 +2,9 @@
 import type { PickableEmoji } from "@/models/message/emoji/PickableEmoji";
 import type { SuggestionProps } from "@tiptap/suggestion";
 
+import { SuggestionTrigger } from "@/models/shared/SuggestionTrigger";
 import { getEmojiShortcode } from "@/services/message/emoji/getEmojiShortcode";
 import { getSuggestionListTitle } from "@/services/message/getSuggestionListTitle";
-import { SuggestionTrigger } from "@/services/message/SuggestionTrigger";
 import { useEmojiPickerStore } from "@/store/message/emojiPicker";
 import { takeOne } from "@esposter/shared";
 
