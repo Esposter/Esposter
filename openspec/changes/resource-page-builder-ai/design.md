@@ -32,7 +32,7 @@ The walk is the one pass the diagram shows. The checks are gates on the node's o
 
 ## Decisions
 
-**One pure function, run in both places.** The critique is one function in the shared page builder services, called by the editor on the unsaved document and by the read tool on the saved one. The alternative was a browser-only check over the rendered canvas, which would read the true cascade through computed styles, but an agent has no canvas to read, and the panel would wait on the frame for every edit. The shared function gives both callers the same answer, which is what the agent needs to trust what the panel showed.
+**One pure function, run in both places.** The critique is one function in the shared page builder services, called by the editor on the unsaved document and by the read tool on the saved one. The alternative was a browser-only check over the rendered canvas, which would read the true cascade through computed styles, but an agent has no canvas to read, and the panel would wait on the frame for every edit. The shared function gives both callers the same rules and the same verdict on every check that needs no colour, which is what the agent needs to trust what the panel showed. The colour checks are the one place the two differ, because only the browser can read a colour, as the colour decision below sets out.
 
 **Checks are declared per type, read by one generic tool.** The webpage's definition in the resource definition map gains an optional critique. The generic read tool reads it off the resource's type, so a second type gains a critique by declaring one and no tool is added. The alternative was a critique tool per type, which the house rule that a feature an agent can use goes through the generic resource tools rejects.
 
@@ -43,7 +43,7 @@ The alternatives were rejected for these reasons:
 - **A small parser of hex, rgb and hsl.** It would silently fail on the values the panel allows, such as oklch and color-mix, and the failure would look like a pass.
 - **A third-party CSS colour parser.** It would be a second reading of colour syntax beside the browser's, able to disagree with the colour the page renders with, and a dependency to keep current for a job the browser already does. No such package was read for this design, so none is named.
 
-The critique takes each colour as a resolved sRGB value from its caller, so the function itself touches no DOM. The editor supplies the probe's values. The read tool on the server has no browser, so it supplies none: every colour check in its answer is reported as unchecked, and the Notes say so.
+The critique takes each colour as a resolved sRGB value from its caller, so the function itself touches no DOM. The editor supplies the probe's values. The read tool on the server has no browser, so it supplies none: every colour check in its answer is reported as unchecked.
 
 **Contrast is held at the normal-text threshold for every text.** WCAG 2.2 criterion 1.4.3 asks for 4.5 to 1 on normal text and 3 to 1 on large text, large meaning 18 point, or 14 point bold ([WCAG 2.2, criterion 1.4.3](https://www.w3.org/TR/WCAG22/#contrast-minimum)). Large text depends on the font size, which the typography sector sets per node and breakpoint, and reading it correctly means resolving the size as the cascade does. The critique holds every text to 4.5 to 1 in this version, so it never passes a text the standard fails, and it may report a large text the standard would allow. Relaxing it for large text is a later change, once the size is resolved.
 
@@ -99,7 +99,7 @@ apps/web/app/components/PageBuilder/Check/       the Check panel and its list of
 - Text that overflows its box for a reason other than a fixed width, such as a long word in a narrow column, is not reported. The canvas measures layout in the browser, and this check does not.
 - The critique reads a saved document through the read tool at the version the agent read, so an agent reading it while the owner edits sees the saved state, not the panel's unsaved one.
 - A type without a critique is refused by the read tool, which states the absence rather than answering an empty list.
-- The read tool has no browser, so it cannot compute colours. Every contrast check in its answer is reported as unchecked, and an agent that needs a contrast verdict reads the panel's findings in the editor instead. Fixed-width and survey findings do not depend on colour and are answered in full.
+- An agent that needs a contrast verdict reads the panel's findings in the editor, since the read tool does not give one. Fixed-width and survey findings do not depend on colour and are answered in full.
 
 ## Sources
 
