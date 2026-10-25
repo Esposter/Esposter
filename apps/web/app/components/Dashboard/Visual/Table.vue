@@ -1,0 +1,77 @@
+<script setup lang="ts">
+import type { Visual } from "#shared/models/dashboard/data/Visual";
+import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
+import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
+
+import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
+import { DASHBOARD_NUMBER_FORMATTER } from "@/services/dashboard/constants";
+import { takeOne } from "@esposter/shared";
+
+interface Props {
+  data: VisualPropsData;
+  visual: Visual;
+}
+
+interface TableRow {
+  category: string;
+  id: string;
+  values: number[];
+}
+
+const CATEGORY_KEY = "category";
+const { data, visual } = defineProps<Props>();
+// The categories and series are the chart's own, so a table over a binding reads the same numbers the chart draws
+const categories = computed(() => (data.options?.xaxis?.categories ?? []).map(String));
+const querySeries = computed(() => visual.dataset?.query.series ?? []);
+const rows = computed<TableRow[]>(() =>
+  categories.value.map((category, index) => ({
+    category,
+    id: category,
+    values: data.series.map((series) => Number(takeOne(series.data, index))),
+  })),
+);
+const columns = computed<UiDataTableColumn<TableRow, string>[]>(() => [
+  {
+    compare: (first, second) => first.category.localeCompare(second.category),
+    getValue: ({ category }) => category,
+    key: CATEGORY_KEY,
+    title: visual.dataset ? visual.dataset.query.xColumn : "Category",
+  },
+  ...data.series.map((series, index) => ({
+    compare: (first: TableRow, second: TableRow) => takeOne(first.values, index) - takeOne(second.values, index),
+    getValue: ({ values }: TableRow) => DASHBOARD_NUMBER_FORMATTER.format(takeOne(values, index)),
+    key: `series${index}`,
+    title: `${series.name}`,
+  })),
+]);
+// A total of counts or sums is a count or a sum of the rows, but a total of averages or extremes is neither an
+// Average nor an extreme of them, so those columns leave the totals row blank
+const columnKeyTotalMap = computed(
+  () =>
+    new Map<string, string>([
+      [CATEGORY_KEY, "Total"],
+      ...data.series.flatMap((_series, index): [string, string][] => {
+        const aggregation = querySeries.value[index]?.aggregation;
+        if (aggregation !== DatasetAggregationType.Count && aggregation !== DatasetAggregationType.Sum) return [];
+
+        const total = rows.value.reduce((sum, row) => sum + takeOne(row.values, index), 0);
+        return [[`series${index}`, DASHBOARD_NUMBER_FORMATTER.format(total)]];
+      }),
+    ]),
+);
+</script>
+
+<template>
+  <UiDataTable
+    size-full
+    p-3
+    min-h-0
+    of-y-auto
+    :columns
+    :get-item-title="({ category }) => category"
+    :items="rows"
+    label="Visual table"
+  >
+    <template #foot="{ column }">{{ columnKeyTotalMap.get(column.key) ?? "" }}</template>
+  </UiDataTable>
+</template>

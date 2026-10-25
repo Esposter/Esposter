@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Visual } from "#shared/models/dashboard/data/Visual";
 
+import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { VISUAL_INTERACTION_CHART_OPTIONS } from "@/services/dashboard/chart/constants";
@@ -54,6 +55,9 @@ const { copy } = clipboardStore;
       <div v-else-if="visual.dataset && !visualPropsData && isPending" p-3 size-full>
         <UiSkeleton size-full />
       </div>
+      <!-- A card and a table draw their own values, so they take the same data a chart would, and no chart options -->
+      <DashboardVisualCard v-else-if="visual.type === VisualType.Card" :data :visual />
+      <DashboardVisualTable v-else-if="visual.type === VisualType.Table" :data :visual />
       <StyledApexChart v-else ref="chart" :="data" :options="linkedOptions" @load="applyView()" />
       <!-- A capped read still charts, so the footnote is what stops it from reading as the whole picture -->
       <DatasetTruncationFootnote v-if="truncation" bottom-1 left-1 absolute :truncation />
