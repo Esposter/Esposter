@@ -11,7 +11,7 @@
 - [x] 2.1 Add the dispatching router, merged after the base router, which checks the resource type's publish capability and refuses in words when the type does not publish. Verify: a test named after the scenario 'A type that does not publish is refused in words', failing first, then passing.
 - [x] 2.2 Dispatch publish and unpublish to the type's own publish procedure. Verify: a test named after the scenario 'An agent publishes and unpublishes a resource of a publishing type', failing first, then passing.
 - [ ] 2.3 Dispatch file upload address requests and file removal. Verify: a test named after the scenario 'An agent uploads a file before its address expires', failing first, then passing; and the scenario 'An upload to an expired address is refused'.
-  - Owed: the refusal of an expired address is Azure's, at the write SAS expiry the app sets (one hour from signing, `WRITE_SAS_DURATION_MS`). The mock signs that expiry as given, but its upload path never reads the `se` parameter, so no local test can show the refusal. The owner checks an expired address against dev storage, then this task is ticked.
+  - Owed: the refusal of an expired address is Blob Storage's, at the write SAS expiry the app sets (one hour from signing, `WRITE_SAS_DURATION_MS`). Locally the mock signs that expiry as given, and `uploadBlocks.test.ts` shows the app stops at a refused block and commits nothing, but its response is a stub that reads the `se` parameter, so Blob Storage's own refusal is unseen. The owner checks an expired address against dev storage, then this task is ticked.
 
 ## 3. Each type's own operations
 
