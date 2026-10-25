@@ -81,6 +81,7 @@
     "unplugin-vue": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
+    "vue": "catalog:",
     "vue-eslint-parser": "catalog:"
   }
 }
