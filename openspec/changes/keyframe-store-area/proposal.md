@@ -2,7 +2,7 @@
 
 ## Why
 
-`keyframe-store` is a published npm package with its own README, and it has no area under `openspec/specs/`. Its behaviour is split between [compression](../../specs/architecture/compression/design.md), which says why the codec is zstd, and [resource version store](../../specs/resource/resource-version-store/design.md), which says how the app keeps versions with it. Neither page states the object format, or the write, read and collection rules a consumer of the package relies on. The package's own README holds the object format as its How it works section, which an npm reader sees, where no spec can check it. A library another project could install gets an area, as `parse-tmx` and `trpc-msw` have ([page shapes](../../specs/architecture/README.md)). This is gap 11 of the [gap survey](../gap-survey-2026-10-25/proposal.md).
+`keyframe-store` is a published npm package with its own README, and it has no area under `openspec/specs/`. Its behaviour is split between [compression](../../specs/architecture/compression/design.md), which says why the codec is zstd, and [resource version store](../../specs/resource/resource-version-store/design.md), which says how the app keeps versions with it. Neither page states the object format, or the write, read and collection rules a consumer of the package relies on. The package's own README holds the object format as its How it works section, which an npm reader sees, where no spec can check it. A library another project could install gets an area, as `parse-tmx` and `trpc-msw` have ([page shapes](../../specs/architecture/README.md)). This is gap 11 of the [gap survey](../archive/2026-10-25-gap-survey-2026-10-25/proposal.md).
 
 ## What Changes
 
