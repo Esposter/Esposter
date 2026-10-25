@@ -2,7 +2,7 @@
 
 ## Why
 
-The Flowchart is a resource type that draws connected steps on Vue Flow. The [whiteboard](../resource-whiteboard/proposal.md), a freeform canvas built on our own core, covers the flowchart's work, and the owner has decided the Flowchart goes. Keeping two diagram types means two editors, two export paths, two agent surfaces and a second canvas engine, all for one type whose work the whiteboard now does.
+The Flowchart is a resource type that draws connected steps on Vue Flow. The [whiteboard](../resource-whiteboard/proposal.md), our own freeform canvas, covers the flowchart's work, and the owner has decided the Flowchart goes. Keeping two diagram types means two editors, two export paths, two agent surfaces and a second canvas engine, all for one type whose work the whiteboard now does.
 
 ## What Changes
 
@@ -15,11 +15,11 @@ The Flowchart type is removed completely, with its stored data. Nothing is migra
 - **Its agent surface**: the flowchart's rows in the generic agent tools' content documentation. Agents reach no flowchart procedure after the change.
 - **The flowchart achievement**: the achievement name and its category, and the earned rows that name it.
 - **Its specs**: the capabilities `resource/flowchart-connectors`, `resource/flowchart-image-export` and `resource/flowchart-publish`, removed from the specs and the resource index.
-- **Its stored rows**: every flowchart resource, its blob and its storage count, deleted by the migration path described in the design.
+- **Its stored rows**: every flowchart resource and every row that references one, deleted by one migration in the release.
 
 ### Existing user flowcharts are deleted
 
-This change deletes every flowchart that exists in any environment, along with the blobs and the storage each one counted against its owner. No user is offered a copy, conversion or read-only view. The number of flowcharts to be deleted is not known to the repository, so the design makes reading it from each environment, and the owner's confirmation of that number, a step that must complete before any deletion runs.
+This change deletes every flowchart that exists in any environment, with the rows that reference it. No user is offered a copy, a conversion or a read-only view. The deletion is a plain migration, with no count to read and no confirmation to wait for. The blobs the rows point at are not removed by it, as the design records.
 
 ## Capabilities
 
@@ -27,7 +27,7 @@ This change deletes every flowchart that exists in any environment, along with t
 
 ## Waiting on
 
-- The [whiteboard](../resource-whiteboard/proposal.md) ships first. Its owner must confirm it covers each row of the feature check in the design before any flowchart is deleted, since afterwards the Flowchart's features have no other home.
+- The [whiteboard](../resource-whiteboard/proposal.md) ships first, and every row of the feature check in the design is covered or decided before the release, since afterwards the Flowchart's features have no other home.
 
 ## Decided against
 
