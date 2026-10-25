@@ -2,9 +2,13 @@
 import RichTextEditor from "@/components/RichTextEditor/Index.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { Editor } from "@tiptap/vue-3";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe("richTextEditor", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   test("tears the editor down once on unmount", async () => {
     expect.hasAssertions();
 

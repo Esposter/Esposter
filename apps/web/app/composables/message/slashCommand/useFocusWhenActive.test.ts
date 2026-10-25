@@ -1,4 +1,4 @@
-// @vitest-environment nuxt
+// @vitest-environment happy-dom
 import type { Ref } from "vue";
 
 import { useFocusWhenActive } from "@/composables/message/slashCommand/useFocusWhenActive";

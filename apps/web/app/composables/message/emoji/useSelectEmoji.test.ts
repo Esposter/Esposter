@@ -1,4 +1,3 @@
-// @vitest-environment nuxt
 import type { CreateEmojiInput } from "#shared/models/db/message/metadata/CreateEmojiInput";
 import type { MessageEmojiMetadataEntity } from "#shared/models/db/message/metadata/MessageEmojiMetadataEntity";
 
