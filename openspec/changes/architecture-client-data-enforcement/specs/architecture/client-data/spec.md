@@ -2,7 +2,7 @@
 
 ### Requirement: A displayed count holds its value until the write that changes it settles
 
-A count the server derives SHALL keep its displayed value until the write that changes it has settled, and the count SHALL then show the value the server reads back. The viewer's own mark MAY change at once, since the client holds it exactly.
+A count the server derives SHALL keep its displayed value until the write that changes it has settled. Once that write settles, the count shows the value the server reads back. The viewer's own mark MAY change at once, since the client holds it exactly.
 
 #### Scenario: A count stays put while its write is in flight
 
