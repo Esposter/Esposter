@@ -1,0 +1,7 @@
+# AI-native resources
+
+How an agent reaches the operations a person runs in a resource editor, through typed procedures derived from what each type already declares. The program that set this out is archived at [its change folder](../../../changes/archive/2026-10-25-architecture-ai-native-resources-program/design.md). Each unit below is built on its own.
+
+| Page                                       | What it covers                                                                                                                                                        |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Typed commands](typed-commands/design.md) | The few acts a patch fits badly, run as the editor's own commands on the server: a Sheet column or row command, a repeating todo's tick, a Note written from Markdown |
