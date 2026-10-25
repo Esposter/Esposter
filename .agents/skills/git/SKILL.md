@@ -45,4 +45,5 @@ The touched tests run once per sitting, in the background (the `running-checks` 
 
 - `references/commit-messages.md` — when writing a multi-line commit message from Bash or PowerShell.
 - `references/shared-checkout.md` — when another session shares the checkout.
+- `references/peer-hunks-in-a-worktree.md` — when a hunk of a file a peer also has dirty is committed, or a commit is built in a throwaway worktree.
 - `references/lockfile-merges.md` — when a merge brings a `pnpm-workspace.yaml` or `pnpm-lock.yaml` conflict.
