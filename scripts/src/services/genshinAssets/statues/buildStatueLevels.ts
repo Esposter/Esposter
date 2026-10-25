@@ -1,10 +1,10 @@
 import type { ExcelCityLevelupRow } from "#src/models/genshinAssets/statues/ExcelCityLevelupRow";
 
+import { readReward } from "#src/services/genshinAssets/rewards/readReward";
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
 import { LIYUE_CITY_ID, MONDSTADT_CITY_ID } from "#src/services/genshinAssets/statues/constants";
 import { toStatueLevelRow } from "#src/services/genshinAssets/statues/toStatueLevelRow";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
 
 // Mondstadt's and Liyue's Statue of The Seven levels, each row's reward joined from the reward table, published as one
@@ -19,16 +19,9 @@ export const buildStatueLevels = (): Record<string, unknown> => {
       levelRows
         .filter((levelRow) => levelRow.cityId === cityId)
         .toSorted((firstLevel, secondLevel) => firstLevel.level - secondLevel.level)
-        .map((levelRow) => {
-          const reward = rewardMap.get(levelRow.rewardID);
-          if (!reward)
-            throw new InvalidOperationError(
-              Operation.Read,
-              "statue level",
-              `level ${levelRow.level} names reward ${levelRow.rewardID}, which the reward table does not hold`,
-            );
-          return toStatueLevelRow(levelRow, reward);
-        }),
+        .map((levelRow) =>
+          toStatueLevelRow(levelRow, readReward(rewardMap, levelRow.rewardID, `level ${levelRow.level}`)),
+        ),
     ]),
   );
 };

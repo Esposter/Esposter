@@ -2,8 +2,8 @@ import type { ExcelReputationQuestRow } from "#src/models/genshinAssets/reputati
 import type { ExcelRewardRow } from "#src/models/genshinAssets/rewards/ExcelRewardRow";
 import type { ReputationQuest } from "genshin-world";
 
-import { readReward } from "#src/services/genshinAssets/reputation/readReward";
 import { toReputationReward } from "#src/services/genshinAssets/reputation/toReputationReward";
+import { readReward } from "#src/services/genshinAssets/rewards/readReward";
 
 // A nation's Reputation quests, each bound to the quest its parent names and paying its reward once that quest finishes,
 // In the order the game lists them

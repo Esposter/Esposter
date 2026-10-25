@@ -11,10 +11,10 @@ import {
   MONDSTADT_BOUNTY_TARGET_NAMES,
 } from "#src/services/genshinAssets/reputation/constants";
 import { readMonsterNames } from "#src/services/genshinAssets/reputation/readMonsterNames";
-import { readReward } from "#src/services/genshinAssets/reputation/readReward";
 import { toBountyTargetIds } from "#src/services/genshinAssets/reputation/toBountyTargetIds";
 import { toReputationQuests } from "#src/services/genshinAssets/reputation/toReputationQuests";
 import { toReputationReward } from "#src/services/genshinAssets/reputation/toReputationReward";
+import { readReward } from "#src/services/genshinAssets/rewards/readReward";
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
 import { MONDSTADT_CITY_ID } from "#src/services/genshinAssets/statues/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";

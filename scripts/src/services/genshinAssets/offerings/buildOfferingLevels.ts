@@ -9,8 +9,8 @@ import {
   PRIMAL_FLAME_RESONANCE_LEVEL_COUNT,
 } from "#src/services/genshinAssets/offerings/constants";
 import { OfferingIdKindMap } from "#src/services/genshinAssets/offerings/OfferingIdKindMap";
-import { readReward } from "#src/services/genshinAssets/offerings/readReward";
 import { toOfferingLevelRow } from "#src/services/genshinAssets/offerings/toOfferingLevelRow";
+import { readReward } from "#src/services/genshinAssets/rewards/readReward";
 import { readRewardMap } from "#src/services/genshinAssets/rewards/readRewardMap";
 import { toRewardItems } from "#src/services/genshinAssets/rewards/toRewardItems";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";

@@ -1,10 +1,10 @@
 import type { ExcelCurrencyRewardRow } from "#src/models/genshinAssets/transPoints/ExcelCurrencyRewardRow";
 import type { ExcelTransPointRewardRow } from "#src/models/genshinAssets/transPoints/ExcelTransPointRewardRow";
 
+import { readReward } from "#src/services/genshinAssets/rewards/readReward";
 import { OPEN_WORLD_SCENE_ID } from "#src/services/genshinAssets/shared/constants";
 import { toTransPointRewardRow } from "#src/services/genshinAssets/transPoints/toTransPointRewardRow";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
 
 // The open world's transport point rewards, each point's Adventure EXP and Primogems joined from its reward row, published
@@ -16,16 +16,7 @@ export const buildTransPointRewards = (): Record<string, unknown> => {
   );
   const rewards = readExcelTable<ExcelTransPointRewardRow>("TransPointRewardConfigData")
     .filter(({ sceneId }) => sceneId === OPEN_WORLD_SCENE_ID)
-    .map((row) => {
-      const currencyReward = currencyRewardMap.get(row.rewardId);
-      if (!currencyReward)
-        throw new InvalidOperationError(
-          Operation.Read,
-          "transport point",
-          `point ${row.pointId} names reward ${row.rewardId}, which the reward table does not hold`,
-        );
-      return toTransPointRewardRow(row, currencyReward);
-    })
+    .map((row) => toTransPointRewardRow(row, readReward(currencyRewardMap, row.rewardId, `point ${row.pointId}`)))
     .toSorted((firstRow, secondRow) => firstRow.pointId - secondRow.pointId);
   return { [`${GameDataset.TransPoints}/scene${OPEN_WORLD_SCENE_ID}`]: rewards };
 };
