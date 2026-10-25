@@ -23,5 +23,5 @@ export const useVisualPropsData = (visual: MaybeRefOrGetter<Visual>) => {
   });
   // A snapshot froze whatever the read gave it, so a published visual reports the same truncation as a live one
   const truncation = computed(() => (resolvedDataset.value ? getDatasetTruncation(resolvedDataset.value) : undefined));
-  return { error, isPending, refresh, truncation, visualPropsData };
+  return { error, isPending, refresh, resolvedDataset, truncation, visualPropsData };
 };

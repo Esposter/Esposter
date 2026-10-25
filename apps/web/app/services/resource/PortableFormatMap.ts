@@ -7,6 +7,7 @@ import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncat
 import { deserializeNoteMarkdown } from "#shared/services/resource/note/deserializeNoteMarkdown";
 import { serializeNoteMarkdown } from "#shared/services/resource/note/serializeNoteMarkdown";
 import { FlowchartExportFormat } from "@/models/resource/FlowchartExportFormat";
+import { exportDashboardPng } from "@/services/dashboard/export/exportDashboardPng";
 import { getDatasetErrorMessage } from "@/services/dataset/getDatasetErrorMessage";
 import { REOPEN_EMAIL_MESSAGE } from "@/services/emailEditor/constants";
 import { exportWebpageHtml } from "@/services/pageBuilder/exportWebpageHtml";
@@ -34,6 +35,18 @@ import { getResult, getResultAsync, noop } from "@esposter/shared";
 // Import/export formats per portable type
 export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> = {
   [ResourceType.Blueprint]: [createBlueprintPortableFormat()],
+  // A picture cannot restore a dashboard, so it exports its page as drawn and has no import
+  [ResourceType.Dashboard]: [
+    {
+      export: async () => {
+        const resourceStore = useResourceStore();
+        const resourceValue = resourceStore.resource;
+        if (resourceValue) await exportDashboardPng(resourceValue.name);
+      },
+      icon: "i-mdi:image-outline",
+      label: "PNG",
+    },
+  ],
   [ResourceType.Email]: [
     {
       export: async () => {

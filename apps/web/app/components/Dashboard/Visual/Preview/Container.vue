@@ -3,6 +3,7 @@ import type { Visual } from "#shared/models/dashboard/data/Visual";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { exportDashboardVisualCsv } from "@/services/dashboard/export/exportDashboardVisualCsv";
 import { useVisualStore } from "@/store/dashboard/visual";
 import { getSynchronizedFunction } from "@esposter/shared";
 
@@ -28,10 +29,10 @@ onClickExceptDrag(
       opens the edit form. The corner's actions and the error state's Retry sit above it again -->
     <div size-full pointer-events-none>
       <DashboardVisual :visual>
-        <template #actions>
+        <template #actions="{ dataset }">
           <!-- Clicking the tile opens its edit form, which nothing on screen says on its own — Power BI puts a visual's
-            Actions on the tile's own corner, so edit, duplicate and delete sit there here too. A press here never reaches
-            The tile's drag tracking, and its click is the corner's own -->
+            Actions on the tile's own corner, so edit, duplicate, export and delete sit there here too. A press here never
+            reaches the tile's drag tracking, and its click is the corner's own -->
           <div data-nested-interaction="true" flex gap-1 @mousedown.stop @mousemove.stop>
             <UiIconButton
               label="Edit visual"
@@ -44,6 +45,13 @@ onClickExceptDrag(
               :meaning="UiIconMeaning.Copy"
               :variant="UiButtonVariant.Quiet"
               @click="duplicateVisual({ id: visual.id })"
+            />
+            <UiIconButton
+              v-if="dataset"
+              label="Export CSV"
+              :meaning="UiIconMeaning.Download"
+              :variant="UiButtonVariant.Quiet"
+              @click="exportDashboardVisualCsv(visual, dataset)"
             />
             <DashboardVisualPreviewDeleteButton :id="visual.id" :type="visual.type" />
           </div>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Visual } from "#shared/models/dashboard/data/Visual";
+import type { Dataset } from "#shared/models/dataset/Dataset";
 
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
@@ -18,7 +19,7 @@ interface Props {
 
 const { visual } = defineProps<Props>();
 // The editor's tile fills this corner with its own actions, which share the row with Copy link and Refresh
-defineSlots<{ actions?: () => VNode }>();
+defineSlots<{ actions?: (props: { dataset?: Dataset }) => VNode }>();
 const container = useTemplateRef("container");
 const chart = useTemplateRef("chart");
 const height = ref<number>();
@@ -28,7 +29,7 @@ useResizeObserver(container, (entries) => {
   height.value = entry.target.clientHeight;
 });
 
-const { error, isPending, refresh, truncation, visualPropsData } = useVisualPropsData(() => visual);
+const { error, isPending, refresh, resolvedDataset, truncation, visualPropsData } = useVisualPropsData(() => visual);
 const data = computed(() => visualPropsData.value ?? VisualTypeDemoDataMap[visual.type](visual.chart.type));
 const options = useApexOptions(
   () => visual.chart,
@@ -63,7 +64,8 @@ const { copy } = clipboardStore;
       <!-- A capped read still charts, so the footnote is what stops it from reading as the whole picture -->
       <DatasetTruncationFootnote v-if="truncation" bottom-1 left-1 absolute :truncation />
       <div flex gap-1 pointer-events-auto right-1 top-1 absolute>
-        <slot name="actions" />
+        <!-- The rows are offered only when the visual draws them, so a demo tile or a tile whose read failed has none -->
+        <slot name="actions" :dataset="visualPropsData ? resolvedDataset : undefined" />
         <!-- The zoom, the hidden series and the selection are the reader's own work, so the link they send
           Carries it rather than dropping the recipient on the unfiltered dashboard -->
         <UiIconButton

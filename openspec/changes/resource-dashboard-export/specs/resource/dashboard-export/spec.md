@@ -51,7 +51,7 @@ A bound visual's tile menu SHALL offer Export CSV, which downloads the rows the 
 
 - **GIVEN** a bound visual whose source read reached the row cap
 - **WHEN** the owner exports the visual's CSV
-- **THEN** an alert says the file holds the rows read, not every row in the source
+- **THEN** an alert says how many of the source's rows the file holds
 - **AND** the file is still downloaded
 
 ### Requirement: A published dashboard exports from its published data

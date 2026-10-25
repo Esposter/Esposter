@@ -21,7 +21,7 @@ export const ResourceDefinitionMap = {
     title: ResourceType.Blueprint,
   },
   [ResourceType.Dashboard]: {
-    capabilities: { publishable: true },
+    capabilities: { portable: true, publishable: true },
     contentSchema: dashboardSchema,
     icon: "i-mdi:view-dashboard-edit",
     title: ResourceType.Dashboard,

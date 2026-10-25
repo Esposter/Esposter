@@ -26,6 +26,15 @@ describe("PortableFormatMap", () => {
   const { trpcMsw } = setupMswTrpc();
   const resourceId = crypto.randomUUID();
   const resource = createResourceListItem({ id: resourceId, name: "Meeting", type: ResourceType.Note });
+  const commands = {
+    delete: noop,
+    duplicate: noop,
+    exportDatasetCsv: noop,
+    read: noop,
+    rename: noop,
+    unpublish: noop,
+    versionHistory: noop,
+  };
   const doc: JSONContent = {
     content: [
       { attrs: { level: 1 }, content: [{ text: "Meeting", type: "text" }], type: "heading" },
@@ -76,15 +85,7 @@ describe("PortableFormatMap", () => {
 
     const { exportFormats, importFormats } = usePortableFormats(() => resource);
     const titles = getResourceBladeItems(resource, {
-      commands: {
-        delete: noop,
-        duplicate: noop,
-        exportDatasetCsv: noop,
-        read: noop,
-        rename: noop,
-        unpublish: noop,
-        versionHistory: noop,
-      },
+      commands,
       exportFormats: exportFormats.value,
       importFormats: importFormats.value,
       isDuplicatePending: false,
@@ -95,5 +96,25 @@ describe("PortableFormatMap", () => {
 
     expect(titles).toContain("Export Markdown");
     expect(titles).toContain("Import Markdown");
+  });
+
+  // A picture cannot restore a dashboard, so its menu gains the page image and no import beside it
+  test("The dashboard's overflow menu lists Export PNG and no import", () => {
+    expect.hasAssertions();
+
+    const dashboard = createResourceListItem({ id: crypto.randomUUID(), name: "Sales", type: ResourceType.Dashboard });
+    const { exportFormats, importFormats } = usePortableFormats(() => dashboard);
+    const titles = getResourceBladeItems(dashboard, {
+      commands,
+      exportFormats: exportFormats.value,
+      importFormats: importFormats.value,
+      isDuplicatePending: false,
+      isPending: false,
+      isPublicationPending: false,
+      isPublished: false,
+    }).map(({ title }) => title);
+
+    expect(titles).toContain("Export PNG");
+    expect(titles.filter((title) => title?.startsWith("Import"))).toStrictEqual([]);
   });
 });
