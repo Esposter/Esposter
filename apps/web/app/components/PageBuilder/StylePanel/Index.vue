@@ -98,6 +98,12 @@ const setSectorOpen = (title: string, isOpen: boolean) => {
             :value-text="`${Math.round(opacity * 100)}%`"
             @end="(value) => settleOpacity(value)"
           />
+          <PageBuilderStylePanelBackgroundLayers
+            v-else-if="property === 'background-image'"
+            :model-value="getField(property).value"
+            :placeholder="getField(property).placeholder"
+            @update:model-value="(value) => setField(property, value)"
+          />
           <PageBuilderStylePanelField
             v-else
             :label="property"
