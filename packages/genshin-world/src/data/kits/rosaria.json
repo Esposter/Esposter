@@ -7,10 +7,7 @@
   },
   "hits.ritesTick.hitmarkFrames": { "file": "burst.go", "line": 99, "source": "Gcsim", "value": 0 },
   "hits.ritesTick.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 4539 } },
-  "parameters.ritesOfTerminationSeconds": {
-    "cause": "Unclassified",
-    "value": { "index": 3, "proudSkillGroupId": 4539 }
-  },
+  "parameters.ritesOfTerminationSeconds": { "source": "Tables" },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 2 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 4532 } },
   "skill.hits.1.element": { "file": "skill.go", "line": 73, "source": "Gcsim", "value": "Ice" },

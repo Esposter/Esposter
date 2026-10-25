@@ -21,10 +21,6 @@
   "chargedAttack.hits.1.healParty.isUnshielded": { "cause": "Unsourced", "value": true },
   "frames.heraldHitmark": { "file": "skill.go", "line": 15, "source": "Gcsim", "value": 32 },
   "hits.herald.length": { "cause": "Unsourced", "value": 10 },
-  "hits.herald.0.area": {
-    "cause": "Unclassified",
-    "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 }
-  },
   "hits.herald.0.hitmarkFrames": { "file": "skill.go", "line": 15, "source": "Gcsim", "value": 32 },
   "hits.herald.0.multiplier": { "source": "Gcsim", "value": { "index": 7, "proudSkillGroupId": 3532 } },
   "hits.herald.1.area": {
@@ -181,5 +177,7 @@
   "parameters.talismanSeconds": { "cause": "Unsourced", "value": { "index": 3, "proudSkillGroupId": 3539 } },
   "parameters.talismanHealHealth": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 3539 } },
   "parameters.talismanHealAttackShare": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 3539 } },
-  "burst.hits.0.internalCooldownTag": { "source": "Wiki" }
+  "burst.hits.0.internalCooldownTag": { "source": "Wiki" },
+  "chargedAttack.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 5, "proudSkillGroupId": 3531 } },
+  "chargedAttack.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 5, "proudSkillGroupId": 3531 } }
 }

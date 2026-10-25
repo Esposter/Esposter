@@ -5,7 +5,7 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
   },
   "hits.aurousBlazeExplosion.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 4939 } },
-  "parameters.niwabiFireDanceSeconds": { "cause": "Unclassified", "value": { "index": 1, "proudSkillGroupId": 4932 } },
+  "parameters.niwabiFireDanceSeconds": { "source": "Tables" },
   "parameters.aurousBlazeSeconds": { "cause": "Unsourced", "value": { "index": 3, "proudSkillGroupId": 4939 } },
   "parameters.aurousBlazeExplosionCooldownSeconds": {
     "cause": "Unsourced",

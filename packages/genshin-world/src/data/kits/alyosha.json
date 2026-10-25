@@ -95,11 +95,11 @@
   "skill.animationFrames": { "cause": "NoGcsimUnit", "value": 20 },
   "skill.hits.length": { "cause": "NoGcsimUnit", "value": 1 },
   "skill.hits.0.area": {
-    "cause": "Unclassified",
+    "cause": "NoGcsimUnit",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 4.648655719667784 }
   },
   "skill.hits.0.element": { "cause": "NoGcsimUnit", "value": "Electric" },
-  "skill.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 16 },
+  "skill.hits.0.hitmarkFrames": { "cause": "NoGcsimUnit", "value": 16 },
   "skill.hits.0.multiplier": { "cause": "NoGcsimUnit", "value": { "index": 0, "proudSkillGroupId": 14832 } },
   "burst.animationFrames": { "cause": "NoGcsimUnit", "value": 50 },
   "burst.hits.length": { "cause": "NamedHitList", "value": 0 }
