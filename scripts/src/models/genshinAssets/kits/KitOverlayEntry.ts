@@ -1,13 +1,7 @@
+import { type KitDonor, kitDonorSchema } from "#src/models/genshinAssets/kits/KitDonor";
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { z } from "zod";
-
-// A value borrowed from a donor names the donor's character and the path of the value in the donor's record, its index
-// Being the donor's where the borrower's differs, and carries no value of its own
-export interface KitDonor {
-  characterId: number;
-  path: string;
-}
 
 // One value of a kit's overlay: a value no source holds with its cause, a value removed with its cause where a source
 // Holds one the kit does not, or the source chosen where the sources disagree. A source chosen by a join, a named hit's
@@ -21,11 +15,6 @@ export type KitOverlayEntry =
   | { file: string; index?: number; line: number; source: KitSource.Gcsim; value?: unknown }
   | { page: string; row: number; source: KitSource.Wiki; value?: unknown }
   | { source: KitSource.Gcsim | KitSource.Tables | KitSource.Wiki; value?: unknown };
-
-export const kitDonorSchema: z.ZodType<KitDonor> = z.strictObject({
-  characterId: z.int().positive(),
-  path: z.string().min(1),
-});
 
 export const kitOverlayEntrySchema: z.ZodType<KitOverlayEntry> = z.union([
   z
