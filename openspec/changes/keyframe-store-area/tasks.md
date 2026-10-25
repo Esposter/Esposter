@@ -2,7 +2,7 @@
 
 ## 1. Area index
 
-- [ ] 1.1 Write: what the package is, its key concepts (keyframe, delta, anchor, base, segment), and its two pages. Verify: `openspec validate keyframe-store-area --strict --no-interactive` passes, and the links in the index resolve.
+- [ ] 1.1 Write openspec/specs/keyframe-store/README.md: what the package is, its key concepts (keyframe, delta, anchor, base, segment), and its two pages. Verify: `openspec validate keyframe-store-area --strict --no-interactive` passes, and the links in the index resolve.
 
 ## 2. Object format
 
@@ -21,4 +21,4 @@
 
 ## 5. Archive
 
-- [ ] 5.1 Archive the change into the specs with `pnpm exec openspec archive keyframe-store-area --yes`, and add its line to the architecture shipped log. Verify: `openspec/changes/keyframe-store-area/specs/keyframe-store/object-format/spec.md` and `version-store/spec.md` exist, and `openspec/changes/keyframe-store-area` is gone.
+- [ ] 5.1 Archive the change into the specs with `pnpm exec openspec archive keyframe-store-area --yes`, and add its line to the architecture shipped log. Verify: openspec/specs/keyframe-store/object-format/spec.md and openspec/specs/keyframe-store/version-store/spec.md exist, and `openspec/changes/keyframe-store-area` is gone.
