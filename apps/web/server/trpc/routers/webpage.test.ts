@@ -1,8 +1,13 @@
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { createCallerFactory } from "#server/trpc";
+import { createSurvey } from "#server/trpc/routers/createSurvey.test";
+import { resourceRouter } from "#server/trpc/routers/resource";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
+import { surveyRouter } from "#server/trpc/routers/survey";
 import { webpageRouter } from "#server/trpc/routers/webpage";
+import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { createTestImageNode } from "#shared/services/pageBuilder/constants.test";
 import { createTestTextDocument } from "#shared/services/pageBuilder/createTestTextDocument.test";
@@ -14,13 +19,17 @@ import { MockBlockBlobClient, MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 describe("webpageRouter", () => {
-  const { getCaller } = setupResourceSuite(webpageRouter);
+  const { getCaller, getMockContext } = setupResourceSuite(webpageRouter);
   let caller: DecorateRouterRecord<TRPCRouter["webpage"]>;
+  let resourceCaller: DecorateRouterRecord<TRPCRouter["resource"]>;
+  let surveyCaller: DecorateRouterRecord<TRPCRouter["survey"]>;
   const name = "name";
   const hash = "a".repeat(64);
 
   beforeAll(() => {
     caller = getCaller();
+    resourceCaller = createCallerFactory(resourceRouter)(getMockContext());
+    surveyCaller = createCallerFactory(surveyRouter)(getMockContext());
   });
 
   afterEach(() => {
@@ -109,5 +118,30 @@ describe("webpageRouter", () => {
 
     expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(assetBlobName)).toBe(true);
     expect(JSON.stringify(await caller.readResourceContent({ id: newResource.id }))).toContain(url);
+  });
+
+  // The survey invite's survey is indexed as a link when the page saves, so the survey's own delete reads the page as its consumer
+  test("Deleting a surveyed invite's survey names the webpage", async () => {
+    expect.hasAssertions();
+
+    const newSurvey = await createSurvey(surveyCaller, name, {
+      model: JSON.stringify({ pages: [{ elements: [{ name, type: "rating" }] }] }),
+    });
+    const newResource = await caller.createResource({ name });
+    await caller.saveResourceContent({
+      content: new WebpageEditor({
+        content: [
+          {
+            props: { id: crypto.randomUUID(), label: name, surveyId: newSurvey.id },
+            type: WebpageNodeType.SurveyInvite,
+          },
+        ],
+      }),
+      contentVersion: newResource.contentVersion,
+      id: newResource.id,
+    });
+    const consumers = await resourceCaller.readResourceConsumers({ ids: [newSurvey.id] });
+
+    expect(consumers).toStrictEqual([{ id: newResource.id, name, type: ResourceType.Webpage }]);
   });
 });
