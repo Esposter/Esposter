@@ -53,8 +53,12 @@ describe(getMcpTools, () => {
           "todoList_readFollowUps",
         ],
         "Resources": [
+          "blueprint_captureBlueprint",
+          "blueprint_deployBlueprint",
           "dataset_readDataset",
           "note_writeNoteMarkdown",
+          "program_generateProgramParticipants",
+          "program_readProgramStatus",
           "resource_createResource",
           "resource_deleteResources",
           "resource_duplicateResource",
@@ -74,6 +78,8 @@ describe(getMcpTools, () => {
           "resource_publishResource",
           "resource_unpublishResource",
           "sheet_runSheetCommand",
+          "survey_readSurveyResponseRecords",
+          "survey_readSurveyResponsesCount",
           "todoList_toggleTodoCompleted",
         ],
       }

@@ -16,6 +16,7 @@ import { createResourceProcedures } from "#server/trpc/procedure/resource/create
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
 import { slowRateLimitedProcedure } from "#server/trpc/procedure/slowRateLimitedProcedure";
 import { standardRateLimitedProcedure } from "#server/trpc/procedure/standardRateLimitedProcedure";
+import { McpScope } from "#shared/models/auth/McpScope";
 import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInput";
 import { createSurveyResponseInputSchema } from "#shared/models/db/survey/CreateSurveyResponseInput";
 import { deleteSurveyResponseInputSchema } from "#shared/models/db/survey/DeleteSurveyResponseInput";
@@ -68,16 +69,20 @@ export const surveyRouter = router({
     }),
   // The dataset contract carries no keys, so the blade reads rows keyed through its own procedure —
   // A blade-local read concern, not a Dataset shape change
-  readSurveyResponseRecords: getOwnerProcedure(
-    ResourceType.Survey,
-    resourceIdInputSchema,
-    "id",
-  ).query<SurveyResponseRecords>(({ ctx }) => readSurveyResponseRecords(ctx.resource.id)),
-  readSurveyResponsesCount: getOwnerProcedure(
-    ResourceType.Survey,
-    resourceIdInputSchema,
-    "id",
-  ).query<ReadSurveyResponsesCountResult>(({ ctx }) => readSurveyResponsesCount(ctx.resource.id)),
+  readSurveyResponseRecords: getOwnerProcedure(ResourceType.Survey, resourceIdInputSchema, "id")
+    .meta({
+      mcp: {
+        description:
+          "Read a survey's responses, one record per respondent, as its owner reads them. Answers the records.",
+        scope: McpScope.Resources,
+      },
+    })
+    .query<SurveyResponseRecords>(({ ctx }) => readSurveyResponseRecords(ctx.resource.id)),
+  readSurveyResponsesCount: getOwnerProcedure(ResourceType.Survey, resourceIdInputSchema, "id")
+    .meta({
+      mcp: { description: "Count the responses a survey has received. Answers the count.", scope: McpScope.Resources },
+    })
+    .query<ReadSurveyResponsesCountResult>(({ ctx }) => readSurveyResponsesCount(ctx.resource.id)),
   updateSurveyResponse: standardRespondentProcedure
     .input(updateSurveyResponseInputSchema)
     .mutation<SurveyResponseEntity>(async ({ ctx, input: { isDraft, ...input } }) => {

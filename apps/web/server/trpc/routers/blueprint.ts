@@ -9,6 +9,7 @@ import { router } from "#server/trpc";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
+import { McpScope } from "#shared/models/auth/McpScope";
 import { captureBlueprintInputSchema } from "#shared/models/db/blueprint/CaptureBlueprintInput";
 import { deployBlueprintInputSchema } from "#shared/models/db/blueprint/DeployBlueprintInput";
 import { blueprintResourceSchema } from "#shared/models/resource/blueprint/BlueprintResource";
@@ -19,13 +20,26 @@ export const blueprintRouter = router({
   // Owner-gated capture reads other resources' content, so ownership of every id is verified in the service
   captureBlueprint: standardAuthedProcedure
     .input(captureBlueprintInputSchema)
+    .meta({
+      mcp: {
+        description:
+          "Capture a new blueprint of the given name from the owner's resources, by their ids. Answers the blueprint.",
+        scope: McpScope.Resources,
+      },
+    })
     .mutation<ResourceInResource>(({ ctx, input: { ids, name } }) => captureBlueprint(ctx, ids, name)),
-  deployBlueprint: getOwnerProcedure(ResourceType.Blueprint, deployBlueprintInputSchema, "id").mutation<
-    BlueprintDeployment[]
-  >(async ({ ctx, input: { parameterValues } }) => {
-    const content = await readResourceContent(blueprintResourceSchema, ctx.resource.id);
-    if (content === undefined) throw getInvalidBlueprintError("cannot deploy blueprint without content");
+  deployBlueprint: getOwnerProcedure(ResourceType.Blueprint, deployBlueprintInputSchema, "id")
+    .meta({
+      mcp: {
+        description:
+          "Deploy a blueprint with its parameter values, which creates the resources it describes. Answers what was deployed.",
+        scope: McpScope.Resources,
+      },
+    })
+    .mutation<BlueprintDeployment[]>(async ({ ctx, input: { parameterValues } }) => {
+      const content = await readResourceContent(blueprintResourceSchema, ctx.resource.id);
+      if (content === undefined) throw getInvalidBlueprintError("cannot deploy blueprint without content");
 
-    return deployBlueprint(ctx, content, parameterValues);
-  }),
+      return deployBlueprint(ctx, content, parameterValues);
+    }),
 });

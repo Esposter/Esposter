@@ -15,5 +15,5 @@
 
 ## 3. Each type's own operations
 
-- [ ] 3.1 Serve Blueprint capture and deploy, Program participant and status, and Survey response reads to agent keys. Verify: a test named after the scenario 'Repeating participant generation returns the same tokens', failing first, then passing.
+- [x] 3.1 Serve Blueprint capture and deploy, Program participant and status, and Survey response reads to agent keys. Verify: a test named after the scenario 'Repeating participant generation returns the same tokens', failing first, then passing.
 - [ ] 3.2 Declare the remaining type-specific procedures, so the declaration check agent keys specifies passes in CI. Verify: its scenario 'Every type-specific procedure declares its key access' passes in CI.
