@@ -56,11 +56,14 @@ import { z } from "zod";
 // The consumer's leaf node and rich text are passed in, since a leaf is named only by the consumer and a text's content is read by its rich text's schema
 export const createMjmlNodeSchema = <TContent extends MjmlRichText>({
   leafNodeSchema,
+  maxChildren,
   richText,
 }: CreateMjmlNodeSchemaOptions<TContent>): {
   bodyChildrenSchema: z.ZodType<MjmlNode>;
   nodeSchema: z.ZodType<MjmlNode>;
 } => {
+  // A slot's children are bounded by the most nodes a document may hold, so no slot can hold more than a document can
+  const childrenOf = (schema: z.ZodType<MjmlNode>) => z.array(schema).max(maxChildren);
   const textNode = createMjmlNodeBranch(
     MjmlNodeType.Text,
     createMjmlTextPropsSchema(richText),
@@ -78,10 +81,10 @@ export const createMjmlNodeSchema = <TContent extends MjmlRichText>({
     {},
   ) satisfies z.ZodType<MjmlAccordionTextNode>;
   const accordionElementNode = createMjmlNodeBranch(MjmlNodeType.AccordionElement, accordionElementPropsSchema, {
-    children: z.array(createMjmlSlotSchema([accordionTitleNode, accordionTextNode, rawNode])),
+    children: childrenOf(createMjmlSlotSchema([accordionTitleNode, accordionTextNode, rawNode])),
   }) satisfies z.ZodType<MjmlAccordionElementNode>;
   const accordionNode = createMjmlNodeBranch(MjmlNodeType.Accordion, accordionPropsSchema, {
-    children: z.array(createMjmlSlotSchema([accordionElementNode, rawNode])),
+    children: childrenOf(createMjmlSlotSchema([accordionElementNode, rawNode])),
   }) satisfies z.ZodType<MjmlAccordionNode>;
   const buttonNode = createMjmlNodeBranch(
     MjmlNodeType.Button,
@@ -94,7 +97,7 @@ export const createMjmlNodeSchema = <TContent extends MjmlRichText>({
     {},
   ) satisfies z.ZodType<MjmlCarouselImageNode>;
   const carouselNode = createMjmlNodeBranch(MjmlNodeType.Carousel, carouselPropsSchema, {
-    children: z.array(createMjmlSlotSchema([carouselImageNode])),
+    children: childrenOf(createMjmlSlotSchema([carouselImageNode])),
   }) satisfies z.ZodType<MjmlCarouselNode>;
   const dividerNode = createMjmlNodeBranch(
     MjmlNodeType.Divider,
@@ -108,7 +111,7 @@ export const createMjmlNodeSchema = <TContent extends MjmlRichText>({
     {},
   ) satisfies z.ZodType<MjmlNavbarLinkNode>;
   const navbarNode = createMjmlNodeBranch(MjmlNodeType.Navbar, navbarPropsSchema, {
-    children: z.array(createMjmlSlotSchema([navbarLinkNode, rawNode])),
+    children: childrenOf(createMjmlSlotSchema([navbarLinkNode, rawNode])),
   }) satisfies z.ZodType<MjmlNavbarNode>;
   const socialElementNode = createMjmlNodeBranch(
     MjmlNodeType.SocialElement,
@@ -116,7 +119,7 @@ export const createMjmlNodeSchema = <TContent extends MjmlRichText>({
     {},
   ) satisfies z.ZodType<MjmlSocialElementNode>;
   const socialNode = createMjmlNodeBranch(MjmlNodeType.Social, socialPropsSchema, {
-    children: z.array(createMjmlSlotSchema([socialElementNode, rawNode])),
+    children: childrenOf(createMjmlSlotSchema([socialElementNode, rawNode])),
   }) satisfies z.ZodType<MjmlSocialNode>;
   const spacerNode = createMjmlNodeBranch(
     MjmlNodeType.Spacer,
@@ -140,19 +143,19 @@ export const createMjmlNodeSchema = <TContent extends MjmlRichText>({
     leafNodeSchema,
   ]);
   const columnNode = createMjmlNodeBranch(MjmlNodeType.Column, columnPropsSchema, {
-    children: z.array(flowChildrenSchema),
+    children: childrenOf(flowChildrenSchema),
   }) satisfies z.ZodType<MjmlColumnNode>;
   const groupNode = createMjmlNodeBranch(MjmlNodeType.Group, groupPropsSchema, {
-    children: z.array(createMjmlSlotSchema([columnNode, rawNode])),
+    children: childrenOf(createMjmlSlotSchema([columnNode, rawNode])),
   }) satisfies z.ZodType<MjmlGroupNode>;
   const heroNode = createMjmlNodeBranch(MjmlNodeType.Hero, heroPropsSchema, {
-    children: z.array(flowChildrenSchema),
+    children: childrenOf(flowChildrenSchema),
   }) satisfies z.ZodType<MjmlHeroNode>;
   const sectionNode = createMjmlNodeBranch(MjmlNodeType.Section, sectionPropsSchema, {
-    children: z.array(createMjmlSlotSchema([columnNode, groupNode, rawNode])),
+    children: childrenOf(createMjmlSlotSchema([columnNode, groupNode, rawNode])),
   }) satisfies z.ZodType<MjmlSectionNode>;
   const wrapperNode = createMjmlNodeBranch(MjmlNodeType.Wrapper, wrapperPropsSchema, {
-    children: z.array(createMjmlSlotSchema([heroNode, rawNode, sectionNode])),
+    children: childrenOf(createMjmlSlotSchema([heroNode, rawNode, sectionNode])),
   }) satisfies z.ZodType<MjmlWrapperNode>;
 
   const nodeSchema = z.discriminatedUnion("type", [

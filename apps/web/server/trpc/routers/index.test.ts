@@ -8,9 +8,10 @@ import { z } from "zod";
 
 // Every path under `schema` where a string or an array accepts input of any size. A string is bounded by a
 // Length, a format or a pattern (each of which a request cannot stretch past what the format allows, since an
-// Anchored format rejects the excess), and an array by its item count
+// Anchored format rejects the excess), and an array by its item count. An opaque subschema is skipped: it holds whatever
+// Strings and arrays it is sent, which its own schema parses once it is applied
 const readUnboundedPaths = (schema: boolean | JSONSchema.JSONSchema, path: string): string[] => {
-  if (typeof schema === "boolean") return [];
+  if (typeof schema === "boolean" || schema[OPAQUE_KEY] === true) return [];
 
   const unboundedPaths: string[] = [];
   const types = Array.isArray(schema.type) ? schema.type : [schema.type];
@@ -47,6 +48,18 @@ const readUnboundedPaths = (schema: boolean | JSONSchema.JSONSchema, path: strin
   return unboundedPaths;
 };
 
+// The JSON Schema of a procedure's input, read as the output side, where the convention puts every constraint
+const getInputJsonSchemas = (procedure: AnyProcedure) =>
+  procedure._def.inputs.map((input) =>
+    z.toJSONSchema(input as z.ZodType, {
+      io: "output",
+      override: ({ jsonSchema: overriddenJsonSchema, zodSchema }) => {
+        if (zodSchema instanceof z.ZodAny || zodSchema instanceof z.ZodUnknown) overriddenJsonSchema[OPAQUE_KEY] = true;
+      },
+      unrepresentable: "any",
+    }),
+  );
+
 describe("trpcRouter", () => {
   // A request body is parsed whole before a procedure runs, so an input with no ceiling lets any caller hand the
   // Server a string or an array as large as the body limit, and have it validated, stored or queried with
@@ -59,28 +72,15 @@ describe("trpcRouter", () => {
     const procedures = trpcRouter._def.procedures as unknown as Record<string, AnyProcedure>;
 
     for (const [procedurePath, procedure] of Object.entries(procedures))
-      for (const input of procedure._def.inputs) {
-        // The output side is where the convention puts every constraint: a normalised string trims before its
-        // Final pipe checks the length, so its input side is a bare string by construction
-        const jsonSchema = z.toJSONSchema(input as z.ZodType, {
-          io: "output",
-          override: ({ jsonSchema: overriddenJsonSchema, zodSchema }) => {
-            if (zodSchema instanceof z.ZodAny || zodSchema instanceof z.ZodUnknown)
-              overriddenJsonSchema[OPAQUE_KEY] = true;
-          },
-          unrepresentable: "any",
-        });
+      for (const jsonSchema of getInputJsonSchemas(procedure)) {
         if (readUnboundedPaths(jsonSchema, procedurePath).length > 0) unboundedProcedurePaths.add(procedurePath);
         if (JSON.stringify(jsonSchema).includes(`"${OPAQUE_KEY}":true`)) opaqueProcedurePaths.add(procedurePath);
       }
 
-    expect(
-      [...unboundedProcedurePaths].filter((procedurePath) => !opaqueProcedurePaths.has(procedurePath)),
-    ).toStrictEqual([]);
-    // An opaque value holds whatever strings and arrays it is sent, so these are the procedures where only the body
-    // Limit bounds them: each carries a document whose shape another library or resource owns (TipTap,
-    // SurveyJS answers, a blueprint's entries), or a patch's values, which the resource's own schema parses once
-    // Applied. A new one fails here until it is bounded or named
+    expect([...unboundedProcedurePaths]).toStrictEqual([]);
+    // An opaque value holds whatever strings and arrays it is sent, so these are the procedures that carry one: each
+    // Carries a document whose shape another library or resource owns (TipTap, SurveyJS answers, a blueprint's entries),
+    // Or a patch's values, which the resource's own schema parses once applied. A new one is bounded beside it or named
     expect([...opaqueProcedurePaths]).toStrictEqual([
       "blueprint.saveResourceContent",
       "email.saveResourceContent",
@@ -91,5 +91,29 @@ describe("trpcRouter", () => {
       "survey.updateSurveyResponse",
       "webpage.saveResourceContent",
     ]);
+  });
+
+  test("An unbounded string beside an opaque document fails the guard", () => {
+    expect.hasAssertions();
+
+    const schema = z.toJSONSchema(z.object({ document: z.unknown(), title: z.string() }), {
+      io: "output",
+      override: ({ jsonSchema, zodSchema }) => {
+        if (zodSchema instanceof z.ZodUnknown) jsonSchema[OPAQUE_KEY] = true;
+      },
+      unrepresentable: "any",
+    });
+
+    expect(readUnboundedPaths(schema, "input")).toStrictEqual(["input.title (string)"]);
+  });
+
+  test("The MJML root's strings are bounded", () => {
+    expect.hasAssertions();
+
+    const procedure = (trpcRouter._def.procedures as unknown as Record<string, AnyProcedure>)["email.compile"];
+
+    expect(
+      getInputJsonSchemas(procedure!).flatMap((jsonSchema) => readUnboundedPaths(jsonSchema, "email.compile")),
+    ).toStrictEqual([]);
   });
 });

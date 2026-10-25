@@ -16,6 +16,15 @@ export const WEBPAGE_PLACEABLE_NODE_TYPES = Object.values(WebpageNodeType).filte
 
 // The most characters a style value may hold, so one value cannot grow a rule past what a render writes
 export const MAX_STYLE_VALUE_LENGTH = 200;
+// The most characters a node's id may hold, and each of its text props: a label, a text, alt text or a title
+export const MAX_NODE_ID_LENGTH = 64;
+export const MAX_NODE_TEXT_LENGTH = 2000;
+// The most characters a custom HTML block's markup, an address, and a webpage's language tag may hold
+export const MAX_NODE_HTML_LENGTH = 100_000;
+export const MAX_URL_LENGTH = 2048;
+export const MAX_LANG_LENGTH = 35;
+// The most texts a typed text node cycles through
+export const MAX_TYPED_TEXT_COUNT = 50;
 // The CSS properties the style panel offers, in the panel's sector order: layout, spacing, size, position, typography, background, border and effects
 export const STYLE_PROPERTY_NAMES = [
   "display",

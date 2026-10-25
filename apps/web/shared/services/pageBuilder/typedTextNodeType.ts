@@ -7,10 +7,13 @@ import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName"
 import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { nodeStyleSchema } from "#shared/models/pageBuilder/NodeStyle";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
+import { MAX_NODE_TEXT_LENGTH, MAX_TYPED_TEXT_COUNT } from "#shared/services/pageBuilder/constants";
 import { takeOne } from "@esposter/shared";
 import { z } from "zod";
 
-const typedTextFormSchema = z.strictObject({ texts: z.array(z.string().min(1)).min(1) });
+const typedTextFormSchema = z.strictObject({
+  texts: z.array(z.string().min(1).max(MAX_NODE_TEXT_LENGTH)).min(1).max(MAX_TYPED_TEXT_COUNT),
+});
 const typedTextPropsSchema = z.object({
   ...typedTextFormSchema.shape,
   style: nodeStyleSchema.optional(),

@@ -8,6 +8,7 @@ import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { nodeStyleSchema } from "#shared/models/pageBuilder/NodeStyle";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { checkIsRealEndsAt } from "#shared/services/pageBuilder/checkIsRealEndsAt";
+import { MAX_NODE_TEXT_LENGTH } from "#shared/services/pageBuilder/constants";
 import { createCountdownUnit } from "#shared/services/pageBuilder/createCountdownUnit";
 import { z } from "zod";
 
@@ -16,7 +17,7 @@ const ENDS_AT_REGEX = /^(?<year>\d{4})-(?<month>\d{2})-(?<day>\d{2})(?:T(?<hour>
 
 const countdownFormSchema = z.strictObject({
   endsAt: z.string().regex(ENDS_AT_REGEX).refine(checkIsRealEndsAt, { error: "is not a real date and time" }),
-  endText: z.string(),
+  endText: z.string().max(MAX_NODE_TEXT_LENGTH),
 });
 const countdownPropsSchema = z.object({
   ...countdownFormSchema.shape,

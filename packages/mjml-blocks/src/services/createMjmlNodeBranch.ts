@@ -1,3 +1,4 @@
+import { MJML_NAME_MAX_LENGTH } from "#src/services/constants";
 import { z } from "zod";
 
 // A node's branch of its union: its type tag, its props checked by the props schema's own refinements once the shape passes, its id and each slot's children
@@ -14,15 +15,17 @@ export const createMjmlNodeBranch = <
   type: z.ZodLiteral<TType>;
 }> => {
   const declaredKeys = Object.keys(propsSchema.shape);
-  const props = z.strictObject({ ...propsSchema.shape, id: z.string(), ...slots }).superRefine(
-    (value, context) => {
-      const declaredProps = Object.fromEntries(
-        Object.entries(value).filter(([key]) => declaredKeys.includes(String(key))),
-      );
-      for (const { message, path } of propsSchema.safeParse(declaredProps).error?.issues ?? [])
-        context.addIssue({ code: "custom", message, path });
-    },
-    { when: ({ issues }) => issues.length === 0 },
-  );
+  const props = z
+    .strictObject({ ...propsSchema.shape, id: z.string().max(MJML_NAME_MAX_LENGTH), ...slots })
+    .superRefine(
+      (value, context) => {
+        const declaredProps = Object.fromEntries(
+          Object.entries(value).filter(([key]) => declaredKeys.includes(String(key))),
+        );
+        for (const { message, path } of propsSchema.safeParse(declaredProps).error?.issues ?? [])
+          context.addIssue({ code: "custom", message, path });
+      },
+      { when: ({ issues }) => issues.length === 0 },
+    );
   return z.object({ props, type: z.literal(type) });
 };

@@ -5,6 +5,14 @@ export const ALL_ATTRIBUTES_KEY = "mj-all";
 // The attribute the root's direction is written under, HTML's own name for it, held as a string since no identifier of ours takes it
 export const DIRECTION_ATTRIBUTE_KEY = "dir";
 export const ALLOWED_URL_SCHEMES: string[] = ["http", "https", "mailto", "tel"];
+// The most characters a name may hold: a tag, an attribute, a font's name, a language tag and a node's id
+export const MJML_NAME_MAX_LENGTH = 64;
+// The most characters a value may hold: an attribute value, an address or a font's href, so a render never grows past it
+export const MJML_VALUE_MAX_LENGTH = 2048;
+// The most characters a piece of content may hold: a label, a raw block's markup or a stylesheet
+export const MJML_CONTENT_MAX_LENGTH = 100_000;
+// The most entries a root's list may hold: its fonts and its styles
+export const MJML_ROOT_LIST_MAX_LENGTH = 100;
 // The tags MJML's preset lists that the package leaves out: includes read the disk, and the other two target by selector
 export const EXCLUDED_MJML_TAGS: string[] = ["mj-include", "mj-html-attributes", "mj-class"];
 // The body's allowed children, and the attributes its own element takes, as MJML's preset lists them

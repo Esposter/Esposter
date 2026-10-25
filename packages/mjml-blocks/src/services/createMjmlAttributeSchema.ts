@@ -3,7 +3,7 @@ import type { MjmlAttributeType } from "#src/models/MjmlAttributeType";
 import { MjmlAttributeKind } from "#src/models/MjmlAttributeKind";
 import { allowedAddressSchema } from "#src/services/allowedAddressSchema";
 import { checkIsMjmlAddressAttribute } from "#src/services/checkIsMjmlAddressAttribute";
-import { MJML_COLOR_MATCHERS } from "#src/services/constants";
+import { MJML_COLOR_MATCHERS, MJML_VALUE_MAX_LENGTH } from "#src/services/constants";
 import { parseMjmlAttributeType } from "#src/services/parseMjmlAttributeType";
 import { exhaustiveGuard } from "@esposter/shared";
 import { z } from "zod";
@@ -21,19 +21,21 @@ const createUnitPattern = (units: string[], isNegativeAllowed: boolean, minCount
 };
 
 const createTypeSchema = (type: MjmlAttributeType): z.ZodType<string> => {
+  // Every branch starts from one bounded string, so no value a branch checks is longer than a value may be
+  const boundedString = z.string().max(MJML_VALUE_MAX_LENGTH);
   switch (type.kind) {
     case MjmlAttributeKind.Boolean:
-      return z.string().refine((value) => ["false", "true"].includes(value));
+      return boundedString.refine((value) => ["false", "true"].includes(value));
     case MjmlAttributeKind.Color:
-      return z.string().refine((value) => MJML_COLOR_MATCHERS.some((matcher) => matcher.test(value)));
+      return boundedString.refine((value) => MJML_COLOR_MATCHERS.some((matcher) => matcher.test(value)));
     case MjmlAttributeKind.Enum:
-      return z.string().refine((value) => type.options.includes(value));
+      return boundedString.refine((value) => type.options.includes(value));
     case MjmlAttributeKind.Integer:
-      return z.string().regex(/^\d+$/u);
+      return boundedString.regex(/^\d+$/u);
     case MjmlAttributeKind.String:
-      return z.string();
+      return boundedString;
     case MjmlAttributeKind.Unit:
-      return z.string().regex(createUnitPattern(type.units, type.isNegativeAllowed, type.minCount, type.maxCount));
+      return boundedString.regex(createUnitPattern(type.units, type.isNegativeAllowed, type.minCount, type.maxCount));
     default:
       return exhaustiveGuard(type);
   }

@@ -59,7 +59,12 @@ export const TEST_LEAF_NODE_SCHEMA: z.ZodObject<
   props: z.strictObject({ id: z.string() }),
   type: z.literal("test-leaf"),
 }) satisfies z.ZodType<TestLeafNode>;
-const TEST_SCHEMAS = createMjmlNodeSchema({ leafNodeSchema: TEST_LEAF_NODE_SCHEMA, richText: TEST_RICH_TEXT });
+const TEST_MAX_CHILDREN = 100;
+const TEST_SCHEMAS = createMjmlNodeSchema({
+  leafNodeSchema: TEST_LEAF_NODE_SCHEMA,
+  maxChildren: TEST_MAX_CHILDREN,
+  richText: TEST_RICH_TEXT,
+});
 export const TEST_NODE_SCHEMA: z.ZodType<MjmlNode> = TEST_SCHEMAS.nodeSchema;
 // The schema of a document's content: the children the body takes
 export const TEST_BODY_CHILDREN_SCHEMA: z.ZodType<MjmlNode> = TEST_SCHEMAS.bodyChildrenSchema;

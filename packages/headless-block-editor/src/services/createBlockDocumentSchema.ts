@@ -18,12 +18,14 @@ export const createBlockDocumentSchema = <TNode extends BlockNode, TRootProps ex
   children: BlockChildren<TNode>,
   maxNodes: number,
 ): z.ZodType<BlockDocument<TNode, TRootProps>> =>
-  z.object({ content: z.array(contentSchema), root: z.object({ props: registry.root.propsSchema }) }).superRefine(
-    (document, context) => {
-      const collection: BlockCollection = { count: 0, ids: new Set() };
-      checkBlockNodeIds(context, registry, children, document.content, ["content"], collection);
-      if (collection.count > maxNodes)
-        context.addIssue({ code: "custom", message: `holds more than ${maxNodes} nodes`, path: ["content"] });
-    },
-    { when: ({ issues }) => issues.length === 0 },
-  );
+  z
+    .object({ content: z.array(contentSchema).max(maxNodes), root: z.object({ props: registry.root.propsSchema }) })
+    .superRefine(
+      (document, context) => {
+        const collection: BlockCollection = { count: 0, ids: new Set() };
+        checkBlockNodeIds(context, registry, children, document.content, ["content"], collection);
+        if (collection.count > maxNodes)
+          context.addIssue({ code: "custom", message: `holds more than ${maxNodes} nodes`, path: ["content"] });
+      },
+      { when: ({ issues }) => issues.length === 0 },
+    );
