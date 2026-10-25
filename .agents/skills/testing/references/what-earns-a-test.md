@@ -13,6 +13,8 @@ The default is delete. A test is kept only when it passes these four steps in or
 
 A guard clause decided in this file is the one exception to step 2: it earns its own case even when a caller also reaches it, because the owner does not decide it here. Removing a test that a change made redundant is part of the change.
 
+The keep test is the standard, not a budget: the aim is code with no test left that asserts nothing a reviewer would care about, and a test count is never a goal. A passing test that would still pass after the bug it names is not coverage, so it is deleted or rewritten until it would fail.
+
 ## Never earns a line
 
 - **A constant, map, schema, enum or generated artifact restated.** The assertion fails only on a deliberate edit, and the diff is the review. The exception is a literal fixed outside this repo (a wire or protocol value, a security limit, a retention window), where catching the edit is the point.
@@ -25,9 +27,12 @@ A guard clause decided in this file is the one exception to step 2: it earns its
 - **Production API added for a test's benefit.** Before building a completion signal, reset hook or inspection getter onto a primitive, grep for who else would call it. "Only the test" means the signal exists already: work through `getSynchronizedFunction` is drained by `waitForSynchronizedFunctions()`. A test-only export means the wrong seam, or a drain the repo already owns.
 - **One product's copy of a generic mechanism**, when the mechanism's own suite already runs the same branch. The mechanism is tested once, generically. A product's test covers only what that product decides.
 - **A name that describes no caller-visible behaviour** — "works", "handles the case", "is correct". If the name cannot be written as a regression, step 1 of the keep test fails.
+- **A skipped or todo test.** `test.skip`, `describe.todo`, `it.todo` and a placeholder left in a file are deleted with the test they stand in for; a parked test is a test nobody runs.
+- **A tautological expectation.** The expected value is computed by the same code under test, or restates the input, so the assertion cannot fail while the code is wrong.
 
 ## Case law
 
+- **Assert the exact value the code produces, never a weaker match.** Where the expected output is known, the test asserts it whole: a `toContain` fragment, a `toBeGreaterThan` on a count, or an `expect.any` stands in for a value the test could know, so it is rewritten to the exact value. A fragment match is kept only when the rest of the output is genuinely unknowable, and the test's title says so.
 - **Test composables, not the service functions under them.** Composable tests cover the full call chain. A service is tested directly only when it has no composable wrapper.
 - **One test per operation.** All of its field assertions go in one test; "updates name" and "updates bio" are one test.
 - **A hand-written type over a third-party data file earns exactly one shape test.** Nothing typechecks a `declare module` against the bytes, so a dependency bump that renames a key passes every other gate silently. Assert one known record `toStrictEqual` its whole shape, plus any invariant the type encodes. This is the fixed-outside-the-repo exception, not a restated constant.
