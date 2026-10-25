@@ -23,7 +23,7 @@ const { data, error, refresh } = useQuery(() => $trpc.email.compile.query(emailD
   },
 });
 const message = computed(() => (data.value && "message" in data.value ? data.value.message : ""));
-// The width the canvas draws the email at for each device, so Preview and the canvas agree on a device's width
+// Mobile and tablet match the canvas's width for their device. Desktop fills the pane, where the canvas uses its minimum
 const frameWidth = computed(() => (device === PageBuilderDevice.Desktop ? "100%" : `${DEVICE_WIDTH_MAP[device]}px`));
 // Each edit schedules one compile on the autosave's cadence, so a run of keystrokes compiles once
 const { start: scheduleRefresh } = useTimeoutFn(refresh, RESOURCE_AUTOSAVE_DEBOUNCE_MS, { immediate: false });
