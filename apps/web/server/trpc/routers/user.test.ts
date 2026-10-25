@@ -67,6 +67,25 @@ describe("userRouter", () => {
   const userId = getMockSession().user.id;
   const getCallBackgroundUrl = (slot: number) =>
     `${MOCK_BLOB_BASE_URL}/${AzureContainer.PrivateUserAssets}/${getCallBackgroundBlobName(userId, slot)}`;
+  // A second session the caller holds, and a revoke that deletes its row the way better-auth would
+  const holdOtherSession = async () => {
+    const otherSession = createMockSession(userId);
+    await mockContext.db
+      .insert(sessionsInAuth)
+      .values({
+        expiresAt: otherSession.expiresAt,
+        id: otherSession.id,
+        ipAddress: "",
+        token: otherSession.token,
+        updatedAt: otherSession.updatedAt,
+        userId,
+      });
+    getMockRevokeSession().mockImplementation(async ({ body: { token } }) => {
+      await mockContext.db.delete(sessionsInAuth).where(eq(sessionsInAuth.token, token));
+    });
+
+    return otherSession;
+  };
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -103,25 +122,12 @@ describe("userRouter", () => {
     });
   });
 
-  // The revoke is stubbed, so the stub deletes the row the way better-auth would, and the assertions read the rows and
-  // the one event the sweep is started by, not the calls that made them
+  // The revoke is stubbed, so the stub deletes the row the way better-auth would
+  // The assertions read the rows and the one event the sweep is started by, not the calls that made them
   test("deleteAccount ends every session the caller holds, marks the account, and publishes the sweep once", async () => {
     expect.hasAssertions();
 
-    const otherSession = createMockSession(userId);
-    await mockContext.db
-      .insert(sessionsInAuth)
-      .values({
-        expiresAt: otherSession.expiresAt,
-        id: otherSession.id,
-        ipAddress: "",
-        token: otherSession.token,
-        updatedAt: otherSession.updatedAt,
-        userId,
-      });
-    getMockRevokeSession().mockImplementation(async ({ body: { token } }) => {
-      await mockContext.db.delete(sessionsInAuth).where(eq(sessionsInAuth.token, token));
-    });
+    await holdOtherSession();
 
     await caller.deleteAccount();
 
@@ -129,35 +135,22 @@ describe("userRouter", () => {
     const deleteAccountEvents = MockEventGridDatabase.get("");
     assert.exists(deleteAccountEvents);
 
-    expect(await mockContext.db.query.sessionsInAuth.findMany({ where: { userId: { eq: userId } } })).toStrictEqual([]);
+    await expect(
+      mockContext.db.query.sessionsInAuth.findMany({ where: { userId: { eq: userId } } }),
+    ).resolves.toStrictEqual([]);
     expect(user?.deletionRequestedAt).toStrictEqual(new Date());
     expect(deleteAccountEvents).toHaveLength(1);
-    expect(takeOne(deleteAccountEvents)).toMatchObject({
-      data: { userId },
-      eventType: AzureFunction.DeleteAccount,
-      subject: userId,
-    });
+    expect(takeOne(deleteAccountEvents).data).toStrictEqual({ userId });
+    expect(takeOne(deleteAccountEvents).eventType).toBe(AzureFunction.DeleteAccount);
+    expect(takeOne(deleteAccountEvents).subject).toBe(userId);
   });
 
   // The marker is set before the sweep is published, so a publish that fails must fail the request and leave the caller
-  // signed in: the sessions are ended only once the event is accepted, and the person can ask again
+  // The sessions are ended only once the event is accepted, so the person can ask again
   test("deleteAccount fails when the sweep is not published, and the caller's sessions stay open", async () => {
     expect.hasAssertions();
 
-    const otherSession = createMockSession(userId);
-    await mockContext.db
-      .insert(sessionsInAuth)
-      .values({
-        expiresAt: otherSession.expiresAt,
-        id: otherSession.id,
-        ipAddress: "",
-        token: otherSession.token,
-        updatedAt: otherSession.updatedAt,
-        userId,
-      });
-    getMockRevokeSession().mockImplementation(async ({ body: { token } }) => {
-      await mockContext.db.delete(sessionsInAuth).where(eq(sessionsInAuth.token, token));
-    });
+    const otherSession = await holdOtherSession();
     vi.spyOn(MockEventGridPublisherClient.prototype, "send").mockRejectedValueOnce(publishError);
 
     await expect(caller.deleteAccount()).rejects.toMatchObject({ cause: publishError });
@@ -170,20 +163,7 @@ describe("userRouter", () => {
   test("deleteAccount succeeds on retry after a failed publish, and publishes the sweep once", async () => {
     expect.hasAssertions();
 
-    const otherSession = createMockSession(userId);
-    await mockContext.db
-      .insert(sessionsInAuth)
-      .values({
-        expiresAt: otherSession.expiresAt,
-        id: otherSession.id,
-        ipAddress: "",
-        token: otherSession.token,
-        updatedAt: otherSession.updatedAt,
-        userId,
-      });
-    getMockRevokeSession().mockImplementation(async ({ body: { token } }) => {
-      await mockContext.db.delete(sessionsInAuth).where(eq(sessionsInAuth.token, token));
-    });
+    await holdOtherSession();
     vi.spyOn(MockEventGridPublisherClient.prototype, "send").mockRejectedValueOnce(publishError);
 
     await expect(caller.deleteAccount()).rejects.toMatchObject({ cause: publishError });
@@ -193,14 +173,14 @@ describe("userRouter", () => {
     const deleteAccountEvents = MockEventGridDatabase.get("");
     assert.exists(deleteAccountEvents);
 
-    expect(await mockContext.db.query.sessionsInAuth.findMany({ where: { userId: { eq: userId } } })).toStrictEqual([]);
+    await expect(
+      mockContext.db.query.sessionsInAuth.findMany({ where: { userId: { eq: userId } } }),
+    ).resolves.toStrictEqual([]);
     expect(user?.deletionRequestedAt).toStrictEqual(new Date());
     expect(deleteAccountEvents).toHaveLength(1);
-    expect(takeOne(deleteAccountEvents)).toMatchObject({
-      data: { userId },
-      eventType: AzureFunction.DeleteAccount,
-      subject: userId,
-    });
+    expect(takeOne(deleteAccountEvents).data).toStrictEqual({ userId });
+    expect(takeOne(deleteAccountEvents).eventType).toBe(AzureFunction.DeleteAccount);
+    expect(takeOne(deleteAccountEvents).subject).toBe(userId);
   });
 
   test("reads empty statuses with default values", async () => {
