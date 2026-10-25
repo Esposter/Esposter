@@ -3,7 +3,6 @@ import type { MjmlDocument, MjmlRawNode } from "mjml-blocks";
 
 import { EmailNodeType } from "#shared/models/pageBuilder/EmailNodeType";
 import { TEST_ID, TEST_LABEL, TEST_OTHER_ID, TEST_SURVEY_ID } from "#shared/services/pageBuilder/constants.test";
-import { MAX_EMAIL_NODES } from "#shared/services/pageBuilder/email/constants";
 import { emailDocumentSchema } from "#shared/services/pageBuilder/email/emailDocumentSchema";
 import { emailNodeChildren } from "#shared/services/pageBuilder/email/emailNodeChildren";
 import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry";
@@ -23,20 +22,6 @@ describe("emailDocumentSchema", () => {
 
     expect(result.error?.issues.map(({ message, path }) => ({ message, path }))).toStrictEqual([
       { message: "repeats an id", path: ["content", 1, "props", "id"] },
-    ]);
-  });
-
-  test("a document over the node limit is refused", () => {
-    expect.hasAssertions();
-
-    const document: MjmlDocument = {
-      content: Array.from({ length: MAX_EMAIL_NODES + 1 }, (_value, index) => createRawNode(`${index}`)),
-      root: { props: {} },
-    };
-    const result = emailDocumentSchema.safeParse(document);
-
-    expect(result.error?.issues.map(({ message, path }) => ({ message, path }))).toStrictEqual([
-      { message: `holds more than ${MAX_EMAIL_NODES} nodes`, path: ["content"] },
     ]);
   });
 

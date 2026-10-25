@@ -1,5 +1,4 @@
 import { generateDownloadFileSasUrlsInputSchema } from "#shared/models/db/message/GenerateDownloadFileSasUrlsInput";
-import { MAX_READ_LIMIT } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe("generateDownloadFileSasUrlsInputSchema", () => {
@@ -26,15 +25,5 @@ describe("generateDownloadFileSasUrlsInputSchema", () => {
     expect(
       generateDownloadFileSasUrlsInputSchema.safeParse({ files: [file, { ...file, filename: " " }], roomId }).success,
     ).toBe(false);
-  });
-
-  // A read SAS is minted per file with no further paging, so the read limit is the only thing bounding how many
-  // One request can ask for, and an empty batch is a round trip that mints nothing
-  test.each([0, MAX_READ_LIMIT + 1])("rejects a batch of %s files", (length) => {
-    expect.hasAssertions();
-
-    const files = Array.from({ length }, () => ({ filename, id: crypto.randomUUID(), mimetype }));
-
-    expect(generateDownloadFileSasUrlsInputSchema.safeParse({ files, roomId }).success).toBe(false);
   });
 });

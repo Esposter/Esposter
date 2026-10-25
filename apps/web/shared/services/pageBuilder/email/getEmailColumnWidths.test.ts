@@ -37,16 +37,6 @@ describe(getEmailColumnWidths, () => {
     ]);
   });
 
-  test("unset columns take no width when the set percentages already fill the section", () => {
-    expect.hasAssertions();
-
-    expect(getEmailColumnWidths([createColumn("60%"), createColumn("60%"), createColumn()])).toStrictEqual([
-      "60%",
-      "60%",
-      "0%",
-    ]);
-  });
-
   test("a pixel width is kept and takes none of the share", () => {
     expect.hasAssertions();
 

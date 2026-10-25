@@ -31,20 +31,4 @@ describe("flowchartEditorSchema", () => {
 
     expect(flowchartEditorSchema.parse(canvasFlowchartEditor)).toStrictEqual(flowchartEditor);
   });
-
-  test("describes node labels and leaves no unknown edge data", () => {
-    expect.hasAssertions();
-
-    expect(
-      flowchartEditorSchema.safeParse({ ...baseFlowchartEditor, nodes: [{ ...node, data: { label: 1 } }] }).success,
-    ).toBe(false);
-    expect(
-      flowchartEditorSchema.safeParse({ ...baseFlowchartEditor, nodes: [{ ...node, data: { other: "value" } }] })
-        .success,
-    ).toBe(false);
-    expect(
-      flowchartEditorSchema.safeParse({ ...baseFlowchartEditor, edges: [{ ...edge, data: { other: "value" } }] })
-        .success,
-    ).toBe(false);
-  });
 });

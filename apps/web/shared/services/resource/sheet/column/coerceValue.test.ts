@@ -15,21 +15,11 @@ describe(coerceValue, () => {
     expect(coerceValue(" ", ColumnType.String)).toBeNull();
   });
 
-  test(`"true" coerces to ${ColumnType.Boolean} true`, () => {
-    expect.hasAssertions();
-
-    expect(coerceValue(BooleanValue.True, ColumnType.Boolean)).toBe(true);
-  });
-
-  test(`"false" coerces to ${ColumnType.Boolean} false`, () => {
-    expect.hasAssertions();
-
-    expect(coerceValue(BooleanValue.False, ColumnType.Boolean)).toBe(false);
-  });
-
   test(`${ColumnType.Boolean} coercion is case insensitive`, () => {
     expect.hasAssertions();
 
+    expect(coerceValue(BooleanValue.True, ColumnType.Boolean)).toBe(true);
+    expect(coerceValue(BooleanValue.False, ColumnType.Boolean)).toBe(false);
     expect(coerceValue("TRUE", ColumnType.Boolean)).toBe(true);
     expect(coerceValue("FALSE", ColumnType.Boolean)).toBe(false);
     expect(coerceValue("True", ColumnType.Boolean)).toBe(true);

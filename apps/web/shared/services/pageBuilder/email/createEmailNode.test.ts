@@ -1,4 +1,3 @@
-// @vitest-environment nuxt
 import { EMAIL_NODE_TYPE_TITLE_MAP } from "#shared/services/pageBuilder/email/constants";
 import { createEmailNode } from "#shared/services/pageBuilder/email/createEmailNode";
 import { emailNodeSchema } from "#shared/services/pageBuilder/email/emailNodeSchema";
