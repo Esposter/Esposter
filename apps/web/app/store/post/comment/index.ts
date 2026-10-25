@@ -3,6 +3,7 @@ import type { DeleteCommentInput } from "#shared/models/db/post/DeleteCommentInp
 import type { UpdateCommentInput } from "#shared/models/db/post/UpdateCommentInput";
 import type { PostInPostWithRelations } from "@esposter/db-schema";
 
+import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { PostSortType } from "@/models/post/PostSortType";
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { applyPostCounts } from "@/services/post/applyPostCounts";
@@ -52,7 +53,12 @@ export const useCommentStore = defineStore("post/comment", () => {
   // Every loaded branch is read again under the new order, from its first page, so none keeps the rows the old order read
   const setCommentSortType = (sortType: PostSortType) => {
     commentSortType.value = sortType;
-    for (const key of keys.value) getSliceOperationData(key).resetCursorPaginationData();
+    for (const key of keys.value) {
+      const { initializeCursorPaginationData, isLoaded } = getSlice(key);
+      // Read through the slice rather than its operation data, which would register connectivity listeners per branch
+      initializeCursorPaginationData(new CursorPaginationData());
+      isLoaded.value = false;
+    }
   };
   const toggleCommentExpanded = (commentId: string) => {
     if (expandedCommentIds.value.has(commentId)) expandedCommentIds.value.delete(commentId);
