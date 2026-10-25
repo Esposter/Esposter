@@ -1,6 +1,6 @@
 # What a script derives, nobody maintains
 
-Read when about to write a table, a list, a roster or a date by hand into a skill, a ledger or a README. The rule itself is in `SKILL.md`; this page is which surfaces a script derives, and what derives each.
+Read when about to write a table, a list, a roster or a date by hand into a skill, a ledger or a README. The rule is in `SKILL.md`; this page is which surfaces a script derives, and what derives each.
 
 The `openspec` skill's rule — never write down what the repo can count — applies to the agent tree as much as to a spec: a hand-maintained copy of a fact the tree or git holds drifts the moment the fact changes, and nothing fails when it does. So before writing any table, list or date by hand, ask what generates it; if a command does, the command's name goes in the prose and the fact stays out. The surfaces derived here:
 
