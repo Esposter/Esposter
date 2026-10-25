@@ -54,7 +54,8 @@ describe("weaponScreen", () => {
 
     const { container } = await render(WeaponScreenContainer, { props });
 
-    await expect.element(page.getByText(weaponName, { exact: true })).toBeVisible();
+    // The header names the open weapon; the fodder row names its copy in the bag by the same name, so the header is read alone
+    expect(container.querySelector(".breadcrumb")?.textContent?.trim()).toBe(weaponName);
     await expect.element(page.getByLabelText(`${weaponData.rarity}`, { exact: true })).toBeInTheDocument();
     await expect.element(page.getByText(levelText, { exact: true })).toBeVisible();
     await expect.element(page.getByText(heldExperienceText, { exact: true })).toBeVisible();
