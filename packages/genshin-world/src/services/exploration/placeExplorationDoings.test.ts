@@ -69,6 +69,19 @@ describe(placeExplorationDoings, () => {
     ]);
   });
 
+  test("reopening a chest adds nothing to the count", () => {
+    expect.hasAssertions();
+
+    // A chest opened again is recorded under the same id, so the recorded ids read it once however many times it is opened
+    const placedAreas = placeExplorationDoings([area], catalogue, [CHEST]);
+    const progressOf = (recordedDoingIds: string[]) =>
+      placedAreas.map((placedArea) =>
+        computeExplorationProgress(placedArea, computeExploredDoingIds(placedArea, [], new Set(recordedDoingIds))),
+      );
+
+    expect(progressOf([CHEST.id, CHEST.id])).toStrictEqual(progressOf([CHEST.id]));
+  });
+
   test("a doing standing in no listed area adds to none", () => {
     expect.hasAssertions();
 
