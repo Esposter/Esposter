@@ -129,7 +129,7 @@ describe("usePageBuilderDrag", () => {
                             {
                               content: [
                                 { text: TEST_ID, type: "text" },
-                                { text: toMergeField(COLUMN_NAME), type: "text" },
+                                { text: ` ${toMergeField(COLUMN_NAME)}`, type: "text" },
                               ],
                               type: "paragraph",
                             },
@@ -154,6 +154,27 @@ describe("usePageBuilderDrag", () => {
       root: { props: {} },
     });
     expect(announce).toHaveBeenCalledExactlyOnceWith(`Inserted merge field ${COLUMN_NAME}`);
+  });
+
+  test("a drag does not also click the control it is released on", () => {
+    expect.hasAssertions();
+    setActivePinia(createPinia());
+    const { startMergeFieldDrag } = usePageBuilderDrag(
+      emailKind,
+      () => undefined,
+      RESOURCE_ID,
+      vi.fn<(message: string) => void>(),
+    );
+    const onClick = vi.fn<(event: MouseEvent) => void>();
+    document.body.addEventListener("click", onClick);
+
+    startMergeFieldDrag("first_name", pointerAt("pointerdown", 0, 0), () => createGeometry());
+    window.dispatchEvent(pointerAt("pointermove", 100, 30));
+    window.dispatchEvent(pointerAt("pointerup", 100, 30));
+    document.body.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    document.body.removeEventListener("click", onClick);
+
+    expect(onClick).not.toHaveBeenCalled();
   });
 
   test("escape cancels a drag", () => {

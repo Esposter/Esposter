@@ -43,6 +43,14 @@ const getDropTargetAt = <
   });
 };
 
+// A release can land on the control the press started on, and the browser clicks that control. The click that follows a
+// Drag is stopped before it reaches the control, and the stop is dropped once the release's click has been dispatched
+const swallowNextClick = () => {
+  const stopClick = (clickEvent: MouseEvent) => clickEvent.stopPropagation();
+  window.addEventListener("click", stopClick, { capture: true, once: true });
+  setTimeout(() => window.removeEventListener("click", stopClick, { capture: true }));
+};
+
 // A palette block or a merge field dragged to the point under the pointer. The drop indicator's target is held here for the
 // Canvas to draw, and a release with a target inserts the block there, announced once. A merge field released over a text
 // Is appended to that text. A press that never moves past the threshold is a click that the palette's own button handles,
@@ -64,7 +72,7 @@ export const usePageBuilderDrag = <
   const dropTarget = shallowRef<DropTarget>();
   // Set once a drag passes the threshold, so the editor can let the pointer pass through the canvas frame, whose document would take it
   const isDragging = ref(false);
-  const pageBuilderHistoryStore = usePageBuilderHistoryStore();
+  const { applyEdit } = usePageBuilderHistoryStore();
 
   // Tracks a press until its release, a cancel or Escape. Each move past the threshold reaches onMove, and the release reaches
   // OnRelease with its point only while the press was dragging
@@ -86,7 +94,10 @@ export const usePageBuilderDrag = <
       if (isDragging.value) onMove(point);
     };
     const onPointerUp = (upEvent: PointerEvent) => {
-      if (isDragging.value) onRelease({ x: upEvent.clientX, y: upEvent.clientY });
+      if (isDragging.value) {
+        onRelease({ x: upEvent.clientX, y: upEvent.clientY });
+        swallowNextClick();
+      }
       endDrag();
     };
     const onKeydown = (keyEvent: KeyboardEvent) => {
@@ -150,22 +161,20 @@ export const usePageBuilderDrag = <
       const content = noteDocumentSchema.safeParse(getBlockPropValue(textNode.props, "content"));
       if (!content.success) return;
 
-      pageBuilderHistoryStore
-        .applyEdit(
-          toValue(resourceId),
-          [
-            {
-              op: JsonPatchOperationType.Replace,
-              path: `${nodePointer}/props/content`,
-              value: appendMergeFieldToText(content.data, columnName),
-            },
-          ],
-          "Insert merge field",
-        )
-        .match(
-          () => announce(`Inserted merge field ${columnName}`),
-          (error) => console.error(error),
-        );
+      applyEdit(
+        toValue(resourceId),
+        [
+          {
+            op: JsonPatchOperationType.Replace,
+            path: `${nodePointer}/props/content`,
+            value: appendMergeFieldToText(content.data, columnName),
+          },
+        ],
+        "Insert merge field",
+      ).match(
+        () => announce(`Inserted merge field ${columnName}`),
+        (error) => console.error(error),
+      );
     });
 
   return { dropTarget, isDragging, startMergeFieldDrag, startPaletteDrag };
