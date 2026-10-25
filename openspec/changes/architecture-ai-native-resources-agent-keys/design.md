@@ -18,7 +18,7 @@ Every key created before scopes was made for the follow-ups, the only tools ther
 
 A test over the router holds the declaration: every procedure on a resource type's router that `createResourceProcedures` did not generate declares `mcp` or `humanOnly`. The type's router is found by its name, which is the type uncapitalized, and the factory's procedures by calling the factory for the type, so the test lists nothing by hand and a new type-specific procedure fails it until its author decides.
 
-The test lands with [lifecycle tools](../architecture-ai-native-resources-lifecycle-tools/design.md), which decides the rest of those procedures: until then the Blueprint's capture and deploy, the Program's participants and status and the Survey's response reads declare neither, and each is a decision that unit makes rather than one this page could make for it.
+The test is in `getMcpTools.test.ts`, and it landed with [lifecycle tools](../architecture-ai-native-resources-lifecycle-tools/design.md), which made the decisions for the rest of those procedures: the Blueprint's capture and deploy, the Program's participants and status and the Survey's response reads are served to keys, and the Email's compile and export and the Program's invite read are human-only. Each is a decision that unit made rather than one this page could make for it.
 
 ## Key files
 

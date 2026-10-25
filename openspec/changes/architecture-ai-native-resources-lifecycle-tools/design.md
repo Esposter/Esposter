@@ -22,7 +22,7 @@ Linking needs no tool: a reference is a field declared with `createResourceLinkS
 
 ## Dispatch to the type's own procedure
 
-Publishing and file assets live only in `createResourceProcedures`, built per type, because a type hands its publish transform to the factory: a Dashboard resolves its bound datasets and an Email checks its compiled html. So the typeless tool reads the row, asks `checkHasCapability` whether the type declares the capability, and calls the generated procedure at the type's own path — the type uncapitalized, as `useResourceRouter` dispatches in the browser — through tRPC's own call path, as the bridge calls any procedure. The transform runs unchanged, and a type without the capability is refused in words before anything runs, rather than with the 404 its missing procedure would give.
+Publishing and file assets live only in `createResourceProcedures`, built per type, because a type hands its publish transform to the factory: a Dashboard resolves its bound datasets and an Email checks its compiled html. So the typeless tool reads the row, asks `checkHasCapability` whether the type declares the capability, and calls the generated procedure on the type's own router — the router named by the type uncapitalized, as `useResourceRouter` dispatches in the browser — through `createCallerFactory` of that router, so the procedure runs its own middleware and guards. The transform runs unchanged, and a type without the capability is refused in words before anything runs, rather than with the 404 its missing procedure would give.
 
 The dispatching procedures call into the routers beside them, so they sit in a router merged after the base router, as the achievement router does for the same reason.
 
@@ -31,7 +31,7 @@ flowchart TD
   CALL["resource.publishResource — an id"] --> OWNER["typeless owner guard — the row and its type"]
   OWNER --> CAP{"does the type declare publishable?"}
   CAP -->|no| REFUSED["refused — this type does not publish"]
-  CAP -->|yes| PATH["callTRPCProcedure at the type's own path"]
+  CAP -->|yes| PATH["createCallerFactory of the type's own router"]
   PATH --> GEN["the factory's publishResource, with the type's transform"]
 ```
 
@@ -48,16 +48,16 @@ A procedure only one type has stays on that type's router, opted in where it is 
 
 ## Key files
 
-| File                                                                  | Role after the change                                                    |
-| --------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| `apps/web/server/trpc/routers/resource.ts`                            | its typeless procedures opted in, with a typeless create and update      |
-| `apps/web/server/trpc/routers/index.ts`                               | merges the dispatching router after the base router                      |
-| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts` | unchanged — the dispatch reaches its publish and file procedures by path |
-| `apps/web/shared/services/resource/checkHasCapability.ts`             | the capability gate the dispatch asks                                    |
-| `apps/web/server/trpc/routers/blueprint.ts`                           | capture and deploy opted in                                              |
-| `apps/web/server/trpc/routers/program.ts`                             | participants and status opted in                                         |
-| `apps/web/server/trpc/routers/survey.ts`                              | the response reads opted in                                              |
-| `apps/web/server/trpc/routers/dataset.ts`                             | `readDataset` opted in                                                   |
+| File                                                                  | Role after the change                                                                      |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `apps/web/server/trpc/routers/resource.ts`                            | its typeless procedures opted in, with a typeless create and update                        |
+| `apps/web/server/trpc/routers/index.ts`                               | merges the dispatching router after the base router                                        |
+| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts` | unchanged — the dispatch reaches its publish and file procedures through the type's router |
+| `apps/web/shared/services/resource/checkHasCapability.ts`             | the capability gate the dispatch asks                                                      |
+| `apps/web/server/trpc/routers/blueprint.ts`                           | capture and deploy opted in                                                                |
+| `apps/web/server/trpc/routers/program.ts`                             | participants and status opted in                                                           |
+| `apps/web/server/trpc/routers/survey.ts`                              | the response reads opted in                                                                |
+| `apps/web/server/trpc/routers/dataset.ts`                             | `readDataset` opted in                                                                     |
 
 New code lands here:
 
