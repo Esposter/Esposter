@@ -2,7 +2,7 @@
 
 - [ ] 1.1 Draw lava as a bright flow on its authored channels, with its glow lighting the rock beside it. Verify: a test named after the scenario 'Lava lights the rock beside it at night', written first and seen failing.
 - [ ] 1.2 Send steam up from hot springs and vents. Verify: a test named after the scenario 'Steam rises from a hot spring'.
-- [ ] 1.3 Make an eruption area weather that suspends rain and lets it resume afterward. Verify: tests named after the scenarios 'An eruption stops the rain' and 'Rain resumes after an eruption'.
+- [x] 1.3 Make an eruption area weather that suspends rain and lets it resume afterward. Verify: tests named after the scenarios 'An eruption stops the rain' and 'Rain resumes after an eruption'.
 
 ## 2. Tribes
 

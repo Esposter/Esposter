@@ -57,6 +57,7 @@ const SNOW_WEATHER_SETTINGS: WeatherSettings = {
 export const WEATHER_SETTINGS_MAP: Readonly<Record<WeatherKind, WeatherSettings>> = {
   [WeatherKind.Clear]: { cloudCoverage: 0, fogDensity: 0, wetness: 0 },
   [WeatherKind.Cloudy]: { cloudCoverage: 0.6, fogDensity: 0, wetness: 0 },
+  [WeatherKind.Eruption]: { cloudCoverage: 0.8, fogDensity: 0.004, wetness: 0 },
   [WeatherKind.Fog]: { cloudCoverage: 0.4, fogDensity: 0.006, wetness: 0 },
   [WeatherKind.Rain]: {
     cloudCoverage: 0.85,
