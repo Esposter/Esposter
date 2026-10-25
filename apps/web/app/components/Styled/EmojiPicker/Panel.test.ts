@@ -4,6 +4,7 @@ import type { VueWrapper } from "@vue/test-utils";
 
 import StyledEmojiPickerGrid from "@/components/Styled/EmojiPicker/Grid.vue";
 import StyledEmojiPickerPanel from "@/components/Styled/EmojiPicker/Panel.vue";
+import UiEmptyState from "@/components/Ui/EmptyState.vue";
 import { EmojiGroup, EmojiGroups } from "@/models/message/emoji/EmojiGroup";
 import { EmojiType } from "@/models/message/emoji/EmojiType";
 import { SkinTone } from "@/models/message/emoji/SkinTone";
@@ -16,7 +17,7 @@ import { takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { getMockSasUrl } from "azure-mock";
-import { beforeEach, describe, expect, test } from "vitest";
+import { assert, beforeEach, describe, expect, test } from "vitest";
 
 // The aria-label is what makes a grid cell identifiable, so selecting on it also asserts every button has one.
 // Scoped to the grid because the rail's categories are aria-labelled buttons as well — they are icon-only, so the
@@ -61,7 +62,9 @@ describe("styledEmojiPickerPanel", () => {
 
     const component = await mountSuspended(StyledEmojiPickerPanel);
 
-    expect(component.findAll(RAIL_BUTTON_SELECTOR)).toHaveLength(EmojiGroups.length);
+    expect(component.findAll(RAIL_BUTTON_SELECTOR).map((button) => button.attributes("aria-label"))).toStrictEqual(
+      EmojiGroups,
+    );
   });
 
   test("replaces the grid with results while a query is running", async () => {
@@ -80,7 +83,7 @@ describe("styledEmojiPickerPanel", () => {
     await component.find("input").setValue("-");
 
     expect(getGridEmojis(component)).toStrictEqual([]);
-    expect(component.text()).toContain("No results");
+    expect(component.findComponent(UiEmptyState).text()).toBe("No resultsNothing matches “-”.");
   });
 
   // The tag leads and the record follows: reaction surfaces store the first, the composer needs the second to
@@ -126,7 +129,7 @@ describe("styledEmojiPickerPanel", () => {
 
     expect(categoryTitles).not.toContain(ROOM_EMOJI_CATEGORY_TITLE);
     expect(component.find(`${RAIL_BUTTON_SELECTOR}[aria-checked="true"]`).attributes("aria-label")).toBe(
-      takeOne(categoryTitles),
+      EmojiGroup.SmileysAndEmotion,
     );
   });
 
@@ -163,7 +166,8 @@ describe("styledEmojiPickerPanel", () => {
   test("#258 arrow keys walk the grid by cell and by row, naming each focused emoji, with Home and End to a row's ends", async () => {
     expect.hasAssertions();
 
-    const smileys = getEmojiIndex().groupEmojisMap.get(EmojiGroup.SmileysAndEmotion) ?? [];
+    const smileys = getEmojiIndex().groupEmojisMap.get(EmojiGroup.SmileysAndEmotion);
+    assert.exists(smileys);
     const component = await mountSuspended(StyledEmojiPickerPanel, { attachTo: document.body });
     const getCell = (index: number) => component.get(`button[data-index="${index}"]`);
     const pressOn = async (index: number, key: string) => {

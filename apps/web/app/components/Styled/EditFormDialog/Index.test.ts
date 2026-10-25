@@ -9,12 +9,12 @@ import { createPinia, setActivePinia } from "pinia";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { z } from "zod";
 
-beforeEach(() => {
-  setActivePinia(createPinia());
-});
-
 describe("styledEditFormDialog", () => {
   setupUiStyle(DEFAULT_UI_STYLE);
+
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
 
   const name = "name";
   // Raw, as a prop hands it over: the mount would otherwise proxy it deeply, which a schema does not survive

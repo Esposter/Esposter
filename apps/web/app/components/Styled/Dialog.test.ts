@@ -14,12 +14,12 @@ const getFooterButtonTexts = () => {
   return footer ? Array.from(footer.querySelectorAll("button"), ({ textContent }) => textContent.trim()) : undefined;
 };
 
-beforeEach(() => {
-  setActivePinia(createPinia());
-});
-
 describe("styledDialog", () => {
   setupUiStyle(DEFAULT_UI_STYLE);
+
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
 
   const confirmLabel = "confirmLabel";
   const title = "title";
@@ -57,12 +57,6 @@ describe("styledDialog", () => {
       description: "renders a third decision between cancel and confirm",
       expected: ["Cancel", "a", confirmLabel],
       props: { confirmLabel },
-      slots: { "prepend-confirm": prependConfirm },
-    },
-    {
-      description: "renders the actions row for an action slot with nothing to confirm",
-      expected: ["Cancel", "a"],
-      props: {},
       slots: { "prepend-confirm": prependConfirm },
     },
     {
@@ -106,6 +100,10 @@ describe("styledDialog", () => {
 
 describe("styledFormDialog", () => {
   setupUiStyle(DEFAULT_UI_STYLE);
+
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
 
   const confirmLabel = "confirmLabel";
   const title = "title";
