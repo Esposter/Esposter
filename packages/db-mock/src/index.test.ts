@@ -8,6 +8,6 @@ describe("@esposter/db-mock", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 0.74 KB (754 bytes)"`);
+    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 0.75 KB (763 bytes)"`);
   });
 });
