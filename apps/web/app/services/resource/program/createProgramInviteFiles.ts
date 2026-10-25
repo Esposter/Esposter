@@ -1,17 +1,7 @@
 import type { ProgramInvite } from "#shared/models/resource/program/ProgramInvite";
 
-import { sanitizeFilename } from "@/services/app/sanitizeFilename";
 import { createProgramInviteHtml } from "@/services/resource/program/createProgramInviteHtml";
-
-// Key values are unique per program, but sanitizing can map two of them to one name ("12/3" and "12-3").
-// A name already taken gets a counter rather than replacing the participant who has it
-const createUniqueFileName = (keyValue: string, takenFileNames: Set<string>) => {
-  const sanitizedName = sanitizeFilename(keyValue);
-  let fileName = sanitizedName;
-  for (let suffix = 2; takenFileNames.has(fileName); suffix += 1) fileName = `${sanitizedName}-${suffix}`;
-  takenFileNames.add(fileName);
-  return fileName;
-};
+import { createUniqueFileName } from "@/services/resource/program/createUniqueFileName";
 
 // One file per participant, named after their key value
 export const createProgramInviteFiles = (emailHtml: string, surveyPath: string, invites: ProgramInvite[]) => {

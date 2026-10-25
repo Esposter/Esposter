@@ -1,10 +1,10 @@
 import type { ProgramParticipant } from "#shared/models/resource/program/ProgramParticipant";
 
+import { CsvDelimiter } from "#shared/models/resource/sheet/csv/CsvDelimiter";
 import { escapeUntrustedCsvCell } from "@/services/resource/sheet/csv/escapeUntrustedCsvCell";
 import { ResourceType } from "@esposter/db-schema";
 import { RoutePath } from "@esposter/shared";
 
-const DELIMITER = ",";
 // One row per participant: the key value the owner knows them by, and the survey link carrying their token.
 // A key value comes from the audience dataset, which may be a survey's anonymous answers, so it is untrusted
 export const createParticipantLinksCsv = (
@@ -14,10 +14,12 @@ export const createParticipantLinksCsv = (
   origin: string,
 ) => {
   const surveyUrl = `${origin}${RoutePath.View(ResourceType.Survey, surveyId)}`;
-  const headerRow = [keyColumn, "Link"].map((header) => escapeUntrustedCsvCell(header, DELIMITER)).join(DELIMITER);
+  const headerRow = [keyColumn, "Link"]
+    .map((header) => escapeUntrustedCsvCell(header, CsvDelimiter.Comma))
+    .join(CsvDelimiter.Comma);
   const dataRows = participants.map(({ keyValue, token }) => {
     const link = `${surveyUrl}?${new URLSearchParams({ t: token })}`;
-    return [escapeUntrustedCsvCell(keyValue, DELIMITER), escapeUntrustedCsvCell(link, DELIMITER)].join(DELIMITER);
+    return [keyValue, link].map((cell) => escapeUntrustedCsvCell(cell, CsvDelimiter.Comma)).join(CsvDelimiter.Comma);
   });
   return [headerRow, ...dataRows].join("\n");
 };
