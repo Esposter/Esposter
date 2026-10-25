@@ -50,4 +50,4 @@ When the ask is "review the PR" or a range (not just "review my last change"), r
 
 ## Reporting
 
-Standard table (`references/reporting.md`). Correctness findings here are a defect or a broken convention; quality findings are the four lenses. `stale-record` appears as a provenance label rather than a finding kind, because a diff review only notices a stale doc when the change happens to walk past it. Auditing the record properly is what `area` mode is for.
+Standard table (`references/reporting.md`). Correctness findings here are a defect or a broken convention; quality findings are the lenses in the lane table. `stale-record` appears as a provenance label rather than a finding kind, because a diff review only notices a stale doc when the change happens to walk past it. Auditing the record properly is what `area` mode is for.
