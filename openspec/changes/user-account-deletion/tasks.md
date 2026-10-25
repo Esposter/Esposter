@@ -18,9 +18,9 @@ Build order. Section 1 lands the schema the rest reads, section 2 moves the shar
 
 ## 3. Handler
 
-- [ ] 3.1 Write `deleteAccountHandler` in `apps/functions/src/handlers/`. It runs the sweeps in this order and fails if any step fails: owned rooms (partitions, attachment prefix, profile images, then the room row), owned resources through `purgeResource`, the user's messages in member rooms, the charged blobs from the ledger, the user's blob prefixes, then the user row last. Test first, one test per step: each step removes exactly its store, and a failing step leaves the user row.
+- [x] 3.1 Write `deleteAccountHandler` in `apps/functions/src/handlers/`. It runs the sweeps in this order and fails if any step fails: owned rooms (partitions, attachment prefix, profile images, then the room row), owned resources through `purgeResource`, the user's messages in member rooms, the charged blobs from the ledger, the user's blob prefixes, then the user row last. Test first, one test per step: each step removes exactly its store, and a failing step leaves the user row.
       Verify: every step test passes, and a test that fails the blob step asserts the user row still exists.
-- [ ] 3.2 Make the handler idempotent: a second run over a finished sweep finds nothing and succeeds. Test first: running the handler twice leaves the same final state and returns success both times.
+- [x] 3.2 Make the handler idempotent: a second run over a finished sweep finds nothing and succeeds. Test first: running the handler twice leaves the same final state and returns success both times.
       Verify: the replay test passes.
 - [ ] 3.3 Register the handler as `AzureFunction.DeleteAccount` in `apps/functions/src/functions/`, and add the event type to `AzureFunction` in `packages/db-schema`.
       Verify: the function index test lists the new function, and the enum entry is the one the web publisher imports.
