@@ -638,7 +638,8 @@ describe("roomRouter", () => {
     const newInvite = await createUnlimitedInvite(newRoom.id);
 
     await expect(roomCaller.joinRoom(newInvite.id)).rejects.toMatchObject({
-      message: expect.stringContaining('Failed query: insert into "message"."usersToRooms"'),
+      code: "BAD_REQUEST",
+      message: expect.stringContaining("Invalid operation: Create, name: UserToRoom"),
     });
   });
 

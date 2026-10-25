@@ -23,6 +23,7 @@ import { getRoomProfileImageBlobPrefix } from "#server/services/room/getRoomProf
 import { listRoomProfileImageBlobNames } from "#server/services/room/listRoomProfileImageBlobNames";
 import { router } from "#server/trpc";
 import { getForbiddenError } from "#server/trpc/guards/getForbiddenError";
+import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
@@ -171,6 +172,18 @@ export const baseRoomRouter = router({
         },
       });
       if (ban) throw getForbiddenError("You are banned from this room");
+
+      // Read under the room lock above, so a second join racing this one waits here and finds the row it made
+      const existingUserToRoom = await tx.query.usersToRoomsInMessage.findFirst({
+        columns: { roomId: true },
+        where: { roomId: { eq: invite.roomId }, userId: { eq: ctx.getSessionPayload.user.id } },
+      });
+      if (existingUserToRoom)
+        throw getInvalidOperationError(
+          Operation.Create,
+          DatabaseEntityType.UserToRoom,
+          JSON.stringify({ roomId: invite.roomId, userId: ctx.getSessionPayload.user.id }),
+        );
 
       const userToRoom = requireMutation(
         (
