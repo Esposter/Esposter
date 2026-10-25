@@ -15,11 +15,13 @@ The Flowchart type is removed completely, with its stored data. Nothing is migra
 - **Its agent surface**: the flowchart's rows in the generic agent tools' content documentation. Agents reach no flowchart procedure after the change.
 - **The flowchart achievement**: the achievement name and its category, and the earned rows that name it.
 - **Its specs**: the capabilities `resource/flowchart-connectors`, `resource/flowchart-image-export` and `resource/flowchart-publish`, removed from the specs and the resource index.
-- **Its stored rows**: every flowchart resource and every row that references one, deleted by one migration in the release.
+- **Its stored rows and blobs**: every flowchart resource, with the blob directory it owns, removed through the existing per-resource purge. Then one migration in the release removes the rows that reference them and drops the enum values.
 
 ### Existing user flowcharts are deleted
 
-This change deletes every flowchart that exists in any environment, with the rows that reference it. No user is offered a copy, a conversion or a read-only view. The deletion is a plain migration, with no count to read and no confirmation to wait for. The blobs the rows point at are not removed by it, as the design records.
+This change deletes every flowchart that exists in any environment, with its blob directory and the rows that reference it. No user is offered a copy, a conversion or a read-only view. The deletion has no count to read and no confirmation to wait for. It reuses the purge the recycle bin already runs for a resource's directory, so the storage each flowchart counted against its owner is released by the same code that releases every other deleted resource.
+
+Blobs follow one ordering rule: a blob is deleted only inside the purge of its own resource, together with that resource's row, and never in a step of its own ahead of the row. The design states the order the purge runs in.
 
 ## Capabilities
 
