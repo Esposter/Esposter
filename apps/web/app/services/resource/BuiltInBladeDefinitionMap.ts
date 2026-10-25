@@ -1,3 +1,4 @@
+// @unocss-include
 import { ResourceBladeType } from "@/models/resource/ResourceBladeType";
 
 // How each built-in blade presents itself, in one entry per blade. Editor is the exception that declares no
