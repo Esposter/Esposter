@@ -1,6 +1,6 @@
 import { MimeType } from "#shared/models/file/MimeType";
+import { escapeXml } from "#shared/util/text/escapeXml";
 import { copyComputedStyles } from "@/services/resource/flowchart/copyComputedStyles";
-import { escapeXml } from "@/services/resource/flowchart/escapeXml";
 import { readFontFaceCss } from "@/services/resource/flowchart/readFontFaceCss";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
