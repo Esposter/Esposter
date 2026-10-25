@@ -1,5 +1,5 @@
 import { withAsyncIterator } from "#server/trpc/routers/withAsyncIterator.test";
-import { assert, describe, expect, test } from "vitest";
+import { assert, describe, expect, test, vi } from "vitest";
 
 export const getFirstEmit = async <T>(
   createIterator: () => AsyncIterable<T>,
@@ -14,15 +14,19 @@ export const getFirstEmit = async <T>(
 };
 
 const createIterator = (): AsyncIterable<string> => ({
-  [Symbol.asyncIterator]: () => ({ next: () => Promise.resolve<IteratorResult<string>>({ done: false, value: "" }) }),
+  [Symbol.asyncIterator]: () => ({
+    next: () => Promise.resolve<IteratorResult<string>>({ done: false, value: "emitted" }),
+  }),
 });
 
 describe(getFirstEmit, () => {
-  test("resolves the first emitted value alongside the trigger", async () => {
+  test("resolves the first emitted value and runs the trigger", async () => {
     expect.hasAssertions();
 
-    const firstEmit = await getFirstEmit(createIterator, () => Promise.resolve());
+    const trigger = vi.fn(() => Promise.resolve());
+    const firstEmit = await getFirstEmit(createIterator, trigger);
 
-    expect(firstEmit).toBe("");
+    expect(firstEmit).toBe("emitted");
+    expect(trigger).toHaveBeenCalledExactlyOnceWith();
   });
 });
