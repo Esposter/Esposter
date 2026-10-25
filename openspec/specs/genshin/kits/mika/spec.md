@@ -1,6 +1,6 @@
 ## Purpose
 
-Mika's kit as built, with his five strikes, charged attack, plunges, Starfrost Swirl's press and held Rimestar Flare, and Skyfeather Song's initial heal, and what is left of his Rimestar Shard, Eagleplume heals, the team's ATK SPD bonus, and his passives.
+Mika's kit as built, with his five strikes, charged attack, plunges, Starfrost Swirl's press and held Rimestar Flare with the team's Soulwind ATK SPD bonus, Skyfeather Song's initial heal with the Eagleplume heals, and Constellation 1's shorter interval, and what is left of his Rimestar Shard, Constellations 2, 4 and 6, and his Ascension passives.
 
 ## Requirements
 
@@ -50,9 +50,51 @@ Mika's plunge attacks SHALL land on the enemies within reach at provisional timi
 - **WHEN** the player starts a plunge attack
 - **THEN** the plunge lands on the enemies within reach
 
+### Requirement: Starfrost Swirl grants the party Soulwind
+
+Starfrost Swirl's press and held Rimestar Flare SHALL grant every party member Soulwind, raising its ATK SPD by the skill's bonus for 12 seconds.
+
+#### Scenario: Press grants Soulwind to the party
+
+- **GIVEN** Mika presses Starfrost Swirl
+- **WHEN** the press starts
+- **THEN** every party member gains the ATK SPD bonus and Soulwind for 12 seconds
+
+#### Scenario: Hold grants Soulwind to the party
+
+- **GIVEN** Mika holds Starfrost Swirl and releases Rimestar Flare
+- **WHEN** the hold starts
+- **THEN** every party member gains the ATK SPD bonus and Soulwind for 12 seconds
+
+### Requirement: Skyfeather Song's heal grants the Eagleplume state
+
+Skyfeather Song's initial heal SHALL grant every party member the Eagleplume state for 15 seconds, and a character under it SHALL heal by Mika's flat heal and a share of his Max HP on each of its normal attacks, once per 2.5 seconds.
+
+#### Scenario: Initial heal grants the Eagleplume state
+
+- **GIVEN** Mika casts Skyfeather Song
+- **WHEN** its initial heal lands
+- **THEN** every party member is under the Eagleplume state for 15 seconds
+
+#### Scenario: A normal attack heals once per interval
+
+- **GIVEN** a character is under the Eagleplume state
+- **WHEN** its normal attack hits an enemy
+- **THEN** it heals by the flat heal and the share of Mika's Max HP, and does not heal again for 2.5 seconds
+
+### Requirement: Constellation 1 shortens the Eagleplume interval under Soulwind
+
+With Constellation 1, a character under Soulwind SHALL wait for its Eagleplume interval shortened by the ATK SPD bonus, and a character not under Soulwind SHALL keep the 2.5-second interval.
+
+#### Scenario: Soulwind shortens the interval
+
+- **GIVEN** Mika has Constellation 1 and a character is under Soulwind
+- **WHEN** that character's normal attack heals it under Eagleplume
+- **THEN** its next heal is due after 2.5 seconds shortened by the ATK SPD bonus
+
 ### Requirement: Unbuilt Mika effects
 
-Rimestar Shard, Eagleplume heals, the team's ATK SPD bonus and Mika's Ascension and constellation passives SHALL NOT take effect.
+Rimestar Shard, Mika's Ascension passives and Constellations 2, 4 and 6 SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 

@@ -1,6 +1,6 @@
 ## Purpose
 
-Kaveh's kit as built, with his four strikes, a provisional charged attack, his plunges, Artistic Ingenuity's circle and Painted Dome's twelve-second stance, and what is left of the Dendro Cores his skill and burst rupture, Painted Dome's Bloom DMG Bonus, and his passives and Constellation 6.
+Kaveh's kit as built, with his four strikes, a provisional charged attack, his plunges, Artistic Ingenuity's circle, Painted Dome's twelve-second stance and Constellation 6's Pairidaeza's Light, and what is left of the Dendro Cores his skill and burst rupture, the Dendro Cores Pairidaeza's Light bursts, Painted Dome's Bloom DMG Bonus, and his passives.
 
 ## Requirements
 
@@ -136,3 +136,31 @@ From constellation 4, the Bloom reaction DMG of each Dendro Core Kaveh's Bloom l
 - **GIVEN** Kaveh is at constellation 4
 - **WHEN** an Overloaded's damage is priced for him
 - **THEN** it is raised by nothing
+
+### Requirement: Sixth constellation strikes with Pairidaeza's Light during Painted Dome
+
+From constellation 6, a Normal, Charged or Plunging Attack of Kaveh's that hits an enemy during Painted Dome SHALL strike that enemy with Pairidaeza's Light, once every three seconds, and no other hit SHALL.
+
+#### Scenario: A normal attack during Painted Dome strikes with Pairidaeza's Light
+
+- **GIVEN** Kaveh is at constellation 6 and Painted Dome holds him
+- **WHEN** his normal attack hits an enemy
+- **THEN** Pairidaeza's Light strikes that enemy
+
+#### Scenario: A skill or burst hit strikes with nothing
+
+- **GIVEN** Kaveh is at constellation 6 and Painted Dome holds him
+- **WHEN** his Elemental Skill or Elemental Burst hits an enemy
+- **THEN** no Pairidaeza's Light strikes
+
+#### Scenario: Pairidaeza's Light waits three seconds
+
+- **GIVEN** Pairidaeza's Light struck less than three seconds ago
+- **WHEN** another hit of Kaveh's lands during Painted Dome
+- **THEN** no Pairidaeza's Light strikes
+
+#### Scenario: Below constellation 6 nothing strikes
+
+- **GIVEN** Kaveh is at constellation 5 and Painted Dome holds him
+- **WHEN** his normal attack hits an enemy
+- **THEN** no Pairidaeza's Light strikes

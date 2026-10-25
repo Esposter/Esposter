@@ -1,6 +1,6 @@
 ## Purpose
 
-Columbina's kit as built: her three strikes, charged attack, plunges, Gravity Interference's press with its DoT field and gravity, the Gravity Ripple with its Lunacy and Constellations 1 and 2, and the burst's hit, with her Moonsign Benediction built, and her Lunar reactions, Dew, Constellation 4 and her Ascension 4 left waiting on their hooks.
+Columbina's kit as built: her three strikes, charged attack, plunges, Gravity Interference's press with its DoT field and gravity, the Gravity Ripple with its hits, its Lunacy and Constellations 1 and 2, and the burst's hit, with her Moonsign Benediction built, and her Lunar reactions, Dew, Constellation 4 and her Ascension 4 left waiting on their hooks.
 
 ## Requirements
 
@@ -53,6 +53,12 @@ Gravity Interference SHALL build gravity while it stands from the Lunar reaction
 - **GIVEN** the gravity built has reached 60
 - **WHEN** the step ends
 - **THEN** a Gravity Ripple fires and the gravity clears
+
+#### Scenario: A Gravity Ripple strikes its reaction's hits
+
+- **GIVEN** a Gravity Ripple fires for a Lunar-Bloom
+- **WHEN** each of its five hits reaches its hitmark
+- **THEN** each hit strikes the enemies in its circle round the enemy it selects
 
 #### Scenario: Constellation 1's press fires a Gravity Ripple once every 15 seconds
 
