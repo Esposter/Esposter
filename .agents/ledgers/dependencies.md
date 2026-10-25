@@ -64,6 +64,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@tiptap/core`                          | —                     | Keep — engine    | the rich-text editor engine, on the stop list for accessibility                                        |
 | `@tiptap/extension-code-block-lowlight` | —                     | Keep — engine    | the rich-text editor engine, on the stop list for accessibility                                        |
 | `@tiptap/extension-file-handler`        | —                     | Keep — engine    | the rich-text editor engine, on the stop list for accessibility                                        |
+| `@tiptap/extension-image`               | —                     |                  |                                                                                                        |
 | `@tiptap/extension-list`                | —                     | Keep — engine    | the rich-text editor engine, on the stop list for accessibility                                        |
 | `@tiptap/extension-mention`             | —                     | Keep — engine    | the rich-text editor engine, on the stop list for accessibility                                        |
 | `@tiptap/extension-table`               | 2026-10-18 · Opus 5.5 | Keep — engine    | the rich-text editor engine, on the stop list for accessibility                                        |

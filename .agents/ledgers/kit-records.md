@@ -12,8 +12,8 @@ grep -c '"Unclassified"' packages/genshin-world/src/data/kits/<kit>.json
 | `albedo`             | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `alhaitham`          | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `aloy`               | 2026-10-14 · Haiku 5.5 |                                                                          |
-| `alyosha`            | —                      |                                                                          |
-| `amber`              | —                      |                                                                          |
+| `alyosha`            | 2026-10-25 · Haiku 5.5 |                                                                          |
+| `amber`              | 2026-10-25 · Haiku 5.5 |                                                                          |
 | `arataki-itto`       | 2026-10-19 · Haiku 5.5 | design is `itto`                                                         |
 | `arlecchino`         | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `baizhu`             | 2026-10-19 · Haiku 5.5 |                                                                          |
@@ -26,7 +26,7 @@ grep -c '"Unclassified"' packages/genshin-world/src/data/kits/<kit>.json
 | `chevreuse`          | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `chiori`             | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `chongyun`           | —                      |                                                                          |
-| `citlali`            | —                      |                                                                          |
+| `citlali`            | 2026-10-25 · Haiku 5.5 |                                                                          |
 | `clorinde`           | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `collei`             | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `columbina`          | 2026-10-19 · Haiku 5.5 | her page's poise bullet names the deleted framework proposal's poise gap |
@@ -34,7 +34,7 @@ grep -c '"Unclassified"' packages/genshin-world/src/data/kits/<kit>.json
 | `dahlia`             | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `dehya`              | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `diluc`              | —                      |                                                                          |
-| `diona`              | —                      |                                                                          |
+| `diona`              | 2026-10-25 · Haiku 5.5 |                                                                          |
 | `dori`               | —                      |                                                                          |
 | `durin`              | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `emilie`             | 2026-10-19 · Haiku 5.5 |                                                                          |
@@ -54,14 +54,14 @@ grep -c '"Unclassified"' packages/genshin-world/src/data/kits/<kit>.json
 | `illuga`             | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `ineffa`             | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `jahoda`             | 2026-10-19 · Haiku 5.5 |                                                                          |
-| `jean`               | —                      |                                                                          |
+| `jean`               | 2026-10-25 · Haiku 5.5 |                                                                          |
 | `kachina`            | 2026-10-19 · Opus 5.5  |                                                                          |
 | `kaedehara-kazuha`   | 2026-10-19 · Haiku 5.5 | design is `kazuha`                                                       |
 | `kaeya`              | —                      |                                                                          |
 | `kamisato-ayaka`     | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `kamisato-ayato`     | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `kaveh`              | 2026-10-19 · Haiku 5.5 |                                                                          |
-| `keqing`             | —                      |                                                                          |
+| `keqing`             | 2026-10-25 · Haiku 5.5 |                                                                          |
 | `kinich`             | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `kirara`             | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `klee`               | —                      |                                                                          |
@@ -90,10 +90,10 @@ grep -c '"Unclassified"' packages/genshin-world/src/data/kits/<kit>.json
 | `odette`             | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `ororon`             | —                      |                                                                          |
 | `prune`              | 2026-10-19 · Haiku 5.5 |                                                                          |
-| `qiqi`               | —                      |                                                                          |
+| `qiqi`               | 2026-10-25 · Haiku 5.5 |                                                                          |
 | `raiden-shogun`      | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `razor`              | 2026-10-19 · Haiku 5.5 |                                                                          |
-| `rosaria`            | —                      |                                                                          |
+| `rosaria`            | 2026-10-25 · Haiku 5.5 |                                                                          |
 | `sandrone`           | 2026-10-19 · Haiku 5.5 |                                                                          |
 | `sangonomiya-kokomi` | 2026-10-19 · Haiku 5.5 | design is `kokomi`                                                       |
 | `sayu`               | 2026-10-19 · Haiku 5.5 |                                                                          |
@@ -119,12 +119,12 @@ grep -c '"Unclassified"' packages/genshin-world/src/data/kits/<kit>.json
 | `xiao`               | —                      |                                                                          |
 | `xilonen`            | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `xingqiu`            | —                      |                                                                          |
-| `xinyan`             | —                      |                                                                          |
+| `xinyan`             | 2026-10-25 · Haiku 5.5 |                                                                          |
 | `yae-miko`           | —                      |                                                                          |
-| `yanfei`             | —                      |                                                                          |
+| `yanfei`             | 2026-10-25 · Haiku 5.5 |                                                                          |
 | `yaoyao`             | 2026-10-14 · Haiku 5.5 |                                                                          |
 | `yelan`              | 2026-10-19 · Haiku 5.5 |                                                                          |
-| `yoimiya`            | —                      |                                                                          |
+| `yoimiya`            | 2026-10-25 · Haiku 5.5 |                                                                          |
 | `yumemizuki-mizuki`  | 2026-10-14 · Haiku 5.5 | design is `mizuki`                                                       |
 | `yun-jin`            | —                      |                                                                          |
 | `zhongli`            | —                      |                                                                          |
