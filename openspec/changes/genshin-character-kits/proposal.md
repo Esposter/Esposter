@@ -30,4 +30,4 @@ Each playable character fights by its own kit, with its passives, its swap effec
 
 - The Genshin world's combat kits: each character's module, the Traveler's kit, the kit events and the rolls a hit can draw.
 - The world build's size check.
-- Three choices are open and recorded as decisions before their build: Amber's Fiery Rain arrow area, the periodic discharge lists, and Go's float division in the kit reader.
+- Four choices are recorded as decisions before their build: Amber's Fiery Rain arrow area, the periodic discharge lists, Go's float division in the kit reader, and the delay of a character task queued with an argument.
