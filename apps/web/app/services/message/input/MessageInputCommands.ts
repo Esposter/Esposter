@@ -1,8 +1,7 @@
 import type { UiCommand } from "@/models/ui/UiCommand";
 
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-
-const MESSAGES_GROUP = "Messages";
+import { MESSAGES_GROUP } from "@/services/message/input/constants";
 
 // The composer's own keys, which it handles itself: registered while it is mounted so the shortcuts dialog lists them,
 // And read by the keybinds settings, where the composer is not

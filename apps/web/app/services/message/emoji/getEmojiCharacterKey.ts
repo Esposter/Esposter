@@ -1,7 +1,5 @@
-import { SkinTones } from "@/models/message/emoji/SkinTone";
-import { VARIATION_SELECTOR } from "@/services/message/emoji/constants";
+import { SkinToneModifiers, VARIATION_SELECTOR } from "@/services/message/emoji/constants";
 
-const SkinToneModifiers = new Set<string>(SkinTones);
 // `characterEmojiMap` is built and queried on this key, so one emoji has exactly one identity however it arrived:
 // A toned pick (👋🏽), an unqualified legacy glyph (❤) and the dataset's own form (❤️) all collapse onto it
 export const getEmojiCharacterKey = (character: string) =>

@@ -1,4 +1,7 @@
 // @unocss-include
+import { EmojiGroups } from "@/models/message/emoji/EmojiGroup";
+import { SkinTones } from "@/models/message/emoji/SkinTone";
+
 // One keystroke can match most of the dataset, and nothing is virtualised, so results are capped for the DOM
 export const MAX_EMOJI_SEARCH_RESULTS = 90;
 export const MAX_EMOJI_SUGGESTIONS = 20;
@@ -23,3 +26,9 @@ export const SKIN_TONE_PREVIEW_EMOJI_SLUG = "raised_hand";
 export const VARIATION_SELECTOR = "\uFE0F";
 
 export const CUSTOM_EMOJI_TYPE = "customEmoji";
+
+export const EMOJI_SUGGESTION_MIN_QUERY_LENGTH = 2;
+// The groups the enum lists, which a dataset record's group must be one of to get a tab
+export const EmojiGroupValues = new Set<string>(EmojiGroups);
+// The tone modifiers a character key drops, so a toned pick keys as its base emoji
+export const SkinToneModifiers = new Set<string>(SkinTones);
