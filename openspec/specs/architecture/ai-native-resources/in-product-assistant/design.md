@@ -1,6 +1,6 @@
 # In-product assistant
 
-Built on the [agent content tools](../../specs/architecture/agent-content-tools/design.md) and [live edits](../architecture-ai-native-resources-live-edits/design.md). A person working in an editor should not have to leave it to ask an agent for an edit, and asking from inside it must not open a second way in. So the assistant is a shortcut into the person's own Claude Code session, which then works through the tools any agent uses. It also waits on something outside this proposal: a host the page can pair with, which the [agent console](../../specs/infra/claude-interface/agent-console/README.md) offers only once it is shown again.
+Built on the [agent content tools](../../agent-content-tools/design.md) and [live edits](../live-edits/design.md). A person working in an editor should not have to leave it to ask an agent for an edit, and asking from inside it must not open a second way in. So the assistant is a shortcut into the person's own Claude Code session, which then works through the tools any agent uses. It also waits on something outside this proposal: a host the page can pair with, which the [agent console](../../../infra/claude-interface/agent-console/README.md) offers only once it is shown again.
 
 ## One path
 
@@ -26,11 +26,11 @@ sequenceDiagram
 
 **Ask Claude** is registered through `useCommands` from the blade header, so it sits in the toolbar and in the command palette for every type, needing nothing from any. It takes a line of text and sends it through the agent console's connection store as a `PromptCommand` to the session the person picks: one already open on the host, or a new one from a `CreateSessionCommand` in a folder they type, which the command takes as its own field rather than sharing the new-session panel's picker. The prompt names the resource by id and type, so the session's first call is the describe or read tool rather than a search.
 
-The session reaches Esposter through the MCP server entry the follow-ups plugin already ships, with the person's own key, which needs the `Resources` scope ([agent access](../../specs/architecture/agent-access/design.md)); the settings card's steps set that up, as the TodoList's Connect an agent dialog does for follow-ups. The edit lands in the open editor through live edits, so the person watches it arrive, and an edit of their own still unsaved meets it as a choice rather than being overwritten.
+The session reaches Esposter through the MCP server entry the follow-ups plugin already ships, with the person's own key, which needs the `Resources` scope ([agent access](../../agent-access/design.md)); the settings card's steps set that up, as the TodoList's Connect an agent dialog does for follow-ups. The edit lands in the open editor through live edits, so the person watches it arrive, and an edit of their own still unsaved meets it as a choice rather than being overwritten.
 
 ## Free
 
-A Claude feature in Esposter costs the person nothing beyond the subscription their Claude Code already runs on, the rule the [Claude interface](../../specs/infra/claude-interface/README.md) is built under. The turn runs in the person's own session, on their own machine and plan, exactly as a line typed into the console does; Esposter calls no model, holds no model key and meters nothing. The [SDK-driven companion](../../rejected/infra/sdk-driven-companion/design.md) was rejected partly for being a chat beside the work that holds none of it, and this session is the reverse: the resource is the work, and the session holds and edits it.
+A Claude feature in Esposter costs the person nothing beyond the subscription their Claude Code already runs on, the rule the [Claude interface](../../../infra/claude-interface/README.md) is built under. The turn runs in the person's own session, on their own machine and plan, exactly as a line typed into the console does; Esposter calls no model, holds no model key and meters nothing. The [SDK-driven companion](../../../../rejected/infra/sdk-driven-companion/design.md) was rejected partly for being a chat beside the work that holds none of it, and this session is the reverse: the resource is the work, and the session holds and edits it.
 
 With no host paired, the command shows how to pair one rather than falling back to anything hosted, since there is nothing hosted to fall back to.
 

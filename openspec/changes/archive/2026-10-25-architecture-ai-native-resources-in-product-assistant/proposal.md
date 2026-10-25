@@ -21,7 +21,7 @@ An editor gets an Ask Claude command that hands the person's line to their own s
 ## Waiting on
 
 - A host the page can pair with: the agent console offers one only once it is shown again, which is outside this proposal.
-- `openspec/changes/architecture-ai-native-resources-live-edits/`: an assistant's edit reaches the open editor through live edits.
+- `openspec/changes/archive/2026-10-25-architecture-ai-native-resources-live-edits/`: an assistant's edit reaches the open editor through live edits.
 
 ## Impact
 
