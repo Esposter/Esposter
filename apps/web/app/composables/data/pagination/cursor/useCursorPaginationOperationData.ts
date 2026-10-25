@@ -6,6 +6,18 @@ import { getBoundComputed } from "@/util/vue/getBoundComputed";
 import { getPropertyComputed } from "@/util/vue/getPropertyComputed";
 import { checkIsServer, createExponentialBackoff, getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 
+// The data a reset has replaced. A read issued against it answers a partition that no longer holds that data, so its
+// result is dropped rather than landing on the replacement. A cache hydration replaces data too, but without retiring
+// it: the rows it restores are the partition's own, so a read still in flight keeps landing on them
+const retiredCursorPaginationData = new WeakSet<object>();
+
+// Empties a partition, retiring the data it held so a read issued against that data is dropped when it lands
+export const emptyCursorPaginationData = <TItem>(data: Ref<CursorPaginationData<TItem>>, isLoaded: Ref<boolean>) => {
+  retiredCursorPaginationData.add(data.value);
+  data.value = new CursorPaginationData<TItem>();
+  isLoaded.value = false;
+};
+
 interface ReadItemsOptions<TItem> {
   // Payload key, from `AsyncDataKey`, for a read a server render also issues. Without one the read runs twice
   // For every such page — once for the html, once again as hydration replays the same setup client-side
@@ -34,8 +46,7 @@ export const useCursorPaginationOperationData = <TItem>(
     isLoaded.value = true;
   };
   const resetCursorPaginationData = () => {
-    cursorPaginationData.value = new CursorPaginationData<TItem>();
-    isLoaded.value = false;
+    emptyCursorPaginationData(cursorPaginationData, isLoaded);
   };
   const readItems = async (
     query: () => Promise<CursorPaginationData<TItem>>,
@@ -57,8 +68,12 @@ export const useCursorPaginationOperationData = <TItem>(
     const refresh = async () => {
       isPending.value = true;
       isError.value = false;
+      const issuedCursorPaginationData = boundCursorPaginationData.value;
       await getResultAsync(async () => {
         const data = await query();
+        // Answers a reset that landed while the read was in flight: the rows are of the order the reset left behind
+        if (retiredCursorPaginationData.has(issuedCursorPaginationData)) return;
+
         await storeCursorPaginationData(data);
         // The page the html was rendered from rides to the client, so hydration adopts the rows already on
         // Screen rather than fetching a second copy of them
@@ -86,11 +101,15 @@ export const useCursorPaginationOperationData = <TItem>(
     const boundCursorPaginationData = bindCursorPaginationData();
     await withFinalizerAsync(async () => {
       if (!online.value) return;
+      const issuedCursorPaginationData = boundCursorPaginationData.value;
       const {
         hasMore: newHasMore,
         items: newItems,
         nextCursor: newNextCursor,
-      } = await executeWithBackoff(() => query(boundCursorPaginationData.value.nextCursor));
+      } = await executeWithBackoff(() => query(issuedCursorPaginationData.nextCursor));
+      // A page of an order a reset has since replaced belongs to no partition the reader is looking at
+      if (retiredCursorPaginationData.has(issuedCursorPaginationData)) return;
+
       boundCursorPaginationData.value.hasMore = newHasMore;
       boundCursorPaginationData.value.nextCursor = newNextCursor;
       boundCursorPaginationData.value.items.push(...newItems);

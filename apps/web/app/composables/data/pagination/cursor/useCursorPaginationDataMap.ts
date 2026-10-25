@@ -2,6 +2,7 @@ import type { CursorPaginationSlice } from "@/models/pagination/cursor/CursorPag
 import type { Except } from "type-fest";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
+import { emptyCursorPaginationData } from "@/composables/data/pagination/cursor/useCursorPaginationOperationData";
 import { getPropertyComputed } from "@/util/vue/getPropertyComputed";
 
 export const useCursorPaginationDataMap = <TItem>(
@@ -30,6 +31,9 @@ export const useCursorPaginationDataMap = <TItem>(
       },
       isLoaded,
       items: getPropertyComputed(data, "items"),
+      resetCursorPaginationData: () => {
+        emptyCursorPaginationData(data, isLoaded);
+      },
     };
   };
   const getSliceOperationData = (key: string) =>

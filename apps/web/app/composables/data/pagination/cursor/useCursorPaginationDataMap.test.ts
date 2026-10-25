@@ -14,6 +14,7 @@ describe(useCursorPaginationDataMap, () => {
   let items: ReturnType<typeof useCursorPaginationDataMap<string>>["items"];
   let readItems: ReturnType<typeof useCursorPaginationOperationData<string>>["readItems"];
   let readMoreItems: ReturnType<typeof useCursorPaginationOperationData<string>>["readMoreItems"];
+  let resetCursorPaginationData: ReturnType<typeof useCursorPaginationDataMap<string>>["resetCursorPaginationData"];
 
   const mountDataMap = async () => {
     await mountSuspended(
@@ -21,7 +22,8 @@ describe(useCursorPaginationDataMap, () => {
         render: () => h("div"),
         setup: () => {
           currentId = ref(key);
-          ({ items, readItems, readMoreItems } = useCursorPaginationDataMap<string>(currentId));
+          ({ items, readItems, readMoreItems, resetCursorPaginationData } =
+            useCursorPaginationDataMap<string>(currentId));
         },
       }),
     );
@@ -78,5 +80,30 @@ describe(useCursorPaginationDataMap, () => {
     await flushPromises();
 
     expect(items.value).toStrictEqual([item]);
+  });
+  test("drops a slow first page that lands after its partition was reset", async () => {
+    expect.hasAssertions();
+
+    await mountDataMap();
+    const { query, resolveQuery } = createPendingRead();
+    const pendingRead = readItems(query);
+    resetCursorPaginationData();
+    resolveQuery();
+    await pendingRead;
+
+    expect(items.value).toStrictEqual([]);
+  });
+
+  test("drops a slow later page that lands after its partition was reset", async () => {
+    expect.hasAssertions();
+
+    await mountDataMap();
+    const { query, resolveQuery } = createPendingRead();
+    const pendingRead = readMoreItems(query);
+    resetCursorPaginationData();
+    resolveQuery();
+    await pendingRead;
+
+    expect(items.value).toStrictEqual([]);
   });
 });

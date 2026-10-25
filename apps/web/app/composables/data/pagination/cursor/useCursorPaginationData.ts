@@ -1,6 +1,7 @@
 import type { CursorPaginationSlice } from "@/models/pagination/cursor/CursorPaginationSlice";
 
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
+import { emptyCursorPaginationData } from "@/composables/data/pagination/cursor/useCursorPaginationOperationData";
 import { getPropertyComputed } from "@/util/vue/getPropertyComputed";
 
 export const useCursorPaginationData = <TItem>(): ReturnType<typeof useCursorPaginationOperationData<TItem>> & {
@@ -17,6 +18,9 @@ export const useCursorPaginationData = <TItem>(): ReturnType<typeof useCursorPag
     },
     isLoaded,
     items: getPropertyComputed(cursorPaginationData, "items"),
+    resetCursorPaginationData: () => {
+      emptyCursorPaginationData(cursorPaginationData, isLoaded);
+    },
   });
   return {
     ...useCursorPaginationOperationData(

@@ -7,4 +7,5 @@ export interface CursorPaginationSlice<TItem> {
   initializeCursorPaginationData: (data: CursorPaginationData<TItem>) => void;
   isLoaded: Ref<boolean>;
   items: Ref<TItem[]>;
+  resetCursorPaginationData: () => void;
 }
