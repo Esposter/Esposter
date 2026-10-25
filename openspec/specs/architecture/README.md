@@ -104,3 +104,4 @@ Cross-cutting standards we decided against are recorded in [rejected](../../reje
 
 - **Vite+** — the builds run on [Vite+](vite-plus/design.md)'s traced task cache in CI and locally, with no hand-kept content-hash key. `vp env` owns the node install. One copy of each tool lives in the lockfile, the catalog's.
 - **UI library** — the app's interfaces are drawn by [the UI library](ui-library/design.md): its own library over Vuetify 0's headless primitives, one theme system, one way to build a control, and a headless dependency only the library imports.
+- **Keyframe store** — the object format on disk and the caller contract of the `keyframe-store` package are specified in [its area](../keyframe-store/README.md), beside the npm README that stays its install page.

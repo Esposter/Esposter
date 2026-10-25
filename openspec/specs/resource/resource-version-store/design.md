@@ -6,7 +6,7 @@ Every trigger, channel and retention rule stays what [resource snapshots](../res
 
 ## The codec
 
-The codec is the `keyframe-store` workspace package, a general library that never sees a schema: it takes bytes and returns bytes, addresses an object by the SHA-256 of its plaintext, and decides per write whether a delta or a keyframe is cheaper. The `keyframe-store` README is the reference for the object format, the promotion ratio, the segment budget and the compression parameters. Two properties of it are what the resource layer is built on:
+The codec is the `keyframe-store` workspace package, a general library that never sees a schema: it takes bytes and returns bytes, addresses an object by the SHA-256 of its plaintext, and decides per write whether a delta or a keyframe is cheaper. The [keyframe store's object format](../../keyframe-store/object-format/design.md) page is the reference for the promotion ratio, the segment budget and the compression parameters. Two properties of it are what the resource layer is built on:
 
 - **Reconstruction is at most two reads.** A delta's own header names its keyframe, so there is no chain to walk and no version depends on the one written before it.
 - **An object is write-once and content-addressed.** A version whose content the store already holds is a row pointing at the existing object — nothing written, nothing charged. That is the case that makes the meter honest about a save that changed nothing, and about a restore back to a version the store still has.

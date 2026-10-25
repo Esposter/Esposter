@@ -66,15 +66,7 @@ const plaintext = await keyframeStore.read(second.hash).match(
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs) to level up.
-
-### How it works
-
-- **Addressing.** An object's key is the hex SHA-256 of its plaintext, so two versions with identical content resolve to one object whichever keyframe either would have been encoded against. The store is write-once: a write of content it already holds records nothing and reports itself deduplicated.
-- **Encoding.** Each write compresses the plaintext standalone and, when the lineage has a keyframe, again with that keyframe's plaintext as the dictionary. The delta is kept only if it is at most the **promotion ratio** of the standalone size _and_ the bytes already anchored to the keyframe plus this delta fit the **segment budget**; otherwise the standalone form is written and this version becomes the lineage's next keyframe.
-- **Reading.** A keyframe is one read and one decompression; a delta fetches the keyframe its own header names, decompresses it, then decompresses the delta against it. Every result is hashed and compared with the key, so a truncated, altered or misfiled object is a refused read rather than a plausible document.
-- **Collection.** An object survives while any record names it, as its own hash or as its base. The caller answers that from its own records — `collect` takes the hashes an eviction released and the hashes still named, deletes the difference, and returns what it deleted.
-- **The anchor is the caller's.** The store holds no notion of a lineage: a caller derives one anchor per history — the newest keyframe's hash, and the bytes anchored to it — and resets both whenever a write reports an empty base.
+We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs) to level up. The object format on disk and the contract a caller writes and reads through are specified in the [keyframe store area](https://github.com/Esposter/Esposter/tree/main/openspec/specs/keyframe-store).
 
 ### Key exports
 
