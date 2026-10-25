@@ -1,6 +1,6 @@
 ## Purpose
 
-The owner's published surveys offered as invite buttons. A webpage's invite is a page-builder node that links to the survey; the email editor's invite is a GrapesJS block until the email cutover. A published page becomes a survey distribution surface.
+The owner's published surveys offered as invite buttons. A webpage's invite is a page-builder node that links to the survey, and the email editor holds the same node as an MJML button. A published page becomes a survey distribution surface.
 
 ## Requirements
 
@@ -65,38 +65,22 @@ A published webpage SHALL NOT embed a survey inline, and SHALL offer a button to
 - **THEN** the survey appears as a button
 - **AND** no survey form is embedded in the page
 
-### Requirement: The email editor offers only published surveys
+### Requirement: An email survey invite is a button to the survey
 
-The email editor SHALL offer the owner's published surveys as invite blocks, and SHALL NOT offer a survey that is still a draft.
+An email survey invite SHALL be a button that links to its bound survey's public page, at the absolute address of the origin the email is compiled for.
 
-#### Scenario: Draft survey
+#### Scenario: Recipient clicks an invite in a sent email
 
-- **GIVEN** a survey still in draft
-- **WHEN** the owner opens the email editor's blocks
-- **THEN** no invite block for that survey is offered
+- **GIVEN** an email with a survey invite bound to a survey
+- **WHEN** the recipient clicks the button
+- **THEN** the recipient opens the plain public address of that survey
 
-#### Scenario: Published survey
+### Requirement: An email survey invite shows its label as escaped text
 
-- **GIVEN** a published survey
-- **WHEN** the owner opens the email editor's blocks
-- **THEN** an invite block for that survey is offered
+An email survey invite SHALL show its label as the button's text, escaped, so markup in the label does not run.
 
-### Requirement: The email editor reads the survey list when the session is available and when the owner returns
+#### Scenario: Label with markup characters in an email
 
-The email editor SHALL read the owner's survey list when the owner's session becomes available, and SHALL read it again when the owner returns to the window. A read SHALL NOT happen while the owner is signed out.
-
-#### Scenario: Survey published while the email editor is open
-
-- **GIVEN** the email editor is open
-- **WHEN** the owner publishes a survey in another tab and returns to the editor's window
-- **THEN** the survey is offered as an invite block without reopening the editor
-
-### Requirement: An email invite block shows the survey's name as escaped text
-
-An email invite block SHALL show the survey's name as escaped text, so markup in the name does not run.
-
-#### Scenario: Survey name with markup characters
-
-- **GIVEN** a published survey whose name contains markup characters
-- **WHEN** its invite block is offered
-- **THEN** the name appears as literal text
+- **GIVEN** an email survey invite whose label contains markup characters
+- **WHEN** the email is compiled
+- **THEN** the label appears as literal text
