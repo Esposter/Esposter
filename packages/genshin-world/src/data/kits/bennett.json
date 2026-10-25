@@ -59,5 +59,7 @@
   "skillHolds.1.variant.hits.1.hitmarkFrames": { "file": "skill.go", "line": 16, "source": "Gcsim", "value": 121 },
   "skillHolds.1.variant.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 4, "proudSkillGroupId": 3232 } },
   "skillHolds.1.variant.hits.2.hitmarkFrames": { "file": "skill.go", "line": 179, "source": "Gcsim", "value": 166 },
-  "skillHolds.1.variant.hits.2.multiplier": { "source": "Gcsim", "value": { "index": 5, "proudSkillGroupId": 3232 } }
+  "skillHolds.1.variant.hits.2.multiplier": { "source": "Gcsim", "value": { "index": 5, "proudSkillGroupId": 3232 } },
+  "chargedAttack.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 5, "proudSkillGroupId": 3231 } },
+  "chargedAttack.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 6, "proudSkillGroupId": 3231 } }
 }
