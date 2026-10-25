@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Visual } from "#shared/models/dashboard/data/Visual";
 
+import { VisualType } from "#shared/models/dashboard/data/VisualType";
 import { VisualDatasetShape } from "@/models/dashboard/VisualDatasetShape";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { VisualTypeChartTypesMap } from "@/services/dashboard/chart/VisualTypeChartTypesMap";
@@ -20,6 +21,10 @@ const schema = useZodSchema(
   () => editedItem.value.type,
 );
 const jsonSchema = computed(() => zodToJsonSchema(schema.value));
+// A card and a table draw no chart, so the chart type and the chart's settings have nothing to set for them
+const isChartVisual = computed(
+  () => editedItem.value.type !== VisualType.Card && editedItem.value.type !== VisualType.Table,
+);
 const chartTypeItems = computed(() =>
   VisualTypeChartTypesMap[editedItem.value.type].map((value) => ({
     meaning: UiIconMeaning.Chart,
@@ -34,7 +39,7 @@ const chartTypeItems = computed(() =>
     v-model="isEditFormDialogOpen"
     v-model:is-edit-form-valid="isEditFormValid"
     :name="`${editedItem.chart.type} ${editedItem.type} Visual`"
-    :title="`${prettify(editedItem.chart.type)} chart`"
+    :title="isChartVisual ? `${prettify(editedItem.chart.type)} chart` : prettify(editedItem.type)"
     :edited-item
     :is-dirty
     :is-savable
@@ -57,7 +62,7 @@ const chartTypeItems = computed(() =>
             @update:model-value="(type) => setVisualType(editedItem, type)"
           />
         </div>
-        <div flex flex-col gap-1 w-64>
+        <div v-if="isChartVisual" flex flex-col gap-1 w-64>
           <span text-sm text-muted>Chart type</span>
           <UiSelect v-model="editedItem.chart.type" :items="chartTypeItems" label="Chart type" />
         </div>
@@ -68,6 +73,18 @@ const chartTypeItems = computed(() =>
       </p>
       <DashboardVisualPreviewDatasetBindingForm v-else v-model="editedItem.dataset" />
     </template>
-    <UiSchemaForm v-model="editedItem.chart.configuration" :schema="jsonSchema" :validation-schema="schema" />
+    <UiSchemaForm
+      v-if="isChartVisual"
+      v-model="editedItem.chart.configuration"
+      :schema="jsonSchema"
+      :validation-schema="schema"
+    />
+    <!-- A card's label is the title its chart configuration holds, so it saves with the rest of the visual and reads back
+      as the card's heading. An empty label falls back to the aggregation of the card's column -->
+    <UiTextField
+      v-else-if="editedItem.type === VisualType.Card"
+      v-model="editedItem.chart.configuration.title"
+      label="Label"
+    />
   </StyledEditFormDialog>
 </template>
