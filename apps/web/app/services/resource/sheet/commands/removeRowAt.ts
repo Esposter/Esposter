@@ -1,6 +1,6 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
-import { getValueSize } from "@/services/resource/sheet/commands/getValueSize";
+import { getValueSize } from "#shared/services/resource/sheet/commands/getValueSize";
 import { takeOne } from "@esposter/shared";
 
 // Takes the row at an index out, releasing its values from every column's size as it goes

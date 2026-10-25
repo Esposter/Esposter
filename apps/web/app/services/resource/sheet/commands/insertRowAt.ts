@@ -1,7 +1,7 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 
-import { getValueSize } from "@/services/resource/sheet/commands/getValueSize";
+import { getValueSize } from "#shared/services/resource/sheet/commands/getValueSize";
 import { takeOne } from "@esposter/shared";
 
 // Puts a row in at an index, counting its values into every column's size as it lands

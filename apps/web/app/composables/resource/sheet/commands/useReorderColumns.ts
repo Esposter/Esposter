@@ -1,6 +1,6 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 
-import { MoveColumnCommand } from "@/models/resource/sheet/commands/MoveColumnCommand";
+import { MoveColumnCommand } from "#shared/models/resource/sheet/commands/MoveColumnCommand";
 import { takeOne } from "@esposter/shared";
 
 export const useReorderColumns = () =>

@@ -1,6 +1,6 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
-import { checkIsEditableColumnValue } from "@/services/resource/sheet/column/checkIsEditableColumnValue";
+import { checkIsEditableColumnValue } from "#shared/services/resource/sheet/column/checkIsEditableColumnValue";
 import { takeOne } from "@esposter/shared";
 
 // A row's data is keyed in column order, so a command that reorders, restores, renames or retypes a column rebuilds

@@ -2,9 +2,9 @@ import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSo
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 
 import { pluralize } from "#shared/util/text/pluralize";
-import { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSourceCommand";
-import { CommandType } from "@/models/resource/sheet/commands/CommandType";
-import { getValueSize } from "@/services/resource/sheet/commands/getValueSize";
+import { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
+import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";
+import { getValueSize } from "#shared/services/resource/sheet/commands/getValueSize";
 import { takeOne } from "@esposter/shared";
 
 export class CreateRowsCommand extends ADataSourceCommand<CommandType.CreateRows> {

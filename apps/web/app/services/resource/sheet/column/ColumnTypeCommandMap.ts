@@ -1,5 +1,5 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
-import type { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSourceCommand";
+import type { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
 import type { Except } from "type-fest";
 
 import { BooleanColumn } from "#shared/models/resource/sheet/column/BooleanColumn";
@@ -8,8 +8,8 @@ import { ComputedColumn } from "#shared/models/resource/sheet/column/ComputedCol
 import { DateColumn } from "#shared/models/resource/sheet/column/DateColumn";
 import { NumberColumn } from "#shared/models/resource/sheet/column/NumberColumn";
 import { StringColumn } from "#shared/models/resource/sheet/column/StringColumn";
-import { CreateColumnCommand } from "@/models/resource/sheet/commands/CreateColumnCommand";
-import { CreateComputedColumnCommand } from "@/models/resource/sheet/commands/CreateComputedColumnCommand";
+import { CreateColumnCommand } from "#shared/models/resource/sheet/commands/CreateColumnCommand";
+import { CreateComputedColumnCommand } from "#shared/models/resource/sheet/commands/CreateComputedColumnCommand";
 
 export const ColumnTypeCommandMap = {
   [ColumnType.Boolean]: (columnIndex: number, data: Except<Extract<Column, { type: ColumnType.Boolean }>, "id">) =>

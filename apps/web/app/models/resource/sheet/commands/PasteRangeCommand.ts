@@ -3,10 +3,10 @@ import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSo
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
 import { coerceValue } from "#shared/services/resource/sheet/column/coerceValue";
 import { pluralize } from "#shared/util/text/pluralize";
-import { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSourceCommand";
-import { CommandType } from "@/models/resource/sheet/commands/CommandType";
+import { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
+import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";
 import { createPastedRowData } from "@/services/resource/sheet/commands/createPastedRowData";
-import { getValueSize } from "@/services/resource/sheet/commands/getValueSize";
+import { getValueSize } from "#shared/services/resource/sheet/commands/getValueSize";
 import { writeCellValue } from "@/services/resource/sheet/commands/writeCellValue";
 import { takeOne } from "@esposter/shared";
 

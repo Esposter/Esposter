@@ -1,8 +1,8 @@
 import type { ComputedColumn } from "#shared/models/resource/sheet/column/ComputedColumn";
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
-import { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSourceCommand";
-import { CommandType } from "@/models/resource/sheet/commands/CommandType";
+import { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
+import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";
 
 export class CreateComputedColumnCommand extends ADataSourceCommand<CommandType.CreateComputedColumn> {
   readonly type = CommandType.CreateComputedColumn;

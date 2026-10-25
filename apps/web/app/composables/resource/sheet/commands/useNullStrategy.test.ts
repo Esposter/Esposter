@@ -5,7 +5,7 @@ import { createRow } from "#shared/models/resource/sheet/datasource/createRow.te
 import { setupCommandTest } from "@/composables/resource/sheet/commands/setupCommandTest.test";
 import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
 import { NullStrategy } from "@/models/resource/sheet/commands/NullStrategy";
-import { NULL_STRATEGY_NA_VALUE } from "@/services/resource/sheet/commands/constants";
+import { NULL_STRATEGY_NA_VALUE } from "#shared/services/resource/sheet/commands/constants";
 import { useSheetHistoryStore } from "@/store/resource/sheet/history";
 import { describe, expect, test } from "vitest";
 

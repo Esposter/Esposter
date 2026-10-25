@@ -1,5 +1,5 @@
-import { RECORD_DIFFERENCE_HEADER } from "@/services/resource/sheet/commands/constants";
-import { getRecordDifferenceDescription } from "@/services/resource/sheet/commands/getRecordDifferenceDescription";
+import { RECORD_DIFFERENCE_HEADER } from "#shared/services/resource/sheet/commands/constants";
+import { getRecordDifferenceDescription } from "#shared/services/resource/sheet/commands/getRecordDifferenceDescription";
 import { describe, expect, test } from "vitest";
 
 describe(getRecordDifferenceDescription, () => {

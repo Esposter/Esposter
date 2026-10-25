@@ -2,10 +2,10 @@ import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSo
 import type { IndexedRow } from "@/models/resource/sheet/commands/IndexedRow";
 
 import { pluralize } from "#shared/util/text/pluralize";
-import { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSourceCommand";
-import { CommandType } from "@/models/resource/sheet/commands/CommandType";
-import { getValueSize } from "@/services/resource/sheet/commands/getValueSize";
-import { restoreAtIndices } from "@/services/resource/sheet/commands/restoreAtIndices";
+import { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
+import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";
+import { getValueSize } from "#shared/services/resource/sheet/commands/getValueSize";
+import { restoreAtIndices } from "#shared/services/resource/sheet/commands/restoreAtIndices";
 import { takeOne } from "@esposter/shared";
 
 export class DeleteRowsCommand extends ADataSourceCommand<CommandType.DeleteRows> {

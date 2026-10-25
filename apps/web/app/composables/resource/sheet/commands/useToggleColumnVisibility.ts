@@ -1,4 +1,4 @@
-import { ToggleColumnVisibilityCommand } from "@/models/resource/sheet/commands/ToggleColumnVisibilityCommand";
+import { ToggleColumnVisibilityCommand } from "#shared/models/resource/sheet/commands/ToggleColumnVisibilityCommand";
 
 export const useToggleColumnVisibility = () =>
   useSheetCommand((dataSource, id: string) => {

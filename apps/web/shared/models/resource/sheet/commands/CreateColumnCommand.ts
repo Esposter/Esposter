@@ -1,9 +1,9 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
-import { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSourceCommand";
-import { CommandType } from "@/models/resource/sheet/commands/CommandType";
-import { getValueSize } from "@/services/resource/sheet/commands/getValueSize";
+import { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
+import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";
+import { getValueSize } from "#shared/services/resource/sheet/commands/getValueSize";
 
 export class CreateColumnCommand extends ADataSourceCommand<CommandType.CreateColumn> {
   readonly type = CommandType.CreateColumn;

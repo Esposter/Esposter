@@ -5,7 +5,7 @@ import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSo
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { columnFormSchema } from "@/models/resource/sheet/column/ColumnForm";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
-import { ColumnTypeCreateMap } from "@/services/resource/sheet/column/ColumnTypeCreateMap";
+import { ColumnTypeCreateMap } from "#shared/services/resource/sheet/column/ColumnTypeCreateMap";
 import { ColumnTypeFormSchemaMap } from "@/services/resource/sheet/column/ColumnTypeFormSchemaMap";
 import { extractSchemaFields } from "@/services/zod/extractSchemaFields";
 

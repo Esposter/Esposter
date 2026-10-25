@@ -1,10 +1,10 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 
-import { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSourceCommand";
-import { CommandType } from "@/models/resource/sheet/commands/CommandType";
-import { getRecordDifferenceDescription } from "@/services/resource/sheet/commands/getRecordDifferenceDescription";
-import { getValueSize } from "@/services/resource/sheet/commands/getValueSize";
+import { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
+import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";
+import { getRecordDifferenceDescription } from "#shared/services/resource/sheet/commands/getRecordDifferenceDescription";
+import { getValueSize } from "#shared/services/resource/sheet/commands/getValueSize";
 import { takeOne } from "@esposter/shared";
 
 export class UpdateRowCommand extends ADataSourceCommand<CommandType.UpdateRow> {

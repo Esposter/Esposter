@@ -2,7 +2,7 @@
 import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 
-import { checkIsEditableColumnValue } from "@/services/resource/sheet/column/checkIsEditableColumnValue";
+import { checkIsEditableColumnValue } from "#shared/services/resource/sheet/column/checkIsEditableColumnValue";
 import { OUTLIER_HIGHLIGHT_CLASS } from "@/services/resource/sheet/constants";
 import { getItemId } from "@/services/resource/sheet/getItemId";
 import { useCellStore } from "@/store/resource/sheet/cell";

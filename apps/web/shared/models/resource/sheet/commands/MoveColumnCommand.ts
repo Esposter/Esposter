@@ -1,8 +1,8 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
-import { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSourceCommand";
-import { CommandType } from "@/models/resource/sheet/commands/CommandType";
-import { alignRowDataToColumns } from "@/services/resource/sheet/commands/alignRowDataToColumns";
+import { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
+import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";
+import { alignRowDataToColumns } from "#shared/services/resource/sheet/commands/alignRowDataToColumns";
 
 export class MoveColumnCommand extends ADataSourceCommand<CommandType.MoveColumn> {
   readonly type = CommandType.MoveColumn;

@@ -2,8 +2,8 @@ import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnValue";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 
-import { checkIsEditableColumnValue } from "@/services/resource/sheet/column/checkIsEditableColumnValue";
-import { getValueSize } from "@/services/resource/sheet/commands/getValueSize";
+import { checkIsEditableColumnValue } from "#shared/services/resource/sheet/column/checkIsEditableColumnValue";
+import { getValueSize } from "#shared/services/resource/sheet/commands/getValueSize";
 import { takeOne } from "@esposter/shared";
 
 // The one way a command writes a cell of a row already in the sheet, with the column's size moved by the difference.

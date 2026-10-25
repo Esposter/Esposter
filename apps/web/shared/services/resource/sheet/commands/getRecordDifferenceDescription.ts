@@ -1,6 +1,6 @@
 import { ISO_DATE_FORMAT } from "#shared/util/date/constants";
 import { formatDate } from "#shared/util/date/formatDate";
-import { RECORD_DIFFERENCE_HEADER } from "@/services/resource/sheet/commands/constants";
+import { RECORD_DIFFERENCE_HEADER } from "#shared/services/resource/sheet/commands/constants";
 import { ItemMetadata } from "@esposter/shared";
 
 const ItemMetadataKeySet = new Set(Object.keys(new ItemMetadata()));

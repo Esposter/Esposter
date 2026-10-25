@@ -6,7 +6,7 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { ChartableColumnTypes } from "@/services/resource/sheet/column/ChartableColumnTypes";
 import { getDeleteColumnDescription } from "@/services/resource/sheet/commands/getDeleteColumnDescription";
 import { getEditColumnDescription } from "@/services/resource/sheet/commands/getEditColumnDescription";
-import { getToggleColumnVisibilityDescription } from "@/services/resource/sheet/commands/getToggleColumnVisibilityDescription";
+import { getToggleColumnVisibilityDescription } from "#shared/services/resource/sheet/commands/getToggleColumnVisibilityDescription";
 import { useColumnDialogStore } from "@/store/resource/sheet/columnDialog";
 
 // A column's commands, which its row's overflow button, its row's context menu and its header in the grid all open,

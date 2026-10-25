@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 
-import { checkIsEditableColumnValue } from "@/services/resource/sheet/column/checkIsEditableColumnValue";
+import { checkIsEditableColumnValue } from "#shared/services/resource/sheet/column/checkIsEditableColumnValue";
 import { toColumnKey } from "@/services/resource/sheet/column/toColumnKey";
 import { useCellStore } from "@/store/resource/sheet/cell";
 import { useColumnStore } from "@/store/resource/sheet/column";

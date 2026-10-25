@@ -1,5 +1,5 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
-import type { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSourceCommand";
+import type { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
 
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { describe, test } from "vitest";

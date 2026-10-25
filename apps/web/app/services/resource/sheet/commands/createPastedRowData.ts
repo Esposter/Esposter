@@ -2,7 +2,7 @@ import type { Column } from "#shared/models/resource/sheet/column/Column";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 
 import { coerceValue } from "#shared/services/resource/sheet/column/coerceValue";
-import { checkIsEditableColumnValue } from "@/services/resource/sheet/column/checkIsEditableColumnValue";
+import { checkIsEditableColumnValue } from "#shared/services/resource/sheet/column/checkIsEditableColumnValue";
 import { createEmptyRowData } from "@/services/resource/sheet/dataSource/createEmptyRowData";
 
 // A new row made from one pasted line — the rows an overwriting paste appends past the end and the rows a shift-down

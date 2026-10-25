@@ -1,7 +1,7 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { IndexedRow } from "@/models/resource/sheet/commands/IndexedRow";
 
-import { checkIsEditableColumnValue } from "@/services/resource/sheet/column/checkIsEditableColumnValue";
+import { checkIsEditableColumnValue } from "#shared/services/resource/sheet/column/checkIsEditableColumnValue";
 import { getVisibleColumns } from "@/services/resource/sheet/column/getVisibleColumns";
 import { checkIsNullOrEmptyValue } from "@/services/resource/sheet/commands/checkIsNullOrEmptyValue";
 import { takeOne } from "@esposter/shared";

@@ -4,43 +4,50 @@ import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSo
 import type { ToData } from "@esposter/shared";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
+import { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
+import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";
 import { coerceValue } from "#shared/services/resource/sheet/column/coerceValue";
+import { checkIsEditableColumnValue } from "#shared/services/resource/sheet/column/checkIsEditableColumnValue";
+import { ColumnTypeCreateMap } from "#shared/services/resource/sheet/column/ColumnTypeCreateMap";
+import { alignRowDataToColumns } from "#shared/services/resource/sheet/commands/alignRowDataToColumns";
+import { getOriginalRowValues } from "#shared/services/resource/sheet/commands/getOriginalRowValues";
+import { getRecordDifferenceDescription } from "#shared/services/resource/sheet/commands/getRecordDifferenceDescription";
+import { getValueSize } from "#shared/services/resource/sheet/commands/getValueSize";
 import { formatDate } from "#shared/util/date/formatDate";
 import { parseDate } from "#shared/util/date/parseDate";
-import { ADataSourceCommand } from "@/models/resource/sheet/commands/ADataSourceCommand";
-import { CommandType } from "@/models/resource/sheet/commands/CommandType";
-import { checkIsEditableColumnValue } from "@/services/resource/sheet/column/checkIsEditableColumnValue";
-import { ColumnTypeCreateMap } from "@/services/resource/sheet/column/ColumnTypeCreateMap";
-import { alignRowDataToColumns } from "@/services/resource/sheet/commands/alignRowDataToColumns";
-import { getRecordDifferenceDescription } from "@/services/resource/sheet/commands/getRecordDifferenceDescription";
-import { getValueSize } from "@/services/resource/sheet/commands/getValueSize";
-import { takeOne } from "@esposter/shared";
+import { takeOne, toRawDeep } from "@esposter/shared";
 
 export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateColumn> {
   readonly type = CommandType.UpdateColumn;
 
   get description() {
-    const recordDifferenceDescription = getRecordDifferenceDescription(this.#originalColumn, this.#updatedColumn);
+    const recordDifferenceDescription = this.#originalColumn
+      ? getRecordDifferenceDescription(this.#originalColumn, this.#updatedColumn)
+      : "";
     const detail = recordDifferenceDescription ? `\n\n${recordDifferenceDescription}` : "";
-    return `Edit "${this.#originalColumn.name}" Column${detail}`;
+    return `Edit "${this.#originalName}" Column${detail}`;
   }
 
-  readonly #originalColumn: Column;
-  readonly #originalRowValues: ColumnValue[];
+  // What the column held before this command, recorded from the document on execute, so undo restores what the
+  // Document held rather than what the caller saw. Undefined until the command has executed
+  #originalColumn: Column | undefined;
+  #originalRowValues: ColumnValue[] = [];
+  readonly #originalName: string;
   readonly #updatedColumn: ToData<Column>;
 
-  constructor(originalColumn: Column, updatedColumn: ToData<Column>, originalRowValues: ColumnValue[]) {
+  constructor(originalName: string, updatedColumn: ToData<Column>) {
     super();
-    this.#originalColumn = originalColumn;
+    this.#originalName = originalName;
     this.#updatedColumn = updatedColumn;
-    this.#originalRowValues = originalRowValues;
   }
 
   execute(dataSource: DataSource) {
-    const originalName = this.#originalColumn.name;
+    const originalName = this.#originalName;
     const columnIndex = dataSource.columns.findIndex(({ name }) => name === originalName);
     if (columnIndex === -1) return;
     const column = takeOne(dataSource.columns, columnIndex);
+    this.#originalColumn = structuredClone(toRawDeep(column));
+    this.#originalRowValues = getOriginalRowValues(dataSource, originalName);
     const updatedName = this.#updatedColumn.name;
     const originalType = column.type;
     const dateFormatChange =
@@ -92,12 +99,14 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
   }
 
   undo(dataSource: DataSource) {
-    const originalName = this.#originalColumn.name;
+    const originalColumn = this.#originalColumn;
+    if (originalColumn === undefined) return;
+    const originalName = originalColumn.name;
     const updatedName = this.#updatedColumn.name;
     const columnIndex = dataSource.columns.findIndex(({ name }) => name === updatedName);
     if (columnIndex === -1) return;
-    const restoredColumn = ColumnTypeCreateMap[this.#originalColumn.type].create();
-    Object.assign(restoredColumn, this.#originalColumn);
+    const restoredColumn = ColumnTypeCreateMap[originalColumn.type].create();
+    Object.assign(restoredColumn, originalColumn);
     const updatedType = takeOne(dataSource.columns, columnIndex).type;
     dataSource.columns[columnIndex] = restoredColumn;
     // A computed column had nothing stored to put back

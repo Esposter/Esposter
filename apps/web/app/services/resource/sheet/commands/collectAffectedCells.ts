@@ -3,7 +3,7 @@ import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnVal
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 import type { AffectedCell } from "@/models/resource/sheet/commands/AffectedCell";
 
-import { checkIsEditableColumnValue } from "@/services/resource/sheet/column/checkIsEditableColumnValue";
+import { checkIsEditableColumnValue } from "#shared/services/resource/sheet/column/checkIsEditableColumnValue";
 import { takeOne } from "@esposter/shared";
 
 // The one row × column walk every cell-scoped command shares; each caller supplies the column set it
