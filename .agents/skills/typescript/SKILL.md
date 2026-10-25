@@ -32,17 +32,17 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 - `Omit` → `Except` from `type-fest`, enforced by oxlint `typescript/no-restricted-types`. Import it from `type-fest` directly; it is **not** re-exported from `@esposter/shared`.
 - **No parameter properties** — never `constructor(private readonly foo: T)`. Declare fields explicitly and assign in the body.
 - **`private` → ECMAScript `#`** (`no-restricted-syntax` in `packages/configuration/eslint/typescriptRules.js`). Keep `readonly` when converting (`private readonly foo` → `readonly #foo`); `protected` stays, as `#` is inaccessible to subclasses.
-- `.forEach()` is **banned** — use `for...of` (`references/loops.md`); `unicorn/no-array-for-each` enforces it in script, `vue/no-restricted-syntax` in templates.
+- **Iteration is `for...of`** (`references/loops.md`); `unicorn/no-array-for-each` and `vue/no-restricted-syntax` enforce it.
 - `type` aliases for object shapes → `interface` (`consistent-type-definitions`).
 - **The newest platform API, always, and the form it replaces is banned** — every `unicorn/prefer-*` rule not turned off in `oxlint.config.ts` is on repo-wide for that reason, so a legacy form fails lint rather than review; one no rule decides is a finding, and a new replacement earns a `no-restricted-syntax` entry the first time it is re-found.
-- **Non-mutating array methods, enforced** — `sort()`, `reverse()` and `splice()` are lint errors; write `toSorted`/`toReversed`/`toSpliced` and assign the result back (`references/collections.md`).
+- **Array methods are non-mutating** — write `toSorted`/`toReversed`/`toSpliced` and assign the result back; the mutating forms are lint errors (`references/collections.md`).
 - **Never hand-roll read-or-insert on a `Map`** — `getOrCreate(map, key, () => new Set())` from `@esposter/shared` (`references/collections.md`).
 - **Never declare what nothing uses** — every export (schema, type, constant, pluralized enum array) earns its existence with a call site; no speculative API. When removing the last consumer of an export, cascade-delete the newly orphaned export and its now-unused imports too.
 - **No `current*` caching of `.value`** just to use it once. If narrowing is needed after a guard, assign a descriptive name (`const selectedFile = file.value`) — `no-restricted-syntax` refuses a `current*` capture. Prefer plain `const` over `computed()` when the source is already non-reactive (e.g. a `readonly` prop field).
 - **Cloning plain data is `structuredClone`**; a class instance is rebuilt through its constructor, since neither a clone nor a spread keeps its prototype (`references/cloning.md`).
 - **Boolean casting** — never `!!`; always `Boolean(value)`.
 - **Interpolation coerces** — `${x}`, never `${x.toString()}`; `no-restricted-syntax` enforces it (a radix `toString(16)` stays). `String(x)` inside a template is only for the types `restrict-template-expressions` rejects (`unknown`, `symbol`).
-- **Regex** — literals for static patterns, `new RegExp(template, flags)` only when the pattern interpolates, and always the `u` flag; all three are lint errors otherwise (`prefer-regex-literals`, `require-unicode-regexp`). Naming (`_REGEX`) is the `naming` skill's rule ("Constants").
+- **Regex** — a literal for a static pattern, `new RegExp` only when it interpolates, and the `u` flag always (`prefer-regex-literals`, `require-unicode-regexp`). Naming (`_REGEX`) is the `naming` skill's rule ("Constants").
 - **Prefer the shortened assignment forms** — compound (`x += y`, `x ??= y`) over `x = x + y`, chained (`a.value = b.value = value`) over repeating the right-hand side. `restrict-plus-operands` and `no-multi-assign` are off for exactly this reason: a cast to silence a lint rule is strictly worse than the operator it replaces.
 - **`as unknown as T` is `any` with extra steps** — a `no-restricted-syntax` error in source (`restrictedSourceSyntaxes.js`; a suite's fakes are exempt), so a surviving one is a disable naming what the compiler cannot see — never "this is safe"; the seams that earn one are `references/type-modelling.md`.
 - **A compiler limit (TS2590) is a tagged `@ts-expect-error` in place, not a redesign** (`references/type-modelling.md`).
@@ -61,8 +61,8 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 ## Promise Style
 
 - **`try`, `.then`/`.catch`/`.finally` and `new Error` are banned** — the `error-handling` skill owns all three and their exceptions.
-- **Never `await import(...)`** for code-splitting — always a static top-level `import`, enforced by `no-restricted-syntax`. An exception is a disable directive whose reason is the comment `references/dynamic-imports.md` asks for.
-- **`void asyncFn()` is banned** (`no-void`) — it silences `no-floating-promises` by discarding the promise, so rejections go unhandled and the caller cannot await completion. The replacement ladder (make the caller `async`, widen the callback to `Promisable<void>`, `getSynchronizedFunction` as the last resort) is `references/floating-promises.md`.
+- **Code-splitting is a static top-level `import`**, enforced by `no-restricted-syntax`; the exceptions and their disable comment are `references/dynamic-imports.md`'s.
+- **A promise is awaited, never discarded** — `no-void` enforces it, and the replacement ladder (make the caller `async`, widen the callback to `Promisable<void>`, `getSynchronizedFunction` as the last resort) is `references/floating-promises.md`.
 
 ## Control Flow
 
@@ -76,7 +76,7 @@ description: Apply when writing any TypeScript in this project. Esposter's TypeS
 
 ## Environment Checks
 
-- **Never `import.meta.dev` or `import.meta.env.MODE` directly** (`no-restricted-syntax`) — `IS_PRODUCTION`/`IS_DEVELOPMENT` from `#shared/util/environment/constants`, the one file that reads them.
+- **Build mode is read through `IS_PRODUCTION`/`IS_DEVELOPMENT`** from `#shared/util/environment/constants`, the one file that reads `import.meta` for it (`no-restricted-syntax`).
 
 ## Absent Values
 
