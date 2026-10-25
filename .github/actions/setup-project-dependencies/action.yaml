@@ -13,7 +13,7 @@ runs:
     # pnpm from `packageManager`, node from `.node-version`. `install: false` because each caller owns its
     # own install — the root alone with `--ignore-scripts` for format, `install-projects` everywhere else.
     - name: 📦 Install pnpm and node
-      uses: pnpm/setup@a0881977cd8ea73b1ed212236c99ca10dcc80cf4 # v3.1.1
+      uses: pnpm/setup@fa36a5ef7dcdefc3a7cb25655c122e00cf6e636e # v3.1.2
       with:
         cache: true
         install: false
