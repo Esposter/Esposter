@@ -62,10 +62,10 @@ A failure in any step fails the handler, the marker stays, and Event Grid redeli
 | `packages/db-schema/src/schema/auth/accountsInAuth.ts`                   | The `accounts` foreign key, changed to cascade |
 | `packages/db-schema/src/schema/auth/usersInAuth.ts`                      | The deletion marker                            |
 | `apps/web/server/trpc/routers/user.ts`                                   | The `deleteAccount` mutation                   |
-| `apps/web/server/services/user/deleteAccountSessions.ts`                 | Revokes the account's sessions                 |
+| "apps/web/server/services/user/deleteAccountSessions.ts"                 | New: revokes the account's sessions            |
 | `packages/db/src/services/message/softDeleteRoomMessagesByUser.ts`       | The soft delete, moved from the web app        |
 | `packages/db/src/services/resource/purgeResource.ts`                     | Reused for each owned resource                 |
-| `apps/functions/src/handlers/deleteAccountHandler.ts`                    | The sweep, in order, idempotent                |
-| `apps/functions/src/functions/deleteAccount.ts`                          | The event registration                         |
+| "apps/functions/src/handlers/deleteAccountHandler.ts"                    | New: the sweep, in order, idempotent           |
+| "apps/functions/src/functions/deleteAccount.ts"                          | New: the event registration                    |
 | `apps/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/` | The subscription, in both environments         |
 | `apps/web/app/pages/user/settings.vue`                                   | The Delete account flow                        |

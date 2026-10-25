@@ -37,4 +37,4 @@ Paths relative to `apps/web/app`.
 | `components/User/Profile/`      | public profile sections           |
 | `components/Login/`             | provider buttons                  |
 
-Decided ideas: [deferred](../../deferred/user/), [rejected](../../rejected/user/).
+Decided ideas: [rejected](../../rejected/user/).

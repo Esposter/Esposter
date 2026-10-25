@@ -11,7 +11,7 @@ Build order. Section 1 lands the row and the container the rest write to, sectio
 
 ## 2. Archive
 
-- [ ] 2.1 Write the streamed archive builder in `apps/functions/src/services/user/`, one function per archive entry group, writing through `fflate`'s streaming zip into a block blob upload. Test first: the builder's output unzips to the entries the design lists, and a person's other messages are not among them.
+- [ ] 2.1 Write the streamed archive builder in "apps/functions/src/services/user/", one function per archive entry group, writing through `fflate`'s streaming zip into a block blob upload. Test first: the builder's output unzips to the entries the design lists, and a person's other messages are not among them.
       Verify: the unzip test passes against the built archive, and the builder never holds a whole attachment in memory, which the test checks by reading each file as a stream.
 - [ ] 2.2 Write `exportUserDataHandler` in `apps/functions/src/handlers/`. It marks the row building, runs the builder over the export's own blob name, marks the row ready with its expiry, and marks it failed with the reason on error. Test first: a failing entry marks the row failed and offers no link.
       Verify: the failed-build test passes, and a replayed event rebuilds the same blob name.

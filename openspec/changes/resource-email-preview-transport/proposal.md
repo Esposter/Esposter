@@ -21,4 +21,4 @@ The design takes option 1. If the owner prefers option 2, the design and tasks a
 
 ## Out of scope
 
-The canvas drawing ([resource-email-canvas-drawing](../resource-email-canvas-drawing/proposal.md)) and the frame's console and scroll behaviour ([resource-email-canvas-frame](../resource-email-canvas-frame/proposal.md)).
+The canvas drawing ([resource-email-canvas-drawing](../archive/2026-10-25-resource-email-canvas-drawing/proposal.md)) and the frame's console and scroll behaviour ([resource-email-canvas-frame](../resource-email-canvas-frame/proposal.md)).

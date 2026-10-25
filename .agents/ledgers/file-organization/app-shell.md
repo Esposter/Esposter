@@ -7,7 +7,6 @@ Everything a product mounts inside rather than owns: the chrome, the routes, and
 | `app/services/resource` — the files at its root                                     | —                      |                                                                                                 |
 | `app/services/resource/activity`                                                    | —                      |                                                                                                 |
 | `app/services/resource/blueprint`                                                   | —                      |                                                                                                 |
-| `app/services/resource/flowchart`                                                   | 2026-10-25 · Haiku 5.5 |                                                                                                 |
 | `app/services/resource/list`                                                        | —                      |                                                                                                 |
 | `app/services/resource/note`                                                        | 2026-10-25 · Haiku 5.5 |                                                                                                 |
 | `app/services/resource/program`                                                     | 2026-10-25 · Haiku 5.5 |                                                                                                 |

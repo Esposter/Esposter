@@ -60,7 +60,7 @@ Each file below is removed or has its entry removed in the release. The paths ar
 | `apps/web/app/services/flowchartEditor`                                 | Deleted: node and edge maps, path functions and constants                                       |
 | `apps/web/app/composables/flowchartEditor`                              | Deleted: drag and drop                                                                          |
 | `apps/web/app/store/flowchartEditor`                                    | Deleted: the editor and export stores                                                           |
-| `apps/web/app/services/resource/flowchart`                              | Deleted: the export capture and its SVG rasterizing                                             |
+| "apps/web/app/services/resource/flowchart"                              | Deleted: the export capture and its SVG rasterizing                                             |
 | `apps/web/app/models/resource/FlowchartExportRequest.ts`                | Deleted                                                                                         |
 | `apps/web/app/models/resource/FlowchartExportFormat.ts`                 | Deleted                                                                                         |
 | `apps/web/app/services/resource/PortableFormatMap.ts`                   | Drops the flowchart formats                                                                     |

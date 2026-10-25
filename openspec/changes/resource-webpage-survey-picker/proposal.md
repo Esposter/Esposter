@@ -1,6 +1,6 @@
 # Webpage survey picker
 
-Gap 7 of the [gap survey](../gap-survey-2026-10-25/proposal.md).
+Gap 7 of the [gap survey](../archive/2026-10-25-gap-survey-2026-10-25/proposal.md).
 
 ## Why
 

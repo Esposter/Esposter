@@ -26,4 +26,4 @@ These leave the cause open. A script can still reach the frame from outside the 
 
 ## Out of scope
 
-The renderer's drawings ([resource-email-canvas-drawing](../resource-email-canvas-drawing/proposal.md)) and the preview's transport ([resource-email-preview-transport](../resource-email-preview-transport/proposal.md)).
+The renderer's drawings ([resource-email-canvas-drawing](../archive/2026-10-25-resource-email-canvas-drawing/proposal.md)) and the preview's transport ([resource-email-preview-transport](../resource-email-preview-transport/proposal.md)).

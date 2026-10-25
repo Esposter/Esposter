@@ -63,10 +63,10 @@ A failed build marks the row failed with its reason and leaves the blob to the l
 
 | Path                                                      | Role                                                            |
 | :-------------------------------------------------------- | :-------------------------------------------------------------- |
-| `packages/db-schema/src/schema/user/dataExportsInUser.ts` | The export row: status, blob name, ready and expiry times       |
+| "packages/db-schema/src/schema/user/dataExportsInUser.ts" | New: the export row: status, blob name, ready and expiry times  |
 | `apps/web/server/trpc/routers/user.ts`                    | Request, status and link procedures                             |
-| `apps/web/server/services/user/getDataExportLink.ts`      | The short-lived read link, owner-only and expiry-checked        |
-| `apps/functions/src/handlers/exportUserDataHandler.ts`    | The streamed archive build                                      |
-| `apps/functions/src/functions/exportUserData.ts`          | The event registration                                          |
+| "apps/web/server/services/user/getDataExportLink.ts"      | New: the short-lived read link, owner-only and expiry-checked   |
+| "apps/functions/src/handlers/exportUserDataHandler.ts"    | New: the streamed archive build                                 |
+| "apps/functions/src/functions/exportUserData.ts"          | New: the event registration                                     |
 | `apps/infra/src/azure/resources/`                         | The private container, its lifecycle rule and the subscriptions |
 | `apps/web/app/pages/user/settings.vue`                    | The Download my data flow                                       |

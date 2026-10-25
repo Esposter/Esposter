@@ -2,7 +2,7 @@
 
 ## Why
 
-The package's README lists what is not built yet, and that list is the only index of the work its own spec calls owed. The repository's roadmaps cover esbabbler, genshin, infra, post and resource, so a session that picks up new work reads none of it. The list also carries an item the audit no longer supports: its FEATURE rows are the feature requests the audit judges worth having, and the audit's own [decisions not built](../../specs/nuxt-security-module/upstream/design.md#decisions-not-built) say none of the 49 met that bar. This is gap 12 of the [gap survey](../gap-survey-2026-10-25/proposal.md).
+The package's README lists what is not built yet, and that list is the only index of the work its own spec calls owed. The repository's roadmaps cover esbabbler, genshin, infra, post and resource, so a session that picks up new work reads none of it. The list also carries an item the audit no longer supports: its FEATURE rows are the feature requests the audit judges worth having, and the audit's own [decisions not built](../../specs/nuxt-security-module/upstream/design.md#decisions-not-built) say none of the 49 met that bar. This is gap 12 of the [gap survey](../archive/2026-10-25-gap-survey-2026-10-25/proposal.md).
 
 ## What Changes
 

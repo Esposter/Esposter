@@ -9,7 +9,7 @@ Build order. Section 1 lands the schema the rest reads, section 2 moves the shar
 
 ## 2. Shared sweeps
 
-- [x] 2.1 Move the per-user soft delete inside one room from `apps/web/server/services/message/moderation/softDeleteRoomMessagesByUser.ts` into `packages/db`, so the functions app and the web app share one implementation. Test first in the moved file's test: only the target user's messages in that room are soft-deleted.
+- [x] 2.1 Move the per-user soft delete inside one room from "apps/web/server/services/message/moderation/softDeleteRoomMessagesByUser.ts" into `packages/db`, so the functions app and the web app share one implementation. Test first in the moved file's test: only the target user's messages in that room are soft-deleted.
       Verify: the web's moderation tests pass unchanged, and no copy of the soft delete remains outside `packages/db`.
 - [ ] 2.2 Add `deleteUserDirectories` in `packages/db`: it removes every blob under `{userId}/` in the given containers, and treats an empty directory as done. Test first: a directory with two blobs is removed, and a second call finds nothing and succeeds. The staged uploads under `character-packs/staging/{userId}/` are a separate sweep, `deleteCharacterPackStaging`, in the same package, with the same test shape.
       Verify: the tests pass, and the function's container list is the inventory's list for user prefixes.
