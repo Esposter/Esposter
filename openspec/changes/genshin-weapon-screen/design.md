@@ -9,7 +9,7 @@ The [weapon enhancement](../../specs/genshin/weapon-enhancement/design.md) page 
 - **The bag gives what the actions spend.** The ores and the refinement material are picked from the bag's stacks and taken out through `takeInventoryItems`, which refuses a stack that holds too few. Fodder weapons and copies are bag entries, each picked by its entry id and taken out through `takeInventoryEntry`.
 - **Ascend is offered at the cap.** The screen offers Ascend only while the weapon is at its phase's level cap. The Adventure Rank gate stays with `ascendWeapon`, so the screen and the rule cannot disagree about it.
 - **Refine is not offered where it cannot apply.** One- and two-star weapons and a weapon at rank five show no Refine; the service keeps the same limits as its own refusal.
-- **The passive waits on the kits.** A weapon's passive name and per-rank descriptions are the weapon enhancement's requirement, and the screen shows them once they land. What a passive does acts through the [character kits](../genshin-character-kits/design.md), so its effect waits on them.
+- **The passive waits on the kits.** A weapon's passive name and per-rank descriptions are the weapon enhancement's requirement, and the screen shows them once its layout is measured, the list being withdrawn until then. What a passive does acts through the [character kits](../genshin-character-kits/design.md), so its effect waits on them.
 - **The passive's descriptions are the game's words per rank.** Each rank's description is published as its own literal text (a damage bonus against opponents affected by Hydro or Cryo, 12% at rank one and 15% at rank two), so the screen draws them filled with no formatter. The record's `passiveRankParams` give the same values, which the screen test checks.
 - **The words are the game's.** Enhance, Ascend and Refine take their labels from the game text by their text ids, never written into the component.
 - **Measured look.** The frames are measured from the reference clip under Reference, at the three frames it names. The sizes are read by eye off the frame, so the placement is provisional until the parity compare runs.
@@ -44,7 +44,7 @@ packages/genshin-interface/src/components/WeaponMenu/Index.vue
 1. **The screen, opened on a held weapon.** The screen shows the weapon's name, rarity, level, EXP towards the next level, phase and rank, with the three action labels.
 2. **Enhance, Ascend and Refine**, each calling its service, in the order the spec's requirements state.
 3. **The frame's look**, placed by its measured rects and compared with the reference clip.
-4. **Each passive, shown** on the screen once the weapon enhancement's passive data lands. Its effect follows the kits.
+4. **Each passive, shown** on the screen, its name and each rank's description beneath the ores with the held rank marked. The list is withdrawn for now, since it overlapped the fodder row, and returns once the layout beneath the fodder grid is measured against the game reference. Its effect follows the kits.
 
 ## Key files
 
