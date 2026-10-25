@@ -1,16 +1,8 @@
+import { getDefaultValue } from "#src/services/genshinText/getDefaultValue";
+import { getKind } from "#src/services/genshinText/getKind";
 import { checkIsPlainObject } from "@esposter/shared";
 
-const getDefaultValue = (sample: unknown): 0 | [] | false | Record<string, never> | undefined => {
-  if (typeof sample === "number") return 0;
-  else if (typeof sample === "boolean") return false;
-  else if (Array.isArray(sample)) return [];
-  else if (checkIsPlainObject(sample)) return {};
-  return undefined;
-};
-
 const MAP_KEY_REGEX = /^\d+$/u;
-
-const getKind = (value: unknown): string => (Array.isArray(value) ? "array" : value === null ? "null" : typeof value);
 
 // Writes back the fields the dump left out of `siblings`, the rows of one table or the values at one path within them.
 // From 7.1 the dump writes a row as protobuf's JSON does, leaving out every field at its default, so a row holds only

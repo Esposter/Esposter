@@ -3,25 +3,11 @@ import { readPublishedGameData } from "#src/services/gameData/readPublishedGameD
 import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { collectNameTextIds } from "#src/services/genshinText/collectNameTextIds";
 import { PUBLISHED_READ_BATCH_SIZE, TEXT_GAME_DATASETS } from "#src/services/genshinText/constants";
+import { toDataFileKey } from "#src/services/genshinText/toDataFileKey";
+import { walkJsonFiles } from "#src/services/genshinText/walkJsonFiles";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { chunk, takeOne } from "@esposter/shared";
-import { readdirSync, readFileSync } from "node:fs";
-import { join, relative, sep } from "node:path";
-
-// Every JSON file under `directory` at any depth
-const walkJsonFiles = (directory: string): string[] =>
-  readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
-    const path = join(directory, entry.name);
-    if (entry.isDirectory()) return walkJsonFiles(path);
-    return entry.name.endsWith(".json") ? [path] : [];
-  });
-
-// The data file's key in the lock: its path under the data folder, with '/' separators and without `.json`
-const toDataFileKey = (path: string): string =>
-  relative(WORLD_DATA_DIRECTORY, path)
-    .split(sep)
-    .join("/")
-    .replace(/\.json$/u, "");
+import { readFileSync } from "node:fs";
 
 // The text id of every name and description the world's data cites: every published record outside the text datasets, and every data file
 // The lock does not name, which the package still keeps. A new source needs no edit here

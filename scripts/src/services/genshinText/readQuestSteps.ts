@@ -1,16 +1,11 @@
 import type { QuestStep } from "genshin-world";
 
 import { QuestContentObjectiveMap } from "#src/services/genshinText/QuestContentObjectiveMap";
+import { countConditioned } from "#src/services/genshinText/countConditioned";
 import { readQuestBanType } from "#src/services/genshinText/readQuestBanType";
 import { readQuestConditions } from "#src/services/genshinText/readQuestConditions";
 import { readQuestGuideNpcId } from "#src/services/genshinText/readQuestGuideNpcId";
 import { QuestBanTypes, QuestObjectiveKind } from "genshin-world";
-
-// Whether a sub quest holds a condition in any of its fields, and how many of a list's sub quests do
-const hasCondition = (subQuest: Record<string, unknown>) =>
-  Object.values(subQuest).some((value) => readQuestConditions(value).length > 0);
-const countConditioned = (subQuestList: Record<string, unknown>[]) =>
-  subQuestList.filter((subQuest) => hasCondition(subQuest)).length;
 
 // A quest's shown steps in order, and the talks offering it, read off its file in the dump's binary output by shape,
 // Since the dump scrambles every field's name each patch. Its sub quests are the list holding the most conditioned sub

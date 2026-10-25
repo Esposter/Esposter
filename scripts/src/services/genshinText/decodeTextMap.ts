@@ -4,35 +4,16 @@ import {
   TEXT_MAP_KEY_FINISH,
   TEXT_MAP_LENGTH_FINISH,
   TEXT_MAP_MAX_COUNT,
-  TEXT_MAP_MIXER_FIRST_ADDEND,
-  TEXT_MAP_MIXER_FIRST_MULTIPLIER,
-  TEXT_MAP_MIXER_ROTATION,
-  TEXT_MAP_MIXER_SECOND_ADDEND,
-  TEXT_MAP_MIXER_SECOND_MULTIPLIER,
-  TEXT_MAP_MIXER_THIRD_MULTIPLIER,
-  TEXT_MAP_MIXER_XOR,
 } from "#src/services/genshinText/constants";
+import { getHighHalfWord } from "#src/services/genshinText/getHighHalfWord";
+import { getHighWord } from "#src/services/genshinText/getHighWord";
+import { getLowHalfWord } from "#src/services/genshinText/getLowHalfWord";
+import { getLowWord } from "#src/services/genshinText/getLowWord";
+import { mix64 } from "#src/services/genshinText/mix64";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 const WORD_BYTES = 8;
 const REPLACEMENT_CHARACTER = "�";
-
-const rotateLeft = (value: bigint): bigint =>
-  BigInt.asUintN(64, (value << TEXT_MAP_MIXER_ROTATION) | (value >> (64n - TEXT_MAP_MIXER_ROTATION)));
-// The devkit's 64-bit mixer: its last XOR is the one constant that differs between the key and the length
-const mix64 = (value: bigint, finish: bigint): bigint => {
-  let state = BigInt.asUintN(64, value * TEXT_MAP_MIXER_FIRST_MULTIPLIER + TEXT_MAP_MIXER_FIRST_ADDEND);
-  state = rotateLeft(state);
-  state = BigInt.asUintN(64, state * TEXT_MAP_MIXER_SECOND_MULTIPLIER + TEXT_MAP_MIXER_SECOND_ADDEND);
-  state ^= TEXT_MAP_MIXER_XOR;
-  state = rotateLeft(state);
-  state = BigInt.asUintN(64, state * TEXT_MAP_MIXER_THIRD_MULTIPLIER);
-  return state ^ finish;
-};
-const getLowWord = (value: bigint): number => Number(BigInt.asUintN(32, value));
-const getHighWord = (value: bigint): number => Number(BigInt.asUintN(32, value >> 32n));
-const getLowHalfWord = (value: bigint): number => Number(BigInt.asUintN(16, value));
-const getHighHalfWord = (value: bigint): number => Number(BigInt.asUintN(16, value >> 32n));
 
 // Decodes one text map chunk, the payload past its length prefix, into its strings by hash. A chunk is an entry count,
 // Then each entry's key and length and a body padded to eight bytes, and it is refused unless it is consumed exactly.
