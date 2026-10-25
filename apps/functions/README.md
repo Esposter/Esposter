@@ -30,6 +30,7 @@ Most functions are triggered by **Azure EventGrid** events published by the main
 | `ProcessScheduledMessageJob`  | Service Bus (`ScheduledMessageJobs`) | Delivers `/schedule` and `/remind` messages at their due time               |
 | `SendTodoReminder`            | Service Bus (`TodoReminders`)        | Publishes a `TodoReminder` notification when a TodoList item comes due      |
 | `PurgeDeletedResources`       | Timer                                | Purges recycle-bin resources past their retention window                    |
+| `PurgeSurveyResources`        | EventGrid                            | One-time run removing the survey resources, started by one published event  |
 
 ### Flow
 
