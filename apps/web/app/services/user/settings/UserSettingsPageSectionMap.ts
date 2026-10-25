@@ -11,4 +11,8 @@ export const UserSettingsPageSectionMap = {
   },
   [UserSettingsPageSection.Sessions]: { subtitle: "The devices signed in to this account", title: "Sessions" },
   [UserSettingsPageSection.ApiKeys]: { subtitle: "The keys an agent reaches this account with", title: "API Keys" },
+  [UserSettingsPageSection.DeleteAccount]: {
+    subtitle: "Remove this account and what it holds",
+    title: "Delete Account",
+  },
 } as const satisfies Record<UserSettingsPageSection, { subtitle: string; title: string }>;
