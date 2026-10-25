@@ -66,6 +66,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Dashboard live canvas](dashboard-live-canvas/design.md) — the editor draws each tile as its real visual over its bound data, not a stock icon
 - [Dashboard chart interaction](dashboard-chart-interaction/design.md) — the ApexCharts v6 investigation surface on visuals: linked highlighting, shareable view state, annotations
 - [Dashboard grid](dashboard-grid/design.md) — the dashboard's own placement and drag grid: pure placement functions, Pointer Events, one write per gesture
+- [Dashboard card and table visuals](dashboard-card-and-table-visuals/design.md) — a card's one aggregated number and a table of exact values beside the charts, over the same binding
 - [Email personalization](email-personalization/design.md) — merge fields, survey invite blocks, personalized HTML export
 - [Dataset row-cap warning](dataset-row-cap-warning/design.md) — "showing N of M" wherever a dataset read hits the 1000-row cap
 - [Dataset CSV export](dataset-csv-export/design.md) — Export CSV on any dataset-serving resource: survey answers with question titles as headers, formula cells neutralised

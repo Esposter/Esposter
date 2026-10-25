@@ -28,7 +28,7 @@ The dashboard editor SHALL let the owner bind a visual to a dataset by choosing 
 
 ### Requirement: A bound visual's aggregation is computed per category
 
-The dashboard SHALL compute each bound series as count, sum, average, minimum or maximum per x-column category.
+The dashboard SHALL compute each bound series as count, sum, average, minimum or maximum per x-column category, except a card, which computes its one series over every row of the query.
 
 #### Scenario: Each aggregation gives its own value
 

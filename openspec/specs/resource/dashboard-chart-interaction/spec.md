@@ -50,7 +50,7 @@ The dashboard SHALL NOT keep annotations after the viewer leaves the page.
 
 ### Requirement: Zoom is available on scatter visuals only
 
-The dashboard SHALL allow zooming on scatter visuals and SHALL instead allow a range to be brushed on the other visual types.
+The dashboard SHALL allow zooming on scatter visuals and SHALL instead allow a range to be brushed on the other chart visuals, a card and a table drawing no chart to brush.
 
 #### Scenario: A scatter can be zoomed on both axes
 
