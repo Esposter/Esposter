@@ -11,9 +11,5 @@
 
 ## 3. The open editor
 
-- [ ] 3.1 Show an assistant's saved edit in the open editor as it arrives, and offer a choice over an unsaved edit. Depends on the live edits change, so it is built after it. Verify: a test named after the scenario 'An edit arriving over an unsaved edit is offered as a choice', failing first, then passing.
+- [x] 3.1 Show an assistant's saved edit in the open editor as it arrives, and offer a choice over an unsaved edit. Depends on the live edits change, so it is built after it. Verify: a test named after the scenario 'An edit arriving over an unsaved edit is offered as a choice', failing first, then passing.
 - [x] 3.2 Confirm the turn runs on the person's host with no model call or charge from Esposter. Verify: a test named after the scenario 'A turn runs in the person's session', failing first, then passing.
-
-## Owed
-
-- 3.1 is not built. It shows an assistant's saved edit in the open editor and offers the choice over an unsaved one, which is the live edits change's client half: its tasks 1.1 (the one subscription), 2.1 (adopting a save in place) and 3.1 (holding an unsaved edit behind a notice) are unbuilt in `openspec/changes/architecture-ai-native-resources-live-edits/tasks.md`. Build it after those land, and tick it then.
