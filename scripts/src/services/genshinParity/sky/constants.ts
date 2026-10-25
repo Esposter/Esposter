@@ -17,3 +17,7 @@ export const COMPONENT_REGEX: RegExp = /^(?<name>.+)\.(?<index>\d+)$/u;
 
 // Every this many pixels across and down is a sample: the sky changes slowly, and a solve reads it many times
 export const SAMPLE_STRIDE = 4;
+
+// The depth bands a haze's pixels are binned by, in metres between one band's edge and the next, the last open to any
+// Depth. The fog solve and the stone light both bin their pixels by them, so each reads the same bands
+export const DEPTH_BANDS: readonly number[] = [0, 10, 20, 40, 80, 160, 320, 640, Infinity];

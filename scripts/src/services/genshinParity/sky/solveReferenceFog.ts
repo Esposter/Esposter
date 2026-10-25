@@ -14,6 +14,7 @@ import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWi
 import { withReferencePage } from "#src/services/genshinParity/shared/withReferencePage";
 import { checkIsPartInterior } from "#src/services/genshinParity/sky/checkIsPartInterior";
 import { computeFogOpacity } from "#src/services/genshinParity/sky/computeFogOpacity";
+import { DEPTH_BANDS } from "#src/services/genshinParity/sky/constants";
 import { getPixelSceneColor } from "#src/services/genshinParity/sky/getPixelSceneColor";
 import { solveFogColors } from "#src/services/genshinParity/sky/solveFogColors";
 import { toDisplayHex } from "#src/services/genshinParity/sky/toDisplayHex";
@@ -26,10 +27,9 @@ import { Matrix4, Vector3 } from "three";
 const DENSITY_RANGE: [number, number] = [0.0001, 3];
 const GOLDEN_STEPS = 40;
 const GOLDEN_SHARE = (Math.sqrt(5) - 1) / 2;
-// The pixels are binned by their depth, in metres between one and the next, and by how far they look toward the sun, in
-// Shares of its scatter weight, each bin read by its medians, so a frame whose texels do not line up with ours prices
-// The fog's mix by distance and angle rather than rewarding a fog that washes every texel to the mean
-const DEPTH_BANDS = [0, 10, 20, 40, 80, 160, 320, 640, 1280];
+// The pixels are binned by their depth band (`DEPTH_BANDS`), and by how far they look toward the sun, in shares of its
+// Scatter weight, each bin read by its medians, so a frame whose texels do not line up with ours prices the fog's mix by
+// Distance and angle rather than rewarding a fog that washes every texel to the mean
 const SCATTER_BIN_COUNT = 4;
 const MIN_BIN_COUNT = 100;
 // A reference's haze solved over the parts the witness draws: each part's interior pixel past the fog's start, its

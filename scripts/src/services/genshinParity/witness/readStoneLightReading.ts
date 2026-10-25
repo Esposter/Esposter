@@ -13,6 +13,7 @@ import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitne
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { withReferencePage } from "#src/services/genshinParity/shared/withReferencePage";
 import { checkIsPartInterior } from "#src/services/genshinParity/sky/checkIsPartInterior";
+import { DEPTH_BANDS } from "#src/services/genshinParity/sky/constants";
 import { getPixelDisplayColor } from "#src/services/genshinParity/sky/getPixelDisplayColor";
 import { STONE_HEIGHT_BANDS } from "#src/services/genshinParity/witness/constants";
 import { shootWitnessFamilies } from "#src/services/genshinParity/witness/shootWitnessFamilies";
@@ -20,10 +21,9 @@ import { computeStoneHarmonics, computeStoneRampCoordinate, STONE_HARMONIC_COUNT
 import sharp from "sharp";
 import { Matrix3, Matrix4, Vector3 } from "three";
 
-// A pixel's bin: its depth band, in metres between one and the next, its height band (`STONE_HEIGHT_BANDS`), its
-// Ramp coordinate in this many steps, and how far its face turns up in this many, so each bin holds faces the light
-// And the haze treat alike, and the light solved over it stands neither too dark below nor too bright above
-const DEPTH_BANDS = [0, 10, 20, 40, 80, 160, 320, 640, Infinity];
+// A pixel's bin: its depth band (`DEPTH_BANDS`), its height band (`STONE_HEIGHT_BANDS`), its ramp coordinate in this many
+// Steps, and how far its face turns up in this many, so each bin holds faces the light and the haze treat alike, and the
+// Light solved over it stands neither too dark below nor too bright above
 const RAMP_BIN_COUNT = 12;
 const UPWARD_BIN_COUNT = 4;
 // A reference's stone as the game's deferred pass casts it, read over the parts the witness draws from the game's
