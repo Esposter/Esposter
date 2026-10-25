@@ -52,7 +52,6 @@ A save the server refuses is the one case the save stream did not deliver, so it
 | `apps/web/app/services/resource/createContentData.ts`                 | its reload stage is the adoption; it registers the `Keep` stage, which saves the document it holds |
 | `apps/web/app/services/resource/ResourceContentHookMap.ts`            | the two stages a restore runs, and the `Keep` stage keep mine runs                                 |
 | `apps/web/app/store/resource/sheet/index.ts`                          | its history clears when the content ref is replaced, which adoption does: unchanged                |
-| `apps/web/app/composables/resource/useResourceSaveSubscribable.ts`    | the open resource's one save subscription, for any type                                            |
 | `apps/web/app/components/Resource/OtherSaveNotice.vue`                | the notice over an unwritten edit: names the saver, and takes theirs or keeps mine                 |
 | `apps/web/server/services/resource/events/resourceEventEmitter.ts`    | the save event carries the key an agent wrote with, "" for a person's own save                     |
 | `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts` | the save stream carries the version and the device rather than the content                         |
