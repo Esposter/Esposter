@@ -1,4 +1,4 @@
-import type { ExcelGcgCostEntry } from "#src/models/genshinAssets/gcg/ExcelGcgSkillRow";
+import type { ExcelGcgCostEntry } from "#src/models/genshinAssets/gcg/ExcelGcgCostEntry";
 
 // One card of the card game's card table, as the dump names its fields: its type, its tags, its cost and the skills it
 // Carries by id, which the skill table names
