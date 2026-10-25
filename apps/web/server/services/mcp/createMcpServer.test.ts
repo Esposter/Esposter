@@ -1,8 +1,10 @@
 import type { Context } from "#server/trpc/context";
+import type { AnyRouter } from "@trpc/server";
 
 import { createMcpServer } from "#server/services/mcp/createMcpServer";
 import { publicProcedure, router } from "#server/trpc";
 import { createMockContext } from "#server/trpc/context.test";
+import { trpcRouter } from "#server/trpc/routers";
 import { McpScope, McpScopes } from "#shared/models/auth/McpScope";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
@@ -31,10 +33,10 @@ describe(createMcpServer, () => {
     mockContext = await createMockContext();
   });
 
-  const createConnectedClient = async (mcpScopes: McpScope[] = McpScopes) => {
+  const createConnectedClient = async (mcpScopes: McpScope[] = McpScopes, router: AnyRouter = testRouter) => {
     const [clientTransport, serverTransport] = InMemoryTransport.createLinkedPair();
     const client = new Client({ name: "", version: "" });
-    await createMcpServer(testRouter, mockContext, mcpScopes).connect(serverTransport);
+    await createMcpServer(router, mockContext, mcpScopes).connect(serverTransport);
     await client.connect(clientTransport);
     onTestFinished(() => client.close());
     return client;
@@ -170,6 +172,19 @@ describe(createMcpServer, () => {
       client.callTool({ arguments: { value: "" }, name: "nested_read" }),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[McpError: MCP error -32602: MCP error -32602: Unknown tool: nested_read]`,
+    );
+  });
+
+  // Purging is human-only, so a key holding every scope is refused the tool by name before the procedure is reached
+  test("A key cannot call a human-only operation by name", async () => {
+    expect.hasAssertions();
+
+    const client = await createConnectedClient(McpScopes, trpcRouter);
+
+    await expect(
+      client.callTool({ arguments: { id: "-1" }, name: "resource_purgeResource" }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[McpError: MCP error -32602: MCP error -32602: Unknown tool: resource_purgeResource]`,
     );
   });
 });
