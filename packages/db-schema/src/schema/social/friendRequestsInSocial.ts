@@ -1,7 +1,7 @@
 import { pgTable } from "#src/pgTable";
-import { createSenderReceiverColumns } from "#src/schema/social/senderReceiverColumns";
 import { socialSchema } from "#src/schema/social/socialSchema";
 import { createDistinctCheckSql } from "#src/services/shared/createDistinctCheckSql";
+import { createSenderReceiverColumns } from "#src/services/social/createSenderReceiverColumns";
 import { check, index, text } from "drizzle-orm/pg-core";
 
 export const friendRequestsInSocial = pgTable(

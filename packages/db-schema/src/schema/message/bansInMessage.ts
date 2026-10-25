@@ -1,7 +1,7 @@
 import { pgTable } from "#src/pgTable";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { messageSchema } from "#src/schema/message/messageSchema";
-import { createRoomUserColumns } from "#src/schema/message/roomUserColumns";
+import { createRoomUserColumns } from "#src/services/message/createRoomUserColumns";
 import { primaryKey, text } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 

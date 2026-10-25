@@ -1,7 +1,3 @@
-import type { PublicUser } from "#src/models/user/PublicUser";
-import type { RoomInMessage } from "#src/schema/message/roomsInMessage";
-import type { UserToRoomInMessage } from "#src/schema/message/usersToRoomsInMessage";
-
 import { schema } from "#src/generated/schema";
 import { PublicUserColumns } from "#src/services/user/PublicUserColumns";
 import { defineRelationsPart } from "drizzle-orm";
@@ -14,5 +10,3 @@ export const usersToRoomsInMessageRelation = defineRelationsPart(schema, (r) => 
 }));
 
 export const UserToRoomInMessageRelations = { room: true, user: { columns: PublicUserColumns } } as const;
-
-export type UserToRoomInMessageWithRelations = UserToRoomInMessage & { room: RoomInMessage; user: PublicUser };

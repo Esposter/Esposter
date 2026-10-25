@@ -1,6 +1,3 @@
-import type { PublicUser } from "#src/models/user/PublicUser";
-import type { FriendRequestInSocial } from "#src/schema/social/friendRequestsInSocial";
-
 import { schema } from "#src/generated/schema";
 import { PublicUserColumns } from "#src/services/user/PublicUserColumns";
 import { defineRelationsPart } from "drizzle-orm";
@@ -16,5 +13,3 @@ export const FriendRequestInSocialRelations = {
   receiver: { columns: PublicUserColumns },
   sender: { columns: PublicUserColumns },
 } as const;
-
-export type FriendRequestInSocialWithRelations = FriendRequestInSocial & { receiver: PublicUser; sender: PublicUser };

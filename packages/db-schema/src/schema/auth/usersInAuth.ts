@@ -1,10 +1,10 @@
-import { createNameSchema } from "#src/models/shared/Name";
 import { StorageTier } from "#src/models/user/StorageTier";
 import { pgTable } from "#src/pgTable";
 import { authSchema } from "#src/schema/auth/authSchema";
 import { URL_MAX_LENGTH } from "#src/services/shared/constants";
 import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
+import { createNameSchema } from "#src/services/shared/createNameSchema";
 import { AUTH_ID_MAX_LENGTH, USER_BIOGRAPHY_MAX_LENGTH, USER_NAME_MAX_LENGTH } from "#src/services/user/constants";
 import { createNormalizedStringSchema } from "@esposter/shared";
 import { bigint, boolean, check, text } from "drizzle-orm/pg-core";

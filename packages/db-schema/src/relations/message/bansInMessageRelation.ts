@@ -1,6 +1,3 @@
-import type { PublicUser } from "#src/models/user/PublicUser";
-import type { BanInMessage } from "#src/schema/message/bansInMessage";
-
 import { schema } from "#src/generated/schema";
 import { defineRelationsPart } from "drizzle-orm";
 
@@ -11,5 +8,3 @@ export const bansInMessageRelation = defineRelationsPart(schema, (r) => ({
     user: r.one.usersInAuth({ from: r.bansInMessage.userId, optional: false, to: r.usersInAuth.id }),
   },
 }));
-
-export type BanInMessageWithUsers = BanInMessage & { bannedByUser: null | PublicUser; user: PublicUser };

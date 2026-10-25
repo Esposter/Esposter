@@ -1,6 +1,3 @@
-import type { RoomRoleInMessage } from "#src/schema/message/roomRolesInMessage";
-import type { UserToRoomRoleInMessage } from "#src/schema/message/usersToRoomRolesInMessage";
-
 import { schema } from "#src/generated/schema";
 import { defineRelationsPart } from "drizzle-orm";
 
@@ -17,5 +14,3 @@ export const usersToRoomRolesInMessageRelation = defineRelationsPart(schema, (r)
 }));
 
 export const UserToRoomRoleInMessageRelations = { role: true } as const;
-
-export type UserToRoomRoleInMessageWithRelations = UserToRoomRoleInMessage & { role: RoomRoleInMessage };

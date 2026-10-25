@@ -2,12 +2,12 @@ import type { ResourceTags } from "#src/models/resource/ResourceTags";
 
 import { resourceTagsSchema } from "#src/models/resource/ResourceTags";
 import { ResourceType } from "#src/models/resource/ResourceType";
-import { createNameSchema } from "#src/models/shared/Name";
 import { pgTable } from "#src/pgTable";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { resourceSchema } from "#src/schema/resource/resourceSchema";
 import { RESOURCE_NAME_MAX_LENGTH } from "#src/services/resource/constants";
 import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
+import { createNameSchema } from "#src/services/shared/createNameSchema";
 import { sql } from "drizzle-orm";
 import { check, index, integer, jsonb, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";

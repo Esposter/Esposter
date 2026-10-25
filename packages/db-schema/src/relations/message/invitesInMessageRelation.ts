@@ -1,6 +1,3 @@
-import type { PublicUser } from "#src/models/user/PublicUser";
-import type { InviteInMessage } from "#src/schema/message/invitesInMessage";
-
 import { schema } from "#src/generated/schema";
 import { PublicUserColumns } from "#src/services/user/PublicUserColumns";
 import { defineRelationsPart } from "drizzle-orm";
@@ -18,6 +15,3 @@ export const InviteInMessageRelations = {
   room: { with: { usersToRoomsInMessage: { columns: { userId: true } } } },
   user: { columns: PublicUserColumns },
 } as const;
-// The row plus whoever minted it, which is what a management surface lists — a code with no author beside it
-// Says nothing about who to ask when it turns up somewhere it should not have
-export type InviteInMessageWithCreator = InviteInMessage & { user: PublicUser };

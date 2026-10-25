@@ -1,10 +1,10 @@
-import { createNameSchema } from "#src/models/shared/Name";
 import { pgTable } from "#src/pgTable";
 import { appSchema } from "#src/schema/app/appSchema";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { resourceTypeEnum } from "#src/schema/resource/resourcesInResource";
 import { BOOKMARK_PATH_MAX_LENGTH, BOOKMARK_TITLE_MAX_LENGTH } from "#src/services/bookmark/constants";
 import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
+import { createNameSchema } from "#src/services/shared/createNameSchema";
 import { check, primaryKey, text } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 

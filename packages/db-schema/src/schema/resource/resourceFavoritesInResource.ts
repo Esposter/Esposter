@@ -1,6 +1,6 @@
 import { pgTable } from "#src/pgTable";
 import { resourceSchema } from "#src/schema/resource/resourceSchema";
-import { createResourceUserColumns } from "#src/schema/resource/resourceUserColumns";
+import { createResourceUserColumns } from "#src/services/resource/createResourceUserColumns";
 import { primaryKey } from "drizzle-orm/pg-core";
 
 // A row exists iff the user has starred the resource. Server-side rather than per-device — a star that

@@ -1,6 +1,6 @@
 import { pgTable } from "#src/pgTable";
 import { messageSchema } from "#src/schema/message/messageSchema";
-import { createRoomUserColumns } from "#src/schema/message/roomUserColumns";
+import { createRoomUserColumns } from "#src/services/message/createRoomUserColumns";
 import { INVITE_ID_LENGTH, INVITE_ID_REGEX } from "#src/services/message/invite/constants";
 import { createExactLengthCheckSql } from "#src/services/shared/createExactLengthCheckSql";
 import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";

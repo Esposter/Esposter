@@ -1,6 +1,5 @@
 import type { AnyPgColumn } from "drizzle-orm/pg-core";
 
-import { createNameSchema } from "#src/models/shared/Name";
 import { pgTable } from "#src/pgTable";
 import { usersInAuth } from "#src/schema/auth/usersInAuth";
 import { postSchema } from "#src/schema/post/postSchema";
@@ -8,6 +7,7 @@ import { POST_DESCRIPTION_MAX_LENGTH, POST_TITLE_MAX_LENGTH } from "#src/service
 import { createPostDescriptionSchema } from "#src/services/post/createPostDescriptionSchema";
 import { createMaxLengthCheckSql } from "#src/services/shared/createMaxLengthCheckSql";
 import { createMinimumCheckSql } from "#src/services/shared/createMinimumCheckSql";
+import { createNameSchema } from "#src/services/shared/createNameSchema";
 import { sql } from "drizzle-orm";
 import { check, doublePrecision, index, integer, text, uuid } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";

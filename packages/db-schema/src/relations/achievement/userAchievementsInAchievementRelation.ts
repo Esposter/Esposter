@@ -1,6 +1,3 @@
-import type { AchievementInAchievement } from "#src/schema/achievement/achievementsInAchievement";
-import type { UserAchievementInAchievement } from "#src/schema/achievement/userAchievementsInAchievement";
-
 import { schema } from "#src/generated/schema";
 import { defineRelationsPart } from "drizzle-orm";
 
@@ -16,7 +13,3 @@ export const userAchievementsInAchievementRelation = defineRelationsPart(schema,
 }));
 
 export const UserAchievementInAchievementRelations = { achievement: true } as const;
-
-export type UserAchievementInAchievementWithRelations = UserAchievementInAchievement & {
-  achievement: AchievementInAchievement;
-};

@@ -4,11 +4,12 @@ import type { ResourceActivityType } from "#src/models/resource/ResourceActivity
 import type { UserInAuth } from "#src/schema/auth/usersInAuth";
 import type { ToData } from "@esposter/shared";
 
-import { AzureEntity, createAzureEntitySchema } from "#src/models/azure/table/AzureEntity";
+import { AzureEntity } from "#src/models/azure/table/AzureEntity";
 import { reverseTickedTimestampSchema } from "#src/models/azure/table/ReverseTickedTimestamp";
 import { resourceActivityTypeSchema } from "#src/models/resource/ResourceActivityType";
 import { selectUserInAuthSchema } from "#src/schema/auth/usersInAuth";
 import { selectResourceInResourceSchema } from "#src/schema/resource/resourcesInResource";
+import { createAzureEntitySchema } from "#src/services/azure/table/createAzureEntitySchema";
 import { getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 

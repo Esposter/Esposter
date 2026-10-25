@@ -1,8 +1,9 @@
 import type { CompositeKeyEntity } from "#src/models/azure/table/CompositeKeyEntity";
 import type { ToData } from "@esposter/shared";
 
-import { AzureEntity, createAzureEntitySchema } from "#src/models/azure/table/AzureEntity";
+import { AzureEntity } from "#src/models/azure/table/AzureEntity";
 import { selectResourceInResourceSchema } from "#src/schema/resource/resourcesInResource";
+import { createAzureEntitySchema } from "#src/services/azure/table/createAzureEntitySchema";
 import { getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 

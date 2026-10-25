@@ -4,11 +4,12 @@ import type { AdminActionType } from "#src/models/message/AdminActionType";
 import type { UserInAuth } from "#src/schema/auth/usersInAuth";
 import type { ToData } from "@esposter/shared";
 
-import { AzureEntity, createAzureEntitySchema } from "#src/models/azure/table/AzureEntity";
+import { AzureEntity } from "#src/models/azure/table/AzureEntity";
 import { reverseTickedTimestampSchema } from "#src/models/azure/table/ReverseTickedTimestamp";
 import { adminActionTypeSchema } from "#src/models/message/AdminActionType";
 import { selectUserInAuthSchema } from "#src/schema/auth/usersInAuth";
 import { selectRoomInMessageSchema } from "#src/schema/message/roomsInMessage";
+import { createAzureEntitySchema } from "#src/services/azure/table/createAzureEntitySchema";
 import { getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
 

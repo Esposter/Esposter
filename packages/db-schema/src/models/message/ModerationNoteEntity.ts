@@ -3,10 +3,11 @@ import type { ReverseTickedTimestamp } from "#src/models/azure/table/ReverseTick
 import type { UserInAuth } from "#src/schema/auth/usersInAuth";
 import type { ToData } from "@esposter/shared";
 
-import { AzureEntity, createAzureEntitySchema } from "#src/models/azure/table/AzureEntity";
+import { AzureEntity } from "#src/models/azure/table/AzureEntity";
 import { reverseTickedTimestampSchema } from "#src/models/azure/table/ReverseTickedTimestamp";
 import { selectUserInAuthSchema } from "#src/schema/auth/usersInAuth";
 import { selectRoomInMessageSchema } from "#src/schema/message/roomsInMessage";
+import { createAzureEntitySchema } from "#src/services/azure/table/createAzureEntitySchema";
 import { MODERATION_NOTE_MAX_LENGTH } from "#src/services/message/constants";
 import { createNormalizedStringSchema, getPropertyNames } from "@esposter/shared";
 import { z } from "zod";
