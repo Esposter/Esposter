@@ -2,7 +2,7 @@
 
 ## Purpose
 
-TBD - created by archiving change keyframe-store-area. Update Purpose after archive.
+The contract a caller writes and reads versions through: each write reports the base it is stored against, a delta is read with the keyframe its own header names, and collection deletes only the objects no surviving record names.
 
 ## Requirements
 

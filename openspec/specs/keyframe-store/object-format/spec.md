@@ -2,7 +2,7 @@
 
 ## Purpose
 
-TBD - created by archiving change keyframe-store-area. Update Purpose after archive.
+What one stored object is on disk: its address by the hash of its plaintext, whether it is a keyframe or a delta against one keyframe, the segment budget that bounds those deltas, and the checks a read must pass before its bytes are trusted.
 
 ## Requirements
 
