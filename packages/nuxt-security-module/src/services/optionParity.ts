@@ -143,7 +143,7 @@ export const OPTION_PARITY: OptionParity[] = [
   },
   { note: "Same default: on", ours: "sri", upstream: "sri", verdict: OptionParityVerdict.Ported },
   {
-    note: "Same defaults: the meta, script hashes and Nitro headers on, the style hashes off",
+    note: "Same defaults: the meta and script hashes on, the style hashes off",
     ours: "ssg",
     upstream: "ssg",
     verdict: OptionParityVerdict.Ported,

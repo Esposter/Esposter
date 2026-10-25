@@ -27,6 +27,6 @@ export const getDefaultModuleOptions = (
   removeLoggers: false,
   requestSizeLimiter: { maxRequestSizeInBytes: 2_000_000, maxUploadFileRequestInBytes: 8_000_000 },
   sri: true,
-  ssg: { exportToPresets: true, hashScripts: true, hashStyles: false, meta: true, nitroHeaders: true },
+  ssg: { hashScripts: true, hashStyles: false, meta: true },
   strict: isStrict,
 });

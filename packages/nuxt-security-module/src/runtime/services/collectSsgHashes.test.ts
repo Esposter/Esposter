@@ -4,7 +4,7 @@ import { generateHash } from "#src/runtime/services/generateHash";
 import { describe, expect, test } from "vitest";
 
 describe(collectSsgHashes, () => {
-  const OPTIONS = { exportToPresets: true, hashScripts: true, hashStyles: true, meta: true, nitroHeaders: true };
+  const OPTIONS = { hashScripts: true, hashStyles: true, meta: true };
 
   test("an inline script is hashed by its body", async () => {
     expect.hasAssertions();
