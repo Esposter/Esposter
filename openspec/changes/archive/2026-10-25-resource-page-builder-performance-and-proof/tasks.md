@@ -25,7 +25,7 @@
 
 - [x] 4.1 Assert each type's output whole across its edge values, and assert the sanitiser's vectors on the raw-HTML types. Verify: tests named after the scenarios 'A type's output matches for every edge value' and 'A hostile markup vector in custom HTML is removed'.
 - [x] 4.2 Bound the MJML root's and the documents' strings in the shared schema, and make the bounds guard skip only the opaque subschema rather than the whole procedure. Verify: tests named after the scenarios 'An unbounded string beside an opaque document fails the guard' and 'The MJML root's strings are bounded'.
-  - Done in `d89870dcf7`: the guard skips only an opaque subschema, and no procedure is exempt whole. The MJML schemas bound their attribute values, names, content, root props and children; the webpage and email nodes bound their ids, text, markup and URLs; the document bounds its content. The guard's own test runs over every procedure, and the two named tests are the opaque skip's fixture and `email.compile`'s root.
+  - Done in `617b16c09b`: the guard skips only an opaque subschema, and no procedure is exempt whole. The MJML schemas bound their attribute values, names, content, root props and children; the webpage and email nodes bound their ids, text, markup and URLs; the document bounds its content. The guard's own test runs over every procedure, and the two named tests are the opaque skip's fixture and `email.compile`'s root.
 
 ## 5. The record
 
