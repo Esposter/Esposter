@@ -1,3 +1,4 @@
+import { RESOURCE_LINK_TYPE_KEYWORD } from "#shared/services/resource/link/constants";
 import { resourceLinkRegistry } from "#shared/services/resource/link/resourceLinkRegistry";
 import { processSchema } from "@/services/jsonSchema/processSchema";
 import { z } from "zod";
@@ -11,7 +12,7 @@ export const zodToJsonSchema = (schema: z.ZodType) => {
       if (meta?.layout) jsonSchema.layout = meta.layout;
       // A link lives in its own registry, which the layout is not read from, so its type is carried beside the layout
       const resourceLinkType = resourceLinkRegistry.get(context.zodSchema)?.resourceLinkType;
-      if (resourceLinkType) jsonSchema.resourceLinkType = resourceLinkType;
+      if (resourceLinkType) jsonSchema[RESOURCE_LINK_TYPE_KEYWORD] = resourceLinkType;
     },
   });
   processSchema(result);

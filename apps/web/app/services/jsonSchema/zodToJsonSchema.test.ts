@@ -1,4 +1,5 @@
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
+import { RESOURCE_LINK_TYPE_KEYWORD } from "#shared/services/resource/link/constants";
 import { createResourceLinkSchema } from "#shared/services/resource/link/createResourceLinkSchema";
 import { ColumnFormContextPropertyNames } from "@/models/resource/sheet/column/ColumnFormContext";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
@@ -314,7 +315,7 @@ describe(zodToJsonSchema, () => {
     const schema = z.object({ surveyId: createResourceLinkSchema(ResourceLinkType.Survey) });
     const result = zodToJsonSchema(schema);
 
-    expect(result.properties?.surveyId).toHaveProperty("resourceLinkType", ResourceLinkType.Survey);
+    expect(result.properties?.surveyId).toHaveProperty(RESOURCE_LINK_TYPE_KEYWORD, ResourceLinkType.Survey);
   });
 
   test("does not set a resource link type on a plain id", () => {
@@ -323,6 +324,6 @@ describe(zodToJsonSchema, () => {
     const schema = z.object({ surveyId: z.uuid() });
     const result = zodToJsonSchema(schema);
 
-    expect(result.properties?.surveyId).not.toHaveProperty("resourceLinkType");
+    expect(result.properties?.surveyId).not.toHaveProperty(RESOURCE_LINK_TYPE_KEYWORD);
   });
 });

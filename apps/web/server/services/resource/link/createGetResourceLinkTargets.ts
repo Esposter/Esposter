@@ -2,8 +2,8 @@ import type { JsonSchemaNode } from "#server/models/resource/link/JsonSchemaNode
 import type { ResourceLinkTarget } from "#server/models/resource/link/ResourceLinkTarget";
 import type { ResourceLinkType } from "@esposter/db-schema";
 
-import { RESOURCE_LINK_TYPE_KEYWORD } from "#server/services/resource/link/constants";
 import { getResourceLinkKey } from "#server/services/resource/link/getResourceLinkKey";
+import { RESOURCE_LINK_TYPE_KEYWORD } from "#shared/services/resource/link/constants";
 import { resourceLinkRegistry } from "#shared/services/resource/link/resourceLinkRegistry";
 import { resourceLinkTypeSchema } from "@esposter/db-schema";
 import { z } from "zod";
