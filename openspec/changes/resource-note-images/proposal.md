@@ -10,7 +10,7 @@ A note can hold images, added from its menu, by paste or by drop, and each image
 
 - The note declares file assets, so its images are uploaded and published like any other type's.
 - An Image button opens a file picker, and pasting or dropping an image file adds it to the note. The image is stored as a stable resource address, never as inline data.
-- Alt text is set from a popover on the selected image.
+- Alt text is set as the [note design](../../specs/resource/note-resource/design.md) describes for images.
 - A published note shows only images from its own resource storage. An image from any other address is dropped from the published page.
 - An image renders at its natural size, capped at the column width.
 - **Capabilities:** `resource/note-images` (new).

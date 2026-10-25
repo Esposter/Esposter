@@ -20,7 +20,7 @@ Build order. Task 1.1 comes first: the scan sets which drops the owner decides. 
 
 - [ ] 3.1 Build the headless runner state in the runner folder under the survey app services: page flow over the core's navigation, each element's visibility, enablement and requiredness from the new expression package, per-answer validation from the question's own schema, and completion. Test-first from the gap rows in section 5.
       Verify: a fixture answer record from the runner equals the record SurveyJS produces for the same answers, key for key and value for value.
-- [ ] 3.2 Build one field component per question kind on the UI library, each with a component test of its keyboard and ARIA contract, mounted with the real parts and run once per style.
+- [ ] 3.2 Build one field component per question kind on the UI library, each held to the component test the [ui-library skill](../../../.agents/skills/ui-library/SKILL.md) requires of a new component, run once per style.
       Verify: each component's contract test passes in both styles, and each field's label is the question's title.
 - [ ] 3.3 Replace SurveyJS on the respondent page: `View.vue` renders the new runner, and `useSurveyResponse.ts` keeps resume by the per-survey response id and the submitted-row rule.
       Verify: the resume and shared-device scenarios in the spec delta pass against the new page.

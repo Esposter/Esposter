@@ -166,7 +166,7 @@ Say plainly: **this is a large build**, several times the Flowchart's current ap
 - **A third-party whiteboard engine, embedded in the app.** This was the first recommendation of this change, with its editor mounted by a Vue component. It is rejected, because the owner's direction rules out a new third-party dependency. Its cost was also real: a second UI runtime beside the app's, a second element model to convert to, and an engine's own interaction and styling in place of ours. Excalidraw's feel is the reference for the whiteboard, not a package the whiteboard uses.
 - **Other third-party drawing and graph engines**, including whiteboard SDKs and node-graph libraries. Each is rejected by the same direction, and each would replace the Flowchart's canvas engine with another one.
 - **Extending the Flowchart on its current canvas engine.** The flowchart shapes change and the flowchart canvas change proposed this. The retirement has removed both, since the whiteboard supersedes the Flowchart and growing it would add work the removal discards.
-- **Rebuilding the Flowchart on the headless editor core.** The retirement records this as rejected: the core has no graph shape, and building one for a type being removed is not worth the cost.
+- **Rebuilding the Flowchart on the headless editor core.** Rejected by [the retirement](../resource-flowchart-retirement/proposal.md), which records why.
 - **Building the whiteboard as a page builder document.** The page builder's core is a tree, and a canvas positions elements and refers to them by id. Forcing a canvas into slots would make the arrows children of the shapes they join. The core is extended with the positioned model instead, and its tree stays as it is.
 
 ## The type's name
