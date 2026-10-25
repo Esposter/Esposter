@@ -53,7 +53,7 @@ The engine's one-time purge runs in each environment before this picker ships. T
 | `apps/web/shared/services/pageBuilder/surveyInviteNodeType.ts`              | the webpage node, whose `surveyId` takes the renderer, unchanged           |
 | `apps/web/shared/services/pageBuilder/email/emailSurveyInviteNodeSchema.ts` | the email node, which shares the webpage's props                           |
 
-New files, in the tree form the design template asks for:
+New files, laid out as the design template's tree:
 
 ```text
 apps/web/app/components/Resource/Link/Select.vue   the shared select, the moved BindingSelect under the name it has everywhere

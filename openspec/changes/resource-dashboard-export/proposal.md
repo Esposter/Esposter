@@ -30,4 +30,4 @@ Export the page as PNG and each visual as CSV, and take neither from the server.
 
 - The Dashboard's resource menu lists an export it did not list before, and the Portable capability's import path stays off, since a picture cannot restore a dashboard.
 - Static visuals have no CSV. Their numbers are typed into the chart by the owner and are already in the editor.
-- A bound visual over a capped dataset exports what was read and says so in an alert, as the dataset export does.
+- A bound visual over a capped dataset is cut at the row cap the dataset export uses, and warns the same way.

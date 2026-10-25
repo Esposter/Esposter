@@ -6,10 +6,10 @@ Gap 6 of the [gap survey](../gap-survey-2026-10-25/proposal.md).
 
 The [client data design](../../specs/architecture/client-data/design.md) lists the shapes the repo used and then left behind, each with the check that stops it coming back. Two of those rules are marked **not yet mechanically enforced**, and each says review owns it:
 
-- **An optimistic count**: moving a displayed count before the server answers. The viewer's own vote may move at once, because the client holds it exactly. The count cannot, because the client does not hold it.
-- **Two reads sent in one tick, one held open**: a test that holds one read open while another waits behind it deadlocks, because tRPC answers a batch as one response.
+- **An optimistic count**: the displayed number moves before the server replies. The viewer's own vote may move at once, because the client holds it exactly. The count cannot, because the client does not hold it.
+- **Two reads sent in one tick, one held open**: a test holding one read open while a second waits behind it deadlocks, because tRPC answers a batch as one response.
 
-The [enforcement ladder](../../specs/architecture/enforcement-ladder/design.md) says a rule that holds only while someone remembers it is a bug with a delay, and that each rule goes on the highest rung that can carry it. Both rules are being held by a reviewer's memory now. The ones a reviewer is most likely to miss are these two, since neither fails on its own.
+The [enforcement ladder](../../specs/architecture/enforcement-ladder/design.md) says a rule kept only by memory is a bug with a delay, and that each rule goes on the highest rung that can carry it. Both rules are being held by a reviewer's memory now. The ones a reviewer is most likely to miss are these two, since neither fails on its own.
 
 ## What Changes
 

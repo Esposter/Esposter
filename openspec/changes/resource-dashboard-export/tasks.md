@@ -30,5 +30,5 @@ Build order. Section 1 moves the capture so the page image can reuse it, and sec
 
 ## 5. Sweep and specs
 
-- [ ] 5.1 Sweep the prose the change makes stale: the dashboard data-binding design's Notes on what a viewer receives, and the flowchart image export's Key files, which name the moved files.
+- [ ] 5.1 Sweep the prose this change leaves stale: the dashboard data-binding design's Notes on what a viewer receives, and the flowchart image export's Key files, which name the moved files.
       Verify: a search for the old flowchart capture paths across `openspec/` finds only this change's references, and the flowchart export design names the shared folder.
