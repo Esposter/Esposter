@@ -107,7 +107,11 @@ export const PNPM_ARGS: readonly string[] = isPnpmScript ? [pnpmExecPath] : [];
 export const BYTE = 255;
 // The D65 white in CIE XYZ, its luminance 1, which sRGB's white is and CIELab is taken against
 export const D65_WHITE: Vector = [0.950428545, 1, 1.088900371];
+// The CIELab knee's delta, 6/29: below the cube it is raised to, the cube root gives way to a line
+export const CIELAB_DELTA = 6 / 29;
 // A pinned tool's archive runs to a hundred-odd megabytes, so its download is bounded by minutes rather than seconds
 export const PINNED_TOOL_DOWNLOAD_TIMEOUT_MS: number = Temporal.Duration.from({ minutes: 5 }).total("milliseconds");
 // The npm lockfile beside a manifest, which `npm install` writes and whose root entry repeats the manifest's `engines`
 export const PACKAGE_LOCK_JSON_FILENAME = "package-lock.json";
+export const SWEEP_LIMIT = 100;
+export const OFF_DIAGONAL_TOLERANCE = 1e-12;
