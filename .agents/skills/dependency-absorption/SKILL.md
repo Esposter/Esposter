@@ -1,6 +1,6 @@
 ---
 name: dependency-absorption
-description: Apply when replacing a third-party package with code of our own, removing an adapter or wrapper library, auditing a package's upstream issue tracker, or turning an absorbed seam into a workspace package. Esposter's absorption flow — survey, gate, upstream audit, build behind the call site, swap, residue sweep, verify — run as the dependency-admission page decides, with every upstream issue given an evidenced verdict and an adapter rebuilt as its own package at parity or better.
+description: Apply when replacing a third-party package with code of our own, removing an adapter or wrapper library, auditing a package's upstream issue tracker, turning an absorbed seam into a workspace package, or replacing a package whose output is an interface a person sees. Esposter's absorption flow — survey, gate, upstream audit, build behind the call site, swap, residue sweep, verify — run as the dependency-admission page decides, with every upstream issue given an evidenced verdict and an adapter rebuilt as its own package at parity or better.
 ---
 
 # Dependency Absorption
@@ -28,9 +28,11 @@ How an absorption is run. Whether a package should be absorbed at all — the co
 - **An issue split across the adapter and a neighbour gets both verdicts** — the adapter's part fixed, the neighbour's part out of scope with our constraint written on the page owning our side.
 - **An absorbed adapter is a workspace package** built to the `file-organization` skill's `references/new-package.md`, with its own spec area carrying the Upstream table — **except a component wrapper, which becomes a component of the app** with a capability page carrying it (`references/package-shape.md`).
 - **The residue sweep lands in the commit that deletes the catalog entry** (`references/residue-sweep.md`).
+- **A UI-bearing absorption surveys its design sources before its first template is written.** An editor, a builder, a form engine or a chart is drawn to the survey of its reference product, the galleries for its category and the design language, and the survey is recorded in the replacement's design page (`references/design-survey.md`).
 
 ## Reference pages
 
 - `references/upstream-audit.md` — when reading a package's tracker, or giving an issue its verdict.
 - `references/residue-sweep.md` — when the last import of the absorbed package is about to go.
 - `references/package-shape.md` — when creating the replacement package, its README or its docs section.
+- `references/design-survey.md` — when the package replaced draws an interface a person sees, before its first template is written.

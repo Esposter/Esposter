@@ -69,6 +69,13 @@ These are where the look comes from: the palette's structure, the surfaces, the 
 ## Galleries of shipped screens
 
 - **[Mobbin](https://mobbin.com/)** — a library of real app and web screens and flows, for how several products arrange the same thing when no one reference product owns it.
+- **[GrapesJS](https://github.com/GrapesJS/grapesjs)** — the open-source web builder whose block manager lays each block out as a tile of one width with its name and icon, the palette the page builder follows.
+- **[SurveyJS Creator](https://github.com/surveyjs/survey-creator)** — a survey builder whose question types sit in a list rather than tiles, the contrast the palette's tiles were chosen against.
+- **[email-builder-js](https://github.com/usewaypoint/email-builder-js)** — an email template editor, one reference for how an email's block kinds are arranged.
+
+## Absorptions that draw an interface
+
+A dependency whose output is an interface a person sees is absorbed only after its design sources are surveyed, the way a new surface is designed: its reference product's own screens first, then the galleries above for its category, then the design language. The sources the survey consulted are written into the replacement's own design page with what each gave the surface, so the arrangement it settled on survives the next rewrite. The procedure is the `dependency-absorption` skill's `references/design-survey.md`, and the stage it runs in is `openspec/specs/architecture/dependency-admission/design.md`'s "Executing an absorption".
 
 ## Usability
 
