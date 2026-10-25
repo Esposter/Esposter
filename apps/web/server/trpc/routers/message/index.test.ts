@@ -1223,8 +1223,6 @@ describe("messageRouter", () => {
     );
   });
 
-  // The gate reads the slowmode clock and the send advances it, so two sends racing one window must not both read
-  // It unstamped
   test("createMessage succeeds after the slowmode window", async () => {
     expect.hasAssertions();
 
