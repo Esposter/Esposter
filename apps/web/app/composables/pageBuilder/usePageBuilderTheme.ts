@@ -1,12 +1,7 @@
 import type { MaybeRefOrGetter } from "vue";
 
-import {
-  COLOR_TOKEN_PREFIX,
-  DEFAULT_FONT_STACK,
-  DEFAULT_THEME_COLOR,
-  FONT_TOKEN_PREFIX,
-  ROOT_POINTER,
-} from "@/services/pageBuilder/constants";
+import { COLOR_TOKEN_PREFIX, FONT_TOKEN_PREFIX } from "#shared/services/pageBuilder/constants";
+import { DEFAULT_FONT_STACK, DEFAULT_THEME_COLOR, ROOT_POINTER } from "@/services/pageBuilder/constants";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { JsonPatchOperationType, noop } from "@esposter/shared";

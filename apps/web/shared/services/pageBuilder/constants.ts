@@ -25,6 +25,9 @@ export const MAX_URL_LENGTH = 2048;
 export const MAX_LANG_LENGTH = 35;
 // The most characters a page token's name may hold, its color- or font- prefix included
 export const MAX_TOKEN_NAME_LENGTH = 64;
+// The prefixes a colour token and a font-stack token are named with, which the theme sorts them into
+export const COLOR_TOKEN_PREFIX = "color-";
+export const FONT_TOKEN_PREFIX = "font-";
 // The most texts a typed text node cycles through
 export const MAX_TYPED_TEXT_COUNT = 50;
 // The CSS properties the style panel offers, in the panel's sector order: layout, spacing, size, position, typography, background, border and effects
