@@ -189,6 +189,8 @@ export const CHROMA_MATCH_SECONDS = 20;
 export const LISTEN_SAMPLE_RATE = 22050;
 export const LISTEN_BAND_CENTRES: number[] = [63, 125, 250, 500, 1000, 2000, 4000, 8000];
 export const LISTEN_FLOOR_DECIBELS = 60;
+// The energy a music band's level is read from, zero: an exact silence is minus infinity, which the game's floor clamps
+export const MUSIC_ENERGY_FLOOR = 0;
 // The screen that plays the login's music, which the parity page renders it through
 export const LOGIN_MUSIC_SCREEN = "LoginMusic";
 // The size the parity page is opened at where nothing it draws is read: the music it renders, the claims on a scene's
@@ -235,6 +237,9 @@ export const LUMINANCE = [0.2126, 0.7152, 0.0722] as const;
 // Of the game's loudest
 export const SOUND_SCORE_HOP_LENGTH = 240;
 export const SOUND_SCORE_RANGE_DECIBELS = 40;
+// The power a sound's level is read from when it is silent: the smallest positive float, so a silent cell reads as the
+// Least decibels a float holds rather than minus infinity
+export const SOUND_POWER_FLOOR = Number.MIN_VALUE;
 // A terminal's colour and style codes, which Vite wraps the address it prints in
 // oxlint-disable-next-line typescript/no-inferrable-types, no-control-regex -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer, and the escape is the control character itself
 export const ANSI_ESCAPE_REGEX: RegExp = /\u001B\[[\d;]*m/gu;

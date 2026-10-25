@@ -1,9 +1,9 @@
 import type { SoundEffectScore } from "#src/models/genshinParity/sound/SoundEffectScore";
 
-import { SOUND_SCORE_RANGE_DECIBELS } from "#src/services/genshinParity/shared/constants";
+import { SOUND_POWER_FLOOR, SOUND_SCORE_RANGE_DECIBELS } from "#src/services/genshinParity/shared/constants";
+import { toDecibels } from "#src/services/genshinParity/shared/toDecibels";
 import { computeChannelLevels } from "#src/services/genshinParity/sound/computeChannelLevels";
 import { computeCorrelation } from "#src/services/genshinParity/sound/computeCorrelation";
-import { toDecibels } from "#src/services/genshinParity/sound/toDecibels";
 
 // A sound effect as the engine renders it (`computeSoundEffectSamples`) against the game's sound it was fitted from, or
 // Against another render of its own, both channels, in its own bands every `SOUND_SCORE_HOP_LENGTH`: finer than the
@@ -23,7 +23,7 @@ export const scoreSoundEffect = (
     for (const [frame, bands] of frames.entries())
       for (const [band, level] of bands.entries()) {
         if (level < loudest - SOUND_SCORE_RANGE_DECIBELS) continue;
-        const gap = (ourLevels[channel]?.[frame]?.[band] ?? toDecibels(0)) - level;
+        const gap = (ourLevels[channel]?.[frame]?.[band] ?? toDecibels(0, SOUND_POWER_FLOOR)) - level;
         total += Math.abs(gap);
         count++;
         (bandGaps[band] ??= []).push(gap);
