@@ -157,9 +157,9 @@ describe("uiCalendar", () => {
       const laterDay = epoch.add({ months: 3 });
       const component = await mountSuspended(UiCalendar, { props: { from: epoch, isRange: true, label } });
       await component.setProps({ from: laterDay });
-      const laterDaySelector = getDaySelector(laterDay.toString());
 
-      expect(component.get(laterDaySelector).attributes("data-date")).toBe(laterDay.toString());
+      expect(component.find(getDaySelector(epoch.toString())).exists()).toBe(false);
+      expect(component.find(getDaySelector(laterDay.toString())).exists()).toBe(true);
     });
 
     test("says a day before its minimum is disabled and never chooses it", async () => {

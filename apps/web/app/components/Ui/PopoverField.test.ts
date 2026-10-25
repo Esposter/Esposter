@@ -24,8 +24,11 @@ describe("uiPopoverField", () => {
         slots: { value: () => value },
       });
 
-      expect(emptyComponent.get("button[aria-describedby]").text()).toContain(placeholder);
-      expect(filledComponent.get("button[aria-describedby]").text()).toContain(value);
+      const emptyValueId = emptyComponent.get("button[aria-describedby]").attributes("aria-describedby");
+      const filledValueId = filledComponent.get("button[aria-describedby]").attributes("aria-describedby");
+
+      expect(emptyComponent.get(`[id="${emptyValueId}"]`).text()).toBe(placeholder);
+      expect(filledComponent.get(`[id="${filledValueId}"]`).text()).toBe(value);
     });
 
     test("offers a clear button that emits clear only while the field is clearable", async () => {
