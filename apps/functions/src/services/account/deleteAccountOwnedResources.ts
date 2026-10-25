@@ -13,7 +13,10 @@ export const deleteAccountOwnedResources = async (
   context: InvocationContext,
   userId: UserInAuth["id"],
 ): Promise<void> => {
-  const ownedResources = await db.select().from(resourcesInResource).where(eq(resourcesInResource.userId, userId));
+  const ownedResources = await db
+    .select({ id: resourcesInResource.id, type: resourcesInResource.type })
+    .from(resourcesInResource)
+    .where(eq(resourcesInResource.userId, userId));
   const containerClient = await getContainerClient(AzureContainer.ResourceAssets);
   for (const ownedResource of ownedResources)
     // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one resource at a time, as the timer's purge runs
