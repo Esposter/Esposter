@@ -254,7 +254,7 @@ export const useResourceStore = defineStore("resource", () => {
     if (resource.value) resource.value.contentVersion = contentVersion;
   };
   // Another device saved this resource. Taken through the two stages a restore runs, which the reload leaves to
-  // Adopt the document (openspec/changes/architecture-ai-native-resources-live-edits/design.md)
+  // Adopt the document (openspec/specs/architecture/ai-native-resources/live-edits/design.md)
   const storeSaveResourceContent = async ({ apiKeyName, contentVersion, device }: ResourceSave) => {
     if (!resource.value || contentVersion <= resource.value.contentVersion) return;
 
