@@ -11,3 +11,8 @@ export const SKILLS_DIRECTORY: string = `${AGENT_DIRECTORY}/skills`;
 // The skills installer's record of the third-party skills it copied into the skills directory, by name. Those skills
 // Are vendored, not ours: their shape is their publisher's, so no scan holds them to this repository's conventions.
 export const SKILLS_LOCK_FILE = "skills-lock.json";
+// The `.claude` symlink to `.agents`, which a scan walking the tree leaves out as a pathspec: reading it throws rather than
+// Returning bytes, and testing every tree entry for a directory costs a `stat` each just to catch this one
+export const CLAUDE_PATHSPEC_EXCLUDE = ":(exclude).claude";
+// The NUL byte: a file holding one anywhere is binary by `git diff`'s own heuristic, so its bytes are data rather than source
+export const BINARY_BYTE = 0;
