@@ -637,17 +637,17 @@ describe(createResourceProcedures, () => {
     const nonPublishableProcedures = new Set(Object.keys(sheetRouter._def.procedures));
 
     // View counting rides the publishable capability, so it is gated by the same seam
-    expect(publishableProcedures.difference(nonPublishableProcedures)).toStrictEqual(
-      new Set([
-        "publishResource",
-        "readPublishedResourceContent",
-        "readPublishedVersionContent",
-        "readResourcePublication",
-        "readResourceViewCount",
-        "unpublishResource",
-      ]),
-    );
-    expect(nonPublishableProcedures.difference(publishableProcedures)).toStrictEqual(new Set());
+    const publishProcedures = new Set([
+      "publishResource",
+      "readPublishedResourceContent",
+      "readPublishedVersionContent",
+      "readResourcePublication",
+      "readResourceViewCount",
+      "unpublishResource",
+    ]);
+    expect(publishableProcedures.difference(nonPublishableProcedures)).toStrictEqual(publishProcedures);
+    // Sheet has commands of its own beside the generic matrix, so the check is that none of them is a publish procedure
+    expect(nonPublishableProcedures.intersection(publishProcedures)).toStrictEqual(new Set());
   });
 
   test("counts each public read", async () => {
