@@ -1,6 +1,8 @@
+import type { SlicePoint } from "#src/models/genshinAssets/fit/SlicePoint";
 import type { RiverCoursePoint } from "genshin-engine";
 import type { Vector3 } from "three";
 
+import { average } from "#src/services/genshinAssets/fit/average";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 
 // Metres between a course's points along it, each slice of a water surface giving one point on its centreline
@@ -9,13 +11,6 @@ const RIVER_COURSE_SLICE_METRES = 1;
 const RIVER_COURSE_GAP_METRES = 4;
 // A water surface no longer than this many of its widths is a pond, which the still water covers, not a river
 const RIVER_MIN_LENGTH_WIDTHS = 2;
-
-interface SlicePoint {
-  along: number;
-  point: RiverCoursePoint;
-}
-
-const average = (values: readonly number[]): number => values.reduce((sum, value) => sum + value, 0) / values.length;
 
 // A water surface's courses read off its points in the world's axes: along its long axis across the ground, each slice
 // Of it a point at the middle of its width with the mean of its level, the surface turned to run downhill from its

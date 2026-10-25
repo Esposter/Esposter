@@ -5,11 +5,9 @@ import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables"
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { checkIsKitValueResolvedEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueResolvedEqual";
+import { findSourceCandidate } from "#src/services/genshinAssets/kits/record/findSourceCandidate";
 
 const SELECTABLE_SOURCES = [KitSource.Gcsim, KitSource.Tables, KitSource.Wiki] as const;
-
-const findSourceCandidate = (candidates: readonly KitCandidate[], source: KitSource): KitCandidate | undefined =>
-  candidates.find(({ provenance }) => provenance.source === source);
 
 // The overlay entry a module's value needs for one path, none where the path's default already is it. A value gcsim's
 // Current branch gives and its tag does not was read past the licence line, unless the tag predates the character,

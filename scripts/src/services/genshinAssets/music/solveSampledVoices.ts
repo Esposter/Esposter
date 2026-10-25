@@ -4,7 +4,9 @@ import type { SampledVoiceSolution } from "#src/models/genshinAssets/music/Sampl
 import type { ShapedMusicScore } from "#src/models/genshinParity/music/ShapedMusicScore";
 import type { NoteEventTime } from "pitch-transcription/notes";
 
+import { computeDot } from "#src/services/genshinAssets/music/computeDot";
 import { computeVoicePitchReference } from "#src/services/genshinAssets/music/computeVoicePitchReference";
+import { listCombinations } from "#src/services/genshinAssets/music/listCombinations";
 import { readInstrumentRecordings } from "#src/services/genshinAssets/music/readInstrumentRecordings";
 import { refineVoicePowers } from "#src/services/genshinAssets/music/refineVoicePowers";
 import { renderSampledVoice } from "#src/services/genshinAssets/music/renderSampledVoice";
@@ -22,17 +24,9 @@ import { solveNonNegativeSystem } from "#src/services/recreation/solve/solveNonN
 import { MUSIC_EXPRESSION_WINDOW_SECONDS } from "genshin-engine";
 import { AUDIO_SAMPLE_RATE } from "pitch-transcription";
 
-// Every combination of one candidate per voice, from `[]` up
-const listCombinations = (counts: number[]): number[][] =>
-  counts.reduce<number[][]>(
-    (combinations, count) =>
-      combinations.flatMap((combination) => Array.from({ length: count }, (_value, index) => [...combination, index])),
-    [[]],
-  );
-const computeDot = (first: Float64Array, second: Float64Array): number =>
-  first.reduce((sum, value, index) => sum + value * (second[index] ?? 0), 0);
 // The shares of its solved levels a mix is tried at, loudest first, until it keeps the base's pitch agreement
 const LEVEL_SHARES = [1, 1 / 2, 1 / 4, 1 / 8];
+
 // Each voice's recorded instrument and level layered over `base`, the synthesizer's render as it ships under its
 // `expression`, solved together against the game's sound by the listening score's own measures. Every instrument plays
 // Each voice's notes alone at level 1, through the recordings they reach and with the release and tuning the game's

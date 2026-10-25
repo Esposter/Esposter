@@ -1,29 +1,12 @@
 import type { ReliefLayer } from "#src/models/genshinAssets/fit/ReliefLayer";
 
+import { findNearestEdgePoint } from "#src/services/genshinAssets/fit/findNearestEdgePoint";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { traceCellLoops } from "#src/services/genshinAssets/fit/traceCellLoops";
 
 // Where between a corner and the nearest point of the depth below the cells are read for a slope
 const SLOPE_SAMPLES = [0.25, 0.5, 0.75];
-// The point of any of several closed loops nearest a point
-const findNearest = (loops: readonly [number, number][][], [px, py]: [number, number]): [number, number] => {
-  let nearest: [number, number] = [px, py];
-  let nearestDistance = Infinity;
-  for (const loop of loops)
-    for (const [index, [ax, ay]] of loop.entries()) {
-      const [bx, by] = loop[(index + 1) % loop.length] ?? [ax, ay];
-      const lengthSquared = (bx - ax) ** 2 + (by - ay) ** 2;
-      const along = lengthSquared
-        ? Math.min(Math.max(((px - ax) * (bx - ax) + (py - ay) * (by - ay)) / lengthSquared, 0), 1)
-        : 0;
-      const point: [number, number] = [ax + along * (bx - ax), ay + along * (by - ay)];
-      const distance = Math.hypot(point[0] - px, point[1] - py);
-      if (distance >= nearestDistance) continue;
-      nearest = point;
-      nearestDistance = distance;
-    }
-  return nearest;
-};
+
 // A relief seen from the front, its height over each cell of a grid (none where nothing stands), as a layer at each of
 // Its depths, deepest first: every loop round the cells standing at least that far out, each corner with its foot on
 // The depth below, the nearest point of that depth's loops where the cells between them slope, so its wall leans
@@ -68,7 +51,7 @@ export const fitReliefLayers = (
       loops: (layerLoops[layer] ?? []).map((points) => {
         const foot = points.map((point): [number, number] => {
           if (belowLoops.length === 0) return point;
-          const nearest = findNearest(belowLoops, point);
+          const nearest = findNearestEdgePoint(belowLoops, point);
           const isSlope = SLOPE_SAMPLES.every((share) => {
             const height = readHeight([
               point[0] + share * (nearest[0] - point[0]),

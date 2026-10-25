@@ -4,11 +4,10 @@ import type { IndexedAsset } from "#src/models/recreation/animeStudio/IndexedAss
 import { GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/constants";
 import { checkIsArchitectureName } from "#src/services/genshinAssets/world/checkIsArchitectureName";
 import { getDependantFiles } from "#src/services/genshinAssets/world/getDependantFiles";
+import { toFileKey } from "#src/services/genshinAssets/world/toFileKey";
 import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
 import { getOrCreate } from "@esposter/shared";
 
-// The one key a file of the game's blocks is held by across the asset index and the CAB map: its block and its offset
-const toFileKey = ({ block, offset }: Pick<CabEntry, "block" | "offset">): string => `${block}@${offset}`;
 // The blocks the game object of each asset's name may stand in, by that name: the block indexing the asset and, for a
 // Building's, the block of each file depending on the file holding it that the asset index lists no asset in. A
 // Building's LOD level is a prefab file of its own depending on its mesh's, in a block that need not index anything of

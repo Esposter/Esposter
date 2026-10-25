@@ -1,30 +1,11 @@
+import type { AvatarRig } from "#src/models/genshinAssets/avatar/AvatarRig";
 import type { AvatarRigNode } from "#src/models/genshinAssets/avatar/AvatarRigNode";
+import type { DumpedAvatar } from "#src/models/genshinAssets/avatar/DumpedAvatar";
 
 import { HUMANOID_BONE_NAMES } from "#src/services/genshinAssets/avatar/constants";
 import { resolveRigPaths } from "#src/services/genshinAssets/avatar/resolveRigPaths";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-
-export interface AvatarRig {
-  humanoid: Record<string, number>;
-  nodes: AvatarRigNode[];
-}
-interface DumpedAvatar {
-  m_Avatar: {
-    m_AvatarSkeleton: { m_Node: { m_ParentId: number }[] };
-    m_DefaultPose: { m_X: { q: DumpedVector & { W: number }; s: DumpedVector; t: DumpedVector }[] };
-    m_Human: { m_HumanBoneIndex: number[] };
-    m_HumanSkeletonIndexArray: number[];
-    m_SkeletonNameIDArray: number[];
-  };
-  m_TOS: Record<string, string>;
-}
-
-interface DumpedVector {
-  X: number;
-  Y: number;
-  Z: number;
-}
 
 // The rig of an Avatar asset's JSON dump: every skeleton node with its path, parent and default pose in the game's own
 // Axes, and the humanoid map naming each Unity humanoid bone by the node it is. The nodes keep the Avatar's own order

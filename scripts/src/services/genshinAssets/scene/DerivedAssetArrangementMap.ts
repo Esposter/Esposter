@@ -9,38 +9,13 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 import { composeLatheAxisPoint } from "#src/services/genshinAssets/fit/composeLatheAxisPoint";
 import { readTowerProfiles } from "#src/services/genshinAssets/fit/readTowerProfiles";
 import { WindrisePlantArrangementFamilies } from "#src/services/genshinAssets/scene/WindrisePlantArrangementFamilies";
+import { computeOutlineCrossings } from "#src/services/genshinAssets/scene/computeOutlineCrossings";
+import { readObjectPositions } from "#src/services/genshinAssets/scene/readObjectPositions";
+import { readTowersRow } from "#src/services/genshinAssets/scene/readTowersRow";
+import { readWalkwayLift } from "#src/services/genshinAssets/scene/readWalkwayLift";
 import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData";
-import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
 import { Quaternion, Vector3 } from "three";
 
-// Where an outline's edges cross a depth, the x of each edge that spans it
-const computeOutlineCrossings = (outline: readonly [number, number][], depth: number): number[] =>
-  outline.flatMap(([x, z], index) => {
-    const [nextX = x, nextZ = z] = outline[(index + 1) % outline.length] ?? [];
-    if ((z - depth) * (nextZ - depth) > 0 || z === nextZ) return [];
-    else return [x + ((depth - z) / (nextZ - z)) * (nextX - x)];
-  });
-// Where the exports' objects a family stands for stand, in three's axes: a part placed at its object's own place, as a
-// Hull and the door are
-const readObjectPositions = (
-  placements: readonly AssetPlacement[],
-  checkIsStoodFor: (placement: AssetPlacement) => boolean,
-): Vector[] =>
-  placements.filter((placement) => checkIsStoodFor(placement)).map(({ position }) => toRightHanded(position));
-// How far the walkway's blocks rise into place: Ani_Login_Lift's settled height on each block's own animator, a block
-// Standing at unit scale in its row, so at the row's scale in the world
-const readWalkwayLift = (placements: readonly AssetPlacement[], clips: readonly DecodedClip[]): number => {
-  const height = clips
-    .find(({ name }) => name === "Ani_Login_Lift")
-    ?.curves.find(({ component, property }) => property === "position" && component === "y")
-    ?.samples.at(-1);
-  const block = placements.find(({ name }) => /^LoginScene_Bridge01_\d+_Vo$/u.test(name));
-  return (height ?? 0) * (block?.scale[1] ?? 0);
-};
-// The row MonoLoginScene scrolls the towers in, their bridges and pillars with them, as the scene draws it
-const readTowersRow = async (): Promise<{ count: number; length: number }> =>
-  (await readWorldData<{ LoginScene_Build_All: { count: number; length: number } }>("login/scroll.json"))
-    .LoginScene_Build_All;
 // Each component's arrangement: the ratios its references show between parts that meet, its fitted families, each
 // Beside the exports' objects it stands for, composed as the family stands its parts, and how far across and up the
 // Game's own data stands each family of the witness off its laid-out place at run time, a family not named standing

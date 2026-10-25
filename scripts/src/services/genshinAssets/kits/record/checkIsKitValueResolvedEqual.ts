@@ -1,21 +1,7 @@
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
 import { checkIsKitValueEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueEqual";
-import { kitParameterSchema } from "genshin-world";
-
-// A table's parameter at each level its talent plays at, as the record reads it at runtime, or none where the value is
-// Not a reference or its talent has no multipliers in the tables
-const readParameterLevels = (
-  value: unknown,
-  talentMultiplierMap: KitTables["talentMultiplierMap"],
-): number[] | undefined => {
-  const parameter = kitParameterSchema.safeParse(value).data;
-  if (typeof parameter !== "object") return undefined;
-  const rows = talentMultiplierMap[String(parameter.proudSkillGroupId)];
-  return rows === undefined || rows.length === 0
-    ? undefined
-    : rows.map(({ paramList }) => paramList[parameter.index] ?? 0);
-};
+import { readParameterLevels } from "#src/services/genshinAssets/kits/record/readParameterLevels";
 
 // Whether two values of a kit's record are the same value once a table's parameter is read at every level its talent
 // Plays at, so a reference equals the number, or the other reference, it reads as at each level. A value that is not a

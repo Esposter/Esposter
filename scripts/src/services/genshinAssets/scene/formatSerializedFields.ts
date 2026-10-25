@@ -2,14 +2,12 @@ import type { SerializedField } from "#src/models/genshinAssets/scene/Serialized
 import type { ObjectPointer } from "#src/models/genshinAssets/shared/ObjectPointer";
 
 import { SerializedFieldKind } from "#src/models/genshinAssets/scene/SerializedFieldKind";
+import { formatTimes } from "#src/services/genshinAssets/scene/formatTimes";
 import { sampleSerializedCurve } from "#src/services/genshinAssets/scene/sampleSerializedCurve";
 import { sampleSerializedGradient } from "#src/services/genshinAssets/scene/sampleSerializedGradient";
 import { formatNumbers } from "#src/services/genshinAssets/shared/formatNumbers";
 import { exhaustiveGuard } from "@esposter/shared";
 
-// What a curve or a gradient reads at each time, after an arrow, or nothing with no times
-const formatTimes = (times: readonly number[], read: (time: number) => string): string =>
-  times.length === 0 ? "" : ` → ${times.map((time) => `${formatNumbers([time])}:${read(time)}`).join(" ")}`;
 // A script's scanned fields as text, one a line by its offset in hexadecimal, a pointer named by what it points at and
 // An array's records indented beneath it, and each curve and gradient followed by what it reads at each of the times given
 export const formatSerializedFields = (

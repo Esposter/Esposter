@@ -1,6 +1,10 @@
 import type { AssetMapLines } from "#src/models/genshinAssets/shared/AssetMapLines";
 
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { closeEntry } from "#src/services/genshinAssets/blocks/closeEntry";
+import { SOURCE_PREFIX } from "#src/services/genshinAssets/blocks/constants";
+import { readShardLines } from "#src/services/genshinAssets/blocks/readShardLines";
+import { rebaseSource } from "#src/services/genshinAssets/blocks/rebaseSource";
+import { toEscaped } from "#src/services/genshinAssets/blocks/toEscaped";
 
 // AnimeStudio's asset map merged from its shards' lines, which hold one entry a block of them. The first shard's header
 // And trailer are kept, every shard's entries follow in turn, and each entry's source is rebased from its shard's
@@ -8,10 +12,6 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 // One at a Time, the map too large to hold whole
 const ENTRIES_OPENING = '"AssetEntries": [';
 const ENTRIES_CLOSING = "]";
-const SOURCE_PREFIX = '"Source": "';
-// What follows a root in a source, as the file escapes it: AnimeStudio writes the platform's own separator, a
-// Backslash on Windows
-const ROOT_SEPARATORS = ["/", String.raw`\\`];
 
 export const mergeAssetMapLines = async function* (
   shards: AssetMapLines[],
@@ -56,36 +56,3 @@ export const mergeAssetMapLines = async function* (
   if (previous) yield* closeEntry(previous, false);
   yield* trailer;
 };
-
-// Every shard's lines in turn, each tagged with its shard, so one loop reads the whole merge
-const readShardLines = async function* (
-  shards: AssetMapLines[],
-): AsyncGenerator<{ index: number; line: string; root: string }> {
-  for (const [index, { lines, root }] of shards.entries()) yield* tagShardLines(lines, index, root);
-};
-
-const tagShardLines = async function* (
-  lines: AsyncIterable<string>,
-  index: number,
-  root: string,
-): AsyncGenerator<{ index: number; line: string; root: string }> {
-  for await (const line of lines) yield { index, line, root };
-};
-
-// A JSON string's characters as they stand between its quotes, so a path is found however the file escapes it
-const toEscaped = (path: string): string => JSON.stringify(path).slice(1, -1);
-
-// The source of an entry's line with its shard's root swapped for the installed blocks'. A source outside the root is
-// Refused: the index reads every source relative to the installed blocks, so a stray one would index as another block
-const rebaseSource = (line: string, from: string, to: string, root: string): string => {
-  const start = line.indexOf(SOURCE_PREFIX) + SOURCE_PREFIX.length;
-  const end = start + from.length;
-  if (!line.startsWith(from, start) || !ROOT_SEPARATORS.some((separator) => line.startsWith(separator, end)))
-    throw new InvalidOperationError(Operation.Read, root, `holds a source outside it: ${line.trim()}`);
-  return `${line.slice(0, start)}${to}${line.slice(end)}`;
-};
-
-// The entry's last line, the closing brace, with the comma that says another entry follows it. AnimeStudio writes that
-// Comma on every entry but the merged map's last, so the closing line's own comma is set, not added to
-const closeEntry = (entry: string[], hasNext: boolean): string[] =>
-  entry.map((line, index) => (index === entry.length - 1 ? `${line.replace(/,$/u, "")}${hasNext ? "," : ""}` : line));

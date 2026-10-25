@@ -1,7 +1,7 @@
 import type { GcsimAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimAttack";
 import type { GcsimQueuedAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimQueuedAttack";
 
-import { findQueuedAttack } from "#src/services/genshinAssets/kits/gcsim/getGcsimQueuedHits";
+import { findQueuedAttack } from "#src/services/genshinAssets/kits/gcsim/findQueuedAttack";
 
 // The `AttackInfo`s a queue call fires. A call after an if else whose branches each set the variable's multiplier fires
 // The latest attack of each branch, as the call makes whichever branch ran; a call inside the branches, or after a set

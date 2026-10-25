@@ -1,17 +1,8 @@
 import type { SerializedField } from "#src/models/genshinAssets/scene/SerializedField";
 import type { SerializedFieldKind } from "#src/models/genshinAssets/scene/SerializedFieldKind";
 
-import { CurveWrapMode } from "#src/models/genshinAssets/scene/CurveWrapMode";
+import { wrapTime } from "#src/services/genshinAssets/scene/wrapTime";
 
-// A time outside a curve's keys brought within them by the wrap mode on its side: repeated from the first key or
-// Mirrored back and forth, and left as it is to clamp or within them
-const wrapTime = (time: number, first: number, last: number, mode: CurveWrapMode): number => {
-  const span = last - first;
-  if (span === 0 || mode === CurveWrapMode.Clamp || (time >= first && time <= last)) return time;
-  const period = mode === CurveWrapMode.Repeat ? span : 2 * span;
-  const phase = (((time - first) % period) + period) % period;
-  return first + (phase <= span ? phase : period - phase);
-};
 // A scanned curve's value at a time as Unity evaluates it: the time wrapped within the keys by its wrap modes, then the
 // Cubic Hermite between the keys either side, each key's slope out of it and the next's into it scaled by the span,
 // Held at the earlier key's value where a slope is infinite (a step), and clamped to the first and last keys' values

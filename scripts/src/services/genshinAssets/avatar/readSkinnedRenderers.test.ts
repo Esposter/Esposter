@@ -1,6 +1,6 @@
-import type { SkinnedRenderer } from "#src/services/genshinAssets/avatar/readRendererBones";
+import type { SkinnedRenderer } from "#src/models/genshinAssets/avatar/SkinnedRenderer";
 
-import { readSkinnedRenderers } from "#src/services/genshinAssets/avatar/readRendererBones";
+import { readSkinnedRenderers } from "#src/services/genshinAssets/avatar/readSkinnedRenderers";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";

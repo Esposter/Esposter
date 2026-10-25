@@ -3,6 +3,7 @@ import type { SoundStart } from "#src/models/genshinAssets/sound/SoundStart";
 import type { AnimeStudioOptions } from "#src/models/recreation/animeStudio/AnimeStudioOptions";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
+import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { SampleLibrary } from "#src/models/genshinAssets/shared/SampleLibrary";
 import { checkIsGameRunning } from "#src/services/genshinParity/shared/checkIsGameRunning";
 import {
@@ -448,3 +449,5 @@ export const CityIdRegionMap: Record<number, string> = {
   6: "natlan",
   7: "snezhnaya",
 };
+
+export const COMPONENT_NAMES: readonly string[] = Object.values(DerivedAssetComponent);

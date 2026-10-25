@@ -1,13 +1,10 @@
+import { computeGreatest } from "#src/services/genshinAssets/fit/computeGreatest";
+import { computeLeast } from "#src/services/genshinAssets/fit/computeLeast";
 import { computeLoopArea } from "#src/services/genshinAssets/fit/computeLoopArea";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { traceCoveredGrid } from "#src/services/genshinAssets/fit/traceCoveredGrid";
 import { FITTED_DECIMALS } from "#src/services/genshinAssets/shared/constants";
 
-// The least and greatest of many values, reduced rather than spread, since a surface's cells run past the arguments a
-// Call can take
-const computeLeast = (values: readonly number[]): number => values.reduce((least, value) => Math.min(least, value));
-const computeGreatest = (values: readonly number[]): number =>
-  values.reduce((greatest, value) => Math.max(greatest, value));
 // The loops round a set of a grid's cells, traced over the cells' own bounds and kept where they enclose at least
 // `minCells`, in the grid's metres from its corner, kept to the centimetre or to as many decimals as asked
 export const traceCellLoops = (

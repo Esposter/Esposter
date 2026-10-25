@@ -1,35 +1,16 @@
 import type { GoExpression } from "#src/models/genshinAssets/kits/gcsim/GoExpression";
-import type { GoOperand } from "#src/models/genshinAssets/kits/gcsim/GoOperand";
 import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 
 import { GoExpressionKind } from "#src/models/genshinAssets/kits/gcsim/GoExpressionKind";
 import { GCSIM_ABILITY_FRAMES_CALLEE, GCSIM_NORMAL_FRAMES_CALLEE } from "#src/services/genshinAssets/kits/constants";
+import { applyOperator } from "#src/services/genshinAssets/kits/gcsim/applyOperator";
 import { checkIsGoFloat } from "#src/services/genshinAssets/kits/gcsim/checkIsGoFloat";
 import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
+import { readOperand } from "#src/services/genshinAssets/kits/gcsim/readOperand";
 import { toGoNumberValue } from "#src/services/genshinAssets/kits/gcsim/toGoNumberValue";
 import { exhaustiveGuard } from "@esposter/shared";
 
 const CONVERSION_CALLEES = new Set(["float64", "int"]);
-
-const readOperand = (value: GoValue | undefined): GoOperand | undefined => {
-  const number = readGoNumber(value);
-  return number === undefined
-    ? undefined
-    : { isFloat: checkIsGoFloat(value) || !Number.isInteger(number), value: number };
-};
-
-const applyOperator = (operator: string, left: GoOperand, right: GoOperand): GoValue | undefined => {
-  const isFloat = left.isFloat || right.isFloat;
-  let value: number;
-  if (operator === "+") value = left.value + right.value;
-  else if (operator === "-") value = left.value - right.value;
-  else if (operator === "*") value = left.value * right.value;
-  // Two whole numbers divide as Go's integers do, truncating, and a float operand keeps the fraction
-  else if (operator === "/") value = isFloat ? left.value / right.value : Math.trunc(left.value / right.value);
-  else if (operator === "%") value = left.value % right.value;
-  else return undefined;
-  return toGoNumberValue(value, isFloat);
-};
 
 // A Go expression's value as gcsim's action files compute their hitmarks and frames: numbers and their sums, slices,
 // Indexes into them, the frame helpers, the numeric conversions and the ceiling, each name read through the package's

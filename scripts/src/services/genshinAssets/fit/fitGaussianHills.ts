@@ -1,3 +1,4 @@
+import type { FitGaussianHillsOptions } from "#src/models/genshinAssets/fit/FitGaussianHillsOptions";
 import type { GaussianHills } from "genshin-engine";
 
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
@@ -12,18 +13,6 @@ const BACKFIT_SWEEPS = 3;
 // A residual smaller than this, in metres, places no hill
 const MIN_RESIDUAL = 0.05;
 
-interface FitGaussianHillsOptions {
-  // The distances from the centre each error is reported within
-  bands: readonly number[];
-  center: readonly [number, number];
-  // How far from the centre a sample weighs half as much as one at the centre
-  falloff: number;
-  getHeight: (x: number, z: number) => number;
-  radius: number;
-  step: number;
-  // The hills' widths, widest first
-  widths: readonly number[];
-}
 // A ground as our own generator draws it, Gaussian hills over a base height, fitted to a heightfield by matching
 // Pursuit: the base at the heightfield's mean weighted toward the centre, then for each width, widest first, the
 // Residual weighted toward the centre is smoothed at that width, a hill is

@@ -1,4 +1,5 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import type { RegionData } from "#src/models/genshinAssets/world/RegionData";
 import type { GroundPoint } from "genshin-engine";
 
 import { RegionCapitalMap } from "#src/services/genshinAssets/fit/RegionCapitalMap";
@@ -9,11 +10,6 @@ import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
-
-// A region's own data as its file holds it: the landmarks its capital is among
-interface RegionData {
-  landmarks: { id: string; position: GroundPoint }[];
-}
 
 // A region's capital's place in the game's axes: its landmark in the region's data, set round the origin the way the
 // Region's open world is

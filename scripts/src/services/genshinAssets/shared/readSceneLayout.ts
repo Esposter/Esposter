@@ -11,28 +11,16 @@ import type { SceneObject } from "#src/models/genshinAssets/shared/SceneObject";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { LAYOUT_ASSET_TYPES } from "#src/services/genshinAssets/shared/constants";
-import { reviveSourcePathId } from "#src/services/genshinAssets/shared/reviveSourcePathId";
+import { readAll } from "#src/services/genshinAssets/shared/readAll";
 import { toGameObjectComponentsMap } from "#src/services/genshinAssets/shared/toGameObjectComponentsMap";
 import { toGameObjectTransformIdMap } from "#src/services/genshinAssets/shared/toGameObjectTransformIdMap";
 import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
+import { toPointers } from "#src/services/genshinAssets/shared/toPointers";
 import { toSceneObjects } from "#src/services/genshinAssets/shared/toSceneObjects";
-import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { existsSync } from "node:fs";
-import { readdir, readFile } from "node:fs/promises";
+import { readdir } from "node:fs/promises";
 import { join } from "node:path";
 
-// Every dump of one type in one file of a block, which holds none of a type it has no object of
-const readAll = async <T>(directory: string): Promise<T[]> => {
-  if (!existsSync(directory)) return [];
-  const names = await readdir(directory);
-  return Promise.all(
-    names.map(async (name) => parseMachineJson<T>(await readFile(join(directory, name), "utf8"), reviveSourcePathId)),
-  );
-};
-const toPointers = (pointers: readonly DumpedPointer[]): ObjectPointer[] =>
-  pointers
-    .filter(({ IsNull, m_PathID }) => !IsNull && m_PathID !== "0")
-    .map(({ m_FileID, m_PathID }) => ({ fileIndex: m_FileID, pathId: m_PathID }));
 // A scene's objects from its blocks' JSON dumps, a folder per block holding a folder per type, and in it a folder per
 // File (its CAB) the objects were dumped from: every transform, its path ID from its game object where that survived
 // The dump (a game object's first component is its transform), and its game object's named components (a script, or an

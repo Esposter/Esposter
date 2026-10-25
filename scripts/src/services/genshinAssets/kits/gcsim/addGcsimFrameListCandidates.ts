@@ -2,26 +2,12 @@ import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimC
 import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/GcsimKitCandidateWriter";
 
 import { checkIsLandingOrdered } from "#src/services/genshinAssets/kits/gcsim/checkIsLandingOrdered";
-import { findQueuedAttack } from "#src/services/genshinAssets/kits/gcsim/getGcsimQueuedHits";
+import { findQueuedAttack } from "#src/services/genshinAssets/kits/gcsim/findQueuedAttack";
+import { readAbilNames } from "#src/services/genshinAssets/kits/gcsim/readAbilNames";
 
 const FRAME_LIST_REGEX = /^frames\.(?<name>[^.]+)\.(?<index>\d+)$/u;
 // The word a list's name ends with for the hits it holds: `boundlessOriginHitmarks` holds the hits of `boundlessOrigin`
 const HIT_WORD_REGEX = /(?:Hitmarks|Hitmark|Hits|Hit)$/u;
-
-// The camel-cased words of a name, `Boundless Origin` as `boundlessOrigin`
-const toCamelCase = (text: string): string =>
-  text
-    .split(/[^A-Za-z0-9]+/u)
-    .filter(Boolean)
-    .map((word, index) => (index === 0 ? word.charAt(0).toLowerCase() : word.charAt(0).toUpperCase()) + word.slice(1))
-    .join("");
-
-// The names an attack's `Abil` gives it, its text before its parenthesis and the parenthesis' own text: `Boundless
-// Origin` and `C6` in `Boundless Origin (C6)`
-const readAbilNames = (abil: string): string[] => {
-  const [base = "", parenthesis = ""] = abil.split("(");
-  return [base, parenthesis.replace(")", "")].map((text) => toCamelCase(text)).filter((name) => name !== "");
-};
 
 // A frame list the kit holds with no named constant of its name takes the delays of the queue calls whose attack an
 // `Abil` names by the list's name without its hit word, as many calls as the list has hits, in the order they land. Where

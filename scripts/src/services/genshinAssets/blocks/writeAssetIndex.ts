@@ -1,9 +1,9 @@
+import { parseValue } from "#src/services/genshinAssets/blocks/parseValue";
 import {
   ASSET_INDEX_PATH,
   ASSET_MAP_PATH,
   INSTALLED_BLOCKS_DIRECTORY,
 } from "#src/services/genshinAssets/shared/constants";
-import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { once } from "node:events";
 import { createReadStream, createWriteStream } from "node:fs";
 import { relative } from "node:path";
@@ -14,9 +14,7 @@ const OFFSET_PREFIX = '"Offset": ';
 const PATH_ID_PREFIX = '"PathID": ';
 const SOURCE_PREFIX = '"Source": "';
 const TYPE_PREFIX = '"Type": "';
-// Reads a JSON string's value off one line of the asset map, which AnimeStudio writes one field a line
-const parseValue = (line: string, prefix: string): string =>
-  parseMachineJson(`"${line.slice(prefix.length, line.lastIndexOf('"'))}"`);
+
 // The asset map's name, type, block, path ID and file offset of every entry, one tab-separated line each, read a line at
 // A time since the map is too large to parse whole. A block is written relative to the blocks folder, so an export can
 // Open it, a path ID as its source text, since 64 bits are past what a number holds exactly, and the offset of the

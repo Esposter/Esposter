@@ -1,22 +1,22 @@
 import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
-import type { Texture } from "#src/models/genshinAssets/fit/Texture";
-import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
 import type { Vector } from "#src/models/shared/Vector";
-import type { TreeTube, TreeTubePoint } from "genshin-engine";
+import type { TreeTube } from "genshin-engine";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { clusterCardCentres } from "#src/services/genshinAssets/fit/clusterCardCentres";
 import { computeNormalField } from "#src/services/genshinAssets/fit/computeNormalField";
 import { computeTriangleArea } from "#src/services/genshinAssets/fit/computeTriangleArea";
-import { computeVertexNormals } from "#src/services/genshinAssets/fit/computeVertexNormals";
+import { countPoints } from "#src/services/genshinAssets/fit/countPoints";
+import { findOakPlacement } from "#src/services/genshinAssets/fit/findOakPlacement";
+import { readCutTexture } from "#src/services/genshinAssets/fit/readCutTexture";
+import { readMeshInThree } from "#src/services/genshinAssets/fit/readMeshInThree";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { sampleFaceUvs } from "#src/services/genshinAssets/fit/sampleFaceUvs";
 import { sampleSurfaceTexture } from "#src/services/genshinAssets/fit/sampleSurfaceTexture";
-import { toWorldVertices } from "#src/services/genshinAssets/fit/toWorldVertices";
+import { toRecordTubes } from "#src/services/genshinAssets/fit/toRecordTubes";
 import { traceTubeCentrelines } from "#src/services/genshinAssets/fit/traceTubeCentrelines";
 import {
-  CUTOFF_PROPERTY,
   OAK_BARK_MESH,
   OAK_CLUSTER_COUNT,
   OAK_CLUSTER_SEED,
@@ -29,85 +29,11 @@ import {
 } from "#src/services/genshinAssets/shared/constants";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { nameMeshPlacements } from "#src/services/genshinAssets/shared/nameMeshPlacements";
-import { readAssetNames } from "#src/services/genshinAssets/shared/readAssetNames";
-import { readComponentMaterials } from "#src/services/genshinAssets/shared/readComponentMaterials";
 import { readComponentPlacements } from "#src/services/genshinAssets/shared/readComponentPlacements";
-import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
-import { toDiffusePath } from "#src/services/genshinAssets/shared/toDiffusePath";
-import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
 import { readWorldOrigin } from "#src/services/genshinAssets/world/readWorldOrigin";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { join } from "node:path";
-import sharp from "sharp";
-import { Quaternion, Vector3 } from "three";
 
-// A mesh's faces, vertices and vertex normals in three's axes, placed where its placement stands it and taken round the
-// Oak's foot, the origin's place in the game's axes, so every point it yields is placed as every other fit's are, with
-// Its faces' texture coordinates as the file holds them
-const readMeshInThree = async (
-  path: string,
-  placement: AssetPlacement,
-  origin: readonly [number, number, number],
-): Promise<
-  Pick<Awaited<ReturnType<typeof readObjMesh>>, "faceGroups" | "faces" | "faceUvs" | "uvs"> & {
-    normals: (undefined | Vector)[];
-    vertices: Vector[];
-  }
-> => {
-  const mesh = await readObjMesh(path);
-  const [originX, originY, originZ] = origin;
-  const rotation = new Quaternion(...placement.rotation);
-  const normal = new Vector3();
-  return {
-    faceGroups: mesh.faceGroups,
-    faces: mesh.faces,
-    faceUvs: mesh.faceUvs,
-    normals: computeVertexNormals(mesh).map((vertexNormal) => {
-      if (!vertexNormal) return undefined;
-      normal.set(...vertexNormal).applyQuaternion(rotation);
-      return toRightHanded(normal.toArray());
-    }),
-    uvs: mesh.uvs,
-    vertices: toWorldVertices(mesh.vertices, placement).map(([x, y, z]) =>
-      toRightHanded([x - originX, y - originY, z - originZ]),
-    ),
-  };
-};
-// The texture a placed material cuts its cards with and the alpha it cuts them at, read off its export: its diffuse and
-// Its cutoff, each found by its path ID through the asset index's names
-const readCutTexture = async (materialPathId: string): Promise<{ cutoff: number; texture: Texture }> => {
-  const materials = await readComponentMaterials(DerivedAssetComponent.Windrise);
-  const pathIdNameMap = await readAssetNames(
-    new Set([
-      materialPathId,
-      ...materials.flatMap(({ textures }) => Object.values(textures).map(({ pathId }) => pathId)),
-    ]),
-  );
-  const material = materials.find(({ name }) => name === pathIdNameMap.get(materialPathId));
-  const textureDirectory = join(getComponentDirectory(DerivedAssetComponent.Windrise).assets, AssetType.Texture2D);
-  const path = toDiffusePath(textureDirectory, material, pathIdNameMap);
-  const cutoff = material?.floats[CUTOFF_PROPERTY];
-  if (path === undefined || cutoff === undefined)
-    throw new InvalidOperationError(Operation.Read, materialPathId, "has no diffuse texture or cutoff exported");
-  return { cutoff, texture: await sharp(path).raw().toBuffer({ resolveWithObject: true }) };
-};
-// The export's placement of one of the oak's meshes, the mesh it draws by name
-const findOakPlacement = (placements: AssetPlacement[], mesh: string): AssetPlacement => {
-  const placement = placements.find((candidate) => candidate.mesh === mesh);
-  if (!placement) throw new InvalidOperationError(Operation.Read, DerivedAssetComponent.Windrise, `places no ${mesh}`);
-  return placement;
-};
-// A traced mesh's tubes as the record holds them, each point rounded as every fitted value is
-const toRecordTubes = (tubes: readonly TreeTube[]): TreeTubePoint[][] =>
-  tubes.map((tube) =>
-    tube.map(({ radius, x, y, z }) => ({
-      radius: roundFitted(radius),
-      x: roundFitted(x),
-      y: roundFitted(y),
-      z: roundFitted(z),
-    })),
-  );
-const countPoints = (tubes: readonly TreeTube[]): number => tubes.reduce((sum, tube) => sum + tube.length, 0);
 // The great oak's canopy, trunk, limbs and surface roots read off its export's Lod1 meshes, in three's axes round its
 // Foot: each leaf triangle's centroid, the centre of the card it is half of, with the leaf it keeps (its area times the
 // Share of its texture its material's cutoff keeps), grouped into the clusters `clusterCardCentres` finds, and the

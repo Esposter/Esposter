@@ -1,3 +1,4 @@
+import type { FieldWrite } from "#src/models/genshinAssets/kits/gcsim/FieldWrite";
 import type { GoConstant } from "#src/models/genshinAssets/kits/gcsim/GoConstant";
 import type { GoDeclaration } from "#src/models/genshinAssets/kits/gcsim/GoDeclaration";
 import type { GoElementAssignment } from "#src/models/genshinAssets/kits/gcsim/GoElementAssignment";
@@ -6,114 +7,18 @@ import type { GoSource } from "#src/models/genshinAssets/kits/gcsim/GoSource";
 import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
 import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 
-import { GoExpressionKind } from "#src/models/genshinAssets/kits/gcsim/GoExpressionKind";
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
 import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
 import { evaluateGoExpression } from "#src/services/genshinAssets/kits/gcsim/evaluateGoExpression";
 import { evaluateGoNumber } from "#src/services/genshinAssets/kits/gcsim/evaluateGoNumber";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
+import { readCharFields } from "#src/services/genshinAssets/kits/gcsim/readCharFields";
+import { readFieldWrites } from "#src/services/genshinAssets/kits/gcsim/readFieldWrites";
 import { skipGoBrackets } from "#src/services/genshinAssets/kits/gcsim/skipGoBrackets";
-import { toGoNumberValue } from "#src/services/genshinAssets/kits/gcsim/toGoNumberValue";
+import { skipToNewline } from "#src/services/genshinAssets/kits/gcsim/skipToNewline";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 
 const DECLARATION_KEYWORDS = new Set(["const", "var"]);
-
-// One write to a `c.<field>` of a character's package: its value when it is a literal number, or no value for an
-// Increment, a compound `op=` or any other write
-interface FieldWrite {
-  file: string;
-  line: number;
-  value?: GoValue;
-}
-
-const ARITHMETIC_OPERATORS = new Set(["%", "&", "*", "+", "-", "/", "<", ">", "^", "|"]);
-
-// The fields a character package's own `char` struct declares, read from its top-level lines. An embedded type such as
-// `*tmpl.Character` declares none, as its fields are written outside the package
-const readCharFields = (tokens: readonly GoToken[], charFieldSet: Set<string>): void => {
-  for (const [position, token] of tokens.entries()) {
-    if (
-      token.kind !== GoTokenKind.Identifier ||
-      token.text !== "type" ||
-      tokens[position + 1]?.text !== "char" ||
-      tokens[position + 2]?.text !== "struct" ||
-      !checkIsGoPunctuation(tokens[position + 3], "{")
-    )
-      continue;
-    const end = skipGoBrackets(tokens, position + 3) - 1;
-    let depth = 0;
-    let isLineStart = true;
-    for (let cursor = position + 4; cursor < end; cursor++) {
-      const current = tokens[cursor];
-      if (current === undefined) break;
-      if (current.kind === GoTokenKind.Newline) {
-        isLineStart = true;
-        continue;
-      }
-      if (
-        checkIsGoPunctuation(current, "(") ||
-        checkIsGoPunctuation(current, "[") ||
-        checkIsGoPunctuation(current, "{")
-      )
-        depth++;
-      else if (
-        checkIsGoPunctuation(current, ")") ||
-        checkIsGoPunctuation(current, "]") ||
-        checkIsGoPunctuation(current, "}")
-      )
-        depth--;
-      else if (
-        isLineStart &&
-        depth === 0 &&
-        current.kind === GoTokenKind.Identifier &&
-        !checkIsGoPunctuation(tokens[cursor + 1], ".")
-      ) {
-        // A line's names run `a, b int`, and a name followed by a dot is an embedded package's selector, not a field
-        let names = cursor;
-        charFieldSet.add(current.text);
-        while (checkIsGoPunctuation(tokens[names + 1], ",") && tokens[names + 2]?.kind === GoTokenKind.Identifier) {
-          names += 2;
-          charFieldSet.add(tokens[names]?.text ?? "");
-        }
-      }
-      isLineStart = false;
-    }
-  }
-};
-
-// Each write to a field of `c` in a file: a literal `=` gives its value, an increment or `op=` gives none, and a read like
-// `c.field == 2` is no write at all
-const readFieldWrites = (tokens: readonly GoToken[], file: string, fieldWriteMap: Map<string, FieldWrite[]>): void => {
-  for (const [position, token] of tokens.entries()) {
-    if (token.kind !== GoTokenKind.Identifier || token.text !== "c" || checkIsGoPunctuation(tokens[position - 1], "."))
-      continue;
-    const field = tokens[position + 2];
-    if (!checkIsGoPunctuation(tokens[position + 1], ".") || field?.kind !== GoTokenKind.Identifier) continue;
-    const writes = fieldWriteMap.get(field.text) ?? [];
-    const operator = tokens[position + 3];
-    const line = token.line;
-    if (checkIsGoPunctuation(operator, "++") || checkIsGoPunctuation(operator, "--"))
-      writes.push({ file, line, value: undefined });
-    else if (checkIsGoPunctuation(operator, "=")) {
-      const { end, expression } = parseGoExpression(tokens, position + 4);
-      const isLiteral = expression.kind === GoExpressionKind.Number && tokens[end]?.kind === GoTokenKind.Newline;
-      writes.push({ file, line, value: isLiteral ? toGoNumberValue(expression.value, expression.isFloat) : undefined });
-    } else if (
-      operator?.kind === GoTokenKind.Punctuation &&
-      ARITHMETIC_OPERATORS.has(operator.text) &&
-      checkIsGoPunctuation(tokens[position + 4], "=")
-    )
-      writes.push({ file, line, value: undefined });
-    else continue;
-    fieldWriteMap.set(field.text, writes);
-  }
-};
-
-const skipToNewline = (tokens: readonly GoToken[], start: number): number => {
-  let position = start;
-  while (position < tokens.length && tokens[position]?.kind !== GoTokenKind.Newline) position++;
-  return position + 1;
-};
 
 // The constants and variables of a gcsim character's package, read from every file of it by a constant evaluator rather
 // Than a Go parser: each `const` and `var` holding a literal, an integer sum or a slice of them, and what the package's

@@ -1,4 +1,5 @@
-import { readGoAliases, resolveGoAlias } from "#src/services/genshinAssets/kits/gcsim/readGoAliases";
+import { readGoAliases } from "#src/services/genshinAssets/kits/gcsim/readGoAliases";
+import { resolveGoAlias } from "#src/services/genshinAssets/kits/gcsim/resolveGoAlias";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 import { describe, expect, test } from "vitest";
 

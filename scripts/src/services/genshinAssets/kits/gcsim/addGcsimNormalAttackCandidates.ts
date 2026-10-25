@@ -1,13 +1,8 @@
 import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
-import type { GcsimHitbox } from "#src/models/genshinAssets/kits/gcsim/GcsimHitbox";
 import type { GcsimHitSource } from "#src/models/genshinAssets/kits/gcsim/GcsimHitSource";
 import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/GcsimKitCandidateWriter";
 import type { GcsimStanceNormalAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimStanceNormalAttack";
-import type { GoConstant } from "#src/models/genshinAssets/kits/gcsim/GoConstant";
-import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 
-import { GcsimHitboxCenter } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxCenter";
-import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxShape";
 import { GcsimMultiplierKey } from "#src/models/genshinAssets/kits/gcsim/GcsimMultiplierKey";
 import { GcsimTalentType } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentType";
 import { checkIsGoFloat } from "#src/services/genshinAssets/kits/gcsim/checkIsGoFloat";
@@ -16,39 +11,10 @@ import { findGcsimHitbox } from "#src/services/genshinAssets/kits/gcsim/findGcsi
 import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
 import { getGcsimLandingFrames } from "#src/services/genshinAssets/kits/gcsim/getGcsimLandingFrames";
 import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
+import { readStanceHitbox } from "#src/services/genshinAssets/kits/gcsim/readStanceHitbox";
+import { readStrikeFrames } from "#src/services/genshinAssets/kits/gcsim/readStrikeFrames";
 import { toGoNumbers } from "#src/services/genshinAssets/kits/gcsim/toGoNumbers";
 import { STRIKE_TARGETING_AREA } from "genshin-world";
-
-// A strike's frames from `attackFrames`, one per strike, or one list per state of the strikes, the first state's read
-const readStrikeFrames = (value: GoValue | undefined, strikeIndex: number): GoValue | undefined => {
-  if (!Array.isArray(value)) return undefined;
-  const strikeList = Array.isArray(value[0]) ? value[0] : value;
-  return strikeList[strikeIndex];
-};
-
-// A stance's strike box as gcsim's attack state gives it: a box round the body at that state's forward offset, from the
-// State's list of boxes and the state's offset
-const readStanceHitbox = (
-  boxes: GoConstant | undefined,
-  offsets: GoConstant | undefined,
-  state: number,
-  strikeIndex: number,
-): GcsimHitbox | undefined => {
-  if (boxes === undefined || offsets === undefined) return undefined;
-  const stateBoxes = Array.isArray(boxes.value) ? boxes.value[state] : undefined;
-  const [width, length] = toGoNumbers(Array.isArray(stateBoxes) ? stateBoxes[strikeIndex] : undefined) ?? [];
-  const forward = readGoNumber(Array.isArray(offsets.value) ? offsets.value[state] : undefined);
-  if (width === undefined || length === undefined || forward === undefined) return undefined;
-  return {
-    box: [width, length],
-    center: GcsimHitboxCenter.Player,
-    file: boxes.file,
-    line: boxes.elementLines[state] ?? boxes.line,
-    name: `N${strikeIndex + 1}`,
-    offset: [0, forward],
-    shape: GcsimHitboxShape.Box,
-  };
-};
 
 // The normal attacks: each strike's hitmarks from `attackHitmarks` or the release list `attackReleases`, its animation
 // From `attackFrames`, and its hits' areas from the `N<strike>` or `N<strike>-<hit>` hitboxes. A stance's normal attacks

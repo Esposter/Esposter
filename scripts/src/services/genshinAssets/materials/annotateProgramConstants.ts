@@ -1,34 +1,16 @@
 import type { ShaderConstant } from "#src/models/genshinAssets/materials/ShaderConstant";
 
-// A register of a constant buffer is 16 bytes, four components of four
-const REGISTER_BYTES = 16;
-const COMPONENT_BYTES = 4;
+import { checkIsDisjoint } from "#src/services/genshinAssets/materials/checkIsDisjoint";
+import { computeRegisters } from "#src/services/genshinAssets/materials/computeRegisters";
+import { COMPONENT_BYTES, REGISTER_BYTES } from "#src/services/genshinAssets/materials/constants";
+
 const COMPONENTS = "xyzw";
 // The first constant buffer's size as an assembly declares it, or as decompiled HLSL does where the program carries no
 // Names of its own. A shader model 6 program's assembly declares the buffer's binding range first and reads each
 // Register under the range's index, `cb0[0:0][size]` and `cb0[0][register]`
 const BUFFER_SIZE_REGEX = /(?:dcl_constantbuffer cb0(?:\[\d+:\d+\])?|float4 cb0)\[(?<size>\d+)\]/iu;
 const REGISTER_REGEX = /cb0(?:\[\d+\])?\[(?<register>\d+)\]/gu;
-// The registers a constant spans: its offset, over its rows (a matrix's four, a vector's one) and its array's length
-const computeRegisters = ({ arrayLength, byteOffset, rows }: ShaderConstant): number[] => {
-  const count = Math.max(rows, 1) * Math.max(arrayLength, 1);
-  const first = Math.floor(byteOffset / REGISTER_BYTES);
-  return Array.from({ length: count }, (_value, index) => first + index);
-};
-// The byte past a constant's last: its last register's columns, past every register before it
-const computeEndByte = (constant: ShaderConstant): number =>
-  constant.byteOffset + (computeRegisters(constant).length - 1) * REGISTER_BYTES + constant.columns * COMPONENT_BYTES;
-// Whether no two of a layout's constants share a byte, as one program's layout never does: an overlap is two lists read
-// As one
-const checkIsDisjoint = (layout: readonly ShaderConstant[]): boolean => {
-  const sorted = layout.toSorted(
-    (firstConstant, secondConstant) => firstConstant.byteOffset - secondConstant.byteOffset,
-  );
-  return sorted.every((constant, index) => {
-    const previous = sorted[index - 1];
-    return !previous || constant.byteOffset >= computeEndByte(previous);
-  });
-};
+
 // A disassembled or decompiled program headed by what its first constant buffer's registers hold, named from the layout
 // Of its shader's that fits it: one whose constants share no byte, that names every register the program reads and ends
 // Within the buffer it declares, preferring the one that names the most. Without one that fits, the program is left as

@@ -2,15 +2,9 @@ import type { GroundLayerField } from "#src/models/genshinAssets/fit/GroundLayer
 import type { Except } from "type-fest";
 
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
+import { toNodeSpan } from "#src/services/genshinAssets/fit/toNodeSpan";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
-// A point's place between the nodes along one axis, kept to the grid: its lower node, its upper node and how far past
-// The lower it stands
-const toNodeSpan = (value: number, origin: number, cellSize: number, nodeCount: number): [number, number, number] => {
-  const coordinate = Math.min(Math.max((value - origin) / cellSize, 0), nodeCount - 1);
-  const lower = Math.floor(coordinate);
-  return [lower, Math.min(lower + 1, nodeCount - 1), coordinate - lower];
-};
 // Each layer's share at every node of a grid, from points of the ground each in one layer. A point counts toward
 // Its four surrounding nodes by how near it stands to each, as a bilinear read gives it back, so a node holds the shares
 // Of the ground within a cell of it. A node no point reaches takes the shares of its nearest reached node through the

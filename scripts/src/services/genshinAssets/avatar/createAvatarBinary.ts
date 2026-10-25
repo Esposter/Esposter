@@ -1,12 +1,5 @@
+import type { AvatarBinary } from "#src/models/genshinAssets/avatar/AvatarBinary";
 import type { AvatarView } from "genshin-world/sceneExport";
-
-// The typed arrays of a manifest's views, packed into one binary, each starting on a four-byte boundary so every view
-// Is a typed array over the buffer the world reads it from without a copy
-export type AvatarArray = Float32Array | Uint16Array | Uint32Array;
-export interface AvatarBinary {
-  add: (array: AvatarArray) => AvatarView;
-  toBuffer: () => Buffer;
-}
 
 export const createAvatarBinary = (): AvatarBinary => {
   const chunks: Buffer[] = [];

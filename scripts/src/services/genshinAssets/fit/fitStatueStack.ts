@@ -2,50 +2,15 @@ import type { Vector } from "#src/models/shared/Vector";
 import type { StatueSection, StatueStack } from "genshin-engine";
 import type { Except } from "type-fest";
 
+import { computePrincipalAxes } from "#src/services/genshinAssets/fit/computePrincipalAxes";
+import { fillGapSectors } from "#src/services/genshinAssets/fit/fillGapSectors";
 import { toRadialSector } from "#src/services/genshinAssets/fit/toRadialSector";
-import { computeSymmetricEigen } from "#src/services/shared/computeSymmetricEigen";
 import { Matrix4, Quaternion, Vector3 } from "three";
 
 // How near to the axis a principal axis may point and still be read as across it
 const CROSSING_COSINE = 0.9;
 const FULL_TURN = Math.PI * 2;
-// A sector no point reached takes the lesser of its nearest reached neighbours' radii either way round, so a gap in a
-// Thin blade's ring is read across its edge rather than bulging it
-const fillEmptySectors = (radii: readonly number[]): number[] =>
-  radii.map((radius, sector) => {
-    if (radius > 0) return radius;
-    const findReached = (step: number): number => {
-      for (let distance = 1; distance < radii.length; distance++) {
-        const reached = radii[(((sector + step * distance) % radii.length) + radii.length) % radii.length] ?? 0;
-        if (reached > 0) return reached;
-      }
-      return 0;
-    };
-    return Math.min(findReached(1), findReached(-1));
-  });
-// Points' spread along each of their principal axes: their centroid, and the axes their covariance's eigenvectors
-// Point along, from the greatest spread to the least
-const computePrincipalAxes = (points: readonly Vector[]): { axes: Vector3[]; centroid: Vector3 } => {
-  const centroid = points
-    .reduce((sum, point) => sum.add(new Vector3(...point)), new Vector3())
-    .divideScalar(points.length);
-  const covariance = [0, 1, 2].map((row) =>
-    [0, 1, 2].map(
-      (column) =>
-        points.reduce(
-          (sum, point) =>
-            sum +
-            ((point[row] ?? 0) - centroid.getComponent(row)) * ((point[column] ?? 0) - centroid.getComponent(column)),
-          0,
-        ) / points.length,
-    ),
-  );
-  const { values, vectors } = computeSymmetricEigen(covariance);
-  const axes = [0, 1, 2]
-    .toSorted((firstAxis, secondAxis) => (values[secondAxis] ?? 0) - (values[firstAxis] ?? 0))
-    .map((index) => new Vector3(...(vectors[index] ?? [0, 0, 0])).normalize());
-  return { axes, centroid };
-};
+
 // Points read as one of a statue kit's stacks: along the axis given, or else along their own greatest spread, cut into
 // Sections of about `sectionHeight`, each section's ring centred on its points' centroid and its radius at each of
 // `angleCount` angles the farthest of its points in that sector, the first angle along the points' next greatest spread
@@ -109,7 +74,7 @@ export const fitStatueStack = (
       const sector = toRadialSector(x, z, centre, angleCount);
       radii[sector] = Math.max(radii[sector] ?? 0, Math.hypot(x - centre[0], z - centre[1]));
     }
-    shapes.push({ centre, height, radii: fillEmptySectors(radii) });
+    shapes.push({ centre, height, radii: fillGapSectors(radii) });
   }
   // Each ring stands at its section's middle, as the kit lofts it, and each of its vertices at its angle about its centre
   const vertex = new Vector3();

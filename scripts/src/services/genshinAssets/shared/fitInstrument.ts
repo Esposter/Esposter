@@ -12,6 +12,7 @@ import {
   MUSIC_NOISE_SHARE,
   MUSIC_RELEASE_SECONDS,
 } from "#src/services/genshinAssets/shared/constants";
+import { toDecibels } from "#src/services/genshinAssets/shared/toDecibels";
 import { toFrequency } from "#src/services/genshinAssets/shared/toFrequency";
 import { computeSpectralPeak } from "#src/services/recreation/signal/computeSpectralPeak";
 import { computeMedian } from "#src/services/recreation/statistics/computeMedian";
@@ -24,7 +25,7 @@ const MAX_DECAY_SECONDS = 30;
 const SUSTAIN_STEPS = 100;
 // Each harmonic a note sounds, from its fundamental as the first
 const HARMONICS = Array.from({ length: MUSIC_HARMONIC_COUNT }, (_value, index) => index + 1);
-const toDecibels = (share: number): number => 20 * Math.log10(share);
+
 // A voice's instrument fitted to the sound it was heard in, each value measured at the voice's own notes. A note's
 // Fundamental and each overtone are read where every other note sounding with it, of any voice, leaves them clear, so
 // A crowded passage gives up only the partials it covers. A partial of another note covers a reading only when

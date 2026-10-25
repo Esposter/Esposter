@@ -1,16 +1,11 @@
 import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
 import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/GcsimKitCandidateWriter";
-import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 
-import { checkIsGoFloat } from "#src/services/genshinAssets/kits/gcsim/checkIsGoFloat";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
+import { readAnimationFrames } from "#src/services/genshinAssets/kits/gcsim/readAnimationFrames";
 import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 import { SKILL_TARGETING_AREA } from "genshin-world";
-
-// A frames constant's animation length, where the constant is one set of frames
-const readAnimationFrames = (value: GoValue | undefined): number | undefined =>
-  typeof value === "object" && !Array.isArray(value) && !checkIsGoFloat(value) ? value.animationFrames : undefined;
 
 // Varesa's Fiery Passion: the stance's skill is the rush at the skill's frames and hitmark, its multiplier the Fiery
 // Passion rush's, and the burst variant is the flying kick at the burst's frames and hitmark, its multiplier the Fiery

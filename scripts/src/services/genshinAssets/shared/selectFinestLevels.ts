@@ -1,7 +1,9 @@
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
 
+import { toGroupKey } from "#src/services/genshinAssets/shared/toGroupKey";
+
 const LEVEL_OF_DETAIL_REGEX = /^(?<part>.+)_Lod(?<level>\d+)$/u;
-const toGroupKey = (father: string, part: string): string => `${father}|${part}`;
+
 // The placements a render draws: a scene places each level of an object's part together under one LOD group, so of
 // Those levels only the finest with a mesh exported is kept, each object on its own: a far tower placed with its coarse
 // Levels alone, or one coarse level standing on its own, is drawn at its finest, not dropped for another tower's finer

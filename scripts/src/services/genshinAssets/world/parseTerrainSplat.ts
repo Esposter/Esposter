@@ -1,6 +1,8 @@
 import type { TerrainSplat } from "#src/models/genshinAssets/world/TerrainSplat";
 import type { TerrainSplatLayer } from "#src/models/genshinAssets/world/TerrainSplatLayer";
 
+import { checkIsCellResolution } from "#src/services/genshinAssets/world/checkIsCellResolution";
+
 const WORD = 4;
 // A pointer is a file index of one word and a path id of two
 const POINTER_BYTES = 3 * WORD;
@@ -8,11 +10,7 @@ const POINTER_BYTES = 3 * WORD;
 const LAYER_BYTES = 3 * POINTER_BYTES + 4 * WORD + 11 * WORD + 2 * WORD;
 const TILE_SIZE_OFFSET = 3 * POINTER_BYTES;
 const KIND_OFFSET = LAYER_BYTES - 2 * WORD;
-// The fewest cells a side a tile's cell map takes, and every side is a power of two
-const MIN_CELL_RESOLUTION = 64;
 
-const checkIsCellResolution = (resolution: number): boolean =>
-  Number.isInteger(resolution) && resolution >= MIN_CELL_RESOLUTION && (resolution & (resolution - 1)) === 0;
 // A terrain tile's splat database out of its TerrainData's raw export (`BigWorldTerrain_1_-1.bin`): past the tile's
 // Name, its layers, each a fixed record; then its control maps' pointers and the resolutions and pointers that follow,
 // Which vary in count, so the cell map is found by its shape past them: a count that is a square of a side a power of

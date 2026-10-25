@@ -4,28 +4,15 @@ import type { SceneTransportPoint } from "#src/models/genshinAssets/world/SceneT
 import type { GroundPoint } from "genshin-engine";
 import type { WaypointLandmark } from "genshin-world";
 
+import { findAreaId } from "#src/services/genshinAssets/fit/findAreaId";
 import {
   GROUND_LAYER,
   INTERACTIVE_MAP_FIT_BAR,
   INTERACTIVE_MAP_WAYPOINT_LABEL_ID,
 } from "#src/services/genshinAssets/points/constants";
 import { matchPairs } from "#src/services/genshinAssets/points/matchPairs";
-import { findNearest } from "#src/services/genshinAssets/shared/findNearest";
 import { toLandmarkArrival } from "#src/services/genshinAssets/shared/toLandmarkArrival";
-import { InvalidOperationError, Operation } from "@esposter/shared";
-import { computeOutlineDistance } from "genshin-engine";
 import { LandmarkKind } from "genshin-world";
-
-// The id of the catalogue area whose outline is nearest a place in its region, the one holding it where any does: a
-// Waypoint past every outline, as one below the ground's caves is, is named by the area it stands nearest
-const findAreaId = (
-  areas: readonly { id: string; outline: readonly GroundPoint[] }[],
-  position: GroundPoint,
-): string => {
-  const nearest = findNearest(areas, ({ outline }) => computeOutlineDistance(outline, position.x, position.z));
-  if (nearest === undefined) throw new InvalidOperationError(Operation.Read, findAreaId.name, "a region with no area");
-  return nearest.id;
-};
 
 // The waypoints of a region as landmarks of their own kind. A ground waypoint on the official map is a waypoint where it
 // Pairs with a transport point of the scene within the fit's bar, and each such point is placed as the landmark's arrival,

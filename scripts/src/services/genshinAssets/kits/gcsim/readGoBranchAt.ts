@@ -1,61 +1,13 @@
 import type { GcsimAttackBranch } from "#src/models/genshinAssets/kits/gcsim/GcsimAttackBranch";
+import type { GoBranchBody } from "#src/models/genshinAssets/kits/gcsim/GoBranchBody";
+import type { GoBranchOpening } from "#src/models/genshinAssets/kits/gcsim/GoBranchOpening";
+import type { GoBranchPlace } from "#src/models/genshinAssets/kits/gcsim/GoBranchPlace";
+import type { GoSwitchFrame } from "#src/models/genshinAssets/kits/gcsim/GoSwitchFrame";
 import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
 
-import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
 import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
-
-interface GoBranchBody extends GoOpenBody {
-  closePosition: number;
-}
-
-interface GoBranchOpening {
-  branch?: GoBranchPlace;
-  openPosition: number;
-  switchFrame?: GoSwitchFrame;
-}
-
-interface GoBranchPlace {
-  chain: number;
-  index: number;
-}
-
-interface GoOpenBody extends GoBranchPlace {
-  openPosition: number;
-}
-
-// The clauses a switch has opened so far: its chain, how many clauses have started, and the clause the cursor is in
-interface GoSwitchFrame {
-  chain: number;
-  clause?: GoOpenBody;
-  clauseCount: number;
-}
-
-// The keyword a brace's statement opens with, such as `if` or `switch`, scanning back over its tokens to the line or block
-// It starts in, else undefined. A function literal's or a struct's brace has no such keyword in its statement, and a switch
-// With an init statement, `switch x := f(); x {`, is not read since the scan stops at its `;`
-const findStatementKeyword = (
-  tokens: readonly GoToken[],
-  openPosition: number,
-  keyword: string,
-): number | undefined => {
-  for (let position = openPosition - 1; position >= 0; position--) {
-    const token = tokens[position];
-    if (
-      token === undefined ||
-      token.kind === GoTokenKind.Newline ||
-      checkIsGoPunctuation(token, "{") ||
-      checkIsGoPunctuation(token, "}") ||
-      checkIsGoPunctuation(token, ";")
-    )
-      return undefined;
-    if (token.text === keyword) return position;
-  }
-  return undefined;
-};
-
-// Whether a token starts a clause of a switch, a `case` or a `default`
-const checkIsSwitchClause = (token: GoToken): boolean =>
-  token.kind === GoTokenKind.Identifier && (token.text === "case" || token.text === "default");
+import { checkIsSwitchClause } from "#src/services/genshinAssets/kits/gcsim/checkIsSwitchClause";
+import { findStatementKeyword } from "#src/services/genshinAssets/kits/gcsim/findStatementKeyword";
 
 // Reads the if and else bodies and the switch clauses of a Go file as chains. An `if` opens a chain, and an `else` or
 // `else if` whose brace follows the previous body's close continues it. A `switch` opens a chain too, its clauses its

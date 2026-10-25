@@ -3,11 +3,9 @@ import type { SerializedPassRecord } from "#src/models/genshinAssets/materials/S
 
 import { ShaderProgramStage } from "#src/models/genshinAssets/materials/ShaderProgramStage";
 import { readSerializedShaderState } from "#src/services/genshinAssets/materials/readSerializedShaderState";
-import { readSerializedSubProgram } from "#src/services/genshinAssets/materials/readSerializedSubProgram";
+import { readStage } from "#src/services/genshinAssets/materials/readStage";
 import { skipTagMap } from "#src/services/genshinAssets/materials/skipTagMap";
 
-// A pass's stage lists in the order Unity writes them, vertex to domain and then ray tracing, which is read past
-const readStage = (cursor: BinaryCursor) => cursor.list(() => readSerializedSubProgram(cursor));
 // Reads a pass: its keyword names keyed by index, its state, whose name is the pass's own, its stage programs, then
 // Its use name, name and texture name, which are read past, and its tags
 export const readSerializedPass = (cursor: BinaryCursor): SerializedPassRecord => {

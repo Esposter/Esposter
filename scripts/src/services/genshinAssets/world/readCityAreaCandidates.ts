@@ -3,16 +3,10 @@ import type { IndexedAsset } from "#src/models/recreation/animeStudio/IndexedAss
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/constants";
-import { CITY_AREA_PREFIX, CITY_AREA_SUFFIX, STREAM_INDEX_SUFFIX } from "#src/services/genshinAssets/world/constants";
-import { getCityStreamName } from "#src/services/genshinAssets/world/getCityStreamName";
-import { getStreamBlobName } from "#src/services/genshinAssets/world/getStreamBlobName";
+import { checkIsCityIndexName } from "#src/services/genshinAssets/world/checkIsCityIndexName";
+import { getCityBlobName } from "#src/services/genshinAssets/world/getCityBlobName";
+import { getCityCode } from "#src/services/genshinAssets/world/getCityCode";
 import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
-
-const CITY_INDEX_SUFFIX = `${CITY_AREA_SUFFIX}${STREAM_INDEX_SUFFIX}`;
-const checkIsCityIndexName = (name: string): boolean =>
-  name.startsWith(CITY_AREA_PREFIX) && name.endsWith(CITY_INDEX_SUFFIX);
-const getCityCode = (indexName: string): string => indexName.slice(CITY_AREA_PREFIX.length, -CITY_INDEX_SUFFIX.length);
-const getCityBlobName = (code: string): string => getStreamBlobName(getCityStreamName(code));
 
 // Every `Area_<code>_City_Index` the asset index names, each with its code and its blob's index entry. Every one is a
 // Candidate, whether or not a region names it: the game keeps one blob per city area

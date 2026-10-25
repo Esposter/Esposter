@@ -7,6 +7,7 @@ import { decompileDxbcDirectory } from "#src/services/genshinAssets/materials/de
 import { disassembleDxbcDirectory } from "#src/services/genshinAssets/materials/disassembleDxbcDirectory";
 import { parseShaderConstantLayouts } from "#src/services/genshinAssets/materials/parseShaderConstantLayouts";
 import { parseShaderProperties } from "#src/services/genshinAssets/materials/parseShaderProperties";
+import { programName } from "#src/services/genshinAssets/materials/programName";
 import { readShaderPrograms } from "#src/services/genshinAssets/materials/readShaderPrograms";
 import {
   ANIMESTUDIO_UNPARSED_SUFFIX,
@@ -25,8 +26,7 @@ import { basename, join } from "node:path";
 
 // How many of a shader's property names its summary line prints, enough to tell it apart
 const SUMMARY_PROPERTY_COUNT = 4;
-// A program's file name in its shader's folder, by its index in the shader's programs
-const programName = (index: number): string => String(index).padStart(5, "0");
+
 // The shaders a component's materials draw with, as references to read: every shader in the blocks holding them,
 // Since a shader is exported nameless and its block holds the post-processing and sky shaders beside it, and the
 // Deferred passes' block, which lights what those shaders write into the G-buffer. Each is

@@ -1,23 +1,19 @@
 import type { FittedFamily } from "#src/models/genshinAssets/fit/FittedFamily";
-import type { FittedSurface } from "#src/models/genshinAssets/fit/FittedSurface";
-import type { SurfaceDetail } from "#src/models/genshinAssets/fit/SurfaceDetail";
-import type { SurfaceSample } from "#src/models/genshinAssets/fit/SurfaceSample";
+import type { ReadSurface } from "#src/models/genshinAssets/fit/ReadSurface";
 import type { Texture } from "#src/models/genshinAssets/fit/Texture";
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { Vector } from "#src/models/shared/Vector";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
-import { averageSurfaceDetails } from "#src/services/genshinAssets/fit/averageSurfaceDetails";
 import { computePartSurfaces } from "#src/services/genshinAssets/fit/computePartSurfaces";
 import { computeSurfaceTones } from "#src/services/genshinAssets/fit/computeSurfaceTones";
-import { computeTextureDetail } from "#src/services/genshinAssets/fit/computeTextureDetail";
-import { computeTriangleArea } from "#src/services/genshinAssets/fit/computeTriangleArea";
-import { computeUvTexels } from "#src/services/genshinAssets/fit/computeUvTexels";
-import { sampleFaceUvs } from "#src/services/genshinAssets/fit/sampleFaceUvs";
-import { sampleSurfaceTexture } from "#src/services/genshinAssets/fit/sampleSurfaceTexture";
+import { readSurface } from "#src/services/genshinAssets/fit/readSurface";
+import { readTexture } from "#src/services/genshinAssets/fit/readTexture";
 import { tintTexture } from "#src/services/genshinAssets/fit/tintTexture";
 import { toWorldVertices } from "#src/services/genshinAssets/fit/toWorldVertices";
+import { withDetail } from "#src/services/genshinAssets/fit/withDetail";
+import { withPartDetails } from "#src/services/genshinAssets/fit/withPartDetails";
 import {
   MAIN_COLOUR_PROPERTY,
   TERRAIN_BASE_MAP_SUFFIX,
@@ -36,105 +32,9 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
 import { readdir } from "node:fs/promises";
 import { basename, join } from "node:path";
-import sharp from "sharp";
 
-type ObjMesh = Awaited<ReturnType<typeof readObjMesh>>;
-// A placed mesh or a terrain tile read apart: its part, its samples, and the detail of the textures its covered faces drew
-interface ReadSurface {
-  detail?: SurfaceDetail;
-  part: string;
-  samples: SurfaceSample[];
-}
-
-// A face's submesh, named for its index among its renderer's materials
-const SUBMESH_REGEX = /_(?<submesh>\d+)$/u;
 const OBJ_EXTENSION = ".obj";
 
-const readTexture = (path: string): Promise<Texture> => sharp(path).raw().toBuffer({ resolveWithObject: true });
-// The samples of a mesh's faces where its vertices stand in the world. Each face is read at the points `sampleFaceUvs`
-// Spreads over its UV triangle, through the texture its submesh draws with (`diffuses`, by submesh index), each point
-// Weighted by an equal share of the face's world area and how far its texel is covered, and tagged with the `part` it
-// Is read for, each face's samples kept with the texture they were read through, the face's world area and the texels
-// Its UVs cover. A face whose centroid `checkKept` refuses counts for nothing
-const readFaceSamples = (
-  { faceGroups, faces, faceUvs, uvs }: ObjMesh,
-  world: Vector[],
-  diffuses: (Texture | undefined)[],
-  part: string,
-  checkKept: (centroid: Vector) => boolean = () => true,
-): { area: number; diffuse: Texture; samples: SurfaceSample[]; texels: number }[] =>
-  faces.flatMap(([firstIndex, secondIndex, thirdIndex], face) => {
-    const [first, second, third] = [world[firstIndex], world[secondIndex], world[thirdIndex]];
-    const submesh = Number(SUBMESH_REGEX.exec(faceGroups[face] ?? "")?.groups?.submesh ?? 0);
-    const diffuse = diffuses[submesh];
-    if (!first || !second || !third || !diffuse) return [];
-    const centroid = ([0, 1, 2] as const).map((axis) => (first[axis] + second[axis] + third[axis]) / 3) as Vector;
-    if (!checkKept(centroid)) return [];
-    const [firstUv, secondUv, thirdUv] = (faceUvs[face] ?? [0, 0, 0]).map((index) => uvs[index] ?? [0, 0]) as [
-      [number, number],
-      [number, number],
-      [number, number],
-    ];
-    const uvTriangle = [firstUv, secondUv, thirdUv] as const;
-    const points = sampleFaceUvs(uvTriangle, diffuse.info);
-    const area = computeTriangleArea(first, second, third);
-    const samples = points.map((uv) => {
-      const { colour, coverage } = sampleSurfaceTexture(diffuse, uv);
-      return { colour, part, weight: (area / points.length) * coverage };
-    });
-    return [{ area, diffuse, samples, texels: computeUvTexels(uvTriangle, diffuse.info) }];
-  });
-const sumWeights = (samples: readonly SurfaceSample[]): number => samples.reduce((sum, { weight }) => sum + weight, 0);
-// A mesh read through its submeshes' textures: its samples, and its detail as the mean of every texture its covered faces
-// Drew, each weighted by the area read through it, so a texture no covered face draws counts for nothing. Each texture's
-// Detail is drawn at the metres a texel spans on the faces read through it, their world area over the texels their UVs
-// Cover: a terrain tile's base map 2 metres on the flat, its 512 texels over the tile's 1,024, more where the ground
-// Slopes, and a mesh's texture its own
-const readSurface = (
-  mesh: ObjMesh,
-  world: Vector[],
-  diffuses: (Texture | undefined)[],
-  part: string,
-  checkKept?: (centroid: Vector) => boolean,
-): ReadSurface => {
-  const faceSamples = readFaceSamples(mesh, world, diffuses, part, checkKept);
-  const diffuseReadMap = new Map<Texture, { area: number; texels: number; weight: number }>();
-  for (const { area, diffuse, samples, texels } of faceSamples) {
-    const read = diffuseReadMap.get(diffuse) ?? { area: 0, texels: 0, weight: 0 };
-    diffuseReadMap.set(diffuse, {
-      area: read.area + area,
-      texels: read.texels + texels,
-      weight: read.weight + sumWeights(samples),
-    });
-  }
-  const details = [...diffuseReadMap].flatMap(([diffuse, { area, texels, weight }]) => {
-    const detail = weight > 0 && texels > 0 ? computeTextureDetail(diffuse, Math.sqrt(area / texels)) : undefined;
-    return detail ? [{ detail, weight }] : [];
-  });
-  return { detail: averageSurfaceDetails(details), part, samples: faceSamples.flatMap(({ samples }) => samples) };
-};
-// A surface's detail as the mean of its reads' details, each weighted by the area it covers, or the surface itself when
-// None drew a texture over a covered face
-const withDetail = <Surface extends FittedSurface>(surface: Surface, reads: readonly ReadSurface[]): Surface => {
-  const detail = averageSurfaceDetails(
-    reads.flatMap((read) => (read.detail ? [{ detail: read.detail, weight: sumWeights(read.samples) }] : [])),
-  );
-  return detail === undefined ? surface : { ...surface, detail };
-};
-// The part surfaces, each with the detail of the textures its own placed meshes drew
-const withPartDetails = (
-  parts: Record<string, FittedSurface>,
-  reads: readonly ReadSurface[],
-): Record<string, FittedSurface> =>
-  Object.fromEntries(
-    Object.entries(parts).map(([part, surface]) => [
-      part,
-      withDetail(
-        surface,
-        reads.filter((read) => read.part === part),
-      ),
-    ]),
-  );
 // Each family's surface as its export's textures paint it, returned as the colour and palette `computeSurfaceTones`
 // Reads off the samples its meshes give, and each part's apart as `computePartSurfaces` reads them. A family's meshes
 // Are its placed meshes, each drawn with its submeshes' diffuse textures under their materials' tints as the witness

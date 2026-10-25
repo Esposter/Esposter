@@ -1,4 +1,4 @@
-import { createAvatarBinary } from "#src/services/genshinAssets/avatar/writeAvatarBinary";
+import { createAvatarBinary } from "#src/services/genshinAssets/avatar/createAvatarBinary";
 import { describe, expect, test } from "vitest";
 
 describe("createAvatarBinary", () => {

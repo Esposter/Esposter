@@ -1,6 +1,9 @@
 import type { CloudLayerDome } from "#src/models/genshinAssets/fit/CloudLayerDome";
 import type { ExportedMesh } from "#src/models/genshinAssets/shared/ExportedMesh";
 
+import { computeMean } from "#src/services/genshinAssets/fit/computeMean";
+import { computeMeanAngle } from "#src/services/genshinAssets/fit/computeMeanAngle";
+import { readPair } from "#src/services/genshinAssets/fit/readPair";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { getOrCreate, InvalidOperationError, Operation } from "@esposter/shared";
 import { MathUtils } from "three";
@@ -10,20 +13,7 @@ const PROFILE_DECIMALS = 4;
 // The decimals two rings' heights are told apart by, and the radius under which a vertex is the dome's apex
 const RING_DECIMALS = 4;
 const APEX_RADIUS = 1e-4;
-const readPair = (values: null | number[], vertex: number, name: string): [number, number] => {
-  if (!values) throw new InvalidOperationError(Operation.Read, name, "the dome has no such texture coordinates");
-  return [values[vertex * 2] ?? 0, values[vertex * 2 + 1] ?? 0];
-};
-// The mean of angles in degrees, read round the circle so a spread across ±180 does not cancel
-const computeMeanAngle = (angles: readonly number[]): number =>
-  MathUtils.radToDeg(
-    Math.atan2(
-      angles.reduce((sum, angle) => sum + Math.sin(MathUtils.degToRad(angle)), 0),
-      angles.reduce((sum, angle) => sum + Math.cos(MathUtils.degToRad(angle)), 0),
-    ),
-  );
-const computeMean = (values: readonly number[]): number =>
-  values.reduce((sum, value) => sum + value, 0) / Math.max(values.length, 1);
+
 // A sky's cloud layer dome as profiles over its rings (`CloudLayerDome`): a dome of rings round a vertical axis, each
 // Ring one height, whose first texture coordinates run round it and up it as the wisps' strip, and whose second and
 // Third are the density's plane, each a turned projection of the azimuth out to a radius its ring's height sets. The

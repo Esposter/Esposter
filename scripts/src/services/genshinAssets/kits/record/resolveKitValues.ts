@@ -1,9 +1,9 @@
-import type { ResolvedKitValues } from "#src/models/genshinAssets/kits/build/ResolvedKitValues";
 import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { KitOverlay } from "#src/models/genshinAssets/kits/KitOverlay";
-import type { KitOverlayEntry } from "#src/models/genshinAssets/kits/KitOverlayEntry";
 import type { KitValueSource } from "#src/models/genshinAssets/kits/KitValueSource";
 import type { NamedHitCandidateMap } from "#src/models/genshinAssets/kits/NamedHitCandidateMap";
+import type { ResolvedKitValues } from "#src/models/genshinAssets/kits/build/ResolvedKitValues";
+import type { KitOverlayChoice } from "#src/models/genshinAssets/kits/record/KitOverlayChoice";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
@@ -16,9 +16,6 @@ import { checkIsKitValueEqual } from "#src/services/genshinAssets/kits/record/ch
 import { checkIsKitValueResolvedEqual } from "#src/services/genshinAssets/kits/record/checkIsKitValueResolvedEqual";
 import { getNamedHitKitCandidates } from "#src/services/genshinAssets/kits/record/getNamedHitKitCandidates";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-
-// An overlay entry choosing a source
-type KitOverlayChoice = Extract<KitOverlayEntry, { source: unknown }>;
 
 // The causes saying no source gives a value: none, no poise, and no damage
 const NO_SOURCE_CAUSES: ReadonlySet<KitProvisionalCause> = new Set([

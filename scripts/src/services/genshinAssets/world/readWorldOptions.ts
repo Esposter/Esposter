@@ -4,8 +4,7 @@ import type { WorldOptions } from "#src/models/genshinAssets/world/WorldOptions"
 import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { WORLD_JSON_NAME } from "#src/services/genshinAssets/world/constants";
-import { formatProducerStaleness } from "#src/services/producerStamp/formatProducerStaleness";
-import { readProducerStaleness } from "#src/services/producerStamp/readProducerStaleness";
+import { warnProducerStaleness } from "#src/services/genshinAssets/world/warnProducerStaleness";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync } from "node:fs";
@@ -15,11 +14,6 @@ import { join } from "node:path";
 // Each component directory's check of its producer's commits, so each is warned of once per process however many
 // Reads start together. A check that fails is dropped, so the next read checks again rather than skipping it
 const stalenessCheckMap = new Map<string, Promise<void>>();
-
-const warnProducerStaleness = async (component: DerivedAssetComponent, root: string) => {
-  const warning = formatProducerStaleness(component, await readProducerStaleness(root));
-  if (warning) console.warn(warning);
-};
 
 // The open world block a component's exports are laid out by: the one its map holds (Windrise's, set by hand), or the
 // One `extract` derived from its capital and wrote beside its exports. Undefined for a component with no open world

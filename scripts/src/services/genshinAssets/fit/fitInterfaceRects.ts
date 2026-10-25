@@ -1,9 +1,8 @@
 import type { FittedInterfaceRect } from "#src/models/genshinAssets/fit/FittedInterfaceRect";
 import type { InterfaceNode } from "#src/models/genshinAssets/shared/InterfaceNode";
 
-import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
+import { roundPair } from "#src/services/genshinAssets/fit/roundPair";
 
-const roundPair = ([x, y]: [number, number]): [number, number] => [roundFitted(x), roundFitted(y)];
 // A screen's interface tree as the rects its markup nests, keyed by each piece's path under the root, which is the
 // Canvas itself and so left out. A layout group places its children at run time, so their rects read zero and are left
 // Out with everything under them; the group's own rect stays, and its spacing is measured

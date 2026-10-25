@@ -1,23 +1,23 @@
+import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { BuiltKit } from "#src/models/genshinAssets/kits/build/BuiltKit";
 import type { KitInput } from "#src/models/genshinAssets/kits/build/KitInput";
-import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
-import {
-  buildKitRecordWithDonors,
-  readDonorRecordMap,
-} from "#src/services/genshinAssets/kits/buildKitRecordWithDonors";
+import { buildKitRecordWithDonors } from "#src/services/genshinAssets/kits/buildKitRecordWithDonors";
 import {
   GCSIM_PLUNGE_FALLBACK_FOLDER,
   GCSIM_TAG,
   KIT_OVERLAY_DIRECTORY,
 } from "#src/services/genshinAssets/kits/constants";
+import { countBy } from "#src/services/genshinAssets/kits/countBy";
+import { formatCounts } from "#src/services/genshinAssets/kits/formatCounts";
 import { findGcsimFolder } from "#src/services/genshinAssets/kits/gcsim/findGcsimFolder";
 import { getGcsimKitCandidates } from "#src/services/genshinAssets/kits/gcsim/getGcsimKitCandidates";
 import { readGcsimMainCharacters } from "#src/services/genshinAssets/kits/gcsim/readGcsimMainCharacters";
 import { toGcsimFolderName } from "#src/services/genshinAssets/kits/gcsim/toGcsimFolderName";
 import { getKitBagPaths } from "#src/services/genshinAssets/kits/getKitBagPaths";
+import { readDonorRecordMap } from "#src/services/genshinAssets/kits/readDonorRecordMap";
 import { readKitOverlayFile } from "#src/services/genshinAssets/kits/readKitOverlay";
 import { compareKitRecord } from "#src/services/genshinAssets/kits/record/compareKitRecord";
 import { getMismatchedKitPaths } from "#src/services/genshinAssets/kits/record/getMismatchedKitPaths";
@@ -25,18 +25,6 @@ import { seedKitOverlay } from "#src/services/genshinAssets/kits/record/seedKitO
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { getResult } from "@esposter/shared";
 import { join } from "node:path";
-
-const countBy = (keys: readonly string[]): Map<string, number> => {
-  const countMap = new Map<string, number>();
-  for (const key of keys) countMap.set(key, (countMap.get(key) ?? 0) + 1);
-  return countMap;
-};
-
-const formatCounts = (countMap: ReadonlyMap<string, number>): string =>
-  [...countMap]
-    .toSorted(([left], [right]) => left.localeCompare(right))
-    .map(([key, count]) => `${key} ${count}`)
-    .join(", ") || "none";
 
 // Builds every kit's published record against its sources, seeds each character's overlay with what the build needs to
 // Reproduce it, and returns the report: the gap, each value the committed overlay left the build short of, by kit; the

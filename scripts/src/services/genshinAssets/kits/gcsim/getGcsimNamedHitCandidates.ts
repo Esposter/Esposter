@@ -1,50 +1,20 @@
+import type { NamedHitCandidate, NamedHitCandidateMap } from "#src/models/genshinAssets/kits/NamedHitCandidateMap";
 import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
 import type { GcsimHitSource } from "#src/models/genshinAssets/kits/gcsim/GcsimHitSource";
-import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/GcsimKitCandidateWriter";
 import type { GcsimQueuedAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimQueuedAttack";
 import type { GcsimTalentLeaf } from "#src/models/genshinAssets/kits/gcsim/GcsimTalentLeaf";
-import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
-import type { NamedHitCandidate, NamedHitCandidateMap } from "#src/models/genshinAssets/kits/NamedHitCandidateMap";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 import type { AttackArea } from "genshin-world";
 
-import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
-import { KitRule } from "#src/models/genshinAssets/kits/KitRule";
-import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
-import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
 import { compareQueuedDelays } from "#src/services/genshinAssets/kits/compareQueuedDelays";
-import { createGcsimKitCandidateWriter } from "#src/services/genshinAssets/kits/gcsim/createGcsimKitCandidateWriter";
-import { findQueuedAttacks } from "#src/services/genshinAssets/kits/gcsim/findQueuedAttacks";
 import { GcsimTalentTypeCombatTalentMap } from "#src/services/genshinAssets/kits/gcsim/GcsimTalentTypeCombatTalentMap";
+import { findQueuedAttacks } from "#src/services/genshinAssets/kits/gcsim/findQueuedAttacks";
 import { joinGcsimVariableTalentArray } from "#src/services/genshinAssets/kits/gcsim/joinGcsimVariableTalentArray";
+import { readFieldMap } from "#src/services/genshinAssets/kits/gcsim/readFieldMap";
 import { readGcsimQueuedAttacks } from "#src/services/genshinAssets/kits/gcsim/readGcsimQueuedAttacks";
 import { readGcsimTalentParameter } from "#src/services/genshinAssets/kits/gcsim/readGcsimTalentParameter";
 import { getTalentTargetingArea } from "#src/services/genshinAssets/kits/getTalentTargetingArea";
 import { readNamedHitKey } from "#src/services/genshinAssets/kits/readNamedHitKey";
-
-// The candidates a hit's writer gives at its key, by their field names
-const readFieldMap = (
-  key: string,
-  gcsim: GcsimCharacter,
-  tables: KitTables,
-  hit: Parameters<GcsimKitCandidateWriter["addHit"]>[1],
-  targetingArea: AttackArea,
-): Map<string, KitCandidate[]> => {
-  const candidateMap = new Map<string, KitCandidate[]>();
-  createGcsimKitCandidateWriter(candidateMap, gcsim, tables).addHit(key, hit, targetingArea);
-  // An attack gcsim gives no poise deals none, as the rule gives an action's hit that has none
-  if (hit.attack !== undefined && !candidateMap.has(`${key}.poiseDamage`))
-    addKitCandidate(candidateMap, `${key}.poiseDamage`, {
-      provenance: { cause: KitProvisionalCause.NoPoiseSource, rule: KitRule.NoPoiseSource, source: KitSource.Rule },
-      value: 0,
-    });
-  return new Map(
-    Array.from(candidateMap, ([path, candidates]): [string, KitCandidate[]] => [
-      path.slice(key.length + 1),
-      candidates,
-    ]),
-  );
-};
 
 // The hit each multiplier of a talent variable joins to, keyed by its proud skill group and index: the multiplier's own
 // Talent row, the variable's attack's element, gauge, tag and poise where the variable's one literal is every

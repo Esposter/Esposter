@@ -4,6 +4,7 @@ import type { WorldPrefabPlacements } from "#src/models/genshinAssets/world/Worl
 
 import { readStreamPlacements } from "#src/services/genshinAssets/world/readStreamPlacements";
 import { readWorldOptions } from "#src/services/genshinAssets/world/readWorldOptions";
+import { toVector } from "#src/services/genshinAssets/world/toVector";
 import { toWorldQuaternion } from "#src/services/genshinAssets/world/toWorldQuaternion";
 import { GAME_TEXT_DIRECTORY } from "#src/services/genshinText/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
@@ -11,7 +12,6 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-const toVector = ({ x = 0, y = 0, z = 0 }: DumpedVector): [number, number, number] => [x, y, z];
 // Every place a part of the open world sets each of its prefabs down: where each scene point stands, read from the
 // Community's dump by the fields its map names, and each StreamGen placement of a prefab's id, read from the blob and
 // Index `extract` wrote. A point or a field the dump does not hold is an error, so a dump that renamed its fields is

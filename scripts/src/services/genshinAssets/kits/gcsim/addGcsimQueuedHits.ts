@@ -1,24 +1,14 @@
 import type { GcsimAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimAttack";
 import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
 import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/GcsimKitCandidateWriter";
-import type { GcsimQueuedHit } from "#src/models/genshinAssets/kits/gcsim/GcsimQueuedHit";
 import type { AttackArea } from "genshin-world";
 
+import { checkIsSameDeclaration } from "#src/services/genshinAssets/kits/gcsim/checkIsSameDeclaration";
+import { checkIsSameHit } from "#src/services/genshinAssets/kits/gcsim/checkIsSameHit";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
 import { getGcsimQueuedHits } from "#src/services/genshinAssets/kits/gcsim/getGcsimQueuedHits";
 import { readGcsimHoldHitmarks } from "#src/services/genshinAssets/kits/gcsim/readGcsimHoldHitmarks";
-
-// The declaration an attack is made from, by its literal's file, variable and line: a `Mult` set's copy shares its
-// Literal's declaration, where a DoT is a literal of its own under the same variable
-const checkIsSameDeclaration = (attack: GcsimAttack, other: GcsimAttack): boolean =>
-  attack.file === other.file && attack.siteLine === other.siteLine && attack.variableName === other.variableName;
-
-// A call firing the first hit's attack, or a copy of it where neither call repeats in a loop: a loop's repeated calls
-// Are ticks of their attack, as a DoT's calls are
-const checkIsSameHit = (hit: GcsimQueuedHit, first: GcsimQueuedHit): boolean =>
-  hit.attack === first.attack ||
-  (checkIsSameDeclaration(hit.attack, first.attack) && hit.iterations === undefined && first.iterations === undefined);
 
 // The hits of an ability with no hitmark constant, fired by its queue calls: each call of the file its frames are in
 // Firing its first declaration, at its damage delay, joined to its multiplier by its place and to its own hitbox,

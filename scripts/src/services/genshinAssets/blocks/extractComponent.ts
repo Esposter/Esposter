@@ -1,13 +1,12 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { ExportedMaterial } from "#src/models/genshinAssets/shared/ExportedMaterial";
-import type { ResolvedObject } from "#src/models/genshinAssets/shared/ResolvedObject";
-import type { IndexedAsset } from "#src/models/recreation/animeStudio/IndexedAsset";
 
 import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
-import { AnimeStudioGroupType } from "#src/models/genshinAssets/shared/AnimeStudioGroupType";
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
-import { EXTRACT_PRODUCER_PATHS } from "#src/services/genshinAssets/blocks/constants";
+import { EXTRACT_PRODUCER_PATHS, GROUP_BY_TYPE } from "#src/services/genshinAssets/blocks/constants";
+import { exportResolvedAssets } from "#src/services/genshinAssets/blocks/exportResolvedAssets";
 import { walkAssetClosure } from "#src/services/genshinAssets/blocks/walkAssetClosure";
+import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import {
   CAB_MAP_PATH,
   EXPORTED_ASSET_TYPES,
@@ -15,7 +14,6 @@ import {
   INSTALLED_BLOCKS_DIRECTORY,
   LAYOUT_ASSET_TYPES,
 } from "#src/services/genshinAssets/shared/constants";
-import { DerivedAssetComponentMap } from "#src/services/genshinAssets/shared/DerivedAssetComponentMap";
 import { exportBlockBySource } from "#src/services/genshinAssets/shared/exportBlockBySource";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readAssetBlocks } from "#src/services/genshinAssets/shared/readAssetBlocks";
@@ -23,7 +21,6 @@ import { readSceneLayout } from "#src/services/genshinAssets/shared/readSceneLay
 import { resolveObjectPointer } from "#src/services/genshinAssets/shared/resolveObjectPointer";
 import { reviveSourcePathId } from "#src/services/genshinAssets/shared/reviveSourcePathId";
 import { toMaterialTextures } from "#src/services/genshinAssets/shared/toMaterialTextures";
-import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
 import { WORLD_JSON_NAME } from "#src/services/genshinAssets/world/constants";
 import { deriveCapitalWorld } from "#src/services/genshinAssets/world/deriveCapitalWorld";
 import { exportWorld } from "#src/services/genshinAssets/world/exportWorld";
@@ -31,69 +28,12 @@ import { extractWorld } from "#src/services/genshinAssets/world/extractWorld";
 import { getWorldRoots } from "#src/services/genshinAssets/world/getWorldRoots";
 import { writeProducerStamp } from "#src/services/producerStamp/writeProducerStamp";
 import { parseCabMap } from "#src/services/recreation/animeStudio/parseCabMap";
-import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
 import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { existsSync } from "node:fs";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 
-const GROUP_BY_TYPE = ["--group_assets", AnimeStudioGroupType.ByType];
-// The resolved objects of the given types, named through the asset index by their block and path ID, each exported
-// From its block by its exact name, converted or as the export type given. The index holds no file, so a block and path ID it names more than once, or that
-// Several files of the block resolve to, is as unresolved as one it does not name
-const exportResolvedAssets = async (
-  resolvedObjects: readonly ResolvedObject[],
-  types: readonly AssetType[],
-  assetsDirectory: string,
-  exportType?: AnimeStudioExportType,
-): Promise<{ assets: (IndexedAsset & { file: string })[]; unresolved: string[] }> => {
-  const keyObjectsMap = Map.groupBy(resolvedObjects, ({ block, pathId }) => toObjectKey(block, pathId));
-  const keyIndexedMap = Map.groupBy(
-    await readIndexedAssets(
-      ({ block, pathId, type }) =>
-        types.some((assetType) => assetType === type) && keyObjectsMap.has(toObjectKey(block, pathId)),
-      GENSHIN_ANIMESTUDIO_OPTIONS,
-    ),
-    ({ block, pathId }) => toObjectKey(block, pathId),
-  );
-  const assets: (IndexedAsset & { file: string })[] = [];
-  const unresolved: string[] = [];
-  for (const [key, objects] of keyObjectsMap) {
-    const files = [...new Set(objects.map(({ file }) => file))];
-    const indexed = keyIndexedMap.get(key) ?? [];
-    const [file] = files;
-    const [asset] = indexed;
-    if (file && asset && files.length === 1 && indexed.length === 1) assets.push({ ...asset, file });
-    else {
-      const { block, pathId } = objects[0] ?? { block: "", pathId: "" };
-      const reason =
-        indexed.length === 0
-          ? `not in the asset index as ${types.join(" or ")}`
-          : files.length > 1
-            ? "resolved from several files of its block, which the asset index does not tell apart"
-            : `named ${indexed.length} times by the asset index`;
-      unresolved.push(`path ID ${pathId} of ${files.join(" and ")} in ${block}: ${reason}`);
-    }
-  }
-  for (const [block, blockAssets] of Map.groupBy(assets, (asset) => asset.block)) {
-    const names = [...new Set(blockAssets.map(({ name }) => RegExp.escape(name)))];
-    runAnimeStudio(
-      [
-        join(INSTALLED_BLOCKS_DIRECTORY, block),
-        assetsDirectory,
-        "--names",
-        `^(${names.join("|")})$`,
-        "--types",
-        ...types,
-        ...GROUP_BY_TYPE,
-        ...(exportType ? ["--export_type", exportType] : []),
-      ],
-      GENSHIN_ANIMESTUDIO_OPTIONS,
-    );
-  }
-  return { assets, unresolved };
-};
 // One component's closure out of the game's blocks: the layout of each of its roots' and spawned prefabs' blocks dumped
 // Per file, then every object its roots reach down their children, the meshes and materials those draw and the textures
 // Each material samples, each pointer resolved through its own file's external references and exported from the block

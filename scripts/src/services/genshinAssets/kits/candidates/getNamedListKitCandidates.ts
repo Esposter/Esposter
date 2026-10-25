@@ -5,38 +5,20 @@ import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvision
 import { KitRule } from "#src/models/genshinAssets/kits/KitRule";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
+import { checkHasOwnSlotHit } from "#src/services/genshinAssets/kits/candidates/checkHasOwnSlotHit";
 import { KIT_HIT_MULTIPLIER_REGEX } from "#src/services/genshinAssets/kits/constants";
 import { CombatTalent, kitParameterSchema } from "genshin-world";
 
 // A named list's hit path, `hits.<name>.<index>`: a list a module spawns of its own, with no prefix. A slot's list,
 // `burst.hits.<index>`, or a skill hold's, `skillHolds.0.hits.<index>`, is not one
 const NAMED_HIT_PATH_REGEX = /^hits\.[^.]+\.\d+$/u;
-
 // A stance's action, `stances.<name>.skill` or `stances.<name>.normalAttacks.<index>`, which its hits list sits in
 const STANCE_ACTION_PATH_REGEX = /^(?<slot>stances\.[^.]+\.(?:burst|chargedAttack|skill|normalAttacks\.\d+))\./u;
-
 // The slot each combat talent with one of its own holds its hits list in, which a named list of its hits leaves empty
 const TALENT_SLOTS: [CombatTalent, string][] = [
   [CombatTalent.ElementalBurst, "burst"],
   [CombatTalent.ElementalSkill, "skill"],
 ];
-
-// Whether a slot keeps a hit of its own beside its named lists: one of its hits joins a proud skill group at an index no
-// Named list's hit joins at, as gcsim's Moonjade Descent hits beside its White Jade Radishes of the same group
-const checkHasOwnSlotHit = (
-  valueMap: ReadonlyMap<string, unknown>,
-  slot: string,
-  namedParameters: ReadonlySet<string>,
-): boolean => {
-  for (const [path, value] of valueMap) {
-    const hitPath = KIT_HIT_MULTIPLIER_REGEX.exec(path)?.groups?.hitPath;
-    if (hitPath === undefined || !hitPath.startsWith(`${slot}.hits.`)) continue;
-    const parameter = kitParameterSchema.safeParse(value).data;
-    if (typeof parameter !== "object" || !namedParameters.has(`${parameter.proudSkillGroupId}.${parameter.index}`))
-      return true;
-  }
-  return false;
-};
 
 // The hits lists a named list's hits join to by their multipliers' proud skill group are empty, as the module spawns the
 // Hits as a list of its own, unless a hit of the slot's own joins that group at an index no named list's hit does. It

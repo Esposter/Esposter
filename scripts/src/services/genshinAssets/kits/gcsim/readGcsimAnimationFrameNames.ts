@@ -1,21 +1,12 @@
-import type { GoExpression } from "#src/models/genshinAssets/kits/gcsim/GoExpression";
 import type { GoSource } from "#src/models/genshinAssets/kits/gcsim/GoSource";
 
-import { GoExpressionKind } from "#src/models/genshinAssets/kits/gcsim/GoExpressionKind";
 import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
-import { getGoRootName } from "#src/services/genshinAssets/kits/gcsim/getGoRootName";
+import { findIndexedName } from "#src/services/genshinAssets/kits/gcsim/findIndexedName";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
-import { readGoAliases, resolveGoAlias } from "#src/services/genshinAssets/kits/gcsim/readGoAliases";
+import { readGoAliases } from "#src/services/genshinAssets/kits/gcsim/readGoAliases";
+import { resolveGoAlias } from "#src/services/genshinAssets/kits/gcsim/resolveGoAlias";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 import { posix } from "node:path";
-
-// The name of the first indexed frames in an expression, `skillEndFrames` in `delay + skillEndFrames[next] + skillHitmark`
-const findIndexedName = (expression: GoExpression): string | undefined => {
-  if (expression.kind === GoExpressionKind.Index) return getGoRootName(expression);
-  else if (expression.kind === GoExpressionKind.Binary)
-    return findIndexedName(expression.left) ?? findIndexedName(expression.right);
-  else return undefined;
-};
 
 // The frames each ability file animates by, from the `AnimationLength` its action literal is given: an ability whose
 // Frames are named otherwise, `skillThrustFrames` in `AnimationLength: skillThrustFrames[action.InvalidAction]`. Keyed by

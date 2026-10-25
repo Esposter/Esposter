@@ -1,11 +1,10 @@
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
 
+import { toPaintKey } from "#src/services/genshinAssets/fit/toPaintKey";
 import { selectFinestLevels } from "#src/services/genshinAssets/shared/selectFinestLevels";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 
-const toPaintKey = (part: string, materials: readonly string[]): string =>
-  `${part}|${[...new Set(materials)].toSorted().join(",")}`;
 // Every placement drawing the level of detail of a part a render draws (each object's finest exported), a mesh named
 // `<part>_Lod<level>` by the pattern's `part` and `level` groups, tagged with its part, and each part's most detailed
 // Mesh the export holds: a scene places a part's levels together, and the finest of them is what its shape is fitted

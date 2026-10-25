@@ -1,6 +1,6 @@
 import type { SampleRegion } from "#src/models/genshinAssets/music/SampleRegion";
 
-import { InvalidOperationError, Operation } from "@esposter/shared";
+import { parseKey } from "#src/services/genshinAssets/music/parseKey";
 import { MIDI_VELOCITY_MAX } from "genshin-engine";
 import { posix } from "node:path";
 
@@ -11,19 +11,7 @@ const COMMENT_REGEX = /\/\*[\s\S]*?\*\/|\/\/.*$/gmu;
 // A header, or an opcode's name up to its `=`: a value runs to the next of either, since a sample's path may hold
 // Spaces
 const TOKEN_REGEX = /<(?<header>\w+)>|(?<opcode>\w+)=/gu;
-const NOTE_NAME_REGEX = /^(?<letter>[a-g])(?<accidental>[#b]?)(?<octave>-?\d+)$/iu;
-const NOTE_LETTER_SEMITONES: Record<string, number> = { a: 9, b: 11, c: 0, d: 2, e: 4, f: 5, g: 7 };
-// A key is a MIDI number or a note name, middle C being `c4`, 60
-const parseKey = (value: string): number => {
-  const groups = NOTE_NAME_REGEX.exec(value)?.groups;
-  const key = groups
-    ? 12 * (Number(groups.octave) + 1) +
-      (NOTE_LETTER_SEMITONES[groups.letter?.toLowerCase() ?? ""] ?? Number.NaN) +
-      (groups.accidental === "#" ? 1 : groups.accidental === "b" ? -1 : 0)
-    : Number(value);
-  if (!Number.isInteger(key)) throw new InvalidOperationError(Operation.Read, value, "not a key");
-  return key;
-};
+
 // An SFZ mapping's regions that a note plays: those triggered by its start whose keys hold a note, the first of any
 // Round robin, each sample's path joined to `default_path` under the mapping's own folder within its library. A layer
 // Crossfaded in or out by velocity answers the velocities where it is the louder of the two it fades between, from the

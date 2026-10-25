@@ -1,17 +1,15 @@
 import type { GroundLayerCellTile } from "#src/models/genshinAssets/fit/GroundLayerCellTile";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
-import type { TerrainSplatKind } from "#src/models/genshinAssets/world/TerrainSplatKind";
 import type { TerrainSplatLayer } from "#src/models/genshinAssets/world/TerrainSplatLayer";
 
 import { TerrainSplatKindGroundLayerMap } from "#src/services/genshinAssets/fit/TerrainSplatKindGroundLayerMap";
+import { checkIsTerrainSplatKind } from "#src/services/genshinAssets/fit/checkIsTerrainSplatKind";
 import { TERRAIN_PATH_DIFFUSE } from "#src/services/genshinAssets/shared/constants";
 import { readAssetNames } from "#src/services/genshinAssets/shared/readAssetNames";
 import { readTerrainSplats } from "#src/services/genshinAssets/world/readTerrainSplats";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GroundLayer } from "genshin-engine";
 
-const checkIsTerrainSplatKind = (kind: number): kind is TerrainSplatKind =>
-  Object.hasOwn(TerrainSplatKindGroundLayerMap, kind);
 // Each terrain tile of a part of the open world, by its column, name and row, with the ground layer every one of its
 // Cells is painted in, the cells a side, row by row along the game's z with its x within a row, as its heights run. A
 // Cell's layer is its splat layer's kind's, but for the stone the game paints its roads in, which is the path: its cells

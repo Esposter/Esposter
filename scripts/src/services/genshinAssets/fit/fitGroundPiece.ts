@@ -5,6 +5,7 @@ import type { TerrainResidualGrid } from "#src/models/genshinAssets/fit/TerrainR
 
 import { computeGroundBounds } from "#src/services/genshinAssets/fit/computeGroundBounds";
 import { computeLagDifference } from "#src/services/genshinAssets/fit/computeLagDifference";
+import { computeMisses } from "#src/services/genshinAssets/fit/computeMisses";
 import { computeTerrainDetail } from "#src/services/genshinAssets/fit/computeTerrainDetail";
 import { fitGaussianHills } from "#src/services/genshinAssets/fit/fitGaussianHills";
 import { fitTerrainCliffs } from "#src/services/genshinAssets/fit/fitTerrainCliffs";
@@ -15,6 +16,7 @@ import { fitTerrainRidges } from "#src/services/genshinAssets/fit/fitTerrainRidg
 import { mapTerrainResidualGrid } from "#src/services/genshinAssets/fit/mapTerrainResidualGrid";
 import { readGroundFootprints } from "#src/services/genshinAssets/fit/readGroundFootprints";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
+import { selectBarSamples } from "#src/services/genshinAssets/fit/selectBarSamples";
 import { smoothTerrainGrid } from "#src/services/genshinAssets/fit/smoothTerrainGrid";
 import { GROUND_GATE_SAMPLES } from "#src/services/genshinAssets/shared/constants";
 import { computeExtentGap } from "#src/services/genshinAssets/world/computeExtentGap";
@@ -24,16 +26,6 @@ import { computeMean } from "#src/services/recreation/statistics/computeMean";
 import { computeRootMeanSquare } from "#src/services/recreation/statistics/computeRootMeanSquare";
 import { createGaussianHillsHeight, createTerrainShapeHeight, sampleTerrainResidualFade } from "genshin-engine";
 import { regionGroundSchema } from "genshin-world";
-
-// The samples of a grid the bar and the gate are read on: every one the piece holds outside its cities
-const selectBarSamples = (grid: TerrainResidualGrid): Float64Array =>
-  grid.values.filter((sample) => Number.isFinite(sample));
-
-// What a ground misses by at each sample of a grid, the fit's samples or the piece's own ground the bar is read on
-const computeMisses = (
-  grid: TerrainResidualGrid,
-  getGroundHeight: (x: number, z: number) => number,
-): TerrainResidualGrid => mapTerrainResidualGrid(grid, (x, z, height) => height - getGroundHeight(x, z));
 
 // The distance between a piece's samples, and the distance from its centre a sample weighs half of one at the centre, in
 // Metres

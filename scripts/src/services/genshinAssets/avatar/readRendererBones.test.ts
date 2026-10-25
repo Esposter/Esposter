@@ -1,5 +1,5 @@
 import type { DumpedMesh } from "#src/models/genshinAssets/avatar/DumpedMesh";
-import type { SkinnedRenderer } from "#src/services/genshinAssets/avatar/readRendererBones";
+import type { SkinnedRenderer } from "#src/models/genshinAssets/avatar/SkinnedRenderer";
 
 import { readRendererBones } from "#src/services/genshinAssets/avatar/readRendererBones";
 import { describe, expect, test } from "vitest";

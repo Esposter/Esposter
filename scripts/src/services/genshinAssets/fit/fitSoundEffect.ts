@@ -1,8 +1,9 @@
 import type { SoundStart } from "#src/models/genshinAssets/sound/SoundStart";
-import type { StereoSoundBandPowers } from "#src/models/genshinAssets/sound/StereoSoundBandPowers";
 import type { SoundEffect } from "genshin-engine";
 
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
+import { sumBandPowers } from "#src/services/genshinAssets/fit/sumBandPowers";
+import { toLevels } from "#src/services/genshinAssets/fit/toLevels";
 import { SOUND_HOP_LENGTH, SOUND_SAMPLE_RATE } from "#src/services/genshinAssets/shared/constants";
 import { computeStereoSoundBandPowers } from "#src/services/genshinAssets/sound/computeStereoSoundBandPowers";
 import { readGameSoundEffect } from "#src/services/genshinAssets/sound/readGameSoundEffect";
@@ -11,17 +12,7 @@ import { computeSoundEffectSamples } from "genshin-engine";
 // A level is kept to five decimals, a hundred decibels under the loudest a sample holds, where the sound has died
 // Away; the effect ends at the last frame any of its noises holds above none
 const LEVEL_DECIMALS = 5;
-// Each band's power over every frame, both channels' own and the shared counted in each channel
-const sumBandPowers = ({ left, right, shared }: StereoSoundBandPowers): number[] =>
-  shared.reduce<number[]>(
-    (sums, bands, frame) =>
-      bands.map(
-        (power, band) => (sums[band] ?? 0) + 2 * power + (left[frame]?.[band] ?? 0) + (right[frame]?.[band] ?? 0),
-      ),
-    [],
-  );
-const toLevels = (frames: number[][], bandGains: number[]): number[][] =>
-  frames.map((bands) => bands.map((power, band) => Math.sqrt(power * (bandGains[band] ?? 1))));
+
 // A sound effect as noise of our own, from the game's sounds `genshin:assets sounds` matched: the sounds laid at their
 // Offsets in both channels as the game plays them (`readGameSoundEffect`), and the mix's powers read band by band and
 // Frame by frame as the shared noise and each channel's own (`computeStereoSoundBandPowers`), a level the root of its

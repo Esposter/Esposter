@@ -2,11 +2,8 @@ import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
 import type { DryRunOptions } from "#src/models/shared/DryRunOptions";
 
 import { mergeGameDataBuilds } from "#src/services/gameData/mergeGameDataBuilds";
+import { checkIsSelectedBy } from "#src/services/genshinAssets/fit/checkIsSelectedBy";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-
-// A name selects the fit it is, and every fit under it as a group, so `ground` selects each `ground/<area>`
-const checkIsSelectedBy = (name: string, selected: string): boolean =>
-  name === selected || name.startsWith(`${selected}/`);
 
 // A component's fits by name, each returning its report and the records it fits under their keys: every fit, or only
 // Those named, so one fit's change is published without every other record refitted, one after the other. A name no fit

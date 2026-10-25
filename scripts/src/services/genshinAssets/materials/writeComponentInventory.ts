@@ -1,25 +1,20 @@
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
+import { readNames } from "#src/services/genshinAssets/materials/readNames";
+import { readWorldTerrainSplats } from "#src/services/genshinAssets/materials/readWorldTerrainSplats";
 import { GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/constants";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import { readComponentMaterials } from "#src/services/genshinAssets/shared/readComponentMaterials";
 import { readSceneLayout } from "#src/services/genshinAssets/shared/readSceneLayout";
-import { readTerrainSplats } from "#src/services/genshinAssets/world/readTerrainSplats";
-import { readWorldOptions } from "#src/services/genshinAssets/world/readWorldOptions";
 import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
 import { getOrCreate } from "@esposter/shared";
-import { existsSync } from "node:fs";
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { basename, join } from "node:path";
 import sharp from "sharp";
 
 const CHANNEL_NAMES = ["R", "G", "B", "A"];
-const readNames = (directory: string): Promise<string[]> =>
-  existsSync(directory) ? readdir(directory) : Promise.resolve([]);
-// A component with no world of its own has no terrain tiles to read layers off
-const readWorldTerrainSplats = async (component: DerivedAssetComponent): ReturnType<typeof readTerrainSplats> =>
-  (await readWorldOptions(component)) ? readTerrainSplats(component) : [];
+
 // Everything a component's export holds, as a Markdown report beside it: each material's shader, texture slots and
 // Values, each texture's size and what each channel spans, each mesh's vertices and the materials its renderers draw it
 // With, each terrain tile's splat layers with the share of its cells each paints, and each shader the `shaders` step

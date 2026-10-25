@@ -1,15 +1,10 @@
+import type { RegionLandmarkData } from "#src/models/genshinAssets/scene/RegionLandmarkData";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 
 import { toRegionPlace } from "#src/services/genshinAssets/fit/toRegionPlace";
 import { readRegionLandmarkSources } from "#src/services/genshinAssets/shared/readRegionLandmarkSources";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-
-interface RegionLandmarkData {
-  heightOffset: number;
-  id: string;
-  position: { x: number; z: number };
-}
 
 // Each region landmark's root, where the scene stands it against where its export's root stands, in metres: the
 // Landmark's place and height as its component draws it (the ground at its spot plus its heightOffset), and the

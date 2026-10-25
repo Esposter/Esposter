@@ -1,5 +1,5 @@
+import type { RosterRenderer } from "#src/models/genshinAssets/avatar/RosterRenderer";
 import type { SceneObject } from "#src/models/genshinAssets/shared/SceneObject";
-import type { RosterRenderer } from "#src/services/genshinAssets/avatar/readAvatarRoster";
 
 import { readAvatarRoster } from "#src/services/genshinAssets/avatar/readAvatarRoster";
 import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";

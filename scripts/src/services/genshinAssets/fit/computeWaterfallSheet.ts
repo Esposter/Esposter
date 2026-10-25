@@ -1,18 +1,13 @@
 import type { WaterfallSheetRecord } from "#src/models/genshinAssets/fit/WaterfallSheetRecord";
 
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
+import { toPoint } from "#src/services/genshinAssets/fit/toPoint";
 import { Vector3 } from "three";
 
 // How far below its highest point a vertex may stand and still lie on the lip's edge, in metres: a centimetre, the
 // Precision every fitted number keeps
 const LIP_EDGE_TOLERANCE = 0.01;
 
-// A rounded negative zero is written as zero, so a point on an axis reads the same whichever way its sign fell
-const toPoint = ({ x, y, z }: Vector3): WaterfallSheetRecord["lip"] => ({
-  x: roundFitted(x) || 0,
-  y: roundFitted(y) || 0,
-  z: roundFitted(z) || 0,
-});
 // A waterfall's sheet read off its mesh's points in the world's axes: the centre of its highest edge as the lip, the unit
 // Direction across that edge on the ground, turned to face +x or else +z, the edge's length as its width and the mesh's
 // Height as its drop. A lip with no width has no direction across it, so it has no sheet

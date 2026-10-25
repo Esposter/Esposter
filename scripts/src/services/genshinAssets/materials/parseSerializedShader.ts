@@ -10,9 +10,8 @@ import type { SerializedSubShaderRecord } from "#src/models/genshinAssets/materi
 import { BinaryCursor } from "#src/models/genshinAssets/materials/BinaryCursor";
 import { ShaderProgramStage } from "#src/models/genshinAssets/materials/ShaderProgramStage";
 import { readSerializedBlobChunk } from "#src/services/genshinAssets/materials/readSerializedBlobChunk";
-import { readSerializedPass } from "#src/services/genshinAssets/materials/readSerializedPass";
 import { readShaderProperty } from "#src/services/genshinAssets/materials/readShaderProperty";
-import { skipTagMap } from "#src/services/genshinAssets/materials/skipTagMap";
+import { readSubShader } from "#src/services/genshinAssets/materials/readSubShader";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The blob's chunks by platform: Direct3D 11 for the earlier GPU program types, PlayStation 5 for the later ones, which
@@ -21,12 +20,6 @@ const PLATFORM_D3D11 = 4;
 const PLATFORM_PS5 = 23;
 const PS5_GPU_PROGRAM_TYPE_MIN = 26;
 
-const readSubShader = (cursor: BinaryCursor): SerializedSubShaderRecord => {
-  const passes = cursor.list(() => readSerializedPass(cursor));
-  skipTagMap(cursor);
-  cursor.int32();
-  return { passes };
-};
 // Reads a shader's raw export: its subshaders as the passes name their keywords and stage programs, then the blob that
 // Holds each program's container, which the programs' blob indices select within their platform's chunk
 export const parseSerializedShader = (data: Buffer): SerializedShader => {

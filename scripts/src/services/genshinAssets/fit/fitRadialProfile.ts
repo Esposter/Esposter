@@ -1,21 +1,9 @@
 import type { RadialProfile } from "#src/models/genshinAssets/fit/RadialProfile";
 
+import { fillEmptySectors } from "#src/services/genshinAssets/fit/fillEmptySectors";
 import { toRadialSector } from "#src/services/genshinAssets/fit/toRadialSector";
 import { computeMedian } from "#src/services/recreation/statistics/computeMedian";
 
-// The radius of the nearest sector that holds one, so a gap in a band's sampling is read across rather than as the axis
-const fillEmptySectors = (radii: readonly number[]): number[] =>
-  radii.map((radius, sector) => {
-    if (radius > 0) return radius;
-    for (let distance = 1; distance <= radii.length; distance++) {
-      const nearest = [
-        radii[(sector + distance) % radii.length],
-        radii[(sector - distance + radii.length) % radii.length],
-      ].find((candidate) => candidate !== undefined && candidate > 0);
-      if (nearest !== undefined) return nearest;
-    }
-    return radius;
-  });
 // A mesh's silhouette as a radial profile: its outermost radius about its vertical axis in each band of height and at
 // Each of `angleCount` sectors about it, which is what its outline against the sky shows, then runs of bands whose radii
 // Hold within a share of themselves at every sector merged into one section. The axis is the median of its bands'

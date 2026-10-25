@@ -2,8 +2,10 @@ import type { FittedStone } from "#src/models/genshinAssets/fit/FittedStone";
 import type { MaterialValues } from "#src/models/genshinAssets/shared/MaterialValues";
 import type { Vector } from "#src/models/shared/Vector";
 
-import { fitAlbedo } from "#src/services/genshinAssets/fit/fitAlbedo";
 import { LoginStoneFamilyMaterialRegexMap } from "#src/services/genshinAssets/fit/LoginStoneFamilyMaterialRegexMap";
+import { computeMeanValue } from "#src/services/genshinAssets/fit/computeMeanValue";
+import { computeVectorMean } from "#src/services/genshinAssets/fit/computeVectorMean";
+import { fitAlbedo } from "#src/services/genshinAssets/fit/fitAlbedo";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { readAssetNames } from "#src/services/genshinAssets/shared/readAssetNames";
 import { computeUpperMedian } from "#src/services/recreation/statistics/computeUpperMedian";
@@ -25,12 +27,7 @@ const RIM_STRENGTH_KEY = "_RGStrength";
 // `passes login --pass Light`): the frame holds about an eighth of the door's and the towers' glow, and the glow colour
 // Reads flat from none to an eighth, then climbs; a family not listed draws its materials' glow whole
 const GLOW_SCALES: Partial<Record<string, number>> = { door: 0.125, towers: 0.125 };
-const computeMeanValue = (values: readonly number[]): number =>
-  roundFitted(values.reduce((sum, value) => sum + value, 0) / Math.max(values.length, 1));
-const computeMean = (vectors: readonly Vector[]): Vector =>
-  ([0, 1, 2] as const).map((channel) =>
-    roundFitted(vectors.reduce((sum, vector) => sum + vector[channel], 0) / Math.max(vectors.length, 1)),
-  ) as Vector;
+
 // The stone each family of the login's parts is carved from, as its materials hold it (Login/Scene/Index.reference.ts,
 // Source `stoneShader`, whose programs do not decompile, so its properties are read, not its code): the median colour
 // Of the diffuse textures their slots draw (two materials may share one), the median smoothness of their masks\' red
@@ -86,11 +83,11 @@ export const fitLoginStone = async (
         {
           albedo: await fitAlbedo(diffusePaths),
           glowRange: computeMeanFloat("_EmissionRange"),
-          rimColor: computeMean(getColors("_RGColor")),
+          rimColor: computeVectorMean(getColors("_RGColor")),
           rimPower: computeMeanFloat("_RGPower"),
           rimStrength: roundFitted(computeMeanValue(rimStrengths) * (GLOW_SCALES[family] ?? 1)),
           smoothness: roundFitted(computeUpperMedian(smoothnesses.flat())),
-          specularColor: computeMean(getColors("_SpecColor")),
+          specularColor: computeVectorMean(getColors("_SpecColor")),
         },
       ] as const;
     }),

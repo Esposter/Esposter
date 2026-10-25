@@ -1,26 +1,12 @@
+import type { GcsimLoop } from "#src/models/genshinAssets/kits/gcsim/GcsimLoop";
 import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 
-import { evaluateGoNumber } from "#src/services/genshinAssets/kits/gcsim/evaluateGoNumber";
-import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
 import { readLessIndentedLines } from "#src/services/genshinAssets/kits/gcsim/readLessIndentedLines";
-import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
-
-export interface GcsimLoop {
-  count: number;
-  index: string;
-}
+import { readLoopCount } from "#src/services/genshinAssets/kits/gcsim/readLoopCount";
 
 const RANGE_HEADER_REGEX = /^\s*for\s+(?<index>\w+)\s*:=\s*range\s+(?<bound>.+?)\s*\{\s*$/u;
 const COUNTING_HEADER_REGEX =
   /^\s*for\s+(?<index>\w+)\s*:=\s*0\s*;\s*\k<index>\s*<\s*(?<bound>.+?)\s*;\s*\k<index>\s*\+\+\s*\{\s*$/u;
-
-// The count an expression of a loop's bound evaluates to, a whole number from zero, or none where the bound is not one
-const readLoopCount = (bound: string, resolveName: (name: string) => GoValue | undefined): number | undefined => {
-  const tokens = tokenizeGo(bound);
-  const { expression } = parseGoExpression(tokens, 0);
-  const value = evaluateGoNumber(expression, resolveName);
-  return value !== undefined && Number.isInteger(value) && value >= 0 ? value : undefined;
-};
 
 // The `for` loop a line sits in, found by scanning up to the nearest block opener above it, where the loop's header is a
 // Range over a whole count or a counting loop from zero. A less indented line that opens no block is the start of a

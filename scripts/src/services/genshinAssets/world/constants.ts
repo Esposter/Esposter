@@ -44,3 +44,5 @@ export const CITY_AREA_SUFFIX = "_City";
 // Every city area's extent, kept for one game version beside the exports and outside the repository
 export const CITY_AREA_FILE_PATH: string = join(PARITY_DIRECTORY, "city-areas.json");
 export const CITY_AREA_EXPORTS_DIRECTORY: string = join(PARITY_DIRECTORY, "city-areas", "exports");
+
+export const CITY_INDEX_SUFFIX = `${CITY_AREA_SUFFIX}${STREAM_INDEX_SUFFIX}`;

@@ -1,20 +1,12 @@
 import type { DecodedClip } from "#src/models/genshinAssets/shared/DecodedClip";
-import type { DecodedCurve } from "#src/models/genshinAssets/shared/DecodedCurve";
 
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { simplifyPath } from "#src/services/genshinAssets/fit/simplifyPath";
+import { toProperty } from "#src/services/genshinAssets/fit/toProperty";
 
 // A decoded clip's curve kept within this share of its own range, over its span, when its keyframes are simplified
 const KEYFRAME_TOLERANCE = 0.005;
-// The properties an interface clip moves, by the Unity property a curve drives: an alpha as opacity, a Transform's
-// Scale by its x, and an anchored position's offset in canvas units, its y running up the screen
-const toProperty = ({ component, property }: DecodedCurve): string => {
-  if (property === "m_Alpha" || property === "m_Color.a") return "opacity";
-  if (property === "scale" && component === "x") return "scale";
-  if (property === "m_AnchoredPosition.x") return "x";
-  if (property === "m_AnchoredPosition.y") return "y";
-  else return "";
-};
+
 // The interface clips a screen plays, from the component's decoded clips: each clip's span in milliseconds and a track
 // For each curve that sets an interface piece its tree names (a path, not a hash) in a property the screen draws,
 // Its keyframes simplified to where the curve bends, each an offset through the clip and a value

@@ -7,27 +7,11 @@ import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
 import { GO_MAX_LOOP_ITERATIONS } from "#src/services/genshinAssets/kits/constants";
 import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
 import { findClosing } from "#src/services/genshinAssets/kits/gcsim/findClosing";
+import { readRangedElements } from "#src/services/genshinAssets/kits/gcsim/readRangedElements";
+import { readTalentRowCount } from "#src/services/genshinAssets/kits/gcsim/readTalentRowCount";
 
 // The blank identifier, which a loop's variable may be and which names no value an iteration carries
 const GO_BLANK_IDENTIFIER = "_";
-
-// The rows of a talent variable's table: one more than the highest row any of its leaves names.
-// A variable the config names as one reference is one row of levels rather than a list of rows, so it has none
-const readTalentRowCount = (config: GcsimConfig, name: string): number | undefined => {
-  const leaves = config.talentVariables.find((variable) => variable.name === name)?.leaves;
-  if (leaves === undefined || leaves.length === 0 || leaves.some(({ path }) => path.length === 0)) return undefined;
-  return Math.max(...leaves.map(({ path: [row = 0] }) => row + 1));
-};
-
-// The elements a range runs once each over: a constant slice of numbers, else the rows of a talent table.
-// A talent table's rows are not numbers, and no constant gives them. Undefined where the range is neither
-const readRangedElements = (
-  slice: GoValue | undefined,
-  rowCount: number | undefined,
-): readonly unknown[] | undefined => {
-  if (Array.isArray(slice)) return slice.every((element) => typeof element === "number") ? slice : undefined;
-  return rowCount === undefined ? undefined : Array.from({ length: rowCount });
-};
 
 // The `for` loop opening at the position when it ranges over a constant slice of numbers, as in
 // `for i, delay := range burstHitmarks {`, or over a talent table, as in `for i, mult := range burstWhiteInitial {`.

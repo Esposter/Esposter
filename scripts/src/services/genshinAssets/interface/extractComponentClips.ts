@@ -1,9 +1,10 @@
 import type { ExportedAnimationClip } from "#src/models/genshinAssets/interface/ExportedAnimationClip";
-import type { SceneTreeNode } from "#src/models/genshinAssets/scene/SceneTreeNode";
 import type { DecodedClip } from "#src/models/genshinAssets/shared/DecodedClip";
 import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { InterfaceNode } from "#src/models/genshinAssets/shared/InterfaceNode";
 
+import { collectInterfacePaths } from "#src/services/genshinAssets/interface/collectInterfacePaths";
+import { collectScenePaths } from "#src/services/genshinAssets/interface/collectScenePaths";
 import { createClipNameResolver } from "#src/services/genshinAssets/interface/createClipNameResolver";
 import { decodeAnimationClip } from "#src/services/genshinAssets/interface/decodeAnimationClip";
 import { composeSceneTree } from "#src/services/genshinAssets/scene/composeSceneTree";
@@ -21,15 +22,7 @@ import { join } from "node:path";
 
 // The rate a clip's curves are sampled at, the game's frame rate, which a Web Animations timeline plays as keyframes
 const CLIP_SAMPLE_RATE = 60;
-// Every path in a tree, each node's named from the root down
-const collectInterfacePaths = (node: InterfaceNode): string[] => [
-  node.path,
-  ...node.children.flatMap((child) => collectInterfacePaths(child)),
-];
-const collectScenePaths = ({ children, object }: SceneTreeNode, father = ""): string[] => {
-  const path = father ? `${father}/${object.name}` : object.name;
-  return [path, ...children.flatMap((child) => collectScenePaths(child, path))];
-};
+
 // A component's animation clips, decoded: every clip whose name its map's pattern matches is exported as JSON from the
 // Blocks holding it, its curves decoded and sampled, and each binding named where its CRC32 resolves, a property
 // Against Unity's names and a path against the component's interface tree (written by `interface`, if it has run) and

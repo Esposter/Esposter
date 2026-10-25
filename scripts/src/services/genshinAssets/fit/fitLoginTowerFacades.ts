@@ -1,24 +1,26 @@
 import type { FacadeGrid } from "#src/models/genshinAssets/fit/FacadeGrid";
 import type { FacadeLayer } from "#src/models/genshinAssets/fit/FacadeLayer";
-import type { Texture } from "#src/models/genshinAssets/fit/Texture";
 import type { TowerFacade } from "#src/models/genshinAssets/fit/TowerFacade";
 import type { TowerSlab } from "#src/models/genshinAssets/fit/TowerSlab";
 import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
 import type { Vector } from "#src/models/shared/Vector";
 
+import { LoginStoneFamilyMaterialRegexMap } from "#src/services/genshinAssets/fit/LoginStoneFamilyMaterialRegexMap";
 import { classifyFacadeCells } from "#src/services/genshinAssets/fit/classifyFacadeCells";
+import { computeCellMean } from "#src/services/genshinAssets/fit/computeCellMean";
 import { findCellComponents } from "#src/services/genshinAssets/fit/findCellComponents";
 import { findCellRectangles } from "#src/services/genshinAssets/fit/findCellRectangles";
 import { fitAlbedo } from "#src/services/genshinAssets/fit/fitAlbedo";
 import { fitLatheProfile } from "#src/services/genshinAssets/fit/fitLatheProfile";
-import { LoginStoneFamilyMaterialRegexMap } from "#src/services/genshinAssets/fit/LoginStoneFamilyMaterialRegexMap";
+import { getTexel } from "#src/services/genshinAssets/fit/getTexel";
 import { mergeFacadeBands } from "#src/services/genshinAssets/fit/mergeFacadeBands";
 import { rasterizeTopFaces } from "#src/services/genshinAssets/fit/rasterizeTopFaces";
 import { readLevelOfDetailParts } from "#src/services/genshinAssets/fit/readLevelOfDetailParts";
+import { readOptionalTexture } from "#src/services/genshinAssets/fit/readOptionalTexture";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
 import { sampleFacadeGrid } from "#src/services/genshinAssets/fit/sampleFacadeGrid";
 import { simplifyPath } from "#src/services/genshinAssets/fit/simplifyPath";
-import { toTexel } from "#src/services/genshinAssets/fit/toTexel";
+import { toShade } from "#src/services/genshinAssets/fit/toShade";
 import { traceCellLoops } from "#src/services/genshinAssets/fit/traceCellLoops";
 import {
   TOWER_BAND_HEIGHT,
@@ -35,25 +37,10 @@ import {
 import { readAssetNames } from "#src/services/genshinAssets/shared/readAssetNames";
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
 import { computeUpperMedian } from "#src/services/recreation/statistics/computeUpperMedian";
-import { BYTE } from "#src/services/shared/constants";
 import { toLinear } from "#src/services/shared/toLinear";
-import { existsSync } from "node:fs";
 import { join } from "node:path";
-import sharp from "sharp";
 import { Color } from "three";
 
-const readTexture = (path: string): Promise<Texture | undefined> =>
-  existsSync(path) ? sharp(path).raw().toBuffer({ resolveWithObject: true }) : Promise.resolve(undefined);
-const getTexel = ({ data, info }: Texture, uv: readonly [number, number], channel: number): number => {
-  const [column, row] = toTexel(uv, info);
-  return (data[(row * info.width + column) * info.channels + channel] ?? 0) / BYTE;
-};
-const computeMean = (colors: readonly Vector[], cells: readonly number[]): Vector =>
-  ([0, 1, 2] as const).map(
-    (channel) => cells.reduce((sum, cell) => sum + (colors[cell]?.[channel] ?? 0), 0) / Math.max(cells.length, 1),
-  ) as Vector;
-const toShade = (mean: Vector, base: Vector): Vector =>
-  ([0, 1, 2] as const).map((channel) => roundFitted(mean[channel] / (base[channel] || 1))) as Vector;
 // Each login tower's surface as the game paints and carves it, read off its finest mesh unrolled round its own axis,
 // The way the scene's lathe stands it: each cell of the unrolled surface keeps the face standing farthest out over it,
 // Its material's diffuse colour and metal there, and how far in from its band's wall it stands. What the lathe
@@ -84,8 +71,8 @@ export const fitLoginTowerFacades = async (
     // oxlint-disable-next-line no-await-in-loop -- one tower's textures are read at a time
     const materialTextures = await Promise.all(
       materialNames.map(async (name) => ({
-        diffuse: await readTexture(join(textureDirectory, `${name}_Diffuse.png`)),
-        mask: await readTexture(join(textureDirectory, `${name}_SMBE.png`)),
+        diffuse: await readOptionalTexture(join(textureDirectory, `${name}_Diffuse.png`)),
+        mask: await readOptionalTexture(join(textureDirectory, `${name}_SMBE.png`)),
       })),
     );
     // oxlint-disable-next-line no-await-in-loop -- one mesh of tens of thousands of vertices is read at a time
@@ -206,7 +193,7 @@ export const fitLoginTowerFacades = async (
       if (!bandCells) continue;
       unmergedBands.push({
         from: roundFitted(band * bandRows * paint.cellSize),
-        shade: toShade(computeMean(paint.colors, bandCells), stone),
+        shade: toShade(computeCellMean(paint.colors, bandCells), stone),
         to: roundFitted(Math.min((band + 1) * bandRows, paint.height) * paint.cellSize),
       });
     }
@@ -233,7 +220,7 @@ export const fitLoginTowerFacades = async (
       });
     const toLayer = (layerCells: readonly number[]): FacadeLayer => ({
       loops: trace(layerCells),
-      shade: toShade(computeMean(paint.colors, layerCells), stone),
+      shade: toShade(computeCellMean(paint.colors, layerCells), stone),
     });
     facades[tower] = {
       bands,

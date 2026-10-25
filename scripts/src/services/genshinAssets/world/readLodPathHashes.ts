@@ -1,7 +1,7 @@
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/constants";
 import { LOD_INFO_MAP_NAME } from "#src/services/genshinAssets/world/constants";
-import { exportNamedRaw } from "#src/services/genshinAssets/world/exportWorldStreams";
+import { exportNamedRaw } from "#src/services/genshinAssets/world/exportNamedRaw";
 import { parseLodInfoMap } from "#src/services/genshinAssets/world/parseLodInfoMap";
 import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
 import { InvalidOperationError, Operation } from "@esposter/shared";

@@ -1,27 +1,12 @@
 import type { WikiAdvancedProperty } from "#src/models/genshinAssets/kits/wiki/WikiAdvancedProperty";
 
+import { readTemplateBody } from "#src/services/genshinAssets/kits/wiki/readTemplateBody";
+
 const TEMPLATE_START = "{{Advanced Properties";
 const PARAMETER_REGEX = /^(?<field>[a-z]+?)(?<row>\d*)$/u;
 const GAUGE_REGEX = /^(?<units>\d+(?:\.\d+)?)U$/u;
 const NUMBER_REGEX = /^\d+(?:\.\d+)?$/u;
 const HEADING_REGEX = /^;\s*(?<name>\S.*?)\s*$/u;
-
-// The template's text from its opening braces to its closing ones, nested templates and all
-const readTemplateBody = (wikitext: string, start: number): string => {
-  let depth = 0;
-  for (let index = start; index < wikitext.length - 1; index++) {
-    const pair = wikitext.slice(index, index + 2);
-    if (pair === "{{") {
-      depth++;
-      index++;
-    } else if (pair === "}}") {
-      depth--;
-      index++;
-      if (depth === 0) return wikitext.slice(start + 2, index - 1);
-    }
-  }
-  return wikitext.slice(start + 2);
-};
 
 // The rows of every `{{Advanced Properties}}` template on a wiki talent page, numbered on from one template to the
 // Next: each row's `titleN`, `guN`, `icdtagN` and `poiseN`, the first row's written with no number. A template under a

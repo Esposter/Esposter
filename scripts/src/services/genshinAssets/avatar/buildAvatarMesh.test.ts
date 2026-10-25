@@ -1,7 +1,7 @@
 import type { DumpedMesh } from "#src/models/genshinAssets/avatar/DumpedMesh";
 
 import { buildAvatarMesh } from "#src/services/genshinAssets/avatar/buildAvatarMesh";
-import { createAvatarBinary } from "#src/services/genshinAssets/avatar/writeAvatarBinary";
+import { createAvatarBinary } from "#src/services/genshinAssets/avatar/createAvatarBinary";
 import { describe, expect, test } from "vitest";
 
 describe(buildAvatarMesh, () => {

@@ -1,5 +1,6 @@
 import type { CityArea } from "#src/models/genshinAssets/world/CityArea";
 import type { CityAreaCandidate } from "#src/models/genshinAssets/world/CityAreaCandidate";
+import type { ExportRequest } from "#src/models/genshinAssets/world/ExportRequest";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/constants";
@@ -11,12 +12,6 @@ import { toCityArea } from "#src/services/genshinAssets/world/toCityArea";
 import { runAnimeStudioBelowNormal } from "#src/services/recreation/animeStudio/runAnimeStudioBelowNormal";
 import { readFile, rm } from "node:fs/promises";
 import { join } from "node:path";
-
-interface ExportRequest {
-  block: string;
-  names: Set<string>;
-  type: AssetType;
-}
 
 // Every candidate's blob and index exported raw, one AnimeStudio run per block and type so each block is read once,
 // Then each blob's placements read and its extent taken. Only the StreamGen blobs and their indexes are exported

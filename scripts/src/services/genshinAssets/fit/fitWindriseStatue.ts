@@ -1,21 +1,19 @@
 import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
-import type { AssetPlacement } from "#src/models/genshinAssets/shared/AssetPlacement";
 import type { Vector } from "#src/models/shared/Vector";
-import type { StatuePart, StatueStack } from "genshin-engine";
+import type { StatuePart } from "genshin-engine";
 
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { createNearestColourReader } from "#src/services/genshinAssets/fit/createNearestColourReader";
 import { fitStatueComponent } from "#src/services/genshinAssets/fit/fitStatueComponent";
-import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
+import { roundStack } from "#src/services/genshinAssets/fit/roundStack";
 import { sampleMeshSurface } from "#src/services/genshinAssets/fit/sampleMeshSurface";
 import { sampleSurfaceTexture } from "#src/services/genshinAssets/fit/sampleSurfaceTexture";
 import { splitMeshComponents } from "#src/services/genshinAssets/fit/splitMeshComponents";
+import { toMatrix } from "#src/services/genshinAssets/fit/toMatrix";
 import {
   MAIN_COLOUR_PROPERTY,
-  ROTATION_DECIMALS,
   STATUE_COLOUR_NEAREST_COUNT,
-  STATUE_DECIMALS,
   STATUE_FIGURE_MESH_REGEX,
   STATUE_FIT_SAMPLE_COUNT,
   STATUE_FIT_SEED,
@@ -30,33 +28,13 @@ import { readComponentPlacements } from "#src/services/genshinAssets/shared/read
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
 import { toDiffusePath } from "#src/services/genshinAssets/shared/toDiffusePath";
 import { toRightHanded } from "#src/services/genshinAssets/shared/toRightHanded";
-import { toRightHandedRotation } from "#src/services/genshinAssets/shared/toRightHandedRotation";
 import { BYTE } from "#src/services/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { createSeededRandom } from "genshin-engine";
 import { join } from "node:path";
 import sharp from "sharp";
-import { Color, Matrix4, Quaternion, SRGBColorSpace, Vector3 } from "three";
+import { Color, SRGBColorSpace, Vector3 } from "three";
 
-// A placement's transform in three's axes
-const toMatrix = ({ position, rotation, scale }: Pick<AssetPlacement, "position" | "rotation" | "scale">): Matrix4 =>
-  new Matrix4().compose(
-    new Vector3(...toRightHanded(position)),
-    new Quaternion(...toRightHandedRotation(rotation)),
-    new Vector3(...scale),
-  );
-const roundStatue = (value: number): number => roundFitted(value, STATUE_DECIMALS);
-// A stack as the data file keeps it: its places, heights and radii to the millimetre, its turn to the ten-thousandth
-const roundStack = ({ position, rotation, sections }: StatueStack): StatueStack => ({
-  position: position.map((value) => roundStatue(value)),
-  rotation: rotation.map((value) => Math.round(value * ROTATION_DECIMALS) / ROTATION_DECIMALS),
-  sections: sections.map(({ centre, colors, height, radii }) => ({
-    centre: centre.map((value) => roundStatue(value)),
-    colors,
-    height: roundStatue(height),
-    radii: radii.map((value) => roundStatue(value)),
-  })),
-});
 // The Statue of The Seven as the statue kit's stacks in its frame, its root at the origin and unturned, so the Landmark's
 // Place and turn set it down. Every statue mesh is taken into that frame by its placement and split into the pieces its
 // Triangles join into, and each piece is fitted as one upright stack or as blades along their own lengths, whichever

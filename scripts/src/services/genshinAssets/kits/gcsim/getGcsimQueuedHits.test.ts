@@ -3,7 +3,7 @@ import {
   GCSIM_ODETTE_FIXTURE_DIRECTORY,
 } from "#src/services/genshinAssets/kits/gcsim/constants.test";
 import { evaluateGoConstants } from "#src/services/genshinAssets/kits/gcsim/evaluateGoConstants";
-import { findQueuedAttack } from "#src/services/genshinAssets/kits/gcsim/getGcsimQueuedHits";
+import { findQueuedAttack } from "#src/services/genshinAssets/kits/gcsim/findQueuedAttack";
 import { readGcsimAttacks } from "#src/services/genshinAssets/kits/gcsim/readGcsimAttacks";
 import { readGcsimQueuedAttacks } from "#src/services/genshinAssets/kits/gcsim/readGcsimQueuedAttacks";
 import { readFileSync } from "node:fs";

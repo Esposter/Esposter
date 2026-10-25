@@ -11,7 +11,7 @@ import { addGcsimHitmarkHits } from "#src/services/genshinAssets/kits/gcsim/addG
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimHitbox } from "#src/services/genshinAssets/kits/gcsim/findGcsimHitbox";
 import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
-import { findQueuedAttack } from "#src/services/genshinAssets/kits/gcsim/getGcsimQueuedHits";
+import { findQueuedAttack } from "#src/services/genshinAssets/kits/gcsim/findQueuedAttack";
 import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 import { toGoNumbers } from "#src/services/genshinAssets/kits/gcsim/toGoNumbers";
 import { SKILL_TARGETING_AREA } from "genshin-world";

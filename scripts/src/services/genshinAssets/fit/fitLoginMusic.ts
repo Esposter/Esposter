@@ -1,8 +1,8 @@
 import type { ComponentPlaylist } from "#src/models/genshinAssets/shared/ComponentPlaylist";
-import type { Instrument, Music, MusicSegment } from "genshin-engine";
-import type { Except } from "type-fest";
+import type { Music, MusicSegment } from "genshin-engine";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { roundInstrument } from "#src/services/genshinAssets/fit/roundInstrument";
 import { fitMusicSource } from "#src/services/genshinAssets/shared/fitMusicSource";
 import { fitVoiceNoises } from "#src/services/genshinAssets/shared/fitVoiceNoises";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
@@ -14,29 +14,6 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { AUDIO_SAMPLE_RATE } from "pitch-transcription";
 
-// A fitted instrument as `music.json` holds it, with no recordings yet: the solve that layers them over it is run
-// Against our render of it afterwards (`genshin:parity instruments`)
-const roundInstrument = ({
-  attack,
-  decay,
-  harmonics,
-  level,
-  noiseBands,
-  release,
-  sustain,
-  tuning,
-}: Except<Instrument, "recordingLevel" | "recordings">): Instrument => ({
-  attack: roundMusic(attack),
-  decay: roundMusic(decay),
-  harmonics: harmonics.map((harmonic) => roundMusic(harmonic)),
-  level: roundMusic(level),
-  noiseBands: noiseBands.map((noiseBand) => roundMusic(noiseBand)),
-  recordingLevel: 0,
-  recordings: [],
-  release: roundMusic(release),
-  sustain: roundMusic(sustain),
-  tuning: roundMusic(tuning),
-});
 // The login's music as our own: its playlist as `playlist` exported it, each segment's sources transcribed, their notes
 // Split by register into voices, each voice's instrument fitted to the source it was heard in (`fitMusicVoices`), and
 // The voices' noise solved together since no note sounds alone. A clip's notes move into its segment's time, where its

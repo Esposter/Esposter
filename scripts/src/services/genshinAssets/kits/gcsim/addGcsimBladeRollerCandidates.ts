@@ -1,48 +1,16 @@
 import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
-import type { GcsimHitbox } from "#src/models/genshinAssets/kits/gcsim/GcsimHitbox";
 import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/GcsimKitCandidateWriter";
-import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
 
-import { GcsimHitboxCenter } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxCenter";
-import { GcsimHitboxShape } from "#src/models/genshinAssets/kits/gcsim/GcsimHitboxShape";
 import { checkIsGoFloat } from "#src/services/genshinAssets/kits/gcsim/checkIsGoFloat";
+import { createBladeRollerHitbox } from "#src/services/genshinAssets/kits/gcsim/createBladeRollerHitbox";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimTalentLeaf } from "#src/services/genshinAssets/kits/gcsim/findGcsimTalentLeaf";
+import { readElement } from "#src/services/genshinAssets/kits/gcsim/readElement";
 import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
-import { toGoNumbers } from "#src/services/genshinAssets/kits/gcsim/toGoNumbers";
+import { readPair } from "#src/services/genshinAssets/kits/gcsim/readPair";
 import { STRIKE_TARGETING_AREA } from "genshin-world";
 
 const BLADE_ROLLER_PATH = "stances.blessing.normalAttacks";
-
-// An element of a constant's list at an index, where the constant is a list
-const readElement = (value: GoValue | undefined, index: number): GoValue | undefined =>
-  Array.isArray(value) ? value[index] : undefined;
-
-// A pair of numbers, its two dimensions in order
-const readPair = (value: GoValue | undefined): [number, number] | undefined => {
-  const [first, second] = toGoNumbers(value) ?? [];
-  return first === undefined || second === undefined ? undefined : [first, second];
-};
-
-// A strike's hitbox from its two dimensions and its offset ahead of the body. gcsim's first and fourth strikes are fans,
-// A circle of radius and angle, and its second and third are boxes of width and length, each on the player
-const createBladeRollerHitbox = (
-  strikeIndex: number,
-  [first, second]: [number, number],
-  offsetY: number,
-  line: number,
-): GcsimHitbox => {
-  const base = {
-    center: GcsimHitboxCenter.Player,
-    file: "attack.go",
-    line,
-    name: `roller${strikeIndex + 1}`,
-    offset: [0, offsetY] as [number, number],
-  };
-  return strikeIndex === 0 || strikeIndex === 3
-    ? { ...base, fanAngle: second, radius: first, shape: GcsimHitboxShape.Circle }
-    : { ...base, box: [first, second], shape: GcsimHitboxShape.Box };
-};
 
 // The Blade Roller that plays Xilonen's normal attacks in her blessing: each of its four strikes is one hit at its own
 // Animation and hitmark from `rollerFrames`, its area from `rollerHitboxes` and `rollerOffsets`, its poise from

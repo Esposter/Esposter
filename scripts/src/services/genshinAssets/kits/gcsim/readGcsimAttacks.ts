@@ -1,141 +1,35 @@
-import type { ConstantLoop } from "#src/models/genshinAssets/kits/gcsim/ConstantLoop";
 import type { GcsimAttack } from "#src/models/genshinAssets/kits/gcsim/GcsimAttack";
-import type { GcsimAttackIteration } from "#src/models/genshinAssets/kits/gcsim/GcsimAttackIteration";
 import type { GcsimConfig } from "#src/models/genshinAssets/kits/gcsim/GcsimConfig";
 import type { GoConstant } from "#src/models/genshinAssets/kits/gcsim/GoConstant";
 import type { GoExpression } from "#src/models/genshinAssets/kits/gcsim/GoExpression";
 import type { GoSource } from "#src/models/genshinAssets/kits/gcsim/GoSource";
-import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
 
 import { GoExpressionKind } from "#src/models/genshinAssets/kits/gcsim/GoExpressionKind";
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
+import { checkIsFieldSet } from "#src/services/genshinAssets/kits/gcsim/checkIsFieldSet";
 import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
 import { createGoScope } from "#src/services/genshinAssets/kits/gcsim/createGoScope";
 import { evaluateGoExpression } from "#src/services/genshinAssets/kits/gcsim/evaluateGoExpression";
 import { getGoRootName } from "#src/services/genshinAssets/kits/gcsim/getGoRootName";
+import { getName } from "#src/services/genshinAssets/kits/gcsim/getName";
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
-import { readGoAliases, resolveGoAlias } from "#src/services/genshinAssets/kits/gcsim/readGoAliases";
+import { readCopySource } from "#src/services/genshinAssets/kits/gcsim/readCopySource";
+import { readGoAliases } from "#src/services/genshinAssets/kits/gcsim/readGoAliases";
 import { readGoBranchAt } from "#src/services/genshinAssets/kits/gcsim/readGoBranchAt";
 import { readConstantLoops } from "#src/services/genshinAssets/kits/gcsim/readGoConstantLoops";
 import { readGoLocalSlice } from "#src/services/genshinAssets/kits/gcsim/readGoLocalSlice";
 import { readGoNamedFunctions } from "#src/services/genshinAssets/kits/gcsim/readGoNamedFunctions";
 import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
+import { readGoStringConstants } from "#src/services/genshinAssets/kits/gcsim/readGoStringConstants";
+import { readIterationAt } from "#src/services/genshinAssets/kits/gcsim/readIterationAt";
 import { readReturnedFunction } from "#src/services/genshinAssets/kits/gcsim/readReturnedFunction";
-import { skipGoBrackets } from "#src/services/genshinAssets/kits/gcsim/skipGoBrackets";
+import { readVariableName } from "#src/services/genshinAssets/kits/gcsim/readVariableName";
+import { resolveGoAlias } from "#src/services/genshinAssets/kits/gcsim/resolveGoAlias";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
-
-const getName = (expression: GoExpression | undefined): string | undefined =>
-  expression?.kind === GoExpressionKind.Identifier ? expression.name : undefined;
-
-// The name a literal at the position is given to, by `:=` or `=`, `ai := info.AttackInfo{` or `c.skillAttackInfo =
-// Info.AttackInfo{`, read back past its qualified type. A literal a function returns takes that function's name, as a
-// Helper's does, `return info.AttackInfo{` in `func (c *char) a1AttackInfo()`
-const readVariableName = (tokens: readonly GoToken[], position: number): string | undefined => {
-  let start = position;
-  while (checkIsGoPunctuation(tokens[start - 1], ".") && tokens[start - 2]?.kind === GoTokenKind.Identifier) start -= 2;
-  if (tokens[start - 1]?.text === "return") return readFunctionName(tokens, start - 1);
-  return (checkIsGoPunctuation(tokens[start - 1], ":=") || checkIsGoPunctuation(tokens[start - 1], "=")) &&
-    tokens[start - 2]?.kind === GoTokenKind.Identifier
-    ? tokens[start - 2]?.text
-    : undefined;
-};
-
-// The name of the nearest function before the position, `a1AttackInfo` in `func (c *char) a1AttackInfo() info.AttackInfo {`
-const readFunctionName = (tokens: readonly GoToken[], position: number): string | undefined => {
-  let start = position;
-  while (start >= 0 && tokens[start]?.text !== "func") start--;
-  if (start < 0) return undefined;
-  const nameStart = checkIsGoPunctuation(tokens[start + 1], "(") ? skipGoBrackets(tokens, start + 1) : start + 1;
-  // A declaration's name opens its parameters; a closure's `func() info.AttackInfo {` has its result type there instead
-  return tokens[nameStart]?.kind === GoTokenKind.Identifier && checkIsGoPunctuation(tokens[nameStart + 1], "(")
-    ? tokens[nameStart]?.text
-    : undefined;
-};
-
-// The string each name of a file is set to, `c6Abil = "Boundless Origin (C6)"`, as an `Abil` names an attack by
-// A constant
-const readGoStringConstants = (tokens: readonly GoToken[]): Map<string, string> => {
-  const stringMap = new Map<string, string>();
-  for (const [position, token] of tokens.entries()) {
-    const value = tokens[position + 2];
-    if (
-      token.kind === GoTokenKind.Identifier &&
-      checkIsGoPunctuation(tokens[position + 1], "=") &&
-      value?.kind === GoTokenKind.String
-    )
-      stringMap.set(token.text, value.text.slice(1, -1));
-  }
-  return stringMap;
-};
-
-// Whether the tokens at the position are a struct copy of an attack variable, `aiC2 = ai` or `aiC2 := ai`, its source
-// Name ending its statement, which a `.` or a call or index on it would not
-const readCopySource = (tokens: readonly GoToken[], position: number): string | undefined => {
-  const source = tokens[position + 2];
-  const isCopy =
-    tokens[position]?.kind === GoTokenKind.Identifier &&
-    !checkIsGoPunctuation(tokens[position - 1], ".") &&
-    (checkIsGoPunctuation(tokens[position + 1], "=") || checkIsGoPunctuation(tokens[position + 1], ":=")) &&
-    source?.kind === GoTokenKind.Identifier &&
-    source.line === tokens[position]?.line &&
-    (tokens[position + 3] === undefined || tokens[position + 3]?.kind === GoTokenKind.Newline);
-  return isCopy ? source.text : undefined;
-};
-
-// Whether the field at the position is set on a variable, `ai.Mult = ...`: a `.` before the field, an `=` after it, and
-// An identifier two tokens back
-const checkIsFieldSet = (tokens: readonly GoToken[], position: number): boolean =>
-  checkIsGoPunctuation(tokens[position - 1], ".") &&
-  checkIsGoPunctuation(tokens[position + 1], "=") &&
-  tokens[position - 2]?.kind === GoTokenKind.Identifier;
 
 // The field an if on a constant loop's variable may set on a copy, by its gcsim name: the poise its hit deals in that
 // Iteration. Other fields an if sets are not read
 const ITERATION_POISE_FIELD = "PoiseDMG";
-
-// The position of the innermost block opened before the position and not yet closed, the `{` of the scope it sits in
-const findEnclosingOpen = (tokens: readonly GoToken[], position: number): number | undefined => {
-  let depth = 0;
-  for (let cursor = position - 1; cursor >= 0; cursor--)
-    if (checkIsGoPunctuation(tokens[cursor], "}")) depth++;
-    else if (checkIsGoPunctuation(tokens[cursor], "{")) {
-      if (depth === 0) return cursor;
-      depth--;
-    }
-  return undefined;
-};
-
-// The iteration an if around the position puts it in: the innermost block it sits in opened by `if i == 0 {`, where `i`
-// Is a constant loop's variable around the position and `0` a whole number, else Undefined
-const readIterationAt = (
-  tokens: readonly GoToken[],
-  position: number,
-  loops: readonly ConstantLoop[],
-): GcsimAttackIteration | undefined => {
-  const open = findEnclosingOpen(tokens, position);
-  if (open === undefined) return undefined;
-  const [ifToken, variableToken, operatorToken, valueToken] = [
-    tokens[open - 4],
-    tokens[open - 3],
-    tokens[open - 2],
-    tokens[open - 1],
-  ];
-  const value = Number(valueToken?.text);
-  if (
-    ifToken?.text !== "if" ||
-    variableToken?.kind !== GoTokenKind.Identifier ||
-    !checkIsGoPunctuation(operatorToken, "==") ||
-    valueToken?.kind !== GoTokenKind.Number ||
-    !Number.isInteger(value)
-  )
-    return undefined;
-  const variable = variableToken.text;
-  const isLoopVariable = loops.some(
-    ({ bodyEnd, bodyStart, iterations }) =>
-      bodyStart < position && position < bodyEnd && iterations.some((iteration) => iteration.has(variable)),
-  );
-  return isLoopVariable ? { value, variable } : undefined;
-};
 
 // The `AttackInfo` literals of a gcsim character's action files, each field read from the literal as written: its tags,
 // Element by their gcsim names, its durability and poise evaluated through the package's constants, and

@@ -1,5 +1,8 @@
 import { AnimeStudioGroupType } from "#src/models/genshinAssets/shared/AnimeStudioGroupType";
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
+import { getBox } from "#src/services/genshinAssets/fit/getBox";
+import { shiftSubpath } from "#src/services/genshinAssets/fit/shiftSubpath";
+import { splitSubpaths } from "#src/services/genshinAssets/fit/splitSubpaths";
 import { GENSHIN_ANIMESTUDIO_OPTIONS, INSTALLED_BLOCKS_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { traceImage } from "#src/services/genshinParity/shared/traceImage";
 import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
@@ -23,22 +26,6 @@ const TITLE_LOGO_SPRITES: { latinRegion?: [number, number, number, number]; logo
   { latinRegion: [195, 516, 448, 59], logo: "Japanese", sprite: "Logo_JPN_Pure" },
   { latinRegion: [301, 536, 228, 94], logo: "Korean", sprite: "Logo_KOR_Pure" },
 ];
-const NUMBER_REGEX = /-?\d+(?:\.\d+)?/gu;
-const splitSubpaths = (path: string): string[] =>
-  path
-    .split(/(?=M )/u)
-    .map((subpath) => subpath.trim())
-    .filter(Boolean);
-const getBox = (subpath: string): { bottom: number; left: number; right: number; top: number } => {
-  const numbers = Array.from(subpath.matchAll(NUMBER_REGEX), ([value]) => Number(value));
-  const xs = numbers.filter((_value, index) => index % 2 === 0);
-  const ys = numbers.filter((_value, index) => index % 2 === 1);
-  return { bottom: Math.max(...ys), left: Math.min(...xs), right: Math.max(...xs), top: Math.min(...ys) };
-};
-const shiftSubpath = (subpath: string, x: number, y: number): string => {
-  let index = 0;
-  return subpath.replaceAll(NUMBER_REGEX, (value) => String(Number(value) + (index++ % 2 === 0 ? x : y)));
-};
 
 // Each title logo as one filled path on the sprites' shared canvas at the trace's scale, by its `TitleLogo`: its sprite
 // Exported from the installed game into the component's folder, flattened on black since it is white on transparency,

@@ -1,11 +1,12 @@
 import type { Vector } from "#src/models/shared/Vector";
 
+import { toCellKey } from "#src/services/genshinAssets/fit/toCellKey";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { Color } from "three";
 
 // The side of the cells the points are hashed into, five centimetres, a statue's section apart
 const CELL_METRES = 0.05;
-const toCellKey = (x: number, y: number, z: number): string => `${x},${y},${z}`;
+
 // The colour a surface takes at any point near it, read off coloured points spread over it: the mean, in linear light,
 // Of the `nearestCount` points nearest, returned as a packed sRGB hex. The points are hashed into a grid and the cells
 // Round a point searched a shell at a time, until the nearest found lies within every shell searched

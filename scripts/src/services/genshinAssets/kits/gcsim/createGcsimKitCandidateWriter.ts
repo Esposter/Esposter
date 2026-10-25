@@ -1,32 +1,28 @@
+import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimCharacter";
 import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/GcsimKitCandidateWriter";
-import type { GoValue } from "#src/models/genshinAssets/kits/gcsim/GoValue";
-import type { KitCandidate } from "#src/models/genshinAssets/kits/KitCandidate";
 import type { KitTables } from "#src/models/genshinAssets/kits/tables/KitTables";
 
-import { GcsimMultiplierKey } from "#src/models/genshinAssets/kits/gcsim/GcsimMultiplierKey";
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { KitRule } from "#src/models/genshinAssets/kits/KitRule";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
+import { GcsimMultiplierKey } from "#src/models/genshinAssets/kits/gcsim/GcsimMultiplierKey";
 import { addKitCandidate } from "#src/services/genshinAssets/kits/candidates/addKitCandidate";
 import {
   GCSIM_CHARACTERS_PATH,
   GCSIM_DURABILITY_PER_GAUGE,
   GCSIM_NO_INTERNAL_COOLDOWN_TAG,
 } from "#src/services/genshinAssets/kits/constants";
-import { checkIsGoFloat } from "#src/services/genshinAssets/kits/gcsim/checkIsGoFloat";
-import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { GcsimAttackTagLunarReactionTypeMap } from "#src/services/genshinAssets/kits/gcsim/GcsimAttackTagLunarReactionTypeMap";
 import { GcsimTalentTypeCombatTalentMap } from "#src/services/genshinAssets/kits/gcsim/GcsimTalentTypeCombatTalentMap";
+import { checkIsGoFloat } from "#src/services/genshinAssets/kits/gcsim/checkIsGoFloat";
+import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { joinGcsimVariableTalentArray } from "#src/services/genshinAssets/kits/gcsim/joinGcsimVariableTalentArray";
+import { readFirstGoFrames } from "#src/services/genshinAssets/kits/gcsim/readFirstGoFrames";
 import { readGcsimTalentParameter } from "#src/services/genshinAssets/kits/gcsim/readGcsimTalentParameter";
 import { toGcsimArea } from "#src/services/genshinAssets/kits/gcsim/toGcsimArea";
 import { toGcsimElement } from "#src/services/genshinAssets/kits/gcsim/toGcsimElement";
 import { toGcsimInternalCooldownTag } from "#src/services/genshinAssets/kits/gcsim/toGcsimInternalCooldownTag";
-
-// The first frames of a constant's list, descending through each level's first element
-const readFirstGoFrames = (value: GoValue | undefined): GoValue | undefined =>
-  Array.isArray(value) ? readFirstGoFrames(value[0]) : value;
 
 // The writer of one gcsim character's values into a kit's candidate map, each cited at the file and line it is read from
 export const createGcsimKitCandidateWriter = (

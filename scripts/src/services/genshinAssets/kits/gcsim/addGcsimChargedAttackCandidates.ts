@@ -7,9 +7,9 @@ import {
   NO_ACTION_FILE_CLAYMORE_CHARGED_ANIMATION_FRAMES,
   NO_ACTION_FILE_CLAYMORE_CHARGED_HITMARK_FRAMES,
 } from "#src/services/genshinAssets/kits/constants";
-import { checkIsChargedAttackVariantAttack } from "#src/services/genshinAssets/kits/gcsim/addGcsimChargedAttackVariantCandidates";
 import { addGcsimHitmarkHits } from "#src/services/genshinAssets/kits/gcsim/addGcsimHitmarkHits";
 import { addGcsimQueuedHits } from "#src/services/genshinAssets/kits/gcsim/addGcsimQueuedHits";
+import { checkIsChargedAttackVariantAttack } from "#src/services/genshinAssets/kits/gcsim/checkIsChargedAttackVariantAttack";
 import { checkIsGoFloat } from "#src/services/genshinAssets/kits/gcsim/checkIsGoFloat";
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
 import { findGcsimHitbox } from "#src/services/genshinAssets/kits/gcsim/findGcsimHitbox";

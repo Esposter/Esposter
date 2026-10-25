@@ -1,8 +1,9 @@
-import type { SceneTreeNode } from "#src/models/genshinAssets/scene/SceneTreeNode";
 import type { SubCommandsDef } from "citty";
 
 import { SceneTreeFlag } from "#src/models/genshinAssets/scene/SceneTreeFlag";
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { findNodes } from "#src/services/genshinAssets/commands/findNodes";
+import { pruneNode } from "#src/services/genshinAssets/commands/pruneNode";
 import { RegionCapitalMap } from "#src/services/genshinAssets/fit/RegionCapitalMap";
 import { composeSceneTree } from "#src/services/genshinAssets/scene/composeSceneTree";
 import { formatSceneTree } from "#src/services/genshinAssets/scene/formatSceneTree";
@@ -15,14 +16,6 @@ import { selectArchitectureInView } from "#src/services/genshinAssets/world/sele
 import { selectLostArchitectureInView } from "#src/services/genshinAssets/world/selectLostArchitectureInView";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
-
-// Every node named so at any depth, or the node itself when it is
-const findNodes = (node: SceneTreeNode, name: string): SceneTreeNode[] =>
-  node.object.name === name ? [node] : node.children.flatMap((child) => findNodes(child, name));
-const pruneNode = (node: SceneTreeNode, depth: number): SceneTreeNode => ({
-  ...node,
-  children: depth > 0 ? node.children.map((child) => pruneNode(child, depth - 1)) : [],
-});
 
 export const treeCommand: SubCommandsDef[string] = defineCommand({
   args: {
