@@ -1,22 +1,12 @@
-import type { Filters, GameObjects } from "phaser";
+import type { CameraMask } from "@/composables/dungeons/camera/CameraMask";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { useSkippableAnimation } from "@/composables/dungeons/animation/useSkippableAnimation";
+import { removeCameraMask } from "@/composables/dungeons/camera/removeCameraMask";
 import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
 import { Geom, Math } from "phaser";
 
-interface CameraMask {
-  graphics: GameObjects.Graphics;
-  mask: Filters.Mask;
-}
-
 const maskMap = new WeakMap<SceneWithPlugins, CameraMask>();
-
-const removeCameraMask = (scene: SceneWithPlugins, { graphics, mask }: CameraMask) => {
-  scene.cameras.main.filters.internal.remove(mask);
-  graphics.destroy();
-  maskMap.delete(scene);
-};
 
 export const useRectangleCameraMask = (scene: SceneWithPlugins) =>
   useSkippableAnimation(
@@ -36,6 +26,7 @@ export const useRectangleCameraMask = (scene: SceneWithPlugins) =>
           height: { ease: Math.Easing.Expo.InOut, ...getTweenRange(0, height) },
           onComplete: () => {
             removeCameraMask(scene, { graphics, mask });
+            maskMap.delete(scene);
             resolve();
           },
           onUpdate: () => {
