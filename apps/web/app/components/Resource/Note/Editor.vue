@@ -4,6 +4,7 @@ import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensi
 import { useInsertNoteImages } from "@/composables/resource/note/useInsertNoteImages";
 import { useNoteSlashExtension } from "@/composables/resource/note/useNoteSlashExtension";
 import { useNoteStore } from "@/store/resource/note";
+import { ResourceType } from "@esposter/db-schema";
 import { FileHandler } from "@tiptap/extension-file-handler";
 import { EditorContent, useEditor } from "@tiptap/vue-3";
 
