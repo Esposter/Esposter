@@ -1,16 +1,12 @@
 <script setup lang="ts">
-import type { MemberActionTarget } from "@/models/message/member/MemberActionTarget";
+import type { MemberActionDialogProps } from "@/models/message/member/MemberActionDialogProps";
 
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { useMemberStore } from "@/store/message/user/member";
 
-interface Props extends MemberActionTarget {
-  roomId: string;
-}
-
 const isOpen = defineModel<boolean>({ default: false });
-const { displayName, roomId, user } = defineProps<Props>();
+const { displayName, roomId, user } = defineProps<MemberActionDialogProps>();
 const { $trpc } = useNuxtApp();
 const memberStore = useMemberStore();
 const { storeUpdateMembers } = memberStore;

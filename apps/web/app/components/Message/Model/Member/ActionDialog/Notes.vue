@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { MemberActionTarget } from "@/models/message/member/MemberActionTarget";
+import type { MemberActionDialogProps } from "@/models/message/member/MemberActionDialogProps";
 
 import { createModerationNoteInputSchema } from "#shared/models/db/moderation/CreateModerationNoteInput";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
@@ -10,12 +10,8 @@ import { UiRules } from "@/services/ui/UiRules";
 import { useModerationNoteStore } from "@/store/message/moderation/note";
 import { MODERATION_NOTE_MAX_LENGTH } from "@esposter/db-schema";
 
-interface Props extends MemberActionTarget {
-  roomId: string;
-}
-
 const isOpen = defineModel<boolean>({ default: false });
-const { displayName, roomId, user } = defineProps<Props>();
+const { displayName, roomId, user } = defineProps<MemberActionDialogProps>();
 const { $trpc } = useNuxtApp();
 const noteRules = [UiRules.maxLength(MODERATION_NOTE_MAX_LENGTH)];
 const { readModerationNotes, readMoreModerationNotes } = useReadModerationNotes(roomId, () => user.id);

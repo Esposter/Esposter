@@ -1,16 +1,13 @@
 <script setup lang="ts">
-import type { MemberActionTarget } from "@/models/message/member/MemberActionTarget";
+import type { MemberActionDialogProps } from "@/models/message/member/MemberActionDialogProps";
 
 import { MemberDialogType } from "@/models/message/user/MemberDialogType";
 import { AdminActionType } from "@esposter/db-schema";
 
-interface Props extends MemberActionTarget {
-  roomId: string;
-}
 // The dialog one of a member's actions opened. The row mounts this only while one is open, so closing it is clearing
 // Which one it is
 const type = defineModel<MemberDialogType>("type");
-const { displayName, roomId, user } = defineProps<Props>();
+const { displayName, roomId, user } = defineProps<MemberActionDialogProps>();
 const isOpen = computed({
   get: () => Boolean(type.value),
   set: (newIsOpen) => {
