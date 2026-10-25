@@ -4,12 +4,12 @@
 
 ## 2. Characters' kits
 
-- [ ] 2.1 Write each playable character without a kit as its own module, from the character kits index. Verify: tests named after the scenarios 'a character with its own kit fights by it' and 'a character without a kit of its own fights by the Traveler's kit', seen failing first.
+- [x] 2.1 Write each playable character without a kit as its own module, from the character kits index. Verify: tests named after the scenarios 'a character with its own kit fights by it' and 'a character without a kit of its own fights by the Traveler's kit', seen failing first.
 - [x] 2.2 Build Nefer's kit from her game records and the wiki, frames and areas provisional until a recording measures them. Verify: a test named after the scenario 'Nefer's elemental skill uses her own hits', seen failing first.
 
 ## 3. Passives
 
-- [ ] 3.1 Add each passive to its character's module, taking effect at the phase its talent table names. Verify: tests named after the scenarios 'a passive takes effect at its ascension phase' and 'a passive does not take effect below its ascension phase', seen failing first.
+- [x] 3.1 Add each passive to its character's module, taking effect at the phase its talent table names. Verify: tests named after the scenarios 'a passive takes effect at its ascension phase' and 'a passive does not take effect below its ascension phase', seen failing first.
 
 ## 4. Heals and swaps
 
