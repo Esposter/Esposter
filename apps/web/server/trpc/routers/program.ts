@@ -31,7 +31,9 @@ export const programRouter = router({
     ResourceType.Program,
     z.object({ ...resourceIdInputSchema.shape, scope: z.enum(ProgramInviteScope) }),
     "id",
-  ).query<ProgramInvites>(({ ctx, input }) => readProgramInvites(ctx, ctx.resource, input.scope)),
+  )
+    .meta({ humanOnly: "The one read that carries participant tokens, which only the owner hands out" })
+    .query<ProgramInvites>(({ ctx, input }) => readProgramInvites(ctx, ctx.resource, input.scope)),
   // Owner-only and deliberately never a dataset — keyValue answers "who hasn't answered yet",
   // Which is blade work, not chart work.
   // Projected down to what the blade renders: the join's publicId is the dataset's identity and nothing on

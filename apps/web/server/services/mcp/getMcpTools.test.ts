@@ -3,8 +3,11 @@ import type { AnyProcedure, AnyRouter } from "@trpc/server";
 
 import { getMcpTools } from "#server/services/mcp/getMcpTools";
 import { publicProcedure, router } from "#server/trpc";
+import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { trpcRouter } from "#server/trpc/routers";
 import { McpScope, McpScopes } from "#shared/models/auth/McpScope";
+import { ResourceType } from "@esposter/db-schema";
+import { uncapitalize } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
@@ -97,6 +100,32 @@ describe(getMcpTools, () => {
     });
 
     expect(getMcpTools(humanOnlyRouter)).toStrictEqual([]);
+  });
+
+  // A type's own procedure, one its factory did not generate, decides what a key may do: a description serves it to the
+  // Agent, and a human-only reason keeps it from every key. The type's router is found by its name, and the factory's
+  // Procedures by calling the factory for the type, so a procedure a type adds fails here until its author decides
+  test("every type-specific procedure declares its key access", () => {
+    expect.hasAssertions();
+
+    const anyRouter: AnyRouter = trpcRouter;
+    const undeclaredPaths = Object.values(ResourceType).flatMap((type) => {
+      const typePrefix = `${uncapitalize(type)}.`;
+      const factoryProcedureNames = Object.keys(createResourceProcedures(type));
+      return Object.entries<AnyProcedure>(anyRouter._def.procedures)
+        .filter(([path, { _def }]) => {
+          const { humanOnly, mcp } = (_def.meta ?? {}) as Meta;
+          return (
+            path.startsWith(typePrefix) &&
+            !factoryProcedureNames.includes(path.slice(typePrefix.length)) &&
+            !humanOnly &&
+            !mcp
+          );
+        })
+        .map(([path]) => path);
+    });
+
+    expect(undeclaredPaths).toStrictEqual([]);
   });
 
   // Turning the dots to underscores would merge `a_b.c` with `a.b_c`, and a client lists the one name twice
