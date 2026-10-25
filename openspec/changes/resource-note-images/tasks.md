@@ -4,7 +4,7 @@
 
 ## 2. Insertion
 
-- [ ] 2.1 Add the Image button, paste and drop, each uploading through the shared upload path. Verify: tests named after the scenarios 'Choosing an image from the menu adds it to the note', 'Pasting an image adds it to the note' and 'Dropping an image file onto the note adds it'.
+- [x] 2.1 Add the Image button, paste and drop, each uploading through the shared upload path. Verify: tests named after the scenarios 'Choosing an image from the menu adds it to the note', 'Pasting an image adds it to the note' and 'Dropping an image file onto the note adds it'.
 - [x] 2.2 Refuse an image that the owner's storage quota cannot hold. Verify: a test named after the scenario 'An image over the storage quota is refused'.
 - [x] 2.3 Store each added image at a stable resource address, shared by the editor, the render and the validator. Verify: a test named after the scenario 'An added image still shows after the note is saved and reopened'.
 
