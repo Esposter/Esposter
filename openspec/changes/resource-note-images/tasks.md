@@ -14,5 +14,5 @@
 
 ## 4. Published view and layout
 
-- [ ] 4.1 Allow an image in the published note only from a resource asset address, keeping its alt and title. Verify: tests named after the scenarios 'A published note shows its own image' and 'A published note drops an image from another site'.
+- [x] 4.1 Allow an image in the published note only from a resource asset address, keeping its alt and title. Verify: tests named after the scenarios 'A published note shows its own image' and 'A published note drops an image from another site'.
 - [ ] 4.2 Cap an image at the column width in the rich-text typography. Verify: a test named after the scenario 'A wide image is capped at the column width'.

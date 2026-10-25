@@ -5,6 +5,7 @@ import { HTML_NAMESPACE, MAX_NESTING_DEPTH, NON_TEXT_TAGS, VOID_TAGS } from "#sr
 import { escapeAttribute } from "#src/services/sanitizeHtml/escapeAttribute";
 import { escapeText } from "#src/services/sanitizeHtml/escapeText";
 import { filterAttributes } from "#src/services/sanitizeHtml/filterAttributes";
+import { checkIsSourceAllowed } from "#src/services/sanitizeHtml/checkIsSourceAllowed";
 import { getChildNodes } from "#src/services/sanitizeHtml/getChildNodes";
 
 // Renders a parsed node as the markup it is allowed to be. Anything the policy does not name is unwrapped to its text,
@@ -20,7 +21,8 @@ export const renderNode = (node: DefaultTreeAdapterTypes.ChildNode, policy: Sani
   const isAllowed =
     element.namespaceURI === HTML_NAMESPACE &&
     !NON_TEXT_TAGS.includes(element.tagName) &&
-    policy.allowedTags.includes(element.tagName);
+    policy.allowedTags.includes(element.tagName) &&
+    checkIsSourceAllowed(element, policy.allowedSources);
   if (!isAllowed) return NON_TEXT_TAGS.includes(element.tagName) ? "" : children;
 
   const attributes = Object.entries(filterAttributes(element, policy))

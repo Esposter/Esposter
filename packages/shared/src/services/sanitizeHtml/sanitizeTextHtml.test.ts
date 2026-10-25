@@ -94,4 +94,35 @@ describe(sanitizeTextHtml, () => {
       ),
     ).toBe(`<pre><code class="language-ts"><span class="hljs-keyword"></span></code></pre>`);
   });
+
+  // An allowance adds its image only from the source it names, so a caller's image from anywhere else is dropped
+  test("keeps an allowed image whose source matches its pattern", () => {
+    expect.hasAssertions();
+
+    expect(
+      sanitizeTextHtml(`<img src="/a/a" alt="a">`, {
+        allowedAttributes: { img: ["alt", "src"] },
+        allowedSources: { img: { src: [/^\/a\//u] } },
+        allowedTags: ["img"],
+      }),
+    ).toBe(`<img src="/a/a" alt="a">`);
+  });
+
+  test("drops an allowed image whose source matches no pattern", () => {
+    expect.hasAssertions();
+
+    expect(
+      sanitizeTextHtml(`<img src="https://a" alt="a">`, {
+        allowedAttributes: { img: ["alt", "src"] },
+        allowedSources: { img: { src: [/^\/a\//u] } },
+        allowedTags: ["img"],
+      }),
+    ).toBe("");
+  });
+
+  test("drops an image the allowance does not name", () => {
+    expect.hasAssertions();
+
+    expect(sanitizeTextHtml(`<img src="/a/a" alt="a">`)).toBe("");
+  });
 });

@@ -50,6 +50,7 @@ export const sanitizeHtml = (html: string, options?: SanitizeHtmlOptions): strin
     },
     allowedClasses: options?.allowedClasses ?? {},
     allowedSchemes: DEFAULT_ALLOWED_SCHEMES,
+    allowedSources: options?.allowedSources ?? {},
     allowedStyles: { ...options?.allowedStyles, ...TABLE_ALLOWED_STYLES },
     allowedTags: options?.allowedTags ?? DEFAULT_ALLOWED_TAGS,
     transformAttributes: {
