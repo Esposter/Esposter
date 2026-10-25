@@ -23,6 +23,7 @@ describe("knockerRouter", () => {
   let callSessionCaller: DecorateRouterRecord<TRPCRouter["callSession"]>;
   let knockerCaller: DecorateRouterRecord<TRPCRouter["callSession"]["knocker"]>;
   const nonExistentCallSessionId = createId(CALL_ID_LENGTH);
+  const renamedKnockerName = "Renamed knocker";
   // Admitting and dismissing share the one doorkeeper guard; the gate whose message does not name the action is
   // Asserted once for both, the two that do stay written out (`testing` skill, error assertions)
   const doorkeeperMutations = [
@@ -64,16 +65,20 @@ describe("knockerRouter", () => {
     );
   });
 
+  // The same device knocking again after renaming itself: the entry it left behind is replaced, so the doorkeeper
+  // reads the name it knocked with last rather than the one it knocked with first
   test("knockCall overwrites the existing entry on a duplicate knock", async () => {
     expect.hasAssertions();
 
     const { callSessionId } = await callSessionCaller.createCall();
     const sessionPayload = await mockSessionOnce(mockContext.db);
     await knockerCaller.knockCall({ id: callSessionId });
-    replayMockSession(sessionPayload);
+    replayMockSession({ session: sessionPayload.session, user: { ...sessionPayload.user, name: renamedKnockerName } });
     await knockerCaller.knockCall({ id: callSessionId });
 
-    expect(callKnockerMap.get(callSessionId)?.size).toBe(1);
+    const knockerMap = callKnockerMap.get(callSessionId);
+    expect(knockerMap?.size).toBe(1);
+    expect(knockerMap?.get(sessionPayload.session.id)?.name).toBe(renamedKnockerName);
   });
 
   test("the last participant leaving dismisses the pending knockers", async () => {
