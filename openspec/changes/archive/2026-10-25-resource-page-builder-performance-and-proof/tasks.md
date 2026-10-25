@@ -24,10 +24,10 @@
 ## 4. Output proof
 
 - [x] 4.1 Assert each type's output whole across its edge values, and assert the sanitiser's vectors on the raw-HTML types. Verify: tests named after the scenarios 'A type's output matches for every edge value' and 'A hostile markup vector in custom HTML is removed'.
-- [ ] 4.2 Bound the MJML root's and the documents' strings in the shared schema, and make the bounds guard skip only the opaque subschema rather than the whole procedure. Verify: tests named after the scenarios 'An unbounded string beside an opaque document fails the guard' and 'The MJML root's strings are bounded'.
-  - Owed, not written: the bounds on the MJML root's and the documents' strings, and the guard change. Nothing here has been checked against the schema.
+- [x] 4.2 Bound the MJML root's and the documents' strings in the shared schema, and make the bounds guard skip only the opaque subschema rather than the whole procedure. Verify: tests named after the scenarios 'An unbounded string beside an opaque document fails the guard' and 'The MJML root's strings are bounded'.
+  - Done in `d89870dcf7`: the guard skips only an opaque subschema, and no procedure is exempt whole. The MJML schemas bound their attribute values, names, content, root props and children; the webpage and email nodes bound their ids, text, markup and URLs; the document bounds its content. The guard's own test runs over every procedure, and the two named tests are the opaque skip's fixture and `email.compile`'s root.
 
 ## 5. The record
 
 - [ ] 5.1 Record each target with the bench or test that holds it as built, then archive this change. Verify: `pnpm -C scripts exec vitest run src/workspace/citations.test.ts src/workspace/openspecLinks.test.ts src/services/openspec` passes.
-  - Owed, not run: the record is the as-built design, and this verify has not run on the archiving commit. The four unticked tasks above stay owed with it.
+  - Owed, run and failing: `citations.test.ts` reports 28 cited paths that do not exist and `openspecLinks.test.ts` 2 relative links that do not resolve. Most name this change's and the style panel's pre-archive paths under `openspec/changes/` in the quality and security ledgers, which the archive move left stale; the rest name other moved files, such as `ResourceSubscribablesMap.ts`, `scripts/src/sweeps/commands.bench.*` and `openspec/specs/keyframe-store/`. Repairing them is the ledger and archive sessions' sweep, not this change's record. The as-built record is the Performance table's Held by column. The browser tasks 1.1, 3.1, 3.2 and 3.3 stay owed with it, since each needs a browser run.
