@@ -23,12 +23,12 @@ const SURVEY_INVITE_NODE_TYPES = new Set(["survey-invite", "SurveyInvite"]);
 
 type StoredNode = Record<string, unknown>;
 
-const isRecord = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null;
+const checkIsRecord = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null;
 
 const isDeletedSurveyInvite = (node: StoredNode, deletedSurveyIds: Set<string>) =>
   typeof node.type === "string" &&
   SURVEY_INVITE_NODE_TYPES.has(node.type) &&
-  isRecord(node.props) &&
+  checkIsRecord(node.props) &&
   typeof node.props.surveyId === "string" &&
   deletedSurveyIds.has(node.props.surveyId);
 
@@ -36,11 +36,11 @@ const isDeletedSurveyInvite = (node: StoredNode, deletedSurveyIds: Set<string>) 
 // props.children, on a webpage and in an email alike, so one walk serves both trees
 const removeSurveyInvites = (nodes: unknown[], deletedSurveyIds: Set<string>): unknown[] =>
   nodes.flatMap((node) => {
-    if (!isRecord(node)) return [node];
+    if (!checkIsRecord(node)) return [node];
     if (isDeletedSurveyInvite(node, deletedSurveyIds)) return [];
 
     const { props } = node;
-    if (!isRecord(props) || !Array.isArray(props.children)) return [node];
+    if (!checkIsRecord(props) || !Array.isArray(props.children)) return [node];
 
     return [{ ...node, props: { ...props, children: removeSurveyInvites(props.children, deletedSurveyIds) } }];
   });
@@ -57,7 +57,7 @@ const removeSurveyInviteReferencesFromResource = async (
   const contentBlobName = getContentBlobName(id);
   const serializedContent = (await readJsonBlob(containerClient, contentBlobName))?.toString();
   const document: unknown = serializedContent === undefined ? undefined : JSON.parse(serializedContent);
-  if (isRecord(document) && Array.isArray(document.content)) {
+  if (checkIsRecord(document) && Array.isArray(document.content)) {
     const serializedNextContent = JSON.stringify({
       ...document,
       content: removeSurveyInvites(document.content, deletedSurveyIds),
