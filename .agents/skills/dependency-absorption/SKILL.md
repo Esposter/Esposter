@@ -5,7 +5,7 @@ description: Apply when replacing a third-party package with code of our own, re
 
 # Dependency Absorption
 
-How an absorption is run. Whether a package should be absorbed at all — the three costs, the admission test, the stop list, the register of verdicts with its score, what an adapter is, the standard and the triage verdicts — is `openspec/specs/architecture/dependency-admission/design.md`, and nothing here restates it.
+How an absorption is run. Whether a package should be absorbed at all — the costs, the admission test, the stop list, the register of verdicts with its score, what an adapter is, the standard and the triage verdicts — is `openspec/specs/architecture/dependency-admission/design.md`, and nothing here restates it.
 
 ## Settled — do not re-propose
 
