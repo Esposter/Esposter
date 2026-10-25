@@ -99,8 +99,8 @@ The read-change-save-retry loop is `updateResourceContent(ctx, resource, update,
 | `apps/web/shared/models/resource/note/NoteResource.ts`                | validates documents with the Note writing kit's schema                     |
 | `apps/web/shared/services/resource/note/getNoteExtensions.ts`         | the extension set shared by the Note editor, renderer and validator        |
 | `apps/web/shared/models/resource/survey/SurveyResource.ts`            | requires a serialized JSON object for a Survey model                       |
-| `apps/web/shared/models/webpageEditor/data/WebpageEditor.ts`          | marks captured HTML and CSS read-only                                      |
-| `apps/web/shared/models/emailEditor/data/EmailEditor.ts`              | marks captured HTML read-only                                              |
+| `apps/web/shared/models/webpageEditor/data/WebpageEditor.ts`          | marks the baked HTML read-only                                             |
+| `apps/web/shared/models/emailEditor/data/EmailEditor.ts`              | marks the baked HTML read-only                                             |
 
 ## Sources
 
