@@ -117,6 +117,8 @@ import { ReputationBountyOffer } from "#src/models/reputation/ReputationBountyOf
 import { ScreenKind } from "#src/models/screen/ScreenKind";
 import { ShortcutWheelDirectionCount } from "#src/models/shortcutWheel/ShortcutWheelDirectionCount";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";
+import { computeViewpointInteractables } from "#src/services/archive/computeViewpointInteractables";
+import { getViewpointInteractableId } from "#src/services/archive/getViewpointInteractableId";
 import { checkIsWeeklyBossEntryOpen } from "#src/services/bosses/checkIsWeeklyBossEntryOpen";
 import { EnemyKindMovesMap } from "#src/services/bosses/EnemyKindMovesMap";
 import { startBossMove } from "#src/services/bosses/startBossMove";
@@ -459,7 +461,7 @@ const {
   worldNow,
 });
 // The Archive's entries, the volumes it reads and the defeats it counts, opened by the bag, the quests and the defeats
-const { archiveData, bookReading, readBook } = useWorldArchive({
+const { archiveData, bookReading, offeredViewpoints, readBook, viewpointPlaceMap, viewViewpoint } = useWorldArchive({
   archiveKillsMap,
   archiveProgressMap,
   enemyKindMap: enemyTables.enemyKindMap,
@@ -1391,6 +1393,17 @@ const domainArenaInteractables = computed<Interactable[]>(() => {
       : []),
   ];
 });
+// The offered viewpoints, each a prompt on the ground beneath its place, named by its own name in the reader's language
+const viewpointInteractables = computed<Interactable[]>(() =>
+  archiveData.value
+    ? computeViewpointInteractables(
+        offeredViewpoints.value,
+        viewpointPlaceMap.value,
+        archiveData.value.textMap,
+        getGroundHeight,
+      )
+    : [],
+);
 const interactables = computed<Interactable[]>(() => {
   if (homeRealmVisit.value) return computeHomeRealmInteractables(gameText);
   // The Spiral Abyss's entrance is offered on the key as the Moon Spire's, standing provisionally at the centre of Cape Oath
@@ -1424,6 +1437,7 @@ const interactables = computed<Interactable[]>(() => {
     ...outcropInteractables.value,
     ...trounceBlossomInteractables.value,
     ...frostbearingTrees,
+    ...viewpointInteractables.value,
     abyssEntrance,
     ...computeStatueInteractables(unlockedLandmarks.value, gameText[GameTextKey.StatueWorship], getGroundHeight),
     ...lockedJumpLandmarks.value.map((landmark) =>
@@ -1780,6 +1794,9 @@ defineExpose({ jumpTo, readCameraPosition });
             const worldDrop = worldDrops.find(({ id }) => id === interactable?.id);
             const materialSource = materialSources.find(({ id }) => id === interactable?.id);
             const frostbearingTreePlace = frostbearingTreePlaces.find(({ id }) => id === interactable?.id);
+            const offeredViewpoint = offeredViewpoints.find(
+              ({ id }) => getViewpointInteractableId(id) === interactable?.id,
+            );
             const domainEntranceLandmark = unlockedDomainEntrances.find(({ id }) => id === interactable?.id);
             if (interactable?.kind === InteractionKind.PickUp && worldDrop) pickUpWorldDrop(worldDrop);
             else if (interactable?.kind === InteractionKind.PickUp && materialSource)
@@ -1798,6 +1815,8 @@ defineExpose({ jumpTo, readCameraPosition });
             else if (interactable?.kind === InteractionKind.Dig) digChestById(interactable.id);
             else if (interactable?.kind === InteractionKind.Activate && frostbearingTreePlace)
               offerFrostbearingTree(frostbearingTreePlace);
+            else if (interactable?.kind === InteractionKind.Activate && offeredViewpoint)
+              viewViewpoint(offeredViewpoint.id);
             else if (
               interactable?.kind === InteractionKind.Activate &&
               interactable.id === COOKING_STOVE_INTERACTABLE_ID
