@@ -5,7 +5,7 @@ export const TRES_CANVAS_NAME = "TresCanvas";
 export const TRES_PACKAGE_SCOPE = "@tresjs/";
 // The core's own components, which Vue resolves as components rather than as custom elements
 export const TRES_CORE_COMPONENT_NAMES: readonly string[] = [
-  "TresCanvas",
+  TRES_CANVAS_NAME,
   "TresCanvasContext",
   "TresLeches",
   "TresPortal",
