@@ -2,7 +2,7 @@
 
 ### Requirement: Each email part is drawn with its own content
 
-The design canvas SHALL draw each part of an email with the words or parts its content gives it, and SHALL NOT draw a part as a box labelled only with its type name.
+The design canvas SHALL draw each part of an email with the words or parts its content gives it, and SHALL NOT draw a part as a box labelled only with its type name, except a part whose content the canvas cannot show, such as a social row.
 
 #### Scenario: a button draws its own words
 
