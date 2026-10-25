@@ -1,4 +1,4 @@
-import { setupPluginSuite } from "#src/services/oxlint/setupPluginSuite.test";
+import { setupPluginSuite } from "#src/services/oxlint/shared/setupPluginSuite.test";
 import { describe } from "vitest";
 
 describe("piniaStore", () => {

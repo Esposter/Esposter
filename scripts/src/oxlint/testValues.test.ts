@@ -1,5 +1,5 @@
 /* oxlint-disable test-values/no-typed-date -- the fixtures spell the violations the rule reports */
-import { setupPluginSuite } from "#src/services/oxlint/setupPluginSuite.test";
+import { setupPluginSuite } from "#src/services/oxlint/shared/setupPluginSuite.test";
 import { describe } from "vitest";
 
 describe("testValues", () => {
