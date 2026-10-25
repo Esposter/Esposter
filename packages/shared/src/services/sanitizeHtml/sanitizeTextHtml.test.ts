@@ -125,4 +125,15 @@ describe(sanitizeTextHtml, () => {
 
     expect(sanitizeTextHtml(`<img src="/a/a" alt="a">`)).toBe("");
   });
+
+  // An allowance's entry for a tag the kit names adds to that tag's list, so the spoiler marker the kit keeps survives
+  test("adds an allowed attribute to a kit tag without dropping the kit's own", () => {
+    expect.hasAssertions();
+
+    expect(
+      sanitizeTextHtml(`<span data-spoiler="" data-extra="">text</span>`, {
+        allowedAttributes: { span: ["data-extra"] },
+      }),
+    ).toBe(`<span data-spoiler="" data-extra="">text</span>`);
+  });
 });
