@@ -1,0 +1,4 @@
+schema: spec-driven
+created: 2026-10-25
+affected_areas: [keyframe-store, resource, architecture]
+x-model: claude-haiku-5-5
