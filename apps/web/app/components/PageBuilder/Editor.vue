@@ -26,13 +26,14 @@ interface Props {
   resourceId: string;
 }
 
-const panelItems: UiTabItem<string>[] = [
+const { kind, resourceId } = defineProps<Props>();
+// The settings tabs the kind has content for: an email has no theme, so its tabs stop at content and style
+const panelItems = computed<UiTabItem<string>[]>(() => [
   { title: CONTENT_PANEL, value: CONTENT_PANEL },
   { title: STYLE_PANEL, value: STYLE_PANEL },
-  { title: THEME_PANEL, value: THEME_PANEL },
-];
+  ...(kind.editor === PageBuilderEditor.Email ? [] : [{ title: THEME_PANEL, value: THEME_PANEL }]),
+]);
 
-const { kind, resourceId } = defineProps<Props>();
 const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 const { getHeldDocument } = pageBuilderDocumentStore;
 // The document the resource holds under either kind, read through the kind the shell is given

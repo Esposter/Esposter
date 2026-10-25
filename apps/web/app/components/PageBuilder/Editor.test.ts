@@ -11,6 +11,7 @@ import {
   TEST_SECTION_ID,
   TEST_TEXT_CONTENT,
 } from "@/services/pageBuilder/constants.test";
+import { emailKind } from "@/services/pageBuilder/emailKind";
 import { parseClipboardNodes } from "@/services/pageBuilder/serializeClipboardNodes";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
@@ -50,6 +51,17 @@ describe("pageBuilderEditor", () => {
     );
     expect(component.find("iframe").exists()).toBe(true);
     expect(component.get('[role="tab"]').text()).toBe("Content");
+  });
+
+  test("an email's settings tabs leave out the theme, which an email has no controls for", async () => {
+    expect.hasAssertions();
+
+    const resourceId = crypto.randomUUID();
+    usePageBuilderDocumentStore().setEmailDocument(resourceId, emailKind, { content: [], root: { props: {} } });
+
+    const component = await mountSuspended(PageBuilderEditor, { props: { kind: emailKind, resourceId } });
+
+    expect(component.findAll('[role="tab"]').map((tab) => tab.text())).toStrictEqual(["Content", "Style"]);
   });
 
   test("A block can be moved with the keyboard alone", async () => {
