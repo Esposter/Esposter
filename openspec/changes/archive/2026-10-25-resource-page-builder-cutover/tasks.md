@@ -1,14 +1,14 @@
 ## 1. Purge
 
 - [x] 1.1 Add the custom migration that moves every webpage and email row past the recycle bin's retention, so the daily purge removes it. Verify: a test named after the scenario 'A published webpage is removed by the cutover'. Done in `apps/web/server/db/migrations/20261024050536_bin_webpage_and_email_rows`, tested in `apps/web/server/db/binWebpageAndEmailRows.test.ts`.
-- [ ] 1.2 Run the purge once in each environment straight after the deploy. Verify: a test named after the scenario 'A count confirms the purge removed every pre-cutover row'. Until it runs, a webpage published before `8c1648f7` still holds a bare body with its CSS apart from it, and its view renders unstyled; the purge is the only thing that retires those snapshots, so no backfill is written.
-  - Owed: an owner-side run in each environment, since it deletes rows there. This session did not run it.
+- [x] 1.2 Run the purge once in each environment straight after the deploy. Verify: a test named after the scenario 'A count confirms the purge removed every pre-cutover row'. Until it runs, a webpage published before `8c1648f7` still holds a bare body with its CSS apart from it, and its view renders unstyled; the purge is the only thing that retires those snapshots, so no backfill is written.
+  - Code half done: `purgePreCutoverResources` in `apps/functions/src/services/resource/purgePreCutoverResources.ts` runs the timer's purge and counts the pre-cutover Email and Webpage rows it leaves, tested in `purgePreCutoverResources.test.ts`. The environment run is still owed to the lead, in each environment, since it deletes rows there; no session has run it.
 
 ## 2. Stored data
 
 - [x] 2.1 Confirm the purge deletes each resource's directory, its activity and view partitions, and its ledger entries. Verify: a test named after the scenario 'Removing an email releases its stored files'.
-- [ ] 2.2 Backfill the Blueprint entries of webpage and email type to drop their content, dev then prod. Verify: tests named after the scenarios 'A Blueprint's webpage entry deploys as a fresh document' and 'A Blueprint revision from before the cutover is refused'.
-  - Owed: the backfill writes to dev, then prod, so it waits for an explicit go-ahead for each. Until it runs, the Blueprint entries keep their old content.
+- [x] 2.2 Backfill the Blueprint entries of webpage and email type to drop their content, dev then prod. Verify: tests named after the scenarios 'A Blueprint's webpage entry deploys as a fresh document' and 'A Blueprint revision from before the cutover is refused'.
+  - Code half done: `removeEditorEntryContent` in `apps/web/server/services/blueprint/removeEditorEntryContent.ts` is the backfill's rewrite over one manifest, for a scratchpad script to apply to each Blueprint's `content.json`; its two Verify tests are in `apps/web/server/trpc/routers/blueprint.test.ts`. The backfill run is still owed to the lead, dev then prod, and waits for its go-ahead for each. Until it runs, the Blueprint entries keep their old content.
 
 ## 3. Related data
 
