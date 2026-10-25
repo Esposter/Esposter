@@ -1,6 +1,6 @@
 ## 1. The command
 
-- [ ] 1.1 Offer Ask Claude in the toolbar and command palette of every resource type's editor. Verify: a test named after the scenario 'Ask Claude is available in any type's editor', failing first, then passing.
+- [x] 1.1 Offer Ask Claude in the toolbar and command palette of every resource type's editor. Verify: a test named after the scenario 'Ask Claude is available in any type's editor', failing first, then passing.
 - [x] 1.2 Send the person's line as a prompt to the session they pick, or to a new session in the folder they choose, with the resource named by id and type. Verify: a test named after the scenario 'The line reaches an open session', failing first, then passing; and the scenario 'A new session starts when none is open'.
 - [x] 1.3 Show the pairing steps when no host is paired, and send nothing. Verify: a test named after the scenario 'Pairing is explained when no host is paired', failing first, then passing.
 

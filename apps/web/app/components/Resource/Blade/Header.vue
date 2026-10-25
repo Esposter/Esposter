@@ -5,6 +5,7 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { exportDatasetCsv } from "@/services/dataset/exportDatasetCsv";
 import { getResourceBladeItems } from "@/services/resource/getResourceBladeItems";
 import { useResourceStore } from "@/store/resource";
@@ -25,12 +26,25 @@ const isPublishable = computed(() => checkHasCapability(resource.type, "publisha
 const isRenameOpen = ref(false);
 const isShareOpen = ref(false);
 const isDeleteOpen = ref(false);
+const isAskClaudeOpen = ref(false);
 // What the delete confirmation asks about, for the warning of what it leaves dangling
 const ids = computed(() => [resource.id]);
 // The panel opens from here rather than from the editor, because Sheet and TodoList are blade-only types with
 // No editor at all — the header is the one surface every type has. See openspec/specs/resource/resource-snapshots/design.md
 const { openVersionHistory } = useVersionHistoryRoute();
 const { exportFormats, importFormats } = usePortableFormats(() => resource);
+// Ask Claude is every type's, registered here because every type has this header: a line to a Claude Code session
+useCommands(() => [
+  {
+    group: ResourceDefinitionMap[resource.type].title,
+    id: "ask-claude",
+    meaning: UiIconMeaning.Terminal,
+    run: () => {
+      isAskClaudeOpen.value = true;
+    },
+    title: "Ask Claude",
+  },
+]);
 // Every command but the lead one, in the overflow menu on every width and on a right-click of the title, so the two
 // Never disagree. Delete comes last, alone, in the danger colour
 const items = computed<Item[]>(() =>
@@ -86,12 +100,20 @@ const items = computed<Item[]>(() =>
           Publish
         </UiButton>
       </template>
+      <UiIconButton
+        aria-haspopup="dialog"
+        label="Ask Claude"
+        :meaning="UiIconMeaning.Terminal"
+        :variant="UiButtonVariant.Quiet"
+        @click="isAskClaudeOpen = true"
+      />
       <ResourceFavoriteToggle :resource />
       <UiOverflowMenu :items label="Resource actions" />
       <ResourceCloseButton />
     </div>
     <ResourceRenameDialog v-if="isRenameOpen" v-model="isRenameOpen" :rename="renameResource" :resource />
     <ResourceShareDialog v-if="isShareOpen" v-model="isShareOpen" :resource />
+    <ResourceAskClaudeDialog v-if="isAskClaudeOpen" v-model="isAskClaudeOpen" :resource />
     <UiConfirmDialog
       v-model="isDeleteOpen"
       confirm-label="Delete"
