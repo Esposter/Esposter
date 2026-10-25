@@ -77,6 +77,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Resource file assets](resource-file-assets/design.md) — the FileAssets capability: hosted binary assets, the webpage share image among them
 - [Storage quotas](storage-quotas/design.md) — per-user blob allowance held at SAS issuance and charged by Storage's own `BlobCreated` event, with a usage bar in the explorer shell's header
 - [Webpage survey invite](webpage-survey-invite-blocks/design.md) — a published survey as an invite-button node in the page builder
+- [Page builder canvas](page-builder/canvas/design.md) — the frame a page is drawn in at its device widths, with its overlays and the pointer, keyboard and layers paths that move its nodes
 - [Page builder document model](page-builder/document-model/design.md) — the webpage and email documents as typed node trees, their registries, the webpage renderer and the server's strict email compile
 - [Page builder undo as patches](page-builder/undo-as-patches/design.md) — each open resource's undo and redo as JSON Patch operations with their inverses, one entry per interaction, cleared on reload
 

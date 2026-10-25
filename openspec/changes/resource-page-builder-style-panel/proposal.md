@@ -24,7 +24,7 @@ Each node carries its own styles, edited in a panel of library controls, with th
 
 ## Waiting on
 
-- `openspec/changes/resource-page-builder-canvas/`, which draws the page, its device widths and the Style and Theme tabs.
+- `openspec/specs/resource/page-builder/canvas/`, which draws the page, its device widths and the Style and Theme tabs.
 
 ## Impact
 

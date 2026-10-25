@@ -22,7 +22,7 @@ The editors and their output meet measured targets, and every type's output and 
 
 ## Waiting on
 
-- `openspec/changes/resource-page-builder-canvas/`, whose canvas the box and mark tests run against.
+- `openspec/specs/resource/page-builder/canvas/`, whose canvas the box and mark tests run against.
 - `openspec/changes/resource-page-builder-email/`, whose email canvas and compile service the email proof and bench measure.
 
 ## Impact
