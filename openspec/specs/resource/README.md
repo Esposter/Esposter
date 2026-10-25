@@ -56,6 +56,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Note slash menu](note-slash-menu/design.md) — `/` opens a filterable block menu at the caret, drawn by the editor on the composer's suggestion stack
 - [Blueprint resource](blueprint-resource/design.md) — a parameterized manifest of resources: deploy one blueprint, get a fully wired set with all the right cross-references
 - [Blueprint capture](blueprint-capture/design.md) — Save as blueprint on selected resources: contents captured, cross-resource ids rewritten to aliases automatically
+- [Blueprint portability](blueprint-portability/design.md) — a blueprint's manifest exports to and imports from a `.json` file on its overflow menu, an import filling the Editor as unsaved text that only Save commits
 - [Survey response controls](survey-response-controls/design.md) — the accepting-responses toggle and the closed state that keeps participant links alive
 - [Survey response modes](survey-response-modes/design.md) — Anonymous or Identified identity, enforced at the write boundary
 - [Survey response summary](survey-response-summary/design.md) — the Responses blade opens on one chart, range or answer list per question
