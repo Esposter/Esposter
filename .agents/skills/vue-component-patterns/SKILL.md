@@ -22,7 +22,7 @@ How an individual component is written, typed and named. Assembling a page or li
 
 Cross-product chrome is a small set of shared components in `apps/web/app/components/Ui/` (the UI library) and `apps/web/app/components/App/` (app-chrome) — **reuse them, never re-roll a bare toolbar per editor.** Their design and rationale live in `openspec/specs/resource/shell-cohesion/design.md`.
 
-The `resource` layout's page header, `UiEmptyState`, `UiSkeleton` and `AppBreadcrumbs` are the set; what each is for, and what a new product or editor wires up (its page's header, a launcher entry), is that page. A search of its own is a scope of the one command palette (`.agents/skills/ui-library/references/keys-and-commands.md`).
+The `resource` layout's page header, `UiEmptyState`, `UiSkeleton` and `AppBreadcrumbs` are the set; what each is for, and what a new product or editor wires up (its page's header, a launcher entry), is that page. A search of its own is a scope of the one command palette (the `ui-library` skill, `references/keys-and-commands.md`).
 
 ## Same Level of Abstraction
 
@@ -42,7 +42,7 @@ A map dispatching a component by type puts every entry in its importer's chunk, 
 
 ## Boolean Props — `is` Prefix + Default-Aware Literal Typing
 
-- **`is` prefix.** Boolean props read as a question: `isDense`, `isInteractive`, `isOpen` — never bare `dense` / `interactive` / `open`, and never `can*` / `should*` (prefer `is`, fall back to `has` — `.agents/skills/naming/SKILL.md`, "Booleans"). The same applies to `defineModel` / emit payloads.
+- **`is` prefix.** Boolean props read as a question: `isDense`, `isInteractive`, `isOpen` — never bare `dense` / `interactive` / `open`, and never `can*` / `should*` (prefer `is`, fall back to `has` — the `naming` skill, "Booleans"). The same applies to `defineModel` / emit payloads.
 - **Type as the non-default literal, not `boolean`**, so passing the default is impossible: defaults-false → `?: true` (caller opts in with the bare attribute), defaults-true → `?: false` with a destructure default `= true`. Derived values, and the genuinely two-way boolean, are in `references/props-and-generics.md`.
 
 ## Emits — Present-Tense Event Names
@@ -57,7 +57,7 @@ A component that gains a folder moves into it as `Index.vue`, never beside the f
 
 ## File Length
 
-Line-count target and exceptions — `.agents/skills/file-organization/SKILL.md`, "File Length". Component-specific extractions when a `.vue` runs long: pull toolbar/header buttons into a slot component (e.g. `TopSlot.vue`), row/column action menus into `ActionSlot.vue`, and grouped controls into their own focused component.
+Line-count target and exceptions — the `file-organization` skill, "File Length". Extracting a slot's content into its own component is `references/slots.md`; grouped controls go into their own focused component.
 
 ## Slots
 
