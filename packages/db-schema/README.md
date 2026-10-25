@@ -18,8 +18,7 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
 ### Migration Workflow
 
 After editing a schema file, generate the migration with `pnpm db:gen` (see Commands). Migrations are output to
-`apps/web/server/db/migrations/` and are applied automatically at app startup by the Nitro plugin
-`apps/web/server/plugins/migrate.ts` — there is no apply script.
+`apps/web/server/db/migrations/` and are applied by `pnpm --filter @esposter/db-schema db:migrate`, which `pnpm dev` runs first and the deploy's pre-deploy step runs too.
 
 ### Schema Layout
 

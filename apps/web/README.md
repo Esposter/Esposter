@@ -48,7 +48,7 @@ pnpm db:up      # upgrade snapshot metadata to a newer drizzle-kit format
 pnpm db:studio  # open Drizzle Studio UI
 ```
 
-Pending migrations are applied automatically at app startup by the Nitro plugin `server/plugins/migrate.ts` — there is no apply script.
+Pending migrations are applied by `pnpm --filter @esposter/db-schema db:migrate`: `pnpm dev` runs it first, and it is the deploy's pre-deploy step.
 
 ## <a name="documentation">📖 Documentation</a>
 
@@ -109,7 +109,7 @@ apps/web/
 │   ├── composables/      # Server-side composables (Azure clients, session)
 │   ├── db/               # Drizzle connection and migrations output
 │   ├── models/           # Server-side models
-│   ├── plugins/          # Nitro plugins (migrations, security, web push)
+│   ├── plugins/          # Nitro plugins (security, web push)
 │   ├── routes/           # Nuxt server routes
 │   ├── services/         # Server-side services (RBAC, moderation, etc.)
 │   └── trpc/             # tRPC router definitions

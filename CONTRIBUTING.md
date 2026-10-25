@@ -58,7 +58,7 @@ pnpm db:studio        # open Drizzle Studio UI
 When you change a schema file in `packages/db-schema/src/schema/`:
 
 1. Run `pnpm db:gen` to generate the migration SQL.
-2. Start the app — migrations are applied at startup by the Nitro plugin `apps/web/server/plugins/migrate.ts`. Nothing applies them from the CLI, `db:up` included.
+2. Start the app — migrations are applied by `pnpm dev`, which runs `pnpm --filter @esposter/db-schema db:migrate` first; the same command is the deploy's pre-deploy step. `db:up` is not a migration command.
 3. If you added, renamed or removed a file, run `pnpm build` in `packages/db-schema/` to regenerate the barrel.
 
 ## Before You Start

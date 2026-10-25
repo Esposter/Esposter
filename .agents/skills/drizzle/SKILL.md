@@ -10,7 +10,7 @@ description: Apply when writing or modifying DB schema files in packages/db-sche
 - **A hand-kept registry, or a test that a registry is complete** — `pnpm registry:gen` writes both from the folders, so a declaration is registered by existing and there is nothing left to check (`references/schema-registration.md`).
 - **A table or an enum in `public`** — every one lives in the schema of the product area that owns it (`references/schemas-and-names.md`).
 - **A table writing its own copy of a column group the others share** — rejected: parallel tables share their columns through a factory, because a builder reused across tables shares one config (`references/table-definition.md`).
-- **Following `drizzle-kit`'s own skills (`pnpm-drizzle-kit-*`) where they differ from this one** — they describe the tool in general, `push` and CLI-applied migrations included; here `db:gen` is the only generator and the app applies migrations at startup, so where the two disagree this skill wins (`references/migrations.md`).
+- **Following `drizzle-kit`'s own skills (`pnpm-drizzle-kit-*`) where they differ from this one** — they describe the tool in general, `push` and CLI-applied migrations included; here `db:gen` is the only generator and migrations apply through `pnpm --filter @esposter/db-schema db:migrate`, which `pnpm dev` and the deploy's pre-deploy step run, so where the two disagree this skill wins (`references/migrations.md`).
 - **A bare table export (`rooms`, `users`)** — it collides with a local of the same name, a row type or a library's name (livekit's `Room`, the `UserStatus` enum); the `In<Schema>` suffix is derived, never chosen, and `schema.test.ts` holds it.
 
 ## Deep dives
@@ -84,4 +84,4 @@ A UUID for a referenced entity, a text natural key, a composite for a pure join 
 ## Migrations
 
 - **`db:gen` (from `packages/db-schema/`) is the only way to produce a migration, and `snapshot.json` is machine state, never hand-cloned** — a copied snapshot forks the chain the instant two migrations descend from one parent (`references/migrations.md`).
-- **`db:gen` is never run as an unprompted side effect** of a schema edit — note the pending migration and let the user decide; migrations apply at app startup (`apps/web/server/plugins/migrate.ts`), never from the CLI.
+- **`db:gen` is never run as an unprompted side effect** of a schema edit — note the pending migration and let the user decide; migrations apply through `pnpm --filter @esposter/db-schema db:migrate`, which `pnpm dev` and the deploy's pre-deploy step run; `db:gen` is still never run unprompted.

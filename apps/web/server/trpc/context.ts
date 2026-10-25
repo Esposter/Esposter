@@ -8,7 +8,7 @@ import { getIpAddress } from "#server/services/request/getIpAddress";
 import { getRequestHeaders } from "#server/services/request/getRequestHeaders";
 import { getRequestIP } from "nuxt/server";
 
-// Widened to the driver-agnostic handle here rather than at its export, because the migrator that runs at startup
+// Widened to the driver-agnostic handle here rather than at its export, because the migrator that runs before the app starts
 // Wants the postgres-js handle itself. Every procedure and service reads `Context["db"]`, so this is the one
 // Seam that lets the pglite handle the tests build stand in without a cast
 const database: Database = db;
