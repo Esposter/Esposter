@@ -14,9 +14,9 @@ The default set is wide — `process.hrtime` is in it — so a test that only wa
 
 Name what the test actually asserts on — `vi.useFakeTimers({ now: 0, toFake: ["Date"] })` — whenever the code under test writes a table row or otherwise reads `now()` from `@esposter/shared`.
 
-**A suite whose code calls tRPC never fakes `setTimeout`.** The batch link arms its dispatch with one, behind a guard
-that stays set until the timer fires: armed under a frozen clock it never fires, and every batched call for the
-rest of the file — the tests after this one included, with real timers restored — waits on it and times out.
+**A suite that imports `setupMswTrpc` never fakes `setTimeout`.** The harness's `afterEach` waits one timer boundary for
+msw to answer what is still in flight, and under a frozen clock that boundary never comes, so the suite hangs at its
+end. The test client sends each call as its own request, so no batch timer is armed for a faked clock to hold.
 `testing/no-faked-batch-timer` reports it in any suite importing `setupMswTrpc`. Name the timers the code under test actually runs on instead: `vi.useFakeTimers({ toFake: ["Date", "setInterval",
 "clearInterval"] })` for an interval sweep.
 

@@ -2,7 +2,7 @@
 
 ### Requirement: A displayed count holds its value until the write that changes it settles
 
-A count the server derives SHALL keep its displayed value until the write that changes it has settled. Once that write settles, the count shows the value the server reads back. The viewer's own mark MAY change at once, since the client holds it exactly.
+A count the server derives SHALL keep its displayed value until the write that changes it has settled. Once that write settles, the count shows the value the server reads back. The viewer's own mark MAY change at once, since the client holds it exactly. A first vote is the exception that proves the rule: its row is server-generated, so the client does not hold it until the write answers, and its mark waits for that answer.
 
 #### Scenario: A count stays put while its write is in flight
 
@@ -18,9 +18,9 @@ A count the server derives SHALL keep its displayed value until the write that c
 
 #### Scenario: The viewer's own mark changes at once
 
-- **GIVEN** a post the viewer has not liked
-- **WHEN** the viewer likes it and the server has not answered
-- **THEN** the viewer's own like mark shows as set
+- **GIVEN** a post the viewer has voted on, and a vote the other way
+- **WHEN** the viewer changes the vote and the server has not answered
+- **THEN** the viewer's own vote shows the new value
 
 ### Requirement: A read in a test settles without waiting for a read sent alongside it
 
