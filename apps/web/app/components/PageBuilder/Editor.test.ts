@@ -52,7 +52,7 @@ describe("pageBuilderEditor", () => {
     expect(component.get('[role="tab"]').text()).toBe("Content");
   });
 
-  test("alt down moves the selected node after its next sibling", async () => {
+  test("A block can be moved with the keyboard alone", async () => {
     expect.hasAssertions();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
