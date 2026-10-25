@@ -5,7 +5,7 @@ import type { MaybeRefOrGetter } from "vue";
 import { DEVICE_BREAKPOINT_MAP } from "@/services/pageBuilder/constants";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { getStyleInheritance } from "@/services/pageBuilder/getStyleInheritance";
-import { getStyleOperation } from "@/services/pageBuilder/getStyleOperation";
+import { getStyleOperations } from "@/services/pageBuilder/getStyleOperations";
 import { setStyleProperty } from "@/services/pageBuilder/setStyleProperty";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
@@ -61,9 +61,14 @@ export const usePageBuilderStyle = (resourceId: MaybeRefOrGetter<string>) => {
 
     const breakpoint = getBreakpoint();
     const state = getState();
-    const operations = [
-      getStyleOperation(targetValue.pointer, setStyleProperty(targetValue.style, breakpoint, state, property, value)),
-    ];
+    const operations = getStyleOperations(
+      targetValue.pointer,
+      targetValue.style,
+      setStyleProperty(targetValue.style, breakpoint, state, property, value),
+    );
+    // A reset of a field the node never set changes nothing, so it records no edit
+    if (operations.length === 0) return undefined;
+
     return {
       interactionId: value === "" ? undefined : `style:${targetValue.nodeId}:${breakpoint}:${state}:${property}`,
       label: value === "" ? "Reset style" : "Edit style",
@@ -96,10 +101,10 @@ export const usePageBuilderStyle = (resourceId: MaybeRefOrGetter<string>) => {
     const { copiedStyle } = pageBuilderStyleClipboardStore;
     if (!targetValue || !copiedStyle) return;
 
-    applyEdit(toValue(resourceId), [getStyleOperation(targetValue.pointer, copiedStyle)], "Paste style").match(
-      noop,
-      console.error,
-    );
+    const operations = getStyleOperations(targetValue.pointer, targetValue.style, copiedStyle);
+    if (operations.length === 0) return;
+
+    applyEdit(toValue(resourceId), operations, "Paste style").match(noop, console.error);
   };
 
   return {

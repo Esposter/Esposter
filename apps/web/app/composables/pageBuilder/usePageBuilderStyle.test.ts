@@ -39,6 +39,47 @@ describe(usePageBuilderStyle, () => {
     expect(pageBuilderDocumentStore.getDocument(resourceId)?.content[1]?.props.style).toStrictEqual(style);
   });
 
+  test("resetting a node's last override removes its style", () => {
+    expect.hasAssertions();
+
+    const resourceId = crypto.randomUUID();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+      content: [{ props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button }],
+      root: TEST_ROOT,
+    });
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
+    const { resetField, setField } = usePageBuilderStyle(resourceId);
+
+    setField("color", "red");
+    resetField("color");
+
+    expect(pageBuilderDocumentStore.getDocument(resourceId)?.content[0]?.props).toStrictEqual({
+      href: TEST_URL,
+      id: TEST_ID,
+      label: TEST_LABEL,
+    });
+  });
+
+  test("resetting a property a node does not set records no edit", () => {
+    expect.hasAssertions();
+
+    const resourceId = crypto.randomUUID();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, {
+      content: [{ props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button }],
+      root: TEST_ROOT,
+    });
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
+    const pageBuilderHistoryStore = usePageBuilderHistoryStore();
+
+    usePageBuilderStyle(resourceId).resetField("color");
+
+    expect(pageBuilderHistoryStore.historyMap.get(resourceId)).toBeUndefined();
+  });
+
   test("dragging an opacity slider records one undoable change", () => {
     expect.hasAssertions();
 

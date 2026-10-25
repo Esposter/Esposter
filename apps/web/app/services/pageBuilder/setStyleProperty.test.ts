@@ -14,6 +14,19 @@ describe(setStyleProperty, () => {
     });
   });
 
+  test("a reset that empties a breakpoint leaves no empty object", () => {
+    expect.hasAssertions();
+
+    const style = {
+      [StyleBreakpoint.Base]: { [StyleState.Default]: { color: "red" } },
+      [StyleBreakpoint.Tablet]: { [StyleState.Default]: { width: "10px" } },
+    };
+
+    expect(setStyleProperty(style, StyleBreakpoint.Base, StyleState.Default, "color", "")).toStrictEqual({
+      [StyleBreakpoint.Tablet]: { [StyleState.Default]: { width: "10px" } },
+    });
+  });
+
   test("a value is set at its breakpoint and state alone", () => {
     expect.hasAssertions();
 
