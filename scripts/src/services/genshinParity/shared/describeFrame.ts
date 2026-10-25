@@ -10,6 +10,9 @@ import { summarizeCpuWindow } from "#src/services/genshinParity/shared/summarize
 const LISTED_CALL_MS = 0.5;
 const LISTED_CALLS_PER_FRAME = 12;
 
+const describeCall = (call: GpuCall): string =>
+  `  ${roundMs(call.duration)} ms ${call.name} | ${call.label} | ${call.detail}`;
+
 export const describeFrame = (
   time: number,
   gapMs: number,
@@ -24,8 +27,6 @@ export const describeFrame = (
     .filter((call) => call.duration >= LISTED_CALL_MS)
     .toSorted((firstCall, secondCall) => secondCall.duration - firstCall.duration)
     .slice(0, LISTED_CALLS_PER_FRAME);
-  const describeCall = (call: GpuCall): string =>
-    `  ${roundMs(call.duration)} ms ${call.name} | ${call.label} | ${call.detail}`;
 
   return [
     `frame #${frameIndex} at ${roundMs(time - (trace.times[0] ?? 0))} ms: ${roundMs(gapMs)} ms, ${calls.length} traced calls for ${roundMs(totalMs)} ms`,

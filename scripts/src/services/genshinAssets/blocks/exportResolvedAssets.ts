@@ -1,8 +1,8 @@
+import type { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
+import type { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import type { ResolvedObject } from "#src/models/genshinAssets/shared/ResolvedObject";
 import type { IndexedAsset } from "#src/models/recreation/animeStudio/IndexedAsset";
 
-import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
-import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 import { GROUP_BY_TYPE } from "#src/services/genshinAssets/blocks/constants";
 import { GENSHIN_ANIMESTUDIO_OPTIONS, INSTALLED_BLOCKS_DIRECTORY } from "#src/services/genshinAssets/shared/constants";
 import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";

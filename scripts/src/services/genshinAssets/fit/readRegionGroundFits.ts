@@ -1,7 +1,7 @@
 import type { GameDataBuild } from "#src/models/gameData/GameDataBuild";
 import type { RegionGroundFit } from "#src/models/genshinAssets/fit/RegionGroundFit";
+import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { checkHasOutline } from "#src/services/genshinAssets/fit/checkHasOutline";
 import { fitRegionGroundPieces } from "#src/services/genshinAssets/fit/fitRegionGroundPieces";
 import { readRegionAreas } from "#src/services/genshinAssets/fit/readRegionAreas";

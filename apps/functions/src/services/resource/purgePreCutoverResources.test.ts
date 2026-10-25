@@ -46,7 +46,7 @@ describe(purgePreCutoverResources, () => {
   const insertResource = async (type: ResourceType, createdAt: Date, deletedAt: Date | null) =>
     takeOne(await mockDb.insert(resourcesInResource).values({ createdAt, deletedAt, name, type, userId }).returning());
 
-  test("A count confirms the purge removed every pre-cutover row", async () => {
+  test("a count confirms the purge removed every pre-cutover row", async () => {
     expect.hasAssertions();
 
     // The migration bins each pre-cutover row at the epoch, which the purge's retention has long passed
@@ -62,7 +62,7 @@ describe(purgePreCutoverResources, () => {
     expect(remainingRows.map(({ id }) => id)).toStrictEqual([postCutoverWebpage.id]);
   });
 
-  test("A pre-cutover row the purge does not reach is still counted", async () => {
+  test("a pre-cutover row the purge does not reach is still counted", async () => {
     expect.hasAssertions();
 
     await insertResource(ResourceType.Email, preCutoverDate, null);

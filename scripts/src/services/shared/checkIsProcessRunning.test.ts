@@ -14,7 +14,7 @@ describe(checkIsProcessRunning, () => {
   test("a process this user may not signal is running", () => {
     expect.hasAssertions();
 
-    const kill = vi.spyOn(process, "kill").mockImplementation(() => {
+    vi.spyOn(process, "kill").mockImplementation(() => {
       throw Object.assign(new Error("EPERM"), { code: "EPERM" });
     });
 

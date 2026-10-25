@@ -1,4 +1,4 @@
-import { BankReader } from "#src/models/genshinAssets/music/BankReader";
+import type { BankReader } from "#src/models/genshinAssets/music/BankReader";
 
 export const skipStateChunk = (reader: BankReader): void => {
   for (let index = reader.readVariableUInt(); index > 0; index--) {

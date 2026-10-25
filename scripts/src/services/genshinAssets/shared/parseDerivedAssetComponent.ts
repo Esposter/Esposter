@@ -1,4 +1,5 @@
-import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+
 import { checkIsDerivedAssetComponent } from "#src/services/genshinAssets/shared/checkIsDerivedAssetComponent";
 import { COMPONENT_NAMES } from "#src/services/genshinAssets/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";

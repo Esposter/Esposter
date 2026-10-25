@@ -1,4 +1,4 @@
-import { BankReader } from "#src/models/genshinAssets/music/BankReader";
+import type { BankReader } from "#src/models/genshinAssets/music/BankReader";
 
 export const readProperties = (reader: BankReader): Map<number, number> => {
   const ids = Array.from({ length: reader.readUInt8() }, () => reader.readUInt8());

@@ -1,4 +1,4 @@
-import { BankReader } from "#src/models/genshinAssets/music/BankReader";
+import type { BankReader } from "#src/models/genshinAssets/music/BankReader";
 
 // A source's plugin, how it streams, its id, its size in memory and its bits
 const SOURCE_LENGTH = 14;

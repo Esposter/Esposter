@@ -1,3 +1,5 @@
+/* oxlint-disable no-underscore-dangle -- the names are the page's own globals: the window fields the page keeps and the devtools messenger three publishes */
+
 // Hands the renderer and the scene over as soon as the devtools messenger publishes its context, before the first frame
 // It draws
 export const hookRenderer = (): void => {

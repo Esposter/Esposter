@@ -12,13 +12,13 @@ import {
   resourcesInResource,
   ResourceType,
 } from "@esposter/db-schema";
-import { getResultAsync, noop, takeOne } from "@esposter/shared";
+import { getResultAsync, InvalidOperationError, noop, Operation, takeOne } from "@esposter/shared";
 import { and, eq, inArray, notInArray } from "drizzle-orm";
 import { createHash } from "node:crypto";
 
 // The survey invite's type tag in a webpage and in an email, as apps/web names them (WebpageNodeType.SurveyInvite and
 // EmailNodeType.SurveyInvite). The functions app cannot import the web's enums, so the tags are repeated here and only
-// ever matched against stored content
+// Ever matched against stored content
 const SURVEY_INVITE_NODE_TYPES = new Set(["survey-invite", "SurveyInvite"]);
 
 type StoredNode = Record<string, unknown>;
@@ -33,7 +33,7 @@ const isDeletedSurveyInvite = (node: StoredNode, deletedSurveyIds: Set<string>) 
   deletedSurveyIds.has(node.props.surveyId);
 
 // The nodes with every survey invite naming a deleted survey removed, at any depth. A container holds its children under
-// props.children, on a webpage and in an email alike, so one walk serves both trees
+// `props.children`, on a webpage and in an email alike, so one walk serves both trees
 const removeSurveyInvites = (nodes: unknown[], deletedSurveyIds: Set<string>): unknown[] =>
   nodes.flatMap((node) => {
     if (!checkIsRecord(node)) return [node];
@@ -45,9 +45,9 @@ const removeSurveyInvites = (nodes: unknown[], deletedSurveyIds: Set<string>): u
     return [{ ...node, props: { ...props, children: removeSurveyInvites(props.children, deletedSurveyIds) } }];
   });
 
-// Rewrites one resource's working copy without the invites to the surveys it names as deleted, then drops those survey
-// links. The rewrite moves the version the way a save does, so a client editing the old copy is told it is stale. A write
-// that fails leaves the link in place, which is what the next run finds the resource by
+// Rewrites one resource's working copy without the invites to the surveys it names as deleted, then drops those survey links.
+// The rewrite moves the version the way a save does, so a client editing the old copy is told it is stale.
+// A write that fails leaves the link in place, which is what the next run finds the resource by
 const removeSurveyInviteReferencesFromResource = async (
   context: InvocationContext,
   containerClient: ContainerClient,
@@ -56,6 +56,7 @@ const removeSurveyInviteReferencesFromResource = async (
 ): Promise<void> => {
   const contentBlobName = getContentBlobName(id);
   const serializedContent = (await readJsonBlob(containerClient, contentBlobName))?.toString();
+  // oxlint-disable-next-line no-restricted-properties -- the stored content as written: the rewrite compares its re-serialised copy with the stored text, so a revived ISO string would look changed
   const document: unknown = serializedContent === undefined ? undefined : JSON.parse(serializedContent);
   if (checkIsRecord(document) && Array.isArray(document.content)) {
     const serializedNextContent = JSON.stringify({
@@ -74,7 +75,8 @@ const removeSurveyInviteReferencesFromResource = async (
           .where(and(eq(resourcesInResource.id, id), eq(resourcesInResource.contentVersion, contentVersion)))
           .returning({ id: resourcesInResource.id });
         // A save that landed since the read holds content this rewrite would overwrite, so the rewrite is refused and its link kept
-        if (!updatedResource) throw new Error(`The content of resource ${id} moved on before its invites were removed`);
+        if (!updatedResource)
+          throw new InvalidOperationError(Operation.Update, id, "moved on before its invites were removed");
 
         return (await writeJsonBlob(containerClient, contentBlobName, serializedNextContent)).size;
       });
@@ -95,9 +97,9 @@ const removeSurveyInviteReferencesFromResource = async (
     );
 };
 
-// Removes every survey invite that names a survey no longer present, from the webpages and emails holding it. The survey
-// links the index keeps for them name the survey, so a link to a survey with no row is the invite left behind: a purged
-// survey's links stay until its holders are rewritten, which is what makes a rerun find whatever a failed run left
+// Removes every survey invite that names a survey no longer present, from the webpages and emails holding it.
+// The survey links the index keeps for them name the survey, so a link to a survey with no row is the invite left behind:
+// A purged survey's links stay until its holders are rewritten, which is what makes a rerun find whatever a failed run left
 export const removeSurveyInviteReferences = async (
   context: InvocationContext,
   containerClient: ContainerClient,
@@ -125,7 +127,10 @@ export const removeSurveyInviteReferences = async (
       ),
     );
 
-  for (const [sourceId, sourceLinks] of Map.groupBy(danglingSurveyLinks, ({ sourceId }) => sourceId)) {
+  for (const [sourceId, sourceLinks] of Map.groupBy(
+    danglingSurveyLinks,
+    (danglingSurveyLink) => danglingSurveyLink.sourceId,
+  )) {
     const { contentVersion, userId } = takeOne(sourceLinks);
     // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one resource's copy at a time, each a read, a write and a charge
     await getResultAsync(() =>

@@ -12,8 +12,8 @@ import { getDecodedUriComponent, getResultAsync, noop } from "@esposter/shared";
 // After the PUT lands, carries the stored object's real length, and — unlike anything we could publish
 // Ourselves — it reports what happened on a data path our servers are never part of.
 // Every container a reserve writes into is listed here, and the subscriptions filter to the same set, so an event
-// from anywhere else is dropped rather than mis-attributed. The row names whose allowance a blob is charged to: a
-// resource asset's owner, or a message attachment's uploader. See openspec/specs/resource/storage-quotas/design.md
+// From anywhere else is dropped rather than mis-attributed. The row names whose allowance a blob is charged to:
+// A resource asset's owner, or a message attachment's uploader. See openspec/specs/resource/storage-quotas/design.md
 const STORAGE_BLOB_CONTAINERS = [AzureContainer.ResourceAssets, AzureContainer.MessageAssets];
 
 export const reconcileStorageLedgerEntryHandler: EventGridHandler = (event, context) => {

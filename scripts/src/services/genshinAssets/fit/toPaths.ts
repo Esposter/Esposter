@@ -3,6 +3,8 @@ import type { SkeletonNode } from "#src/models/genshinAssets/fit/SkeletonNode";
 
 import { toDistance } from "#src/services/genshinAssets/fit/toDistance";
 
+const toPoint = ({ centre: [x, y, z], radius }: SkeletonNode): PathPoint => [x, y, z, radius];
+
 // A skeleton's nodes as the paths a tube is swept along, each a node's centre and radius: from its start, each path
 // Keeps to the child leading farthest on, and every other child starts a path of its own at the node it forks from, in
 // The child's radius so it grows from inside its parent
@@ -18,7 +20,6 @@ export const toPaths = (nodes: readonly SkeletonNode[]): PathPoint[][] => {
     const reach = (reaches[index] ?? 0) + toDistance(node?.centre ?? [0, 0, 0], nodes[parent]?.centre ?? [0, 0, 0]);
     reaches[parent] = Math.max(reaches[parent] ?? 0, reach);
   }
-  const toPoint = ({ centre: [x, y, z], radius }: SkeletonNode): PathPoint => [x, y, z, radius];
   const paths: PathPoint[][] = [];
   const forks: [number, number | undefined][] = [[0, undefined]];
   for (let fork = forks.pop(); fork; fork = forks.pop()) {

@@ -1,7 +1,7 @@
+import type { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import type { Vector } from "#src/models/shared/Vector";
 import type { Page } from "playwright";
 
-import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { readWitnessTargetsInCall } from "#src/services/genshinParity/shared/readWitnessTargetsInCall";
 
 // The witness page's targets at the view last set, as its `renderWitnessTargets` reads them back from the renderer.

@@ -1,3 +1,5 @@
+/* oxlint-disable no-underscore-dangle -- the names are the page's own globals, which the page sets and these read back by name */
+
 import type { Page } from "playwright";
 
 // Mouse look turns 0.002 radians a pixel, and a full turn is spread over six seconds of events every 16 milliseconds

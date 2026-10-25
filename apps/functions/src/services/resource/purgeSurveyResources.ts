@@ -9,9 +9,9 @@ import { getResultAsync, noop } from "@esposter/shared";
 import { asc, eq } from "drizzle-orm";
 
 // The one-time run before the survey type is removed: each survey resource is purged as the timer purges an expired one,
-// then every invite naming a survey that is gone is removed from the webpages and emails holding it. A survey whose purge
-// fails keeps its row, and the invites naming it keep their links, so a rerun finds exactly what is left. It is a
-// deletion only: nothing is counted and no stored survey is converted
+// Then every invite naming a survey that is gone is removed from the webpages and emails holding it.
+// A survey whose purge fails keeps its row, and the invites naming it keep their links, so a rerun finds exactly what is left.
+// It is a deletion only: nothing is counted and no stored survey is converted
 export const purgeSurveyResources = async (context: InvocationContext): Promise<void> => {
   const surveys = await db
     .select()

@@ -13,7 +13,7 @@ import {
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
+import { jsonDateParse, takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
@@ -25,6 +25,11 @@ vi.mock(import("#src/services/shared/db"), () => ({
   },
 }));
 vi.mock(import("#src/services/azure/getTableClient"), () => import("#src/services/azure/getTableClient.test"));
+
+const readUserIdsByRoom = (roomId: string) =>
+  [...(MockTableDatabase.get(AzureTable.MessagesMetadata)?.values() ?? [])]
+    .filter((entity) => entity.partitionKey === roomId)
+    .map(({ userIds }) => jsonDateParse(String(userIds)));
 
 describe(deleteAccountMemberRoomReactions, () => {
   const name = "name";
@@ -71,10 +76,6 @@ describe(deleteAccountMemberRoomReactions, () => {
 
     await deleteAccountMemberRoomReactions(userId);
 
-    const readUserIdsByRoom = (roomId: string) =>
-      [...(MockTableDatabase.get(AzureTable.MessagesMetadata)?.values() ?? [])]
-        .filter((entity) => entity.partitionKey === roomId)
-        .map(({ userIds }) => JSON.parse(String(userIds)));
     expect(readUserIdsByRoom(memberRoom.id)).toStrictEqual([[otherUserId]]);
     expect(readUserIdsByRoom(nonMemberRoom.id)).toStrictEqual([[userId, otherUserId]]);
   });

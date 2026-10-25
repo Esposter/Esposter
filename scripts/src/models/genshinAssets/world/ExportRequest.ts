@@ -1,4 +1,4 @@
-import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
+import type { AssetType } from "#src/models/genshinAssets/shared/AssetType";
 
 export interface ExportRequest {
   block: string;

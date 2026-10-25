@@ -67,7 +67,13 @@ export const compareKits = async (inputs: readonly KitInput[]): Promise<string[]
       continue;
     }
     // A borrowed value is seeded from its donor's record, so a kit whose donor fails to build is reported, not seeded
-    const donorRecordMap = getResult(() => readDonorRecordMap(characterId, committedOverlay, inputMap, builtMap)).match(
+    const donorRecordMap = getResult(() =>
+      readDonorRecordMap(
+        characterId,
+        committedOverlay,
+        (donorId, chain) => buildKitRecordWithDonors(donorId, inputMap, builtMap, chain).record,
+      ),
+    ).match(
       (recordMap) => recordMap,
       (error) => {
         failureLines.push(

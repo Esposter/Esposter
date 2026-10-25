@@ -3,7 +3,7 @@ import { EDITOR_SCRIPT_BUDGET } from "@esposter/configuration";
 import { describe, expect, test } from "vitest";
 
 describe(assertEditorScriptsWithinBudget, () => {
-  test("A cutover build over the budget does not merge", () => {
+  test("a cutover build over the budget does not merge", () => {
     expect.hasAssertions();
 
     expect(() =>

@@ -18,7 +18,7 @@ import {
   SurveyResponseEntity,
   usersInAuth,
 } from "@esposter/db-schema";
-import { takeOne } from "@esposter/shared";
+import { jsonDateParse, takeOne } from "@esposter/shared";
 import { MockBlockBlobClient, MockContainerDatabase, MockTableClient, MockTableDatabase } from "azure-mock";
 import { eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, describe, expect, test, vi } from "vitest";
@@ -49,6 +49,33 @@ vi.mock(import("#src/services/azure/getWebPubSubServiceClient"), () => ({
     }) as never,
 }));
 
+const writeContent = async (resourceId: string, document: object) => {
+  const containerClient = await getContainerClient(AzureContainer.ResourceAssets);
+  await writeJsonBlob(containerClient, getContentBlobName(resourceId), JSON.stringify(document));
+};
+
+const readContent = async (resourceId: string) => {
+  const containerClient = await getContainerClient(AzureContainer.ResourceAssets);
+  const serializedContent = await readJsonBlob(containerClient, getContentBlobName(resourceId));
+  assert.exists(serializedContent);
+  return jsonDateParse(serializedContent.toString());
+};
+
+const readBlobNames = () => [...(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.keys() ?? [])];
+
+const readSurveyResponseEntities = (surveyId: string) =>
+  [...(MockTableDatabase.get(AzureTable.SurveyResponses)?.values() ?? [])].filter(
+    ({ partitionKey }) => partitionKey === surveyId,
+  );
+
+const readLinkTargetIds = async (sourceId: string) =>
+  (
+    await mockDb
+      .select({ targetId: resourceLinksInResource.targetId })
+      .from(resourceLinksInResource)
+      .where(eq(resourceLinksInResource.sourceId, sourceId))
+  ).map(({ targetId }) => targetId);
+
 describe(purgeSurveyResources, () => {
   const context = new InvocationContext({ logHandler: () => {} });
   const userId = crypto.randomUUID();
@@ -77,40 +104,13 @@ describe(purgeSurveyResources, () => {
   const insertResource = async (type: ResourceType, createdAt: Date) =>
     takeOne(await mockDb.insert(resourcesInResource).values({ createdAt, name, type, userId }).returning());
 
-  const writeContent = async (resourceId: string, document: object) => {
-    const containerClient = await getContainerClient(AzureContainer.ResourceAssets);
-    await writeJsonBlob(containerClient, getContentBlobName(resourceId), JSON.stringify(document));
-  };
-
-  const readContent = async (resourceId: string) => {
-    const containerClient = await getContainerClient(AzureContainer.ResourceAssets);
-    const serializedContent = await readJsonBlob(containerClient, getContentBlobName(resourceId));
-    assert.exists(serializedContent);
-    return JSON.parse(serializedContent.toString());
-  };
-
-  const readBlobNames = () => [...(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.keys() ?? [])];
-
-  const readSurveyResponseEntities = (surveyId: string) =>
-    [...(MockTableDatabase.get(AzureTable.SurveyResponses)?.values() ?? [])].filter(
-      ({ partitionKey }) => partitionKey === surveyId,
-    );
-
-  const readLinkTargetIds = async (sourceId: string) =>
-    (
-      await mockDb
-        .select({ targetId: resourceLinksInResource.targetId })
-        .from(resourceLinksInResource)
-        .where(eq(resourceLinksInResource.sourceId, sourceId))
-    ).map(({ targetId }) => targetId);
-
   const inviteNodeId = "invite";
   const createInvite = (type: string, surveyId: string) => ({
     props: { id: inviteNodeId, label: "Survey", surveyId },
     type,
   });
 
-  test("A purge removes a survey's blob directory, response partition, storage ledger entries and row, and broadcasts the owner whose bytes it released", async () => {
+  test("a purge removes a survey's blob directory, response partition, storage ledger entries and row, and broadcasts the owner whose bytes it released", async () => {
     expect.hasAssertions();
 
     const survey = await insertResource(ResourceType.Survey, earlierDate);
@@ -133,18 +133,18 @@ describe(purgeSurveyResources, () => {
 
     expect(readBlobNames().filter((blobName) => blobName.startsWith(`${survey.id}/`))).toStrictEqual([]);
     expect(readSurveyResponseEntities(survey.id)).toStrictEqual([]);
-    expect(
-      await mockDb.select({ blobName: storageLedgerInStorage.blobName }).from(storageLedgerInStorage),
-    ).toStrictEqual([]);
+    await expect(
+      mockDb.select({ blobName: storageLedgerInStorage.blobName }).from(storageLedgerInStorage),
+    ).resolves.toStrictEqual([]);
     expect(
       takeOne(await mockDb.select({ storageBytesUsed: usersInAuth.storageBytesUsed }).from(usersInAuth)),
     ).toStrictEqual({ storageBytesUsed: 0 });
-    expect(await mockDb.select({ id: resourcesInResource.id }).from(resourcesInResource)).toStrictEqual([]);
+    await expect(mockDb.select({ id: resourcesInResource.id }).from(resourcesInResource)).resolves.toStrictEqual([]);
     expect(groupMock).toHaveBeenCalledExactlyOnceWith(userId);
     expect(sendToAllMock).toHaveBeenCalledExactlyOnceWith({ userId });
   });
 
-  test("A purge that fails leaves its row in place, and the survey after it still purges", async () => {
+  test("a purge that fails leaves its row in place, and the survey after it still purges", async () => {
     expect.hasAssertions();
 
     // The earlier survey is the one the run reaches first, so the first partition read is its own
@@ -156,12 +156,12 @@ describe(purgeSurveyResources, () => {
 
     await purgeSurveyResources(context);
 
-    expect(await mockDb.select({ id: resourcesInResource.id }).from(resourcesInResource)).toStrictEqual([
+    await expect(mockDb.select({ id: resourcesInResource.id }).from(resourcesInResource)).resolves.toStrictEqual([
       { id: failingSurvey.id },
     ]);
   });
 
-  test("A survey invite naming a purged survey is removed from a webpage and an email, and one naming a survey whose purge failed is kept", async () => {
+  test("a survey invite naming a purged survey is removed from a webpage and an email, and one naming a survey whose purge failed is kept", async () => {
     expect.hasAssertions();
 
     // The failing survey is the earlier one, so its partition read fails and its row, and the invites naming it, stay
@@ -207,13 +207,13 @@ describe(purgeSurveyResources, () => {
 
     await purgeSurveyResources(context);
 
-    expect(await readContent(webpage.id)).toStrictEqual({
+    await expect(readContent(webpage.id)).resolves.toStrictEqual({
       content: [
         { props: { children: [textNode], id: "section" }, type: "Section" },
         createInvite("SurveyInvite", failingSurvey.id),
       ],
     });
-    expect(await readContent(email.id)).toStrictEqual({
+    await expect(readContent(email.id)).resolves.toStrictEqual({
       content: [
         {
           props: { children: [{ props: { children: [], id: "column" }, type: "mj-column" }], id: "section" },
@@ -221,13 +221,13 @@ describe(purgeSurveyResources, () => {
         },
       ],
     });
-    expect(await readLinkTargetIds(webpage.id)).toStrictEqual([failingSurvey.id]);
-    expect(await readLinkTargetIds(email.id)).toStrictEqual([]);
+    await expect(readLinkTargetIds(webpage.id)).resolves.toStrictEqual([failingSurvey.id]);
+    await expect(readLinkTargetIds(email.id)).resolves.toStrictEqual([]);
     // A program is not a webpage or an email, so its survey link is left to the program
-    expect(await readLinkTargetIds(program.id)).toStrictEqual([purgedSurvey.id]);
+    await expect(readLinkTargetIds(program.id)).resolves.toStrictEqual([purgedSurvey.id]);
   });
 
-  test("A webpage whose invite could not be removed keeps its survey link, and a rerun removes the invite", async () => {
+  test("a webpage whose invite could not be removed keeps its survey link, and a rerun removes the invite", async () => {
     expect.hasAssertions();
 
     const purgedSurvey = await insertResource(ResourceType.Survey, earlierDate);
@@ -240,12 +240,14 @@ describe(purgeSurveyResources, () => {
 
     await purgeSurveyResources(context);
 
-    expect(await readLinkTargetIds(webpage.id)).toStrictEqual([purgedSurvey.id]);
-    expect(await readContent(webpage.id)).toStrictEqual({ content: [createInvite("SurveyInvite", purgedSurvey.id)] });
+    await expect(readLinkTargetIds(webpage.id)).resolves.toStrictEqual([purgedSurvey.id]);
+    await expect(readContent(webpage.id)).resolves.toStrictEqual({
+      content: [createInvite("SurveyInvite", purgedSurvey.id)],
+    });
 
     await purgeSurveyResources(context);
 
-    expect(await readLinkTargetIds(webpage.id)).toStrictEqual([]);
-    expect(await readContent(webpage.id)).toStrictEqual({ content: [] });
+    await expect(readLinkTargetIds(webpage.id)).resolves.toStrictEqual([]);
+    await expect(readContent(webpage.id)).resolves.toStrictEqual({ content: [] });
   });
 });

@@ -1,4 +1,5 @@
-import { TarOperation } from "#src/models/fleet/data/TarOperation";
+import type { TarOperation } from "#src/models/fleet/data/TarOperation";
+
 import { getTarArguments } from "#src/services/fleet/data/getTarArguments";
 import { toRemotePath } from "#src/services/fleet/data/toRemotePath";
 

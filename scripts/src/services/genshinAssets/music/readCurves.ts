@@ -1,6 +1,5 @@
+import type { BankReader } from "#src/models/genshinAssets/music/BankReader";
 import type { WwiseCurve } from "#src/models/genshinAssets/music/WwiseCurve";
-
-import { BankReader } from "#src/models/genshinAssets/music/BankReader";
 
 export const readCurves = (reader: BankReader): WwiseCurve[] =>
   Array.from({ length: reader.readUInt16() }, () => {

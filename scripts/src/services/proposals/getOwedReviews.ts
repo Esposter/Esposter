@@ -3,6 +3,7 @@ import type { ProductReviewPass } from "#src/models/proposals/ProductReviewPass"
 import type { ProposalShip } from "#src/models/proposals/ProposalShip";
 
 import { getLatest } from "#src/services/proposals/getLatest";
+
 // A ship moves the surface a pass last judged, so an area whose newest ship is newer than its newest pass is owed one
 // (`product-review` skill, `references/convergence.md`). A ship and a pass in one commit are the pass itself deleting
 // A superseded proposal, so it owes nothing; two commits in one second cannot be ordered, so they owe the pass.

@@ -20,7 +20,12 @@ export const buildKitRecordWithDonors = (
   const result = buildKitRecord(
     input.sourceCandidateMap,
     input.overlay,
-    readDonorRecordMap(characterId, input.overlay, inputMap, builtMap, [...chain, characterId]),
+    readDonorRecordMap(
+      characterId,
+      input.overlay,
+      (donorId, donorChain) => buildKitRecordWithDonors(donorId, inputMap, builtMap, donorChain).record,
+      [...chain, characterId],
+    ),
     input.namedHitCandidateMap,
     input.tables,
     input.gcsimFolder !== undefined,

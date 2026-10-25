@@ -1,4 +1,5 @@
-import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
+import type { AssetType } from "#src/models/genshinAssets/shared/AssetType";
+
 import { GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/constants";
 import { getNamedRawArgs } from "#src/services/genshinAssets/shared/getNamedRawArgs";
 import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";

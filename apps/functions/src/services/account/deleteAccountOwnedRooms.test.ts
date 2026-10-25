@@ -25,6 +25,12 @@ vi.mock(
   () => import("#src/services/azure/getWebPubSubServiceClient.test"),
 );
 
+// A partition's rows are only ever read by their partition key, so one row keyed by the room is the whole fixture
+const seedPartitionRow = (tableName: AzureTable, partitionKey: string) =>
+  new MockTableClient("", tableName).createEntity({ partitionKey, rowKey: crypto.randomUUID() });
+const readPartitionRows = (tableName: AzureTable, partitionKey: string) =>
+  [...(MockTableDatabase.get(tableName)?.values() ?? [])].filter((entity) => entity.partitionKey === partitionKey);
+
 describe(deleteAccountOwnedRooms, () => {
   const context = new InvocationContext({ logHandler: () => {} });
   const name = "name";
@@ -45,12 +51,6 @@ describe(deleteAccountOwnedRooms, () => {
     MockTableDatabase.clear();
     await mockDb.delete(usersInAuth);
   });
-
-  // A partition's rows are only ever read by their partition key, so one row keyed by the room is the whole fixture
-  const seedPartitionRow = (tableName: AzureTable, partitionKey: string) =>
-    new MockTableClient("", tableName).createEntity({ partitionKey, rowKey: crypto.randomUUID() });
-  const readPartitionRows = (tableName: AzureTable, partitionKey: string) =>
-    [...(MockTableDatabase.get(tableName)?.values() ?? [])].filter((entity) => entity.partitionKey === partitionKey);
 
   test("deletes an owned room's partitions, attachments and row, and no other owner's room", async () => {
     expect.hasAssertions();

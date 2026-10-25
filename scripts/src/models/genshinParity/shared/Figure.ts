@@ -1,4 +1,4 @@
-import { LoadFigureUnit } from "#src/models/genshinParity/page/LoadFigureUnit";
+import type { LoadFigureUnit } from "#src/models/genshinParity/page/LoadFigureUnit";
 
 export interface Figure {
   budget?: number;

@@ -1,6 +1,6 @@
+import type { BinaryCursor } from "#src/models/genshinAssets/materials/BinaryCursor";
 import type { SerializedSubShaderRecord } from "#src/models/genshinAssets/materials/SerializedSubShaderRecord";
 
-import { BinaryCursor } from "#src/models/genshinAssets/materials/BinaryCursor";
 import { readSerializedPass } from "#src/services/genshinAssets/materials/readSerializedPass";
 import { skipTagMap } from "#src/services/genshinAssets/materials/skipTagMap";
 

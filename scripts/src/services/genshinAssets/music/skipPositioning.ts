@@ -1,4 +1,4 @@
-import { BankReader } from "#src/models/genshinAssets/music/BankReader";
+import type { BankReader } from "#src/models/genshinAssets/music/BankReader";
 
 export const skipPositioning = (reader: BankReader): void => {
   const bits = reader.readUInt8();

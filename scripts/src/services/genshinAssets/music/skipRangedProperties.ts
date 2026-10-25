@@ -1,4 +1,4 @@
-import { BankReader } from "#src/models/genshinAssets/music/BankReader";
+import type { BankReader } from "#src/models/genshinAssets/music/BankReader";
 
 export const skipRangedProperties = (reader: BankReader): void => {
   const count = reader.readUInt8();

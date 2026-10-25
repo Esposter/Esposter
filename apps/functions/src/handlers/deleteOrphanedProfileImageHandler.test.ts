@@ -20,18 +20,18 @@ vi.mock(import("#src/services/shared/db"), () => ({
 
 vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
 
+const createBlobCreatedEvent = (blobName: string) =>
+  createEventGridEvent({ subject: `${getBlobSubjectPrefix(AzureContainer.PublicUserAssets)}${blobName}` });
+const hasBlob = (blobName: string) =>
+  MockContainerDatabase.get(AzureContainer.PublicUserAssets)?.has(blobName) === true;
 describe(deleteOrphanedProfileImageHandler, () => {
   const context = new InvocationContext({ logHandler: () => {} });
   const userId = crypto.randomUUID();
   const blobContent = " ";
-  const createBlobCreatedEvent = (blobName: string) =>
-    createEventGridEvent({ subject: `${getBlobSubjectPrefix(AzureContainer.PublicUserAssets)}${blobName}` });
   const seedBlob = async (blobName: string) => {
     const containerClient = await getContainerClient(AzureContainer.PublicUserAssets);
     await containerClient.getBlockBlobClient(blobName).upload(blobContent, blobContent.length);
   };
-  const hasBlob = (blobName: string) =>
-    MockContainerDatabase.get(AzureContainer.PublicUserAssets)?.has(blobName) === true;
 
   beforeAll(async () => {
     mockDb = await createMockDb();

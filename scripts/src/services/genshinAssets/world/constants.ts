@@ -45,4 +45,4 @@ export const CITY_AREA_SUFFIX = "_City";
 export const CITY_AREA_FILE_PATH: string = join(PARITY_DIRECTORY, "city-areas.json");
 export const CITY_AREA_EXPORTS_DIRECTORY: string = join(PARITY_DIRECTORY, "city-areas", "exports");
 
-export const CITY_INDEX_SUFFIX: string = `${CITY_AREA_SUFFIX}${STREAM_INDEX_SUFFIX}`;
+export const CITY_INDEX_SUFFIX = `${CITY_AREA_SUFFIX}${STREAM_INDEX_SUFFIX}`;

@@ -6,7 +6,7 @@ import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
 describe(assertEditorScriptsWithinBudget, () => {
-  test("An editor's script loads within the budget", () => {
+  test("an editor's script loads within the budget", () => {
     expect.hasAssertions();
 
     const editorScriptBytes = z

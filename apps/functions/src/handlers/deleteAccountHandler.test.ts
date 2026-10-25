@@ -40,6 +40,9 @@ vi.mock(
   () => import("#src/services/azure/getWebPubSubServiceClient.test"),
 );
 
+const readUserRows = (userId: string) =>
+  mockDb.select({ id: usersInAuth.id }).from(usersInAuth).where(eq(usersInAuth.id, userId));
+
 describe(deleteAccountHandler, () => {
   const context = new InvocationContext({ logHandler: () => {} });
   const name = "name";
@@ -55,9 +58,6 @@ describe(deleteAccountHandler, () => {
     MockTableDatabase.clear();
     await mockDb.delete(usersInAuth);
   });
-
-  const readUserRows = (userId: string) =>
-    mockDb.select({ id: usersInAuth.id }).from(usersInAuth).where(eq(usersInAuth.id, userId));
 
   test("deletes the user row, and the sign-in accounts it holds cascade with it", async () => {
     expect.hasAssertions();

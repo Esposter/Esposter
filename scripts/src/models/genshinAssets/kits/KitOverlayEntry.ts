@@ -1,4 +1,6 @@
-import { type KitDonor, kitDonorSchema } from "#src/models/genshinAssets/kits/KitDonor";
+import type { KitDonor } from "#src/models/genshinAssets/kits/KitDonor";
+
+import { kitDonorSchema } from "#src/models/genshinAssets/kits/KitDonor";
 import { KitProvisionalCause } from "#src/models/genshinAssets/kits/KitProvisionalCause";
 import { KitSource } from "#src/models/genshinAssets/kits/KitSource";
 import { z } from "zod";

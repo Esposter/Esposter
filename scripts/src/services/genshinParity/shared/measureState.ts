@@ -1,3 +1,5 @@
+/* oxlint-disable no-underscore-dangle -- the names are the page's own globals, which the page sets and these read back by name */
+
 import type { StallState } from "#src/models/genshinParity/shared/StallState";
 import type { TracedState } from "#src/models/genshinParity/shared/TracedState";
 import type { Page } from "playwright";

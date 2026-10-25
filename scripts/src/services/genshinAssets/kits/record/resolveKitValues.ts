@@ -24,6 +24,9 @@ const NO_SOURCE_CAUSES: ReadonlySet<KitProvisionalCause> = new Set([
   KitProvisionalCause.Unsourced,
 ]);
 
+const refuseChoice = (path: string, entry: KitOverlayChoice) =>
+  new InvalidOperationError(Operation.Read, path, `has no ${entry.source} value for the overlay to choose`);
+
 // A kit's values from its sources' candidates and its overlay: each path takes its first source's value, the overlay
 // Then sets its own values, removes others and picks another source where it names one. A talent whose hits a named list
 // Spawns keeps its own list empty, the named lists' hits join to their multipliers' talent variables, and the rules fill
@@ -64,8 +67,6 @@ export const resolveKitValues = (
     if (candidate !== undefined) choose(path, candidate);
     return candidate !== undefined;
   };
-  const refuseChoice = (path: string, entry: KitOverlayChoice) =>
-    new InvalidOperationError(Operation.Read, path, `has no ${entry.source} value for the overlay to choose`);
   // A choice carrying a value its path's sources do not give is the named-hit join's, which reads the hit's multiplier
   // And the hitmark picking its call from the record, so it holds its value until the join runs and then takes its candidate
   const joinedChoiceMap = new Map<string, KitOverlayChoice>();
