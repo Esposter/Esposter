@@ -4,9 +4,10 @@ import type { Context } from "#server/trpc/context";
 import { createMockContext, getMockSession } from "#server/trpc/context.test";
 import { McpScope } from "#shared/models/auth/McpScope";
 import { apiKeysInAuth } from "@esposter/db-schema";
-import { sql } from "drizzle-orm";
+import { takeOne } from "@esposter/shared";
+import { eq, sql } from "drizzle-orm";
 import { readFile } from "node:fs/promises";
-import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
+import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("api keys follow-ups scope migration", () => {
   // The startup migration's own SQL, run over the keys it names. The mock database loads a snapshot of the schema rather
@@ -29,12 +30,17 @@ describe("api keys follow-ups scope migration", () => {
     const id = crypto.randomUUID();
     await mockContext.db
       .insert(apiKeysInAuth)
-      .values({ id, key: crypto.randomUUID(), permissions, referenceId: ctx.getSessionPayload.user.id });
+      .values({
+        id,
+        key: crypto.randomUUID(),
+        permissions,
+        referenceId: ctx.getSessionPayload.user.id,
+        updatedAt: new Date(0),
+      });
     return id;
   };
   const readKeyPermissions = async (id: string) => {
-    const key = await mockContext.db.query.apiKeysInAuth.findFirst({ where: { id: { eq: id } } });
-    assert.exists(key);
+    const key = takeOne(await mockContext.db.select().from(apiKeysInAuth).where(eq(apiKeysInAuth.id, id)));
     return key.permissions;
   };
 
