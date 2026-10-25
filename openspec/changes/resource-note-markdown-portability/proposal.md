@@ -2,7 +2,7 @@
 
 ## Why
 
-A note can be read only inside the app or through its published page, and its own page names Markdown export as a natural follow-on. Markdown is the format documents travel in, such as a README, a wiki or a pasted answer. A note that cannot leave as a Markdown file or arrive from one is a document the owner is locked into.
+A note can be read only inside the app or through its published page, and its own page named Markdown export a natural follow-on. Markdown is the format documents travel in, such as a README, a wiki or a pasted answer. A note that cannot leave as a Markdown file or arrive from one is a document the owner is locked into.
 
 ## What Changes
 

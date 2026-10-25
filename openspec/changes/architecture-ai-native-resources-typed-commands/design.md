@@ -32,7 +32,7 @@ Ticking a repeating todo rolls it to its next due date in a time zone rather tha
 
 ## A Note written as Markdown
 
-An agent writes Markdown far more reliably than ProseMirror JSON, and a heading's level or a link's address lives in the node attributes the content tools refuse to write. So `note.writeNoteMarkdown` takes Markdown and either replaces the document or appends to it, parsed on the server against the writing kit's own extensions. The converter is the one [Note Markdown portability](../resource-note-markdown-portability/design.md) admits, Tiptap's own, so this command waits on that proposal's dependency while the rest of this unit does not. The write still goes through `saveResourceContent`, so it reserves the assets its Markdown embeds like any other content write.
+An agent writes Markdown far more reliably than ProseMirror JSON, and a heading's level or a link's address lives in the node attributes the content tools refuse to write. So `note.writeNoteMarkdown` takes Markdown and either replaces the document or appends to it, parsed on the server against the writing kit's own extensions. The converter is the one [Note Markdown portability](../resource-note-markdown-portability/design.md) has shipped: `marked`'s tokens mapped onto the note's own schema, in `apps/web/app/services/resource/note/`. That module lives under `app/`, which server code does not import, so this command's server-side parse first moves the converter to `shared/`. The write still goes through `saveResourceContent`, so it reserves the assets its Markdown embeds like any other content write.
 
 ## The page builder has none
 

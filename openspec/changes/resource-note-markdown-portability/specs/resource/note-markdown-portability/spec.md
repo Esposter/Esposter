@@ -24,7 +24,7 @@ Exporting a note SHALL download its content as a Markdown file named after the n
 
 ### Requirement: A Markdown round trip keeps every block the note holds
 
-A note exported to Markdown and imported again SHALL keep the same content, for every kind of block CommonMark carries. Tables are outside it, as the design records.
+A note exported to Markdown and imported again SHALL keep the same content, for every kind of block CommonMark carries. Tables and images are outside it, as the design records.
 
 #### Scenario: A note with every block survives a Markdown round trip
 
@@ -59,3 +59,36 @@ Confirming an import SHALL keep the note's previous content in its version histo
 - **WHEN** the owner confirms an import of a Markdown file
 - **THEN** the note shows the imported content
 - **AND** the previous content can be restored from the note's version history
+
+### Requirement: An exported image keeps its words, not its picture
+
+A note's image SHALL export as its alt text, because the picture is stored at an address a file cannot carry outside the app.
+
+#### Scenario: An image exports as its alt text
+
+- **GIVEN** a note holding an image with the alt text "A cat"
+- **WHEN** the owner exports the note
+- **THEN** the file holds "A cat" as a paragraph
+- **AND** the file holds no address for the picture
+
+### Requirement: An import refuses a file over the app's file limit
+
+Importing a Markdown file SHALL refuse a file larger than the app's file limit before it reads the file, and SHALL open no preview for it.
+
+#### Scenario: An import over the file size limit opens no preview
+
+- **GIVEN** a Markdown file larger than the app's file limit
+- **WHEN** the owner chooses Import Markdown and picks the file
+- **THEN** no preview opens
+- **AND** the file is not read
+
+### Requirement: An import keeps no link that runs a script
+
+An imported link to a scheme that can run a script SHALL keep its text and drop the link.
+
+#### Scenario: A link to a script scheme keeps its text without the link
+
+- **GIVEN** a Markdown file with a link to a `javascript:` address
+- **WHEN** the owner imports the file
+- **THEN** the link's text is kept
+- **AND** the note holds no link to that address
