@@ -14,6 +14,7 @@ import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useAlertStore } from "@/store/alert";
 import { useEmailEditorStore } from "@/store/emailEditor";
 import { useEmailExportDialogStore } from "@/store/emailEditor/exportDialog";
+import { useEmailImportDialogStore } from "@/store/emailEditor/importDialog";
 import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 import { useFlowchartExportStore } from "@/store/flowchartEditor/export";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
@@ -122,6 +123,27 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
       },
       icon: "i-mdi:language-html5",
       label: "Personalized HTML",
+    },
+    {
+      icon: "i-mdi:code-tags",
+      // The command opens the code field for the email it was run on, which the Editor blade renders
+      import: async () => {
+        const alertStore = useAlertStore();
+        const { createAlert } = alertStore;
+        const resourceStore = useResourceStore();
+        const { resource } = storeToRefs(resourceStore);
+        const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+        const { getEmailDocument } = pageBuilderDocumentStore;
+        if (!resource.value || !getEmailDocument(resource.value.id)) {
+          createAlert(OPEN_EMAIL_EDITOR_MESSAGE, "warning");
+          return;
+        }
+
+        const emailImportDialogStore = useEmailImportDialogStore();
+        const { openImport } = emailImportDialogStore;
+        openImport(resource.value.id);
+      },
+      label: "MJML",
     },
   ],
   [ResourceType.Flowchart]: [

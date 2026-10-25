@@ -48,5 +48,6 @@ onUnmounted(() => {
     <PageBuilderEditor :kind="emailKind" :resource-id />
     <!-- The export confirm is drawn here, since this blade holds the dataset it decides on -->
     <ResourceEmailExportTruncationDialog />
+    <ResourceEmailImportDialog />
   </div>
 </template>
