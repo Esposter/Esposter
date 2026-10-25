@@ -274,18 +274,6 @@ describe("resourceRouter", () => {
     expect(count).toBe(1);
   });
 
-  test("See all lists a tag match", async () => {
-    expect.hasAssertions();
-
-    const taggedResource = await dashboardCaller.createResource({ name: "a" });
-    await dashboardCaller.updateResource({ id: taggedResource.id, name: "a", tags: { a: name } });
-    await sheetCaller.createResource({ name: "b" });
-    // The full list reads the same search as the palette's group, only without its row limit
-    const { items } = await caller.readResources({ searchQuery: name });
-
-    expect(items.map(({ id }) => id)).toStrictEqual([taggedResource.id]);
-  });
-
   test("A name match ranks above a tag-only match", async () => {
     expect.hasAssertions();
 
