@@ -97,7 +97,8 @@ Verified at `c3996b74`: the six email suites pass (11 tests); `vue-tsc -p .nuxt/
 11. **Bundle budget (cutover 6.1).** Open. 200 KiB gzipped. Measure after the GrapesJS removal (item 7).
 12. **Browser proofs.** Open: performance-and-proof 1.1, 3.1–3.3, 4.1, 5.1.
 13. **Performance budgets. Raised to the measured numbers.** The performance-and-proof change now states render under 5 seconds and edit under 20 milliseconds at the 95th percentile, and the measured numbers meet them. The scenario tests that name the budgets are still to write, and the render path's cost is an optimisation, not a condition of the budget.
-14. **Final review and finishing audit.** Not started. Run `code-review` (both lanes) and `finishing` over the whole change, after items 1–13. Then push.
+14. **Email's FileAssets adoption (decision).** Open. `resource-file-assets` names Email as an adopter, and `ResourceDefinitionMap` still declares `fileAssets: true` for Email, but the page builder has no upload caller: `useUploadResourceFile` and `useDeleteResourceFile` are reached only from Survey, Note and Webpage Settings. Decide either to wire the page builder's image upload to the Email type's file procedures (keeping the adoption the spec's three-adopter admission rests on) or to drop `fileAssets` from Email and re-state the admission with two adopters. Settle it before item 8 rewrites `resource-file-assets`.
+15. **Final review and finishing audit.** Not started. Run `code-review` (both lanes) and `finishing` over the whole change, after items 1–14. Then push.
 
 Blueprint backfill (cutover 2.2) is excluded. It needs explicit dev and prod go-aheads.
 
