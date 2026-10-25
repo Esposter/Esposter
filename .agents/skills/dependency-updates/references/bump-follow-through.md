@@ -10,6 +10,8 @@ When `unocss` changes, `apps/web/uno.config.test.ts` is the check: it snapshots 
 
 `inlinedDependencies` in a package manifest is written by tsdown on every build, so a vendored package's bump lands in a reviewed diff — every package included, `apps/functions` among them: it keeps the `main` the Functions host reads through `exports: { legacy: true }` rather than by switching generation off, and generation is the same write that records the list. Nothing there is hand-maintained, so a recorded version that no longer exists under `node_modules/.pnpm` is a build nobody re-ran rather than an edit nobody made — rebuild and read the diff, which is also the explanation on offer for that package's bundle size moving when nothing in its own manifest did.
 
+A rebuild that rewrites a version the repo commits is drift, not a result: the manifest and the lockfile disagree, and the build keeps writing the lockfile's version back. The version the build writes is the one to commit, in the bump's own commit, and a size measured while it is still uncommitted is not the size the commit ships.
+
 Any bump that reaches a `dist/` is finished only by this sequence, all of it in the bump's own commit:
 
 1. `vp run build:packages` from the repo root — rebuilds every library package, so tsdown rewrites each `inlinedDependencies` and the `dist/` the size tests read. Skipping it makes `-u` write the stale `dist/` into the snapshot.
