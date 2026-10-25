@@ -2,9 +2,9 @@ import type { PortableFormat } from "@/models/resource/PortableFormat";
 
 import { MimeType } from "#shared/models/file/MimeType";
 import { noteDocumentSchema } from "#shared/models/resource/note/NoteDocument";
+import { deserializeNoteMarkdown } from "#shared/services/resource/note/deserializeNoteMarkdown";
+import { serializeNoteMarkdown } from "#shared/services/resource/note/serializeNoteMarkdown";
 import { NOTE_MARKDOWN_ACCEPT } from "@/services/resource/constants";
-import { deserializeNoteMarkdown } from "@/services/resource/note/deserializeNoteMarkdown";
-import { serializeNoteMarkdown } from "@/services/resource/note/serializeNoteMarkdown";
 import { useResourceStore } from "@/store/resource";
 import { useNoteStore } from "@/store/resource/note";
 import { useNotePortableDialogStore } from "@/store/resource/note/portableDialog";
