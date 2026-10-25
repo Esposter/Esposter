@@ -22,11 +22,12 @@ The test lands with [lifecycle tools](../architecture-ai-native-resources-lifecy
 
 ## Key files
 
-| File                                                  | Role after the change                                                         |
-| ----------------------------------------------------- | ----------------------------------------------------------------------------- |
-| `apps/web/server/models/trpc/Meta.ts`                 | `humanOnly` names why a procedure is never served                             |
-| `apps/web/server/services/mcp/getMcpTools.ts`         | skips a human-only procedure                                                  |
-| `apps/web/server/services/mcp/getMcpTools.test.ts`    | every non-factory procedure on a type's router declares `mcp` or `humanOnly`  |
-| `apps/web/server/trpc/routers/resource.ts`            | `purgeResource` declares itself human-only                                    |
-| `apps/web/server/trpc/routers/survey.ts`              | response deletion and the respondent procedures declare themselves human-only |
-| `packages/db-schema/src/schema/auth/apiKeysInAuth.ts` | the keys the backfill gives the follow-ups scope                              |
+| File                                                                                   | Role after the change                                                         |
+| -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `apps/web/server/models/trpc/Meta.ts`                                                  | `humanOnly` names why a procedure is never served                             |
+| `apps/web/server/services/mcp/getMcpTools.ts`                                          | skips a human-only procedure                                                  |
+| `apps/web/server/services/mcp/getMcpTools.test.ts`                                     | the tools each scope reaches, and no human-only procedure listed as one       |
+| `apps/web/server/trpc/routers/resource.ts`                                             | `purgeResource` declares itself human-only                                    |
+| `apps/web/server/trpc/routers/survey.ts`                                               | response deletion and the respondent procedures declare themselves human-only |
+| `packages/db-schema/src/schema/auth/apiKeysInAuth.ts`                                  | the table the keys live in                                                    |
+| `apps/web/server/db/migrations/20261013003850_api_keys_follow_ups_scope/migration.sql` | the backfill, applied at startup as the migration that owns it                |
