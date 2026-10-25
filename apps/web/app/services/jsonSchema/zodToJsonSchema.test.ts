@@ -78,8 +78,50 @@ describe(zodToJsonSchema, () => {
       ]),
     );
 
-    expect(result).toHaveProperty("oneOf");
-    expect(result).not.toHaveProperty("properties");
+    expect(result).toMatchInlineSnapshot(`
+      {
+        "oneOf": [
+          {
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "title": "Name",
+                "type": "string",
+              },
+              "type": {
+                "const": "a",
+                "title": "Type",
+                "type": "string",
+              },
+            },
+            "required": [
+              "name",
+              "type",
+            ],
+            "type": "object",
+          },
+          {
+            "additionalProperties": false,
+            "properties": {
+              "count": {
+                "title": "Count",
+                "type": "number",
+              },
+              "type": {
+                "const": "b",
+                "title": "Type",
+                "type": "string",
+              },
+            },
+            "required": [
+              "count",
+              "type",
+            ],
+            "type": "object",
+          },
+        ],
+      }
+    `);
   });
 
   // The column form nests one under `transformation`, whose variant choice reads the titles generated for it, so they
