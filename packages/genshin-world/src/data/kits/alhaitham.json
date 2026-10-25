@@ -252,5 +252,6 @@
   "parameters.constellation4ElementalMasteryPerMirror": { "cause": "Unsourced", "value": 30 },
   "parameters.constellation4DendroDamageBonusPerMirror": { "cause": "Unsourced", "value": 0.1 },
   "parameters.constellation6CriticalRate": { "file": "cons.go", "line": 105, "source": "Gcsim", "value": 0.1 },
-  "parameters.constellation6CriticalDamage": { "file": "cons.go", "line": 106, "source": "Gcsim", "value": 0.7 }
+  "parameters.constellation6CriticalDamage": { "file": "cons.go", "line": 106, "source": "Gcsim", "value": 0.7 },
+  "chargedAttack.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 6, "proudSkillGroupId": 7831 } }
 }
