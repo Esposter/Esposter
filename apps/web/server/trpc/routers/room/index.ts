@@ -173,17 +173,15 @@ export const baseRoomRouter = router({
       });
       if (ban) throw getForbiddenError("You are banned from this room");
 
+      const userToRoomContext = JSON.stringify({ roomId: invite.roomId, userId: ctx.getSessionPayload.user.id });
+
       // Read under the room lock above, so a second join racing this one waits here and finds the row it made
       const existingUserToRoom = await tx.query.usersToRoomsInMessage.findFirst({
         columns: { roomId: true },
         where: { roomId: { eq: invite.roomId }, userId: { eq: ctx.getSessionPayload.user.id } },
       });
       if (existingUserToRoom)
-        throw getInvalidOperationError(
-          Operation.Create,
-          DatabaseEntityType.UserToRoom,
-          JSON.stringify({ roomId: invite.roomId, userId: ctx.getSessionPayload.user.id }),
-        );
+        throw getInvalidOperationError(Operation.Create, DatabaseEntityType.UserToRoom, userToRoomContext);
 
       const userToRoom = requireMutation(
         (
@@ -194,7 +192,7 @@ export const baseRoomRouter = router({
         )[0],
         Operation.Create,
         DatabaseEntityType.UserToRoom,
-        JSON.stringify({ roomId: invite.roomId, userId: ctx.getSessionPayload.user.id }),
+        userToRoomContext,
       );
       const userToRoomWithRelations = await requireEntity(
         tx.query.usersToRoomsInMessage.findFirst({
