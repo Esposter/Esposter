@@ -127,6 +127,20 @@ describe(serializeNoteMarkdown, () => {
     ).toBe("## Item \\#\n\n**hello** `  x  `\n");
   });
 
+  // A code span of only spaces is not padded, since a reader strips no space from a span of only spaces
+  test("a code span of only spaces reads back as the spaces it holds", () => {
+    expect.hasAssertions();
+
+    const noteSchema = getSchema(getNoteExtensions());
+    const doc: JSONContent = {
+      content: [{ content: [{ marks: [{ type: "code" }], text: "  ", type: "text" }], type: "paragraph" }],
+      type: "doc",
+    };
+    const imported = deserializeNoteMarkdown(serializeNoteMarkdown(doc));
+
+    expect(noteSchema.nodeFromJSON(imported).toJSON()).toStrictEqual(noteSchema.nodeFromJSON(doc).toJSON());
+  });
+
   // A line that CommonMark would read as a rule, a setext underline or an indented block is escaped, so it reads back
   test("a paragraph that starts like a block reads back as the text it holds", () => {
     expect.hasAssertions();
