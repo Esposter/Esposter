@@ -52,14 +52,14 @@ The preview text set on an email SHALL be the text the email shows as its inbox 
 
 A merge field SHALL be inserted into a text by typing two braces or by dragging a column from the dataset, and SHALL show as the column's token.
 
-#### Scenario: Typing two braces offers the dataset's columns
+#### Scenario: typing two braces offers the dataset's columns
 
 - **GIVEN** an email bound to a dataset with the columns Name and Email
 - **WHEN** the owner types two braces in a text
 - **THEN** the list offers Name and Email
 - **AND** choosing Name inserts a merge field shown as its token
 
-#### Scenario: Dragging a column into a text inserts a merge field
+#### Scenario: dragging a column into a text inserts a merge field
 
 - **GIVEN** an email bound to a dataset with a column named Name
 - **WHEN** the owner drags Name from the Merge fields group into a text
@@ -69,14 +69,14 @@ A merge field SHALL be inserted into a text by typing two braces or by dragging 
 
 An email node SHALL offer no breakpoints or states, and its style fields SHALL be the attributes its email output takes.
 
-#### Scenario: An email text has no breakpoint or state choice
+#### Scenario: an email text has no breakpoint or state choice
 
 - **GIVEN** a text node in an email
 - **WHEN** the owner opens its style fields
 - **THEN** no breakpoint or state choice is shown
 - **AND** the fields include its padding, colours and font
 
-#### Scenario: Clearing a field restores the root's default
+#### Scenario: clearing a field restores the root's default
 
 - **GIVEN** an email whose default font size for texts is 16 pixels, and a text whose own font size is 20 pixels
 - **WHEN** the owner clears the text's font size

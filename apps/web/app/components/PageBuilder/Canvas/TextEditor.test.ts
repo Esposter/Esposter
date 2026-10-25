@@ -101,7 +101,7 @@ describe("pageBuilderCanvasTextEditor", () => {
     expect(pageBuilderHistoryStore.historyMap.get(resourceId)?.past.length).toBe(pastLengthBefore + 2);
   });
 
-  test("typing two braces offers the dataset's columns, and a chosen one is inserted as its merge field", async () => {
+  test("typing two braces offers the dataset's columns", async () => {
     expect.hasAssertions();
 
     const columnId = crypto.randomUUID();

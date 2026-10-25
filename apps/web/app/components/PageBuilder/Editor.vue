@@ -5,6 +5,7 @@ import type { UiTabItem } from "@/models/ui/UiTabItem";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { KeyAction } from "@/models/pageBuilder/KeyAction";
 import { KeyScope } from "@/models/pageBuilder/KeyScope";
+import { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
 import {
   CONTENT_PANEL,
   DEFAULT_SIDE_PANE_WIDTH,
@@ -177,7 +178,11 @@ const handleEditorKeydown = (event: KeyboardEvent) => {
       />
       <UiTabs v-model="panel" is-filling :items="panelItems" label="Node settings" h-full>
         <PageBuilderContentPanel v-if="panel === CONTENT_PANEL" :kind :resource-id />
-        <PageBuilderStylePanel v-if="panel === STYLE_PANEL" :resource-id />
+        <PageBuilderEmailStylePanel
+          v-if="panel === STYLE_PANEL && kind.editor === PageBuilderEditor.Email"
+          :resource-id
+        />
+        <PageBuilderStylePanel v-else-if="panel === STYLE_PANEL" :resource-id />
         <PageBuilderThemePanel v-if="panel === THEME_PANEL" :resource-id />
       </UiTabs>
     </div>
