@@ -2,6 +2,7 @@ import type { AnimalCodexRow } from "#src/models/genshinAssets/enemies/AnimalCod
 import type { ExcelMonsterDescribeRow } from "#src/models/genshinAssets/enemies/ExcelMonsterDescribeRow";
 import type { MonsterCurveRow } from "#src/models/genshinAssets/enemies/MonsterCurveRow";
 import type { MonsterRow } from "#src/models/genshinAssets/enemies/MonsterRow";
+import type { RegionCampsData } from "#src/models/genshinAssets/enemies/RegionCampsData";
 
 import { ANIMAL_CODEX_TABLE_NAME } from "#src/services/genshinAssets/archive/constants";
 import { collectEnemyKindIds } from "#src/services/genshinAssets/enemies/collectEnemyKindIds";
@@ -43,9 +44,7 @@ export const buildEnemyKinds = async (): Promise<Record<string, unknown>> => {
   const regionFilenames = await readdir(regionsDirectory);
   const regionDatas = await Promise.all(
     regionFilenames.map(async (filename) =>
-      parseMachineJson<{ enemyCamps: { members: { enemyKindId: number }[] }[] }>(
-        await readFile(join(regionsDirectory, filename), "utf8"),
-      ),
+      parseMachineJson<RegionCampsData>(await readFile(join(regionsDirectory, filename), "utf8")),
     ),
   );
   const monsterRows = readExcelTable<MonsterRow>(MONSTER_TABLE_NAME);
