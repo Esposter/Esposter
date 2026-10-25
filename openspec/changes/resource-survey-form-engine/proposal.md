@@ -18,10 +18,6 @@ The survey is rebuilt on our own code and SurveyJS is removed in the same change
 
 The rejected alternative, keeping SurveyJS and checking its document on save, is recorded in [its rejected folder](../../rejected/resource/survey-keep-and-type-the-document/design.md).
 
-## Owner confirmation before deletion
-
-Removing the old survey deletes user data: each survey's stored content, its published snapshots, its retained versions and every response collected under it. The change therefore records, per deployed environment, how many survey resources and how many response rows exist, read before the migration runs. The migration does not start until the owner has confirmed those counts for each environment. The counts are part of this change's spec, so a deletion is never run on an unrecorded or unconfirmed count.
-
 ## Sizing the Creator
 
 The Creator is the largest part. It is about as much work as the typed model and the runner together. SurveyJS's Creator is a vendor product with a toolbox and property grid for about two dozen question kinds, a logic builder, a theme editor, a translation tab, a preview and a JSON editor. The gap analysis decides which of those the replacement builds. The theme editor's full range and the translation tab are the two places most likely to be dropped, and each drop needs the owner's decision.
@@ -38,6 +34,5 @@ The survey stop list in the dependency admission design names forms as accessibi
 
 ## Waiting on
 
-- The owner confirms each environment's survey and response counts before the migration runs. Until then the change is not built.
 - The scan of stored surveys (task 1.1) sets which question kinds, expression functions and theme keys the replacement covers, so the gap analysis's verdicts are checked against real data before they are final.
 - The headless block editor core is built, but its first editor consumer, the page builder, is not shipped. This survey is the core's first consumer of a typed document root, so a gap found in the core is fixed in the core in its own commit.

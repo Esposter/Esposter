@@ -1,13 +1,11 @@
 # Tasks
 
-Build order. Tasks 1.1 and 1.2 come first: the scan sets which drops the owner decides, and the owner's count confirmation gates the deletion in 6.1. Nothing else waits on them, so the replacement is built in parallel with the counts being confirmed.
+Build order. Task 1.1 comes first: the scan sets which drops the owner decides. Nothing else waits on it, so the replacement is built alongside it.
 
-## 1. Scan and counts
+## 1. Scan
 
 - [ ] 1.1 Scan every stored survey, read-only. Count, across working copies, published snapshots and retained versions: each question kind, each expression function, nesting depth, languages in use, theme keys in use, and every survey whose question names repeat. Run it as a throwaway scratchpad script, never committed.
       Verify: the counts are written into the gap analysis's drop rows in `design.md`, and the scan's log records no write to storage.
-- [ ] 1.2 Read the owner-confirmation counts for each deployed environment, read-only: survey resources, response rows, asset files and invite references. Record them in the owner-confirmation table in `design.md`, and ask the owner to confirm each row.
-      Verify: every environment row has a read count and a confirmed-by-owner mark, with no estimate in any cell.
 
 ## 2. Typed model
 
@@ -71,8 +69,8 @@ Each task names the rows of the gap analysis in `design.md` it closes. A row is 
 
 ## 6. Removal
 
-- [ ] 6.1 Run the migration that deletes the old survey type's rows: each survey's working copy, published snapshots and retained versions with their content and file assets, every response row in Azure Table keyed by the survey's id, and a report of every invite reference and program binding. It runs per environment, only after 1.2's count for that environment is confirmed, and it refuses to run if the live count differs from the confirmed one.
-      Verify: after the run, the live counts are zero for each environment, the report lists every invite reference and program binding found, and a rerun finds nothing to delete.
+- [ ] 6.1 Run the plain deletion migration that removes the old survey type's rows: each survey resource's working copy, published snapshots and retained versions with their content, every asset file, every response row in Azure Table keyed by the survey's id, and every invite reference to the survey in webpages and emails. It is a deletion only: no count step and no data conversion.
+      Verify: after the run, live survey resource rows, response rows and invite references are zero, and a rerun finds nothing to delete.
 - [ ] 6.2 Remove SurveyJS: its four catalog entries in `pnpm-workspace.yaml` and `apps/web/package.json`, its two plugins, `parseSurveyModel.ts`, the old theme key constant, the chunk and optimise entries in `vite.ts` and `build.ts`, and the old `getActions` shape. Run `pnpm i` in the same commit.
       Verify: a repo search for `survey-core`, `survey-creator` and `survey-vue3-ui` finds nothing outside the archive folder, and the lockfile holds no SurveyJS package.
 - [ ] 6.3 At archive, remove the old survey capability folders listed in `design.md` and write the new capability as built, its design holding the gap rows' outcomes.

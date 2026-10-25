@@ -1,6 +1,6 @@
 # Survey Form Engine
 
-The survey is rebuilt as a typed document of our own, validated on every save, answered by a runner and authored in a Creator both built on the headless block editor core and the UI library. SurveyJS is removed in the same change, and the stored data of the old survey type is deleted, after the owner has confirmed the counts recorded below.
+The survey is rebuilt as a typed document of our own, validated on every save, answered by a runner and authored in a Creator both built on the headless block editor core and the UI library. SurveyJS is removed in the same change, and the stored data of the old survey type is deleted in a plain deletion migration.
 
 ## How it works
 
@@ -101,18 +101,7 @@ The change removes SurveyJS and the old survey type's stored data in one step, s
 - the resource's working copy, its published snapshots and its retained versions, with their content and file assets;
 - every response row written under the survey, in Azure Table, keyed by the survey's id.
 
-It also reports every reference to a deleted survey from the rest of the app, the survey invite blocks in webpages and emails, and from programs bound to a survey, so the owner knows what will show as empty or broken.
-
-### Owner confirmation
-
-The migration does not run until the owner has confirmed the counts below for each environment. The counts are read before the migration, by a read-only script, and recorded here. A row without a confirmed count blocks the migration in that environment.
-
-| Environment                    | Survey resources | Response rows | Asset files  | Invite references | Confirmed by the owner |
-| ------------------------------ | ---------------- | ------------- | ------------ | ----------------- | ---------------------- |
-| Production                     | not yet read     | not yet read  | not yet read | not yet read      | no                     |
-| Any other deployed environment | not yet read     | not yet read  | not yet read | not yet read      | no                     |
-
-The rows are filled from the read, never estimated. A count that changes between the read and the migration is read again.
+It also removes every invite reference to a deleted survey from webpages and emails, so no invite block points at a removed survey.
 
 ## Options considered
 
@@ -175,8 +164,8 @@ New files are the expression package and the schema, runner and Creator modules 
 
 - The core is built, and its first editor consumer, the page builder, is not shipped. This survey is the first consumer of a typed document root, so a gap in the core is fixed in the core in its own commit.
 - Accessibility is the largest risk the owner takes on. The runner and Creator meet the UI library's contracts component by component, and the owner checks labelled fields and screen-reader behaviour by hand.
-- A program bound to a survey reads that survey's responses, so its funnel empties when the rows are deleted. The owner count and the report list those bindings.
-- A survey invite block in a webpage or email links a deleted survey's public page after the migration. The migration reports each block so the owner can remove it.
+- A program bound to a survey reads that survey's responses, so its funnel empties when the rows are deleted, and the binding goes with the survey.
+- A survey invite block in a webpage or email links a deleted survey's public page after the migration. The migration removes each such reference as part of the deletion.
 
 ## Sources
 
