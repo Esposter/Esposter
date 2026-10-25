@@ -55,8 +55,9 @@ describe(createKeyframeStore, () => {
 
     expect(keyframe.baseHash).toBe("");
     expect(delta.baseHash).toBe(keyframe.hash);
+    expect(keyframe.storedBytes).toBe(13986);
     // A delta costs the edit, not the document
-    expect(delta.storedBytes).toBeLessThan(keyframe.storedBytes / 10);
+    expect(delta.storedBytes).toBe(517);
     await expect(
       keyframeStore.read(keyframe.hash).match(
         (value) => value,
@@ -132,7 +133,7 @@ describe(createKeyframeStore, () => {
     );
 
     expect(countKeyframes(unboundedVersions)).toBe(1);
-    expect(countKeyframes(budgetedVersions)).toBeGreaterThan(1);
+    expect(countKeyframes(budgetedVersions)).toBe(10);
   });
 
   // The one failure this format can suffer — a truncated, altered or misfiled object — surfaces as a refused
