@@ -32,7 +32,7 @@ describe(createSingleFlight, () => {
     expect(run).toHaveBeenCalledTimes(2);
   });
 
-  test("runs nothing more once nothing is owed", async () => {
+  test("runs a call made after the flight settles as a run of its own", async () => {
     expect.hasAssertions();
     const run = vi.fn<() => Promise<void>>().mockResolvedValue(undefined);
     const flush = createSingleFlight(run);

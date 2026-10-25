@@ -14,7 +14,7 @@ describe(createAzureMetadataMap, () => {
     azureMetadataMap = createAzureMetadataMap(MessageMetadataType.Emoji);
   });
 
-  test("gets", () => {
+  test("returns no metadata for a partition nothing has set", () => {
     expect.hasAssertions();
 
     const { getEmojis } = azureMetadataMap;
@@ -23,7 +23,7 @@ describe(createAzureMetadataMap, () => {
     expect(emojis).toHaveLength(0);
   });
 
-  test("sets", () => {
+  test("reads back the metadata set under its message's row", () => {
     expect.hasAssertions();
 
     const { getEmojis, setEmojis } = azureMetadataMap;
