@@ -3,6 +3,7 @@ import type { Item } from "@/models/shared/Item";
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { checkHasCapability } from "#shared/services/resource/checkHasCapability";
+import { PortableFormatKind } from "@/models/resource/PortableFormatKind";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { createPortableFormatItems } from "@/services/resource/createPortableFormatItems";
 import { getDeleteResourceItem } from "@/services/resource/getDeleteResourceItem";
@@ -61,8 +62,8 @@ export const getResourceBladeItems = (
           },
         ]
       : []),
-    ...createPortableFormatItems("Import", UiIconMeaning.Upload, importFormats, "import"),
-    ...createPortableFormatItems("Export", UiIconMeaning.Download, exportFormats, "export"),
+    ...createPortableFormatItems("Import", UiIconMeaning.Upload, importFormats, PortableFormatKind.Import),
+    ...createPortableFormatItems("Export", UiIconMeaning.Download, exportFormats, PortableFormatKind.Export),
     ...(isDatasetExportable
       ? [
           {

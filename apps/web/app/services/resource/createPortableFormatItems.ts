@@ -1,4 +1,5 @@
 import type { PortableFormat } from "@/models/resource/PortableFormat";
+import type { PortableFormatKind } from "@/models/resource/PortableFormatKind";
 import type { Item } from "@/models/shared/Item";
 import type { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 
@@ -8,7 +9,7 @@ export const createPortableFormatItems = (
   verb: string,
   meaning: UiIconMeaning,
   formats: PortableFormat[],
-  kind: "export" | "import",
+  kind: PortableFormatKind,
 ): Item[] =>
   formats.map((format, index) => ({
     isGroupStart: index === 0,
