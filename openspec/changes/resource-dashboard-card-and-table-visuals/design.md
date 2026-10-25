@@ -1,6 +1,6 @@
 # Dashboard Card and Table Visuals
 
-Every dashboard visual is an ApexCharts chart — `VisualType` runs from Area to Treemap — bound to a dataset through one query of an x column and aggregated series ([dashboard data binding](../../specs/resource/dashboard-data-binding/design.md)). The two visuals a report is most often opened for are missing: **the number** ("412 responses", "average rating 4.3") and **the exact values** behind a chart. In Power BI those are the Card — a measure's value as a large callout with its label — and the Table — rows and columns with headers and a totals row, for "reviewing and comparing detailed data and exact values rather than visual representations".
+Every dashboard visual so far is an ApexCharts chart — `VisualType` runs from Area to Treemap — bound to a dataset through one query of an x column and aggregated series ([dashboard data binding](../../specs/resource/dashboard-data-binding/design.md)). The two visuals a report is most often opened for are missing: **the number** ("412 responses", "average rating 4.3") and **the exact values** behind a chart. In Power BI those are the Card — a measure's value as a large callout with its label — and the Table — rows and columns with headers and a totals row, for "reviewing and comparing detailed data and exact values rather than visual representations".
 
 ## What it adds
 
@@ -24,6 +24,7 @@ flowchart LR
 - **No multi-card, categories, callout images or conditional formatting** (the modern Power BI card's layout options). One number per Card; a second number is a second Card on the grid.
 - **No matrix (pivot) visual.** A Table grouped by one column covers the exact-values need; a pivot is the Sheet's job.
 - **No cross-highlighting from a Table row.** Linked highlighting belongs to the charts.
+- **The binding form still asks for an X column a card ignores.** A card's query takes its one value over every row, but `DatasetQuery.xColumn` is required, so the field stays until that query shape is made optional, a change to the shared dataset query rather than to the card.
 
 ## Key files
 
@@ -31,9 +32,9 @@ flowchart LR
 | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
 | `apps/web/shared/models/dashboard/data/VisualType.ts`                  | gains `Card` and `Table`                                                           |
 | `apps/web/app/components/Dashboard/Visual/Index.vue`                   | dispatches the two non-chart kinds to their components                             |
-| `apps/web/app/services/dashboard/VisualTypeItemCategoryDefinitions.ts` | the picker's entries, the two plainest first                                       |
+| `apps/web/app/services/dashboard/VisualTypeItemCategoryDefinitions.ts` | not changed: the picker lists the enum, which leads with the two plainest kinds    |
 | `apps/web/app/services/dashboard/dataset/VisualTypeDatasetShapeMap.ts` | a shape for each, so `computeDatasetVisualPropsData` hands them the grouped result |
-| `apps/web/app/services/dashboard/chart/VisualTypeChartTypesMap.ts`     | the two kinds take no chart type                                                   |
+| `apps/web/app/services/dashboard/chart/VisualTypeChartTypesMap.ts`     | the two kinds take the common chart type, which the edit form does not offer       |
 | `apps/web/app/services/dashboard/demo/VisualTypeDemoDataMap.ts`        | the demo value and demo rows an unbound Card and Table show                        |
 | `apps/web/app/components/Dashboard/Visual/Preview/EditFormDialog.vue`  | hides the chart type and chart settings for the two kinds, shows the Card's label  |
 

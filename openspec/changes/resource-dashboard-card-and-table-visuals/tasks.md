@@ -1,6 +1,6 @@
 ## 1. Visual kinds
 
-- [x] 1.1 Add the Card and Table kinds, listed first in the visual picker, with no chart type. Verify: a test named after the scenario 'Editing a card offers only its label'.
+- [x] 1.1 Add the Card and Table kinds, listed first in the visual picker, with the common chart type the edit form does not offer. Verify: a test named after the scenario 'Editing a card offers only its label'.
 - [x] 1.2 Route the two kinds past the chart renderer to their own components, keeping the grid item, the binding, the refresh and the states. Verify: a test named after the scenario 'A table whose read fails shows the error state'.
 
 ## 2. Card
