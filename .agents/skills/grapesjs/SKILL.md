@@ -1,9 +1,9 @@
 ---
 name: grapesjs
-description: Apply when working on Resource/Email/Editor.vue, Resource/Webpage/Editor.vue, their View.vue renders, the emailEditor/webpageEditor stores, or any GrapesJS-backed feature. Esposter's GrapesJS editors — components the resource routes mount, never pages.
+description: Apply when working on Resource/Email/Editor.vue, Resource/Webpage/Editor.vue, their View.vue renders, or the emailEditor/webpageEditor stores. Esposter's page-builder-backed resource editors — components the resource routes mount, never pages.
 ---
 
-# GrapesJS Conventions
+# Resource Editor Conventions
 
 ## Where the editors live
 
@@ -13,9 +13,9 @@ There are no editor **pages** — an editor is a component the generic resource 
 - `apps/web/app/components/Resource/Webpage/Editor.vue`
 - `apps/web/app/components/Resource/Webpage/View.vue` and `Resource/Email/View.vue` — the public read-only renders
 
-## Initialization — Always `useGrapesJsEditor`
+## Initialization — Mount the Page Builder
 
-Never `grapesJS.init` in a component — `await useGrapesJsEditor(type, storage, configuration?, assets?)` owns the container, storage, re-init and teardown; the container holds nothing else, and the upload adapter is always passed (`references/initialization.md`).
+An editor component mounts `PageBuilderEditor` with its kind and resource id, and wires autosave to its document; it never builds a canvas of its own (`references/initialization.md`).
 
 ## Resource Resolution — No Document Picker
 
@@ -25,13 +25,13 @@ An editor never picks its resource: its store holds only content, built on `crea
 
 What a published view renders is captured in the store callback at save time — Webpage's HTML and CSS, Email's compiled MJML through `getEmailHtml` — never at read time (`references/save-capture.md`).
 
-## Custom Blocks — Re-Sync Wholesale via `setBlocks`
+## Custom Nodes — Built by `create*Node`
 
-Reactive blocks re-sync wholesale through `setBlocks`, their markup lives in a `create*Blocks` service with user text escaped, and a merge field is `toMergeField(column)` (`references/blocks.md`).
+A merge field is a text node from `createMergeFieldNode`, its token is `toMergeField(column)`, and the bound columns reach the palette through `useMergeFieldColumns` (`references/blocks.md`).
 
 ## Reference pages
 
-- `references/initialization.md` — when an editor creates its instance, storage adapter or asset upload.
+- `references/initialization.md` — when an editor mounts the page builder or wires its autosave.
 - `references/resource-resolution.md` — when an editor needs its resource or content, or rebuilds a content class.
 - `references/save-capture.md` — when a published view needs HTML or CSS from the live editor.
-- `references/blocks.md` — when adding or re-syncing blocks, or writing a block's markup.
+- `references/blocks.md` — when adding merge fields or survey invites, or writing a node a palette item inserts.

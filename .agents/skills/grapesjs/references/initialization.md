@@ -1,9 +1,9 @@
-# Initializing an Editor
+# Mounting an Editor
 
-Read when an editor component creates its GrapesJS instance, its storage adapter or its asset upload.
+Read when an editor component mounts the page builder, or wires its document to autosave.
 
-Never call `grapesJS.init` in a component. `useGrapesJsEditor(type, storage, configuration?, assets?)` (`apps/web/app/composables/grapesjs/useGrapesJsEditor.ts`) owns the shared scaffolding: container (`#${GRAPES_JS_EDITOR_CONTAINER_ID}` from `apps/web/app/services/grapesjs/constants.ts`), `fromElement`, `height: 100%`, the `document` storage manager, session-change re-init, and unmount cleanup (watcher stop + `editor.destroy()`). `type` is the resource type, which it registers with `useAdoptResourceContent` so a restore reloads the live project instead of letting the next autosave write the pre-restore one back. It returns `{ editor: ShallowRef<Editor | undefined> }` and is `async` (awaits the SSR-aware session) — `await` it in the editor component's setup.
+The editor component mounts `<PageBuilderEditor :kind :resource-id />` with the kind for its resource type (`webpageKind` for a webpage, `emailKind` for an email), as `apps/web/app/components/Resource/Webpage/Editor.vue` does. It never creates a canvas, a frame or a GrapesJS instance of its own.
 
-- The component template gives GrapesJS its own `<div :id="GRAPES_JS_EDITOR_CONTAINER_ID" flex-1 of-hidden />`; it must never mount on a container that also holds a toolbar (it would ingest it via `fromElement`).
-- `storage.load`/`storage.store` delegate to the product store (`readEmailEditor`/`saveEmailEditor`, …). `store` receives `(data, editor)` so save can capture editor-derived values.
-- `assets` is the FileAssets upload adapter (`{ upload: (file) => Promise<string> }`). Pass it — without it GrapesJS embeds dropped images as base64 into the content blob. Build it from `useUploadResourceFile(type, () => resource?.id ?? "")`, reading `resource` from `useResourceStore`; the composable owns the Asset Manager `uploadFile` handler, size validation and error alerts.
+- The component awaits the content store's `loadContent()` in setup, so the document is loaded before the builder renders.
+- Autosave is driven by the document, not by the component: `watchAutosave(computed(() => getDocument(resourceId)), () => saveWebpage(resourceId))` (`apps/web/app/store/pageBuilder/document.ts`) saves on the content store's own cadence whenever the document changes deeply. The document itself is read from `usePageBuilderDocumentStore().getDocument` (`apps/web/app/store/pageBuilder/document.ts`).
+- The resource row comes from `useResourceStore`; an editor never picks its own resource (see `references/resource-resolution.md`).
