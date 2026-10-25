@@ -1,11 +1,15 @@
 import { createSceneClass } from "#src/services/shared/createSceneClass";
 import { usePhaserStore } from "#src/store/index";
 import { getTestGame, getTestPinia, removeTestScene, startTestScene } from "#src/test/fixtures/headlessGame.test";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(usePhaserStore, () => {
   const sceneKey = "sceneKey";
   const otherSceneKey = "otherSceneKey";
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
 
   test("switchToScene updates rootSceneKey, stops the old scene, and starts the new scene", async () => {
     expect.hasAssertions();
@@ -31,9 +35,6 @@ describe(usePhaserStore, () => {
     expect(stopSpy).toHaveBeenCalledWith(sceneKey);
     expect(startSpy).toHaveBeenCalledWith(otherSceneKey);
 
-    stopSpy.mockRestore();
-    startSpy.mockRestore();
-
     removeTestScene(sceneKey);
     removeTestScene(otherSceneKey);
   });
@@ -57,8 +58,6 @@ describe(usePhaserStore, () => {
 
     expect(parallelSceneKeys.value).toStrictEqual([otherSceneKey]);
     expect(launchSpy).toHaveBeenCalledWith(otherSceneKey);
-
-    launchSpy.mockRestore();
 
     parallelSceneKeys.value = [];
     removeTestScene(sceneKey);
@@ -86,8 +85,6 @@ describe(usePhaserStore, () => {
 
     expect(parallelSceneKeys.value).toStrictEqual([]);
     expect(stopSpy).toHaveBeenCalledWith(otherSceneKey);
-
-    stopSpy.mockRestore();
 
     removeTestScene(sceneKey);
     removeTestScene(otherSceneKey);

@@ -5,10 +5,14 @@ import Tilemap from "#src/components/Tilemap.vue";
 import { startTestScene, stepScene } from "#src/test/fixtures/headlessGame.test";
 import { setupGameObjectSuite } from "#src/test/fixtures/setupGameObjectSuite.test";
 import { takeOne } from "@esposter/shared";
-import { assert, describe, expect, test, vi } from "vitest";
+import { afterEach, assert, describe, expect, test, vi } from "vitest";
 
 describe("tilemap", () => {
   const { mountGameObject, sceneKey, unmountGameObject } = setupGameObjectSuite();
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
 
   test("destroys the old tilemap and fires onComplete with the new one when the key changes", async () => {
     expect.hasAssertions();

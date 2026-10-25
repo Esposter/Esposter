@@ -23,6 +23,7 @@ describe("scene", () => {
     wrapper?.unmount();
     wrapper = undefined;
     removeTestScene(sceneKey);
+    vi.restoreAllMocks();
   });
 
   test("adds the scene to the phaser game after mount", () => {
@@ -110,7 +111,6 @@ describe("scene", () => {
     const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(noop);
 
     secondWrapper.unmount();
-    consoleErrorSpy.mockRestore();
 
     expect(game.scene.getScene(sceneKey)).not.toBeNull();
   });

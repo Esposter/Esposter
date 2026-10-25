@@ -1,10 +1,14 @@
 import { useCameraStore } from "#src/store/camera";
 import { getTestPinia, removeTestScene, startTestScene } from "#src/test/fixtures/headlessGame.test";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(useCameraStore, () => {
   const sceneKey = "sceneKey";
   const durationMs = 1;
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
 
   test.each(["fadeIn", "fadeOut"] as const)("%s sets isFading and forwards to the main camera", (fade) => {
     expect.hasAssertions();
