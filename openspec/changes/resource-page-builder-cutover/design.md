@@ -78,10 +78,10 @@ Each editor's script beyond the explorer is at most 200 KiB gzipped, measured on
 
 | File                                                                | Role after the change                                                               |
 | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `apps/web/shared/models/grapesjs/AGrapesJsEditor.ts`                | deleted                                                                             |
-| `apps/web/app/composables/grapesjs/useGrapesJsEditor.ts`            | deleted                                                                             |
-| `apps/web/app/services/emailEditor/getEmailHtml.ts`                 | deleted; the server compiles                                                        |
-| `apps/web/shared/services/grapesjs/constants.ts`                    | deleted                                                                             |
+| apps/web/shared/models/grapesjs/AGrapesJsEditor.ts                  | deleted in ccebd1e268                                                               |
+| apps/web/app/composables/grapesjs/useGrapesJsEditor.ts              | deleted in ccebd1e268                                                               |
+| apps/web/app/services/emailEditor/getEmailHtml.ts                   | deleted in ccebd1e268; the server compiles                                          |
+| apps/web/shared/services/grapesjs/constants.ts                      | deleted in ccebd1e268                                                               |
 | `apps/web/shared/models/webpageEditor/data/WebpageEditor.ts`        | the webpage document, its schema built from the registry                            |
 | `apps/web/shared/models/emailEditor/data/EmailEditor.ts`            | the email document, its dataset reference, and baked HTML on a published snapshot   |
 | `apps/web/shared/services/superjson/JSONClassMap.ts`                | the two content classes, same names                                                 |
