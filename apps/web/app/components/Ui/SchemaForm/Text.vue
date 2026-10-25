@@ -13,7 +13,9 @@ const isNumber = computed(() => control.value.schema.type === "number" || contro
 
 <!-- A string or a number of a schema form, one line or several as its layout says; a read-only one is disabled -->
 <template>
+  <!-- A schema's length limit is counted under the field, so the reader sees what the schema allows before a save is refused -->
   <UiTextField
+    :counter="control.schema.maxLength"
     :error="issue"
     :is-disabled="!control.enabled || undefined"
     :label="control.label"

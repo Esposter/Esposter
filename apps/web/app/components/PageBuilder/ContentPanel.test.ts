@@ -2,6 +2,7 @@
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
+import { MAX_EMAIL_PREVIEW_LENGTH } from "#shared/services/pageBuilder/email/constants";
 import { TEST_CONTEXT, TEST_ID, TEST_LABEL, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
 import { webpageDocumentSchema } from "#shared/services/pageBuilder/webpageDocumentSchema";
 import PageBuilderContentPanel from "@/components/PageBuilder/ContentPanel.vue";
@@ -90,6 +91,19 @@ describe("pageBuilderContentPanel", () => {
     component.getComponent(UiSchemaForm).vm.$emit("update:modelValue", { preview: "Your order has shipped" });
 
     expect(pageBuilderDocumentStore.getEmailDocument(resourceId)?.root.props.preview).toBe("Your order has shipped");
+
+    component.unmount();
+  });
+
+  test("an email's preview text shows the length its schema allows beside the field", async () => {
+    expect.hasAssertions();
+
+    const resourceId = crypto.randomUUID();
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, { content: [], root: { props: {} } });
+    const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: emailKind, resourceId } });
+
+    expect(component.text()).toContain(`0 / ${MAX_EMAIL_PREVIEW_LENGTH}`);
 
     component.unmount();
   });

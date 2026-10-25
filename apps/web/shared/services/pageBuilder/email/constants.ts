@@ -4,6 +4,9 @@ import { MjmlNodeType } from "mjml-blocks";
 // The most nodes an email may hold, counted across every slot, so a document cannot grow past what a render walks
 export const MAX_EMAIL_NODES = 1000;
 
+// The most characters an inbox shows of an email's preview text before most clients cut it off, so the field stops there
+export const MAX_EMAIL_PREVIEW_LENGTH = 140;
+
 // The width below which MJML stacks a section's columns. Its mobile media query is the breakpoint less one pixel
 // (mjml-core's makeLowerBreakpoint), so a canvas exactly 480 pixels wide still lays its columns side by side
 export const EMAIL_MOBILE_BREAKPOINT = 480;
