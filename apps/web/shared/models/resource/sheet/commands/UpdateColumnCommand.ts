@@ -30,7 +30,7 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
 
   // What the column held before this command, recorded from the document on execute, so undo restores what the
   // Document held rather than what the caller saw. Undefined until the command has executed
-  #originalColumn: Column | undefined;
+  #originalColumn: ToData<Column> | undefined;
   #originalRowValues: ColumnValue[] = [];
   readonly #originalName: string;
   readonly #updatedColumn: ToData<Column>;
@@ -41,7 +41,7 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
     this.#updatedColumn = updatedColumn;
   }
 
-  execute(dataSource: DataSource) {
+  execute(dataSource: ToData<DataSource>) {
     const originalName = this.#originalName;
     const columnIndex = dataSource.columns.findIndex(({ name }) => name === originalName);
     if (columnIndex === -1) return;
@@ -98,7 +98,7 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
     if (updatedName !== originalName || originalType !== this.#updatedColumn.type) alignRowDataToColumns(dataSource);
   }
 
-  undo(dataSource: DataSource) {
+  undo(dataSource: ToData<DataSource>) {
     const originalColumn = this.#originalColumn;
     if (originalColumn === undefined) return;
     const originalName = originalColumn.name;

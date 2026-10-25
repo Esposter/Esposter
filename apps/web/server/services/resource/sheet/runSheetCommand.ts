@@ -52,7 +52,7 @@ export const runSheetCommand = async (
           break;
         }
         default:
-          exhaustiveGuard(command.type);
+          exhaustiveGuard(command);
       }
       return { content: sheet, result: undefined };
     },

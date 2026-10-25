@@ -1,4 +1,5 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
+import type { ToData } from "@esposter/shared";
 
 import { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";
@@ -22,13 +23,13 @@ export class ToggleColumnVisibilityCommand extends ADataSourceCommand<CommandTyp
     this.#isHidden = isHidden;
   }
 
-  execute(dataSource: DataSource) {
+  execute(dataSource: ToData<DataSource>) {
     const column = dataSource.columns.find(({ id }) => id === this.#columnId);
     if (!column) return;
     column.isHidden = !this.#isHidden;
   }
 
-  undo(dataSource: DataSource) {
+  undo(dataSource: ToData<DataSource>) {
     const column = dataSource.columns.find(({ id }) => id === this.#columnId);
     if (!column) return;
     column.isHidden = this.#isHidden;

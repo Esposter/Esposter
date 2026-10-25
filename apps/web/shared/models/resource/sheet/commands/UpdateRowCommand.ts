@@ -1,5 +1,6 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
+import type { ToData } from "@esposter/shared";
 
 import { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";
@@ -17,26 +18,26 @@ export class UpdateRowCommand extends ADataSourceCommand<CommandType.UpdateRow> 
   }
 
   readonly #index: number;
-  readonly #originalRow: Row;
-  readonly #updatedRow: Row;
+  readonly #originalRow: ToData<Row>;
+  readonly #updatedRow: ToData<Row>;
 
-  constructor(index: number, originalRow: Row, updatedRow: Row) {
+  constructor(index: number, originalRow: ToData<Row>, updatedRow: ToData<Row>) {
     super();
     this.#index = index;
     this.#originalRow = originalRow;
     this.#updatedRow = updatedRow;
   }
 
-  execute(dataSource: DataSource) {
+  execute(dataSource: ToData<DataSource>) {
     this.#setRowTo(dataSource, this.#updatedRow);
   }
 
-  undo(dataSource: DataSource) {
+  undo(dataSource: ToData<DataSource>) {
     this.#setRowTo(dataSource, this.#originalRow);
   }
 
   // Writes the given row's values over the row at this command's index, adjusting each column's size by the difference
-  #setRowTo(dataSource: DataSource, targetRow: Row) {
+  #setRowTo(dataSource: ToData<DataSource>, targetRow: ToData<Row>) {
     if (this.#index === -1) return;
     const row = takeOne(dataSource.rows, this.#index);
     for (const column of dataSource.columns)

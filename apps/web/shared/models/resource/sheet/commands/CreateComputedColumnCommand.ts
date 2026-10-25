@@ -1,5 +1,6 @@
 import type { ComputedColumn } from "#shared/models/resource/sheet/column/ComputedColumn";
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
+import type { ToData } from "@esposter/shared";
 
 import { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";
@@ -21,7 +22,7 @@ export class CreateComputedColumnCommand extends ADataSourceCommand<CommandType.
     this.#newColumn = newColumn;
   }
 
-  execute(dataSource: DataSource) {
+  execute(dataSource: ToData<DataSource>) {
     dataSource.columns = [
       ...dataSource.columns.slice(0, this.#columnIndex),
       this.#newColumn,
@@ -30,7 +31,7 @@ export class CreateComputedColumnCommand extends ADataSourceCommand<CommandType.
     // No row.data writes — computed values are never stored
   }
 
-  undo(dataSource: DataSource) {
+  undo(dataSource: ToData<DataSource>) {
     dataSource.columns = dataSource.columns.filter((column) => column.id !== this.#newColumn.id);
   }
 }

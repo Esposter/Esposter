@@ -1,4 +1,5 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
+import type { ToData } from "@esposter/shared";
 
 import { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";
@@ -24,15 +25,15 @@ export class MoveColumnCommand extends ADataSourceCommand<CommandType.MoveColumn
     this.#toIndex = toIndex;
   }
 
-  execute(dataSource: DataSource) {
+  execute(dataSource: ToData<DataSource>) {
     this.#moveColumn(dataSource, this.#fromIndex, this.#toIndex);
   }
 
-  undo(dataSource: DataSource) {
+  undo(dataSource: ToData<DataSource>) {
     this.#moveColumn(dataSource, this.#toIndex, this.#fromIndex);
   }
 
-  #moveColumn(dataSource: DataSource, fromIndex: number, toIndex: number) {
+  #moveColumn(dataSource: ToData<DataSource>, fromIndex: number, toIndex: number) {
     const movedColumn = dataSource.columns[fromIndex];
     if (!movedColumn) return;
 

@@ -1,5 +1,6 @@
 import type { IndexedColumn } from "#shared/models/resource/sheet/commands/IndexedColumn";
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
+import type { ToData } from "@esposter/shared";
 
 import { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";
@@ -24,7 +25,7 @@ export class DeleteColumnsCommand extends ADataSourceCommand<CommandType.DeleteC
     this.#columnIds = columnIds;
   }
 
-  execute(dataSource: DataSource) {
+  execute(dataSource: ToData<DataSource>) {
     const columnIdIndexMap = new Map(dataSource.columns.map((column, index) => [column.id, index]));
     const indexedColumns: IndexedColumn[] = [];
     for (const id of this.#columnIds) {
@@ -48,7 +49,7 @@ export class DeleteColumnsCommand extends ADataSourceCommand<CommandType.DeleteC
     for (const { data } of dataSource.rows) for (const name of namesToDelete) delete data[name];
   }
 
-  undo(dataSource: DataSource) {
+  undo(dataSource: ToData<DataSource>) {
     const ascendingColumns = this.#indexedColumns.toSorted(
       (firstIndexedColumn, secondIndexedColumn) => firstIndexedColumn.columnIndex - secondIndexedColumn.columnIndex,
     );
