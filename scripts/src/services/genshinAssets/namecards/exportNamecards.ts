@@ -1,57 +1,19 @@
-import { AnimeStudioGroupType } from "#src/models/genshinAssets/shared/AnimeStudioGroupType";
-import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
-import { checkNamecardAsset } from "#src/services/genshinAssets/namecards/checkNamecardAsset";
-import { checkSameFileNames } from "#src/services/genshinAssets/namecards/checkSameFileNames";
 import {
   NAMECARD_ART_DIRECTORY,
   NAMECARD_DIRECTORY,
   NAMECARD_ICON_DIRECTORY,
-  NAMECARD_ICON_PREFIX,
 } from "#src/services/genshinAssets/namecards/constants";
-import {
-  ASSET_INDEX_PATH,
-  GENSHIN_ANIMESTUDIO_OPTIONS,
-  INSTALLED_BLOCKS_DIRECTORY,
-} from "#src/services/genshinAssets/shared/constants";
+import { checkNamecardAsset } from "#src/services/genshinAssets/namecards/checkNamecardAsset";
+import { checkSameFileNames } from "#src/services/genshinAssets/namecards/checkSameFileNames";
+import { exportBlockNamecards } from "#src/services/genshinAssets/namecards/exportBlockNamecards";
+import { getNamecardDirectory } from "#src/services/genshinAssets/namecards/getNamecardDirectory";
+import { readNamecardNames } from "#src/services/genshinAssets/namecards/readNamecardNames";
+import { ASSET_INDEX_PATH, GENSHIN_ANIMESTUDIO_OPTIONS } from "#src/services/genshinAssets/shared/constants";
 import { readIndexedAssets } from "#src/services/recreation/animeStudio/readIndexedAssets";
-import { runAnimeStudio } from "#src/services/recreation/animeStudio/runAnimeStudio";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { existsSync, mkdirSync, readdirSync, renameSync, rmSync } from "node:fs";
-import { extname, join, parse } from "node:path";
+import { mkdirSync, rmSync } from "node:fs";
 
-const PNG_EXTENSION = ".png";
 const DIRECTORIES = [NAMECARD_ART_DIRECTORY, NAMECARD_ICON_DIRECTORY];
-// The folder a namecard's PNG is written to: its icon apart from its art
-const getNamecardDirectory = (name: string): string =>
-  name.startsWith(NAMECARD_ICON_PREFIX) ? NAMECARD_ICON_DIRECTORY : NAMECARD_ART_DIRECTORY;
-// The names of the PNGs a folder holds, each by its file name without the extension
-const readNamecardNames = (directory: string): string[] =>
-  existsSync(directory)
-    ? readdirSync(directory)
-        .filter((file) => extname(file) === PNG_EXTENSION)
-        .map((file) => parse(file).name)
-    : [];
-// One block's namecard textures of a folder, read in one AnimeStudio run by their exact names. AnimeStudio writes each
-// Type into a folder of its own, which is moved up beside the others, and a block that yields none is left to the check
-const exportBlockNamecards = (block: string, names: readonly string[], directory: string): void => {
-  runAnimeStudio(
-    [
-      join(INSTALLED_BLOCKS_DIRECTORY, block),
-      directory,
-      "--names",
-      `^(${names.map((name) => RegExp.escape(name)).join("|")})$`,
-      "--types",
-      AssetType.Texture2D,
-      "--group_assets",
-      AnimeStudioGroupType.ByType,
-    ],
-    GENSHIN_ANIMESTUDIO_OPTIONS,
-  );
-  const typeDirectory = join(directory, AssetType.Texture2D);
-  if (!existsSync(typeDirectory)) return;
-  for (const file of readdirSync(typeDirectory)) renameSync(join(typeDirectory, file), join(directory, file));
-  rmSync(typeDirectory, { recursive: true });
-};
 // The namecards' art and icons the asset index names, each a PNG under its name in one of two folders. A folder already
 // Holding exactly those names is left as it is, so a rerun costs nothing. Any other is cleaned and exported block by
 // Block, then checked for every name the index holds. An index naming no namecard is refused before any folder is touched
