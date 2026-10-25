@@ -56,7 +56,7 @@ A member SHALL be able to set their own display name in a room they belong to, w
 
 - **GIVEN** a member who holds no room permission beyond membership
 - **WHEN** the member saves a display name in the room's profile settings
-- **THEN** every member of the room sees the new display name
+- **THEN** the member sees the new display name, and the other members see it the next time they read the member list
 
 ### Requirement: A display name applies only in the room where it was set
 
@@ -91,13 +91,13 @@ A direct message listing SHALL show each participant by the same name the room s
 
 ### Requirement: A member with the display-names permission sets another member's display name
 
-A member who holds the display-names permission in a room SHALL be able to set the display name of a member the permission lets them manage. Every member of the room sees the new display name.
+A member who holds the display-names permission in a room SHALL be able to set the display name of a member the permission lets them manage. The moderator and the renamed member see the new display name when the change lands; the other members of the room see it the next time they read the room's member list.
 
 #### Scenario: A moderator sets a lower-ranked member's display name
 
 - **GIVEN** a member who holds the display-names permission and a member ranked below them
 - **WHEN** the moderator saves a display name for that member from the member's menu
-- **THEN** every member of the room sees the new display name
+- **THEN** the moderator and the renamed member see the new display name, and the other members see it the next time they read the member list
 
 ### Requirement: A member cannot set the display name of a member who outranks them
 
