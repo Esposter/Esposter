@@ -27,6 +27,17 @@ vi.mock(import("@esposter/shared"), async (importOriginal) => ({
 }));
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
+// Each guard answers before any file is built, so a refused export names what the owner must fix and downloads
+// Nothing. The notices are the whole visible outcome, so they are what each test reads back
+const findButton = (component: VueWrapper, label: string) => {
+  const button = component.findAll("button").find((candidate) => candidate.text() === label);
+  assert.exists(button);
+  return button;
+};
+const getNotificationTitles = () => {
+  const notificationStore = useNotificationStore();
+  return notificationStore.notifications.map(({ title }) => title);
+};
 // The blade renders inside the shell's Suspense boundary, which is what shows a skeleton while it resolves —
 // So the blade awaits everything it renders from in setup rather than mounting empty behind its own flag
 describe("resourceProgramStatus", () => {
@@ -183,14 +194,6 @@ describe("resourceProgramStatus", () => {
     });
   });
 
-  // Each guard answers before any file is built, so a refused export names what the owner must fix and downloads
-  // Nothing. The notices are the whole visible outcome, so they are what each test reads back
-  const findButton = (component: VueWrapper, label: string) => {
-    const button = component.findAll("button").find((candidate) => candidate.text() === label);
-    assert.exists(button);
-    return button;
-  };
-  const getNotificationTitles = () => useNotificationStore().notifications.map(({ title }) => title);
   // The click's last call is the invite read, so the test holds until it lands rather than ending with it in flight
   const clickExportWithInvites = async (component: VueWrapper, label: string, invites: ProgramInvites) => {
     const { promise: isInviteRead, resolve: onInviteRead } = Promise.withResolvers<void>();
@@ -287,7 +290,7 @@ describe("resourceProgramStatus", () => {
       unmatchedCount: 2,
     });
 
-    expect(downloadFile).toHaveBeenCalledOnce();
+    expect(downloadFile).toHaveBeenCalledTimes(1);
     expect(getNotificationTitles()).toStrictEqual([
       "1 invite ready",
       "2 participants past the audience read limit were not exported",
@@ -312,7 +315,7 @@ describe("resourceProgramStatus", () => {
       unmatchedCount: 0,
     });
 
-    expect(downloadFile).toHaveBeenCalledOnce();
+    expect(downloadFile).toHaveBeenCalledTimes(1);
     expect(getNotificationTitles()).toContain("1 reminder ready");
   });
 });

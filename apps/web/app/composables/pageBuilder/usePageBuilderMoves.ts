@@ -65,7 +65,7 @@ const getSiblingMoveOperations = <
 // It. Each edit is one history entry, and a move keeps the node selected; focus is the caller's to move. Each landed edit is
 // Announced once through announce
 // The kind's signature, which each composable lists as its own inputs, so the duplicate-code gate skips it
-// jscpd:ignore-start
+// `jscpd:ignore-start`
 export const usePageBuilderMoves = <
   TNode extends BlockNode,
   TRoot extends BlockRootProps,
@@ -77,7 +77,7 @@ export const usePageBuilderMoves = <
   resourceId: MaybeRefOrGetter<string>,
   announce: (message: string) => void,
 ) => {
-  // jscpd:ignore-end
+  // `jscpd:ignore-end`
   const { getOpenDocument, getSelection } = usePageBuilderSelectedNode(kind, getDocument, resourceId);
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
   const { getSelectedNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
@@ -85,7 +85,7 @@ export const usePageBuilderMoves = <
   const { applyEdit } = pageBuilderHistoryStore;
   // Announces where a moved node now sits: its title, its 1-based position among its slot's children and the slot's path
   const announceMove = (
-    kind: MoveKind<TNode, TRoot, TDefinition, TDocument>,
+    movedKind: MoveKind<TNode, TRoot, TDefinition, TDocument>,
     document: TDocument,
     nodePointer: string,
   ) => {
@@ -93,10 +93,10 @@ export const usePageBuilderMoves = <
     const slotSegments = segments.slice(0, -1);
     const siblings = readJsonValue(document, slotSegments);
     const index = parseArrayIndex(segments.at(-1) ?? "", Number.MAX_SAFE_INTEGER);
-    const title = getNodeTitle(kind, document, segments);
+    const title = getNodeTitle(movedKind, document, segments);
     if (!title || !Array.isArray(siblings) || index === undefined) return;
 
-    const path = getSlotPath(kind, document, toJsonPointer(slotSegments));
+    const path = getSlotPath(movedKind, document, toJsonPointer(slotSegments));
     announce(`Moved ${title} to position ${index + 1} of ${siblings.length} in ${path}`);
   };
   // Applies the operations a move makes to the selected node, and keeps that node selected once the edit lands
@@ -121,28 +121,35 @@ export const usePageBuilderMoves = <
     }, console.error);
   };
   const moveDown = () =>
-    moveSelected("Move block", (kind, document, nodePointer) =>
-      getSiblingMoveOperations(kind, document, nodePointer, 1),
+    moveSelected("Move block", (selectedKind, document, nodePointer) =>
+      getSiblingMoveOperations(selectedKind, document, nodePointer, 1),
     );
   const moveUp = () =>
-    moveSelected("Move block", (kind, document, nodePointer) =>
-      getSiblingMoveOperations(kind, document, nodePointer, -1),
+    moveSelected("Move block", (selectedKind, document, nodePointer) =>
+      getSiblingMoveOperations(selectedKind, document, nodePointer, -1),
     );
   const moveRight = () =>
-    moveSelected("Move block", (kind, document, nodePointer) =>
-      moveIntoPreviousSibling(document, kind.registry, kind.children, nodePointer),
+    moveSelected("Move block", (selectedKind, document, nodePointer) =>
+      moveIntoPreviousSibling(document, selectedKind.registry, selectedKind.children, nodePointer),
     );
   const moveLeft = () =>
-    moveSelected("Move block", (kind, document, nodePointer) =>
-      moveOutAfterParent(document, kind.registry, kind.children, nodePointer),
+    moveSelected("Move block", (selectedKind, document, nodePointer) =>
+      moveOutAfterParent(document, selectedKind.registry, selectedKind.children, nodePointer),
     );
   const moveTo = (slotPointer: string) =>
-    moveSelected("Move to", (kind, document, nodePointer) => {
+    moveSelected("Move to", (selectedKind, document, nodePointer) => {
       const children = readJsonValue(document, parseJsonPointer(slotPointer));
       const nodeSlotPointer = getNodeSlotPointer(nodePointer);
       // A node taken out of its own slot leaves that slot one shorter, so the end of it is one index less
       const childCount = Array.isArray(children) ? children.length - (slotPointer === nodeSlotPointer ? 1 : 0) : 0;
-      return moveBlockNode(document, kind.registry, kind.children, nodePointer, slotPointer, childCount);
+      return moveBlockNode(
+        document,
+        selectedKind.registry,
+        selectedKind.children,
+        nodePointer,
+        slotPointer,
+        childCount,
+      );
     });
   // Each slot that accepts the selected node, named by its path, so Move to is one search rather than a chain of Alt presses
   const moveToScope: UiCommandScope = {
@@ -199,9 +206,9 @@ export const usePageBuilderMoves = <
     const nodePointer = open && getNodePointer(open.kind, open.document, nodeId);
     if (!open || nodePointer === undefined) return false;
 
-    const { document, kind } = open;
-    const focusPointer = getFocusAfterRemoval(document, kind.children, nodePointer);
-    const title = getNodeTitle(kind, document, parseJsonPointer(nodePointer));
+    const { document, kind: openKind } = open;
+    const focusPointer = getFocusAfterRemoval(document, openKind.children, nodePointer);
+    const title = getNodeTitle(openKind, document, parseJsonPointer(nodePointer));
     return applyEdit(resourceIdValue, removeBlockNode(nodePointer), "Delete block").match(
       () => {
         const focus = getOpenDocument();

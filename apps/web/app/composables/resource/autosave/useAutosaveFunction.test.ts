@@ -45,13 +45,15 @@ describe(useAutosaveFunction, () => {
   beforeEach(() => {
     save = vi.fn<() => Promise<void>>().mockResolvedValue(undefined);
     // The indicator reads the resource on screen, so an edit is only ever held for a loaded one
-    const { resource } = storeToRefs(useResourceStore());
+    const resourceStore = useResourceStore();
+    const { resource } = storeToRefs(resourceStore);
     resource.value = createResourceListItem({ id: resourceId, type: ResourceType.Sheet });
   });
 
   afterEach(() => {
     vi.useRealTimers();
-    useResourceStore().clearResource(resourceId);
+    const resourceStore = useResourceStore();
+    resourceStore.clearResource(resourceId);
   });
 
   test("saves once the debounce elapses", async () => {
@@ -132,8 +134,9 @@ describe(useAutosaveFunction, () => {
     const hostPath = `/autosave-host/${resourceId}`;
     const elsewherePath = "/autosave-elsewhere";
     let pathAtSave: string | undefined;
-    save.mockImplementation(async () => {
+    save.mockImplementation(() => {
       pathAtSave = router.currentRoute.value.path;
+      return Promise.resolve();
     });
     router.addRoute({
       component: defineComponent({
@@ -161,8 +164,9 @@ describe(useAutosaveFunction, () => {
 
     const hostPath = `/autosave-host/${resourceId}`;
     let pathAtSave: string | undefined;
-    save.mockImplementation(async () => {
+    save.mockImplementation(() => {
       pathAtSave = router.currentRoute.value.path;
+      return Promise.resolve();
     });
     router.addRoute({
       component: defineComponent({
@@ -188,11 +192,12 @@ describe(useAutosaveFunction, () => {
 
     const hostPath = `/autosave-host/${resourceId}`;
     let isTyping = true;
-    save.mockImplementation(async () => {
+    save.mockImplementation(() => {
       if (isTyping) {
         isTyping = false;
         autosave();
       }
+      return Promise.resolve();
     });
     router.addRoute({
       component: defineComponent({

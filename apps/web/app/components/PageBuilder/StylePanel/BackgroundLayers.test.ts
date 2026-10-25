@@ -11,8 +11,8 @@ describe("pageBuilderBackgroundLayers", () => {
     expect.hasAssertions();
 
     const component = await mountSuspended(PageBuilderBackgroundLayers, { props: { modelValue: TEST_LAYERS } });
-    const removeButtons = component.findAll("button").filter((button) => button.text() === "Remove");
-    await removeButtons[0]?.trigger("click");
+    const removeButton = component.findAll("button").find((button) => button.text() === "Remove");
+    await removeButton?.trigger("click");
 
     expect(component.emitted("update:modelValue")?.at(-1)).toStrictEqual([TEST_GRADIENT]);
   });

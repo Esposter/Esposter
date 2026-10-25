@@ -6,7 +6,7 @@ import { describe, expect, test } from "vitest";
 
 describe("resourceActivityLogListItem", () => {
   // An agent writes as the owner from a key of its own, and the row names that key, so the edit reads as the agent's
-  test("An assistant edit is recorded under the person's key", async () => {
+  test("an assistant edit is recorded under the person's key", async () => {
     expect.hasAssertions();
 
     const name = "Assistant";

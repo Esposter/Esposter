@@ -13,13 +13,15 @@ import { describe, expect, test } from "vitest";
 
 type ReadPostsQuery = NonNullable<z.input<typeof readPostsInputSchema>>;
 
+const createPagedRead = () => {
+  const postStore = usePostStore();
+  const { readItems, readMoreItems } = postStore;
+  return usePagedPostRead({ readItems, readMoreItems });
+};
+
 describe(usePagedPostRead, () => {
   const { trpcMsw } = setupMswTrpc();
   const userId = crypto.randomUUID();
-  const createPagedRead = () => {
-    const { readItems, readMoreItems } = usePostStore();
-    return usePagedPostRead({ readItems, readMoreItems });
-  };
 
   test("reads the first page with the query it is given", async () => {
     expect.hasAssertions();

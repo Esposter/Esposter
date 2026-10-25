@@ -30,12 +30,6 @@ export const useEmailEditorStore = defineStore("emailEditor", () => {
     },
   );
   const datasetReference = computed(() => emailEditor.value.datasetReference);
-  // The column names of the dataset each email is bound to, which its merge fields are offered from. A blade holds its own
-  // Email's columns while it is mounted and clears them on unmount, so an email with no dataset bound offers none
-  const { getDataRef: getMergeFieldColumnsRef } = useDataMap<string[]>(() => resourceStore.currentResourceId, []);
-  const setMergeFieldColumns = (resourceId: string, columnNames: string[]) => {
-    getMergeFieldColumnsRef(resourceId).value = columnNames;
-  };
   // The document the page builder holds is written back as the content's body and head, with the dataset binding the
   // Content keeps beside them. Nothing is written for a resource whose document is not held
   const saveEmail = (resourceId: string) =>
@@ -48,12 +42,5 @@ export const useEmailEditorStore = defineStore("emailEditor", () => {
     emailEditor.value.datasetReference = newDatasetReference;
     await saveContent();
   };
-  return {
-    datasetReference,
-    getMergeFieldColumnsRef,
-    loadContent,
-    saveDatasetReference,
-    saveEmail,
-    setMergeFieldColumns,
-  };
+  return { datasetReference, loadContent, saveDatasetReference, saveEmail };
 });

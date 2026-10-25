@@ -1,16 +1,16 @@
+import type { readPostsInputSchema } from "#shared/models/db/post/ReadPostsInput";
 import type { PostInPostWithRelations } from "@esposter/db-schema";
+import type { Except } from "type-fest";
 import type { z } from "zod";
-
-import { readPostsInputSchema } from "#shared/models/db/post/ReadPostsInput";
 
 type PostPagingOperations = Pick<
   ReturnType<typeof useCursorPaginationOperationData<PostInPostWithRelations>>,
   "readItems" | "readMoreItems"
 >;
-type ReadPostsQuery = Omit<z.input<typeof readPostsInputSchema>, "cursor">;
+type ReadPostsQuery = Except<z.input<typeof readPostsInputSchema>, "cursor">;
 
 // The paging every post list shares: the first page reads into the list under its payload key, and each later page
-// follows the cursor the page before it left. The cursor is the paging's own, so a query never carries one
+// Follows the cursor the page before it left. The cursor is the paging's own, so a query never carries one
 export const usePagedPostRead = ({ readItems, readMoreItems }: PostPagingOperations) => {
   const { $trpc } = useNuxtApp();
   const readFirstPage = (query: ReadPostsQuery, key: string) =>

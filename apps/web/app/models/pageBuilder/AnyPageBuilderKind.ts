@@ -7,6 +7,6 @@ import type { z } from "zod";
 export type AnyPageBuilderKind = PageBuilderKind<
   BlockNode,
   BlockRootProps,
-  BlockTypeDefinition<BlockNode> & { formSchema: z.ZodType },
+  BlockTypeDefinition & { formSchema: z.ZodType },
   AnyPageBuilderDocument
 >;

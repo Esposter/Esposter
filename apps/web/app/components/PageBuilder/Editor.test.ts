@@ -57,14 +57,15 @@ describe("pageBuilderEditor", () => {
     expect.hasAssertions();
 
     const resourceId = crypto.randomUUID();
-    usePageBuilderDocumentStore().setEmailDocument(resourceId, emailKind, { content: [], root: { props: {} } });
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, { content: [], root: { props: {} } });
 
     const component = await mountSuspended(PageBuilderEditor, { props: { kind: emailKind, resourceId } });
 
     expect(component.findAll('[role="tab"]').map((tab) => tab.text())).toStrictEqual(["Content", "Style"]);
   });
 
-  test("A block can be moved with the keyboard alone", async () => {
+  test("a block can be moved with the keyboard alone", async () => {
     expect.hasAssertions();
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();

@@ -7,8 +7,8 @@ import { getPropertyComputed } from "@/util/vue/getPropertyComputed";
 import { checkIsServer, createExponentialBackoff, getResultAsync, noop, withFinalizerAsync } from "@esposter/shared";
 
 // The data a reset has replaced. A read issued against it answers a partition that no longer holds that data, so its
-// result is dropped rather than landing on the replacement. A cache hydration replaces data too, but without retiring
-// it: the rows it restores are the partition's own, so a read still in flight keeps landing on them
+// Result is dropped rather than landing on the replacement. A cache hydration replaces data too, but without retiring
+// It: the rows it restores are the partition's own, so a read still in flight keeps landing on them
 const retiredCursorPaginationData = new WeakSet<object>();
 
 // Empties a partition, retiring the data it held so a read issued against that data is dropped when it lands

@@ -32,10 +32,11 @@ describe("resourceNoteDialogs", () => {
   });
 
   // The preview shows what the file holds, and the note keeps what it held until the reader confirms
-  test("An import previews the content it will replace", async () => {
+  test("an import previews the content it will replace", async () => {
     expect.hasAssertions();
 
-    await useResourceStore().readResource();
+    const resourceStore = useResourceStore();
+    await resourceStore.readResource();
     const noteStore = useNoteStore();
     await noteStore.loadContent();
     const notePortableDialogStore = useNotePortableDialogStore();
@@ -48,10 +49,11 @@ describe("resourceNoteDialogs", () => {
     expect(noteStore.note.doc).toStrictEqual(EMPTY_NOTE_DOC);
   });
 
-  test("Cancelling an import keeps the note as it was", async () => {
+  test("cancelling an import keeps the note as it was", async () => {
     expect.hasAssertions();
 
-    await useResourceStore().readResource();
+    const resourceStore = useResourceStore();
+    await resourceStore.readResource();
     const noteStore = useNoteStore();
     await noteStore.loadContent();
     const notePortableDialogStore = useNotePortableDialogStore();
@@ -70,7 +72,7 @@ describe("resourceNoteDialogs", () => {
   });
 
   // The replaced content is saved as a revision before the import writes, so the reader can restore it
-  test("An imported note keeps its previous content in history", async () => {
+  test("an imported note keeps its previous content in history", async () => {
     expect.hasAssertions();
 
     const revisionSaves: string[] = [];
@@ -86,7 +88,8 @@ describe("resourceNoteDialogs", () => {
       return createResourceListItem({ id: resourceId, type: ResourceType.Note });
     });
     trpcMsw.resource.readSnapshotHistory.query(() => []);
-    await useResourceStore().readResource();
+    const resourceStore = useResourceStore();
+    await resourceStore.readResource();
     const noteStore = useNoteStore();
     await noteStore.loadContent();
     const notePortableDialogStore = useNotePortableDialogStore();

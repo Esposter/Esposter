@@ -34,11 +34,13 @@ export const useAutosaveFunction = (save: () => Promisable<unknown>) => {
   // Every navigation writes the edit it holds before the route changes, whether it leaves the resource or only
   // Changes the one it names, since a leave guard alone misses a change of id within the same route. An edit typed
   // While that write is in flight is still held for the route the guard runs on, so the guard writes until none is left
-  tryOnScopeDispose(
-    beforeEach(async () => {
-      while (pendingResourceId !== undefined) await writePending();
-    }),
-  );
+  const writeHeldEdits = async (): Promise<void> => {
+    if (pendingResourceId === undefined) return;
+
+    await writePending();
+    await writeHeldEdits();
+  };
+  tryOnScopeDispose(beforeEach(writeHeldEdits));
 
   return () => {
     // The debounce holds this edit for half a second and re-arms for as long as the owner keeps typing, so

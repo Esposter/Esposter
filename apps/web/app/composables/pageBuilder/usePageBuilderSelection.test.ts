@@ -12,23 +12,24 @@ import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { createPinia, setActivePinia } from "pinia";
 import { describe, expect, test } from "vitest";
 
-describe(usePageBuilderSelection, () => {
-  // The document is the webpage fixture: a section holding a text node, then a text node at the root
-  const setup = (selectedNodeId: string) => {
-    setActivePinia(createPinia());
-    const resourceId = crypto.randomUUID();
-    usePageBuilderDocumentStore().setDocument(resourceId, webpageKind, TEST_WEBPAGE);
-    usePageBuilderCanvasStore().setSelectedNodeId(resourceId, selectedNodeId);
-    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-    const selection = usePageBuilderSelection(
-      webpageKind,
-      () => pageBuilderDocumentStore.getDocument(resourceId),
-      resourceId,
-    );
-    const getSelectedNodeId = () => usePageBuilderCanvasStore().getSelectedNodeId(resourceId);
-    return { ...selection, getSelectedNodeId };
-  };
+// The document is the webpage fixture: a section holding a text node, then a text node at the root
+const setup = (selectedNodeId: string) => {
+  setActivePinia(createPinia());
+  const resourceId = crypto.randomUUID();
+  const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+  pageBuilderDocumentStore.setDocument(resourceId, webpageKind, TEST_WEBPAGE);
+  const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+  pageBuilderCanvasStore.setSelectedNodeId(resourceId, selectedNodeId);
+  const selection = usePageBuilderSelection(
+    webpageKind,
+    () => pageBuilderDocumentStore.getDocument(resourceId),
+    resourceId,
+  );
+  const getSelectedNodeId = () => pageBuilderCanvasStore.getSelectedNodeId(resourceId);
+  return { ...selection, getSelectedNodeId };
+};
 
+describe(usePageBuilderSelection, () => {
   test("next selects the node after the selected one in document order", () => {
     expect.hasAssertions();
 

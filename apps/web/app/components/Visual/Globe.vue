@@ -46,7 +46,7 @@ const disposables: { dispose: () => void }[] = [];
 let animationFrameId: number;
 let intervalId: number;
 // The resize listener is registered after the chunk loads, which is outside the component's scope, so teardown stops
-// it by hand rather than leaving it to a scope that is not there
+// It by hand rather than leaving it to a scope that is not there
 let stopResizeListener: (() => void) | undefined;
 // Unmount can land while the chunk loads, and the scene that load would finish then has no owner to stop it
 let isUnmounted = false;

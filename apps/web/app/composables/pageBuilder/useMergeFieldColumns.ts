@@ -1,4 +1,10 @@
-import { MERGE_FIELD_COLUMNS_KEY } from "@/services/pageBuilder/mergeFieldColumnsKey";
+import type { MaybeRefOrGetter } from "vue";
 
-// The columns the shell provides, or none when it provides none
-export const useMergeFieldColumns = () => inject(MERGE_FIELD_COLUMNS_KEY, () => computed<string[]>(() => []), true);
+import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
+
+// The column names of the dataset the email is bound to, which its merge fields are offered from, or none while it binds none
+export const useMergeFieldColumns = (resourceId: MaybeRefOrGetter<string>) => {
+  const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+  const { getMergeFieldColumnsRef } = pageBuilderDocumentStore;
+  return getMergeFieldColumnsRef(resourceId);
+};

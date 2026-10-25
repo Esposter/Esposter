@@ -6,18 +6,16 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 
 describe("postCommentSortSelect", () => {
-  test("Comment sort lists Hot, Top, New and Old", async () => {
+  test("comment sort lists Hot, Top, New and Old", async () => {
     expect.hasAssertions();
 
     const component = await mountSuspended(PostCommentSortSelect);
 
-    expect(component.findComponent(UiSelect).vm.$props).toMatchObject({
-      items: [
-        { value: PostSortType.Hot },
-        { value: PostSortType.Top },
-        { value: PostSortType.New },
-        { value: PostSortType.Old },
-      ],
-    });
+    expect(
+      component
+        .findComponent(UiSelect)
+        .props("items")
+        .map(({ value }) => value),
+    ).toStrictEqual([PostSortType.Hot, PostSortType.Top, PostSortType.New, PostSortType.Old]);
   });
 });

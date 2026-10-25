@@ -34,7 +34,7 @@ const getNodeContent = () => {
 };
 // Each session is its own interaction, so its changes are one history entry and the next session is another one
 const interactionId = crypto.randomUUID();
-const mergeFieldColumns = useMergeFieldColumns();
+const mergeFieldColumns = useMergeFieldColumns(() => resourceId);
 const editor = useEditor({
   autofocus: "end",
   content: getNodeContent(),

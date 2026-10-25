@@ -68,7 +68,7 @@ describe(useLikeOperations, () => {
   });
 
   // The count is the server's to move, so it holds the value it had until the write it follows has settled
-  test("A count stays put while its write is in flight", async () => {
+  test("a count stays put while its write is in flight", async () => {
     expect.hasAssertions();
 
     const heldWrite = Promise.withResolvers<void>();
@@ -93,7 +93,7 @@ describe(useLikeOperations, () => {
     await pendingLike;
   });
 
-  test("The count shows the read-back value once the write settles", async () => {
+  test("the count shows the read-back value once the write settles", async () => {
     expect.hasAssertions();
 
     trpcMsw.like.createLike.mutation(({ input }) => createLike(input.value));
@@ -109,7 +109,7 @@ describe(useLikeOperations, () => {
   });
 
   // The viewer's own vote is held exactly by the client, so it may change before the server answers
-  test("The viewer's own mark changes at once", async () => {
+  test("the viewer's own mark changes at once", async () => {
     expect.hasAssertions();
 
     const heldWrite = Promise.withResolvers<void>();

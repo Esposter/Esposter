@@ -1,4 +1,5 @@
 // @vitest-environment nuxt
+import { TEST_ID } from "#shared/services/pageBuilder/constants.test";
 import { MAX_EMAIL_NODES } from "#shared/services/pageBuilder/email/constants";
 import { emailBodyChildrenSchema } from "#shared/services/pageBuilder/email/emailNodeSchema";
 import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry";
@@ -9,9 +10,13 @@ import { useAlertStore } from "@/store/alert";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { MjmlNodeType, parseMjmlDocument } from "mjml-blocks";
-import { describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(useImportEmailSource, () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   const TEST_EXISTING_SOURCE =
     "<mjml><mj-body><mj-section><mj-column><mj-text></mj-text></mj-column></mj-section></mj-body></mjml>";
   const TEST_IMPORTED_SOURCE =
@@ -35,7 +40,7 @@ describe(useImportEmailSource, () => {
     return { existingDocument: result.data, resourceId };
   };
 
-  test("Importing MJML replaces the email", () => {
+  test("importing MJML replaces the email", () => {
     expect.hasAssertions();
 
     const { existingDocument, resourceId } = setupEmail();
@@ -44,11 +49,28 @@ describe(useImportEmailSource, () => {
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
     const { undo } = pageBuilderHistoryStore;
     const importEmailSource = useImportEmailSource();
+    // Every node the import reads is minted an id, and the parser refuses a repeated one, so each mint is numbered in turn
+    let mintedCount = 0;
+    vi.spyOn(crypto, "randomUUID").mockImplementation(() => {
+      mintedCount += 1;
+      return `${TEST_ID}-${mintedCount}`;
+    });
     const isImported = importEmailSource(resourceId, TEST_IMPORTED_SOURCE);
     expect(isImported).toBe(true);
-    expect(getEmailDocument(resourceId)?.content).toMatchObject([
+    expect(getEmailDocument(resourceId)?.content).toStrictEqual([
       {
-        props: { children: [{ props: { children: [{ type: MjmlNodeType.Button }] }, type: MjmlNodeType.Column }] },
+        props: {
+          children: [
+            {
+              props: {
+                children: [{ props: { content: "", id: `${TEST_ID}-3` }, type: MjmlNodeType.Button }],
+                id: `${TEST_ID}-2`,
+              },
+              type: MjmlNodeType.Column,
+            },
+          ],
+          id: `${TEST_ID}-1`,
+        },
         type: MjmlNodeType.Section,
       },
     ]);
@@ -57,7 +79,7 @@ describe(useImportEmailSource, () => {
     expect(getEmailDocument(resourceId)).toStrictEqual(existingDocument);
   });
 
-  test("An import that does not fit leaves the email as it was", () => {
+  test("an import that does not fit leaves the email as it was", () => {
     expect.hasAssertions();
 
     const { existingDocument, resourceId } = setupEmail();

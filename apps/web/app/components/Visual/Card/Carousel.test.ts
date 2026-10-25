@@ -24,7 +24,7 @@ describe("visualCardCarousel", () => {
     expect.hasAssertions();
 
     const component = await mountCarousel();
-    const [first, second] = Array.from((component.element as HTMLElement).children);
+    const [first, second] = [...(component.element as HTMLElement).children];
 
     expect(first?.className).toBe("active-card");
     expect(second?.className).toBe("normal-card normal-card-even");
@@ -37,7 +37,7 @@ describe("visualCardCarousel", () => {
     const component = await mountCarousel();
     vi.advanceTimersByTime(DURATION);
     await flushPromises();
-    const [first, second] = Array.from((component.element as HTMLElement).children);
+    const [first, second] = [...(component.element as HTMLElement).children];
 
     expect(second?.className).toBe("active-card");
     expect(first?.className).toBe("inactive-card");

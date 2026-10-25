@@ -9,11 +9,12 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 
 describe("dashboardVisualPreviewEditFormDialog", () => {
-  test("Editing a card offers only its label", async () => {
+  test("editing a card offers only its label", async () => {
     expect.hasAssertions();
 
     // The dialog draws its body only while the store has it open, as an edit of a visual does
-    const { isEditFormDialogOpen } = storeToRefs(useVisualStore());
+    const visualStore = useVisualStore();
+    const { isEditFormDialogOpen } = storeToRefs(visualStore);
     isEditFormDialogOpen.value = true;
     const wrapper = await mountSuspended(DashboardVisualPreviewEditFormDialog, {
       props: { modelValue: new Visual({ type: VisualType.Card }) },
@@ -26,11 +27,12 @@ describe("dashboardVisualPreviewEditFormDialog", () => {
     expect(wrapper.findComponent(UiTextField).props("label")).toBe("Label");
   });
 
-  test("Editing a table offers no extra settings", async () => {
+  test("editing a table offers no extra settings", async () => {
     expect.hasAssertions();
 
     // The dialog draws its body only while the store has it open, as an edit of a visual does
-    const { isEditFormDialogOpen } = storeToRefs(useVisualStore());
+    const visualStore = useVisualStore();
+    const { isEditFormDialogOpen } = storeToRefs(visualStore);
     isEditFormDialogOpen.value = true;
     const wrapper = await mountSuspended(DashboardVisualPreviewEditFormDialog, {
       props: { modelValue: new Visual({ type: VisualType.Table }) },

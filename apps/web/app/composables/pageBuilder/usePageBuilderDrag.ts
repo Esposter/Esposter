@@ -38,12 +38,13 @@ const getDropTargetAt = <
   });
 };
 
+const stopClick = (clickEvent: MouseEvent) => clickEvent.stopPropagation();
+
 // A release can land on the control the press started on, and the browser clicks that control. The click that follows a
 // Drag is stopped before it reaches the control, and the stop is dropped once the release's click has been dispatched
 const swallowNextClick = () => {
-  const stopClick = (clickEvent: MouseEvent) => clickEvent.stopPropagation();
   window.addEventListener("click", stopClick, { capture: true, once: true });
-  setTimeout(() => window.removeEventListener("click", stopClick, { capture: true }));
+  setTimeout(() => window.removeEventListener("click", stopClick, { capture: true }), 0);
 };
 
 // A palette block or a merge field dragged to the point under the pointer. The drop indicator's target is held here for the
@@ -51,7 +52,7 @@ const swallowNextClick = () => {
 // Is appended to that text. A press that never moves past the threshold is a click that the palette's own button handles,
 // So the drag does nothing; Escape, a cancel or a release with no target inserts nothing
 // The kind's signature, which each composable lists as its own inputs, so the duplicate-code gate skips it
-// jscpd:ignore-start
+// `jscpd:ignore-start`
 export const usePageBuilderDrag = <
   TNode extends BlockNode,
   TRoot extends BlockRootProps,
@@ -63,13 +64,13 @@ export const usePageBuilderDrag = <
   resourceId: MaybeRefOrGetter<string>,
   announce: (message: string) => void,
 ) => {
-  // jscpd:ignore-end
+  // `jscpd:ignore-end`
   const dropTarget = shallowRef<DropTarget>();
   // Set once a drag passes the threshold, so the editor can let the pointer pass through the canvas frame, whose document would take it
   const isDragging = ref(false);
 
   // Tracks a press until its release, a cancel or Escape. Each move past the threshold reaches onMove, and the release reaches
-  // OnRelease with its point only while the press was dragging
+  // `onRelease` with its point only while the press was dragging
   const trackDrag = (
     event: PointerEvent,
     onMove: (point: { x: number; y: number }) => void,

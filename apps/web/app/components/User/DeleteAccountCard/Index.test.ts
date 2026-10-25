@@ -15,6 +15,23 @@ import { afterEach, assert, describe, expect, test, vi } from "vitest";
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 vi.mock(import("@/services/auth/signOutOfBrowser"));
 
+const getDialog = () => {
+  const dialog = document.body.querySelector<HTMLElement>('[role="alertdialog"]');
+  assert.exists(dialog);
+  return dialog;
+};
+const getConfirmButton = () => {
+  const button = getDialog().querySelector<HTMLButtonElement>('button[data-variant="Danger"]');
+  assert.exists(button);
+  return button;
+};
+const typeName = (value: string) => {
+  const input = getDialog().querySelector<HTMLInputElement>("input");
+  assert.exists(input);
+  input.value = value;
+  input.dispatchEvent(new Event("input"));
+};
+
 describe("userDeleteAccountCard", () => {
   afterEach(() => {
     document.body.innerHTML = "";
@@ -23,22 +40,6 @@ describe("userDeleteAccountCard", () => {
 
   const { trpcMsw } = setupMswTrpc();
   const name = "name";
-  const getDialog = () => {
-    const dialog = document.body.querySelector<HTMLElement>('[role="alertdialog"]');
-    assert.exists(dialog);
-    return dialog;
-  };
-  const getConfirmButton = () => {
-    const button = getDialog().querySelector<HTMLButtonElement>('button[data-variant="Danger"]');
-    assert.exists(button);
-    return button;
-  };
-  const typeName = (value: string) => {
-    const input = getDialog().querySelector<HTMLInputElement>("input");
-    assert.exists(input);
-    input.value = value;
-    input.dispatchEvent(new Event("input"));
-  };
   const mountCard = () => {
     useSession.mockReturnValue({ data: ref({ user: { name } }) });
     return mountSuspended(UserDeleteAccountCard, {
@@ -69,8 +70,9 @@ describe("userDeleteAccountCard", () => {
     const { promise: isSignedOut, resolve: onSignedOut } = Promise.withResolvers<void>();
     const deleteAccount = vi.fn<() => void>();
     trpcMsw.user.deleteAccount.mutation(deleteAccount);
-    vi.mocked(signOutOfBrowser).mockImplementation(async () => {
+    vi.mocked(signOutOfBrowser).mockImplementation(() => {
       onSignedOut();
+      return Promise.resolve();
     });
     const component = await mountCard();
     await component.get("button").trigger("click");
@@ -89,7 +91,7 @@ describe("userDeleteAccountCard", () => {
     getConfirmButton().click();
     await isSignedOut;
 
-    expect(deleteAccount).toHaveBeenCalledOnce();
+    expect(deleteAccount).toHaveBeenCalledTimes(1);
     expect(signOutOfBrowser).toHaveBeenCalledExactlyOnceWith(RoutePath.Login);
   });
 
@@ -117,7 +119,7 @@ describe("userDeleteAccountCard", () => {
     typeName(name);
     await flushPromises();
 
-    expect(await component.getComponent(UiConfirmDialog).props("confirm")()).toBe(false);
+    await expect(component.getComponent(UiConfirmDialog).props("confirm")()).resolves.toBe(false);
     expect(signOutOfBrowser).not.toHaveBeenCalled();
   });
 });

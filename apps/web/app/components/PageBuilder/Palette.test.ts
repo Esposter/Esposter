@@ -6,14 +6,12 @@ import UiIcon from "@/components/Ui/Icon.vue";
 import { WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
 import { TEST_SECTION_ID } from "@/services/pageBuilder/constants.test";
 import { emailKind } from "@/services/pageBuilder/emailKind";
-import { MERGE_FIELD_COLUMNS_KEY } from "@/services/pageBuilder/mergeFieldColumnsKey";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { MjmlNodeType } from "mjml-blocks";
 import { describe, expect, test, vi } from "vitest";
-import { computed } from "vue";
 
 describe("pageBuilderPalette", () => {
   test("a palette click still inserts the block", async () => {
@@ -48,7 +46,7 @@ describe("pageBuilderPalette", () => {
     const component = await mountSuspended(PageBuilderPalette, {
       props: { announce: vi.fn<(message: string) => void>(), getDocument: () => undefined, kind, resourceId: TEST_ID },
     });
-    const types = kind.paletteCategories.flatMap<string>(({ types }) => types);
+    const types = kind.paletteCategories.flatMap<string>((category) => category.types);
 
     expect(component.findAll("button").map((button) => button.text())).toStrictEqual(
       types.map((type) => kind.titles[type]),
@@ -62,6 +60,7 @@ describe("pageBuilderPalette", () => {
     expect.hasAssertions();
 
     const columnId = crypto.randomUUID();
+    const insertedId = crypto.randomUUID();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setEmailDocument(TEST_ID, emailKind, {
       content: [
@@ -75,9 +74,11 @@ describe("pageBuilderPalette", () => {
       ],
       root: { props: {} },
     });
-    usePageBuilderCanvasStore().setSelectedNodeId(TEST_ID, columnId);
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    pageBuilderCanvasStore.setSelectedNodeId(TEST_ID, columnId);
+    const { setMergeFieldColumns } = pageBuilderDocumentStore;
+    setMergeFieldColumns(TEST_ID, ["first_name"]);
     const component = await mountSuspended(PageBuilderPalette, {
-      global: { provide: { [MERGE_FIELD_COLUMNS_KEY]: computed(() => ["first_name"]) } },
       props: {
         announce: vi.fn<(message: string) => void>(),
         getDocument: () => pageBuilderDocumentStore.getEmailDocument(TEST_ID),
@@ -86,12 +87,13 @@ describe("pageBuilderPalette", () => {
       },
     });
 
+    vi.spyOn(crypto, "randomUUID").mockReturnValueOnce(insertedId);
     await component
       .findAll("button")
       .find((button) => button.text() === "first_name")
       ?.trigger("click");
 
-    expect(pageBuilderDocumentStore.getEmailDocument(TEST_ID)?.content).toMatchObject([
+    expect(pageBuilderDocumentStore.getEmailDocument(TEST_ID)?.content).toStrictEqual([
       {
         props: {
           children: [
@@ -99,14 +101,24 @@ describe("pageBuilderPalette", () => {
               props: {
                 children: [
                   {
-                    props: { content: { content: [{ content: [{ text: "{{first_name}}" }] }] } },
+                    props: {
+                      content: {
+                        content: [{ content: [{ text: "{{first_name}}", type: "text" }], type: "paragraph" }],
+                        type: "doc",
+                      },
+                      id: insertedId,
+                    },
                     type: MjmlNodeType.Text,
                   },
                 ],
+                id: columnId,
               },
+              type: MjmlNodeType.Column,
             },
           ],
+          id: TEST_SECTION_ID,
         },
+        type: MjmlNodeType.Section,
       },
     ]);
   });

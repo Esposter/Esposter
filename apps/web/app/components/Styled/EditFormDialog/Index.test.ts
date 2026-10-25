@@ -12,10 +12,6 @@ import { z } from "zod";
 describe("styledEditFormDialog", () => {
   setupUiStyle(DEFAULT_UI_STYLE);
 
-  beforeEach(() => {
-    setActivePinia(createPinia());
-  });
-
   const name = "name";
   // Raw, as a prop hands it over: the mount would otherwise proxy it deeply, which a schema does not survive
   const schema = markRaw(z.object({ name: z.string() }));
@@ -36,8 +32,9 @@ describe("styledEditFormDialog", () => {
       },
     });
 
-  // The close waits out the dialog's leave on a timer, and Vue's own scheduler and `flushPromises` run on the others
   beforeEach(() => {
+    setActivePinia(createPinia());
+    // The close waits out the dialog's leave on a timer, and Vue's own scheduler and `flushPromises` run on the others
     vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
   });
 

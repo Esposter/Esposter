@@ -54,8 +54,10 @@ describe("pageBuilderCanvas", () => {
     );
     if (!result.success) throw new Error("the test email should parse");
 
-    usePageBuilderDocumentStore().setEmailDocument(TEST_ID, emailKind, result.data);
-    usePageBuilderCanvasStore().setDevice(TEST_ID, PageBuilderDevice.Tablet);
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setEmailDocument(TEST_ID, emailKind, result.data);
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    pageBuilderCanvasStore.setDevice(TEST_ID, PageBuilderDevice.Tablet);
 
     const component = await mountSuspended(PageBuilderCanvas, {
       props: { announce: vi.fn<(message: string) => void>(), kind: emailKind, resourceId: TEST_ID },

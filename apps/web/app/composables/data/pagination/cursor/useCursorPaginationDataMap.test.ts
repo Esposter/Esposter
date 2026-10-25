@@ -81,6 +81,7 @@ describe(useCursorPaginationDataMap, () => {
 
     expect(items.value).toStrictEqual([item]);
   });
+
   test("drops a slow first page that lands after its partition was reset", async () => {
     expect.hasAssertions();
 

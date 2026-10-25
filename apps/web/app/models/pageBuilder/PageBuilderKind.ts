@@ -1,14 +1,8 @@
+/* oxlint-disable typescript/method-signature-style -- method signatures required for bivariant parameter checking so a kind over a narrower node type stays assignable to the shared kind a shell holds */
 import type { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
 import type { PageBuilderPaletteCategory } from "@/models/pageBuilder/PageBuilderPaletteCategory";
 import type { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import type {
-  BlockChildren,
-  BlockNode,
-  BlockRegistry,
-  BlockRootProps,
-  BlockSlots,
-  BlockTypeDefinition,
-} from "headless-block-editor";
+import type { BlockNode, BlockRegistry, BlockRootProps, BlockSlots, BlockTypeDefinition } from "headless-block-editor";
 import type { z } from "zod";
 
 // A kind of document the page builder shell edits, over its node, root props, node definition and document types. The

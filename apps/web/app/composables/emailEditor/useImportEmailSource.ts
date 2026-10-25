@@ -20,10 +20,10 @@ export const useImportEmailSource = () => {
     getResult(() =>
       parseMjmlDocument(source, emailRegistry, emailBodyChildrenSchema, noteRichText, MAX_EMAIL_NODES),
     ).match(
-      (parsed) => {
-        if (!parsed.success) {
+      (result) => {
+        if (!result.success) {
           // A refusal names the tag, attribute or value it is about, and one repeated across nodes is named once
-          const refusals = new Set(parsed.error.issues.map(({ message }) => message));
+          const refusals = new Set(result.error.issues.map(({ message }) => message));
           createAlert(`Could not import the MJML: ${[...refusals].join("; ")}`, "error");
           return false;
         }
@@ -31,8 +31,8 @@ export const useImportEmailSource = () => {
         return applyEdit(
           resourceId,
           [
-            { op: JsonPatchOperationType.Replace, path: "/content", value: parsed.data.content },
-            { op: JsonPatchOperationType.Replace, path: "/root", value: parsed.data.root },
+            { op: JsonPatchOperationType.Replace, path: "/content", value: result.data.content },
+            { op: JsonPatchOperationType.Replace, path: "/root", value: result.data.root },
           ],
           "Import MJML",
         ).match(

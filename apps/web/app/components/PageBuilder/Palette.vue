@@ -29,8 +29,8 @@ interface Props {
 const { announce, getDocument, getFrameGeometry, kind, resourceId, startMergeFieldDrag, startPaletteDrag } =
   defineProps<Props>();
 const { insert } = usePageBuilderInsert(kind, getDocument, () => resourceId, announce);
-// The columns of the dataset an email is bound to, which only an email's shell provides, so a webpage lists none
-const mergeFieldColumns = useMergeFieldColumns();
+// The columns of the dataset an email is bound to, which an email's blade holds in the store, so a webpage lists none
+const mergeFieldColumns = useMergeFieldColumns(() => resourceId);
 const insertMergeField = (columnName: string) =>
   insert(MjmlNodeType.Text, (id) => createMergeFieldNode(columnName, id));
 

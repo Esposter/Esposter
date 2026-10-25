@@ -104,11 +104,13 @@ describe(useUploadFiles, () => {
     trpcMsw.message.generateUploadFileSasEntities.mutation(() => {
       throw new TRPCError({ code: "FORBIDDEN", message: STORAGE_QUOTA_EXCEEDED_ERROR_MESSAGE });
     });
-    const { getComposerFiles } = useUploadFileStore();
+    const uploadFileStore = useUploadFileStore();
+    const { getComposerFiles } = uploadFileStore;
     await useUploadFiles(target)([createFile()]);
+    const alertStore = useAlertStore();
 
     expect(getComposerFiles(target)).toHaveLength(0);
-    expect(useAlertStore().alerts.map(({ text }) => text)).toStrictEqual([STORAGE_QUOTA_EXCEEDED_ERROR_MESSAGE]);
+    expect(alertStore.alerts.map(({ text }) => text)).toStrictEqual([STORAGE_QUOTA_EXCEEDED_ERROR_MESSAGE]);
   });
 
   // Crossing the two features that meet on this path: attachments are keyed by composer, and a revert runs

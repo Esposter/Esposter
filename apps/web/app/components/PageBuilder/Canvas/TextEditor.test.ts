@@ -2,10 +2,8 @@
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import PageBuilderCanvasTextEditor from "@/components/PageBuilder/Canvas/TextEditor.vue";
-import { TEST_ROOT_TEXT_ID, TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
-import { TEST_SECTION_ID } from "@/services/pageBuilder/constants.test";
+import { TEST_ROOT_TEXT_ID, TEST_SECTION_ID, TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
 import { emailKind } from "@/services/pageBuilder/emailKind";
-import { MERGE_FIELD_COLUMNS_KEY } from "@/services/pageBuilder/mergeFieldColumnsKey";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
@@ -13,9 +11,9 @@ import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { useRichTextSuggestionStore } from "@/store/richTextEditor/suggestion";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { EditorContent } from "@tiptap/vue-3";
+import { flushPromises } from "@vue/test-utils";
 import { MjmlNodeType } from "mjml-blocks";
-import { assert, describe, expect, test, vi } from "vitest";
-import { computed } from "vue";
+import { assert, describe, expect, test } from "vitest";
 import { nextTick } from "vue";
 
 describe("pageBuilderCanvasTextEditor", () => {
@@ -127,8 +125,9 @@ describe("pageBuilderCanvasTextEditor", () => {
       ],
       root: { props: {} },
     });
+    const { setMergeFieldColumns } = pageBuilderDocumentStore;
+    setMergeFieldColumns(resourceId, ["first_name", "last_name"]);
     const component = await mountSuspended(PageBuilderCanvasTextEditor, {
-      global: { provide: { [MERGE_FIELD_COLUMNS_KEY]: computed(() => ["first_name", "last_name"]) } },
       props: { kind: emailKind, nodeId: TEST_ROOT_TEXT_ID, resourceId },
     });
     await nextTick();
@@ -137,12 +136,12 @@ describe("pageBuilderCanvasTextEditor", () => {
 
     // The braces open after a space, as the suggestion only opens where a word begins
     editor.commands.insertContent(" {{");
-    // The suggestion's items resolve after the keystroke, so the list is read once they have
-    await vi.waitFor(() =>
-      expect(useRichTextSuggestionStore().suggestion?.props.items).toStrictEqual(["first_name", "last_name"]),
-    );
+    // The suggestion's items resolve after the keystroke, so the list is read once the promises it waits on have settled
+    await flushPromises();
+    const richTextSuggestionStore = useRichTextSuggestionStore();
 
-    useRichTextSuggestionStore().suggestion?.props.command("last_name");
+    expect(richTextSuggestionStore.suggestion?.props.items).toStrictEqual(["first_name", "last_name"]);
+    richTextSuggestionStore.suggestion?.props.command("last_name");
     expect(editor.getText()).toBe(`${TEST_ID} {{last_name}}`);
     component.unmount();
   });

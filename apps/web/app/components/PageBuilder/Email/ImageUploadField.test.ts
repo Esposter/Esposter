@@ -7,7 +7,9 @@ import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test, vi } from "vitest";
 
 const { assetUrl } = vi.hoisted(() => ({ assetUrl: "https://assets.example/image" }));
-vi.mock("@/composables/resource/useUploadResourceFile", () => ({ useUploadResourceFile: () => async () => assetUrl }));
+vi.mock(import("@/composables/resource/useUploadResourceFile"), () => ({
+  useUploadResourceFile: () => () => Promise.resolve(assetUrl),
+}));
 
 describe("pageBuilderEmailImageUploadField", () => {
   const TEST_IMAGE_FILE_NAME = "photo.png";

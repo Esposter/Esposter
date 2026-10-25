@@ -19,7 +19,8 @@ interface Props {
 const { announce, kind, position, resourceId } = defineProps<Props>();
 const commandStore = useCommandStore();
 const { openCommandPalette } = commandStore;
-const { getDocument } = usePageBuilderDocumentStore();
+const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+const { getDocument } = pageBuilderDocumentStore;
 const { deleteSelected, duplicateSelected, moveDown, moveToScope, moveUp } = usePageBuilderMoves(
   kind,
   () => getDocument(resourceId),

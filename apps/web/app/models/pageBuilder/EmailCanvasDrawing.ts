@@ -13,6 +13,6 @@ export type EmailCanvasDrawing<TType extends EmailCanvasType> = (
 export type EmailCanvasType = EmailNodeType | MjmlNodeType;
 
 // Looked up by type rather than written as a conditional in the drawing: TypeScript compares two instances of one
-// generic alias by variance, and a conditional type measures as invariant there, so a drawing shared by two types (a
-// text and an accordion's text) would fail each of its keys
+// Generic alias by variance, and a conditional type measures as invariant there, so a drawing shared by two types (a
+// Text and an accordion's text) would fail each of its keys
 type EmailCanvasNodeMap = { [TType in EmailCanvasType]: Extract<MjmlNode, { type: TType }> };

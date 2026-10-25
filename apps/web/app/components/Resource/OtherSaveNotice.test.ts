@@ -8,8 +8,8 @@ import { describe, expect, test } from "vitest";
 
 describe("otherSaveNotice", () => {
   // An assistant's save is another save held behind the person's unsaved edit, so the notice offers the same choice
-  // and names the agent by its key
-  test("An edit arriving over an unsaved edit is offered as a choice", async () => {
+  // And names the agent by its key
+  test("an edit arriving over an unsaved edit is offered as a choice", async () => {
     expect.hasAssertions();
 
     const apiKeyName = "Assistant";

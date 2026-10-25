@@ -11,10 +11,8 @@ describe(useVisualPerspective, () => {
 
     const chart = new ApexCharts(document.createElement("div"), {});
 
-    expect(chart.perspectives).toMatchObject({
-      apply: expect.any(Function),
-      capture: expect.any(Function),
-      encode: expect.any(Function),
-    });
+    expect(chart.perspectives.apply).toBeTypeOf("function");
+    expect(chart.perspectives.capture).toBeTypeOf("function");
+    expect(chart.perspectives.encode).toBeTypeOf("function");
   });
 });

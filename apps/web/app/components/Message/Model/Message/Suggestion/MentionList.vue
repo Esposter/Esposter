@@ -12,9 +12,9 @@ import { getMemberDescription } from "@/services/message/member/getMemberDescrip
 import { MentionType, takeOne } from "@esposter/shared";
 
 type MentionItem = BroadcastMentionItem | MemberInRoom | RoleMentionItem;
+type Props = Pick<SuggestionProps<MentionItem, MentionNodeAttributes>, "command" | "items" | "query">;
 
-const { command, items, query } =
-  defineProps<Pick<SuggestionProps<MentionItem, MentionNodeAttributes>, "command" | "items" | "query">>();
+const { command, items, query } = defineProps<Props>();
 const checkIsRoleMentionItem = (item: MentionItem): item is RoleMentionItem =>
   "type" in item && item.type === MentionType.Role;
 const checkIsMemberMentionItem = (item: MentionItem): item is MemberInRoom => "displayName" in item;

@@ -29,8 +29,9 @@ describe(useReadComments, () => {
 
     expect(receivedInput?.sortBy).toStrictEqual(PostSortTypeSortByMap[PostSortType.Top]);
   });
+
   // A branch read issued before the sort changed belongs to the order the change replaces, so it is dropped when it
-  // lands rather than filling the branch the new order is reading into
+  // Lands rather than filling the branch the new order is reading into
   test("drops a branch read that lands after the sort changed", async () => {
     expect.hasAssertions();
 

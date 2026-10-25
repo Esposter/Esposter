@@ -3,7 +3,7 @@ import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { TRPCClientError } from "@trpc/client";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-vi.mock("@/services/auth/authClient", () => ({
+vi.mock(import("@/services/auth/authClient"), () => ({
   authClient: { useSession: () => ({ value: { data: { user: {} } } }) },
 }));
 vi.mock(import("@/services/trpc/createErrorAlert"));
@@ -51,11 +51,12 @@ describe(useSave, () => {
       Promise.resolve({ etag: "next" }),
     );
     const { save: saveState, setState } = useSave(state, { auth: { save } });
-    setState({ ...createCounter(), count: 5 }, "read");
+    const loaded = { ...createCounter(), count: 5 };
+    setState(loaded, "read");
     state.value.count = 6;
     await saveState();
 
-    expect(save).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ count: 6 }), "read");
+    expect(save).toHaveBeenCalledExactlyOnceWith({ ...loaded, count: 6 }, "read");
   });
 
   // Another session wrote the save first, so this page's copy is stale and reloading takes the server's
@@ -72,7 +73,7 @@ describe(useSave, () => {
     state.value.count = 1;
     await saveState();
 
-    expect(reload).toHaveBeenCalledOnce();
+    expect(reload).toHaveBeenCalledTimes(1);
   });
 
   // A save that fails for any other reason is not a conflict, so the user is told rather than left with a silent loss

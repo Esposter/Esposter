@@ -22,7 +22,7 @@ describe("messageModelMemberActionDialogDisplayName", () => {
     });
 
   // A save reads the row back once the write has landed, so the read is the last request it makes. The test awaits that
-  // read rather than a flush, since a test that ends first leaves the read in flight
+  // Read rather than a flush, since a test that ends first leaves the read in flight
   const setupUpdate = () => {
     const { promise: readBack, resolve: signalReadBack } = Promise.withResolvers<void>();
     const updateUserToRoom = vi.fn<(input: UpdateUserToRoomInput) => void>();

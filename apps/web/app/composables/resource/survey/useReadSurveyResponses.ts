@@ -14,7 +14,7 @@ export const useReadSurveyResponses = (id: string) => {
   const summaryError = ref("");
   const refreshResponses = async () => {
     // Rows arrive already carrying their keys from one server read, so a response submitted or deleted between reads
-    // can never associate a row with another response's key
+    // Can never associate a row with another response's key
     const [recordsResult, contentResult] = await Promise.all([
       getResultAsync(() => $trpc.survey.readSurveyResponseRecords.query({ id })),
       getResultAsync(() => $trpc.survey.readResourceContent.query({ id })),

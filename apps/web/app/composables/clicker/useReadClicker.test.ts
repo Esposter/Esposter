@@ -16,6 +16,10 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@/services/auth/authClient"), () => import("@/services/auth/authClient.test"));
 
+const writeGuestSave = (clicker: Clicker) => {
+  localStorage.setItem(LocalStorageKey.ClickerStore, JSON.stringify(toClickerSave(clicker)));
+};
+
 describe(useReadClicker, () => {
   const hourMs = 60 * 60 * 1000;
   let wrapper: undefined | VueWrapper;
@@ -30,14 +34,11 @@ describe(useReadClicker, () => {
     );
     await flushPromises();
   };
-  const writeGuestSave = (clicker: Clicker) => {
-    localStorage.setItem(LocalStorageKey.ClickerStore, JSON.stringify(toClickerSave(clicker)));
-  };
 
   beforeEach(() => {
     // A guest: the session has settled to no account, so the save is the one in this browser
     useSession.mockImplementation((fetcher?: unknown) =>
-      fetcher ? { data: ref(null) } : ref({ data: null, isPending: false }),
+      fetcher ? { data: ref<null>(null) } : ref({ data: null, isPending: false }),
     );
   });
 
@@ -55,7 +56,9 @@ describe(useReadClicker, () => {
     writeGuestSave(new Clicker({ pointCount: 42, updatedAt: new Date() }));
     await mountReadClicker();
 
-    expect(useClickerStore().clicker.pointCount).toBe(42);
+    const clickerStore = useClickerStore();
+
+    expect(clickerStore.clicker.pointCount).toBe(42);
   });
 
   // An absence is paid out as production, and the dialog reports what it was paid. The clock is pinned to the hour
@@ -71,10 +74,12 @@ describe(useReadClicker, () => {
       }),
     );
     await mountReadClicker();
-    const { awardedPoints } = storeToRefs(useOfflineProgressStore());
+    const offlineProgressStore = useOfflineProgressStore();
+    const { awardedPoints } = storeToRefs(offlineProgressStore);
+    const clickerStore = useClickerStore();
 
     expect(awardedPoints.value).toBe(180);
-    expect(useClickerStore().clicker.pointCount).toBe(awardedPoints.value);
+    expect(clickerStore.clicker.pointCount).toBe(awardedPoints.value);
   });
 
   // A save that cannot be read is reported and replaced by a new game, so the page still opens
@@ -85,6 +90,8 @@ describe(useReadClicker, () => {
     localStorage.setItem(LocalStorageKey.ClickerStore, "{not json");
     await mountReadClicker();
 
-    expect(useClickerStore().clicker.pointCount).toBe(0);
+    const clickerStore = useClickerStore();
+
+    expect(clickerStore.clicker.pointCount).toBe(0);
   });
 });

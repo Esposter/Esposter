@@ -83,7 +83,8 @@ describe("pageBuilderCanvasOverlays", () => {
     const element = document.createElement("div");
     document.body.append(element);
     vi.spyOn(element, "getBoundingClientRect").mockReturnValue(new DOMRect(120, 40, 80, 20));
-    usePageBuilderDocumentStore().setDocument(TEST_ID, webpageKind, {
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setDocument(TEST_ID, webpageKind, {
       content: [],
       root: { props: { lang: "en", tokens: {} } },
     });

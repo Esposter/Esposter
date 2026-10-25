@@ -16,7 +16,7 @@ describe("resourceAskClaudeDialog", () => {
   });
 
   // Nothing is sent while no host is paired, so the pairing steps are all the dialog offers and no line form is shown
-  test("Pairing is explained when no host is paired", async () => {
+  test("pairing is explained when no host is paired", async () => {
     expect.hasAssertions();
 
     apiKeyList.mockResolvedValue({ data: { apiKeys: [] }, error: null });
@@ -29,7 +29,7 @@ describe("resourceAskClaudeDialog", () => {
     expect(document.body.querySelector("form")).toBeNull();
   });
 
-  test("The steps to connect a key are shown when none holds the scope", async () => {
+  test("the steps to connect a key are shown when none holds the scope", async () => {
     expect.hasAssertions();
 
     const agentConsoleConnectionStore = useAgentConsoleConnectionStore();

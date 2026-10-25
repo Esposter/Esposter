@@ -53,7 +53,7 @@ describe("resourceBlueprintEditor", () => {
   });
 
   // An imported manifest is shown as text the owner has not saved, in place of the text the Editor held
-  test("Importing a manifest fills the editor unsaved", async () => {
+  test("importing a manifest fills the editor unsaved", async () => {
     expect.hasAssertions();
 
     const importedManifest = { entries: [{ key: "notes", name: "Kickoff", type: ResourceType.Note }], parameters: [] };
@@ -71,7 +71,7 @@ describe("resourceBlueprintEditor", () => {
   });
 
   // Save is what makes an imported manifest the saved one, and until it does Deploy stays off
-  test("Deploy stays disabled until an imported manifest is saved", async () => {
+  test("deploy stays disabled until an imported manifest is saved", async () => {
     expect.hasAssertions();
 
     const importedManifest = { entries: [{ key: "notes", name: "Kickoff", type: ResourceType.Note }], parameters: [] };
@@ -82,7 +82,8 @@ describe("resourceBlueprintEditor", () => {
       createResourceListItem({ id: resourceId, type: ResourceType.Blueprint }),
     );
     const component = await mountSuspended(ResourceBlueprintEditor);
-    const { isManifestDirty } = storeToRefs(useBlueprintStore());
+    const blueprintStore = useBlueprintStore();
+    const { isManifestDirty } = storeToRefs(blueprintStore);
     const [manifestFormat] = PortableFormatMap[ResourceType.Blueprint];
     assert.exists(manifestFormat?.import);
     await manifestFormat.import();
@@ -97,7 +98,7 @@ describe("resourceBlueprintEditor", () => {
     assert.exists(saveButton);
     await saveButton.trigger("click");
     // The store adopts the saved manifest only once the write's answer is read and its content hashed, which is more
-    // turns than a flush covers, so the test awaits the adoption itself
+    // Turns than a flush covers, so the test awaits the adoption itself
     await until(isManifestDirty).toBe(false);
     await nextTick();
     const savedDeployButton = findDeployButton();
@@ -107,8 +108,8 @@ describe("resourceBlueprintEditor", () => {
   });
 
   // The import takes a revision of the manifest it replaces before it fills the Editor, so the save that follows
-  // always has that manifest in history to return to
-  test("Saving an imported manifest keeps the previous one in version history", async () => {
+  // Always has that manifest in history to return to
+  test("saving an imported manifest keeps the previous one in version history", async () => {
     expect.hasAssertions();
 
     const importedManifest = { entries: [{ key: "notes", name: "Kickoff", type: ResourceType.Note }], parameters: [] };

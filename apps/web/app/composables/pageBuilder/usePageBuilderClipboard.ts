@@ -19,7 +19,7 @@ import { getBlockNode, pasteBlockNodes } from "headless-block-editor";
 // Tagged with the kind's editor, and a paste lands where an insert would, as a copy with fresh ids. Each landed edit is
 // Announced once through announce
 // The kind's signature, which each composable lists as its own inputs, so the duplicate-code gate skips it
-// jscpd:ignore-start
+// `jscpd:ignore-start`
 export const usePageBuilderClipboard = <
   TNode extends BlockNode,
   TRoot extends BlockRootProps,
@@ -32,7 +32,7 @@ export const usePageBuilderClipboard = <
   announce: (message: string) => void,
   deleteNode: (nodeId: string) => boolean,
 ) => {
-  // jscpd:ignore-end
+  // `jscpd:ignore-end`
   const { getOpenDocument, getSelection } = usePageBuilderSelectedNode(kind, getDocument, resourceId);
   const pageBuilderCanvasStore = usePageBuilderCanvasStore();
   const { getSelectedNodeId, setSelectedNodeId } = pageBuilderCanvasStore;
