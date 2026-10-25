@@ -11,7 +11,7 @@ import { drawSurveyInvite } from "@/services/pageBuilder/email/canvasDrawing/dra
 import { drawText } from "@/services/pageBuilder/email/canvasDrawing/drawText";
 import { MjmlNodeType } from "mjml-blocks";
 
-// Every email node type names its drawing here, keyed by the type, so a type with no drawing fails the typecheck and
+// Every email node type names its drawing here, keyed by the type, so a type with no drawing fails the typecheck.
 // The renderer has no fallback for it
 export const EmailCanvasDrawingMap = {
   [EmailNodeType.SurveyInvite]: drawSurveyInvite,
