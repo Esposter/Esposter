@@ -1,11 +1,17 @@
 import type { CallBackgroundBlob } from "#server/models/message/call/CallBackgroundBlob";
 import type { ApiKeyPermissions } from "#shared/models/auth/ApiKeyPermissions";
 import type { CallBackground } from "#shared/models/message/call/CallBackground";
-import type { UserInAuth, UserSettingsInMessage, UserStatusInMessage } from "@esposter/db-schema";
+import type {
+  DeleteAccountEventGridData,
+  UserInAuth,
+  UserSettingsInMessage,
+  UserStatusInMessage,
+} from "@esposter/db-schema";
 import type { SetNonNullable } from "type-fest";
 
 import { auth } from "#server/auth";
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
+import { useEventGridPublisherClient } from "#server/composables/azure/eventGrid/useEventGridPublisherClient";
 import { publishBlobDeletion } from "#server/services/azure/eventGrid/publishBlobDeletion";
 import { publishBlobPrefixDeletion } from "#server/services/azure/eventGrid/publishBlobPrefixDeletion";
 import { on } from "#server/services/events/on";
@@ -13,6 +19,7 @@ import { checkIsServableCallBackground } from "#server/services/message/call/che
 import { getCallBackgroundBlobName } from "#server/services/message/call/getCallBackgroundBlobName";
 import { readCallBackgroundBlobs } from "#server/services/message/call/readCallBackgroundBlobs";
 import { getDetectedUserStatus } from "#server/services/message/getDetectedUserStatus";
+import { deleteAccountSessions } from "#server/services/user/deleteAccountSessions";
 import { userEventEmitter } from "#server/services/user/events/userEventEmitter";
 import { upsertConnectedStatus } from "#server/services/user/upsertConnectedStatus";
 import { router } from "#server/trpc";
@@ -33,6 +40,8 @@ import { MAX_CALL_BACKGROUND_SIZE_BYTES } from "#shared/services/message/constan
 import { generateReadSasUrl, generateWriteSasUrl } from "@esposter/db";
 import {
   AzureContainer,
+  AzureFunction,
+  createEventGridEvent,
   DatabaseEntityType,
   DEFAULT_AUTO_IDLE_THRESHOLD_MS,
   DEFAULT_INPUT_SENSITIVITY_DECIBELS,
@@ -48,7 +57,7 @@ import {
   userStatusesInMessage,
   VoiceInputMode,
 } from "@esposter/db-schema";
-import { noop, Operation } from "@esposter/shared";
+import { getResultAsync, noop, Operation } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 
 export const userRouter = router({
@@ -68,6 +77,23 @@ export const userRouter = router({
       });
       return key;
     }),
+  // Takes no input: the typed confirmation is the settings page's, and nothing here could be a way round it. The request
+  // ends the account's sessions and marks the row, then hands the sweep to the functions app, which outlasts a request
+  deleteAccount: standardAuthedProcedure.mutation<void>(async ({ ctx }) => {
+    const userId = ctx.getSessionPayload.user.id;
+    await deleteAccountSessions(ctx);
+    await ctx.db.update(usersInAuth).set({ deletionRequestedAt: new Date() }).where(eq(usersInAuth.id, userId));
+    const data: DeleteAccountEventGridData = { userId };
+    const deleteAccountEvent = createEventGridEvent(AzureFunction.DeleteAccount, userId, data);
+    // Best-effort after the write, as the room and resource deletions publish. A publish that fails leaves the marker
+    // standing with no sweep behind it, so the error names that, and signing back in and asking again publishes it
+    await getResultAsync(() => useEventGridPublisherClient().send([deleteAccountEvent])).match(noop, (error) => {
+      console.error(
+        `${AzureFunction.DeleteAccount} was not published for ${userId}: the marker stands with no sweep`,
+        error,
+      );
+    });
+  }),
   deleteCallBackground: standardAuthedProcedure
     .input(callBackgroundSlotSchema)
     .mutation<void>(async ({ ctx, input: { slot } }) => {

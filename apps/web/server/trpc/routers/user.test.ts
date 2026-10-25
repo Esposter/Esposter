@@ -3,6 +3,7 @@ import type { TRPCRouter } from "#server/trpc/routers";
 import type { BlobDeletionEventGridData } from "@esposter/db-schema";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { createMockSession } from "#server/auth.test";
 import { getCallBackgroundBlobName } from "#server/services/message/call/getCallBackgroundBlobName";
 import { getCallBackgroundPrefix } from "#server/services/message/call/getCallBackgroundPrefix";
 import { createCallerFactory } from "#server/trpc";
@@ -10,6 +11,7 @@ import {
   consumeMockSessionOnce,
   createMockContext,
   getMockCreateApiKey,
+  getMockRevokeSession,
   getMockSession,
   mockNoSessionOnce,
   mockSessionOnce,
@@ -22,8 +24,10 @@ import { MimeType } from "#shared/models/file/MimeType";
 import { MAX_CALL_BACKGROUND_SIZE_BYTES, MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
 import {
   AzureContainer,
+  AzureFunction,
   DatabaseEntityType,
   READ_SAS_DURATION_MS,
+  sessionsInAuth,
   UserStatus,
   userStatusesInMessage,
   WRITE_SAS_DURATION_MS,
@@ -36,6 +40,7 @@ import {
   MockEventGridDatabase,
   MockTableDatabase,
 } from "azure-mock";
+import { eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
 const getCallBackgroundErrorMessage = (context: string) =>
@@ -72,6 +77,7 @@ describe("userRouter", () => {
 
   afterEach(async () => {
     vi.useRealTimers();
+    getMockRevokeSession().mockReset();
     MockContainerDatabase.clear();
     MockEventGridDatabase.clear();
     MockTableDatabase.clear();
@@ -92,6 +98,42 @@ describe("userRouter", () => {
     expect(createdKey).toBe(key);
     expect(getMockCreateApiKey()).toHaveBeenCalledExactlyOnceWith({
       body: { name, permissions: { mcp: mcpScopes }, userId },
+    });
+  });
+
+  // The revoke is stubbed, so the stub deletes the row the way better-auth would, and the assertions read the rows and
+  // the one event the sweep is started by, not the calls that made them
+  test("deleteAccount ends every session the caller holds, marks the account, and publishes the sweep once", async () => {
+    expect.hasAssertions();
+
+    const otherSession = createMockSession(userId);
+    await mockContext.db
+      .insert(sessionsInAuth)
+      .values({
+        expiresAt: otherSession.expiresAt,
+        id: otherSession.id,
+        ipAddress: "",
+        token: otherSession.token,
+        updatedAt: otherSession.updatedAt,
+        userId,
+      });
+    getMockRevokeSession().mockImplementation(async ({ body: { token } }) => {
+      await mockContext.db.delete(sessionsInAuth).where(eq(sessionsInAuth.token, token));
+    });
+
+    await caller.deleteAccount();
+
+    const user = await mockContext.db.query.usersInAuth.findFirst({ where: { id: { eq: userId } } });
+    const deleteAccountEvents = MockEventGridDatabase.get("");
+    assert.exists(deleteAccountEvents);
+
+    expect(await mockContext.db.query.sessionsInAuth.findMany({ where: { userId: { eq: userId } } })).toStrictEqual([]);
+    expect(user?.deletionRequestedAt).toStrictEqual(new Date());
+    expect(deleteAccountEvents).toHaveLength(1);
+    expect(takeOne(deleteAccountEvents)).toMatchObject({
+      data: { userId },
+      eventType: AzureFunction.DeleteAccount,
+      subject: userId,
     });
   });
 
