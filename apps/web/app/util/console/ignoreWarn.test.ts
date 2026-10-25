@@ -7,7 +7,7 @@ describe(ignoreWarn, () => {
     vi.restoreAllMocks();
   });
 
-  test("ignores warn", () => {
+  test("silences console.warn while the callback runs", () => {
     expect.hasAssertions();
 
     const warn = vi.spyOn(console, "warn").mockImplementation(noop);
@@ -16,5 +16,15 @@ describe(ignoreWarn, () => {
     });
 
     expect(warn).not.toHaveBeenCalled();
+  });
+
+  test("restores console.warn once the callback returns", () => {
+    expect.hasAssertions();
+
+    const warn = vi.spyOn(console, "warn").mockImplementation(noop);
+    ignoreWarn(noop);
+    console.warn("after");
+
+    expect(warn).toHaveBeenCalledExactlyOnceWith("after");
   });
 });

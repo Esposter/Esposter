@@ -1,12 +1,18 @@
 import { getRandomValue } from "@/util/math/random/getRandomValue";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(getRandomValue, () => {
-  test("gets", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  test("picks the value at the random index", () => {
     expect.hasAssertions();
 
-    expect(getRandomValue([""])).toBe("");
+    vi.spyOn(Math, "random").mockReturnValue(0.99);
+
+    expect(getRandomValue(["a", "b"])).toBe("b");
   });
 
   test("fails for empty values", () => {

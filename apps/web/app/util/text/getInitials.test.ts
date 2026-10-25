@@ -2,7 +2,7 @@ import { getInitials } from "@/util/text/getInitials";
 import { describe, expect, test } from "vitest";
 
 describe(getInitials, () => {
-  test("gets", () => {
+  test("takes the initials of the first and last names only", () => {
     expect.hasAssertions();
 
     expect(getInitials("")).toBe("");

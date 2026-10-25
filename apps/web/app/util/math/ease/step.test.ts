@@ -8,7 +8,7 @@ describe(step, () => {
   const threshold = 1;
   const thresholds: Threshold[] = [{ speed, threshold }, { speed: speed + 1 }];
 
-  test("steps", () => {
+  test("holds a speed up to its threshold, then steps to the next", () => {
     expect.hasAssertions();
 
     expect(step(0, thresholds)).toBe(speed);

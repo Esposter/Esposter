@@ -2,15 +2,15 @@ import { getFilename } from "@/util/file/getFilename";
 import { describe, expect, test } from "vitest";
 
 describe(getFilename, () => {
-  test("empty string", () => {
+  test("returns the segment after the last slash", () => {
     expect.hasAssertions();
 
-    expect(getFilename("")).toBe("");
+    expect(getFilename("a/b/c")).toBe("c");
   });
 
-  test("filename", () => {
+  test("returns a name with no slash as it is", () => {
     expect.hasAssertions();
 
-    expect(getFilename("a/b")).toBe("b");
+    expect(getFilename("a")).toBe("a");
   });
 });

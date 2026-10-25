@@ -8,10 +8,11 @@ describe(getRandomValues, () => {
     expect(getRandomValues([], 0)).toStrictEqual([]);
   });
 
-  test("gets", () => {
+  // Taking every value is a shuffle, so each one lands exactly once whatever order the draw picks them in
+  test("takes each value once when taking them all", () => {
     expect.hasAssertions();
 
-    expect(getRandomValues([""], 1)).toStrictEqual([""]);
+    expect(getRandomValues(["a", "b"], 2).toSorted()).toStrictEqual(["a", "b"]);
   });
 
   test("fails for invalid range", () => {

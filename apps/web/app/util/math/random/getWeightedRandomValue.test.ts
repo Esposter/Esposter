@@ -11,7 +11,7 @@ describe(getWeightedRandomValue, () => {
     vi.restoreAllMocks();
   });
 
-  test("gets", () => {
+  test("picks the last value when every weight is zero", () => {
     expect.hasAssertions();
 
     expect(getWeightedRandomValue([{ cumulativeWeight: 0 }])).toStrictEqual({ cumulativeWeight: 0 });
