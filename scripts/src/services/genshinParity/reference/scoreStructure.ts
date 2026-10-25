@@ -8,7 +8,6 @@ import sharp from "sharp";
 
 // The blur the tone is read through: the size of a pillar at the structure's width, so only light and colour are left
 const TONE_BLUR_SIGMA = 8;
-
 // How alike two images are where a pixel mean cannot say, as for a scene rebuilt from shapes rather than copied: the
 // Shape is the edges they share, as an F-score of each one's edges found in the other, and the tone is the mean
 // Difference of their colour blurred past any texture, as a percentage. Given a layer, a mask at the structure's width,

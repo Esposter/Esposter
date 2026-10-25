@@ -32,7 +32,6 @@ const LAYER_HEADER = [
 // Slash
 const ROW_REGEX = /^\| `(?<key>[^`]+)` \|/u;
 const LAYER_SEPARATOR = "/";
-
 // The report of every reference's scores and its scene's layers from the report's lines as they were, the given ones
 // Rewritten and the rest kept as they were last scored, in the references' order, a reference not among them dropped
 // With its layers. A pending reference's row says so with its reason, in its place, and it has no layers

@@ -33,7 +33,6 @@ import sharp from "sharp";
 const GRID_SIZE = 6;
 // The least Gaussian sigma sharp blurs by, below which a recording's softness is too slight to draw
 const MIN_BLUR_SIGMA = 0.3;
-
 // The reference, ours and their difference side by side in one image, and how far apart they are: the mean over the
 // Compared region, then the same over a grid of cells, row by row, so where they differ is read without looking; the
 // Scores are handed back for the committed report, FLIP's perceptual error among them. A scene's shot is scored again
