@@ -1,8 +1,10 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
+import type { Dataset } from "#shared/models/dataset/Dataset";
 import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { connectAgentKey } from "#server/services/mcp/connectAgentKey.test";
 import { createCallerFactory } from "#server/trpc";
 import { mockSessionOnce } from "#server/trpc/context.test";
 import { createSurvey } from "#server/trpc/routers/createSurvey.test";
@@ -10,6 +12,7 @@ import { datasetRouter } from "#server/trpc/routers/dataset";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { sheetRouter } from "#server/trpc/routers/sheet";
 import { surveyRouter } from "#server/trpc/routers/survey";
+import { McpScope } from "#shared/models/auth/McpScope";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { StringColumn } from "#shared/models/resource/sheet/column/StringColumn";
@@ -200,6 +203,30 @@ describe("datasetRouter", () => {
     };
     await sheetCaller.saveResourceContent({ content, contentVersion: 0, id: newResource.id });
     const dataset = await caller.readDataset({ id: newResource.id, type: DatasetProviderType.Sheet });
+
+    expect(dataset.columns).toStrictEqual([{ name: columnName, type: ColumnType.String }]);
+    expect(dataset.rows).toStrictEqual([{ [columnName]: value }]);
+    expect(dataset.totalRows).toBe(1);
+  });
+
+  test("An agent reads a Sheet's rows as one table", async () => {
+    expect.hasAssertions();
+
+    const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
+    const newResource = await sheetCaller.createResource({ name });
+    const content: SheetResource = {
+      data: {
+        columns: [new StringColumn({ name: columnName, sourceName: columnName })],
+        metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(0), name, size: 0 },
+        rows: [new Row({ data: { [columnName]: value } })],
+      },
+      settings: { configuration: { delimiter: CsvDelimiter.Comma }, type: DataSourceType.Csv },
+    };
+    await sheetCaller.saveResourceContent({ content, contentVersion: 0, id: newResource.id });
+    const dataset = await callAgentTool<Dataset>("dataset_readDataset", {
+      id: newResource.id,
+      type: DatasetProviderType.Sheet,
+    });
 
     expect(dataset.columns).toStrictEqual([{ name: columnName, type: ColumnType.String }]);
     expect(dataset.rows).toStrictEqual([{ [columnName]: value }]);
