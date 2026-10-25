@@ -208,8 +208,7 @@ describe("moderationRouter", () => {
       ({ userId }) => userId === member.id,
     );
 
-    expect(memberMessages).toHaveLength(1);
-    expect(memberMessages.every(({ deletedAt }) => deletedAt)).toBe(true);
+    expect(memberMessages.map(({ deletedAt }) => deletedAt)).toStrictEqual([new Date(0)]);
   });
 
   test("readBans returns an empty list for a new room", async () => {
