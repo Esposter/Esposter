@@ -13,6 +13,7 @@ Working is not finished. This page answers one question: **what this change owes
 - **A third lane inside `code-review`.** The review lanes settle code by reading it; most rows here have no diff to read at all — an unwritten test, an unswept ledger row, a diagram nobody updated — and folding them in would give the review skill a second topic, which is a split rather than a lane (the `skill-authoring` skill, `references/splitting-a-skill.md`).
 - **Restating a row's rule here.** Every row is a pointer by construction; the moment one explains its owner's rule there are two copies of it, and this is the page that goes stale first (the `skill-authoring` skill, `references/one-owner-per-topic.md`).
 - **A row for the checks.** The touched tests are mechanical, run once after all the edits going out together, and the rest are CI's — all of it owned by `running-checks`, so an audit row for them would be a second place to forget them.
+- **Auditing a batch once, at its end.** A batch's changes share files, so one audit over the whole batch mixes one change's findings into another's diff, and its fixes land after the work they should have shaped. Each change is audited as it lands (see *When it runs*).
 
 ## When it runs
 
@@ -20,7 +21,9 @@ The order of the ritual, and the commit and push that close it, are `AGENTS.md`'
 
 **It runs at any point, and it is a reminder before it is a gate.** Asked mid-change it reports what is owed so far and marks the rows the diff cannot answer yet as `not yet` — never a refusal to run, and never a demand that the change be finished first. Asked at the end it is the same table with every row answered. Run it unprompted at the end of a change; run it on request whenever.
 
-**Scope the audit to the same diff a review would take** (the `code-review` skill, `references/diff-window.md`). A row is asked of that diff, never of the repository.
+**Scope the audit to the same diff a review would take** (the `code-review` skill, `references/diff-window.md`). A row is asked of that diff, never of the repository. In a batch of changes that diff is the one change's own commits, so the audit never sees another change's work.
+
+**Per change, as each one lands.** When a change's tasks are done, run the audit on that change alone before the next change in the batch is reviewed. Report its table, make each verdict's fix as its own commit, and push it as it is made, so the work is saved row by row. The end-of-change run is this same table, not a second audit, and a change that ran it per row does not run it again at the end.
 
 ## The audit
 
