@@ -1,3 +1,4 @@
+import type { HookRegistry } from "@/models/shared/HookRegistry";
 import type { ResourceType } from "@esposter/db-schema";
 import type { Promisable } from "type-fest";
 
@@ -22,4 +23,4 @@ export const ResourceContentHookMap = {
   // Keep mine: the resource's version has moved to the held save's, so each content store writes the document it holds
   // over it. Registered by the content stores, which are the only holders of the document
   Keep: createHookRegistry<(type: ResourceType) => Promisable<void>>(),
-};
+} as const satisfies Record<string, HookRegistry<(type: ResourceType) => Promisable<void>>>;
