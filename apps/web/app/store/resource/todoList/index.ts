@@ -67,7 +67,7 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     else if (!previousItem) deleteItem({ id });
     // Against the list as it stands — another device's save reloads the list mid-flight, and that content is kept
     else if (isDeleteAction) items.value = getRestoredItems(items.value, previousItem, previousIndex);
-    // Adopted content never held this edit, so its copy of the item is left as that device saved it
+    // Reloaded content never held this edit, so its copy of the item is left as that device saved it
     else if (todoList.value === writtenTodoList) updateItem(previousItem);
     return isSuccessful;
   };
@@ -85,7 +85,7 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     return isSuccessful;
   };
   // One field of one todo written from its row, with no dialog, and a refused save puts back the value it had — unless
-  // Another device's content was adopted mid-flight, which replaces the rows and never held this write
+  // Another device's content was reloaded mid-flight, which replaces the rows and never held this write
   const setItemValue = async <TKey extends keyof TodoListItem>(
     id: TodoListItem["id"],
     key: TKey,
@@ -103,7 +103,7 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
   };
   // A tick or an untick: completedAt is set to now or cleared — except the tick of a repeating todo, which rolls to its
   // Next due date in the browser's time zone. A refused save puts both back, unless another device's content was
-  // Adopted mid-flight
+  // Reloaded mid-flight
   const toggleCompleted = async (id: TodoListItem["id"]) => {
     const item = items.value.find((todo) => todo.id === id);
     if (!item || !checkRollsOnTick(item))
@@ -123,7 +123,7 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     setItemValue(id, "isImportant", ({ isImportant }) => (isImportant ? undefined : true));
   // Some todos put in a new order, by a drag or a key, each taking the next of the places they held; a refused save
   // Puts them back in the order they had, over whatever the list holds by then — unless that is another device's
-  // Content, adopted mid-flight, whose order never held this one
+  // Content, reloaded mid-flight, whose order never held this one
   const reorderItems = async (orderedIds: TodoListItem["id"][]) => {
     const previousIds = items.value.filter(({ id }) => orderedIds.includes(id)).map(({ id }) => id);
     const writtenTodoList = todoList.value;
