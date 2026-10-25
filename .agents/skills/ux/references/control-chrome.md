@@ -35,5 +35,5 @@ not.
 
 **Prime example — the emoji name field.** The name's charset is lowercase letters, digits and underscores, so a
 typed colon could only ever be an error; the field strips the colons from whatever is typed or pasted and stores the
-name alone. One field serves the create dialog and the settings rename, so the rules and the chrome cannot
+name alone. One field serves the create dialog and the settings rename, so the stripping and the rules cannot
 disagree between them.
