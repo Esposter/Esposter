@@ -4,11 +4,14 @@ import { MAX_EMAIL_NODES } from "#shared/services/pageBuilder/email/constants";
 import { emailBodyChildrenSchema } from "#shared/services/pageBuilder/email/emailNodeSchema";
 import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry";
 import { noteRichText } from "#shared/services/pageBuilder/email/noteRichText";
+import { STARTER_EMAIL_SOURCE } from "#shared/services/pageBuilder/email/starterEmailSource";
 import { renderEmailCanvasVNodes } from "@/services/pageBuilder/email/renderEmailCanvasVNodes";
 import { emailKind } from "@/services/pageBuilder/emailKind";
 import { takeOne } from "@esposter/shared";
 import { MjmlNodeType, parseMjmlDocument } from "mjml-blocks";
 import { describe, expect, test } from "vitest";
+import { createSSRApp } from "vue";
+import { renderToString } from "vue/server-renderer";
 
 const parseEmail = (source: string) => {
   const result = parseMjmlDocument(source, emailRegistry, emailBodyChildrenSchema, noteRichText, MAX_EMAIL_NODES);
@@ -138,5 +141,46 @@ describe("renderEmailCanvasVNodes", () => {
     const divider = takeOne(childrenOf(column));
 
     expect(styleOf(divider).borderTop).toBe("4px solid #000000");
+  });
+
+  test("the starter email draws every part with its content", async () => {
+    expect.hasAssertions();
+
+    const email = parseEmail(STARTER_EMAIL_SOURCE);
+    const html = await renderToString(createSSRApp({ render: () => renderEmailCanvasVNodes(emailKind, email, 1024) }));
+    const visibleText = html
+      .replaceAll(/<[^>]*>/gu, "\n")
+      .split("\n")
+      .map((line) => line.trim())
+      .filter((line) => line !== "");
+
+    // The social row keeps its type-name box, the design's one drawing for content the canvas cannot show
+    expect(visibleText).toStrictEqual([
+      "Home",
+      "Features",
+      "Contact",
+      "Welcome aboard",
+      "Every part of this email is a block. Change any of them, or delete what you do not need.",
+      "Get started",
+      "Hello {{first_name}},",
+      "Text holds your words. Select a text block to edit it on the canvas, or press Enter. Type two braces to insert a merge field from your dataset.",
+      "Columns",
+      "Columns sit side by side on a desktop and stack on a phone.",
+      "Blocks",
+      "Each column holds any blocks you like, in any order.",
+      "Block",
+      "What it is for",
+      "Hero",
+      "A bold opening band",
+      "Table",
+      "Rows of facts",
+      "What is a merge field?",
+      "A placeholder such as first name, filled with each reader's own value when you export.",
+      "A wrapper keeps its blocks together with one background.",
+      "Read the guide",
+      "A raw block holds HTML of your own.",
+      "mj-social",
+      "You are receiving this because you signed up for updates.",
+    ]);
   });
 });

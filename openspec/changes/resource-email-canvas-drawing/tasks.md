@@ -10,8 +10,8 @@
 
 ## 3. The starter draws whole
 
-- [ ] 3.1 Draw each part of the starter email with its own content. Verify: a test named after the scenario 'the starter email draws every part with its content', seen failing first. Open: the starter's render has no test yet.
+- [x] 3.1 Draw each part of the starter email with its own content. Verify: a test named after the scenario 'the starter email draws every part with its content', seen failing first. Seen failing with the table, raw, accordion and spacer parts drawn as type names; the table, raw, accordion and spacer drawings now pass it, and the social row keeps its labelled box as the design names.
 
 ## 4. Sweep
 
-- [ ] 4.1 Update the [email page builder design](../../specs/resource/page-builder/email/design.md) Key files row for `renderEmailCanvasVNodes.ts` to name the map, and fix any prose that describes the labelled fallback. Verify: the spec tests in `scripts` pass.
+- [x] 4.1 Update the [email page builder design](../../specs/resource/page-builder/email/design.md) Key files row for `renderEmailCanvasVNodes.ts` to name the map, and fix any prose that describes the labelled fallback. Verify: the spec tests in `scripts` pass.

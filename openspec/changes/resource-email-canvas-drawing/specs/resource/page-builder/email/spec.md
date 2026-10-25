@@ -22,7 +22,7 @@ The design canvas SHALL draw each part of an email with the words or parts its c
 - **GIVEN** the starter email a new email begins from
 - **WHEN** the owner views the design canvas
 - **THEN** each part of the starter shows its own content
-- **AND** no part shows only its type name
+- **AND** no part shows only its type name, except a social row, which keeps its labelled box
 
 #### Scenario: every email part has a drawing
 

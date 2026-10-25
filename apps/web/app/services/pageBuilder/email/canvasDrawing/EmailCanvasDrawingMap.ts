@@ -1,13 +1,16 @@
 import type { EmailCanvasDrawing, EmailCanvasType } from "@/models/pageBuilder/EmailCanvasDrawing";
 
 import { EmailNodeType } from "#shared/models/pageBuilder/EmailNodeType";
-import { drawButton } from "@/services/pageBuilder/email/canvasDrawing/drawButton";
 import { drawContainer } from "@/services/pageBuilder/email/canvasDrawing/drawContainer";
 import { drawDivider } from "@/services/pageBuilder/email/canvasDrawing/drawDivider";
+import { drawLabel } from "@/services/pageBuilder/email/canvasDrawing/drawLabel";
 import { drawLeaf } from "@/services/pageBuilder/email/canvasDrawing/drawLeaf";
 import { drawNavbarLink } from "@/services/pageBuilder/email/canvasDrawing/drawNavbarLink";
+import { drawRaw } from "@/services/pageBuilder/email/canvasDrawing/drawRaw";
 import { drawSection } from "@/services/pageBuilder/email/canvasDrawing/drawSection";
+import { drawSpacer } from "@/services/pageBuilder/email/canvasDrawing/drawSpacer";
 import { drawSurveyInvite } from "@/services/pageBuilder/email/canvasDrawing/drawSurveyInvite";
+import { drawTable } from "@/services/pageBuilder/email/canvasDrawing/drawTable";
 import { drawText } from "@/services/pageBuilder/email/canvasDrawing/drawText";
 import { MjmlNodeType } from "mjml-blocks";
 
@@ -17,9 +20,9 @@ export const EmailCanvasDrawingMap = {
   [EmailNodeType.SurveyInvite]: drawSurveyInvite,
   [MjmlNodeType.Accordion]: drawContainer,
   [MjmlNodeType.AccordionElement]: drawContainer,
-  [MjmlNodeType.AccordionText]: drawLeaf,
-  [MjmlNodeType.AccordionTitle]: drawLeaf,
-  [MjmlNodeType.Button]: drawButton,
+  [MjmlNodeType.AccordionText]: drawText,
+  [MjmlNodeType.AccordionTitle]: drawLabel,
+  [MjmlNodeType.Button]: drawLabel,
   [MjmlNodeType.Carousel]: drawContainer,
   [MjmlNodeType.CarouselImage]: drawLeaf,
   [MjmlNodeType.Column]: drawContainer,
@@ -29,12 +32,12 @@ export const EmailCanvasDrawingMap = {
   [MjmlNodeType.Image]: drawLeaf,
   [MjmlNodeType.Navbar]: drawContainer,
   [MjmlNodeType.NavbarLink]: drawNavbarLink,
-  [MjmlNodeType.Raw]: drawLeaf,
+  [MjmlNodeType.Raw]: drawRaw,
   [MjmlNodeType.Section]: drawSection,
   [MjmlNodeType.Social]: drawLeaf,
   [MjmlNodeType.SocialElement]: drawLeaf,
-  [MjmlNodeType.Spacer]: drawLeaf,
-  [MjmlNodeType.Table]: drawLeaf,
+  [MjmlNodeType.Spacer]: drawSpacer,
+  [MjmlNodeType.Table]: drawTable,
   [MjmlNodeType.Text]: drawText,
   [MjmlNodeType.Wrapper]: drawContainer,
 } as const satisfies { [TType in EmailCanvasType]: EmailCanvasDrawing<TType> };

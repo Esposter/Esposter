@@ -4,6 +4,6 @@ import type { MjmlNodeType } from "mjml-blocks";
 import { renderNoteHtml } from "#shared/services/resource/note/renderNoteHtml";
 import { h } from "vue";
 
-// A text is drawn as its sanitised note html, so its formatting shows as the reader will see it
-export const drawText: EmailCanvasDrawing<MjmlNodeType.Text> = (node, { style }) =>
+// A text, or an accordion's text, is drawn as its sanitised note html, so its formatting shows as a reader sees it
+export const drawText: EmailCanvasDrawing<MjmlNodeType.AccordionText | MjmlNodeType.Text> = (node, { style }) =>
   h("div", { innerHTML: renderNoteHtml(node.props.content), style });
