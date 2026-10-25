@@ -1,4 +1,8 @@
-import { SERVER_COUNT_FIELDS, SERVER_COUNT_ROLE_LIST } from "@esposter/configuration/eslint/serverCountFields.js";
+import {
+  SERVER_COUNT_FIELDS,
+  SERVER_COUNT_ROLE_FIELD,
+  SERVER_COUNT_ROLE_LIST,
+} from "@esposter/configuration/eslint/serverCountFields.js";
 
 const COUNT_FIELD_PATTERN = `/^(${SERVER_COUNT_FIELDS.join("|")})$/`;
 
@@ -42,7 +46,7 @@ export default [
     // A role's `count` is matched only as an item of `countsByTopRole`, since a bare `count` is a counter elsewhere
     message:
       "A server-owned count is re-read, never adjusted by a delta — read it back with its batched refresh (see openspec/specs/architecture/client-data/design.md).",
-    selector: `UpdateExpression[argument.property.name=${COUNT_FIELD_PATTERN}], AssignmentExpression[operator=/^[+-]=$/][left.property.name=${COUNT_FIELD_PATTERN}], UpdateExpression[argument.property.name='count'][argument.object.object.property.name='${SERVER_COUNT_ROLE_LIST}'], AssignmentExpression[operator=/^[+-]=$/][left.property.name='count'][left.object.object.property.name='${SERVER_COUNT_ROLE_LIST}']`,
+    selector: `UpdateExpression[argument.property.name=${COUNT_FIELD_PATTERN}], AssignmentExpression[operator=/^[+-]=$/][left.property.name=${COUNT_FIELD_PATTERN}], UpdateExpression[argument.property.name='${SERVER_COUNT_ROLE_FIELD}'][argument.object.object.property.name='${SERVER_COUNT_ROLE_LIST}'], AssignmentExpression[operator=/^[+-]=$/][left.property.name='${SERVER_COUNT_ROLE_FIELD}'][left.object.object.property.name='${SERVER_COUNT_ROLE_LIST}']`,
   },
   {
     // The reassignment form of the same delta: a count set to a sum or difference is moved by the client, even when the
@@ -50,7 +54,7 @@ export default [
     // Is not matched
     message:
       "A server-owned count is set from the server's read, not from a sum or difference — read it back with its batched refresh (see openspec/specs/architecture/client-data/design.md).",
-    selector: `AssignmentExpression[operator='='][left.property.name=${COUNT_FIELD_PATTERN}][right.type='BinaryExpression'][right.operator=/^[+-]$/], AssignmentExpression[operator='='][left.property.name='count'][left.object.object.property.name='${SERVER_COUNT_ROLE_LIST}'][right.type='BinaryExpression'][right.operator=/^[+-]$/]`,
+    selector: `AssignmentExpression[operator='='][left.property.name=${COUNT_FIELD_PATTERN}][right.type='BinaryExpression'][right.operator=/^[+-]$/], AssignmentExpression[operator='='][left.property.name='${SERVER_COUNT_ROLE_FIELD}'][left.object.object.property.name='${SERVER_COUNT_ROLE_LIST}'][right.type='BinaryExpression'][right.operator=/^[+-]$/]`,
   },
   {
     // A template literal already runs `ToString` on every substitution, so a `.toString()` inside one spells the
