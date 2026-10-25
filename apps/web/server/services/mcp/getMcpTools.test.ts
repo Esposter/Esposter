@@ -69,6 +69,8 @@ describe(getMcpTools, () => {
           "resource_restoreSnapshotVersion",
           "resource_updateResource",
           "resource_updateResourceContent",
+          "resource_deleteFile",
+          "resource_generateUploadFileSasEntities",
           "resource_publishResource",
           "resource_unpublishResource",
           "sheet_runSheetCommand",
