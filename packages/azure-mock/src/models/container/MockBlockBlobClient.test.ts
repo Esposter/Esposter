@@ -1,7 +1,7 @@
 import type { BlobDownloadResponseParsed } from "@azure/storage-blob";
 
-import { MOCK_BLOB_BASE_URL } from "#src/constants";
 import { MockBlockBlobClient } from "#src/models/container/MockBlockBlobClient";
+import { MOCK_BLOB_BASE_URL } from "#src/services/constants";
 import { MOCK_BLOB_SEEDED_PROPERTIES } from "#src/services/container/constants";
 import { readMockBlobMetadata } from "#src/services/container/readMockBlobMetadata";
 import { MockContainerBlobDatesDatabase } from "#src/store/MockContainerBlobDatesDatabase";

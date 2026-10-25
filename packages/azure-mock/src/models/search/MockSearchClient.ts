@@ -20,69 +20,13 @@ import type {
 } from "@azure/search-documents";
 import type { Except } from "type-fest";
 
-import { MOCK_SEARCH_BASE_URL } from "#src/constants";
 import { NotImplementedError } from "#src/models/shared/NotImplementedError";
+import { MOCK_SEARCH_BASE_URL } from "#src/services/constants";
 import { createFilterPredicate } from "#src/services/filter/createFilterPredicate";
+import { searchDocuments } from "#src/services/search/searchDocuments";
+import { sortDocuments } from "#src/services/search/sortDocuments";
 import { MockSearchDatabase } from "#src/store/MockSearchDatabase";
-import { deserializeKey } from "@esposter/azure";
 import { getOrCreate } from "@esposter/shared";
-
-const toComparable = (value: unknown): number | string => {
-  if (value instanceof Date) return value.getTime();
-  else if (typeof value === "number" || typeof value === "string") return value;
-  else return String(value);
-};
-
-const compareValues = (firstValue: unknown, secondValue: unknown): number => {
-  const firstComparable = toComparable(firstValue);
-  const secondComparable = toComparable(secondValue);
-  if (typeof firstComparable === "number" && typeof secondComparable === "number")
-    return firstComparable - secondComparable;
-  else return String(firstComparable).localeCompare(String(secondComparable));
-};
-
-const sortDocuments = (documents: Record<string, unknown>[], orderBy: string[]): Record<string, unknown>[] => {
-  // Parsed once rather than inside the comparator, which runs O(n log n) times
-  const parsedOrderBy = orderBy.map((clause) => {
-    const [field = "", direction = "asc"] = clause.split(/\s+/u);
-    return { direction, key: deserializeKey(field) };
-  });
-  return documents.toSorted((firstDocument, secondDocument) => {
-    for (const { direction, key } of parsedOrderBy) {
-      const comparison = compareValues(firstDocument[key], secondDocument[key]);
-      if (comparison !== 0) return direction === "desc" ? -comparison : comparison;
-    }
-    return 0;
-  });
-};
-
-const getSearchFieldValues = (value: unknown, pathSegments: string[]): unknown[] => {
-  if (pathSegments.length === 0) return [value];
-  else if (Array.isArray(value)) return value.flatMap((item) => getSearchFieldValues(item, pathSegments));
-  else if (typeof value === "object" && value !== null) {
-    const [field = "", ...remainingPathSegments] = pathSegments;
-    return getSearchFieldValues((value as Record<string, unknown>)[deserializeKey(field)], remainingPathSegments);
-  } else return [];
-};
-
-const searchDocuments = (
-  documents: Record<string, unknown>[],
-  searchText: string | undefined,
-  searchFields: readonly string[] | undefined,
-): Record<string, unknown>[] => {
-  if (!searchText || searchText === "*") return documents;
-
-  const normalizedSearchText = searchText.toLocaleLowerCase();
-  const searchFieldPaths = searchFields?.map((searchField) => searchField.split("/"));
-  return documents.filter((document) =>
-    (searchFieldPaths ?? Object.keys(document).map((field) => field.split("/"))).some((pathSegments) =>
-      // Only string leaves match a search: every other field type is filterable rather than searchable in Azure Search
-      getSearchFieldValues(document, pathSegments).some(
-        (value) => typeof value === "string" && value.toLocaleLowerCase().includes(normalizedSearchText),
-      ),
-    ),
-  );
-};
 
 /**
  * An in-memory mock of the Azure SearchClient — no emulator and no network. It applies the same OData filtering

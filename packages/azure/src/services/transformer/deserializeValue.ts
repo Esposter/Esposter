@@ -1,12 +1,7 @@
 import type { SerializableValue } from "#src/models/shared/SerializableValue";
 
 import { DATETIME_LITERAL_PREFIX } from "#src/services/transformer/constants";
-import { getResult } from "@esposter/shared";
-
-// `Temporal.Instant` is the parser rather than `new Date`, which answers an impossible day with the day it
-// Overflows into — 30 February reads as 2 March — and an unparseable string with an Invalid Date object
-const parseIsoDate = (isoValue: string): Date | undefined =>
-  getResult(() => new Date(Temporal.Instant.from(isoValue).epochMilliseconds)).unwrapOr(undefined);
+import { parseIsoDate } from "#src/services/transformer/parseIsoDate";
 
 export const deserializeValue = (serializedValue: string): SerializableValue => {
   if (serializedValue === String(true)) return true;

@@ -17,9 +17,9 @@ import type {
 } from "@azure/data-tables";
 import type { Except } from "type-fest";
 
-import { MOCK_TABLE_BASE_URL } from "#src/constants";
 import { MockRestError } from "#src/models/shared/MockRestError";
 import { NotImplementedError } from "#src/models/shared/NotImplementedError";
+import { MOCK_TABLE_BASE_URL } from "#src/services/constants";
 import { createFilterPredicate } from "#src/services/filter/createFilterPredicate";
 import { compareByCompositeKey } from "#src/services/table/compareByCompositeKey";
 import { MockTableDatabase } from "#src/store/MockTableDatabase";

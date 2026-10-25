@@ -9,13 +9,13 @@ import type {
   StorageSharedKeyCredential,
 } from "@azure/storage-blob";
 
+import { NotImplementedError } from "#src/models/shared/NotImplementedError";
 import {
   BLOB_NOT_FOUND_ERROR_CODE,
   BLOB_NOT_FOUND_MESSAGE,
   CONDITION_NOT_MET_ERROR_CODE,
   CONDITION_NOT_MET_MESSAGE,
-} from "#src/constants";
-import { NotImplementedError } from "#src/models/shared/NotImplementedError";
+} from "#src/services/constants";
 import { deleteMockBlob } from "#src/services/container/deleteMockBlob";
 import { getAzureErrorXml } from "#src/services/container/getAzureErrorXml";
 import { getBlobUrlParts } from "#src/services/container/getBlobUrlParts";

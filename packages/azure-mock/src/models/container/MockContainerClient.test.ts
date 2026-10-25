@@ -1,5 +1,5 @@
-import { MOCK_BLOB_BASE_URL } from "#src/constants";
 import { MockContainerClient } from "#src/models/container/MockContainerClient";
+import { MOCK_BLOB_BASE_URL } from "#src/services/constants";
 import { MockContainerDatabase } from "#src/store/MockContainerDatabase";
 import { afterEach, describe, expect, test } from "vitest";
 

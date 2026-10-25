@@ -29,8 +29,8 @@ import type {
 } from "@azure/storage-queue";
 import type { Except } from "type-fest";
 
-import { MOCK_QUEUE_BASE_URL } from "#src/constants";
 import { NotImplementedError } from "#src/models/shared/NotImplementedError";
+import { MOCK_QUEUE_BASE_URL } from "#src/services/constants";
 import { getMockQueueMessageItem } from "#src/services/queue/getMockQueueMessageItem";
 import { createMockResponse } from "#src/services/shared/createMockResponse";
 import { getMockSasUrl } from "#src/services/shared/getMockSasUrl";

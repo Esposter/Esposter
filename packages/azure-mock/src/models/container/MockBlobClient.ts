@@ -30,9 +30,9 @@ import type {
 } from "@azure/storage-blob";
 import type { Except } from "type-fest";
 
-import { BLOB_NOT_FOUND_MESSAGE } from "#src/constants";
 import { MockRestError } from "#src/models/shared/MockRestError";
 import { NotImplementedError } from "#src/models/shared/NotImplementedError";
+import { BLOB_NOT_FOUND_MESSAGE } from "#src/services/constants";
 import { deleteMockBlob } from "#src/services/container/deleteMockBlob";
 import { getBlobUrl } from "#src/services/container/getBlobUrl";
 import { getBlobUrlParts } from "#src/services/container/getBlobUrlParts";

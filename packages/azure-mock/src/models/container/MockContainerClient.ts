@@ -32,11 +32,11 @@ import type {
 } from "@azure/storage-blob";
 import type { Except } from "type-fest";
 
-import { BLOB_NOT_FOUND_MESSAGE, MOCK_BLOB_BASE_URL } from "#src/constants";
 import { MockBlobBatchClient } from "#src/models/container/MockBlobBatchClient";
 import { MockBlockBlobClient } from "#src/models/container/MockBlockBlobClient";
 import { MockRestError } from "#src/models/shared/MockRestError";
 import { NotImplementedError } from "#src/models/shared/NotImplementedError";
+import { BLOB_NOT_FOUND_MESSAGE, MOCK_BLOB_BASE_URL } from "#src/services/constants";
 import { deleteMockBlob } from "#src/services/container/deleteMockBlob";
 import { getBlobItemXml } from "#src/services/container/getBlobItemXml";
 import { getBlobPrefixXml } from "#src/services/container/getBlobPrefixXml";

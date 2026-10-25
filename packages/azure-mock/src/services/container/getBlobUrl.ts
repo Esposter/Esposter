@@ -1,4 +1,4 @@
-import { MOCK_BLOB_BASE_URL } from "#src/constants";
+import { MOCK_BLOB_BASE_URL } from "#src/services/constants";
 
 // Percent-encoded per path segment, as the real SDK builds it. Production takes every copy source and batch-delete
 // Target from a client's own `url`, so a raw interpolation here would address a name truncated at the first `#` or
