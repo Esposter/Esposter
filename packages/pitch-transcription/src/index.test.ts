@@ -43,9 +43,9 @@ describe("pitch-transcription", () => {
     const output = execFileSync(process.execPath, [
       "--input-type=module",
       "--eval",
-      `const { writeMidi } = await import(${JSON.stringify(pathToFileURL(distFile).href)}); console.log(String(writeMidi([]).length > 0));`,
+      `const { writeMidi } = await import(${JSON.stringify(pathToFileURL(distFile).href)}); console.log(String(writeMidi([]).length));`,
     ]);
 
-    expect(output.toString().trim()).toBe("true");
+    expect(output.toString().trim()).toBe("49");
   });
 });
