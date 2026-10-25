@@ -36,4 +36,4 @@ Build order. Sections 1 and 2 give the schema form a link renderer, section 3 gi
 ## 6. Sweep and specs
 
 - [x] 6.1 Sweep the prose the change makes stale: the webpage survey invite spec's line that says no picker lists the owner's surveys, its design's Notes that call the picker owed, and the schema-forms design's Key files.
-      Verify: a search for "survey picker is owed" and "no picker lists" across `openspec/` returns nothing, and the schema-forms Key files name the link renderer.
+      Verify: a search across `openspec/`, skipping this change's own tasks.md, finds no claim that the picker is still owed or that no picker exists, and the schema-forms Key files name the link renderer.
