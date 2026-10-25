@@ -5,7 +5,7 @@ import { assert, describe, expect, test } from "vitest";
 describe(getDefaultModuleOptions, () => {
   const DEV_SERVER_URL = "http://localhost:3000";
 
-  test("#118 the default CORS origin is the development server's, never a wildcard", () => {
+  test("the default CORS origin is the development server's, never a wildcard", () => {
     expect.hasAssertions();
 
     expect(getDefaultModuleOptions(false, DEV_SERVER_URL, false).corsHandler).toStrictEqual({
