@@ -11,7 +11,7 @@ The Flowchart type is removed completely, with its stored data. Nothing is migra
 - **The type**: the `Flowchart` value of the resource type, its content schema, its server router and its dispatch entry, its tRPC procedure inputs, its blade, editor, view, dialogs, export and portable formats.
 - **Its editor and its canvas**: every component, composable, store and service under the flowchart's names, and the shared models of its graph.
 - **Vue Flow**: all five `@vue-flow` packages, with their stylesheets, their catalog entries and their ledger rows. Vue Flow is removed with the type, in the same release, and not in a later step.
-- **Its public view**: the published flowchart's view component, which the generic view map routes to. Publishing is then a capability no type holds, since the flowchart is its only publishable type.
+- **Its public view**: the published flowchart's view component, which the generic view map routes to. The flowchart is one of six publishable types, so publishing keeps its other holders, and the removal takes only the flowchart's own public view.
 - **Its agent surface**: the flowchart's rows in the generic agent tools' content documentation. Agents reach no flowchart procedure after the change.
 - **The flowchart achievement**: the achievement name and its category, and the earned rows that name it.
 - **Its specs**: the capabilities `resource/flowchart-connectors`, `resource/flowchart-image-export` and `resource/flowchart-publish`, removed from the specs and the resource index.
