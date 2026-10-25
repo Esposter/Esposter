@@ -4,26 +4,13 @@ import type { ResourceStatusFilter } from "@/models/resource/list/ResourceStatus
 import type { ResourceUpdatedFilter } from "@/models/resource/list/ResourceUpdatedFilter";
 import type { ResourceType } from "@esposter/db-schema";
 
-import { ISO_DATE_FORMAT } from "#shared/util/date/constants";
-import { formatDate } from "#shared/util/date/formatDate";
-import { parseDate } from "#shared/util/date/parseDate";
 import { ResourceStatusFilters } from "@/models/resource/list/ResourceStatusFilter";
 import { ResourceUpdatedFilters } from "@/models/resource/list/ResourceUpdatedFilter";
+import { createUpdatedBound } from "@/services/resource/list/createUpdatedBound";
 import { deserializeResourceSortBy } from "@/services/resource/list/deserializeResourceSortBy";
 import { serializeResourceSortBy } from "@/services/resource/list/serializeResourceSortBy";
 import { resourceTypeSchema } from "@esposter/db-schema";
 
-// Dates can't round-trip through a query param directly, so the custom bounds serialize day-granular. It reads
-// Nothing from the composable it is called in, so it declares once rather than per call
-const createUpdatedBound = (key: string) => {
-  const boundQuery = useRouteQuery(key, "", { transform: String });
-  return computed<Date | undefined>({
-    get: () => (boundQuery.value ? parseDate(boundQuery.value, ISO_DATE_FORMAT) : undefined),
-    set: (value) => {
-      boundQuery.value = value ? formatDate(value, ISO_DATE_FORMAT) : "";
-    },
-  });
-};
 // The list workbench's filter state, mirrored to query params so the list is deep-linkable, refresh-safe and
 // Back-button-safe. useRouteQuery drops a param again when set back to its default, and the default order is
 // The view's own — Recent's newest-open-first leaves the url as clean as All's newest-updated-first.
