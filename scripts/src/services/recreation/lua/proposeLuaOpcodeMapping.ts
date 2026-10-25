@@ -1,5 +1,5 @@
 import type { LuaOpcodeProposal } from "#src/models/recreation/lua/LuaOpcodeProposal";
-import type { LuaOpcodeRuleContext } from "#src/models/recreation/lua/LuaOpcodeRule";
+import type { LuaOpcodeRuleContext } from "#src/models/recreation/lua/LuaOpcodeRuleContext";
 import type { LuaOpcodeStatistic } from "#src/models/recreation/lua/LuaOpcodeStatistic";
 
 import { LuaOpcode } from "#src/models/recreation/lua/LuaOpcode";

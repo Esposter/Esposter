@@ -1,4 +1,5 @@
 import type { LuaOpcode } from "#src/models/recreation/lua/LuaOpcode";
+import type { LuaOpcodeRuleContext } from "#src/models/recreation/lua/LuaOpcodeRuleContext";
 import type { LuaOpcodeStatistic } from "#src/models/recreation/lua/LuaOpcodeStatistic";
 
 // A stock opcode's constraint over one dialect opcode's statistics: the evidence it holds with, or undefined
@@ -6,9 +7,4 @@ import type { LuaOpcodeStatistic } from "#src/models/recreation/lua/LuaOpcodeSta
 export interface LuaOpcodeRule {
   describe: (statistic: LuaOpcodeStatistic, context: LuaOpcodeRuleContext) => string | undefined;
   stockOpcode: LuaOpcode;
-}
-
-export interface LuaOpcodeRuleContext {
-  functionCount: number;
-  setDialectOpcodes: number[];
 }
