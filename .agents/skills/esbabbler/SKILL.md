@@ -24,7 +24,8 @@ An opt-out is recorded on the row rather than deleting it, only the member's own
 ## Deep Dives
 
 - `references/message-operations.md` — when adding a message operation or `MessageType`, or gating a message menu item on who may use it.
-- `references/client-state.md` — when a component mutates messaging state (and whether that belongs in a store at all), or when a composable sets up subscriptions from a reactive list or resumes one after an `await`.
+- `references/client-state.md` — when a component mutates messaging state, and whether that belongs in a store at all.
+- `references/subscribable-watch-sources.md` — when a composable sets up subscriptions from a reactive list, or resumes one after an `await`.
 - `references/settings-surfaces.md` — when adding a tab, panel or field to the room or user settings dialog.
 - `references/scheduled-message-jobs.md` — when scheduling work to run at a future time (scheduled messages, reminders).
 - `references/discord-parity.md` — when a messaging behaviour, name or default is undecided.
