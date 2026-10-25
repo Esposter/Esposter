@@ -6,6 +6,7 @@ import { createEmptyBlueprint } from "@/services/resource/blueprint/createEmptyB
 import { PortableFormatMap } from "@/services/resource/PortableFormatMap";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useResourceStore } from "@/store/resource";
+import { useBlueprintStore } from "@/store/resource/blueprint";
 import { ResourceType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
@@ -77,12 +78,11 @@ describe("resourceBlueprintEditor", () => {
     vi.mocked(showOpenFilePicker).mockResolvedValue([
       { getFile: () => Promise.resolve(new File([JSON.stringify(importedManifest)], "Launch.json")) },
     ] as never);
-    const { promise: isContentSaved, resolve: onContentSaved } = Promise.withResolvers<void>();
-    trpcMsw.blueprint.saveResourceContent.mutation(() => {
-      onContentSaved();
-      return createResourceListItem({ id: resourceId, type: ResourceType.Blueprint });
-    });
+    trpcMsw.blueprint.saveResourceContent.mutation(() =>
+      createResourceListItem({ id: resourceId, type: ResourceType.Blueprint }),
+    );
     const component = await mountSuspended(ResourceBlueprintEditor);
+    const { isManifestDirty } = storeToRefs(useBlueprintStore());
     const [manifestFormat] = PortableFormatMap[ResourceType.Blueprint];
     assert.exists(manifestFormat?.import);
     await manifestFormat.import();
@@ -96,8 +96,10 @@ describe("resourceBlueprintEditor", () => {
     const saveButton = component.findAll("button").find((button) => button.text() === "Save");
     assert.exists(saveButton);
     await saveButton.trigger("click");
-    await isContentSaved;
-    await flushPromises();
+    // The store adopts the saved manifest only once the write's answer is read and its content hashed, which is more
+    // turns than a flush covers, so the test awaits the adoption itself
+    await until(isManifestDirty).toBe(false);
+    await nextTick();
     const savedDeployButton = findDeployButton();
     assert.exists(savedDeployButton);
 
