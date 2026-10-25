@@ -13,7 +13,7 @@ Build order. Section 1 lands the schema the rest reads, section 2 moves the shar
       Verify: the web's moderation tests pass unchanged, and no copy of the soft delete remains outside `packages/db`.
 - [x] 2.2 Add `deleteUserDirectories` in `packages/db`: it removes every blob under `{userId}/` in the given containers, and every blob under `character-packs/staging/{userId}/` in the game-asset container, and treats an empty directory as done. Test first: a directory with two blobs is removed, a staged blob under `character-packs/staging/{userId}/` is removed, and a second call finds nothing and succeeds.
       Verify: the test passes, and the function's container list is the inventory's list for user prefixes.
-- [ ] 2.3 Add `listChargedBlobsByUser` in `packages/db`: it reads the storage ledger rows for one user, grouped by container. Test first: a user with two charged blobs in two containers gets both, and another user's rows are not among them.
+- [x] 2.3 Add `listChargedBlobsByUser` in `packages/db`: it reads the storage ledger rows for one user, grouped by container. Test first: a user with two charged blobs in two containers gets both, and another user's rows are not among them.
       Verify: the test passes against the ledger table, not against a list of blob names.
 
 ## 3. Handler
