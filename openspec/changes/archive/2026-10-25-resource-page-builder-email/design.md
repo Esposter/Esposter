@@ -1,10 +1,10 @@
 # Email
 
-The email editor, built over the node types and the renderer contract the [document model](../../specs/resource/page-builder/document-model/design.md) defines, inside the frame and shell the [canvas](../../specs/resource/page-builder/canvas/design.md) draws, with the field components the [style panel](../../specs/resource/page-builder/style-panel/design.md) builds.
+The email editor, built over the node types and the renderer contract the [document model](../../../specs/resource/page-builder/document-model/design.md) defines, inside the frame and shell the [canvas](../../../specs/resource/page-builder/canvas/design.md) draws, with the field components the [style panel](../../../specs/resource/page-builder/style-panel/design.md) builds.
 
 ## Email
 
-MJML stays the engine, and the email's node types are its components from the [MJML blocks](../../specs/mjml-blocks/README.md) package: their attributes, MJML's defaults, their nesting and the head as the root's props. That package owns what an email may hold. This page is what the editor draws over it, plus the one type the app adds, the survey invite, an `mj-button` whose survey link prop indexes the invite as the webpage's does.
+MJML stays the engine, and the email's node types are its components from the [MJML blocks](../../../specs/mjml-blocks/README.md) package: their attributes, MJML's defaults, their nesting and the head as the root's props. That package owns what an email may hold. This page is what the editor draws over it, plus the one type the app adds, the survey invite, an `mj-button` whose survey link prop indexes the invite as the webpage's does.
 
 The preview text is a root prop, so the bar's field binds it through a patch like any other edit, and `readEmailPreviewText`, `writeEmailPreviewText` and `getEmailPreview` go with the read-back after every change. A merge field is an inline node in the text, inserted by typing `{{` — the mention suggestion the composer already uses, offering the bound dataset's columns — or by dragging a column from the Merge fields category; it renders as the `{{column}}` token `toMergeField` writes today.
 
@@ -16,7 +16,7 @@ The preview text is a root prop, so the bar's field binds it through a patch lik
 
 **Style fields.** An email node has no breakpoints and no states: email clients honour media queries unevenly, so MJML's own column stacking is the responsive model. Its style fields are its MJML attributes, such as padding, colours, font, alignment, border and background image. Each control is chosen from the package's field descriptor for the attribute: an enum is a select of its options, a colour a colour field, a boolean a switch, and the other kinds a text field. Each is stored as a prop. A field the author has not set shows the cascade's value, and clearing it, or the field's reset once the node sets it, removes the prop, so the root's `mj-attributes` apply again. The Style tab shows no breakpoint or state choice for an email.
 
-**Import MJML** is the one import the editor offers. Because the types are MJML's own components, MJML source from another tool reads back faithfully through the package's `parseMjmlDocument`, unlike the HTML import the [program](../resource-page-builder-program/design.md) leaves out. The command opens a code field. An accepted import replaces the document as one history entry. A refused one leaves the document as it was and names the tag or attribute that did not fit.
+**Import MJML** is the one import the editor offers. Because the types are MJML's own components, MJML source from another tool reads back faithfully through the package's `parseMjmlDocument`, unlike the HTML import the [program](../../resource-page-builder-program/design.md) leaves out. The command opens a code field. An accepted import replaces the document as one history entry. A refused one leaves the document as it was and names the tag or attribute that did not fit.
 
 **Preview** is the truth: the email editor's header holds a Design / Preview toggle beside the dataset picker, and Preview takes the design's place, with the canvas's device toggle above it. Preview shows the open document compiled by the server, through a query that passes the document to the document model's compile service, debounced like the autosave so Preview shows an edit before it is saved. It draws in the sandboxed frame the published view uses, at desktop and mobile width, with MJML's validation messages above it as an alert. The design stays mounted beneath Preview, so an edit and a selection survive the toggle. The design canvas is where an email is edited and Preview is what a client receives, because email-client HTML — nested tables and conditional comments — is output to inspect, not a surface to edit in place.
 
@@ -48,10 +48,10 @@ apps/web/app/components/PageBuilder/Email/      the design canvas's email types,
 
 Settled while the change was finished. The owed items and their reasons are in `tasks.md`.
 
-- **One merge-field form.** The compile writes a merge token's `&`, `<` and `>` escaped and leaves quotes as they are, so substitution matches that text escape alone. The raw form is no longer matched ([`substituteMergeFields.ts`](../../../apps/web/app/services/emailEditor/substituteMergeFields.ts)).
+- **One merge-field form.** The compile writes a merge token's `&`, `<` and `>` escaped and leaves quotes as they are, so substitution matches that text escape alone. The raw form is no longer matched ([`substituteMergeFields.ts`](../../../../apps/web/app/services/emailEditor/substituteMergeFields.ts)).
 - **Length hint.** The preview text's limit is `MAX_EMAIL_PREVIEW_LENGTH`, which is the schema's maximum. The schema form draws it beside the field as a count, so the hint and the enforced limit come from one constant.
 - **Preview placement.** Preview is a header toggle in the editor blade, beside the dataset picker, so it is reachable without leaving the editor.
-- **FileAssets.** Email keeps `fileAssets` on its resource definition, since its images are hosted by us. Its image field has no upload path yet, so Email is not counted as an adopter of [resource-file-assets](../../specs/resource/resource-file-assets/design.md) until that field lands.
+- **FileAssets.** Email keeps `fileAssets` on its resource definition, since its images are hosted by us. Its image field has no upload path yet, so Email is not counted as an adopter of [resource-file-assets](../../../specs/resource/resource-file-assets/design.md) until that field lands.
 - **The export staging store stays.** `apps/web/app/store/emailEditor/exportDialog.ts` is the singleton target the personalised export's truncation confirm is staged in. It is not a bridge to a live editor, so it stays beside the blade that draws the decision.
 - **The shell is mounted.** The editor blade mounts the page builder shell with the email kind, so the earlier note that the blade was broken on the tip no longer holds.
 
