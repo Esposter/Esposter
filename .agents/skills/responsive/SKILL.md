@@ -7,11 +7,16 @@ description: Apply when adding or editing any toolbar, action row, button group 
 
 Narrow viewports are a first-class target, not an afterthought. A row of buttons that fits on a desktop toolbar does not fit on a phone — it either overflows horizontally or wraps into a tall stack of full-width buttons that pushes the actual content off-screen.
 
+## Settled — do not re-propose
+
+- **A device-specific component, folder or name** (`mobile/`, a `Mobile` prefix, a phone-only bar of buttons) — every fix to a surface lands in two copies that drift; write one component and climb the ladder (`One component for every device`, this file).
+- **A sheet on a phone in place of a popover** — the popover stays anchored at every width and sizes itself with `min()` against the viewport (`One component for every device`, this file).
+
 ## One component for every device
 
 Each surface is written once for every width and climbs the promotion ladder — reflow, a breakpoint prefix, the overflow menu, a container the library swaps, a component per input device — only as far as the rung below fails; there is no `mobile/` folder, no `Mobile` prefix and no phone-only bar of buttons (`openspec/specs/architecture/responsive/design.md`, "One component for every device"). A popover stays anchored at every width, sized with `min()` against the viewport, never a sheet on a phone. What the reader holds — a touch screen's keyboard, a joystick — is `isTouchScreen` or device detection, never a breakpoint.
 
-A region shown from a breakpoint takes the `hidden` **class** (`class="hidden md:flex"`): a valueless `hidden` attribute is HTML's, the reset hides it with an important rule, and no breakpoint's display outranks it. `apps/web/app/templates.test.ts` ("breakpoints") refuses the combination.
+A region shown from a breakpoint takes the `hidden` **class** (`class="hidden md:flex"`), since the reset hides the attribute form with a rule no breakpoint's display can outrank. `apps/web/app/templates.test.ts` ("breakpoints") refuses the attribute form.
 
 ## Occasional commands wait in the overflow menu
 
@@ -71,7 +76,7 @@ A dialog a menu item opens is mounted in the toolbar, never inside the menu, whi
 
 Wrapping a button row to a second line is allowed **only** when the surface genuinely has vertical room to spare and the row is short (roughly ≤ 3 controls) — e.g. a transient selection toolbar. It is not the default, and it is never the answer for a full command bar. When in doubt, move the occasional commands into the `…`.
 
-**A bar that pushes its groups apart never wraps.** A spacer (`<div flex-1 />`), `justify-between` or `justify-end` pushing a group to the row's end, plus `flex-wrap`, sends the trailing group alone to the end of a second line the moment the row runs short — one button at the start of the first line and one at the end of the next, the most frequent broken row in the app. The leading content yields instead (`truncate`, `min-w-0`), the actions keep their size, and the occasional ones already wait in the overflow menu. `apps/web/app/templates.test.ts` ("bars") refuses the combination.
+**A bar that pushes its groups apart never wraps.** A group pushed to the row's end strands alone on a second line once the row runs short. The leading content yields instead (`truncate`, `min-w-0`) and the occasional actions wait in the overflow menu. `apps/web/app/templates.test.ts` ("bars") refuses the wrapping combination.
 
 ## Reference pages
 
