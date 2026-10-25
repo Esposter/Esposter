@@ -1,13 +1,21 @@
-import type { Clause } from "@esposter/azure";
-import type { AzureTableEntityMap, CustomTableClient, RoomInMessage, UserInAuth } from "@esposter/db-schema";
+import type { Clause, CompositeKey } from "@esposter/azure";
+import type {
+  AzureTable,
+  AzureTableEntityMap,
+  CustomTableClient,
+  RoomInMessage,
+  UserInAuth,
+} from "@esposter/db-schema";
 
 import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
 import { serializeEntity } from "@esposter/db";
-import { AzureTable, MessageMetadataType, userIdsSchema } from "@esposter/db-schema";
+import { MessageMetadataType, userIdsSchema } from "@esposter/db-schema";
+import { jsonDateParse } from "@esposter/shared";
 
-// One row holds every member who reacted with one emoji, so the account's place on a shared row is taken out of its
-// userIds and a row it holds alone goes. Each write is conditional on the version it read: a reaction another member
-// changed meanwhile fails the step, and the redelivery reads it again rather than overwriting that change
+// One row holds every member who reacted with one emoji, so the account is taken out of a shared row's
+// Reactor list, and a row it holds alone goes. Each write is conditional on the version it read, so a
+// Reaction another member changed meanwhile fails the step, and the redelivery reads it again rather than
+// Overwriting that change
 export const deleteAccountRoomReactions = async (
   messagesMetadataClient: CustomTableClient<AzureTableEntityMap[AzureTable.MessagesMetadata]>,
   roomId: RoomInMessage["id"],
@@ -18,10 +26,10 @@ export const deleteAccountRoomReactions = async (
     { key: "type", operator: BinaryOperator.Eq, value: MessageMetadataType.Emoji },
   ];
   for await (const page of messagesMetadataClient
-    .listEntities<{ userIds: string }>({ queryOptions: { filter: serializeClauses(clauses) } })
+    .listEntities<CompositeKey & { userIds: string }>({ queryOptions: { filter: serializeClauses(clauses) } })
     .byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE }))
     for (const { etag, partitionKey, rowKey, userIds: serializedUserIds } of page) {
-      const userIds = userIdsSchema.shape.userIds.parse(JSON.parse(serializedUserIds));
+      const userIds = userIdsSchema.shape.userIds.parse(jsonDateParse(serializedUserIds));
       if (!userIds.includes(userId)) continue;
 
       if (userIds.length === 1)
