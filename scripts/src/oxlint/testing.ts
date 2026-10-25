@@ -1,6 +1,6 @@
 import type { Plugin } from "@oxlint/plugins";
 
-import { noFakedBatchTimer } from "#src/services/oxlint/testing/noFakedBatchTimer";
+import { noFakedSetTimeout } from "#src/services/oxlint/testing/noFakedSetTimeout";
 import { definePlugin } from "@oxlint/plugins";
 
 // An oxlint JS plugin enforcing the testing skill's timer rule for suites that answer tRPC at the network: fake timers
@@ -12,7 +12,7 @@ import { definePlugin } from "@oxlint/plugins";
 // Scoped by `overrides` in the root oxlint.config.ts to `**/*.test.ts`: only a suite calls `setupMswTrpc`.
 const plugin: Plugin = definePlugin({
   meta: { name: "testing" },
-  rules: { "no-faked-batch-timer": noFakedBatchTimer },
+  rules: { "no-faked-set-timeout": noFakedSetTimeout },
 });
 
 export default plugin;

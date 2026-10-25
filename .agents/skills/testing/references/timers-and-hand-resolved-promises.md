@@ -17,7 +17,7 @@ Name what the test actually asserts on — `vi.useFakeTimers({ now: 0, toFake: [
 **A suite that imports `setupMswTrpc` never fakes `setTimeout`.** The harness's `afterEach` waits one timer boundary for
 msw to answer what is still in flight, and under a frozen clock that boundary never comes, so the suite hangs at its
 end. The test client sends each call as its own request, so no batch timer is armed for a faked clock to hold.
-`testing/no-faked-batch-timer` reports it in any suite importing `setupMswTrpc`. Name the timers the code under test actually runs on instead: `vi.useFakeTimers({ toFake: ["Date", "setInterval",
+`testing/no-faked-set-timeout` reports it in any suite importing `setupMswTrpc`. Name the timers the code under test actually runs on instead: `vi.useFakeTimers({ toFake: ["Date", "setInterval",
 "clearInterval"] })` for an interval sweep.
 
 ## `Temporal.Now` is faked, but only when `toFake` names it

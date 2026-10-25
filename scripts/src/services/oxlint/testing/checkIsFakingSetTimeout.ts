@@ -2,7 +2,7 @@ import type { ESTree } from "@oxlint/plugins";
 
 import { FAKED_TIMER } from "#src/services/oxlint/testing/constants";
 
-export const checkIsFakingBatchTimer = (options: ESTree.Expression | ESTree.SpreadElement | undefined): boolean => {
+export const checkIsFakingSetTimeout = (options: ESTree.Expression | ESTree.SpreadElement | undefined): boolean => {
   if (options?.type !== "ObjectExpression") return true;
   const toFake = options.properties.find(
     (property): property is ESTree.ObjectProperty =>

@@ -185,7 +185,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     },
     { files: ["apps/web/server/trpc/**/*.test.ts"], rules: { "trpc-procedure/require-query-verb": "off" } },
     { files: ["**/*.test.ts", "**/*.test-d.ts", "**/*.bench.ts"], rules: { "test-values/no-typed-date": "error" } },
-    { files: ["**/*.test.ts"], rules: { "testing/no-faked-batch-timer": "error" } },
+    { files: ["**/*.test.ts"], rules: { "testing/no-faked-set-timeout": "error" } },
     {
       files: [
         "apps/web/app/components/Ui/**",

@@ -2,7 +2,7 @@ import { setupPluginSuite } from "#src/services/oxlint/shared/setupPluginSuite.t
 import { describe } from "vitest";
 
 describe("testing", () => {
-  const RULE = "testing/no-faked-batch-timer";
+  const RULE = "testing/no-faked-set-timeout";
   const IMPORT = `import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";\nsetupMswTrpc();`;
   const FIXTURES = [
     { name: "defaultSet", source: `${IMPORT}\nvi.useFakeTimers();`, violations: 1 },
