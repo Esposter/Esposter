@@ -132,7 +132,7 @@ const handleEditorKeydown = (event: KeyboardEvent) => {
     @keydown="handleEditorKeydown($event)"
   >
     <div :style="{ width: `${leftWidth}px` }" flex shrink-0 flex-col gap-4 min-h-0 relative>
-      <div flex flex-1 flex-col gap-4 min-h-0 of-y-auto>
+      <div flex flex-1 flex-col gap-4 min-h-0 p-3 of-y-auto>
         <PageBuilderPalette
           :announce
           :get-document="getPageDocument"
@@ -178,7 +178,7 @@ const handleEditorKeydown = (event: KeyboardEvent) => {
         :max="MAX_SIDE_PANE_WIDTH"
         :min="MIN_SIDE_PANE_WIDTH"
       />
-      <UiTabs v-model="panel" is-filling :items="panelItems" label="Node settings" h-full>
+      <UiTabs v-model="panel" is-filling :items="panelItems" label="Node settings" h-full px-3>
         <PageBuilderContentPanel v-if="panel === CONTENT_PANEL" :kind :resource-id />
         <PageBuilderEmailStylePanel
           v-if="panel === STYLE_PANEL && kind.editor === PageBuilderEditor.Email"
