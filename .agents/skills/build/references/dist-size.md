@@ -1,6 +1,6 @@
 # Dist Size
 
-Read after changing a manifest, a `deps` entry, a config factory or a bundled package's exports, when a `src/index.test.ts` size snapshot moves.
+Read when a `src/index.test.ts` size snapshot moves after a manifest, `deps` entry, config factory or bundled package's export change.
 
 Every package snapshots its `dist/index.js` size in `src/index.test.ts`, and its `index.d.ts` too unless it skips `dts`. After changing a manifest, a `deps` entry or a config factory, rebuild and run those — a jump means something started being bundled that shouldn't be, and a `-u` that "fixes" a large jump is hiding the bug.
 

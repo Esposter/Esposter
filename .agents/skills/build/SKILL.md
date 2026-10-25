@@ -34,7 +34,7 @@ Every line here is a direction a reader reaches for on meeting the Rules section
 - **A manifest's `files` is the tarball: `dist` and what a runtime reads beside it for a built package, its directories less `!**/*.test.ts` and `!.claude-plugin/types` for a plugin shipping its source** — only a release reads the list, so `scripts/src/workspace/publishedFiles.test.ts` packs every published package (`openspec/specs/architecture/monorepo-tooling/design.md`, "Lerna Lite").
 - **Every `deps` entry goes through `getPackagePatterns`**, so a subpath import matches (`references/dependency-placement.md`).
 - **`deps.onlyImport` gates every bundle's externals, and the factory gates every published package with `publint` and `attw`**, both declared by `@esposter/configuration` and never by a package — none is ever widened or disabled to get a build through (`references/gates.md`).
-- **A package reaches its own source through `#src/*` subpath imports, never `@/`**, which is what gives every package its `source` export arm; `apps/web` keeps `@/` because Nuxt generates it (`references/source-exports.md`).
+- **A package reaches its own source through `#src/*` subpath imports, never `@/`**, which is what gives every package its `source` export arm; `apps/web` keeps `@/` because Nuxt generates it (`references/self-alias.md`).
 - **A moved `dist` size snapshot is something newly bundled, never a `-u` to take** — and an export added to a bundled package moves `apps/functions`' and `apps/infra`'s snapshots too (`references/dist-size.md`).
 - **A package that is a Nuxt module builds its runtime unbundled beside a `src/module.ts` entry, and the app registers it by the path to that source**, never its package name, which `nuxt prepare` cannot load before the packages build (`references/nuxt-module-packages.md`).
 - **Presets live in `@esposter/configuration`, extended by path, and the base carries no framework assumption** (`references/tsconfig-presets.md`).
@@ -45,7 +45,7 @@ Every line here is a direction a reader reaches for on meeting the Rules section
 ## Reference pages
 
 - `references/gates.md` — when `deps.onlyImport`, `publint` or `attw` fails a build, or a consumer reports a module the package never referenced.
-- `references/source-exports.md` — when a package imports its own source, a specifier has to survive a sibling bundling it, or the `source` condition's reach is in question.
+- `references/source-exports.md` — when a specifier has to survive a sibling bundling it, or the `source` condition's reach is in question.
 - `references/tsconfig-presets.md` — when editing a `tsconfig*.json` preset, or `@esposter/configuration` itself.
 - `references/barrels.md` — when a generated `src/index.ts`, `exportsGeneration`, or the `entry` the build hook needs is in question.
 - `references/subpaths.md` — when a package gains or loses a subpath export or entry, or a review asks why one exists.
@@ -56,3 +56,4 @@ Every line here is a direction a reader reaches for on meeting the Rules section
 - `references/shared-configs.md` — when writing a package's `tsdown.config.ts` or a configuration factory.
 - `references/dist-size.md` — when a size snapshot moves after a manifest, `deps`, factory or export change.
 - `references/nuxt-module-packages.md` — when a workspace package is a Nuxt module, or the app registers one.
+- `references/self-alias.md` — when a package's own `#src/*` import fails to resolve, or a `@/` specifier appears outside `apps/web`.
