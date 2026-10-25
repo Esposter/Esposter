@@ -1,9 +1,11 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
+import { trpcRouter } from "#server/trpc/routers";
 import type { GeneratedProgramParticipants } from "#shared/models/resource/program/GeneratedProgramParticipants";
 import type { ProgramResource } from "#shared/models/resource/program/ProgramResource";
 import type { Clause } from "@esposter/azure";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
+import type { MjmlFlowNode, MjmlLeafNode } from "mjml-blocks";
 
 import { useTableClient } from "#server/composables/azure/table/useTableClient";
 import { ProgramStatusDatasetColumnName } from "#server/models/dataset/programStatus/ProgramStatusDatasetColumnName";
@@ -18,7 +20,6 @@ import { createSurvey } from "#server/trpc/routers/createSurvey.test";
 import { datasetRouter } from "#server/trpc/routers/dataset";
 import { emailRouter } from "#server/trpc/routers/email";
 import { programRouter } from "#server/trpc/routers/program";
-import { resourceRouter } from "#server/trpc/routers/resource";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { sheetRouter } from "#server/trpc/routers/sheet";
 import { surveyRouter } from "#server/trpc/routers/survey";
@@ -101,7 +102,7 @@ describe("programRouter", () => {
     caller = getCaller();
     datasetCaller = createCallerFactory(datasetRouter)(mockContext);
     emailCaller = createCallerFactory(emailRouter)(mockContext);
-    resourceCaller = createCallerFactory(resourceRouter)(mockContext);
+    resourceCaller = createCallerFactory(trpcRouter)(mockContext).resource;
     sheetCaller = createCallerFactory(sheetRouter)(mockContext);
     surveyCaller = createCallerFactory(surveyRouter)(mockContext);
   });
@@ -468,7 +469,7 @@ describe("programRouter", () => {
     const survey = await createSurvey(surveyCaller, name, { model, settings: identifiedSettings });
     const sheet = await createAudienceSheet(sheetCaller, name, audienceKeyValues);
     const email = await emailCaller.createResource({ name });
-    const invite = linksSurvey
+    const invite: MjmlFlowNode | MjmlLeafNode = linksSurvey
       ? { props: { id: crypto.randomUUID(), label: TEST_LABEL, surveyId: survey.id }, type: EmailNodeType.SurveyInvite }
       : { props: { content: TEST_LABEL, id: crypto.randomUUID() }, type: MjmlNodeType.Button };
     await emailCaller.saveResourceContent({
