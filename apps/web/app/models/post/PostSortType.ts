@@ -1,7 +1,8 @@
 export enum PostSortType {
   Hot = "Hot",
-  New = "New",
   Top = "Top",
+  New = "New",
+  Old = "Old",
 }
 
 export const PostSortTypes = Object.values(PostSortType);

@@ -3,6 +3,7 @@ import type { DeleteCommentInput } from "#shared/models/db/post/DeleteCommentInp
 import type { UpdateCommentInput } from "#shared/models/db/post/UpdateCommentInput";
 import type { PostInPostWithRelations } from "@esposter/db-schema";
 
+import { PostSortType } from "@/models/post/PostSortType";
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { applyPostCounts } from "@/services/post/applyPostCounts";
 import { postCountHooks } from "@/services/post/postCountHooks";
@@ -17,6 +18,7 @@ export const useCommentStore = defineStore("post/comment", () => {
   const postCountStore = usePostCountStore();
   const { refreshPostCounts } = postCountStore;
   const currentPost = ref<PostInPostWithRelations>();
+  const commentSortType = ref(PostSortType.Hot);
   // Keyed by the post whose replies the partition holds, the route's own post included
   const { getSlice, getSliceOperationData, keys } = useCursorPaginationDataMap<PostInPostWithRelations>();
   const getCommentOperationData = (parentId: string) =>
@@ -116,6 +118,7 @@ export const useCommentStore = defineStore("post/comment", () => {
 
   return {
     allComments,
+    commentSortType,
     createComment,
     currentPost,
     deleteComment,

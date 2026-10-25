@@ -88,6 +88,7 @@ export enum UiIconMeaning {
   Notifications = "Notifications",
   NotificationsOff = "NotificationsOff",
   OutOfDate = "OutOfDate",
+  Old = "Old",
   Owner = "Owner",
   Paste = "Paste",
   Pause = "Pause",

@@ -32,6 +32,7 @@ currentPost.value = post;
         title="Be the first to comment"
       />
       <section v-else aria-label="Comments" flex flex-col gap-2>
+        <PostCommentSortSelect self-start />
         <PostCommentBranch :parent-id="currentPost.id" :depth="0" />
       </section>
       <PostConfirmDeleteDialog />
