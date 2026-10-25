@@ -1,4 +1,4 @@
-import type { FleetRefLine } from "#src/services/fleet/parseForEachRefLine";
+import type { FleetRefLine } from "#src/models/fleet/FleetRefLine";
 
 import { parseForEachRefLine } from "#src/services/fleet/parseForEachRefLine";
 import { runFleetRefGit } from "#src/services/fleet/runFleetRefGit";
