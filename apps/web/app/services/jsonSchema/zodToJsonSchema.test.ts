@@ -1,6 +1,8 @@
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
+import { createResourceLinkSchema } from "#shared/services/resource/link/createResourceLinkSchema";
 import { ColumnFormContextPropertyNames } from "@/models/resource/sheet/column/ColumnFormContext";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
+import { ResourceLinkType } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
@@ -304,5 +306,23 @@ describe(zodToJsonSchema, () => {
     const result = zodToJsonSchema(schema);
 
     expect(result.properties?.name).not.toHaveProperty("layout");
+  });
+
+  test("carries a resource link's type into its schema", () => {
+    expect.hasAssertions();
+
+    const schema = z.object({ surveyId: createResourceLinkSchema(ResourceLinkType.Survey) });
+    const result = zodToJsonSchema(schema);
+
+    expect(result.properties?.surveyId).toHaveProperty("resourceLinkType", ResourceLinkType.Survey);
+  });
+
+  test("does not set a resource link type on a plain id", () => {
+    expect.hasAssertions();
+
+    const schema = z.object({ surveyId: z.uuid() });
+    const result = zodToJsonSchema(schema);
+
+    expect(result.properties?.surveyId).not.toHaveProperty("resourceLinkType");
   });
 });
