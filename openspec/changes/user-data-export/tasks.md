@@ -1,0 +1,37 @@
+# Tasks
+
+Build order. Section 1 lands the row and the container the rest write to, section 2 the archive, section 3 the request and the link, and section 4 the settings flow. The export is archived only when every box is ticked.
+
+## 1. Row and container
+
+- [ ] 1.1 Add the `dataExports` table in `packages/db-schema`: id, user, status (queued, building, ready, failed), blob name, failure reason, ready time and expiry time. Test first in the schema test: a second active row for one user is refused.
+      Verify: the test passes, and the migration from `db:gen` is checked by hand.
+- [ ] 1.2 Add the private `DataExports` container to `AzureContainer`, with a lifecycle rule that deletes blobs seven days after they are last written.
+      Verify: the container is listed in the infra container definitions as private, and the rule's age is the one the design states.
+
+## 2. Archive
+
+- [ ] 2.1 Write the streamed archive builder in `apps/functions/src/services/user/`, one function per archive entry group, writing through `fflate`'s streaming zip into a block blob upload. Test first: the builder's output unzips to the entries the design lists, and a person's other messages are not among them.
+      Verify: the unzip test passes against the built archive, and the builder never holds a whole attachment in memory, which the test checks by reading each file as a stream.
+- [ ] 2.2 Write `exportUserDataHandler` in `apps/functions/src/handlers/`. It marks the row building, runs the builder over the export's own blob name, marks the row ready with its expiry, and marks it failed with the reason on error. Test first: a failing entry marks the row failed and offers no link.
+      Verify: the failed-build test passes, and a replayed event rebuilds the same blob name.
+- [ ] 2.3 Register the handler as `AzureFunction.ExportUserData` in `apps/functions/src/functions/`, and add the event type to `packages/db-schema`.
+      Verify: the function index test lists the new function.
+
+## 3. Request and link
+
+- [ ] 3.1 Add the `user.requestDataExport` mutation. It returns the active export when one exists, otherwise inserts a queued row and publishes the event after the write. Test first in the user router's test file: a second request returns the first export.
+      Verify: the router test passes, and the publish happens once per new export.
+- [ ] 3.2 Add the `user.getDataExport` query and the `user.getDataExportLink` mutation. The link is a read SAS of fifteen minutes, issued only to the owner, only when the export is ready and unexpired. Test first: another person gets no link, and an expired export gets no link.
+      Verify: the owner, other-person and expired cases pass.
+- [ ] 3.3 Subscribe the new event type in both environments' Event Grid subscription files under `apps/infra`.
+      Verify: the dev and prod subscription files each list `AzureFunction.ExportUserData`.
+
+## 4. Settings and sweep
+
+- [ ] 4.1 Add the Download my data flow to `apps/web/app/pages/user/settings.vue`. It shows the three omissions before the request, shows the export's status while it builds, and offers the link once it is ready. Test first: the link is not shown while the export is building or failed.
+      Verify: the settings test shows the omissions and withholds the link in those two states.
+- [ ] 4.2 Update the user data inventory's table to name the export entry for each store the archive reads, and its Known gaps to match what the archive omits.
+      Verify: every store in the archive table names its entry, and every omission names the gap that states it.
+- [ ] 4.3 Run an export end to end against the in-memory database and the test blob container: create an account with a room, a resource, messages, an attachment and a save, request the export, build it, and unzip it.
+      Verify: the end-to-end test passes and the unzipped archive holds each entry the design lists.
