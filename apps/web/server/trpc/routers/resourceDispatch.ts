@@ -1,7 +1,7 @@
 import type { Context } from "#server/trpc/context";
 import type { ResourceIdInput } from "#shared/models/db/resource/ResourceIdInput";
 import type { PublishableResourceType } from "#shared/models/resource/PublishableResourceType";
-import type { ResourcePublicationInResource } from "@esposter/db-schema";
+import type { ResourceInResource, ResourcePublicationInResource } from "@esposter/db-schema";
 
 import { createCallerFactory, router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
@@ -22,6 +22,7 @@ import { Operation } from "@esposter/shared";
 // Router calls it, so the type's publish transform runs unchanged
 interface PublishCaller {
   publishResource: (input: ResourceIdInput) => Promise<ResourcePublicationInResource>;
+  unpublishResource: (input: ResourceIdInput) => Promise<ResourceInResource>;
 }
 
 const publishCallers: Record<PublishableResourceType, (ctx: Context) => PublishCaller> = {
@@ -49,5 +50,19 @@ export const resourceDispatchRouter = router({
       if (!checkHasCapability(type, "publishable"))
         throw getInvalidOperationError(Operation.Update, type, "does not publish");
       return publishCallers[type](ctx).publishResource(input);
+    }),
+  unpublishResource: getOwnerProcedure(undefined, resourceIdInputSchema, "id")
+    .meta({
+      mcp: {
+        description:
+          "Take a published resource down, leaving its draft as it is. A type that does not publish is refused. Answers the resource.",
+        scope: McpScope.Resources,
+      },
+    })
+    .mutation<ResourceInResource>(({ ctx, input }) => {
+      const { type } = ctx.resource;
+      if (!checkHasCapability(type, "publishable"))
+        throw getInvalidOperationError(Operation.Update, type, "does not publish");
+      return publishCallers[type](ctx).unpublishResource(input);
     }),
 });
