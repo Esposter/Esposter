@@ -24,7 +24,7 @@ sequenceDiagram
 
 ## The command
 
-**Ask Claude** is registered through `useCommands` from the blade header, so it sits in the toolbar and in the command palette for every type, needing nothing from any. It takes a line of text and sends it through the agent console's connection store as a `PromptCommand` to the session the person picks: one already open on the host, or a new one from a `CreateSessionCommand` in a folder they choose, the choice the console's new-session panel already offers. The prompt names the resource by id and type, so the session's first call is the describe or read tool rather than a search.
+**Ask Claude** is registered through `useCommands` from the blade header, so it sits in the toolbar and in the command palette for every type, needing nothing from any. It takes a line of text and sends it through the agent console's connection store as a `PromptCommand` to the session the person picks: one already open on the host, or a new one from a `CreateSessionCommand` in a folder they type, which the command takes as its own field rather than sharing the new-session panel's picker. The prompt names the resource by id and type, so the session's first call is the describe or read tool rather than a search.
 
 The session reaches Esposter through the MCP server entry the follow-ups plugin already ships, with the person's own key, which needs the `Resources` scope ([agent access](../../specs/architecture/agent-access/design.md)); the settings card's steps set that up, as the TodoList's Connect an agent dialog does for follow-ups. The edit lands in the open editor through live edits, so the person watches it arrive, and an edit of their own still unsaved meets it as a choice rather than being overwritten.
 
@@ -40,7 +40,7 @@ With no host paired, the command shows how to pair one rather than falling back 
 | -------------------------------------------------------------------------- | ------------------------------------------------------------------ |
 | `apps/web/app/components/Resource/Blade/Header.vue`                        | registers Ask Claude for every type                                |
 | `apps/web/app/store/agentConsole/connection.ts`                            | sends the prompt to the paired host, unchanged                     |
-| `apps/web/app/components/AgentConsole/Panel/NewSession.vue`                | the folder choice, shared with the command                         |
+| `apps/web/app/components/AgentConsole/Panel/NewSession.vue`                | unchanged; the command types its own folder                        |
 | `packages/agent-console-server/src/models/command/PromptCommand.ts`        | the wire a prompt crosses, unchanged                               |
 | `packages/agent-console-server/src/models/command/CreateSessionCommand.ts` | the wire a new session crosses, unchanged                          |
 | `packages/follow-ups/.mcp.json`                                            | the MCP server entry a session reaches Esposter through, unchanged |
