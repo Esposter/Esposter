@@ -37,15 +37,15 @@ describe(getWebpageCss, () => {
   test("changing a theme colour recolours every node that uses it", () => {
     expect.hasAssertions();
 
-    const nodeRule = `.pb-${TEST_ID} {\n  color: var(--color-brand);\n}`;
-    const before = getBrandPageCss("#ff0000");
-    const after = getBrandPageCss("#00ff00");
-
-    expect(before).toContain(":root {\n  --color-brand: #ff0000;\n}");
-    expect(after).toContain(":root {\n  --color-brand: #00ff00;\n}");
     // The node names the token rather than the colour, so its rule is the same whichever colour the theme holds
-    expect(before).toContain(nodeRule);
-    expect(after).toContain(nodeRule);
+    const nodeRule = `.pb-${TEST_ID} {\n  color: var(--color-brand);\n}`;
+
+    expect(getBrandPageCss("#ff0000")).toBe(
+      `:root {\n  --color-brand: #ff0000;\n}\n${buttonNodeType.css}\n${nodeRule}`,
+    );
+    expect(getBrandPageCss("#00ff00")).toBe(
+      `:root {\n  --color-brand: #00ff00;\n}\n${buttonNodeType.css}\n${nodeRule}`,
+    );
   });
 
   test("the page css joins the css of the definitions it is given, then the style rules", () => {

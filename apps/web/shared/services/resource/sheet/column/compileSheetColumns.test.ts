@@ -40,38 +40,6 @@ describe(compileSheetColumns, () => {
     expect(compileSheetColumns(dataSource.columns)(dataSource.rows)(row, computedColumn, 0)).toBeNull();
   });
 
-  test.each([["Two math columns depend on each other"]])("%s", (_title) => {
-    expect.hasAssertions();
-
-    const firstColumn = createComputedColumn("a", "");
-    const secondColumn = new ComputedColumn({
-      name: "b",
-      size: 0,
-      sourceName: "b",
-      transformation: {
-        expression: "a + 1",
-        type: ColumnTransformationType.Math,
-        variables: [{ name: "a", sourceColumnId: firstColumn.id }],
-      },
-    });
-    const firstColumnWithCycle = new ComputedColumn({
-      id: firstColumn.id,
-      name: "a",
-      size: 0,
-      sourceName: "a",
-      transformation: {
-        expression: "b + 1",
-        type: ColumnTransformationType.Math,
-        variables: [{ name: "b", sourceColumnId: secondColumn.id }],
-      },
-    });
-    const row = createRow({});
-    const dataSource = createDataSource([firstColumnWithCycle, secondColumn], [row]);
-    const readCell = compileSheetColumns(dataSource.columns)(dataSource.rows);
-
-    expect([readCell(row, firstColumnWithCycle, 0), readCell(row, secondColumn, 0)]).toStrictEqual([null, null]);
-  });
-
   test("every column on a cycle reads null, including one that reaches it through a column already finished", () => {
     expect.hasAssertions();
 

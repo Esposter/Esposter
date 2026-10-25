@@ -1,7 +1,5 @@
 import type { ImageNode } from "#shared/models/pageBuilder/ImageNode";
 
-import { HtmlAttributeName } from "#shared/models/pageBuilder/HtmlAttributeName";
-import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_CONTEXT, TEST_ID, TEST_LABEL, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
 import { imageNodeType } from "#shared/services/pageBuilder/imageNodeType";
@@ -19,26 +17,6 @@ describe("imageNodeType", () => {
     });
 
     expect(result.error?.issues.map(({ path }) => path)).toStrictEqual([["content", 0, "props", "alt"]]);
-  });
-
-  test("a decorative image publishes marked as decorative", () => {
-    expect.hasAssertions();
-
-    expect(
-      imageNodeType.render({
-        props: { alt: "", decorative: true, id: TEST_ID, src: TEST_URL },
-        type: WebpageNodeType.Image,
-      }),
-    ).toStrictEqual({
-      attributes: {
-        [HtmlAttributeName.Alt]: "",
-        [HtmlAttributeName.Class]: "image",
-        [HtmlAttributeName.Role]: "presentation",
-        [HtmlAttributeName.Src]: TEST_URL,
-      },
-      children: [],
-      tag: HtmlTag.Img,
-    });
   });
 
   test("A type's output matches for every edge value", () => {

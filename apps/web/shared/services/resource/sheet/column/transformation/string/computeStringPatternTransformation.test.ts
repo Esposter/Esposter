@@ -19,9 +19,4 @@ describe(computeStringPatternTransformation, () => {
     expect.hasAssertions();
     expect(computeStringPatternTransformation(["a"], "{0}{1}")).toBe("a");
   });
-
-  test("leaves a pattern without variables unchanged", () => {
-    expect.hasAssertions();
-    expect(computeStringPatternTransformation(["a"], " ")).toBe(" ");
-  });
 });

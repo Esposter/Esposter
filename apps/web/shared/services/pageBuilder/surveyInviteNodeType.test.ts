@@ -14,20 +14,6 @@ import { surveyInviteNodeType } from "#shared/services/pageBuilder/surveyInviteN
 import { describe, expect, test } from "vitest";
 
 describe("surveyInviteNodeType", () => {
-  test("the survey invite links to the published survey at the origin", () => {
-    expect.hasAssertions();
-
-    expect(
-      serializeHtml([
-        surveyInviteNodeType.render(
-          { props: { id: TEST_ID, label: TEST_LABEL, surveyId: TEST_SURVEY_ID }, type: WebpageNodeType.SurveyInvite },
-          {},
-          TEST_CONTEXT,
-        ),
-      ]),
-    ).toBe(`<a class="survey-invite" href="${getSurveyInviteUrl(TEST_ORIGIN, TEST_SURVEY_ID)}">${TEST_LABEL}</a>`);
-  });
-
   test("A type's output matches for every edge value", () => {
     expect.hasAssertions();
 

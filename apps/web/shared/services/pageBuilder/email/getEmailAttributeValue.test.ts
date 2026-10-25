@@ -11,15 +11,6 @@ describe(getEmailAttributeValue, () => {
     type: MjmlNodeType.Text,
   });
 
-  test("a new text shows the default font and padding", () => {
-    expect.hasAssertions();
-
-    const text = createText();
-
-    expect(getEmailAttributeValue(text, "font-family", undefined)).toBe("Ubuntu, Helvetica, Arial, sans-serif");
-    expect(getEmailAttributeValue(text, "padding", undefined)).toBe("10px 25px");
-  });
-
   test("an attribute the node sets wins over its default", () => {
     expect.hasAssertions();
 

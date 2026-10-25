@@ -3,7 +3,7 @@ import { FilterType } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
 describe(checkIsSearchQueryEmpty, () => {
-  test("empty", () => {
+  test("a query with no text and no chip holding a value is empty", () => {
     expect.hasAssertions();
 
     expect(checkIsSearchQueryEmpty("", [])).toBe(true);
@@ -13,7 +13,7 @@ describe(checkIsSearchQueryEmpty, () => {
     expect(checkIsSearchQueryEmpty("", [{ type: FilterType.Has, value: "" }])).toBe(true);
   });
 
-  test("non-empty", () => {
+  test("text, or a chip holding a value, makes a query non-empty", () => {
     expect.hasAssertions();
 
     expect(checkIsSearchQueryEmpty("a", [])).toBe(false);

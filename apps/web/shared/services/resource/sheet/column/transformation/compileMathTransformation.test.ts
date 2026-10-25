@@ -71,7 +71,7 @@ describe(compileMathTransformation, () => {
     expect(result).toBe(4);
   });
 
-  test.each([["A comparison shows one or zero"]])("%s", (_title) => {
+  test("a comparison shows one or zero", () => {
     expect.hasAssertions();
 
     const result = readMath(createTransformation("price > 50", [{ name: "price", sourceColumnId: "price" }]), () => 80);
@@ -79,7 +79,7 @@ describe(compileMathTransformation, () => {
     expect(result).toBe(1);
   });
 
-  test.each([["A stored expression the parser refuses"]])("%s", (_title) => {
+  test("a stored expression the parser refuses reads as null", () => {
     expect.hasAssertions();
 
     const transformation = createTransformation("1 +", []);

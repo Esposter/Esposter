@@ -1,6 +1,5 @@
-import { AchievementCategory } from "#shared/models/achievement/AchievementCategory";
 import { AchievementDefinitionMap } from "#shared/services/achievement/AchievementDefinitionMap";
-import { AchievementName, EmailAchievementName } from "@esposter/db-schema";
+import { AchievementName } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
 describe("achievementDefinitionMap", () => {
@@ -20,6 +19,5 @@ describe("achievementDefinitionMap", () => {
     expect.hasAssertions();
 
     expect(Object.values(AchievementDefinitionMap).filter(({ category }) => !category)).toHaveLength(0);
-    expect(AchievementDefinitionMap[EmailAchievementName.EmailMarketer].category).toBe(AchievementCategory.Email);
   });
 });

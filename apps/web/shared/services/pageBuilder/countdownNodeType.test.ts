@@ -51,17 +51,7 @@ describe("countdownNodeType", () => {
     document.body.innerHTML = "";
   });
 
-  test("a countdown does not announce each tick", () => {
-    expect.hasAssertions();
-
-    const endsAt = toDateInput(localDayFromEpoch(1));
-
-    expect(serializeHtml([countdownNodeType.render(createCountdown(endsAt))])).toBe(
-      `<div aria-atomic="false" aria-live="off" class="countdown" data-ends-at="${endsAt}" data-end-text="${TEST_LABEL}" role="timer"><span class="countdown-unit" data-unit="day"><span class="countdown-value"></span> days</span><span class="countdown-unit" data-unit="hour"><span class="countdown-value"></span> hours</span><span class="countdown-unit" data-unit="minute"><span class="countdown-value"></span> minutes</span><span class="countdown-unit" data-unit="second"><span class="countdown-value"></span> seconds</span><span class="countdown-end" hidden=""></span></div>`,
-    );
-  });
-
-  test("A type's output matches for every edge value", () => {
+  test("does not announce each tick, and writes an empty end text as an empty attribute", () => {
     expect.hasAssertions();
 
     const endsAt = toDateInput(localDayFromEpoch(1));
