@@ -55,7 +55,6 @@ Esbabbler is Esposter's messaging module: a Discord-like experience with rooms, 
 | [webhooks](webhooks/design.md)                                       | Inbound webhooks and their app-user bot identities                 |
 | [deferred](../../deferred/esbabbler/)                                | Ideas deferred, each with a revisit trigger                        |
 | [rejected](../../rejected/esbabbler/)                                | Ideas decided against                                              |
-| [roadmap](../../changes/esbabbler-roadmap/tasks.md)                  | Open work — every item links its proposal                          |
 
 ## Shipped log
 
