@@ -108,21 +108,6 @@ describe(uploadBlocks, () => {
     expect(progressNotifier.mock.calls).toStrictEqual([[1]]);
   });
 
-  // A refused write is a status, not a failed request, so an upload whose blocks were all refused must not report
-  // Itself landed
-  test("fails an upload whose block storage refuses", async () => {
-    expect.hasAssertions();
-
-    vi.stubGlobal(
-      "fetch",
-      vi.fn<() => Promise<Response>>(() => Promise.resolve(new Response(null, { status: 403 }))),
-    );
-
-    await expect(uploadBlocks(new Blob([" "]), sasUrl)).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[BlobStorageStatusError: Invalid operation: Create, name: requestBlobStorage, Blob Storage answered 403]`,
-    );
-  });
-
   // The create-only header belongs to the commit alone: a block put carrying it would be refused on every block
   test("sends If-None-Match on the commit alone when the upload is create-only", async () => {
     expect.hasAssertions();

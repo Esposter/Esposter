@@ -398,7 +398,6 @@ describe.each<PaginationCacheVariant>([
   // A hydrate lands after its own read, so the rows belong to the partition that was read rather than to
   // Whichever one the reader switched to while it was in flight — read against a single shared list neither
   // Half of that is visible
-
   test("hydrates the partition its read was issued for rather than the current one", async () => {
     expect.hasAssertions();
 
