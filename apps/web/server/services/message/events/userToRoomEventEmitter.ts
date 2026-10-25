@@ -1,9 +1,5 @@
-import type { UserToRoomInMessage } from "@esposter/db-schema";
+import type { UserToRoomEvents } from "#server/models/message/events/UserToRoomEvents";
 
 import { EventEmitter } from "node:events";
-
-interface UserToRoomEvents {
-  updateUserToRoom: [UserToRoomInMessage];
-}
 
 export const userToRoomEventEmitter = new EventEmitter<UserToRoomEvents>();

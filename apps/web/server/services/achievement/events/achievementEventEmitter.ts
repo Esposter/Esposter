@@ -1,9 +1,5 @@
-import type { UserAchievementInAchievementWithRelations } from "@esposter/db-schema";
+import type { AchievementEvents } from "#server/models/achievement/events/AchievementEvents";
 
 import { EventEmitter } from "node:events";
-
-interface AchievementEvents {
-  updateAchievement: [UserAchievementInAchievementWithRelations[]];
-}
 
 export const achievementEventEmitter = new EventEmitter<AchievementEvents>();
