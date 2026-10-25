@@ -1,13 +1,10 @@
-import type { Vector } from "#src/models/shared/Vector";
 import type { SubCommandsDef } from "citty";
 
+import { formatDirection } from "#src/services/genshinParity/commands/formatDirection";
 import { witnessArg } from "#src/services/genshinParity/commands/witnessArg";
 import { solveReferenceShadows } from "#src/services/genshinParity/witness/solveReferenceShadows";
 import { defineCommand } from "citty";
 import { MathUtils, Vector3 } from "three";
-
-const formatDirection = (direction: Readonly<Vector>): string =>
-  `[${direction.map((value) => value.toFixed(3)).join(", ")}]`;
 
 export const shadowsCommand: SubCommandsDef[string] = defineCommand({
   args: {

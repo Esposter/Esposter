@@ -1,6 +1,7 @@
 import type { SubCommandsDef } from "citty";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { formatShare } from "#src/services/genshinParity/commands/formatShare";
 import { computeAttackShares } from "#src/services/genshinParity/music/computeAttackShares";
 import { computeAudibleFrames } from "#src/services/genshinParity/music/computeAudibleFrames";
 import { computeBandLevels } from "#src/services/genshinParity/music/computeBandLevels";
@@ -13,8 +14,6 @@ import {
   LOGIN_MUSIC_SCREEN,
 } from "#src/services/genshinParity/shared/constants";
 import { defineCommand } from "citty";
-
-const formatShare = (share: number): string => `${(100 * share).toFixed(1)}%`;
 
 export const attacksCommand: SubCommandsDef[string] = defineCommand({
   meta: {

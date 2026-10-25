@@ -1,5 +1,4 @@
 import type { SampledVoiceSolution } from "#src/models/genshinAssets/music/SampledVoiceSolution";
-import type { HeldOutEqualiser } from "#src/models/genshinParity/music/HeldOutEqualiser";
 import type { SubCommandsDef } from "citty";
 import type { Music } from "genshin-engine";
 
@@ -11,14 +10,12 @@ import { solveSampledVoices } from "#src/services/genshinAssets/music/solveSampl
 import { writeLayeredRecordings } from "#src/services/genshinAssets/music/writeLayeredRecordings";
 import { SAMPLED_VOICE_REPORTED_COUNT } from "#src/services/genshinAssets/shared/constants";
 import { readWorldData } from "#src/services/genshinAssets/shared/readWorldData";
+import { formatEqualiser } from "#src/services/genshinParity/commands/formatEqualiser";
 import { fitHeldOutEqualiser } from "#src/services/genshinParity/music/fitHeldOutEqualiser";
 import { formatOnsetAgeSpan } from "#src/services/genshinParity/music/formatOnsetAgeSpan";
 import { renderMusicSegments } from "#src/services/genshinParity/music/renderMusicSegments";
 import { LISTEN_BAND_CENTRES, LOGIN_MUSIC_SCREEN } from "#src/services/genshinParity/shared/constants";
 import { defineCommand } from "citty";
-
-const formatEqualiser = ({ distance, equalisedDistance, heldOutDistance }: HeldOutEqualiser): string =>
-  `equalised ${equalisedDistance.toFixed(2)} dB in place and ${heldOutDistance.toFixed(2)} held out across time, from ${distance.toFixed(2)}`;
 
 export const instrumentsCommand: SubCommandsDef[string] = defineCommand({
   meta: {
