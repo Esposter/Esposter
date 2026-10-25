@@ -8,7 +8,7 @@ import { emailNodeSchema } from "#shared/services/pageBuilder/email/emailNodeSch
 import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry";
 import { emailRootFormSchema } from "#shared/services/pageBuilder/email/emailRootFormSchema";
 import { PageBuilderEditor } from "@/models/pageBuilder/PageBuilderEditor";
-import { EMAIL_PALETTE_CATEGORIES } from "@/services/pageBuilder/email/constants";
+import { EMAIL_NODE_TYPE_ICON_MAP, EMAIL_PALETTE_CATEGORIES } from "@/services/pageBuilder/email/constants";
 import { MjmlNodeType } from "mjml-blocks";
 
 export const emailKind: EmailKind = {
@@ -16,6 +16,7 @@ export const emailKind: EmailKind = {
   createNode: createEmailNode,
   documentSchema: emailDocumentSchema,
   editor: PageBuilderEditor.Email,
+  icons: EMAIL_NODE_TYPE_ICON_MAP,
   nodeSchema: emailNodeSchema,
   paletteCategories: EMAIL_PALETTE_CATEGORIES,
   registry: emailRegistry,

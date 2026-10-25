@@ -5,6 +5,7 @@ import type { PageBuilderPaletteCategory } from "@/models/pageBuilder/PageBuilde
 import { PageBuilderDevice } from "#shared/models/pageBuilder/PageBuilderDevice";
 import { StyleBreakpoint } from "#shared/models/pageBuilder/StyleBreakpoint";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 
 // The most edits one open resource's undo history keeps, the oldest dropping first
 export const MAX_PAGE_BUILDER_HISTORY_SIZE = 100;
@@ -28,6 +29,23 @@ export const WEBPAGE_NODE_TYPE_TITLE_MAP: Readonly<Record<WebpageNodeType, strin
   [WebpageNodeType.Tooltip]: "Tooltip",
   [WebpageNodeType.TypedText]: "Typed text",
   [WebpageNodeType.Video]: "Video",
+});
+// The icon each webpage node type is drawn by in the palette, by the meaning it stands for
+export const WEBPAGE_NODE_TYPE_ICON_MAP: Readonly<Record<WebpageNodeType, UiIconMeaning>> = Object.freeze({
+  [WebpageNodeType.Button]: UiIconMeaning.Button,
+  [WebpageNodeType.Column]: UiIconMeaning.Columns,
+  [WebpageNodeType.Columns]: UiIconMeaning.Columns,
+  [WebpageNodeType.Countdown]: UiIconMeaning.Timer,
+  [WebpageNodeType.CustomHtml]: UiIconMeaning.Terminal,
+  [WebpageNodeType.Image]: UiIconMeaning.Image,
+  [WebpageNodeType.Section]: UiIconMeaning.Section,
+  [WebpageNodeType.SurveyInvite]: UiIconMeaning.Survey,
+  [WebpageNodeType.Tab]: UiIconMeaning.Tabs,
+  [WebpageNodeType.Tabs]: UiIconMeaning.Tabs,
+  [WebpageNodeType.Text]: UiIconMeaning.ReadableText,
+  [WebpageNodeType.Tooltip]: UiIconMeaning.Info,
+  [WebpageNodeType.TypedText]: UiIconMeaning.Keyboard,
+  [WebpageNodeType.Video]: UiIconMeaning.Play,
 });
 // The thickness of the line a drop indicator draws between two children
 export const LINE_THICKNESS = 2;
