@@ -48,5 +48,7 @@
     "value": { "index": 0, "proudSkillGroupId": 7439 }
   },
   "plungeCollision.poiseDamage": { "source": "Wiki", "value": 25 },
-  "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 7432 } }
+  "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 7432 } },
+  "chargedAttack.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 3, "proudSkillGroupId": 7431 } },
+  "chargedAttack.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 4, "proudSkillGroupId": 7431 } }
 }
