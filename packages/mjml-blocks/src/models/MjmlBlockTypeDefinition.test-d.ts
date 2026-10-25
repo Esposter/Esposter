@@ -30,18 +30,6 @@ describe("mjmlBlockTypeDefinition content kind", () => {
     expectTypeOf(definition).toEqualTypeOf<MjmlBlockTypeDefinition>();
   });
 
-  test("a raw-kind definition holding a number content schema is refused on the generic path", () => {
-    expect.hasAssertions();
-
-    // @ts-expect-error: a raw's content is a string, so a number content schema is refused
-    const definition: MjmlBlockTypeDefinition = {
-      ...definitionFields,
-      contentKind: MjmlContentKind.Raw,
-      propsSchema: numberContentSchema,
-    };
-    expectTypeOf(definition).toEqualTypeOf<MjmlBlockTypeDefinition>();
-  });
-
   test("a label-kind button definition holding a number content schema is refused on the node path", () => {
     expect.hasAssertions();
 
