@@ -2,9 +2,8 @@ import type { Clause } from "@esposter/azure";
 import type { ModerationNoteEntity, RoomInMessage, UserInAuth } from "@esposter/db-schema";
 
 import { useTableClient } from "#server/composables/azure/table/useTableClient";
-import { getLivePartitionClauses } from "#server/services/azure/table/getLivePartitionClauses";
 import { BinaryOperator, serializeClauses } from "@esposter/azure";
-import { readEntitiesCount } from "@esposter/db";
+import { getLivePartitionClauses, readEntitiesCount } from "@esposter/db";
 import { AzureTable, ModerationNoteEntityPropertyNames } from "@esposter/db-schema";
 
 // The paginated read only returns the loaded page, so the notes badge needs a true total. A target's

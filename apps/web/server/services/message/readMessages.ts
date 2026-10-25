@@ -5,13 +5,12 @@ import type { MessageEntity } from "@esposter/db-schema";
 import type { SetOptional } from "type-fest";
 
 import { useTableClient } from "#server/composables/azure/table/useTableClient";
-import { getLivePartitionClauses } from "#server/services/azure/table/getLivePartitionClauses";
 import { getCursorPaginationData } from "#server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhereAzureTable } from "#server/services/pagination/cursor/getCursorWhereAzureTable";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { DEFAULT_READ_LIMIT, MESSAGE_ROW_KEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { BinaryOperator, CompositeKey, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
-import { getTopNEntities, getTopNEntitiesByType } from "@esposter/db";
+import { getLivePartitionClauses, getTopNEntities, getTopNEntitiesByType } from "@esposter/db";
 import {
   AzureTable,
   getReverseTickedTimestamp,

@@ -66,11 +66,11 @@ A deletion or an export cannot be complete while these hold, and each one is nam
 
 ## Key files
 
-| Path                                                                          | Role                                                   |
-| :---------------------------------------------------------------------------- | :----------------------------------------------------- |
-| `packages/db-schema/src/schema/`                                              | The Postgres tables and their foreign keys             |
-| `packages/db-schema/src/models/`                                              | `AzureTable` and `AzureContainer`, the stores in Azure |
-| `packages/db/src/services/azure/container/`                                   | The blob helpers, including the prefix delete          |
-| `packages/db/src/services/resource/purgeResource.ts`                          | The one existing whole-owner sweep, for resources      |
-| `apps/web/server/services/room/deleteRoom.ts`                                 | The room deletion an owner's departure runs            |
-| `apps/web/server/services/message/moderation/softDeleteRoomMessagesByUser.ts` | The per-user soft delete inside one room               |
+| Path                                                               | Role                                                   |
+| :----------------------------------------------------------------- | :----------------------------------------------------- |
+| `packages/db-schema/src/schema/`                                   | The Postgres tables and their foreign keys             |
+| `packages/db-schema/src/models/`                                   | `AzureTable` and `AzureContainer`, the stores in Azure |
+| `packages/db/src/services/azure/container/`                        | The blob helpers, including the prefix delete          |
+| `packages/db/src/services/resource/purgeResource.ts`               | The one existing whole-owner sweep, for resources      |
+| `apps/web/server/services/room/deleteRoom.ts`                      | The room deletion an owner's departure runs            |
+| `packages/db/src/services/message/softDeleteRoomMessagesByUser.ts` | The per-user soft delete inside one room               |

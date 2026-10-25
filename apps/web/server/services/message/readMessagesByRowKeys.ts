@@ -1,9 +1,8 @@
 import type { MessageEntity, StandardMessageEntity } from "@esposter/db-schema";
 
 import { useTableClient } from "#server/composables/azure/table/useTableClient";
-import { getLivePartitionClauses } from "#server/services/azure/table/getLivePartitionClauses";
 import { BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
-import { getTopNEntitiesByType } from "@esposter/db";
+import { getLivePartitionClauses, getTopNEntitiesByType } from "@esposter/db";
 import { AzureTable, MessageTypeEntityMap } from "@esposter/db-schema";
 
 // A named set of a room's messages in one table scan rather than a point read each, with the deleted ones

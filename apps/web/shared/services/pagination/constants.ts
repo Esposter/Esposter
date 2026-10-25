@@ -1,9 +1,9 @@
 import type { SortItem } from "#shared/models/pagination/sorting/SortItem";
 import type { MessageEntity } from "@esposter/db-schema";
 
-import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadataPropertyNames";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { CompositeKeyPropertyNames } from "@esposter/azure";
+import { ItemMetadataPropertyNames } from "@esposter/shared";
 
 // One serialised value per sort item, base64-encoded (see serialize) — sized for the longest sort a read accepts
 export const CURSOR_MAX_LENGTH = 4096;

@@ -1,12 +1,12 @@
 import type { ItemMetadata } from "@esposter/shared";
 import type { z } from "zod";
 
-import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadataPropertyNames";
 import { MutationStatus } from "@/models/shared/MutationStatus";
 import { authClient } from "@/services/auth/authClient";
 import { saveItemMetadata } from "@/services/shared/metadata/saveItemMetadata";
 import { checkIsTRPCConflict } from "@/services/trpc/checkIsTRPCConflict";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
+import { ItemMetadataPropertyNames } from "@esposter/shared";
 
 // What saving stamps, which every saved state carries whether it is a content item or a row
 type SavedMetadata = Pick<ItemMetadata, "updatedAt">;

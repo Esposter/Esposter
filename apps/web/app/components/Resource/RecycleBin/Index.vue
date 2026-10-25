@@ -4,7 +4,6 @@ import type { ResourceListItem } from "#shared/models/resource/ResourceListItem"
 import type { Item } from "@/models/shared/Item";
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadataPropertyNames";
 import { ResourceListItemPropertyNames } from "#shared/models/resource/ResourceListItem";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
@@ -21,6 +20,7 @@ import { getRetentionElapsedPercentage } from "@/services/resource/getRetentionE
 import { NO_ACTION_ITEMS } from "@/services/shared/constants";
 import { useRecycleBinDialogStore } from "@/store/resource/recycleBinDialog";
 import { RECYCLE_BIN_RETENTION_DAYS } from "@esposter/db-schema";
+import { ItemMetadataPropertyNames } from "@esposter/shared";
 
 const { count, error, isPending, items, readDeletedResources, refresh } = useReadDeletedResources();
 const recycleBinDialogStore = useRecycleBinDialogStore();

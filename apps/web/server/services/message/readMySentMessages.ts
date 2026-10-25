@@ -6,10 +6,10 @@ import type { Database, MessageEntity } from "@esposter/db-schema";
 
 import { readMessageSearchDocuments } from "#server/services/message/readMessageSearchDocuments";
 import { getBasePaginationData } from "#server/services/pagination/getBasePaginationData";
-import { ItemMetadataPropertyNames } from "#shared/models/entity/ItemMetadataPropertyNames";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { BinaryOperator, getSearchNullClause, serializeSearchClauses } from "@esposter/azure";
 import { roomsInMessage, StandardMessageEntityPropertyNames } from "@esposter/db-schema";
+import { ItemMetadataPropertyNames } from "@esposter/shared";
 import { inArray } from "drizzle-orm";
 
 export const readMySentMessages = async (

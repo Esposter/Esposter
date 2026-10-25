@@ -11,7 +11,6 @@ import { useContainerClient } from "#server/composables/azure/container/useConta
 import { useTableClient } from "#server/composables/azure/table/useTableClient";
 import { checkIsSameDevice } from "#server/services/auth/checkIsSameDevice";
 import { publishBlobDeletion } from "#server/services/azure/eventGrid/publishBlobDeletion";
-import { getLivePartitionClauses } from "#server/services/azure/table/getLivePartitionClauses";
 import { updateEntityConditionally } from "#server/services/azure/table/updateEntityConditionally";
 import { generateWebPubSubClientAccessUrl } from "#server/services/azure/webPubSub/generateWebPubSubClientAccessUrl";
 import { on } from "#server/services/events/on";
@@ -78,6 +77,7 @@ import {
   generateDownloadThumbnailSasUrls,
   getFileBlobNames,
   getFilesBlobNames,
+  getLivePartitionClauses,
   getTopNEntitiesByType,
   updateEntity,
 } from "@esposter/db";

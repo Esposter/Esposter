@@ -71,6 +71,7 @@
     "@esposter/configuration": "workspace:*",
     "@esposter/db-mock": "workspace:*",
     "@esposter/shared-node": "workspace:*",
+    "azure-mock": "workspace:*",
     "tsdown": "catalog:",
     "type-fest": "catalog:"
   },

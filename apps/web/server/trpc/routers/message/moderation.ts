@@ -9,7 +9,6 @@ import type { SQL } from "drizzle-orm";
 
 import { useTableClient } from "#server/composables/azure/table/useTableClient";
 import { RoomMemberRemovalAction } from "#server/models/room/RoomMemberRemovalAction";
-import { getLivePartitionClauses } from "#server/services/azure/table/getLivePartitionClauses";
 import { escapeLike } from "#server/services/db/escapeLike";
 import { on } from "#server/services/events/on";
 import { SCREEN_SHARE_TRACK_SOURCES } from "#server/services/livekit/constants";
@@ -20,8 +19,8 @@ import { moderationEventEmitter } from "#server/services/message/events/moderati
 import { getRoomDisplayNameMap } from "#server/services/message/getRoomDisplayNameMap";
 import { AdminActionPermissionMap } from "#server/services/message/moderation/AdminActionPermissionMap";
 import { banRoomMember } from "#server/services/message/moderation/banRoomMember";
+import { publishSoftDeletedMessages } from "#server/services/message/moderation/publishSoftDeletedMessages";
 import { readModerationNotesCount } from "#server/services/message/moderation/readModerationNotesCount";
-import { softDeleteRoomMessagesByUser } from "#server/services/message/moderation/softDeleteRoomMessagesByUser";
 import { getCursorPaginationData } from "#server/services/pagination/cursor/getCursorPaginationData";
 import { getCursorWhere } from "#server/services/pagination/cursor/getCursorWhere";
 import { readCursorPaginationDataAzureTable } from "#server/services/pagination/cursor/readCursorPaginationDataAzureTable";
@@ -45,7 +44,7 @@ import { readModerationNotesCountInputSchema } from "#shared/models/db/moderatio
 import { readModerationNotesInputSchema } from "#shared/models/db/moderation/ReadModerationNotesInput";
 import { CREATED_AT_DESCENDING_SORT_ITEM, MESSAGE_ROW_KEY_SORT_ITEM } from "#shared/services/pagination/constants";
 import { BinaryOperator } from "@esposter/azure";
-import { checkHasPermission, createEntity } from "@esposter/db";
+import { checkHasPermission, createEntity, getLivePartitionClauses, softDeleteRoomMessagesByUser } from "@esposter/db";
 import {
   AdminActionType,
   AzureTable,
@@ -159,7 +158,12 @@ export const moderationRouter = router({
           // Deletes them by hand. Accepted while the purge is a table scan the request path already owns; a
           // Durable version belongs on the event pipeline
           if (input.type === AdminActionType.SoftBan)
-            await getResultAsync(() => softDeleteRoomMessagesByUser(roomId, targetUserId)).match(noop, console.error);
+            await getResultAsync(async () => {
+              const messageClient = await useTableClient(AzureTable.Messages);
+              await softDeleteRoomMessagesByUser(messageClient, roomId, targetUserId, (batch) =>
+                publishSoftDeletedMessages(roomId, batch),
+              );
+            }).match(noop, console.error);
           await evictAfterRemoval();
           break;
         }

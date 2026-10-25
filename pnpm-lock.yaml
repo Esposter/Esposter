@@ -1629,6 +1629,9 @@ importers:
       '@esposter/shared-node':
         specifier: workspace:*
         version: link:../shared-node
+      azure-mock:
+        specifier: workspace:*
+        version: link:../azure-mock
       tsdown:
         specifier: 'catalog:'
         version: 0.23.2(@arethetypeswrong/core@0.18.5)(@tsdown/css@0.23.2)(@volar/typescript@2.4.28)(@vue/language-core@3.3.11)(oxc-resolver@11.24.2)(publint@0.3.25)(vue-tsc@3.3.11(typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2))
