@@ -13,6 +13,17 @@ const SKILL = CombatTalent.ElementalSkill;
 // Hold is his skill's hold, read from its Hold DMG label. Vesna's skill tag is the wiki's, so her skill reads its label
 // Here like her burst
 export const CharacterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = new Map<number, KitSlotLabels>([
+  // Diona. Icy Paws' hold shield multiplier reads its skill's Duration label at its position, and Signature Mix's
+  // Duration reads her burst's, the field's seconds the burst's Duration label gives
+  [
+    10_000_039,
+    {
+      values: {
+        "parameters.holdShieldMultiplier": { combatTalent: SKILL, label: "Duration" },
+        "parameters.signatureMixSeconds": { combatTalent: BURST, label: "Duration" },
+      },
+    },
+  ],
   // Shenhe's avatar id, as her kit module names it. Her Icy Quill's ATK ratio, press and hold durations and trigger quotas
   // Read from her skill's labels, the ratio's ATK label first and the durations and quotas by their press and hold positions
   [
