@@ -4,16 +4,11 @@ import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
 import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "headless-block-editor";
 import type { MaybeRefOrGetter } from "vue";
 
-import { noteDocumentSchema } from "#shared/models/resource/note/NoteDocument";
-import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
-import { JsonPatchOperationType, noop } from "@esposter/shared";
-import { getBlockNode, getBlockPropValue } from "headless-block-editor";
+import { noop } from "@esposter/shared";
 import { checkIsInsideBox } from "@/services/pageBuilder/checkIsInsideBox";
 import { DRAG_THRESHOLD } from "@/services/pageBuilder/constants";
-import { appendMergeFieldToText } from "@/services/pageBuilder/email/appendMergeFieldToText";
-import { getTextNodeIdAt } from "@/services/pageBuilder/email/getTextNodeIdAt";
-import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { insertAt } from "@/services/pageBuilder/insertAt";
+import { insertMergeFieldAt } from "@/services/pageBuilder/insertMergeFieldAt";
 import { resolveDropTarget } from "@/services/pageBuilder/resolveDropTarget";
 import { toFramePoint } from "@/services/pageBuilder/toFramePoint";
 
@@ -72,7 +67,6 @@ export const usePageBuilderDrag = <
   const dropTarget = shallowRef<DropTarget>();
   // Set once a drag passes the threshold, so the editor can let the pointer pass through the canvas frame, whose document would take it
   const isDragging = ref(false);
-  const { applyEdit } = usePageBuilderHistoryStore();
 
   // Tracks a press until its release, a cancel or Escape. Each move past the threshold reaches onMove, and the release reaches
   // OnRelease with its point only while the press was dragging
@@ -136,8 +130,7 @@ export const usePageBuilderDrag = <
       },
     );
 
-  // A merge field dropped on a text is appended to its rich text, so the text reads the column's token where it was dropped.
-  // A release over no text, or outside the frame, appends nothing
+  // A merge field released over a text is appended to it, and the release over no text, or outside the frame, appends nothing
   const startMergeFieldDrag = (
     columnName: string,
     event: PointerEvent,
@@ -148,33 +141,15 @@ export const usePageBuilderDrag = <
       const document = getDocument();
       if (!geometry || !document || !checkIsInsideBox(point, geometry.frameRect)) return;
 
-      const nodeId = getTextNodeIdAt(
+      const inserted = insertMergeFieldAt(
         kind,
         document,
+        toValue(resourceId),
         toFramePoint(point, geometry.frameRect, geometry.scale),
         geometry.getChildRect,
+        columnName,
       );
-      const nodePointer = nodeId && getNodePointer(kind, document, nodeId);
-      const textNode = nodePointer && getBlockNode(document, nodePointer, kind.children);
-      if (!nodePointer || !textNode) return;
-
-      const content = noteDocumentSchema.safeParse(getBlockPropValue(textNode.props, "content"));
-      if (!content.success) return;
-
-      applyEdit(
-        toValue(resourceId),
-        [
-          {
-            op: JsonPatchOperationType.Replace,
-            path: `${nodePointer}/props/content`,
-            value: appendMergeFieldToText(content.data, columnName),
-          },
-        ],
-        "Insert merge field",
-      ).match(
-        () => announce(`Inserted merge field ${columnName}`),
-        (error) => console.error(error),
-      );
+      if (inserted) announce(`Inserted merge field ${columnName}`);
     });
 
   return { dropTarget, isDragging, startMergeFieldDrag, startPaletteDrag };
