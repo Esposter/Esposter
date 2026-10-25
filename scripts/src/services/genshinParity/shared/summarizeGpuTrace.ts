@@ -1,14 +1,12 @@
 import type { GpuTrace } from "#src/models/genshinParity/shared/GpuTrace";
 import type { TracedState } from "#src/models/genshinParity/shared/TracedState";
 
+import { SLOW_FRAME_MS } from "#src/services/genshinParity/shared/constants";
 import { describeBuilds } from "#src/services/genshinParity/shared/describeBuilds";
 import { describeCategories } from "#src/services/genshinParity/shared/describeCategories";
 import { describeFrame } from "#src/services/genshinParity/shared/describeFrame";
 import { describePasses } from "#src/services/genshinParity/shared/describePasses";
 import { summarizeSceneKinds } from "#src/services/genshinParity/shared/summarizeSceneKinds";
-
-// A frame is slow past this many milliseconds, the same line the stall summary counts by
-const SLOW_FRAME_MS = 50;
 
 // The GPU calls behind each stall: the cold orbit's slowest frame, then every frame past 50 ms in the other states. A frame's
 // Gap runs from its start to the next frame's, and the calls it made are the ones its animation frame ran. Each state first

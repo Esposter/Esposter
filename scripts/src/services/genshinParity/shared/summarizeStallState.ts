@@ -1,9 +1,10 @@
 import type { FrameSample } from "#src/models/genshinParity/shared/FrameSample";
 import type { StallState } from "#src/models/genshinParity/shared/StallState";
 
+import { SLOW_FRAME_MS } from "#src/services/genshinParity/shared/constants";
+
 // A frame is kept to a tenth of a millisecond
 const TENTHS_PER_MS = 10;
-const SLOW_FRAME_MS = 50;
 const STALLED_FRAME_MS = 250;
 
 // The summary of one state from the frames drawn while it ran. A frame's time is the gap from the frame before it, so the

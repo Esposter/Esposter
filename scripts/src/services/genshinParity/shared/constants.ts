@@ -19,6 +19,8 @@ export const FILMS_DIRECTORY: string = join(PARITY_DIRECTORY, "films");
 export const STALLS_DIRECTORY: string = join(PARITY_DIRECTORY, "stalls");
 // A frame at 60 a second, the step a faked clock is moved by
 export const PARITY_FRAME_MS: number = 1000 / 60;
+// A frame is slow past this many milliseconds, the line the stall and GPU summaries count by
+export const SLOW_FRAME_MS = 50;
 // How long a page may take to draw its first frame, a full window at 1080 high on a machine running several pages at
 // Once taking near a minute, where Playwright's default half minute gave up on a page still loading
 export const PARITY_READY_TIMEOUT_MS = 120_000;
