@@ -10,7 +10,7 @@ A replacement written from the package's API reproduces its functions and none o
 
 Consult these in the order the design-sources page gives (`openspec/specs/architecture/design-sources/design.md`, "The order they are consulted in"):
 
-1. **The package's own reference product.** The product the package is modelled on: its demo, its shipped examples, the screenshots in its docs. Match its hierarchy: what is large, what recedes, what sits in the margin.
+1. **The package's own reference product.** The product the package is modelled on: its demo, its shipped examples, the screenshots in its docs. Read how it arranges the screen by the method in `.agents/skills/ux/references/visual-design-sources.md`.
 2. **The galleries for its category.** The list under "Galleries of shipped screens" in the design-sources page. A gallery the survey finds that the list lacks is added to it in the same change.
 3. **The design language.** `openspec/specs/architecture/design-language/design.md` gives the tokens the surface is drawn in. The survey settles arrangement and density; the language settles the look.
 

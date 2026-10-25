@@ -14,4 +14,4 @@
 
 ## 4. Visual check
 
-- [ ] 4.1 Confirm in the browser that the scroll position holds across a run of edits, and that the console shows no blocked script. Verify: the owner's check in the browser, recorded on this task.
+- [ ] 4.1 Confirm in the browser that the scroll position holds across a run of edits, and that the console shows no blocked script. Verify: the owner checks the scroll and console in the browser and notes the result here.

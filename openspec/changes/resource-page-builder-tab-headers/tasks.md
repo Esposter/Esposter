@@ -4,5 +4,5 @@
 
 ## 2. Restyle
 
-- [ ] 2.1 Give the page builder's tab headers the app's header style, through a variant of the shared tabs component that the other tab surfaces do not take, and the email editor's Design and Preview control the style its design Notes set out. Verify: the owner's check in the browser, recorded on this task.
-- [ ] 2.2 Restyle the Layout tab once task 1.1 has found it. Verify: the owner's check in the browser, recorded on this task.
+- [ ] 2.1 Give the page builder's tab headers the app's header style, through a variant of the shared tabs component that the other tab surfaces do not take, and the email editor's Design and Preview control the style its design Notes set out. Verify: the owner checks the header style in the browser and notes the result here.
+- [ ] 2.2 Restyle the Layout tab once task 1.1 has found it. Verify: the owner checks the Layout tab in the browser and notes the result here.

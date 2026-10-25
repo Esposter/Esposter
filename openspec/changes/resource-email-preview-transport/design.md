@@ -42,4 +42,4 @@ None. The compile reads the document it is sent and stores nothing.
 
 - The change alters only the transport. The compile, its validator messages and the substitution of merge fields are unchanged.
 - A mutation's retry is not automatic, so a dropped compile is retried by the next settled edit or by Preview's retry control.
-- Email design sentence to update when this ships: Preview "shows the open document compiled by the server, through a query". It becomes a mutation carrying the document in its body.
+- The Preview paragraph of the email design: the query it describes becomes a mutation carrying the document in its body.

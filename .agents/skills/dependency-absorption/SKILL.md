@@ -28,7 +28,7 @@ How an absorption is run. Whether a package should be absorbed at all — the co
 - **An issue split across the adapter and a neighbour gets both verdicts** — the adapter's part fixed, the neighbour's part out of scope with our constraint written on the page owning our side.
 - **An absorbed adapter is a workspace package** built to the `file-organization` skill's `references/new-package.md`, with its own spec area carrying the Upstream table — **except a component wrapper, which becomes a component of the app** with a capability page carrying it (`references/package-shape.md`).
 - **The residue sweep lands in the commit that deletes the catalog entry** (`references/residue-sweep.md`).
-- **A UI-bearing absorption surveys its design sources before its first template is written.** An editor, a builder, a form engine or a chart is drawn to the survey of its reference product, the galleries for its category and the design language, and the survey is recorded in the replacement's design page (`references/design-survey.md`).
+- **A UI-bearing absorption runs a design survey before its first template is written** — an editor, a builder, a form engine or a chart. The procedure is `references/design-survey.md`, and the order of sources is the design-sources page's.
 
 ## Reference pages
 
