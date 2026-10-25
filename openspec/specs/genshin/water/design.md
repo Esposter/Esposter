@@ -24,7 +24,7 @@ flowchart TD
   E -->|surfacing| A[The fog above given back]
 ```
 
-- **One surface for every sea and lake.** A single square at the region's water level is kept under the camera (`components/World/Water/Index.vue`), so every place the ground dips beneath the level shows water through it and the ground hides it everywhere else. It is one draw for all of a region's still water.
+- **One surface for every sea and lake.** A single square at the region's water level is kept under the camera (`packages/genshin-world/src/components/World/Water/Index.vue`), so every place the ground dips beneath the level shows water through it and the ground hides it everywhere else. It is one draw for all of a region's still water.
 - **Colour by depth.** The surface reads the scene's depth behind it, and the distance between the surface and the floor along the view grades its colour from the shallow tint to the deep one by the region's deep depth (`createWaterMaterial`).
 - **The floor through the shallows.** The scene behind the surface is read and shown through the shallows, tinted by the shallow colour and bent by the ripples. Where the bend would pull in something standing in front of the water, the unbent floor is read instead.
 - **Foam where water meets anything.** Where the depth behind the surface is under the foam depth, at every shore, rock and pillar, animated noise is cut into foam lines, so no foam mesh is authored.
