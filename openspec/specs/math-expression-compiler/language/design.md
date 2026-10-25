@@ -119,7 +119,7 @@ The precedence is mathjs's. From the loosest binding to the tightest:
 
 ## Notes
 
-- **The value model is numbers alone, on purpose.** A survey runner on the editor core ([deferred](../../../deferred/resource/survey-on-editor-core/design.md)) would need SurveyJS's condition language: strings, booleans and arrays, `{name}` references bound to answers, `=` as equality and list operators such as `contains`. That is a different grammar over a different value model, so it would be its own parser and compiler, reusing this one's numeric function table and its error wording. Widening this language to it would put a type check into every operator of every sheet cell, the per-row dispatch the compiler exists to remove.
+- **The value model is numbers alone, on purpose.** The survey runner of [the survey form engine](../../../changes/resource-survey-form-engine/design.md) would need the survey condition language: strings, booleans and arrays, `{name}` references bound to answers, `=` as equality and list operators such as `contains`. That is a different grammar over a different value model, so it would be its own parser and compiler, reusing this one's numeric function table and its error wording. Widening this language to it would put a type check into every operator of every sheet cell, the per-row dispatch the compiler exists to remove.
 - **The sheet's use of the language is the computed columns capability.** The stored schema, the edit form's parse and unbound-name check, and the compile once per column list are in [computed columns](../../resource/sheet/computed-columns/design.md).
 
 ## Upstream

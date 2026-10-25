@@ -1,117 +1,184 @@
 # Survey Form Engine
 
-A survey's questions are stored as SurveyJS JSON in one string, and this design keeps SurveyJS as the engine while making the document it stores checked on every save, by the same schema the server and the agent tools share.
+The survey is rebuilt as a typed document of our own, validated on every save, answered by a runner and authored in a Creator both built on the headless block editor core and the UI library. SurveyJS is removed in the same change, and the stored data of the old survey type is deleted, after the owner has confirmed the counts recorded below.
 
 ## How it works
 
-Every write of a survey's model passes one check before it is stored. The check has three gates, in order: the string must parse to a JSON object, the object must satisfy the document schema, and only then does the survey's working copy take the string. The readers (the runner, the response summary and the dataset) keep parsing the same string, now known to satisfy the schema.
+A survey is stored as one typed object: its settings, a theme subset and its pages. Every write passes the schema before it is stored, from the owner's editor and from an agent's content tool. The readers (the runner, the response summary and the dataset) read the same typed object.
 
 ```mermaid
 flowchart TD
-  WRITE["a save of a survey's model: the owner's editor or an agent's content tool"] --> OBJ{"the string parses to a JSON object?"}
-  OBJ -->|no| REFUSE["refused: the model must be a JSON object"]
-  OBJ -->|yes| DOC{"the document schema: pages, element types, unique question names"}
-  DOC -->|no| REFUSE2["refused with the path of the element at fault"]
-  DOC -->|yes| STORE[("working copy: the model string, checked")]
-  STORE --> READ["readers: the runner, the response summary and the dataset parse the same schema"]
+  WRITE["a save: the owner's Creator or an agent's content tool"] --> SCHEMA{"the survey document schema: pages, kinds, unique question names"}
+  SCHEMA -->|no| REFUSE["refused with the path of the element at fault"]
+  SCHEMA -->|yes| STORE[("working copy: the typed document")]
+  STORE --> FLOW["runner state: pages and the current page's visible elements, over the core's navigation"]
+  LOGIC["survey-logic: visibleIf, enableIf, requiredIf, calculated values"] --> FLOW
+  FLOW --> FIELDS["the UI library's fields, one per question kind"]
+  FIELDS -->|an answer, keyed by question name| FLOW
+  FLOW -->|submit| RESPONSE[("response record: answers keyed by question name")]
 ```
 
-The schema checks what the server reads and nothing SurveyJS owns. A survey's theme, its styling, its localisation and its expression language stay in the JSON, untouched, and SurveyJS keeps interpreting them. What the server can say for certain is structural: every element has a name and a type the engine knows, a panel holds elements, and no two questions share a name, because responses are keyed by question name and a shared name would merge two questions' answers.
+The schema is the one check. The runner evaluates conditions through the expression package and validates each answer with the question's own schema, so the server and the respondent's browser refuse the same answer for the same reason.
 
-## The options
+## The typed document
 
-Each option is judged by the admission test in the [dependency admission design](../../specs/architecture/dependency-admission/design.md). A survey engine is on that page's stop list: an engine stays a package whatever its size, so the question is whether the engine costs us a behaviour we cannot change, a version we do not control, or a second way to do something we already do, not whether it is large.
+The document follows the shape the [headless block editor core](../../specs/headless-block-editor/editor-core/design.md) already checks: a root holding pages, pages and panels holding elements, and questions holding no children. The root declares its content, so the core's schema checks the tree and its ids, and the survey adds two rules.
 
-### Keep SurveyJS (chosen)
+- **Question names are unique across the whole survey**, because responses are keyed by name and a shared name would merge two questions' answers.
+- **Each question's props are a Zod schema for its kind**: choices for the choice kinds, rows and columns for a matrix, the template of a dynamic panel. A question is a discriminated union on `type`, one variant per kind, and each variant's props are their own schema. The same schema drives the Creator's property grid and the runner's validation.
 
-The runner is `survey-core` with `survey-vue3-ui`, both MIT. The Creator is `survey-creator-core` with `survey-creator-vue`, which SurveyJS licenses commercially and the repository runs under the open-source exception recorded in the [rejected licence proposal](../../rejected/resource/survey-creator-licence/design.md). Both are loaded only on the routes that author or answer a survey, through [the runner's plugin](../../../apps/web/app/services/survey/registerSurveyPlugin.ts) and [the Creator's](../../../apps/web/app/services/survey/registerSurveyCreatorPlugin.ts), so no page pays for them at startup.
+The theme is a subset: a logo, an accent and a background, held as the app's own tokens. Every model is an interface-first Zod schema with `satisfies z.ZodType`, one model per file, in `apps/web/shared/models/resource/survey/`.
 
-- **Weight.** Measured from the installed packages, `survey-core` and `survey-creator-core` are each a few hundred kilobytes gzipped; the Creator's Vue wrapper is tens of kilobytes. The score command reads the client's real bytes and is the figure of record.
-- **Question types.** The Creator's toolbox offers about two dozen question types, enumerated from `survey-core`'s question factory, plus a panel. The repository's readers handle the subset they need: the summary's cards cover boolean, radio group, dropdown, checkbox, tag box, rating and text, and the dataset maps boolean, rating, number, date and text, with every other kind a string column and the presentation kinds (html and image) left out.
-- **Logic.** Conditions, calculated values and validators are SurveyJS's expression language, which includes `iif`, `sum`, `contains`, `anyof`, `allof`, `age`, the date functions and a set of aggregates. Nothing on the server evaluates it. A malformed expression is a runner error, not a refused save.
-- **Responses and export.** Answers are one JSON property per response in Azure Table, keyed by question name, and the owner reads them through the Responses blade and the dataset. Export goes through the dataset, not through SurveyJS.
-- **Agent access.** An agent replaces the model whole through the content tools, and today the server accepts any JSON object. The schema in this change is what gives the agent a check it can read.
-- **Behaviour.** The one charge the admission test finds is the look: the runner and the Creator draw their own theme, carried in the model under `THEME_KEY`, beside the app's style system. Accepted while owners need the engine's editor and runner, and it is the reason the replacement options below stay on the table.
+## The expression package
 
-### Own survey model on the ui-library and schema forms
+Conditions, calculated values and required rules are written in an expression language over answers. It is a grammar of its own: `{name}` references bound to answers, a value model of strings, booleans and arrays, `=` as equality, `contains` and the list operators, and the functions the scan finds in use. It is a workspace package, since a grammar and an interpreter is an engine of its own and every package would otherwise import it through shared. The math expression compiler is numeric by design and stays out of this, since the survey's value model is different.
 
-This is the rebuild the [deferred survey editor core design](../../deferred/resource/survey-on-editor-core/design.md) describes: a survey as a typed document of pages, panels and questions over the headless block editor, a runner drawn with the UI library and a logic language of our own.
+While the replacement is built, SurveyJS's own evaluation of each expression on a set of answers is the reference for the package's fixtures. The fixtures are kept as the package's tests once SurveyJS is removed.
 
-- **Licence.** None to buy. The cost is that the owner writes an engine: the logic language is a parser and evaluator over strings, booleans and arrays, a runner with about two dozen question components, and a creator.
-- **What the app already has.** `UiSchemaForm` draws a form from a Zod schema and validates it, so each question type's properties form and the runner's per-question check can reuse it. It does not cover what a survey needs beyond a form: JSON Forms' rules are not used, so conditional visibility and calculated values have no home there, and the pages and their flow are new.
-- **Migration.** Every stored survey is converted, and the responses keep working only where the converter keeps each question's name. The deferred design calls the work large, and it is deferred for that reason and because the page builder, its first consumer, is not yet on the core.
+## The runner
 
-### Open-source form library
+The runner is headless. Its state is page flow, each element's visibility, enablement and requiredness, per-answer validation and completion, built on the core's navigation and the expression package, with no DOM. A thin Vue renderer draws each question kind with the UI library's fields, so each field keeps the library's keyboard and ARIA contract, and each renderer has a component test of that contract once per style.
 
-Candidates include Form.io (MIT, with a builder and a renderer), Formily (Apache-2.0, schema-driven, with linkage between fields) and FormKit (MIT, Vue-native). Their licences are as their repositories state them and are read again from the package manifest when the admission gate runs.
+The respondent page keeps the behaviour the [survey resource](../../specs/resource/survey-resource/design.md) states today: resume on the same device by a per-survey response id, the submitted-row rule for a shared device, and the sanitised completion message. The answer record keeps its shape, answers keyed by question name, so the response summary and the dataset read it as they do now.
 
-- **It is a second form engine.** Each candidate brings its own schema format, its own renderer and its own styling, and the app already draws forms from Zod. The admission test's third charge applies directly: two ways to draw a form.
-- **Logic and pages.** Each has conditional logic and multi-step layout, in a model that is its own JSON, so the survey's JSON becomes a different JSON and the question names of every stored survey are mapped into the new keys.
-- **Creator.** Form.io ships a builder. Formily's and FormKit's authoring surfaces are not a survey creator, so a creator would be ours to write, as in the second option.
-- **Migration.** Like the second option, every stored survey is converted, with the same name-preservation risk for responses, and with the library's own styling replacing the theme.
+## The Creator
 
-## Comparison
+The Creator is built on the core's tree editing, which offers insert, move, move into the previous sibling, remove, duplicate and paste with checked slots, and on the core's undo history.
 
-| Option                            | Licence                                             | Weight                                                                | Question types and logic                                    | Agent access                                      | Migration of stored surveys                                 |
-| --------------------------------- | --------------------------------------------------- | --------------------------------------------------------------------- | ----------------------------------------------------------- | ------------------------------------------------- | ----------------------------------------------------------- |
-| Keep SurveyJS, check the document | MIT runner; Creator under the open-source exception | A few hundred kilobytes gzipped per engine, on the survey routes only | About two dozen types and SurveyJS's expressions, unchanged | A schema the agent's writes are checked against   | None: stored strings are checked, not rewritten             |
-| Own model on the UI library       | None; our code                                      | Our code, plus the runner's components                                | What we write; a logic language of our own                  | Our typed document, read and written by the agent | Every survey converted; responses kept where names are kept |
-| Open-source form library          | Per candidate; MIT or Apache-2.0                    | Per candidate, unmeasured                                             | Per candidate, in its own JSON                              | Its own JSON schema, a second form model          | Every survey converted, with a new JSON                     |
+- **Canvas and layers** over the core's tree, with keyboard reorder and a pointer drag whose keyboard alternative is the same command.
+- **Palette** of question kinds, inserted through the core's accepted-type check.
+- **Property grid**, one `UiSchemaForm` per kind from its props schema, with the choice list and matrix editors as the Creator's own components, since a form cannot draw them.
+- **Logic builder** over the expression package, writing an expression from an answer, an operator and a value, with the raw expression beside it and the package's errors shown.
+- **Theme** over the subset, through the UI library's tokens.
+- **Files** for the logo, image questions and image choices, through the FileAssets capability and its delete hooks.
+- **Preview** is the runner. Import, export and clear are kept.
 
-## Decision
+## Gap analysis
 
-Keep SurveyJS as the engine of the runner and the Creator, and check the document it stores on every save. Replacing the engine is not justified yet: the behaviour charge is real but no owner has asked for the engine's look to change, the replacement is large, and the licence cost is only due once paid tiers ship, which is a decision of its own. Adopting an open-source library is rejected for now, because it adds a second form engine beside the app's schema forms and converts every stored survey to a third JSON without removing the engine's weight.
+Each row is a feature SurveyJS provides today, or one the app relies on, with the replacement's plan and a verdict. **Match** means the replacement does what SurveyJS does for the app. **Beat** means it does it better, with the reason stated. **Drop** means the replacement does not build it, and the owner decides the drop before the change ships. A row whose verdict is not met blocks the change.
 
-The licence question is not closed by this change. It becomes due when [paid storage tiers](../resource-paid-storage-tiers/design.md) ship, and the roadmap carries it as an open item until the owner chooses between buying a Creator licence and building the Creator on the deferred core.
+| Feature                                                            | SurveyJS today                                               | Replacement                                                            | Verdict                                |
+| ------------------------------------------------------------------ | ------------------------------------------------------------ | ---------------------------------------------------------------------- | -------------------------------------- |
+| Page flow, progress and navigation                                 | Runner pages                                                 | Headless runner over the core's navigation                             | Match                                  |
+| Visibility, enablement and requiredness conditions                 | Expression language                                          | `survey-logic`, same operators and functions the scan finds            | Match                                  |
+| Expression syntax checked on save                                  | Not checked; a malformed expression fails in the runner      | Checked on save, refused with the element's path                       | Beat                                   |
+| Calculated values and expression validators                        | Supported                                                    | Supported over `survey-logic`                                          | Match                                  |
+| Required checks, messages and focus on the first error             | Supported                                                    | Supported through each answer's schema                                 | Match                                  |
+| Text, number and date inputs                                       | Text with input type                                         | Typed kinds, numbers and dates by schema                               | Match                                  |
+| Boolean, radio, dropdown, checkbox, tag box                        | Supported                                                    | One field per kind on the UI library                                   | Match                                  |
+| Rating and ranking                                                 | Supported                                                    | Supported                                                              | Match                                  |
+| Matrix, dynamic matrix, dynamic panel                              | Supported                                                    | Supported where the scan finds them used; otherwise decided            | Drop until the owner decides           |
+| Multiple text, slider, button group, image picker, signature, file | Supported                                                    | Supported where the scan finds them used; otherwise decided            | Drop until the owner decides           |
+| Presentational html and image elements                             | Supported                                                    | Supported as read-only blocks                                          | Match                                  |
+| Completion message                                                 | Sanitised html                                               | Sanitised html                                                         | Match                                  |
+| Resume on the same device, shared-device rule                      | Per-survey local id                                          | Same rule, same spec scenarios                                         | Match                                  |
+| Autosave of answers and of the Creator                             | Autosave                                                     | Autosave through the store's save path                                 | Match                                  |
+| Keyboard and ARIA behaviour of every field                         | Library's own                                                | Each field meets the UI library's contract, tested per style           | Match, owner checks screen readers     |
+| Look and theme                                                     | SurveyJS theme, its own colours and fonts                    | Follows the app's design styles; logo, accent and background as tokens | Beat: one look across the app's styles |
+| Theme editor's full range                                          | Colours, fonts, backgrounds, backgrounds per page            | Logo, accent and background only                                       | Drop until the owner decides           |
+| Logic tab (condition builder)                                      | Builder beside the raw expression                            | Builder beside the raw expression                                      | Match                                  |
+| Designer: add, move, delete, duplicate, rename                     | Supported                                                    | Core's tree commands                                                   | Match                                  |
+| Drag reorder                                                       | Pointer drag only                                            | Pointer drag with the same command on the keyboard                     | Beat                                   |
+| Undo and redo                                                      | Supported                                                    | The core's history                                                     | Match                                  |
+| Choice and matrix editors                                          | Supported                                                    | Own components                                                         | Match                                  |
+| Logo, image question and image choice uploads                      | Supported with delete hooks                                  | Through FileAssets with the same delete hooks                          | Match                                  |
+| Preview                                                            | Creator's preview                                            | The runner itself                                                      | Match                                  |
+| JSON import, export and clear                                      | Supported                                                    | Supported                                                              | Match                                  |
+| JSON editor tab                                                    | Edits the raw JSON                                           | Not built; import and export cover the need                            | Drop until the owner decides           |
+| Translation tab and multi-language surveys                         | Supported                                                    | Not built unless the scan finds a survey in more than one language     | Drop until the owner decides           |
+| Stored data shape                                                  | JSON string, checked as an object                            | Typed document, checked on every save                                  | Beat                                   |
+| Client weight                                                      | Two engines loaded on the survey routes                      | Our own code only                                                      | Beat                                   |
+| Licence                                                            | Creator commercially licensed under an open-source exception | None                                                                   | Beat                                   |
+| Response record and summary cards                                  | As stated by the response summary spec                       | Same record shape and cards, rewritten over the typed kinds            | Match                                  |
+| Dataset columns and column types                                   | Read from SurveyJS's JSON                                    | Read from the typed document                                           | Match                                  |
 
-## Scope
+The drop rows are the owner's decisions. The scan of stored surveys in task 1.1 sets which kinds, functions and languages are used, so each "until the owner decides" row carries its count as a fact before the owner decides.
 
-- **Works today:** a survey saved with any JSON object is stored; an agent's write of a survey with a duplicate question name or an unknown type is stored as well.
-- **This change adds:** the document schema, its check on every save, the typed element used by the dataset reader, the roadmap item for the licence, and the scan that sets the schema's rules before they are written.
-- **Failure and retry:** a refused save changes nothing, so the owner keeps the editor's last valid state and the agent's write is retried after it fixes the element named in the refusal. Nothing runs in the background, so there is no retry queue.
+## Removal of the old survey type
 
-## Migration
+The change removes SurveyJS and the old survey type's stored data in one step, so nothing of the old survey survives and nothing is converted. The migration deletes, for every survey resource of the old type:
 
-The scan (task 1) counts, across the working copies and the published snapshots, every question type, every expression function, nesting depth, model size and any survey whose question names repeat. The schema's rules are set to accept every survey the scan finds. A survey that would fail is repaired by its owner in the editor; it is never reset, since its responses are keyed by its question names and a reset would orphan them.
+- the resource's working copy, its published snapshots and its retained versions, with their content and file assets;
+- every response row written under the survey, in Azure Table, keyed by the survey's id.
 
-The model stays a string in storage. Changing it to an object would change every retained version's content address in the version store, rewriting the version store and the snapshot listing, and the persisted-data standard forbids reading both shapes. That cost is an open choice for the owner (below), not something this change pays.
+It also reports every reference to a deleted survey from the rest of the app, the survey invite blocks in webpages and emails, and from programs bound to a survey, so the owner knows what will show as empty or broken.
 
-## Open choices for the owner
+### Owner confirmation
 
-- **Store the document as an object** instead of a string. The recommendation is no: the version store's content addresses would all change, and the gain is only the removal of a parse, which the schema already performs.
-- **Check the document with SurveyJS's own model on the server**, which would parse expressions and catch malformed ones at save time, at the cost of adding `survey-core` to the server build. The recommendation is the schema alone, with expressions left to the runner.
-- **Refuse a survey with a question type the installed engine does not know**, or accept types the schema lists. The recommendation is the schema's list, followed by the dependency-updates skill when the engine is bumped.
-- **Licence path when paid tiers ship:** buy the Creator licence, or revive the deferred survey editor core. The recommendation is to buy while the Creator is the only authoring surface, and to revisit only if the look must change.
+The migration does not run until the owner has confirmed the counts below for each environment. The counts are read before the migration, by a read-only script, and recorded here. A row without a confirmed count blocks the migration in that environment.
+
+| Environment                    | Survey resources | Response rows | Asset files  | Invite references | Confirmed by the owner |
+| ------------------------------ | ---------------- | ------------- | ------------ | ----------------- | ---------------------- |
+| Production                     | not yet read     | not yet read  | not yet read | not yet read      | no                     |
+| Any other deployed environment | not yet read     | not yet read  | not yet read | not yet read      | no                     |
+
+The rows are filled from the read, never estimated. A count that changes between the read and the migration is read again.
+
+## Options considered
+
+| Option                                              | Verdict    | Why                                                                                                                                                                                                                |
+| --------------------------------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Keep SurveyJS and check its document on save        | Rejected   | The owner rules out a third-party engine for the survey, and the Creator's licence exception ends with paid tiers. See its [rejected folder](../../rejected/resource/survey-keep-and-type-the-document/design.md). |
+| Convert stored surveys to the new document          | Not chosen | The owner decided against a migration of stored survey data.                                                                                                                                                       |
+| Keep stored surveys read-only beside the new survey | Not chosen | The owner decided to delete the old survey type's data.                                                                                                                                                            |
+| An open-source form library                         | Rejected   | A second form engine beside the app's schema forms, with its own JSON and styling, and a third-party dependency the owner has ruled out.                                                                           |
+| Our own typed model, runner and Creator             | Chosen     | No third-party dependency for the survey, one form model, and the core and schema forms the app already has.                                                                                                       |
+
+The dependency admission test would keep SurveyJS as an engine, since its stop list names survey runtimes among the engines that stay whatever their size. The owner's decision overrides that entry, which is edited in this change with the reason recorded there.
 
 ## Key files
 
-| File                                                                               | Role after the change                                                                         |
-| ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| `apps/web/shared/models/resource/survey/SurveyResource.ts`                         | the model check gains the document schema after the object check                              |
-| `apps/web/shared/models/resource/survey/SurveyResource.test.ts`                    | the check's accepted stored shapes and refused documents                                      |
-| `apps/web/shared/services/survey/parseSurveyModel.ts`                              | the one parse every reader uses, unchanged, now of a checked string                           |
-| `apps/web/server/models/dataset/surveyResponses/SurveyModelElement.ts`             | the loose element type, replaced by the document's element type                               |
-| `apps/web/server/services/dataset/surveyResponses/getSurveyModelDatasetColumns.ts` | the dataset's columns, read from the typed elements                                           |
-| `apps/web/app/composables/survey/useSurveyCreator.ts`                              | the editor's autosave, whose refusal reaches the owner through the shared save                |
-| `apps/web/app/components/Resource/Survey/View.vue`                                 | the runner, unchanged, reading a checked model                                                |
-| `apps/web/app/services/resource/survey/getSurveyResponseSummaryCards.ts`           | the summary, unchanged, reading the same model                                                |
-| `apps/web/app/services/survey/registerSurveyCreatorPlugin.ts`                      | the Creator's load on its routes, unchanged                                                   |
-| `openspec/specs/resource/survey-resource/design.md`                                | the as-built data model, updated when the change ships                                        |
-| `openspec/specs/architecture/agent-content-tools/design.md`                        | the survey row of the schema-fidelity rule, updated when the change ships                     |
-| `openspec/changes/architecture-ai-native-resources-program/design.md`              | the audit row stating that SurveyJS constraints stay unchecked, updated when the change ships |
-| `openspec/changes/resource-roadmap/tasks.md`                                       | carries the licence decision as an open item                                                  |
+| File                                                                               | Role after the change                                                     |
+| ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `apps/web/shared/models/resource/survey/SurveyResource.ts`                         | the survey resource schema, now the typed document checked on every save  |
+| `apps/web/shared/models/resource/survey/SurveyResource.test.ts`                    | the schema's accepted and refused documents                               |
+| `apps/web/shared/models/db/survey/SurveyResponseModel.ts`                          | the answer record's shape, unchanged, keyed by question name              |
+| `apps/web/shared/services/survey/parseSurveyModel.ts`                              | removed: nothing parses a string once the document is an object           |
+| `apps/web/shared/services/survey/constants.ts`                                     | the old theme key constant, removed with SurveyJS's theme                 |
+| `apps/web/shared/models/pageBuilder/SurveyInviteNode.ts`                           | the invite block, whose survey references the migration reports           |
+| `apps/web/server/trpc/routers/survey.ts`                                           | the resource factory and response procedures, saving the typed document   |
+| `apps/web/server/models/dataset/surveyResponses/SurveyModelElement.ts`             | removed: replaced by the typed question union                             |
+| `apps/web/server/services/dataset/surveyResponses/getSurveyModelDatasetColumns.ts` | the dataset's columns, read from the typed document                       |
+| `apps/web/app/store/survey/index.ts`                                               | the save path, taking the typed object                                    |
+| `apps/web/app/composables/survey/useSurveyCreator.ts`                              | rewritten: the Creator's state over the core's tree and history           |
+| `apps/web/app/composables/survey/useSurveyResponse.ts`                             | the respondent's resume and submit, over the runner's state               |
+| `apps/web/app/components/Resource/Survey/Editor.vue`                               | the Editor blade, rendering the new Creator                               |
+| `apps/web/app/components/Resource/Survey/View.vue`                                 | the respondent page, rendering the new runner                             |
+| `apps/web/app/components/Resource/Survey/Responses.vue`                            | the Responses blade, unchanged                                            |
+| `apps/web/app/services/survey/getActions.ts`                                       | rewritten to the Creator's import, export and clear                       |
+| `apps/web/app/services/survey/registerSurveyPlugin.ts`                             | removed with SurveyJS's runner plugin                                     |
+| `apps/web/app/services/survey/registerSurveyCreatorPlugin.ts`                      | removed with SurveyJS's Creator plugin                                    |
+| `apps/web/app/services/resource/survey/getSurveyResponseSummaryCards.ts`           | the summary's cards, read from the typed document                         |
+| `apps/web/app/services/survey/summary/getSurveySummaryCards.ts`                    | the cards, keyed by the typed kinds in place of SurveyJS's classes        |
+| `apps/web/app/services/survey/summary/getSurveySummaryCards.test.ts`               | the cards' tests, rewritten over the typed kinds                          |
+| `apps/web/configuration/vite.ts`                                                   | the survey packages' optimise entries, removed                            |
+| `apps/web/configuration/build.ts`                                                  | the Creator's chunk entry, removed                                        |
+| `apps/web/package.json`                                                            | the four SurveyJS dependencies, removed                                   |
+| `pnpm-workspace.yaml`                                                              | the four SurveyJS catalog entries, removed                                |
+| `packages/headless-block-editor`                                                   | the core the runner and Creator are built on                              |
+| `.agents/ledgers/dependencies.md`                                                  | the four SurveyJS rows, removed with their packages                       |
+| `openspec/specs/architecture/dependency-admission/design.md`                       | the stop list's survey entry, edited with the owner's decision            |
+| `openspec/specs/resource/survey-resource/design.md`                                | the old survey capability, removed at archive and rewritten as built      |
+| `openspec/specs/resource/survey-response-controls/design.md`                       | the old controls capability, removed at archive                           |
+| `openspec/specs/resource/survey-response-management/design.md`                     | the old management capability, removed at archive                         |
+| `openspec/specs/resource/survey-response-modes/design.md`                          | the old modes capability, removed at archive                              |
+| `openspec/specs/resource/survey-response-summary/design.md`                        | the old summary capability, removed at archive                            |
+| `openspec/specs/resource/webpage-survey-invite-blocks/design.md`                   | the old invite capability, removed at archive                             |
+| `openspec/specs/architecture/agent-content-tools/design.md`                        | the survey row of the schema-fidelity rule, updated                       |
+| `openspec/changes/architecture-ai-native-resources-program/design.md`              | the Survey audit row, updated                                             |
+| `openspec/specs/math-expression-compiler/language/design.md`                       | its pointer to the survey's condition language, re-pointed to this change |
+| `openspec/changes/resource-roadmap/tasks.md`                                       | carries this change as an open item                                       |
 
-A new file for the document schema is not listed, since the schema is a new module in the survey's shared models folder, named by the file-organization rules when it is written.
+New files are the expression package and the schema, runner and Creator modules in the survey's shared and app folders. They are named by the file-organisation and naming rules when each is written.
 
 ## Notes
 
-- The check covers the structure the server reads. A survey's expressions, its theme and its localised text are not validated on save, so a broken expression is still a runner error and not a refused save.
-- The set of question types comes from the installed engine. An engine upgrade that adds a type makes a new survey using it refused until the schema's list follows, which is why the list is named in one place.
-- A rename of a question changes its responses' column, and the check does not address it: names are unique, not stable.
-- The check does not change how responses are stored. Answers stay one JSON property keyed by question name in Azure Table.
+- The core is built, and its first editor consumer, the page builder, is not shipped. This survey is the first consumer of a typed document root, so a gap in the core is fixed in the core in its own commit.
+- Accessibility is the largest risk the owner takes on. The runner and Creator meet the UI library's contracts component by component, and the owner checks labelled fields and screen-reader behaviour by hand.
+- A program bound to a survey reads that survey's responses, so its funnel empties when the rows are deleted. The owner count and the report list those bindings.
+- A survey invite block in a webpage or email links a deleted survey's public page after the migration. The migration reports each block so the owner can remove it.
 
 ## Sources
 
-- [SurveyJS licensing](https://surveyjs.io/licensing) and its [licensing FAQ](https://surveyjs.io/faq/licensing) — the Creator's commercial licence and the open-source exception that the decision relies on.
-- [SurveyJS conditional logic](https://surveyjs.io/form-library/documentation/design-survey/conditional-logic) — the expression language the runner keeps interpreting.
-- [Form.io](https://github.com/formio/formio), [Formily](https://github.com/alibaba/formily) and [FormKit](https://github.com/formkit/formkit) — the candidate open-source libraries; their licences and question sets are re-read from their manifests and documentation when the admission gate runs.
+- [SurveyJS licensing](https://surveyjs.io/licensing) and its [licensing FAQ](https://surveyjs.io/faq/licensing), which state the Creator's commercial licence and the open-source exception the app relies on.
+- [SurveyJS conditional logic](https://surveyjs.io/form-library/documentation/design-survey/conditional-logic), read for the condition language the expression package must cover.

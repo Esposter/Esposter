@@ -2,26 +2,42 @@
 
 ## Why
 
-A survey's questions are SurveyJS's JSON, stored as one string in the survey's content. The server checks only that the string parses to a JSON object, so an agent or an owner can save a survey with a question type SurveyJS does not know or two questions sharing a name, and the failure surfaces later, in the runner or in the responses. The AI-native resources program names this as a document held inside a string.
+The survey resource is built on SurveyJS. Its runner and its Creator are a third-party engine that the owner has ruled out for the survey, and the survey's questions are SurveyJS's JSON stored as one string, which the server only checks is a JSON object. The AI-native resources program names that string as a document held inside a string.
 
-The same question raises a larger one: the survey stack is SurveyJS, whose Creator is commercially licensed. The Creator is free to use only under the open-source exception recorded in [the rejected licence proposal](../../rejected/resource/survey-creator-licence/design.md), and the planned [paid storage tiers](../resource-paid-storage-tiers/design.md) would end that exception. So the choice between keeping SurveyJS, replacing it with our own survey model, or adopting an open-source form library has to be made before paid tiers ship.
+The licence is the other reason. SurveyJS's Creator is commercially licensed. Esposter uses it free under the open-source exception recorded in SurveyJS's licensing FAQ, and the planned [paid storage tiers](../resource-paid-storage-tiers/design.md) would end that exception. Keeping the Creator therefore means buying a licence or replacing it, and the owner has chosen to replace it now.
 
 ## What Changes
 
-Keep SurveyJS as the engine of the Creator and the runner, and make the document it stores checked on every write.
+The survey is rebuilt on our own code and SurveyJS is removed in the same change.
 
-- The survey's model is checked against a Zod schema of the parts the server reads: its pages and their elements, each element's name and type, nested panels, and unique question names across the survey. Everything else in the JSON stays SurveyJS's, passed through unchanged.
-- The same check runs wherever a survey is saved, whether by the owner's editor or by an agent's content tool, so both refuse the same invalid survey with the same reason.
-- The server's dataset reader takes its element type from the same schema in place of the loose type it holds today.
-- Stored surveys are not converted. The model stays a string in storage, so no backfill of working copies or retained version objects is needed. A read-only scan of every stored survey runs first, so the new check is written to accept every survey that exists today.
-- The licence question is recorded as a roadmap item that must be decided before paid tiers ship: buy a Creator licence, or build the Creator our own way on the [deferred survey editor core](../../deferred/resource/survey-on-editor-core/design.md).
+- **Typed model.** A survey is a typed document of our own, validated by Zod on every save from both the owner's editor and an agent's content tool. Its question kinds, logic and expressions are our schema, and a small workspace package holds the expression language.
+- **Runner.** Respondents fill and see a survey through a headless runner over the [headless block editor core](../../specs/headless-block-editor/editor-core/design.md), drawn by a thin Vue renderer with the UI library's fields.
+- **Creator.** Owners author surveys in a Creator on the same model, using the core's tree editing and history and the UI library's schema-form pieces for each question's properties.
+- **Removal of the old survey.** SurveyJS's four packages, its plugins and its chunk entries are removed, along with the stored survey data of the current Survey type, its editor, runner and built specs. The replacement does not read the old data: the migration deletes the rows of the old type, and the change does not convert them.
+- **Gap analysis.** Every feature SurveyJS provides and the app uses is a row in the design's gap analysis, with a verdict of match, beat, or drop for the owner to decide. The replacement ships only when every row has its verdict met.
 
-The comparison behind this choice, with each option's licence, weight, question types, responses, agent access and migration cost, is in `design.md`.
+The rejected alternative, keeping SurveyJS and checking its document on save, is recorded in [its rejected folder](../../rejected/resource/survey-keep-and-type-the-document/design.md).
+
+## Owner confirmation before deletion
+
+Removing the old survey deletes user data: each survey's stored content, its published snapshots, its retained versions and every response collected under it. The change therefore records, per deployed environment, how many survey resources and how many response rows exist, read before the migration runs. The migration does not start until the owner has confirmed those counts for each environment. The counts are part of this change's spec, so a deletion is never run on an unrecorded or unconfirmed count.
+
+## Sizing the Creator
+
+The Creator is the largest part. It is about as much work as the typed model and the runner together. SurveyJS's Creator is a vendor product with a toolbox and property grid for about two dozen question kinds, a logic builder, a theme editor, a translation tab, a preview and a JSON editor. The gap analysis decides which of those the replacement builds. The theme editor's full range and the translation tab are the two places most likely to be dropped, and each drop needs the owner's decision.
+
+If the Creator grows past one reviewable change while it is built, it splits out at the start of its phase into its own change under the same area prefix.
+
+## Accessibility
+
+The survey stop list in the dependency admission design names forms as accessibility-shaped, the surface where owning the behaviour reliably ships worse. The replacement takes that on knowingly. The runner and the Creator meet the UI library's keyboard and ARIA contracts component by component, the gap analysis includes keyboard-only completion and labelled fields, and the owner checks screen-reader behaviour by hand, since no automated suite can.
 
 ## Capabilities
 
-- **resource/survey-resource** (modified): a survey's questions must have unique names and known types for a save to succeed.
+- **resource/survey-resource** (replaced): a survey is a typed document, unique question names and known kinds are required for a save, and the old survey type's data and built specs are removed.
 
 ## Waiting on
 
-- The read-only scan of stored surveys (task 1) decides the check's exact rules. Nothing else in this change is built before its counts are in.
+- The owner confirms each environment's survey and response counts before the migration runs. Until then the change is not built.
+- The scan of stored surveys (task 1.1) sets which question kinds, expression functions and theme keys the replacement covers, so the gap analysis's verdicts are checked against real data before they are final.
+- The headless block editor core is built, but its first editor consumer, the page builder, is not shipped. This survey is the core's first consumer of a typed document root, so a gap found in the core is fixed in the core in its own commit.
