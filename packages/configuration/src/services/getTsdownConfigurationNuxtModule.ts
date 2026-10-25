@@ -1,7 +1,7 @@
 import type { UserConfig } from "tsdown";
 
-import { NON_SOURCE_SUFFIXES } from "#src/constants";
-import { getTsdownConfigurationNode } from "#src/getTsdownConfigurationNode";
+import { NON_SOURCE_SUFFIXES } from "#src/services/constants";
+import { getTsdownConfigurationNode } from "#src/services/getTsdownConfigurationNode";
 import { mergeConfig } from "tsdown";
 
 // Two kinds of entry, and no barrel. `index` is the module Nuxt imports while it reads `nuxt.config`, in Node, before any

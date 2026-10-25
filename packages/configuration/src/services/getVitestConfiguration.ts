@@ -1,9 +1,9 @@
 import type { ViteUserConfig } from "vitest/config";
 
-import { BROWSER_TEST_GLOB, SOURCE_CONDITION } from "#src/constants";
-import { getBenchmarkTestConfiguration } from "#src/getBenchmarkTestConfiguration";
-import { getVitestProjectName } from "#src/getVitestProjectName";
-import { getVueTestConfiguration } from "#src/getVueTestConfiguration";
+import { BROWSER_TEST_GLOB, SOURCE_CONDITION } from "#src/services/constants";
+import { getBenchmarkTestConfiguration } from "#src/services/getBenchmarkTestConfiguration";
+import { getVitestProjectName } from "#src/services/getVitestProjectName";
+import { getVueTestConfiguration } from "#src/services/getVueTestConfiguration";
 import { defaultServerConditions } from "vite";
 import { configDefaults } from "vitest/config";
 

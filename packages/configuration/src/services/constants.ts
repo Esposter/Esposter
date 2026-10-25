@@ -66,3 +66,6 @@ export const BROWSER_TEST_GLOB = "**/*.browser.test.ts";
 // `pnpm` parses it at the start of every command, so a resolver handed a checkout where it still holds conflict
 // Markers is told to resolve it before anything else (`git` skill)
 export const WORKSPACE_FILE = "pnpm-workspace.yaml";
+// The barrel every package with a source tree writes at the top of `src`, and the folder of Vue components it reads from
+export const BARREL_FILE = "index.ts";
+export const COMPONENTS_DIRECTORY = "components";

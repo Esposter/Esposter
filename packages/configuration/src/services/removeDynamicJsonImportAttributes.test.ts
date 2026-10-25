@@ -1,4 +1,4 @@
-import { removeDynamicJsonImportAttributes } from "#src/removeDynamicJsonImportAttributes";
+import { removeDynamicJsonImportAttributes } from "#src/services/removeDynamicJsonImportAttributes";
 import { describe, expect, test } from "vitest";
 
 describe(removeDynamicJsonImportAttributes, () => {

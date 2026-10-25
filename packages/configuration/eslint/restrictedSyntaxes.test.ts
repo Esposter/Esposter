@@ -1,4 +1,4 @@
-import { setupSyntaxSuite } from "#src/setupSyntaxSuite.test";
+import { setupSyntaxSuite } from "#src/services/setupSyntaxSuite.test";
 import restrictedSyntaxes from "@esposter/configuration/eslint/restrictedSyntaxes.js";
 import { describe } from "vitest";
 

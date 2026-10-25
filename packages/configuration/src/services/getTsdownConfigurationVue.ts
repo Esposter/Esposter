@@ -1,10 +1,10 @@
 import type { UserConfig } from "tsdown";
 import type { Options } from "unplugin-vue/api";
 
-import { STYLESHEET_REQUEST_REGEX, VUE_AUTO_IMPORTS } from "#src/constants";
-import { getTsdownConfiguration } from "#src/getTsdownConfiguration";
-import { readPackageManifest } from "#src/readPackageManifest";
-import { vueStyleSrcPlugin } from "#src/vueStyleSrcPlugin";
+import { STYLESHEET_REQUEST_REGEX, VUE_AUTO_IMPORTS } from "#src/services/constants";
+import { getTsdownConfiguration } from "#src/services/getTsdownConfiguration";
+import { readPackageManifest } from "#src/services/readPackageManifest";
+import { vueStyleSrcPlugin } from "#src/services/vueStyleSrcPlugin";
 import { mergeConfig } from "tsdown";
 import AutoImport from "unplugin-auto-import/rolldown";
 import Vue from "unplugin-vue/rolldown";

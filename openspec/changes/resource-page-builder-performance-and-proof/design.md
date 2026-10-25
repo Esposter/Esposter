@@ -39,11 +39,11 @@ flowchart TD
 
 ## Key files
 
-| File                                                          | Role after the change                                   |
-| ------------------------------------------------------------- | ------------------------------------------------------- |
-| `packages/configuration/src/getVitestBrowserConfiguration.ts` | the browser suite the box, mark and origin tests run in |
-| `apps/web/app/components/Resource/SrcdocIframe.vue`           | the published view's frame the canvas is held against   |
-| `apps/web/configuration/security.ts`                          | the policy a published page's own scripts run under     |
+| File                                                                   | Role after the change                                   |
+| ---------------------------------------------------------------------- | ------------------------------------------------------- |
+| `packages/configuration/src/services/getVitestBrowserConfiguration.ts` | the browser suite the box, mark and origin tests run in |
+| `apps/web/app/components/Resource/SrcdocIframe.vue`                    | the published view's frame the canvas is held against   |
+| `apps/web/configuration/security.ts`                                   | the policy a published page's own scripts run under     |
 
 New code lands here:
 

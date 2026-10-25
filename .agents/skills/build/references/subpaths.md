@@ -27,7 +27,7 @@ If neither holds, the subpath is a duplicate or a leftover, and it goes.
 
 Every published package is experimental (`openspec/specs/architecture/monorepo-tooling/design.md`, Stability), so a removed export is a changelog line in a minor release, not a breaking change. Check before removing: no repo consumer (`git grep` for the specifier across `apps`, `packages` and `scripts`), no README naming it, and the entry's own use (a bin or worker keeps its build entry even when the export goes).
 
-A Nuxt module's runtime arms are generated from its unbundled runtime glob, so a removed arm is excluded in the package's `tsdown.config.ts` through `exports.exclude`. Editing `package.json` by hand is undone by the next build. The factory's `exports.exclude` already carries `runtime/**/services/**` (`packages/configuration/src/getTsdownConfigurationNuxtModule.ts`), and each config passes only its own arms as the factory's argument, so no config repeats the services entry.
+A Nuxt module's runtime arms are generated from its unbundled runtime glob, so a removed arm is excluded in the package's `tsdown.config.ts` through `exports.exclude`. Editing `package.json` by hand is undone by the next build. The factory's `exports.exclude` already carries `runtime/**/services/**` (`packages/configuration/src/services/getTsdownConfigurationNuxtModule.ts`), and each config passes only its own arms as the factory's argument, so no config repeats the services entry.
 
 ## Worked decisions
 

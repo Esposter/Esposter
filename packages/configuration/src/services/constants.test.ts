@@ -1,4 +1,4 @@
-import { NON_SOURCE_SUFFIXES, SOURCE_CONDITION } from "#src/constants";
+import { NON_SOURCE_SUFFIXES, SOURCE_CONDITION } from "#src/services/constants";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, test } from "vitest";
@@ -13,7 +13,7 @@ describe("sourceCondition", () => {
   test("is the condition the tsconfig preset opts into", () => {
     expect.hasAssertions();
 
-    const tsconfigPath = resolve(import.meta.dirname, "../tsconfig.base.json");
+    const tsconfigPath = resolve(import.meta.dirname, "../../tsconfig.base.json");
     // oxlint-disable-next-line no-restricted-properties -- a tsconfig carries no dates, and this package builds before @esposter/shared so it cannot import jsonDateParse
     const { compilerOptions } = JSON.parse(readFileSync(tsconfigPath, "utf8")) as {
       compilerOptions: { customConditions: string[] };
@@ -39,7 +39,7 @@ describe("nonSourceSuffixes", () => {
 
     // oxlint-disable-next-line no-restricted-properties -- the tsconfig carries no dates, and this package builds before @esposter/shared so it cannot import jsonDateParse
     const { exclude } = JSON.parse(
-      readFileSync(resolve(import.meta.dirname, "../tsconfig.build.base.json"), "utf8"),
+      readFileSync(resolve(import.meta.dirname, "../../tsconfig.build.base.json"), "utf8"),
     ) as { exclude: string[] };
 
     expect(

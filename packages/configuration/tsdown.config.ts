@@ -1,8 +1,8 @@
 import type { UserConfig } from "tsdown";
 
-import { getPackagePatterns } from "#src/getPackagePatterns";
-import { getTsdownConfigurationNode } from "#src/getTsdownConfigurationNode";
-import { readPackageManifest } from "#src/readPackageManifest";
+import { getPackagePatterns } from "#src/services/getPackagePatterns";
+import { getTsdownConfigurationNode } from "#src/services/getTsdownConfigurationNode";
+import { readPackageManifest } from "#src/services/readPackageManifest";
 import { mergeConfig } from "tsdown";
 
 const { devDependencies } = readPackageManifest();

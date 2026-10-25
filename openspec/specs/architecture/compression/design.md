@@ -35,13 +35,13 @@ Compressing on the server through a node builtin, and decompressing in the brows
 
 ## Key Files
 
-| File                                                        | Role                                                                       |
-| ----------------------------------------------------------- | -------------------------------------------------------------------------- |
-| `packages/keyframe-store/src/services/encodeObject.ts`      | a retained version, compressed as a keyframe or a delta                    |
-| `packages/keyframe-store/src/services/decodeObject.ts`      | the matching decode, with the base plaintext as the dictionary             |
-| `packages/db/src/services/azure/container/writeJsonBlob.ts` | every JSON blob, a standalone frame served as `Content-Encoding: zstd`     |
-| `packages/parse-tmx/src/services/getDecompressedBytes.ts`   | the browser-side decode of a foreign format, through `DecompressionStream` |
-| `packages/configuration/src/getTsdownConfiguration.ts`      | the neutral platform default that keeps node builtins out of a bundle      |
+| File                                                            | Role                                                                       |
+| --------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `packages/keyframe-store/src/services/encodeObject.ts`          | a retained version, compressed as a keyframe or a delta                    |
+| `packages/keyframe-store/src/services/decodeObject.ts`          | the matching decode, with the base plaintext as the dictionary             |
+| `packages/db/src/services/azure/container/writeJsonBlob.ts`     | every JSON blob, a standalone frame served as `Content-Encoding: zstd`     |
+| `packages/parse-tmx/src/services/getDecompressedBytes.ts`       | the browser-side decode of a foreign format, through `DecompressionStream` |
+| `packages/configuration/src/services/getTsdownConfiguration.ts` | the neutral platform default that keeps node builtins out of a bundle      |
 
 ## Notes
 

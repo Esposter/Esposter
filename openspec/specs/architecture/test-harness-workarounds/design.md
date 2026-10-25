@@ -50,16 +50,16 @@ Not every piece of test scaffolding is a workaround, and treating them alike wou
 
 ## Key files
 
-| File                                                    | Role                                                                                       |
-| ------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `packages/configuration/src/getVueTestConfiguration.ts` | The upstream Vue log filter                                                                |
-| `packages/configuration/src/getVitestConfiguration.ts`  | `--no-webstorage` for every member                                                         |
-| `apps/web/shared/test/setup.ts`                         | Storage, the Azure and runtime-config mocks, the warm-up hook, and auto-unmount            |
-| `apps/web/vitest.config.ts`                             | `setupFiles` including `fake-indexeddb/auto`, the node default, and the timeouts around it |
-| `apps/web/app/services/trpc/mswTrpc.test.ts`            | The msw `fetch` and `Headers` realignment                                                  |
-| `apps/web/configuration/modules.ts`                     | The Vitest module allowlist                                                                |
-| `packages/vue-phaserjs/src/test/setupCanvas.ts`         | The canvas context mock Phaser boots against                                               |
-| `packages/vue-phaserjs/src/test/setup.ts`               | The `Phaser` global stub                                                                   |
-| `packages/configuration/src/dynamicJsonImportPlugin.ts` | The dynamic JSON import attribute workaround                                               |
-| `packages/genshin-world/vitest.browser.config.ts`       | The browser suite wiring it                                                                |
-| `packages/genshin-world/parity/vite.config.ts`          | The parity page wiring it                                                                  |
+| File                                                             | Role                                                                                       |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `packages/configuration/src/services/getVueTestConfiguration.ts` | The upstream Vue log filter                                                                |
+| `packages/configuration/src/services/getVitestConfiguration.ts`  | `--no-webstorage` for every member                                                         |
+| `apps/web/shared/test/setup.ts`                                  | Storage, the Azure and runtime-config mocks, the warm-up hook, and auto-unmount            |
+| `apps/web/vitest.config.ts`                                      | `setupFiles` including `fake-indexeddb/auto`, the node default, and the timeouts around it |
+| `apps/web/app/services/trpc/mswTrpc.test.ts`                     | The msw `fetch` and `Headers` realignment                                                  |
+| `apps/web/configuration/modules.ts`                              | The Vitest module allowlist                                                                |
+| `packages/vue-phaserjs/src/test/setupCanvas.ts`                  | The canvas context mock Phaser boots against                                               |
+| `packages/vue-phaserjs/src/test/setup.ts`                        | The `Phaser` global stub                                                                   |
+| `packages/configuration/src/services/dynamicJsonImportPlugin.ts` | The dynamic JSON import attribute workaround                                               |
+| `packages/genshin-world/vitest.browser.config.ts`                | The browser suite wiring it                                                                |
+| `packages/genshin-world/parity/vite.config.ts`                   | The parity page wiring it                                                                  |

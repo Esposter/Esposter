@@ -1,5 +1,5 @@
-import { generateExports } from "#src/generateExports";
-import { getComponentName } from "#src/getComponentName";
+import { generateExports } from "#src/services/generateExports";
+import { getComponentName } from "#src/services/getComponentName";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, utimesSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";

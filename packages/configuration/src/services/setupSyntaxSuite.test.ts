@@ -1,22 +1,10 @@
+import type { SetupSyntaxSuiteOptions } from "#src/models/SetupSyntaxSuiteOptions";
 import type { Linter } from "eslint";
 
 import { ESLint } from "eslint";
 import { join } from "node:path";
 import { beforeAll, describe, expect, test } from "vitest";
 
-interface SetupSyntaxSuiteOptions {
-  // The restricted-syntax entries under test, told apart from every other entry by their message
-  entries: { message: string }[];
-  fixtures: SyntaxFixture[];
-}
-
-interface SyntaxFixture {
-  // The fixture's file name under the package, whose extension picks the override that lints it
-  filePath: string;
-  name: string;
-  source: string;
-  violations: number;
-}
 // Every ban here is one entry in a list the flat config spreads into one or more overrides, so a fixture is linted
 // Through the real app config rather than the entry alone: that is what proves the selector parses, that its
 // Override reaches the file kind it names, and that a later override has not replaced it. The config is loaded once
@@ -29,7 +17,7 @@ export const setupSyntaxSuite = ({ entries, fixtures }: SetupSyntaxSuiteOptions)
 
   beforeAll(async () => {
     const eslint = new ESLint({
-      cwd: join(import.meta.dirname, ".."),
+      cwd: join(import.meta.dirname, "..", ".."),
       overrideConfigFile: "eslint/index.vue.js",
       ruleFilter: ({ ruleId }) => ruleId.endsWith("no-restricted-syntax"),
     });

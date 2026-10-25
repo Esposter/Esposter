@@ -1,4 +1,4 @@
-import { KIBIBYTE } from "#src/constants";
+import { KIBIBYTE } from "#src/services/constants";
 import { statSync } from "node:fs";
 import { basename, resolve } from "node:path";
 

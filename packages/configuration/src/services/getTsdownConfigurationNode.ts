@@ -1,7 +1,7 @@
 import type { TsdownConfigurationOptions } from "#src/models/TsdownConfigurationOptions";
 import type { UserConfig } from "tsdown";
 
-import { getTsdownConfiguration } from "#src/getTsdownConfiguration";
+import { getTsdownConfiguration } from "#src/services/getTsdownConfiguration";
 import { mergeConfig } from "tsdown";
 
 export const getTsdownConfigurationNode = (options?: TsdownConfigurationOptions): UserConfig =>

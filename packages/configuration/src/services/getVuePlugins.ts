@@ -1,8 +1,8 @@
 import type { Options } from "unplugin-vue/api";
 import type { PluginOption } from "vite";
 
-import { VUE_AUTO_IMPORTS } from "#src/constants";
-import { vueStyleSrcPlugin } from "#src/vueStyleSrcPlugin";
+import { VUE_AUTO_IMPORTS } from "#src/services/constants";
+import { vueStyleSrcPlugin } from "#src/services/vueStyleSrcPlugin";
 import AutoImport from "unplugin-auto-import/vite";
 import Vue from "unplugin-vue/vite";
 

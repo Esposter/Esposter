@@ -1,4 +1,4 @@
-import { getComponentName } from "#src/getComponentName";
+import { getComponentName } from "#src/services/getComponentName";
 import { describe, expect, test } from "vitest";
 
 describe(getComponentName, () => {

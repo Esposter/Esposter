@@ -1,6 +1,6 @@
 import type { Plugin } from "vite";
 
-import { removeDynamicJsonImportAttributes } from "#src/removeDynamicJsonImportAttributes";
+import { removeDynamicJsonImportAttributes } from "#src/services/removeDynamicJsonImportAttributes";
 
 // @TODO: https://github.com/vitejs/vite/issues/19095
 // Vite's server hands a JSON file on as a JavaScript module and strips a static import's `type: "json"` to match, but

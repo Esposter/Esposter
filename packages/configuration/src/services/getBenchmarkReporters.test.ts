@@ -1,5 +1,5 @@
 // oxlint-disable no-restricted-properties -- the suite sets the argv Vitest itself is started with, which is what it reads
-import { getBenchmarkReporters } from "#src/getBenchmarkReporters";
+import { getBenchmarkReporters } from "#src/services/getBenchmarkReporters";
 import { afterEach, describe, expect, test } from "vitest";
 
 describe(getBenchmarkReporters, () => {

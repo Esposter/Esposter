@@ -1,10 +1,10 @@
 import type { TsdownConfigurationOptions } from "#src/models/TsdownConfigurationOptions";
 import type { UserConfig } from "tsdown";
 
-import { SOURCE_CONDITION } from "#src/constants";
-import { generateExports } from "#src/generateExports";
-import { getPackagePatterns } from "#src/getPackagePatterns";
-import { readPackageManifest } from "#src/readPackageManifest";
+import { SOURCE_CONDITION } from "#src/services/constants";
+import { generateExports } from "#src/services/generateExports";
+import { getPackagePatterns } from "#src/services/getPackagePatterns";
+import { readPackageManifest } from "#src/services/readPackageManifest";
 import { mergeConfig } from "tsdown";
 
 // The base every package's `tsdown.config.ts` calls. tsdown already defaults `outDir` to `dist`, `format` to
