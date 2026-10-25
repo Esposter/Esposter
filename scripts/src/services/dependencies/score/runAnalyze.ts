@@ -1,5 +1,5 @@
-import { APP_DIRECTORY, CLIENT_BUNDLE_REPORT_PATH } from "#src/services/dependencies/score/constants";
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { CLIENT_BUNDLE_REPORT_PATH } from "#src/services/dependencies/score/constants";
+import { APP_DIRECTORY, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { spawnPnpm } from "#src/services/shared/spawnPnpm";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { resolve } from "node:path";

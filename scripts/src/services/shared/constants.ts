@@ -115,3 +115,5 @@ export const PINNED_TOOL_DOWNLOAD_TIMEOUT_MS: number = Temporal.Duration.from({ 
 export const PACKAGE_LOCK_JSON_FILENAME = "package-lock.json";
 export const SWEEP_LIMIT = 100;
 export const OFF_DIAGONAL_TOLERANCE = 1e-12;
+// The web app's directory, against the repository root
+export const APP_DIRECTORY = "apps/web";

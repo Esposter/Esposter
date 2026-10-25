@@ -1,8 +1,8 @@
 import type { ClientBundleReport } from "#src/models/dependencies/score/ClientBundleReport";
 
 import { clientBundleReportSchema } from "#src/models/dependencies/score/ClientBundleReport";
-import { APP_DIRECTORY, CLIENT_BUNDLE_REPORT_PATH } from "#src/services/dependencies/score/constants";
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { CLIENT_BUNDLE_REPORT_PATH } from "#src/services/dependencies/score/constants";
+import { APP_DIRECTORY, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { existsSync, readFileSync, statSync } from "node:fs";

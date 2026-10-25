@@ -68,8 +68,6 @@ export const SHIM_LINE_WINDOW = 3;
 // The reasons a Keep verdict keeps a package whose type workarounds absorbing it would fix at the root
 export const SHIM_EXEMPT_REASONS: string[] = CORE_EXEMPT_REASONS;
 
-// The app whose client bundle the report is read from, against the repository root
-export const APP_DIRECTORY = "apps/web";
 // How many of the largest bundle costs the report ends on
 export const TOP_BUNDLE_COUNT = 25;
 // The package the app's own code is attributed to in the client bundle report, and the report the score's `nuxt analyze`

@@ -1,8 +1,7 @@
 import type { WorkspacePackage } from "#src/models/dependencies/score/WorkspacePackage";
 import type { ManifestFile } from "#src/models/shared/ManifestFile";
 
-import { APP_DIRECTORY } from "#src/services/dependencies/score/constants";
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { APP_DIRECTORY, REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { dirname, relative } from "node:path";
 
 // Every workspace package other than the root and the app, by its directory from the repository root
