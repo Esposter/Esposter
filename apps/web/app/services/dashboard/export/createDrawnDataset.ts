@@ -4,6 +4,7 @@ import type { AxisVisualPropsData } from "@/models/dashboard/AxisVisualPropsData
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { VisualDatasetShape } from "@/models/dashboard/VisualDatasetShape";
+import { DASHBOARD_TABLE_CATEGORY_KEY } from "@/services/dashboard/constants";
 import { takeOne } from "@esposter/shared";
 
 // The key a series' column is read from, by its position, so a category sharing a series' name cannot overwrite it
@@ -25,9 +26,9 @@ export const createDrawnDataset = (
   }));
   const columns: Dataset["columns"] = isSingle
     ? seriesColumns
-    : [{ name: "category", title: xColumn, type: ColumnType.String }, ...seriesColumns];
+    : [{ name: DASHBOARD_TABLE_CATEGORY_KEY, title: xColumn, type: ColumnType.String }, ...seriesColumns];
   const rows = Array.from({ length: isSingle ? 1 : categories.length }, (_row, index) => ({
-    ...(isSingle ? {} : { category: takeOne(categories, index) }),
+    ...(isSingle ? {} : { [DASHBOARD_TABLE_CATEGORY_KEY]: takeOne(categories, index) }),
     ...Object.fromEntries(
       series.map((item, seriesIndex) => [getSeriesKey(seriesIndex), Number(takeOne(item.data, index))]),
     ),
