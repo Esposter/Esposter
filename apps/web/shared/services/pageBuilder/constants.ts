@@ -23,6 +23,8 @@ export const MAX_NODE_TEXT_LENGTH = 2000;
 export const MAX_NODE_HTML_LENGTH = 100_000;
 export const MAX_URL_LENGTH = 2048;
 export const MAX_LANG_LENGTH = 35;
+// The most characters a page token's name may hold, its color- or font- prefix included
+export const MAX_TOKEN_NAME_LENGTH = 64;
 // The most texts a typed text node cycles through
 export const MAX_TYPED_TEXT_COUNT = 50;
 // The CSS properties the style panel offers, in the panel's sector order: layout, spacing, size, position, typography, background, border and effects
