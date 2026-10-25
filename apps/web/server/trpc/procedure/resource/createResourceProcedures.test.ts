@@ -1,14 +1,15 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
+import type { GetSessionPayload } from "#shared/models/auth/GetSessionPayload";
 import type { Clause } from "@esposter/azure";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
-import { authMocks } from "#server/auth.test";
+import { authMocks, createMockSession } from "#server/auth.test";
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { useTableClient } from "#server/composables/azure/table/useTableClient";
 import { getStagingContentBlobName } from "#server/services/resource/getStagingContentBlobName";
 import { createCallerFactory } from "#server/trpc";
-import { createMockContext, mockSessionOnce } from "#server/trpc/context.test";
+import { createMockContext, mockSessionOnce, replayMockSession } from "#server/trpc/context.test";
 import { createResourceProcedures } from "#server/trpc/procedure/resource/createResourceProcedures";
 import { dashboardRouter } from "#server/trpc/routers/dashboard";
 import { getFirstEmit } from "#server/trpc/routers/getFirstEmit.test";
@@ -208,6 +209,32 @@ describe(createResourceProcedures, () => {
     expect(emitted).toStrictEqual({ contentVersion: 1, id: newResource.id });
     expect(device.sessionId).toBeTypeOf("string");
     expect(device.userId).toBe(authMocks.user.id);
+  });
+
+  // One user on two sessions is two devices: the first save the subscriber made is filtered out, so the first save
+  // it hears is the other session's, at the version that save landed on
+  test("A device does not hear its own save", async () => {
+    expect.hasAssertions();
+
+    const ownPayload: GetSessionPayload = { session: createMockSession(authMocks.user.id), user: authMocks.user };
+    const otherPayload: GetSessionPayload = { session: createMockSession(authMocks.user.id), user: authMocks.user };
+    const dashboard = new Dashboard({ visuals: [new Visual()] });
+    replayMockSession(ownPayload);
+    const newResource = await dashboardCaller.createResource({ name });
+    replayMockSession(ownPayload);
+    const subscription = await dashboardCaller.onSaveResourceContent({ id: newResource.id });
+    const data = await getFirstEmit(
+      () => subscription,
+      async () => {
+        replayMockSession(ownPayload);
+        await dashboardCaller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id });
+        replayMockSession(otherPayload);
+        await dashboardCaller.saveResourceContent({ content: dashboard, contentVersion: 1, id: newResource.id });
+      },
+    );
+
+    expect(data.contentVersion).toBe(2);
+    expect(data.device.sessionId).toBe(otherPayload.session.id);
   });
 
   test("fails save content with old content version", async () => {

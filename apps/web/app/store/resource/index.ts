@@ -1,5 +1,6 @@
 import type { ResourceContent } from "#shared/models/resource/ResourceContent";
 import type { ContentBaseline } from "@/models/resource/ContentBaseline";
+import type { ResourceSave } from "@/models/resource/ResourceSave";
 import type {
   ResourceInResource,
   ResourcePublicationInResource,
@@ -239,6 +240,13 @@ export const useResourceStore = defineStore("resource", () => {
   // Next save from being rejected as stale
   const storeContentVersion = (contentVersion: ResourceInResource["contentVersion"]) => {
     if (resource.value) resource.value.contentVersion = contentVersion;
+  };
+  // Another device saved this resource. Taken through the two stages a restore runs, which the reload leaves to
+  // Adopt the document (openspec/changes/architecture-ai-native-resources-live-edits/design.md)
+  const storeSaveResourceContent = async ({ contentVersion }: ResourceSave) => {
+    if (!resource.value || contentVersion <= resource.value.contentVersion) return;
+
+    await reloadResourceContent();
   };
   const saveContent = async (content: ResourceContent<ResourceType>) => {
     const resourceValue = resource.value;
@@ -503,6 +511,7 @@ export const useResourceStore = defineStore("resource", () => {
     saveState,
     setPersistedContent,
     storeContentVersion,
+    storeSaveResourceContent,
     unpublishResource,
     unwrittenContentResourceId,
     updateResourceTags,

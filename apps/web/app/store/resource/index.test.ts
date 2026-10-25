@@ -1,4 +1,5 @@
 // @vitest-environment nuxt
+import type { Device } from "#shared/models/auth/Device";
 import type { NoteResource } from "#shared/models/resource/note/NoteResource";
 import type { ResourceContent } from "#shared/models/resource/ResourceContent";
 import type { SheetResource } from "#shared/models/resource/sheet/SheetResource";
@@ -52,6 +53,7 @@ describe(useResourceStore, () => {
   let readResourceQuery: ReturnType<typeof vi.fn<(options: { input: { id: string } }) => ReadResourceResult>>;
   let saveResourceContent: ReturnType<typeof vi.fn<() => ResourceInResource>>;
   const resourceId = crypto.randomUUID();
+  const device: Device = { sessionId: crypto.randomUUID(), userId: crypto.randomUUID() };
   const otherResourceId = crypto.randomUUID();
   const newName = "newName";
   const failingName = "failingName";
@@ -843,4 +845,25 @@ describe(useResourceStore, () => {
 
     expect(stages).toStrictEqual(["reload", "adopt"]);
   });
+
+  // The save stream names the version and the device only, so every open resource of every type is told of another
+  // Device's save through the same store door
+  test.each([ResourceType.Note, ResourceType.Sheet, ResourceType.TodoList])(
+    "An open resource of any type hears another device's save (%s)",
+    async (type) => {
+      expect.hasAssertions();
+
+      trpcMsw.resource.readResource.query(({ input }) => ({ ...createResource(input.id, type), publication: null }));
+      const reload = vi.fn<(reloadedType: ResourceType) => void>();
+      const unregisterReload = ResourceContentHookMap.Reload.register(reload);
+      const resourceStore = useResourceStore();
+      await resourceStore.readResource();
+      await withFinalizerAsync(
+        () => resourceStore.storeSaveResourceContent({ contentVersion: 1, device }),
+        unregisterReload,
+      );
+
+      expect(reload).toHaveBeenCalledExactlyOnceWith(type);
+    },
+  );
 });
