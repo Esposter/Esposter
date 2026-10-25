@@ -1,8 +1,10 @@
 import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
+import type { FramePlacement } from "@/models/pageBuilder/FramePlacement";
 import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
 import type { Ref, ShallowRef } from "vue";
 
 import { checkIsHorizontalFlow } from "@/services/pageBuilder/checkIsHorizontalFlow";
+import { getToolbarPlacement } from "@/services/pageBuilder/getToolbarPlacement";
 import { getFrameScale } from "vue-canvas-frame-headless";
 
 // The canvas's frame as the page builder reads it: a node's element in the frame, the frame's geometry for a palette drag, and
@@ -23,18 +25,40 @@ export const usePageBuilderFrame = (
   // The frame is scaled to fit its pane, so the scale maps the frame's own pixels to the app's viewport
   const getFrameScaleOf = (frameElement: HTMLIFrameElement) =>
     getFrameScale(frameElement.parentElement?.clientWidth ?? 0, frameElement.offsetWidth);
-  // The toolbar sits in the app's document, so the selection box is mapped into the app's viewport through the frame's element
-  // The frame is scaled to fit its pane while the box is in the frame's own unscaled pixels, so the scale applies to the box
-  const toolbarPosition = computed(() => {
+  // The frame moves in the app's viewport when the app scrolls or its pane resizes, and neither changes the selection box, so
+  // Its placement is read again on each. The toolbar sits in the app's document and is placed from that placement
+  const framePlacement = shallowRef<FramePlacement>();
+  const refreshFramePlacement = () => {
     const frameElement = getFrameElement();
-    if (!frameElement || !selectionBox.value) return undefined;
+    if (!frameElement) {
+      framePlacement.value = undefined;
+      return;
+    }
 
-    const scale = getFrameScaleOf(frameElement);
     const frameRect = frameElement.getBoundingClientRect();
-    return {
-      left: frameRect.left + selectionBox.value.left * scale,
-      top: frameRect.top + selectionBox.value.top * scale,
+    framePlacement.value = {
+      height: frameRect.height,
+      left: frameRect.left,
+      scale: getFrameScaleOf(frameElement),
+      top: frameRect.top,
     };
+  };
+  // One read per animation frame, however many scrolls land before it
+  let pendingFrame = 0;
+  const scheduleFramePlacement = () => {
+    cancelAnimationFrame(pendingFrame);
+    pendingFrame = requestAnimationFrame(refreshFramePlacement);
+  };
+  // Captured so a scroll in any container of the app reaches it, not only the window's own
+  useEventListener("scroll", scheduleFramePlacement, { capture: true, passive: true });
+  // The pane's size moves the frame's scale, and the device toggle changes the frame's own width without changing the pane's
+  useResizeObserver(() => getFrameElement()?.parentElement, scheduleFramePlacement);
+  useResizeObserver(getFrameElement, scheduleFramePlacement);
+  watch(contentRoot, refreshFramePlacement, { flush: "post" });
+  const toolbarPosition = computed(() => {
+    if (!framePlacement.value || !selectionBox.value) return undefined;
+
+    return getToolbarPlacement(selectionBox.value, framePlacement.value);
   });
   // What a palette drag reads of the frame, taken fresh at each call. A child's box is its raw viewport rect in the frame.
   // That is the same space the pointer is mapped into, so the drop logic is not offset by the frame's own scroll

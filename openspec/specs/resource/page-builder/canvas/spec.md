@@ -52,6 +52,28 @@ Hovering a node SHALL outline it, and selecting a node SHALL show a selection ou
 - **THEN** the node is outlined while the pointer is over it
 - **AND** clicking it shows the selection outline and the node's toolbar
 
+### Requirement: The node toolbar sits beside its node
+
+The node toolbar SHALL sit above its selected node, or below it when the canvas has no room above, SHALL stay beside the node as the app or the canvas scrolls, and SHALL be hidden while the node is outside the canvas.
+
+#### Scenario: The toolbar sits above its node when the canvas has room for it
+
+- **GIVEN** a selected node with room above it in the canvas
+- **WHEN** the toolbar is shown
+- **THEN** it sits above the node, clear of the node's top edge
+
+#### Scenario: The toolbar sits below its node when there is no room above it
+
+- **GIVEN** a selected node whose top edge is at the top of the canvas
+- **WHEN** the toolbar is shown
+- **THEN** it sits below the node's bottom edge
+
+#### Scenario: The toolbar is hidden once its node has scrolled out of the canvas
+
+- **GIVEN** a selected node
+- **WHEN** the canvas scrolls until the node is no longer in view
+- **THEN** the toolbar is hidden
+
 ### Requirement: A block dragged from the palette drops into the slot under the pointer
 
 A block dragged from the palette SHALL drop into the nearest slot under the pointer that accepts its type, and SHALL be cancelled where no such slot exists.
@@ -199,12 +221,12 @@ The Content panel SHALL show the fields of the selected node's type, and a chang
 - **WHEN** the owner changes its label in the Content panel
 - **THEN** the button on the canvas shows the new label
 
-### Requirement: An empty page offers the palette
+### Requirement: An empty page names the palette rather than drawing a second one
 
-A page with no nodes SHALL offer the palette in its canvas, so the first block can be added from there.
+A page with no nodes SHALL show its empty state in the canvas, naming the palette beside the canvas as the place the first block is added from, and SHALL NOT draw the palette a second time.
 
-#### Scenario: An empty page offers the palette
+#### Scenario: An empty page names the palette rather than drawing a second one
 
 - **GIVEN** a new webpage with no nodes
 - **WHEN** the owner opens it in the editor
-- **THEN** the canvas offers the palette's blocks
+- **THEN** the canvas shows the empty state titled "This page is empty" and names the palette, and no frame is drawn

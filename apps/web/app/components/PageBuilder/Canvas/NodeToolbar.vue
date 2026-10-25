@@ -36,18 +36,9 @@ const { selectParent } = usePageBuilderSelection(
 const isDeleteOpen = ref(false);
 </script>
 
-<!-- Above the selected node, so the toolbar never covers the node it acts on -->
+<!-- Placed by the canvas above the selected node, or below it when the frame has no room above -->
 <template>
-  <div
-    p-1
-    b-border
-    bg-background
-    flex
-    gap-1
-    fixed
-    class="-translate-y-full"
-    :style="{ left: `${position.left}px`, top: `${position.top}px` }"
-  >
+  <div p-1 b-border bg-background flex gap-1 fixed :style="{ left: `${position.left}px`, top: `${position.top}px` }">
     <UiIconButton label="Select parent" :meaning="UiIconMeaning.Collapse" @click="selectParent()" />
     <UiIconButton label="Move up" :meaning="UiIconMeaning.ArrowUp" @click="moveUp()" />
     <UiIconButton label="Move down" :meaning="UiIconMeaning.ArrowDown" @click="moveDown()" />

@@ -303,7 +303,7 @@ describe("pageBuilderEditor", () => {
     ).toStrictEqual([[TEST_ROOT_TEXT_ID]]);
   });
 
-  test("an empty page shows the palette instead of the canvas", async () => {
+  test("an empty page shows its empty state instead of the canvas", async () => {
     expect.hasAssertions();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
 

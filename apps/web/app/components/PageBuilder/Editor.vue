@@ -153,13 +153,7 @@ const handleEditorKeydown = (event: KeyboardEvent) => {
     </div>
     <div flex flex-1 flex-col gap-2 min-h-0 min-w-0>
       <PageBuilderCanvasDeviceToggle :resource-id />
-      <PageBuilderEmptyPage
-        v-if="pageDocument.content.length === 0"
-        :announce
-        :get-document="getPageDocument"
-        :kind
-        :resource-id
-      />
+      <PageBuilderEmptyPage v-if="pageDocument.content.length === 0" />
       <PageBuilderCanvas
         v-else
         ref="canvas"
