@@ -8,6 +8,8 @@ import { AzureFunction } from "#src/models/azure/function/AzureFunction";
 // Exhaustive over AzureFunction on purpose — a new function has to state its answer here rather than inherit a default
 // That silently makes its dead-letters replayable.
 export const AzureFunctionIsIdempotentMap = {
+  // Each sweep treats a gone target as done and the user row goes last, so a replay finds only what a failed run left.
+  [AzureFunction.DeleteAccount]: true,
   // Deletes each blob with deleteIfExists, so a blob an earlier attempt already removed is a no-op rather than a
   // 404: a replay converges on the same empty state instead of duplicating work.
   [AzureFunction.ProcessBlobDeletion]: true,

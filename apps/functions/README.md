@@ -31,6 +31,7 @@ Most functions are triggered by **Azure EventGrid** events published by the main
 | `SendTodoReminder`            | Service Bus (`TodoReminders`)        | Publishes a `TodoReminder` notification when a TodoList item comes due      |
 | `PurgeDeletedResources`       | Timer                                | Purges recycle-bin resources past their retention window                    |
 | `PurgeSurveyResources`        | EventGrid                            | One-time run removing the survey resources, started by one published event  |
+| `DeleteAccount`               | EventGrid                            | Sweeps every store a deleted account is keyed to, its user row last         |
 
 ### Flow
 
