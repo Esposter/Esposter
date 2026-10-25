@@ -6,7 +6,7 @@ import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSou
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
 import { FlowchartExportFormat } from "@/models/resource/FlowchartExportFormat";
 import { getDatasetErrorMessage } from "@/services/dataset/getDatasetErrorMessage";
-import { OPEN_EMAIL_EDITOR_MESSAGE } from "@/services/emailEditor/constants";
+import { exportWebpageHtml } from "@/services/pageBuilder/exportWebpageHtml";
 import { createDefaultSheetSettings } from "@/services/resource/sheet/createDefaultSheetSettings";
 import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
 import { DataSourceTypeItemCategoryDefinitionMap } from "@/services/resource/sheet/dataSource/DataSourceTypeItemCategoryDefinitionMap";
@@ -24,7 +24,7 @@ import { useTodoListStore } from "@/store/resource/todoList";
 import { useTodoListPrintDialogStore } from "@/store/resource/todoList/printDialog";
 import { trimFileExtension } from "@/util/file/trimFileExtension";
 import { ResourceType } from "@esposter/db-schema";
-import { getResultAsync, noop } from "@esposter/shared";
+import { getResult, getResultAsync, noop } from "@esposter/shared";
 import { toRaw } from "vue";
 
 // Per-format import/export for Sheet. Both hand off to the dialog the blade shell mounts rather than acting
@@ -93,33 +93,23 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
     {
       export: async () => {
         const { $trpc } = useNuxtApp();
-        const alertStore = useAlertStore();
-        const { createAlert } = alertStore;
-        // The bound dataset lives on the email store, and the document the export compiles is the one the page builder
-        // holds for the resource the blade shows, so the export takes each from the store that owns it
-        const emailEditorStore = useEmailEditorStore();
-        const { datasetReference } = storeToRefs(emailEditorStore);
+        const { createAlert } = useAlertStore();
         const resourceStore = useResourceStore();
-        const { resource } = storeToRefs(resourceStore);
-        const pageBuilderDocumentStore = usePageBuilderDocumentStore();
-        const { getEmailDocument } = pageBuilderDocumentStore;
-        const emailExportDialogStore = useEmailExportDialogStore();
-        const { setPendingDataset } = emailExportDialogStore;
-        const exportPersonalizedHtml = useExportPersonalizedHtml();
-        const referenceValue = datasetReference.value;
-        if (!resource.value || !getEmailDocument(resource.value.id)) {
-          createAlert(OPEN_EMAIL_EDITOR_MESSAGE, "warning");
-          return;
-        }
-        if (!referenceValue) {
-          createAlert("Bind a dataset before exporting personalized HTML", "warning");
-          return;
-        }
-        // The dataset is read after an await, so what it is exported into is named now
-        const resourceId = resource.value.id;
+        const resourceId = resourceStore.currentResourceId;
+        // The open editor's latest edit reaches the stored copy first, so the export compiles what the reader sees. With
+        // No editor open nothing is held and the save is a no-op
+        const { saveEmail } = useEmailEditorStore();
+        const { setPendingDataset } = useEmailExportDialogStore();
+        const { compileStoredEmail, exportRows } = useExportPersonalizedHtml();
 
         await getResultAsync(async () => {
-          const dataset = await $trpc.dataset.readDataset.query(referenceValue);
+          await saveEmail(resourceId);
+          const { datasetReference, html } = await compileStoredEmail(resourceId);
+          if (!datasetReference) {
+            createAlert("Bind a dataset before exporting personalized HTML", "warning");
+            return;
+          }
+          const dataset = await $trpc.dataset.readDataset.query(datasetReference);
           if (dataset.rows.length === 0) {
             createAlert("Dataset has no rows to export", "warning");
             return;
@@ -127,7 +117,7 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
           // Silently mailing a truncated audience is the one failure the sender can never take back,
           // So a capped read hands the decision to the Editor blade's confirm instead of exporting
           if (getDatasetTruncation(dataset)) setPendingDataset(resourceId, dataset);
-          else await exportPersonalizedHtml(resourceId, dataset.rows);
+          else exportRows(resourceId, html, dataset.rows);
         }).match(noop, (error) => createErrorAlert(error, getDatasetErrorMessage(error)));
       },
       icon: "i-mdi:language-html5",
@@ -174,6 +164,27 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
       },
       icon: "i-mdi:printer",
       label: "Print",
+    },
+  ],
+  [ResourceType.Webpage]: [
+    {
+      export: async () => {
+        const resourceStore = useResourceStore();
+        const { resource } = storeToRefs(resourceStore);
+        const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+        const { getDocument } = pageBuilderDocumentStore;
+        const resourceValue = resource.value;
+        const document = resourceValue && getDocument(resourceValue.id);
+        if (!resourceValue || !document) {
+          useAlertStore().createAlert("Open the webpage before exporting its HTML", "warning");
+          return;
+        }
+        getResult(() => exportWebpageHtml(resourceValue.name, document, window.location.origin)).match(noop, (error) =>
+          createErrorAlert(error),
+        );
+      },
+      icon: "i-mdi:language-html5",
+      label: "HTML",
     },
   ],
 };

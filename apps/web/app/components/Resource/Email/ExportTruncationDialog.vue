@@ -5,10 +5,12 @@ import { pluralize } from "#shared/util/text/pluralize";
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
 import { formatTruncationCount } from "@/services/dataset/formatTruncationCount";
+import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useEmailExportDialogStore } from "@/store/emailEditor/exportDialog";
 import { useResourceStore } from "@/store/resource";
+import { getResultAsync, noop } from "@esposter/shared";
 
-const exportPersonalizedHtml = useExportPersonalizedHtml();
+const { compileStoredEmail, exportRows } = useExportPersonalizedHtml();
 const emailExportDialogStore = useEmailExportDialogStore();
 const { pendingDataset } = storeToRefs(emailExportDialogStore);
 const resourceStore = useResourceStore();
@@ -24,9 +26,13 @@ const isOpen = computed({
 });
 // The rows are read before the dialog closes, since closing clears the staged dataset they come from
 const exportAnyway = async () => {
+  const resourceId = currentResourceId.value;
   const rows = pendingDataset.value?.rows ?? [];
   isOpen.value = false;
-  await exportPersonalizedHtml(currentResourceId.value, rows);
+  await getResultAsync(async () => {
+    const { html } = await compileStoredEmail(resourceId);
+    exportRows(resourceId, html, rows);
+  }).match(noop, (error) => createErrorAlert(error));
 };
 </script>
 

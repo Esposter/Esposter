@@ -5,6 +5,7 @@ import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test
 import { webpageRouter } from "#server/trpc/routers/webpage";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { createTestImageNode } from "#shared/services/pageBuilder/constants.test";
+import { createTestTextDocument } from "#shared/services/pageBuilder/createTestTextDocument.test";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { AzureContainer, ResourceType } from "@esposter/db-schema";
@@ -51,6 +52,23 @@ describe("webpageRouter", () => {
     const content = await caller.readResourceContent({ id: newResource.id });
 
     expect(content).toStrictEqual(jsonDateParse(JSON.stringify(webpageEditor)));
+  });
+
+  test("A published webpage is one HTML document", async () => {
+    expect.hasAssertions();
+
+    const newResource = await caller.createResource({ name });
+    await caller.saveResourceContent({
+      content: new WebpageEditor(createTestTextDocument(1)),
+      contentVersion: newResource.contentVersion,
+      id: newResource.id,
+    });
+    await caller.publishResource({ id: newResource.id });
+    const publishedContent = await caller.readPublishedResourceContent(newResource.id);
+
+    expect(publishedContent.content.html).toMatchInlineSnapshot(
+      `"<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style></style></head><body><div class="text"><p>node 0</p></div></body></html>"`,
+    );
   });
 
   test("publishing a document with images copies no assets", async () => {

@@ -69,7 +69,7 @@ export const ResourceDefinitionMap = {
     title: "Todo List",
   },
   [ResourceType.Webpage]: {
-    capabilities: { fileAssets: true, publishable: true },
+    capabilities: { fileAssets: true, portable: true, publishable: true },
     contentSchema: webpageEditorSchema,
     icon: "i-mdi:language-html5",
     title: ResourceType.Webpage,
