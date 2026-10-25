@@ -143,8 +143,8 @@ const securityModule: NuxtModule<Partial<ModuleOptions>> = defineNuxtModule<Part
       addServerHandler({ handler: resolver.resolve("./runtime/server/middleware/basicAuth"), middleware: true });
 
     // The client bundles are written before Nitro copies the public assets, and Nitro's own build:before runs ahead of
-    // them, so the hashes wait for the public-assets hook. That hook runs before the server is built, and it is not
-    // called in development, where the bundles are served from memory and the page carries no integrity attributes
+    // Them, so the hashes wait for the public-assets hook. That hook runs before the server is built, and it is not
+    // Called in development, where the bundles are served from memory and the page carries no integrity attributes
     let sriHashes: Record<string, string> = {};
     if (options.sri) {
       addServerTemplate({

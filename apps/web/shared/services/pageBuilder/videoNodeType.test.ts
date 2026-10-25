@@ -7,7 +7,7 @@ import { videoNodeType } from "#shared/services/pageBuilder/videoNodeType";
 import { describe, expect, test } from "vitest";
 
 describe("videoNodeType", () => {
-  test("A type's output matches for every edge value", () => {
+  test("a type's output matches for every edge value", () => {
     expect.hasAssertions();
 
     // The title is the accessible name and the tooltip both, so its quotes and ampersands are escaped in each

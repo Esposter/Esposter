@@ -28,7 +28,7 @@ describe("typedTextNodeType", () => {
     }).toStrictEqual({ label: "a, b", text: "a, b", timers: 0 });
   });
 
-  test("A type's output matches for every edge value", () => {
+  test("a type's output matches for every edge value", () => {
     expect.hasAssertions();
 
     // The texts are written as a JSON attribute, so a quote in one is escaped twice: once as JSON and once as the attribute
@@ -48,7 +48,7 @@ describe("typedTextNodeType", () => {
     ]).toStrictEqual([
       `<span aria-label="${TEST_LABEL}" class="typed-text"><span aria-hidden="true" data-texts="[&quot;${TEST_LABEL}&quot;]">${TEST_LABEL}</span></span>`,
       `<span aria-label="${TEST_LABEL}, ${TEST_ID}" class="typed-text"><span aria-hidden="true" data-texts="[&quot;${TEST_LABEL}&quot;,&quot;${TEST_ID}&quot;]">${TEST_LABEL}</span></span>`,
-      '<span aria-label="&quot;&amp;" class="typed-text"><span aria-hidden="true" data-texts="[&quot;\\&quot;&amp;&quot;]">"&amp;</span></span>',
+      String.raw`<span aria-label="&quot;&amp;" class="typed-text"><span aria-hidden="true" data-texts="[&quot;\&quot;&amp;&quot;]">"&amp;</span></span>`,
     ]);
   });
 });

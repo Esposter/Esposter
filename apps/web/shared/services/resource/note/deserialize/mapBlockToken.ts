@@ -8,7 +8,7 @@ import { getTokenText } from "#shared/services/resource/note/deserialize/getToke
 import { mapInlineTokens } from "#shared/services/resource/note/deserialize/mapInlineTokens";
 import { mapList } from "#shared/services/resource/note/deserialize/mapList";
 
-// marked's catch-all token is typed with a bare string type, so a list is narrowed to its own type by this guard
+// Marked's catch-all token is typed with a bare string type, so a list is narrowed to its own type by this guard
 const checkIsListToken = (token: Token): token is Tokens.List => token.type === "list";
 
 export const mapBlockToken = (token: Token, mapBlockTokens: TokensMapper): JSONContent[] => {

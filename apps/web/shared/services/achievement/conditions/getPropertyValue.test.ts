@@ -12,9 +12,11 @@ describe(getPropertyValue, () => {
   test("reads undefined through a step that is absent or null", () => {
     expect.hasAssertions();
 
-    expect(getPropertyValue({} as { data?: { pointCount: number } }, "data.pointCount")).toBeUndefined();
     expect(
-      getPropertyValue({ data: null } as { data: null | { pointCount: number } }, "data.pointCount"),
+      getPropertyValue<{ data?: { pointCount: number } }, "data.pointCount">({}, "data.pointCount"),
+    ).toBeUndefined();
+    expect(
+      getPropertyValue<{ data: null | { pointCount: number } }, "data.pointCount">({ data: null }, "data.pointCount"),
     ).toBeUndefined();
   });
 });

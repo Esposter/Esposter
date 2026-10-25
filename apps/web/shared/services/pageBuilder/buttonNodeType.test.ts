@@ -21,7 +21,7 @@ describe("buttonNodeType", () => {
     expect(result.error?.issues.map(({ path }) => path)).toStrictEqual([["content", 0, "props", "href"]]);
   });
 
-  test("A type's output matches for every edge value", () => {
+  test("a type's output matches for every edge value", () => {
     expect.hasAssertions();
 
     // The label is written as text and the link as an attribute, so each keeps the characters its own escape owns

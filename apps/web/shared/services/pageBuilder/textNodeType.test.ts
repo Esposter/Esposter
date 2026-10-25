@@ -7,7 +7,7 @@ import { textNodeType } from "#shared/services/pageBuilder/textNodeType";
 import { describe, expect, test } from "vitest";
 
 describe("textNodeType", () => {
-  test("A type's output matches for every edge value", () => {
+  test("a type's output matches for every edge value", () => {
     expect.hasAssertions();
 
     // A note's text is written as escaped text, and an empty note publishes as an empty block

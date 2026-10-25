@@ -25,6 +25,6 @@ export const mapInlineToken = (token: Token, mapInlineTokens: TokensMapper): JSO
   if (token.type === "br") return [{ type: "hardBreak" }];
 
   // Escapes, plain text, an image's alt text and raw HTML keep their words. A node the kit has for HTML is not
-  // reached: raw HTML is read as the text it carries, never as markup
+  // Reached: raw HTML is read as the text it carries, never as markup
   return tokens ? mapInlineTokens(tokens) : createTextNodes(getTokenText(token));
 };

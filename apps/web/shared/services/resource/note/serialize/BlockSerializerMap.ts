@@ -9,7 +9,7 @@ import { serializeListItems } from "#shared/services/resource/note/serialize/ser
 import { serializeParagraph } from "#shared/services/resource/note/serialize/serializeParagraph";
 
 // The writing kit's blocks as CommonMark's. A node with no form here keeps its text as a paragraph, so the reader's
-// words survive the export even where the structure does not
+// Words survive the export even where the structure does not
 export const BlockSerializerMap: Record<string, (node: JSONContent, serializeBlocks: NodesSerializer) => string> = {
   blockquote: (node, serializeBlocks) => prefixLines(serializeBlocks(node.content ?? []), "> ", "> "),
   bulletList: (node, serializeBlocks) => serializeListItems(node.content ?? [], () => "- ", serializeBlocks),

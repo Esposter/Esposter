@@ -1,6 +1,5 @@
 import type { Inventory } from "#src/models/inventory/Inventory";
 import type { Wallet } from "#src/models/inventory/Wallet";
-import type { WeaponData } from "#src/models/weapon/WeaponData";
 
 import {
   atCapWeapon,
@@ -38,6 +37,7 @@ describe("weaponScreen", () => {
   const heldRequiredExp =
     getRarityRequiredExps(props.rarityRequiredExpsMap, weaponData.rarity)[heldWeapon.level - 1] ?? 0;
   const heldExperienceText = `${heldWeapon.experience}/${heldRequiredExp}`;
+
   // The weapon's name, rarity, level in the game's own format, EXP, phase and refinement rank
   test("the weapon screen opens on a held weapon", async () => {
     expect.hasAssertions();

@@ -44,7 +44,7 @@ describe("columnsNodeType", () => {
     ).toHaveLength(1);
   });
 
-  test("A type's output matches for every edge value", () => {
+  test("a type's output matches for every edge value", () => {
     expect.hasAssertions();
 
     const column: ColumnNode = { props: { children: [], id: TEST_OTHER_ID }, type: WebpageNodeType.Column };

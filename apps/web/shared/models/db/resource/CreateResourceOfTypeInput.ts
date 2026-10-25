@@ -1,6 +1,7 @@
+import type { z } from "zod";
+
 import { createResourceInputSchema } from "#shared/models/db/resource/CreateResourceInput";
 import { resourceTypeSchema } from "@esposter/db-schema";
-import { z } from "zod";
 
 // A typeless create names the type the factory would otherwise bind, so one procedure serves every type
 export const createResourceOfTypeInputSchema = createResourceInputSchema.extend({ type: resourceTypeSchema });

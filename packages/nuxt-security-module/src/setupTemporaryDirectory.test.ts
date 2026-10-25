@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { afterEach, beforeEach, describe } from "vitest";
 
 // Registers the hooks that give each test a fresh directory and remove it afterwards, and returns the getter for the
-// directory the current test owns
+// Directory the current test owns
 export const setupTemporaryDirectory = (): (() => string) => {
   let directory = "";
 

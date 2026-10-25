@@ -1,5 +1,4 @@
 import type { BlockChildren } from "#src/models/BlockChildren";
-import type { BlockNode } from "#src/models/BlockNode";
 import type { BlockTypeDefinition } from "#src/models/BlockTypeDefinition";
 import type { OwnProps } from "#src/models/OwnProps";
 import type { SlotKeys } from "#src/models/SlotKeys";

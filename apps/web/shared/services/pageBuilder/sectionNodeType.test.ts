@@ -6,7 +6,7 @@ import { serializeHtml } from "#shared/services/pageBuilder/serializeHtml";
 import { describe, expect, test } from "vitest";
 
 describe("sectionNodeType", () => {
-  test("A type's output matches for every edge value", () => {
+  test("a type's output matches for every edge value", () => {
     expect.hasAssertions();
 
     // Every semantic tag the editor offers renders as that element, with the section's class on each

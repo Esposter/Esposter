@@ -40,7 +40,7 @@ describe("tabsNodeType", () => {
     }).toStrictEqual({ focused: `${TEST_OTHER_ID}-tab`, hidden: [true, false], selected: ["false", "true"] });
   });
 
-  test("A type's output matches for every edge value", () => {
+  test("a type's output matches for every edge value", () => {
     expect.hasAssertions();
 
     // The first tab is selected and every other panel starts hidden; a label is text, so its markup is escaped

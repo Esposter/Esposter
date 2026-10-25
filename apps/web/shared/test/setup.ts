@@ -72,6 +72,8 @@ vi.mock(
 // The better-auth session is one of them: registered beside the context helpers it reached a suite only when that
 // Module happened to load before the suite's router did.
 vi.mock(import("#server/auth"), () => import("#server/auth.test"));
+// The dungeon page passes GridEngine to Phaser only as a plugin, so an empty constructor stands in for it
+const EmptyGridEngine = function () {};
 // `grid-engine` re-exports Phaser, which touches `window` and a canvas context at import. Every dungeon suite that
 // Reaches its grid-engine exports through a module needs only those, so they are registered once here rather than per file
 vi.mock(import("grid-engine"), () => ({
@@ -86,8 +88,8 @@ vi.mock(import("grid-engine"), () => ({
     UP_LEFT: "up-left",
     UP_RIGHT: "up-right",
   } as typeof import("grid-engine").Direction,
-  // eslint-disable-next-line no-restricted-syntax -- an empty class shares no members with the real one, so no single cast is accepted; the dungeon page passes it to Phaser only as a plugin
-  GridEngine: class GridEngine {} as unknown as typeof import("grid-engine").GridEngine,
+  // eslint-disable-next-line no-restricted-syntax -- an empty constructor shares no members with the real one, so no single cast is accepted; the dungeon page passes it to Phaser only as a plugin
+  GridEngine: EmptyGridEngine as unknown as typeof import("grid-engine").GridEngine,
   NumberOfDirections: { EIGHT: 8, FOUR: 4 } as typeof import("grid-engine").NumberOfDirections,
 }));
 // oxlint-disable-next-line vitest/prefer-import-in-mock -- the stubbed `useRuntimeConfig` returns a fraction of the config, which the typed `import()` form holds to the real return type

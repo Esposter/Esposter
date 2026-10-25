@@ -7,7 +7,7 @@ import { tabNodeType } from "#shared/services/pageBuilder/tabNodeType";
 import { describe, expect, test } from "vitest";
 
 describe("tabNodeType", () => {
-  test("A type's output matches for every edge value", () => {
+  test("a type's output matches for every edge value", () => {
     expect.hasAssertions();
 
     const tab: TabNode = { props: { children: [], id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Tab };

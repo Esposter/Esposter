@@ -7,7 +7,7 @@ import { tooltipNodeType } from "#shared/services/pageBuilder/tooltipNodeType";
 import { describe, expect, test } from "vitest";
 
 describe("tooltipNodeType", () => {
-  test("A type's output matches for every edge value", () => {
+  test("a type's output matches for every edge value", () => {
     expect.hasAssertions();
 
     // The label and the tooltip are both text, so their markup is escaped where each is written

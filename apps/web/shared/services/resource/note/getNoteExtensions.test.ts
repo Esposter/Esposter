@@ -5,16 +5,17 @@ import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensi
 import { Editor } from "@tiptap/core";
 import { describe, expect, test } from "vitest";
 
+// A paste reaches the editor's clipboard parser as HTML, so the image's rule is the one a pasted web image meets
+const getPastedImageSources = (html: string) => {
+  const editor = new Editor({ element: document.createElement("div"), extensions: getNoteExtensions() });
+  editor.view.pasteHTML(html);
+  return (editor.getJSON().content ?? []).filter(({ type }) => type === "image").map(({ attrs }) => attrs?.src);
+};
+
 describe(getNoteExtensions, () => {
   const resourceId = crypto.randomUUID();
   const hash = "a".repeat(64);
   const assetUrl = getResourceAssetUrl(getResourceFileBlobName(resourceId, hash));
-  // A paste reaches the editor's clipboard parser as HTML, so the image's rule is the one a pasted web image meets
-  const getPastedImageSources = (html: string) => {
-    const editor = new Editor({ element: document.createElement("div"), extensions: getNoteExtensions() });
-    editor.view.pasteHTML(html);
-    return (editor.getJSON().content ?? []).filter(({ type }) => type === "image").map(({ attrs }) => attrs?.src);
-  };
 
   // A web page's image copied with its own address is refused, since the published view would drop it
   test("an image pasted from another site is not kept", () => {

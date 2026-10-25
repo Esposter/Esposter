@@ -7,7 +7,7 @@ import { serializeHtml } from "#shared/services/pageBuilder/serializeHtml";
 import { describe, expect, test } from "vitest";
 
 describe("columnNodeType", () => {
-  test("A type's output matches for every edge value", () => {
+  test("a type's output matches for every edge value", () => {
     expect.hasAssertions();
 
     const column: ColumnNode = { props: { children: [], id: TEST_ID }, type: WebpageNodeType.Column };

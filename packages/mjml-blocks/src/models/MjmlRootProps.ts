@@ -1,8 +1,7 @@
-import { MjmlDirection } from "#src/models/MjmlDirection";
+import type { MjmlDirection } from "#src/models/MjmlDirection";
 
-// The document's head and body: what MJML writes outside the email's sections, each value as the author set it. An object
-// Type alias rather than an interface, since an interface takes no implicit index signature and the core's root props need one
-export type MjmlRootProps = {
+// The document's head and body: what MJML writes outside the email's sections, each value as the author set it
+export interface MjmlRootProps {
   attributes?: Record<string, Record<string, string>>;
   body?: Record<string, string>;
   breakpoint?: { width: string };
@@ -12,4 +11,4 @@ export type MjmlRootProps = {
   preview?: string;
   styles?: { css: string; inline: boolean }[];
   title?: string;
-};
+}

@@ -1,6 +1,7 @@
 import type { DatasetReference } from "#shared/models/dataset/DatasetReference";
 import type { ToData } from "@esposter/shared";
 import type { MjmlNode, MjmlRootProps } from "mjml-blocks";
+import type { Except } from "type-fest";
 
 import { datasetReferenceSchema } from "#shared/models/dataset/DatasetReference";
 import { AItemEntity, aItemEntitySchema } from "#shared/models/entity/AItemEntity";
@@ -11,11 +12,12 @@ import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry"
 import { noteRichText } from "#shared/services/pageBuilder/email/noteRichText";
 import { STARTER_EMAIL_SOURCE } from "#shared/services/pageBuilder/email/starterEmailSource";
 import { MAX_RESOURCE_CONTENT_SIZE } from "#shared/services/resource/constants";
+import { InvalidOperationError, Operation } from "@esposter/shared";
 import { parseMjmlDocument } from "mjml-blocks";
 import { z } from "zod";
 
 // The document a new email is written from, read back from the MJML it is written in. The starter is ours, so a failure
-// to read it is a broken build, which the starter's own test catches before it ships
+// To read it is a broken build, which the starter's own test catches before it ships
 const readStarterEmail = () => {
   const result = parseMjmlDocument(
     STARTER_EMAIL_SOURCE,
@@ -24,7 +26,12 @@ const readStarterEmail = () => {
     noteRichText,
     MAX_EMAIL_NODES,
   );
-  if (!result.success) throw new Error("The starter email does not read back as an email");
+  if (!result.success)
+    throw new InvalidOperationError(
+      Operation.Read,
+      readStarterEmail.name,
+      "The starter email does not read back as an email",
+    );
 
   return result.data;
 };
@@ -58,4 +65,4 @@ export const emailEditorSchema = emailDocumentSchema.and(
     datasetReference: datasetReferenceSchema.optional(),
     html: z.string().max(MAX_RESOURCE_CONTENT_SIZE).meta({ readOnly: true }).optional(),
   }),
-) satisfies z.ZodType<ToData<Omit<EmailEditor, "content" | "root">>>;
+) satisfies z.ZodType<ToData<Except<EmailEditor, "content" | "root">>>;

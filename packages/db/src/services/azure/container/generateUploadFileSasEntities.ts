@@ -6,7 +6,7 @@ import { getFileBlobNames } from "#src/services/azure/container/getFileBlobNames
 import { getMimeCategory, MAX_THUMBNAIL_BYTES, MimeCategory, THUMBNAIL_CONTENT_TYPE } from "@esposter/db-schema";
 
 // Every target is named before the first is signed, and `reserve` is handed the whole set before any SAS exists, so a
-// refused reserve throws with no write target minted. The caller's reserve decides what the bytes are charged against
+// Refused reserve throws with no write target minted. The caller's reserve decides what the bytes are charged against
 export const generateUploadFileSasEntities = async (
   containerClient: ContainerClient,
   files: (Pick<FileEntity, "filename" | "mimetype"> & { size: number })[],

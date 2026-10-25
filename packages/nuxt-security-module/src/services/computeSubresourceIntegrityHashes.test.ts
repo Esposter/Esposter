@@ -7,12 +7,13 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
+const createNitro = (publicDir: string): Nitro =>
+  ({ options: { output: { publicDir }, runtimeConfig: { app: { baseURL: "/", cdnURL: "" } } } }) as unknown as Nitro;
+
 describe(computeSubresourceIntegrityHashes, () => {
   const SCRIPT_CONTENT = "entry";
   const STYLESHEET_CONTENT = "body{}";
   const STYLESHEET_HASH = "sha384-myyg/hQ74aSgjBBvVME/QXAXEkT4Y9dHbVQ5C0lIyGpldvNLJV2IWc5ElXbqLi06";
-  const createNitro = (publicDir: string): Nitro =>
-    ({ options: { output: { publicDir }, runtimeConfig: { app: { baseURL: "/", cdnURL: "" } } } }) as unknown as Nitro;
   const getDirectory = setupTemporaryDirectory();
 
   test("each file of a nested public directory is keyed by the url it is served at", async () => {

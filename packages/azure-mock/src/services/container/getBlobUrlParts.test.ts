@@ -6,7 +6,7 @@ describe(getBlobUrlParts, () => {
   test("keeps a segment with a lone percent sign raw and decodes the other segments", () => {
     expect.hasAssertions();
 
-    expect(getBlobUrlParts("https://account.blob.core.windows.net/container/100%/a%20b")).toEqual({
+    expect(getBlobUrlParts("https://account.blob.core.windows.net/container/100%/a%20b")).toStrictEqual({
       blobName: "100%/a b",
       containerName: "container",
     });

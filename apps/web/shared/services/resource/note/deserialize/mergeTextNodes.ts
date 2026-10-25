@@ -8,7 +8,7 @@ export const mergeTextNodes = (nodes: JSONContent[]): JSONContent[] =>
       node.type === "text" &&
       previous?.type === "text" &&
       JSON.stringify(previous.marks ?? []) === JSON.stringify(node.marks ?? []);
-    if (!isSameRun) return [...merged, node];
+    if (!isSameRun) return merged.toSpliced(merged.length, 0, node);
 
-    return [...merged.slice(0, -1), { ...previous, text: `${previous.text ?? ""}${node.text ?? ""}` }];
+    return merged.with(merged.length - 1, { ...previous, text: `${previous.text ?? ""}${node.text ?? ""}` });
   }, []);

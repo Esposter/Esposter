@@ -9,8 +9,8 @@ export const SPECIAL_CHARACTER_REGEX = /[\\`*_[\]<>~&!]/gu;
 export const LINE_START_MARKER_REGEX = /^(?<indent>[ \t]*\d*)(?<marker>[#>+\-.)=])(?=\s|$|\k<marker>+\s*$)/gmu;
 // A backslash cannot escape a space, so leading whitespace is written as character references
 export const LINE_START_WHITESPACE_REGEX = /^[ \t]+/gmu;
-export const BACKTICK_RUN_REGEX = /`+/g;
-export const BACKTICK_EDGE_REGEX = /^`|`$/;
+export const BACKTICK_RUN_REGEX = /`+/gu;
+export const BACKTICK_EDGE_REGEX = /^`|`$/u;
 // A code span whose text starts and ends with a space, and holds another character, loses one from each side on read-back, so it is padded
 // A span of only spaces keeps them all on read-back, so it is not
 export const SPACE_EDGE_REGEX = /^ .*[^ ].* $/su;

@@ -15,13 +15,13 @@ describe(renderNoteHtml, () => {
     type: "doc",
   });
 
-  test("A published note shows its own image", () => {
+  test("a published note shows its own image", () => {
     expect.hasAssertions();
 
     expect(renderNoteHtml(createImageDocument(assetUrl))).toBe(`<img src="${assetUrl}" alt="${alt}">`);
   });
 
-  test("A published note drops an image from another site", () => {
+  test("a published note drops an image from another site", () => {
     expect.hasAssertions();
 
     expect(renderNoteHtml(createImageDocument("https://a"))).toBe("");

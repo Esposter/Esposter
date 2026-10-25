@@ -10,7 +10,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { afterEach, assert, describe, expect, test, vi } from "vitest";
 
-vi.mock("@nuxt/kit", async (importOriginal) => ({
+vi.mock(import("@nuxt/kit"), async (importOriginal) => ({
   ...(await importOriginal<typeof import("@nuxt/kit")>()),
   addNitroPlugin: vi.fn<typeof import("@nuxt/kit").addNitroPlugin>(),
   addServerHandler: vi.fn<typeof import("@nuxt/kit").addServerHandler>(),
@@ -53,6 +53,6 @@ describe(securityModule, () => {
     assert.exists(sriHashesTemplate);
     const contents = await sriHashesTemplate.getContents();
 
-    expect(contents).toStrictEqual(`export default ${JSON.stringify({ "/_nuxt/entry.js": SCRIPT_HASH })}\n`);
+    expect(contents).toBe(`export default ${JSON.stringify({ "/_nuxt/entry.js": SCRIPT_HASH })}\n`);
   });
 });

@@ -17,7 +17,7 @@ describe("customHtmlNodeType", () => {
     );
   });
 
-  test("A type's output matches for every edge value", () => {
+  test("a type's output matches for every edge value", () => {
     expect.hasAssertions();
 
     // Text that is not markup is written as escaped text, and an empty block publishes as an empty block
@@ -27,7 +27,7 @@ describe("customHtmlNodeType", () => {
     ]);
   });
 
-  test("A hostile markup vector in custom HTML is removed", () => {
+  test("a hostile markup vector in custom HTML is removed", () => {
     expect.hasAssertions();
 
     // Each vector is a script or frame with an error handler, a script URL behind a leading space or in mixed case, a srcdoc, and an SVG link

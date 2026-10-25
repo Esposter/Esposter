@@ -14,7 +14,7 @@ import { surveyInviteNodeType } from "#shared/services/pageBuilder/surveyInviteN
 import { describe, expect, test } from "vitest";
 
 describe("surveyInviteNodeType", () => {
-  test("A type's output matches for every edge value", () => {
+  test("a type's output matches for every edge value", () => {
     expect.hasAssertions();
 
     const invites: SurveyInviteNode[] = [

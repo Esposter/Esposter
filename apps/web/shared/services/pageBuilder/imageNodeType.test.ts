@@ -19,7 +19,7 @@ describe("imageNodeType", () => {
     expect(result.error?.issues.map(({ path }) => path)).toStrictEqual([["content", 0, "props", "alt"]]);
   });
 
-  test("A type's output matches for every edge value", () => {
+  test("a type's output matches for every edge value", () => {
     expect.hasAssertions();
 
     // Alternative text is an attribute, so its quotes and ampersands are escaped where a label's would not be

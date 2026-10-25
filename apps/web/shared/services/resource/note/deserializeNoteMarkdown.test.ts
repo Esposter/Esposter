@@ -7,14 +7,15 @@ import { serializeNoteMarkdown } from "#shared/services/resource/note/serializeN
 import { getSchema } from "@tiptap/core";
 import { describe, expect, test } from "vitest";
 
+const paragraph = (text: string): JSONContent => ({ content: [{ text, type: "text" }], type: "paragraph" });
+const listItem = (...content: JSONContent[]): JSONContent => ({ content, type: "listItem" });
+const taskItem = (checked: boolean, text: string): JSONContent => ({
+  attrs: { checked },
+  content: [paragraph(text)],
+  type: "taskItem",
+});
+
 describe(deserializeNoteMarkdown, () => {
-  const paragraph = (text: string): JSONContent => ({ content: [{ text, type: "text" }], type: "paragraph" });
-  const listItem = (...content: JSONContent[]): JSONContent => ({ content, type: "listItem" });
-  const taskItem = (checked: boolean, text: string): JSONContent => ({
-    attrs: { checked },
-    content: [paragraph(text)],
-    type: "taskItem",
-  });
   // Every block the writing kit holds that CommonMark carries, with the marks and characters a reader can type
   const noteDoc: JSONContent = {
     content: [
@@ -51,7 +52,7 @@ describe(deserializeNoteMarkdown, () => {
     type: "doc",
   };
 
-  test("A note with every block survives a Markdown round trip", () => {
+  test("a note with every block survives a Markdown round trip", () => {
     expect.hasAssertions();
 
     const noteSchema = getSchema(getNoteExtensions());
@@ -83,7 +84,7 @@ describe(deserializeNoteMarkdown, () => {
   });
 
   // A link to a scheme that can run a script is read as its text, so the note never holds a link the webpage refuses
-  test("A link to a script scheme keeps its text without the link", () => {
+  test("a link to a script scheme keeps its text without the link", () => {
     expect.hasAssertions();
 
     expect(deserializeNoteMarkdown("[click](javascript:alert(1))")).toStrictEqual({
@@ -94,7 +95,7 @@ describe(deserializeNoteMarkdown, () => {
 });
 
 describe(serializeNoteMarkdown, () => {
-  test("An image exports as its alt text", () => {
+  test("an image exports as its alt text", () => {
     expect.hasAssertions();
 
     expect(
