@@ -6,7 +6,7 @@ import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-describe("carousel", () => {
+describe("visualCardCarousel", () => {
   const DURATION = 1000;
   const cards: Card[] = [{ text: "a" }, { text: "b" }, { text: "c" }];
   // The cards are the root's children in the order given, so each card's classes are read where it sits
@@ -26,8 +26,8 @@ describe("carousel", () => {
     const component = await mountCarousel();
     const [first, second] = Array.from((component.element as HTMLElement).children);
 
-    expect(first?.classList).toContain("active-card");
-    expect(second?.classList).not.toContain("active-card");
+    expect(first?.className).toBe("active-card");
+    expect(second?.className).toBe("normal-card normal-card-even");
   });
 
   // Each step moves the stack on, so the card after the first takes its turn once a duration has passed
@@ -39,7 +39,7 @@ describe("carousel", () => {
     await flushPromises();
     const [first, second] = Array.from((component.element as HTMLElement).children);
 
-    expect(second?.classList).toContain("active-card");
-    expect(first?.classList).toContain("inactive-card");
+    expect(second?.className).toBe("active-card");
+    expect(first?.className).toBe("inactive-card");
   });
 });

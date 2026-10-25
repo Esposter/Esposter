@@ -3,13 +3,17 @@ import ClickerModelItemList from "@/components/Clicker/Model/ItemList.vue";
 import UiList from "@/components/Ui/List/Index.vue";
 import { DIALOG_CLOSE_DURATION_MS } from "@/services/ui/constants";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { describe, expect, onTestFinished, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe("clickerModelItemList", () => {
   const id = "id";
   const otherId = "otherId";
   const item = { id, price: 0 };
   const otherItem = { id: otherId, price: 0 };
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
 
   // A bought upgrade leaves the store's list while its details are still open, and details rendered for an id the list
   // No longer holds hand the detail slot an item that is not there. The details are held through the popover's leave,
@@ -30,9 +34,6 @@ describe("clickerModelItemList", () => {
     expect(component.get(".detail").text()).toBe(otherId);
 
     vi.useFakeTimers();
-    onTestFinished(() => {
-      vi.useRealTimers();
-    });
     await component.setProps({ items: [item] });
     vi.advanceTimersByTime(DIALOG_CLOSE_DURATION_MS);
     await nextTick();

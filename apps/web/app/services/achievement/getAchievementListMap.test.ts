@@ -19,7 +19,7 @@ describe(getAchievementListMap, () => {
   const listMap = getAchievementListMap(achievementDefinitions, userAchievements);
   const getNames = (definitions: AchievementDefinitionEntry[]) => definitions.map(({ name }) => name);
 
-  test("splits the definitions into locked and unlocked by their row's timestamp", () => {
+  test("splits the definitions and their rows into locked and unlocked by the row's timestamp", () => {
     expect.hasAssertions();
 
     expect(getNames(listMap[AchievementStatus.Locked].achievementDefinitions)).toStrictEqual([
@@ -28,11 +28,6 @@ describe(getAchievementListMap, () => {
     expect(getNames(listMap[AchievementStatus.Unlocked].achievementDefinitions)).toStrictEqual([
       EmailAchievementName.EmailMarketer,
     ]);
-  });
-
-  test("gives the unlocked tab only the rows that are unlocked", () => {
-    expect.hasAssertions();
-
     expect(listMap[AchievementStatus.Unlocked].userAchievements).toStrictEqual([userAchievements[0]]);
   });
 });

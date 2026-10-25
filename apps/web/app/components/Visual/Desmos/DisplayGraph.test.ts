@@ -7,7 +7,7 @@ import { Colors } from "@/models/desmos/Colors";
 import { noop } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 // The script never loads here, so its load slot calls back at once with a calculator constructor the test controls
 const { GraphingCalculator } = vi.hoisted(() => ({
@@ -25,7 +25,11 @@ vi.mock(import("@/composables/desmos/useDesmos"), () => ({
 const mountGraph = (expressions: Expression[]) =>
   mountSuspended(VisualDesmosDisplayGraph, { attachTo: document.body, props: { expressions, id: "graph" } });
 
-describe("displayGraph", () => {
+describe("visualDesmosDisplayGraph", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   // The expression sets are module constants shared by every mount, so the defaults go on copies
   test("the calculator draws each expression in its default colour and leaves the expressions it was given as they were", async () => {
     expect.hasAssertions();

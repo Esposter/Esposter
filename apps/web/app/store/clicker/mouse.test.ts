@@ -21,6 +21,6 @@ describe(useMouseStore, () => {
 
     clicker.value.boughtUpgrades.push(upgrade);
 
-    expect(mouseStore.mousePower).toBeGreaterThan(1);
+    expect(mouseStore.mousePower).toBe(2);
   });
 });

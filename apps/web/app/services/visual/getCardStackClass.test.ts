@@ -22,7 +22,7 @@ describe(getCardStackClass, () => {
   test("the last shown card starts inactive before any card has moved", () => {
     expect.hasAssertions();
 
-    expect(getCardStackClass(3, { ...state, cardIds: [0, 1, 2, 3], inactiveCardId: undefined })).toBe("inactive-card");
+    expect(getCardStackClass(3, { ...state, inactiveCardId: undefined })).toBe("inactive-card");
   });
 
   test("a card past the second-last shown card is hidden behind it", () => {

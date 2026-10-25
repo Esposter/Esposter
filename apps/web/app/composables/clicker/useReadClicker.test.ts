@@ -46,6 +46,7 @@ describe(useReadClicker, () => {
     wrapper = undefined;
     localStorage.clear();
     vi.restoreAllMocks();
+    vi.useRealTimers();
   });
 
   test("hydrates a guest's clicker from the save in this browser", async () => {
@@ -57,20 +58,22 @@ describe(useReadClicker, () => {
     expect(useClickerStore().clicker.pointCount).toBe(42);
   });
 
-  // An absence is paid out as production, and the dialog reports what it was paid
+  // An absence is paid out as production, and the dialog reports what it was paid. The clock is pinned to the hour
+  // The save was stamped at the epoch, so the absence is exactly that hour: one cursor's tenth of a point a second, at the offline rate
   test("awards the production an absence earned while the page was closed", async () => {
     expect.hasAssertions();
 
+    vi.useFakeTimers({ now: hourMs, toFake: ["Date"] });
     writeGuestSave(
       new Clicker({
         boughtBuildings: [{ ...BuildingMap[BuildingId.Cursor], amount: 1, id: BuildingId.Cursor, producedValue: 0 }],
-        updatedAt: new Date(Date.now() - hourMs),
+        updatedAt: new Date(0),
       }),
     );
     await mountReadClicker();
     const { awardedPoints } = storeToRefs(useOfflineProgressStore());
 
-    expect(awardedPoints.value).toBeGreaterThan(0);
+    expect(awardedPoints.value).toBe(180);
     expect(useClickerStore().clicker.pointCount).toBe(awardedPoints.value);
   });
 
