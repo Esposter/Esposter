@@ -10,9 +10,9 @@ The stream carries the new content version and the writing device rather than th
 
 ## Adopting
 
-An open editor that holds no unwritten edit — no save pending, no autosave armed, content equal to what it last persisted — adopts the save. It stores the new version and runs `ResourceContentHookMap`'s two stages in order, as [third-party document adapters](../../specs/architecture/third-party-document-adapters/design.md) describe for a restore: `Reload`, where each content store re-reads through `createContentData`, then `Adopt`, where a library holding its own copy — Tiptap, SurveyJS — takes the new document.
+An open editor that holds no unwritten edit — no save pending, no autosave armed, content equal to what it last persisted — adopts the save. It stores the new version and runs `ResourceContentHookMap`'s two stages in order, as [third-party document adapters](../../third-party-document-adapters/design.md) describe for a restore: `Reload`, where each content store re-reads through `createContentData`, then `Adopt`, where a library holding its own copy — Tiptap, SurveyJS — takes the new document.
 
-Two things describe a document that is gone, and clear. An editor's undo history clears, as a restore clears it: the Sheet's command history today, the page builder's patch history once it ships. The [delta content saves](../../specs/resource/delta-content-saves/design.md) baseline clears too, since it names bytes the server no longer holds, so one large save crosses whole before deltas resume.
+Two things describe a document that is gone, and clear. An editor's undo history clears, as a restore clears it: the Sheet's command history today, the page builder's patch history once it ships. The [delta content saves](../../../resource/delta-content-saves/design.md) baseline clears too, since it names bytes the server no longer holds, so one large save crosses whole before deltas resume.
 
 The TodoList saves each edit as it happens, so it rarely holds an unwritten one, and it re-reads on another device's save in place of taking the streamed list.
 
@@ -39,7 +39,7 @@ flowchart TD
 
 The store holds no document, so it cannot write one. Keep mine therefore runs a `Keep` stage on `ResourceContentHookMap`: the store moves the resource to the held save's version and runs the stage, and each content store (`createContentData`) answers by saving the document it holds through its own save, so the write goes through the existing save mutation and the other write stays in version history. Taking theirs runs no stage; it reloads and drops the unwritten edit.
 
-A save the server refuses is the one case the save stream did not deliver, so it keeps the stale-save refresh rather than a second route to the choice. A refused save names no other save, so there is no other version to choose between and no device to name. The choice is offered only where the other save is known: when it lands over an unsaved edit. The [resource page parity](../../specs/resource/resource-page-parity/design.md) delta records this.
+A save the server refuses is the one case the save stream did not deliver, so it keeps the stale-save refresh rather than a second route to the choice. A refused save names no other save, so there is no other version to choose between and no device to name. The choice is offered only where the other save is known: when it lands over an unsaved edit. The [resource page parity](../../../resource/resource-page-parity/design.md) delta records this.
 
 ## Key files
 
