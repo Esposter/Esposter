@@ -38,7 +38,9 @@ export const scoreFlip = (
   const toYcxcz = (image: Float32Array): Float32Array => {
     const converted = new Float32Array(pixelCount * 3);
     for (let pixel = 0; pixel < pixelCount; pixel++) {
-      const linear: Vector = [0, 1, 2].map((channel) => toLinear(clamp(image[pixel * 3 + channel] ?? 0))) as Vector;
+      const linear: Vector = [0, 1, 2].map((channel) =>
+        toLinear(clamp(image[pixel * 3 + channel] ?? 0, 0, 1)),
+      ) as Vector;
       converted.set(xyzToYcxcz(toXyz(linear)), pixel * 3);
     }
     return converted;
@@ -85,7 +87,7 @@ export const scoreFlip = (
       sumCz1 += w1 * (alongX[source + 2] ?? 0);
       sumCz2 += w2 * (alongX[source + 3] ?? 0);
     }
-    const linear = xyzToLinear(ycxczToXyz([sumY, sumCx, sumCz1 + sumCz2])).map((value) => clamp(value)) as Vector;
+    const linear = xyzToLinear(ycxczToXyz([sumY, sumCx, sumCz1 + sumCz2])).map((value) => clamp(value, 0, 1)) as Vector;
     return toHuntLab(linear);
   };
   const colorDifferences = new Float32Array(pixelCount);

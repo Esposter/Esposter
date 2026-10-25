@@ -1,9 +1,9 @@
 import type { Vector } from "#src/models/shared/Vector";
 import type { SkyShape } from "genshin-engine";
 
+import { clamp } from "#src/services/genshinParity/shared/clamp";
 import { dot } from "#src/services/genshinParity/sky/dot";
 import { getCurve } from "#src/services/genshinParity/sky/getCurve";
-import { saturate } from "#src/services/genshinParity/sky/saturate";
 import { smoothstep } from "#src/services/genshinParity/sky/smoothstep";
 
 const LEAST_DIVISOR = 1e-4;
@@ -23,16 +23,16 @@ export const computeSkyWeights = (
   const toward = Math.max(sunCosine * frontBackBlend + 1 - frontBackBlend, 0) ** 3;
   const bottomShare = getCurve(gradient.red, elevation / Math.max(horizonBand, LEAST_DIVISOR));
   const haloShare = getCurve(gradient.green, elevation / Math.max(haloHeight, LEAST_DIVISOR));
-  const sunSide = saturate(sunCosine * 0.5 + 0.5);
+  const sunSide = clamp(sunCosine * 0.5 + 0.5, 0, 1);
   const towardSun = smoothstep(Math.max((sunSide - 0.3) / 0.7, 0));
-  const sunUp = smoothstep(saturate((Math.abs(sunDirection[1]) - 0.2) / 0.3));
+  const sunUp = smoothstep(clamp((Math.abs(sunDirection[1]) - 0.2) / 0.3, 0, 1));
   const spread = sunHaloSize * Math.abs(height);
   const sunHalo =
     (Math.min(sunSide ** spread, 1) +
       Math.min(sunSide ** (spread * 0.1), 1) * 0.12 +
       Math.min(sunSide ** (spread * 0.01), 1) * 0.03) *
     smoothstep(Math.max((sunSide - 0.5) * 2, 0));
-  const moonCosine = saturate(dot(direction, moonDirection));
+  const moonCosine = clamp(dot(direction, moonDirection), 0, 1);
   const moonGlow = Math.max((moonCosine - 1) / Math.max(moonSize * 0.1, LEAST_DIVISOR) + 1, 0) ** 6;
   return [
     (1 - toward) * (1 - bottomShare),

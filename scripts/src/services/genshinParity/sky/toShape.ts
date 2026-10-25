@@ -1,5 +1,7 @@
 import type { SkyShape } from "genshin-engine";
 
+import { clamp } from "#src/services/genshinParity/shared/clamp";
+
 // The least a reach or a size is held at, as the shader divides by it, and the least the sun's halo and the moon are:
 // Smaller, a halo or a glow spreads over the whole sky and stands in for its colours, as clouds pull it
 const LEAST_SHAPE = 1e-3;
@@ -14,7 +16,7 @@ export const toShape = ([
   moonSize = 0,
   sunHaloSize = 0,
 ]: readonly number[]): SkyShape => ({
-  frontBackBlend: Math.min(Math.max(frontBackBlend, 0), 1),
+  frontBackBlend: clamp(frontBackBlend, 0, 1),
   haloHeight: Math.max(haloHeight, LEAST_SHAPE),
   horizonBand: Math.max(horizonBand, LEAST_SHAPE),
   moonSize: Math.max(moonSize, LEAST_MOON_SIZE),
