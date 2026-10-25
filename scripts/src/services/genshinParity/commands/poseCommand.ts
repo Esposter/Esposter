@@ -10,8 +10,6 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";
 import { readFile, writeFile } from "node:fs/promises";
 
-const AXIS_NAMES: readonly string[] = CAMERA_POSE_AXES;
-
 export const poseCommand: SubCommandsDef[string] = defineCommand({
   args: {
     families: { description: "The families whose edges refine the pose, comma separated", type: "string" },
@@ -54,7 +52,7 @@ export const poseCommand: SubCommandsDef[string] = defineCommand({
     const { errors, imagePath, pose, refinement, rms } = await solveReferencePose(args.reference, args.witness, {
       families: args.families?.split(","),
       heldAxes: args.hold?.split(",").map((axis) => {
-        const index = AXIS_NAMES.indexOf(axis);
+        const index = CAMERA_POSE_AXES.findIndex((name) => name === axis);
         if (index === -1)
           throw new InvalidOperationError(Operation.Read, axis, `not an axis: ${CAMERA_POSE_AXES.join(", ")}`);
         return index;
