@@ -1,11 +1,12 @@
 import type { TRPCRouter } from "#server/trpc/routers";
+import { trpcRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { transformPublishedEmail } from "#server/services/emailEditor/transformPublishedEmail";
 import { incrementResourceViewCount } from "#server/services/resource/incrementResourceViewCount";
 import { createCallerFactory } from "#server/trpc";
+import { getMockSession } from "#server/trpc/context.test";
 import { emailRouter } from "#server/trpc/routers/email";
-import { resourceRouter } from "#server/trpc/routers/resource";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
@@ -33,7 +34,7 @@ describe("emailRouter", () => {
 
   beforeAll(() => {
     caller = getCaller();
-    resourceCaller = createCallerFactory(resourceRouter)(getMockContext());
+    resourceCaller = createCallerFactory(trpcRouter)(getMockContext()).resource;
   });
 
   test("saves and reads content", async () => {
@@ -127,8 +128,9 @@ describe("emailRouter", () => {
       root: { props: {} },
     });
 
-    await expect(transformPublishedEmail(getMockContext(), newResource, invalidEmail)).rejects
-      .toThrowErrorMatchingInlineSnapshot(`
+    await expect(
+      transformPublishedEmail({ ...getMockContext(), getSessionPayload: getMockSession() }, newResource, invalidEmail),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`
       [TRPCError: Invalid operation: Update, name: Resource, ValidationError: 
        Line undefined of undefined (mj-button) — Attribute padding has invalid value: 1px 2px 3px 4px 5px for type Unit, only accepts (px, %) units and 1 to 4 value(s)]
     `);
