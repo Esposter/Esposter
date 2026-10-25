@@ -1,9 +1,17 @@
 /* oxlint-disable typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation these three template literals would otherwise infer */
+import { PackageRole } from "#src/models/dependencyGraph/PackageRole";
 
 export const GRAPH_FILENAME = "dependency-graph.svg";
 
 // `pnpm` writes a sibling it links from the workspace as a `link:` version to its folder
 export const LINK_PREFIX = "link:";
+// The roles in the order their rows are drawn above, so the striped swatch below reads as those three keys
+// Restated rather than as a fourth palette.
+export const LEGEND_PACKAGE_ROLES: PackageRole[] = [
+  PackageRole.Entrypoint,
+  PackageRole.Library,
+  PackageRole.Foundation,
+];
 // The one neutral in the palette. It is the grey that carries against both a white and a near-black page, which
 // Is what every line the theme does not own has to do — the svg is committed once and read in either scheme.
 export const MUTED_COLOR = "#8b949e";

@@ -5,17 +5,8 @@ import type { WorkspaceEdges } from "#src/models/dependencyGraph/WorkspaceEdges"
 import type { WorkspacePackage } from "#src/models/shared/WorkspacePackage";
 
 import { LINK_PREFIX } from "#src/services/dependencyGraph/constants";
-
-const getEdgeKey = ({ from, to }: WorkspaceEdge): string => `${from}/${to}`;
-// Ordered by `<` on the key rather than by `localeCompare`, so the order is UTF-16 code units rather than the
-// Machine's collation. The svg this feeds is committed, and a locale-dependent order would rewrite it on someone
-// Else's machine.
-const getSortedEdges = (workspaceEdges: Map<string, WorkspaceEdge>): WorkspaceEdge[] =>
-  workspaceEdges
-    .entries()
-    .toArray()
-    .toSorted(([leftKey], [rightKey]) => (leftKey < rightKey ? -1 : 1))
-    .map(([, workspaceEdge]) => workspaceEdge);
+import { getEdgeKey } from "#src/services/dependencyGraph/getEdgeKey";
+import { getSortedEdges } from "#src/services/dependencyGraph/getSortedEdges";
 
 // A sibling is an edge where pnpm links it, a `link:` to its folder. The runtime fields are `dependencies` and
 // `optionalDependencies`, as opposed to `devDependencies`, which only the package's build, lint, test and bench

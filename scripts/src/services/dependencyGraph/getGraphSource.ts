@@ -1,51 +1,16 @@
-import type { WorkspaceEdge } from "#src/models/dependencyGraph/WorkspaceEdge";
 import type { WorkspaceEdges } from "#src/models/dependencyGraph/WorkspaceEdges";
 import type { WorkspacePackage } from "#src/models/shared/WorkspacePackage";
 
 import {
-  CLUSTER_ATTRIBUTES,
   DEVELOPMENT_EDGE_ATTRIBUTES,
   GRAPH_ATTRIBUTES,
   RUNTIME_EDGE_ATTRIBUTES,
 } from "#src/services/dependencyGraph/constants";
+import { getClusterLines } from "#src/services/dependencyGraph/getClusterLines";
+import { getEdgeLines } from "#src/services/dependencyGraph/getEdgeLines";
 import { getLegendLabel } from "#src/services/dependencyGraph/getLegendLabel";
-import { getPackageRole } from "#src/services/dependencyGraph/getPackageRole";
-import { PackageRoleColorsMap } from "#src/services/dependencyGraph/PackageRoleColorsMap";
-
-const getEdgeLines = (workspaceEdges: WorkspaceEdge[], attributes: string): string[] =>
-  workspaceEdges.map(({ from, to }) => `  "${from}" -> "${to}" [${attributes}];`);
-// In the order the members come in, which `readWorkspacePackages` sorts by path — so the clusters are drawn
-// In the same order however the workspace file happens to list its globs.
-const getWorkspaceDirectories = (workspacePackages: WorkspacePackage[]): string[] => [
-  ...new Set(
-    workspacePackages.flatMap(({ workspaceDirectory }) => (workspaceDirectory === "" ? [] : [workspaceDirectory])),
-  ),
-];
-// The nodes are boxed and titled by the workspace root they live under. Graphviz draws a subgraph as a box only
-// When its name starts with `cluster`, and it boxes the nodes declared inside that subgraph — so the node lines
-// Are nested and the edges are not, which keeps an edge from silently deciding which box a node is in.
-const getClusterLines = (
-  workspaceDirectory: string,
-  workspacePackages: WorkspacePackage[],
-  workspaceEdges: WorkspaceEdges,
-): string[] => [
-  `  subgraph cluster_${workspaceDirectory} {`,
-  ...CLUSTER_ATTRIBUTES.map((attribute) => `    ${attribute};`),
-  `    label="${workspaceDirectory}";`,
-  ...workspacePackages
-    .filter((workspacePackage) => workspacePackage.workspaceDirectory === workspaceDirectory)
-    .map((workspacePackage) => `    ${getNodeLine(workspacePackage, workspaceEdges)}`),
-  "  }",
-];
-// A private package is drawn dashed: nothing installs it, so its edges are internal wiring rather than a
-// Promise to anyone outside this repo. The role decides the colour, and it is read off the edges rather than
-// Off a list, so a package that starts being depended on changes colour on the next run without anyone saying
-// So.
-const getNodeLine = ({ directory, manifest }: WorkspacePackage, workspaceEdges: WorkspaceEdges): string => {
-  const { deepFill, paleFill, stroke } = PackageRoleColorsMap[getPackageRole(directory, workspaceEdges)];
-  const style = manifest.private === true ? "filled,dashed" : "filled";
-  return `"${directory}" [fillcolor="${paleFill}:${deepFill}" color="${stroke}" style="${style}"];`;
-};
+import { getNodeLine } from "#src/services/dependencyGraph/getNodeLine";
+import { getWorkspaceDirectories } from "#src/services/dependencyGraph/getWorkspaceDirectories";
 
 export const getGraphSource = (workspacePackages: WorkspacePackage[], workspaceEdges: WorkspaceEdges): string =>
   [
