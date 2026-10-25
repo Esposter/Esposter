@@ -39,14 +39,14 @@ flowchart TD
 
 ## Key files
 
-| File                                                                  | Role                                                                 |
-| --------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| `apps/web/shared/services/pageBuilder/renderWebpageDocument.bench.ts` | the render bench, reporting a 2,000-node render's time               |
-| `apps/web/shared/services/pageBuilder/applyWebpageEdit.bench.ts`      | the patch bench, reporting one edit's time with its inverse recorded |
-| `apps/web/server/services/emailEditor/compileEmailDocument.bench.ts`  | the compile bench, reporting the starter email's server compile      |
-| `packages/configuration/src/getVitestBrowserConfiguration.ts`         | the browser configuration the frame package's browser suite runs on  |
-| `apps/web/app/components/Resource/SrcdocIframe.vue`                   | the published view's frame the canvas is held against                |
-| `apps/web/configuration/security.ts`                                  | the policy a published page's own scripts run under                  |
+| File                                                                   | Role                                                                 |
+| ---------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `apps/web/shared/services/pageBuilder/renderWebpageDocument.bench.ts`  | the render bench, reporting a 2,000-node render's time               |
+| `apps/web/shared/services/pageBuilder/applyWebpageEdit.bench.ts`       | the patch bench, reporting one edit's time with its inverse recorded |
+| `apps/web/server/services/emailEditor/compileEmailDocument.bench.ts`   | the compile bench, reporting the starter email's server compile      |
+| `packages/configuration/src/services/getVitestBrowserConfiguration.ts` | the browser configuration the frame package's browser suite runs on  |
+| `apps/web/app/components/Resource/SrcdocIframe.vue`                    | the published view's frame the canvas is held against                |
+| `apps/web/configuration/security.ts`                                   | the policy a published page's own scripts run under                  |
 
 ## Notes
 
