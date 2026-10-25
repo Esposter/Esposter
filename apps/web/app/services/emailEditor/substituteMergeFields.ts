@@ -3,11 +3,14 @@ import type { ColumnValue } from "#shared/models/resource/sheet/column/ColumnVal
 import { escapeHtml } from "#shared/util/text/escapeHtml";
 import { toMergeField } from "@/services/emailEditor/toMergeField";
 
+// The token as the compiled html writes it. A text node escapes `&`, `<` and `>` and leaves quotes alone, so a column
+// Named "P&L" is `{{P&amp;L}}` and one named "O'Brien" is `{{O'Brien}}`. Every merge field in the output takes this one form
+const escapeTextToken = (token: string) =>
+  token.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;");
+
 export const substituteMergeFields = (html: string, row: Record<string, ColumnValue>) =>
-  Object.entries(row).reduce((personalizedHtml, [columnName, value]) => {
-    const escapedValue = escapeHtml(String(value ?? ""));
-    const mergeField = toMergeField(columnName);
-    // The editor canvas entity-encodes special characters on serialization,
-    // So a column name like "P&L" appears in the exported HTML as its escaped token form
-    return personalizedHtml.replaceAll(mergeField, escapedValue).replaceAll(escapeHtml(mergeField), escapedValue);
-  }, html);
+  Object.entries(row).reduce(
+    (personalizedHtml, [columnName, value]) =>
+      personalizedHtml.replaceAll(escapeTextToken(toMergeField(columnName)), escapeHtml(String(value ?? ""))),
+    html,
+  );

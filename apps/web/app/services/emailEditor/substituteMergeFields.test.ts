@@ -36,6 +36,18 @@ describe(substituteMergeFields, () => {
     expect(substituteMergeFields("{{P&amp;L}}", { "P&L": "a" })).toBe("a");
   });
 
+  test("a column name with a quote matches the token the compile writes, which leaves quotes unescaped", () => {
+    expect.hasAssertions();
+
+    expect(substituteMergeFields("{{O'Brien}}", { "O'Brien": "a" })).toBe("a");
+  });
+
+  test("the raw form of a special-character merge field is left alone, since the compile never writes it", () => {
+    expect.hasAssertions();
+
+    expect(substituteMergeFields("{{P&L}}", { "P&L": "a" })).toBe("{{P&L}}");
+  });
+
   test("leaves merge fields without a matching column", () => {
     expect.hasAssertions();
 

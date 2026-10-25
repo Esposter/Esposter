@@ -45,6 +45,51 @@ describe(compileEmailDocument, () => {
     });
   });
 
+  test("a merge field's token compiles to the one form substitution matches", async () => {
+    expect.hasAssertions();
+
+    const document: MjmlDocument = {
+      content: [
+        {
+          props: {
+            children: [
+              {
+                props: {
+                  children: [
+                    {
+                      props: {
+                        content: {
+                          content: [{ content: [{ text: "{{P&L}}", type: "text" }], type: "paragraph" }],
+                          type: "doc",
+                        },
+                        id: crypto.randomUUID(),
+                      },
+                      type: MjmlNodeType.Text,
+                    },
+                  ],
+                  id: crypto.randomUUID(),
+                },
+                type: MjmlNodeType.Column,
+              },
+            ],
+            id: crypto.randomUUID(),
+          },
+          type: MjmlNodeType.Section,
+        },
+      ],
+      root: { props: {} },
+    };
+
+    await compileEmailDocument(document, TEST_CONTEXT).match(
+      (html) => {
+        expect(html).toContain("{{P&amp;L}}");
+      },
+      (error) => {
+        throw error;
+      },
+    );
+  });
+
   test("a valid email document compiles to email HTML", async () => {
     expect.hasAssertions();
 
