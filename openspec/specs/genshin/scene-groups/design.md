@@ -1,6 +1,6 @@
 # Scene groups
 
-The game places most of what stands in its open world through scene groups, each a script of members switched on in suites. Those scripts are the server's and never in the client, so this page is the record the repository can fill from its own sources: one record keyed by group, filled field by field from the sources the repository already reads, each member and each place naming the source behind it. The residents of [resident schedules](../resident-schedules/design.md) are written from it; the Archive's viewpoints, the crafting bench and the stove read it on their own proposals.
+The game places most of what stands in its open world through scene groups, each a script of members switched on in suites. Those scripts are the server's and never in the client, so this page is the record the repository can fill from its own sources: one record keyed by group, filled field by field from the sources the repository already reads, each member and each place naming the source behind it. The residents of [resident schedules](../resident-schedules/design.md) are written from it; the [Archive's](../archive/design.md) viewpoints read it as the Archive's entries load, and the crafting bench and the stove read it on their own proposals.
 
 ## How it works
 
