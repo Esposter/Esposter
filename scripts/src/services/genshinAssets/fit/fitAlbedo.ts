@@ -1,4 +1,5 @@
 import { computeUpperMedian } from "#src/services/recreation/statistics/computeUpperMedian";
+import { toHex } from "#src/services/shared/toHex";
 import sharp from "sharp";
 
 // The texels a diffuse texture is reduced to before its median is taken, enough for a colour a whole part is painted
@@ -18,6 +19,6 @@ export const fitAlbedo = async (texturePaths: readonly string[]): Promise<string
     for (let texel = 0; texel < info.width * info.height; texel++)
       for (const [channel, values] of channels.entries()) values.push(data[texel * info.channels + channel] ?? 0);
   }
-  const median = channels.map((values) => computeUpperMedian(values));
-  return `#${median.map((value) => value.toString(16).padStart(2, "0")).join("")}`;
+  const [red, green, blue] = channels;
+  return toHex([computeUpperMedian(red), computeUpperMedian(green), computeUpperMedian(blue)]);
 };
