@@ -141,14 +141,16 @@ const securityModule: NuxtModule<Partial<ModuleOptions>> = defineNuxtModule<Part
     if (basicAuth)
       addServerHandler({ handler: resolver.resolve("./runtime/server/middleware/basicAuth"), middleware: true });
 
-    // The integrity hashes need the build's public assets, which exist only once Nitro is about to build them
+    // The client bundles are written before Nitro copies the public assets, and Nitro's own build:before runs ahead of
+    // them, so the hashes wait for the public-assets hook. That hook runs before the server is built, and it is not
+    // called in development, where the bundles are served from memory and the page carries no integrity attributes
     let sriHashes: Record<string, string> = {};
     if (options.sri) {
       addServerTemplate({
         filename: SRI_HASHES_TEMPLATE_FILENAME,
         getContents: () => `export default ${JSON.stringify(sriHashes)}\n`,
       });
-      nuxt.hook("nitro:build:before", async (nitro) => {
+      nuxt.hook("nitro:build:public-assets", async (nitro) => {
         sriHashes = await computeSubresourceIntegrityHashes(nitro);
       });
     }
