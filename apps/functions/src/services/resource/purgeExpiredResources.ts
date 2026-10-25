@@ -1,17 +1,9 @@
 import type { InvocationContext } from "@azure/functions";
 
 import { getContainerClient } from "#src/services/azure/getContainerClient";
-import { getTableClient } from "#src/services/azure/getTableClient";
+import { purgeResourceAndBroadcast } from "#src/services/resource/purgeResourceAndBroadcast";
 import { db } from "#src/services/shared/db";
-import { broadcastStorageUsage } from "#src/services/storage/broadcastStorageUsage";
-import { purgeResource } from "@esposter/db";
-import {
-  AzureContainer,
-  AzureFunction,
-  getResourceOwnedTableNames,
-  RECYCLE_BIN_RETENTION_MS,
-  resourcesInResource,
-} from "@esposter/db-schema";
+import { AzureContainer, AzureFunction, RECYCLE_BIN_RETENTION_MS, resourcesInResource } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 import { and, isNotNull, lt } from "drizzle-orm";
 
@@ -34,16 +26,12 @@ export const purgeExpiredResources = async (context: InvocationContext): Promise
   // Per-resource so one poisoned resource cannot block the rest of the sweep; its row survives,
   // So the next tick retries it. Failures are logged, never rethrown — a rethrow would strand
   // The resources this pass already purged behind a retry of the whole batch.
-  for (const { id, type } of expiredResources)
+  for (const expiredResource of expiredResources)
     // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one resource at a time, each fanning out across its own partitions and blob directory
-    await getResultAsync(async () => {
-      // The type decides which partitions this resource owns, so the client list is per-resource
-      const tableClients = await Promise.all(
-        getResourceOwnedTableNames(type).map((tableName) => getTableClient(tableName)),
-      );
-      const releasedUserIds = await purgeResource(db, containerClient, tableClients, id);
-      await broadcastStorageUsage(context, releasedUserIds);
-    }).match(noop, (error) => {
-      context.error(`${AzureFunction.PurgeDeletedResources} failed to purge resource ${id}: `, error);
-    });
+    await getResultAsync(() => purgeResourceAndBroadcast(context, containerClient, expiredResource)).match(
+      noop,
+      (error) => {
+        context.error(`${AzureFunction.PurgeDeletedResources} failed to purge resource ${expiredResource.id}: `, error);
+      },
+    );
 };
