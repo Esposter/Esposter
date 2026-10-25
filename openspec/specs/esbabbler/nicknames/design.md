@@ -11,11 +11,11 @@ WRONG   — {{ member.name }}                     (ignores the room display name
 CORRECT — {{ getRoomMemberName(roomId, member.id, member.name) }}  (room display name, falls back to account name)
 ```
 
-The one name a template may render directly is `creator.name` from `useCreator`, because that composable has already resolved it — see below.
+Where the member list, the settings Members panel and the @-mention list name a member by nickname, the account name follows it beside the row only where the two differ, through `getMemberDescription`, which the rule is written in. A row whose room shows the account name alone has no second name, so nothing is printed twice. The one name a template may render directly is `creator.name` from `useCreator`, because that composable has already resolved it — see below.
 
 Room display names are stored as `usersToRooms.displayName`, a `text().notNull().default("")` column, where empty means "no room-specific name". Every query that returns a member's name for display goes through `getDisplayNameExpression`, which is `coalesce(nullif(displayName, ''), name)`, so the server never hands back an empty display name in those. So the client takes the value it is given with `??`, and the one fallback to the account name lives in `getRoomMemberName`, which takes the account name a caller already holds, or reads it from the account map. Two reads return the raw column on purpose: `readMyUsersToRooms` returns the current user's own nickname, where empty is the "no nickname" state the My Profile field edits; and the typing broadcast reads its own row's raw value and applies `||` to the account name at the call site.
 
-Applied in: mention labels (`useMessageHtml`), the member list sidebar (`Member/List`), the profile card that pops out of it (`ProfileCard/Index`), the room settings Members panel (`Settings/Type/Member/ListItem`), the push notification title (queried server-side before the EventGrid publish), a room call's tiles, strip and action menu (resolved once in the two call composables every call surface reads — a standalone call has no room, so it keeps the account's name), the typing broadcast (resolved server-side), an unnamed room's "<creator>'s Room", the member editor's heading, the invite list's creator, and — through `useCreator` — every message in the timeline.
+Applied in: mention labels (`useMessageHtml`), the member list sidebar (`Member/List`), the profile card that pops out of it (`ProfileCard/Index`), the room settings Members panel (`Settings/Type/Member/List`), the @-mention suggestion list (`Suggestion/MentionList`), the push notification title (queried server-side before the EventGrid publish), a room call's tiles, strip and action menu (resolved once in the two call composables every call surface reads — a standalone call has no room, so it keeps the account's name), the typing broadcast (resolved server-side), an unnamed room's "<creator>'s Room", the member editor's heading, the invite list's creator, and — through `useCreator` — every message in the timeline.
 
 **`useCreator` resolves the display name itself**, so every surface that renders a message author — avatar initials, the batch header, reply titles, forward and pin lines, the delete and pin confirmations — gets it from one place rather than each remembering to call `getRoomMemberName`. It reads the room from the message's own `partitionKey`, so a message rendered outside the current room — a search hit, a thread preview — resolves against the room it was written in rather than the room on screen. A webhook message is the one exception: its author is an app user, which is not a member of the room and therefore has no room display name to overlay.
 
@@ -62,13 +62,15 @@ Room settings → **My Profile** tab (visible to all members, no permission requ
 
 ## Key files
 
-| File                                                                | Role                                                   |
-| :------------------------------------------------------------------ | :----------------------------------------------------- |
-| `apps/web/app/store/message/room/userToRoom.ts`                     | `useUserToRoomStore`, the current user's own row       |
-| `apps/web/app/store/message/user/index.ts`                          | `useUserStore`, `getRoomMemberName`                    |
-| `apps/web/app/composables/message/room/useCreator.ts`               | message author, display name already applied           |
-| `apps/web/app/composables/message/useMessageHtml.ts`                | mention label resolution                               |
-| `apps/web/app/components/Message/Model/Room/Settings/Type/Profile/` | My Profile tab + display name field (labeled Nickname) |
+| File                                                                       | Role                                                                   |
+| :------------------------------------------------------------------------- | :--------------------------------------------------------------------- |
+| `apps/web/app/store/message/room/userToRoom.ts`                            | `useUserToRoomStore`, the current user's own row                       |
+| `apps/web/app/store/message/user/index.ts`                                 | `useUserStore`, `getRoomMemberName`                                    |
+| `apps/web/app/composables/message/room/useCreator.ts`                      | message author, display name already applied                           |
+| `apps/web/app/composables/message/useMessageHtml.ts`                       | mention label resolution                                               |
+| `apps/web/app/services/message/member/getMemberDescription.ts`             | The account name beside a nickname, only where they differ             |
+| `apps/web/app/components/Message/Model/Message/Suggestion/MentionList.vue` | @-mention list: nickname, the account name beside it where they differ |
+| `apps/web/app/components/Message/Model/Room/Settings/Type/Profile/`        | My Profile tab + display name field (labeled Nickname)                 |
 
 ## Notes
 

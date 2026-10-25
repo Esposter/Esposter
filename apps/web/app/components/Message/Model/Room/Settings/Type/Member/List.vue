@@ -4,6 +4,7 @@ import type { UiListItem } from "@/models/ui/UiListItem";
 import { DEFAULT_READ_LIMIT } from "#shared/services/pagination/constants";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiTextFieldType } from "@/models/ui/UiTextFieldType";
+import { getMemberDescription } from "@/services/message/member/getMemberDescription";
 import { useRoleStore } from "@/store/message/room/role";
 import { useMemberStore } from "@/store/message/user/member";
 import { noop } from "@esposter/shared";
@@ -13,10 +14,10 @@ const { selectMember } = roleStore;
 const { selectedMemberId } = storeToRefs(roleStore);
 const memberStore = useMemberStore();
 const { hasMore, members } = storeToRefs(memberStore);
-// A member goes by their displayName in the room they are named in
+// A member goes by their displayName in the room they are named in, with the account name beside it where they differ
 const memberItems = computed(() =>
   members.value.map<UiListItem<string>>((member) => ({
-    description: member.name === member.displayName ? undefined : member.name,
+    description: getMemberDescription(member, ""),
     image: member.image,
     title: member.displayName,
     value: member.id,

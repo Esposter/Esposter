@@ -2,21 +2,28 @@
 import type { BroadcastMentionItem } from "@/models/message/BroadcastMentionItem";
 import type { MentionNodeAttributes } from "@/models/message/MentionNodeAttributes";
 import type { RoleMentionItem } from "@/models/message/RoleMentionItem";
-import type { PublicUser } from "@esposter/db-schema";
+import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 import type { SuggestionProps } from "@tiptap/suggestion";
 
 import { SuggestionTrigger } from "@/models/shared/SuggestionTrigger";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
+import { getMemberDescription } from "@/services/message/member/getMemberDescription";
 import { getSuggestionListTitle } from "@/services/message/getSuggestionListTitle";
 import { MentionType, takeOne } from "@esposter/shared";
 
-const { command, items, query } =
-  defineProps<SuggestionProps<BroadcastMentionItem | PublicUser | RoleMentionItem, MentionNodeAttributes>>();
-const checkIsRoleMentionItem = (item: BroadcastMentionItem | PublicUser | RoleMentionItem): item is RoleMentionItem =>
+type MentionItem = BroadcastMentionItem | MemberInRoom | RoleMentionItem;
+
+const { command, items, query } = defineProps<SuggestionProps<MentionItem, MentionNodeAttributes>>();
+const checkIsRoleMentionItem = (item: MentionItem): item is RoleMentionItem =>
   "type" in item && item.type === MentionType.Role;
+const checkIsMemberMentionItem = (item: MentionItem): item is MemberInRoom => "displayName" in item;
+// A member is named by the room's display name, with the account name beside it only where the room shows another
+const getItemTitle = (item: MentionItem) => (checkIsMemberMentionItem(item) ? item.displayName : item.name);
+const getItemDescription = (item: MentionItem) =>
+  checkIsMemberMentionItem(item) ? getMemberDescription(item, "") : undefined;
 const selectItem = (index: number) => {
   const item = takeOne(items, index);
-  const mentionNodeAttributes: MentionNodeAttributes = { id: item.id, label: item.name };
+  const mentionNodeAttributes: MentionNodeAttributes = { id: item.id, label: getItemTitle(item) };
   if (checkIsRoleMentionItem(item)) mentionNodeAttributes.type = item.type;
   command(mentionNodeAttributes);
 };
@@ -48,12 +55,21 @@ defineExpose({ onKeyDown });
           <span class="i-mdi:circle" :style="{ color: item.color || undefined }" size-6 />
         </template>
       </UiItemContent>
-      <UiItemContent v-else-if="'image' in item && item.image" :title="item.name">
+      <UiItemContent
+        v-else-if="'image' in item && item.image"
+        :description="getItemDescription(item)"
+        :title="getItemTitle(item)"
+      >
         <template #mark>
-          <MessageModelMemberStatusAvatar :id="item.id" :image="item.image" :name="item.name" is-small />
+          <MessageModelMemberStatusAvatar :id="item.id" :image="item.image" :name="getItemTitle(item)" is-small />
         </template>
       </UiItemContent>
-      <UiItemContent v-else :meaning="UiIconMeaning.Mention" :title="item.name" />
+      <UiItemContent
+        v-else
+        :description="getItemDescription(item)"
+        :meaning="UiIconMeaning.Mention"
+        :title="getItemTitle(item)"
+      />
     </div>
   </MessageModelMessageSuggestionList>
 </template>

@@ -1,7 +1,7 @@
 import type { BroadcastMentionItem } from "@/models/message/BroadcastMentionItem";
 import type { MentionNodeAttributes } from "@/models/message/MentionNodeAttributes";
 import type { RoleMentionItem } from "@/models/message/RoleMentionItem";
-import type { PublicUser } from "@esposter/db-schema";
+import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 import type { MentionOptions } from "@tiptap/extension-mention";
 
 import MentionList from "@/components/Message/Model/Message/Suggestion/MentionList.vue";
@@ -13,7 +13,7 @@ import { useRoomStore } from "@/store/message/room";
 import { PluginKey } from "@tiptap/pm/state";
 
 export const MentionSuggestion: MentionOptions<
-  BroadcastMentionItem | PublicUser | RoleMentionItem,
+  BroadcastMentionItem | MemberInRoom | RoleMentionItem,
   MentionNodeAttributes
 >["suggestion"] = {
   items: async ({ query }) => {

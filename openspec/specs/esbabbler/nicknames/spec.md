@@ -21,6 +21,23 @@ A member's name SHALL appear as their nickname in every room surface where one i
 - **WHEN** the member's message is shown in that room
 - **THEN** the message author is shown by the nickname
 
+### Requirement: A member's account name shows beside a nickname only where they differ
+
+A member listed by a room nickname SHALL show their account name beside it, and a member the room shows by the account name SHALL NOT have a second name beside it.
+
+#### Scenario: a member with a nickname is listed with the account name
+
+- **GIVEN** a member who has set a nickname in a room
+- **WHEN** another member views the room's member list, or opens the mention list and searches for the member
+- **THEN** the member is shown by the nickname
+- **AND** the member's account name is shown beside it
+
+#### Scenario: a member with no nickname is listed once
+
+- **GIVEN** a member who has no nickname in a room
+- **WHEN** another member views the room's member list
+- **THEN** the member is shown once, by the account name
+
 ### Requirement: A cleared nickname restores the account name
 
 An empty nickname SHALL mean no room-specific name, so the account name is shown.
