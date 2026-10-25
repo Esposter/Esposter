@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Visual } from "#shared/models/dashboard/data/Visual";
-import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
+import type { AxisVisualPropsData } from "@/models/dashboard/AxisVisualPropsData";
 import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
 
 import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
@@ -8,7 +8,7 @@ import { NUMBER_FORMATTER } from "#shared/services/intl/constants";
 import { takeOne } from "@esposter/shared";
 
 interface Props {
-  data: VisualPropsData;
+  data: AxisVisualPropsData;
   visual: Visual;
 }
 

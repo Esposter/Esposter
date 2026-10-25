@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
+import type { AxisVisualPropsData } from "@/models/dashboard/AxisVisualPropsData";
 
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
@@ -12,7 +12,7 @@ import { describe, expect, test } from "vitest";
 
 describe("dashboardVisualTable", () => {
   const categories = ["a", "b"];
-  const data: VisualPropsData = {
+  const data: AxisVisualPropsData = {
     options: { xaxis: { categories } },
     series: [
       { data: [1, 2], name: "x" },

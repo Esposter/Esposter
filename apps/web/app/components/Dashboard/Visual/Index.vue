@@ -7,6 +7,7 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { VISUAL_INTERACTION_CHART_OPTIONS } from "@/services/dashboard/chart/constants";
 import { getVisualLinkChartOptions } from "@/services/dashboard/chart/getVisualLinkChartOptions";
 import { VisualTypeDemoDataMap } from "@/services/dashboard/demo/VisualTypeDemoDataMap";
+import { isAxisVisualPropsData } from "@/services/dashboard/isAxisVisualPropsData";
 import { useClipboardStore } from "@/store/clipboard";
 import { takeOne } from "@esposter/shared";
 import { defu } from "defu";
@@ -56,8 +57,8 @@ const { copy } = clipboardStore;
         <UiSkeleton size-full />
       </div>
       <!-- A card and a table draw their own values, so they take the same data a chart would, and no chart options -->
-      <DashboardVisualCard v-else-if="visual.type === VisualType.Card" :data :visual />
-      <DashboardVisualTable v-else-if="visual.type === VisualType.Table" :data :visual />
+      <DashboardVisualCard v-else-if="visual.type === VisualType.Card && isAxisVisualPropsData(data)" :data :visual />
+      <DashboardVisualTable v-else-if="visual.type === VisualType.Table && isAxisVisualPropsData(data)" :data :visual />
       <StyledApexChart v-else ref="chart" :="data" :options="linkedOptions" @load="applyView()" />
       <!-- A capped read still charts, so the footnote is what stops it from reading as the whole picture -->
       <DatasetTruncationFootnote v-if="truncation" bottom-1 left-1 absolute :truncation />

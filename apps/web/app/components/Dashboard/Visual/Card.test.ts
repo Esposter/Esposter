@@ -1,5 +1,5 @@
 // @vitest-environment nuxt
-import type { VisualPropsData } from "@/models/dashboard/VisualPropsData";
+import type { AxisVisualPropsData } from "@/models/dashboard/AxisVisualPropsData";
 
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
@@ -13,7 +13,7 @@ describe("dashboardVisualCard", () => {
   test("a card abbreviates a large number", async () => {
     expect.hasAssertions();
 
-    const data: VisualPropsData = { series: [{ data: [12000], name }] };
+    const data: AxisVisualPropsData = { series: [{ data: [12000], name }] };
     const wrapper = await mountSuspended(DashboardVisualCard, {
       props: { data, visual: new Visual({ type: VisualType.Card }) },
     });
@@ -24,7 +24,7 @@ describe("dashboardVisualCard", () => {
   test("a card shows the label its owner wrote over the default", async () => {
     expect.hasAssertions();
 
-    const data: VisualPropsData = { series: [{ data: [412], name }] };
+    const data: AxisVisualPropsData = { series: [{ data: [412], name }] };
     const visual = new Visual({ type: VisualType.Card });
     visual.chart.configuration.title = "a";
     const wrapper = await mountSuspended(DashboardVisualCard, { props: { data, visual } });
