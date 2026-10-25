@@ -4,7 +4,6 @@ import type { CraftingRecipe } from "genshin-world";
 
 import {
   CONDENSED_RESIN_CRYSTAL_CORE_ITEM_ID,
-  CONDENSED_RESIN_ITEM_ID,
   CONDENSED_RESIN_ORIGINAL_RESIN_COUNT,
   TIER_MATERIAL_COUNT,
 } from "#src/services/genshinAssets/crafting/constants";
