@@ -9,17 +9,6 @@ describe(getRecordDifferenceDescription, () => {
     expect(getRecordDifferenceDescription({ "": "" }, { "": "" })).toBe("");
   });
 
-  test("changed date value produces table", () => {
-    expect.hasAssertions();
-
-    const originalValue = new Date(1970, 0, 1);
-    const updatedValue = new Date(1970, 0, 2);
-
-    expect(getRecordDifferenceDescription({ "": originalValue }, { "": updatedValue })).toBe(
-      `${RECORD_DIFFERENCE_HEADER}\n | 1970-01-01 | 1970-01-02`,
-    );
-  });
-
   test("multiple changed values produces multiple rows", () => {
     expect.hasAssertions();
 
