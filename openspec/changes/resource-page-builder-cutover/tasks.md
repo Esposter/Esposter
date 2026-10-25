@@ -27,5 +27,6 @@
 
 ## 6. The ceiling
 
-- [ ] 6.1 Measure each editor's script beyond the explorer on this change's production build, gzipped, and hold the merge while either is over 200 KiB. Verify: tests named after the scenarios 'An editor's script loads within the budget' and 'A cutover build over the budget does not merge'.
-  - Measured 2026-10-25 on the production build at `c36d7a9a02`, from `nuxt analyze`'s raw report: the gzipped static import closure of each editor's chunks, less the explorer's (`_blade_.js`) closure. Webpage editor 110,405 B (107.8 KiB), Email editor 113,130 B (110.5 KiB). Both are under 200 KiB. The largest shared chunk is `zodToJsonSchema.js` at 68,405 B. Not ticked: the two Verify tests are not written yet, and the budget constant and the report they read are still to be decided.
+- [x] 6.1 Measure each editor's script beyond the explorer on this change's production build, gzipped, and hold the merge while either is over 200 KiB. Verify: tests named after the scenarios 'An editor's script loads within the budget' and 'A cutover build over the budget does not merge'.
+  - Measured 2026-10-25 on the production build at `c36d7a9a02`, from `nuxt analyze`'s raw report: the gzipped static import closure of each editor's chunks, less the explorer's (`_blade_.js`) closure. Webpage editor 110,405 B (107.8 KiB), Email editor 113,130 B (110.5 KiB). Both are under 200 KiB. The largest shared chunk is `zodToJsonSchema.js` at 68,405 B.
+  - Done: `EDITOR_SCRIPT_BUDGET` is defined once in `@esposter/configuration` beside `KIBIBYTE`. `getEditorScriptBytes.test.ts` holds the first scenario over the built chunks, and `assertEditorScriptsWithinBudget.test.ts` the second, with a missing report or build failing both rather than skipping.
