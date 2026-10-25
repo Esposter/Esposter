@@ -6,24 +6,26 @@ The Flowchart is a diagram editor that draws a fixed set of connected steps on a
 
 ## What Changes
 
-- A new resource type for the whiteboard, a freeform canvas of positioned elements: rectangles, ellipses and diamonds; the flowchart shape set; arrows that bind to shapes at connection points, with arrowheads at either end; freehand strokes; text; images; and sticky notes. The look is hand-drawn, drawn by our own code. The type's name is an owner choice, with the recommendation in the design.
+- A new resource type named Whiteboard, a freeform canvas of positioned elements: rectangles, ellipses and diamonds; the flowchart shape set; arrows that bind to shapes at connection points, with arrowheads at either end; freehand strokes; text; images; and sticky notes. The look is hand-drawn, drawn by our own code.
 - **Phase 1, the headless core.** The headless editor core gains a positioned-element model: typed elements with bounds, z-order, bindings between elements that the core checks, and commands that return JSON Patch operations. Its tests need no DOM.
 - **Phase 2, the renderer.** A Vue 3 component draws the model as SVG and handles pointer gestures for select, move, resize, draw, pan and multi-select, with hit testing that the core computes.
-- **Phase 3, export.** PNG and SVG export, both drawn from the same model. The read-only published view is an owner choice, recorded in the design.
-- **Phase 4, the whiteboard's own cutover parts.** The whiteboard's enum value and its agent surface. The Flowchart's removal is not in this change. It is the [flowchart retirement](../resource-flowchart-retirement/proposal.md), which the owner decided: every stored flowchart is deleted, with no conversion and no read-only copy.
+- **Phase 3, export.** PNG and SVG export, both drawn from the same model.
+- **Phase 4, the whiteboard's own parts.** The whiteboard's enum value and its agent surface. The Flowchart's removal is not in this change. It is the [flowchart retirement](../resource-flowchart-retirement/proposal.md), which the owner decided: every stored flowchart is deleted, with no conversion and no read-only copy.
 - Excalidraw is a reference for how a whiteboard feels. It is not a dependency, and neither is any other third-party drawing engine. The change adds no catalog entry.
+- **Dropped:** the minimap, since a whiteboard does not need one and Excalidraw has none.
+- **Deferred:** the read-only published view. It is recorded as its own later proposal, so the whiteboard ships unpublished and that proposal settles the public route and the Publishable capability.
 
 ## Capabilities
 
-- **resource/whiteboard** (new): the whiteboard type, its editor, its export, its agent surface and, if the owner keeps it, its published view.
+- **resource/whiteboard** (new): the whiteboard type, its editor, its export and its agent surface.
 - **headless-block-editor/positioned-elements** (new): the core's element model, its bindings, its commands and its geometry.
 
 ## Impact
 
 - The headless editor core gains a second document model next to its tree. Its existing tree model is unchanged.
-- A new `ResourceType` value for the whiteboard. The Flowchart's value is removed by the retirement change, not here.
+- A new `ResourceType` value, `Whiteboard`. The Flowchart's value is removed by the retirement change, not here.
 - The flowchart's canvas packages leave the catalog in the retirement change.
-- The whiteboard is a large build, and the design sizes it. Its production code is estimated at roughly 5,750 to 9,550 lines, against about 930 non-test lines for the Flowchart today. The estimate is judgement from measured sizes, not a measurement.
+- The whiteboard is a large build, and the design sizes it. Its production code is estimated at roughly 5,600 to 9,300 lines, against about 930 non-test lines for the Flowchart today. The estimate is judgement from measured sizes, not a measurement.
 
 ## Waiting on
 
@@ -31,4 +33,4 @@ The Flowchart is a diagram editor that draws a fixed set of connected steps on a
 - **The headless graph question** is no longer open. The flowchart canvas change that once posed it is gone, and the retirement records that rebuilding the flowchart on the core is rejected. The whiteboard's arrows need only the core to check references between elements, and phase 1 builds that check.
 - **Flowchart shapes** moved to [rejected](../../rejected/resource/flowchart-shapes/proposal.md). Its six shapes are part of this whiteboard's shape set, so nothing is lost.
 
-Owner choices, the gap analysis and the sizing are in the [design](design.md).
+The gap analysis, the type's name and the sizing are in the [design](design.md).

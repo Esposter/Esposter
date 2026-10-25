@@ -157,17 +157,6 @@ A whiteboard SHALL export to SVG and to PNG from its resource menu, with both dr
 - **WHEN** the owner exports it as PNG
 - **THEN** the file is an image of the same elements as the SVG export
 
-### Requirement: A published whiteboard is read-only, if the owner keeps the view
-
-If the owner keeps the read-only published view (owner choice E), a published whiteboard SHALL be shown at its public address, with pan and zoom and without any editing. Otherwise this requirement is removed.
-
-#### Scenario: A published whiteboard shows its shapes read-only
-
-- **GIVEN** a whiteboard that has been published
-- **WHEN** a reader opens its public address
-- **THEN** the shapes and arrows are drawn as they were saved
-- **AND** no element can be selected, moved or edited
-
 ### Requirement: An agent reads and edits a whiteboard through the generic tools
 
 An agent SHALL read a whiteboard's content and edit it by JSON Patch, through the generic resource tools, with no procedure of the whiteboard's own. A bound arrow's reroute SHALL be taken by a typed move command.

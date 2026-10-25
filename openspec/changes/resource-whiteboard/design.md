@@ -7,8 +7,11 @@ The whiteboard is a freeform canvas resource that succeeds the Flowchart. It is 
 The owner's decisions behind this design, taken as given:
 
 - The whiteboard is the flowchart's successor. A flowchart is a whiteboard with connected shapes, not a separate type kept alongside.
+- The feature and the resource type are both named Whiteboard.
 - The product takes no new third-party dependency. The whiteboard is built on the headless core and drawn by our own code. Excalidraw is a reference for how a whiteboard feels, and the whiteboard copies none of its code or packages.
 - There is no parity gate. The whiteboard ships, and the Flowchart is removed by the retirement change once that change's feature check is confirmed. Its stored flowcharts are deleted, not converted or kept read-only.
+- The minimap is dropped, since a whiteboard does not need one and Excalidraw has none.
+- The read-only published view is deferred to its own later proposal.
 
 ## What exists today
 
@@ -48,18 +51,18 @@ The retirement change's own feature check lists the rows the owner confirms. Thi
 | Pan and zoom                            | the engine's viewport                                                                 | our viewport in the renderer                                                                                     | carried                                                                       |
 | Zoom and fit controls                   | controls at the bottom left                                                           | zoom in and out, and fit to content                                                                              | carried                                                                       |
 | Background grid and snap                | background dots; the shapes change snaps to grid                                      | a grid, with snap to it                                                                                          | carried                                                                       |
-| MiniMap                                 | a plugin in the editor and in the published view                                      | not in version one                                                                                               | **dropped; owner choice D**                                                   |
+| MiniMap                                 | a plugin in the editor and in the published view                                      | none; a whiteboard needs no minimap                                                                              | dropped                                                                       |
 | Selection and multi-select              | the engine's single selection                                                         | single selection, shift to add, and a marquee                                                                    | carried, extended                                                             |
 | Keyboard                                | Backspace removes the selection, which nothing on screen names; Enter commits a label | Delete and Backspace, Enter, Escape, arrow-key nudge, undo and duplicate                                         | carried, extended                                                             |
 | Undo                                    | not in the files inspected                                                            | the shared history over inverse patches                                                                          | new for flowcharts                                                            |
 | Export PNG and SVG                      | the editor's DOM is captured and rasterised                                           | both drawn from the model                                                                                        | changed                                                                       |
-| Read-only published view                | read-only, with pan, zoom and the minimap                                             | not in version one                                                                                               | **dropped; owner choice E**                                                   |
+| Read-only published view                | read-only, with pan, zoom and the minimap                                             | deferred to its own later proposal                                                                               | deferred                                                                      |
 | Stored content                          | the canvas engine's own node and edge JSON                                            | none; the whiteboard does not read it                                                                            | **cannot carry, and not converted: the retirement deletes stored flowcharts** |
 | Earned achievement                      | the flowchart achievement                                                             | removed with the type, by the retirement                                                                         | removed by decision                                                           |
 | Agent tools                             | the generic tools over the content schema                                             | the generic tools, plus a typed move that reroutes                                                               | carried, extended                                                             |
 | Versions, recycle bin, tags, favourites | the generic resource layer                                                            | the same                                                                                                         | carried                                                                       |
 
-Three rows are the whiteboard's losses, and each is stated rather than argued away. The **stored content** cannot be read by the whiteboard, and the owner decided that the retirement deletes it rather than converting it. The **minimap** and the **read-only published view** are not in version one, and each is an owner choice below. The Flowchart is publishable today, so the published view is a real loss. The retirement records it as a loss the owner confirms, and this design does not decide it for the owner.
+The **stored content** is the one row the whiteboard cannot carry: the whiteboard does not read it, and the owner decided the retirement deletes it rather than converting it. The **minimap** is dropped. The **read-only published view** is deferred to its own later proposal, so the whiteboard ships unpublished. The Flowchart is publishable today, so that deferral is a real loss for the time being, and the later proposal is where it is recovered.
 
 ## The model
 
@@ -107,7 +110,7 @@ Phase 3 draws the same model in two formats.
 - **SVG.** A pure function over the model writes the SVG, using the same hand-drawn offsets the editor uses. It runs in the browser, and the server can run it too.
 - **PNG.** The SVG is drawn onto a canvas by the platform's image and canvas APIs and written out with the canvas's own blob export. This is the platform, so it adds no dependency.
 
-The read-only published view is owner choice E. If the owner keeps it, it is the renderer at the public route, with pan and zoom and no editing, and it publishes the document's current version as a Publishable resource does.
+The read-only published view is not in this change. It is deferred to its own later proposal, which will settle its public route and the Publishable capability it needs.
 
 ## The cutover
 
@@ -154,8 +157,7 @@ The estimates below are judgement, checked against the measured sizes above: the
 | Keyboard and accessibility         | key map, focus, announcements of selection and moves                | 300 to 500                 |
 | SVG and PNG export                 | the SVG writer, the canvas route to PNG                             | 300 to 500                 |
 | Agent surface                      | describe, patch validation, the typed move                          | 200 to 300                 |
-| Published view, if kept            | the read-only renderer at the public route                          | 150 to 250                 |
-| **Total**                          |                                                                     | **about 5,750 to 9,550**   |
+| **Total**                          |                                                                     | **about 5,600 to 9,300**   |
 
 Say plainly: **this is a large build**, several times the Flowchart's current app code and larger than the headless core it extends. The engine the Flowchart rents today does a share of this work the whiteboard must do itself: hit testing, routing, pan and zoom, and the selection model. Phases 1 and 2 are the bulk. Phase 1 can ship and be tested without the renderer, and phase 2 can be built against it, so the work can be cut at phase boundaries.
 
@@ -167,31 +169,18 @@ Say plainly: **this is a large build**, several times the Flowchart's current ap
 - **Rebuilding the Flowchart on the headless editor core.** The retirement records this as rejected: the core has no graph shape, and building one for a type being removed is not worth the cost.
 - **Building the whiteboard as a page builder document.** The page builder's core is a tree, and a canvas positions elements and refers to them by id. Forcing a canvas into slots would make the arrows children of the shapes they join. The core is extended with the positioned model instead, and its tree stays as it is.
 
-## Owner choices
+## The type's name
 
-**A. The resource type's name.** The feature is named Whiteboard. The type can take the same name or another one.
-
-- **Whiteboard (recommended).** One word names the feature, the type, the route and the tools, and it is the owner's word for it.
-- **Design.** The name of the earlier draft. It names a page-design tool, which the Webpage and the Email already are in part, so it reads two ways.
-
-Whichever name the type takes, a type rename touches the following, which the change lists so the choice is made knowing its cost:
+The feature and the resource type are both named Whiteboard, and the `ResourceType` value is `Whiteboard`. The name is decided, so the rename is part of this change rather than a choice. This section lists what the name touches, so the change's sweep covers each one:
 
 - **The `ResourceType` value** in `packages/db-schema/src/models/resource/ResourceType.ts`, and every map keyed by the type: the definition map, the description map, the editor, view and portable-format maps, and the blade map.
-- **The Postgres enum and its rows.** The enum `resourceTypeEnum` is read by `resources.type` and by `bookmarks.resourceType`. A migration adds the new value. Before any whiteboard exists, nothing holds the new value, so the add is the whole migration. A rename after rows exist would rewrite them, and then a later migration would remove the old value by recreating the enum.
-- **The public route.** A published view's address is `/view/<Type>/[id]`, so each published address changes with the type's name. The published view itself is owner choice E.
-- **The router key and the MCP tool names.** A type's tRPC router is named from the type (its accessor is `uncapitalize` of the type), and the type-specific MCP tools take their names from it. The generic tool names do not change.
-- **openspec folder names.** The change folder is already `resource-whiteboard`. Any page that names a type folder is renamed in the same change, as this change's sweep does.
-- **Code names.** The components, services and models named after the type. On the order of a hundred files mention the flowchart's name, and a rename of the new type's code would touch its own files only. None is renamed by this change.
+- **The Postgres enum and its rows.** The enum `resourceTypeEnum` is read by `resources.type` and by `bookmarks.resourceType`. The migration adds the `Whiteboard` value. Before any whiteboard exists, nothing holds the value, so the add is the whole migration.
+- **The public route.** A published whiteboard's address would be `/view/Whiteboard/[id]`. No published address exists in this change, since the read-only view is deferred, so no route is added here.
+- **The router key and the MCP tool names.** A type's tRPC router is named from the type (its accessor is `uncapitalize` of the type), so the router key is `whiteboard`, and the type-specific MCP tools take their names from it. The generic tool names do not change.
+- **openspec folder names.** The change folder is `resource-whiteboard`, and any page that names a type folder is renamed in the same change, as this change's sweep does.
+- **Code names.** The components, services and models named after the type are written under the Whiteboard name in this change. The flowchart's own code, named after the Flowchart, is removed by the retirement and is not renamed here.
 
 The content blobs are not touched. They are keyed by id, not by type, so no stored document moves.
-
-**B. The stored flowcharts.** Decided, not open. The [retirement](../resource-flowchart-retirement/proposal.md) records the owner's decision: every stored flowchart is deleted, with its blob and its storage count, and nothing is converted or kept read-only. The converting and read-only options were considered there and rejected by the owner, so this change has no conversion to build.
-
-**C. The flowchart shapes and the flowchart canvas.** Decided, not open. The shapes change is in [rejected](../../rejected/resource/flowchart-shapes/proposal.md), and the canvas change was removed with the retirement. The six shapes are part of this whiteboard's shape set.
-
-**D. The minimap in version one.** Open. Recommended: no. The minimap is dropped in version one, and a viewport overview is a later read over the same bounds. The retirement lists it as dropped or added, which the owner confirms. Adding it before the retirement runs adds to phase 2.
-
-**E. The read-only published view.** Open. The retirement lists the loss as one the owner confirms. Recommended: confirm the loss for version one, so the whiteboard is unpublished and the Publishable capability is added to it later as its own change. Keeping the view in version one makes the whiteboard publishable at once, and adds the renderer at the public route to phase 3, and the path to be settled with the type's name in owner choice A.
 
 ## Notes
 
