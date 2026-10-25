@@ -37,9 +37,9 @@ const mjmlSpacerTypeFields = {
   allowedAttributes: spacerAttributes,
   contentKind: undefined,
   defaultAttributes: { height: "20px" },
+  formSchema: z.strictObject({}),
   hasAlternativeText: false,
   propsSchema: spacerPropsSchema,
-  formSchema: z.strictObject({}),
   slots: {},
   type: MjmlNodeType.Spacer,
 } satisfies Partial<MjmlBlockTypeDefinition<MjmlSpacerNode>>;

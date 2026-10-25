@@ -55,9 +55,9 @@ const mjmlAccordionTypeFields = {
     "icon-wrapped-url": "https://i.imgur.com/bIXv1bk.png",
     padding: "10px 25px",
   },
+  formSchema: z.strictObject({}),
   hasAlternativeText: false,
   propsSchema: accordionPropsSchema,
-  formSchema: z.strictObject({}),
   slots: { children: [MjmlNodeType.AccordionElement, MjmlNodeType.Raw] },
   type: MjmlNodeType.Accordion,
 } satisfies Partial<MjmlBlockTypeDefinition<MjmlAccordionNode>>;

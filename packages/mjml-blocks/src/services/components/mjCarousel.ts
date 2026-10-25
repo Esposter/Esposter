@@ -55,9 +55,9 @@ const mjmlCarouselTypeFields = {
     "tb-selected-border-color": "#ccc",
     thumbnails: "visible",
   },
+  formSchema: z.strictObject({}),
   hasAlternativeText: false,
   propsSchema: carouselPropsSchema,
-  formSchema: z.strictObject({}),
   slots: { children: [MjmlNodeType.CarouselImage] },
   type: MjmlNodeType.Carousel,
 } satisfies Partial<MjmlBlockTypeDefinition<MjmlCarouselNode>>;

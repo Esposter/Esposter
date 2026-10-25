@@ -58,9 +58,9 @@ const mjmlNavbarLinkTypeFields = {
     "text-decoration": "none",
     "text-transform": "uppercase",
   },
+  formSchema: z.strictObject({ content: MjmlContentKindSchemaMap[MjmlContentKind.Label] }),
   hasAlternativeText: false,
   propsSchema: navbarLinkPropsSchema,
-  formSchema: z.strictObject({ content: MjmlContentKindSchemaMap[MjmlContentKind.Label] }),
   slots: {},
   type: MjmlNodeType.NavbarLink,
 } satisfies Partial<MjmlBlockTypeDefinition<MjmlNavbarLinkNode>>;

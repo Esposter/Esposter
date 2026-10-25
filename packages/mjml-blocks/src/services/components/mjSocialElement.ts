@@ -76,9 +76,9 @@ const mjmlSocialElementTypeFields = {
     "text-padding": "4px 4px 4px 0",
     "vertical-align": "middle",
   },
+  formSchema: z.strictObject({ content: MjmlContentKindSchemaMap[MjmlContentKind.Label] }),
   hasAlternativeText: false,
   propsSchema: socialElementPropsSchema,
-  formSchema: z.strictObject({ content: MjmlContentKindSchemaMap[MjmlContentKind.Label] }),
   slots: {},
   type: MjmlNodeType.SocialElement,
 } satisfies Partial<MjmlBlockTypeDefinition<MjmlSocialElementNode>>;

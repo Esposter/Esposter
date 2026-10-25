@@ -43,9 +43,9 @@ const mjmlDividerTypeFields = {
     padding: "10px 25px",
     width: "100%",
   },
+  formSchema: z.strictObject({}),
   hasAlternativeText: false,
   propsSchema: dividerPropsSchema,
-  formSchema: z.strictObject({}),
   slots: {},
   type: MjmlNodeType.Divider,
 } satisfies Partial<MjmlBlockTypeDefinition<MjmlDividerNode>>;

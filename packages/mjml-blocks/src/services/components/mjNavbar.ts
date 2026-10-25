@@ -59,9 +59,9 @@ const mjmlNavbarTypeFields = {
     "ico-text-decoration": "none",
     "ico-text-transform": "uppercase",
   },
+  formSchema: z.strictObject({}),
   hasAlternativeText: false,
   propsSchema: navbarPropsSchema,
-  formSchema: z.strictObject({}),
   slots: { children: [MjmlNodeType.NavbarLink, MjmlNodeType.Raw] },
   type: MjmlNodeType.Navbar,
 } satisfies Partial<MjmlBlockTypeDefinition<MjmlNavbarNode>>;
