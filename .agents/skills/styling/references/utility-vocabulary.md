@@ -18,7 +18,7 @@ Always use the UnoCSS abbreviated shorthand forms — they are first-class utili
 - For negative values, put the double hyphen in the attribute name: `right--1`, `top--1`, `ml--2`. Do not write `right="-0.25rem"` or use `-right-1` in templates.
 - Use arbitrary values only when off-scale or computed (`references/arbitrary-values.md`).
 
-**Border (`b-` prefix)** — `b-1`, `b-b-1`, `b-border`, never a `border-*` spelling; what a width draws on its own is `references/layout.md`.
+**Border (`b-` prefix)** — `b-1`, `b-b-1`, `b-border`, never a `border-*` spelling; what a width draws on its own is `references/borders.md`.
 
 **Border-radius (`rd` prefix)** — `rd` not `rounded`, `rd-t-2` not `rounded-t-2`, `rd-full` not `rounded-full`, and `rd="50%"` for a circle.
 

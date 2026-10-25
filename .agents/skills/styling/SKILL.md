@@ -13,7 +13,7 @@ description: Apply when writing or reviewing styles in .vue or .css files, or la
 
 ## Deep Dives
 
-- `references/layout.md` — when laying out a page, panel, sidebar or column split, sizing a region, drawing a border or finding one you did not ask for, or building a row that reads as one sentence.
+- `references/layout.md` — when laying out a page, panel, sidebar or column split, sizing a region, or building a row that reads as one sentence.
 - `references/utility-vocabulary.md` — when two spellings say the same thing: an abbreviation, a named step against a numeric one, a directional gap, or a slash value.
 - `references/images.md` — when adding or sizing an image.
 - `references/theme-utilities.md` — when reaching for a type size, a token or palette colour, a named opacity, or muted text.
@@ -25,6 +25,7 @@ description: Apply when writing or reviewing styles in .vue or .css files, or la
 - `references/links.md` — when styling a link or inline text that runs an action.
 - `references/state-variants.md` — when a colour changes with state, or a shaded cell also takes a tint.
 - `references/spacing.md` — when spacing siblings or reaching for a margin.
+- `references/borders.md` — when drawing a border, putting one between two regions, or finding a border you did not ask for.
 
 ## Core Rules
 
