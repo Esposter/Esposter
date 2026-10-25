@@ -82,6 +82,8 @@ const blockSerializers: Record<string, (node: JSONContent) => string> = {
   codeBlock: serializeCodeBlock,
   heading: (node) => `${"#".repeat(Number(node.attrs?.level ?? 1))} ${serializeInline(node.content ?? [])}`,
   horizontalRule: () => "---",
+  // An image is stored at the app's own address, which a file cannot carry, so the file keeps the words the image was given
+  image: (node) => serializeParagraph({ content: [{ text: String(node.attrs?.alt ?? ""), type: "text" }] }),
   orderedList: (node) => {
     const start = Number(node.attrs?.start ?? 1);
     return serializeListItems(node.content ?? [], (_item, index) => `${start + index}. `);

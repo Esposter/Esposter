@@ -59,4 +59,27 @@ describe(deserializeNoteMarkdown, () => {
 
     expect(noteSchema.nodeFromJSON(imported).toJSON()).toStrictEqual(noteSchema.nodeFromJSON(noteDoc).toJSON());
   });
+
+  // A link to a scheme that can run a script is read as its text, so the note never holds a link the webpage refuses
+  test("A link to a script scheme keeps its text without the link", () => {
+    expect.hasAssertions();
+
+    expect(deserializeNoteMarkdown("[click](javascript:alert(1))")).toStrictEqual({
+      content: [{ content: [{ marks: [], text: "click", type: "text" }], type: "paragraph" }],
+      type: "doc",
+    });
+  });
+});
+
+describe(serializeNoteMarkdown, () => {
+  test("An image exports as its alt text", () => {
+    expect.hasAssertions();
+
+    expect(
+      serializeNoteMarkdown({
+        content: [{ attrs: { alt: "A cat", src: "/api/resource-assets/cat.png" }, type: "image" }],
+        type: "doc",
+      }),
+    ).toBe("A cat\n");
+  });
 });

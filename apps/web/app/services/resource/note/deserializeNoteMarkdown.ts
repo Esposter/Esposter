@@ -1,6 +1,7 @@
 import type { JSONContent } from "@tiptap/core";
 import type { Token, Tokens } from "marked";
 
+import { checkIsAllowedUrl, DEFAULT_ALLOWED_SCHEMES } from "@esposter/shared";
 import { marked } from "marked";
 
 interface InlineMark {
@@ -36,8 +37,11 @@ const mapInlineToken = (token: Token): JSONContent[] => {
   const markType = INLINE_MARK_TYPES[token.type];
   if (markType) return withMark(mapInlineTokens(token.tokens), { type: markType });
 
+  // A link to a scheme that can run a script is kept as its text, the way the webpage's own links refuse it
   if (token.type === "link")
-    return withMark(mapInlineTokens(token.tokens), { attrs: { href: token.href }, type: "link" });
+    return checkIsAllowedUrl(token.href, DEFAULT_ALLOWED_SCHEMES)
+      ? withMark(mapInlineTokens(token.tokens), { attrs: { href: token.href }, type: "link" })
+      : mapInlineTokens(token.tokens);
 
   if (token.type === "codespan") return createTextNodes(token.text, [{ type: "code" }]);
 
