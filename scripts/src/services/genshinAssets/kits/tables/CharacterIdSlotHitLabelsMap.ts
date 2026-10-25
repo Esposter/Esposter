@@ -35,6 +35,8 @@ export const CharacterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = n
       },
     },
   ],
+  // Yoimiya. Niwabi Fire Dance's seconds read its skill's Duration label
+  [10_000_049, { values: { "parameters.niwabiFireDanceSeconds": { combatTalent: SKILL, label: "Duration" } } }],
   // Shenhe's avatar id, as her kit module names it. Her Icy Quill's ATK ratio, press and hold durations and trigger quotas
   // Read from her skill's labels, the ratio's ATK label first and the durations and quotas by their press and hold positions
   [
