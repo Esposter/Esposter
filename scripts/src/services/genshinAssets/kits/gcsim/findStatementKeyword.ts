@@ -5,7 +5,8 @@ import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/che
 
 // The keyword a brace's statement opens with, such as `if` or `switch`, scanning back over its tokens to the line or block
 // It starts in, else undefined. A function literal's or a struct's brace has no such keyword in its statement, and a switch
-// With an init statement, `switch x := f(); x {`, is not read since the scan stops at its `;`
+// With an init statement, `switch x := f(); x {`, is not read since the scan stops at its `;`. A `func` met on the way
+// Belongs to a function literal in that statement, `if x := func() int { ... }(); x > 0 {`, so the brace is the literal's
 export const findStatementKeyword = (
   tokens: readonly GoToken[],
   openPosition: number,
@@ -16,6 +17,7 @@ export const findStatementKeyword = (
     if (
       token === undefined ||
       token.kind === GoTokenKind.Newline ||
+      token.text === "func" ||
       checkIsGoPunctuation(token, "{") ||
       checkIsGoPunctuation(token, "}") ||
       checkIsGoPunctuation(token, ";")
