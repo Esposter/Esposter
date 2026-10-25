@@ -38,7 +38,7 @@ flowchart TD
 
 - **Choose from the report, not from reading every page** — `pnpm ai:proposals:report` sizes each open proposal, orders them cheapest first and lists the areas owed a pass; the pick weighs that cost against the roadmap's order (`references/choosing.md`).
 - **One proposal, or one sub-spec of a folder, per build**, taken in the folder index's build order — a folder is never built whole in one go (`references/choosing.md`).
-- **Re-verify before building** — the checks every product-review pass runs, on this one page, before the first edit (`references/building.md`).
+- **Re-verify before building** — the checks every product-review pass runs, listed in `references/building.md`, before the first edit.
 - **A feature asked for with no proposal** gets the same written-record check a proposal had before it was written — `deferred/`, `rejected/` and the area's reference product — and is then built directly; the ask is the spec (`references/building.md`).
 - **What the build leaves out is written down** as a deferred or rejected page, so the next product-review pass does not find it again as a gap (`references/building.md`).
 - **Ship in the same change** — the lifecycle is the `openspec` skill's (`references/page-shapes.md`, "Lifecycle map"); what a build adds to it is `references/shipping.md`.
