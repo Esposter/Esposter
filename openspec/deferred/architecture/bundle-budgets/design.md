@@ -8,7 +8,7 @@ Payload control today is idiomatic rather than measured: Nuxt's per-route code s
 
 ## Why deferred
 
-- A budget is only useful if a breach changes a decision. This app deliberately ships heavy client-only surfaces — Phaser games, LiveKit, a PDF viewer, GrapesJS, three — whose weight is a product choice already made. A single global number would be tripped by design on the routes that carry them, and the response would be to raise the number, which is how a budget becomes decoration.
+- A budget is only useful if a breach changes a decision. This app deliberately ships heavy client-only surfaces — Phaser games, LiveKit, a PDF viewer, three — whose weight is a product choice already made. A single global number would be tripped by design on the routes that carry them, and the response would be to raise the number, which is how a budget becomes decoration.
 - The number worth guarding is per-route first-load, not total build size, and getting from `nuxt analyze` output to a per-route attribution is real work rather than a config file. Guarding the wrong number is worse than guarding none, because it produces a green check that means nothing.
 - The failure mode a budget catches — a dependency quietly landing in the shared entry chunk — has not happened here, and the lazy-import discipline above is what prevents it.
 

@@ -24,7 +24,7 @@ One conversion, `getAgentJsonSchema`, turns a Zod schema into the JSON Schema an
 - **Undescribed parts are marked.** `z.unknown()` and `z.any()` are stamped `x-opaque`, the key `OPAQUE_KEY` names, so the agent sees where the schema stops describing.
 - **Read-only fields say so.** A schema given `.readonly()` or `.meta({ readOnly: true })` reaches the agent as JSON Schema's own `readOnly` keyword.
 - **Enums come through as `enum` lists**, so the legal values arrive in the same answer as the shape.
-- **The resource schema follows its editor.** Flowchart node data describes its optional label and edges have no writable data; Notes check documents against the shared writing kit; Survey models must be JSON objects; and the HTML or CSS captured by GrapesJS is read-only until the page builder replaces that format.
+- **The resource schema follows its editor.** Flowchart node data describes its optional label and edges have no writable data; Notes check documents against the shared writing kit; Survey models must be JSON objects; and the `html` a published snapshot holds is read-only, since the server bakes it from the document at publish.
 
 ## Reading
 
