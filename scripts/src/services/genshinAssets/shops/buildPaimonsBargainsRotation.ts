@@ -1,6 +1,6 @@
 import type { ExcelShopGoodsRow } from "#src/models/genshinAssets/shops/ExcelShopGoodsRow";
 import type { ExcelShopRotateRow } from "#src/models/genshinAssets/shops/ExcelShopRotateRow";
-import type { ShopRefresh } from "#src/models/genshinAssets/shops/ShopRefresh";
+import type { PaimonsBargainsPrice } from "#src/models/genshinAssets/shops/PaimonsBargainsPrice";
 import type { ExcelMaterialRow } from "#src/models/genshinAssets/stats/ExcelMaterialRow";
 
 import {
@@ -14,18 +14,12 @@ import {
   SHOP_REFRESH_BY_TABLE_TYPE,
   SHOP_REFRESH_NONE_TABLE_TYPE,
 } from "#src/services/genshinAssets/shops/constants";
+import { checkIsSamePrice } from "#src/services/genshinAssets/shops/checkIsSamePrice";
 import { getShopGoodCosts } from "#src/services/genshinAssets/shops/getShopGoodCosts";
 import { SHOP_GOODS_TABLE_NAME } from "#src/services/genshinText/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameDataset } from "genshin-world";
-
-// The price, limit and refresh a Paimon's Bargains set is sold at, as its goods give them
-interface PaimonsBargainsPrice {
-  buyLimit: number;
-  costs: { count: number; itemId: number }[];
-  refresh: ShopRefresh;
-}
 
 // Paimon's Bargains' rotation as one record of the shops dataset: the pairs of characters, each pair the avatars that the
 // Two character rotations give at the same order, read through their cards' item use, and the Royal and Blackcliff weapon
@@ -113,11 +107,3 @@ export const buildPaimonsBargainsRotation = (): Record<string, unknown> => {
   };
   return { [`${GameDataset.Shops}/paimonsBargainsRotation`]: rotation };
 };
-
-const checkIsSamePrice = (first: PaimonsBargainsPrice, second: PaimonsBargainsPrice): boolean =>
-  first.buyLimit === second.buyLimit &&
-  first.costs.length === second.costs.length &&
-  first.costs.every(
-    ({ count, itemId }, index) => count === second.costs[index]?.count && itemId === second.costs[index]?.itemId,
-  ) &&
-  first.refresh === second.refresh;
