@@ -4,7 +4,7 @@
 
 ## 2. Preview
 
-- [ ] 2.1 Show the open document, compiled by the server, in a frame at desktop and mobile width, with the validator's messages above it. Verify: tests named after the scenarios 'Preview shows the compiled email at mobile width' and 'Validator messages show above the preview'.
+- [x] 2.1 Show the open document, compiled by the server, in a frame at desktop and mobile width, with the validator's messages above it. Verify: tests named after the scenarios 'preview shows the compiled email at mobile width' and 'validator messages show above the preview' in `apps/web/app/components/PageBuilder/Email/Preview.test.ts`.
 
 ## 3. Fields
 

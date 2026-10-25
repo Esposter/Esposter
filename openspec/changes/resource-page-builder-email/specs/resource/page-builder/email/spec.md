@@ -26,13 +26,13 @@ Each element on the design canvas SHALL show what its attributes resolve to: its
 
 Preview SHALL show the compiled email at the width the owner chooses, and SHALL show the validator's messages above it.
 
-#### Scenario: Preview shows the compiled email at mobile width
+#### Scenario: preview shows the compiled email at mobile width
 
 - **GIVEN** an email open in the editor
 - **WHEN** the owner switches Preview to mobile width
 - **THEN** the compiled email is shown at 375 pixels wide
 
-#### Scenario: Validator messages show above the preview
+#### Scenario: validator messages show above the preview
 
 - **GIVEN** an email whose markup fails strict validation
 - **WHEN** the owner views Preview
