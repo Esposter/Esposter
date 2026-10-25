@@ -15,4 +15,4 @@
 
 ## 4. Old paging
 
-- [ ] 4.1 Confirm the existing cursor pages the Old pair in ascending order with no repeats or gaps; the design expects no cursor change. Verify: a test named after the scenario 'Paging Old reaches every reply once', written first; if it fails against the current cursor, the cursor needs a change before 4.1 is done.
+- [x] 4.1 Confirm the existing cursor pages the Old pair in ascending order with no repeats or gaps; the design expects no cursor change. Verify: a test named after the scenario 'Paging Old reaches every reply once', written first; if it fails against the current cursor, the cursor needs a change before 4.1 is done.
