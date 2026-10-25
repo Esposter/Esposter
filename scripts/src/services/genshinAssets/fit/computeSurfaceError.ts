@@ -1,6 +1,6 @@
 import type { MeshSample } from "#src/models/genshinAssets/fit/MeshSample";
 
-import { findNearest } from "#src/services/genshinAssets/fit/findNearest";
+import { findNearestSample } from "#src/services/genshinAssets/fit/findNearestSample";
 
 const DEGREES_PER_RADIAN = 180 / Math.PI;
 
@@ -14,7 +14,7 @@ export const computeSurfaceError = (
   let targetDistance = 0;
   let angle = 0;
   for (const { normal, point } of targetSamples) {
-    const { distance, nearest } = findNearest(point, standInSamples);
+    const { distance, nearest } = findNearestSample(point, standInSamples);
     targetDistance += distance;
     const cosine = nearest
       ? normal[0] * nearest.normal[0] + normal[1] * nearest.normal[1] + normal[2] * nearest.normal[2]
@@ -22,7 +22,7 @@ export const computeSurfaceError = (
     angle += Math.acos(Math.min(1, Math.max(-1, cosine))) * DEGREES_PER_RADIAN;
   }
   let standInDistance = 0;
-  for (const { point } of standInSamples) standInDistance += findNearest(point, targetSamples).distance;
+  for (const { point } of standInSamples) standInDistance += findNearestSample(point, targetSamples).distance;
   return {
     angle: angle / targetSamples.length,
     distance: (targetDistance / targetSamples.length + standInDistance / standInSamples.length) / 2,

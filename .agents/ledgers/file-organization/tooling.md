@@ -396,8 +396,8 @@
 | `scripts/src/services/genshinAssets/fit/findCellComponents.ts`                            | —                      | 1 file   |
 | `scripts/src/services/genshinAssets/fit/findCellRectangles.test.ts`                       | —                      | 1 file   |
 | `scripts/src/services/genshinAssets/fit/findCellRectangles.ts`                            | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/findNearest.ts`                                   | —                      | 1 file   |
 | `scripts/src/services/genshinAssets/fit/findNearestEdgePoint.ts`                          | —                      | 1 file   |
+| `scripts/src/services/genshinAssets/fit/findNearestSample.ts`                             | —                      | 1 file   |
 | `scripts/src/services/genshinAssets/fit/findOakPlacement.ts`                              | —                      | 1 file   |
 | `scripts/src/services/genshinAssets/fit/findOpenLoops.ts`                                 | —                      | 1 file   |
 | `scripts/src/services/genshinAssets/fit/fitAlbedo.ts`                                     | —                      | 1 file   |
