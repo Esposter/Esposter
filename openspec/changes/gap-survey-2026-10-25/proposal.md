@@ -36,4 +36,4 @@ Each gap below is ranked by what it costs if left open. Its type says what to do
 
 14. **A dataset row-cap deferral may have met its consumers.** `openspec/deferred/resource/dataset-row-cap-pagination/design.md` (line 11) revisits "when a real consumer (dashboard binding, Sheet import, email personalized export) hits the cap on real data". All three consumers shipped, and the cap is now surfaced through the warning in `openspec/specs/resource/dataset-row-cap-warning/`. The deferral does not say whether any real data has reached the cap since. Why it matters: the answer decides whether pagination is owed. **Deferred, revisit**: measure whether a real dataset has hit the cap, and decide from that rather than from the consumer list.
 
-Items 1, 3, 4, 5, 6, 7, 9, 10, 11, 12 and 13 are the proposals in `tasks.md`. Items 2 and 8 are bugs, and items 3 and 14 are deferred revisits to decide, not proposals to write.
+Items 1, 4, 5, 6, 7, 9, 10, 11, 12 and 13 are the proposals in `tasks.md`. Items 2 and 8 are bugs, and items 3 and 14 are deferred revisits to decide, not proposals to write.
