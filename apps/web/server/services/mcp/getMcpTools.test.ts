@@ -69,6 +69,7 @@ describe(getMcpTools, () => {
           "resource_restoreSnapshotVersion",
           "resource_updateResource",
           "resource_updateResourceContent",
+          "resource_publishResource",
           "sheet_runSheetCommand",
           "todoList_toggleTodoCompleted",
         ],

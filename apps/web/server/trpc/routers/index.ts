@@ -23,6 +23,7 @@ import { postRouter } from "#server/trpc/routers/post";
 import { programRouter } from "#server/trpc/routers/program";
 import { pushSubscriptionRouter } from "#server/trpc/routers/pushSubscription";
 import { resourceRouter } from "#server/trpc/routers/resource";
+import { resourceDispatchRouter } from "#server/trpc/routers/resourceDispatch";
 import { roleRouter } from "#server/trpc/routers/role";
 import { roomRouter } from "#server/trpc/routers/room";
 import { searchHistoryRouter } from "#server/trpc/routers/searchHistory";
@@ -35,6 +36,7 @@ import { userRouter } from "#server/trpc/routers/user";
 import { userToRoomRouter } from "#server/trpc/routers/userToRoom";
 import { webhookRouter } from "#server/trpc/routers/webhook";
 import { webpageRouter } from "#server/trpc/routers/webpage";
+import { mergeRouters } from "@trpc/server/unstable-core-do-not-import";
 
 export const trpcRouter = router({
   achievement: achievementRouter,
@@ -60,7 +62,7 @@ export const trpcRouter = router({
   post: postRouter,
   program: programRouter,
   pushSubscription: pushSubscriptionRouter,
-  resource: resourceRouter,
+  resource: mergeRouters(resourceRouter, resourceDispatchRouter),
   role: roleRouter,
   room: roomRouter,
   searchHistory: searchHistoryRouter,
