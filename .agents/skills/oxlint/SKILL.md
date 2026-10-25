@@ -32,7 +32,7 @@ Oxlint runs as **one repo-wide pass** from the one `oxlint.config.ts` at the rep
 
 **Never hand-fix lint errors** — let the fix script do it. **The one exception is while you are changing a rule**: an edit to `oxlint.config.ts` is verified check-only, because a fix variant would rewrite the repo to satisfy a decision that is still being made (`references/lint-configuration.md`).
 
-**A new ban is rolled out from one violation list, never one package at a time.** The root lint runs every package to the end — `pnpm-workspace.yaml` sets `bail: false`, so a recursive run reports each package's result rather than stopping at the first — and one check-only run therefore lists every site across the tree. Collect the whole set before editing anything: a rule finds sites a grep for the same shape does not, because the shape wraps across lines, so the list is also the count.
+**A new ban is rolled out from one violation list, never one package at a time.** The root lint runs every package to the end (the `package-scripts` skill, `references/app-scripts.md`), so one check-only run lists every site across the tree. Collect the whole set before editing anything: a rule finds sites a grep for the same shape does not, because the shape wraps across lines, so the list is also the count.
 
 ## Which directive to use
 
