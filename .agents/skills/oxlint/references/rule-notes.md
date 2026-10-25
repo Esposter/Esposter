@@ -38,10 +38,11 @@ default. Deleting it is a runtime defect the types no longer describe: the singl
 
 ## `typescript/method-signature-style` (oxlint)
 
-Interface method signatures must be property signatures (`bar: (x: string) => void`, not `bar(x: string): void`). Two exceptions take a file-level `/* oxlint-disable typescript/method-signature-style -- reason */`:
+Interface method signatures must be property signatures (`bar: (x: string) => void`, not `bar(x: string): void`). Three exceptions take a file-level `/* oxlint-disable typescript/method-signature-style -- reason */`:
 
 1. **Built-in interface augmentations needing generic-per-call-site overloads** (`declare global { interface ObjectConstructor { … } }`) — method signatures let each call site pass different type arguments; property signatures don't.
 2. **Third-party declaration files with real overloads** (DefinitelyTyped-style `.d.ts`) — overloaded method signatures can't be cleanly converted.
+3. **Interfaces whose parameters must stay bivariant** — a property function type is checked contravariantly under `strictFunctionTypes`, so an interface over a narrower type (`DataSourceConfiguration<Subtype>` in a map of `DataSourceConfiguration<SheetSettings>`, a `PageBuilderKind` over a narrower node) would stop assigning to the shared form. Method signatures keep it assignable.
 
 **Overloads in your own code** don't qualify: use call signatures inside an object type — `bar: { (x: string): void; (x: number): string }`.
 
