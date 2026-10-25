@@ -1,3 +1,4 @@
+import type { BaseSurveySummaryCard } from "@/models/resource/survey/BaseSurveySummaryCard";
 import type { SurveySummaryCardType } from "@/models/resource/survey/SurveySummaryCardType";
 
 // One question of the summary. A choice's count is out of the responses that answered, so a question taking several
@@ -8,9 +9,3 @@ export type SurveySummaryCard = BaseSurveySummaryCard &
     | { average: number; maximum: number; minimum: number; type: SurveySummaryCardType.Number }
     | { average?: number; choices: { count: number; label: string }[]; type: SurveySummaryCardType.Choice }
   );
-interface BaseSurveySummaryCard {
-  // How many responses answered the question, so a skipped optional question reads honestly
-  answeredCount: number;
-  name: string;
-  title: string;
-}

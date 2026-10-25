@@ -1,9 +1,6 @@
-import type { NpcId } from "#shared/generated/tiled/propertyTypes/enum/NpcId";
 import type { Item } from "#shared/models/dungeons/item/Item";
 import type { Monster } from "#shared/models/dungeons/monster/Monster";
-import type { SceneKey } from "@/models/dungeons/keys/SceneKey";
-import type { SceneEventKey } from "@/models/dungeons/scene/SceneEventKey";
-import type { EFFECT_COMPLETE_EVENT_KEY_SUFFIX } from "@/services/phaser/constants";
+import type { SceneEvents } from "@/models/phaser/SceneEvents";
 import type { Direction, Position } from "grid-engine";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
@@ -17,7 +14,3 @@ export interface PhaserEvents extends SceneEvents {
   unuseItem: () => void;
   useItem: (scene: SceneWithPlugins, item: Item, monster: Monster, onComplete: () => Promise<void>) => void;
 }
-
-type SceneEventKeys = `${NpcId}${typeof EFFECT_COMPLETE_EVENT_KEY_SUFFIX}` | `${SceneEventKey}${keyof typeof SceneKey}`;
-
-type SceneEvents = Record<SceneEventKeys, () => void>;
