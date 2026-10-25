@@ -9,4 +9,4 @@
 
 ## 2. The surface check
 
-- [ ] 2.1 Add the check over every resource type, with no roster: each type's content schema describes as a root object, and its undescribed and read-only paths match the record kept per type, so a partial surface is never silent. Verify: a test named after the scenario 'A type whose content schema is not an object fails CI', failing first, then passing; and the scenario 'A change to a type's described surface fails CI until it is recorded'.
+- [x] 2.1 Add the check over every resource type, with no roster: each type's content schema describes as a root object, and its undescribed and read-only paths match the record kept per type, so a partial surface is never silent. Verify: a test named after the scenario 'A type whose content schema is not an object fails CI', failing first, then passing; and the scenario 'A change to a type's described surface fails CI until it is recorded'.
