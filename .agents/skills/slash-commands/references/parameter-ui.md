@@ -8,7 +8,7 @@ The components live under `apps/web/app/components/Message/Model/Message/Input/`
 
 ## Validation — `safeParse` + `setErrors`, not `:rules`
 
-Errors live in `useSlashCommandStore` as `SlashCommandParameterError[]` (`{ id, messages }`, keyed by parameter name), written via `setErrors(name, messages)`. `Chip.vue` validates per keystroke and only styles its own border; the message text renders in the input header:
+Errors live in `useSlashCommandStore` as `SlashCommandParameterError[]` (`{ id, messages }`, keyed by parameter name), written via `setErrors(name, messages)`. `Chip.vue` validates per keystroke and only tints its own chip; the message text renders in the input header:
 
 ```ts
 setErrors(
