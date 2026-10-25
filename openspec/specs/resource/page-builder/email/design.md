@@ -6,7 +6,7 @@ The email editor, built over the node types and the renderer contract the [docum
 
 MJML stays the engine, and the email's node types are its components from the [MJML blocks](../../../mjml-blocks/README.md) package: their attributes, MJML's defaults, their nesting and the head as the root's props. That package owns what an email may hold. This page is what the editor draws over it, plus the one type the app adds, the survey invite, an `mj-button` whose survey link prop indexes the invite as the webpage's does.
 
-The preview text is a root prop, so the bar's field binds it through a patch like any other edit, and `readEmailPreviewText`, `writeEmailPreviewText` and `getEmailPreview` go with the read-back after every change. A merge field is an inline node in the text, inserted by typing `{{` — the mention suggestion the composer already uses, offering the bound dataset's columns — or by dragging a column from the Merge fields category; it renders as the `{{column}}` token `toMergeField` writes today.
+The preview text is a root prop, so the bar's field binds it through a patch like any other edit, and the root form's `preview` field holds it, written to the head as `mj-preview` as the [email preview text](../../email-preview-text/design.md) page describes. A merge field is an inline node in the text, inserted by typing `{{` — the mention suggestion the composer already uses, offering the bound dataset's columns — or by dragging a column from the Merge fields category; it renders as the `{{column}}` token `toMergeField` writes today.
 
 **The design canvas** draws each email type with its `canvas` component:
 
@@ -54,7 +54,7 @@ The owed items and their reasons are in the [change's tasks](../../../../changes
 
 - **One merge-field form.** The compile writes a merge token's `&`, `<` and `>` escaped and leaves quotes as they are, so substitution matches that text escape alone. The raw form is no longer matched ([`substituteMergeFields.ts`](../../../../../apps/web/app/services/emailEditor/substituteMergeFields.ts)).
 - **Length hint.** The preview text's limit is `MAX_EMAIL_PREVIEW_LENGTH`, which is the schema's maximum. The schema form draws it beside the field as a count, so the hint and the enforced limit come from one constant.
-- **Preview placement.** Preview is a header toggle in the editor blade, beside the dataset picker, so it is reachable without leaving the editor.
+- **Preview placement.** Preview is reachable without leaving the editor, so the toggle the Preview paragraph places stays in the header.
 - **FileAssets.** Email keeps `fileAssets` on its resource definition, since its images are hosted by us. Its image field has no upload path yet, so Email is not counted as an adopter of [resource-file-assets](../../resource-file-assets/design.md) until that field lands.
 - **The export staging store stays.** `apps/web/app/store/emailEditor/exportDialog.ts` is the singleton target the personalised export's truncation confirm is staged in. It is not a bridge to a live editor, so it stays beside the blade that draws the decision.
 
