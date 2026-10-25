@@ -2,26 +2,7 @@ import type { TMXFrame } from "#src/models/tmx/TMXFrame";
 
 import { PropertyType } from "#src/models/PropertyType";
 import { TMXTagName } from "#src/models/tmx/TMXTagName";
-import { exhaustiveGuard } from "@esposter/shared";
-
-// A property's value read as its type says it is, so a string property holding "1" stays a string
-const parsePropertyValue = (propertyType: PropertyType, value: string): boolean | number | string => {
-  switch (propertyType) {
-    case PropertyType.Bool:
-      return value === "true";
-    case PropertyType.Class:
-    case PropertyType.Color:
-    case PropertyType.File:
-    case PropertyType.Object:
-    case PropertyType.String:
-      return value;
-    case PropertyType.Float:
-    case PropertyType.Int:
-      return Number(value);
-    default:
-      return exhaustiveGuard(propertyType);
-  }
-};
+import { parsePropertyValue } from "#src/services/parsePropertyValue";
 
 // Reads the character data an element holds once it has closed: a property's value, a text's content, and a tile
 // Data's encoded cells. Every other element is complete when it opens.

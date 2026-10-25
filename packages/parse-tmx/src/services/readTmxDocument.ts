@@ -1,25 +1,14 @@
-import type { TMXAttributes } from "#src/models/tmx/TMXAttributes";
 import type { TMXFrame } from "#src/models/tmx/TMXFrame";
 import type { TMXReadContext } from "#src/models/tmx/TMXReadContext";
-import type { QualifiedAttribute } from "sax";
 
 import { closeTmxFrame } from "#src/services/closeTmxFrame";
 import { openTmxFrame } from "#src/services/openTmxFrame";
+import { toTmxAttributes } from "#src/services/toTmxAttributes";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import sax from "sax";
 
 // A byte order mark is not part of the document, and sax would refuse it
-const BYTE_ORDER_MARK_REGEX = /^\uFEFF/u;
-
-// Sax types an attribute as its value, or as the qualified attribute that wraps it when namespaces are read. This reader
-// Reads no namespaces, so every attribute is the value it holds.
-const toTmxAttributes = (attributes: Record<string, QualifiedAttribute | string>): TMXAttributes =>
-  Object.fromEntries(
-    Object.entries(attributes).map(([name, attribute]) => [
-      name,
-      typeof attribute === "string" ? attribute : attribute.value,
-    ]),
-  );
+const BYTE_ORDER_MARK_REGEX = /^﻿/u;
 
 // One sax pass over the document, each element opening its frame and closing into it, and the root's frame is what it
 // Returns. sax reports malformed input through `onerror`, which throws so the first error is the one the caller
