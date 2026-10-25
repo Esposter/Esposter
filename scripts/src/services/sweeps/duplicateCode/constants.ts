@@ -1,3 +1,5 @@
+import type { WiringBlock } from "#src/models/sweeps/duplicateCode/WiringBlock";
+
 // The code trees the scan reads, relative to the repository root: every tree of code the repository owns. The
 // Tooling is in because it repeats the app's shapes, and a copy there is still a copy.
 export const DUPLICATE_CODE_SCOPES: string[] = [
@@ -36,3 +38,21 @@ export const DUPLICATE_CODE_IGNORED_GLOBS: string[] = [
 ];
 // The manifest a Claude plugin's directory holds, the one a plugin's root is read by
 export const CLAUDE_PLUGIN_MANIFEST_PATH = ".claude-plugin/plugin.json";
+// A composable's destructured call, or a props destructure of defineProps, opens on `const {` and closes on the
+// `} = useName(...);` or `} = defineProps<...>();` that binds it, and its return opens on `return {`. A block is a
+// Declaration only while every line in it is an entry: a bare name or `name: alias,` in a call, and a bare name in a
+// Return. A block with a computed value stays code.
+export const WIRING_BLOCKS: WiringBlock[] = [
+  {
+    end: /^\s*\} = (?:use\w+|defineProps<.*>)\(.*\);\s*$/u,
+    entry: /^\s*\w+(?:: \w+)?,\s*$/u,
+    start: /^\s*const \{\s*$/u,
+  },
+  { end: /^\s*\};?\s*$/u, entry: /^\s*\w+,\s*$/u, start: /^\s*return \{\s*$/u },
+];
+// A fragment's name is its path, behind Windows' verbatim `\\?\` prefix, and a Vue file's name ends in `:` and the
+// Format its script was read as. A drive's `:` is never followed by letters, so the suffix matches only the format.
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
+export const WINDOWS_VERBATIM_PREFIX_REGEX: RegExp = /^\\\\\?\\/u;
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
+export const FORMAT_SUFFIX_REGEX: RegExp = /:[a-z]+$/u;

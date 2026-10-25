@@ -1,6 +1,6 @@
 import type { DuplicateCodeClone } from "#src/models/sweeps/duplicateCode/DuplicateCodeClone";
 import type { DuplicateCodeFinding } from "#src/models/sweeps/duplicateCode/DuplicateCodeFinding";
-import type { DuplicateCodeFragment } from "#src/models/sweeps/duplicateCode/DuplicateCodeFragment";
+import type { JscpdReport } from "#src/models/sweeps/duplicateCode/JscpdReport";
 
 import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import {
@@ -12,6 +12,7 @@ import {
 } from "#src/services/sweeps/duplicateCode/constants";
 import { getDuplicateCodeFindings } from "#src/services/sweeps/duplicateCode/getDuplicateCodeFindings";
 import { getPluginRoot } from "#src/services/sweeps/duplicateCode/getPluginRoot";
+import { toDuplicateCodeFragment } from "#src/services/sweeps/duplicateCode/toDuplicateCodeFragment";
 import { InvalidOperationError, jsonDateParse, Operation, withFinalizer } from "@esposter/shared";
 import { spawnSync } from "@esposter/shared-node/child-process";
 import { mkdtempSync, readFileSync, rmSync } from "node:fs";
@@ -19,33 +20,10 @@ import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import { join, resolve, sep } from "node:path";
 
-interface JscpdReport {
-  duplicates: { firstFile: JscpdReportFragment; format: string; secondFile: JscpdReportFragment }[];
-}
-
-interface JscpdReportFragment {
-  endLoc: DuplicateCodeFragment["end"];
-  name: string;
-  startLoc: DuplicateCodeFragment["start"];
-}
-
 // The `jscpd` package is the Rust engine's launcher, with no JavaScript API, so the scan runs as its command line and
 // Reads the JSON report it writes. The launcher picks the platform binary, and `--absolute` keeps every fragment's name
 // The absolute path the finder relates to the repository root.
 const JSCPD_LAUNCHER = createRequire(import.meta.url).resolve("jscpd/run-jscpd.js");
-
-// A fragment's name is its path, behind Windows' verbatim `\\?\` prefix, and a Vue file's name ends in `:` and the
-// Format its script was read as. A drive's `:` is never followed by letters, so the suffix matches only the format.
-const WINDOWS_VERBATIM_PREFIX_REGEX = /^\\\\\?\\/u;
-const FORMAT_SUFFIX_REGEX = /:[a-z]+$/u;
-const getSourceId = ({ name }: JscpdReportFragment) =>
-  name.replace(WINDOWS_VERBATIM_PREFIX_REGEX, "").replace(FORMAT_SUFFIX_REGEX, "");
-
-const toDuplicateCodeFragment = (fragment: JscpdReportFragment): DuplicateCodeFragment => ({
-  end: fragment.endLoc,
-  sourceId: getSourceId(fragment),
-  start: fragment.startLoc,
-});
 
 // The JSON report goes into a temporary directory that is removed once it is read, so the scan leaves nothing behind.
 export const readDuplicateCodeFindings = (): DuplicateCodeFinding[] => {

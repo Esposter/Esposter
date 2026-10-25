@@ -1,41 +1,13 @@
-import { CACHE_DIRECTORY, LOCKFILE_PATH, REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { CACHE_DIRECTORY, LOCKFILE_PATH } from "#src/services/shared/constants";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { writeCacheFile } from "#src/services/shared/writeCacheFile";
 import { addWords } from "#src/services/sweeps/staleNames/addWords";
+import { readDeclarationPaths } from "#src/services/sweeps/staleNames/readDeclarationPaths";
+import { readStorePackageDirectories } from "#src/services/sweeps/staleNames/readStorePackageDirectories";
 import { createHash } from "node:crypto";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { join, relative, sep } from "node:path";
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 
-const STORE_DIRECTORY = join(REPOSITORY_ROOT, "node_modules", ".pnpm");
-const DECLARATION_REGEX = /\.d\.[cm]?ts$/u;
-// The packages pnpm's store holds, each a real directory under `<name@version>/node_modules/` beside symlinks to
-// Its own dependencies — the symlinks are skipped, since each points at another entry the walk reaches itself.
-// The store's own `node_modules` is the hoisted symlink tree, not a package
-const readStorePackageDirectories = (): string[] =>
-  readdirSync(STORE_DIRECTORY, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory() && entry.name !== "node_modules")
-    .map((entry) => join(STORE_DIRECTORY, entry.name, "node_modules"))
-    .flatMap((modulesDirectory) =>
-      readdirSync(modulesDirectory, { withFileTypes: true })
-        .filter((entry) => entry.isDirectory())
-        .flatMap((entry) =>
-          entry.name.startsWith("@")
-            ? readdirSync(join(modulesDirectory, entry.name), { withFileTypes: true })
-                .filter((scopedEntry) => scopedEntry.isDirectory())
-                .map((scopedEntry) => join(modulesDirectory, entry.name, scopedEntry.name))
-            : [join(modulesDirectory, entry.name)],
-        ),
-    );
-// A package's type declarations, its own nested `node_modules` left out — those are another package's
-const readDeclarationPaths = (packageDirectory: string): string[] =>
-  readdirSync(packageDirectory, { recursive: true, withFileTypes: true })
-    .filter(
-      (entry) =>
-        entry.isFile() &&
-        DECLARATION_REGEX.test(entry.name) &&
-        !relative(packageDirectory, entry.parentPath).split(sep).includes("node_modules"),
-    )
-    .map((entry) => join(entry.parentPath, entry.name));
 // Every name an installed package declares: each word of every type declaration in pnpm's store. A page citing a
 // Library's API, or a banned one to ban it, names something the tree never held and the library always did, and
 // This is what tells that citation from a stale one. The whole store is read rather than the direct dependencies

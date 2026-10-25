@@ -8,15 +8,13 @@ import { getExportNames } from "#src/services/sweeps/sharedExportConsumers/getEx
 import { getIdentifiers } from "#src/services/sweeps/sharedExportConsumers/getIdentifiers";
 import { getPackageIdentifiersMap } from "#src/services/sweeps/sharedExportConsumers/getPackageIdentifiersMap";
 import { getPackagePath } from "#src/services/sweeps/sharedExportConsumers/getPackagePath";
+import { readSource } from "#src/services/sweeps/sharedExportConsumers/readSource";
 import { getSourceSpecifiers } from "@esposter/configuration";
-import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const SHARED_PACKAGE_PATH = "packages/shared";
 const SHARED_SOURCE_PREFIX = `${SHARED_PACKAGE_PATH}/src/`;
 
-const readSource = (path: string): readonly [string, string] =>
-  [path, readFileSync(resolve(REPOSITORY_ROOT, path), "utf8")] as const;
 // Every export of `packages/shared` that the ≥2-consumers rule does not earn a place there: named by one package
 // Outside it and by nothing else in it, so it belongs beside that consumer; or named by nothing anywhere, so it is
 // Dead. An export the package's other files name stays whatever the count — it is a piece of an export that does clear

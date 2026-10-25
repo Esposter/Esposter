@@ -1,54 +1,12 @@
 import type { CitingPage } from "#src/models/citations/CitingPage";
 import type { DuplicateProseFinding } from "#src/models/sweeps/duplicateProse/DuplicateProseFinding";
 
-import { getOpenSpecOwners } from "#src/services/openspec/getOpenSpecOwners";
+import { checkIsOneOwner } from "#src/services/sweeps/duplicateProse/checkIsOneOwner";
 import { SHINGLE_SIZE } from "#src/services/sweeps/duplicateProse/constants";
 import { getProseWords } from "#src/services/sweeps/duplicateProse/getProseWords";
-import { getSkillName } from "#src/services/sweeps/skillDocs/getSkillName";
+import { getShingles } from "#src/services/sweeps/duplicateProse/getShingles";
 import { takeOne } from "@esposter/shared";
 
-// A skill's `SKILL.md` restates each of its reference pages by design — the index line names the trigger the page
-// Opens on, and an always-on rule is the page's rule in one line — so that pair is one owner. Two reference pages
-// Are two owners even inside one skill: each is the single statement of its topic, so a run they share is a copy. Two
-// OpenSpec pages are one owner when they state one capability or one change (`getOpenSpecOwners`)
-const checkIsOneOwner = (firstPath: string, secondPath: string): boolean => {
-  const skillName = getSkillName(firstPath);
-  const secondOwners = getOpenSpecOwners(secondPath);
-  return (
-    (skillName !== "" &&
-      skillName === getSkillName(secondPath) &&
-      (firstPath.endsWith("/SKILL.md") || secondPath.endsWith("/SKILL.md"))) ||
-    getOpenSpecOwners(firstPath).some((owner) => secondOwners.includes(owner))
-  );
-};
-// The shingles of every page in one pass: each window of `SHINGLE_SIZE` words with the pages it appears on and
-// The position it first appears at on each, and beside it how many pages hold each window one word shorter —
-// The shorter window is the longer one's prefix, so it costs one concatenation rather than a second walk
-const getShingles = (
-  pageWords: Map<string, string[]>,
-): { shinglePages: Map<string, Map<string, number>>; stemPageCounts: Map<string, number> } => {
-  const shinglePages = new Map<string, Map<string, number>>();
-  // A page's positions arrive in order, so a stem's page count moves only when the page does — two flat maps
-  // Rather than a set of paths per stem, which on a corpus of distinct pages is one allocation per word
-  const stemPageCounts = new Map<string, number>();
-  const stemLastPaths = new Map<string, string>();
-  for (const [path, words] of pageWords)
-    for (let index = 0; index + SHINGLE_SIZE - 1 <= words.length; index++) {
-      const stem = words.slice(index, index + SHINGLE_SIZE - 1).join(" ");
-      if (stemLastPaths.get(stem) !== path) {
-        stemLastPaths.set(stem, path);
-        stemPageCounts.set(stem, (stemPageCounts.get(stem) ?? 0) + 1);
-      }
-      const last = words[index + SHINGLE_SIZE - 1];
-      if (last === undefined) continue;
-
-      const shingle = `${stem} ${last}`;
-      const positions = shinglePages.get(shingle) ?? new Map<string, number>();
-      if (!positions.has(path)) positions.set(path, index);
-      shinglePages.set(shingle, positions);
-    }
-  return { shinglePages, stemPageCounts };
-};
 // Every run of words two pages of different owners share, longest first. A run is found through its shingles —
 // Every window of `SHINGLE_SIZE` words, keyed by its text — and a shingle on three or more pages is a template
 // (an area index's standing intro, a Key Files heading) rather than a copy, so only a shingle exactly two pages

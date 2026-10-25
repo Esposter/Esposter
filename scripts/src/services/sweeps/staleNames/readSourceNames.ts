@@ -1,18 +1,16 @@
-import type { SourceWordCache } from "#src/models/sweeps/staleNames/SourceWordCache";
 import type { SourceWordEntry } from "#src/models/sweeps/staleNames/SourceWordEntry";
 
-import { CACHE_DIRECTORY, REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { parseMachineJson } from "#src/services/shared/parseMachineJson";
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { writeCacheFile } from "#src/services/shared/writeCacheFile";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { addWords } from "#src/services/sweeps/staleNames/addWords";
+import { SOURCE_WORD_CACHE_PATH } from "#src/services/sweeps/staleNames/constants";
 import { getComponentName } from "#src/services/sweeps/staleNames/getComponentName";
 import { readFileWords } from "#src/services/sweeps/staleNames/readFileWords";
-import { existsSync, globSync, readFileSync, statSync } from "node:fs";
+import { readGeneratedPatterns } from "#src/services/sweeps/staleNames/readGeneratedPatterns";
+import { readSourceWordCache } from "#src/services/sweeps/staleNames/readSourceWordCache";
+import { globSync, readFileSync, statSync } from "node:fs";
 import { join, matchesGlob, resolve } from "node:path";
-
-// oxlint-disable-next-line no-restricted-imports -- the repo-root formatter config, which no `#` map can reach
-import formatterConfiguration from "../../../../../oxfmt.config.ts";
 
 // Text a name can be declared or used in. Markdown is left out on purpose: the pages are what the scan judges,
 // And a stale name cited on two of them would otherwise vouch for itself.
@@ -22,22 +20,7 @@ const COMPONENT_PATH_REGEX = /\/components\/(?<componentPath>.+\.vue)$/u;
 // Gitignored, so they are read by path rather than through git, and are simply absent on a checkout nothing has
 // Prepared yet
 const NUXT_DECLARATIONS_DIRECTORY = join(REPOSITORY_ROOT, "apps", "web", ".nuxt");
-const SOURCE_WORD_CACHE_PATH = join(CACHE_DIRECTORY, "sourceWords.json");
-// A generated file vouches for nothing its generator's source does not, and an old one vouches for what that source
-// Since dropped — a migration snapshot still spells every column a later migration removed. The formatter's ignore
-// List is the repo's one list of what is generated, so the scan skips exactly what the formatter skips. A pattern
-// Naming a directory covers the files under it, as the formatter reads it.
-const readGeneratedPatterns = (): string[] =>
-  (formatterConfiguration.ignorePatterns ?? []).flatMap((pattern) => [pattern, `${pattern}/**`]);
-// The last scan's cache, or an empty one where no scan has written it yet or it was written under other patterns, since
-// Its entries hold only the files those patterns did not generate
-const readSourceWordCache = (generatedPatterns: string[]): SourceWordCache => {
-  const emptyCache: SourceWordCache = { entries: {}, generatedPatterns, words: [] };
-  if (!existsSync(SOURCE_WORD_CACHE_PATH)) return emptyCache;
 
-  const cache = parseMachineJson<SourceWordCache>(readFileSync(SOURCE_WORD_CACHE_PATH, "utf8"));
-  return JSON.stringify(cache.generatedPatterns) === JSON.stringify(generatedPatterns) ? cache : emptyCache;
-};
 // Every name the tracked tree holds: each word of every source file, every path segment (a directory a ledger
 // Row names, a file name whole and by its dot-split parts, so `Foo.test.ts` vouches for `Foo`), the registered
 // Name of every Nuxt component, which no file writes, and every word of the declarations Nuxt generates. A source

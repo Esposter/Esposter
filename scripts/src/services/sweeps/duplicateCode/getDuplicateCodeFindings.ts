@@ -2,7 +2,6 @@ import type { DuplicateCodeClone } from "#src/models/sweeps/duplicateCode/Duplic
 import type { DuplicateCodeFinding } from "#src/models/sweeps/duplicateCode/DuplicateCodeFinding";
 import type { DuplicateCodeFragment } from "#src/models/sweeps/duplicateCode/DuplicateCodeFragment";
 
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { checkIsRangeFree } from "#src/services/sweeps/duplicateCode/checkIsRangeFree";
 import { checkIsRegisterFile } from "#src/services/sweeps/duplicateCode/checkIsRegisterFile";
 import { getCloneLineRange } from "#src/services/sweeps/duplicateCode/getCloneLineRange";
@@ -10,23 +9,14 @@ import { getDataRowLines } from "#src/services/sweeps/duplicateCode/getDataRowLi
 import { getDeclarationLines } from "#src/services/sweeps/duplicateCode/getDeclarationLines";
 import { getLeadingImportLines } from "#src/services/sweeps/duplicateCode/getLeadingImportLines";
 import { getNonImportLines } from "#src/services/sweeps/duplicateCode/getNonImportLines";
+import { getPath } from "#src/services/sweeps/duplicateCode/getPath";
 import { getRecordRowLines } from "#src/services/sweeps/duplicateCode/getRecordRowLines";
-import { getOrCreate } from "@esposter/shared";
-import { relative, sep } from "node:path";
-
-// Each file is read once per reader however many clones it is in
-const memoize = <TValue>(read: (sourceId: string) => TValue) => {
-  const sourceIdValueMap = new Map<string, TValue>();
-  return (sourceId: string) => getOrCreate(sourceIdValueMap, sourceId, () => read(sourceId));
-};
+import { memoize } from "#src/services/sweeps/duplicateCode/memoize";
 
 // Each reader gives the data lines of a file: one kind of non-logic read as data, a declaration or wiring, the rows of an
 // Enum-keyed record, or the numeric and colour rows of a table. A clone free of code under any reader is a copy of that
 // Non-logic alone, where a file's code under a reader is every line that is neither an import nor one of its data lines
 const DATA_LINE_READERS: ((text: string) => Set<number>)[] = [getDeclarationLines, getRecordRowLines, getDataRowLines];
-
-const getPath = (sourceId: string, line: number) =>
-  `${relative(REPOSITORY_ROOT, sourceId).split(sep).join("/")}:${line}`;
 
 // Every clone jscpd found, as a finding, except the ones that are non-logic in both files, and the ones a Claude plugin
 // Cannot share: a clone across two plugins, since each installs standalone, and a clone of two register files, since the

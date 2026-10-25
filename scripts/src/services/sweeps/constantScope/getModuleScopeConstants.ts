@@ -1,31 +1,12 @@
 import type { ModuleScopeConstant } from "#src/models/sweeps/constantScope/ModuleScopeConstant";
 
+import { checkIsCallTo } from "#src/services/sweeps/constantScope/checkIsCallTo";
+import { checkIsExported } from "#src/services/sweeps/constantScope/checkIsExported";
+import { checkIsMovable } from "#src/services/sweeps/constantScope/checkIsMovable";
+import { DESCRIBE_TODO_CALLEE, MOCK_CALLEE } from "#src/services/sweeps/constantScope/constants";
+import { getIdentifierNames } from "#src/services/sweeps/constantScope/getIdentifierNames";
 import { getDescendants } from "#src/services/sweeps/getDescendants";
 import ts from "typescript";
-
-const DESCRIBE_TODO_CALLEE = "describe.todo";
-const HOISTED_CALLEE = "vi.hoisted";
-const MOCK_CALLEE = "vi.mock";
-
-const checkIsCallTo = (statement: ts.Statement, calleeName: string): boolean =>
-  ts.isExpressionStatement(statement) &&
-  ts.isCallExpression(statement.expression) &&
-  statement.expression.expression.getText() === calleeName;
-
-const checkIsExported = (statement: ts.VariableStatement): boolean =>
-  (statement.modifiers ?? []).some((modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword);
-
-// A function holds no state of its own, and a `vi.hoisted` block must stay at module scope, so neither is a constant to move
-const checkIsMovable = (initializer: ts.Expression | undefined): boolean =>
-  initializer === undefined ||
-  (!ts.isArrowFunction(initializer) &&
-    !ts.isFunctionExpression(initializer) &&
-    !initializer.getText().includes(HOISTED_CALLEE));
-
-const getIdentifierNames = (node: ts.Node): string[] =>
-  getDescendants(node)
-    .filter((descendant) => ts.isIdentifier(descendant))
-    .map((identifier) => identifier.text);
 
 // Module-scope state in a test file, which a sibling suite can reach and mutate: the `testing` skill's scope rule.
 // A function and a hoisted `vi.hoisted` block are never candidates, and a constant only a module-scope helper reads
