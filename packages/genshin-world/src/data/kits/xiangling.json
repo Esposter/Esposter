@@ -239,5 +239,6 @@
   "hits.implode.hitmarkFrames": { "cause": "DiffersFromSource", "value": 141 },
   "hits.implode.multiplier": { "file": "cons.go", "line": 57, "source": "Gcsim", "value": 0.75 },
   "hits.implode.poiseDamage": { "cause": "Unsourced", "value": 8.8 },
-  "parameters.pyronadoSeconds": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 2339 } }
+  "parameters.pyronadoSeconds": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 2339 } },
+  "hits.slowbakePyronadoTicks.length": { "cause": "DiffersFromSource", "value": 12 }
 }
