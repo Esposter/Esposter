@@ -1,5 +1,5 @@
-import type { AchievementDefinition } from "#shared/models/achievement/AchievementDefinition";
-import type { TRPCPath } from "#shared/models/trpc/TRPCProcedureInputs";
+import type { AchievementDefinitionEntry } from "#shared/models/achievement/AchievementDefinitionEntry";
+import type { Except } from "type-fest";
 
-// The definition as the client receives it: the trigger's input schema stays on the server, and the name is the map's key
-export type AchievementDefinitionView = Omit<AchievementDefinition<TRPCPath>, "inputSchema" | "name">;
+// An entry as a map holds it: the name is the map's key, so the value leaves it out
+export type AchievementDefinitionView = Except<AchievementDefinitionEntry, "name">;

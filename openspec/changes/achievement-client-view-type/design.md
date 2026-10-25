@@ -23,9 +23,9 @@ None.
 
 | File                                                                   | Role                                                                            |
 | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `apps/web/shared/models/achievement/AchievementDefinitionView.ts`      | a definition as the client holds it: the schema and the name left out           |
+| `apps/web/shared/models/achievement/AchievementDefinitionEntry.ts`     | a definition as the client holds it: the trigger's input schema left out        |
+| `apps/web/shared/models/achievement/AchievementDefinitionView.ts`      | an entry as a map holds it: the name left out, since the map's key carries it   |
 | `apps/web/shared/models/achievement/AchievementDefinitionViewMap.ts`   | the view keyed by every achievement name                                        |
-| `apps/web/shared/models/achievement/AchievementDefinitionEntry.ts`     | a view with its name, as the store and the components read it                   |
 | `apps/web/server/trpc/routers/achievement.ts`                          | `readAchievementMap` strips the server-only fields and is typed as the view map |
 | `apps/web/app/store/achievement/index.ts`                              | the store holds the view map and its entries                                    |
 | `apps/web/app/services/achievement/toUserAchievementWithDefinition.ts` | the join of a user's achievement with a view                                    |

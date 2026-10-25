@@ -22,11 +22,11 @@ The achievement router sits in the one root router beside the others. Each trigg
 
 ## Procedures
 
-| Procedure                          | Auth         | Input            | Purpose                                       |
-| ---------------------------------- | ------------ | ---------------- | --------------------------------------------- |
-| `achievement.readAchievementMap`   | authed       | —                | all definitions (hidden ones masked as `???`) |
-| `achievement.readUserAchievements` | rate-limited | optional user id | a user's progress rows (defaults to caller)   |
-| `achievement.onUpdateAchievement`  | authed       | —                | live progress/unlock events                   |
+| Procedure                          | Auth         | Input            | Purpose                                                                    |
+| ---------------------------------- | ------------ | ---------------- | -------------------------------------------------------------------------- |
+| `achievement.readAchievementMap`   | authed       | —                | all definitions without their trigger schema (hidden ones masked as `???`) |
+| `achievement.readUserAchievements` | rate-limited | optional user id | a user's progress rows (defaults to caller)                                |
+| `achievement.onUpdateAchievement`  | authed       | —                | live progress/unlock events                                                |
 
 ## Key files
 
