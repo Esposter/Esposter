@@ -393,9 +393,6 @@ catalogs:
     '@tsdown/css':
       specifier: ^0.23.2
       version: 0.23.2
-    '@types/js-beautify':
-      specifier: ^1.14.3
-      version: 1.14.3
     '@types/node':
       specifier: ^26.6.5
       version: 26.6.5
@@ -552,9 +549,6 @@ catalogs:
     imagetracerjs:
       specifier: ^1.2.6
       version: 1.2.6
-    js-beautify:
-      specifier: ^2.0.3
-      version: 2.0.3
     jscpd:
       specifier: ^5.4.2
       version: 5.4.2
@@ -1146,9 +1140,6 @@ importers:
       headless-block-editor:
         specifier: workspace:*
         version: link:../../packages/headless-block-editor
-      js-beautify:
-        specifier: 'catalog:'
-        version: 2.0.3
       keyframe-store:
         specifier: workspace:*
         version: link:../../packages/keyframe-store
@@ -1309,9 +1300,6 @@ importers:
       '@takumi-rs/core':
         specifier: 'catalog:'
         version: 2.17.1(csstype@3.2.3)
-      '@types/js-beautify':
-        specifier: 'catalog:'
-        version: 1.14.3
       '@types/mjml':
         specifier: ~5.0.0
         version: 5.0.0
@@ -6599,9 +6587,6 @@ packages:
 
   '@types/hast@3.0.5':
     resolution: {integrity: sha512-rp/ezSWaD1m44dPKICGhiskI13nVr7qTloFwDa/IYkhhf5nzwP+zIQcIJh3WIFSBOy/H1PzB40jPjMDksN4F+g==}
-
-  '@types/js-beautify@1.14.3':
-    resolution: {integrity: sha512-FMbQHz+qd9DoGvgLHxeqqVPaNRffpIu5ZjozwV8hf9JAGpIOzuAf4wGbRSo8LNITHqGjmmVjaMggTT5P4v4IHg==}
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
@@ -18868,8 +18853,6 @@ snapshots:
   '@types/hast@3.0.5':
     dependencies:
       '@types/unist': 3.0.3
-
-  '@types/js-beautify@1.14.3': {}
 
   '@types/json-schema@7.0.15': {}
 

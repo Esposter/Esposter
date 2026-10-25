@@ -109,7 +109,6 @@ catalog:
   "@trpc/client": ^11.19.0
   "@trpc/server": ^11.19.0
   "@tsdown/css": ^0.23.2
-  "@types/js-beautify": ^1.14.3
   # Held inside 5.0.x by the `@types/mjml` rule in renovate.json, which carries the reason
   "@types/mjml": ~5.0.0
   "@types/node": ^26.6.5
@@ -173,7 +172,6 @@ catalog:
   h3: ^2.0.8
   happy-dom: ^21.0.4
   imagetracerjs: ^1.2.6
-  js-beautify: ^2.0.3
   jscpd: ^5.4.2
   knip: ^6.42.1
   link-preview-js: ^5.0.1

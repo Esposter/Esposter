@@ -79,7 +79,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@trpc/client`                          | —                     | Keep — framework | the API layer                                                                                          |
 | `@trpc/server`                          | —                     | Keep — framework | the API layer                                                                                          |
 | `@tsdown/css`                           | —                     | Keep — tooling   | tsdown's CSS handling                                                                                  |
-| `@types/js-beautify`                    | —                     | Keep — types     | declarations for `js-beautify`                                                                         |
 | `@types/mjml`                           | 2026-10-18 · Opus 5.5 | Keep — types     | declarations for `mjml`                                                                                |
 | `@types/node`                           | —                     | Keep — types     | declarations for `node`                                                                                |
 | `@types/sax`                            | —                     | Keep — types     | declarations for `sax`                                                                                 |
@@ -140,7 +139,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `h3`                                    | —                     | Keep — framework | the server framework nitro is built on; the security module augments its route-rule types              |
 | `happy-dom`                             | —                     | Keep — tooling   | the DOM test environment                                                                               |
 | `imagetracerjs`                         | —                     | Keep — engine    | raster tracing for the glyph pipeline                                                                  |
-| `js-beautify`                           | —                     | Keep — engine    | an HTML formatter                                                                                      |
 | `jscpd`                                 | —                     | Keep — tooling   | the duplicate-code finder                                                                              |
 | `knip`                                  | —                     | Keep — tooling   | unused files, exports and dependencies                                                                 |
 | `link-preview-js`                       | —                     | Keep — utility   | maintained, with its own SSRF guard options                                                            |
