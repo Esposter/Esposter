@@ -15,6 +15,6 @@ const { announce, getDocument, kind, resourceId } = defineProps<Props>();
 
 <template>
   <UiEmptyState :meaning="UiIconMeaning.Sheet" title="This page is empty">
-    <PageBuilderPalette :announce :get-document :kind :resource-id />
+    <PageBuilderPalette w-full :announce :get-document :kind :resource-id />
   </UiEmptyState>
 </template>
