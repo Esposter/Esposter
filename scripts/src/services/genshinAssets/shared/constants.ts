@@ -117,6 +117,8 @@ export const MAIN_COLOUR_PROPERTY = "_Color";
 export const CUTOFF_PROPERTY = "_Cutoff";
 // The suffix AnimeStudio gives the folder it exports a block into when its assets are grouped by source
 export const SOURCE_EXPORT_SUFFIX = ".blk_export";
+// The extension of the PNG an export writes its textures and sprites as, which the palette and the namecards pick out by
+export const PNG_EXTENSION = ".png";
 // The installed game's asset blocks, every one AnimeStudio reads
 export const GAME_BLOCKS_DIRECTORY: string = join(
   dirname(GAME_EXECUTABLE_PATH),

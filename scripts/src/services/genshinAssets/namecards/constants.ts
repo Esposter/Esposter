@@ -9,4 +9,3 @@ export const NAMECARD_ICON_DIRECTORY: string = join(NAMECARD_DIRECTORY, "icons")
 // The asset names a namecard's art and its icon are held under in the asset index, by the namecard's own name
 export const NAMECARD_ART_PREFIX = "UI_NameCardPic_";
 export const NAMECARD_ICON_PREFIX = "UI_NameCardIcon_";
-export const PNG_EXTENSION = ".png";

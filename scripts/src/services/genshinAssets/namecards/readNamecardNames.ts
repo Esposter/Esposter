@@ -1,4 +1,4 @@
-import { PNG_EXTENSION } from "#src/services/genshinAssets/namecards/constants";
+import { PNG_EXTENSION } from "#src/services/genshinAssets/shared/constants";
 import { existsSync, readdirSync } from "node:fs";
 import { extname, parse } from "node:path";
 
