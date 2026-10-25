@@ -72,4 +72,35 @@ describe("pageBuilderCanvasOverlays", () => {
     expect(component.find("[data-outline='selection']").exists()).toBe(true);
     expect(component.find("[data-outline='hover']").exists()).toBe(false);
   });
+
+  test("a hovered node is outlined in a frame attached to the document", async () => {
+    expect.hasAssertions();
+
+    vi.stubGlobal("requestAnimationFrame", (callback: FrameRequestCallback) => {
+      callback(0);
+      return 0;
+    });
+    const element = document.createElement("div");
+    document.body.append(element);
+    vi.spyOn(element, "getBoundingClientRect").mockReturnValue(new DOMRect(120, 40, 80, 20));
+    usePageBuilderDocumentStore().setDocument(TEST_ID, webpageKind, {
+      content: [],
+      root: { props: { lang: "en", tokens: {} } },
+    });
+
+    const component = await mountSuspended(PageBuilderCanvasOverlays, {
+      attachTo: document.body,
+      props: {
+        checkIsHorizontalOwner: () => false,
+        getElement: () => element,
+        hoveredNodeId: TEST_ID,
+        resourceId: TEST_ID,
+        selectedNodeId: "",
+      },
+    });
+    await nextTick();
+
+    expect(component.get<HTMLElement>("[data-outline='hover']").element.style.left).toBe("120px");
+    element.remove();
+  });
 });
