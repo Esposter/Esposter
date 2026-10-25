@@ -31,7 +31,11 @@ export const exportDashboardVisualCsv = (visual: Visual, dataset: Dataset) => {
 
   // A capped read still downloads, since the rows read are the file, but the alert says they are not every row
   const truncation = getDatasetTruncation(dataset);
-  if (truncation) useAlertStore().createAlert(getDatasetTruncationText(truncation), "warning");
+  if (truncation) {
+    const alertStore = useAlertStore();
+    const { createAlert } = alertStore;
+    createAlert(getDatasetTruncationText(truncation), "warning");
+  }
   downloadFile(
     `${visual.chart.configuration.title || visual.type}.csv`,
     createDatasetCsv(createDrawnDataset(shape, query, drawn)),

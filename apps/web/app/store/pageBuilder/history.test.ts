@@ -41,7 +41,7 @@ describe(usePageBuilderHistoryStore, () => {
   // Values an edit writes over a button's label and link, each different from the one the fixture holds
   const TEST_EDITED_LABEL = "Edited";
   const TEST_EDITED_URL = "https://example.com/edited";
-  const setupDocument = async () => {
+  const setupDocument = () => {
     const resourceId = crypto.randomUUID();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { setDocument } = pageBuilderDocumentStore;
@@ -51,10 +51,10 @@ describe(usePageBuilderHistoryStore, () => {
   const moveFirstToEnd = () =>
     moveBlockNode(TEST_DOCUMENT, webpageRegistry, webpageNodeChildren, "/content/0", "/content", 1);
 
-  test("undo restores the document before the last edit", async () => {
+  test("undo restores the document before the last edit", () => {
     expect.hasAssertions();
 
-    const resourceId = await setupDocument();
+    const resourceId = setupDocument();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { getDocument } = pageBuilderDocumentStore;
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
@@ -67,10 +67,10 @@ describe(usePageBuilderHistoryStore, () => {
     expect(getDocument(resourceId)).toStrictEqual(TEST_DOCUMENT);
   });
 
-  test("a drag of a value is one undo entry", async () => {
+  test("a drag of a value is one undo entry", () => {
     expect.hasAssertions();
 
-    const resourceId = await setupDocument();
+    const resourceId = setupDocument();
     const interactionId = crypto.randomUUID();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { getDocument } = pageBuilderDocumentStore;
@@ -93,7 +93,7 @@ describe(usePageBuilderHistoryStore, () => {
     expect(getUndoLabel(resourceId)).toBe("");
   });
 
-  test("a text session is one undoable change", async () => {
+  test("a text session is one undoable change", () => {
     expect.hasAssertions();
 
     const resourceId = crypto.randomUUID();
@@ -123,10 +123,10 @@ describe(usePageBuilderHistoryStore, () => {
     expect(getDocument(resourceId)).toStrictEqual(textDocument);
   });
 
-  test("two inserts at one index in one interaction are two undo entries", async () => {
+  test("two inserts at one index in one interaction are two undo entries", () => {
     expect.hasAssertions();
 
-    const resourceId = await setupDocument();
+    const resourceId = setupDocument();
     const interactionId = crypto.randomUUID();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { getDocument } = pageBuilderDocumentStore;
@@ -150,10 +150,10 @@ describe(usePageBuilderHistoryStore, () => {
     expect(getDocument(resourceId)).toStrictEqual(TEST_DOCUMENT);
   });
 
-  test("undo stops at the oldest kept entry", async () => {
+  test("undo stops at the oldest kept entry", () => {
     expect.hasAssertions();
 
-    const resourceId = await setupDocument();
+    const resourceId = setupDocument();
     const editCount = MAX_PAGE_BUILDER_HISTORY_SIZE + 1;
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { getDocument } = pageBuilderDocumentStore;
@@ -184,10 +184,10 @@ describe(usePageBuilderHistoryStore, () => {
     expect(getUndoLabel(resourceId)).toBe("");
   });
 
-  test("redo reapplies an undone edit", async () => {
+  test("redo reapplies an undone edit", () => {
     expect.hasAssertions();
 
-    const resourceId = await setupDocument();
+    const resourceId = setupDocument();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { getDocument } = pageBuilderDocumentStore;
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
@@ -202,10 +202,10 @@ describe(usePageBuilderHistoryStore, () => {
     expect(getDocument(resourceId)).toStrictEqual(movedDocument);
   });
 
-  test("a new edit after undo discards the redo entry", async () => {
+  test("a new edit after undo discards the redo entry", () => {
     expect.hasAssertions();
 
-    const resourceId = await setupDocument();
+    const resourceId = setupDocument();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { getDocument } = pageBuilderDocumentStore;
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
@@ -230,10 +230,10 @@ describe(usePageBuilderHistoryStore, () => {
     expect(getDocument(resourceId)).toStrictEqual(editedDocument);
   });
 
-  test("reloading a document leaves nothing to undo", async () => {
+  test("reloading a document leaves nothing to undo", () => {
     expect.hasAssertions();
 
-    const resourceId = await setupDocument();
+    const resourceId = setupDocument();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { getDocument } = pageBuilderDocumentStore;
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
@@ -256,7 +256,7 @@ describe(usePageBuilderHistoryStore, () => {
   test("a save stores the whole document after edits", async () => {
     expect.hasAssertions();
 
-    const resourceId = await setupDocument();
+    const resourceId = setupDocument();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { getDocument, saveDocument } = pageBuilderDocumentStore;
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
@@ -278,10 +278,10 @@ describe(usePageBuilderHistoryStore, () => {
     expect(writeDocument).toHaveBeenCalledExactlyOnceWith(editedDocument);
   });
 
-  test("an edit whose operations cannot apply changes neither the document nor the history", async () => {
+  test("an edit whose operations cannot apply changes neither the document nor the history", () => {
     expect.hasAssertions();
 
-    const resourceId = await setupDocument();
+    const resourceId = setupDocument();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { getDocument } = pageBuilderDocumentStore;
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
@@ -299,10 +299,10 @@ describe(usePageBuilderHistoryStore, () => {
     expect(getUndoLabel(resourceId)).toBe("");
   });
 
-  test("an edit in the same interaction over a different path starts a new entry", async () => {
+  test("an edit in the same interaction over a different path starts a new entry", () => {
     expect.hasAssertions();
 
-    const resourceId = await setupDocument();
+    const resourceId = setupDocument();
     const interactionId = crypto.randomUUID();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { getDocument } = pageBuilderDocumentStore;
@@ -330,10 +330,10 @@ describe(usePageBuilderHistoryStore, () => {
     expect(getDocument(resourceId)).toStrictEqual(labelEditedDocument);
   });
 
-  test("an insert and a replace of its path in one interaction stay two entries, and redo restores both", async () => {
+  test("an insert and a replace of its path in one interaction stay two entries, and redo restores both", () => {
     expect.hasAssertions();
 
-    const resourceId = await setupDocument();
+    const resourceId = setupDocument();
     const interactionId = crypto.randomUUID();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { getDocument } = pageBuilderDocumentStore;
@@ -370,10 +370,10 @@ describe(usePageBuilderHistoryStore, () => {
     });
   });
 
-  test("edits over a path and a path under it in one interaction stay two entries, and redo restores both", async () => {
+  test("edits over a path and a path under it in one interaction stay two entries, and redo restores both", () => {
     expect.hasAssertions();
 
-    const resourceId = await setupDocument();
+    const resourceId = setupDocument();
     const interactionId = crypto.randomUUID();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { getDocument } = pageBuilderDocumentStore;
@@ -415,10 +415,10 @@ describe(usePageBuilderHistoryStore, () => {
     expect(getDocument(resourceId)).toStrictEqual({ content: [createButton("c"), createButton("g")], root: TEST_ROOT });
   });
 
-  test("a test after a replace in one interaction stays its own entry, and redo restores the replace", async () => {
+  test("a test after a replace in one interaction stays its own entry, and redo restores the replace", () => {
     expect.hasAssertions();
 
-    const resourceId = await setupDocument();
+    const resourceId = setupDocument();
     const interactionId = crypto.randomUUID();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     const { getDocument } = pageBuilderDocumentStore;

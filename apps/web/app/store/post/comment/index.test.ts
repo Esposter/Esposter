@@ -180,9 +180,10 @@ describe(useCommentStore, () => {
 
     expect(takeOne(getSlice(postId).items.value).commentCount).toBe(1);
   });
+
   // A new sort orders every branch afresh, so each open branch has to drop the rows the old order read and read its
   // First page again when it is shown
-  test("Changing the comment sort re-reads every open branch from page one", async () => {
+  test("changing the comment sort re-reads every open branch from page one", () => {
     expect.hasAssertions();
 
     const reply = createPost({ depth: 2, parentId: comment.id });
@@ -200,7 +201,7 @@ describe(useCommentStore, () => {
   });
 
   // The expansion lives in the store, so the cards a re-read remounts come back open and read their replies again
-  test("Expanded replies stay expanded after a sort change", async () => {
+  test("expanded replies stay expanded after a sort change", () => {
     expect.hasAssertions();
 
     const commentStore = useCommentStore();
@@ -214,7 +215,7 @@ describe(useCommentStore, () => {
   });
 
   // The sort is a visit's own: opening another post starts it at Hot, whatever the last post was read under
-  test("Comment sort resets to Hot on the next post", async () => {
+  test("comment sort resets to Hot on the next post", () => {
     expect.hasAssertions();
 
     const commentStore = useCommentStore();

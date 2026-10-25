@@ -35,13 +35,20 @@ describe(StateMachine, () => {
     const stateMachine = createMachine({
       idle: {
         name: "idle",
-        onEnter: () => void calls.push("enter idle"),
+        onEnter: () => {
+          calls.push("enter idle");
+        },
         onExit: async () => {
           await Promise.resolve();
           calls.push("exit idle");
         },
       },
-      walk: { name: "walk", onEnter: () => void calls.push("enter walk") },
+      walk: {
+        name: "walk",
+        onEnter: () => {
+          calls.push("enter walk");
+        },
+      },
     });
     await stateMachine.setState("idle");
     await stateMachine.setState("walk");

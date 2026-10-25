@@ -163,9 +163,11 @@ describe(exportDashboardVisualCsv, () => {
 
     exportDashboardVisualCsv(card, cappedDataset);
 
-    expect(useAlertStore().alerts).toContainEqual(
-      expect.objectContaining({ text: "Showing 2 of 3 rows", type: "warning" }),
-    );
+    const alertStore = useAlertStore();
+
+    expect(alertStore.alerts.map(({ text, type }) => ({ text, type }))).toStrictEqual([
+      { text: "Showing 2 of 3 rows", type: "warning" },
+    ]);
     expect(downloadFile).toHaveBeenCalledExactlyOnceWith(
       `${VisualType.Card}.csv`,
       `Count of ${responseColumn}\n2`,

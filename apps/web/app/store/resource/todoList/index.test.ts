@@ -142,14 +142,16 @@ describe(useTodoListStore, () => {
 
   // Another device's save re-reads the list through the reload every open content store takes, so the list on screen
   // Is the one the blob now holds, and that read re-seeds the dirty check rather than writing the list back
-  test("An open todo list re-reads another device's save", async () => {
+  test("an open todo list re-reads another device's save", async () => {
     expect.hasAssertions();
 
     const todoListStore = await setupStore();
     const { saveTodoList } = todoListStore;
     const { items } = storeToRefs(todoListStore);
     content = { items: [new TodoListItem({ name: newItemName })] };
-    await useResourceStore().storeSaveResourceContent({ apiKeyName: "", contentVersion: 1, device });
+    const resourceStore = useResourceStore();
+    const { storeSaveResourceContent } = resourceStore;
+    await storeSaveResourceContent({ apiKeyName: "", contentVersion: 1, device });
     const isSuccessful = await saveTodoList();
 
     expect(items.value.map(({ name }) => name)).toStrictEqual([newItemName]);
@@ -167,7 +169,9 @@ describe(useTodoListStore, () => {
     const { editedItem, items } = storeToRefs(todoListStore);
     trpcMsw.todoList.saveResourceContent.mutation(async () => {
       content = { items: [new TodoListItem({ name: adoptedItemName })] };
-      await useResourceStore().reloadResourceContent();
+      const resourceStore = useResourceStore();
+      const { reloadResourceContent } = resourceStore;
+      await reloadResourceContent();
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     editedItem.value = new TodoListItem({ name: newItemName });
@@ -189,7 +193,9 @@ describe(useTodoListStore, () => {
     const reloadedItem = new TodoListItem({ completedAt: new Date(0), id, name: itemName });
     trpcMsw.todoList.saveResourceContent.mutation(async () => {
       content = { items: [structuredClone(reloadedItem)] };
-      await useResourceStore().reloadResourceContent();
+      const resourceStore = useResourceStore();
+      const { reloadResourceContent } = resourceStore;
+      await reloadResourceContent();
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     const isSuccessful = await toggleCompleted(id);
@@ -208,7 +214,9 @@ describe(useTodoListStore, () => {
     const reloadedItems = structuredClone(toRawDeep(items.value)).toReversed();
     trpcMsw.todoList.saveResourceContent.mutation(async () => {
       content = { items: structuredClone(reloadedItems) };
-      await useResourceStore().reloadResourceContent();
+      const resourceStore = useResourceStore();
+      const { reloadResourceContent } = resourceStore;
+      await reloadResourceContent();
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     const isSuccessful = await reorderItems(reloadedItems.map(({ id }) => id));
@@ -218,7 +226,7 @@ describe(useTodoListStore, () => {
   });
 
   // Keeping mine writes the list on screen over another device's save, as the newest version: the content store that
-  // holds the list is the one that writes it, at the version that save left the resource on
+  // Holds the list is the one that writes it, at the version that save left the resource on
   test("keeps the unsaved list over another device's save, written as the newest version", async () => {
     expect.hasAssertions();
 
@@ -226,7 +234,7 @@ describe(useTodoListStore, () => {
     const { items } = storeToRefs(todoListStore);
     const resourceStore = useResourceStore();
     const { unwrittenContentResourceId } = storeToRefs(resourceStore);
-    const saveKept = vi.fn<(options: { input: { contentVersion: number } }) => ResourceInResource>(() =>
+    const saveKept = vi.fn<(options: { input: { contentVersion: number; id: string } }) => ResourceInResource>(() =>
       createResource(2),
     );
     trpcMsw.todoList.saveResourceContent.mutation(saveKept);
@@ -235,9 +243,9 @@ describe(useTodoListStore, () => {
     await resourceStore.storeSaveResourceContent({ apiKeyName: "", contentVersion: 1, device });
     await resourceStore.keepUnwrittenContent();
 
-    expect(saveKept).toHaveBeenCalledExactlyOnceWith(
-      expect.objectContaining({ input: expect.objectContaining({ contentVersion: 1, id: resourceId }) }),
-    );
+    expect(
+      saveKept.mock.calls.map(([{ input }]) => ({ contentVersion: input.contentVersion, id: input.id })),
+    ).toStrictEqual([{ contentVersion: 1, id: resourceId }]);
   });
 
   // The field above the list adds with no dialog to hold a draft, so a refused save has to take the new row back out

@@ -97,7 +97,7 @@ export const useResourceStore = defineStore("resource", () => {
   // "out of date" is the one save state the owner has to act on
   const isContentStale = ref(false);
   // Another device's save held behind an unwritten edit, until the person answers the notice. The stale latch holds
-  // autosave in the meantime; this is what the notice shows and answers
+  // Autosave in the meantime; this is what the notice shows and answers
   const heldSave = ref<ResourceSave>();
   // Whether the last content write was rejected for any other reason. Its notification is a one-shot the owner
   // Dismisses; this is what keeps saying so afterwards, because a failed save leaves work only in the tab
@@ -193,8 +193,8 @@ export const useResourceStore = defineStore("resource", () => {
     await ResourceContentHookMap.Adopt.run(resource.value.type);
   };
   // Another device's document is adopted in place of this client's. The bytes it held name the document the save
-  // replaced, so the next large save crosses whole. Cleared after the re-read, which may itself have held the large
-  // document's bytes
+  // Replaced, so the next large save crosses whole. Cleared after the re-read, which may itself have held the large
+  // Document's bytes
   const adoptResourceContent = async () => {
     await reloadResourceContent();
     contentBaseline = undefined;
@@ -260,7 +260,7 @@ export const useResourceStore = defineStore("resource", () => {
 
     if (hasUnwrittenContent.value || checkIsSaveContentPending(currentResourceId.value)) {
       // The unwritten edit is the person's, so the save waits for their answer, and the stale latch holds autosave
-      // until then
+      // Until then
       heldSave.value = { apiKeyName, contentVersion, device };
       isContentStale.value = true;
       return;
@@ -277,7 +277,7 @@ export const useResourceStore = defineStore("resource", () => {
     await adoptResourceContent();
   };
   // Keeping mine: the version moves to the held save's, so the local document is written over it as the newest version,
-  // and the other write stays in history. The stale latch lifts for that one write
+  // And the other write stays in history. The stale latch lifts for that one write
   const keepUnwrittenContent = async () => {
     const resourceValue = resource.value;
     if (!resourceValue || !heldSave.value) return;

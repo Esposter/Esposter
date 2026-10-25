@@ -66,7 +66,7 @@ describe(useVersionHistoryStore, () => {
   });
 
   // A restore replaces the draft under the open page, so the edits its history holds describe a document that is gone
-  test("Restoring a version leaves nothing to undo", async () => {
+  test("restoring a version leaves nothing to undo", async () => {
     expect.hasAssertions();
 
     const webpage = createResourceListItem({ type: ResourceType.Webpage });
@@ -110,7 +110,7 @@ describe(useVersionHistoryStore, () => {
   });
 
   // An email is restored through the same reload, so the draft it replaces takes its undo history with it
-  test("Restoring an email version leaves nothing to undo", async () => {
+  test("restoring an email version leaves nothing to undo", async () => {
     expect.hasAssertions();
 
     const email = createResourceListItem({ type: ResourceType.Email });

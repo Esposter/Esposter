@@ -10,7 +10,8 @@ describe(usePointStore, () => {
 
     const clickerStore = useClickerStore();
     const { clicker } = storeToRefs(clickerStore);
-    const { checkIsAffordable } = usePointStore();
+    const pointStore = usePointStore();
+    const { checkIsAffordable } = pointStore;
     clicker.value.pointCount = 10;
 
     expect(checkIsAffordable(10)).toBe(true);

@@ -6,11 +6,12 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { createTRPCClient } from "@trpc/client";
 import { describe, expect, test } from "vitest";
 
+const serveCounts = (ids: string[]) => ids.map((id) => ({ commentCount: 0, id, likeCount: 0 }));
+
 describe(createHttpBatchingLink, () => {
   const { server, trpcMsw } = setupMswTrpc();
   const firstPostId = crypto.randomUUID();
   const secondPostId = crypto.randomUUID();
-  const serveCounts = (ids: string[]) => ids.map((id) => ({ commentCount: 0, id, likeCount: 0 }));
 
   test("batches two reads sent in one tick into one request", async () => {
     expect.hasAssertions();
@@ -33,7 +34,7 @@ describe(createHttpBatchingLink, () => {
 
   // The client a test uses is the test build's, which sends each read as its own request, so a read held open does not
   // Hold the one sent after it. A batched client would answer both as one response, which waits for the held one
-  test("A held read does not hold a read sent in the same tick", async () => {
+  test("a held read does not hold a read sent in the same tick", async () => {
     expect.hasAssertions();
 
     const heldRead = Promise.withResolvers<void>();

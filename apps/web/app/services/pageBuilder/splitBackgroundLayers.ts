@@ -8,7 +8,7 @@ export const splitBackgroundLayers = (value: string): string[] => {
   let depth = 0;
   // The quote mark the layer is inside of, or an empty string outside any quote
   let quote = "";
-  for (const character of value) {
+  for (const character of value)
     if (quote !== "") {
       if (character === quote) quote = "";
       layer += character;
@@ -21,7 +21,7 @@ export const splitBackgroundLayers = (value: string): string[] => {
       else if (character === ")") depth--;
       layer += character;
     }
-  }
+
   layers.push(layer.trim());
 
   return layers;

@@ -8,12 +8,13 @@ import { createUpgrade } from "@/services/clicker/upgrade/createUpgrade.test";
 import { getUnlockedUpgrades } from "@/services/clicker/upgrade/getUnlockedUpgrades";
 import { describe, expect, test } from "vitest";
 
+const createUpgradeWithConditions = (unlockConditions: UnlockCondition[]) => ({
+  ...createUpgrade(CursorUpgradeId.Ambidextrous, []),
+  unlockConditions,
+});
+
 describe(getUnlockedUpgrades, () => {
   const amount = 10;
-  const createUpgradeWithConditions = (unlockConditions: UnlockCondition[]) => ({
-    ...createUpgrade(CursorUpgradeId.Ambidextrous, []),
-    unlockConditions,
-  });
   const buildingCondition = { amount, id: BuildingId.Cursor, type: Target.Building } as const;
   const upgradeCondition = { id: CursorUpgradeId.Ambidextrous, type: Target.Upgrade } as const;
 

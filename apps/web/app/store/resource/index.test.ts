@@ -852,7 +852,7 @@ describe(useResourceStore, () => {
   // The save stream names the version and the device only, so every open resource of every type is told of another
   // Device's save through the same store door
   test.each([ResourceType.Note, ResourceType.Sheet, ResourceType.TodoList])(
-    "An open resource of any type hears another device's save (%s)",
+    "an open resource of any type hears another device's save (%s)",
     async (type) => {
       expect.hasAssertions();
 
@@ -869,9 +869,10 @@ describe(useResourceStore, () => {
       expect(reload).toHaveBeenCalledExactlyOnceWith(type);
     },
   );
+
   // An unwritten edit is the person's, and another device's save must not replace it. The save is held behind the
   // Stale latch, which holds autosave too, until the person answers
-  test("An unsaved edit stays on screen when another device saves", async () => {
+  test("an unsaved edit stays on screen when another device saves", async () => {
     expect.hasAssertions();
 
     const resourceStore = useResourceStore();
@@ -896,7 +897,7 @@ describe(useResourceStore, () => {
   });
 
   // Taking theirs adopts the other version and drops the unwritten edit with the document it was an edit of
-  test("Taking theirs replaces the unsaved edit", async () => {
+  test("taking theirs replaces the unsaved edit", async () => {
     expect.hasAssertions();
 
     const resourceStore = useResourceStore();
@@ -917,8 +918,8 @@ describe(useResourceStore, () => {
   });
 
   // Keeping mine re-writes the local document as the newest version, so the other save is one version back in history
-  // and not overwritten
-  test("Keeping mine saves over the other version and keeps it in history", async () => {
+  // And not overwritten
+  test("keeping mine saves over the other version and keeps it in history", async () => {
     expect.hasAssertions();
 
     const resourceStore = useResourceStore();
@@ -941,7 +942,7 @@ describe(useResourceStore, () => {
   });
 
   // An agent's save names the key it was written with, so the notice can say which agent saved
-  test("A save made with a key is named by that key", async () => {
+  test("a save made with a key is named by that key", async () => {
     expect.hasAssertions();
 
     const apiKeyName = "agentKey";
@@ -957,8 +958,8 @@ describe(useResourceStore, () => {
   });
 
   // The save stream names the version and the device only, so an editor with nothing unwritten re-reads the document
-  // through the reload stage and lets its library adopt it — the same two stages a restore runs
-  test("An editor with nothing unsaved adopts a save in place", async () => {
+  // Through the reload stage and lets its library adopt it — the same two stages a restore runs
+  test("an editor with nothing unsaved adopts a save in place", async () => {
     expect.hasAssertions();
 
     const resourceStore = useResourceStore();
@@ -984,13 +985,14 @@ describe(useResourceStore, () => {
 
   // Undo replays onto the document a command was recorded against, and a delta is measured against the bytes this
   // Client last held — both are the document another device's save replaced, so both go with it
-  test("Adopting a save clears undo history and the delta baseline", async () => {
+  test("adopting a save clears undo history and the delta baseline", async () => {
     expect.hasAssertions();
 
     const { dataSource } = setupWithDataSource();
     const deleteRow = useDeleteRow();
     await deleteRow(takeOne(dataSource.rows, 0).id);
-    const { isUndoable } = storeToRefs(useSheetHistoryStore());
+    const sheetHistoryStore = useSheetHistoryStore();
+    const { isUndoable } = storeToRefs(sheetHistoryStore);
     const resourceStore = useResourceStore();
     const { resource } = storeToRefs(resourceStore);
     await resourceStore.readResource();

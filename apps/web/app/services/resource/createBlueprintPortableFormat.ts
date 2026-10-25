@@ -12,8 +12,8 @@ import { trimFileExtension } from "@/util/file/trimFileExtension";
 import { downloadFile } from "@esposter/shared";
 
 // A blueprint's manifest as a JSON file. Export downloads the saved manifest, named after the blueprint, so the file is
-// what a deploy would create. Import reads a file the manifest schema accepts into the Editor as unsaved text, which
-// only Save makes the saved manifest
+// What a deploy would create. Import reads a file the manifest schema accepts into the Editor as unsaved text, which
+// Only Save makes the saved manifest
 export const createBlueprintPortableFormat = (): PortableFormat => ({
   export: async () => {
     const resourceStore = useResourceStore();
@@ -49,7 +49,7 @@ export const createBlueprintPortableFormat = (): PortableFormat => ({
       // A file read after the owner moved to another resource is that resource's import, and must not fill this one
       if (resourceStore.currentResourceId !== resourceId) return;
       // The safety net an import takes before it replaces the draft, so the saved manifest it replaces stays in version
-      // history whenever the owner saves the import. A failed revision leaves the Editor's text as it was
+      // History whenever the owner saves the import. A failed revision leaves the Editor's text as it was
       if (!(await saveResourceRevision())) return;
 
       setManifestJson(manifest);

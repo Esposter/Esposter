@@ -3,7 +3,9 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { AInputResolver } from "@/models/resolvers/dungeons/AInputResolver";
 
-type MenuStore = { onPlayerInput: (scene: SceneWithPlugins, justDownInput: PlayerInput) => boolean | Promise<boolean> };
+interface MenuStore {
+  onPlayerInput: (scene: SceneWithPlugins, justDownInput: PlayerInput) => boolean | Promise<boolean>;
+}
 
 export class MenuInputResolver extends AInputResolver {
   readonly #useMenuStore: () => MenuStore;

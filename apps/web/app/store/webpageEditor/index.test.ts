@@ -31,7 +31,7 @@ describe(useWebpageEditorStore, () => {
     trpcMsw.webpage.readResourceContent.query(() => content);
     trpcMsw.webpage.readResourcePublication.query(() => undefined);
     trpcMsw.webpage.saveResourceContent.mutation(({ input }) => {
-      savedContents.push(input.content);
+      savedContents.push({ content: input.content.content, id: input.content.id });
       return saveResourceContent();
     });
     // The page reads the row before any blade mounts, and a content load reads only the blob
@@ -54,7 +54,7 @@ describe(useWebpageEditorStore, () => {
     });
     await saveWebpage(resourceId);
 
-    expect(savedContents[0]).toMatchObject({
+    expect(savedContents[0]).toStrictEqual({
       content: [{ props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button }],
       id: content.id,
     });

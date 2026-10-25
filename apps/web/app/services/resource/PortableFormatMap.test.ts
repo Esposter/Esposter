@@ -22,7 +22,7 @@ vi.mock(import("@/services/file/showOpenFilePicker"), () => ({
   showOpenFilePicker: vi.fn<typeof showOpenFilePicker>(),
 }));
 
-describe("PortableFormatMap", () => {
+describe("portableFormatMap", () => {
   const { trpcMsw } = setupMswTrpc();
   const resourceId = crypto.randomUUID();
   const resource = createResourceListItem({ id: resourceId, name: "Meeting", type: ResourceType.Note });
@@ -53,10 +53,12 @@ describe("PortableFormatMap", () => {
   });
 
   // The export is the note as it is held, so a reader sees the same heading and list in the file as in the note
-  test("Exporting a note downloads a Markdown file", async () => {
+  test("exporting a note downloads a Markdown file", async () => {
     expect.hasAssertions();
 
-    await useResourceStore().readResource();
+    const resourceStore = useResourceStore();
+    const { readResource } = resourceStore;
+    await readResource();
     const [markdownFormat] = PortableFormatMap[ResourceType.Note];
     assert.exists(markdownFormat?.export);
     await markdownFormat.export();
@@ -65,10 +67,12 @@ describe("PortableFormatMap", () => {
   });
 
   // A file over the app's file limit is refused before it is read, so no preview opens over the note for it
-  test("An import over the file size limit opens no preview", async () => {
+  test("an import over the file size limit opens no preview", async () => {
     expect.hasAssertions();
 
-    await useResourceStore().readResource();
+    const resourceStore = useResourceStore();
+    const { readResource } = resourceStore;
+    await readResource();
     const oversizedFile = new File([new Uint8Array(MAX_FILE_REQUEST_SIZE + 1)], "Meeting.md");
     const readFile = vi.spyOn(oversizedFile, "text");
     vi.mocked(showOpenFilePicker).mockResolvedValue([{ getFile: () => Promise.resolve(oversizedFile) }] as never);
@@ -80,7 +84,7 @@ describe("PortableFormatMap", () => {
   });
 
   // The overflow menu takes its import and export commands from the formats, so a note gets both beside its others
-  test("The overflow menu lists the Markdown commands", () => {
+  test("the overflow menu lists the Markdown commands", () => {
     expect.hasAssertions();
 
     const { exportFormats, importFormats } = usePortableFormats(() => resource);
@@ -99,7 +103,7 @@ describe("PortableFormatMap", () => {
   });
 
   // A picture cannot restore a dashboard, so its menu gains the page image and no import beside it
-  test("The dashboard's overflow menu lists Export PNG and no import", () => {
+  test("the dashboard's overflow menu lists Export PNG and no import", () => {
     expect.hasAssertions();
 
     const dashboard = createResourceListItem({ id: crypto.randomUUID(), name: "Sales", type: ResourceType.Dashboard });

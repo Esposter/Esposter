@@ -38,10 +38,12 @@ describe(createBlueprintPortableFormat, () => {
   });
 
   // The file is the saved manifest, so it is what a deploy would create and never the text on screen
-  test("Exporting downloads the saved manifest", async () => {
+  test("exporting downloads the saved manifest", async () => {
     expect.hasAssertions();
 
-    await useResourceStore().readResource();
+    const resourceStore = useResourceStore();
+    const { readResource } = resourceStore;
+    await readResource();
     const [manifestFormat] = PortableFormatMap[ResourceType.Blueprint];
     assert.exists(manifestFormat?.export);
     await manifestFormat.export();
@@ -50,10 +52,12 @@ describe(createBlueprintPortableFormat, () => {
   });
 
   // Text the owner has not saved is not what Deploy runs, so the file leaves it out
-  test("Unsaved editor text is not exported", async () => {
+  test("unsaved editor text is not exported", async () => {
     expect.hasAssertions();
 
-    await useResourceStore().readResource();
+    const resourceStore = useResourceStore();
+    const { readResource } = resourceStore;
+    await readResource();
     const blueprintStore = useBlueprintStore();
     const { loadContent } = blueprintStore;
     // The Editor reads the content before the owner can type, so the text is set over a loaded manifest
@@ -68,10 +72,12 @@ describe(createBlueprintPortableFormat, () => {
   });
 
   // The schema the Editor's Save checks is the one a file must pass, so a file Save would refuse never reaches the text
-  test("An invalid manifest file is refused and changes nothing", async () => {
+  test("an invalid manifest file is refused and changes nothing", async () => {
     expect.hasAssertions();
 
-    await useResourceStore().readResource();
+    const resourceStore = useResourceStore();
+    const { readResource } = resourceStore;
+    await readResource();
     const invalidFile = new File(
       [JSON.stringify({ entries: [{ key: "notes", name: "Kickoff", type: "Unknown" }] })],
       "Launch.json",
@@ -83,34 +89,40 @@ describe(createBlueprintPortableFormat, () => {
     await flushPromises();
     const alertStore = useAlertStore();
     const { alerts } = storeToRefs(alertStore);
-    const { manifestJson } = storeToRefs(useBlueprintStore());
+    const blueprintStore = useBlueprintStore();
+    const { manifestJson } = storeToRefs(blueprintStore);
 
     expect(alerts.value.map(({ type }) => type)).toStrictEqual(["error"]);
     expect(manifestJson.value).toBe(savedJson);
   });
 
   // The size check runs before the file is read, so an oversized file costs no read and changes no text
-  test("A manifest file over the limit is refused before it is read", async () => {
+  test("a manifest file over the limit is refused before it is read", async () => {
     expect.hasAssertions();
 
-    await useResourceStore().readResource();
+    const resourceStore = useResourceStore();
+    const { readResource } = resourceStore;
+    await readResource();
     const oversizedFile = new File([new Uint8Array(MAX_FILE_REQUEST_SIZE + 1)], "Launch.json");
     const readFile = vi.spyOn(oversizedFile, "text");
     vi.mocked(showOpenFilePicker).mockResolvedValue([{ getFile: () => Promise.resolve(oversizedFile) }] as never);
     const [manifestFormat] = PortableFormatMap[ResourceType.Blueprint];
     assert.exists(manifestFormat?.import);
     await manifestFormat.import();
-    const { manifestJson } = storeToRefs(useBlueprintStore());
+    const blueprintStore = useBlueprintStore();
+    const { manifestJson } = storeToRefs(blueprintStore);
 
     expect(readFile).not.toHaveBeenCalled();
     expect(manifestJson.value).toBe(savedJson);
   });
 
   // The export is the file an import reads back, so a copy of a manifest between accounts is the manifest that was saved
-  test("A manifest exported and imported again is unchanged", async () => {
+  test("a manifest exported and imported again is unchanged", async () => {
     expect.hasAssertions();
 
-    await useResourceStore().readResource();
+    const resourceStore = useResourceStore();
+    const { readResource } = resourceStore;
+    await readResource();
     const [manifestFormat] = PortableFormatMap[ResourceType.Blueprint];
     assert.exists(manifestFormat?.export);
     assert.exists(manifestFormat.import);
@@ -122,7 +134,8 @@ describe(createBlueprintPortableFormat, () => {
       { getFile: () => Promise.resolve(new File([exportedJson], "Launch.json")) },
     ] as never);
     await manifestFormat.import();
-    const { manifestJson } = storeToRefs(useBlueprintStore());
+    const blueprintStore = useBlueprintStore();
+    const { manifestJson } = storeToRefs(blueprintStore);
 
     expect(manifestJson.value).toBe(savedJson);
   });

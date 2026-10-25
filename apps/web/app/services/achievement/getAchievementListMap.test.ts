@@ -6,6 +6,8 @@ import { getAchievementListMap } from "@/services/achievement/getAchievementList
 import { EmailAchievementName, MessageAchievementName } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
+const getNames = (definitions: AchievementDefinitionEntry[]) => definitions.map(({ name }) => name);
+
 describe(getAchievementListMap, () => {
   const achievementDefinitions = [
     { name: EmailAchievementName.EmailMarketer },
@@ -17,7 +19,6 @@ describe(getAchievementListMap, () => {
     { achievement: { name: MessageAchievementName.EssayWriter }, unlockedAt: null },
   ] as UserAchievementWithDefinition[];
   const listMap = getAchievementListMap(achievementDefinitions, userAchievements);
-  const getNames = (definitions: AchievementDefinitionEntry[]) => definitions.map(({ name }) => name);
 
   test("splits the definitions and their rows into locked and unlocked by the row's timestamp", () => {
     expect.hasAssertions();

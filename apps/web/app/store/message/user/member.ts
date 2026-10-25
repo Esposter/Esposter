@@ -83,10 +83,10 @@ export const useMemberStore = defineStore("message/user/member", () => {
   };
   // A row the server read back after a change to its display name. The room's list and its names take the server's
   // Resolved name together, so the two cannot disagree about who a member is shown as
-  const storeUpdateMembers = (roomId: string, members: MemberInRoom[]) => {
-    storeUsers(members);
-    storeRoomMembers(roomId, members);
-    for (const member of members) getRoomOperationData(roomId).updateMember(member);
+  const storeUpdateMembers = (roomId: string, readMembers: MemberInRoom[]) => {
+    storeUsers(readMembers);
+    storeRoomMembers(roomId, readMembers);
+    for (const member of readMembers) getRoomOperationData(roomId).updateMember(member);
   };
   return {
     getMemberCountsRef,

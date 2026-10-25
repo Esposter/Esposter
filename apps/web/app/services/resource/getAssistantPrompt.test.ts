@@ -1,6 +1,7 @@
 // @vitest-environment nuxt
 import { getAssistantPrompt } from "@/services/resource/getAssistantPrompt";
 import { ResourceType } from "@esposter/db-schema";
+import { SITE_NAME } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 describe(getAssistantPrompt, () => {
@@ -11,7 +12,7 @@ describe(getAssistantPrompt, () => {
     expect.hasAssertions();
 
     expect(getAssistantPrompt({ id, type: ResourceType.Note }, line)).toBe(
-      `In Esposter, the Note with id ${id}: ${line}`,
+      `In ${SITE_NAME}, the Note with id ${id}: ${line}`,
     );
   });
 });

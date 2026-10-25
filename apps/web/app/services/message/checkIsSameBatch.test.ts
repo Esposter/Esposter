@@ -3,12 +3,13 @@ import { SAME_BATCH_WINDOW_MS } from "@/services/message/constants";
 import { createMessageEntity, MessageType } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
+const withCreatedAt = (message: ReturnType<typeof createMessageEntity>, messageCreatedAt: Date) =>
+  Object.assign(message, { createdAt: messageCreatedAt });
+
 describe(checkIsSameBatch, () => {
   const roomId = crypto.randomUUID();
   const userId = crypto.randomUUID();
   const createdAt = new Date(0);
-  const withCreatedAt = (message: ReturnType<typeof createMessageEntity>, messageCreatedAt: Date) =>
-    Object.assign(message, { createdAt: messageCreatedAt });
   const createStandardMessage = (messageUserId: string, messageCreatedAt: Date) =>
     withCreatedAt(createMessageEntity({ roomId, type: MessageType.Message, userId: messageUserId }), messageCreatedAt);
   const createWebhookMessage = (appId: string, messageCreatedAt: Date) =>

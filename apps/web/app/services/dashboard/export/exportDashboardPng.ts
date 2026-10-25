@@ -6,7 +6,8 @@ import { downloadFile, getResultAsync, InvalidOperationError, noop, Operation } 
 
 // The page as it is drawn: the grid holds every tile, and the capture reads it at its rendered size once the fonts are in
 export const exportDashboardPng = async (name: string) => {
-  const { createAlert } = useAlertStore();
+  const alertStore = useAlertStore();
+  const { createAlert } = alertStore;
   await getResultAsync(async () => {
     const grid = window.document.querySelector<HTMLElement>(".dashboard-grid");
     if (!grid) throw new InvalidOperationError(Operation.Read, exportDashboardPng.name, "Dashboard has no grid");

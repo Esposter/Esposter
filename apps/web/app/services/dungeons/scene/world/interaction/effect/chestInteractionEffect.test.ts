@@ -21,9 +21,9 @@ const { showMessages } = vi.hoisted(() => ({ showMessages: vi.fn<() => Promise<v
 // oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type
 vi.mock("@/store/dungeons", async () => {
   const { Dungeons } = await import("#shared/models/dungeons/data/Dungeons");
-  const { Save } = await import("#shared/models/dungeons/data/Save");
+  const { Save: DungeonsSave } = await import("#shared/models/dungeons/data/Save");
   const { reactive } = await import("vue");
-  const dungeonsStore = reactive({ dungeons: new Dungeons(), save: new Save() });
+  const dungeonsStore = reactive({ dungeons: new Dungeons(), save: new DungeonsSave() });
   return { useDungeonsStore: () => dungeonsStore };
 });
 
@@ -37,18 +37,18 @@ vi.mock("@/services/dungeons/sound/getDungeonsSoundEffect", () => ({
   getDungeonsSoundEffect: () => ({ play: () => undefined }),
 }));
 
+const getChestObject = (x: number, y: number): Types.Tilemaps.TiledObject & { x: number; y: number } => ({
+  id: 0,
+  name: "",
+  properties: [{ name: ChestObjectProperty.ItemId, type: "string", value: ItemId.Potion }],
+  type: "",
+  x,
+  y,
+});
+
 describe(chestInteractionEffect, () => {
   const scene = {} as SceneWithPlugins;
   const chestPosition = { x: 3, y: 4 };
-
-  const getChestObject = (x: number, y: number): Types.Tilemaps.TiledObject & { x: number; y: number } => ({
-    id: 0,
-    name: "",
-    properties: [{ name: ChestObjectProperty.ItemId, type: "string", value: ItemId.Potion }],
-    type: "",
-    x,
-    y,
-  });
 
   beforeEach(() => {
     setActivePinia(createPinia());
@@ -104,7 +104,9 @@ describe(chestInteractionEffect, () => {
     const isHandled = await chestInteractionEffect(scene, [getChestObject(2, 4)]);
 
     expect(isHandled).toBe(false);
-    expect(useDungeonsStore().save.player.inventory).toStrictEqual([]);
+    const dungeonsStore = useDungeonsStore();
+
+    expect(dungeonsStore.save.player.inventory).toStrictEqual([]);
     expect(showMessages).not.toHaveBeenCalled();
   });
 });

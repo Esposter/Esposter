@@ -102,7 +102,7 @@ describe(uploadBlocks, () => {
   });
 
   // An address still within its hour takes the blocks and commits the blob
-  test("An upload to an address still within its hour commits the blob", async () => {
+  test("an upload to an address still within its hour commits the blob", async () => {
     expect.hasAssertions();
 
     vi.useFakeTimers({ now: 0 });

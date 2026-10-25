@@ -36,16 +36,17 @@ vi.mock("phaser", () => ({ Cameras: { Scene2D: { Events: {} } } }));
 // oxlint-disable-next-line vitest/prefer-import-in-mock -- vue-phaserjs loads Phaser, and only the fade effect sleeps the scene
 vi.mock("vue-phaserjs", () => ({ sleepScene: () => Promise.resolve() }));
 
+const getNpc = (effects: Effect[]) => new Npc({ effects, name: NpcId.John });
+
 describe(applyNpcEffects, () => {
   const scene = {} as SceneWithPlugins;
 
-  const getNpc = (effects: Effect[]) => new Npc({ effects, name: NpcId.John });
-
   beforeEach(() => {
     setActivePinia(createPinia());
-    useDungeonsStore().save.player.monsters = [new Monster(MonsterKey.Iguanignite)];
+    const dungeonsStore = useDungeonsStore();
+    dungeonsStore.save.player.monsters = [new Monster(MonsterKey.Iguanignite)];
     showMessages.mockReset();
-    showMessages.mockImplementation(() => Promise.resolve());
+    showMessages.mockResolvedValue(undefined);
   });
 
   test("an NPC's effects run one after another, each once the one before has finished", async () => {

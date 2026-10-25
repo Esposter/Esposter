@@ -5,27 +5,30 @@ import { getResourceBladeItems } from "@/services/resource/getResourceBladeItems
 import { ResourceType } from "@esposter/db-schema";
 import { describe, expect, test, vi } from "vitest";
 
+const createCommands = () => ({
+  delete: vi.fn<() => void>(),
+  duplicate: vi.fn<() => void>(),
+  exportDatasetCsv: vi.fn<() => void>(),
+  read: vi.fn<() => void>(),
+  rename: vi.fn<() => void>(),
+  unpublish: vi.fn<() => void>(),
+  versionHistory: vi.fn<() => void>(),
+});
+
+const getTitles = (items: Item[]) => items.map(({ title }) => title);
+
+const getOptions = () => ({
+  commands: createCommands(),
+  exportFormats: [],
+  importFormats: [],
+  isDuplicatePending: false,
+  isPending: false,
+  isPublicationPending: false,
+  isPublished: false,
+});
+
 describe(getResourceBladeItems, () => {
   const resource = createResourceListItem({ type: ResourceType.Program });
-  const createCommands = () => ({
-    delete: vi.fn<() => void>(),
-    duplicate: vi.fn<() => void>(),
-    exportDatasetCsv: vi.fn<() => void>(),
-    read: vi.fn<() => void>(),
-    rename: vi.fn<() => void>(),
-    unpublish: vi.fn<() => void>(),
-    versionHistory: vi.fn<() => void>(),
-  });
-  const getOptions = () => ({
-    commands: createCommands(),
-    exportFormats: [],
-    importFormats: [],
-    isDuplicatePending: false,
-    isPending: false,
-    isPublicationPending: false,
-    isPublished: false,
-  });
-  const getTitles = (items: Item[]) => items.map(({ title }) => title);
 
   // Unpublish takes a publication down, so it is offered only while there is one
   test("offers Unpublish only while the resource is published", () => {
@@ -56,7 +59,7 @@ describe(getResourceBladeItems, () => {
     const exportItem = items.find(({ title }) => title === "Export Csv");
     exportItem?.onClick?.();
 
-    expect(exportCsv).toHaveBeenCalledOnce();
+    expect(exportCsv).toHaveBeenCalledTimes(1);
   });
 
   test("disables Refresh while the resource is pending", () => {
@@ -76,6 +79,10 @@ describe(getResourceBladeItems, () => {
     const items = getResourceBladeItems(resource, getOptions());
     const deleteItem = items.at(-1);
 
-    expect(deleteItem).toMatchObject({ isDanger: true, isGroupStart: true, title: "Delete" });
+    expect({
+      isDanger: deleteItem?.isDanger,
+      isGroupStart: deleteItem?.isGroupStart,
+      title: deleteItem?.title,
+    }).toStrictEqual({ isDanger: true, isGroupStart: true, title: "Delete" });
   });
 });

@@ -30,7 +30,7 @@ describe(useEmailEditorStore, () => {
     trpcMsw.email.readResourceContent.query(() => content);
     trpcMsw.email.readResourcePublication.query(() => undefined);
     trpcMsw.email.saveResourceContent.mutation(({ input }) => {
-      savedContents.push(input.content);
+      savedContents.push({ content: input.content.content, id: input.content.id });
       return saveResourceContent();
     });
     // The page reads the row before any blade mounts, and a content load reads only the blob
@@ -50,7 +50,7 @@ describe(useEmailEditorStore, () => {
     setEmailDocument(resourceId, emailKind, { content: [], root: { props: { attributes: {} } } });
     await saveEmail(resourceId);
 
-    expect(savedContents[0]).toMatchObject({ content: [], id: content.id });
+    expect(savedContents[0]).toStrictEqual({ content: [], id: content.id });
   });
 
   test("carries the dataset binding across an email save", async () => {

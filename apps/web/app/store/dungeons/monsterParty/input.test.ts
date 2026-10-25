@@ -20,12 +20,12 @@ import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 // oxlint-disable-next-line vitest/prefer-import-in-mock -- A partial fake: the typed module would load Phaser and its full store type
 vi.mock("@/store/dungeons", async () => {
   const { Dungeons } = await import("#shared/models/dungeons/data/Dungeons");
-  const { Save } = await import("#shared/models/dungeons/data/Save");
+  const { Save: DungeonsSave } = await import("#shared/models/dungeons/data/Save");
   const { reactive } = await import("vue");
   const dungeonsStore = reactive({
     dungeons: new Dungeons(),
     fadeSwitchToScene: vi.fn<() => void>(),
-    save: new Save(),
+    save: new DungeonsSave(),
     saveDungeons: vi.fn<() => void>(),
   });
   return { useDungeonsStore: () => dungeonsStore };
@@ -33,11 +33,11 @@ vi.mock("@/store/dungeons", async () => {
 
 // The scene switch belongs to Phaser, so only its calls are recorded
 vi.mock(import("@/composables/dungeons/usePreviousScene"), async () => {
-  const { SceneKey } = await import("@/models/dungeons/keys/SceneKey");
+  const { SceneKey: MockSceneKey } = await import("@/models/dungeons/keys/SceneKey");
   const { computed } = await import("vue");
   const usePreviousSceneMock = {
     launchScene: vi.fn<() => void>(),
-    previousSceneKey: computed(() => SceneKey.Battle),
+    previousSceneKey: computed(() => MockSceneKey.Battle),
     removeScenesAbove: vi.fn<() => void>(),
     switchToPreviousScene: vi.fn<() => void>(),
   };
@@ -45,8 +45,24 @@ vi.mock(import("@/composables/dungeons/usePreviousScene"), async () => {
 });
 
 // Text animation drives Phaser's scene, and the dialog store only reaches it once a message is shown, which these tests
-// never do
+// Never do
 vi.mock(import("@/composables/dungeons/text/useAnimateText"), () => ({ useAnimateText: () => Promise.resolve() }));
+
+const setParty = (...monsters: Monster[]) => {
+  const dungeonsStore = useDungeonsStore();
+  dungeonsStore.save.player.monsters = monsters;
+};
+
+// The party is read through reactive proxies, so a monster is found by its place in the party rather than by identity
+const selectPartyMonster = (partyIndex: number) => {
+  useMonsterPartyOptionGrid().position.value = { x: partyIndex, y: 0 };
+};
+
+const getFaintedMonster = () => {
+  const monster = new Monster(MonsterKey.Iguanignite);
+  monster.status.health = 0;
+  return monster;
+};
 
 describe(useMonsterPartyInputStore, () => {
   const scene = {} as SceneWithPlugins;
@@ -55,7 +71,8 @@ describe(useMonsterPartyInputStore, () => {
   // A fresh pinia per test, so the battle's active monster is read from the party as this test sets it
   beforeEach(() => {
     setActivePinia(createPinia());
-    useDungeonsStore().save = new Save();
+    const dungeonsStore = useDungeonsStore();
+    dungeonsStore.save = new Save();
     emitSpy = vi.spyOn(phaserEventEmitter, "emit");
   });
 
@@ -63,29 +80,17 @@ describe(useMonsterPartyInputStore, () => {
     emitSpy.mockRestore();
   });
 
-  const setParty = (...monsters: Monster[]) => {
-    useDungeonsStore().save.player.monsters = monsters;
-  };
-
-  // The party is read through reactive proxies, so a monster is found by its place in the party rather than by identity
-  const selectPartyMonster = (partyIndex: number) => {
-    useMonsterPartyOptionGrid().position.value = { x: partyIndex, y: 0 };
-  };
-
-  const getFaintedMonster = () => {
-    const monster = new Monster(MonsterKey.Iguanignite);
-    monster.status.health = 0;
-    return monster;
-  };
-
   test("a battle switch to a fainted monster is refused with the reason shown", async () => {
     expect.hasAssertions();
 
     setParty(new Monster(MonsterKey.Iguanignite), getFaintedMonster());
     selectPartyMonster(1);
-    await useMonsterPartyInputStore().onPlayerInput(scene, PlayerSpecialInput.Confirm);
+    const monsterPartyInputStore = useMonsterPartyInputStore();
+    const { onPlayerInput } = monsterPartyInputStore;
+    await onPlayerInput(scene, PlayerSpecialInput.Confirm);
+    const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
 
-    expect(useMonsterPartyInfoPanelStore().infoDialogMessage.text).toBe("Selected monster is fainted.");
+    expect(monsterPartyInfoPanelStore.infoDialogMessage.text).toBe("Selected monster is fainted.");
     expect(usePreviousScene(SceneKey.MonsterParty).switchToPreviousScene).not.toHaveBeenCalled();
     expect(emitSpy).not.toHaveBeenCalledWith("switchMonster", expect.anything());
   });
@@ -95,9 +100,12 @@ describe(useMonsterPartyInputStore, () => {
 
     setParty(new Monster(MonsterKey.Iguanignite), getFaintedMonster());
     selectPartyMonster(0);
-    await useMonsterPartyInputStore().onPlayerInput(scene, PlayerSpecialInput.Confirm);
+    const monsterPartyInputStore = useMonsterPartyInputStore();
+    const { onPlayerInput } = monsterPartyInputStore;
+    await onPlayerInput(scene, PlayerSpecialInput.Confirm);
+    const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
 
-    expect(useMonsterPartyInfoPanelStore().infoDialogMessage.text).toBe("Selected monster is already battling.");
+    expect(monsterPartyInfoPanelStore.infoDialogMessage.text).toBe("Selected monster is already battling.");
     expect(emitSpy).not.toHaveBeenCalledWith("switchMonster", expect.anything());
   });
 
@@ -107,7 +115,9 @@ describe(useMonsterPartyInputStore, () => {
     const bench = new Monster(MonsterKey.Iguanignite);
     setParty(new Monster(MonsterKey.Iguanignite), bench);
     selectPartyMonster(1);
-    await useMonsterPartyInputStore().onPlayerInput(scene, PlayerSpecialInput.Confirm);
+    const monsterPartyInputStore = useMonsterPartyInputStore();
+    const { onPlayerInput } = monsterPartyInputStore;
+    await onPlayerInput(scene, PlayerSpecialInput.Confirm);
 
     expect(usePreviousScene(SceneKey.MonsterParty).switchToPreviousScene).toHaveBeenCalledWith(scene);
     expect(emitSpy).toHaveBeenCalledWith("switchMonster", bench);
@@ -123,7 +133,9 @@ describe(useMonsterPartyInputStore, () => {
     fighting.status.health = 0;
     await monsterPartyInputStore.onPlayerInput(scene, PlayerSpecialInput.Cancel);
 
-    expect(useMonsterPartyInfoPanelStore().infoDialogMessage.text).toBe("You need to select a monster to switch to.");
+    const monsterPartyInfoPanelStore = useMonsterPartyInfoPanelStore();
+
+    expect(monsterPartyInfoPanelStore.infoDialogMessage.text).toBe("You need to select a monster to switch to.");
     expect(usePreviousScene(SceneKey.MonsterParty).switchToPreviousScene).not.toHaveBeenCalled();
     expect(emitSpy).not.toHaveBeenCalledWith("unswitchMonster");
   });

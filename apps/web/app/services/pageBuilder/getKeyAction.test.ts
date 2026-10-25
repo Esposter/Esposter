@@ -4,14 +4,14 @@ import { KeyScope } from "@/models/pageBuilder/KeyScope";
 import { getKeyAction } from "@/services/pageBuilder/getKeyAction";
 import { describe, expect, test } from "vitest";
 
-describe(getKeyAction, () => {
-  // The event is dispatched on its target, so the target it reports is the element the key was pressed in
-  const press = (init: KeyboardEventInit, target: EventTarget = document.body) => {
-    const event = new KeyboardEvent("keydown", init);
-    target.dispatchEvent(event);
-    return event;
-  };
+// The event is dispatched on its target, so the target it reports is the element the key was pressed in
+const press = (init: KeyboardEventInit, target: EventTarget = document.body) => {
+  const event = new KeyboardEvent("keydown", init);
+  target.dispatchEvent(event);
+  return event;
+};
 
+describe(getKeyAction, () => {
   test("the canvas takes arrow down, arrow up and escape as the next node, the previous node and the parent", () => {
     expect.hasAssertions();
 

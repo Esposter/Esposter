@@ -8,7 +8,7 @@ import { STARTER_EMAIL_SOURCE } from "#shared/services/pageBuilder/email/starter
 import { renderEmailCanvasVNodes } from "@/services/pageBuilder/email/renderEmailCanvasVNodes";
 import { emailKind } from "@/services/pageBuilder/emailKind";
 import { takeOne } from "@esposter/shared";
-import { MjmlNodeType, parseMjmlDocument } from "mjml-blocks";
+import { parseMjmlDocument } from "mjml-blocks";
 import { describe, expect, test } from "vitest";
 import { createSSRApp } from "vue";
 import { renderToString } from "vue/server-renderer";

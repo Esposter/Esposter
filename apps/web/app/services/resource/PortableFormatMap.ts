@@ -4,8 +4,6 @@ import type { PortableResourceType } from "@/models/resource/PortableResourceTyp
 
 import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import { getDatasetTruncation } from "#shared/services/dataset/getDatasetTruncation";
-import { deserializeNoteMarkdown } from "#shared/services/resource/note/deserializeNoteMarkdown";
-import { serializeNoteMarkdown } from "#shared/services/resource/note/serializeNoteMarkdown";
 import { FlowchartExportFormat } from "@/models/resource/FlowchartExportFormat";
 import { exportDashboardPng } from "@/services/dashboard/export/exportDashboardPng";
 import { getDatasetErrorMessage } from "@/services/dataset/getDatasetErrorMessage";
@@ -15,9 +13,6 @@ import { createBlueprintPortableFormat } from "@/services/resource/createBluepri
 import { createFlowchartPortableFormat } from "@/services/resource/createFlowchartPortableFormat";
 import { createNoteMarkdownPortableFormat } from "@/services/resource/createNoteMarkdownPortableFormat";
 import { createSheetPortableFormat } from "@/services/resource/createSheetPortableFormat";
-import { createDefaultSheetSettings } from "@/services/resource/sheet/createDefaultSheetSettings";
-import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
-import { DataSourceTypeItemCategoryDefinitionMap } from "@/services/resource/sheet/dataSource/DataSourceTypeItemCategoryDefinitionMap";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useAlertStore } from "@/store/alert";
 import { useEmailEditorStore } from "@/store/emailEditor";
@@ -51,13 +46,16 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
     {
       export: async () => {
         const { $trpc } = useNuxtApp();
-        const { createAlert } = useAlertStore();
+        const alertStore = useAlertStore();
+        const { createAlert } = alertStore;
         const resourceStore = useResourceStore();
         const resourceId = resourceStore.currentResourceId;
         // The open editor's latest edit reaches the stored copy first, so the export compiles what the reader sees. With
         // No editor open nothing is held and the save is a no-op
-        const { saveEmail } = useEmailEditorStore();
-        const { setPendingDataset } = useEmailExportDialogStore();
+        const emailEditorStore = useEmailEditorStore();
+        const { saveEmail } = emailEditorStore;
+        const emailExportDialogStore = useEmailExportDialogStore();
+        const { setPendingDataset } = emailExportDialogStore;
         const { compileStoredEmail, exportRows } = useExportPersonalizedHtml();
 
         await getResultAsync(async () => {
@@ -84,7 +82,7 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
     {
       icon: "i-mdi:code-tags",
       // The command opens the code field for the email it was run on, which the Editor blade renders
-      import: async () => {
+      import: () => {
         const alertStore = useAlertStore();
         const { createAlert } = alertStore;
         const resourceStore = useResourceStore();
@@ -93,12 +91,13 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
         const { getEmailDocument } = pageBuilderDocumentStore;
         if (!resource.value || !getEmailDocument(resource.value.id)) {
           createAlert(REOPEN_EMAIL_MESSAGE, "warning");
-          return;
+          return Promise.resolve();
         }
 
         const emailImportDialogStore = useEmailImportDialogStore();
         const { openImport } = emailImportDialogStore;
         openImport(resource.value.id);
+        return Promise.resolve();
       },
       label: "MJML",
     },
@@ -148,7 +147,7 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
   ],
   [ResourceType.Webpage]: [
     {
-      export: async () => {
+      export: () => {
         const resourceStore = useResourceStore();
         const { resource } = storeToRefs(resourceStore);
         const pageBuilderDocumentStore = usePageBuilderDocumentStore();
@@ -156,12 +155,15 @@ export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> =
         const resourceValue = resource.value;
         const document = resourceValue && getDocument(resourceValue.id);
         if (!resourceValue || !document) {
-          useAlertStore().createAlert("Open the webpage before exporting its HTML", "warning");
-          return;
+          const alertStore = useAlertStore();
+          const { createAlert } = alertStore;
+          createAlert("Open the webpage before exporting its HTML", "warning");
+          return Promise.resolve();
         }
         getResult(() => exportWebpageHtml(resourceValue.name, document, window.location.origin)).match(noop, (error) =>
           createErrorAlert(error),
         );
+        return Promise.resolve();
       },
       icon: "i-mdi:language-html5",
       label: "HTML",

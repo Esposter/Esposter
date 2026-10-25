@@ -489,7 +489,7 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
   };
 
   // Ask Claude's line goes to the session the reader picked, or starts a new one in its folder, and the line is held
-  // until that session opens. Returns whether the line was sent, so a line refused while no host is reached is kept
+  // Until that session opens. Returns whether the line was sent, so a line refused while no host is reached is kept
   const askAssistant = (line: AssistantLine, connectionId?: string) => {
     if (line.sessionId) return sendCommand(toPromptCommand(line.sessionId, line.text, []), connectionId);
 

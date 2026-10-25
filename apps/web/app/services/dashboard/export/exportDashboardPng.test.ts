@@ -80,6 +80,10 @@ describe(exportDashboardPng, () => {
     await exportDashboardPng(dashboardName);
 
     expect(downloadFile).not.toHaveBeenCalled();
-    expect(useAlertStore().alerts).toMatchObject([{ text: "Couldn't export this dashboard", type: "error" }]);
+    const alertStore = useAlertStore();
+
+    expect(alertStore.alerts.map(({ text, type }) => ({ text, type }))).toStrictEqual([
+      { text: "Couldn't export this dashboard", type: "error" },
+    ]);
   });
 });

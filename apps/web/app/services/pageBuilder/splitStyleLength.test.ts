@@ -9,10 +9,14 @@ describe(splitStyleLength, () => {
     ["", { amount: "", unit: "" }],
     ["12", { amount: "12", unit: "" }],
   ])("%s splits into its number and unit", (value, parts) => {
+    expect.hasAssertions();
+
     expect(splitStyleLength(value)).toStrictEqual(parts);
   });
 
   test("a value that is not a length splits to nothing", () => {
+    expect.hasAssertions();
+
     expect(splitStyleLength("auto")).toBeUndefined();
   });
 });

@@ -9,32 +9,32 @@ import { getNodeTitle } from "@/services/pageBuilder/getNodeTitle";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { describe, expect, test } from "vitest";
 
-describe(getNodeTitle, () => {
-  const createColumnsDocument = (): WebpageDocument => ({
-    content: [
-      {
-        props: {
-          children: [
-            {
-              props: {
-                children: [
-                  { props: { children: [], id: "k1" }, type: WebpageNodeType.Column },
-                  { props: { children: [], id: "k2" }, type: WebpageNodeType.Column },
-                ],
-                id: "cs",
-              },
-              type: WebpageNodeType.Columns,
+const createColumnsDocument = (): WebpageDocument => ({
+  content: [
+    {
+      props: {
+        children: [
+          {
+            props: {
+              children: [
+                { props: { children: [], id: "k1" }, type: WebpageNodeType.Column },
+                { props: { children: [], id: "k2" }, type: WebpageNodeType.Column },
+              ],
+              id: "cs",
             },
-          ],
-          id: "s",
-          tag: HtmlTag.Section,
-        },
-        type: WebpageNodeType.Section,
+            type: WebpageNodeType.Columns,
+          },
+        ],
+        id: "s",
+        tag: HtmlTag.Section,
       },
-    ],
-    root: TEST_ROOT,
-  });
+      type: WebpageNodeType.Section,
+    },
+  ],
+  root: TEST_ROOT,
+});
 
+describe(getNodeTitle, () => {
   test("a node with no other node of its type beside it is titled by its type", () => {
     expect.hasAssertions();
 

@@ -10,8 +10,8 @@ export const useBlueprintStore = defineStore("resource/blueprint", () => {
   const resourceStore = useResourceStore();
   const { saveContent } = resourceStore;
   // The manifest is edited wholesale as validated JSON. The text is held here, not in the Editor, so an import from
-  // the overflow menu can fill it. A read replaces it with the saved manifest, so text the owner has not saved never
-  // outlives the content it was typed over
+  // The overflow menu can fill it. A read replaces it with the saved manifest, so text the owner has not saved never
+  // Outlives the content it was typed over
   const manifestJson = ref("");
   const setManifestJson = (manifest: BlueprintResource) => {
     manifestJson.value = stringifyBlueprintManifest(manifest);

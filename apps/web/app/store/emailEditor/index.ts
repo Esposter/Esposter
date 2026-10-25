@@ -20,7 +20,7 @@ export const useEmailEditorStore = defineStore("emailEditor", () => {
     ResourceType.Email,
     (data) => new EmailEditor(data),
     // The page builder edits the body and head the content holds, so every read hands them over, and a reload drops the
-    // history of the document it replaces
+    // History of the document it replaces
     (email) => {
       const resourceId = resourceStore.resource?.id;
       if (!resourceId) return;
@@ -30,8 +30,14 @@ export const useEmailEditorStore = defineStore("emailEditor", () => {
     },
   );
   const datasetReference = computed(() => emailEditor.value.datasetReference);
+  // The column names of the dataset each email is bound to, which its merge fields are offered from. A blade holds its own
+  // Email's columns while it is mounted and clears them on unmount, so an email with no dataset bound offers none
+  const { getDataRef: getMergeFieldColumnsRef } = useDataMap<string[]>(() => resourceStore.currentResourceId, []);
+  const setMergeFieldColumns = (resourceId: string, columnNames: string[]) => {
+    getMergeFieldColumnsRef(resourceId).value = columnNames;
+  };
   // The document the page builder holds is written back as the content's body and head, with the dataset binding the
-  // content keeps beside them. Nothing is written for a resource whose document is not held
+  // Content keeps beside them. Nothing is written for a resource whose document is not held
   const saveEmail = (resourceId: string) =>
     pageBuilderDocumentStore.saveEmailDocument(resourceId, async (document) => {
       emailEditor.value.content = document.content;
@@ -42,5 +48,12 @@ export const useEmailEditorStore = defineStore("emailEditor", () => {
     emailEditor.value.datasetReference = newDatasetReference;
     await saveContent();
   };
-  return { datasetReference, loadContent, saveDatasetReference, saveEmail };
+  return {
+    datasetReference,
+    getMergeFieldColumnsRef,
+    loadContent,
+    saveDatasetReference,
+    saveEmail,
+    setMergeFieldColumns,
+  };
 });

@@ -33,23 +33,23 @@ export const insertMergeFieldAt = <
   const content = noteDocumentSchema.safeParse(getBlockPropValue(textNode.props, "content"));
   if (!content.success) return false;
 
-  return usePageBuilderHistoryStore()
-    .applyEdit(
-      resourceId,
-      [
-        {
-          op: JsonPatchOperationType.Replace,
-          path: `${nodePointer}/props/content`,
-          value: appendMergeFieldToText(content.data, columnName),
-        },
-      ],
-      "Insert merge field",
-    )
-    .match(
-      () => true,
-      (error) => {
-        console.error(error);
-        return false;
+  const pageBuilderHistoryStore = usePageBuilderHistoryStore();
+  const { applyEdit } = pageBuilderHistoryStore;
+  return applyEdit(
+    resourceId,
+    [
+      {
+        op: JsonPatchOperationType.Replace,
+        path: `${nodePointer}/props/content`,
+        value: appendMergeFieldToText(content.data, columnName),
       },
-    );
+    ],
+    "Insert merge field",
+  ).match(
+    () => true,
+    (error) => {
+      console.error(error);
+      return false;
+    },
+  );
 };

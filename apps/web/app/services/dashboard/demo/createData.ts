@@ -1,7 +1,7 @@
 import { createRandomInteger } from "@/util/math/random/createRandomInteger";
 
 // A bubble-chart demo series: x and y are the axis coordinates, z the bubble size. Every range below includes both of
-// its ends, and the random helper's maximum is exclusive, so each maximum is one above the largest value wanted
+// Its ends, and the random helper's maximum is exclusive, so each maximum is one above the largest value wanted
 export const createData = (count: number, { maximum, minimum }: { maximum: number; minimum: number }) => {
   const series: [number, number, number][] = [];
   for (let index = 0; index < count; index++) {

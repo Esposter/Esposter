@@ -10,7 +10,7 @@ vi.mock(import("@esposter/shared"), async (importOriginal) => ({
 }));
 
 describe(exportWebpageHtml, () => {
-  test("Exporting a webpage downloads one HTML file", () => {
+  test("exporting a webpage downloads one HTML file", () => {
     expect.hasAssertions();
 
     const name = "name";

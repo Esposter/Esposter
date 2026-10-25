@@ -1,6 +1,6 @@
+import type { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import type { PortableFormat } from "@/models/resource/PortableFormat";
 
-import { DataSourceType } from "#shared/models/resource/sheet/datasource/DataSourceType";
 import { createDefaultSheetSettings } from "@/services/resource/sheet/createDefaultSheetSettings";
 import { DataSourceConfigurationMap } from "@/services/resource/sheet/dataSource/DataSourceConfigurationMap";
 import { DataSourceTypeItemCategoryDefinitionMap } from "@/services/resource/sheet/dataSource/DataSourceTypeItemCategoryDefinitionMap";

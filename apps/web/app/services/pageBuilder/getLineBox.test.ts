@@ -1,5 +1,3 @@
-import type { OverlayBox } from "@/models/pageBuilder/OverlayBox";
-
 import { LINE_THICKNESS } from "@/services/pageBuilder/constants";
 import { TEST_SINGLE_ROW, TEST_WRAPPED_ROW } from "@/services/pageBuilder/constants.test";
 import { getLineBox } from "@/services/pageBuilder/getLineBox";

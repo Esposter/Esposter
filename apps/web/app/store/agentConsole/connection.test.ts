@@ -446,7 +446,7 @@ describe(useAgentConsoleConnectionStore, () => {
     expect(id).toBeTypeOf("string");
   });
 
-  test("The line reaches an open session", async () => {
+  test("the line reaches an open session", async () => {
     expect.hasAssertions();
 
     const { agentConsoleConnectionStore, sessionId, socket } = await openConsole();
@@ -458,7 +458,7 @@ describe(useAgentConsoleConnectionStore, () => {
     expect(id).toBeTypeOf("string");
   });
 
-  test("A new session starts when none is open", async () => {
+  test("a new session starts when none is open", async () => {
     expect.hasAssertions();
 
     const { agentConsoleConnectionStore, agentConsoleSessionStore, socket } = await openConsole();
@@ -485,14 +485,14 @@ describe(useAgentConsoleConnectionStore, () => {
     expect(promptId).toBeTypeOf("string");
   });
 
-  test("A turn runs in the person's session", async () => {
+  test("a turn runs in the person's session", async () => {
     expect.hasAssertions();
 
     const { agentConsoleConnectionStore, sessionId, socket } = await openConsole();
     const sentBefore = socket.send.mock.calls.length;
     agentConsoleConnectionStore.askAssistant({ cwd: "", sessionId, text: "rename the heading" });
 
-    expect(socket.send.mock.calls).toHaveLength(sentBefore + 1);
+    expect(socket.send).toHaveBeenCalledTimes(sentBefore + 1);
     expect(readLastCommand(socket).type).toBe(CommandType.Prompt);
   });
 });

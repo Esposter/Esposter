@@ -3,8 +3,8 @@ import type { JSONContent } from "@tiptap/core";
 import { useResourceStore } from "@/store/resource";
 
 // The import is started from the command bar, which the blade shell's dialogs outlive, so the preview cannot live in
-// the blade alone. It is keyed by the note it was parsed for: a file read after the reader moved to another note is
-// that note's import, and its preview must not open over, or import into, the next one
+// The blade alone. It is keyed by the note it was parsed for: a file read after the reader moved to another note is
+// That note's import, and its preview must not open over, or import into, the next one
 export const useNotePortableDialogStore = defineStore("resource/note/portableDialog", () => {
   const resourceStore = useResourceStore();
   const getResourceId = () => resourceStore.currentResourceId;

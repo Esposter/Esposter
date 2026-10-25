@@ -1,8 +1,9 @@
 import type { AchievementDefinitionEntry } from "#shared/models/achievement/AchievementDefinitionEntry";
+import type { AchievementName } from "@esposter/db-schema";
 
 import { AchievementSort } from "@/models/achievement/AchievementSort";
 import { sortAchievementDefinitions } from "@/services/achievement/sortAchievementDefinitions";
-import { AchievementName, EmailAchievementName, MessageAchievementName } from "@esposter/db-schema";
+import { EmailAchievementName, MessageAchievementName } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
 describe(sortAchievementDefinitions, () => {

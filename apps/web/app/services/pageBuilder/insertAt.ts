@@ -6,7 +6,7 @@ import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { insertBlockNode } from "headless-block-editor";
 
 // Inserts a new block at an index of a slot in one open resource's document, selects it, and reports whether the edit
-// applied. The block is built from the id the insert mints for it, and a slot that refuses its type applies nothing
+// Applied. The block is built from the id the insert mints for it, and a slot that refuses its type applies nothing
 export const insertAt = <
   TNode extends BlockNode,
   TRoot extends BlockRootProps,
