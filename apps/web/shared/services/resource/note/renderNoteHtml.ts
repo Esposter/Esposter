@@ -1,6 +1,6 @@
 import type { JSONContent } from "@tiptap/core";
 
-import { RESOURCE_ASSETS_URL_PREFIX } from "#shared/services/resource/constants";
+import { NOTE_IMAGE_SOURCE_REGEX } from "#shared/services/resource/note/constants";
 import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensions";
 import { sanitizeTextHtml } from "@esposter/shared";
 import { generateHTML } from "@tiptap/html";
@@ -9,7 +9,7 @@ import { generateHTML } from "@tiptap/html";
 // Other source is dropped with its element, so a tracking pixel or a hotlink never reaches a reader
 const NOTE_IMAGE_ALLOWANCE = {
   allowedAttributes: { img: ["alt", "src", "title"] },
-  allowedSources: { img: { src: [new RegExp(`^${RegExp.escape(RESOURCE_ASSETS_URL_PREFIX)}/`, "u")] } },
+  allowedSources: { img: { src: [NOTE_IMAGE_SOURCE_REGEX] } },
   allowedTags: ["img"],
 };
 
