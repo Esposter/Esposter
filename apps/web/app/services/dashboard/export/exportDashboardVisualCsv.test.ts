@@ -90,6 +90,33 @@ describe(exportDashboardVisualCsv, () => {
     );
   });
 
+  // A pie draws only its first series, so its file holds that one column rather than every series the table draws
+  test("a bound pie writes a row per category with the first series only", () => {
+    expect.hasAssertions();
+
+    const pie = new Visual({
+      dataset: {
+        query: {
+          series: [
+            { aggregation: DatasetAggregationType.Count, column: responseColumn },
+            { aggregation: DatasetAggregationType.Sum, column: scoreColumn },
+          ],
+          xColumn: categoryColumn,
+        },
+        reference,
+      },
+      type: VisualType.Pie,
+    });
+
+    exportDashboardVisualCsv(pie, dataset);
+
+    expect(downloadFile).toHaveBeenCalledExactlyOnceWith(
+      `${VisualType.Pie}.csv`,
+      `${categoryColumn},${responseColumn}\nNorth,2\nSouth,1`,
+      MimeType.Csv,
+    );
+  });
+
   // A category is respondent text, so a spreadsheet must open it as text rather than run it as a formula
   test("a category typed as a formula is neutralised", () => {
     expect.hasAssertions();
