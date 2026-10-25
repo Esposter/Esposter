@@ -1,7 +1,11 @@
 import { checkIsServer } from "#src/util/environment/checkIsServer";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(checkIsServer, () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   test("gets is server", () => {
     expect.hasAssertions();
 
@@ -10,7 +14,5 @@ describe(checkIsServer, () => {
     vi.stubGlobal("window", {});
 
     expect(checkIsServer()).toBe(false);
-
-    vi.unstubAllGlobals();
   });
 });

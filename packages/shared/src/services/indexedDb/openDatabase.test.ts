@@ -25,6 +25,7 @@ const openTestDatabase = (databaseName: string) =>
 describe(openDatabase, () => {
   afterEach(() => {
     vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
 
   test("runs the upgrade and names the database it opened", async () => {
@@ -121,8 +122,7 @@ describe(openDatabase, () => {
     await expect(upgradeTransactions[0]?.done).rejects.toThrowErrorMatchingInlineSnapshot(
       `[AbortError: The transaction was aborted]`,
     );
-    expect(console.error).toHaveBeenCalledTimes(1);
-    expect(console.error).toHaveBeenLastCalledWith(upgradeError);
+    expect(console.error).toHaveBeenCalledExactlyOnceWith(upgradeError);
   });
 
   test("an upgrade aborted by a request error is logged", async () => {
@@ -278,6 +278,5 @@ describe(openDatabase, () => {
     const { openDatabase: importedOpenDatabase } = await import("#src/services/indexedDb/openDatabase");
 
     expect(importedOpenDatabase).toBeTypeOf("function");
-    vi.unstubAllGlobals();
   });
 });
