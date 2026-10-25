@@ -23,7 +23,7 @@ flowchart TD
 - **Role changes** — every role-membership write (optimistic apply, rollback, `onSuccess`, and the role subscription handlers) funnels through the role store's `mutateMemberRoles`, which fires `memberRoleChangeHooks` on every write, and the member store re-reads the room's totals for each. The re-read is used rather than a delta because the group a change leaves is not always known here: a member whose roles were never read has no prior role at all. The server filters its own events from the originating device, so a local write also re-reads when it settles, and the echo that does arrive from other devices re-reads again.
 - **Ordering** — the re-read rule and its latest-started-wins order are owned by the [client data](../../architecture/client-data/design.md) page ("Server-owned aggregates are re-read, never adjusted"). This page holds only the room's use of it.
 
-### A failed re-read and the snapshot race
+#### A failed re-read and the snapshot race
 
 Each room's re-read is one pair: the total and the per-role groups are read together and written only once both return, so a failed read leaves the last settled pair standing. A total is never written beside groups from another read, which keeps the roleless remainder from going negative on a mixed pair.
 
