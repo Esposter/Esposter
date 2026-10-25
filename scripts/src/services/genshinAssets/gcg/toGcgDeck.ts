@@ -3,17 +3,11 @@ import type { ExcelGcgCharRow } from "#src/models/genshinAssets/gcg/ExcelGcgChar
 import type { ExcelGcgCostRow } from "#src/models/genshinAssets/gcg/ExcelGcgCostRow";
 import type { ExcelGcgDeckRow } from "#src/models/genshinAssets/gcg/ExcelGcgDeckRow";
 import type { ExcelGcgSkillRow } from "#src/models/genshinAssets/gcg/ExcelGcgSkillRow";
-import type {
-  GcgDeckSlice,
-  GcgDeckSliceCard,
-  GcgDeckSliceCharacter,
-  GcgDeckSliceSkill,
-} from "#src/models/genshinAssets/gcg/GcgDeckSlice";
-import type { Element, GcgCost } from "genshin-world";
+import type { GcgDeckSlice } from "#src/models/genshinAssets/gcg/GcgDeckSlice";
 
-import { GCG_COST_TYPE_INVALID, GcgCostTableElementMap } from "#src/services/genshinAssets/gcg/constants";
-import { InvalidOperationError, Operation } from "@esposter/shared";
-import { GcgCardKind, GcgCostKind, GcgSkillKind } from "genshin-world";
+import { findRow } from "#src/services/genshinAssets/gcg/findRow";
+import { toCard } from "#src/services/genshinAssets/gcg/toCard";
+import { toCharacter } from "#src/services/genshinAssets/gcg/toCharacter";
 
 // A deck's slice, read from the dump's deck, character, skill and card rows. Its cards are the deck's distinct cards and
 // The cards its skills create, each with its name and description text ids and the effect names its skills carry
@@ -38,125 +32,3 @@ export const toGcgDeck = (
     characters,
   };
 };
-
-const toCharacter = (
-  characterRow: ExcelGcgCharRow,
-  skillRows: ExcelGcgSkillRow[],
-  costTypes: Set<string>,
-): GcgDeckSliceCharacter => {
-  const elementSuffix = findTagSuffix(characterRow.tagList, "GCG_TAG_ELEMENT_");
-  const element = elementSuffix === undefined ? undefined : toElement(`GCG_COST_DICE_${elementSuffix}`);
-  if (!element) throw invalidRead(`character ${characterRow.id} names no element`);
-  const nation = findTagSuffix(characterRow.tagList, "GCG_TAG_NATION_");
-  return {
-    descriptionTextId: characterRow.descTextMapHash,
-    element,
-    hp: characterRow.hp,
-    id: characterRow.id,
-    maxEnergy: characterRow.maxEnergy,
-    nameTextId: characterRow.nameTextMapHash,
-    ...(nation === undefined ? {} : { nation }),
-    skills: characterRow.skillList.map((skillId) => toSkill(findRow(skillRows, skillId, "skill"), costTypes)),
-    weapon: findTagSuffix(characterRow.tagList, "GCG_TAG_WEAPON_") ?? "",
-  };
-};
-
-const toSkill = (skillRow: ExcelGcgSkillRow, costTypes: Set<string>): GcgDeckSliceSkill => {
-  const kind = toSkillKind(skillRow.skillTagList);
-  return {
-    costs: toCosts(skillRow.costList, skillRow.id, costTypes),
-    effect: skillRow.skillJson,
-    energyGain: skillRow.energyRecharge,
-    id: skillRow.id,
-    kind,
-  };
-};
-
-const toCard = (cardRow: ExcelGcgCardRow, skillRows: ExcelGcgSkillRow[], costTypes: Set<string>): GcgDeckSliceCard => ({
-  costs: toCosts(cardRow.costList, cardRow.id, costTypes),
-  descriptionTextId: cardRow.descTextMapHash,
-  effects: cardRow.skillList.map((skillId) => findRow(skillRows, skillId, "skill").skillJson),
-  id: cardRow.id,
-  isLocation: cardRow.tagList.includes("GCG_TAG_PLACE"),
-  kind: toCardKind(cardRow),
-  nameTextId: cardRow.nameTextMapHash,
-  ...toCardWeapon(cardRow),
-  ...toCardCompanion(cardRow),
-});
-
-// A weapon card names its weapon kind, the tag's suffix as a character's weapon is named, and any other card names none
-const toCardWeapon = ({ tagList }: ExcelGcgCardRow): { weapon?: string } => {
-  const weapon = findTagSuffix(tagList, "GCG_TAG_WEAPON_");
-  return weapon === undefined ? {} : { weapon };
-};
-
-// A companion support card carries the ally tag the dump marks the Companion Support Cards with, and any other card carries no mark
-const toCardCompanion = ({ tagList }: ExcelGcgCardRow): { isCompanion?: boolean } =>
-  tagList.includes("GCG_TAG_ALLY") ? { isCompanion: true } : {};
-
-// The dump's cost lines: an element's die, Matching dice (the character's own element), Unaligned dice of any face, or
-// Energy. The dump's empty slots, which hold the invalid cost at its default, are left out
-const toCosts = (costRows: ExcelGcgSkillRow["costList"], rowId: number, costTypes: Set<string>): GcgCost[] =>
-  costRows
-    .map(({ costType = GCG_COST_TYPE_INVALID, count }) => ({ costType, count }))
-    .filter(({ costType }) => costType !== GCG_COST_TYPE_INVALID)
-    .map(({ costType, count }): GcgCost => {
-      if (!costTypes.has(costType)) throw invalidRead(`the cost table names no cost type ${costType} of row ${rowId}`);
-      if (costType === "GCG_COST_DICE_SAME") return { count, kind: GcgCostKind.Matching };
-      else if (costType === "GCG_COST_DICE_VOID") return { count, kind: GcgCostKind.Unaligned };
-      else if (costType === "GCG_COST_ENERGY") return { count, kind: GcgCostKind.Energy };
-      return { count, element: toElement(costType, rowId), kind: GcgCostKind.Dice };
-    });
-
-// The element a cost type or a character tag names, the tag spelt as its cost type
-const toElement = (costType: string, rowId?: number): Element => {
-  const element = GcgCostTableElementMap.get(costType);
-  if (!element) throw invalidRead(`row ${rowId ?? costType} names no element for ${costType}`);
-  return element;
-};
-
-// The skill tag the card gives a skill: A for a normal attack, E for an elemental skill, Q for a burst, and PASSIVE for a
-// Passive the character holds
-const toSkillKind = (skillTags: string[]): GcgSkillKind => {
-  if (skillTags.includes("GCG_SKILL_TAG_A")) return GcgSkillKind.NormalAttack;
-  else if (skillTags.includes("GCG_SKILL_TAG_E")) return GcgSkillKind.ElementalSkill;
-  else if (skillTags.includes("GCG_SKILL_TAG_Q")) return GcgSkillKind.ElementalBurst;
-  else if (skillTags.includes("GCG_SKILL_TAG_PASSIVE")) return GcgSkillKind.Passive;
-  throw invalidRead(`a skill names no kind in ${skillTags.join(", ")}`);
-};
-
-const CardTypeKindMap = new Map<string, GcgCardKind>([
-  ["GCG_CARD_ASSIST", GcgCardKind.Support],
-  ["GCG_CARD_EVENT", GcgCardKind.Event],
-  ["GCG_CARD_ONSTAGE", GcgCardKind.Onstage],
-  ["GCG_CARD_STATE", GcgCardKind.State],
-  ["GCG_CARD_SUMMON", GcgCardKind.Summon],
-]);
-
-// The card type the dump names, which a modify card's tags refine into the kind of equipment it is
-const toCardKind = ({ cardType, id, tagList }: ExcelGcgCardRow): GcgCardKind => {
-  const equipmentKind =
-    cardType === "GCG_CARD_MODIFY" ? EquipmentTagKindMap.find(([tag]) => tagList.includes(tag))?.[1] : undefined;
-  const kind = equipmentKind ?? CardTypeKindMap.get(cardType);
-  if (kind === undefined) throw invalidRead(`card ${id} has the unknown type ${cardType}`);
-  return kind;
-};
-
-const EquipmentTagKindMap: [string, GcgCardKind][] = [
-  ["GCG_TAG_TALENT", GcgCardKind.Talent],
-  ["GCG_TAG_VEHICLE", GcgCardKind.Vehicle],
-  ["GCG_TAG_WEAPON", GcgCardKind.Weapon],
-  ["GCG_TAG_ARTIFACT", GcgCardKind.Artifact],
-];
-
-// The suffix of the first tag under a prefix, or undefined where no tag holds that prefix
-const findTagSuffix = (tagList: string[], prefix: string): string | undefined =>
-  tagList.find((tag) => tag.startsWith(prefix))?.slice(prefix.length);
-
-const findRow = <TRow extends { id: number }>(rows: TRow[], id: number, name: string): TRow => {
-  const row = rows.find((candidate) => candidate.id === id);
-  if (!row) throw invalidRead(`the ${name} table holds no ${name} ${id}`);
-  return row;
-};
-
-const invalidRead = (message: string) => new InvalidOperationError(Operation.Read, "deck", message);
