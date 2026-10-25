@@ -5,36 +5,13 @@ import type { ExcelDailyTaskRow } from "#src/models/genshinAssets/commissions/Ex
 import type { ExcelRewardPreviewRow } from "#src/models/genshinAssets/expeditions/ExcelRewardPreviewRow";
 import type { RewardItem } from "genshin-world";
 
+import { checkLevelBands } from "#src/services/genshinAssets/commissions/checkLevelBands";
 import { toCommissionTask } from "#src/services/genshinAssets/commissions/toCommissionTask";
 import { toPreviewItems } from "#src/services/genshinAssets/rewards/toPreviewItems";
 import { CityIdRegionMap } from "#src/services/genshinAssets/shared/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import {
-  COMMISSION_RANK_BAND_COUNT,
-  COMMISSION_RANK_BAND_SIZE,
-  commissionSliceSchema,
-  GameDataset,
-} from "genshin-world";
-
-// The level table must be the game's bands: twelve of five ranks each in order from rank one, since a claim reads its band
-// Off the rank alone and a table of other bands would pay every rank the wrong reward
-const checkLevelBands = (levelRows: ExcelDailyTaskLevelRow[]): void => {
-  const isGameBands =
-    levelRows.length === COMMISSION_RANK_BAND_COUNT &&
-    levelRows.every(
-      ({ ID, maxPlayerLevel, minPlayerLevel }, index) =>
-        ID === index + 1 &&
-        minPlayerLevel === index * COMMISSION_RANK_BAND_SIZE + 1 &&
-        maxPlayerLevel === (index + 1) * COMMISSION_RANK_BAND_SIZE,
-    );
-  if (!isGameBands)
-    throw new InvalidOperationError(
-      Operation.Read,
-      "DailyTaskLevelExcelConfigData",
-      "is not the game's twelve bands of five ranks from rank one",
-    );
-};
+import { COMMISSION_RANK_BAND_COUNT, commissionSliceSchema, GameDataset } from "genshin-world";
 
 // Every region's daily tasks from the dump: each task, every reward tier's items by Adventure Rank band, and the items of
 // Katheryne's bonus by band, which each region's record shares. Every preview is read through the reward table, and each
