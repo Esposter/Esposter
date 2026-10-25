@@ -44,12 +44,11 @@ The engine's one-time purge runs in each environment before this picker ships. T
 | `apps/web/app/services/jsonSchema/zodToJsonSchema.ts`                       | gains the link type in the JSON schema, beside the layout hint             |
 | `apps/web/app/services/ui/schemaForm/SchemaFormRenderers.ts`                | gains the link renderer entry, ranked above the text field                 |
 | `apps/web/app/components/Ui/SchemaForm/Text.vue`                            | the text renderer a link field no longer reaches, unchanged                |
-| `apps/web/app/components/Resource/Program/BindingSelect.vue`                | the select, moved out of the program folder and given the publication flag |
+| `apps/web/app/components/Resource/Link/Select.vue`                          | the select, moved out of the program folder and given the publication flag |
 | `apps/web/app/components/Resource/Program/Setup.vue`                        | the program setup, which imports the moved select                          |
 | `apps/web/app/services/resource/getMissingResourceMessage.ts`               | the missing-binding wording both uses share                                |
 | `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`       | `readResources`, which gains the publication filter in its where clause    |
 | `apps/web/shared/models/db/resource/ReadResourcesInput.ts`                  | the list input, which gains the filter                                     |
-| `apps/web/shared/services/resource/checkHasCapability.ts`                   | the publishable check the filter is applied through                        |
 | `apps/web/shared/services/pageBuilder/surveyInviteNodeType.ts`              | the webpage node, whose `surveyId` takes the renderer, unchanged           |
 | `apps/web/shared/services/pageBuilder/email/emailSurveyInviteNodeSchema.ts` | the email node, which shares the webpage's props                           |
 
@@ -58,6 +57,7 @@ New files, laid out as the design template's tree:
 ```text
 apps/web/app/components/Resource/Link/Select.vue   the shared select, the moved BindingSelect under the name it has everywhere
 apps/web/app/components/Ui/SchemaForm/ResourceLink.vue   the schema-form renderer that draws a link field with the shared select
+apps/web/server/services/resource/getPublicationWhere.ts   the publication row check, shared by the resource list's filter and the published read
 ```
 
 ## Notes

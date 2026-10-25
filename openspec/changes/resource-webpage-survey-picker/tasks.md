@@ -4,19 +4,19 @@ Build order. Sections 1 and 2 give the schema form a link renderer, section 3 gi
 
 ## 1. Link in the schema
 
-- [ ] 1.1 Test first, in the JSON-schema test: a field declared with `createResourceLinkSchema(ResourceLinkType.Survey)` carries the survey link type in its JSON schema, and a plain id field carries none.
+- [x] 1.1 Test first, in the JSON-schema test: a field declared with `createResourceLinkSchema(ResourceLinkType.Survey)` carries the survey link type in its JSON schema, and a plain id field carries none.
       Verify: the test fails on the current `zodToJsonSchema`, and passes once its override reads the link registry beside the layout.
 
 ## 2. Renderer
 
-- [ ] 2.1 Move `BindingSelect.vue` to apps/web/app/components/Resource/Link/Select.vue, update the program setup's import, and keep its missing-binding message. Test first: the program setup's tests pass with only the import changed.
+- [x] 2.1 Move `BindingSelect.vue` to apps/web/app/components/Resource/Link/Select.vue, update the program setup's import, and keep its missing-binding message. Test first: the program setup's tests pass with only the import changed.
       Verify: no path under `Resource/Program/` names the moved select, and the missing-binding alert text is the one the program already shows.
 - [ ] 2.2 Add `ResourceLink.vue` to the schema form and rank its renderer above the text renderer for link fields, so a link field is drawn with the shared select over the owner's resources of the declared type. Test first in the schema-form test: a link field renders the select and a plain text field still renders the text control.
       Verify: both cases pass, and the select's items are the type's resources, read through the type's router.
 
 ## 3. Published filter
 
-- [ ] 3.1 Test first, in the resource procedures' test: `readResources` with the publication filter returns only published resources of the type, pages over that filtered set, and reports `hasMore` over it. A list without the filter is unchanged.
+- [x] 3.1 Test first, in the resource procedures' test: `readResources` with the publication filter returns only published resources of the type, pages over that filtered set, and reports `hasMore` over it. A list without the filter is unchanged.
       Verify: the filtered page's `hasMore` is true only when a published row exists past the limit, and the unfiltered list's test passes unedited.
 
 ## 4. The invite's picker
