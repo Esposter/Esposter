@@ -5,15 +5,11 @@ import type { NoteEvent } from "#src/models/NoteEvent";
 import { ENERGY_TOLERANCE, FRAME_THRESHOLD, MIDI_OFFSET, MIN_NOTE_LENGTH, ONSET_THRESHOLD } from "#src/constants";
 import { clearPitch } from "#src/services/clearPitch";
 import { constrainFrequency } from "#src/services/constrainFrequency";
+import { getMeanReading } from "#src/services/createNotes/getMeanReading";
 import { findOnsetPeaks } from "#src/services/findOnsetPeaks";
 import { inferOnsets } from "#src/services/inferOnsets";
 import { takeOne } from "@esposter/shared";
 
-const getMeanReading = (frames: number[][], start: number, end: number, pitch: number): number => {
-  let sum = 0;
-  for (let frame = start; frame < end; frame++) sum += takeOne(takeOne(frames, frame), pitch);
-  return sum / (end - start);
-};
 // The model's readings turned into notes, Basic Pitch's `output_to_notes_polyphonic`. Each onset peak, latest first,
 // Starts a note that lasts until its pitch's energy stays under the frame threshold for `energyTolerance` frames, and
 // Claims that energy for its pitch and the keys either side. Under the melodia trick, the energy no onset claimed is

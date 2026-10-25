@@ -1,11 +1,7 @@
 import { findLargestReading } from "#src/services/findLargestReading";
+import { getJump } from "#src/services/inferOnsets/getJump";
 import { takeOne } from "@esposter/shared";
 
-// How far a pitch's frame reading rose over both of its last two frames, never under zero
-const getJump = (row: number[], previous: number[], beforePrevious: number[], pitch: number): number => {
-  const reading = takeOne(row, pitch);
-  return Math.max(0, Math.min(reading - takeOne(previous, pitch), reading - takeOne(beforePrevious, pitch)));
-};
 // The onset readings with onsets inferred from the frames added: a pitch whose frame reading jumps over both of its
 // Last two frames is read as starting there, the jump scaled so the largest matches the largest onset reading, and each
 // Cell keeps the larger of the two. The first two frames have no history and infer nothing: each stands as its own
