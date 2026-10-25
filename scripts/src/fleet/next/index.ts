@@ -1,6 +1,6 @@
+import { checkIsFleetEntryKind } from "#src/services/fleet/checkIsFleetEntryKind";
 import { claimNextFleetEntry } from "#src/services/fleet/claimNextFleetEntry";
 import { createFleetWorker } from "#src/services/fleet/createFleetWorker";
-import { checkIsFleetEntryKind } from "#src/services/fleet/filterFleetEntries";
 import { runCommand } from "#src/services/timing/runCommand";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { defineCommand } from "citty";

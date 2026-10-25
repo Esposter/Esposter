@@ -1,7 +1,7 @@
 import type { FleetEntry } from "#src/models/fleet/FleetEntry";
 
 import { FleetEntryKind } from "#src/models/fleet/FleetEntryKind";
-import { checkIsFleetEntryKind, filterFleetEntries } from "#src/services/fleet/filterFleetEntries";
+import { filterFleetEntries } from "#src/services/fleet/filterFleetEntries";
 import { describe, expect, test } from "vitest";
 
 const createEntry = (overrides: Partial<FleetEntry>): FleetEntry => ({
@@ -45,14 +45,5 @@ describe(filterFleetEntries, () => {
     expect.hasAssertions();
 
     expect(filterFleetEntries(ENTRIES, "cpu", FleetEntryKind.Queue).map(({ id }) => id)).toStrictEqual(["cpu-item"]);
-  });
-});
-
-describe(checkIsFleetEntryKind, () => {
-  test("accepts the kinds a fleet entry has, and no other value", () => {
-    expect.hasAssertions();
-
-    expect(checkIsFleetEntryKind(FleetEntryKind.Queue)).toBe(true);
-    expect(checkIsFleetEntryKind("units")).toBe(false);
   });
 });
