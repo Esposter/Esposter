@@ -105,6 +105,28 @@ describe(serializeNoteMarkdown, () => {
     ).toBe("A cat\n");
   });
 
+  // A mark's edge space sits outside its delimiters, and a heading's closing hash is escaped
+  // A code span's edge space is padded, so each reads back as the text it holds
+  test("edge characters of a mark, a heading and a code span are written so they read back", () => {
+    expect.hasAssertions();
+
+    expect(
+      serializeNoteMarkdown({
+        content: [
+          { attrs: { level: 2 }, content: [{ text: "Item #", type: "text" }], type: "heading" },
+          {
+            content: [
+              { marks: [{ type: "bold" }], text: "hello ", type: "text" },
+              { marks: [{ type: "code" }], text: " x ", type: "text" },
+            ],
+            type: "paragraph",
+          },
+        ],
+        type: "doc",
+      }),
+    ).toBe("## Item \\#\n\n**hello** `  x  `\n");
+  });
+
   // A line that CommonMark would read as a rule, a setext underline or an indented block is escaped, so it reads back
   test("a paragraph that starts like a block reads back as the text it holds", () => {
     expect.hasAssertions();

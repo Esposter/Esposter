@@ -1,6 +1,7 @@
 import type { MarkWrapper } from "#shared/models/resource/note/serialize/MarkWrapper";
 
 import { formatDestination } from "#shared/services/resource/note/serialize/formatDestination";
+import { wrapEmphasis } from "#shared/services/resource/note/serialize/wrapEmphasis";
 
 export const SPECIAL_CHARACTER_REGEX = /[\\`*_[\]<>~&!]/gu;
 // The marker's own character is escaped (`1\.`, `\#`), so the line reads as its text.
@@ -10,10 +11,14 @@ export const LINE_START_MARKER_REGEX = /^(?<indent>[ \t]*\d*)(?<marker>[#>+\-.)=
 export const LINE_START_WHITESPACE_REGEX = /^[ \t]+/gmu;
 export const BACKTICK_RUN_REGEX = /`+/g;
 export const BACKTICK_EDGE_REGEX = /^`|`$/;
+// A code span whose text starts and ends with a space loses one from each side on read-back, so it is padded
+export const SPACE_EDGE_REGEX = /^ .* $/su;
+// A closing hash run ends a heading unless it is escaped, so the last hash of a heading's text is
+export const HEADING_CLOSING_HASH_REGEX = /#(?=\s*$)/u;
 // Innermost first, so a bold link reads as a link around bold text, and a link is what a reader sees at the edge
 export const MARK_WRAPPERS: { type: string; wrap: MarkWrapper }[] = [
-  { type: "bold", wrap: (text) => `**${text}**` },
-  { type: "italic", wrap: (text) => `*${text}*` },
-  { type: "strike", wrap: (text) => `~~${text}~~` },
+  { type: "bold", wrap: wrapEmphasis("**") },
+  { type: "italic", wrap: wrapEmphasis("*") },
+  { type: "strike", wrap: wrapEmphasis("~~") },
   { type: "link", wrap: (text, mark) => `[${text}](${formatDestination(String(mark.attrs?.href ?? ""))})` },
 ];

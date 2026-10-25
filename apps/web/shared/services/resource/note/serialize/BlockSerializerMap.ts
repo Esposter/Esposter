@@ -1,6 +1,7 @@
 import type { NodesSerializer } from "#shared/models/resource/note/serialize/NodesSerializer";
 import type { JSONContent } from "@tiptap/core";
 
+import { HEADING_CLOSING_HASH_REGEX } from "#shared/services/resource/note/serialize/constants";
 import { prefixLines } from "#shared/services/resource/note/serialize/prefixLines";
 import { serializeCodeBlock } from "#shared/services/resource/note/serialize/serializeCodeBlock";
 import { serializeInline } from "#shared/services/resource/note/serialize/serializeInline";
@@ -13,7 +14,8 @@ export const BlockSerializerMap: Record<string, (node: JSONContent, serializeBlo
   blockquote: (node, serializeBlocks) => prefixLines(serializeBlocks(node.content ?? []), "> ", "> "),
   bulletList: (node, serializeBlocks) => serializeListItems(node.content ?? [], () => "- ", serializeBlocks),
   codeBlock: serializeCodeBlock,
-  heading: (node) => `${"#".repeat(Number(node.attrs?.level ?? 1))} ${serializeInline(node.content ?? [])}`,
+  heading: (node) =>
+    `${"#".repeat(Number(node.attrs?.level ?? 1))} ${serializeInline(node.content ?? []).replace(HEADING_CLOSING_HASH_REGEX, String.raw`\#`)}`,
   horizontalRule: () => "---",
   // An image is stored at the app's own address, which a file cannot carry, so the file keeps the words the image was given
   image: (node) => serializeParagraph({ content: [{ text: String(node.attrs?.alt ?? ""), type: "text" }] }),
