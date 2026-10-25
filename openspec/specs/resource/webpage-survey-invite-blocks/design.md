@@ -35,7 +35,7 @@ Paths relative to `apps/web`.
 | `app/services/pageBuilder/constants.ts`                            | the webpage palette's Survey category                                     |
 | `app/services/pageBuilder/webpageNodeDefaults.ts`                  | the node a palette drop creates                                           |
 | `server/services/resource/link/ResourceTypeGetLinkTargetsMap.ts`   | the link index, read off each type's content schema                       |
-| `apps/web/app/components/Ui/SchemaForm/ResourceLink.vue`           | the picker the `surveyId` is drawn by, over the owner's published surveys |
+| `app/components/Ui/SchemaForm/ResourceLink.vue`                    | the picker the `surveyId` is drawn by, over the owner's published surveys |
 
 ## Notes
 
