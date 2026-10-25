@@ -2,7 +2,9 @@
 import type { JSONContent } from "@tiptap/core";
 
 import { MimeType } from "#shared/models/file/MimeType";
+import { MAX_FILE_REQUEST_SIZE } from "#shared/services/app/constants";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
+import { showOpenFilePicker } from "@/services/file/showOpenFilePicker";
 import { getResourceBladeItems } from "@/services/resource/getResourceBladeItems";
 import { PortableFormatMap } from "@/services/resource/PortableFormatMap";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
@@ -14,6 +16,10 @@ import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 vi.mock(import("@esposter/shared"), async (importOriginal) => ({
   ...(await importOriginal()),
   downloadFile: vi.fn<typeof downloadFile>(),
+}));
+
+vi.mock(import("@/services/file/showOpenFilePicker"), () => ({
+  showOpenFilePicker: vi.fn<typeof showOpenFilePicker>(),
 }));
 
 describe("PortableFormatMap", () => {
@@ -47,6 +53,21 @@ describe("PortableFormatMap", () => {
     await markdownFormat.export();
 
     expect(downloadFile).toHaveBeenCalledExactlyOnceWith("Meeting.md", "# Meeting\n\n- one\n", MimeType.Markdown);
+  });
+
+  // A file over the app's file limit is refused before it is read, so no preview opens over the note for it
+  test("An import over the file size limit opens no preview", async () => {
+    expect.hasAssertions();
+
+    await useResourceStore().readResource();
+    const oversizedFile = new File([new Uint8Array(MAX_FILE_REQUEST_SIZE + 1)], "Meeting.md");
+    const readFile = vi.spyOn(oversizedFile, "text");
+    vi.mocked(showOpenFilePicker).mockResolvedValue([{ getFile: () => Promise.resolve(oversizedFile) }] as never);
+    const [markdownFormat] = PortableFormatMap[ResourceType.Note];
+    assert.exists(markdownFormat?.import);
+    await markdownFormat.import();
+
+    expect(readFile).not.toHaveBeenCalled();
   });
 
   // The overflow menu takes its import and export commands from the formats, so a note gets both beside its others

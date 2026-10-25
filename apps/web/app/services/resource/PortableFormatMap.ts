@@ -120,9 +120,13 @@ const createNoteMarkdownPortableFormat = (): PortableFormat => ({
     const { loadContent } = noteStore;
     await loadContent();
     const importFile = useImportFile();
+    const validateFile = useValidateFile();
     const notePortableDialogStore = useNotePortableDialogStore();
     const { openPreview } = notePortableDialogStore;
     await importFile(MimeType.Markdown, NOTE_MARKDOWN_ACCEPT, async (file) => {
+      // A file over the app's file limit is refused before it is read, so no preview opens over the note for it
+      if (!validateFile(file)) return;
+
       const doc = deserializeNoteMarkdown(await file.text());
       if (!noteDocumentSchema.safeParse(doc).success)
         throw new InvalidOperationError(Operation.Create, "note", "the file does not read as the content of a note");
