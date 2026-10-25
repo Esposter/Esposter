@@ -5,7 +5,7 @@ import { writeChunk } from "#src/services/writeMidi/writeChunk";
 import { writeVariableLength } from "#src/services/writeMidi/writeVariableLength";
 
 // Events are written in tick order, and an event at the same tick as another keeps the place it was given
-export const writeTrack = (events: MidiEvent[]) => {
+export const writeTrack = (events: MidiEvent[]): number[] => {
   const data: number[] = [];
   let lastTick = 0;
   for (const { bytes, tick } of events.toSorted((firstEvent, secondEvent) => firstEvent.tick - secondEvent.tick)) {
