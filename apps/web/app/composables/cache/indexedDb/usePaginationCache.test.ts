@@ -32,6 +32,7 @@ interface TestSlice {
   initializeItems: (data: { items: MessageValue[] }) => void;
   isLoaded: Ref<boolean>;
   items: Ref<MessageValue[]>;
+  resetItems: () => void;
 }
 
 describe.each<PaginationCacheVariant>([
@@ -41,8 +42,13 @@ describe.each<PaginationCacheVariant>([
       useCursorPaginationCache({
         configuration: MessageIndexedDbStoreConfiguration,
         getSlice: (key) => {
-          const { initializeItems, isLoaded, items } = getSlice(key);
-          return { initializeCursorPaginationData: initializeItems, isLoaded, items };
+          const { initializeItems, isLoaded, items, resetItems } = getSlice(key);
+          return {
+            initializeCursorPaginationData: initializeItems,
+            isLoaded,
+            items,
+            resetCursorPaginationData: resetItems,
+          };
         },
         onHydrate,
         partitionKey,
@@ -83,6 +89,10 @@ describe.each<PaginationCacheVariant>([
       },
       isLoaded: sliceIsLoaded,
       items: sliceItems,
+      resetItems: () => {
+        sliceItems.value = [];
+        sliceIsLoaded.value = false;
+      },
     };
     sliceMap.set(key, slice);
     return slice;

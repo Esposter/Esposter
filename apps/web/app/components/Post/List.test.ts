@@ -15,8 +15,9 @@ describe("postList", () => {
 
     trpcMsw.post.readPosts.query(() => new CursorPaginationData());
     const component = await mountSuspended(PostList);
-    const items = component.findComponent(UiSelect).props("items");
 
-    expect(items.map(({ value }) => value)).toStrictEqual([PostSortType.Hot, PostSortType.New, PostSortType.Top]);
+    expect(component.findComponent(UiSelect).vm.$props).toMatchObject({
+      items: [{ value: PostSortType.Hot }, { value: PostSortType.New }, { value: PostSortType.Top }],
+    });
   });
 });

@@ -10,13 +10,14 @@ describe("postCommentSortSelect", () => {
     expect.hasAssertions();
 
     const component = await mountSuspended(PostCommentSortSelect);
-    const items = component.findComponent(UiSelect).props("items");
 
-    expect(items.map(({ value }) => value)).toStrictEqual([
-      PostSortType.Hot,
-      PostSortType.Top,
-      PostSortType.New,
-      PostSortType.Old,
-    ]);
+    expect(component.findComponent(UiSelect).vm.$props).toMatchObject({
+      items: [
+        { value: PostSortType.Hot },
+        { value: PostSortType.Top },
+        { value: PostSortType.New },
+        { value: PostSortType.Old },
+      ],
+    });
   });
 });

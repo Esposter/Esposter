@@ -398,12 +398,12 @@ describe("postRouter", () => {
   // Replies are written in one order and then given the columns each sort reads, so every sort reads a different
   // Order from the one creation left
   const ONE_SECOND = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
-  const createReplies = async (parentId: string, count: number) => {
+  // Three replies, in the order they are written, so each is known to exist by its position
+  const createReplies = async (parentId: string) => {
     const replyIds: string[] = [];
     // oxlint-disable-next-line no-await-in-loop -- Order is the contract: replies land in the order they are written
-    for (let i = 0; i < count; i++)
-      replyIds.push((await postCaller.createComment({ description, parentId })).comment.id);
-    return replyIds;
+    for (let i = 0; i < 3; i++) replyIds.push((await postCaller.createComment({ description, parentId })).comment.id);
+    return [takeOne(replyIds, 0), takeOne(replyIds, 1), takeOne(replyIds, 2)] as const;
   };
   const setReplyColumns = (id: string, columns: Partial<Pick<PostInPost, "createdAt" | "likeCount" | "ranking">>) =>
     mockContext.db.update(postsInPost).set(columns).where(eq(postsInPost.id, id));
@@ -412,7 +412,7 @@ describe("postRouter", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    const [firstId, secondId, thirdId] = await createReplies(newPost.id, 3);
+    const [firstId, secondId, thirdId] = await createReplies(newPost.id);
     await setReplyColumns(firstId, { ranking: 0.1 });
     await setReplyColumns(secondId, { ranking: -1 });
     await setReplyColumns(thirdId, { ranking: 0 });
@@ -425,7 +425,7 @@ describe("postRouter", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    const [firstId, secondId, thirdId] = await createReplies(newPost.id, 3);
+    const [firstId, secondId, thirdId] = await createReplies(newPost.id);
     await setReplyColumns(secondId, { likeCount: 2 });
     await setReplyColumns(thirdId, { likeCount: 1 });
     const { items } = await postCaller.readPosts({ parentId: newPost.id, sortBy: TOP_SORT_BY });
@@ -437,7 +437,7 @@ describe("postRouter", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    const [firstId, secondId, thirdId] = await createReplies(newPost.id, 3);
+    const [firstId, secondId, thirdId] = await createReplies(newPost.id);
     await setReplyColumns(firstId, { createdAt: new Date(0) });
     await setReplyColumns(secondId, { createdAt: new Date(ONE_SECOND) });
     await setReplyColumns(thirdId, { createdAt: new Date(ONE_SECOND * 2) });
@@ -450,7 +450,7 @@ describe("postRouter", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    const [firstId, secondId, thirdId] = await createReplies(newPost.id, 3);
+    const [firstId, secondId, thirdId] = await createReplies(newPost.id);
     await setReplyColumns(firstId, { createdAt: new Date(0) });
     await setReplyColumns(secondId, { createdAt: new Date(ONE_SECOND) });
     await setReplyColumns(thirdId, { createdAt: new Date(ONE_SECOND * 2) });
@@ -463,7 +463,7 @@ describe("postRouter", () => {
     expect.hasAssertions();
 
     const newPost = await postCaller.createPost({ title });
-    const [firstId, secondId, thirdId] = await createReplies(newPost.id, 3);
+    const [firstId, secondId, thirdId] = await createReplies(newPost.id);
     await setReplyColumns(firstId, { createdAt: new Date(0) });
     await setReplyColumns(secondId, { createdAt: new Date(ONE_SECOND) });
     await setReplyColumns(thirdId, { createdAt: new Date(ONE_SECOND * 2) });

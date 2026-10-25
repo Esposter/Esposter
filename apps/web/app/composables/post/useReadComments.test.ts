@@ -16,9 +16,9 @@ describe(useReadComments, () => {
   test("reads each branch under the comment sort the reader chose", async () => {
     expect.hasAssertions();
 
-    let receivedInput: ReadPostsInput | undefined;
+    let receivedInput: Partial<ReadPostsInput> | undefined;
     trpcMsw.post.readPosts.query(({ input }) => {
-      receivedInput = input;
+      if (input) receivedInput = input;
       return new CursorPaginationData();
     });
     const commentStore = useCommentStore();
