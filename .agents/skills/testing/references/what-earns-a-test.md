@@ -27,7 +27,7 @@ The keep test is the standard, not a budget: the aim is code with no test left t
 - **Production API added for a test's benefit.** Before building a completion signal, reset hook or inspection getter onto a primitive, grep for who else would call it. "Only the test" means the signal exists already: work through `getSynchronizedFunction` is drained by `waitForSynchronizedFunctions()`. A test-only export means the wrong seam, or a drain the repo already owns.
 - **One product's copy of a generic mechanism**, when the mechanism's own suite already runs the same branch. The mechanism is tested once, generically. A product's test covers only what that product decides.
 - **A name that describes no caller-visible behaviour** — "works", "handles the case", "is correct". If the name cannot be written as a regression, step 1 of the keep test fails.
-- **A skipped or todo test.** `test.skip`, `describe.todo`, `it.todo` and a placeholder left in a file are deleted with the test they stand in for; a parked test is a test nobody runs.
+- **A skipped test.** `test.skip`, `it.skip`, `describe.skip`, and a `.todo` on a test that should run, are deleted with the test they stand in for; a parked test is a test nobody runs. The one `describe.todo` that stays is the placeholder in a helper-only `.test.ts`, which Vitest needs a suite in to load (`references/test-helper-files.md`).
 - **A tautological expectation.** The expected value is computed by the same code under test, or restates the input, so the assertion cannot fail while the code is wrong.
 
 ## Case law
