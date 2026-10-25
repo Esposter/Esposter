@@ -8,7 +8,7 @@ import type {
 } from "@esposter/db-schema";
 
 import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
-import { serializeEntity } from "@esposter/db";
+import { checkIsOnlyReactor, updateEntity } from "@esposter/db";
 import { MessageMetadataType, userIdsSchema } from "@esposter/db-schema";
 import { jsonDateParse } from "@esposter/shared";
 
@@ -32,18 +32,16 @@ export const deleteAccountRoomReactions = async (
       const userIds = userIdsSchema.shape.userIds.parse(jsonDateParse(serializedUserIds));
       if (!userIds.includes(userId)) continue;
 
-      if (userIds.length === 1)
+      if (checkIsOnlyReactor(userIds, userId))
         // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one reaction at a time, as the room's partition is walked
         await messagesMetadataClient.deleteEntity(partitionKey, rowKey, { etag });
-      else {
-        const remainingReaction = {
-          partitionKey,
-          rowKey,
-          updatedAt: new Date(),
-          userIds: userIds.filter((reactorUserId) => reactorUserId !== userId),
-        };
+      else
         // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one reaction at a time, as the room's partition is walked
-        await messagesMetadataClient.updateEntity(serializeEntity(remainingReaction), "Merge", { etag });
-      }
+        await updateEntity(
+          messagesMetadataClient,
+          { partitionKey, rowKey, userIds: userIds.filter((reactorUserId) => reactorUserId !== userId) },
+          "Merge",
+          { etag },
+        );
     }
 };

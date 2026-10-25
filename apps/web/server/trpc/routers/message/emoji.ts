@@ -2,7 +2,6 @@ import type { Clause } from "@esposter/azure";
 
 import { useMessageEmojiMetadataClient } from "#server/composables/azure/table/useMessageEmojiMetadataClient";
 import { getDevice } from "#server/services/auth/getDevice";
-import { checkIsOnlyReactor } from "#server/services/message/emoji/checkIsOnlyReactor";
 import { getEmojiMetadataClauses } from "#server/services/message/emoji/getEmojiMetadataClauses";
 import { emojiEventEmitter } from "#server/services/message/events/emojiEventEmitter";
 import { router } from "#server/trpc";
@@ -21,7 +20,14 @@ import { readMetadataInputSchema } from "#shared/models/db/message/ReadMetadataI
 import { createMessageEmojiMetadataEntity } from "#shared/services/message/createMessageEmojiMetadataEntity";
 import { getUpdatedUserIds } from "#shared/services/message/emoji/getUpdatedUserIds";
 import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
-import { createEntity, getEntity, getEntityWithEtag, getTopNEntities, updateEntity } from "@esposter/db";
+import {
+  checkIsOnlyReactor,
+  createEntity,
+  getEntity,
+  getEntityWithEtag,
+  getTopNEntities,
+  updateEntity,
+} from "@esposter/db";
 import { MessageMetadataType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 
