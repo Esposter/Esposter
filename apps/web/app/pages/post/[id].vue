@@ -13,8 +13,9 @@ const route = useRoute();
 // Context instead of ten, and no route of its own
 const post = await $trpc.post.readPost.query(route.params.id);
 const commentStore = useCommentStore();
-const { currentPost } = storeToRefs(commentStore);
-currentPost.value = post;
+const { currentPost, commentSortType } = storeToRefs(commentStore);
+const { openPost } = commentStore;
+openPost(post);
 </script>
 
 <template>
@@ -33,7 +34,8 @@ currentPost.value = post;
       />
       <section v-else aria-label="Comments" flex flex-col gap-2>
         <PostCommentSortSelect self-start />
-        <PostCommentBranch :parent-id="currentPost.id" :depth="0" />
+        <!-- A new sort is read from the first page, which a branch does only when it is mounted, so the thread remounts -->
+        <PostCommentBranch :key="commentSortType" :parent-id="currentPost.id" :depth="0" />
       </section>
       <PostConfirmDeleteDialog />
       <PostCommentConfirmDeleteDialog />

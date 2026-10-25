@@ -7,6 +7,7 @@ import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { authClient } from "@/services/auth/authClient";
 import { MAX_COMMENT_INDENT_DEPTH } from "@/services/post/constants";
+import { useCommentStore } from "@/store/post/comment";
 import { useCommentDialogStore } from "@/store/post/comment/dialog";
 import { RoutePath } from "@esposter/shared";
 
@@ -24,7 +25,10 @@ const { replyingId } = storeToRefs(commentDialogStore);
 const { setDeletingComment } = commentDialogStore;
 const isCreator = computed(() => comment.userId === session.value.data?.user.id);
 const isUpdateMode = ref(false);
-const isExpanded = ref(false);
+const commentStore = useCommentStore();
+const { expandedCommentIds } = storeToRefs(commentStore);
+const { toggleCommentExpanded } = commentStore;
+const isExpanded = computed(() => expandedCommentIds.value.has(comment.id));
 // Past the clamp a thread goes on on its own page rather than further in
 const isClamped = computed(() => depth >= MAX_COMMENT_INDENT_DEPTH);
 const repliesId = useId();
@@ -87,7 +91,7 @@ const contextMenuProps = getContextMenuProps(comment.id, () => items);
           :aria-expanded="isExpanded"
           :variant="UiButtonVariant.Quiet"
           self-start
-          @click="isExpanded = !isExpanded"
+          @click="toggleCommentExpanded(comment.id)"
         >
           <UiIcon :class="{ 'rotate-90': isExpanded }" :meaning="UiIconMeaning.Disclosure" />
           {{ comment.commentCount }} {{ pluralize("reply", comment.commentCount, "replies") }}

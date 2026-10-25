@@ -19,6 +19,8 @@ export const useCommentStore = defineStore("post/comment", () => {
   const { refreshPostCounts } = postCountStore;
   const currentPost = ref<PostInPostWithRelations>();
   const commentSortType = ref(PostSortType.Hot);
+  // Held here rather than in each card, so a card a re-read remounts comes back open
+  const expandedCommentIds = ref(new Set<string>());
   // Keyed by the post whose replies the partition holds, the route's own post included
   const { getSlice, getSliceOperationData, keys } = useCursorPaginationDataMap<PostInPostWithRelations>();
   const getCommentOperationData = (parentId: string) =>
@@ -45,6 +47,22 @@ export const useCommentStore = defineStore("post/comment", () => {
       isLoaded.value = false;
     };
     deleteLoadedBranch(parentId);
+  };
+
+  // Every loaded branch is read again under the new order, from its first page, so none keeps the rows the old order read
+  const setCommentSortType = (sortType: PostSortType) => {
+    commentSortType.value = sortType;
+    for (const key of keys.value) getSliceOperationData(key).resetCursorPaginationData();
+  };
+  const toggleCommentExpanded = (commentId: string) => {
+    if (expandedCommentIds.value.has(commentId)) expandedCommentIds.value.delete(commentId);
+    else expandedCommentIds.value.add(commentId);
+  };
+  // A visit starts at Hot with nothing open, whatever the last post was read under
+  const openPost = (post: PostInPostWithRelations) => {
+    currentPost.value = post;
+    expandedCommentIds.value.clear();
+    setCommentSortType(PostSortType.Hot);
   };
 
   const { executeMutation: executeCreateCommentMutation, isPending: isCreateCommentPending } = useMutation();
@@ -122,9 +140,13 @@ export const useCommentStore = defineStore("post/comment", () => {
     createComment,
     currentPost,
     deleteComment,
+    expandedCommentIds,
     getSlice,
     getSliceOperationData,
     isCreateCommentPending,
+    openPost,
+    setCommentSortType,
+    toggleCommentExpanded,
     updateComment,
   };
 });

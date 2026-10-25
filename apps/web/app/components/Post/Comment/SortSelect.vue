@@ -5,9 +5,15 @@ import { useCommentStore } from "@/store/post/comment";
 
 const commentStore = useCommentStore();
 const { commentSortType } = storeToRefs(commentStore);
+const { setCommentSortType } = commentStore;
 const sortItems = getPostSortTypeItems(PostSortTypes);
 </script>
 
 <template>
-  <UiSelect v-model="commentSortType" :items="sortItems" label="Sort by" />
+  <UiSelect
+    :model-value="commentSortType"
+    :items="sortItems"
+    label="Sort by"
+    @update:model-value="setCommentSortType"
+  />
 </template>

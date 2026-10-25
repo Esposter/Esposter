@@ -6,12 +6,12 @@
 ## 2. Comment ordering
 
 - [x] 2.1 Read each reply branch with the chosen sort, Hot keeping today's order. Verify: tests named after the scenarios 'Hot keeps the ranked reply order', 'Top lists the most-liked reply first', 'New lists the newest reply first' and 'Old lists the oldest reply first', each written first and seen failing.
-- [ ] 2.2 Hold one sort for the whole thread, and on a change clear every loaded branch so each re-reads from page one. Verify: a test named after the scenario 'Changing the comment sort re-reads every open branch from page one', written first and seen failing.
-- [ ] 2.3 Keep expanded replies expanded when the sort changes. Verify: a test named after the scenario 'Expanded replies stay expanded after a sort change', written first and seen failing.
+- [x] 2.2 Hold one sort for the whole thread, and on a change clear every loaded branch so each re-reads from page one. Verify: a test named after the scenario 'Changing the comment sort re-reads every open branch from page one', written first and seen failing.
+- [x] 2.3 Keep expanded replies expanded when the sort changes. Verify: a test named after the scenario 'Expanded replies stay expanded after a sort change', written first and seen failing.
 
 ## 3. Visit lifecycle
 
-- [ ] 3.1 Start the comment sort at Hot on each post and do not persist it. Verify: a test named after the scenario 'Comment sort resets to Hot on the next post', written first and seen failing.
+- [x] 3.1 Start the comment sort at Hot on each post and do not persist it. Verify: a test named after the scenario 'Comment sort resets to Hot on the next post', written first and seen failing.
 
 ## 4. Old paging
 

@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
+import { PostSortType } from "@/models/post/PostSortType";
 import { createPost } from "@/services/post/createPost.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { usePostStore } from "@/store/post";
@@ -178,5 +179,51 @@ describe(useCommentStore, () => {
     await updateComment({ description: "a", id: editedComment.id }, postId);
 
     expect(takeOne(getSlice(postId).items.value).commentCount).toBe(1);
+  });
+  // A new sort orders every branch afresh, so each open branch has to drop the rows the old order read and read its
+  // First page again when it is shown
+  test("Changing the comment sort re-reads every open branch from page one", async () => {
+    expect.hasAssertions();
+
+    const reply = createPost({ depth: 2, parentId: comment.id });
+    const commentStore = useCommentStore();
+    const { getSlice, setCommentSortType } = commentStore;
+    getSlice(postId).initializeCursorPaginationData(new CursorPaginationData({ hasMore: true, items: [comment] }));
+    getSlice(comment.id).initializeCursorPaginationData(new CursorPaginationData({ hasMore: true, items: [reply] }));
+
+    setCommentSortType(PostSortType.New);
+
+    expect(getSlice(postId).items.value).toStrictEqual([]);
+    expect(getSlice(postId).isLoaded.value).toBe(false);
+    expect(getSlice(comment.id).items.value).toStrictEqual([]);
+    expect(getSlice(comment.id).isLoaded.value).toBe(false);
+  });
+
+  // The expansion lives in the store, so the cards a re-read remounts come back open and read their replies again
+  test("Expanded replies stay expanded after a sort change", async () => {
+    expect.hasAssertions();
+
+    const commentStore = useCommentStore();
+    const { expandedCommentIds } = storeToRefs(commentStore);
+    const { setCommentSortType, toggleCommentExpanded } = commentStore;
+    toggleCommentExpanded(comment.id);
+
+    setCommentSortType(PostSortType.New);
+
+    expect(expandedCommentIds.value.has(comment.id)).toBe(true);
+  });
+
+  // The sort is a visit's own: opening another post starts it at Hot, whatever the last post was read under
+  test("Comment sort resets to Hot on the next post", async () => {
+    expect.hasAssertions();
+
+    const commentStore = useCommentStore();
+    const { commentSortType } = storeToRefs(commentStore);
+    const { openPost, setCommentSortType } = commentStore;
+    setCommentSortType(PostSortType.Top);
+
+    openPost(createPost());
+
+    expect(commentSortType.value).toBe(PostSortType.Hot);
   });
 });
