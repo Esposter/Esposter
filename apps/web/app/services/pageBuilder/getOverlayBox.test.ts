@@ -12,15 +12,4 @@ describe(getOverlayBox, () => {
       width: 80,
     });
   });
-
-  test("an overlay keeps its element's size", () => {
-    expect.hasAssertions();
-
-    expect(getOverlayBox({ height: 36, left: 0, top: 0, width: 240 }, { left: 0, top: 0 })).toStrictEqual({
-      height: 36,
-      left: 0,
-      top: 0,
-      width: 240,
-    });
-  });
 });

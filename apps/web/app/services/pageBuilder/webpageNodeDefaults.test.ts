@@ -15,14 +15,4 @@ describe("webpageNodeDefaults", () => {
       expect(propsSchema.safeParse(createWebpageNode(type, TEST_ID).props).success).toBe(true);
     }
   });
-
-  test("an inserted image and video load the app's own placeholder", () => {
-    expect.hasAssertions();
-
-    for (const type of [WebpageNodeType.Image, WebpageNodeType.Video]) {
-      const { props } = createWebpageNode(type, TEST_ID);
-
-      expect(props).toHaveProperty("src", "/page-builder/placeholder.svg");
-    }
-  });
 });

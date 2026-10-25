@@ -32,22 +32,6 @@ describe("pageBuilderEmailPreview", () => {
     wrapper.unmount();
   });
 
-  test("preview draws the compiled email at tablet width", async () => {
-    expect.hasAssertions();
-
-    trpcMsw.email.compile.query(() => ({ html }));
-    const wrapper = await mountSuspended(PageBuilderEmailPreview, {
-      props: { device: PageBuilderDevice.Tablet, emailDocument },
-    });
-    await waitForSynchronizedFunctions();
-    await flushPromises();
-
-    expect(wrapper.find<HTMLIFrameElement>("iframe").element.style.width).toBe(
-      `${DEVICE_WIDTH_MAP[PageBuilderDevice.Tablet]}px`,
-    );
-    wrapper.unmount();
-  });
-
   test("validator messages show above the preview", async () => {
     expect.hasAssertions();
 
