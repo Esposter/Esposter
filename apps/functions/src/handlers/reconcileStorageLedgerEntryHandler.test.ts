@@ -102,10 +102,8 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     expect(sendToAllMock).toHaveBeenCalledExactlyOnceWith({ userId });
   });
 
-  // The counter settles in this process and is read in the app's, so a redelivery that moves nothing must not
-  // Cost every one of the owner's devices a re-read
-  // A message attachment is named by its room and its id, with the filename after the separator. Its uploader is
-  // charged, and no resource-asset check reads its bytes back
+  // A message attachment is named by its room and its id, with the filename after the separator.
+  // Its uploader is charged, and no resource-asset check reads its bytes back
   test("charges a message attachment's uploader what storage reported", async () => {
     expect.hasAssertions();
 
@@ -123,6 +121,8 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     expect(downloadSpy).not.toHaveBeenCalled();
   });
 
+  // The counter settles in this process and is read in the app's, so a redelivery that moves nothing must not
+  // Cost every one of the owner's devices a re-read
   test("stays quiet when a redelivered event moves nothing", async () => {
     expect.hasAssertions();
 
