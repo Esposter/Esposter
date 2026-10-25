@@ -15,6 +15,7 @@ describe(getCursorWhere, () => {
     biography: "",
     createdAt,
     deletedAt: null,
+    deletionRequestedAt: null,
     email: "",
     emailVerified: false,
     id: crypto.randomUUID(),
