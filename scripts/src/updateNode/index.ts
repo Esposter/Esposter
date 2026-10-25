@@ -3,42 +3,16 @@ import { getVersionParts } from "#src/services/shared/getVersionParts";
 import { readManifestFiles } from "#src/services/shared/readManifestFiles";
 import { runCommand } from "#src/services/timing/runCommand";
 import { NODE_VERSION_FILENAME } from "#src/services/updateNode/constants";
-import { getEnvWithoutPackageBins } from "#src/services/updateNode/getEnvWithoutPackageBins";
 import { readRegistryLatestVersionForPrefix } from "#src/services/updateNode/readRegistryLatestVersionForPrefix";
+import { runVp } from "#src/services/updateNode/runVp";
 import { setCatalogTypesNode } from "#src/services/updateNode/setCatalogTypesNode";
 import { setLockfileNodeVersion } from "#src/services/updateNode/setLockfileNodeVersion";
 import { setManifestNodeVersion } from "#src/services/updateNode/setManifestNodeVersion";
+import { updateNodeFloorFile } from "#src/services/updateNode/updateNodeFloorFile";
 import { WORKSPACE_FILE } from "@esposter/configuration";
-import { InvalidOperationError, Operation } from "@esposter/shared";
-import { spawnSync } from "@esposter/shared-node/child-process";
 import { defineCommand } from "citty";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, relative, resolve } from "node:path";
-
-// Runs the global `vp`, which resolves, pins and installs node, and cleans the versions nothing names any more
-const runVp = (vpArgs: string[]): void => {
-  const result = spawnSync("vp", vpArgs, {
-    cwd: REPOSITORY_ROOT,
-    env: getEnvWithoutPackageBins(process.env),
-    stdio: "inherit",
-  });
-  if (result.status !== 0)
-    throw new InvalidOperationError(
-      Operation.Update,
-      "update:node",
-      `\`vp ${vpArgs.join(" ")}\` failed — install the global vp first (https://viteplus.dev/guide/)`,
-    );
-};
-
-// Rewrite a file only when the edit changed it, and say which node floor it now carries
-const updateNodeFloorFile = (path: string, version: string, setFloor: (text: string) => string): void => {
-  const text = readFileSync(path, "utf8");
-  const updatedText = setFloor(text);
-  if (updatedText === text) return;
-
-  writeFileSync(path, updatedText);
-  console.info(`✔ ${relative(REPOSITORY_ROOT, path)} node → >=${version}`);
-};
+import { dirname, resolve } from "node:path";
 
 await runCommand(
   defineCommand({
