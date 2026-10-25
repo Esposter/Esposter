@@ -57,6 +57,8 @@ export const TODO_COMPLETION_CHIME_RING_SECONDS = Temporal.Duration.from({ milli
 export const TODO_COMPLETION_CHIME_GAIN = 0.15;
 
 export const NOTE_MARKDOWN_ACCEPT = ".md";
+// A blueprint's manifest file, the JSON the Editor blade shows
+export const BLUEPRINT_MANIFEST_ACCEPT = ".json";
 
 // The functions the compressor's own exports are checked for, each by its runtime kind
 export const ZSTD_FUNCTION_EXPORTS = [

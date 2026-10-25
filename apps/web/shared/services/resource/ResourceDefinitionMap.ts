@@ -15,7 +15,7 @@ import { ResourceType } from "@esposter/db-schema";
 
 export const ResourceDefinitionMap = {
   [ResourceType.Blueprint]: {
-    capabilities: {},
+    capabilities: { portable: true },
     contentSchema: blueprintResourceSchema,
     icon: "i-mdi:floor-plan",
     title: ResourceType.Blueprint,

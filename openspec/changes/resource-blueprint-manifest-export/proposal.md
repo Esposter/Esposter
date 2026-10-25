@@ -9,7 +9,7 @@ A blueprint is the one resource whose purpose is reuse. Capture gathers a workin
 A blueprint gains one format through the Portable capability, the manifest as a JSON file, so its overflow menu offers Import and Export like every other portable type.
 
 - **Export** downloads the saved manifest as `<name>.json`. It is the content Deploy runs, so the file never differs from what a deploy would create.
-- **Import** reads a `.json` file, refuses one over the app's file limit before it is read, and checks it against the manifest schema the Editor's Save already uses. An accepted manifest lands in the Editor blade as unsaved text. Save commits it, and the previous manifest stays in version history.
+- **Import** reads a `.json` file, refuses one over the app's file limit before it is read, and checks it against the manifest schema the Editor's Save already uses. An accepted manifest takes a revision of the saved manifest, then lands in the Editor blade as unsaved text. Save commits it, and the previous manifest stays in version history.
 - No server procedure, no migration and no new dependency. The manifest holds no owner ids, so a file carries its blueprint to another account.
 - **Capabilities:** `resource/blueprint-portability` (new).
 
@@ -26,4 +26,4 @@ None. The blueprint resource and its capture are built.
 - The blueprint's resource definition, which gains `portable`.
 - The Portable format map, which gains a Blueprint entry. The map is keyed by the portable union, so a type that declares the capability without an entry is a compile error.
 - The Editor blade, which shows an imported manifest as unsaved text.
-- Storage: an import saved through Save is charged like any Editor save. Nothing new is stored.
+- Storage: an import takes one revision of the saved manifest, charged as the Note's import is, and its Save is charged like any Editor save. Nothing new is stored.

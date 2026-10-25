@@ -10,6 +10,7 @@ import { FlowchartExportFormat } from "@/models/resource/FlowchartExportFormat";
 import { getDatasetErrorMessage } from "@/services/dataset/getDatasetErrorMessage";
 import { REOPEN_EMAIL_MESSAGE } from "@/services/emailEditor/constants";
 import { exportWebpageHtml } from "@/services/pageBuilder/exportWebpageHtml";
+import { createBlueprintPortableFormat } from "@/services/resource/createBlueprintPortableFormat";
 import { createFlowchartPortableFormat } from "@/services/resource/createFlowchartPortableFormat";
 import { createNoteMarkdownPortableFormat } from "@/services/resource/createNoteMarkdownPortableFormat";
 import { createSheetPortableFormat } from "@/services/resource/createSheetPortableFormat";
@@ -32,6 +33,7 @@ import { getResult, getResultAsync, noop } from "@esposter/shared";
 
 // Import/export formats per portable type
 export const PortableFormatMap: Record<PortableResourceType, PortableFormat[]> = {
+  [ResourceType.Blueprint]: [createBlueprintPortableFormat()],
   [ResourceType.Email]: [
     {
       export: async () => {
