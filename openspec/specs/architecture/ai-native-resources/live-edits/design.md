@@ -1,10 +1,10 @@
 # Live edits
 
-`ResourceSubscribablesMap` has one entry, the TodoList's, so every other type's open editor never hears that another device saved. Its next save carries the version it read, the door refuses it as stale, and the notice asks for a refresh, which reloads the page and drops whatever the person typed since their last save. A second tab meets that now and then. An agent editing a resource the owner has open would meet it on every write, so this unit makes adoption generic before the content tools put agents in front of it; it needs nothing from them and helps two tabs as much as an agent.
+An open editor that does not hear another device's save keeps the version it read, and its next save is refused as stale. The notice then asks for a refresh, which reloads the page and drops whatever the person typed since their last save. A second tab meets that now and then, and an agent editing a resource the owner has open would meet it on every write. So adoption is generic, for every type, and it helps two tabs as much as an agent.
 
 ## One subscription for every type
 
-`createResourceProcedures` already generates `onSaveResourceContent` for every type, filtered so a device never hears its own save. One generic subscription, run by the explorer (`Explorer/Index.vue`) for whichever resource is open, serves every type, so a type needs no entry anywhere, and the per-type subscribables go: `ResourceSubscribablesMap` and the TodoList's own `useTodoListSubscribables`.
+`createResourceProcedures` already generates `onSaveResourceContent` for every type, filtered so a device never hears its own save. One generic subscription, run by the explorer (`Explorer/Index.vue`) for whichever resource is open, serves every type, so a type needs no entry anywhere. No type keeps a subscribable of its own.
 
 The stream carries the new content version and the writing device rather than the content. The content is re-read through the reload stage a restore already runs, so a large Sheet arrives by the large-documents path rather than over the socket, and one path adopts whatever wrote the blob.
 
