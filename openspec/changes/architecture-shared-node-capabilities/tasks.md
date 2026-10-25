@@ -7,7 +7,7 @@
 ## 2. Hidden child processes
 
 - [ ] 2.1 Write `architecture/hidden-child-processes/{spec,design}.md` from `withHiddenWindow`, the five wrappers and the lint rule. Verify: the scenarios 'hides the window when the caller passes no options', 'keeps the caller's options and hides the window last' and 'a caller cannot re-show the window by passing windowsHide false' name existing tests in the five wrapper test files, and 'an undefined options argument is the options slot, not an args slot' and 'hides the window ahead of a trailing callback when the caller passes no options' name the `execSync` and `execFile` tests.
-- [ ] 2.2 Add the test for the lint rule, which no test names. Verify: a lint probe file that imports `node:child_process` is reported, and the test named 'a direct import of node's child process fails lint' is seen failing before the rule exists and passing after.
+- [ ] 2.2 Add the test for the lint rule, which no test names. Verify: a lint probe file that imports `node:child_process` is reported, and the test named 'a direct import of node's child process fails lint' is seen failing with the rule's two entries reverted and passing with them restored.
 
 ## 3. Benchmark reporting
 
