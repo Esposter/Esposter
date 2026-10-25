@@ -7,7 +7,7 @@ import { noteRichText } from "#shared/services/pageBuilder/email/noteRichText";
 import { renderEmailCanvasVNodes } from "@/services/pageBuilder/email/renderEmailCanvasVNodes";
 import { emailKind } from "@/services/pageBuilder/emailKind";
 import { takeOne } from "@esposter/shared";
-import { parseMjmlDocument } from "mjml-blocks";
+import { MjmlNodeType, parseMjmlDocument } from "mjml-blocks";
 import { describe, expect, test } from "vitest";
 
 const parseEmail = (source: string) => {
@@ -61,5 +61,51 @@ describe("renderEmailCanvasVNodes", () => {
 
     expect(styleOf(text).fontFamily).toBe("Ubuntu, Helvetica, Arial, sans-serif");
     expect(styleOf(text).padding).toBe("10px 25px");
+  });
+
+  test("a labelled leaf draws the attributes its component takes", () => {
+    expect.hasAssertions();
+
+    const section = takeOne(
+      renderEmailCanvasVNodes(
+        emailKind,
+        parseEmail(
+          `<mjml><mj-body><mj-section><mj-column><mj-button href="#">Go</mj-button></mj-column></mj-section></mj-body></mjml>`,
+        ),
+        1024,
+      ),
+    );
+    const column = takeOne(childrenOf(takeOne(childrenOf(section))));
+    const button = takeOne(childrenOf(column));
+
+    expect(styleOf(button)).toStrictEqual({
+      backgroundColor: "#414141",
+      borderRadius: "3px",
+      color: "#ffffff",
+      fontFamily: "Ubuntu, Helvetica, Arial, sans-serif",
+      fontSize: "13px",
+      fontWeight: "normal",
+      height: undefined,
+      lineHeight: "120%",
+      padding: "10px 25px",
+      textAlign: "center",
+    });
+    expect(button.children).toBe(MjmlNodeType.Button);
+  });
+
+  test("a divider is drawn as the rule its border attributes name", () => {
+    expect.hasAssertions();
+
+    const section = takeOne(
+      renderEmailCanvasVNodes(
+        emailKind,
+        parseEmail(`<mjml><mj-body><mj-section><mj-column><mj-divider /></mj-column></mj-section></mj-body></mjml>`),
+        1024,
+      ),
+    );
+    const column = takeOne(childrenOf(takeOne(childrenOf(section))));
+    const divider = takeOne(childrenOf(column));
+
+    expect(styleOf(divider).borderTop).toBe("4px solid #000000");
   });
 });
