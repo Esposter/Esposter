@@ -104,14 +104,15 @@ A survey invite in a webpage or an email SHALL link its survey, so that deleting
 
 ### Requirement: A webpage exports as one HTML file
 
-A webpage SHALL export as one self-contained HTML file showing the page as the editor holds it, rendered by the same function the publish bakes it with.
+A webpage SHALL export as one HTML file showing the page as the editor holds it, rendered by the same function the publish bakes it with. The file's images are not embedded: they load from the app, so they show only where the owner's session is signed in.
 
 #### Scenario: Exporting a webpage downloads one HTML file
 
 - **GIVEN** a webpage open in the editor
 - **WHEN** the owner chooses Export
 - **THEN** one HTML file downloads
-- **AND** the file shows the webpage without needing any other file
+- **AND** the file shows the webpage's text and styles without needing any other file
+- **AND** its images load from the app's own origin, not from the file
 
 ### Requirement: The personalised export works with the editor closed
 

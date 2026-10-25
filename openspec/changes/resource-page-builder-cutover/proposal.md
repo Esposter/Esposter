@@ -8,7 +8,7 @@ The webpage and email editors run GrapesJS in the browser, and each save capture
 
 The new editors ship, every existing webpage and email is deleted, and the old editor is removed.
 
-- The new documents become what a webpage and an email store. Publishing renders a webpage to one HTML document and compiles an email on the server, the views serve that HTML whole, a webpage exports as one self-contained HTML file, an email's personalised export compiles from the saved email with the editor closed, a restore clears the undo history, and a survey invite links its survey, so deleting the survey warns about the page that holds it.
+- The new documents become what a webpage and an email store. Publishing renders a webpage to one HTML document and compiles an email on the server, the views serve that HTML whole, a webpage exports as one HTML file whose images load from the app, an email's personalised export compiles from the saved email with the editor closed, a restore clears the undo history, and a survey invite links its survey, so deleting the survey warns about the page that holds it.
 - **BREAKING:** Publishing an email refuses markup that fails strict validation, with the validator's message, where it previously checked only that HTML was present.
 
 - **BREAKING:** Every existing webpage and email is deleted, whatever its state: working copy, recycle bin or published. Its versions, publications, accesses, favourites, links, activity and stored files go with it, and its owner's storage is released.
