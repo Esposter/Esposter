@@ -3,6 +3,7 @@ import type {
   AzureTable,
   AzureTableEntityMap,
   CustomTableClient,
+  ReverseTickedTimestamp,
   RoomInMessage,
   UserInAuth,
 } from "@esposter/db-schema";
@@ -26,7 +27,9 @@ export const deleteAccountRoomReactions = async (
     { key: "type", operator: BinaryOperator.Eq, value: MessageMetadataType.Emoji },
   ];
   for await (const page of messagesMetadataClient
-    .listEntities<CompositeKey & { userIds: string }>({ queryOptions: { filter: serializeClauses(clauses) } })
+    .listEntities<CompositeKey & { rowKey: ReverseTickedTimestamp; userIds: string }>({
+      queryOptions: { filter: serializeClauses(clauses) },
+    })
     .byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE }))
     for (const { etag, partitionKey, rowKey, userIds: serializedUserIds } of page) {
       const userIds = userIdsSchema.shape.userIds.parse(jsonDateParse(serializedUserIds));
@@ -35,13 +38,15 @@ export const deleteAccountRoomReactions = async (
       if (checkIsOnlyReactor(userIds, userId))
         // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one reaction at a time, as the room's partition is walked
         await messagesMetadataClient.deleteEntity(partitionKey, rowKey, { etag });
-      else
+      else {
+        // A variable, not a literal: the table's entity type has no userIds, so a literal fails the excess-property check
+        const remainingReaction = {
+          partitionKey,
+          rowKey,
+          userIds: userIds.filter((reactorUserId) => reactorUserId !== userId),
+        };
         // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one reaction at a time, as the room's partition is walked
-        await updateEntity(
-          messagesMetadataClient,
-          { partitionKey, rowKey, userIds: userIds.filter((reactorUserId) => reactorUserId !== userId) },
-          "Merge",
-          { etag },
-        );
+        await updateEntity(messagesMetadataClient, remainingReaction, "Merge", { etag });
+      }
     }
 };
