@@ -1,6 +1,6 @@
 ## 1. Keys made before scopes
 
-- [ ] 1.1 At application startup, give the follow-ups scope to every key whose permissions are empty, and leave keys that hold scopes unchanged. Verify: a test named after the scenario 'A key created before scopes can run the follow-ups', failing first, then passing; and the scenario 'A key that already holds scopes keeps them'.
+- [x] 1.1 At application startup, give the follow-ups scope to every key whose permissions are empty, and leave keys that hold scopes unchanged. Verify: a test named after the scenario 'A key created before scopes can run the follow-ups', failing first, then passing; and the scenario 'A key that already holds scopes keeps them'.
 
 ## 2. Operations nothing can undo
 

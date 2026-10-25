@@ -1,4 +1,5 @@
 import { db } from "#server/db";
+import { grantFollowUpsToKeysBeforeScopes } from "#server/services/auth/grantFollowUpsToKeysBeforeScopes";
 import { getSynchronizedFunction } from "@esposter/shared";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import { definePlugin } from "nitro";
@@ -11,5 +12,6 @@ export default definePlugin(
     if (import.meta.prerender) return;
 
     await migrate(db, { migrationsFolder: "server/db/migrations" });
+    await grantFollowUpsToKeysBeforeScopes(db);
   }),
 );
