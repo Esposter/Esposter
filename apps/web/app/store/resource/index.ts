@@ -551,7 +551,6 @@ export const useResourceStore = defineStore("resource", () => {
     saveContent,
     saveState,
     setPersistedContent,
-    storeContentVersion,
     storeSaveResourceContent,
     takeOtherSave,
     unpublishResource,
