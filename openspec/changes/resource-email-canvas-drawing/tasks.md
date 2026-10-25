@@ -5,7 +5,7 @@
 
 ## 2. One drawing per node type
 
-- [x] 2.1 Key the drawings by `MjmlNodeType` in one map, each drawing in its own file, dispatched by one expression. Verify: the map is typed `as const satisfies { [TType in MjmlNodeType]: EmailCanvasDrawing<TType> }`, so a built-in type with no drawing fails the typecheck. A test would repeat that check, so none is written.
+- [x] 2.1 Key the drawings by `MjmlNodeType` in one map, each drawing in its own file, dispatched by one expression. Verify: the map is typed `as const satisfies { [TType in EmailCanvasType]: EmailCanvasDrawing<TType> }`, so a built-in type with no drawing fails the typecheck. A test would repeat that check, so none is written.
 - [x] 2.2 Remove the fallback that draws a type-name box for an unnamed built-in type. Verify: the same typecheck as 2.1; the labelled box stays only as the drawing of the leaf types the map names.
 
 ## 3. The starter draws whole
