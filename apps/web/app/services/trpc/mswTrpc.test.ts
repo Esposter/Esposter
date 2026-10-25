@@ -54,7 +54,7 @@ export const setupMswTrpc = () => {
   // A request sent after the test ended comes from a handler the test never awaited, and left alone it lands after msw
   // Closes, where what it logs races the worker's teardown into an error pinned on whichever file was running. A request
   // Already out when the test ended — one it held and released — is answered here while msw still listens, and one
-  // Timer boundary after that lets a batch the last answer scheduled dispatch before the check
+  // Timer boundary after that lets a call the last answer triggered reach msw before the check
   afterEach(async () => {
     const lateRequestUrls: string[] = [];
     const onRequestStart = ({ request }: { request: Request }) => {

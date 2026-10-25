@@ -38,7 +38,7 @@ describe("resourceActivityLog", () => {
     const activityStore = useActivityStore();
     const { readItems } = activityStore;
     await readItems(() => Promise.resolve(data));
-    // The mount's read leaves a batch later, so the claim is checked once it has actually reached the server
+    // The mount's read leaves a turn later, so the claim is checked once it has actually reached the server
     await isReadReached;
     await nextTick();
 

@@ -2,8 +2,9 @@ import type { TRPCRouter } from "#server/trpc/routers";
 import type { TRPCLink } from "@trpc/client";
 
 import { transformer } from "#shared/services/trpc/transformer";
-import { IS_PRODUCTION } from "#shared/util/environment/constants";
+import { IS_PRODUCTION, IS_TEST } from "#shared/util/environment/constants";
 import { TRPC_CLIENT_PATH, TRPC_WS_PATH } from "@/services/trpc/constants";
+import { createHttpBatchingLink } from "@/services/trpc/createHttpBatchingLink";
 import { createOfflineLink } from "@/services/trpc/createOfflineLink";
 import { errorLink } from "@/services/trpc/errorLink";
 import { checkIsServer } from "@esposter/shared";
@@ -21,7 +22,7 @@ export default defineNuxtPlugin(() => {
   ];
   const httpSplitLink = splitLink({
     condition: ({ input }) => isNonJsonSerializable(input),
-    false: httpBatchLink<TRPCRouter>({ transformer, url: TRPC_CLIENT_PATH }),
+    false: createHttpBatchingLink(IS_TEST),
     true: httpLink<TRPCRouter>({ transformer, url: TRPC_CLIENT_PATH }),
   });
 

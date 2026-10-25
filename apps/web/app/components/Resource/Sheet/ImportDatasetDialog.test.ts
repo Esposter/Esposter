@@ -28,7 +28,7 @@ describe("resourceSheetImportDatasetDialog", () => {
     });
     const wrapper = await mountSuspended(ResourceSheetImportDatasetDialog, { props: { modelValue: false } });
     await wrapper.setProps({ modelValue: true });
-    // Opening issues the read a batch later than a flush started now would cover, so the read's arrival is awaited
+    // Opening issues the read a turn later than a flush started now would cover, so the read's arrival is awaited
     await isSurveysRead;
     await flushPromises();
     wrapper.findComponent(UiSelect).vm.$emit("update:modelValue", survey.id);

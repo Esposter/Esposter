@@ -1,4 +1,4 @@
 export const MESSAGE =
-  "A suite answering tRPC through setupMswTrpc names the timers it fakes, and never `setTimeout`: the batch link arms its dispatch on one, and armed under a frozen clock it never fires for any call left in the file";
+  "A suite importing setupMswTrpc names the timers it fakes, and never `setTimeout`: the harness's afterEach waits one timer boundary for msw to answer what is in flight, and under a frozen clock that wait never ends";
 export const MSW_TRPC_MODULE_SUFFIX = "/services/trpc/mswTrpc.test";
 export const FAKED_TIMER = "setTimeout";
