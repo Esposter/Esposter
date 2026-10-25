@@ -60,6 +60,28 @@ describe(deserializeNoteMarkdown, () => {
     expect(noteSchema.nodeFromJSON(imported).toJSON()).toStrictEqual(noteSchema.nodeFromJSON(noteDoc).toJSON());
   });
 
+  // A list mixing task and plain items is no task list, so its checkboxes are dropped and it reads as the list it is
+  test("a list mixing task and plain items drops its checkboxes", () => {
+    expect.hasAssertions();
+
+    const noteSchema = getSchema(getNoteExtensions());
+    const imported = deserializeNoteMarkdown("- [ ] a\n- b");
+
+    expect(imported).toStrictEqual({
+      content: [
+        {
+          content: [
+            { content: [{ content: [{ marks: [], text: "a", type: "text" }], type: "paragraph" }], type: "listItem" },
+            { content: [{ content: [{ marks: [], text: "b", type: "text" }], type: "paragraph" }], type: "listItem" },
+          ],
+          type: "bulletList",
+        },
+      ],
+      type: "doc",
+    });
+    expect(() => noteSchema.nodeFromJSON(imported).check()).not.toThrow();
+  });
+
   // A link to a scheme that can run a script is read as its text, so the note never holds a link the webpage refuses
   test("A link to a script scheme keeps its text without the link", () => {
     expect.hasAssertions();

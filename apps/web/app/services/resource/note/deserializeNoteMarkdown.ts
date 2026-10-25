@@ -62,27 +62,24 @@ const createParagraph = (content: JSONContent[]): JSONContent =>
 const withLeadingParagraph = (nodes: JSONContent[]): JSONContent[] =>
   nodes[0]?.type === "paragraph" ? nodes : [createParagraph([]), ...nodes];
 
-const mapListItem = (item: Tokens.ListItem): JSONContent =>
-  item.task
-    ? {
-        attrs: { checked: Boolean(item.checked) },
-        content: withLeadingParagraph(mapBlockTokens(item.tokens)),
-        type: "taskItem",
-      }
-    : { content: withLeadingParagraph(mapBlockTokens(item.tokens)), type: "listItem" };
+// The list decides its items' kind, so a list that is no task list holds plain items whatever each one's checkbox says
+const mapListItem = (item: Tokens.ListItem, isTaskList: boolean): JSONContent => {
+  const content = withLeadingParagraph(mapBlockTokens(item.tokens));
+  return isTaskList
+    ? { attrs: { checked: Boolean(item.checked) }, content, type: "taskItem" }
+    : { content, type: "listItem" };
+};
 
 const mapList = (token: Tokens.List): JSONContent => {
   // A task list holds only task items, so a list mixing both reads as the list it is and its checkboxes are dropped
-  if (token.items.every((item) => item.task)) return { content: token.items.map(mapListItem), type: "taskList" };
+  const isTaskList = token.items.every((item) => item.task);
+  const content = token.items.map((item) => mapListItem(item, isTaskList));
+  if (isTaskList) return { content, type: "taskList" };
 
   if (token.ordered)
-    return {
-      attrs: { start: typeof token.start === "number" ? token.start : 1 },
-      content: token.items.map(mapListItem),
-      type: "orderedList",
-    };
+    return { attrs: { start: typeof token.start === "number" ? token.start : 1 }, content, type: "orderedList" };
 
-  return { content: token.items.map(mapListItem), type: "bulletList" };
+  return { content, type: "bulletList" };
 };
 
 const mapBlockToken = (token: Token): JSONContent[] => {
