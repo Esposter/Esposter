@@ -2,10 +2,12 @@ import type { TRPCRouter } from "#server/trpc/routers";
 import type { BlueprintResource } from "#shared/models/resource/blueprint/BlueprintResource";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
+import { removeEditorEntryContent } from "#server/services/blueprint/removeEditorEntryContent";
 import { createCallerFactory } from "#server/trpc";
 import { blueprintRouter } from "#server/trpc/routers/blueprint";
 import { programRouter } from "#server/trpc/routers/program";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
+import { webpageRouter } from "#server/trpc/routers/webpage";
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { buildBlueprintEntryToken } from "#shared/services/resource/blueprint/buildBlueprintEntryToken";
 import { AzureQueue, DatabaseEntityType, ResourceType } from "@esposter/db-schema";
@@ -19,7 +21,10 @@ describe("blueprintRouter", () => {
   const { getCaller, getMockContext } = setupResourceSuite(blueprintRouter);
   let caller: DecorateRouterRecord<TRPCRouter["blueprint"]>;
   let programCaller: DecorateRouterRecord<TRPCRouter["program"]>;
+  let webpageCaller: DecorateRouterRecord<TRPCRouter["webpage"]>;
   const name = "name";
+  // GrapesJS project data, the content a Blueprint captured before the cutover still holds for a webpage entry
+  const editorContent = { pages: [] };
   // Two program entries: the funnel binds the audience's created id through the audience entry's alias
   const wiredManifest: BlueprintResource = {
     entries: [
@@ -37,6 +42,7 @@ describe("blueprintRouter", () => {
   beforeAll(() => {
     caller = getCaller();
     programCaller = createCallerFactory(programRouter)(getMockContext());
+    webpageCaller = createCallerFactory(webpageRouter)(getMockContext());
   });
 
   afterEach(() => {
@@ -126,6 +132,42 @@ describe("blueprintRouter", () => {
 
     // Pre-validation runs before any insert, so a rejected deploy creates nothing
     expect(programs.items).toStrictEqual([]);
+  });
+
+  test("A Blueprint's webpage entry deploys as a fresh document", async () => {
+    expect.hasAssertions();
+
+    // The backfill's output: the entry keeps no content, so it deploys to a resource whose content was never written
+    const blueprint = await createBlueprint(
+      removeEditorEntryContent({
+        entries: [{ content: editorContent, key: "a", name: "a", type: ResourceType.Webpage }],
+        parameters: [],
+      }),
+    );
+    const deployment = takeOne(await caller.deployBlueprint({ id: blueprint.id, parameterValues: {} }));
+
+    expect(deployment.resource.type).toBe(ResourceType.Webpage);
+    await expect(webpageCaller.readResourceContent({ id: deployment.resource.id })).resolves.toBeUndefined();
+  });
+
+  test("A Blueprint revision from before the cutover is refused", async () => {
+    expect.hasAssertions();
+
+    const blueprint = await createBlueprint({
+      entries: [{ content: editorContent, key: "a", name: "a", type: ResourceType.Webpage }],
+      parameters: [],
+    });
+
+    await expect(
+      caller.deployBlueprint({ id: blueprint.id, parameterValues: {} }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Create, DatabaseEntityType.Resource, "invalid content for entry a").message}]`,
+    );
+
+    const webpages = await webpageCaller.readResources();
+
+    // Validation runs before any insert, so a refused deploy creates no webpage
+    expect(webpages.items).toStrictEqual([]);
   });
 
   test("deploys a nested blueprint entry without resolving its manifest's own tokens", async () => {
