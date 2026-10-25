@@ -21,6 +21,6 @@ Read when placing a lifecycle hook, or when a component reaches for a browser gl
   if (!checkIsServer()) { ... }
 
   useScript<typeof Desmos>(API_URL, {
-    use: () => (checkIsServer() ? undefined : window.Desmos) as typeof Desmos,
+    use: () => (checkIsServer() ? undefined : window.Desmos),
   });
   ```

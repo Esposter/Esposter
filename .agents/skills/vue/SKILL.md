@@ -30,17 +30,16 @@ Read it when naming, extracting or reviewing a function used once. **A single-us
 Read it when an input needs the split `:model-value` + `@update:model-value` form, or when a form handles both create and edit (the `isCreate` prop, a single `values` ref).
 
 - Prefer `v-model="ref"` over the split form whenever the update is a direct assignment to a single ref.
-- **Never trim in Vue** — `restrictedTrimSyntaxes.js` bans `normalizeString` and `.trim()` in script and template, since tRPC input schemas already normalize and a string a component parses belongs in a service. **Trust the server schema** — validity is a `safeParse` of the shared schema driving `:disabled`, and submit handlers pass raw values with no guards. Both rules in full, including what dirty-state comparison parses, are on that page.
+- **Never trim in Vue** — `restrictedTrimSyntaxes.js` enforces it, since tRPC input schemas already normalize and a string a component parses belongs in a service. **Trust the server schema** — validity is a `safeParse` of the shared schema driving `:disabled`, and submit handlers pass raw values with no guards. Both rules in full, including what dirty-state comparison parses, are on that page.
 
 ## Template Conventions
 
 - **Truthiness** — `v-if="value"`, not `v-if="value !== null"`. Explicit undefined comparisons only when distinguishing falsy values (`0` valid, `false` meaningful).
 - **No bare function references in `@event` bindings** (`vue/no-restricted-syntax`) — a bare ref forwards the event object as first arg (almost always unintended). Use `fn()` for zero-arg calls, an arrow function naming the payload when it is wanted: `@select="(id) => selectRole(id)"`.
 - **`v-for` destructures what it reads**, keeping the whole item only when it is passed on (`references/template-bindings.md`).
-- **`v-bind` shorthand** is autofixed by `vue/v-bind-style`.
 - **Never use `.value` in templates** — Vue auto-unwraps refs, so `ref.value` reads `.value` on the unwrapped object (usually `undefined`). Write `fn(ref)`; `.value` is for `<script setup>` only.
 - **No allocating expressions in render positions** — `Object.*` in a `:prop`, `v-for` source or `{{ }}` allocates a fresh reference every render. Enforced by `vue/no-restricted-syntax`, whose message states the fix.
-- **Event modifiers over raw event methods** (`vue/no-restricted-syntax`); `stopImmediatePropagation()` is banned (`references/template-bindings.md`).
+- **Event modifiers over raw event methods** (`vue/no-restricted-syntax`); the exceptions and the one banned call are on `references/template-bindings.md`.
 - Reassigning a `defineModel` vs mutating it in place is a deliberate semantic choice — don't "fix" one into the other.
 - **`references/template-gotchas.md`** — read it when a directive or slot renders nothing, or vue-tsc cannot see a template identifier: `v-html` on a component, a dotted slot name, a guard that stops narrowing at a closure inside an inline handler, and why a type-only import is enough for a template cast.
 
@@ -50,7 +49,7 @@ Read it when an input needs the split `:model-value` + `@update:model-value` for
 - **`defineProps` takes a locally declared `interface Props`**, never exported (`props-interface` plugin, `references/props.md`).
 - **No `provide`/`inject`** (`no-restricted-globals` for the auto-import, `no-restricted-imports` from `vue`) — an injected input is missing from the component's signature, a forgotten provider silently takes the default, and a test must mount the provider. Pass a prop down, or read a Pinia store for state the app shares. A library whose contract is a subtree's context — a theme scope, a renderer's parent container — disables the line with that reason.
 - **A local bound to a prop is named after it**, so the `:prop` shorthand works; a module-scope constant is not a local (`references/props.md`).
-- **Optional refs omit the initial value** — `ref<T>()`, never `ref<T | undefined>(undefined)`; both that and a string ref without its `""` are `no-restricted-syntax` errors.
+- **Optional refs omit the initial value** — `ref<T>()`, never an explicit `undefined`; `no-restricted-syntax` enforces it, and a string ref's `""` is the `absent-values` skill (`references/string-sentinel.md`).
 - **Template refs use `useTemplateRef`** with no generic and no `Ref` suffix (`template-ref/require-ref-name`), and a Three object the script moves is created there and mounted with `<primitive>` rather than reached through one (`references/template-refs.md`).
 - **Sort at display time**, in the computed feeding the template, never in the store (`references/props.md`).
 - **Computed by cost and identity, never by use count — `references/computed-extraction.md`** — read it before extracting or inlining any `computed`. A computed is a cache with a price, so it earns its place on **reuse** (binds to 2+ props), **work** (parses, formats, filters, maps, sorts, reduces, walks a collection), or **identity** (allocates an object/array/function bound to a prop). Everything else inlines: comparisons, booleans, ternaries, template literals, property reads, arithmetic, map lookups. The page owns the traps, the keeps that override cost, and the cadence question — work run per event that only changes per boundary.
@@ -65,7 +64,7 @@ Read it when anything needs the signed-in user. Two call forms, and the access s
 
 Read it before writing any `watch`, or when a local `ref` mirrors a prop/store value. In short: a read-only derived value is a `computed`; form state initialized from a prop/store initializes the `ref` directly (`watchImmediate` to set an initial value is always a smell) and resyncs via `useCloned`; an id the instance is keyed by cannot change, so read it once in `onMounted`. Watching is correct for bridging imperative APIs (Phaser, Tiptap, Desmos) and for async side effects of state that genuinely varies under a live instance.
 
-- **`watchDeep`/`watchImmediate` replace the option object on `watch`** (`no-restricted-syntax`), and **`deep` skips Vue's own changed check**. Why the rule reaches `.ts`, where the aliases do not exist, how both flags compose, and when a deep watcher's re-run is the bug: that page ("Writing the watch").
+- **`watchDeep`/`watchImmediate` replace the option object on `watch`** (`no-restricted-syntax`), and **`deep` skips Vue's own changed check**. Why the rule reaches `.ts`, where the aliases do not exist, how both flags compose, and when a deep watcher's re-run is the bug: `references/watch-decision-tree.md` ("Writing the watch").
 - **Never `watchEffect`** (`no-restricted-syntax`, its `Post`/`Sync` twins included) — always `watch` with explicit dependencies; implicit tracking is hard to audit and re-runs on unrelated changes. Wrap a prop dependency in a getter: `watch(() => isActive, ...)`.
 
 ## Lifecycle hooks and the browser — `references/lifecycle-and-ssr.md`
@@ -74,15 +73,15 @@ A browser global read at setup scope runs on the server too, and the failure is 
 
 ## The Options API runtime is compiled out — `references/options-api.md`
 
-Ours are `<script setup>` only (`vue/component-api-style`, which bans plain `defineComponent(…)` with it). `vue.optionsApi` is **off** and stays off, so a _dependency_ shipping Options API `.vue` components mounts and then dereferences off `undefined` with nothing thrown to name the cause. Every Vitest worker runs the same Vue, so a component test mounting one fails as the app does. Read the page before adding one, or when a `node_modules` component renders blank.
+Ours are `<script setup>` only (`vue/component-api-style`). `vue.optionsApi` is **off** and stays off, so a _dependency_ shipping Options API `.vue` components mounts and then dereferences off `undefined` with nothing thrown to name the cause. Every Vitest worker runs the same Vue, so a component test mounting one fails as the app does. Read the page before adding one, or when a `node_modules` component renders blank.
 
 ## Dates Are `<NuxtTime>` — `references/dates.md`
 
-Every rendered date is a `<NuxtTime>`; `formatDate(…)`, `toLocaleDateString()`, `useTimeAgo` and `useDateFormat` inside a `.vue` are `vue/no-restricted-syntax` errors, and a hand-written `<time>` is a `vue/no-restricted-html-elements` one. Standard: `openspec/specs/architecture/date-time-display/design.md`. Read the page for what the lint rule can't say — options rather than format strings, what bare `title` really renders, and the client-rendered message list as the one exception.
+Every rendered date is a `<NuxtTime>`; the date-formatting ban inside a `.vue` and the hand-written time element are lint errors (`vue/no-restricted-syntax`, `vue/no-restricted-html-elements`). Standard: `openspec/specs/architecture/date-time-display/design.md`. Read the page for what the lint rule can't say — options rather than format strings, what bare `title` really renders, and the client-rendered message list as the one exception.
 
 ## Reference pages
 
-- `references/template-bindings.md` — when writing a `v-for`, a `v-bind` or an event modifier.
+- `references/template-bindings.md` — when writing a `v-for` or an event modifier.
 - `references/props.md` — when declaring props, binding a local to a prop, or typing props from a third-party component.
 - `references/template-refs.md` — when taking a ref to an element, a child component or a Tres element.
 - `references/ordering.md` — when laying out a `<script setup>` block's macros and declarations, or an element's attributes.
