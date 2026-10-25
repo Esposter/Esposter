@@ -2,10 +2,10 @@
 
 ## Why
 
-A leave or a role change whose prior top role was never read is settled by re-reading the room's group totals from the server (`room.readMemberCountsByTopRole`), as [room-ui](../../specs/esbabbler/room-ui/design.md) describes. Three things about that re-read are open, and each needs a decision the code cannot make on its own:
+A leave or a role change whose prior top role was never read is settled by re-reading the room's group totals from the server (`room.readMemberCountsByTopRole`), as [room-ui](../../../specs/esbabbler/room-ui/design.md) describes. Three things about that re-read are open, and each needs a decision the code cannot make on its own:
 
 - A failed re-read leaves the total already decremented while the role groups keep the leaver. The error only reaches `console.error`, and nothing retries or resets the counts, so the roleless remainder can go negative.
-- A role event for a loaded member that the server committed before the re-read but that is delivered after it is counted twice until the next room switch. The [room-ui spec](../../specs/esbabbler/room-ui/spec.md) SHALL that the counts stay exact, and the design records that they do not.
+- A role event for a loaded member that the server committed before the re-read but that is delivered after it is counted twice until the next room switch. The [room-ui spec](../../../specs/esbabbler/room-ui/spec.md) SHALL that the counts stay exact, and the design records that they do not.
 
 ## What Changes
 

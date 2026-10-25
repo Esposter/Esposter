@@ -5,4 +5,4 @@ Prioritized top-down. Every item links a full proposal; the specs are the plan, 
 ## Next
 
 - [x] [Nickname global-name subtitle](../../specs/esbabbler/nicknames/design.md) — a member's real account name under their nickname wherever the two differ: the member list, the settings members panel and the @-mention list
-- [ ] [Count re-read policy](../esbabbler-room-ui-count-reread/proposal.md) — what a failed group-count re-read does, and whether the snapshot race that double-counts a late role event is closed or accepted
+- [x] [Count re-read policy](../archive/2026-10-25-esbabbler-room-ui-count-reread/proposal.md) — what a failed group-count re-read does, and whether the snapshot race that double-counts a late role event is closed or accepted
