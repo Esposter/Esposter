@@ -2,7 +2,7 @@
 
 `packages/mjml-blocks` (npm `mjml-blocks`) holds MJML's component set as block types on the [headless block editor](../headless-block-editor/editor-core/design.md). Each type carries its attributes in MJML's own type grammar, MJML's defaults, the tags it may hold and its content kind. A document renders to MJML's JSON form, serialises to MJML source, and reads back from MJML source, refusing every tag, attribute or value the package does not take. The package has no framework, no DOM and no MJML runtime: the compile is the consumer's, one `mjml2html` call with strict validation.
 
-The email editor's canvas, preview and fields belong to the [email change](../../changes/resource-page-builder-email/design.md), and the server's compile to the document model. What the package does not own is MJML's own, so each rule is held equal to the installed MJML rather than copied from it.
+The email editor's canvas, preview and fields belong to the [email editor](../resource/page-builder/email/design.md), and the server's compile to the document model. What the package does not own is MJML's own, so each rule is held equal to the installed MJML rather than copied from it.
 
 - [Block types](block-types/design.md) — each MJML component as a block type, its attributes and content kind, and the files each part of the behaviour lives in.
 
