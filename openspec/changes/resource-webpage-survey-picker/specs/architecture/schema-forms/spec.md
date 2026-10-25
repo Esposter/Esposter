@@ -2,7 +2,7 @@
 
 ### Requirement: A field that names another resource is drawn as a picker of that resource's type
 
-A schema form SHALL draw a field declared as a link to another resource with a picker of the owner's resources of the declared type, and SHALL draw a field without that declaration as its plain control.
+A schema form SHALL draw a field declared as a link to another resource with a picker of the owner's resources of the declared type. A field without that declaration keeps its plain control.
 
 #### Scenario: A link field offers the owner's resources of its type
 

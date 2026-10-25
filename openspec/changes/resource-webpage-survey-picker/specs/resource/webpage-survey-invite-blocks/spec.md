@@ -14,7 +14,7 @@ The webpage editor SHALL offer a survey invite node in its Survey palette catego
 
 ### Requirement: An owner binds an invite to one of their published surveys from a picker
 
-The survey invite SHALL offer only the owner's published surveys, by title, and SHALL store the chosen survey's id as the invite's survey.
+The survey invite SHALL offer only the owner's published surveys, by title. Choosing one stores that survey's id as the invite's survey.
 
 #### Scenario: Owner binds a published survey
 
