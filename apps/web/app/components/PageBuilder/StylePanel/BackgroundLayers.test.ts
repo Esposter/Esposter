@@ -3,10 +3,10 @@ import PageBuilderBackgroundLayers from "@/components/PageBuilder/StylePanel/Bac
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 
-const TEST_LAYERS = "url(a.png), linear-gradient(red, blue)";
-const TEST_GRADIENT = "linear-gradient(red, blue)";
-
 describe("pageBuilderBackgroundLayers", () => {
+  const TEST_LAYERS = "url(a.png), linear-gradient(red, blue)";
+  const TEST_GRADIENT = "linear-gradient(red, blue)";
+
   test("removing a layer writes the layers that remain", async () => {
     expect.hasAssertions();
 
