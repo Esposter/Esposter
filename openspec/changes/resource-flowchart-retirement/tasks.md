@@ -1,7 +1,7 @@
 ## 1. Before the release
 
 - [ ] 1.1 Wait for the whiteboard change to ship and archive. Verify: its proposal sits under `openspec/changes/archive` and its whiteboard is in the app.
-- [ ] 1.2 Settle each open row of the feature check in the design (node resize minimum, connector ports, path types, minimap, the read-only publish loss, the achievement loss, export without an open editor, the grid, delete by keyboard). Verify: every row in the design's table reads covered, or is decided.
+- [ ] 1.2 Check each row of the feature check in the design against the whiteboard's gap analysis, and confirm the built whiteboard covers each row it marks covered. Verify: every row reads covered, or is one of the drops the design names.
 - [ ] 1.3 Write the one-time purge, a function in `apps/functions/src/services/resource` in the style of the cutover's one-time run: for each Flowchart row it calls `purgeResource`, then `broadcastStorageUsage` with the owners returned. Verify: a test in `apps/functions` shows that after the run, a flowchart's blob directory, its storage ledger entries and its row are gone, and that a purge which fails leaves its row in place as the retry marker.
 
 ## 2. The one-time purge

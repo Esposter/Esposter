@@ -29,7 +29,7 @@ Blobs follow one ordering rule: a blob is deleted only inside the purge of its o
 
 ## Waiting on
 
-- The [whiteboard](../resource-whiteboard/proposal.md) ships first, and every row of the feature check in the design is covered or decided before the release, since afterwards the Flowchart's features have no other home.
+- The [whiteboard](../resource-whiteboard/proposal.md) ships first, and every row of the feature check in the design is covered, or is one of the drops the design names, before the release, since afterwards the Flowchart's features have no other home.
 
 ## Decided against
 

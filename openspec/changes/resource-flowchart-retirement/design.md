@@ -15,26 +15,26 @@ A blob is deleted only inside the purge of its own resource, together with that 
 
 ## The whiteboard covers the feature list
 
-Nothing is dropped unnoticed: each feature the Flowchart has is checked against the [whiteboard](../resource-whiteboard/design.md), which succeeds it, and each row ends as covered or as a loss decided before the release. A row left open blocks the release.
+Nothing is dropped unnoticed: each feature the Flowchart has is checked against the whiteboard's [gap analysis](../resource-whiteboard/design.md#gap-analysis), which succeeds it. Each row below ends as covered, as a change the whiteboard names, or as one of the drops the owner decided: the minimap, the read-only published view and the achievement. A row left open blocks the release.
 
-| Flowchart feature                                 | Whiteboard counterpart                                                 | Status                                                     |
-| ------------------------------------------------- | ---------------------------------------------------------------------- | ---------------------------------------------------------- |
-| Labelled step nodes                               | Shapes with text bound to their container                              | Covered                                                    |
-| Node colour                                       | Element fill and stroke                                                | Covered                                                    |
-| Node resize with a minimum size                   | Free resize with no minimum                                            | Decide before release                                      |
-| Four connection points per node, loose connection | Arrows bound to a shape, with no fixed points                          | Decide before release                                      |
-| Arrowhead on every connector                      | Arrow end head                                                         | Covered; verify in the whiteboard's build                  |
-| Connector labels, edited inline                   | Text bound to an arrow                                                 | Covered; verify                                            |
-| Curved, right-angled and straight paths           | The whiteboard's arrow kinds                                           | Decide before release                                      |
-| Palette of node types, dropped on the canvas      | The whiteboard's toolbar                                               | Covered                                                    |
-| Minimap                                           | None in the whiteboard                                                 | Decide before release: dropped, or added to the whiteboard |
-| Dot grid and snap to grid                         | The whiteboard's grid                                                  | Verify                                                     |
-| Pan, zoom and fit                                 | The whiteboard's viewport                                              | Covered                                                    |
-| Delete by keyboard                                | The whiteboard's shortcuts                                             | Verify                                                     |
-| Export to PNG and SVG, fonts and theme background | The Portable formats, from stored elements                             | Covered; verify export without an open editor              |
-| Read-only published view                          | None: publishing is not in the whiteboard's first version              | Decide the loss before release                             |
-| Agent reads and patches of flowchart content      | The whiteboard's content schema, read and patched by the generic tools | Covered                                                    |
-| Flowchart achievement                             | Removed with the type                                                  | Decide the loss before release                             |
+| Flowchart feature                                 | Whiteboard row, in its gap analysis                              | Status                                         |
+| ------------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------- |
+| Labelled step nodes                               | Node label                                                       | Covered                                        |
+| Node colour                                       | Node colour                                                      | Covered                                        |
+| Node resize with a minimum size                   | Node resize, with a minimum for each shape                       | Covered                                        |
+| Four connection points per node, loose connection | Connection points, and connector binds to shapes with a free end | Covered                                        |
+| Arrowhead on every connector                      | Connector and arrowhead, with arrowheads at either end           | Covered, changed: both ends                    |
+| Connector labels, edited inline                   | Edge label                                                       | Covered                                        |
+| Curved, right-angled and straight paths           | Path kinds, and right-angled routing                             | Covered                                        |
+| Palette of node types, dropped on the canvas      | Palette, placed by drag or by click                              | Covered, changed: no native drag and drop      |
+| Minimap                                           | MiniMap                                                          | Dropped, by the owner's decision               |
+| Dot grid and snap to grid                         | Background grid and snap                                         | Covered                                        |
+| Pan, zoom and fit                                 | Pan and zoom, and zoom and fit controls                          | Covered                                        |
+| Delete by keyboard                                | Keyboard                                                         | Covered, extended                              |
+| Export to PNG and SVG, fonts and theme background | Export PNG and SVG, and export background and fonts              | Covered, changed: drawn from the model         |
+| Read-only published view                          | Read-only published view                                         | Deferred, by the owner's decision              |
+| Agent reads and patches of flowchart content      | Agent tools                                                      | Covered, extended with the typed move          |
+| Flowchart achievement                             | Earned achievement                                               | Removed with the type, by the owner's decision |
 
 ## Scope of the removal
 
@@ -87,5 +87,5 @@ This change writes no spec delta now. Its removal is recorded as REMOVED require
 ## Sources
 
 - [Flowchart on the editor core](../../deferred/resource/flowchart-on-editor-core/design.md): the removal future, and the rule that a resource type leaves PostgreSQL only once no row holds it.
-- [Whiteboard](../resource-whiteboard/design.md): the capabilities the feature check reads.
+- [Whiteboard](../resource-whiteboard/design.md#gap-analysis): the gap analysis the feature check reads.
 - [Purge a resource](../../../apps/functions/src/services/resource/purgePreCutoverResources.ts): the cutover's one-time run, the precedent the one-time purge follows.
