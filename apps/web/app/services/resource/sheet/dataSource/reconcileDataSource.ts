@@ -1,17 +1,9 @@
-import type { AItemEntity } from "#shared/models/entity/AItemEntity";
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
+import { inheritIdentity } from "@/services/resource/sheet/dataSource/inheritIdentity";
+import { toComparable } from "@/services/resource/sheet/dataSource/toComparable";
 import { checkIsDeepEqual } from "@esposter/shared";
 
-const inheritIdentity = (item: AItemEntity, previousItem: AItemEntity, isUnchanged: boolean) => {
-  item.id = previousItem.id;
-  item.createdAt = previousItem.createdAt;
-  if (isUnchanged) item.updatedAt = previousItem.updatedAt;
-};
-// Everything but the identity an import mints, gathered into a plain object so an instance built by the import
-// Compares with the parsed content a loaded sheet holds
-const toComparable = ({ createdAt: _createdAt, id: _id, updatedAt: _updatedAt, ...comparable }: AItemEntity) =>
-  comparable;
 // An import builds every column and row new, and a new item mints a random id and fresh timestamps, so the same
 // File imported twice was never the same bytes: the version store, which stores identical content once and similar
 // Content as a delta, kept every id again on each import. The sheet being replaced hands its identities over

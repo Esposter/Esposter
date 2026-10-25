@@ -1,16 +1,11 @@
 import type { ColumnFilter } from "@/models/resource/sheet/column/ColumnFilter";
 import type { ColumnFilterOfType } from "@/models/resource/sheet/column/ColumnFilterOfType";
 import type { ColumnFilterPredicate } from "@/models/resource/sheet/column/ColumnFilterPredicate";
-import type { StringColumnFilter } from "@/models/resource/sheet/column/StringColumnFilter";
 
 import { BooleanValue } from "#shared/models/resource/sheet/column/BooleanValue";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { BooleanFilterValue } from "@/models/resource/sheet/column/BooleanFilterValue";
-
-// A filter variant may answer to more than one ColumnType (one string filter covers Date and String), so the
-// Variant is selected by whether its own type union contains the key rather than by an exact match
-const checkIsMatchingStringCell: ColumnFilterPredicate<StringColumnFilter> = (filter, cellValue) =>
-  cellValue !== null && String(cellValue).toLowerCase().includes(filter.value.toLowerCase());
+import { checkIsMatchingStringCell } from "@/services/resource/sheet/dataSource/checkIsMatchingStringCell";
 
 export const ColumnFilterPredicateMap = {
   [ColumnType.Boolean]: (filter, cellValue) => {

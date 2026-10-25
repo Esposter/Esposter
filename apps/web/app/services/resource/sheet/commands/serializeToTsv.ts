@@ -1,8 +1,7 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
 import { getCellTextRows } from "@/services/resource/sheet/commands/getCellTextRows";
-
-const sanitizeTsvField = (value: string) => value.replaceAll(/[\t\r\n]/gu, " ");
+import { sanitizeTsvField } from "@/services/resource/sheet/commands/sanitizeTsvField";
 
 export const serializeToTsv = (
   dataSource: DataSource,

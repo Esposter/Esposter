@@ -1,27 +1,9 @@
 import type { ColumnStatistics } from "#shared/models/resource/sheet/column/ColumnStatistics";
 import type { ColumnChartData } from "@/models/resource/sheet/column/ColumnChartData";
-import type { ApexOptions } from "apexcharts";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-
-const BASE_CHART_OPTIONS: ApexOptions = { chart: { toolbar: { show: false } } };
-const buildTopFrequenciesChartData = (
-  columnStatistics: ColumnStatistics,
-  isHorizontal: boolean,
-): ColumnChartData | undefined => {
-  if (!columnStatistics.topFrequencies?.length) return undefined;
-
-  const entries = isHorizontal ? columnStatistics.topFrequencies.toReversed() : columnStatistics.topFrequencies;
-  return {
-    options: {
-      ...BASE_CHART_OPTIONS,
-      ...(isHorizontal ? { plotOptions: { bar: { horizontal: true } } } : {}),
-      xaxis: { categories: entries.map(([category]) => category) },
-    },
-    series: [{ data: entries.map(([, count]) => count), name: columnStatistics.columnName }],
-    type: "bar",
-  };
-};
+import { buildTopFrequenciesChartData } from "@/services/resource/sheet/column/buildTopFrequenciesChartData";
+import { BASE_CHART_OPTIONS } from "@/services/resource/sheet/column/constants";
 
 export const ColumnTypeChartDataComputeMap: Partial<
   Record<ColumnType, (statistics: ColumnStatistics) => ColumnChartData | undefined>
