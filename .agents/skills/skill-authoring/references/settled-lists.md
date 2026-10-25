@@ -1,6 +1,6 @@
 # Settled lists
 
-Read when a direction has been tried and rejected, or when a skill is accumulating rejections as prose.
+Read when a direction has been tried and rejected, or when a skill is accumulating rejections as prose. The rule itself is in `SKILL.md`; this page is what a Settled entry holds and why the list stays short.
 
 A settled decision written as prose — "finishing X has been tried and is not wanted", mid-paragraph, two thirds down a long skill — is not read by the person about to propose X. That is how a rejected design gets re-derived by a reader who loaded the very skill that rejects it, and the cost is a session's work thrown away against a record that existed and was unfindable.
 

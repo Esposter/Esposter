@@ -1,6 +1,6 @@
 # Exceptions
 
-Read when about to write an exception, a carve-out, or an "except where" clause into a rule.
+Read when about to write an exception, a carve-out, or an "except where" clause into a rule. The rule itself is in `SKILL.md`; this page is the bar an outside force must clear, and the branch that replaces a carve-out.
 
 We own the whole codebase, so almost nothing is genuinely un-fixable: a rule that would be inconvenient to apply
 is a rule to apply anyway, and an exception written for it is a permanent licence bought to save one commit. The

@@ -1,6 +1,6 @@
 # What a skill may record
 
-Read when deciding whether something learned is worth writing down at all, and in what form — the reproducible-pattern test, the placeholders a rule uses, and why a roster is not a rule.
+Read when deciding whether something learned is worth writing down at all, and in what form — the reproducible-pattern test, the placeholders a rule uses, and why a roster is not a rule. The rule itself is in `SKILL.md`; this page is the argument behind its one-off and roster lines.
 
 ## Is it a reproducible pattern? If not, it does not belong
 

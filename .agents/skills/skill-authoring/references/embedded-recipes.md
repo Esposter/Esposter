@@ -1,6 +1,6 @@
 # Embedded recipes
 
-Read when a skill page, a ledger or a spec is about to embed a command — or when one it already embeds needs a fix.
+Read when a skill page, a ledger or a spec is about to embed a command — or when one it already embeds needs a fix. The rule itself is in `SKILL.md`; this page is where a command stays inline and where a script goes.
 
 A recipe pasted into a fence is a program with none of a program's guarantees: nothing typechecks it, nothing lints or formats it, and nothing runs it. It rots in place and the rot is silent, because an unrunnable scan reports nothing and that is the same shape as a clean tree. A `python3` block on a Windows checkout prints a Microsoft Store notice and **exits 0**, and a `node -e` reader is repaired only by the agent whose run it failed.
 

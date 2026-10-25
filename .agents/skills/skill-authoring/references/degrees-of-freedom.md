@@ -1,6 +1,6 @@
 # Degrees of freedom
 
-Read when writing a step into a skill, or reading one that prescribes how a thing is done rather than what must come out of it.
+Read when writing a step into a skill, or reading one that prescribes how a thing is done rather than what must come out of it. The rule itself is in `SKILL.md`; this page is the test for how tightly a line prescribes.
 
 **How tightly a line prescribes matches how fragile the thing it governs is**, and the test for any one line is what breaks if the reader does it differently:
 

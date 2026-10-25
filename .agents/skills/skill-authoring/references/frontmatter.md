@@ -1,6 +1,6 @@
 # Frontmatter
 
-Read when writing a new skill's `description`, or when a body edit changes what the skill is for — a new trigger, a domain it no longer covers.
+Read when writing a new skill's `description`, or when a body edit changes what the skill is for — a new trigger, a domain it no longer covers. The rule itself is in `SKILL.md`; this page is the description's three parts and what it is not.
 
 The `description` is the **only** thing read when deciding whether to load a skill — the body is invisible until it's selected — and Claude Code shows a fixed prefix of it in the listing and nothing past that (the cap is `MAX_DESCRIPTION_CHARACTERS` in `scripts/src/services/sweeps/skillDocs/constants.ts`, and `pnpm ai:sweep:skill-docs` reports a description over it). So a description is three things in a fixed order, and `ai:sweep:skill-docs` holds the first:
 

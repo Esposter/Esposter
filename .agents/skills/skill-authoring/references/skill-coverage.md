@@ -1,6 +1,6 @@
 # Skill Coverage
 
-Read when a commit has read a whole skill against these rules, when these rules change, or when a session asks which skills a newer model has not yet read.
+Read when a commit has read a whole skill against these rules, when these rules change, or when a session asks which skills a newer model has not yet read. The rule itself is in `SKILL.md`; this page is what the `Ledger:` and `Reopens:` trailers and the `Swept` cell mean.
 
 Every skill is a row of `.agents/ledgers/docs/skills.md`, derived from the skills directory itself (`LedgerUnitsMap` in `scripts/src/services/sweeps/ledgerCoverage/`), so a new skill opens a row and a deleted one drops it with nobody editing the table. The `Swept` cell is the date and the model of the last commit that read the skill whole — `SKILL.md` and every `references/` page as one unit — and it is written by `pnpm ai:sweep:ledger-coverage` from that commit's trailers, never by hand (the `sweeps` skill, `references/one-pass.md`):
 

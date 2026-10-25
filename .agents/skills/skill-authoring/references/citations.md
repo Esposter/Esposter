@@ -1,6 +1,6 @@
 # Citations
 
-Read when citing a file, a spec or another skill from a skill, a ledger or a README.
+Read when citing a file, a spec or another skill from a skill, a ledger or a README. The rule itself is in `SKILL.md`; this page is how a citation is written and how the test resolves it.
 
 Nothing resolves a link out of a skill: no renderer opens one, and a relative `../../../` hop or a
 `github.com/.../blob/main/...` url is a path the reader has to reconstruct or a network fetch they cannot make.
