@@ -7,6 +7,11 @@ description: Apply when adding a query, an index, a fan-out, a background handle
 
 Where work is placed decides its cost far more than how it is written. These are the placement rules; **which `pnpm` script measures it is `package-scripts`, writing the benchmark itself is `bench`, and how the session spends its own turns is `context-efficiency`.** Query and column mechanics belong to `drizzle` and `azure-table` — this skill only decides what runs, where, and how often.
 
+## Settled — do not re-propose
+
+- **A scheduled sweep that trims a table nothing deletes from.** It has to rediscover keys the write already holds, and it runs on a schedule nothing watches; the trim is one indexed delete on the write path (`Bound growth where the keys already are`, this file).
+- **Routing a large document's bytes through the server.** Past one request body they move through a SAS the server signs, and the server holds them only to validate or compute (`openspec/specs/architecture/large-documents/design.md`).
+
 ## Resolve a fact once, at the consumer
 
 A fact several producers would each compute belongs to the single consumer that acts on it. Every producer computing it separately is the same query run N times, N chances to disagree, and N places to fix when the rule changes.
