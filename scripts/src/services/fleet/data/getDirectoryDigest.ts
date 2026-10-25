@@ -1,9 +1,8 @@
 import type { ChildDigest } from "#src/models/fleet/data/ChildDigest";
 import type { FileEntry } from "#src/models/fleet/data/FileEntry";
 
+import { byName } from "#src/services/fleet/data/byName";
 import { createHash } from "node:crypto";
-
-const byName = <T extends { name: string }>(left: T, right: T): number => (left.name < right.name ? -1 : 1);
 
 // A directory's digest: a hash of its direct files' name, size and mtime and its child directories' name and digest,
 // Each sorted by name so the order a filesystem lists them in never changes the digest

@@ -1,16 +1,10 @@
 import type { Peer } from "#src/models/fleet/data/Peer";
 
+import { readField } from "#src/services/fleet/data/readField";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 const PEER_FIELDS: readonly string[] = ["host", "identityFile", "parityDirectory", "repository", "user"];
-
-// A peer's field as a string; a field the peers file leaves out is "", which the copy reads as absent
-const readField = (name: string, values: Map<string, unknown>, field: string): string => {
-  const value = values.get(field) ?? "";
-  if (typeof value !== "string") throw new InvalidOperationError(Operation.Read, name, `its ${field} is not a string`);
-  return value;
-};
 
 // The peers file: a map from each peer's name to its host, user, key, repository and parity directory
 export const parsePeers = (text: string): Record<string, Peer> => {
