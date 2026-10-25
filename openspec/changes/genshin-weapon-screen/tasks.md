@@ -15,4 +15,4 @@
 
 ## 4. Passive
 
-- [ ] 4.1 Show each passive on the screen once the weapon enhancement's passive data lands, with a weapon that has none showing nothing. Verify: the passive display tests that change owns pass when mounted on this screen. Blocked until that change's data task lands; the passive's effect waits on the character kits.
+- [ ] 4.1 Show each passive on the screen once the weapon enhancement's passive data lands and the layout beneath the fodder grid is measured against the game reference, with a weapon that has none showing nothing. The list is withdrawn until then (the design's Decisions). Verify: the passive display tests that change owns pass when mounted on this screen. Blocked until that change's data task lands and the layout is measured; the passive's effect waits on the character kits.
