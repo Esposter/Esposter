@@ -1,6 +1,9 @@
 import { z } from "zod";
 
+// A card and a table lead the picker, since they are the plainest visuals: one number, and the exact values behind a chart
 export enum VisualType {
+  Card = "Card",
+  Table = "Table",
   Area = "Area",
   Bar = "Bar",
   BoxPlot = "BoxPlot",

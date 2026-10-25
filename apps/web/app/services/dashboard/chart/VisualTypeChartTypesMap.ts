@@ -4,9 +4,12 @@ import { VisualType } from "#shared/models/dashboard/data/VisualType";
 const CommonChartTypes: ChartType[] = [ChartType.Basic];
 
 export const VisualTypeChartTypesMap = {
+  // A card and a table draw no chart, so their one chart type is the common one, which the edit form does not offer
   [VisualType.Area]: CommonChartTypes,
   [VisualType.Bar]: CommonChartTypes,
   [VisualType.BoxPlot]: CommonChartTypes,
+  [VisualType.Card]: CommonChartTypes,
+  [VisualType.Table]: CommonChartTypes,
   [VisualType.Bubble]: [...CommonChartTypes, ChartType["3D"]],
   [VisualType.Candlestick]: CommonChartTypes,
   [VisualType.Column]: CommonChartTypes,

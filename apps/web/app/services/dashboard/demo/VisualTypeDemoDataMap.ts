@@ -7,6 +7,7 @@ import { BarPropsData } from "@/assets/dashboard/demo/data/BarPropsData";
 import { BoxPlotPropsData } from "@/assets/dashboard/demo/data/BoxPlotPropsData";
 import { BubblePropsDataMap } from "@/assets/dashboard/demo/data/bubble/BubblePropsDataMap";
 import { CandlestickPropsData } from "@/assets/dashboard/demo/data/CandlestickPropsData";
+import { CardPropsData } from "@/assets/dashboard/demo/data/CardPropsData";
 import { ColumnPropsData } from "@/assets/dashboard/demo/data/ColumnPropsData";
 import { FunnelPropsDataMap } from "@/assets/dashboard/demo/data/funnel/FunnelPropsDataMap";
 import { HeatmapPropsData } from "@/assets/dashboard/demo/data/HeatmapPropsData";
@@ -28,6 +29,7 @@ export const VisualTypeDemoDataMap: Record<VisualType, (chartType: ChartType) =>
   [VisualType.BoxPlot]: () => BoxPlotPropsData,
   [VisualType.Bubble]: (chartType) => getVisualPropsData(BubblePropsDataMap, chartType),
   [VisualType.Candlestick]: () => CandlestickPropsData,
+  [VisualType.Card]: () => CardPropsData,
   [VisualType.Column]: () => ColumnPropsData,
   [VisualType.Funnel]: (chartType) => getVisualPropsData(FunnelPropsDataMap, chartType),
   [VisualType.Heatmap]: () => HeatmapPropsData,
@@ -40,5 +42,7 @@ export const VisualTypeDemoDataMap: Record<VisualType, (chartType: ChartType) =>
   [VisualType.RangeBar]: () => RangeBarPropsData,
   [VisualType.Scatter]: () => ScatterPropsData,
   [VisualType.Slope]: () => SlopePropsData,
+  // An unbound table shows the bar chart's demo categories and series, which are the rows a table lists
+  [VisualType.Table]: () => BarPropsData,
   [VisualType.Treemap]: (chartType) => getVisualPropsData(TreemapPropsDataMap, chartType),
 };

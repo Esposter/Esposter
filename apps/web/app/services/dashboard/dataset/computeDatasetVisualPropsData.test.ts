@@ -26,4 +26,28 @@ describe(computeDatasetVisualPropsData, () => {
 
     expect(computeDatasetVisualPropsData(VisualType.Candlestick, dataset, query)).toBeUndefined();
   });
+
+  // A card has no category axis, so the two rows count as one value whatever their x column holds
+  test("a card counts every response in its dataset", () => {
+    expect.hasAssertions();
+
+    const otherCategory = "b";
+    const cardDataset: Dataset = { columns: [], rows: [{ x: category }, { x: otherCategory }] };
+
+    expect(computeDatasetVisualPropsData(VisualType.Card, cardDataset, query)).toStrictEqual({
+      series: [{ data: [2], name: "Count of x" }],
+    });
+  });
+
+  // A table lists the grouped result the chart over the same binding draws, so its numbers are the bars' exact values
+  test("a table beside a bar chart shows the bars' exact values", () => {
+    expect.hasAssertions();
+
+    const otherCategory = "b";
+    const tableDataset: Dataset = { columns: [], rows: [{ x: category }, { x: category }, { x: otherCategory }] };
+
+    expect(computeDatasetVisualPropsData(VisualType.Table, tableDataset, query)).toStrictEqual(
+      computeDatasetVisualPropsData(VisualType.Bar, tableDataset, query),
+    );
+  });
 });

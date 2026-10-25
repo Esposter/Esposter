@@ -16,6 +16,18 @@ export const computeDatasetVisualPropsData = (
 ): undefined | VisualPropsData => {
   const shape = VisualTypeDatasetShapeMap[visualType];
   if (shape === VisualDatasetShape.None) return undefined;
+  // A card has no category axis, so its one value is the first series over every row, and the x column is ignored
+  if (shape === VisualDatasetShape.Single) {
+    const { aggregation, column } = takeOne(query.series);
+    return {
+      series: [
+        {
+          data: [DatasetAggregationComputeMap[aggregation](dataset.rows.map((row) => row[column] ?? null))],
+          name: `${aggregation} of ${column}`,
+        },
+      ],
+    };
+  }
 
   const categoryRowsMap = new Map<string, Dataset["rows"]>();
   for (const row of dataset.rows) {
