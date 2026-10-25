@@ -2,7 +2,7 @@ import type { InvocationContext } from "@azure/functions";
 
 import { purgeExpiredResources } from "#src/services/resource/purgeExpiredResources";
 import { db } from "#src/services/shared/db";
-import { ResourceType, resourcesInResource } from "@esposter/db-schema";
+import { resourcesInResource, ResourceType } from "@esposter/db-schema";
 import { and, inArray, lt } from "drizzle-orm";
 
 // The cutover's one-time run: the timer's purge, then a count of the Email and Webpage rows created before the cutover

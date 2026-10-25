@@ -4,7 +4,7 @@ import { purgePreCutoverResources } from "#src/services/resource/purgePreCutover
 import { createUser } from "#src/services/shared/createUser.test";
 import { InvocationContext } from "@azure/functions";
 import { createMockDb } from "@esposter/db-mock";
-import { ResourceType, resourcesInResource, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
+import { resourcesInResource, ResourceType, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";

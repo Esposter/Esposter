@@ -19,7 +19,7 @@ import { createHash } from "node:crypto";
 // The survey invite's type tag in a webpage and in an email, as apps/web names them (WebpageNodeType.SurveyInvite and
 // EmailNodeType.SurveyInvite). The functions app cannot import the web's enums, so the tags are repeated here and only
 // ever matched against stored content
-const SURVEY_INVITE_NODE_TYPES = new Set(["SurveyInvite", "survey-invite"]);
+const SURVEY_INVITE_NODE_TYPES = new Set(["survey-invite", "SurveyInvite"]);
 
 type StoredNode = Record<string, unknown>;
 
