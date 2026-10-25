@@ -45,6 +45,7 @@ import { readSnapshotVersionContent } from "#server/services/resource/snapshot/r
 import { takeResourceRevision } from "#server/services/resource/snapshot/takeResourceRevision";
 import { softDeleteResources } from "#server/services/resource/softDeleteResources";
 import { updateResourceContent } from "#server/services/resource/updateResourceContent";
+import { updateResourceRow } from "#server/services/resource/updateResourceRow";
 import { withResourceRollback } from "#server/services/resource/withResourceRollback";
 import { writeResourceActivity } from "#server/services/resource/writeResourceActivity";
 import { emitStorageUsage } from "#server/services/storage/emitStorageUsage";
@@ -53,6 +54,7 @@ import { requireEntity } from "#server/trpc/guards/requireEntity";
 import { getOwnerProcedure } from "#server/trpc/procedure/resource/getOwnerProcedure";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
 import { McpScope } from "#shared/models/auth/McpScope";
+import { createResourceOfTypeInputSchema } from "#shared/models/db/resource/CreateResourceOfTypeInput";
 import { deleteResourcesInputSchema } from "#shared/models/db/resource/DeleteResourcesInput";
 import { readActivitiesInputSchema } from "#shared/models/db/resource/ReadActivitiesInput";
 import { readDeletedResourcesInputSchema } from "#shared/models/db/resource/ReadDeletedResourcesInput";
@@ -65,6 +67,7 @@ import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInpu
 import { restoreResourcesInputSchema } from "#shared/models/db/resource/RestoreResourcesInput";
 import { restoreSnapshotVersionInputSchema } from "#shared/models/db/resource/RestoreSnapshotVersionInput";
 import { updateResourceContentInputSchema } from "#shared/models/db/resource/UpdateResourceContentInput";
+import { updateResourceInputSchema } from "#shared/models/db/resource/UpdateResourceInput";
 import { ResourceOperationType } from "#shared/models/notification/ResourceOperationType";
 import { ResourceOperationTitleMap } from "#shared/services/notification/ResourceOperationTitleMap";
 import { MESSAGE_ROW_KEY_SORT_ITEM } from "#shared/services/pagination/constants";
@@ -89,6 +92,17 @@ import { getSynchronizedFunction, MAX_READ_LIMIT, RoutePath, takeOne } from "@es
 import { and, asc, count, desc, eq, ilike, inArray, isNotNull, isNull, sql } from "drizzle-orm";
 
 export const resourceRouter = router({
+  // Typeless: the type is named in the input, so one tool creates a resource of any type
+  createResource: standardAuthedProcedure
+    .input(createResourceOfTypeInputSchema)
+    .meta({
+      mcp: {
+        description:
+          "Create a resource of a named type with a name, as a new draft with no content. Answers the resource, its id included, which the other tools take.",
+        scope: McpScope.Resources,
+      },
+    })
+    .mutation<ResourceInResource>(({ ctx, input }) => createResourceRow(ctx, input)),
   deleteResources: standardAuthedProcedure
     .input(deleteResourcesInputSchema)
     // Owner-scoped where so callers can only ever soft-delete their own rows
@@ -476,6 +490,18 @@ export const resourceRouter = router({
       return true;
     },
   ),
+  // Typeless: the factory's rename-and-tag body, which names no type, so one tool serves every resource
+  updateResource: getOwnerProcedure(undefined, updateResourceInputSchema, "id")
+    .meta({
+      mcp: {
+        description:
+          "Rename a resource or replace its tags, leaving its content as it is. Tags replace the whole record, so send every tag the resource keeps. Answers the updated resource.",
+        scope: McpScope.Resources,
+      },
+    })
+    .mutation<ResourceInResource>(({ ctx, input: { name, tags } }) =>
+      updateResourceRow(ctx, ctx.resource, { name, tags }),
+    ),
   updateResourceContent: getOwnerProcedure(undefined, updateResourceContentInputSchema, "id")
     .meta({
       mcp: {

@@ -678,6 +678,28 @@ describe("resourceRouter", () => {
     expect(updatedResource.tags).toStrictEqual(tags);
   });
 
+  test("An agent creates a resource of a named type", async () => {
+    expect.hasAssertions();
+
+    const createdResource = await caller.createResource({ name, type: ResourceType.Sheet });
+    const readResource = await caller.readResource({ id: createdResource.id });
+
+    expect(readResource).toMatchObject({ name, type: ResourceType.Sheet });
+  });
+
+  test("An agent renames and tags a resource", async () => {
+    expect.hasAssertions();
+
+    const webpageResource = await webpageCaller.createResource({ name });
+    await saveWebpageContent(webpageResource, webpageEditor);
+    const contentBefore = await webpageCaller.readResourceContent({ id: webpageResource.id });
+    const updatedResource = await caller.updateResource({ id: webpageResource.id, name: updatedName, tags });
+    const contentAfter = await webpageCaller.readResourceContent({ id: webpageResource.id });
+
+    expect(updatedResource).toMatchObject({ name: updatedName, tags });
+    expect(contentAfter).toStrictEqual(contentBefore);
+  });
+
   test("moves a deleted resource to the bin instead of destroying it", async () => {
     expect.hasAssertions();
 

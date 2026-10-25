@@ -39,6 +39,7 @@ import { readSnapshotVersionContent } from "#server/services/resource/snapshot/r
 import { releaseResourceAssets } from "#server/services/resource/snapshot/releaseResourceAssets";
 import { writeSnapshotVersion } from "#server/services/resource/snapshot/writeSnapshotVersion";
 import { softDeleteResources } from "#server/services/resource/softDeleteResources";
+import { updateResourceRow } from "#server/services/resource/updateResourceRow";
 import { writeResourceActivity } from "#server/services/resource/writeResourceActivity";
 import { generateReservedWriteSasUrl } from "#server/services/storage/generateReservedWriteSasUrl";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
@@ -250,25 +251,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
       return savedResource;
     }),
     updateResource: getOwnerProcedure(type, updateResourceInputSchema, "id").mutation<ResourceInResource>(
-      async ({ ctx, input: { id, ...rest } }) => {
-        const oldName = ctx.resource.name;
-        const updatedResource = requireMutation(
-          (await ctx.db.update(resourcesInResource).set(rest).where(eq(resourcesInResource.id, id)).returning())[0],
-          Operation.Update,
-          DatabaseEntityType.Resource,
-          id,
-        );
-        // A tags-only edit is not a rename, so it leaves no Renamed entry.
-        // Best-effort: a failed write loses one trail entry, never the rename.
-        if (updatedResource.name !== oldName)
-          getSynchronizedFunction(writeResourceActivity)(ctx, {
-            activityType: ResourceActivityType.Renamed,
-            newName: updatedResource.name,
-            oldName,
-            resourceId: id,
-          });
-        return updatedResource;
-      },
+      ({ ctx, input: { name, tags } }) => updateResourceRow(ctx, ctx.resource, { name, tags }),
     ),
   };
   // Binary assets live under {id}/files/{hash} — the owner uploads through short-lived SAS urls and reads resolve
