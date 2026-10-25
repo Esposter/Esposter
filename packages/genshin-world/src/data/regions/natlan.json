@@ -5200,6 +5200,13 @@
       "id": "6406",
       "nameTextId": "2544308640",
       "talkId": "7516106"
+    },
+    {
+      "areaId": "toyac-springs",
+      "day": { "position": { "x": -3906.05, "z": -10461.37 }, "rotation": 0 },
+      "id": "6340",
+      "nameTextId": "2364531120",
+      "talkId": "6634001"
     }
   ]
 }

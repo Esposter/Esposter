@@ -1345,5 +1345,13 @@
       "heightOffset": -26.8
     }
   ],
-  "residents": []
+  "residents": [
+    {
+      "areaId": "lempo-isle",
+      "day": { "position": { "x": -268.66, "z": -10543.67 }, "rotation": 3.0899 },
+      "id": "7086",
+      "nameTextId": "1313811552",
+      "talkId": "6708601"
+    }
+  ]
 }

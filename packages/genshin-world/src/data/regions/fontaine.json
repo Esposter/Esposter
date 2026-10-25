@@ -6349,6 +6349,13 @@
       "id": "21311",
       "nameTextId": "4162607224",
       "talkId": "7411906"
+    },
+    {
+      "areaId": "court-of-fontaine-region",
+      "day": { "position": { "x": 1848.95, "z": -5521.76 }, "rotation": 0 },
+      "id": "5073",
+      "nameTextId": "1148313032",
+      "talkId": "6507301"
     }
   ]
 }

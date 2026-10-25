@@ -25932,6 +25932,13 @@
       "talkId": "30330"
     },
     {
+      "areaId": "ashavan-realm",
+      "day": { "position": { "x": -3573, "z": -3933.28 }, "rotation": 0 },
+      "id": "4176",
+      "nameTextId": "1977112792",
+      "talkId": "6417601"
+    },
+    {
       "areaId": "avidya-forest",
       "day": { "position": { "x": -2314.48, "z": -4012.52 }, "rotation": 0 },
       "duelGameId": 1104,

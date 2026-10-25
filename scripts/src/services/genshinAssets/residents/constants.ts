@@ -36,7 +36,8 @@ export const REPUTATION_KEEPER_NPC_ID_MAP: ReadonlyMap<string, number> = new Map
 // Share's bartender. A vendor
 // Has no birth in the scene, so her place is her point, an estimate the residents carry as provisional. The Adventurers'
 // Guild's NPC is the base Katheryne, 1512, which the NPC table gives the lowest id, not confirmed against the scene. The
-// Knights of Favonius headquarters, 54, is Ellin's point, the wiki placing her behind it, which no point gives
+// Knights of Favonius headquarters, 54, is Ellin's point, the wiki placing her behind it, which no point gives. Each other
+// Region's Fishing Association point stands for the one member the wiki lists there, provisional as Nantuck's is
 export const BUILDING_NPC_ID_MAP: ReadonlyMap<string, number> = new Map<string, number>([
   ["54", 9704],
   ["62", 1419],
@@ -45,7 +46,14 @@ export const BUILDING_NPC_ID_MAP: ReadonlyMap<string, number> = new Map<string, 
   ["65", 1638],
   ["98", 1512],
   ["391", 1673],
+  ["400", 2615],
+  ["401", 3200],
   ["511", 1465],
+  ["528", 4176],
+  ["1042", 5073],
+  ["1464", 6340],
+  ["1699", 7086],
+  ["2173", 7418],
 ]);
 // The scene's crafting benches that an NPC stands beside, each by the bench's building point and the NPC who stands beside
 // It: Sumeru's bench, 526, is Kimiya's, the wiki placing him next to the bench on Treasures Street in Sumeru City

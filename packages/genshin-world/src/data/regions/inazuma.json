@@ -12657,6 +12657,13 @@
       "id": "20497",
       "nameTextId": "2724359445",
       "talkId": "6801702"
+    },
+    {
+      "areaId": "narukami-island",
+      "day": { "position": { "x": -4926.36, "z": 2945.04 }, "rotation": 0 },
+      "id": "3200",
+      "nameTextId": "2404488589",
+      "talkId": "6320001"
     }
   ]
 }

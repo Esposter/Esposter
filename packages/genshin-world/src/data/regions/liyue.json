@@ -18895,6 +18895,13 @@
       "id": "20172",
       "nameTextId": "3120577005",
       "talkId": "4117001"
+    },
+    {
+      "areaId": "sea-of-clouds",
+      "day": { "position": { "x": -2608.75, "z": -1280.57 }, "rotation": 0 },
+      "id": "2615",
+      "nameTextId": "830762029",
+      "talkId": "6261501"
     }
   ],
   "waterfalls": [
