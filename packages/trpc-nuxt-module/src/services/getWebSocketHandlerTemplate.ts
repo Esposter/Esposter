@@ -16,7 +16,7 @@ export const getWebSocketHandlerTemplate = (
     `import { useNitroHooks } from "nitro/app";`,
     `import { defineWebSocketHandler } from "nitro/h3";`,
     `import { WEBSOCKET_CLOSE_HOOK, WEBSOCKET_OPEN_HOOK } from "${MODULE_NAME}/runtime/constants";`,
-    `import { createTRPCWebSocketHandler } from "${MODULE_NAME}/runtime/server/createTRPCWebSocketHandler";`,
+    `import { createTRPCWebSocketHandler } from "trpc-nuxt-module/runtime/server/createTRPCWebSocketHandler";`,
     getImportStatement(router, "router"),
     createContext ? getImportStatement(createContext, "createContext") : "const createContext = () => ({});",
     `const nitroHooks = useNitroHooks();`,
