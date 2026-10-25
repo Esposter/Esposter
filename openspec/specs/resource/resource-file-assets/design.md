@@ -2,7 +2,7 @@
 
 The **FileAssets capability**: hosted binary assets for the resource types that need them. A type declaring `fileAssets: true` gets owner-only procedures for uploading and removing blobs under its own `{id}/files/…` directory, and the webpage's Settings blade uploads its share image through them — so an image a resource carries is a hosted URL, never a base64 blob inlined into the content.
 
-Adopters: Survey (SurveyJS image questions, logos, theme backgrounds), Email, Webpage. Three adopters clears the capability admission rule of two or more ([resources](../../architecture/resource/design.md)).
+Adopters: Survey (SurveyJS image questions, logos, theme backgrounds), Note (inline images), Webpage (share image). Three adopters clears the capability admission rule of two or more ([resources](../../architecture/resource/design.md)). Email also declares `fileAssets` ahead of the page builder's image style fields, but has no upload path yet, so it is not counted as an adopter.
 
 ## How it works
 
@@ -10,9 +10,10 @@ Content embeds a **stable, relative app url** — `/api/resource-assets/{blobNam
 
 ```mermaid
 flowchart LR
-  DEF["ResourceDefinitionMap<br/>fileAssets: true<br/>Survey · Email · Webpage"] -->|derives| UNION["FileAssetsResourceType"]
+  DEF["ResourceDefinitionMap<br/>fileAssets: true<br/>Survey · Note · Webpage · Email"] -->|derives| UNION["FileAssetsResourceType"]
   UNION -->|"conditional spread<br/>(like the publish procedures)"| FACTORY["createResourceProcedures<br/>+ upload SAS + deleteFile"]
   WS["Webpage Settings<br/>share image"] -->|"useUploadResourceFile"| FACTORY
+  NOTE["Note<br/>useInsertNoteImages"] -->|useUploadResourceFile| FACTORY
   CREATOR["SurveyJS creator<br/>onUploadFile"] -->|useUploadResourceFile| FACTORY
   FACTORY -->|SAS PUT target| BLOB[("{id}/files/{sha256}<br/>ResourceAssets container")]
   WS -->|"stores the stable url"| CANVAS["content blob stores /api/resource-assets/{blobName}"]
