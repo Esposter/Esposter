@@ -11,7 +11,7 @@
 
 - [x] 3.1 Hold the unsaved edit and show a notice naming the device, with autosave held. Verify: a test named after the scenario 'An unsaved edit stays on screen when another device saves', failing first, then passing.
 - [x] 3.2 Answer the notice with take theirs or keep mine. Verify: a test named after the scenario 'Taking theirs replaces the unsaved edit', failing first, then passing; and the scenario 'Keeping mine saves over the other version and keeps it in history'.
-- [ ] 3.3 Name an agent in the notice by its key's name. Verify: a test named after the scenario 'A save made with a key is named by that key', failing first, then passing.
+- [x] 3.3 Name an agent in the notice by its key's name. Verify: a test named after the scenario 'A save made with a key is named by that key', failing first, then passing.
 
 ## Built so far
 
