@@ -8,17 +8,17 @@ The inventory in [user data](../../specs/architecture/user-data-inventory/design
 
 **The mutation does not sweep.** It sets `users.deletionRequestedAt`, deletes the account's sessions so the caller is signed out everywhere, and publishes one Event Grid event. A sweep across message partitions and blob directories can outlast a request, and the caller is owed an answer the moment the marker lands.
 
-**Owned rooms are deleted, as an owner's departure already deletes them.** `leaveRoom` deletes a room for everyone when its owner leaves, so account deletion does the same rather than inventing a transfer. A transfer of ownership is a feature with its own design, and it is the reason to revisit this. The sweep additionally clears the room's four table partitions and its attachment prefix, which the room deletion does not.
+**Owned rooms are deleted, as an owner's departure already deletes them.** `leaveRoom` deletes a room for everyone when its owner leaves, so account deletion does the same rather than inventing a transfer. A transfer of ownership is a feature with its own design, and it is the reason to revisit this. `deleteRoom` already publishes the room's attachment prefix and profile images, so the sweep relies on that teardown for them and adds the room's four table partitions, which it does not clear.
 
 **The user's messages are soft-deleted, and their charged attachments are removed.** A message is attributed to its author, so a deletion removes the author's content from every room the user is a member of, through the soft delete the moderation ban already uses. The soft delete moves into `packages/db` so the function and the web app share one implementation. The attachment list comes from the storage ledger, which holds one row per charged blob and its owner, so the sweep never scans a message partition to find files.
 
-**Blob directories are swept by the user's prefix.** `{userId}/` in the public and private asset containers and in the game-save containers holds everything the user wrote there. The deletion lists no names.
+**Blob directories are swept by the user's prefix.** `{userId}/` in the public and private asset containers and in the game-save containers holds everything the user wrote there, and `character-packs/staging/{userId}/` in the game-asset container holds their pending character-pack uploads. The deletion lists no names.
 
 **Resources go through the purge that already exists.** `purgeResource` already deletes a resource's directory, its table partitions and its ledger rows, in the order that makes replay safe. Each owned resource is passed to it with the table clients of its type.
 
 **The `accounts` foreign key cascades.** The inventory found `accounts` as the one foreign key that blocks the user row's deletion. It is changed to cascade in the schema, so the deletion declares what it removes, and no step deletes accounts by hand.
 
-**Shared character-pack files stay.** They are keyed by content hash and shared across accounts, and nothing counts their references, so removing one could break another account. The user's manifest and staging are removed by their prefix. Whether the shared files hold personal data is an owner question, and deleting them needs a reference count first.
+**Shared character-pack files stay.** They are keyed by content hash and shared across accounts, and nothing counts their references, so removing one could break another account. The user's manifest is removed under `{userId}/`, and their staging under `character-packs/staging/{userId}/`. Whether the shared files hold personal data is an owner question, and deleting them needs a reference count first.
 
 ## Rejected
 
@@ -60,7 +60,7 @@ A failure in any step fails the handler, the marker stays, and Event Grid redeli
 | Path                                                                     | Role                                           |
 | :----------------------------------------------------------------------- | :--------------------------------------------- |
 | `packages/db-schema/src/schema/auth/accountsInAuth.ts`                   | The `accounts` foreign key, changed to cascade |
-| `packages/db-schema/src/schema/user/usersInUser.ts`                      | The deletion marker                            |
+| `packages/db-schema/src/schema/auth/usersInAuth.ts`                      | The deletion marker                            |
 | `apps/web/server/trpc/routers/user.ts`                                   | The `deleteAccount` mutation                   |
 | `apps/web/server/services/user/deleteAccountSessions.ts`                 | Revokes the account's sessions                 |
 | `packages/db/src/services/message/softDeleteRoomMessagesByUser.ts`       | The soft delete, moved from the web app        |
