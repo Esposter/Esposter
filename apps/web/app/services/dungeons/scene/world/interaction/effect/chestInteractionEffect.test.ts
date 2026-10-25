@@ -80,8 +80,7 @@ describe(chestInteractionEffect, () => {
     dungeonsStore.save.player.inventory = [{ ...getItem(ItemId.Potion), quantity: 1 }];
     await chestInteractionEffect(scene, [getChestObject(chestPosition.x, chestPosition.y)]);
 
-    expect(dungeonsStore.save.player.inventory).toHaveLength(1);
-    expect(dungeonsStore.save.player.inventory[0]?.quantity).toBe(2);
+    expect(dungeonsStore.save.player.inventory).toStrictEqual([{ ...getItem(ItemId.Potion), quantity: 2 }]);
   });
 
   test("an opened chest gives nothing again and says so", async () => {

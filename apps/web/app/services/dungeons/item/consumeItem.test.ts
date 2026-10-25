@@ -1,10 +1,10 @@
-// @vitest-environment nuxt
 import type { Item } from "#shared/models/dungeons/item/Item";
 
 import { ItemId } from "#shared/generated/tiled/propertyTypes/enum/ItemId";
 import { ItemEffectType } from "#shared/models/dungeons/item/ItemEffectType";
 import { consumeItem } from "@/services/dungeons/item/consumeItem";
 import { usePlayerStore } from "@/store/dungeons/player";
+import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { ref } from "vue";
 
@@ -20,6 +20,7 @@ describe(consumeItem, () => {
   let item: Item;
 
   beforeEach(() => {
+    setActivePinia(createPinia());
     item = {
       description: "description",
       effect: { type: ItemEffectType.Heal, value: 0 },

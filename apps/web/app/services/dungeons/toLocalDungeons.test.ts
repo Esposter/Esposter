@@ -5,28 +5,14 @@ import { describe, expect, test } from "vitest";
 // The read runs on every load, so a save that cannot be parsed must start a fresh game rather than leave the page with
 // Nothing to show. A fresh game gets a new id, so it is checked by its settings and missing save, not compared whole
 describe(toLocalDungeons, () => {
-  test("starts a fresh game when nothing is stored", () => {
+  test.each([
+    { dungeonsJson: null, reason: "nothing is stored" },
+    { dungeonsJson: "{not json", reason: "the stored text is not JSON" },
+    { dungeonsJson: JSON.stringify({ settings: "not settings" }), reason: "the stored JSON is not a save" },
+  ])("starts a fresh game when $reason", ({ dungeonsJson }) => {
     expect.hasAssertions();
 
-    const dungeons = toLocalDungeons(null);
-
-    expect(dungeons.settings).toStrictEqual(new Dungeons().settings);
-    expect(dungeons.save).toBeUndefined();
-  });
-
-  test("starts a fresh game when the stored text is not JSON", () => {
-    expect.hasAssertions();
-
-    const dungeons = toLocalDungeons("{not json");
-
-    expect(dungeons.settings).toStrictEqual(new Dungeons().settings);
-    expect(dungeons.save).toBeUndefined();
-  });
-
-  test("starts a fresh game when the stored JSON is not a save", () => {
-    expect.hasAssertions();
-
-    const dungeons = toLocalDungeons(JSON.stringify({ settings: "not settings" }));
+    const dungeons = toLocalDungeons(dungeonsJson);
 
     expect(dungeons.settings).toStrictEqual(new Dungeons().settings);
     expect(dungeons.save).toBeUndefined();

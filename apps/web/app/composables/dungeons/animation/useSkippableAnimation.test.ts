@@ -5,7 +5,7 @@ const { settingsStore } = vi.hoisted(() => ({ settingsStore: { isSkipAnimations:
 // oxlint-disable-next-line vitest/prefer-import-in-mock -- The settings store loads Phaser, which the test environment cannot start
 vi.mock("@/store/dungeons/settings", () => ({ useSettingsStore: () => settingsStore }));
 
-describe("useSkippableAnimation", () => {
+describe(useSkippableAnimation, () => {
   test("plays the animation and not the end state while animations are on", async () => {
     expect.hasAssertions();
 

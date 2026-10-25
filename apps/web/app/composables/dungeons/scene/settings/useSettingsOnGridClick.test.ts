@@ -1,4 +1,3 @@
-// @vitest-environment nuxt
 import type { Controls } from "@/models/dungeons/input/Controls";
 
 import { getInitialSettings } from "#shared/models/dungeons/data/settings/Settings";
@@ -10,6 +9,7 @@ import { SettingsOptionGrid } from "@/services/dungeons/scene/settings/SettingsO
 import { useControlsStore } from "@/store/dungeons/controls";
 import { useSettingsStore } from "@/store/dungeons/settings";
 import { NotFoundError } from "@esposter/shared";
+import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const { saveDungeons } = vi.hoisted(() => ({ saveDungeons: vi.fn<() => void>() }));
@@ -35,6 +35,7 @@ describe(useSettingsOnGridClick, () => {
   let controls: Controls;
 
   beforeEach(() => {
+    setActivePinia(createPinia());
     controls = { setInput: vi.fn<(input: PlayerSpecialInput) => void>() } as unknown as Controls;
     const controlsStore = useControlsStore();
     controlsStore.controls = controls;

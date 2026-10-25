@@ -1,4 +1,3 @@
-// @vitest-environment nuxt
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { AnimationsSetting } from "#shared/models/dungeons/data/settings/AnimationsSetting";
@@ -10,6 +9,7 @@ import { useSettingsStore } from "@/store/dungeons/settings";
 import { useSettingsSceneStore } from "@/store/dungeons/settings/scene";
 import { NotFoundError } from "@esposter/shared";
 import { Direction } from "grid-engine";
+import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 const { saveDungeons } = vi.hoisted(() => ({ saveDungeons: vi.fn<() => void>() }));
@@ -36,6 +36,7 @@ describe(useSettingsSceneStore, () => {
   const scene = {} as SceneWithPlugins;
 
   beforeEach(() => {
+    setActivePinia(createPinia());
     const settingsStore = useSettingsStore();
     settingsStore.settings = getInitialSettings();
     SettingsOptionGrid.position.value = { x: 0, y: 0 };

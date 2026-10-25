@@ -1,4 +1,3 @@
-// @vitest-environment nuxt
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { TilemapKey } from "#shared/generated/tiled/propertyTypes/enum/TilemapKey";
@@ -10,6 +9,7 @@ import { PlayerTitleMenuOptionGrid } from "@/services/dungeons/scene/title/menu/
 import { useDungeonsStore } from "@/store/dungeons";
 import { useTitleSceneStore } from "@/store/dungeons/title/scene";
 import { NotFoundError } from "@esposter/shared";
+import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 
 // The dungeons store imports Phaser, which cannot initialise under the test environment. Only its saves and the scene
@@ -43,6 +43,7 @@ describe(useTitleSceneStore, () => {
   const scene = {} as SceneWithPlugins;
 
   beforeEach(() => {
+    setActivePinia(createPinia());
     const dungeonsStore = useDungeonsStore();
     dungeonsStore.dungeons.save = undefined;
     dungeonsStore.save = new Save();

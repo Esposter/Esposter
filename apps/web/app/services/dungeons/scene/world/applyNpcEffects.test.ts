@@ -70,10 +70,13 @@ describe(applyNpcEffects, () => {
     expect.hasAssertions();
 
     const dungeonsStore = useDungeonsStore();
-    const [monster] = dungeonsStore.save.player.monsters;
-    if (monster) monster.status.health = 1;
+    const party = [new Monster(MonsterKey.Iguanignite), new Monster(MonsterKey.Iguanignite)];
+    for (const monster of party) monster.status.health = 1;
+    dungeonsStore.save.player.monsters = party;
     await applyNpcEffects(scene, getNpc([{ type: EffectType.Heal }]));
 
-    expect(monster?.status.health).toBe(monster?.statistics.maxHealth);
+    expect(dungeonsStore.save.player.monsters.map(({ status }) => status.health)).toStrictEqual(
+      party.map(({ statistics }) => statistics.maxHealth),
+    );
   });
 });
