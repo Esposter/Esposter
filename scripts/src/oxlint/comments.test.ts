@@ -17,7 +17,7 @@ describe("comments/no-capitalized-identifier", () => {
     { name: "opensOnCapitalisedWord", source: `// A\n// Value b\nexport const value = 0;`, violations: 0 },
     // The capitalised spelling is itself a name in the file, so the comment may mean it
     { name: "opensOnPascalCaseName", source: `// A\n// AB b\nexport class AB {}\nexport const aB = 0;`, violations: 0 },
-    // A sentence start may open on a proper name the file binds camel-cased, as `GrapesJS` is imported `grapesJS`
+    // A sentence start may open on a proper name the file binds camel-cased, as `PageBuilder` is imported `pageBuilder`
     { name: "opensSentenceOnName", source: `// A.\n// AB b\nexport const aB = 0;`, violations: 0 },
     { name: "opensFirstLineOnName", source: `// AB b\nexport const aB = 0;`, violations: 0 },
     { name: "opensAfterGapOnName", source: `// A\n\n// AB b\nexport const aB = 0;`, violations: 0 },

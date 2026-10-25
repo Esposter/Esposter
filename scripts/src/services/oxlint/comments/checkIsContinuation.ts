@@ -3,7 +3,7 @@ import type { Comment } from "@oxlint/plugins";
 import { SENTENCE_END_REGEX } from "#src/services/oxlint/comments/constants";
 
 // A `//` line carrying on a sentence the `//` line directly above it left open. A sentence start is left alone:
-// There a capitalised proper name (`GrapesJS`, imported as `grapesJS`) reads the same as a corrupted identifier
+// There a capitalised proper name (`PageBuilder`, imported as `pageBuilder`) reads the same as a corrupted identifier
 export const checkIsContinuation = (previous: Comment | undefined, comment: Comment): boolean =>
   comment.type === "Line" &&
   previous?.type === "Line" &&

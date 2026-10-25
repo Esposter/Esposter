@@ -16,7 +16,7 @@ import { definePlugin } from "@oxlint/plugins";
  * `use`) and then a capital, wherever that name is declared — no type or proper name is spelled that way. Otherwise
  * it is reported only on a line carrying on the sentence of the `//` line above, when its lowercase-first spelling
  * is a code-shaped identifier in the same file and its own spelling is not: a sentence start may open on a proper
- * name the file binds camel-cased (`GrapesJS`, imported as `grapesJS`), and a single lowercase word (`result`)
+ * name the file binds camel-cased (`PageBuilder`, imported as `pageBuilder`), and a single lowercase word (`result`)
  * reads the same capitalised as the prose word. A tool name or a path the file never binds stays with the comments
  * ledger's grep, since recognising one would take a roster of the repo's tools.
  *
