@@ -1,9 +1,9 @@
 import type { MjmlBlockTypeDefinition } from "#src/models/MjmlBlockTypeDefinition";
 
-import { mjmlRootPropsSchema } from "#src/models/MjmlRootProps";
 import { allowedAddressSchema } from "#src/services/allowedAddressSchema";
 import { checkMjmlAttributeValues } from "#src/services/checkMjmlAttributeValues";
 import { ALL_ATTRIBUTES_KEY, MJML_BODY_ATTRIBUTES, MJML_BREAKPOINT_ATTRIBUTES } from "#src/services/constants";
+import { mjmlRootPropsSchema } from "#src/services/mjmlRootPropsSchema";
 
 // The document's head and body, checked against the definitions it may name: each per-type attribute map is one the type takes
 export const createMjmlRootPropsSchema = (

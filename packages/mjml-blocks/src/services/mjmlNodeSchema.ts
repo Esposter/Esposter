@@ -63,7 +63,7 @@ export const createMjmlNodeSchema = <TContent extends MjmlRichText>({
   nodeSchema: z.ZodType<MjmlNode>;
 } => {
   // A slot's children are bounded by the most nodes a document may hold, so no slot can hold more than a document can
-  const childrenOf = (schema: z.ZodType<MjmlNode>) => z.array(schema).max(maxChildren);
+  const childrenOf = <TSchema extends z.ZodType>(schema: TSchema) => z.array(schema).max(maxChildren);
   const textNode = createMjmlNodeBranch(
     MjmlNodeType.Text,
     createMjmlTextPropsSchema(richText),
