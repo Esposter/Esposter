@@ -1,3 +1,4 @@
+import ResourceNoteDialogs from "@/components/Resource/Note/Dialogs.vue";
 import ResourceSheetDialogs from "@/components/Resource/Sheet/Dialogs.vue";
 import ResourceTodoListDialogs from "@/components/Resource/TodoList/Dialogs.vue";
 import { ResourceType } from "@esposter/db-schema";
@@ -10,6 +11,7 @@ const ResourceFlowchartDialogs: Component = defineAsyncComponent(
 // Mounted in each is torn down and rebuilt on every switch. A type with no entry mounts nothing
 export const ResourceDialogsComponentMap: Partial<Record<ResourceType, Component>> = {
   [ResourceType.Flowchart]: ResourceFlowchartDialogs,
+  [ResourceType.Note]: ResourceNoteDialogs,
   [ResourceType.Sheet]: ResourceSheetDialogs,
   [ResourceType.TodoList]: ResourceTodoListDialogs,
 };

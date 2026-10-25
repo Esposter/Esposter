@@ -39,7 +39,7 @@ export const ResourceDefinitionMap = {
     title: ResourceType.Flowchart,
   },
   [ResourceType.Note]: {
-    capabilities: { fileAssets: true, publishable: true },
+    capabilities: { fileAssets: true, portable: true, publishable: true },
     contentSchema: noteResourceSchema,
     icon: "i-mdi:note-text",
     title: ResourceType.Note,

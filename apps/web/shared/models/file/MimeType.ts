@@ -6,6 +6,7 @@ export enum MimeType {
   Html = "text/html",
   Jpeg = "image/jpeg",
   Json = "application/json",
+  Markdown = "text/markdown",
   Pdf = "application/pdf",
   PlainText = "text/plain",
   Png = "image/png",

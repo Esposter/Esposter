@@ -5,8 +5,9 @@ import { ResourceType } from "@esposter/db-schema";
 export const useNoteStore = defineStore("resource/note", () => {
   const {
     content: note,
+    getContentWriter,
     loadContent,
     saveContent: saveNote,
   } = createContentData<ResourceType.Note>(ResourceType.Note, (data) => data ?? { doc: EMPTY_NOTE_DOC });
-  return { loadContent, note, saveNote };
+  return { getContentWriter, loadContent, note, saveNote };
 });
