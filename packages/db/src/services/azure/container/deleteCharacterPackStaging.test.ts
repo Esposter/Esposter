@@ -28,11 +28,14 @@ describe(deleteCharacterPackStaging, () => {
 
     await deleteCharacterPackStaging(genshinAssetsClient, userId);
 
-    expect((await listBlobNames(genshinAssetsClient, "")).toSorted()).toStrictEqual([
-      `${userId}/save.json`,
-      `character-packs/files/${sha256}`,
-      `character-packs/staging/${otherUserId}/keep/${sha256}`,
-    ]);
+    // The user's own prefix sorts before or after the pack folders depending on the id's first character, so both sides sort
+    expect((await listBlobNames(genshinAssetsClient, "")).toSorted()).toStrictEqual(
+      [
+        `${userId}/save.json`,
+        `character-packs/files/${sha256}`,
+        `character-packs/staging/${otherUserId}/keep/${sha256}`,
+      ].toSorted(),
+    );
   });
 
   // The sweep is a teardown that must converge when it re-runs after an interrupted attempt, so a prefix an earlier
