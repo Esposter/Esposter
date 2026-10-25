@@ -1,6 +1,6 @@
 # Webpage Site Pages
 
-A Webflow project is a site of pages, each with its own url under the site, and GrapesJS has a pages API that would let one Webpage resource hold several.
+A Webflow project is a site of pages, each with its own url under the site, and a Webpage would need its document to hold a list of pages, which the page builder's document does not.
 
 ## Why not
 
