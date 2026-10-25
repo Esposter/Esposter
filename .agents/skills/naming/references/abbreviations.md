@@ -16,6 +16,12 @@ coverage. The denylist also catches only the **bare** word, so every compound sp
 keeps its own spelling (`mkdir`, `tmpdir`, `readdir`, `gitdir`, overlayfs's `upperdir`), and so does a string
 value that crosses the wire, which is never renamed to match its member.
 
+## `Configuration`, never `Config`
+
+`uiSchemaFormConfiguration`, `newUiSchemaFormConfiguration`, in a compound as much as bare: a value of our own is named
+after its full domain type. The bare word keeps library-owned sites, a dependency's `config` key and the destructure
+that reads it (`names-a-dependency-owns.md`), so it is not on the denylist; those sites keep the library's spelling.
+
 ## A stored count is `<singular noun>Count`
 
 `commentCount`, `likeCount`, `webhookCount`, DB columns included. Singular, because the suffix already carries the

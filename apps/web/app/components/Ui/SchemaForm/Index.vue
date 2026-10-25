@@ -22,7 +22,7 @@ interface Props {
 // Validation is off
 const modelValue = defineModel<T>({ required: true });
 const { context = {}, schema, validationSchema } = defineProps<Props>();
-const config = computed<UiSchemaFormConfiguration>(() => {
+const uiSchemaFormConfiguration = computed<UiSchemaFormConfiguration>(() => {
   const issueMap = new Map<string, string>();
   const result = validationSchema?.safeParse(modelValue.value);
   if (result && !result.success)
@@ -41,7 +41,7 @@ const options = { validationMode: "NoValidation" } as const;
 // Property being replaced is the only change to track, and the renderers inside are never proxied
 const jsonforms = shallowReactive<JsonFormsSubStates & { core: JsonFormsCore }>({
   cells: [],
-  config: configReducer(undefined, Actions.setConfig(config.value)),
+  config: configReducer(undefined, Actions.setConfig(uiSchemaFormConfiguration.value)),
   core: coreReducer(undefined, Actions.init(modelValue.value, jsonFormsSchema.value, uischema.value, options)),
   i18n: i18nReducer(undefined, Actions.updateI18n(undefined, undefined, undefined)),
   renderers: SchemaFormRenderers,
@@ -58,8 +58,8 @@ const form: UiSchemaFormBinding = { dispatch, state: { jsonforms } };
 watch([modelValue, jsonFormsSchema, uischema], ([newModelValue, newJsonFormsSchema, newUischema]) => {
   dispatch(Actions.updateCore(newModelValue, newJsonFormsSchema, newUischema, options));
 });
-watch(config, (newConfig) => {
-  jsonforms.config = configReducer(undefined, Actions.setConfig(newConfig));
+watch(uiSchemaFormConfiguration, (newUiSchemaFormConfiguration) => {
+  jsonforms.config = configReducer(undefined, Actions.setConfig(newUiSchemaFormConfiguration));
 });
 </script>
 

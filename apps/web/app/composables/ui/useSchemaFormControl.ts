@@ -10,12 +10,14 @@ export const useSchemaFormControl = (props: UiSchemaFormRendererProps) => {
   const control = computed(() => ({ ...props, ...mapStateToControlProps(props.form.state, props) }));
   const { handleChange } = mapDispatchToControlProps(props.form.dispatch);
   const isChanged = ref(false);
-  const config = computed(() => control.value.config as UiSchemaFormConfiguration);
+  const uiSchemaFormConfiguration = computed(() => control.value.config as UiSchemaFormConfiguration);
   const layout = computed(() => getSchemaFormLayout(control.value.schema) ?? {});
-  const issue = computed(() => (isChanged.value ? config.value.issueMap.get(control.value.path) : undefined));
+  const issue = computed(() =>
+    isChanged.value ? uiSchemaFormConfiguration.value.issueMap.get(control.value.path) : undefined,
+  );
   const change = (value: unknown) => {
     isChanged.value = true;
     handleChange(control.value.path, value);
   };
-  return { change, config, control, issue, layout };
+  return { change, control, issue, layout, uiSchemaFormConfiguration };
 };
