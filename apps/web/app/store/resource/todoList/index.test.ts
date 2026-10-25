@@ -23,6 +23,7 @@ const setupStore = async () => {
 describe(useTodoListStore, () => {
   const { trpcMsw } = setupMswTrpc();
   const resourceId = crypto.randomUUID();
+  const device = { sessionId: crypto.randomUUID(), userId: crypto.randomUUID() };
   const adoptedItemName = "adoptedItem";
   const itemName = "item";
   const newItemName = "newItem";
@@ -139,15 +140,16 @@ describe(useTodoListStore, () => {
     expect(items.value.map(({ name }) => name)).toStrictEqual([itemName, newItemName]);
   });
 
-  // Another device's save arrives with the content it wrote, so adopting it has to re-seed the dirty check
-  // Too — otherwise this client's next save writes that same content straight back
-  test("adopts another device's content without writing it back", async () => {
+  // Another device's save re-reads the list through the reload every open content store takes, so the list on screen
+  // Is the one the blob now holds, and that read re-seeds the dirty check rather than writing the list back
+  test("An open todo list re-reads another device's save", async () => {
     expect.hasAssertions();
 
     const todoListStore = await setupStore();
-    const { saveTodoList, storeSaveResourceContent } = todoListStore;
+    const { saveTodoList } = todoListStore;
     const { items } = storeToRefs(todoListStore);
-    storeSaveResourceContent({ items: [new TodoListItem({ name: newItemName })] }, 1);
+    content = { items: [new TodoListItem({ name: newItemName })] };
+    await useResourceStore().storeSaveResourceContent({ contentVersion: 1, device });
     const isSuccessful = await saveTodoList();
 
     expect(items.value.map(({ name }) => name)).toStrictEqual([newItemName]);
@@ -155,16 +157,17 @@ describe(useTodoListStore, () => {
     expect(saveResourceContent).not.toHaveBeenCalled();
   });
 
-  // That adoption can land while this client's own save is still in flight. The rollback owes back the item it
-  // Added and nothing else — restoring the blob it captured throws the adopted list away with the failed edit
-  test("keeps content adopted while the save was in flight when that save fails", async () => {
+  // A reload that lands while this client's own save is still in flight. The rollback owes back the item it added and
+  // Nothing else — restoring the blob it captured throws the reloaded list away with the failed edit
+  test("keeps content reloaded while the save was in flight when that save fails", async () => {
     expect.hasAssertions();
 
     const todoListStore = await setupStore();
-    const { saveItem, storeSaveResourceContent } = todoListStore;
+    const { saveItem } = todoListStore;
     const { editedItem, items } = storeToRefs(todoListStore);
-    trpcMsw.todoList.saveResourceContent.mutation(() => {
-      storeSaveResourceContent({ items: [new TodoListItem({ name: adoptedItemName })] }, 1);
+    trpcMsw.todoList.saveResourceContent.mutation(async () => {
+      content = { items: [new TodoListItem({ name: adoptedItemName })] };
+      await useResourceStore().reloadResourceContent();
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     editedItem.value = new TodoListItem({ name: newItemName });
@@ -174,52 +177,41 @@ describe(useTodoListStore, () => {
     expect(items.value.map(({ name }) => name)).toStrictEqual([adoptedItemName]);
   });
 
-  // Two saves' re-reads can land newest first, and the older one must not overwrite the newer content it trails
-  test("drops an older adoption that lands after a newer one", async () => {
+  // A row written with no dialog is refused the same way while the list reloads, and the reloaded value is what stands —
+  // This write never reached it, so there is nothing of it to put back
+  test("keeps a reloaded todo's value when its row write is refused", async () => {
     expect.hasAssertions();
 
     const todoListStore = await setupStore();
-    const { storeSaveResourceContent } = todoListStore;
-    const { items } = storeToRefs(todoListStore);
-    storeSaveResourceContent({ items: [new TodoListItem({ name: newItemName })] }, 2);
-    storeSaveResourceContent({ items: [new TodoListItem({ name: adoptedItemName })] }, 1);
-
-    expect(items.value.map(({ name }) => name)).toStrictEqual([newItemName]);
-  });
-
-  // A row written with no dialog is refused the same way while another device's content lands, and that device's value
-  // Is what stands — this write never reached it, so there is nothing of it to put back
-  test("keeps an adopted todo's value when its row write is refused", async () => {
-    expect.hasAssertions();
-
-    const todoListStore = await setupStore();
-    const { storeSaveResourceContent, toggleCompleted } = todoListStore;
+    const { toggleCompleted } = todoListStore;
     const { items } = storeToRefs(todoListStore);
     const { id } = takeOne(items.value);
-    const adoptedItem = new TodoListItem({ completedAt: new Date(0), id, name: itemName });
-    trpcMsw.todoList.saveResourceContent.mutation(() => {
-      storeSaveResourceContent({ items: [structuredClone(adoptedItem)] }, 1);
+    const reloadedItem = new TodoListItem({ completedAt: new Date(0), id, name: itemName });
+    trpcMsw.todoList.saveResourceContent.mutation(async () => {
+      content = { items: [structuredClone(reloadedItem)] };
+      await useResourceStore().reloadResourceContent();
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     const isSuccessful = await toggleCompleted(id);
 
     expect(isSuccessful).toBe(false);
-    expect(takeOne(items.value).completedAt).toStrictEqual(adoptedItem.completedAt);
+    expect(takeOne(items.value).completedAt).toStrictEqual(reloadedItem.completedAt);
   });
 
-  test("keeps an adopted order when a reorder is refused", async () => {
+  test("keeps a reloaded order when a reorder is refused", async () => {
     expect.hasAssertions();
 
     content = { items: [new TodoListItem({ name: itemName }), new TodoListItem({ name: newItemName })] };
     const todoListStore = await setupStore();
-    const { reorderItems, storeSaveResourceContent } = todoListStore;
+    const { reorderItems } = todoListStore;
     const { items } = storeToRefs(todoListStore);
-    const adoptedItems = structuredClone(toRawDeep(items.value)).toReversed();
-    trpcMsw.todoList.saveResourceContent.mutation(() => {
-      storeSaveResourceContent({ items: structuredClone(adoptedItems) }, 1);
+    const reloadedItems = structuredClone(toRawDeep(items.value)).toReversed();
+    trpcMsw.todoList.saveResourceContent.mutation(async () => {
+      content = { items: structuredClone(reloadedItems) };
+      await useResourceStore().reloadResourceContent();
       throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
-    const isSuccessful = await reorderItems(adoptedItems.map(({ id }) => id));
+    const isSuccessful = await reorderItems(reloadedItems.map(({ id }) => id));
 
     expect(isSuccessful).toBe(false);
     expect(items.value.map(({ name }) => name)).toStrictEqual([newItemName, itemName]);

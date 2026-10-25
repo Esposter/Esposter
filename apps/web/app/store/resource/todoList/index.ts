@@ -1,5 +1,4 @@
 import type { TodoListResource } from "#shared/models/resource/todoList/TodoListResource";
-import type { ResourceInResource } from "@esposter/db-schema";
 
 import { TodoListItem } from "#shared/models/resource/todoList/TodoListItem";
 import { ITEM_NAME_MAX_LENGTH } from "#shared/services/resource/item/constants";
@@ -18,7 +17,6 @@ import { normalizeString, toRawDeep } from "@esposter/shared";
 
 export const useTodoListStore = defineStore("resource/todoList", () => {
   const resourceStore = useResourceStore();
-  const { setPersistedContent, storeContentVersion } = resourceStore;
   const {
     content: todoList,
     loadContent,
@@ -37,19 +35,6 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     },
   });
   const searchQuery = ref("");
-  // Another device saved — adopt its content and contentVersion so this client renders live data
-  // And its own next save is not rejected as stale; the adopted content is what is now persisted
-  // Re-reads for two saves can land out of order, so content older than the version already held is dropped
-  const storeSaveResourceContent = (
-    content: TodoListResource,
-    contentVersion: ResourceInResource["contentVersion"],
-  ) => {
-    if (resourceStore.resource && contentVersion < resourceStore.resource.contentVersion) return;
-
-    todoList.value = content;
-    storeContentVersion(contentVersion);
-    setPersistedContent(content);
-  };
   const { createItem, deleteItem, updateItem } = createOperationData(items, ["id"], "Item");
   const { editedItem, isEditFormDialogOpen, originalItem, ...restEditFormData } = createEditFormData(
     computed(() => items.value),
@@ -62,7 +47,7 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
 
     const { id } = editedItem.value;
     // The unwind is this write's own item rather than a copy of the whole blob: another device's save is
-    // Adopted mid-flight through storeSaveResourceContent, and a blob-wide restore would drop that adopted
+    // Reloaded mid-flight, and a blob-wide restore would drop that reloaded
     // Content along with the rejected edit. Cloned before the write because updateItem assigns onto the live
     // Item, and read before it because originalItem is a computed over items
     const previousItem = originalItem.value ? structuredClone(toRawDeep(originalItem.value)) : undefined;
@@ -80,8 +65,7 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     const isSuccessful = await saveTodoList();
     if (isSuccessful) isEditFormDialogOpen.value = false;
     else if (!previousItem) deleteItem({ id });
-    // Against the list as it stands — `storeSaveResourceContent` adopts another device's content mid-flight, and
-    // That content is kept
+    // Against the list as it stands — another device's save reloads the list mid-flight, and that content is kept
     else if (isDeleteAction) items.value = getRestoredItems(items.value, previousItem, previousIndex);
     // Adopted content never held this edit, so its copy of the item is left as that device saved it
     else if (todoList.value === writtenTodoList) updateItem(previousItem);
@@ -177,7 +161,6 @@ export const useTodoListStore = defineStore("resource/todoList", () => {
     saveTodoList,
     searchQuery,
     sort,
-    storeSaveResourceContent,
     todoList,
     toggleCompleted,
     toggleImportant,
