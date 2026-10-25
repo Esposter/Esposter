@@ -4,14 +4,17 @@ import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument
 import type { FrameGeometry } from "@/models/pageBuilder/FrameGeometry";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
+import { TEST_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
+import { toMergeField } from "@/services/emailEditor/toMergeField";
 import { usePageBuilderDrag } from "@/composables/pageBuilder/usePageBuilderDrag";
 import { WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
 import { TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
 import { getSlotChildIds } from "@/services/pageBuilder/getSlotChildIds";
+import { emailKind } from "@/services/pageBuilder/emailKind";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
+import { MjmlNodeType } from "mjml-blocks";
 import { createPinia, setActivePinia } from "pinia";
 import { describe, expect, test, vi } from "vitest";
 
@@ -72,6 +75,86 @@ describe("usePageBuilderDrag", () => {
   };
   const ROOT_DOCUMENT: WebpageDocument = { content: [createText(TEXT_ONE), createText(TEXT_TWO)], root: TEST_ROOT };
   const TEXT_TITLE = WEBPAGE_NODE_TYPE_TITLE_MAP[WebpageNodeType.Text];
+
+  test("dragging a column into a text inserts a merge field", () => {
+    expect.hasAssertions();
+    setActivePinia(createPinia());
+    const COLUMN_NAME = "first_name";
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const EMAIL_TEXT_DOCUMENT = {
+      content: [
+        {
+          props: {
+            children: [
+              {
+                props: {
+                  children: [{ props: { content: TEST_TEXT_CONTENT, id: TEXT_ONE }, type: MjmlNodeType.Text }],
+                  id: "column",
+                },
+                type: MjmlNodeType.Column,
+              },
+            ],
+            id: "section",
+          },
+          type: MjmlNodeType.Section,
+        },
+      ],
+      root: { props: {} },
+    };
+    pageBuilderDocumentStore.setEmailDocument(RESOURCE_ID, emailKind, EMAIL_TEXT_DOCUMENT);
+    const announce = vi.fn<(message: string) => void>();
+    const { startMergeFieldDrag } = usePageBuilderDrag(
+      emailKind,
+      () => pageBuilderDocumentStore.getEmailDocument(RESOURCE_ID),
+      RESOURCE_ID,
+      announce,
+    );
+
+    startMergeFieldDrag(COLUMN_NAME, pointerAt("pointerdown", 0, 0), () => createGeometry());
+    window.dispatchEvent(pointerAt("pointermove", 100, 30));
+    window.dispatchEvent(pointerAt("pointerup", 100, 30));
+
+    expect(pageBuilderDocumentStore.getEmailDocument(RESOURCE_ID)).toStrictEqual({
+      content: [
+        {
+          props: {
+            children: [
+              {
+                props: {
+                  children: [
+                    {
+                      props: {
+                        content: {
+                          content: [
+                            {
+                              content: [
+                                { text: TEST_ID, type: "text" },
+                                { text: toMergeField(COLUMN_NAME), type: "text" },
+                              ],
+                              type: "paragraph",
+                            },
+                          ],
+                          type: "doc",
+                        },
+                        id: TEXT_ONE,
+                      },
+                      type: MjmlNodeType.Text,
+                    },
+                  ],
+                  id: "column",
+                },
+                type: MjmlNodeType.Column,
+              },
+            ],
+            id: "section",
+          },
+          type: MjmlNodeType.Section,
+        },
+      ],
+      root: { props: {} },
+    });
+    expect(announce).toHaveBeenCalledExactlyOnceWith(`Inserted merge field ${COLUMN_NAME}`);
+  });
 
   test("escape cancels a drag", () => {
     expect.hasAssertions();

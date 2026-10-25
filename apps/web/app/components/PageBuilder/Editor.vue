@@ -67,7 +67,7 @@ const { copySelected, cutSelected, pasteSelected } = usePageBuilderClipboard(
 );
 usePageBuilderHistoryCommands(() => resourceId);
 usePageBuilderStyleCommands(() => resourceId);
-const { dropTarget, isDragging, startPaletteDrag } = usePageBuilderDrag(
+const { dropTarget, isDragging, startMergeFieldDrag, startPaletteDrag } = usePageBuilderDrag(
   kind,
   getPageDocument,
   () => resourceId,
@@ -138,6 +138,7 @@ const handleEditorKeydown = (event: KeyboardEvent) => {
           :get-frame-geometry
           :kind
           :resource-id
+          :start-merge-field-drag
           :start-palette-drag
         />
         <PageBuilderLayers :get-document="getPageDocument" :kind :resource-id />

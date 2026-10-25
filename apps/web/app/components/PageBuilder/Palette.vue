@@ -14,24 +14,32 @@ interface Props {
   getFrameGeometry?: () => FrameGeometry | undefined;
   kind: AnyPageBuilderKind;
   resourceId: string;
+  startMergeFieldDrag?: (
+    columnName: string,
+    event: PointerEvent,
+    getFrameGeometry: () => FrameGeometry | undefined,
+  ) => void;
   startPaletteDrag?: (
     type: BlockNode["type"],
     event: PointerEvent,
     getFrameGeometry: () => FrameGeometry | undefined,
   ) => void;
 }
-const { announce, getDocument, getFrameGeometry, kind, resourceId, startPaletteDrag } = defineProps<Props>();
+const { announce, getDocument, getFrameGeometry, kind, resourceId, startMergeFieldDrag, startPaletteDrag } =
+  defineProps<Props>();
 const { insert } = usePageBuilderInsert(kind, getDocument, () => resourceId, announce);
 // The columns of the dataset an email is bound to, which only an email's shell provides, so a webpage lists none
 const mergeFieldColumns = useMergeFieldColumns();
 const insertMergeField = (columnName: string) =>
   insert(MjmlNodeType.Text, (id) => createMergeFieldNode(columnName, id));
 
-// A press starts a drag only where a frame can take the block, so a press that has no frame stays a click
+// A press starts a drag only where a frame can take the block or the column, so a press that has no frame stays a click
+const hasFrame = () => getFrameGeometry?.() !== undefined;
 const startDrag = (type: BlockNode["type"], event: PointerEvent) => {
-  if (!getFrameGeometry || !startPaletteDrag || getFrameGeometry() === undefined) return;
-
-  startPaletteDrag(type, event, getFrameGeometry);
+  if (startPaletteDrag && getFrameGeometry && hasFrame()) startPaletteDrag(type, event, getFrameGeometry);
+};
+const startColumnDrag = (columnName: string, event: PointerEvent) => {
+  if (startMergeFieldDrag && getFrameGeometry && hasFrame()) startMergeFieldDrag(columnName, event, getFrameGeometry);
 };
 </script>
 
@@ -48,9 +56,13 @@ const startDrag = (type: BlockNode["type"], event: PointerEvent) => {
     <section v-if="mergeFieldColumns.length > 0" flex flex-col gap-2>
       <h3 text-sm text-muted>Merge fields</h3>
       <div flex flex-wrap gap-2>
-        <UiButton v-for="columnName of mergeFieldColumns" :key="columnName" @click="insertMergeField(columnName)">{{
-          columnName
-        }}</UiButton>
+        <UiButton
+          v-for="columnName of mergeFieldColumns"
+          :key="columnName"
+          @click="insertMergeField(columnName)"
+          @pointerdown="startColumnDrag(columnName, $event)"
+          >{{ columnName }}</UiButton
+        >
       </div>
     </section>
   </div>
