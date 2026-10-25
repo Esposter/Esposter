@@ -6,14 +6,11 @@ import type { RegistryCheckError } from "#src/models/outdatedDependencies/shared
 import { getSpecifierBase } from "#src/services/outdatedDependencies/getSpecifierBase";
 import { getVersionChangeLevel } from "#src/services/outdatedDependencies/getVersionChangeLevel";
 import { checkIsVersionOutdated } from "#src/services/outdatedDependencies/registry/checkIsVersionOutdated";
-import { REGISTRY_CONCURRENCY } from "#src/services/outdatedDependencies/registry/constants";
+import { DIGEST_DEPENDENCY_TYPE, REGISTRY_CONCURRENCY } from "#src/services/outdatedDependencies/registry/constants";
+import { getShortDigest } from "#src/services/outdatedDependencies/registry/getShortDigest";
 import { GroupMetadataMap } from "#src/services/outdatedDependencies/registry/GroupMetadataMap";
 import { forEachConcurrently } from "#src/services/shared/forEachConcurrently";
 import { getResultAsync } from "@esposter/shared";
-
-const DIGEST_DEPENDENCY_TYPE = "digest";
-// A digest's first seven hex characters, as git abbreviates a commit, which tell two digests apart in a table
-const getShortDigest = (digest: string): string => digest.replace(/^sha256:/u, "").slice(0, 7);
 
 // `concurrency` bounds how many requests one source sees at once: the npm registry's default, or every entry at once
 // For a caller whose entries are each a different repository or image

@@ -1,9 +1,6 @@
 import type { ColorPalette } from "#src/models/outdatedDependencies/print/ColorPalette";
 
-// ANSI SGR escape sequences for terminal color; the reset code returns the foreground to the default.
-const escape = "\u001B";
-const reset = `${escape}[39m`;
-const wrap = (code: number, text: string) => `${escape}[${code}m${text}${reset}`;
+import { wrap } from "#src/services/outdatedDependencies/print/wrap";
 
 export const createColor = (isColorEnabled: boolean): ColorPalette => ({
   cyan: (text) => (isColorEnabled ? wrap(36, text) : text),
