@@ -1,9 +1,4 @@
-// One condition a story's open or finish list names, as the dump writes it: its kind, which the dump leaves out when the kind
-// Is none, the enum's first value, and the numbers it is read with
-export interface ExcelFetterCondition {
-  condType?: string;
-  paramList: number[];
-}
+import type { ExcelFetterCondition } from "#src/models/genshinAssets/profile/ExcelFetterCondition";
 
 // One story of a character's fetters in the dump's FetterStory table: the character it belongs to, the conditions it opens
 // On, and the text ids of its title and text
