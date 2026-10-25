@@ -1,4 +1,3 @@
-// @vitest-environment nuxt
 import { useDisplayWidths } from "@/composables/dungeons/UI/healthBar/useDisplayWidths";
 import { describe, expect, test } from "vitest";
 import { nextTick, ref } from "vue";

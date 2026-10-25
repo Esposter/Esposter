@@ -1,4 +1,3 @@
-// @vitest-environment nuxt
 import type { Effect } from "@/models/dungeons/npc/effect/Effect";
 import type { SceneWithPlugins } from "vue-phaserjs";
 

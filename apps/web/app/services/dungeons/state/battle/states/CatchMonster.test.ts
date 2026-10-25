@@ -1,4 +1,3 @@
-// @vitest-environment nuxt
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { Save } from "#shared/models/dungeons/data/Save";

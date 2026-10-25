@@ -1,4 +1,3 @@
-// @vitest-environment nuxt
 import { getInitialSettings } from "#shared/models/dungeons/data/settings/Settings";
 import { SettingsOption } from "#shared/models/dungeons/data/settings/SettingsOption";
 import { useSettingsStore } from "@/store/dungeons/settings";

@@ -1,4 +1,3 @@
-// @vitest-environment nuxt
 import type { Types } from "phaser";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
