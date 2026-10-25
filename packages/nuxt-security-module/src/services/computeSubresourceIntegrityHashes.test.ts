@@ -1,10 +1,10 @@
 import type { Nitro } from "nitro/types";
 
 import { computeSubresourceIntegrityHashes } from "#src/services/computeSubresourceIntegrityHashes";
-import { afterEach, beforeEach, describe, expect, test } from "vitest";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 describe(computeSubresourceIntegrityHashes, () => {
   const SCRIPT_CONTENT = "entry";

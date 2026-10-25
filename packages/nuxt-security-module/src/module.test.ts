@@ -4,17 +4,17 @@ import type { Nitro } from "nitro/types";
 import securityModule from "#src/module";
 import { MODULE_NAME } from "#src/runtime/constants";
 import { addServerTemplate } from "@nuxt/kit";
-import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { afterEach, assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock("@nuxt/kit", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@nuxt/kit")>()),
-  addNitroPlugin: vi.fn(),
-  addServerHandler: vi.fn(),
-  addServerTemplate: vi.fn(),
-  addTypeTemplate: vi.fn(),
+  addNitroPlugin: vi.fn<typeof import("@nuxt/kit").addNitroPlugin>(),
+  addServerHandler: vi.fn<typeof import("@nuxt/kit").addServerHandler>(),
+  addServerTemplate: vi.fn<typeof import("@nuxt/kit").addServerTemplate>(),
+  addTypeTemplate: vi.fn<typeof import("@nuxt/kit").addTypeTemplate>(),
 }));
 
 describe(securityModule, () => {

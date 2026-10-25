@@ -39,7 +39,7 @@ describe("childProcessImport", () => {
     directory = mkdtempSync(join(tmpdir(), "child-process-import-"));
     writeFileSync(join(directory, PROBE_FILENAME), PROBE_SOURCE);
 
-    const { stdout, status, stderr } = spawnSync(
+    const { status, stderr, stdout } = spawnSync(
       process.execPath,
       [
         OXLINT_BIN,
