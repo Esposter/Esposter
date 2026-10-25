@@ -1,5 +1,6 @@
 // @vitest-environment nuxt
 import type { ButtonNodeProps } from "#shared/models/pageBuilder/ButtonNodeProps";
+import type { WebpageNode } from "#shared/models/pageBuilder/WebpageNode";
 
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
@@ -71,7 +72,7 @@ describe(useVersionHistoryStore, () => {
     const webpage = createResourceListItem({ type: ResourceType.Webpage });
     const buttonId = crypto.randomUUID();
     // The restored draft's label differs from the one the undo would write back, so a surviving entry is visible
-    const restoredContent = [
+    const restoredContent: WebpageNode[] = [
       { props: { href: TEST_URL, id: buttonId, label: TEST_RESTORED_LABEL }, type: WebpageNodeType.Button },
     ];
     let content = new WebpageEditor({ content: [createButton(buttonId)] });
@@ -79,7 +80,7 @@ describe(useVersionHistoryStore, () => {
     trpcMsw.resource.readResource.query(() => ({ ...webpage, publication: null }));
     trpcMsw.webpage.readResourceContent.query(() => content);
     trpcMsw.webpage.readResourcePublication.query(() => undefined);
-    trpcMsw.resource.restoreSnapshotVersion.mutation(() => ({ undoRevisionVersion: undefined }));
+    trpcMsw.resource.restoreSnapshotVersion.mutation(() => ({ resource: webpage, undoRevisionVersion: undefined }));
     trpcMsw.resource.readSnapshotHistory.query(() => []);
     const resourceStore = useResourceStore();
     await resourceStore.readResource();
@@ -118,7 +119,7 @@ describe(useVersionHistoryStore, () => {
     trpcMsw.resource.readResource.query(() => ({ ...email, publication: null }));
     trpcMsw.email.readResourceContent.query(() => content);
     trpcMsw.email.readResourcePublication.query(() => undefined);
-    trpcMsw.resource.restoreSnapshotVersion.mutation(() => ({ undoRevisionVersion: undefined }));
+    trpcMsw.resource.restoreSnapshotVersion.mutation(() => ({ resource: email, undoRevisionVersion: undefined }));
     trpcMsw.resource.readSnapshotHistory.query(() => []);
     const resourceStore = useResourceStore();
     await resourceStore.readResource();
