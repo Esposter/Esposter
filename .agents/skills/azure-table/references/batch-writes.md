@@ -4,7 +4,7 @@ Read when writing many entities that share a `partitionKey`, or when a batched w
 
 ## One round trip per batch, never per row
 
-A loop of `createEntity`/`updateEntity` awaits is one network latency per row, so an unremarkable write of a thousand rows becomes a thousand sequential calls on a request a user is waiting on — the Azure-side twin of the `drizzle` skill's `SKILL.md`, "Batch Inserts". Partition-per-owner designs (`partitionKey = roomId`, `= programId`) mean the writes usually already qualify, so check whether they do before reaching for `Promise.all`. Paginate at `AZURE_MAX_PAGE_SIZE` and chunk transactions at `AZURE_MAX_BATCH_SIZE`, never with an index-stepping `for` and `.slice()`.
+A loop of `createEntity`/`updateEntity` awaits is one network latency per row, so an unremarkable write of a thousand rows becomes a thousand sequential calls on a request a user is waiting on — the Azure-side twin of the `drizzle` skill ("Batch Inserts"). Partition-per-owner designs (`partitionKey = roomId`, `= programId`) mean the writes usually already qualify, so check whether they do before reaching for `Promise.all`. Paginate at `AZURE_MAX_PAGE_SIZE` and chunk transactions at `AZURE_MAX_BATCH_SIZE`, never with an index-stepping `for` and `.slice()`.
 
 ## `submitTransactionBatches`
 
