@@ -104,7 +104,7 @@ A survey invite in a webpage or an email SHALL link its survey, so that deleting
 
 ### Requirement: A webpage exports as one HTML file
 
-A webpage SHALL export as one self-contained HTML file showing the page as published.
+A webpage SHALL export as one self-contained HTML file showing the page as the editor holds it, rendered by the same function the publish bakes it with.
 
 #### Scenario: Exporting a webpage downloads one HTML file
 
