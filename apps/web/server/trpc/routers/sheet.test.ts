@@ -79,29 +79,30 @@ describe("sheetRouter", () => {
     expect(content?.data.rows[0]?.data[column.id]).toBe(cell);
   });
 
-  // A Sheet of the given columns and rows, saved as the first content of a new resource for a command to run on
+  // The content of a Sheet of the given columns and rows, with the metadata and settings every Sheet carries
+  const createSheetResource = (columns: Column[], rows: Row[]): SheetResource => ({
+    data: {
+      columns,
+      metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(0), name: "", size: 0 },
+      rows,
+    },
+    settings: { configuration: { delimiter: CsvDelimiter.Comma }, type: DataSourceType.Csv },
+  });
+
+  // A Sheet saved as the first content of a new resource, for a command to run on; answers the saved resource
   const createSheet = async (columns: Column[], rows: Row[]) => {
     const newResource = await caller.createResource({ name });
-    const sheetResource: SheetResource = {
-      data: {
-        columns,
-        metadata: { dataSourceType: DataSourceType.Csv, importedAt: new Date(0), name: "", size: 0 },
-        rows,
-      },
-      settings: { configuration: { delimiter: CsvDelimiter.Comma }, type: DataSourceType.Csv },
-    };
-    await caller.saveResourceContent({
-      content: sheetResource,
+    return caller.saveResourceContent({
+      content: createSheetResource(columns, rows),
       contentVersion: newResource.contentVersion,
       id: newResource.id,
     });
-    return newResource.id;
   };
 
   test("Column rename re-keys every row", async () => {
     expect.hasAssertions();
 
-    const id = await createSheet([new StringColumn({ name: "old" })], [new Row({ data: { old: "value" } })]);
+    const { id } = await createSheet([new StringColumn({ name: "old" })], [new Row({ data: { old: "value" } })]);
 
     await caller.runSheetCommand({
       command: { name: "old", type: CommandType.UpdateColumn, updatedColumn: new StringColumn({ name: "new" }) },
@@ -116,7 +117,7 @@ describe("sheetRouter", () => {
   test("Column type change converts every cell", async () => {
     expect.hasAssertions();
 
-    const id = await createSheet(
+    const { id } = await createSheet(
       [new StringColumn({ name: "amount" })],
       [new Row({ data: { amount: "12" } }), new Row({ data: { amount: "x" } })],
     );
@@ -133,7 +134,7 @@ describe("sheetRouter", () => {
   test("Date format change rewrites every date", async () => {
     expect.hasAssertions();
 
-    const id = await createSheet(
+    const { id } = await createSheet(
       [new DateColumn({ format: DateFormat["YYYY/MM/DD"], name: "day" })],
       [new Row({ data: { day: "2026/10/25" } })],
     );
@@ -149,5 +150,52 @@ describe("sheetRouter", () => {
     const content = await caller.readResourceContent({ id });
 
     expect(content?.data.rows.map(({ data }) => data.day)).toStrictEqual(["25-10-2026"]);
+  });
+
+  test("A command lands on its row after a row is inserted above it", async () => {
+    expect.hasAssertions();
+
+    const column = new StringColumn({ name: "status" });
+    const firstRow = new Row({ data: { status: "open" } });
+    const row = new Row({ data: { status: "open" } });
+    const { contentVersion, id } = await createSheet([column], [firstRow, row]);
+    // The owner inserts a row above the one the agent names
+    const insertedRow = new Row({ data: { status: "inserted" } });
+    await caller.saveResourceContent({
+      content: createSheetResource([column], [insertedRow, firstRow, row]),
+      contentVersion,
+      id,
+    });
+
+    await caller.runSheetCommand({
+      command: { data: { status: "done" }, rowId: row.id, type: CommandType.UpdateRow },
+      id,
+    });
+    const content = await caller.readResourceContent({ id });
+
+    expect(content?.data.rows.map(({ data }) => data.status)).toStrictEqual(["inserted", "open", "done"]);
+  });
+
+  test("A command based on older content applies to the newer content", async () => {
+    expect.hasAssertions();
+
+    const column = new StringColumn({ name: "status" });
+    const firstRow = new Row({ data: { status: "open" } });
+    const row = new Row({ data: { status: "open" } });
+    const { contentVersion, id } = await createSheet([column], [firstRow, row]);
+    // The owner edits the first row after the agent read the Sheet
+    await caller.saveResourceContent({
+      content: createSheetResource([column], [new Row({ data: { status: "edited" }, id: firstRow.id }), row]),
+      contentVersion,
+      id,
+    });
+
+    await caller.runSheetCommand({
+      command: { data: { status: "done" }, rowId: row.id, type: CommandType.UpdateRow },
+      id,
+    });
+    const content = await caller.readResourceContent({ id });
+
+    expect(content?.data.rows.map(({ data }) => data.status)).toStrictEqual(["edited", "done"]);
   });
 });

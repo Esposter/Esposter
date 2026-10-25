@@ -12,7 +12,7 @@ export const sheetRouter = router({
     .meta({
       mcp: {
         description:
-          "Run one of the sheet editor's own commands on a Sheet, so every row changes as the editor would change it: rename a column, or change its type or its date format. Pass the contentVersion you read and the command is refused if the Sheet changed since; left out, it applies to the latest content. Answers the new contentVersion.",
+          "Run one of the sheet editor's own commands on a Sheet, so every row changes as the editor would change it: rename a column, change its type or its date format, or set the cells of a row named by its id, which still lands on that row after rows are inserted above it. Pass the contentVersion you read and the command is refused if the Sheet changed since; left out, it applies to the latest content. Answers the new contentVersion.",
         scope: McpScope.Resources,
       },
     })

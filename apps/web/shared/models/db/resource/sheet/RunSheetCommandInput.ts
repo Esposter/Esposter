@@ -2,6 +2,7 @@ import { resourceIdInputSchema } from "#shared/models/db/resource/ResourceIdInpu
 import { aNamedItemEntitySchema } from "#shared/models/entity/ANamedItemEntity";
 import { columnSchema } from "#shared/models/resource/sheet/column/Column";
 import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";
+import { rowSchema } from "#shared/models/resource/sheet/datasource/Row";
 import { selectResourceInResourceSchema } from "@esposter/db-schema";
 import { z } from "zod";
 
@@ -15,6 +16,12 @@ export const runSheetCommandInputSchema = z.object({
       updatedColumn: columnSchema.meta({
         description: "The column as it should be after the change: its name, its type and its format",
       }),
+    }),
+    z.object({
+      // Only the cells named here change; the row's other cells are left as the Sheet has them
+      data: rowSchema.shape.data.meta({ description: "The cells to set, keyed by column name" }),
+      rowId: rowSchema.shape.id.meta({ description: "The row's id, as readResourceContent gave it" }),
+      type: z.literal(CommandType.UpdateRow),
     }),
   ]),
   ...resourceIdInputSchema.shape,

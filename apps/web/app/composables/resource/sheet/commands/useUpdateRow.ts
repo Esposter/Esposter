@@ -1,6 +1,6 @@
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 
-import { UpdateRowCommand } from "@/models/resource/sheet/commands/UpdateRowCommand";
+import { UpdateRowCommand } from "#shared/models/resource/sheet/commands/UpdateRowCommand";
 import { takeOne, toRawDeep } from "@esposter/shared";
 
 export const useUpdateRow = () =>
