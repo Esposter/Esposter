@@ -8,7 +8,7 @@
 ## 2. Phase two: webpage editor
 
 - [x] 2.1 Build the canvas, the style panel and their keyboard paths, as the canvas and style-panel changes specify. Verify: a test named after the scenario 'A block can be moved with the keyboard alone'.
-- [x] 2.2 Type the page builder's node-keyed services over the kind alone, so the four generic constraints (node, root, definition, document) are written once in `PageBuilderKind` and not copied into each service header, which the duplicate-code rule flags across `getNodeIdAt`, `getNodePointer`, `getParentNodeId`, `getSlotChildIds`, `getSlotOwnerId`, `getEmptyContainerSlotPointer` and `getCandidateSlotPointers`. Verify: the workspace duplicate-code rule's test 'finds no clone in the scan' in `scripts/src/workspace/duplicateCode.test.ts` passes over `apps/web/app/services/pageBuilder`.
+- [x] 2.2 Type the page builder's node-keyed services over the kind alone, so the four generic constraints (node, root, definition, document) are written once in `PageBuilderHelper` over `PageBuilderKind` and not copied into each service header, across `getNodeIdAt`, `getNodePointer`, `getParentNodeId`, `getSlotChildIds`, `getSlotOwnerId`, `getEmptyContainerSlotPointer` and `getCandidateSlotPointers`. Verify: the workspace duplicate-code rule's test 'finds no clone in the scan' in `scripts/src/workspace/duplicateCode.test.ts` passes over `apps/web/app/services/pageBuilder`.
 
 ## 3. Phase three: email editor
 
