@@ -14,7 +14,7 @@ import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWi
 import { withReferencePage } from "#src/services/genshinParity/shared/withReferencePage";
 import { checkIsPartInterior } from "#src/services/genshinParity/sky/checkIsPartInterior";
 import { computeFogOpacity } from "#src/services/genshinParity/sky/computeFogOpacity";
-import { DEPTH_BANDS, FOG_TOP_DEPTH_BAND } from "#src/services/genshinParity/sky/constants";
+import { FOG_DEPTH_BANDS } from "#src/services/genshinParity/sky/constants";
 import { getPixelSceneColor } from "#src/services/genshinParity/sky/getPixelSceneColor";
 import { solveFogColors } from "#src/services/genshinParity/sky/solveFogColors";
 import { toDisplayHex } from "#src/services/genshinParity/sky/toDisplayHex";
@@ -32,7 +32,6 @@ const GOLDEN_SHARE = (Math.sqrt(5) - 1) / 2;
 // Distance and angle rather than rewarding a fog that washes every texel to the mean
 const SCATTER_BIN_COUNT = 4;
 const MIN_BIN_COUNT = 100;
-const FOG_DEPTH_BANDS: readonly number[] = [...DEPTH_BANDS, FOG_TOP_DEPTH_BAND];
 // A reference's haze solved over the parts the witness draws: each part's interior pixel past the fog's start, its
 // Reference colour and ours drawn without the fog both taken back through the tone mapping into the scene's own colour
 // (`toSceneColor`), so the fog's mix is linear in them. For a density, each pixel's opacity follows from its depth, its

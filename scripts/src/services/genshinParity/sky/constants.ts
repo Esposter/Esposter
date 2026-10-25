@@ -25,3 +25,6 @@ export const DEPTH_BANDS: readonly number[] = [0, 10, 20, 40, 80, 160, 320, 640]
 // And the stone light's is open to any depth
 export const FOG_TOP_DEPTH_BAND = 1280;
 export const STONE_LIGHT_TOP_DEPTH_BAND = Infinity;
+// The table each solve bins by: DEPTH_BANDS closed by its own open top band
+export const FOG_DEPTH_BANDS: readonly number[] = [...DEPTH_BANDS, FOG_TOP_DEPTH_BAND];
+export const STONE_LIGHT_DEPTH_BANDS: readonly number[] = [...DEPTH_BANDS, STONE_LIGHT_TOP_DEPTH_BAND];
