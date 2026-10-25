@@ -75,7 +75,7 @@ Never expose `sessionId` or any raw session identifier as a store state field. A
 
 - `references/keyed-state-and-pagination.md` — when a store keys state by an id, holds a list of entities, or paginates one.
 - `references/mutation-actions.md` — when writing a store action that calls a tRPC mutation, or picking its `key`.
-- `references/cross-surface-state.md` — when more than one mounted surface displays or mutates the same server-side singular state, a mutation must fan out to another store, or a caller has to await something a singleton component finishes.
+- `references/cross-surface-state.md` — when more than one mounted surface displays or mutates the same server-side singular state.
 - `references/class-instances-in-state.md` — when a class or third-party instance is pushed into store state.
 - `references/blade-scoped-state.md` — when a component populates a store ref for code outside its subtree, or tears one down on a keyed route.
 - `references/consuming-a-store.md` — when anything takes a store in: the binding, the grouping, dot-access, store-to-store, and the module cycle.
@@ -85,3 +85,5 @@ Never expose `sessionId` or any raw session identifier as a store state field. A
 - `references/crud.md` — when naming or writing a store's create, update, delete or `store*` method.
 - `references/action-inputs.md` — when writing a store action's parameters.
 - `references/reuse-store-maps.md` — when an action receives entities another store already caches.
+- `references/awaiting-singleton-components.md` — when a caller has to await something a singleton component finishes.
+- `references/hook-registries.md` — when a mutation must fan out to a side effect owned by another store, or a hook registry is created or fired.
