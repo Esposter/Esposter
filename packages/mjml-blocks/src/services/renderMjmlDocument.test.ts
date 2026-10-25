@@ -325,6 +325,7 @@ describe(renderMjmlDocument, () => {
     const inviteType = {
       allowedAttributes: {},
       defaultAttributes: {},
+      formSchema: z.strictObject({}),
       hasAlternativeText: false,
       propsSchema: z.strictObject({}),
       render: (_node, _slots, context) => ({ attributes: { href: context }, content: "", tagName: "mj-button" }),

@@ -8,11 +8,11 @@ import { describe, expect, expectTypeOf, test } from "vitest";
 
 declare const definitionFields: Pick<
   MjmlBlockTypeDefinition,
-  "allowedAttributes" | "defaultAttributes" | "hasAlternativeText" | "render" | "slots" | "type"
+  "allowedAttributes" | "defaultAttributes" | "formSchema" | "hasAlternativeText" | "render" | "slots" | "type"
 >;
 declare const buttonFields: Pick<
   MjmlBlockTypeDefinition<MjmlButtonNode>,
-  "allowedAttributes" | "defaultAttributes" | "hasAlternativeText" | "render" | "slots" | "type"
+  "allowedAttributes" | "defaultAttributes" | "formSchema" | "hasAlternativeText" | "render" | "slots" | "type"
 >;
 declare const numberContentSchema: z.ZodObject<{ content: z.ZodNumber }>;
 declare const stringContentSchema: z.ZodObject<{ content: z.ZodString }>;
