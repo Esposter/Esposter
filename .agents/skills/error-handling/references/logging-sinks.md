@@ -2,7 +2,7 @@
 
 Read when writing an err handler, logging a failure, or writing a notice for an expected degradation. The one-line rules are in `SKILL.md`; this page is the sinks and the one place `console.warn` stays.
 
-- Never `catch {}` (silent swallow). Never `console.warn` — always `.orTee(console.error)`; `console.warn` handed to any handler slot is a `no-restricted-syntax` error. A process that writes somewhere more specific than the console changes that sink: an Azure Functions handler logs through its `InvocationContext` (`context.error`) so the failure is attached to the invocation rather than the process, and `console.*` there is banned outright. **The ban is on `console.warn` as an
+- Never `catch {}` (silent swallow). Never `console.warn` — always `.orTee(console.error)`; `console.warn` handed to any handler slot is a `no-restricted-syntax` error. A process that writes somewhere more specific than the console changes that sink: an Azure Functions handler logs through its `InvocationContext` (`context.error`) so the failure is attached to the invocation rather than the process, which is why a handler uses it rather than `console.*`. **The ban is on `console.warn` as an
   err handler** — a failure downgraded to a warning is a failure nobody reads. A notice that no chain produced keeps
   it: a browser without autoplay or background processors, an anonymous request on a local production build with no
   address to key a limiter on — each is an expected degradation on a path that has not failed, and `console.error`

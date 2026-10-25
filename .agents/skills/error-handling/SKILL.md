@@ -13,13 +13,15 @@ description: Apply when handling errors or logging in components, composables, s
 - **A rule for a fire-and-forget body that does not terminate** — whether the body has anything to terminate is a question about what it calls: a body whose whole work is an `executeMutation` with an `onError` is already done.
 - **Reaching a template's inline alert from `error-alert/no-raw-error-alert`** — oxlint hands a JS plugin no Vue template.
 - **Banning `console.warn` outright** — a notice with its own sentence is allowed; the handler slot is the swallow, and that half is the selector.
+- **A base error class writing `this.name = new.target.name`** — the minifier mangles class names, so every client-side error would report a one-letter name; each class writes its name as a literal (`references/error-classes.md`).
 
 ## Deep dives
 
 - `references/result-chains.md` — when shaping one chain: a fallback value, an alert, a mid-chain side effect, an `instanceof` branch on the error, or an abort/cancel.
 - `references/alerting.md` — when wiring the error path of a tRPC call, or a background read that must not alert.
 - `references/finalizers.md` — when a chain has to release something whichever way it resolves: `withFinalizer` or `withFinalizerAsync`, and when neither is the shape.
-- `references/server-guards.md` — when a tRPC router or server route guards a nullable DB result, attaches a `cause` to a `TRPCError`, or has a fire-and-forget tail on a path a caller rolls back.
+- `references/server-guards.md` — when a tRPC router or server route guards a nullable DB result, or attaches a `cause` to a `TRPCError`.
+- `references/rollback-compensated-effects.md` — when a function has a fire-and-forget tail and a failure path a caller rolls back through.
 - `references/ban-exceptions.md` — when a callback must become a rejection, a throw is being kept synchronous for a test, or a `.then`/`.catch`/`.finally` looks unavoidable.
 - `references/azure-functions.md` — when writing or changing an Azure Functions handler, its dead-letter replay, or a handler that enumerates its own work from a query.
 - `references/throwing.md` — when a code path throws, or a mock stubs a vendor method it never serves.
@@ -51,7 +53,6 @@ import { getResult, getResultAsync, noop, withFinalizer, withFinalizerAsync } fr
 ```
 
 - Always use `getResult(() => expr)` / `getResultAsync(() => asyncExpr)` — neverthrow's `fromThrowable`/`fromPromise` called directly is a `no-restricted-syntax` error, disabled only where `@esposter/shared` cannot be imported (`references/no-shared-import.md`).
-- **Each error class writes `this.name` as a literal**, never `new.target.name`, which the minifier mangles (`references/error-classes.md`).
 - **Wrap only what can actually fail** — a pure step is called bare (`references/wrapping.md`).
 - **Never leave a `Result` unterminated** — `.match` or `.unwrapOr`; no lint rule can see it, so it is a review catch and `pnpm ai:sweep:unterminated-results` a scan (`references/wrapping.md`).
 - **`._unsafeUnwrap()` and `._unsafeUnwrapErr()` are banned, tests included** (`no-underscore-dangle`, which allows only Zod's `_def`). A test asserts the error with `.match(noop, (error) => error)`, and a step that must succeed, or a value it reads, takes `.match(onOk, (error) => { throw error; })`, so a failure surfaces as the error itself.
