@@ -1,12 +1,8 @@
 import type { RenameMap } from "#src/models/identifiers/rename/RenameMap";
 
+import { getAlternation } from "#src/services/identifiers/rename/getAlternation";
 import { getBoundNames } from "#src/services/identifiers/rename/getBoundNames";
 import ts from "typescript";
-
-const getAlternation = (names: Iterable<string>) =>
-  Array.from(names, (name) => RegExp.escape(name))
-    .toSorted((firstName, secondName) => secondName.length - firstName.length)
-    .join("|");
 
 // Renames every name the map holds in one TypeScript source, where the source binds it and only in code, read from
 // The syntax tree rather than the text. A key that merely shares the spelling (`{ users: … }`) and a property read
