@@ -1,6 +1,6 @@
 ## 1. One subscription for every type
 
-- [ ] 1.1 Run one save subscription for the open resource, whatever its type, and stream the new version and the writing device rather than the content. Verify: a test named after the scenario 'An open resource of any type hears another device's save', failing first, then passing; and the scenario 'A device does not hear its own save'.
+- [x] 1.1 Run one save subscription for the open resource, whatever its type, and stream the new version and the writing device rather than the content. Verify: a test named after the scenario 'An open resource of any type hears another device's save', failing first, then passing; and the scenario 'A device does not hear its own save'.
 
 ## 2. Adoption
 
