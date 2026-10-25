@@ -63,7 +63,33 @@ describe(getAgentJsonSchema, () => {
   const ResourceTypeUnwritablePathsMap = {
     Blueprint: ["/entries/-/content"],
     Dashboard: [],
-    Email: ["/html", "/*", "/pages/-"],
+    Email: [
+      "/content/-/props/children/-/props/children/-/props/children/-/props/children/-/props/children/-/props/children/-/props/content/*",
+      "/content/-/props/children/-/props/children/-/props/children/-/props/children/-/props/children/-/props/children/-/props/content/attrs/*",
+      "/content/-/props/children/-/props/children/-/props/children/-/props/children/-/props/children/-/props/children/-/props/content/marks/-/*",
+      "/content/-/props/children/-/props/children/-/props/children/-/props/children/-/props/children/-/props/children/-/props/content/marks/-/attrs/*",
+      "/content/-/props/children/-/props/children/-/props/children/-/props/children/-/props/children/-/props/content/*",
+      "/content/-/props/children/-/props/children/-/props/children/-/props/children/-/props/children/-/props/content/attrs/*",
+      "/content/-/props/children/-/props/children/-/props/children/-/props/children/-/props/children/-/props/content/marks/-/*",
+      "/content/-/props/children/-/props/children/-/props/children/-/props/children/-/props/children/-/props/content/marks/-/attrs/*",
+      "/content/-/props/children/-/props/children/-/props/children/-/props/children/-/props/content/*",
+      "/content/-/props/children/-/props/children/-/props/children/-/props/children/-/props/content/attrs/*",
+      "/content/-/props/children/-/props/children/-/props/children/-/props/children/-/props/content/marks/-/*",
+      "/content/-/props/children/-/props/children/-/props/children/-/props/children/-/props/content/marks/-/attrs/*",
+      "/content/-/props/children/-/props/children/-/props/children/-/props/content/*",
+      "/content/-/props/children/-/props/children/-/props/children/-/props/content/attrs/*",
+      "/content/-/props/children/-/props/children/-/props/children/-/props/content/marks/-/*",
+      "/content/-/props/children/-/props/children/-/props/children/-/props/content/marks/-/attrs/*",
+      "/content/-/props/children/-/props/children/-/props/content/*",
+      "/content/-/props/children/-/props/children/-/props/content/attrs/*",
+      "/content/-/props/children/-/props/children/-/props/content/marks/-/*",
+      "/content/-/props/children/-/props/children/-/props/content/marks/-/attrs/*",
+      "/content/-/props/children/-/props/content/*",
+      "/content/-/props/children/-/props/content/attrs/*",
+      "/content/-/props/children/-/props/content/marks/-/*",
+      "/content/-/props/children/-/props/content/marks/-/attrs/*",
+      "/html",
+    ],
     Flowchart: [],
     Note: ["/doc/*", "/doc/attrs/*", "/doc/marks/-/*", "/doc/marks/-/attrs/*"],
     Program: [],
@@ -75,15 +101,26 @@ describe(getAgentJsonSchema, () => {
     ],
     Survey: [],
     TodoList: [],
-    Webpage: ["/css", "/html", "/*", "/pages/-"],
+    Webpage: [
+      "/content/-/props/content/*",
+      "/content/-/props/content/attrs/*",
+      "/content/-/props/content/marks/-/*",
+      "/content/-/props/content/marks/-/attrs/*",
+      "/html",
+    ],
   } as const satisfies Record<ResourceType, string[]>;
 
-  test.each(ResourceTypes)("describes the %s content as an object, its unwritable paths recorded", (type) => {
+  test.each(ResourceTypes)("A type whose content schema is not an object fails CI: %s", (type) => {
+    expect.hasAssertions();
+
+    expect(getAgentJsonSchema(ResourceDefinitionMap[type].contentSchema).type).toBe("object");
+  });
+
+  test.each(ResourceTypes)("A change to a type's described surface fails CI until it is recorded: %s", (type) => {
     expect.hasAssertions();
 
     const jsonSchema = getAgentJsonSchema(ResourceDefinitionMap[type].contentSchema);
 
-    expect(jsonSchema.type).toBe("object");
     expect(new Set(readUnwritablePaths(jsonSchema, jsonSchema))).toStrictEqual(
       new Set(ResourceTypeUnwritablePathsMap[type]),
     );
