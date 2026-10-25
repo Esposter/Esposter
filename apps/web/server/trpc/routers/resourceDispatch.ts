@@ -37,20 +37,23 @@ interface FileCaller {
   generateUploadFileSasEntities: (input: GenerateUploadFileSasEntitiesInput) => Promise<ResourceFileSasEntity[]>;
 }
 
-const publishCallers: Record<PublishableResourceType, (ctx: Context) => PublishCaller> = {
-  [ResourceType.Dashboard]: (ctx) => createCallerFactory(dashboardRouter)(ctx),
-  [ResourceType.Email]: (ctx) => createCallerFactory(emailRouter)(ctx),
-  [ResourceType.Flowchart]: (ctx) => createCallerFactory(flowchartRouter)(ctx),
-  [ResourceType.Note]: (ctx) => createCallerFactory(noteRouter)(ctx),
-  [ResourceType.Survey]: (ctx) => createCallerFactory(surveyRouter)(ctx),
-  [ResourceType.Webpage]: (ctx) => createCallerFactory(webpageRouter)(ctx),
+// The one record of every router the dispatch reaches, keyed by resource type; each router is named once, here
+const resourceCallers = {
+  [ResourceType.Dashboard]: (ctx: Context) => createCallerFactory(dashboardRouter)(ctx),
+  [ResourceType.Email]: (ctx: Context) => createCallerFactory(emailRouter)(ctx),
+  [ResourceType.Flowchart]: (ctx: Context) => createCallerFactory(flowchartRouter)(ctx),
+  [ResourceType.Note]: (ctx: Context) => createCallerFactory(noteRouter)(ctx),
+  [ResourceType.Survey]: (ctx: Context) => createCallerFactory(surveyRouter)(ctx),
+  [ResourceType.Webpage]: (ctx: Context) => createCallerFactory(webpageRouter)(ctx),
 };
 
+const publishCallers: Record<PublishableResourceType, (ctx: Context) => PublishCaller> = resourceCallers;
+
 const fileCallers: Record<FileAssetsResourceType, (ctx: Context) => FileCaller> = {
-  [ResourceType.Email]: (ctx) => createCallerFactory(emailRouter)(ctx),
-  [ResourceType.Note]: (ctx) => createCallerFactory(noteRouter)(ctx),
-  [ResourceType.Survey]: (ctx) => createCallerFactory(surveyRouter)(ctx),
-  [ResourceType.Webpage]: (ctx) => createCallerFactory(webpageRouter)(ctx),
+  [ResourceType.Email]: resourceCallers[ResourceType.Email],
+  [ResourceType.Note]: resourceCallers[ResourceType.Note],
+  [ResourceType.Survey]: resourceCallers[ResourceType.Survey],
+  [ResourceType.Webpage]: resourceCallers[ResourceType.Webpage],
 };
 
 // Typeless, so one tool serves a resource of any type: the type decides whether the operation exists at all, and a type
