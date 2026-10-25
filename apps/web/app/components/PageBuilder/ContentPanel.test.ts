@@ -21,7 +21,6 @@ import { createResourceListItem } from "#shared/services/resource/list/createRes
 import PageBuilderContentPanel from "@/components/PageBuilder/ContentPanel.vue";
 import ResourceLinkSelect from "@/components/Resource/Link/Select.vue";
 import UiSchemaForm from "@/components/Ui/SchemaForm/Index.vue";
-import UiSelect from "@/components/Ui/Select/Index.vue";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { emailKind } from "@/services/pageBuilder/emailKind";
 import { renderCanvasVNodes } from "@/services/pageBuilder/renderCanvasVNodes";
@@ -47,10 +46,13 @@ const createSurveyInviteDocument = (surveyId: string): WebpageDocument => ({
 });
 // An email's invite sits in a column, as the email's document schema requires
 const createPublication = (resourceId: string): ResourcePublicationInResource => ({
+  createdAt: new Date(0),
+  deletedAt: null,
   publishedAt: new Date(0),
   publishedContentVersion: 0,
   publishVersion: 1,
   resourceId,
+  updatedAt: new Date(0),
 });
 const createEmailSurveyInviteDocument = (surveyId: string): EmailDocument => ({
   content: [
@@ -167,11 +169,13 @@ describe("pageBuilderContentPanel", () => {
     const resourceId = crypto.randomUUID();
     const published = createResourceListItem({ name: "Published", type: ResourceType.Survey });
     const unpublished = createResourceListItem({ name: "Unpublished", type: ResourceType.Survey });
+    const publishedInList = { ...published, publication: createPublication(published.id) };
+    const unpublishedInList = { ...unpublished, publication: null };
     trpcMsw.survey.readResources.query(({ input }) => ({
       hasMore: false,
-      items: input.isPublished ? [published] : [published, unpublished],
+      items: input?.isPublished ? [publishedInList] : [publishedInList, unpublishedInList],
     }));
-    trpcMsw.resource.readResource.query(() => ({ ...published, publication: createPublication(published.id) }));
+    trpcMsw.resource.readResource.query(() => publishedInList);
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setDocument(resourceId, webpageKind, createSurveyInviteDocument(NO_SURVEY_ID));
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
@@ -198,11 +202,13 @@ describe("pageBuilderContentPanel", () => {
     const resourceId = crypto.randomUUID();
     const published = createResourceListItem({ name: "Published", type: ResourceType.Survey });
     const unpublished = createResourceListItem({ name: "Unpublished", type: ResourceType.Survey });
+    const publishedInList = { ...published, publication: createPublication(published.id) };
+    const unpublishedInList = { ...unpublished, publication: null };
     trpcMsw.survey.readResources.query(({ input }) => ({
       hasMore: false,
-      items: input.isPublished ? [published] : [published, unpublished],
+      items: input?.isPublished ? [publishedInList] : [publishedInList, unpublishedInList],
     }));
-    trpcMsw.resource.readResource.query(() => ({ ...published, publication: createPublication(published.id) }));
+    trpcMsw.resource.readResource.query(() => publishedInList);
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();
     pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, createEmailSurveyInviteDocument(NO_SURVEY_ID));
     const pageBuilderCanvasStore = usePageBuilderCanvasStore();
@@ -261,7 +267,7 @@ describe("pageBuilderContentPanel", () => {
     await flushPromises();
 
     expect(component.get('[role="status"]').text()).toBe("A survey must be published before it can be chosen");
-    expect(component.getComponent(UiSelect).props("items")).toStrictEqual([]);
+    expect(component.findComponent({ name: "UiSelect" }).props("items")).toStrictEqual([]);
     expect(pageBuilderDocumentStore.getDocument(resourceId)?.content).toStrictEqual(document.content);
 
     component.unmount();
