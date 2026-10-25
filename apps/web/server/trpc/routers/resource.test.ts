@@ -241,6 +241,89 @@ describe("resourceRouter", () => {
     expect(items.map(({ id }) => id)).toStrictEqual([newerResource.id, olderResource.id]);
   });
 
+  test("A tag value finds its resource", async () => {
+    expect.hasAssertions();
+
+    const taggedResource = await dashboardCaller.createResource({ name: "a" });
+    await dashboardCaller.updateResource({ id: taggedResource.id, name: "a", tags: { a: name } });
+    await sheetCaller.createResource({ name: "b" });
+    const { items } = await caller.readResources({ searchQuery: name });
+
+    expect(items.map(({ id }) => id)).toStrictEqual([taggedResource.id]);
+  });
+
+  test("A tag name finds its resource", async () => {
+    expect.hasAssertions();
+
+    const taggedResource = await dashboardCaller.createResource({ name: "a" });
+    await dashboardCaller.updateResource({ id: taggedResource.id, name: "a", tags: { [name]: "" } });
+    await sheetCaller.createResource({ name: "b" });
+    const { items } = await caller.readResources({ searchQuery: "am" });
+
+    expect(items.map(({ id }) => id)).toStrictEqual([taggedResource.id]);
+  });
+
+  test("A tag match is counted with the list", async () => {
+    expect.hasAssertions();
+
+    const taggedResource = await dashboardCaller.createResource({ name: "a" });
+    await dashboardCaller.updateResource({ id: taggedResource.id, name: "a", tags: { a: name } });
+    await sheetCaller.createResource({ name: "b" });
+    const count = await caller.readResourcesCount({ searchQuery: name });
+
+    expect(count).toBe(1);
+  });
+
+  test("See all lists a tag match", async () => {
+    expect.hasAssertions();
+
+    const taggedResource = await dashboardCaller.createResource({ name: "a" });
+    await dashboardCaller.updateResource({ id: taggedResource.id, name: "a", tags: { a: name } });
+    await sheetCaller.createResource({ name: "b" });
+    // The full list reads the same search as the palette's group, only without its row limit
+    const { items } = await caller.readResources({ searchQuery: name });
+
+    expect(items.map(({ id }) => id)).toStrictEqual([taggedResource.id]);
+  });
+
+  test("A name match ranks above a tag-only match", async () => {
+    expect.hasAssertions();
+
+    // "Email" holds the query as a substring and shares no trigram with it, while "Ask" shares one, so the
+    // Trigram similarity alone would list the tagged resource first
+    const nameResource = await dashboardCaller.createResource({ name: "Email" });
+    vi.advanceTimersByTime(1);
+    const taggedResource = await sheetCaller.createResource({ name: "Ask" });
+    await sheetCaller.updateResource({ id: taggedResource.id, name: "Ask", tags: { a: "ai" } });
+    const { items } = await caller.readResources({ searchQuery: "ai" });
+
+    expect(items.map(({ id }) => id)).toStrictEqual([nameResource.id, taggedResource.id]);
+  });
+
+  test("Tag-only matches list newest first", async () => {
+    expect.hasAssertions();
+
+    // The older tagged resource is the closer name, so only the newest-first key puts the newer one first
+    const olderResource = await dashboardCaller.createResource({ name: "Ask" });
+    await dashboardCaller.updateResource({ id: olderResource.id, name: "Ask", tags: { a: "ai" } });
+    vi.advanceTimersByTime(1);
+    const newerResource = await sheetCaller.createResource({ name: "Notes" });
+    await sheetCaller.updateResource({ id: newerResource.id, name: "Notes", tags: { a: "ai" } });
+    const { items } = await caller.readResources({ searchQuery: "ai" });
+
+    expect(items.map(({ id }) => id)).toStrictEqual([newerResource.id, olderResource.id]);
+  });
+
+  test("A wildcard in the query matches only itself", async () => {
+    expect.hasAssertions();
+
+    const resource = await dashboardCaller.createResource({ name });
+    await dashboardCaller.updateResource({ id: resource.id, name, tags });
+    const { items } = await caller.readResources({ searchQuery: "%" });
+
+    expect(items).toStrictEqual([]);
+  });
+
   test("counts resources across every type", async () => {
     expect.hasAssertions();
 

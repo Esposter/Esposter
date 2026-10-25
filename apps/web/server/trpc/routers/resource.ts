@@ -28,6 +28,7 @@ import { createResourceRow } from "#server/services/resource/createResourceRow";
 import { getFavoriteJoin } from "#server/services/resource/getFavoriteJoin";
 import { getLastAccessedJoin } from "#server/services/resource/getLastAccessedJoin";
 import { getResourcesWhere } from "#server/services/resource/getResourcesWhere";
+import { getSearchNameMatch } from "#server/services/resource/getSearchNameMatch";
 import { getSearchSimilarity } from "#server/services/resource/getSearchSimilarity";
 import { omitDerivedContent } from "#server/services/resource/omitDerivedContent";
 import { readContentAtPointer } from "#server/services/resource/readContentAtPointer";
@@ -318,12 +319,16 @@ export const resourceRouter = router({
       const userId = ctx.getSessionPayload.user.id;
       const where = getResourcesWhere(ctx.db, userId, filter);
       const orderBy = [
-        // Relevance ladder: closest trigram match first so a typo still ranks its resource top, then
-        // Prefix matches above the remaining substring matches (true sorts before false under desc),
-        // Then newest-first within each tier; every search value is bound through the query builder
+        // Relevance ladder, every search value bound through the query builder. A name match comes before a row matched
+        // only by a tag, so a tag never outranks a name. Among the names, the closest trigram match comes first so a typo
+        // still ranks its resource top; a tag-only row scores 0 there, which leaves the tag matches newest-first. Then
+        // prefix matches above the remaining substring matches (true sorts before false under desc), then newest-first
         ...(filter.searchQuery
           ? [
-              desc(getSearchSimilarity(filter.searchQuery)),
+              desc(getSearchNameMatch(filter.searchQuery)),
+              desc(
+                sql`case when ${getSearchNameMatch(filter.searchQuery)} then ${getSearchSimilarity(filter.searchQuery)} else 0 end`,
+              ),
               desc(ilike(resourcesInResource.name, `${escapeLike(filter.searchQuery)}%`)),
             ]
           : []),

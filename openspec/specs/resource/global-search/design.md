@@ -1,6 +1,6 @@
 # Global Search
 
-Azure-portal-faithful search over the Resource Explorer: an as-you-type search grouped into Resources / Services / Pages, which is the [command palette](../../architecture/command-palette/design.md)'s scope while the explorer home page (`pages/resource-explorer/index.vue`) is open, so `Ctrl+K` there searches resources. Home leads with a button drawn as the field it opens (portal landing parity), as the docs' search is, rather than a second search of its own. No new backend — the Resources group rides `resource.readResources`, which ranks prefix matches first.
+Azure-portal-faithful search over the Resource Explorer: an as-you-type search grouped into Resources / Services / Pages, which is the [command palette](../../architecture/command-palette/design.md)'s scope while the explorer home page (`pages/resource-explorer/index.vue`) is open, so `Ctrl+K` there searches resources. Home leads with a button drawn as the field it opens (portal landing parity), as the docs' search is, rather than a second search of its own. No new backend — the Resources group rides `resource.readResources`, which matches a resource by its name or by one of its tags and ranks the name matches first.
 
 ## How it works
 
@@ -44,7 +44,7 @@ With a query set the scope shows three groups plus a last row:
 
 ## Relevance
 
-`readResources` ranks its matches by the ladder that [global search relevance](../global-search-relevance/design.md) owns. The search value is escaped and bound through the query builder throughout, and `getResourcesWhere` stays the single filter source so `readResourcesCount` never drifts from the list. Typo tolerance is covered there too; Azure AI Search stays [deferred](../../../deferred/resource/azure-ai-search/design.md).
+`readResources` matches a resource by its name or by one of its tags, and ranks the matches by the ladder that [global search relevance](../global-search-relevance/design.md) owns. The search value is escaped and bound through the query builder throughout, and `getResourcesWhere` stays the single filter source so `readResourcesCount` never drifts from the list. Typo tolerance is covered there too; Azure AI Search stays [deferred](../../../deferred/resource/azure-ai-search/design.md).
 
 ## Key files
 
@@ -56,7 +56,8 @@ With a query set the scope shows three groups plus a last row:
 | `app/composables/resource/useRecordResourceAccess.ts`       | records the open from the resource page, feeding the Recently opened group                         |
 | `app/composables/resource/useResourceCommands.ts`           | the palette's Resources scope and the `G`-chords, registered with the explorer home page           |
 | `app/services/resource/search/`                             | pure grouping and recents helpers (`getServiceSearchItems`, `pushRecent`, …)                       |
-| `server/trpc/routers/resource.ts`                           | prefix-match ranking in `readResources`                                                            |
+| `server/services/resource/getResourcesWhere.ts`             | the search predicate: the name arm and the tag arm, shared by the list and the count               |
+| `server/trpc/routers/resource.ts`                           | the name-first ranking in `readResources`                                                          |
 
 ## Notes
 

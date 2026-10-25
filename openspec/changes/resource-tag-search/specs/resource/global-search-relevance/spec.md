@@ -10,6 +10,12 @@ The search SHALL list a resource matched only by one of its tags after every res
 - **WHEN** the owner searches for the query
 - **THEN** the resource named for the query is listed first
 
+#### Scenario: Tag-only matches list newest first
+
+- **GIVEN** two resources that match the query only through a tag, one updated more recently
+- **WHEN** the owner searches for the query
+- **THEN** the more recently updated one is listed first
+
 ### Requirement: A wildcard in the query matches only itself
 
 The search SHALL treat a percent sign or an underscore in the query as an ordinary character.

@@ -12,12 +12,13 @@ A search matches a resource whose tag name or tag value contains the query, case
 - A resource matched only by a tag ranks below every resource matched by its name. Within the tag matches, newest first.
 - The query's wildcard characters match only themselves, as they already do for names.
 - No index and no migration. The tag match scans the owner's own rows, which the owner filter already bounds.
-- **Capabilities:** `resource/global-search` (modified), `resource/global-search-relevance` (modified).
+- **Capabilities:** `resource/global-search` (modified), `resource/global-search-relevance` (modified), `resource/tags` (modified).
 
 ## Capabilities
 
 - **resource/global-search** (modified): a requirement for matching by tags.
 - **resource/global-search-relevance** (modified): a requirement for where a tag-only match ranks.
+- **resource/tags** (modified): the requirement that global search does not match tags is removed.
 
 ## Waiting on
 
@@ -25,5 +26,5 @@ None. Global search and its relevance ladder are built.
 
 ## Impact
 
-- The search predicate, which gains the tag arm, and the ordering of the list, which gains a name-substring tier.
-- The tags spec's Notes sentence saying tag search is not wired up is removed when this ships, and the global-search and relevance pages describe the match they now do.
+- The search predicate, which gains the tag arm, and the ordering of the list, which leads with the name match.
+- The tags spec's requirement and its Notes sentence saying tag search is not wired up are removed when this ships, and the global-search and relevance pages describe the match they now do.

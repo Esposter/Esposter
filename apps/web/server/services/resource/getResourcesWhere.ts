@@ -1,18 +1,17 @@
 import type { Context } from "#server/trpc/context";
 import type { ResourceFilterInput } from "#shared/models/db/resource/ResourceFilterInput";
 
-import { escapeLike } from "#server/services/db/escapeLike";
-import { SEARCH_SIMILARITY_THRESHOLD } from "#server/services/resource/constants";
 import { getFavoriteJoin } from "#server/services/resource/getFavoriteJoin";
 import { getLastAccessedJoin } from "#server/services/resource/getLastAccessedJoin";
-import { getSearchSimilarity } from "#server/services/resource/getSearchSimilarity";
+import { getSearchNameMatch } from "#server/services/resource/getSearchNameMatch";
+import { getSearchTagMatch } from "#server/services/resource/getSearchTagMatch";
 import {
   resourceAccessesInResource,
   resourceFavoritesInResource,
   resourcePublicationsInResource,
   resourcesInResource,
 } from "@esposter/db-schema";
-import { and, eq, exists, gte, ilike, inArray, isNotNull, isNull, lte, notExists, or, sql } from "drizzle-orm";
+import { and, eq, exists, gte, inArray, isNotNull, isNull, lte, notExists, or, sql } from "drizzle-orm";
 
 export const getResourcesWhere = (
   db: Context["db"],
@@ -42,13 +41,9 @@ export const getResourcesWhere = (
     eq(resourcesInResource.userId, userId),
     // Soft-deleted resources live on for the Recycle bin window, so every normal read excludes them
     isDeletedOnly ? isNotNull(resourcesInResource.deletedAt) : isNull(resourcesInResource.deletedAt),
-    // Substring keeps exact matches that trigram similarity would miss on very short queries
-    searchQuery
-      ? or(
-          ilike(resourcesInResource.name, `%${escapeLike(searchQuery)}%`),
-          sql`${getSearchSimilarity(searchQuery)} > ${SEARCH_SIMILARITY_THRESHOLD}`,
-        )
-      : undefined,
+    // The name arm keeps exact substrings that trigram similarity would miss on very short queries; the tag arm finds a
+    // resource by a label the owner remembers rather than its name
+    searchQuery ? or(getSearchNameMatch(searchQuery), getSearchTagMatch(searchQuery)) : undefined,
     ids ? inArray(resourcesInResource.id, ids) : undefined,
     tags && Object.keys(tags).length > 0
       ? sql`${resourcesInResource.tags} @> ${JSON.stringify(tags)}::jsonb`
