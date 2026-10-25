@@ -39,7 +39,7 @@ Each member group's count SHALL show the group's total members in the room, not 
 
 ### Requirement: A departure or a role change keeps every role group count exact
 
-A member's departure or role change SHALL leave each role group's count equal to the members holding that role and the roleless count non-negative, whether or not the member's roles were loaded.
+A member's departure or role change SHALL, once the room's counts have been re-read after it, leave each role group's count equal to the members holding that role and the roleless count non-negative, whether or not the member's roles were loaded. Until that re-read settles, the counts SHALL show the last settled read.
 
 #### Scenario: a leave from an unloaded page keeps every group count equal to its members
 
@@ -47,6 +47,13 @@ A member's departure or role change SHALL leave each role group's count equal to
 - **WHEN** one of them leaves
 - **THEN** the Admin group count is 1
 - **AND** the roleless count is 0
+
+#### Scenario: a failed re-read keeps the last settled counts
+
+- **GIVEN** a room of 2 members who both hold the Admin role, whose counts were read before either left
+- **WHEN** one of them leaves and the re-read of the counts fails
+- **THEN** the Admin group count is still 2
+- **AND** the counts are read again, and the Admin group count becomes 1 once a read settles
 
 #### Scenario: a role change for a member outside the loaded pages keeps every group count equal to its members
 

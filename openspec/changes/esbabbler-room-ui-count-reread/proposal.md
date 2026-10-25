@@ -13,7 +13,7 @@ The re-read's failure policy and the snapshot race are decided, and the room-ui 
 
 ## Capabilities
 
-- **esbabbler/room-ui** (modified, once decided)
+- **esbabbler/room-ui** (modified)
 
 ## Impact
 

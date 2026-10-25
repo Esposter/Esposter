@@ -23,6 +23,22 @@ flowchart TD
 - **Role changes** — every role-membership write (optimistic apply, rollback, `onSuccess`, and the role subscription handlers) funnels through the role store's `mutateMemberRoles`, which fires `memberRoleChangeHooks` on every write, and the member store re-reads the room's totals for each. The re-read is used rather than a delta because the group a change leaves is not always known here: a member whose roles were never read has no prior role at all. The server filters its own events from the originating device, so a local write also re-reads when it settles, and the echo that does arrive from other devices re-reads again.
 - **Ordering** — the re-read rule and its latest-started-wins order are owned by the [client data](../../architecture/client-data/design.md) page ("Server-owned aggregates are re-read, never adjusted"). This page holds only the room's use of it.
 
+### A failed re-read and the snapshot race
+
+Each room's re-read is one pair: the total and the per-role groups are read together and written only once both return, so a failed read leaves the last settled pair standing. A total is never written beside groups from another read, which keeps the roleless remainder from going negative on a mixed pair.
+
+On failure the batched refresh puts the room back as dirty and retries with exponential backoff, up to five retries in a row. After that the room waits for the next change to mark it, and that change's re-read is the retry. Until a read settles, the counts show the pre-change pair.
+
+Options rejected for a failed read:
+
+- **Reset the room's totals to zero.** Every group heading would read 0 beside the members listed under it, and the roleless group would show the whole room. The reset shows a count the room does not have, with nothing marking it as unknown.
+- **Reset the totals from a fresh read.** A failed read has no value to reset to, and a read that later succeeds is only the retry. A reset to a read the store has not seen settle can drop a change the settled pair already counted, and no event brings that change back.
+- **Retry without a bound.** A server that stays down would be read forever. The five retries and the next change bound it.
+
+The snapshot race is the case where a role event for a loaded member is committed before a re-read but delivered after it, so the change looks counted twice. A double count needs a delta, and no delta is ever applied to these totals ([client data](../../architecture/client-data/design.md)): the event's own re-read reads state at or after the commit, so the change is counted once. What remains is a window. While a re-read is in flight, the counts show the last settled read, and they are exact once the latest re-read settles, because that read started after every change the client has been told of.
+
+Closing that window by numbering the server's member events, so a delta and a snapshot could be ordered, was rejected for size. It needs a server sequence on every join, leave and role event, a protocol change on each subscription that carries them, and an ordering across the subscriptions that feed the counts. That is more change than the window costs. The requirement that the counts stay exact is therefore weakened to what the design delivers: exact once the latest re-read settles.
+
 ## Resizable, persisted sidebars
 
 The left (rooms) sidebar and right (members/search/thread) drawer have a drag handle on their inner edge. Widths clamp between the min and max sidebar constants, persist per device in `localStorage` via the message layout store, and feed both the layout's drawer width and the fixed-layout offset styles so the chat content reflows while dragging. Handles render on desktop only — drawers float over content on mobile.
