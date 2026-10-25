@@ -19,7 +19,7 @@ describe(getStyledApexOptions, () => {
     expect(formatter("<b>", { seriesIndex: 0, w: { config: {}, globals: {} } })).toBe("&lt;b&gt;%");
   });
 
-  test("#32 keeps the chart height the options name", () => {
+  test("keeps the chart height the options name", () => {
     expect.hasAssertions();
 
     const height = 1;
