@@ -15,10 +15,15 @@
 
 ## Built so far
 
-- The save stream names the new version and the writing device, never the content (task 1.1, server half). The emitter, the save door and `onSaveResourceContent` carry `{ contentVersion, device, id }`, covered by the procedure, save-service and resource-router tests.
-- The todo list's subscriber re-reads the list on each save and adopts it with the version (task 2.2, client half). Its own test is not yet written.
+- Every task above is ticked, each with its own test or proof. 1.1 streams the version, device and key name; the explorer runs one save subscription for any type, and the own-device and keyed-save scenarios are server tests. 2.1 adopts in place and clears the delta baseline. 2.2 re-reads the todo list through the same reload. 3.1 holds the save behind an unwritten edit and notices it. 3.2 answers it: take theirs drops the edit, keep mine runs the `Keep` stage. 3.3 names an agent by its key.
+- The keep-mine decision the tasks left open is made in the design: a `Keep` stage on `ResourceContentHookMap`, run by each content store.
 
-## Waiting
+## Owed
 
-- Tasks 1.1 (client half: one subscription run by `Explorer/Index.vue`, deleting `ResourceSubscribablesMap` and `useTodoListSubscribables`), 2.1, 3.1, 3.2 and 3.3 are not built. The client work needs a typecheck run, which the building session cannot run locally.
-- Task 3.2's Keep mine needs a decision the spec does not name: the resource store holds no content reference, so re-saving the local document requires a content-store hook. The main session decides whether that hook is a new stage on `ResourceContentHookMap` or a content-store method the store calls, and names it in this change's design before the notice is built.
+- A look at the notice in the explorer, in a browser, by the owner. The tests cover the store's answers, not the notice's rendering or its two buttons.
+- Naming the device: a save from another device of the person's own is named "another device", because the `Device` a save carries has no name to show. A device name needs its own change.
+- The stale-save choice in the `resource-page-parity` delta (a refused save offers take theirs or keep mine). No task names it, so it is not built here; the refused save still shows the refresh notice. It needs a task before it is built.
+
+## Typecheck
+
+- The client work was checked by the suites that exercise it (store, todo list, server procedures), not by a full `typecheck` run; CI's typecheck is the owner of that.

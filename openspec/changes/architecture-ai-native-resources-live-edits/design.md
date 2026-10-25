@@ -37,16 +37,21 @@ flowchart TD
   ASK -->|"keep mine"| WRITE["save the local document at the new version"]
 ```
 
+The store holds no document, so it cannot write one. Keep mine therefore runs a `Keep` stage on `ResourceContentHookMap`: the store moves the resource to the held save's version and runs the stage, and each content store (`createContentData`) answers by saving the document it holds through its own save, so the write goes through the existing save mutation and the other write stays in version history. Taking theirs runs no stage; it reloads and drops the unwritten edit.
+
 ## Key files
 
-| File                                                                     | Role after the change                                                             |
-| ------------------------------------------------------------------------ | --------------------------------------------------------------------------------- |
-| `apps/web/app/components/Resource/Explorer/Index.vue`                    | runs the open resource's save subscription, whatever its type                     |
-| `apps/web/app/services/resource/ResourceSubscribablesMap.ts`             | deleted                                                                           |
-| `apps/web/app/composables/resource/todoList/useTodoListSubscribables.ts` | deleted                                                                           |
-| `apps/web/app/store/resource/todoList/index.ts`                          | its own adoption of a streamed list goes                                          |
-| `apps/web/app/store/resource/index.ts`                                   | adopts or asks from its unwritten-edit state, and owns the notice and its answers |
-| `apps/web/app/services/resource/createContentData.ts`                    | unchanged — its reload stage is the adoption                                      |
-| `apps/web/app/services/resource/ResourceContentHookMap.ts`               | unchanged — the two stages a restore runs                                         |
-| `apps/web/app/store/resource/sheet/history/index.ts`                     | clears on adoption                                                                |
-| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`    | the save stream carries the version and the device rather than the content        |
+| File                                                                     | Role after the change                                                                              |
+| ------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| `apps/web/app/components/Resource/Explorer/Index.vue`                    | runs the open resource's save subscription, whatever its type                                      |
+| `apps/web/app/services/resource/ResourceSubscribablesMap.ts`             | deleted                                                                                            |
+| `apps/web/app/composables/resource/todoList/useTodoListSubscribables.ts` | deleted                                                                                            |
+| `apps/web/app/store/resource/todoList/index.ts`                          | its own adoption of a streamed list goes                                                           |
+| `apps/web/app/store/resource/index.ts`                                   | adopts or asks from its unwritten-edit state, and owns the notice and its answers                  |
+| `apps/web/app/services/resource/createContentData.ts`                    | its reload stage is the adoption; it registers the `Keep` stage, which saves the document it holds |
+| `apps/web/app/services/resource/ResourceContentHookMap.ts`               | the two stages a restore runs, and the `Keep` stage keep mine runs                                 |
+| `apps/web/app/store/resource/sheet/index.ts`                             | its history clears when the content ref is replaced, which adoption does: unchanged                |
+| `apps/web/app/composables/resource/useResourceSaveSubscribable.ts`       | the open resource's one save subscription, for any type                                            |
+| `apps/web/app/components/Resource/OtherSaveNotice.vue`                   | the notice over an unwritten edit: names the saver, and takes theirs or keeps mine                 |
+| `apps/web/server/services/resource/events/resourceEventEmitter.ts`       | the save event carries the key an agent wrote with, "" for a person's own save                     |
+| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts`    | the save stream carries the version and the device rather than the content                         |
