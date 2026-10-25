@@ -206,8 +206,10 @@ describe.each<PaginationCacheVariant>([
     items.value = [];
     isLoaded.value = false;
     await flushCache();
+    const leftPartitionCachedItems = await readIndexedDb(MessageIndexedDbStoreConfiguration, partitionKey);
     const cachedItems = await readIndexedDb(MessageIndexedDbStoreConfiguration, secondPartitionKey);
 
+    expect(leftPartitionCachedItems).toHaveLength(1);
     expect(cachedItems).toHaveLength(1);
   });
 
@@ -227,20 +229,6 @@ describe.each<PaginationCacheVariant>([
     // First visit does — and the rows the previous session cached are still the only ones this partition has
     isLoaded.value = false;
     items.value = [];
-    await flushCache();
-    const cachedItems = await readIndexedDb(MessageIndexedDbStoreConfiguration, partitionKey);
-
-    expect(cachedItems).toHaveLength(1);
-  });
-
-  test("does not clear cache when items become empty on partition key switch", async () => {
-    expect.hasAssertions();
-
-    await mountCache();
-    loadItems([createMessageEntity()]);
-    await flushCache();
-    partitionKeyRef.value = secondPartitionKey;
-    isLoaded.value = false;
     await flushCache();
     const cachedItems = await readIndexedDb(MessageIndexedDbStoreConfiguration, partitionKey);
 
