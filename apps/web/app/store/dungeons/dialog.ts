@@ -6,24 +6,10 @@ import type { SceneWithPlugins } from "vue-phaserjs";
 import { useAnimateText } from "@/composables/dungeons/text/useAnimateText";
 import { SceneEventKey } from "@/models/dungeons/scene/SceneEventKey";
 import { PlayerSpecialInput } from "@/models/dungeons/UI/input/PlayerSpecialInput";
+import { getDialogTargetText } from "@/services/dungeons/dialog/getDialogTargetText";
+import { showMessageNoInputRequired } from "@/services/dungeons/dialog/showMessageNoInputRequired";
 import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
 import { getResultAsync, getSynchronizedFunction, noop, withFinalizerAsync } from "@esposter/shared";
-
-const getDialogTargetText = (target: DialogTarget) =>
-  computed({
-    get: () => target.message.value.text,
-    set: (newText) => {
-      target.message.value.text = newText;
-    },
-  });
-
-const showMessageNoInputRequired = (scene: SceneWithPlugins, target: DialogTarget, message: DialogMessage) => {
-  target.reset();
-  phaserEventEmitter.emit(`${SceneEventKey.ShowMessage}${scene.scene.key}`);
-
-  target.message.value.title = message.title;
-  return useAnimateText(scene, getDialogTargetText(target), message.text);
-};
 
 export const useDialogStore = defineStore("dungeons/dialog", () => {
   const inputPromptCursorX = ref<number>();
