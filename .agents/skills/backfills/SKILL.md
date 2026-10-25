@@ -25,25 +25,13 @@ A field _removed_ from a schema is not one: Zod's object parse drops the stale k
 
 ## Where persisted JSON lives
 
-| Store                               | Blobs                                                                                                      | Written by                                |
-| ----------------------------------- | ---------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| `resource-assets`                   | `{resourceId}/content.json` — every resource's working copy, a Blueprint's captured entries inside its own | `saveResourceContent`                     |
-| `clicker-assets`, `dungeons-assets` | `{userId}/save.json`                                                                                       | `createSaveBlobStateProcedure`            |
-| `genshin-assets`                    | `{userId}/save.json`                                                                                       | `saveGenshin`, `writeGenshinSaveEnvelope` |
-| `resource-assets`                   | `{resourceId}/objects/{hash}` — version snapshots, content-addressed keyframes and deltas                  | `writeSnapshotVersion`                    |
-
-Every JSON blob is one zstd frame (`writeJsonBlob`): level `JSON_BLOB_COMPRESSION_LEVEL`, window `MAX_CONTENT_ENCODING_WINDOW_LOG`, served as `Content-Encoding: zstd`. A rewrite keeps all three.
-
-Snapshot objects are not rewritten. They are named by their hash and listed in Postgres (`resourceVersions`), prod's database is not reachable from a session, and a version is restored through the save path, which parses it — so a snapshot older than the change no longer restores until it expires (the revision retention, `openspec/specs/resource/resource-snapshots/design.md`), the same accepted tradeoff as the deploy window that "The run" accepts for its prod step. A published version of a publishable type is the exception worth a look: if the change reaches a publishable type's content, its published pages read that snapshot, and the change is raised with the user before it ships.
-
-Rewriting a working copy leaves `resources.contentHash` and `contentSize` stale until the next save. That is safe: a delta save against the stale hash is refused with CONFLICT and the client retries it as a full save.
+Which blob holds a schema's stored data, and the writer that keeps it, is `references/persisted-stores.md`.
 
 ## The run
 
-1. **Write the script in the scratchpad**, resolving `@azure/storage-blob` from a workspace package with `createRequire`. It walks each store, decodes each document, removes or reshapes the slots by the _shape of the object holding them_ (the keys that identify an item, a todo, a program) — never by key name alone, since a sheet cell can be named anything — and re-encodes only the documents it changed.
-2. **Upload with `ifMatch` on the listed etag**, so a user's save landing mid-run wins and the document is simply retried on the next run.
-3. **Get the connection string from the Azure CLI** — `az storage account show-connection-string -n <account> -g <group>`; the accounts are `devstesposter001` and `prodstesposter001`.
-4. **Dry run, then write, on dev.** The dry run prints each document and slot count; the write run follows.
-5. **Prod straight after dev, without waiting for the deploy.** The code still serving prod reads the old shape, so a rewritten document fails there until the change deploys; that window is accepted; holding the backfill for a deploy the session cannot see is not.
-6. **Re-run until it reports nothing to change**, so a document skipped by a conflicting save is caught.
-7. **Delete the script.** Report the counts per store.
+A backfill is a scratchpad script run dry then for real on dev, then prod straight after, re-run until it reports nothing, then deleted — `references/the-run.md`.
+
+## Reference pages
+
+- `references/persisted-stores.md` — when locating which store, blob and writer hold a persisted document a schema change touches.
+- `references/the-run.md` — when running a backfill: the script, the dry run, the dev-then-prod order and the re-run.
