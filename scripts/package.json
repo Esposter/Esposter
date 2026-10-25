@@ -66,7 +66,6 @@
     "ai:worktree:remove": "vpx src/worktree/remove/index.ts",
     "bench": "vitest bench --run",
     "bench:types": "vpx src/benchTypes/index.ts",
-    "budget:editors": "vpx src/editorBudget/index.ts",
     "crossOS": "node src/crossOS/index.ts",
     "genshin:animestudio:build": "vpx src/animeStudio/index.ts",
     "genshin:assets": "vpx src/genshinAssets/index.ts",

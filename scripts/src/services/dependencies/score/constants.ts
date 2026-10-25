@@ -76,15 +76,6 @@ export const TOP_BUNDLE_COUNT = 25;
 // Run writes beside the app's build output, against the app, which the bundle column reads
 export const APP_PACKAGE_NAME = "@esposter/web";
 export const CLIENT_BUNDLE_REPORT_PATH = ".nuxt/analyze/client.json";
-// The directory the app's production build writes its public files to, which the editors' chunks are read from
-export const APP_PUBLIC_DIRECTORY = ".output/public";
-// The module the explorer's script is named by in the client bundle report, and the two editors the cutover holds to
-// The budget, each by its module, so a chunk is found by what it holds rather than by a name the build may renumber
-export const EXPLORER_MODULE = "components/Resource/Explorer/";
-export const EDITOR_MODULES: string[] = [
-  "components/Resource/Email/Editor.vue",
-  "components/Resource/Webpage/Editor.vue",
-];
 // The reason a catalog package the client build does not contain is given, in place of its bundle bytes
 export const NOT_IN_CLIENT_SKIP_REASON = "not in client";
 // A module id's query, such as the hash Vite appends, which is no part of the file's own path
