@@ -1,0 +1,113 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "3f96698a-9aea-44f8-ba36-ee83f8edeee7",
+  "prevIds": [
+    "2b86f276-f02a-4f62-95e8-7ee23adddcf1"
+  ],
+  "footprints": [
+    {
+      "statementType": "drop_fk",
+      "statementTarget": [
+        "table",
+        "auth",
+        "accounts"
+      ],
+      "writes": [
+        "s|fk|auth.accounts.accounts_user_id_users_id_fk",
+        "n|fk|auth.accounts.accounts_user_id_users_id_fk",
+        "e|fk|auth.accounts.accounts_user_id_users_id_fk",
+        "n|con|auth.accounts.accounts_user_id_users_id_fk"
+      ],
+      "reads": [
+        "n|tbl|auth.accounts",
+        "n|sch|auth",
+        "e|col|auth.accounts.userId"
+      ]
+    },
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "auth",
+        "users",
+        "deletionRequestedAt"
+      ],
+      "writes": [
+        "s|col|auth.users.deletionRequestedAt",
+        "n|col|auth.users.deletionRequestedAt",
+        "e|col|auth.users.deletionRequestedAt"
+      ],
+      "reads": [
+        "n|tbl|auth.users",
+        "n|sch|auth"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "auth",
+        "accounts"
+      ],
+      "writes": [
+        "s|fk|auth.accounts.accounts_userId_users_id_fkey",
+        "n|fk|auth.accounts.accounts_userId_users_id_fkey",
+        "e|fk|auth.accounts.accounts_userId_users_id_fkey",
+        "n|con|auth.accounts.accounts_userId_users_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|auth.accounts",
+        "n|sch|auth",
+        "n|tbl|auth.users",
+        "n|sch|auth",
+        "n|col|auth.accounts.userId",
+        "n|col|auth.users.id",
+        "e|uniqueness|auth.users.id"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "auth",
+        "table": "users",
+        "name": "deletionRequestedAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "auth",
+        "table": "accounts",
+        "name": "accounts_userId_users_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "userId"
+        ],
+        "schemaTo": "auth",
+        "tableTo": "users",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "drop",
+      "key": "fks\u0000[\"auth\",\"accounts\",\"accounts_user_id_users_id_fk\"]"
+    }
+  ]
+}

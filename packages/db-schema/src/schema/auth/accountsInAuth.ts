@@ -18,7 +18,7 @@ export const accountsInAuth = pgTable(
     scope: text(),
     userId: text()
       .notNull()
-      .references(() => usersInAuth.id),
+      .references(() => usersInAuth.id, { onDelete: "cascade" }),
   },
   {
     extraConfig: ({ accountId, providerId }) => [

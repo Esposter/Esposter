@@ -4,8 +4,9 @@ import { createMockDb } from "#src/createMockDb";
 import { SNAPSHOT_FILENAME } from "#src/services/constants";
 import { PGlite } from "@electric-sql/pglite";
 import { pg_trgm } from "@electric-sql/pglite/contrib/pg_trgm";
-import { schema, usersInAuth } from "@esposter/db-schema";
+import { accountsInAuth, schema, usersInAuth } from "@esposter/db-schema";
 import { generateDrizzleJson, generateMigration } from "drizzle-kit/api-postgres";
+import { eq } from "drizzle-orm";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { beforeAll, describe, expect, test } from "vitest";
@@ -58,5 +59,21 @@ describe(createMockDb, () => {
     const count = await db.$count(usersInAuth);
 
     expect(count).toBe(0);
+  });
+
+  // An account is a credential the user row owns, so the user row's deletion must take it along rather than
+  // Be blocked by it — the account deletion sweep relies on this and deletes no account row by hand
+  test("deleting a user removes the account rows linked to it", async () => {
+    expect.hasAssertions();
+
+    const userId = crypto.randomUUID();
+    await db
+      .insert(usersInAuth)
+      .values({ email: `${userId}@example.com`, emailVerified: false, id: userId, name: userId });
+    await db.insert(accountsInAuth).values({ accountId: userId, id: userId, providerId: "credential", userId });
+
+    await db.delete(usersInAuth).where(eq(usersInAuth.id, userId));
+
+    await expect(db.query.accountsInAuth.findMany({ where: { userId: { eq: userId } } })).resolves.toStrictEqual([]);
   });
 });

@@ -7,7 +7,7 @@ import { createNameCheckSql } from "#src/services/shared/createNameCheckSql";
 import { createNameSchema } from "#src/services/shared/createNameSchema";
 import { AUTH_ID_MAX_LENGTH, USER_BIOGRAPHY_MAX_LENGTH, USER_NAME_MAX_LENGTH } from "#src/services/user/constants";
 import { createNormalizedStringSchema } from "@esposter/shared";
-import { bigint, boolean, check, text } from "drizzle-orm/pg-core";
+import { bigint, boolean, check, text, timestamp } from "drizzle-orm/pg-core";
 import { createSelectSchema } from "drizzle-orm/zod";
 import { z } from "zod";
 
@@ -17,6 +17,9 @@ export const usersInAuth = pgTable(
   "users",
   {
     biography: text().notNull().default(""),
+    // Set when the person asks to delete their account. The row is the marker the deletion sweep resumes from, so
+    // It is removed last, and a row still carrying this stamp is an account whose sweep has not finished
+    deletionRequestedAt: timestamp(),
     email: text().notNull().unique(),
     emailVerified: boolean().notNull(),
     id: text().primaryKey(),

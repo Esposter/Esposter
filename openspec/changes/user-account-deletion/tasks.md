@@ -4,7 +4,7 @@ Build order. Section 1 lands the schema the rest reads, section 2 moves the shar
 
 ## 1. Schema
 
-- [ ] 1.1 Cascade the `accounts` foreign key on the user row, and add `deletionRequestedAt` to `users`. Test first in the schema's test: deleting a user row removes its linked account rows. Generate the migration with `db:gen`, then check its SQL by hand.
+- [x] 1.1 Cascade the `accounts` foreign key on the user row, and add `deletionRequestedAt` to `users`. Test first in the schema's test: deleting a user row removes its linked account rows. Generate the migration with `db:gen`, then check its SQL by hand.
       Verify: the cascade test passes, and the generated migration alters the `accounts` foreign key to cascade and adds the column nullable.
 
 ## 2. Shared sweeps
