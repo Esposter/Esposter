@@ -29,7 +29,7 @@ describe(compileSheetColumns, () => {
     expect(compileSheetColumns(dataSource.columns)(dataSource.rows)(row, computedColumn, 0)).toBeNull();
   });
 
-  test("returns null for computed column when source column is itself computed", () => {
+  test("returns null for computed column when the source it reads is computed from a missing column", () => {
     expect.hasAssertions();
 
     const sourceColumn = createComputedColumn("", "-1");

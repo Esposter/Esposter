@@ -6,7 +6,7 @@ import { trpcRouter } from "#server/trpc/routers";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import { CallToolResultSchema } from "@modelcontextprotocol/sdk/types.js";
-import { onTestFinished } from "vitest";
+import { describe, onTestFinished } from "vitest";
 
 // A key holding these scopes, connected to the MCP server an agent reaches. Each tool it calls is answered as the agent
 // reads it: the data as parsed JSON, and a refused call as a rejection carrying the words it is refused in
@@ -25,3 +25,5 @@ export const connectAgentKey = async (ctx: Context, mcpScopes: McpScope[]) => {
     return JSON.parse(answer.text);
   };
 };
+
+describe.todo("connectAgentKey");
