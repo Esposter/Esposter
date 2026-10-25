@@ -36,17 +36,24 @@ export const achievementRouter = router({
       with: UserAchievementInAchievementRelations,
     });
     const unlockedUserAchievementNames = new Set(unlockedUserAchievements.map(({ achievement }) => achievement.name));
+    // The trigger's zod schema and the predicates are server-only, and the schema's cycles cannot be sent as JSON, so
+    // The map ships its client fields alone
     return Object.fromEntries(
-      Object.entries(AchievementDefinitionMap).map(([achievementName, achievementDefinition]) => [
-        achievementName,
-        {
-          ...achievementDefinition,
-          description:
-            achievementDefinition.isHidden && !unlockedUserAchievementNames.has(achievementName)
-              ? HIDDEN_ACHIEVEMENT_DESCRIPTION
-              : achievementDefinition.description,
-        },
-      ]),
+      Object.entries(AchievementDefinitionMap).map(
+        ([
+          achievementName,
+          { check: _check, condition: _condition, inputSchema: _inputSchema, ...achievementDefinition },
+        ]) => [
+          achievementName,
+          {
+            ...achievementDefinition,
+            description:
+              achievementDefinition.isHidden && !unlockedUserAchievementNames.has(achievementName)
+                ? HIDDEN_ACHIEVEMENT_DESCRIPTION
+                : achievementDefinition.description,
+          },
+        ],
+      ),
     ) as typeof AchievementDefinitionMap;
   }),
   // The share of registered users who have unlocked each achievement, as a percentage. Every definition is keyed, so

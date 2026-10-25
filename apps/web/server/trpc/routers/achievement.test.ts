@@ -71,6 +71,15 @@ describe("achievementRouter", () => {
     );
   });
 
+  // The map is sent as JSON, and a trigger's zod schema is circular, so the payload must not carry it
+  test("readAchievementMap serializes to JSON", async () => {
+    expect.hasAssertions();
+
+    const achievementMap = await caller.achievement.readAchievementMap();
+
+    expect(() => JSON.stringify(achievementMap)).not.toThrow();
+  });
+
   // The endpoint is public, so this is the difference between a profile and a progress report: one message
   // Unlocks FirstMessage and starts CenturyClub, and only the unlocked one is anyone else business
   test("readUserAchievements reads another user unlocked achievements only", async () => {
