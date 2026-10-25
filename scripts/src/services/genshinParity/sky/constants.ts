@@ -18,6 +18,10 @@ export const COMPONENT_REGEX: RegExp = /^(?<name>.+)\.(?<index>\d+)$/u;
 // Every this many pixels across and down is a sample: the sky changes slowly, and a solve reads it many times
 export const SAMPLE_STRIDE = 4;
 
-// The depth bands a haze's pixels are binned by, in metres between one band's edge and the next, the last open to any
-// Depth. The fog solve and the stone light both bin their pixels by them, so each reads the same bands
-export const DEPTH_BANDS: readonly number[] = [0, 10, 20, 40, 80, 160, 320, 640, Infinity];
+// The depth bands a haze's pixels are binned by, the edges in metres from 0 up to 640, each band running to the next edge.
+// The fog solve and the stone light both bin their pixels by them, each closing the table with its own open top band
+export const DEPTH_BANDS: readonly number[] = [0, 10, 20, 40, 80, 160, 320, 640];
+// The open top band each solve closes DEPTH_BANDS with: the fog's ends at 1280 m, so its pixels past that stand in no band,
+// And the stone light's is open to any depth
+export const FOG_TOP_DEPTH_BAND = 1280;
+export const STONE_LIGHT_TOP_DEPTH_BAND = Infinity;

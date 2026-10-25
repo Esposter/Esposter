@@ -13,7 +13,7 @@ import { readWitnessTargets } from "#src/services/genshinParity/shared/readWitne
 import { setPageWitnessView } from "#src/services/genshinParity/shared/setPageWitnessView";
 import { withReferencePage } from "#src/services/genshinParity/shared/withReferencePage";
 import { checkIsPartInterior } from "#src/services/genshinParity/sky/checkIsPartInterior";
-import { DEPTH_BANDS } from "#src/services/genshinParity/sky/constants";
+import { DEPTH_BANDS, STONE_LIGHT_TOP_DEPTH_BAND } from "#src/services/genshinParity/sky/constants";
 import { getPixelDisplayColor } from "#src/services/genshinParity/sky/getPixelDisplayColor";
 import { STONE_HEIGHT_BANDS } from "#src/services/genshinParity/witness/constants";
 import { shootWitnessFamilies } from "#src/services/genshinParity/witness/shootWitnessFamilies";
@@ -26,6 +26,7 @@ import { Matrix3, Matrix4, Vector3 } from "three";
 // Light solved over it stands neither too dark below nor too bright above
 const RAMP_BIN_COUNT = 12;
 const UPWARD_BIN_COUNT = 4;
+const STONE_LIGHT_DEPTH_BANDS: readonly number[] = [...DEPTH_BANDS, STONE_LIGHT_TOP_DEPTH_BAND];
 // A reference's stone as the game's deferred pass casts it, read over the parts the witness draws from the game's
 // Exports: each part's interior pixel where the scene puts it, its reference colour as the screen shows it, the
 // Exports' albedo, their normal against the scene's sun and the sun's visibility there giving its ramp coordinate and
@@ -93,7 +94,7 @@ export const readStoneLightReading = async (
       const rampCoordinate = computeStoneRampCoordinate(faceNormal.dot(sun), shadow[pixel * 4] ?? 0);
       const ray = point.clone().sub(eye).normalize();
       const scatter = Math.min(Math.max(ray.dot(scatterDirection), 0) ** fog.scatterPower * fog.scatterStrength, 1);
-      const band = DEPTH_BANDS.findIndex((far) => pixelDepth < far);
+      const band = STONE_LIGHT_DEPTH_BANDS.findIndex((far) => pixelDepth < far);
       const heightBand = STONE_HEIGHT_BANDS.findIndex((top) => point.y < top);
       const rampBin = Math.min(Math.floor(rampCoordinate * RAMP_BIN_COUNT), RAMP_BIN_COUNT - 1);
       const upwardBin = Math.min(Math.floor(((faceNormal.y + 1) / 2) * UPWARD_BIN_COUNT), UPWARD_BIN_COUNT - 1);
