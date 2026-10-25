@@ -114,6 +114,28 @@ describe("sheetRouter", () => {
     expect(content?.data.rows.map(({ data }) => data)).toStrictEqual([{ new: "value" }]);
   });
 
+  test("a column rename onto another column's name is refused and leaves the cells alone", async () => {
+    expect.hasAssertions();
+
+    const { id } = await createSheet(
+      [new StringColumn({ name: "a" }), new StringColumn({ name: "b" })],
+      [new Row({ data: { a: "1", b: "2" } })],
+    );
+
+    await expect(
+      caller.runSheetCommand({
+        command: { name: "a", type: CommandType.UpdateColumn, updatedColumn: new StringColumn({ name: "b" }) },
+        id,
+      }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: Invalid operation: Update, name: a, a column named "b" already exists]`,
+    );
+    const content = await caller.readResourceContent({ id });
+
+    expect(content?.data.columns.map(({ name: columnName }) => columnName)).toStrictEqual(["a", "b"]);
+    expect(content?.data.rows.map(({ data }) => data)).toStrictEqual([{ a: "1", b: "2" }]);
+  });
+
   test("Column type change converts every cell", async () => {
     expect.hasAssertions();
 

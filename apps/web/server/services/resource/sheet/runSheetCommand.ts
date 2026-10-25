@@ -3,12 +3,13 @@ import type { RunSheetCommandInput } from "#shared/models/db/resource/sheet/RunS
 import type { ResourceInResource } from "@esposter/db-schema";
 
 import { updateResourceContent } from "#server/services/resource/updateResourceContent";
+import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
 import { sheetResourceSchema } from "#shared/models/resource/sheet/SheetResource";
 import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";
 import { UpdateColumnCommand } from "#shared/models/resource/sheet/commands/UpdateColumnCommand";
 import { UpdateRowCommand } from "#shared/models/resource/sheet/commands/UpdateRowCommand";
-import { exhaustiveGuard, takeOne, toRawDeep } from "@esposter/shared";
+import { exhaustiveGuard, Operation, takeOne, toRawDeep } from "@esposter/shared";
 
 // Runs the editor's own command over the Sheet as `updateResourceContent` hands it, so a command naming a column or
 // a row by id lands on the content the owner has now. A pinned version refuses it once the Sheet has moved past it.
@@ -28,6 +29,13 @@ export const runSheetCommand = async (
         case CommandType.UpdateColumn: {
           if (!sheet.data.columns.some(({ name }) => name === command.name))
             throw getNotFoundError("Column", command.name);
+          const { name: updatedName } = command.updatedColumn;
+          if (updatedName !== command.name && sheet.data.columns.some(({ name }) => name === updatedName))
+            throw getInvalidOperationError(
+              Operation.Update,
+              command.name,
+              `a column named "${updatedName}" already exists`,
+            );
           new UpdateColumnCommand(command.name, command.updatedColumn).execute(sheet.data);
           break;
         }
