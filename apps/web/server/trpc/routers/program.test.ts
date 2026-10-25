@@ -22,8 +22,10 @@ import { sheetRouter } from "#server/trpc/routers/sheet";
 import { surveyRouter } from "#server/trpc/routers/survey";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
 import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
+import { EmailNodeType } from "#shared/models/pageBuilder/EmailNodeType";
 import { ProgramInviteScope } from "#shared/models/resource/program/ProgramInviteScope";
 import { surveySettingsSchema } from "#shared/models/resource/survey/SurveySettings";
+import { TEST_LABEL } from "#shared/services/pageBuilder/constants.test";
 import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
 import { createEntity, getTopNEntities } from "@esposter/db";
 import {
@@ -35,8 +37,9 @@ import {
   SurveyResponseEntity,
   SurveyResponseMode,
 } from "@esposter/db-schema";
-import { InvalidOperationError, NotFoundError, Operation, RoutePath, takeOne } from "@esposter/shared";
+import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { MockTableDatabase } from "azure-mock";
+import { MjmlNodeType } from "mjml-blocks";
 import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
 import { z } from "zod";
 
@@ -425,7 +428,7 @@ describe("programRouter", () => {
   test("a program keeps its reference to a deleted email", async () => {
     expect.hasAssertions();
 
-    const { program } = await createInviteProgram((surveyPath) => `<a href="${surveyPath}">Take the survey</a>`);
+    const { program } = await createInviteProgram();
     const readEmailId = async () => (await caller.readResourceContent({ id: program.id }))?.emailId;
     const emailId = await readEmailId();
     if (!emailId) throw new Error("the program holds no email");
@@ -441,14 +444,27 @@ describe("programRouter", () => {
     expect(missingDependencyCount).toBe(1);
   });
 
-  // A program whose email is captured with the survey link the invite button writes, so every test reads one bound email
-  const createInviteProgram = async (emailHtml: (surveyPath: string) => string, audienceKeyValues = ["a", "b"]) => {
+  // A program bound to one email as its working copy holds it: a survey invite to the survey, or a button that links nowhere
+  const createInviteProgram = async (linksSurvey = true, audienceKeyValues = ["a", "b"]) => {
     const survey = await createSurvey(surveyCaller, name, { model, settings: identifiedSettings });
-    const surveyPath = RoutePath.View(ResourceType.Survey, survey.id);
     const sheet = await createAudienceSheet(sheetCaller, name, audienceKeyValues);
     const email = await emailCaller.createResource({ name });
+    const invite = linksSurvey
+      ? { props: { id: crypto.randomUUID(), label: TEST_LABEL, surveyId: survey.id }, type: EmailNodeType.SurveyInvite }
+      : { props: { content: TEST_LABEL, id: crypto.randomUUID() }, type: MjmlNodeType.Button };
     await emailCaller.saveResourceContent({
-      content: new EmailEditor({ html: emailHtml(surveyPath) }),
+      content: new EmailEditor({
+        content: [
+          {
+            props: {
+              children: [{ props: { children: [invite], id: crypto.randomUUID() }, type: MjmlNodeType.Column }],
+              id: crypto.randomUUID(),
+            },
+            type: MjmlNodeType.Section,
+          },
+        ],
+        root: { props: {} },
+      }),
       contentVersion: email.contentVersion,
       id: email.id,
     });
@@ -470,7 +486,7 @@ describe("programRouter", () => {
   test("invites refuse an email with no link to the survey, before reading the audience", async () => {
     expect.hasAssertions();
 
-    const { program } = await createInviteProgram(() => "<p>No link</p>");
+    const { program } = await createInviteProgram(false);
 
     await expect(
       caller.readProgramInvites({ id: program.id, scope: ProgramInviteScope.All }),
@@ -482,7 +498,7 @@ describe("programRouter", () => {
   test("invites hand each participant their own token with the audience row", async () => {
     expect.hasAssertions();
 
-    const { program } = await createInviteProgram((surveyPath) => `<a href="${surveyPath}">Take the survey</a>`);
+    const { program } = await createInviteProgram();
     const { participants } = await caller.generateProgramParticipants({ id: program.id });
     const { emailHtml, invites, unmatchedCount } = await caller.readProgramInvites({
       id: program.id,
@@ -490,7 +506,7 @@ describe("programRouter", () => {
     });
 
     expect(unmatchedCount).toBe(0);
-    expect(emailHtml).toContain("Take the survey");
+    expect(emailHtml).toContain(TEST_LABEL);
     expect(
       sortByKeyValue(invites.map(({ keyValue: inviteKeyValue, token }) => ({ keyValue: inviteKeyValue, token }))),
     ).toStrictEqual(sortByKeyValue(participants));
@@ -500,7 +516,7 @@ describe("programRouter", () => {
   test("reminders carry only the participants still awaiting a response", async () => {
     expect.hasAssertions();
 
-    const { program, survey } = await createInviteProgram((surveyPath) => `<a href="${surveyPath}">Go</a>`);
+    const { program, survey } = await createInviteProgram();
     const { participants } = await caller.generateProgramParticipants({ id: program.id });
     const responderToken = takeOne(
       participants.filter(({ keyValue: participantKeyValue }) => participantKeyValue === "a"),
