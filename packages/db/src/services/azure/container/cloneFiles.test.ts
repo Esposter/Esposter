@@ -43,11 +43,11 @@ describe(cloneFiles, () => {
     const containerClient = {
       getBlockBlobClient: (blobName: string) => ({
         beginCopyFromURL,
-        getProperties: () => Promise.resolve({ contentLength: 1 }),
         deleteIfExists: () => {
           deletedBlobNames.push(blobName);
           return Promise.resolve({ succeeded: true });
         },
+        getProperties: () => Promise.resolve({ contentLength: 1 }),
         url: `${containerUrl}/${blobName
           .split("/")
           .map((segment) => encodeURIComponent(segment))

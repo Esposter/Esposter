@@ -41,8 +41,8 @@ describe(listChargedBlobsByUser, () => {
 
     await expect(listChargedBlobsByUser(db, userId)).resolves.toStrictEqual(
       new Map([
-        [AzureContainer.ResourceAssets, [`${resourceId}/blobName`]],
         [AzureContainer.MessageAssets, [`${roomId}/${fileId}`]],
+        [AzureContainer.ResourceAssets, [`${resourceId}/blobName`]],
       ]),
     );
   });
