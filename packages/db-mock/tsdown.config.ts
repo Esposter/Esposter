@@ -1,6 +1,6 @@
 import type { UserConfig } from "tsdown";
 
-import { SNAPSHOT_FILENAME } from "#src/constants";
+import { SNAPSHOT_FILENAME } from "#src/services/constants";
 import { DISTRIBUTION_DIRECTORY, getTsdownConfigurationNode } from "@esposter/configuration";
 import { copyFileSync } from "node:fs";
 import { join } from "node:path";

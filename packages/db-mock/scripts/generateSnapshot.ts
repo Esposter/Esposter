@@ -1,4 +1,4 @@
-import { SNAPSHOT_FILENAME } from "#src/constants";
+import { SNAPSHOT_FILENAME } from "#src/services/constants";
 import { PGlite } from "@electric-sql/pglite";
 import { pg_trgm } from "@electric-sql/pglite/contrib/pg_trgm";
 import { KIBIBYTE } from "@esposter/configuration";
