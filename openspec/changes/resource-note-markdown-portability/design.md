@@ -20,6 +20,7 @@ Note joins `PortableResourceType` with one Markdown format in `PortableFormatMap
 - **No HTML or `.docx` export.** The published view already is the HTML form; `.docx` is a heavy dependency for a Word user who can paste the Markdown.
 - **No live Markdown editing mode.** The Note is a rich-text editor; Markdown is its file format, not a second editing surface.
 - **No tables in the round trip.** CommonMark has no table syntax, so a table the note's kit inserts does not survive an export and import; the round trip keeps the blocks CommonMark carries. A GFM table form is a later decision, recorded here until it is made.
+- **Blank paragraphs do not survive an export.** Markdown separates blocks by blank lines rather than storing them, so an empty paragraph the editor holds writes nothing and reads back as no block.
 
 ## Key files
 
@@ -35,7 +36,8 @@ The files it creates:
 
 ```text
 apps/web/app/
-  services/resource/note/markdown/         ← the export walk and the import token map, and their tests
-  components/Resource/Note/Dialogs.vue     ← the import preview and its confirm
-  store/resource/note/portableDialog.ts    ← the parsed document the preview shows
+  services/resource/note/serializeNoteMarkdown.ts     ← the export walk
+  services/resource/note/deserializeNoteMarkdown.ts   ← the import's token map, and the round-trip test
+  components/Resource/Note/Dialogs.vue                ← the import preview and its confirm
+  store/resource/note/portableDialog.ts               ← the parsed document the preview shows
 ```

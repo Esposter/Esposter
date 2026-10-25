@@ -1,6 +1,6 @@
 ## 1. Converter
 
-- [ ] 1.1 Write the Markdown converter over the catalog's `marked` and the note's own content schema, adding no package (the design records why). Verify: a test named after the scenario 'A note with every block survives a Markdown round trip' passes.
+- [x] 1.1 Write the Markdown converter over the catalog's `marked` and the note's own content schema, adding no package (the design records why). Verify: a test named after the scenario 'A note with every block survives a Markdown round trip' passes.
 
 ## 2. Export
 
@@ -8,7 +8,7 @@
 
 ## 3. Import
 
-- [ ] 3.1 Parse an imported file against the note's own content extensions, so the note decides what round-trips. Verify: a test named after the scenario 'A note with every block survives a Markdown round trip'.
+- [x] 3.1 Parse an imported file against the note's own content extensions, so the note decides what round-trips. Verify: a test named after the scenario 'A note with every block survives a Markdown round trip'.
 - [ ] 3.2 Show the import preview with confirm and cancel, saving only on confirm. Verify: tests named after the scenarios 'An import previews the content it will replace' and 'Cancelling an import keeps the note as it was'.
 
 ## 4. Menu and history
