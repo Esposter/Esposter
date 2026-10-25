@@ -16,9 +16,13 @@ export const deleteAccountOwnedRoom = async (
   roomId: RoomInMessage["id"],
 ): Promise<void> => {
   await Promise.all(
-    [AzureTable.Messages, AzureTable.MessagesMetadata, AzureTable.ModerationLog, AzureTable.ModerationNotes].map(
-      async (tableName) => deleteTablePartitionEntities(await getTableClient(tableName), roomId),
-    ),
+    [
+      AzureTable.Messages,
+      AzureTable.MessagesAscending,
+      AzureTable.MessagesMetadata,
+      AzureTable.ModerationLog,
+      AzureTable.ModerationNotes,
+    ].map(async (tableName) => deleteTablePartitionEntities(await getTableClient(tableName), roomId)),
   );
   await deleteStoragePrefix(context, AzureContainer.MessageAssets, `${roomId}/`);
   await deleteStoragePrefix(context, AzureContainer.PublicUserAssets, `rooms/${roomId}/`);

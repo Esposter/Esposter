@@ -81,6 +81,7 @@ describe(deleteAccountHandler, () => {
   const name = "name";
   const roomTableNames = [
     AzureTable.Messages,
+    AzureTable.MessagesAscending,
     AzureTable.MessagesMetadata,
     AzureTable.ModerationLog,
     AzureTable.ModerationNotes,
