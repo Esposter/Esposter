@@ -33,5 +33,6 @@ Paths relative to `apps/web`.
 | `server/services/resource/readOwnedResource.ts`            | the owner and type lookup every owned read shares                   |
 | `server/services/resource/requireOwnedResource.ts`         | the same lookup as an access check, refusing what it cannot resolve |
 | `server/services/resource/checkIsResourceAssetReadable.ts` | whether a caller may read one asset path                            |
+| `server/services/resource/readResourceAccess.ts`           | the caller's ownership and the resource's publication, read once    |
 | `server/services/program/readProgramStatusRows.ts`         | the participants × responses join                                   |
 | `server/services/survey/resolveIdentifiedToken.ts`         | the survey owner's programs as the token issuers                    |

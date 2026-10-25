@@ -94,6 +94,7 @@ A reserve names the old content's assets and the new content's together, so a wr
 | `apps/web/server/services/resource/snapshot/releaseResourceAssets.ts`           | the one release, with the lock, the grace window and the counting-only gate     |
 | `apps/web/shared/services/resource/constants.ts`                                | `ASSET_GRACE_MS` and `checkIsAssetCollectionEnabled()`                          |
 | `apps/web/server/services/resource/checkIsResourceAssetReadable.ts`             | the one read-access question, asked by the endpoint and by duplicate            |
+| `apps/web/server/services/resource/readResourceAccess.ts`                       | the resource's ownership and publication, read once per resource                |
 | `apps/web/server/services/resource/cloneContentAssets.ts`                       | duplicate's copy of referenced files                                            |
 
 ## Notes
