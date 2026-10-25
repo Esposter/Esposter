@@ -43,6 +43,9 @@ export const createContentData = <
     if (reloadedType === type) await readContentData();
   });
   const saveContent = () => saveResourceContent(content.value);
+  ResourceContentHookMap.Keep.register(async (keptType) => {
+    if (keptType === type) await saveContent();
+  });
   // A write that lands after an await belongs to the opening it was issued under. The ref holds one opening's
   // Document at a time, so the writer this hands back — bound where the operation is issued — applies only while
   // That opening is still the open one, and a late write is dropped rather than filed under another resource or a

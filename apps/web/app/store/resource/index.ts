@@ -192,6 +192,13 @@ export const useResourceStore = defineStore("resource", () => {
     await ResourceContentHookMap.Reload.run(resource.value.type);
     await ResourceContentHookMap.Adopt.run(resource.value.type);
   };
+  // Another device's document is adopted in place of this client's. The bytes it held name the document the save
+  // replaced, so the next large save crosses whole. Cleared after the re-read, which may itself have held the large
+  // document's bytes
+  const adoptResourceContent = async () => {
+    await reloadResourceContent();
+    contentBaseline = undefined;
+  };
   // The blob is written on first save, so a freshly created resource returns undefined content.
   // The dispatch reads the loaded row's own type, so the procedure resolves to the union of every type's
   // Content read — narrowing it to TType is the calling content store's claim about which resources it opens,
@@ -259,10 +266,26 @@ export const useResourceStore = defineStore("resource", () => {
       return;
     }
 
-    await reloadResourceContent();
-    // The bytes this client held name a document the save replaced, so the next large save crosses whole. Cleared
-    // After the re-read, which may itself have held the large document's bytes
-    contentBaseline = undefined;
+    await adoptResourceContent();
+  };
+  // Taking theirs: the other version is adopted and the unwritten edit is dropped with the content it was an edit of
+  const takeOtherSave = async () => {
+    if (!heldSave.value) return;
+
+    heldSave.value = undefined;
+    if (unwrittenContentResourceId.value === currentResourceId.value) unwrittenContentResourceId.value = "";
+    await adoptResourceContent();
+  };
+  // Keeping mine: the version moves to the held save's, so the local document is written over it as the newest version,
+  // and the other write stays in history. The stale latch lifts for that one write
+  const keepUnwrittenContent = async () => {
+    const resourceValue = resource.value;
+    if (!resourceValue || !heldSave.value) return;
+
+    storeContentVersion(heldSave.value.contentVersion);
+    heldSave.value = undefined;
+    isContentStale.value = false;
+    await ResourceContentHookMap.Keep.run(resourceValue.type);
   };
   const saveContent = async (content: ResourceContent<ResourceType>) => {
     const resourceValue = resource.value;
@@ -517,6 +540,7 @@ export const useResourceStore = defineStore("resource", () => {
     isDuplicatePending,
     isPending,
     isPublicationPending,
+    keepUnwrittenContent,
     publication,
     publishResource,
     readContent,
@@ -529,6 +553,7 @@ export const useResourceStore = defineStore("resource", () => {
     setPersistedContent,
     storeContentVersion,
     storeSaveResourceContent,
+    takeOtherSave,
     unpublishResource,
     unwrittenContentResourceId,
     updateResourceTags,

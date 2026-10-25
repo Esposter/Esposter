@@ -895,6 +895,51 @@ describe(useResourceStore, () => {
     expect(saveResourceContent).not.toHaveBeenCalled();
   });
 
+  // Taking theirs adopts the other version and drops the unwritten edit with the document it was an edit of
+  test("Taking theirs replaces the unsaved edit", async () => {
+    expect.hasAssertions();
+
+    const resourceStore = useResourceStore();
+    const { heldSave, resource, saveState, unwrittenContentResourceId } = storeToRefs(resourceStore);
+    await resourceStore.readResource();
+    assert.exists(resource.value);
+    const { contentVersion, id } = resource.value;
+    const reload = vi.fn<(type: ResourceType) => void>();
+    const unregisterReload = ResourceContentHookMap.Reload.register(reload);
+    unwrittenContentResourceId.value = id;
+    await resourceStore.storeSaveResourceContent({ contentVersion: contentVersion + 1, device });
+    await withFinalizerAsync(() => resourceStore.takeOtherSave(), unregisterReload);
+
+    expect(reload).toHaveBeenCalledExactlyOnceWith(ResourceType.Sheet);
+    expect(heldSave.value).toBeUndefined();
+    expect(unwrittenContentResourceId.value).toBe("");
+    expect(saveState.value).toBe(ResourceSaveState.Saved);
+  });
+
+  // Keeping mine re-writes the local document as the newest version, so the other save is one version back in history
+  // and not overwritten
+  test("Keeping mine saves over the other version and keeps it in history", async () => {
+    expect.hasAssertions();
+
+    const resourceStore = useResourceStore();
+    const { heldSave, resource, unwrittenContentResourceId } = storeToRefs(resourceStore);
+    await resourceStore.readResource();
+    assert.exists(resource.value);
+    const { contentVersion, id } = resource.value;
+    let contentVersionKept = contentVersion;
+    const keep = vi.fn<(type: ResourceType) => void>(() => {
+      contentVersionKept = resource.value?.contentVersion ?? contentVersion;
+    });
+    const unregisterKeep = ResourceContentHookMap.Keep.register(keep);
+    unwrittenContentResourceId.value = id;
+    await resourceStore.storeSaveResourceContent({ contentVersion: contentVersion + 1, device });
+    await withFinalizerAsync(() => resourceStore.keepUnwrittenContent(), unregisterKeep);
+
+    expect(keep).toHaveBeenCalledExactlyOnceWith(ResourceType.Sheet);
+    expect(contentVersionKept).toBe(contentVersion + 1);
+    expect(heldSave.value).toBeUndefined();
+  });
+
   // The save stream names the version and the device only, so an editor with nothing unwritten re-reads the document
   // through the reload stage and lets its library adopt it — the same two stages a restore runs
   test("An editor with nothing unsaved adopts a save in place", async () => {

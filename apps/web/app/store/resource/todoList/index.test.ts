@@ -217,6 +217,29 @@ describe(useTodoListStore, () => {
     expect(items.value.map(({ name }) => name)).toStrictEqual([newItemName, itemName]);
   });
 
+  // Keeping mine writes the list on screen over another device's save, as the newest version: the content store that
+  // holds the list is the one that writes it, at the version that save left the resource on
+  test("keeps the unsaved list over another device's save, written as the newest version", async () => {
+    expect.hasAssertions();
+
+    const todoListStore = await setupStore();
+    const { items } = storeToRefs(todoListStore);
+    const resourceStore = useResourceStore();
+    const { unwrittenContentResourceId } = storeToRefs(resourceStore);
+    const saveKept = vi.fn<(options: { input: { contentVersion: number } }) => ResourceInResource>(() =>
+      createResource(2),
+    );
+    trpcMsw.todoList.saveResourceContent.mutation(saveKept);
+    items.value = [new TodoListItem({ name: newItemName })];
+    unwrittenContentResourceId.value = resourceId;
+    await resourceStore.storeSaveResourceContent({ contentVersion: 1, device });
+    await resourceStore.keepUnwrittenContent();
+
+    expect(saveKept).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ input: expect.objectContaining({ contentVersion: 1, id: resourceId }) }),
+    );
+  });
+
   // The field above the list adds with no dialog to hold a draft, so a refused save has to take the new row back out
   test("takes out a todo added by name when the server refuses it", async () => {
     expect.hasAssertions();
