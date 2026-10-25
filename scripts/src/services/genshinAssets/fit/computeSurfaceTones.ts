@@ -4,7 +4,7 @@ import type { SurfaceSample } from "#src/models/genshinAssets/fit/SurfaceSample"
 import { clusterColours } from "#src/services/genshinAssets/fit/clusterColours";
 import { computeTotalWeight } from "#src/services/genshinAssets/fit/computeTotalWeight";
 import { computeWeightedColour } from "#src/services/genshinAssets/fit/computeWeightedColour";
-import { toHex } from "#src/services/genshinAssets/fit/toHex";
+import { toHex } from "#src/services/genshinParity/image/toHex";
 
 // The most tones a surface's textures are split into, each a cluster of their colours
 const SURFACE_TONE_COUNT = 3;

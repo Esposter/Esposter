@@ -132,13 +132,14 @@ export const readGcsimAttacks = (
           tokens[typeStart - 1]?.text === "return"
             ? variableName
             : readReturnedFunction(tokens, namedFunctions, position, variableName);
+        const abilName = getName(abilExpression);
         const base: GcsimAttack = {
           abil:
             abilExpression?.kind === GoExpressionKind.String
               ? abilExpression.value
-              : getName(abilExpression) === undefined
+              : abilName === undefined
                 ? undefined
-                : stringMap.get(getName(abilExpression) ?? ""),
+                : stringMap.get(abilName),
           attackTag: getName(fieldMap.get("AttackTag")?.expression),
           durability: evaluateNumber("Durability"),
           element: getName(fieldMap.get("Element")?.expression),

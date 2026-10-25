@@ -2,7 +2,8 @@ import type { GcsimCharacter } from "#src/models/genshinAssets/kits/gcsim/GcsimC
 import type { GcsimKitCandidateWriter } from "#src/models/genshinAssets/kits/gcsim/GcsimKitCandidateWriter";
 
 import { findGcsimConstant } from "#src/services/genshinAssets/kits/gcsim/findGcsimConstant";
-import { readFirstNumber } from "#src/services/genshinAssets/kits/gcsim/readFirstNumber";
+import { readFirstGoFrames } from "#src/services/genshinAssets/kits/gcsim/readFirstGoFrames";
+import { readGoNumber } from "#src/services/genshinAssets/kits/gcsim/readGoNumber";
 
 const BAG_PATH_REGEX = /^(?:frames|parameters)\.(?<name>[^.]+)$/u;
 
@@ -17,7 +18,7 @@ export const addGcsimNamedConstantCandidates = (
   for (const path of bagPaths) {
     const name = BAG_PATH_REGEX.exec(path)?.groups?.name;
     const constant = name === undefined ? undefined : findGcsimConstant(constantMap, name);
-    const value = readFirstNumber(constant?.value);
+    const value = readGoNumber(readFirstGoFrames(constant?.value));
     if (constant === undefined || value === undefined) continue;
     const line = Array.isArray(constant.value) ? (constant.elementLines[0] ?? constant.line) : constant.line;
     add(path, value, toFile(constant.file), line);

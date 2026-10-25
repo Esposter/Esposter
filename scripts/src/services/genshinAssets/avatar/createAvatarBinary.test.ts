@@ -1,7 +1,7 @@
 import { createAvatarBinary } from "#src/services/genshinAssets/avatar/createAvatarBinary";
 import { describe, expect, test } from "vitest";
 
-describe("createAvatarBinary", () => {
+describe(createAvatarBinary, () => {
   test("packs each array after the last, on a four-byte boundary, so it reads without a copy", () => {
     expect.hasAssertions();
 

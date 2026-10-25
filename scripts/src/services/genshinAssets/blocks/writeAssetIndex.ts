@@ -1,3 +1,4 @@
+import { SOURCE_PREFIX } from "#src/services/genshinAssets/blocks/constants";
 import { parseValue } from "#src/services/genshinAssets/blocks/parseValue";
 import {
   ASSET_INDEX_PATH,
@@ -12,7 +13,6 @@ import { createInterface } from "node:readline";
 const NAME_PREFIX = '"Name": "';
 const OFFSET_PREFIX = '"Offset": ';
 const PATH_ID_PREFIX = '"PathID": ';
-const SOURCE_PREFIX = '"Source": "';
 const TYPE_PREFIX = '"Type": "';
 
 // The asset map's name, type, block, path ID and file offset of every entry, one tab-separated line each, read a line at

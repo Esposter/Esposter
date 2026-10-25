@@ -5,8 +5,8 @@ import type { GoBranchPlace } from "#src/models/genshinAssets/kits/gcsim/GoBranc
 import type { GoSwitchFrame } from "#src/models/genshinAssets/kits/gcsim/GoSwitchFrame";
 import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
 
+import { checkIsCaseClause } from "#src/services/genshinAssets/kits/gcsim/checkIsCaseClause";
 import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
-import { checkIsSwitchClause } from "#src/services/genshinAssets/kits/gcsim/checkIsSwitchClause";
 import { findStatementKeyword } from "#src/services/genshinAssets/kits/gcsim/findStatementKeyword";
 
 // Reads the if and else bodies and the switch clauses of a Go file as chains. An `if` opens a chain, and an `else` or
@@ -73,7 +73,7 @@ export const readGoBranchAt = (tokens: readonly GoToken[]): ((position: number) 
   for (const [position, token] of tokens.entries())
     if (checkIsGoPunctuation(token, "{")) openBrace(position);
     else if (checkIsGoPunctuation(token, "}")) closeBrace(position, token.line);
-    else if (checkIsSwitchClause(token)) openClause(position);
+    else if (checkIsCaseClause(token)) openClause(position);
   const chainArmCountMap = new Map<number, number>();
   for (const { chain, index } of bodies)
     chainArmCountMap.set(chain, Math.max(chainArmCountMap.get(chain) ?? 0, index + 1));

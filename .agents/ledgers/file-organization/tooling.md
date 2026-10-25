@@ -323,7 +323,6 @@
 | `scripts/src/services/genshinAssets/fit/LoginStoneFamilyMaterialRegexMap.ts`              | —                      | 1 file    |
 | `scripts/src/services/genshinAssets/fit/RegionCapitalMap.ts`                              | —                      | 1 file    |
 | `scripts/src/services/genshinAssets/fit/TerrainSplatKindGroundLayerMap.ts`                | —                      | 1 file    |
-| `scripts/src/services/genshinAssets/fit/average.ts`                                       | —                      | 1 file    |
 | `scripts/src/services/genshinAssets/fit/averageSurfaceDetails.test.ts`                    | —                      | 1 file    |
 | `scripts/src/services/genshinAssets/fit/averageSurfaceDetails.ts`                         | —                      | 1 file    |
 | `scripts/src/services/genshinAssets/fit/blurWithinTags.test.ts`                           | —                      | 1 file    |
@@ -353,7 +352,6 @@
 | `scripts/src/services/genshinAssets/fit/computeLagDifference.ts`                          | —                      | 1 file    |
 | `scripts/src/services/genshinAssets/fit/computeLeast.ts`                                  | —                      | 1 file    |
 | `scripts/src/services/genshinAssets/fit/computeLoopArea.ts`                               | —                      | 1 file    |
-| `scripts/src/services/genshinAssets/fit/computeMean.ts`                                   | —                      | 1 file    |
 | `scripts/src/services/genshinAssets/fit/computeMeanAngle.ts`                              | —                      | 1 file    |
 | `scripts/src/services/genshinAssets/fit/computeMeanValue.ts`                              | —                      | 1 file    |
 | `scripts/src/services/genshinAssets/fit/computeMisses.ts`                                 | —                      | 1 file    |
@@ -559,7 +557,6 @@
 | `scripts/src/services/genshinAssets/fit/toEdgeKey.ts`                                     | —                      | 1 file    |
 | `scripts/src/services/genshinAssets/fit/toFaceEdges.ts`                                   | —                      | 1 file    |
 | `scripts/src/services/genshinAssets/fit/toGroundPiece.ts`                                 | —                      | 1 file    |
-| `scripts/src/services/genshinAssets/fit/toHex.ts`                                         | —                      | 1 file    |
 | `scripts/src/services/genshinAssets/fit/toLevels.ts`                                      | —                      | 1 file    |
 | `scripts/src/services/genshinAssets/fit/toMatrix.ts`                                      | —                      | 1 file    |
 | `scripts/src/services/genshinAssets/fit/toNodeSpan.ts`                                    | —                      | 1 file    |

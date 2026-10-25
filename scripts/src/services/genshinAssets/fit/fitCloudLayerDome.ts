@@ -1,10 +1,10 @@
 import type { CloudLayerDome } from "#src/models/genshinAssets/fit/CloudLayerDome";
 import type { ExportedMesh } from "#src/models/genshinAssets/shared/ExportedMesh";
 
-import { computeMean } from "#src/services/genshinAssets/fit/computeMean";
 import { computeMeanAngle } from "#src/services/genshinAssets/fit/computeMeanAngle";
 import { readPair } from "#src/services/genshinAssets/fit/readPair";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
+import { computeMean } from "#src/services/recreation/statistics/computeMean";
 import { getOrCreate, InvalidOperationError, Operation } from "@esposter/shared";
 import { MathUtils } from "three";
 

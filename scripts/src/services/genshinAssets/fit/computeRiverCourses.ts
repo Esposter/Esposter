@@ -2,8 +2,8 @@ import type { SlicePoint } from "#src/models/genshinAssets/fit/SlicePoint";
 import type { RiverCoursePoint } from "genshin-engine";
 import type { Vector3 } from "three";
 
-import { average } from "#src/services/genshinAssets/fit/average";
 import { roundFitted } from "#src/services/genshinAssets/fit/roundFitted";
+import { computeMean } from "#src/services/recreation/statistics/computeMean";
 
 // Metres between a course's points along it, each slice of a water surface giving one point on its centreline
 const RIVER_COURSE_SLICE_METRES = 1;
@@ -16,8 +16,8 @@ const RIVER_MIN_LENGTH_WIDTHS = 2;
 // Of it a point at the middle of its width with the mean of its level, the surface turned to run downhill from its
 // Higher level to its lower, and broken where it has a hole. A pond, no longer than twice its width, has no course
 export const computeRiverCourses = (points: readonly Vector3[]): RiverCoursePoint[][] => {
-  const centreX = average(points.map(({ x }) => x));
-  const centreZ = average(points.map(({ z }) => z));
+  const centreX = computeMean(points.map(({ x }) => x));
+  const centreZ = computeMean(points.map(({ z }) => z));
   let spreadXX = 0;
   let spreadZZ = 0;
   let spreadXZ = 0;
@@ -50,7 +50,7 @@ export const computeRiverCourses = (points: readonly Vector3[]): RiverCoursePoin
   for (const point of surface) slices[Math.round((point.along - minAlong) / RIVER_COURSE_SLICE_METRES)]?.push(point);
   const sliced = slices.flatMap((slice): SlicePoint[] => {
     if (slice.length === 0) return [];
-    const sliceAlong = average(slice.map(({ along }) => along));
+    const sliceAlong = computeMean(slice.map(({ along }) => along));
     const acrossMin = Math.min(...slice.map(({ across }) => across));
     const acrossMax = Math.max(...slice.map(({ across }) => across));
     const across = (acrossMin + acrossMax) / 2;
@@ -58,7 +58,7 @@ export const computeRiverCourses = (points: readonly Vector3[]): RiverCoursePoin
       {
         along: sliceAlong,
         point: {
-          level: roundFitted(average(slice.map(({ level }) => level))),
+          level: roundFitted(computeMean(slice.map(({ level }) => level))),
           width: roundFitted(acrossMax - acrossMin),
           x: roundFitted(centreX + sliceAlong * alongX + across * acrossX) || 0,
           z: roundFitted(centreZ + sliceAlong * alongZ + across * acrossZ) || 0,

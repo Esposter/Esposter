@@ -5,8 +5,8 @@ export const readChannels = async (
   path: string,
   scale = 1,
 ): Promise<{ channels: Float64Array[]; height: number; width: number }> => {
-  const { width } = await sharp(path).metadata();
   const image = sharp(path);
+  const { width } = await image.metadata();
   const { data, info } = await (scale === 1 ? image : image.resize({ kernel: "cubic", width: width * scale }))
     .raw()
     .toBuffer({ resolveWithObject: true });
