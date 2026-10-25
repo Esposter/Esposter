@@ -1,6 +1,6 @@
 # Tasks
 
-Build order. Task 1.1 comes first: the scan sets which drops the owner decides. Nothing else waits on it, so the replacement is built alongside it.
+Build order. Task 1.1 comes first: the scan sets which features are built and which are dropped. Nothing else waits on it, so the replacement is built alongside it.
 
 ## 1. Scan
 
@@ -46,7 +46,7 @@ Build order. Task 1.1 comes first: the scan sets which drops the owner decides. 
 
 ## 5. Gap checklist
 
-Each task names the rows of the gap analysis in `design.md` it closes. A row is met when its verdict holds: match or beat for the row's stated reason, or the owner's recorded drop. Drop rows are closed by the owner's decision, not by code.
+Each task names the rows of the gap analysis in `design.md` it closes. A row is met when its verdict holds: match or beat for the row's stated reason, or a drop its scan count supports. Drop rows are closed by that count, not by code.
 
 - [ ] 5.1 Runner rows: page flow, the condition rows, calculated values and validators, required checks with focus on the first error, the input kinds, the completion message, presentational blocks, and the expression-on-save row.
       Verify: a test per row passes, and the oracle fixtures from 2.2 give the same visible, enabled and required sets as SurveyJS.
@@ -63,18 +63,18 @@ Each task names the rows of the gap analysis in `design.md` it closes. A row is 
 - [ ] 5.7 Client and licence rows: the weight and licence rows.
       Verify: the client bundle holds no SurveyJS package after 6.2, and the dependency score reports no survey entry.
 - [ ] 5.8 Drop rows: the matrix, multiple text, slider, JSON editor, translation and full theme-editor rows.
-      Verify: each drop row carries the owner's recorded decision and the scan's count the decision was taken from.
-- [ ] 5.9 Owner review: the owner reviews the runner and the Creator in both styles and both modes, and signs off the drop decisions.
-      Verify: the sign-off is recorded in `design.md`, naming each decision it covers.
+      Verify: each drop row carries the scan's count it was taken from, or names the feature that covers it.
+- [ ] 5.9 Owner review: the owner reviews the runner and the Creator in both styles and both modes.
+      Verify: the review is recorded in `design.md`.
 
 ## 6. Removal
 
-- [ ] 6.1 Run the plain deletion migration that removes the old survey type's rows: each survey resource's working copy, published snapshots and retained versions with their content, every asset file, every response row in Azure Table keyed by the survey's id, and every invite reference to the survey in webpages and emails. It is a deletion only: no count step and no data conversion.
-      Verify: after the run, live survey resource rows, response rows and invite references are zero, and a rerun finds nothing to delete.
+- [ ] 6.1 Write the one-time purge in `apps/functions/src/services/resource` and run it once against each environment from the current release, before this change's release ships. For each survey resource it calls `purgeResource`, then `broadcastStorageUsage` with the owners returned, and it removes every invite reference to a deleted survey from webpages and emails. It is a deletion only: no count step and no data conversion.
+      Verify: a test in `apps/functions` shows that after the run a survey's blob directory, its response partition, its storage ledger entries and its row are gone, and that a purge which fails leaves its row in place. After the run, live survey rows, response rows and invite references are zero, and a rerun finds nothing to delete.
 - [ ] 6.2 Remove SurveyJS: its four catalog entries in `pnpm-workspace.yaml` and `apps/web/package.json`, its two plugins, `parseSurveyModel.ts`, the old theme key constant, the chunk and optimise entries in `vite.ts` and `build.ts`, and the old `getActions` shape. Run `pnpm i` in the same commit.
       Verify: a repo search for `survey-core`, `survey-creator` and `survey-vue3-ui` finds nothing outside the archive folder, and the lockfile holds no SurveyJS package.
 - [ ] 6.3 At archive, remove the old survey capability folders listed in `design.md` and write the new capability as built, its design holding the gap rows' outcomes.
-      Verify: no folder named `survey-response-*` or `webpage-survey-invite-blocks` remains in `openspec/specs/`, and the new capability's design holds the drop decisions.
+      Verify: no folder named `survey-response-*` or `webpage-survey-invite-blocks` remains in `openspec/specs/`, and the new capability's design holds each drop row's count.
 - [ ] 6.4 Edit the survey entry in the stop list of `openspec/specs/architecture/dependency-admission/design.md` to name the owner's decision, and remove the SurveyJS rows from `.agents/ledgers/dependencies.md`.
       Verify: the stop list's survey line cites this change, and the ledger holds no survey row.
 - [ ] 6.5 Sweep the prose the change makes stale: the agent content tools' schema-fidelity row, the program's Survey audit row, the math expression pointer, and the roadmap item, which closes with this change.

@@ -13,14 +13,14 @@ The survey is rebuilt on our own code and SurveyJS is removed in the same change
 - **Typed model.** A survey is a typed document of our own, validated by Zod on every save from both the owner's editor and an agent's content tool. Its question kinds, logic and expressions are our schema, and a small workspace package holds the expression language.
 - **Runner.** Respondents fill and see a survey through a headless runner over the [headless block editor core](../../specs/headless-block-editor/editor-core/design.md), drawn by a thin Vue renderer with the UI library's fields.
 - **Creator.** Owners author surveys in a Creator on the same model, using the core's tree editing and history and the UI library's schema-form pieces for each question's properties.
-- **Removal of the old survey.** SurveyJS's four packages, its plugins and its chunk entries are removed, along with the stored survey data of the current Survey type, its editor, runner and built specs. The replacement does not read the old data: the migration deletes the rows of the old type, and the change does not convert them.
-- **Gap analysis.** Every feature SurveyJS provides and the app uses is a row in the design's gap analysis, with a verdict of match, beat, or drop for the owner to decide. The replacement ships only when every row has its verdict met.
+- **Removal of the old survey.** SurveyJS's four packages, its plugins and its chunk entries are removed, along with the stored survey data of the current Survey type, its editor, runner and built specs. The replacement does not read the old data: a one-time purge deletes each stored survey through the per-resource purge the flowchart retirement also uses, and the change does not convert them.
+- **Gap analysis.** Every feature SurveyJS provides and the app uses is a row in the design's gap analysis, with a verdict of match, beat, or drop. A drop follows the scan of stored surveys, so a feature no stored survey uses is not built. The replacement ships only when every row has its verdict met.
 
 The rejected alternative, keeping SurveyJS and checking its document on save, is recorded in [its rejected folder](../../rejected/resource/survey-keep-and-type-the-document/design.md).
 
 ## Sizing the Creator
 
-The Creator is the largest part. It is about as much work as the typed model and the runner together. SurveyJS's Creator is a vendor product with a toolbox and property grid for about two dozen question kinds, a logic builder, a theme editor, a translation tab, a preview and a JSON editor. The gap analysis decides which of those the replacement builds. The theme editor's full range and the translation tab are the two places most likely to be dropped, and each drop needs the owner's decision.
+The Creator is the largest part. It is about as much work as the typed model and the runner together. SurveyJS's Creator is a vendor product with a toolbox and property grid for about two dozen question kinds, a logic builder, a theme editor, a translation tab, a preview and a JSON editor. The gap analysis decides which of those the replacement builds. The theme editor's full range and the translation tab are the two places most likely to be dropped, each by the scan's count of its use.
 
 If the Creator grows past one reviewable change while it is built, it splits out at the start of its phase into its own change under the same area prefix.
 

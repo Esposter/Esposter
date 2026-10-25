@@ -1,6 +1,6 @@
 # Survey Form Engine
 
-The survey is rebuilt as a typed document of our own, validated on every save, answered by a runner and authored in a Creator both built on the headless block editor core and the UI library. SurveyJS is removed in the same change, and the stored data of the old survey type is deleted in a plain deletion migration.
+The survey is rebuilt as a typed document of our own, validated on every save, answered by a runner and authored in a Creator both built on the headless block editor core and the UI library. SurveyJS is removed in the same change, and the stored data of the old survey type is deleted by a one-time purge through the per-resource purge.
 
 ## How it works
 
@@ -55,53 +55,50 @@ The Creator is built on the core's tree editing, which offers insert, move, move
 
 ## Gap analysis
 
-Each row is a feature SurveyJS provides today, or one the app relies on, with the replacement's plan and a verdict. **Match** means the replacement does what SurveyJS does for the app. **Beat** means it does it better, with the reason stated. **Drop** means the replacement does not build it, and the owner decides the drop before the change ships. A row whose verdict is not met blocks the change.
+Each row is a feature SurveyJS provides today, or one the app relies on, with the replacement's plan and a verdict. **Match** means the replacement does what SurveyJS does for the app. **Beat** means it does it better, with the reason stated. **Drop** means the replacement does not build it. A drop is taken where the scan of stored surveys finds no use of the feature, or where the row names the feature that covers it. A row whose verdict is not met blocks the change.
 
-| Feature                                                            | SurveyJS today                                               | Replacement                                                            | Verdict                                |
-| ------------------------------------------------------------------ | ------------------------------------------------------------ | ---------------------------------------------------------------------- | -------------------------------------- |
-| Page flow, progress and navigation                                 | Runner pages                                                 | Headless runner over the core's navigation                             | Match                                  |
-| Visibility, enablement and requiredness conditions                 | Expression language                                          | `survey-logic`, same operators and functions the scan finds            | Match                                  |
-| Expression syntax checked on save                                  | Not checked; a malformed expression fails in the runner      | Checked on save, refused with the element's path                       | Beat                                   |
-| Calculated values and expression validators                        | Supported                                                    | Supported over `survey-logic`                                          | Match                                  |
-| Required checks, messages and focus on the first error             | Supported                                                    | Supported through each answer's schema                                 | Match                                  |
-| Text, number and date inputs                                       | Text with input type                                         | Typed kinds, numbers and dates by schema                               | Match                                  |
-| Boolean, radio, dropdown, checkbox, tag box                        | Supported                                                    | One field per kind on the UI library                                   | Match                                  |
-| Rating and ranking                                                 | Supported                                                    | Supported                                                              | Match                                  |
-| Matrix, dynamic matrix, dynamic panel                              | Supported                                                    | Supported where the scan finds them used; otherwise decided            | Drop until the owner decides           |
-| Multiple text, slider, button group, image picker, signature, file | Supported                                                    | Supported where the scan finds them used; otherwise decided            | Drop until the owner decides           |
-| Presentational html and image elements                             | Supported                                                    | Supported as read-only blocks                                          | Match                                  |
-| Completion message                                                 | Sanitised html                                               | Sanitised html                                                         | Match                                  |
-| Resume on the same device, shared-device rule                      | Per-survey local id                                          | Same rule, same spec scenarios                                         | Match                                  |
-| Autosave of answers and of the Creator                             | Autosave                                                     | Autosave through the store's save path                                 | Match                                  |
-| Keyboard and ARIA behaviour of every field                         | Library's own                                                | Each field meets the UI library's contract, tested per style           | Match, owner checks screen readers     |
-| Look and theme                                                     | SurveyJS theme, its own colours and fonts                    | Follows the app's design styles; logo, accent and background as tokens | Beat: one look across the app's styles |
-| Theme editor's full range                                          | Colours, fonts, backgrounds, backgrounds per page            | Logo, accent and background only                                       | Drop until the owner decides           |
-| Logic tab (condition builder)                                      | Builder beside the raw expression                            | Builder beside the raw expression                                      | Match                                  |
-| Designer: add, move, delete, duplicate, rename                     | Supported                                                    | Core's tree commands                                                   | Match                                  |
-| Drag reorder                                                       | Pointer drag only                                            | Pointer drag with the same command on the keyboard                     | Beat                                   |
-| Undo and redo                                                      | Supported                                                    | The core's history                                                     | Match                                  |
-| Choice and matrix editors                                          | Supported                                                    | Own components                                                         | Match                                  |
-| Logo, image question and image choice uploads                      | Supported with delete hooks                                  | Through FileAssets with the same delete hooks                          | Match                                  |
-| Preview                                                            | Creator's preview                                            | The runner itself                                                      | Match                                  |
-| JSON import, export and clear                                      | Supported                                                    | Supported                                                              | Match                                  |
-| JSON editor tab                                                    | Edits the raw JSON                                           | Not built; import and export cover the need                            | Drop until the owner decides           |
-| Translation tab and multi-language surveys                         | Supported                                                    | Not built unless the scan finds a survey in more than one language     | Drop until the owner decides           |
-| Stored data shape                                                  | JSON string, checked as an object                            | Typed document, checked on every save                                  | Beat                                   |
-| Client weight                                                      | Two engines loaded on the survey routes                      | Our own code only                                                      | Beat                                   |
-| Licence                                                            | Creator commercially licensed under an open-source exception | None                                                                   | Beat                                   |
-| Response record and summary cards                                  | As stated by the response summary spec                       | Same record shape and cards, rewritten over the typed kinds            | Match                                  |
-| Dataset columns and column types                                   | Read from SurveyJS's JSON                                    | Read from the typed document                                           | Match                                  |
+| Feature                                                            | SurveyJS today                                               | Replacement                                                            | Verdict                                                               |
+| ------------------------------------------------------------------ | ------------------------------------------------------------ | ---------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| Page flow, progress and navigation                                 | Runner pages                                                 | Headless runner over the core's navigation                             | Match                                                                 |
+| Visibility, enablement and requiredness conditions                 | Expression language                                          | `survey-logic`, same operators and functions the scan finds            | Match                                                                 |
+| Expression syntax checked on save                                  | Not checked; a malformed expression fails in the runner      | Checked on save, refused with the element's path                       | Beat                                                                  |
+| Calculated values and expression validators                        | Supported                                                    | Supported over `survey-logic`                                          | Match                                                                 |
+| Required checks, messages and focus on the first error             | Supported                                                    | Supported through each answer's schema                                 | Match                                                                 |
+| Text, number and date inputs                                       | Text with input type                                         | Typed kinds, numbers and dates by schema                               | Match                                                                 |
+| Boolean, radio, dropdown, checkbox, tag box                        | Supported                                                    | One field per kind on the UI library                                   | Match                                                                 |
+| Rating and ranking                                                 | Supported                                                    | Supported                                                              | Match                                                                 |
+| Matrix, dynamic matrix, dynamic panel                              | Supported                                                    | Supported where the scan finds them used; otherwise dropped            | Match if the scan finds them used, else drop                          |
+| Multiple text, slider, button group, image picker, signature, file | Supported                                                    | Supported where the scan finds them used; otherwise dropped            | Match if the scan finds them used, else drop                          |
+| Presentational html and image elements                             | Supported                                                    | Supported as read-only blocks                                          | Match                                                                 |
+| Completion message                                                 | Sanitised html                                               | Sanitised html                                                         | Match                                                                 |
+| Resume on the same device, shared-device rule                      | Per-survey local id                                          | Same rule, same spec scenarios                                         | Match                                                                 |
+| Autosave of answers and of the Creator                             | Autosave                                                     | Autosave through the store's save path                                 | Match                                                                 |
+| Keyboard and ARIA behaviour of every field                         | Library's own                                                | Each field meets the UI library's contract, tested per style           | Match, owner checks screen readers                                    |
+| Look and theme                                                     | SurveyJS theme, its own colours and fonts                    | Follows the app's design styles; logo, accent and background as tokens | Beat: one look across the app's styles                                |
+| Theme editor's full range                                          | Colours, fonts, backgrounds, backgrounds per page            | Logo, accent and background only                                       | Drop, unless the scan finds other theme keys in use                   |
+| Logic tab (condition builder)                                      | Builder beside the raw expression                            | Builder beside the raw expression                                      | Match                                                                 |
+| Designer: add, move, delete, duplicate, rename                     | Supported                                                    | Core's tree commands                                                   | Match                                                                 |
+| Drag reorder                                                       | Pointer drag only                                            | Pointer drag with the same command on the keyboard                     | Beat                                                                  |
+| Undo and redo                                                      | Supported                                                    | The core's history                                                     | Match                                                                 |
+| Choice and matrix editors                                          | Supported                                                    | Own components                                                         | Match                                                                 |
+| Logo, image question and image choice uploads                      | Supported with delete hooks                                  | Through FileAssets with the same delete hooks                          | Match                                                                 |
+| Preview                                                            | Creator's preview                                            | The runner itself                                                      | Match                                                                 |
+| JSON import, export and clear                                      | Supported                                                    | Supported                                                              | Match                                                                 |
+| JSON editor tab                                                    | Edits the raw JSON                                           | Not built; import and export cover the need                            | Drop, as import and export cover the need                             |
+| Translation tab and multi-language surveys                         | Supported                                                    | Not built unless the scan finds a survey in more than one language     | Match if the scan finds a survey in more than one language, else drop |
+| Stored data shape                                                  | JSON string, checked as an object                            | Typed document, checked on every save                                  | Beat                                                                  |
+| Client weight                                                      | Two engines loaded on the survey routes                      | Our own code only                                                      | Beat                                                                  |
+| Licence                                                            | Creator commercially licensed under an open-source exception | None                                                                   | Beat                                                                  |
+| Response record and summary cards                                  | As stated by the response summary spec                       | Same record shape and cards, rewritten over the typed kinds            | Match                                                                 |
+| Dataset columns and column types                                   | Read from SurveyJS's JSON                                    | Read from the typed document                                           | Match                                                                 |
 
-The drop rows are the owner's decisions. The scan of stored surveys in task 1.1 sets which kinds, functions and languages are used, so each "until the owner decides" row carries its count as a fact before the owner decides.
+The drop rows follow from the scan. The scan of stored surveys in task 1.1 sets which kinds, functions and languages are used, and each row that depends on it carries its count before the change ships.
 
 ## Removal of the old survey type
 
-The change removes SurveyJS and the old survey type's stored data in one step, so nothing of the old survey survives and nothing is converted. The migration deletes, for every survey resource of the old type:
+The change removes SurveyJS and the old survey type's stored data, so nothing of the old survey survives and nothing is converted. The stored surveys are deleted by a one-time purge that the current release runs before this change's release ships, the same way the [flowchart retirement](../resource-flowchart-retirement/design.md) runs its purge. For each survey resource, the purge calls `purgeResource`, the per-resource purge the recycle bin already runs. It takes the resource's steps in one fixed order: the blob directory, with the content and file assets it holds; the survey's response partition in Azure Table, keyed by the survey's id; the storage ledger entries for the directory; then the row, whose cascade removes its versions, publications and working assets. A blob is deleted only inside the purge of its own resource, together with that resource's row, and never in a step of its own ahead of the row.
 
-- the resource's working copy, its published snapshots and its retained versions, with their content and file assets;
-- every response row written under the survey, in Azure Table, keyed by the survey's id.
-
-It also removes every invite reference to a deleted survey from webpages and emails, so no invite block points at a removed survey.
+The one-time run also removes every invite reference to a deleted survey from webpages and emails, so no invite block points at a removed survey.
 
 ## Options considered
 
@@ -124,7 +121,7 @@ The dependency admission test would keep SurveyJS as an engine, since its stop l
 | `apps/web/shared/models/db/survey/SurveyResponseModel.ts`                                | the answer record's shape, unchanged, keyed by question name              |
 | `apps/web/shared/services/survey/parseSurveyModel.ts`                                    | removed: nothing parses a string once the document is an object           |
 | `apps/web/shared/services/survey/constants.ts`                                           | the old theme key constant, removed with SurveyJS's theme                 |
-| `apps/web/shared/models/pageBuilder/SurveyInviteNode.ts`                                 | the invite block, whose survey references the migration reports           |
+| `apps/web/shared/models/pageBuilder/SurveyInviteNode.ts`                                 | the invite block, whose survey references the one-time run removes        |
 | `apps/web/server/trpc/routers/survey.ts`                                                 | the resource factory and response procedures, saving the typed document   |
 | `apps/web/server/models/dataset/surveyResponses/SurveyModelElement.ts`                   | removed: replaced by the typed question union                             |
 | `apps/web/server/services/dataset/surveyResponses/getSurveyModelDatasetColumns.ts`       | the dataset's columns, read from the typed document                       |
@@ -144,6 +141,7 @@ The dependency admission test would keep SurveyJS as an engine, since its stop l
 | `apps/web/configuration/build.ts`                                                        | the Creator's chunk entry, removed                                        |
 | `apps/web/package.json`                                                                  | the four SurveyJS dependencies, removed                                   |
 | `pnpm-workspace.yaml`                                                                    | the four SurveyJS catalog entries, removed                                |
+| `packages/db/src/services/resource/purgeResource.ts`                                     | the per-resource purge the one-time run calls for each survey row         |
 | `packages/headless-block-editor`                                                         | the core the runner and Creator are built on                              |
 | `.agents/ledgers/dependencies.md`                                                        | the four SurveyJS rows, removed with their packages                       |
 | `openspec/specs/architecture/dependency-admission/design.md`                             | the stop list's survey entry, edited with the owner's decision            |
@@ -158,14 +156,14 @@ The dependency admission test would keep SurveyJS as an engine, since its stop l
 | `openspec/specs/math-expression-compiler/language/design.md`                             | its pointer to the survey's condition language, re-pointed to this change |
 | `openspec/changes/resource-roadmap/tasks.md`                                             | carries this change as an open item                                       |
 
-New files are the expression package and the schema, runner and Creator modules in the survey's shared and app folders. They are named by the file-organisation and naming rules when each is written.
+New files are the expression package, the schema, runner and Creator modules in the survey's shared and app folders, and the one-time purge in `apps/functions/src/services/resource`. They are named by the file-organisation and naming rules when each is written.
 
 ## Notes
 
-- The core is built, and its first editor consumer, the page builder, is not shipped. This survey is the first consumer of a typed document root, so a gap in the core is fixed in the core in its own commit.
+- The core is shipped, with the page builder's webpage and email editors as its consumers. This survey is the first consumer of a typed document root, so a gap in the core is fixed in the core in its own commit.
 - Accessibility is the largest risk the owner takes on. The runner and Creator meet the UI library's contracts component by component, and the owner checks labelled fields and screen-reader behaviour by hand.
 - A program bound to a survey reads that survey's responses, so its funnel empties when the rows are deleted, and the binding goes with the survey.
-- A survey invite block in a webpage or email links a deleted survey's public page after the migration. The migration removes each such reference as part of the deletion.
+- A survey invite block in a webpage or email links a deleted survey's public page after the purge. The one-time run removes each such reference as part of the deletion.
 
 ## Sources
 
