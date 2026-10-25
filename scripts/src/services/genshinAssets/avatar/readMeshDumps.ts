@@ -3,6 +3,7 @@ import type { ResolvedObject } from "#src/models/genshinAssets/shared/ResolvedOb
 
 import { AnimeStudioExportType } from "#src/models/genshinAssets/shared/AnimeStudioExportType";
 import { AssetType } from "#src/models/genshinAssets/shared/AssetType";
+import { readName } from "#src/services/genshinAssets/avatar/readName";
 import { exportBlockBySource } from "#src/services/genshinAssets/shared/exportBlockBySource";
 import { toObjectKey } from "#src/services/genshinAssets/shared/toObjectKey";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
@@ -22,8 +23,13 @@ export const readMeshDumps = async (
   const entries = await Promise.all(
     meshes.map(async (mesh): Promise<[string, DumpedMesh]> => {
       const key = toObjectKey(mesh.file, mesh.pathId);
-      const name = names.get(key) ?? "";
-      const path = join(directory, basename(mesh.block, ".blk"), AssetType.Mesh, mesh.file, `${name}.json`);
+      const path = join(
+        directory,
+        basename(mesh.block, ".blk"),
+        AssetType.Mesh,
+        mesh.file,
+        `${readName(names, mesh)}.json`,
+      );
       return [key, parseMachineJson<DumpedMesh>(await readFile(path, "utf8"))];
     }),
   );
