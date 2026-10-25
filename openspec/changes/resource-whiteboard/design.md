@@ -9,7 +9,7 @@ The owner's decisions behind this design, taken as given:
 - The whiteboard is the flowchart's successor. A flowchart is a whiteboard with connected shapes, not a separate type kept alongside.
 - The feature and the resource type are both named Whiteboard.
 - The product takes no new third-party dependency. The whiteboard is built on the headless core and drawn by our own code. Excalidraw is a reference for how a whiteboard feels, and the whiteboard copies none of its code or packages.
-- There is no parity gate. The whiteboard ships, and the Flowchart is removed by the retirement change once that change's feature check is confirmed. Its stored flowcharts are deleted, not converted or kept read-only.
+- There is no parity gate. The whiteboard ships, and the Flowchart is removed by the retirement change once the whiteboard covers that change's feature check. Its stored flowcharts are deleted, not converted or kept read-only.
 - The minimap is dropped, since a whiteboard does not need one and Excalidraw has none.
 - The read-only published view is deferred to its own later proposal.
 
@@ -28,7 +28,7 @@ The Flowchart's stored content is the canvas engine's own node and edge JSON. No
 
 Each Flowchart feature, one line, with the whiteboard's verdict. The verdicts are **carried** (the whiteboard does it as the flowchart does), **changed** (it does it differently, and the difference is named), or **dropped** (it is not in the whiteboard). The rows marked **must-have** are the flowchart behaviour the whiteboard must carry before the retirement runs. A row marked **cannot carry** is one the whiteboard cannot carry as it stands.
 
-The retirement change's own feature check lists the rows the owner confirms. This table is the design's view of the whiteboard; where a row is a loss, the owner's confirmation is what makes it one.
+The retirement change's feature check points at this table and takes each row's verdict from it. The losses are the ones the owner decided: the minimap is dropped, the read-only published view is deferred, the Flowchart achievement is removed, and the stored content is deleted rather than read.
 
 | Feature                                 | Flowchart today                                                                       | Whiteboard                                                                                                       | Verdict                                                                       |
 | --------------------------------------- | ------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
@@ -56,6 +56,7 @@ The retirement change's own feature check lists the rows the owner confirms. Thi
 | Keyboard                                | Backspace removes the selection, which nothing on screen names; Enter commits a label | Delete and Backspace, Enter, Escape, arrow-key nudge, undo and duplicate                                         | carried, extended                                                             |
 | Undo                                    | not in the files inspected                                                            | the shared history over inverse patches                                                                          | new for flowcharts                                                            |
 | Export PNG and SVG                      | the editor's DOM is captured and rasterised                                           | both drawn from the model                                                                                        | changed                                                                       |
+| Export background and fonts             | the captured DOM carries the theme background and the editor's font                   | the export draws the canvas background and each element's text from the model                                    | changed: drawn from the model                                                 |
 | Read-only published view                | read-only, with pan, zoom and the minimap                                             | deferred to its own later proposal                                                                               | deferred                                                                      |
 | Stored content                          | the canvas engine's own node and edge JSON                                            | none; the whiteboard does not read it                                                                            | **cannot carry, and not converted: the retirement deletes stored flowcharts** |
 | Earned achievement                      | the flowchart achievement                                                             | removed with the type, by the retirement                                                                         | removed by decision                                                           |
@@ -114,9 +115,9 @@ The read-only published view is not in this change. It is deferred to its own la
 
 ## The cutover
 
-The Flowchart is removed by the [flowchart retirement](../resource-flowchart-retirement/design.md), which has its own order: owner confirmations of each environment's counts, a marking migration, the nightly purge that destroys the blobs, and a release that removes the code and the enum value. The owner's decision is recorded there: nothing is converted and nothing is kept read-only.
+The Flowchart is removed by the [flowchart retirement](../resource-flowchart-retirement/design.md), which has its own order: a one-time purge run by the current release, which deletes each flowchart through the per-resource purge, and then a release that removes the code and the enum values. The owner's decision is recorded there: nothing is converted and nothing is kept read-only.
 
-This change's part is the whiteboard. Its enum value is added by a migration before any whiteboard exists, and the whiteboard ships with its editor, its export and its agent surface. The retirement runs after this ships and after its owner confirms the feature check. No flowchart content is read, converted or migrated by anything in this change.
+This change's part is the whiteboard. Its enum value is added by a migration before any whiteboard exists, and the whiteboard ships with its editor, its export and its agent surface. The retirement runs after this ships. No flowchart content is read, converted or migrated by anything in this change.
 
 ## The agent surface
 

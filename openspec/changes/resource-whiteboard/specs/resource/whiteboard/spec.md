@@ -159,7 +159,7 @@ A whiteboard SHALL export to SVG and to PNG from its resource menu, with both dr
 
 ### Requirement: An agent reads and edits a whiteboard through the generic tools
 
-An agent SHALL read a whiteboard's content and edit it by JSON Patch, through the generic resource tools, with no procedure of the whiteboard's own. A bound arrow's reroute SHALL be taken by a typed move command.
+An agent SHALL read a whiteboard's content and edit it by JSON Patch, through the generic resource tools. An agent that moves a shape SHALL use the typed move command, which reroutes each arrow bound to the shape in the same write.
 
 #### Scenario: An agent adds an arrow bound to a shape by patch
 
@@ -167,6 +167,13 @@ An agent SHALL read a whiteboard's content and edit it by JSON Patch, through th
 - **WHEN** an agent patches the whiteboard to add an arrow bound to that shape
 - **THEN** the open editor shows the arrow, bound to the shape
 - **AND** the saved content holds the arrow in the whiteboard's z-order
+
+#### Scenario: An agent moves a bound shape through the typed move
+
+- **GIVEN** a saved whiteboard with a Process shape and an arrow bound to it
+- **WHEN** an agent moves the shape with the typed move command
+- **THEN** the saved content holds the shape at its new place
+- **AND** the arrow is rerouted from the moved point in the same write
 
 #### Scenario: A patch leaving a dangling binding is refused
 
