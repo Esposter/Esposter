@@ -36,7 +36,7 @@ Build order. Section 1 lands the schema the rest reads, section 2 moves the shar
 
 ## 5. Sweep, inventory and specs
 
-- [ ] 5.1 Update the user data inventory's table to name the removal this change adds for each store, and its Known gaps list to match what the sweep does not reach.
+- [x] 5.1 Update the user data inventory's table to name the removal this change adds for each store, and its Known gaps list to match what the sweep does not reach.
       Verify: no row in the inventory says "not removed" for a store the sweep covers, and every gap names the spec line that states it.
-- [ ] 5.2 Run the account deletion end to end against the in-memory test database: create an account with a room, a resource, messages, an attachment and a save, delete it, and check every store the inventory lists.
+- [x] 5.2 Run the account deletion end to end against the in-memory test database: create an account with a room, a resource, messages, an attachment and a save, delete it, and check every store the inventory lists.
       Verify: the end-to-end test passes, and it asserts each store is empty for the account.

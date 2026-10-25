@@ -10,7 +10,7 @@ The inventory in [user data](../../specs/architecture/user-data-inventory/design
 
 **Owned rooms are deleted, as an owner's departure already deletes them.** `leaveRoom` deletes a room for everyone when its owner leaves, so account deletion does the same rather than inventing a transfer. A transfer of ownership is a feature with its own design, and it is the reason to revisit this. `deleteRoom` already publishes the room's attachment prefix and profile images, so the sweep relies on that teardown for them and adds the room's four table partitions, which it does not clear.
 
-**The user's messages are soft-deleted, and their charged attachments are removed.** A message is attributed to its author, so a deletion removes the author's content from every room the user is a member of, through the soft delete the moderation ban already uses. The soft delete moves into `packages/db` so the function and the web app share one implementation. The attachment list comes from the storage ledger, which holds one row per charged blob and its owner, so the sweep never scans a message partition to find files.
+**The user's messages are soft-deleted, and their charged attachments are removed.** A message is attributed to its author, so a deletion removes the author's content from every room the user is a member of, through the soft delete the moderation ban already uses. A reaction is one row shared by everyone who reacted with that emoji, so in each member room the sweep takes the account's id out of the reactions it shares and removes the ones it holds alone, as the reaction's own removal does. The soft delete moves into `packages/db` so the function and the web app share one implementation. The attachment list comes from the storage ledger, which holds one row per charged blob and its owner, so the sweep never scans a message partition to find files.
 
 **The soft delete owes live views an announcement, and the sweep does not yet give one.** A moderation ban publishes each batch it commits, so members watching the room see the messages leave. The sweep passes a no-op in that place, so members keep seeing a deleted account's messages until they reload. The announcement cannot be made from the functions host as the ban makes it: the emitter that drives live views lives in the web app. The route is a room-level broadcast over Web PubSub, the path the storage meter's counter already uses, with the client dropping the messages on receipt. That is a new event with its own client handling, so the choice of route and the reload lag it leaves are a decision this change owes before the sweep ships.
 
@@ -49,7 +49,8 @@ sequenceDiagram
   EG->>Handler: DeleteAccount
   Handler->>DB: owned rooms, owned resources
   Handler->>DB: charged attachments from the ledger
-  Handler->>Handler: message soft deletes, user blob prefixes
+  Handler->>DB: message soft deletes, reactions in member rooms
+  Handler->>Handler: user blob prefixes
   Handler->>DB: delete the user row, last
 ```
 
