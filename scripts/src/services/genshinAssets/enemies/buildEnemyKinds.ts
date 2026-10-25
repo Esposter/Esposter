@@ -18,6 +18,7 @@ import {
   WEEKLY_BOSS_KIND_IDS,
 } from "#src/services/genshinAssets/enemies/constants";
 import { findMonsterCodexRow } from "#src/services/genshinAssets/enemies/findMonsterCodexRow";
+import { getGrowCurve } from "#src/services/genshinAssets/enemies/getGrowCurve";
 import { MONDSTADT_BOUNTY_TARGET_NAMES } from "#src/services/genshinAssets/reputation/constants";
 import { readMonsterNames } from "#src/services/genshinAssets/reputation/readMonsterNames";
 import { toBountyTargetIds } from "#src/services/genshinAssets/reputation/toBountyTargetIds";
@@ -32,11 +33,6 @@ import { GameDataset } from "genshin-world";
 import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 
-const getGrowCurve = ({ id, propGrowCurves }: MonsterRow, property: string): string => {
-  const growCurve = propGrowCurves.find(({ type }) => type === property)?.growCurve;
-  if (!growCurve) throw new InvalidOperationError(Operation.Read, String(id), `grows ${property} by no curve`);
-  return growCurve;
-};
 // The kinds every region's camps place and every Mondstadt bounty, weekly boss and Spiral Abyss chamber fights, each read
 // From the game's monster table with its family from the archive and its name's text id, and every level curve they name,
 // As the records of the enemies dataset. A kind the tables lack is an Error. The resistances are keyed by the world's
