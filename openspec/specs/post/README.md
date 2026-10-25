@@ -18,7 +18,7 @@ Posts are Esposter's core product — "a nice and casual place for posting rando
 - [Feed block filtering](feed-block-filtering/design.md) — blocked users' posts and comments are hidden from feeds.
 - [Comment sort](comment-sort/design.md) — Hot, Top, New and Old over a post's replies, applied to every open branch.
 
-Open work: [roadmap](../../changes/post-roadmap/tasks.md). Decided ideas: [deferred](../../deferred/post/), [rejected](../../rejected/post/).
+Open work: none. Decided ideas: [deferred](../../deferred/post/), [rejected](../../rejected/post/).
 
 ## Shipped log
 

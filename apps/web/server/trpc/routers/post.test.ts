@@ -10,8 +10,6 @@ import { blockRouter } from "#server/trpc/routers/block";
 import { likeRouter } from "#server/trpc/routers/like";
 import { postRouter } from "#server/trpc/routers/post";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
-import { PostSortType } from "@/models/post/PostSortType";
-import { PostSortTypeSortByMap } from "@/services/post/PostSortTypeSortByMap";
 import {
   blocksInSocial,
   DatabaseEntityType,
@@ -31,6 +29,22 @@ describe("postRouter", () => {
   const title = "title";
   const updatedTitle = "updatedTitle";
   const description = "description";
+  const HOT_SORT_BY: SortItem<keyof PostInPost>[] = [
+    { key: "ranking", order: SortOrder.Desc },
+    { key: "id", order: SortOrder.Desc },
+  ];
+  const TOP_SORT_BY: SortItem<keyof PostInPost>[] = [
+    { key: "likeCount", order: SortOrder.Desc },
+    { key: "id", order: SortOrder.Desc },
+  ];
+  const NEW_SORT_BY: SortItem<keyof PostInPost>[] = [
+    { key: "createdAt", order: SortOrder.Desc },
+    { key: "id", order: SortOrder.Desc },
+  ];
+  const OLD_SORT_BY: SortItem<keyof PostInPost>[] = [
+    { key: "createdAt", order: SortOrder.Asc },
+    { key: "id", order: SortOrder.Asc },
+  ];
   const updatedDescription = "updatedDescription";
   const value = 1;
   const sortBy: SortItem<keyof PostInPost>[] = [
@@ -402,10 +416,7 @@ describe("postRouter", () => {
     await setReplyColumns(firstId, { ranking: 0.1 });
     await setReplyColumns(secondId, { ranking: -1 });
     await setReplyColumns(thirdId, { ranking: 0 });
-    const { items } = await postCaller.readPosts({
-      parentId: newPost.id,
-      sortBy: PostSortTypeSortByMap[PostSortType.Hot],
-    });
+    const { items } = await postCaller.readPosts({ parentId: newPost.id, sortBy: HOT_SORT_BY });
 
     expect(items.map(({ id }) => id)).toStrictEqual([firstId, thirdId, secondId]);
   });
@@ -417,10 +428,7 @@ describe("postRouter", () => {
     const [firstId, secondId, thirdId] = await createReplies(newPost.id, 3);
     await setReplyColumns(secondId, { likeCount: 2 });
     await setReplyColumns(thirdId, { likeCount: 1 });
-    const { items } = await postCaller.readPosts({
-      parentId: newPost.id,
-      sortBy: PostSortTypeSortByMap[PostSortType.Top],
-    });
+    const { items } = await postCaller.readPosts({ parentId: newPost.id, sortBy: TOP_SORT_BY });
 
     expect(items.map(({ id }) => id)).toStrictEqual([secondId, thirdId, firstId]);
   });
@@ -433,10 +441,7 @@ describe("postRouter", () => {
     await setReplyColumns(firstId, { createdAt: new Date(0) });
     await setReplyColumns(secondId, { createdAt: new Date(ONE_SECOND) });
     await setReplyColumns(thirdId, { createdAt: new Date(ONE_SECOND * 2) });
-    const { items } = await postCaller.readPosts({
-      parentId: newPost.id,
-      sortBy: PostSortTypeSortByMap[PostSortType.New],
-    });
+    const { items } = await postCaller.readPosts({ parentId: newPost.id, sortBy: NEW_SORT_BY });
 
     expect(items.map(({ id }) => id)).toStrictEqual([thirdId, secondId, firstId]);
   });
@@ -449,10 +454,7 @@ describe("postRouter", () => {
     await setReplyColumns(firstId, { createdAt: new Date(0) });
     await setReplyColumns(secondId, { createdAt: new Date(ONE_SECOND) });
     await setReplyColumns(thirdId, { createdAt: new Date(ONE_SECOND * 2) });
-    const { items } = await postCaller.readPosts({
-      parentId: newPost.id,
-      sortBy: PostSortTypeSortByMap[PostSortType.Old],
-    });
+    const { items } = await postCaller.readPosts({ parentId: newPost.id, sortBy: OLD_SORT_BY });
 
     expect(items.map(({ id }) => id)).toStrictEqual([firstId, secondId, thirdId]);
   });
@@ -465,7 +467,7 @@ describe("postRouter", () => {
     await setReplyColumns(firstId, { createdAt: new Date(0) });
     await setReplyColumns(secondId, { createdAt: new Date(ONE_SECOND) });
     await setReplyColumns(thirdId, { createdAt: new Date(ONE_SECOND * 2) });
-    const sortBy = PostSortTypeSortByMap[PostSortType.Old];
+    const sortBy = OLD_SORT_BY;
     const firstPage = await postCaller.readPosts({ limit: 2, parentId: newPost.id, sortBy });
     const secondPage = await postCaller.readPosts({
       cursor: firstPage.nextCursor,
