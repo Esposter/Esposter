@@ -33,6 +33,7 @@ The keep test is the standard, not a budget: the aim is code with no test left t
 ## Case law
 
 - **Assert the exact value the code produces, never a weaker match.** Where the expected output is known, the test asserts it whole: a `toContain` fragment, a `toBeGreaterThan` on a count, or an `expect.any` stands in for a value the test could know, so it is rewritten to the exact value. A fragment match is kept only when the rest of the output is genuinely unknowable, and the test's title says so.
+- **An authorization assertion stays with the procedure it guards.** A non-member or unauthorized rejection is not a duplicate of another procedure's, even when the same guard produces it: each procedure's rejection is its own regression. It is removed only when a named test already rejects that procedure for the same caller.
 - **Test composables, not the service functions under them.** Composable tests cover the full call chain. A service is tested directly only when it has no composable wrapper.
 - **One test per operation.** All of its field assertions go in one test; "updates name" and "updates bio" are one test.
 - **A hand-written type over a third-party data file earns exactly one shape test.** Nothing typechecks a `declare module` against the bytes, so a dependency bump that renames a key passes every other gate silently. Assert one known record `toStrictEqual` its whole shape, plus any invariant the type encodes. This is the fixed-outside-the-repo exception, not a restated constant.
