@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import ResourceActivityLogListItem from "@/components/Resource/ActivityLogListItem.vue";
-import { ResourceActivityEntity, ResourceActivityType } from "@esposter/db-schema";
+import { getReverseTickedTimestamp, ResourceActivityEntity, ResourceActivityType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 
@@ -16,6 +16,8 @@ describe("resourceActivityLogListItem", () => {
           activityType: ResourceActivityType.ContentSaved,
           apiKeyName: name,
           createdAt: new Date(0),
+          partitionKey: crypto.randomUUID(),
+          rowKey: getReverseTickedTimestamp(),
         }),
       },
     });
