@@ -13,5 +13,5 @@ export const DASHBOARD_BREAKPOINTS = [
   { columnNumber: 4, minimumWidth: 480 },
   { columnNumber: 2, minimumWidth: 0 },
 ] as const;
-// The key a visual table's category column is read and totalled under
+// The key a dashboard dataset's category column is read under, and a table visual totals it under
 export const DASHBOARD_TABLE_CATEGORY_KEY = "category";
