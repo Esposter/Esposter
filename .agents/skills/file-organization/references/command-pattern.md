@@ -2,7 +2,7 @@
 
 Read when adding or editing a command in the undo/redo stack.
 
-A command is a class extending `ADataSourceCommand<T extends CommandType>` declaring `readonly type = CommandType.X`. It never declares a `name` — the base exposes `get name() { return this.type; }`. The `CommandType` enum lives in `models/resource/sheet/commands/CommandType.ts`.
+A command is a class extending `ADataSourceCommand<T extends CommandType>` declaring `readonly type = CommandType.X`. It never declares a `name` — the base exposes `get name() { return this.type; }`. The `CommandType` enum lives in `shared/models/resource/sheet/commands/CommandType.ts`, with the command classes, so the server runs the same commands the browser does.
 
 Field order inside the class, blank line between each group:
 

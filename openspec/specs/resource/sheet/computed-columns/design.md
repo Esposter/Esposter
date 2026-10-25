@@ -101,7 +101,7 @@ Paths relative to `apps/web`.
 | `shared/services/resource/sheet/dataSourceToDataset.ts`                                       | Serves computed columns in the Sheet's dataset                                            |
 | `app/services/resource/sheet/dataSource/filterDataSourceColumns.ts`                           | Materializes computed values for export                                                   |
 | `app/store/resource/sheet/row.ts`                                                             | The grid's compiled columns as a computed value, and the reader bound to the rows in view |
-| `app/models/resource/sheet/commands/CreateComputedColumnCommand.ts`                           | Undoable create command                                                                   |
+| `shared/models/resource/sheet/commands/CreateComputedColumnCommand.ts`                        | Undoable create command                                                                   |
 
 ## Datasets
 

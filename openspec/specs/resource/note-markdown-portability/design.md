@@ -36,9 +36,10 @@ Note joins `PortableResourceType` with one Markdown format in `PortableFormatMap
 The files it creates:
 
 ```text
-apps/web/app/
+apps/web/shared/
   services/resource/note/serializeNoteMarkdown.ts     ← the export walk
   services/resource/note/deserializeNoteMarkdown.ts   ← the import's token map, and the round-trip test
+apps/web/app/
   components/Resource/Note/Dialogs.vue                ← the import preview and its confirm
   store/resource/note/portableDialog.ts               ← the parsed document the preview shows
 ```
