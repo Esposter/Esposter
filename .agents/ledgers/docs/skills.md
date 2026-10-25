@@ -12,8 +12,8 @@
 | `claude-permissions`      | 2026-10-21 · Haiku 5.5 |       |
 | `cli`                     | 2026-10-21 · Haiku 5.5 |       |
 | `code-review`             | 2026-10-21 · Haiku 5.5 |       |
-| `context-efficiency`      | —                      |       |
-| `dependency-absorption`   | —                      |       |
+| `context-efficiency`      | 2026-10-21 · Haiku 5.5 |       |
+| `dependency-absorption`   | 2026-10-21 · Haiku 5.5 |       |
 | `dependency-updates`      | 2026-10-21 · Haiku 5.5 |       |
 | `drizzle`                 | 2026-10-21 · Haiku 5.5 |       |
 | `error-handling`          | 2026-10-21 · Haiku 5.5 |       |
