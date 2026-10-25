@@ -247,6 +247,9 @@ export const useResourceStore = defineStore("resource", () => {
     if (!resource.value || contentVersion <= resource.value.contentVersion) return;
 
     await reloadResourceContent();
+    // The bytes this client held name a document the save replaced, so the next large save crosses whole. Cleared
+    // After the re-read, which may itself have held the large document's bytes
+    contentBaseline = undefined;
   };
   const saveContent = async (content: ResourceContent<ResourceType>) => {
     const resourceValue = resource.value;

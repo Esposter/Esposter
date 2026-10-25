@@ -14,6 +14,8 @@ import {
   STALE_CONTENT_VERSION_ERROR_MESSAGE,
 } from "#shared/services/resource/constants";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
+import { useDeleteRow } from "@/composables/resource/sheet/commands/useDeleteRow";
+import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
 import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
 import { ResourceContentHookMap } from "@/services/resource/ResourceContentHookMap";
 import { createDefaultSheetResource } from "@/services/resource/sheet/createDefaultSheetResource";
@@ -21,6 +23,7 @@ import { getSha256Hex } from "@/services/shared/getSha256Hex";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useNotificationStore } from "@/store/notification";
 import { useResourceStore } from "@/store/resource";
+import { useSheetHistoryStore } from "@/store/resource/sheet/history";
 import { ResourceType } from "@esposter/db-schema";
 import { noop, takeOne, withFinalizerAsync } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
@@ -866,4 +869,69 @@ describe(useResourceStore, () => {
       expect(reload).toHaveBeenCalledExactlyOnceWith(type);
     },
   );
+  // The save stream names the version and the device only, so an editor with nothing unwritten re-reads the document
+  // through the reload stage and lets its library adopt it — the same two stages a restore runs
+  test("An editor with nothing unsaved adopts a save in place", async () => {
+    expect.hasAssertions();
+
+    const resourceStore = useResourceStore();
+    const { resource } = storeToRefs(resourceStore);
+    await resourceStore.readResource();
+    assert.exists(resource.value);
+    const { contentVersion } = resource.value;
+    const reload = vi.fn<(type: ResourceType) => void>();
+    const adopt = vi.fn<(type: ResourceType) => void>();
+    const unregisterReload = ResourceContentHookMap.Reload.register(reload);
+    const unregisterAdopt = ResourceContentHookMap.Adopt.register(adopt);
+    await withFinalizerAsync(
+      () => resourceStore.storeSaveResourceContent({ contentVersion: contentVersion + 1, device }),
+      () => {
+        unregisterReload();
+        unregisterAdopt();
+      },
+    );
+
+    expect(reload).toHaveBeenCalledExactlyOnceWith(ResourceType.Sheet);
+    expect(adopt).toHaveBeenCalledExactlyOnceWith(ResourceType.Sheet);
+  });
+
+  // Undo replays onto the document a command was recorded against, and a delta is measured against the bytes this
+  // Client last held — both are the document another device's save replaced, so both go with it
+  test("Adopting a save clears undo history and the delta baseline", async () => {
+    expect.hasAssertions();
+
+    const { dataSource } = setupWithDataSource();
+    const deleteRow = useDeleteRow();
+    await deleteRow(takeOne(dataSource.rows, 0).id);
+    const { isUndoable } = storeToRefs(useSheetHistoryStore());
+    const resourceStore = useResourceStore();
+    const { resource } = storeToRefs(resourceStore);
+    await resourceStore.readResource();
+    assert.exists(resource.value);
+    const loadedContent = createLargeSheetResource(" ");
+    const loadedContentBytes = new TextEncoder().encode(JSON.stringify(loadedContent));
+    const sasUrl = getMockSasUrl(`${window.location.origin}/${resourceId}`, "r", "b");
+    server.use(http.get(`${window.location.origin}/${resourceId}`, () => new HttpResponse(loadedContentBytes)));
+    trpcMsw.resource.readResource.query(({ input }) => ({
+      ...createResource(input.id),
+      contentSize: loadedContentBytes.byteLength,
+      publication: null,
+    }));
+    trpcMsw.sheet.generateReadContentSasUrl.query(() => sasUrl);
+    const { saveStagedResourceContent } = setupStagedSave();
+    const saveResourceContentDelta = vi.fn<() => ResourceInResource>(() => createResource(resourceId));
+    trpcMsw.sheet.saveResourceContentDelta.mutation(saveResourceContentDelta);
+    const { readContent, readResource, saveContent } = resourceStore;
+    await readResource();
+    await readContent(noop);
+    assert.exists(resource.value);
+    await resourceStore.storeSaveResourceContent({ contentVersion: resource.value.contentVersion + 1, device });
+    await nextTick();
+    const isUndoableAfterAdoption = isUndoable.value;
+    await saveContent(createLargeSheetResource("a"));
+
+    expect(isUndoableAfterAdoption).toBe(false);
+    expect(saveResourceContentDelta).not.toHaveBeenCalled();
+    expect(saveStagedResourceContent).toHaveBeenCalledTimes(1);
+  });
 });
