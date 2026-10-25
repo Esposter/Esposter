@@ -11,13 +11,12 @@ const { fields, hasNode, setField } = useEmailStyle(() => resourceId);
 
 <template>
   <div v-if="hasNode" flex flex-col gap-3>
-    <UiTextField
+    <PageBuilderEmailStyleField
       v-for="field of fields"
       :key="field.name"
-      :label="field.name"
-      :model-value="field.value"
-      :placeholder="field.placeholder"
-      @update:model-value="(value) => setField(field.name, value)"
+      :field
+      @reset="setField(field.name, '')"
+      @update="(value) => setField(field.name, value)"
     />
   </div>
   <p v-else text-muted>Select a block to style it</p>

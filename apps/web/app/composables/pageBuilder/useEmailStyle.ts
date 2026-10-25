@@ -1,3 +1,4 @@
+import type { EmailStyleField } from "@/models/pageBuilder/EmailStyleField";
 import type { MaybeRefOrGetter } from "vue";
 
 import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry";
@@ -37,11 +38,13 @@ export const useEmailStyle = (resourceId: MaybeRefOrGetter<string>) => {
     const definition = current && getBlockTypeDefinition(emailRegistry, current.node.type);
     if (!current || !definition) return [];
 
-    return getMjmlAttributeFields(definition).map(({ name }) => {
+    return getMjmlAttributeFields(definition).map(({ name, type }): EmailStyleField => {
       const own = getBlockPropValue(current.node.props, name);
       return {
+        isSet: typeof own === "string",
         name,
-        placeholder: getEmailAttributeValue(current.node, name, current.rootAttributes),
+        placeholder: getEmailAttributeValue(current.node, name, current.rootAttributes) ?? "",
+        type,
         value: typeof own === "string" ? own : "",
       };
     });
