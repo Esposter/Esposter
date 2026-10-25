@@ -17,7 +17,8 @@ description: Apply when writing or modifying DB schema files in packages/db-sche
 
 - `references/relations-v2.md` — when adding or editing a file in `packages/db-schema/src/relations/`, or writing a relational query's `where` / `orderBy` / `with`.
 - `references/migrations.md` — when running `db:gen`, editing a generated `migration.sql`, regenerating the db-mock snapshot, or recovering a forked migration chain.
-- `references/table-constraints.md` — when adding a CHECK constraint, unique constraint or index to a table.
+- `references/table-constraints.md` — when adding a CHECK constraint or a unique constraint, or naming a constraint or index.
+- `references/indexes.md` — when a query's filter or order needs an index, a count runs on a path every render pays for, or an index is added to a populated table.
 - `references/table-definition.md` — when adding or editing a table, a column or a reference.
 - `references/schemas-and-names.md` — when adding a table or an enum, choosing its schema, naming anything derived from a table, or moving a table to another schema.
 - `references/schema-registration.md` — when adding a table, an enum, a schema or a relation part, or a migration fails on a missing type or schema.
