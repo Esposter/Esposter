@@ -1,0 +1,5 @@
+# A gap in a check nothing decides on
+
+Read when a proposal widens a trigger, adds a gate, a hash or a graph query for a case a check misses, or its benefit is "it would have caught X".
+
+A check exists to be read. Before a trigger grows a path, a gate job, a second content hash or a graph query for a case it currently misses, name what waits on its verdict: a merge blocked by a required status, a deploy that ships on green, an `up` that runs on the plan. If nothing does, the check is a courtesy — its output is a comment someone may read — and a case it misses costs nothing, because the decision was never being made there. The gate that **is** load-bearing is somewhere else, and that is the one the missed case is checked against; if it covers the case, the courtesy stays exactly as narrow as it is. The tell is a proposal whose benefit is "it would have caught X" with no sentence saying who would have acted on the catch. A missed case in a required check is a defect; the same case missed by an advisory one is a trade already made, and it is written down where the check lives so that it is not re-derived.

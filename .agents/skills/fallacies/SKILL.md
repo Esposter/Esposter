@@ -9,11 +9,11 @@ The one list of the arguments that lead a session to chase a change the reposito
 
 ## A gap in a check nothing decides on is not a defect — owned here
 
-A check exists to be read. Before a trigger grows a path, a gate job, a second content hash or a graph query for a case it currently misses, name what waits on its verdict: a merge blocked by a required status, a deploy that ships on green, an `up` that runs on the plan. If nothing does, the check is a courtesy — its output is a comment someone may read — and a case it misses costs nothing, because the decision was never being made there. The gate that **is** load-bearing is somewhere else, and that is the one the missed case is checked against; if it covers the case, the courtesy stays exactly as narrow as it is. The tell is a proposal whose benefit is "it would have caught X" with no sentence saying who would have acted on the catch. A missed case in a required check is a defect; the same case missed by an advisory one is a trade already made, and it is written down where the check lives so that it is not re-derived.
+A missed case is a defect only where a required status or a shipped decision waits on the check; elsewhere it is a trade already made and written down (`references/undecided-checks.md`).
 
 ## A cost or a risk asserted without its measurement is a guess — owned here
 
-"This forces a replacement", "this cache would hit", "moving the build here costs every job", "this is slow" — each is a claim with a measurement that would settle it, and the argument that sounds right from the diff is exactly the one the measurement contradicts most often. The claim is not made until the measurement is: the preview's plan line, the cache action's restore log, the list of jobs that download the artifact, the timing beside the job it is compared to. Where the measurement is expensive, the claim is stated as unmeasured and left out of the decision rather than argued from plausibility. The reverse holds too: a benefit is counted only where its reader is named, never from what a mechanism could in principle catch.
+A cost, speed, cache hit or risk is claimed only with the measurement that settles it, and a benefit only with the reader who would act on it (`references/unmeasured-claims.md`).
 
 ## The catalogue
 
@@ -34,3 +34,8 @@ A check exists to be read. Before a trigger grows a path, a gate job, a second c
 - A finding or a proposal that rests on an entry here cites the owning rule and stops, never re-argues it.
 - An argument that recurs without an owner is maintained the way `over-engineering` maintains a shape: the rule goes to its most specific owner first and the row here second, never the row alone.
 - When the argument survives — the check is required, the measurement was taken, the record says nothing — the change is real, and `over-engineering` is the next list it is read against.
+
+## Reference pages
+
+- `references/undecided-checks.md` — when a proposal widens a trigger, adds a gate, a hash or a graph query for a case a check misses, or its benefit is "it would have caught X".
+- `references/unmeasured-claims.md` — when a proposal or a finding asserts a cost, a speed, a cache hit, a replacement or a risk.
