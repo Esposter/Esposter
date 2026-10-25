@@ -6,7 +6,7 @@ import { relative, resolve } from "node:path";
 
 // The agent console, kept unmounted while it is hidden from the game until its rebuild in the game's style mounts it
 // Again (the agent console's spec). The page builder's editor, kept unmounted until the resource cutover binds it to the
-// Webpage resource page (`openspec/changes/resource-page-builder-cutover`)
+// Webpage resource page (`openspec/changes/archive/2026-10-25-resource-page-builder-cutover`)
 const HIDDEN_COMPONENT_PATHS = new Set([
   `${COMPONENTS_DIRECTORY}/AgentConsole/Index.vue`,
   `${COMPONENTS_DIRECTORY}/PageBuilder/Editor.vue`,

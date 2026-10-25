@@ -2,11 +2,13 @@
 
 - [x] 1.1 Add the custom migration that moves every webpage and email row past the recycle bin's retention, so the daily purge removes it. Verify: a test named after the scenario 'A published webpage is removed by the cutover'. Done in `apps/web/server/db/migrations/20261024050536_bin_webpage_and_email_rows`, tested in `apps/web/server/db/binWebpageAndEmailRows.test.ts`.
 - [ ] 1.2 Run the purge once in each environment straight after the deploy. Verify: a test named after the scenario 'A count confirms the purge removed every pre-cutover row'. Until it runs, a webpage published before `8c1648f7` still holds a bare body with its CSS apart from it, and its view renders unstyled; the purge is the only thing that retires those snapshots, so no backfill is written.
+  - Owed: an owner-side run in each environment, since it deletes rows there. This session did not run it.
 
 ## 2. Stored data
 
 - [x] 2.1 Confirm the purge deletes each resource's directory, its activity and view partitions, and its ledger entries. Verify: a test named after the scenario 'Removing an email releases its stored files'.
 - [ ] 2.2 Backfill the Blueprint entries of webpage and email type to drop their content, dev then prod. Verify: tests named after the scenarios 'A Blueprint's webpage entry deploys as a fresh document' and 'A Blueprint revision from before the cutover is refused'.
+  - Owed: the backfill writes to dev, then prod, so it waits for an explicit go-ahead for each. Until it runs, the Blueprint entries keep their old content.
 
 ## 3. Related data
 
@@ -14,9 +16,10 @@
 
 ## 4. Removing the old editor
 
-- [ ] 4.1 Remove the old editor's dependencies, security origins, OSV exception, modules and tests, and replace its skill and ledger with the page-builder ones. Verify: a search of the app and the dependency list for the old editor's names returns no match.
+- [x] 4.1 Remove the old editor's dependencies, security origins, OSV exception, modules and tests, and replace its skill and ledger with the page-builder ones. Verify: a search of the app and the dependency list for the old editor's names returns no match.
+  - Verified 2026-10-25 by a search of the tree: no match in the app, the manifests, the lock file or the agent ledgers, outside openspec, the changelogs and the 2026-10-24 migration, which names the old editor.
 - [ ] 4.2 Delete the absorbed plugins' pages (`webpage-plugin-blocks-basic`, `webpage-plugin-countdown`, `webpage-plugin-custom-code`, `webpage-plugin-forms`) and rewrite `resource/webpage-survey-invite-blocks` as built, as the design says. Verify: a search of `openspec/specs` for the old editor's name returns no match.
-  - Done: the four plugin pages are deleted, and no spec names `webpage-plugin-*`. `resource/webpage-survey-invite-blocks` is rewritten as built, with its email half on the MJML node. Still open: the old editor's name appears in 14 files under `openspec/specs` (`grep -ril grapes openspec/specs`), so the verify search fails until those are swept.
+  - Done: the four plugin pages are deleted, and no spec names `webpage-plugin-*`. `resource/webpage-survey-invite-blocks` is rewritten as built, with its email half on the MJML node. Owed: the verify search still matches `openspec/specs/mjml-blocks/README.md`, which lists the upstream issues of the GrapesJS/mjml repository as the audit's history. The verify needs an exception for that page, which is the owner's call.
 
 ## 5. Binding the new editors
 
