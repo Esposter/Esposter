@@ -53,9 +53,9 @@ Carried forward for any future infra change: keep `protect: true` on imported re
 
 ## Key files
 
-| File                                                                     | Role                                                                                                            |
-| ------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
-| `apps/infra/src/azure/resources/Microsoft.Consumption/budgets/`          | The four `$0.01` guard budgets                                                                                  |
-| `apps/infra/src/azure/resources/Microsoft.Logic/workflows/`              | Stop/start/delete/recreate guard workflows (`001`–`004` per environment)                                        |
-| `apps/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/` | Subscriptions for `ProcessWebhook`, `ProcessNotification`, `ProcessBlobDeletion`, `ReconcileStorageLedgerEntry` |
-| `apps/infra/docs/azure/security-constraints.md`                          | Hardening blockers + gating app code paths                                                                      |
+| File                                                                     | Role                                                                                                                                                           |
+| ------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `apps/infra/src/azure/resources/Microsoft.Consumption/budgets/`          | The four `$0.01` guard budgets                                                                                                                                 |
+| `apps/infra/src/azure/resources/Microsoft.Logic/workflows/`              | Stop/start/delete/recreate guard workflows (`001`–`004` per environment)                                                                                       |
+| `apps/infra/src/azure/resources/Microsoft.EventGrid/eventSubscriptions/` | Subscriptions for `ProcessWebhook`, `ProcessNotification`, `ProcessBlobDeletion`, `ReconcileStorageLedgerEntry`, `DeleteAccount`, `DeleteOrphanedProfileImage` |
+| `apps/infra/docs/azure/security-constraints.md`                          | Hardening blockers + gating app code paths                                                                                                                     |
