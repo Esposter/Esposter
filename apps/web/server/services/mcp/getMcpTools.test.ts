@@ -11,6 +11,25 @@ import { uncapitalize } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
+// A resource type's own procedures, those its factory did not generate, that declare neither a key description nor a
+// Human-only reason. The factory is called for each type, so the generic set is never listed by hand
+const getUndeclaredTypeProcedurePaths = (anyRouter: AnyRouter) =>
+  Object.values(ResourceType).flatMap((type) => {
+    const typePrefix = `${uncapitalize(type)}.`;
+    const factoryProcedureNames = Object.keys(createResourceProcedures(type));
+    return Object.entries<AnyProcedure>(anyRouter._def.procedures)
+      .filter(([path, { _def }]) => {
+        const { humanOnly, mcp } = (_def.meta ?? {}) as Meta;
+        return (
+          path.startsWith(typePrefix) &&
+          !factoryProcedureNames.includes(path.slice(typePrefix.length)) &&
+          !humanOnly &&
+          !mcp
+        );
+      })
+      .map(([path]) => path);
+  });
+
 describe(getMcpTools, () => {
   // A tool's input schema must be one object, and a subscription has no tool call to answer, so a procedure opting in
   // Any other way would list a tool no client can call. A defaulted object converts to the object, its default beside it
@@ -102,30 +121,22 @@ describe(getMcpTools, () => {
     expect(getMcpTools(humanOnlyRouter)).toStrictEqual([]);
   });
 
-  // A type's own procedure, one its factory did not generate, decides what a key may do: a description serves it to the
-  // Agent, and a human-only reason keeps it from every key. The type's router is found by its name, and the factory's
-  // Procedures by calling the factory for the type, so a procedure a type adds fails here until its author decides
+  // A type's own procedure decides what a key may do: a description serves it to the Agent, and a human-only reason keeps
+  // It from every key. Every procedure the trpc router holds today declares one
   test("every type-specific procedure declares its key access", () => {
     expect.hasAssertions();
 
-    const anyRouter: AnyRouter = trpcRouter;
-    const undeclaredPaths = Object.values(ResourceType).flatMap((type) => {
-      const typePrefix = `${uncapitalize(type)}.`;
-      const factoryProcedureNames = Object.keys(createResourceProcedures(type));
-      return Object.entries<AnyProcedure>(anyRouter._def.procedures)
-        .filter(([path, { _def }]) => {
-          const { humanOnly, mcp } = (_def.meta ?? {}) as Meta;
-          return (
-            path.startsWith(typePrefix) &&
-            !factoryProcedureNames.includes(path.slice(typePrefix.length)) &&
-            !humanOnly &&
-            !mcp
-          );
-        })
-        .map(([path]) => path);
-    });
+    expect(getUndeclaredTypeProcedurePaths(trpcRouter)).toStrictEqual([]);
+  });
 
-    expect(undeclaredPaths).toStrictEqual([]);
+  // A type's procedure the factory did not generate, declaring nothing, is found by its path under the type's name, so
+  // A router holding one fails the check until its author declares it
+  test("A new type-specific procedure without a declaration fails CI", () => {
+    expect.hasAssertions();
+
+    const undeclaredRouter = router({ webpage: router({ undeclared: publicProcedure.query<void>(() => undefined) }) });
+
+    expect(getUndeclaredTypeProcedurePaths(undeclaredRouter)).toStrictEqual(["webpage.undeclared"]);
   });
 
   // Turning the dots to underscores would merge `a_b.c` with `a.b_c`, and a client lists the one name twice

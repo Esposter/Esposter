@@ -10,4 +10,4 @@
 
 ## 3. The declaration check
 
-- [ ] 3.1 Add the check over every resource type's own procedures, found by type name, with the generic set taken from the factory so no procedure is listed by hand. It lands with the lifecycle tools change, which declares the remaining procedures. Verify: a test named after the scenario 'A new type-specific procedure without a declaration fails CI', failing first, then passing once the remaining procedures declare.
+- [x] 3.1 Add the check over every resource type's own procedures, found by type name, with the generic set taken from the factory so no procedure is listed by hand. It lands with the lifecycle tools change, which declares the remaining procedures. Verify: a test named after the scenario 'A new type-specific procedure without a declaration fails CI', failing first, then passing once the remaining procedures declare.
