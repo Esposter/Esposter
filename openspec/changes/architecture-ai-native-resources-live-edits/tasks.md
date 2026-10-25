@@ -5,7 +5,7 @@
 ## 2. Adoption
 
 - [x] 2.1 Adopt another device's save in an editor with no unsaved edit, running the reload and adopt stages in order, and clear undo history and the delta baseline. Verify: a test named after the scenario 'An editor with nothing unsaved adopts a save in place', failing first, then passing; and the scenario 'Adopting a save clears undo history and the delta baseline'.
-- [ ] 2.2 Re-read the todo list on another device's save in place of taking the streamed list. Verify: a test named after the scenario 'An open todo list re-reads another device's save', failing first, then passing.
+- [x] 2.2 Re-read the todo list on another device's save in place of taking the streamed list. Verify: a test named after the scenario 'An open todo list re-reads another device's save', failing first, then passing.
 
 ## 3. Unsaved edits
 
