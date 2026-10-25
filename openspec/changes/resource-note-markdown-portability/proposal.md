@@ -28,4 +28,4 @@ None.
 - The note's overflow menu, which gains the two commands.
 - The note's import preview, which opens from the menu through its own dialog store and is mounted by the note's dialogs.
 - The note's content save, so an import keeps the replaced content in history.
-- A new Markdown converter dependency, admitted through dependency admission and pinned to an exact version.
+- No new dependency. The converter is written over `marked`, which the catalog already holds.

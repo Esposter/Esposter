@@ -1,6 +1,6 @@
 ## 1. Converter
 
-- [ ] 1.1 Admit the Markdown converter through dependency admission, then add it pinned to an exact version. Verify: a test named after the scenario 'A note with every block survives a Markdown round trip' passes on the pinned version.
+- [ ] 1.1 Write the Markdown converter over the catalog's `marked` and the note's own content schema, adding no package (the design records why). Verify: a test named after the scenario 'A note with every block survives a Markdown round trip' passes.
 
 ## 2. Export
 

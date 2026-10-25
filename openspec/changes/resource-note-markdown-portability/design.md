@@ -6,9 +6,14 @@ A Note can be read only inside the app or through its published page ([note reso
 
 Note joins `PortableResourceType` with one Markdown format in `PortableFormatMap`, so the resource page's overflow menu gains **Import Markdown** and **Export Markdown** beside every other portable type's commands ([resource explorer](../../specs/resource/explorer/design.md)).
 
-- **Export** serializes the working copy's Tiptap JSON to Markdown and downloads `<name>.md`. Headings, lists, task lists (as `- [ ]`), marks, links, blockquotes and code blocks all have Markdown forms, so nothing the writing kit holds is lost.
-- **Import** reads a `.md` file, parses it to Tiptap JSON with the same extension set, shows what it will replace, and saves it as the working copy through `saveResourceContent` — the Sheet's import-replaces-with-confirmation pattern — so the previous content stays in [version history](../../specs/resource/resource-snapshots/design.md). The import runs from the overflow menu, outside any component, so it opens its preview through a small `useNotePortableDialogStore`, and the Note gains a `ResourceNoteDialogs` entry in `ResourceDialogsComponentMap` to mount that preview, as the Sheet's import does through `useSheetPortableDialogStore` and `ResourceSheetDialogs`.
-- **The converter is Tiptap's own** `@tiptap/markdown`, whose `MarkdownManager` parses and serializes against the editor's schema, so a Note's extensions decide what round-trips rather than a second Markdown library's idea of the document. Tiptap marks it an early release; the change pins it to an exact version in the catalog and adds a round-trip test over every node the writing kit has, which is what fails if a release changes the output. It is a new dependency and goes through [dependency admission](../../specs/architecture/dependency-admission/design.md).
+- **Export** walks the working copy's ProseMirror JSON and writes it as Markdown, then downloads `<name>.md`. Headings, lists, task lists (as `- [ ]`), marks, links, blockquotes and code blocks all have Markdown forms, so nothing the writing kit holds that CommonMark can carry is lost.
+- **Import** reads a `.md` file, parses it to a note document, shows what it will replace, and saves it as the working copy through the note's content writer and `saveNote` — the Sheet's import-replaces-with-confirmation pattern — so the previous content stays in [version history](../../specs/resource/resource-snapshots/design.md). The import runs from the overflow menu, outside any component, so it opens its preview through a small `useNotePortableDialogStore`, and the Note gains a `ResourceNoteDialogs` entry in `ResourceDialogsComponentMap` to mount that preview, as the Sheet's import does through `useSheetPortableDialogStore` and `ResourceSheetDialogs`. The editor holds its own live document, so a confirmed import also runs the adopt hook, or the editor would write the pre-import document back on its next keystroke.
+- **The converter is ours, over the parser the app already holds.** `marked` is in the catalog and already parses Markdown across the app, and it hands back tokens rather than a document. The import maps those tokens onto the note's node and mark names, and the result passes through the note's own content schema (`noteDocumentSchema`) before it is accepted, so a file can produce only what the writing kit can hold. Raw HTML in a file has no node in the kit, so it arrives as its text. The export is the mirror walk, with the escapes CommonMark needs so that the file reads back to the same document.
+
+## Decisions
+
+- **No new package.** The admission gate asks first whether the job is already installed, and `marked` is. `@tiptap/markdown` was the first choice: it is Tiptap's own converter and drives the editor's schema. It was rejected because it depends on `marked` 17 while the catalog holds `marked` 18, so the app would ship two Markdown parsers, and its serializer would own the file's form. The round trip test below is what makes the owned converter's output a fact rather than a claim.
+- **Underline has no Markdown form.** The writing kit's underline mark is not CommonMark, so an underlined run exports as its plain text. Strikethrough is GFM and round-trips through `marked`'s GFM mode.
 
 ## What is deliberately not in it
 
@@ -18,24 +23,19 @@ Note joins `PortableResourceType` with one Markdown format in `PortableFormatMap
 
 ## Key files
 
-| File                                                            | Role after the change                           |
-| --------------------------------------------------------------- | ----------------------------------------------- |
-| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`    | Note declares `portable`                        |
-| `apps/web/app/services/resource/PortableFormatMap.ts`           | the Markdown format for Note                    |
-| `apps/web/shared/services/resource/note/getNoteExtensions.ts`   | the extension set the converter parses against  |
-| `apps/web/app/services/resource/ResourceDialogsComponentMap.ts` | maps the Note to `ResourceNoteDialogs`          |
-| `apps/web/package.json`                                         | gains `@tiptap/markdown` from the catalog       |
-| `pnpm-workspace.yaml`                                           | the catalog entry for `@tiptap/markdown`, exact |
+| File                                                            | Role after the change                         |
+| --------------------------------------------------------------- | --------------------------------------------- |
+| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`    | Note declares `portable`                      |
+| `apps/web/app/services/resource/PortableFormatMap.ts`           | the Markdown format for Note                  |
+| `apps/web/shared/services/resource/note/getNoteExtensions.ts`   | the node and mark names the converter maps to |
+| `apps/web/shared/models/resource/note/NoteDocument.ts`          | the schema an imported document must pass     |
+| `apps/web/app/services/resource/ResourceDialogsComponentMap.ts` | maps the Note to `ResourceNoteDialogs`        |
 
 The files it creates:
 
 ```text
 apps/web/app/
+  services/resource/note/markdown/         ← the export walk and the import token map, and their tests
   components/Resource/Note/Dialogs.vue     ← the import preview and its confirm
   store/resource/note/portableDialog.ts    ← the parsed document the preview shows
 ```
-
-## Sources
-
-- [Tiptap — Markdown installation](https://tiptap.dev/docs/editor/markdown/getting-started/installation) — the `@tiptap/markdown` package and its `MarkdownManager` parse and serialize.
-- [Tiptap — Markdown](https://tiptap.dev/docs/editor/markdown) — bidirectional support, and its early-release caveat that motivates the round-trip test.
