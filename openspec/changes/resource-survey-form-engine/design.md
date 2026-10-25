@@ -117,46 +117,46 @@ The dependency admission test would keep SurveyJS as an engine, since its stop l
 
 ## Key files
 
-| File                                                                               | Role after the change                                                     |
-| ---------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| `apps/web/shared/models/resource/survey/SurveyResource.ts`                         | the survey resource schema, now the typed document checked on every save  |
-| `apps/web/shared/models/resource/survey/SurveyResource.test.ts`                    | the schema's accepted and refused documents                               |
-| `apps/web/shared/models/db/survey/SurveyResponseModel.ts`                          | the answer record's shape, unchanged, keyed by question name              |
-| `apps/web/shared/services/survey/parseSurveyModel.ts`                              | removed: nothing parses a string once the document is an object           |
-| `apps/web/shared/services/survey/constants.ts`                                     | the old theme key constant, removed with SurveyJS's theme                 |
-| `apps/web/shared/models/pageBuilder/SurveyInviteNode.ts`                           | the invite block, whose survey references the migration reports           |
-| `apps/web/server/trpc/routers/survey.ts`                                           | the resource factory and response procedures, saving the typed document   |
-| `apps/web/server/models/dataset/surveyResponses/SurveyModelElement.ts`             | removed: replaced by the typed question union                             |
-| `apps/web/server/services/dataset/surveyResponses/getSurveyModelDatasetColumns.ts` | the dataset's columns, read from the typed document                       |
-| `apps/web/app/store/survey/index.ts`                                               | the save path, taking the typed object                                    |
-| `apps/web/app/composables/survey/useSurveyCreator.ts`                              | rewritten: the Creator's state over the core's tree and history           |
-| `apps/web/app/composables/survey/useSurveyResponse.ts`                             | the respondent's resume and submit, over the runner's state               |
-| `apps/web/app/components/Resource/Survey/Editor.vue`                               | the Editor blade, rendering the new Creator                               |
-| `apps/web/app/components/Resource/Survey/View.vue`                                 | the respondent page, rendering the new runner                             |
-| `apps/web/app/components/Resource/Survey/Responses.vue`                            | the Responses blade, unchanged                                            |
-| `apps/web/app/services/survey/getActions.ts`                                       | rewritten to the Creator's import, export and clear                       |
-| `apps/web/app/services/survey/registerSurveyPlugin.ts`                             | removed with SurveyJS's runner plugin                                     |
-| `apps/web/app/services/survey/registerSurveyCreatorPlugin.ts`                      | removed with SurveyJS's Creator plugin                                    |
-| `apps/web/app/services/resource/survey/getSurveyResponseSummaryCards.ts`           | the summary's cards, read from the typed document                         |
-| `apps/web/app/services/survey/summary/getSurveySummaryCards.ts`                    | the cards, keyed by the typed kinds in place of SurveyJS's classes        |
-| `apps/web/app/services/survey/summary/getSurveySummaryCards.test.ts`               | the cards' tests, rewritten over the typed kinds                          |
-| `apps/web/configuration/vite.ts`                                                   | the survey packages' optimise entries, removed                            |
-| `apps/web/configuration/build.ts`                                                  | the Creator's chunk entry, removed                                        |
-| `apps/web/package.json`                                                            | the four SurveyJS dependencies, removed                                   |
-| `pnpm-workspace.yaml`                                                              | the four SurveyJS catalog entries, removed                                |
-| `packages/headless-block-editor`                                                   | the core the runner and Creator are built on                              |
-| `.agents/ledgers/dependencies.md`                                                  | the four SurveyJS rows, removed with their packages                       |
-| `openspec/specs/architecture/dependency-admission/design.md`                       | the stop list's survey entry, edited with the owner's decision            |
-| `openspec/specs/resource/survey-resource/design.md`                                | the old survey capability, removed at archive and rewritten as built      |
-| `openspec/specs/resource/survey-response-controls/design.md`                       | the old controls capability, removed at archive                           |
-| `openspec/specs/resource/survey-response-management/design.md`                     | the old management capability, removed at archive                         |
-| `openspec/specs/resource/survey-response-modes/design.md`                          | the old modes capability, removed at archive                              |
-| `openspec/specs/resource/survey-response-summary/design.md`                        | the old summary capability, removed at archive                            |
-| `openspec/specs/resource/webpage-survey-invite-blocks/design.md`                   | the old invite capability, removed at archive                             |
-| `openspec/specs/architecture/agent-content-tools/design.md`                        | the survey row of the schema-fidelity rule, updated                       |
-| `openspec/changes/architecture-ai-native-resources-program/design.md`              | the Survey audit row, updated                                             |
-| `openspec/specs/math-expression-compiler/language/design.md`                       | its pointer to the survey's condition language, re-pointed to this change |
-| `openspec/changes/resource-roadmap/tasks.md`                                       | carries this change as an open item                                       |
+| File                                                                                     | Role after the change                                                     |
+| ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| `apps/web/shared/models/resource/survey/SurveyResource.ts`                               | the survey resource schema, now the typed document checked on every save  |
+| `apps/web/shared/models/resource/survey/SurveyResource.test.ts`                          | the schema's accepted and refused documents                               |
+| `apps/web/shared/models/db/survey/SurveyResponseModel.ts`                                | the answer record's shape, unchanged, keyed by question name              |
+| `apps/web/shared/services/survey/parseSurveyModel.ts`                                    | removed: nothing parses a string once the document is an object           |
+| `apps/web/shared/services/survey/constants.ts`                                           | the old theme key constant, removed with SurveyJS's theme                 |
+| `apps/web/shared/models/pageBuilder/SurveyInviteNode.ts`                                 | the invite block, whose survey references the migration reports           |
+| `apps/web/server/trpc/routers/survey.ts`                                                 | the resource factory and response procedures, saving the typed document   |
+| `apps/web/server/models/dataset/surveyResponses/SurveyModelElement.ts`                   | removed: replaced by the typed question union                             |
+| `apps/web/server/services/dataset/surveyResponses/getSurveyModelDatasetColumns.ts`       | the dataset's columns, read from the typed document                       |
+| `apps/web/app/store/survey/index.ts`                                                     | the save path, taking the typed object                                    |
+| `apps/web/app/composables/survey/useSurveyCreator.ts`                                    | rewritten: the Creator's state over the core's tree and history           |
+| `apps/web/app/composables/survey/useSurveyResponse.ts`                                   | the respondent's resume and submit, over the runner's state               |
+| `apps/web/app/components/Resource/Survey/Editor.vue`                                     | the Editor blade, rendering the new Creator                               |
+| `apps/web/app/components/Resource/Survey/View.vue`                                       | the respondent page, rendering the new runner                             |
+| `apps/web/app/components/Resource/Survey/Responses.vue`                                  | the Responses blade, unchanged                                            |
+| `apps/web/app/services/survey/getActions.ts`                                             | rewritten to the Creator's import, export and clear                       |
+| `apps/web/app/services/survey/registerSurveyPlugin.ts`                                   | removed with SurveyJS's runner plugin                                     |
+| `apps/web/app/services/survey/registerSurveyCreatorPlugin.ts`                            | removed with SurveyJS's Creator plugin                                    |
+| `apps/web/app/services/resource/survey/getSurveyResponseSummaryCards.ts`                 | the summary's cards, read from the typed document                         |
+| `apps/web/app/services/survey/summary/getSurveySummaryCards.ts`                          | the cards, keyed by the typed kinds in place of SurveyJS's classes        |
+| `apps/web/app/services/survey/summary/getSurveySummaryCards.test.ts`                     | the cards' tests, rewritten over the typed kinds                          |
+| `apps/web/configuration/vite.ts`                                                         | the survey packages' optimise entries, removed                            |
+| `apps/web/configuration/build.ts`                                                        | the Creator's chunk entry, removed                                        |
+| `apps/web/package.json`                                                                  | the four SurveyJS dependencies, removed                                   |
+| `pnpm-workspace.yaml`                                                                    | the four SurveyJS catalog entries, removed                                |
+| `packages/headless-block-editor`                                                         | the core the runner and Creator are built on                              |
+| `.agents/ledgers/dependencies.md`                                                        | the four SurveyJS rows, removed with their packages                       |
+| `openspec/specs/architecture/dependency-admission/design.md`                             | the stop list's survey entry, edited with the owner's decision            |
+| `openspec/specs/resource/survey-resource/design.md`                                      | the old survey capability, removed at archive and rewritten as built      |
+| `openspec/specs/resource/survey-response-controls/design.md`                             | the old controls capability, removed at archive                           |
+| `openspec/specs/resource/survey-response-management/design.md`                           | the old management capability, removed at archive                         |
+| `openspec/specs/resource/survey-response-modes/design.md`                                | the old modes capability, removed at archive                              |
+| `openspec/specs/resource/survey-response-summary/design.md`                              | the old summary capability, removed at archive                            |
+| `openspec/specs/resource/webpage-survey-invite-blocks/design.md`                         | the old invite capability, removed at archive                             |
+| `openspec/specs/architecture/agent-content-tools/design.md`                              | the survey row of the schema-fidelity rule, updated                       |
+| `openspec/changes/archive/2026-10-25-architecture-ai-native-resources-program/design.md` | the Survey audit row, updated                                             |
+| `openspec/specs/math-expression-compiler/language/design.md`                             | its pointer to the survey's condition language, re-pointed to this change |
+| `openspec/changes/resource-roadmap/tasks.md`                                             | carries this change as an open item                                       |
 
 New files are the expression package and the schema, runner and Creator modules in the survey's shared and app folders. They are named by the file-organisation and naming rules when each is written.
 

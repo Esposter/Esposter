@@ -120,7 +120,7 @@ This change's part is the whiteboard. Its enum value is added by a migration bef
 
 ## The agent surface
 
-The whiteboard is reached by the generic resource tools, as every type is: describe, read, patch and the lifecycle tools ([AI-native resources](../architecture-ai-native-resources-program/design.md)).
+The whiteboard is reached by the generic resource tools, as every type is: describe, read, patch and the lifecycle tools ([AI-native resources](../archive/2026-10-25-architecture-ai-native-resources-program/design.md)).
 
 - **Describe** returns the content's JSON Schema, with the element kinds, their bounds and the binding rules stated, and with the fields the core derives marked read-only.
 - **Read** returns the document, or one element by its index.
