@@ -45,6 +45,9 @@ export const SPLIT_BLOCK_PIXELS = 32;
 // The gate a mean colour is held to, a surface's unlit or glow or the clear sky's: within the CIELab distance two colours
 // Side by side are just told apart at
 export const COLOUR_GATE = 2.3;
+// The structure lost, one less its term, is drawn at full red at half a term, and past it a pixel whitens until its two
+// Images are nothing alike. A plan's cell is drawn at the average loss of the pixels it gathers, on the same scale
+export const LOST_FULL = 0.5;
 // The display pass reads at this width, and holds the shipped tone contrast to leaving at most this share more of its
 // Light off the plane than the contrast that leaves least: on the login the profile's 0.5 leaves a few hundredths
 // More, and its next value, 0.75, about seven tenths

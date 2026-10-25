@@ -4,6 +4,7 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 import { WitnessTargetName } from "#src/models/genshinParity/shared/WitnessTargetName";
 import { carryLossToPlan } from "#src/services/genshinParity/passes/carryLossToPlan";
 import { compareFamilyColour } from "#src/services/genshinParity/passes/compareFamilyColour";
+import { LOST_FULL } from "#src/services/genshinParity/passes/constants";
 import { measureFamilyTargets } from "#src/services/genshinParity/passes/measureFamilyTargets";
 import { PLANS_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { computeLabelSimilarity } from "#src/services/genshinParity/witness/computeLabelSimilarity";
@@ -17,8 +18,6 @@ import sharp from "sharp";
 
 // A plan's axes by the letters a command line names them with
 const AXES = ["x", "y", "z"];
-// The loss a cell's pixels average that the image draws at full red, as the structure image draws a pixel's
-const LOST_FULL = 0.5;
 // The bands across the plan printed, the most lost first
 const PRINTED_BAND_COUNT = 12;
 

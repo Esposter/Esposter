@@ -1,5 +1,6 @@
 import type { SimilarityTermMap } from "#src/models/genshinParity/witness/SimilarityTermMap";
 
+import { LOST_FULL } from "#src/services/genshinParity/passes/constants";
 import { SURFACES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { writeSideBySide } from "#src/services/genshinParity/shared/writeSideBySide";
 import { drawPixels } from "#src/services/recreation/image/drawPixels";
@@ -7,9 +8,6 @@ import { toByte } from "#src/services/shared/toByte";
 import { mkdir } from "node:fs/promises";
 import { join } from "node:path";
 
-// The structure lost, one less its term, the diff draws at full red, half a term; past it a pixel whitens until its
-// Two images are nothing alike
-const LOST_FULL = 0.5;
 // Where the surface pass's structure is lost on the frame, outside the repository: a panel per scale of its terms
 // (`scoreLabelSimilarity`), finest first, each drawn at the frame's size, black where it holds and over the pixels no
 // Family both draw. A loss at the finest panel only is detail off; at every panel, the layout under it. Returns the
