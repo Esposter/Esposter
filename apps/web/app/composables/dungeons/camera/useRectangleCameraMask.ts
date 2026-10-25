@@ -1,4 +1,4 @@
-import type { CameraMask } from "@/composables/dungeons/camera/CameraMask";
+import type { CameraMask } from "@/models/dungeons/camera/CameraMask";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
 import { useSkippableAnimation } from "@/composables/dungeons/animation/useSkippableAnimation";
