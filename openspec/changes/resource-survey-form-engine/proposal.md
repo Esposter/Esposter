@@ -26,7 +26,7 @@ If the Creator grows past one reviewable change while it is built, it splits out
 
 ## Accessibility
 
-The survey stop list in the dependency admission design names forms as accessibility-shaped, the surface where owning the behaviour reliably ships worse. The replacement takes that on knowingly. The runner and the Creator meet the UI library's keyboard and ARIA contracts component by component, the gap analysis includes keyboard-only completion and labelled fields, and the owner checks screen-reader behaviour by hand, since no automated suite can.
+The dependency admission design's stop list names the survey runtime as an engine, not as accessibility-shaped, and its accessibility-shaped entry names the component framework and the rich text and code editors. Forms are the surface where owning the behaviour reliably ships worse, and the replacement takes that on knowingly. The runner and the Creator meet the UI library's keyboard and ARIA contracts component by component, the gap analysis includes keyboard-only completion and labelled fields, and the owner checks screen-reader behaviour by hand, since no automated suite can.
 
 ## Capabilities
 
@@ -35,4 +35,4 @@ The survey stop list in the dependency admission design names forms as accessibi
 ## Waiting on
 
 - The scan of stored surveys (task 1.1) sets which question kinds, expression functions and theme keys the replacement covers, so the gap analysis's verdicts are checked against real data before they are final.
-- The headless block editor core is built, but its first editor consumer, the page builder, is not shipped. This survey is the core's first consumer of a typed document root, so a gap found in the core is fixed in the core in its own commit.
+- The headless block editor core is built and shipped, with the page builder's webpage and email editors as its consumers. This survey is the core's first consumer of a typed document root for a survey, so a gap found in the core is fixed in the core in its own commit.
