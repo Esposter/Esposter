@@ -100,6 +100,7 @@ describe("surveyRouter", () => {
 
   afterEach(() => {
     MockTableDatabase.clear();
+    vi.restoreAllMocks();
   });
 
   test("saves and reads content", async () => {

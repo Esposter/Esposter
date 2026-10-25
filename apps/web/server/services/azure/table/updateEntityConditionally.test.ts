@@ -5,7 +5,7 @@ import { updateEntityConditionally } from "#server/services/azure/table/updateEn
 import { AzureEntityType, getReverseTickedTimestamp, StandardMessageEntity } from "@esposter/db-schema";
 import { noop, NotFoundError } from "@esposter/shared";
 import { MockRestError } from "azure-mock";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 type WriteEntity = (entity: AzureUpdateEntity<StandardMessageEntity>, etag: string) => Promise<unknown>;
 
@@ -34,6 +34,10 @@ describe(updateEntityConditionally, () => {
     message: `${entityMessage}!`,
     partitionKey,
     rowKey,
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   test("re-applies the intent to the version it re-read rather than the one it started from", async () => {
@@ -125,8 +129,6 @@ describe(updateEntityConditionally, () => {
       ),
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: CONFLICT]`);
     expect(consoleErrorSpy).toHaveBeenCalledExactlyOnceWith(readError);
-
-    consoleErrorSpy.mockRestore();
   });
 
   // Bounded, so an entity being rewritten faster than the caller can land is refused rather than retried forever

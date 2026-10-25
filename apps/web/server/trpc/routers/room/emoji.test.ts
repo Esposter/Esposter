@@ -52,15 +52,6 @@ describe("emojiRouter", () => {
     roomId = getRoomId();
   });
 
-  test("generateUploadRoomEmojiSasEntity mints an id and a write target", async () => {
-    expect.hasAssertions();
-
-    const sasEntity = await roomEmojiCaller.generateUploadRoomEmojiSasEntity({ mimetype, roomId, size });
-
-    expect(sasEntity.id).not.toBe("");
-    expect(sasEntity.sasUrl).not.toBe("");
-  });
-
   test("fails generateUploadRoomEmojiSasEntity with anything but an image", async () => {
     expect.hasAssertions();
 

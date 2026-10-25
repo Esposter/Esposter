@@ -1,11 +1,7 @@
 import { relativizeOwnAssetUrls } from "#server/services/resource/relativizeOwnAssetUrls";
 import { TEST_ORIGIN, TEST_URL } from "#shared/services/pageBuilder/constants.test";
 import { RESOURCE_ASSETS_URL_PREFIX } from "#shared/services/resource/constants";
-import { afterEach, describe, expect, test, vi } from "vitest";
-
-afterEach(() => {
-  vi.unstubAllEnvs();
-});
+import { describe, expect, test, vi } from "vitest";
 
 describe(relativizeOwnAssetUrls, () => {
   test("an asset url of our own origin is made local", () => {

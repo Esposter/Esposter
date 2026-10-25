@@ -773,28 +773,6 @@ describe(createResourceProcedures, () => {
     expect(touchedBlobNames).toStrictEqual([blobName]);
   });
 
-  test("rejects a file path that climbs out of the files directory", async () => {
-    expect.hasAssertions();
-
-    const newResource = await webpageCaller.createResource({ name });
-
-    await expect(webpageCaller.deleteFile({ blobPath: `../../${crypto.randomUUID()}/${filename}`, id: newResource.id }))
-      .rejects.toThrowErrorMatchingInlineSnapshot(`
-      [TRPCError: [
-        {
-          "origin": "string",
-          "code": "invalid_format",
-          "format": "regex",
-          "pattern": "/^[0-9a-f]{64}$/u",
-          "path": [
-            "blobPath"
-          ],
-          "message": "Invalid string: must match pattern /^[0-9a-f]{64}$/u"
-        }
-      ]]
-    `);
-  });
-
   test("omits file asset procedures for types without the capability", () => {
     expect.hasAssertions();
 

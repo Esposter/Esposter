@@ -1,15 +1,11 @@
 import { getSnapshotAssetHashes } from "#server/services/resource/snapshot/getSnapshotAssetHashes";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 describe(getSnapshotAssetHashes, () => {
   const resourceId = crypto.randomUUID();
   const assetHash = "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08";
   const assetUrl = getResourceAssetUrl(`${resourceId}/files/${assetHash}`);
-
-  afterEach(() => {
-    vi.unstubAllEnvs();
-  });
 
   // The scan reads every string whatever the schema, so each content shape that can embed an image is its own case:
   // A block-editor image, a choice's picture, an html string carrying the url, and a list nested inside objects

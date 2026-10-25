@@ -28,6 +28,7 @@ describe(createUserMessage, () => {
   });
 
   afterEach(async () => {
+    vi.restoreAllMocks();
     MockEventGridDatabase.clear();
     MockTableDatabase.clear();
     await mockContext.db.delete(roomsInMessage);
@@ -126,7 +127,5 @@ describe(createUserMessage, () => {
 
     expect(replierFollows).toStrictEqual([root.rowKey]);
     expect(consoleErrorSpy).not.toHaveBeenCalled();
-
-    consoleErrorSpy.mockRestore();
   });
 });

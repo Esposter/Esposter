@@ -560,7 +560,7 @@ describe("resourceRouter", () => {
 
     // The copy is fully reverted: no row and no blobs outside the original's directory
     expect(items.map(({ id }) => id)).toStrictEqual([webpageResource.id]);
-    expect([...container.keys()].every((key) => key.startsWith(`${webpageResource.id}/`))).toBe(true);
+    expect([...container.keys()].filter((key) => !key.startsWith(`${webpageResource.id}/`))).toStrictEqual([]);
   });
 
   test("runs the after-save hook for a duplicated resource", async () => {

@@ -180,6 +180,7 @@ describe(saveResourceContent, () => {
 
   afterEach(async () => {
     vi.useRealTimers();
+    vi.restoreAllMocks();
     resourceEventEmitter.removeAllListeners("saveResourceContent");
     MockContainerDatabase.clear();
     MockServiceBusDatabase.clear();
@@ -515,7 +516,6 @@ describe(saveResourceContent, () => {
 
     await expect(readWorkingAssetHashes(webpage.id)).resolves.toStrictEqual([assetHash]);
     expect(infoSpy).toHaveBeenCalledWith("unreferenced assets counted", { count: 1, resourceId: webpage.id });
-    infoSpy.mockRestore();
   });
 
   test("stores content naming an asset that is not stored, and references it", async () => {

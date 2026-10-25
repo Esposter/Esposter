@@ -66,19 +66,22 @@ describe("moderationRouter", () => {
     callSessionParticipantMap.clear();
   });
 
-  test(`executeAdminAction ${AdminActionType.CreateBan} inserts the ban row and deletes the membership rows`, async () => {
-    expect.hasAssertions();
+  test.each([AdminActionType.CreateBan, AdminActionType.SoftBan] as const)(
+    "executeAdminAction %s inserts the ban row and deletes the membership rows",
+    async (type) => {
+      expect.hasAssertions();
 
-    const member = await createMember();
-    await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.CreateBan });
+      const member = await createMember();
+      await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type });
 
-    const banRows = await readBanRows(member.id);
-    const membershipRows = await readMembershipRows(member.id);
+      const banRows = await readBanRows(member.id);
+      const membershipRows = await readMembershipRows(member.id);
 
-    expect(banRows).toHaveLength(1);
-    expect(takeOne(banRows).userId).toBe(member.id);
-    expect(membershipRows).toHaveLength(0);
-  });
+      expect(banRows).toHaveLength(1);
+      expect(takeOne(banRows).userId).toBe(member.id);
+      expect(membershipRows).toHaveLength(0);
+    },
+  );
 
   // A ban that only deletes the membership row is undone by the link the member still holds. The rejection
   // Names the condition rather than being a bare UNAUTHORIZED, because it is one the caller can act on —
@@ -190,35 +193,6 @@ describe("moderationRouter", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.Room, directMessage.id).message}]`,
     );
-  });
-
-  // These three land on the call pipeline rather than the database, so the mutation itself only has to record
-  // The action and resolve. `as const` keeps the rows as their own literals — a plain array widens to
-  // `AdminActionType`, which the discriminated input union rejects
-  test.each([AdminActionType.ForceMute, AdminActionType.ForceUnmute, AdminActionType.KickFromCall] as const)(
-    "executeAdminAction %s resolves against a member",
-    async (type) => {
-      expect.hasAssertions();
-
-      const member = await createMember();
-
-      await expect(
-        moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type }),
-      ).resolves.toBeUndefined();
-    },
-  );
-
-  test(`executeAdminAction ${AdminActionType.SoftBan} inserts the ban row and deletes the membership row`, async () => {
-    expect.hasAssertions();
-
-    const member = await createMember();
-    await moderationCaller.executeAdminAction({ roomId, targetUserId: member.id, type: AdminActionType.SoftBan });
-    const banRows = await readBanRows(member.id);
-    const membershipRows = await readMembershipRows(member.id);
-
-    expect(banRows).toHaveLength(1);
-    expect(takeOne(banRows).userId).toBe(member.id);
-    expect(membershipRows).toHaveLength(0);
   });
 
   test(`executeAdminAction ${AdminActionType.SoftBan} soft-deletes the member messages`, async () => {

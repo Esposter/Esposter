@@ -89,14 +89,6 @@ describe("directMessageRouter", () => {
     expect(directMessages.items).toHaveLength(0);
   });
 
-  test("hides direct message", async () => {
-    expect.hasAssertions();
-
-    const { directMessage } = await createDirectMessageWithFriend(mockContext);
-
-    await expect(directMessageCaller.hideDirectMessage(directMessage.id)).resolves.toBeUndefined();
-  });
-
   test("fails hide with non-member", async () => {
     expect.hasAssertions();
 

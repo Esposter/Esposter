@@ -1,8 +1,12 @@
 import { auth } from "#server/auth";
 import { readSession } from "#server/services/auth/readSession";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(readSession, () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   test("forwards the extended session cookie onto the response", async () => {
     expect.hasAssertions();
 

@@ -1,4 +1,3 @@
-// @vitest-environment happy-dom
 import type { Context } from "#server/trpc/context";
 
 import { executeAutomodAction } from "#server/services/message/moderation/executeAutomodAction";

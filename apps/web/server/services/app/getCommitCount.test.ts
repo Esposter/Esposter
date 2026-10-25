@@ -1,7 +1,11 @@
 import { getCommitCount } from "#server/services/app/getCommitCount";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(getCommitCount, () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   // A public procedure reads this, so a read per call would spend GitHub's per-address budget for every visitor —
   // Callers arriving before the first read answers included
   test("asks GitHub once per process", async () => {

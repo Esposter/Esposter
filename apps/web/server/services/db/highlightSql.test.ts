@@ -1,14 +1,11 @@
 import { HighlightStyleMap } from "#server/services/db/constants";
 import { highlightSql } from "#server/services/db/highlightSql";
 import { stripVTControlCharacters, styleText } from "node:util";
-import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 describe(highlightSql, () => {
   beforeEach(() => {
     vi.stubEnv("FORCE_COLOR", "1");
-  });
-  afterEach(() => {
-    vi.unstubAllEnvs();
   });
 
   test("colour is forced for these tests", () => {
