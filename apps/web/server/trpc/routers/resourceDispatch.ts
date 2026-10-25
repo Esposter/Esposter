@@ -78,7 +78,7 @@ export const resourceDispatchRouter = router({
         scope: McpScope.Resources,
       },
     })
-    .query<ResourceFileSasEntity[]>(({ ctx, input }) => {
+    .mutation<ResourceFileSasEntity[]>(({ ctx, input }) => {
       const { type } = ctx.resource;
       if (!checkHasCapability(type, "fileAssets"))
         throw getInvalidOperationError(Operation.Read, type, "does not take files");
