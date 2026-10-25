@@ -7,12 +7,12 @@
 ## 2. Object format
 
 - [ ] 2.1 Write `object-format/{spec,design}.md` from the code: the address, the keyframe and delta forms, the promotion ratio and segment budget, the header, and the verified read. Verify: the scenario 'adopts content it already holds instead of writing it again' names an existing test in `packages/keyframe-store/src/createKeyframeStore.test.ts`, and so do 'round-trips a keyframe and the delta anchored to it to the exact input bytes', 'promotes a wholesale rewrite to a keyframe', 'promotes once the bytes anchored to a keyframe reach the segment budget' and 'refuses an object that does not decode to its key'.
-- [ ] 2.2 Add the test for a stranger's bytes, which no existing test names. Verify: a test named 'refuses bytes that do not open with the format's magic' is written first and seen failing against a parse that skips the magic check, then passes.
+- [x] 2.2 Add the test for a stranger's bytes, which no existing test names. Verify: a test named 'refuses bytes that do not open with the format's magic' is written first and seen failing against a parse that skips the magic check, then passes.
 
 ## 3. Version store
 
 - [ ] 3.1 Write `version-store/{spec,design}.md` from the code: the anchor, the base each write reports, the two-read reconstruction, the collection rule and the backend contract. Verify: the scenarios 'reports the twin's object when its write lands second', 'collects only what no surviving record names' and 'reports a collected version as absent rather than as corruption' name existing tests in the same suite.
-- [ ] 3.2 Add the tests for the scenarios no existing test names: 'a new keyframe reports no base', 'a delta is read with its keyframe', 'refuses an anchor that is a delta', and 'a write against a missing anchor starts a new lineage'. Verify: each test is written first, seen failing against the rule it pins, and then passes.
+- [x] 3.2 Add the tests for the scenarios no existing test names: 'a new keyframe reports no base', 'a delta is read with its keyframe', 'refuses an anchor that is a delta', and 'a write against a missing anchor starts a new lineage'. Verify: each test is written first, seen failing against the rule it pins, and then passes.
 
 ## 4. Package and pointers
 

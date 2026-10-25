@@ -5,7 +5,7 @@ import type { WrittenVersion } from "#src/models/WrittenVersion";
 
 import { createKeyframeStore } from "#src/createKeyframeStore";
 import { ObjectNotStoredError } from "#src/models/ObjectNotStoredError";
-import { DELTA_FLAG, OBJECT_FLAGS_OFFSET } from "#src/services/constants";
+import { DELTA_FLAG, OBJECT_FLAGS_OFFSET, OBJECT_MAGIC } from "#src/services/constants";
 import { createDocumentVersions } from "#src/services/createDocumentVersions.test";
 import { createMemoryObjectStore } from "#src/services/createMemoryObjectStore.test";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
@@ -240,6 +240,33 @@ describe(createKeyframeStore, () => {
     expect(memoryObjectStore.objects.size).toBe(1);
   });
 
+  // A stranger's bytes are refused by their magic before the decompressor sees them. A valid object with only its
+  // Magic overwritten still carries a legal version, flag and frame, so nothing but the magic check refuses it
+  test("refuses bytes that do not open with the format's magic", async () => {
+    expect.hasAssertions();
+
+    const memoryObjectStore = createMemoryObjectStore();
+    const keyframeStore = createKeyframeStore(memoryObjectStore);
+    const [keyframe] = await writeVersions(keyframeStore, [baseVersion]);
+    assert.exists(keyframe);
+    const keyframeBytes = memoryObjectStore.objects.get(keyframe.hash);
+    assert.exists(keyframeBytes);
+    const strangerBytes = new Uint8Array(keyframeBytes);
+    strangerBytes.fill(0, 0, OBJECT_MAGIC.byteLength);
+    memoryObjectStore.objects.set(keyframe.hash, strangerBytes);
+
+    await expect(
+      keyframeStore.read(keyframe.hash).match(
+        (value) => value,
+        (error) => {
+          throw error;
+        },
+      ),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, keyframe.hash, "not a keyframe store object").message}]`,
+    );
+  });
+
   // Two writers of one content both find nothing stored, and each encodes against its own anchor. The one the
   // Backend refuses reports the object that stands under the key — the twin's, with the twin's base — because a
   // Record carrying this writer's base would name a keyframe the stored delta never decodes against, and a
@@ -346,6 +373,94 @@ describe(createKeyframeStore, () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(
       `[ObjectNotStoredError: ${new ObjectNotStoredError(delta.hash, "object is not stored").message}]`,
     );
+  });
+
+  test("a new keyframe reports no base", async () => {
+    expect.hasAssertions();
+
+    const writtenVersion = await createKeyframeStore(createMemoryObjectStore())
+      .write(baseVersion, emptyAnchor)
+      .match(
+        (value) => value,
+        (error) => {
+          throw error;
+        },
+      );
+
+    expect(writtenVersion.baseHash).toBe("");
+  });
+
+  // A delta names its keyframe in its own header, so reading it takes exactly that keyframe and nothing else
+  test("a delta is read with its keyframe", async () => {
+    expect.hasAssertions();
+
+    const memoryObjectStore = createMemoryObjectStore();
+    const [keyframe, delta] = await writeVersions(createKeyframeStore(memoryObjectStore), [baseVersion, editedVersion]);
+    assert.exists(keyframe);
+    assert.exists(delta);
+    const readKeys: string[] = [];
+    const keyframeStore = createKeyframeStore({
+      ...memoryObjectStore,
+      read: (key) => {
+        readKeys.push(key);
+        return memoryObjectStore.read(key);
+      },
+    });
+
+    await keyframeStore.read(delta.hash).match(
+      (value) => value,
+      (error) => {
+        throw error;
+      },
+    );
+
+    expect(readKeys).toStrictEqual([delta.hash, keyframe.hash]);
+  });
+
+  // A base that is itself a delta is not a state this store writes, and refusing it is what keeps reconstruction at
+  // Two objects rather than a chain
+  test("refuses an anchor that is a delta", async () => {
+    expect.hasAssertions();
+
+    const memoryObjectStore = createMemoryObjectStore();
+    const keyframeStore = createKeyframeStore(memoryObjectStore);
+    const [keyframe, delta] = await writeVersions(keyframeStore, [baseVersion, editedVersion]);
+    assert.exists(keyframe);
+    assert.exists(delta);
+
+    await expect(
+      keyframeStore.write(rewrittenVersion, { anchoredBytes: 0, hash: delta.hash }).match(
+        (value) => value,
+        (error) => {
+          throw error;
+        },
+      ),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, delta.hash, `is a delta against ${keyframe.hash}, not a keyframe`).message}]`,
+    );
+    expect(memoryObjectStore.objects.size).toBe(2);
+  });
+
+  // An anchor whose keyframe is gone cannot be encoded against, so the version is stored as a keyframe of its own
+  test("a write against a missing anchor starts a new lineage", async () => {
+    expect.hasAssertions();
+
+    const memoryObjectStore = createMemoryObjectStore();
+    const keyframeStore = createKeyframeStore(memoryObjectStore);
+    const [keyframe] = await writeVersions(keyframeStore, [baseVersion]);
+    assert.exists(keyframe);
+    memoryObjectStore.objects.delete(keyframe.hash);
+
+    const writtenVersion = await keyframeStore.write(editedVersion, { anchoredBytes: 0, hash: keyframe.hash }).match(
+      (value) => value,
+      (error) => {
+        throw error;
+      },
+    );
+
+    expect(writtenVersion.baseHash).toBe("");
+    expect(writtenVersion.isDeduplicated).toBe(false);
+    expect(memoryObjectStore.objects.has(writtenVersion.hash)).toBe(true);
   });
 
   // The value proposition itself, pinned: compression ratios are not speed, so the bench cannot gate them, and a
