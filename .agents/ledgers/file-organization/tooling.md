@@ -1324,7 +1324,7 @@
 | `scripts/src/services/genshinText/getPlainGameText.ts`                                    | —                      | 1 file   |
 | `scripts/src/services/genshinText/getTalkTextIds.ts`                                      | —                      | 1 file   |
 | `scripts/src/services/genshinText/getVoiceLines.ts`                                       | —                      | 1 file   |
-| `scripts/src/services/genshinText/hasCondition.ts`                                        | —                      | 1 file   |
+| `scripts/src/services/genshinText/checkHasCondition.ts`                                   | —                      | 1 file   |
 | `scripts/src/services/genshinText/listCarriedQuestBinaryFiles.ts`                         | —                      | 1 file   |
 | `scripts/src/services/genshinText/listDumpFiles.ts`                                       | —                      | 1 file   |
 | `scripts/src/services/genshinText/listHeldBinaryFiles.ts`                                 | —                      | 1 file   |

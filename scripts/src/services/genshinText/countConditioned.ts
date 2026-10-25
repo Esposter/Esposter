@@ -1,4 +1,4 @@
-import { hasCondition } from "#src/services/genshinText/hasCondition";
+import { checkHasCondition } from "#src/services/genshinText/checkHasCondition";
 
 export const countConditioned = (subQuestList: Record<string, unknown>[]): number =>
-  subQuestList.filter((subQuest) => hasCondition(subQuest)).length;
+  subQuestList.filter((subQuest) => checkHasCondition(subQuest)).length;
