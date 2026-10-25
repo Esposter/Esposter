@@ -10,6 +10,9 @@ import { AzureFunction } from "#src/models/azure/function/AzureFunction";
 export const AzureFunctionIsIdempotentMap = {
   // Each sweep treats a gone target as done and the user row goes last, so a replay finds only what a failed run left.
   [AzureFunction.DeleteAccount]: true,
+  // Deletes through deleteBlobs, which reads a blob an earlier attempt already removed as success, so a rerun finds
+  // Nothing left to remove and changes nothing.
+  [AzureFunction.DeleteOrphanedProfileImage]: true,
   // Deletes each blob with deleteIfExists, so a blob an earlier attempt already removed is a no-op rather than a
   // 404: a replay converges on the same empty state instead of duplicating work.
   [AzureFunction.ProcessBlobDeletion]: true,

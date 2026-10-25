@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export enum AzureFunction {
   DeleteAccount = "DeleteAccount",
+  DeleteOrphanedProfileImage = "DeleteOrphanedProfileImage",
   ProcessBlobDeletion = "ProcessBlobDeletion",
   ProcessNotification = "ProcessNotification",
   ProcessScheduledMessageJob = "ProcessScheduledMessageJob",

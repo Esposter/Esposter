@@ -19,19 +19,20 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
 
 Most functions are triggered by **Azure EventGrid** events published by the main app; the rest run on Service Bus queues or timers. `PushWebhook` is the one publicly routed HTTP trigger. Each function handles one async concern:
 
-| Function                      | Trigger                              | Description                                                                 |
-| ----------------------------- | ------------------------------------ | --------------------------------------------------------------------------- |
-| `ProcessNotification`         | EventGrid                            | Delivers every notification — resolves recipients, writes bell rows, pushes |
-| `ProcessWebhook`              | EventGrid                            | Posts the message a pushed webhook carried into its room, then notifies     |
-| `PushWebhook`                 | HTTP (`POST webhooks/{id}/{token}`)  | Accepts inbound webhook pushes, validating the token from the url           |
-| `ProcessBlobDeletion`         | EventGrid                            | Deletes blobs durably once their owning row is gone                         |
-| `ReconcileStorageLedgerEntry` | EventGrid (storage system topic)     | Charges a user's storage counter the blob's real size on `BlobCreated`      |
-| `ReplayDeadLetterEvent`       | EventGrid                            | Replays dead-lettered events it can route, quarantining the rest            |
-| `ProcessScheduledMessageJob`  | Service Bus (`ScheduledMessageJobs`) | Delivers `/schedule` and `/remind` messages at their due time               |
-| `SendTodoReminder`            | Service Bus (`TodoReminders`)        | Publishes a `TodoReminder` notification when a TodoList item comes due      |
-| `PurgeDeletedResources`       | Timer                                | Purges recycle-bin resources past their retention window                    |
-| `PurgeSurveyResources`        | EventGrid                            | One-time run removing the survey resources, started by one published event  |
-| `DeleteAccount`               | EventGrid                            | Sweeps every store a deleted account is keyed to, its user row last         |
+| Function                      | Trigger                              | Description                                                                    |
+| ----------------------------- | ------------------------------------ | ------------------------------------------------------------------------------ |
+| `ProcessNotification`         | EventGrid                            | Delivers every notification — resolves recipients, writes bell rows, pushes    |
+| `ProcessWebhook`              | EventGrid                            | Posts the message a pushed webhook carried into its room, then notifies        |
+| `PushWebhook`                 | HTTP (`POST webhooks/{id}/{token}`)  | Accepts inbound webhook pushes, validating the token from the url              |
+| `ProcessBlobDeletion`         | EventGrid                            | Deletes blobs durably once their owning row is gone                            |
+| `ReconcileStorageLedgerEntry` | EventGrid (storage system topic)     | Charges a user's storage counter the blob's real size on `BlobCreated`         |
+| `ReplayDeadLetterEvent`       | EventGrid                            | Replays dead-lettered events it can route, quarantining the rest               |
+| `ProcessScheduledMessageJob`  | Service Bus (`ScheduledMessageJobs`) | Delivers `/schedule` and `/remind` messages at their due time                  |
+| `SendTodoReminder`            | Service Bus (`TodoReminders`)        | Publishes a `TodoReminder` notification when a TodoList item comes due         |
+| `PurgeDeletedResources`       | Timer                                | Purges recycle-bin resources past their retention window                       |
+| `PurgeSurveyResources`        | EventGrid                            | One-time run removing the survey resources, started by one published event     |
+| `DeleteAccount`               | EventGrid                            | Sweeps every store a deleted account is keyed to, its user row last            |
+| `DeleteOrphanedProfileImage`  | EventGrid (storage system topic)     | Deletes a profile image that lands after its account is gone, on `BlobCreated` |
 
 ### Flow
 

@@ -49,6 +49,7 @@ import {
   DEFAULT_PUSH_TO_TALK_RELEASE_DELAY_MS,
   DEFAULT_SPEAKER_VOLUME_PERCENTAGE,
   getMimeCategory,
+  getUserProfileImageBlobName,
   MimeCategory,
   NoiseSuppressionMode,
   userSettingsInMessage,
@@ -132,7 +133,7 @@ export const userRouter = router({
   generateProfileImageUploadUrl: standardAuthedProcedure.mutation<{ publicUrl: string; sasUrl: string }>(
     async ({ ctx }) => {
       const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
-      const blobName = `${ctx.getSessionPayload.user.id}/ProfileImage`;
+      const blobName = getUserProfileImageBlobName(ctx.getSessionPayload.user.id);
       const blockBlobClient = containerClient.getBlockBlobClient(blobName);
       const sasUrl = await generateWriteSasUrl(blockBlobClient);
       return { publicUrl: blockBlobClient.url, sasUrl };

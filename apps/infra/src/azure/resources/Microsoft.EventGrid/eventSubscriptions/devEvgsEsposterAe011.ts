@@ -1,0 +1,36 @@
+import AzureBlobCreatedEventType from "#src/azure/constants/AzureBlobCreatedEventType";
+import AzureEventSubscriptionRetryPolicy from "#src/azure/constants/AzureEventSubscriptionRetryPolicy";
+import { devEgstEsposterAe001 } from "#src/azure/resources/Microsoft.EventGrid/systemTopics/devEgstEsposterAe001";
+import { devRgEsposterAe001 } from "#src/azure/resources/Microsoft.Resources/resourceGroups/devRgEsposterAe001";
+import { devstesposter001Deadletter } from "#src/azure/resources/Microsoft.Storage/storageAccounts/blobContainers/devstesposter001Deadletter";
+import { devstesposter001 } from "#src/azure/resources/Microsoft.Storage/storageAccounts/devstesposter001";
+import { devFuncEsposter001 } from "#src/azure/resources/Microsoft.Web/sites/devFuncEsposter001";
+import { getAzureFunctionEventSubscriptionDestination } from "#src/azure/services/getAzureFunctionEventSubscriptionDestination";
+import { getStorageBlobDeadLetterDestination } from "#src/azure/services/getStorageBlobDeadLetterDestination";
+import { AzureContainer, AzureFunction, getBlobSubjectPrefix } from "@esposter/db-schema";
+import * as azure_native from "@pulumi/azure-native";
+
+const eventSubscriptionName = "dev-evgs-esposter-ae-011";
+export const devEvgsEsposterAe011: azure_native.eventgrid.SystemTopicEventSubscription =
+  new azure_native.eventgrid.SystemTopicEventSubscription(
+    eventSubscriptionName,
+    {
+      deadLetterDestination: getStorageBlobDeadLetterDestination(devstesposter001, devstesposter001Deadletter),
+      destination: getAzureFunctionEventSubscriptionDestination(
+        AzureFunction.DeleteOrphanedProfileImage,
+        devFuncEsposter001,
+      ),
+      eventDeliverySchema: azure_native.eventgrid.EventDeliverySchema.EventGridSchema,
+      eventSubscriptionName,
+      filter: {
+        enableAdvancedFilteringOnArrays: true,
+        includedEventTypes: [AzureBlobCreatedEventType],
+        subjectBeginsWith: getBlobSubjectPrefix(AzureContainer.PublicUserAssets),
+        subjectEndsWith: "",
+      },
+      resourceGroupName: devRgEsposterAe001.name,
+      retryPolicy: AzureEventSubscriptionRetryPolicy,
+      systemTopicName: devEgstEsposterAe001.name,
+    },
+    { parent: devEgstEsposterAe001, protect: true },
+  );
