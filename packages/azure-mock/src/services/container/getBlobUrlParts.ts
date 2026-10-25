@@ -12,7 +12,10 @@ export const getBlobUrlParts = (url: string): undefined | { blobName: string; co
   const pathSegments = parsedUrl.pathname.split("/").filter(Boolean);
   if (pathSegments.length < 2) return undefined;
   return {
-    blobName: pathSegments.slice(1).map(decodeSegment).join("/"),
+    blobName: pathSegments
+      .slice(1)
+      .map((segment) => decodeSegment(segment))
+      .join("/"),
     containerName: decodeSegment(takeOne(pathSegments)),
   };
 };
