@@ -41,7 +41,7 @@ The kind's document type is the union of the two node types the registry holds, 
 | `apps/web/app/components/PageBuilder/Email/StyleField.vue`           | one style field: the control its attribute's kind draws, and its reset                |
 | `apps/web/app/composables/pageBuilder/useEmailStyle.ts`              | the selected node's style fields and the edit that sets or clears one                 |
 | `apps/web/app/composables/pageBuilder/usePageBuilderDrag.ts`         | a palette block or a merge field dragged to a slot or onto a text                     |
-| `apps/web/app/services/pageBuilder/email/getTextNodeIdAt.ts`         | the text under a drop point, the only node a merge field drops into                   |
+| `apps/web/app/services/pageBuilder/getTextNodeIdAt.ts`               | the text under a drop point, the only node a merge field drops into                   |
 | `apps/web/app/services/pageBuilder/email/appendMergeFieldToText.ts`  | a text's rich text with a merge field's token appended                                |
 | `apps/web/app/services/emailEditor/toMergeField.ts`                  | the `{{column}}` token a merge field renders as                                       |
 | `apps/web/app/services/emailEditor/substituteMergeFields.ts`         | the one form of a merge token the compiled html is substituted at                     |
