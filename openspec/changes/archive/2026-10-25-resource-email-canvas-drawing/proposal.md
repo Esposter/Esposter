@@ -2,7 +2,7 @@
 
 ## Why
 
-The design canvas draws most of an email's node types as a generic box labelled with the node's type name. A button reads `mj-button` where its words belong, a navbar's links read `mj-navbar-link`, and a starter email, which is meant to show every part an email can hold, reads as a stack of type names. The [email page builder](../../specs/resource/page-builder/email/design.md) already promises that each email type is drawn with its own canvas component, so the gap is a broken promise, not a new feature.
+The design canvas draws most of an email's node types as a generic box labelled with the node's type name. A button reads `mj-button` where its words belong, a navbar's links read `mj-navbar-link`, and a starter email, which is meant to show every part an email can hold, reads as a stack of type names. The [email page builder](../../../specs/resource/page-builder/email/design.md) already promises that each email type is drawn with its own canvas component, so the gap is a broken promise, not a new feature.
 
 ## What changes
 
@@ -13,4 +13,4 @@ The design canvas draws most of an email's node types as a generic box labelled 
 
 ## Out of scope
 
-The preview's request size and the frame's console and scrolling problems are separate changes: [resource-email-preview-transport](../resource-email-preview-transport/proposal.md) and [resource-email-canvas-frame](../resource-email-canvas-frame/proposal.md).
+The preview's request size and the frame's console and scrolling problems are separate changes: [resource-email-preview-transport](../../resource-email-preview-transport/proposal.md) and [resource-email-canvas-frame](../../resource-email-canvas-frame/proposal.md).

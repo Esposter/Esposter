@@ -1,14 +1,14 @@
 # Member display names
 
-Gap 5 of the [gap survey](../gap-survey-2026-10-25/proposal.md).
+Gap 5 of the [gap survey](../2026-10-25-gap-survey-2026-10-25/proposal.md).
 
 ## Why
 
 The `ManageDisplayNames` permission exists, and the server checks it. A member who holds it can set another member's room display name through the procedure the user router already exposes. No interface lets anyone use that path. The only display name UI is the self-service field on the My Profile tab, so a role can be granted a permission the app never lets it exercise.
 
-The check on the server is also incomplete. The [RBAC design](../../specs/esbabbler/rbac/design.md) says every procedure that names a target member must check hierarchy as well as the permission, because holding a permission and outranking the target are different questions. The display-name path checks only the permission, so a holder of the bit could rename a moderator or the owner. The gap survey saw the permission check and not the missing hierarchy check, so the path needs a guard as well as a surface.
+The check on the server is also incomplete. The [RBAC design](../../../specs/esbabbler/rbac/design.md) says every procedure that names a target member must check hierarchy as well as the permission, because holding a permission and outranking the target are different questions. The display-name path checks only the permission, so a holder of the bit could rename a moderator or the owner. The gap survey saw the permission check and not the missing hierarchy check, so the path needs a guard as well as a surface.
 
-The esbabbler [display names design](../../specs/esbabbler/display-names/design.md) admits the missing surface. The room's global-name item on the roadmap is a different feature: it changes a person's name across the app, not inside one room.
+The esbabbler [display names design](../../../specs/esbabbler/display-names/design.md) admits the missing surface. The room's global-name item on the roadmap is a different feature: it changes a person's name across the app, not inside one room.
 
 ## What Changes
 

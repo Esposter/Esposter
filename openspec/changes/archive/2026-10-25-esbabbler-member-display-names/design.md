@@ -8,7 +8,7 @@ Today `updateUserToRoom` accepts a `targetUserId` with a display name, checks th
 
 ## Decisions
 
-- **The guard is `assertIsManageable`, not a new check.** The moderation procedures call it beside the permission check, and the [RBAC design](../../specs/esbabbler/rbac/design.md) names it as the one guard for a member-targeting action. A second helper for display names would be the copy that guard exists to prevent. The alternative, checking only the permission and trusting the client to hide the item, is the bypass the RBAC design describes.
+- **The guard is `assertIsManageable`, not a new check.** The moderation procedures call it beside the permission check, and the [RBAC design](../../../specs/esbabbler/rbac/design.md) names it as the one guard for a member-targeting action. A second helper for display names would be the copy that guard exists to prevent. The alternative, checking only the permission and trusting the client to hide the item, is the bypass the RBAC design describes.
 - **The guard runs for a target other than the actor.** A self-edit keeps the path it has today, with no permission required, since a member always may name themselves.
 - **The item lives in `useMemberActionItems`.** That composable already builds the list for both the profile's overflow menu and the row's context menu, and it already gates kick and ban by permission and manageability on the client. The display name item joins it, so it cannot appear on one surface and not the other.
 - **The dialog reuses `DisplayNameField`.** The field already carries the length limit and the rule that an empty value falls back to the account name. A second field would drift from the first.
@@ -78,4 +78,4 @@ It takes the name of its siblings in `ActionDialog/` (`Timeout.vue`, `Warn.vue`)
 
 - Nothing notifies the renamed member. Their own list takes the new name through the same subscription a self-service change uses. Other members see it on their next read of the room's members, as they do for a self-service change.
 - The display name item is not offered to a holder of the permission who targets themselves. A self-edit is already on the My Profile tab, and offering it twice would show two entries for one field.
-- The [display names design](../../specs/esbabbler/display-names/design.md) line that admitted the surface was missing is rewritten in this change, with its Key files.
+- The [display names design](../../../specs/esbabbler/display-names/design.md) line that admitted the surface was missing is rewritten in this change, with its Key files.
