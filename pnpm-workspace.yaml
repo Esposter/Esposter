@@ -32,7 +32,7 @@ lockfile:
   includeResolutionSettings: true
 
 catalog:
-  "@anthropic-ai/claude-agent-sdk": ^0.3.309
+  "@anthropic-ai/claude-agent-sdk": ^0.3.310
   "@arethetypeswrong/core": ^0.18.5
   "@azure/core-client": ^1.11.1
   "@azure/core-http-compat": ^2.5.0
@@ -56,7 +56,7 @@ catalog:
   "@dxup/nuxt": ^0.5.10
   "@dxup/unimport": ^0.1.2
   "@electric-sql/pglite": ^0.5.11
-  "@fission-ai/openspec": ^1.14.3
+  "@fission-ai/openspec": ^1.15.0
   "@eslint/core": ^1.2.1
   "@eslint/json": ^2.1.1
   "@fontsource/signika": ^5.3.0
@@ -71,9 +71,9 @@ catalog:
   "@lerna-lite/publish": ^5.6.4
   "@lezer/highlight": ^1.2.5
   "@livekit/track-processors": ^0.8.2
-  "@modelcontextprotocol/sdk": ^1.32.1
+  "@modelcontextprotocol/sdk": ^1.32.2
   "@nuxt/eslint": ^1.17.0
-  "@nuxt/fonts": ^1.1.0
+  "@nuxt/fonts": ^1.2.0
   "@nuxt/image": ^2.2.0
   # @TODO: https://github.com/nuxt/nuxt/releases/tag/v5.0.0 — back to ranges, with the Renovate rule that holds the
   # Aliases, once Nuxt 5 reaches `latest`: until then it ships only as nightly packages
@@ -90,7 +90,7 @@ catalog:
   "@pulumi/github": ^6.15.0
   "@pulumi/pulumi": ^3.272.0
   "@standard-schema/spec": ^1.1.0
-  "@takumi-rs/core": ^2.17.1
+  "@takumi-rs/core": ^2.18.1
   "@tiptap/core": ^3.32.0
   "@tiptap/extension-code-block-lowlight": ^3.32.0
   "@tiptap/extension-file-handler": ^3.32.0
@@ -144,7 +144,7 @@ catalog:
   "@webgpu/types": ^0.1.74
   "@xterm/addon-fit": ^0.11.0
   "@xterm/xterm": ^6.0.0
-  apexcharts: ^8.4.1
+  apexcharts: ^8.5.0
   azurite: ^3.37.0
   better-auth: ^1.7.12
   bowser: ^2.14.1
@@ -173,7 +173,7 @@ catalog:
   happy-dom: ^21.0.4
   imagetracerjs: ^1.2.6
   jscpd: ^5.4.2
-  knip: ^6.42.1
+  knip: ^6.43.0
   link-preview-js: ^5.0.1
   linkifyjs: ^4.4.0
   livekit-client: ^2.23.0
@@ -286,7 +286,7 @@ overrides:
   oxc-parser: "catalog:"
   vite: ^8.3.5
   # TODO: Remove once phaser4-rex-plugins updates to a fixed backend version (GHSA-xvq9-wjp8-hwqf).
-  phaser4-rex-plugins>i18next-http-backend: ^4.0.4
+  phaser4-rex-plugins>i18next-http-backend: ^4.0.5
   # vp runs the catalog's tools rather than the exact copies vite-plus pins, so the lockfile holds one of each and
   # Renovate keeps owning their versions; its `vite`, aliased to Vite+'s own core, takes the global `vite` above.
   vite-plus>@oxlint/plugins: "catalog:"
