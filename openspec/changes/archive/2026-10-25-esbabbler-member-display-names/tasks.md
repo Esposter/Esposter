@@ -24,5 +24,5 @@ Build order. Section 1 closes the server gap before any surface reaches it, so n
 
 - [x] 3.1 Rewrite the display names design's line that admits the surface is missing, and its Key files, to name the dialog and the guard. Confirm the RBAC design's member-targeting rule needs no edit.
       Verify: a search for "not wired" across `openspec/specs/esbabbler/` finds no display name sentence, and the display names Key files name the new dialog.
-- [ ] 3.2 At archive, move the display names capability's design to its as-built form and remove the esbabbler roadmap's mention of a moderator's rename, if one is listed.
+- [x] 3.2 At archive, move the display names capability's design to its as-built form and remove the esbabbler roadmap's mention of a moderator's rename, if one is listed.
       Verify: `openspec validate` passes with the archive, and the roadmap holds no open item for this change.
