@@ -1,9 +1,0 @@
-# GrapesJS
-
-The init composable, the storage and asset adapters, block re-sync, and the email editor's save-time HTML capture.
-
-| Unit                                                                                                                                                | Swept                  | Notes |
-| --------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- | ----- |
-| `Resource/Email`, `app/store/emailEditor`, `app/services/emailEditor`, `app/composables/emailEditor`                                                | 2026-10-14 · Haiku 5.5 |       |
-| `Resource/Webpage`, `app/store/webpageEditor`                                                                                                       | 2026-10-14 · Haiku 5.5 |       |
-| `app/services/grapesjs`, `app/composables/grapesjs`, `app/models/grapesjs`, the shared `grapesjs` models and service, `server/services/emailEditor` | 2026-10-14 · Haiku 5.5 |       |
