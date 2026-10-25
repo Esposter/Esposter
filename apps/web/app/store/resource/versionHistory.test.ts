@@ -1,19 +1,21 @@
 // @vitest-environment nuxt
 import type { ButtonNodeProps } from "#shared/models/pageBuilder/ButtonNodeProps";
 
+import { EmailEditor } from "#shared/models/emailEditor/data/EmailEditor";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { TEST_URL } from "#shared/services/pageBuilder/constants.test";
 import { createButton } from "#shared/services/pageBuilder/createButton.test";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import { useEmailEditorStore } from "@/store/emailEditor";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { useResourceStore } from "@/store/resource";
 import { useVersionHistoryStore } from "@/store/resource/versionHistory";
 import { useWebpageEditorStore } from "@/store/webpageEditor";
 import { ResourceType, SnapshotChannel } from "@esposter/db-schema";
-import { noop } from "@esposter/shared";
+import { JsonPatchOperationType, noop } from "@esposter/shared";
 import { updateBlockNodeProps } from "headless-block-editor";
 import { describe, expect, test } from "vitest";
 
@@ -104,5 +106,45 @@ describe(useVersionHistoryStore, () => {
     expect(undoLabelBeforeRestore).toBe(TEST_EDIT_LABEL);
     expect(getUndoLabel(webpage.id)).toBe("");
     expect(getDocument(webpage.id)?.content).toStrictEqual(restoredContent);
+  });
+
+  // An email is restored through the same reload, so the draft it replaces takes its undo history with it
+  test("Restoring an email version leaves nothing to undo", async () => {
+    expect.hasAssertions();
+
+    const email = createResourceListItem({ type: ResourceType.Email });
+    let content = new EmailEditor({ content: [], root: { props: {} } });
+    Object.assign(useRouter().currentRoute.value.params, { id: email.id });
+    trpcMsw.resource.readResource.query(() => ({ ...email, publication: null }));
+    trpcMsw.email.readResourceContent.query(() => content);
+    trpcMsw.email.readResourcePublication.query(() => undefined);
+    trpcMsw.resource.restoreSnapshotVersion.mutation(() => ({ undoRevisionVersion: undefined }));
+    trpcMsw.resource.readSnapshotHistory.query(() => []);
+    const resourceStore = useResourceStore();
+    await resourceStore.readResource();
+    const emailEditorStore = useEmailEditorStore();
+    await emailEditorStore.loadContent();
+    const pageBuilderHistoryStore = usePageBuilderHistoryStore();
+    const { applyEdit, getUndoLabel, undo } = pageBuilderHistoryStore;
+    applyEdit(
+      email.id,
+      [{ op: JsonPatchOperationType.Add, path: "/root/props/title", value: TEST_EDITED_LABEL }],
+      TEST_EDIT_LABEL,
+    ).match(noop, (error) => {
+      throw error;
+    });
+    const undoLabelBeforeRestore = getUndoLabel(email.id);
+    const restoredEmail = new EmailEditor({ content: [], root: { props: { title: TEST_RESTORED_LABEL } } });
+    content = restoredEmail;
+    const versionHistoryStore = useVersionHistoryStore();
+    const { restoreSnapshot } = versionHistoryStore;
+    await restoreSnapshot({ channel: SnapshotChannel.Revisions, version: 1 });
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const { getEmailDocument } = pageBuilderDocumentStore;
+    undo(email.id);
+
+    expect(undoLabelBeforeRestore).toBe(TEST_EDIT_LABEL);
+    expect(getUndoLabel(email.id)).toBe("");
+    expect(getEmailDocument(email.id)?.root).toStrictEqual(restoredEmail.root);
   });
 });
