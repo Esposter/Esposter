@@ -16,6 +16,6 @@ This is the same job run from the session: the main session decides every verdic
 7. Before each commit, run the tests of the files it touched, with `pnpm -C <package> test <paths> --run`, and every check the session-check list names for those files. Run long checks in the background. A fix that fails its check is not committed.
 8. Land each issue's commits with `for attempt in 1 2 3 4; do git pull --rebase origin ai/queue || break; git push origin HEAD:ai/queue && break; done`. A rebase conflict stops the loop, and it is settled per `.agents/skills/review-queue/references/pull-conflicts.md`. Only a rejected push retries.
 9. Close each issue once every finding has a verdict and its commits have landed. Post one comment with a markdown table of each finding's file, verdict and reason, using `gh issue comment <issue number> --body-file <file>`, then run `gh issue close <issue number>`. No commit carries `Closes #<number>`.
-10. The main session never pushes `main`. `main` moves only through the review's fast-forward.
+10. The main session pushes `main` only on the owner's sync to main, as a plain fast-forward to the reviewed tip. Otherwise `main` moves only through the review's fast-forward.
 
 The issue's label belongs to the review. This procedure closes the issues a session settles here, and it does not relabel any. Issues the session leaves open are the settle job's on the next push, as `.agents/skills/review-queue/SKILL.md` ("Review issues") says.

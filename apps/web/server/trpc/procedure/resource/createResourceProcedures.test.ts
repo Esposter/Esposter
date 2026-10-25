@@ -28,6 +28,7 @@ import {
 } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
+import { getExpectedWriteSasUrl } from "#shared/services/storage/getExpectedWriteSasUrl.test";
 import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
 import { getContentBlobName, getTopNEntities, readJsonBlob } from "@esposter/db";
 import {
@@ -39,12 +40,10 @@ import {
   ResourceType,
   ResourceViewEntity,
   storageLedgerInStorage,
-  WRITE_SAS_DURATION_MS,
 } from "@esposter/db-schema";
 import { jsonDateParse, noop, NotFoundError, takeOne, waitForSynchronizedFunctions } from "@esposter/shared";
 import {
   getBlobUrl,
-  getMockSasUrl,
   MockBlobClient,
   MockContainerDatabase,
   MockEventGridDatabase,
@@ -759,16 +758,7 @@ describe(createResourceProcedures, () => {
     const blobName = `${getFilesDirectoryName(newResource.id)}/${hash}`;
 
     expect(sasEntities).toStrictEqual([
-      {
-        id: hash,
-        isHeld: false,
-        sasUrl: getMockSasUrl(
-          getBlobUrl(AzureContainer.ResourceAssets, blobName),
-          "w",
-          "b",
-          new Date(Date.now() + WRITE_SAS_DURATION_MS),
-        ),
-      },
+      { id: hash, isHeld: false, sasUrl: getExpectedWriteSasUrl(getBlobUrl(AzureContainer.ResourceAssets, blobName)) },
     ]);
   });
 

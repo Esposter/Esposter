@@ -14,8 +14,9 @@ import { McpScope } from "#shared/models/auth/McpScope";
 import { MimeType } from "#shared/models/file/MimeType";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
+import { getExpectedWriteSasUrl } from "#shared/services/storage/getExpectedWriteSasUrl.test";
 import { AzureContainer, WRITE_SAS_DURATION_MS } from "@esposter/db-schema";
-import { getBlobUrl, getMockSasUrl, MockContainerDatabase } from "azure-mock";
+import { getBlobUrl, MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 describe("resourceDispatchRouter", () => {
@@ -90,16 +91,7 @@ describe("resourceDispatchRouter", () => {
     const blobName = `${getFilesDirectoryName(webpageResource.id)}/${hash}`;
 
     expect(sasEntities).toStrictEqual([
-      {
-        id: hash,
-        isHeld: false,
-        sasUrl: getMockSasUrl(
-          getBlobUrl(AzureContainer.ResourceAssets, blobName),
-          "w",
-          "b",
-          new Date(Date.now() + WRITE_SAS_DURATION_MS),
-        ),
-      },
+      { id: hash, isHeld: false, sasUrl: getExpectedWriteSasUrl(getBlobUrl(AzureContainer.ResourceAssets, blobName)) },
     ]);
     expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(blobName)).not.toBe(true);
   });

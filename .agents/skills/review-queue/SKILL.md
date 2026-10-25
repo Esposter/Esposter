@@ -10,7 +10,7 @@ Every agent works on **one permanent branch, `ai/queue`**, in the main checkout,
 ## Settled — do not re-propose
 
 - **Per-chunk feature branches.** The queue is linear history and the review cuts its windows at commit boundaries, so a branch per chunk adds a merge that buys nothing.
-- **Pushing `main` by hand, outside the scenarios below.** `main` moves by the review's fast-forward. The hand pushes allowed are plain fast-forwards only, never forced: the owner's fast-forward of `main` to `ai/queue` once a review has passed, and the direct local push below. The owner's fast-forward is the session's to run when the owner says **sync to main**: that phrase is the whole instruction, so the session reviews `main..ai/queue` locally (the `code-review` skill, both lanes, every commit in the window), and once the review passes it pushes `main` as a plain fast-forward and syncs the local `main` to it. Each finding is fixed directly, in its own commit on `ai/queue`, with no approval asked; the sync then goes ahead on the fixed tip. Any other hand push is a commit the review never read.
+- **Pushing `main` by hand, outside the scenarios below.** `main` moves by the review's fast-forward. The hand pushes allowed are plain fast-forwards only, never forced: the owner's sync to main, which the session pushes directly once its local review has passed, and the direct local push below. The owner's fast-forward is the session's to run when the owner says **sync to main**: that phrase is the whole instruction, so the session reviews `main..ai/queue` locally (the `code-review` skill, both lanes, every commit in the window), and once the review passes it pushes `main` directly as a plain fast-forward, without waiting for the review's fast-forward, and syncs the local `main` to it. Each finding is fixed directly, in its own commit on `ai/queue`, with no approval asked; the sync then goes ahead on the fixed tip. Any other hand push is a commit the review never read.
   - **Direct local push (no review), for the commit types below only.** A commit whose subject is `fix(ci):` (a CI fix) or `chore(deps):` (a hand dependency update, `dependency-updates`), made locally in the main checkout. It goes to `ai/queue` and then `main` in the same sitting, without waiting for the review. The push does not wait on its CI run. A red result is fixed in the next commit, pushed to both branches the same way, after the verify request (`AGENTS.md`, step 6).
   - **Never direct, whatever its size:** a spec, a skill, a ledger, a roadmap entry, a feature, a refactor, a test. Those go to `ai/queue` and wait for the review, even when the change is one line of prose. A commit that touches prose alongside a CI fix is split, the fix going direct and the prose through the queue.
   - **When in doubt, the queue.** If the subject cannot honestly say `fix(ci)` or `chore(deps)`, the commit is not direct.
@@ -25,13 +25,13 @@ Every agent works on **one permanent branch, `ai/queue`**, in the main checkout,
 
 ## The refs
 
-| Ref          | Written by                              | How                                                                          |
-| :----------- | :-------------------------------------- | :--------------------------------------------------------------------------- |
-| `ai/queue`   | every session, and Renovate's automerge | a plain push, after `git pull --rebase`; never force-pushed, never rewritten |
-| `main`       | the review only                         | a fast-forward to the end of the last window that passed                     |
-| other `ai/*` | the one session that owns it            | a plain push                                                                 |
+| Ref          | Written by                               | How                                                                          |
+| :----------- | :--------------------------------------- | :--------------------------------------------------------------------------- |
+| `ai/queue`   | every session, and Renovate's automerge  | a plain push, after `git pull --rebase`; never force-pushed, never rewritten |
+| `main`       | the review, and a session's sync to main | a fast-forward to the end of the last window that passed                     |
+| other `ai/*` | the one session that owns it             | a plain push                                                                 |
 
-A session pushes `main` only as the direct local push under "Settled" allows — never otherwise. A session lands on `ai/queue` itself; the only other branch it ever holds is a concurrent change's worktree branch, which gives that worktree's pull a fork point.
+A session pushes `main` only on the owner's sync to main, or as the direct local push under "Settled" allows — never otherwise. A session lands on `ai/queue` itself; the only other branch it ever holds is a concurrent change's worktree branch, which gives that worktree's pull a fork point.
 
 ## The loop
 

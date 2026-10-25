@@ -1,5 +1,6 @@
 import { MimeType } from "#shared/models/file/MimeType";
 import { MEGABYTE } from "#shared/services/app/constants";
+import { getExpectedWriteSasUrl } from "#shared/services/storage/getExpectedWriteSasUrl.test";
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 import { takeOne } from "@esposter/shared";
 import { WRITE_SAS_DURATION_MS } from "@esposter/db-schema";
@@ -105,7 +106,7 @@ describe(uploadBlocks, () => {
     expect.hasAssertions();
 
     vi.useFakeTimers({ now: 0 });
-    const liveSasUrl = getMockSasUrl(blobUrl, "w", "b", new Date(Date.now() + WRITE_SAS_DURATION_MS));
+    const liveSasUrl = getExpectedWriteSasUrl(blobUrl);
     vi.setSystemTime(WRITE_SAS_DURATION_MS / 2);
     const fetchMock = vi.fn<(input: string, init: RequestInit) => Promise<Response>>((url) => {
       const expiresOn = new Date(String(new URL(url).searchParams.get("se")));

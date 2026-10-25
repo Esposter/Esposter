@@ -83,7 +83,7 @@ Every feature is described under `openspec/`, and where its folder lives says wh
 
 ## Syncing to main
 
-`main` moves by the review's fast-forward. The one exception is the owner's **sync to main**: the session reviews `main..ai/queue` locally (both lanes, every commit in the window), fixes each finding in its own commit on `ai/queue`, and once the review passes fast-forwards `main` to the tip and its local `main` with it. No other session pushes `main`. The procedure, its limits and the direct-push cases are the `review-queue` skill's.
+`main` moves by the review's fast-forward. The one exception is the owner's **sync to main**, which the session runs and finishes by pushing `main` itself, rather than leaving the move to the review. No other session pushes `main`. The procedure, its limits and the direct-push cases are the `review-queue` skill's.
 
 ## Where everything is owned
 

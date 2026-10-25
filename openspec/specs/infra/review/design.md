@@ -1,6 +1,6 @@
 # Review
 
-Working sessions push one permanent branch, `ai/queue`, which is the default branch, and nothing reaches `main` except through a review. The review is a GitHub workflow, `.github/workflows/Review.yaml`, that runs on every push to `ai/queue`. It reads the commits `main` does not yet have, cuts them into windows of a bounded size, reads every batch of every window at once with headless haiku sessions, and fast-forwards `main` through the windows that were read in full. Every finding it raises then ends in one of three terminal states, and the workflow carries each one there. Nothing waits on a person, and no step is timed: a run's spend is bounded by how many files it reads.
+Working sessions push one permanent branch, `ai/queue`, which is the default branch, and nothing reaches `main` except through a review or a session's sync to main that the owner asked for (`.agents/skills/review-queue/SKILL.md`). The review is a GitHub workflow, `.github/workflows/Review.yaml`, that runs on every push to `ai/queue`. It reads the commits `main` does not yet have, cuts them into windows of a bounded size, reads every batch of every window at once with headless haiku sessions, and fast-forwards `main` through the windows that were read in full. Every finding it raises then ends in one of three terminal states, and the workflow carries each one there. Nothing waits on a person, and no step is timed: a run's spend is bounded by how many files it reads.
 
 ## The terminal-state rule
 
