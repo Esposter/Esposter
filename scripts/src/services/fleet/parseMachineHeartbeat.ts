@@ -1,24 +1,8 @@
 import type { MachineHeartbeat } from "#src/models/fleet/MachineHeartbeat";
 
-import { lastPushSchema } from "#src/models/fleet/LastPush";
-import { checkIsInstant } from "#src/services/shared/checkIsInstant";
+import { checkIsHeartbeat } from "#src/services/fleet/checkIsHeartbeat";
 import { parseMachineJson } from "#src/services/shared/parseMachineJson";
 import { getResult } from "@esposter/shared";
-
-const checkIsHeartbeat = (value: unknown): value is MachineHeartbeat =>
-  typeof value === "object" &&
-  value !== null &&
-  "machine" in value &&
-  typeof value.machine === "string" &&
-  "at" in value &&
-  checkIsInstant(value.at) &&
-  "cpu" in value &&
-  typeof value.cpu === "number" &&
-  "freeMemory" in value &&
-  typeof value.freeMemory === "number" &&
-  (!("gpu" in value) || typeof value.gpu === "number") &&
-  (!("lastPush" in value) || lastPushSchema.safeParse(value.lastPush).success) &&
-  (!("platform" in value) || typeof value.platform === "string");
 
 // The heartbeat a machine's commit carries, or undefined for a commit that is not one
 export const parseMachineHeartbeat = (message: string): MachineHeartbeat | undefined =>
