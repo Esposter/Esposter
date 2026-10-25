@@ -1,7 +1,7 @@
 ## 1. Origins
 
 - [ ] 1.1 Keep the editors from requesting any third-party origin. Verify: a browser test whose scenario is 'Opening an editor requests no third-party origin'.
-  - Done: an inserted image or video loads the app's own placeholder (`apps/web/public/page-builder/placeholder.svg`) rather than `example.com`, and the email starter loads no picture. Owed, not written: the browser test that opens each editor and records its requests.
+  - Done: an inserted image or video loads the app's own placeholder (`apps/web/public/page-builder/placeholder.svg`) rather than `example.com`, and the email starter loads no picture. Owed, not written: the browser test that opens each editor and records its requests. Blocked: the editors live in `apps/web`, and their components import the app's `@/` and `#shared` aliases and Nuxt's auto-imports, which the frame package's no-Nuxt browser configuration does not resolve; that configuration also has no Vue plugin for `.vue` files (probed on `apps/web/app/components/PageBuilder/Canvas/Index.vue`, which failed to import).
 
 ## 2. Benchmarks
 
@@ -15,11 +15,11 @@
 ## 3. Browser proof
 
 - [ ] 3.1 Record the performance marks for prop and style edits at 2,000 nodes and for selection changes, reported and not asserted. Verify: tests named after the scenarios 'An edit shows on the canvas' and 'Selecting a node outlines it'.
-  - Owed, not written: no test records the marks yet. The canvas's own hover and selection proof is owed too (canvas 2.1).
+  - Owed, not written: no test records the marks yet. The canvas's own hover and selection proof is owed too (canvas 2.1). Blocked: the same as 1.1, since the canvas components live in `apps/web` and the frame package's no-Nuxt browser suite cannot import them.
 - [ ] 3.2 Render the starter webpage in the canvas and in the published frame at each width, and compare every node's box within one pixel. Verify: tests named after the scenarios 'The canvas matches the published page within one pixel' and 'A published page's own scripts run under the app's policy'.
-  - Owed, not written: the comparison of the canvas with the published frame at each width, and the policy check. It needs the browser suite in the frame package.
+  - Owed, not written: the comparison of the canvas with the published frame at each width, and the policy check. It needs the browser suite in the frame package. Blocked: the canvas and the starter webpage's editor components live in `apps/web` and cannot be imported by the frame package's no-Nuxt browser suite, which has no Vue plugin and no app aliases (the probe failed on import).
 - [ ] 3.3 Compare the starter email's canvas with its compiled email at desktop and mobile width. Verify: a test named after the scenario 'The email canvas stays close to the compiled email'.
-  - Owed, not written: the email canvas's comparison with its compiled email. The email editor is still unarchived, so this proof waits on its owed items too.
+  - Owed, not written: the email canvas's comparison with its compiled email. The email editor is still unarchived, so this proof waits on its owed items too. Blocked: the email canvas lives in `apps/web` with the same import barrier as 3.2.
 
 ## 4. Output proof
 
