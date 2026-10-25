@@ -1,7 +1,11 @@
 import { checkIsProcessRunning } from "#src/services/shared/checkIsProcessRunning";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(checkIsProcessRunning, () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   test("the running process is running", () => {
     expect.hasAssertions();
     expect(checkIsProcessRunning(process.pid)).toBe(true);
@@ -15,7 +19,6 @@ describe(checkIsProcessRunning, () => {
     });
 
     expect(checkIsProcessRunning(1)).toBe(true);
-    kill.mockRestore();
   });
 
   test("an id no process holds is not running", () => {
