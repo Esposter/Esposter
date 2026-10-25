@@ -10,6 +10,8 @@ import { blockRouter } from "#server/trpc/routers/block";
 import { likeRouter } from "#server/trpc/routers/like";
 import { postRouter } from "#server/trpc/routers/post";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
+import { PostSortType } from "@/models/post/PostSortType";
+import { PostSortTypeSortByMap } from "@/services/post/PostSortTypeSortByMap";
 import {
   blocksInSocial,
   DatabaseEntityType,
@@ -18,6 +20,7 @@ import {
   PublicUserColumns,
 } from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
+import { eq } from "drizzle-orm";
 import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("postRouter", () => {
@@ -376,5 +379,101 @@ describe("postRouter", () => {
     expect([...firstPage.items, ...secondPage.items].map(({ id }) => id).toSorted()).toStrictEqual(
       newPostIds.toSorted(),
     );
+  });
+
+  // Replies are written in one order and then given the columns each sort reads, so every sort reads a different
+  // Order from the one creation left
+  const ONE_SECOND = Temporal.Duration.from({ seconds: 1 }).total("milliseconds");
+  const createReplies = async (parentId: string, count: number) => {
+    const replyIds: string[] = [];
+    // oxlint-disable-next-line no-await-in-loop -- Order is the contract: replies land in the order they are written
+    for (let i = 0; i < count; i++)
+      replyIds.push((await postCaller.createComment({ description, parentId })).comment.id);
+    return replyIds;
+  };
+  const setReplyColumns = (id: string, columns: Partial<Pick<PostInPost, "createdAt" | "likeCount" | "ranking">>) =>
+    mockContext.db.update(postsInPost).set(columns).where(eq(postsInPost.id, id));
+
+  test("Hot keeps the ranked reply order", async () => {
+    expect.hasAssertions();
+
+    const newPost = await postCaller.createPost({ title });
+    const [firstId, secondId, thirdId] = await createReplies(newPost.id, 3);
+    await setReplyColumns(firstId, { ranking: 0.1 });
+    await setReplyColumns(secondId, { ranking: -1 });
+    await setReplyColumns(thirdId, { ranking: 0 });
+    const { items } = await postCaller.readPosts({
+      parentId: newPost.id,
+      sortBy: PostSortTypeSortByMap[PostSortType.Hot],
+    });
+
+    expect(items.map(({ id }) => id)).toStrictEqual([firstId, thirdId, secondId]);
+  });
+
+  test("Top lists the most-liked reply first", async () => {
+    expect.hasAssertions();
+
+    const newPost = await postCaller.createPost({ title });
+    const [firstId, secondId, thirdId] = await createReplies(newPost.id, 3);
+    await setReplyColumns(secondId, { likeCount: 2 });
+    await setReplyColumns(thirdId, { likeCount: 1 });
+    const { items } = await postCaller.readPosts({
+      parentId: newPost.id,
+      sortBy: PostSortTypeSortByMap[PostSortType.Top],
+    });
+
+    expect(items.map(({ id }) => id)).toStrictEqual([secondId, thirdId, firstId]);
+  });
+
+  test("New lists the newest reply first", async () => {
+    expect.hasAssertions();
+
+    const newPost = await postCaller.createPost({ title });
+    const [firstId, secondId, thirdId] = await createReplies(newPost.id, 3);
+    await setReplyColumns(firstId, { createdAt: new Date(0) });
+    await setReplyColumns(secondId, { createdAt: new Date(ONE_SECOND) });
+    await setReplyColumns(thirdId, { createdAt: new Date(ONE_SECOND * 2) });
+    const { items } = await postCaller.readPosts({
+      parentId: newPost.id,
+      sortBy: PostSortTypeSortByMap[PostSortType.New],
+    });
+
+    expect(items.map(({ id }) => id)).toStrictEqual([thirdId, secondId, firstId]);
+  });
+
+  test("Old lists the oldest reply first", async () => {
+    expect.hasAssertions();
+
+    const newPost = await postCaller.createPost({ title });
+    const [firstId, secondId, thirdId] = await createReplies(newPost.id, 3);
+    await setReplyColumns(firstId, { createdAt: new Date(0) });
+    await setReplyColumns(secondId, { createdAt: new Date(ONE_SECOND) });
+    await setReplyColumns(thirdId, { createdAt: new Date(ONE_SECOND * 2) });
+    const { items } = await postCaller.readPosts({
+      parentId: newPost.id,
+      sortBy: PostSortTypeSortByMap[PostSortType.Old],
+    });
+
+    expect(items.map(({ id }) => id)).toStrictEqual([firstId, secondId, thirdId]);
+  });
+
+  test("Paging Old reaches every reply once", async () => {
+    expect.hasAssertions();
+
+    const newPost = await postCaller.createPost({ title });
+    const [firstId, secondId, thirdId] = await createReplies(newPost.id, 3);
+    await setReplyColumns(firstId, { createdAt: new Date(0) });
+    await setReplyColumns(secondId, { createdAt: new Date(ONE_SECOND) });
+    await setReplyColumns(thirdId, { createdAt: new Date(ONE_SECOND * 2) });
+    const sortBy = PostSortTypeSortByMap[PostSortType.Old];
+    const firstPage = await postCaller.readPosts({ limit: 2, parentId: newPost.id, sortBy });
+    const secondPage = await postCaller.readPosts({
+      cursor: firstPage.nextCursor,
+      limit: 2,
+      parentId: newPost.id,
+      sortBy,
+    });
+
+    expect([...firstPage.items, ...secondPage.items].map(({ id }) => id)).toStrictEqual([firstId, secondId, thirdId]);
   });
 });
