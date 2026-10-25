@@ -45,36 +45,26 @@ const startColumnDrag = (columnName: string, event: PointerEvent) => {
 </script>
 
 <template>
-  <div grid cols="[repeat(auto-fill,minmax(4.25rem,1fr))]" gap-1>
+  <div cols="[repeat(auto-fill,minmax(4.25rem,1fr))]" gap-1 grid>
     <template v-for="{ category, types } of kind.paletteCategories" :key="category">
-      <h3 ui-title text-muted col-span-full>{{ category }}</h3>
-      <UiButton
+      <h3 text-muted col-span-full ui-title>{{ category }}</h3>
+      <PageBuilderPaletteTile
         v-for="type of types"
         :key="type"
-        aspect-square
-        w-full
+        :icon="kind.icons[type]"
+        :label="kind.titles[type]"
         @click="insert(type)"
         @pointerdown="startDrag(type, $event)"
-      >
-        <span flex flex-col items-center justify-center gap-1 h-full text-center>
-          <UiIcon v-if="kind.icons[type]" :meaning="kind.icons[type]" />
-          {{ kind.titles[type] }}
-        </span>
-      </UiButton>
+      />
     </template>
-    <h3 v-if="mergeFieldColumns.length > 0" ui-title text-muted col-span-full>Merge fields</h3>
-    <UiButton
+    <h3 v-if="mergeFieldColumns.length > 0" text-muted col-span-full ui-title>Merge fields</h3>
+    <PageBuilderPaletteTile
       v-for="columnName of mergeFieldColumns"
       :key="columnName"
-      aspect-square
-      w-full
+      :icon="UiIconMeaning.Tag"
+      :label="columnName"
       @click="insertMergeField(columnName)"
       @pointerdown="startColumnDrag(columnName, $event)"
-    >
-      <span flex flex-col items-center justify-center gap-1 h-full text-center>
-        <UiIcon :meaning="UiIconMeaning.Tag" />
-        {{ columnName }}
-      </span>
-    </UiButton>
+    />
   </div>
 </template>
