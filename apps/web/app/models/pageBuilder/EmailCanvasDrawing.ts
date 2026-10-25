@@ -5,9 +5,14 @@ import type { VNode } from "vue";
 
 // One email node type's drawing: the node narrowed to that type, and what the canvas reads around it
 export type EmailCanvasDrawing<TType extends EmailCanvasType> = (
-  node: Extract<MjmlNode, { type: TType }>,
+  node: EmailCanvasNodeMap[TType],
   context: EmailCanvasContext,
 ) => VNode;
+
+// Looked up by type rather than written as a conditional in the drawing: TypeScript compares two instances of one
+// generic alias by variance, and a conditional type measures as invariant there, so a drawing shared by two types (a
+// text and an accordion's text) would fail each of its keys
+type EmailCanvasNodeMap = { [TType in EmailCanvasType]: Extract<MjmlNode, { type: TType }> };
 
 // Every type an email node carries: MJML's own, and the ones an email adds to that set
 export type EmailCanvasType = EmailNodeType | MjmlNodeType;
