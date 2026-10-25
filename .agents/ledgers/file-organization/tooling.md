@@ -11,7 +11,6 @@
 | `scripts/src/crossOS`                                                                     | 2026-10-25 · Haiku 5.5 | 1 file   |
 | `scripts/src/dependencies`                                                                | 2026-10-25 · Haiku 5.5 | 1 file   |
 | `scripts/src/dependencyGraph`                                                             | 2026-10-25 · Haiku 5.5 | 1 file   |
-| `scripts/src/editorBudget`                                                                | 2026-10-25 · Haiku 5.5 | 1 file   |
 | `scripts/src/fleet`                                                                       | 2026-10-25 · Haiku 5.5 | 7 files  |
 | `scripts/src/gameData`                                                                    | 2026-10-25 · Haiku 5.5 | 1 file   |
 | `scripts/src/genshinAssets`                                                               | 2026-10-25 · Haiku 5.5 | 1 file   |
