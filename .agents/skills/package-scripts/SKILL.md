@@ -15,7 +15,7 @@ description: Apply when running or recommending any pnpm script. Esposter's pnpm
 
 ## `apps/web`
 
-**`nuxt typecheck` is the only typecheck, and root `vp run lint` the only lint** — why a root check aggregates its leaves and what the binaries under them miss is `references/app-scripts.md`.
+**`apps/web`'s `pnpm typecheck` is the only typecheck, and root `vp run lint` the only lint** — why a root check aggregates its leaves and what the binaries under them miss is `references/app-scripts.md`.
 
 ## Root Scripts — `references/root-scripts.md`
 
