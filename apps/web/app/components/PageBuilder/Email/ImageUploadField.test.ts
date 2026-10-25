@@ -7,10 +7,11 @@ import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test, vi } from "vitest";
 
 const { assetUrl } = vi.hoisted(() => ({ assetUrl: "https://assets.example/image" }));
-const TEST_IMAGE_FILE_NAME = "photo.png";
 vi.mock("@/composables/resource/useUploadResourceFile", () => ({ useUploadResourceFile: () => async () => assetUrl }));
 
 describe("pageBuilderEmailImageUploadField", () => {
+  const TEST_IMAGE_FILE_NAME = "photo.png";
+
   test("a picked image uploads, and its asset url is emitted as the source", async () => {
     expect.hasAssertions();
 
