@@ -64,6 +64,7 @@ describe(createResourceProcedures, () => {
   // Dashboard is the publishable representative; Webpage is the FileAssets one
   let webpageCaller: DecorateRouterRecord<TRPCRouter["webpage"]>;
   const name = "name";
+  const apiKeyName = "apiKeyName";
   const updatedName = "updatedName";
   const filename = "filename";
   const hash = "a".repeat(64);
@@ -206,9 +207,28 @@ describe(createResourceProcedures, () => {
 
     const { device, ...emitted } = data;
 
-    expect(emitted).toStrictEqual({ contentVersion: 1, id: newResource.id });
+    expect(emitted).toStrictEqual({ apiKeyName: "", contentVersion: 1, id: newResource.id });
     expect(device.sessionId).toBeTypeOf("string");
     expect(device.userId).toBe(authMocks.user.id);
+  });
+
+  // An agent writes through its key, so the stream names the key rather than leaving the save to read as the person's own
+  test("A save made with a key is named by that key", async () => {
+    expect.hasAssertions();
+
+    const newResource = await dashboardCaller.createResource({ name });
+    const dashboard = new Dashboard({ visuals: [new Visual()] });
+    const keyedCaller = createCallerFactory(dashboardRouter)({
+      ...mockContext,
+      apiKey: { id: crypto.randomUUID(), name: apiKeyName },
+    });
+    const subscription = await dashboardCaller.onSaveResourceContent({ id: newResource.id });
+    const data = await getFirstEmit(
+      () => subscription,
+      () => keyedCaller.saveResourceContent({ content: dashboard, contentVersion: 0, id: newResource.id }),
+    );
+
+    expect(data.apiKeyName).toBe(apiKeyName);
   });
 
   // One user on two sessions is two devices: the first save the subscriber made is filtered out, so the first save

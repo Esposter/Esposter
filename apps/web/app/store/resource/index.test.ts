@@ -862,7 +862,7 @@ describe(useResourceStore, () => {
       const resourceStore = useResourceStore();
       await resourceStore.readResource();
       await withFinalizerAsync(
-        () => resourceStore.storeSaveResourceContent({ contentVersion: 1, device }),
+        () => resourceStore.storeSaveResourceContent({ contentVersion: 1, apiKeyName: "", device }),
         unregisterReload,
       );
 
@@ -883,13 +883,13 @@ describe(useResourceStore, () => {
     const unregisterReload = ResourceContentHookMap.Reload.register(reload);
     unwrittenContentResourceId.value = id;
     await withFinalizerAsync(
-      () => resourceStore.storeSaveResourceContent({ contentVersion: contentVersion + 1, device }),
+      () => resourceStore.storeSaveResourceContent({ contentVersion: contentVersion + 1, apiKeyName: "", device }),
       unregisterReload,
     );
     const isSaved = await resourceStore.saveContent(createDefaultSheetResource());
 
     expect(reload).not.toHaveBeenCalled();
-    expect(heldSave.value).toStrictEqual({ contentVersion: contentVersion + 1, device });
+    expect(heldSave.value).toStrictEqual({ apiKeyName: "", contentVersion: contentVersion + 1, device });
     expect(saveState.value).toBe(ResourceSaveState.Stale);
     expect(isSaved).toBe(false);
     expect(saveResourceContent).not.toHaveBeenCalled();
@@ -907,7 +907,7 @@ describe(useResourceStore, () => {
     const reload = vi.fn<(type: ResourceType) => void>();
     const unregisterReload = ResourceContentHookMap.Reload.register(reload);
     unwrittenContentResourceId.value = id;
-    await resourceStore.storeSaveResourceContent({ contentVersion: contentVersion + 1, device });
+    await resourceStore.storeSaveResourceContent({ contentVersion: contentVersion + 1, apiKeyName: "", device });
     await withFinalizerAsync(() => resourceStore.takeOtherSave(), unregisterReload);
 
     expect(reload).toHaveBeenCalledExactlyOnceWith(ResourceType.Sheet);
@@ -932,12 +932,28 @@ describe(useResourceStore, () => {
     });
     const unregisterKeep = ResourceContentHookMap.Keep.register(keep);
     unwrittenContentResourceId.value = id;
-    await resourceStore.storeSaveResourceContent({ contentVersion: contentVersion + 1, device });
+    await resourceStore.storeSaveResourceContent({ contentVersion: contentVersion + 1, apiKeyName: "", device });
     await withFinalizerAsync(() => resourceStore.keepUnwrittenContent(), unregisterKeep);
 
     expect(keep).toHaveBeenCalledExactlyOnceWith(ResourceType.Sheet);
     expect(contentVersionKept).toBe(contentVersion + 1);
     expect(heldSave.value).toBeUndefined();
+  });
+
+  // An agent's save names the key it was written with, so the notice can say which agent saved
+  test("A save made with a key is named by that key", async () => {
+    expect.hasAssertions();
+
+    const apiKeyName = "agentKey";
+    const resourceStore = useResourceStore();
+    const { heldSave, resource, unwrittenContentResourceId } = storeToRefs(resourceStore);
+    await resourceStore.readResource();
+    assert.exists(resource.value);
+    const { contentVersion, id } = resource.value;
+    unwrittenContentResourceId.value = id;
+    await resourceStore.storeSaveResourceContent({ apiKeyName, contentVersion: contentVersion + 1, device });
+
+    expect(heldSave.value).toStrictEqual({ apiKeyName, contentVersion: contentVersion + 1, device });
   });
 
   // The save stream names the version and the device only, so an editor with nothing unwritten re-reads the document
@@ -955,7 +971,7 @@ describe(useResourceStore, () => {
     const unregisterReload = ResourceContentHookMap.Reload.register(reload);
     const unregisterAdopt = ResourceContentHookMap.Adopt.register(adopt);
     await withFinalizerAsync(
-      () => resourceStore.storeSaveResourceContent({ contentVersion: contentVersion + 1, device }),
+      () => resourceStore.storeSaveResourceContent({ contentVersion: contentVersion + 1, apiKeyName: "", device }),
       () => {
         unregisterReload();
         unregisterAdopt();
@@ -996,7 +1012,11 @@ describe(useResourceStore, () => {
     await readResource();
     await readContent(noop);
     assert.exists(resource.value);
-    await resourceStore.storeSaveResourceContent({ contentVersion: resource.value.contentVersion + 1, device });
+    await resourceStore.storeSaveResourceContent({
+      contentVersion: resource.value.contentVersion + 1,
+      apiKeyName: "",
+      device,
+    });
     await nextTick();
     const isUndoableAfterAdoption = isUndoable.value;
     await saveContent(createLargeSheetResource("a"));

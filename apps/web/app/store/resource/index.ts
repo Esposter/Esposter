@@ -255,13 +255,13 @@ export const useResourceStore = defineStore("resource", () => {
   };
   // Another device saved this resource. Taken through the two stages a restore runs, which the reload leaves to
   // Adopt the document (openspec/changes/architecture-ai-native-resources-live-edits/design.md)
-  const storeSaveResourceContent = async ({ contentVersion, device }: ResourceSave) => {
+  const storeSaveResourceContent = async ({ apiKeyName, contentVersion, device }: ResourceSave) => {
     if (!resource.value || contentVersion <= resource.value.contentVersion) return;
 
     if (hasUnwrittenContent.value || checkIsSaveContentPending(currentResourceId.value)) {
       // The unwritten edit is the person's, so the save waits for their answer, and the stale latch holds autosave
       // until then
-      heldSave.value = { contentVersion, device };
+      heldSave.value = { apiKeyName, contentVersion, device };
       isContentStale.value = true;
       return;
     }

@@ -216,7 +216,8 @@ export const saveResourceContent = async (
   // Best-effort like every release: a failed one leaves a dropped asset stored and charged until a release names it again
   await getResultAsync(() => releaseResourceAssets(ctx.db, id, removedAssetHashes)).match(noop, console.error);
   resourceEventEmitter.emit("saveResourceContent", [
-    { contentVersion: savedResource.contentVersion, id },
+    // The key an agent wrote with, named so an open editor can say who saved; "" for the person's own save
+    { apiKeyName: ctx.apiKey?.name ?? "", contentVersion: savedResource.contentVersion, id },
     getDevice(ctx.getSessionPayload),
   ]);
   // Not awaited — a failure costs one activity row, and the coalescing scan it does would otherwise land on

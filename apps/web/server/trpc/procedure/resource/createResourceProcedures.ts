@@ -181,6 +181,7 @@ export const createResourceProcedures = <TType extends ResourceType>(
       input: { id },
       signal,
     }): AsyncGenerator<{
+      apiKeyName: string;
       contentVersion: ResourceInResource["contentVersion"];
       device: Device;
       id: ResourceInResource["id"];

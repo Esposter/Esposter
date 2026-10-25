@@ -949,7 +949,9 @@ describe("resourceRouter", () => {
     await webpageCaller.publishResource({ id: webpageResource.id });
     await waitForSynchronizedFunctions();
     vi.advanceTimersByTime(1);
-    let saveEvent: undefined | { contentVersion: ResourceInResource["contentVersion"]; id: ResourceInResource["id"] };
+    let saveEvent:
+      | undefined
+      | { apiKeyName: string; contentVersion: ResourceInResource["contentVersion"]; id: ResourceInResource["id"] };
     resourceEventEmitter.on("saveResourceContent", ([data]) => {
       saveEvent = data;
     });

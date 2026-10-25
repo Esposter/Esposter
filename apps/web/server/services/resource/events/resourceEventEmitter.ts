@@ -7,7 +7,10 @@ interface ResourceEvents {
   // The content itself is not carried: a subscriber re-reads it through the type's own read, so a large document
   // Crosses by the same path as any read rather than over the socket
   saveResourceContent: [
-    [{ contentVersion: ResourceInResource["contentVersion"]; id: ResourceInResource["id"] }, Device],
+    [
+      { apiKeyName: string; contentVersion: ResourceInResource["contentVersion"]; id: ResourceInResource["id"] },
+      Device,
+    ],
   ];
 }
 
