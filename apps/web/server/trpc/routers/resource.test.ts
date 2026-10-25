@@ -505,11 +505,10 @@ describe("resourceRouter", () => {
     const webpageResource = await webpageCaller.createResource({ name });
     const blobName = createFilesBlobName(webpageResource.id);
     const missingBlobName = createFilesBlobName(webpageResource.id);
+    const imageNode = createImageNode(blobName);
+    const danglingImageNode = createImageNode(missingBlobName);
     storeAsset(blobName);
-    await saveWebpageContent(
-      webpageResource,
-      new WebpageEditor({ content: [createImageNode(blobName), createImageNode(missingBlobName)] }),
-    );
+    await saveWebpageContent(webpageResource, new WebpageEditor({ content: [imageNode, danglingImageNode] }));
     const duplicatedResource = await caller.duplicateResource({ id: webpageResource.id });
     const content = await webpageCaller.readResourceContent({ id: duplicatedResource.id });
     assert.exists(content);
@@ -518,8 +517,19 @@ describe("resourceRouter", () => {
 
     // The existing asset is cloned and rewritten; the dangling url is data, carried verbatim instead of
     // Failing the whole clone
-    expect(JSON.stringify(content.content)).toContain(getResourceAssetUrl(duplicatedBlobName));
-    expect(JSON.stringify(content.content)).toContain(getResourceAssetUrl(missingBlobName));
+    expect(content).toStrictEqual(
+      jsonDateParse(
+        JSON.stringify(
+          new WebpageEditor({
+            content: [
+              { ...imageNode, props: { ...imageNode.props, src: getResourceAssetUrl(duplicatedBlobName) } },
+              danglingImageNode,
+            ],
+            id: content.id,
+          }),
+        ),
+      ),
+    );
     expect(duplicatedBlobName).toBe(`${getFilesDirectoryName(duplicatedResource.id)}/${getAssetHash(blobName)}`);
   });
 
@@ -531,13 +541,13 @@ describe("resourceRouter", () => {
     const webpageResource = await webpageCaller.createResource({ name });
     const blobName = createFilesBlobName(webpageResource.id);
     storeAsset(blobName);
-    await saveWebpageContent(webpageResource, createImageEditor(blobName));
+    const imageEditor = createImageEditor(blobName);
+    await saveWebpageContent(webpageResource, imageEditor);
     await webpageCaller.publishResource({ id: webpageResource.id });
     await caller.restoreSnapshotVersion({ channel: SnapshotChannel.Published, id: webpageResource.id, version: 1 });
     const content = await webpageCaller.readResourceContent({ id: webpageResource.id });
-    assert.exists(content);
 
-    expect(JSON.stringify(content.content)).toContain(getResourceAssetUrl(blobName));
+    expect(content).toStrictEqual(jsonDateParse(JSON.stringify(imageEditor)));
     expect(readFilesBlobNames(webpageResource.id)).toStrictEqual([blobName]);
   });
 
@@ -885,7 +895,8 @@ describe("resourceRouter", () => {
     const webpageResource = await webpageCaller.createResource({ name });
     const blobName = createFilesBlobName(webpageResource.id);
     storeAsset(blobName);
-    await saveWebpageContent(webpageResource, createImageEditor(blobName));
+    const imageEditor = createImageEditor(blobName);
+    await saveWebpageContent(webpageResource, imageEditor);
     const revisionVersion = await caller.saveResourceRevision({ id: webpageResource.id });
     assert.exists(revisionVersion);
     await saveWebpageContent(webpageResource, webpageEditor, 1);
@@ -895,9 +906,8 @@ describe("resourceRouter", () => {
       version: revisionVersion,
     });
     const content = await webpageCaller.readResourceContent({ id: webpageResource.id });
-    assert.exists(content);
 
-    expect(JSON.stringify(content.content)).toContain(getResourceAssetUrl(blobName));
+    expect(content).toStrictEqual(jsonDateParse(JSON.stringify(imageEditor)));
     expect(readFilesBlobNames(webpageResource.id)).toStrictEqual([blobName]);
   });
 
@@ -934,14 +944,21 @@ describe("resourceRouter", () => {
     const webpageResource = await webpageCaller.createResource({ name });
     const blobName = createFilesBlobName(webpageResource.id);
     storeAsset(blobName);
-    await saveWebpageContent(webpageResource, createImageEditor(blobName));
+    const imageEditor = createImageEditor(blobName);
+    await saveWebpageContent(webpageResource, imageEditor);
     await webpageCaller.publishResource({ id: webpageResource.id });
     await saveWebpageContent(webpageResource, webpageEditor, 1);
     MockContainerDatabase.get(AzureContainer.ResourceAssets)?.delete(blobName);
 
-    await expect(
-      caller.restoreSnapshotVersion({ channel: SnapshotChannel.Published, id: webpageResource.id, version: 1 }),
-    ).resolves.toMatchObject({ resource: { id: webpageResource.id } });
+    const { resource } = await caller.restoreSnapshotVersion({
+      channel: SnapshotChannel.Published,
+      id: webpageResource.id,
+      version: 1,
+    });
+    const content = await webpageCaller.readResourceContent({ id: webpageResource.id });
+
+    expect(resource.id).toBe(webpageResource.id);
+    expect(content).toStrictEqual(jsonDateParse(JSON.stringify(imageEditor)));
   });
 
   test("records the draft version a publish was taken from", async () => {

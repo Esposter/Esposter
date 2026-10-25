@@ -5,7 +5,9 @@ import { noteRouter } from "#server/trpc/routers/note";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { MimeType } from "#shared/models/file/MimeType";
 import { EMPTY_NOTE_DOC } from "#shared/services/resource/constants";
-import { ResourceType } from "@esposter/db-schema";
+import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
+import { AzureContainer, ResourceType } from "@esposter/db-schema";
+import { getBlobUrl, getMockSasUrl } from "azure-mock";
 import { beforeAll, describe, expect, test } from "vitest";
 
 describe("noteRouter", () => {
@@ -30,7 +32,11 @@ describe("noteRouter", () => {
       id: newResource.id,
     });
 
-    expect(sasEntities).toStrictEqual([{ id: hash, isHeld: false, sasUrl: expect.any(String) }]);
+    const blobName = `${getFilesDirectoryName(newResource.id)}/${hash}`;
+
+    expect(sasEntities).toStrictEqual([
+      { id: hash, isHeld: false, sasUrl: getMockSasUrl(getBlobUrl(AzureContainer.ResourceAssets, blobName), "w", "b") },
+    ]);
   });
 
   test("saves and reads content", async () => {

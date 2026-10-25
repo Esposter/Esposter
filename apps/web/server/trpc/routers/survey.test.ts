@@ -616,9 +616,10 @@ describe("surveyRouter", () => {
     const newResource = await createSurvey(caller, name, { model, settings: closedSettings });
     // No re-publish involved — the toggle alone reopens collection
     await saveSurveyContent(newResource.id, newResource.contentVersion + 1, { model, settings });
-    const newSurveyResponse = await createSurveyResponse(newResource.id, 0);
+    await createSurveyResponse(newResource.id, 0);
+    const responseCount = await caller.readSurveyResponsesCount({ id: newResource.id });
 
-    expect(newSurveyResponse.partitionKey).toBe(newResource.id);
+    expect(responseCount).toStrictEqual({ count: 1, isCapped: false });
   });
 
   test("deletes survey response", async () => {
