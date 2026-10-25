@@ -51,7 +51,7 @@ import {
   WordFilterAction,
   WRITE_SAS_DURATION_MS,
 } from "@esposter/db-schema";
-import { InvalidOperationError, jsonDateParse, noop, NotFoundError, Operation, takeOne } from "@esposter/shared";
+import { InvalidOperationError, jsonDateParse, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { isTrackedEnvelope } from "@trpc/server";
 import {
   MockBlobClient,
@@ -763,6 +763,7 @@ describe("messageRouter", () => {
     setMessageAssetBlob(id);
     const forwardedRoom = await roomCaller.createRoom({ name });
     const bytesBeforeForward = await readStorageBytesUsed();
+    assert.exists(bytesBeforeForward);
 
     await messageCaller.forwardMessage({ ...getCompositeKey(newMessage), roomIds: [forwardedRoom.id] });
 
@@ -1058,11 +1059,15 @@ describe("messageRouter", () => {
     const blobNames = (
       await Promise.all(
         blobDeletions.map((blobDeletion) =>
-          "blobNames" in blobDeletion ? blobDeletion.blobNames : listBlobNames(containerClient, blobDeletion.prefix),
+          blobDeletion.prefix === undefined
+            ? blobDeletion.blobNames
+            : listBlobNames(containerClient, blobDeletion.prefix),
         ),
       )
     ).flat();
-    await deleteStorageBlobs(mockContext.db, containerClient, AzureContainer.MessageAssets, blobNames, noop);
+    await deleteStorageBlobs(mockContext.db, containerClient, AzureContainer.MessageAssets, blobNames, () =>
+      Promise.resolve(),
+    );
   };
   // Storage reporting an upload's stored size is the reconcile the `BlobCreated` handler runs
   const reportStoredUpload = (blobName: string) =>
@@ -1079,6 +1084,7 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const bytesBeforeUpload = await readStorageBytesUsed();
+    assert.exists(bytesBeforeUpload);
     const [sasEntity] = await messageCaller.generateUploadFileSasEntities({
       files: [{ filename, mimetype, size }],
       roomId,
@@ -1103,6 +1109,7 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const bytesBeforeUpload = await readStorageBytesUsed();
+    assert.exists(bytesBeforeUpload);
     const [sasEntity] = await messageCaller.generateUploadFileSasEntities({
       files: [{ filename, mimetype, size }],
       roomId,
@@ -1121,6 +1128,7 @@ describe("messageRouter", () => {
     expect.hasAssertions();
 
     const bytesBeforeUpload = await readStorageBytesUsed();
+    assert.exists(bytesBeforeUpload);
     const [sasEntity] = await messageCaller.generateUploadFileSasEntities({
       files: [{ filename, mimetype, size }],
       roomId,
