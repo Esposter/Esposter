@@ -11,7 +11,7 @@ import { renderNoteHtml } from "#shared/services/resource/note/renderNoteHtml";
 import { takeOne } from "@esposter/shared";
 import { getBlockSlots, renderBlockNodes } from "headless-block-editor";
 import { MjmlNodeType } from "mjml-blocks";
-import { h } from "vue";
+import { cloneVNode, h } from "vue";
 
 // The CSS property each MJML attribute the canvas draws is written as. An attribute its node's component does not take is
 // Not drawn, so a link's href or an image's source never reaches the style
@@ -36,7 +36,11 @@ export const renderEmailCanvasVNodes = (kind: EmailKind, document: EmailDocument
   const rootAttributes = document.root.props.attributes;
   const isStacked = checkIsStackedColumns(width);
 
-  return renderBlockNodes(document.content, kind.registry, kind.children, (node, definition, slots) => {
+  const drawNode = (
+    node: MjmlNode,
+    definition: { allowedAttributes: object },
+    slots: Record<string, VNode[]>,
+  ): VNode => {
     const attribute = (name: string) => getEmailAttributeValue(node, name, rootAttributes);
     const childNodes = Object.values(slots).flat();
 
@@ -74,6 +78,10 @@ export const renderEmailCanvasVNodes = (kind: EmailKind, document: EmailDocument
 
     if (node.type === MjmlNodeType.Text) return h("div", { innerHTML: renderNoteHtml(node.props.content), style });
 
+    // A button and a navbar link are drawn as the words a reader sees, a link inline so a navbar lays them in a row
+    if (node.type === MjmlNodeType.Button) return h("div", { style }, node.props.content);
+    if (node.type === MjmlNodeType.NavbarLink) return h("span", { style }, node.props.content);
+
     // A divider is drawn as the rule its border attributes name, since a rule is what it is
     if (node.type === MjmlNodeType.Divider)
       return h("div", {
@@ -84,5 +92,10 @@ export const renderEmailCanvasVNodes = (kind: EmailKind, document: EmailDocument
       });
 
     return h("div", { style }, childNodes.length > 0 ? childNodes : node.type);
-  });
+  };
+
+  // Each drawn node's root element carries the node's id, so the canvas can outline it on hover and select it on click
+  return renderBlockNodes(document.content, kind.registry, kind.children, (node, definition, slots) =>
+    cloneVNode(drawNode(node, definition, slots), { "data-node-id": node.props.id }),
+  );
 };

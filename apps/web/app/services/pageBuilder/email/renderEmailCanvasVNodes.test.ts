@@ -90,7 +90,38 @@ describe("renderEmailCanvasVNodes", () => {
       padding: "10px 25px",
       textAlign: "center",
     });
-    expect(button.children).toBe(MjmlNodeType.Button);
+    expect(button.children).toBe("Go");
+  });
+
+  test("a navbar draws each link as its own words, in a row", () => {
+    expect.hasAssertions();
+
+    const section = takeOne(
+      renderEmailCanvasVNodes(
+        emailKind,
+        parseEmail(
+          `<mjml><mj-body><mj-section><mj-column><mj-navbar><mj-navbar-link href="#">Home</mj-navbar-link></mj-navbar></mj-column></mj-section></mj-body></mjml>`,
+        ),
+        1024,
+      ),
+    );
+    const column = takeOne(childrenOf(takeOne(childrenOf(section))));
+    const navbar = takeOne(childrenOf(column));
+    const link = takeOne(childrenOf(navbar));
+
+    expect(link.children).toBe("Home");
+  });
+
+  test("each drawn node carries its own id, so the canvas can outline and select it", () => {
+    expect.hasAssertions();
+
+    const section = takeOne(renderEmailCanvasVNodes(emailKind, parseEmail(TWO_COLUMN_SOURCE), 1024));
+    const column = takeOne(childrenOf(takeOne(childrenOf(section))));
+    const text = takeOne(childrenOf(column));
+    const ids = [section, column, text].map((vnode) => vnode.props?.["data-node-id"]);
+
+    expect(ids.every((id) => typeof id === "string" && id !== "")).toBe(true);
+    expect(new Set(ids).size).toBe(ids.length);
   });
 
   test("a divider is drawn as the rule its border attributes name", () => {
