@@ -1,5 +1,5 @@
-import type { AzureTable, AzureTableEntityMap, CustomTableClient } from "@esposter/db-schema";
 import type { Clause } from "@esposter/azure";
+import type { AzureTable, AzureTableEntityMap, CustomTableClient } from "@esposter/db-schema";
 import type { Promisable } from "type-fest";
 
 import { getLivePartitionClauses } from "#src/services/azure/table/getLivePartitionClauses";
