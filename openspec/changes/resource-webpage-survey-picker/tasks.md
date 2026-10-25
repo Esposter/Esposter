@@ -9,7 +9,7 @@ Build order. Sections 1 and 2 give the schema form a link renderer, section 3 gi
 
 ## 2. Renderer
 
-- [ ] 2.1 Move `BindingSelect.vue` to `apps/web/app/components/Resource/Link/Select.vue`, update the program setup's import, and keep its missing-binding message. Test first: the program setup's tests pass with only the import changed.
+- [ ] 2.1 Move `BindingSelect.vue`, update the program setup's import, and keep its missing-binding message. Test first: the program setup's tests pass with only the import changed.
       Verify: no path under `Resource/Program/` names the moved select, and the missing-binding alert text is the one the program already shows.
 - [ ] 2.2 Add `ResourceLink.vue` to the schema form and rank its renderer above the text renderer for link fields, so a link field is drawn with the shared select over the owner's resources of the declared type. Test first in the schema-form test: a link field renders the select and a plain text field still renders the text control.
       Verify: both cases pass, and the select's items are the type's resources, read through the type's router.
