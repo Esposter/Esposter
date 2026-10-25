@@ -4,7 +4,7 @@ The email editor joins the data flow: merge-field blocks bound to a `DatasetRefe
 
 ## How it works
 
-An email optionally binds one dataset (`EmailEditor.datasetReference`, stored inside the content blob — every GrapesJS save carries it over since project data doesn't know about it). The bound dataset's columns appear in the page builder's palette as merge-field nodes (`{{columnName}}`), and the owner's published surveys appear as the email's survey-invite node (`shared/services/pageBuilder/email/emailSurveyInviteType.ts`). Export compiles the current MJML to HTML once (`mjml-code-to-html`), then zips one personalized `.html` per dataset row with merge fields substituted.
+An email optionally binds one dataset (`EmailEditor.datasetReference`, stored inside the content blob, which every page builder save writes whole, so the binding survives each edit). The bound dataset's columns appear in the page builder's palette as merge-field nodes (`{{columnName}}`), and the owner's published surveys appear as the email's survey-invite node (`shared/services/pageBuilder/email/emailSurveyInviteType.ts`). Export compiles the current MJML to HTML once (`mjml-code-to-html`), then zips one personalized `.html` per dataset row with merge fields substituted.
 
 ```mermaid
 flowchart LR
@@ -19,17 +19,17 @@ flowchart LR
 
 ## Key files
 
-| File                                                       | Role                                                                          |
-| ---------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| `app/services/emailEditor/toMergeField.ts`                 | canonical `{{columnName}}` token                                              |
-| `app/services/pageBuilder/email/createMergeFieldNode.ts`   | bound column → a text node carrying the escaped token                         |
-| `app/services/pageBuilder/MergeFieldExtension.ts`          | the two-brace suggestion over the bound dataset's columns                     |
-| `app/composables/pageBuilder/useMergeFieldColumns.ts`      | the bound dataset's columns, provided by the shell                            |
-| `app/services/emailEditor/substituteMergeFields.ts`        | per-row substitution, HTML-escaped                                            |
-| `app/services/emailEditor/getEmailHtml.ts`                 | the one MJML compile, shared with the [web view](../email-web-view/design.md) |
-| `app/services/emailEditor/exportPersonalizedHtml.ts`       | personalized HTML files → one zip, shared with the program's invites          |
-| `app/components/Resource/Email/Editor.vue`                 | the email's page builder, mounted by the resource routes over the email store |
-| `app/components/Resource/Email/ExportTruncationDialog.vue` | the confirm a capped dataset read routes through before exporting             |
+| File                                                          | Role                                                                          |
+| ------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `app/services/emailEditor/toMergeField.ts`                    | canonical `{{columnName}}` token                                              |
+| `app/services/pageBuilder/email/createMergeFieldNode.ts`      | bound column → a text node carrying the escaped token                         |
+| `app/services/pageBuilder/MergeFieldExtension.ts`             | the two-brace suggestion over the bound dataset's columns                     |
+| `app/composables/pageBuilder/useMergeFieldColumns.ts`         | the bound dataset's columns, provided by the shell                            |
+| `app/services/emailEditor/substituteMergeFields.ts`           | per-row substitution, HTML-escaped                                            |
+| `apps/web/server/services/emailEditor/compileEmailContent.ts` | the one MJML compile, shared with the [web view](../email-web-view/design.md) |
+| `app/services/emailEditor/exportPersonalizedHtml.ts`          | personalized HTML files → one zip, shared with the program's invites          |
+| `app/components/Resource/Email/Editor.vue`                    | the email's page builder, mounted by the resource routes over the email store |
+| `app/components/Resource/Email/ExportTruncationDialog.vue`    | the confirm a capped dataset read routes through before exporting             |
 
 ## Notes
 

@@ -1,16 +1,13 @@
 # Email Preview Text
 
-An email's preview text — the preheader — is the line an inbox shows beside the subject before the email is opened. Without one, "email clients will pull in the first part of your message by default", as Mailchimp puts it: in the default template, "My Company". MJML already has the element, `mj-preview` inside `mj-head`, which compiles to a hidden block at the top of the body, but the `grapesjs-mjml` plugin offers no way to add it from the canvas.
+An email's preview text — the preheader — is the line an inbox shows beside the subject before the email is opened. Without one, "email clients will pull in the first part of your message by default", as Mailchimp puts it: in the default template, "My Company". MJML already has the element, `mj-preview` inside `mj-head`, which compiles to a hidden block at the top of the body. The [page builder](../page-builder/README.md) writes it as one prop of the email's root, so the line is set in the root's form and never placed on the canvas.
 
 ## How it works
 
-- **The field sits in the Editor blade's bar**, beside the dataset picker, labelled _Preview text_.
-- **It writes markup.** The plugin registers `mj-head` as a component type but not `mj-preview`, and a component added by type serialises as a `<div>` the compiler ignores, so `writeEmailPreviewText` removes the preview it finds by tag and appends `<mj-preview>…</mj-preview>` to the head, the text escaped. The head keeps its other children, an email with no head gains one as the `mjml` root's first child, and emptying the field removes the preview. The edit is an ordinary change to the project, so the editor's own storage saves it, undo takes it back, and the save-time HTML capture ([email web view](../email-web-view/design.md)) compiles it in.
-- **It reads back after every change.** `readEmailPreviewText` reads the preview's text node on each editor `update`, so an undo shows in the field too.
+- **The field is the root's form.** The email's root form holds one field, `preview`, and nothing else of the head. It is edited through the page builder's history like any other root edit, so an undo takes the line back.
+- **It compiles to markup.** The [MJML blocks](../../mjml-blocks/README.md) package writes the root's `preview` as an `mj-preview` in the head, its text escaped, and reads the element back into the same prop on import. A preview left unset writes no element.
+- **A new email starts with a placeholder.** The starter document carries a short line that shows under the subject in most inboxes, which the author replaces.
 - **Merge fields work in it.** A `{{column}}` in the preview text is substituted per row on export like any token in the body, since substitution runs over the whole compiled HTML ([email personalization](../email-personalization/design.md)).
-- **The length is advice, not a cap.** The field counts characters against `EMAIL_PREVIEW_TEXT_INBOX_LENGTH`, and past it says that most inboxes cut the line there.
-
-Both services are tested against a headless GrapesJS editor with the installed plugin: the text reaches MJML's hidden preheader escaped, a second write replaces the first, and the head's other children stay.
 
 ## What is deliberately not in it
 
@@ -19,13 +16,12 @@ Both services are tested against a headless GrapesJS editor with the installed p
 
 ## Key files
 
-| File                                                             | Role                                                                                           |
-| ---------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| `apps/web/app/components/Resource/Email/Editor.vue`              | The Preview text field in the blade's bar, bridged to the live editor                          |
-| `apps/web/app/services/emailEditor/writeEmailPreviewText.ts`     | The preview written into the head as markup                                                    |
-| `apps/web/app/services/emailEditor/readEmailPreviewText.ts`      | The preview read back as text                                                                  |
-| `apps/web/app/services/emailEditor/getEmailPreview.ts`           | The `mj-preview` found by its tag inside the head                                              |
-| `apps/web/app/composables/resource/email/useEmailPreviewText.ts` | the field's value: read back after every editor change, an undo included, and written on input |
+| File                                                                | Role                                                          |
+| ------------------------------------------------------------------- | ------------------------------------------------------------- |
+| `apps/web/shared/services/pageBuilder/email/emailRootFormSchema.ts` | the root form's `preview` field, the only head field it edits |
+| `apps/web/shared/services/pageBuilder/email/starterEmailSource.ts`  | the starter email's placeholder preview                       |
+| `packages/mjml-blocks/src/services/renderMjmlHead.ts`               | the preview written into the head as `mj-preview`             |
+| `packages/mjml-blocks/src/services/readMjmlHead.ts`                 | the preview read back from `mj-preview` on import             |
 
 ## Sources
 
