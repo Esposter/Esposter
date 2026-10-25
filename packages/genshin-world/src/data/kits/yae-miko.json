@@ -2,7 +2,7 @@
   "burst.hits.length": { "source": "Gcsim" },
   "burst.hits.0.area": { "cause": "TargetCentred", "value": { "angle": 6.283185307179586, "height": 2, "radius": 22 } },
   "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 5839 } },
-  "frames.totemStrikes.length": { "cause": "Unclassified", "value": 5 },
+  "frames.totemStrikes.length": { "cause": "Unsourced", "value": 5 },
   "frames.totemStrikes.0": { "cause": "Unsourced", "value": 120 },
   "frames.totemStrikes.1": { "cause": "Unsourced", "value": 296 },
   "frames.totemStrikes.2": { "cause": "Unsourced", "value": 472 },
