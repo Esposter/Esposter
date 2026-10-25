@@ -50,7 +50,7 @@ The preview text set on an email SHALL be the text the email shows as its inbox 
 
 ### Requirement: A merge field is inserted by typing braces or dragging a column
 
-A merge field SHALL be inserted into a text by typing two braces or by dragging a column from the dataset, and SHALL show as the column's token.
+A merge field SHALL be inserted into a text by typing two braces or by dragging a column from the dataset, and SHALL show as the column's token. A dragged column SHALL be appended to the end of the text it is dropped on.
 
 #### Scenario: typing two braces offers the dataset's columns
 
@@ -63,7 +63,7 @@ A merge field SHALL be inserted into a text by typing two braces or by dragging 
 
 - **GIVEN** an email bound to a dataset with a column named Name
 - **WHEN** the owner drags Name from the Merge fields group into a text
-- **THEN** a merge field for Name is inserted in the text
+- **THEN** a merge field for Name is appended to the end of the text
 
 ### Requirement: An email node's style fields are its email attributes
 
