@@ -1,6 +1,6 @@
 # Dashboard Card and Table Visuals
 
-Every dashboard visual so far is an ApexCharts chart — `VisualType` runs from Area to Treemap — bound to a dataset through one query of an x column and aggregated series ([dashboard data binding](../../specs/resource/dashboard-data-binding/design.md)). The two visuals a report is most often opened for are missing: **the number** ("412 responses", "average rating 4.3") and **the exact values** behind a chart. In Power BI those are the Card — a measure's value as a large callout with its label — and the Table — rows and columns with headers and a totals row, for "reviewing and comparing detailed data and exact values rather than visual representations".
+Every dashboard visual so far is an ApexCharts chart — `VisualType` runs from Area to Treemap — bound to a dataset through one query of an x column and aggregated series ([dashboard data binding](../../../specs/resource/dashboard-data-binding/design.md)). The two visuals a report is most often opened for are missing: **the number** ("412 responses", "average rating 4.3") and **the exact values** behind a chart. In Power BI those are the Card — a measure's value as a large callout with its label — and the Table — rows and columns with headers and a totals row, for "reviewing and comparing detailed data and exact values rather than visual representations".
 
 ## What it adds
 
@@ -8,7 +8,7 @@ Every dashboard visual so far is an ApexCharts chart — `VisualType` runs from 
 
 - **Card** — one number, large, with its label under it. Bound, it reads the query's first series (a column and an aggregation — count, sum, average, minimum, maximum) over **every** row, ignoring the x column, since a card has no category axis; the label defaults to "_aggregation_ of _column_" and is editable. Unbound, it shows the demo value, as an unbound chart shows demo data. Numbers format through the app's number formatter with the same compact form (12K) Power BI's display units default to.
 - **Table** — the query's grouped result as a `UiDataTable`: the x column's values as rows, one column per series, sortable by header, with a totals row that sums a series whose aggregation is count or sum (and leaves an average or extreme blank, since a total of averages is not an average). It is the same aggregation the chart visuals already compute on the client, so a Table beside a Bar over the same binding shows the Bar's exact values.
-- **Chart options do not apply.** The visual's edit dialog hides the chart settings for these two kinds and shows only the label (Card) or nothing extra (Table); the chart-interaction features ([dashboard chart interaction](../../specs/resource/dashboard-chart-interaction/design.md)) stay chart-only.
+- **Chart options do not apply.** The visual's edit dialog hides the chart settings for these two kinds and shows only the label (Card) or nothing extra (Table); the chart-interaction features ([dashboard chart interaction](../../../specs/resource/dashboard-chart-interaction/design.md)) stay chart-only.
 
 ```mermaid
 flowchart LR
