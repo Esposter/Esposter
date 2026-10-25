@@ -157,7 +157,7 @@ The estimates below are judgement, checked against the measured sizes above: the
 | Keyboard and accessibility         | key map, focus, announcements of selection and moves                | 300 to 500                 |
 | SVG and PNG export                 | the SVG writer, the canvas route to PNG                             | 300 to 500                 |
 | Agent surface                      | describe, patch validation, the typed move                          | 200 to 300                 |
-| **Total**                          |                                                                     | **about 5,600 to 9,300**   |
+| **Total**                          |                                                                     | **about 5,600 to 8,900**   |
 
 Say plainly: **this is a large build**, several times the Flowchart's current app code and larger than the headless core it extends. The engine the Flowchart rents today does a share of this work the whiteboard must do itself: hit testing, routing, pan and zoom, and the selection model. Phases 1 and 2 are the bulk. Phase 1 can ship and be tested without the renderer, and phase 2 can be built against it, so the work can be cut at phase boundaries.
 

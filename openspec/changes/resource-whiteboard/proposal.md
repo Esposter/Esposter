@@ -25,7 +25,7 @@ The Flowchart is a diagram editor that draws a fixed set of connected steps on a
 - The headless editor core gains a second document model next to its tree. Its existing tree model is unchanged.
 - A new `ResourceType` value, `Whiteboard`. The Flowchart's value is removed by the retirement change, not here.
 - The flowchart's canvas packages leave the catalog in the retirement change.
-- The whiteboard is a large build, and the design sizes it. Its production code is estimated at roughly 5,600 to 9,300 lines, against about 930 non-test lines for the Flowchart today. The estimate is judgement from measured sizes, not a measurement.
+- The whiteboard is a large build, and the design sizes it. Its production code is estimated at roughly 5,600 to 8,900 lines, against about 930 non-test lines for the Flowchart today. The estimate is judgement from measured sizes, not a measurement.
 
 ## Waiting on
 
