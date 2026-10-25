@@ -1,7 +1,6 @@
 import { createHash } from "node:crypto";
+import { DIGEST_LENGTH } from "#src/services/genshinParity/reference/constants";
 import { createReadStream } from "node:fs";
-
-const DIGEST_LENGTH = 16;
 
 // The SHA-256 of a file's bytes, streamed, its first digits as the reference cache names it
 export const hashFile = async (path: string): Promise<string> => {

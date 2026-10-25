@@ -1,5 +1,6 @@
 import type { ImageRegion } from "#src/models/recreation/image/ImageRegion";
 
+import { DIGEST_LENGTH } from "#src/services/genshinParity/reference/constants";
 import { REFERENCES_DIRECTORY } from "#src/services/genshinParity/shared/constants";
 import { fillRegionHarmonically } from "#src/services/recreation/image/fillRegionHarmonically";
 import { createHash } from "node:crypto";
@@ -7,8 +8,6 @@ import { existsSync } from "node:fs";
 import { readFile, rename } from "node:fs/promises";
 import { join } from "node:path";
 import sharp from "sharp";
-
-const DIGEST_LENGTH = 16;
 
 // The reference drawn behind a screen, with each of its regions filled from its surroundings in turn: the game's
 // Interface is gone from them, so a render that draws nothing scores their own error rather than the interface's, and
