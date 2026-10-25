@@ -4,13 +4,13 @@ The email editor joins the data flow: merge-field blocks bound to a `DatasetRefe
 
 ## How it works
 
-An email optionally binds one dataset (`EmailEditor.datasetReference`, stored inside the content blob — every GrapesJS save carries it over since project data doesn't know about it). The bound dataset's columns appear in the block manager as drag-in merge-field blocks (`{{columnName}}`), and the owner's published surveys appear as styled invite-button blocks (`createEmailSurveyInviteBlocks`, over the shared core in `apps/web/app/services/grapesjs`). Export compiles the current MJML to HTML once (`mjml-code-to-html`), then zips one personalized `.html` per dataset row with merge fields substituted.
+An email optionally binds one dataset (`EmailEditor.datasetReference`, stored inside the content blob — every GrapesJS save carries it over since project data doesn't know about it). The bound dataset's columns appear in the page builder's palette as merge-field nodes (`{{columnName}}`), and the owner's published surveys appear as the email's survey-invite node (`shared/services/pageBuilder/email/emailSurveyInviteType.ts`). Export compiles the current MJML to HTML once (`mjml-code-to-html`), then zips one personalized `.html` per dataset row with merge fields substituted.
 
 ```mermaid
 flowchart LR
   BIND["Dataset/ReferencePicker<br/>EmailEditor.datasetReference"] -->|columns| BLOCKS["block manager<br/>merge-field blocks {{col}}"]
   SURV["owner's published surveys"] -->|invite-button blocks| BLOCKS
-  BLOCKS --> CANVAS["GrapesJS canvas (MJML)"]
+  BLOCKS --> CANVAS["Page builder canvas (MJML)"]
   CANVAS -->|"Export (Portable capability)"| MJML["mjml-code-to-html → HTML template"]
   BIND -->|dataset.readDataset rows| SUB["substituteMergeFields<br/>per row, HTML-escaped"]
   MJML --> SUB
@@ -19,23 +19,22 @@ flowchart LR
 
 ## Key files
 
-| File                                                        | Role                                                                          |
-| ----------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| `app/services/emailEditor/toMergeField.ts`                  | canonical `{{columnName}}` token                                              |
-| `app/services/emailEditor/createMergeFieldBlocks.ts`        | bound columns → mj-text blocks carrying the escaped token                     |
-| `app/services/emailEditor/createEmailSurveyInviteBlocks.ts` | the email's survey invite blocks, over the shared core                        |
-| `app/services/emailEditor/substituteMergeFields.ts`         | per-row substitution, HTML-escaped                                            |
-| `app/services/emailEditor/getEmailHtml.ts`                  | the one MJML compile, shared with the [web view](../email-web-view/design.md) |
-| `app/services/emailEditor/exportPersonalizedHtml.ts`        | personalized HTML files → one zip, shared with the program's invites          |
-| `app/services/grapesjs/setBlocks.ts`                        | wholesale block-category re-sync in the block manager                         |
-| `app/composables/grapesjs/useGrapesJsEditor.ts`             | shared GrapesJS init + resource storage adapter (email)                       |
-| `app/components/Resource/Email/Editor.vue`                  | inline Editor blade bridging the live editor onto the email store             |
-| `app/components/Resource/Email/ExportTruncationDialog.vue`  | the confirm a capped dataset read routes through before exporting             |
+| File                                                       | Role                                                                          |
+| ---------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `app/services/emailEditor/toMergeField.ts`                 | canonical `{{columnName}}` token                                              |
+| `app/services/pageBuilder/email/createMergeFieldNode.ts`   | bound column → a text node carrying the escaped token                         |
+| `app/services/pageBuilder/MergeFieldExtension.ts`          | the two-brace suggestion over the bound dataset's columns                     |
+| `app/composables/pageBuilder/useMergeFieldColumns.ts`      | the bound dataset's columns, provided by the shell                            |
+| `app/services/emailEditor/substituteMergeFields.ts`        | per-row substitution, HTML-escaped                                            |
+| `app/services/emailEditor/getEmailHtml.ts`                 | the one MJML compile, shared with the [web view](../email-web-view/design.md) |
+| `app/services/emailEditor/exportPersonalizedHtml.ts`       | personalized HTML files → one zip, shared with the program's invites          |
+| `app/components/Resource/Email/Editor.vue`                 | the email's page builder, mounted by the resource routes over the email store |
+| `app/components/Resource/Email/ExportTruncationDialog.vue` | the confirm a capped dataset read routes through before exporting             |
 
 ## Notes
 
-- Export surfaces through the **Portable** capability (`PortableFormatMap[Email]` personalized-HTML `export()`), rendered as Import/Export entries in the resource command bar — the live GrapesJS editor is bridged onto the email store so the command-bar export can reach it.
-- Merge-field and survey-invite block categories re-sync wholesale whenever their reactive source changes (bound dataset columns, published surveys) — no per-block bookkeeping.
+- Export surfaces through the **Portable** capability (`PortableFormatMap[Email]` personalized-HTML `export()`), rendered as Import/Export entries in the resource command bar — the email's page builder is mounted over the email store, so the command-bar export compiles the stored document.
+- Merge-field palette entries and the survey-invite node read their reactive sources (bound dataset columns, published surveys) on render, so no per-block re-sync is kept.
 - Substituted values are HTML-escaped: merge fields personalize text, never inject markup. Tokens are inserted escaped and substitution matches both raw and escaped token forms, since the canvas entity-encodes special characters (e.g. a "P&L" column) on serialization.
 - Export is fully client-side: the personalized files are zipped in the browser and handed over as one download, so no directory permission prompt stands between the sender and the artifact.
 - Exported files keep app-origin asset urls (`/api/resource-assets/…`), which resolve only for a request carrying the owner's session cookie — images are blank in a file opened straight off disk. Durable public asset urls come with [email sending](../../../deferred/resource/email-sending/design.md).
