@@ -1,7 +1,7 @@
 import { MimeType } from "#shared/models/file/MimeType";
 import { escapeXml } from "#shared/util/text/escapeXml";
-import { copyComputedStyles } from "@/services/resource/flowchart/copyComputedStyles";
-import { readFontFaceCss } from "@/services/resource/flowchart/readFontFaceCss";
+import { copyComputedStyles } from "@/services/capture/copyComputedStyles";
+import { readFontFaceCss } from "@/services/capture/readFontFaceCss";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const createFlowchartSvg = async (element: HTMLElement) => {

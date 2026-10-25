@@ -1,4 +1,4 @@
-import { encodeBase64 } from "@/services/resource/flowchart/encodeBase64";
+import { encodeBase64 } from "@/services/capture/encodeBase64";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 export const inlineFontFace = async (rule: CSSFontFaceRule) => {

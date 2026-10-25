@@ -1,4 +1,4 @@
-import { getCssText } from "@/services/resource/flowchart/getCssText";
+import { getCssText } from "@/services/capture/getCssText";
 
 export const copyComputedStyles = (source: Element, target: Element) => {
   target.setAttribute("style", getCssText(window.getComputedStyle(source)));

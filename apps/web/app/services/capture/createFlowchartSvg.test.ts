@@ -1,6 +1,6 @@
 // @vitest-environment nuxt
 import { MimeType } from "#shared/models/file/MimeType";
-import { createFlowchartSvg } from "@/services/resource/flowchart/createFlowchartSvg";
+import { createFlowchartSvg } from "@/services/capture/createFlowchartSvg";
 import { describe, expect, test, vi } from "vitest";
 
 describe(createFlowchartSvg, () => {

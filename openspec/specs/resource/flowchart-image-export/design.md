@@ -23,14 +23,14 @@ flowchart LR
 
 ## Key files
 
-| File                                                            | Role                                                     |
-| :-------------------------------------------------------------- | :------------------------------------------------------- |
-| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`    | Flowchart opts into the Portable capability              |
-| `apps/web/app/services/resource/PortableFormatMap.ts`           | PNG and SVG export menu entries                          |
-| `apps/web/app/services/resource/ResourceDialogsComponentMap.ts` | Lazily loads the Flowchart export surface                |
-| `apps/web/app/store/flowchartEditor/export.ts`                  | Holds the graph snapshot while the export canvas renders |
-| `apps/web/app/components/Resource/Flowchart/ExportCanvas.vue`   | Fits and downloads the offscreen read-only canvas        |
-| `apps/web/app/services/resource/flowchart/captureFlowchart.ts`  | Captures SVG and rasterizes PNG                          |
+| File                                                            | Role                                                                  |
+| :-------------------------------------------------------------- | :-------------------------------------------------------------------- |
+| `apps/web/shared/services/resource/ResourceDefinitionMap.ts`    | Flowchart opts into the Portable capability                           |
+| `apps/web/app/services/resource/PortableFormatMap.ts`           | PNG and SVG export menu entries                                       |
+| `apps/web/app/services/resource/ResourceDialogsComponentMap.ts` | Lazily loads the Flowchart export surface                             |
+| `apps/web/app/store/flowchartEditor/export.ts`                  | Holds the graph snapshot while the export canvas renders              |
+| `apps/web/app/components/Resource/Flowchart/ExportCanvas.vue`   | Fits and downloads the offscreen read-only canvas                     |
+| `apps/web/app/services/capture/captureFlowchart.ts`             | Captures SVG and rasterizes PNG, shared with the dashboard page image |
 
 ## Notes
 
