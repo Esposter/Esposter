@@ -10,7 +10,7 @@ The stream carries the new content version and the writing device rather than th
 
 ## Adopting
 
-An open editor that holds no unwritten edit — no save pending, no autosave armed, content equal to what it last persisted — adopts the save. It stores the new version and runs `ResourceContentHookMap`'s two stages in order, as [third-party document adapters](../../specs/architecture/third-party-document-adapters/design.md) describe for a restore: `Reload`, where each content store re-reads through `createContentData`, then `Adopt`, where a library holding its own copy — Tiptap, SurveyJS, GrapesJS — takes the new document.
+An open editor that holds no unwritten edit — no save pending, no autosave armed, content equal to what it last persisted — adopts the save. It stores the new version and runs `ResourceContentHookMap`'s two stages in order, as [third-party document adapters](../../specs/architecture/third-party-document-adapters/design.md) describe for a restore: `Reload`, where each content store re-reads through `createContentData`, then `Adopt`, where a library holding its own copy — Tiptap, SurveyJS — takes the new document.
 
 Two things describe a document that is gone, and clear. An editor's undo history clears, as a restore clears it: the Sheet's command history today, the page builder's patch history once it ships. The [delta content saves](../../specs/resource/delta-content-saves/design.md) baseline clears too, since it names bytes the server no longer holds, so one large save crosses whole before deltas resume.
 
