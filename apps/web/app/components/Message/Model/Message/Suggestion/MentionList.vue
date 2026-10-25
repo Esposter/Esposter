@@ -13,7 +13,8 @@ import { MentionType, takeOne } from "@esposter/shared";
 
 type MentionItem = BroadcastMentionItem | MemberInRoom | RoleMentionItem;
 
-const { command, items, query } = defineProps<SuggestionProps<MentionItem, MentionNodeAttributes>>();
+const { command, items, query } =
+  defineProps<Pick<SuggestionProps<MentionItem, MentionNodeAttributes>, "command" | "items" | "query">>();
 const checkIsRoleMentionItem = (item: MentionItem): item is RoleMentionItem =>
   "type" in item && item.type === MentionType.Role;
 const checkIsMemberMentionItem = (item: MentionItem): item is MemberInRoom => "displayName" in item;
