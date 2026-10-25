@@ -8,6 +8,7 @@ export const parsePropertyValue = (propertyType: PropertyType, value: string): b
       return value === "true";
     case PropertyType.Class:
     case PropertyType.Color:
+    case PropertyType.Enum:
     case PropertyType.File:
     case PropertyType.Object:
     case PropertyType.String:

@@ -1,4 +1,5 @@
 // oxlint-disable oxc/no-barrel-file -- the package's one entry is a barrel by design: it names what a consumer imports, and the build bundles it
+export * from "#src/models/PropertyType";
 export * from "#src/models/Shape";
 export type * from "#src/models/tmx/parsed/TMXAnimationFrameParsed";
 export type * from "#src/models/tmx/parsed/TMXAnimationParsed";
