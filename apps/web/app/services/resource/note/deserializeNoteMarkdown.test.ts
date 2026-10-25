@@ -28,6 +28,8 @@ describe(deserializeNoteMarkdown, () => {
           { text: " ", type: "text" },
           { marks: [{ attrs: { href: "https://example.com" }, type: "link" }], text: "link", type: "text" },
           { text: " *_[]~<>&\\`", type: "text" },
+          { text: " Wow!", type: "text" },
+          { marks: [{ attrs: { href: "https://example.com" }, type: "link" }], text: "here", type: "text" },
           { type: "hardBreak" },
           { text: "next", type: "text" },
         ],

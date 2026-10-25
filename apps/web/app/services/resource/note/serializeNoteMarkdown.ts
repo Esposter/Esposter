@@ -9,7 +9,7 @@ const MARK_WRAPPERS: { type: string; wrap: MarkWrapper }[] = [
   { type: "strike", wrap: (text) => `~~${text}~~` },
   { type: "link", wrap: (text, mark) => `[${text}](${formatDestination(String(mark.attrs?.href ?? ""))})` },
 ];
-const SPECIAL_CHARACTER_REGEX = /[\\`*_[\]<>~&]/g;
+const SPECIAL_CHARACTER_REGEX = /[\\`*_[\]<>~&!]/gu;
 // The marker's own character is escaped (`1\.`, `\#`), so the line reads as its text
 const LINE_START_MARKER_REGEX = /^([ \t]*\d*)([#>+\-.)])(?=\s|$)/gm;
 const BACKTICK_RUN_REGEX = /`+/g;
