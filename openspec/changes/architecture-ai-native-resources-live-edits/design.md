@@ -18,7 +18,7 @@ The TodoList saves each edit as it happens, so it rarely holds an unwritten one,
 
 ## Meeting an unsaved edit
 
-An editor holding an unwritten edit overwrites nothing in either direction. The notice comes the moment the other save lands, naming the device — an agent by its key's name from the owner's key list — with two answers:
+An editor holding an unwritten edit overwrites nothing in either direction. The notice comes the moment the other save lands, saying where the save came from — another device, or an agent by its key's name from the owner's key list — with two answers:
 
 - **Take theirs** adopts as above and drops the local edit.
 - **Keep mine** re-saves the local document through the existing save mutation at the newer version, replacing the other write, which stays in version history.
@@ -32,12 +32,14 @@ flowchart TD
   DIRTY -->|no| RELOAD["Reload stage — the content store re-reads"]
   RELOAD --> ADOPT["Adopt stage — a library editor takes the document"]
   ADOPT --> CLEAR["undo history and delta baseline cleared"]
-  DIRTY -->|yes| ASK["notice naming the device, autosave held"]
+  DIRTY -->|yes| ASK["notice naming the saver, autosave held"]
   ASK -->|"take theirs"| RELOAD
   ASK -->|"keep mine"| WRITE["save the local document at the new version"]
 ```
 
 The store holds no document, so it cannot write one. Keep mine therefore runs a `Keep` stage on `ResourceContentHookMap`: the store moves the resource to the held save's version and runs the stage, and each content store (`createContentData`) answers by saving the document it holds through its own save, so the write goes through the existing save mutation and the other write stays in version history. Taking theirs runs no stage; it reloads and drops the unwritten edit.
+
+A save the server refuses is the one case the save stream did not deliver, so it keeps the stale-save refresh rather than a second route to the choice. A refused save names no other save, so there is no other version to choose between and no device to name. The choice is offered only where the other save is known: when it lands over an unsaved edit. The [resource page parity](../../specs/resource/resource-page-parity/design.md) delta records this.
 
 ## Key files
 

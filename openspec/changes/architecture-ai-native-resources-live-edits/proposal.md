@@ -10,8 +10,8 @@ Every open resource adopts another device's save, and an unsaved edit is present
 
 - One save subscription serves every open resource type, so no type needs its own.
 - An editor with no unwritten edit takes the new version in place, clears its undo history and its delta baseline, so the next large save is written whole.
-- An editor with an unwritten edit is told at once that another device saved, naming the device. Autosave holds until the person answers.
-- **BREAKING**: the stale-save notice that asked for a refresh is replaced by a choice between taking the other version and keeping the local edit.
+- An editor with an unwritten edit is told at once that another device saved, and who: another device, or the agent by its key. Autosave holds until the person answers.
+- **BREAKING**: an unsaved edit that meets another device's save is offered a choice between taking the other version and keeping the local edit, where the stale-save notice used to ask for a refresh. A save the server refuses still asks for a refresh: a refusal names no save to choose between.
 - Taking theirs adopts the other version and drops the local edit. Keeping mine saves the local document over it, and the other write stays in version history.
 - An agent is named in the notice by its key's name.
 - The todo list re-reads another device's save in place of taking the streamed list.
@@ -19,7 +19,7 @@ Every open resource adopts another device's save, and an unsaved edit is present
 ## Capabilities
 
 - **architecture/ai-native-resources/live-edits** (new)
-- **resource/resource-page-parity** (modified: its stale-save requirement becomes the choice)
+- **resource/resource-page-parity** (modified: its stale-save requirement keeps the refresh, with the decision and its reason written in the delta)
 
 ## Waiting on
 

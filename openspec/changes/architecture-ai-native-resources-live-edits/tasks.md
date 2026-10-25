@@ -21,8 +21,11 @@
 ## Owed
 
 - A look at the notice in the explorer, in a browser, by the owner. The tests cover the store's answers, not the notice's rendering or its two buttons.
-- Naming the device: a save from another device of the person's own is named "another device", because the `Device` a save carries has no name to show. A device name needs its own change.
-- The stale-save choice in the `resource-page-parity` delta (a refused save offers take theirs or keep mine). No task names it, so it is not built here; the refused save still shows the refresh notice. It needs a task before it is built.
+
+## Decided
+
+- **Device naming: "another device" is the final wording.** A save carries a `Device` with a session and user id and no name, so the notice cannot name the device more usefully. An agent's save is named by its key instead. A device name would need its own change, which is not planned.
+- **Stale-save choice: the refresh stays for a refused save.** The choice is offered when another device's save lands over an unsaved edit, at once, under the live-edits capability. A refused save names no save, so it keeps the refresh. The decision and its reason are written in the `resource-page-parity` delta and in the design.
 
 ## Typecheck
 

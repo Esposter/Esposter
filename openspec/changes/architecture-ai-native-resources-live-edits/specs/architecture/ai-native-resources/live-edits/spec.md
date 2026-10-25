@@ -35,13 +35,13 @@ An open editor with no unsaved edit SHALL show another device's saved content in
 
 ### Requirement: An unsaved edit is kept and the other save is offered as a choice
 
-An editor holding an unsaved edit SHALL NOT overwrite it when another device saves, and SHALL name the device and offer the person a choice.
+An editor holding an unsaved edit SHALL NOT overwrite it when another device saves, and SHALL say where the save came from, another device or the agent by its key, and offer the person a choice.
 
 #### Scenario: An unsaved edit stays on screen when another device saves
 
 - **GIVEN** an editor holds an unsaved edit
 - **WHEN** another device saves the resource
-- **THEN** a notice names the device that saved
+- **THEN** a notice says the save came from another device, or names the agent that saved
 - **AND** the unsaved edit stays on screen
 - **AND** autosave is held until the person answers
 
