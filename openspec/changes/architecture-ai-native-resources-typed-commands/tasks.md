@@ -1,7 +1,7 @@
 ## 1. Sheet commands
 
 - [x] 1.1 Move the sheet's column command classes to the shared layer with plain-data inputs, the browser building them as before. Verify: the existing sheet history tests pass with no change to their expectations (`pnpm test` on those files, `--run`, all passing).
-- [ ] 1.2 Add the server sheet command that runs one of these inside the generic update service. Verify: a test named after the scenario 'Column rename re-keys every row', failing first, then passing; and the scenarios 'Column type change converts every cell' and 'Date format change rewrites every date'.
+- [x] 1.2 Add the server sheet command that runs one of these inside the generic update service. Verify: a test named after the scenario 'Column rename re-keys every row', failing first, then passing; and the scenarios 'Column type change converts every cell' and 'Date format change rewrites every date'.
 - [ ] 1.3 Land a command that names a row by id after rows are inserted above it, and reapply it to newer content. Verify: a test named after the scenario 'A command lands on its row after a row is inserted above it', failing first, then passing; and the scenario 'A command based on older content applies to the newer content'.
 
 ## 2. Repeating todo tick

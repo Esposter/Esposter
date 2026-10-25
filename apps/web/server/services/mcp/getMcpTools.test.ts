@@ -59,6 +59,7 @@ describe(getMcpTools, () => {
           "resource_readResources",
           "resource_updateResource",
           "resource_updateResourceContent",
+          "sheet_runSheetCommand",
         ],
       }
     `);
