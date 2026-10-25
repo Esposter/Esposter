@@ -2,6 +2,8 @@
 import type { MenuItem } from "@/models/shared/MenuItem";
 import type { Editor } from "@tiptap/vue-3";
 
+import { NOTE_IMAGE_MIME_TYPES } from "#shared/services/resource/note/constants";
+import { useInsertNoteImages } from "@/composables/resource/note/useInsertNoteImages";
 import { getNoteBlockMenuItems } from "@/services/resource/note/getNoteBlockMenuItems";
 import { getListMenuItems } from "@/services/richTextEditor/getListMenuItems";
 import { getTextFormatMenuItems } from "@/services/richTextEditor/getTextFormatMenuItems";
@@ -11,6 +13,11 @@ interface Props {
 }
 
 const { editor } = defineProps<Props>();
+const insertNoteImages = useInsertNoteImages();
+const { onChange, open: openImagePicker } = useFileDialog({ accept: NOTE_IMAGE_MIME_TYPES.join(","), multiple: true });
+onChange((pickedFiles) => {
+  if (editor && pickedFiles) insertNoteImages(editor, [...pickedFiles]);
+});
 const items = computed<MenuItem[]>(() => [
   ...getNoteBlockMenuItems(editor),
   {
@@ -20,6 +27,7 @@ const items = computed<MenuItem[]>(() => [
     },
     title: "Table",
   },
+  { icon: "i-mdi:image", onClick: () => openImagePicker(), title: "Image" },
   { isDivider: true },
   ...getTextFormatMenuItems(editor),
   {

@@ -1,8 +1,10 @@
 <script setup lang="ts">
+import { NOTE_IMAGE_MIME_TYPES } from "#shared/services/resource/note/constants";
 import { getNoteExtensions } from "#shared/services/resource/note/getNoteExtensions";
+import { useInsertNoteImages } from "@/composables/resource/note/useInsertNoteImages";
 import { useNoteSlashExtension } from "@/composables/resource/note/useNoteSlashExtension";
 import { useNoteStore } from "@/store/resource/note";
-import { ResourceType } from "@esposter/db-schema";
+import { FileHandler } from "@tiptap/extension-file-handler";
 import { EditorContent, useEditor } from "@tiptap/vue-3";
 
 const noteStore = useNoteStore();
@@ -11,10 +13,20 @@ const { note } = storeToRefs(noteStore);
 await loadContent();
 // Tiptap onUpdate fires per keystroke, so writes coalesce on the shared autosave cadence like the other editors
 const debouncedSave = useAutosaveFunction(saveNote);
+const insertNoteImages = useInsertNoteImages();
 // `useEditor` constructs the editor in onMounted, which is after the load above, so the doc is already there
 const editor = useEditor({
   content: note.value.doc,
-  extensions: [...getNoteExtensions(), useNoteSlashExtension()],
+  extensions: [
+    ...getNoteExtensions(),
+    // A pasted or dropped image file is inserted where it lands, through the same upload the menu's Image button uses
+    FileHandler.configure({
+      allowedMimeTypes: NOTE_IMAGE_MIME_TYPES,
+      onDrop: (noteEditor, files, position) => insertNoteImages(noteEditor, files, position),
+      onPaste: (noteEditor, files) => insertNoteImages(noteEditor, files),
+    }),
+    useNoteSlashExtension(),
+  ],
   onUpdate: ({ editor: updatedEditor }) => {
     note.value.doc = updatedEditor.getJSON();
     debouncedSave();

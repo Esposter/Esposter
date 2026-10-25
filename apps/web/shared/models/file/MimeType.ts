@@ -1,13 +1,16 @@
 export enum MimeType {
   AudioWebm = "audio/webm",
   Csv = "text/csv",
+  Gif = "image/gif",
   Gzip = "application/gzip",
   Html = "text/html",
+  Jpeg = "image/jpeg",
   Json = "application/json",
   Pdf = "application/pdf",
   PlainText = "text/plain",
   Png = "image/png",
   Svg = "image/svg+xml",
+  Webp = "image/webp",
   Xlsx = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   Xml = "application/xml",
 }

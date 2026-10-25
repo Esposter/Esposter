@@ -87,6 +87,7 @@
     "@tiptap/core": "catalog:",
     "@tiptap/extension-code-block-lowlight": "catalog:",
     "@tiptap/extension-file-handler": "catalog:",
+    "@tiptap/extension-image": "catalog:",
     "@tiptap/extension-list": "catalog:",
     "@tiptap/extension-mention": "catalog:",
     "@tiptap/extension-table": "catalog:",
