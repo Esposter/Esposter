@@ -8,7 +8,7 @@ import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "@/services/resource/constants";
 interface Props {
   // The open email as the page builder holds it, so Preview shows an edit before it is saved
   emailDocument: EmailDocument;
-  // The device the canvas's toggle sets: mobile draws the email at a phone's width, and any other device fills the pane
+  // The device the canvas's toggle sets: mobile and tablet draw the email at their device's width, and desktop fills the pane
   device: PageBuilderDevice;
 }
 
