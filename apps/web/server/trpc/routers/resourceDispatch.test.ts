@@ -15,8 +15,8 @@ import { MimeType } from "#shared/models/file/MimeType";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { AzureContainer } from "@esposter/db-schema";
-import { MockContainerDatabase } from "azure-mock";
-import { afterEach, assert, beforeAll, describe, expect, test } from "vitest";
+import { getBlobUrl, getMockSasUrl, MockContainerDatabase } from "azure-mock";
+import { afterEach, beforeAll, describe, expect, test } from "vitest";
 
 describe("resourceDispatchRouter", () => {
   const { getMockContext } = setupResourceSuite(resourceDispatchRouter);
@@ -76,22 +76,20 @@ describe("resourceDispatchRouter", () => {
     expect(publishedAfterUnpublish).toBeUndefined();
   });
 
-  test("An agent uploads a file before its address expires", async () => {
+  test("an agent is given a write address for the file's hash, and the store holds nothing until the bytes are sent", async () => {
     expect.hasAssertions();
 
     const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
     const webpageResource = await webpageCaller.createResource({ name });
-    const [{ sasUrl }] = await callAgentTool<ResourceFileSasEntity[]>("resource_generateUploadFileSasEntities", {
+    const sasEntities = await callAgentTool<ResourceFileSasEntity[]>("resource_generateUploadFileSasEntities", {
       files: [{ hash, mimetype, size }],
       id: webpageResource.id,
     });
-    // The agent's own shell sends the bytes to the address, and the store keeps them under the name it signs
     const blobName = `${getFilesDirectoryName(webpageResource.id)}/${hash}`;
-    MockContainerDatabase.set(AzureContainer.ResourceAssets, new Map([[blobName, Buffer.alloc(size)]]));
-    const container = MockContainerDatabase.get(AzureContainer.ResourceAssets);
-    assert.exists(container);
 
-    expect(sasUrl).toContain(blobName);
-    expect(container.has(blobName)).toBe(true);
+    expect(sasEntities).toStrictEqual([
+      { id: hash, isHeld: false, sasUrl: getMockSasUrl(getBlobUrl(AzureContainer.ResourceAssets, blobName), "w", "b") },
+    ]);
+    expect(MockContainerDatabase.get(AzureContainer.ResourceAssets)?.has(blobName)).not.toBe(true);
   });
 });
