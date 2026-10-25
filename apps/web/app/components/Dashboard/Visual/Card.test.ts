@@ -20,4 +20,15 @@ describe("dashboardVisualCard", () => {
 
     expect(wrapper.findAll("span").map((span) => span.text())).toStrictEqual(["12K", name]);
   });
+
+  test("a card shows the label its owner wrote over the default", async () => {
+    expect.hasAssertions();
+
+    const data: VisualPropsData = { series: [{ data: [412], name }] };
+    const visual = new Visual({ type: VisualType.Card });
+    visual.chart.configuration.title = "a";
+    const wrapper = await mountSuspended(DashboardVisualCard, { props: { data, visual } });
+
+    expect(wrapper.findAll("span").map((span) => span.text())).toStrictEqual(["412", "a"]);
+  });
 });
