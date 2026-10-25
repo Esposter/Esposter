@@ -1,12 +1,8 @@
 import type { DurationUnit } from "@/models/date/DurationUnit";
 
 import { DurationUnits } from "@/models/date/DurationUnit";
+import { createUnitFormatter } from "@/util/date/createUnitFormatter";
 
-// Pinned to en-US rather than the reader's locale, like every other formatter here: a duration is rendered on
-// Both sides of hydration, and a server that speaks a different locale would print different text to the one
-// The browser then computes.
-const createUnitFormatter = (unit: DurationUnit) =>
-  new Intl.NumberFormat("en-US", { style: "unit", unit, unitDisplay: "long" });
 const DurationUnitFormatterMap: Record<DurationUnit, Intl.NumberFormat> = {
   day: createUnitFormatter("day"),
   hour: createUnitFormatter("hour"),

@@ -1,5 +1,4 @@
 import { formatDate } from "#shared/util/date/formatDate";
-
-const SHORT_TIME_FORMAT = "H:mm";
+import { SHORT_TIME_FORMAT } from "@/util/date/constants";
 
 export const getShortTimeLabel = (date: Date) => formatDate(date, SHORT_TIME_FORMAT);
