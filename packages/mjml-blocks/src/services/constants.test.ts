@@ -65,7 +65,6 @@ const TEST_SCHEMAS = createMjmlNodeSchema({
   maxChildren: TEST_MAX_CHILDREN,
   richText: TEST_RICH_TEXT,
 });
-export const TEST_NODE_SCHEMA: z.ZodType<MjmlNode> = TEST_SCHEMAS.nodeSchema;
 // The schema of a document's content: the children the body takes
 export const TEST_BODY_CHILDREN_SCHEMA: z.ZodType<MjmlNode> = TEST_SCHEMAS.bodyChildrenSchema;
 // The children port a test registry composes: the test leaf holds no slot, and every built-in node is MJML's own
