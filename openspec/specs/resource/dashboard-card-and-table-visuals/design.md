@@ -30,11 +30,11 @@ flowchart LR
 
 | File                                                                   | Role                                                                               |
 | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| `apps/web/shared/models/dashboard/data/VisualType.ts`                  | `Card` and `Table`, first in the enum                                              |
+| `apps/web/shared/models/dashboard/data/VisualType.ts`                  | `Card` and `Table`, in the enum's sorted order                                     |
 | `apps/web/app/components/Dashboard/Visual/Index.vue`                   | dispatches the two non-chart kinds to their components                             |
 | `apps/web/app/components/Dashboard/Visual/Card.vue`                    | the one number, its label and its compact form                                     |
 | `apps/web/app/components/Dashboard/Visual/Table.vue`                   | the grouped rows, the sortable columns and the totals row                          |
-| `apps/web/app/services/dashboard/VisualTypeItemCategoryDefinitions.ts` | not changed: the picker lists the enum, which leads with the two plainest kinds    |
+| `apps/web/app/services/dashboard/VisualTypeItemCategoryDefinitions.ts` | the picker lists the two plainest kinds first, then the rest in the enum's order   |
 | `apps/web/app/services/dashboard/dataset/VisualTypeDatasetShapeMap.ts` | a shape for each, so `computeDatasetVisualPropsData` hands them the grouped result |
 | `apps/web/app/services/dashboard/chart/VisualTypeChartTypesMap.ts`     | the two kinds take the common chart type, which the edit form does not offer       |
 | `apps/web/app/services/dashboard/demo/VisualTypeDemoDataMap.ts`        | the demo value and demo rows an unbound Card and Table show                        |

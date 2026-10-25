@@ -4,6 +4,15 @@ import { VisualTypeItemCategoryDefinitions } from "@/services/dashboard/VisualTy
 import { describe, expect, test } from "vitest";
 
 describe("visualTypeItemCategoryDefinitions", () => {
+  test("leads with a card and a table, then offers every other type once", () => {
+    expect.hasAssertions();
+
+    const values = VisualTypeItemCategoryDefinitions.map(({ value }) => value);
+
+    expect(values.slice(0, 2)).toStrictEqual([VisualType.Card, VisualType.Table]);
+    expect(new Set(values).size).toBe(Object.values(VisualType).length);
+  });
+
   test("titles a multi-word type at its word boundaries", () => {
     expect.hasAssertions();
 
