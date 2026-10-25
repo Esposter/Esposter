@@ -376,8 +376,15 @@ export const resourceRouter = router({
   // Both channels in one time-ordered list, because the owner has one question — where can I go back to — and
   // The channels are an address space rather than two things to make them choose between. Every type is asked
   // For both: a non-publishable one simply has no published rows
-  readSnapshotHistory: getOwnerProcedure(undefined, resourceIdInputSchema, "id").query<SnapshotVersion[]>(
-    async ({ ctx }) => {
+  readSnapshotHistory: getOwnerProcedure(undefined, resourceIdInputSchema, "id")
+    .meta({
+      mcp: {
+        description:
+          "Read a resource's version history, its revisions and its published versions together, newest first. Answers each version's channel and number, which restoreSnapshotVersion takes.",
+        scope: McpScope.Resources,
+      },
+    })
+    .query<SnapshotVersion[]>(async ({ ctx }) => {
       const publication = await ctx.db.query.resourcePublicationsInResource.findFirst({
         where: { resourceId: { eq: ctx.resource.id } },
       });
@@ -393,8 +400,7 @@ export const resourceRouter = router({
           (firstChannelHistory, secondChannelHistory) =>
             secondChannelHistory.takenAt.getTime() - firstChannelHistory.takenAt.getTime(),
         );
-    },
-  ),
+    }),
   // An upsert rather than an insert: the open that just happened is always the newest, so there is nothing to
   // Compare. Owner-scoped, like every other resource write
   recordAccess: getOwnerProcedure(undefined, resourceIdInputSchema, "id").mutation<void>(
@@ -462,51 +468,55 @@ export const resourceRouter = router({
   // Referenced where they sit, exactly as the duplicate path does: a published url lives under {id}/published,
   // Which unpublish wipes wholesale, so a verbatim copy would hand the draft urls a later unpublish deletes —
   // And re-publishing that draft would ship the same dead urls, with re-uploading every asset the only recovery
-  restoreSnapshotVersion: getOwnerProcedure(
-    undefined,
-    restoreSnapshotVersionInputSchema,
-    "id",
-  ).mutation<SnapshotRestoration>(async ({ ctx, input: { channel, id, version } }) => {
-    const snapshotContent = await requireEntity(
-      readSnapshotVersionContent(ctx.db, ctx.resource, { channel, version }),
-      DatabaseEntityType.Resource,
-      `${id}/${channel}/${version}`,
-    );
-    // The undo, taken before a single byte of the working copy is written and allowed to fail the whole
-    // Restore: a restore is the one operation that destroys draft work on purpose, and one whose undo silently
-    // Did not happen is the defect this mechanism exists to close. Taken after the snapshot is known to exist,
-    // So a restore that was never going to land does not spend a ring-buffer slot and evict the oldest
-    // Recovery point on its way to failing
-    const undoRevisionVersion = await takeResourceRevision(ctx, ctx.resource, SnapshotReason.BeforeRestore);
-    // Reconstitution, not a raw copy: a snapshot froze whatever the type declares live, and writing that back
-    // Over the working copy would silently reopen a closed survey or flip its response mode — a setting the
-    // Write boundary makes authorization decisions on, with nothing in the restore or its confirmation saying
-    // It would happen. The declaration is `ResourceLiveContentMap`, and it is the same one the public read and
-    // The version preview reconstitute through
-    const reappliedContent = omitDerivedContent(
-      ctx.resource,
-      await reapplyLiveResourceContent(ctx.resource, snapshotContent),
-    );
-    // Nothing is copied: the save below reserves the objects the restored content names, so they stay alive, and they
-    // Are this Resource's own objects, so a restore holds no second copy of any asset. A version's asset an eviction
-    // Above released is not refused: the save reserves it like any other name, so the working copy names a gone file,
-    // Which reads as a broken image rather than a failed restore.
-    // The one content-write path, so a restore is a content write like any other: the version bump and the blob
-    // Write land in one transaction, the type's after-save hook re-derives what the restored content declares,
-    // And the trail records the restore the way the recycle bin's does. Nothing adopts the save event it emits:
-    // The subscription filters the emitting device out, and no publishable type subscribes to it client-side, so
-    // An editor left open on this resource keeps the pre-restore draft and the version it cached, and its next
-    // Autosave is rejected as stale until it reloads
-    const restoredResource = await saveResourceContent(ctx, {
-      activityType: ResourceActivityType.Restored,
-      content: reappliedContent,
-      // The bump and the write stay in one transaction so a failed write rolls the contentVersion back —
-      // A restore that did not land must never advance the version every client caches against
-      contentVersion: ctx.resource.contentVersion,
-      resource: ctx.resource,
-    });
-    return { resource: restoredResource, undoRevisionVersion };
-  }),
+  restoreSnapshotVersion: getOwnerProcedure(undefined, restoreSnapshotVersionInputSchema, "id")
+    .meta({
+      mcp: {
+        description:
+          "Restore a version of a resource into its working draft, which the restore replaces. The draft it replaced is kept as a revision, named in the answer, so restoring that revision undoes the restore. Answers the restored resource and that revision's version.",
+        scope: McpScope.Resources,
+      },
+    })
+    .mutation<SnapshotRestoration>(async ({ ctx, input: { channel, id, version } }) => {
+      const snapshotContent = await requireEntity(
+        readSnapshotVersionContent(ctx.db, ctx.resource, { channel, version }),
+        DatabaseEntityType.Resource,
+        `${id}/${channel}/${version}`,
+      );
+      // The undo, taken before a single byte of the working copy is written and allowed to fail the whole
+      // Restore: a restore is the one operation that destroys draft work on purpose, and one whose undo silently
+      // Did not happen is the defect this mechanism exists to close. Taken after the snapshot is known to exist,
+      // So a restore that was never going to land does not spend a ring-buffer slot and evict the oldest
+      // Recovery point on its way to failing
+      const undoRevisionVersion = await takeResourceRevision(ctx, ctx.resource, SnapshotReason.BeforeRestore);
+      // Reconstitution, not a raw copy: a snapshot froze whatever the type declares live, and writing that back
+      // Over the working copy would silently reopen a closed survey or flip its response mode — a setting the
+      // Write boundary makes authorization decisions on, with nothing in the restore or its confirmation saying
+      // It would happen. The declaration is `ResourceLiveContentMap`, and it is the same one the public read and
+      // The version preview reconstitute through
+      const reappliedContent = omitDerivedContent(
+        ctx.resource,
+        await reapplyLiveResourceContent(ctx.resource, snapshotContent),
+      );
+      // Nothing is copied: the save below reserves the objects the restored content names, so they stay alive, and they
+      // Are this Resource's own objects, so a restore holds no second copy of any asset. A version's asset an eviction
+      // Above released is not refused: the save reserves it like any other name, so the working copy names a gone file,
+      // Which reads as a broken image rather than a failed restore.
+      // The one content-write path, so a restore is a content write like any other: the version bump and the blob
+      // Write land in one transaction, the type's after-save hook re-derives what the restored content declares,
+      // And the trail records the restore the way the recycle bin's does. Nothing adopts the save event it emits:
+      // The subscription filters the emitting device out, and no publishable type subscribes to it client-side, so
+      // An editor left open on this resource keeps the pre-restore draft and the version it cached, and its next
+      // Autosave is rejected as stale until it reloads
+      const restoredResource = await saveResourceContent(ctx, {
+        activityType: ResourceActivityType.Restored,
+        content: reappliedContent,
+        // The bump and the write stay in one transaction so a failed write rolls the contentVersion back —
+        // A restore that did not land must never advance the version every client caches against
+        contentVersion: ctx.resource.contentVersion,
+        resource: ctx.resource,
+      });
+      return { resource: restoredResource, undoRevisionVersion };
+    }),
   // The safety net an import takes before it replaces a draft wholesale. Returns the version it wrote, or
   // Undefined when the resource has no content blob to take one from — a resource created and never saved has
   // No state worth keeping, which is an answer rather than a failure

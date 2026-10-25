@@ -1,6 +1,8 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
 import type { ResourceReferences } from "#shared/models/resource/ResourceReferences";
+import type { SnapshotRestoration } from "#shared/models/resource/SnapshotRestoration";
+import type { SnapshotVersion } from "#shared/models/resource/SnapshotVersion";
 import type { UpdateResourceContentResult } from "#shared/models/resource/UpdateResourceContentResult";
 import type { ResourceInResource } from "@esposter/db-schema";
 import type { JsonPatchOperation } from "@esposter/shared";
@@ -489,6 +491,35 @@ describe("resourceRouter", () => {
     });
 
     expect(references.dependencies).toStrictEqual([{ id: sheet.id, name, type: ResourceType.Sheet }]);
+  });
+
+  test("A restore keeps the version it replaces as a revision", async () => {
+    expect.hasAssertions();
+
+    const callAgentTool = await connectAgentKey(mockContext, [McpScope.Resources]);
+    const webpageResource = await webpageCaller.createResource({ name });
+    await saveWebpageContent(webpageResource, webpageEditor);
+    await webpageCaller.publishResource({ id: webpageResource.id });
+    const [publishedVersion] = (
+      await callAgentTool<SnapshotVersion[]>("resource_readSnapshotHistory", { id: webpageResource.id })
+    ).filter(({ channel }) => channel === SnapshotChannel.Published);
+    const draftWebpageResource = await caller.readResource({ id: webpageResource.id });
+    await saveWebpageContent(draftWebpageResource, updatedWebpageEditor);
+    const draftContent = await webpageCaller.readResourceContent({ id: webpageResource.id });
+    const { undoRevisionVersion } = await callAgentTool<SnapshotRestoration>("resource_restoreSnapshotVersion", {
+      channel: SnapshotChannel.Published,
+      id: webpageResource.id,
+      version: publishedVersion?.version,
+    });
+    await callAgentTool<SnapshotRestoration>("resource_restoreSnapshotVersion", {
+      channel: SnapshotChannel.Revisions,
+      id: webpageResource.id,
+      version: undoRevisionVersion,
+    });
+    const undoneContent = await webpageCaller.readResourceContent({ id: webpageResource.id });
+
+    expect(undoRevisionVersion).toBeDefined();
+    expect(undoneContent).toStrictEqual(draftContent);
   });
 
   // A snapshot is stored bytes the owner keeps, and nothing else charges it: a server-side write raises a BlobCreated for
