@@ -11,18 +11,13 @@ The decision to absorb it, and the rule a security-shaped absorption meets, are 
 
 ## Status
 
-The package builds the headers, the nonce Content Security Policy, subresource integrity, the prerender policy, the header and CORS handlers, the allowed methods, basic auth, the request size limit, a rate limiter behind a store interface, CSRF by the double submit cookie, the route rules' `security` key and strict mode, and the `removeLoggers` option, which sets the bundler's `dropConsole`. Its module options are validated by one Zod schema per option group, so a bad option stops the build with its path. Each part has unit tests, and each in-scope audit defect that this code fixes has a regression test titled with its issue number. The package typechecks, lints and builds. Its Nitro plugins and middleware run inside the app, which registers the package in place of the upstream. The rendered headers, the nonce and the integrity attributes are still to be checked in a browser.
+The package builds the headers, the nonce Content Security Policy, subresource integrity, the prerender policy, the header and CORS handlers, the allowed methods, basic auth, the request size limit, a rate limiter behind a store interface, CSRF by the double submit cookie, the route rules' `security` key and strict mode, and the `removeLoggers` option, which sets the bundler's `dropConsole`. Its module options are validated by one Zod schema per option group, so a bad option stops the build with its path. Each part has unit tests, and each in-scope audit defect that this code fixes has a regression test titled with its issue number. The package typechecks, lints and builds. Its Nitro plugins and middleware run inside the app, which registers the package in place of the upstream. A built app's rendered page carries the headers, a nonce that matches the Content Security Policy and integrity attributes that match their files, and no `X-Powered-By` header. The integrity attributes cover the public files the build hashes, not the client bundles, which the roadmap lists as open.
 
 Decided not to build, with the reason on the [upstream audit](upstream/design.md#decisions-not-built):
 
 - The XSS validator, as its filter rejects ordinary text and passes a script once escaping is off.
 
-Not built yet, in order:
-
-1. Run the plugins in a Nuxt app and check the headers, the nonce and the integrity attributes in a rendered page, including the `X-Powered-By` removal.
-2. Run each regression test against the upstream package and confirm it fails there first, where the reproduction is cheap.
-3. Verify the SRI behaviour on preload links (#655) and on entry import maps (#657) against a built app. Both are kept as they are until then.
-4. Build the FEATURE rows the audit judges worth having, each with a test named for its number.
+What is not built yet, and in what order, is listed on the [nuxt-security-module roadmap](../../changes/nuxt-security-module-roadmap/tasks.md).
 
 ## Per-request cost
 
