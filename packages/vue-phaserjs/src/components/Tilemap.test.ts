@@ -82,6 +82,6 @@ describe("tilemap", () => {
     });
     stepScene(scene);
 
-    expect(capturedTilemap).toBeDefined();
+    expect(capturedTilemap?.scene).toBe(scene);
   });
 });

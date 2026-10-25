@@ -5,7 +5,6 @@ import { Lifecycle } from "#src/models/lifecycle/Lifecycle";
 import { useCameraStore } from "#src/store/camera";
 import { useInputStore } from "#src/store/input";
 import { getTestGame, getTestPinia, removeTestScene } from "#src/test/fixtures/headlessGame.test";
-import { noop } from "@esposter/shared";
 import { mount } from "@vue/test-utils";
 import { Cameras } from "phaser";
 import { afterEach, describe, expect, test, vi } from "vitest";
@@ -108,8 +107,6 @@ describe("scene", () => {
     const game = getTestGame();
     mountScene();
     const secondWrapper = mount(Scene, { global: { plugins: [getTestPinia()] }, props: { sceneKey } });
-    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(noop);
-
     secondWrapper.unmount();
 
     expect(game.scene.getScene(sceneKey)).not.toBeNull();
