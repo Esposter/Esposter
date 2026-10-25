@@ -24,6 +24,7 @@ import { createResourceRow } from "#server/services/resource/createResourceRow";
 import { deleteStagingContentBlob } from "#server/services/resource/deleteStagingContentBlob";
 import { resourceEventEmitter } from "#server/services/resource/events/resourceEventEmitter";
 import { generateReservedResourceAssetSasEntities } from "#server/services/resource/generateReservedResourceAssetSasEntities";
+import { getPublicationWhere } from "#server/services/resource/getPublicationWhere";
 import { getStagingContentBlobName } from "#server/services/resource/getStagingContentBlobName";
 import { incrementResourceViewCount } from "#server/services/resource/incrementResourceViewCount";
 import { readResourceContent } from "#server/services/resource/readResourceContent";
@@ -76,7 +77,7 @@ import {
   SnapshotChannel,
 } from "@esposter/db-schema";
 import { getResultAsync, getSynchronizedFunction, noop, Operation, RoutePath } from "@esposter/shared";
-import { and, eq, sql } from "drizzle-orm";
+import { and, EmptyFilter, eq, sql } from "drizzle-orm";
 
 export const createResourceProcedures = <TType extends ResourceType>(
   type: TType,
@@ -194,22 +195,29 @@ export const createResourceProcedures = <TType extends ResourceType>(
     ),
     readResources: standardAuthedProcedure
       .input(readResourcesInputSchema)
-      .query<OffsetPaginationData<ResourceWithPublication>>(async ({ ctx, input: { limit, offset, sortBy } }) => {
-        const resultResources = await ctx.db.query.resourcesInResource.findMany({
-          limit: limit + 1,
-          offset,
-          orderBy: (resource, { desc }) =>
-            sortBy.length > 0 ? parseSortByToSql(resource, sortBy) : desc(resource.updatedAt),
-          where: {
-            // Soft-deleted resources belong to the Recycle bin, never to a type's own listing
-            deletedAt: { isNull: true },
-            type: { eq: type },
-            userId: { eq: ctx.getSessionPayload.user.id },
-          },
-          with: { publication: true },
-        });
-        return getBasePaginationData(resultResources, limit);
-      }),
+      .query<OffsetPaginationData<ResourceWithPublication>>(
+        async ({ ctx, input: { isPublished, limit, offset, sortBy } }) => {
+          const resultResources = await ctx.db.query.resourcesInResource.findMany({
+            limit: limit + 1,
+            offset,
+            orderBy: (resource, { desc }) =>
+              sortBy.length > 0 ? parseSortByToSql(resource, sortBy) : desc(resource.updatedAt),
+            where: {
+              // Soft-deleted resources belong to the Recycle bin, never to a type's own listing
+              deletedAt: { isNull: true },
+              // The filter runs in the query, so the page and its hasMore are over the matching resources alone
+              RAW:
+                isPublished === undefined
+                  ? EmptyFilter
+                  : (resource) => getPublicationWhere(ctx.db, resource.id, isPublished),
+              type: { eq: type },
+              userId: { eq: ctx.getSessionPayload.user.id },
+            },
+            with: { publication: true },
+          });
+          return getBasePaginationData(resultResources, limit);
+        },
+      ),
     saveResourceContent: getOwnerProcedure(type, saveResourceContentInputSchema, "id").mutation<ResourceInResource>(
       ({ ctx, input: { content, contentVersion } }) =>
         saveResourceContent(ctx, {

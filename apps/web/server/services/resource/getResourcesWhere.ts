@@ -3,14 +3,10 @@ import type { ResourceFilterInput } from "#shared/models/db/resource/ResourceFil
 
 import { getFavoriteJoin } from "#server/services/resource/getFavoriteJoin";
 import { getLastAccessedJoin } from "#server/services/resource/getLastAccessedJoin";
+import { getPublicationWhere } from "#server/services/resource/getPublicationWhere";
 import { getSearchNameMatch } from "#server/services/resource/getSearchNameMatch";
 import { getSearchTagMatch } from "#server/services/resource/getSearchTagMatch";
-import {
-  resourceAccessesInResource,
-  resourceFavoritesInResource,
-  resourcePublicationsInResource,
-  resourcesInResource,
-} from "@esposter/db-schema";
+import { resourceAccessesInResource, resourceFavoritesInResource, resourcesInResource } from "@esposter/db-schema";
 import { and, eq, exists, gte, inArray, isNotNull, isNull, lte, notExists, or, sql } from "drizzle-orm";
 
 export const getResourcesWhere = (
@@ -30,11 +26,6 @@ export const getResourcesWhere = (
   }: ResourceFilterInput,
   isDeletedOnly = false,
 ) => {
-  // A publication row exists iff the resource is currently published
-  const publicationQuery = db
-    .select()
-    .from(resourcePublicationsInResource)
-    .where(eq(resourcePublicationsInResource.resourceId, resourcesInResource.id));
   const accessQuery = db.select().from(resourceAccessesInResource).where(getLastAccessedJoin(userId));
   const favoriteQuery = db.select().from(resourceFavoritesInResource).where(getFavoriteJoin(userId));
   return and(
@@ -53,7 +44,7 @@ export const getResourcesWhere = (
     types && types.length > 0 ? inArray(resourcesInResource.type, types) : undefined,
     isAccessed === undefined ? undefined : isAccessed ? exists(accessQuery) : notExists(accessQuery),
     isFavorite === undefined ? undefined : isFavorite ? exists(favoriteQuery) : notExists(favoriteQuery),
-    isPublished === undefined ? undefined : isPublished ? exists(publicationQuery) : notExists(publicationQuery),
+    isPublished === undefined ? undefined : getPublicationWhere(db, resourcesInResource.id, isPublished),
     updatedAfter ? gte(resourcesInResource.updatedAt, updatedAfter) : undefined,
     updatedBefore ? lte(resourcesInResource.updatedAt, updatedBefore) : undefined,
   );

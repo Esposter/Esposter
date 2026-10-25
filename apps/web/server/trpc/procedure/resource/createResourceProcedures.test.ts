@@ -133,6 +133,23 @@ describe(createResourceProcedures, () => {
     expect(takeOne(publishedItems).publication?.publishVersion).toBe(1);
   });
 
+  test("reads only published resources when filtered to published, with hasMore over them", async () => {
+    expect.hasAssertions();
+
+    const publishedResource = await dashboardCaller.createResource({ name });
+    await dashboardCaller.createResource({ name: updatedName });
+    await dashboardCaller.saveResourceContent({
+      content: new Dashboard(),
+      contentVersion: 0,
+      id: publishedResource.id,
+    });
+    await dashboardCaller.publishResource({ id: publishedResource.id });
+    const { hasMore, items } = await dashboardCaller.readResources({ isPublished: true, limit: 1 });
+
+    expect(hasMore).toBe(false);
+    expect(items.map(({ id }) => id)).toStrictEqual([publishedResource.id]);
+  });
+
   test("updates resource", async () => {
     expect.hasAssertions();
 
