@@ -2,7 +2,7 @@
 
 ## Purpose
 
-TBD - created by archiving change resource-page-builder-email. Update Purpose after archive.
+The page builder's email editor: an MJML email drawn on the canvas with its components from the MJML blocks package, previewed as a client receives it, with its inbox preview text, merge fields and MJML source import.
 
 ## Requirements
 
