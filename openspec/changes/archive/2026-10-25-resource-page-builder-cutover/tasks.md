@@ -18,8 +18,8 @@
 
 - [x] 4.1 Remove the old editor's dependencies, security origins, OSV exception, modules and tests, and replace its skill and ledger with the page-builder ones. Verify: a search of the app and the dependency list for the old editor's names returns no match.
   - Verified 2026-10-25 by a search of the tree: no match in the app, the manifests, the lock file or the agent ledgers, outside openspec, the changelogs and the 2026-10-24 migration, which names the old editor.
-- [ ] 4.2 Delete the absorbed plugins' pages (`webpage-plugin-blocks-basic`, `webpage-plugin-countdown`, `webpage-plugin-custom-code`, `webpage-plugin-forms`) and rewrite `resource/webpage-survey-invite-blocks` as built, as the design says. Verify: a search of `openspec/specs` for the old editor's name returns no match.
-  - Done: the four plugin pages are deleted, and no spec names `webpage-plugin-*`. `resource/webpage-survey-invite-blocks` is rewritten as built, with its email half on the MJML node. Owed: the verify search still matches `openspec/specs/mjml-blocks/README.md`, which lists the upstream issues of the GrapesJS/mjml repository as the audit's history. The verify needs an exception for that page, which is the owner's call.
+- [x] 4.2 Delete the absorbed plugins' pages (`webpage-plugin-blocks-basic`, `webpage-plugin-countdown`, `webpage-plugin-custom-code`, `webpage-plugin-forms`) and rewrite `resource/webpage-survey-invite-blocks` as built, as the design says. Verify: a search of the live specs under `openspec/specs` for the old editor's name returns no match, except `openspec/specs/mjml-blocks/README.md`, whose audit names the upstream issues of the GrapesJS/mjml repository by number and is excluded by name.
+  - Done: the four plugin pages are deleted, and no spec names `webpage-plugin-*`. `resource/webpage-survey-invite-blocks` is rewritten as built, with its email half on the MJML node. Verified 2026-10-25: the search returns no match outside the excluded README.
 
 ## 5. Binding the new editors
 
