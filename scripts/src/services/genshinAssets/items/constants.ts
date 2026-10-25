@@ -18,3 +18,5 @@ export const ADD_ITEM_USE_OP = "ITEM_USE_ADD_ITEM";
 export const BAG_TAB_BY_TABLE_TYPE: Partial<Record<string, MaterialType>> = {
   MATERIAL_CONSUME_BATCH_USE: MaterialType.Consume,
 };
+// The bag's tabs, each a material type the bag shows a tab for
+export const BAG_MATERIAL_TYPES: string[] = Object.values(MaterialType);

@@ -5,12 +5,10 @@ import { readPublishedGameData } from "#src/services/gameData/readPublishedGameD
 import { readCookingRecipes } from "#src/services/genshinAssets/cooking/readCookingRecipes";
 import { readMondstadtExpeditionPlaces } from "#src/services/genshinAssets/expeditions/readMondstadtExpeditionPlaces";
 import { MATERIAL_TYPE_NONE } from "#src/services/genshinAssets/gathering/constants";
-import {
-  ADD_ITEM_USE_OP,
-  BAG_TAB_BY_TABLE_TYPE,
-  MATERIAL_TABLE_NAME,
-} from "#src/services/genshinAssets/items/constants";
+import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
+import { checkIsAddItemConsumable } from "#src/services/genshinAssets/items/checkIsAddItemConsumable";
 import { readItemTableMap } from "#src/services/genshinAssets/items/readItemTableMap";
+import { toBagMaterialType } from "#src/services/genshinAssets/items/toBagMaterialType";
 import { checkIsFishingAssociationGood } from "#src/services/genshinAssets/shops/checkIsFishingAssociationGood";
 import { GOOD_HUNTER_SHOP_TYPE } from "#src/services/genshinAssets/shops/constants";
 import { SHOP_GOODS_TABLE_NAME } from "#src/services/genshinText/constants";
@@ -26,20 +24,10 @@ import {
   forgeRecipeSchema,
   gadgetRowSchema,
   GameDataset,
-  MaterialType,
   reputationCitySchema,
   WALLET_ITEM_IDS,
 } from "genshin-world";
 import { z } from "zod";
-
-const BAG_MATERIAL_TYPES: string[] = Object.values(MaterialType);
-// The type a table type is shown under in the bag, a batch-use consumable filed with the consume tab
-const toBagMaterialType = (materialType: string): string => BAG_TAB_BY_TABLE_TYPE[materialType] ?? materialType;
-// A consumable whose use adds an item to the bag, where the bag has a tab for its type
-const checkIsAddItemConsumable = ({ itemUse, materialType }: MaterialRow): boolean =>
-  materialType !== undefined &&
-  itemUse.some(({ useOp }) => useOp === ADD_ITEM_USE_OP) &&
-  BAG_MATERIAL_TYPES.includes(toBagMaterialType(materialType));
 
 // The items every drop family's table names, every expedition's reward preview gives, every forge and crafting recipe
 // Takes or yields, every dish a cook recipe yields and every instruction that teaches it, every gadget of the gadgets slice, every offering the Frostbearing

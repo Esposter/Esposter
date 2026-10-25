@@ -7,19 +7,9 @@ import {
   RELIQUARY_SET_TABLE_NAME,
   RELIQUARY_TABLE_NAME,
 } from "#src/services/genshinAssets/archive/constants";
+import { toReliquaryPiece } from "#src/services/genshinAssets/items/toReliquaryPiece";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset, reliquarySetDataSchema } from "genshin-world";
-
-// The piece a reliquary row is: its item id, the text id of its name, its rank, rarity and slot, and how many minor affixes
-// It starts with, which a row that names none leaves at zero
-const toPiece = ({ appendPropNum, equipType, id, nameTextMapHash, rank, rankLevel }: ExcelReliquaryRow) => ({
-  itemId: id,
-  nameTextId: String(nameTextMapHash),
-  rank,
-  rarity: rankLevel,
-  slot: equipType,
-  startingMinorCount: appendPropNum,
-});
 
 // Every artifact set the game's set table holds, each with the text id of its name from its equip affix, the counts its
 // Bonuses take and each piece it is made of. A piece is every row of the reliquary table that belongs to the set, one per
@@ -44,7 +34,7 @@ export const buildReliquarySets = (): Record<string, unknown> => {
               id: setId,
               nameTextId: String(nameTextMapHash),
               needCounts: setNeedNum,
-              pieces: (setRowsMap.get(setId) ?? []).map((row) => toPiece(row)),
+              pieces: (setRowsMap.get(setId) ?? []).map((row) => toReliquaryPiece(row)),
             },
           ];
     })
