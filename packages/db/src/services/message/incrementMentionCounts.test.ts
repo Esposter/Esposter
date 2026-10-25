@@ -100,7 +100,7 @@ describe(incrementMentionCounts, () => {
 
     expect(updatedUsersToRooms).toHaveLength(1);
     expect(getMentionedUserIds(updatedUsersToRooms)).toStrictEqual(new Set([neverUserId]));
-    expect(updatedUsersToRooms.every(({ mentionCount }) => mentionCount === 1)).toBe(true);
+    expect(updatedUsersToRooms.map(({ mentionCount }) => mentionCount)).toStrictEqual([1]);
   });
 
   test("mentioning only the sender updates nobody", async () => {
