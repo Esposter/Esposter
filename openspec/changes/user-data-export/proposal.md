@@ -16,6 +16,6 @@ A person who uses the platform has a right to a copy of what the platform holds 
 
 - `packages/db-schema`: a `dataExports` table and the event type.
 - `apps/web`: the request, status and link procedures, and the settings flow.
-- `apps/functions`: the handler and its event registration.
+- `apps/functions`: the archive build and the function that starts it.
 - `apps/infra`: the container, its lifecycle rule and the event subscription, in both environments.
 - Not included, as the deletion change states: other people's messages, the shared character-pack files, and messages in rooms the person has left.

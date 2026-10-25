@@ -24,8 +24,8 @@ Build order. Section 1 lands the row and the container the rest write to, sectio
       Verify: the router test passes, and the publish happens once per new export.
 - [ ] 3.2 Add the `user.getDataExport` query and the `user.getDataExportLink` mutation. The link is a read SAS of fifteen minutes, issued only to the owner, only when the export is ready and unexpired. Test first: another person gets no link, and an expired export gets no link.
       Verify: the owner, other-person and expired cases pass.
-- [ ] 3.3 Subscribe the new event type in both environments' Event Grid subscription files under `apps/infra`.
-      Verify: the dev and prod subscription files each list `AzureFunction.ExportUserData`.
+- [ ] 3.3 Point each environment's Event Grid subscription under `apps/infra` at the export's event type.
+      Verify: both subscription files, dev and prod, name `AzureFunction.ExportUserData`.
 
 ## 4. Settings and sweep
 
@@ -33,5 +33,5 @@ Build order. Section 1 lands the row and the container the rest write to, sectio
       Verify: the settings test shows the omissions and withholds the link in those two states.
 - [ ] 4.2 Update the user data inventory's table to name the export entry for each store the archive reads, and its Known gaps to match what the archive omits.
       Verify: every store in the archive table names its entry, and every omission names the gap that states it.
-- [ ] 4.3 Run an export end to end against the in-memory database and the test blob container: create an account with a room, a resource, messages, an attachment and a save, request the export, build it, and unzip it.
+- [ ] 4.3 Run an export end to end against the in-memory database and the test blob container: seed an account that owns a room and a resource, and has messages, an attachment and a save, then request the export, build it, and unzip it.
       Verify: the end-to-end test passes and the unzipped archive holds each entry the design lists.
