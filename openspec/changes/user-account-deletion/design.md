@@ -59,7 +59,7 @@ A failure in any step fails the handler, the marker stays, and Event Grid redeli
 ## Limits the spec states
 
 - Messages a user wrote in a room they have since left remain attributed to them. Membership is the only index from a user to a room.
-- Moderation logs and resource activity records that name the user are kept as the platform's audit trail. Whether that is lawful retention is an owner decision.
+- Moderation records in other people's rooms that name the user, and resource activity records on resources the user does not own, are kept as the platform's audit trail. Whether that is lawful retention is an owner decision.
 - The Azure AI Search index may keep message text whose removal is unverified. The indexer's handling of soft-deleted messages decides it.
 - The shared character-pack files are left in place, as above.
 
