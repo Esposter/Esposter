@@ -1,31 +1,16 @@
 import type { KeyframeStore } from "#src/models/KeyframeStore";
 import type { KeyframeStoreOptions } from "#src/models/KeyframeStoreOptions";
 import type { ObjectStore } from "#src/models/ObjectStore";
-import type { ParsedObject } from "#src/models/ParsedObject";
 import type { WrittenVersion } from "#src/models/WrittenVersion";
 
-import { DEFAULT_PROMOTION_RATIO, DEFAULT_SEGMENT_BUDGET_RATIO } from "#src/constants";
 import { ObjectNotStoredError } from "#src/models/ObjectNotStoredError";
-import { decodeObject } from "#src/services/decodeObject";
+import { DEFAULT_PROMOTION_RATIO, DEFAULT_SEGMENT_BUDGET_RATIO } from "#src/services/constants";
+import { decodeVerifiedObject } from "#src/services/decodeVerifiedObject";
 import { encodeObject } from "#src/services/encodeObject";
 import { getContentAddress } from "#src/services/getContentAddress";
 import { parseObject } from "#src/services/parseObject";
 import { DEFAULT_COMPRESSION_LEVEL, getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 
-// The only decode this store makes, so no read path can hand back plaintext its key was never checked against.
-// Cheap, because the hash is already computed on every write, and it turns the one failure this format can
-// Suffer — a truncated or mismatched object — into a refused read rather than a plausible-looking document
-const decodeVerifiedObject = async (
-  hash: string,
-  parsedObject: ParsedObject,
-  basePlaintext?: Uint8Array,
-): Promise<Uint8Array> => {
-  const plaintext = await decodeObject(parsedObject, basePlaintext);
-  if (getContentAddress(plaintext) !== hash)
-    throw new InvalidOperationError(Operation.Read, hash, "object does not hash to its key");
-
-  return plaintext;
-};
 // The store: immutable objects addressed by the hash of their plaintext, each either a keyframe compressed
 // On its own or a delta compressed against exactly one keyframe. No chains, no generations, no rewriting —
 // Reconstructing any version is at most two reads, and an object once written is never touched again until

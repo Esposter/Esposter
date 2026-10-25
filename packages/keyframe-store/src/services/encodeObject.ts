@@ -9,7 +9,7 @@ import {
   OBJECT_MAGIC,
   OBJECT_VERSION_OFFSET,
   OBJECT_WINDOW_LOG_OFFSET,
-} from "#src/constants";
+} from "#src/services/constants";
 import { getWindowLog } from "@esposter/shared";
 import { promisify } from "node:util";
 import { constants, zstdCompress } from "node:zlib";

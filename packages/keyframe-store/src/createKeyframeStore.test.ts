@@ -3,9 +3,9 @@ import type { ObjectStore } from "#src/models/ObjectStore";
 import type { VersionAnchor } from "#src/models/VersionAnchor";
 import type { WrittenVersion } from "#src/models/WrittenVersion";
 
-import { DELTA_FLAG, OBJECT_FLAGS_OFFSET } from "#src/constants";
 import { createKeyframeStore } from "#src/createKeyframeStore";
 import { ObjectNotStoredError } from "#src/models/ObjectNotStoredError";
+import { DELTA_FLAG, OBJECT_FLAGS_OFFSET } from "#src/services/constants";
 import { createDocumentVersions } from "#src/services/createDocumentVersions.test";
 import { createMemoryObjectStore } from "#src/services/createMemoryObjectStore.test";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";

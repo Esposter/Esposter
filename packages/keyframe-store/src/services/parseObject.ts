@@ -11,7 +11,7 @@ import {
   OBJECT_MAGIC,
   OBJECT_VERSION_OFFSET,
   OBJECT_WINDOW_LOG_OFFSET,
-} from "#src/constants";
+} from "#src/services/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // Splits an object at its header. Throws on anything that is not an object this format wrote, so a stranger's
