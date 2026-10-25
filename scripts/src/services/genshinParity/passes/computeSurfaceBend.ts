@@ -2,7 +2,7 @@ import type { SurfaceBend } from "#src/models/genshinParity/passes/SurfaceBend";
 import type { SurfaceBendSide } from "#src/models/genshinParity/passes/SurfaceBendSide";
 
 import { computeNormalAngle } from "#src/services/genshinParity/passes/computeNormalAngle";
-import { SPLIT_BLOCK_PIXELS } from "#src/services/genshinParity/passes/constants";
+import { readBlockHalf } from "#src/services/genshinParity/passes/readBlockHalf";
 import { readTargetFamily } from "#src/services/genshinParity/passes/readTargetFamily";
 
 // The bend of each family's surface detail, from the exports' and ours' normal and geometry normal targets. A family
@@ -22,9 +22,7 @@ export const computeSurfaceBend = (
     const family = readTargetFamily(exports.part, pixel);
     const sum = sums[family];
     if (!sum || readTargetFamily(ours.part, pixel) !== family) continue;
-    const blockX = Math.floor((pixel % width) / SPLIT_BLOCK_PIXELS);
-    const blockY = Math.floor(Math.floor(pixel / width) / SPLIT_BLOCK_PIXELS);
-    const half = (blockX + blockY) % 2;
+    const half = readBlockHalf(pixel, width);
     sum.exportsAngles[half] =
       (sum.exportsAngles[half] ?? 0) + computeNormalAngle(exports.normal, exports.geometryNormal, pixel);
     sum.oursAngles[half] = (sum.oursAngles[half] ?? 0) + computeNormalAngle(ours.normal, ours.geometryNormal, pixel);
