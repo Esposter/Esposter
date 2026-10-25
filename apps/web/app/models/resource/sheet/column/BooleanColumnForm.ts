@@ -3,7 +3,7 @@ import type { BaseColumnForm } from "@/models/resource/sheet/column/BaseColumnFo
 
 import { booleanColumnSchema } from "#shared/models/resource/sheet/column/BooleanColumn";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import { createBaseColumnFormSchema } from "@/models/resource/sheet/column/BaseColumnForm";
+import { createBaseColumnFormSchema } from "@/services/resource/sheet/column/createBaseColumnFormSchema";
 import { z } from "zod";
 
 export interface BooleanColumnForm extends BaseColumnForm<ColumnType.Boolean>, Pick<BooleanColumn, "format"> {}

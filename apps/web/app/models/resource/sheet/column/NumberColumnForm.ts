@@ -3,7 +3,7 @@ import type { BaseColumnForm } from "@/models/resource/sheet/column/BaseColumnFo
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { numberColumnSchema } from "#shared/models/resource/sheet/column/NumberColumn";
-import { createBaseColumnFormSchema } from "@/models/resource/sheet/column/BaseColumnForm";
+import { createBaseColumnFormSchema } from "@/services/resource/sheet/column/createBaseColumnFormSchema";
 import { z } from "zod";
 
 export interface NumberColumnForm

@@ -1,20 +1,7 @@
 import type { AColumn } from "#shared/models/resource/sheet/column/AColumn";
 import type { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 
-import { createAColumnSchema } from "#shared/models/resource/sheet/column/AColumn";
-import { z } from "zod";
-
 export interface BaseColumnForm<TColumnType extends ColumnType = ColumnType> extends Pick<
   AColumn<TColumnType>,
   "description" | "name" | "sourceName" | "type"
 > {}
-
-export const createBaseColumnFormSchema = <T extends z.ZodType<ColumnType>>(typeSchema: T) => {
-  const aColumnSchema = createAColumnSchema(typeSchema);
-  return z.object({
-    description: aColumnSchema.shape.description,
-    name: aColumnSchema.shape.name.meta({ title: "Column" }),
-    sourceName: aColumnSchema.shape.sourceName.meta({ title: "Source Column" }),
-    type: aColumnSchema.shape.type,
-  });
-};

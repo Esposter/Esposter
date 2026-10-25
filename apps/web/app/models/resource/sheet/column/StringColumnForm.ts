@@ -1,7 +1,7 @@
 import type { BaseColumnForm } from "@/models/resource/sheet/column/BaseColumnForm";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
-import { createBaseColumnFormSchema } from "@/models/resource/sheet/column/BaseColumnForm";
+import { createBaseColumnFormSchema } from "@/services/resource/sheet/column/createBaseColumnFormSchema";
 import { z } from "zod";
 
 export interface StringColumnForm extends BaseColumnForm<ColumnType.String> {}

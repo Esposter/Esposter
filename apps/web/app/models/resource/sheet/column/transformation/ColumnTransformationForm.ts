@@ -1,5 +1,4 @@
 import type { ColumnTransformation } from "#shared/models/resource/sheet/column/transformation/ColumnTransformation";
-import type { ColumnFormContext } from "@/models/resource/sheet/column/ColumnFormContext";
 
 import { aggregationTransformationSchema } from "#shared/models/resource/sheet/column/transformation/AggregationTransformation";
 import { ColumnTransformationType } from "#shared/models/resource/sheet/column/transformation/ColumnTransformationType";
@@ -8,24 +7,16 @@ import { datePartTransformationSchema } from "#shared/models/resource/sheet/colu
 import { mathTransformationSchema } from "#shared/models/resource/sheet/column/transformation/MathTransformation";
 import { mathVariableSchema } from "#shared/models/resource/sheet/column/transformation/MathVariable";
 import { regexMatchTransformationSchema } from "#shared/models/resource/sheet/column/transformation/RegexMatchTransformation";
-import { sourceColumnIdSchema } from "#shared/models/resource/sheet/column/transformation/SourceColumnId";
 import { sourceColumnIdsSchema } from "#shared/models/resource/sheet/column/transformation/SourceColumnIds";
 import { stringPatternTransformationSchema } from "#shared/models/resource/sheet/column/transformation/string/StringPatternTransformation";
 import { stringSplitTransformationSchema } from "#shared/models/resource/sheet/column/transformation/string/StringSplitTransformation";
 import { stringTransformationSchema } from "#shared/models/resource/sheet/column/transformation/string/StringTransformation";
 import { ColumnFormContextPropertyNames } from "@/models/resource/sheet/column/ColumnFormContext";
+import { createSourceColumnIdFormShape } from "@/services/resource/sheet/column/createSourceColumnIdFormShape";
 import { createUniqueArraySchema } from "@esposter/shared";
 import { getMathExpressionNames, parseMathExpression } from "math-expression-compiler";
 import { z } from "zod";
 
-// Which of the form's context lists feeds a source-column picker is a rendering decision, so the key naming
-// It only exists on this side of the boundary — `shared/` states what a transformation is, never how it looks.
-const createSourceColumnIdFormShape = (itemsKey: keyof ColumnFormContext) => ({
-  [sourceColumnIdSchema.keyof().enum.sourceColumnId]: sourceColumnIdSchema.shape.sourceColumnId.meta({
-    layout: { itemsKey },
-    title: "Source Column",
-  }),
-});
 // `safeExtend` layers presentation onto the schema the server validates rather than restating it, so a field,
 // Constraint or refinement added to a shared transformation reaches the form without being copied here.
 const aggregationTransformationFormSchema = aggregationTransformationSchema
