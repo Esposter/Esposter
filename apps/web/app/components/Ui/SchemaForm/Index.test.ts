@@ -1,8 +1,15 @@
 // @vitest-environment nuxt
+import ResourceLinkSelect from "@/components/Resource/Link/Select.vue";
 import UiSchemaForm from "@/components/Ui/SchemaForm/Index.vue";
+import UiSchemaFormText from "@/components/Ui/SchemaForm/Text.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import { createResourceLinkSchema } from "#shared/services/resource/link/createResourceLinkSchema";
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
+import { ResourceLinkType, ResourceType } from "@esposter/db-schema";
 import { noop, takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises } from "@vue/test-utils";
@@ -10,6 +17,8 @@ import { afterEach, describe, expect, test, vi } from "vitest";
 import { z } from "zod";
 
 describe("uiSchemaForm", () => {
+  const { trpcMsw } = setupMswTrpc();
+
   afterEach(() => {
     vi.restoreAllMocks();
   });
@@ -21,6 +30,26 @@ describe("uiSchemaForm", () => {
     const validationSchema = z.object({ name: z.string().refine((name) => name !== " ", message) });
     const schema = zodToJsonSchema(validationSchema);
     const arraySchema = zodToJsonSchema(z.object({ items: z.array(z.object({ name: z.string() })) }));
+    const linkSchema = zodToJsonSchema(
+      z.object({ name: z.string(), surveyId: createResourceLinkSchema(ResourceLinkType.Survey) }),
+    );
+
+    test("draws a resource link as the shared select of the owner's resources of its type, beside a plain field as text", async () => {
+      expect.hasAssertions();
+
+      const survey = createResourceListItem({ type: ResourceType.Survey });
+      trpcMsw.survey.readResources.query(() => ({ hasMore: false, items: [survey] }));
+      const component = await mountSuspended(UiSchemaForm, {
+        props: { modelValue: { name: "", surveyId: survey.id }, schema: linkSchema },
+      });
+      await flushPromises();
+
+      expect(component.findAllComponents(UiSchemaFormText)).toHaveLength(1);
+      expect(component.findComponent(ResourceLinkSelect).props("resources")).toStrictEqual({
+        hasMore: false,
+        items: [{ meaning: UiIconMeaning.Survey, title: survey.name, value: survey.id }],
+      });
+    });
 
     test("draws a string as the library's text field named by its title, and writes what is typed", async () => {
       expect.hasAssertions();

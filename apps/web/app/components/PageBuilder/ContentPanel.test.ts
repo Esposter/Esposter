@@ -1,19 +1,39 @@
 // @vitest-environment nuxt
+import type { EmailDocument } from "@/models/pageBuilder/EmailDocument";
+import type { ResourcePublicationInResource } from "@esposter/db-schema";
 import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 
+import { EmailNodeType } from "#shared/models/pageBuilder/EmailNodeType";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { MAX_EMAIL_PREVIEW_LENGTH } from "#shared/services/pageBuilder/email/constants";
-import { TEST_CONTEXT, TEST_ID, TEST_LABEL, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
+import { NO_SURVEY_ID } from "#shared/services/pageBuilder/constants";
+import {
+  TEST_CONTEXT,
+  TEST_ID,
+  TEST_LABEL,
+  TEST_OTHER_ID,
+  TEST_ROOT,
+  TEST_THIRD_ID,
+  TEST_URL,
+} from "#shared/services/pageBuilder/constants.test";
 import { webpageDocumentSchema } from "#shared/services/pageBuilder/webpageDocumentSchema";
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import PageBuilderContentPanel from "@/components/PageBuilder/ContentPanel.vue";
+import ResourceLinkSelect from "@/components/Resource/Link/Select.vue";
 import UiSchemaForm from "@/components/Ui/SchemaForm/Index.vue";
+import UiSelect from "@/components/Ui/Select/Index.vue";
+import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { emailKind } from "@/services/pageBuilder/emailKind";
 import { renderCanvasVNodes } from "@/services/pageBuilder/renderCanvasVNodes";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
+import { getUnpublishedResourceMessage } from "@/services/resource/getUnpublishedResourceMessage";
+import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
+import { MjmlNodeType } from "mjml-blocks";
+import { ResourceType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { mount } from "@vue/test-utils";
+import { flushPromises, mount } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 import { defineComponent, h } from "vue";
 
@@ -21,8 +41,41 @@ const createButtonDocument = (): WebpageDocument => ({
   content: [{ props: { href: TEST_URL, id: TEST_ID, label: TEST_LABEL }, type: WebpageNodeType.Button }],
   root: TEST_ROOT,
 });
+const createSurveyInviteDocument = (surveyId: string): WebpageDocument => ({
+  content: [{ props: { id: TEST_ID, label: TEST_LABEL, surveyId }, type: WebpageNodeType.SurveyInvite }],
+  root: TEST_ROOT,
+});
+// An email's invite sits in a column, as the email's document schema requires
+const createPublication = (resourceId: string): ResourcePublicationInResource => ({
+  publishedAt: new Date(0),
+  publishedContentVersion: 0,
+  publishVersion: 1,
+  resourceId,
+});
+const createEmailSurveyInviteDocument = (surveyId: string): EmailDocument => ({
+  content: [
+    {
+      props: {
+        children: [
+          {
+            props: {
+              children: [{ props: { id: TEST_ID, label: TEST_LABEL, surveyId }, type: EmailNodeType.SurveyInvite }],
+              id: TEST_OTHER_ID,
+            },
+            type: MjmlNodeType.Column,
+          },
+        ],
+        id: TEST_THIRD_ID,
+      },
+      type: MjmlNodeType.Section,
+    },
+  ],
+  root: { props: {} },
+});
 
 describe("pageBuilderContentPanel", () => {
+  const { trpcMsw } = setupMswTrpc();
+
   test("editing a button's label in the content panel shows on the canvas", async () => {
     expect.hasAssertions();
 
@@ -104,6 +157,112 @@ describe("pageBuilderContentPanel", () => {
     const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: emailKind, resourceId } });
 
     expect(component.text()).toContain(`0 / ${MAX_EMAIL_PREVIEW_LENGTH}`);
+
+    component.unmount();
+  });
+
+  test("an invite offers only the published surveys, and binds the one chosen", async () => {
+    expect.hasAssertions();
+
+    const resourceId = crypto.randomUUID();
+    const published = createResourceListItem({ name: "Published", type: ResourceType.Survey });
+    const unpublished = createResourceListItem({ name: "Unpublished", type: ResourceType.Survey });
+    trpcMsw.survey.readResources.query(({ input }) => ({
+      hasMore: false,
+      items: input.isPublished ? [published] : [published, unpublished],
+    }));
+    trpcMsw.resource.readResource.query(() => ({ ...published, publication: createPublication(published.id) }));
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, createSurveyInviteDocument(NO_SURVEY_ID));
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
+    const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: webpageKind, resourceId } });
+    await flushPromises();
+
+    expect(component.getComponent(ResourceLinkSelect).props("resources")).toStrictEqual({
+      hasMore: false,
+      items: [{ meaning: UiIconMeaning.Survey, title: published.name, value: published.id }],
+    });
+    component.getComponent(ResourceLinkSelect).vm.$emit("update:modelValue", published.id);
+
+    expect(pageBuilderDocumentStore.getDocument(resourceId)?.content).toStrictEqual(
+      createSurveyInviteDocument(published.id).content,
+    );
+
+    component.unmount();
+  });
+
+  test("an email's invite offers only the published surveys, and binds the one chosen", async () => {
+    expect.hasAssertions();
+
+    const resourceId = crypto.randomUUID();
+    const published = createResourceListItem({ name: "Published", type: ResourceType.Survey });
+    const unpublished = createResourceListItem({ name: "Unpublished", type: ResourceType.Survey });
+    trpcMsw.survey.readResources.query(({ input }) => ({
+      hasMore: false,
+      items: input.isPublished ? [published] : [published, unpublished],
+    }));
+    trpcMsw.resource.readResource.query(() => ({ ...published, publication: createPublication(published.id) }));
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    pageBuilderDocumentStore.setEmailDocument(resourceId, emailKind, createEmailSurveyInviteDocument(NO_SURVEY_ID));
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
+    const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: emailKind, resourceId } });
+    await flushPromises();
+
+    expect(component.getComponent(ResourceLinkSelect).props("resources")).toStrictEqual({
+      hasMore: false,
+      items: [{ meaning: UiIconMeaning.Survey, title: published.name, value: published.id }],
+    });
+    component.getComponent(ResourceLinkSelect).vm.$emit("update:modelValue", published.id);
+
+    expect(pageBuilderDocumentStore.getEmailDocument(resourceId)?.content).toStrictEqual(
+      createEmailSurveyInviteDocument(published.id).content,
+    );
+
+    component.unmount();
+  });
+
+  test("a bound survey that is no longer published is flagged, not offered, and keeps its id", async () => {
+    expect.hasAssertions();
+
+    const resourceId = crypto.randomUUID();
+    const survey = createResourceListItem({ name: "Surveyed", type: ResourceType.Survey });
+    trpcMsw.survey.readResources.query(() => ({ hasMore: false, items: [] }));
+    trpcMsw.resource.readResource.query(() => ({ ...survey, publication: null }));
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const document = createSurveyInviteDocument(survey.id);
+    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, document);
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
+    const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: webpageKind, resourceId } });
+    await flushPromises();
+
+    expect(component.findAll('[role="alert"]').map((alert) => alert.text())).toStrictEqual([
+      getUnpublishedResourceMessage(survey.name),
+    ]);
+    expect(component.getComponent(ResourceLinkSelect).props("resources")).toStrictEqual({ hasMore: false, items: [] });
+    expect(pageBuilderDocumentStore.getDocument(resourceId)?.content).toStrictEqual(document.content);
+
+    component.unmount();
+  });
+
+  test("with no published survey the picker says so, offers no blank choice, and writes no id", async () => {
+    expect.hasAssertions();
+
+    const resourceId = crypto.randomUUID();
+    trpcMsw.survey.readResources.query(() => ({ hasMore: false, items: [] }));
+    const pageBuilderDocumentStore = usePageBuilderDocumentStore();
+    const document = createSurveyInviteDocument(NO_SURVEY_ID);
+    pageBuilderDocumentStore.setDocument(resourceId, webpageKind, document);
+    const pageBuilderCanvasStore = usePageBuilderCanvasStore();
+    pageBuilderCanvasStore.setSelectedNodeId(resourceId, TEST_ID);
+    const component = await mountSuspended(PageBuilderContentPanel, { props: { kind: webpageKind, resourceId } });
+    await flushPromises();
+
+    expect(component.get('[role="status"]').text()).toBe("A survey must be published before it can be chosen");
+    expect(component.getComponent(UiSelect).props("items")).toStrictEqual([]);
+    expect(pageBuilderDocumentStore.getDocument(resourceId)?.content).toStrictEqual(document.content);
 
     component.unmount();
   });

@@ -6,8 +6,10 @@ import UiSchemaFormHidden from "@/components/Ui/SchemaForm/Hidden.vue";
 import UiSchemaFormLayout from "@/components/Ui/SchemaForm/Layout.vue";
 import UiSchemaFormObject from "@/components/Ui/SchemaForm/Object.vue";
 import UiSchemaFormOneOf from "@/components/Ui/SchemaForm/OneOf.vue";
+import UiSchemaFormResourceLink from "@/components/Ui/SchemaForm/ResourceLink.vue";
 import UiSchemaFormSelect from "@/components/Ui/SchemaForm/Select.vue";
 import UiSchemaFormText from "@/components/Ui/SchemaForm/Text.vue";
+import { getResourceLinkSource } from "@/services/resource/link/getResourceLinkSource";
 import { getSchemaFormLayout } from "@/services/ui/schemaForm/getSchemaFormLayout";
 import {
   and,
@@ -30,10 +32,11 @@ import {
 
 const hasItemsKey = schemaMatches((schema) => Boolean(getSchemaFormLayout(schema)?.itemsKey));
 const hasConst = schemaMatches((schema: JsonSchema) => schema.const !== undefined);
+const hasResourceLinkSource = schemaMatches((schema) => Boolean(getResourceLinkSource(schema)));
 // Which of the library's renderers draws each node of a schema form, the highest rank winning: a layout stacks its
 // Elements, an object and a list draw their own, a fixed value draws nothing, a choice is the library's select, a
-// Union's variant is chosen in it, and text, numbers and booleans are the library's fields. A new kind of node is one
-// Entry here
+// Union's variant is chosen in it, text, numbers and booleans are the library's fields, and a link to another resource
+// Is the shared select of that resource's type. A new kind of node is one Entry here
 export const SchemaFormRenderers: JsonFormsRendererRegistryEntry[] = [
   { renderer: UiSchemaFormLayout, tester: rankWith(1, isLayout) },
   { renderer: UiSchemaFormObject, tester: rankWith(2, isObjectControl) },
@@ -47,6 +50,7 @@ export const SchemaFormRenderers: JsonFormsRendererRegistryEntry[] = [
     ),
   },
   { renderer: UiSchemaFormOneOf, tester: rankWith(10, and(isOneOfControl, not(isOneOfEnumControl))) },
+  { renderer: UiSchemaFormResourceLink, tester: rankWith(6, and(isStringControl, hasResourceLinkSource)) },
   { renderer: UiSchemaFormText, tester: rankWith(5, or(isStringControl, isNumberControl, isIntegerControl)) },
   { renderer: UiSchemaFormCheckbox, tester: rankWith(5, isBooleanControl) },
 ];
