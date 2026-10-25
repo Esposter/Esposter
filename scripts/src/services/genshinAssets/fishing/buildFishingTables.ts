@@ -8,61 +8,18 @@ import type { ExcelFishRodRow } from "#src/models/genshinAssets/fishing/ExcelFis
 import type { ExcelFishRow } from "#src/models/genshinAssets/fishing/ExcelFishRow";
 import type { ExcelFishSkillRow } from "#src/models/genshinAssets/fishing/ExcelFishSkillRow";
 import type { ExcelFishStockRow } from "#src/models/genshinAssets/fishing/ExcelFishStockRow";
-import type { Fish, FishingPool, FishReward, FishRod } from "genshin-world";
+import type { FishingPool } from "genshin-world";
 
+import { toFish } from "#src/services/genshinAssets/fishing/toFish";
 import { toFishingBait } from "#src/services/genshinAssets/fishing/toFishingBait";
-import { toFishingPool, toFishingPoolFishIds } from "#src/services/genshinAssets/fishing/toFishingPool";
+import { toFishingPool } from "#src/services/genshinAssets/fishing/toFishingPool";
+import { toFishingPoolFishIds } from "#src/services/genshinAssets/fishing/toFishingPoolFishIds";
+import { toFishReward } from "#src/services/genshinAssets/fishing/toFishReward";
+import { toFishRod } from "#src/services/genshinAssets/fishing/toFishRod";
+import { toFishSkill } from "#src/services/genshinAssets/fishing/toFishSkill";
 import { CityIdRegionMap } from "#src/services/genshinAssets/shared/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
-
-const toFish = (row: Fish): Fish => ({
-  attractRange: row.attractRange,
-  biteTimeout: row.biteTimeout,
-  bonusDuration: row.bonusDuration,
-  bonusOffset: row.bonusOffset,
-  bonusSpeed: row.bonusSpeed,
-  bonusWidth: row.bonusWidth,
-  feelerTimes: row.feelerTimes,
-  fleeRange: row.fleeRange,
-  hp: row.hp,
-  id: row.id,
-  itemId: row.itemId,
-  proficientId: row.proficientId,
-  rewardId: row.rewardId,
-  skillId: row.skillId,
-});
-
-const toFishRod = (row: ExcelFishRodRow): FishRod => ({
-  attackAcc: row.attackAcc,
-  attackMag: row.attackMag,
-  baseAttack: row.baseAttack,
-  cityId: row.cityId,
-  id: row.id,
-  maxAttack: row.maxAttack,
-});
-
-const toFishSkill = (row: ExcelFishSkillRow): ExcelFishSkillRow => ({
-  bonusDuration: row.bonusDuration,
-  bonusOffset: row.bonusOffset,
-  bonusSpeed: row.bonusSpeed,
-  bonusWidth: row.bonusWidth,
-  duration: row.duration,
-  forceFactor: row.forceFactor,
-  id: row.id,
-  param: row.param,
-  priority: row.priority,
-  skillCategory: row.skillCategory,
-  skillType: row.skillType,
-});
-
-// A blank item entry in a reward row holds item zero, so it is left out of the reward
-const toFishReward = (row: ExcelFishRewardRow): FishReward => ({
-  rewardId: row.rewardId,
-  rewardItemList: row.rewardItemList
-    .filter((item) => item.itemId !== 0)
-    .map(({ itemCount, itemId }) => ({ itemCount, itemId })),
-});
 
 // The fish, their rods, skills, baits, proficiency and each fish's catch reward, and each region's pools built as the
 // Fishing dataset's records, the pools filed by the city they are fished in. A pool filed under no region named here is

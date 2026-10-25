@@ -1,7 +1,8 @@
 import type { ExcelFishPoolRow } from "#src/models/genshinAssets/fishing/ExcelFishPoolRow";
 import type { ExcelFishStockRow } from "#src/models/genshinAssets/fishing/ExcelFishStockRow";
 
-import { toFishingPool, toFishingPoolFishIds } from "#src/services/genshinAssets/fishing/toFishingPool";
+import { toFishingPool } from "#src/services/genshinAssets/fishing/toFishingPool";
+import { toFishingPoolFishIds } from "#src/services/genshinAssets/fishing/toFishingPoolFishIds";
 import { FishingStockType } from "genshin-world";
 import { describe, expect, test } from "vitest";
 
