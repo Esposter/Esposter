@@ -1,6 +1,6 @@
 # Comment Sort
 
-The feed has a **Sort by** select — Hot, New, Top — over the one `post.readPosts` procedure, and comments are read through the same procedure, but they "keep their fixed sort" ([feed and ranking](../../specs/post/feed-and-ranking/design.md)): always the stored hot score. On a thread of any length that hides the newest reply under older well-liked ones, and there is no way to read a conversation in the order it happened. Reddit puts a comment sort directly above every thread, defaulting to its ranked order and offering Top, New and Old beside it.
+The feed has a **Sort by** select — Hot, New, Top — over the one `post.readPosts` procedure, and comments are read through the same procedure, but they "keep their fixed sort" ([feed and ranking](../../../specs/post/feed-and-ranking/design.md)): always the stored hot score. On a thread of any length that hides the newest reply under older well-liked ones, and there is no way to read a conversation in the order it happened. Reddit puts a comment sort directly above every thread, defaulting to its ranked order and offering Top, New and Old beside it.
 
 ## What it adds
 

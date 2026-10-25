@@ -16,9 +16,11 @@ Posts are Esposter's core product — "a nice and casual place for posting rando
 - [Posts and comments](posts-and-comments/design.md) — CRUD, the self-referencing model, rich text.
 - [Likes](likes/design.md) — the ±1 like model, viewer-scoped reads, and transactional counter updates.
 - [Feed block filtering](feed-block-filtering/design.md) — blocked users' posts and comments are hidden from feeds.
+- [Comment sort](comment-sort/design.md) — Hot, Top, New and Old over a post's replies, applied to every open branch.
 
 Open work: [roadmap](../../changes/post-roadmap/tasks.md). Decided ideas: [deferred](../../deferred/post/), [rejected](../../rejected/post/).
 
 ## Shipped log
 
 - **Feed reads** — viewer-scoped likes (one like row per post instead of all of them), Hot / New / Top sort toggle, blocked-user filtering, lexicographic compound cursors.
+- **Comment sort** — Hot, Top, New and Old above a post's replies, with every open reply branch re-read when the order changes.

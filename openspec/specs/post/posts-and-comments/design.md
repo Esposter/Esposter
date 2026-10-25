@@ -30,7 +30,7 @@ The two guards are why a post procedure cannot touch a comment and vice versa, e
 
 **Reading** — the post page takes the feed's width: the post's card with its title as the page heading, the comment editor for a signed-in session, then the thread, or an empty state for zero comments. The author's edit and delete sit in each card's overflow menu, which a right-click or long press on the card opens too; deleting asks first in the library's confirm dialog, over a preview of what goes.
 
-**The tree** — every node is a branch that pages independently through the same `readPosts` procedure with its own `parentId`, keyed in the store by the comment whose replies it holds. The route's own post is simply the branch keyed by its id, so the page and a reply ten levels down mount the same component and run the same read. A branch is collapsed until asked for: expanding one is what reads it, and re-expanding costs nothing because the rows outlive the component that read them. Each level of replies sits under a line running down from its parent's picture, as Reddit draws a thread, so which comment a reply answers stays visible. Depth counts levels below the comment the **route** names rather than the stored `depth`, so a rerooted thread opens at zero rather than already clamped. Past the clamp a node offers to continue the thread on its own page, which needs no route of its own: a comment is a post, so `/post/[id]` on its id renders it as a root with one level of context instead of ten.
+**The tree** — every node is a branch that pages independently through the same `readPosts` procedure with its own `parentId`, keyed in the store by the comment whose replies it holds. The route's own post is simply the branch keyed by its id, so the page and a reply ten levels down mount the same component and run the same read. A branch is collapsed until asked for: expanding one is what reads it, and re-expanding costs nothing because the rows outlive the component that read them. Every branch of a thread reads under one comment sort, which [comment sort](../comment-sort/design.md) owns. Each level of replies sits under a line running down from its parent's picture, as Reddit draws a thread, so which comment a reply answers stays visible. Depth counts levels below the comment the **route** names rather than the stored `depth`, so a rerooted thread opens at zero rather than already clamped. Past the clamp a node offers to continue the thread on its own page, which needs no route of its own: a comment is a post, so `/post/[id]` on its id renders it as a root with one level of context instead of ten.
 
 ```mermaid
 flowchart TD
@@ -61,16 +61,16 @@ flowchart TD
 
 Paths relative to `apps/web`; `packages/` ones to the repo root.
 
-| File                                                   | Role                                           |
-| ------------------------------------------------------ | ---------------------------------------------- |
-| `packages/db-schema/src/schema/post/postsInPost.ts`    | table + length checks + select schemas         |
-| `server/trpc/routers/post.ts`                          | all CRUD procedures                            |
-| `server/trpc/procedure/getProfanityFilterProcedure.ts` | text censoring middleware                      |
-| `app/pages/post/create.vue`, `app/pages/post/[id].vue` | create + detail pages                          |
-| `app/components/Post/`                                 | card, forms, comment components                |
-| `app/components/Post/Comment/Branch.vue`               | one node's replies — the recursion             |
-| `app/store/post/comment/index.ts`                      | the branch-keyed comment map                   |
-| `app/composables/post/usePagedPostRead.ts`             | the paging each branch's replies are read with |
+| File                                                   | Role                                                                 |
+| ------------------------------------------------------ | -------------------------------------------------------------------- |
+| `packages/db-schema/src/schema/post/postsInPost.ts`    | table + length checks + select schemas                               |
+| `server/trpc/routers/post.ts`                          | all CRUD procedures                                                  |
+| `server/trpc/procedure/getProfanityFilterProcedure.ts` | text censoring middleware                                            |
+| `app/pages/post/create.vue`, `app/pages/post/[id].vue` | create + detail pages                                                |
+| `app/components/Post/`                                 | card, forms, comment components                                      |
+| `app/components/Post/Comment/Branch.vue`               | one node's replies — the recursion                                   |
+| `app/store/post/comment/index.ts`                      | the branch-keyed comment map, the thread's sort and expanded replies |
+| `app/composables/post/usePagedPostRead.ts`             | the paging each branch's replies are read with                       |
 
 ## Notes
 

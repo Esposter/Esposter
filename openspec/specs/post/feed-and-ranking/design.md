@@ -17,7 +17,7 @@ flowchart LR
 
 **Pagination** — `readPosts` takes cursor pagination params (default sort: `ranking` desc with the unique `id` as tiebreaker), fetches `limit + 1` rows to detect `hasMore`, and returns a cursor for the next page — the app-standard cursor pattern (`getCursorWhere` / `getCursorPaginationData`). Compound sort keys compare lexicographically — `(k1 < v1) OR (k1 = v1 AND k2 < v2)` — so pages of tied values (every new post has `likeCount = 0`) never skip rows. The same procedure serves comment lists via the `parentId` filter.
 
-**Sort options** — a "Sort by" select on the feed's toolbar, beside Create post, switches between Hot (`ranking` desc), New (`createdAt` desc), and Top (`likeCount` desc, all-time), each mapped to a `sortBy` by `PostSortTypeSortByMap` with `id` as second key. The chosen sort lives in the post store; switching clears the list and refetches page one, and the waypoint continues from the new cursor. Comments keep their fixed sort.
+**Sort options** — a "Sort by" select on the feed's toolbar, beside Create post, switches between Hot (`ranking` desc), New (`createdAt` desc), and Top (`likeCount` desc, all-time), each mapped to a `sortBy` by `PostSortTypeSortByMap` with `id` as second key. The map also holds Old, which only the comments offer. The chosen sort lives in the post store; switching clears the list and refetches page one, and the waypoint continues from the new cursor. Comments take their own Sort by, which adds Old and is owned by [comment sort](../comment-sort/design.md).
 
 **Block filtering** — authenticated feed reads exclude posts and comments authored by users the viewer has blocked — see [feed block filtering](../feed-block-filtering/design.md).
 
@@ -49,7 +49,7 @@ Paths relative to `apps/web`.
 | `app/composables/post/useReadPosts.ts`       | initial read + read-more, `sortBy`                                |
 | `app/composables/post/usePagedPostRead.ts`   | the first page and cursor pages, shared with the comment branches |
 | `app/store/post/index.ts`                    | feed items store + `sortType`                                     |
-| `app/services/post/PostSortTypeSortByMap.ts` | sort → `sortBy` mapping                                           |
+| `app/services/post/PostSortTypeSortByMap.ts` | sort → `sortBy` mapping, Old included                             |
 | `server/trpc/routers/post.ts`                | `readPosts` / `readPost`                                          |
 | `server/services/post/getPostRanking.ts`     | the hot score                                                     |
 | `server/services/pagination/cursor/`         | shared cursor pagination helpers                                  |
