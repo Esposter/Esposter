@@ -1,6 +1,6 @@
-import type { ClaimedRef } from "#src/models/fleet/ClaimedRef";
 import type { ClaimHolder } from "#src/models/fleet/ClaimHolder";
 import type { ClaimMessage } from "#src/models/fleet/ClaimMessage";
+import type { FleetClaimResult } from "#src/models/fleet/FleetClaimResult";
 
 import { ClaimAttempt } from "#src/models/fleet/ClaimAttempt";
 import { ClaimDecision } from "#src/models/fleet/ClaimDecision";
@@ -11,12 +11,6 @@ import { getClaimDecision } from "#src/services/fleet/getClaimDecision";
 import { pushFleetRef } from "#src/services/fleet/pushFleetRef";
 import { readClaimedRefs } from "#src/services/fleet/readClaimedRefs";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-
-export interface FleetClaimResult {
-  attempt: ClaimAttempt;
-  // The claim this worker now holds when it won, or the live claim another worker holds when it did not
-  claimed: ClaimedRef;
-}
 
 // Takes `entry` for `holder`. A claim this worker already holds is adopted, a live one held by any other worker, even on
 // The same machine, is returned as the holder, and a stale one or none is taken: a new parentless claim commit is pushed,
