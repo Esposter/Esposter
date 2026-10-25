@@ -40,7 +40,7 @@ describe("messageModelMemberActionDialogShell", () => {
       await flushPromises();
 
       const cancelButton = component.findAll("button").find((button) => button.text() === "Cancel");
-      expect(cancelButton?.attributes("autofocus")).toBeDefined();
+      expect(cancelButton?.attributes("autofocus")).toBe("");
       expect(document.activeElement).not.toBe(component.get("dialog").element);
     });
   });

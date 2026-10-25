@@ -11,6 +11,7 @@ import {
   CUSTOM_EMOJI_ID_ATTRIBUTE,
   CUSTOM_EMOJI_NAME_ATTRIBUTE,
   MENTION_ID_ATTRIBUTE,
+  MENTION_LABEL_ATTRIBUTE,
   MENTION_TYPE,
   MENTION_TYPE_ATTRIBUTE,
 } from "@esposter/shared";
@@ -54,7 +55,9 @@ describe(useMessageHtml, () => {
     storeRoomMembers(roomId, [{ ...createUser({ id: userId }), displayName }]);
     const messageHtml = useMessageHtml(createMention(userId), roomId);
 
-    expect(messageHtml.value).toContain(`@${displayName}`);
+    expect(messageHtml.value).toBe(
+      `<span ${MENTION_TYPE_ATTRIBUTE}="${MENTION_TYPE}" ${MENTION_ID_ATTRIBUTE}="${userId}" ${MENTION_LABEL_ATTRIBUTE}="${displayName}">@${displayName}</span>`,
+    );
   });
 
   test("resolves a custom emoji node to its image", () => {
@@ -65,8 +68,9 @@ describe(useMessageHtml, () => {
     storeCreateRoomEmoji(roomId, roomEmoji);
     const messageHtml = useMessageHtml(createCustomEmojiNode(roomEmojiId), roomId);
 
-    expect(messageHtml.value).toContain(`src="${sasUrl.replaceAll("&", "&amp;")}"`);
-    expect(messageHtml.value).toContain(`alt=":${name}:"`);
+    expect(messageHtml.value).toBe(
+      `<span ${CUSTOM_EMOJI_ID_ATTRIBUTE}="${roomEmojiId}" ${CUSTOM_EMOJI_NAME_ATTRIBUTE}="${name}"><img class="custom-emoji" src="${sasUrl.replaceAll("&", "&amp;")}" alt=":${name}:" ></span>`,
+    );
   });
 
   // An emoji the room no longer has is data rather than an error: the node keeps the shortcode it was authored

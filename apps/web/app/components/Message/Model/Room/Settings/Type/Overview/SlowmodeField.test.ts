@@ -37,8 +37,6 @@ describe("messageModelRoomSettingsTypeOverviewSlowmodeField", () => {
     });
     const displaySeconds = Number(component.get("input").element.value);
 
-    expect(Temporal.Duration.from({ seconds: displaySeconds }).total("milliseconds")).toBeLessThanOrEqual(
-      MAX_SLOWMODE_MS,
-    );
+    expect(displaySeconds).toBe(Math.floor(MAX_SLOWMODE_MS / 1000));
   });
 });

@@ -40,7 +40,7 @@ describe(useInputStore, () => {
     const inputStore = useInputStore();
     const { drafts } = storeToRefs(inputStore);
 
-    expect(drafts.value.has(roomId1)).toBe(true);
+    expect(drafts.value.get(roomId1)?.content).toBe(draftContent);
   });
 
   test("restores a draft under the stamp the previous session stored", () => {
@@ -99,8 +99,8 @@ describe(useInputStore, () => {
     const inputStore = useInputStore();
     const { drafts } = storeToRefs(inputStore);
 
-    expect(drafts.value.has(roomId1)).toBe(true);
-    expect(drafts.value.has(roomId2)).toBe(true);
+    expect(drafts.value.get(roomId1)?.content).toBe(draftContent);
+    expect(drafts.value.get(roomId2)?.content).toBe(draftContent);
   });
 
   test("clearDraft removes room from drafts", () => {
