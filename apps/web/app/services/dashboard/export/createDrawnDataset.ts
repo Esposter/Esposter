@@ -1,6 +1,6 @@
+import type { Dataset } from "#shared/models/dataset/Dataset";
 import type { DatasetQuery } from "#shared/models/dataset/DatasetQuery";
 import type { AxisVisualPropsData } from "@/models/dashboard/AxisVisualPropsData";
-import type { Dataset } from "#shared/models/dataset/Dataset";
 
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { VisualDatasetShape } from "@/models/dashboard/VisualDatasetShape";

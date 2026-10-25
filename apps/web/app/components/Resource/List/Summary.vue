@@ -26,9 +26,9 @@ const emit = defineEmits<{ retry: []; select: [type: ResourceType] }>();
     <div
       v-else-if="isPending && counts.length === 0"
       aria-busy="true"
-      grid
       cols="[repeat(auto-fill,minmax(14rem,1fr))]"
       gap-3
+      grid
     >
       <UiSkeleton v-for="index of RESOURCE_SUMMARY_SKELETON_COUNT" :key="index" h-18 />
     </div>
@@ -40,7 +40,7 @@ const emit = defineEmits<{ retry: []; select: [type: ResourceType] }>();
       title="Nothing to summarize"
     />
     <!-- A card is the type filter's affordance, so it goes back into the list rather than anywhere new -->
-    <ul v-else grid cols="[repeat(auto-fill,minmax(14rem,1fr))]" gap-3>
+    <ul v-else cols="[repeat(auto-fill,minmax(14rem,1fr))]" gap-3 grid>
       <li v-for="{ count, type } of counts" :key="type">
         <button type="button" ui-card flex gap-3 w-full items-center @click="emit('select', type)">
           <span :class="ResourceDefinitionMap[type].icon" aria-hidden="true" text-accent shrink-0 size-6 />

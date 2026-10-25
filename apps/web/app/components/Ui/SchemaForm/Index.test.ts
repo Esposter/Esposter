@@ -1,4 +1,6 @@
 // @vitest-environment nuxt
+import { createResourceLinkSchema } from "#shared/services/resource/link/createResourceLinkSchema";
+import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import ResourceLinkSelect from "@/components/Resource/Link/Select.vue";
 import UiSchemaForm from "@/components/Ui/SchemaForm/Index.vue";
 import UiSchemaFormText from "@/components/Ui/SchemaForm/Text.vue";
@@ -7,8 +9,6 @@ import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { createResourceLinkSchema } from "#shared/services/resource/link/createResourceLinkSchema";
-import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import { ResourceLinkType, ResourceType } from "@esposter/db-schema";
 import { noop, takeOne } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";

@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
+import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import PostList from "@/components/Post/List.vue";
 import UiSelect from "@/components/Ui/Select/Index.vue";
 import { PostSortType } from "@/models/post/PostSortType";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { describe, expect, test } from "vitest";
 

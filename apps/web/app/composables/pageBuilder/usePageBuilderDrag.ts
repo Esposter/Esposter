@@ -4,13 +4,13 @@ import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
 import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "headless-block-editor";
 import type { MaybeRefOrGetter } from "vue";
 
-import { noop } from "@esposter/shared";
 import { checkIsInsideBox } from "@/services/pageBuilder/checkIsInsideBox";
 import { DRAG_THRESHOLD } from "@/services/pageBuilder/constants";
 import { insertAt } from "@/services/pageBuilder/insertAt";
 import { insertMergeFieldAt } from "@/services/pageBuilder/insertMergeFieldAt";
 import { resolveDropTarget } from "@/services/pageBuilder/resolveDropTarget";
 import { toFramePoint } from "@/services/pageBuilder/toFramePoint";
+import { noop } from "@esposter/shared";
 
 // The slot a block of the type dropped at a viewport point lands in, or none when the point is outside the frame, or when
 // The document is not held or no slot takes the type

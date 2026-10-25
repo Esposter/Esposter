@@ -1,8 +1,8 @@
+import { MoveColumnCommand } from "#shared/models/resource/sheet/commands/MoveColumnCommand";
 import { benchRows1k, benchRows10k, benchRows100 } from "@/composables/resource/sheet/commands/constants.bench";
 import { createBenchDataSource } from "@/composables/resource/sheet/commands/createBenchDataSource.bench";
 import { BENCH_COLUMN_NAMES } from "@/composables/resource/sheet/commands/generateBenchRows.bench";
 import { setupCommandBench } from "@/composables/resource/sheet/commands/setupCommandBench.bench";
-import { MoveColumnCommand } from "#shared/models/resource/sheet/commands/MoveColumnCommand";
 import { takeOne } from "@esposter/shared";
 import { describe } from "vitest";
 

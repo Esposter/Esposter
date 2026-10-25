@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { UiButtonVariant } from "@/models/ui/UiButtonVariant";
 import { UiDialogPlacement } from "@/models/ui/UiDialogPlacement";
+import { checkIsBlankSource } from "@/services/emailEditor/checkIsBlankSource";
 import { useEmailImportDialogStore } from "@/store/emailEditor/importDialog";
 import { useResourceStore } from "@/store/resource";
-import { normalizeString } from "@esposter/shared";
 
 const emailImportDialogStore = useEmailImportDialogStore();
 const { isImportOpen } = storeToRefs(emailImportDialogStore);
@@ -37,8 +37,8 @@ onUnmounted(() => {
     <footer p-3 flex gap-2 justify-end>
       <UiButton :variant="UiButtonVariant.Quiet" @click="isOpen = false">Cancel</UiButton>
       <UiButton
-        :disabled="!normalizeString(source)"
-        :is-pending="isPending"
+        :disabled="checkIsBlankSource(source)"
+        :is-pending
         :variant="UiButtonVariant.Accent"
         @click="answer(() => importEmailSource(resourceId, source))"
       >

@@ -13,7 +13,7 @@ const route = useRoute();
 // Context instead of ten, and no route of its own
 const post = await $trpc.post.readPost.query(route.params.id);
 const commentStore = useCommentStore();
-const { currentPost, commentSortType } = storeToRefs(commentStore);
+const { commentSortType, currentPost } = storeToRefs(commentStore);
 const { openPost } = commentStore;
 openPost(post);
 </script>

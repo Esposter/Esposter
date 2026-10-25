@@ -16,11 +16,11 @@ export const ResourceContentHookMap = {
   // View but a write-back clobber: its next autosave carries the old document at the restore's own fresh
   // `contentVersion`, which the server accepts (openspec/specs/architecture/third-party-document-adapters/design.md)
   Adopt: createHookRegistry<(type: ResourceType) => Promisable<void>>(),
+  // Keep mine: the resource's version has moved to the held save's, so each content store writes the document it holds
+  // over it. Registered by the content stores, which are the only holders of the document
+  Keep: createHookRegistry<(type: ResourceType) => Promisable<void>>(),
   // The working copy was replaced wholesale, which a restore is the one write to do. Registered by the content
   // Stores, which re-read their own blob; every Vue-rendered type is finished here, because its blade renders
   // The ref this refills
   Reload: createHookRegistry<(type: ResourceType) => Promisable<void>>(),
-  // Keep mine: the resource's version has moved to the held save's, so each content store writes the document it holds
-  // over it. Registered by the content stores, which are the only holders of the document
-  Keep: createHookRegistry<(type: ResourceType) => Promisable<void>>(),
 } as const satisfies Record<string, HookRegistry<(type: ResourceType) => Promisable<void>>>;

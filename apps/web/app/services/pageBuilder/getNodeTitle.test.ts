@@ -6,8 +6,8 @@ import { TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import { WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
 import { TEST_WEBPAGE } from "@/services/pageBuilder/constants.test";
 import { getNodeTitle } from "@/services/pageBuilder/getNodeTitle";
-import { describe, expect, test } from "vitest";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
+import { describe, expect, test } from "vitest";
 
 describe(getNodeTitle, () => {
   const createColumnsDocument = (): WebpageDocument => ({

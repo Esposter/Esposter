@@ -1,5 +1,5 @@
-import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
+import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
 import { MAX_HISTORY_SIZE } from "@/services/resource/sheet/constants";
 import { createHistory, pushHistory, redoHistory, undoHistory } from "@esposter/shared";

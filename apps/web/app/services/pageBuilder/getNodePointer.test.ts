@@ -1,7 +1,7 @@
 import { TEST_NESTED_TEXT_ID, TEST_WEBPAGE } from "@/services/pageBuilder/constants.test";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
-import { describe, expect, test } from "vitest";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
+import { describe, expect, test } from "vitest";
 
 describe(getNodePointer, () => {
   test("a node is found by its id at its pointer", () => {

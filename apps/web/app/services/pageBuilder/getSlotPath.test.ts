@@ -4,8 +4,8 @@ import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import { getSlotPath } from "@/services/pageBuilder/getSlotPath";
-import { describe, expect, test } from "vitest";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
+import { describe, expect, test } from "vitest";
 
 describe(getSlotPath, () => {
   const TEST_DOCUMENT: WebpageDocument = {

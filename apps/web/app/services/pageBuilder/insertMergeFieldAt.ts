@@ -3,9 +3,9 @@ import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
 import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "headless-block-editor";
 
 import { noteDocumentSchema } from "#shared/models/resource/note/NoteDocument";
+import { appendMergeFieldToText } from "@/services/pageBuilder/email/appendMergeFieldToText";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { getTextNodeIdAt } from "@/services/pageBuilder/getTextNodeIdAt";
-import { appendMergeFieldToText } from "@/services/pageBuilder/email/appendMergeFieldToText";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { JsonPatchOperationType } from "@esposter/shared";
 import { getBlockNode, getBlockPropValue } from "headless-block-editor";

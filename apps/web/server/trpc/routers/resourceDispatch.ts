@@ -24,17 +24,17 @@ import { checkHasCapability } from "#shared/services/resource/checkHasCapability
 import { ResourceType } from "@esposter/db-schema";
 import { Operation } from "@esposter/shared";
 
+// The file procedures each type with file assets generates, called the same way
+interface FileCaller {
+  deleteFile: (input: DeleteFileInput) => Promise<void>;
+  generateUploadFileSasEntities: (input: GenerateUploadFileSasEntitiesInput) => Promise<ResourceFileSasEntity[]>;
+}
+
 // The publish procedures each publishable type's own router generates, called in process as the browser's per-type
 // Router calls them, so the type's publish transform runs unchanged
 interface PublishCaller {
   publishResource: (input: ResourceIdInput) => Promise<ResourcePublicationInResource>;
   unpublishResource: (input: ResourceIdInput) => Promise<ResourceInResource>;
-}
-
-// The file procedures each type with file assets generates, called the same way
-interface FileCaller {
-  deleteFile: (input: DeleteFileInput) => Promise<void>;
-  generateUploadFileSasEntities: (input: GenerateUploadFileSasEntitiesInput) => Promise<ResourceFileSasEntity[]>;
 }
 
 // The one record of every router the dispatch reaches, keyed by resource type; each router is named once, here

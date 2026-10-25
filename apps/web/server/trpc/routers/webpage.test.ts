@@ -1,8 +1,8 @@
 import type { TRPCRouter } from "#server/trpc/routers";
-import { trpcRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { createCallerFactory } from "#server/trpc";
+import { trpcRouter } from "#server/trpc/routers";
 import { createSurvey } from "#server/trpc/routers/createSurvey.test";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { surveyRouter } from "#server/trpc/routers/survey";

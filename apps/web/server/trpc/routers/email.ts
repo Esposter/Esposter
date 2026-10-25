@@ -34,7 +34,7 @@ export const emailRouter = router({
   // latest saved edit. The bound dataset comes back beside the html, since the export reads its rows from it
   generateEmailHtml: getOwnerProcedure(ResourceType.Email, resourceIdInputSchema, "id")
     .meta({ humanOnly: "The personalised export a person sends, which nothing recalls once it is sent" })
-    .query<{ datasetReference: DatasetReference | undefined; html: string }>(async ({ input: { id } }) => {
+    .query<{ datasetReference?: DatasetReference; html: string }>(async ({ input: { id } }) => {
       const content = await requireEntity(readResourceContent(emailEditorSchema, id), DatabaseEntityType.Resource, id);
 
       return (await compileEmailContent(content)).match(

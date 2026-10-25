@@ -4,9 +4,9 @@ import type { IndexedRow } from "@/models/resource/sheet/commands/IndexedRow";
 
 import { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";
-import { NullStrategy } from "@/models/resource/sheet/commands/NullStrategy";
 import { NULL_STRATEGY_NA_VALUE } from "#shared/services/resource/sheet/commands/constants";
 import { getValueSize } from "#shared/services/resource/sheet/commands/getValueSize";
+import { NullStrategy } from "@/models/resource/sheet/commands/NullStrategy";
 import { writeAffectedCells } from "@/services/resource/sheet/commands/writeAffectedCells";
 
 export class NullStrategyCommand extends ADataSourceCommand<CommandType.NullStrategy> {

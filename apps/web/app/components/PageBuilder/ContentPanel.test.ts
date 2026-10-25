@@ -1,11 +1,10 @@
 // @vitest-environment nuxt
+import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 import type { EmailDocument } from "@/models/pageBuilder/EmailDocument";
 import type { ResourcePublicationInResource } from "@esposter/db-schema";
-import type { WebpageDocument } from "#shared/models/pageBuilder/WebpageDocument";
 
 import { EmailNodeType } from "#shared/models/pageBuilder/EmailNodeType";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { MAX_EMAIL_PREVIEW_LENGTH } from "#shared/services/pageBuilder/email/constants";
 import { NO_SURVEY_ID } from "#shared/services/pageBuilder/constants";
 import {
   TEST_CONTEXT,
@@ -16,6 +15,7 @@ import {
   TEST_THIRD_ID,
   TEST_URL,
 } from "#shared/services/pageBuilder/constants.test";
+import { MAX_EMAIL_PREVIEW_LENGTH } from "#shared/services/pageBuilder/email/constants";
 import { webpageDocumentSchema } from "#shared/services/pageBuilder/webpageDocumentSchema";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
 import PageBuilderContentPanel from "@/components/PageBuilder/ContentPanel.vue";
@@ -29,10 +29,10 @@ import { getUnpublishedResourceMessage } from "@/services/resource/getUnpublishe
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
-import { MjmlNodeType } from "mjml-blocks";
 import { ResourceType } from "@esposter/db-schema";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { flushPromises, mount } from "@vue/test-utils";
+import { MjmlNodeType } from "mjml-blocks";
 import { describe, expect, test } from "vitest";
 import { defineComponent, h } from "vue";
 

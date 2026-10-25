@@ -5,13 +5,13 @@ import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
 import { TEST_ID, TEST_LABEL, TEST_ROOT, TEST_URL } from "#shared/services/pageBuilder/constants.test";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { useResourceStore } from "@/store/resource";
 import { useWebpageEditorStore } from "@/store/webpageEditor";
 import { ResourceType } from "@esposter/db-schema";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 describe(useWebpageEditorStore, () => {
   const { trpcMsw } = setupMswTrpc();

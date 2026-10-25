@@ -3,9 +3,9 @@ import type { Dataset } from "#shared/models/dataset/Dataset";
 
 import { Visual } from "#shared/models/dashboard/data/Visual";
 import { VisualType } from "#shared/models/dashboard/data/VisualType";
-import { MimeType } from "#shared/models/file/MimeType";
 import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";
+import { MimeType } from "#shared/models/file/MimeType";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { exportDashboardVisualCsv } from "@/services/dashboard/export/exportDashboardVisualCsv";
 import { useAlertStore } from "@/store/alert";

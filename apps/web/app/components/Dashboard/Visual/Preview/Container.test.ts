@@ -71,7 +71,7 @@ describe("dashboardVisualPreviewContainer", () => {
       props: { visual: new Visual({ type: VisualType.Card }) },
     });
 
-    expect(wrapper.find(exportCsvLabel).exists()).toBe(false);
+    expect(wrapper.findAll(exportCsvLabel)).toHaveLength(0);
   });
 
   // A visual whose source is gone shows its error state, and there are no rows left to export
@@ -88,6 +88,6 @@ describe("dashboardVisualPreviewContainer", () => {
     await flushPromises();
 
     expect(wrapper.findComponent(UiErrorState).exists()).toBe(true);
-    expect(wrapper.find(exportCsvLabel).exists()).toBe(false);
+    expect(wrapper.findAll(exportCsvLabel)).toHaveLength(0);
   });
 });

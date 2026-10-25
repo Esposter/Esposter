@@ -68,8 +68,8 @@ describe(getAgentJsonSchema, () => {
   // An email nests its body one more child deep each level, and each level holds rich text
   const childRichTextPaths = Array.from(
     { length: 6 },
-    (_, index) => "/content/-" + "/props/children/-".repeat(index + 1),
-  ).flatMap(richTextPaths);
+    (_value, index) => "/content/-" + "/props/children/-".repeat(index + 1),
+  ).flatMap((pointer) => richTextPaths(pointer));
   // What each type's agent may not write: a new undescribed or read-only node fails here until it is described or
   // Recorded, so no type's reach widens or narrows unseen
   const ResourceTypeUnwritablePathsMap = {

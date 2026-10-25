@@ -3,10 +3,10 @@ import type { FlowchartExportRequest } from "@/models/resource/FlowchartExportRe
 
 import { MimeType } from "#shared/models/file/MimeType";
 import { FlowchartExportFormat } from "@/models/resource/FlowchartExportFormat";
+import { captureFlowchart } from "@/services/capture/captureFlowchart";
 import { DEFAULT_EDGE_OPTIONS } from "@/services/flowchartEditor/constants";
 import { edgeTypes } from "@/services/flowchartEditor/EdgeTypeMap";
 import { nodeTypes } from "@/services/flowchartEditor/NodeTypeMap";
-import { captureFlowchart } from "@/services/capture/captureFlowchart";
 import { useAlertStore } from "@/store/alert";
 import { useFlowchartExportStore } from "@/store/flowchartEditor/export";
 import { trimFileExtension } from "@/util/file/trimFileExtension";

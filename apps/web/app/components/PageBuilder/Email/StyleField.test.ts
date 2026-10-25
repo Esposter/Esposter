@@ -1,9 +1,9 @@
 // @vitest-environment nuxt
 import type { EmailStyleField } from "@/models/pageBuilder/EmailStyleField";
 
+import PageBuilderEmailStyleField from "@/components/PageBuilder/Email/StyleField.vue";
 import UiColorField from "@/components/Ui/ColorField.vue";
 import UiSwitch from "@/components/Ui/Switch.vue";
-import PageBuilderEmailStyleField from "@/components/PageBuilder/Email/StyleField.vue";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { MjmlAttributeKind } from "mjml-blocks";
 import { describe, expect, test } from "vitest";

@@ -1,6 +1,5 @@
 import type { Context } from "#server/trpc/context";
 import type { TRPCRouter } from "#server/trpc/routers";
-import { trpcRouter } from "#server/trpc/routers";
 import type { ProgramResource } from "#shared/models/resource/program/ProgramResource";
 import type { SurveyResource } from "#shared/models/resource/survey/SurveyResource";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
@@ -8,6 +7,7 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { CLOSED_SURVEY_ERROR_REASON, INVALID_PARTICIPANT_TOKEN_ERROR_REASON } from "#server/services/survey/constants";
 import { createCallerFactory } from "#server/trpc";
 import { mockSessionOnce } from "#server/trpc/context.test";
+import { trpcRouter } from "#server/trpc/routers";
 import { createBoundProgram } from "#server/trpc/routers/createBoundProgram.test";
 import { createSurvey } from "#server/trpc/routers/createSurvey.test";
 import { programRouter } from "#server/trpc/routers/program";

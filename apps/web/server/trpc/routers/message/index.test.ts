@@ -22,8 +22,8 @@ import { MimeType } from "#shared/models/file/MimeType";
 import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MESSAGE_ROW_KEY_SORT_ITEM } from "#shared/services/pagination/constants";
-import { StorageTierQuotaMap } from "#shared/services/storage/StorageTierQuotaMap";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
+import { StorageTierQuotaMap } from "#shared/services/storage/StorageTierQuotaMap";
 import {
   deleteStorageBlobs,
   getBlobName,

@@ -1,14 +1,14 @@
 <script setup lang="ts">
+import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 import type { BroadcastMentionItem } from "@/models/message/BroadcastMentionItem";
 import type { MentionNodeAttributes } from "@/models/message/MentionNodeAttributes";
 import type { RoleMentionItem } from "@/models/message/RoleMentionItem";
-import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 import type { SuggestionProps } from "@tiptap/suggestion";
 
 import { SuggestionTrigger } from "@/models/shared/SuggestionTrigger";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
-import { getMemberDescription } from "@/services/message/member/getMemberDescription";
 import { getSuggestionListTitle } from "@/services/message/getSuggestionListTitle";
+import { getMemberDescription } from "@/services/message/member/getMemberDescription";
 import { MentionType, takeOne } from "@esposter/shared";
 
 type MentionItem = BroadcastMentionItem | MemberInRoom | RoleMentionItem;

@@ -27,23 +27,6 @@ import { ResourceType } from "@esposter/db-schema";
 // Wrote, and none deletes one
 export const todoListRouter = router({
   ...createResourceProcedures(ResourceType.TodoList),
-  // The checkbox's tick for any todo, as the browser takes it: a repeating one rolls on, and any other completes or reopens
-  toggleTodoCompleted: getOwnerProcedure(ResourceType.TodoList, toggleTodoCompletedInputSchema, "id")
-    .meta({
-      mcp: {
-        description:
-          "Tick a todo as its checkbox does: a repeating todo with a due date rolls to its next due date in the time zone given rather than completing, and any other todo completes, or reopens if it already is completed. Answers nothing.",
-        scope: McpScope.Resources,
-      },
-    })
-    .mutation<void>(async ({ ctx, input: { itemId, timeZone } }) => {
-      await updateTodoListContent(ctx, ctx.resource, (todoList) => {
-        const item = todoList.items.find(({ id }) => id === itemId);
-        if (!item) throw getNotFoundError("Todo", itemId);
-        if (checkRollsOnTick(item)) rollRecurringItem(item, item.dueAt, item.recurrence, timeZone);
-        else item.completedAt = item.completedAt ? undefined : new Date();
-      });
-    }),
   addFollowUp: getOwnerProcedure(ResourceType.TodoList, addFollowUpInputSchema, "id")
     .meta({
       mcp: {
@@ -120,5 +103,22 @@ export const todoListRouter = router({
           item.origin.repository === repository &&
           !(item.recurrence && item.dueAt && item.dueAt > now),
       );
+    }),
+  // The checkbox's tick for any todo, as the browser takes it: a repeating one rolls on, and any other completes or reopens
+  toggleTodoCompleted: getOwnerProcedure(ResourceType.TodoList, toggleTodoCompletedInputSchema, "id")
+    .meta({
+      mcp: {
+        description:
+          "Tick a todo as its checkbox does: a repeating todo with a due date rolls to its next due date in the time zone given rather than completing, and any other todo completes, or reopens if it already is completed. Answers nothing.",
+        scope: McpScope.Resources,
+      },
+    })
+    .mutation<void>(async ({ ctx, input: { itemId, timeZone } }) => {
+      await updateTodoListContent(ctx, ctx.resource, (todoList) => {
+        const item = todoList.items.find(({ id }) => id === itemId);
+        if (!item) throw getNotFoundError("Todo", itemId);
+        if (checkRollsOnTick(item)) rollRecurringItem(item, item.dueAt, item.recurrence, timeZone);
+        else item.completedAt = item.completedAt ? undefined : new Date();
+      });
     }),
 });

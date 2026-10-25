@@ -8,8 +8,8 @@ import { DateColumn } from "#shared/models/resource/sheet/column/DateColumn";
 import { NumberColumn } from "#shared/models/resource/sheet/column/NumberColumn";
 import { StringColumn } from "#shared/models/resource/sheet/column/StringColumn";
 import { Row } from "#shared/models/resource/sheet/datasource/Row";
-import { inferDateFormat } from "@/services/resource/sheet/column/inferDateFormat";
 import { getValueSize } from "#shared/services/resource/sheet/commands/getValueSize";
+import { inferDateFormat } from "@/services/resource/sheet/column/inferDateFormat";
 import { computeDataSourceStatistics } from "@/services/resource/sheet/dataSource/computeDataSourceStatistics";
 import { exhaustiveGuard } from "@esposter/shared";
 

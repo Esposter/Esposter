@@ -8,10 +8,9 @@ export const VisualTypeChartTypesMap = {
   [VisualType.Area]: CommonChartTypes,
   [VisualType.Bar]: CommonChartTypes,
   [VisualType.BoxPlot]: CommonChartTypes,
-  [VisualType.Card]: CommonChartTypes,
-  [VisualType.Table]: CommonChartTypes,
   [VisualType.Bubble]: [...CommonChartTypes, ChartType["3D"]],
   [VisualType.Candlestick]: CommonChartTypes,
+  [VisualType.Card]: CommonChartTypes,
   [VisualType.Column]: CommonChartTypes,
   [VisualType.Funnel]: [...CommonChartTypes, ChartType.Pyramid],
   [VisualType.Heatmap]: CommonChartTypes,
@@ -24,5 +23,6 @@ export const VisualTypeChartTypesMap = {
   [VisualType.RangeBar]: CommonChartTypes,
   [VisualType.Scatter]: CommonChartTypes,
   [VisualType.Slope]: CommonChartTypes,
+  [VisualType.Table]: CommonChartTypes,
   [VisualType.Treemap]: [...CommonChartTypes, ChartType.Distributed],
 } as const satisfies Record<VisualType, ChartType[]>;

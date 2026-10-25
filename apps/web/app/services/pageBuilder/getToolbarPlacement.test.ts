@@ -34,7 +34,7 @@ describe(getToolbarPlacement.name, () => {
   test("the toolbar stays inside the canvas when its node runs past the bottom edge", () => {
     expect.hasAssertions();
 
-    expect(getToolbarPlacement({ ...BOX, top: 0, height: 450 }, FRAME)).toStrictEqual({
+    expect(getToolbarPlacement({ ...BOX, height: 450, top: 0 }, FRAME)).toStrictEqual({
       left: 320,
       top: 100 + 400 - TOOLBAR_HEIGHT,
     });

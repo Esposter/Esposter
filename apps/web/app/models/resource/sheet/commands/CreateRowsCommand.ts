@@ -1,10 +1,10 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { Row } from "#shared/models/resource/sheet/datasource/Row";
 
-import { pluralize } from "#shared/util/text/pluralize";
 import { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";
 import { getValueSize } from "#shared/services/resource/sheet/commands/getValueSize";
+import { pluralize } from "#shared/util/text/pluralize";
 import { takeOne } from "@esposter/shared";
 
 export class CreateRowsCommand extends ADataSourceCommand<CommandType.CreateRows> {

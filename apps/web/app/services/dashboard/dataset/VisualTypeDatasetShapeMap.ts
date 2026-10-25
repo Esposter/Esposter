@@ -6,10 +6,9 @@ export const VisualTypeDatasetShapeMap = {
   [VisualType.Area]: VisualDatasetShape.Categories,
   [VisualType.Bar]: VisualDatasetShape.Categories,
   [VisualType.BoxPlot]: VisualDatasetShape.None,
-  [VisualType.Card]: VisualDatasetShape.Single,
-  [VisualType.Table]: VisualDatasetShape.Categories,
   [VisualType.Bubble]: VisualDatasetShape.None,
   [VisualType.Candlestick]: VisualDatasetShape.None,
+  [VisualType.Card]: VisualDatasetShape.Single,
   [VisualType.Column]: VisualDatasetShape.Categories,
   [VisualType.Funnel]: VisualDatasetShape.Categories,
   [VisualType.Heatmap]: VisualDatasetShape.Categories,
@@ -22,5 +21,6 @@ export const VisualTypeDatasetShapeMap = {
   [VisualType.RangeBar]: VisualDatasetShape.None,
   [VisualType.Scatter]: VisualDatasetShape.Categories,
   [VisualType.Slope]: VisualDatasetShape.Points,
+  [VisualType.Table]: VisualDatasetShape.Categories,
   [VisualType.Treemap]: VisualDatasetShape.Points,
 } as const satisfies Record<VisualType, VisualDatasetShape>;

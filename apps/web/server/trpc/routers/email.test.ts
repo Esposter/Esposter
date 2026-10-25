@@ -1,11 +1,11 @@
 import type { TRPCRouter } from "#server/trpc/routers";
-import { trpcRouter } from "#server/trpc/routers";
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 
 import { transformPublishedEmail } from "#server/services/emailEditor/transformPublishedEmail";
 import { incrementResourceViewCount } from "#server/services/resource/incrementResourceViewCount";
 import { createCallerFactory } from "#server/trpc";
 import { getMockSession } from "#server/trpc/context.test";
+import { trpcRouter } from "#server/trpc/routers";
 import { emailRouter } from "#server/trpc/routers/email";
 import { setupResourceSuite } from "#server/trpc/routers/setupResourceSuite.test";
 import { DatasetProviderType } from "#shared/models/dataset/DatasetProviderType";

@@ -5,8 +5,8 @@ import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import { TEST_SECTION_ID, TEST_WEBPAGE } from "@/services/pageBuilder/constants.test";
 import { getInsertTarget } from "@/services/pageBuilder/getInsertTarget";
-import { describe, expect, test } from "vitest";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
+import { describe, expect, test } from "vitest";
 
 describe(getInsertTarget, () => {
   const TEST_COLUMNS_DOCUMENT: WebpageDocument = {

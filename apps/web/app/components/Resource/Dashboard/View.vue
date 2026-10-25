@@ -25,7 +25,7 @@ const dashboard = new BaseDashboard(content as never);
 
 <template>
   <div p-4 flex flex-col gap-3 ui-body>
-    <div flex items-center justify-between gap-3>
+    <div flex gap-3 items-center justify-between>
       <h1 ui-display>{{ name }}</h1>
       <UiButton :variant="UiButtonVariant.Quiet" @click="exportDashboardPng(name)">Export PNG</UiButton>
     </div>

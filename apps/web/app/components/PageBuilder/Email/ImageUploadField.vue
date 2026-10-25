@@ -23,5 +23,10 @@ const onPick = async (files: File[]) => {
 </script>
 
 <template>
-  <UiFileField accept="image/*" label="Upload image" :model-value="[]" @update:model-value="onPick" />
+  <UiFileField
+    accept="image/*"
+    label="Upload image"
+    :model-value="[]"
+    @update:model-value="(newModelValue) => onPick(newModelValue)"
+  />
 </template>

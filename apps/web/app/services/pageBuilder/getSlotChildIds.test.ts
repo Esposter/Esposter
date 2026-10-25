@@ -5,8 +5,8 @@ import {
   TEST_WEBPAGE,
 } from "@/services/pageBuilder/constants.test";
 import { getSlotChildIds } from "@/services/pageBuilder/getSlotChildIds";
-import { describe, expect, test } from "vitest";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
+import { describe, expect, test } from "vitest";
 
 describe(getSlotChildIds, () => {
   test("the ids of a slot's children come in the slot's order", () => {

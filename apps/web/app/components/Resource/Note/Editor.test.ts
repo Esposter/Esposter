@@ -7,9 +7,9 @@ import { createResourceListItem } from "#shared/services/resource/list/createRes
 import ResourceNoteEditor from "@/components/Resource/Note/Editor.vue";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { ResourceType } from "@esposter/db-schema";
-import { flushPromises } from "@vue/test-utils";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { Editor } from "@tiptap/vue-3";
+import { flushPromises } from "@vue/test-utils";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { uploadResourceFileMock } = vi.hoisted(() => ({

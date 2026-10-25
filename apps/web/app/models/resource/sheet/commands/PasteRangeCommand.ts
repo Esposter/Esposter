@@ -1,12 +1,12 @@
 import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
-import { Row } from "#shared/models/resource/sheet/datasource/Row";
-import { coerceValue } from "#shared/services/resource/sheet/column/coerceValue";
-import { pluralize } from "#shared/util/text/pluralize";
 import { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";
-import { createPastedRowData } from "@/services/resource/sheet/commands/createPastedRowData";
+import { Row } from "#shared/models/resource/sheet/datasource/Row";
+import { coerceValue } from "#shared/services/resource/sheet/column/coerceValue";
 import { getValueSize } from "#shared/services/resource/sheet/commands/getValueSize";
+import { pluralize } from "#shared/util/text/pluralize";
+import { createPastedRowData } from "@/services/resource/sheet/commands/createPastedRowData";
 import { writeCellValue } from "@/services/resource/sheet/commands/writeCellValue";
 import { takeOne } from "@esposter/shared";
 

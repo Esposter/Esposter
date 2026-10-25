@@ -2,10 +2,10 @@ import { HtmlTag } from "#shared/models/pageBuilder/HtmlTag";
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_CONTEXT, TEST_ID, TEST_OTHER_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import { renderCanvasVNodes } from "@/services/pageBuilder/renderCanvasVNodes";
+import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { takeOne } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
 import { isVNode } from "vue";
-import { webpageKind } from "@/services/pageBuilder/webpageKind";
 
 describe(renderCanvasVNodes, () => {
   test("a section holding a text node stamps each node's id on its own root element", () => {

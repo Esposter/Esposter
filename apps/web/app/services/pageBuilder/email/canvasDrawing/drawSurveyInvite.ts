@@ -1,5 +1,5 @@
-import type { EmailCanvasDrawing } from "@/models/pageBuilder/EmailCanvasDrawing";
 import type { EmailNodeType } from "#shared/models/pageBuilder/EmailNodeType";
+import type { EmailCanvasDrawing } from "@/models/pageBuilder/EmailCanvasDrawing";
 
 import { h } from "vue";
 

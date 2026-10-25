@@ -6,12 +6,12 @@ import type { MjmlDocument } from "mjml-blocks";
 
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ID, TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
-import { toMergeField } from "@/services/emailEditor/toMergeField";
 import { usePageBuilderDrag } from "@/composables/pageBuilder/usePageBuilderDrag";
+import { toMergeField } from "@/services/emailEditor/toMergeField";
 import { WEBPAGE_NODE_TYPE_TITLE_MAP } from "@/services/pageBuilder/constants";
 import { TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
-import { getSlotChildIds } from "@/services/pageBuilder/getSlotChildIds";
 import { emailKind } from "@/services/pageBuilder/emailKind";
+import { getSlotChildIds } from "@/services/pageBuilder/getSlotChildIds";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";

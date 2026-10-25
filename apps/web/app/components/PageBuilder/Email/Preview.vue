@@ -6,16 +6,16 @@ import { DEVICE_WIDTH_MAP } from "#shared/services/pageBuilder/constants";
 import { RESOURCE_AUTOSAVE_DEBOUNCE_MS } from "@/services/resource/constants";
 
 interface Props {
-  // The open email as the page builder holds it, so Preview shows an edit before it is saved
-  emailDocument: EmailDocument;
   // The device the canvas's toggle sets: mobile and tablet draw the email at their device's width, and desktop fills the pane
   device: PageBuilderDevice;
+  // The open email as the page builder holds it, so Preview shows an edit before it is saved
+  emailDocument: EmailDocument;
 }
 
 const { device, emailDocument } = defineProps<Props>();
 const { $trpc } = useNuxtApp();
 // The last html the server compiled. A refused compile keeps it, so the validator's alert sits above the preview it did not replace
-const html = shallowRef<string>();
+const html = shallowRef("");
 const { data, error, refresh } = useQuery(() => $trpc.email.compile.mutate(emailDocument), {
   isInlineError: true,
   onSuccess: (result) => {
@@ -37,7 +37,7 @@ watchDeep(
 <template>
   <div flex flex-col gap-2 h-full min-h-0>
     <UiAlert v-if="message" status="error">{{ message }}</UiAlert>
-    <UiErrorState v-if="error" :error @retry="refresh" />
+    <UiErrorState v-if="error" :error @retry="refresh()" />
     <iframe
       v-else-if="html"
       b-none

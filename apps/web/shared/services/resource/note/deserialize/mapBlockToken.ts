@@ -9,7 +9,7 @@ import { mapInlineTokens } from "#shared/services/resource/note/deserialize/mapI
 import { mapList } from "#shared/services/resource/note/deserialize/mapList";
 
 // marked's catch-all token is typed with a bare string type, so a list is narrowed to its own type by this guard
-const isListToken = (token: Token): token is Tokens.List => token.type === "list";
+const checkIsListToken = (token: Token): token is Tokens.List => token.type === "list";
 
 export const mapBlockToken = (token: Token, mapBlockTokens: TokensMapper): JSONContent[] => {
   // A task item's checkbox is read into the item's checked attribute, so the token itself holds no text
@@ -34,7 +34,7 @@ export const mapBlockToken = (token: Token, mapBlockTokens: TokensMapper): JSONC
 
   if (token.type === "hr") return [{ type: "horizontalRule" }];
 
-  if (isListToken(token)) return [mapList(token, mapBlockTokens)];
+  if (checkIsListToken(token)) return [mapList(token, mapBlockTokens)];
 
   // Raw HTML and a construct the kit has no node for (a table) keep their text, as a paragraph
   const text = getTokenText(token).trim();

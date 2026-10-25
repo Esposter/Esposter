@@ -5,6 +5,7 @@ import type { UiDataTableColumn } from "@/models/ui/UiDataTableColumn";
 
 import { DatasetAggregationType } from "#shared/models/dataset/DatasetAggregationType";
 import { NUMBER_FORMATTER } from "#shared/services/intl/constants";
+import { DASHBOARD_TABLE_CATEGORY_KEY } from "@/services/dashboard/constants";
 import { takeOne } from "@esposter/shared";
 
 interface Props {
@@ -18,7 +19,6 @@ interface TableRow {
   values: number[];
 }
 
-const CATEGORY_KEY = "category";
 const { data, visual } = defineProps<Props>();
 // The categories and series are the chart's own, so a table over a binding reads the same numbers the chart draws
 const categories = computed(() => (data.options?.xaxis?.categories ?? []).map(String));
@@ -34,7 +34,7 @@ const columns = computed<UiDataTableColumn<TableRow, string>[]>(() => [
   {
     compare: (first, second) => first.category.localeCompare(second.category),
     getValue: ({ category }) => category,
-    key: CATEGORY_KEY,
+    key: DASHBOARD_TABLE_CATEGORY_KEY,
     title: visual.dataset ? visual.dataset.query.xColumn : "Category",
   },
   ...data.series.map((series, index) => ({
@@ -49,7 +49,7 @@ const columns = computed<UiDataTableColumn<TableRow, string>[]>(() => [
 const columnKeyTotalMap = computed(
   () =>
     new Map<string, string>([
-      [CATEGORY_KEY, "Total"],
+      [DASHBOARD_TABLE_CATEGORY_KEY, "Total"],
       ...data.series.flatMap((_series, index): [string, string][] => {
         const aggregation = querySeries.value[index]?.aggregation;
         if (aggregation !== DatasetAggregationType.Count && aggregation !== DatasetAggregationType.Sum) return [];
@@ -63,8 +63,8 @@ const columnKeyTotalMap = computed(
 
 <template>
   <UiDataTable
-    size-full
     p-3
+    size-full
     min-h-0
     of-y-auto
     :columns

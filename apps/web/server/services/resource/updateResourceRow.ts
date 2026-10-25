@@ -4,7 +4,7 @@ import type { ResourceInResource } from "@esposter/db-schema";
 
 import { writeResourceActivity } from "#server/services/resource/writeResourceActivity";
 import { requireMutation } from "#server/trpc/guards/requireMutation";
-import { DatabaseEntityType, resourcesInResource, ResourceActivityType } from "@esposter/db-schema";
+import { DatabaseEntityType, ResourceActivityType, resourcesInResource } from "@esposter/db-schema";
 import { getSynchronizedFunction, Operation } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 

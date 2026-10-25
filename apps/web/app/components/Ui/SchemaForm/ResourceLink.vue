@@ -3,8 +3,8 @@ import type { UiSchemaFormRendererProps } from "@/models/ui/UiSchemaFormRenderer
 import type { UiSelectItem } from "@/models/ui/UiSelectItem";
 
 import ResourceLinkSelect from "@/components/Resource/Link/Select.vue";
-import { getResourceLinkSource } from "@/services/resource/link/getResourceLinkSource";
 import { getUnpublishedResourceMessage } from "@/services/resource/getUnpublishedResourceMessage";
+import { getResourceLinkSource } from "@/services/resource/link/getResourceLinkSource";
 import { MAX_READ_LIMIT } from "@esposter/shared";
 
 interface Props extends UiSchemaFormRendererProps {}

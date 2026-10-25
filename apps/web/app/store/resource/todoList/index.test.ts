@@ -149,7 +149,7 @@ describe(useTodoListStore, () => {
     const { saveTodoList } = todoListStore;
     const { items } = storeToRefs(todoListStore);
     content = { items: [new TodoListItem({ name: newItemName })] };
-    await useResourceStore().storeSaveResourceContent({ contentVersion: 1, apiKeyName: "", device });
+    await useResourceStore().storeSaveResourceContent({ apiKeyName: "", contentVersion: 1, device });
     const isSuccessful = await saveTodoList();
 
     expect(items.value.map(({ name }) => name)).toStrictEqual([newItemName]);
@@ -232,7 +232,7 @@ describe(useTodoListStore, () => {
     trpcMsw.todoList.saveResourceContent.mutation(saveKept);
     items.value = [new TodoListItem({ name: newItemName })];
     unwrittenContentResourceId.value = resourceId;
-    await resourceStore.storeSaveResourceContent({ contentVersion: 1, apiKeyName: "", device });
+    await resourceStore.storeSaveResourceContent({ apiKeyName: "", contentVersion: 1, device });
     await resourceStore.keepUnwrittenContent();
 
     expect(saveKept).toHaveBeenCalledExactlyOnceWith(

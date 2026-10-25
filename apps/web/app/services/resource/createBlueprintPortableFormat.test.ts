@@ -9,9 +9,9 @@ import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { useAlertStore } from "@/store/alert";
 import { useResourceStore } from "@/store/resource";
 import { useBlueprintStore } from "@/store/resource/blueprint";
-import { flushPromises } from "@vue/test-utils";
 import { ResourceType } from "@esposter/db-schema";
 import { downloadFile } from "@esposter/shared";
+import { flushPromises } from "@vue/test-utils";
 import { assert, beforeEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@esposter/shared"), async (importOriginal) => ({

@@ -23,7 +23,7 @@ const displayValue = computed(() =>
 </script>
 
 <template>
-  <div flex flex-col gap-1 items-center justify-center size-full p-3 text-center>
+  <div p-3 text-center flex flex-col gap-1 size-full items-center justify-center>
     <span text-4xl fw-semibold>{{ displayValue }}</span>
     <span text-muted>{{ label }}</span>
   </div>

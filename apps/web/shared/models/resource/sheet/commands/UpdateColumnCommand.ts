@@ -6,8 +6,8 @@ import type { ToData } from "@esposter/shared";
 import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";
-import { coerceValue } from "#shared/services/resource/sheet/column/coerceValue";
 import { checkIsEditableColumnValue } from "#shared/services/resource/sheet/column/checkIsEditableColumnValue";
+import { coerceValue } from "#shared/services/resource/sheet/column/coerceValue";
 import { ColumnTypeCreateMap } from "#shared/services/resource/sheet/column/ColumnTypeCreateMap";
 import { alignRowDataToColumns } from "#shared/services/resource/sheet/commands/alignRowDataToColumns";
 import { getOriginalRowValues } from "#shared/services/resource/sheet/commands/getOriginalRowValues";
@@ -30,9 +30,9 @@ export class UpdateColumnCommand extends ADataSourceCommand<CommandType.UpdateCo
 
   // What the column held before this command, recorded from the document on execute, so undo restores what the
   // Document held rather than what the caller saw. Undefined until the command has executed
-  #originalColumn: ToData<Column> | undefined;
-  #originalRowValues: ColumnValue[] = [];
+  #originalColumn?: ToData<Column>;
   readonly #originalName: string;
+  #originalRowValues: ColumnValue[] = [];
   readonly #updatedColumn: ToData<Column>;
 
   constructor(originalName: string, updatedColumn: ToData<Column>) {

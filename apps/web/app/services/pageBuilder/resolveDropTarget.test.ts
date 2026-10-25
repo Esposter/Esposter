@@ -5,8 +5,8 @@ import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import { TEST_ROOT } from "#shared/services/pageBuilder/constants.test";
 import { TEST_TEXT_CONTENT } from "@/services/pageBuilder/constants.test";
 import { resolveDropTarget } from "@/services/pageBuilder/resolveDropTarget";
-import { describe, expect, test } from "vitest";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
+import { describe, expect, test } from "vitest";
 
 const createText = (id: string): TextNode => ({
   props: { content: TEST_TEXT_CONTENT, id },

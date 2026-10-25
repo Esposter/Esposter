@@ -1,5 +1,5 @@
-import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
+import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
 import { useSheetStore } from "@/store/resource/sheet";
 import { useSheetHistoryStore } from "@/store/resource/sheet/history";

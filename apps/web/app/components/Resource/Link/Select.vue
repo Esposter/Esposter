@@ -6,11 +6,11 @@ import { getMissingResourceMessage } from "@/services/resource/getMissingResourc
 import { prependNoneSelectItem } from "@/services/ui/prependNoneSelectItem";
 
 interface Props {
-  label: string;
   // A required binding offers no None, since choosing it would leave the field with no resource at all
   isRequired?: boolean;
   // An unpublished binding is kept beside the list it is left out of, and said to be unpublished in its warning slot
   isUnpublished?: boolean;
+  label: string;
   // Absent until the owner's resources of this type are read, since a binding cannot be told missing before then
   resources?: OffsetPaginationData<UiSelectItem<string>>;
 }

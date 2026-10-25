@@ -41,8 +41,8 @@ describe("pageBuilderPalette", () => {
   });
 
   test.each([
-    { kindName: "webpage", kind: webpageKind },
-    { kindName: "email", kind: emailKind },
+    { kind: webpageKind, kindName: "webpage" },
+    { kind: emailKind, kindName: "email" },
   ])("the $kindName palette draws each block as a tile with its icon and its title", async ({ kind }) => {
     expect.hasAssertions();
     const component = await mountSuspended(PageBuilderPalette, {

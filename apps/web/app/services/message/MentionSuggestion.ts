@@ -1,7 +1,7 @@
+import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 import type { BroadcastMentionItem } from "@/models/message/BroadcastMentionItem";
 import type { MentionNodeAttributes } from "@/models/message/MentionNodeAttributes";
 import type { RoleMentionItem } from "@/models/message/RoleMentionItem";
-import type { MemberInRoom } from "#shared/models/db/room/MemberInRoom";
 import type { MentionOptions } from "@tiptap/extension-mention";
 
 import MentionList from "@/components/Message/Model/Message/Suggestion/MentionList.vue";

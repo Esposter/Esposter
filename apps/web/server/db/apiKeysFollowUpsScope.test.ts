@@ -26,7 +26,7 @@ describe("api keys follow-ups scope migration", () => {
     await mockContext.db.delete(apiKeysInAuth);
   });
 
-  const insertKey = async (permissions: string | null) => {
+  const insertKey = async (permissions: null | string) => {
     const id = crypto.randomUUID();
     await mockContext.db
       .insert(apiKeysInAuth)

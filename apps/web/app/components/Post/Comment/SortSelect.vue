@@ -14,6 +14,6 @@ const sortItems = getPostSortTypeItems(PostSortTypes);
     :model-value="commentSortType"
     :items="sortItems"
     label="Sort by"
-    @update:model-value="setCommentSortType"
+    @update:model-value="(newModelValue) => setCommentSortType(newModelValue)"
   />
 </template>

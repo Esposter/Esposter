@@ -14,8 +14,8 @@ import {
   STALE_CONTENT_VERSION_ERROR_MESSAGE,
 } from "#shared/services/resource/constants";
 import { createResourceListItem } from "#shared/services/resource/list/createResourceListItem.test";
-import { useDeleteRow } from "@/composables/resource/sheet/commands/useDeleteRow";
 import { setupWithDataSource } from "@/composables/resource/sheet/commands/setupWithDataSource.test";
+import { useDeleteRow } from "@/composables/resource/sheet/commands/useDeleteRow";
 import { ResourceSaveState } from "@/models/resource/ResourceSaveState";
 import { ResourceContentHookMap } from "@/services/resource/ResourceContentHookMap";
 import { createDefaultSheetResource } from "@/services/resource/sheet/createDefaultSheetResource";
@@ -862,7 +862,7 @@ describe(useResourceStore, () => {
       const resourceStore = useResourceStore();
       await resourceStore.readResource();
       await withFinalizerAsync(
-        () => resourceStore.storeSaveResourceContent({ contentVersion: 1, apiKeyName: "", device }),
+        () => resourceStore.storeSaveResourceContent({ apiKeyName: "", contentVersion: 1, device }),
         unregisterReload,
       );
 
@@ -883,7 +883,7 @@ describe(useResourceStore, () => {
     const unregisterReload = ResourceContentHookMap.Reload.register(reload);
     unwrittenContentResourceId.value = id;
     await withFinalizerAsync(
-      () => resourceStore.storeSaveResourceContent({ contentVersion: contentVersion + 1, apiKeyName: "", device }),
+      () => resourceStore.storeSaveResourceContent({ apiKeyName: "", contentVersion: contentVersion + 1, device }),
       unregisterReload,
     );
     const isSaved = await resourceStore.saveContent(createDefaultSheetResource());
@@ -907,7 +907,7 @@ describe(useResourceStore, () => {
     const reload = vi.fn<(type: ResourceType) => void>();
     const unregisterReload = ResourceContentHookMap.Reload.register(reload);
     unwrittenContentResourceId.value = id;
-    await resourceStore.storeSaveResourceContent({ contentVersion: contentVersion + 1, apiKeyName: "", device });
+    await resourceStore.storeSaveResourceContent({ apiKeyName: "", contentVersion: contentVersion + 1, device });
     await withFinalizerAsync(() => resourceStore.takeOtherSave(), unregisterReload);
 
     expect(reload).toHaveBeenCalledExactlyOnceWith(ResourceType.Sheet);
@@ -932,7 +932,7 @@ describe(useResourceStore, () => {
     });
     const unregisterKeep = ResourceContentHookMap.Keep.register(keep);
     unwrittenContentResourceId.value = id;
-    await resourceStore.storeSaveResourceContent({ contentVersion: contentVersion + 1, apiKeyName: "", device });
+    await resourceStore.storeSaveResourceContent({ apiKeyName: "", contentVersion: contentVersion + 1, device });
     await withFinalizerAsync(() => resourceStore.keepUnwrittenContent(), unregisterKeep);
 
     expect(keep).toHaveBeenCalledExactlyOnceWith(ResourceType.Sheet);
@@ -971,7 +971,7 @@ describe(useResourceStore, () => {
     const unregisterReload = ResourceContentHookMap.Reload.register(reload);
     const unregisterAdopt = ResourceContentHookMap.Adopt.register(adopt);
     await withFinalizerAsync(
-      () => resourceStore.storeSaveResourceContent({ contentVersion: contentVersion + 1, apiKeyName: "", device }),
+      () => resourceStore.storeSaveResourceContent({ apiKeyName: "", contentVersion: contentVersion + 1, device }),
       () => {
         unregisterReload();
         unregisterAdopt();
@@ -1013,8 +1013,8 @@ describe(useResourceStore, () => {
     await readContent(noop);
     assert.exists(resource.value);
     await resourceStore.storeSaveResourceContent({
-      contentVersion: resource.value.contentVersion + 1,
       apiKeyName: "",
+      contentVersion: resource.value.contentVersion + 1,
       device,
     });
     await nextTick();

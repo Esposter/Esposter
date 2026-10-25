@@ -56,7 +56,7 @@ onUnmounted(() => {
       <UiToggleGroup v-model="view" :items="viewItems" label="View" />
     </div>
     <PageBuilderEditor v-show="view === EmailView.Design" :kind="emailKind" :resource-id />
-    <div v-if="view === EmailView.Preview && emailDocument" flex flex-col gap-2 p-4 min-h-0 flex-1>
+    <div v-if="view === EmailView.Preview && emailDocument" p-4 flex flex-1 flex-col gap-2 min-h-0>
       <PageBuilderCanvasDeviceToggle :resource-id />
       <PageBuilderEmailPreview :device="getDevice(resourceId)" :email-document />
     </div>

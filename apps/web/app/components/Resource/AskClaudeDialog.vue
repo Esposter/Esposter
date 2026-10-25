@@ -82,7 +82,7 @@ const send = () => {
             </div>
           </li>
         </ol>
-        <UiForm v-else v-model:is-valid="isValid" flex flex-col gap-3 @submit="send">
+        <UiForm v-else v-model:is-valid="isValid" flex flex-col gap-3 @submit="send()">
           <UiSelect v-model="selectedSessionId" :items="sessionItems" label="Session" />
           <UiTextField v-if="!selectedSessionId" v-model="editedCwd" label="Start a session in" :rules="cwdRules" />
           <UiTextField v-model="line" is-autofocus label="Ask Claude" :rules="lineRules" />

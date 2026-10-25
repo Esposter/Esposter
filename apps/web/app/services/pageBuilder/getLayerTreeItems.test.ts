@@ -5,8 +5,8 @@ import {
   TEST_WEBPAGE,
 } from "@/services/pageBuilder/constants.test";
 import { getLayerTreeItems } from "@/services/pageBuilder/getLayerTreeItems";
-import { describe, expect, test } from "vitest";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
+import { describe, expect, test } from "vitest";
 
 describe(getLayerTreeItems, () => {
   test("nests a row under the nearest row one depth up, each labelled by its type's title", () => {

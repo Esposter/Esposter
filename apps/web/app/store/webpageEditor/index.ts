@@ -1,6 +1,6 @@
 import { WebpageEditor } from "#shared/models/webpageEditor/data/WebpageEditor";
-import { createContentData } from "@/services/resource/createContentData";
 import { webpageKind } from "@/services/pageBuilder/webpageKind";
+import { createContentData } from "@/services/resource/createContentData";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { useResourceStore } from "@/store/resource";

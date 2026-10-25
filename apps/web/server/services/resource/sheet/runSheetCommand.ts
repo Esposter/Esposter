@@ -5,10 +5,10 @@ import type { ResourceInResource } from "@esposter/db-schema";
 import { updateResourceContent } from "#server/services/resource/updateResourceContent";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
-import { sheetResourceSchema } from "#shared/models/resource/sheet/SheetResource";
 import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";
 import { UpdateColumnCommand } from "#shared/models/resource/sheet/commands/UpdateColumnCommand";
 import { UpdateRowCommand } from "#shared/models/resource/sheet/commands/UpdateRowCommand";
+import { sheetResourceSchema } from "#shared/models/resource/sheet/SheetResource";
 import { exhaustiveGuard, Operation, takeOne, toRawDeep } from "@esposter/shared";
 
 // Runs the editor's own command over the Sheet as `updateResourceContent` hands it, so a command naming a column or

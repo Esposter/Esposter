@@ -1,8 +1,7 @@
 // @vitest-environment nuxt
+import { getAssistantPrompt } from "@/services/resource/getAssistantPrompt";
 import { ResourceType } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
-
-import { getAssistantPrompt } from "@/services/resource/getAssistantPrompt";
 
 describe(getAssistantPrompt, () => {
   const id = crypto.randomUUID();

@@ -1,8 +1,7 @@
 // @vitest-environment nuxt
 import { McpScope } from "#shared/models/auth/McpScope";
-import { describe, expect, test } from "vitest";
-
 import { checkHasResourcesKey } from "@/services/resource/checkHasResourcesKey";
+import { describe, expect, test } from "vitest";
 
 describe(checkHasResourcesKey, () => {
   test("holds for a key ticked with the Resources scope", () => {
