@@ -27,16 +27,19 @@ describe(pickFileInput, () => {
     return expect(picked).rejects.toThrowErrorMatchingInlineSnapshot(`[AbortError: The user aborted a request.]`);
   });
 
-  test("opens a single selection unless multiple is set", () => {
-    expect.hasAssertions();
+  test.each([{ isMultiple: false }, { isMultiple: true }])(
+    "sets the input's multiple flag to $isMultiple",
+    ({ isMultiple }) => {
+      expect.hasAssertions();
 
-    const picked = pickFileInput(types, true);
-    const input = getFileInput();
+      const picked = pickFileInput(types, isMultiple);
+      const input = getFileInput();
 
-    expect(input.multiple).toBe(true);
-    input.dispatchEvent(new Event("cancel"));
-    return expect(picked).rejects.toThrowErrorMatchingInlineSnapshot(`[AbortError: The user aborted a request.]`);
-  });
+      expect(input.multiple).toBe(isMultiple);
+      input.dispatchEvent(new Event("cancel"));
+      return expect(picked).rejects.toThrowErrorMatchingInlineSnapshot(`[AbortError: The user aborted a request.]`);
+    },
+  );
 
   test("resolves the files the user selected", async () => {
     expect.hasAssertions();
