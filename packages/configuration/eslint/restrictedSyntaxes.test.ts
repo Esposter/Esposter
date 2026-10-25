@@ -42,6 +42,25 @@ describe("restrictedSyntaxes", () => {
         source: "const escapeRegExp = (value: string) => RegExp(value);",
         violations: 1,
       },
+      { filePath: "serverCountStep.ts", name: "serverCountStep", source: "post.likeCount++;", violations: 1 },
+      {
+        filePath: "serverCountSetFromSum.ts",
+        name: "serverCountSetFromSum",
+        source: "post.likeCount = post.likeCount + 1;",
+        violations: 1,
+      },
+      {
+        filePath: "serverRoleCountStep.ts",
+        name: "serverRoleCountStep",
+        source: "roles.countsByTopRole[0].count++;",
+        violations: 1,
+      },
+      {
+        filePath: "serverCountSetFromRead.ts",
+        name: "serverCountSetFromRead",
+        source: "post.likeCount = count;",
+        violations: 0,
+      },
       {
         filePath: "regexpEscape.ts",
         name: "regexpEscape",

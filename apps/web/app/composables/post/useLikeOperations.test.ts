@@ -66,4 +66,71 @@ describe(useLikeOperations, () => {
     expect(post.viewerLike).toBeUndefined();
     expect(post.likeCount).toBe(0);
   });
+
+  // The count is the server's to move, so it holds the value it had until the write it follows has settled
+  test("A count stays put while its write is in flight", async () => {
+    expect.hasAssertions();
+
+    const heldWrite = Promise.withResolvers<void>();
+    const isWriteReceived = Promise.withResolvers<void>();
+    trpcMsw.like.createLike.mutation(async ({ input }) => {
+      isWriteReceived.resolve();
+      await heldWrite.promise;
+
+      return createLike(input.value);
+    });
+    serveLikeCount(2);
+    const post = createPost({ id: postId, likeCount: 1 });
+    const postStore = usePostStore();
+    const { items } = storeToRefs(postStore);
+    items.value = [post];
+    const { createLike: sendLike } = useLikeOperations(items);
+    const pendingLike = sendLike({ postId, value: 1 });
+
+    await isWriteReceived.promise;
+    expect(post.likeCount).toBe(1);
+    heldWrite.resolve();
+    await pendingLike;
+  });
+
+  test("The count shows the read-back value once the write settles", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.like.createLike.mutation(({ input }) => createLike(input.value));
+    serveLikeCount(2);
+    const post = createPost({ id: postId, likeCount: 1 });
+    const postStore = usePostStore();
+    const { items } = storeToRefs(postStore);
+    items.value = [post];
+    const { createLike: sendLike } = useLikeOperations(items);
+    await sendLike({ postId, value: 1 });
+
+    expect(post.likeCount).toBe(2);
+  });
+
+  // The viewer's own vote is held exactly by the client, so it may change before the server answers
+  test("The viewer's own mark changes at once", async () => {
+    expect.hasAssertions();
+
+    const heldWrite = Promise.withResolvers<void>();
+    const isWriteReceived = Promise.withResolvers<void>();
+    trpcMsw.like.updateLike.mutation(async ({ input }) => {
+      isWriteReceived.resolve();
+      await heldWrite.promise;
+
+      return createLike(input.value);
+    });
+    serveLikeCount(1);
+    const post = createPost({ id: postId, likeCount: 1, viewerLike: createLike(1) });
+    const postStore = usePostStore();
+    const { items } = storeToRefs(postStore);
+    items.value = [post];
+    const { updateLike } = useLikeOperations(items);
+    const pendingVote = updateLike({ postId, value: -1 });
+
+    await isWriteReceived.promise;
+    expect(post.viewerLike).toStrictEqual(createLike(-1));
+    heldWrite.resolve();
+    await pendingVote;
+  });
 });
