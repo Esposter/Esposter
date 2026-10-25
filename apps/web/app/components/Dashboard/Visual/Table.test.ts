@@ -28,7 +28,7 @@ describe("dashboardVisualTable", () => {
         ],
         xColumn: "c",
       },
-      reference: { id: "-1", type: DatasetProviderType.Sheet },
+      reference: { id: crypto.randomUUID(), type: DatasetProviderType.Sheet },
     },
     type: VisualType.Table,
   });

@@ -25,7 +25,7 @@ describe("dashboardVisualIndex", () => {
     const visual = new Visual({
       dataset: {
         query: { series: [{ aggregation: DatasetAggregationType.Count, column: "x" }], xColumn: "x" },
-        reference: { id: "-1", type: DatasetProviderType.Sheet },
+        reference: { id: crypto.randomUUID(), type: DatasetProviderType.Sheet },
       },
       type: VisualType.Table,
     });
