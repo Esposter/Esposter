@@ -24,6 +24,8 @@ export const CharacterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = n
       },
     },
   ],
+  // Rosaria. Rites of Termination's field seconds read its burst's Duration label
+  [10_000_045, { values: { "parameters.ritesOfTerminationSeconds": { combatTalent: BURST, label: "Duration" } } }],
   // Shenhe's avatar id, as her kit module names it. Her Icy Quill's ATK ratio, press and hold durations and trigger quotas
   // Read from her skill's labels, the ratio's ATK label first and the durations and quotas by their press and hold positions
   [
