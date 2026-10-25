@@ -69,8 +69,13 @@ export const DEFAULT_SIDE_PANE_WIDTH = 260;
 export const CONTENT_PANEL = "Content";
 // The theme panel's title, which is also its value in the node settings tabs
 export const THEME_PANEL = "Theme";
+// The prefixes a colour token and a font-stack token are named with, which the theme sorts them into
+export const COLOR_TOKEN_PREFIX = "color-";
+export const FONT_TOKEN_PREFIX = "font-";
 // The colour a new theme colour starts as, until the colour field changes it
 export const DEFAULT_THEME_COLOR = "#000000";
+// The stack a new font-stack token starts as, until its field changes it
+export const DEFAULT_FONT_STACK = "system-ui, sans-serif";
 // The style panel's title, which is also its value in the node settings tabs
 export const STYLE_PANEL = "Style";
 // The name each breakpoint's override is shown under, where the base is the desktop

@@ -38,7 +38,9 @@ const settleOpacity = (value: number) => {
   opacityDrag.value = undefined;
   setField("opacity", String(value));
 };
-const { colors } = usePageBuilderTheme(() => resourceId);
+const { colors, fonts } = usePageBuilderTheme(() => resourceId);
+// A font stack the theme holds is offered as a choice, which stores a reference to it, as a colour swatch does
+const fontItems = computed(() => fonts.value.map(({ name }) => ({ title: name, value: `var(--${name})` })));
 // A colour field shows the value the property sets, else the one it inherits, else black, since a colour input holds a colour
 const getColorValue = (property: StyleProperty) => {
   const { inheritedValue, value } = getField(property);
@@ -102,6 +104,13 @@ const setSectorOpen = (title: string, isOpen: boolean) => {
             :property
             :model-value="getField(property).value"
             :placeholder="getField(property).placeholder"
+            @update:model-value="(value) => setField(property, value)"
+          />
+          <UiSelect
+            v-if="property === 'font-family' && fontItems.length > 0"
+            :items="fontItems"
+            label="font stack"
+            :model-value="getField(property).value"
             @update:model-value="(value) => setField(property, value)"
           />
           <UiButton v-if="getField(property).value !== ''" @click="resetField(property)">Reset</UiButton>
