@@ -117,7 +117,9 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
           ],
         },
         // The tile's own placements, of which Area_Md_Water_Common_01_Vo, named by its path hash, is the valley's water,
-        // And the two paving stones under the statue's dais steps, whose centres a recording's camera is solved by
+        // And the two paving stones under the statue's dais steps, whose centres a recording's camera is solved by. The
+        // Dais's steps and the two carved pedestals either side of the statue carry no path hash of their own, so the
+        // LOD table names them by their finest level's
         {
           blob: { block: "00/05825684.blk", name: "012854bd" },
           index: { block: "00/05825684.blk", name: "BigWorld_1_-2_Index" },
@@ -137,6 +139,30 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
                 pathId: "4746829665091620903",
               },
               prefabId: 3_350_382_264,
+            },
+            {
+              prefab: {
+                block: "00/05652564.blk",
+                name: "Area_Common_Build_Plinth_E_01_Lod0",
+                pathId: "-2383471818772636885",
+              },
+              prefabId: 2_068_799_372,
+            },
+            {
+              prefab: {
+                block: "00/05652564.blk",
+                name: "Area_Common_Build_Plinth_E_02_Lod0",
+                pathId: "-4253360323365887065",
+              },
+              prefabId: 2_068_796_237,
+            },
+            {
+              prefab: {
+                block: "00/03851813.blk",
+                name: "Area_Common_Build_Stair_A_01_Lod0",
+                pathId: "-3545738691652725999",
+              },
+              prefabId: 2_751_255_372,
             },
           ],
           waterPrefabId: 1_246_497_777,

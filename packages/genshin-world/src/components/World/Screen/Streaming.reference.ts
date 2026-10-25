@@ -47,8 +47,15 @@ export const streamingTopic: ReferenceTopic = {
       result:
         "The three ids' seventeen placements carry no path hash in the tile's blob, so they name no prefab. The named placements within sixty metres are Ruin_H_06 and _07, the rock families Stages_MDSRock11 to _15, grass, ground and leaf decals and two effects: no pillar, plinth or column. A placement's hash holds its name in its low forty bits, and its upper twenty-four are unexplained",
     },
+    {
+      method:
+        "The three unhashed ids' placements named through the game's LOD table, which gives a placement with no path hash its finest level's path hash, then each prefab's GameObject found in its block's layout dump",
+      outcome: InvestigationOutcome.Found,
+      result:
+        "2751255372 is Area_Common_Build_Stair_A_01_Lod0, the dais's steps, seven placements with the nearest 2.7 metres from the statue's foot, in 00/03851813.blk. 2068799372 and 2068796237 are Area_Common_Build_Plinth_E_01_Lod0 and _02_Lod0, the carved pedestals, seven and three placements each about ten metres either side of the statue, in 00/05652564.blk. The three are streamed by the open world's second stream as its prefabs",
+    },
   ],
   openQuestions: [
-    "The prefabs of the placements carrying only the world's 32-bit id, the trees round the statue among them, the dais under the statue, the carved pedestals beside it, and the paths newer than the 2.6 index",
+    "The prefabs of the placements carrying only the world's 32-bit id, the trees round the statue among them, and the paths newer than the 2.6 index",
   ],
 };
