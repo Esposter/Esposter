@@ -8,8 +8,8 @@ import DashboardVisualIndex from "@/components/Dashboard/Visual/Index.vue";
 import DashboardVisualTable from "@/components/Dashboard/Visual/Table.vue";
 import UiErrorState from "@/components/Ui/ErrorState.vue";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
-import { TRPCError } from "@trpc/server";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
+import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
 import { describe, expect, test } from "vitest";
 
@@ -23,7 +23,7 @@ describe("dashboardVisualIndex", () => {
     const { promise: isReadAnswered, resolve: onReadAnswered } = Promise.withResolvers<void>();
     trpcMsw.dataset.readDataset.query(() => {
       onReadAnswered();
-      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "The source cannot be read" });
+      throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: " " });
     });
     const visual = new Visual({
       dataset: {
