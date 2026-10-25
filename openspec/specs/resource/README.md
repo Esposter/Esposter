@@ -69,11 +69,11 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Dataset row-cap warning](dataset-row-cap-warning/design.md) — "showing N of M" wherever a dataset read hits the 1000-row cap
 - [Dataset CSV export](dataset-csv-export/design.md) — Export CSV on any dataset-serving resource: survey answers with question titles as headers, formula cells neutralised
 - [Email preview text](email-preview-text/design.md) — the inbox line under the subject, written into the MJML as its `mj-preview`
-- [Email web view](email-web-view/design.md) — Email is Publishable: save-time HTML capture, `/view/Email/[id]` browser copy
+- [Email web view](email-web-view/design.md) — Email is Publishable: HTML compiled at publish, `/view/Email/[id]` browser copy
 - [Flowchart connectors](flowchart-connectors/design.md) — arrowheads, right-angled paths, edge labels and a panel for a selected edge
 - [Flowchart publish](flowchart-publish/design.md) — Flowchart is Publishable: read-only VueFlow render at `/view/Flowchart/[id]`
 - [Flowchart image export](flowchart-image-export/design.md) — export the whole diagram as PNG or SVG from the resource menu
-- [Resource file assets](resource-file-assets/design.md) — the FileAssets capability: hosted binary assets + GrapesJS Asset Manager
+- [Resource file assets](resource-file-assets/design.md) — the FileAssets capability: hosted binary assets, the webpage share image among them
 - [Storage quotas](storage-quotas/design.md) — per-user blob allowance held at SAS issuance and charged by Storage's own `BlobCreated` event, with a usage bar in the explorer shell's header
 - [Webpage survey invite](webpage-survey-invite-blocks/design.md) — a published survey as an invite-button node in the page builder
 - [Page builder document model](page-builder/document-model/design.md) — the webpage and email documents as typed node trees, their registries, the webpage renderer and the server's strict email compile

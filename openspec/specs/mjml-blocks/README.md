@@ -46,7 +46,7 @@ flowchart LR
 
 The plugin's tracker holds a few hundred issues and pull requests, most of them closed, and it routes questions to its discussions. Every item has one verdict below, and the table is the audit's record, with one row per upstream item. Most of the in-scope items are the component set, the head and the escaping, and each in-scope defect or feature has the test that proves it, or a note on the reading that does. Items the page builder's editor owns are out of scope here, and so are MJML's own compiler's behaviours, which are MJML's to fix.
 
-Reproduced against the installed plugin, `grapesjs-mjml` 1.0.8, without GrapesJS, since the editor is not installed beside this package:
+Reproduced when the `grapesjs-mjml` 1.0.8 plugin was installed, without GrapesJS itself, since the editor was not installed beside this package:
 
 - **[#392](https://github.com/GrapesJS/mjml/issues/392) and [#393](https://github.com/GrapesJS/mjml/pull/393)**: the plugin's bundle throws `window is not defined` when it loads under Node, and so does `mjml-browser` 4.18.0, the MJML build its parser imports (`src/components/parser.ts`, line 2). The pin is `rendering where there is no document object model`, which runs with no `document` present.
 - **[#391](https://github.com/GrapesJS/mjml/issues/391)**: `mjml-browser` 4.18.0 writes a `css-class` holding `<img src=x onerror=alert(1)>` into its output verbatim. The render escapes it once, so the pin is `#391 an attribute holding markup is written escaped once`.
@@ -500,4 +500,4 @@ The in-scope features that are open (#203, #351, #390, #436) are the package's o
 - `mjml-preset-core`'s `dependencies`: the allowed children of every tag, which the slots are held equal to.
 - `mjml-parser-xml`'s `MJMLParser`: `ignoreIncludes` defaults to true, and the ending tags come from its `components` option.
 - [node-html-parser](https://github.com/taoqf/node-html-parser): the block text elements and the decoded attributes the read back uses.
-- [GrapesJS MJML](https://github.com/GrapesJS/mjml): the plugin whose surface the package meets, and whose tracker the Upstream table answers.
+- [GrapesJS MJML](https://github.com/GrapesJS/mjml): the plugin whose surface this package replaced, and whose tracker the Upstream table answers.

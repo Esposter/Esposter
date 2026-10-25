@@ -1,6 +1,6 @@
 # Document model
 
-The webpage and email editors' documents: the node types each editor registers over the [headless core](../../../headless-block-editor/editor-core/design.md)'s tree, and how a finished document becomes the page or the email a reader gets. The webpage's types are the app's own. The email's types are the [MJML blocks](../../../mjml-blocks/README.md) package's, with the app's survey invite added. The documents sit beside the GrapesJS editors, which still mount and save their own shape until the [cutover](../../../../changes/resource-page-builder-cutover/design.md) binds these in their place.
+The webpage and email editors' documents: the node types each editor registers over the [headless core](../../../headless-block-editor/editor-core/design.md)'s tree, and how a finished document becomes the page or the email a reader gets. The webpage's types are the app's own. The email's types are the [MJML blocks](../../../mjml-blocks/README.md) package's, with the app's survey invite added. The page builder's editors open and save these documents for both resource types.
 
 ## The document shape
 
@@ -88,7 +88,7 @@ flowchart TD
   BAKE --> VIEW
 ```
 
-The document store, `usePageBuilderDocumentStore`, holds each open document under its resource in a `documentMap`, beside the resource type it is opened as: a webpage or an email. The webpage getters read only webpages and the email getter only emails, so a webpage's document never reaches email code. A document is loaded and saved through the functions its caller passes, and each open document keeps its own, so editing one leaves the others unchanged. The store reads and writes nothing the GrapesJS editors read.
+The document store, `usePageBuilderDocumentStore`, holds each open document under its resource in a `documentMap`, beside the resource type it is opened as: a webpage or an email. The webpage getters read only webpages and the email getter only emails, so a webpage's document never reaches email code. A document is loaded and saved through the functions its caller passes, and each open document keeps its own, so editing one leaves the others unchanged.
 
 ## Key files
 

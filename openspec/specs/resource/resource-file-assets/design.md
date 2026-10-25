@@ -1,21 +1,21 @@
 # Resource File Assets
 
-The **FileAssets capability**: hosted binary assets for the resource types that need them. A type declaring `fileAssets: true` gets owner-only procedures for uploading and removing blobs under its own `{id}/files/…` directory, and the two GrapesJS editors wire their Asset Manager onto them — so an image in an email or a webpage is a hosted URL, never a base64 blob inlined into the content.
+The **FileAssets capability**: hosted binary assets for the resource types that need them. A type declaring `fileAssets: true` gets owner-only procedures for uploading and removing blobs under its own `{id}/files/…` directory, and the webpage's Settings blade uploads its share image through them — so an image a resource carries is a hosted URL, never a base64 blob inlined into the content.
 
 Adopters: Survey (SurveyJS image questions, logos, theme backgrounds), Email, Webpage. Three adopters clears the capability admission rule of two or more ([resources](../../architecture/resource/design.md)).
 
 ## How it works
 
-Content embeds a **stable, relative app url** — `/api/resource-assets/{blobName}` — never a signed Azure url. The serving endpoint authorizes the caller and 302-redirects to a freshly signed minutes-scale SAS on every request, so nothing in stored content can expire and a leaked SAS dies in minutes. The app url itself carries whatever grant the authorization gives it: working-copy urls answer only to the owner, while published urls are intentionally anonymous-capable for as long as the publication row exists and its current version names the file — unpublish is what revokes them. What an editor does with an asset url stays type-specific — SurveyJS puts it on an image question, GrapesJS registers it in the Asset Manager — which keeps the capability at the same altitude as Portable: the mechanism is declared centrally, the semantics stay with the type.
+Content embeds a **stable, relative app url** — `/api/resource-assets/{blobName}` — never a signed Azure url. The serving endpoint authorizes the caller and 302-redirects to a freshly signed minutes-scale SAS on every request, so nothing in stored content can expire and a leaked SAS dies in minutes. The app url itself carries whatever grant the authorization gives it: working-copy urls answer only to the owner, while published urls are intentionally anonymous-capable for as long as the publication row exists and its current version names the file — unpublish is what revokes them. What an editor does with an asset url stays type-specific — SurveyJS puts it on an image question, and the webpage's Settings blade puts its share image on the webpage's content — which keeps the capability at the same altitude as Portable: the mechanism is declared centrally, the semantics stay with the type.
 
 ```mermaid
 flowchart LR
   DEF["ResourceDefinitionMap<br/>fileAssets: true<br/>Survey · Email · Webpage"] -->|derives| UNION["FileAssetsResourceType"]
   UNION -->|"conditional spread<br/>(like the publish procedures)"| FACTORY["createResourceProcedures<br/>+ upload SAS + deleteFile"]
-  AM["GrapesJS Asset Manager<br/>(Email · Webpage)"] -->|"useUploadResourceFile"| FACTORY
+  WS["Webpage Settings<br/>share image"] -->|"useUploadResourceFile"| FACTORY
   CREATOR["SurveyJS creator<br/>onUploadFile"] -->|useUploadResourceFile| FACTORY
   FACTORY -->|SAS PUT target| BLOB[("{id}/files/{sha256}<br/>ResourceAssets container")]
-  AM -->|"registers the stable url"| CANVAS["content blob stores /api/resource-assets/{blobName}"]
+  WS -->|"stores the stable url"| CANVAS["content blob stores /api/resource-assets/{blobName}"]
   PUB["publishResource"] -->|"references by hash, no copy"| BLOB
   VIEW["editor + published views"] -->|"GET /api/resource-assets/…"| EP["authorize · rate limit<br/>302 to minutes-scale SAS"]
   EP --> BLOB
@@ -69,7 +69,6 @@ Reads have no procedure — they go through the `/api/resource-assets` endpoint.
 | `apps/web/shared/services/resource/getFilesDirectoryName.ts`          | where the `{id}/files` prefix is spelled                         |
 | `apps/web/app/composables/resource/useUploadResourceFile.ts`          | upload round-trip, returns the stable url                        |
 | `apps/web/app/composables/resource/useDeleteResourceFile.ts`          | stable url to blob path, then `deleteFile`                       |
-| `apps/web/app/composables/grapesjs/useGrapesJsEditor.ts`              | Asset Manager upload adapter                                     |
 
 ## Notes
 
