@@ -1,9 +1,8 @@
 import type { CSSProperties } from "vue";
 
 import { DiffRowType } from "@/models/agentConsole/DiffRowType";
+import { ADDED_STYLE, REMOVED_STYLE } from "@/services/agentConsole/constants";
 
-const ADDED_STYLE = { backgroundColor: "color-mix(in srgb, var(--ui-success) 20%, transparent)" };
-const REMOVED_STYLE = { backgroundColor: "color-mix(in srgb, var(--ui-error) 20%, transparent)" };
 // The palette's own success and error colours, faint enough to read the code through
 export const DiffRowStyleMap = {
   [DiffRowType.Added]: { new: ADDED_STYLE, old: {} },

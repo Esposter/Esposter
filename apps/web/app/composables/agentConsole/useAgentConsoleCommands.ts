@@ -3,16 +3,9 @@ import type { AgentConsoleCommand } from "@/models/agentConsole/AgentConsoleComm
 import { AgentConsolePanelType } from "@/models/agentConsole/AgentConsolePanelType";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { AGENT_CONSOLE_COMMAND_GROUP } from "@/services/agentConsole/constants";
+import { toListedCommand } from "@/services/agentConsole/toListedCommand";
 import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 
-// A command as the shortcuts dialog lists it, with nothing bound to its key
-const toListedCommand = ({ group, id, meaning, shortcut, title }: AgentConsoleCommand): AgentConsoleCommand => ({
-  group,
-  id,
-  meaning,
-  shortcut,
-  title,
-});
 // The keys a game's chat and pause take, over the world. Listed in the shortcuts dialog always and bound only while
 // The world has the keys, so a key pressed in a dialog over the world stays that dialog's
 export const useAgentConsoleCommands = () => {

@@ -1,13 +1,5 @@
 import { escapeHtml } from "#shared/util/text/escapeHtml";
-
-const getRepositoryPathPattern = (files: readonly string[]) =>
-  new RegExp(
-    `(?<![\\w./-])(${files
-      .toSorted((left, right) => right.length - left.length)
-      .map((file) => RegExp.escape(file))
-      .join("|")})(?![\\w./-])`,
-    "gu",
-  );
+import { getRepositoryPathPattern } from "@/services/agentConsole/getRepositoryPathPattern";
 
 export const createRepositoryPathLinkifier = (files: readonly string[]) => {
   const pattern = getRepositoryPathPattern(files);

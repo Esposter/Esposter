@@ -1,5 +1,14 @@
+import { ConnectionStatus } from "@/models/agentConsole/ConnectionStatus";
 import { RoutePath } from "@esposter/shared";
 import { DEFAULT_HOSTNAME, DEFAULT_PORT } from "agent-console-server/contracts";
+
+// The order a set of connections reads as one status in: any host reached makes the page usable
+export const AGGREGATE_STATUS_ORDER = [
+  ConnectionStatus.Connected,
+  ConnectionStatus.Connecting,
+  ConnectionStatus.Disconnected,
+  ConnectionStatus.Stopped,
+] as const;
 
 // Reconnecting backs off from the first delay to the cap and stays there, so a host that is down is retried for as
 // Long as the page is open and costs nothing while it is
@@ -61,3 +70,10 @@ export const PAIRING_CODE_BYTE_LENGTH = 32;
 // The side pane's width until the reader drags its edge, and the range that drag is held to
 export const AGENT_CONSOLE_PANE_DEFAULT_WIDTH = 420;
 export const AGENT_CONSOLE_PANE_MIN_WIDTH = 240;
+// The Windows folder a session resumes from is one a drive letter or a UNC share names
+export const WINDOWS_PATH_REGEX = /^(?:[a-z]:|\\\\)/iu;
+// PowerShell reads the typographic single quotes as quotes too
+export const POWERSHELL_QUOTE_REGEX = /['‘’‚‛]/gu;
+export const LOOPBACK_HOSTNAMES = new Set(["127.0.0.1", "[::1]", "localhost"]);
+export const ADDED_STYLE = { backgroundColor: "color-mix(in srgb, var(--ui-success) 20%, transparent)" };
+export const REMOVED_STYLE = { backgroundColor: "color-mix(in srgb, var(--ui-error) 20%, transparent)" };

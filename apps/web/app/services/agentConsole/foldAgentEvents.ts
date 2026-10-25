@@ -3,13 +3,12 @@ import type { AgentEvent } from "agent-console-server/contracts";
 
 import { checkIsConversationEvent } from "@/services/agentConsole/checkIsConversationEvent";
 import { SESSION_START_HOOK_EVENT } from "@/services/agentConsole/constants";
+import { getOrCreateTimelineLane } from "@/services/agentConsole/getOrCreateTimelineLane";
 import { getSessionStartContext } from "@/services/agentConsole/getSessionStartContext";
 import { toFileEdits } from "@/services/agentConsole/toFileEdits";
-import { exhaustiveGuard, getOrCreate } from "@esposter/shared";
+import { exhaustiveGuard } from "@esposter/shared";
 import { AgentEventType, EphemeralAgentEventTypes, HookPhase, SessionState } from "agent-console-server/contracts";
 
-const getOrCreateTimelineLane = (sessionView: SessionView, id: string) =>
-  getOrCreate(sessionView.timelineLaneMap, id, () => ({ id, title: "", toolCalls: [] }));
 // Folds events into the session's view, touching only what each one changes, and returns the ones it had not folded
 // Before — an event arrives more than once when a replay after a reconnect overlaps what the page already holds
 export const foldAgentEvents = (sessionView: SessionView, events: AgentEvent[]) => {

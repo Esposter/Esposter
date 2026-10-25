@@ -9,6 +9,7 @@ describe(getResumeCommand, () => {
       String.raw`Set-Location -LiteralPath 'C:\a''’’$(b)' -ErrorAction Stop; claude --resume 'c'`,
     ],
     [String.raw`\\a\b`, String.raw`Set-Location -LiteralPath '\\a\b' -ErrorAction Stop; claude --resume 'c'`],
+    ["/a\nb", ""],
   ])("quotes %s for its own shell", (cwd, expected) => {
     expect.hasAssertions();
 

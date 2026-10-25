@@ -10,6 +10,7 @@ import { AgentConsoleThemeType } from "@/models/agentConsole/AgentConsoleThemeTy
 import { ConnectionStatus } from "@/models/agentConsole/ConnectionStatus";
 import { checkIsHostProofValid } from "@/services/agentConsole/checkIsHostProofValid";
 import {
+  AGGREGATE_STATUS_ORDER,
   LOCAL_HOST_ADDRESS,
   MAX_RECONNECT_DELAY_MS,
   MIN_RECONNECT_DELAY_MS,
@@ -39,14 +40,6 @@ import {
   ServerMessageType,
   SessionState,
 } from "agent-console-server/contracts";
-
-// The order a set of connections reads as one status in: any host reached makes the page usable
-const AggregateStatusOrder = [
-  ConnectionStatus.Connected,
-  ConnectionStatus.Connecting,
-  ConnectionStatus.Disconnected,
-  ConnectionStatus.Stopped,
-] as const;
 
 // One socket per paired host — this computer's, and each machine of the reader's own — each with a credential of its
 // Own. Every connect proves the host first: the page sends a fresh challenge and sends its credential only once the
@@ -97,7 +90,7 @@ export const useAgentConsoleConnectionStore = defineStore("agentConsole/connecti
       ...connectionStatuses.value.map(({ status: connectionStatus }) => connectionStatus),
       ...(pairing.value ? [ConnectionStatus.Connecting] : []),
     ]);
-    return AggregateStatusOrder.find((aggregateStatus) => statuses.has(aggregateStatus)) ?? ConnectionStatus.Unpaired;
+    return AGGREGATE_STATUS_ORDER.find((aggregateStatus) => statuses.has(aggregateStatus)) ?? ConnectionStatus.Unpaired;
   });
   const connectedConnections = computed(() =>
     connectionStatuses.value
