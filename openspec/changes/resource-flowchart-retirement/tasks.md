@@ -2,7 +2,7 @@
 
 - [ ] 1.1 Read the Flowchart row count and the Flowcharter achievement row count from each environment's database, and record each count with its read date in the owner's confirmation. Verify: the record holds one count per environment, and the owner confirms each one in writing.
 - [ ] 1.2 Settle each open row of the feature check in the design (node resize minimum, connector ports, path types, minimap, the read-only publish loss, the achievement loss, export without an open editor, the grid, delete by keyboard). Verify: every row in the design's table reads covered, or confirmed as a loss by the owner.
-- [ ] 1.3 Wait for the design canvas change to ship and archive. Verify: its proposal sits under `openspec/changes/archive` and its whiteboard is in the app.
+- [ ] 1.3 Wait for the whiteboard change to ship and archive. Verify: its proposal sits under `openspec/changes/archive` and its whiteboard is in the app.
 
 ## 2. Mark the rows
 

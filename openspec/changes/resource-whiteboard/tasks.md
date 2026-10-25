@@ -18,23 +18,20 @@
 - [ ] 2.7 Map the keyboard: Delete and Backspace to delete with confirmation, Escape to deselect, arrow keys to nudge, undo and duplicate. Verify: a test named after the scenario 'Deleting a shape from the canvas asks first and then removes its arrows'.
 - [ ] 2.8 Upload a pasted image as a file asset of the whiteboard, and place sticky notes with a fill and text. Verify: tests named after the scenarios 'A pasted image is stored as a file asset' and 'A sticky note takes a fill and text'.
 
-## 3. Export and publish (phase 3)
+## 3. Export (phase 3)
 
 - [ ] 3.1 Write the SVG export as a pure function over the model. Verify: a test named after the scenario 'The whiteboard exports to SVG'.
 - [ ] 3.2 Write the PNG export by drawing the SVG on a canvas through the platform APIs. Verify: a test named after the scenario 'The whiteboard exports to PNG'.
-- [ ] 3.3 Render the read-only published view at the public route, with pan and zoom and no editing. Verify: a test named after the scenario 'A published whiteboard shows its shapes read-only'.
+- [ ] 3.3 If owner choice E keeps the read-only published view, render it at the public route, with pan and zoom and no editing. Verify: a test named after the scenario 'A published whiteboard shows its shapes read-only'. If the owner confirms the loss, this task is removed.
 
-## 4. Agent surface and cutover (phase 4)
+## 4. Agent surface and the whiteboard's enum value (phase 4)
 
 - [ ] 4.1 Describe the content as JSON Schema with the binding rules and the derived fields read-only, and expose the typed move. Verify: tests named after the scenarios 'An agent adds an arrow bound to a shape by patch' and 'A patch leaving a dangling binding is refused'.
-- [ ] 4.2 Record the owner's choices A to D in the design, each with its date, before any migration is written. Verify: the design's Owner choices section records each choice, and `openspec validate resource-whiteboard --strict --no-interactive` passes.
-- [ ] 4.3 Convert each stored flowchart to a whiteboard as a backfill over fixtures of stored flowcharts, reporting any it cannot map. Verify: a test named after the scenario 'A stored flowchart opens as a whiteboard with its shapes, arrows and labels'. This task is written for the convert choice, and is rewritten if the owner chooses otherwise.
-- [ ] 4.4 Add the whiteboard's enum value, rewrite each row that holds the flowchart value, and recreate the enum without the old value once the count of flowchart rows is zero. Verify: a test named after the scenario 'A published flowchart's old address stops resolving'.
-- [ ] 4.5 Remove the Flowchart's editor, router, models and canvas packages from the repository and the catalog, and rewrite or delete its specs. Verify: CI's typecheck passes, and the catalog no longer lists the canvas packages.
-- [ ] 4.6 Point the flowchart achievement's definition at the whiteboard and keep every earned achievement. Verify: a test named after the scenario 'An earned flowchart achievement stays earned after the cutover'.
+- [ ] 4.2 Record the owner's choices A, D and E in the design, each with its date, before the whiteboard ships. Verify: the design's Owner choices section records each choice, and `openspec validate resource-whiteboard --strict --no-interactive` passes.
+- [ ] 4.3 Add the whiteboard's value to the resource type enum through a migration the drizzle skill generates. No row holds the value yet, so the migration is the add alone. Verify: the migration applies on a database holding no whiteboard row, and the enum lists the whiteboard value, shown by the migration check in `packages/db-schema`.
+- [ ] 4.4 Confirm the flowchart retirement change is ready to run after this change ships, with the owner's confirmation of its feature check. Verify: the retirement change links this folder as the change it waits on, and its own tasks run no step before this change is in the app.
 
-## 5. Specs, names and the earlier flowchart changes
+## 5. Specs and names
 
 - [ ] 5.1 Keep the type's name as the owner chooses in owner choice A, renaming every name the choice touches listed in the design. Verify: `openspec validate resource-whiteboard --strict --no-interactive` passes.
-- [ ] 5.2 Link this change from the flowchart canvas and flowchart shapes changes and from the deferred flowchart page, and mark each superseded or interim as the owner chooses in owner choice C. Verify: `openspec validate resource-whiteboard --strict --no-interactive` passes, and each page links this folder.
-- [ ] 5.3 On ship, archive the change, rewrite each capability's design as built, and add one shipped-log line to the resource README. Verify: `openspec archive` succeeds and the resource README indexes the whiteboard capability.
+- [ ] 5.2 On ship, archive the change, rewrite each capability's design as built, and add one shipped-log line to the resource README. Verify: `openspec archive` succeeds and the resource README indexes the whiteboard capability.

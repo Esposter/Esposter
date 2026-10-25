@@ -24,7 +24,7 @@ The count is a number each environment holds, not one this repository can state,
 
 ## The whiteboard covers the feature list
 
-Nothing is dropped unnoticed: each feature the Flowchart has is checked against the [design canvas](../resource-design-canvas/design.md), the whiteboard that succeeds it, and each row ends as covered or as an owner's confirmed loss. A row left open blocks the release.
+Nothing is dropped unnoticed: each feature the Flowchart has is checked against the [whiteboard](../resource-whiteboard/design.md), which succeeds it, and each row ends as covered or as an owner's confirmed loss. A row left open blocks the release.
 
 | Flowchart feature                                 | Whiteboard counterpart                                                 | Status                                              |
 | ------------------------------------------------- | ---------------------------------------------------------------------- | --------------------------------------------------- |
@@ -95,4 +95,4 @@ This change writes no spec delta now. Its removal is recorded as REMOVED require
 ## Sources
 
 - [Flowchart on the editor core](../../deferred/resource/flowchart-on-editor-core/design.md): the removal future, and the two-step rule that a resource type leaves PostgreSQL only after its rows are purged.
-- [Design canvas](../resource-design-canvas/design.md): the whiteboard whose capabilities the feature check reads.
+- [Whiteboard](../resource-whiteboard/design.md): the capabilities the feature check reads.

@@ -157,9 +157,9 @@ A whiteboard SHALL export to SVG and to PNG from its resource menu, with both dr
 - **WHEN** the owner exports it as PNG
 - **THEN** the file is an image of the same elements as the SVG export
 
-### Requirement: A published whiteboard is read-only
+### Requirement: A published whiteboard is read-only, if the owner keeps the view
 
-A published whiteboard SHALL be shown at its public address, with pan and zoom and without any editing.
+If the owner keeps the read-only published view (owner choice E), a published whiteboard SHALL be shown at its public address, with pan and zoom and without any editing. Otherwise this requirement is removed.
 
 #### Scenario: A published whiteboard shows its shapes read-only
 
@@ -185,30 +185,3 @@ An agent SHALL read a whiteboard's content and edit it by JSON Patch, through th
 - **WHEN** an agent patches an arrow's binding to name a shape the whiteboard does not hold
 - **THEN** the patch is refused
 - **AND** the saved content is unchanged
-
-### Requirement: A stored flowchart becomes a whiteboard
-
-Each stored flowchart SHALL open as a whiteboard with its shapes, its arrows and their labels, and its published address SHALL stop resolving once the cutover runs. This requirement is written for the owner's convert choice, and is rewritten if the owner chooses another.
-
-#### Scenario: A stored flowchart opens as a whiteboard with its shapes, arrows and labels
-
-- **GIVEN** a stored flowchart with two nodes joined by a labelled edge
-- **WHEN** the cutover converts it
-- **THEN** the whiteboard holds two shapes joined by an arrow with the same label
-- **AND** the arrow is bound to the shapes' connection points
-
-#### Scenario: A published flowchart's old address stops resolving
-
-- **GIVEN** a flowchart published before the cutover
-- **WHEN** a reader opens its old public address after the cutover
-- **THEN** the address does not resolve
-
-### Requirement: An earned flowchart achievement stays earned
-
-The flowchart achievement SHALL stay earned by each owner who earned it, and its definition SHALL name the whiteboard.
-
-#### Scenario: An earned flowchart achievement stays earned after the cutover
-
-- **GIVEN** an owner who earned the flowchart achievement before the cutover
-- **WHEN** the cutover runs
-- **THEN** the owner still holds the achievement

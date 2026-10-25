@@ -2,7 +2,7 @@
 
 ## Why
 
-The Flowchart is a resource type that draws connected steps on Vue Flow. The [design canvas](../resource-design-canvas/proposal.md), our own freeform whiteboard, built in Vue 3 to Excalidraw's feel, with no Excalidraw dependency, covers the flowchart's work, and the owner has decided the Flowchart goes. Keeping two diagram types means two editors, two export paths, two agent surfaces and a second canvas engine, all for one type whose work the whiteboard now does.
+The Flowchart is a resource type that draws connected steps on Vue Flow. The [whiteboard](../resource-whiteboard/proposal.md), a freeform canvas built on our own core, covers the flowchart's work, and the owner has decided the Flowchart goes. Keeping two diagram types means two editors, two export paths, two agent surfaces and a second canvas engine, all for one type whose work the whiteboard now does.
 
 ## What Changes
 
@@ -27,7 +27,7 @@ This change deletes every flowchart that exists in any environment, along with t
 
 ## Waiting on
 
-- The [design canvas](../resource-design-canvas/proposal.md) ships first. Its owner must confirm it covers each row of the feature check in the design before any flowchart is deleted, since afterwards the Flowchart's features have no other home.
+- The [whiteboard](../resource-whiteboard/proposal.md) ships first. Its owner must confirm it covers each row of the feature check in the design before any flowchart is deleted, since afterwards the Flowchart's features have no other home.
 
 ## Decided against
 

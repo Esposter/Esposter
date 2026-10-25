@@ -23,7 +23,7 @@ The Flowchart editor offers the standard set of six shapes in place of one recta
 
 ## Decided against
 
-Rejected with the Flowchart type. The owner removed the Flowchart in favour of the whiteboard in the design canvas, so there is no flowchart palette to extend. The [flowchart retirement](../../../changes/resource-flowchart-retirement/proposal.md) records the decision.
+Rejected with the Flowchart type. The owner removed the Flowchart in favour of the whiteboard, so there is no flowchart palette to extend. The [flowchart retirement](../../../changes/resource-flowchart-retirement/proposal.md) records the decision.
 
 ## Impact
 

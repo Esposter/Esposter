@@ -2,7 +2,7 @@
 
 ## Why
 
-Decided — the flowchart's future is removal, in favour of the whiteboard in the design canvas. The rebuild on the headless editor core and keeping Vue Flow are rejected; the reasons are in `design.md`.
+Decided — the flowchart's future is removal, in favour of the whiteboard. The rebuild on the headless editor core and keeping Vue Flow are rejected; the reasons are in `design.md`.
 
 ## What Changes
 
