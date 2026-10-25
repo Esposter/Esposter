@@ -1,12 +1,12 @@
 ## 1. Visual kinds
 
 - [x] 1.1 Add the Card and Table kinds, listed first in the visual picker, with no chart type. Verify: a test named after the scenario 'Editing a card offers only its label'.
-- [ ] 1.2 Route the two kinds past the chart renderer to their own components, keeping the grid item, the binding, the refresh and the states. Verify: a test named after the scenario 'A table whose read fails shows the error state'.
+- [x] 1.2 Route the two kinds past the chart renderer to their own components, keeping the grid item, the binding, the refresh and the states. Verify: a test named after the scenario 'A table whose read fails shows the error state'.
 
 ## 2. Card
 
 - [x] 2.1 Aggregate the first series over every row, with the label defaulting to the aggregation of the column. Verify: a test named after the scenario 'A card counts every response in its dataset'.
-- [ ] 2.2 Show the demo value when unbound, and write large values in compact form. Verify: tests named after the scenarios 'A card with no binding shows the demo value' and 'A card abbreviates a large number'.
+- [x] 2.2 Show the demo value when unbound, and write large values in compact form. Verify: tests named after the scenarios 'A card with no binding shows the demo value' and 'A card abbreviates a large number'.
 
 ## 3. Table
 
