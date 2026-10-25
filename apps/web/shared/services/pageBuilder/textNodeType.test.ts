@@ -1,5 +1,7 @@
+import type { TextNode } from "#shared/models/pageBuilder/TextNode";
+
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
-import { TEST_ID } from "#shared/services/pageBuilder/constants.test";
+import { TEST_CONTEXT, TEST_ID, TEST_LABEL } from "#shared/services/pageBuilder/constants.test";
 import { serializeHtml } from "#shared/services/pageBuilder/serializeHtml";
 import { textNodeType } from "#shared/services/pageBuilder/textNodeType";
 import { describe, expect, test } from "vitest";
@@ -10,8 +12,34 @@ describe("textNodeType", () => {
 
     const content = { content: [{ content: [{ text: "a", type: "text" }], type: "paragraph" }], type: "doc" };
 
-    expect(serializeHtml([textNodeType.render({ props: { content, id: TEST_ID }, type: WebpageNodeType.Text })])).toBe(
-      '<div class="text"><p>a</p></div>',
-    );
+    expect(
+      serializeHtml([
+        textNodeType.render({ props: { content, id: TEST_ID }, type: WebpageNodeType.Text }, {}, TEST_CONTEXT),
+      ]),
+    ).toBe('<div class="text"><p>a</p></div>');
+  });
+
+  test("A type's output matches for every edge value", () => {
+    expect.hasAssertions();
+
+    // A note's text is written as escaped text, and an empty note publishes as an empty block
+    const texts: TextNode[] = [
+      { props: { content: { content: [], type: "doc" }, id: TEST_ID }, type: WebpageNodeType.Text },
+      {
+        props: {
+          content: {
+            content: [{ content: [{ text: `${TEST_LABEL} <b>&`, type: "text" }], type: "paragraph" }],
+            type: "doc",
+          },
+          id: TEST_ID,
+        },
+        type: WebpageNodeType.Text,
+      },
+    ];
+
+    expect(texts.map((text) => serializeHtml([textNodeType.render(text, {}, TEST_CONTEXT)]))).toStrictEqual([
+      '<div class="text"></div>',
+      `<div class="text"><p>${TEST_LABEL} &lt;b&gt;&amp;</p></div>`,
+    ]);
   });
 });

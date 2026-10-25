@@ -1,3 +1,5 @@
+import type { SurveyInviteNode } from "#shared/models/pageBuilder/SurveyInviteNode";
+
 import { WebpageNodeType } from "#shared/models/pageBuilder/WebpageNodeType";
 import {
   TEST_CONTEXT,
@@ -24,5 +26,22 @@ describe("surveyInviteNodeType", () => {
         ),
       ]),
     ).toBe(`<a class="survey-invite" href="${getSurveyInviteUrl(TEST_ORIGIN, TEST_SURVEY_ID)}">${TEST_LABEL}</a>`);
+  });
+
+  test("A type's output matches for every edge value", () => {
+    expect.hasAssertions();
+
+    const invites: SurveyInviteNode[] = [
+      { props: { id: TEST_ID, label: TEST_LABEL, surveyId: TEST_SURVEY_ID }, type: WebpageNodeType.SurveyInvite },
+      { props: { id: TEST_ID, label: "<b>&", surveyId: TEST_SURVEY_ID }, type: WebpageNodeType.SurveyInvite },
+    ];
+    const href = getSurveyInviteUrl(TEST_ORIGIN, TEST_SURVEY_ID);
+
+    expect(
+      invites.map((invite) => serializeHtml([surveyInviteNodeType.render(invite, {}, TEST_CONTEXT)])),
+    ).toStrictEqual([
+      `<a class="survey-invite" href="${href}">${TEST_LABEL}</a>`,
+      `<a class="survey-invite" href="${href}">&lt;b&gt;&amp;</a>`,
+    ]);
   });
 });

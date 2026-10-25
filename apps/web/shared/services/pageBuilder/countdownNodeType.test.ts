@@ -61,6 +61,21 @@ describe("countdownNodeType", () => {
     );
   });
 
+  test("A type's output matches for every edge value", () => {
+    expect.hasAssertions();
+
+    const endsAt = toDateInput(localDayFromEpoch(1));
+
+    // An empty end text is still written, as an empty attribute, so the script has a value to show
+    expect([
+      serializeHtml([countdownNodeType.render(createCountdown(endsAt))]),
+      serializeHtml([countdownNodeType.render(createCountdown(endsAt, ""))]),
+    ]).toStrictEqual([
+      `<div aria-atomic="false" aria-live="off" class="countdown" data-ends-at="${endsAt}" data-end-text="${TEST_LABEL}" role="timer"><span class="countdown-unit" data-unit="day"><span class="countdown-value"></span> days</span><span class="countdown-unit" data-unit="hour"><span class="countdown-value"></span> hours</span><span class="countdown-unit" data-unit="minute"><span class="countdown-value"></span> minutes</span><span class="countdown-unit" data-unit="second"><span class="countdown-value"></span> seconds</span><span class="countdown-end" hidden=""></span></div>`,
+      `<div aria-atomic="false" aria-live="off" class="countdown" data-ends-at="${endsAt}" data-end-text="" role="timer"><span class="countdown-unit" data-unit="day"><span class="countdown-value"></span> days</span><span class="countdown-unit" data-unit="hour"><span class="countdown-value"></span> hours</span><span class="countdown-unit" data-unit="minute"><span class="countdown-value"></span> minutes</span><span class="countdown-unit" data-unit="second"><span class="countdown-value"></span> seconds</span><span class="countdown-end" hidden=""></span></div>`,
+    ]);
+  });
+
   test("a countdown refuses a date and time that is not on the calendar", () => {
     expect.hasAssertions();
 
