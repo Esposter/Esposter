@@ -1,6 +1,6 @@
 # Agent keys
 
-Keys carry scopes, reads are marked read-only and an agent's writes name their key ([agent access](../../specs/architecture/agent-access/design.md)). Two parts are left: the keys that existed before scopes, which hold none and so reach no tool, and the operations no key should reach whatever its scopes.
+Keys carry scopes, reads are marked read-only and an agent's writes name their key ([agent access](../../agent-access/design.md)). Two parts are left: the keys that existed before scopes, which hold none and so reach no tool, and the operations no key should reach whatever its scopes.
 
 ## The keys made before scopes
 
@@ -10,15 +10,15 @@ Every key created before scopes was made for the follow-ups, the only tools ther
 
 `Meta` carries `humanOnly`, the reason a procedure is never served to a key, and the bridge skips any procedure declaring it. The rule is reversibility: an agent may do whatever a revision, the recycle bin or an unpublish can undo, publishing and moving to the bin included, and what nothing can undo stays with the owner's own hand.
 
-| Procedure                                                                                 | Why it stays the owner's                                                                                                                                          |
-| ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `resource.purgeResource`                                                                  | the one delete nothing restores, already behind the type-the-name guard ([destructive confirmation](../../specs/architecture/destructive-confirmation/design.md)) |
-| `survey.deleteSurveyResponse`                                                             | deletes a respondent's answer from its table outright, data the owner holds on someone else's behalf                                                              |
-| `survey.createSurveyResponse`, `survey.updateSurveyResponse`, `survey.readSurveyResponse` | a respondent's procedures, not the owner's acts at all                                                                                                            |
+| Procedure                                                                                 | Why it stays the owner's                                                                                                                       |
+| ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `resource.purgeResource`                                                                  | the one delete nothing restores, already behind the type-the-name guard ([destructive confirmation](../../destructive-confirmation/design.md)) |
+| `survey.deleteSurveyResponse`                                                             | deletes a respondent's answer from its table outright, data the owner holds on someone else's behalf                                           |
+| `survey.createSurveyResponse`, `survey.updateSurveyResponse`, `survey.readSurveyResponse` | a respondent's procedures, not the owner's acts at all                                                                                         |
 
 A test over the router holds the declaration: every procedure on a resource type's router that `createResourceProcedures` did not generate declares `mcp` or `humanOnly`. The type's router is found by its name, which is the type uncapitalized, and the factory's procedures by calling the factory for the type, so the test lists nothing by hand and a new type-specific procedure fails it until its author decides.
 
-The test is in `getMcpTools.test.ts`, and it landed with [lifecycle tools](../architecture-ai-native-resources-lifecycle-tools/design.md), which made the decisions for the rest of those procedures: the Blueprint's capture and deploy, the Program's participants and status and the Survey's response reads are served to keys, and the Email's compile and export and the Program's invite read are human-only. Each is a decision that unit made rather than one this page could make for it.
+The test is in `getMcpTools.test.ts`, and it landed with [lifecycle tools](../lifecycle-tools/design.md), which made the decisions for the rest of those procedures: the Blueprint's capture and deploy, the Program's participants and status and the Survey's response reads are served to keys, and the Email's compile and export and the Program's invite read are human-only. Each is a decision that unit made rather than one this page could make for it.
 
 ## Key files
 

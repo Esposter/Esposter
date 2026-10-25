@@ -6,7 +6,7 @@
 
 - [x] 2.1 Let a procedure declare itself human-only with a reason, and leave such procedures out of the tool list built for a key. Verify: a test named after the scenario 'Human-only operations are not listed to a key with every scope', failing first, then passing.
 - [x] 2.2 Declare purging a resource, deleting a survey response, and the survey respondent procedures human-only. Verify: a test named after the scenario 'A key cannot call a human-only operation by name', failing first, then passing.
-- [x] 2.3 Confirm the operations a person can undo stay served to a key with their scope. Verify: a test named after the scenario 'A key moves a resource to the bin and back' and the scenario 'A key publishes a resource', both failing first where they do not yet hold, then passing. Held by the [lifecycle tools'](../architecture-ai-native-resources-lifecycle-tools/tasks.md) tests at their tasks 1.2 and 2.2, which call the tools through a key holding only the Resources scope and pass with no change, so no test is added under the scenario names.
+- [x] 2.3 Confirm the operations a person can undo stay served to a key with their scope. Verify: a test named after the scenario 'A key moves a resource to the bin and back' and the scenario 'A key publishes a resource', both failing first where they do not yet hold, then passing. Held by the [lifecycle tools'](../2026-10-25-architecture-ai-native-resources-lifecycle-tools/tasks.md) tests at their tasks 1.2 and 2.2, which call the tools through a key holding only the Resources scope and pass with no change, so no test is added under the scenario names.
 
 ## 3. The declaration check
 

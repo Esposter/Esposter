@@ -20,7 +20,7 @@ Keys made before scopes keep working for the follow-ups, and the operations noth
 
 ## Waiting on
 
-- `openspec/changes/architecture-ai-native-resources-lifecycle-tools/`: the declaration check lands with it, and that change decides the remaining type-specific procedures.
+- `openspec/changes/archive/2026-10-25-architecture-ai-native-resources-lifecycle-tools/`: the declaration check lands with it, and that change decides the remaining type-specific procedures.
 
 ## Impact
 
