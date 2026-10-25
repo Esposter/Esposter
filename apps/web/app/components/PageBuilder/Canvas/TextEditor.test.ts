@@ -12,7 +12,6 @@ import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { usePageBuilderHistoryStore } from "@/store/pageBuilder/history";
 import { useRichTextSuggestionStore } from "@/store/richTextEditor/suggestion";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
-import { EditorContent } from "@tiptap/vue-3";
 import { MjmlNodeType } from "mjml-blocks";
 import { assert, describe, expect, test, vi } from "vitest";
 import { computed } from "vue";
@@ -55,7 +54,7 @@ describe("pageBuilderCanvasTextEditor", () => {
       props: { kind: webpageKind, nodeId: TEST_ROOT_TEXT_ID, resourceId },
     });
     await nextTick();
-    const editor = component.getComponent(EditorContent).props("editor");
+    const editor = component.getComponent({ name: "EditorContent" }).props("editor");
     assert.exists(editor);
 
     // Two updates in one session are one history entry
@@ -87,7 +86,7 @@ describe("pageBuilderCanvasTextEditor", () => {
         props: { kind: webpageKind, nodeId: TEST_ROOT_TEXT_ID, resourceId },
       });
       await nextTick();
-      const editor = component.getComponent(EditorContent).props("editor");
+      const editor = component.getComponent({ name: "EditorContent" }).props("editor");
       assert.exists(editor);
 
       editor.commands.insertContent(text);
@@ -132,7 +131,7 @@ describe("pageBuilderCanvasTextEditor", () => {
       props: { kind: emailKind, nodeId: TEST_ROOT_TEXT_ID, resourceId },
     });
     await nextTick();
-    const editor = component.getComponent(EditorContent).props("editor");
+    const editor = component.getComponent({ name: "EditorContent" }).props("editor");
     assert.exists(editor);
 
     // The braces open after a space, as the suggestion only opens where a word begins
