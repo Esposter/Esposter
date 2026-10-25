@@ -10,17 +10,7 @@ import {
 } from "#src/services/proposals/constants";
 import { getProposalId } from "#src/services/proposals/getProposalId";
 import { getProposalSummary } from "#src/services/proposals/getProposalSummary";
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
-import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
-
-// The changes' designs in the working tree, with the ones written and not yet added
-const readProposalFiles = (): QueueFile[] =>
-  readSweepFilePaths(`${PROPOSALS_DIRECTORY}/*/${PROPOSAL_DESIGN_FILE}`).map((path) => ({
-    path,
-    text: readFileSync(resolve(REPOSITORY_ROOT, path), "utf8"),
-  }));
+import { readProposalFiles } from "#src/services/proposals/readProposalFiles";
 
 // Every open proposal, cheapest first, from the change files given, the working tree's when none are. A change is open
 // While its folder sits directly under the changes root, and a unit to build when it has a design; a program is the

@@ -1,7 +1,7 @@
 import type { ProposalSummary } from "#src/models/proposals/ProposalSummary";
 
 import { ProposalSignal, ProposalSignals } from "#src/models/proposals/ProposalSignal";
-import { PROGRAM_SUFFIX } from "#src/services/proposals/constants";
+import { checkIsProgramOf } from "#src/services/proposals/checkIsProgramOf";
 
 const SECTION_HEADING_REGEX = /^## /mu;
 const KEY_FILES_HEADING_REGEX = /^Key files\s*$/iu;
@@ -14,9 +14,6 @@ const ProposalSignalPathPrefixesMap = {
   [ProposalSignal.Schema]: ["packages/db-schema/"],
   [ProposalSignal.Server]: ["apps/web/server/"],
 } as const satisfies Record<Exclude<ProposalSignal, ProposalSignal.Dependency>, readonly string[]>;
-// A change's own program is its umbrella, never something it waits on
-const checkIsProgramOf = (linkedId: string, id: string): boolean =>
-  linkedId.endsWith(PROGRAM_SUFFIX) && id.startsWith(`${linkedId.slice(0, -PROGRAM_SUFFIX.length)}-`);
 // Everything is read off what the design already states, so nothing here is a field anyone keeps: the lead — the prose
 // Before the first section — is where a proposal links the proposals it waits on, a Key files row is a table line
 // Opening on a backticked path, and a package a proposal adds is the manifest it names there (`openspec` skill)
