@@ -2,25 +2,8 @@ import type { ConfigWidgetRow } from "#src/models/genshinAssets/gadgets/ConfigWi
 import type { GadgetSliceRow } from "#src/models/genshinAssets/gadgets/GadgetSliceRow";
 
 import { ConfigWidgetTypeGadgetKindMap } from "#src/services/genshinAssets/gadgets/ConfigWidgetTypeGadgetKindMap";
+import { toGatherItemId } from "#src/services/genshinAssets/gadgets/toGatherItemId";
 import { CityIdRegionMap } from "#src/services/genshinAssets/shared/constants";
-import { InvalidOperationError, Operation } from "@esposter/shared";
-
-// The item a gather point finder finds, by the gather point type its widget names. A type the gather table gives no item
-// Is refused, so the stone is not published with a target it cannot have
-const toGatherItemId = (
-  id: string,
-  { gatherPointType }: ConfigWidgetRow,
-  pointTypeItemIdMap: ReadonlyMap<number, number>,
-) => {
-  const itemId = gatherPointType === undefined ? undefined : pointTypeItemIdMap.get(gatherPointType);
-  if (itemId === undefined)
-    throw new InvalidOperationError(
-      Operation.Read,
-      `widget ${id}`,
-      `names gather point type ${gatherPointType ?? "none"}, which the gather table gives no item`,
-    );
-  return itemId;
-};
 
 // The config's widgets of a kind the gadgets build, one row each by its id. A field the config omits reads as zero, or as
 // Not equipable, and a widget naming no city, or a city in no region, has an empty region. A widget of another kind has no
