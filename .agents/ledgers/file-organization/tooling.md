@@ -82,7 +82,7 @@
 | `scripts/src/models/genshinAssets/scene`                                                  | —                      | 13 files |
 | `scripts/src/models/genshinAssets/sceneGroups`                                            | —                      | 1 file   |
 | `scripts/src/models/genshinAssets/sceneNpcBorn`                                           | —                      | 2 files  |
-| `scripts/src/models/genshinAssets/shared`                                                 | 2026-10-25 · Haiku 5.5 | 37 files |
+| `scripts/src/models/genshinAssets/shared`                                                 | 2026-10-25 · Haiku 5.5 | 39 files |
 | `scripts/src/models/genshinAssets/shops`                                                  | —                      | 6 files  |
 | `scripts/src/models/genshinAssets/skillGlyphs`                                            | —                      | 1 file   |
 | `scripts/src/models/genshinAssets/sound`                                                  | —                      | 4 files  |
@@ -155,7 +155,7 @@
 | `scripts/src/services/fleet/constants.ts`                                                 | —                      | 1 file   |
 | `scripts/src/services/fleet/createFleetCommit.ts`                                         | —                      | 1 file   |
 | `scripts/src/services/fleet/createFleetWorker.ts`                                         | —                      | 1 file   |
-| `scripts/src/services/fleet/data`                                                         | 2026-10-25 · Haiku 5.5 | 37 files |
+| `scripts/src/services/fleet/data`                                                         | 2026-10-25 · Haiku 5.5 | 43 files |
 | `scripts/src/services/fleet/filterFleetEntries.test.ts`                                   | —                      | 1 file   |
 | `scripts/src/services/fleet/filterFleetEntries.ts`                                        | 2026-10-25 · Haiku 5.5 | 1 file   |
 | `scripts/src/services/fleet/formatClaimHolder.ts`                                         | —                      | 1 file   |
@@ -772,7 +772,7 @@
 | `scripts/src/services/genshinAssets/measure`                                              | —                      | 4 files  |
 | `scripts/src/services/genshinAssets/miningOutcrops`                                       | —                      | 2 files  |
 | `scripts/src/services/genshinAssets/music`                                                | —                      | 61 files |
-| `scripts/src/services/genshinAssets/namecards`                                            | 2026-10-25 · Haiku 5.5 | 6 files  |
+| `scripts/src/services/genshinAssets/namecards`                                            | 2026-10-25 · Haiku 5.5 | 9 files  |
 | `scripts/src/services/genshinAssets/oculi`                                                | —                      | 2 files  |
 | `scripts/src/services/genshinAssets/offerings`                                            | 2026-10-25 · Haiku 5.5 | 10 files |
 | `scripts/src/services/genshinAssets/palette`                                              | 2026-10-25 · Haiku 5.5 | 7 files  |
