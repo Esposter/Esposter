@@ -1,5 +1,5 @@
-import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 import type { IndexedColumn } from "#shared/models/resource/sheet/commands/IndexedColumn";
+import type { DataSource } from "#shared/models/resource/sheet/datasource/DataSource";
 
 import { ADataSourceCommand } from "#shared/models/resource/sheet/commands/ADataSourceCommand";
 import { CommandType } from "#shared/models/resource/sheet/commands/CommandType";
@@ -15,9 +15,9 @@ export class DeleteColumnsCommand extends ADataSourceCommand<CommandType.DeleteC
     return `Delete ${this.#indexedColumns.length} ${pluralize("Column", this.#indexedColumns.length)}`;
   }
 
+  readonly #columnIds: string[];
   // The target columns recorded from the document on execute, highest index first
   #indexedColumns: IndexedColumn[] = [];
-  readonly #columnIds: string[];
 
   constructor(columnIds: string[]) {
     super();

@@ -1,7 +1,8 @@
-import { DeleteColumnCommand } from "#shared/models/resource/sheet/commands/DeleteColumnCommand";
+import { DeleteColumnsCommand } from "#shared/models/resource/sheet/commands/DeleteColumnsCommand";
 
 export const useDeleteColumn = () =>
   useSheetCommand((dataSource, name: string) => {
-    if (dataSource.columns.some((column) => column.name === name)) return new DeleteColumnCommand(name);
+    const column = dataSource.columns.find((candidate) => candidate.name === name);
+    if (column) return new DeleteColumnsCommand([column.id]);
     else return undefined;
   });
