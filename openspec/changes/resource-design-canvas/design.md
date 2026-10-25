@@ -6,7 +6,7 @@ The recommendation is a new `Design` resource type whose editor is the Excalidra
 
 No type in the `ResourceDefinitionMap` is a freeform canvas. The closest three each fit a different shape of work:
 
-- **Flowchart.** A Vue Flow graph of nodes on fixed handles, joined by edges that connect two nodes, with a label and an arrowhead on each edge ([flowchart connectors](../../specs/resource/flowchart-connectors/design.md)). A freehand stroke or an arrow that points at nothing has no place in that model, and the pending [flowchart shapes](../resource-flowchart-shapes/design.md) change extends the same graph.
+- **Flowchart.** A Vue Flow graph of nodes on fixed handles, joined by edges that connect two nodes, with a label and an arrowhead on each edge ([flowchart connectors](../../specs/resource/flowchart-connectors/design.md)). A freehand stroke or an arrow that points at nothing has no place in that model, and the pending [flowchart shapes](../../rejected/resource/flowchart-shapes/design.md) change extends the same graph.
 - **Webpage and Email.** Typed block trees over the headless block editor, rendered to HTML at publish ([document model](../../specs/resource/page-builder/document-model/design.md)). Their nodes sit in a slot tree, not at coordinates.
 - **Dashboard.** A placement grid of visuals over datasets ([dashboard grid](../../specs/resource/dashboard-grid/design.md)). Its placement is grid cells, and the [vue-grid-layout-headless](../../specs/vue-grid-layout-headless/README.md) triage marks free-form placement out of scope.
 

@@ -2,8 +2,8 @@
 
 ## Why
 
-Deferred — the flowchart's future: rebuilt on the page builder's headless editor core, removed in favour of a mature whiteboard such as Excalidraw, or kept on Vue Flow with its four plugin components absorbed as the app's own.
+Decided — the flowchart's future is removal, in favour of the whiteboard in the design canvas. The rebuild on the headless editor core and keeping Vue Flow are rejected; the reasons are in `design.md`.
 
 ## What Changes
 
-Nothing yet: this idea is deferred. Its argument and revisit trigger are in `design.md`. Reviving it moves this folder into `openspec/changes/`.
+Nothing here: the removal is designed in `openspec/changes/resource-flowchart-retirement/`, which deletes the Flowchart type, its canvas dependency and its stored flowcharts.

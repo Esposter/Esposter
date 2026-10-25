@@ -1,23 +1,13 @@
 # Flowchart on the Editor Core
 
-The Flowchart resource draws its canvas with Vue Flow (`@vue-flow/core`) and four of its plugin components: the background, the controls, the minimap and the node resizer. Three futures are open:
+The Flowchart resource drew its canvas with Vue Flow (`@vue-flow/core`) and four of its plugin components: the background, the controls, the minimap and the node resizer. Three futures were open when this page was written:
 
 - **Rebuild it on the [headless editor core](../../../specs/headless-block-editor/editor-core/design.md).** The flowchart would be the core's second implementer and the proof that it is generic: a graph of freely placed nodes and edges beside the page builder's tree of slotted nodes. Vue Flow and its plugins would go.
 - **Remove it.** Excalidraw is a mature open-source whiteboard that already does what the flowchart does, and better, so the resource could be dropped rather than maintained. Embedding Excalidraw is not one of the options: it is a React application, and the app is Vue.
 - **Keep Vue Flow, and absorb its four plugin components as the app's own.** This is the absorption the [dependency admission](../../../specs/architecture/dependency-admission/design.md) standard gives a component wrapper.
 
-## Why deferred
+## Decided
 
-If either of the first two futures wins, absorbing the plugins is wasted work, and which one wins turns on the core's shape. The open question is whether the core's history, patches and commands carry a graph as well as they carry a tree, and only the core and its first implementer, the page builder, can show that.
+The owner chose the second future, removal. The whiteboard in the [design canvas](../../../changes/resource-design-canvas/proposal.md) takes over the flowchart's work, and the Flowchart type goes with its canvas dependency and every stored flowchart. The removal is designed in [flowchart retirement](../../../changes/resource-flowchart-retirement/design.md). Its deletion order runs the purge before the enum value is dropped, because a resource type cannot leave PostgreSQL while a row still holds it, and a row deleted directly leaves its blob and storage count behind.
 
-Removal also costs more than it looks. It destroys every saved flowchart. And a resource type cannot leave PostgreSQL while a row still holds its enum value, so removal has two steps. First, every live flowchart is marked deleted past the recycle bin's window, so the nightly purge (`apps/functions/src/handlers/purgeDeletedResourcesHandler.ts`) clears its blobs, its table partitions and the storage it counts against its owner. Only then can a later migration drop the enum value and the flowchart achievement.
-
-## Revisit when
-
-The headless editor core ships, and the page builder's webpage editor runs on it.
-
-Both have happened: the core is shipped and the webpage editor imports it. The comparison of the three futures is taken in [flowchart canvas](../../../changes/resource-flowchart-canvas/proposal.md), which recommends keeping Vue Flow and absorbing its plugins. This idea stays deferred until the owner chooses the headless graph option, which first needs the core to gain a graph shape.
-
-## Cheaper interim
-
-The flowchart keeps Vue Flow and its plugins as they are. [Flowchart shapes](../../../changes/resource-flowchart-shapes/design.md) waits on the same decision, since it extends the Vue Flow canvas.
+The first future and the third are rejected. A rebuild would need the headless core to gain a graph shape for a type being removed, and keeping Vue Flow keeps the engine the removal drops.
