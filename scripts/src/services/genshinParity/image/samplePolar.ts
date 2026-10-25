@@ -1,4 +1,4 @@
-import { toHex } from "#src/services/genshinParity/image/toHex";
+import { toHex } from "#src/services/genshinAssets/fit/toHex";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import sharp from "sharp";
 
