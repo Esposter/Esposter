@@ -16,6 +16,8 @@ Removal also costs more than it looks. It destroys every saved flowchart. And a 
 
 The headless editor core ships, and the page builder's webpage editor runs on it.
 
+Both have happened: the core is shipped and the webpage editor imports it. The comparison of the three futures is taken in [flowchart canvas](../../../changes/resource-flowchart-canvas/proposal.md), which recommends keeping Vue Flow and absorbing its plugins. This idea stays deferred until the owner chooses the headless graph option, which first needs the core to gain a graph shape.
+
 ## Cheaper interim
 
 The flowchart keeps Vue Flow and its plugins as they are. [Flowchart shapes](../../../changes/resource-flowchart-shapes/design.md) waits on the same decision, since it extends the Vue Flow canvas.
