@@ -1,6 +1,5 @@
 import type { TiledProject } from "@@/scripts/tiled/models/TiledProject";
 
-import { PropertyType } from "@/models/dungeons/tilemap/PropertyType";
 import { outputFile } from "@@/scripts/services/outputFile";
 import { TILED_ROOT_DIRECTORY, WORLD_ROOT_DIRECTORY } from "@@/scripts/tiled/constants";
 import { PROPERTY_TYPES_DIRECTORY } from "@@/scripts/tiled/propertyTypes/constants";
@@ -8,6 +7,7 @@ import { createClassString } from "@@/scripts/tiled/propertyTypes/createClassStr
 import { createEnumString } from "@@/scripts/util/createEnumString";
 import { jsonDateParse } from "@esposter/shared";
 import { readFile } from "node:fs/promises";
+import { PropertyType } from "parse-tmx";
 
 const FILE_PATH = `${WORLD_ROOT_DIRECTORY}/index.tiled-project`;
 

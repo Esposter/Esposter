@@ -1,5 +1,5 @@
-import type { PropertyType } from "@/models/dungeons/tilemap/PropertyType";
 import type { ItemEntityType } from "@esposter/shared";
+import type { PropertyType } from "parse-tmx";
 
 export interface TiledIntProperty<TValue = never> extends ItemEntityType<PropertyType.Int> {
   name: string;

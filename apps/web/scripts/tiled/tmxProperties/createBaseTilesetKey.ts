@@ -1,12 +1,12 @@
 import type { TMXExternalTilesetParsed } from "parse-tmx";
 
-import { PropertyType } from "@/models/dungeons/tilemap/PropertyType";
 import { getFilename } from "@/util/file/getFilename";
 import { trimFileExtension } from "@/util/file/trimFileExtension";
 import { outputFile } from "@@/scripts/services/outputFile";
 import { TILED_ROOT_DIRECTORY } from "@@/scripts/tiled/constants";
 import { PROPERTY_TYPES_DIRECTORY } from "@@/scripts/tiled/propertyTypes/constants";
 import { createEnumString } from "@@/scripts/util/createEnumString";
+import { PropertyType } from "parse-tmx";
 
 export const createBaseTilesetKey = async (tilesets: TMXExternalTilesetParsed[]) => {
   const tilesetKeys = new Set<string>();
