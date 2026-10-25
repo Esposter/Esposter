@@ -2,13 +2,19 @@
 
 ### Requirement: Deleting the account signs it out everywhere at once
 
-Deleting the account SHALL end every session it holds before the request returns, and SHALL mark the account as pending deletion.
+Deleting the account SHALL mark the account as pending deletion, publish the deletion, and then end every session it holds before the request returns. A deletion that cannot be published SHALL fail the request and SHALL leave the sessions open.
 
 #### Scenario: The deletion ends the caller's sessions
 
 - **GIVEN** a signed-in person with two open sessions
 - **WHEN** they confirm the deletion of their account
 - **THEN** both sessions are ended and the request returns without waiting for the sweep
+
+#### Scenario: A deletion that cannot be published leaves the person signed in
+
+- **GIVEN** a signed-in person with two open sessions
+- **WHEN** they confirm the deletion of their account and the deletion cannot be published
+- **THEN** the request fails with the error, both sessions remain open, and the person can confirm the deletion again
 
 ### Requirement: Deletion requires a typed confirmation
 

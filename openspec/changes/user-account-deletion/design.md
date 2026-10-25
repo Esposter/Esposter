@@ -6,7 +6,7 @@ The inventory in [user data](../../specs/architecture/user-data-inventory/design
 
 **The marker is the row, and the user row goes last.** The purge of a resource already works this way: the Postgres row is the durable marker, every external sweep treats an already-gone target as success, and the row is deleted last, so a replay after any failure finds the same work. The account follows it. Deleting the user row first would cascade away the only record of what still needs sweeping.
 
-**The mutation does not sweep.** It sets `users.deletionRequestedAt`, deletes the account's sessions so the caller is signed out everywhere, and publishes one Event Grid event. A sweep across message partitions and blob directories can outlast a request, and the caller is owed an answer the moment the marker lands.
+**The mutation does not sweep.** It sets `users.deletionRequestedAt`, publishes one Event Grid event, and only then deletes the account's sessions so the caller is signed out everywhere. The publish comes before the sessions so that a failed publish fails the request with the person still signed in: a retry sets the same marker and publishes again, and every step is idempotent. A sweep across message partitions and blob directories can outlast a request, and the caller is owed an answer once the event is accepted.
 
 **Owned rooms are deleted, as an owner's departure already deletes them.** `leaveRoom` deletes a room for everyone when its owner leaves, so account deletion does the same rather than inventing a transfer. A transfer of ownership is a feature with its own design, and it is the reason to revisit this. `deleteRoom` already publishes the room's attachment prefix and profile images, so the sweep relies on that teardown for them and adds the room's four table partitions, which it does not clear.
 
@@ -38,9 +38,14 @@ sequenceDiagram
   participant EG as Event Grid
   participant Handler as deleteAccount handler
   Person->>Web: Delete account, typed confirmation
-  Web->>DB: set deletionRequestedAt, delete sessions
+  Web->>DB: set deletionRequestedAt
   Web->>EG: DeleteAccount for the user
-  Web-->>Person: confirmed, signed out
+  alt publish fails
+    Web-->>Person: error, still signed in, can ask again
+  else publish accepted
+    Web->>DB: delete sessions
+    Web-->>Person: confirmed, signed out
+  end
   EG->>Handler: DeleteAccount
   Handler->>DB: owned rooms, owned resources
   Handler->>DB: charged attachments from the ledger

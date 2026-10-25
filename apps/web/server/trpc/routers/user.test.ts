@@ -38,6 +38,7 @@ import {
   MOCK_BLOB_BASE_URL,
   MockContainerDatabase,
   MockEventGridDatabase,
+  MockEventGridPublisherClient,
   MockTableDatabase,
 } from "azure-mock";
 import { eq } from "drizzle-orm";
@@ -60,6 +61,7 @@ describe("userRouter", () => {
   const message = "message";
   const mimetype = MimeType.Png;
   const name = "name";
+  const publishError = new Error(" ");
   const size = 1;
   const updatedMessage = "updatedMessage";
   const userId = getMockSession().user.id;
@@ -121,6 +123,70 @@ describe("userRouter", () => {
       await mockContext.db.delete(sessionsInAuth).where(eq(sessionsInAuth.token, token));
     });
 
+    await caller.deleteAccount();
+
+    const user = await mockContext.db.query.usersInAuth.findFirst({ where: { id: { eq: userId } } });
+    const deleteAccountEvents = MockEventGridDatabase.get("");
+    assert.exists(deleteAccountEvents);
+
+    expect(await mockContext.db.query.sessionsInAuth.findMany({ where: { userId: { eq: userId } } })).toStrictEqual([]);
+    expect(user?.deletionRequestedAt).toStrictEqual(new Date());
+    expect(deleteAccountEvents).toHaveLength(1);
+    expect(takeOne(deleteAccountEvents)).toMatchObject({
+      data: { userId },
+      eventType: AzureFunction.DeleteAccount,
+      subject: userId,
+    });
+  });
+
+  // The marker is set before the sweep is published, so a publish that fails must fail the request and leave the caller
+  // signed in: the sessions are ended only once the event is accepted, and the person can ask again
+  test("deleteAccount fails when the sweep is not published, and the caller's sessions stay open", async () => {
+    expect.hasAssertions();
+
+    const otherSession = createMockSession(userId);
+    await mockContext.db
+      .insert(sessionsInAuth)
+      .values({
+        expiresAt: otherSession.expiresAt,
+        id: otherSession.id,
+        ipAddress: "",
+        token: otherSession.token,
+        updatedAt: otherSession.updatedAt,
+        userId,
+      });
+    getMockRevokeSession().mockImplementation(async ({ body: { token } }) => {
+      await mockContext.db.delete(sessionsInAuth).where(eq(sessionsInAuth.token, token));
+    });
+    vi.spyOn(MockEventGridPublisherClient.prototype, "send").mockRejectedValueOnce(publishError);
+
+    await expect(caller.deleteAccount()).rejects.toMatchObject({ cause: publishError });
+
+    const sessions = await mockContext.db.query.sessionsInAuth.findMany({ where: { userId: { eq: userId } } });
+    expect(MockEventGridDatabase.get("")).toBeUndefined();
+    expect(sessions.map(({ id }) => id)).toContain(otherSession.id);
+  });
+
+  test("deleteAccount succeeds on retry after a failed publish, and publishes the sweep once", async () => {
+    expect.hasAssertions();
+
+    const otherSession = createMockSession(userId);
+    await mockContext.db
+      .insert(sessionsInAuth)
+      .values({
+        expiresAt: otherSession.expiresAt,
+        id: otherSession.id,
+        ipAddress: "",
+        token: otherSession.token,
+        updatedAt: otherSession.updatedAt,
+        userId,
+      });
+    getMockRevokeSession().mockImplementation(async ({ body: { token } }) => {
+      await mockContext.db.delete(sessionsInAuth).where(eq(sessionsInAuth.token, token));
+    });
+    vi.spyOn(MockEventGridPublisherClient.prototype, "send").mockRejectedValueOnce(publishError);
+
+    await expect(caller.deleteAccount()).rejects.toMatchObject({ cause: publishError });
     await caller.deleteAccount();
 
     const user = await mockContext.db.query.usersInAuth.findFirst({ where: { id: { eq: userId } } });

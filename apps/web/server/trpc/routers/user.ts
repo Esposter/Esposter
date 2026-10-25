@@ -77,22 +77,20 @@ export const userRouter = router({
       });
       return key;
     }),
-  // Takes no input: the typed confirmation is the settings page's, and nothing here could be a way round it. The request
-  // ends the account's sessions and marks the row, then hands the sweep to the functions app, which outlasts a request
+  // Takes no input: the typed confirmation is the settings page's, and nothing here could be a way round it. The
+  // Marker is set first, then the sweep is published, and the sessions end last, so a failed publish leaves the person
+  // Signed in to ask again: that retry sets the same marker and publishes again, and each step is idempotent
   deleteAccount: standardAuthedProcedure.mutation<void>(async ({ ctx }) => {
     const userId = ctx.getSessionPayload.user.id;
-    await deleteAccountSessions(ctx);
     await ctx.db.update(usersInAuth).set({ deletionRequestedAt: new Date() }).where(eq(usersInAuth.id, userId));
     const data: DeleteAccountEventGridData = { userId };
     const deleteAccountEvent = createEventGridEvent(AzureFunction.DeleteAccount, userId, data);
-    // Best-effort after the write, as the room and resource deletions publish. A publish that fails leaves the marker
-    // standing with no sweep behind it, so the error names that, and signing back in and asking again publishes it
+    // Fatal, unlike the best-effort publishes after a write: this event is the only thing that starts the sweep, so a
+    // Publish that only logged its failure would leave a marked account that nothing sweeps
     await getResultAsync(() => useEventGridPublisherClient().send([deleteAccountEvent])).match(noop, (error) => {
-      console.error(
-        `${AzureFunction.DeleteAccount} was not published for ${userId}: the marker stands with no sweep`,
-        error,
-      );
+      throw error;
     });
+    await deleteAccountSessions(ctx);
   }),
   deleteCallBackground: standardAuthedProcedure
     .input(callBackgroundSlotSchema)
