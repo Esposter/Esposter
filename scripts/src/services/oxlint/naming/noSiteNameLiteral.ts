@@ -1,20 +1,8 @@
 import type { Rule } from "@oxlint/plugins";
 
-import {
-  SITE_NAME_ALLOWED_REGEX,
-  SITE_NAME_LITERAL_MESSAGE,
-  SITE_NAME_REGEX,
-} from "#src/services/oxlint/naming/constants";
+import { checkIsSiteNameSpelled } from "#src/services/oxlint/naming/checkIsSiteNameSpelled";
+import { MODULE_SOURCE_PARENT_TYPES, SITE_NAME_LITERAL_MESSAGE } from "#src/services/oxlint/naming/constants";
 import { defineRule } from "@oxlint/plugins";
-
-const MODULE_SOURCE_PARENT_TYPES = new Set([
-  "ExportAllDeclaration",
-  "ExportNamedDeclaration",
-  "ImportDeclaration",
-  "ImportExpression",
-]);
-
-const checkIsSiteNameSpelled = (text: string) => SITE_NAME_REGEX.test(text.replaceAll(SITE_NAME_ALLOWED_REGEX, ""));
 
 export const noSiteNameLiteral: Rule = defineRule({
   create(context) {

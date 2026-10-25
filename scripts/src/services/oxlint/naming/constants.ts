@@ -14,3 +14,10 @@ export const SITE_NAME_REGEX: RegExp = /esposter/iu;
 // Ends at whitespace or the markup delimiting it, an encoded quote included, so the text after an anchor is still read
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex would otherwise infer
 export const SITE_NAME_ALLOWED_REGEX: RegExp = /@esposter\b|https?:\/\/(?:(?!&quot;)[^\s"'<>`])*|Esposter\/Esposter/gu;
+// The parents a string sits under when it is a module's path rather than a label, so a name in it is an import's
+export const MODULE_SOURCE_PARENT_TYPES: ReadonlySet<string> = new Set([
+  "ExportAllDeclaration",
+  "ExportNamedDeclaration",
+  "ImportDeclaration",
+  "ImportExpression",
+]);
