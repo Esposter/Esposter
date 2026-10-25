@@ -1,13 +1,18 @@
 import type { ContainerClient } from "@azure/storage-blob";
-import type { FileEntity } from "@esposter/db-schema";
+import type { AzureContainer, Database, FileEntity, UserInAuth } from "@esposter/db-schema";
 
-import { copyBlob } from "#src/services/azure/container/copyBlob";
 import { getFileBlobNames } from "#src/services/azure/container/getFileBlobNames";
-import { getResultAsync, settleAll } from "@esposter/shared";
+import { chargeAndCopyBlob } from "#src/services/storage/chargeAndCopyBlob";
+import { releaseStorageLedgerEntries } from "#src/services/storage/releaseStorageLedgerEntries";
+import { getResultAsync, InvalidOperationError, Operation, settleAll } from "@esposter/shared";
 
 // Returns each clone's minted id alongside the thumbnail state its blobs actually carry, so the caller
-// Writes an entity that describes what was copied rather than what the source claimed.
+// Writes an entity that describes what was copied rather than what the source claimed. Every copy is charged to
+// `userId` before it is written, and a clone that fails gives back the charge of every copy it had made.
 export const cloneFiles = async (
+  db: Database,
+  userId: UserInAuth["id"],
+  containerName: AzureContainer,
   containerClient: ContainerClient,
   files: FileEntity[],
   sourcePrefix = "",
@@ -16,6 +21,23 @@ export const cloneFiles = async (
   if (files.length === 0) return [];
 
   const writtenBlobNames: string[] = [];
+  const copyChargedBlob = async (sourceBlobName: string, destinationBlobName: string) => {
+    // One HEAD answers what the copy costs its new owner, and fails if the source is not there to copy
+    const { contentLength } = await containerClient.getBlockBlobClient(sourceBlobName).getProperties();
+    if (contentLength === undefined)
+      throw new InvalidOperationError(Operation.Read, sourceBlobName, "returned no content length to charge");
+
+    await chargeAndCopyBlob(
+      db,
+      userId,
+      containerName,
+      containerClient,
+      sourceBlobName,
+      destinationBlobName,
+      contentLength,
+    );
+    writtenBlobNames.push(destinationBlobName);
+  };
   // Awaited rather than returned: the error arm below resolves to `Promise<never>`, so the match's own type is
   // The union of that and the clone list until an await collapses it
   const clonedFiles = await getResultAsync(() =>
@@ -24,15 +46,12 @@ export const cloneFiles = async (
         const newId: string = crypto.randomUUID();
         const sourceBlobNames = getFileBlobNames(sourcePrefix, id, filename);
         const destinationBlobNames = getFileBlobNames(destinationPrefix, newId, filename);
-        await copyBlob(containerClient, sourceBlobNames.blobName, destinationBlobNames.blobName);
-        writtenBlobNames.push(destinationBlobNames.blobName);
+        await copyChargedBlob(sourceBlobNames.blobName, destinationBlobNames.blobName);
         // The thumbnail is a sibling blob, not part of the original, so copying only the original leaves a
         // Clone whose `hasThumbnail` points the renderer at a blob that was never written. `hasThumbnail` is
         // The uploader's own record that it wrote one (see FileEntity), so it is read here rather than probed
-        if (hasThumbnail) {
-          await copyBlob(containerClient, sourceBlobNames.thumbnailBlobName, destinationBlobNames.thumbnailBlobName);
-          writtenBlobNames.push(destinationBlobNames.thumbnailBlobName);
-        }
+        if (hasThumbnail)
+          await copyChargedBlob(sourceBlobNames.thumbnailBlobName, destinationBlobNames.thumbnailBlobName);
         return { hasThumbnail, id: newId };
       }),
     ),
@@ -44,11 +63,13 @@ export const cloneFiles = async (
     // Precisely because these names were minted moments ago: no other content can point at them yet, unlike
     // `restorePublishedVersion`, whose destination is a live working copy a directory-wide delete would destroy.
     // `settleAll` above is what makes the name list complete: a copy still in flight when the delete ran would
-    // Land after it and strand the blob it wrote
+    // Land after it and strand the blob it wrote. The charges go with the blobs, so nothing stays counted for a
+    // Blob that no longer exists
     async (error) => {
       await settleAll(
         writtenBlobNames.map((blobName) => () => containerClient.getBlockBlobClient(blobName).deleteIfExists()),
       );
+      await releaseStorageLedgerEntries(db, containerName, writtenBlobNames);
       throw error;
     },
   );

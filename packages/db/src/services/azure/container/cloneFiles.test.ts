@@ -1,12 +1,18 @@
 import type { ContainerClient } from "@azure/storage-blob";
+import type { Database } from "@esposter/db-schema";
 
 import { cloneFiles } from "#src/services/azure/container/cloneFiles";
 import { getThumbnailBlobName } from "#src/services/azure/container/getThumbnailBlobName";
-import { FileEntity } from "@esposter/db-schema";
+import { createUser } from "#src/services/message/createUser.test";
+import { createMockDb } from "@esposter/db-mock";
+import { AzureContainer, FileEntity, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
 import { ID_SEPARATOR, takeOne } from "@esposter/shared";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 
 describe(cloneFiles, () => {
+  let db: Database;
+  const userId = crypto.randomUUID();
+  const containerName = AzureContainer.MessageAssets;
   const containerUrl = "";
   const sourcePrefix = crypto.randomUUID();
   const destinationPrefix = crypto.randomUUID();
@@ -16,6 +22,16 @@ describe(cloneFiles, () => {
   // Records the copy source the destination client was handed, which is the whole invariant: it has to be
   // The SDK's own percent-encoded url and never an interpolation of the raw name. `rejectSource` fails the one copy
   // Whose source ends with it, so a partial clone can be driven without faking the client's shape.
+  beforeAll(async () => {
+    db = await createMockDb();
+    await db.insert(usersInAuth).values(createUser(userId, new Date(0), "name"));
+  });
+
+  afterEach(async () => {
+    await db.delete(storageLedgerInStorage);
+    await db.update(usersInAuth).set({ storageBytesUsed: 0 });
+  });
+
   const setupContainerClient = (rejectSource = "") => {
     const beginCopyFromURL = vi.fn<(copySource: string) => Promise<{ pollUntilDone: () => Promise<void> }>>(
       (copySource) =>
@@ -27,6 +43,7 @@ describe(cloneFiles, () => {
     const containerClient = {
       getBlockBlobClient: (blobName: string) => ({
         beginCopyFromURL,
+        getProperties: () => Promise.resolve({ contentLength: 1 }),
         deleteIfExists: () => {
           deletedBlobNames.push(blobName);
           return Promise.resolve({ succeeded: true });
@@ -46,7 +63,15 @@ describe(cloneFiles, () => {
 
     const { beginCopyFromURL, containerClient } = setupContainerClient();
 
-    await cloneFiles(containerClient, [new FileEntity({ filename: "#", id })], sourcePrefix, destinationPrefix);
+    await cloneFiles(
+      db,
+      userId,
+      containerName,
+      containerClient,
+      [new FileEntity({ filename: "#", id })],
+      sourcePrefix,
+      destinationPrefix,
+    );
 
     // Interpolated, the `#` would start a fragment and Azure would receive a source ending at the separator.
     expect(beginCopyFromURL).toHaveBeenCalledWith(`${containerUrl}/${sourcePrefix}/${id}%7C%23`);
@@ -58,6 +83,9 @@ describe(cloneFiles, () => {
     const { beginCopyFromURL, containerClient } = setupContainerClient();
 
     const [clonedFile] = await cloneFiles(
+      db,
+      userId,
+      containerName,
       containerClient,
       [new FileEntity({ filename, hasThumbnail: true, id })],
       sourcePrefix,
@@ -77,6 +105,9 @@ describe(cloneFiles, () => {
 
     await expect(
       cloneFiles(
+        db,
+        userId,
+        containerName,
         containerClient,
         [new FileEntity({ filename, hasThumbnail: true, id })],
         sourcePrefix,
@@ -100,6 +131,9 @@ describe(cloneFiles, () => {
 
     await expect(
       cloneFiles(
+        db,
+        userId,
+        containerName,
         containerClient,
         [new FileEntity({ filename, id }), new FileEntity({ filename: failingFilename, id: failingId })],
         sourcePrefix,
@@ -110,6 +144,8 @@ describe(cloneFiles, () => {
     // Only the sibling that landed — the failing copy wrote nothing to clear
     expect(deletedBlobNames).toHaveLength(1);
     expect(takeOne(deletedBlobNames).endsWith(`${ID_SEPARATOR}${filename}`)).toBe(true);
+    // The sibling's charge goes with its blob, and the failing copy's charge went back when its copy failed
+    await expect(db.query.storageLedgerInStorage.findMany()).resolves.toStrictEqual([]);
   });
 
   test("copies only the original when the source recorded no thumbnail", async () => {
@@ -118,6 +154,9 @@ describe(cloneFiles, () => {
     const { beginCopyFromURL, containerClient } = setupContainerClient();
 
     const [clonedFile] = await cloneFiles(
+      db,
+      userId,
+      containerName,
       containerClient,
       [new FileEntity({ filename, id })],
       sourcePrefix,

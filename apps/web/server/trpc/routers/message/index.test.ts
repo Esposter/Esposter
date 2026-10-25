@@ -6,6 +6,7 @@ import type { BlobDeletionEventGridData, MessageEntity, MessageNotificationData 
 import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-import";
 import type { MockInstance } from "vitest";
 
+import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
 import { useTableClient } from "#server/composables/azure/table/useTableClient";
 import { MessageCreationRejectionReasonMap } from "#server/services/message/moderation/MessageCreationRejectionReasonMap";
 import { createCallerFactory } from "#server/trpc";
@@ -21,8 +22,15 @@ import { MimeType } from "#shared/models/file/MimeType";
 import { MessageOperation } from "#shared/models/message/MessageOperation";
 import { SortOrder } from "#shared/models/pagination/sorting/SortOrder";
 import { MESSAGE_ROW_KEY_SORT_ITEM } from "#shared/services/pagination/constants";
+import { StorageTierQuotaMap } from "#shared/services/storage/StorageTierQuotaMap";
 import { serialize } from "#shared/services/pagination/cursor/serialize";
-import { getBlobName, getThumbnailBlobName } from "@esposter/db";
+import {
+  deleteStorageBlobs,
+  getBlobName,
+  getThumbnailBlobName,
+  listBlobNames,
+  reconcileStorageLedgerEntry,
+} from "@esposter/db";
 import {
   AppNotificationType,
   AzureContainer,
@@ -30,18 +38,28 @@ import {
   AzureFunction,
   AzureTable,
   getReverseTickedTimestamp,
+  MAX_THUMBNAIL_BYTES,
   MessageCreationRejectionType,
   MessageType,
   roomFiltersInMessage,
   SearchIndex,
   StandardMessageEntity,
+  storageLedgerInStorage,
+  StorageTier,
+  usersInAuth,
   usersToRoomsInMessage,
   WordFilterAction,
   WRITE_SAS_DURATION_MS,
 } from "@esposter/db-schema";
-import { InvalidOperationError, jsonDateParse, NotFoundError, Operation, takeOne } from "@esposter/shared";
+import { InvalidOperationError, jsonDateParse, noop, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import { isTrackedEnvelope } from "@trpc/server";
-import { MockContainerDatabase, MockEventGridDatabase, MockSearchDatabase, MockTableClient } from "azure-mock";
+import {
+  MockBlobClient,
+  MockContainerDatabase,
+  MockEventGridDatabase,
+  MockSearchDatabase,
+  MockTableClient,
+} from "azure-mock";
 import { and, eq } from "drizzle-orm";
 import { afterEach, assert, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 
@@ -159,13 +177,15 @@ describe("messageRouter", () => {
     });
   });
 
-  afterEach(() => {
+  afterEach(async () => {
     consoleErrorSpy.mockRestore();
     updateEntitySpy.mockRestore();
     vi.useRealTimers();
     MockContainerDatabase.clear();
     MockEventGridDatabase.clear();
     MockSearchDatabase.clear();
+    await mockContext.db.delete(storageLedgerInStorage);
+    await mockContext.db.update(usersInAuth).set({ storageBytesUsed: 0, storageTier: StorageTier.Free });
   });
 
   test("reads empty", async () => {
@@ -730,6 +750,50 @@ describe("messageRouter", () => {
     expect(takeOne(forwardedMessages.items).isForward).toBe(true);
   });
 
+  // A forward writes bytes the server copies, so the forwarder is charged for each copy and the charge moves the meter
+  test("forwarded attachment is copied and charged", async () => {
+    expect.hasAssertions();
+
+    const id = crypto.randomUUID();
+    const newMessage = await messageCaller.createMessage({
+      files: [{ filename, id, mimetype, size }],
+      roomId,
+      timeZone,
+    });
+    setMessageAssetBlob(id);
+    const forwardedRoom = await roomCaller.createRoom({ name });
+    const bytesBeforeForward = await readStorageBytesUsed();
+
+    await messageCaller.forwardMessage({ ...getCompositeKey(newMessage), roomIds: [forwardedRoom.id] });
+
+    expect(await readStorageBytesUsed()).toBe(bytesBeforeForward + size);
+  });
+
+  // A copy that fails gives the forwarder back what it was charged, and the forward posts nothing to the room
+  test("a failed copy gives its charge back", async () => {
+    expect.hasAssertions();
+
+    const id = crypto.randomUUID();
+    const newMessage = await messageCaller.createMessage({
+      files: [{ filename, id, mimetype, size }],
+      roomId,
+      timeZone,
+    });
+    setMessageAssetBlob(id);
+    const forwardedRoom = await roomCaller.createRoom({ name });
+    const bytesBeforeForward = await readStorageBytesUsed();
+    vi.spyOn(MockBlobClient.prototype, "beginCopyFromURL").mockRejectedValueOnce(new Error(" "));
+
+    await expect(
+      messageCaller.forwardMessage({ ...getCompositeKey(newMessage), roomIds: [forwardedRoom.id] }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError:  ]`);
+
+    expect(await readStorageBytesUsed()).toBe(bytesBeforeForward);
+    await expect(mockContext.db.query.storageLedgerInStorage.findMany()).resolves.toStrictEqual([]);
+    const forwardedMessages = await messageCaller.readMessages({ roomId: forwardedRoom.id });
+    expect(forwardedMessages.items).toHaveLength(0);
+  });
+
   test("forwards message with optional message", async () => {
     expect.hasAssertions();
 
@@ -861,6 +925,34 @@ describe("messageRouter", () => {
     expect(new Set(sasEntities.map(({ id }) => id)).size).toBe(2);
   });
 
+  // A drop of one image holds its original and its thumbnail against the uploader, so the allowance covers what the
+  // upload will store before either target is handed out
+  test("attachment uploaded within the allowance is reserved against the uploader", async () => {
+    expect.hasAssertions();
+
+    await messageCaller.generateUploadFileSasEntities({ files: [{ filename, mimetype, size }], roomId });
+    const ledgerEntries = await mockContext.db.query.storageLedgerInStorage.findMany();
+
+    expect(ledgerEntries.map(({ declaredBytes }) => declaredBytes).toSorted()).toStrictEqual(
+      [size, MAX_THUMBNAIL_BYTES].toSorted(),
+    );
+    expect(ledgerEntries.every(({ userId }) => userId === getMockSession().user.id)).toBe(true);
+  });
+
+  test("attachment refused over the allowance hands out no write target", async () => {
+    expect.hasAssertions();
+
+    await mockContext.db
+      .update(usersInAuth)
+      .set({ storageBytesUsed: StorageTierQuotaMap[StorageTier.Free], storageTier: StorageTier.Free })
+      .where(eq(usersInAuth.id, getMockSession().user.id));
+
+    await expect(
+      messageCaller.generateUploadFileSasEntities({ files: [{ filename, mimetype, size }], roomId }),
+    ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: You have run out of storage.]`);
+    await expect(mockContext.db.query.storageLedgerInStorage.findMany()).resolves.toStrictEqual([]);
+  });
+
   test("reclaims an upload the caller was granted", async () => {
     expect.hasAssertions();
 
@@ -953,6 +1045,95 @@ describe("messageRouter", () => {
     ).rejects.toThrowErrorMatchingInlineSnapshot(`[TRPCError: UNAUTHORIZED]`);
 
     expect(MockEventGridDatabase.get("")).toBeUndefined();
+  });
+
+  // Each give-back below runs the work a blob-deletion event does once the functions host takes it: the names the event
+  // carries, or every blob under its prefix, released through the same `deleteStorageBlobs`. The bytes are read after
+  // that, so a case proves the release path returned them rather than the procedure that published it
+  const runBlobDeletionEvents = async () => {
+    const containerClient = await useContainerClient(AzureContainer.MessageAssets);
+    const blobDeletions = (MockEventGridDatabase.get("") ?? [])
+      .map(({ data }) => data as BlobDeletionEventGridData)
+      .filter(({ containerName }) => containerName === AzureContainer.MessageAssets);
+    const blobNames = (
+      await Promise.all(
+        blobDeletions.map((blobDeletion) =>
+          "blobNames" in blobDeletion ? blobDeletion.blobNames : listBlobNames(containerClient, blobDeletion.prefix),
+        ),
+      )
+    ).flat();
+    await deleteStorageBlobs(mockContext.db, containerClient, AzureContainer.MessageAssets, blobNames, noop);
+  };
+  // Storage reporting an upload's stored size is the reconcile the `BlobCreated` handler runs
+  const reportStoredUpload = (blobName: string) =>
+    reconcileStorageLedgerEntry(mockContext.db, AzureContainer.MessageAssets, blobName, size, "0");
+  const readStorageBytesUsed = async () =>
+    (
+      await mockContext.db.query.usersInAuth.findFirst({
+        columns: { storageBytesUsed: true },
+        where: { id: { eq: getMockSession().user.id } },
+      })
+    )?.storageBytesUsed;
+
+  test("gives an attachment's bytes back when its file is deleted", async () => {
+    expect.hasAssertions();
+
+    const bytesBeforeUpload = await readStorageBytesUsed();
+    const [sasEntity] = await messageCaller.generateUploadFileSasEntities({
+      files: [{ filename, mimetype, size }],
+      roomId,
+    });
+    assert(sasEntity);
+    setMessageAssetBlob(sasEntity.id);
+    await reportStoredUpload(getBlobName(`${roomId}/${sasEntity.id}`, filename));
+    const newMessage = await messageCaller.createMessage({
+      files: [{ filename, id: sasEntity.id, mimetype, size }],
+      roomId,
+      timeZone,
+    });
+    expect(await readStorageBytesUsed()).toBe(bytesBeforeUpload + size);
+
+    await messageCaller.deleteFile({ id: sasEntity.id, ...getCompositeKey(newMessage) });
+    await runBlobDeletionEvents();
+
+    expect(await readStorageBytesUsed()).toBe(bytesBeforeUpload);
+  });
+
+  test("gives an upload's bytes back when the composer discards it", async () => {
+    expect.hasAssertions();
+
+    const bytesBeforeUpload = await readStorageBytesUsed();
+    const [sasEntity] = await messageCaller.generateUploadFileSasEntities({
+      files: [{ filename, mimetype, size }],
+      roomId,
+    });
+    assert(sasEntity);
+    await reportStoredUpload(getBlobName(`${roomId}/${sasEntity.id}`, filename));
+    expect(await readStorageBytesUsed()).toBe(bytesBeforeUpload + size);
+
+    await messageCaller.deleteUploadFiles({ files: [{ filename, id: sasEntity.id, token: sasEntity.token }], roomId });
+    await runBlobDeletionEvents();
+
+    expect(await readStorageBytesUsed()).toBe(bytesBeforeUpload);
+  });
+
+  test("gives every attachment's bytes back when its room is deleted", async () => {
+    expect.hasAssertions();
+
+    const bytesBeforeUpload = await readStorageBytesUsed();
+    const [sasEntity] = await messageCaller.generateUploadFileSasEntities({
+      files: [{ filename, mimetype, size }],
+      roomId,
+    });
+    assert(sasEntity);
+    setMessageAssetBlob(sasEntity.id);
+    await reportStoredUpload(getBlobName(`${roomId}/${sasEntity.id}`, filename));
+    expect(await readStorageBytesUsed()).toBe(bytesBeforeUpload + size);
+
+    await roomCaller.deleteRoom(roomId);
+    await runBlobDeletionEvents();
+
+    expect(await readStorageBytesUsed()).toBe(bytesBeforeUpload);
   });
 
   test("deletes file", async () => {

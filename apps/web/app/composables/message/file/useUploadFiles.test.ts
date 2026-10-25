@@ -4,12 +4,15 @@ import type { ComposerTarget } from "@/models/message/ComposerTarget";
 import type { inferProcedureInput } from "@trpc/server";
 
 import { MimeType } from "#shared/models/file/MimeType";
+import { STORAGE_QUOTA_EXCEEDED_ERROR_MESSAGE } from "#shared/services/storage/constants";
 import { useUploadFiles } from "@/composables/message/file/useUploadFiles";
 import { setCurrentRoomId } from "@/services/message/room/setCurrentRoomId.test";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
+import { useAlertStore } from "@/store/alert";
 import { useUploadFileStore } from "@/store/message/input/uploadFile";
 import { getReverseTickedTimestamp } from "@esposter/db-schema";
 import { noop, takeOne } from "@esposter/shared";
+import { TRPCError } from "@trpc/server";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
 const { uploadBlocksMock } = vi.hoisted(() => ({
@@ -43,7 +46,7 @@ describe(useUploadFiles, () => {
     // The room store reads the current room off the route; an unlisted room falls back to the platform cap,
     // Which is all this composable needs from it.
     setCurrentRoomId(roomId);
-    trpcMsw.message.generateUploadFileSasEntities.query(() => [{ id: fileId, sasUrl, thumbnailSasUrl, token }]);
+    trpcMsw.message.generateUploadFileSasEntities.mutation(() => [{ id: fileId, sasUrl, thumbnailSasUrl, token }]);
     vi.spyOn(globalThis.URL, "createObjectURL").mockReturnValue("blob:url");
     vi.spyOn(globalThis.URL, "revokeObjectURL").mockImplementation(noop);
   });
@@ -92,6 +95,20 @@ describe(useUploadFiles, () => {
       files: [{ filename, id: fileId, token }],
       roomId,
     });
+  });
+
+  // A refused reserve reaches the composer as the quota message, and the drop never enters the tray
+  test("shows the storage refusal and seeds no attachment when the allowance refuses the drop", async () => {
+    expect.hasAssertions();
+
+    trpcMsw.message.generateUploadFileSasEntities.mutation(() => {
+      throw new TRPCError({ code: "FORBIDDEN", message: STORAGE_QUOTA_EXCEEDED_ERROR_MESSAGE });
+    });
+    const { getComposerFiles } = useUploadFileStore();
+    await useUploadFiles(target)([createFile()]);
+
+    expect(getComposerFiles(target)).toHaveLength(0);
+    expect(useAlertStore().alerts.map(({ text }) => text)).toStrictEqual([STORAGE_QUOTA_EXCEEDED_ERROR_MESSAGE]);
   });
 
   // Crossing the two features that meet on this path: attachments are keyed by composer, and a revert runs
@@ -144,7 +161,7 @@ describe(useUploadFiles, () => {
 
     const slowFileId = crypto.randomUUID();
     let isSlowUploadFinished = false;
-    trpcMsw.message.generateUploadFileSasEntities.query(() => [
+    trpcMsw.message.generateUploadFileSasEntities.mutation(() => [
       { id: fileId, sasUrl, token },
       { id: slowFileId, sasUrl: slowSasUrl, token },
     ]);

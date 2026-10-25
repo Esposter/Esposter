@@ -5,6 +5,7 @@ import { createEventGridEvent } from "#src/services/azure/createEventGridEvent.t
 import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { createUser } from "#src/services/shared/createUser.test";
 import { InvocationContext } from "@azure/functions";
+import { getBlobName } from "@esposter/db";
 import { createMockDb } from "@esposter/db-mock";
 import { AzureContainer, getBlobSubjectPrefix, storageLedgerInStorage, usersInAuth } from "@esposter/db-schema";
 import { MockBlockBlobClient, MockContainerDatabase, MockRestError } from "azure-mock";
@@ -82,10 +83,10 @@ describe(reconcileStorageLedgerEntryHandler, () => {
     await containerClient.getBlockBlobClient(name).upload(resourceAssetContent, resourceAssetContent.length);
   };
 
-  const createStorageLedgerEntry = () =>
+  const createStorageLedgerEntry = (entry = { blobName, containerName }) =>
     mockDb
       .insert(storageLedgerInStorage)
-      .values({ blobName, containerName, countedBytes: 0, declaredBytes: 1, expiresAt: new Date(0), userId });
+      .values({ ...entry, countedBytes: 0, declaredBytes: 1, expiresAt: new Date(0), userId });
 
   test("charges the owner what storage reported", async () => {
     expect.hasAssertions();
@@ -103,6 +104,25 @@ describe(reconcileStorageLedgerEntryHandler, () => {
 
   // The counter settles in this process and is read in the app's, so a redelivery that moves nothing must not
   // Cost every one of the owner's devices a re-read
+  // A message attachment is named by its room and its id, with the filename after the separator. Its uploader is
+  // charged, and no resource-asset check reads its bytes back
+  test("charges a message attachment's uploader what storage reported", async () => {
+    expect.hasAssertions();
+
+    const messageBlobName = getBlobName(`${resourceId}/${crypto.randomUUID()}`, "filename");
+    const messageContainerName = AzureContainer.MessageAssets;
+    await createStorageLedgerEntry({ blobName: messageBlobName, containerName: messageContainerName });
+    const downloadSpy = vi.spyOn(MockBlockBlobClient.prototype, "download");
+    await reconcileStorageLedgerEntryHandler(
+      createBlobCreatedEvent(`${getBlobSubjectPrefix(messageContainerName)}${messageBlobName}`),
+      context,
+    );
+
+    await expect(readStorageBytesUsed()).resolves.toBe(contentLength);
+    expect(groupMock).toHaveBeenCalledExactlyOnceWith(userId);
+    expect(downloadSpy).not.toHaveBeenCalled();
+  });
+
   test("stays quiet when a redelivered event moves nothing", async () => {
     expect.hasAssertions();
 
@@ -145,7 +165,7 @@ describe(reconcileStorageLedgerEntryHandler, () => {
 
     await createStorageLedgerEntry();
     await reconcileStorageLedgerEntryHandler(
-      createBlobCreatedEvent(`${getBlobSubjectPrefix(AzureContainer.MessageAssets)}${blobName}`),
+      createBlobCreatedEvent(`${getBlobSubjectPrefix(AzureContainer.PublicUserAssets)}${blobName}`),
       context,
     );
 

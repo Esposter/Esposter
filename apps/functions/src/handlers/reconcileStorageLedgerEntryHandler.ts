@@ -11,10 +11,10 @@ import { getDecodedUriComponent, getResultAsync, noop } from "@esposter/shared";
 // Storage's own BlobCreated event is what turns a client's declared size into the truth. It arrives seconds
 // After the PUT lands, carries the stored object's real length, and — unlike anything we could publish
 // Ourselves — it reports what happened on a data path our servers are never part of.
-// Resource assets only — the quota counts what a user keeps in their own resources, and a room's attachments
-// Belong to the room. The subscription filters to this container and the handler agrees with that filter, so an
-// Event from anywhere else is dropped rather than mis-attributed. See openspec/specs/resource/storage-quotas/design.md
-const STORAGE_BLOB_CONTAINERS = [AzureContainer.ResourceAssets];
+// Every container a reserve writes into is listed here, and the subscriptions filter to the same set, so an event
+// from anywhere else is dropped rather than mis-attributed. The row names whose allowance a blob is charged to: a
+// resource asset's owner, or a message attachment's uploader. See openspec/specs/resource/storage-quotas/design.md
+const STORAGE_BLOB_CONTAINERS = [AzureContainer.ResourceAssets, AzureContainer.MessageAssets];
 
 export const reconcileStorageLedgerEntryHandler: EventGridHandler = (event, context) => {
   context.log(`${AzureFunction.ReconcileStorageLedgerEntry} processed subject: `, event.subject);
@@ -47,6 +47,6 @@ export const reconcileStorageLedgerEntryHandler: EventGridHandler = (event, cont
     if (!isMatched && decodedBlobName !== blobName) await reconcile(decodedBlobName);
     // Verified after the ledger step so a mismatched blob is charged before its deletion raises BlobDeleted, which
     // Releases the charge. A resource asset's name holds no characters storage encodes, so the raw name is the stored one
-    await verifyResourceAssetBlob(context, blobName);
+    if (containerName === AzureContainer.ResourceAssets) await verifyResourceAssetBlob(context, blobName);
   }).match(noop, logAndRethrow(context, AzureFunction.ReconcileStorageLedgerEntry));
 };

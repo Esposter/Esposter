@@ -20,6 +20,7 @@ import { createUserMessage } from "#server/services/message/createUserMessage";
 import { messageEventEmitter } from "#server/services/message/events/messageEventEmitter";
 import { checkIsUploadFileTokenValid } from "#server/services/message/file/checkIsUploadFileTokenValid";
 import { createUploadFileToken } from "#server/services/message/file/createUploadFileToken";
+import { generateReservedMessageFileSasEntities } from "#server/services/message/file/generateReservedMessageFileSasEntities";
 import { getMessageTableClients } from "#server/services/message/getMessageTableClients";
 import { assertCanCreateMessage } from "#server/services/message/moderation/assertCanCreateMessage";
 import { readLiveMessageWithEtag } from "#server/services/message/readLiveMessageWithEtag";
@@ -32,6 +33,7 @@ import { upsertThreadUnfollow } from "#server/services/message/thread/upsertThre
 import { updateMessage } from "#server/services/message/updateMessage";
 import { updateUserToRoom } from "#server/services/message/updateUserToRoom";
 import { assertIsMember } from "#server/services/room/assertIsMember";
+import { emitStorageUsage } from "#server/services/storage/emitStorageUsage";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
 import { getNotFoundError } from "#server/trpc/guards/getNotFoundError";
@@ -74,7 +76,6 @@ import {
   createThreadFollow,
   generateDownloadFileSasUrls,
   generateDownloadThumbnailSasUrls,
-  generateUploadFileSasEntities,
   getFileBlobNames,
   getFilesBlobNames,
   getTopNEntitiesByType,
@@ -242,6 +243,9 @@ export const baseMessageRouter = router({
             roomId,
           });
           const clonedFiles = await cloneFiles(
+            ctx.db,
+            ctx.getSessionPayload.user.id,
+            AzureContainer.MessageAssets,
             containerClient,
             messageEntity.files,
             messageEntity.partitionKey,
@@ -278,6 +282,8 @@ export const baseMessageRouter = router({
           ]);
         }),
       );
+      // Every copy that landed was charged to the forwarder, so the meter is read once the rooms have settled
+      if (messageEntity.files.length > 0) await emitStorageUsage(ctx.db, ctx.getSessionPayload.user.id);
       // Surface the first per-room block like a single blocked send does, after the unblocked rooms posted.
       // Only one rejection can be surfaced, so every rejection is logged with the room it belongs to first —
       // Otherwise a transient failure behind a blocked room leaves that room silently without the forward and
@@ -301,7 +307,7 @@ export const baseMessageRouter = router({
   >(async ({ input: { files, roomId } }) =>
     generateDownloadThumbnailSasUrls(await useContainerClient(AzureContainer.MessageAssets), files, roomId),
   ),
-  generateUploadFileSasEntities: getMemberProcedure(generateUploadFileSasEntitiesInputSchema, "roomId").query<
+  generateUploadFileSasEntities: getMemberProcedure(generateUploadFileSasEntitiesInputSchema, "roomId").mutation<
     MessageFileSasEntity[]
   >(async ({ ctx, input: { files, roomId } }) => {
     const room = await requireEntity(
@@ -321,12 +327,14 @@ export const baseMessageRouter = router({
     for (const { mimetype, size } of files)
       if (size > maxFileSizeBytes || !room.allowedMimeCategories.includes(getMimeCategory(mimetype)))
         throw getInvalidOperationError(Operation.Create, AzureEntityType.File, JSON.stringify({ mimetype, size }));
-    // Room attachments are outside the personal storage quota, which counts what a user keeps in their own
-    // Resources — a room's files belong to the room. See openspec/specs/resource/storage-quotas/design.md
-    const containerClient = await useContainerClient(AzureContainer.MessageAssets);
-    const fileSasEntities = await generateUploadFileSasEntities(containerClient, files, roomId, {
-      withThumbnail: true,
-    });
+    // A write target is minted only after its bytes are reserved against the uploader's allowance: the bytes belong to
+    // whoever sent them, wherever the room is. See openspec/specs/resource/storage-quotas/design.md
+    const fileSasEntities = await generateReservedMessageFileSasEntities(
+      ctx.db,
+      ctx.getSessionPayload.user.id,
+      roomId,
+      files,
+    );
     // The grant travels with the write target: whoever can upload the blob is the only one who can reclaim it
     return fileSasEntities.map((fileSasEntity) =>
       Object.assign(fileSasEntity, {

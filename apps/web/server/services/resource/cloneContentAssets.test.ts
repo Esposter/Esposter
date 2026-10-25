@@ -26,10 +26,20 @@ vi.mock(import("#server/composables/azure/container/useContainerClient"), () => 
 
 // The charge every clone makes is asserted where a real database exists, in the duplicate router test, rather than
 // Faked into this one
-vi.mock(import("@esposter/db"), async (importOriginal) => ({
-  ...(await importOriginal()),
-  chargeStorageLedgerEntry: () => Promise.resolve(),
-}));
+vi.mock(import("@esposter/db"), async (importOriginal) => {
+  const original = await importOriginal();
+  return {
+    ...original,
+    chargeAndCopyBlob: (
+      _db: Database,
+      _userId: string,
+      _containerName: AzureContainer,
+      containerClient: ContainerClient,
+      sourceBlobName: string,
+      destinationBlobName: string,
+    ) => original.copyBlob(containerClient, sourceBlobName, destinationBlobName),
+  };
+});
 
 describe(cloneContentAssets, () => {
   const userId = crypto.randomUUID();

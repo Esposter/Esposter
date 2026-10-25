@@ -10,7 +10,8 @@ export const azureContainerEnum = storageSchema.enum("azureContainer", AzureCont
 // Exactly the bytes the counter is carrying on its behalf. Every increment of the counter writes a row in the
 // Same transaction, so a crash can never leave bytes held with nothing left to give them back, and every
 // Decrement reads its amount off the row rather than recomputing it — which is also the only way a delete can
-// Attribute a blob to an owner at all (a message asset is keyed by room, not by uploader).
+// Attribute a blob to whoever was charged for it. A message attachment is keyed by its room in the blob name, and
+// Its row names the uploader, so a room's blobs are charged to the people who sent them.
 //
 // A row is born unreconciled, carrying the size the client *declared* before it uploaded anything. Storage's
 // Own `BlobCreated` is what turns it into the truth, replacing the declaration with the stored object's real

@@ -70,7 +70,7 @@ export const useUploadFiles = (target: MaybeRefOrGetter<ComposerTarget>) => {
           const fileSasEntities = await uploadFileToSas({
             files: newFiles,
             generateUploadFileSasEntities: (uploadFiles) =>
-              $trpc.message.generateUploadFileSasEntities.query({ files: uploadFiles, roomId }),
+              $trpc.message.generateUploadFileSasEntities.mutate({ files: uploadFiles, roomId }),
             onUploadProgress: ({ id }, progress) => {
               storeUploadFileProgress(targetValue, id, progress);
             },

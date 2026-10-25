@@ -13,9 +13,9 @@ import { getResourceFileBlobName } from "#shared/services/resource/getResourceFi
 import { parseResourceAssetPath } from "#shared/services/resource/parseResourceAssetPath";
 import { deepReplaceStrings } from "#shared/util/object/deepReplaceStrings";
 import { deepVisitStrings } from "#shared/util/object/deepVisitStrings";
-import { chargeStorageLedgerEntry, copyBlob, releaseStorageLedgerEntries } from "@esposter/db";
+import { chargeAndCopyBlob } from "@esposter/db";
 import { AzureContainer, MAX_CONCURRENT_BLOB_COPIES } from "@esposter/db-schema";
-import { getOrCreate, getResultAsync, noop, settleAll } from "@esposter/shared";
+import { getOrCreate, getResultAsync, settleAll } from "@esposter/shared";
 
 // Copies one asset to the destination under the same hash. A destination that already holds the hash is the same bytes,
 // So nothing is copied or charged. Returns whether the destination now holds the asset: a source Azure cannot find reads as
@@ -36,14 +36,15 @@ const cloneAsset = async (
   );
   if (contentLength === undefined) return false;
 
-  // Charged before the copy, never after: Event Grid orders nothing, and an event arriving before the row exists is dropped
-  // For good. The source's length is provisional, and the copy's own `BlobCreated` replaces it with the stored size
-  await chargeStorageLedgerEntry(db, userId, AzureContainer.ResourceAssets, destinationBlobName, contentLength);
-  // The charge is a claim about a blob, so it unwinds the moment the blob turns out not to exist
-  await getResultAsync(() => copyBlob(containerClient, blobName, destinationBlobName)).match(noop, async (error) => {
-    await releaseStorageLedgerEntries(db, AzureContainer.ResourceAssets, [destinationBlobName]);
-    throw error;
-  });
+  await chargeAndCopyBlob(
+    db,
+    userId,
+    AzureContainer.ResourceAssets,
+    containerClient,
+    blobName,
+    destinationBlobName,
+    contentLength,
+  );
   return true;
 };
 

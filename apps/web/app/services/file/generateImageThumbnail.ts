@@ -1,5 +1,4 @@
-import { THUMBNAIL_MAX_EDGE } from "@/services/file/constants";
-import { getMimeCategory, MimeCategory, THUMBNAIL_CONTENT_TYPE } from "@esposter/db-schema";
+import { getMimeCategory, MimeCategory, THUMBNAIL_CONTENT_TYPE, THUMBNAIL_MAX_EDGE } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 
 // Downscales an image to a thumbnail whose longest edge is THUMBNAIL_MAX_EDGE; undefined for non-images or on failure.
