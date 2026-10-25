@@ -23,6 +23,7 @@ A reporter writes each bench file's results to colocated `*.bench.{json,md}` you
 - `references/what-to-bench.md` — when choosing what a bench measures: the unit, the axis, the shape, a slow workload, a baseline.
 - `references/running-benchmarks.md` — when running benches, adding one to `scripts`, switching one off, or gating one on CI.
 - `references/type-benches.md` — when measuring what a type costs the compiler, adding a `*.typebench.ts`, or changing the `bench:types` runner or its `*.typebench.md` results.
+- `references/platform-benches.md` — when a bench's numbers differ by host and it runs on more than one platform.
 
 ## Writing benchmarks
 
