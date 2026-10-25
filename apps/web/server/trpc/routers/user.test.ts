@@ -20,7 +20,14 @@ import { withAsyncIterator } from "#server/trpc/routers/withAsyncIterator.test";
 import { McpScope } from "#shared/models/auth/McpScope";
 import { MimeType } from "#shared/models/file/MimeType";
 import { MAX_CALL_BACKGROUND_SIZE_BYTES, MAX_CALL_BACKGROUNDS } from "#shared/services/message/constants";
-import { AzureContainer, DatabaseEntityType, UserStatus, userStatusesInMessage } from "@esposter/db-schema";
+import {
+  AzureContainer,
+  DatabaseEntityType,
+  READ_SAS_DURATION_MS,
+  UserStatus,
+  userStatusesInMessage,
+  WRITE_SAS_DURATION_MS,
+} from "@esposter/db-schema";
 import { InvalidOperationError, NotFoundError, Operation, takeOne } from "@esposter/shared";
 import {
   getMockSasUrl,
@@ -246,7 +253,7 @@ describe("userRouter", () => {
     const { publicUrl, sasUrl } = await caller.generateProfileImageUploadUrl();
 
     expect(publicUrl).toBe(`${MOCK_BLOB_BASE_URL}/${AzureContainer.PublicUserAssets}/${userId}/ProfileImage`);
-    expect(sasUrl).toBe(getMockSasUrl(publicUrl, "w", "b"));
+    expect(sasUrl).toBe(getMockSasUrl(publicUrl, "w", "b", new Date(WRITE_SAS_DURATION_MS)));
   });
 
   test("updates", async () => {
@@ -307,8 +314,8 @@ describe("userRouter", () => {
     seedSlots(userId, [0, 2], size);
 
     await expect(caller.readCallBackgrounds()).resolves.toStrictEqual([
-      { sasUrl: getMockSasUrl(getCallBackgroundUrl(0), "r", "b"), slot: 0 },
-      { sasUrl: getMockSasUrl(getCallBackgroundUrl(2), "r", "b"), slot: 2 },
+      { sasUrl: getMockSasUrl(getCallBackgroundUrl(0), "r", "b", new Date(READ_SAS_DURATION_MS)), slot: 0 },
+      { sasUrl: getMockSasUrl(getCallBackgroundUrl(2), "r", "b", new Date(READ_SAS_DURATION_MS)), slot: 2 },
     ]);
   });
 
@@ -356,7 +363,7 @@ describe("userRouter", () => {
     );
 
     await expect(caller.generateCallBackgroundUploadUrl({ mimetype, size, slot: 0 })).resolves.toBe(
-      getMockSasUrl(getCallBackgroundUrl(0), "w", "b"),
+      getMockSasUrl(getCallBackgroundUrl(0), "w", "b", new Date(WRITE_SAS_DURATION_MS)),
     );
   });
 
