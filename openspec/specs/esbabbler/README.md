@@ -34,7 +34,7 @@ Esbabbler is Esposter's messaging module: a Discord-like experience with rooms, 
 | [threads](threads/design.md)                                         | Thread pane, its composer, thread calls, split view, thread route  |
 | [thread follows](thread-follows/design.md)                           | Follow threads, notify-on-reply, Followed Threads drawer           |
 | [invites](invites/design.md)                                         | Invite links with expiry and max-use options                       |
-| [display names](nicknames/design.md)                                 | Per-room display names and resolution                              |
+| [display names](display-names/design.md)                             | Per-room display names and resolution                              |
 | [mention badges](mention-badges/design.md)                           | Mention-only unread counts in the room sidebar                     |
 | [profiles and presence](profiles-and-presence/design.md)             | Profile card/editing and Online/Idle/DND/Offline presence          |
 | [calls](calls/README.md)                                             | LiveKit sessions, membership boundary, knock lobby                 |

@@ -32,7 +32,7 @@ flowchart TD
 - `user.updateUser` — restricted to the caller's own row; validates `name` (`USER_NAME_MAX_LENGTH`), `biography`, `image`.
 - Avatar upload uses the standard two-step SAS flow ([file uploads](../../architecture/file-uploads/design.md)) into `AzureContainer.PublicUserAssets` at `{userId}/ProfileImage`; rooms have the equivalent room profile image at `rooms/{roomId}/ProfileImage`.
 
-In room contexts, a `displayName` wins over the account name ([display names](../nicknames/design.md)).
+In room contexts, a `displayName` wins over the account name ([display names](../display-names/design.md)).
 
 ## Key files
 
