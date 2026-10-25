@@ -6,7 +6,7 @@ The resource explorer, the sheet editor, and the other content editors.
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- | ------------------------- |
 | `services/resource/sheet/column`                                                                                                                            | 2026-10-25 · Haiku 5.5 | the transformation suites |
 | `services/resource/sheet` — `commands`, `csv`, `dataSource`, `json`, `xlsx` and the root                                                                    | 2026-10-25 · Haiku 5.5 |                           |
-| `composables/resource/sheet/commands`                                                                                                                       | —                      | one suite per command     |
+| `composables/resource/sheet/commands`                                                                                                                       | 2026-10-25 · Haiku 5.5 | one suite per command     |
 | `composables/resource/sheet` — the rest, `composables/resource/autosave`                                                                                    | —                      |                           |
 | `services/resource/{list,search}` and the root, `composables/resource/list` and the root                                                                    | 2026-10-25 · Haiku 5.5 |                           |
 | `store/resource`, `components/Resource`                                                                                                                     | 2026-10-25 · Haiku 5.5 |                           |

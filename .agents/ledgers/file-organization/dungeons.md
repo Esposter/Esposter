@@ -2,7 +2,7 @@
 
 The game.
 
-| Unit                      | Swept | Notes                                                                            |
-| ------------------------- | ----- | -------------------------------------------------------------------------------- |
-| `app/models/dungeons`     | —     | a class hierarchy stays a model; a map and the behaviour it dispatches to do not |
-| `app/components/Dungeons` | —     |                                                                                  |
+| Unit                      | Swept                  | Notes                                                                            |
+| ------------------------- | ---------------------- | -------------------------------------------------------------------------------- |
+| `app/models/dungeons`     | 2026-10-25 · Haiku 5.5 | a class hierarchy stays a model; a map and the behaviour it dispatches to do not |
+| `app/components/Dungeons` | —                      |                                                                                  |
