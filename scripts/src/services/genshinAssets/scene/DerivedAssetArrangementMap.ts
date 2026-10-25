@@ -32,6 +32,7 @@ export const DerivedAssetArrangementMap: Record<
   }
 > = {
   // The Court's parts stand where the world's own data places them, as Windrise's do, so its families wait on the export
+  [DerivedAssetComponent.Character]: { explainedOffsets: {}, families: [], ratios: {} },
   [DerivedAssetComponent.Fontaine]: { explainedOffsets: {}, families: [], ratios: {} },
   [DerivedAssetComponent.Hud]: { explainedOffsets: {}, families: [], ratios: {} },
   // Inazuma City's parts stand where the city's own data places them, as Windrise's do, so its families wait on the export

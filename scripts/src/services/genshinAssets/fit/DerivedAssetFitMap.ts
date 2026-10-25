@@ -1,8 +1,8 @@
 import type { DerivedAssetFit } from "#src/models/genshinAssets/fit/DerivedAssetFit";
 
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
+import { createInterfaceRectsFit } from "#src/services/genshinAssets/fit/createInterfaceRectsFit";
 import { createRegionFit } from "#src/services/genshinAssets/fit/createRegionFit";
-import { fitHud } from "#src/services/genshinAssets/fit/fitHud";
 import { fitLoginScene } from "#src/services/genshinAssets/fit/fitLoginScene";
 import { fitRiverCourses } from "#src/services/genshinAssets/fit/fitRiverCourses";
 import { fitWaterfallSheets } from "#src/services/genshinAssets/fit/fitWaterfallSheets";
@@ -11,8 +11,9 @@ import { fitWindriseScene } from "#src/services/genshinAssets/fit/fitWindriseSce
 // Each component's fit, which reads its exports and returns the parameters of ours they fit as records under their
 // Keys: every fit of the component's, or only those named. A component with no fit yet has no entry
 export const DerivedAssetFitMap: Partial<Record<DerivedAssetComponent, DerivedAssetFit>> = {
+  [DerivedAssetComponent.Character]: createInterfaceRectsFit(DerivedAssetComponent.Character),
   [DerivedAssetComponent.Fontaine]: createRegionFit(DerivedAssetComponent.Fontaine),
-  [DerivedAssetComponent.Hud]: fitHud,
+  [DerivedAssetComponent.Hud]: createInterfaceRectsFit(DerivedAssetComponent.Hud),
   [DerivedAssetComponent.Inazuma]: createRegionFit(DerivedAssetComponent.Inazuma, {
     waterfalls: (fitOptions) => fitWaterfallSheets(DerivedAssetComponent.Inazuma, fitOptions),
   }),

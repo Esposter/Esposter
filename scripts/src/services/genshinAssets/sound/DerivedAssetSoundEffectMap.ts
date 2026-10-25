@@ -10,6 +10,7 @@ export const DerivedAssetSoundEffectMap: Record<
   DerivedAssetComponent,
   Record<string, { pattern: string; sounds: readonly SoundStart[] }>
 > = {
+  [DerivedAssetComponent.Character]: {},
   [DerivedAssetComponent.Fontaine]: {},
   [DerivedAssetComponent.Hud]: {},
   // Inazuma City's sounds wait on a recording that names them, as a city's do, so it has none yet

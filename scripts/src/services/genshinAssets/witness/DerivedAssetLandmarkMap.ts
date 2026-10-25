@@ -5,6 +5,7 @@ import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedA
 // Each component's landmarks by name, the points of its parts `pose` solves a reference's camera from where the
 // Reference names the pixels it sees them at
 export const DerivedAssetLandmarkMap: Record<DerivedAssetComponent, Record<string, Landmark>> = {
+  [DerivedAssetComponent.Character]: {},
   // The Court of Fontaine's six landmarks (ParityReferenceMap's court-of-fontaine-location: the arch's feet, the bridge's
   // Springs and the drum tower's roof corners) are all dropped: the re-extraction exports no arch or bridge mesh near the
   // Court, and its tall Talou towers (Area_Fd_Build_FDC_Talou_A_01_Lod0, 85 metres) stand on several instances with no

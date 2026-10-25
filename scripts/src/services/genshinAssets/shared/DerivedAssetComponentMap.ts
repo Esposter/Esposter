@@ -19,6 +19,13 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
   // MonoBehaviour holding a blob's chunk offsets and no game object: a root that is one walks to nothing, since the
   // Closure starts from the layout of game objects. The blob's placements, read beside the tiles its capital's view covers,
   // Are what holds the city's props and buildings, each a prefab rooted by its game object's name
+  // The character screen's page is the `AvatarInfoDialogV2` GameObject, the Animator beside `AvatarInfoDescDialog`, the
+  // Details dialog, and `AvatarLevelUpDialog`. A tree that names none of the tabs is the wrong page
+  [DerivedAssetComponent.Character]: {
+    interface: { anchorPattern: "^AvatarInfoDialogV2$", root: "AvatarInfoDialogV2" },
+    roots: [],
+    screen: "CharacterScreen",
+  },
   [DerivedAssetComponent.Fontaine]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
   // The in-level HUD: its page is the `InLevelMainPage` GameObject, holding the minimap, the party and the skill buttons.
   // Its anchor is `TeamBtn_MP`, an Animator in no other block, since `GrpMainPage` is in four
