@@ -1,17 +1,15 @@
 import type { GatherRow } from "#src/models/genshinAssets/gathering/GatherRow";
 import type { MaterialRow } from "#src/models/genshinAssets/items/MaterialRow";
 import type { InteractiveMapLabel } from "#src/models/genshinAssets/points/InteractiveMapLabel";
-import type { FlatInteractiveMapLabel } from "#src/services/genshinAssets/points/flattenLabelTree";
 import type { GatheringItem } from "genshin-world";
 
 import {
-  CATEGORY_RESPAWN_MAP,
   GATHER_POINT_LOCATION_GROUND,
   GATHER_SAVE_TYPE_NONE,
   GATHER_TABLE_NAME,
-  LABEL_RESPAWN_MAP,
   MATERIAL_TYPE_NONE,
 } from "#src/services/genshinAssets/gathering/constants";
+import { getLabelRespawn } from "#src/services/genshinAssets/gathering/getLabelRespawn";
 import { MATERIAL_TABLE_NAME } from "#src/services/genshinAssets/items/constants";
 import { flattenLabelTree } from "#src/services/genshinAssets/points/flattenLabelTree";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
@@ -19,10 +17,6 @@ import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { GameLanguage } from "genshin-text";
 import { MaterialType } from "genshin-world";
-
-// How a label's points come back once picked or broken: by its own rule where it has one, else by its category
-const getLabelRespawn = ({ categoryId, id }: FlatInteractiveMapLabel) =>
-  LABEL_RESPAWN_MAP[id] ?? CATEGORY_RESPAWN_MAP[categoryId];
 
 // The plants, specialties and ores the gathering points give. An item is one when the gather table picks it off the ground, and
 // Its English name is the name of a label the official map files under a category that respawns, which is the label
