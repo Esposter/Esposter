@@ -1,6 +1,6 @@
 ## ADDED Requirements
 
-### Requirement: A child process the repo starts never opens a console window on Windows
+### Requirement: A child process a wrapper starts never opens a console window on Windows
 
 The child process wrappers SHALL start every child with its window hidden, including when the caller passes no options and including when the caller asks for a visible window.
 
@@ -50,10 +50,10 @@ The child process wrappers SHALL read each call by node's own argument shapes, s
 
 ### Requirement: Code imports node's child process only through the wrappers
 
-The repo's lint rules SHALL reject an import of node's child process module from any file other than the wrappers.
+The repo's lint rules SHALL reject a value import of node's child process module from any file of the workspace, except the wrappers, the genshin-persona source and the follow-ups scripts. A type-only import SHALL stay allowed.
 
 #### Scenario: a direct import of node's child process fails lint
 
-- **GIVEN** a source file that imports node's child process module directly
+- **GIVEN** a source file that imports node's child process module as a value
 - **WHEN** the repo's lint runs
-- **THEN** the import is reported with the message that names the wrappers
+- **THEN** the import is reported, with advice to use the wrappers

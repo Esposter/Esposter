@@ -32,9 +32,9 @@ The benchmark reporter SHALL refuse a bench that produced no samples with an err
 - **WHEN** its report is built
 - **THEN** the build fails with an error that names the bench
 
-### Requirement: A Markdown report shows each group's multiplier against the native baseline
+### Requirement: A Markdown report shows each group's multiplier against its baseline
 
-The Markdown report SHALL show each group's multiplier against its native baseline, with a multiplier above one meaning faster than the baseline and one below one meaning slower.
+The Markdown report SHALL show each group's multiplier against its baseline, which is the task named native when the group has one and otherwise its fastest task, with a multiplier above one meaning faster than the baseline and one below one meaning slower.
 
 #### Scenario: derives the vs-base multiplier from the native baseline, faster above 1 and slower below
 
