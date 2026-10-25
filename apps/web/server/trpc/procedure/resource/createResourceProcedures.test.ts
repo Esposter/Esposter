@@ -645,9 +645,8 @@ describe(createResourceProcedures, () => {
       "readResourceViewCount",
       "unpublishResource",
     ]);
+    // Sheet has commands of its own beside the generic matrix, so this also checks that none of them is a publish procedure
     expect(publishableProcedures.difference(nonPublishableProcedures)).toStrictEqual(publishProcedures);
-    // Sheet has commands of its own beside the generic matrix, so the check is that none of them is a publish procedure
-    expect(nonPublishableProcedures.intersection(publishProcedures)).toStrictEqual(new Set());
   });
 
   test("counts each public read", async () => {
