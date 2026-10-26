@@ -51,3 +51,7 @@ Her third and fifth constellations raise her skill and burst levels from the con
 - The proud skill groups 13131, 13132 and 13139 in the hosted game data: the multipliers, the shield and buff parameters, the cooldowns, the burst's energy and the charged stamina, read at talent level 1.
 - The cached Genshin wiki's `Category_Nicole_Talents.json` (the Allegoria page): the plunge poise rows, 50 low and 100 high.
 - No YouTube or Bilibili reference snapshot for Nicole is in the repo, so no claim here rests on video.
+
+## Open
+
+- [ ] **The Hexerei set is the wiki's Hexerei Characters category** — no source yet: the cached wiki has no Hexerei Characters category page; its talent pages name only their own character as Hexerei.
