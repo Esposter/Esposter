@@ -84,11 +84,10 @@ The post chain SHALL draw no god rays.
 
 ## Open
 
-- [ ] **The walkway and the bridges draw no edge glow** — no source yet: their fitted strength is in the hosted login stone fit, which is not read here.
+- [ ] **The walkway and the bridges draw no edge glow** — no source yet: the walkway's and the bridges' fitted strength is in the hosted `login/stoneLight` record, and no copy of that record is on disk.
 - [ ] **The night darkens at 0.14 per metre of height** — no source yet: the rate is in the hosted `login/stoneLight` record, which is not kept locally.
 - [ ] **The haze hides the stone under the walkway, its wall's top about 3 metres under the walkway at night and 6 at dawn, and the dusk's haze hides no more than about three quarters of the far towers** — no source yet: the haze tops are not measured in any kept file.
-- [ ] **The login is drawn at the medium tier on the phone client** — no source yet: the phone client's tier is set by the client and is not read here.
-- [ ] **The post chain draws no god rays** — no source yet: the login scene's post chain was not read for a god-ray pass.
+- [ ] **The login is drawn at the medium tier on the phone client** — no source yet: the repo holds no phone tier, since the app's one quality tier constant, GENSHIN_QUALITY_TIER, is High for every client.
 - [ ] **The door and the towers glow at an eighth of the material's strength** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **The stone darkens with height at each hour's rate up to 20 metres** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **The scene draws no outline round its stone** — no source yet: game data or a snapshot that holds this behaviour
