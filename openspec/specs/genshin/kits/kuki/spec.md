@@ -1,6 +1,6 @@
 ## Purpose
 
-Kuki's kit as built: four strikes, a charged attack, Grass Ring of Sanctification with its ring and drain, and Gyoei Narukami Kariyama Rite's seven hits or twelve at half health or less, with Ascension 1's healing bonus and Constellations 4 and 6 not built.
+Kuki's kit as built: four strikes, a charged attack, Grass Ring of Sanctification with its ring and drain, and Gyoei Narukami Kariyama Rite's seven hits or twelve at half health or less, with Ascension 1's Breaking Free, Ascension 4 and Constellations 1 and 2 built, and Constellations 4 and 6 not built.
 
 ## Requirements
 
@@ -69,7 +69,13 @@ Kuki's burst SHALL land seven hits while her health is above half, and twelve at
 
 ### Requirement: Kuki's Ascension and constellations
 
-Kuki's Ascension 4 and Constellations 1 and 2 SHALL take effect, and her Ascension 1 healing bonus and Constellations 4 and 6 SHALL NOT take effect.
+Kuki's Ascension 1, Ascension 4 and Constellations 1 and 2 SHALL take effect, and her Constellations 4 and 6 SHALL NOT take effect.
+
+#### Scenario: Breaking Free raises the Healing Bonus at half health
+
+- **GIVEN** Kuki has Ascension 1
+- **WHEN** her health is at half or less
+- **THEN** her Healing Bonus is raised by 15%
 
 #### Scenario: Built constellations apply
 
