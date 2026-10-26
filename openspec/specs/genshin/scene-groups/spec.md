@@ -105,5 +105,5 @@ A service keeper with no NPC birth SHALL be absent from the record while the poi
 
 ## Open
 
-- [ ] **Service keepers without a birth are absent from the record** — no source yet: `sceneNpcBorn/scene3` is hosted, not in the local dump, so the births behind the absence were not checked.
-- [ ] **The camp keeps its stand-in** — no source yet: the enemies page's stand-in camp was not checked in this pass.
+- [ ] **Service keepers without a birth are absent from the record** — checked against `~/Esposter.noindex/genshin-dump-backup-6.6/BinOutput/Scene/SceneNpcBorn/scene3_npcborn.json`: 1005 births, and the file is on disk, so the design page reads it; the claim is not settled here because no NPC id for the five named keepers could be matched to a birth's config id by name text.
+- [ ] **The camp keeps its stand-in** — checked against the enemies page, which places Windrise's camp where the repo's authored region record puts it (`mondstadt-camp-1`), and the claim is not settled in this spec because its citation is repo data, which a spec names no path for; the citation belongs beside it in the design.
