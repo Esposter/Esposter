@@ -36,14 +36,14 @@ The compare command SHALL shoot a screen, print its scores, and write the refere
 
 - **GIVEN** a reference whose images are not on disk yet
 - **WHEN** the operator runs compare for all references
-- **THEN** that reference keeps its row in the committed report (see Open)
+- **THEN** that reference keeps its row in the committed report
 
 #### Scenario: Comparison that throws
 
 - **GIVEN** a reference whose comparison throws
 - **WHEN** the operator runs compare for all references
-- **THEN** that reference is reported as failed (see Open)
-- **AND** the run goes on to the remaining references (see Open)
+- **THEN** that reference is reported as failed
+- **AND** the run goes on to the remaining references
 
 ### Requirement: Approve writes a screen's image only once it clears its bar
 
@@ -61,7 +61,7 @@ The approve command SHALL write a screen's visual image only when its comparison
 - **WHEN** the operator runs approve on that reference
 - **THEN** no image is written
 - **AND** the refusal names its reason
-- **AND** the comparison's row is still written (see Open)
+- **AND** the comparison's row is still written
 
 ### Requirement: Witness commands draw the game's exports under our camera
 
@@ -220,6 +220,4 @@ The analysis commands SHALL rank each term of a frame's error by the most it cou
 
 ## Open
 
-- [ ] **compare keeps a reference's row when its images are missing, and reports a throwing one as failed** — no source yet: a recorded run of compare with its images missing or a throw, which the parity snapshot does not hold.
-- [ ] **A refused approval still writes the comparison's row** — no source yet: a recorded refused approval and the row it leaves, which the parity snapshot does not hold.
 - [ ] **A pass run alone keeps the rows of the passes it did not run** — no source yet: a recorded pass-alone run and the rows it leaves, which the parity snapshot does not hold.

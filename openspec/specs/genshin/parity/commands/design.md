@@ -59,6 +59,22 @@ From `scripts/`, as `pnpm genshin:parity <command>`, each with its own `--help` 
 | `scripts/src/services/genshinParity/commands/genshinParityCommand.ts` | The commands, one file each beside it            |
 | `scripts/src/services/genshinParity/music/scoreMusicSegment.ts`       | How close a render of music sounds to the game's |
 
+## Requirements' sources
+
+The spec's requirements name no paths, so each one's sources are read here.
+
+- **Help and the parity page.** `scripts/src/services/genshinParity/commands/genshinParityCommand.ts` for each command's usage; `packages/genshin-world/package.json` for the parity page's own command (`"parity": "vite --config parity/vite.config.ts"`).
+- **Compare.** `scripts/src/services/genshinParity/commands/compareCommand.ts` and `scripts/src/services/genshinParity/reference/compareScreen.ts`. A reference whose images are missing keeps its row as the report last had it, and the run goes on (`scripts/src/services/genshinParity/commands/compareCommand.ts`, lines 64 to 68); under `--all` a throwing reference is reported as failed and the run goes on (`scripts/src/services/genshinParity/commands/compareCommand.ts`, lines 76 to 79).
+- **Approve.** `scripts/src/services/genshinParity/commands/approveCommand.ts` and `scripts/src/services/genshinParity/reference/decideApproval.ts`. The compare's row is written before the refusal (`scripts/src/services/genshinParity/reference/approveReference.ts`, lines 41 to 42).
+- **Witness.** `scripts/src/services/genshinParity/commands/gbufferCommand.ts`, `scripts/src/services/genshinParity/commands/overlayCommand.ts` and `scripts/src/services/genshinParity/commands/viewCommand.ts`.
+- **Pose.** `scripts/src/services/genshinParity/commands/poseCommand.ts`, `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts` (`poseBar: 7.5`) and `scripts/src/services/genshinParity/witness/getPoseBar.ts` for the refusal.
+- **Track and scroll.** `scripts/src/services/genshinParity/commands/trackCommand.ts` and `scripts/src/services/genshinParity/commands/scrollCommand.ts`.
+- **Audio.** `scripts/src/services/genshinParity/commands/listenCommand.ts` and `scripts/src/services/genshinParity/commands/notesCommand.ts`; the scores are written to `scripts/src/services/genshinParity/shared/ParityMusicScores.snapshot.md`.
+- **Recording.** `scripts/src/services/genshinParity/commands/recordCommand.ts` and `scripts/src/services/genshinParity/game/captureGame.ts` (`-t` seconds); the two-minute default is `RECORD_DEFAULT_SECONDS` in `scripts/src/services/genshinParity/shared/constants.ts`.
+- **Image commands.** `scripts/src/services/genshinParity/commands/measureCommand.ts`, `scripts/src/services/genshinParity/commands/zoomCommand.ts`, `scripts/src/services/genshinParity/commands/lumaCommand.ts`, `scripts/src/services/genshinParity/commands/framesCommand.ts`, `scripts/src/services/genshinParity/commands/polarCommand.ts` and `scripts/src/services/genshinParity/commands/traceCommand.ts`.
+- **Passes.** `scripts/src/services/genshinParity/commands/passesCommand.ts` and `scripts/src/services/genshinParity/passes/runParityPasses.ts`; the reports are in `scripts/src/services/genshinParity/passes/snapshots/`.
+- **Analysis.** `scripts/src/services/genshinParity/commands/rankCommand.ts`, `scripts/src/services/genshinParity/commands/coverCommand.ts` and `scripts/src/services/genshinParity/commands/planCommand.ts`.
+
 ## Open
 
 - [ ] **Each row's described behaviour** — no source yet: the table's other rows are not compared against their command files; `fetch`, `frames` and `film` are (`scripts/src/services/genshinParity/commands/fetchCommand.ts`, `framesCommand.ts` and `filmCommand.ts`).
