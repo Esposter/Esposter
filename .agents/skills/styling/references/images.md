@@ -13,4 +13,4 @@ A component that draws its own `<img>` is the same `<img>`. A Vuetify 0 image pa
 
 ## The provider is `none`
 
-`apps/web/configuration/image.ts`, so `NuxtImg` rewrites no urls — it is a plain `<img>` with Nuxt's component API. Turning the optimizer on is a deliberate change, not a default to assume.
+It is set in `apps/web/configuration/image.ts`, so `NuxtImg` rewrites no urls — it is a plain `<img>` with Nuxt's component API. Turning the optimizer on is a deliberate change, not a default to assume.

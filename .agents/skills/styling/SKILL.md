@@ -29,20 +29,20 @@ description: Apply when writing or reviewing styles in .vue or .css files, or la
 
 ## Core Rules
 
-- Prop-based styling for ALL static styles: `<div text-red p-4>`. Where UnoCSS attributes sit relative to component props is the template attribute order in `.agents/skills/vue/references/ordering.md`.
+- Prop-based styling for ALL static styles: `<div text-red p-4>`. Where UnoCSS attributes sit relative to component props is the template attribute order in the `vue` skill, `references/ordering.md`.
 - `size` attribute (or `width`/`height` props) instead of `w-<n>` / `h-<n>` where possible. They are authored lengths, so they take `rem` — `size="4rem"`.
 - Prefer simple named utilities over arbitrary values. Avoid arbitrary shadows, gradients, dimensions, border widths, and z-index unless the layout needs them. Don't add z-index defensively; rely on DOM order and positioning first.
-- Prefer theme primitives over bespoke styling: the library's surfaces (`ui-frame`, `ui-card`) and type for card/panel/surface backgrounds (`.agents/skills/ui-library/references/surfaces.md`); token colours (`bg-background`, `b-border`, `text-accent`, `text-muted`) before custom colours. A surface is a library surface, never `bg-panel` on a `<div>`, and no page paints its own background (`references/layout.md`).
-- Avoid arbitrary hex/RGB/RGBA, custom shadows, and one-off background/border colours in app UI. A colour a template needs is a token, and one the tokens lack is a new token rather than a raw value (`.agents/skills/ui-library/references/tokens.md`).
+- Prefer theme primitives over bespoke styling: the library's surfaces (`ui-frame`, `ui-card`) and type for card/panel/surface backgrounds (the `ui-library` skill, `references/surfaces.md`); token colours (`bg-background`, `b-border`, `text-accent`, `text-muted`) before custom colours. A surface is a library surface, never `bg-panel` on a `<div>`, and no page paints its own background (`references/layout.md`).
+- Avoid arbitrary hex/RGB/RGBA, custom shadows, and one-off background/border colours in app UI. A colour a template needs is a token, and one the tokens lack is a new token rather than a raw value (the `ui-library` skill, `references/tokens.md`).
 - Never hardcode a fixed dimension to lay out a **region** (sidebar/panel/column split) — `references/layout.md`. Arbitrary dimensions are a last resort for true format constraints (`aspect-video`, viewport-safe containers, canvas/game surfaces, third-party embeds); first check whether the component hierarchy or flex/grid structure is wrong.
 - **An empty element sized along a flex axis takes `shrink-0`** (`references/lengths.md`).
 - **Always `rem`, never `px`**, for every authored length; `px` survives only where the unit is not ours to choose (`references/lengths.md`).
-- **A viewport height is `dvh`, never `vh` or `h-screen`** — a mobile browser's toolbar comes and goes over `vh`. `BLOCKED_SPELLINGS` refuses both, so a `vh` value generates no CSS at all rather than a wrong height (`.agents/skills/unocss/references/blocklist.md`).
+- **A viewport height is `dvh`, never `vh` or `h-screen`** — a mobile browser's toolbar comes and goes over `vh`. `BLOCKED_SPELLINGS` refuses both, so a `vh` value generates no CSS at all rather than a wrong height (the `unocss` skill, `references/blocklist.md`).
 - `field-sizing: content` is an attributify utility — put `field-sizing-content` directly on the `<input>` / `<textarea>`, never in a scoped class.
 
 ## The look is the app's, on every page
 
-An immersive page (`apps/web/app/layouts/immersive.vue`) is one with no app frame, and nothing more: it brings its own way back, not a look of its own. The look is the UI library's tokens, which every page reads whichever library draws it — a colour on any page is a token, and a page that sets its own palette on its root is a finding (`.agents/skills/ui-library/references/document-chrome.md`). The agent console stays in dusk through a theme scope rather than a palette of its own (`openspec/specs/architecture/ui-library/design.md`). Every rule on this page holds inside an immersive page as on any other.
+An immersive page (`apps/web/app/layouts/immersive.vue`) is one with no app frame, and nothing more: it brings its own way back, not a look of its own. The look is the UI library's tokens, which every page reads whichever library draws it — a colour on any page is a token, and a page that sets its own palette on its root is a finding (the `ui-library` skill, `references/document-chrome.md`). The agent console stays in dusk through a theme scope rather than a palette of its own (`openspec/specs/architecture/ui-library/design.md`). Every rule on this page holds inside an immersive page as on any other.
 
 ## What stays in `class="..."`
 
@@ -50,7 +50,7 @@ Only a scoped CSS ref, a `:class` binding (the home of a valueless utility switc
 
 ## Theme utilities are attributify too — `references/theme-utilities.md`
 
-`presetAttributify()` is active, so every token colour, named opacity and palette colour is a standalone attribute; which names generate a utility at all, and the opacity spelling, are that page.
+`presetAttributify()` is active, so every token colour, named opacity and palette colour is a standalone attribute; which names generate a utility at all, and the opacity spelling, are in `references/theme-utilities.md`.
 
 ## Links use `text-info` (the blue), never `text-accent`
 
@@ -62,11 +62,11 @@ A state colour is a variant utility (`hover:text-text`), never an `&:hover` bloc
 
 ## Utility vocabulary — `references/utility-vocabulary.md`
 
-Where two spellings say the same thing, one is the repo's. **Choosing between an abbreviation and its long form, a named step and a numeric one, a directional gap, or a slash value against a bare one** is that page.
+Where two spellings say the same thing, one is the repo's. **Choosing between an abbreviation and its long form, a named step and a numeric one, a directional gap, or a slash value against a bare one** is in `references/utility-vocabulary.md`.
 
 ## Images Are `<NuxtImg>` — `references/images.md`
 
-A raw `<img>` is a `vue/no-restricted-html-elements` error. Read the page when adding or sizing one: `width`/`height` are html attributes rather than styles, sizing is CSS utilities, and `object-contain`/`object-cover` is stated wherever both dimensions are constrained.
+A raw `<img>` is a `vue/no-restricted-html-elements` error. Read `references/images.md` when adding or sizing one: `width`/`height` are html attributes rather than styles, sizing is CSS utilities, and `object-contain`/`object-cover` is stated wherever both dimensions are constrained.
 
 ## The Parent Owns Spacing
 
@@ -78,4 +78,4 @@ Use `relative` on the parent and `absolute top-0 right-0` (or other corners) to 
 
 ## Style Block — `references/style-blocks.md`
 
-`<style scoped>` always (`vue/enforce-style-attribute`), plain CSS with native nesting and no `lang`, library CSS imported in script setup. A Fragment-rooted child defeats `scoped` and `:deep()` alike, silently — that page.
+`<style scoped>` always (`vue/enforce-style-attribute`), plain CSS with native nesting and no `lang`, library CSS imported in script setup. A Fragment-rooted child defeats `scoped` and `:deep()` alike, silently — `references/style-blocks.md`.
