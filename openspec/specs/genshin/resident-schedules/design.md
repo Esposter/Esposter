@@ -71,6 +71,8 @@ The record's NPCs are filled from the dump's NPC births, which give one place fo
 - [ ] **Draff's and Brook's shops open from six in the morning until seven at night** — no source yet: the wiki's vendor pages are not in `~/Esposter.noindex/cache/genshin-wiki/`.
 - [ ] **Blanche's and Sara's shops are open all day, and the rest give no hours** — no source yet: the wiki's vendor pages are not in `~/Esposter.noindex/cache/genshin-wiki/`.
 - [ ] **A repeated placement is the same NPC at nearly the same spot** — no source yet: no distance between an NPC's repeated births is recorded in the repo or under `~/Esposter.noindex`.
-- [ ] **`checkIsVendorHourOpen` opens a city vendor's shop only in the hours its wiki page gives** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Most residents have one place from the dump's NPC births, a day spot and no night spot** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Hertha keeps the point named Reputation through `REPUTATION_KEEPER_NPC_ID_MAP`, where Reputation is NPC `1663`** — no source yet: game data or a snapshot that holds this behaviour
+- **`checkIsVendorHourOpen` takes a shop and the game clock's minutes and answers whether the shop's hours are open** — `packages/genshin-world/src/services/shop/checkIsVendorHourOpen.ts`.
+- [ ] **A city vendor's shop is open only in the hours its wiki page gives** — no source yet: the wiki's NPC page, named in Sources, is not in the wiki cache.
+- [ ] **Most residents have one place from the dump's NPC births, a day spot and no night spot** — no source yet: `NpcExcelConfigData` in `~/Esposter/genshin-parity/text/ExcelBinOutput/`, not yet counted for each resident's places.
+- **The reputation keeper's NPC is found by a point's name in `REPUTATION_KEEPER_NPC_ID_MAP`** — `scripts/src/services/genshinAssets/residents/writeResidents.ts`.
+- [ ] **Hertha keeps the point named Reputation, where Reputation is NPC `1663`** — no source yet: `NpcExcelConfigData` in `~/Esposter/genshin-parity/text/ExcelBinOutput/`, not yet read for NPC 1663's name.
