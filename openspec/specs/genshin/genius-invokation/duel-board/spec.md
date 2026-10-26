@@ -6,7 +6,7 @@ How a resident's talk opens a duel, the board's choices and the session that pla
 
 ### Requirement: A seated resident offers the duel on the talk's opening line
 
-A resident with a seated duel SHALL offer the duel as a reply on the opening line of their standing talk, after the talk's own replies (`packages/genshin-world/src/composables/useWorldTalks.ts`, `duelGameId`).
+A resident with a seated duel SHALL offer the duel as a reply on the opening line of their standing talk, after the talk's own replies (`duelGameId`).
 
 #### Scenario: Duel reply is offered after the talk's own replies
 
@@ -24,11 +24,11 @@ A resident with a seated duel SHALL offer the duel as a reply on the opening lin
 
 - **GIVEN** a resident has no seated duel
 - **WHEN** the player begins the resident's talk
-- **THEN** no duel reply is offered (`packages/genshin-world/src/composables/useWorldTalks.ts`)
+- **THEN** no duel reply is offered
 
 ### Requirement: A quest's talk replaces a standing talk with the same id
 
-A quest's talk SHALL take the place of a standing talk with the same id (`packages/genshin-world/src/services/dialogue/mergeTalks.ts`).
+A quest's talk SHALL take the place of a standing talk with the same id.
 
 #### Scenario: Quest talk wins over the standing talk
 
@@ -38,29 +38,29 @@ A quest's talk SHALL take the place of a standing talk with the same id (`packag
 
 ### Requirement: The board holds only the choices the player makes
 
-The duel board SHALL hold only the dice, card, tuning and switch or prepare choices the player is making, and SHALL send every other choice to the duel session (`packages/genshin-world/src/components/Gcg/Screen/Index.vue`).
+The duel board SHALL hold only the dice, card, tuning and switch or prepare choices the player is making, and SHALL send every other choice to the duel session.
 
 #### Scenario: Board clears its choice whether or not the engine takes it
 
 - **GIVEN** the player has made a choice on the board
 - **WHEN** the engine takes it or refuses it
-- **THEN** the board clears its choice (`packages/genshin-world/src/components/Gcg/Screen/Index.vue`, `clearSelection`)
+- **THEN** the board clears its choice (`clearSelection`)
 
 ### Requirement: The opponent's turns are played by the scripted policy
 
-After each player choice the opponent's turns SHALL be played by the scripted policy until the duel waits on the player (`packages/genshin-world/src/services/gcg/advanceGcgOpponent.ts`, `packages/genshin-world/src/components/Gcg/Session/Index.vue`).
+After each player choice the opponent's turns SHALL be played by the scripted policy until the duel waits on the player.
 
 #### Scenario: Opponent takes its first card then its first skill
 
 - **GIVEN** the opponent has a card and a skill available on its turn
 - **WHEN** the opponent takes its turn
-- **THEN** it plays its first card, then uses its first skill, then declares the round's end (`packages/genshin-world/src/services/gcg/takeGcgScriptedAction.ts`)
+- **THEN** it plays its first card, then uses its first skill, then declares the round's end
 
 #### Scenario: Duel waits on the player after the opponent's turns
 
 - **GIVEN** the opponent has finished its turns
 - **WHEN** it is the player's turn
-- **THEN** the duel waits for the player's choice (`packages/genshin-world/src/components/Gcg/Session/Index.vue`)
+- **THEN** the duel waits for the player's choice
 
 ### Requirement: A duel is seated only from a challenger with a built deck
 
@@ -82,7 +82,7 @@ A duel SHALL be seated only from a challenger whose game is published, and no du
 
 - **GIVEN** a seated game's player deck is not published
 - **WHEN** the duel is opened
-- **THEN** the placeholder deck is played as the player's deck (`scripts/src/services/genshinAssets/gcg/constants.ts`, `GCG_PLACEHOLDER_PLAYER_DECK_ID` of 3)
+- **THEN** the placeholder deck is played as the player's deck (`GCG_PLACEHOLDER_PLAYER_DECK_ID` of 3)
 
 ### Requirement: A duel's end returns the player to the world
 
@@ -92,10 +92,17 @@ A duel's end SHALL return the player from the board to the world.
 
 - **GIVEN** the duel board is open
 - **WHEN** the player leaves the board
-- **THEN** the player returns to the world (`packages/genshin-world/src/components/Gcg/Screen/Index.vue`, which emits `leave` with whether the player won)
+- **THEN** the player returns to the world (which emits `leave` with whether the player won)
 
 ## Open
 
 - [ ] **Choosing the duel ends the talk and opens the board** — no source yet: the talk's duel-choice handler was not read.
 - [ ] **A game whose opponent deck is missing fails the run** — no source yet: the deck check in `scripts/src/services/genshinAssets/gcg/toGcgGames.ts` was not read.
 - [ ] **The board's leave returns the player to the world** — no source yet: the world's handler for the board's leave was not read.
+- [ ] **A quest's talk replaces a standing talk with the same id** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The board holds only the choices the player makes** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The board clears its choice whether or not the engine takes it** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The opponent's turns are played by the scripted policy until the duel waits on the player** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The opponent takes its first card, then its first skill, then declares the round's end** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The duel waits for the player's choice after the opponent's turns** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The placeholder deck is played as the player's deck when the game's is not published** — no source yet: game data or a snapshot that holds this behaviour
