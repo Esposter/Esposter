@@ -1,6 +1,6 @@
 # Free camera
 
-Photo mode's camera is the follow camera's orbit round the held character, as [follow camera](../follow-camera/design.md) sets out (`packages/genshin-engine/src/camera/createFollowCamera.ts`). Under the tuning panel, photo mode mounts the free camera instead (`packages/genshin-world/src/components/World/Session/Index.vue`): the developer's flight, which starts from wherever the follow camera left the view and flies over Windrise and beyond while the character holds where it stood (`packages/genshin-world/src/components/World/FreeCamera/Index.vue`). Leaving photo mode unmounts it (`packages/genshin-world/src/components/World/Session/Index.vue`). The camera is built from three engine modules, `input`, `simulation` and `camera`, and reads the ground through `collision`, all in `genshin-engine` and knowing no place by name (`packages/genshin-engine/src/camera`, `packages/genshin-engine/src/input`, `packages/genshin-engine/src/simulation` and `packages/genshin-engine/src/collision` name no region). The world screen wires them to its own origin and its own height function (`packages/genshin-world/src/components/World/FreeCamera/Index.vue`).
+Photo mode's camera is the follow camera's orbit round the held character, as [follow camera](../follow-camera/design.md) sets out. Under the tuning panel, photo mode mounts the free camera instead: the developer's flight, which starts from wherever the follow camera left the view and flies over Windrise and beyond while the character holds where it stood. Leaving photo mode unmounts it. The camera is built from three engine modules, `input`, `simulation` and `camera`, and reads the ground through `collision`, all in `genshin-engine` and knowing no place by name. The world screen wires them to its own origin and its own height function.
 
 ```mermaid
 sequenceDiagram
@@ -24,28 +24,28 @@ sequenceDiagram
   F->>FO: the origin's shift reads where the camera now stands
 ```
 
-The diagram's steps are `packages/genshin-engine/src/simulation/createFixedStepLoop.ts` (at most five a frame, `MAX_STEPS_PER_FRAME` in `packages/genshin-engine/src/simulation/constants.ts`) and `FIXED_STEP_SECONDS`, a sixtieth of a second, in `packages/genshin-world/src/services/constants.ts`.
+The diagram's steps are the fixed-step loop's, at most five a frame, and `FIXED_STEP_SECONDS`, a sixtieth of a second.
 
-The order is the reason for the priority. The floating origin reads the camera to decide whether to shift the world back under it, and the terrain and grass read the camera for their tiles, so both must see where it has been moved to. The free camera registers its frame callback at `CAMERA_FRAME_PRIORITY`, ahead of TresJS's default the origin runs at, so it runs first though it mounts after the scene (`packages/genshin-world/src/components/World/FreeCamera/Index.vue`, `CAMERA_FRAME_PRIORITY` in `packages/genshin-world/src/services/constants.ts`).
+The order is the reason for the priority. The floating origin reads the camera to decide whether to shift the world back under it, and the terrain and grass read the camera for their tiles, so both must see where it has been moved to. The free camera registers its frame callback at `CAMERA_FRAME_PRIORITY`, ahead of TresJS's default the origin runs at, so it runs first though it mounts after the scene.
 
 ## The controls
 
-- **Keyboard**: `W` and `S` move forward and back over the ground, `A` and `D` move left and right, `Space` rises and `Shift` falls. A pair held against each other cancels (`packages/genshin-engine/src/input/createInput.ts`).
-- **Mouse**: a click on the canvas locks the pointer, and while it is locked the pointer turns the look (`packages/genshin-world/src/components/World/FreeCamera/Index.vue` takes the click; `packages/genshin-engine/src/input/createInput.ts` reads the look).
-- **Gamepad**: the first connected gamepad's left stick moves over the ground, and its right stick turns the look at a rate of 2.5 radians a second (`GAMEPAD_LOOK_RADIANS_PER_SECOND` in `packages/genshin-engine/src/input/constants.ts`). Both have a deadzone at the stick's centre (`GAMEPAD_STICK_DEADZONE`, 0.15, in `packages/genshin-engine/src/input/constants.ts`).
-- **Touch**: on a touch screen, a stick under the left thumb moves, a drag on the right half looks and a button rises, through the same input ([touch controls](../touch-controls/design.md); `packages/genshin-world/src/components/Hud/Stick/Index.vue`, `packages/genshin-world/src/components/Hud/Touch/Index.vue`, `packages/genshin-world/src/components/Hud/Actions/Index.vue`).
+- **Keyboard**: `W` and `S` move forward and back over the ground, `A` and `D` move left and right, `Space` rises and `Shift` falls. A pair held against each other cancels.
+- **Mouse**: a click on the canvas locks the pointer, and while it is locked the pointer turns the look.
+- **Gamepad**: the first connected gamepad's left stick moves over the ground, and its right stick turns the look at a rate of 2.5 radians a second. Both have a deadzone at the stick's centre (`GAMEPAD_STICK_DEADZONE`, 0.15).
+- **Touch**: on a touch screen, a stick under the left thumb moves, a drag on the right half looks and a button rises, through the same input ([touch controls](../touch-controls/design.md)).
 
-The camera's motion is per second, so a key held for the same time moves it the same distance at any frame rate (`packages/genshin-engine/src/camera/createFreeCamera.ts`). The look is not: the mouse turns it by a fixed angle for each pixel the pointer moves, and only the gamepad's right stick turns it per second (`MOUSE_LOOK_RADIANS_PER_PIXEL` in `packages/genshin-engine/src/input/constants.ts`). The world screen reads the input once a frame, ahead of every frame callback, and hands the camera the state it read: its look turns the camera once, before the frame's steps, and the steps of that frame all use its move, so no pointer movement is lost or repeated at any frame rate (`packages/genshin-world/src/components/World/Session/Index.vue` reads the input; `packages/genshin-world/src/components/World/FreeCamera/Index.vue` looks and steps). While a screen holds the world ([screens](../screens/design.md)), the camera neither looks nor steps (`packages/genshin-world/src/components/World/FreeCamera/Index.vue`). Losing focus clears the keys held, since their releases never reach the page (`packages/genshin-engine/src/input/createInput.ts`, its `blur` listener). The input's listeners and the canvas's click are released when the component holding them unmounts, so a remount does not stack them (`packages/genshin-world/src/components/World/FreeCamera/Index.vue`, `packages/genshin-engine/src/input/createInput.ts`).
+The camera's motion is per second, so a key held for the same time moves it the same distance at any frame rate. The look is not: the mouse turns it by a fixed angle for each pixel the pointer moves, and only the gamepad's right stick turns it per second. The world screen reads the input once a frame, ahead of every frame callback, and hands the camera the state it read: its look turns the camera once, before the frame's steps, and the steps of that frame all use its move, so no pointer movement is lost or repeated at any frame rate. While a screen holds the world ([screens](../screens/design.md)), the camera neither looks nor steps. Losing focus clears the keys held, since their releases never reach the page. The input's listeners and the canvas's click are released when the component holding them unmounts, so a remount does not stack them.
 
 ## The motion
 
-A move goes along the view on the ground, and straight up or down. Its speed grows with the camera's height above the ground, so a crossing takes seconds and a slow pass over grass stays slow; the speed's base and its growth live in `packages/genshin-engine/src/camera/constants.ts` and are read in `packages/genshin-engine/src/camera/createFreeCamera.ts`. The look turns the yaw and tilts the pitch, which is clamped short of straight up or down so the view never flips (`packages/genshin-engine/src/camera/createFreeCamera.ts`, `FREE_CAMERA_MAX_PITCH` in `packages/genshin-engine/src/camera/constants.ts`).
+A move goes along the view on the ground, and straight up or down. Its speed grows with the camera's height above the ground, so a crossing takes seconds and a slow pass over grass stays slow; the speed's base and its growth live in the camera module's constants and are read by the free camera. The look turns the yaw and tilts the pitch, which is clamped short of straight up or down so the view never flips (`FREE_CAMERA_MAX_PITCH`).
 
-The camera is never held under the ground or the water's surface: after each step its height is raised to the higher of the ground's height at its place and the water's level, plus a clearance, which the same constants file holds (`packages/genshin-engine/src/camera/createFreeCamera.ts`, `FREE_CAMERA_CLEARANCE` of 1.5).
+The camera is never held under the ground or the water's surface: after each step its height is raised to the higher of the ground's height at its place and the water's level, plus a clearance, which the same constants file holds (`FREE_CAMERA_CLEARANCE` of 1.5).
 
 ## The ground
 
-`collision` answers the ground's height and normal at a point from the height function the terrain is built from. The world's session passes it the ground it builds (`getGroundHeight`, from `createWorldHeight`) read at the scene's origin plus the camera's own place, with the water's level read from the hosted game data before the world opened, on the main thread, so the answer is the one the terrain draws, never a read back from a worker's tile (`packages/genshin-world/src/components/World/FreeCamera/Index.vue` reads the ground at the origin's shift; `packages/genshin-world/src/components/World/Session/Index.vue` passes the ground and the level; the level is read from the hosted game data by `packages/genshin-world/src/services/windrise/readWindriseData.ts`, called from `packages/genshin-world/src/components/World/Screen/Index.vue`). The normal is read from the same function's slopes across a tenth of a metre (`packages/genshin-engine/src/collision/constants.ts`, `packages/genshin-engine/src/collision/createGroundQuery.ts`). The sample object is reused by every query, so a frame reads the ground allocating nothing (`packages/genshin-engine/src/collision/createGroundQuery.ts`).
+`collision` answers the ground's height and normal at a point from the height function the terrain is built from. The world's session passes it the ground it builds (`getGroundHeight`, from `createWorldHeight`) read at the scene's origin plus the camera's own place, with the water's level read from the hosted game data before the world opened, on the main thread, so the answer is the one the terrain draws, never a read back from a worker's tile. The normal is read from the same function's slopes across a tenth of a metre. The sample object is reused by every query, so a frame reads the ground allocating nothing.
 
 ## Key files
 
@@ -62,3 +62,33 @@ The camera is never held under the ground or the water's surface: after each ste
 ## Sources
 
 - [Fix your timestep!](https://gafferongames.com/post/fix_your_timestep/), Glenn Fiedler: simulation in fixed steps from an accumulator, which the simulation module follows.
+
+## Open
+
+- [ ] **Photo mode's camera is the follow camera's orbit round the held character** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Under the tuning panel, photo mode mounts the free camera** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The free camera starts where the follow camera left the view and flies over Windrise and beyond** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Leaving photo mode unmounts the free camera** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The camera is built from three engine modules and collision, all knowing no place by name** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The world screen wires the camera's modules to its own origin and its own height function** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The fixed step is a sixtieth of a second, and at most five steps run a frame** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The free camera registers its frame callback at `CAMERA_FRAME_PRIORITY`, ahead of the origin's default** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **`W` and `S` move forward and back, `A` and `D` left and right, `Space` rises and `Shift` falls, and an opposed pair cancels** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A click on the canvas locks the pointer, and while locked the pointer turns the look** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The first gamepad's left stick moves over the ground, and its right stick turns the look at 2.5 radians a second** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Both sticks have a deadzone at the centre, `GAMEPAD_STICK_DEADZONE` of 0.15** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **On a touch screen a stick under the left thumb moves, a drag on the right half looks, and a button rises** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The camera's motion is per second, so a held key moves it the same distance at any frame rate** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The mouse turns the look by a fixed angle for each pixel moved, and only the gamepad's right stick turns it per second** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The world screen reads the input once a frame, ahead of every frame callback** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The camera's look turns it once before the frame's steps, and all of a frame's steps use its move** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **While a screen holds the world, the camera neither looks nor steps** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Losing focus clears the keys held** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The input's listeners and the canvas's click are released on unmount, so a remount does not stack them** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The move's speed has a base and grows with the camera's height above the ground** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The look turns the yaw and tilts the pitch, clamped short of straight up or down** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The camera is never held under the ground or the water's surface, and rises to the higher of the two plus a clearance of 1.5** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The world's session passes `collision` the ground it builds, read at the scene's origin plus the camera's place** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The water's level is read from the hosted game data before the world opened, on the main thread** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The normal is read from the ground's slopes across a tenth of a metre** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The sample object is reused by every query, so a frame reads the ground allocating nothing** — no source yet: game data or a snapshot that holds this behaviour
