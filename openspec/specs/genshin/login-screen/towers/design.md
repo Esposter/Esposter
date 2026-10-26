@@ -30,6 +30,7 @@ The towers, bridges and pillars the login's walkway runs past. Each tower is a l
 ## Open
 
 - [ ] **The lathe stands on the walls, not on the tips of the columns and cornices** — contradicted by `scripts/src/services/genshinAssets/fit/fitRadialProfile.ts:44`: each band's radius is its outermost vertex, tips included.
+- [ ] **The towers' mouldings and cornices turn as the game's do** — no source yet: no profile comparison with the game is kept.
 - [ ] **The carving's edges land within a pixel of the game's where the towers stand nearest** — no source yet: no edge measurement is kept.
 - [ ] **No bump tilts the light at a recess's edge, and a bump over the atlas changed no frame** — no source yet: no frame comparison of a bump over the atlas is kept in `~/Esposter/genshin-parity/comparisons/`, which holds no tower snapshot, and `packages/genshin-world/src/components/Login/Scene/Towers.reference.ts` records the result without one.
 - [ ] **Columns and recesses together bring every frame's towers nearer the exports than the lathe alone** — no source yet: no per-frame score is kept.

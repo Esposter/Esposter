@@ -56,5 +56,4 @@ Gilding SHALL take the stone's colour, and no bump SHALL tilt the light at a rec
 
 ## Open
 
-- [ ] **The towers stand on their walls rather than on the tips of their columns and cornices, and their mouldings and cornices turn as the game's do** — no source yet: no profile comparison with the game is kept.
 - [ ] **No bump tilts the light at a recess's edge** — no source yet: whether the recess edges are masked from the bump, which `~/Esposter/genshin-parity/extracted/login-bytype-assets/Material/LoginScene_Build04.json` does not show (its `_BumpScale` is 1.0 with a `_BumpMap` set).
