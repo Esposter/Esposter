@@ -98,3 +98,9 @@ The skill's pull and her Hexerei team bonus SHALL NOT take effect.
 - **GIVEN** Sucrose has the skill's pull or the Hexerei team bonus unlocked
 - **WHEN** the player fights with Sucrose
 - **THEN** that effect has no effect
+
+## Open
+
+- [ ] **the team gains a share of her Elemental Mastery for each skill or burst hit at Ascension 4** — no source yet: gcsim's `asc.go` share line was not opened.
+- [ ] **the enemy's aura is left in place when the absorbed element strikes** — no source yet: gcsim's aura handling was not opened.
+- [ ] **Constellations 1, 2 and 6 take effect** — no source yet: Constellation 1 is cited on the design page, and 2 and 6 are not.
