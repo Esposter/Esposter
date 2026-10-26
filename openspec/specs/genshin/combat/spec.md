@@ -46,8 +46,8 @@ Electro and Hydro lying together on a target SHALL tick Electro-Charged damage u
 
 - **GIVEN** an Electro aura and a Hydro aura stand on a target
 - **WHEN** they meet on the target
-- **THEN** an Electro-Charged tick lands at once (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/electrocharged.go:78-81`)
-- **AND** another tick lands each second after (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/electrocharged.go:181`)
+- **THEN** an Electro-Charged tick lands at once
+- **AND** another tick lands each second after
 
 #### Scenario: Electro-Charged ends once one of its auras decays away
 
@@ -67,7 +67,7 @@ A hit's damage SHALL be cut by the enemy's defence against the attacker's level,
 
 ### Requirement: An enemy's resistance
 
-An enemy's resistance SHALL cut damage by its share, up to three quarters (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/enemy/damage.go:86-88`), and beyond that by a diminishing factor.
+An enemy's resistance SHALL cut damage by its share, up to three quarters, and beyond that by a diminishing factor.
 
 #### Scenario: A resistance of half cuts half the damage
 
@@ -172,7 +172,7 @@ A deployed member's party reaction bonus SHALL raise a Lunar or Stellar reaction
 - **GIVEN** a deployed member's kit gives a Lunar-Bloom a DMG Bonus, a CRIT Rate, a CRIT DMG and an Elevation
 - **WHEN** a direct Lunar-Bloom hit is priced on an enemy
 - **THEN** the DMG Bonus adds to its reaction bonus, the CRIT Rate to its roll and the CRIT DMG to a CRIT hit
-- **AND** the whole is multiplied by one plus the Elevation (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/core/combat/reaction.go:30`)
+- **AND** the whole is multiplied by one plus the Elevation
 
 ### Requirement: A Stellar Jubilee's Base DMG Bonus
 
@@ -339,7 +339,7 @@ When every member of the party is down, the party SHALL revive at 35 percent hea
 
 ### Requirement: Glimmer Reaction Damage
 
-A Stellar Swirl's own damage SHALL be weighted across the four highest contributors, at 0.6, 0.3, 0.05 and 0.05, each contributor's damage worked out alone with standard crit (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl.go:15`, `lunarcharged.go:22`, `lunarcrystallize.go:27`). A Stellar-Conduct SHALL deal no damage of its own: its damage is dealt only by a talent's or a constellation's direct hit.
+A Stellar Swirl's own damage SHALL be weighted across the four highest contributors, at 0.6, 0.3, 0.05 and 0.05, each contributor's damage worked out alone with standard crit. A Stellar-Conduct SHALL deal no damage of its own: its damage is dealt only by a talent's or a constellation's direct hit.
 
 #### Scenario: a Glimmer reaction weights its four highest contributors
 
@@ -361,7 +361,7 @@ A talent's or a constellation's direct Stellar hit SHALL be priced by the Glimme
 
 - **GIVEN** a striker carrying the Starlight Prism's count of 3 recorded hits
 - **WHEN** its direct Stellar-Conduct hit strikes an enemy
-- **THEN** it is priced at a coefficient of 1.55, with no Defence (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct.go:9`)
+- **THEN** it is priced at a coefficient of 1.55, with no Defence
 
 #### Scenario: prices a direct Stellar Swirl hit by the Glimmer formula at its coefficient by the Starlight Prism's count its striker carries, with no Defence
 
@@ -434,7 +434,7 @@ A Stellar-Conduct SHALL leave a Starlight Prism that lasts 7 seconds and sustain
 #### Scenario: a Stellar-Conduct places a Polestar Field round the point given for 7 seconds, ticking every 4
 
 - **WHEN** a Stellar-Conduct is triggered and no Polestar Field stands
-- **THEN** a Polestar Field of radius 15 stands at the body on the field for 7 seconds, as gcsim places it at the player (`stellarconduct_gadget.go`), placed by the reaction path for any enabler
+- **THEN** a Polestar Field of radius 15 stands at the body on the field for 7 seconds, as gcsim places it at the player, placed by the reaction path for any enabler
 
 #### Scenario: a Stellar-Conduct refreshes a standing Polestar Field
 
@@ -448,12 +448,12 @@ A Stellar-Conduct SHALL leave a Starlight Prism that lasts 7 seconds and sustain
 
 ### Requirement: Starlight Prism Buffs by Recorded Hits
 
-Inside the field, a Cryo or Electro hit on an enemy that applies an element, as its internal cooldown allows, SHALL be recorded by the prism, the hit that created the prism excepted. Every 4 seconds the count resets (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct_gadget.go:21`), and the buffs it grants last 4 seconds (`stellarconduct_gadget.go:22`): the Base Reaction Coefficient of the Stellar-Conduct, the Cryo and Electro DMG Bonus of the body in the field, and the Physical RES reduction of the enemies in it.
+Inside the field, a Cryo or Electro hit on an enemy that applies an element, as its internal cooldown allows, SHALL be recorded by the prism, the hit that created the prism excepted. Every 4 seconds the count resets, and the buffs it grants last 4 seconds: the Base Reaction Coefficient of the Stellar-Conduct, the Cryo and Electro DMG Bonus of the body in the field, and the Physical RES reduction of the enemies in it.
 
 #### Scenario: a recorded hit raises the Stellar-Conduct's coefficient
 
 - **WHEN** one Cryo or Electro hit is recorded
-- **THEN** the Base Reaction Coefficient is 1.45, rising by 0.05 for each further hit up to 12 hits, where it is 2 (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct.go:9`)
+- **THEN** the Base Reaction Coefficient is 1.45, rising by 0.05 for each further hit up to 12 hits, where it is 2
 
 #### Scenario: a field with no recorded hit gives a 20% Cryo and Electro DMG Bonus
 
@@ -511,7 +511,7 @@ A Stellar Vortex's explosion SHALL be priced at a Base Reaction Coefficient of 2
 #### Scenario: a Stellar Swirl's Anemo instance has a coefficient of 0.75
 
 - **WHEN** a Stellar Swirl is triggered
-- **THEN** its Anemo instance's Base Reaction Coefficient is 0.75 (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl.go:76`)
+- **THEN** its Anemo instance's Base Reaction Coefficient is 0.75
 
 ## Open
 
