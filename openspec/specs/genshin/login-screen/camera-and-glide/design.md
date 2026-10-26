@@ -33,6 +33,7 @@ The login camera holds one pose, and the world glides toward it. The walkway, it
 
 ## Open
 
+- [ ] **The eye stands 1 metre over the walkway** — no source yet: the 1 metre is the current build's door frame at 21.5:9 fitting 0.997 metres, not a height read from `ModelCamera`'s 60 units, which `constants.ts` takes as 6 metres.
 - [ ] **At 21.5:9 the solved eye lands the door within a pixel and a quarter of the recording's door** — no source yet: no door-position comparison at 21.5:9 is kept in `~/Esposter/genshin-parity/comparisons/`.
 - [ ] **The rows wrap at 16, 200 and 300 metres** — no source yet: the `login/scroll` record is hosted, and its lengths are not kept in the repository or the parity folders.
 - [ ] **The current build's title reads about 3.5 metres a second, and a braking repeat about 4.35** — no source yet: the `genshin:parity glide` report is not kept in `~/Esposter/genshin-parity/`.
