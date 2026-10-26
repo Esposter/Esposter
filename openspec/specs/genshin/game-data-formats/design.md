@@ -196,19 +196,36 @@ The things that each cost a search to find, to reach for first:
 - [ ] **The environment's mask texture is SMBE, with smoothness in red and metalness in green** — no source yet: `packages/genshin-world/src/services/scene/createWitnessMaterial.ts` names SMBE and states no channels; the fit code reads red as smoothness (`scripts/src/services/genshinAssets/fit/fitLoginStone.ts`) and channel 1 as metal (`scripts/src/services/genshinAssets/fit/fitLoginTowerFacades.ts`), the port's own reading, not the game's shader.
 - [ ] **Grading tables are textures named `Stages_*_LUT`** — no source yet: no read of the texture names from the game's exports is recorded; `packages/genshin-world/src/components/Login/Scene/Index.reference.ts` is the repo's own account.
 - [ ] **A root's own parent can sit in a block not read, and is dumped at the origin** — no source yet: the dumps of the blocks not read were not compared with the game's placement; the walkway is the one case, recorded in `packages/genshin-world/src/components/Login/Scene/Arrangement.reference.ts`.
-- **The open world is streamed in 1024-metre tiles and named areas, each with a StreamGen blob** — `scripts/src/services/genshinAssets/world/getStreamBlobName.test.ts` names the tiles, and `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts` the areas.
+- [ ] **the open world is streamed in 1024-metre tiles and named areas, each with a StreamGen blob** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **`StreamGen/BigWorld_1_-2` is the blob `012854bd`** — no source yet: the community's asset index was not matched for that tile's blob name.
-- **A newer prefab is named by hashing the candidate paths of its folder** — `scripts/src/services/genshinAssets/world/readAssetPathNames.ts`.
+- [ ] **a newer prefab is named by hashing the candidate paths of its folder** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **The game's LOD table names every prefab grouped by level of detail** — no source yet: `scripts/src/services/genshinAssets/world/parseLodInfoMap.ts` reads the table, but whether it names every prefab was not counted.
-- **A region's open world is derived from its capital's place** — `scripts/src/services/genshinAssets/world/deriveCapitalWorld.ts`.
+- [ ] **a region's open world is derived from its capital's place** — no source yet: game data or a snapshot that holds this behaviour
 - **A tile's heightfield is read from its TerrainData** — `scripts/src/services/genshinAssets/world/parseTerrainHeights.ts`.
-- **A tile's splat database places its layers by texel** — `scripts/src/services/genshinAssets/world/parseTerrainSplat.ts`.
+- [ ] **a tile's splat database places its layers by texel** — no source yet: game data or a snapshot that holds this behaviour
 - **A field is read by its shape** — `scripts/src/services/genshinAssets/scene/scanSerializedFields.ts`.
 - [ ] **The install's `global-metadata.dat` does not begin with Unity's IL2CPP magic** — no source yet: the install's file header was not read in this pass.
 - [ ] **The client ships no scene group script; the group scripts are the server's** — no source yet: the client's Lua block was not counted against the community's index.
 - [ ] **The material table's use of each instruction names the combine id it opens** — no source yet: the combine table's instruction field was not matched against the material table in this pass.
 - **The client's text maps are decoded from its own chunks by path hash** — `scripts/src/services/genshinText/decodeGameText.ts`.
-- **The audio is Wwise packages of banks and streamed sounds** — `scripts/src/services/genshinAssets/music/parseAudioPackageHeader.ts`.
-- **A sound is Wwise's own Vorbis, decoded by vgmstream** — `scripts/src/services/genshinAssets/music/resolveVgmstream.ts`.
+- [ ] **the audio is Wwise packages of banks and streamed sounds** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **a sound is Wwise's own Vorbis, decoded by vgmstream** — no source yet: game data or a snapshot that holds this behaviour
 - **A RectTransform exports with its Transform fields alone, and its last 40 bytes are its anchors** — `scripts/src/models/genshinAssets/shared/DumpedRectTransform.ts`.
 - [ ] **The 32-bit prefab id is the world's own, with no hash of the path** — no source yet: no prefab id table was matched against a path hash in this pass.
+- [ ] **a shader's serialized form names its programs** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **a constant buffer's layout is a run of records beside the programs** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **a scene's stone shader writes the G-buffer and lights nothing** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **a material's export is its shader's path ID, texture slots and values by name** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **a Transform's dump is its local position, rotation and scale** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **a MeshRenderer names its materials by file index and path ID** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **a StreamGen blob is a length word, then chunks of placements** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **a city's index object is its blob's chunk index, not a root** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **a placement's prefab is named by its path hash, and its root is found by name** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **a tile's TerrainData is found by its name inside it** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **the two non-group scripts are Lua 5.3 bytecode in a dialect of their own** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **a bank's music is its hierarchy chunk's objects** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **how loud the game plays a sound is in its nodes and buses** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **a shader's programs are DXBC or DXIL containers carved from its raw export** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **a pass's trailer is read by peeking at the next subshader** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **a script's fields are named by the dummy scripts of an older build** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **a bank holds short sounds in itself, read from its index chunk** — no source yet: game data or a snapshot that holds this behaviour
