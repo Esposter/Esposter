@@ -124,5 +124,5 @@ The world SHALL draw the Frostbearing Tree as a stand-in at its place in Mondsta
 ## Open
 
 - [ ] **The bag's offering items all leave the bag at one offer** — no source yet: no cached wiki page, capture or table read here shows one offer taking every item at once.
-- [ ] **Oculi offered at a statue reach levels by the tree's rule** — no source yet: the offering table (`~/Esposter/genshin-parity/text/ExcelBinOutput/OfferingOpenStateConfigData.json`) names 22 offerings and none is a statue, and no statue offering table is on disk.
+- [ ] **Oculi offered at a statue reach levels by the tree's rule** — no source yet: the statues' offering rows are not read here.
 - [ ] **The tree stands at its place in Mondstadt's region** — no source yet: the area's name, since `~/Esposter/genshin-parity/references/interactive-map/points.json` places the tree's label (158) on point 7179 at x 302, y 1036 in area 1, and the held files do not name area 1.
