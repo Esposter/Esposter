@@ -19,6 +19,7 @@ import { readStandingTalks } from "#src/services/resident/readStandingTalks";
 import { StandingTalkTextLoaderMap } from "#src/services/resident/StandingTalkTextLoaderMap";
 import { getResultAsync } from "@esposter/shared";
 import { InteractionKind } from "genshin-interface";
+import { computed, shallowRef } from "vue";
 
 // The talks a resident begins and the talk the world runs, held by id: the quests in progress hold theirs, the quests not
 // Yet started the talks offering them, and the residents their standing talks, read with their words as the world
