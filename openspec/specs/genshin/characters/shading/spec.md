@@ -104,8 +104,12 @@ Where a player's pack supplies no value, the body SHALL take the game's own valu
 - [ ] **A close-up of the body shows no haze in any sky state, at 3 metres** — no source yet: the evaluation of `createHeightFogNode` at the Windrise and login settings, which no test or script commits.
 - [ ] **The nose keeps a small mark at every light angle** — no source yet: the face map's two flank texels at its two ends are not read from the texture.
 - [ ] **A face with no face map is lit in full** — no source yet: the no-map branch of `createFaceShadeNode.ts` is not traced.
-- [ ] **The outline's colour is drawn toward a fifth of the main texture, by the region's intensity** — no source yet: no 0.2 literal in `createOutlineColorNode.ts` or `shading/constants.ts`, and pixel 885's use of it is not traced.
+- [ ] **The outline's colour is drawn toward a fifth of the main texture, by the region's intensity** — no source yet: no 0.2 literal in `createOutlineColorNode.ts` or the shading constants, and pixel 885's use of it is not traced.
 - [ ] **A pack's toon is read down its one column as the lookup, with the flat default lightmap as the threshold** — no source yet: the pack path through `createCharacterShadingNode.ts` is not traced.
 - [ ] **The default light area and band width keep the lookup from clamping across the light's full range** — no source yet: a computed trace at the defaults; no test asserts it.
 - [ ] **A pack's region toggles stay off, and its values come from the game's inventory** — no source yet: the code path that fills a pack's material from the inventory record is not traced, and `createCharacterShadingInputs.ts`'s own defaults (brightness 1, contrast and desaturate 0) are not the inventory's values.
 - [ ] **A pack without a lightmap takes the flat default lightmap of red 0, green 0.5 and alpha 0** — no source yet: the flat lightmap's red and alpha are not traced to a constant.
+- [ ] **Lumine's body takes the colour and emission of the region its lightmap alpha selects, from an alpha of at least 0.8** — no source yet: the region branch is not traced in the material's program.
+- [ ] **A part in a region whose toggle is off keeps the first region's colours, and a material with no region toggle on draws in the first region only** — no source yet: the toggle branch is not traced in the material's program.
+- [ ] **Lumine's outline takes her region's colour, toned as her body is, and the outline colour when no region toggle is on** — no source yet: the outline's region branch is not traced in the material's program.
+- [ ] **Lumine's face turns its shadow edge across the face as the light turns around her head** — no source yet: the face's shadow branch is not traced in the material's program.
