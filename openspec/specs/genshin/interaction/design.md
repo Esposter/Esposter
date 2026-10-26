@@ -110,4 +110,4 @@ Provisional and unmeasured: the pill's right end (290 units, since the rock behi
 - [ ] **A defeat's drops reach the world screen through Windrise** — no source yet: the drop path found is `packages/genshin-world/src/composables/useWorldCombat.ts`, and no Windrise step in it was found.
 - [ ] **A witness render draws none of the stand-ins** — no source yet: `packages/genshin-world/src/components/World/Interactables/Index.vue` has no witness check.
 - [ ] **Drops last the page's life** — no source yet: `packages/genshin-world/src/components/World/Session/Index.vue` holds the drops, but no check ties their lifetime to the page's state.
-- [ ] **The item icons are drawn as discs, since the game's item art ships nowhere** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The item icons are drawn as discs, since the game's item art ships nowhere** — no source yet: whether the game's item art is in `~/Esposter/genshin-parity/extracted/`, not yet checked.
