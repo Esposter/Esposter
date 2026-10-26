@@ -7,7 +7,7 @@ description: Apply when asked to review the products for gaps, generate or regen
 
 The repeatable pass that turns "what is missing from our products" into proposals, fixes and decisions, run the same way every time so its output can be compared with the last run's. The design philosophy it serves is a finished product: **each pass should find less than the one before, and an area whose pass finds nothing is done.** Churn — a new proposal, a reversed decision — is the measure of how far an area still is from that.
 
-What a change, a deferred idea and a rejected idea look like, and the rule that ideation runs in the main session one area at a time, are the `openspec` skill's (`.agents/skills/openspec/references/area-passes.md`, `.agents/skills/openspec/references/page-shapes.md`); this skill is the loop that feeds them, and the `building-proposals` skill (`.agents/skills/building-proposals/SKILL.md`) is the loop that empties them and hands each shipped area back here.
+What a change, a deferred idea and a rejected idea look like, and the rule that ideation runs in the main session one area at a time, are the `openspec` skill's (`references/area-passes.md`, `references/page-shapes.md`); this skill is the loop that feeds them, and the `building-proposals` skill is the loop that empties them and hands each shipped area back here.
 
 ## Settled — do not re-propose
 
@@ -15,7 +15,7 @@ What a change, a deferred idea and a rejected idea look like, and the rule that 
 - **A proposal from memory of how a product works.** The reference product's own help or docs page is opened in the pass and cited in the proposal's `## Sources`; a feature remembered but not read is not written down.
 - **Proposing a bug.** A defect found while reading — a schema that rejects what the editor saves, a field the save strips — is fixed in the pass with its regression test, in its own commit. A proposal is for behaviour that does not exist yet.
 - **Taking the reference product whole.** A pass takes the lean core of the reference product that makes sense for a single-owner resource, and writes each larger feature it leaves out (smart lists, sharing, AI) as a deferred or rejected page, so the next pass does not find it again as a gap.
-- **Fanning the pass out to agents.** Triage needs every idea of an area in one head (the `openspec` skill, `references/area-passes.md`), and an agent's verdict is a judgement made without the rest of the area — a `haiku` map of a broad area is the most a read may hand down (the `llm-delegation` skill, "In a session").
+- **Fanning the pass out to agents.** Triage needs every idea of an area in one head, as the `openspec` skill (`references/area-passes.md`) sets out, and an agent's verdict is a judgement made without the rest of the area — a `haiku` map of a broad area is the most a read may hand down, as the `llm-delegation` skill ("In a session") sets out.
 - **A hand-kept list of which areas were reviewed and when.** Each pass's commit subject names the area and its result, so `git log --grep "product-review"` is the record.
 
 ## The loop
@@ -47,7 +47,7 @@ flowchart TD
 - **Every area has a reference product**, and a surface is judged against it before it is judged against taste; the table of them is `openspec/specs/architecture/design-sources/design.md`, and a pick not yet in it travels in the proposal's `## Sources` until the surface ships (`references/reference-products.md`).
 - **Inventory from the code, not the docs** — the store, the content schema and the components say what exists; a feature page can be stale (`references/gap-inventory.md`).
 - **Every open proposal is re-verified each pass** — still unbuilt, still consistent with the code, sources still resolving (`references/verifying-proposals.md`).
-- **A proposal built in the same session** follows the ship lifecycle at once: archived into its capability with the design rewritten as built, and its roadmap line deleted (`.agents/skills/openspec/references/page-shapes.md`).
+- **A proposal built in the same session** follows the ship lifecycle at once: archived into its capability with the design rewritten as built, and its roadmap line deleted, as the `openspec` skill (`references/page-shapes.md`) sets out.
 - **The pass reports its churn**: proposals added, decisions changed, bugs fixed, and — when all three are zero — that the area converged (`references/convergence.md`).
 - **Starting a pass** uses the prompt in `references/prompts.md`, so every run asks the same questions.
 

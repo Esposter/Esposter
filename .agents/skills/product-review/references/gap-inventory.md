@@ -18,8 +18,8 @@ Read when reading a surface to list what it is missing.
 - **Is every binding read, every answer used, and the thing being made shown?** Follow each picker's value, each setting and each mutation's return to what consumes it: a binding saved and read nowhere, a procedure whose answer the client drops after counting it, an editor that draws a stand-in for what it makes and leaves the real render to the published page. These pass every other question — the save round-trips, the export exists — and still leave the type unable to do its job.
 - **How does the work get out?** Export, share, print — a type whose content cannot leave except by publishing is a gap.
 - **What is dead weight?** A column that says the same thing on every row, an enum with one member, a setting nobody changes — a removal is as much a finding as an addition.
-- **Is the first want met at the point of need?** The `ux` skill's reachability rules (`.agents/skills/ux/references/point-of-need.md`), applied to each action found.
+- **Is the first want met at the point of need?** Apply the reachability rules in the `ux` skill (`references/point-of-need.md`) to each action found.
 
 ## Writing it down
 
-Each gap becomes exactly one of: a fix with a test, a proposal, a deferred idea, a rejected idea (`.agents/skills/openspec/references/area-passes.md`). A proposal with several separable parts becomes a program whose design holds the build order (`.agents/skills/openspec/references/page-shapes.md`), as `openspec/changes/infra-agent-console-program/design.md` does. A gap left as a sentence in a report and nowhere else is found again next pass — which is churn.
+Each gap becomes exactly one of: a fix with a test, a proposal, a deferred idea, a rejected idea, the last three being the `openspec` skill's triage buckets (`references/area-passes.md`). A proposal with several separable parts becomes a program whose design holds the build order, as the `openspec` skill (`references/page-shapes.md`) describes and `openspec/changes/infra-agent-console-program/design.md` does. A gap left as a sentence in a report and nowhere else is found again next pass — which is churn.

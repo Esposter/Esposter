@@ -10,7 +10,7 @@ The user's ask names an area, or all of them. Either way the session runs `pnpm 
 - the open proposals it will verify;
 - the deferred and rejected pages it has read, so the user can see what will not be re-proposed.
 
-An ask for "all products" is taken area by area in the order the user gives, else by the rule in `.agents/skills/product-review/SKILL.md`; the session reports after each area rather than once at the end, so a long review is useful before it finishes.
+An ask for "all products" is taken area by area in the order the user gives, else by the rule in `SKILL.md`; the session reports after each area rather than once at the end, so a long review is useful before it finishes.
 
 ## The questions
 
