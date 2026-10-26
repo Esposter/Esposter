@@ -99,3 +99,5 @@ Thoma's Ascension 1 passive, Constellation 1 and Fiery Collapse on a shielded ch
 - **THEN** that effect has no effect
 
 ## Open
+
+- [ ] **Flaming Assault's gate in gcsim is Ascension 1, not the wiki's Ascension 4** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/thoma/asc.go:31`: its gate is Ascension 1, against the wiki's 4th Ascension Passive.
