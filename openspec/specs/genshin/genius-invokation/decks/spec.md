@@ -306,7 +306,7 @@ A hit that takes a standing character's shield to 0 SHALL call each card attache
 
 ### Requirement: Shimenawa's Reminiscence reduces a side's Talent card or Elemental Skill from any character
 
-Shimenawa's Reminiscence SHALL reduce, once per round, a Talent card or an Elemental Skill paid by any character on its side, whichever character carries the artifact. Its game text names the side ("you play a Talent card or a Character uses an Elemental Skill"). The wiki's Equipment Card page reads "the character", so this reading is provisional.
+Shimenawa's Reminiscence SHALL reduce, once per round, a Talent card or an Elemental Skill paid by any character on its side, whichever character carries the artifact. Its game text names the side ("you play a Talent card or a Character uses an Elemental Skill", `~/Esposter.noindex/genshin-parity/text/TextMap/TextMapEN.json`, text 455966544, on the card `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/GCGCardExcelConfigData.json` id 312014). The wiki's Equipment Card page reads "the character", so this reading is provisional.
 
 #### Scenario: The artifact on a standby character reduces the active character's Elemental Skill
 
@@ -339,5 +339,5 @@ A character still standing that loses HP or shield SHALL hear the DMG it takes t
 - [ ] **A card's damage bonus applies only to the skills it names** — no source yet: the check that reads a skill's kind (Normal Attack or not) was not located.
 - [ ] **An opponent deck is legal only when every talent card it holds has its character in the deck** — no source yet: no legality check was found in the deck build or read scripts.
 - [ ] **While the opponent has declared its end, the side's prepared skills wait** — no source yet: the named source is repo code, which is not game evidence, and the wiki's rules page is not in `~/Esposter.noindex/cache/genshin-wiki`.
-- [ ] **The card values and card behaviours in the scenarios match the game** — no source yet: the wiki's card pages are not in the cache, and the medium text map holds no card texts. The cache was checked again: no cached page is a Genius Invokation card page, so the values are still unread.
-- [ ] **Shimenawa's Reminiscence reduces a side's Talent card or Elemental Skill from any character** — no source yet: the wiki's Equipment Card page, which design.md cites for the "the character" wording, is not in the cache, and no cached page names Shimenawa's Reminiscence; its card text is not yet read.
+- [ ] **The card values and card behaviours in the scenarios match the game** — no source yet: the scenarios' card values are not yet checked against `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/GCGCardExcelConfigData.json`, and the wiki's card pages are not in the cache.
+- [ ] **Shimenawa's Reminiscence reduces a side's Talent card or Elemental Skill from any character** — no source yet: the wiki's Equipment Card page, which design.md cites for the "the character" wording, is not in the cache, and no cached page names Shimenawa's Reminiscence.
