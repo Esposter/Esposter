@@ -6,7 +6,7 @@ The swell each segment of the login's music carries, one gain per window over ev
 
 ### Requirement: Whole-section swell
 
-Each segment of the login music SHALL swell or fade as a whole, with one gain per window over all its voices, so that a section plays louder or softer than the one before it `scripts/src/services/genshinParity/music/fitMusicExpression.ts`.
+Each segment of the login music SHALL swell or fade as a whole, with one gain per window over all its voices, so that a section plays louder or softer than the one before it.
 
 #### Scenario: Section louder than the last
 
@@ -26,7 +26,7 @@ The swell SHALL be a gain on a segment's whole output, so that a chord already r
 
 - **GIVEN** a chord is ringing
 - **WHEN** its section fades
-- **THEN** the chord fades with the section `packages/genshin-engine/src/audio/createMusicPlayer.ts`
+- **THEN** the chord fades with the section
 
 ### Requirement: Gain ramps between window centres
 
@@ -35,11 +35,11 @@ Each segment's gain SHALL ramp between the windows' centres, evenly in decibels.
 #### Scenario: Between two windows
 
 - **WHEN** playback moves between two windows' centres
-- **THEN** the gain ramps evenly in decibels between them `packages/genshin-engine/src/audio/scheduleMusicExpression.ts`
+- **THEN** the gain ramps evenly in decibels between them
 
 ### Requirement: Fitted after the instruments
 
-The gains SHALL be fitted after the instruments against the game's sound, and a second fit SHALL move them little `scripts/src/services/genshinParity/commands/expressionCommand.ts`.
+The gains SHALL be fitted after the instruments against the game's sound, and a second fit SHALL move them little.
 
 #### Scenario: Fit run again
 
@@ -50,3 +50,7 @@ The gains SHALL be fitted after the instruments against the game's sound, and a 
 
 - [ ] **The whole segment swells or fades by about twenty decibels across its voices** — no source yet: no level measurement of a swell is recorded.
 - [ ] **The gains change little when the expression is fitted a second time** — no source yet: no second run's output is recorded.
+- [ ] **Each segment swells or fades as a whole, with one gain per window over all its voices** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The swell is a gain on a segment's whole output, so a chord already ringing fades with its section** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Each segment's gain ramps between the windows' centres, evenly in decibels** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The gains are fitted after the instruments against the game's sound** — no source yet: game data or a snapshot that holds this behaviour
