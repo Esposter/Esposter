@@ -231,7 +231,7 @@ The crafting bench SHALL show each recipe the party has learned together with it
 
 ### Requirement: A conversion turns one material into another with its catalyst
 
-The bench SHALL hold each conversion of the game's conversion sections as a recipe that takes one material and the catalyst it names, makes one item and costs no Mora (the convert rows of `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/CombineExcelConfigData.json` carry no Mora). A conversion SHALL be open from the start.
+The bench SHALL hold each conversion of the game's conversion sections as a recipe that takes one material and the catalyst it names, makes one item and costs the Mora its row names (most convert rows name none; 21 rows of combine type five name 300, 900 or 2700, in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/CombineExcelConfigData.json`). A conversion SHALL be open from the start.
 
 #### Scenario: a conversion takes its material and its catalyst
 
@@ -245,11 +245,11 @@ The bench SHALL hold each conversion of the game's conversion sections as a reci
 - **WHEN** the recipe build runs
 - **THEN** the row is left out of the bench's recipes
 
-#### Scenario: a conversion is limited by its catalyst, not by Mora
+#### Scenario: a conversion is limited by its catalyst and by the Mora its row names
 
 - **GIVEN** the bag holds more of a conversion's material than its catalyst pays for
 - **WHEN** the times the conversion can be crafted are counted
-- **THEN** the count is the least the catalyst pays for, with no limit from Mora
+- **THEN** the count is the least the catalyst pays for, and for a conversion whose row names Mora, the least the wallet's Mora pays for too
 
 #### Scenario: a conversion spends its material and its catalyst from the bag
 
