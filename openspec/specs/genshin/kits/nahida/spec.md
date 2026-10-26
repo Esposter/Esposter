@@ -180,7 +180,7 @@ From Constellation 2, a Quicken, Aggravate or Spread on an enemy Nahida has mark
 
 ### Requirement: Constellation 4's Elemental Mastery from marked enemies
 
-From Constellation 4, Nahida's Elemental Mastery SHALL rise by 80 with one marked enemy within 30 metres of her, and by 20 more for each further one up to four, and SHALL rise by nothing with none.
+From Constellation 4, Nahida's Elemental Mastery SHALL rise by 80 plus 20 for each marked enemy within 30 metres of her, up to four, so by 100 with one and 160 with four, and SHALL rise by nothing with none.
 
 #### Scenario: One marked enemy in reach adds 100 Elemental Mastery
 
