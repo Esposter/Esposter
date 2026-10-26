@@ -355,19 +355,21 @@ The only case where a ramp stays raw is an artist painting it in linear values, 
 
 ## Open
 
-- **The colour space of each texture** is settled by the per-slot rule above, Provisional until a frame confirms it.
-- **The shade term's `z` and `w`.** Their expressions are read; their fitted values are not.
-- **The lit colour `C`.** The sum of the main colour, the ramp, the sun, the sky ambient, the specular and the rim is not yet assembled into one expression.
-- **Hair constants.** The hair equations are written; the face's threshold and flip are read from the game's own light and root bone.
-- **The deferred pass's character branch.** The gate and C_branch are written; the light loops, the shadow terms and the final output are not traced, so the light sum is not written. The byte's target is Provisional.
-- **The metal gate.** The body variant read for the emission and the specular uses no metal constant, so the "Lm.r > 0.9" gate and the matcap are not confirmed by it; they stay Provisional until a variant that reads "_MTMap" is traced.
-- **The register-to-texture binding.** The order the parameter table lists the textures is used for the bindings above; a check against a rendered frame is still to be made.
-- **A PMX AdditionalUv sphere is not drawn.** Its mode reads the mesh's second UV set (`subUv`), which the geometry carries, but the sphere is laid over the diffuse only for Multiply and Add; the mode is open until its colour is checked against a rendered pack.
-- **TOON_SPECULAR_ON is defined by no uber variant** — not found: no listing under `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber` (6,337 of them) and no `Shader#*.dat` dump (43) holds the keyword.
-- [ ] **The uber's 1,553 compiled programs sort into the five pass classes** — no source yet: `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber` holds 6,337 listings, not 1,553, and the classing is not reproduced.
+- [ ] **The colour space of each texture** — no source yet: a rendered frame that confirms the per-slot rule above.
+- [ ] **The shade term's `z` and `w`** — no source yet: their fitted values; the expressions are read.
+- [ ] **The lit colour `C`** — no source yet: the sum of the main colour, the ramp, the sun, the sky ambient, the specular and the rim, not yet assembled into one expression.
+- [ ] **Hair constants** — no source yet: the face's threshold and flip, read from the game's own light and root bone; the hair equations are written.
+- [ ] **The deferred pass's character branch** — no source yet: the light loops, the shadow terms and the final output, not traced, so the light sum is not written; the byte's target is Provisional.
+- [ ] **The metal gate** — no source yet: a body variant that reads `_MTMap`, since the variant read for the emission and the specular uses no metal constant, so the "Lm.r > 0.9" gate and the matcap are unconfirmed.
+- [ ] **The register-to-texture binding** — no source yet: a check against a rendered frame of the order the parameter table lists the textures, which the bindings above use.
+- [ ] **A PMX AdditionalUv sphere is not drawn** — no source yet: its colour checked against a rendered pack. Its mode reads the mesh's second UV set (`subUv`), which the geometry carries, but the sphere is laid over the diffuse only for Multiply and Add.
+- [ ] **TOON_SPECULAR_ON is defined by no uber variant** — no source yet: no listing under `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber` (6,337 of them) and no `Shader#*.dat` dump (43) holds the keyword.
+- [ ] **The uber's 1,553 compiled programs sort into the five pass classes** — contradicted by `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber`: it holds 6,337 listings, not 1,553.
+- [ ] **The uber's programs sort into the five pass classes** — no source yet: the classing is not reproduced.
 - [ ] **The candidate counts (body 124 and 41, hair 60 and 5, face 68 and 30, outline 16 and 24)** — no source yet: a count over the uber's keyword sets.
-- [ ] **Programs 795, 753, 788 and 958 are vertex programs** — contradicted in part: `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber/00795.asm`, `00753.asm`, `00788.asm` and `00958.asm` each carry a `ps_5_0` header and one `SV_Target` output, which is a pixel program. The table's Vertex stage and the outline's "vertex 958" attribution are not borne out, and need re-deriving from the listings.
-- [ ] **Each program's container is DXBC or DXIL as the table says** — contradicted: all 6,337 listings under `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber` carry the D3D shader disassembler header and none carries a DXIL marker, so the table's DXIL entries are not borne out.
+- [ ] **Programs 795, 753, 788 and 958 are vertex programs** — contradicted by `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber/00795.asm`: a `ps_5_0` pixel program with one `SV_Target`; so are 00753, 00788 and 00958.
+- [ ] **The table's Vertex stage and the outline's "vertex 958" attribution** — no source yet: they need re-deriving from the listings.
+- [ ] **Each program's container is DXBC or DXIL as the table says** — contradicted by `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber`: all 6,337 listings carry the D3D disassembler header, none a DXIL marker.
 - [ ] **The metal gate's threshold `Lm.r > 0.9`** — no source yet: pixel 460's literal list has 0.93 but no 0.9, so the threshold is not read from the program.
 - [ ] **The half-Lambert scale 0.4975 in `N_v`** — no source yet: 0.4975 is not a literal in any of the 6,337 listings under `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber` (searched), so its use in the program is not read. The repo's `HALF_LAMBERT_SCALE` holds the value, not the program's use.
 - [ ] **The region thresholds 0.8, 0.6, 0.4 and 0.2** — no source yet: pixel 460's literal list holds 0.2 but no 0.8, 0.6 or 0.4, so these are not read as literals.
