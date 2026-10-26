@@ -1,6 +1,6 @@
 ## Purpose
 
-Kamisato Ayaka's kit as built: her strikes, charged attack and plunges, Kamisato Art: Hyouka, Soumetsu's storms and Senho's Cryo infusion, with Senho's Cryo application, her first and fourth ascension effects, and her fourth and sixth constellations left unbuilt.
+Kamisato Ayaka's kit as built: her strikes, charged attack and plunges, Kamisato Art: Hyouka, Soumetsu's storms and Senho's Cryo infusion, with her first ascension and her first, second, fourth and sixth constellations built; Senho's Cryo application and her fourth ascension effect are left unbuilt.
 
 ## Requirements
 
