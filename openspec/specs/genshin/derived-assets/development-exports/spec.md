@@ -92,12 +92,6 @@ A landmark within an exported family's extent that the export stands in for SHAL
 - **THEN** the landmark is hidden
 - **AND** the body still collides with it
 
-## Open
-
-- [ ] **No production build holds a byte of the exports** — no source yet: a production build's output, which is not on disk.
-- [ ] **The body still collides with a landmark hidden for an export** — no source yet: a checked collider test of the body against a landmark hidden for an export.
-- [ ] **The body stands on our ground and collides with our stand-ins while exports are drawn** — no source yet: a checked test of the body standing on our ground and colliding with our stand-ins while exports are drawn.
-
 ### Requirement: Collision and ground remain our own data
 
 The body and the camera SHALL collide with our stand-ins and walk on our ground, whether or not exports are drawn.
@@ -108,3 +102,9 @@ The body and the camera SHALL collide with our stand-ins and walk on our ground,
 - **WHEN** the body walks
 - **THEN** it stands on our ground
 - **AND** it collides with our stand-ins
+
+## Open
+
+- [ ] **No production build holds a byte of the exports** — no source yet: a production build's output, which is not on disk.
+- [ ] **The body still collides with a landmark hidden for an export** — no source yet: a checked collider test of the body against a landmark hidden for an export.
+- [ ] **The body stands on our ground and collides with our stand-ins while exports are drawn** — no source yet: a checked test of the body standing on our ground and colliding with our stand-ins while exports are drawn.
