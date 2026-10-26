@@ -11,8 +11,7 @@ import { withFinalizerAsync } from "@esposter/shared";
 // Start to that moment, then the page's load bench, which reads the load steps' measures, the requests and the scene.
 // Given a crossing, the screen is then moved and its crossing read once settled
 export const loadScreen = async (options: ParityPageOptions, crossing?: ScreenCrossing): Promise<LoadReading> => {
-  // Opened at its load event rather than once idle, so a fetch issued after ready is not counted into the reading
-  const { close, page } = await openParityPage({ ...options, isFrameRateUnlimited: false, isOpenedAtLoad: true });
+  const { close, page } = await openParityPage({ ...options, isFrameRateUnlimited: false });
   return withFinalizerAsync(
     async () => {
       // Both readings in one evaluate, so the bench and the ready milliseconds are taken together at the ready signal

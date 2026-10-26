@@ -35,7 +35,6 @@ describe(loadScreen, () => {
     expect(vi.mocked(openParityPage).mock.lastCall?.[0]).toStrictEqual({
       height: 1080,
       isFrameRateUnlimited: false,
-      isOpenedAtLoad: true,
       screen: "WorldScreen",
       width: 1920,
     });
