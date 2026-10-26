@@ -76,7 +76,7 @@ The user's one batch, checked whenever convenient ([parity](../../specs/genshin/
 - [ ] **Does Savvy Strategy's cooldown start at its drain, not its press?** — [Jahoda](../../specs/genshin/kits/jahoda/design.md): gcsim starts it at the drain, and the framework at the press, which is shipped.
 - [ ] **Do Jahoda's strikes, charged shot, flask hits and plunges deal poise?** — [Jahoda](../../specs/genshin/kits/jahoda/design.md): gcsim gives none, so they deal zero.
 - [ ] **Do Jahoda's plunges land at once with the shared reach?** — [Jahoda](../../specs/genshin/kits/jahoda/design.md): no gcsim plunge file, so they land at 0 seconds.
-- [ ] **Do Kinich's plunges deal the wiki's 100, 150 and 25 poise, and land as their action starts?** — [Kinich](../../specs/genshin/kits/kinich/design.md): gcsim gives him no plunge file, so the kit borrows the shared reach and a provisional 0.4 seconds.
+- [ ] **Do Kinich's plunges land as their action starts?** — [Kinich](../../specs/genshin/kits/kinich/design.md): gcsim gives him no plunge file, so the kit borrows the shared reach and a provisional 0.4 seconds. Their poise is the wiki's rows on Nightsun Style, 150 low, 200 high and 35 collision.
 - [ ] **Reputation reward page list** — [Reputation](../../specs/genshin/reputation/design.md): the rows, marks and sizes sit as the 18-second reference frame shows them.
 - [ ] **Desert clip is a sandstorm** — [Weather](../../specs/genshin/weather/design.md): what blows across the clip is the sandstorm the haze is matched to, not a dust column.
 - [ ] **Snezhnaya's flakes are falling snow** — [Weather](../../specs/genshin/weather/design.md): the flakes in the wiki's frame are the snowfall, not a sky detail.
