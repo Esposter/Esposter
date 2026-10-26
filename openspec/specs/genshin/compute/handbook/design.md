@@ -11,4 +11,5 @@ Nothing here.
 ## Open
 
 - [ ] **Handbook: the Experience page's commission rows at a 249.5 pitch** — no source yet: a layout constant or measured pitch for the rows; the component names only the 242 high card.
-- [ ] **The Experience page is still over the FLIP bar** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The Experience page is still over the FLIP bar** — no source yet: the parity snapshot's row holds only the whole page's FLIP, 0.2456, and no part of the page is scored.
+- [ ] **The titles, reward tiles, tabs and chapter checks match the frame's widths, colours and sizes** — no source yet: no part of the page is scored in the parity snapshot, so each measure is unchecked against the frame.
