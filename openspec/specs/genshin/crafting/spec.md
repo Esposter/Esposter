@@ -87,7 +87,7 @@ The number of a recipe that can be crafted SHALL be the least count its material
 
 ### Requirement: Condensed Resin stops at the five a player can hold
 
-Crafting Condensed Resin SHALL be refused once the bag has no room for another (the game's text 953962629 in `~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json` says no more than 5 can be held).
+Crafting Condensed Resin SHALL be refused once the bag has no room for another (the game's text 953962629 says no more than 5 can be held).
 
 #### Scenario: A craft of Condensed Resin is refused with five held
 
@@ -231,11 +231,11 @@ The crafting bench SHALL show each recipe the party has learned together with it
 
 ### Requirement: A conversion turns one material into another with its catalyst
 
-The bench SHALL hold each conversion of the game's conversion sections as a recipe that takes one material and the catalyst it names, makes one item and costs no Mora (the convert rows of `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/CombineExcelConfigData.json` carry no Mora). A conversion SHALL be open from the start.
+The bench SHALL hold each conversion of the game's conversion sections as a recipe that takes one material and the catalyst it names, makes one item and costs no Mora (the convert rows carry no Mora). A conversion SHALL be open from the start.
 
 #### Scenario: a conversion takes its material and its catalyst
 
-- **GIVEN** a conversion row of combine type nine that takes a boss material and Dream Solvent (`CombineExcelConfigData.json`, combine type 9: Dvalin's Claw and Dream Solvent make Dvalin's Plume)
+- **GIVEN** a conversion row of combine type nine that takes a boss material and Dream Solvent (combine type 9: Dvalin's Claw and Dream Solvent make Dvalin's Plume)
 - **WHEN** the recipe build runs
 - **THEN** the conversion is held with its material and its catalyst, one result and no Mora
 
