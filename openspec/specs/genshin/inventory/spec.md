@@ -241,3 +241,20 @@ Using a food SHALL take one of that food from the bag and apply its heal to the 
 
 - [ ] **The bag opens on B** — no source yet: no key binding to `B` is traced in the code, and the wiki's Controls page is not cached in `~/Esposter/cache/genshin-wiki`.
 - [ ] **Every one- to three-star weapon is destroyable** — no source yet: ten one-star rows of `~/Esposter/genshin-parity/text/ExcelBinOutput/WeaponExcelConfigData.json` carry no destroy rule.
+- [ ] **The bag holds everything in nine tabs, in the game's order, each with the game's own name** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The bag opens on the weapons tab, with its weapons sorted by level from the highest** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **An item stacks up to its own stack limit, and each weapon or artifact is an entry of its own** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A picked up weapon becomes an entry at level one, in its first phase, with no EXP and at refinement rank one** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A pick up the bag has no room for is left over where it lay** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The game's full-bag hint shows over the world on such a pick up, and the next pick up clears it** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Each tab sorts as the game sorts it: weapons by level, furnishings from the first obtained, and ties by rank and then the order obtained** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The wallet counts the game's currencies: Mora, Primogems, Genesis Crystals, the Intertwined and Acquaint Fates, Masterless Starglitter, Stardust, Stella Fortuna and Original Resin** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Original Resin regenerates from the moment it last changed** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **An entry is destroyable only when the game's destroy rule returns materials, and returns exactly the materials its table names** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A one to three star weapon returns its enhancement ore times its rarity when destroyed** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A four or five star weapon cannot be destroyed** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The destroy mode ticks the entries the player picks, offers quick selects by rarity, and destroys only after confirmation** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The confirm lists the chosen entries and the materials they return under the game's Recovered line, and warns that the action cannot be undone** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The OK button is held off under the game's bag-full line when the returns have no room** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Using a food takes one of it from the bag and applies its heal to the target it names, never past full health** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A picked up material shows its name in the reader's language** — no source yet: game data or a snapshot that holds this behaviour
