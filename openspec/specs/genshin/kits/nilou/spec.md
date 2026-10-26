@@ -34,11 +34,12 @@ Nilou's Dance of Haftkarsvar SHALL deal damage equal to a share of her Max HP an
 - **THEN** the damage equals a share of Nilou's Max HP
 - **AND** Pirouette begins for ten seconds
 
-#### Scenario: Recast restarts Pirouette
+#### Scenario: Recast is refused by the cooldown
 
 - **GIVEN** Pirouette is standing
 - **WHEN** the player casts Dance of Haftkarsvar again
-- **THEN** Pirouette restarts
+- **THEN** the cast is refused by the cooldown the first cast set
+- **AND** Pirouette is not restarted
 
 ### Requirement: Lunar Prayer from the third step
 
@@ -218,5 +219,4 @@ Lingering Aeon, Tranquility Aura and the Whirling Steps' later presses SHALL NOT
 ## Open
 
 - [ ] **Golden Chalice's Bounty needs a Dendro member and no member that is neither Dendro nor Hydro** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/nilou/asc.go`: its condition also needs a Hydro member (lines 19 and 20).
-- [ ] **Recast restarts Pirouette** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/nilou/skill.go`: a press while Pirouette stands runs Whirling Steps (lines 92 to 93).
 - [ ] **An Electro or Pyro hit leaves a Bountiful Core standing** — no source yet: design.md names no element rule for the core, and gcsim's core takes a hit of any element alike.
