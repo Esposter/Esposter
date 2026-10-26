@@ -369,5 +369,5 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 - [ ] **Particles give 3 of their element, 1 of another and 2 of none, an orb three times that, and members off the field take 80%, 70% or 60%** — no source yet: gcsim's energy gain code was not opened.
 - [ ] **The Traveler's strikes, charged attack, plunges, Palm Vortex and Gust Surge figures** — no source yet: the wiki's Foreign Ironwind, Palm Vortex and Gust Surge pages are not cached.
 - [ ] **The hit cylinders of 5 and 6 metres, the targeting zone of 15 metres and 10 high, and the score weights 0.7 and 0.3** — no source yet: the wiki's Area of Effect and Targeting pages are not cached.
-- [ ] **The Starlight Prism's coefficient and DMG Bonus by count, as the wiki's Stellar-Conduct page gives them** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A Stellar Vortex's explosion coefficient at Lv. 1 and Lv. 2, as the wiki's Damage page gives them** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The Starlight Prism's coefficient and DMG Bonus by count, as the wiki's Stellar-Conduct page gives them** — no source yet: the wiki's Stellar-Conduct page, named in this page's own text, is not in the wiki cache.
+- [ ] **A Stellar Vortex's explosion coefficient at Lv. 1 and Lv. 2, as the wiki's Damage page gives them** — no source yet: the wiki's Damage page, named in Sources, is not in the wiki cache.
