@@ -30,12 +30,12 @@ The light on the login scene's stone and haze: the stone is lit as the game's de
 
 ## Open
 
-- [ ] **The walkway and the bridges draw no glow, their fitted strength being none** — no source yet: their strengths are in the hosted login stone fit, which is not read here.
+- [ ] **The walkway and the bridges draw no glow, their fitted strength being none** — checked against `~/Esposter.noindex/genshin-parity/extracted/login/Material/LoginScene_Bridge01.json` (the walkway's material) and `LoginScene_Bridge02.json`: `_RGStrength` is 0.0 in both, and the claim is not settled by it because the Bridge03, Bridge04 and pillar materials are not on disk.
 - [ ] **The game draws no outline round its stone** — no source yet: no outline capture or game reference was read for this claim.
-- [ ] **The night darkens at 0.14 a metre of height** — no source yet: the rate is in the hosted `login/stoneLight` record, which is not kept locally, so 0.14 was not read here.
+- [ ] **The night darkens at 0.14 a metre of height** — no source yet: the hosted `login/stoneLight` record is not on disk, and no file in `comparisons/`, `captures/`, `extracted/login` or `extracted/login-layout` holds `stoneLight`.
 - [ ] **The day's haze is dimmer and bluer than the cloud sea's, the dusk's warmer and redder, and the night's close to the sea's** — no source yet: the haze colours are hosted, and no comparison is kept locally.
 - [ ] **The haze's wall stands about 3 metres under the walkway at night and 6 at dawn, and the dusk hides no more than about three quarters of its far towers** — no source yet: the haze tops are not measured in any kept file.
-- [ ] **The phone's frame is drawn at the medium tier** — no source yet: the phone client's tier is set by the client and is not read here.
+- [ ] **The phone's frame is drawn at the medium tier** — no source yet: the phone client is not on disk, and `~/Esposter.noindex/genshin-parity/game/config.ini` holds no quality tier.
 - [ ] **These shadow settings bring the scene's edge count near the reference's** — no source yet: no edge-count comparison is kept in `~/Esposter.noindex/genshin-parity/comparisons/`.
 - [ ] **The stone's glow is its albedo plus an edge glow, drawn only where its length reaches the material's emission range** — no source yet: the door's material export `~/Esposter/genshin-parity/extracted/login-bytype-assets/Material/LoginScene_Door01.json`, not yet read for the emission range.
 - [ ] **The glow's strength is an eighth of the material's for the door and the towers** — no source yet: the door materials `LoginScene_Door01.json` and `LoginScene_Door02.json` in `~/Esposter/genshin-parity/extracted/login-bytype-assets/Material/`, not yet read for the strength.
@@ -45,6 +45,6 @@ The light on the login scene's stone and haze: the stone is lit as the game's de
 - [ ] **The phone's frame draws no occlusion, at the medium quality tier** — no source yet: a recording of the phone frame at the game's medium tier, not yet captured.
 - [ ] **The day's haze thins slowest, with no most opacity, since a most opacity under all scored the phone's door frame worse** — no source yet: no haze-opacity score for the phone's door frame is kept in `~/Esposter.noindex/genshin-parity/comparisons/`.
 - [ ] **Under the dawn's and night's haze the far towers stand darker against their albedo rather than paler, and the stone under the walkway turns wholly to the haze's colour** — no source yet: no tone measurement of the towers under the haze is kept in `~/Esposter.noindex/genshin-parity/comparisons/`.
-- [ ] **The game's stone carries an occlusion strength, and its pipeline darkens creases and the feet of walls on screen** — no source yet: the stone's occlusion strength is not read from the game's material data here.
+- [ ] **The game's stone carries an occlusion strength, and its pipeline darkens creases and the feet of walls on screen** — checked against `~/Esposter.noindex/genshin-parity/extracted/login/Material/LoginScene_Door01.json` and the twelve other `LoginScene_` materials beside it: `_OcclusionStrength` is 1.0 in all thirteen, and the claim is not settled by it because the material data holds no pipeline behaviour for creases or wall feet.
 - [ ] **The dawn draws no occlusion, since under occlusion it scored worse than without, and a reach of 4 metres scored the dawn and the day worse again** — no source yet: no occlusion score is kept in `~/Esposter.noindex/genshin-parity/comparisons/`.
 - [ ] **At the light's own bias the walkway's carved relief casts speckled shadow edges the session's reference does not show** — no source yet: no shadow-edge comparison is kept in `~/Esposter.noindex/genshin-parity/comparisons/`.
