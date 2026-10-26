@@ -15,4 +15,4 @@
 
 ## 4. The Theater Lobby
 
-- [ ] 4.1 Add the Theater Lobby once the Mondstadt Library's interior stands, and open the Theater at Adventure Rank 35. Verify: tests named after the scenarios "Reaching Adventure Rank 35 opens the Theater" and "Below Adventure Rank 35 the Theater stays closed".
+- [ ] 4.1 Add the Theater Lobby once the Mondstadt Library's interior stands, and open the Theater at Adventure Rank 35. Verify: tests named after the scenarios "Reaching Adventure Rank 35 opens the Theater" and "Below Adventure Rank 35 the Theater stays closed". Blocked: the Mondstadt Library's interior is in no spec or change yet, so there is no building to add the lobby to.

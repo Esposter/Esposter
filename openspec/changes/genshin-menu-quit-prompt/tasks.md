@@ -9,4 +9,4 @@
 
 ## 3. Re-measure
 
-- [ ] 3.1 Re-measure the prompt when the longer clip lands, without gating the build. Verify: the re-measure of the menu-quit-prompt clip writes a row for the exit prompt, queued for the user's eyes, and no build step waits on it.
+- [ ] 3.1 Re-measure the prompt when the longer clip lands, without gating the build. Verify: the re-measure of the menu-quit-prompt clip writes a row for the exit prompt, queued for the user's eyes, and no build step waits on it. Blocked: the longer clip `menu-quit-prompt.mkv` is not in the captures folder yet, so there is no recording to re-measure.
