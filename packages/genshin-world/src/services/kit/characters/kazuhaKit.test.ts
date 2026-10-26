@@ -13,7 +13,8 @@ import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
 import { createEnemy } from "#src/services/enemy/createEnemy";
 import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { createKazuhaKitBehaviour, KAZUHA_CHARACTER_ID } from "#src/services/kit/characters/kazuhaKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitBody } from "#src/services/kit/createKitBody";
+import { createKitTestContext, readBuffTuples } from "#src/services/kit/createKitTestContext.test";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
 import { createParty } from "#src/services/party/createParty";
@@ -54,6 +55,37 @@ describe(createKazuhaKitBehaviour, () => {
     expect(kitEffectState.effects).toStrictEqual([
       { characterId: KAZUHA_CHARACTER_ID, element: Element.Anemo, kind: "infusion", secondsRemaining: 5 },
     ]);
+  });
+
+  test("an active constellation's switch changes its character's kit", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createKazuhaCombatant(2));
+    KAZUHA_KIT.elementalBurst.onStart?.(context);
+    const [, , constellationField] = context.kitEffectState.effects;
+    if (constellationField?.kind !== "field") throw new Error("The burst casts no constellation 2 field");
+    constellationField.onTick(context, 0);
+
+    expect(readBuffTuples(context.kitEffectState.effects)).toStrictEqual([[Attribute.ElementalMastery, 200, 1]]);
+  });
+
+  test("the constellation 2 check gives nothing to a member outside the Autumn Whirlwind's circle", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createKazuhaCombatant(2));
+    KAZUHA_KIT.elementalBurst.onStart?.(context);
+    const [, , constellationField] = context.kitEffectState.effects;
+    if (constellationField?.kind !== "field") throw new Error("The burst casts no constellation 2 field");
+    context.body = createKitBody({ x: 10, z: 0 });
+    constellationField.onTick(context, 0);
+
+    expect(readBuffTuples(context.kitEffectState.effects)).toStrictEqual([]);
+  });
+
+  test("an inactive constellation changes nothing", () => {
+    expect.hasAssertions();
+    const context = createKitTestContext(createKazuhaCombatant(1));
+    KAZUHA_KIT.elementalBurst.onStart?.(context);
+
+    expect(context.kitEffectState.effects.map(({ kind }) => kind)).toStrictEqual(["summon", "field"]);
   });
 
   test("the Autumn Whirlwind lands the absorbed element's tick ahead of each tick still to come, absorbing once", () => {

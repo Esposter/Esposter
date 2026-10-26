@@ -96,3 +96,25 @@ Kazuha's first constellation SHALL cut a tenth off both of his skill cooldowns, 
 - **GIVEN** Kazuha is at constellation 6
 - **WHEN** he presses, holds or slashes
 - **THEN** he is infused with Anemo for five seconds
+
+### Requirement: Constellation 2 gives Elemental Mastery within the Autumn Whirlwind
+
+Kazuha's second constellation SHALL give 200 Elemental Mastery for a second, every half second, to the active member standing within nine metres of where the Autumn Whirlwind was cast, and to Kazuha himself when he is off the field, for as long as the whirlwind stands.
+
+#### Scenario: an active constellation's switch changes its character's kit
+
+- **GIVEN** Kazuha is at constellation 2 and casts Kazuha Slash
+- **WHEN** the active member stands within the whirlwind's circle at a check
+- **THEN** that member gains 200 Elemental Mastery for a second
+
+#### Scenario: the constellation 2 check gives nothing to a member outside the Autumn Whirlwind's circle
+
+- **GIVEN** Kazuha is at constellation 2 and the whirlwind stands
+- **WHEN** the active member stands beyond nine metres of where it was cast
+- **THEN** no Elemental Mastery is given
+
+#### Scenario: an inactive constellation changes nothing
+
+- **GIVEN** Kazuha is at constellation 1
+- **WHEN** he casts Kazuha Slash
+- **THEN** no constellation 2 field is cast

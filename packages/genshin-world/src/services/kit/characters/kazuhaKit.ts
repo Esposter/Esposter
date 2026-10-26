@@ -1,7 +1,10 @@
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
+import type { KitSummon } from "#src/models/kit/KitSummon";
 
+import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
@@ -9,9 +12,11 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { ElementDamageBonusAttributeMap } from "#src/services/combat/damage/ElementDamageBonusAttributeMap";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
 import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { elementalMasteryMultiplier } from "#src/services/kit/elementalMasteryMultiplier";
 import { findAbsorbedElement } from "#src/services/kit/findAbsorbedElement";
@@ -32,6 +37,17 @@ const COOLDOWN_CONSTELLATION_MULTIPLIER = 0.9;
 // 5 seconds, which infuses his normal, charged and plunging attacks
 const INFUSION_CONSTELLATION = 6;
 const INFUSION_SECONDS = 5;
+// Measured: gcsim (MIT) kazuha/cons.go, from Constellation 2 the Autumn Whirlwind's field, 9 metres round where he cast it,
+// checks every half second: the active member within it gains 200 Elemental Mastery for a second, and Kazuha too when he is
+// off the field. Its effects do not stack, so each check restarts the one before it
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kazuha/cons.go
+const CONSTELLATION_2 = 2;
+const CONSTELLATION_2_RADIUS = 9;
+const CONSTELLATION_2_CHECK_SECONDS = 0.5;
+const CONSTELLATION_2_ELEMENTAL_MASTERY = 200;
+const CONSTELLATION_2_SECONDS = 1;
+const CONSTELLATION_2_FIELD_ID = "kazuha-autumn-whirlwind-constellation-2";
+const CONSTELLATION_2_SOURCE = "kazuha-constellation-2";
 // Poetics of Fuubutsu, Kazuha's Ascension 4 passive as its text gives it: a Swirl he triggers gives each party member an
 // Elemental DMG Bonus to the absorbed element of 0.04% for every point of his Elemental Mastery, for 8 seconds
 const ASCENSION_4 = 4;
@@ -49,12 +65,35 @@ const addInfusion = ({ activeCombatant: combatant, kitEffectState }: KitContext)
   });
 };
 
+// Constellation 2's field, cast with the Autumn Whirlwind and standing as long as it: each check gives the active member, and
+// Kazuha too when he is off the field, Elemental Mastery for a second while the active member stands within its circle
+const castConstellation2Field = (kitEffectState: KitEffectState, characterId: number, whirlwind: KitSummon): void => {
+  const field = castKitField(kitEffectState, characterId, whirlwind.body.position, {
+    id: CONSTELLATION_2_FIELD_ID,
+    nextTickSeconds: 0,
+    onTick: ({ activeCombatant, body, kitEffectState: tickState }) => {
+      if (!checkIsInKitField(field, body.position)) return;
+      const buff = {
+        amount: CONSTELLATION_2_ELEMENTAL_MASTERY,
+        attribute: Attribute.ElementalMastery,
+        secondsRemaining: CONSTELLATION_2_SECONDS,
+        source: CONSTELLATION_2_SOURCE,
+      };
+      buffKitMember(tickState, activeCombatant.characterId, buff);
+      if (activeCombatant.characterId !== characterId) buffKitMember(tickState, characterId, buff);
+    },
+    radius: CONSTELLATION_2_RADIUS,
+    secondsRemaining: whirlwind.secondsRemaining,
+    tickIntervalSeconds: CONSTELLATION_2_CHECK_SECONDS,
+  });
+};
+
 export const KAZUHA_CHARACTER_ID = 10_000_047;
 
 // Kazuha's behaviour: Chihayaburu's press and hold and Kazuha Slash each give him Constellation 6's infusion, and Kazuha
-// Slash casts its Autumn Whirlwind with its absorb check. Constellation 1 shortens his skill cooldowns.
+// Slash casts its Autumn Whirlwind with its absorb check. Constellation 1 shortens his skill cooldowns, and Constellation 2's
+// field gives Elemental Mastery within the Autumn Whirlwind.
 // Poetics of Fuubutsu is built from Ascension 4. The absorption of the Chihayaburu from Ascension 1 is not built.
-// Constellation 2 needs the Elemental Mastery buff on Kazuha and on members within Autumn Whirlwind, not built
 // Constellation 4 needs his Energy under 45 effects, which the kit does not read, not built
 export const createKazuhaKitBehaviour = ({
   readArea,
@@ -98,6 +137,8 @@ export const createKazuhaKitBehaviour = ({
           secondsRemaining: absorbCheckLastSeconds + ABSORB_FIELD_LINGER_SECONDS,
           tickIntervalSeconds: absorbCheckIntervalSeconds,
         });
+        if (combatant.constellationCount >= CONSTELLATION_2)
+          castConstellation2Field(kitEffectState, combatant.characterId, whirlwind);
       },
     },
     getSkillCooldownMultiplier: ({ activeCombatant: combatant }) =>
