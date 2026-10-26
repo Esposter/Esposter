@@ -64,7 +64,7 @@ describe(createAloyKitBehaviour, () => {
     expect.hasAssertions();
     const hitmarks = ALOY_KIT.elementalSkill.hits.map((hit) => Math.round(hit.hitmarkSeconds * 60));
 
-    expect(hitmarks).toStrictEqual([25, 31, 37]);
+    expect(hitmarks).toStrictEqual([25, 31, 37, 43, 49, 55, 61]);
   });
 
   test("the fourth Chillwater Bomblet coil gives Cryo infusion and Rushing Ice, which holds off more coils", () => {
@@ -96,7 +96,7 @@ describe(createAloyKitBehaviour, () => {
     expect(kitEffectState.effects).toStrictEqual(effectsInRushingIce);
   });
 
-  // Four coil stacks, the fourth from the second Chillwater Bomblet, start Rushing Ice on a combatant of the given ascension
+  // Four coil stacks, each from a Chillwater Bomblet, start Rushing Ice on a combatant of the given ascension
   const startRushingIce = (ascension: number) => {
     const combatant: Combatant = { ...createAloyCombatant(), ascension };
     const context = createKitTestContext(combatant);

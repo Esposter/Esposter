@@ -19,6 +19,8 @@ import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
 // Provisional: gcsim gives the coils no end while Aloy is on the field, so they are a resource Rushing Ice spends
 const COIL_RUSHING_ICE_STACKS = 4;
 const COIL_RESOURCE_ID = "aloy-coil";
+// The Chillwater Bomblets Freeze Bomb releases, each a hit after its own, as the wiki's Gameplay Notes give them
+const CHILLWATER_BOMBLET_COUNT = 6;
 const RUSHING_ICE_STATUS_ID = "aloy-rushing-ice";
 // Measured: gcsim v2.47.2 (MIT) aloy/asc.go, Ascension 1: while Rushing Ice holds, Aloy's ATK rises by 16% and each nearby
 // Party member's by 8%, for its seconds
@@ -52,7 +54,7 @@ const addCryoStacks = (
     source: ASCENSION_4_SOURCE,
   });
 
-// Aloy's behaviour: each of Freeze Bomb's two Chillwater Bomblets adds a coil stack as it strikes, and four coil stacks
+// Aloy's behaviour: each of Freeze Bomb's six Chillwater Bomblets adds a coil stack as it strikes, and four coil stacks
 // Give Cryo infusion for the table's seconds of Rushing Ice. From Ascension 1, Rushing Ice raises the ATK of the deployed
 // Team, and Aloy's own by 8% more, and from Ascension 4 it raises her Cryo DMG Bonus a step each second. Her Coil and Rushing
 // Ice normal attack bonuses are not built, as no kit step reads a normal attack's DMG bonus from the team's effects. Her
@@ -107,6 +109,8 @@ export const createAloyKitBehaviour = ({ readSeconds }: KitRecordReader): KitBeh
         addCryoStacks(tickKitEffectState, combatant.characterId, second + 1, rushingIceSeconds - second),
       );
   };
-  // Freeze Bomb's own hit, then its two Chillwater Bomblets
-  return { skill: { hits: [{}, { onStrike: addCoilStack }, { onStrike: addCoilStack }] } };
+  // Freeze Bomb's own hit, then its Chillwater Bomblets
+  return {
+    skill: { hits: [{}, ...Array.from({ length: CHILLWATER_BOMBLET_COUNT }, () => ({ onStrike: addCoilStack }))] },
+  };
 };
