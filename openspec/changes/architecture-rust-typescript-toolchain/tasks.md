@@ -2,7 +2,7 @@
 
 ## 1. Plain typecheck on `tsrs`
 
-- [x] 1.1 Every package's plain `typecheck` script runs `tsrs --fast`, with `noEmit` read from the shared `tsconfig` chain. Verified by the package scripts and the workspace typecheck passing.
+- [x] 1.1 Every package's plain `typecheck` script runs `tsrs --fast`, with `noEmit` read from the shared `tsconfig` chain, except `packages/db`, which stays on plain `tsc` because `tsrs --fast` reports TS2883 on its two thread-follow files (see `proposal.md`). Verified by the package scripts and the workspace typecheck passing.
 
 ## 2. Explain the file-set difference
 
