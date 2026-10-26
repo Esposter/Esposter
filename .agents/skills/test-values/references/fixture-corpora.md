@@ -6,7 +6,7 @@ A corpus of files — maps, payloads, documents — is the same rule applied to 
 under test can tell apart**, and each file the least content that carries its shape. The shape is what the parser
 branches on and what the assertion reads (an element, an attribute, a value it switches on, the _absence_ of one);
 everything else is another copy of a case already there. Name each file after the shape it carries
-(`emptyObjectLayer.tmx`), not after where it came from, so a reader knows what deleting it would lose, and
+(`<shape>.tmx`), not after where it came from, so a reader knows what deleting it would lose, and
 canonicalize the values inside it like any other literal — a name the code never reads is `""`, a number it never
 reads is `0`, and only what the code branches on keeps a real value.
 
