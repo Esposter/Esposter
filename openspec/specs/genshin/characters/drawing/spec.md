@@ -1,6 +1,6 @@
 ## Purpose
 
-A character's parsed model becomes one skinned mesh, each material shaded by the game's own character shader from its pack's inputs, with its outline and its stance at its holder's origin (`packages/genshin-engine/src/character/createPmxMesh.ts`, `packages/genshin-engine/src/character/createCharacterMaterial.ts`, `packages/genshin-engine/src/character/pose/createCharacterPoser.ts`). The poses it takes are procedural and provisional, not the game's clips.
+A character's parsed model becomes one skinned mesh, each material shaded by the game's own character shader from its pack's inputs, with its outline and its stance at its holder's origin. The poses it takes are procedural and provisional, not the game's clips.
 
 ## Requirements
 
@@ -159,3 +159,7 @@ The Traveler SHALL be drawn on the character body at Windrise's start point, fro
 - **GIVEN** a pack is held for the Traveler
 - **WHEN** the world starts
 - **THEN** the Traveler's model is drawn on the body at Windrise
+
+## Open
+
+- [ ] **A character's parsed model is drawn as one skinned mesh, each material in the game's shading** — no source yet: game data or a snapshot that holds this behaviour
