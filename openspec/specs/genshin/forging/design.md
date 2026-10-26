@@ -108,5 +108,5 @@ flowchart TD
 - [ ] **The three refusal lines are the game's own, keyed in `genshin-text`** — no source yet: their `forgePointNoticeTextMapHash` values were not found in `~/Esposter.noindex/genshin-dump-backup-6.6/TextMap/TextMapEN.json`.
 - [ ] **Venti's reduce-time of a fifth, Bennett's one-in-five extra copy, and Diluc's, Zhongli's and Ganyu's 15% ore refund** — no source yet: the talent rows of `ProudSkillExcelConfigData.json` were not opened.
 - [ ] **The forge types 5, 7 and 4 for the claymore, polearm and bow** — no source yet: the weapon-type numbers were not checked against the dump.
-- [ ] **The drop id 208001500 is in neither the dump nor the repository's other tables** — the dump contradicts this: `ForgeExcelConfigData.json` names 208001500 as row 12001's `mainRandomDropId`, and only the random table 20001 holds its results.
+- [ ] **The drop id 208001500 is in neither the dump nor the repository's other tables** — contradicted by `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ForgeExcelConfigData.json`: names 208001500 as row 12001's `mainRandomDropId`.
 - [ ] **Adventure EXP past rank 60 is paid into the wallet as Mora** — no source yet: the rank-60 rule is not in the dump, and the wiki's Forging page is not cached.
