@@ -29,7 +29,7 @@ Enigmatic Feint's press SHALL strike the enemies within its reach, dealing Anemo
 
 ### Requirement: Magic Trick's initial hit and Bogglecat Box
 
-Magic Trick: Astonishing Shift SHALL land an initial hit and place a Bogglecat Box 1.8 metres ahead of Lynette, which ticks eleven times, the first tick 122 frames after the cast and then every 59 frames, each tick striking the enemies within six metres of the box.
+Magic Trick: Astonishing Shift SHALL land an initial hit and place a Bogglecat Box 1.8 metres ahead of Lynette, which ticks eleven times, the first tick 122 frames after the box is placed (136 after the cast) and then every 59 frames, each tick striking the enemies within six metres of the box.
 
 #### Scenario: Initial hit lands
 
