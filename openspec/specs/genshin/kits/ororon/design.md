@@ -33,5 +33,3 @@ Ororon's kit is its record and one behaviour module, `createOroronKitBehaviour`,
 - The proud skill groups 10531, 10532 and 10539 in the hosted game data: the multipliers' indices, the Spirit Orb's 15-second cooldown (group 10532's index 1, `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/ororon/skill.go:68`), and the burst's 9 seconds, 15-second cooldown and 60 energy (group 10539's indices 2, 3 and 4).
 - No YouTube or Bilibili reference snapshot for Ororon is in the repo, so no claim here rests on video.
 
-## Open
-
