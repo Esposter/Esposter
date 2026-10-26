@@ -48,7 +48,7 @@ The door sound SHALL play with its rumble louder than its rush, as the game mixe
 - **THEN** the peak is limited so that it does not clip
 ### Requirement: The door keeps its two stereo channels apart as the game does
 
-The door sound SHALL keep its two stereo channels distinct, with the two channels as alike as the game's own channels are (channels correlated 0.58 against the game's 0.53).
+The door sound SHALL keep its two stereo channels distinct, with the two channels as alike as the game's own channels are.
 
 #### Scenario: The channels are as alike as the game's
 
