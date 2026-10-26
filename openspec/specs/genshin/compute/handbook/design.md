@@ -10,4 +10,4 @@ Nothing here.
 
 ## Open
 
-- [ ] **The titles, reward tiles, tabs and chapter checks match the frame's widths, colours and sizes** — no source yet: no part of the page is scored in the parity snapshot, so each measure is unchecked against the frame.
+- [ ] **The titles, reward tiles, tabs and chapter checks match the frame's widths, colours and sizes** — no source yet: a per-part score against the frame, since the snapshot scores only the whole page, at FLIP 0.2456 (`scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md:35`).
