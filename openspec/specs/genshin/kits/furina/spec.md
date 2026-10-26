@@ -34,7 +34,7 @@ Furina's charged attack SHALL strike a circle round her and turn her Arkhe.
 
 ### Requirement: Salon Solitaire brings out Ousia members or Pneuma's Singer
 
-Salon Solitaire SHALL bring out Gentilhomme Usher, Surintendante Chevalmarin and Mademoiselle Crabaletta in Ousia, or the Singer of Many Waters in Pneuma, and its summons SHALL stand for about 28.9 seconds.
+Salon Solitaire SHALL bring out Gentilhomme Usher, Surintendante Chevalmarin and Mademoiselle Crabaletta in Ousia, or the Singer of Many Waters in Pneuma, and its summons SHALL stand for 30 seconds.
 
 #### Scenario: Ousia members drain the team and strike
 
@@ -62,7 +62,7 @@ Salon Solitaire SHALL bring out Gentilhomme Usher, Surintendante Chevalmarin and
 - **GIVEN** Salon Solitaire's summons stand
 - **WHEN** the player casts Salon Solitaire again
 - **THEN** the earlier summons end
-- **AND** the new summons stand for about 28.9 seconds
+- **AND** the new summons stand for 30 seconds
 
 ### Requirement: Let the People Rejoice builds Fanfare from HP changes
 
@@ -73,7 +73,7 @@ Let the People Rejoice SHALL build Fanfare from changes to team members' HP, up 
 - **GIVEN** Furina is the character on the field
 - **WHEN** the player casts Let the People Rejoice
 - **THEN** a circle round her strikes 98 frames in for a share of her Max HP
-- **AND** the Fanfare starts 95 frames in and lasts 18.2 seconds
+- **AND** the Fanfare starts 95 frames in and lasts 18 seconds
 
 #### Scenario: A change to a member's HP builds points
 
@@ -106,7 +106,7 @@ Let the People Rejoice SHALL build Fanfare from changes to team members' HP, up 
 - **GIVEN** a Fanfare stands
 - **WHEN** the player casts Let the People Rejoice again
 - **THEN** the earlier Fanfare ends
-- **AND** the new Fanfare lasts 18.2 seconds
+- **AND** the new Fanfare lasts 18 seconds
 
 ### Requirement: Endless Waltz from another character's overheal
 
