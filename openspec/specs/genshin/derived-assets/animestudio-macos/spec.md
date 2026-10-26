@@ -1,6 +1,6 @@
 ## Purpose
 
-How the AnimeStudio CLI is built for macOS arm64 from its pinned sources `scripts/src/services/recreation/animeStudio/buildAnimeStudio.ts`, the edits the build applies to the clone `scripts/src/services/recreation/animeStudio/constants.ts`, and the staging and acceptance that keep a failed rebuild from replacing a working CLI.
+How the AnimeStudio CLI is built for macOS arm64 from its pinned sources, the edits the build applies to the clone, and the staging and acceptance that keep a failed rebuild from replacing a working CLI.
 
 ## Requirements
 
@@ -12,14 +12,14 @@ The macOS build SHALL replace the published tool only once the staged build pass
 
 - **GIVEN** the pinned sources built into a staged tool
 - **WHEN** the staged tool passes the parity check
-- **THEN** the staged tool replaces the published tool `scripts/src/services/recreation/animeStudio/buildAnimeStudio.ts`
-- **AND** the build prints the path to set for the tool `scripts/src/animeStudio/index.ts`
+- **THEN** the staged tool replaces the published tool
+- **AND** the build prints the path to set for the tool
 
 #### Scenario: A failing staged build leaves the published tool untouched
 
 - **GIVEN** the pinned sources built into a staged tool
 - **WHEN** the staged tool fails the parity check
-- **THEN** the published tool is left as it was `scripts/src/services/recreation/animeStudio/buildAnimeStudio.ts`
+- **THEN** the published tool is left as it was
 - **AND** the path set for the tool is unchanged
 
 ### Requirement: A rebuild keeps the existing map
@@ -30,7 +30,7 @@ A rebuild SHALL carry the published tool's existing map into the new tool, so a 
 
 - **GIVEN** a published tool holding a map
 - **WHEN** the tool is rebuilt and passes the parity check
-- **THEN** the map is carried into the new tool `scripts/src/services/recreation/animeStudio/buildAnimeStudio.ts`
+- **THEN** the map is carried into the new tool
 
 ### Requirement: The parity check compares file counts against the Windows build
 
@@ -40,14 +40,14 @@ The parity check SHALL pass only when each reference block exports the same coun
 
 - **GIVEN** the reference blocks exported once for each type
 - **WHEN** the counts are compared with the Windows build's
-- **THEN** each type's count matches `scripts/src/services/genshinAssets/shared/checkParityBlock.ts`
-- **AND** no exception is logged `scripts/src/services/recreation/animeStudio/readAnimeStudioExceptions.ts`
+- **THEN** each type's count matches
+- **AND** no exception is logged
 
 #### Scenario: A count that differs fails the check
 
 - **GIVEN** a reference block whose count for some type differs from the Windows build's
 - **WHEN** the counts are compared
-- **THEN** the parity check fails `scripts/src/services/genshinAssets/shared/checkParityBlock.ts`
+- **THEN** the parity check fails
 
 ### Requirement: The parity check is skipped only when the game's blocks are absent
 
@@ -57,14 +57,14 @@ The parity check SHALL be skipped only when the game's blocks are absent, and th
 
 - **GIVEN** the game's blocks absent and a skip requested
 - **WHEN** the build runs
-- **THEN** the parity check is skipped `scripts/src/services/genshinAssets/shared/checkAnimeStudioParity.ts`
-- **AND** the build prints why `scripts/src/services/genshinAssets/shared/checkAnimeStudioParity.ts`
+- **THEN** the parity check is skipped
+- **AND** the build prints why
 
 #### Scenario: A skip request with the game's blocks present is not honoured
 
 - **GIVEN** the game's blocks present and a skip requested
 - **WHEN** the build runs
-- **THEN** the parity check still runs `scripts/src/services/genshinAssets/shared/checkAnimeStudioParity.ts`
+- **THEN** the parity check still runs
 
 ### Requirement: The published tool runs without a separately installed runtime
 
@@ -74,7 +74,7 @@ The published tool SHALL run on a machine with no separately installed runtime o
 
 - **GIVEN** a machine with no separately installed runtime
 - **WHEN** the published tool is run
-- **THEN** it starts and runs `scripts/src/services/recreation/animeStudio/buildAnimeStudio.ts`
+- **THEN** it starts and runs
 
 ### Requirement: Windows-only steps do not run on Apple silicon
 

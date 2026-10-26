@@ -27,10 +27,11 @@ flowchart TD
 
 ## Key files
 
-| File                                                              | Role                                                                                                             |
-| :---------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
-| `scripts/src/animeStudio/index.ts`                                | The macOS build command, `genshin:animestudio:build`                                                             |
-| `scripts/src/services/recreation/animeStudio/buildAnimeStudio.ts` | Fetches the pinned sources, builds the natives, publishes the CLI and copies the dylibs under their import names |
+| File                                                                       | Role                                                                                                             |
+| :------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------- |
+| `scripts/src/animeStudio/index.ts`                                         | The macOS build command, `genshin:animestudio:build`                                                             |
+| `scripts/src/services/recreation/animeStudio/buildAnimeStudio.ts`          | Fetches the pinned sources, builds the natives, publishes the CLI and copies the dylibs under their import names |
+| `scripts/src/services/recreation/animeStudio/readAnimeStudioExceptions.ts` | Reads the exception lines off the CLI's output, so a run that skipped an asset does not read as clean            |
 
 ## Open
 
