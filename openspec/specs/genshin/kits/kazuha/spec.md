@@ -37,15 +37,15 @@ Chihayaburu SHALL release as a press when tapped and as a hold when held for hal
 - **THEN** Chihayaburu releases as its hold
 - **AND** the half-second threshold stays provisional until a recording settles it
 
-### Requirement: Skill, burst and collision deal no poise
+### Requirement: Skill, burst and collision deal the wiki's poise
 
-Kazuha's skill, burst and collision SHALL deal no poise, a provisional value until a recording settles it.
+Kazuha's skill, burst and collision SHALL deal the wiki's poise for each hit: 150 for the press, 300 for the hold, 250 for the burst's first hit, 25 for the collision.
 
-#### Scenario: A hit from the skill, burst or collision deals no poise
+#### Scenario: A hit from the skill, burst or collision deals its wiki poise
 
 - **GIVEN** Kazuha is on the field
 - **WHEN** a hit from his skill, his burst or his collision lands
-- **THEN** it deals no poise
+- **THEN** it deals the poise the wiki gives that hit
 
 ### Requirement: Kazuha Slash raises an Autumn Whirlwind
 
@@ -101,7 +101,7 @@ Kazuha's first constellation SHALL cut a tenth off both of his skill cooldowns, 
 
 Kazuha's second constellation SHALL give 200 Elemental Mastery for a second, every half second, to the active member standing within nine metres of where the Autumn Whirlwind was cast, and to Kazuha himself when he is off the field, for as long as the whirlwind stands.
 
-#### Scenario: an active constellation's switch changes its character's kit
+#### Scenario: the active member within the whirlwind gains Elemental Mastery
 
 - **GIVEN** Kazuha is at constellation 2 and casts Kazuha Slash
 - **WHEN** the active member stands within the whirlwind's circle at a check
