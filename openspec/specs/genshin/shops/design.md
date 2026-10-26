@@ -49,9 +49,9 @@ flowchart TD
 
 ## Open
 
-- [ ] **The goods filed under 1001 are the only monthly ones** — no source yet: `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/ShopGoodsExcelConfigData.json` files one monthly good under shop type 1031 as well, so the 'only' is not held.
-- [ ] **Shop 1004 is the Mondstadt grocery, which the wiki's Blanche page confirms** — no source yet: the wiki's General Goods page is not in `~/Esposter.noindex/cache/genshin-wiki/`, and `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/ShopExcelConfigData.json` types shop 1004 as `SHOP_TYPE_ACTIVITY_DRAGON_SPINE`.
+- [ ] **The goods filed under 1001 are the only monthly ones** — no source yet: `~/Esposter/genshin-parity/text/ExcelBinOutput/ShopGoodsExcelConfigData.json` files one monthly good under shop type 1031 as well, so the 'only' is not held.
+- [ ] **Shop 1004 is the Mondstadt grocery, which the wiki's Blanche page confirms** — no source yet: the wiki's General Goods page is not in `~/Esposter/cache/genshin-wiki/`, and `~/Esposter/genshin-parity/text/ExcelBinOutput/ShopExcelConfigData.json` types shop 1004 as `SHOP_TYPE_ACTIVITY_DRAGON_SPINE`.
 - [ ] **The Starglitter Fates have a limit of zero and the Stardust Fates five a month, at five and seventy-five of their currency** — no source yet: the goods' cost and limit fields were not decoded, and all 183 shop-1001 rows read a `refreshParam` of 1.
-- [ ] **The rotation's item ids name no row in the dump** — no source yet: they were not checked against `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/ShopGoodsExcelConfigData.json`.
+- [ ] **The rotation's item ids name no row in the dump** — no source yet: they were not checked against `~/Esposter/genshin-parity/text/ExcelBinOutput/ShopGoodsExcelConfigData.json`.
 - [ ] **Each refresh is at four in the morning in UTC+8** — no source yet: the wiki's Reset page is not in the cache, and no game table on disk was read for the refresh hour.
 - [ ] **Starglitter is item 221, Stardust item 222, and the Fates 223 and 224** — no source yet: `MaterialExcelConfigData.json` in `~/Esposter/genshin-parity/text/ExcelBinOutput/` is not read for items 221 to 224, and the wiki's General Goods page is not in the cache.
