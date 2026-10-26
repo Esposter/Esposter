@@ -8,7 +8,6 @@ Gcsim gives Mika's plunges no file, so the design takes Bennett's timings and re
 
 ## Provisional constants
 
-- **Mika's plunge timings are not in his record.** `mika.json` has no plunge keys, so Bennett's frames and reaches are the design's until the record carries them.
 - **The initial heal's parameters are `Unsourced` in the record.** `parameters.initialHealFlatHealth` and `parameters.initialHealMaxHealthShare` read group 8039's indices 0 and 1, but gcsim's burst arrays give the same heal (`burst.go` lines 28 to 36), so the causes should name gcsim.
 - **The heal's 51st frame depends on ping.** gcsim's `initialHeal` is marked so (`burst.go` line 15), so 51 is a measured value, not a fixed one.
 
