@@ -41,4 +41,4 @@ Diluc's kit is its record and one behaviour module, `createDilucKitBehaviour` (`
 
 ## Open
 
-- [ ] **The charge stops when its stamina runs out** — no source yet: the cached wiki does not give the stop, and gcsim has no charged attack to read it from.
+- [ ] **The charge stops when its stamina runs out** — no source yet: the cached wiki does not give the stop, and gcsim has no charged attack to read it from. Checked the cached Tempered Sword page: it gives the stamina drain and the 5-second maximum duration, not what ends the charge at zero stamina.
