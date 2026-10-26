@@ -74,7 +74,8 @@ The sky is the scene's background node (`createSkyNode`), drawn behind everythin
 
 ## Open
 
-- [ ] **The dusk sky is violet, and the afternoon and night read as a high clear blue and deep blue under a large moon** — no source yet: the dusk frame reads indigo rather than violet, and no afternoon or night frame was read.
+- [ ] **The dusk sky is violet** — contradicted by `~/Esposter.noindex/genshin-parity/captures/world-weather-turn.dusk.mkv`: its frame at 2 s reads indigo, not violet.
+- [ ] **The afternoon and night read as a high clear blue and deep blue under a large moon** — no source yet: no afternoon or night frame was read.
 - [ ] **One in-game minute passes per real second, with dawn at six, noon at twelve, dusk at eighteen and midnight at twenty-four** — no source yet: the wiki's Time page is not in the cache, and the time clip `~/Esposter.noindex/genshin-parity/captures/yt-a4_J84iMqR0-time.mp4` was not read.
 - [ ] **Windrise loads at three in the afternoon, its reference hour** — no source yet: the in-game hour of its reference screenshots was not read here.
 - [ ] **The sun rises due east at six and sets due west at eighteen** — no source yet: the Time page is not in the cache, and no frame's sun bearing was read.
