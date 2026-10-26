@@ -15,10 +15,6 @@ A decoder defect found by the macOS build SHALL be drafted as an upstream issue 
 - **THEN** its upstream issue is drafted and kept in the repository `openspec/specs/genshin/derived-assets/animestudio-upstream/design.md`
 - **AND** nothing is filed or posted upstream
 
-## Open
-
-- [ ] **Nothing is filed or posted upstream** — no source yet: no issue-tracker record is cited.
-
 ### Requirement: A defect draft gives its reproduction and the effect of its patch
 
 Each defect draft SHALL give a reproduction and the observed output before and after the patch.
@@ -46,3 +42,7 @@ A defect draft SHALL mark any cause it has not verified as not established or as
 - **WHEN** the draft is written
 - **THEN** the cause is marked inferred `openspec/specs/genshin/derived-assets/animestudio-upstream/design.md`
 - **AND** the observed stale read is stated as observed `openspec/specs/genshin/derived-assets/animestudio-upstream/design.md`
+
+## Open
+
+- [ ] **Nothing is filed or posted upstream** — no source yet: no issue-tracker record is cited.
