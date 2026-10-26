@@ -52,4 +52,4 @@ flowchart TD
 - [ ] **Reputation's mining outcrop search at level 2 of a nation marks them** — no source yet: no reputation source was checked for the search or its level.
 - [ ] **The respawn is at 06:00 on the wiki, two hours after the reset** — no source yet: the wiki's Mining Outcrop page is not in the cache.
 - [ ] **A break drops one to three Magical Crystal Chunks** — no source yet: the figure is the wiki's and provisional, its page is not cached, and the dump's gather rows hold no count.
-- [ ] **A mining outcrop is a cluster of 2 to 3 chunks, with no count per break, as the wiki's Mining Outcrop page gives it** — no source yet: the wiki's Mining Outcrop page is not in `~/Esposter.noindex/cache/genshin-wiki/`.
+- [ ] **A mining outcrop is a cluster of 2 to 3 chunks, with no count per break** — no source yet: the wiki's Mining Outcrop page is not in `~/Esposter.noindex/cache/genshin-wiki/`.
