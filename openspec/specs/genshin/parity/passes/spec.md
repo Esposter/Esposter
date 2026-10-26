@@ -35,7 +35,7 @@ The passes command SHALL run each pass's measure in order and stop at the first 
 - **GIVEN** a component whose measure fails at some pass
 - **WHEN** the passes command runs on it
 - **THEN** the run stops at that pass
-- **AND** the component's report names the pass as the next work (see the design's Open)
+- **AND** the component's report names the pass as the next work
 
 #### Scenario: Pass with no measure yet
 
@@ -106,7 +106,7 @@ The inventory pass SHALL hold only once every renderer of the game's exports is 
 
 ### Requirement: The pass option runs one measure alone
 
-The pass option SHALL run one named measure alone and rewrite only that pass's rows of the component's report (see the design's Open).
+The pass option SHALL run the passes up to and including one named pass, and rewrite only the rows of the passes run (see the design's Open).
 
 #### Scenario: One pass rerun
 
