@@ -138,4 +138,46 @@ describe(advanceQuest, () => {
       advanceQuest(quest, { objectiveCounts: [], stepIndex: 2 }, { kind: QuestObjectiveKind.GoTo, targetId: "0" }),
     ).toStrictEqual({ objectiveCounts: [], stepIndex: 2 });
   });
+
+  // New Horizons of Adventure (22111), a world quest of two steps, each asking the Traveler to talk to one NPC. Its ids
+  // And talk targets are the game's, read from its binary in the dump (`BinOutput/Quest/22111.json` under
+  // `~/Esposter.noindex/genshin-parity/text`), the way `pnpm -C scripts genshin:text quests` reads them. Its steps show no
+  // Cutscene or CG, so the walk has none to leave out
+  test("walks a real quest from its first step to its last", () => {
+    expect.hasAssertions();
+
+    const newHorizons: Quest = {
+      descriptionTextId: "descriptionTextId",
+      id: "22111",
+      kind: QuestKind.World,
+      mainId: "22111",
+      offerTalkIds: [],
+      parentQuestIds: [],
+      rewards: [],
+      steps: [
+        {
+          id: "2211101",
+          objectives: [{ count: 1, kind: QuestObjectiveKind.TalkTo, targetIds: ["2211101"] }],
+          textId: "textId",
+        },
+        {
+          id: "2211102",
+          objectives: [{ count: 1, kind: QuestObjectiveKind.TalkTo, targetIds: ["2211102"] }],
+          textId: "textId",
+        },
+      ],
+      talks: [],
+      titleTextId: "titleTextId",
+    };
+    const afterFirstStep = advanceQuest(
+      newHorizons,
+      { objectiveCounts: [], stepIndex: 0 },
+      { kind: QuestObjectiveKind.TalkTo, targetId: "2211101" },
+    );
+
+    expect(afterFirstStep).toStrictEqual({ objectiveCounts: [], stepIndex: 1 });
+    expect(
+      advanceQuest(newHorizons, afterFirstStep, { kind: QuestObjectiveKind.TalkTo, targetId: "2211102" }),
+    ).toStrictEqual({ objectiveCounts: [], stepIndex: 2 });
+  });
 });
