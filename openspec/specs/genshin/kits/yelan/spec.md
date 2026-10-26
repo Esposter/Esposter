@@ -1,6 +1,6 @@
 ## Purpose
 
-Yelan's kit as built, with Lingering Lifeline and Depth-Clarion Dice's field of Exquisite Throws, and what is left of Breakthrough Barb and Constellations 2, 4 and 6, with Constellation 1's charge and her Ascension 1 and 4 passives built.
+Yelan's kit as built, with Lingering Lifeline and Depth-Clarion Dice's field of Exquisite Throws, and what is left of Breakthrough Barb and Constellations 4 and 6, with Constellations 1 and 2 and her Ascension 1 and 4 passives built.
 
 ## Requirements
 
@@ -64,9 +64,31 @@ From Constellation 1, Lingering Lifeline SHALL have one more charge than its bas
 - **WHEN** her skill's charges are read
 - **THEN** no charge is added
 
-### Requirement: Breakthrough Barb and Constellations 2, 4 and 6 not built
+### Requirement: Constellation 2 hit on the primary enemy
 
-Breakthrough Barb and Yelan's Constellations 2, 4 and 6 SHALL have no effect yet.
+From Constellation 2, each Exquisite Throw volley SHALL add a hit of 14% of Yelan's Max HP on the primary enemy, 17 frames after the volley, and no such hit SHALL come within 1.8 seconds of the last.
+
+#### Scenario: A volley adds a hit on the primary enemy
+
+- **GIVEN** Yelan has Constellation 2, Depth-Clarion Dice stands and an enemy is the primary target
+- **WHEN** an Exquisite Throw volley is thrown
+- **THEN** the primary enemy takes a 14% of Max HP hit 17 frames after the volley
+
+#### Scenario: The hit waits out its interval
+
+- **GIVEN** Yelan has Constellation 2 and a hit on the primary enemy landed 1 second ago
+- **WHEN** another volley is thrown
+- **THEN** no further hit on the primary enemy is added
+
+#### Scenario: Constellation 1 adds no hit
+
+- **GIVEN** Yelan has Constellation 1
+- **WHEN** an Exquisite Throw volley is thrown
+- **THEN** no hit on the primary enemy is added
+
+### Requirement: Breakthrough Barb and Constellations 4 and 6 not built
+
+Breakthrough Barb and Yelan's Constellations 4 and 6 SHALL have no effect yet.
 
 #### Scenario: Lifeline hits without Barb
 

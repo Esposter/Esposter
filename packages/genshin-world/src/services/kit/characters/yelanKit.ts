@@ -1,13 +1,19 @@
+import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitBody } from "#src/models/kit/KitBody";
+import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { createConstellationSkillChargeBonus } from "#src/services/kit/createConstellationSkillChargeBonus";
+import { createKitBody } from "#src/services/kit/createKitBody";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { gainKitResource } from "#src/services/kit/effects/gainKitResource";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
@@ -45,19 +51,54 @@ const ASCENSION_4_MAX_DAMAGE_BONUS = 0.5;
 export const YELAN_CHARACTER_ID = 10_000_060;
 
 const CONSTELLATION_1 = 1;
+// Constellation 2, as gcsim (MIT) yelan/burst.go gives it: each Exquisite Throw volley adds a hit of 14% of her Max HP on
+// The primary enemy, 17 frames after the volley and at most once each 1.8 seconds
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yelan/burst.go
+const CONSTELLATION_2 = 2;
+const CONSTELLATION_2_HEALTH_SHARE = 0.14;
+const CONSTELLATION_2_HITMARK_SECONDS = 17 / 60;
+const CONSTELLATION_2_INTERVAL_SECONDS = 1.8;
+const CONSTELLATION_2_INTERVAL_ID = "yelan-constellation-2-interval";
+const CONSTELLATION_2_RADIUS = 0.5;
 
 // Yelan's behaviour: Depth-Clarion Dice sets its field as it is cast, which waves an Exquisite Throw each second from a
 // Second after its hit for its seconds, and each Lingering Lifeline hit throws one more while the field stands.
-// Her Breakthrough Barb's own hit and Constellations 2, 4 and 6 are not built. Her Ascension 1 passive is built from
+// Her Breakthrough Barb's own hit and Constellations 4 and 6 are not built. Her Ascension 1 passive is built from
 // The team's Elemental Types, and her Ascension 4 Passive from the burst's hit
-// Constellation 1's charge is built
-// Constellation 2 needs Exquisite Throw's coordinated attack and its extra arrow, which the kit does not build
+// Constellation 1's charge and Constellation 2's hit on the primary enemy are built
 // Constellation 4 needs the marked opponents on Lifeline's explosion, which the kit does not build
 // Constellation 6 needs the Mastermind state after Depth-Clarion Dice, which the kit does not build
 export const createYelanKitBehaviour = ({ kit, readHits, readParameter }: KitRecordReader): KitBehaviour => {
   const burstHitmarkSeconds = takeOne(kit.elementalBurst.hits).hitmarkSeconds;
   const depthClarionDiceSeconds = readParameter("depthClarionDiceSeconds");
   const exquisiteThrows = readHits("exquisiteThrow");
+  // Constellation 2's hit is one throw's hit, with its own share of Max HP and radius round the primary enemy
+  const exquisiteThrow = takeOne(exquisiteThrows, 0);
+  const constellation2Throw: KitHit = {
+    ...exquisiteThrow,
+    hitArea: { ...exquisiteThrow.hitArea, radius: CONSTELLATION_2_RADIUS },
+    hitmarkSeconds: CONSTELLATION_2_HITMARK_SECONDS,
+    talentMultiplier: CONSTELLATION_2_HEALTH_SHARE,
+  };
+  // A volley of Exquisite Throws from a body, which from Constellation 2 adds the hit on the primary enemy once its interval
+  // Lapses
+  const castExquisiteThrowVolley = (context: KitContext, body: KitBody, combatant: Combatant): void => {
+    const { kitEffectState, primaryTarget } = context;
+    castKitSummon(kitEffectState, body, combatant, exquisiteThrows, { attackTag: AttackTag.ElementalBurst });
+    if (
+      combatant.constellationCount < CONSTELLATION_2 ||
+      !primaryTarget ||
+      checkIsKitStatusActive(kitEffectState.effects, combatant.characterId, CONSTELLATION_2_INTERVAL_ID)
+    )
+      return;
+    addKitStatus(kitEffectState, combatant.characterId, {
+      id: CONSTELLATION_2_INTERVAL_ID,
+      secondsRemaining: CONSTELLATION_2_INTERVAL_SECONDS,
+    });
+    castKitSummon(kitEffectState, createKitBody(primaryTarget.position), combatant, [constellation2Throw], {
+      attackTag: AttackTag.ElementalBurst,
+    });
+  };
   return {
     // The burst's field waves its throws from where Yelan cast it, and it rings the body wherever it moves, as the field's
     // Ticks do not depend on where the body stands
@@ -67,10 +108,7 @@ export const createYelanKitBehaviour = ({ kit, readHits, readParameter }: KitRec
         castKitField(kitEffectState, combatant.characterId, position, {
           id: DEPTH_CLARION_DICE_ID,
           nextTickSeconds: burstHitmarkSeconds + EXQUISITE_THROW_WAVE_SECONDS,
-          onTick: ({ kitEffectState: tickKitEffectState }) =>
-            castKitSummon(tickKitEffectState, { facing, height, position }, combatant, exquisiteThrows, {
-              attackTag: AttackTag.ElementalBurst,
-            }),
+          onTick: (tickContext) => castExquisiteThrowVolley(tickContext, { facing, height, position }, combatant),
           secondsRemaining: burstHitmarkSeconds + depthClarionDiceSeconds + FIELD_LINGER_SECONDS,
           tickIntervalSeconds: EXQUISITE_THROW_WAVE_SECONDS,
         });
@@ -124,14 +162,15 @@ export const createYelanKitBehaviour = ({ kit, readHits, readParameter }: KitRec
     skill: {
       hits: [
         {
-          onStrike: ({ kitEffectState, random }, { body, combatant }) => {
+          onStrike: (context, { body, combatant }) => {
+            const { kitEffectState, random } = context;
             if (random() < BREAKTHROUGH_BARB_CHANCE)
               gainKitResource(kitEffectState, combatant.characterId, BREAKTHROUGH_BARB_ID, 1, 1);
             if (
               !kitEffectState.effects.some((effect) => effect.kind === "field" && effect.id === DEPTH_CLARION_DICE_ID)
             )
               return;
-            castKitSummon(kitEffectState, body, combatant, exquisiteThrows, { attackTag: AttackTag.ElementalBurst });
+            castExquisiteThrowVolley(context, body, combatant);
           },
         },
       ],
