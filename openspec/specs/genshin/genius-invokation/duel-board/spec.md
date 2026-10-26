@@ -96,4 +96,3 @@ A duel's end SHALL return the player from the board to the world.
 
 ## Open
 
-- [ ] **Choosing the duel ends the talk and opens the board** — contradicted by `packages/genshin-world/src/components/World/Session/Index.vue`: its duel handler sets the GcgDuel screen and calls no endTalk.

@@ -59,3 +59,4 @@ flowchart LR
 
 - [ ] **Marjorie sits on NPC 1435 of her Souvenir shop row** — contradicted by `~/Esposter/genshin-parity/text/ExcelBinOutput/GCGWeekLevelExcelConfigData.json`: its game 1021 row names NPC 9701, not 1435.
 - [ ] **Ellin stands at the Knights of Favonius headquarters' point, and Kimiya beside Sumeru's crafting bench** — no source yet: the scene group records for the two points, which are not yet read.
+- [ ] **Choosing the duel ends the talk and opens the board** — contradicted by `packages/genshin-world/src/components/World/Session/Index.vue`: its duel handler sets the GcgDuel screen and calls no endTalk.
