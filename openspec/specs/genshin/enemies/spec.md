@@ -275,4 +275,3 @@ Each enemy SHALL be drawn as a capsule tinted by its state, and SHALL be tinted 
 - [ ] **Each level band's Mora and Character EXP follow the wiki's table** — no source yet: the wiki's Module:Drops Table page is not in the wiki cache.
 - [ ] **No enemy gives Adventure EXP** — no source yet: the wiki's Adventure EXP page is not in the wiki cache.
 - [ ] **A hit that launches is one whose stagger level is Air** — no source yet: the wiki's Interruption Resistance/Stagger page is not in the wiki cache.
-- [ ] **An enemy's max health and ATK are its base values times the multiplier of its level's curve** — no source yet: `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/MonsterCurveExcelConfigData.json` holds the HP and ATTACK grow-curve multipliers per level, but it was not opened here to check the base values.
