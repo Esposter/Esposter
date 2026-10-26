@@ -6,13 +6,13 @@ Each character's Friendship Level read from the Companionship EXP it has earned,
 
 ### Requirement: Each character's Friendship Level
 
-Each character's Friendship Level SHALL be the number of the game's levels its total Companionship EXP has reached.
+Each character's Friendship Level SHALL be the number of the game's levels its total Companionship EXP has reached (`~/Esposter/genshin-parity/text/ExcelBinOutput/AvatarFettersLevelExcelConfigData.json`).
 
 #### Scenario: A total of 1,000 EXP reaches level 2
 
 - **GIVEN** a character has 1,000 total Companionship EXP
 - **WHEN** its Friendship Level is read
-- **THEN** the level is 2
+- **THEN** the level is 2 (`~/Esposter/genshin-parity/text/ExcelBinOutput/AvatarFettersLevelExcelConfigData.json`)
 
 #### Scenario: A total below the first level's total is level 1
 
@@ -68,3 +68,7 @@ A character SHALL hold its namecard once its total reaches level 10.
 - **GIVEN** a character's total is below level 10
 - **WHEN** its profile is shown
 - **THEN** its namecard is not held
+
+## Open
+
+- [ ] **The Original Resin claims give Companionship EXP to the deployed team but the Traveler** — no source yet: the cached Original Resin wiki page is not on disk.
