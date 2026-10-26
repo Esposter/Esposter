@@ -30,4 +30,4 @@
 
 - [ ] **The Jueyun label's 78% of its box and 59% of its ring** — no source yet: no measurement record for the Jueyun label is in the repository, so the figures stand as the page's own.
 - [ ] **A title logo approved without a reference came out nearly twice the size** — no source yet: no commit, snapshot or report records that approval or its size.
-- [ ] **The parity page gives a screen the reference's language's text** — no source yet: `packages/genshin-world` language handling for the parity page was not traced; `ParityReferenceMap.ts` sets `props.language` (lines 291 and 300) only.
+- [ ] **The parity page gives a screen the reference's language's text** — checked against `packages/genshin-world/parity/main.ts` lines 85 to 88: when the reference's language is a game language and the screen takes `gameText`, it loads that language's game text into the screen, and the claim is not settled by it because this page states no built sentence for it.
