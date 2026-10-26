@@ -127,5 +127,4 @@ Everything the passes already have is reused as it is, and each measure, once bu
 
 ## Notes
 
-- **A measure that passes while the frame still stands off is the measure's defect.** Acceptance reopens the pass whose measure missed it, and that measure is fixed before the pass is run again, so the next screen is not caught the same way.
 - **A gate is the reference's noise, not zero.** A recording's compression and softness, an export's texels, a clip's sampling: each sets how close a measure can read, and a pass worked past it is polishing what no frame can show.
