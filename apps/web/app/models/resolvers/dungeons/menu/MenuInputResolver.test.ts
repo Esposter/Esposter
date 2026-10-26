@@ -29,6 +29,6 @@ describe(MenuInputResolver, () => {
 
     resolver.handleInput(scene, PlayerSpecialInput.Cancel);
 
-    expect(useMenuStore).toHaveBeenCalledTimes(1);
+    expect(useMenuStore).toHaveBeenCalledExactlyOnceWith();
   });
 });
