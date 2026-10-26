@@ -85,4 +85,3 @@ When the witness is used, the scene's motion SHALL be filmed on the game's expor
 
 ## Open
 
-- [ ] **A recording's events are found by sampling it at one frame a second** — no source yet: no code runs the one-a-second event sampling; `scripts/src/services/genshinParity/commands/framesCommand.ts` defaults to 10 a second, and the procedure is written only in `.agents/skills/genshin-parity/references/motion.md` line 5.
