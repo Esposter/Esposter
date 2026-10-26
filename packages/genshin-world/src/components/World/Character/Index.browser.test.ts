@@ -6,6 +6,7 @@ import { BodyType } from "#src/models/character/BodyType";
 import { TRAVELER_CHARACTER_ID } from "#src/services/character/constants";
 import { createParty } from "#src/services/party/createParty";
 import { BodyTypeLocomotionMap } from "#src/services/world/locomotion/BodyTypeLocomotionMap";
+import { sleep } from "@esposter/shared";
 import { TresCanvas } from "@tresjs/core";
 import { createGrassTrail, createLandmarkCollider, createStamina, LocomotionState, STAMINA_MAX } from "genshin-engine";
 import { Object3D, Vector3 } from "three";
@@ -71,19 +72,14 @@ const renderCharacter = (isMoveHeld?: true): Object3D => {
 
 const WALK_MS = 1000;
 
-const wait = (ms: number): Promise<void> =>
-  new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-
 describe("worldCharacter", () => {
-  test("Holding Tab stops the character walking", async () => {
+  test("holding Tab stops the character walking", async () => {
     expect.hasAssertions();
 
     const body = renderCharacter(true);
-    await wait(WALK_MS);
+    await sleep(WALK_MS);
     const start = body.position.clone();
-    await wait(WALK_MS);
+    await sleep(WALK_MS);
 
     expect(body.position.distanceTo(start)).toBeLessThan(0.01);
   });
@@ -93,9 +89,9 @@ describe("worldCharacter", () => {
     expect.hasAssertions();
 
     const body = renderCharacter();
-    await wait(WALK_MS);
+    await sleep(WALK_MS);
     const start = body.position.clone();
-    await wait(WALK_MS);
+    await sleep(WALK_MS);
 
     expect(body.position.distanceTo(start)).toBeGreaterThan(0.5);
   });
