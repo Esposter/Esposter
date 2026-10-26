@@ -1,6 +1,6 @@
 ## Purpose
 
-How each kind of the game's data reads once the community's asset extractor has exported it, as decoded while deriving the login scene, and how its audio reads from the installed packages, and where a component records the data it is derived from. Shaders keep their compiled programs as plain binary containers with their constant layouts beside them `scripts/src/services/genshinAssets/materials/parseShaderConstantLayouts.ts`; a UI element's anchors sit in its transform's raw tail `scripts/src/models/genshinAssets/shared/DumpedRectTransform.ts`; an animation clip is streamed cubic segments bound by hashes `scripts/src/services/genshinAssets/interface/decodeAnimationClip.ts`; a renderer names its materials by path ID `scripts/src/services/genshinAssets/shared/readSceneLayout.ts`; a scene's scripts export without their fields `scripts/src/services/genshinAssets/scene/scanSerializedFields.ts`; and the open world is streamed, its placements mask-led varint records in blobs named by their path's hash `scripts/src/services/genshinAssets/world/parseStreamingPlacements.ts` and each tile's ground a terrain record. The shortcuts section is what to reach for first, so no session derives any of it again.
+How each kind of the game's data reads once the community's asset extractor has exported it, as decoded while deriving the login scene, and how its audio reads from the installed packages, and where a component records the data it is derived from. Shaders keep their compiled programs as plain binary containers with their constant layouts beside them; a UI element's anchors sit in its transform's raw tail; an animation clip is streamed cubic segments bound by hashes; a renderer names its materials by path ID; a scene's scripts export without their fields; and the open world is streamed, its placements mask-led varint records in blobs named by their path's hash and each tile's ground a terrain record. The shortcuts section is what to reach for first, so no session derives any of it again.
 
 ## Requirements
 
@@ -18,13 +18,13 @@ Game files read for derivation SHALL stay on the developer's machine, and SHALL 
 
 - **GIVEN** the repository is checked for game-derived files
 - **WHEN** a reviewer lists them
-- **THEN** the text slices of `genshin-text` and the persona plugin are present `packages/genshin-text/src/generated`, `packages/genshin-persona/src/generated`, and no image, audio, model, mesh or table is
+- **THEN** the text slices of `genshin-text` and the persona plugin are present, and no image, audio, model, mesh or table is
 
 #### Scenario: Missing community table is fetched locally, never committed
 
 - **GIVEN** a builder needs a table the community dump does not hold
 - **WHEN** the builder runs
-- **THEN** the table is fetched into the local dump and is not committed `scripts/src/services/genshinAssets/gadgets/constants.ts`
+- **THEN** the table is fetched into the local dump and is not committed
 
 ### Requirement: A reader of a changed layout fails rather than guessing
 
@@ -34,7 +34,7 @@ A reader of a game data structure whose layout no longer matches its expected fi
 
 - **GIVEN** a later game build moves a config the reader names by its fields
 - **WHEN** the reader reads that config
-- **THEN** the reader throws an error and returns no values `scripts/src/services/genshinAssets/camera/constants.ts`
+- **THEN** the reader throws an error and returns no values
 
 ### Requirement: Every derived value names its source
 
@@ -48,7 +48,7 @@ A derived value SHALL name the key of the source it is taken from, so that any v
 
 ### Requirement: Every investigation is recorded with its outcome
 
-Every investigation of a derived component's data SHALL be recorded with its method, its result and its outcome `packages/genshin-interface/src/models/reference/InvestigationOutcome.ts`, so that a dead end or a rejected change is not run again.
+Every investigation of a derived component's data SHALL be recorded with its method, its result and its outcome, so that a dead end or a rejected change is not run again.
 
 #### Scenario: Search that found nothing is kept as a dead end
 
@@ -80,13 +80,13 @@ Compiled shader programs SHALL be named by their pass, stage and keyword set whe
 
 - **GIVEN** a shader's serialized form can be read
 - **WHEN** its programs are read
-- **THEN** each program is named by its pass, stage and keyword set `scripts/src/services/genshinAssets/materials/readShaderPrograms.ts`
+- **THEN** each program is named by its pass, stage and keyword set
 
 #### Scenario: Shader with an unfollowed layout keeps its programs unnamed
 
 - **GIVEN** a shader's layout is not one the reader follows
 - **WHEN** its programs are read
-- **THEN** its programs are carved out unnamed `scripts/src/services/genshinAssets/materials/readShaderPrograms.ts`
+- **THEN** its programs are carved out unnamed
 
 ### Requirement: A script field is read by its shape or measured
 
@@ -106,7 +106,7 @@ A sound that has no name SHALL be identified by matching a recording against the
 
 - **GIVEN** a recording of a sound with no name
 - **WHEN** the recording is matched
-- **THEN** the sound it plays is identified from the game's sounds `scripts/src/services/genshinAssets/commands/genshinAssetsCommand.ts`
+- **THEN** the sound it plays is identified from the game's sounds
 
 ### Requirement: A bytecode number with no known meaning stays unknown
 
@@ -116,7 +116,7 @@ A bytecode operation number whose meaning is not determined SHALL be reported as
 
 - **GIVEN** a bytecode operation number has no determined meaning
 - **WHEN** the scripts are read
-- **THEN** the number is reported as unknown and no meaning is assigned `scripts/src/services/genshinAssets/lua/GENSHIN_LUA_53.ts`
+- **THEN** the number is reported as unknown and no meaning is assigned
 
 ### Requirement: A scene's group data is never read from the client
 
@@ -145,3 +145,9 @@ A session deriving game data SHALL look for a scene's parts from its roots and f
 - [ ] **Open world: an unnamed prefab is counted with its placements in the extract report** — no source yet: the extract report's line for an unnamed prefab, which no record keeps.
 - [ ] **Scripts: a field with no known shape is measured off the captures** — no source yet: a measured value of such a field, which no record holds.
 - [ ] **Scripts: a group script looked up by path in the client's scripts is found** — no source yet: a lookup run over the client's Lua block, which no record keeps.
+- [ ] **Shaders keep their compiled programs as plain binary containers, with their constant layouts beside them** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A UI element's anchors sit in its transform's raw tail** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **An animation clip is streamed as cubic segments bound by hashes** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A renderer names its materials by path ID** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A scene's scripts export without their fields** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The open world is streamed, its placements mask-led varint records in blobs named by their path's hash** — no source yet: game data or a snapshot that holds this behaviour
