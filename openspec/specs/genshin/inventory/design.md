@@ -100,7 +100,7 @@ flowchart TD
 - [ ] **Every one- to three-star weapon is destroyable** — contradicted by `~/Esposter/genshin-parity/text/ExcelBinOutput/WeaponExcelConfigData.json`: ten one-star weapons have no `destroyRule`, so the rule decides each entry (`packages/genshin-world/src/services/inventory/checkIsInventoryItemDestroyable.ts`).
 - [ ] **The artifact rule is per item, and every set piece is destroyable for Mora** — contradicted by `~/Esposter/genshin-parity/text/ExcelBinOutput/ReliquaryExcelConfigData.json`: 1,795 set rows have no `destroyRule`, against 2,525 that carry `DESTROY_RETURN_MATERIAL`.
 - [ ] **The game keeps its bag in nine tabs, with its currencies beside it** — no source yet: the nine categories are the wiki's Inventory page's, which is not cached; `packages/genshin-interface/src/models/ItemCategory.ts` holds nine, in the order the page gives.
-- [ ] **Each wallet currency is named by its item's own text** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The destroy mode's title and opening line are the game's own text** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The destroy confirm's words are the game's own text** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The recovered line is the game's own text** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Each wallet currency is named by its item's own text** — no source yet: the name text id of each currency in `MaterialExcelConfigData` in `~/Esposter/genshin-parity/text/ExcelBinOutput/`, not yet looked up in `~/Esposter/genshin-parity/text/TextMapEN.json`.
+- [ ] **The destroy mode's title and opening line are the game's own text** — no source yet: their text ids in `~/Esposter/genshin-parity/text/TextMapEN.json`, not yet looked up.
+- [ ] **The destroy confirm's words are the game's own text** — no source yet: their text ids in `~/Esposter/genshin-parity/text/TextMapEN.json`, not yet looked up.
+- [ ] **The recovered line is the game's own text** — no source yet: its text id in `~/Esposter/genshin-parity/text/TextMapEN.json`, not yet looked up.
