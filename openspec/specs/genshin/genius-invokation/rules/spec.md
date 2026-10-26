@@ -16,7 +16,7 @@ Each side SHALL switch its cards once during preparation, and the first round SH
 
 ### Requirement: Each side rolls eight dice a round and may reroll once
 
-Each side SHALL roll eight dice each round and MAY reroll any dice it names once, and naming no dice SHALL pass the reroll.
+Each side SHALL roll eight dice each round and MAY reroll any dice it names once, and naming no dice SHALL pass the reroll (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/GCGRuleTextDetailExcelConfigData.json`, rows `#1003` and `#2002`).
 
 #### Scenario: Naming no dice passes the reroll
 
@@ -128,11 +128,11 @@ The side that declares the round's end first SHALL go first in the next round, a
 
 ### Requirement: A duel ends with no winner after its fifteenth round
 
-A duel SHALL end with no winner if no winner is decided by the start of the fifteenth round, both sides losing as the game's text says (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMapEN.json`, key `199839675`).
+A duel SHALL end with no winner once the fifteenth round's end-phase draws are made, both sides losing. The game's text (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMapEN.json`, key `199839675`) puts that loss at the start of Round 15, which Open records as contradicting the timing.
 
-#### Scenario: Duel concedes at the start of the fifteenth round
+#### Scenario: Duel concedes after the fifteenth round's draws
 
-- **GIVEN** no winner is decided by the start of the fifteenth round
+- **GIVEN** no winner is decided by the end of the fifteenth round's draws
 - **WHEN** the next step is due
 - **THEN** both sides concede with no winner
 
@@ -216,7 +216,7 @@ Cryo, Hydro, Pyro, Electro and Dendro damage SHALL set its aura on the target, a
 
 ### Requirement: A reaction adds its bonus to the hit, and Swirl adds none
 
-A reaction SHALL add its bonus to the hit that makes it, and Swirl SHALL add no bonus.
+A reaction SHALL add its bonus to the hit that makes it (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/GCGRuleTextDetailExcelConfigData.json`, rows 5001 to 5017), and Swirl SHALL add no bonus.
 
 #### Scenario: Melt adds two to the hit
 
@@ -242,7 +242,7 @@ A reaction SHALL summon its card on the attacker's side, and a second reaction o
 
 ### Requirement: A frozen target takes extra damage from Pyro or Physical hits
 
-A frozen target SHALL take two more damage from a Pyro or Physical hit, and that hit SHALL remove the frozen status.
+A frozen target SHALL take two more damage from a Pyro or Physical hit, and that hit SHALL remove the frozen status (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/GCGRuleTextDetailExcelConfigData.json`, row 5006).
 
 #### Scenario: Pyro hit on a frozen target
 
@@ -310,10 +310,6 @@ A character at no health SHALL be defeated: its equipment and statuses SHALL be 
 
 ## Open
 
-- [ ] **Each side rolls eight dice a round, as the game does** — no source yet: the rule table's dice count is an obfuscated key the build does not read, and the wiki's rules page is not in the cache.
 - [ ] **A duel ends with no winner once the fifteenth round's end phase has closed** — contradicted by `~/Esposter/genshin-parity/text/TextMap/TextMapEN.json`: no winner by the start of Round 15 means both sides lose.
-- [ ] **Melt adds two, and the other reaction bonuses, as the game does** — no source yet: the wiki's rules page is not in the cache, and the reaction card texts were not found in the medium text map.
-- [ ] **A frozen target takes two more damage, as the game does** — no source yet: the wiki's rules page is not in the cache.
-- [ ] **Leave It to Me makes the next switch a fast action and is spent** — no source yet: the card's text was not found in the medium text map.
-- [ ] **Shimenawa's Reminiscence reduces a cost for its side, as the game's text says** — no source yet: its card text was not found in the medium text map.
+- [ ] **Leave It to Me makes the next switch a fast action and is spent** — no source yet: the keywords `$[K1]` and `$[K2]` in card 332006's text are not resolved; the card is in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/GCGCardExcelConfigData.json`.
 - [ ] **A second reaction of the same kind joins the card already there** — no source yet: the join in the effect that places the reaction's card was not read.
