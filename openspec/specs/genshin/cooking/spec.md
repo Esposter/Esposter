@@ -313,7 +313,7 @@ A cook's passive SHALL bonus each dish the cook makes whose food type matches th
 
 ### Requirement: A cooking talent adds a dish by chance
 
-A cook's cooking talent SHALL add one more dish of the recipe when its chance draw succeeds.
+A cook's cooking talent SHALL add one more dish of the recipe when its chance draw succeeds. The 12 percent talent is Xiangling's Chef de Cuisine (`~/Esposter.noindex/cache/genshin-wiki/Category_Xiangling_Talents.json`), and the 18 percent one is Hu Tao's The More the Merrier (`~/Esposter.noindex/cache/genshin-wiki/Category_Hu_Tao_Talents.json`).
 
 #### Scenario: A perfect cook doubles a delicious dish
 
@@ -348,7 +348,8 @@ A cook's cooking talent SHALL add one more dish of the recipe when its chance dr
 ## Open
 
 - [ ] **Auto Cook makes up to 99 dishes** — no source yet: a batch limit in the game's data or text, since `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/CookRecipeExcelConfigData.json` and `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/CookBonusExcelConfigData.json` hold none, the English text's Auto Cook line (key `1879414003`) names none, and no cooking wiki page is cached.
-- [ ] **The game refuses Raiden Shogun as a cook** — no source yet: the code's check asserts it, and no dump table or cached wiki page was checked for it.
-- [ ] **A cook's passive bonuses each matching dish** — no source yet: no passive bonus is applied in the cooking services; the talent roll only adds a dish.
-- [ ] **Xiangling and Hu Tao carry the 12 and 18 percent talents** — no source yet: the dump's 1200 and 1800 cooking talent rows are not tied to these characters in the files checked.
-- [ ] **A stove offers no prompt out of reach** — no source yet: no reach check was found in the stove's interactables code.
+- [ ] **The game refuses Raiden Shogun as a cook** — no source yet: a dump table or cached wiki page naming the refusal; the cached Raiden Shogun talents page does not mention cooking, and the code's check asserts it.
+- [ ] **A cook's passive bonuses each matching dish** — no source yet: a game table naming each passive's food type, which no dump table holds; the cooking services apply no passive bonus, and the talent roll only adds a dish.
+- [ ] **A stove offers no prompt out of reach** — no source yet: a capture or game table of the stove's prompt range.
+- [ ] **A campfire is lit by Pyro, put out by Anemo, Cryo, Electro, Geo and Hydro, and left as it was by Dendro** — no source yet: no campfire row in the game's exports and no cached Campfire wiki page is on disk.
+- [ ] **Rain and thunderstorms put out a campfire in the open** — no source yet: no campfire row in the game's exports and the cached Weather wiki page is not on disk.
