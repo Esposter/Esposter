@@ -438,6 +438,20 @@ describe(useWorldMap, () => {
     expect(progress).toStrictEqual({ objectiveCounts: [], stepIndex: 1 });
   });
 
+  test("a quest event does not unlock a waypoint outright", async () => {
+    expect.hasAssertions();
+
+    // No quest step unlocks a waypoint outright, so an Interact on the point a step names leaves it locked until F
+    const events = createWorldEvents();
+    const { lockedJumpLandmarks, unlockedLandmarkIds } = createWorldMap(new Set(), events);
+    await waitForReads();
+
+    events.emit("questEvent", { kind: QuestObjectiveKind.Interact, targetId: String(TRANS_POINT_ID) });
+
+    expect(unlockedLandmarkIds.value).toStrictEqual(new Set<string>());
+    expect(lockedJumpLandmarks.value).toContainEqual(waypoint);
+  });
+
   test("interacting with a locked domain entrance unlocks it", async () => {
     expect.hasAssertions();
 
