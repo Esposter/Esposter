@@ -96,13 +96,4 @@ Only Statues of The Seven and Teleport Waypoints SHALL be jump landmarks, and a 
 
 - [ ] **Map: Escape closes the open map** — no source yet: an input handler that routes Escape to the map's close; the session names Escape for the Paimon menu, and the map files name no Escape.
 - [ ] **Pressing M opens the full-screen map and hides the HUD** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The map's drawing is placed north up with the player's pointer on the player** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **An area with no unlocked statue standing in it is blank on the map** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A drag pans the view by the metres it covers at the shown zoom** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The wheel zooms the view by one notch along the track** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A drag that travels past the threshold and ends on a landmark does not choose it** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **Choosing a statue on the map fades to pale grey, places the character at the statue's arrival facing its turn, and fades back in** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A cross-region jump's fade out takes 801 milliseconds and its fade in 200 milliseconds** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Each landmark in the jump list is a button named by its area and kind, grouped by region** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A region whose data fails to load is logged and its landmarks left off the map** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A tree in a region's data is not offered as a jump** — no source yet: game data or a snapshot that holds this behaviour
