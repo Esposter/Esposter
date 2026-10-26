@@ -57,7 +57,7 @@ A finished commission SHALL be claimed free, an unfinished one SHALL be claimed 
 
 ### Requirement: A player
 
-A player SHALL claim at most four commissions a day, whichever way each was made (key `1812726784`).
+A player SHALL claim at most four commissions a day, whichever way each was made (`~/Esposter/genshin-parity/text/TextMap/TextMap_MediumEN.json`, key `1812726784`).
 
 #### Scenario: A fifth claim in one day is refused
 
@@ -69,13 +69,13 @@ A player SHALL claim at most four commissions a day, whichever way each was made
 
 - **GIVEN** four claims have been made today and Katheryne's bonus is not yet given
 - **WHEN** the player talks to Katheryne
-- **THEN** Katheryne's bonus is drawn for the band the player's rank falls in at that moment, and the day records it as given (the game's text, key `1812726784`)
+- **THEN** Katheryne's bonus is drawn for the band the player's rank falls in at that moment, and the day records it as given (the game's text, `~/Esposter/genshin-parity/text/TextMap/TextMap_MediumEN.json`, key `1812726784`)
 
 #### Scenario: A claim does not draw Katheryne's bonus
 
 - **GIVEN** three claims have been made today
 - **WHEN** the player makes the fourth claim
-- **THEN** the claim pays its reward only, and Katheryne's bonus remains to be given (the game's text, key `33283106`)
+- **THEN** the claim pays its reward only, and Katheryne's bonus remains to be given (the game's text, `~/Esposter/genshin-parity/text/TextMap/TextMap_MediumEN.json`, key `33283106`)
 
 #### Scenario: Katheryne gives the bonus once a day
 
@@ -85,13 +85,13 @@ A player SHALL claim at most four commissions a day, whichever way each was made
 
 ### Requirement: Katheryne's bonus
 
-Katheryne's bonus SHALL give the same Primogems and Adventure EXP in every band, and its Mora and Companionship EXP SHALL rise with the band (rows `2001` to `2012`: Primogem `201` at 20 and Adventure EXP `102` at 500 in every band, Mora `202` from 3875 to 13175 and Companionship EXP `105` from 35 to 100).
+Katheryne's bonus SHALL give the same Primogems and Adventure EXP in every band, and its Mora and Companionship EXP SHALL rise with the band (`~/Esposter/genshin-parity/text/ExcelBinOutput/RewardPreviewExcelConfigData.json`, rows `2001` to `2012`: Primogem `201` at 20 and Adventure EXP `102` at 500 in every band, Mora `202` from 3875 to 13175 and Companionship EXP `105` from 35 to 100).
 
 #### Scenario: The Adventure Treasure Pack is not paid by the bonus
 
 - **GIVEN** Katheryne's bonus is drawn
 - **WHEN** its items are listed
-- **THEN** the Adventure Treasure Pack is not among them (item `107004` is at count `0` in every band)
+- **THEN** the Adventure Treasure Pack is not among them (item `107004` is at count `0` in every band of `~/Esposter/genshin-parity/text/ExcelBinOutput/RewardPreviewExcelConfigData.json`)
 
 ### Requirement: Each reward item
 
@@ -105,5 +105,5 @@ Each reward item SHALL draw its count from its range, and a draw of zero SHALL g
 
 ## Open
 
-- [ ] **Daily commissions open at Adventure Rank 12** — partly settled: the Commission page (checked) gives Adventure Rank 12 with completing Every Day a New Adventure as the unlock, so the rank alone does not open them; the quest gate is not built (see the design's Not built yet). No system open UI in `~/Esposter/genshin-parity/text/ExcelBinOutput/SystemOpenUIConfigData.json` names the commissions.
+- [ ] **Daily commissions open at Adventure Rank 12** — no source yet: the wiki's Commission page is not in `~/Esposter.noindex/cache/genshin-wiki/`, and no system open UI in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/SystemOpenUIConfigData.json` names the commissions.
 - [ ] **An unfinished commission is claimed for one Encounter Point** — no source yet: the game's text gives Encounter Points' use in place of a commission but no per-commission cost, and its one-per-commission line (`~/Esposter/genshin-parity/text/TextMap/TextMap_MediumEN.json`, key `2417337778`) is for Long-Term Encounter Points.
