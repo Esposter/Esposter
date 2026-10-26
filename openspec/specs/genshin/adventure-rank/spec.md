@@ -202,5 +202,4 @@ The Paimon menu SHALL keep a system's entry disabled until the player reaches th
 
 - [ ] **Ten Mora for each point of Adventure EXP past rank 60** — no source yet: the game's text converts the EXP to Mora (text 365981086 in `~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`) but gives no rate, and the wiki's Adventure Rank page is not in the cache.
 - [ ] **Five Adventure EXP for each point of Original Resin spent** — no source yet: neither the game's text nor the dump's tables checked here gives the resin's Adventure EXP rate.
-- [ ] **The World Level can be lowered from World Level 3** — contradicted by `~/Esposter.noindex/genshin-parity/captures/yt-P13s7kSmVOE-world-level-dialog-2024.mp4`: after reaching World Level 5 the option to decrease appears
 - [ ] **Katheryne gives a reached rank's reward once, at a branch of the Adventurers' Guild** — no source yet: the Adventure Rank wiki page and its Adventurers' Guild Rewards page are not on disk
