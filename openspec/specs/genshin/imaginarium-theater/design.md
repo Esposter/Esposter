@@ -79,7 +79,7 @@ A season names its difficulties by id, and the writer refuses a season that name
 
 ## Sources
 
-- [Imaginarium Theater](https://genshin-impact.fandom.com/wiki/Imaginarium_Theater), Genshin Impact Wiki: the Vigor, the Blessing Level steps and stats, the opening character's bonus and the Stella rewards this page builds. Quoted: "Every stage requires four stage members"; "Each character has two Vigor"; "Every character added to the Alternate Cast above the required number increases Blessing Level by 2"; "obtaining or upgrading any Brilliant Blessing increases Blessing Level by 1"; "The buff effects received by Special Guest Stars are increased by 100%"; "If the player possesses an Opening Character, their HP, ATK and DEF are increased by 20%"; "every 3 Stella obtained in a run" (its Stella Rewards table gives one card at 3, 6, 9 and 12).
+- [Imaginarium Theater](https://genshin-impact.fandom.com/wiki/Imaginarium_Theater), Genshin Impact Wiki: the Vigor, the Blessing Level steps and stats, the opening character's bonus and the Stella rewards this page builds. Its quotes are listed under Sources in [spec.md](spec.md).
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `RoleCombatScheduleExcelConfigData` and `RoleCombatDifficultyExcelConfigData`, the two tables the slices are written from. Their revision matches the dump's tower tables.
 
 ## Open
