@@ -40,4 +40,4 @@ flowchart LR
 - [ ] **The licence's forty-unit spacing, its 400 ms fade and the splash's own hold** — no source yet: the bili recording has not been read frame by frame for these timings.
 - [ ] **The licence's second line runs narrower than the recording's** — no source yet: the licence line's width has not been measured against the recording.
 - [ ] **253 on the user's own recording** — no source yet: no still of the PC splash from the user's own recording is in `~/Esposter.noindex/genshin-parity/references/`.
-- [ ] **A Simplified Chinese reader is shown mainland China's client** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A Simplified Chinese reader is shown mainland China's client** — no source yet: `~/Esposter/genshin-parity/references/cn-login.png`, not yet read for which client a Simplified Chinese reader sees.
