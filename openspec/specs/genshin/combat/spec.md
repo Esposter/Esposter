@@ -429,22 +429,22 @@ A Stellar Linchpin user's Stellar Jubilee passive SHALL enable Stellar Swirl and
 
 ### Requirement: Starlight Prism Sustains a Polestar Field
 
-A Stellar-Conduct SHALL leave a Starlight Prism that lasts 6 seconds (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct_gadget.go` line 17) and sustains a Polestar Field of radius 15 around it (same file, line 58), the field standing for as long as the prism does. A Stellar-Conduct triggered with the body inside a standing field SHALL set that field's time back to 6 seconds rather than leave a second field, and one triggered with the body inside none SHALL leave a new field beside any that stand. While it stands, the enemies inside it have their Physical RES lowered by 40%.
+A Stellar-Conduct SHALL leave a Starlight Prism that lasts 7 seconds and sustains a Polestar Field of radius 15 around it (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct_gadget.go` line 58), the field standing for as long as the prism does. A Stellar-Conduct triggered with the body inside a standing field SHALL set that field's time back to 7 seconds rather than leave a second field, and one triggered with the body inside none SHALL leave a new field beside any that stand. While it stands, the enemies inside it have their Physical RES lowered by 40%.
 
-#### Scenario: a Stellar-Conduct places a Polestar Field round the point given for 6 seconds, ticking every 4
+#### Scenario: a Stellar-Conduct places a Polestar Field round the point given for 7 seconds, ticking every 4
 
 - **WHEN** a Stellar-Conduct is triggered and no Polestar Field stands
-- **THEN** a Polestar Field of radius 15 stands at the body on the field for 6 seconds, as gcsim places it at the player, placed by the reaction path for any enabler
+- **THEN** a Polestar Field of radius 15 stands at the body on the field for 7 seconds, as gcsim places it at the player, placed by the reaction path for any enabler
 
 #### Scenario: a Stellar-Conduct refreshes a standing Polestar Field
 
 - **WHEN** a Stellar-Conduct is triggered with the body inside a standing Polestar Field
-- **THEN** the field's time is set back to 6 seconds, and no second field stands
+- **THEN** the field's time is set back to 7 seconds, and no second field stands
 
 #### Scenario: a Stellar-Conduct with the body outside the standing Polestar Field places a second one beside it
 
 - **WHEN** a Stellar-Conduct is triggered with the body outside the one Polestar Field that stands
-- **THEN** a second field stands at the body for 6 seconds, and the first keeps its time
+- **THEN** a second field stands at the body for 7 seconds, and the first keeps its time
 
 ### Requirement: Starlight Prism Buffs by Recorded Hits
 
@@ -477,21 +477,21 @@ Inside the field, a Cryo or Electro hit on an enemy that applies an element, as 
 
 ### Requirement: Stellar Swirl Places a Stellar Vortex
 
-A Stellar Swirl SHALL deal Anemo damage to its target and then leave one Stellar Vortex lasting 3 seconds (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl_gadget.go` line 19), and a standing vortex SHALL NOT be doubled. A vortex SHALL explode at its expiry for AoE Cryo damage. The second Stellar Swirl SHALL level it to Lv. 2, which deals more damage across a wider area, and the third SHALL explode it at once (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl.go` lines 84, 91 to 93 and 238 to 240: the stack add reaches three on the second swirl and six on the third, where the vortex is killed).
+A Stellar Swirl SHALL deal Anemo damage to its target and then leave one Stellar Vortex lasting 3 seconds (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl_gadget.go` line 19), and a standing vortex SHALL NOT be doubled. A vortex SHALL explode at its expiry for AoE Cryo damage. The third Stellar Swirl SHALL level it to Lv. 2, which deals more damage across a wider area, and three further Stellar Swirls SHALL explode it at once.
 
 #### Scenario: a Stellar Swirl leaves one Stellar Vortex for 3 seconds
 
 - **WHEN** a Stellar Swirl is triggered and no vortex stands
 - **THEN** one Lv. 1 Stellar Vortex stands for 3 seconds
 
-#### Scenario: the second Stellar Swirl levels the vortex up
-
-- **WHEN** the second Stellar Swirl is triggered
-- **THEN** the vortex is Lv. 2
-
-#### Scenario: the third Stellar Swirl explodes the vortex at once
+#### Scenario: the third Stellar Swirl levels the vortex up
 
 - **WHEN** the third Stellar Swirl is triggered
+- **THEN** the vortex is Lv. 2
+
+#### Scenario: three more Stellar Swirls explode a vortex at once
+
+- **WHEN** three more Stellar Swirls are triggered after the vortex levels up
 - **THEN** the vortex explodes at once
 
 ### Requirement: Stellar Vortex Explosion Coefficient
@@ -519,6 +519,6 @@ A Stellar Vortex's explosion SHALL be priced at a Base Reaction Coefficient of 2
 - [ ] **An enemy's strike is resisted by the member's RES to its attack element, or Physical RES with none** — no source yet: gcsim's `~/Esposter/cache/gcsim-v2.47.2/pkg/avatar/avatar.go` sets a member's resistance to zero, with a TODO that players have no resistances, so the source does not hold this rule.
 - [ ] **A DMG Reduction lowers a strike's damage by its share, and 120% leaves none** — no source yet: gcsim's `DamageReduction` in `~/Esposter/cache/gcsim-v2.47.2/pkg/core/player/character/mods.go` sums the active mods' amounts, and no gcsim code calls it on a strike, so the source does not hold this arithmetic
 - [ ] **A party that is all down revives at 35% health at the nearest statue** — no source yet: gcsim holds no party revive and no statue rule, so the named source does not hold this value
-- [ ] **The Starlight Prism lasts 7 seconds, sustains a radius-15 Polestar Field, and a refresh sets the field back to 7 seconds** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct_gadget.go`: its field lasts 6 seconds (`sscFieldDur`, line 17).
+- [ ] **The Starlight Prism lasts 7 seconds, sustains a radius-15 Polestar Field, and a refresh sets the field back to 7 seconds** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct_gadget.go:17`: its field lasts 6 seconds (`sscFieldDur`).
 - [ ] **The third Stellar Swirl levels the vortex to Lv. 2, and three more explode it at once** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl.go`: its stack add reaches 3 on the second swirl and 6 on the third.
 - [ ] **A direct Stellar Swirl hit has Base Reaction Coefficient 1, which the count does not raise** — no source yet: gcsim's direct-hit coefficient for a Stellar Swirl, since `~/Esposter/cache/gcsim-v2.47.2/pkg/core/combat/reaction.go` line 24 gives 1 to the reaction's tag alone.
