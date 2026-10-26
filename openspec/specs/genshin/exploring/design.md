@@ -37,7 +37,7 @@ Mondstadt is the first region fitted, and the regions the waypoints command writ
 
 ## Data and measures
 
-- **Read from the game:** the scene's transport points, each with its place, turn and height, read by `readSceneTransportPoints` from the scene points of the kind Windrise's statue holds (`scripts/src/services/genshinAssets/world/readSceneTransportPoints.ts`, lines 10 to 12). The official map's ground waypoints come from the map's references, as the [spawned places](../spawned-places/design.md) page reads them (`scripts/src/services/genshinAssets/fit/fitRegionWaypoints.ts`, line 19, through `readFittedRegions`).
+- **Read from the game:** the scene's transport points, each with its place, turn and height, read by `readSceneTransportPoints` from the scene points of the kind Windrise's statue holds (`scripts/src/services/genshinAssets/world/readSceneTransportPoints.ts`, lines 10 to 12). The official map's ground waypoints come from the map's references, as the [spawned places](../spawned-places/design.md) page reads them (`scripts/src/services/genshinAssets/points/readFittedMapPoints.ts`, lines 12 to 22, with the fit's transform, and `scripts/src/services/genshinAssets/fit/fitRegionWaypoints.ts`, line 19, through `readFittedRegions`).
 - **Written into region data:** each waypoint's id, arrival, position, rotation, height offset and area, in the `TeleportWaypoint` kind (`scripts/src/services/genshinAssets/fit/toWaypointLandmarks.ts`, line 17, and `fitRegionWaypoints.ts`, line 43).
 - **Measured:** nothing new. The pairing holds to the bar the statues' fit holds to (`INTERACTIVE_MAP_FIT_BAR`, `scripts/src/services/genshinAssets/points/constants.ts`, line 28, which `scripts/src/services/genshinAssets/fit/fitInteractiveMap.ts` and `toWaypointLandmarks.ts` both use).
 
@@ -65,16 +65,9 @@ Mondstadt is the first region fitted, and the regions the waypoints command writ
 
 ## Notes
 
-- **A waypoint's first unlock pays its point's reward.** `computeLandmarkPointId` keys each waypoint by the point its id ends in (`packages/genshin-world/src/services/transPoint/computeLandmarkPointId.ts`), so its Primogems and Adventure EXP are the point's row, as the [map unlocking](../map-unlocking/design.md) page sets out, and the waypoints in points 1865 to 2051 pay nothing (`~/Esposter/genshin-parity/text/ExcelBinOutput/TransPointRewardConfigData.json` holds no row for those points, and `packages/genshin-world/src/data/regions/mondstadt.json` holds the waypoints in that range). The transport-point achievement counts only the statue `LandmarkIdStatuePointIdMap` names (`packages/genshin-world/src/services/statue/computeUnlockedStatuePointIds.ts`, line 12, over a map that holds only `windrise-statue-of-the-seven`), so a waypoint's unlock counts toward it not at all.
+- **A waypoint's first unlock pays its point's reward.** `computeLandmarkPointId` keys each waypoint by the point its id ends in (`packages/genshin-world/src/services/transPoint/computeLandmarkPointId.ts`), so its Primogems and Adventure EXP are the point's row, as the [map unlocking](../map-unlocking/design.md) page sets out, and the waypoints in points 1865 to 2051 pay nothing (`~/Esposter/genshin-parity/text/ExcelBinOutput/TransPointRewardConfigData.json` holds no row for those points, and `packages/genshin-world/src/data/regions/mondstadt.json` holds the eleven waypoints in that range, counted by the number after each id's last hyphen). The transport-point achievement counts only the statue `LandmarkIdStatuePointIdMap` names (`packages/genshin-world/src/services/statue/computeUnlockedStatuePointIds.ts`, line 12, over a map that holds only `windrise-statue-of-the-seven`), so a waypoint's unlock counts toward it not at all.
 - **Only the regions in `WAYPOINT_REGIONS` have waypoints.** (`scripts/src/services/genshinAssets/shared/constants.ts`, line 417.) Each further region is added to that list once its map fit is checked.
 
 ## Sources
 
 - [Teleport Waypoint](https://genshin-impact.fandom.com/wiki/Teleport_Waypoint), Genshin Impact Wiki: the fast-travel points a jump goes to.
-
-## Open
-
-- **Mondstadt's region data holds its waypoints, with ids such as `mondstadt-waypoint-1865`** — `packages/genshin-world/src/data/regions/mondstadt.json` holds that id, and eleven of its waypoints fall in points 1865 to 2051 by the number after each id's last hyphen.
-- **Each scene transport point is read from the scene points Windrise's statue holds** — `scripts/src/services/genshinAssets/world/readSceneTransportPoints.ts` (lines 10 to 12), whose kind is the one the Windrise statue point names.
-- **The official map's ground waypoints are read from the map's references** — `scripts/src/services/genshinAssets/points/readFittedMapPoints.ts` (lines 12 to 22) reads the official map's points with the fit's transform, and `scripts/src/services/genshinAssets/fit/fitRegionWaypoints.ts` (line 19) takes them through `readFittedRegions`.
-- **Mondstadt has eleven of its waypoints in points 1865 to 2051** — counted from `packages/genshin-world/src/data/regions/mondstadt.json` by the number after each id's last hyphen.
