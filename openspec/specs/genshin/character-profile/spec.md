@@ -84,7 +84,7 @@ The Friendship Level SHALL be the level that the character's total Companionship
 
 ### Requirement: The panel names the namecard once Friendship holds it
 
-The panel SHALL name the character's namecard once Friendship holds it, except for the three characters who have none.
+The panel SHALL name the character's namecard once Friendship holds it, except for Momoka and the Traveler, who have none.
 
 #### Scenario: Namecard named after Friendship holds it
 
@@ -94,7 +94,7 @@ The panel SHALL name the character's namecard once Friendship holds it, except f
 
 #### Scenario: Characters with no namecard show none
 
-- **GIVEN** the character is Xinyan, Yae Miko or Momoka
+- **GIVEN** the character is Momoka or the Traveler
 - **WHEN** the panel is shown
 - **THEN** no namecard is shown
 
