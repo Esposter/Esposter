@@ -518,22 +518,22 @@ A Stellar Vortex's explosion SHALL be priced at a Base Reaction Coefficient of 2
 - [ ] **A two-unit Pyro tap leaves 1.6 units of Pyro lasting 12 seconds** — no source yet: gcsim's aura tax and decay were not opened for this case, and the wiki's Elemental Gauge Theory page is not cached.
 - [ ] **Anemo and Geo leave no aura** — no source yet: gcsim's Swirl and Crystallize paths were not opened to show they attach none.
 - [ ] **Hydro on a burning target vaporizes the Burning and its Pyro, and blooms the Dendro with what is left** — no source yet: `pkg/reactable/vaporize.go` and `bloom.go` were not opened for the Burning step.
-- [ ] **A hit from an attacker of the enemy's own level is halved by defence** — no source yet: the defence factor in gcsim's `pkg/enemy/damage.go` was not located.
-- [ ] **A resistance past three quarters cuts damage to one over four times the resistance plus one** — no source yet: `pkg/enemy/damage.go` past line 88 was not opened.
-- [ ] **Vaporize and Melt multiply the hit by two** — no source yet: gcsim's amplifying multiplier was not opened.
+- [ ] **A hit from an attacker of the enemy's own level is halved by defence** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/enemy/damage.go`: its defence factor is (attacker + 100) over (attacker + 100) plus (enemy + 100): 0.5 at equal levels.
+- [ ] **A resistance past three quarters cuts damage to one over four times the resistance plus one** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/enemy/damage.go`: past 0.75 its resistance modifier is 1 / (4 × res + 1).
+- [ ] **Vaporize and Melt multiply the hit by two** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/vaporize.go`: Pyro on Hydro multiplies by 1.5, Hydro on Pyro by 2.
 - [ ] **A Lunar-Bloom deals no damage of its own and leaves a Dendro Core** — no source yet: gcsim's `pkg/reactable/lunarbloom.go` was not opened.
 - [ ] **Ascendant Gleam is capped at 36% and lasts 20 seconds** — no source yet: gcsim's Ascendant Gleam code was not opened for these values.
-- [ ] **Each deployed Stellar Jubilee's Base DMG Bonus adds, two at 7% giving 14%** — no source yet: gcsim's Stellar Jubilee Base DMG code was not opened.
+- [ ] **Each deployed Stellar Jubilee's Base DMG Bonus adds, two at 7% giving 14%** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/odette/stellar.go`: the Base DMG bonus is 0.7% per 100 ATK, capped at 14%.
 - [ ] **An enemy's strike is resisted by the member's RES to its attack element, or Physical RES with none** — no source yet: gcsim's strike resistance was not opened for this rule.
 - [ ] **A DMG Reduction lowers a strike's damage by its share, and 120% leaves none** — no source yet: gcsim's `DamageReduction` arithmetic was not opened.
 - [ ] **A shield absorbs 2.5 points per point of its own element's strike, and a Shield Strength of 25% gives 1.25** — no source yet: gcsim's shield absorption code was not opened.
 - [ ] **A sword's energy chance starts at 10% and rises by 5% after each hit that gives none** — no source yet: gcsim's attack energy code was not opened.
 - [ ] **A particle gives 3 energy of its element, 1 of another and 2 of none** — no source yet: gcsim's particle gain was not opened.
 - [ ] **A party that is all down revives at 35% health at the nearest statue** — no source yet: gcsim's revive code was not opened.
-- [ ] **The Starlight Prism lasts 7 seconds, sustains a radius-15 Polestar Field, and a refresh sets the field back to 7 seconds** — no source yet: the wiki's Stellar-Conduct page is not cached, and gcsim sets 6 seconds (`pkg/reactable/stellarconduct_gadget.go:17`).
+- [ ] **The Starlight Prism lasts 7 seconds, sustains a radius-15 Polestar Field, and a refresh sets the field back to 7 seconds** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct_gadget.go`: its field lasts 6 seconds (`sscFieldDur`, line 17). The wiki's Stellar-Conduct page is not cached.
 - [ ] **The Polestar Field lowers each enemy's Physical RES by 40%** — no source yet: gcsim's shred value (`stellarconduct_gadget.go:122`) was not opened.
 - [ ] **A Polestar Field gives its body 20% Cryo and Electro DMG Bonus with no hit, 28% plus 1% a hit up to 40%** — no source yet: gcsim's DMG Bonus lines for the field were not opened.
-- [ ] **A Stellar Vortex lasts 3 seconds, and its explosion is at Base Reaction Coefficient 2 at Lv. 1 and 3 at Lv. 2** — no source yet: gcsim's vortex duration and explosion coefficients were not opened, and the wiki's Damage page is not cached.
+- [ ] **A Stellar Vortex lasts 3 seconds, and its explosion is at Base Reaction Coefficient 2 at Lv. 1 and 3 at Lv. 2** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl_gadget.go`: its duration is 181 frames, about 3 seconds. Its explosion coefficients were not opened, and the wiki's Damage page is not cached.
 - [ ] **The third Stellar Swirl levels the vortex to Lv. 2, and three more explode it at once** — no source yet: gcsim's vortex stacking in `pkg/reactable/stellarswirl.go` was not opened for these counts.
 - [ ] **A direct Stellar Swirl hit has Base Reaction Coefficient 1, which the count does not raise** — no source yet: gcsim's direct Stellar Swirl coefficient was not opened.
-- [ ] **A Stellar Jubilee passive enables Stellar Swirl and Stellar-Conduct for its party** — no source yet: gcsim's `internal/characters/odette/stellar.go` enable flags were not opened in this pass.
+- [ ] **A Stellar Jubilee passive enables Stellar Swirl and Stellar-Conduct for its party** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/odette/stellar.go`: its stellar init sets both enable flags to 1.
