@@ -144,7 +144,8 @@ The world SHALL leave unbound the keys of places and modes it does not have (whi
 
 ## Open
 
+- [ ] **The game's default key for each action on a PC and a gamepad, M, F3 and F5 among them** — no source yet: the wiki's Controls page is not in `~/Esposter.noindex/cache/genshin-wiki/`, and no capture shows the game's controls list.
 - [ ] **A pad's bumper turns the face buttons into the shortcut wheel's while held** — no source yet: a capture of the pad's bumper held in the game, not on this machine.
 - [ ] **The browser keeps Escape for a pointer lock and takes no lock from it** — no source yet: the Pointer Lock and user-activation specs, which this pass did not open.
 - [ ] **Chromium reports one spurious, very large pointer move after a lock** — no source yet: a recording of the first move after a lock, not taken here.
-- [ ] **F6, F7 and F8 are the Serenitea Pot, the Cat's Tail and Stellar Reunion** — partly sourced: the wiki's Controls page gives F8 as Stellar Reunion, F6 as the settings menu within the Serenitea Pot and the Cat's Tail, and F7 as the Furnishing Screen inside the Serenitea Pot alone, so whether F7 also opens a Cat's Tail screen is not stated.
+- [ ] **F6, F7 and F8 are the Serenitea Pot, the Cat's Tail and Stellar Reunion** — no source yet: the game's controls list for those screens, which the wiki cache does not hold.
