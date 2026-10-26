@@ -84,5 +84,5 @@ The login's button clicks and its wind SHALL NOT play until a recording that pla
 
 ## Open
 
-- [ ] **A deployed product holds no game sound, only the measured levels** — no source yet: the product's contents are not inspected here, and the hosted `login/sounds` record is named in the game-data lock by its hash only.
-- [ ] **Our door sits as near the game's as a second render sits to the first** — no source yet: the reference records the door at 2.12 decibels off and two resyntheses 3.32 apart, but no grain for the audio pass to set beside it.
+- [ ] **A deployed product holds no game sound, only the measured levels** — no source yet: the product's contents are not inspected here, and the hosted `login/sounds` record is named in `packages/genshin-world/src/generated/gameDataLock.json` by its hash only.
+- [ ] **Our door sits as near the game's as a second render sits to the first** — no source yet: the 2.12-decibel offset of the door and the 3.32 spread between two resyntheses are not recorded in `~/Esposter/genshin-parity/comparisons/` or `~/Esposter/genshin-parity/references/`, so no grain for the audio pass to set beside them is on disk.
