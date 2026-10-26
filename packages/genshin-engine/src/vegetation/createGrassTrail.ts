@@ -1,5 +1,6 @@
 import type { GrassTrail } from "#src/models/vegetation/GrassTrail";
 
+import { MAX_BYTE } from "#src/constants";
 import { GRASS_TRAIL_TEXELS } from "#src/vegetation/constants";
 import { DataTexture, LinearFilter, RepeatWrapping, RGBAFormat, Vector2 } from "three";
 import { uniform } from "three/tsl";
@@ -9,7 +10,7 @@ export const createGrassTrail = (): GrassTrail => {
   const texelCount = GRASS_TRAIL_TEXELS * GRASS_TRAIL_TEXELS;
   const data = new Uint8Array(texelCount * 4);
   // Alpha is one everywhere, and the bends a half, which the encoding reads as no bend
-  for (let index = 0; index < data.length; index++) data[index] = index % 4 === 3 ? 255 : 128;
+  for (let index = 0; index < data.length; index++) data[index] = index % 4 === 3 ? MAX_BYTE : 128;
   const texture = new DataTexture(data, GRASS_TRAIL_TEXELS, GRASS_TRAIL_TEXELS, RGBAFormat);
   texture.magFilter = LinearFilter;
   texture.minFilter = LinearFilter;

@@ -1,6 +1,7 @@
 import type { GrassTrail } from "#src/models/vegetation/GrassTrail";
 import type { Vector2 } from "three";
 
+import { MAX_BYTE } from "#src/constants";
 import { computeGrassTrailCell } from "#src/vegetation/computeGrassTrailCell";
 import { computeGrassTrailTexelIndex } from "#src/vegetation/computeGrassTrailTexelIndex";
 import {
@@ -11,7 +12,7 @@ import {
 } from "#src/vegetation/constants";
 
 // Each bend encoded in a byte, from [-1, 1] across [0, 255]
-const encodeBend = (bend: number): number => Math.round((Math.min(Math.max(bend, -1), 1) * 0.5 + 0.5) * 255);
+const encodeBend = (bend: number): number => Math.round((Math.min(Math.max(bend, -1), 1) * 0.5 + 0.5) * MAX_BYTE);
 
 // Advances the trail by a frame: every bend fades, the texels the square has moved off are cleared for the cells it
 // Now covers, the character's footing is stamped with its direction of travel when it moves, and the texture takes the
