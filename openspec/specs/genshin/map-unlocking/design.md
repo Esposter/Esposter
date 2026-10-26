@@ -57,5 +57,5 @@ flowchart TD
 - [ ] **A locked domain entrance is a row named Domain Entrance** — no source yet: `computeJumpLandmarkTextKey` names it by the domain's own title (`titleTextKey`), not by a Domain Entrance text.
 - [ ] **No text id for the game's resonating prompt is in the text dump under a known key** — no source yet: the dump's `Resonate with <element>` entries are the element skills' prompts, and no key for the statue's prompt is identified.
 - [ ] **A party that falls is jumped to the unlocked landmark nearest its body** — no source yet: the revive takes only the nearest unlocked Teleport Waypoint (`findNearestTeleportWaypoint`), since a statue takes no revive.
-- [ ] **A domain entrance is a landmark that resonating unlocks the same way** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The build follows the game's table for waypoint rewards** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A domain entrance is a landmark that resonating unlocks the same way** — no source yet: the Icy Veins Galesong Hill page and the Let the Wind Lead page, named in Sources, are not in the wiki cache.
+- [ ] **The build follows the game's table for waypoint rewards** — no source yet: the game's waypoint reward table in `~/Esposter/genshin-parity/text/ExcelBinOutput/`, not yet named or read.
