@@ -18,7 +18,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
-  "hits.discharges.1.hitmarkFrames": { "cause": "Unsourced", "value": 149 },
+  "hits.discharges.1.hitmarkFrames": { "cause": "Unclassified", "value": 149 },
   "hits.discharges.1.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 439 } },
   "hits.discharges.2.area": {
     "file": "burst.go",
@@ -26,7 +26,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
-  "hits.discharges.2.hitmarkFrames": { "cause": "Unsourced", "value": 179 },
+  "hits.discharges.2.hitmarkFrames": { "cause": "Unclassified", "value": 179 },
   "hits.discharges.2.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 439 } },
   "hits.discharges.3.area": {
     "file": "burst.go",
@@ -34,7 +34,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
-  "hits.discharges.3.hitmarkFrames": { "cause": "Unsourced", "value": 209 },
+  "hits.discharges.3.hitmarkFrames": { "cause": "Unclassified", "value": 209 },
   "hits.discharges.3.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 439 } },
   "hits.discharges.4.area": {
     "file": "burst.go",
@@ -42,7 +42,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
-  "hits.discharges.4.hitmarkFrames": { "cause": "Unsourced", "value": 239 },
+  "hits.discharges.4.hitmarkFrames": { "cause": "Unclassified", "value": 239 },
   "hits.discharges.4.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 439 } },
   "hits.discharges.5.area": {
     "file": "burst.go",
@@ -50,7 +50,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
-  "hits.discharges.5.hitmarkFrames": { "cause": "Unsourced", "value": 269 },
+  "hits.discharges.5.hitmarkFrames": { "cause": "Unclassified", "value": 269 },
   "hits.discharges.5.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 439 } },
   "hits.discharges.6.area": {
     "file": "burst.go",
@@ -58,7 +58,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
-  "hits.discharges.6.hitmarkFrames": { "cause": "Unsourced", "value": 299 },
+  "hits.discharges.6.hitmarkFrames": { "cause": "Unclassified", "value": 299 },
   "hits.discharges.6.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 439 } },
   "hits.discharges.7.area": {
     "file": "burst.go",
@@ -66,7 +66,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
-  "hits.discharges.7.hitmarkFrames": { "cause": "Unsourced", "value": 329 },
+  "hits.discharges.7.hitmarkFrames": { "cause": "Unclassified", "value": 329 },
   "hits.discharges.7.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 439 } },
   "hits.discharges.8.area": {
     "file": "burst.go",
@@ -74,7 +74,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
-  "hits.discharges.8.hitmarkFrames": { "cause": "Unsourced", "value": 359 },
+  "hits.discharges.8.hitmarkFrames": { "cause": "Unclassified", "value": 359 },
   "hits.discharges.8.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 439 } },
   "hits.discharges.9.area": {
     "file": "burst.go",
@@ -82,7 +82,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
-  "hits.discharges.9.hitmarkFrames": { "cause": "Unsourced", "value": 389 },
+  "hits.discharges.9.hitmarkFrames": { "cause": "Unclassified", "value": 389 },
   "hits.discharges.9.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 439 } },
   "hits.discharges.10.area": {
     "file": "burst.go",
@@ -90,7 +90,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
-  "hits.discharges.10.hitmarkFrames": { "cause": "Unsourced", "value": 419 },
+  "hits.discharges.10.hitmarkFrames": { "cause": "Unclassified", "value": 419 },
   "hits.discharges.10.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 439 } },
   "hits.discharges.11.area": {
     "file": "burst.go",
@@ -98,7 +98,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
-  "hits.discharges.11.hitmarkFrames": { "cause": "Unsourced", "value": 449 },
+  "hits.discharges.11.hitmarkFrames": { "cause": "Unclassified", "value": 449 },
   "hits.discharges.11.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 439 } },
   "hits.discharges.12.area": {
     "file": "burst.go",
@@ -106,7 +106,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
-  "hits.discharges.12.hitmarkFrames": { "cause": "Unsourced", "value": 479 },
+  "hits.discharges.12.hitmarkFrames": { "cause": "Unclassified", "value": 479 },
   "hits.discharges.12.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 439 } },
   "hits.discharges.13.area": {
     "file": "burst.go",
@@ -114,7 +114,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
-  "hits.discharges.13.hitmarkFrames": { "cause": "Unsourced", "value": 509 },
+  "hits.discharges.13.hitmarkFrames": { "cause": "Unclassified", "value": 509 },
   "hits.discharges.13.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 439 } },
   "hits.discharges.14.area": {
     "file": "burst.go",
@@ -122,7 +122,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
-  "hits.discharges.14.hitmarkFrames": { "cause": "Unsourced", "value": 539 },
+  "hits.discharges.14.hitmarkFrames": { "cause": "Unclassified", "value": 539 },
   "hits.discharges.14.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 439 } },
   "hits.discharges.15.area": {
     "file": "burst.go",
@@ -130,7 +130,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
-  "hits.discharges.15.hitmarkFrames": { "cause": "Unsourced", "value": 569 },
+  "hits.discharges.15.hitmarkFrames": { "cause": "Unclassified", "value": 569 },
   "hits.discharges.15.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 439 } },
   "hits.discharges.16.area": {
     "file": "burst.go",
@@ -138,7 +138,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
-  "hits.discharges.16.hitmarkFrames": { "cause": "Unsourced", "value": 599 },
+  "hits.discharges.16.hitmarkFrames": { "cause": "Unclassified", "value": 599 },
   "hits.discharges.16.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 439 } },
   "hits.discharges.17.area": {
     "file": "burst.go",
@@ -146,7 +146,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
-  "hits.discharges.17.hitmarkFrames": { "cause": "Unsourced", "value": 629 },
+  "hits.discharges.17.hitmarkFrames": { "cause": "Unclassified", "value": 629 },
   "hits.discharges.17.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 439 } },
   "hits.discharges.18.area": {
     "file": "burst.go",
@@ -154,7 +154,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
-  "hits.discharges.18.hitmarkFrames": { "cause": "Unsourced", "value": 659 },
+  "hits.discharges.18.hitmarkFrames": { "cause": "Unclassified", "value": 659 },
   "hits.discharges.18.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 439 } },
   "hits.discharges.19.area": {
     "file": "burst.go",
@@ -162,7 +162,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
-  "hits.discharges.19.hitmarkFrames": { "cause": "Unsourced", "value": 689 },
+  "hits.discharges.19.hitmarkFrames": { "cause": "Unclassified", "value": 689 },
   "hits.discharges.19.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 439 } },
   "hits.discharges.20.area": {
     "file": "burst.go",
@@ -170,7 +170,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
-  "hits.discharges.20.hitmarkFrames": { "cause": "Unsourced", "value": 719 },
+  "hits.discharges.20.hitmarkFrames": { "cause": "Unclassified", "value": 719 },
   "hits.discharges.20.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 439 } },
   "hits.discharges.21.area": {
     "file": "burst.go",
@@ -178,7 +178,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
-  "hits.discharges.21.hitmarkFrames": { "cause": "Unsourced", "value": 749 },
+  "hits.discharges.21.hitmarkFrames": { "cause": "Unclassified", "value": 749 },
   "hits.discharges.21.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 439 } },
   "hits.discharges.22.area": {
     "file": "burst.go",
@@ -186,7 +186,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
-  "hits.discharges.22.hitmarkFrames": { "cause": "Unsourced", "value": 779 },
+  "hits.discharges.22.hitmarkFrames": { "cause": "Unclassified", "value": 779 },
   "hits.discharges.22.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 439 } },
   "hits.discharges.23.area": {
     "file": "burst.go",
@@ -194,7 +194,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
-  "hits.discharges.23.hitmarkFrames": { "cause": "Unsourced", "value": 809 },
+  "hits.discharges.23.hitmarkFrames": { "cause": "Unclassified", "value": 809 },
   "hits.discharges.23.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 439 } },
   "hits.discharges.24.area": {
     "file": "burst.go",
@@ -202,7 +202,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
-  "hits.discharges.24.hitmarkFrames": { "cause": "Unsourced", "value": 839 },
+  "hits.discharges.24.hitmarkFrames": { "cause": "Unclassified", "value": 839 },
   "hits.discharges.24.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 439 } },
   "hits.discharges.25.area": {
     "file": "burst.go",
@@ -210,7 +210,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
-  "hits.discharges.25.hitmarkFrames": { "cause": "Unsourced", "value": 869 },
+  "hits.discharges.25.hitmarkFrames": { "cause": "Unclassified", "value": 869 },
   "hits.discharges.25.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 439 } },
   "hits.discharges.26.area": {
     "file": "burst.go",
@@ -218,7 +218,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
-  "hits.discharges.26.hitmarkFrames": { "cause": "Unsourced", "value": 899 },
+  "hits.discharges.26.hitmarkFrames": { "cause": "Unclassified", "value": 899 },
   "hits.discharges.26.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 439 } },
   "hits.discharges.27.area": {
     "file": "burst.go",
@@ -226,7 +226,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
-  "hits.discharges.27.hitmarkFrames": { "cause": "Unsourced", "value": 929 },
+  "hits.discharges.27.hitmarkFrames": { "cause": "Unclassified", "value": 929 },
   "hits.discharges.27.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 439 } },
   "hits.discharges.28.area": {
     "file": "burst.go",
@@ -234,7 +234,7 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
-  "hits.discharges.28.hitmarkFrames": { "cause": "Unsourced", "value": 959 },
+  "hits.discharges.28.hitmarkFrames": { "cause": "Unclassified", "value": 959 },
   "hits.discharges.28.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 439 } },
   "hits.discharges.29.area": {
     "file": "burst.go",
@@ -242,29 +242,32 @@
     "source": "Gcsim",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 7 }
   },
-  "hits.discharges.29.hitmarkFrames": { "cause": "Unsourced", "value": 989 },
+  "hits.discharges.29.hitmarkFrames": { "cause": "Unclassified", "value": 989 },
   "hits.discharges.29.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 439 } },
   "skillHolds.0.action.hits.0.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 10.2 }
   },
-  "skillHolds.0.action.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 432 } },
+  "skillHolds.0.action.hits.0.multiplier": {
+    "cause": "Unclassified",
+    "value": { "index": 0, "proudSkillGroupId": 432 }
+  },
   "skillHolds.0.action.hits.0.poiseDamage": { "cause": "Unsourced", "value": 150 },
   "skillHolds.0.action.hits.0.stackedHit.multipliers.length": { "cause": "Unsourced", "value": 4 },
   "skillHolds.0.action.hits.0.stackedHit.multipliers.0": {
-    "cause": "Unsourced",
+    "cause": "Unclassified",
     "value": { "index": 0, "proudSkillGroupId": 432 }
   },
   "skillHolds.0.action.hits.0.stackedHit.multipliers.1": {
-    "cause": "Unsourced",
+    "cause": "Unclassified",
     "value": { "index": 1, "proudSkillGroupId": 432 }
   },
   "skillHolds.0.action.hits.0.stackedHit.multipliers.2": {
-    "cause": "Unsourced",
+    "cause": "Unclassified",
     "value": { "index": 2, "proudSkillGroupId": 432 }
   },
   "skillHolds.0.action.hits.0.stackedHit.multipliers.3": {
-    "cause": "Unsourced",
+    "cause": "Unclassified",
     "value": { "index": 3, "proudSkillGroupId": 432 }
   },
   "skillHolds.0.action.hits.0.stackedHit.poiseDamages.length": { "cause": "Unsourced", "value": 4 },
