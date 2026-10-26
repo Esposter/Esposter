@@ -144,6 +144,3 @@ Illuga's hit timings and areas SHALL stay provisional, borrowed from other chara
 - **THEN** the timings and areas stay provisional until the comparison settles them
 
 ## Open
-
-- [ ] **The skill's Press deals two hits** — no source yet: the cached Dawnbearing Songbird wiki page (`~/Esposter/cache/genshin-wiki/Category_Illuga_Talents.json`) gives the Press DMG row without a hit count.
-- [ ] **The burst deals two hits** — no source yet: the cached Shadowless Reflection wiki page (`~/Esposter/cache/genshin-wiki/Category_Illuga_Talents.json`) gives one Skill DMG row without a hit count, and the game's text for the burst (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, hash 1078666392) says AoE Geo DMG with no hit count.
