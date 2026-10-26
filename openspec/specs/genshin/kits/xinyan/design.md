@@ -28,4 +28,4 @@ Xinyan's kit is its record and one behaviour module, `createXinyanKitBehaviour`,
 ## Open
 
 - [ ] **The shield is set at the press when none stands** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/xinyan/skill.go`: sets the level-1 shield 28 frames after the press.
-- [ ] **The shield's level ends when the shield breaks** — no source yet: the cached Sweeping Fervor text gives the levels by hits and not their end on a break, and no source read in this pass settles it.
+- [ ] **The shield's level ends when the shield breaks** — no source yet: a wiki or game source for the level's end on a break; the cached Sweeping Fervor text in `~/Esposter/cache/genshin-wiki/Category_Xinyan_Talents.json` ends only the DoT on a break.
