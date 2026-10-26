@@ -15,11 +15,11 @@ flowchart TD
 
 ## Rules
 
-- **Opened at Adventure Rank 30.** `checkIsMiningOutcropOpen` compares the rank with the constant. The rank only opens the outcrops; Reputation's mining outcrop search, at level 2 of a nation, is what marks them.
-- **A mined outcrop comes back at the next draw.** The respawn is the first 04:00 reset strictly after the mining, read in the game's time zone, UTC+8. A mining before a day's draw is back at that draw, and one at or after it at the next day's.
-- **Standing once the respawn has come.** One never mined stands. A mined one stands from its respawn, and gone before it. The day's unmined outcrops are gone with the next day's draw: `computeStandingMiningOutcrops` stands a place only in the day's draw.
-- **Mined outcrops are the save's.** A mined outcrop is saved as `minedOutcrops`, absent while none is mined, each by its place's id and the instant it was mined, so a reload keeps it gone until its respawn. A mining drops the outcrops whose respawn has come, so the save holds the day's mined ones only ([save data](../save-data/design.md)).
-- **Struck as an ore.** A standing outcrop breaks as an ore does, and a break drops one to three Magical Crystal Chunks, provisional from the wiki, since the dump's gather rows give no counts (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/GatherExcelConfigData.json` has no count field). The break sets the outcrop's instant, so the respawn above applies (which strikes with `strikeOre` and records the mined instant).
+- **Opened at Adventure Rank 30.** `checkIsMiningOutcropOpen` compares the rank with the constant (`packages/genshin-world/src/services/leyLine/checkIsMiningOutcropOpen.ts`; the constant is in `packages/genshin-world/src/services/leyLine/constants.ts`). The rank only opens the outcrops; Reputation's mining outcrop search, at level 2 of a nation, is what marks them.
+- **A mined outcrop comes back at the next draw.** The respawn is the first 04:00 reset strictly after the mining, read in the game's time zone, UTC+8 (`packages/genshin-world/src/services/time/computeNextDailyReset.ts`). A mining before a day's draw is back at that draw, and one at or after it at the next day's.
+- **Standing once the respawn has come.** One never mined stands. A mined one stands from its respawn, and gone before it. The day's unmined outcrops are gone with the next day's draw: `computeStandingMiningOutcrops` stands a place only in the day's draw (`packages/genshin-world/src/services/leyLine/checkIsMiningOutcropStanding.ts`; `packages/genshin-world/src/services/gathering/computeStandingMiningOutcrops.ts`).
+- **Mined outcrops are the save's.** A mined outcrop is saved as `minedOutcrops`, absent while none is mined, each by its place's id and the instant it was mined, so a reload keeps it gone until its respawn (`packages/genshin-world/src/models/save/GenshinSave.ts`). A mining drops the outcrops whose respawn has come, so the save holds the day's mined ones only ([save data](../save-data/design.md); `packages/genshin-world/src/composables/useMiningOutcrops.ts`).
+- **Struck as an ore.** A standing outcrop breaks as an ore does, and a break drops one to three Magical Crystal Chunks, provisional from the wiki, since the dump's gather rows give no counts (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/GatherExcelConfigData.json` has no count field). The break sets the outcrop's instant, so the respawn above applies (`packages/genshin-world/src/composables/useMiningOutcrops.ts`, which strikes with `strikeOre` and records the mined instant).
 
 ## Key files
 
@@ -51,7 +51,3 @@ flowchart TD
 - [ ] **Reputation's mining outcrop search at level 2 of a nation marks them** — no source yet: no reputation source was checked for the search or its level.
 - [ ] **The respawn is at 06:00 on the wiki, two hours after the reset** — no source yet: the wiki's Mining Outcrop page is not in the cache.
 - [ ] **A break drops one to three Magical Crystal Chunks** — no source yet: the figure is the wiki's and provisional, its page is not cached, and the dump's gather rows hold no count.
-- [ ] **A mined outcrop comes back at the first 04:00 reset strictly after its mining, in UTC+8** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A mined outcrop stands from its respawn, and the day's unmined outcrops are gone at the next draw** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Mined outcrops are saved as `minedOutcrops`, each by its place's id and instant, and a mining drops the respawned ones** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A break sets the outcrop's mined instant, so the respawn applies** — no source yet: game data or a snapshot that holds this behaviour
