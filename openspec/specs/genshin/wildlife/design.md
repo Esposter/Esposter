@@ -20,13 +20,13 @@ flowchart TD
 
 ## The kinds
 
-`WildlifeKind` names three: `CrimsonFox`, `Squirrel` and `WhitePigeon`. Each is one of the map's own labels under its Animals group, and `WildlifeKindLabelIdMap` gives its label id, so a point takes its kind by its label (`scripts/src/services/genshinAssets/wildlife/WildlifeKindLabelIdMap.ts`). The archive files each as an animal or aviary monster, and the capture table's rows and the monster rows hold the rest of what each one is.
+`WildlifeKind` names three: `CrimsonFox`, `Squirrel` and `WhitePigeon`. Each is one of the map's own labels under its Animals group, and `WildlifeKindLabelIdMap` gives its label id, so a point takes its kind by its label. The archive files each as an animal or aviary monster, and the capture table's rows and the monster rows hold the rest of what each one is.
 
 ## The flight
 
 `stepWildlife` runs on the enemies' fixed step, a sixtieth of a second (`packages/genshin-world/src/services/wildlife/constants.ts`, `WILDLIFE_STEP_SECONDS`). An idle animal with the character within its escape radius starts running straight away from it at the flight speed (`packages/genshin-world/src/services/wildlife/stepWildlife.ts`). A running one keeps running for the escape time, then stands idle, or runs again if the character is still in reach (`packages/genshin-world/src/services/wildlife/stepWildlife.ts`). A character that is gone leaves a running animal running on its last heading until its time is up, and then standing idle (`packages/genshin-world/src/services/wildlife/stepWildlife.ts`).
 
-The numbers are provisional, each marked in `services/wildlife/constants.ts`:
+The numbers are provisional, each marked in `packages/genshin-world/src/services/wildlife/constants.ts`:
 
 - **The escape radius and the escape time.** `WILDLIFE_ESCAPE_RADIUS` and `WILDLIFE_ESCAPE_SECONDS` are the environment table's gadget rows' values (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/EnvAnimalGatherExcelConfigData.json`, four of its six Gadget rows at escapeRadius 4 and escapeTime 1), the closest it holds, since it has no row for a bird or a beast, until a recording of each kind's flight measures them.
 - **The flight speed.** `WILDLIFE_FLEE_SPEED` is a placeholder, since no table gives it, until a recording times it (`packages/genshin-world/src/services/wildlife/constants.ts`; the environment table's keys carry escapeRadius and escapeTime and no speed).
@@ -62,12 +62,13 @@ Every animal of the slice exists from the scene's load (`packages/genshin-world/
 
 ## Open
 
-- [ ] **Nothing is struck, dropped or picked up yet** — no source yet: the code now strikes and drops animals (`packages/genshin-world/src/services/kit/strikeKitEnemies.ts` calls `strikeKitWildlife`, which calls `strikeWildlife` with `WildlifeKindDropMap.ts`) and picks up material sources (`useWorldPickups.ts`), so this line is stale.
+- [ ] **Nothing is struck, dropped or picked up yet** — no source yet: the code now strikes and drops animals (`packages/genshin-world/src/services/kit/strikeKitEnemies.ts` calls `strikeKitWildlife`, which calls `strikeWildlife` with `packages/genshin-world/src/services/wildlife/WildlifeKindDropMap.ts`) and picks up material sources (`packages/genshin-world/src/composables/useWorldPickups.ts`), so this line is stale.
 - [ ] **The three kinds of bird and beast** — no source yet: `WildlifeKind` now names four kinds, the boar too (`packages/genshin-world/src/models/wildlife/WildlifeKind.ts`, label 313), and the boar charges rather than flees.
-- [ ] **The fleeing-kind check admits only White Pigeon, Crimson Fox or Squirrel** — no source yet: `buildWildlifePlaces.ts` loops over every `WildlifeKind`, so a boar's label is placed as well.
+- [ ] **The fleeing-kind check admits only White Pigeon, Crimson Fox or Squirrel** — no source yet: `scripts/src/services/genshinAssets/wildlife/buildWildlifePlaces.ts` loops over every `WildlifeKind`, so a boar's label is placed as well.
 - [ ] **A fleeing kind on the ground layer is placed, and an underground one left out** — no source yet: the ground-layer filter in the map-point reader was not read.
 - [ ] **The archive files each kind as an animal or aviary monster** — no source yet: the dump's Monster and Gadget rows were not matched to the kinds' names.
 - [ ] **The environment table holds no row for a bird or a beast** — no source yet: its six Gadget rows' animal ids were not matched to a kind.
 - [ ] **No table gives a flight's speed** — no source yet: only the environment table's keys were read, not every table's.
 - [ ] **Mondstadt's slice holds about a hundred animals, and the other regions hold the same kinds where their labels are marked** — no source yet: the published slices are in hosted storage, not the local dump, so neither count was checked.
 - [ ] **The animals are not drawn in a witness render** — no source yet: the witness render's families were not checked against the animals.
+- [ ] **Each kind is one of the map's own labels under its Animals group** — no source yet: game data or a snapshot that holds this behaviour
