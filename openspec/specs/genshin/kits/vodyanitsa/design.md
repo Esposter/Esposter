@@ -1,20 +1,20 @@
 # Vodyanitsa
 
-Vodyanitsa's kit is its record and one behaviour module, `createVodyanitsaKitBehaviour`, avatar 10000140. gcsim has no folder for Vodyanitsa at v2.47.2, so Vodyanitsa's record follows [the kits index](../README.md).
+Vodyanitsa's kit is its record and one behaviour module, `createVodyanitsaKitBehaviour`, avatar 10000140. gcsim has no folder for Vodyanitsa at v2.47.2 (its `internal/characters/` holds none at that tag), so Vodyanitsa's record follows [the kits index](../README.md).
 
 ## Decisions
 
-- **Vodyanitsa borrows Barbara's strikes and charged attack, Columbina's skill and Mona's burst, provisional.** Her four Hydro strikes take Barbara's four, each one hit, and her charged attack takes Barbara's single hit's area and element. Her charged attack's hitmark is not Barbara's 55 frames: it is 41, which no source gives, so it names `NoGcsimUnit`. Her skill takes Columbina's single Hydro hit, and her burst takes Mona's.
-- **Her plunges and collision borrow Bennett's hitmarks and areas, as `NoActionFile`.** Her high plunge's impact is Hydro, as the wiki gives it, so that hit is Water; her low plunge is Physical. Her plunges' frames are read from her own clips. Their poise is the wiki's 100 high and 50 low, where Bennett's file gives 150 and 100.
-- **Her skill scales with Max HP.** The wiki gives Rechitativ: Sonorous Dawn as 3.27% of Max HP at level 1, which is the talent multiplier of its proud group, so its hit reads `FIGHT_PROP_HP`.
-- **Her frames are her clips' durations, as the [kits README](../README.md) gives.** Her strikes run from `Attack_01` to `Attack_04`, her charged attack is ExtraAttack, her skill ElementalArt_Strike, her burst `ElementalBurst`, and her plunges FallingAttack_Strike and FallingAttack_Strike_AS.
+- **Vodyanitsa borrows Barbara's strikes and charged attack (10000014), Columbina's skill (10000125) and Mona's burst (10000041), provisional.** Her four Hydro strikes take Barbara's four, each one hit, and her charged attack takes Barbara's single hit's area and element. Her charged attack's hitmark is not Barbara's 55 frames (`barbara/charge.go`, line 14): it is 41, which no source gives, so it names `NoGcsimUnit`. Her skill takes Columbina's single Hydro hit, and her burst takes Mona's.
+- **Her plunges and collision borrow Bennett's hitmarks and areas, as `NoActionFile`.** Her high plunge's impact is Hydro, as the wiki gives it, so that hit is Water; her low plunge is Physical. Her plunges' frames are read from her own clips. Their poise is the wiki's 100 high and 50 low (the cached Psyshkhwe Arietta page's Advanced Properties), where Bennett's file gives 150 and 100 (`bennett/plunge.go`, lines 27 and 32). Her high plunge's Hydro impact is the cached Psyshkhwe Arietta page's "AoE Hydro DMG upon impact", and her plunges' hitmarks and areas are the record's `NoActionFile` values, open until her clips are measured.
+- **Her skill scales with Max HP.** The wiki gives Rechitativ: Sonorous Dawn as 3.27% of Max HP at level 1 (the cached Rechitativ page's Skill DMG row, `skilldmg_1`), which is the talent multiplier of its proud group 14032, index 0, so its hit reads `FIGHT_PROP_HP`.
+- **Her frames are open until her clips are measured.** They are her clips' durations, as the [kits README](../README.md) gives: the record holds them `NoGcsimUnit`, since no source gives them, so they stay open. Her strikes run from `Attack_01` to `Attack_04`, her charged attack is ExtraAttack, her skill ElementalArt_Strike, her burst `ElementalBurst`, and her plunges FallingAttack_Strike and FallingAttack_Strike_AS.
 - **Her strikes and charged attack are Hydro.**
 - **The values no source gives are `NoGcsimUnit`.** Vodyanitsa has no gcsim folder, so the values her overlay holds with no source read `NoGcsimUnit` as the [kits README](../README.md#framework-decisions) gives: her frames, her charged attack's hitmark, her high plunge's element, her skill's and burst's multipliers and her skill's scaling attribute. The wiki states the high plunge's Hydro impact and Rechitativ's Max HP scaling, but the wiki and table readers join a hit to its row by the label its gcsim candidate gives, and a kit with no folder has none.
 
 ## Not built
 
-- **The Song of Ages Past effect is waiting on its module.** Her press starts it, and its Horn of Spring's Call and healing are not built, so her skill deals its press alone.
-- **Her burst's Song of Ages Past bonus is not built.** Koda: Sink With Thee deals its hit alone.
+- **The Song of Ages Past effect is waiting on its module.** Her press starts it (the cached Rechitativ page's info text), and its Horn of Spring's Call and healing (the page's Horn of Spring's Call DMG and Song of Ages Past healing rows) are not built, so her skill deals its press alone.
+- **Her burst's Song of Ages Past bonus is not built.** The cached Koda page gives a Song of Ages Past DMG Bonus column, and Koda: Sink With Thee deals its hit alone.
 
 ## Key files
 
