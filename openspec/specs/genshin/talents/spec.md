@@ -184,6 +184,6 @@ A talent SHALL play at the level the character holds for it plus the levels its 
 
 ## Open
 
-- [ ] **The alternate sprint has no level and no upgrade** — no source yet: the wiki pages cached here do not name it, and its skill row is not read. Checked again against the wiki cache: the Character/Menu page names an Alternate Sprint among some characters' additional talents, the Stamina page gives its costs, and the Illusory Torrent page (type Alternate Sprint, in `Category_Mona_Talents.json`) has no level section; none states that it has no level or an upgrade.
+- [ ] **The alternate sprint has no level and no upgrade** — checked against `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarSkillExcelConfigData.json` rows 11094 (Mizuki's sprint) and 11227 (unnamed), each with `proudSkillGroupId` 0, which is no level group, and `~/Esposter.noindex/cache/genshin-wiki/Category_Mona_Talents.json`, whose Illusory Torrent (type Alternate Sprint) has no level section; the claim is not settled by them because neither row is tied to a named alternate sprint's character here.
 - [ ] **The utility passive opens at phase 0** — partly sourced: the wiki's Character/Menu page gives every character a 1st and a 4th Ascension Passive, which settles phases 1 and 4, and a Utility Passive for every character but the Traveler, with no phase given for it.
 - [ ] **A constellation adds levels above ten to its own talent** — no source yet: the table's rows 11 to 15 are checked, but no constellation's row naming the talent it raises is read.
