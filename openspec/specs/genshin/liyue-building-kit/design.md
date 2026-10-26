@@ -18,15 +18,15 @@ flowchart TD
 ```
 
 - **A footprint with parameters.** A building is its width along x, its depth along z, the height of its storey and its roof tier count, one to three. Its terrace stands a margin past the walls, and its walls rise from the terrace's top.
-- **Bays, not a column count.** Along each wall the bays are the fewest that keep each no wider than a bay width (`packages/genshin-world/src/services/liyue/constants.ts:18`, 3 metres), spread evenly. The front and back carry a column at every bay's start and at their far end, and the sides carry columns only between the corners, so no column is placed twice.
-- **Openwork.** Each bay between two columns is a lattice panel: a rail at its sill and another at its head, with a bar every cell between them (`packages/genshin-world/src/services/liyue/constants.ts:27-29`). The bars stand flat to the wall, so the lattice reads as openwork from the street.
-- **Upturned eaves.** A roof tier is a shell of rings stepping inward from its eave to a flat top. The eave's corners lift by the curl over its middle (`packages/genshin-world/src/services/liyue/constants.ts:32`), and the shell's rise is steep at the eave and levels toward the top. Each top corner carries a finial.
-- **Stacked tiers.** Each tier above the first has its eave scaled by the tier scale of the one below and is raised one tier height (`packages/genshin-world/src/services/liyue/constants.ts:34-35`; `createLiyueBuildingGeometries.test.ts:6`), so a building with three tiers stands three rises above its walls.
+- **Bays, not a column count.** Along each wall the bays are the fewest that keep each no wider than a bay width (3 metres), spread evenly. The front and back carry a column at every bay's start and at their far end, and the sides carry columns only between the corners, so no column is placed twice.
+- **Openwork.** Each bay between two columns is a lattice panel: a rail at its sill and another at its head, with a bar every cell between them. The bars stand flat to the wall, so the lattice reads as openwork from the street.
+- **Upturned eaves.** A roof tier is a shell of rings stepping inward from its eave to a flat top. The eave's corners lift by the curl over its middle, and the shell's rise is steep at the eave and levels toward the top. Each top corner carries a finial.
+- **Stacked tiers.** Each tier above the first has its eave scaled by the tier scale of the one below and is raised one tier height, so a building with three tiers stands three rises above its walls.
 - **The kit stands in for Liyue Harbor's houses.** When the [parity](../parity/README.md) inventory claims the harbour's export, the export's buildings family is `Area_Ly_Build_` and `Area_LY_Build_`, with its terrain tiles as its ground. The harbour's other meshes are claimed undrawn by kind (`LiyueUndrawnMeshRegexMap`).
 
 ## Palette
 
-The palette's hues are the ones the game's Liyue reads as: ochre and grey rock, jade-green water, golden ginkgo and autumn maples, the red lacquer and gold of its architecture, and the stone of its terraces. Each is an sRGB colour in `genshin-world`'s `services/liyue/constants.ts`. These values are the named hues' first reading, to be fitted against the reference in the recreation passes.
+The palette's hues are the ones the game's Liyue reads as: ochre and grey rock, jade-green water, golden ginkgo and autumn maples, the red lacquer and gold of its architecture, and the stone of its terraces. Each is an sRGB colour in the kit's constants. These values are the named hues' first reading, to be fitted against the reference in the recreation passes.
 
 ## Key files
 
@@ -47,3 +47,6 @@ The palette's hues are the ones the game's Liyue reads as: ochre and grey rock, 
 - [ ] **Each bay's lattice has a rail at its sill and at its head, with bars standing flat to the wall** — no source yet: no test or reference checks the lattice.
 - [ ] **The export's buildings family is `Area_Ly_Build_` and `Area_LY_Build_`, with its terrain tiles as the ground** — no source yet: neither name is in `~/Esposter.noindex/genshin-parity/extracted/`.
 - [ ] **The harbour's other meshes are claimed undrawn by kind (`LiyueUndrawnMeshRegexMap`)** — no source yet: the export holds none of the harbour's families to check the claim against.
+- [ ] **the bay width is 3 metres** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **each roof tier above the first is scaled and raised one tier height** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **each palette hue is an sRGB colour in the kit's constants** — no source yet: game data or a snapshot that holds this behaviour
