@@ -143,7 +143,7 @@ Each area SHALL name the weathers it can have, its own first, and the area holdi
 
 - **GIVEN** the camera enters an area
 - **WHEN** the area is entered
-- **THEN** the area's first weather starts again
+- **THEN** the area's first weather starts again (`useAreaWeather.ts` sets the area's first weather when the camera's area changes)
 
 ### Requirement: Landmarks appear with their region's data
 
@@ -163,4 +163,3 @@ A region's landmarks SHALL appear when its data arrives and SHALL be removed whe
 
 ## Open
 
-- [ ] **Entering an area starts its first weather again** — no source yet: the weather composable that restarts it was not read.
