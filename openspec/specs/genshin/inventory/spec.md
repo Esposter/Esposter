@@ -239,7 +239,7 @@ Using a food SHALL take one of that food from the bag and apply its heal to the 
 
 ## Open
 
-- [ ] **The bag opens on B** — no source yet: no key binding to `B` is traced in the code, and the wiki's Controls page is not cached in `~/Esposter/cache/genshin-wiki`.
+- [ ] **The bag opens on B** — no source yet: the wiki's Controls page is not cached in `~/Esposter.noindex/cache/genshin-wiki`.
 - [ ] **Every one- to three-star weapon is destroyable** — contradicted by `~/Esposter/genshin-parity/text/ExcelBinOutput/WeaponExcelConfigData.json`: ten one-star weapons (`rankLevel` 1) have no `destroyRule`.
 - [ ] **The bag holds everything in nine tabs, in the game's order, each with the game's own name** — no source yet: the wiki's Inventory page, whose Inventory Categories section lists the nine in this order under their own names, is not on disk.
 - [ ] **The bag opens on the weapons tab, with its weapons sorted by level from the highest** — no source yet: a recording of the bag opened on B with nothing chosen, showing the tab and sort it opens on
