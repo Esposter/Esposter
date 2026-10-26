@@ -33,7 +33,7 @@ flowchart TD
 
 - **A material's export is its shader's path ID, its texture slots by path ID and its floats and colours by name** (`toMaterialValues`) `scripts/src/services/genshinAssets/shared/toMaterialValues.ts`. A texture slot's path ID names its texture through the asset index. Its shader keywords, which pick the variant it compiles, are not in the JSON: `extract` exports each material's raw bytes beside it and `readMaterialKeywords` `scripts/src/services/genshinAssets/shared/readMaterialKeywords.ts` reads them past its name and shader pointer. A toggle's float is no proof of its variant: the door's panel holds `_EnableRimGlow` at 1 with no `ENABLE_RIM_GLOW_ON`, so it draws no glow.
 - **A material's colours table holds its vectors too.** Unity saves both in `m_Colors`, and decodes only what the shader declares a colour without its gamma flag from sRGB to linear light before a program reads it; a vector it never decodes. So each material's colours are read as its own shader declares them (`readShaderColorNames`) `scripts/src/services/genshinAssets/shared/readShaderColorNames.ts`: its shader found by path ID in the asset index, its file by the offset the CAB map gives it, and the block's shaders exported raw a folder per file. Decoded as colours, the avatar's outline width knots read a tenth of the game's. A name the shader does not declare, which none of its programs reads, is still read as a colour.
-- **The environment's mask texture is `SMBE` `packages/genshin-world/src/services/scene/createWitnessMaterial.ts`:** smoothness in red, metalness in green, blue empty, emission in alpha where the material enables it. The diffuse is albedo and nearly neutral, so a surface's warmth is its light.
+- **The environment's mask texture is `SMBE` `packages/genshin-world/src/services/scene/createWitnessMaterial.ts`**, which names it and states no channels; its channels are open (see Open), and emission is in alpha where the material enables it. The diffuse is albedo and nearly neutral, so a surface's warmth is its light.
 - **Grading tables are textures** (`Stages_*_LUT`) `packages/genshin-world/src/components/Login/Scene/Index.reference.ts`, but which one a scene uses is set in its post-processing profile, which is fieldless.
 
 ### Placements and renderers
@@ -164,6 +164,7 @@ The things that each cost a search to find, to reach for first:
 - [WorldReverse](https://github.com/fengjixuchui/WorldReverse/tree/main/Assets/DummyScripts/Assembly-CSharp), fengjixuchui: the il2cpp dummy scripts of a 2022 build, each class's fields by name and type in declaration order.
 
 ## Open
+
 - [ ] **Shaders: the uber shader's 3,980 variant records, 1,553 compiled programs, 693 SHEX and 860 DXIL containers, and 446 of 448 exports read by the layout** — no source yet: no run of the shader reader over the dump's raw exports prints these counts; the 6,337 listings under `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber` all carry the D3D disassembler header and none marks DXIL, so the 860 is not borne out by them.
 - [ ] **Shaders: the peeking rule parses 665 of the local dump's 667 raw exports, and `Shader#199` fits neither trailer** — no source yet: no run of `readSerializedPass` over those exports prints the counts (`scripts/src/services/genshinAssets/materials/readSerializedPass.ts`).
 - [ ] **Shaders: the login stone's and the cloud layer's shaders do not parse in AnimeStudio** — no source yet: AnimeStudio is the tool's behaviour, not this repo's, and no parse log for those two shaders is kept.
@@ -196,7 +197,7 @@ The things that each cost a search to find, to reach for first:
 - **A material's export is its shader's path ID, texture slots and values by name** — `scripts/src/services/genshinAssets/shared/toMaterialValues.ts`.
 - **A material's shader keywords are read from its raw bytes** — `scripts/src/services/genshinAssets/shared/readMaterialKeywords.ts`.
 - **Each material's colours are read as its shader declares them** — `scripts/src/services/genshinAssets/shared/readShaderColorNames.ts`.
-- **The environment's mask texture is SMBE, with smoothness in red and metalness in green** — `packages/genshin-world/src/services/scene/createWitnessMaterial.ts`.
+- [ ] **The environment's mask texture is SMBE, with smoothness in red and metalness in green** — no source yet: `packages/genshin-world/src/services/scene/createWitnessMaterial.ts` names SMBE and states no channels; the fit code reads red as smoothness (`scripts/src/services/genshinAssets/fit/fitLoginStone.ts`) and channel 1 as metal (`scripts/src/services/genshinAssets/fit/fitLoginTowerFacades.ts`), the port's own reading, not the game's shader.
 - **Grading tables are textures named `Stages_*_LUT`** — `packages/genshin-world/src/components/Login/Scene/Index.reference.ts`.
 - **A Transform's dump is its local position, rotation and scale** — `scripts/src/services/genshinAssets/shared/readSceneLayout.ts`.
 - **A MeshRenderer names its materials by file index and path ID** — `scripts/src/services/genshinAssets/shared/readSceneLayout.ts`.
