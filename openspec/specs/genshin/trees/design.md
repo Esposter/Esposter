@@ -93,5 +93,5 @@ flowchart TD
 - [ ] **The oak has a few dozen surface roots and a few dozen limbs** — no source yet: the `windrise/oak` record is hosted rather than kept in the repository, so its tube counts are not read here.
 - [ ] **The oak's hundred or so tubes make a few tens of thousands of vertices** — no source yet: `computeTreeTubes.bench.md` measures 8 and 32 tubes, not the oak's.
 - [ ] **The switch is read off a recording of a walk away from one of the game's trees** — no source yet: no capture of that walk is in `~/Esposter.noindex/genshin-parity/captures/`.
-- [ ] **the oak's surface roots are the bark mesh's second submesh** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **a junction draws as the game's mesh does, with no fillet over it** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **the oak's surface roots are the bark mesh's second submesh** — no source yet: the oak's mesh export under `~/Esposter/genshin-parity/extracted/windrise/`, not yet read for its submeshes.
+- [ ] **a junction draws as the game's mesh does, with no fillet over it** — no source yet: the junction mesh in `~/Esposter/genshin-parity/extracted/windrise/`, not yet compared with the drawn junction.
