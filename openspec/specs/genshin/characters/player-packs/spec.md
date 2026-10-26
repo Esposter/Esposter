@@ -252,7 +252,3 @@ Removing a kept release SHALL drop it from the account's list, and its stored fi
 - **WHEN** the player removes it
 - **THEN** it is no longer listed on the account
 - **AND** its stored files are left in place
-
-## Open
-
-- [ ] **the character screen loads a downloaded release, the browser keeps it, and a signed-in copy is kept with the account** — no source yet: game data or a snapshot that holds this behaviour
