@@ -4,7 +4,9 @@ Freminet's kit is its record and one behaviour module, `createFreminetKitBehavio
 
 The charged attack is provisional. gcsim gives Freminet no charged attack, so it takes the fourth strike's hitmark, animation and reach with the table's charged multiplier and stamina, and a yes-or-no question is on the roadmap.
 
-Not built: Pressurized Floe's Pers Time stance, which holds the frost of each strike and the stacks it gains, and the detonation that replaces the skill on its next press; Shadowhunter's Ambush's stalking state, which lowers the skill's cooldown to three seconds and resets it; and his ascension and constellation passives.
+Constellations 4 and 6 are built: a Shatter, Frozen, Superconduct or Stellar-Conduct that Freminet's own attack triggers gives him up to two stacks of 9% ATK, and from Constellation 6 up to three of 12% CRIT DMG, each for six seconds, once every 18 frames.
+
+Not built: Pressurized Floe's Pers Time stance, which holds the frost of each strike and the stacks it gains, and the detonation that replaces the skill on its next press; Shadowhunter's Ambush's stalking state, which lowers the skill's cooldown to three seconds and resets it; his ascension passives; and Constellations 1 and 2, which act on the detonation's hits and the stance's stacks.
 
 ## Decisions
 
@@ -19,4 +21,4 @@ Not built: Pressurized Floe's Pers Time stance, which holds the frost of each st
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/freminet), MIT: Freminet's strikes' hitmarks, cancel frames, reaches and poise, the low and high plunges and their collision, Pressurized Floe's Upward Thrust and Shadowhunter's Ambush with their gauge.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/freminet), MIT: Freminet's strikes' hitmarks, cancel frames, reaches and poise, the low and high plunges and their collision, Pressurized Floe's Upward Thrust and Shadowhunter's Ambush with their gauge, and Constellations 4 and 6's stacks, their ICD and their values.
