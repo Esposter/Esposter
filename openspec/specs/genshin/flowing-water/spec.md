@@ -6,7 +6,7 @@ Genshin's rivers and waterfalls in the anime style, built on the still water's m
 
 ### Requirement: Still water has no flow
 
-Still water, such as the sea and lakes, SHALL draw with a flow of zero, so its ripples and foam do not move.
+Still water, such as the sea and lakes, SHALL draw with a flow of zero, so its ripples and foam do not move (`packages/genshin-engine/src/water/createWaterFlowUniforms.ts`, which carries still water on zero; `packages/genshin-world/src/components/World/Water/Index.vue`, which passes it to the still water's material).
 
 #### Scenario: Sea draws without movement
 
@@ -26,7 +26,7 @@ A flowing water surface SHALL carry its ripples and foam downstream at its flow'
 
 ### Requirement: A river is a ribbon along its course
 
-A river SHALL be a ribbon laid along its course, each course point at its level and across its width, centred on the course.
+A river SHALL be a ribbon laid along its course, each course point at its level and across its width, centred on the course (`packages/genshin-engine/src/water/createRiverGeometry.ts`, which takes the way the course came in for a point that turns straight back, and narrows a point with no direction to nothing).
 
 #### Scenario: Ribbon spans the river's width
 
@@ -48,7 +48,7 @@ A river SHALL be a ribbon laid along its course, each course point at its level 
 
 ### Requirement: Foam gathers on the outer bank of a bend
 
-A river's foam SHALL gather on the outer bank of each bend, more strongly the tighter the bend, and SHALL fade to none across the river toward the inner bank.
+A river's foam SHALL gather on the outer bank of each bend, more strongly the tighter the bend, and SHALL fade to none across the river toward the inner bank (`packages/genshin-engine/src/water/createRiverGeometry.ts`, where `bendFoam` is `min(curvature * width * BEND_FOAM_FULL_RADIUS_WIDTHS, 1)` on the outer side and zero on the inner; `packages/genshin-engine/src/water/constants.ts`, `BEND_FOAM_FULL_RADIUS_WIDTHS` of 2).
 
 #### Scenario: Tight bend foams fully
 
@@ -70,7 +70,7 @@ A river's foam SHALL gather on the outer bank of each bend, more strongly the ti
 
 ### Requirement: A waterfall falls as a sheet from its lip
 
-A waterfall SHALL be a sheet hung from its lip down by its drop, with streaks falling along its height and clear between the streaks.
+A waterfall SHALL be a sheet hung from its lip down by its drop, with streaks falling along its height and clear between the streaks (`packages/genshin-engine/src/water/createWaterfallGeometry.ts`, one quad from the lip to the foot; `packages/genshin-engine/src/nodes/createWaterfallMaterial.ts`, whose streaks are stepped hard and fall in sheet heights a second).
 
 #### Scenario: Sheet hangs from the lip to the pool
 
@@ -99,3 +99,8 @@ The open world SHALL NOT yet draw its rivers or the waterfalls its region data r
 - **GIVEN** a region's data records a waterfall
 - **WHEN** the world is shown
 - **THEN** no waterfall sheet is drawn
+
+## Open
+
+- [ ] **A flowing water surface carries its ripples and foam downstream at its flow's speed in its direction** — no source yet: `packages/genshin-engine/src/nodes/createRiverMaterial.ts` draws still ("No flow yet", line 12), so no flow moves a river's ripples or foam.
+- [ ] **The open world does not draw its rivers or the waterfalls its region data records** — no source yet, and the requirement is contradicted: `packages/genshin-world/src/components/World/Windrise/Index.vue` mounts `WorldWaterfalls` and `WorldRivers` (lines 575 and 576). The delta that removes this requirement is commit `aba38417f6`.
