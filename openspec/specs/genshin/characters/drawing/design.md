@@ -46,7 +46,7 @@ The model [read from a pack](../pmx-reader/design.md) becomes one skinned mesh, 
 | `packages/genshin-engine/src/character/getSharedToonRamp.ts`                        | MMD's ten shared toon ramps, generated once in the world's own tones, a material's default ramp                 |
 | `packages/genshin-engine/src/models/nodes/SharedToonOutlinePassNode.ts`             | The outline pass, one shared material and one per distinct material edge, each width by its knots               |
 | `packages/genshin-engine/src/character/createPmxTexture.ts`                         | A texture decoded as the model samples it                                                                       |
-| `packages/genshin-world/src/services/character/readCharacterMesh.ts`                | A pack's model and its textures into one mesh through its reader, as a Result                                   |
+| `packages/genshin-world/src/services/character/readCharacterMesh.ts`                | A pack's model and its textures into one mesh through its reader, as a Result; a texture the release lacks is logged once with the model (`console.warn` at line 57)                                   |
 | `packages/genshin-world/src/components/Character/Model/Index.vue`                   | Draws a character's model at its holder's origin, and releases it                                               |
 | `packages/genshin-world/src/components/World/Windrise/Index.vue`                    | Stands the Traveler at Windrise's start point, drawn from the pack it is handed a reader of                     |
 
