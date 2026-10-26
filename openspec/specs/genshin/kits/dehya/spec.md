@@ -16,7 +16,7 @@ Dehya's normal attacks SHALL be four blunt strikes, a charged attack, a collisio
 
 ### Requirement: Provisional charged attack
 
-Dehya's charged attack SHALL be provisional, with a spin that hits at once and a final hit at its longest charge, until a recording of the game settles them.
+Dehya's charged attack SHALL be provisional, with a spin that hits at once and a final hit at its longest charge, until a recording of the game settles them. The final hit's 300 frames are the wiki's 5-second maximum duration; the spin's timing and the circle's radius have no source (the design's Provisional constants).
 
 #### Scenario: Charging plays the spin and the final hit
 
@@ -27,19 +27,13 @@ Dehya's charged attack SHALL be provisional, with a spin that hits at once and a
 
 ### Requirement: Molten Inferno initial hit
 
-Molten Inferno SHALL deal an initial Pyro hit in a circle of radius 5 metres, landing 20 frames after it is cast, and SHALL be refused without the energy it costs.
+Molten Inferno SHALL deal an initial Pyro hit in a circle of radius 5 metres, landing 20 frames after it is cast, and SHALL cool down for 20 seconds. Molten Inferno costs no energy: its skill row in the dump has a cooldown and no energy cost, and the wiki's Molten Inferno page gives a CD of 20s and no energy.
 
 #### Scenario: The initial hit lands 20 frames after the cast
 
-- **GIVEN** Dehya has enough energy
+- **GIVEN** Dehya is the character on the field
 - **WHEN** the player casts Molten Inferno
 - **THEN** its Pyro hit lands 20 frames later on the enemies inside the circle of radius 5 metres
-
-#### Scenario: Molten Inferno is refused without enough energy
-
-- **GIVEN** Dehya has less energy than Molten Inferno costs
-- **WHEN** the player casts Molten Inferno
-- **THEN** it does not cast
 
 ### Requirement: Dehya's constellations
 
