@@ -3,8 +3,11 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitHitBehaviour } from "#src/models/kit/KitHitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
@@ -42,16 +45,22 @@ const STORM_OF_DEFIANCE_STATUS: EnemyStatus = {
   resistanceReduction: { [Element.Anemo]: 0.2 },
   secondsRemaining: 10,
 };
+// Hurricane of Freedom, from four constellations, gives Venti a 25% Anemo DMG Bonus for 10 seconds each time he picks up an
+// Elemental Orb or Particle while he is on the field, as gcsim v2.47.2 (MIT) venti/cons.go gives it
+// https://genshin-impact.fandom.com/wiki/Hurricane_of_Freedom
+const HURRICANE_OF_FREEDOM_CONSTELLATION = 4;
+const HURRICANE_OF_FREEDOM_DAMAGE_BONUS = 0.25;
+const HURRICANE_OF_FREEDOM_SECONDS = 10;
+const HURRICANE_OF_FREEDOM_SOURCE = "Hurricane of Freedom";
 
 export const VENTI_CHARACTER_ID = 10_000_022;
 
 // Venti's behaviour: from one constellation, the aimed shot casts Splitting Gales' arrows, and from two Skyward Sonnet's
 // Press and hold take Breeze of Reminiscence's Anemo RES. Wind's Grand Ode casts the Stormeye ahead of him, its ticks
 // Taking Storm of Defiance's Anemo RES from six constellations, and from Ascension 4 a task as its seconds end gives him
-// Its energy
+// Its energy. From four constellations, a particle he picks up raises his Anemo DMG Bonus
 // Constellation 2's airborne extra needs a launched state, which is not built
 // Constellation 6's RES cut on an absorbed element, which the kit does not build
-// Constellation 4 needs the Elemental Orb or Particle pickup and the team's buff after his skill and burst, not built
 export const createVentiKitBehaviour = ({ readHits, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   const splittingGalesHits = readHits("splittingGalesArrows");
   const stormeyeHits = readHits("stormeyeTicks", {
@@ -90,6 +99,22 @@ export const createVentiKitBehaviour = ({ readHits, readParameter, readSeconds }
         if (combatant.constellationCount < SPLITTING_GALES_CONSTELLATION) return;
         castKitSummon(kitEffectState, body, combatant, splittingGalesHits, { attackTag: AttackTag.ChargedAttack });
       },
+    },
+    // Hurricane of Freedom, from Constellation 4: a particle or orb collected while Venti is on the field raises his
+    // Anemo DMG Bonus, a new pickup restarting it, as gcsim's OnParticleReceived hook gives it
+    onKitEvent: (event, { activeCombatant, kitEffectState }, combatant) => {
+      if (
+        event.kind !== KitEventKind.EnergyParticleCollected ||
+        combatant.constellationCount < HURRICANE_OF_FREEDOM_CONSTELLATION ||
+        activeCombatant.characterId !== combatant.characterId
+      )
+        return;
+      buffKitMember(kitEffectState, combatant.characterId, {
+        amount: HURRICANE_OF_FREEDOM_DAMAGE_BONUS,
+        attribute: Attribute.AnemoDamageBonus,
+        secondsRemaining: HURRICANE_OF_FREEDOM_SECONDS,
+        source: HURRICANE_OF_FREEDOM_SOURCE,
+      });
     },
     skill: { hits: [windDomainHitBehaviour] },
     skillHolds: [{ hits: [windDomainHitBehaviour] }],

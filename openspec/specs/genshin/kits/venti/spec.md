@@ -86,9 +86,25 @@ From Constellation 2, each Skyward Sonnet hit SHALL cut the Anemo RES and Physic
 - **WHEN** a Stormeye tick strikes an enemy hit by Skyward Sonnet
 - **THEN** that enemy's Anemo RES drops by the two cuts added together
 
+### Requirement: Hurricane of Freedom from Constellation 4
+
+From Constellation 4, a particle or orb the party collects while Venti is on the field SHALL give him a 25% Anemo DMG Bonus for 10 seconds, each pickup restarting it.
+
+#### Scenario: A pickup on the field gives the bonus
+
+- **GIVEN** Venti has Constellation 4 and is on the field
+- **WHEN** the party collects a particle or orb
+- **THEN** Venti's Anemo DMG Bonus rises by 25% for 10 seconds
+
+#### Scenario: A pickup off the field gives nothing
+
+- **GIVEN** Venti has Constellation 4 and is off the field
+- **WHEN** the party collects a particle or orb
+- **THEN** Venti's Anemo DMG Bonus is unchanged
+
 ### Requirement: Unbuilt Venti effects
 
-Elemental Absorption, the Stormeye's pull, Constellation 2's airborne cut, Hurricane of Freedom, Venti's other constellations and his Hexerei kit SHALL NOT take effect.
+Elemental Absorption, the Stormeye's pull, Constellation 2's airborne cut, Venti's other constellations and his Hexerei kit SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
