@@ -415,6 +415,31 @@ describe(buildUserDataArchive, () => {
     expect(Object.keys(entries)).not.toContain(`resources/${unpublishedResource.id}/publications.json`);
   });
 
+  test("writes an owned resource's own fields and its creation time, and none of its bookkeeping", async () => {
+    expect.hasAssertions();
+
+    const userId = crypto.randomUUID();
+    const blobName = `${crypto.randomUUID()}.zip`;
+    await mockDb.insert(usersInAuth).values(createUser(userId));
+    const resource = takeOne(
+      await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Blueprint, userId }).returning(),
+    );
+
+    await buildUserDataArchive(userId, blobName);
+    const entries = readArchiveEntries(blobName);
+
+    // The hashes, sizes and revision counters are the store's bookkeeping, and the update and delete times are not the
+    // person's, so the record holds what the person wrote and when it was created
+    expect(readEntryJson(entries, `resources/${resource.id}/resource.json`)).toStrictEqual({
+      contentVersion: 0,
+      createdAt: resource.createdAt,
+      id: resource.id,
+      name,
+      tags: {},
+      type: ResourceType.Blueprint,
+    });
+  });
+
   test("writes an owned resource's link records as stored, and none for a resource with no links", async () => {
     expect.hasAssertions();
 
