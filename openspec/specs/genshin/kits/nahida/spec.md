@@ -120,6 +120,7 @@ Nahida's burst SHALL cast a field of radius 20 metres, centred one metre ahead o
 
 #### Scenario: The field lasts 15 seconds without a Hydro character
 
+- **GIVEN** Nahida has no Constellation 1
 - **WHEN** the player casts the burst with no Hydro character on the team
 - **THEN** the field lasts 15 seconds
 
@@ -133,12 +134,106 @@ Nahida's burst SHALL cast a field of radius 20 metres, centred one metre ahead o
 - **WHEN** the field ticks while Nahida stands inside it
 - **THEN** Tri-Karma Purification's Pyro bonus and Electro cut apply for one second
 
+### Requirement: Constellation 1's Shrine tally
+
+From Constellation 1, the Pyro, Hydro and Electro counts SHALL each be one higher before they are clamped at two, so each count's first row of the burst's tables applies with no character of that element on the team.
+
+#### Scenario: Constellation 1 extends the field with no Hydro character
+
+- **GIVEN** Nahida has Constellation 1 and no Hydro character is on the team
+- **WHEN** the player casts the burst
+- **THEN** the field lasts 15 seconds plus the burst's Hydro extension at its first row
+
+#### Scenario: Constellation 1 applies the Electro cut with no Electro character
+
+- **GIVEN** Nahida has Constellation 1, no Electro character is on the team, and the field's window is open
+- **WHEN** Tri-Karma Purification is triggered
+- **THEN** the interval is cut by the Electro cut at its first row
+
+### Requirement: Constellation 2's defence reduction and Lunar-Bloom CRIT
+
+From Constellation 2, a Quicken, Aggravate or Spread on an enemy Nahida has marked SHALL reduce that enemy's DEF by 30% for eight seconds, and another member's direct Lunar-Bloom hit on a marked enemy SHALL gain 10% CRIT Rate and 20% CRIT DMG.
+
+#### Scenario: A defence-reducing reaction lowers the marked enemy's DEF
+
+- **GIVEN** Nahida has Constellation 2 and an enemy carries her marks
+- **WHEN** a Quicken, Aggravate or Spread lands on that enemy
+- **THEN** the enemy's DEF is reduced by 30% for eight seconds
+
+#### Scenario: A reaction on an unmarked enemy lowers nothing
+
+- **GIVEN** Nahida has Constellation 2 and an enemy carries no mark
+- **WHEN** a Quicken lands on it
+- **THEN** no DEF is reduced
+
+#### Scenario: A party member's Lunar-Bloom hit gains CRIT on a marked enemy
+
+- **GIVEN** Nahida has Constellation 2 and an enemy carries her marks
+- **WHEN** another party member's direct Lunar-Bloom hit lands on that enemy
+- **THEN** the hit gains 10% CRIT Rate and 20% CRIT DMG
+
+#### Scenario: Below Constellation 2 nothing applies
+
+- **GIVEN** Nahida has Constellation 1 and an enemy carries her marks
+- **WHEN** a Quicken lands on it
+- **THEN** no DEF is reduced
+
+### Requirement: Constellation 4's Elemental Mastery from marked enemies
+
+From Constellation 4, Nahida's Elemental Mastery SHALL rise by 80 with one marked enemy within 30 metres of her, and by 20 more for each further one up to four, and SHALL rise by nothing with none.
+
+#### Scenario: One marked enemy in reach adds 100 Elemental Mastery
+
+- **GIVEN** Nahida has Constellation 4 and one enemy within 30 metres carries her marks
+- **WHEN** her Elemental Mastery is priced
+- **THEN** it is 100 higher
+
+#### Scenario: Four marked enemies in reach add 160 Elemental Mastery
+
+- **GIVEN** Nahida has Constellation 4 and four or more enemies within 30 metres carry her marks
+- **WHEN** her Elemental Mastery is priced
+- **THEN** it is 160 higher
+
+#### Scenario: No marked enemy in reach adds nothing
+
+- **GIVEN** Nahida has Constellation 4 and no marked enemy is within 30 metres
+- **WHEN** her Elemental Mastery is priced
+- **THEN** nothing is added
+
+### Requirement: Constellation 6's Karmic Oblivion
+
+From Constellation 6, for ten seconds after Illusory Heart is unleashed, a normal or charged attack's hit on a marked enemy SHALL strike every marked enemy with Karmic Oblivion, dealt as Elemental Skill DMG at 200% of Nahida's ATK and 400% of her Elemental Mastery. Karmic Oblivion SHALL strike at most six times, and no more than once in 0.2 seconds.
+
+#### Scenario: A marked hit strikes every marked enemy
+
+- **GIVEN** Nahida has Constellation 6 and has unleashed Illusory Heart
+- **WHEN** her normal attack hits a marked enemy
+- **THEN** Karmic Oblivion strikes every marked enemy
+
+#### Scenario: Karmic Oblivion waits 0.2 seconds between instances
+
+- **GIVEN** Karmic Oblivion has just struck
+- **WHEN** a normal or charged attack hits a marked enemy within 0.2 seconds
+- **THEN** nothing more is struck
+
+#### Scenario: Karmic Oblivion stops after six instances
+
+- **GIVEN** Karmic Oblivion has struck six times in the ten seconds
+- **WHEN** a charged attack hits a marked enemy
+- **THEN** nothing more is struck
+
+#### Scenario: Nothing before Illusory Heart is unleashed
+
+- **GIVEN** Nahida has Constellation 6 and has not unleashed Illusory Heart
+- **WHEN** her normal attack hits a marked enemy
+- **THEN** nothing is struck
+
 ### Requirement: Unbuilt Nahida effects
 
-Nahida's Ascension passives and her constellations SHALL NOT take effect.
+Nahida's Ascension passives and Constellation 2's CRIT on the reactions of a marked enemy SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Nahida has an Ascension passive or a constellation unlocked
+- **GIVEN** Nahida has an Ascension passive unlocked, or Constellation 2 and a reaction on a marked enemy
 - **WHEN** the player fights with Nahida
 - **THEN** those effects have no effect
