@@ -17,10 +17,15 @@ import {
 import { createMockDb } from "@esposter/db-mock";
 import {
   accountsInAuth,
+  achievementsInAchievement,
   AdminActionType,
+  AppNotificationType,
   AzureContainer,
   AzureTable,
+  blocksInSocial,
+  bookmarksInApp,
   callSessionsInMessage,
+  EmailAchievementName,
   friendRequestsInSocial,
   friendsInSocial,
   getReverseTickedTimestamp,
@@ -29,6 +34,8 @@ import {
   likesInPost,
   MessageMetadataType,
   MessageType,
+  NotificationSeverity,
+  notificationsInNotification,
   postsInPost,
   resourceAccessesInResource,
   resourceFavoritesInResource,
@@ -44,7 +51,10 @@ import {
   roomsInMessage,
   searchHistoriesInMessage,
   threadFollowsInMessage,
+  userAchievementsInAchievement,
   usersInAuth,
+  userSettingsInMessage,
+  userStatusesInMessage,
   usersToRoomRolesInMessage,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
@@ -74,6 +84,7 @@ describe(buildUserDataArchive, () => {
   const name = "name";
   const otherCallId = "callsession2";
   const otherMessage = "b";
+  const path = "path";
   const title = "title";
 
   beforeAll(async () => {
@@ -206,6 +217,47 @@ describe(buildUserDataArchive, () => {
     );
     const messages = jsonDateParse<StandardMessageEntity[]>(readEntryText(entries, `rooms/${room.id}/messages.json`));
     expect(messages.map(({ message: text }) => text)).toStrictEqual([message]);
+  });
+
+  test("writes the account's rows without their update or delete times, and a creation time only where a row is the person's act", async () => {
+    expect.hasAssertions();
+
+    const userId = crypto.randomUUID();
+    const otherUserId = crypto.randomUUID();
+    const blobName = `${crypto.randomUUID()}.zip`;
+    const user = takeOne(await mockDb.insert(usersInAuth).values(createUser(userId)).returning());
+    await mockDb.insert(usersInAuth).values(createUser(otherUserId));
+    const block = takeOne(
+      await mockDb.insert(blocksInSocial).values({ blockedId: otherUserId, blockerId: userId }).returning(),
+    );
+    const bookmark = takeOne(await mockDb.insert(bookmarksInApp).values({ path, title, userId }).returning());
+    // The notification, the achievement, the settings and the status are written by the system or are the account's
+    // current state, so their rows carry no creation time
+    await mockDb
+      .insert(notificationsInNotification)
+      .values({ severity: NotificationSeverity.Info, title, type: AppNotificationType.Message, userId });
+    const achievement = takeOne(
+      await mockDb.insert(achievementsInAchievement).values({ name: EmailAchievementName.EmailMarketer }).returning(),
+    );
+    await mockDb.insert(userAchievementsInAchievement).values({ achievementId: achievement.id, amount: 1, userId });
+    await mockDb.insert(userSettingsInMessage).values({ userId });
+    await mockDb.insert(userStatusesInMessage).values({ userId });
+
+    await buildUserDataArchive(userId, blobName);
+    const account = readEntryJson(readArchiveEntries(blobName), "account.json");
+
+    expect(account.user).toStrictEqual(expect.objectContaining({ createdAt: user.createdAt }));
+    expect(account.user).not.toHaveProperty("updatedAt");
+    expect(account.blocks).toStrictEqual([{ blockedId: otherUserId, blockerId: userId, createdAt: block.createdAt }]);
+    expect(account.bookmarks).toStrictEqual([
+      { createdAt: bookmark.createdAt, path, resourceType: null, title, userId },
+    ]);
+    for (const rows of [account.notifications, account.achievements, account.settings, account.statuses]) {
+      expect(rows).toHaveLength(1);
+      expect(rows[0]).not.toHaveProperty("createdAt");
+      expect(rows[0]).not.toHaveProperty("updatedAt");
+      expect(rows[0]).not.toHaveProperty("deletedAt");
+    }
   });
 
   test("writes a person's own posts, likes and friends, leaving out other people's counts and records", async () => {
