@@ -84,6 +84,6 @@ The bindings of places and modes the world does not have are left out (`packages
 - [ ] **The pad's touchpad is no button in the standard layout, and the View and Share buttons carry the chat on every pad** — no source yet: the game's controls list for a PlayStation pad, not on this machine.
 - [ ] **The game's defaults are the only ones, and the player-changeable keys are left at the game's own** — no source yet: the game's list of changeable keys; the `settings-controls` frames are a browser walkthrough, not the controls screen.
 - [ ] **F6, F7 and F8 are the Serenitea Pot, the Cat's Tail and Stellar Reunion** — no source yet: the game's controls list for those screens, which the wiki cache does not hold.
-- [ ] **Left Alt held with a number switches to that party member and uses its burst** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **`Escape` with the pointer free opens the Paimon menu** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Left Control is the walk switch, and the free camera falls on left Shift** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Left Alt held with a number switches to that party member and uses its burst** — no source yet: the wiki's Controls page, named in Sources, is not in the wiki cache; the keyboard handler is not yet located under `packages/genshin-world/src`.
+- [ ] **`Escape` with the pointer free opens the Paimon menu** — no source yet: the wiki's Controls page, named in Sources, is not in the wiki cache; the keyboard handler is not yet located under `packages/genshin-world/src`.
+- [ ] **Left Control is the walk switch, and the free camera falls on left Shift** — no source yet: the wiki's Controls page, named in Sources, is not in the wiki cache; the keyboard handler is not yet located under `packages/genshin-world/src`.
