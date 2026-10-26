@@ -65,9 +65,9 @@ Every animal of the slice exists from the scene's load (`packages/genshin-world/
 ## Open
 
 - [ ] **Nothing is struck, dropped or picked up yet** — contradicted by `packages/genshin-world/src/services/kit/strikeKitEnemies.ts`: its kit strike drops animals by kind, and `useWorldPickups.ts` picks up material sources.
+- [ ] **The three kinds of bird and beast** — contradicted by `packages/genshin-world/src/models/wildlife/WildlifeKind.ts`: it names four kinds, the boar too.
 - [ ] **The fleeing-kind check admits only White Pigeon, Crimson Fox or Squirrel** — contradicted by `scripts/src/services/genshinAssets/wildlife/buildWildlifePlaces.ts`: it maps every `WildlifeKind` to its label, Boar included.
 - [ ] **The archive files each kind as an animal or aviary monster** — no source yet: the dump's Monster and Gadget rows were not matched to the kinds' names.
 - [ ] **The environment table holds no row for a bird or a beast** — no source yet: its six Gadget rows' animal ids were not matched to a kind.
 - [ ] **No table gives a flight's speed** — no source yet: only the environment table's keys were read, not every table's.
 - [ ] **Mondstadt's slice holds about a hundred animals, and the other regions hold the same kinds where their labels are marked** — no source yet: the published slices are in hosted storage, not the local dump, so neither count was checked.
-- [ ] **Each kind is one of the map's own labels under its Animals group** — no source yet: the map labels under the Animals group in `~/Esposter/genshin-parity/text/TextMapEN.json`, not yet matched to each kind.
