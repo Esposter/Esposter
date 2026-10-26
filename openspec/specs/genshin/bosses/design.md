@@ -1,6 +1,6 @@
 # Bosses
 
-Bosses are the enemies whose reward is claimed rather than dropped, so their rules are a service of their own rather than the enemies' drops. Two rules are built as pure services in `genshin-world`: when a normal boss comes back after its Trounce Blossom's claim, and where a week's weekly-boss claims are counted from. The world does not call them yet, so the [enemies](../enemies/design.md) still bring a boss back at once and the claim's price, built on the [Original Resin](../original-resin/design.md) page, has no claim to price yet. The rules are the [proposal](../../../changes/genshin-bosses/design.md)'s, read off the wiki.
+Bosses are the enemies whose reward is claimed rather than dropped, so their rules are a service of their own rather than the enemies' drops. Two rules are built as pure services in `genshin-world`: when a normal boss comes back after its Trounce Blossom's claim, and where a week's weekly-boss claims are counted from (`packages/genshin-world/src/services/bosses/computeBossRespawnTime.ts`, `packages/genshin-world/src/services/weekly/countWeeklyClaims.ts`). The world does not call them yet, so the [enemies](../enemies/design.md) still bring a boss back at once and the claim's price, built on the [Original Resin](../original-resin/design.md) page, has no claim to price yet. The rules are the [proposal](../../../changes/genshin-bosses/design.md)'s, read off the wiki.
 
 ## How it works
 
@@ -15,15 +15,15 @@ flowchart TD
 
 ## Decisions
 
-- **An unclaimed boss has no respawn time.** `computeBossRespawnTime` returns undefined for a boss with no claim, since it stays defeated until the player teleports away, which the world will take as the claim's absence.
-- **A claimed boss is back a fixed span later.** `BOSS_RESPAWN_AFTER_CLAIM_DURATION` is the wiki's figure, and a claim at any time brings the boss back that span after it. The span's value lives in the bosses service's constants, and the return is the service's respawn-time function.
-- **The week resets on Monday at 04:00 on the server's clock.** `computeLastWeeklyReset`, in the [reset clock](../reset-clock/design.md), finds the most recent Monday at the server's 04:00 at or before the moment read, the one clock every reset is read on. A moment before that week's reset belongs to the week before. The Monday 04:00 is the weekly refresh row `REFRESH_WEEKlY`, id 800001, `14400;360000`, in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json` (14400 is the 4:00 hour, and 360000 seconds past the epoch's Thursday is Monday 04:00).
-- **A claim at the reset counts toward the new week.** `countWeeklyClaims` counts a claim made at or after the reset and no later than the moment read, so the claim at exactly 04:00 Monday is this week's first and a claim after the moment is not yet counted.
-- **One count across every weekly boss.** `countWeeklyClaims` counts the claims of all weekly bosses together, since the cheap price is for the first three claims in the week, whichever boss they are for.
+- **An unclaimed boss has no respawn time.** `computeBossRespawnTime` returns undefined for a boss with no claim, since it stays defeated until the player teleports away, which the world will take as the claim's absence (`packages/genshin-world/src/services/bosses/computeBossRespawnTime.ts`).
+- **A claimed boss is back a fixed span later.** `BOSS_RESPAWN_AFTER_CLAIM_DURATION` is the wiki's figure, and a claim at any time brings the boss back that span after it. The span's value lives in `packages/genshin-world/src/services/bosses/constants.ts`, and the return is `packages/genshin-world/src/services/bosses/computeBossRespawnTime.ts`.
+- **The week resets on Monday at 04:00 on the server's clock.** `computeLastWeeklyReset`, in the [reset clock](../reset-clock/design.md), finds the most recent Monday at the server's 04:00 at or before the moment read, the one clock every reset is read on. A moment before that week's reset belongs to the week before. The Monday 04:00 is the weekly refresh row `REFRESH_WEEKlY`, id 800001, `14400;360000`, in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json` (14400 is the 4:00 hour, and 360000 seconds past the epoch's Thursday is Monday 04:00); the function is `packages/genshin-world/src/services/time/computeLastWeeklyReset.ts`.
+- **A claim at the reset counts toward the new week.** `countWeeklyClaims` counts a claim made at or after the reset and no later than the moment read, so the claim at exactly 04:00 Monday is this week's first and a claim after the moment is not yet counted (`packages/genshin-world/src/services/weekly/countWeeklyClaims.ts`).
+- **One count across every weekly boss.** `countWeeklyClaims` counts the claims of all weekly bosses together, since the cheap price is for the first three claims in the week, whichever boss they are for (`packages/genshin-world/src/services/weekly/countWeeklyClaims.ts`).
 
 ## Scope and order
 
-**Built:** the respawn rule after a claim and the weekly reset and count, as pure services with tests.
+**Built:** the respawn rule after a claim and the weekly reset and count, as pure services with tests (`packages/genshin-world/src/services/bosses/computeBossRespawnTime.ts` with its `.test.ts`, `packages/genshin-world/src/services/time/computeLastWeeklyReset.ts` with its `.test.ts`, and `packages/genshin-world/src/services/weekly/countWeeklyClaims.ts` with its `.test.ts`).
 
 Not built, and in the [proposal](../../../changes/genshin-bosses/design.md): the Trounce Blossom's offer and claim, which wait on the enemies' defeat map and the interaction prompts; the bosses' rewards, which need the reward table fetched since the dump's blossom tables hold no normal boss's row; each boss's moves, phases and shields; the weekly bosses' domains and quests; and the handbook's quick challenge rewards.
 
@@ -49,10 +49,5 @@ Not built, and in the [proposal](../../../changes/genshin-bosses/design.md): the
 - [ ] **A normal boss stays defeated until the player teleports away** — no source yet: the wiki's Normal Bosses page, named in Sources, is not in the wiki cache.
 - [ ] **A claimed normal boss returns five seconds after its claim** — no source yet: the wiki's Normal Bosses page, named in Sources, is not in the wiki cache, and no respawn row in the game's exports holds the five seconds.
 - [ ] **The weekly reset is read on the server's UTC+8 clock** — no source yet: no row of the game's exports names the zone, and the wiki's Domains page, named in Sources, is not in the wiki cache.
-- [ ] **The respawn rule and the weekly reset and count are built as pure services with tests** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **An unclaimed boss has no respawn time** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A claimed boss is back a fixed span after its claim** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **computeLastWeeklyReset finds the latest Monday 04:00 at or before a moment** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A claim at the reset counts toward the new week** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **A weekly boss's claim costs 30 resin for the first three of a week and 60 after** — no source yet: the export's weekly discount row gives three claims at 0.5 but no base price of 60, and the wiki's Weekly Bosses page is not in the wiki cache.
 - [ ] **The first three weekly claims count across every weekly boss together** — no source yet: the export's weekly discount row does not say the cheap claims are counted across bosses, and the wiki's Weekly Bosses page is not in the wiki cache.
