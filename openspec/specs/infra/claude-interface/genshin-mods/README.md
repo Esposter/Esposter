@@ -65,4 +65,4 @@ flowchart LR
 ## Sources
 
 - [Claude Code Mods Are Game Changers. Set Up These 5 NOW.](https://www.youtube.com/watch?v=9hetShMMp2s) (Nate Herk): the five mods, what each shows and how each is switched. The names here are our own.
-- [etding/cache-keeper](https://github.com/etding/cache-keeper): a published build of the cache mod, taken for its row of figures and its warning before the cache goes cold.
+- [cache-keeper](https://github.com/etding/cache-keeper): a published build of the cache mod, taken for its row of figures and its warning before the cache goes cold.

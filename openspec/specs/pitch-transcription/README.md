@@ -71,7 +71,7 @@ Reading the source turned up defects nobody has filed, each reproduced against t
 
 ## Upstream: @tonejs/midi
 
-The MIDI writer was [@tonejs/midi](https://github.com/Tonejs/Midi) until it was rewritten here. Its tracker holds 107 issues, read by title and, for the ones on the writer's path, with their bodies and comments, judged by the [dependency admission triage](../architecture/dependency-admission/design.md). The writer's bytes are pinned to what the library wrote for the same notes, so a defect the library had on that path it still has, and the rows say which.
+The MIDI writer was [Tone.js's MIDI library](https://github.com/Tonejs/Midi) until it was rewritten here. Its tracker holds over a hundred issues, read by title and, for the ones on the writer's path, with their bodies and comments, judged by the [dependency admission triage](../architecture/dependency-admission/design.md). The writer's bytes are pinned to what the library wrote for the same notes, so a defect the library had on that path it still has, and the rows say which.
 
 | Upstream                                               | Verdict            | Proof                                                                                                                                                 |
 | ------------------------------------------------------ | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -96,10 +96,10 @@ The MIDI writer was [@tonejs/midi](https://github.com/Tonejs/Midi) until it was 
 
 ## Sources
 
-- [spotify/basic-pitch-ts](https://github.com/spotify/basic-pitch-ts) — the package absorbed, its tracker and its Apache-2.0 licence.
-- [spotify/basic-pitch](https://github.com/spotify/basic-pitch) — the model repository: its constants and note creation modules, and its issue on real-time transcription.
-- [spotify/basic-pitch — `saved_models/icassp_2022`](https://github.com/spotify/basic-pitch/tree/main/basic_pitch/saved_models/icassp_2022) — the ONNX export shipped in place of the TensorFlow.js one, beside the TensorFlow Lite and Core ML exports of the same saved model.
+- [basic-pitch-ts](https://github.com/spotify/basic-pitch-ts) — the package absorbed, its tracker and its Apache-2.0 licence.
+- [basic-pitch](https://github.com/spotify/basic-pitch) — the model repository: its constants and note creation modules, and its issue on real-time transcription.
+- [basic-pitch's ICASSP 2022 model](https://github.com/spotify/basic-pitch/tree/main/basic_pitch/saved_models/icassp_2022) — the ONNX export shipped in place of the TensorFlow.js one, beside the TensorFlow Lite and Core ML exports of the same saved model.
 - [ONNX Runtime — JavaScript API](https://onnxruntime.ai/docs/api/js/) — `InferenceSession`, `Tensor`, and `onnxruntime-common` as the interface shared by `onnxruntime-node` and `onnxruntime-web`.
-- [tensorflow/tfjs — releases](https://github.com/tensorflow/tfjs/releases) — 4.22.0, October 2024, the last.
+- [tfjs releases](https://github.com/tensorflow/tfjs/releases) — 4.22.0, October 2024, the last.
 - [A Lightweight Instrument-Agnostic Model for Polyphonic Note Transcription and Multipitch Estimation](https://arxiv.org/abs/2203.09893), Bittner et al., ICASSP 2022 — the network and its three readings.
 - [scipy.signal.argrelmax](https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.argrelmax.html) — the edge clipping the onset peaks follow.

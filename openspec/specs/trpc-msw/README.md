@@ -85,7 +85,7 @@ Never ported: **observable subscriptions**. tRPC 11 deprecates them in favour of
 
 ## Sources
 
-- [maloguertin/msw-trpc](https://github.com/maloguertin/msw-trpc) — the package replaced, its issues and pull requests.
+- [msw-trpc](https://github.com/maloguertin/msw-trpc) — the package replaced, its issues and pull requests.
 - [Fetch adapter](https://trpc.io/docs/server/adapters/fetch) (tRPC) — `fetchRequestHandler`, which serves batches, method override and server-sent events.
 - [WebSockets](https://trpc.io/docs/server/websockets) (tRPC) — `applyWSSHandler`, the connection handler and the reconnect notification.
 - [Subscriptions](https://trpc.io/docs/server/subscriptions) (tRPC) — async generators as the subscription shape, observables deprecated.

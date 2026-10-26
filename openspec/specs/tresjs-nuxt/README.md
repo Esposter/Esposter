@@ -1,6 +1,6 @@
 # tresjs-nuxt
 
-`packages/tresjs-nuxt` (npm `tresjs-nuxt`) replaces `@tresjs/nuxt`, the Nuxt module the app used to register by package name. It joins the renderer and Nuxt, and nothing else: the engine stays `@tresjs/core`, and the module is the connection the app used to take from upstream.
+`packages/tresjs-nuxt` (npm `tresjs-nuxt`) replaces `@tresjs/nuxt`, the Nuxt module registered by package name. It joins the renderer and Nuxt, and nothing else: the engine stays `@tresjs/core`, and the module is the connection the app takes from this package rather than from upstream.
 
 ## How it works
 
@@ -30,7 +30,7 @@ flowchart LR
 | `glsl`    | `false` | Adds `vite-plugin-glsl` so shader files import as strings. The plugin is an optional peer, loaded only when this is on.           |
 | `modules` | `[]`    | Extra packages whose exports register beside the installed `@tresjs/*` ones, for a package the app does not list as a dependency. |
 
-The `devtools` option of `@tresjs/nuxt` is gone. It added a TresJS tab to the Nuxt devtools built on Nuxt UI, which pulled that library, its font package and the esbuild override that package needed into the app's install. The module no longer carries any of them.
+The `devtools` option of `@tresjs/nuxt` is not offered. It added a TresJS tab to the Nuxt devtools built on Nuxt UI, which pulled that library, its font package and the esbuild override that package needed into the app's install. The module carries none of them.
 
 ## Upstream
 
@@ -64,7 +64,7 @@ Every issue in the upstream tracker, open and closed, read with its comments. Th
 ## Sources
 
 - [TresJS](https://github.com/Tresjs/tres) — the renderer, whose exports and custom-element rule the module restates.
-- [tresjs/nuxt](https://github.com/Tresjs/nuxt) — the upstream module this replaces, and the tracker the table above reads.
+- [the upstream repository](https://github.com/Tresjs/nuxt) — the upstream module this replaces, and the tracker the table above reads.
 - [Nuxt module authoring](https://nuxt.com/docs/4.x/guide/going-further/modules) — the kit calls the module makes: `addImports`, `addComponent`, `addVitePlugin`, `resolvePath`.
 
 ## Key files
