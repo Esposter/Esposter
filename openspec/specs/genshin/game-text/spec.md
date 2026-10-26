@@ -1,6 +1,6 @@
 ## Purpose
 
-The game's own words in all fifteen of its languages (`~/Esposter/genshin-parity/text/TextMap/`), in the published genshin-text package — the language registry, a matcher from a reader's locale, and every string a consumer references, looked up by the game's own text id with one lazily loaded chunk per language. A generator reads them out of the game's text, its text maps from the community dump, kept to the remote `main` by size until a decoder covers the current patch and then decoded from the installed client (`openspec/specs/genshin/game-text/design.md`), and its tables from a dump kept outside the repository; nothing is translated by hand. The persona plugin takes a generated copy rather than a dependency.
+The game's own words in all fifteen of its languages (`~/Esposter.noindex/genshin-parity/text/TextMap/`), in the published genshin-text package — the language registry, a matcher from a reader's locale, and every string a consumer references, looked up by the game's own text id with one lazily loaded chunk per language. A generator reads them out of the game's text, its text maps from the community dump, kept to the remote `main` by size until a decoder covers the current patch (`openspec/specs/genshin/game-text/design.md`), and its tables from a dump kept outside the repository; nothing is translated by hand. The persona plugin takes a generated copy rather than a dependency.
 
 ## Requirements
 
@@ -22,7 +22,7 @@ Every game string a consumer shows SHALL be referenced by the game's own text id
 
 ### Requirement: The game's text is available in its fifteen languages
 
-The game's text SHALL be available in the game's fifteen languages, each as one chunk for that language (`~/Esposter/genshin-parity/text/TextMap/`).
+The game's text SHALL be available in the game's fifteen languages, each as one chunk for that language (`~/Esposter.noindex/genshin-parity/text/TextMap/`).
 
 #### Scenario: Each language has its own chunk
 
@@ -98,7 +98,7 @@ A numbered interface string SHALL show its values in place, with a number that h
 
 ### Requirement: A game string's line breaks are real line breaks
 
-The game writes a line break in its text as a backslash and an n. Every chunk the writer publishes or generates SHALL hold a real line break in its place (`~/Esposter/genshin-parity/text/TextMap/TextMapEN.json`), and a screen SHALL show the string's line breaks without splitting on the escaped form.
+The game writes a line break in its text as a backslash and an n. Every chunk the writer publishes or generates SHALL hold a real line break in its place (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMapEN.json`), and a screen SHALL show the string's line breaks without splitting on the escaped form.
 
 #### Scenario: A line break in an interface string is a real line break
 
@@ -190,6 +190,6 @@ Non-Latin game text SHALL be drawn in a system face, since the game's own faces 
 
 ## Open
 
-- [ ] **The text maps are decoded from the installed client** — no source yet: the design says the text maps stay the community dump's until a decoder covers the current patch, so the Purpose's "decoded from the installed client" is not yet built.
-- [ ] **The app's own labels stay English** — no source yet: the app's Latin-script labels, not checked word by word for their language; the app holds no `useI18n` or `$t(` call.
-- [ ] **HYWenHei does not cover Chinese, Japanese, Korean or Thai** — no source yet: no HYWenHei font file is tracked in the repo.
+- [ ] **The text maps are decoded from the installed client** — contradicted by `openspec/specs/genshin/game-text/design.md`: the text maps stay the community dump's until a decoder covers the current patch.
+- [ ] **The app's own labels stay English** — no source yet: the app was not searched for a locale switch in this pass.
+- [ ] **HYWenHei does not cover Chinese, Japanese, Korean or Thai** — no source yet: HYWenHei's glyph coverage, from a font file the repo does not track.
