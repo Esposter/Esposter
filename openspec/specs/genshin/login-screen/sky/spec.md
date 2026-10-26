@@ -65,7 +65,7 @@ Faces turned upward SHALL be lit by the sky's bright cloud colour and faces turn
 
 ## Open
 
-- [ ] **The frame is drawn through the game's own tone curve alone, with no grade or bloom** — no source yet: the frame's draw chain was not read here.
+- [ ] **The frame is drawn through the game's own tone curve alone, with no grade or bloom** — partly cited: the requirement above builds a frame drawn through the tone curve with no grade or bloom; checked against the login scene's post pipeline call, which passes `isBloomed: false` with a comment giving no grade and no bloom, and the claim is open for the game's own tone curve because that check gives no curve values to compare the game's curve against.
 - [ ] **The night's moon stands behind the lantern tower** — no source yet: the reference point is not annotated against the lantern tower in any kept file.
 - [ ] **The dusk's sunlight falls 50 degrees up and 60 degrees left of the walkway** — contradicted: `DUSK_LIGHT_DIRECTION` (0.493, 0.763, 0.418) is 49.7 degrees up and 49.7 degrees off the walkway's +z axis, not 60.
 - [ ] **Faces turned upward are lit by the sky's bright cloud colour** — contradicted: at dawn `hemisphereSkyColor` is 0xf2dfc8 against `cloudLitColor` 0xf5efe8.
