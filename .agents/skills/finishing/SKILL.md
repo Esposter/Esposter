@@ -45,7 +45,7 @@ The order of the ritual, and the commit and push that close it, are `AGENTS.md`'
 | **A decision the change made and left unwritten**                      | a larger part it knowingly left out, or an idea it declined, that the next pass would find as a gap  | `openspec`, `building-proposals`                |
 | **A finding the change did not fix**                                   | whether any confirmed finding is still open, which the review owes a fix this round                  | `code-review`                                   |
 
-A behaviour change and a diagram have no name to grep and are missed for it: the stale sentence fails nothing and is found from the code instead (`AGENTS.md`, "Finishing a change", the specs step), and a diagram's edge labels are read by no sweep (the `openspec` skill, `references/diagrams.md`). Both rows are only the reminder to run their owner's lookup.
+The spec prose and diagrams row is only the reminder to run its owner's lookup.
 
 ## Report every row, including the empty ones
 
