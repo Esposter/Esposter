@@ -116,12 +116,14 @@ export const RECORD_ENCODING: string[] = [
 export const VIDEO_EXTENSIONS: ReadonlySet<string> = new Set([".mkv", ".mov", ".mp4", ".webm"]);
 // Each image of a comparison is drawn this high, side by side
 export const COMPARISON_HEIGHT = 540;
-// The FLIP a shot must score under its reference to be approved. The committed scores put the interface screens that
-// Match the game at 0.001 to 0.05 (the loading, the publisher's splash, the login's interface), most other references
-// At 0.14 or more, and the settings' graphics rows at 0.10, so the bar sits under the lowest of the rest
-export const APPROVAL_FLIP_BAR = 0.05;
+// The mean difference, in percent, a shot must score under its reference to be approved: one percent is the 99%
+// Likeness the screens are held to. A reference that records its own approval keeps that bar instead
+export const APPROVAL_MEAN_DIFFERENCE_BAR = 1;
 // The approval a screen gets when its reference records none
-export const DEFAULT_APPROVAL: ParityApproval = { bar: APPROVAL_FLIP_BAR, measure: ParityApprovalMeasure.Flip };
+export const DEFAULT_APPROVAL: ParityApproval = {
+  bar: APPROVAL_MEAN_DIFFERENCE_BAR,
+  measure: ParityApprovalMeasure.MeanDifference,
+};
 // The contact sheet `frames` writes beside its frames, which is not one of them
 export const CONTACT_SHEET_NAME = "sheet.png";
 // The map naming every reference, whose held cameras `pose --write` rewrites
