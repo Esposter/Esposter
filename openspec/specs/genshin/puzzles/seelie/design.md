@@ -22,10 +22,10 @@ The map gives one point per Seelie, and thirty courts for Mondstadt alone. Each 
 
 ## Sources
 
-- [Seelie](https://genshin-impact.fandom.com/wiki/Seelie), Genshin Impact Wiki: a Seelie returns to its starting location "if they have not been led back to their court after a certain amount of time."
+- [Seelie](https://genshin-impact.fandom.com/wiki/Seelie), Genshin Impact Wiki: a Seelie returns to its starting location "if they have not been led back to their court after a certain amount of time." The page is not on disk, so the quote is unread here (see Open).
 
 ## Open
 
 - [ ] **The map gives one point per Seelie and thirty courts for Mondstadt** — no source yet: the official map's point list is not among the caches read.
-- [ ] **A Seelie rests until followed, and goes back to rest when left unfollowed, as the game does** — no source yet: the Seelie wiki page is not on disk, for either trigger.
+- [ ] **A Seelie rests until followed, is led to its court, and goes back to rest when left unfollowed, as the game does** — no source yet: the Seelie wiki page is not on disk, for any of its three steps.
 - [ ] **The chest a settled Seelie spawns** — no source yet: the Chest wiki page is not on disk, and the Seelie page is not either.
