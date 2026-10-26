@@ -34,12 +34,11 @@ Nilou's Dance of Haftkarsvar SHALL deal damage equal to a share of her Max HP an
 - **THEN** the damage equals a share of Nilou's Max HP
 - **AND** Pirouette begins for ten seconds
 
-#### Scenario: Recast is refused by the cooldown
+#### Scenario: Recast while Pirouette stands runs Whirling Steps
 
 - **GIVEN** Pirouette is standing
 - **WHEN** the player casts Dance of Haftkarsvar again
-- **THEN** the cast is refused by the cooldown the first cast set
-- **AND** Pirouette is not restarted
+- **THEN** Whirling Steps runs in place of a new Pirouette (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/nilou/skill.go` lines 92 and 93)
 
 ### Requirement: Lunar Prayer from the third step
 
@@ -146,7 +145,7 @@ A press of Nilou's skill inside Pirouette SHALL be refused by the cooldown the c
 
 ### Requirement: Golden Chalice's Bounty from Ascension 1
 
-From Ascension 1, Pirouette's third sword dance SHALL give each deployed member Golden Chalice's Bounty for 30 seconds when the team holds a Dendro member and no member that is neither Dendro nor Hydro. A Dendro hit on a member under the Bounty SHALL give every deployed member 100 Elemental Mastery for 10 seconds, and a Bloom by a member under it SHALL leave a Bountiful Core, which bursts 0.4 seconds after it is made over 6.5 metres.
+From Ascension 1, Pirouette's third sword dance SHALL give each deployed member Golden Chalice's Bounty for 30 seconds when the team holds a Dendro member and a Hydro member and no member that is neither Dendro nor Hydro (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/nilou/asc.go` comment, lines 19 and 20). A Dendro hit on a member under the Bounty SHALL give every deployed member 100 Elemental Mastery for 10 seconds, and a Bloom by a member under it SHALL leave a Bountiful Core, which bursts 0.4 seconds after it is made over 6.5 metres.
 
 #### Scenario: A Dendro and Hydro team gains the Bounty
 
@@ -218,6 +217,4 @@ Lingering Aeon, Tranquility Aura and the Whirling Steps' later presses SHALL NOT
 
 ## Open
 
-- [ ] **Golden Chalice's Bounty needs a Dendro member and no member that is neither Dendro nor Hydro** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/nilou/asc.go`: its condition also needs a Hydro member (lines 19 and 20).
-- [ ] **A press of Nilou's skill inside Pirouette is refused by the cooldown** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/nilou/skill.go`: a press while Pirouette stands runs Whirling Steps (lines 92 to 93).
 - [ ] **An Electro or Pyro hit leaves a Bountiful Core standing** — no source yet: design.md names no element rule for the core, and gcsim's core takes a hit of any element alike.
