@@ -218,7 +218,7 @@ A card's and a character's name and description SHALL be shown in the game's wor
 
 ### Requirement: Ellin's deck holds no cards and gives its side two statuses
 
-Ellin's opponent deck SHALL hold no cards and SHALL give its side only the two statuses its passives give at the start of the battle (id 11002, with an empty `cardList`).
+Ellin's opponent deck SHALL hold no cards and SHALL give its side only the two statuses its passives give at the start of the battle (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/GCGDeckExcelConfigData.json`, id 11002, which has no `cardList` key).
 
 #### Scenario: Ellin's side starts with its two statuses
 
