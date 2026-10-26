@@ -53,3 +53,8 @@ Vesna's Armed for Action form SHALL NOT take effect.
 
 - **WHEN** the player uses Vesna's strikes while Armed for Action is active
 - **THEN** the strikes deal Physical damage, as they do outside the form
+
+## Open
+
+- [ ] **The Art of Victory deals one Anemo hit** — no source yet: design.md cites no hit count for the skill, though the cached wiki page lists one Skill DMG row.
+- [ ] **Vesna's strikes deal Physical damage outside Armed for Action** — no source yet: the cached Vila Blade Dance page names no element for them, and gcsim has no Vesna folder.
