@@ -14,3 +14,7 @@
 - [ ] 3.2 Run the challenge's waves against the time limit, with each ley line disorder as its own module, once the domain's scene export is in. Verify: tests named after the scenarios 'Clearing a domain raises its Petrified Tree', 'Running out of time returns the player to the entrance', 'Every member down returns the player to the entrance' and 'A ley line disorder changes the fight' written first and seen failing.
 - [ ] 3.3 Claim the Petrified Tree with Original Resin. Verify: tests named after the scenarios 'Claiming the tree spends resin and gives its rewards' and 'Claiming the tree with too little resin is refused' written first and seen failing.
 - [x] 3.4 Give a one-time domain its reward on the first clear only. Verify: a test named after the scenario 'A repeat clear of a one-time domain gives nothing' written first and seen failing.
+
+## 4. Specs
+
+- [ ] 4.1 Archive this change's map delta, which replaces the map spec's 'Only statues and waypoints are jump landmarks' with the domain entrances added. Verify: `openspec/specs/genshin/map/spec.md` names Domain Entrances in its jump-landmark requirement once the change is archived.
