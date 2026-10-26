@@ -28,16 +28,16 @@ The model draws five LOD0 meshes under its root "Avatar_Girl_Sword_PlayerGirl_Mo
 
 Each program is named by its index in the uber's named list: pass, then stage, then record order, the same index as its `NNNNN.dxbc` and its programs.tsv line. Each material's base variant is one keyword set with a vertex and a pixel program, chosen by the rule in the Decisions below. The variant's two programs are (listings named by the pattern `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber/NNNNN.asm`, where `NNNNN` is the program's index and the pattern is not one file; the stage each listing shows is checked in the open items):
 
-| Material | Pass      | Stage  | Program index | Container   |
-| :------- | :-------- | :----- | ------------: | :---------- |
-| Body     | "BODY"    | Pixel  |           460 | DXBC (SHEX) |
-| Body     | "BODY"    | Vertex |           795 | DXIL        |
-| Hair     | "BODY"    | Pixel  |           272 | DXBC (SHEX) |
-| Hair     | "BODY"    | Vertex |           753 | DXIL        |
-| Face     | "BODY"    | Pixel  |           432 | DXBC (SHEX) |
-| Face     | "BODY"    | Vertex |           788 | DXIL        |
-| Face     | "OUTLINE" | Pixel  |           885 | DXIL        |
-| Face     | "OUTLINE" | Pixel  |           958 | DXBC (SHEX) |
+| Material | Pass      | Stage  | Program index | Container     |
+| :------- | :-------- | :----- | ------------: | :------------ |
+| Body     | "BODY"    | Pixel  |           460 | DXBC (SHEX)   |
+| Body     | "BODY"    | Vertex |           795 | DXIL          |
+| Hair     | "BODY"    | Pixel  |           272 | DXBC (SHEX)   |
+| Hair     | "BODY"    | Vertex |           753 | DXIL          |
+| Face     | "BODY"    | Pixel  |           432 | DXBC (SHEX)   |
+| Face     | "BODY"    | Vertex |           788 | DXIL          |
+| Face     | "OUTLINE" | Pixel  |           885 | D3D (no DXIL) |
+| Face     | "OUTLINE" | Pixel  |           958 | DXBC (SHEX)   |
 
 Candidates before the choice: body 124 pixel and 41 vertex, hair 60 and 5, face 68 and 30, the face's outline 16 and 24 (Exact).
 
