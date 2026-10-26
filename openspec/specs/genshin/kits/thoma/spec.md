@@ -20,7 +20,7 @@ Thoma's four strikes and charged attack SHALL land on the enemies within reach, 
 
 ### Requirement: Blazing Blessing
 
-Blazing Blessing SHALL deal its hit, set a shield from a share of Thoma's Max HP plus a flat amount, and infuse Thoma with Pyro for 30 frames, and a recast SHALL replace the shield he holds.
+Blazing Blessing SHALL deal its hit, set a shield from a share of Thoma's Max HP plus a flat amount, and infuse Thoma with Pyro for 30 frames, and a recast SHALL replace the shield he holds (open on the design page: gcsim keeps the larger of the two, capped).
 
 #### Scenario: Skill sets the shield and infusion
 
@@ -33,7 +33,7 @@ Blazing Blessing SHALL deal its hit, set a shield from a share of Thoma's Max HP
 
 - **GIVEN** Blazing Blessing's shield is standing
 - **WHEN** the player presses Blazing Blessing again
-- **THEN** the new shield replaces the old one
+- **THEN** the new shield replaces the old one (open on the design page)
 
 ### Requirement: Crimson Ooyoroi and Fiery Collapse
 
