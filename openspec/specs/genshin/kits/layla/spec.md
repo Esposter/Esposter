@@ -1,6 +1,6 @@
 ## Purpose
 
-Layla's kit as built, with her strikes, charged attack, plunges, Nights of Formal Focus's hit and shield, and Starlight Slug's field, her Night Stars with the Shooting Stars they fire, Ascension 4 and Constellation 2, and what is left of her passives.
+Layla's kit as built, with her strikes, charged attack, plunges, Nights of Formal Focus's hit and shield, and Starlight Slug's field, her Night Stars with the Shooting Stars they fire, Ascension 4, Constellation 2 and Constellation 6, and what is left of her passives.
 
 ## Requirements
 
@@ -110,12 +110,28 @@ Ascension 4 SHALL add 1.5% of Layla's Max HP as flat damage to each Shooting Sta
 - **WHEN** a Shooting Star hits an enemy twice
 - **THEN** she gains 1 Energy once
 
-### Requirement: Ascension 1, Constellations 4 and 6, and Constellation 1's team shields not yet built
+### Requirement: Constellation 6's damage and shorter Night Stars tick
 
-Layla's Ascension 1, her Constellations 4 and 6, and Constellation 1's team shields SHALL NOT take effect.
+Constellation 6 SHALL give Starlight Slug's ticks and each Shooting Star 40% DMG Bonus, and SHALL shorten the Night Stars' tick to 1.2 seconds.
+
+#### Scenario: Constellation 6 raises Starlight Slug and Shooting Star damage
+
+- **GIVEN** Layla has Constellation 6
+- **WHEN** a Starlight Slug tick or a Shooting Star hits an enemy
+- **THEN** the hit gains 40% DMG Bonus
+
+#### Scenario: Constellation 6 shortens the Night Stars tick
+
+- **GIVEN** Layla has Constellation 6 and the shield is up
+- **WHEN** the Night Stars tick comes due
+- **THEN** the next tick comes 1.2 seconds after it, not 1.5
+
+### Requirement: Ascension 1, Constellation 4, and Constellation 1's team shields not yet built
+
+Layla's Ascension 1, her Constellation 4, and Constellation 1's team shields SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Layla has Ascension 1, Constellation 4 or Constellation 6 unlocked
+- **GIVEN** Layla has Ascension 1 or Constellation 4 unlocked
 - **WHEN** the player fights with Layla
 - **THEN** that effect has no effect
