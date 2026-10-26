@@ -10,7 +10,7 @@ A session that ends mid-change — a compaction, a usage lockout, a dead agent, 
 ## Settled — do not re-propose
 
 - **New work over leftovers.** A unit started on a dirty tree builds on a half-change no record describes, and the leftover's author context is gone for good once a second change lands on top of it.
-- **Discarding an uncommitted change because its author is gone** (`git checkout --`, `git clean`, a hard reset). An uncommitted path is someone's work until its handoff says otherwise, so it is finished or recorded, never thrown away. The one exception is below.
+- **Discarding an uncommitted change because its author is gone** (`git checkout --`, `git clean`, a hard reset). An uncommitted path is someone's work until its handoff says otherwise, so it is finished or recorded, never thrown away.
 - **Re-deriving a leftover from scratch.** Its handoff already holds the paths, the calls made and the next step. Reading it costs one file, while re-deriving it costs the original session's whole investigation.
 - **Waiting on the other machine before syncing this one.** Each machine resumes itself. `ai/queue` and the claims are the state the machines share, and a peer that never answers is covered by the stale-claim takeover.
 
