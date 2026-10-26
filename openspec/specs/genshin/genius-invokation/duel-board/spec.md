@@ -97,5 +97,5 @@ A duel's end SHALL return the player from the board to the world.
 ## Open
 
 - [ ] **Choosing the duel ends the talk and opens the board** — no source yet: the talk's duel-choice handler was not read.
-- [ ] **A game whose opponent deck is missing fails the run** — no source yet: the deck check in `scripts/src/services/genshinAssets/gcg/toGcgGames.ts` was not read.
+- [ ] **A game whose opponent deck is missing fails the run** — no source yet: the deck check was not read.
 - [ ] **The board's leave returns the player to the world** — no source yet: the world's handler for the board's leave was not read.
