@@ -115,7 +115,8 @@ export const createCharlotteKitBehaviour = ({
       },
     },
     // Spiritbreath Thorn is opened as the charged attack starts on a target, and its field strikes after the charged
-    // Attack's hit, where the target stood then, unless the thorn is still on its cooldown
+    // Attack's hit, round the point the target stood at when the attack started, as gcsim (MIT) charlotte/charge.go
+    // takes it, not where the target stands at the hit, unless the thorn is still on its cooldown
     chargedAttack: {
       onStart: ({ activeCombatant: combatant, kitEffectState }, target) => {
         if (!target) return;
