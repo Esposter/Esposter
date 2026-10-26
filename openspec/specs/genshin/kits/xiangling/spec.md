@@ -26,13 +26,13 @@ Xiangling's five strikes SHALL land in order, her charged attack SHALL cost 25 s
 
 ### Requirement: Guoba's breaths
 
-Guoba Attack SHALL place Guoba 1.3 metres ahead of Xiangling for 438 frames, breathing four times at 126, 226, 326 and 426 frames, each breath a 60-degree fan of 5 metres, or 6 metres with Crossfire.
+Guoba Attack SHALL place Guoba 1.3 metres ahead of Xiangling for 438 frames, breathing four times two seconds after the cast and then every 1.5 seconds, each breath a 60-degree fan of 5 metres, or 6 metres with Crossfire.
 
 #### Scenario: Guoba breathes four times
 
 - **WHEN** the player casts Guoba Attack
 - **THEN** Guoba stands 1.3 metres ahead of Xiangling
-- **AND** it breathes at 126, 226, 326 and 426 frames
+- **AND** it breathes two seconds after the cast and then every 1.5 seconds, at 120, 210, 300 and 390 frames
 
 #### Scenario: Crossfire widens the breath
 
