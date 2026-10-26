@@ -252,3 +252,4 @@ Paths relative to the repository root.
 - [ ] **Save: each draw's wish history is kept for the year** — no source yet: the retention rule for the wish history, which no record names.
 - [ ] **each stack's maximum follows the game's inventory limits, item by item** — no source yet: the wiki's Inventory page, which the repo's `bagLimits.ts` cites, is not in the wiki cache, so the per-item ceiling is not checked against the game.
 - [ ] **a new player holds Original Resin at its cap from the epoch, with Mondstadt's Reputation at its first level** — no source yet: the new-player wallet in `packages/genshin-world/src/services/inventory/constants.ts` (`EMPTY_WALLET`), not yet read for its Original Resin value; the game's new-player state is not yet recorded.
+- [ ] **Save: the account's bag and wallet are kept in a merge** — contradicted by `packages/genshin-world/src/services/save/mergeGenshinSave.ts`: the same-day primogem refill count takes the larger

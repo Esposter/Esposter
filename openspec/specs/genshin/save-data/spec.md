@@ -335,6 +335,4 @@ The save SHALL hold each mined outcrop by its place's id with the instant it was
 
 ## Open
 
-- [ ] **Save: the camps cleared are not saved and start fresh after a reload** — contradicted by `packages/genshin-world/src/models/save/GenshinSave.ts`: holds a clearedCamps slice, each camp by its id
-- [ ] **Save: the account's bag and wallet are kept in a merge** — contradicted by `packages/genshin-world/src/services/save/mergeGenshinSave.ts`: the same-day primogem refill count takes the larger
 - [ ] **Save: a guest's claimed statue level is paid again on the account from its own bag** — no source yet: a run of the merge over a guest and an account save with a claimed statue level, which no record holds.
