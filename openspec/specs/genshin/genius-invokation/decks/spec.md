@@ -339,5 +339,5 @@ A character still standing that loses HP or shield SHALL hear the DMG it takes t
 - [ ] **A card's damage bonus applies only to the skills it names** — no source yet: the check that reads a skill's kind (Normal Attack or not) was not located.
 - [ ] **An opponent deck is legal only when every talent card it holds has its character in the deck** — no source yet: no legality check was found in the deck build or read scripts.
 - [ ] **While the opponent has declared its end, the side's prepared skills wait** — no source yet: the wait in `runGcgPreparedSkills.ts` was not read.
-- [ ] **The card values and card behaviours in the scenarios match the game** — no source yet: the wiki's card pages are not in the cache, and the medium text map holds no card texts.
+- [ ] **The card values and card behaviours in the scenarios match the game** — no source yet: the wiki's card pages are not in the cache, and the medium text map holds no card texts. The cache was checked again: no cached page is a Genius Invokation card page, so the values are still unread.
 - [ ] **Shimenawa's Reminiscence reduces a side's Talent card or Elemental Skill from any character** — no source yet: game data or a snapshot that holds this behaviour

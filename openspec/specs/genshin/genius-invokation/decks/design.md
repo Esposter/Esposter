@@ -110,11 +110,11 @@ A duel's enemy card group is its deck's id, and the built decks are these.
 
 ## Open
 
-- [ ] **The card values and card behaviours in the character and card decisions match the game** — no source yet: the wiki's card pages are not in the cache, and the medium text map holds no card texts.
+- [ ] **The card values and card behaviours in the character and card decisions match the game** — no source yet: the wiki's card pages are not in the cache, and the medium text map holds no card texts. The cache was checked again: no cached page is a Genius Invokation card page, so the values are still unread.
 - [ ] **Game 1103 pays 900 Lucky Coins and 200 Player EXP as its week reward** — no source yet: its reward row (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/GCGGameRewardExcelConfigData.json`, level 1103) lists reward id 0 only, so the week reward sits in a row not identified here.
 - [ ] **Deck 10 is not legal, since its Crossfire needs Xiangling** — no source yet: deck 10's `characterList` is 1203 alone, with no Xiangling (1302), and no line of `~/Esposter.noindex/genshin-dump-backup-6.6/TextMap/TextMapEN.json` reads "Crossfire", so the card is not identified.
 - [ ] **Marjorie and Ellin open at Genius Invokation level 0** — contradicted by `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/GCGWeekLevelExcelConfigData.json`: games 1021 and 1031 need gcgLevel 1.
-- [ ] **The dice cap of sixteen and four supports match the game** — no source yet: the wiki's rules page is not in the cache.
+- [ ] **The dice cap of sixteen and four supports match the game** — no source yet: the wiki's rules page is not in the cache. The cache was checked: no cached page is the Genius Invokation rules page, and none states a dice cap of sixteen or a four-support limit.
 - [ ] **A character's description id names no text in any language** — no source yet: the character rows' description hashes were not looked up in the text maps.
 - [ ] **Kid Kujirai creates its Omni Element die once a phase, then moves to the opposing support zone** — no source yet: the Kid Kujirai card's entry in `GCGCardExcelConfigData` in `~/Esposter/genshin-parity/text/ExcelBinOutput/`, not yet read for its die and zone.
 - [ ] **Timmie's Pigeon is gained at each end phase** — no source yet: Timmie's Pigeon's card entry in `GCGCardExcelConfigData` in `~/Esposter/genshin-parity/text/ExcelBinOutput/`, not yet read for the end-phase gain.
