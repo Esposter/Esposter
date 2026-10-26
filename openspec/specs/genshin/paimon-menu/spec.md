@@ -151,7 +151,7 @@ The profile card SHALL show the Traveler's rank and World Level, and the info ic
 
 - **GIVEN** the Traveler's birthday is not set
 - **WHEN** the profile card is shown
-- **THEN** the Birthday row shows -/- with no button beneath it (`~/Esposter/genshin-parity/captures/menu-paimon-current.png`)
+- **THEN** the Birthday row shows -/- with a Set Birthday button beneath it
 
 ### Requirement: The World Level dialog shows its help text and lowering button
 
@@ -185,5 +185,5 @@ The Settings screen SHALL list its tabs down the left in the game's order and dr
 
 - [ ] **The contents run in the game's own order, Shop first** — no source yet: the 2560 wide 1.3 still is not in captures, and the 1920 wide `~/Esposter/genshin-parity/captures/menu-paimon-current.png` draws a shorter set, without Shop, Events, Adventurer Handbook, Wish, Battle Pass or Co-Op.
 - [ ] **Single-player pauses everything except particles and music** — no source yet: no game data or snapshot checked holds the single-player pause; `MENU_SCREEN_BEHAVIOUR` holds the world with no particle or music carve-out.
-- [ ] **The Birthday row stands over a Set Birthday button** — contradicted by `~/Esposter/genshin-parity/captures/menu-paimon-current.png`: the unset row shows -/- with no button beneath it.
+- [ ] **The Birthday row stands over a Set Birthday button** — contradicted by `~/Esposter/genshin-parity/captures/menu-paimon-current.png`: the unset row shows -/- with no button beneath it; re-measure the frame before settling the row.
 - [ ] **The Paimon menu opens over the world from Escape or Start, and the quit prompt and World Level dialog open from it** — no source yet: game data or a snapshot that holds this behaviour.
