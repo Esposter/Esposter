@@ -20,7 +20,7 @@ flowchart TD
 
 ## The kinds
 
-`WildlifeKind` names three: `CrimsonFox`, `Squirrel` and `WhitePigeon`. Each is one of the map's own labels under its Animals group, and `WildlifeKindLabelIdMap` gives its label id, so a point takes its kind by its label. The archive files each as an animal or aviary monster, and the capture table's rows and the monster rows hold the rest of what each one is.
+`WildlifeKind` names four: `Boar`, `CrimsonFox`, `Squirrel` and `WhitePigeon`, of which the first three flee and the boar charges. Each is one of the map's own labels under its Animals group, and `WildlifeKindLabelIdMap` gives its label id, so a point takes its kind by its label. The archive files each as an animal or aviary monster, and the capture table's rows and the monster rows hold the rest of what each one is.
 
 ## The flight
 
@@ -43,7 +43,7 @@ Every animal of the slice exists from the scene's load (`packages/genshin-world/
 
 | File                                                                          | Role                                                        |
 | :---------------------------------------------------------------------------- | :---------------------------------------------------------- |
-| `packages/genshin-world/src/models/wildlife/WildlifeKind.ts`                  | The three fleeing kinds                                     |
+| `packages/genshin-world/src/models/wildlife/WildlifeKind.ts`                  | The four kinds: three that flee, and the boar that charges  |
 | `packages/genshin-world/src/models/wildlife/WildlifePlace.ts`                 | A placed animal, and the schema its slice is parsed with    |
 | `packages/genshin-world/src/models/wildlife/Wildlife.ts`                      | One animal as its flight moves it                           |
 | `packages/genshin-world/src/services/wildlife/stepWildlife.ts`                | The flight, one fixed step at a time                        |
@@ -63,7 +63,6 @@ Every animal of the slice exists from the scene's load (`packages/genshin-world/
 ## Open
 
 - [ ] **Nothing is struck, dropped or picked up yet** — no source yet: the code now strikes and drops animals (`packages/genshin-world/src/services/kit/strikeKitEnemies.ts` calls `strikeKitWildlife`, which calls `strikeWildlife` with `packages/genshin-world/src/services/wildlife/WildlifeKindDropMap.ts`) and picks up material sources (`packages/genshin-world/src/composables/useWorldPickups.ts`), so this line is stale.
-- [ ] **The three kinds of bird and beast** — no source yet: `WildlifeKind` now names four kinds, the boar too (`packages/genshin-world/src/models/wildlife/WildlifeKind.ts`, label 313), and the boar charges rather than flees.
 - [ ] **The fleeing-kind check admits only White Pigeon, Crimson Fox or Squirrel** — no source yet: `scripts/src/services/genshinAssets/wildlife/buildWildlifePlaces.ts` loops over every `WildlifeKind`, so a boar's label is placed as well.
 - [ ] **A fleeing kind on the ground layer is placed, and an underground one left out** — no source yet: the ground-layer filter in the map-point reader was not read.
 - [ ] **The archive files each kind as an animal or aviary monster** — no source yet: the dump's Monster and Gadget rows were not matched to the kinds' names.
