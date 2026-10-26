@@ -70,8 +70,8 @@ The fish, stock, pool and rod tables are not in the community dump the repositor
 ## Open
 
 - [ ] **The fishing points stand where the official map marks them** — no source yet: no comparison of the fitted points against the official map is saved in the parity folders.
-- [ ] **A pool's day stock is drawn from six to eighteen on the game's clock, in `Asia/Shanghai`** — no source yet: the pool table holds no time window and the Fishing wiki page is not in `~/Esposter.noindex/cache/genshin-wiki/`.
-- [ ] **An emptied stock is back in full seventy-two hours on** — no source yet: no decoded fishing table holds a refill time, and the Fishing wiki page is not cached.
+- [ ] **A pool's day stock is drawn from six to eighteen on the game's clock, in `Asia/Shanghai`** — no source yet: the pool table holds no time window and the Fishing wiki page is not in `~/Esposter.noindex/cache/genshin-wiki/`. Checked again against the wiki cache: it holds no Fishing page, and no cached page, in its own file or among a category's pages, is titled Fishing, so the time window stays open.
+- [ ] **An emptied stock is back in full seventy-two hours on** — no source yet: no decoded fishing table holds a refill time, and the Fishing wiki page is not cached. Checked again against the wiki cache: it holds no Fishing page, so the refill time stays open.
 - [ ] **A fish flees any lure within its flee range, and turns toward the bait it takes** — no source yet: the reaction rule is not in the decoded tables, and no recording of it is checked.
 - [ ] **A draw picks a fish by its share of the stock's weight** — no source yet: the stock table holds the weights, not the draw rule.
 - [ ] **The reel's tension holds in its zone until the fish is caught or the line breaks** — no source yet: `~/Esposter.noindex/genshin-parity/captures/fishing-reel.mkv` is not yet read against the rule.
