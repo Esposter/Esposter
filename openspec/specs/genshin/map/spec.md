@@ -11,7 +11,7 @@ M SHALL open the full-screen map over the held world, hiding the HUD, and M, Esc
 #### Scenario: Opening the map
 
 - **WHEN** the player presses M
-- **THEN** the full-screen map opens and the HUD is hidden
+- **THEN** the full-screen map opens and the HUD is hidden `packages/genshin-world/src/components/World/Session/Index.vue`
 
 #### Scenario: Closing the map
 
@@ -25,12 +25,12 @@ The map SHALL draw the filled areas' outlines and the unlocked landmarks north u
 #### Scenario: Map shows the player's place
 
 - **WHEN** the map is open
-- **THEN** the drawing is placed north up with the player's pointer on the player
+- **THEN** the drawing is placed north up with the player's pointer on the player `packages/genshin-world/src/components/Map/Overlay/Index.vue`
 
 #### Scenario: Blank area
 
 - **WHEN** an area has no unlocked statue standing in it
-- **THEN** the area is blank on the map
+- **THEN** the area is blank on the map `packages/genshin-world/src/services/map/computeAreaLabels.ts`
 
 ### Requirement: Pan and zoom
 
@@ -39,17 +39,17 @@ Dragging SHALL pan the map by the metres its pixels cover, and the wheel and the
 #### Scenario: Drag pans the view
 
 - **WHEN** the player drags the map
-- **THEN** the view moves by the metres the drag covers at the shown zoom
+- **THEN** the view moves by the metres the drag covers at the shown zoom `packages/genshin-world/src/components/Map/Overlay/Index.vue`
 
 #### Scenario: Wheel zooms
 
 - **WHEN** the player turns the wheel on the map
-- **THEN** the view zooms by one notch along the track
+- **THEN** the view zooms by one notch along the track `packages/genshin-world/src/services/map/computeWheelZoomMetres.ts`
 
 #### Scenario: Drag does not choose a landmark
 
 - **WHEN** a drag travels beyond the drag threshold and ends on a landmark
-- **THEN** that landmark is not chosen
+- **THEN** that landmark is not chosen `packages/genshin-world/src/components/Map/Overlay/Index.vue`
 
 ### Requirement: Choosing a landmark jumps the character
 
@@ -58,12 +58,12 @@ Choosing a landmark on the map or in the jump list SHALL fade the screen to the 
 #### Scenario: Jump to a statue
 
 - **WHEN** the player chooses a statue on the map
-- **THEN** the screen fades to pale grey, the character is placed at the statue's arrival facing its turn, and the screen fades back in
+- **THEN** the screen fades to pale grey, the character is placed at the statue's arrival facing its turn, and the screen fades back in `packages/genshin-world/src/services/map/computeJumpPose.ts`
 
 #### Scenario: Cross-region fade durations
 
 - **WHEN** a cross-region jump fades
-- **THEN** the fade out takes 801 milliseconds and the fade in takes 200 milliseconds
+- **THEN** the fade out takes 801 milliseconds and the fade in takes 200 milliseconds `packages/genshin-world/src/services/map/constants.ts`
 
 ### Requirement: Jump list for the keyboard and screen readers
 
@@ -72,7 +72,7 @@ The jump list SHALL be visually hidden and reachable by keyboard and screen read
 #### Scenario: Keyboard reaches a jump
 
 - **WHEN** a keyboard user moves through the map's jump list
-- **THEN** each landmark is a button named by its area and kind, grouped by region
+- **THEN** each landmark is a button named by its area and kind, grouped by region `packages/genshin-world/src/components/Map/JumpList/Index.vue`
 
 ### Requirement: Every region's landmarks read once
 
@@ -81,7 +81,7 @@ The map SHALL offer the jump landmarks of every region, and a region whose data 
 #### Scenario: Region fails to load
 
 - **WHEN** a region's data fails to load
-- **THEN** the failure is logged and that region's landmarks are left off the map
+- **THEN** the failure is logged and that region's landmarks are left off the map `packages/genshin-world/src/composables/useJumpLandmarks.ts`
 
 ### Requirement: Only statues and waypoints are jump landmarks
 
@@ -90,4 +90,8 @@ Only Statues of The Seven and Teleport Waypoints SHALL be jump landmarks, and a 
 #### Scenario: Tree in a region
 
 - **WHEN** a tree is in a region's data
-- **THEN** it is not offered as a jump
+- **THEN** it is not offered as a jump `packages/genshin-world/src/services/map/constants.ts`
+
+## Open
+
+- [ ] **Map: Escape closes the open map** — no source yet: an input handler that routes Escape to the map's close; the session names Escape for the Paimon menu, and the map files name no Escape.
