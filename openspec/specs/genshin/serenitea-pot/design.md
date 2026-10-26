@@ -82,4 +82,4 @@ The furnishings' own table, "HomeWorldFurnitureExcelConfigData", is not read yet
 
 - [ ] **The wiki answered HTTP 402 to this build's read** — no source yet: no fetch log of the wiki's response is in the repo or the caches.
 - [ ] **The build slot appears on every Trust Rank** — no source yet: the dump's level row does not name the field that opens each build slot; the queue count is cited to `packages/genshin-world/src/services/home/constants.ts`.
-- [ ] **Realm Currency is not in the wallet until its game text name has a key in `genshin-text`** — no source yet: the key exists at `packages/genshin-text/src/models/GameTextKey.ts`, so whether the wallet still excludes it is not checked here.
+- [ ] **Realm Currency is not in the wallet until its game text name has a key in `genshin-text`** — no source yet: the key exists at `packages/genshin-text/src/models/GameTextKey.ts`, and the wallet's own exclusion of Realm Currency is not traced to a reader in this pass.
