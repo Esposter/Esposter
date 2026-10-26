@@ -142,11 +142,11 @@ A module SHALL be added only by the proposal that first needs it, never as an em
 
 ## Open
 
-- [ ] **Every generator and per-frame selection is benched at two scales** — no source yet: 16 `*.bench.ts` files under `packages/genshin-engine/src` have recorded results, but no inventory shows each generator and selection has one at two scales.
+- [ ] **Every generator and per-frame selection is benched at two scales** — no source yet: 16 `*.bench.ts` files have recorded results, but no inventory shows each generator and selection has one at two scales.
 - [ ] **A bench shows its cost follows what is visible** — no source yet: the recorded bench results are not checked against the amount visible.
 - [ ] **A generator gives the same output in a worker and in a test** — no source yet: no test runs one generator in both places and compares the outputs.
 - [ ] **A steady frame allocates nothing for its objects** — no source yet: no allocation test or measurement is in the repo.
-- [ ] **A region of thousands of parts is drawn in tens of calls** — no source yet: `packages/genshin-engine/src/renderer/createInstancedMesh.ts` shows the instancing, but no draw-call count is recorded.
-- [ ] **A device missing the frame budget gets a lower tier** — no source yet: the tier is a prop the host passes (`packages/genshin-world/src/models/world/WorldScreenProps.ts`), and no code lowers it when a frame misses its budget.
-- [ ] **The engine's code loads only when the world needs it** — no source yet: no lazy import of the engine code is found under `packages/genshin-world/src/components/World`.
-- [ ] **The one event map is the one the screen creates** — no source yet: `createWorldEvents()` is called in `packages/genshin-world/src/components/World/Session/Index.vue` (line 328), not in the screen.
+- [ ] **A region of thousands of parts is drawn in tens of calls** — no source yet: the code shows the instancing, but no draw-call count is recorded.
+- [ ] **A device missing the frame budget gets a lower tier** — no source yet: the tier is a prop the host passes, and no code lowers it when a frame misses its budget.
+- [ ] **The engine's code loads only when the world needs it** — no source yet: no lazy import of the engine code is found.
+- [ ] **The one event map is the one the screen creates** — no source yet: `createWorldEvents()` is called (line 328), not in the screen.
