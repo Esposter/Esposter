@@ -42,25 +42,25 @@ stateDiagram-v2
 
 ## Key files
 
-| File                                                                              | Role                                                                  |
-| :-------------------------------------------------------------------------------- | :-------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/expedition/Expedition.ts`                      | A character out: its place, its hours and the moment it left          |
-| `packages/genshin-world/src/models/expedition/ExpeditionPlace.ts`                 | A place: its rank, statue point, quest and durations with their items |
-| `packages/genshin-world/src/services/expedition/sendExpedition.ts`                | The rules a send is refused by                                        |
-| `packages/genshin-world/src/services/expedition/claimExpedition.ts`               | A claim: the rolled items into the bag, the Mora into the wallet      |
-| `packages/genshin-world/src/services/expedition/recallExpedition.ts`              | A recall, forfeiting the reward                                       |
-| `packages/genshin-world/src/services/expedition/checkIsExpeditionPlaceOpen.ts`    | A place open by its rank, statue and quest                            |
-| `packages/genshin-world/src/services/expedition/computeExpeditionLimit.ts`        | The most expeditions out at once at a rank                            |
-| `packages/genshin-world/src/services/statue/computeUnlockedStatuePointIds.ts`     | The scene points of the statues unlocked, the points a place names    |
-| `packages/genshin-world/src/services/expedition/readMondstadtExpeditionPlaces.ts` | Mondstadt's places, fetched by key and checked on arrival             |
-| `scripts/src/services/genshinAssets/expeditions/buildMondstadtExpeditions.ts`     | The builder of the places record from the dump                        |
-| `scripts/src/services/genshinAssets/expeditions/buildExpeditionLimits.ts`         | The builder of the limit's ranks record from the dump                 |
-| `packages/genshin-world/src/services/expedition/checkIsExpeditionTalk.ts`         | Whether a talk is Katheryne's, which opens the expedition screen      |
-| `packages/genshin-world/src/services/expedition/computeExpeditionBonusChance.ts`  | The bonus chance at a character's level                               |
-| `packages/genshin-world/src/services/expedition/readExpeditionBonuses.ts`         | The bonus table, fetched by its key from the hosted game data         |
-| `packages/genshin-world/src/models/expedition/ExpeditionBonus.ts`                 | A bonus row: the level it names and its chance                        |
-| `packages/genshin-world/src/components/Expedition/Screen/Index.vue`               | The expedition screen's world wrapper over Mondstadt's slice          |
-| `packages/genshin-interface/src/components/ExpeditionScreen/Index.vue`            | The expedition screen's layout, drawn from the public clip (`~/Esposter.noindex/genshin-parity/captures/yt-fxIjhlV3vUA-expedition-screen.mp4`)            |
+| File                                                                              | Role                                                                                                                                           |
+| :-------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/expedition/Expedition.ts`                      | A character out: its place, its hours and the moment it left                                                                                   |
+| `packages/genshin-world/src/models/expedition/ExpeditionPlace.ts`                 | A place: its rank, statue point, quest and durations with their items                                                                          |
+| `packages/genshin-world/src/services/expedition/sendExpedition.ts`                | The rules a send is refused by                                                                                                                 |
+| `packages/genshin-world/src/services/expedition/claimExpedition.ts`               | A claim: the rolled items into the bag, the Mora into the wallet                                                                               |
+| `packages/genshin-world/src/services/expedition/recallExpedition.ts`              | A recall, forfeiting the reward                                                                                                                |
+| `packages/genshin-world/src/services/expedition/checkIsExpeditionPlaceOpen.ts`    | A place open by its rank, statue and quest                                                                                                     |
+| `packages/genshin-world/src/services/expedition/computeExpeditionLimit.ts`        | The most expeditions out at once at a rank                                                                                                     |
+| `packages/genshin-world/src/services/statue/computeUnlockedStatuePointIds.ts`     | The scene points of the statues unlocked, the points a place names                                                                             |
+| `packages/genshin-world/src/services/expedition/readMondstadtExpeditionPlaces.ts` | Mondstadt's places, fetched by key and checked on arrival                                                                                      |
+| `scripts/src/services/genshinAssets/expeditions/buildMondstadtExpeditions.ts`     | The builder of the places record from the dump                                                                                                 |
+| `scripts/src/services/genshinAssets/expeditions/buildExpeditionLimits.ts`         | The builder of the limit's ranks record from the dump                                                                                          |
+| `packages/genshin-world/src/services/expedition/checkIsExpeditionTalk.ts`         | Whether a talk is Katheryne's, which opens the expedition screen                                                                               |
+| `packages/genshin-world/src/services/expedition/computeExpeditionBonusChance.ts`  | The bonus chance at a character's level                                                                                                        |
+| `packages/genshin-world/src/services/expedition/readExpeditionBonuses.ts`         | The bonus table, fetched by its key from the hosted game data                                                                                  |
+| `packages/genshin-world/src/models/expedition/ExpeditionBonus.ts`                 | A bonus row: the level it names and its chance                                                                                                 |
+| `packages/genshin-world/src/components/Expedition/Screen/Index.vue`               | The expedition screen's world wrapper over Mondstadt's slice                                                                                   |
+| `packages/genshin-interface/src/components/ExpeditionScreen/Index.vue`            | The expedition screen's layout, drawn from the public clip (`~/Esposter.noindex/genshin-parity/captures/yt-fxIjhlV3vUA-expedition-screen.mp4`) |
 
 ## Notes
 
@@ -77,8 +77,5 @@ stateDiagram-v2
 
 - [ ] **The base limit of two** — no source yet: the wiki's Expedition page is not cached and the dump holds no base limit; the clip's "Expedition Limit: 1/2" does not show its player's Adventure Rank.
 - [ ] **The game's menus hold no expedition entry** — no source yet: no capture of the Paimon menu's entries shows that none is an expedition.
-- [ ] **A claim the bag cannot take whole is refused** — no source yet: no test in `claimExpedition.test.ts` holds an overflowing bag.
-- [ ] **A recall forfeits the reward** — no source yet: no test holds `recallExpedition`.
-- [ ] **The expedition list is held for the session, and a reload empties it** — no source yet: no test holds the list's session-only state or the save leaving it out.
 - [ ] **A talent applies once its passive is unlocked at the character's ascension** — no source yet: the dump's rows for these talents carry no `breakLevel`, and no test holds the ascension unlock.
 - [ ] **A talent's region the model does not hold is an error** — no source yet: no test holds that refusal.
