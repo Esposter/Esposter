@@ -99,35 +99,34 @@ flowchart TD
 - [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump: the rule and element reaction tables the standard rule is written from.
 
 ## Open
-
-- [ ] **Each side rolls eight dice a round, as the game does** — no source yet: the rule table's dice count is an obfuscated key the build does not read, and the wiki's rules page is not in the cache.
-- [ ] **A duel concedes after its fifteenth round, as the game does** — no source yet: the wiki's rules page is not in the cache, and no round limit was found in the rule table's readable fields.
-- [ ] **The reaction bonuses match the game (two for Melt, Vaporize and Overloaded, one for the rest)** — no source yet: the wiki's rules page is not in the cache, and the reaction card texts were not found in the medium text map.
-- [ ] **Burning Flame, Dendro Core and Catalyzing Field deal and last as the page says** — no source yet: their card names are not in the medium text map, so the card descriptions were not read.
-- [ ] **Frozen's two, the shield's limit of two, and one damage each for piercing and spread match the game** — no source yet: the wiki's rules page is not in the cache.
-- [ ] **Leave It to Me! makes the next switch a fast action and is spent by it** — no source yet: the card's text was not found in the medium text map.
-- [ ] **Tenko Thunderbolts deals 3 Electro, and Sesshou Sakura lasts four usages** — no source yet: the card values were not checked against the dump's card table.
-- [ ] **A defeat is heard by the other side's cards, each with the character it is attached to** — no source yet: the defeat hook's call in `applyGcgDamage.ts` was not read.
-- [ ] **A second reaction of the same kind joins the card already there, up to its most usages** — no source yet: the join in the effect that places the reaction's card was not read.
-- [ ] **Preparation switches once, then chooses, and the first roll starts once both sides have** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Each side has one reroll of any dice it names, and naming none passes** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Combat actions pass the turn unless the other side has already declared its end** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A turn begins with the damage the field's before-action and round-end cards deal** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Tuning is a fast action that keeps the turn, and playing a card passes no turn** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A switch is paid through the field's reductions, and may pay no die** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A card that names its holder's reduction needs its holder active** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A defeated active is replaced by a free action that only that side's turn actions wait on** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The round's end: the first declarer goes first, each side draws two, and a draw past the hand's limit is discarded** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Energy is gained by a normal attack and an elemental skill, and a skill a character cannot pay for is refused** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Combat actions are refused whole, leaving the duel as it was** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A charged attack is a normal attack by a side whose Elemental Dice were even before its Action Phase** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A plunging attack is a normal attack by a character switched in this Round** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **An element applied with no damage reacts with its aura but deals no damage, and its other effects still land** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A reaction's bonus joins its instance, and Swirl adds none** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A shield takes damage before HP, piercing skips it, and Crystallize grants a shield at most two** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A Swirl's spread is one damage of the Swirl's side that sets no aura and reacts with none** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **An Overloaded active character is switched to the next standing character, with no choice** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The roll, action and end phases run their hooks, and an end-phase hook's damage is dealt by the phase** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A character still standing hears each DMG it takes, through one primitive** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The end phase runs as the round closes, and the next round's roll follows it** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A hit on the opposing active character is settled in the order the flowchart draws** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Each side rolls eight dice a round, as the game does** — no source yet: the rule table's dice count is an obfuscated key the build does not read, and the wiki's rules page is in neither the wiki cache nor the `genshin-parity` snapshots.
+- [ ] **A duel concedes after its fifteenth round, as the game does** — no source yet: the wiki's rules page is in neither the wiki cache nor the `genshin-parity` snapshots, and no round limit was found in the rule table's readable fields.
+- [ ] **The reaction bonuses match the game (two for Melt, Vaporize and Overloaded, one for the rest)** — no source yet: `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/GCGElementReactionExcelConfigData.json` holds only each reaction's element pair, skill id and id (37 rows), with no bonus field, and the wiki's rules page is in neither the wiki cache nor the snapshots.
+- [ ] **Burning Flame, Dendro Core and Catalyzing Field deal and last as the page says** — no source yet: their names are in `~/Esposter.noindex/genshin-parity/text/TextMap/TextMapEN.json` (ids `227598079`, `1786104359` and `56432359`), but their descriptions and the card table's values were not compared with the page.
+- [ ] **Frozen's two, the shield's limit of two, and one damage each for piercing and spread match the game** — no source yet: the wiki's rules page is in neither the wiki cache nor the `genshin-parity` snapshots.
+- [ ] **Leave It to Me! makes the next switch a fast action and is spent by it** — no source yet: the card's name is in `TextMapEN.json` (id `2871879455`), but its description was not read against the page.
+- [ ] **Tenko Thunderbolts deals 3 Electro, and Sesshou Sakura lasts four usages** — no source yet: the names are in `TextMapEN.json` (ids `97097671` and `2974662287`), but the card table's values were not checked against the page.
+- **A defeat is heard by the other side's cards, each with the character it is attached to** — `packages/genshin-world/src/services/gcg/applyGcgDamage.ts`, whose `settleGcgDefeats` settles each defeated character.
+- [ ] **A second reaction of the same kind joins the card already there, up to its most usages** — no source yet: `packages/genshin-world/src/services/gcg/effects/` was searched for the join, and the effect that places a reaction's card was not among the files read.
+- **Preparation switches once, then chooses, and the first roll starts once both sides have** — `packages/genshin-world/src/services/gcg/prepareGcgSide.ts`.
+- **Each side has one reroll of any dice it names, and naming none passes** — `packages/genshin-world/src/services/gcg/rerollGcgDice.ts`.
+- **Combat actions pass the turn unless the other side has already declared its end** — `packages/genshin-world/src/services/gcg/useGcgSkill.ts`.
+- **A turn begins with the damage the field's before-action and round-end cards deal** — `packages/genshin-world/src/services/gcg/runGcgSideDamageHook.ts`.
+- **Tuning is a fast action that keeps the turn, and playing a card passes no turn** — `packages/genshin-world/src/services/gcg/tuneGcgDie.ts`.
+- **A switch is paid through the field's reductions, and may pay no die** — `packages/genshin-world/src/services/gcg/switchGcgCharacter.ts`.
+- **A card that names its holder's reduction needs its holder active** — `packages/genshin-world/src/services/gcg/switchGcgCharacter.ts`.
+- **A defeated active is replaced by a free action that only that side's turn actions wait on** — `packages/genshin-world/src/services/gcg/replaceGcgCharacter.ts`.
+- **The round's end: the first declarer goes first, each side draws two, and a draw past the hand's limit is discarded** — `packages/genshin-world/src/services/gcg/declareGcgRoundEnd.ts` and `packages/genshin-world/src/services/gcg/endGcgRound.ts`.
+- **Energy is gained by a normal attack and an elemental skill, and a skill a character cannot pay for is refused** — `packages/genshin-world/src/services/gcg/useGcgSkill.ts` and `packages/genshin-world/src/services/gcg/payGcgCost.ts`.
+- **Combat actions are refused whole, leaving the duel as it was** — `packages/genshin-world/src/services/gcg/useGcgSkill.ts`.
+- **A charged attack is a normal attack by a side whose Elemental Dice were even before its Action Phase** — `packages/genshin-world/src/services/gcg/effects/checkIsGcgChargedAttack.ts` and `packages/genshin-world/src/services/gcg/runGcgActionPhase.ts`.
+- **A plunging attack is a normal attack by a character switched in this Round** — `packages/genshin-world/src/services/gcg/switchGcgActiveCharacter.ts`.
+- **An element applied with no damage reacts with its aura but deals no damage, and its other effects still land** — `packages/genshin-world/src/services/gcg/effects/applyGcgApplication.ts`.
+- **A reaction's bonus joins its instance, and Swirl adds none** — `packages/genshin-world/src/services/gcg/applyGcgDamage.ts`.
+- **A shield takes damage before HP, piercing skips it, and Crystallize grants a shield at most two** — `packages/genshin-world/src/services/gcg/applyGcgDamage.ts` and `packages/genshin-world/src/services/gcg/effects/applyGcgNonDamageReactionEffects.ts`.
+- **A Swirl's spread is one damage of the Swirl's side that sets no aura and reacts with none** — `packages/genshin-world/src/services/gcg/applyGcgDamage.ts`.
+- **An Overloaded active character is switched to the next standing character, with no choice** — `packages/genshin-world/src/services/gcg/effects/applyGcgNonDamageReactionEffects.ts`.
+- **The roll, action and end phases run their hooks, and an end-phase hook's damage is dealt by the phase** — `packages/genshin-world/src/services/gcg/runGcgRollPhase.ts`, `packages/genshin-world/src/services/gcg/runGcgActionPhase.ts` and `packages/genshin-world/src/services/gcg/runGcgEndPhase.ts`.
+- **A character still standing hears each DMG it takes, through one primitive** — `packages/genshin-world/src/services/gcg/applyGcgDamage.ts`, which sends the DMG-taken notice.
+- **The end phase runs as the round closes, and the next round's roll follows it** — `packages/genshin-world/src/services/gcg/endGcgRound.ts` and `packages/genshin-world/src/services/gcg/declareGcgRoundEnd.ts`.
+- **A hit on the opposing active character is settled in the order the flowchart draws** — `packages/genshin-world/src/services/gcg/applyGcgDamage.ts`, whose Key files row gives the order.
