@@ -152,12 +152,12 @@ A broken ore SHALL stand again on its own respawn: an iron chunk at the daily re
 
 ## Sources
 
-- [Local Specialty](https://genshin-impact.fandom.com/wiki/Local_Specialty), Genshin Impact Wiki, not in the wiki cache: "After a local specialty is harvested, it will respawn after 46 hours." The [Reset](https://genshin-impact.fandom.com/wiki/Reset) page, also not in the wiki cache, lists All Local Specialties at 48 hours (see the design's Open).
+- [Local Specialty](https://genshin-impact.fandom.com/wiki/Local_Specialty), Genshin Impact Wiki, not in the wiki cache: "After a local specialty is harvested, it will respawn after 46 hours." The [Reset](https://genshin-impact.fandom.com/wiki/Reset) page, also not in the wiki cache, lists All Local Specialties at 48 hours (see the Open below).
 
 ## Open
 
-- [ ] **Gathering points stand where the official map marks their item** — no source yet: no label-tree file matching `teyvat`, `map-label` or `labels` was found under `~/Esposter/genshin-parity/references/`.
-- [ ] **F picks a gathering point into the bag, and F does not pick an ore** — no source yet: no gathering pick path was found in the files checked, so the pick, full-bag and no-ore scenarios are unchecked.
+- [ ] **Gathering points stand where the official map marks their item** — no source yet: a comparison of the gathering points with `label-tree.json` and `points.json` under `~/Esposter/genshin-parity/references/interactive-map/`, which no record keeps.
+- [ ] **F picks a gathering point into the bag, and F does not pick an ore** — no source yet: a run of the full-bag and no-ore scenarios on the pick path, which no record keeps.
 - [ ] **Ningguang's plunge is not blunt, as the wiki's table excepts it** — no source yet: the wiki's Blunt Attacks table is not cached; the code carries the exception. Checked: the genshin-wiki cache holds no Blunt Attack page.
 - [ ] **A burst breaks a crystal chunk in one hit** — no source yet: no frame of the Zhongli clip `~/Esposter/genshin-parity/captures/yt-EWYe-MYjmqU-ore-zhongli.mp4` in genshin-parity's captures has been checked.
 - [ ] **An item a mining outcrop draws is not a gathering point** — no source yet: the mining outcrops' drops are not matched against the gather table's items.
@@ -167,3 +167,4 @@ A broken ore SHALL stand again on its own respawn: an iron chunk at the daily re
 - [ ] **A broken ore drops its certain piece, and one more for each of two draws under ten per cent** — no source yet: the dump's gather table at `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/GatherExcelConfigData.json` holds no drop chance, the resident gadget config's keys carry no drop field, and no wiki ore page is in the genshin-wiki cache.
 - [ ] **Ores stand again on their own respawn: an iron chunk at the daily reset, a white iron chunk or starsilver after two days, a crystal chunk, amethyst lump or condessence crystal after three** — no source yet: the gather table's ore refresh ids, 999900 to 999932, name no policy in `~/Esposter/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`.
 - [ ] **A local specialty stands again 46 hours after its pick** — no source yet: the Local Specialty wiki page is not in `~/Esposter.noindex/cache/genshin-wiki/`, and no 46-hour value was found in the gathering respawn code checked.
+- [ ] **The Reset page lists All Local Specialties at 48 hours** — no source yet: the wiki's Reset page, which is not in `~/Esposter.noindex/cache/genshin-wiki/`.
