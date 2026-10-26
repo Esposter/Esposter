@@ -1,6 +1,6 @@
 ## Purpose
 
-Genshin's weather as built. The area the camera stands in names the weather, an area with several weathers turns through them, its cities hold clear inside their outlines, and a change blends over nine seconds, eased in and out. Each weather raises the sky's cloud cover, the fog's density and the ground's wetness over the region's own clear sky, tints the haze where it carries sand, and falls its particles in a box that follows the eye. Rain splashes where it meets the ground, and a thunderstorm's lightning flashes the sky and drops a bolt.
+Genshin's weather as built. The area the camera stands in names the weather, an area with several weathers turns through them, its cities hold clear inside their outlines, and a change blends over nine seconds, eased in and out (`packages/genshin-engine/src/atmosphere/constants.ts`). Each weather raises the sky's cloud cover, the fog's density and the ground's wetness over the region's own clear sky, tints the haze where it carries sand, and falls its particles in a box that follows the eye. Rain splashes where it meets the ground, and a thunderstorm's lightning flashes the sky and drops a bolt.
 
 ## Requirements
 
@@ -176,11 +176,6 @@ Under the water's surface the water's haze SHALL replace the weather's colour, a
 - [ ] **Snow and fog keep the ground dry** — no source yet: the snow and fog wetness values were not read in `packages/genshin-engine/src/atmosphere/constants.ts`.
 - [ ] **Under the water the water's haze replaces the weather's colour** — no source yet: `packages/genshin-engine/src/water/updateUnderwaterFog.ts` was not read.
 - [ ] **A weather change blends over nine seconds, eased in and out** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The area the camera stands in names the weather, and the weather is clear where no area holds the camera** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A city's outline holds the weather clear while the area's weather goes on outside it** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **A weather change blends over nine seconds, eased in and out, from where the sky had reached** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Only one kind of particle falls at a time, the old one fading out as the new one fades in** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A weather raises the region's cloud cover and fog density, and never lowers them** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **A sandstorm tints the haze toward the colour of sand** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **A thunderstorm strikes about 27.6 times a minute, each flashing the sky twice and dropping a bolt** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Wet ground darkens and glints in rain and thunderstorm, and stays dry in the other weathers** — no source yet: game data or a snapshot that holds this behaviour
