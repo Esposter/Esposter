@@ -6,7 +6,7 @@ A Time Trial Challenge as a timed state machine, solved by striking every target
 
 ### Requirement: A challenge's clock starts when it is started at its marker
 
-A time trial challenge SHALL start its clock when it is started from its marker.
+A time trial challenge SHALL start its clock when it is started from its marker (`packages/genshin-world/src/services/puzzle/startTimeTrialChallenge.ts`).
 
 #### Scenario: Challenge started at its marker
 
@@ -16,7 +16,7 @@ A time trial challenge SHALL start its clock when it is started from its marker.
 
 ### Requirement: A challenge is solved when its last target is struck
 
-A running challenge SHALL be solved when its last target is struck before its clock runs out.
+A running challenge SHALL be solved when its last target is struck before its clock runs out (`packages/genshin-world/src/services/puzzle/strikeTimeTrialTarget.ts`).
 
 #### Scenario: Last target struck in time
 
@@ -26,10 +26,14 @@ A running challenge SHALL be solved when its last target is struck before its cl
 
 ### Requirement: A challenge fails when its clock runs out first
 
-A running challenge SHALL fail when its clock runs out before its last target is struck.
+A running challenge SHALL fail when its clock runs out before its last target is struck (`packages/genshin-world/src/services/puzzle/stepTimeTrialChallenge.ts`).
 
 #### Scenario: Clock runs out
 
 - **GIVEN** a running challenge with targets still to strike
 - **WHEN** its clock runs out
 - **THEN** the challenge fails
+
+## Open
+
+- [ ] **A challenge is solved by striking every target before its clock runs out, as the game does** — no source yet: the wiki's Time Trial Challenge page is not in the genshin-wiki cache, and the clip at 0 to 55 s is not read frame by frame.
