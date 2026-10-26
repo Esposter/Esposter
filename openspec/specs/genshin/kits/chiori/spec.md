@@ -1,6 +1,6 @@
 ## Purpose
 
-Chiori's kit as built: her four strikes, charged attack, collision and two plunges, Fluttering Hasode's upward sweep with its Tamoto doll and hold, and Hiyoku: Twin Blades, and what is left of Tapestry and Tailoring, the Geo constructs and her constellations.
+Chiori's kit as built: her four strikes, charged attack, collision and two plunges, Fluttering Hasode's upward sweep with its Tamoto doll and hold, and Hiyoku: Twin Blades, and what is left of Tapestry and Tailoring, the Geo constructs and her constellations. The sources of its numbers are cited inline on the [design page](design.md), which also lists what is open.
 
 ## Requirements
 
