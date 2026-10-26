@@ -6,7 +6,7 @@ Chasca's kit as built: her four normal attacks, fully-charged Aimed Shot, collis
 
 ### Requirement: Four normal attacks
 
-Chasca's normal attacks SHALL be four attacks, the third of which hits twice and the fourth of which hits once, each in a short box half a metre ahead of her.
+Chasca's normal attacks SHALL be four attacks, the third of which hits twice and the fourth of which hits once, each in a short box centred on the primary target it strikes.
 
 #### Scenario: Third normal attack lands two hits
 
