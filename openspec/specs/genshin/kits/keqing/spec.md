@@ -6,24 +6,24 @@ Keqing's kit as built: five strikes, a charged attack of two slashes, a collisio
 
 ### Requirement: Five strikes and two-slash charged attack
 
-Keqing's five strikes and two-slash charged attack SHALL be her normal attacks, and the charged attack's gauge and frames SHALL stay provisional until a recording settles them.
+Keqing's five strikes and two-slash charged attack SHALL be her normal attacks (`attack.go` line 16, `charge.go` line 16), and the charged attack's gauge and frames SHALL stay provisional until a recording settles them.
 
 #### Scenario: Strike chain plays five strikes in order
 
 - **GIVEN** Keqing is the character on the field
 - **WHEN** the player presses the attack button repeatedly
-- **THEN** her five strikes play in order
+- **THEN** her five strikes play in order (`attack.go` line 16)
 
 #### Scenario: Charged attack plays two slashes
 
 - **GIVEN** Keqing is the character on the field
 - **WHEN** the player holds the attack button to charge
-- **THEN** the charged attack plays two slashes
+- **THEN** the charged attack plays two slashes (`charge.go` line 16)
 - **AND** its gauge and frames stay provisional until a recording settles them
 
 ### Requirement: Stellar Restoration leaves Lightning Stiletto for a recast
 
-Stellar Restoration SHALL leave Lightning Stiletto, which a second press recasts within five seconds and twenty frames.
+Stellar Restoration SHALL leave Lightning Stiletto, which a second press recasts within five seconds and twenty frames (`skill.go` line 74).
 
 #### Scenario: Casting Stellar Restoration leaves the Stiletto
 
@@ -34,9 +34,9 @@ Stellar Restoration SHALL leave Lightning Stiletto, which a second press recasts
 #### Scenario: A press inside the window recasts and infuses
 
 - **GIVEN** Lightning Stiletto stands
-- **WHEN** the player presses again within five seconds and twenty frames
+- **WHEN** the player presses again within five seconds and twenty frames (`skill.go` line 74)
 - **THEN** the recast lands
-- **AND** from Ascension 1 her attacks are infused with Electro for five seconds
+- **AND** from Ascension 1 her attacks are infused with Electro for five seconds (`asc.go` line 19)
 - **AND** below Ascension 1 no infusion is given
 
 #### Scenario: A press after the window recasts nothing
@@ -47,15 +47,15 @@ Stellar Restoration SHALL leave Lightning Stiletto, which a second press recasts
 
 ### Requirement: Starward Sword strikes its initial hit, eight slashes and final strike
 
-Starward Sword SHALL strike an initial hit, eight slashes and a final strike, all Electro, in a circle of 8 metres round Keqing's body.
+Starward Sword SHALL strike an initial hit, eight slashes and a final strike, all Electro, in a circle of 8 metres round Keqing's body (`burst.go` line 44).
 
 #### Scenario: Casting Starward Sword plays its hits in order
 
 - **GIVEN** Keqing has the energy for the burst
 - **WHEN** the player casts Starward Sword
 - **THEN** the initial hit lands
-- **AND** eight slashes follow, 11 frames apart from 82 frames
-- **AND** the final strike lands
+- **AND** eight slashes follow, 11 frames apart from 82 frames (`burst.go` lines 50 to 51)
+- **AND** the final strike lands (`burst.go` line 57)
 - **AND** each slash is its own hit
 
 #### Scenario: Starward Sword cannot be cast during its cooldown
@@ -66,7 +66,7 @@ Starward Sword SHALL strike an initial hit, eight slashes and a final strike, al
 
 ### Requirement: Keqing's Constellations 1, 2, 4 and 6
 
-Constellation 1 SHALL add an Electro hit of 50% of ATK 3 frames into each Stellar Restoration recast and another at its hitmark. Constellation 2 SHALL give a 50% chance of an Electro particle, delayed 100 frames, from each Normal Attack or Charged Attack hit on an enemy under Electro, at most once every 5 seconds. Constellation 4 SHALL give Keqing 25% ATK for 10 seconds when an Electro-related reaction she triggers lands. Constellation 6 SHALL give her 6% Electro DMG Bonus for 8 seconds from each Normal Attack, Charged Attack, Elemental Skill and Burst, a repeat of the same kind restarting its own.
+Constellation 1 SHALL add an Electro hit of 50% of ATK 3 frames into each Stellar Restoration recast and another at its hitmark (`skill.go` lines 98 to 104 and 110). Constellation 2 SHALL give a 50% chance of an Electro particle, delayed 100 frames, from each Normal Attack or Charged Attack hit on an enemy under Electro, at most once every 5 seconds (`cons.go` lines 36 to 37; delay at `pkg/core/player/character/character.go` line 144). Constellation 4 SHALL give Keqing 25% ATK for 10 seconds when an Electro-related reaction she triggers lands (`keqing.go` line 40, `cons.go` line 51). Constellation 6 SHALL give her 6% Electro DMG Bonus for 8 seconds from each Normal Attack, Charged Attack, Elemental Skill and Burst, a repeat of the same kind restarting its own (`keqing.go` line 45, `cons.go` line 77).
 
 #### Scenario: Recast adds Electro hits at Constellation 1
 
@@ -78,20 +78,20 @@ Constellation 1 SHALL add an Electro hit of 50% of ATK 3 frames into each Stella
 
 - **GIVEN** Keqing has Constellation 2 and the cooldown has run out
 - **WHEN** her Normal Attack or Charged Attack hits an enemy under Electro, and the 50% roll passes
-- **THEN** the cooldown starts for 5 seconds
-- **AND** an Electro particle is collected 100 frames later
+- **THEN** the cooldown starts for 5 seconds (`cons.go` line 37)
+- **AND** an Electro particle is collected 100 frames later (`pkg/core/player/character/character.go` line 144)
 
 #### Scenario: Electro reaction raises ATK at Constellation 4
 
 - **GIVEN** Keqing has Constellation 4
 - **WHEN** she triggers an Electro-related reaction
-- **THEN** she gains 25% ATK for 10 seconds
+- **THEN** she gains 25% ATK for 10 seconds (`keqing.go` line 40, `cons.go` line 51)
 
 #### Scenario: Each kind of action gives Electro DMG Bonus at Constellation 6
 
 - **GIVEN** Keqing has Constellation 6
 - **WHEN** she starts a Normal Attack, Charged Attack, Elemental Skill and Burst
-- **THEN** each gives 6% Electro DMG Bonus for 8 seconds, and a repeat of the same kind restarts its own
+- **THEN** each gives 6% Electro DMG Bonus for 8 seconds, and a repeat of the same kind restarts its own (`keqing.go` line 45, `cons.go` line 77)
 
 ### Requirement: Unbuilt Keqing effects
 
