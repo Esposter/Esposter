@@ -88,7 +88,4 @@ A good priced in Mora SHALL cost the Mora amount its table gives.
 ## Open
 
 - [ ] **Refreshes happen at four in the morning in the game's time** — no source yet: the hour is read from the repo's time constants (`GAME_DAY_START_HOUR`), but the game's own reset was not checked against a recording or the wiki.
-- [ ] **A good is offered only once the player's Adventure Rank reaches its rank and within its sale dates** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A good with a buy limit is sold up to that limit between refreshes, and a limit of zero means no limit** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A monthly refresh falls on the first of the month, and a purchase before four in the morning counts to the month before** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **A general good of the Mondstadt grocery costs its table's Mora amount** — no source yet: game data or a snapshot that holds this behaviour
