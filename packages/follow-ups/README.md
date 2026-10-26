@@ -27,7 +27,7 @@ claude plugin install follow-ups@esposter
 
 ## <a name="documentation">📖 Documentation</a>
 
-[TodoList agent follow-ups](https://github.com/Esposter/Esposter/blob/main/openspec/specs/resource/todolist-agent-follow-ups/design.md) — the origin a follow-up carries, the procedures the plugin's tools call, and what counts as a follow-up.
+We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/blob/main/openspec/specs/resource/todolist-agent-follow-ups/design.md) to level up. It covers the origin a follow-up carries, the procedures the plugin's tools call, and what counts as a follow-up.
 
 ---
 

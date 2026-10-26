@@ -5,9 +5,9 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-Inspired by [phavuer](https://github.com/laineus/phavuer).
-
 Vue integration for the [Phaser](https://phaser.io) game engine. Provides Vue components and composables that bridge Phaser scenes, game objects, and Pinia state with the Vue component lifecycle.
+
+Inspired by [phavuer](https://github.com/laineus/phavuer).
 
 ## Table of Contents
 
@@ -34,7 +34,7 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
 
 ### Usage
 
-See the reference implementation in [`apps/web/app/pages/dungeons.vue`](https://github.com/Esposter/Esposter/blob/main/apps/web/app/pages/dungeons.vue) for a complete example of a Phaser game embedded in a Nuxt/Vue page with Pinia-driven state.
+See the reference implementation in [the dungeons page](https://github.com/Esposter/Esposter/blob/main/apps/web/app/pages/dungeons.vue) for a complete example of a Phaser game embedded in a Nuxt/Vue page with Pinia-driven state.
 
 ### Features
 

@@ -5,8 +5,9 @@
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
 
-Inspired by [tmx-map-parser](https://github.com/praghus/tmx-map-parser).
 A parser for [Tiled Map Editor](http://www.mapeditor.org/) \*.tmx files.
+
+Inspired by [tmx-map-parser](https://github.com/praghus/tmx-map-parser).
 
 ## Table of Contents
 
