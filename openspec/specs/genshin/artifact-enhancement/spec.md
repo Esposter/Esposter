@@ -6,7 +6,7 @@ An artifact rolled, enhanced and locked as the game does it: a drop's main and m
 
 ### Requirement: A new artifact's main affix comes from its slot
 
-A new artifact's main affix SHALL be drawn from the attributes its slot may carry, in proportion to the game's weights. (a Plume's depot 2000 holds only flat ATK, in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/ReliquaryMainPropExcelConfigData.json`).
+A new artifact's main affix SHALL be drawn from the attributes its slot may carry, in proportion to the game's weights. (a Plume's depot 2000 holds only flat ATK).
 
 #### Scenario: Plume of Death rolls flat ATK
 
@@ -84,7 +84,7 @@ Each enhancement's EXP SHALL be multiplied by five one time in a hundred, by two
 
 ### Requirement: Levels follow the table and EXP past the top is lost
 
-An artifact's level SHALL rise as far as its EXP reaches the table's costs, and EXP beyond its highest level SHALL be lost. (each level's `exp` in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/ReliquaryLevelExcelConfigData.json`).
+An artifact's level SHALL rise as far as its EXP reaches the table's costs, and EXP beyond its highest level SHALL be lost. (each level's `exp`).
 
 #### Scenario: EXP past the highest level is wasted
 
@@ -95,7 +95,7 @@ An artifact's level SHALL rise as far as its EXP reaches the table's costs, and 
 
 ### Requirement: Every fourth level adds or raises a minor affix
 
-Each fourth level an artifact passes SHALL add a minor affix to an artifact holding fewer than four, or raise one of its four minor affixes. (`addPropLevels` 5, 9, 13, 17 and 21 in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/ReliquaryExcelConfigData.json`).
+Each fourth level an artifact passes SHALL add a minor affix to an artifact holding fewer than four, or raise one of its four minor affixes. (`addPropLevels` 5, 9, 13, 17 and 21).
 
 #### Scenario: Fewer than four minor affixes gains one
 
@@ -127,7 +127,7 @@ A locked artifact SHALL never be used as fodder for another artifact.
 
 ### Requirement: Instructor's four-piece gives the team Elemental Mastery on a reaction
 
-A reaction the Instructor's wearer triggers on the field SHALL give every deployed member of the team the bonus's Elemental Mastery for its seconds, restarted rather than stacked. (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, affix 2100071: EM 120 for 8s).
+A reaction the Instructor's wearer triggers on the field SHALL give every deployed member of the team the bonus's Elemental Mastery for its seconds, restarted rather than stacked. (affix 2100071: EM 120 for 8s).
 
 #### Scenario: Reaction on the field gives the team the buff
 
@@ -149,7 +149,7 @@ A reaction the Instructor's wearer triggers on the field SHALL give every deploy
 
 ### Requirement: The Exile's four-piece regenerates the others' energy after a burst
 
-A burst the wearer of The Exile's four-piece uses SHALL start a field that gives every other deployed member energy at three ticks, two seconds apart. (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, affix 2100091: 2 Energy every 2s for 6s).
+A burst the wearer of The Exile's four-piece uses SHALL start a field that gives every other deployed member energy at three ticks, two seconds apart. (affix 2100091: 2 Energy every 2s for 6s).
 
 #### Scenario: Burst starts the energy field
 
@@ -162,11 +162,11 @@ A burst the wearer of The Exile's four-piece uses SHALL start a field that gives
 
 - **GIVEN** an energy field is still ticking
 - **WHEN** any wearer uses another burst
-- **THEN** no second field starts (gcsim `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/artifacts/exile/exile.go`, lines 50 to 54).
+- **THEN** no second field starts (gcsim, lines 50 to 54).
 
 ### Requirement: Traveling Doctor's four-piece heals its wearer as its burst is used
 
-A burst the wearer of Traveling Doctor's four-piece uses SHALL restore the wearer twenty percent of its Max HP, raised by the wearer's Healing Bonus. (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, affix 2100131: 20% of Max HP).
+A burst the wearer of Traveling Doctor's four-piece uses SHALL restore the wearer twenty percent of its Max HP, raised by the wearer's Healing Bonus. (affix 2100131: 20% of Max HP).
 
 #### Scenario: Burst restores the wearer
 
@@ -182,7 +182,7 @@ A burst the wearer of Traveling Doctor's four-piece uses SHALL restore the weare
 
 ### Requirement: Berserker's four-piece raises CRIT Rate at low HP
 
-While the wearer of Berserker's four-piece has HP below seventy percent of its Max HP, the wearer SHALL gain 24% CRIT Rate. (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, affix 2100051).
+While the wearer of Berserker's four-piece has HP below seventy percent of its Max HP, the wearer SHALL gain 24% CRIT Rate. (affix 2100051).
 
 #### Scenario: Low HP adds the CRIT Rate
 
@@ -198,7 +198,7 @@ While the wearer of Berserker's four-piece has HP below seventy percent of its M
 
 ### Requirement: Adventurer's four-piece restoration
 
-The wearer of four Adventurer's pieces SHALL have HP restored by 6% of its maximum each second for 5 seconds when a chest is opened. (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, affix 2100101: 30% over 5s, 6% of Max HP a second).
+The wearer of four Adventurer's pieces SHALL have HP restored by 6% of its maximum each second for 5 seconds when a chest is opened. (affix 2100101: 30% over 5s, 6% of Max HP a second).
 
 #### Scenario: a chest opened by a four-piece wearer restores HP for five seconds
 
