@@ -83,8 +83,5 @@ The bridge whose deck crosses the glide's path SHALL pass under the walkway as t
 - [ ] **The title opens about 49 metres short of the door** — no source yet: `computeLoginGlideTitleScrolled` takes its walkway copy length from the open 16 metres, and its result is not checked against 49 here.
 - [ ] **The login camera holds the game's pose: straight down the walkway's middle, pitched 5.69 degrees up, its eye one metre over the walkway** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **The vertical field of view is 45 degrees at 18.5:9 or wider, and widens on a narrower screen to match 18.5:9's view across** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **At 16:9 the vertical field of view is 51.2 degrees** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **The glide moves at 3.5 metres a second while the title waits and 4.5 once the game prepares, changing over half a second** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The glide rests on a whole copy of the walkway at the door, keeping on to the first copy that can be stopped on at its rate** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A scenery row repeats from its start once the glide carries it past its own length** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **The bridge across the glide's path passes under the walkway as the glide passes over it** — no source yet: game data or a snapshot that holds this behaviour
