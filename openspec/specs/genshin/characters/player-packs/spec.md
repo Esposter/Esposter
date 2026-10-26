@@ -1,6 +1,6 @@
 ## Purpose
 
-A player loads the official release they downloaded on the character screen, the browser keeps its files, and a signed-in player's own copy is kept with their account, readable by them alone (`packages/genshin-world/src/components/Character/PackLoader/Index.vue`, `packages/genshin-world/src/services/character/createCharacterPackStore.ts`, `apps/web/server/services/genshin/accountCharacterPack/keepAccountCharacterPack.ts`).
+A player loads the official release they downloaded on the character screen, the browser keeps its files, and a signed-in player's own copy is kept with their account, readable by them alone.
 
 ## Requirements
 
@@ -252,3 +252,7 @@ Removing a kept release SHALL drop it from the account's list, and its stored fi
 - **WHEN** the player removes it
 - **THEN** it is no longer listed on the account
 - **AND** its stored files are left in place
+
+## Open
+
+- [ ] **the character screen loads a downloaded release, the browser keeps it, and a signed-in copy is kept with the account** — no source yet: game data or a snapshot that holds this behaviour
