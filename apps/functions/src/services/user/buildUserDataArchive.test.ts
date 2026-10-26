@@ -606,7 +606,8 @@ describe(buildUserDataArchive, () => {
       { roomId: room.id, userId },
       { roomId: room.id, userId: otherUserId },
     ]);
-    // The person's unfollow is a decision they made, so its row stays; the other person's follow of the same thread is not theirs
+    // The person's unfollow is a decision they made, so its row stays; the other person's follow of the same thread is
+    // not theirs
     const follow = takeOne(
       await mockDb
         .insert(threadFollowsInMessage)
@@ -652,8 +653,8 @@ describe(buildUserDataArchive, () => {
     await buildUserDataArchive(userId, blobName);
     const entries = readArchiveEntries(blobName);
 
-    // The membership keeps the person's own settings, the time they joined and the time they last read the room, and the roles
-    // they hold there
+    // The membership keeps the person's own settings, the time they joined and the time they last read the room, and
+    // the roles they hold there
     expect(readEntryJson(entries, "memberships.json")).toStrictEqual([
       {
         createdAt: membership.createdAt,
