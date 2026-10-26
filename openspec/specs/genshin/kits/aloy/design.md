@@ -28,4 +28,4 @@ Aloy's kit is its record and one behaviour module, `createAloyKitBehaviour`, ava
 
 ## Open
 
-- [ ] **Freeze Bomb's two Chillwater Bomblets** — no source yet: the game's bomblet count, since the wiki gives only "many" and gcsim's `skill.go:52` default of 2 is its own.
+- [ ] **Freeze Bomb's two Chillwater Bomblets** — no source yet: the game's bomblet count, since the wiki gives only "many" and gcsim's `skill.go:52` default of 2 is its own. Checked: Frozen Wilds (`Category_Aloy_Talents.json`), whose Gameplay Notes give a count, "The freeze bomb generates 6 Chillwater Bomblets", not two.
