@@ -16,7 +16,7 @@ Each side SHALL switch its cards once during preparation, and the first round SH
 
 ### Requirement: Each side rolls eight dice a round and may reroll once
 
-Each side SHALL roll eight dice each round and MAY reroll any dice it names once, and naming no dice SHALL pass the reroll.
+Each side SHALL roll eight dice each round and MAY reroll any dice it names once, and naming no dice SHALL pass the reroll. The game's Roll Phase rule text gives both sides 8 Elemental Dice (`GCGRuleTextDetail` #1003).
 
 #### Scenario: Naming no dice passes the reroll
 
@@ -310,7 +310,6 @@ A character at no health SHALL be defeated: its equipment and statuses SHALL be 
 
 ## Open
 
-- [ ] **Each side rolls eight dice a round, as the game does** — partly settled: the game's rule texts give both sides 8 Elemental Dice a round (`#1003` "Both sides will get 8 Elemental Dice to roll."). The build's roll count is not cited here.
 - [ ] **A duel ends with no winner after its fifteenth round, as the game does** — contradicted in timing: the Round Limit rule (`#6016`) reads "If a winner has not been decided by the start of Round 15, both sides will lose.", so the duel ends at the start of Round 15.
 - [ ] **Melt adds two, and the other reaction bonuses, as the game does** — partly settled: Melt's rule is "Deal +2 DMG for this instance" (`#5001`), and the other reactions' bonuses are in `#5002` to `#5017` (two for Vaporize and Overloaded, one for the rest).
 - [ ] **A frozen target takes two more damage, as the game does** — qualified by the game's text: `#5006` gives "+2 DMG" only when the Frozen character receives Pyro or Physical DMG, and removes the status in advance. No rule text gives two more damage on every hit.
