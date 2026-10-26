@@ -41,7 +41,7 @@ flowchart TD
 
 ## Sources
 
-- [Domain](https://genshin-impact.fandom.com/wiki/Domain), Genshin Impact Wiki: the unlocking ranks, "Players must reach Adventure Rank 16 or complete For a Tomorrow Without Tears" for Forgery, and 22 and 27 for Blessing and Mastery. Its Challenge Domains give each stage three days a week, with "the third day, Sunday, being consistent for all stages". The quests it names are not built, and it does not name the set days.
+- [Domain](https://genshin-impact.fandom.com/wiki/Domain), Genshin Impact Wiki: the unlocking ranks, "Players must reach Adventure Rank 16 or complete For a Tomorrow Without Tears" for Forgery, and 22 and 27 for Blessing and Mastery. Its Challenge Domains give each stage three days a week, with "the third day, Sunday, being consistent for all stages". The quests it names are not built, and it does not name the set days. Its Trounce Domains "can be accessed on all days of the week", which is the every-day opening `checkIsDomainKindOpenOnDay` gives Trounce.
 - [Reset](https://genshin-impact.fandom.com/wiki/Reset), Genshin Impact Wiki (cached under Daily Reset): "The daily reset occurs at 04:00 (4 AM), based on the player's server's time zone." Under daily reset, "Domains of Forgery (Weapon Ascension Materials) and Domains of Mastery (Talent Level-Up Materials) rotate."
 
 ## Open
