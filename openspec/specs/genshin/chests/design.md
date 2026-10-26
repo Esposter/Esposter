@@ -62,7 +62,7 @@ A kind with no entry stays unopened: Luxurious, whose Mora the table leaves unst
 
 ## Reference
 
-- `chest-dig.mkv` — found on YouTube at https://www.youtube.com/watch?v=j5ggVp4ffyc at 0–33 s (`captures/yt-j5ggVp4ffyc-chest-dig.mp4`), cut to `chest-dig.mkv` at 10–30 s: 29.8 frames a second, not 60, at 1080p in English. The dig prompt, the dig and its rewards are shown.
+- `chest-dig.mkv` — found on YouTube at https://www.youtube.com/watch?v=j5ggVp4ffyc at 0–33 s (`~/Esposter.noindex/genshin-parity/captures/yt-j5ggVp4ffyc-chest-dig.mp4`), cut to `chest-dig.mkv` at 10–30 s: 29.8 frames a second, not 60, at 1080p in English. The dig prompt, the dig and its rewards are shown.
 
 ## Open
 
