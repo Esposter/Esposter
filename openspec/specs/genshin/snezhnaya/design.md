@@ -47,3 +47,5 @@ flowchart TD
 ## Open
 
 - [ ] **the flame stands 2.15 metres up at the brazier's rim, as the game's torch does** — no source yet: a measure of the game's Kresnik's Torch mesh, which the witness export does not name.
+- [ ] **The wiki's Snezhnaya image shows a few faint flakes** — no source yet: the `File:Snezhnaya.png` wiki image is not on disk.
+- [ ] **The snowfall's density is measured in a clip** — no source yet: `world-snow.mkv` is not in `~/Esposter.noindex/genshin-parity/captures/`.
