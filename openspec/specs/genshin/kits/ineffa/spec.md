@@ -196,3 +196,7 @@ From Constellation 1, each shield Ineffa casts SHALL give the party a Lunar-Char
 - **GIVEN** Ineffa has no constellation
 - **WHEN** she casts a shield
 - **THEN** no reaction gains the bonus
+
+## Open
+
+- [ ] **Each discharge that lands drops an Electro particle two times in three** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/ineffa/skill.go` line 97: gcsim rolls below 0.66, not two in three.
