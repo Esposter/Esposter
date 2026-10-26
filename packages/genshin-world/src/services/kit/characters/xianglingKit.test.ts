@@ -33,7 +33,7 @@ describe(createXianglingKitBehaviour, () => {
     const context = createKitTestContext(createXianglingCombatant(0, 0));
     XIANGLING_KIT.elementalSkill.onStart?.(context);
     XIANGLING_KIT.elementalBurst.onStart?.(context);
-    // Guoba's first breath lands at 126 frames and the Pyronado's first tick at 56, its next falling at 129
+    // Guoba's first breath lands at 120 frames and the Pyronado's first tick at 56, its next falling at 129
     const summonStrikes = stepKitTestEffects(2.12, context);
     const multipliers = [
       ...XIANGLING_KIT.normalAttacks.flatMap((action) => action.hits.map(({ talentMultiplier }) => talentMultiplier)),
@@ -84,6 +84,18 @@ describe(createXianglingKitBehaviour, () => {
         ]),
       ).toStrictEqual(Array.from({ length: 4 }, () => [{ x: 0, z: -1.3 }, radius, status]));
       expect(kitEffectState.effects).toStrictEqual([]);
+    },
+  );
+
+  test.each([0, 1])(
+    "at Ascension %i, Guoba breathes two seconds after the cast and then every 1.5 seconds",
+    (ascension) => {
+      expect.hasAssertions();
+      const context = createKitTestContext(createXianglingCombatant(ascension, 0));
+      XIANGLING_KIT.elementalSkill.onStart?.(context);
+      const breaths = stepKitTestEffects(8, context);
+
+      expect(breaths.map(({ hit }) => hit.hitmarkSeconds)).toStrictEqual([2, 3.5, 5, 6.5]);
     },
   );
 
