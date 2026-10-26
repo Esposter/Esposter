@@ -42,7 +42,7 @@ export const LAYLA_CHARACTER_ID = 10_000_074;
 export const LAYLA_NIGHT_STARS_ID = "layla-night-stars";
 export const LAYLA_SHOOTING_STARS_ID = "layla-shooting-stars";
 const LAYLA_NIGHT_STAR_TICK_ID = "layla-night-star-tick";
-const LAYLA_DAWN_STAR_ID = "layla-dawn-star";
+export const LAYLA_DAWN_STAR_ID = "layla-dawn-star";
 
 const ASCENSION_4 = 4;
 // Gcsim's a4: a Shooting Star adds 1.5% of Max HP, flat, to its damage from Ascension 4

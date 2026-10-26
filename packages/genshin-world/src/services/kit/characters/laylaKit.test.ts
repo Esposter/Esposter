@@ -23,6 +23,7 @@ import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import {
   createLaylaKitBehaviour,
   LAYLA_CHARACTER_ID,
+  LAYLA_DAWN_STAR_ID,
   LAYLA_NIGHT_STARS_ID,
   LAYLA_SHOOTING_STARS_ID,
 } from "#src/services/kit/characters/laylaKit";
@@ -44,7 +45,6 @@ import { assert, describe, expect, test } from "vitest";
 
 const LAYLA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, LAYLA_CHARACTER_ID);
 const ENEMY_TABLES = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const DAWN_STAR_ID = "layla-dawn-star";
 
 const createEnemyAt = (x: number, z: number): Enemy => ({
   ...createEnemy(ENEMY_TABLES, [], ENEMY_CAMP_MEMBER, ""),
@@ -57,7 +57,7 @@ const countNightStars = (kitEffectState: KitEffectState) =>
 // The Dawn Star statuses the team holds, one on each deployed member
 const findDawnStars = (kitEffectState: KitEffectState): KitStatus[] =>
   kitEffectState.effects.filter(
-    (effect): effect is KitStatus => effect.kind === "status" && effect.id === DAWN_STAR_ID,
+    (effect): effect is KitStatus => effect.kind === "status" && effect.id === LAYLA_DAWN_STAR_ID,
   );
 
 const sendSkillUsed = (context: KitContext) =>
