@@ -80,7 +80,7 @@ The bridge whose deck crosses the glide's path SHALL pass under the walkway as t
 ## Open
 
 - [ ] **The rows wrap at 16, 200 and 300 metres** — no source yet: the `login/scroll` record is hosted, and its lengths are not kept in the repository or the parity folders.
-- [ ] **The title opens about 49 metres short of the door** — no source yet: `computeLoginGlideTitleScrolled` takes its walkway copy length from the open 16 metres, and its result is not checked against 49 here.
+- [ ] **The title opens about 49 metres short of the door** — checked against `packages/genshin-world/src/services/login/scene/computeLoginGlideTitleScrolled.ts`, which holds no 49-metre value, and the claim is not settled by it because the 49 metres is set in no file read here.
 - [ ] **The login camera holds the game's pose: straight down the walkway's middle, pitched 5.69 degrees up, its eye one metre over the walkway** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **The vertical field of view is 45 degrees at 18.5:9 or wider, and widens on a narrower screen to match 18.5:9's view across** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **The glide moves at 3.5 metres a second while the title waits and 4.5 once the game prepares, changing over half a second** — no source yet: game data or a snapshot that holds this behaviour
