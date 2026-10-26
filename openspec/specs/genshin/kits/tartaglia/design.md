@@ -25,4 +25,4 @@ Tartaglia's kit is its record and one behaviour module, `createTartagliaKitBehav
 
 ## Open
 
-- [ ] **Hydrospout's tick every 4 seconds in the game** — no source yet: the cached Tartaglia talent pages name Hydrospout only and give no interval.
+- [ ] **Hydrospout's tick every 4 seconds in the game** — contradicted by `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json`: talent 334's text gives its Riptide triggers every 4s.
