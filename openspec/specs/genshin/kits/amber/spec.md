@@ -74,7 +74,7 @@ From Constellation 1, each aimed shot SHALL fire a second arrow dealing 20% of t
 
 ### Requirement: Constellation 6 Movement SPD and ATK during Fiery Rain
 
-From Constellation 6, Fiery Rain SHALL give each deployed party member 15% Movement SPD and 15% ATK for 10 seconds.
+From Constellation 6, Fiery Rain SHALL give each deployed party member 15% Movement SPD and 15% ATK for 10 seconds. The Movement SPD share is open (see design.md, Not built).
 
 #### Scenario: Constellation 6 raises each party member's Movement SPD and ATK
 
