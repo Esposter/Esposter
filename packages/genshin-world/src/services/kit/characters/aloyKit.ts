@@ -59,9 +59,15 @@ const addCryoStacks = (
 // Constellations are not built, as the game cannot activate them
 export const createAloyKitBehaviour = ({ readSeconds }: KitRecordReader): KitBehaviour => {
   const rushingIceSeconds = readSeconds("rushingIceDuration");
+  // The bomblets' landings that have counted their coil stack. A landing runs its onStrike once for each enemy it strikes,
+  // And gcsim's coil callback is held back by its 6-frame internal cooldown for every enemy after the first at that frame
+  const countedCoilStrikes = new WeakSet<KitStrike>();
   // Each Chillwater Bomblet that lands counts a coil stack, and the fourth gives Rushing Ice, which holds off any more coils
-  // Until it ends. Provisional: gcsim counts a bomblet once for all the enemies it strikes, where this counts each one
-  const addCoilStack = ({ kitEffectState, party }: KitContext, { combatant }: KitStrike): void => {
+  // Until it ends
+  const addCoilStack = ({ kitEffectState, party }: KitContext, strike: KitStrike): void => {
+    if (countedCoilStrikes.has(strike)) return;
+    countedCoilStrikes.add(strike);
+    const { combatant } = strike;
     if (checkHasKitStatus(kitEffectState.effects, combatant.characterId, RUSHING_ICE_STATUS_ID)) return;
     if (
       gainKitResource(kitEffectState, combatant.characterId, COIL_RESOURCE_ID, 1, COIL_RUSHING_ICE_STACKS) <

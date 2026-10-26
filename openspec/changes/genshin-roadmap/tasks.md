@@ -108,7 +108,6 @@ The user's one batch, checked whenever convenient ([parity](../../specs/genshin/
 - [ ] **Yelan's first wave comes a second after the hit** — [Yelan](../../specs/genshin/kits/yelan/design.md): a recording of the burst shows its first three throws a second after the hit.
 - [ ] **Kirara's hits deal no poise** — [Kirara](../../specs/genshin/kits/kirara/design.md): none stagger a poised enemy in a recording.
 - [ ] **Aloy's hits deal no poise** — [Aloy](../../specs/genshin/kits/aloy/design.md): none stagger a poised enemy in a recording.
-- [ ] **A Chillwater Bomblet across two enemies adds one coil stack** — [Aloy](../../specs/genshin/kits/aloy/design.md): one bomblet striking two enemies gives one coil stack.
 - [ ] **Freeze Bomb and each bomblet give 1U of Cryo** — [Aloy](../../specs/genshin/kits/aloy/design.md): a recording shows 1U from each.
 - [ ] **Shenhe's hits deal no poise** — [Shenhe](../../specs/genshin/kits/shenhe/design.md): none stagger a poised enemy in a recording.
 - [ ] **Spring Spirit Summoning's hold begins at half a second** — [Shenhe](../../specs/genshin/kits/shenhe/design.md): a shorter hold gives the press and a longer one the hold.
