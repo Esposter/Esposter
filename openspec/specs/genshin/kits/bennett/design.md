@@ -9,7 +9,7 @@ Bennett's kit is its record and one behaviour module, `createBennettKitBehaviour
 - **Fearnaught's no-launch is the Level 2 hold's shorter animation.** Inside Fantastic Voyage's field at Ascension 4, the Level 2 hold plays gcsim's 175 frames (`~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/bennett/skill.go:58`) in place of 343 (`~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/bennett/skill.go:50`), with the same two hits and explosion (`~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/bennett/skill.go:16` and `:179`), all of which land before it ends. The wiki's Fearnaught page gives the effect (`~/Esposter.noindex/cache/genshin-wiki/Category_Bennett_Talents.json`), and gcsim the animation. Bennett's launch is not modelled, so only the animation changes.
 - **Bennett's hold boxes are circles.** The 3 by 3 box of the hold's second hit (`~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/bennett/skill.go:17`, `{3, 3}`, drawn at `skill.go:161` to `:166`) is priced as the circle to its far corner, 2.12 metres, as the other boxes are.
 
-- **Impasse Conqueror is a passive, read at the HP share the pricing passes.** At constellation 2 and up, Bennett's Energy Recharge is 30% while his HP is under 70% of his Max HP, and none from 70% on (gcsim's `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/bennett/cons.go:11` and `cons.go:17`). The kit's passive hook takes that share as the character stands, so the bonus follows his HP without a field or a timer. The wiki's constellation table would confirm the effect, but its page is not cached, so that check is open, see [Open](#open).
+- **Impasse Conqueror is a passive, read at the HP share the pricing passes.** At constellation 2 and up, Bennett's Energy Recharge is 30% while his HP is under 70% of his Max HP, and none from 70% on (gcsim's `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/bennett/cons.go:11` and `cons.go:17`). The kit's passive hook takes that share as the character stands, so the bonus follows his HP without a field or a timer. The wiki's constellation table would confirm the effect, but the cached Bennett page only calls that table as a template, so that check is open, see [Open](#open).
 
 ## Provisional constants
 
@@ -35,4 +35,4 @@ Bennett's kit is its record and one behaviour module, `createBennettKitBehaviour
 
 ## Open
 
-- [ ] **The wiki's constellation table gives Impasse Conqueror's effect** — no source yet: the Bennett wiki page that holds the constellation table is not in the wiki cache, only its talent pages.
+- [ ] **The wiki's constellation table gives Impasse Conqueror's effect** — no source yet: the cached Bennett page (title Bennett), checked, calls its constellation table as a template, `{{Constellation Table}}`, so no rows are in its text, and no cached page names Impasse Conqueror.
