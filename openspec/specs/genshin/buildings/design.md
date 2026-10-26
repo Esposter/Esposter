@@ -33,4 +33,4 @@ The building is centred on the origin and stands on it, so a caller places it on
 
 ## Open
 
-- [ ] **Natlan's tribes build with the kit** — no source yet: the Natlan building meshes under `~/Esposter/genshin-parity/extracted/natlan/assets/Mesh/` (`Area_Nt_Build_*`) are not measured against the kit's box-and-cone form.
+- [ ] **Natlan's tribes build with the kit** — no source yet: a measurement of the Natlan building meshes under `~/Esposter/genshin-parity/extracted/natlan/assets/Mesh/` (`Area_Nt_Build_*.obj`) against the kit's box-and-cone form.
