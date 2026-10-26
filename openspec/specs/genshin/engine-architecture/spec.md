@@ -147,6 +147,3 @@ A module SHALL be added only by the proposal that first needs it, never as an em
 - [ ] **A generator gives the same output in a worker and in a test** — no source yet: no test runs one generator in both places and compares the outputs.
 - [ ] **A steady frame allocates nothing for its objects** — no source yet: no allocation test or measurement is in the repo.
 - [ ] **A region of thousands of parts is drawn in tens of calls** — no source yet: the code shows the instancing, but no draw-call count is recorded.
-- [ ] **A device missing the frame budget gets a lower tier** — no source yet: the tier is a prop the host passes (`packages/genshin-engine/src/models/renderer/QualityTierSettings.ts` is its shape). A grep of `tier` lines in `packages/genshin-engine/src` and `packages/genshin-world/src` that name a frame or a budget finds no code that lowers it.
-- [ ] **The engine's code loads only when the world needs it** — no source yet: the app's lazy mount of the world is not checked; the engine's source holds one dynamic import, of three.js's Inspector, which `packages/genshin-engine/src/renderer/attachInspector.ts` loads on demand (line 8).
-- [ ] **The one event map is the one the screen creates** — contradicted by `packages/genshin-world/src/components/World/Session/Index.vue`: calls `createWorldEvents()` at line 328, not the screen.
