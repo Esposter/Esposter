@@ -52,4 +52,5 @@ flowchart LR
 - [ ] **The stills agree with the tree: the ring 107 pixels from the centre at 1080 high, 1.2 pixels a unit** — no source yet: a pixel reading of the 1080-high still, which this pass did not take.
 - [ ] **The fan a quarter turn wide** — no source yet: the game's sight-fan image width from the tree, which this machine does not hold; the `.fan` clip in `Hud/Minimap/Index.vue` cuts a wedge of about 72 degrees, not 90.
 - [ ] **The ring, the fan's white, the arrow's cyan, and the N's and arrow's measures at 1080 high** — no source yet: a pixel reading of the 1080-high references, which this pass did not take.
-- [ ] **The back and the marks stand where the game's tree places them** — no source yet: game data or a snapshot that holds this behaviour
+- **The minimap's marks are placed by the HUD's interface rects** — `packages/genshin-world/src/components/Hud/Minimap/Index.vue`.
+- [ ] **The back stands where the game's tree places it** — no source yet: the game's UI tree for the minimap's back, not yet read.
