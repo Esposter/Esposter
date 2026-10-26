@@ -91,3 +91,8 @@ From her second constellation, Soumetsu's storm SHALL also raise two smaller sto
 - **WHEN** the player casts Kamisato Art: Soumetsu
 - **THEN** two smaller storms stand where the storm stands
 - **AND** they reach 1.8 metres and 3 metres
+
+## Open
+
+- [ ] **The charged attack strikes only enemies within 5 metres** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/ayaka/charge.go`: its strikes reach 4 metres from the locked enemy, so past 5 is possible.
+- [ ] **A normal attack's hit cuts Hyouka's cooldown** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/ayaka/cons.go`: returns unless the hit deals Cryo; Ayaka's normal attacks are Physical.
