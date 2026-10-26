@@ -24,8 +24,8 @@ Jahoda's kit is its record and one behaviour module, `createJahodaKitBehaviour`,
 
 ## Open
 
-- **The Meowball's reach of 19 metres.** The record's `areas.meowballCircle` has radius 19, tagged DiffersFromSource. gcsim strikes its primary target with a radius-4 circle (`skill.go` line 335) and travels 13 frames by default (line 71), and gcsim gives no 19 metres for the reach, so the kit's choice of nearest living enemy as the target stands in for gcsim's primary target and its reach is unsourced.
-- **The plunges' timing.** gcsim has no plunge file for Jahoda, so the collision and the two plunges land at once with the shared reach; no source gives their frames.
+- [ ] **The Meowball's reach of 19 metres, with the nearest living enemy as its target** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/jahoda/skill.go`: a radius-4 circle on the primary target, no 19-metre reach
+- [ ] **The plunges' timing** — no source yet: the Jahoda plunge frames, which no gcsim file (there is no plunge file) or cached page gives
 
 ## Key files
 
