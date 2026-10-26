@@ -61,4 +61,4 @@ flowchart TD
 ## Open
 
 - [ ] **Each region takes one Oculus at its statue** — no source yet: no cached wiki page or dump table read here holds the statues' Oculus counts.
-- [ ] **The wiki's Offering System page matches the rule's level thresholds and lists the published offerings one for one** — no source yet: the page, checked, says the player automatically offers all of Inventory and names its offerings, but gives no level thresholds, and the cache holds no set of published offerings to list against.
+- [ ] **The wiki's Offering System page matches the rule's level thresholds and lists the published offerings one for one** — no source yet: the Offering System wiki page is not on disk.
