@@ -25,22 +25,22 @@ A wave of agents multiplies every habit by the number of agents. A typecheck eac
 ## Search what git tracks
 
 - **Search with `rg`, `git grep` or the Grep tool.** All of them skip `node_modules`. A `grep -r` from a folder that holds one reads every installed package, piped into `grep -v node_modules` after the fact, and costs a minute of a core every call.
-- **Read a large JSON with `node`, never with `grep -o`.** A data dump is often one line tens of megabytes long, and `grep -o` over it ran for over half an hour.
+- **Read a large JSON with `node`, never with `grep -o`.** A data dump is often one line tens of megabytes long, and `grep -o` over one is far slower than a `node` read.
 
 ## Long runs
 
-- **Read the memory gate first.** Before a test run, a build or a page, read the free memory (`(Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory/1MB` on Windows, `sysctl -n kern.memorystatus_level` on macOS, as a percentage of the RAM `sysctl -n hw.memsize` reports) and wait while it is under an eighth of the machine's RAM. A machine that swaps slows every run more than one that waits.
+- **Read the memory gate first.** Before a test run, a build or a page, read the free memory (`(Get-CimInstance Win32_OperatingSystem).FreePhysicalMemory/1MB` on Windows, `sysctl -n kern.memorystatus_level` on macOS, as a percentage of the RAM `sysctl -n hw.memsize` reports) and wait while it is under `GATE_MEMORY_SHARE` of the machine's RAM (`scripts/src/services/machine/constants.ts`). A machine that swaps slows every run more than one that waits.
 - **Run a long CPU job at below-normal priority.** Use PowerShell `Start-Process … -PassThru` and then set `.PriorityClass = 'BelowNormal'`, or `start /belownormal`. The agents' checks and the page lane then keep their cores. On macOS, start it under `taskpolicy -c utility <command>`.
 - **Measure a run's Node CPU from its own process tree.** Sum the node processes under the launched one, sampled as the run goes: a match on the command line counts another session's run too, and a browser's CPU is not the Node CPU.
 - **Decode a whole-video scan on the GPU, at a small size.** Pass `-hwaccel d3d11va` (or `-hwaccel videotoolbox` on macOS) to use the GPU's video engine, and scale each frame down before any per-frame filter (`scale=64:-2` ahead of `signalstats`). A luma scan only needs one number per frame.
 - **Sweep the orphans.** An agent that ends can leave its background processes running.
-  - The machine watcher (`pnpm ai:machine:watch`) stops an orphaned `find`, `du`, `grep` or `rg` on sight, once that process itself has burnt more than half a minute of CPU. On Windows its MSYS parent decides only whether it is orphaned, since a Git tool's Win32 parent can exit while its bash lives.
+  - The machine watcher (`pnpm ai:machine:watch`) stops an orphaned `find`, `du`, `grep` or `rg` on sight, once that process itself has burnt more CPU than `ORPHAN_CPU_SECONDS` (`scripts/src/services/machine/constants.ts`). On Windows its MSYS parent decides only whether it is orphaned, since a Git tool's Win32 parent can exit while its bash lives.
   - The main session sweeps the rest: an `ffmpeg`, or a `tail -f` feeding a dead monitor.
-- **Never scan the disk for a file whose home is known.** The game's data is under `GENSHIN_PARITY_DIRECTORY` and its text under the `GENSHIN_TEXT_*` folders. Look there; never `find /` or `du` a home folder, and the Bash guard refuses it. A tool is never searched for either: the pinned ones (FFmpeg, yt-dlp, the decompiler, vgmstream) resolve through `resolvePinnedTool`.
+- **Never scan the disk for a file whose home is known.** The game's data is under `GENSHIN_PARITY_DIRECTORY` and its text under the `GENSHIN_TEXT_*` folders. Look there; never `find /` or `du` a home folder, and the Bash guard refuses it. A tool is never searched for either: the pinned ones resolve through `resolvePinnedTool` (`scripts/src/services/shared/resolvePinnedTool.ts`).
 
 ## Watch the machine
 
-- **The pulse mod keeps the watcher running, so no session arms a Monitor for it.** `pnpm ai:machine:watch` is one command on Windows and macOS alike, reading the CPU, the GPU and the free memory each minute and writing its reading to the machine's state file. The genshin-mods pulse mod starts it from any session that loads the plugin, and its page is `openspec/specs/infra/claude-interface/genshin-mods/pulse/design.md`. The watcher itself is silent while the machine is busy. It prints one line when the CPU has averaged under 80% for three minutes with more than three sixteenths of the machine's RAM free, and one when free memory falls under an eighth of it (the gate). Either line repeats every 15 minutes while its state holds.
+- **The pulse mod keeps the watcher running, so no session arms a Monitor for it.** `pnpm ai:machine:watch` is one command on Windows and macOS alike, reading the CPU, the GPU and the free memory each minute and writing its reading to the machine's state file. The genshin-mods pulse mod starts it from any session that loads the plugin, and its page is `openspec/specs/infra/claude-interface/genshin-mods/pulse/design.md`. The watcher itself is silent while the machine is busy. It prints one line when the CPU has averaged under `CPU_TARGET_PERCENTAGE` over `WINDOW_MINUTES` with more than `ROOM_MEMORY_SHARE` of the machine's RAM free, and one when free memory falls under `GATE_MEMORY_SHARE` of it (the gate). Either line repeats every `REMINDER_MINUTES` while its state holds (`scripts/src/services/machine/constants.ts`).
 - **An idle line is a call to start what can run:** a lane's runner for a runnable item, a page per independent scene, the next wave's ready units.
 - **A machine idle because nothing can run is correct.** That line is answered by saying so. No item is queued, and no unit invented, to fill the cores: a queue that only grows is never digested.
 - **A tight line holds new starts** until memory comes back.
@@ -49,10 +49,10 @@ A wave of agents multiplies every habit by the number of agents. A typecheck eac
 ## Keep the GPU busy
 
 - **The GPU is already the one doing the work.** Headless Edge gets the machine's own adapter by default, and the launch flags tried (`--use-angle=d3d11`, `--ignore-gpu-blocklist`, `--enable-unsafe-webgpu`) change nothing that matters: the last adds three features, and a launch forced onto SwiftShader gets no adapter at all. A bench's frame is set by the main thread instead, so a low GPU share can be the scene's draw loop, not a missing flag.
-- **The page lane runs several scenes at once.** Its runner serves every item's page from its one parity server in its own worktree (port 3002), as `.agents/skills/genshin-parity/references/compute-queue.md` sets out.
+- **The page lane runs several scenes at once.** Its runner serves every item's page from its one parity server in its own worktree, as the `genshin-parity` skill, `references/compute-queue.md` sets out.
 - **A GPU idle while the queue holds items is a lane waiting on a miss.** A miss is a call only the main session makes, so it settles the misses before anything else: each holds the GPU.
 
 ## Tokens are a resource too
 
-- **Every agent runs on haiku, and the main session settles the calls** (`.agents/skills/llm-delegation/SKILL.md`). An agent stopped part way ends on a handoff spec. The main session lifts the spec out of the agent's transcript with a script into a file the next agent reads, never by reading the transcript itself.
+- **Every agent runs on haiku, and the main session settles the calls** (the `llm-delegation` skill). An agent stopped part way ends on a handoff spec. The main session lifts the spec out of the agent's transcript with a script into a file the next agent reads, never by reading the transcript itself.
 - **A usage window's end belongs to the compute queue** (the usage reserve, `references/usage-reserve.md`).
