@@ -76,3 +76,7 @@ Shadowpiercing Shot, the plain Aimed Shot, Secret Rite's Dusk Bolts, Ancient Rit
 - **GIVEN** Sethos has Shadowpiercing Shot, Dusk Bolts or a passive unlocked
 - **WHEN** the player fights with Sethos
 - **THEN** that effect has no effect
+
+## Open
+
+- [ ] **Sethos's strikes deal no poise damage** — contradicted by `~/Esposter.noindex/cache/genshin-wiki/Category_Sethos_Talents.json`: Royal Reed Archery gives the strikes poise 18.879, 8.791 and 25.809.
