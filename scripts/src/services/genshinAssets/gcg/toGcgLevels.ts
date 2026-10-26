@@ -22,7 +22,10 @@ export const toGcgLevels = (
         .filter(({ levelCondList }) => levelCondList.length > 0)
         .map(({ levelCondList, npcId }) => [
           String(npcId),
-          levelCondList.map(({ gcgLevel, levelId }) => ({ gameId: levelId, level: gcgLevel })),
+          // A slot with no duel reads as a zero game id, which no game has, so it is no duel rather than a duel of game zero
+          levelCondList.flatMap(({ gcgLevel, levelId }) =>
+            levelId === 0 ? [] : [{ gameId: levelId, level: gcgLevel }],
+          ),
         ]),
     ),
     playerLevelLocks: levelLockRows

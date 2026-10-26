@@ -24,6 +24,14 @@ describe(toGcgLevels, () => {
       npcId: 9701,
     },
     { levelCondList: [], npcId: 9702 },
+    {
+      levelCondList: [
+        { gcgLevel: 10, levelId: 1115 },
+        { gcgLevel: 0, levelId: 0 },
+        { gcgLevel: 0, levelId: 0 },
+      ],
+      npcId: 9716,
+    },
   ];
 
   test("should total each level's EXP from level one, and name each challenger's duels by their level", () => {
@@ -35,6 +43,7 @@ describe(toGcgLevels, () => {
           { gameId: 1021, level: 1 },
           { gameId: 1022, level: 3 },
         ],
+        9716: [{ gameId: 1115, level: 10 }],
       },
       playerLevelLocks: [
         { unlockLevel: 1, unlockMainQuestId: "1" },
