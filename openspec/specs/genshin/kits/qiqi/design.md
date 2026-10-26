@@ -15,7 +15,7 @@ Qiqi's kit is its record and one behaviour module, `createQiqiKitBehaviour`, on 
 ## Not built
 
 - **The kit's ATK read for the Talisman heal is not traced.** gcsim reads her live total ATK, buffs included (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/qiqi/qiqi.go:51-55`, `~/Esposter/cache/gcsim-v2.47.2/internal/characters/qiqi/burst.go:90`), and the kit's own read has not been checked against it.
-- **Rite of Resurrection's revive, its 15-minute interval and its clearing by a drown or a jump have no source yet.** gcsim has no revive, and the cached Talents page names the constellation (`Talent Note`, constellation 6) without its text, so the interval waits on the constellation's text or a recording. The cached Qiqi talents page names constellation 6 as Rite of Resurrection without its text (`~/Esposter/cache/genshin-wiki/Category_Qiqi_Talents.json`).
+- **Rite of Resurrection's clearing by a drown or a jump has no source yet.** gcsim has no revive, and the cached Talents page names the constellation (`Talent Note`, constellation 6) without its text, so the clearing waits on a recording. Talent 356's text gives the revive and its 15-minute interval (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json`, openConfig `Qiqi_Constellation_6`). The cached Qiqi talents page names constellation 6 as Rite of Resurrection without its text (`~/Esposter/cache/genshin-wiki/Category_Qiqi_Talents.json`).
 
 ## Key files
 
