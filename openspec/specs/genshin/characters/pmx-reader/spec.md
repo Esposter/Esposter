@@ -112,7 +112,3 @@ The rigid bodies, joints and morphs SHALL be read but not yet applied to the dra
 - **GIVEN** a model has morphs
 - **WHEN** it is drawn
 - **THEN** no morph is applied
-
-## Open
-
-- [ ] **The engine's own PMX reader turns an MMD model file into three's space as it reads** — no source yet: game data or a snapshot that holds this behaviour
