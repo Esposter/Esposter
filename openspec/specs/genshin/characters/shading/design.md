@@ -237,7 +237,7 @@ F  = smoothstep(0, 1, saturate((T - lo) / (hi - lo)))
 
 A face with no face map is lit, so `F` is one.
 
-The face map holds the nose's two flanks at its two ends, one always in shadow and the other always lit, so the nose shows a small mark at every light angle: a dark one in front light, as the character screen draws it, and a light one with the light behind, where the rest of the face is in shadow. A pale dot on the nose of a back-lit face is that lit flank, not a fault in the lookup.
+The face map holds the nose's two flanks at its two ends, and both are at full alpha in `~/Esposter.noindex/genshin-parity/extracted/characters/playergirl/raw/tex-12271586/Texture2D/Avatar_Tex_Face_Shadow.png` (rows 212 to 240), with zero alpha between them, so the lookup reads both flanks as lit whatever the threshold.
 
 ### The shadow colour
 
@@ -385,6 +385,8 @@ The only case where a ramp stays raw is an artist painting it in linear values, 
 - [ ] **The hair's specular and ramp-row equations (pixel 272)** — contradicted by `~/Esposter/genshin-parity/extracted/shaders/asm/uber/00272.asm`: CB0 has 106 vectors, so cb0[220] and cb0[222] are not read; no 0.1 literal.
 - [ ] **Each program's index is the same in its `NNNNN.dxbc` and its `programs.tsv` line** — no source yet: the cited file `programs.tsv` is not on disk
 - [ ] **The nose shows a dark mark in front light, as the character screen draws it** — no source yet: the Hydro Lumine character-screen video (https://www.youtube.com/watch?v=KPlvZW6udfk, 0:18) is not on disk.
+- [ ] **The nose shows a small mark at every light angle, from a flank in shadow** — contradicted by `~/Esposter.noindex/genshin-parity/extracted/characters/playergirl/raw/tex-12271586/Texture2D/Avatar_Tex_Face_Shadow.png`: both flanks at full alpha, so neither is shadowed.
+- [ ] **A pale dot on the nose of a back-lit face is the lit flank** — no source yet: a rendered back-lit frame of the face.
 - [ ] **The repo's outline projection scale holds the game's 2.414** — no source yet: a game listing holding the literal 2.414000; none under `~/Esposter/genshin-parity/extracted/shaders/asm/uber` does.
 - [ ] **The outline's width is `_OutlineWidth` times 0.41425, weighted by the alpha, with no `T_w`** — no source yet: a game listing holding the literal 0.41425; none under `~/Esposter/genshin-parity/extracted/shaders/asm/uber` does.
 - [ ] **The haze at the close-up is zero, by the fog's form** — no source yet: a run of `packages/genshin-engine/src/post/createHeightFogNode.ts` at a close-up distance, which is not on disk.
