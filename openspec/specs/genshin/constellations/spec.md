@@ -42,7 +42,7 @@ A constellation activation SHALL be refused when the set has no constellation le
 
 ### Requirement: The third and fifth constellations raise a combat talent by three levels
 
-A character's third and fifth constellations SHALL each raise one combat talent by three levels, and its other four constellations SHALL raise no talent (whose third and fifth actions raise by 3).
+A character's third and fifth constellations SHALL each raise one combat talent by three levels, and its other four constellations SHALL raise no talent (`~/Esposter.noindex/genshin-parity/text/BinOutput/Talent/AvatarTalents/ConfigTalent_Ayaka.json`, whose third and fifth actions raise by 3).
 
 #### Scenario: An active third constellation raises its talent
 
@@ -73,7 +73,7 @@ A skill set with a constellation the game data gives no config for SHALL be left
 
 #### Scenario: A set with an unnamed constellation is left out
 
-- **GIVEN** a skill set with a constellation the game data gives no config for (depot 6201, whose talents 621 to 626 name no config)
+- **GIVEN** a skill set with a constellation the game data gives no config for (depot 6201 of `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/AvatarSkillDepotExcelConfigData.json`, whose talents 621 to 626 name no config)
 - **WHEN** the table is built
 - **THEN** that set is left out of the table
 - **AND** a note names the set
