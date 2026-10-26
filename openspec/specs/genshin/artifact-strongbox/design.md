@@ -27,7 +27,7 @@ flowchart TD
 ## Notes
 
 - Piece odds are not known. The wiki gives none for the piece within the set, so the draw is even among the offer row's pieces (`packages/genshin-world/src/services/crafting/rollStrongboxArtifact.ts`), and the offer row is taken as the pool the game uses.
-- One strongbox per offering. The game's batch of up to 39 artifacts, which makes up to thirteen strongboxes at once, is not built.
+- One strongbox per offering. The game's batch of up to 39 artifacts (`maxReliquaryNum` is 39 in every row of `~/Esposter/genshin-parity/text/ExcelBinOutput/ReliquaryDecomposeExcelConfigData.json`), which makes up to thirteen strongboxes at once, is not built.
 - The gate is the wiki's rank, not a value the dump's tables hold. It stays provisional until the unlock is found in the game's data.
 - The tab's place after the recipe tabs, and the panel taking the screen over the bench, are not measured against the game. Both wait on a recording.
 - The locked check reads the artifact's saved `isLocked` flag. The lock toggle belongs to the artifact screen, not to this capability.
@@ -63,4 +63,3 @@ flowchart TD
 - [ ] **the Mystic Offering opens at Adventure Rank 45** — no source yet: the cached Mystic Offering wiki page is not on disk, and the dump's tables do not hold the gate.
 - [ ] **a strongbox holds one random piece of the chosen set** — no source yet: the cached Artifact Strongbox wiki page is not on disk, and no recording shows a roll.
 - [ ] **the game draws a strongbox's piece evenly from the offer row's pieces** — no source yet: the cached Artifact Strongbox wiki page is not on disk, and no recording shows a roll.
-- [ ] **the game offers up to 39 artifacts at once, which makes up to thirteen strongboxes** — no source yet: the cached Artifact Strongbox wiki page is not on disk.
