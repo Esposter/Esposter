@@ -75,7 +75,7 @@ A season names its difficulties by id, and the writer refuses a season that name
 
 ## Notes
 
-- **The wiki's numbers are the page's.** The Vigor, the Blessing Level steps and stats, the opening bonus and the Stella rewards are the Imaginarium Theater page's statements, quoted under Sources. They are constants in `packages/genshin-world/src/services/imaginarium/constants.ts` and need no measure from the game, but a reader who finds them wrong changes that file.
+- **The wiki's numbers are unverified.** The Vigor, the Blessing Level stats, the opening bonus and the three-Stella reward are the proposal's statements, from the wiki, which could not be read when this was built. They are constants in `packages/genshin-world/src/services/imaginarium/constants.ts` and need no measure from the game, but a reader who finds them wrong changes that file.
 
 ## Sources
 
