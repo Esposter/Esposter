@@ -11,7 +11,7 @@ Lumine's body SHALL draw each part in the colours of the region its lightmap alp
 #### Scenario: A part in a region whose toggle is on takes that region's colours
 
 - **GIVEN** the second region's toggle is on for Lumine's material
-- **WHEN** the body is drawn where its lightmap alpha is at least 0.8 (`packages/genshin-engine/src/character/shading/constants.ts`, `REGION_FLOORS`, two at 0.8)
+- **WHEN** the body is drawn where its lightmap alpha is at least 0.8
 - **THEN** the body takes the second region's colour and emission
 - **AND** a part in a region whose toggle is off keeps the first region's colours
 
@@ -30,11 +30,11 @@ A player's pack SHALL shade the body along its own toon column, with no value co
 - **GIVEN** a player's pack supplies a toon texture and no lightmap
 - **WHEN** the body is drawn
 - **THEN** the toon is read down its one column as the shade's lookup
-- **AND** the flat default lightmap sets the threshold (`packages/genshin-engine/src/character/shading/constants.ts`, `NEUTRAL_LIGHT_MAP_GREEN`)
+- **AND** the flat default lightmap sets the threshold
 
 #### Scenario: The default light area and band width read the toon's whole column
 
-- **GIVEN** the pack sets no light area and no band width (`packages/genshin-engine/src/character/shading/constants.ts`, `DEFAULT_LIGHT_AREA` and `DEFAULT_RAMP_WIDTH`)
+- **GIVEN** the pack sets no light area and no band width
 - **WHEN** the shade lookup runs across the full range of the light
 - **THEN** the lookup reaches the end of the column without clamping
 
@@ -50,7 +50,7 @@ Lumine's body SHALL draw without fog, so a close-up keeps its colour.
 
 ### Requirement: Lumine's face
 
-Lumine's face SHALL turn its shadow with the light's angle to her head, and a face with no face map SHALL stay lit (`packages/genshin-engine/src/character/shading/updateFaceDraw.ts`, `packages/genshin-engine/src/character/shading/createFaceShadeNode.ts`).
+Lumine's face SHALL turn its shadow with the light's angle to her head, and a face with no face map SHALL stay lit.
 
 #### Scenario: The face's shadow edge moves as the light turns around the head
 
@@ -67,7 +67,7 @@ Lumine's face SHALL turn its shadow with the light's angle to her head, and a fa
 
 ### Requirement: Lumine's outline
 
-Lumine's outline SHALL be drawn in her region's colour, toned as her body is (`packages/genshin-engine/src/character/shading/createOutlineColorNode.ts`).
+Lumine's outline SHALL be drawn in her region's colour, toned as her body is.
 
 #### Scenario: An outline with no region toggle on draws in the outline colour
 
@@ -96,7 +96,7 @@ Where a player's pack supplies no value, the body SHALL take the game's own valu
 
 - **GIVEN** a material holds no value for a field
 - **WHEN** the body is drawn
-- **THEN** that field takes its default (`packages/genshin-engine/src/character/createCharacterShadingInputs.ts`, which fills each default in)
+- **THEN** that field takes its default
 
 ## Open
 
@@ -109,3 +109,7 @@ Where a player's pack supplies no value, the body SHALL take the game's own valu
 - [ ] **The default light area and band width keep the lookup from clamping across the light's full range** — no source yet: a computed trace at the defaults; no test asserts it.
 - [ ] **A pack's region toggles stay off, and its values come from the game's inventory** — no source yet: the code path that fills a pack's material from the inventory record is not traced, and `createCharacterShadingInputs.ts`'s own defaults (brightness 1, contrast and desaturate 0) are not the inventory's values.
 - [ ] **A pack without a lightmap takes the flat default lightmap of red 0, green 0.5 and alpha 0** — no source yet: the flat lightmap's red and alpha are not traced to a constant.
+- [ ] **A part in a region whose toggle is on takes that region's colour and emission** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Lumine's face turns its shadow with the light's angle to her head** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Lumine's outline is drawn in her region's colour, toned as her body is** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A material's field with no value takes its default** — no source yet: game data or a snapshot that holds this behaviour
