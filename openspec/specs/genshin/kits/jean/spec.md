@@ -182,3 +182,11 @@ Jean's collision and two plunges SHALL keep provisional reaches until a recordin
 - **WHEN** the player plunges
 - **THEN** the plunge deals its hit within its provisional reach
 - **AND** the reach stays provisional until a recording settles it
+
+## Open
+
+- [ ] **the charged attack strikes a 160-degree fan ahead of her** — no source yet: the charged attack's angle in gcsim's `charge.go` was not opened.
+- [ ] **each enemy the blast reaches takes 2 units of Anemo gauge with 50 poise** — no source yet: the wiki's Dandelion Breeze poise row was not located in the cached Jean talents file.
+- [ ] **Constellation 6 cuts 35% DMG for 3 strikes or 10 seconds** — no source yet: gcsim leaves Constellation 6 unimplemented, and the cached wiki holds no Lion's Fang text.
+- [ ] **an enemy walking in or out of the field is not struck by its entering or exiting damage** — no source yet: gcsim's enemy tracking for the field was not opened.
+- [ ] **each enemy a strike reaches gets its own 50% roll for Wind Companion** — no source yet: the wiki's per-enemy note was not opened in the cached Jean talents file.
