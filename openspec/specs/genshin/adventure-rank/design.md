@@ -39,11 +39,11 @@ The rank is the EXP's own, held at the cap of the last World Level open. So a pl
 
 ## Systems a rank opens
 
-The wiki's table of Game System Unlocks gives the rank each system opens at. Two of the Paimon menu's entries are in it: Co-Op Mode at rank 16 and the Battle Pass at rank 20 (`ScreenKindOpenRankMap`; Co-Op's rank 16 is id 49 of `~/Esposter/genshin-parity/text/ExcelBinOutput/OpenStateConfigData.json`, with a quest 35001 beside it, whose icon is the MultiPlayer icon, id 9 of `~/Esposter/genshin-parity/text/ExcelBinOutput/SystemOpenUIConfigData.json`; the Battle Pass's 20 is id 1301 of that file, whose icon is id 10). Friends' rank 2 in the same map has no source yet (see Still open). An entry for one of them stays disabled below its rank (`checkIsSystemOpen`), as an entry not yet built does; the menu's other entries are open from the start. The table's other systems are not entries of the menu, so each is gated on its own screen.
+The wiki's table of Game System Unlocks gives the rank each system opens at. Two of the Paimon menu's entries are in it: Co-Op Mode at rank 16 and the Battle Pass at rank 20 (`ScreenKindOpenRankMap`; Co-Op's rank 16 is id 49 of `~/Esposter/genshin-parity/text/ExcelBinOutput/OpenStateConfigData.json`, with a quest 35001 beside it, whose icon is the MultiPlayer icon, id 9 of `~/Esposter/genshin-parity/text/ExcelBinOutput/SystemOpenUIConfigData.json`; the Battle Pass's 20 is id 1301 of `~/Esposter/genshin-parity/text/ExcelBinOutput/OpenStateConfigData.json`, whose icon is id 10 of `SystemOpenUIConfigData.json`). Friends' rank 2 in the same map has no source yet (see Still open). An entry for one of them stays disabled below its rank (`checkIsSystemOpen`), as an entry not yet built does; the menu's other entries are open from the start. The table's other systems are not entries of the menu, so each is gated on its own screen.
 
 ## EXP past the total and past rank 60
 
-`gainAdventureExp` adds EXP up to rank 60's total, 1,880,200. Where the cap is below 60, EXP past that total is not gained, as the game does while a quest holds the rank. Once the cap is 60, EXP past the total is paid in Mora at ten for each point (a rate with no source yet, see Still open), returned as `moraPaid` for the wallet to take (`packages/genshin-world/src/services/adventureRank/gainAdventureExp.ts`, the rate in `constants.ts`).
+`gainAdventureExp` adds EXP up to rank 60's total, 1,880,200. Where the cap is below 60, EXP past that total is not gained, as the game does while a quest holds the rank. Once the cap is 60, EXP past the total is paid in Mora at ten for each point (a rate with no source yet, see Still open), returned as `moraPaid` for the wallet to take (`packages/genshin-world/src/services/adventureRank/gainAdventureExp.ts`, the rate in `constants.ts`). The game's text says all Adventure EXP received after the maximum rank is converted to Mora (text 365981086 in `~/Esposter/genshin-parity/text/TextMap/TextMap_MediumEN.json`); only the rate is open.
 
 ## Lowering the World Level
 
@@ -82,8 +82,8 @@ A camp's enemy stands at its camp level under World Level 0. From World Level 1 
 - [ ] **The prompt's frame and choices are the quit prompt's measured layout** — no source yet: the quit prompt's 2026 recording, which is not on disk under the name the page gives; the still `~/Esposter/genshin-parity/references/menu-quit-prompt/exit-prompt-current.png` holds no measurement of the frame or buttons.
 - [ ] **The dialog stays open after a change** — no source yet: neither recording shows the game after Confirm.
 - [ ] **The card's values stand right-aligned beside the info disc, as the current client draws them** — no source yet: the menu's reference is the 1.3 build's, with its values redacted.
-- [ ] **Adventure EXP accrues toward rank 60's total while a quest holds the rank, the rank catches up when it is done, and EXP past rank 60 is paid in Mora** — no source yet: the wiki's Adventure EXP page, named in the enemies page's Sources, is not in the wiki cache.
-- [ ] **The option to lower the World Level opens after World Level 5** — contradicted by ~/Esposter/genshin-parity/text/TextMap/TextMap_MediumEN.json: text 2955635938 says World Level 3.
+- [ ] **Adventure EXP accrues toward rank 60's total while a quest holds the rank, and the rank catches up when it is done** — no source yet: the wiki's Adventure EXP page, named in the enemies page's Sources, is not in the wiki cache.
+- [ ] **The option to lower the World Level opens after World Level 5** — contradicted by `~/Esposter/genshin-parity/text/TextMap/TextMap_MediumEN.json`: text 2955635938 says World Level 3.
 
 ## Key files
 
