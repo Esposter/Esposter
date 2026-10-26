@@ -137,5 +137,5 @@ The character on the field fights through its kit, which prices every character'
 - [ ] **A domain's challenge revives its team without the screen** — no source yet: no domain-challenge revive call was located in `packages/genshin-world/src/services/party/` or `packages/genshin-world/src/composables/useWorldDomains.ts`.
 - [ ] **An enemy's strike that lands on a taunt is the taunt's to take, as the game does** — no source yet: `packages/genshin-world/src/composables/useWorldCombat.ts` (`strikeParty`) sends a taunted strike to the taunt and every other strike to the character on the field through the team's shields, but no game text or wiki page checks the taunt's targeting.
 - **The code zeroes every deployed member's energy as a drowning falls** — `packages/genshin-world/src/services/party/drownParty.ts` (line 12).
-- [ ] **A drowning takes every member's energy** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A drowning takes every member's energy** — no source yet: a recording of a drowning, not yet captured.
 - [ ] **Only the character on the field takes an enemy's strike** — no source yet: no test holds it, and the wiki's Party page is not cached.
