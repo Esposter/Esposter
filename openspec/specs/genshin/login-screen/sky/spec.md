@@ -67,5 +67,3 @@ Faces turned upward SHALL be lit by the sky's bright cloud colour and faces turn
 
 - [ ] **The frame is drawn through the game's own tone curve alone, with no grade or bloom** — no source yet: the login scene's post pipeline call passes `isBloomed: false` with a comment giving no grade and no bloom, but gives no curve values to compare the game's own tone curve against.
 - [ ] **The night's moon stands behind the lantern tower** — no source yet: the reference point is not annotated against the lantern tower in any kept file.
-- [ ] **The dusk's sunlight falls 50 degrees up and 60 degrees left of the walkway** — contradicted by `packages/genshin-world/src/services/login/scene/LoginSkyStateMap.ts`: `DUSK_LIGHT_DIRECTION` (0.493, 0.763, 0.418) is 49.7 degrees up and 49.7 degrees off the walkway's +z axis, not 60.
-- [ ] **Faces turned upward are lit by the sky's bright cloud colour** — contradicted by `packages/genshin-world/src/services/login/scene/LoginSkyStateMap.ts`: at dawn `hemisphereSkyColor` is 0xf2dfc8, not `cloudLitColor` 0xf5efe8.
