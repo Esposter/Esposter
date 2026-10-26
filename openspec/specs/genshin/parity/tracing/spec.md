@@ -71,8 +71,3 @@ A screen SHALL ship only shapes derived from the game's marks through this traci
 
 - [ ] **Only traced shapes or published vectors ship with a screen** — no source yet: no check of the screens' shipped shapes against their source was run.
 - [ ] **A vector mark's published paths are drawn unchanged** — no source yet: the component that draws the Commons SVGs was not traced.
-- [ ] **A glyph is traced from the game's own mark at the source's full resolution, never a reduced one** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The region is printed beside the trace for checking** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Ink is told from paper by its contrast with the region's corners** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Specks and small holes are cleared before tracing, and every path the trace finds is kept** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A traced path is written in its shortest form with the same points, and its opening move kept absolute** — no source yet: game data or a snapshot that holds this behaviour
