@@ -8,7 +8,7 @@ The install is `C:\Program Files\Genshin Impact\Genshin Impact Game`. Agents onl
 
 ## What it holds
 
-- `GenshinImpact.exe`, 444 MB. There is no `GameAssembly.dll` beside it, and no `UnityPlayer.dll` at the root.
+- `GenshinImpact.exe`, 444 MB. There is no GameAssembly.dll beside it, and no UnityPlayer.dll at the root.
 - `GenshinImpact_Data/Managed/` holds only `Metadata/` and `Resources/`, so it has no managed assemblies.
 - `GenshinImpact_Data/Managed/Metadata/global-metadata.dat`, 82.7 MB, does not begin with the IL2CPP magic, so REA refuses it (`references/unity-il2cpp.md`). `startup-metadata.dat` sits beside it.
 - `GenshinImpact_Data/Plugins/` holds the HoYoverse SDKs and third-party libraries (Rewired, UnityNativeChromaSDK and others). These are not analysis targets (SKILL.md, Settled).

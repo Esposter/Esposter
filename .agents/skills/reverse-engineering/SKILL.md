@@ -11,7 +11,7 @@ Analysis of a target at rest: its files are read, never run. The game's data rea
 
 - **REA as a workspace devDependency.** Its dependencies include a native terminal binding (`@lydell/node-pty`) and a browser driver (`playwright-core`), which every `pnpm i` and CI runner would build, and no repo code imports it. It is pinned in the machine cache instead (`references/rea.md`).
 - **`rea setup` to register REA with an agent.** It writes agent configuration and workflow instructions into the machine, so it runs only on the owner's approval.
-- **Analysing the protection layer or the account and network SDKs.** `HoYoKProtect.sys`, `mhypbase.dll`, `rtlbase.dll` and the `Plugins/` SDKs are not targets: the repo's questions are how the game's data and interface work, and none of those components answers them.
+- **Analysing the protection layer or the account and network SDKs.** The anti-cheat driver, the protection DLLs at the install's root and the `Plugins/` SDKs are not targets: the repo's questions are how the game's data and interface work, and none of those components answers them.
 - **Decoding a protected metadata file inside an analysis session.** A decoder for the install's wrapper is its own effort with its own design, decided before it is started (`references/unity-il2cpp.md`).
 
 ## Rules
