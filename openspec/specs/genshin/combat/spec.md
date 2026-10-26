@@ -46,8 +46,8 @@ Electro and Hydro lying together on a target SHALL tick Electro-Charged damage u
 
 - **GIVEN** an Electro aura and a Hydro aura stand on a target
 - **WHEN** they meet on the target
-- **THEN** an Electro-Charged tick lands at once
-- **AND** another tick lands each second after
+- **THEN** an Electro-Charged tick lands at once (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/electrocharged.go:78-81`)
+- **AND** another tick lands each second after (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/electrocharged.go:181`)
 
 #### Scenario: Electro-Charged ends once one of its auras decays away
 
@@ -67,7 +67,7 @@ A hit's damage SHALL be cut by the enemy's defence against the attacker's level,
 
 ### Requirement: An enemy's resistance
 
-An enemy's resistance SHALL cut damage by its share, up to three quarters, and beyond that by a diminishing factor.
+An enemy's resistance SHALL cut damage by its share, up to three quarters (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/enemy/damage.go:86-88`), and beyond that by a diminishing factor.
 
 #### Scenario: A resistance of half cuts half the damage
 
@@ -172,7 +172,7 @@ A deployed member's party reaction bonus SHALL raise a Lunar or Stellar reaction
 - **GIVEN** a deployed member's kit gives a Lunar-Bloom a DMG Bonus, a CRIT Rate, a CRIT DMG and an Elevation
 - **WHEN** a direct Lunar-Bloom hit is priced on an enemy
 - **THEN** the DMG Bonus adds to its reaction bonus, the CRIT Rate to its roll and the CRIT DMG to a CRIT hit
-- **AND** the whole is multiplied by one plus the Elevation
+- **AND** the whole is multiplied by one plus the Elevation (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/core/combat/reaction.go:30`)
 
 ### Requirement: A Stellar Jubilee's Base DMG Bonus
 
@@ -339,7 +339,7 @@ When every member of the party is down, the party SHALL revive at 35 percent hea
 
 ### Requirement: Glimmer Reaction Damage
 
-A Stellar Swirl's own damage SHALL be weighted across the four highest contributors, at 0.6, 0.3, 0.05 and 0.05, each contributor's damage worked out alone with standard crit. A Stellar-Conduct SHALL deal no damage of its own: its damage is dealt only by a talent's or a constellation's direct hit.
+A Stellar Swirl's own damage SHALL be weighted across the four highest contributors, at 0.6, 0.3, 0.05 and 0.05, each contributor's damage worked out alone with standard crit (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl.go:15`, `lunarcharged.go:22`, `lunarcrystallize.go:27`). A Stellar-Conduct SHALL deal no damage of its own: its damage is dealt only by a talent's or a constellation's direct hit.
 
 #### Scenario: a Glimmer reaction weights its four highest contributors
 
@@ -361,7 +361,7 @@ A talent's or a constellation's direct Stellar hit SHALL be priced by the Glimme
 
 - **GIVEN** a striker carrying the Starlight Prism's count of 3 recorded hits
 - **WHEN** its direct Stellar-Conduct hit strikes an enemy
-- **THEN** it is priced at a coefficient of 1.55, with no Defence
+- **THEN** it is priced at a coefficient of 1.55, with no Defence (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct.go:9`)
 
 #### Scenario: prices a direct Stellar Swirl hit by the Glimmer formula at its coefficient by the Starlight Prism's count its striker carries, with no Defence
 
@@ -448,12 +448,12 @@ A Stellar-Conduct SHALL leave a Starlight Prism that lasts 7 seconds and sustain
 
 ### Requirement: Starlight Prism Buffs by Recorded Hits
 
-Inside the field, a Cryo or Electro hit on an enemy that applies an element, as its internal cooldown allows, SHALL be recorded by the prism, the hit that created the prism excepted. Every 4 seconds the count resets, and the buffs it grants last 4 seconds: the Base Reaction Coefficient of the Stellar-Conduct, the Cryo and Electro DMG Bonus of the body in the field, and the Physical RES reduction of the enemies in it.
+Inside the field, a Cryo or Electro hit on an enemy that applies an element, as its internal cooldown allows, SHALL be recorded by the prism, the hit that created the prism excepted. Every 4 seconds the count resets (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct_gadget.go:21`), and the buffs it grants last 4 seconds (`stellarconduct_gadget.go:22`): the Base Reaction Coefficient of the Stellar-Conduct, the Cryo and Electro DMG Bonus of the body in the field, and the Physical RES reduction of the enemies in it.
 
 #### Scenario: a recorded hit raises the Stellar-Conduct's coefficient
 
 - **WHEN** one Cryo or Electro hit is recorded
-- **THEN** the Base Reaction Coefficient is 1.45, rising by 0.05 for each further hit up to 12 hits, where it is 2
+- **THEN** the Base Reaction Coefficient is 1.45, rising by 0.05 for each further hit up to 12 hits, where it is 2 (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct.go:9`)
 
 #### Scenario: a field with no recorded hit gives a 20% Cryo and Electro DMG Bonus
 
@@ -511,4 +511,29 @@ A Stellar Vortex's explosion SHALL be priced at a Base Reaction Coefficient of 2
 #### Scenario: a Stellar Swirl's Anemo instance has a coefficient of 0.75
 
 - **WHEN** a Stellar Swirl is triggered
-- **THEN** its Anemo instance's Base Reaction Coefficient is 0.75
+- **THEN** its Anemo instance's Base Reaction Coefficient is 0.75 (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl.go:76`)
+
+## Open
+
+- [ ] **A two-unit Pyro tap leaves 1.6 units of Pyro lasting 12 seconds** — no source yet: gcsim's aura tax and decay were not opened for this case, and the wiki's Elemental Gauge Theory page is not cached.
+- [ ] **Anemo and Geo leave no aura** — no source yet: gcsim's Swirl and Crystallize paths were not opened to show they attach none.
+- [ ] **Hydro on a burning target vaporizes the Burning and its Pyro, and blooms the Dendro with what is left** — no source yet: `pkg/reactable/vaporize.go` and `bloom.go` were not opened for the Burning step.
+- [ ] **A hit from an attacker of the enemy's own level is halved by defence** — no source yet: the defence factor in gcsim's `pkg/enemy/damage.go` was not located.
+- [ ] **A resistance past three quarters cuts damage to one over four times the resistance plus one** — no source yet: `pkg/enemy/damage.go` past line 88 was not opened.
+- [ ] **Vaporize and Melt multiply the hit by two** — no source yet: gcsim's amplifying multiplier was not opened.
+- [ ] **A Lunar-Bloom deals no damage of its own and leaves a Dendro Core** — no source yet: gcsim's `pkg/reactable/lunarbloom.go` was not opened.
+- [ ] **Ascendant Gleam is capped at 36% and lasts 20 seconds** — no source yet: gcsim's Ascendant Gleam code was not opened for these values.
+- [ ] **Each deployed Stellar Jubilee's Base DMG Bonus adds, two at 7% giving 14%** — no source yet: gcsim's Stellar Jubilee Base DMG code was not opened.
+- [ ] **An enemy's strike is resisted by the member's RES to its attack element, or Physical RES with none** — no source yet: gcsim's strike resistance was not opened for this rule.
+- [ ] **A DMG Reduction lowers a strike's damage by its share, and 120% leaves none** — no source yet: gcsim's `DamageReduction` arithmetic was not opened.
+- [ ] **A shield absorbs 2.5 points per point of its own element's strike, and a Shield Strength of 25% gives 1.25** — no source yet: gcsim's shield absorption code was not opened.
+- [ ] **A sword's energy chance starts at 10% and rises by 5% after each hit that gives none** — no source yet: gcsim's attack energy code was not opened.
+- [ ] **A particle gives 3 energy of its element, 1 of another and 2 of none** — no source yet: gcsim's particle gain was not opened.
+- [ ] **A party that is all down revives at 35% health at the nearest statue** — no source yet: gcsim's revive code was not opened.
+- [ ] **The Starlight Prism lasts 7 seconds, sustains a radius-15 Polestar Field, and a refresh sets the field back to 7 seconds** — no source yet: the wiki's Stellar-Conduct page is not cached, and gcsim sets 6 seconds (`pkg/reactable/stellarconduct_gadget.go:17`).
+- [ ] **The Polestar Field lowers each enemy's Physical RES by 40%** — no source yet: gcsim's shred value (`stellarconduct_gadget.go:122`) was not opened.
+- [ ] **A Polestar Field gives its body 20% Cryo and Electro DMG Bonus with no hit, 28% plus 1% a hit up to 40%** — no source yet: gcsim's DMG Bonus lines for the field were not opened.
+- [ ] **A Stellar Vortex lasts 3 seconds, and its explosion is at Base Reaction Coefficient 2 at Lv. 1 and 3 at Lv. 2** — no source yet: gcsim's vortex duration and explosion coefficients were not opened, and the wiki's Damage page is not cached.
+- [ ] **The third Stellar Swirl levels the vortex to Lv. 2, and three more explode it at once** — no source yet: gcsim's vortex stacking in `pkg/reactable/stellarswirl.go` was not opened for these counts.
+- [ ] **A direct Stellar Swirl hit has Base Reaction Coefficient 1, which the count does not raise** — no source yet: gcsim's direct Stellar Swirl coefficient was not opened.
+- [ ] **A Stellar Jubilee passive enables Stellar Swirl and Stellar-Conduct for its party** — no source yet: gcsim's `internal/characters/odette/stellar.go` enable flags were not opened in this pass.
