@@ -6,7 +6,7 @@ Shenhe's kit as built: Spring Spirit Summoning's press and hold, which give the 
 
 ### Requirement: Shenhe's strikes, charged attack and plunges
 
-Shenhe's five strikes, charged attack, collision and two plunges SHALL land on the enemies within reach, and her normal attacks SHALL deal poise of 46.08 per hit as the wiki lists it (`~/Esposter/cache/genshin-wiki/Category_Shenhe_Talents.json`), provisionally.
+Shenhe's five strikes, charged attack, collision and two plunges SHALL land on the enemies within reach, and her five strikes SHALL deal the wiki's poise per strike, 46.08, 43.44, 56.31, 27.88 and 73.6, with 27.88 on each of the fourth strike's two hits (`~/Esposter/cache/genshin-wiki/Category_Shenhe_Talents.json`), provisionally.
 
 #### Scenario: Five strikes in sequence
 
@@ -34,7 +34,7 @@ Spring Spirit Summoning SHALL deal its press on tap, and holding it past half a 
 
 ### Requirement: Divine Maiden's Deliverance field
 
-Divine Maiden's Deliverance SHALL deal an initial hit (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/burst.go` lines 50 to 55) and leave a field 2 metres ahead of Shenhe (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/burst.go` line 48), whose DoT ticks summon two hits there (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/burst.go` lines 82 to 86), and each field tick SHALL hold an RES Decrease on the enemies within the field for 36 frames (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/burst.go` lines 90 to 91 and 112 to 122).
+Divine Maiden's Deliverance SHALL deal an initial hit (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/burst.go` lines 50 to 55) and leave a field 2 metres ahead of Shenhe (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/burst.go` line 48), whose DoT ticks summon two hits there (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/burst.go` lines 82 to 86), and each field tick SHALL hold an RES Decrease on the enemies within the field for one tick interval, 117 frames, as the kit's record reads (`packages/genshin-world/src/services/kit/characters/shenheKit.ts` line 151); gcsim holds it for 36 frames instead (see Open).
 
 #### Scenario: Initial hit and field
 
@@ -46,7 +46,7 @@ Divine Maiden's Deliverance SHALL deal an initial hit (`~/Esposter/cache/gcsim-v
 
 - **GIVEN** Divine Maiden's Deliverance's field is standing
 - **WHEN** a DoT tick strikes an enemy
-- **THEN** that enemy's RES is decreased for 36 frames (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/burst.go` lines 90 and 112 to 122)
+- **THEN** that enemy's RES is decreased for one tick interval, 117 frames (`packages/genshin-world/src/services/kit/characters/shenheKit.ts` line 151; see Open)
 
 ### Requirement: Ascension 1 Cryo DMG Bonus in the field
 
