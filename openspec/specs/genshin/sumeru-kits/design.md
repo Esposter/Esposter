@@ -35,3 +35,7 @@ Sumeru City's houses, "Area_Xm_Build_" in the game's names (`~/Esposter/genshin-
 | `packages/genshin-world/src/data/regions/sumeru.json`                        | Sumeru's region data: Sumeru City's terraces, at a provisional place              |
 | `packages/genshin-world/src/services/sumeru/SumeruPartFamilyMeshRegexMap.ts` | The families Sumeru City's houses and terrain tiles fall to                       |
 | `packages/genshin-world/src/services/sumeru/SumeruUndrawnMeshRegexMap.ts`    | What else Sumeru City's export holds, by kind, not drawn yet                      |
+
+## Open
+
+- [ ] **The rainforest city stands where the game's houses stand** — no source yet: the city's place in `packages/genshin-world/src/data/regions/sumeru.json` is not compared against the game's house positions in the Sumeru export.
