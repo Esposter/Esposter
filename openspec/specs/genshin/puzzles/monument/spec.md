@@ -1,6 +1,6 @@
 ## Purpose
 
-An Elemental Monument as a state machine, lit by its element or a reaction of its own and, when timed, going out after its time. Built in the world package; not yet placed, struck or solved in the world.
+An Elemental Monument as a state machine, lit by its element or a reaction of its own and, when timed, going out after its time. Built in the world package and placed in the world, each monument mark a puzzle of its own, struck by a hit's element and solved once all its monuments are lit together.
 
 ## Requirements
 
