@@ -92,7 +92,8 @@ flowchart TD
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's dump of the game's data: `MaterialExcelConfigData`, each material's type, name, rank, rarity and stack limit.
 
 ## Open
-- **The bag opens on B** — `packages/genshin-engine/src/input/InputActionBindingMap.ts` binds `InputAction.OpenInventory` to `KeyB`.
+
+- [ ] **The bag opens on B** — no source yet: `packages/genshin-engine/src/input/InputActionBindingMap.ts` binds `InputAction.OpenInventory` to `KeyB`, which is the port's binding and not the game's, and the wiki's Controls page is not cached in `~/Esposter/cache/genshin-wiki` to show the game's.
 - [ ] **Genesis Crystals are bought only by topping up** — no source yet: the wiki's Genesis Crystal page is not cached in `~/Esposter/cache/genshin-wiki`.
 - [ ] **The bag's kind and room limits, and the tabs' sort, are the wiki's Inventory page's** — no source yet for the wiki's side: the code holds 2,300 kinds (`packages/genshin-world/src/services/inventory/bagLimits.ts`) and rooms of 2,000 weapons, 2,400 artifacts and 2,600 furnishings (`packages/genshin-world/src/services/inventory/ItemCategoryRoomMap.ts`), but the wiki's Inventory page is not cached to settle them, and the sort rule was not checked.
 - [ ] **The masks, Hero's Wit and the other materials are filed in the tabs their wiki item pages name** — no source yet: no item page is cached in `~/Esposter/cache/genshin-wiki`, `Damaged_Mask` among them.
