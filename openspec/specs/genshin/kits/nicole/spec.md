@@ -295,4 +295,3 @@ Her sixth constellation SHALL ignore 40% of the defence an upgraded character's 
 ## Open
 
 - [ ] **Nicole's plunge collision and hits land on the enemies within reach** — no source yet: gcsim's nicole package has no plunge frames or hitbox, and no Nicole plunge recording is in `~/Esposter/genshin-parity/captures/`.
-- [ ] **A physical hit's projection is dealt at Nicole's element** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/nicole/burst.go`: the projection takes the hitting character's element.
