@@ -9,7 +9,7 @@ gcsim sources: `varka/attack.go`, `charge.go`, `skill.go` and `burst.go`, with t
 ## Decisions
 
 - **The burst's hits are Anemo.** gcsim makes the first hit the element of his conversion, which is Anemo while no Four Winds conversion stands, and the second Anemo. The record holds each as Anemo, the default it gives (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/varka/burst.go`, lines 30 to 32).
-- **The skill and burst areas are the circles gcsim gives round his body.** The skill is a circle of 5 metres (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/varka/skill.go`, line 103), and the burst is the circle of 7 metres offset 2 metres ahead, priced at 9 metres as the area holds no offset. Both hits' areas are cited to `~/Esposter/cache/gcsim-v2.47.2/internal/characters/varka/burst.go:51`, the queue call's circle, which its hit's loop iteration reads. The second hit's Wind is cited to `burst.go:30`, the entry its loop reads from `ele` by index. The first hit's Wind is `Unsourced`: gcsim sets `ele[0]` to Anemo only under `if ele[0] == defaultConversionElement` (`burst.go:32`), a runtime comparison the reader does not evaluate, so the default stands.
+- **The skill and burst areas are the circles gcsim gives round his body.** The skill is a circle of 5 metres (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/varka/skill.go`, line 103), and the burst is the circle of 7 metres offset 2 metres ahead, priced at 9 metres as the area holds no offset. Both hits' areas are cited to `~/Esposter/cache/gcsim-v2.47.2/internal/characters/varka/burst.go:51`, the queue call's circle, which its hit's loop iteration reads. The second hit's Wind is cited to `burst.go:30`, the entry its loop reads from `ele` by index. The first hit's Wind is `Unsourced`: gcsim sets `ele[0]` to Anemo only under `if ele[0] == defaultConversionElement` (`burst.go` lines 31 and 32), a runtime comparison the reader does not evaluate, so the default stands.
 
 - **His plunges are borrowed.** gcsim has no plunge file for Varka, so his collision and two plunges take the borrowed plunge of [how a kit is read](../README.md#how-a-kit-is-read), and the roadmap's manual verification has the question.
 
@@ -31,4 +31,4 @@ gcsim sources: `varka/attack.go`, `charge.go`, `skill.go` and `burst.go`, with t
 
 ## Open
 
-- [ ] **The burst's first hit is Anemo** — no source yet: gcsim's conversion check at `~/Esposter/cache/gcsim-v2.47.2/internal/characters/varka/burst.go` line 31 is a runtime comparison the reader does not evaluate, so the default stands.
+- [ ] **The burst's first hit is Anemo** — no source yet: the Four Winds conversion state that gcsim checks at runtime (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/varka/burst.go` lines 31 to 32) is not a value on disk.
