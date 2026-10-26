@@ -7,7 +7,7 @@
 
 - [ ] 2.1 Plant birch forests and dark conifers on the peaks. Verify: a test named after the scenarios 'A birch forest stands in snow' and 'Dark conifers stand on the peaks'.
 - [ ] 2.2 Show tundra grass through the snow in Volkodlak Tundra. Verify: a test named after the scenario 'Tundra grass shows through the snow in Volkodlak Tundra'.
-- [x] 2.3 List the five areas and their subareas on the world map by the game's names. Verify: a test named after the scenario 'The map lists Snezhnaya's areas by the game's names'.
+- [ ] 2.3 List the five areas and their subareas on the world map by the game's names. Verify: a test named after the scenario 'The map lists Snezhnaya's areas by the game's names'.
 
 ## 3. Snezhnograd
 
