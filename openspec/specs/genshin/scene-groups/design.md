@@ -39,7 +39,7 @@ A place (`SceneGroupPlace`) is a ground point in the game's own axes, the height
 | A viewpoint member's group, config and gadget | `ViewCodexExcelConfigData`, its open-world rows the codex keeps                                                 | `ViewCodex`        |
 | A viewpoint's place                           | The official map's Viewpoint label, matched by name and carried by the [map's fit](../spawned-places/design.md) | `OfficialMap`      |
 | A trigger member's group and id               | `TriggerExcelConfigData`, its open-world rows                                                                   | `TriggerTable`     |
-| A building point's service, place and turn    | The dump's `scene3_point.json`, the points of Mondstadt's restaurant point's kind                               | `ScenePoints`      |
+| A building point's service, place and turn    | The dump's `~/Esposter.noindex/genshin-parity/text/BinOutput/Scene/Point/scene3_point.json`, the points of Mondstadt's restaurant point's kind                               | `ScenePoints`      |
 
 An NPC birth's own `configId` is the NPC's id, so it becomes the member's object id, and the member's config id within the group stays unset. The two tables name the scene each row belongs to, and only the open world's are kept (`scripts/src/services/genshinAssets/sceneGroups/readViewpointMembers.ts`, which filters on the open-world `sceneId`; `scripts/src/services/genshinAssets/sceneGroups/buildSceneGroups.ts`, which filters the triggers the same way; `packages/genshin-world/src/models/sceneGroup/SceneGroupSource.ts` for the five sources, and `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/ViewCodexExcelConfigData.json` and `TriggerExcelConfigData.json` as the tables they read).
 
