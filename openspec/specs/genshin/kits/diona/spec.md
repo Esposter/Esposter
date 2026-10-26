@@ -49,7 +49,7 @@ Holding Icy Paws SHALL cast paws that give Diona a larger shield, once the hold 
 
 ### Requirement: Constellation 2 shields
 
-From constellation 2, each Icy Paws shield, whether tapped or held, SHALL be 15 percent larger.
+From constellation 2, each Icy Paws shield, whether tapped or held, SHALL be 15 percent larger (gcsim's `skill.go:96-97`). Its damage part, which gcsim also gives, is open in the design.
 
 #### Scenario: A shield at constellation 2 is larger
 
@@ -86,7 +86,7 @@ From constellation 1, Signature Mix SHALL give 15 energy as its field ends.
 
 ### Requirement: Constellation 6 buffs the team
 
-From constellation 6, each half-second tick of Signature Mix's field SHALL give every deployed member 200 Elemental Mastery if it is above half its HP, or 30 percent Incoming Healing Bonus if it is at or below half, each lasting until the next tick.
+From constellation 6, each half-second tick of Signature Mix's field SHALL give every deployed member 200 Elemental Mastery if it is above half its HP, or 30 percent Incoming Healing Bonus if it is at or below half, each lasting until the next tick (a duration the wiki does not give and gcsim sets at 2 seconds, open in the design).
 
 #### Scenario: A member above half HP gains Elemental Mastery
 
@@ -108,7 +108,7 @@ From constellation 6, each half-second tick of Signature Mix's field SHALL give 
 
 ### Requirement: Signature Mix cuts the ATK of the enemies it strikes from Ascension 4
 
-From Ascension 4, each enemy Signature Mix's initial hit or one of its ticks strikes SHALL lose 10% of its ATK for 15 seconds.
+From Ascension 4, each enemy Signature Mix's initial hit or one of its ticks strikes SHALL lose 10% of its ATK for 15 seconds (the wiki's Drunkards' Farce: an opponent who enters the AoE; a strike stands in for entering, open in the design).
 
 #### Scenario: Drunkards' Farce weakens an enemy
 
@@ -118,7 +118,7 @@ From Ascension 4, each enemy Signature Mix's initial hit or one of its ticks str
 
 ### Requirement: Paws deal no poise
 
-Icy Paws' paws SHALL deal no poise, a provisional zero until the game's own values are measured.
+Icy Paws' paws SHALL deal no poise, a provisional zero until the game's own values are measured. The wiki's Icy Paw DMG gives 30 poise each, and the kit does not build it: the difference is open in the design.
 
 #### Scenario: A paw deals no poise
 
