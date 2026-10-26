@@ -1,6 +1,6 @@
 # Screens
 
-In the game, a key or the Paimon menu opens a screen over the world: the map, the character screen, the inventory, the wish and the rest. The world screen does the same. What is open is a `ScreenKind`, either `World`, the world in play with nothing over it, or one of the screens the game opens from it. The world screen keeps it, reads the frame's pressed actions into it once a frame, and draws the open screen over the canvas (`packages/genshin-world/src/components/World/Session/Index.vue`, `packages/genshin-world/src/models/screen/ScreenKind.ts`).
+In the game, a key or the Paimon menu opens a screen over the world: the map, the character screen, the inventory, the wish and the rest. The world screen does the same. What is open is a `ScreenKind`, either `World`, the world in play with nothing over it, or one of the screens the game opens from it. The world screen keeps it, reads the frame's pressed actions into it once a frame, and draws the open screen over the canvas.
 
 ## Moving between screens
 
@@ -20,16 +20,16 @@ stateDiagram-v2
 
 `getNextScreenKind` is the rule, a pure function of what is open and the frame's pressed actions:
 
-- **From the world, a shortcut opens its screen.** `InputActionScreenKindMap` names the screen each opening action opens (`packages/genshin-world/src/services/screen/InputActionScreenKindMap.ts`); `Escape` and a pad's `Start` open the Paimon menu, as the game's controls bind them ([controls](../controls/design.md)).
-- **Over a screen, the way back is to the world.** `Escape`, `Start` and a pad's cancel close any screen, and a screen's own shortcut closes it again, as `M` closes the map it opened (`packages/genshin-world/src/services/screen/getNextScreenKind.ts`).
-- **One screen at a time.** Over a screen, every other screen's shortcut waits; the Paimon menu's entries are the one way from a screen to another, and they replace the menu with the screen chosen (`packages/genshin-world/src/services/screen/getNextScreenKind.ts`).
-- **A talk stays open.** Over a talk, every key waits, Escape and a pad's Start among them; only the talk's own end sets the world back (`packages/genshin-world/src/services/screen/getNextScreenKind.ts`). A talk is begun from the world by F on a resident, as the [dialogue](../dialogue/design.md) page describes.
+- **From the world, a shortcut opens its screen.** `InputActionScreenKindMap` names the screen each opening action opens; `Escape` and a pad's `Start` open the Paimon menu, as the game's controls bind them ([controls](../controls/design.md)).
+- **Over a screen, the way back is to the world.** `Escape`, `Start` and a pad's cancel close any screen, and a screen's own shortcut closes it again, as `M` closes the map it opened.
+- **One screen at a time.** Over a screen, every other screen's shortcut waits; the Paimon menu's entries are the one way from a screen to another, and they replace the menu with the screen chosen.
+- **A talk stays open.** Over a talk, every key waits, Escape and a pad's Start among them; only the talk's own end sets the world back. A talk is begun from the world by F on a resident, as the [dialogue](../dialogue/design.md) page describes.
 
-The rule is read only while the world is shown (`packages/genshin-world/src/services/screen/getNextScreenKind.ts`), so nothing opens under the opening that covers it.
+The rule is read only while the world is shown, so nothing opens under the opening that covers it.
 
 ## What a screen does to the world
 
-`ScreenBehaviourMap` answers for each kind (`packages/genshin-world/src/services/screen/ScreenBehaviourMap.ts`):
+`ScreenBehaviourMap` answers for each kind:
 
 | Field               | When true                                                                             |
 | :------------------ | :------------------------------------------------------------------------------------ |
@@ -37,12 +37,12 @@ The rule is read only while the world is shown (`packages/genshin-world/src/serv
 | `isHudHidden`       | the heads-up display is hidden                                                        |
 | `isPointerReleased` | the pointer's lock is let go, for the screen's own cursor                             |
 
-Every menu answers true to all three (`packages/genshin-world/src/services/screen/constants.ts`, `MENU_SCREEN_BEHAVIOUR`), as the game's single-player menus pause its simulation and its time while its music and particles carry on. Photo mode and a talk hold nothing: their clock runs with the HUD hidden, photo mode's camera orbits the character and its pointer still turns it, while a talk lets the pointer go for its replies. The world in play answers false to all three.
+Every menu answers true to all three (`MENU_SCREEN_BEHAVIOUR`), as the game's single-player menus pause its simulation and its time while its music and particles carry on. Photo mode and a talk hold nothing: their clock runs with the HUD hidden, photo mode's camera orbits the character and its pointer still turns it, while a talk lets the pointer go for its replies. The world in play answers false to all three.
 
-- **Held.** Under any screen but the world, the character on the field and its body neither step, photo mode's and a talk's included. Only photo mode's follow camera still looks, orbiting the held body; a menu's and a talk's stand where they are. Only a menu holds the world's fixed-step loops, so Windrise's clock and its clouds stand still under a menu and run on under a talk and in photo mode. Drawing goes on, so the world stays behind the screen (`packages/genshin-world/src/services/screen/ScreenBehaviourMap.ts`). This is a different thing from the world screen's `isPaused`, which stops drawing altogether while the opening covers the world.
-- **Pointer.** A screen that lets the pointer go releases the lock when it opens. Closing it does not take the lock back, since the browser grants one only to a click; a click on the world takes it, as it did the first time (`packages/genshin-world/src/components/World/Session/Index.vue`, the pointer release a screen asks for).
-- **A press that closes a screen is spent.** When the screen returns to the world, the world reads the input once more, so the key or click that closed it never reaches the world in play as an interact, a jump or an attack (`packages/genshin-world/src/components/World/Session/Index.vue`).
-- **A lock lost in play opens the menu.** The browser keeps `Escape` for itself while the pointer is locked, so a lock lost with the world in play opens the Paimon menu as the key would have (`packages/genshin-world/src/components/World/Session/Index.vue`, the `pointerlockchange` listener).
+- **Held.** Under any screen but the world, the character on the field and its body neither step, photo mode's and a talk's included. Only photo mode's follow camera still looks, orbiting the held body; a menu's and a talk's stand where they are. Only a menu holds the world's fixed-step loops, so Windrise's clock and its clouds stand still under a menu and run on under a talk and in photo mode. Drawing goes on, so the world stays behind the screen. This is a different thing from the world screen's `isPaused`, which stops drawing altogether while the opening covers the world.
+- **Pointer.** A screen that lets the pointer go releases the lock when it opens. Closing it does not take the lock back, since the browser grants one only to a click; a click on the world takes it, as it did the first time (the pointer release a screen asks for).
+- **A press that closes a screen is spent.** When the screen returns to the world, the world reads the input once more, so the key or click that closed it never reaches the world in play as an interact, a jump or an attack.
+- **A lock lost in play opens the menu.** The browser keeps `Escape` for itself while the pointer is locked, so a lock lost with the world in play opens the Paimon menu as the key would have (the `pointerlockchange` listener).
 
 ## Drawing the open screen
 
@@ -50,9 +50,9 @@ Every menu answers true to all three (`packages/genshin-world/src/services/scree
 
 - the [Paimon menu](../paimon-menu/design.md);
 - a built screen, which is a slot of `MenuScreen` named by its kind, filled by the world screen with what that screen needs and closed by setting the world back;
-- or, for a screen nobody has built yet, a placeholder: its title in the game's words (`ScreenKindGameTextKeyMap`) over a veil, and a way back (`packages/genshin-world/src/components/Menu/Placeholder/Index.vue`). Every shortcut therefore opens something, and closes it again, before its screen exists.
+- or, for a screen nobody has built yet, a placeholder: its title in the game's words (`ScreenKindGameTextKeyMap`) over a veil, and a way back. Every shortcut therefore opens something, and closes it again, before its screen exists.
 
-Each one is a dialog that takes focus as it opens, so the keyboard reaches it without a pointer (`packages/genshin-world/src/components/Menu/Screen/Index.vue`).
+Each one is a dialog that takes focus as it opens, so the keyboard reaches it without a pointer.
 
 A talk is none of these: `MenuScreen` draws nothing for it, and the world screen mounts the talk's host over the world while the talk is open ([dialogue](../dialogue/design.md)).
 
@@ -82,3 +82,17 @@ A talk is none of these: `MenuScreen` draws nothing for it, and the world screen
 - [ ] **Each screen's shortcut is the game's binding (M, C, L, B, J, F1 to F5, O, Enter)** — no source yet: the wiki's Controls page is not in the cache, and no recording was checked for the bindings.
 - [ ] **The menus pause the world's simulation and clock while their music and particles run on** — no source yet: the wiki's Time page is not in the cache, and no recording was checked for the held clock.
 - [ ] **Windrise's clock and clouds stand still under a menu and run on under a talk and in photo mode** — no source yet: no recording of Windrise's clock under each screen was checked.
+- [ ] **The world screen keeps the open `ScreenKind`, reads the frame's pressed actions into it once a frame, and draws the open screen over the canvas** — no source yet: game data or a snapshot that holds this behaviour.
+- [ ] **`InputActionScreenKindMap` names the screen each opening action opens** — no source yet: game data or a snapshot that holds this behaviour.
+- [ ] **Over a screen, Escape, Start and a pad's cancel close it, and a screen's own shortcut closes it again** — no source yet: game data or a snapshot that holds this behaviour.
+- [ ] **Over a screen, every other screen's shortcut waits, and the Paimon menu's entries are the one way from a screen to another** — no source yet: game data or a snapshot that holds this behaviour.
+- [ ] **Over a talk, every key waits, and only the talk's own end sets the world back** — no source yet: game data or a snapshot that holds this behaviour.
+- [ ] **The rule is read only while the world is shown, so nothing opens under the opening that covers it** — no source yet: game data or a snapshot that holds this behaviour.
+- [ ] **`ScreenBehaviourMap` answers for each screen kind** — no source yet: game data or a snapshot that holds this behaviour.
+- [ ] **Every menu answers true to all three of its world behaviours** — no source yet: game data or a snapshot that holds this behaviour.
+- [ ] **Under any screen but the world, the character and its body are held, and only a menu holds the world's fixed-step loops** — no source yet: game data or a snapshot that holds this behaviour.
+- [ ] **A screen that lets the pointer go releases the lock when it opens** — no source yet: game data or a snapshot that holds this behaviour.
+- [ ] **A press that closes a screen is spent, so the world reads no interact, jump or attack from it** — no source yet: game data or a snapshot that holds this behaviour.
+- [ ] **A lock lost in play opens the Paimon menu** — no source yet: game data or a snapshot that holds this behaviour.
+- [ ] **A screen nobody has built shows a placeholder with its title in the game's words over a veil, and a way back** — no source yet: game data or a snapshot that holds this behaviour.
+- [ ] **Each menu is a dialog that takes focus as it opens** — no source yet: game data or a snapshot that holds this behaviour.
