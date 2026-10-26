@@ -16,7 +16,7 @@ Each side SHALL switch its cards once during preparation, and the first round SH
 
 ### Requirement: Each side rolls eight dice a round and may reroll once
 
-Each side SHALL roll eight dice each round and MAY reroll any dice it names once, and naming no dice SHALL pass the reroll (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/GCGRuleTextDetailExcelConfigData.json`, rows `#1003` and `#2002`).
+Each side SHALL roll eight dice each round and MAY reroll any dice it names once, and naming no dice SHALL pass the reroll.
 
 #### Scenario: Naming no dice passes the reroll
 
@@ -216,7 +216,7 @@ Cryo, Hydro, Pyro, Electro and Dendro damage SHALL set its aura on the target, a
 
 ### Requirement: A reaction adds its bonus to the hit, and Swirl adds none
 
-A reaction SHALL add its bonus to the hit that makes it (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/GCGRuleTextDetailExcelConfigData.json`, rows 5001 to 5017), and Swirl SHALL add no bonus.
+A reaction SHALL add its bonus to the hit that makes it, and Swirl SHALL add no bonus.
 
 #### Scenario: Melt adds two to the hit
 
@@ -242,7 +242,7 @@ A reaction SHALL summon its card on the attacker's side, and a second reaction o
 
 ### Requirement: A frozen target takes extra damage from Pyro or Physical hits
 
-A frozen target SHALL take two more damage from a Pyro or Physical hit, and that hit SHALL remove the frozen status (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/GCGRuleTextDetailExcelConfigData.json`, row 5006).
+A frozen target SHALL take two more damage from a Pyro or Physical hit, and that hit SHALL remove the frozen status.
 
 #### Scenario: Pyro hit on a frozen target
 
