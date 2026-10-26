@@ -1,9 +1,11 @@
+import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitEvent } from "#src/models/kit/KitEvent";
 import type { KitField } from "#src/models/kit/KitField";
+import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitStance } from "#src/models/kit/KitStance";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
@@ -26,8 +28,10 @@ import { YELAN_CHARACTER_ID } from "#src/services/kit/characters/yelanKit";
 import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
 import { GOLDEN_CHALICE_BOUNTY_STATUS_ID } from "#src/services/party/constants";
 import { createParty } from "#src/services/party/createParty";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -58,6 +62,11 @@ const landThirdStep = (context: KitContext): void => {
   thirdStep.onStart?.(context);
   findField(context.kitEffectState)?.onTick(context, 0);
 };
+
+// The hit the sword dance's third step holds in the stance on the team: Pirouette's copy of the illusion's hit, which
+// Constellation 4 is set on, or Lunar Prayer's own once Lunar Prayer has taken the stance
+const takeThirdStepHit = (kitEffectState: KitEffectState): KitHit =>
+  takeOne(takeOne((findStance(kitEffectState)?.combatant.kit.normalAttacks ?? []).slice(2)).hits);
 
 describe(createNilouKitBehaviour, () => {
   // The conversion bonuses a constellation count gives, each as its attribute and its amount rounded to a thousandth
@@ -93,7 +102,25 @@ describe(createNilouKitBehaviour, () => {
   });
 
   const MAX_HEALTH = 10_000;
+  // Health past every energy threshold, so that no hit in these tests drops an enemy's energy
+  const SURVIVING_HEALTH = 1e9;
   const kitBody = createKitBody({ x: 0, z: 0 });
+
+  // Two enemies at the origin, which every area a hit reaches takes in
+  const createTwoEnemyMap = (): Map<string, Enemy> => {
+    const enemies = ["first", "second"].map((id) => createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, id }, ""));
+    for (const enemy of enemies) enemy.health = SURVIVING_HEALTH;
+    return new Map(enemies.map((enemy) => [enemy.id, enemy]));
+  };
+
+  // Nilou's skill enters Pirouette, and the combatant given strikes the two enemies with the copy of the illusion's hit
+  // That the third step carries
+  const strikeWithPirouetteThirdStep = (combatant: Combatant): KitContext => {
+    const context = createKitTestContext(combatant, { enemyMap: createTwoEnemyMap(), enemyTables });
+    NILOU_KIT.elementalSkill.onStart?.(context);
+    strikeKitEnemies([{ body: context.body, combatant, hit: takeThirdStepHit(context.kitEffectState) }], context);
+    return context;
+  };
 
   test("reads the strikes', charged attack's, plunges' multipliers from her proud skill group", () => {
     expect.hasAssertions();
@@ -456,5 +483,36 @@ describe(createNilouKitBehaviour, () => {
     );
 
     expect(enemy.statuses).toStrictEqual([]);
+  });
+
+  test("Constellation 4 gives 15 Elemental Energy once per attack, on the first enemy the Pirouette third step strikes", () => {
+    expect.hasAssertions();
+    const context = strikeWithPirouetteThirdStep(createNilouCombatant(4));
+    const constellation3Context = strikeWithPirouetteThirdStep(createNilouCombatant(3));
+
+    expect({
+      burstStatuses: findStatuses(context.kitEffectState),
+      burstStatusesAtConstellation3: findStatuses(constellation3Context.kitEffectState),
+      energy: getPartyMember(context.party, NILOU_CHARACTER_ID).energy,
+      energyAtConstellation3: getPartyMember(constellation3Context.party, NILOU_CHARACTER_ID).energy,
+    }).toStrictEqual({
+      burstStatuses: [{ characterId: NILOU_CHARACTER_ID, id: "nilou-c4-burst", kind: "status", secondsRemaining: 8 }],
+      burstStatusesAtConstellation3: [],
+      energy: 15,
+      energyAtConstellation3: 0,
+    });
+  });
+
+  test("Lunar Prayer's third step gives no Constellation 4 energy", () => {
+    expect.hasAssertions();
+    const combatant = createNilouCombatant(4);
+    const context = createKitTestContext(combatant, { enemyMap: createTwoEnemyMap(), enemyTables });
+    landThirdStep(context);
+    strikeKitEnemies([{ body: context.body, combatant, hit: takeThirdStepHit(context.kitEffectState) }], context);
+
+    expect({
+      burstStatuses: findStatuses(context.kitEffectState),
+      energy: getPartyMember(context.party, NILOU_CHARACTER_ID).energy,
+    }).toStrictEqual({ burstStatuses: [], energy: 0 });
   });
 });

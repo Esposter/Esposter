@@ -6,10 +6,13 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitShield } from "#src/models/kit/KitShield";
+import type { KitStatus } from "#src/models/kit/KitStatus";
 import type { KitSummon } from "#src/models/kit/KitSummon";
+import type { Party } from "#src/models/party/Party";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
@@ -23,6 +26,8 @@ import {
   LAYLA_NIGHT_STARS_ID,
   LAYLA_SHOOTING_STARS_ID,
 } from "#src/services/kit/characters/laylaKit";
+import { YELAN_CHARACTER_ID } from "#src/services/kit/characters/yelanKit";
+import { createKitStrike } from "#src/services/kit/createKitStrike.test";
 import {
   createKitTestContext,
   stepKitSeconds,
@@ -32,12 +37,14 @@ import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStat
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { assert, describe, expect, test } from "vitest";
 
 const LAYLA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, LAYLA_CHARACTER_ID);
 const ENEMY_TABLES = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
+const DAWN_STAR_ID = "layla-dawn-star";
 
 const createEnemyAt = (x: number, z: number): Enemy => ({
   ...createEnemy(ENEMY_TABLES, [], ENEMY_CAMP_MEMBER, ""),
@@ -46,6 +53,12 @@ const createEnemyAt = (x: number, z: number): Enemy => ({
 
 const countNightStars = (kitEffectState: KitEffectState) =>
   countKitResource(kitEffectState.effects, LAYLA_CHARACTER_ID, LAYLA_NIGHT_STARS_ID);
+
+// The Dawn Star statuses the team holds, one on each deployed member
+const findDawnStars = (kitEffectState: KitEffectState): KitStatus[] =>
+  kitEffectState.effects.filter(
+    (effect): effect is KitStatus => effect.kind === "status" && effect.id === DAWN_STAR_ID,
+  );
 
 const sendSkillUsed = (context: KitContext) =>
   LAYLA_KIT.onKitEvent?.(
@@ -91,16 +104,18 @@ describe(createLaylaKitBehaviour, () => {
 
   const MAX_HEALTH = 10_000;
 
-  // Layla on the team with the given enemies in the world, the enemies standing at the given places
+  // Layla on the team with the given enemies in the world, the enemies standing at the given places, on the team given
   const createLaylaContext = (
     kitEffectState: KitEffectState = { effects: [] },
     overrides: Partial<Combatant> = {},
     enemies: Enemy[] = [],
+    party: Party = createParty([LAYLA_CHARACTER_ID]),
   ): KitContext =>
     createKitTestContext(createLaylaCombatant(overrides), {
       enemyMap: new Map(enemies.map((enemy, index) => [String(index), enemy])),
       enemyTables: ENEMY_TABLES,
       kitEffectState,
+      party,
     });
 
   // Layla with her shield and two skill uses, so four Night Stars and the Shooting Stars, stepped to the first Shooting
@@ -367,5 +382,68 @@ describe(createLaylaKitBehaviour, () => {
     const damageBonusOf = (striker: Combatant) => slugStrike?.additiveBaseDamageBonus?.(striker) ?? 0;
 
     expect(damageBonusOf(buffedStriker)).toBeCloseTo(1.5 * damageBonusOf(createLaylaCombatant()));
+  });
+
+  test("The first Shooting Star gives each deployed member Dawn Star for 3 seconds", () => {
+    expect.hasAssertions();
+    const context = createLaylaContext(
+      { effects: [] },
+      { constellationCount: 4 },
+      [createEnemyAt(3, 0)],
+      createParty([LAYLA_CHARACTER_ID, YELAN_CHARACTER_ID]),
+    );
+    LAYLA_KIT.elementalSkill.onStart?.(context);
+    sendSkillUsed(context);
+    stepKitSeconds(context, 0.31);
+    sendSkillUsed(context);
+
+    // The first Shooting Star is cast on the 36th frame, the frame it gives Dawn Star on, before any step runs it down
+    const casts = stepRecordingCasts(context, 36);
+    expect({
+      castFrames: casts.map(({ frame }) => frame),
+      dawnStars: findDawnStars(context.kitEffectState).map(({ characterId, secondsRemaining }) => ({
+        characterId,
+        secondsRemaining,
+      })),
+    }).toStrictEqual({
+      castFrames: [36],
+      dawnStars: [
+        { characterId: LAYLA_CHARACTER_ID, secondsRemaining: 3 },
+        { characterId: YELAN_CHARACTER_ID, secondsRemaining: 3 },
+      ],
+    });
+  });
+
+  test("Dawn Star adds 5 percent of Layla's Max HP to a holder's Normal Attack until it lands, then ends 0.05 seconds later", () => {
+    expect.hasAssertions();
+    const enemy = createEnemyAt(3, 0);
+    const context = createLaylaContext({ effects: [] }, { constellationCount: 4 }, [enemy]);
+    const holder = context.activeCombatant;
+    LAYLA_KIT.elementalSkill.onStart?.(context);
+    sendSkillUsed(context);
+    stepKitSeconds(context, 0.31);
+    sendSkillUsed(context);
+    stepRecordingCasts(context, 36);
+    const bonusOf = (attackTag: AttackTag) =>
+      LAYLA_KIT.getStrikeAdditiveBaseDamageBonus?.(
+        createKitStrike(holder, attackTag),
+        enemy,
+        context.party,
+        context.kitEffectState.effects,
+      ) ?? 0;
+
+    expect(bonusOf(AttackTag.NormalAttack)).toBeCloseTo(0.05 * MAX_HEALTH);
+    expect(bonusOf(AttackTag.ElementalSkill)).toBe(0);
+
+    LAYLA_KIT.onKitEvent?.(
+      { attackTag: AttackTag.NormalAttack, enemy, kind: KitEventKind.EnemyHit, striker: holder },
+      context,
+      holder,
+    );
+    // The removal is scheduled 0.05 seconds on from the hit, so it has not run at 0.04 seconds and has at 0.05
+    stepKitSeconds(context, 0.04);
+    expect(findDawnStars(context.kitEffectState)).toHaveLength(1);
+    stepKitSeconds(context, 0.01);
+    expect(findDawnStars(context.kitEffectState)).toStrictEqual([]);
   });
 });
