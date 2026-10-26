@@ -6,7 +6,7 @@ Genshin's Adventure Rank as built — the rank to 60 on the game's own table, he
 
 ### Requirement: Rank follows Adventure EXP under the World Level cap
 
-The player's Adventure Rank SHALL be the rank their Adventure EXP reaches, held at the rank cap set by the last open World Level (`packages/genshin-world/src/services/adventureRank/computeAdventureRankStanding.ts`, the caps in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/PlayerLevelLockExcelConfigData.json`).
+The player's Adventure Rank SHALL be the rank their Adventure EXP reaches, held at the rank cap set by the last open World Level.
 
 #### Scenario: Rank holds at the cap while EXP keeps accruing
 
@@ -29,7 +29,7 @@ The player's Adventure Rank SHALL be the rank their Adventure EXP reaches, held 
 
 ### Requirement: A World Level opens after the rank and quest it needs
 
-A World Level SHALL open once the rank the World Level before it capped is reached and any quest its lock names is complete (`packages/genshin-world/src/services/adventureRank/computeAdventureRankStanding.ts`; the game's text at 2955635938 in `~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json` gives the same ranks and quests).
+A World Level SHALL open once the rank the World Level before it capped is reached and any quest its lock names is complete (the game's text at 2955635938 in TextMap_MediumEN.json gives the same ranks and quests).
 
 #### Scenario: World Level 1 opens at rank 20
 
@@ -46,7 +46,7 @@ A World Level SHALL open once the rank the World Level before it capped is reach
 
 ### Requirement: Adventure EXP past rank 60 is paid as Mora
 
-Adventure EXP past rank 60's total SHALL be paid as Mora at ten Mora for each point once the rank cap is 60, and SHALL not be gained while the cap is below 60 (`packages/genshin-world/src/services/adventureRank/gainAdventureExp.ts`).
+Adventure EXP past rank 60's total SHALL be paid as Mora at ten Mora for each point once the rank cap is 60, and SHALL not be gained while the cap is below 60.
 
 #### Scenario: EXP past the total pays Mora at the cap of 60
 
@@ -63,7 +63,7 @@ Adventure EXP past rank 60's total SHALL be paid as Mora at ten Mora for each po
 
 ### Requirement: The World Level can be lowered and restored from World Level 3
 
-From World Level 3 the player SHALL be able to lower the World Level by one and restore it by one, with each change followed by a 24 hour wait before the next change (`packages/genshin-world/src/services/adventureRank/toggleWorldLevelLowering.ts`; the game's text at 2955635938 and 2310679825 in `~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`).
+From World Level 3 the player SHALL be able to lower the World Level by one and restore it by one, with each change followed by a 24 hour wait before the next change (the game's text at 2955635938 and 2310679825 in TextMap_MediumEN.json).
 
 #### Scenario: Lowering the World Level by one
 
@@ -86,14 +86,14 @@ From World Level 3 the player SHALL be able to lower the World Level by one and 
 
 ### Requirement: The info icon opens the World Level dialog
 
-Clicking the info icon beside the World Level SHALL open the World Level dialog over the dimmed menu, and the dialog SHALL close back to the menu (`packages/genshin-world/src/components/Menu/WorldLevelDialog/Index.vue`).
+Clicking the info icon beside the World Level SHALL open the World Level dialog over the dimmed menu, and the dialog SHALL close back to the menu.
 
 #### Scenario: Dialog opens at the end of the help text
 
 - **GIVEN** the profile card shows the World Level
 - **WHEN** the info icon is clicked
 - **THEN** the World Level dialog opens over the dimmed menu
-- **AND** the game's help text is shown with its end in view (`~/Esposter.noindex/genshin-parity/captures/yt-P13s7kSmVOE-world-level-dialog-2024.mp4`)
+- **AND** the game's help text is shown with its end in view
 
 #### Scenario: Escape or the cross closes the dialog
 
@@ -104,7 +104,7 @@ Clicking the info icon beside the World Level SHALL open the World Level dialog 
 
 ### Requirement: Enemies stand at the level of the World Level played at
 
-Each camp's enemies SHALL stand at a level set by the World Level played at, and a change of World Level SHALL respawn every camp at its new level (`packages/genshin-world/src/services/adventureRank/computeSpawnLevel.ts`, `packages/genshin-world/src/components/World/Enemies/Index.vue`).
+Each camp's enemies SHALL stand at a level set by the World Level played at, and a change of World Level SHALL respawn every camp at its new level.
 
 #### Scenario: Camp enemies at World Level 0 stand at their camp level
 
@@ -126,7 +126,7 @@ Each camp's enemies SHALL stand at a level set by the World Level played at, and
 
 ### Requirement: Adventure EXP Source Grant
 
-The Adventure Rank SHALL rise by the Adventure EXP that each source gives once that source's page adds it through the shared grant (`packages/genshin-world/src/services/originalResin/claimOriginalResin.ts`, the first source built).
+The Adventure Rank SHALL rise by the Adventure EXP that each source gives once that source's page adds it through the shared grant (the first source built).
 
 #### Scenario: spent resin adds five Adventure EXP for each point spent
 
@@ -142,7 +142,7 @@ The Adventure Rank SHALL rise by the Adventure EXP that each source gives once t
 
 ### Requirement: Mora Past Rank 60
 
-The Adventure Rank SHALL pay ten Mora for each point of Adventure EXP gained once the player is at rank 60 (`packages/genshin-world/src/services/adventureRank/gainAdventureExp.ts`).
+The Adventure Rank SHALL pay ten Mora for each point of Adventure EXP gained once the player is at rank 60.
 
 #### Scenario: a gain at rank 60 pays ten Mora for each point
 
@@ -152,7 +152,7 @@ The Adventure Rank SHALL pay ten Mora for each point of Adventure EXP gained onc
 
 ### Requirement: Katheryne Rank Rewards
 
-Katheryne SHALL give a reached rank's reward to the player once, when the player talks to her at a branch of the Adventurers' Guild (`packages/genshin-world/src/services/adventureRank/claimRankRewards.ts`).
+Katheryne SHALL give a reached rank's reward to the player once, when the player talks to her at a branch of the Adventurers' Guild.
 
 #### Scenario: Katheryne gives a reached rank's reward once
 
@@ -174,7 +174,7 @@ Katheryne SHALL give a reached rank's reward to the player once, when the player
 
 ### Requirement: Claimed Rewards Kept
 
-The game SHALL keep each claimed rank reward with the player's progress across reloads (`packages/genshin-world/src/composables/useWorldAdventureRank.ts`, the `claimedRanks` the save keeps).
+The game SHALL keep each claimed rank reward with the player's progress across reloads (the `claimedRanks` the save keeps).
 
 #### Scenario: a claimed rank reward stays claimed after a reload
 
@@ -184,7 +184,7 @@ The game SHALL keep each claimed rank reward with the player's progress across r
 
 ### Requirement: System Rank Gates
 
-The Paimon menu SHALL keep a system's entry disabled until the player reaches the rank that opens that system (`packages/genshin-world/src/services/adventureRank/checkIsSystemOpen.ts`, used by `packages/genshin-world/src/components/Menu/Paimon/Index.vue`).
+The Paimon menu SHALL keep a system's entry disabled until the player reaches the rank that opens that system.
 
 #### Scenario: a system's entry stays disabled below its rank
 
@@ -202,3 +202,8 @@ The Paimon menu SHALL keep a system's entry disabled until the player reaches th
 
 - [ ] **Ten Mora for each point of Adventure EXP past rank 60** — no source yet: the game's text converts the EXP to Mora (text 365981086 in `TextMap_MediumEN.json`) but gives no rate, and the wiki's Adventure Rank page is not in the cache.
 - [ ] **Five Adventure EXP for each point of Original Resin spent** — no source yet: neither the game's text nor the dump's tables checked here gives the resin's Adventure EXP rate.
+- [ ] **Adventure EXP past rank 60 is paid as Mora** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Adventure EXP from a source rises the Adventure Rank once its page adds it** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Mora is paid for each point of Adventure EXP gained at rank 60** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Katheryne gives a reached rank's reward once, at a branch of the Adventurers' Guild** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A claimed rank reward stays claimed across reloads** — no source yet: game data or a snapshot that holds this behaviour
