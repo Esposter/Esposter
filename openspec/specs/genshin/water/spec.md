@@ -1,12 +1,12 @@
 ## Purpose
 
-Genshin's still water in the anime style, one surface for every sea and lake. Its colour is graded by the depth behind it from bright shallows to deep blue, the floor shows through the shallows bent by ripples, foam gathers at every shore with no mesh authored, the sun breaks into stepped glints, and the sky is reflected toward the horizon. Caustics shimmer on the ground under it, and under the surface the fog turns to the water's own.
+Genshin's still water in the anime style, one surface for every sea and lake. Its colour is graded by the depth behind it from bright shallows to deep blue, the floor shows through the shallows bent by ripples, foam gathers at every shore with no mesh authored, the sun breaks into stepped glints, and the sky is reflected toward the horizon. Caustics shimmer on the ground under it, and under the surface the fog turns to the water's own (`packages/genshin-engine/src/nodes/createWaterMaterial.ts`, `packages/genshin-engine/src/nodes/createCausticsNode.ts`, `packages/genshin-engine/src/water/updateUnderwaterFog.ts`).
 
 ## Requirements
 
 ### Requirement: One still surface at each region's water level
 
-Still water SHALL be one surface at each region's water level, shown wherever the ground dips beneath that level.
+Still water SHALL be one surface at each region's water level, shown wherever the ground dips beneath that level (`packages/genshin-world/src/components/World/Water/Index.vue`).
 
 #### Scenario: Ground dipping under the level
 
@@ -22,7 +22,7 @@ Still water SHALL be one surface at each region's water level, shown wherever th
 
 ### Requirement: Water colour graded by depth
 
-The water's colour SHALL grade from a bright shallow tint to a deep blue with the depth of water behind the surface.
+The water's colour SHALL grade from a bright shallow tint to a deep blue with the depth of water behind the surface (`packages/genshin-engine/src/nodes/createWaterMaterial.ts`).
 
 #### Scenario: Shallows bright
 
@@ -38,7 +38,7 @@ The water's colour SHALL grade from a bright shallow tint to a deep blue with th
 
 ### Requirement: Floor shows through the shallows
 
-The floor SHALL show through the shallows, bent by the ripples on the surface.
+The floor SHALL show through the shallows, bent by the ripples on the surface (`packages/genshin-engine/src/nodes/createWaterMaterial.ts`).
 
 #### Scenario: Floor visible through shallow water
 
@@ -48,7 +48,7 @@ The floor SHALL show through the shallows, bent by the ripples on the surface.
 
 ### Requirement: Foam gathers wherever water meets anything
 
-Foam SHALL gather in animated lines at every shore, rock and pillar that water meets, with no foam authored into the scene.
+Foam SHALL gather in animated lines at every shore, rock and pillar that water meets, with no foam authored into the scene (`packages/genshin-engine/src/nodes/createWaterMaterial.ts`).
 
 #### Scenario: Foam at a shore
 
@@ -58,7 +58,7 @@ Foam SHALL gather in animated lines at every shore, rock and pillar that water m
 
 ### Requirement: Sun breaks into stepped glints and the sky is reflected
 
-The sun SHALL break on the surface into stepped glints, and the sky SHALL be reflected toward the horizon.
+The sun SHALL break on the surface into stepped glints, and the sky SHALL be reflected toward the horizon (`packages/genshin-engine/src/nodes/createWaterMaterial.ts`).
 
 #### Scenario: Sun glints on the surface
 
@@ -74,7 +74,7 @@ The sun SHALL break on the surface into stepped glints, and the sky SHALL be ref
 
 ### Requirement: Caustics shimmer on the ground under the water
 
-The ground under the water SHALL shimmer with caustics that dim at night with the light and fade with depth.
+The ground under the water SHALL shimmer with caustics that dim at night with the light and fade with depth (`packages/genshin-engine/src/nodes/createCausticsNode.ts`, added to the ground by `packages/genshin-engine/src/terrain/createTerrainMaterial.ts`).
 
 #### Scenario: Caustics by day
 
@@ -90,7 +90,7 @@ The ground under the water SHALL shimmer with caustics that dim at night with th
 
 ### Requirement: Fog turns to the water's own under the surface
 
-When the eye goes under the water's level, the fog SHALL turn thick and take the water's colour, and surfacing SHALL give back the fog the sky had above.
+When the eye goes under the water's level, the fog SHALL turn thick and take the water's colour, and surfacing SHALL give back the fog the sky had above (`packages/genshin-engine/src/water/updateUnderwaterFog.ts`).
 
 #### Scenario: Diving under the surface
 
