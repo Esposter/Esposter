@@ -33,3 +33,7 @@ A running challenge SHALL fail when its clock runs out before its last target is
 - **GIVEN** a running challenge with targets still to strike
 - **WHEN** its clock runs out
 - **THEN** the challenge fails
+
+## Open
+
+- [ ] **A challenge is solved by striking every target before its clock runs out, as the game does** — no source yet: the wiki's Time Trial Challenge page is not in the genshin-wiki cache, and the clip at 0 to 55 s is not read frame by frame.
