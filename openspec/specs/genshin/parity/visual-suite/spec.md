@@ -32,14 +32,14 @@ The visual suite SHALL run in its own run, so that an ordinary test run never st
 
 ### Requirement: The opening's run covers every handoff
 
-The opening's run SHALL play the whole opening, including the login's flight, and SHALL fail if any screen is skipped along the way (see Open).
+The opening's run SHALL play the whole opening, including the login's flight, and SHALL fail if any screen is skipped along the way.
 
 #### Scenario: Opening played through
 
 - **GIVEN** the opening's run
 - **WHEN** it plays the opening
 - **THEN** every handoff between screens is checked
-- **AND** the run fails if a screen is skipped on the way
+- **AND** the run fails if a screen is skipped on the way (`Index.browser.test.ts` asserts each splash, the login's title and prompt, the marks and the finish in turn)
 
 ### Requirement: A moving screen is held still through its fixture's still state
 
@@ -80,4 +80,3 @@ A screen image written by a pass SHALL NOT count as approved until its compariso
 
 ## Open
 
-- [ ] **The opening's run fails when a screen is skipped** — no source yet: the skip assertion was not traced.
