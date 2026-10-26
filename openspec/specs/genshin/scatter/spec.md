@@ -78,4 +78,4 @@ The flowers' spacing, sizes and colours SHALL be treated as provisional until th
 
 ## Open
 
-- [ ] **The plants no record places are the small flowers among a region's grass** — no source yet: the placements read off the streams are not checked for flowers, and no capture is named for them.
+- [ ] **The plants no record places are the small flowers among a region's grass** — no source yet: no capture is named for the small flowers, and the placement streams are not searched for a flower kind in this pass.
