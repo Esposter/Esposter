@@ -1,6 +1,6 @@
 ## Purpose
 
-Kaeya's kit as built: five strikes, a charged attack, Frostgnaw with its first-ascension heal, Glacial Waltz's thirteen icicles, Constellations 1, 2 and 4, with Frostgnaw's damage against Water, the activation knockback, and Constellation 6 not built.
+Kaeya's kit as built: five strikes, a charged attack, Frostgnaw with its first-ascension heal, Glacial Waltz's thirteen icicles, Constellations 1, 2 and 4, and Constellation 6's Energy on the cast, with Frostgnaw's damage against Water, the activation knockback, and Constellation 6's fourth icicle not built.
 
 ## Requirements
 
@@ -131,12 +131,22 @@ From Constellation 2, each enemy defeated during Glacial Waltz SHALL extend it b
 - **WHEN** an enemy is defeated
 - **THEN** Glacial Waltz is not extended
 
+### Requirement: Constellation 6 Energy on the cast
+
+From Constellation 6, Glacial Waltz's cast SHALL regenerate 15 Energy to Kaeya 52 frames after the burst starts.
+
+#### Scenario: The cast regenerates Energy
+
+- **GIVEN** Kaeya has Constellation 6
+- **WHEN** he casts Glacial Waltz
+- **THEN** 15 Energy is regenerated 52 frames after the cast
+
 ### Requirement: Unbuilt Kaeya effects
 
-Kaeya's Constellation 6 SHALL NOT take effect.
+Kaeya's Constellation 6 fourth icicle SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
 - **GIVEN** Kaeya has Constellation 6
 - **WHEN** the player fights with Kaeya
-- **THEN** that effect has no effect
+- **THEN** the fourth icicle is not summoned

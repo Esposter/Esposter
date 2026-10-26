@@ -17,8 +17,11 @@ import { findStandingKitSummon } from "#src/services/kit/effects/findStandingKit
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { releaseKitHolds } from "#src/services/kit/effects/releaseKitHolds";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
+import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
+import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 
 // Measured: gcsim v2.47.2 (MIT) kaeya/skill.go, A1: each enemy Frostgnaw hits heals Kaeya by 15% of his ATK
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kaeya/skill.go
@@ -41,6 +44,10 @@ const CONSTELLATION_4_COOLDOWN_SECONDS = 60;
 const CONSTELLATION_4_HEALTH_SHARE = 0.2;
 const CONSTELLATION_4_SHIELD_HEALTH_SHARE = 0.3;
 const CONSTELLATION_4_SHIELD_SECONDS = 20;
+// Constellation 6's Energy on the cast, as gcsim v2.47.2 (MIT) kaeya/burst.go gives it: 15 Energy 52 frames after the burst
+const CONSTELLATION_6 = 6;
+const CONSTELLATION_6_ENERGY = 15;
+const CONSTELLATION_6_ENERGY_FRAMES = 52;
 const GLACIAL_WALTZ_ID = "kaeya-glacial-waltz";
 // The wiki's Glacial Heart: an opponent Frozen by Frostgnaw drops an Elemental Particle, up to two each use. The
 // Wiki gives no element for the particle, so it is Cryo, the element of the Frostgnaw that drops it
@@ -83,8 +90,8 @@ const spendGlacialHeartParticle = (kitEffectState: KitEffectState, characterId: 
 
 // Kaeya's behaviour: Frostgnaw's hit heals him from Ascension 1, and Glacial Waltz's icicles are a summon's hits, landing
 // From where he cast it and priced by him. Frostgnaw's damage against Water and Glacial Waltz's Activation knockback are
-// Not built. Ascension 4 and Constellations 1, 2 and 4 are built
-// Constellation 6 needs one more icicle, whose timing the record's icicle hits do not give
+// Not built. Ascension 4 and Constellations 1, 2 and 4 are built, with Constellation 6's Energy on the cast
+// Constellation 6's fourth icicle needs its timing, which the record's icicle hits do not give, so it is not built
 export const createKaeyaKitBehaviour = ({ kit, readHits, readSeconds }: KitRecordReader): KitBehaviour => {
   const icicles = readHits("icicle");
   const glacialHeartSeconds = kit.elementalSkill.seconds;
@@ -92,6 +99,11 @@ export const createKaeyaKitBehaviour = ({ kit, readHits, readSeconds }: KitRecor
   return {
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
+        // Constellation 6 regenerates 15 Energy 52 frames after the cast, as gcsim's burst.go gives it
+        if (combatant.constellationCount >= CONSTELLATION_6)
+          scheduleKitTask(kitEffectState, combatant.characterId, toKitSeconds(CONSTELLATION_6_ENERGY_FRAMES), (tick) =>
+            gainPartyMemberEnergy(tick.party, combatant, CONSTELLATION_6_ENERGY),
+          );
         // A recast replaces the Glacial Waltz standing, as gcsim's one burst does, so its icicles stop with it
         removeKitEffects(
           kitEffectState,

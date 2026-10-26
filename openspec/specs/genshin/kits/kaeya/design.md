@@ -9,9 +9,11 @@ Kaeya's kit is its record and one behaviour module, `createKaeyaKitBehaviour`, o
 - **Ascension 4's Glacial Heart is built from the wiki's text, with no cooldown and two particles a use.** An opponent Frozen by Frostgnaw drops one Elemental Particle, and the wiki caps a use of Frostgnaw at two, so each use sets two holds that each freeze spends, restarted by the next use. The wiki gives no element for the particle, so it is Cryo, the element of the Frostgnaw that drops it; that is a provisional choice, not a measured one. No cooldown is kept, as the wiki states none. Only a freeze by the skill counts, not one by a hit of another attack.
 - **Kaeya's reaches are priced with their offsets.** Its strikes, charge and plunges are priced a metre or so ahead of the body.
 
+- **Constellation 6's Energy on the cast is built.** gcsim (MIT) `kaeya/burst.go` gives 15 Energy 52 frames after the cast at Constellation 6, which the kit schedules as a task on the burst's start.
+
 ## Not built
 
-- **Constellation 6 is not built.** It needs one more icicle, whose timing the record's icicle hits do not give. Constellation 2 is built: each enemy defeated during Glacial Waltz extends it by 2.5 seconds, up to 15 seconds in all, as the kit hears `EnemyDefeated`.
+- **Constellation 6's fourth icicle is not built.** Its extra icicle sets the icicles' spacing to 120 frames over four, not three, and the record's icicle hits are timed for three, so they do not give it. Constellation 2 is built: each enemy defeated during Glacial Waltz extends it by 2.5 seconds, up to 15 seconds in all, as the kit hears `EnemyDefeated`.
 - **Glacial Waltz's activation knockback is not built.** Its 400 poise has no damage and gcsim gives no area for it, so the icicles alone are built.
 
 ## Key files
