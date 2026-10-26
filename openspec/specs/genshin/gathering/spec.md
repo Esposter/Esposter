@@ -1,12 +1,12 @@
 ## Purpose
 
-The plants and specialties the official map marks, placed by the fit into each region as gathering points, picked with F and kept gone until their respawn. A local specialty comes back 46 hours after it is picked, and a cooking ingredient at the game's midnight that follows, as the wiki gives each. The gather table's refresh ids name no policy in the dump, so the category settles it.
+The plants and specialties the official map marks, placed by the fit into each region as gathering points, picked with F and kept gone until their respawn. A local specialty comes back 46 hours after it is picked, and a cooking ingredient at the game's midnight that follows, as the wiki gives each. The gather table's refresh ids name no policy in the dump, so the category settles it (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/GatherExcelConfigData.json`, checked against `RefreshPolicyExcelConfigData.json`).
 
 ## Requirements
 
 ### Requirement: Gathering points stand where the official map marks their item
 
-Gathering points SHALL stand in each region where the official map marks their item, and an item the game excludes SHALL NOT be a gathering point.
+Gathering points SHALL stand in each region where the official map marks their item, and an item the game excludes SHALL NOT be a gathering point (`scripts/src/services/genshinAssets/gathering/constants.ts`).
 
 #### Scenario: Plant stands at its official map mark
 
@@ -18,7 +18,7 @@ Gathering points SHALL stand in each region where the official map marks their i
 
 - **GIVEN** an item is drawn by a mining outcrop instead
 - **WHEN** the gathering points are built
-- **THEN** no gathering point is made for that item
+- **THEN** no gathering point is made for that item (`scripts/src/services/genshinAssets/gathering/constants.ts`)
 
 ### Requirement: F picks a gathering point into the bag
 
@@ -74,7 +74,7 @@ An ore SHALL NOT be picked with F, and SHALL be broken by the hits that land on 
 
 ### Requirement: An ore breaks once its hits reach its poise requirement
 
-An ore SHALL break once the poise its landed hits deal reaches its requirement for the kind of hit, blunt or melee.
+An ore SHALL break once the poise its landed hits deal reaches its requirement for the kind of hit, blunt or melee (`packages/genshin-world/src/services/gathering/strikeOre.ts`).
 
 #### Scenario: Burst breaks a crystal chunk in one hit
 
@@ -86,66 +86,75 @@ An ore SHALL break once the poise its landed hits deal reaches its requirement f
 
 - **GIVEN** a hit is neither blunt nor melee
 - **WHEN** it lands on an ore
-- **THEN** the ore takes no poise from it
+- **THEN** the ore takes no poise from it (`packages/genshin-world/src/services/gathering/strikeOre.ts`)
 
 #### Scenario: Claymore attacks, plunges and Geo damage strike blunt
 
 - **GIVEN** a claymore's normal attack, a sword's or polearm's plunge, or a hit that deals Geo damage lands on an ore
 - **WHEN** the hit is dealt
-- **THEN** the ore takes its poise as a blunt hit, against the blunt requirement
+- **THEN** the ore takes its poise as a blunt hit, against the blunt requirement (`packages/genshin-world/src/services/kit/checkIsBluntHit.ts`)
 
 #### Scenario: A Geo character's physical normal attack and a listed exception do not strike blunt
 
 - **GIVEN** a Geo character's normal attack, which deals no element, lands on an ore, or Ningguang's plunge lands on it
 - **WHEN** the hit is dealt
-- **THEN** the ore takes its poise as a melee hit or none, and Ningguang's plunge is not blunt, as the wiki's table excepts it
+- **THEN** the ore takes its poise as a melee hit or none, and Ningguang's plunge is not blunt, as the wiki's table excepts it (`packages/genshin-world/src/services/kit/checkIsBluntHit.ts` for the Geo rule)
 
 #### Scenario: A Geo Traveler's skill strikes blunt, as the element it deals is Geo
 
 - **GIVEN** a Geo Traveler's skill, which takes her wielder's element, lands on an ore
 - **WHEN** the hit is dealt
-- **THEN** the ore takes its poise as a blunt hit
+- **THEN** the ore takes its poise as a blunt hit (`packages/genshin-world/src/services/kit/checkIsBluntHit.ts`, where Geo damage is blunt)
 
 #### Scenario: Converted poise from an infusion does not reach an ore
 
 - **GIVEN** a hit's damage has been converted by an infusion
 - **WHEN** it lands on an ore
-- **THEN** the converted poise does not count toward breaking the ore
+- **THEN** the converted poise does not count toward breaking the ore (`packages/genshin-world/src/services/gathering/readOreHit.ts`)
 
 #### Scenario: Overloaded explosion strikes ores nearby
 
 - **GIVEN** an Overloaded reaction lands on an enemy
 - **WHEN** the explosion resolves
-- **THEN** ores within three metres of that enemy take a blunt hit of ninety poise
+- **THEN** ores within three metres of that enemy take a blunt hit of ninety poise (`packages/genshin-world/src/services/gathering/readReactionOreHit.ts`; `~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/overload.go`, lines 53-54 and 62)
 
 ### Requirement: A broken ore drops its pieces where it lay
 
-A broken ore SHALL drop its certain piece where it lay, and one more for each of two draws that comes under ten per cent.
+A broken ore SHALL drop its certain piece where it lay, and one more for each of two draws that comes under ten per cent (`packages/genshin-world/src/services/gathering/rollOreDropCount.ts`; `packages/genshin-world/src/services/gathering/constants.ts`).
 
 #### Scenario: Broken ore drops its certain piece
 
 - **GIVEN** an ore breaks
 - **WHEN** it breaks
-- **THEN** its certain piece drops where it lay
+- **THEN** its certain piece drops where it lay (`packages/genshin-world/src/services/gathering/rollOreDropCount.ts`)
 
 #### Scenario: Extra piece drops on a successful draw
 
 - **GIVEN** an ore breaks
 - **WHEN** each of its two draws comes under ten per cent
-- **THEN** one extra piece drops for each draw that succeeds
+- **THEN** one extra piece drops for each draw that succeeds (`packages/genshin-world/src/services/gathering/rollOreDropCount.ts`)
 
 ### Requirement: An ore stands again on its own respawn
 
-A broken ore SHALL stand again on its own respawn: an iron chunk at the game's midnight, a white iron chunk or starsilver two days after it breaks, and a crystal chunk, amethyst lump or condessence crystal three days after it breaks.
+A broken ore SHALL stand again on its own respawn: an iron chunk at the game's midnight, a white iron chunk or starsilver two days after it breaks, and a crystal chunk, amethyst lump or condessence crystal three days after it breaks (`scripts/src/services/genshinAssets/gathering/constants.ts`).
 
 #### Scenario: White iron chunk is back two days after breaking
 
 - **GIVEN** a white iron chunk breaks
 - **WHEN** two days have passed
-- **THEN** it stands again
+- **THEN** it stands again (`scripts/src/services/genshinAssets/gathering/constants.ts`)
 
 #### Scenario: Crystal chunk is back three days after breaking
 
 - **GIVEN** a crystal chunk breaks
 - **WHEN** three days have passed
-- **THEN** it stands again
+- **THEN** it stands again (`scripts/src/services/genshinAssets/gathering/constants.ts`)
+
+## Open
+
+- [ ] **A local specialty stands again 46 hours after its pick** — no source yet: the Local Specialty wiki page is not in `~/Esposter.noindex/cache/genshin-wiki/`, and no 46-hour value was found in the gathering respawn code checked.
+- [ ] **A cooking ingredient stands again at the game's midnight** — no source yet: the code's daily respawn is the 04:00 reset (`packages/genshin-world/src/services/gathering/computeGatheringRespawn.ts`), and the design page says the same, so this midnight claim disagrees with the code.
+- [ ] **Gathering points stand where the official map marks their item** — no source yet: no label-tree file matching `teyvat`, `map-label` or `labels` was found under `~/Esposter.noindex/genshin-parity/references/`.
+- [ ] **F picks a gathering point into the bag, and F does not pick an ore** — no source yet: no gathering pick path was found in the files checked, so the pick, full-bag and no-ore scenarios are unchecked.
+- [ ] **Ningguang's plunge is not blunt, as the wiki's table excepts it** — no source yet: the wiki's Blunt Attacks table is not cached; `packages/genshin-world/src/services/kit/CharacterIdBluntActionMap.ts` carries the exception.
+- [ ] **A burst breaks a crystal chunk in one hit** — no source yet: the Zhongli clip `yt-EWYe-MYjmqU-ore-zhongli.mp4` was not frame-checked in this pass.
