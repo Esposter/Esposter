@@ -44,3 +44,8 @@ Dehya's Constellations 1, 2, 4 and 6 SHALL NOT take effect: Constellation 1 need
 - **GIVEN** Dehya has any of her constellations unlocked
 - **WHEN** the player fights with Dehya
 - **THEN** that constellation has no effect
+
+## Open
+
+- [ ] **the final hit's 300 frames are the wiki's 5-second maximum duration** — no source yet: the wiki's Sandstorm Assault text was not located; the dump's group 7931 index 7 gives 5 seconds.
+- [ ] **Molten Inferno's wiki page gives a CD of 20s and no energy** — no source yet: the Molten Inferno text was not located in the cached Dehya talents file; the dump's skill row gives the 20 seconds and no energy.
