@@ -36,4 +36,4 @@ A running challenge SHALL fail when its clock runs out before its last target is
 
 ## Open
 
-- [ ] **A challenge is solved by striking every target before its clock runs out, as the game does** — no source yet: the wiki's Time Trial Challenge page is not in the genshin-wiki cache, and the clip at 0 to 55 s is not read frame by frame.
+- [ ] **A challenge is solved by striking every target before its clock runs out, as the game does** — no source yet: the wiki's Time Trial Challenge page is not in the genshin-wiki cache, and the clip `~/Esposter.noindex/genshin-parity/captures/yt-B_l5b_KXt-o-time-trial-limit.mp4` is on disk, with its frames at 0 to 55 seconds not matched to the rule here.
