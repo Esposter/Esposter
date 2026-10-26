@@ -23,7 +23,7 @@ A reference is a wiki image or one frame of a recording, judged against and kept
 
 ## Sources
 
-- [Photo Mode](https://genshin-impact.fandom.com/wiki/Photo_Mode), Genshin Impact Wiki: capturing the game without its interface, for the world's references.
+- [Photo Mode](https://genshin-impact.fandom.com/wiki/Photo_Mode), Genshin Impact Wiki: not in the cache, so nothing here cites it.
 
 ## Open
 
