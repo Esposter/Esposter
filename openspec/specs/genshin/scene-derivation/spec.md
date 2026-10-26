@@ -1,6 +1,6 @@
 ## Purpose
 
-How a 3D scene is re-derived from the game's own assets, inside the recreation passes that order its unknowns. Each piece of information is sorted as exact, fieldless or on screen only and answered by the most exact query the data allows, never by a search over the frame. The witness render draws the exports through our own engine (`packages/genshin-world/parity/screens.ts`), so each stand-in is measured against the game's own data, and each is closed by the least representation that closes it: an exact value, a fitted generator or a richer kit. An open-world region is first laid out with every object at its exact place as a stand-in, then rebuilt one object at a time, each fitted against its own export.
+How a 3D scene is re-derived from the game's own assets, inside the recreation passes that order its unknowns. Each piece of information is sorted as exact, fieldless or on screen only and answered by the most exact query the data allows, never by a search over the frame. The witness render draws the exports through our own engine, so each stand-in is measured against the game's own data, and each is closed by the least representation that closes it: an exact value, a fitted generator or a richer kit. An open-world region is first laid out with every object at its exact place as a stand-in, then rebuilt one object at a time, each fitted against its own export.
 
 ## Requirements
 
@@ -41,7 +41,7 @@ A scene SHALL be inventoried, listing every object, material, texture and script
 
 - **GIVEN** a scene is to be re-derived
 - **WHEN** the inventory is taken
-- **THEN** every renderer, material, texture slot and script spawn the scene uses is listed (`scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts`)
+- **THEN** every renderer, material, texture slot and script spawn the scene uses is listed
 - **AND** no stand-in is built until the inventory is complete
 
 ### Requirement: Each loss is priced in its pass and the largest is closed first
@@ -52,7 +52,7 @@ Each loss inside a pass SHALL be priced by the frame error it could recover, and
 
 - **GIVEN** a pass has several losses
 - **WHEN** the next loss is chosen
-- **THEN** the loss that recovers the most frame error is chosen (`scripts/src/services/genshinParity/witness/rankReferenceGains.ts`)
+- **THEN** the loss that recovers the most frame error is chosen
 
 #### Scenario: A later pass waits for the earlier pass to freeze
 
@@ -88,13 +88,13 @@ A representation SHALL be judged by its pass's measure at the reference cameras,
 
 ### Requirement: Each layer of a reference is scored on its own
 
-Each layer of a reference SHALL be scored on its own, so that a change is judged where it lands (`scripts/src/services/genshinParity/reference/compareScreen.ts`).
+Each layer of a reference SHALL be scored on its own, so that a change is judged where it lands.
 
 #### Scenario: A change is judged on the layer it changes
 
 - **GIVEN** a change alters one layer of a scene
 - **WHEN** the scene is scored
-- **THEN** that layer's own shape, tone and detail scores show the change (`scripts/src/services/genshinParity/reference/compareScreen.ts`)
+- **THEN** that layer's own shape, tone and detail scores show the change
 - **AND** the other layers' scores are unchanged
 
 ### Requirement: An open-world region is laid out first and each object rebuilt once
@@ -115,7 +115,7 @@ An open-world region SHALL be laid out with every object at its exact place, and
 
 ### Requirement: Nothing of the game's files ships in the product
 
-The product SHALL NOT commit, build, upload or deploy any file, format or data of the game, and SHALL ship only its own shaders, geometry and fitted data (`packages/genshin-engine/src/nodes/createToonMaterial.ts`, `scripts/src/services/genshinAssets/shared/constants.ts`).
+The product SHALL NOT commit, build, upload or deploy any file, format or data of the game, and SHALL ship only its own shaders, geometry and fitted data.
 
 #### Scenario: A deployed product holds no game data
 
@@ -128,17 +128,17 @@ The product SHALL NOT commit, build, upload or deploy any file, format or data o
 
 - **GIVEN** the product is built
 - **WHEN** its contents are inspected
-- **THEN** the witness render page is not among them (`packages/genshin-world/parity/screens.ts`)
+- **THEN** the witness render page is not among them
 
 ### Requirement: A region's ground is published only once it holds its gate
 
-A region's ground SHALL be published only when its fit holds the bar set for it at its centre and its landmarks stand within the gate (`scripts/src/services/genshinAssets/fit/fitGroundPieces.ts`).
+A region's ground SHALL be published only when its fit holds the bar set for it at its centre and its landmarks stand within the gate.
 
 #### Scenario: A ground missing its gate is not published
 
 - **GIVEN** a region's fitted ground exceeds the bar at its centre
 - **WHEN** the fit is published
-- **THEN** the ground is not published (`scripts/src/services/genshinAssets/fit/fitGroundPieces.ts`)
+- **THEN** the ground is not published
 
 #### Scenario: A landmark moving more than the gate fails the fit
 
@@ -151,3 +151,10 @@ A region's ground SHALL be published only when its fit holds the bar set for it 
 - [ ] **The classing of each piece, the closed-form camera, the least-representation order and the reference-camera judgement** — process rules: no code check in this pass covers them, and the solvers were not traced.
 - [ ] **Each object of a region rebuilt once, and the light, haze and sky calibrated only after every gap is within noise** — no source yet: the layout pass and the calibration order were not traced in this pass.
 - [ ] **A landmark moving more than five centimetres fails the fit** — no source yet: the five-centimetre gate was not found in `fitGroundPieces.ts` or `fitGroundPiece.ts` in this pass.
+- [ ] **The witness render draws the exports through our own engine** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A scene's inventory lists every renderer, material, texture slot and script spawn it uses** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The next loss chosen is the one that recovers the most frame error** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Each layer of a reference is scored on its own, so a change shows on the layer it changes** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The product ships only its own shaders, geometry and fitted data** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The witness render page is not among the product's contents** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A region's ground is published only once its fit holds the bar at its centre and its landmarks stand within the gate** — no source yet: game data or a snapshot that holds this behaviour
