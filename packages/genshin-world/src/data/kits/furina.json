@@ -32,7 +32,7 @@
     "value": "FurinaChevalmarin"
   },
   "hits.salonMemberAttacks.0.multiplier": { "cause": "Unsourced", "value": 0 },
-  "hits.salonMemberAttacks.0.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "hits.salonMemberAttacks.0.poiseDamage": { "page": "Salon Solitaire", "row": 3, "source": "Wiki" },
   "hits.salonMemberAttacks.1.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 }
@@ -47,7 +47,7 @@
     "value": "FurinaUsher"
   },
   "hits.salonMemberAttacks.1.multiplier": { "cause": "Unsourced", "value": 0 },
-  "hits.salonMemberAttacks.1.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "hits.salonMemberAttacks.1.poiseDamage": { "page": "Salon Solitaire", "row": 2, "source": "Wiki" },
   "hits.salonMemberAttacks.2.area": {
     "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3.5 }
@@ -56,7 +56,7 @@
   "hits.salonMemberAttacks.2.gauge": { "file": "skill.go", "line": 279, "source": "Gcsim", "value": 1 },
   "hits.salonMemberAttacks.2.hitmarkFrames": { "file": "skill.go", "line": 46, "source": "Gcsim", "value": 41 },
   "hits.salonMemberAttacks.2.multiplier": { "cause": "Unsourced", "value": 0 },
-  "hits.salonMemberAttacks.2.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
+  "hits.salonMemberAttacks.2.poiseDamage": { "page": "Salon Solitaire", "row": 4, "source": "Wiki" },
   "hits.arkhe.multiplier": { "source": "Gcsim", "value": { "index": 9, "proudSkillGroupId": 8931 } },
   "hits.arkhe.poiseDamage": { "source": "Wiki", "value": 20 },
   "hits.ousiaBubble.area": {

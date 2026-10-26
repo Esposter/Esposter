@@ -1,0 +1,25 @@
+{{Advanced Properties
+|title     = Ousia Bubble DMG
+|gu        = 1U
+|icdtag    = none
+|poise     = 20
+|impulse   = 2
+|title2    = Gentilhomme Usher DMG
+|gu2       = 1U
+|icdtag2   = Octopus
+|icdtype2  = 30s/2 Hits
+|poise2    = 15
+|impulse2  = 2
+|title3    = Surintendante Chevalmarin DMG
+|gu3       = 1U
+|icdtag3   = Seahorse
+|icdtype3  = 30s/2 Hits
+|poise3    = 10
+|impulse3  = 2
+|title4    = Mademoiselle Crabaletta DMG
+|gu4       = 1U
+|icdtag4   = Hermit crab
+|poise4    = 30
+|impulse4  = 3
+|icdtype4  = No ICD
+}}
