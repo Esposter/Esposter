@@ -102,5 +102,5 @@ The open world SHALL NOT yet draw its rivers or the waterfalls its region data r
 
 ## Open
 
-- [ ] **A flowing water surface carries its ripples and foam downstream at its flow's speed in its direction** — no source yet: the river material draws still ("No flow yet"), so no flow moves a river's ripples or foam.
-- [ ] **The open world does not draw its rivers or the waterfalls its region data records** — no source yet: the Windrise world component mounts `WorldWaterfalls` and `WorldRivers`, so the requirement is contradicted; the delta that removes it is commit `aba38417f6`.
+- [ ] **A flowing water surface carries its ripples and foam downstream at its flow's speed in its direction** — no source yet: the game's water material's flow or a recording of a river's ripples and foam, which the river material at `packages/genshin-engine/src/nodes/createRiverMaterial.ts:12` waits on, so it draws still until then.
+- [ ] **The open world does not draw its rivers or the waterfalls its region data records** — contradicted by `packages/genshin-world/src/components/World/Windrise/Index.vue:579-580`: mounts WorldWaterfalls and WorldRivers; the removing delta is aba38417f6.
