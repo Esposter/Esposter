@@ -51,6 +51,6 @@ flowchart LR
 
 - [ ] **The marks' places and scales in the game's tree** — no source yet: the in-level HUD's interface tree export, which this machine does not hold (no `hud` folder under `~/Esposter/genshin-parity/extracted/`), so GrpMap's 0.6 scale, MarkSouth's inset, MarkSightFan's 1.25 scale and GrpBackMap's 180-unit half are unchecked.
 - [ ] **The stills agree with the tree: the ring 107 pixels from the centre at 1080 high, 1.2 pixels a unit** — no source yet: a pixel reading of the 1080-high still, which this pass did not take.
-- [ ] **The fan a quarter turn wide** — no source yet: the game's sight-fan image width from the tree, which this machine does not hold; the `.fan` clip in `packages/genshin-world/src/components/Hud/Minimap/Index.vue` cuts a wedge of about 72 degrees, not 90.
+- [ ] **The fan a quarter turn wide** — no source yet: the game's sight-fan image width from the tree, which this machine does not hold.
 - [ ] **The ring, the fan's white, the arrow's cyan, and the N's and arrow's measures at 1080 high** — no source yet: a pixel reading of the 1080-high references, which this pass did not take.
 - [ ] **The back stands where the game's tree places it** — no source yet: the game's UI tree for the minimap's back, not yet read.
