@@ -165,6 +165,8 @@ The things that each cost a search to find, to reach for first:
 
 ## Open
 
+- [ ] **A MonoBehaviour's fields are serialized in declaration order and aligned to four bytes** — no source yet: the Unity Manual's script-serialization page is not on disk.
+- [ ] **AssetStudio's SerializedPass reads a keyword-state mask only for Unity 2021.2** — no source yet: the upstream AssetStudio Shader.cs is not on disk.
 - [ ] **Shaders: the uber shader's 3,980 variant records, 1,553 compiled programs, 693 SHEX and 860 DXIL containers, and 446 of 448 exports read by the layout** — no source yet: a run of the shader reader over the dump's raw exports that prints these counts.
 - [ ] **Shaders: the peeking rule parses 665 of the local dump's 667 raw exports, and `Shader#199` fits neither trailer** — no source yet: a run of `readSerializedPass` over those exports that prints the counts.
 - [ ] **Shaders: the login stone's and the cloud layer's shaders do not parse in AnimeStudio** — no source yet: AnimeStudio's parse log for those two shaders, which no record keeps.
