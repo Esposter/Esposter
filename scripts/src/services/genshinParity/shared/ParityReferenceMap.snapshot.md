@@ -68,9 +68,9 @@ committed.
 | `quest-screen-details` | `QuestScreen` | 49.84% | 0.835 | 48.29% | 0.8746 |
 | `quest-screen-header` | `QuestScreen` | 41.97% | 0.999 | 40.41% | 0.8306 |
 | `reputation-screen` | `ReputationScreen` | 2.10% | 0.877 | 1.39% | 0.1458 |
-| `settings-audio-rows` | `MenuSettings` | 1.15% | 0.992 | 0.49% | 0.0786 |
-| `settings-graphics` | `MenuSettings` | 1.48% | 0.996 | 1.26% | 0.0979 |
-| `settings-graphics-rows` | `MenuSettings` | 1.18% | 0.997 | 0.58% | 0.0983 |
+| `settings-audio-rows` | `MenuSettings` | 1.01% | 0.995 | 0.38% | 0.0745 |
+| `settings-graphics` | `MenuSettings` | 1.59% | 0.996 | 1.26% | 0.1020 |
+| `settings-graphics-rows` | `MenuSettings` | 1.07% | 0.998 | 0.40% | 0.0888 |
 | `spiral-abyss-benediction` | `SpiralAbyssBenediction` | pending: no recording of the screen yet | | | |
 | `spiral-abyss-entry` | `SpiralAbyssEntry` | pending: no recording of the screen yet | | | |
 | `sumeru-city-location` | `WorldScreen` | 32.42% | 0.227 | 28.07% | 0.8157 |

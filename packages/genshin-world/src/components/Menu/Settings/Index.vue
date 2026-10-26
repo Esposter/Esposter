@@ -381,8 +381,12 @@ onMounted(() => {
   color: #ece5d7;
 }
 
+/* The mark is placed at the button's padding box, inside its ring, so it is moved out by the ring's width to sit concentric
+   With the ring, as the reference's disc does. Measured on the clip's close button (`yt-5EmJX_RyuY8-menu-settings`, 1920
+   Wide), where the cream disc sat a ring's width right and down of the ring's centre */
 .close-glyph {
   color: inherit;
+  translate: calc(var(--unit) * -5.5) calc(var(--unit) * -5.5);
 }
 
 .tabs {
@@ -417,6 +421,13 @@ onMounted(() => {
   color: #edeae7;
   font-size: calc(var(--unit) * 41);
   letter-spacing: calc(var(--unit) * 2.4);
+}
+
+/* The open tab is held selected by GameButton's row tint, which the game does not draw here: the reference's Graphics tab
+   Has no band behind its name, only the light below, so the tint is turned off on the tabs. Measured on the clip's sidebar
+   (`yt-5EmJX_RyuY8-menu-settings`, 1920 wide), where the band scored the sidebar's cell at 5% */
+.tabs .tab[aria-selected="true"]::before {
+  opacity: 0;
 }
 
 /* Provisional: the light the open tab's name trails to its right, behind its last letters, solved from the clip's glow
@@ -494,14 +505,15 @@ onMounted(() => {
 }
 
 /* The row's glass, lighter over its label and a tan panel under its value from 977 across, solved from the clip's rows
-   Over the world between them. Provisional: the faint shadow round its edge, read off the clip's column through a row
-   Against the world beside it */
+   Over the world between them. Its colour is 240 231 215 rather than 239 231 221: the clip's pill interior reads 226 217 202
+   There over the same world, where the old glass read 225 218 207. Provisional: the faint shadow round its edge, read off
+   The clip's column through a row against the world beside it */
 .row {
   position: relative;
   flex: none;
   height: calc(var(--unit) * 56);
   border-radius: calc(var(--unit) * 28);
-  background: rgb(239 231 221 / 0.78);
+  background: rgb(240 231 215 / 0.78);
   box-shadow: 0 0 calc(var(--unit) * 3) rgb(0 0 0 / 0.15);
   color: #4b4d54;
   font-size: calc(var(--unit) * 27);
@@ -545,8 +557,8 @@ onMounted(() => {
 .row:has(.choice) {
   background: linear-gradient(
     to right,
-    rgb(239 231 221 / 0.78) calc(var(--unit) * 977),
-    rgb(239 231 221 / 0) calc(var(--unit) * 977)
+    rgb(240 231 215 / 0.78) calc(var(--unit) * 977),
+    rgb(240 231 215 / 0) calc(var(--unit) * 977)
   );
 }
 
