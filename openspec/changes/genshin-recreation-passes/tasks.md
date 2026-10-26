@@ -3,6 +3,7 @@
 - [ ] 1.1 Draw the display bloom in the engine's post pipeline with the game's threshold, scaler, intensity and four-level weights, and turn it on for the login scene. Verify: a test named after the scenario 'Bright stone in the login scene glows', written first and seen failing, and `pnpm -C scripts genshin:parity passes login --pass Display` still holds its contrast gate.
 - [ ] 1.2 Add the bloom reading over the brightest pixels of each reference. Verify: a test named after the scenario 'Bloom closes where it brings the brightest pixels closer'.
 - [ ] 1.3 Re-read the bloom's field when the drawn bloom reads no closer than none. Verify: a test named after the scenario 'A bloom that reads no closer reopens its field'.
+- [ ] 1.4 Fix the login's washed-out shaders in the colour pass with bloom on. Depends on 1.1. The login scene runs with bloom off (`isBloomed: false` in `packages/genshin-world/src/components/Login/Scene/Index.vue`), so its shaders read washed out against the game's frames. Verify: `pnpm -C scripts genshin:parity compare <login reference>` on each login reference reads a mean difference no worse than its row in `scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md`.
 
 ## 2. Clouds
 
