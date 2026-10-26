@@ -72,13 +72,16 @@ A camp's enemy stands at its camp level under World Level 0. From World Level 1 
 
 ## Still open
 
-- **Adventure EXP from the sources not built yet.** A source's page adds its EXP through `gainWorldAdventureExp`, the composable's gain, which takes the completed main quests along. Until a source's page calls it, its EXP is not gained.
-- **The Paimon menu's rank gates for systems not built yet.** An entry whose system is not built stays disabled. A system the wiki gates by rank takes its rank in `ScreenKindOpenRankMap` as its page is built.
+- [ ] **Adventure EXP from the sources not built yet** — no source yet: the sources' own pages, which add their EXP through `gainWorldAdventureExp`, the composable's gain, which takes the completed main quests along; until a page calls it, its EXP is not gained.
+- [ ] **The Paimon menu's rank gates for systems not built yet** — no source yet: the wiki's rank for each system not built, which its page takes in `ScreenKindOpenRankMap`; an entry whose system is not built stays disabled.
 - [ ] **Friends opens at Adventure Rank 2** — no source yet for the system: the rank-2 open-state rows (ids 30, 37 and 2101 of `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/OpenStateConfigData.json`) gate player level 2 and name no system, so none is shown to name Friends.
-- [ ] **EXP past rank 60 pays ten Mora for each point** — the code applies the rate (`packages/genshin-world/src/services/adventureRank/gainAdventureExp.ts`), but the game's text converts the EXP to Mora (text 365981086) with no rate, and the wiki's Adventure Rank page is not in the cache.
+- [ ] **EXP past rank 60 pays ten Mora for each point** — no source yet: a game source for the rate, since the game's text converts the EXP to Mora (text 365981086) with no rate and the wiki's Adventure Rank page is not in the cache; the code applies it (`packages/genshin-world/src/services/adventureRank/gainAdventureExp.ts`).
 - [ ] **The lowest enemy at each World Level sits 14 to 17 under its monster level** — no source yet: the wiki's enemy level ranges are not in the cache, and the name-plate measurement is still on the References sought list.
 - [ ] **The game has no tooltip on the World Level** — no source yet: the two recordings show the click and the dialog, not a hover over the info icon.
 - [ ] **The prompt's frame and choices are the quit prompt's measured layout** — no source yet: the quit prompt's measurement is not checked against the 2026 recording here.
+- [ ] **The dialog stays open after a change** — no source yet: neither recording shows the game after Confirm.
+- [ ] **The card's values stand right-aligned beside the info disc, as the current client draws them** — no source yet: the menu's reference is the 1.3 build's, with its values redacted.
+- [ ] **Adventure EXP accrues toward rank 60's total while a quest holds the rank, the rank catches up when it is done, and EXP past rank 60 is paid in Mora** — no source yet: game data or a snapshot that holds this behaviour
 
 ## Key files
 
