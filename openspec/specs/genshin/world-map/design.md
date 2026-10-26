@@ -67,12 +67,15 @@ flowchart TD
 - [ ] **Names are facts: the catalogue's names come from the wiki, and no shape comes from a map's imagery** — no source yet: the wiki's Area page is not in `~/Esposter.noindex/cache/genshin-wiki/`, and no region's shape was checked against imagery.
 - [ ] **The game's file holds no polygon for Nod-Krai's areas** — no source yet: `~/Esposter.noindex/genshin-parity/text/BinOutput/Scene/WorldArea/scene3_worldArea.json` was not searched for Nod-Krai's area names.
 - [ ] **A region swaps from its plateau to its pieces only when the fit allows it** — no source yet: the fit's refusal rule was not read.
-- [ ] **Windrise is a subarea of Galesong Hill in Mondstadt** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Enkanomiya, the Chasm's underground mines and the Sea of Bygone Eras are layers that carry their own terrain, sky and water** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A subarea takes the kind of ground the game's area table files it under, so the game's cities are marked as the game marks them** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Areas the file holds no polygon for keep their catalogue outlines, and Everfrozen Earth keeps a provisional square round Snezhnograd** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Each area lists the weathers it can have, its own first** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A region's buildings' kit palettes come from the hosted game data** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Mondstadt's ground is not laid over Windrise's base** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Windrise's great oak is a tree landmark, its Statue of The Seven a statue landmark, and each region's capital a building landmark** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Event areas, such as the Golden Apple Archipelago, are left out of the catalogue** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Windrise is a subarea of Galesong Hill in Mondstadt** — no source yet: the wiki's Area page, named in Sources, is not in the wiki cache.
+- [ ] **Enkanomiya, the Chasm's underground mines and the Sea of Bygone Eras are layers that carry their own terrain, sky and water** — no source yet: the wiki's Map page, named in Sources, is not in the wiki cache.
+- [ ] **A subarea takes the kind of ground the game's area table files it under, so the game's cities are marked as the game marks them** — no source yet: the wiki's Area page, named in Sources, is not in the wiki cache; `~/Esposter/genshin-parity/text/ExcelBinOutput/` holds no table named Area.
+- [ ] **Areas the file holds no polygon for keep their catalogue outlines, and Everfrozen Earth keeps a provisional square round Snezhnograd** — no source yet: the wiki's Area page, named in Sources, is not in the wiki cache; the outlines in `packages/genshin-world/src/data/catalogue.json` and Everfrozen Earth's square are not yet checked against it.
+- **Each area in the catalogue lists its weathers** — `packages/genshin-world/src/data/catalogue.json`.
+- [ ] **Each area's own weather comes first** — no source yet: the wiki's Area page, named in Sources, is not in the wiki cache.
+- **A region's buildings' kit palettes are read by the palette reader** — `packages/genshin-world/src/services/world/readRegionPalettes.ts`.
+- [ ] **A region's buildings' kit palettes come from the hosted game data** — no source yet: the palette records the reader fetches, not yet compared with the game's own palette table.
+- [ ] **Mondstadt's ground is not laid over Windrise's base** — no source yet: `packages/genshin-world/src/data/regions/mondstadt.json` not yet read for the ground layering against Windrise's base.
+- **The Mondstadt region file holds Tree, StatueOfTheSeven and Building landmarks** — `packages/genshin-world/src/data/regions/mondstadt.json`.
+- [ ] **Windrise's great oak is the Tree landmark, its Statue of The Seven the statue landmark, and each region's capital the Building landmark** — no source yet: the landmark positions in `mondstadt.json` are not yet matched to Windrise's oak, statue and capital.
+- [ ] **Event areas, such as the Golden Apple Archipelago, are left out of the catalogue** — no source yet: `packages/genshin-world/src/data/catalogue.json` not yet checked for an event-area entry; the wiki's Area page, named in Sources, is not in the wiki cache.
