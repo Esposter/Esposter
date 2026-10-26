@@ -82,5 +82,3 @@ flowchart TD
 
 - [ ] **The daily reset itself is at 04:00 on the Asia server's clock** — partly settled: the wiki's Reset page (cache `Reset.json`) gives the daily reset at 04:00, "based on the player's server's time zone", and names no zone or offset for the Asia server. Still open: that the Asia server's clock is UTC+8.
 - [ ] **The world keeps 04:00 where the wiki gives the mining respawn at 06:00** — partly settled: the wiki's Mining Outcrop page (cache `Mining_Outcrop.json`) gives the respawn at 6am, "2 hours after each daily reset", so the wiki's 06:00 stands. Still open: whether the dump's `BLOSSOM_REFRESH_CRYSTAL` 06:00:00 refresh (`BlossomRefreshExcelConfigData.json`) is the mining respawn, which no wiki page names.
-- [ ] **A moment at the reset belongs to the period it opens** — no source yet: `packages/genshin-world/src/services/time/computeLastDailyReset.test.ts` exists but was not opened for the at-04:00 assertion.
-- [ ] **The save keeps game-day dates and instants as ISO strings, the enemy's instant by its spawn key** — no source yet: the ISO-string shape in `packages/genshin-world/src/models/enemy/EnemyRespawnSave.ts` was not opened.
