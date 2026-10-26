@@ -131,3 +131,9 @@ From constellation four, a hit Beidou takes while she is on the field SHALL give
 - **GIVEN** Beidou is at constellation three
 - **WHEN** an enemy's strike costs her HP and a normal attack hit lands
 - **THEN** no extra hit follows that hit
+
+## Open
+
+- [ ] **The Targe outlasts Beidou's fall** — contradicted by `~/Esposter.noindex/cache/genshin-wiki/Category_Beidou_Talents.json`: Stormbreaker lists "Effects End Character Fallen" as a utility.
+- [ ] **A discharge lands even when the strike misses** — contradicted by `~/Esposter.noindex/cache/genshin-wiki/Category_Beidou_Talents.json`: discharges arise when Normal and Charged Attacks hit.
+- [ ] **Constellation 4 counts HP lost to a drown or a wildlife's charge** — no source yet: the cached Beidou page gives the constellation no text.
