@@ -85,8 +85,6 @@ Every field below is held only by the group scripts, which are the server's and 
 
 ## Open
 
-- [ ] **The hosted NPC births hold each NPC's spot, suites and config id, and leave out Hertha, Wagner, Katheryne, Sara and Timaeus** — no source yet: `sceneNpcBorn/scene3` is hosted, not in the local dump, so the births were not checked.
-- [ ] **The interactive map's viewpoints file keeps the viewpoints' text beside the other map references** — contradicted by `~/Esposter/genshin-parity/references/interactive-map/viewpoints.json`: 224 records, each with its viewpoint's text in `content`.
 - [ ] **The publish's notes count a handful of the codex's left-out rows** — no source yet: the publish notes were not run for the count in this pass.
 - [ ] **The Nod-Krai region's data file keeps its residents empty** — contradicted by `packages/genshin-world/src/data/regions/nod-krai.json`: it holds one resident, `lempo-isle` (id 7086).
 - [ ] **The group scripts hold the fields this page leaves out** — no source yet: `~/Esposter/genshin-parity/extracted/lua/raw/scene3.dat` names `born_pos`, `born_rot`, `routes`, `routes_config`, `block_rects` and `dummy_points`, but does not say which of the page's left-out rows those fields serve; the dummy point in `~/Esposter/genshin-parity/extracted/lua/raw/scene3_dummy_points.json` is not matched to the quests' location guide, which is not on disk.
