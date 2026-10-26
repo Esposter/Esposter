@@ -238,17 +238,12 @@ The weights are not in the tables. They are the wiki's: each slot's main affix c
 
 ## Open
 
-- [ ] **Enhancing costs one Mora per EXP point, and a fodder's recovered share costs none** — no source yet: the wiki's Artifact EXP page is not in the cache.
-- [ ] **Each enhancement's EXP is multiplied by five at one in a hundred and by two at nine in a hundred** — no source yet: the wiki's Artifact EXP page is not in the cache, and no dump table holds the chance.
-- [ ] **EXP past the highest level is lost** — no source yet: the wiki's Artifact page is not in the cache.
 - [ ] **An artifact holds at most four minor affixes** — no source yet: the wiki's Artifact page is not in the cache.
 - [ ] **A Sands of Eon rolls one of its five percentages** — no source yet: the wiki's Artifact/Distribution weights are not in the cache, and depot 1000 also lists flat HP, ATK and DEF.
 - [ ] **The main and minor affix weights, and each tier being as likely as the next** — no source yet: the Artifact/Distribution page is not in the cache, so the constants in `services/artifact/constants.ts` cannot be checked against it.
 - [ ] **A drop starts with three minor affixes at 80% and four at 20% for a domain's five-star, and at 66% and 34% for a boss's** — no source yet: the wiki's Loot System page is not in the cache.
-- [ ] **A locked artifact is never fodder** — no source yet: no cached wiki page or capture shows a lock refusing fodder.
 - [ ] **A character wears one piece of each slot** — no source yet: the wiki's Artifact page is not in the cache.
 - [ ] **Instructor's gives no Elemental Mastery for a summon's reaction after the wearer leaves** — no source yet: the wiki's Instructor page is not in the cache.
-- [ ] **The Exile's energy is not raised by Energy Recharge** — no source yet: the wiki's The Exile page is not in the cache, and the game's text says only that the effect cannot stack.
 - [ ] **The heals of Traveling Doctor and the other sets are raised by the Healing Bonuses** — no source yet: the wiki's Healing Bonus page is not in the cache.
 - [ ] **A failed Valley Rite check raises the next chance only while the wearer is on the field** — no source yet: the wiki's off-field note is not in the cache, and the game's text states no such limit.
 - [ ] **A defeat by wildlife counts for Bloodstained Chivalry, and a swap off the field does not end its status** — no source yet: the wiki's Bloodstained Chivalry page is not in the cache.
