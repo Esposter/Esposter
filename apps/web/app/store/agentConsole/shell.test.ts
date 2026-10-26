@@ -40,7 +40,7 @@ describe(useAgentConsoleShellStore, () => {
     const laterShellListener = createShellListener();
     agentConsoleShellStore.listenToShell(shellId, laterShellListener);
 
-    expect(shellListener.reset).toHaveBeenCalledTimes(1);
+    expect(shellListener.reset).toHaveBeenCalledExactlyOnceWith();
     expect(agentConsoleShellStore.shells).toHaveLength(1);
     expect(vi.mocked(laterShellListener.write).mock.calls).toStrictEqual([[""]]);
   });

@@ -4,10 +4,12 @@ import { useAgentConsolePanelStore } from "@/store/agentConsole/panel";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 describe(useAgentConsolePanelStore, () => {
-  const sheet = document.createElement("section");
-  const composer = document.createElement("textarea");
+  let sheet: HTMLElement;
+  let composer: HTMLTextAreaElement;
 
   beforeEach(() => {
+    sheet = document.createElement("section");
+    composer = document.createElement("textarea");
     sheet.id = AGENT_CONSOLE_ID;
     sheet.append(composer);
     document.body.append(sheet);

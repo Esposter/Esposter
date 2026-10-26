@@ -4,11 +4,13 @@ import { toDiffRows } from "@/services/agentConsole/toDiffRows";
 import { describe, expect, test } from "vitest";
 
 describe(toDiffRows, () => {
+  const unchangedRow = { newLine: "a", newLineNumber: 1, oldLine: "a", oldLineNumber: 1, type: DiffRowType.Unchanged };
+
   test("pairs a replaced line beside its replacement and keeps what is unchanged", () => {
     expect.hasAssertions();
 
     expect(toDiffRows("a\nb", "a\nc\nd")).toStrictEqual([
-      { newLine: "a", newLineNumber: 1, oldLine: "a", oldLineNumber: 1, type: DiffRowType.Unchanged },
+      unchangedRow,
       { newLine: "c", newLineNumber: 2, oldLine: "b", oldLineNumber: 2, type: DiffRowType.Changed },
       { newLine: "d", newLineNumber: 3, oldLine: "", oldLineNumber: 0, type: DiffRowType.Added },
     ]);
@@ -21,7 +23,7 @@ describe(toDiffRows, () => {
       { newLine: "a", newLineNumber: 1, oldLine: "", oldLineNumber: 0, type: DiffRowType.Added },
     ]);
     expect(toDiffRows("a\nb", "a")).toStrictEqual([
-      { newLine: "a", newLineNumber: 1, oldLine: "a", oldLineNumber: 1, type: DiffRowType.Unchanged },
+      unchangedRow,
       { newLine: "", newLineNumber: 0, oldLine: "b", oldLineNumber: 2, type: DiffRowType.Removed },
     ]);
   });
