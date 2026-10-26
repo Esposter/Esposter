@@ -1,6 +1,6 @@
 ## Purpose
 
-Razor's kit as built: the strikes, charged attack and collision, Claw and Thunder's press and hold, and Lightning Fang with the Wolf Within and its Soul Companion over the Electro Sigils, with Awakening's cooldown cut and Bite's DEF cut built, and his other passives, his third and fifth constellations, which add no kit effect and raise a talent by three levels on the constellations page, and his Hexerei kit left unbuilt.
+Razor's kit as built: the strikes, charged attack and collision, Claw and Thunder's press and hold, and Lightning Fang with the Wolf Within and its Soul Companion over the Electro Sigils, with Awakening's cooldown cut and Bite's DEF cut built, and his other passives, his third and fifth constellations, which add no kit effect and raise a talent by three levels on the constellations page (that talent level is open on the design page), and his Hexerei kit left unbuilt.
 
 ## Requirements
 
