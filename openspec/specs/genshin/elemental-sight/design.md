@@ -1,6 +1,6 @@
 # Elemental Sight
 
-Elemental Sight shows what can be acted on. Pressed, a range spreads out from the character, and inside it what cannot be acted on goes dark while the drops, the residents and the enemies stand lit. The [controls](../controls/design.md) read its binding, and the world answers it here. Trails are not drawn yet; the notes say what they wait on.
+Elemental Sight shows what can be acted on. Pressed, a range spreads out from the character, and inside it what cannot be acted on goes dark while the drops, the residents and the enemies stand lit. The [controls](../controls/design.md) read its binding, and the world answers it here. Trails are drawn for the Seelies, the bounties and the quests (`packages/genshin-world/src/services/elementalSight/computeQuestClueTrailEnds.ts`); the notes say what they wait on.
 
 ## How it works
 
