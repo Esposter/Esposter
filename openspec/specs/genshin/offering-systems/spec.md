@@ -17,7 +17,7 @@ An offering SHALL take every offering item the bag holds out of the bag in one o
 
 ### Requirement: Each level the held count covers is reached once
 
-An offering SHALL reach each next level its held count covers, taking that level's items off the count and paying its rewards once.
+An offering SHALL reach each next level its held count covers, taking that level's items off the count and paying its rewards once (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/OfferingLevelUpExcelConfigData.json`).
 
 #### Scenario: Held count covers two levels
 
@@ -44,7 +44,7 @@ An offering SHALL drop at the tree, as pick ups lying there, any items the bag h
 
 ### Requirement: The first offer starts the tree
 
-The tree SHALL reach its first level on the first offer whatever the bag holds, paying that level's reward once (offering 1 level 1 holds no items).
+The tree SHALL reach its first level on the first offer whatever the bag holds, paying that level's reward once (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/OfferingLevelUpExcelConfigData.json`, offering 1 level 1 holds no items).
 
 #### Scenario: First offer with no offering items
 
@@ -125,4 +125,4 @@ The world SHALL draw the Frostbearing Tree as a stand-in at its place in Mondsta
 
 - [ ] **The bag's offering items all leave the bag at one offer** — no source yet: no cached wiki page, capture or table read here shows one offer taking every item at once.
 - [ ] **Oculi offered at a statue reach levels by the tree's rule** — no source yet: the offering table (`~/Esposter/genshin-parity/text/ExcelBinOutput/OfferingOpenStateConfigData.json`) names 22 offerings and none is a statue, and no statue offering table is on disk.
-- [ ] **The tree stands at its place in Mondstadt's region** — partly cited: the requirement above places the stand-in at its place in Mondstadt's region; checked against `~/Esposter/genshin-parity/references/interactive-map/points.json`: the tree's label (158) sits on point 7179 at x 302, y 1036 in area 1, and the claim is open for the area's name because the held files do not name area 1.
+- [ ] **The tree stands at its place in Mondstadt's region** — no source yet: the area's name, since `~/Esposter/genshin-parity/references/interactive-map/points.json` places the tree's label (158) on point 7179 at x 302, y 1036 in area 1, and the held files do not name area 1.
