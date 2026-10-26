@@ -1,12 +1,12 @@
 ## Purpose
 
-The rules of a Statue of The Seven past being a jump, built and tested but not yet on a screen. Mondstadt's levels read from the game's level-up table with their rewards and stamina, the Oculi offered to level them, the maximum stamina they raise to 240 at most, and the Statue's Blessing's pool with its click heal and auto-recover.
+The rules of a Statue of The Seven past being a jump, built and tested but not yet on a screen. Mondstadt's levels read from the game's level-up table with their rewards and stamina (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/CityLevelupConfigData.json`), the Oculi offered to level them, the maximum stamina they raise to 240 at most, and the Statue's Blessing's pool with its click heal and auto-recover.
 
 ## Requirements
 
 ### Requirement: Oculi reach a region's levels in turn
 
-Oculi offered to a region SHALL be added to its held count, and each level SHALL be reached in turn as the held Oculi cover its cost, the Oculi it takes being taken off the count.
+Oculi offered to a region SHALL be added to its held count, and each level SHALL be reached in turn as the held Oculi cover its cost, the Oculi it takes being taken off the count (`packages/genshin-world/src/services/offering/offerItems.ts`).
 
 #### Scenario: Offering reaches a level
 
@@ -29,13 +29,13 @@ Oculi offered to a region SHALL be added to its held count, and each level SHALL
 
 ### Requirement: Maximum stamina rises with reached levels up to 240
 
-The maximum stamina SHALL rise with the stamina share of every reached level in every region, and SHALL never exceed two hundred and forty.
+The maximum stamina SHALL rise with the stamina share of every reached level in every region, and SHALL never exceed two hundred and forty (`packages/genshin-world/src/services/statue/computeMaximumStamina.ts`).
 
 #### Scenario: Mondstadt's tenth level
 
 - **GIVEN** Mondstadt's levels are reached up to the tenth
 - **WHEN** the maximum stamina is computed
-- **THEN** the maximum is one hundred and seventy
+- **THEN** the maximum is one hundred and seventy (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/CityLevelupConfigData.json`, whose Mondstadt stamina shares for levels 2 to 10 sum to 70)
 
 #### Scenario: Maximum held at the limit
 
@@ -45,7 +45,7 @@ The maximum stamina SHALL rise with the stamina share of every reached level in 
 
 ### Requirement: Restorative Power pool refills over time
 
-The Restorative Power SHALL hold five thousand for each unlocked statue as its maximum, and SHALL refill one percent of that maximum every fifteen seconds until it is full.
+The Restorative Power SHALL hold five thousand for each unlocked statue as its maximum, and SHALL refill one percent of that maximum every fifteen seconds until it is full (`packages/genshin-world/src/services/statue/regenerateRestorativePower.ts`).
 
 #### Scenario: Refill every fifteen seconds
 
@@ -61,7 +61,7 @@ The Restorative Power SHALL hold five thousand for each unlocked statue as its m
 
 ### Requirement: A click heals a tenth of a member's maximum HP from the pool
 
-A click SHALL heal a standing party member who is hurt by a tenth of their maximum HP, paid from the pool, and SHALL heal nothing for a fallen member or a member at full HP.
+A click SHALL heal a standing party member who is hurt by a tenth of their maximum HP, paid from the pool, and SHALL heal nothing for a fallen member or a member at full HP (`packages/genshin-world/src/services/statue/healPartyMemberWithPower.ts`).
 
 #### Scenario: Pool covers the full heal
 
@@ -86,7 +86,7 @@ A click SHALL heal a standing party member who is hurt by a tenth of their maxim
 
 ### Requirement: Auto-recover revives the fallen and heals the hurt to a threshold
 
-Auto-recover SHALL revive the deployed team's fallen members at thirty-five percent of their HP at no cost to the pool, and then SHALL heal every member under its threshold up to that threshold from the pool, slot by slot.
+Auto-recover SHALL revive the deployed team's fallen members at thirty-five percent of their HP at no cost to the pool, and then SHALL heal every member under its threshold up to that threshold from the pool, slot by slot (`packages/genshin-world/src/services/statue/autoRecoverParty.ts`).
 
 #### Scenario: Fallen member revived for free
 
@@ -112,3 +112,9 @@ Until the world screen holds the region's level, the pool and the auto-recover s
 - **WHEN** a player uses a statue
 - **THEN** the statue acts as a jump
 - **AND** no Oculus is offered to the region
+
+## Open
+
+- [ ] **The maximum stamina stops at 240, as the game's statues raise it** — no source yet: the wiki's Statue of The Seven page is not in the genshin-wiki cache, and no dump table read holds the cap.
+- [ ] **The Restorative Power holds 5,000 for each unlocked statue and refills 1% every 15 seconds** — no source yet: the wiki's page is not in the cache, and no dump table read holds these numbers.
+- [ ] **A click heals a tenth of Max HP, and auto-recover revives the fallen at 35%** — no source yet: the wiki's Statue of The Seven page is not in the genshin-wiki cache.
