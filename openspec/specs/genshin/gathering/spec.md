@@ -6,7 +6,7 @@ The plants and specialties the official map marks, placed by the fit into each r
 
 ### Requirement: Gathering points stand where the official map marks their item
 
-Gathering points SHALL stand in each region where the official map marks their item, and an item the game excludes SHALL NOT be a gathering point (`scripts/src/services/genshinAssets/gathering/constants.ts`).
+Gathering points SHALL stand in each region where the official map marks their item, and an item the game excludes SHALL NOT be a gathering point.
 
 #### Scenario: Plant stands at its official map mark
 
@@ -18,7 +18,7 @@ Gathering points SHALL stand in each region where the official map marks their i
 
 - **GIVEN** an item is drawn by a mining outcrop instead
 - **WHEN** the gathering points are built
-- **THEN** no gathering point is made for that item (`scripts/src/services/genshinAssets/gathering/constants.ts`)
+- **THEN** no gathering point is made for that item
 
 ### Requirement: F picks a gathering point into the bag
 
@@ -74,7 +74,7 @@ An ore SHALL NOT be picked with F, and SHALL be broken by the hits that land on 
 
 ### Requirement: An ore breaks once its hits reach its poise requirement
 
-An ore SHALL break once the poise its landed hits deal reaches its requirement for the kind of hit, blunt or melee (`packages/genshin-world/src/services/gathering/strikeOre.ts`).
+An ore SHALL break once the poise its landed hits deal reaches its requirement for the kind of hit, blunt or melee.
 
 #### Scenario: Burst breaks a crystal chunk in one hit
 
@@ -86,69 +86,69 @@ An ore SHALL break once the poise its landed hits deal reaches its requirement f
 
 - **GIVEN** a hit is neither blunt nor melee
 - **WHEN** it lands on an ore
-- **THEN** the ore takes no poise from it (`packages/genshin-world/src/services/gathering/strikeOre.ts`)
+- **THEN** the ore takes no poise from it
 
 #### Scenario: Claymore attacks, plunges and Geo damage strike blunt
 
 - **GIVEN** a claymore's normal attack, a sword's or polearm's plunge, or a hit that deals Geo damage lands on an ore
 - **WHEN** the hit is dealt
-- **THEN** the ore takes its poise as a blunt hit, against the blunt requirement (`packages/genshin-world/src/services/kit/checkIsBluntHit.ts`)
+- **THEN** the ore takes its poise as a blunt hit, against the blunt requirement
 
 #### Scenario: A Geo character's physical normal attack and a listed exception do not strike blunt
 
 - **GIVEN** a Geo character's normal attack, which deals no element, lands on an ore, or Ningguang's plunge lands on it
 - **WHEN** the hit is dealt
-- **THEN** the ore takes its poise as a melee hit or none, and Ningguang's plunge is not blunt, as the wiki's table excepts it (`packages/genshin-world/src/services/kit/checkIsBluntHit.ts` for the Geo rule)
+- **THEN** the ore takes its poise as a melee hit or none, and Ningguang's plunge is not blunt, as the wiki's table excepts it (for the Geo rule)
 
 #### Scenario: A Geo Traveler's skill strikes blunt, as the element it deals is Geo
 
 - **GIVEN** a Geo Traveler's skill, which takes her wielder's element, lands on an ore
 - **WHEN** the hit is dealt
-- **THEN** the ore takes its poise as a blunt hit (`packages/genshin-world/src/services/kit/checkIsBluntHit.ts`, where Geo damage is blunt)
+- **THEN** the ore takes its poise as a blunt hit (where Geo damage is blunt)
 
 #### Scenario: Converted poise from an infusion does not reach an ore
 
 - **GIVEN** a hit's damage has been converted by an infusion
 - **WHEN** it lands on an ore
-- **THEN** the converted poise does not count toward breaking the ore (`packages/genshin-world/src/services/gathering/readOreHit.ts`)
+- **THEN** the converted poise does not count toward breaking the ore
 
 #### Scenario: Overloaded explosion strikes ores nearby
 
 - **GIVEN** an Overloaded reaction lands on an enemy
 - **WHEN** the explosion resolves
-- **THEN** ores within three metres of that enemy take a blunt hit of ninety poise (`packages/genshin-world/src/services/gathering/readReactionOreHit.ts`; `~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/overload.go`, lines 53-54 and 62)
+- **THEN** ores within three metres of that enemy take a blunt hit of ninety poise
 
 ### Requirement: A broken ore drops its pieces where it lay
 
-A broken ore SHALL drop its certain piece where it lay, and one more for each of two draws that comes under ten per cent (`packages/genshin-world/src/services/gathering/rollOreDropCount.ts`; `packages/genshin-world/src/services/gathering/constants.ts`).
+A broken ore SHALL drop its certain piece where it lay, and one more for each of two draws that comes under ten per cent.
 
 #### Scenario: Broken ore drops its certain piece
 
 - **GIVEN** an ore breaks
 - **WHEN** it breaks
-- **THEN** its certain piece drops where it lay (`packages/genshin-world/src/services/gathering/rollOreDropCount.ts`)
+- **THEN** its certain piece drops where it lay
 
 #### Scenario: Extra piece drops on a successful draw
 
 - **GIVEN** an ore breaks
 - **WHEN** each of its two draws comes under ten per cent
-- **THEN** one extra piece drops for each draw that succeeds (`packages/genshin-world/src/services/gathering/rollOreDropCount.ts`)
+- **THEN** one extra piece drops for each draw that succeeds
 
 ### Requirement: An ore stands again on its own respawn
 
-A broken ore SHALL stand again on its own respawn: an iron chunk at the daily reset, a white iron chunk or starsilver two days after it breaks, and a crystal chunk, amethyst lump or condessence crystal three days after it breaks (`scripts/src/services/genshinAssets/gathering/constants.ts`).
+A broken ore SHALL stand again on its own respawn: an iron chunk at the daily reset, a white iron chunk or starsilver two days after it breaks, and a crystal chunk, amethyst lump or condessence crystal three days after it breaks.
 
 #### Scenario: White iron chunk is back two days after breaking
 
 - **GIVEN** a white iron chunk breaks
 - **WHEN** two days have passed
-- **THEN** it stands again (`scripts/src/services/genshinAssets/gathering/constants.ts`)
+- **THEN** it stands again
 
 #### Scenario: Crystal chunk is back three days after breaking
 
 - **GIVEN** a crystal chunk breaks
 - **WHEN** three days have passed
-- **THEN** it stands again (`scripts/src/services/genshinAssets/gathering/constants.ts`)
+- **THEN** it stands again
 
 ## Open
 
