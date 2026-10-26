@@ -161,8 +161,3 @@ Losing focus SHALL release every key held, since their releases never reach the 
 - **GIVEN** the player holds a movement key
 - **WHEN** the page loses focus
 - **THEN** every held key is released and the camera stops moving
-
-## Open
-
-- [ ] **The free camera is flown from where the follow camera left the view, mounted by photo mode** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The free camera's motion runs in fixed steps ahead of the floating origin's shift, and it is held above the ground and water** — no source yet: game data or a snapshot that holds this behaviour
