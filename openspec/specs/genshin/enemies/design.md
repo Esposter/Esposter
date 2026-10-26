@@ -106,7 +106,6 @@ A capsule that a hit landed on is tinted white for 0.15 seconds after the hit, a
 
 ## Notes
 
-
 - **The published tables hold a partial dump.** The `enemies/kinds` record holds the Hilichurl Fighter as the game's table has it, and `enemies/levelCurves` its curves' first ten levels; `genshin:assets enemies` publishes every kind and curve from the dump when it is run over it.
 - **The AI's numbers are provisional.** Its ranges, speeds and timings, the leash, the capsule's size, and the hit's tint and flash are starting points marked in `packages/genshin-world/src/services/enemy/constants.ts`, each to be measured off a recording or the Hilichurl's own clips.
 - **Character EXP is computed, not yet given.** The party's levels take it, since a quest's finish gives its Character EXP through `raiseCharacterByExp`, but nothing grants a defeat's roll yet, so a defeat's EXP is rolled and left. A defeat's drops are placed and picked up by the world's screen, and the component emits `strike` and `defeat` for it (`packages/genshin-world/src/components/World/Enemies/Index.vue`).
@@ -147,7 +146,7 @@ A capsule that a hit landed on is tinted white for 0.15 seconds after the hit, a
 - [Reset](https://genshin-impact.fandom.com/wiki/Reset), Genshin Impact Wiki, not in the wiki cache: common enemies outside an elite's group back 12 hours after defeat, elites with limited spawn points per day and their groups' commons at the daily reset, and normal bosses immediately after claiming the Trounce Blossom.
 - [Module:Drops Table/data](https://genshin-impact.fandom.com/wiki/Module:Drops_Table/data), Genshin Impact Wiki, not in the wiki cache: Mora and Character EXP by level band, each family's materials and the tiers' shares by band.
 - [Module:Drops Table](https://genshin-impact.fandom.com/wiki/Module:Drops_Table), Genshin Impact Wiki, not in the wiki cache: the drops table's display code, which reads its rates, Mora and Character EXP from its data page.
-- [Adventure EXP](https://genshin-impact.fandom.com/wiki/Adventure_EXP), Genshin Impact Wiki, not in the wiki cache: Adventure EXP from bosses' rewards and none from defeating enemies.
+- [Adventure EXP](https://genshin-impact.fandom.com/wiki/Adventure_EXP), Genshin Impact Wiki, not in the wiki cache: the Adventure EXP sources the open item below rests on.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's dump of the game's data: `MonsterExcelConfigData`, `MonsterCurveExcelConfigData` and `AnimalCodexExcelConfigData`, the tables the kinds are read from.
 
 ## Reference
