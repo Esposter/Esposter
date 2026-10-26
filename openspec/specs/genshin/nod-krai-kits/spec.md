@@ -66,4 +66,4 @@ The kits SHALL take every number they build from options supplied to them, so a 
 
 ## Open
 
-- [ ] **Nasha Town's halls, cranes and pipes are drawn by the dieselpunk works** — no source yet: a map from the `Area_Ndkl_Build_` assets in `~/Esposter/genshin-parity/extracted/maps/index.tsv` to the halls, cranes and pipes; the index's asset names carry no hall, crane, pipe or Nasha label.
+- [ ] **Nasha Town's halls, cranes and pipes are drawn by the dieselpunk works** — no source yet: a map from the `Area_Ndkl_Build_` assets in `~/Esposter/genshin-parity/extracted/maps/index.tsv` to the halls, cranes and pipes; the index names NXZ_House, NXZ_Qizhongji and LJC_Guandao among them, but no map ties them to the works.
