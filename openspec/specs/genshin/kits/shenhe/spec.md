@@ -34,7 +34,7 @@ Spring Spirit Summoning SHALL deal its press on tap, and holding it past half a 
 
 ### Requirement: Divine Maiden's Deliverance field
 
-Divine Maiden's Deliverance SHALL deal an initial hit (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/burst.go` lines 50 to 55) and leave a field 2 metres ahead of Shenhe (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/burst.go` line 48), whose DoT ticks summon two hits there (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/burst.go` lines 82 to 86), and each field tick SHALL hold an RES Decrease on the enemies within the field for one tick interval, 117 frames, as the kit's record reads (`packages/genshin-world/src/services/kit/characters/shenheKit.ts` line 151); gcsim holds it for 36 frames instead (see Open).
+Divine Maiden's Deliverance SHALL deal an initial hit (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/burst.go` lines 50 to 55) and leave a field 2 metres ahead of Shenhe (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/burst.go` line 48), whose DoT ticks summon two hits there (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/burst.go` lines 82 to 86), and each field tick SHALL hold an RES Decrease on the enemies within the field for one tick interval, 117 frames, as the kit's record reads; gcsim holds it for 36 frames instead (see Open).
 
 #### Scenario: Initial hit and field
 
@@ -46,7 +46,7 @@ Divine Maiden's Deliverance SHALL deal an initial hit (`~/Esposter/cache/gcsim-v
 
 - **GIVEN** Divine Maiden's Deliverance's field is standing
 - **WHEN** a DoT tick strikes an enemy
-- **THEN** that enemy's RES is decreased for one tick interval, 117 frames (`packages/genshin-world/src/services/kit/characters/shenheKit.ts` line 151; see Open)
+- **THEN** that enemy's RES is decreased for one tick interval, 117 frames (see Open)
 
 ### Requirement: Ascension 1 Cryo DMG Bonus in the field
 
@@ -201,6 +201,6 @@ Shenhe's other passives SHALL NOT take effect.
 
 - [ ] **Shenhe's normal attacks deal no poise damage** — contradicted by `~/Esposter/cache/genshin-wiki/Category_Shenhe_Talents.json`: the wiki lists 46.08 poise for a normal attack hit.
 - [ ] **Each tick's RES Decrease lasts one tick interval** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/burst.go`: the RES mod lasts 36 frames, two 18-frame field ticks.
-- [ ] **A field's tick is dealt as no attack kind** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/burst.go`: the field's DoT is tagged elemental burst (line 69).
+- [ ] **A field's tick is dealt as no attack kind** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/burst.go:69`: the field's DoT is tagged elemental burst.
 - [ ] **Holding Spring Spirit Summoning past half a second releases its hold** — no source yet: gcsim reads hold as a flag (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/skill.go` lines 50 to 53), and no recording of the threshold is on disk.
 - [ ] **The Skyfrost Mantra bonus lasts the press action's length** — no source yet: the wiki gives no window, and gcsim applies the bonus once to the summoning's damage snapshot (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/skill.go` lines 74 and 136) with no length stated.
