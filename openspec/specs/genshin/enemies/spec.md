@@ -142,7 +142,7 @@ An enemy's max health and ATK SHALL be its base values times the multiplier of i
 
 ### Requirement: A defeated camp member returns only after its camp's respawn time
 
-A defeated enemy SHALL NOT return before its respawn time, which depends on its camp: twelve hours for a camp of common enemies, the next daily reset for a camp with an elite, and on the next load for a camp with a boss (with the twelve hours as a constant).
+A defeated enemy SHALL NOT return before its respawn time, which depends on its camp: twelve hours (a constant) for a camp of common enemies, the next daily reset for a camp with an elite, and five seconds after the Trounce Blossom's claim for a camp with a normal boss, or at the first teleport after its defeat while the blossom is unclaimed.
 
 #### Scenario: A common camp member returns twelve hours after its defeat
 
@@ -156,10 +156,10 @@ A defeated enemy SHALL NOT return before its respawn time, which depends on its 
 - **WHEN** the next daily reset at 04:00 on the server's clock arrives (`~/Esposter/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, the `REFRESH_DAILY` rows with `14400`)
 - **THEN** the member returns
 
-#### Scenario: A boss camp returns on the next load with its reward claimed
+#### Scenario: A boss camp returns five seconds after its reward is claimed
 
-- **GIVEN** a camp with a boss whose reward is claimed
-- **WHEN** the page is next loaded
+- **GIVEN** a camp with a normal boss whose reward is claimed
+- **WHEN** five seconds pass after the claim
 - **THEN** the boss's camp is spawned again
 
 ### Requirement: A camp wakes together
@@ -270,7 +270,7 @@ Each enemy SHALL be drawn as a capsule tinted by its state, and SHALL be tinted 
 - [ ] **A defeated common enemy returns twelve hours after its defeat** — no source yet: the wiki's Reset page is not in the wiki cache.
 - [ ] **An elite camp's member returns at the next daily reset** — no source yet: the wiki's Reset page is not in the wiki cache, which gives the elite's rule.
 - [ ] **The server's clock is UTC+8** — no source yet: no row of the game's exports names the zone, and the wiki's Reset page is not in the wiki cache.
-- [ ] **A camp with a boss returns on the next load with its reward claimed** — no source yet: the wiki's Reset page is not in the wiki cache.
+- [ ] **A camp with a normal boss comes back whole with the boss** — no source yet: the Normal Bosses page gives the boss its return roughly five seconds after the claim, and says nothing of its camp's other members.
 - [ ] **An enemy drops its energy at each health threshold, once for its life** — no source yet: the wiki's Energy/Data page is not in the wiki cache.
 - [ ] **Each level band's Mora and Character EXP follow the wiki's table** — no source yet: the wiki's Module:Drops Table page is not in the wiki cache.
 - [ ] **No enemy gives Adventure EXP** — no source yet: the wiki's Adventure EXP page is not in the wiki cache.
