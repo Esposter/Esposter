@@ -45,4 +45,38 @@ describe(createHookRegistry, () => {
     expect(registry.hooks).toHaveLength(0);
     expect(hook).not.toHaveBeenCalled();
   });
+
+  // Unregistering twice must leave the other hooks alone: with the index missing, `splice(-1, 1)` would drop the last one
+  test("unregisters only its own hook when called twice", async () => {
+    expect.hasAssertions();
+
+    vi.stubGlobal("window", {});
+    const registry = createHookRegistry<(value: number) => void>();
+    const firstHook = vi.fn<(value: number) => void>();
+    const secondHook = vi.fn<(value: number) => void>();
+    const unregisterFirst = registry.register(firstHook);
+    registry.register(secondHook);
+    unregisterFirst();
+    unregisterFirst();
+    await registry.run(0);
+
+    expect(firstHook).not.toHaveBeenCalled();
+    expect(secondHook).toHaveBeenCalledExactlyOnceWith(0);
+  });
+
+  // A loop walking the list, when a hook unregisters itself, must still reach the hook after it
+  test("keeps a loop walking the hooks on the one after an unregister made mid-walk", () => {
+    expect.hasAssertions();
+
+    vi.stubGlobal("window", {});
+    const registry = createHookRegistry<() => void>();
+    let unregisterFirst = (): void => {};
+    const firstHook = vi.fn<() => void>(() => unregisterFirst());
+    const secondHook = vi.fn<() => void>();
+    unregisterFirst = registry.register(firstHook);
+    registry.register(secondHook);
+    for (const hook of registry.hooks) hook();
+
+    expect(secondHook).toHaveBeenCalledExactlyOnceWith();
+  });
 });
