@@ -34,5 +34,5 @@ The player plays each segment's notes through a gain of their own `packages/gens
 - [ ] **A second expression run moves the gains little** — no source yet: no second run's output is recorded.
 - [ ] **The expression is the largest gain of any step on the score, with pitch agreement unchanged** — no source yet: the score snapshot holds only final scores, not each step's gain.
 - [ ] **Gains fitted to half the bands and scored on the others leave nearly the same distance** — no source yet: no half-band fit run is recorded.
-- [ ] **Each segment carries one gain a window over every voice, which swells and fades a section** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The fit renders each segment as it ships and fits each window's gain to the game's** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Each segment carries one gain a window over every voice, which swells and fades a section** — no source yet: the game's expression curves in `~/Esposter/genshin-parity/extracted/music/`, not yet read for the gains.
+- [ ] **The fit renders each segment as it ships and fits each window's gain to the game's** — no source yet: the game's expression curves in `~/Esposter/genshin-parity/extracted/music/`, not yet read against the fitted gains.
