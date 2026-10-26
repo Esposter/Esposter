@@ -26,11 +26,14 @@ export const LOGIN_TOWERS_ROW_OFFSET: [number, number, number] = [0, -WALKWAY_LI
 export const LOGIN_CLOUD_SEA_ROW = { count: 2, length: 300 };
 // The glide, in metres a second: MonoLoginScene's two speeds, 3.5 while the title waits and 4.5 once the game
 // Prepares, which the current build's recording times by the walkway's repeats (genshin:parity glide) at 3.42 to 3.52
-// And, over a repeat already braking, 4.35. It changes pace by 0.63 each second, the slope of the older recording's
-// Last three seconds read off its paving, until the script's curves are named
+// And, over a repeat already braking, 4.35
 export const LOGIN_GLIDE_TITLE_SPEED = 3.5;
 export const LOGIN_GLIDE_PREPARING_SPEED = 4.5;
-export const LOGIN_GLIDE_ACCELERATION = 0.63;
+// The speed-up between them takes half a second: MonoLoginScene's curve at 0xa4 rises from 0.2 to 1 over 0.5 seconds,
+// And the recording's speed-up reads about half a second too. A straight ramp of that length stands in for its S shape
+const LOGIN_GLIDE_SPEED_UP_SECONDS = 0.5;
+export const LOGIN_GLIDE_ACCELERATION =
+  (LOGIN_GLIDE_PREPARING_SPEED - LOGIN_GLIDE_TITLE_SPEED) / LOGIN_GLIDE_SPEED_UP_SECONDS;
 // Where the glide comes to rest at the door, as metres scrolled: nine of the walkway's copies, the towers' row 144
 // Metres along its loop, where both older builds' door frames stand it, their towers and bridges moved as one with the
 // Camera held: 145.8 and 144.4 along. There the lantern tower stands close to the door's right and the colonnade low

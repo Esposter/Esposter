@@ -29,7 +29,7 @@ The vertical field of view SHALL be 45 degrees on a screen 18.5:9 or wider, and 
 
 ### Requirement: Glide pace
 
-The glide SHALL move at 3.5 metres a second while the title waits and at 4.5 metres a second once the game prepares, changing between the two by 0.63 metres a second each second.
+The glide SHALL move at 3.5 metres a second while the title waits and at 4.5 metres a second once the game prepares, changing between the two over half a second.
 
 #### Scenario: Title waits
 

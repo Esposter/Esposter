@@ -217,6 +217,6 @@ export const cameraTopic: ReferenceTopic = {
     "How the game brings the towers to the door's phase after a long idle: every recording found idles a few seconds, so the title's phase is read off its glide's length, not a rule of the script's",
     "Where the glide comes to rest: the recording's door frame was still slowing at 1.6 metres a second when the click came, so the rest stands a little nearer the door than its pose",
     "Why the title's repeats read 3.42 to 3.52 metres a second, wider than their 0.005: the stretch from 28.4 to 29.1 seconds, under the load's bar held at 45.29%, glides about a seventh slower than the one from 23.8 to 24.5, with no frame held, so either the script eases its speed or the recording's clock drifts against the game's",
-    "Which of MonoLoginScene's curves and their floats is the speed-up and which the braking to the door: 0x70 falls from 1 to 0.02 over 1, 0xa0 is 30, 0xa4 rises from 0.2 to 1 over 0.5, 0xd4 is 50. The recording's speed-up takes about half a second, and LOGIN_GLIDE_ACCELERATION and the even brake stand until one is named",
+    "Whether MonoLoginScene's 0x70 falls from 1 to 0.02 over a second is the braking to the door, and what 0xa0 (30) and 0xd4 (50) set: 0xa4 rises from 0.2 to 1 over half a second and is the speed-up LOGIN_GLIDE_ACCELERATION now ramps by, the recording's speed-up reading that length. The even brake stands until 0x70's place is named, the door frame having still slowed at 1.6 metres a second when the click came",
   ],
 };
