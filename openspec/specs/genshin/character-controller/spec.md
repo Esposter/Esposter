@@ -103,7 +103,7 @@ The character SHALL climb any surface too steep to walk when it moves into it wi
 - **GIVEN** the character is climbing
 - **WHEN** jump is pressed
 - **THEN** it jumps off the wall
-- **AND** it climbs again once that jump ends (`~/Esposter.noindex/genshin-parity/extracted/locomotion/Girl/locomotion.json`, whose climb-jump clip, ClimbDashU, lasts 1.08 s)
+- **AND** it climbs again once that jump ends (whose climb-jump clip, ClimbDashU, lasts 1.08 s)
 
 #### Scenario: Drop or empty stamina lets go of the wall
 
@@ -137,13 +137,13 @@ The character SHALL swim in water deeper than it can wade, and SHALL drown when 
 
 - **GIVEN** the character is swimming and moving
 - **WHEN** sprint is pressed
-- **THEN** it makes a swim dash (`~/Esposter.noindex/genshin-parity/extracted/locomotion/Girl/locomotion.json`, whose swim-dash clip covers 3.6 m in a second)
+- **THEN** it makes a swim dash (whose swim-dash clip covers 3.6 m in a second)
 
 #### Scenario: Running out of stamina in water drowns the character
 
 - **GIVEN** the character is swimming
 - **WHEN** its stamina runs out
-- **THEN** it drowns (`~/Esposter.noindex/genshin-parity/extracted/locomotion/Girl/locomotion.json`, whose drowning clip, SwimDie, lasts 3 s)
+- **THEN** it drowns (whose drowning clip, SwimDie, lasts 3 s)
 - **AND** after a while it returns to where its stamina was last full on foot, with stamina refilled
 
 #### Scenario: Ground within wading depth stands the character up
@@ -184,8 +184,7 @@ The character and its party SHALL share one stamina pool that starts at 100, ref
 
 - **GIVEN** the pool holds at least 20 stamina
 - **WHEN** a sword's charged attack starts
-- **THEN** 20 stamina is spent (`~/Esposter.noindex/cache/gcsim-v2.47.2/internal/template/character/stam.go`, lines 19 to 21)
-
+- **THEN** 20 stamina is spent
 #### Scenario: Charged attack that cannot be paid does not start
 
 - **GIVEN** the pool holds less than 20 stamina
@@ -200,13 +199,13 @@ The character and its party SHALL share one stamina pool that starts at 100, ref
 
 ### Requirement: Each body type moves by its own numbers
 
-Each character's speeds, heights and thresholds SHALL be those of its own body type, so that sprints and dashes cover different distances as the game's do (`~/Esposter.noindex/genshin-parity/extracted/locomotion/Male/locomotion.json`, `~/Esposter.noindex/genshin-parity/extracted/locomotion/Loli/locomotion.json`).
+Each character's speeds, heights and thresholds SHALL be those of its own body type, so that sprints and dashes cover different distances as the game's do.
 
 #### Scenario: Tall male covers more ground than short female
 
 - **GIVEN** a tall male and a short female each sprint for the same time
 - **WHEN** the distances are compared
-- **THEN** the tall male covers more ground (`~/Esposter.noindex/genshin-parity/extracted/locomotion/Male/locomotion.json`, 11.2 m over its dash clip, against the short female's 9.3 m in `~/Esposter.noindex/genshin-parity/extracted/locomotion/Loli/locomotion.json`)
+- **THEN** the tall male covers more ground (11.2 m over its dash clip, against the short female's 9.3 m)
 
 #### Scenario: Switching party character changes the numbers, not the place
 
