@@ -51,7 +51,7 @@ A trigger type the map does not name is not watched, and its achievements never 
 
 ## Parity
 
-The Achievements screen has no parity measure yet. Its look waits on `achievements-screen.mkv`, listed as owed on the roadmap.
+The Achievements screen has no parity measure yet. Its look waits on the achievements-screen recording, listed as owed on the roadmap.
 
 ## Key files
 
@@ -77,7 +77,7 @@ The Achievements screen has no parity measure yet. Its look waits on `achievemen
 
 ## Sources
 
-- [Achievements](https://genshin-impact.fandom.com/wiki/Achievements), Genshin Impact Wiki: the Primogems each pays, a namecard for a category done, open-ended categories, and tiers shown as stars, which the cached page cannot confirm (see Open).
+- [Achievements](https://genshin-impact.fandom.com/wiki/Achievements), Genshin Impact Wiki: the Primogems each pays, a namecard for a category done, open-ended categories, and tiers shown as stars, which no source on disk confirms (see Open).
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the achievement table with each one's category, trigger, count, reward and tier, the category table, and the quest table whose sub-quest ids the quest triggers name.
 
 ## Open
