@@ -104,6 +104,5 @@ The edges are emitted by `packages/genshin-world/src/composables/useWorldPickups
 ## Open
 
 - [ ] **The generators and per-frame selections the bench files cover are benched at two scales** — no source yet: `packages/genshin-engine/src` holds 16 `*.bench.ts` files (`computeTerrainTile.bench.ts`, `computeLeafCards.bench.ts` and the rest), and no bench exists for `createGrassCell`; the two-scale shape of each bench was not read.
-- **The session creates the `WorldEvents`, not the screen** — `createWorldEvents()` is called in `packages/genshin-world/src/components/World/Session/Index.vue` (line 328).
-- **The session composes, and defines a few functions of its own** — `packages/genshin-world/src/components/World/Session/Index.vue` defines `getGroundHeight` and others of its own.
+- [ ] **The screen creates the `WorldEvents`** — contradicted by `packages/genshin-world/src/components/World/Session/Index.vue`: the session calls `createWorldEvents()` at line 328, not the screen.
 - [ ] **The screen loads the ground the first frame draws** — no source yet: the screen's load steps (`packages/genshin-world/src/components/World/Screen/Index.vue`) name no ground read, and its only ground mention is a comment (line 49); the ground read was not located in the session either.
