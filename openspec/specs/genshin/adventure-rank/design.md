@@ -81,14 +81,6 @@ A camp's enemy stands at its camp level under World Level 0. From World Level 1 
 - [ ] **The prompt's frame and choices are the quit prompt's measured layout** — no source yet: the quit prompt's measurement is not checked against the 2026 recording here.
 - [ ] **The dialog stays open after a change** — no source yet: neither recording shows the game after Confirm.
 - [ ] **The card's values stand right-aligned beside the info disc, as the current client draws them** — no source yet: the menu's reference is the 1.3 build's, with its values redacted.
-- [ ] **Adventure EXP accrues toward rank 60's total while a quest holds the rank, the rank catches up when it is done, and EXP past rank 60 is paid in Mora** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The rank holds at the cap of the last open World Level until its quest is done, then rises to the rank the EXP reaches** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **An entry stays disabled below its rank, and the menu's other entries are open from the start** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **EXP is gained up to rank 60's total, and past it only once the cap is 60** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The World Level played at is the unlocked one less that single step** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The help text is the game's own text by its text id, its headings and numbers in the colours its tags give** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The prompt's Confirm makes the change, and its Cancel closes it back to the dialog** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Changing the World Level clears the camps and spawns them anew at the level the new World Level sets** — no source yet: game data or a snapshot that holds this behaviour
 
 ## Key files
 

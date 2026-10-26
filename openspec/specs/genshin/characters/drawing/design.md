@@ -26,29 +26,29 @@ The model [read from a pack](../pmx-reader/design.md) becomes one skinned mesh, 
 
 ## Key files
 
-| File                                                                                | Role                                                                                                            |
-| :---------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-engine/src/character/createPmxMesh.ts`                            | The skinned mesh: the geometry's groups, the skeleton, and the scale to metres                                  |
-| `packages/genshin-engine/src/character/createPmxSkeleton.ts`                        | Each bone nested and placed from its parent, and bound where it stands                                          |
-| `packages/genshin-engine/src/character/pose/computeCharacterPose.ts`                | The standard bones' rotations for a state, a pure function                                                      |
-| `packages/genshin-engine/src/character/pose/createCharacterPoser.ts`                | Drives the model's bones each frame, cross-fading between states                                                |
-| `packages/genshin-engine/src/character/checkIsPmxSphereDrawn.ts`                    | Whether a sphere mode is drawn: Multiply and Add, never Disabled or AdditionalUv                                |
-| `packages/genshin-engine/src/character/createCharacterMaterial.ts`                  | A PMX material as the game's shader: its inputs, its outline edge, its transparency and its draw                |
-| `packages/genshin-world/src/composables/useCharacterAvatar.ts`                      | Reads the Traveler's game model once the export index holds it, and draws it while the Traveler is on the field |
-| `packages/genshin-world/src/services/character/createSkinnedMeshFinder.ts`          | Finds the body's skinned mesh again only when a model arrives or is taken away                                  |
-| `packages/genshin-world/src/services/character/avatar/readCharacterAvatar.ts`       | Fetches an avatar's manifest, its binary and each texture its drawn materials name, once each                   |
-| `packages/genshin-world/src/services/character/avatar/updateAvatarFaces.ts`         | Sets each face's threshold and flip from the main light and the face's root bone, once a frame                  |
-| `packages/genshin-world/src/services/character/avatar/createAvatarTexture.ts`       | Reads the game's textures flipped to its UVs, with sRGB on the colour slots of `AVATAR_TEXTURE_SLOTS`           |
-| `packages/genshin-world/src/services/character/avatar/createCharacterAvatar.ts`     | Builds the skinned meshes over the binary's typed arrays, the rest-pose bones and the game's materials          |
-| `packages/genshin-world/src/services/character/avatar/createAvatarShadingInputs.ts` | The game's material values and textures as the shading's inputs, a missing one left to its default              |
-| `packages/genshin-engine/src/character/createCharacterShadingInputs.ts`             | The shading's inputs with each default the page sets out                                                        |
-| `packages/genshin-engine/src/character/shading/`                                    | The shading page's equations, each as a pure function and as a TSL node over shared constants                   |
-| `packages/genshin-engine/src/character/getSharedToonRamp.ts`                        | MMD's ten shared toon ramps, generated once in the world's own tones, a material's default ramp                 |
-| `packages/genshin-engine/src/models/nodes/SharedToonOutlinePassNode.ts`             | The outline pass, one shared material and one per distinct material edge, each width by its knots               |
-| `packages/genshin-engine/src/character/createPmxTexture.ts`                         | A texture decoded as the model samples it                                                                       |
-| `packages/genshin-world/src/services/character/readCharacterMesh.ts`                | A pack's model and its textures into one mesh through its reader, as a Result; a texture the release lacks is logged once with the model (`console.warn` at line 57)                                   |
-| `packages/genshin-world/src/components/Character/Model/Index.vue`                   | Draws a character's model at its holder's origin, and releases it                                               |
-| `packages/genshin-world/src/components/World/Windrise/Index.vue`                    | Stands the Traveler at Windrise's start point, drawn from the pack it is handed a reader of                     |
+| File                                                                                | Role                                                                                                                                                                 |
+| :---------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-engine/src/character/createPmxMesh.ts`                            | The skinned mesh: the geometry's groups, the skeleton, and the scale to metres                                                                                       |
+| `packages/genshin-engine/src/character/createPmxSkeleton.ts`                        | Each bone nested and placed from its parent, and bound where it stands                                                                                               |
+| `packages/genshin-engine/src/character/pose/computeCharacterPose.ts`                | The standard bones' rotations for a state, a pure function                                                                                                           |
+| `packages/genshin-engine/src/character/pose/createCharacterPoser.ts`                | Drives the model's bones each frame, cross-fading between states                                                                                                     |
+| `packages/genshin-engine/src/character/checkIsPmxSphereDrawn.ts`                    | Whether a sphere mode is drawn: Multiply and Add, never Disabled or AdditionalUv                                                                                     |
+| `packages/genshin-engine/src/character/createCharacterMaterial.ts`                  | A PMX material as the game's shader: its inputs, its outline edge, its transparency and its draw                                                                     |
+| `packages/genshin-world/src/composables/useCharacterAvatar.ts`                      | Reads the Traveler's game model once the export index holds it, and draws it while the Traveler is on the field                                                      |
+| `packages/genshin-world/src/services/character/createSkinnedMeshFinder.ts`          | Finds the body's skinned mesh again only when a model arrives or is taken away                                                                                       |
+| `packages/genshin-world/src/services/character/avatar/readCharacterAvatar.ts`       | Fetches an avatar's manifest, its binary and each texture its drawn materials name, once each                                                                        |
+| `packages/genshin-world/src/services/character/avatar/updateAvatarFaces.ts`         | Sets each face's threshold and flip from the main light and the face's root bone, once a frame                                                                       |
+| `packages/genshin-world/src/services/character/avatar/createAvatarTexture.ts`       | Reads the game's textures flipped to its UVs, with sRGB on the colour slots of `AVATAR_TEXTURE_SLOTS`                                                                |
+| `packages/genshin-world/src/services/character/avatar/createCharacterAvatar.ts`     | Builds the skinned meshes over the binary's typed arrays, the rest-pose bones and the game's materials                                                               |
+| `packages/genshin-world/src/services/character/avatar/createAvatarShadingInputs.ts` | The game's material values and textures as the shading's inputs, a missing one left to its default                                                                   |
+| `packages/genshin-engine/src/character/createCharacterShadingInputs.ts`             | The shading's inputs with each default the page sets out                                                                                                             |
+| `packages/genshin-engine/src/character/shading/`                                    | The shading page's equations, each as a pure function and as a TSL node over shared constants                                                                        |
+| `packages/genshin-engine/src/character/getSharedToonRamp.ts`                        | MMD's ten shared toon ramps, generated once in the world's own tones, a material's default ramp                                                                      |
+| `packages/genshin-engine/src/models/nodes/SharedToonOutlinePassNode.ts`             | The outline pass, one shared material and one per distinct material edge, each width by its knots                                                                    |
+| `packages/genshin-engine/src/character/createPmxTexture.ts`                         | A texture decoded as the model samples it                                                                                                                            |
+| `packages/genshin-world/src/services/character/readCharacterMesh.ts`                | A pack's model and its textures into one mesh through its reader, as a Result; a texture the release lacks is logged once with the model (`console.warn` at line 57) |
+| `packages/genshin-world/src/components/Character/Model/Index.vue`                   | Draws a character's model at its holder's origin, and releases it                                                                                                    |
+| `packages/genshin-world/src/components/World/Windrise/Index.vue`                    | Stands the Traveler at Windrise's start point, drawn from the pack it is handed a reader of                                                                          |
 
 ## Sources
 
@@ -60,41 +60,3 @@ The model [read from a pack](../pmx-reader/design.md) becomes one skinned mesh, 
 - [ ] **The pose and mesh oracle is three-stdlib's `MMDLoader`** — no source yet: a test or script that loads `MMDLoader`; none is in `packages`, `apps` or `scripts`.
 - [ ] **The avatar's modules are a separate chunk the export index gates, so nothing reaches production** — no source yet: the production build's chunk graph for the avatar modules.
 - [ ] **A witness render draws no character** — no source yet: the witness render's scene composition.
-- [ ] **A pack's material is drawn by the game's character shader, not MMD's toon** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The skinned mesh has one geometry group per material's run of triangles, in the file's order** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Each bone is nested under its parent, placed from it, and bound where it stands by the step back** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **MMD's unit is scaled into metres by the unit each character's id sets** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The body's path of Lumine's shader is built as TSL nodes over its equations** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Each equation's constants come from one module that its pure functions also read** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The material takes no three lighting, and its output is the shaded colour** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A pack's material fills the shading inputs as the shading page's production column says** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A material with no toon names the world's ramp** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Every material takes the flat lightmap the page proposes** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The brightness, desaturation and contrast are 1, 0 and 0, and the outline's knots are unit scales** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The light's colour scales the lit colour and the specular, and the light factor `f` is left out** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **`CharacterMaterialKind` selects the body, hair or face path** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A pack's material is always a body, since a PMX file names no kind** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The poser's standard bones are each found under the name a bone name map gives** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A bone's pose is written in its rest frame** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Each arm's rest is taken raised to the T, so an A-pose model holds the same pose as one in the T** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Each frame the poser turns the bones from the controller's state: the arms, the breath, the gait, the stances and the cross-fades** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A gait's stride is a full turn for each stride the state's speed covers** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The skinned mesh is looked for again only when a child is added to or taken from the body's tree** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The outline pass picks a solid material by its toon flag, and not a transparent one** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A material with an edge set is outlined in that edge, its colour the material's colour times its edge colour** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A material with no edge takes the world's own outline, its colour and width** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A game avatar's material takes its edge from the game's own values** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The outline's width is scaled along the view depth by the three knots** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A material outlined this way gets one outline material per distinct edge, built once and shared** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A material is blended unless its alpha or a texel is below full, and one set to draw both faces is drawn from behind** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A texture is decoded unpremultiplied and unflipped, and repeats past its edges** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A toon texture is read flipped, up its one column with the lit end at the top** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A texture drawn in two roles is decoded once for each role** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **`CharacterModel` stands the model at its holder's origin, turned half round to face -z** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The world plays the Traveler, drawn on the character controller's body from Windrise's start** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A character's material takes none of the environment's wetness** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A sphere is drawn only in the Multiply and Add modes, so a disabled or additional-UV sphere has no texture read or kept** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **In development the Traveler is drawn from the game's own avatar model, in place of the pack** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The avatar's textures are flipped to the game's bottom-left UVs, and only the colour slot decodes as sRGB** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The Traveler's stance and cycles are the poser's own, not the game's clips retargeted** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The reckoned unit is 0.08, and the Traveler's measured unit is 0.0909** — no source yet: game data or a snapshot that holds this behaviour

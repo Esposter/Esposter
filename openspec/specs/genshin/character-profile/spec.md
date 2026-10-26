@@ -101,4 +101,3 @@ The panel SHALL name the character's namecard once Friendship holds it, except f
 ## Open
 
 - [ ] **Xinyan, Yae Miko and Momoka have no namecard, and every other playable character has one** — no source yet: `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json` holds a namecard named for Yae Miko (id 210112, `UI_NameCardIcon_Yae1`, "Kitsune Dreaming"), and the Travellers' derived names (`UI_NameCardIcon_PlayerBoy` and `_PlayerGirl`) are absent.
-- [ ] **Locked stories show the game's own unlock line, and the chosen entry's title and text sit beside the list** — no source yet: game data or a snapshot that holds this behaviour
