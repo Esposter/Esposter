@@ -70,7 +70,7 @@ The furnishings' own table, "HomeWorldFurnitureExcelConfigData", is not read yet
 ## Notes
 
 - **The bag does not hold the furnishings yet.** A finished furnishing is taken into the bag as an item the caller defines `packages/genshin-world/src/services/home/collectHomeOrder.ts`, since the Furnishings tab and its item definitions are not built.
-- **Realm Currency is in the wallet.** It is a store of the realm's progress, counted as every currency is (`packages/genshin-world/src/models/inventory/Wallet.ts`, `packages/genshin-world/src/services/save/toWalletSave.ts`), and its game text name is mapped to `GameTextKey.RealmCurrency` (`packages/genshin-world/src/services/inventory/CurrencyGameTextKeyMap.ts`, line 23).
+- **Realm Currency is in the wallet.** It is a store of the realm's progress, which the game's text says accumulates as the Adeptal Energy Rank rises (`~/Esposter/genshin-parity/text/TextMap/TextMap_MediumEN.json`, text ids 1089342864 and 3750993256), counted as every currency is (`packages/genshin-world/src/models/inventory/Wallet.ts`, `packages/genshin-world/src/services/save/toWalletSave.ts`), and its game text name is mapped to `GameTextKey.RealmCurrency` (`packages/genshin-world/src/services/inventory/CurrencyGameTextKeyMap.ts`, line 23).
 - **The rates are read forward from a claim.** The caller settles a store at the rank in force before the rank changes, since a store accrues at the rank it was last claimed at `packages/genshin-world/src/services/home/settleHomeStores.ts`.
 
 ## Sources
