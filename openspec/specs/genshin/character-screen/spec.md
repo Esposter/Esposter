@@ -130,7 +130,7 @@ The screen SHALL leave out any label whose game text has not been decoded yet, r
 
 - [ ] **C and the Paimon menu open the character screen** — no source yet: no recording or wiki page of the C key or the Paimon menu's Character entry is checked against this build, and the cached Character Menu wiki page is not on disk.
 - [ ] **The layout is the reference's** — no source yet: the 21:9 reference frame at 154 seconds is not saved as a still, so its places cannot be checked.
-- [ ] **The Attributes tab's values are the game's sums** — no source yet: no source on disk holds the sums, and at the same state the reference's base five differ from the build's (`~/Esposter/genshin-parity/comparisons/character-attributes.png`).
+- [ ] **The Attributes tab's values are the game's sums** — contradicted by `~/Esposter/genshin-parity/comparisons/character-attributes.png`: the reference's base five differ from the build's.
 - [ ] **The advanced group is shown as percentages to one place** — no source yet: no reference frame shows its values, which the game holds behind Details.
 - [ ] **The level line is in the game's `Lv.` wording** — contradicted by `~/Esposter/genshin-parity/comparisons/character-attributes.png`: the reference writes "Level 90 / 90".
 - [ ] **The Weapons, Artifacts, Constellation and Talents panels show the game's rows** — no source yet: the reference stills (`~/Esposter/genshin-parity/comparisons/character-weapons.png`, `~/Esposter/genshin-parity/comparisons/character-artifacts.png`, `~/Esposter/genshin-parity/comparisons/character-constellation.png`, `~/Esposter/genshin-parity/comparisons/character-talents.png`) are not checked row by row against the build.
