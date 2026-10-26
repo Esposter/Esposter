@@ -16,7 +16,7 @@ Faruzan's kit is its record and one behaviour module, `createFaruzanKitBehaviour
 - **Her particles are not built.** The skill gives an Anemo particle on its hit, on a 5.5-second cooldown, which waits on a hit that gives particles, as an enemy's HP drops are the only energy a strike gives.
 - **Ascension 4's Hurricane Guard is not built.** It adds 32% of her base ATK to Anemo hits of her team's characters while Prayerful Wind's Gift is on them, once each 0.8 seconds, which waits on a party effect that adds to other members' hits.
 - **Constellations 1, 4 and 6 are not built.** Constellation 1's second Hurricane Arrow and 4's energy wait on Pressurized Collapse and the Manifest Gale; Constellation 6's 40% CRIT DMG and its extra arrow wait on the same two hooks.
-- **Dazzling Polyhedron stands 12.4 seconds, 745 frames, where the table gives 12.** gcsim's burst is 745 frames, so its sixth Whirlwind Pulse, at 13 seconds, comes after it has gone.
+- **Dazzling Polyhedron stands 13.1 seconds, 788 frames, where the table gives 12.** gcsim's last refresh lands at 788 frames, so its sixth Whirlwind Pulse, at 780 frames, still fires inside the standing.
 - **Faruzan's strikes, fully charged shot and plunges take the wiki's poise.** gcsim gives none, so the wiki's Parthian Shot gives 15.6033, 14.7162, 18.5454 and 24.6351 for the four strikes, 20 for the fully charged shot, 50 for the low plunge and 100 for the high one.
 
 ## Key files
@@ -27,5 +27,5 @@ Faruzan's kit is its record and one behaviour module, `createFaruzanKitBehaviour
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/faruzan), MIT: Faruzan's strikes' hitmarks and cancel frames, the fully charged shot's frames, Wind Realm of Nasamjnin's frames and hit, The Wind's Secret Ways' frames, initial hit, the polyhedron's 745 frames, its Pulses and gadgets, and Prayerful Wind's Gift and Perfidious Wind's Ruin.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/faruzan), MIT: Faruzan's strikes' hitmarks and cancel frames, the fully charged shot's frames, Wind Realm of Nasamjnin's frames and hit, The Wind's Secret Ways' frames, initial hit, the polyhedron's 788 frames, its Pulses and gadgets, and Prayerful Wind's Gift and Perfidious Wind's Ruin.
 - [Parthian Shot](https://genshin-impact.fandom.com/wiki/Parthian_Shot), Genshin Impact Wiki: the poise her plunges, strikes and fully charged shot deal.

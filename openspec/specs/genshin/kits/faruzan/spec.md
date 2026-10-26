@@ -48,14 +48,14 @@ Wind Realm of Nasamjnin SHALL deal its hit in a circle centred three metres ahea
 
 ### Requirement: The Wind's Secret Ways and Dazzling Polyhedron
 
-The Wind's Secret Ways SHALL deal its initial hit and set Dazzling Polyhedron standing for 745 frames, and it SHALL be refused without the energy it costs.
+The Wind's Secret Ways SHALL deal its initial hit and set Dazzling Polyhedron standing for 788 frames, and it SHALL be refused without the energy it costs.
 
 #### Scenario: The burst sets the polyhedron standing
 
 - **GIVEN** Faruzan has enough energy
 - **WHEN** the player casts The Wind's Secret Ways
 - **THEN** its initial hit lands
-- **AND** Dazzling Polyhedron stands for 745 frames, about 12.4 seconds
+- **AND** Dazzling Polyhedron stands for 788 frames, about 13.1 seconds
 
 #### Scenario: The burst is refused without enough energy
 
@@ -75,7 +75,7 @@ While Dazzling Polyhedron stands, it SHALL fire Whirlwind Pulses, the first thre
 
 #### Scenario: No Pulse fires after the polyhedron ends
 
-- **GIVEN** Dazzling Polyhedron has stood for 745 frames
+- **GIVEN** Dazzling Polyhedron has stood for 788 frames
 - **WHEN** the next Pulse would fire
 - **THEN** no Pulse fires
 
