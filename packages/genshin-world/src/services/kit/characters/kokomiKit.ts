@@ -21,9 +21,11 @@ import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 
 // Measured: gcsim (MIT) kokomi/skill.go, Bake-Kurage's heal lands on the active character while it stands within a circle
-// Of radius 6 whose centre lies 3 metres ahead, every tick, for 12.5 seconds
+// Of radius 6 whose centre lies 3 metres ahead, every tick. Its 12 seconds are Kurage's Oath's duration on the Genshin Impact
+// Wiki (https://genshin-impact.fandom.com/wiki/Kurage%27s_Oath) and proud skill group 5432 index 3 of the game data dump's
+// ProudSkillExcelConfigData.json, 12.0 seconds
 // Https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/kokomi/skill.go
-const SKILL_DURATION_SECONDS = 12.5;
+const SKILL_DURATION_SECONDS = 12;
 const SKILL_CENTRE_METRES = 3;
 const SKILL_RADIUS = 6;
 const ASCENSION_1 = 1;

@@ -112,7 +112,7 @@ describe("tamakushi Casket", () => {
   test("a passive takes effect at its ascension phase", () => {
     expect.hasAssertions();
 
-    expect(readBakeKurageSeconds(1)).toBe(12.5);
+    expect(readBakeKurageSeconds(1)).toBe(12);
   });
 
   test("a passive does not take effect below its ascension phase", () => {
