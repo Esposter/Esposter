@@ -62,7 +62,7 @@ Mujina Flurry SHALL land an initial hit and leave a field that heals the active 
 
 - **GIVEN** the active character is at 70% HP or under
 - **WHEN** a Muji-Muji Daruma tick lands
-- **THEN** the tick strikes the enemies in reach and heals the active character
+- **THEN** the tick strikes the enemies in reach and heals the active character (both at once is open on the design page: the wiki and gcsim give one action per tick)
 
 ### Requirement: Constellation 4 Energy from Swirls
 
