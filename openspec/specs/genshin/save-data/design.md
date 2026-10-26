@@ -249,5 +249,5 @@ Paths relative to the repository root.
 - [ ] **Save: a save written before the week's bounty and request claims were added is backfilled to `[]`** — no source yet: the backfill that writes those values, which no file names.
 - [ ] **Save: stored saves need the characters backfill before the schema reads them** — no source yet: the backfill file for the characters slice.
 - [ ] **Save: each draw's wish history is kept for the year** — no source yet: the retention rule for the wish history, which no record names.
-- [ ] **the bag's room per tab and each stack's maximum follow the game's inventory limits** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **a new player holds Original Resin at its cap from the epoch, with Mondstadt's Reputation at its first level** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **the bag's room per tab and each stack's maximum follow the game's inventory limits** — no source yet: the wiki's Inventory page, named on the inventory page's Sources, is not in the wiki cache; the bag's limits are not yet matched to it.
+- [ ] **a new player holds Original Resin at its cap from the epoch, with Mondstadt's Reputation at its first level** — no source yet: the new-player wallet in `packages/genshin-world/src/services/inventory/constants.ts` (`EMPTY_WALLET`), not yet read for its Original Resin value; the game's new-player state is not yet recorded.
