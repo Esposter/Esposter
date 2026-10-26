@@ -118,5 +118,3 @@ Until the world screen holds the region's level, the pool and the auto-recover s
 - [ ] **The maximum stamina stops at 240, as the game's statues raise it** — no source yet: the wiki's Statue of The Seven page is not in the genshin-wiki cache, and no dump table read holds the cap.
 - [ ] **The Restorative Power holds 5,000 for each unlocked statue and refills 1% every 15 seconds** — no source yet: the wiki's page is not in the cache, and no dump table read holds these numbers.
 - [ ] **A click heals a tenth of Max HP, and auto-recover revives the fallen at 35%** — no source yet: the wiki's Statue of The Seven page is not in the genshin-wiki cache.
-- [ ] **The Oculi offered to a region reach its levels in turn, and each level's Oculi come off the held count** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Auto-recover heals each member under its threshold up to it from the pool, slot by slot** — no source yet: game data or a snapshot that holds this behaviour
