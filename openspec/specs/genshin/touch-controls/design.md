@@ -50,7 +50,7 @@ flowchart LR
 
 ## Reference
 
-- `hud-world-pickup.png` — the mobile client's play screen from a public recording, the [HUD](../hud/design.md)'s reference, which shows the stick at rest.
+- `hud-world-pickup.png` (`~/Esposter.noindex/genshin-parity/references/hud-world-pickup.png`) — the mobile client's play screen from a public recording, the [HUD](../hud/design.md)'s reference, which shows the stick at rest.
 - The held stick, measured on three public recordings of the mobile client: [d9ZWM3cAlf0](https://www.youtube.com/watch?v=d9ZWM3cAlf0) (16:9, 6.1, 33 held frames), [HqQob991B8Q](https://www.youtube.com/watch?v=HqQob991B8Q) (19.5:9, 9 held and 5 at rest) and [quYgZtHhIa4](https://www.youtube.com/watch?v=quYgZtHhIa4) (20:9, 17 held), none showing the thumb itself.
 - `mobile-touch.png` — a recording of a drag of the mobile client's look (`~/Esposter.noindex/genshin-parity/captures/mobile-touch.png`). On the wiki and YouTube, none found (searched 2026-10-11).
 
@@ -63,6 +63,5 @@ flowchart LR
 - [ ] **The stick's rings and arcs are measured on the newest recording, which another phone draws 0.9 times as large** — no source yet: the recordings are not in `~/Esposter.noindex/genshin-parity/captures/`, so the 0.9 is not read back.
 - [ ] **The game's stick stands 87 units further in on a 19.5:9 recording and 95 on a 20:9 one** — no source yet: the recordings `HqQob991B8Q` and `quYgZtHhIa4` are not in `~/Esposter.noindex/genshin-parity/captures/`.
 - [ ] **The game's touch layout has no button to descend** — no source yet: no frame of `touch-controls-mobile.mkv` is recorded as showing the layout's buttons.
-- [ ] **`hud-world-pickup.png` shows the stick at rest** — no source yet: no file of that name is in the repo or in `~/Esposter.noindex/genshin-parity/captures/`.
 - [ ] **The held stick and the 16:9 recording's 199.5 and 172.5 units** — no source yet: the recordings `d9ZWM3cAlf0`, `HqQob991B8Q` and `quYgZtHhIa4` are not in `~/Esposter.noindex/genshin-parity/captures/`, so their frame counts and measures are not read back.
 - [ ] **The stick stands 227.5 units in on a 19.5:9 window and 235.5 on 20:9** — no source yet: game data or a snapshot that holds this behaviour
