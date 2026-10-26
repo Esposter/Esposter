@@ -55,3 +55,5 @@ Linnea's Lumi duration SHALL NOT take effect, so her skill leaves no timed field
 ## Open
 
 - [ ] **The burst lands no hit** — contradicted by `~/Esposter/cache/genshin-wiki/Category_Linnea_Talents.json`: Lumi strikes nearby opponents with Pound-Pound Pummeler in the burst.
+- [ ] **Linnea's charged shot costs no stamina** — no source yet: the cached Linnea talents file names no stamina cost, and gcsim has no Linnea folder.
+- [ ] **Linnea's three strikes, charged shot and skill land on their provisional timings** — no source yet: gcsim has no Linnea folder, and the cached Linnea talents file gives no frames.
