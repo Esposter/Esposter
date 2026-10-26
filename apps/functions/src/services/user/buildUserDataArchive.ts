@@ -11,6 +11,7 @@ import { writeAccountEntry } from "#src/services/user/writeAccountEntry";
 import { writeFriendEntries } from "#src/services/user/writeFriendEntries";
 import { writeImageEntries } from "#src/services/user/writeImageEntries";
 import { writeLikeEntries } from "#src/services/user/writeLikeEntries";
+import { writeModerationActionEntry } from "#src/services/user/writeModerationActionEntry";
 import { writeModerationEntry } from "#src/services/user/writeModerationEntry";
 import { writeOwnedRoomEntries } from "#src/services/user/writeOwnedRoomEntries";
 import { writePostEntries } from "#src/services/user/writePostEntries";
@@ -53,6 +54,7 @@ export const buildUserDataArchive = async (userId: UserInAuth["id"], blobName: s
     await writeSearchHistoryEntry(archive, userId);
     await writeImageEntries(archive, userId);
     await writeModerationEntry(archive, userId);
+    await writeModerationActionEntry(archive, userId);
     archive.end();
   }).match(noop, failArchive);
   await Promise.all([uploading, writing]);

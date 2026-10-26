@@ -180,6 +180,7 @@ describe(buildUserDataArchive, () => {
         "friends.json",
         "images/ProfileImage",
         "likes.json",
+        "moderation-actions.json",
         "moderation.json",
         `resources/${resource.id}/content.json`,
         `resources/${resource.id}/files/${assetHash}`,
@@ -415,6 +416,54 @@ describe(buildUserDataArchive, () => {
       { sourceId: linkingResource.id, targetId: linkedResource.id, type: ResourceLinkType.Email },
     ]);
     expect(Object.keys(entries)).not.toContain(`resources/${unlinkedResource.id}/links.json`);
+  });
+
+  test("writes the moderation actions the person took in rooms they own, and no other moderator's", async () => {
+    expect.hasAssertions();
+
+    const userId = crypto.randomUUID();
+    const otherUserId = crypto.randomUUID();
+    const blobName = `${crypto.randomUUID()}.zip`;
+    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
+    const ownedRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
+    const otherRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
+
+    // The action the person took in the room they own, at a fixed time, beside another moderator's action there against
+    // the person, and one the person took in a room they do not own
+    const actionTime = new Date("2025-03-04T05:06:07.890Z");
+    const moderationLogClient = await getTableClient(AzureTable.ModerationLog);
+    const actions = [
+      {
+        actorUserId: userId,
+        partitionKey: ownedRoom.id,
+        rowKey: getReverseTickedTimestamp((BigInt(actionTime.getTime()) * 10n ** 6n).toString()),
+        targetUserId: otherUserId,
+        type: AdminActionType.Warn,
+      },
+      {
+        actorUserId: otherUserId,
+        partitionKey: ownedRoom.id,
+        rowKey: getReverseTickedTimestamp(),
+        targetUserId: userId,
+        type: AdminActionType.Warn,
+      },
+      {
+        actorUserId: userId,
+        partitionKey: otherRoom.id,
+        rowKey: getReverseTickedTimestamp(),
+        targetUserId: otherUserId,
+        type: AdminActionType.Warn,
+      },
+    ];
+    for (const action of actions) await moderationLogClient.createEntity(serializeEntity(action));
+
+    await buildUserDataArchive(userId, blobName);
+    const entries = readArchiveEntries(blobName);
+
+    // The action is written with its type, time and the id it was taken against, and no content of the target's
+    expect(readEntryJson(entries, "moderation-actions.json")).toStrictEqual([
+      { roomId: ownedRoom.id, targetUserId: otherUserId, time: actionTime, type: AdminActionType.Warn },
+    ]);
   });
 
   test("reads an attachment as a stream, never into a buffer", async () => {

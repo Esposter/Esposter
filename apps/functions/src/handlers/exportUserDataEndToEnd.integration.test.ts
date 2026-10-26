@@ -161,6 +161,7 @@ describe(exportUserDataHandler, () => {
         "images/CallBackground/0",
         "images/ProfileImage",
         "likes.json",
+        "moderation-actions.json",
         "moderation.json",
         `posts/${post.id}.json`,
         `resources/${resource.id}/content.json`,
