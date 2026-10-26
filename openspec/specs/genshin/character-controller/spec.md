@@ -11,7 +11,7 @@ The character SHALL move on foot through standing, walking, running, dashing and
 #### Scenario: Walk switch walks instead of running
 
 - **GIVEN** the character stands on walkable ground
-- **WHEN** a move is held with the walk switch on
+- **WHEN** a move is held with the walk switch (the left Control) on
 - **THEN** the character walks
 
 #### Scenario: Sprint press dashes then sprints
@@ -289,8 +289,6 @@ A jump from the map SHALL place the character standing on the ground at the chos
 
 ## Open
 
-- [ ] **The walk switch is the left Control, and a part-way stick push walks as a light push does in the game** — no source yet: the wiki's Controls page is not in the genshin-wiki cache, and the stick's walk threshold is marked provisional in.
-- [ ] **W, A and D move the character as the game's controls bind them** — no source yet: the wiki's Controls page is not in the cache, and the settings-controls clip `~/Esposter.noindex/genshin-parity/captures/yt-4VkVOwpPgwE-settings-controls.mp4` does not hold this value: its frames at six-second steps to 66 seconds show the installer and the website, and no controls screen.
-- [ ] **The glider opens from a jump only high enough above the ground, and a press plunges or closes it, as the game does** — no source yet: the wiki's Gliding page is not in the cache, and the height the glider opens at is provisional.
-- [ ] **A climb grips any surface too steep to walk, lets go on a drop or when stamina runs out, and stands the character on walkable ground at the top, as the game does** — no source yet: the wiki's Climbing page is not in the cache, and `Stamina.reference.ts` records the climb's start and cost only.
-- [ ] **Running out of stamina in water drowns the character, which then returns to where its stamina was last full on foot, as the game does** — no source yet: the wiki's Fallen Character page is not in the cache, and no reference file records the drowning's return.
+- [ ] **A part-way stick push walks as a light push does in the game** — no source yet: the wiki's Controls page (cached) binds the walk switch to Left Ctrl and says nothing about a stick's walk, and the stick's walk threshold is marked provisional in `packages/genshin-engine/src/locomotion/constants.ts`.
+- [ ] **A climb grips any surface too steep to walk, lets go on a drop, and stands the character on walkable ground at the top, as the game does** — no source yet: the wiki's Climbing page (cached) says a climbable surface is one that would not require hanging upside-down or nearly upside-down, and that running out of Stamina makes the character fall; it names no walk threshold, no drop and no top, and `Stamina.reference.ts` records the climb's start and cost only.
+- [ ] **A drowned character returns to where its stamina was last full on foot, as the game does** — no source yet for the "on foot" condition: the wiki's Fallen Character page (cached) says the character is "respawned where their stamina was last at maximum", with no on-foot condition, and no reference file records the drowning's return.
