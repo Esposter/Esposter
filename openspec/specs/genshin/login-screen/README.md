@@ -61,7 +61,6 @@ flowchart TD
 ## Tests
 
 - The opening's browser test plays the whole opening with timers and frames faked, through the login's title, flight and door, and checks every handoff and the finish, its records read through the suites' mirror. With every fetch held, it checks the opening holds the splashes' white rather than a title splash with no logo.
-- Each fit that builds the data has its own test.
 
 ## Key files
 
