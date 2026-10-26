@@ -24,6 +24,8 @@ Build order. Section 1 lands the schema the rest reads, section 2 moves the shar
       Verify: the replay test passes.
 - [x] 3.3 Register the handler as `AzureFunction.DeleteAccount` in `apps/functions/src/functions/`, and add the event type to `AzureFunction` in `packages/db-schema`.
       Verify: the function index test lists the new function, and the enum entry is the one the web publisher imports.
+- [x] 3.4 Delete the account's export archives before the user row. `deleteAccountDataExportArchives` reads each `dataExports` row's `blobName`, skips a row that names none, and removes the archives through `deleteBlobs`, which counts an archive already gone as done. It runs after the blob prefixes and before the user row, since the row's cascade removes the rows that name the archives. Test first in `deleteAccountDataExportArchives.test.ts`: "deletes the archive each of the person's export rows names, and no other person's archive", and "a row whose archive is already gone does not fail the sweep, and the archive it still holds is removed".
+      Verify: both tests pass, and the handler runs the step before the user row is deleted.
 
 ## 4. Trigger and settings
 
