@@ -96,6 +96,6 @@ A duel's end SHALL return the player from the board to the world.
 
 ## Open
 
-- [ ] **Choosing the duel ends the talk and opens the board** — no source yet: the talk's duel-choice handler was not read.
-- [ ] **A game whose opponent deck is missing fails the run** — no source yet: the deck check was not read.
-- [ ] **The board's leave returns the player to the world** — no source yet: the world's handler for the board's leave was not read.
+- [ ] **Choosing the duel ends the talk and opens the board** — checked against `packages/genshin-world/src/components/Dialogue/Talk/Index.vue` (line 102: the duel choice emits `duel`) and `packages/genshin-world/src/components/World/Session/Index.vue` (lines 2400 to 2403: the duel handler sets the GcgDuel screen and calls no `endTalk`): the board opens and the talk's screen gives way, and the claim is not settled by it because `endTalk`, the call that ends a talk, is not run on the duel.
+- [ ] **A game whose opponent deck is missing fails the run** — checked against `scripts/src/services/genshinAssets/gcg/toGcgGames.ts` (lines 18 to 23: it throws when no slice is written for the opponent's deck) and its test at `toGcgGames.test.ts` (line 29), which holds it; the line stays open because the scenario above names no path.
+- [ ] **The board's leave returns the player to the world** — checked against `packages/genshin-world/src/components/World/Session/Index.vue` (lines 2425 to 2431: the leave handler clears the game and sets the World screen), which holds it; the line stays open because the scenario above names no path.
