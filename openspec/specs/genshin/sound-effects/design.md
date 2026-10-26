@@ -1,6 +1,6 @@
 # Sound effects
 
-The login's door sounds as it opens, and so does ours (`packages/genshin-world/src/components/Login/Music/Index.vue`). The game's own sounds stay on the machine that measures them; each sound's levels and the engine's noise that plays them are what ships.
+The login's door sounds as it opens, and so does ours (`packages/genshin-world/src/components/Login/Music/Index.vue`). The game's own sounds stay on the machine that measures them; each sound's levels and the engine's noise that plays them are what ships (the hosted record, `~/Esposter.noindex/cache/content/5523c4b4cee27020c460a2a08a930025fe6b69c05e10ffada78f373da3b8df97`, holds only the door's frame time and levels).
 
 ## How it works
 
@@ -53,7 +53,6 @@ flowchart TD
 
 ## Open
 
-- [ ] **Only each sound's levels and the engine's noise ship** — no source yet: the hosted `login/sounds` record is not on disk (the game-data lock names it by hash only), so its contents are not read here.
 - [ ] **The login/sounds record holds three noises a band every 25 milliseconds** — no source yet: the lock records only the record's hash, and the record is hosted, not in the repo.
 - [ ] **A noise of a band built in one long transform would cost most of a second on the login's thread** — no source yet: no timing of either build is recorded in the repo.
 - [ ] **The levels keep five decimals, a hundred decibels under full scale** — no source yet: the precision and the floor were not found in `packages/genshin-engine/src/audio/computeSoundEffectSamples.ts`.
