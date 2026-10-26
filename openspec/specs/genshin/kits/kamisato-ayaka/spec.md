@@ -94,4 +94,4 @@ From her second constellation, Soumetsu's storm SHALL also raise two smaller sto
 
 ## Open
 
-- [ ] **The charged attack strikes only enemies within 5 metres** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/ayaka/charge.go`: its strikes reach 4 metres from each anchor enemy, itself within 5 metres of her.
+- [ ] **The charged attack strikes only enemies within 5 metres** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/ayaka/charge.go`: strikes reach 4 metres from each anchor enemy, itself within 5 metres of her.
