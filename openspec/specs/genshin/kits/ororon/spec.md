@@ -54,13 +54,13 @@ From Constellation 2, the burst SHALL give an 8% buff that gains 8% for each ene
 
 ### Requirement: Ascension 4 energy
 
-From Ascension 4, the Spirit Orb's status SHALL last 15 seconds, and each of its three triggers SHALL give 3 energy to the active character and to Ororon, with a one-second cooldown between triggers.
+From Ascension 4, the Spirit Orb's status SHALL last 15 seconds, and each of its three triggers SHALL give 3 energy to the active character, and 3 more to Ororon when he is not the active character, with a one-second cooldown between triggers.
 
 #### Scenario: Trigger gives energy with a cooldown
 
 - **GIVEN** Ororon has Ascension 4 and the Spirit Orb's status is standing
 - **WHEN** a trigger fires
-- **THEN** the active character and Ororon each gain 3 energy
+- **THEN** the active character gains 3 energy, and Ororon gains 3 more when he is not the active character
 - **AND** the next trigger waits one second
 
 ### Requirement: Plunge attacks
