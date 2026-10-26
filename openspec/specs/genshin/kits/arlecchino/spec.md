@@ -20,15 +20,15 @@ Arlecchino's six strikes SHALL deal physical damage (`~/Esposter/cache/gcsim-v2.
 - **WHEN** the strike is checked for enemies in reach
 - **THEN** enemies within the offset plus the radius are struck
 
-### Requirement: Arlecchino's charged attack strikes at 37 frames
+### Requirement: Arlecchino's charged attack costs 25 stamina and strikes at 37 frames
 
-Arlecchino's charged attack SHALL strike at 37 frames of its 60 frame animation (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/arlecchino/charge.go:14`, `~/Esposter/cache/gcsim-v2.47.2/internal/characters/arlecchino/charge.go:17`) and SHALL cost stamina, a provisional 25 until a source gives the cost (see Open).
+Arlecchino's charged attack SHALL strike at 37 frames of its 60 frame animation (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/arlecchino/charge.go:14`, `~/Esposter/cache/gcsim-v2.47.2/internal/characters/arlecchino/charge.go:17`) and SHALL cost 25 stamina (`~/Esposter/cache/genshin-wiki/Category_Arlecchino_Talents.json`, the charged attack's `stamina=25`).
 
 #### Scenario: The charged attack costs stamina when performed
 
-- **GIVEN** Arlecchino has at least the provisional 25 stamina (see Open)
+- **GIVEN** Arlecchino has at least 25 stamina
 - **WHEN** she performs her charged attack
-- **THEN** the provisional 25 stamina is spent (see Open)
+- **THEN** 25 stamina is spent
 
 ### Requirement: Arlecchino's plunges land at 47 and 48 frames with their poise
 
@@ -112,4 +112,4 @@ From Constellation 6, Arlecchino's Normal Attacks and Balemoon Rising SHALL have
 
 ## Open
 
-- [ ] **Arlecchino's charged attack costs 25 stamina** — no source yet: no dump or gcsim record holds a stamina cost for it; the ProudSkill row cited before (group 9631 index 7) holds ascension costs, and gcsim models no stamina.
+Nothing open.
