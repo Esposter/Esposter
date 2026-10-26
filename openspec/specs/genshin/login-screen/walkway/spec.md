@@ -48,5 +48,5 @@ Each piece SHALL rise from 3 metres down at 17.5 metres ahead of the camera, car
 - **THEN** the walkway still ends a fixed distance ahead of the camera
 ## Open
 
-- [ ] **The walkway is 23 pieces** — no source yet: the piece count is a fitted value in the hosted `login/walkway` record, which is not read here.
+- [ ] **The walkway is 23 pieces** — no source yet: the hosted `login/walkway` record is in neither the repository's data nor the parity folder. The post-image of `walkway.json` in `~/Esposter.noindex/genshin-parity/plans/login-walkway-layers.patch` has 23 pieces, but its compact JSON hashes to `9652a04b…`, not the lock's `7ffee328…`, so it is not confirmed as that record.
 - [ ] **The rims of the pockets read as dark carving at low sun** — no source yet: no capture comparison of the carving is kept.
