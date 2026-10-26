@@ -34,7 +34,7 @@ A recreation converges in a round or two when every unknown in it can be answere
 - **Every tool prints a number with its residual**, and writes an image only to check that number: a solve's reprojection error, a fit's error in pixels at the reference's pose, a regression's residual.
 - **A tool is kept while it moves the benchmark** and deleted when superseded, in the same change that supersedes it (the `genshin-parity` skill's `references/tools-and-estimates.md`, "A tool earns its place by the benchmark").
 - **A domain's toolbox page maps each unknown to its tool**, and a tool that ships updates its row in the same commit, so the next session reads the map instead of rediscovering it.
-- **The generic tools live in `scripts/src/services/recreation/`, behind the `recreation` CLI (`pnpm recreation <command>`)**, and a domain's toolbox page maps each of its unknowns to the one that answers it, so a second domain reaches the tool a first one built rather than building its own.
+- **The generic tools live in `scripts/src/services/recreation/`, behind the `recreation` CLI (`pnpm recreation <command>`)**, so a second domain reaches the tool a first one built rather than building its own.
 
 ## Reference pages
 

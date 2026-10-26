@@ -10,7 +10,7 @@ Every value a recreation ships is one of three kinds, and its comment or its rec
 
 - **Read**: the source's own value, with where it was read from (a table and its key, an asset and its field).
 - **Solved**: computed from a reference, with the residual the solve printed.
-- **Provisional**: no source holds it yet. It names the query or the recording that will replace it, and it sits on the list where that replacement is owed (Genshin's roadmap lists the References sought).
+- **Provisional**: no source holds it yet. It names the query or the recording that will replace it, and it sits on the list where that replacement is owed (Genshin's roadmap, `openspec/changes/genshin-roadmap/tasks.md`, lists the References sought).
 
 A report never presents a solved value as read, or a provisional one as either. Moving a value between kinds is a change of its own.
 
