@@ -1,12 +1,12 @@
 ## Purpose
 
-The world's residents keep the game's day and night. Each resident has a day spot, from six in the morning to seven at night, and a night spot, or else keeps the day spot through the night (`packages/genshin-world/src/services/resident/computeResidentSpot.ts`); a resident the game shows only by day is marked absent at night. The clock picks the spot at each frame, and a change of spot waits while the resident is in view, so nobody is seen to jump at the turn of the hour (`packages/genshin-world/src/composables/useResidentSpots.ts`, `packages/genshin-world/src/services/resident/computeShownResidentSpot.ts`).
+The world's residents keep the game's day and night. Each resident has a day spot, from six in the morning to seven at night, and a night spot, or else keeps the day spot through the night; a resident the game shows only by day is marked absent at night. The clock picks the spot at each frame, and a change of spot waits while the resident is in view, so nobody is seen to jump at the turn of the hour.
 
 ## Requirements
 
 ### Requirement: Residents keep a day spot and a night spot by the clock
 
-Each resident SHALL stand at its day spot from six in the morning to seven at night, and at its night spot for the rest of the day (`packages/genshin-world/src/services/resident/computeResidentSpot.ts`).
+Each resident SHALL stand at its day spot from six in the morning to seven at night, and at its night spot for the rest of the day.
 
 #### Scenario: A resident is at the day spot at noon
 
@@ -24,35 +24,35 @@ Each resident SHALL stand at its day spot from six in the morning to seven at ni
 
 - **GIVEN** a resident has a day spot and no night spot
 - **WHEN** the world's clock reads midnight
-- **THEN** the resident stays at its day spot (`packages/genshin-world/src/services/resident/computeResidentSpot.ts`)
+- **THEN** the resident stays at its day spot
 
 ### Requirement: A resident absent at night is neither shown nor offered
 
-A resident marked absent at night SHALL NOT be shown, offered as a talk or pointed at by a quest marker while it is night (`packages/genshin-world/src/components/World/Session/Index.vue`, `packages/genshin-world/src/services/quest/findQuestTargetPosition.ts`).
+A resident marked absent at night SHALL NOT be shown, offered as a talk or pointed at by a quest marker while it is night.
 
 #### Scenario: An absent resident is hidden at night
 
 - **GIVEN** a resident is marked absent at night
 - **WHEN** the world's clock reads midnight
-- **THEN** the resident is not shown in the world (`packages/genshin-world/src/services/resident/computeResidentSpot.ts`)
+- **THEN** the resident is not shown in the world
 
 #### Scenario: An absent resident gives no talk prompt or quest marker at night
 
 - **GIVEN** a resident is marked absent at night
 - **AND** the player stands near where the resident stood by day
 - **WHEN** it is night
-- **THEN** no talk prompt is offered for the resident (`packages/genshin-world/src/components/World/Session/Index.vue`)
-- **AND** a quest marker does not point at the resident (`packages/genshin-world/src/services/quest/findQuestTargetPosition.ts`)
+- **THEN** no talk prompt is offered for the resident
+- **AND** a quest marker does not point at the resident
 
 #### Scenario: A resident with no day spot is absent by day
 
 - **GIVEN** a resident has a night spot and no day spot
 - **WHEN** the world's clock reads noon
-- **THEN** the resident is not shown in the world (`packages/genshin-world/src/services/resident/computeResidentSpot.ts`)
+- **THEN** the resident is not shown in the world
 
 ### Requirement: A change of spot waits while the resident is in view
 
-A resident SHALL keep the spot it stands at while that spot is due to change and the resident is in view, and SHALL move once the resident is out of view (`packages/genshin-world/src/services/resident/computeShownResidentSpot.ts`).
+A resident SHALL keep the spot it stands at while that spot is due to change and the resident is in view, and SHALL move once the resident is out of view.
 
 #### Scenario: The hour turns while a resident is in view
 
@@ -70,38 +70,40 @@ A resident SHALL keep the spot it stands at while that spot is due to change and
 
 - **GIVEN** a resident is due to appear or disappear at the turn of the hour
 - **WHEN** the turn happens while the resident is in view
-- **THEN** the resident keeps its current state until it is out of view (`packages/genshin-world/src/services/resident/computeShownResidentSpot.ts`)
+- **THEN** the resident keeps its current state until it is out of view
 
 ### Requirement: Residents are generated from the scene's own records
 
-An operator generating the residents SHALL place each named NPC that has a talk once per fitted region, SHALL leave out any NPC with no name or no talk, and SHALL leave out the NPC a crafting bench stands for, since the bench is an interaction and no person (`scripts/src/services/genshinAssets/residents/writeResidents.ts`, `scripts/src/services/genshinAssets/residents/joinResidents.ts`).
+An operator generating the residents SHALL place each named NPC that has a talk once per fitted region, SHALL leave out any NPC with no name or no talk, and SHALL leave out the NPC a crafting bench stands for, since the bench is an interaction and no person.
 
 #### Scenario: An NPC placed more than once in a region is kept once
 
 - **GIVEN** an NPC is placed more than once in the same region
 - **WHEN** the residents are generated
-- **THEN** only its first place is kept as its day spot (`scripts/src/services/genshinAssets/residents/joinResidents.ts`)
+- **THEN** only its first place is kept as its day spot
 
 #### Scenario: An NPC with no talk is left out and counted
 
 - **GIVEN** an NPC has neither a name nor a talk
 - **WHEN** the residents are generated
-- **THEN** the NPC is left out of the region's residents (`scripts/src/services/genshinAssets/residents/joinResidents.ts`)
-- **AND** the omission is counted in the generation's report (`scripts/src/services/genshinAssets/residents/writeResidents.ts`)
+- **THEN** the NPC is left out of the region's residents
+- **AND** the omission is counted in the generation's report
 
 #### Scenario: A crafting bench's NPC is left out and counted
 
 - **GIVEN** an NPC is the one a crafting bench's place is built from, in the bench's scene group
 - **WHEN** the residents are generated
-- **THEN** the NPC is left out of every region (`scripts/src/services/genshinAssets/crafting/findCraftingBenchMember.ts`)
-- **AND** the omission is counted in the generation's report as a crafting bench (`scripts/src/services/genshinAssets/residents/joinResidents.ts`)
+- **THEN** the NPC is left out of every region
+- **AND** the omission is counted in the generation's report as a crafting bench
 
 #### Scenario: A place outside every fitted region is left out
 
 - **GIVEN** an NPC's place is not within reach of a fitted region
 - **WHEN** the residents are generated
-- **THEN** the NPC is left out of every region (`scripts/src/services/genshinAssets/residents/writeResidents.ts`)
+- **THEN** the NPC is left out of every region
 
 ## Open
 
 - [ ] **A resident the game shows only by day is marked absent at night** — no source yet: no generator or data file sets `absentAtNight` (only `packages/genshin-world/src/models/world/Resident.ts` and `computeResidentSpot.ts` read it), and no resident in `packages/genshin-world/src/data/regions/*.json` carries it.
+- [ ] **Each resident has a day spot from six in the morning to seven at night, and a night spot or else keeps its day spot** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The clock picks the spot at each frame, and a change of spot waits while the resident is in view** — no source yet: game data or a snapshot that holds this behaviour
