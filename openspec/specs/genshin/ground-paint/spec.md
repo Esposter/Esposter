@@ -137,4 +137,4 @@ A region whose base maps are not exported SHALL keep its layer colours unpainted
 - [ ] **The game places its layers by cell, never by slope** — no source yet: no checked game data shows that placement ignores slope.
 - [ ] **No grass blade grows on earth, rock, sand or path** — no source yet: no vegetation placement check is cited here.
 - [ ] **Flowers grow only where the weights are nearly all grass** — no source yet: no scatter placement check is cited here.
-- [ ] **The layer field is fitted from the layer the game's tiles paint each four-metre cell** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The layer field is fitted from the layer the game's tiles paint each four-metre cell** — the dump's `mondstadt/world/TerrainData/BigWorldTerrain_*.bin.dat` tiles are the source that would settle which layer each cell is painted in, and `scripts/src/services/genshinAssets/fit/readGroundLayerCells.ts` reads the cells from them for the fit. The four-metre cell size is not checked against those tiles here.
