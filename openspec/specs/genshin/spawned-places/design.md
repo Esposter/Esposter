@@ -70,7 +70,7 @@ Each region is reported in turn, Mondstadt first, with its matched points, the r
 ## Sources
 
 - [Teyvat Interactive Map](https://act.hoyolab.com/ys/app/interactive-map/index.html), HoYoLAB: the official map. Its label tree and point list are the public data the read keeps as references (`~/Esposter/genshin-parity/references/interactive-map/label-tree.json`, `~/Esposter/genshin-parity/references/interactive-map/points.json`).
-- [Oculus](https://genshin-impact.fandom.com/wiki/Oculus), Genshin Impact Wiki: each region's Oculi, and the counts the checks hold the map to, such as "66 Anemoculi can be found in Mondstadt." and "271 Hydroculi can be found in Fontaine & Sea of Bygone Eras."
+- [Oculus](https://genshin-impact.fandom.com/wiki/Oculus), Genshin Impact Wiki: each region's Oculi, and the counts the checks hold the map to, such as 66 Anemoculi in Mondstadt and 271 Hydroculi in Fontaine & Sea of Bygone Eras; the page is not on disk, so these counts are unchecked (see Open).
 
 ## Open
 
