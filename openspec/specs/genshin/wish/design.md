@@ -121,6 +121,7 @@ Compared with the game at 78 seconds of `yt-uhCW3MZTgL8`: mean 50.96%, shape 0.4
 - [ ] **The Starglitter and Stardust amounts each draw returns match the wiki's Wish page** — no source yet: the wiki page is not cached.
 - [ ] **One Fate costs 160 Primogems, as in the game** — the code holds `FATE_PRIMOGEM_COST = 160` (`packages/genshin-world/src/services/wish/constants.ts`), but the game's price is not checked against a recording or the wiki.
 - **The wish screen opens on F3** — `packages/genshin-engine/src/input/InputActionBindingMap.ts` binds `InputAction.OpenWish` to `F3`; the game's own default stays with the controls page's open item.
+- [ ] **The wish screen opens on F3, as in the game** — no source yet: the wiki's Controls page is not cached.
 - **The save's merge of a guest's history into an account's keeps the account's alone** — contradicted and corrected in the prose above: `packages/genshin-world/src/services/save/mergeGenshinSave.ts` (line 238) sets `wishHistory` to `account.wishHistory`, so the guest's draws are not kept.
 - [ ] **The parity figures at 78 seconds of `yt-uhCW3MZTgL8` (mean 50.96%, shape 0.425, FLIP 0.8743; 52.22% and 0.8926 before the rebuild)** — no source yet: the clip is in `~/Esposter.noindex/genshin-parity/captures/`, but no parity run output or snapshot holding these figures is kept in the repo.
 - [ ] **The 1080p clip shows the Character Event banner at about 96 to 117 seconds and 136 seconds, and single-pull reveals from about 104 seconds** — no source yet: the clip's frames were not checked.
