@@ -6,14 +6,14 @@ A new screen is derived in passes, each answering one kind of unknown from its m
 
 ### Requirement: Passes run in a fixed order, each after the one before holds
 
-A component's passes, a screen's or a region's, SHALL run in a fixed order, and each pass SHALL be judged by its own measure before the next pass runs.
+A component's passes, a screen's or a region's, SHALL run in a fixed order, and each pass SHALL be judged by its own measure before the next pass runs (`scripts/src/services/genshinParity/passes/constants.ts`, `PARITY_PASS_ORDER`).
 
 #### Scenario: Screen derived
 
 - **GIVEN** a new screen or a new piece of one
 - **WHEN** it is derived
-- **THEN** each pass runs in the order the page gives
-- **AND** a pass runs only after the passes before it hold
+- **THEN** each pass runs in the order the page gives (`scripts/src/services/genshinParity/passes/constants.ts`, `PARITY_PASS_ORDER`)
+- **AND** a pass runs only after the passes before it hold (`scripts/src/services/genshinParity/passes/runParityPasses.ts`)
 
 ### Requirement: The frame's score is the screen's acceptance, not the measure a pass is worked on
 
@@ -28,18 +28,18 @@ The whole frame's score SHALL be the acceptance of a screen, and a pass SHALL be
 
 ### Requirement: The passes command names the next work
 
-The passes command SHALL run each pass's measure in order and stop at the first measure that fails or has no measure yet, naming that pass as the next work.
+The passes command SHALL run each pass's measure in order and stop at the first measure that fails or has no measure yet, naming that pass as the next work (`scripts/src/services/genshinParity/passes/runParityPasses.ts`).
 
 #### Scenario: Failing measure stops the run
 
 - **GIVEN** a component whose measure fails at some pass
 - **WHEN** the passes command runs on it
 - **THEN** the run stops at that pass
-- **AND** the component's report names the pass as the next work
+- **AND** the component's report names the pass as the next work (see Open)
 
 #### Scenario: Pass with no measure yet
 
-- **GIVEN** a component whose next pass has no measure yet
+- **GIVEN** a component whose next pass has no measure yet (`scripts/src/services/genshinParity/passes/runParityPasses.ts`)
 - **WHEN** the passes command runs on it
 - **THEN** the run stops at that pass
 
@@ -47,12 +47,12 @@ The passes command SHALL run each pass's measure in order and stop at the first 
 
 - **GIVEN** a component with no door a clip moves
 - **WHEN** the passes command reaches the motion pass
-- **THEN** the motion pass is printed as not owed
+- **THEN** the motion pass is printed as not owed (`scripts/src/services/genshinParity/passes/measureMotion.ts`, `scripts/src/services/genshinParity/passes/runParityPasses.ts`)
 - **AND** the run goes on past it
 
 ### Requirement: Exact game data outranks a value measured from a recording
 
-A derived value SHALL come from the game's own exact data before any value measured from a recording, and a recording SHALL measure only what the game's data does not hold.
+A derived value SHALL come from the game's own exact data before any value measured from a recording, and a recording SHALL measure only what the game's data does not hold (see Open).
 
 #### Scenario: Anchor from the game's data
 
@@ -79,39 +79,46 @@ Every derived value SHALL name the key of the reference source it is taken from.
 
 ### Requirement: A pass's gate is the noise of the data it reads
 
-Each pass's gate SHALL be the noise of the data that pass reads, and a family too thin to meet itself SHALL read no gate.
+Each pass's gate SHALL be the noise of the data that pass reads, and a family too thin to meet itself SHALL read no gate (`scripts/src/services/genshinParity/passes/shiftTargetAcross.ts`).
 
 #### Scenario: Family too thin to meet itself
 
 - **GIVEN** a family too thin to be measured against itself
 - **WHEN** its pass reads its gate
-- **THEN** no gate is read for that family
+- **THEN** no gate is read for that family (`scripts/src/services/genshinParity/passes/measureSurface.ts`, `NO_GATE_REASON`)
 
 ### Requirement: The inventory holds only when every renderer is claimed
 
-The inventory pass SHALL hold only once every renderer of the game's exports is claimed by a part of the scene, and SHALL fail while any renderer goes unclaimed.
+The inventory pass SHALL hold only once every renderer of the game's exports is claimed by a part of the scene, and SHALL fail while any renderer goes unclaimed (`scripts/src/services/genshinParity/passes/measureInventory.ts`).
 
 #### Scenario: Renderer left unclaimed
 
 - **GIVEN** a renderer of the game's exports that no part of the scene claims
 - **WHEN** the inventory pass runs
-- **THEN** the pass fails
-- **AND** the unclaimed renderer is named
+- **THEN** the pass fails (`scripts/src/services/genshinParity/passes/measureInventory.ts`)
+- **AND** the unclaimed renderer is named (`scripts/src/services/genshinParity/passes/measureInventory.ts`, `unclaimed: ${renderer}`)
 
 #### Scenario: Claim names not in the fixture
 
 - **GIVEN** a component's claims naming a component the fixture does not list
 - **WHEN** the inventory pass runs
-- **THEN** the page fails on that name
+- **THEN** the page fails on that name (`packages/genshin-world/parity/main.ts`)
 
 ### Requirement: The pass option runs one measure alone
 
-The pass option SHALL run one named measure alone and rewrite only that pass's rows of the component's report.
+The pass option SHALL run one named measure alone and rewrite only that pass's rows of the component's report (see Open).
 
 #### Scenario: One pass rerun
 
 - **GIVEN** a pass named by the pass option, with a pass before it still open
 - **WHEN** the run is started
-- **THEN** the run stops at the open pass and names it
-- **AND** the named pass is not measured
-- **AND** only the rows of the passes run are rewritten
+- **THEN** the run stops at the open pass and names it (`scripts/src/services/genshinParity/passes/runParityPasses.ts`)
+- **AND** the named pass is not measured (`scripts/src/services/genshinParity/passes/runParityPasses.ts`)
+- **AND** only the rows of the passes run are rewritten (see Open)
+
+## Open
+
+- [ ] **The pass option runs one named measure alone** — no source yet: `scripts/src/services/genshinParity/passes/runParityPasses.ts` runs every pass up to and including the named one (`PARITY_PASS_ORDER.slice`), not that pass alone.
+- [ ] **The component's report names the pass as the next work** — no source yet: the report writer `scripts/src/services/genshinParity/passes/writeParityPasses.ts` was not traced for that naming.
+- [ ] **Only the rows of the passes run are rewritten** — no source yet: `scripts/src/services/genshinParity/passes/writeParityPasses.ts` was not traced for row-only rewriting.
+- [ ] **Exact game data outranks a value measured from a recording** — no source yet: no check traced the anchor and timing choice in the derivation for a rect; the rule is held in the passes design, not in code.
