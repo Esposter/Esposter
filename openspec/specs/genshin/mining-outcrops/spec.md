@@ -57,4 +57,4 @@ Mining outcrops SHALL not be placed, drawn, mined or marked in the world yet.
 
 ## Open
 
-- [ ] **Adventure Rank 30 opens the mining outcrops** — no source yet: the wiki's Mining Outcrop page is not in `~/Esposter.noindex/cache/genshin-wiki/`, and the rank is only the code's constant.
+- [ ] **Adventure Rank 30 opens the mining outcrops** — partly settled by the Mining Outcrop wiki page, which says Magical Crystal Chunks do not appear in outcrops before Adventure Rank 30; what it does not say is whether the outcrops themselves are withheld below the rank, and the rank is only the code's constant.
