@@ -98,5 +98,5 @@ The published Oculi SHALL be those the official map marks on the ground, each wi
 
 ## Open
 
-- [ ] **The wiki's Oculus counts the report compares against** — no source yet: no cached Oculus wiki page is in `~/Esposter.noindex/cache/genshin-wiki/`; the 66 and the 271 for Fontaine, Natlan and Nod-Krai are the figures `scripts/src/services/genshinAssets/points/InteractiveMapRegionMap.ts` carries, and the 271 is one figure for three elements.
+- [ ] **The wiki's Oculus counts the report compares against** — no source yet: no cached Oculus wiki page is in `~/Esposter.noindex/cache/genshin-wiki/`; the 66 and the 271 for Fontaine, Natlan and Nod-Krai are the figures the interactive map region map carries, and the 271 is one figure for three elements.
 - [ ] **Snezhnaya holds no transport points in the scene** — no source yet: the dump's transport points for Snezhnaya's areas were not counted, and `~/Esposter.noindex/genshin-parity/references/interactive-map/fit.json` shows only its zero matches.
