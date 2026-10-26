@@ -13,7 +13,6 @@ Noelle's kit is its record and one behaviour module, `createNoelleKitBehaviour`,
 
 ## Not yet built
 
-- **The charged attack's stamina multiplier of 0.8 is unsourced.** Neither gcsim's Noelle files nor the cached Talents page gives it; the constellation's text lives on the constellations page, which is not cached.
 - **The explosion's reach is unsourced.** The wiki gives no area for To Be Cleaned's explosion, and gcsim's 4-metre circle round the character on the field (`skill.go:145`) is not yet set against the kit's reach.
 
 ## Key files
