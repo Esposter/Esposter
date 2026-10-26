@@ -67,12 +67,6 @@ A new character is `createCharacter` over the roster: level 1 in its first phase
 
 - [ ] **Every Attributes-tab number is computed the way the game computes it** — no source yet: no test sums a recorded character's lines to its Attributes tab; the one capture, `~/Esposter.noindex/genshin-parity/captures/character-attributes-1080.png` (Jean at level 50: Max HP 8,639, ATK 625, DEF 397), has no test.
 - [ ] **Every attribute's name is filed under its id in the game's text** — no source yet: only `FIGHT_PROP_BASE_HP` is checked, in `ManualTextMapConfigData.json`.
-- [ ] **The Fatui are counted as Snezhnaya's, as the wiki counts them** — no source yet: the dump's two Fatui associations (avatars 10000033 and 10000096) name no region in the dump, and the wiki's count is not cached.
-- [ ] **The Snezhnaya association names Snezhnaya's region** — no source yet: `AssociationRegionIdMap` maps `ASSOC_TYPE_FATUI` but not `ASSOC_TYPE_SNEZHNAYA` or `ASSOC_TYPE_SNEZHNAYA_STAR`, which the dump files two and three characters under.
 - [ ] **The crossbow rows are the Traveler's discarded shooter forms, from 7.1** — no source yet: the dump gives the five crossbow rows no English name and holds no patch version.
 - [ ] **The tables run to hundreds of kilobytes** — no source yet: the published stats files are not in the checkout.
-- [ ] **The world screen reads the tables before it opens, and a failed load keeps it shut** — no source yet: no test holds the load order or the failure path.
-- [ ] **A new character starts at level 1 with its weapon at level 1 and no artifacts** — no source yet: no test holds `createCharacter`'s starting state.
-- [ ] **The Traveler at level 90 matches the wiki's Max HP and DEF** — no source yet: the wiki's Traveler page is not cached, and the test holds the pair as the wiki's without a recording.
-- [ ] **A set's conditional bonus adds no line** — no source yet: no test holds that a conditional bonus adds nothing.
 - [ ] **The Traveler's base HP, ATK and DEF match the wiki at each level and phase** — no source yet: the wiki's Traveler page is not cached.
