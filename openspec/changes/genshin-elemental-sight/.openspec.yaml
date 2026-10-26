@@ -2,4 +2,4 @@ schema: spec-driven
 created: 2026-10-18
 affected_areas: [genshin]
 x-model: claude-haiku-5-5
-x-waiting: "1.1 a bounty's target, which genshin-reputation task 2.2 spawns when a bounty is taken (unbuilt); 1.2 a quest's go-to place, which genshin-quests task 1.1 places in region data from the PC's scene3_dummy_points.lua (unbuilt)"
+x-waiting: "1.1 a bounty's target, which genshin-reputation task 2.2 spawns when a bounty is taken (unbuilt); 1.2 a quest's go-to place, which genshin-quests task 1.1 placed in Mondstadt's region data for quest 352 (built; the main session's authored publish carries it to the hosted data)"
