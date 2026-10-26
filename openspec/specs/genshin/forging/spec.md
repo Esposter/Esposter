@@ -160,19 +160,19 @@ The forging talents of the party's characters SHALL apply to the forge types the
 
 - **GIVEN** a party member with the reduce time talent is in the party
 - **WHEN** an enhancement ore order starts
-- **THEN** each unit takes a fifth less time
+- **THEN** each unit takes a fifth less time (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`, row 22501's 0.2)
 
 #### Scenario: Extra result talent may add a copy of a unit's result
 
 - **GIVEN** a party member with the extra result talent is in the party
 - **WHEN** an enhancement ore unit is collected
-- **THEN** the unit has a one in five chance of yielding an extra copy of its result
+- **THEN** the unit has a one in five chance of yielding an extra copy of its result (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`, row 32501's 2000 of 10000)
 
 #### Scenario: Refund talent gives back ore from weapons of its type
 
 - **GIVEN** a party member with the refund talent is in the party
 - **WHEN** a weapon of the talent's type is forged
-- **THEN** fifteen per cent of the ores its units take are refunded when the order starts
+- **THEN** fifteen per cent of the ores its units take are refunded when the order starts (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`, row 302301's 0.15)
 
 #### Scenario: Refund the bag cannot hold is lost
 
@@ -222,6 +222,7 @@ The forge SHALL NOT yet show a blacksmith's place on the map.
 - [ ] **The game day restarts at four in the morning on the game's clock** — no source yet: the reset hour is not in the dump, and the wiki's Forging page is not on disk.
 - [ ] **A refused enhancement ore order shows the game's own refusal line for that ore** — no source yet: the refusal lines' `forgePointNoticeTextMapHash` values were not found in the game's English text map.
 - [ ] **A recipe is refused until the player's rank and its diagram allow it** — no source yet: each recipe's rank and unlock uses were not tied to its row in `ForgeExcelConfigData.json` and `MaterialExcelConfigData.json`.
-- [ ] **The Reduce time, Extra result and Refund talents apply at a fifth less time, one in five, and 15%** — no source yet: the skill depot rows that name the reduce-time and extra-result groups, since those rows are named "Forge Test" in `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`.
-- [ ] **Adventure EXP past rank sixty is paid as Mora into the wallet** — no source yet: a game record that pays Adventure EXP past rank 60 as Mora; the TextMap entry at hash 365981086 names no rank.
-- [ ] **The forge shows no blacksmith place on the map** — no source yet: a map-mark table for the official map, which the dump's `ExcelBinOutput` does not hold.
+- [ ] **An order takes its cost as it starts, a finished unit waits when the bag is full, forging runs over real time and collects at any blacksmith, and a reload empties the queues** — no source yet: the forge service tests were not opened for these assertions.
+- [ ] **Adventure EXP past rank sixty is paid as Mora into the wallet** — no source yet: the forge's order-obtaining test was not opened for this assertion, and the rank-60 rule is not in the dump.
+- [ ] **A forged weapon enters the bag as a weapon at level one** — no source yet: the weapons' bag path was not opened.
+- [ ] **The forge shows no blacksmith place on the map** — no source yet: the blacksmith place's service and its test exist, but whether the map shows that place was not checked.
