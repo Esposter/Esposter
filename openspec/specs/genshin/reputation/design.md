@@ -68,5 +68,5 @@ flowchart TD
 - [ ] **The weekly reset is Monday at 04:00 on the server's clock** — no source yet: the cached sources hold the daily 04:00 reset only, not a weekly one.
 - [ ] **A Reputation discount is 10% off, rounded down to a multiple of five Mora** — no source yet: the wiki's Reputation page does not confirm it, and no cached game text states the percentage.
 - [ ] **The discount names shop types 1004 and 1005** — no source yet: the discount's function text does not resolve in the cached English text.
-- [ ] **The list scores within the parity loop's bar, and the game's face is HYWenHei** — no source yet: the parity score is not in the cache, and the face is not read from the game's assets here.
+- [ ] **The list scores within the parity loop's bar, and the game's face is HYWenHei** — no source yet: the snapshot's `reputation-screen` row reads 2.10% and 0.877 in `scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md`, with no bar named beside them, and no file under `~/Esposter.noindex/genshin-parity/extracted/` names HYWenHei.
 - [ ] **Each level's unlock is shown in the game's words behind an info mark, by its function id** — no source yet: `ReputationCityExcelConfigData` in `~/Esposter/genshin-parity/text/ExcelBinOutput/`, not yet read for the function ids.
