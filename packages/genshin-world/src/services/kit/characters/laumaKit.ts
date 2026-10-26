@@ -1,5 +1,6 @@
 import type { ReactionType } from "#src/models/combat/ReactionType";
 import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
+import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitActionBehaviour } from "#src/models/kit/KitActionBehaviour";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitContext } from "#src/models/kit/KitContext";
@@ -17,10 +18,12 @@ import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { consumeKitResource } from "#src/services/kit/effects/consumeKitResource";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { elementalMasteryMultiplier } from "#src/services/kit/elementalMasteryMultiplier";
@@ -155,6 +158,37 @@ const CONSTELLATION_4_COOLDOWN_ID = "lauma-constellation-4-cooldown";
 const CONSTELLATION_4_COOLDOWN_SECONDS = 5;
 const CONSTELLATION_4_ENERGY = 5;
 
+// Constellation 1's Threads of Life: while the status her burst gives from Constellation 1 holds for 20 seconds, each
+// Lunar-Bloom reaction heals the active character for 5 times Lauma's Elemental Mastery, 5 frames later, once every 1.9
+// Seconds, as gcsim v2.47.2 (MIT) lauma/cons.go gives it. The Spirit Envoy's deer is not built
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/lauma/cons.go
+const CONSTELLATION_1 = 1;
+const CONSTELLATION_1_COOLDOWN_ID = "lauma-constellation-1-cooldown";
+const CONSTELLATION_1_COOLDOWN_SECONDS = 1.9;
+const CONSTELLATION_1_HEAL_DELAY_SECONDS = toKitSeconds(5);
+const CONSTELLATION_1_HEAL_ELEMENTAL_MASTERY_SHARE = 5;
+const CONSTELLATION_1_SECONDS = 20;
+const CONSTELLATION_1_STATUS_ID = "lauma-constellation-1";
+
+// A Lunar-Bloom reaction's heal, given the cooldown has run out and the status her burst gave holds
+const giveThreadsOfLifeHeal = (context: KitContext, combatant: Combatant): void => {
+  const { kitEffectState } = context;
+  const { characterId } = combatant;
+  if (
+    !checkIsKitStatusActive(kitEffectState.effects, characterId, CONSTELLATION_1_STATUS_ID) ||
+    checkIsKitStatusActive(kitEffectState.effects, characterId, CONSTELLATION_1_COOLDOWN_ID)
+  )
+    return;
+  addKitStatus(kitEffectState, characterId, {
+    id: CONSTELLATION_1_COOLDOWN_ID,
+    secondsRemaining: CONSTELLATION_1_COOLDOWN_SECONDS,
+  });
+  const health = elementalMasteryMultiplier(combatant, CONSTELLATION_1_HEAL_ELEMENTAL_MASTERY_SHARE);
+  scheduleKitTask(kitEffectState, characterId, CONSTELLATION_1_HEAL_DELAY_SECONDS, (tick) =>
+    changeKitMemberHealth(tick, combatant, tick.activeCombatant.characterId, health),
+  );
+};
+
 // A Sanctuary tick's strike gives its striker the energy, unless the cooldown from the last one has not run out
 const restoreSanctuaryEnergy = ({ kitEffectState, party }: KitContext, { combatant }: KitStrike): void => {
   if (combatant.constellationCount < CONSTELLATION_4) return;
@@ -180,7 +214,7 @@ const restoreSanctuaryEnergy = ({ kitEffectState, party }: KitContext, { combata
 // Attack's first press enters, which waits on a stance that drains stamina; Light for the Frosty Night and her
 // Constellations; the Spirit Envoy's cooldown reduction of Cleansing for the Spring, as the charged attack's cooldown is not
 // Read by a kit
-// Constellation 1 needs the Threads of Life heal on Lunar-Bloom reactions and the Spirit Envoy's stamina, not built
+// Constellation 1's Threads of Life heal is built, from each Lunar-Bloom reaction; the Spirit Envoy's deer is not
 // Constellation 4's energy is built, from each Sanctuary tick that strikes an enemy, once every 5 seconds
 // Constellation 6 needs the Pale Hymn stacks it gives and an extra Lunar-Bloom Dendro hit per Sanctuary attack, not built
 export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter }: KitRecordReader): KitBehaviour => {
@@ -231,6 +265,11 @@ export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter
           id: PALE_HYMN_GAIN_ID,
           secondsRemaining: toKitSeconds(PALE_HYMN_GAIN_FRAMES),
         });
+        if (activeCombatant.constellationCount >= CONSTELLATION_1)
+          addKitStatus(kitEffectState, characterId, {
+            id: CONSTELLATION_1_STATUS_ID,
+            secondsRemaining: CONSTELLATION_1_SECONDS,
+          });
       },
     },
     // Pale Hymn adds her Elemental Mastery to the base damage of each Bloom and Lunar-Bloom the party makes while it holds
@@ -259,7 +298,9 @@ export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter
           BENEDICTION_MAXIMUM_BASE_DAMAGE_BONUS,
         ),
     },
-    onKitEvent: (event, { kitEffectState }, { characterId }) => {
+    onKitEvent: (event, context, combatant) => {
+      const { kitEffectState } = context;
+      const { characterId } = combatant;
       if (event.kind === KitEventKind.EffectExpired) {
         const { effect } = event;
         if (effect.kind === "status" && effect.id === PALE_HYMN_GAIN_ID && effect.characterId === characterId)
@@ -269,6 +310,8 @@ export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter
           PALE_HYMN_REACTION_TYPES.has(reactionType),
         ).length;
         for (let spendIndex = 0; spendIndex < reactionCount; spendIndex++) spendPaleHymn(kitEffectState, characterId);
+        if (event.reactions.some(({ reactionType }) => reactionType === LunarReactionType.LunarBloom))
+          giveThreadsOfLifeHeal(context, combatant);
       }
     },
     skill: pressBehaviour,

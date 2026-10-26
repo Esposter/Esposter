@@ -1,6 +1,6 @@
 ## Purpose
 
-Lauma's kit as built, with her three strikes, charged attack, provisional plunges, Hymn of Hunting's press and Hymn of Eternal Rest's hold with the Frostgrove Sanctuary each plants, her Lunar-Bloom hit, Moonsign Benediction and Pale Hymn stacks, Constellations 2 and 4, and what is left waiting on the Spirit Envoy and Constellations 1 and 6.
+Lauma's kit as built, with her three strikes, charged attack, provisional plunges, Hymn of Hunting's press and Hymn of Eternal Rest's hold with the Frostgrove Sanctuary each plants, her Lunar-Bloom hit, Moonsign Benediction and Pale Hymn stacks, Constellations 1, 2 and 4, and what is left waiting on the Spirit Envoy and Constellation 6.
 
 ## Requirements
 
@@ -176,12 +176,28 @@ From Constellation 4, each Frostgrove Sanctuary tick that strikes an enemy SHALL
 - **WHEN** her press or her hold strikes an enemy
 - **THEN** she gains no energy from it
 
-### Requirement: Spirit Envoy, her other passives, and Constellations 1 and 6 not yet built
+### Requirement: Constellation 1's heal on Lunar-Bloom
 
-Lauma's Spirit Envoy state, her other passives, and Constellations 1 and 6 SHALL NOT take effect.
+From Constellation 1, while the status her burst gives holds for 20 seconds, each Lunar-Bloom reaction SHALL heal the active character for 5 times Lauma's Elemental Mastery, 5 frames later, at most once every 1.9 seconds.
+
+#### Scenario: A Lunar-Bloom heals the active character at Constellation 1
+
+- **GIVEN** Lauma has Constellation 1 and her burst was cast within 20 seconds
+- **WHEN** a Lunar-Bloom reaction triggers
+- **THEN** the active character is healed for 5 times her Elemental Mastery 5 frames later
+
+#### Scenario: Heals wait out their cooldown
+
+- **GIVEN** a Lunar-Bloom heal was given within the last 1.9 seconds
+- **WHEN** another Lunar-Bloom reaction triggers
+- **THEN** no heal is given
+
+### Requirement: Spirit Envoy, her other passives, and Constellation 6 not yet built
+
+Lauma's Spirit Envoy state, her other passives, and Constellation 6 SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Lauma has the Spirit Envoy state, another passive, or Constellation 1 or 6 unlocked
+- **GIVEN** Lauma has the Spirit Envoy state, another passive, or Constellation 6 unlocked
 - **WHEN** the player fights with Lauma
 - **THEN** that effect has no effect
