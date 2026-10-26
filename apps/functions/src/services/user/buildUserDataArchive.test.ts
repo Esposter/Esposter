@@ -262,9 +262,11 @@ describe(buildUserDataArchive, () => {
       parentId: null,
       title,
     });
+    // Neither entry has a time: a post like stores none, and a reaction row's time is its first reactor's, not the
+    // person's, so the exact shape leaves it out
     expect(readEntryJson(entries, "likes.json")).toStrictEqual([
       { kind: ArchiveLikeKind.Post, targetId: otherPost.id, value: 1 },
-      { kind: ArchiveLikeKind.Emoji, emojiTag, roomId: room.id, targetId: messageRowKey, time: expect.any(String) },
+      { kind: ArchiveLikeKind.Emoji, emojiTag, roomId: room.id, targetId: messageRowKey },
     ]);
     expect(readEntryJson(entries, "friends.json")).toStrictEqual({
       friends: [{ id: friendUserId, name }],
