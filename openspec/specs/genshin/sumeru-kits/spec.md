@@ -71,5 +71,3 @@ The rainforest city SHALL stand in for the houses the game draws in Sumeru City,
 ## Open
 
 - [ ] **The rainforest city stands where the game's houses stand** — no source yet: the city's place in `packages/genshin-world/src/data/regions/sumeru.json` is not compared against the game's house positions in the Sumeru export.
-- [ ] **Each parametric kit is a pure generator that returns one merged geometry** — no source yet: game data or a snapshot that holds this behaviour.
-- [ ] **The rainforest city stands as Sumeru City's first landmark, the `sumeru-city` Building in the region data** — no source yet: game data or a snapshot that holds this behaviour.
