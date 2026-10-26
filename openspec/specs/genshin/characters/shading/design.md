@@ -363,30 +363,30 @@ The only case where a ramp stays raw is an artist painting it in linear values, 
 - **The metal gate.** The body variant read for the emission and the specular uses no metal constant, so the "Lm.r > 0.9" gate and the matcap are not confirmed by it; they stay Provisional until a variant that reads "_MTMap" is traced.
 - **The register-to-texture binding.** The order the parameter table lists the textures is used for the bindings above; a check against a rendered frame is still to be made.
 - **A PMX AdditionalUv sphere is not drawn.** Its mode reads the mesh's second UV set (`subUv`), which the geometry carries, but the sphere is laid over the diffuse only for Multiply and Add; the mode is open until its colour is checked against a rendered pack.
-- [ ] **TOON_SPECULAR_ON is defined by no uber variant** — no source yet: a scan of the uber's keyword sets, which the extracted listings do not name.
+- **TOON_SPECULAR_ON is defined by no uber variant** — not found: no listing under `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber` (6,337 of them) and no `Shader#*.dat` dump (43) holds the keyword.
 - [ ] **The uber's 1,553 compiled programs sort into the five pass classes** — no source yet: `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber` holds 6,337 listings, not 1,553, and the classing is not reproduced.
 - [ ] **The candidate counts (body 124 and 41, hair 60 and 5, face 68 and 30, outline 16 and 24)** — no source yet: a count over the uber's keyword sets.
-- [ ] **Programs 795, 753, 788 and 958 are vertex programs** — no source yet: `asm/uber/00795.asm`, `00753.asm`, `00788.asm` and `00958.asm` each disassemble with a `ps_5_0` header and `SV_Target` outputs, not as vertex programs.
-- [ ] **Each program's container is DXBC or DXIL as the table says** — no source yet: all 6,337 listings carry the same D3D disassembler header and none has a DXIL marker, so the container column is not confirmed.
+- [ ] **Programs 795, 753, 788 and 958 are vertex programs** — contradicted in part: `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber/00795.asm`, `00753.asm`, `00788.asm` and `00958.asm` each carry a `ps_5_0` header and one `SV_Target` output, which is a pixel program. The table's Vertex stage and the outline's "vertex 958" attribution are not borne out, and need re-deriving from the listings.
+- **Each program's container is DXBC or DXIL as the table says** — contradicted: all 6,337 listings under `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber` carry the D3D shader disassembler header and none carries a DXIL marker, so the table's DXIL entries are not borne out.
 - [ ] **The metal gate's threshold `Lm.r > 0.9`** — no source yet: pixel 460's literal list has 0.93 but no 0.9, so the threshold is not read from the program.
-- [ ] **The half-Lambert scale 0.4975 in `N_v`** — no source yet: 0.4975 is not a literal in pixel 460, so its use in the program is not read (the repo's `HALF_LAMBERT_SCALE` holds the value, not the program's use).
+- [ ] **The half-Lambert scale 0.4975 in `N_v`** — no source yet: 0.4975 is not a literal in any of the 6,337 listings under `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber` (searched), so its use in the program is not read. The repo's `HALF_LAMBERT_SCALE` holds the value, not the program's use.
 - [ ] **The region thresholds 0.8, 0.6, 0.4 and 0.2** — no source yet: pixel 460's literal list holds 0.2 but no 0.8, 0.6 or 0.4, so these are not read as literals.
-- [ ] **The deferred lighting pass's block `00/00612967.blk`, its 765 programs and its 34 character pixel programs** — no source yet: "Hidden/Internal-DeferredShading" is not in the extracted shader dump.
+- [ ] **The deferred lighting pass's block `00/00612967.blk`, its 765 programs and its 34 character pixel programs** — no source yet: "Hidden/Internal-DeferredShading" is not in the extracted shader dump (`~/Esposter.noindex/genshin-parity/extracted/shaders`, searched in full, no hit).
 - [ ] **240 of the 693 body variants read `_ES_CharacterMainLightBrightness` as one `mul`** — no source yet: a count over `Shader#0`'s variants, which is not reproduced.
 - [ ] **No body variant reads a fog constant, and the properties declare the four fog values** — no source yet: a variant scan of `Shader#0`, and the declared properties are not read.
 - [ ] **The haze at 3 m is 0.0000% for every setting that sets a density** — no source yet: an evaluation of `createHeightFogNode` at the stated settings; no script or test commits it.
 - [ ] **The game's tone curve against ACES at scene 0.05, 0.18, 0.5, 1 and 4** — no source yet: a script evaluating both curves; none is committed.
-- [ ] **The face's flip, `_FaceFlipFactor` and its angle rule** — no source yet: the face flip's code and its use in `createFaceShadeNode.ts` are not traced.
+- **The face's flip, `_FaceFlipFactor` and its angle rule** — `packages/genshin-engine/src/character/shading/updateFaceDraw.ts`, whose `checkIsFlipped` takes the face's angle and the flip factor.
 - [ ] **The face's shadow colour `C = Cm * mix(S, 1, F)` and the no-face-map case lit** — no source yet: `createFaceShadeNode.ts` is not read against the equation, and no rendered face checks it.
 - [ ] **The outline's colour tint `0.2 * T_m` and its region intensities** — no source yet: a literal scan of pixel 885, which is not made.
-- [ ] **The outline's `_OutLineZOffset` at `cb0[31].x` is not built** — no source yet: a repo search for the offset's absence, which is not run.
+- [ ] **The outline's `_OutLineZOffset` at `cb0[31].x` is not built** — no source yet for the bias itself: no repo file names `_OutLineZOffset`, and the offset the repo does build comes from `_MaxOutlineZOffset` (`packages/genshin-world/src/services/character/avatar/createAvatarShadingInputs.ts`).
 - [ ] **The output map `o0` to `o5` of the deferred body pass** — no source yet: pixel 460's writes to its SV_Target outputs are not traced to these registers.
 - [ ] **The hair's specular and ramp-row equations (pixel 272)** — no source yet: pixel 272's operators are not read against the written form.
 - [ ] **Each program's index is the same in its `NNNNN.dxbc` and its `programs.tsv` line** — no source yet: the cited file `programs.tsv` is not on disk
 - [ ] **The nose shows a dark mark in front light, as the character screen draws it** — no source yet: the cited video https://www.youtube.com/watch?v=KPlvZW6udfk is not on disk
-- [ ] **The repo's outline projection scale holds the game's 2.414** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The outline's width is `_OutlineWidth` times 0.41425, weighted by the alpha, with no `T_w`** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The haze at the close-up is zero, by the fog's form** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The repo's outline projection scale holds the game's 2.414** — no source yet: the repo holds 2.414 as `OUTLINE_PROJECTION_SCALE` (`packages/genshin-engine/src/character/shading/constants.ts`), but no listing under `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber` holds the literal 2.414 (searched), so the game's value is not read.
+- [ ] **The outline's width is `_OutlineWidth` times 0.41425, weighted by the alpha, with no `T_w`** — no source yet: no listing under `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber` holds the literal 0.41425 (searched). The repo holds it as `OUTLINE_WIDTH_SCALE` (`packages/genshin-engine/src/character/shading/constants.ts`).
+- [ ] **The haze at the close-up is zero, by the fog's form** — no source yet: the form is in `packages/genshin-engine/src/post/createHeightFogNode.ts`, but its value at a close-up needs a run of that node, which this sitting does not run.
 - [ ] **The tone curve is the game's** — no source yet: game data or a snapshot that holds this behaviour
 
 Related: [drawing a character](../drawing/design.md), [derived assets](../../derived-assets/design.md), [game data formats](../../game-data-formats/design.md).
