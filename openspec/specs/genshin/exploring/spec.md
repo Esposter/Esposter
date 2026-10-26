@@ -34,4 +34,4 @@ A jump SHALL land the character at the landmark's arrival place, facing the arri
 
 ## Open
 
-- [ ] **A jump to a statue or a waypoint lands the character at the game's arrival place, facing its turn** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A jump to a statue or a waypoint lands the character at the game's arrival place, facing its turn** — no source yet: the scene point file `~/Esposter/genshin-parity/text/BinOutput/Scene/Point/scene3_point.json`, not yet read for each statue's and waypoint's arrival place and turn
