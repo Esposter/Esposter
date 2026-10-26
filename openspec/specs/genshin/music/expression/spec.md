@@ -50,4 +50,4 @@ The gains SHALL be fitted after the instruments against the game's sound, and a 
 
 - [ ] **The whole segment swells or fades by about twenty decibels across its voices** — no source yet: no level measurement of a swell is recorded.
 - [ ] **The gains change little when the expression is fitted a second time** — no source yet: no second run's output is recorded.
-- [ ] **The gains are fitted after the instruments against the game's sound** — no source yet: the order is the repo's `scripts/src/services/genshinParity/commands/expressionCommand.ts`, and the game's sound in `~/Esposter/genshin-parity/extracted/music/` has no file named for expression, so its levels are not yet read against the gains.
+- [ ] **The gains are fitted after the instruments against the game's sound** — no source yet: the game's sound in `~/Esposter/genshin-parity/extracted/music/` has no file named for expression, so its levels are not yet read against the gains.
