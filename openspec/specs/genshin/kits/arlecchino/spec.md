@@ -20,15 +20,15 @@ Arlecchino's six strikes SHALL deal physical damage (`~/Esposter/cache/gcsim-v2.
 - **WHEN** the strike is checked for enemies in reach
 - **THEN** enemies within the offset plus the radius are struck
 
-### Requirement: Arlecchino's charged attack costs 25 stamina and strikes at 37 frames
+### Requirement: Arlecchino's charged attack strikes at 37 frames
 
-Arlecchino's charged attack SHALL strike at 37 frames of its 60 frame animation (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/arlecchino/charge.go:14`, `~/Esposter/cache/gcsim-v2.47.2/internal/characters/arlecchino/charge.go:17`) and SHALL cost 25 stamina.
+Arlecchino's charged attack SHALL strike at 37 frames of its 60 frame animation (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/arlecchino/charge.go:14`, `~/Esposter/cache/gcsim-v2.47.2/internal/characters/arlecchino/charge.go:17`) and SHALL cost stamina, a provisional 25 until a source gives the cost (see Open).
 
 #### Scenario: The charged attack costs stamina when performed
 
-- **GIVEN** Arlecchino has at least 25 stamina
+- **GIVEN** Arlecchino has at least the provisional 25 stamina (see Open)
 - **WHEN** she performs her charged attack
-- **THEN** 25 stamina is spent
+- **THEN** the provisional 25 stamina is spent (see Open)
 
 ### Requirement: Arlecchino's plunges land at 47 and 48 frames with their poise
 
