@@ -69,10 +69,10 @@ The camera's numbers are in `packages/genshin-engine/src/camera/constants.ts`, e
 
 ## Sources
 
-- [Settings](https://genshin-impact.fandom.com/wiki/Settings), Genshin Impact Wiki: not in the cache (see Still open), so nothing here cites it.
-- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: not in the cache (see Still open), so nothing here cites it.
-- [Photo Mode](https://genshin-impact.fandom.com/wiki/Photo_Mode), Genshin Impact Wiki: not in the cache (see Still open), so nothing here cites it.
-- [Time](https://genshin-impact.fandom.com/wiki/Time), Genshin Impact Wiki: not in the cache (see Still open), so nothing here cites it.
+- [Settings](https://genshin-impact.fandom.com/wiki/Settings), Genshin Impact Wiki: not in the cache (see Open), so nothing here cites it.
+- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: not in the cache (see Open), so nothing here cites it.
+- [Photo Mode](https://genshin-impact.fandom.com/wiki/Photo_Mode), Genshin Impact Wiki: not in the cache (see Open), so nothing here cites it.
+- [Time](https://genshin-impact.fandom.com/wiki/Time), Genshin Impact Wiki: not in the cache (see Open), so nothing here cites it.
 - [Fix your timestep!](https://gafferongames.com/post/fix_your_timestep/), Glenn Fiedler: the shown state as a blend of the two latest steps, weighted by what the accumulator has left over.
 - [WorldReverse](https://github.com/fengjixuchui/WorldReverse/tree/main/Assets/DummyScripts/Assembly-CSharp), fengjixuchui: the camera profile's classes, its global config's and each module config's fields in declaration order, and the numbers of its camera modules.
 - [genshin-utility](https://github.com/lanylow/genshin-utility/blob/main/src/library/src/hooks/hooks.cpp), lanylow: a field-of-view tool that takes the game's own call setting 45 as its world camera's.
@@ -81,6 +81,7 @@ The camera's numbers are in `packages/genshin-engine/src/camera/constants.ts`, e
 
 - [ ] **In the game the camera stays behind the character, turns freely, zooms, and is pulled in by a wall rather than hiding the character** — no source yet: the Settings and Controls wiki pages are not in the cache, and no capture of the orbit is checked frame by frame.
 - [ ] **The game's sensitivity runs from 1 to 5, and the look turns at its middle** — no source yet: the range is not read from the interface export in the cache.
+- [ ] **The Settings screen's pitch follows slopes** — no source yet: the Settings wiki page is not in the cache.
 - [ ] **The field of view is 45 degrees, the wheel runs from 1 to 6 metres, and the profile's elevation limit is 89 degrees** — no source yet: the camera export under `~/Esposter/genshin-parity/extracted/` is not on disk (that folder has no `camera` folder), and the cached sources do not hold the profile.
 - [ ] **The Settings screen's default distance runs from 4.5 to 6.0 metres, topping out at the furthest radius** — no source yet: the Settings wiki page is not in the cache, and the camera profile is not exported.
 - [ ] **The middle mouse button and the right stick press are the game's camera reset** — no source yet: the Controls wiki page is not in the cache, and the controls capture is not checked frame by frame.
