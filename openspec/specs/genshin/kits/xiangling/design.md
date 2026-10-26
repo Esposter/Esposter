@@ -32,4 +32,4 @@ Xiangling's kit is its record and one behaviour module, `createXianglingKitBehav
 
 - [ ] **The Implode's explosion is AoE Pyro DMG with no kind, as the wiki gives it** — no source yet: the cached Oil Meets Fire wiki page is not on disk.
 - [ ] **the Implode's 8.8 poise** — no source yet: the Oil Meets Fire wiki page, which neither `~/Esposter/cache/genshin-wiki/Category_Xiangling_Talents.json` nor `~/Esposter/cache/genshin-wiki/xiangling-page.json` holds.
-- [ ] **Guoba breathes every 1.5 seconds from two seconds after the cast, as the wiki's Guoba Attack notes give** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/xiangling/guoba.go`, lines 47-53: gcsim breathes every 100 frames from 126, 1.67 seconds apart, where the built breaths are 1.5 seconds apart.
+- [ ] **Guoba breathes every 1.5 seconds from two seconds after the cast, as the wiki's Guoba Attack notes give** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/xiangling/guoba.go:47-53`: gcsim breathes every 100 frames from 126, 1.67 seconds apart.
