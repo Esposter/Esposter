@@ -61,4 +61,4 @@ From `scripts/`, as `pnpm genshin:parity <command>`, each with its own `--help` 
 
 ## Open
 
-- [ ] **Each row's described behaviour** — no source yet: the table's other rows are not compared against their command files; the `fetch`, `frames` and `film` rows are read against `scripts/src/services/genshinParity/commands/fetchCommand.ts`, `framesCommand.ts` and `filmCommand.ts`, each one's description as its row says, with the defaults of `frames` and `film` as their rows give them (ten a second, and two stills a second).
+- [ ] **Each row's described behaviour** — no source yet: the table's other rows are not compared against their command files; `fetch`, `frames` and `film` are (`scripts/src/services/genshinParity/commands/fetchCommand.ts`, `framesCommand.ts` and `filmCommand.ts`).
