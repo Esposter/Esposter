@@ -106,7 +106,7 @@ The inventory pass SHALL hold only once every renderer of the game's exports is 
 
 ### Requirement: The pass option runs one measure alone
 
-The pass option SHALL run one named measure alone and rewrite only that pass's rows of the component's report (see Open).
+The pass option SHALL run one named measure alone and rewrite only that pass's rows of the component's report (see the design's Open).
 
 #### Scenario: One pass rerun
 
@@ -114,11 +114,8 @@ The pass option SHALL run one named measure alone and rewrite only that pass's r
 - **WHEN** the run is started
 - **THEN** the run stops at the open pass and names it
 - **AND** the named pass is not measured
-- **AND** only the rows of the passes run are rewritten (see Open)
+- **AND** only the rows of the passes run are rewritten (see the design's Open)
 
 ## Open
 
-- [ ] **The pass option runs one named measure alone** — contradicted by `scripts/src/services/genshinParity/passes/runParityPasses.ts`: it runs every pass up to and including the named one.
-- [ ] **The component's report names the pass as the next work** — no source yet: the run stops at the first pass not held, so its rows end the report, and no words in `scripts/src/services/genshinParity/passes/runParityPasses.ts` name it as the next work.
-- [ ] **Only the rows of the passes run are rewritten** — contradicted by `scripts/src/services/genshinParity/passes/writeParityPasses.ts`: a whole run writes only its own results, so unreached passes' rows are dropped.
 - [ ] **Exact game data outranks a value measured from a recording** — no source yet: no check traced the anchor and timing choice in the derivation for a rect; the rule is held in the passes design, not in code.
