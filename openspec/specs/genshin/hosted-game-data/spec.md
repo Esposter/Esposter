@@ -6,25 +6,25 @@ Every static dataset genshin-world reads — the game's tables and words, the fi
 
 ### Requirement: Records are named by the hash of their content
 
-The game's static datasets SHALL be stored as records each named by the hash of its own content, so a name always refers to the same bytes.
+The game's static datasets SHALL be stored as records each named by the hash of its own content, so a name always refers to the same bytes (`scripts/src/services/gameData/getGameDataHash.ts`).
 
 #### Scenario: Identical content is stored once
 
 - **GIVEN** a record is already stored under the hash of its content
 - **WHEN** the same content is published again
-- **THEN** no second copy is written
-- **AND** an object already present under its name is accepted as the state asked for rather than as an error
+- **THEN** no second copy is written (`scripts/src/services/gameData/storeGameDataRecord.ts`)
+- **AND** an object already present under its name is accepted as the state asked for rather than as an error (`scripts/src/services/gameData/storeGameDataRecord.ts`)
 
 #### Scenario: A rerun with unchanged data makes no request
 
 - **GIVEN** the lock already names the hash of every record of a dataset
 - **WHEN** its builder runs again
-- **THEN** the builder reports the data as unchanged
+- **THEN** the builder reports the data as unchanged (`scripts/src/services/gameData/publishGameDataStep.ts`)
 - **AND** no request is made to storage
 
 ### Requirement: The published lock is the only switch to new data
 
-The published lock SHALL be the one switch that makes new records readable, so no page reads a new record before the commit of its lock has been deployed.
+The published lock SHALL be the one switch that makes new records readable, so no page reads a new record before the commit of its lock has been deployed (`packages/genshin-world/src/generated/gameDataLock.json`, `packages/genshin-world/src/services/data/gameDataLock.ts`).
 
 #### Scenario: New records reach pages on deploy
 
@@ -36,18 +36,18 @@ The published lock SHALL be the one switch that makes new records readable, so n
 
 - **GIVEN** a page is open on the build from before the lock changed
 - **WHEN** new records are published
-- **THEN** that page keeps reading the old records
+- **THEN** that page keeps reading the old records (`packages/genshin-world/src/services/data/readGameDataObject.ts`, objects named by their hash)
 - **AND** the old records stay stored
 
 ### Requirement: A read fetches only a key the lock names
 
-A reader SHALL fetch a record only by a key the published lock names, and SHALL refuse any other key.
+A reader SHALL fetch a record only by a key the published lock names, and SHALL refuse any other key (`packages/genshin-world/src/services/data/readGameData.ts`).
 
 #### Scenario: A key the lock lacks is refused
 
 - **GIVEN** no published lock names the key
 - **WHEN** a reader asks for it
-- **THEN** the read fails, reporting that the key is not in the game data lock
+- **THEN** the read fails, reporting that the key is not in the game data lock (`packages/genshin-world/src/services/data/readGameData.ts`)
 
 #### Scenario: An entity missing from its index is refused
 
@@ -57,7 +57,7 @@ A reader SHALL fetch a record only by a key the published lock names, and SHALL 
 
 ### Requirement: Reading one entity takes two small fetches
 
-A read of one entity from an index SHALL fetch the index first and then only the one record the index names.
+A read of one entity from an index SHALL fetch the index first and then only the one record the index names (`packages/genshin-world/src/services/data/readGameDataEntry.ts`).
 
 #### Scenario: Opening one entity fetches its index, then its record
 
@@ -68,7 +68,7 @@ A read of one entity from an index SHALL fetch the index first and then only the
 
 ### Requirement: A record is parsed by its own schema
 
-A reader SHALL parse each record with its own schema and SHALL reject a record that schema does not parse.
+A reader SHALL parse each record with its own schema and SHALL reject a record that schema does not parse (`packages/genshin-world/src/services/data/readGameData.ts`).
 
 #### Scenario: A record that fails its schema is rejected
 
@@ -80,17 +80,17 @@ A reader SHALL parse each record with its own schema and SHALL reject a record t
 
 - **GIVEN** two callers read the same record
 - **WHEN** each receives its value
-- **THEN** each holds a value of its own
+- **THEN** each holds a value of its own (`packages/genshin-world/src/services/data/readGameDataObject.ts` caches the JSON, each caller's schema parses its own copy)
 
 ### Requirement: A record is fetched once per page and a failed fetch is retried
 
-A record fetch SHALL be made once for the life of a page, and a failed or timed-out fetch SHALL be retried by the next read.
+A record fetch SHALL be made once for the life of a page, and a failed or timed-out fetch SHALL be retried by the next read (`packages/genshin-world/src/services/data/readGameDataObject.ts`, `packages/genshin-world/src/services/constants.ts`).
 
 #### Scenario: A repeated read reuses the first fetch
 
 - **GIVEN** a record was fetched earlier on the same page
 - **WHEN** it is read again
-- **THEN** no second fetch is made
+- **THEN** no second fetch is made (`packages/genshin-world/src/services/data/readGameDataObject.ts`)
 
 #### Scenario: A failed fetch is retried
 
@@ -100,7 +100,7 @@ A record fetch SHALL be made once for the life of a page, and a failed or timed-
 
 ### Requirement: The world stays shut until its gate records load
 
-The world SHALL stay shut until every record its gate names has loaded, and a failed gate read SHALL leave it shut.
+The world SHALL stay shut until every record its gate names has loaded, and a failed gate read SHALL leave it shut (`packages/genshin-world/src/components/World/Screen/Index.vue`).
 
 #### Scenario: The world opens once its gate records load
 
@@ -113,7 +113,7 @@ The world SHALL stay shut until every record its gate names has loaded, and a fa
 - **GIVEN** a record the gate names fails to load
 - **WHEN** the gate settles
 - **THEN** the world stays shut
-- **AND** the failure is logged
+- **AND** the failure is logged (`packages/genshin-world/src/components/World/Screen/Index.vue`, `console.error`)
 
 ### Requirement: A screen keeps what it showed when a later read fails
 
@@ -128,7 +128,7 @@ A screen whose later record read fails SHALL keep showing what it had and SHALL 
 
 ### Requirement: The opening holds its splashes white until its title logo loads
 
-The opening SHALL hold its splashes white until the title logo it reads first has loaded.
+The opening SHALL hold its splashes white until the title logo it reads first has loaded (`packages/genshin-world/src/components/Game/Opening/Index.vue`).
 
 #### Scenario: The splashes wait on the title logo
 
@@ -140,11 +140,11 @@ The opening SHALL hold its splashes white until the title logo it reads first ha
 
 - **GIVEN** the splashes are playing
 - **WHEN** the login records finish loading
-- **THEN** the login screen draws them
+- **THEN** the login screen draws them (`packages/genshin-world/src/services/login/readLoginData.ts`)
 
 ### Requirement: A publish replaces only the scope it names
 
-A publish SHALL replace only the keys under the scope it names and SHALL keep every other key the lock already holds.
+A publish SHALL replace only the keys under the scope it names and SHALL keep every other key the lock already holds (`scripts/src/services/gameData/mergeGameDataLock.ts`).
 
 #### Scenario: A dataset scope replaces all of its keys
 
@@ -163,65 +163,65 @@ A publish SHALL replace only the keys under the scope it names and SHALL keep ev
 
 - **GIVEN** a dataset name is given where a key is expected
 - **WHEN** the publish is attempted
-- **THEN** it is refused before anything is published
+- **THEN** it is refused before anything is published (`scripts/src/services/gameData/toGameDataKeyScopes.ts`)
 
 ### Requirement: Retiring a record removes its lock entry and later its objects
 
-Retiring a record SHALL remove its entry from the lock, and its stored objects SHALL be deleted only once no live lock names them and they are older than ninety days.
+Retiring a record SHALL remove its entry from the lock, and its stored objects SHALL be deleted only once no live lock names them and they are older than ninety days (`scripts/src/services/gameData/pruneGameData.ts`, `scripts/src/services/gameData/constants.ts`, `GAME_DATA_RETENTION_MS`).
 
 #### Scenario: A retired key leaves the lock on its next write
 
 - **GIVEN** a key is deleted from the lock or its dataset is removed
 - **WHEN** the lock is next written
-- **THEN** the key no longer appears in the lock
+- **THEN** the key no longer appears in the lock (`scripts/src/services/gameData/mergeGameDataLock.ts`)
 
 #### Scenario: A prune keeps objects a live lock still names
 
 - **GIVEN** an object is named by a lock on a live branch or in the recent window
 - **WHEN** a prune runs
-- **THEN** the object is kept
+- **THEN** the object is kept (`scripts/src/services/gameData/readLiveGameDataLocks.ts`)
 
 #### Scenario: A prune is skipped when the remote cannot be fetched
 
 - **GIVEN** the remote repository cannot be fetched
 - **WHEN** a prune runs
 - **THEN** nothing is deleted
-- **AND** the skipped prune is noted
+- **AND** the skipped prune is noted (`scripts/src/services/gameData/commands/pruneCommand.ts`, `console.warn`)
 
 #### Scenario: A reverted lock commit still resolves
 
 - **GIVEN** a lock commit from within the window is reverted
 - **WHEN** the reverted lock is read
-- **THEN** its objects are still stored and resolve
+- **THEN** its objects are still stored and resolve (`scripts/src/services/gameData/readLiveGameDataLocks.ts`)
 
 ### Requirement: Test suites read game data through a local mirror
 
-Test suites SHALL read game data through a local mirror of the published objects and SHALL NOT keep a copy of the game data in the repository.
+Test suites SHALL read game data through a local mirror of the published objects and SHALL NOT keep a copy of the game data in the repository (`packages/genshin-world/scripts/gameData/mirror/setupGameDataFetch.ts`, `packages/genshin-world/scripts/gameData/constants.ts`).
 
 #### Scenario: A suite reads a record the mirror lacks
 
 - **GIVEN** the mirror does not hold the hash of a record
 - **WHEN** a suite reads the record
 - **THEN** the record is downloaded from the development account
-- **AND** it is kept in the shared cache
+- **AND** it is kept in the shared cache (`packages/shared-node/src/services/cache/readContentAddressedObject.ts`)
 
 #### Scenario: A downloaded record that does not match its name is refused
 
 - **GIVEN** a downloaded record whose bytes do not hash to its name
 - **WHEN** it is stored
 - **THEN** the read throws
-- **AND** nothing is kept in the cache
+- **AND** nothing is kept in the cache (`packages/shared-node/src/services/cache/readContentAddressedObject.ts`)
 
 #### Scenario: CI restores the mirror for every shard
 
 - **GIVEN** a CI run for a lock whose hash already has a cache
 - **WHEN** the test shards start
 - **THEN** each shard restores the cache
-- **AND** no shard fetches any record
+- **AND** no shard fetches any record (`.github/workflows/CI.yaml`, `.github/workflows/build-packages.yaml`)
 
 ### Requirement: The package bundles its lock and no game record
 
-The package SHALL bundle only its lock and the one achievement count the save schema needs at import, and SHALL NOT bundle any game record.
+The package SHALL bundle only its lock and the one achievement count the save schema needs at import, and SHALL NOT bundle any game record (`packages/genshin-world/src/services/data/gameDataLock.ts`, `packages/genshin-world/src/data/achievements/achievementCount.json`).
 
 #### Scenario: A build includes no game record
 
@@ -233,43 +233,43 @@ The package SHALL bundle only its lock and the one achievement count the save sc
 
 - **GIVEN** a player opens a page that needs a record
 - **WHEN** the record's key is read
-- **THEN** the browser fetches the record from storage at that moment
+- **THEN** the browser fetches the record from storage at that moment (`packages/genshin-world/src/services/data/readGameData.ts`)
 
 ### Requirement: Records are served straight from storage to the browser
 
-Each record SHALL be served directly from storage to the browser with no app route in between, and SHALL be cached by the browser for a year without revalidation.
+Each record SHALL be served directly from storage to the browser with no app route in between, and SHALL be cached by the browser for a year without revalidation (`scripts/src/services/gameData/constants.ts`, `GAME_DATA_CACHE_CONTROL`; `apps/web/shared/services/genshin/getGenshinGameDataBaseUrl.ts`).
 
 #### Scenario: A record is fetched from storage directly
 
 - **GIVEN** a page needs a record
 - **WHEN** the browser fetches it
-- **THEN** the request goes to storage rather than to the app's server
+- **THEN** the request goes to storage rather than to the app's server (`apps/web/shared/services/genshin/getGenshinGameDataBaseUrl.ts`)
 
 #### Scenario: A repeat visit uses the cached record
 
 - **GIVEN** the record was fetched before
 - **WHEN** the page loads again within a year
-- **THEN** the browser answers without making a request
+- **THEN** the browser answers without making a request (`scripts/src/services/gameData/constants.ts`, `GAME_DATA_CACHE_CONTROL`)
 
 ### Requirement: A profile or book record is checked before it is published
 
-A profile or book record SHALL be parsed by its schema before it is published, and an index SHALL hash to the same name whatever order its entries were built in.
+A profile or book record SHALL be parsed by its schema before it is published, and an index SHALL hash to the same name whatever order its entries were built in (`packages/genshin-world/src/models/profile/ProfileText.ts`, `scripts/src/services/genshinAssets/profile/buildProfilePublication.ts`, `scripts/src/services/gameData/planGameDataPublication.ts`).
 
 #### Scenario: An invalid profile record is not published
 
 - **GIVEN** a profile record that its schema does not parse
 - **WHEN** the publish runs
-- **THEN** the record is not published
+- **THEN** the record is not published (`scripts/src/services/genshinAssets/profile/buildProfilePublication.ts`)
 
 #### Scenario: The order of index entries does not change the name
 
 - **GIVEN** two builds list the same index entries in different orders
 - **WHEN** each index is hashed
-- **THEN** both hash to the same name
+- **THEN** both hash to the same name (`scripts/src/services/gameData/planGameDataPublication.ts`)
 
 ### Requirement: Verification confirms every reached object matches its name
 
-A verification SHALL fetch every object the lock reaches from each account and SHALL confirm that each hashes to its name.
+A verification SHALL fetch every object the lock reaches from each account and SHALL confirm that each hashes to its name (`scripts/src/services/gameData/verifyGameData.ts`).
 
 #### Scenario: Verification checks each account
 
@@ -277,3 +277,10 @@ A verification SHALL fetch every object the lock reaches from each account and S
 - **WHEN** verification runs
 - **THEN** each reached object is fetched from each account without credentials
 - **AND** each is checked against its name
+
+## Open
+
+- [ ] **An entity missing from its index fails with "not in its index"** — no source yet: no error text "not in its index" was found in `packages/genshin-world/src/services/data/` or `scripts/src/services/`.
+- [ ] **A failed or timed-out fetch is retried by the next read** — no source yet: the failure path of `createEvictingPromiseCache` in `@esposter/shared` was not read.
+- [ ] **A screen keeps what it showed and logs a later read's failure** — no source yet: only the world's gate and the opening's logging were checked.
+- [ ] **A book record is parsed by its schema before it is published** — no source yet: `scripts/src/services/genshinAssets/archive/buildBookBodyPublication.ts` shows no schema parse.
