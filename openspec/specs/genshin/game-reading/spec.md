@@ -6,7 +6,7 @@ The route a question about the game takes through the game's own files: the sour
 
 ### Requirement: A read of the game's blocks waits for the game to close
 
-A step that reads the installed game's blocks SHALL refuse to start while the game is running (`scripts/src/services/recreation/animeStudio/assertAnimeStudioReady.ts`, `scripts/src/services/genshinParity/shared/checkIsGameRunning.ts`).
+A step that reads the installed game's blocks SHALL refuse to start while the game is running.
 
 #### Scenario: The game closed
 
@@ -18,12 +18,12 @@ A step that reads the installed game's blocks SHALL refuse to start while the ga
 
 - **GIVEN** the game is running
 - **WHEN** a step that reads its blocks starts
-- **THEN** it stops before reading anything, naming the game's executable (`scripts/src/services/genshinAssets/shared/constants.ts`, the blocked subject)
+- **THEN** it stops before reading anything, naming the game's executable
 - **AND** nothing is exported
 
 ### Requirement: Every shader program a disassembler can read is written beside it
 
-The shaders step SHALL write the assembly of every program its machine's disassembler reads, DXBC and shader model 6 DXIL alike, headed by the names of the constants its registers hold wherever its shader's layouts cover them (`scripts/src/services/genshinAssets/materials/disassembleDxbcDirectory.ts`, `scripts/src/services/genshinAssets/materials/disassembleWithVkd3d.ts`, `scripts/src/services/genshinAssets/materials/annotateProgramConstants.ts`).
+The shaders step SHALL write the assembly of every program its machine's disassembler reads, DXBC and shader model 6 DXIL alike, headed by the names of the constants its registers hold wherever its shader's layouts cover them.
 
 #### Scenario: A DXIL program off Windows
 
@@ -36,14 +36,14 @@ The shaders step SHALL write the assembly of every program its machine's disasse
 
 - **GIVEN** a program the machine's disassembler cannot read
 - **WHEN** the shaders step runs
-- **THEN** the program is left without its assembly (`scripts/src/services/genshinAssets/materials/disassembleWithVkd3d.ts`)
+- **THEN** the program is left without its assembly
 - **AND** the step goes on to the next program
 
 #### Scenario: No disassembler on the machine
 
 - **GIVEN** a machine without Windows' compiler library and with no `vkd3d-compiler`
 - **WHEN** the shaders step runs
-- **THEN** it stops with the missing compiler's error rather than writing programs without their assembly (`scripts/src/services/genshinAssets/materials/disassembleWithVkd3d.ts`)
+- **THEN** it stops with the missing compiler's error rather than writing programs without their assembly
 
 ### Requirement: A ported shader's terms are recorded as Exact or Provisional
 
