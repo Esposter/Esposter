@@ -27,7 +27,7 @@ Candace's kit is its record and one behaviour module, `createCandaceKitBehaviour
 ## Sources
 
 - [gcsim (MIT)](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/candace): the strikes' hitmarks, cancel frames, reaches and poise, the charged attack and the plunges' frames, radii and poise, Heron's Sanctum's frames, hitboxes, shields and cooldowns, Wagtail's Tide's hitmark, duration, infusion and waves, and Constellations 1, 2, 4 and 6.
-- The Genshin Impact Wiki's Aegis of Crossed Arrows page, cached at `cache/genshin-wiki/Category_Candace_Talents.json`: Ascension 1's text.
+- The Genshin Impact Wiki's Aegis of Crossed Arrows page, cached at `~/Esposter/cache/genshin-wiki/Category_Candace_Talents.json`: Ascension 1's text.
 - The Candace talent pages in the same cache: the tap's 6-second and the hold's 9-second cooldowns, 25 stamina for the charged attack, and the Prayer's 9 seconds, which the dump's groups confirm at level 1.
 - The proud skill groups 7231, 7232 and 7239 in the hosted game data: each multiplier's index, the shield's share and flat HP, the cooldowns, the burst's seconds, wave count, cooldown and energy cost, read at talent level 1.
 
