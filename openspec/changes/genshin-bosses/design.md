@@ -64,6 +64,7 @@ packages/genshin-world/src/services/bosses/
 | `packages/genshin-world/src/services/enemy/computeEnemyDrops.ts`                         | Still nothing for a boss, its reward the blossom's                                                               |
 | `packages/genshin-world/src/services/enemy/EnemyKindTraitsMap.ts`                        | Each boss's poise type and immunities                                                                            |
 | `packages/genshin-world/src/services/bosses/anemoHypostasis.ts`                          | The first normal boss's moves and Second Wind threshold                                                          |
+| `packages/genshin-world/src/services/bosses/perpetualMechanicalArray.ts`                 | The Perpetual Mechanical Array's six attacks, its Defensive Mode not yet run                                     |
 | `packages/genshin-world/src/services/bosses/EnemyKindMovesMap.ts`                        | Each boss kind's moves, which the enemies' step is passed                                                        |
 | `packages/genshin-world/src/services/bosses/checkIsWeeklyBossDomainOpen.ts`              | Whether a weekly boss's domain is open, once its introducing quests are done                                     |
 | `packages/genshin-world/src/services/bosses/checkIsWeeklyBossEntryOpen.ts`               | Whether a weekly boss's Trounce Domain entrance is open: its introducing quests are done                         |
