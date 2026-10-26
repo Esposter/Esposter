@@ -8,7 +8,7 @@ Arlecchino's kit is its record and one behaviour module, `createArlecchinoKitBeh
 - **The fourth strike's two hits are both 3 in the attack group.** They land at 24 and 35 frames within its 55-frame animation, as gcsim has them.
 - **The charged attack is a circle of radius 4 centred 0.9 metres ahead of its target,** priced at the targeting area's radius plus 4.9, 9.9 metres, hitting at 37 frames of its 60-frame animation. It costs the table's 25 stamina.
 - **The plunges are gcsim's.** The low and high plunges land at 47 and 48 frames, with circles of radius 3 and 5 one metre ahead, and poise 100 and 150. The collision is a circle of radius 1, queued 41 frames into a plunge, as gcsim queues it.
-- **Cleave is priced conservatively.** Its circle sits 4.5 metres past the target, so its reach from the target is 10.5 metres, the offset plus its radius of 6. The question is on the roadmap.
+- **Cleave's reach is measured from different points.** gcsim places its circle of radius 6 4.5 metres past the target, so it reaches 10.5 metres from the target. The kit centres the circle on Arlecchino's body and reaches 10.5 metres from there, so the kit's reach is understated for targets far from her body. The question stays open on the roadmap.
 - **Balemoon Rising hits once at 110 frames of its 146,** a circle of radius 6.5 six metres ahead, priced at 12.5 metres, with 3.704 of the table's multiplier, a gauge of 1, and the table's cooldown of 15 seconds on 60 energy.
 - **Her skill's cooldown is the table's 30 seconds.**
 - **Balemoon Rising resets her skill's cooldown 107 frames in.** gcsim's `burst.go` queues `ResetActionCooldown(action.ActionSkill)` at that frame, and the kit schedules the same reset as a task that zeroes her party member's skill cooldown.
