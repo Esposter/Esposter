@@ -13,17 +13,17 @@ Each Genshin design page's claims cited to game code or a reference snapshot, or
 | `openspec/specs/genshin/controls/design.md`                            | 2026-10-26 · Haiku 5.5 |       |
 | `openspec/specs/genshin/combat/design.md`                              | 2026-10-26 · Haiku 5.5 |       |
 | `openspec/specs/genshin/engine-architecture/design.md`                 | 2026-10-26 · Haiku 5.5 |       |
-| `openspec/specs/genshin/free-camera/design.md`                         | —                      |       |
-| `openspec/specs/genshin/derived-assets/development-exports/design.md`  | —                      |       |
-| `openspec/specs/genshin/exploring/design.md`                           | —                      |       |
-| `openspec/specs/genshin/derived-assets/design.md`                      | —                      |       |
-| `openspec/specs/genshin/archive/design.md`                             | —                      |       |
+| `openspec/specs/genshin/free-camera/design.md`                         | 2026-10-26 · Haiku 5.5 |       |
+| `openspec/specs/genshin/derived-assets/development-exports/design.md`  | 2026-10-26 · Haiku 5.5 |       |
+| `openspec/specs/genshin/exploring/design.md`                           | 2026-10-26 · Haiku 5.5 |       |
+| `openspec/specs/genshin/derived-assets/design.md`                      | 2026-10-26 · Haiku 5.5 |       |
+| `openspec/specs/genshin/archive/design.md`                             | 2026-10-26 · Haiku 5.5 |       |
 | `openspec/specs/genshin/elemental-sight/design.md`                     | 2026-10-26 · Haiku 5.5 |       |
-| `openspec/specs/genshin/game-data-formats/design.md`                   | —                      |       |
+| `openspec/specs/genshin/game-data-formats/design.md`                   | 2026-10-26 · Haiku 5.5 |       |
 | `openspec/specs/genshin/inventory/design.md`                           | 2026-10-26 · Haiku 5.5 |       |
 | `openspec/specs/genshin/constellations/design.md`                      | 2026-10-26 · Haiku 5.5 |       |
-| `openspec/specs/genshin/crafting/design.md`                            | —                      |       |
-| `openspec/specs/genshin/achievements/design.md`                        | —                      |       |
+| `openspec/specs/genshin/crafting/design.md`                            | 2026-10-26 · Haiku 5.5 |       |
+| `openspec/specs/genshin/achievements/design.md`                        | 2026-10-26 · Haiku 5.5 |       |
 | `openspec/specs/genshin/chests/design.md`                              | 2026-10-26 · Haiku 5.5 |       |
 | `openspec/specs/genshin/scene-derivation/design.md`                    | —                      |       |
 | `openspec/specs/genshin/wish/design.md`                                | 2026-10-26 · Haiku 5.5 |       |
