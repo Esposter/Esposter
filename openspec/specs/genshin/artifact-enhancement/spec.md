@@ -6,7 +6,7 @@ An artifact rolled, enhanced and locked as the game does it: a drop's main and m
 
 ### Requirement: A new artifact's main affix comes from its slot
 
-A new artifact's main affix SHALL be drawn from the attributes its slot may carry, in proportion to the game's weights.
+A new artifact's main affix SHALL be drawn from the attributes its slot may carry, in proportion to the game's weights. (a Plume's depot 2000 holds only flat ATK, in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/ReliquaryMainPropExcelConfigData.json`).
 
 #### Scenario: Plume of Death rolls flat ATK
 
@@ -84,7 +84,7 @@ Each enhancement's EXP SHALL be multiplied by five one time in a hundred, by two
 
 ### Requirement: Levels follow the table and EXP past the top is lost
 
-An artifact's level SHALL rise as far as its EXP reaches the table's costs, and EXP beyond its highest level SHALL be lost.
+An artifact's level SHALL rise as far as its EXP reaches the table's costs, and EXP beyond its highest level SHALL be lost. (each level's `exp` in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/ReliquaryLevelExcelConfigData.json`).
 
 #### Scenario: EXP past the highest level is wasted
 
@@ -95,7 +95,7 @@ An artifact's level SHALL rise as far as its EXP reaches the table's costs, and 
 
 ### Requirement: Every fourth level adds or raises a minor affix
 
-Each fourth level an artifact passes SHALL add a minor affix to an artifact holding fewer than four, or raise one of its four minor affixes.
+Each fourth level an artifact passes SHALL add a minor affix to an artifact holding fewer than four, or raise one of its four minor affixes. (`addPropLevels` 5, 9, 13, 17 and 21 in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/ReliquaryExcelConfigData.json`).
 
 #### Scenario: Fewer than four minor affixes gains one
 
@@ -127,7 +127,7 @@ A locked artifact SHALL never be used as fodder for another artifact.
 
 ### Requirement: Instructor's four-piece gives the team Elemental Mastery on a reaction
 
-A reaction the Instructor's wearer triggers on the field SHALL give every deployed member of the team the bonus's Elemental Mastery for its seconds, restarted rather than stacked.
+A reaction the Instructor's wearer triggers on the field SHALL give every deployed member of the team the bonus's Elemental Mastery for its seconds, restarted rather than stacked. (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, affix 2100071: EM 120 for 8s).
 
 #### Scenario: Reaction on the field gives the team the buff
 
@@ -149,7 +149,7 @@ A reaction the Instructor's wearer triggers on the field SHALL give every deploy
 
 ### Requirement: The Exile's four-piece regenerates the others' energy after a burst
 
-A burst the wearer of The Exile's four-piece uses SHALL start a field that gives every other deployed member energy at three ticks, two seconds apart.
+A burst the wearer of The Exile's four-piece uses SHALL start a field that gives every other deployed member energy at three ticks, two seconds apart. (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, affix 2100091: 2 Energy every 2s for 6s).
 
 #### Scenario: Burst starts the energy field
 
@@ -162,11 +162,11 @@ A burst the wearer of The Exile's four-piece uses SHALL start a field that gives
 
 - **GIVEN** an energy field is still ticking
 - **WHEN** any wearer uses another burst
-- **THEN** no second field starts
+- **THEN** no second field starts (gcsim ``~/Esposter.noindex/cache/gcsim-v2.47.2/internal/artifacts/exile/exile.go`, lines 50 to 54`).
 
 ### Requirement: Traveling Doctor's four-piece heals its wearer as its burst is used
 
-A burst the wearer of Traveling Doctor's four-piece uses SHALL restore the wearer twenty percent of its Max HP, raised by the wearer's Healing Bonus.
+A burst the wearer of Traveling Doctor's four-piece uses SHALL restore the wearer twenty percent of its Max HP, raised by the wearer's Healing Bonus. (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, affix 2100131: 20% of Max HP).
 
 #### Scenario: Burst restores the wearer
 
@@ -182,7 +182,7 @@ A burst the wearer of Traveling Doctor's four-piece uses SHALL restore the weare
 
 ### Requirement: Berserker's four-piece raises CRIT Rate at low HP
 
-While the wearer of Berserker's four-piece has HP below seventy percent of its Max HP, the wearer SHALL gain 24% CRIT Rate.
+While the wearer of Berserker's four-piece has HP below seventy percent of its Max HP, the wearer SHALL gain 24% CRIT Rate. (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, affix 2100051).
 
 #### Scenario: Low HP adds the CRIT Rate
 
@@ -198,7 +198,7 @@ While the wearer of Berserker's four-piece has HP below seventy percent of its M
 
 ### Requirement: Adventurer's four-piece restoration
 
-The wearer of four Adventurer's pieces SHALL have HP restored by 6% of its maximum each second for 5 seconds when a chest is opened.
+The wearer of four Adventurer's pieces SHALL have HP restored by 6% of its maximum each second for 5 seconds when a chest is opened. (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, affix 2100101: 30% over 5s, 6% of Max HP a second).
 
 #### Scenario: a chest opened by a four-piece wearer restores HP for five seconds
 
@@ -233,3 +233,14 @@ The Adventurer's four-piece restoration SHALL apply only to the character wearin
 - **GIVEN** a party in which one character wears four Adventurer's pieces and another wears none
 - **WHEN** a chest is opened in the world
 - **THEN** only the character wearing the set has its HP restored
+
+## Open
+
+- [ ] **Each enhancement's EXP is multiplied by five at one in a hundred and by two at nine in a hundred** — no source yet: the wiki's Artifact EXP page is not in the cache, and no dump table holds the chance.
+- [ ] **Enhancing costs one Mora per EXP point, and a fodder's recovered share costs none** — no source yet: the wiki's Artifact EXP page is not in the cache.
+- [ ] **EXP past the highest level is lost** — no source yet: the wiki's Artifact page is not in the cache.
+- [ ] **The main affix weights are the wiki's, and each minor affix tier is as likely as the next** — no source yet: the Artifact/Distribution page is not in the cache.
+- [ ] **A locked artifact is never fodder** — no source yet: no cached wiki page or capture shows a lock refusing fodder.
+- [ ] **Instructor's buff restarts rather than stacks, and gives nothing for a summon's reaction after the wearer leaves** — no source yet: the wiki's Instructor page is not in the cache.
+- [ ] **The Exile's energy is not raised by Energy Recharge** — no source yet: the wiki's The Exile page is not in the cache, and the game's text says only that the effect cannot stack.
+- [ ] **Traveling Doctor's restore is raised by the Healing Bonuses** — no source yet: the wiki's Healing Bonus page is not in the cache.
