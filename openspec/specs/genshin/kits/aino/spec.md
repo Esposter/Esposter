@@ -1,6 +1,6 @@
 ## Purpose
 
-Aino's kit as built, with her three strikes, a provisional charged attack and plunges, Musecatcher's two stages, and Cool Your Jets Ducky's Water Balls with Ascension 1 at Ascendant Gleam and Ascension 4, Constellation 1's Elemental Mastery, Constellation 2's water ball on her teammates' hits, and Constellation 4's skill energy, and what is left waiting on the Moonsign and Lunar hooks.
+Aino's kit as built, with her three strikes, a provisional charged attack and plunges, Musecatcher's two stages, and Cool Your Jets Ducky's Water Balls with Ascension 1 at Ascendant Gleam and Ascension 4, Constellation 1's Elemental Mastery, Constellation 2's water ball on her teammates' hits, Constellation 4's skill energy, and Constellation 6's reaction bonus.
 
 ## Requirements
 
@@ -187,3 +187,31 @@ From Constellation 2, while Aino is off the field and her burst's zone stands, e
 - **GIVEN** a water ball was queued less than five seconds ago
 - **WHEN** her active teammate's hit strikes an enemy
 - **THEN** no water ball is queued, and one is queued once five seconds have passed
+
+### Requirement: Constellation 6 raises the active member's reactions for fifteen seconds after the burst
+
+From Constellation 6, for fifteen seconds after Aino's burst, each Electro-Charged, Bloom, Lunar-Charged, Lunar-Bloom or Lunar-Crystallize reaction the active member makes SHALL deal 15% more DMG, and 20% more with the team at Ascendant Gleam.
+
+#### Scenario: A reaction of the active member gains DMG during the burst's fifteen seconds
+
+- **GIVEN** Aino has Constellation 6 and has just cast her burst
+- **WHEN** the active member makes a Bloom reaction
+- **THEN** the reaction deals 15% more DMG
+
+#### Scenario: Ascendant Gleam adds 20% more
+
+- **GIVEN** Aino has Constellation 6, her burst's fifteen seconds are running, and the team is at Ascendant Gleam
+- **WHEN** the active member makes a Lunar-Charged reaction
+- **THEN** the reaction deals 35% more DMG
+
+#### Scenario: A reaction of a member off the field gains nothing
+
+- **GIVEN** Aino has Constellation 6 and her burst's fifteen seconds are running
+- **WHEN** a member off the field makes an Electro-Charged reaction
+- **THEN** the reaction gains no DMG
+
+#### Scenario: Below Constellation 6 no DMG is gained
+
+- **GIVEN** Aino has Constellation 5
+- **WHEN** the active member makes a Bloom reaction after her burst
+- **THEN** the reaction gains no DMG

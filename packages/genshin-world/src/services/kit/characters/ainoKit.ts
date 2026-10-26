@@ -1,3 +1,4 @@
+import type { ReactionType } from "#src/models/combat/ReactionType";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
@@ -5,7 +6,9 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { InternalCooldownTag } from "#src/models/combat/InternalCooldownTag";
+import { LunarReactionType } from "#src/models/combat/LunarReactionType";
 import { MoonsignLevel } from "#src/models/combat/MoonsignLevel";
+import { TransformativeReactionType } from "#src/models/combat/TransformativeReactionType";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
@@ -49,6 +52,21 @@ const CONSTELLATION_2_COOLDOWN_SECONDS = 5;
 const CONSTELLATION_2_RADIUS = 1.5;
 // The field Precision Hydronic Cooler casts, which Constellation 2 reads for as long as it stands
 const BURST_FIELD_ID = "aino-precision-hydronic-cooler";
+// Constellation 6, The Burden of Creative Genius: for fifteen seconds after her burst, the reactions the active member makes
+// Deal 15% more DMG, and 20% more at Ascendant Gleam, as the dump's paramList 0.15, 0.2 and 15 give and gcsim's aino/cons.go does
+const CONSTELLATION_6 = 6;
+const CONSTELLATION_6_DAMAGE_BONUS = 0.15;
+const CONSTELLATION_6_ASCENDANT_GLEAM_DAMAGE_BONUS = 0.2;
+const CONSTELLATION_6_SECONDS = 15;
+const CONSTELLATION_6_STATUS_ID = "aino-constellation-6";
+// The reactions Constellation 6 raises: Electro-Charged and Bloom, and the Lunar reactions a Moonsign turns them into
+const CONSTELLATION_6_REACTION_TYPES = new Set<ReactionType>([
+  LunarReactionType.LunarBloom,
+  LunarReactionType.LunarCharged,
+  LunarReactionType.LunarCrystallize,
+  TransformativeReactionType.Bloom,
+  TransformativeReactionType.ElectroCharged,
+]);
 
 export const AINO_CHARACTER_ID = 10_000_121;
 
@@ -58,9 +76,9 @@ export const AINO_CHARACTER_ID = 10_000_121;
 // Skill hit that strikes an enemy, once every ten seconds, as gcsim does. Constellation 1 gives her, and the member on the field
 // Through a swap, 80 Elemental Mastery for fifteen seconds after her skill or burst. Constellation 2 queues a water ball on each
 // Enemy her active teammate hits while she is off the field and the burst's zone stands, once every five seconds. The ball
-// Strikes the enemy it is queued on alone, where gcsim's circle of 1.5 metres also reaches the enemies beside it. Not built yet:
-// Constellation 6's Lunar DMG bonus, which waits on the Lunar hook. Musecatcher's hold is not built, as gcsim does not
-// Implement it either
+// Strikes the enemy it is queued on alone, where gcsim's circle of 1.5 metres also reaches the enemies beside it. Constellation
+// 6 raises the reactions the active member makes for fifteen seconds after the burst. Musecatcher's hold is not built, as gcsim
+// Does not implement it either
 export const createAinoKitBehaviour = ({ kit, readHit, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   const masteryShare = readParameter("ascension4MasteryShare");
   const burstFirstTickSeconds = readSeconds("burstStart");
@@ -121,7 +139,32 @@ export const createAinoKitBehaviour = ({ kit, readHit, readParameter, readSecond
           secondsRemaining: burstFirstTickSeconds + burstSeconds,
           tickIntervalSeconds: isAscendantBurst ? ASCENSION_1_WATER_BALL_INTERVAL_SECONDS : burstTickIntervalSeconds,
         });
+        if (combatant.constellationCount >= CONSTELLATION_6)
+          addKitStatus(kitEffectState, combatant.characterId, {
+            id: CONSTELLATION_6_STATUS_ID,
+            secondsRemaining: CONSTELLATION_6_SECONDS,
+          });
       },
+    },
+    // Constellation 6: the Electro-Charged, Bloom and Lunar reactions the active member makes deal more DMG for fifteen seconds
+    // After her burst, 20% more at Ascendant Gleam, as gcsim's aino/cons.go gives them
+    getPartyReactionBonus: (
+      member,
+      { combatant, reactionType },
+      { activeCombatant, characterIdCombatantMap, kitEffectState, party },
+    ) => {
+      if (
+        !CONSTELLATION_6_REACTION_TYPES.has(reactionType) ||
+        combatant.characterId !== activeCombatant.characterId ||
+        !checkIsKitStatusActive(kitEffectState.effects, member.characterId, CONSTELLATION_6_STATUS_ID)
+      )
+        return {};
+      const isAscendantGleam = getMoonsignLevel(characterIdCombatantMap, party) === MoonsignLevel.AscendantGleam;
+      return {
+        damageBonus: isAscendantGleam
+          ? CONSTELLATION_6_DAMAGE_BONUS + CONSTELLATION_6_ASCENDANT_GLEAM_DAMAGE_BONUS
+          : CONSTELLATION_6_DAMAGE_BONUS,
+      };
     },
     onKitEvent: (event, context, combatant) => {
       const { activeCombatant, kitEffectState, party } = context;
