@@ -37,6 +37,12 @@ describe(toImaginariumDifficulty, () => {
       levelFloor: 60,
     };
 
-    expect(toImaginariumDifficulty(row).alternateCastExtra).toBeUndefined();
+    expect(toImaginariumDifficulty(row)).toStrictEqual({
+      actCount: 3,
+      alternateCastMinimum: 2,
+      id: 1,
+      level: 1,
+      levelFloor: 60,
+    });
   });
 });
