@@ -164,64 +164,74 @@ The things that each cost a search to find, to reach for first:
 - [WorldReverse](https://github.com/fengjixuchui/WorldReverse/tree/main/Assets/DummyScripts/Assembly-CSharp), fengjixuchui: the il2cpp dummy scripts of a 2022 build, each class's fields by name and type in declaration order.
 
 ## Open
-
-- [ ] **Shaders: the uber shader's 3,980 variant records, 1,553 compiled programs, 693 SHEX and 860 DXIL containers, and 446 of 448 exports read by the layout** — no source yet: a run of the shader reader over the dump's raw exports that prints these counts.
-- [ ] **Shaders: the peeking rule parses 665 of the local dump's 667 raw exports, and `Shader#199` fits neither trailer** — no source yet: a run of `readSerializedPass` over those exports that prints the counts.
-- [ ] **Shaders: the login stone's and the cloud layer's shaders do not parse in AnimeStudio** — no source yet: AnimeStudio's parse log for those two shaders, which no record keeps.
-- [ ] **Materials: decoded as colours, the avatar's outline width knots read a tenth of the game's** — no source yet: a comparison of the decoded knots with the game's values, which no record holds.
-- [ ] **Open world: most hashless prefab ids of a city are in the LOD table** — no source yet: a count of a city's hashless ids against the LOD table, which no record holds.
-- [ ] **Open world: the Inazuma City animators and a grass material named two blocks of 471,618 and 466,697 layout files** — no source yet: a count of the layout files each block holds, which no record keeps.
-- [ ] **Open world: every region's tiles have a height scale of 1024 metres over a full sample of 32766** — no source yet: a read of every region's TerrainData height scale, which no record holds.
-- [ ] **Open world: every region's tiles read as the splat layout describes, a few listing no layers** — no source yet: a read of each region's TerrainData splat records, which no record holds.
-- [ ] **Open world: a city's index object carries no game object, so `extract` reports 0 objects from it** — no source yet: the recorded `extract` output for a city's index root, which no record keeps.
-- [ ] **Open world: the login walkway is dumped at the origin and solved from the door it ends at** — no source yet: the login layout record for the walkway's root, which the walkway reference does not hold.
-- [ ] **Open world: `version-index.json` sits beside the asset index and is read by nothing** — no source yet: the file, which is not in `<parity>/asset-index/`.
-- [ ] **Interface: the canvas is 1600 by 900 and the mobile canvas 1280 by 720** — no source yet: the export's canvas size for either client, which no record holds.
-- [ ] **Interface: the 192 pixels the server bar's top is placed by, measured on the 1080 high recording** — no source yet: a measured bar position on that recording, which no record holds.
-- [ ] **Interface: a layout group's children read zero in the export** — no source yet: the export's child records for a layout group, which no record keeps.
-- [ ] **Scripts: the client holds about thirty thousand Lua chunks and about eighteen thousand scene group names, none of them in the client's Lua block** — no source yet: a count of the Lua block's chunks and of the group names it holds.
-- [ ] **Scripts: the two non-group scripts write format 1 and the sizes `04 04 08 08`** — no source yet: a byte dump of a script's header, which no record keeps.
-- [ ] **Text: the dump scrambles a dialog's own id under eleven capitals** — no source yet: the dump's table field for a dialog id, which no record names.
-- [ ] **Text: the welcome card's greeting is read from the account kit's bundle, not the dump** — no source yet: the bundle's string table, which no record holds.
-- [ ] **References: every component derived from the game's data has an `Index.reference.ts` beside its `Index.vue`** — no source yet: a listing that checks each derived component for its `Index.reference.ts`.
-- [ ] **Audio: the login's first piece plays 5 decibels under its source, its second 16, and the door's rumble 11 over its own** — no source yet: the decibel readings of those nodes, which no record holds.
-- [ ] **Audio: decoded, the music packages run to tens of gigabytes** — no source yet: the decoded package sizes, which no record holds.
-- [ ] **Audio: `Minimum.pck` holds the banks the login's own sounds are in** — no source yet: the bank listing of `Minimum.pck` against the login's sounds, which no record holds.
-- [ ] **the game's text ships as generated slices** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **a shader's programs are DXBC or DXIL containers carved from its raw export** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **a shader's properties and name are read from its raw export** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **a shader's serialized form names its programs** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **a pass's trailer is read by peeking at the next subshader** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **a constant buffer's layout is a run of records beside the programs** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **a scene's stone shader writes the G-buffer and lights nothing** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **a material's export is its shader's path ID, texture slots and values by name** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **a material's shader keywords are read from its raw bytes** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **each material's colours are read as its shader declares them** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **the environment's mask texture is SMBE, with smoothness in red and metalness in green** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **grading tables are textures named `Stages_*_LUT`** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **a Transform's dump is its local position, rotation and scale** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **a MeshRenderer names its materials by file index and path ID** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **a skinned mesh's bones are in its JSON export, never its OBJ** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **the open world is streamed in 1024-metre tiles and named areas, each with a StreamGen blob** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **`StreamGen/BigWorld_1_-2` is the blob `012854bd`** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **a newer prefab is named by hashing the candidate paths of its folder** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **a StreamGen blob is a length word, then chunks of placements** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **the game's LOD table names every prefab grouped by level of detail** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **a city's index object is its blob's chunk index, not a root** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **a region's open world is derived from its capital's place** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **a placement's prefab is named by its path hash, and its root is found by name** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **a tile's TerrainData is found by its name inside it** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **a tile's heightfield is read from its TerrainData** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **a tile's splat database places its layers by texel** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **a MonoBehaviour's JSON export has no fields, and its raw export keeps them** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **a field is read by its shape** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **a script's fields are named by the dummy scripts of an older build** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **the two non-group scripts are Lua 5.3 bytecode in a dialect of their own** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **the material table's use of each instruction names the combine id it opens** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **the client's text maps are decoded from its own chunks by path hash** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **the audio is Wwise packages of banks and streamed sounds** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **a bank's music is its hierarchy chunk's objects** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **how loud the game plays a sound is in its nodes and buses** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **a bank holds short sounds in itself, read from its index chunk** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **a sound is Wwise's own Vorbis, decoded by vgmstream** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **which sound a recording plays is measured by matching pitch classes** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Shaders: the uber shader's 3,980 variant records, 1,553 compiled programs, 693 SHEX and 860 DXIL containers, and 446 of 448 exports read by the layout** — no source yet: no run of the shader reader over the dump's raw exports prints these counts; the 6,337 listings under `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber` all carry the D3D disassembler header and none marks DXIL, so the 860 is not borne out by them.
+- [ ] **Shaders: the peeking rule parses 665 of the local dump's 667 raw exports, and `Shader#199` fits neither trailer** — no source yet: no run of `readSerializedPass` over those exports prints the counts (`scripts/src/services/genshinAssets/materials/readSerializedPass.ts`).
+- [ ] **Shaders: the login stone's and the cloud layer's shaders do not parse in AnimeStudio** — no source yet: AnimeStudio is the tool's behaviour, not this repo's, and no parse log for those two shaders is kept.
+- [ ] **Materials: decoded as colours, the avatar's outline width knots read a tenth of the game's** — no source yet: no comparison of the decoded knots with the game's values is on disk.
+- [ ] **Open world: most hashless prefab ids of a city are in the LOD table** — no source yet: no count of a city's hashless ids against the LOD table is on disk.
+- [ ] **Open world: the Inazuma City animators and a grass material named two blocks of 471,618 and 466,697 layout files** — no source yet: no count of the layout files each block holds is kept.
+- [ ] **Open world: every region's tiles have a height scale of 1024 metres over a full sample of 32766** — no source yet: no read of every region's TerrainData height scale is on disk.
+- [ ] **Open world: every region's tiles read as the splat layout describes, a few listing no layers** — no source yet: no read of each region's TerrainData splat records is on disk.
+- [ ] **Open world: a city's index object carries no game object, so `extract` reports 0 objects from it** — no source yet: no recorded `extract` output for a city's index root is kept.
+- [ ] **Open world: the login walkway is dumped at the origin and solved from the door it ends at** — no source yet: `packages/genshin-world/src/components/Login/Scene/Arrangement.reference.ts` records the solve, but the login layout record for the walkway's root is not on disk.
+- [ ] **Open world: `version-index.json` sits beside the asset index and is read by nothing** — no source yet: no reader names it under `scripts/src` (searched), but its presence in `<parity>/asset-index/` was not checked.
+- [ ] **Interface: the canvas is 1600 by 900 and the mobile canvas 1280 by 720** — `packages/genshin-interface/src/services/constants.ts` holds both references, but the export's canvas size for either client was not read.
+- [ ] **Interface: the 192 pixels the server bar's top is placed by, measured on the 1080 high recording** — no source yet: no measured bar position on that recording is on disk.
+- [ ] **Interface: a layout group's children read zero in the export** — no source yet: no export child records for a layout group are kept.
+- [ ] **Scripts: the client holds about thirty thousand Lua chunks and about eighteen thousand scene group names, none of them in the client's Lua block** — no source yet: no count of the Lua block's chunks or of the group names it holds is on disk.
+- [ ] **Scripts: the two non-group scripts write format 1 and the sizes `04 04 08 08`** — no source yet: no byte dump of a script's header is kept.
+- [ ] **Text: the dump scrambles a dialog's own id under eleven capitals** — no source yet: the dump's dialog table was not read in this pass.
+- **Text: the welcome card's greeting is read from the account kit's bundle, not the dump** — `scripts/src/services/genshinText/constants.ts`, which names the account kit's bundle beside the game.
+- [ ] **References: every component derived from the game's data has an `Index.reference.ts` beside its `Index.vue`** — no source yet: `scripts/src/services/genshinAssets/scene/DerivedAssetArrangementMap.ts` maps the components, but no listing checked each one for its reference file.
+- [ ] **Audio: the login's first piece plays 5 decibels under its source, its second 16, and the door's rumble 11 over its own** — no source yet: no decibel readings of those nodes are on disk.
+- [ ] **Audio: decoded, the music packages run to tens of gigabytes** — no source yet: no decoded package sizes are on disk.
+- [ ] **Audio: `Minimum.pck` holds the banks the login's own sounds are in** — no source yet: `scripts/src/services/genshinAssets/shared/constants.ts` (`MINIMUM_PACKAGE_NAME`) names the package, but no bank listing of it against the login's sounds is on disk.
+- **The game's text ships as generated slices** — `packages/genshin-text/src/generated/`, which holds the text chunks and loader map, and no asset folder.
+- **A shader's programs are DXBC containers carved from its raw export** — `scripts/src/services/genshinAssets/materials/parseDxbcPrograms.ts`, which carves each program by its magic and its stated size. The DXIL count is open (see above), and `scripts/src/services/genshinAssets/materials/disassembleWithVkd3d.ts` handles the DXIL programs.
+- **A shader's properties and name are read from its raw export** — `scripts/src/services/genshinAssets/materials/parseShaderProperties.ts`.
+- **A shader's serialized form names its programs** — `scripts/src/services/genshinAssets/materials/parseSerializedShader.ts` and `scripts/src/services/genshinAssets/materials/readShaderPrograms.ts`.
+- **A pass's trailer is read by peeking at the next subshader** — `scripts/src/services/genshinAssets/materials/readSerializedPass.ts`.
+- **A constant buffer's layout is a run of records beside the programs** — `scripts/src/services/genshinAssets/materials/parseShaderConstantLayouts.ts` and `scripts/src/services/genshinAssets/materials/annotateProgramConstants.ts`.
+- **A scene's stone shader writes the G-buffer and lights nothing** — `scripts/src/services/genshinAssets/shared/constants.ts`, which names the deferred pass's block the stone's light comes from.
+- **A material's export is its shader's path ID, texture slots and values by name** — `scripts/src/services/genshinAssets/shared/toMaterialValues.ts`.
+- **A material's shader keywords are read from its raw bytes** — `scripts/src/services/genshinAssets/shared/readMaterialKeywords.ts`.
+- **Each material's colours are read as its shader declares them** — `scripts/src/services/genshinAssets/shared/readShaderColorNames.ts`.
+- **The environment's mask texture is SMBE, with smoothness in red and metalness in green** — `packages/genshin-world/src/services/scene/createWitnessMaterial.ts`.
+- **Grading tables are textures named `Stages_*_LUT`** — `packages/genshin-world/src/components/Login/Scene/Index.reference.ts`.
+- **A Transform's dump is its local position, rotation and scale** — `scripts/src/services/genshinAssets/shared/readSceneLayout.ts`.
+- **A MeshRenderer names its materials by file index and path ID** — `scripts/src/services/genshinAssets/shared/readSceneLayout.ts`.
+- **A skinned mesh's bones are in its JSON export, never its OBJ** — `scripts/src/services/genshinAssets/fit/fitRigidPieces.ts`, as the export's writer.
+- [ ] **A root's own parent can sit in a block not read, and is dumped at the origin** — no source yet: the dumps of the blocks not read were not compared with the game's placement; the walkway is the one case, recorded in `packages/genshin-world/src/components/Login/Scene/Arrangement.reference.ts`.
+- **The open world is streamed in 1024-metre tiles and named areas, each with a StreamGen blob** — `scripts/src/services/genshinAssets/world/getStreamBlobName.test.ts` names the tiles, and `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts` the areas.
+- [ ] **`StreamGen/BigWorld_1_-2` is the blob `012854bd`** — no source yet: the community's asset index was not matched for that tile's blob name.
+- **A newer prefab is named by hashing the candidate paths of its folder** — `scripts/src/services/genshinAssets/world/readAssetPathNames.ts`.
+- **A StreamGen blob is a length word, then chunks of placements** — `scripts/src/services/genshinAssets/world/parseStreamingIndex.ts` and `scripts/src/services/genshinAssets/world/parseStreamingPlacements.ts`.
+- [ ] **The game's LOD table names every prefab grouped by level of detail** — no source yet: `scripts/src/services/genshinAssets/world/parseLodInfoMap.ts` reads the table, but whether it names every prefab was not counted.
+- **A city's index object is its blob's chunk index, not a root** — `scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts` and `scripts/src/services/genshinAssets/world/deriveCapitalWorld.ts`.
+- **A region's open world is derived from its capital's place** — `scripts/src/services/genshinAssets/world/deriveCapitalWorld.ts`.
+- **A placement's prefab is named by its path hash, and its root is found by name** — `scripts/src/services/genshinAssets/world/readAssetPathNames.ts` and `scripts/src/services/genshinAssets/world/resolvePrefabRoot.ts`.
+- **A tile's TerrainData is found by its name inside it** — `scripts/src/services/genshinAssets/world/exportTerrainTiles.ts`.
+- **A tile's heightfield is read from its TerrainData** — `scripts/src/services/genshinAssets/world/parseTerrainHeights.ts`.
+- **A tile's splat database places its layers by texel** — `scripts/src/services/genshinAssets/world/parseTerrainSplat.ts`.
+- **A MonoBehaviour's JSON export has no fields, and its raw export keeps them** — `packages/genshin-world/src/components/Login/Scene/Index.reference.ts` and `scripts/src/services/genshinAssets/scene/scanSerializedFields.ts`.
+- **A field is read by its shape** — `scripts/src/services/genshinAssets/scene/scanSerializedFields.ts`.
+- **A script's fields are named by the dummy scripts of an older build** — `scripts/src/services/genshinAssets/camera/constants.ts`.
+- [ ] **The install's `global-metadata.dat` does not begin with Unity's IL2CPP magic** — no source yet: the install's file header was not read in this pass.
+- [ ] **The client ships no scene group script; the group scripts are the server's** — no source yet: the client's Lua block was not counted against the community's index.
+- **The two non-group scripts are Lua 5.3 bytecode in a dialect of their own** — `scripts/src/services/genshinAssets/lua/GENSHIN_LUA_53.ts`, read by `scripts/src/services/genshinAssets/commands/sceneScriptsCommand.ts`.
+- **The gadgets are the widget config, one entry per widget by its item id** — `scripts/src/services/genshinAssets/gadgets/buildGadgetRows.ts` and `scripts/src/models/genshinAssets/gadgets/ConfigWidgetRow.ts`.
+- [ ] **The material table's use of each instruction names the combine id it opens** — no source yet: the combine table's instruction field was not matched against the material table in this pass.
+- **The client's text maps are decoded from its own chunks by path hash** — `scripts/src/services/genshinText/decodeGameText.ts`.
+- **The audio is Wwise packages of banks and streamed sounds** — `scripts/src/services/genshinAssets/music/parseAudioPackageHeader.ts`.
+- **A bank's music is its hierarchy chunk's objects** — `scripts/src/services/genshinAssets/music/parseMusicHierarchy.ts`.
+- **How loud the game plays a sound is in its nodes and buses** — `scripts/src/services/genshinAssets/music/parseWwiseNode.ts` and `scripts/src/services/genshinAssets/music/readGameMixVolumes.ts`.
+- **A node's own properties vary in length** — `scripts/src/services/genshinAssets/music/parseWwiseNode.ts`.
+- **A bank holds short sounds in itself, read from its index chunk** — `scripts/src/services/genshinAssets/music/parseSoundBankSounds.ts`.
+- **A sound is Wwise's own Vorbis, decoded by vgmstream** — `scripts/src/services/genshinAssets/music/resolveVgmstream.ts`.
+- **Which sound a recording plays is measured by matching pitch classes** — `scripts/src/services/genshinAssets/commands/genshinAssetsCommand.ts`.
+- **A RectTransform exports with its Transform fields alone, and its last 40 bytes are its anchors** — `scripts/src/models/genshinAssets/shared/DumpedRectTransform.ts`.
+- **A Mecanim clip keeps its curves in three parts** — `scripts/src/models/genshinAssets/interface/ExportedAnimationClip.ts` and `scripts/src/models/genshinAssets/interface/StreamedKey.ts`.
+- **A streamed clip is a run of frames** — `scripts/src/models/genshinAssets/interface/StreamedKey.ts`.
+- **A binding names its object and its property by CRC32** — `scripts/src/services/genshinAssets/avatar/resolveRigPaths.ts` and `scripts/src/models/genshinAssets/shared/DecodedCurve.ts`.
+- **A table the community dump lacks is fetched into the dump and never committed** — `scripts/src/services/genshinText/fetchDump.ts`.
+- [ ] **The 32-bit prefab id is the world's own, with no hash of the path** — no source yet: no prefab id table was matched against a path hash in this pass.
