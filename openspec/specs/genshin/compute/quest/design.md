@@ -12,4 +12,4 @@ Nothing here.
 
 - [ ] **Quest: the list sub-region at FLIP 0.586 and mean 28.58%** — no source yet: a `quest-screen-list` row in the parity snapshot, which holds only the header and details rows.
 - [ ] **Quest: the still's list sitting 65 lower than a list opened at its top** — no source yet: a measured scroll offset of the list against the still, which no record holds.
-- [ ] **The whole frame keeps its world blur and glass** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The whole frame keeps its world blur and glass** — no source yet: the quest screen's still in `~/Esposter/genshin-parity/references/`, not yet read for the blur and glass.
