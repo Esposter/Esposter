@@ -130,7 +130,3 @@ The Achievements screen SHALL list every category with how many of its achieveme
 - **WHEN** E is pressed
 - **THEN** the next category is selected (`packages/genshin-world/src/components/Achievement/Screen/Index.vue`)
 - **AND** pressing Q selects the previous category
-
-## Open
-
-- [ ] **Other trigger types wait on the pages that record their doings** — no source yet: the composables already emit chest, monster and other doings (`packages/genshin-world/src/composables/useWorldChests.ts`, `useWorldCombat.ts`), so this is out of date.
