@@ -53,5 +53,6 @@ flowchart TD
 - [ ] **A single chest took Galesong Hill from 99% to 100%** — no source yet: the capture shows the step near 10 s, but no frame read shows the chest that caused it.
 - [ ] **The label's capitals are 28.8 and 16.0 pixels high, their middles 45.9 apart** — no source yet: the frame at 4.6 s shows the label, but no measurement of it is recorded in a file.
 - [ ] **The label scores 7.76% against its still, against a bar of 2%** — no source yet: the still `~/Esposter.noindex/genshin-parity/comparisons/map-overlay-galesong.png` exists, but no file read records the score.
-- [ ] **The label reads "Exploration Progress: 99%", the game's `UI_EXPLORE_COUNT` with the percentage filled in** — no source yet: game data or a snapshot that holds this behaviour; `text/TextMap/` is not read for this line
-- [ ] **`computeExplorationProgress` holds a done weight's share at most 100, so it never reads past the game's gold 100%** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The label reads "Exploration Progress: 99%", the game's `UI_EXPLORE_COUNT` with the percentage filled in** — no source yet: `UI_EXPLORE_COUNT` in `~/Esposter/genshin-parity/text/TextMapEN.json`, not yet looked up.
+- **`computeExplorationProgress` holds a done weight's share at most 100** — `packages/genshin-world/src/services/exploration/computeExplorationProgress.ts`.
+- [ ] **The English map reads the fully explored area in gold 100%** — no source yet: the one recording of the map's steps that the code comment cites (a single chest taking it from 99% to 100%), not yet re-read for the gold.
