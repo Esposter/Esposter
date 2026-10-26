@@ -10,10 +10,10 @@ One wind field SHALL move the grass, the tree leaves and the clouds together, wi
 
 #### Scenario: Gusts rolling across the meadow
 
-- **GIVEN** Mondstadt's wind is a steady breeze from the west with gusts `packages/genshin-world/src/services/windrise/constants.ts`
+- **GIVEN** Mondstadt's wind is a steady breeze from the west with gusts
 - **WHEN** a gust passes over the meadow
-- **THEN** the grass bends in a wave that rolls downwind `packages/genshin-engine/src/nodes/createWindNode.ts`
-- **AND** the clouds drift with the same wind `packages/genshin-engine/src/nodes/createWindNode.ts`
+- **THEN** the grass bends in a wave that rolls downwind
+- **AND** the clouds drift with the same wind
 
 ### Requirement: Grass grows only on green ground above the water
 
@@ -23,19 +23,19 @@ Grass SHALL grow only on green ground above the water, and never on rock, sand o
 
 - **GIVEN** the ground is green and above the water
 - **WHEN** the grass is drawn
-- **THEN** grass blades stand on that ground `packages/genshin-engine/src/vegetation/createGrassCell.ts`
+- **THEN** grass blades stand on that ground
 
 #### Scenario: No grass on rock or sand
 
 - **GIVEN** the ground is rock or sand
 - **WHEN** the grass is drawn
-- **THEN** no grass blade stands on it `packages/genshin-engine/src/vegetation/createGrassCell.ts`
+- **THEN** no grass blade stands on it
 
 #### Scenario: No grass under water
 
 - **GIVEN** the ground lies under the water
 - **WHEN** the grass is drawn
-- **THEN** no grass blade stands there `packages/genshin-engine/src/vegetation/createGrassCell.ts`
+- **THEN** no grass blade stands there
 
 ### Requirement: Dense grass near the eye, sparse grass beyond
 
@@ -45,7 +45,7 @@ Grass SHALL grow densely under the eye and sparsely in a middle ring, and SHALL 
 
 - **GIVEN** the eye stands over a meadow
 - **WHEN** the meadow is drawn
-- **THEN** the grass nearest the eye is dense and fine `packages/genshin-world/src/components/World/Grass/Index.vue`
+- **THEN** the grass nearest the eye is dense and fine
 
 #### Scenario: Fade into the terrain
 
@@ -61,7 +61,7 @@ A blade SHALL stay rooted at its base while its tip bends with the wind, bending
 
 - **GIVEN** a gust reaches a blade
 - **WHEN** the blade bends
-- **THEN** its root stays planted `packages/genshin-engine/src/vegetation/createGrassBladePoint.ts`
+- **THEN** its root stays planted
 - **AND** its tip moves with the gust
 
 ### Requirement: Grass shades as one surface
@@ -72,7 +72,7 @@ Grass SHALL shade as one surface with light rolling across it, not as a noisy ca
 
 - **GIVEN** the sun lights a meadow
 - **WHEN** the meadow is drawn
-- **THEN** the blades share the light of one surface `packages/genshin-engine/src/vegetation/createGrassMaterial.ts`
+- **THEN** the blades share the light of one surface
 - **AND** the root is darker than the tip
 
 #### Scenario: Wet meadow glints as one surface
@@ -89,7 +89,7 @@ A tree's crown SHALL lean downwind, leaning more the higher up the tree it stand
 
 - **GIVEN** a tree stands in a steady wind
 - **WHEN** its crown is drawn
-- **THEN** the upper leaves lean further downwind than the lower ones `packages/genshin-engine/src/nodes/createLeafMaterial.ts`
+- **THEN** the upper leaves lean further downwind than the lower ones
 
 ### Requirement: Grass density is the first detail a lower tier reduces
 
@@ -99,7 +99,7 @@ Blade density SHALL be the first detail a lower quality tier reduces, before the
 
 - **GIVEN** the quality tier is lowered
 - **WHEN** the scene is drawn
-- **THEN** the grass becomes thinner `packages/genshin-engine/src/renderer/QualityTierSettingsMap.ts`
+- **THEN** the grass becomes thinner
 - **AND** the shadows are kept
 
 ## Open
