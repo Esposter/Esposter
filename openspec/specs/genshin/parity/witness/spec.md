@@ -6,7 +6,7 @@ The witness draws the game's exports through our scene, so a camera, a layout an
 
 ### Requirement: A witness render draws the exports through our own scene
 
-A witness render SHALL draw the game's exports in place of our parts, under our own camera, light and frame, so that a stand-in is priced against the game's own data (`packages/genshin-world/parity/witness/claimWitnessRenderers.ts`).
+A witness render SHALL draw the game's exports in place of our parts, under our own camera, light and frame, so that a stand-in is priced against the game's own data.
 
 #### Scenario: Witness render drawn
 
@@ -17,7 +17,7 @@ A witness render SHALL draw the game's exports in place of our parts, under our 
 
 ### Requirement: Textures are sampled as the game samples them
 
-The exports' textures SHALL be sampled tiled and anisotropically along a grazing line of sight, as the game samples them (`packages/genshin-world/src/services/scene/loadWitness.ts`).
+The exports' textures SHALL be sampled tiled and anisotropically along a grazing line of sight, as the game samples them.
 
 #### Scenario: Far surface at a grazing angle
 
@@ -27,7 +27,7 @@ The exports' textures SHALL be sampled tiled and anisotropically along a grazing
 
 ### Requirement: The page fetches only the meshes a family draws
 
-The witness page SHALL fetch only the meshes a family draws and each texture their materials name, each texture once (`packages/genshin-world/src/services/scene/loadWitness.ts`).
+The witness page SHALL fetch only the meshes a family draws and each texture their materials name, each texture once.
 
 #### Scenario: Capital's exports loaded
 
@@ -38,13 +38,13 @@ The witness page SHALL fetch only the meshes a family draws and each texture the
 
 ### Requirement: The pose is solved from landmarks against the reference's pixels
 
-The camera pose SHALL be solved from landmarks whose places are known, against the pixels the reference gives them, with each landmark's reprojection error printed (`scripts/src/services/genshinParity/witness/solveCameraPose.ts`).
+The camera pose SHALL be solved from landmarks whose places are known, against the pixels the reference gives them, with each landmark's reprojection error printed.
 
 #### Scenario: Six or more landmarks
 
 - **GIVEN** six or more landmarks
 - **WHEN** the pose is solved
-- **THEN** the projection is read in closed form (`scripts/src/services/genshinParity/witness/solveCameraPose.ts`, `DLT_POINT_COUNT = 6`)
+- **THEN** the projection is read in closed form (`DLT_POINT_COUNT = 6`)
 - **AND** the reprojection error of each landmark is printed
 
 #### Scenario: Fewer than six landmarks
@@ -56,7 +56,7 @@ The camera pose SHALL be solved from landmarks whose places are known, against t
 
 ### Requirement: Pose refinement uses only the chosen families' silhouettes
 
-The pose refinement SHALL measure only the silhouettes of the chosen families, so that clouds, which draw no part, cannot pull it (`scripts/src/services/genshinParity/witness/refineCameraPose.ts`).
+The pose refinement SHALL measure only the silhouettes of the chosen families, so that clouds, which draw no part, cannot pull it.
 
 #### Scenario: Clouds in the frame
 
@@ -67,7 +67,7 @@ The pose refinement SHALL measure only the silhouettes of the chosen families, s
 
 ### Requirement: Seams between one family's parts are left out of refinement
 
-The refinement SHALL leave out the seams between one family's parts, since the reference draws them as cracks or not at all (`scripts/src/services/genshinParity/witness/findFamilyBoundaries.ts`).
+The refinement SHALL leave out the seams between one family's parts, since the reference draws them as cracks or not at all.
 
 #### Scenario: Seam between two parts
 
@@ -87,7 +87,7 @@ The parts in one frame SHALL share one camera, and an axis that one part's landm
 
 ### Requirement: A witness render settles in one frame
 
-A witness render SHALL settle in one frame, so that the same view draws the same frame (`packages/genshin-world/parity/main.ts`, `isClockHeld`).
+A witness render SHALL settle in one frame, so that the same view draws the same frame (`isClockHeld`).
 
 #### Scenario: Same view drawn twice
 
@@ -108,14 +108,14 @@ A scrolling row SHALL stand where the exports lay it, with only its phase along 
 
 ### Requirement: The glide's pace is read from a repeating landmark
 
-The pace of a glide SHALL be read from a repeating landmark's crossings of a column, paired with the crossing a known number of repeats later (`scripts/src/services/genshinParity/witness/findCrossings.ts`).
+The pace of a glide SHALL be read from a repeating landmark's crossings of a column, paired with the crossing a known number of repeats later.
 
 #### Scenario: Pace read from crossings
 
 - **GIVEN** a repeating landmark crossing a column of a recording at two known repeats apart
 - **WHEN** the pace is read
 - **THEN** the pace is read over the time between the two crossings
-- **AND** each crossing's time is the recording's own frame time (`scripts/src/services/genshinParity/witness/findCrossings.ts`)
+- **AND** each crossing's time is the recording's own frame time
 
 ## Open
 
