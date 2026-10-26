@@ -1,19 +1,26 @@
 # Music synthesizer
 
-The synthesizer is `genshin-engine`'s audio module. It plays each note of a [voice](../voices/design.md) from that voice's fitted instrument, so the synthesizer is the music's base: a voice's recording, when one is layered, plays beside its synthesized note rather than in place of it ([sampled instruments](../../sampled-instruments/design.md)).
+The synthesizer is `genshin-engine`'s audio module `packages/genshin-engine/src/audio/`. It plays each note of a [voice](../voices/design.md) from that voice's fitted instrument, so the synthesizer is the music's base: a voice's recording, when one is layered, plays beside its synthesized note rather than in place of it ([sampled instruments](../../sampled-instruments/design.md)).
 
 ## Notes and noise
 
-- **Each note is an oscillator over the instrument's harmonics.** A note's partials are sounded at the instrument's measured overtone amplitudes, through one gain following the instrument's attack, decay and release envelope.
-- **The noise is a looped buffer built in the spectrum.** `computeNoiseSamples` builds the buffer over the engine's `transformFourier`, with every band in the one transform: each band is flat between its half octaves at the level the instrument gives it. So no band leaks into another, and the loop has no seam.
-- **The envelope's end is worked out, not held.** The envelope's value at the note's end is computed and scheduled, rather than held with `cancelAndHoldAtTime`, which Firefox lacks.
-- **Every note reads the noise from the loop's clock.** Each note's noise starts at the loop clock's current position, with one phase per band across every buffer, which overfills the lowest band: a known defect, explained with the remedies that did not ship under [music](../README.md#not-yet).
+- **Each note is an oscillator over the instrument's harmonics.** A note's partials are sounded at the instrument's measured overtone amplitudes, through one gain following the instrument's attack, decay and release envelope `packages/genshin-engine/src/audio/scheduleMusicNote.ts`.
+- **The noise is a looped buffer built in the spectrum.** `computeNoiseSamples` builds the buffer over the engine's `transformFourier` `packages/genshin-engine/src/audio/computeNoiseSamples.ts`, with every band in the one transform: each band is flat between its half octaves at the level the instrument gives it. So no band leaks into another, and the loop has no seam.
+- **The envelope's end is worked out, not held.** The envelope's value at the note's end is computed and scheduled, rather than held with `cancelAndHoldAtTime`, which Firefox lacks `packages/genshin-engine/src/audio/scheduleMusicNote.ts`.
+- **Every note reads the noise from the loop's clock.** Each note's noise starts at the loop clock's current position, with one phase per band across every buffer `packages/genshin-engine/src/audio/scheduleMusicNote.ts`, which overfills the lowest band: a known defect, explained with the remedies that did not ship under [music](../README.md#not-yet).
 
 ## The player
 
-- **`createMusicPlayer` schedules ahead of the clock.** It schedules the notes due in the next two seconds every half second, and loops the playlist.
-- **`renderMusicSegment` renders one segment offline** through the same notes, so the parity page scores what the player plays.
-- **Each segment has its own expression gain.** The segment plays its notes through a gain of its own, which the [expression](../expression/design.md) ramps between the windows' centres (`scheduleMusicExpression`). A chord ringing past its segment's end fades from the level it ended at rather than jumping to the next segment's.
+- **`createMusicPlayer` schedules ahead of the clock.** It schedules the notes due in the next two seconds every half second `packages/genshin-engine/src/audio/constants.ts`, and loops the playlist.
+- **`renderMusicSegment` renders one segment offline** through the same notes, so the parity page scores what the player plays `packages/genshin-engine/src/audio/renderMusicSegment.ts`.
+- **Each segment has its own expression gain.** The segment plays its notes through a gain of its own, which the [expression](../expression/design.md) ramps between the windows' centres (`scheduleMusicExpression`) `packages/genshin-engine/src/audio/scheduleMusicExpression.ts`. A chord ringing past its segment's end fades from the level it ended at rather than jumping to the next segment's `packages/genshin-engine/src/audio/createMusicPlayer.ts`.
+
+## Open
+
+- [ ] **The noise loop has no audible seam, and no band leaks into another** — no source yet: no seam or leakage measurement is recorded.
+- [ ] **The shared noise phases overfill the lowest band** — no source yet: the overfill is recorded only in the music page's narrative, with no checked measurement file.
+- [ ] **Firefox lacks `cancelAndHoldAtTime`** — no source yet: no browser compatibility record is cited.
+- [ ] **The player loops the playlist** — no source yet: the loop is not located in `createMusicPlayer.ts`; the playlist's `isLooping` flag is the only checked source.
 
 ## Key files
 
