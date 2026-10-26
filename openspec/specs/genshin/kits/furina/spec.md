@@ -29,7 +29,7 @@ Furina's charged attack SHALL strike a circle round her and turn her Arkhe.
 
 - **GIVEN** Furina is the character on the field
 - **WHEN** the player plays her charged attack
-- **THEN** its circle strikes 33 frames in
+- **THEN** its circle strikes 33 frames in, or 22 frames in after a normal attack
 - **AND** her Arkhe turns between Ousia and Pneuma
 
 ### Requirement: Salon Solitaire brings out Ousia members or Pneuma's Singer
@@ -41,7 +41,7 @@ Salon Solitaire SHALL bring out Gentilhomme Usher, Surintendante Chevalmarin and
 - **GIVEN** Furina is in Ousia and an enemy stands within a member's reach
 - **WHEN** the player casts Salon Solitaire
 - **THEN** each member drains every deployed member above half HP by a share of that member's Max HP
-- **AND** each member strikes the enemy nearest it with a hit of a share of Furina's Max HP, a tenth harder for each member it drained
+- **AND** each member strikes its primary target with a hit of a share of Furina's Max HP, a tenth harder for each member it drained
 
 #### Scenario: A member with no enemy in reach does nothing
 
