@@ -35,13 +35,13 @@ Xiao's skill SHALL dash him forward as an Anemo hit on the enemies within 5 metr
 
 ### Requirement: Bane of All Evil converts attacks
 
-While Bane of All Evil stands, Xiao's normal, charged and plunging attacks SHALL deal Anemo damage, and each converted hit SHALL carry the burst's 58.45% DMG Bonus.
+While Bane of All Evil stands, Xiao's normal, charged and plunging attacks SHALL deal Anemo damage, and each converted hit SHALL carry the burst's DMG Bonus, 58.45% at talent level 1.
 
 #### Scenario: Converted attack carries the burst bonus
 
 - **GIVEN** Bane of All Evil stands
 - **WHEN** Xiao strikes with a normal attack
-- **THEN** the strike deals Anemo damage with the burst's 58.45% DMG Bonus
+- **THEN** the strike deals Anemo damage with the burst's DMG Bonus
 
 #### Scenario: Dash carries no burst bonus
 
@@ -51,13 +51,13 @@ While Bane of All Evil stands, Xiao's normal, charged and plunging attacks SHALL
 
 ### Requirement: Bane of All Evil drain and end
 
-While Bane of All Evil stands with Xiao on the field, his current HP SHALL drain by 3% every second, and the drain SHALL never down him.
+While Bane of All Evil stands with Xiao on the field, his current HP SHALL drain by 3% every second at talent levels 1 to 3, less from level 4, and the drain SHALL never down him.
 
 #### Scenario: Drain ticks through the burst
 
 - **GIVEN** Xiao stays on the field during Bane of All Evil
 - **WHEN** each second of the burst passes
-- **THEN** 3% of his current HP drains, fourteen times, the last a second before the burst ends
+- **THEN** his current HP drains by the burst's share of it, fourteen times, the last a second before the burst ends
 
 #### Scenario: Drain at low HP
 
