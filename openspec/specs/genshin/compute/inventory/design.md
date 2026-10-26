@@ -10,4 +10,4 @@ Nothing here.
 
 ## Open
 
-- [ ] **Inventory: the whole-frame moment cut at 20 seconds** — no source yet: the cut image is not on disk in the install.
+- [ ] **Inventory: the whole-frame moment cut at 20 seconds** — no source yet: the 20-second cut image of the bag's Weapons tab is not on disk in the install.
