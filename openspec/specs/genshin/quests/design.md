@@ -67,7 +67,7 @@ The dump scrambles the binary output's field names each patch, so the reader fin
 
 ## Parity
 
-The quest screen is scored whole-frame against `quest-screen`, the English client's quest screen at 1920 by 1080, set to the still's state by `packages/genshin-world/src/components/Quest/Screen/Index.fixture.ts`: a mean difference of 44.32% and a FLIP of 0.8047, from `pnpm -C scripts genshin:parity compare quest-screen` into `~/Esposter.noindex/genshin-parity/comparisons/quest-screen.png`, off the wiki's File:Quest Screen.png (`scripts/src/services/genshinParity/shared/ParityReferenceMap.ts`, `quest-screen`). Most of what remains is the world behind the screen, blurred and washed lighter down the screen, which the page has no copy of; the screen draws the band, rows and panels translucent as the game does, so they sit over the page's white rather than the world. The rest is the list's scroll, since the still is scrolled down to its commissions and the list opens at its top, and the stand-in font, narrower than the game's.
+The quest screen is scored whole-frame against `quest-screen`, the English client's quest screen at 1920 by 1080, set to the still's state by `packages/genshin-world/src/components/Quest/Screen/Index.fixture.ts`: a mean difference of 44.36% and a FLIP of 0.8054 (its `quest-screen` row in `scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md`), from `pnpm -C scripts genshin:parity compare quest-screen` into `~/Esposter.noindex/genshin-parity/comparisons/quest-screen.png`, off the wiki's File:Quest Screen.png (`scripts/src/services/genshinParity/shared/ParityReferenceMap.ts`, `quest-screen`). Most of what remains is the world behind the screen, blurred and washed lighter down the screen, which the page has no copy of; the screen draws the band, rows and panels translucent as the game does, so they sit over the page's white rather than the world. The rest is the list's scroll, since the still is scrolled down to its commissions and the list opens at its top, and the stand-in font, narrower than the game's.
 
 ## Key files
 
@@ -124,7 +124,7 @@ The quest screen is scored whole-frame against `quest-screen`, the English clien
 ## Open
 
 - [ ] **The screen is the English client's still at 1920 by 1080, and its marks are traced from it** — no source yet: the wiki's File:Quest Screen.png is not in `~/Esposter/cache/genshin-wiki`, so the still's size and language are unchecked.
-- [ ] **The screen scores a mean difference of 44.32% and a FLIP of 0.8047** — no source yet: `~/Esposter/genshin-parity/comparisons/quest-screen.png` is the only file for the screen, and no text file there holds either number.
+- [ ] **The screen scores a mean difference of 44.32% and a FLIP of 0.8047** — contradicted by `scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md`: its quest-screen row reads 44.36% and 0.8054.
 - [ ] **The beam is drawn from 50 metres off, as the wiki says** — no source yet: the wiki's Quest page is not in `~/Esposter/cache/genshin-wiki`.
 - [ ] **J opens the quest menu, V navigates, and holding V shows the objective** — no source yet: the wiki's Controls page is not in `~/Esposter/cache/genshin-wiki`; the repo's bindings in `packages/genshin-engine/src/input/InputActionBindingMap.ts` (`KeyJ` to `OpenQuests`, `KeyV` to `QuestNavigation`, lines 32 and 35) are not game evidence.
 - [ ] **The Seventh Samurai opens only once Tatara Tales: The Last Act is finished** — no source yet: the wiki's "The Seventh Samurai" page is not in `~/Esposter/cache/genshin-wiki`.
