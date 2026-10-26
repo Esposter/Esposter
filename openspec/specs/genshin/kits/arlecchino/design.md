@@ -31,5 +31,5 @@ Arlecchino's kit is its record and one behaviour module, `createArlecchinoKitBeh
 ## Sources
 
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/arlecchino), MIT: the kit's hitmarks and animations, the hitboxes and their offsets, the plunge and burst circles, the poise of the plunges, and the proud group indices behind each multiplier, cost and cooldown.
-- The dump's proud skill groups `9631`, `9632` and `9639`, and its talents `961` to `966`, read from `~/Esposter/genshin-parity/text/ExcelBinOutput/ProudSkillExcelConfigData.json` and `~/Esposter/genshin-parity/text/ExcelBinOutput/AvatarTalentExcelConfigData.json`, which hold Constellation 6's 0.1, 0.7, 20 and 15.
+- The dump's proud skill groups `9631`, `9632` and `9639`, and its talents `961` to `966`, read from `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json` and `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json`, which hold Constellation 6's 0.1, 0.7, 20 and 15.
 - The wiki pages cached at `~/Esposter.noindex/cache/genshin-wiki/Category_Arlecchino_Talents.json`, for Balemoon Rising's 1U gauge, its 15-second cooldown and 60 energy.
