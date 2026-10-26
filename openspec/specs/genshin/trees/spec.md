@@ -1,6 +1,6 @@
 ## Purpose
 
-Genshin's trees as species, each one set of the tree kit's parameters a placed tree names, and each drawn as its mesh near the eye and as an impostor far from it. A tree's wood is its trunk, its limbs and its surface roots, each swept as a tube along a spline traced off its export's own bark. The impostor is baked once from the tree's own mesh, its colour and its normal, and drawn on one card turned about the trunk to face the eye and toon-lit through the hour; the two cross over by a dither across a band some ten of the tree's heights out.
+Genshin's trees as species, each one set of the tree kit's parameters a placed tree names, and each drawn as its mesh near the eye and as an impostor far from it (`packages/genshin-world/src/components/World/Landmark/Tree/Index.vue`). A tree's wood is its trunk, its limbs and its surface roots, each swept as a tube along a spline traced off its export's own bark (`scripts/src/services/genshinAssets/fit/traceTubeCentrelines.ts`, `packages/genshin-engine/src/kits/tree/computeTreeTubes.ts`). The impostor is baked once from the tree's own mesh, its colour and its normal, and drawn on one card turned about the trunk to face the eye and toon-lit through the hour; the two cross over by a dither across a band some ten of the tree's heights out (`packages/genshin-engine/src/vegetation/constants.ts`, `packages/genshin-engine/src/vegetation/bakeImpostor.ts`, `packages/genshin-engine/src/nodes/createImpostorMaterial.ts`).
 
 ## Requirements
 
