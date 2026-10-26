@@ -66,7 +66,7 @@ flowchart TD
 
 - [ ] **Names are facts: the catalogue's names come from the wiki, and no shape comes from a map's imagery** — no source yet: the wiki's Area page is not in `~/Esposter.noindex/cache/genshin-wiki/`, and no region's shape was checked against imagery.
 - [ ] **The game's file holds no polygon for Nod-Krai's areas** — no source yet: `~/Esposter.noindex/genshin-parity/text/BinOutput/Scene/WorldArea/scene3_worldArea.json` was not searched for Nod-Krai's area names.
-- [ ] **A region swaps from its plateau to its pieces only when the fit allows it** — no source yet: the fit's refusal rule was not read.
+- [ ] **A region swaps from its plateau to its pieces only when the fit allows it** — checked against `scripts/src/services/genshinAssets/fit/fitRegionGroundPieces.ts`: its pieces publish only when every area holds, and a refused or outline-less area holds the region back; the claim stays open until the page builds that rule.
 - [ ] **Windrise is a subarea of Galesong Hill in Mondstadt** — no source yet: the wiki's Area page, named in Sources, is not in the wiki cache. Checked the Area page, now cached: it names neither Windrise nor Galesong Hill.
 - [ ] **Enkanomiya, the Chasm's underground mines and the Sea of Bygone Eras are layers that carry their own terrain, sky and water** — no source yet for the terrain, sky and water: the wiki's Map page, checked, lists each as a separate map environment, and names no terrain, sky or water for any of them.
 - [ ] **A subarea takes the kind of ground the game's area table files it under, so the game's cities are marked as the game marks them** — no source yet: the wiki's Area page, named in Sources, is not in the wiki cache; `~/Esposter/genshin-parity/text/ExcelBinOutput/` holds no table named Area.
