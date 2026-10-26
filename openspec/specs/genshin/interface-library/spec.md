@@ -6,7 +6,7 @@ genshin-interface, the game's 2D interface as presentational Vue components. Eve
 
 ### Requirement: Every screen is drawn inside a root sized to the game's proportions
 
-Every screen SHALL be drawn inside one root that sizes its interface to the window's smaller axis at the game's proportions, and that inset its canvas from wider screens.
+Every screen SHALL be drawn inside one root that sizes its interface to the window's smaller axis at the game's proportions, and that inset its canvas from wider screens (`packages/genshin-interface/src/components/GameScreen/Index.vue`).
 
 #### Scenario: A wide screen insets the canvas
 
@@ -18,39 +18,39 @@ Every screen SHALL be drawn inside one root that sizes its interface to the wind
 
 - **GIVEN** the device's main pointer is a finger
 - **WHEN** the screen is drawn
-- **THEN** the interface is drawn at the larger touch scale
+- **THEN** the interface is drawn at the larger touch scale (`packages/genshin-interface/src/components/GameScreen/Index.vue`, `MOBILE_INTERFACE_SCALE` in `packages/genshin-interface/src/services/constants.ts`)
 
 ### Requirement: Every button takes its game template's look for each state
 
-Every button SHALL take the look its game template gives for each state, which is the disabled, pressed, hover or rest look, decided by the pointer and by the screen's forced state.
+Every button SHALL take the look its game template gives for each state, which is the disabled, pressed, hover or rest look, decided by the pointer and by the screen's forced state (`packages/genshin-interface/src/components/GameButton/Index.vue`).
 
 #### Scenario: A hovered button fades in at the hover speed
 
 - **GIVEN** a button is at rest
 - **WHEN** the pointer moves over it
-- **THEN** it fades into its hover look over the hover duration
+- **THEN** it fades into its hover look over the hover duration (`INTERACTION_HOVER_MS` in `packages/genshin-interface/src/services/constants.ts`)
 
 #### Scenario: A pressed button shows its pressed look at once
 
 - **GIVEN** a button is under the pointer
 - **WHEN** the player presses it
-- **THEN** it shows its pressed look immediately
+- **THEN** it shows its pressed look immediately (`packages/genshin-interface/src/components/GameButton/Index.vue`)
 
 #### Scenario: A released button fades back to rest
 
 - **GIVEN** a button is in its hover look
 - **WHEN** the pointer leaves it
-- **THEN** it fades back to its rest look over the rest duration
+- **THEN** it fades back to its rest look over the rest duration (`INTERACTION_REST_MS` in `packages/genshin-interface/src/services/constants.ts`)
 
 #### Scenario: A disabled button answers nothing
 
 - **GIVEN** a button belongs to a screen not yet built
 - **WHEN** the player presses it
-- **THEN** it shows its disabled look and does nothing
+- **THEN** it shows its disabled look and does nothing (`packages/genshin-interface/src/components/GameButton/Index.vue`)
 
 ### Requirement: Keyboard focus shows the hover look
 
-A button focused from the keyboard SHALL show its hover look, and a plain button SHALL show a white ring instead so focus stays visible.
+A button focused from the keyboard SHALL show its hover look, and a plain button SHALL show a white ring instead so focus stays visible (`packages/genshin-interface/src/components/GameButton/Index.vue`).
 
 #### Scenario: A focused button shows its hover look
 
@@ -62,11 +62,11 @@ A button focused from the keyboard SHALL show its hover look, and a plain button
 
 - **GIVEN** a plain button is focused from the keyboard
 - **WHEN** it is drawn
-- **THEN** a white ring surrounds it
+- **THEN** a white ring surrounds it (`packages/genshin-interface/src/components/GameButton/Index.vue`, `[data-kind="Plain"]:focus-visible`)
 
 ### Requirement: A side bar disc lights and enlarges its icon on hover
 
-A side bar disc SHALL light a translucent disc behind its icon on hover, turn the icon cream and enlarge it, and show its name beside it.
+A side bar disc SHALL light a translucent disc behind its icon on hover, turn the icon cream and enlarge it, and show its name beside it (`packages/genshin-interface/src/components/GameButton/Index.vue`).
 
 #### Scenario: A hovered disc shows its name
 
@@ -84,7 +84,7 @@ A side bar disc SHALL light a translucent disc behind its icon on hover, turn th
 
 ### Requirement: A pill lights a ring on hover and holds its size
 
-A pill SHALL show its words in ink at rest, SHALL light a white ring over its edge on hover without changing size, and SHALL turn a half-transparent slate under a gold light when pressed.
+A pill SHALL show its words in ink at rest, SHALL light a white ring over its edge on hover without changing size, and SHALL turn a half-transparent slate under a gold light when pressed (`packages/genshin-interface/src/components/GameButton/Index.vue`).
 
 #### Scenario: A hovered pill lights a ring without resizing
 
@@ -101,7 +101,7 @@ A pill SHALL show its words in ink at rest, SHALL light a white ring over its ed
 
 ### Requirement: A dialogue reply lights white on hover
 
-A dialogue reply SHALL be a translucent black pill at rest, and SHALL turn a white pill with slate words when hovered, focused or lit.
+A dialogue reply SHALL be a translucent black pill at rest, and SHALL turn a white pill with slate words when hovered, focused or lit (`packages/genshin-interface/src/components/GameButton/Index.vue`, `GAME_REPLY_REST` in `packages/genshin-interface/src/services/constants.ts`).
 
 #### Scenario: A hovered reply turns white
 
@@ -111,7 +111,7 @@ A dialogue reply SHALL be a translucent black pill at rest, and SHALL turn a whi
 
 ### Requirement: Every piece ships with its fixture and approved images
 
-Every component of the library but the layout roots that draw nothing of their own (GameScreen, GameRect and TwoColumnScreen) SHALL be a folder holding its fixture and its approved images, and a component without its fixture SHALL fail the visual check.
+Every component of the library but the layout roots that draw nothing of their own (GameScreen, GameRect and TwoColumnScreen) SHALL be a folder holding its fixture and its approved images, and a component without its fixture SHALL fail the visual check (`packages/genshin-interface/src/components/components.visual.ts`).
 
 #### Scenario: A component without a fixture fails the visual check
 
@@ -134,3 +134,9 @@ The pointer SHALL be drawn as the game's four-pointed star with its gold centre,
 - **GIVEN** the pointer is drawn over a screen
 - **WHEN** it is shown
 - **THEN** it appears as the game's four-pointed star with a gold centre
+
+## Open
+
+- [ ] **The pointer is the game's four-pointed star at the size the game draws it on a screen of the same height** — no source yet: the wiki's Tutorial System Show Cursor image is not in the genshin-wiki cache, and the 25 px size is in no file read.
+- [ ] **The game fits its interface to a 1920 by 1080 screen, with a 1600 by 900 canvas inset up to 71 units, and its touch scale is the mobile client's** — no source yet: the 2560 and 3440 wide recordings are not among the captures, and the canvas size and touch scale are in no file read.
+- [ ] **A hover fades in over 0.05 s and back over 0.1 s, as the game's button transitions do** — no source yet: the transitions are not in `~/Esposter.noindex/genshin-parity/extracted/interface-states/states-07356235.json`, whose hover clips hold 0.067 s and no 0.05 s.
