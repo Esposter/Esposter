@@ -134,7 +134,12 @@ describe(createBeidouKitBehaviour, () => {
       context.body = createKitBody(movedBody);
       const ticks = stepKitTestEffects(15, context);
 
-      expect(ticks.map(({ body: { position }, hit }) => [position, hit.enemyStatus?.(combatant)])).toStrictEqual(
+      expect(
+        ticks.map(({ body: { position }, hit }) => [
+          position,
+          hit.enemyStatus?.(combatant, combatant.attributes.maxHealth),
+        ]),
+      ).toStrictEqual(
         Array.from({ length: tickCount }, () => [
           movedBody,
           {

@@ -1,6 +1,6 @@
 ## Purpose
 
-Hu Tao's kit as built: her string, charged attack, Guide to Afterlife's Paramita stance with its HP cost, and Spirit Soother's half-HP hit with Blood Blossom, with her Constellation 2 left unbuilt, her Constellations 1, 4 and 6 built, and her Flutter By and Sanguine Rouge passives built.
+Hu Tao's kit as built: her string, charged attack, Guide to Afterlife's Paramita stance with its HP cost, and Spirit Soother's half-HP hit with Blood Blossom, with her Constellations 1, 2, 4 and 6 built, and her Flutter By and Sanguine Rouge passives built.
 
 ## Requirements
 
@@ -106,3 +106,25 @@ From constellation 1, Hu Tao's charged attacks SHALL cost no stamina while a sta
 - **GIVEN** Hu Tao is at constellation 0 and holds a stance
 - **WHEN** her charged attack's stamina multiplier is read
 - **THEN** it is one
+
+### Requirement: Second constellation adds to Blood Blossom's DMG and has Spirit Soother apply it
+
+From constellation 2, each Blood Blossom tick SHALL add 10% of Hu Tao's Max HP as it was when the effect was applied, and Spirit Soother SHALL apply Blood Blossom to each enemy its hit strikes.
+
+#### Scenario: Blood Blossom's tick adds 10% of the Max HP Hu Tao had when it was applied, not the Max HP she has as it ticks
+
+- **GIVEN** Hu Tao is at constellation 2 and Blood Blossom has been applied to an enemy
+- **WHEN** her Max HP rises before the Blood Blossom tick falls due
+- **THEN** the tick's DMG rises by 10% of the Max HP she had when Blood Blossom was applied
+
+#### Scenario: Spirit Soother also applies Blood Blossom to each enemy its hit strikes
+
+- **GIVEN** Hu Tao is at constellation 2
+- **WHEN** Spirit Soother's hit strikes an enemy
+- **THEN** Blood Blossom is applied to that enemy
+
+#### Scenario: below constellation 2, Spirit Soother applies no Blood Blossom
+
+- **GIVEN** Hu Tao is at constellation 1
+- **WHEN** Spirit Soother's hit strikes an enemy
+- **THEN** no Blood Blossom is applied to that enemy

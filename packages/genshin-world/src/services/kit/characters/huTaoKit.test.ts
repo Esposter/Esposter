@@ -4,6 +4,7 @@ import type { KitBuff } from "#src/models/kit/KitBuff";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitEvent } from "#src/models/kit/KitEvent";
+import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitStance } from "#src/models/kit/KitStance";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { KitSummon } from "#src/models/kit/KitSummon";
@@ -21,9 +22,11 @@ import { createHuTaoKitBehaviour, HU_TAO_CHARACTER_ID } from "#src/services/kit/
 import { castKitAction, createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { hitPartyMember } from "#src/services/kit/hitPartyMember";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { strikeEnemy } from "#src/services/kit/strikeEnemy";
 import { tickEnemyStatuses } from "#src/services/kit/tickEnemyStatuses";
 import { createParty } from "#src/services/party/createParty";
 import { getPartyMember } from "#src/services/party/getPartyMember";
+import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const HU_TAO_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, HU_TAO_CHARACTER_ID);
@@ -144,7 +147,10 @@ describe(createHuTaoKitBehaviour, () => {
     const kitEffectState: KitEffectState = { effects: [] };
     HU_TAO_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
     const stance = kitEffectState.effects.find((effect): effect is KitStance => effect.kind === "stance");
-    const bloodBlossom = stance?.combatant.kit.chargedAttack.hits[0]?.enemyStatus?.(combatant);
+    const bloodBlossom = stance?.combatant.kit.chargedAttack.hits[0]?.enemyStatus?.(
+      combatant,
+      combatant.attributes.maxHealth,
+    );
     if (!bloodBlossom) throw new Error("the Paramita's charged attack gave no Blood Blossom");
     const enemy = { ...createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, ""), statuses: [bloodBlossom] };
 
@@ -243,7 +249,7 @@ const getHealthShare = (context: KitContext) => getPartyMember(context.party, HU
 const createSpiritSootherContext = (healthShare: number) =>
   createKitTestContext(createHuTaoCombatant(), { party: createHuTaoParty(healthShare) });
 // One enemy struck by the given hit of Spirit Soother
-const strikeEnemy = (context: KitContext, hit: KitStrike["hit"] | undefined) => {
+const strikeSpiritSootherEnemy = (context: KitContext, hit: KitStrike["hit"] | undefined) => {
   if (!hit?.onStrike) throw new Error("Spirit Soother's hit has no strike to land");
   hit.onStrike(
     context,
@@ -263,7 +269,7 @@ describe("spirit Soother", () => {
     const context = createSpiritSootherContext(0.6);
 
     HU_TAO_KIT.elementalBurst.onStart?.(context);
-    strikeEnemy(context, HU_TAO_KIT.elementalBurst.hits[0]);
+    strikeSpiritSootherEnemy(context, HU_TAO_KIT.elementalBurst.hits[0]);
 
     expect(getHealthShare(context)).toBeCloseTo(0.6 + SPIRIT_SOOTHER_REGEN_SHARE);
   });
@@ -273,7 +279,7 @@ describe("spirit Soother", () => {
     const context = createSpiritSootherContext(0.5);
 
     HU_TAO_KIT.elementalBurstVariant?.action.onStart?.(context);
-    strikeEnemy(context, HU_TAO_KIT.elementalBurstVariant?.action.hits[0]);
+    strikeSpiritSootherEnemy(context, HU_TAO_KIT.elementalBurstVariant?.action.hits[0]);
 
     expect(getHealthShare(context)).toBeCloseTo(0.5 + SPIRIT_SOOTHER_LOW_REGEN_SHARE);
   });
@@ -283,7 +289,7 @@ describe("spirit Soother", () => {
     const context = createSpiritSootherContext(0.1);
 
     HU_TAO_KIT.elementalBurst.onStart?.(context);
-    for (let index = 0; index < 6; index++) strikeEnemy(context, HU_TAO_KIT.elementalBurst.hits[0]);
+    for (let index = 0; index < 6; index++) strikeSpiritSootherEnemy(context, HU_TAO_KIT.elementalBurst.hits[0]);
 
     expect(getHealthShare(context)).toBeCloseTo(0.1 + 5 * SPIRIT_SOOTHER_LOW_REGEN_SHARE);
   });
@@ -293,9 +299,9 @@ describe("spirit Soother", () => {
     const context = createSpiritSootherContext(0.1);
 
     HU_TAO_KIT.elementalBurst.onStart?.(context);
-    for (let index = 0; index < 5; index++) strikeEnemy(context, HU_TAO_KIT.elementalBurst.hits[0]);
+    for (let index = 0; index < 5; index++) strikeSpiritSootherEnemy(context, HU_TAO_KIT.elementalBurst.hits[0]);
     HU_TAO_KIT.elementalBurst.onStart?.(context);
-    strikeEnemy(context, HU_TAO_KIT.elementalBurst.hits[0]);
+    strikeSpiritSootherEnemy(context, HU_TAO_KIT.elementalBurst.hits[0]);
 
     expect(getHealthShare(context)).toBeCloseTo(0.1 + 5 * SPIRIT_SOOTHER_LOW_REGEN_SHARE + SPIRIT_SOOTHER_REGEN_SHARE);
   });
@@ -318,7 +324,7 @@ describe("spirit Soother", () => {
     const context = createKitTestContext(combatant, { kitEffectState, party });
 
     HU_TAO_KIT.elementalBurst.onStart?.(context);
-    strikeEnemy(context, HU_TAO_KIT.elementalBurst.hits[0]);
+    strikeSpiritSootherEnemy(context, HU_TAO_KIT.elementalBurst.hits[0]);
 
     expect(party.healthChanges).toStrictEqual([
       {
@@ -331,6 +337,72 @@ describe("spirit Soother", () => {
         sourceCharacterId: HU_TAO_CHARACTER_ID,
       },
     ]);
+  });
+});
+
+describe("constellation 2", () => {
+  // The first hit of the Paramita Papilio charged attack, which puts Blood Blossom on each enemy it strikes
+  const getParamitaChargedAttackHit = (combatant: Combatant): KitHit => {
+    const kitEffectState: KitEffectState = { effects: [] };
+    HU_TAO_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+    const stance = kitEffectState.effects.find((effect): effect is KitStance => effect.kind === "stance");
+    const hit = stance?.combatant.kit.chargedAttack.hits[0];
+    if (!hit) throw new Error("Guide to Afterlife held no charged attack hit");
+    return hit;
+  };
+
+  test("Blood Blossom's tick adds 10% of the Max HP Hu Tao had when it was applied, not the Max HP she has as it ticks", () => {
+    expect.hasAssertions();
+    const combatant = { ...createHuTaoCombatant(), constellationCount: 2 };
+    const healthBuff: KitBuff = {
+      amount: 10_000,
+      attribute: Attribute.Health,
+      characterId: HU_TAO_CHARACTER_ID,
+      kind: "buff",
+      secondsRemaining: 10,
+    };
+    // The buff raises Hu Tao's Max HP as Blood Blossom is applied, and is gone by the time the enemy ticks
+    const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+    strikeEnemy(
+      enemy,
+      getParamitaChargedAttackHit(combatant),
+      combatant,
+      createKitTestContext(combatant, { enemyTables, kitEffectState: { effects: [healthBuff] } }),
+    );
+    const bloodBlossom = takeOne(enemy.statuses);
+
+    // Each tick falls due one interval on, which a step of that many seconds reaches
+    const tickState: KitEffectState = { effects: [] };
+    const tickContext = createKitTestContext(combatant, {
+      enemyMap: new Map([[enemy.id, enemy]]),
+      kitEffectState: tickState,
+    });
+    const outbox: KitEvent[] = [];
+    tickEnemyStatuses([enemy], bloodBlossom.tickIntervalSeconds ?? 0, outbox);
+    for (const event of outbox) HU_TAO_KIT.onKitEvent?.(event, tickContext, combatant);
+
+    const tick = tickState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
+    expect(tick?.hits[0]?.additiveBaseDamageBonus?.(combatant)).toBeCloseTo(
+      0.1 * (combatant.attributes.maxHealth + healthBuff.amount),
+    );
+  });
+
+  test("Spirit Soother also applies Blood Blossom to each enemy its hit strikes", () => {
+    expect.hasAssertions();
+    const combatant = { ...createHuTaoCombatant(), constellationCount: 2 };
+
+    expect(
+      [HU_TAO_KIT.elementalBurst.hits[0], HU_TAO_KIT.elementalBurstVariant?.action.hits[0]].map(
+        (hit) => hit?.enemyStatus?.(combatant, combatant.attributes.maxHealth)?.id,
+      ),
+    ).toStrictEqual(["hu-tao-blood-blossom", "hu-tao-blood-blossom"]);
+  });
+
+  test("below constellation 2, Spirit Soother applies no Blood Blossom", () => {
+    expect.hasAssertions();
+    const combatant = createHuTaoCombatant();
+
+    expect(HU_TAO_KIT.elementalBurst.hits[0]?.enemyStatus?.(combatant, combatant.attributes.maxHealth)).toBeUndefined();
   });
 });
 

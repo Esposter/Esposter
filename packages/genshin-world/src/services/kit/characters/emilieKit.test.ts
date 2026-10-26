@@ -97,10 +97,9 @@ describe(createEmilieKitBehaviour, () => {
         constellationCount,
       );
 
-      expect(EMILIE_KIT.elementalSkill.hits.map((hit) => hit.enemyStatus?.(combatant))).toStrictEqual([
-        enemyStatus,
-        enemyStatus,
-      ]);
+      expect(
+        EMILIE_KIT.elementalSkill.hits.map((hit) => hit.enemyStatus?.(combatant, combatant.attributes.maxHealth)),
+      ).toStrictEqual([enemyStatus, enemyStatus]);
     },
   );
 

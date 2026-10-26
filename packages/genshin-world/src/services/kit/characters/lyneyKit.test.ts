@@ -116,7 +116,9 @@ describe(createLyneyKitBehaviour, () => {
     LYNEY_KIT.chargedAttack.onStart?.(createKitTestContext(combatant, { kitEffectState }));
     const summon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
 
-    expect(summon?.hits[0]?.enemyStatus?.(combatant)?.resistanceReduction).toStrictEqual({ [Element.Pyro]: 0.2 });
+    expect(
+      summon?.hits[0]?.enemyStatus?.(combatant, combatant.attributes.maxHealth)?.resistanceReduction,
+    ).toStrictEqual({ [Element.Pyro]: 0.2 });
   });
 
   test("an inactive constellation changes nothing", () => {
@@ -126,7 +128,7 @@ describe(createLyneyKitBehaviour, () => {
     LYNEY_KIT.chargedAttack.onStart?.(createKitTestContext(combatant, { kitEffectState }));
     const summon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
 
-    expect(summon?.hits[0]?.enemyStatus?.(combatant)).toBeUndefined();
+    expect(summon?.hits[0]?.enemyStatus?.(combatant, combatant.attributes.maxHealth)).toBeUndefined();
   });
 
   test("ascension 4's DMG bonus takes effect as a passive at its ascension phase", () => {

@@ -61,7 +61,7 @@ describe(createCharlotteKitBehaviour, () => {
     const combatant = createCharlotteCombatant();
     const press = CHARLOTTE_KIT.elementalSkill.hits[0]?.enemyStatus;
     CHARLOTTE_KIT.elementalSkill.onStart?.(createKitTestContext(combatant));
-    const marks = Array.from({ length: 6 }, () => press?.(combatant) !== undefined);
+    const marks = Array.from({ length: 6 }, () => press?.(combatant, combatant.attributes.maxHealth) !== undefined);
 
     expect(marks).toStrictEqual([true, true, true, true, true, false]);
   });

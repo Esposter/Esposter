@@ -137,8 +137,9 @@ describe(createFaruzanKitBehaviour, () => {
   test("the initial burst hit cuts the enemy's Anemo RES by 30% for 4 seconds", () => {
     expect.hasAssertions();
     const burstHit = takeOne(FARUZAN_KIT.elementalBurst.hits);
+    const combatant = createFaruzanCombatant();
 
-    expect(burstHit.enemyStatus?.(createFaruzanCombatant())).toStrictEqual({
+    expect(burstHit.enemyStatus?.(combatant, combatant.attributes.maxHealth)).toStrictEqual({
       damageTakenBonus: 0,
       id: "faruzan-perfidious-wind-ruin",
       resistanceReduction: { Wind: 0.3 },

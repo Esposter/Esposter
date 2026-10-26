@@ -122,7 +122,7 @@ describe(createZhongliKitBehaviour, () => {
 
     expect(summonCount).toBe(2);
     expect(shieldHealth).toBeCloseTo(1232.4108 + 0.128 * 10_000);
-    expect(cutStrikes.map(({ hit }) => hit.enemyStatus?.(combatant))).toStrictEqual(
+    expect(cutStrikes.map(({ hit }) => hit.enemyStatus?.(combatant, combatant.attributes.maxHealth))).toStrictEqual(
       Array.from({ length: 3 }, () => ({
         damageTakenBonus: 0,
         id: "zhongli-jade-shield",

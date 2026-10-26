@@ -26,6 +26,7 @@ import { getEnemyResistance } from "#src/services/enemy/getEnemyResistance";
 import { applyEnemyElement } from "#src/services/kit/applyEnemyElement";
 import { checkIsBluntHit } from "#src/services/kit/checkIsBluntHit";
 import { dealKitEnemyDamage } from "#src/services/kit/dealKitEnemyDamage";
+import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { getDeployedReactionBonuses } from "#src/services/kit/getDeployedReactionBonuses";
 import { getDirectLunarDamage } from "#src/services/kit/getDirectLunarDamage";
 import { getDirectStellarDamage } from "#src/services/kit/getDirectStellarDamage";
@@ -59,7 +60,11 @@ export const strikeEnemy = (
   const { elementalState } = enemy;
   const { attack, attributeTotalMap } = combatant.attributes;
   const { gauge, internalCooldownTag } = kitHit;
-  const status = kitHit.enemyStatus?.(combatant);
+  // The striker's Max HP is read only for a hit that gives a status, as the optional call skips its arguments otherwise
+  const status = kitHit.enemyStatus?.(
+    combatant,
+    getKitMaxHealth(combatant, context.kitEffectState.effects, context.party, context.characterIdCombatantMap),
+  );
   if (status) addEnemyStatus(enemy, { ...status });
   // A stacked hit's multiplier and poise are read from the enemy's stacks, which the hit then consumes
   const { poiseDamage, talentMultiplier } = readKitStackedHit(enemy, kitHit);

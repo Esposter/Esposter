@@ -40,8 +40,9 @@ export interface KitHit {
   // The share of its enemy's defence the hit ignores as it is dealt, if a constellation or a deployed member's kit gives it one
   defenseIgnored?: number;
   element?: Element;
-  // The status it gives each enemy it strikes, given its striker, before its damage is taken
-  enemyStatus?: (combatant: Combatant) => EnemyStatus | undefined;
+  // The status it gives each enemy it strikes, given its striker and the striker's Max HP as the hit lands, before its
+  // Damage is taken
+  enemyStatus?: (combatant: Combatant, maxHealth: number) => EnemyStatus | undefined;
   // The status it gives each enemy it strikes once its damage lands, given its striker, if the hit deals that enemy damage
   enemyStatusAfterDamage?: (combatant: Combatant) => EnemyStatus | undefined;
   gauge?: number;

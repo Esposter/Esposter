@@ -134,7 +134,7 @@ describe(createVentiKitBehaviour, () => {
 
       expect(
         [takeOne(VENTI_KIT.elementalSkill.hits), ...strikes.map(({ hit }) => hit)].map(({ enemyStatus }) =>
-          enemyStatus?.(combatant),
+          enemyStatus?.(combatant, combatant.attributes.maxHealth),
         ),
       ).toStrictEqual([skillStatus, burstStatus]);
     },
@@ -144,7 +144,8 @@ describe(createVentiKitBehaviour, () => {
 describe("breeze of reminiscence", () => {
   test("from two constellations each Skyward Sonnet hit cuts the Anemo and Physical RES of the enemy it strikes by 12% for 10 seconds", () => {
     expect.hasAssertions();
-    const status = VENTI_KIT.elementalSkill.hits[0]?.enemyStatus?.(createVentiCombatant(0, 2));
+    const combatant = createVentiCombatant(0, 2);
+    const status = VENTI_KIT.elementalSkill.hits[0]?.enemyStatus?.(combatant, combatant.attributes.maxHealth);
     expect({
       physicalResistanceReduction: status?.physicalResistanceReduction,
       resistanceReduction: status?.resistanceReduction,
@@ -158,6 +159,7 @@ describe("breeze of reminiscence", () => {
 
   test("below two constellations a Skyward Sonnet hit cuts no RES", () => {
     expect.hasAssertions();
-    expect(VENTI_KIT.elementalSkill.hits[0]?.enemyStatus?.(createVentiCombatant(0, 1))).toBeUndefined();
+    const combatant = createVentiCombatant(0, 1);
+    expect(VENTI_KIT.elementalSkill.hits[0]?.enemyStatus?.(combatant, combatant.attributes.maxHealth)).toBeUndefined();
   });
 });

@@ -64,6 +64,10 @@ const CONSTELLATION_6_SECONDS = 10;
 const CONSTELLATION_6_COOLDOWN_SECONDS = 60;
 const CONSTELLATION_6_COOLDOWN_STATUS_ID = "hu-tao-c6-cooldown";
 const CONSTELLATION_6_SOURCE = "hu-tao-c6";
+// Constellation 2, Ominous Rainfall, as the game's text gives it (TextMap key 3620258903): Blood Blossom's DMG rises
+// By 10% of Hu Tao's Max HP at the time the effect is applied, and Spirit Soother also applies Blood Blossom
+const CONSTELLATION_2 = 2;
+const CONSTELLATION_2_MAX_HEALTH_SHARE = 0.1;
 
 export const HU_TAO_CHARACTER_ID = 10_000_046;
 // Hu Tao's behaviour: Guide to Afterlife pays its HP cost from the party and holds the Paramita Papilio stance for its
@@ -71,8 +75,9 @@ export const HU_TAO_CHARACTER_ID = 10_000_046;
 // Puts Blood Blossom on the enemies it hits, whose tick strikes each, and Spirit Soother plays its variant at half HP or
 // Under. Spirit Soother heals her on each enemy its hit strikes, up to five a cast. Flutter By, Sanguine Rouge and the CRIT
 // Rate of Constellations 4 and 6 are built, and Constellation 6 refuses a fall to none once a minute.
-// Constellation 1's stamina is built as the charged attack's multiplier, while the Paramita stance holds her
-// Constellation 2 needs Blood Blossom's DMG by 10% of her Max HP, and Spirit Soother applying it, not built
+// Constellation 1's stamina is built as the charged attack's multiplier, while the Paramita stance holds her.
+// Constellation 2 is built: Spirit Soother applies Blood Blossom, and a tick adds 10% of the Max HP she had when the
+// Effect was applied
 const getPassiveBonuses = (combatant: Combatant, healthShare: number): { amount: number; attribute: Attribute }[] =>
   combatant.ascension < ASCENSION_4 || healthShare > SANGUINE_ROUGE_HEALTH_SHARE
     ? []
@@ -109,19 +114,28 @@ export const createHuTaoKitBehaviour = ({
   const bloodBlossomIntervalSeconds = readSeconds("bloodBlossomInterval");
   // Blood Blossom's tick, a Pyro hit on the one enemy it is put on
   const bloodBlossomHit = readHit("bloodBlossom");
-  // Blood Blossom on an enemy, which the Paramita's charged attack gives each enemy it hits
-  const createBloodBlossomStatus = (): EnemyStatus => ({
+  // Blood Blossom on an enemy, which the Paramita's charged attack gives each enemy it hits. It keeps the Max HP its
+  // Wielder had as it was applied, which its tick's DMG is priced from
+  const createBloodBlossomStatus = (wielderMaxHealth: number): EnemyStatus => ({
     damageTakenBonus: 0,
     id: BLOOD_BLOSSOM_STATUS_ID,
     nextTickSeconds: bloodBlossomIntervalSeconds,
     secondsRemaining: bloodBlossomSeconds,
     tickIntervalSeconds: bloodBlossomIntervalSeconds,
+    wielderMaxHealth,
   });
+  // Spirit Soother also applies Blood Blossom from Constellation 2, to each enemy its hit strikes
+  const getSpiritSootherStatus = (combatant: Combatant, wielderMaxHealth: number): EnemyStatus | undefined =>
+    combatant.constellationCount < CONSTELLATION_2 ? undefined : createBloodBlossomStatus(wielderMaxHealth);
   // Guide to Afterlife's Paramita Papilio: a stance on her for its seconds, playing her strikes and charged attack in its
   // Own reach, which infuses her normal attacks, charged attack and plunges with Pyro, and raises her ATK by her Max HP.
   // Its strikes are Normal Attack DMG and its charged attack Charged Attack DMG, gcsim's AttackTagNormal in
   // Hutao/attack.go's ppAttack and AttackTagExtra in hutao/charge.go's ppChargeAttack
-  const paramita = readStance("paramita", { chargedAttack: { hits: [{ enemyStatus: createBloodBlossomStatus }] } });
+  const paramita = readStance("paramita", {
+    chargedAttack: {
+      hits: [{ enemyStatus: (_combatant, wielderMaxHealth) => createBloodBlossomStatus(wielderMaxHealth) }],
+    },
+  });
   // Spirit Soother's heal from one enemy its hit strikes, the larger share at her HP at or under half, read as it strikes
   const healOnSpiritSootherStrike = (context: KitContext, strike: KitStrike) => {
     const { characterId } = strike.combatant;
@@ -139,11 +153,14 @@ export const createHuTaoKitBehaviour = ({
     });
   };
   return {
-    burst: { hits: [{ onStrike: healOnSpiritSootherStrike }], onStart: resetSpiritSootherHeals },
+    burst: {
+      hits: [{ enemyStatus: getSpiritSootherStatus, onStrike: healOnSpiritSootherStrike }],
+      onStart: resetSpiritSootherHeals,
+    },
     burstVariant: {
       checkIsActive: ({ activeCombatant: combatant, party }) =>
         getPartyMember(party, combatant.characterId).healthShare <= lowHealthShare,
-      hits: [{ onStrike: healOnSpiritSootherStrike }],
+      hits: [{ enemyStatus: getSpiritSootherStatus, onStrike: healOnSpiritSootherStrike }],
       onStart: resetSpiritSootherHeals,
     },
     // Constellation 1, Crimson Bouquet: her charged attacks cost no stamina while Paramita Papilio holds her
@@ -210,10 +227,19 @@ export const createHuTaoKitBehaviour = ({
         return;
       }
       if (event.kind !== KitEventKind.StatusTicked || event.status.id !== BLOOD_BLOSSOM_STATUS_ID) return;
-      castKitSummon(kitEffectState, createKitBody(event.enemy.position), combatant, [bloodBlossomHit], {
-        attackTag: AttackTag.ElementalSkill,
-        target: event.enemy,
-      });
+      // From Constellation 2, a tick adds 10% of the Max HP Hu Tao had when the status was applied, which the status
+      // Keeps, so the tick never reads her Max HP as it stands
+      const additiveBaseDamage =
+        combatant.constellationCount < CONSTELLATION_2
+          ? 0
+          : CONSTELLATION_2_MAX_HEALTH_SHARE * (event.status.wielderMaxHealth ?? 0);
+      castKitSummon(
+        kitEffectState,
+        createKitBody(event.enemy.position),
+        combatant,
+        [{ ...bloodBlossomHit, additiveBaseDamageBonus: () => additiveBaseDamage }],
+        { attackTag: AttackTag.ElementalSkill, target: event.enemy },
+      );
     },
     // Constellation 6: a fall that would take her to none is refused once a minute, leaving her at 1 HP, as gcsim v2.47.2
     // (MIT) hutao/cons.go revives her to 1 HP. Its cooldown starts with the refusal

@@ -187,7 +187,9 @@ describe(createXingqiuKitBehaviour, () => {
       startNormalAttack(normalAttack, false, context, combatant);
 
       expect(waves.map((wave) => wave.length)).toStrictEqual(swordCounts);
-      expect(takeOne(takeOne(waves)).hit.enemyStatus?.(combatant)).toStrictEqual(status);
+      expect(takeOne(takeOne(waves)).hit.enemyStatus?.(combatant, combatant.attributes.maxHealth)).toStrictEqual(
+        status,
+      );
       expect(getPartyMember(party, XINGQIU_CHARACTER_ID).energy).toBe(energy);
       expect(kitEffectState.effects).toStrictEqual([]);
     },

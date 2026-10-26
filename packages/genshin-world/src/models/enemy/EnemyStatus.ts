@@ -23,4 +23,7 @@ export interface EnemyStatus {
   secondsRemaining: number;
   stacks?: number;
   tickIntervalSeconds?: number;
+  // The Max HP the striker that applied the status had as it was applied, which a status whose tick scales with that Max
+  // HP reads, so the tick does not read it as it stands when the tick falls
+  wielderMaxHealth?: number;
 }

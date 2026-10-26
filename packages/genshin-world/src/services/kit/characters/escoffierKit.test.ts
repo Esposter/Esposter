@@ -43,7 +43,7 @@ const getShred = (ascension: number, deployedElements: (Element | undefined)[]):
   const kitEffectState: KitEffectState = { effects: [] };
   ESCOFFIER_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
   const summon = kitEffectState.effects.find((effect): effect is KitSummon => effect.kind === "summon");
-  return summon?.hits[0]?.enemyStatus?.(combatant)?.resistanceReduction?.[Element.Cryo];
+  return summon?.hits[0]?.enemyStatus?.(combatant, combatant.attributes.maxHealth)?.resistanceReduction?.[Element.Cryo];
 };
 
 const createTeamCombatant = (

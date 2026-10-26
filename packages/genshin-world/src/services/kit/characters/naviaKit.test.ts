@@ -55,7 +55,10 @@ const getCannonSummon = (kitEffectState: KitEffectState): KitSummon =>
   takeOne(kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon"));
 
 // The Geo RES cut a burst hit applies to an enemy, from a constellation count
-const shredAt = (constellationCount: number) => getBlastHit().enemyStatus?.(createNaviaCombatant(constellationCount));
+const shredAt = (constellationCount: number) => {
+  const combatant = createNaviaCombatant(constellationCount);
+  return getBlastHit().enemyStatus?.(combatant, combatant.attributes.maxHealth);
+};
 
 // The effects an action's start adds to the team's, given the team's effects it starts on
 const startAction = (action: KitAction, kitEffectState: KitEffectState, combatant = createNaviaCombatant()): void =>

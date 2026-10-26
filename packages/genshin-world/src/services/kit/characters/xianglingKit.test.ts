@@ -77,7 +77,11 @@ describe(createXianglingKitBehaviour, () => {
       const breaths = stepKitTestEffects(8, context);
 
       expect(
-        breaths.map(({ body: { position }, hit }) => [position, hit.hitArea.radius, hit.enemyStatus?.(combatant)]),
+        breaths.map(({ body: { position }, hit }) => [
+          position,
+          hit.hitArea.radius,
+          hit.enemyStatus?.(combatant, combatant.attributes.maxHealth),
+        ]),
       ).toStrictEqual(Array.from({ length: 4 }, () => [{ x: 0, z: -1.3 }, radius, status]));
       expect(kitEffectState.effects).toStrictEqual([]);
     },

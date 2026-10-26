@@ -134,7 +134,7 @@ describe(createQiqiKitBehaviour, () => {
   // An enemy holding the Talisman the burst gives, as Qiqi stands
   const createTalismanEnemy = (combatant = createQiqiCombatant()) => {
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-    const talisman = takeOne(QIQI_KIT.elementalBurst.hits).enemyStatus?.(combatant);
+    const talisman = takeOne(QIQI_KIT.elementalBurst.hits).enemyStatus?.(combatant, combatant.attributes.maxHealth);
     if (talisman) addEnemyStatus(enemy, talisman);
     return enemy;
   };

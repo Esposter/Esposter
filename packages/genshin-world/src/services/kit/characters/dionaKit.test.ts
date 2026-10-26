@@ -47,7 +47,9 @@ const readSignatureMixEnemyStatuses = (ascension: number) => {
   const ticks = takeOne(
     context.kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon"),
   ).hits;
-  return [takeOne(DIONA_KIT.elementalBurst.hits), ...ticks].map((hit) => hit.enemyStatus?.(combatant));
+  return [takeOne(DIONA_KIT.elementalBurst.hits), ...ticks].map((hit) =>
+    hit.enemyStatus?.(combatant, combatant.attributes.maxHealth),
+  );
 };
 
 describe(createDionaKitBehaviour, () => {

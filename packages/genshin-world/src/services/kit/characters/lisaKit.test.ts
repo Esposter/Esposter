@@ -74,7 +74,7 @@ const readDischargeEnemyStatuses = (ascension: number) => {
   const summon = takeOne(
     context.kitEffectState.effects.filter((effect): effect is KitSummon => effect.kind === "summon"),
   );
-  return summon.hits.map((hit) => hit.enemyStatus?.(combatant));
+  return summon.hits.map((hit) => hit.enemyStatus?.(combatant, combatant.attributes.maxHealth));
 };
 
 describe("lisa kit", () => {

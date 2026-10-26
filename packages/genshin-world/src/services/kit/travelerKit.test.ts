@@ -14,7 +14,8 @@ import { describe, expect, test } from "vitest";
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 const readEnergyRecharge = (combatant: Combatant) => TRAVELER_KIT.getPassiveBonuses?.(combatant, 1, [], []) ?? [];
-const readBurstStatus = (combatant: Combatant) => takeOne(TRAVELER_KIT.elementalBurst.hits).enemyStatus?.(combatant);
+const readBurstStatus = (combatant: Combatant) =>
+  takeOne(TRAVELER_KIT.elementalBurst.hits).enemyStatus?.(combatant, combatant.attributes.maxHealth);
 
 const createTravelerCombatant = (
   element: Element,

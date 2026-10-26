@@ -207,7 +207,9 @@ describe(createChongyunKitBehaviour, () => {
     expect(field?.secondsRemaining).toBe(0);
     expect(blade?.body.position).toStrictEqual({ x: 0, z: -5 });
     expect(bladeHit?.talentMultiplier).toBeCloseTo(1.7204);
-    expect(bladeHit?.enemyStatus?.(combatant)?.resistanceReduction).toStrictEqual({ [Element.Cryo]: 0.1 });
+    expect(bladeHit?.enemyStatus?.(combatant, combatant.attributes.maxHealth)?.resistanceReduction).toStrictEqual({
+      [Element.Cryo]: 0.1,
+    });
   });
 
   test("one constellation's fourth strike releases three ice blades five frames apart", () => {
