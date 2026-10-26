@@ -1,6 +1,6 @@
 # Snezhnaya
 
-Snezhnaya's region is specified in [its proposal](../../../changes/genshin-snezhnaya/design.md), and the parts below are the built ones. The capital kit stands as Snezhnograd's first hall, a [building landmark](../region-buildings/design.md) on a provisional plateau; the industrial kit and the torch are generators nothing places yet.
+Snezhnaya's region is specified in [its proposal](../../../changes/genshin-snezhnaya/design.md), and the parts below are the built ones. The capital kit stands as Snezhnograd's first hall (`packages/genshin-world/src/data/regions/snezhnaya.json`), a [building landmark](../region-buildings/design.md) on a provisional plateau; the industrial kit and the torch are generators nothing places yet.
 
 ## How it works
 
@@ -15,10 +15,10 @@ flowchart TD
   RD[Region data: snezhnaya.json] --> NL[Snezhnograd's hall, by the capital kit]
 ```
 
-- **Factories are one hall and one chimney.** `createFactoryGeometry` merges a box for the hall, standing on the origin and centred across its width and depth, with a plain lathe stack for the chimney, which stands at a fixed share of the hall's width. Its width, depth, height and chimney are its options, so each factory is fitted by its caller (`CHIMNEY_OFFSET_RATIO`).
-- **Capital halls step back as they rise.** `createHallGeometry` stacks its storeys as boxes, each inset by the setback from the one below, so a palace's tiers are its options and nothing more.
-- **Kresnik's Torch is two geometries for two materials.** The stone is a faceted lathe stack of a stepped plinth, a tapering shaft and a cup brazier, and the flame is a lathe of its silhouette standing in the cup at the brazier's rim, 2.15 metres up (`TORCH_HEIGHT`).
-- **Region data holds the capital.** The region data holds Snezhnograd's hall, and Everfrozen Earth's outline is a provisional square round it, so a camera that comes within reach fetches it and draws the hall.
+- **Factories are one hall and one chimney.** `createFactoryGeometry` merges a box for the hall, standing on the origin and centred across its width and depth, with a plain lathe stack for the chimney, which stands at a fixed share of the hall's width. Its width, depth, height and chimney are its options, so each factory is fitted by its caller (`packages/genshin-world/src/services/snezhnaya/createFactoryGeometry.ts`, `CHIMNEY_OFFSET_RATIO`).
+- **Capital halls step back as they rise.** `createHallGeometry` stacks its storeys as boxes, each inset by the setback from the one below, so a palace's tiers are its options and nothing more (`packages/genshin-world/src/services/snezhnaya/createHallGeometry.ts`).
+- **Kresnik's Torch is two geometries for two materials.** The stone is a faceted lathe stack of a stepped plinth, a tapering shaft and a cup brazier, and the flame is a lathe of its silhouette standing in the cup at the brazier's rim, 2.15 metres up (`packages/genshin-world/src/services/snezhnaya/createKresnikTorchGeometry.ts`, `TORCH_HEIGHT`).
+- **Region data holds the capital.** `src/data/regions/snezhnaya.json` holds Snezhnograd's hall, and Everfrozen Earth's outline is a provisional square round it, so a camera that comes within reach fetches it and draws the hall.
 - **The witness claims Everfrozen Earth's export by its ground alone.** The [parity](../parity/README.md) inventory claims the terrain tiles as the one family, since the export holds no house of Snezhnograd's for the capital kit to stand in for, and every other mesh as not drawn yet, one entry a kind: common buildings, props, rocks, stage planes and effects (`~/Esposter.noindex/genshin-parity/extracted/snezhnaya/witness.json`, whose only house mesh is `Area_Common_Build_Hili_House_18_Vo`; `packages/genshin-world/src/services/snezhnaya/SnezhnayaPartFamilyMeshRegexMap.ts`; `packages/genshin-world/src/services/snezhnaya/SnezhnayaUndrawnMeshRegexMap.ts`).
 - **The flakes in the wiki's Snezhnaya frame may be falling snow.** `File:Snezhnaya.png` shows a few faint flakes; if they are the snowfall `world-snow.mkv` measures the density of, the snow is the falling snow, and if a detail of the sky, it is not.
 
@@ -37,7 +37,7 @@ flowchart TD
 
 ## Notes
 
-- **No torch landmark yet.** A Kresnik's Torch becomes a landmark kind of its own, with its warm light, when the first settlement round one is placed. Until then the kit is built and nothing draws it.
+- **No torch landmark yet.** A Kresnik's Torch becomes a landmark kind of its own, with its warm light, when the first settlement round one is placed. Until then the kit is built and nothing draws it (`packages/genshin-world/src/services/snezhnaya/createKresnikTorchGeometry.ts`).
 - **Palette and light are not set.** The stone, flame and the nation's shade colours are not chosen, and the torch's light does not reach the scene, since a point light is not one of the lighting model's shared uniforms.
 
 ## Sources
@@ -47,9 +47,3 @@ flowchart TD
 ## Open
 
 - [ ] **the flame stands 2.15 metres up at the brazier's rim, as the game's torch does** — no source yet: a measure of the game's Kresnik's Torch mesh, which the witness export does not name.
-- [ ] **The capital kit stands as Snezhnograd's first hall** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A factory is one hall box and one chimney stack, the chimney at a fixed share of the hall's width** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Capital halls stack their storeys as boxes, each inset by the setback from the one below** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Kresnik's Torch is two geometries, its stone a faceted lathe stack of a plinth, shaft and brazier** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A camera within reach fetches the region and draws the capital hall** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The Kresnik's Torch kit is built and nothing draws it** — no source yet: game data or a snapshot that holds this behaviour
