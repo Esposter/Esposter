@@ -9,7 +9,6 @@
   },
   "plungeVariants.0.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 35 },
   "plungeVariants.0.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 9332 } },
-  "plungeVariants.0.hits.0.poiseDamage": { "source": "Wiki", "value": 75 },
   "plungeVariants.0.hits.length": { "cause": "Unsourced", "value": 1 },
   "plungeVariants.1.animationFrames": { "file": "plunge.go", "line": 49, "source": "Gcsim", "value": 70 },
   "plungeVariants.1.hits.0.area": {
@@ -18,7 +17,6 @@
   },
   "plungeVariants.1.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 40 },
   "plungeVariants.1.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 2, "proudSkillGroupId": 9332 } },
-  "plungeVariants.1.hits.0.poiseDamage": { "source": "Wiki", "value": 75 },
   "plungeVariants.1.hits.length": { "cause": "Unsourced", "value": 1 },
   "plungeVariants.2.animationFrames": { "file": "plunge.go", "line": 58, "source": "Gcsim", "value": 76 },
   "plungeVariants.2.hits.0.area": {
@@ -27,7 +25,6 @@
   },
   "plungeVariants.2.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 46 },
   "plungeVariants.2.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 3, "proudSkillGroupId": 9332 } },
-  "plungeVariants.2.hits.0.poiseDamage": { "source": "Wiki", "value": 150 },
   "plungeVariants.2.hits.length": { "cause": "Unsourced", "value": 1 },
   "plungeVariants.length": { "cause": "Unsourced", "value": 3 },
   "skillChain.followUps.0.animationFrames": { "file": "skill.go", "line": 46, "source": "Gcsim", "value": 243 },
