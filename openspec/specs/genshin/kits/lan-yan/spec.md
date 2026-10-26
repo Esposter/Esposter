@@ -85,12 +85,22 @@ From Constellation 6, Swallow-Wisp Pinion Dance SHALL have one more charge than 
 - **WHEN** her skill's charges are read
 - **THEN** no charge is added
 
+### Requirement: Ascension 4 on Lustrous Moonrise
+
+From Ascension 4, each hit of Lan Yan's Lustrous Moonrise SHALL add 774% of her Elemental Mastery as flat damage.
+
+#### Scenario: Ascension 4 adds Elemental Mastery damage to each burst hit
+
+- **GIVEN** Lan Yan has Ascension 4
+- **WHEN** the player casts her elemental burst
+- **THEN** each of its three hits adds 774% of her Elemental Mastery to its damage
+
 ### Requirement: Lan Yan's stance and shield not yet built
 
-Lan Yan's Feathermoon Rings, her element-absorbing shield and her Ascension and constellations 1 and 2 SHALL NOT take effect.
+Lan Yan's Feathermoon Rings, her element-absorbing shield, her Ascension 1, the 309% of her Ascension 4 on the press and its rings, and her constellations 1 and 2 SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Lan Yan has the rings, shield or those constellations unlocked
+- **GIVEN** Lan Yan has the rings, shield, Ascension 1 or those constellations unlocked
 - **WHEN** the player fights with Lan Yan
 - **THEN** those effects have no effect
