@@ -131,6 +131,7 @@ The stamina meter SHALL stand beside the character while the stamina pool is not
 - **GIVEN** the stamina pool is not full
 - **WHEN** the character is on screen
 - **THEN** the meter stands beside the character
+- **AND** the meter is divided into sections, each representing 100 Stamina
 
 #### Scenario: The meter fades out when the pool is full
 
@@ -234,10 +235,7 @@ A mouse press on a heads-up display piece SHALL NOT act in the world, while a cl
 
 ## Open
 
-- [ ] **The Paimon button and the minimap open the Paimon menu and the map** — no source yet: the wiki's Paimon Menu and Map pages are not in the cache.
-- [ ] **The backslash hides and shows the HUD, and every menu hides it** — no source yet: the wiki's Controls page is not in the cache.
-- [ ] **A shortcut opens the screen its key opens, as F3, F1, B and C do** — no source yet: the wiki's Controls page is not in the cache, and `~/Esposter.noindex/genshin-key-map` holds none of these bindings.
+- [ ] **The backslash shows the HUD again, and every menu hides it** — no source yet: the wiki's Controls page binds Hide UI to the backslash, and says nothing of a second press or of the menus.
 - [ ] **Health shows the level and whole-number HP as the game writes them** — no source yet: no recording with a health bar was read here.
-- [ ] **The stamina meter stands beside the character and fades when full, cut into sections of 100** — no source yet: the wiki's Stamina page is not in the cache.
-- [ ] **V navigates to the tracked quest, and a beam rises over its objective** — no source yet: the wiki's Controls and Quest pages are not in the cache.
-- [ ] **Buttons carry the game's own icons** — no source yet: the wiki's icon renders are not in the cache.
+- [ ] **V navigates to the tracked quest** — no source yet for the tracked quest: the wiki's Controls page binds Quest Navigation to V but names no tracked quest, and its Quest page's beam marks the objective the Navigate feature pinpoints.
+- [ ] **Buttons carry the game's own icons** — no source yet: the wiki's icon renders are not in the cache. Checked the wiki cache: it holds no File pages, so no icon render is in it.
