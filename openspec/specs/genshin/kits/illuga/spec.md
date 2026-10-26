@@ -59,7 +59,7 @@ Illuga's burst SHALL deal its two hits.
 
 ### Requirement: Haunted Night and Nightingale's Song
 
-Illuga's burst SHALL start Haunted Night's Oriole-Song for twenty seconds with twenty-one stacks of Nightingale's Song. Each Geo hit a nearby active party member lands on an enemy SHALL spend one stack, and that hit SHALL gain Geo DMG of 33.6% of Illuga's Elemental Mastery for the stack it spends. Illuga's own hits SHALL spend no stack and gain no bonus.
+Illuga's burst SHALL start Haunted Night's Oriole-Song for twenty seconds with twenty-one stacks of Nightingale's Song. Each Geo hit a nearby active party member lands on an enemy SHALL spend one stack, and that hit SHALL gain Geo DMG of 33.6% of Illuga's Elemental Mastery for the stack it spends. Illuga's own hits SHALL spend no stack and gain no bonus. The game's text names the nearby active party members as the ones whose hits spend a stack (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, hash 1078666392), and the cached wiki gives the 33.6 Geo DMG Bonus at talent level 1 (`~/Esposter/cache/genshin-wiki/Category_Illuga_Talents.json`).
 
 #### Scenario: The burst starts Haunted Night
 
@@ -99,7 +99,7 @@ From ascension 1, Illuga's skill or burst SHALL give each other deployed party m
 
 ### Requirement: Constellation 2 summons Aedon's hit
 
-At Constellation 2, for every seven stacks of Nightingale's Song consumed, Illuga SHALL summon one Geo hit of 400% of his Elemental Mastery and 200% of his DEF as Elemental Burst DMG on one nearby opponent.
+At Constellation 2, for every seven stacks of Nightingale's Song consumed, Illuga SHALL summon one Geo hit of 400% of his Elemental Mastery and 200% of his DEF as Elemental Burst DMG on one nearby opponent. The game's text gives the same values (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, hash 3921016055).
 
 #### Scenario: Seven stacks consumed summon one hit
 
@@ -115,7 +115,7 @@ At Constellation 2, for every seven stacks of Nightingale's Song consumed, Illug
 
 ### Requirement: Constellation 4 gives the active member DEF
 
-At Constellation 4, while Haunted Night holds, the active party member SHALL gain 200 DEF.
+At Constellation 4, while Haunted Night holds, the active party member SHALL gain 200 DEF. The game's text gives the condition and the value (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, hash 2798755983; talent 1274 of `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json`).
 
 #### Scenario: The active member gains 200 DEF
 
@@ -125,7 +125,7 @@ At Constellation 4, while Haunted Night holds, the active party member SHALL gai
 
 ### Requirement: Constellation 6 enhances Lightkeeper's Oath
 
-At Constellation 6, Lightkeeper's Oath SHALL give 10% CRIT Rate and 30% CRIT DMG to Geo hits, and under Ascendant Gleam, 80 Elemental Mastery.
+At Constellation 6, Lightkeeper's Oath SHALL give 10% CRIT Rate and 30% CRIT DMG to Geo hits, and under Ascendant Gleam, 80 Elemental Mastery. The game's text gives both (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, hash 208718975; talent 1276 of `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json`).
 
 #### Scenario: The enhanced Oath raises the CRIT and the Elemental Mastery
 
@@ -145,8 +145,5 @@ Illuga's hit timings and areas SHALL stay provisional, borrowed from other chara
 
 ## Open
 
-- [ ] **The skill's Press deals two hits** — no source yet: the cached wiki gives the Press DMG row without a hit count. Checked the Dawnbearing Songbird page (`Category_Illuga_Talents.json`): its Press DMG row has no hit count.
-- [ ] **The burst deals two hits** — no source yet: the cached wiki gives one Skill DMG row without a hit count. No Illuga burst page is in the cache, and the Dawnbearing Songbird page has no Skill DMG row.
-- [ ] **Illuga's own hits spend no stack** — no source yet: the cached wiki's 'nearby active party members' wording does not say whether Illuga counts. The cache holds no such wording, and the Dawnbearing Songbird page does not mention Illuga's stacks.
-- [ ] **Constellation 4's 200 DEF holds only while Haunted Night holds** — no source yet: the record gives 200 DEF at talent 1274, and the cached wiki gives that note without its text. The cache holds no Haunted Night text, and the Dawnbearing Songbird page gives only Constellation 5, Hurricane Steed.
-- [ ] **Constellation 6's 80 Elemental Mastery applies under Ascendant Gleam** — no source yet: the record gives talent 1276's 80 Elemental Mastery, but no line gives its condition.
+- [ ] **The skill's Press deals two hits** — no source yet: the cached Dawnbearing Songbird wiki page (`~/Esposter/cache/genshin-wiki/Category_Illuga_Talents.json`) gives the Press DMG row without a hit count.
+- [ ] **The burst deals two hits** — no source yet: the cached Shadowless Reflection wiki page (`~/Esposter/cache/genshin-wiki/Category_Illuga_Talents.json`) gives one Skill DMG row without a hit count, and the game's text for the burst (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, hash 1078666392) says AoE Geo DMG with no hit count.
