@@ -19,14 +19,14 @@ Each material sets a different set of keywords on the shader. These are read fro
 | Hair     | "SHADOW_RAMP_ON", "TOON_LIGHTMAP_ON", "TOON_SPECULAR_ON"                              |
 
 - **"TOON_SPECULAR_ON" is not a keyword the shader defines.** None of the uber's variants lists it, so no program is selected by it. The specular is gated by the material's own floats instead ("_UseSpecular", "_Shininess", "_SpecMulti").
-- **The program is picked by the keywords that do exist.** The uber's programs are named by pass, stage and keyword set (`readShaderPrograms`). A body's variant is one whose material keywords are exactly "METAL_MAT", "SHADOW_RAMP_ON" and "TOON_LIGHTMAP_ON", and no program has only those: every candidate also carries engine-wide keywords ("LOD_FADE_CROSSFADE", "MHY_SKINMESH_ENABLE_VSSKINNING", "ENABLE_PACK_NORMAL_ON" and the like). The candidates fall into 76 engine-wide sets. Exact on the material match; Provisional on which engine-wide set the game draws Lumine with, since it is set at runtime and is not in the program's bytes.
+- **The program is picked by the keywords that do exist.** The uber's programs are named by pass, stage and keyword set. A body's variant is one whose material keywords are exactly "METAL_MAT", "SHADOW_RAMP_ON" and "TOON_LIGHTMAP_ON", and no program has only those: every candidate also carries engine-wide keywords ("LOD_FADE_CROSSFADE", "MHY_SKINMESH_ENABLE_VSSKINNING", "ENABLE_PACK_NORMAL_ON" and the like). The candidates fall into 76 engine-wide sets. Exact on the material match; Provisional on which engine-wide set the game draws Lumine with, since it is set at runtime and is not in the program's bytes.
 - **The body's four texture slots** are "_MainTex", "_LightMapTex", "_MTMap" and "_PackedShadowRampTex". The variant also samples "_MTSpecularRamp" and "_EyeMask". Provisional: the register each slot is bound to is taken from the order the program's own parameter table lists the textures, which matches the sampling sites but is not yet checked against a binding.
 
 The model draws five LOD0 meshes under its root "Avatar_Girl_Sword_PlayerGirl_Model" in the Partner prefab's tree: "Body" (12,022 vertices in three submeshes, Hair 2,305 triangles, Body 11,166 and Dress 1,166, 14,637 in all), "Face" (877), "Face_Eye" (1,113, the eye sockets the face leaves open), "Brow" (52) and "EyeStar" (90), with "Body_LOD1" to "Body_LOD3" beside them in the same block (Exact on the counts and on the root). Each mesh is the one its renderer's pointer names, through the renderer's CAB's externals: "Body", "Face_Eye", "Brow" and "EyeStar" match the dump of "cab-3bec6b44" alone by vertex count, and that CAB's "Body" has 114 bind poses for its renderer's 114 bones. "Face" (877 vertices) matches "cab-3bec6b44" and "cab-2891f49d" alike, and both have 3 bind poses, so which CAB it is stays Provisional until its renderer's pointer is read. Each mesh's bind poses equal its renderer's bones, which the writer asserts: "Face" has 3, "Face_Eye" 1, "Brow" 1 and "EyeStar" 2 (Exact). "Face", "Face_Eye", "Brow" and "EyeStar" draw the one material "Avatar_Girl_Sword_PlayerGirl_Mat_Face", so they share one shading and one face threshold. "EyeStar"'s UVs sit at 0 to 0.03, so it samples the face material's "_MainTex" at its corner. "EffectMesh" (110 vertices) draws the generic "miHoYoDiffuse" material, which the dump gives no textures for, so it is left out: the effect shell (an untextured placeholder material) is not drawn; the effects that fill it are not built. Whether the game draws "Face_Eye" and "Brow" through a stencil pass, so the brows show through the hair, is not yet read from a program and is not built. Which LOD the game draws up close is Provisional: the prefab's root carries no LODGroup, and the renderer that binds each LOD is not yet identified. The textures are 1024 with a full 11-mip chain, and no other block holds a higher mip (Exact).
 
 ### The base programs
 
-Each program is named by its index in the uber's named list: pass, then stage, then record order, the same index as its `NNNNN.dxbc` and its `programs.tsv` line. Each material's base variant is one keyword set with a vertex and a pixel program, chosen by the rule in the Decisions below. The variant's two programs are (listings in `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber/NNNNN.asm`; the stage each listing shows is checked in the open items):
+Each program is named by its index in the uber's named list: pass, then stage, then record order, the same index as its `NNNNN.dxbc`. Each material's base variant is one keyword set with a vertex and a pixel program, chosen by the rule in the Decisions below. The variant's two programs are (listings in `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber/NNNNN.asm`; the stage each listing shows is checked in the open items):
 
 | Material | Pass      | Stage  | Program index | Container   |
 | :------- | :-------- | :----- | ------------: | :---------- |
@@ -194,11 +194,11 @@ Hair's equations are not fitted to a rendered frame, so no number is claimed.
 
 ## The face
 
-The face is not shaded on the body's ramp (`packages/genshin-engine/src/character/shading/createFaceShadeNode.ts`). Its shadow is its face map compared with a threshold that turns with the light, and both the threshold and the flip of the face map are set once a frame on the CPU from the light and the face's root bone. The shadow colour is set per pixel, and its equations are below.
+The face is not shaded on the body's ramp. Its shadow is its face map compared with a threshold that turns with the light, and both the threshold and the flip of the face map are set once a frame on the CPU from the light and the face's root bone. The shadow colour is set per pixel, and its equations are below.
 
 ### The light's angle to the root bone
 
-Let `L` be the main light's direction, the same the body is lit by, and let `A` and `B` be the root bone's local Y and Z axes in world space, the root bone's world rotation applied to the unit vectors `(0, 1, 0)` and `(0, 0, 1)`. Then with `a = L · A` and `b = L · B` (`packages/genshin-engine/src/character/shading/updateFaceDraw.ts` takes the same `-atan2` of the two dots, in its own units):
+Let `L` be the main light's direction, the same the body is lit by, and let `A` and `B` be the root bone's local Y and Z axes in world space, the root bone's world rotation applied to the unit vectors `(0, 1, 0)` and `(0, 0, 1)`. Then with `a = L · A` and `b = L · B` (the code takes the same `-atan2` of the two dots, in its own units):
 
 ```
 angle = -atan2(b, a)                       in degrees, when a ≠ 0
@@ -215,7 +215,7 @@ s         = saturate((t - lo) / (hi - lo))
 threshold = clamp(s * s * (3 - 2s), 1e-4, 0.9999)
 ```
 
-A light straight along the root's Y axis gives the minimum, `1e-4`, and a light from the opposite side gives the maximum, `0.9999` (`packages/genshin-engine/src/character/shading/constants.ts`, `MINIMUM_FACE_THRESHOLD` and `MAXIMUM_FACE_THRESHOLD`). The threshold stands where the page's depth term stood, and is what the face map's texel is compared against.
+A light straight along the root's Y axis gives the minimum, `1e-4`, and a light from the opposite side gives the maximum, `0.9999`. The threshold stands where the page's depth term stood, and is what the face map's texel is compared against.
 
 ### The flip
 
@@ -227,7 +227,7 @@ uv = (flip ? 1 - uv.x : uv.x, uv.y)
 
 ### The shadow's lookup
 
-With the face map's texel `T` at that UV, which is its alpha, not its red (Exact: the program samples "t2" into a destination's `.w`), the softness window `s = max(_FaceMapSoftness, 1e-6)`, and the threshold above (`packages/genshin-engine/src/character/shading/createFaceShadeNode.ts`, a `smoothstep` of a saturated ratio):
+With the face map's texel `T` at that UV, which is its alpha, not its red (Exact: the program samples "t2" into a destination's `.w`), the softness window `s = max(_FaceMapSoftness, 1e-6)`, and the threshold above (a `smoothstep` of a saturated ratio):
 
 ```
 lo = clamp(threshold - s, 1e-4, 0.9989)
@@ -237,7 +237,7 @@ F  = smoothstep(0, 1, saturate((T - lo) / (hi - lo)))
 
 A face with no face map is lit, so `F` is one.
 
-The face map holds the nose's two flanks at its two ends, one always in shadow and the other always lit, so the nose shows a small mark at every light angle: a dark one in front light, as the character screen draws it ([Hydro Lumine on the character screen](https://www.youtube.com/watch?v=KPlvZW6udfk), 0:18), and a light one with the light behind, where the rest of the face is in shadow. A pale dot on the nose of a back-lit face is that lit flank, not a fault in the lookup.
+The face map holds the nose's two flanks at its two ends, one always in shadow and the other always lit, so the nose shows a small mark at every light angle: a dark one in front light, as the character screen draws it, and a light one with the light behind, where the rest of the face is in shadow. A pale dot on the nose of a back-lit face is that lit flank, not a fault in the lookup.
 
 ### The shadow colour
 
@@ -261,7 +261,7 @@ The outline is the face's "OUTLINE" pass, whose base programs are vertex 958 (DX
 
 ### The width (vertex 958)
 
-The vertex program moves each vertex in view space, before the projection (the repo's `OUTLINE_PROJECTION_SCALE` in `packages/genshin-engine/src/character/shading/constants.ts` holds the same 2.414): along its ray from the eye by an offset, then along its screen normal by a width `W`. The depth term `D` picks one of three knots of "_OutlineWidthAdjustZs", and the scale is read from the matching knots of "_OutlineWidthAdjustScales" (Exact on the operators and the knot selection):
+The vertex program moves each vertex in view space, before the projection: along its ray from the eye by an offset, then along its screen normal by a width `W`. The depth term `D` picks one of three knots of "_OutlineWidthAdjustZs", and the scale is read from the matching knots of "_OutlineWidthAdjustScales" (Exact on the operators and the knot selection):
 
 ```
 k  = 2.414 / cb2[7].y                       (the projection's y scale)
@@ -286,7 +286,7 @@ V += normalize(V) * "_MaxOutlineZOffset" * 0.01 * f
 
 A flag of zero with a blue of a half offsets nothing, so a face vertex is not pushed out by it. "_OutLineZOffset" (cb0[31].x) biases the clip depth where a facing test is negative; it is not built, and the outline's depth is the projection's.
 
-The code (`createGameOutlineMaterial`, `getGameOutlineOffset`, `createAvatarShadingInputs`, in `packages/genshin-world/src/services/character/avatar/createAvatarShadingInputs.ts`, and `packages/genshin-engine/src/models/nodes/getGameOutlineOffset.ts`) takes the knots, the vertex weight, the offset and the flag from the game, in the program's view-space form: the push is the skinned tangent carried to view space by the model view matrix, since three's view normal and tangent turn inward on the back side the outline draws, the offset is the pure equation `getGameOutlineOffset`, the rule's one reference (the outline pass's TSL offset node is its GPU form, and a change to the rule lands in both; no test evaluates the node, since vitest has no GPU), and the width is `"_OutlineWidth" * 0.41425` weighted by the alpha (`OUTLINE_WIDTH_SCALE` in `packages/genshin-engine/src/character/shading/constants.ts`, 0.41425), with no `T_w`, as the GPU-skinned variants draw it, and "_OutlineCorrectionWidth" taken as 1 where a material holds none. The pack's outline is the world's own, unchanged, in clip space.
+The code takes the knots, the vertex weight, the offset and the flag from the game, in the program's view-space form: the push is the skinned tangent carried to view space by the model view matrix, since three's view normal and tangent turn inward on the back side the outline draws, the offset is the pure equation, the rule's one reference (the outline pass's TSL offset node is its GPU form, and a change to the rule lands in both; no test evaluates the node, since vitest has no GPU), and the width is `"_OutlineWidth" * 0.41425` weighted by the alpha, with no `T_w`, as the GPU-skinned variants draw it, and "_OutlineCorrectionWidth" taken as 1 where a material holds none. The pack's outline is the world's own, unchanged, in clip space.
 
 ### The colour (pixel 885)
 
@@ -303,7 +303,7 @@ The region's `A` is the alpha of texture "t1" at the main texture's coordinates,
 
 The output colour uses the same tone form as the body's "o1": `O1 = 0.5 + (C_d - 0.5) * (1 + K)` with `C_d` the desaturation of `C`, where "_DesaturateScale" and "_ContrastScale" are read from the same registers as the body's (Exact).
 
-The code (`packages/genshin-engine/src/character/shading/createOutlineColorNode.ts`) draws a game model's outline by these per pixel, toned as the body is; the vertex colour passthrough is not built, every material here holding it off. A pack's outline is its edge's one colour times its diffuse, toned the same way.
+The code draws a game model's outline by these per pixel, toned as the body is; the vertex colour passthrough is not built, every material here holding it off. A pack's outline is its edge's one colour times its diffuse, toned the same way.
 
 Nothing in the outline's equations has been fitted to a rendered outline, so no number is claimed for its width or colour.
 
@@ -340,9 +340,9 @@ In development the Traveler's model reads these from the game's own values in `a
 The body's program is "Shader#0" of the layout's shader export, with 693 compiled variants (Exact on the counts; the register is the variant's header and its instructions).
 
 - **The brightness is a plain multiply, Exact.** 240 of the 693 variants read "_ES_CharacterMainLightBrightness" (`cb0[269].x` in each header), each as a single `mul` on the lit colour and on the specular term (the first `mul` into `r11` and the `mul` on `cb0[269].x` before the `movc`). The value is not on the material: the body's saved properties hold no "_ES_CharacterMainLightBrightness", and no extracted dump carries it (Exact on the absence; `~/Esposter.noindex/genshin-parity/extracted/characters/playergirl/inventory-values.txt` holds no such key). Its value is the game's own and is not read, so the world takes 1 (Provisional: a game-set value below 1 would be missing from the lit colour).
-- **No fog reaches the body's program, Exact.** None of the 693 variants reads a fog constant. The shader's properties declare "_FogStart", "_FogEnd", "_FogDensity" and "_FogColor", but no compiled variant reads them, so the game's body draws without fog. The world's height fog is a depth pass in the post pipeline (`createHeightFogNode`, `createPostPipeline`), applied to every scene pixel with depth below 1, the avatar's included. Whether the game's own post pass fogs characters is not read (Provisional).
-- **The haze at the close-up is zero, Exact on the form.** The fog's integral starts at the world's start distance, so a pixel nearer than that gets no haze. At 3 m the factor is 0.0000% for every setting that sets a density: Windrise (start 60 m, density 0.0024, falloff 0.02) and the login's sky states (start 10 m, densities 818 to 339400, falloffs 0.12 to 1.16), both level and tilted 10 degrees up. The evaluation is of the form `createHeightFogNode` writes, at the eye's height of 1.5 m, with the world's unit taken as the metre (the ground tiles are 1024 metres, Provisional on the unit). So the fog does not reach a close-up.
-- **The tone curve is the game's, Exact on the code path.** Both canvases pass the renderer's `GENSHIN_TONE_MAPPING`, which is `NoToneMapping`, and the post pipeline ends every pixel on `toneMapGenshinNode`, the avatar's included. Three's ACES Filmic is the canvas's default only where a canvas omits the prop, and none does. Against three's ACES Filmic, per channel on a grey, the game's curve gives 0.179 against 0.032 at scene 0.05, 0.335 against 0.213 at 0.18, 0.535 against 0.558 at 0.5, 0.702 against 0.763 at 1 (white, the sides differ by 0.061), and 0.968 against 0.952 at 4. The two cross near scene 0.5, so the shadows of the game's curve are lighter and its highlights darker than ACES. The game's own curve on characters is not read (Provisional).
+- **No fog reaches the body's program, Exact.** None of the 693 variants reads a fog constant. The shader's properties declare "_FogStart", "_FogEnd", "_FogDensity" and "_FogColor", but no compiled variant reads them, so the game's body draws without fog. The world's height fog is a depth pass in the post pipeline, applied to every scene pixel with depth below 1, the avatar's included. Whether the game's own post pass fogs characters is not read (Provisional).
+- **The haze at the close-up is zero, Exact on the form.** The fog's integral starts at the world's start distance, so a pixel nearer than that gets no haze. At 3 m the factor is 0.0000% for every setting that sets a density: Windrise (start 60 m, density 0.0024, falloff 0.02) and the login's sky states (start 10 m, densities 818 to 339400, falloffs 0.12 to 1.16), both level and tilted 10 degrees up. The evaluation is of the form the world's height fog writes, at the eye's height of 1.5 m, with the world's unit taken as the metre (the ground tiles are 1024 metres, Provisional on the unit). So the fog does not reach a close-up.
+- **The tone curve is the game's.** Both canvases pass the renderer's `GENSHIN_TONE_MAPPING`, which is `NoToneMapping`, and the post pipeline ends every pixel on `toneMapGenshinNode`, the avatar's included. Three's ACES Filmic is the canvas's default only where a canvas omits the prop, and none does. Against three's ACES Filmic, per channel on a grey, the game's curve gives 0.179 against 0.032 at scene 0.05, 0.335 against 0.213 at 0.18, 0.535 against 0.558 at 0.5, 0.702 against 0.763 at 1 (white, the sides differ by 0.061), and 0.968 against 0.952 at 4. The two cross near scene 0.5, so the shadows of the game's curve are lighter and its highlights darker than ACES. The game's own curve on characters is not read (Provisional).
 
 ### The colour space of each texture, per slot (Derived, Provisional)
 
@@ -351,7 +351,7 @@ A texture decodes as sRGB only where the shading multiplies the colour in the sp
 - **A gamma-space project** ignores the sRGB flag, and the program computes `main_g x ramp_g`. In linear terms that is `main_lin x ramp_lin`.
 - **A linear project** gives a colour texture the default sRGB import, so the same product comes out as `main_lin x ramp_lin`.
 
-The only case where a ramp stays raw is an artist painting it in linear values, and nothing in the data points to that. So the colour slots decode as sRGB: "_MainTex", "_PackedShadowRampTex", "_MTMap" (the metal map's matcap colour) and any ramp. The data slots are read as they are stored: "_LightMapTex", "_FaceMapTex", the face shadow, the masks and the noise, whose values are thresholds, distances or channels. Each slot's entry in `AVATAR_TEXTURE_SLOTS` carries this flag (`packages/genshin-world/src/services/character/avatar/constants.ts`, which defines it). Provisional until a game frame confirms the ramps.
+The only case where a ramp stays raw is an artist painting it in linear values, and nothing in the data points to that. So the colour slots decode as sRGB: "_MainTex", "_PackedShadowRampTex", "_MTMap" (the metal map's matcap colour) and any ramp. The data slots are read as they are stored: "_LightMapTex", "_FaceMapTex", the face shadow, the masks and the noise, whose values are thresholds, distances or channels. Each slot's entry in `AVATAR_TEXTURE_SLOTS` carries this flag. Provisional until a game frame confirms the ramps.
 
 ## Open
 
@@ -382,5 +382,21 @@ The only case where a ramp stays raw is an artist painting it in linear values, 
 - [ ] **The outline's `_OutLineZOffset` at `cb0[31].x` is not built** — no source yet: a repo search for the offset's absence, which is not run.
 - [ ] **The output map `o0` to `o5` of the deferred body pass** — no source yet: pixel 460's writes to its SV_Target outputs are not traced to these registers.
 - [ ] **The hair's specular and ramp-row equations (pixel 272)** — no source yet: pixel 272's operators are not read against the written form.
+- [ ] **The uber's programs are named by pass, stage and keyword set** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Each program's index is the same in its `NNNNN.dxbc` and its `programs.tsv` line** — no source yet: the cited file `programs.tsv` is not on disk
+- [ ] **The face is not shaded on the body's ramp** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The face's light angle is the `-atan2` of the two root-bone dots, in the code's own units** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A light along the root's Y axis gives the face threshold's minimum, 1e-4, and the opposite side its maximum, 0.9999** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The face's shadow lookup is a `smoothstep` of the saturated ratio over the softness window** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The nose shows a dark mark in front light, as the character screen draws it** — no source yet: the cited video https://www.youtube.com/watch?v=KPlvZW6udfk is not on disk
+- [ ] **The repo's outline projection scale holds the game's 2.414** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The code takes the outline's knots, vertex weight, offset and flag from the game** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The outline's offset is one pure equation, the rule's one reference** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The outline's width is `_OutlineWidth` times 0.41425, weighted by the alpha, with no `T_w`** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The code draws a game model's outline per pixel by these equations, toned as the body is** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The world's height fog is a depth pass applied to every scene pixel with depth below 1, the avatar's included** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The haze at the close-up is zero, by the fog's form** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The tone curve is the game's** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Each slot's entry in `AVATAR_TEXTURE_SLOTS` carries its colour-space flag** — no source yet: game data or a snapshot that holds this behaviour
 
 Related: [drawing a character](../drawing/design.md), [derived assets](../../derived-assets/design.md), [game data formats](../../game-data-formats/design.md).
