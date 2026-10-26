@@ -74,5 +74,6 @@ Each region is reported in turn, Mondstadt first, with its matched points, the r
 
 ## Open
 
+- [ ] **The wiki's Oculus counts: 66 Anemoculi in Mondstadt, 271 each for Fontaine, Natlan and Nod-Krai, and the counts the wiki gives for Liyue, Inazuma, Sumeru and Snezhnaya** — no source yet: the Oculus wiki page is not on disk.
 - [ ] **The game's servers spawn chests, Oculi, puzzles and camps, and the client's data does not place them** — no source yet: no check of the dump for chest, Oculus, puzzle or camp placements was run here.
 - [ ] **Snezhnaya's transport points are absent from the dump** — no source yet: the dump's transport points for Snezhnaya's areas were not counted, and `~/Esposter/genshin-parity/references/interactive-map/fit.json` shows only its zero matches.
