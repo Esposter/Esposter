@@ -7,8 +7,8 @@ import { addGcsimCloudCandidates } from "#src/services/genshinAssets/kits/gcsim/
 import { addGcsimFieryPassionCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimFieryPassionCandidates";
 import { addGcsimLoopShotCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimLoopShotCandidates";
 import { addGcsimMoondewCleanseCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimMoondewCleanseCandidates";
-import { addGcsimShieldRegenerationCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimShieldRegenerationCandidates";
 import { addGcsimShellCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimShellCandidates";
+import { addGcsimShieldRegenerationCandidates } from "#src/services/genshinAssets/kits/gcsim/addGcsimShieldRegenerationCandidates";
 
 // The per-character builder mappings, by a character's gcsim folder: the values a folder holds beyond the shapes every
 // Folder is read by, each written on top of them. A folder with no mapping takes the shared readers alone
