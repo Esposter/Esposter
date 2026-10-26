@@ -117,5 +117,4 @@ A copy or a refinement material SHALL come only from the bag, never from a weapo
 
 - [ ] **Ten points of EXP cost one Mora, and a fodder gives back 80%** — no source yet: the wiki's Weapon EXP page is not in `~/Esposter/cache/genshin-wiki/`, and the stats tables opened here state neither rate.
 - [ ] **A copy adds its own rank, a material adds one, and the ranks past the fifth are lost** — no source yet: the wiki's Refinement page is not in `~/Esposter/cache/genshin-wiki/`, and no table opened here states the refinement rule.
-- [ ] **Ranks two to five of a three-star weapon cost 500, 1,000, 2,000 and 4,000 Mora** — no source yet: no refinement cost table is on disk, and `~/Esposter/genshin-parity/text/ExcelBinOutput/WeaponExcelConfigData.json` holds no Mora cost field.
-- [ ] **One-star and two-star weapons are never refined** — no source yet: the wiki's Refinement page is not in `~/Esposter/cache/genshin-wiki/`, and no table on disk states the star rule.
+- [ ] **One-star and two-star weapons are never refined** — no source yet: the wiki's Refinement page is not in `~/Esposter/cache/genshin-wiki/`, and no table on disk states the star rule; `~/Esposter/genshin-parity/text/ExcelBinOutput/WeaponExcelConfigData.json` omits `awakenCosts` from its 15 one-star and 5 two-star rows, which states no rule.
