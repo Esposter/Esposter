@@ -22,17 +22,16 @@ describe(useAutosaveFunction, () => {
   let wrapper: VueWrapper;
   let save: ReturnType<typeof vi.fn<() => Promise<void>>>;
   let autosave: () => void;
+  const autosaveHost = defineComponent({
+    render: () => h("div"),
+    setup: () => {
+      autosave = useAutosaveFunction(save);
+    },
+  });
   const resourceId = crypto.randomUUID();
   const otherResourceId = crypto.randomUUID();
   const mountAutosave = async () => {
-    wrapper = await mountSuspended(
-      defineComponent({
-        render: () => h("div"),
-        setup: () => {
-          autosave = useAutosaveFunction(save);
-        },
-      }),
-    );
+    wrapper = await mountSuspended(autosaveHost);
     // Mounting resets the route, so the resource the edit is made on is named once the blade is up
     Object.assign(router.currentRoute.value.params, { id: resourceId });
     vi.useFakeTimers({ now: 0 });
@@ -138,15 +137,7 @@ describe(useAutosaveFunction, () => {
       pathAtSave = router.currentRoute.value.path;
       return Promise.resolve();
     });
-    router.addRoute({
-      component: defineComponent({
-        render: () => h("div"),
-        setup: () => {
-          autosave = useAutosaveFunction(save);
-        },
-      }),
-      path: "/autosave-host/:id",
-    });
+    router.addRoute({ component: autosaveHost, path: "/autosave-host/:id" });
     router.addRoute({ component: defineComponent({ render: () => h("div") }), path: elsewherePath });
     await mountSuspended(defineComponent({ render: () => h(RouterView) }), { route: hostPath });
     autosave();
@@ -168,15 +159,7 @@ describe(useAutosaveFunction, () => {
       pathAtSave = router.currentRoute.value.path;
       return Promise.resolve();
     });
-    router.addRoute({
-      component: defineComponent({
-        render: () => h("div"),
-        setup: () => {
-          autosave = useAutosaveFunction(save);
-        },
-      }),
-      path: "/autosave-host/:id",
-    });
+    router.addRoute({ component: autosaveHost, path: "/autosave-host/:id" });
     await mountSuspended(defineComponent({ render: () => h(RouterView) }), { route: hostPath });
     autosave();
     await navigateTo(`/autosave-host/${otherResourceId}`, { replace: true });
@@ -199,15 +182,7 @@ describe(useAutosaveFunction, () => {
       }
       return Promise.resolve();
     });
-    router.addRoute({
-      component: defineComponent({
-        render: () => h("div"),
-        setup: () => {
-          autosave = useAutosaveFunction(save);
-        },
-      }),
-      path: "/autosave-host/:id",
-    });
+    router.addRoute({ component: autosaveHost, path: "/autosave-host/:id" });
     await mountSuspended(defineComponent({ render: () => h(RouterView) }), { route: hostPath });
     autosave();
     await navigateTo(`/autosave-host/${otherResourceId}`, { replace: true });
