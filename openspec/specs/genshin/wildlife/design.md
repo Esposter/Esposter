@@ -62,8 +62,8 @@ Every animal of the slice exists from the scene's load (`packages/genshin-world/
 
 ## Open
 
-- [ ] **Nothing is struck, dropped or picked up yet** — no source yet: the code now strikes and drops animals (`packages/genshin-world/src/services/kit/strikeKitEnemies.ts` calls `strikeKitWildlife`, which calls `strikeWildlife` with `packages/genshin-world/src/services/wildlife/WildlifeKindDropMap.ts`) and picks up material sources (`packages/genshin-world/src/composables/useWorldPickups.ts`), so this line is stale.
-- [ ] **The fleeing-kind check admits only White Pigeon, Crimson Fox or Squirrel** — no source yet: `scripts/src/services/genshinAssets/wildlife/buildWildlifePlaces.ts` loops over every `WildlifeKind`, so a boar's label is placed as well.
+- [ ] **Nothing is struck, dropped or picked up yet** — contradicted by `packages/genshin-world/src/services/kit/strikeKitEnemies.ts`: its kit strike drops animals by kind, and `useWorldPickups.ts` picks up material sources.
+- [ ] **The fleeing-kind check admits only White Pigeon, Crimson Fox or Squirrel** — contradicted by `scripts/src/services/genshinAssets/wildlife/buildWildlifePlaces.ts`: it maps every `WildlifeKind` to its label, Boar included.
 - [ ] **A fleeing kind on the ground layer is placed, and an underground one left out** — no source yet: the ground-layer filter in the map-point reader was not read.
 - [ ] **The archive files each kind as an animal or aviary monster** — no source yet: the dump's Monster and Gadget rows were not matched to the kinds' names.
 - [ ] **The environment table holds no row for a bird or a beast** — no source yet: its six Gadget rows' animal ids were not matched to a kind.
