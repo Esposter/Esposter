@@ -190,6 +190,6 @@ Non-Latin game text SHALL be drawn in a system face, since the game's own faces 
 
 ## Open
 
-- [ ] **The text maps are decoded from the installed client** — no source yet: the design says the text maps stay the community dump's until a decoder covers the current patch, so the Purpose's "decoded from the installed client" is not yet built.
-- [ ] **The app's own labels stay English** — no source yet: the app was not searched for a locale switch in this pass.
-- [ ] **HYWenHei and Signika do not cover Chinese, Japanese, Korean or Thai** — no source yet: neither font's glyph coverage was read in this pass.
+- [ ] **The text maps are decoded from the installed client** — partly settled: `scripts/src/services/genshinText/decodeGameText.ts` (the `decode` command) exports the install's text chunks, but the design's known-plaintext finding says the current patch's mixer constants stop the decode, and whether the command now decodes the current patch is not checked here, so the Purpose's "decoded from the installed client" is not yet proven for the current patch.
+- [ ] **The app's own labels stay English** — partly settled: `apps/web/package.json` and `apps/web/nuxt.config.ts` name no i18n module, so the app has no locale switch; the build config's only i18n mention is the survey library's locale chunks (`apps/web/configuration/vite.ts`). The labels' language is not read string by string.
+- [ ] **HYWenHei and Signika do not cover Chinese, Japanese, Korean or Thai** — partly settled: Signika's `index.css` in the installed `@fontsource/signika` package has three `@font-face` blocks, and no unicode range in them covers Thai, CJK or Hangul. No HYWenHei font file is tracked in the repo, so that half waits on the file.
