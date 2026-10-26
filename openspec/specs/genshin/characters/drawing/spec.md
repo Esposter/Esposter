@@ -162,4 +162,4 @@ The Traveler SHALL be drawn on the character body at Windrise's start point, fro
 
 ## Open
 
-- [ ] **A character's parsed model is drawn as one skinned mesh, each material in the game's shading** — no source yet: the shading comparison against the body program `Shader#0.dat` under `~/Esposter/genshin-parity/extracted/shaders/Shader/`, which is on disk but not yet compared with the drawn material
+- [ ] **A character's parsed model is drawn as one skinned mesh, each material in the game's shading** — no source yet: a comparison of the drawn material against the body shader `~/Esposter/genshin-parity/extracted/shaders/Shader/Shader#0.dat` has not been run; the shader is on disk
