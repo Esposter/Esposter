@@ -1,6 +1,6 @@
 # Fishing
 
-The fishing points stand where the official map places them, each region's pools and the fish they draw from are the game's own tables, and the rules of a cast are pure functions over them: a stock's day and night, its refill, a weighted draw of a fish, a lure's reaction and a reel's tension against its zone. This is the first half of the [fishing](../../../changes/genshin-fishing/design.md) proposal. Nothing is cast yet: no bait, no bite timing, no fish's skills, no screen, no prompt and no bag item.
+The fishing points stand where the official map places them, each region's pools and the fish they draw from are the game's own tables (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/FishPoolExcelConfigData.json`, `FishExcelConfigData.json`), and the rules of a cast are pure functions over them: a stock's day and night, its refill, a weighted draw of a fish, a lure's reaction and a reel's tension against its zone. This is the first half of the [fishing](../../../changes/genshin-fishing/design.md) proposal. Nothing is cast yet: no bait, no bite timing, no fish's skills, no screen, no prompt and no bag item.
 
 ## How it works
 
@@ -30,8 +30,8 @@ stateDiagram-v2
 `pnpm -C scripts genshin:assets fishing` publishes four records to the fishing dataset of the [hosted game data](../hosted-game-data/design.md), one for each of the points, the fish, the rods and the pools:
 
 - **Points.** The official map's Fishing Point label, placed by the fit that already carries the statues and waypoints into the game's coordinates ([spawned places](../spawned-places/design.md)), carried into its region's axes by the same step as the chests, and filed by region.
-- **Fish and rods.** Every fish's hit points, attract and flee ranges, bite timeout, feeler range, moving zone and item, and every rod's base attack, multiplier, accuracy and maximum, read by the table's own names.
-- **Pools.** Each region's fishing pools, filed by the game's city id, each stock on a pool's list resolved to its table row with the fish weights kept in the table's order. A stock the table does not hold is an error, never a pool missing it.
+- **Fish and rods.** Every fish's hit points, attract and flee ranges, bite timeout, feeler range, moving zone and item, and every rod's base attack, multiplier, accuracy and maximum, read by the table's own names (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/FishExcelConfigData.json` holds `hp`, `attractRange`, `fleeRange`, `biteTimeout` and `bonusWidth`; `FishRodExcelConfigData.json` holds `baseAttack`, `attackMag`, `attackAcc` and `maxAttack`).
+- **Pools.** Each region's fishing pools, filed by the game's city id, each stock on a pool's list resolved to its table row with the fish weights kept in the table's order (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/FishStockExcelConfigData.json` holds each `fishWeight`; `FishPoolExcelConfigData.json` holds each pool's `stockList` and `cityId`). A stock the table does not hold is an error, never a pool missing it.
 
 The fish, stock, pool and rod tables are not in the community dump the repository reads, so the seven the fishing reads were fetched from the AnimeGameData repository into the dump's folder, never committed.
 
@@ -66,3 +66,10 @@ The fish, stock, pool and rod tables are not in the community dump the repositor
 - [Fishing](https://genshin-impact.fandom.com/wiki/Fishing), Genshin Impact Wiki: the day and night stocks, the seventy-two hour refill and the bite.
 - [Teyvat Interactive Map](https://act.hoyolab.com/ys/app/interactive-map/index.html), HoYoLAB: the Fishing Point label whose points the fit places.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the fish, pool, stock and rod tables read here.
+
+## Open
+
+- [ ] **The fishing points stand where the official map marks them** — no source yet: no comparison of the fitted points against the official map is saved in the parity folders.
+- [ ] **A pool's day stock is drawn from six to eighteen on the game's clock, in `Asia/Shanghai`** — no source yet: the pool table holds no time window and the Fishing wiki page is not in `~/Esposter.noindex/cache/genshin-wiki/`.
+- [ ] **An emptied stock is back in full seventy-two hours on** — no source yet: no decoded fishing table holds a refill time, and the Fishing wiki page is not cached.
+- [ ] **A fish flees any lure within its flee range, and turns toward the bait it takes** — no source yet: the reaction rule is not in the decoded tables, and no recording of it is checked.
