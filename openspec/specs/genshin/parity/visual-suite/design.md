@@ -24,5 +24,5 @@ The visual suite holds approved screens to their own last images. It says nothin
 
 ## Open
 
-- [ ] **The suite reads the engine and the interface library from their source** — checked against `packages/genshin-world/vitest.browser.config.ts` line 18: its `resolve.conditions` lead with `SOURCE_CONDITION`, and the interface's `package.json` exports carry a `source` condition; the claim stays open because the page does not yet build it.
+- [ ] **The suite reads the engine and the interface library from their source** — no source yet: a recorded run of the suite that resolves both from source; `packages/genshin-world/vitest.browser.config.ts` (line 18) leads its `resolve.conditions` with `SOURCE_CONDITION`, but no run is kept.
 - [ ] **A screen with no image on disk is not held by the suite** — no source yet: no filter or test for a missing image was traced in `packages/genshin-world/parity/screens.visual.ts`.
