@@ -604,18 +604,39 @@ describe("userRouter", () => {
     );
   });
 
-  test.each([DataExportStatus.Building, DataExportStatus.Failed, DataExportStatus.Queued])(
-    "generateDataExportLink refuses a %s export",
-    async (status) => {
-      expect.hasAssertions();
+  const insertDataExportWithStatus = async (status: DataExportStatus) =>
+    takeOne(await mockContext.db.insert(dataExportsInUser).values({ status, userId }).returning()).id;
 
-      const dataExport = takeOne(await mockContext.db.insert(dataExportsInUser).values({ status, userId }).returning());
+  // Each status gets its own test: an inline snapshot belongs to its call site, and the id in the message differs per row
+  test("generateDataExportLink refuses a building export", async () => {
+    expect.hasAssertions();
 
-      await expect(caller.generateDataExportLink(dataExport.id)).rejects.toThrowErrorMatchingInlineSnapshot(
-        `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.DataExport, dataExport.id).message}]`,
-      );
-    },
-  );
+    const dataExportId = await insertDataExportWithStatus(DataExportStatus.Building);
+
+    await expect(caller.generateDataExportLink(dataExportId)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.DataExport, dataExportId).message}]`,
+    );
+  });
+
+  test("generateDataExportLink refuses a failed export", async () => {
+    expect.hasAssertions();
+
+    const dataExportId = await insertDataExportWithStatus(DataExportStatus.Failed);
+
+    await expect(caller.generateDataExportLink(dataExportId)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.DataExport, dataExportId).message}]`,
+    );
+  });
+
+  test("generateDataExportLink refuses a queued export", async () => {
+    expect.hasAssertions();
+
+    const dataExportId = await insertDataExportWithStatus(DataExportStatus.Queued);
+
+    await expect(caller.generateDataExportLink(dataExportId)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.DataExport, dataExportId).message}]`,
+    );
+  });
 
   test("generateDataExportLink refuses another person's export", async () => {
     expect.hasAssertions();
