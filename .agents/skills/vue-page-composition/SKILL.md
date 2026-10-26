@@ -27,7 +27,7 @@ A page is layout and composition only — `<Head>`, page metadata and sub-compon
 
 ## Maximal Component Granularity — One Action per Component
 
-One component per action: each action button is its own component with its store wiring and inline handler, a row reduces to layout, a menu and its items are one unit, and a `v-for` item with logic of its own is its own component — never a forwarding wrapper — while buttons that are genuinely one logic, rendered from one config array, stay one `v-for` (`references/granularity.md`).
+One component per action: a row reduces to layout, a menu and its items are one unit, and a `v-for` item with logic of its own is its own component, while buttons that are genuinely one logic, rendered from one config array, stay one `v-for` (`references/granularity.md`).
 
 ## List Item Rendering: Array + v-for over Hardcoded Items
 
@@ -39,8 +39,8 @@ Every action has exactly one visible control — keep the largest hit target wit
 
 ## Settings Tab Permissions — Hide at the Tab Level
 
-A permission-gated settings tab is hidden by a tab-definition map (`SettingsPermissionMap` in `services/message/settings/`) filtered through the role store's `checkHasMyPermission` in a `computed`; a tab never renders an insufficient-permissions message, and the map hides the tab without withholding anything (`references/action-items.md`, "Settings tabs hide at the tab level").
+A permission-gated settings tab is hidden, never shown with an insufficient-permissions message (`references/action-items.md`, "Settings tabs hide at the tab level").
 
 ## Singleton Dialogs — Store-Driven Target, Never Per-Item
 
-**Never mount a dialog (or any heavy overlay subtree) inside a list item.** A `v-for` over N items with an embedded dialog or menu creates N component trees that mount, hydrate and re-render as one — which is how a list page ends up with a seconds-long INP. One instance is mounted at list level and driven by a target ref in a per-service dialog store; the three-part wiring is in `references/singleton-dialogs.md`, and the rationale in `openspec/specs/architecture/singleton-dialogs/design.md`.
+**Never mount a dialog (or any heavy overlay subtree) inside a list item.** One instance is mounted at list level and driven by a target ref in a per-service dialog store; the three-part wiring is in `references/singleton-dialogs.md`, and the rationale in `openspec/specs/architecture/singleton-dialogs/design.md`.
