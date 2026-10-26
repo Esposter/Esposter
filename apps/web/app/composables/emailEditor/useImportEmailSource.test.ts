@@ -1,5 +1,4 @@
 // @vitest-environment nuxt
-import { TEST_ID } from "#shared/services/pageBuilder/constants.test";
 import { MAX_EMAIL_NODES } from "#shared/services/pageBuilder/email/constants";
 import { emailBodyChildrenSchema } from "#shared/services/pageBuilder/email/emailNodeSchema";
 import { emailRegistry } from "#shared/services/pageBuilder/email/emailRegistry";
@@ -49,12 +48,14 @@ describe(useImportEmailSource, () => {
     const pageBuilderHistoryStore = usePageBuilderHistoryStore();
     const { undo } = pageBuilderHistoryStore;
     const importEmailSource = useImportEmailSource();
-    // Every node the import reads is minted an id, and the parser refuses a repeated one, so each mint is numbered in turn
-    let mintedCount = 0;
-    vi.spyOn(crypto, "randomUUID").mockImplementation(() => {
-      mintedCount += 1;
-      return `${TEST_ID}-${mintedCount}`;
-    });
+    // Every node the import reads is minted an id, and the parser refuses a repeated one, so each mint is handed its own in turn
+    const sectionId = crypto.randomUUID();
+    const columnId = crypto.randomUUID();
+    const buttonId = crypto.randomUUID();
+    vi.spyOn(crypto, "randomUUID")
+      .mockReturnValueOnce(sectionId)
+      .mockReturnValueOnce(columnId)
+      .mockReturnValueOnce(buttonId);
     const isImported = importEmailSource(resourceId, TEST_IMPORTED_SOURCE);
     expect(isImported).toBe(true);
     expect(getEmailDocument(resourceId)?.content).toStrictEqual([
@@ -62,14 +63,11 @@ describe(useImportEmailSource, () => {
         props: {
           children: [
             {
-              props: {
-                children: [{ props: { content: "", id: `${TEST_ID}-3` }, type: MjmlNodeType.Button }],
-                id: `${TEST_ID}-2`,
-              },
+              props: { children: [{ props: { content: "", id: buttonId }, type: MjmlNodeType.Button }], id: columnId },
               type: MjmlNodeType.Column,
             },
           ],
-          id: `${TEST_ID}-1`,
+          id: sectionId,
         },
         type: MjmlNodeType.Section,
       },

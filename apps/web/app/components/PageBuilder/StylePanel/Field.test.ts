@@ -1,6 +1,5 @@
 // @vitest-environment happy-dom
 import UiStyleField from "@/components/PageBuilder/StylePanel/Field.vue";
-import UiSelect from "@/components/Ui/Select/Index.vue";
 import { setupUiStyle } from "@/components/Ui/setupUiStyle.test";
 import { UiStyles } from "@/models/ui/UiStyle";
 import { mount } from "@vue/test-utils";
@@ -124,7 +123,7 @@ describe("styleField", () => {
         props: { label: "Border width", modelValue: "2px", property: "border-width" },
       });
 
-      expect(component.findComponent(UiSelect).props("items")).toStrictEqual(
+      expect(component.findComponent({ name: "UiSelect" }).props("items")).toStrictEqual(
         ["px", "rem", "em", "vw", "vh"].map((lengthUnit) => ({ title: lengthUnit, value: lengthUnit })),
       );
     });

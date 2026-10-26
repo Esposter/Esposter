@@ -1,7 +1,6 @@
 // @vitest-environment nuxt
 import { CursorPaginationData } from "#shared/models/pagination/cursor/CursorPaginationData";
 import PostList from "@/components/Post/List.vue";
-import UiSelect from "@/components/Ui/Select/Index.vue";
 import { PostSortType } from "@/models/post/PostSortType";
 import { setupMswTrpc } from "@/services/trpc/mswTrpc.test";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
@@ -18,9 +17,9 @@ describe("postList", () => {
 
     expect(
       component
-        .findComponent(UiSelect)
+        .findComponent({ name: "UiSelect" })
         .props("items")
-        .map(({ value }) => value),
+        .map(({ value }: { value: PostSortType }) => value),
     ).toStrictEqual([PostSortType.Hot, PostSortType.New, PostSortType.Top]);
   });
 });
