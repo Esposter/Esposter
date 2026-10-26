@@ -1,6 +1,6 @@
 ## Purpose
 
-Chevreuse's kit as built, with Short-Range Rapid Interdiction Fire's press and hold, the Overcharged Ball an Overloaded reaction sets going, and Ring of Bursting Grenades, and what is left of her passives, her skill's heal and her constellations.
+Chevreuse's kit as built, with Short-Range Rapid Interdiction Fire's press and hold, the Overcharged Ball an Overloaded reaction sets going, and Ring of Bursting Grenades with Constellation 4's hold waiver, and what is left of her passives, her skill's heal and her other constellations.
 
 ## Requirements
 
@@ -75,3 +75,31 @@ Ring of Bursting Grenades SHALL land an Explosive Grenade circle of radius 6 met
 - **WHEN** the shells explode between 83 and 119 frames after the cast
 - **THEN** each shell lands in the area round the primary target
 - **AND** the shells land even though they explode after the burst's animation ends
+
+### Requirement: Constellation 4 waives the hold's cooldown after the Ring
+
+At constellation 4, Ring of Bursting Grenades SHALL let the next two holds of Short-Range Rapid Interdiction Fire start with no cooldown, for six seconds from the cast, and a Ring cast again restarts the two holds.
+
+#### Scenario: A hold after the Ring starts with no cooldown
+
+- **GIVEN** Chevreuse is at constellation 4 and has cast Ring of Bursting Grenades less than six seconds ago
+- **WHEN** the player holds Short-Range Rapid Interdiction Fire
+- **THEN** the hold starts and her skill's cooldown is not started by it
+
+#### Scenario: The third hold after the Ring starts a cooldown
+
+- **GIVEN** Chevreuse is at constellation 4 and two holds have started since the last Ring cast
+- **WHEN** the player holds Short-Range Rapid Interdiction Fire again
+- **THEN** the hold starts its ordinary cooldown
+
+#### Scenario: The waiver ends after six seconds
+
+- **GIVEN** Chevreuse is at constellation 4 and six seconds have passed since the Ring cast
+- **WHEN** the player holds Short-Range Rapid Interdiction Fire
+- **THEN** the hold starts its ordinary cooldown
+
+#### Scenario: Below constellation 4 the Ring waives nothing
+
+- **GIVEN** Chevreuse is at constellation 3
+- **WHEN** the player casts Ring of Bursting Grenades and then holds Short-Range Rapid Interdiction Fire
+- **THEN** the hold starts its ordinary cooldown

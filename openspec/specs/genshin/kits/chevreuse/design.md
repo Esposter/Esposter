@@ -11,12 +11,14 @@ Chevreuse's kit is its record and one behaviour module, `createChevreuseKitBehav
 - **Provisional: the hold's threshold.** The seconds a press must be held to become the hold are not in any table, so it takes Zhongli's half second, as the question in the roadmap's Manual verification list asks.
 - **Vertical Force Coordination is built as the Overcharged Ball's hold start.** From Ascension 4 the ball's firing gives each Pyro and Electro member of the deployed team 1% ATK for every 1,000 of Chevreuse's Max HP, up to 40%, for 30 seconds, as gcsim does, with no range check on the members, as gcsim has none.
 
+- **Constellation 4's waiver cuts the hold's cooldown to none.** Ring of Bursting Grenades sets a status of two shots and six seconds, as gcsim's `c4StatusKey` does. A hold that the status lets through spends one shot, and its start cuts the party member's skill cooldown by all it runs. A hold starts only once the skill is ready, so that cooldown is none before the hold's start, and the cut leaves none whatever multiplier the start applied. The overcharged hold is waived too, as gcsim's check sits after both shapes of the hold.
+
 ## Not built
 
 - **Her skill's heal is waiting on a timed party heal.** Short-Range Rapid Interdiction Fire heals the active character every 2 seconds for 12 seconds from her Max HP and a flat amount, which a kit has no hook for over time. It waits on that hook.
 - **Surging Blade is waiting on a conditional follow-up hit.** Each press or hold that hits anything sets off a circle of radius 2 round the target after a delay, once per 10 seconds, and a hit that fires only when an earlier one landed, under the character's own cooldown, has no hook yet.
 - **Her first ascension passive is waiting on the party-composition hook.** Coordinated Tactics applies only when the deployed team is all Pyro and Electro, which the kit cannot read as party composition yet, and it adds the Overloaded reaction's Pyro and Electro RES cut of 40% for 6 seconds to the enemies it hits. Her first constellation's energy on an Overloaded reaction by a member with that status waits on the same hook. Her dash's stamina cut is not built.
-- **Her constellations are not built.** The second's chain explosions after a hold, the fourth's cooldown waiver, the sixth's team heal and its stacked elemental damage bonus wait on the hooks above, and the constellations that raise talent levels are the [talents](../../talents/design.md) page's.
+- **Her constellations 1, 2 and 6 are not built.** The first's energy on an Overloaded reaction waits on the party-composition hook, the second's chain explosions after a hold, the sixth's team heal and its stacked elemental damage bonus wait on the hooks above, and the constellations that raise talent levels are the [talents](../../talents/design.md) page's.
 
 ## Key files
 
@@ -26,5 +28,5 @@ Chevreuse's kit is its record and one behaviour module, `createChevreuseKitBehav
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/chevreuse), MIT: each strike's hitmarks, frames and areas, the charged attack's hitmark and circle, the press's and hold's boxes and hitmarks, the Overcharged Ball's circle and the overload subscription, Explosive Grenade and its shells' delays, and the passives and constellations listed as not built.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/chevreuse), MIT: each strike's hitmarks, frames and areas, the charged attack's hitmark and circle, the press's and hold's boxes and hitmarks, the Overcharged Ball's circle and the overload subscription, Explosive Grenade and its shells' delays, the Ring's Constellation 4 status and the hold's cooldown check, and the passives and constellations listed as not built.
 - [Short-Range Rapid Interdiction Fire](https://genshin-impact.fandom.com/wiki/Short-Range_Rapid_Interdiction_Fire) and [Ring of Bursting Grenades](https://genshin-impact.fandom.com/wiki/Ring_of_Bursting_Grenades), Genshin Impact Wiki, where the game's values agree with the table.
