@@ -6,7 +6,7 @@ The Spiral Abyss's rules as built, read from the game's tower tables into genshi
 
 ### Requirement: Abyss open from Adventure Rank 20
 
-The Spiral Abyss SHALL be open only to a player whose Adventure Rank is twenty or higher (`packages/genshin-world/src/services/spiralAbyss/checkIsAbyssOpenAtRank.test.ts`).
+The Spiral Abyss SHALL be open only to a player whose Adventure Rank is twenty or higher.
 
 #### Scenario: Closed below rank 20
 
@@ -22,7 +22,7 @@ The Spiral Abyss SHALL be open only to a player whose Adventure Rank is twenty o
 
 ### Requirement: Floors open in turn
 
-The first floor SHALL always be open, and a floor above it SHALL open only when the floor below has all three of its chambers cleared and holds at least six stars (`packages/genshin-world/src/services/spiralAbyss/checkIsAbyssFloorUnlocked.test.ts`; the six in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/TowerFloorExcelConfigData.json`, `unlockStarCount` on all 141 floors).
+The first floor SHALL always be open, and a floor above it SHALL open only when the floor below has all three of its chambers cleared and holds at least six stars (the six, `unlockStarCount` on all 141 floors).
 
 #### Scenario: First floor always open
 
@@ -46,11 +46,11 @@ The first floor SHALL always be open, and a floor above it SHALL open only when 
 
 - **GIVEN** the Corridor's floor eight has all three chambers cleared and six stars
 - **WHEN** the Moon Spire's first floor is checked
-- **THEN** the Moon Spire's first floor is open (the floors with ids 1008 and 1009 in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/TowerFloorExcelConfigData.json`)
+- **THEN** the Moon Spire's first floor is open (the floors with ids 1008 and 1009)
 
 ### Requirement: Chamber clock set by its floor
 
-A chamber's clock SHALL run for its floor's time, five minutes on the Corridor's first four floors and ten minutes on every floor above, and both halves of a chamber SHALL share that one clock (`packages/genshin-world/src/services/spiralAbyss/stepAbyssChallenge.test.ts`).
+A chamber's clock SHALL run for its floor's time, five minutes on the Corridor's first four floors and ten minutes on every floor above, and both halves of a chamber SHALL share that one clock.
 
 #### Scenario: Clock on the Corridor's early floors
 
@@ -62,18 +62,18 @@ A chamber's clock SHALL run for its floor's time, five minutes on the Corridor's
 
 - **GIVEN** the first half of a chamber ends with two minutes left on the clock
 - **WHEN** the second half begins
-- **THEN** the clock reads two minutes (`packages/genshin-world/src/services/spiralAbyss/stepAbyssChallenge.test.ts`)
+- **THEN** the clock reads two minutes
 
 ### Requirement: Chamber lost at zero clock or zero monolith
 
-A chamber SHALL be lost when its clock reaches zero or its monolith reaches zero health before it is cleared, and a cleared chamber SHALL never be lost (`packages/genshin-world/src/services/spiralAbyss/checkIsAbyssChallengeFailed.test.ts`).
+A chamber SHALL be lost when its clock reaches zero or its monolith reaches zero health before it is cleared, and a cleared chamber SHALL never be lost.
 
 #### Scenario: Clock runs out
 
 - **GIVEN** a chamber is being fought and has not been cleared
 - **WHEN** its clock reaches zero
 - **THEN** the chamber is failed
-- **AND** nothing from that attempt is kept (`packages/genshin-world/src/services/spiralAbyss/stepAbyssArena.test.ts`)
+- **AND** nothing from that attempt is kept
 
 #### Scenario: Monolith destroyed
 
@@ -89,7 +89,7 @@ A chamber SHALL be lost when its clock reaches zero or its monolith reaches zero
 
 ### Requirement: Stars count the conditions a clear meets
 
-A clear SHALL earn one star for each star condition it meets at the moment it clears, and a chamber SHALL keep the most stars any of its clears has earned (`packages/genshin-world/src/services/spiralAbyss/computeAbyssChamberStars.test.ts`, `packages/genshin-world/src/services/spiralAbyss/recordAbyssChamberClear.test.ts`).
+A clear SHALL earn one star for each star condition it meets at the moment it clears, and a chamber SHALL keep the most stars any of its clears has earned.
 
 #### Scenario: Stars from the conditions met
 
@@ -111,7 +111,7 @@ A clear SHALL earn one star for each star condition it meets at the moment it cl
 
 ### Requirement: Each reward given once per cycle
 
-Each reward SHALL be given only the first time it is earned within its cycle, while the Corridor SHALL be one cycle that never resets and each Moon Spire period SHALL be a cycle of its own (`packages/genshin-world/src/services/spiralAbyss/recordAbyssChamberClear.test.ts`, `packages/genshin-world/src/services/spiralAbyss/getAbyssCycleKey.test.ts`).
+Each reward SHALL be given only the first time it is earned within its cycle, while the Corridor SHALL be one cycle that never resets and each Moon Spire period SHALL be a cycle of its own.
 
 #### Scenario: First clear gives its reward
 
@@ -139,7 +139,7 @@ Each reward SHALL be given only the first time it is earned within its cycle, wh
 
 ### Requirement: Moon Spire runs the latest period begun
 
-The Moon Spire SHALL run the period that began most recently before now in UTC+8, and SHALL keep its last period when no later one is known (`packages/genshin-world/src/services/spiralAbyss/findAbyssPeriodAt.test.ts`).
+The Moon Spire SHALL run the period that began most recently before now in UTC+8, and SHALL keep its last period when no later one is known.
 
 #### Scenario: Latest begun period runs
 
@@ -158,3 +158,10 @@ The Moon Spire SHALL run the period that began most recently before now in UTC+8
 - [ ] **The Abyss opens at Adventure Rank 20** — no source yet: the wiki's Spiral Abyss page is not cached, and no open-state row in the dump names the Abyss.
 - [ ] **A chamber's clock is five minutes on the Corridor's first four floors and ten minutes above** — no source yet: the dump's tower tables hold no clock length, and the test holds the repo's own constants.
 - [ ] **A chamber cleared with no condition met counts as cleared with no stars** — no source yet: no test holds a clear with no condition met.
+- [ ] **The first floor is always open, and a floor opens only when the floor below has all three chambers cleared and six stars** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The second half starts on the clock the first half left** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A chamber is lost when its clock or its monolith reaches zero before it is cleared, and a cleared chamber is never lost** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A failed chamber keeps nothing from that attempt** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A clear earns one star for each star condition it meets, and a chamber keeps the most stars any clear earned** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Each reward is given once per cycle, the Corridor is one cycle that never resets, and each Moon Spire period is a cycle of its own** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The Moon Spire runs the latest period begun in UTC+8, keeping its last period when no later one is known** — no source yet: game data or a snapshot that holds this behaviour
