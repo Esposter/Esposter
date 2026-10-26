@@ -40,7 +40,7 @@ A gadget SHALL start its configured cooldown after a use that works and its cool
 
 - **GIVEN** a collector gadget has no failure cooldown configured
 - **WHEN** a use of it fails
-- **THEN** no cooldown starts (the collector `220004`)
+- **THEN** no cooldown starts (`~/Esposter.noindex/genshin-parity/text/BinOutput/Widget/ConfigWidget.json`, the collector `220004`, which has no `coolDownOnFail`)
 
 ### Requirement: A gadget is refused while its cooldown group is not ready
 
@@ -96,4 +96,5 @@ Gadgets SHALL NOT yet be equipped to the quick-use key or used from the world.
 
 ## Open
 
-- [ ] **Z is bound to the quick-use gadget** — provisional: `packages/genshin-engine/src/input/InputActionBindingMap.ts` binds `KeyZ` to `InputAction.QuickUseGadget`, which is the build's own table, not a read of the game; the game's own key binding, read from its settings or a recorded keypress, settles it.
+- [ ] **Z is bound to the quick-use gadget** — no source yet: the game's settings file, which would hold the key binding, is not on disk (`~/Esposter.noindex/genshin-parity/game/config.ini` holds only the game version).
+- [ ] **A cooldown keeps counting down while the world is paused, as the game's do** — no source yet: the wiki's Gadget page is not in `~/Esposter.noindex/cache/genshin-wiki/`, so the game's pause rule is not checked.
