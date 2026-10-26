@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Teleport Waypoints as jump targets: each ground waypoint on the official map, paired with the scene's transport point it stands at, is listed on the map, the minimap and the jump list once the player has unlocked it, named by its area. A jump to a statue or a waypoint lands the character at the game's own arrival place, facing its turn.
+Teleport Waypoints as jump targets: each ground waypoint on the official map, paired with the scene's transport point it stands at, is listed on the map, the minimap and the jump list once the player has unlocked it, named by its area. A jump to a statue or a waypoint lands the character at the game's own arrival place, facing its turn (the landing is `packages/genshin-world/src/services/map/computeJumpPose.ts`, tested by `computeJumpPose.test.ts`; the list is `packages/genshin-world/src/components/Map/JumpList/Index.vue`; the pairing is `scripts/src/services/genshinAssets/fit/toWaypointLandmarks.ts`, tested by `toWaypointLandmarks.test.ts`; the arrival is the transport point's place and turn, read from `~/Esposter/genshin-parity/text/BinOutput/Scene/Point/scene3_point.json`, whose points carry `tranPos` and `tranRot`).
 
 ## Requirements
 
@@ -34,4 +34,4 @@ A jump SHALL land the character at the landmark's arrival place, facing the arri
 
 ## Open
 
-- [ ] **A jump to a statue or a waypoint lands the character at the game's arrival place, facing its turn** — no source yet: the scene point file `~/Esposter/genshin-parity/text/BinOutput/Scene/Point/scene3_point.json`, not yet read for each statue's and waypoint's arrival place and turn
+- [ ] **A jump to a statue or a waypoint lands the character at the game's arrival place, facing its turn** — no source yet: the arrival of each statue and waypoint outside scene 3 is not read from its scene's point file.
