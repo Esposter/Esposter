@@ -20,7 +20,7 @@ Each score is read between two ends: the game's segment against itself shifted l
 ## Rules the score holds
 
 - **Approval is by ear, since the score is blind to how a mix sounds.** The numbers show what a step changed, and the user's ears decide whether it sounds right. A step is approved by ear once its numbers improve.
-- **A mix that loses pitch agreement is a regression**, whatever it gains in the bands. The recordings' solve holds this rule (see [sampled instruments](../../sampled-instruments/design.md)).
+- **A mix that loses pitch agreement is a regression**, whatever it gains in the bands. The recordings' solve holds this rule (see [sampled instruments](../../sampled-instruments/design.md), and `scripts/src/services/genshinAssets/music/solveSampledVoices.ts`, line 159, which drops a mix that falls under the base's pitch agreement).
 - **No equaliser ships.** A fixed gain per octave band, fitted to one half of a segment's frames and scored on the other, left about as much distance as none, so what remains moves within a section rather than across one.
 - **The band measure is a proxy for the score.** Solved in the score's own bands, the solve's distance came within a few tenths of a decibel of what `listen` then measured.
 
@@ -54,7 +54,6 @@ The parity commands read three further measures from the same frames.
 - [ ] **Pitch agreement falls to about a quarter once the game is two seconds or more off itself, and under a fifth for one piece against the other** — no source yet: no self-shift run of the score is recorded.
 - [ ] **A render holding above four in five names nearly the right notes at nearly the right time** — no source yet: no checked run supports this reading.
 - [ ] **The game a quarter second off itself is a few decibels from itself, two seconds off well over twice that, and the other piece about twice the distance of the nearer end** — no source yet: no self-shift distance run is recorded.
-- [ ] **The recordings' solve holds the regression rule** — no source yet: the sampled-instruments solve is not checked here.
 - [ ] **A band gain fitted to half a segment's frames leaves about as much distance as none** — no source yet: no half-frame fit run is recorded.
 - [ ] **Solved in the score's own bands, the solve's distance came within a few tenths of a decibel of what `listen` measured** — no source yet: no solve-against-`listen` comparison is recorded.
 - [ ] **The game's noise reading reproduces what ships** — no source yet: no noise read-back output is recorded.
