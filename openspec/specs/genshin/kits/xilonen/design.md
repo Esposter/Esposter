@@ -10,6 +10,8 @@ Xilonen's kit is its record and one behaviour module, `createXilonenKitBehaviour
 - **The skill's cooldown is the table's seven seconds, run from the press.** In gcsim the Blessing's end sets it, and that end's cooldown is not built, so the cooldown starts the moment of the press here.
 - **Ocelotlicue Point is not built, so the burst has no hit.** It keeps gcsim's 101-frame animation, the table's 60 energy and 15-second cooldown. Its damage is read only with fewer than two Samplers in the party, and its heal with two or more, as gcsim picks them. The kit step cannot count the team's elements yet, so neither branch is chosen.
 - **Her plunges are gcsim's, with their Defense shares.** The collision is at 41 frames, a circle of radius 1 one metre ahead, the low plunge at 47 frames of 75 with radius 3 and Poise 100, and the high at 50 frames with radius 5 and Poise 150.
+- **Constellation 1 lengthens the Blessing and cuts its drain.** gcsim (MIT) `xilonen/cons.go` multiplies the Blessing's duration by 1.45, so it lasts 13.05 seconds, and its points' consumption by 0.7, so the drain falls from 5 to 3.5 a second and a sprint's 5 points to 3.5 (`nightsoulConsumptionMul` and `nightsoulDurationMul`, read at `skill.go` 41 and 64). Its stance lasts as long as the Blessing does.
+- **Constellation 4's stacks are read where the party strikes.** At the skill's press, each deployed member gets six stacks for 15 seconds (gcsim `cons.go` `c4`, called from `skill.go` 203). Each Normal Attack, Charged Attack or Plunge that hits an enemy adds 65% of Xilonen's DEF as flat base damage while its striker holds a stack, and spends one. Her own strikes take it through `getStrikeAdditiveBaseDamageBonus`, a teammate's through `getPartyStrikeBonus`, both priced from her buffed DEF, and the spend is read on each `DamageTaken`, so a hit spends one per enemy it lands on as gcsim's `OnEnemyHit` does.
 
 ## Not built
 
@@ -18,7 +20,7 @@ Xilonen's kit is its record and one behaviour module, `createXilonenKitBehaviour
 - **The Samplers and their Sampler RES shred are not built.** A Blessing's Samplers shred an enemy's RES to the elements the party's other members carry, by the table's 0.09 each, with Geo standing in for any element outside Pyro, Hydro, Cryo and Electro. The Samplers wait on the Blessing, and their count on a kit step that reads the deployed team's elements, which the step context does not yet carry.
 - **Ocelotlicue Point's heal is not built.** With two or more Samplers in the party, the burst heals the active member on a schedule, through eight ticks at each 1.5 seconds, instead of its damage. The heal waits on the kit step reading the team's elements, and on a timed heal to the active member.
 - **Her skill high plunge is not built.** A plunge that follows her Yohual's Scratch lands at 39 frames, a skill-only variant that waits on a plunge gate that reads the last action, as the [Chiori](../chiori/design.md) page's low plunge does.
-- **Her Ascension bonuses and constellations are not built.** The [constellations](../../../../changes/genshin-constellations/design.md) page holds the second and the [character kits proposal](../../../../changes/genshin-character-kits/design.md) the first.
+- **Her Ascension bonuses and Constellations 2 and 6 are not built.** The [constellations](../../../../changes/genshin-constellations/design.md) page holds the second and the [character kits proposal](../../../../changes/genshin-character-kits/design.md) the first.
 
 ## Key files
 

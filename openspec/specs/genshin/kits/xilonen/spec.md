@@ -1,6 +1,6 @@
 ## Purpose
 
-Xilonen's kit as built: her three strikes, charged attack, collision and two plunges, and Yohual's Scratch's hit, and what is left of her Nightsoul Blessing, her Samplers and Ocelotlicue Point.
+Xilonen's kit as built: her three strikes, charged attack, collision and two plunges, Yohual's Scratch's hit, and her Constellations 1 and 4, and what is left of her Nightsoul Blessing, her Samplers, Ocelotlicue Point and Constellations 2 and 6.
 
 ## Requirements
 
@@ -94,6 +94,50 @@ Xilonen's skill press SHALL enter the Nightsoul Blessing with 45 points, which d
 - **GIVEN** Xilonen has just entered the Blessing with 45 points
 - **WHEN** she sprints for a second
 - **THEN** the Blessing holds 40 points
+
+### Requirement: Constellation 1 lengthens the Blessing and cuts its drain
+
+From Constellation 1, the Nightsoul Blessing SHALL last 13.05 seconds, and its points SHALL drain 3.5 a second, with a sprint in it draining 3.5 points once.
+
+#### Scenario: Constellation 1 lengthens the Blessing
+
+- **GIVEN** Xilonen has Constellation 1
+- **WHEN** the player presses Yohual's Scratch
+- **THEN** the Blessing lasts 13.05 seconds
+
+#### Scenario: Constellation 1 cuts the drain
+
+- **GIVEN** Xilonen has Constellation 1 and has just entered the Blessing with 45 points
+- **WHEN** two seconds pass
+- **THEN** the Blessing holds 38 points
+
+#### Scenario: Constellation 1 cuts a sprint's drain
+
+- **GIVEN** Xilonen has Constellation 1 and has just entered the Blessing with 45 points
+- **WHEN** she sprints
+- **THEN** the Blessing holds 41.5 points
+
+### Requirement: Constellation 4 stacks add a share of her DEF to the team's strikes
+
+From Constellation 4, the press of Yohual's Scratch SHALL give every deployed member six stacks for 15 seconds. While a member holds a stack, each of its Normal Attacks, Charged Attacks and Plunges that hits an enemy SHALL add 65% of Xilonen's DEF as flat base damage, and spend one stack.
+
+#### Scenario: A teammate's Normal Attack spends a stack and adds the DEF share
+
+- **GIVEN** Xilonen has Constellation 4 and pressed Yohual's Scratch
+- **WHEN** a teammate's Normal Attack hits an enemy
+- **THEN** the hit adds 65% of Xilonen's DEF as flat base damage, and the teammate holds five stacks
+
+#### Scenario: Stacks end after 15 seconds
+
+- **GIVEN** Xilonen has Constellation 4 and pressed Yohual's Scratch 15 seconds ago
+- **WHEN** a teammate's Normal Attack hits an enemy
+- **THEN** no DEF share is added
+
+#### Scenario: Constellation 3 adds no stacks
+
+- **GIVEN** Xilonen has Constellation 3
+- **WHEN** she presses Yohual's Scratch
+- **THEN** no member gains stacks
 
 ### Requirement: Blade Roller strikes and Samplers not built
 
