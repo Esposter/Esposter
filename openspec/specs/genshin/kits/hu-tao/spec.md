@@ -6,7 +6,7 @@ Hu Tao's kit as built: her string, charged attack, Guide to Afterlife's Paramita
 
 ### Requirement: String of six strikes and a seventh hit
 
-Hu Tao's string SHALL be six strikes, the fifth of which deals two hits, so that the string's seventh hit is its sixth strike, as her normal attacks.
+Hu Tao's string SHALL be six strikes, the fifth of which deals two hits, so that the string's seventh hit is its sixth strike, as her normal attacks (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/hutao/attack.go:16`).
 
 #### Scenario: The string plays through to its seventh hit
 
@@ -35,7 +35,7 @@ Guide to Afterlife SHALL start the Paramita Papilio stance, which infuses Hu Tao
 
 ### Requirement: Guide to Afterlife costs HP without going below 1
 
-Guide to Afterlife SHALL cost 30% of Hu Tao's current HP as the stance starts, and the cost SHALL never take her below 1 HP.
+Guide to Afterlife SHALL cost 30% of Hu Tao's current HP as the stance starts (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/hutao/skill.go:56`), and the cost SHALL never take her below 1 HP.
 
 #### Scenario: The HP cost is paid as the stance starts
 
@@ -51,7 +51,7 @@ Guide to Afterlife SHALL cost 30% of Hu Tao's current HP as the stance starts, a
 
 ### Requirement: Spirit Soother's half-HP hit
 
-Spirit Soother SHALL use its half-HP multiplier only when Hu Tao's HP is at or under half of her Max HP as the burst starts.
+Spirit Soother SHALL use its half-HP multiplier only when Hu Tao's HP is at or under half of her Max HP as the burst starts (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/hutao/burst.go:24`).
 
 #### Scenario: Low HP applies the half-HP multiplier
 
@@ -67,7 +67,7 @@ Spirit Soother SHALL use its half-HP multiplier only when Hu Tao's HP is at or u
 
 ### Requirement: Blood Blossom on enemies her charged attack hits
 
-Blood Blossom SHALL be applied to each enemy the Paramita charged attack hits and SHALL tick a Pyro hit on that enemy every four seconds for 9.5 seconds.
+Blood Blossom SHALL be applied to each enemy the Paramita charged attack hits and SHALL tick a Pyro hit on that enemy every four seconds for 9.5 seconds (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/hutao/skill.go:107`, `~/Esposter/cache/gcsim-v2.47.2/internal/characters/hutao/skill.go:111`).
 
 #### Scenario: The charged attack applies Blood Blossom
 
@@ -79,7 +79,7 @@ Blood Blossom SHALL be applied to each enemy the Paramita charged attack hits an
 
 - **GIVEN** Blood Blossom is on an enemy
 - **WHEN** four seconds pass
-- **THEN** that enemy takes a Pyro tick of 1 unit of gauge
+- **THEN** that enemy takes a Pyro tick of 1 unit of gauge (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/hutao/skill.go:135`)
 - **AND** the ticks continue every four seconds for 9.5 seconds
 
 ### Requirement: Provisional plunge timings
@@ -100,7 +100,7 @@ From constellation 1, Hu Tao's charged attacks SHALL cost no stamina while a sta
 
 - **GIVEN** Hu Tao is at constellation 1 and holds a stance
 - **WHEN** her charged attack's stamina multiplier is read
-- **THEN** it is zero
+- **THEN** it is zero (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/hutao/hutao.go` lines 70 to 77)
 
 #### Scenario: Below constellation 1 the multiplier is unchanged
 
@@ -110,7 +110,7 @@ From constellation 1, Hu Tao's charged attacks SHALL cost no stamina while a sta
 
 ### Requirement: Second constellation adds to Blood Blossom's DMG and has Spirit Soother apply it
 
-From constellation 2, each Blood Blossom tick SHALL add 10% of Hu Tao's Max HP as it was when the effect was applied, and Spirit Soother SHALL apply Blood Blossom to each enemy its hit strikes.
+From constellation 2, each Blood Blossom tick SHALL add 10% of Hu Tao's Max HP as it was when the effect was applied, and Spirit Soother SHALL apply Blood Blossom to each enemy its hit strikes (the game's text, TextMap key 3620258903 in `~/Esposter/genshin-parity/text/TextMap/TextMap_MediumEN.json`).
 
 #### Scenario: Blood Blossom's tick adds 10% of the Max HP Hu Tao had when it was applied, not the Max HP she has as it ticks
 
@@ -132,4 +132,6 @@ From constellation 2, each Blood Blossom tick SHALL add 10% of Hu Tao's Max HP a
 
 ## Open
 
-- [ ] **From constellation 1, a charged attack in the Paramita stance costs no stamina** — no source yet: the cached Hu Tao wiki page names Crimson Bouquet without its wording, and gcsim has no stamina rule for her.
+- [ ] **Guide to Afterlife's HP cost never takes Hu Tao below 1 HP** — no source yet: no game text or gcsim record of that floor is checked here.
+- [ ] **Hu Tao's plunge frames and poise stay provisional until a recording settles them** — no source yet: no recording of her plunges is on disk.
+- [ ] **Blood Blossom's constellation 2 tick adds 10% of the Max HP Hu Tao had when it was applied** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/hutao/skill.go`: adds 10% of MaxHP at the tick (line 140).
