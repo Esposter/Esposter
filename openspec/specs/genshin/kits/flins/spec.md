@@ -67,17 +67,17 @@ Cometh the Night SHALL deal an initial Electro hit 93 frames after it is cast, t
 
 ### Requirement: Cometh the Night cooldown
 
-Cometh the Night SHALL cool for 15 seconds before it can be cast again, a provisional value against the 20 seconds the game's table gives until a recording settles it.
+Cometh the Night SHALL cool for the game's 20 seconds before it can be cast again, as its table and the wiki give it; gcsim's 15 is not taken, and the built value is open in the design.
 
 #### Scenario: A cast during the cooldown does nothing
 
-- **GIVEN** Cometh the Night was cast less than 15 seconds ago
+- **GIVEN** Cometh the Night was cast less than 20 seconds ago
 - **WHEN** the player casts it again
 - **THEN** it does not cast
 
 ### Requirement: Provisional plunges
 
-Flins's plunges SHALL take timings and poise borrowed from another character, provisional until a recording of the game settles them.
+Flins's plunges SHALL take their timings from another character's gcsim plunge file and their poise from his own Pocztowy Demonspear page, provisional until a recording of the game settles them.
 
 #### Scenario: A recording settles the plunges
 
@@ -87,7 +87,7 @@ Flins's plunges SHALL take timings and poise borrowed from another character, pr
 
 ### Requirement: Fourth constellation raises Flins's ATK by 20%
 
-From constellation 4, Flins's ATK SHALL be raised by 20% as a passive bonus. Its Elemental Mastery part is not built.
+From constellation 4, Flins's ATK SHALL be raised by 20% as a passive bonus. Its change to Whispering Flame, 10% up to 220 Elemental Mastery, is not built.
 
 #### Scenario: A Flins at constellation 4 gets the ATK bonus
 
