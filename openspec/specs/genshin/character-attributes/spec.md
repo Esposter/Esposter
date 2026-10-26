@@ -6,7 +6,7 @@ The game's characters, weapons and artifacts as data in the game's own shapes, r
 
 ### Requirement: Max HP, ATK and DEF are built from base, percentage and flat
 
-A character's Max HP, ATK and DEF SHALL each be its base multiplied by one plus its percentage bonuses, plus its flat bonuses, summed from every line the character carries (`packages/genshin-world/src/services/character/computeCharacterAttributes.test.ts`).
+A character's Max HP, ATK and DEF SHALL each be its base multiplied by one plus its percentage bonuses, plus its flat bonuses, summed from every line the character carries.
 
 #### Scenario: Traveler at level 90 with a Dull Blade
 
@@ -14,18 +14,17 @@ A character's Max HP, ATK and DEF SHALL each be its base multiplied by one plus 
 - **WHEN** its attributes are summed
 - **THEN** its Max HP is 10,874.91
 - **AND** its DEF is 682.52
-- (`packages/genshin-world/src/services/character/getCharacterAttributeLines.test.ts` holds the pair; the wiki's pair is open below)
+- (the wiki's pair is open below)
 
 #### Scenario: A weapon's ATK percentage raises both ATK bases
 
 - **GIVEN** a character with a weapon whose lines add an ATK percentage
 - **WHEN** its attributes are summed
 - **THEN** the percentage raises the character's ATK and the weapon's base ATK alike
-- (`packages/genshin-world/src/services/character/computeCharacterAttributes.test.ts`)
 
 ### Requirement: Base attributes grow along the level curve and rise with ascension
 
-A character's and weapon's base attributes SHALL grow along the game's level curve and rise with each ascension phase they have reached (`packages/genshin-world/src/services/character/getGrownAttributeLines.test.ts`).
+A character's and weapon's base attributes SHALL grow along the game's level curve and rise with each ascension phase they have reached.
 
 #### Scenario: Base grows to its level within its phase
 
@@ -39,18 +38,16 @@ A character's and weapon's base attributes SHALL grow along the game's level cur
 - **GIVEN** a phase covers a range of levels
 - **WHEN** a level outside that range is requested for it
 - **THEN** the request is refused
-- (`packages/genshin-world/src/services/character/getGrownAttributeLines.test.ts`)
 
 ### Requirement: Every line a character carries counts toward its attributes
 
-Every line a character carries SHALL count toward its attributes, including its own, its weapon's, its artifacts' main and minor affixes and its sets' bonuses (`packages/genshin-world/src/services/character/getCharacterAttributeLines.test.ts`; `packages/genshin-world/src/services/artifact/getArtifactSetAttributeLines.test.ts`).
+Every line a character carries SHALL count toward its attributes, including its own, its weapon's, its artifacts' main and minor affixes and its sets' bonuses.
 
 #### Scenario: Four pieces of a set count both bonuses
 
 - **GIVEN** four pieces of one artifact set are worn
 - **WHEN** attributes are summed
 - **THEN** both the two-piece bonus and the four-piece bonus are counted
-- (`packages/genshin-world/src/services/artifact/getArtifactSetAttributeLines.test.ts`)
 
 #### Scenario: Conditional set bonus adds no line
 
@@ -89,7 +86,7 @@ A newly created character SHALL start at level 1 in its first ascension phase, w
 
 ### Requirement: A character's region comes from its association
 
-A character's region SHALL be the region its association names, with the Fatui counted as Snezhnaya's and characters with no nation counted in none (`scripts/src/services/genshinAssets/stats/constants.ts`, `AssociationRegionIdMap`).
+A character's region SHALL be the region its association names, with the Fatui counted as Snezhnaya's and characters with no nation counted in none.
 
 #### Scenario: Fatui character belongs to Snezhnaya
 
@@ -105,7 +102,7 @@ A character's region SHALL be the region its association names, with the Fatui c
 
 ### Requirement: The Traveler has no element until it resonates with a statue
 
-The Traveler SHALL have no element until it resonates with a statue (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/AvatarSkillDepotExcelConfigData.json`, the Traveler's default depots 501 and 701, whose skills carry no `energySkill`).
+The Traveler SHALL have no element until it resonates with a statue (the Traveler's default depots 501 and 701, whose skills carry no `energySkill`).
 
 #### Scenario: Traveler before resonance has no element
 
@@ -122,3 +119,10 @@ The Traveler SHALL have no element until it resonates with a statue (`~/Esposter
 - [ ] **The Fatui count as Snezhnaya's region** — no source yet: the wiki's count is not cached, and the dump's two Fatui associations name no region of their own.
 - [ ] **The Snezhnaya association names Snezhnaya's region** — no source yet: `AssociationRegionIdMap` maps `ASSOC_TYPE_FATUI` but not `ASSOC_TYPE_SNEZHNAYA` or `ASSOC_TYPE_SNEZHNAYA_STAR`, which the dump files two and three characters under.
 - [ ] **The Traveler has no element in the world before its statue resonance** — no source yet: no test holds the Traveler's element before resonance; the element test holds only its alignment mark.
+- [ ] **Max HP, ATK and DEF are each built from base, percentage and flat** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A weapon's ATK percentage raises the character's and the weapon's ATK bases** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Base attributes grow along the level curve and rise with ascension** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A level outside a phase's range is refused** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Every line a character carries counts toward its attributes** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Four pieces of a set count both the two-piece and four-piece bonuses** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A character's region is the one its association names** — no source yet: game data or a snapshot that holds this behaviour
