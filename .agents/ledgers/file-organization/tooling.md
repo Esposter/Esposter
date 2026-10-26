@@ -383,6 +383,7 @@
 | `scripts/src/services/genshinAssets/fit/constants.ts`                                     | —                      | 1 file   |
 | `scripts/src/services/genshinAssets/fit/countPoints.ts`                                   | —                      | 1 file   |
 | `scripts/src/services/genshinAssets/fit/coverTriangles.ts`                                | —                      | 1 file   |
+| `scripts/src/services/genshinAssets/fit/createInterfaceRectsFit.ts`                       | —                      | 1 file   |
 | `scripts/src/services/genshinAssets/fit/createNearestColourReader.test.ts`                | —                      | 1 file   |
 | `scripts/src/services/genshinAssets/fit/createNearestColourReader.ts`                     | —                      | 1 file   |
 | `scripts/src/services/genshinAssets/fit/createRegionFit.ts`                               | —                      | 1 file   |
@@ -415,7 +416,6 @@
 | `scripts/src/services/genshinAssets/fit/fitGroundLayerField.ts`                           | —                      | 1 file   |
 | `scripts/src/services/genshinAssets/fit/fitGroundPiece.ts`                                | —                      | 1 file   |
 | `scripts/src/services/genshinAssets/fit/fitGroundPieces.ts`                               | —                      | 1 file   |
-| `scripts/src/services/genshinAssets/fit/fitHud.ts`                                        | —                      | 1 file   |
 | `scripts/src/services/genshinAssets/fit/fitInteractiveMap.ts`                             | —                      | 1 file   |
 | `scripts/src/services/genshinAssets/fit/fitInterfaceClips.test.ts`                        | —                      | 1 file   |
 | `scripts/src/services/genshinAssets/fit/fitInterfaceClips.ts`                             | —                      | 1 file   |
