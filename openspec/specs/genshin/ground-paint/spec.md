@@ -1,6 +1,6 @@
 ## Purpose
 
-The ground's colour painted in layers, as the game's terrain blends its own — grass, bare earth, sand, snow, path and rock. Where they lie is a field of each layer's shares fitted from the layer the game's tiles paint each four-metre cell in `scripts/src/services/genshinAssets/fit/fitGroundLayerField.ts`, since the game places its layers by cell and never by slope; a rule of the slope, the height or a path's distance lays a layer over the field only where a biome has one. The layers' weights are solved per vertex in the terrain's worker, as the game holds its weights per texel, so the colour the ground morphs toward at the next level is painted the same way `packages/genshin-world/src/workers/terrainTile.worker.ts`.
+The ground's colour painted in layers, as the game's terrain blends its own — grass, bare earth, sand, snow, path and rock. Where they lie is a field of each layer's shares fitted from the layer the game's tiles paint each four-metre cell, since the game places its layers by cell and never by slope; a rule of the slope, the height or a path's distance lays a layer over the field only where a biome has one. The layers' weights are solved per vertex in the terrain's worker, as the game holds its weights per texel, so the colour the ground morphs toward at the next level is painted the same way.
 
 ## Requirements
 
@@ -12,7 +12,7 @@ The ground SHALL be painted in layers of grass, bare earth, sand, snow, path and
 
 - **GIVEN** a point on the ground is painted
 - **WHEN** its layers' weights are read
-- **THEN** the weights sum to one `packages/genshin-engine/src/terrain/createGroundLayerWeights.ts`
+- **THEN** the weights sum to one
 
 ### Requirement: Layers follow the game's cell painting, not the slope
 
@@ -22,7 +22,7 @@ Each layer's share at a place SHALL follow the layer the game paints that cell i
 
 - **GIVEN** a steep place whose cells the game paints as grass, in a biome with no slope rule
 - **WHEN** the ground is painted
-- **THEN** the place is grass rather than rock `packages/genshin-engine/src/terrain/createGroundLayerWeights.ts`
+- **THEN** the place is grass rather than rock
 
 ### Requirement: A biome's slope, height and path rules apply only where it has them
 
@@ -32,7 +32,7 @@ A biome's slope, height and path rules SHALL lay their layer over the field only
 
 - **GIVEN** Windrise's ground is painted
 - **WHEN** a steep slope is reached
-- **THEN** no slope rule changes the field's layers `packages/genshin-world/src/services/windrise/createWindriseGroundPaint.ts`
+- **THEN** no slope rule changes the field's layers
 
 ### Requirement: Each rule takes its share from the layers laid before it
 
@@ -42,13 +42,13 @@ Each rule SHALL take its share from the layers already laid under it, so the las
 
 - **GIVEN** a cliff is steep enough for a rock rule
 - **WHEN** the layers are laid
-- **THEN** rock covers the cliff over the layers beneath it `packages/genshin-engine/src/terrain/createGroundLayerWeights.ts`
+- **THEN** rock covers the cliff over the layers beneath it
 
 #### Scenario: Path lies over sand on a beach road
 
 - **GIVEN** a beach road crosses sand
 - **WHEN** the layers are laid
-- **THEN** the path covers the sand along the road `packages/genshin-engine/src/terrain/createGroundLayerWeights.ts`
+- **THEN** the path covers the sand along the road
 
 ### Requirement: A path is full within half its width and fades past its falloff
 
@@ -58,13 +58,13 @@ A path's layer SHALL be full within half the path's width and SHALL fade out to 
 
 - **GIVEN** a point lies within half the path's width of its segment
 - **WHEN** the path's share is read
-- **THEN** the path's share is full `packages/genshin-engine/src/terrain/createGroundLayerWeights.ts`
+- **THEN** the path's share is full
 
 #### Scenario: Path gives nothing past its falloff
 
 - **GIVEN** a point lies past the path's falloff from its segment
 - **WHEN** the path's share is read
-- **THEN** the path gives none `packages/genshin-engine/src/terrain/createGroundLayerWeights.ts`
+- **THEN** the path gives none
 
 ### Requirement: Each layer's colour varies across seeded patches
 
@@ -74,7 +74,7 @@ Each layer's colour SHALL turn between its two colours across patches of its sca
 
 - **GIVEN** a ground is painted with a seed
 - **WHEN** it is painted again with the same seed
-- **THEN** the same patches appear in the same places `packages/genshin-engine/src/terrain/createGroundPaintColor.ts`
+- **THEN** the same patches appear in the same places
 
 ### Requirement: Weights are solved per vertex off the main thread
 
@@ -84,7 +84,7 @@ The layers' weights SHALL be solved per vertex in the terrain's worker, not per 
 
 - **GIVEN** a terrain tile is loaded
 - **WHEN** its ground is painted
-- **THEN** the weights are solved in the worker at each vertex `packages/genshin-world/src/workers/terrainTile.worker.ts`
+- **THEN** the weights are solved in the worker at each vertex
 
 ### Requirement: A morphing tile paints the colour its next level paints
 
@@ -94,7 +94,7 @@ A tile morphing to the next level SHALL morph toward the colour that level paint
 
 - **GIVEN** a tile is morphing to the next level of detail
 - **WHEN** the morph runs
-- **THEN** the colour morphs toward the colour the next level paints `packages/genshin-world/src/workers/terrainTile.worker.ts`
+- **THEN** the colour morphs toward the colour the next level paints
 
 ### Requirement: Grass grows only where the grass layer dominates
 
@@ -120,7 +120,7 @@ Each ground's layer field SHALL be fitted from its terrain tiles' cells as a gri
 
 - **GIVEN** a grid node is not reached by any cell
 - **WHEN** the field is fitted
-- **THEN** the node takes the shares of its nearest reached node `scripts/src/services/genshinAssets/fit/computeGroundLayerField.ts`
+- **THEN** the node takes the shares of its nearest reached node
 
 ### Requirement: A region without exported base maps waits for its layer colours
 
@@ -130,10 +130,12 @@ A region whose base maps are not exported SHALL keep its layer colours unpainted
 
 - **GIVEN** a region's base maps are not exported
 - **WHEN** its layers are fitted
-- **THEN** its layer colours are left unpainted until its base maps are exported `scripts/src/services/genshinAssets/fit/fitGroundLayerColours.ts`
+- **THEN** its layer colours are left unpainted until its base maps are exported
 
 ## Open
 
 - [ ] **The game places its layers by cell, never by slope** — no source yet: no checked game data shows that placement ignores slope.
 - [ ] **No grass blade grows on earth, rock, sand or path** — no source yet: no vegetation placement check is cited here.
 - [ ] **Flowers grow only where the weights are nearly all grass** — no source yet: no scatter placement check is cited here.
+- [ ] **The layer field is fitted from the layer the game's tiles paint each four-metre cell** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The layers' weights are solved per vertex in the terrain's worker** — no source yet: game data or a snapshot that holds this behaviour
