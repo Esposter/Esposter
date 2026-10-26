@@ -64,4 +64,4 @@ flowchart LR
 - [ ] **The game's stick stands 87 units further in on a 19.5:9 recording and 95 on a 20:9 one** — no source yet: the recordings `HqQob991B8Q` and `quYgZtHhIa4` are not in `~/Esposter.noindex/genshin-parity/captures/`.
 - [ ] **The game's touch layout has no button to descend** — no source yet: no frame of `touch-controls-mobile.mkv` is recorded as showing the layout's buttons.
 - [ ] **The held stick and the 16:9 recording's 199.5 and 172.5 units** — no source yet: the recordings `d9ZWM3cAlf0`, `HqQob991B8Q` and `quYgZtHhIa4` are not in `~/Esposter.noindex/genshin-parity/captures/`, so their frame counts and measures are not read back.
-- [ ] **The stick stands 227.5 units in on a 19.5:9 window and 235.5 on 20:9** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The stick stands 227.5 units in on a 19.5:9 window and 235.5 on 20:9** — no source yet: the touch layout's reference still in `~/Esposter/genshin-parity/references/`, not yet measured at 19.5:9 and 20:9.
