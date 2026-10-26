@@ -74,17 +74,15 @@ Fudou Style Vacuum Slugger SHALL strike a circle and set a Windmuster Iris on ea
 - **WHEN** the cast ends
 - **THEN** no Windmuster Iris is set
 
-### Requirement: Heizou's hits deal the poise the wiki gives them
+### Requirement: Heizou's hits deal no poise
 
-Heizou's strikes, charged attack, plunges, press, hold and burst SHALL deal the poise the wiki gives each of them, and his burst's aura check SHALL deal none. The press and hold's poise rises with the Declension stacks they hold, which the design leaves open.
+Heizou's strikes, charged attack, plunges, skill and burst SHALL deal no poise.
 
-#### Scenario: A hit deals its wiki poise
+#### Scenario: A hit deals no poise
 
 - **GIVEN** Heizou is the character on the field
 - **WHEN** any of his hits lands
-- **THEN** it deals the poise the wiki gives that hit
-- **AND** his burst's aura check deals no poise
-
+- **THEN** it deals no poise
 
 ### Requirement: Fourth constellation regenerates Energy on each aura check tag
 

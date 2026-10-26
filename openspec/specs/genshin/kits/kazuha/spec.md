@@ -37,15 +37,15 @@ Chihayaburu SHALL release as a press when tapped and as a hold when held for hal
 - **THEN** Chihayaburu releases as its hold
 - **AND** the half-second threshold stays provisional until a recording settles it
 
-### Requirement: Skill, burst and collision deal the wiki's poise
+### Requirement: Skill, burst and collision deal no poise
 
-Kazuha's skill, burst and collision SHALL deal the wiki's poise for each hit: 150 for the press, 300 for the hold, 250 for the burst's first hit, 25 for the collision.
+Kazuha's skill, burst and collision SHALL deal no poise, a provisional value until a recording settles it.
 
-#### Scenario: A hit from the skill, burst or collision deals its wiki poise
+#### Scenario: A hit from the skill, burst or collision deals no poise
 
 - **GIVEN** Kazuha is on the field
 - **WHEN** a hit from his skill, his burst or his collision lands
-- **THEN** it deals the poise the wiki gives that hit
+- **THEN** it deals no poise
 
 ### Requirement: Kazuha Slash raises an Autumn Whirlwind
 
