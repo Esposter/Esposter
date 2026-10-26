@@ -12,21 +12,25 @@ import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 const CONNECTOR_FIELD_RADIUS = 10;
 const CONNECTOR_AHEAD_METRES = 5;
 
+// Constellation 1 raises the After-Sales Service Rounds by one, as gcsim (MIT) dori/cons.go's c1 does
+const CONSTELLATION_1 = 1;
+
 export const DORI_CHARACTER_ID = 10_000_068;
 
 // Dori's behaviour: Alcazarzaray's Exactitude casts the Connector's field ahead of her, each of whose ticks strikes as a
 // Summon from where it was cast. Her healing, energy regeneration, self-infusion and passives are not built: the healing
 // And energy wait on a field that heals on its own clock, and the self-infusion and the passives wait on hooks the kit
 // Does not yet offer
-// Constellation 1 needs the Troubleshooter Shots' After-Sales Service Rounds, which the kit does not build
 // Constellation 2 needs the Jinni's healing and its Toop shot, which wait on the Jinni's own clock to heal
 // Constellation 4 needs the buffs on the Jinni's connected member by its HP and Energy, which wait on the same healing
 // Constellation 6 needs Spirit-Warding Lamp's Electro infusion and Troubleshooter Cannon's shots, which are not built
-export const createDoriKitBehaviour = ({ readHit, readSeconds }: KitRecordReader): KitBehaviour => {
+export const createDoriKitBehaviour = ({ kit, readHit, readSeconds }: KitRecordReader): KitBehaviour => {
   const connector = readHit("connector");
   const connectorFirstTickSeconds = readSeconds("connectorFirstTick");
   const connectorTickIntervalSeconds = readSeconds("connectorTickInterval");
   const connectorSeconds = readSeconds("connector");
+  // The skill's last hit is its After-Sales Service Round's second, which Constellation 1's extra round lands again
+  const afterSalesRound = kit.elementalSkill.hits.at(-1);
   return {
     burst: {
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
@@ -42,6 +46,13 @@ export const createDoriKitBehaviour = ({ readHit, readSeconds }: KitRecordReader
           secondsRemaining: connectorSeconds,
           tickIntervalSeconds: connectorTickIntervalSeconds,
         });
+      },
+    },
+    // The extra round is cast from the skill's spot as the press starts, as the skill's own rounds land from it
+    skill: {
+      onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
+        if (afterSalesRound && combatant.constellationCount >= CONSTELLATION_1)
+          castKitSummon(kitEffectState, body, combatant, [afterSalesRound], { attackTag: AttackTag.ElementalSkill });
       },
     },
   };

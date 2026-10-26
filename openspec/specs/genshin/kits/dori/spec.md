@@ -1,6 +1,6 @@
 ## Purpose
 
-Dori's kit as built: her three strikes, a provisional charged attack, a collision and two plunges, Troubleshooter Shot with its After-Sales Service Round, and Alcazarzaray's Exactitude's Connector field, with her healing, energy and passives left unbuilt.
+Dori's kit as built: her three strikes, a provisional charged attack, a collision and two plunges, Troubleshooter Shot with its After-Sales Service Round and Constellation 1's extra round, and Alcazarzaray's Exactitude's Connector field, with her healing, energy, passives and Constellations 2, 4 and 6 left unbuilt.
 
 ## Requirements
 
@@ -41,6 +41,22 @@ Troubleshooter Shot SHALL deal its hit when pressed, and its After-Sales Service
 - **GIVEN** Troubleshooter Shot was pressed and its cooldown has not ended
 - **WHEN** the player presses it again
 - **THEN** it does not cast
+
+### Requirement: Constellation 1 adds a third After-Sales Service Round
+
+From constellation 1, a press of Troubleshooter Shot SHALL land one more After-Sales Service Round hit, 85 frames after the press, the same frame as the second round.
+
+#### Scenario: Constellation 1 adds a round at the second round's frame
+
+- **GIVEN** Dori is at constellation 1 and is the character on the field
+- **WHEN** the player presses Troubleshooter Shot
+- **THEN** a third round hit lands 85 frames after the press
+
+#### Scenario: Below constellation 1 no round is added
+
+- **GIVEN** Dori is at constellation 0
+- **WHEN** the player presses Troubleshooter Shot
+- **THEN** only the two round hits land
 
 ### Requirement: Alcazarzaray's Exactitude's Connector field
 

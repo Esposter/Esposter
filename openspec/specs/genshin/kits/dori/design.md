@@ -2,7 +2,7 @@
 
 Dori's kit is its record and one behaviour module, `createDoriKitBehaviour`, avatar 10000068: three strikes, a charged attack, a collision and two plunges, Troubleshooter Shot with its After-Sales Service Round, and Alcazarzaray's Exactitude's Connector field. Her multipliers are read from proud skill groups 6831, 6832 and 6839; the skill's cooldown, the burst's cooldown, energy cost and duration, and the charged attack's stamina and maximum duration come from the same groups. The particles are not built.
 
-Not yet built: Continuous Healing and Energy Regeneration, which the burst's own clock of 11, 131 and every 120 frames sets and which no field can yet heal on; the Electro infusion the burst gives Dori herself, which waits on a hook that infuses the kit's own character; and the passives and constellations, which wait on the passive hook.
+Not yet built: Continuous Healing and Energy Regeneration, which the burst's own clock of 11, 131 and every 120 frames sets and which no field can yet heal on; the Electro infusion the burst gives Dori herself, which waits on a hook that infuses the kit's own character; and the passives and Constellations 2, 4 and 6, which wait on that healing, the self-infusion and the passive hook.
 
 ## Decisions
 
@@ -10,6 +10,7 @@ Not yet built: Continuous Healing and Energy Regeneration, which the burst's own
 - **The Connector ticks run to 772 frames, past the table's 12 seconds.** gcsim runs its 32 ticks to 12.9 seconds on their own schedule, with no duration check, so the field lasts until the last of them, as gcsim has it.
 - **Dori's Troubleshooter Shot takes the wiki's 30, her Connector the wiki's 8, and her plunge collision takes the wiki's 35.** gcsim gives the Shot and the Connector no poise, and no plunge file for the collision, so the Shot takes the wiki's 30, the collision the wiki's 35, and the Connector the wiki's 8.
 - **The After-Sales Service Round lands from the skill's spot.** Its two hits are the skill's own, at 72 and 85 frames, past its 44-frame animation, where gcsim queues them off the first hit's landing, which is the same moment as the skill's 26-frame hitmark.
+- **Constellation 1's extra round is cast from the skill's spot as the press starts.** gcsim's `skillSalesHitmarks` (`dori/skill.go`) gives a third round the same 59 frames past the skill's hitmark as its second, so it lands at the second round's 85 frames after the press. The kit summons the skill's last hit there, with the body as the skill's own rounds are.
 
 ## Key files
 
