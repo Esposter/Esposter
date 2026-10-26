@@ -68,14 +68,14 @@ The sky is the scene's background node (`createSkyNode`), drawn behind everythin
 
 ## Sources
 
-- [Time](https://genshin-impact.fandom.com/wiki/Time), Genshin Impact Wiki: one in-game minute per real second, dawn, midday, dusk and midnight at six-hour marks, and the twenty-four-minute cycle. The page reads "time passes at the rate of one in-game minute per real-world second."
+- [Time](https://genshin-impact.fandom.com/wiki/Time), Genshin Impact Wiki: one in-game minute per real second, dawn, midday, dusk and midnight at six-hour marks, and the twenty-four-minute cycle.
 - [Console platform development in Genshin Impact](https://docswell.com/s/UnityJapan/KWRPQ5-210617-unity-dojo20211mihoyozhenzhongyi), Zhenzhong Yi, Unity Dojo 2021: ambient light from spherical harmonics probes, which the hemisphere colours simplify.
 - [SkyMesh](https://threejs.org/docs/pages/SkyMesh.html), three.js: the physical sky this page chooses not to use, since the game's skies are painted.
 
 ## Open
 
-- [ ] **The dusk sky is violet** — contradicted by `~/Esposter.noindex/genshin-parity/captures/world-weather-turn.dusk.mkv`: its frame at 2 s reads indigo, not violet.
-- [ ] **The afternoon and night read as a high clear blue and deep blue under a large moon** — no source yet: no afternoon or night frame was read.
-- [ ] **Windrise loads at three in the afternoon, its reference hour** — checked against `~/Esposter/genshin-parity/references/windrise-statue-day.png`: a daytime frame with no clock or sun in it, and `~/Esposter/genshin-parity/references/windrise-environment/README.md` reads Windrise's environment around 15:00 but names no screenshot's hour; the claim is not settled by either because neither gives the hour its screenshots were taken.
-- [ ] **The sun rises due east at six and sets due west at eighteen** — no source yet: the Time page is not in the cache, and no frame's sun bearing was read. Checked the Time page, now in the cache: it gives dawn at 06:00 and dusk at 18:00, and names no sun, its rising or its setting.
+- [ ] **The dusk sky is violet, and the afternoon and night read as a high clear blue and deep blue under a large moon** — no source yet: the dusk frame reads indigo rather than violet, and no afternoon or night frame was read.
+- [ ] **One in-game minute passes per real second, with dawn at six, noon at twelve, dusk at eighteen and midnight at twenty-four** — no source yet: the wiki's Time page is not in the cache, and the time clip `~/Esposter.noindex/genshin-parity/captures/yt-a4_J84iMqR0-time.mp4` was not read.
+- [ ] **Windrise loads at three in the afternoon, its reference hour** — no source yet: the in-game hour of its reference screenshots was not read here.
+- [ ] **The sun rises due east at six and sets due west at eighteen** — no source yet: the Time page is not in the cache, and no frame's sun bearing was read.
 - [ ] **The painted sky draws as the game's own sky shader does, ported from its decompiled programs** — no source yet: the decompiled programs are not in the cache, and no in-world sky frame was compared.
