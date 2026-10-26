@@ -1,6 +1,6 @@
 ## Purpose
 
-Prune's kit as built: her normal attacks, charged attack, plunges, Anemo skill press and burst's initial hit, with her skill's Clang Clang convert, the burst's Witchlure Bell DoT and her passives left waiting on their hooks.
+Prune's kit as built: her normal attacks, charged attack, plunges, Anemo skill press and burst's initial hit, with her skill's Clang Clang convert and her passives left waiting on their hooks, and the burst's Witchlure Bell DoT built on the nearest enemy.
 
 ## Requirements
 
@@ -51,16 +51,27 @@ Prune's burst SHALL cost 70 energy, deal Anemo damage in a 6.5-metre circle on t
 - **WHEN** the player casts the burst
 - **THEN** the burst does not start
 
-### Requirement: Clang Clang convert and Witchlure Bell not yet built
+### Requirement: Witchlure Bell damage over time
 
-Prune's Clang Clang convert on a second press, the burst's Witchlure Bell damage over time and her passives SHALL NOT take effect.
+Prune's burst SHALL leave the Witchlure Bell, which ticks Anemo damage over time on the enemy nearest her within 10 metres: its first tick 137 frames after the cast, each later tick 117 frames after the last, for the burst's 813 frames.
+
+#### Scenario: Bell ticks on the nearest enemy
+
+- **GIVEN** an enemy stands within 10 metres of Prune
+- **WHEN** a tick falls
+- **THEN** the damage over time lands on the nearest enemy within 10 metres
+
+#### Scenario: Bell ticks nothing with no enemy in reach
+
+- **GIVEN** no enemy stands within 10 metres of Prune
+- **WHEN** a tick falls
+- **THEN** no damage over time is dealt
+
+### Requirement: Clang Clang convert and passives not yet built
+
+Prune's Clang Clang convert on a second press and her passives SHALL NOT take effect.
 
 #### Scenario: Second press does not convert
 
 - **WHEN** the player presses Prune's skill a second time
 - **THEN** no Clang Clang convert takes effect
-
-#### Scenario: Burst leaves no bell damage
-
-- **WHEN** the player casts Prune's burst
-- **THEN** no Witchlure Bell damage over time is dealt
