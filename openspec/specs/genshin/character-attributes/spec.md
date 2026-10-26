@@ -1,6 +1,6 @@
 ## Purpose
 
-The game's characters, weapons and artifacts as data in the game's own shapes, read from the community's dump of the game's tables by genshin:assets stats (`~/Esposter/genshin-parity/text/ExcelBinOutput/`) and fetched from the hosted game data as the world opens (`packages/genshin-world/src/generated/gameDataLock.json`), and a character's attributes summed from them as the game sums them — each base grown along its curve and raised by its ascension, a weapon's and artifacts' lines added, and Max HP, ATK and DEF each built from its base, percentage and flat.
+The game's characters, weapons and artifacts as data in the game's own shapes, read from the community's dump of the game's tables by genshin:assets stats (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/`) and fetched from the hosted game data as the world opens (`packages/genshin-world/src/generated/gameDataLock.json`), and a character's attributes summed from them as the game sums them — each base grown along its curve and raised by its ascension, a weapon's and artifacts' lines added, and Max HP, ATK and DEF each built from its base, percentage and flat.
 
 ## Requirements
 
@@ -101,7 +101,7 @@ A character's region SHALL be the region its association names, with the Fatui c
 
 ### Requirement: The Traveler has no element until it resonates with a statue
 
-The Traveler SHALL have no element until it resonates with a statue (`~/Esposter/genshin-parity/text/ExcelBinOutput/AvatarSkillDepotExcelConfigData.json`, the Traveler's default depots 501 and 701, whose skills carry no `energySkill`).
+The Traveler SHALL have no element until it resonates with a statue (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/AvatarSkillDepotExcelConfigData.json`, the Traveler's default depots 501 and 701, whose skills carry no `energySkill`).
 
 #### Scenario: Traveler before resonance has no element
 
@@ -118,9 +118,9 @@ The Traveler SHALL have no element until it resonates with a statue (`~/Esposter
 - [ ] **The Fatui count as Snezhnaya's region** — no source yet: the wiki's count is not cached, and the dump's two Fatui associations name no region of their own.
 - [ ] **The Snezhnaya association names Snezhnaya's region** — contradicted by `scripts/src/services/genshinAssets/stats/constants.ts`: maps only `ASSOC_TYPE_FATUI`, not the Snezhnaya associations the dump uses.
 - [ ] **The Traveler has no element in the world before its statue resonance** — no source yet: no test holds the Traveler's element before resonance; the element test holds only its alignment mark.
-- [ ] **Max HP, ATK and DEF are each built from base, percentage and flat** — no source yet: the wiki's Attributes page (title Attributes) is not in the wiki cache, and the Attributes tab in `~/Esposter/genshin-parity/references/character-attributes.png` (Xilonen at level 90) is not yet summed from her lines.
-- [ ] **A weapon's ATK percentage raises the character's and the weapon's ATK bases** — no source yet: the wiki's Attributes page (title Attributes) is not in the wiki cache, and no weapon's ATK percentage is yet summed against an Attributes tab, the reference `~/Esposter/genshin-parity/references/character-attributes.png` among them.
-- [ ] **Base attributes grow along the level curve and rise with ascension** — no source yet: the dump's `AvatarCurveExcelConfigData.json` and `AvatarPromoteExcelConfigData.json` in `~/Esposter/genshin-parity/text/ExcelBinOutput/`, on disk, are not yet read for a base at a level or a phase (the weapon's `WeaponCurveExcelConfigData.json` and `WeaponPromoteExcelConfigData.json` alike).
-- [ ] **Every line a character carries counts toward its attributes** — no source yet: the Attributes tab in `~/Esposter/genshin-parity/references/character-attributes.png` (Xilonen at level 90) is not yet summed from every line she carries.
-- [ ] **Four pieces of a set count both the two-piece and four-piece bonuses** — no source yet: the wiki's Artifact/Sets page (title Artifact/Sets) is not on disk, and the dump's `ReliquarySetExcelConfigData.json` in `~/Esposter/genshin-parity/text/ExcelBinOutput/` is not yet read for a set's two- and four-piece bonuses.
-- [ ] **A character's region is the one its association names** — contradicted by `~/Esposter/genshin-parity/text/ExcelBinOutput/FetterInfoExcelConfigData.json`: five characters name Snezhnaya associations the map leaves out.
+- [ ] **Max HP, ATK and DEF are each built from base, percentage and flat** — no source yet: the wiki's Attributes page (title Attributes) is not in the wiki cache, and the Attributes tab in `~/Esposter.noindex/genshin-parity/references/character-attributes.png` (Xilonen at level 90) is not yet summed from her lines.
+- [ ] **A weapon's ATK percentage raises the character's and the weapon's ATK bases** — no source yet: the wiki's Attributes page (title Attributes) is not in the wiki cache, and no weapon's ATK percentage is yet summed against an Attributes tab, the reference `~/Esposter.noindex/genshin-parity/references/character-attributes.png` among them.
+- [ ] **Base attributes grow along the level curve and rise with ascension** — no source yet: the dump's `AvatarCurveExcelConfigData.json` and `AvatarPromoteExcelConfigData.json` in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/`, on disk, are not yet read for a base at a level or a phase (the weapon's `WeaponCurveExcelConfigData.json` and `WeaponPromoteExcelConfigData.json` alike).
+- [ ] **Every line a character carries counts toward its attributes** — no source yet: the Attributes tab in `~/Esposter.noindex/genshin-parity/references/character-attributes.png` (Xilonen at level 90) is not yet summed from every line she carries.
+- [ ] **Four pieces of a set count both the two-piece and four-piece bonuses** — no source yet: the wiki's Artifact/Sets page (title Artifact/Sets) is not on disk, and the dump's `ReliquarySetExcelConfigData.json` in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/` is not yet read for a set's two- and four-piece bonuses.
+- [ ] **A character's region is the one its association names** — contradicted by `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/FetterInfoExcelConfigData.json`: five characters name Snezhnaya associations the map leaves out.

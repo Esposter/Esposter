@@ -64,7 +64,7 @@ With no address, or an index that fails to load (which is logged), the host has 
 
 ## Sources
 
-- The terms bundled with each official model, read from each release's own file: 「请勿二次配布」 or 「请勿二配」, "do not redistribute", the releases whose terms are a readme adding 「以及拆取部件以用于改造其他模型」, "nor take parts to modify other models", beside the uses they forbid and miHoYo as the model's provider and holder of its final interpretation (`~/Esposter.noindex/character-packs/extracted/10000030/readme【一定要看】.txt`, "模型提供：miHoYo", "最终解释权归属：miHoYo"). The credit they carry is shown as part of their text (`~/Esposter.noindex/character-packs/extracted/10000030/readme【一定要看】.txt`, `~/Esposter/character-packs/extracted/10000031/菲谢尔/readme【一定要看】.txt`, `~/Esposter.noindex/character-packs/extracted/10000036/readme【一定要看】.txt`).
+- The terms bundled with each official model, read from each release's own file: 「请勿二次配布」 or 「请勿二配」, "do not redistribute", the releases whose terms are a readme adding 「以及拆取部件以用于改造其他模型」, "nor take parts to modify other models", beside the uses they forbid and miHoYo as the model's provider and holder of its final interpretation (`~/Esposter.noindex/character-packs/extracted/10000030/readme【一定要看】.txt`, "模型提供：miHoYo", "最终解释权归属：miHoYo"). The credit they carry is shown as part of their text (`~/Esposter.noindex/character-packs/extracted/10000030/readme【一定要看】.txt`, `~/Esposter.noindex/character-packs/extracted/10000031/菲谢尔/readme【一定要看】.txt`, `~/Esposter.noindex/character-packs/extracted/10000036/readme【一定要看】.txt`).
 
 ## Open
 
