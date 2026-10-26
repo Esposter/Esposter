@@ -6,7 +6,7 @@ Linnea's kit as built: her three strikes, charged shot, plunges, Lumi's skill hi
 
 ### Requirement: Linnea's strikes, charged shot and skill timings
 
-Linnea's three strikes, her charged shot and her skill SHALL land their hits on provisional timings borrowed from a bow user of her role.
+Linnea's three strikes, her charged shot and her skill SHALL land their hits on provisional timings, from a donor the design does not yet name for most of them.
 
 #### Scenario: Strike lands on its provisional timing
 
@@ -25,12 +25,12 @@ Linnea's charged shot SHALL cost no stamina, provisionally.
 
 ### Requirement: Skill's four hits
 
-Linnea's skill SHALL deal four hits from its three Lumi labels, and SHALL leave no field.
+Linnea's skill SHALL deal three hits from its three Lumi labels, and SHALL leave no field.
 
-#### Scenario: Skill deals four hits
+#### Scenario: Skill deals three hits
 
 - **WHEN** the player uses Linnea's skill
-- **THEN** four hits land on the enemies in reach
+- **THEN** three hits land on the enemies in reach
 - **AND** no field is left behind
 
 ### Requirement: Burst heals without a hit
