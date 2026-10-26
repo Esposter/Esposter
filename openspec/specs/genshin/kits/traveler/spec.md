@@ -46,12 +46,17 @@ The Traveler's skill SHALL have a 5-second cooldown and one charge, and her burs
 
 ### Requirement: The Traveler's poise
 
-The Traveler's skill and burst SHALL deal no poise damage, and her strikes, charged attack and plunge collision SHALL carry provisional poise.
+The Traveler's skill SHALL deal no poise damage, her burst SHALL carry the wiki's 13 poise, and her strikes, charged attack and plunge collision SHALL carry provisional poise.
 
-#### Scenario: Skill and burst carry no poise
+#### Scenario: Skill carries no poise
 
-- **WHEN** the Traveler's skill or burst hits an enemy
+- **WHEN** the Traveler's skill hits an enemy
 - **THEN** the enemy's poise is not reduced
+
+#### Scenario: Burst carries 13 poise
+
+- **WHEN** the Traveler's burst's Tornado DMG hits an enemy
+- **THEN** the enemy's poise is reduced by 13
 
 ### Requirement: The Anemo set's Constellations 2 and 6
 
