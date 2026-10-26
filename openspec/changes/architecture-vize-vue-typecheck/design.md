@@ -36,7 +36,7 @@ The choice is taken at the pilot gate, against which in-process uses `scripts/` 
 
 ### Pilot before scope
 
-The pilot is one small `vue-tsc` package, chosen by its size: `packages/vue-canvas-frame-headless` has one composable and one component. Its gate is that the mapper's diagnostics match `vue-tsc`'s on the same program, every diagnostic, both the error set and the locations. A mismatch is recorded in this design before the next package starts, and a mismatch that is a `vize` or `tsrs` defect is reported upstream.
+`packages/vue-canvas-frame-headless` was proposed as the pilot for its size, but it is not a valid one. Its `typecheck` is `tsrs --fast`, not `vue-tsc`, and it has no `.vue` file: its only `defineComponent` sits in a browser test fixture. A diagnostic match on it would compare two outputs with no Vue source behind them. The pilot is therefore an open decision, recorded as task 2.2: a small package that runs `vue-tsc` today and has real `.vue` files. Its gate is that the mapper's diagnostics match `vue-tsc`'s on the same program, every diagnostic, both the error set and the locations. A mismatch is recorded in this design before the next package starts, and a mismatch that is a `vize` or `tsrs` defect is reported upstream.
 
 ### `apps/web` last
 
@@ -59,16 +59,16 @@ flowchart TD
 
 ## Key files
 
-| File                                                       | Role                                                                               |
-| :--------------------------------------------------------- | :--------------------------------------------------------------------------------- |
-| `packages/genshin-interface/package.json`                  | `typecheck` runs `vue-tsc`                                                         |
-| `packages/genshin-world/package.json`                      | `typecheck` runs `vue-tsc`                                                         |
-| `packages/vue-phaserjs/package.json`                       | `typecheck` runs `vue-tsc`                                                         |
-| `packages/vue-canvas-frame-headless/package.json`          | the proposed pilot; its `typecheck` is `tsrs` today, and has `.vue` files to check |
-| `apps/web/package.json`                                    | `typecheck` is `nuxt typecheck` followed by the service-worker `tsrs` check        |
-| `pnpm-workspace.yaml`                                      | the `typescript` override onto `typescript-native-bridge`, and the `vue-tsc` pin   |
-| `openspec/specs/architecture/monorepo-tooling/design.md`   | owns the TypeScript compiler section, rewritten as built at archive                |
-| `openspec/changes/architecture-rust-typescript-toolchain/` | the change this one depends on, for every plain `tsc` path                         |
+| File                                                       | Role                                                                                                               |
+| :--------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-interface/package.json`                  | `typecheck` runs `vue-tsc`                                                                                         |
+| `packages/genshin-world/package.json`                      | `typecheck` runs `vue-tsc`                                                                                         |
+| `packages/vue-phaserjs/package.json`                       | `typecheck` runs `vue-tsc`                                                                                         |
+| `packages/vue-canvas-frame-headless/package.json`          | the proposed pilot, rejected: its `typecheck` is `tsrs` today, and it has no `.vue` file (see the pilot paragraph) |
+| `apps/web/package.json`                                    | `typecheck` is `nuxt typecheck` followed by the service-worker `tsrs` check                                        |
+| `pnpm-workspace.yaml`                                      | the `typescript` override onto `typescript-native-bridge`, and the `vue-tsc` pin                                   |
+| `openspec/specs/architecture/monorepo-tooling/design.md`   | owns the TypeScript compiler section, rewritten as built at archive                                                |
+| `openspec/changes/architecture-rust-typescript-toolchain/` | the change this one depends on, for every plain `tsc` path                                                         |
 
 ## Notes
 

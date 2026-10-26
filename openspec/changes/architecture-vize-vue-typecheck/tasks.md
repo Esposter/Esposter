@@ -8,10 +8,11 @@
 ## 2. Decide the compiler the Vue checks run on
 
 - [ ] 2.1 Choose between moving `typescript` to the 7.1 beta and aliasing a second copy for the Vue packages, against the `scripts/` in-process uses. Verified by a recorded choice in `design.md`, replacing "The compiler for the proven path".
+- [ ] 2.2 Choose the pilot: one small package whose `typecheck` runs `vue-tsc` today and that has real `.vue` files, in place of `packages/vue-canvas-frame-headless`, which runs `tsrs` and has none. Verified by a recorded choice in `design.md`'s pilot paragraph.
 
 ## 3. Pilot one small Vue package
 
-- [ ] 3.1 Run `vize` through the chosen compiler on `packages/vue-canvas-frame-headless`, and compare its diagnostics with `vue-tsc` on the same program. Verified by a diff of the two diagnostic lists recorded in `design.md`, empty on both the error set and the locations.
+- [ ] 3.1 Run `vize` through the chosen compiler on the pilot chosen in 2.2, and compare its diagnostics with `vue-tsc` on the same program. Verified by a diff of the two diagnostic lists recorded in `design.md`, empty on both the error set and the locations.
 - [ ] 3.2 Record any mismatch in `design.md` before the next package starts, and report upstream any mismatch that is a `vize` or `tsrs` defect. Verified by each mismatch appearing in `design.md` with its outcome.
 
 ## 4. Extend to the remaining Vue packages
