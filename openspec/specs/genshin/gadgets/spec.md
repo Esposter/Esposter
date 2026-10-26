@@ -96,5 +96,4 @@ Gadgets SHALL NOT yet be equipped to the quick-use key or used from the world.
 
 ## Open
 
-- [ ] **A cooldown keeps counting down while the world is paused, as the game's do** — no source yet: the wiki's Gadget page is not in `~/Esposter.noindex/cache/genshin-wiki/`, so the game's pause rule is not checked.
 - [ ] **Z is bound to the quick-use gadget** — no source yet: game data or a snapshot that holds this behaviour

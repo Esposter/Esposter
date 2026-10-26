@@ -34,7 +34,7 @@ The rest of the config's widgets, the cameras, the avatar attachments, the water
 
 - **Each cooldown is a whole number of seconds from the config.** A gadget's cooldown is its `coolDown`, and its cooldown on a failed use its `coolDownOnFail` (`~/Esposter.noindex/genshin-parity/text/BinOutput/Widget/ConfigWidget.json`, `scripts/src/services/genshinAssets/gadgets/toGadgetRows.ts`). A field the config omits reads as zero, so a collector has no cooldown on a failed use (`~/Esposter.noindex/genshin-parity/text/BinOutput/Widget/ConfigWidget.json`, the collector `220004`, which names a `coolDown` and no `coolDownOnFail`).
 - **A group is shared.** A gadget with a cooldown group shares its cooldown with every gadget of that group, and a gadget with none shares with no other, so it is kept under its own id (`packages/genshin-world/src/services/gadget/getCooldownGroup.ts`). The game's groups are small numbers and the ids are not, so the two never meet (`~/Esposter.noindex/genshin-parity/text/BinOutput/Widget/ConfigWidget.json`, groups from 1 to 18 against widget ids from 220001).
-- **A cooldown is read, not ticked.** The group is kept as the moment it is ready again (`packages/genshin-world/src/models/gadget/CooldownGroupReadyAtMap.ts`), and a gadget is ready once `now` has reached it (`packages/genshin-world/src/services/gadget/checkIsGadgetReady.ts`). A pause changes nothing in it (`packages/genshin-world/src/services/gadget/checkIsGadgetReady.ts`), so a cooldown started before a menu runs on while the menu is open, as the game's do.
+- **A cooldown is read, not ticked.** The group is kept as the moment it is ready again (`packages/genshin-world/src/models/gadget/CooldownGroupReadyAtMap.ts`), and a gadget is ready once `now` has reached it (`packages/genshin-world/src/services/gadget/checkIsGadgetReady.ts`). A pause changes nothing in it (`packages/genshin-world/src/services/gadget/checkIsGadgetReady.ts`), so a cooldown started before a menu runs on while the menu is open, as the game's do: the wiki's Gadget page says a gadget's cooldown keeps decreasing while the game is paused.
 
 ## Key files
 
@@ -54,10 +54,9 @@ The rest of the config's widgets, the cameras, the avatar attachments, the water
 ## Sources
 
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `BinOutput/Widget/ConfigWidget.json`, the widget config with each widget's type, cooldowns and cooldown group, and `ExcelBinOutput/GadgetExcelConfigData.json`, which names each spawned gadget. Both are read from the dump outside the repository and nothing from them is committed.
-- [Gadget](https://genshin-impact.fandom.com/wiki/Gadget), Genshin Impact Wiki: the gadgets as the bag's tab, and the cooldowns that run while the world is paused.
+- [Gadget](https://genshin-impact.fandom.com/wiki/Gadget), Genshin Impact Wiki: the gadgets as the bag's tab, and the cooldowns that run while the world is paused: "gadget cooldowns will continue to decrease even while the game is paused".
 
 ## Open
 
-- [ ] **A cooldown counts on through a paused world, as the game's do** — no source yet: the wiki's Gadget page, which the Sources name for the paused cooldowns, is not in `~/Esposter.noindex/cache/genshin-wiki/`.
 - [ ] **The success and failure crystals belong to each gather point type** — no source yet: the two grass crystals are named in `GadgetExcelConfigData.json`, but no table checked ties them to a gather point type of the one-off detector.
 - [ ] **Group numbers from 1 to 18 never meet widget ids from 220001** — contradicted by `~/Esposter.noindex/genshin-parity/text/BinOutput/Widget/ConfigWidget.json`: its widget keys include 101516, below 220001.
