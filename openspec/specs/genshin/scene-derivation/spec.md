@@ -1,6 +1,6 @@
 ## Purpose
 
-How a 3D scene is re-derived from the game's own assets, inside the recreation passes that order its unknowns. Each piece of information is sorted as exact, fieldless or on screen only and answered by the most exact query the data allows, never by a search over the frame. The witness render draws the exports through our own engine, so each stand-in is measured against the game's own data, and each is closed by the least representation that closes it: an exact value, a fitted generator or a richer kit. An open-world region is first laid out with every object at its exact place as a stand-in, then rebuilt one object at a time, each fitted against its own export.
+How a 3D scene is re-derived from the game's own assets, inside the recreation passes that order its unknowns. Each piece of information is sorted as exact, fieldless or on screen only and answered by the most exact query the data allows, never by a search over the frame. The witness render draws the exports through our own engine (`packages/genshin-world/parity/screens.ts`), so each stand-in is measured against the game's own data, and each is closed by the least representation that closes it: an exact value, a fitted generator or a richer kit. An open-world region is first laid out with every object at its exact place as a stand-in, then rebuilt one object at a time, each fitted against its own export.
 
 ## Requirements
 
@@ -151,10 +151,3 @@ A region's ground SHALL be published only when its fit holds the bar set for it 
 - [ ] **The classing of each piece, the closed-form camera, the least-representation order and the reference-camera judgement** — process rules: no code check in this pass covers them, and the solvers were not traced.
 - [ ] **Each object of a region rebuilt once, and the light, haze and sky calibrated only after every gap is within noise** — no source yet: the layout pass and the calibration order were not traced in this pass.
 - [ ] **A landmark moving more than five centimetres fails the fit** — no source yet: the five-centimetre gate was not found in `fitGroundPieces.ts` or `fitGroundPiece.ts` in this pass.
-- [ ] **The witness render draws the exports through our own engine** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A scene's inventory lists every renderer, material, texture slot and script spawn it uses** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The next loss chosen is the one that recovers the most frame error** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Each layer of a reference is scored on its own, so a change shows on the layer it changes** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The product ships only its own shaders, geometry and fitted data** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The witness render page is not among the product's contents** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A region's ground is published only once its fit holds the bar at its centre and its landmarks stand within the gate** — no source yet: game data or a snapshot that holds this behaviour
