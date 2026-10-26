@@ -42,4 +42,4 @@ Sandrone's kit is its record and one behaviour module, `createSandroneKitBehavio
 
 ## Open
 
-- [ ] **Her strikes are Physical** — no source yet: the wiki names no element for her strikes, so the Physical default stands.
+- [ ] **Her strikes are Physical** — no source yet: the wiki names no element for her strikes, so the Physical default stands. Checked the cache's Category_Sandrone_Talents.json entries: the Formule Phenomenale: Self-Evident Proposition entry describes "up to 3 consecutive strikes" with no element, its element names belong to the charged attack's Fagio, and no other cached page says Physical.
