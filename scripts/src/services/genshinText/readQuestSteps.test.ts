@@ -74,6 +74,22 @@ describe(readQuestSteps, () => {
     ]);
   });
 
+  test("reads a step's id as its sub quest's own number, not the quest's id the dump repeats in every sub quest", () => {
+    expect.hasAssertions();
+
+    const questBinary = {
+      A: [{ B: QUEST_ID, C: 100, D: TEXT_HASH, E: [{ F: "QUEST_CONTENT_COMPLETE_TALK", G: [0, 0] }] }],
+    };
+
+    expect(readQuestSteps(questBinary, QUEST_ID, checkIsText).steps).toStrictEqual([
+      {
+        id: "100",
+        objectives: [{ count: 1, kind: QuestObjectiveKind.TalkTo, targetIds: ["0"] }],
+        textId: String(TEXT_HASH),
+      },
+    ]);
+  });
+
   test("keeps every condition of a step that asks something, in the order the game lists them", () => {
     expect.hasAssertions();
 

@@ -73,8 +73,11 @@ export const readQuestSteps = (
       : [];
   const steps = sortedSubQuests.flatMap((subQuest) => {
     const numbers = Object.values(subQuest).filter((value) => typeof value === "number");
-    // A world quest's steps are its id and a number, and a city's opening sub quest's step is its own id
-    const id = numbers.find((value) => value === questId || Math.floor(value / 100) === questId);
+    // A world quest's step is the number in its quest's hundred, and a city's opening sub quest's step is its own id. The
+    // Dump repeats the quest's own id in every sub quest, so that number is read only when no step number is in the hundred
+    const id =
+      numbers.find((value) => value !== questId && Math.floor(value / 100) === questId) ??
+      numbers.find((value) => value === questId);
     const textHash = readTextHash(subQuest);
     if (id === undefined || textHash === undefined) return [];
     const objectives = readFinishConditions(subQuest).flatMap(({ parameters, type }) => {
