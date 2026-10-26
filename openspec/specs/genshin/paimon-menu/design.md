@@ -50,8 +50,8 @@ The game's pause menu, laid out as the English PC client's 1.3 still draws it at
 ## Open
 
 - [ ] **The 1.3 still draws Community and Feedback at the foot of the contents** — no source yet: the 2560 wide still is not in captures, and the 1920 wide `~/Esposter.noindex/genshin-parity/captures/menu-paimon-current.png` draws all four links instead.
-- [ ] **The 2026 frame at 25 seconds and its 30-second colours come from `yt-jHr2bERjkYc`** — no source yet: that clip is not in captures.
-- [ ] **The quit prompt's panel is 960 by 606 reference pixels under a 48% backdrop, its pills 390 by 67 and 70 pixels in** — no source yet: those sizes are not in `components/Menu/Exit/Index.vue`, and the 2026 clip is not in captures.
+- [ ] **The 2026 frame at 25 seconds and its 30-second colours come from `yt-jHr2bERjkYc`** — contradicted by `~/Esposter.noindex/genshin-parity/captures/yt-jHr2bERjkYc-logout-tech4gamers.mp4`: the clip is held there, 1920 by 1080, 56 seconds long.
+- [ ] **The quit prompt's panel is 960 by 606 reference pixels under a 48% backdrop, its pills 390 by 67 and 70 pixels in** — no source yet: those sizes are not in `components/Menu/Exit/Index.vue`, and the 2026 clip held at `~/Esposter.noindex/genshin-parity/captures/yt-jHr2bERjkYc-logout-tech4gamers.mp4` is not yet measured for them.
 - [ ] **The Audio reference's pointer rests on Output Settings** — no source yet: the reference's pointer at (1000, 663) is not matched to its row in this page's sources.
 - [ ] **The graphics quality row's default-tier words are the game's** — no source yet: the Graphics frame at 144.5 seconds is not checked against those words here.
 - [ ] **The settings rows light one at a time from 176 to 179 seconds** — no source yet: no record of the recording's row-by-row lighting is in the repo.
