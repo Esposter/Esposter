@@ -30,28 +30,27 @@ flowchart LR
 
 ## The tables
 
-`pnpm -C scripts genshin:assets home` builds two records from the game's tables in the dump and publishes them to the hosted game data as `home/blueprints` and `home/levels`, which `readHomeBlueprints` and `readHomeLevels` fetch by key. Three of them are pulled from the AnimeGameData repository into the dump and kept out of the commit, as the [forging](../forging/design.md) tables are.
+`pnpm -C scripts genshin:assets home` builds two records from the game's tables in the dump and publishes them to the hosted game data as `home/blueprints` and `home/levels`, which `readHomeBlueprints` and `readHomeLevels` fetch by key `scripts/src/services/genshinAssets/home/buildHomeRules.ts`, `packages/genshin-world/src/services/home/readHomeBlueprints.ts`, `packages/genshin-world/src/services/home/readHomeLevels.ts`. Three of them are pulled from the AnimeGameData repository into the dump and kept out of the commit, as the [forging](../forging/design.md) tables are `scripts/src/services/genshinAssets/home/constants.ts`.
 
-- **Blueprints.** `FurnitureMakeExcelConfigData`: each furnishing, its materials, its seconds and the Trust EXP its first making gives. The seconds are the table's `makeTime` read as seconds: between ten and twenty hours, the first blueprint fourteen. Each order makes one furnishing.
-- **Diagrams.** The material table's `ITEM_USE_UNLOCK_FURNITURE_FORMULA` uses. Each diagram names the furnishing it opens by its item id, and over a thousand of the blueprints have one. The few dozen that no diagram names are open from the start.
-- **Trust and Adeptal Energy.** `HomeworldLevelExcelConfigData` and `HomeWorldComfortLevelExcelConfigData`, published as one `home/levels` record: each Trust Rank's EXP, companions and store limits, and each Adeptal Energy rank's comfort and the rates its stores fill at.
+- **Blueprints.** `FurnitureMakeExcelConfigData`: each furnishing, its materials, its seconds and the Trust EXP its first making gives. The seconds are the table's `makeTime` read as seconds `scripts/src/services/genshinAssets/home/toHomeBlueprint.ts`: between ten and twenty hours, the first blueprint fourteen `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/FurnitureMakeExcelConfigData.json`. Each order makes one furnishing `packages/genshin-world/src/services/home/startHomeMake.ts`.
+- **Diagrams.** The material table's `ITEM_USE_UNLOCK_FURNITURE_FORMULA` uses. Each diagram names the furnishing it opens by its item id, and over a thousand of the blueprints have one `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/MaterialExcelConfigData.json`. The few dozen that no diagram names are open from the start `packages/genshin-world/src/services/home/startHomeMake.ts`.
+- **Trust and Adeptal Energy.** `HomeworldLevelExcelConfigData` and `HomeWorldComfortLevelExcelConfigData`, published as one `home/levels` record: each Trust Rank's EXP, companions and store limits, and each Adeptal Energy rank's comfort and the rates its stores fill at `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/HomeworldLevelExcelConfigData.json`, `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/HomeWorldComfortLevelExcelConfigData.json`, `scripts/src/services/genshinAssets/home/buildHomeRules.ts`.
 
 The furnishings' own table, "HomeWorldFurnitureExcelConfigData", is not read yet: its comfort is for the placement editor, which is not built.
 
 ## The rules
 
-- **Trust Rank.** A rank's EXP is what it takes to pass it, so a rank is reached once the EXP of every rank below it is held. The table has ten ranks; the last takes no EXP. Trust EXP comes from a furnishing's first making, given when it is collected into the bag, never again for the same blueprint.
-- **Queues.** Tubby runs one queue for each Trust Rank, since every rank opens a build slot. A queue holds one furnishing at a time, each taking its blueprint's seconds from when it began, so it finishes while the page is closed.
-- **Making.** A furnishing is started only when its blueprint is open and a queue is free, and its materials are taken from the bag at once. A furnishing done waits in its queue while the bag has no room for it.
-- **Adeptal Energy.** The rank is the last whose comfort the realm's total reaches, and the lowest rank's comfort is zero, so every realm reads as at least rank one.
-- **Stores.** Realm Currency fills at the Adeptal rank's `homeCoinProduceRate` and Realm Bounty at its `companionshipExpProduceRate`, each per real hour of the rank in force, in whole units, and never past the Trust Rank's store limit. A clock read below zero produces nothing.
-- **Companions.** A Trust Rank holds as many companions as its `deployNpcCount`, from one at rank one to eight at rank ten. The companions themselves are not invited yet.
+- **Trust Rank.** A rank's EXP is what it takes to pass it, so a rank is reached once the EXP of every rank below it is held `packages/genshin-world/src/services/home/computeHomeTrustRank.ts`. The table has ten ranks; the last takes no EXP `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/HomeworldLevelExcelConfigData.json`. Trust EXP comes from a furnishing's first making, given when it is collected into the bag, never again for the same blueprint `packages/genshin-world/src/services/home/collectHomeOrder.ts`.
+- **Queues.** Tubby runs one queue for each Trust Rank, since every rank opens a build slot `packages/genshin-world/src/services/home/startHomeMake.ts`. A queue holds one furnishing at a time, each taking its blueprint's seconds from when it began, so it finishes while the page is closed `packages/genshin-world/src/services/home/collectHomeOrder.ts`.
+- **Making.** A furnishing is started only when its blueprint is open and a queue is free, and its materials are taken from the bag at once `packages/genshin-world/src/services/home/startHomeMake.ts`. A furnishing done waits in its queue while the bag has no room for it `packages/genshin-world/src/services/home/collectHomeOrder.ts`.
+- **Adeptal Energy.** The rank is the last whose comfort the realm's total reaches, and the lowest rank's comfort is zero, so every realm reads as at least rank one `packages/genshin-world/src/services/home/computeHomeAdeptalRank.ts`.
+- **Stores.** Realm Currency fills at the Adeptal rank's `homeCoinProduceRate` and Realm Bounty at its `companionshipExpProduceRate`, each per real hour of the rank in force, in whole units, and never past the Trust Rank's store limit `packages/genshin-world/src/services/home/settleHomeStores.ts`, with the rates' mapping `scripts/src/services/genshinAssets/home/buildHomeRules.ts`. A clock read below zero produces nothing `packages/genshin-world/src/services/home/computeHomeAccrued.ts`.
+- **Companions.** A Trust Rank holds as many companions as its `deployNpcCount`, from one at rank one to eight at rank ten `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/HomeworldLevelExcelConfigData.json`, `scripts/src/services/genshinAssets/home/buildHomeRules.ts`. The companions themselves are not invited yet.
 
 ## Calls the table settled
 
 - **The per-hour unit is provisional.** The wiki could not be read from this build (it answered HTTP 402), so the rates' unit is the table's own reading of one real hour, marked provisional in `packages/genshin-world/src/services/home/constants.ts` until a recording of a store across an hour settles it.
-- **One queue per rank.** The build slot appears on every Trust Rank, so the count is the rank itself. A recording of the queues at two ranks would confirm it.
-
+- **One queue per rank.** The build slot appears on every Trust Rank, so the count is the rank itself `packages/genshin-world/src/services/home/constants.ts`. A recording of the queues at two ranks would confirm it.
 ## Key files
 
 | File                                                                 | Role                                                                      |
@@ -70,11 +69,17 @@ The furnishings' own table, "HomeWorldFurnitureExcelConfigData", is not read yet
 
 ## Notes
 
-- **The bag does not hold the furnishings yet.** A finished furnishing is taken into the bag as an item the caller defines, since the Furnishings tab and its item definitions are not built.
+- **The bag does not hold the furnishings yet.** A finished furnishing is taken into the bag as an item the caller defines `packages/genshin-world/src/services/home/collectHomeOrder.ts`, since the Furnishings tab and its item definitions are not built.
 - **Realm Currency is not in the wallet.** It is a store of the realm's progress, not a currency the wallet counts, until its game text name has a key in `genshin-text`.
-- **The rates are read forward from a claim.** The caller settles a store at the rank in force before the rank changes, since a store accrues at the rank it was last claimed at.
+- **The rates are read forward from a claim.** The caller settles a store at the rank in force before the rank changes, since a store accrues at the rank it was last claimed at `packages/genshin-world/src/services/home/settleHomeStores.ts`.
 
 ## Sources
 
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `FurnitureMakeExcelConfigData`, `HomeworldLevelExcelConfigData` and `HomeWorldComfortLevelExcelConfigData`, fetched into the dump, and the material table's `ITEM_USE_UNLOCK_FURNITURE_FORMULA` uses.
 - [Serenitea Pot](https://genshin-impact.fandom.com/wiki/Serenitea_Pot), Genshin Impact Wiki: the per-hour rates and the store limits. The page could not be read from this build, so the per-hour unit waits on a recording.
+
+## Open
+
+- [ ] **The wiki answered HTTP 402 to this build's read** — no source yet: no fetch log of the wiki's response is in the repo or the caches.
+- [ ] **The build slot appears on every Trust Rank** — no source yet: the dump's level row does not name the field that opens each build slot; the queue count is cited to `packages/genshin-world/src/services/home/constants.ts`.
+- [ ] **Realm Currency is not in the wallet until its game text name has a key in `genshin-text`** — no source yet: the key exists at `packages/genshin-text/src/models/GameTextKey.ts`, so whether the wallet still excludes it is not checked here.
