@@ -28,7 +28,7 @@ The Imaginarium Theater SHALL play the latest season that began before the curre
 
 ### Requirement: Each season's difficulties are ordered by level and carry a level floor
 
-A season SHALL play the difficulties its schedule names, ordered from the lowest level, and each difficulty SHALL carry a level floor of sixty for levels one and two and seventy for levels three to five (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/RoleCombatDifficultyExcelConfigData.json`, field `OHDBPBMODLP`).
+A season SHALL play the difficulties its schedule names, ordered from the lowest level, and each difficulty SHALL carry a level floor of sixty for levels one and two and seventy for levels three to five (field `OHDBPBMODLP`).
 
 #### Scenario: Difficulties are ordered from the lowest level
 
