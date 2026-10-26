@@ -1,12 +1,12 @@
 ## Purpose
 
-The swell each segment of the login's music carries, one gain per window over every voice, fitted to the game's own sound and played as a ramp between the windows' centres, the way an orchestral expression controller swells a whole section.
+The swell each segment of the login's music carries, one gain per window over every voice, fitted to the game's own sound and played as a ramp between the windows' centres `scripts/src/services/genshinParity/music/fitMusicExpression.ts`, `packages/genshin-engine/src/audio/scheduleMusicExpression.ts`, the way an orchestral expression controller swells a whole section.
 
 ## Requirements
 
 ### Requirement: Whole-section swell
 
-Each segment of the login music SHALL swell or fade as a whole, with one gain per window over all its voices, so that a section plays louder or softer than the one before it.
+Each segment of the login music SHALL swell or fade as a whole, with one gain per window over all its voices, so that a section plays louder or softer than the one before it `scripts/src/services/genshinParity/music/fitMusicExpression.ts`.
 
 #### Scenario: Section louder than the last
 
@@ -26,7 +26,7 @@ The swell SHALL be a gain on a segment's whole output, so that a chord already r
 
 - **GIVEN** a chord is ringing
 - **WHEN** its section fades
-- **THEN** the chord fades with the section
+- **THEN** the chord fades with the section `packages/genshin-engine/src/audio/createMusicPlayer.ts`
 
 ### Requirement: Gain ramps between window centres
 
@@ -35,13 +35,18 @@ Each segment's gain SHALL ramp between the windows' centres, evenly in decibels.
 #### Scenario: Between two windows
 
 - **WHEN** playback moves between two windows' centres
-- **THEN** the gain ramps evenly in decibels between them
+- **THEN** the gain ramps evenly in decibels between them `packages/genshin-engine/src/audio/scheduleMusicExpression.ts`
 
 ### Requirement: Fitted after the instruments
 
-The gains SHALL be fitted after the instruments against the game's sound, and a second fit SHALL move them little.
+The gains SHALL be fitted after the instruments against the game's sound, and a second fit SHALL move them little `scripts/src/services/genshinParity/commands/expressionCommand.ts`.
 
 #### Scenario: Fit run again
 
 - **WHEN** the expression is fitted a second time
 - **THEN** the gains change little
+
+## Open
+
+- [ ] **The whole segment swells or fades by about twenty decibels across its voices** — no source yet: no level measurement of a swell is recorded.
+- [ ] **The gains change little when the expression is fitted a second time** — no source yet: no second run's output is recorded.
