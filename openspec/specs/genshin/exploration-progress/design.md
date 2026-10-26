@@ -49,7 +49,7 @@ flowchart TD
 
 - [ ] **The label appears once a statue in its area is unlocked, as the game does** — no source yet: the cached Map and Exploration wiki pages are not on disk, and the capture shows the label but not the unlock.
 - [ ] **The Windrise statue is Galesong Hill's waypoint, the one doing its statue completes** — no source yet: event 40 of the table names point 4, and no row read ties that point to the statue at Windrise.
-- [ ] **Galesong Hill's counted doings at ten each sum to nearly twice its total** — contradicted by `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/WorldAreaExploreEventConfigData.json`: 19 counted doings sum to 190 against a total of 146.
+- [ ] **Galesong Hill's counted doings at ten each sum to nearly twice its total** — contradicted by `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/WorldAreaExploreEventConfigData.json`: 19 counted doings sum to 190, against the total of 146 in `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ExploreAreaTotalExpExcelConfigData.json`.
 - [ ] **A single chest took Galesong Hill from 99% to 100%** — no source yet: the capture shows the step near 10 s, but no frame read shows the chest that caused it.
 - [ ] **The label's capitals are 28.8 and 16.0 pixels high, their middles 45.9 apart** — no source yet: a file recording the label's capital heights and spacing, measured on the frame at 4.6 s.
-- [ ] **The English map reads the fully explored area in gold 100%** — no source yet: a frame of the recording at 10.5 s read for its gold, since no read records the colour.
+- [ ] **The English map reads the fully explored area in gold 100%** — no source yet: a frame of the recording at 10.5 s read for its rendered gold, beyond the colour tag `#FFCC33` in `~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json:12452`.
