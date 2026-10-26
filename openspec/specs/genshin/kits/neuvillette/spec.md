@@ -29,17 +29,17 @@ Neuvillette's plunge attacks SHALL land on the enemies within reach at provision
 
 ### Requirement: O Tears, I Shall Repay
 
-O Tears, I Shall Repay's hit SHALL deal a share of Neuvillette's Max HP as flat damage, and its Spiritbreath Thorn SHALL land 60 frames after the skill's 42-frame animation, dealing Hydro damage on a share of his ATK.
+O Tears, I Shall Repay's hit SHALL deal a share of Neuvillette's Max HP as flat damage, and its Spiritbreath Thorn SHALL land 60 frames after the skill is pressed, dealing Hydro damage on a share of his ATK.
 
 #### Scenario: Skill deals Max HP damage
 
 - **WHEN** the player presses O Tears, I Shall Repay
 - **THEN** the hit deals damage equal to a share of Neuvillette's Max HP
 
-#### Scenario: Thorn lands after the animation
+#### Scenario: Thorn lands 60 frames after the press
 
-- **WHEN** the skill's 42-frame animation ends
-- **THEN** Spiritbreath Thorn lands 60 frames later as Hydro damage
+- **WHEN** the player presses O Tears, I Shall Repay
+- **THEN** Spiritbreath Thorn lands 60 frames later, 18 frames after the skill's 42-frame animation, as Hydro damage
 
 ### Requirement: O Tides, I Have Returned
 
