@@ -38,9 +38,9 @@ The solved turn is a quarter turn mirrored (a turn of minus ninety degrees, the 
 
 Each region is reported in turn, Mondstadt first, with its matched points, the residual of those, and its Oculi counted by its kind's label against the wiki's count. A shortfall or a surplus is printed as it stands (`~/Esposter.noindex/genshin-parity/references/interactive-map/fit.json`, `scripts/src/services/genshinAssets/points/InteractiveMapRegionMap.ts`).
 
-- **Mondstadt** matches about fifty of its statues and waypoints, and its Anemoculi count is the wiki's sixty-six (`~/Esposter.noindex/genshin-parity/references/interactive-map/fit.json`: `matched` 51, `oculusCount` 66; the wiki's 66 see Open).
+- **Mondstadt** matches about fifty of its statues and waypoints, and its Anemoculi count is the wiki's sixty-six (`~/Esposter.noindex/genshin-parity/references/interactive-map/fit.json`: `matched` 51, `oculusCount` 66; the wiki's 66, see Sources).
 - **Liyue, Inazuma, Sumeru and Snezhnaya's Oculi** count as the wiki gives them, Snezhnaya with no point matched (`~/Esposter.noindex/genshin-parity/references/interactive-map/fit.json`: 131, 181, 271 and 140, each equal to its wiki count; Snezhnaya `matched` 0).
-- **Fontaine, Natlan and Nod-Krai** count shortfalls against the wiki's figure of 271 for each (`~/Esposter.noindex/genshin-parity/references/interactive-map/fit.json`: 225, 249 and 197). The wiki gives that same figure for three different elements, so these three are the wiki's to settle, not the fit's (see Open).
+- **Fontaine, Natlan and Nod-Krai** count shortfalls against the wiki's figure of 271 for each (`~/Esposter.noindex/genshin-parity/references/interactive-map/fit.json`: 225, 249 and 197). The wiki gives that same figure for each of those three elements (see Sources), so the three shortfalls stand against the wiki's own count.
 - **Snezhnaya** matches none of its points. The dump holds no transport points for its areas yet, as [region capitals](../region-buildings/design.md) records, so its residual is reported as none (`~/Esposter.noindex/genshin-parity/references/interactive-map/fit.json`, no `residual` key for snezhnaya; see Open).
 
 ## The Oculi
@@ -70,12 +70,11 @@ Each region is reported in turn, Mondstadt first, with its matched points, the r
 ## Sources
 
 - [Teyvat Interactive Map](https://act.hoyolab.com/ys/app/interactive-map/index.html), HoYoLAB: the official map. Its label tree and point list are the public data the read keeps as references (`~/Esposter.noindex/genshin-parity/references/interactive-map/label-tree.json`, `~/Esposter.noindex/genshin-parity/references/interactive-map/points.json`).
-- [Oculus](https://genshin-impact.fandom.com/wiki/Oculus), Genshin Impact Wiki: each region's Oculi, the counts the checks hold the map to (see Open).
+- [Oculus](https://genshin-impact.fandom.com/wiki/Oculus), Genshin Impact Wiki: each region's Oculi, and the counts the checks hold the map to, such as "66 Anemoculi can be found in Mondstadt." and "271 Hydroculi can be found in Fontaine & Sea of Bygone Eras."
 
 ## Open
 
 - [ ] **The game's servers spawn chests, Oculi, puzzles and camps, and the client's data does not place them** — no source yet: no check of the dump for chest, Oculus, puzzle or camp placements was run here.
-- [ ] **The wiki counts the checks hold the map to, 66, 131, 181, 271 and 140** — no source yet: no cached Oculus wiki page is in `~/Esposter.noindex/cache/genshin-wiki/`, so the figures are only those `scripts/src/services/genshinAssets/points/InteractiveMapRegionMap.ts` carries, and its 271 for Fontaine, Natlan and Nod-Krai is one figure for three elements.
 - [ ] **Snezhnaya's transport points are absent from the dump** — no source yet: the dump's transport points for Snezhnaya's areas were not counted, and `~/Esposter.noindex/genshin-parity/references/interactive-map/fit.json` shows only its zero matches.
 - [ ] **Fontaine holds the only underground Oculi** — no source yet: no count of Oculi on layers under the ground was made, so the ground count's gap is not traced to them.
 - [ ] **No kit draws an Oculus** — no source yet: `packages/genshin-world/src/models/oculus/OculusPlace.ts` is read by `packages/genshin-world/src/services/statue/readOculusPlaces.ts`, the minimap and the HUD, and no kit was checked for a draw of it.
