@@ -51,7 +51,7 @@ The score's numbers are not kept on these pages: they are the committed snapshot
 
 ## Recreating another piece
 
-The order, and the rules each step keeps, are the `genshin-parity` skill's `references/music.md`:
+The order, and the rules each step keeps, are the `genshin-parity` skill's `.agents/skills/genshin-parity/references/music.md`:
 
 1. Find the sound with `genshin:assets music <recording>` over a recording of the screen.
 2. Name its playlist in the component's map (`musicPlaylistId`).
