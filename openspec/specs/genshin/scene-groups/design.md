@@ -59,7 +59,7 @@ Every field below is held only by the group scripts, which are the server's and 
 - **A puzzle's mechanisms and a chest's gadget.** The only gadgets are the viewpoints (`scripts/src/services/genshinAssets/sceneGroups/buildSceneGroups.ts`).
 - **A trigger's region.** A trigger member names its group but has no place (`scripts/src/services/genshinAssets/sceneGroups/buildSceneGroups.ts`). A quest's go-to step is placed instead by its own location guide, which names a dummy point the client's scene3_dummy_points.lua holds ([quests](../quests/design.md)).
 - **The suites that move a resident by the hour.** The births give each NPC one spot, so no resident has a night spot.
-- **The NPCs the births leave out.** The cities' service keepers among them: Hertha, Wagner, Katheryne, Sara and Timaeus each have no birth, so the record places their services' building points but not them.
+- **The NPCs the births leave out.** The cities' service keepers among them: Hertha, Wagner, Katheryne, Sara and Timaeus each have no birth (`~/Esposter.noindex/genshin-dump-backup-6.6/BinOutput/Scene/SceneNpcBorn/scene3_npcborn.json`: 1005 births, each with its spot, suites and config id, none for an NPC of these five names in `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/NpcExcelConfigData.json`), so the record places their services' building points but not them.
 - **Nod-Krai's NPC placements.** No Nod-Krai NPC is placed in the record, so `packages/genshin-world/src/data/regions/nod-krai.json` keeps its `residents` empty, and the [resident schedules](../../../changes/genshin-resident-schedules/proposal.md) change waits on them.
 
 ## Key files
@@ -85,10 +85,9 @@ Every field below is held only by the group scripts, which are the server's and 
 
 ## Open
 
-- [ ] **The hosted NPC births hold each NPC's spot, suites and config id, and leave out Hertha, Wagner, Katheryne, Sara and Timaeus** — no source yet: `sceneNpcBorn/scene3` is hosted, not in the local dump, so the births were not checked.
 - [ ] **The scene's service points name Restaurant, Alchemy, Blacksmith, Reputation and Adventurers, with suffixes such as `Restaurant_liyue`** — contradicted by `~/Esposter.noindex/genshin-parity/text/BinOutput/Scene/Point/scene3_point.json`: it names all five services with `_liyue` suffixes; the cooking page's stove place rests on the same point.
 - [ ] **`viewpoints.json` keeps the viewpoints' text beside the other map references** — contradicted by `~/Esposter.noindex/genshin-parity/references/interactive-map/viewpoints.json`: 224 records, each with its viewpoint's text in `content`.
 - [ ] **The publish's notes count a handful of the codex's left-out rows** — no source yet: the publish notes were not run for the count in this pass.
 - [ ] **`nod-krai.json` keeps its residents empty** — contradicted by `packages/genshin-world/src/data/regions/nod-krai.json`: it holds one resident, `lempo-isle` (id 7086).
-- [ ] **The group scripts hold the fields this page leaves out** — contradicted by `~/Esposter.noindex/genshin-parity/extracted/lua/raw/scene3.dat`: compiled Lua naming `born_pos`, `routes_config` and `block_rects`. The dummy point in `~/Esposter.noindex/genshin-parity/extracted/lua/raw/scene3_dummy_points.json` was not checked against the quests' location guide.
+- [ ] **The group scripts hold the fields this page leaves out** — checked against `~/Esposter.noindex/genshin-parity/extracted/lua/raw/scene3.dat`: compiled Lua naming `born_pos`, `born_rot`, `routes`, `routes_config`, `block_rects` and `dummy_points`, and the claim is not settled by it because it does not say which of the page's left-out rows those fields serve. The dummy point in `~/Esposter.noindex/genshin-parity/extracted/lua/raw/scene3_dummy_points.json` is not matched to the quests' location guide, which is not on disk: a search of the dump and the parity extracts for six of its dummy names finds none.
 - [ ] **The group scripts are the server's and never in the client** — contradicted by `~/Esposter.noindex/genshin-parity/extracted/lua/raw/Build_Scripts_Scene_3_scene3_block115.dat`: an obfuscated Lua script for scene 3's block 115.
