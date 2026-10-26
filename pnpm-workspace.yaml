@@ -47,8 +47,8 @@ catalog:
   "@azure/storage-queue": ^12.32.0
   "@azure/web-pubsub": ^1.2.0
   "@azure/web-pubsub-client": ^1.1.0
-  "@better-auth/api-key": ^1.7.13
-  "@better-auth/drizzle-adapter": ^1.7.13
+  "@better-auth/api-key": ^1.7.14
+  "@better-auth/drizzle-adapter": ^1.7.14
   "@codemirror/lang-vue": ^0.1.3
   "@codemirror/language": ^6.13.1
   "@codemirror/language-data": ^6.5.2
@@ -146,7 +146,7 @@ catalog:
   "@xterm/xterm": ^6.0.0
   apexcharts: ^8.5.0
   azurite: ^3.37.0
-  better-auth: ^1.7.13
+  better-auth: ^1.7.14
   bowser: ^2.14.1
   # @TODO: no upstream issue — unstorage 2's fs driver, which a storage mount in Nitro 3's server bundle uses, loads
   # `chokidar` without declaring it, so the app installs it for the bundle to resolve (nitrojs/nitro)
