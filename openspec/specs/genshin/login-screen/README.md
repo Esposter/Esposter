@@ -92,3 +92,5 @@ flowchart TD
 - [ ] **The game opens on its login screen once the health notice has faded** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **The console's opening shows the login at the same place, stages and timings** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **Its music plays from the start, looping as the game's does** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The 2021 recordings stand the walkway's far end about 30 rows lower than the current build's** — no source yet: the 2021 recordings are not measured against the current build's walkway here.
+- [ ] **The wiki's four title stills fit no single camera centred on them** — no source yet: the stills are not in `~/Esposter.noindex/cache/genshin-wiki/`, so no fit is run on them.
