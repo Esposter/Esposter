@@ -42,4 +42,4 @@ Kokomi's kit is its record and one behaviour module, `createKokomiKitBehaviour`,
 ## Open
 
 - [ ] **Bake-Kurage's field lasts 12 seconds, as the wiki and the dump give** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/kokomi/skill.go:31`: gcsim's status is `12*60+30+1` frames, about 12.5 seconds.
-- [ ] **Bake-Kurage's field ticks seven times in its 12 seconds, as the wiki's gameplay note gives** — contradicted by `~/Esposter/cache/genshin-wiki/Category_Sangonomiya_Kokomi_Talents.json`: the built first tick at 24 frames (unsourced, `packages/genshin-world/src/data/kits/sangonomiya-kokomi.json`) and the 120-frame interval put the seventh tick at 12.4 seconds, past the field's end, so the field ticks six times.
+- [ ] **Bake-Kurage's field ticks seven times in its 12 seconds, as the wiki's gameplay note gives** — contradicted by `~/Esposter/cache/genshin-wiki/Category_Sangonomiya_Kokomi_Talents.json`: the 24-frame first tick and 120-frame interval give six ticks in 12 seconds.
