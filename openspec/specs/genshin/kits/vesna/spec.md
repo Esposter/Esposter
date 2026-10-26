@@ -56,5 +56,5 @@ Vesna's Armed for Action form SHALL NOT take effect.
 
 ## Open
 
-- [ ] **The Art of Victory deals one Anemo hit** — partly settled: the wiki's The Art of Victory page (cache `Category_Vesna_Talents.json`) gives its damage as "AoE Anemo DMG", and its one Skill DMG row is a single scaling value, not a stated hit count. Still open: the hit count, which no wiki page states.
+- [ ] **The Art of Victory deals one Anemo hit** — no source yet: the Art of Victory page in `~/Esposter.noindex/cache/genshin-wiki/Category_Vesna_Talents.json` gives its damage as "AoE Anemo DMG", and its one Skill DMG row is a single scaling value, not a stated hit count; no wiki page states the hit count.
 - [ ] **Vesna's strikes deal Physical damage outside Armed for Action** — no source yet: the cached Vila Blade Dance page names no element for them, and gcsim has no Vesna folder. Checked the cache's Category_Vesna_Talents.json entries: Vila Blade Dance's infobox and advanced properties name no element, and The Art of Victory's Armed for Action text names Anemo only inside that form; no cached page says Physical.
