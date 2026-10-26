@@ -80,10 +80,3 @@ Each mesh of Inazuma City's exported scene that the parity witness does not draw
 ## Open
 
 - [ ] **Each area of the region takes the game's own outline** — no source yet: the catalogue's Inazuma outlines are not matched here to the game's dumped area polygons.
-- [ ] **Inazuma's building kit, its island palette and its region data file are as built** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A building stacks its storeys, each set back from the roof below** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A hipped roof slopes on all four sides, and a gabled roof closes its ends with gables** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Each island's part is drawn in its own colours, and the building kit uses its timber, plaster and tile colours** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Inazuma City shows one building at a provisional place, until the region's fit writes its real place** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The region is fetched as the camera comes near any of its areas** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Each undrawn mesh of Inazuma City's exported scene is named as undrawn by its kind** — no source yet: game data or a snapshot that holds this behaviour
