@@ -71,3 +71,8 @@ Mondstadt is the first region fitted, and the regions the waypoints command writ
 ## Sources
 
 - [Teleport Waypoint](https://genshin-impact.fandom.com/wiki/Teleport_Waypoint), Genshin Impact Wiki: the fast-travel points a jump goes to.
+
+## Open
+- [ ] **Mondstadt's region data holds 43 waypoints, with ids such as `mondstadt-waypoint-1865`** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Each Statue of The Seven gets the arrival of the transport point it stands at** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Mondstadt has 11 of its 43 waypoints in points 1865 to 2051** — no source yet: game data or a snapshot that holds this behaviour
