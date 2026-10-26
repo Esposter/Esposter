@@ -4,10 +4,10 @@ A domain is an instance behind a temple-like entrance, challenged for a reward. 
 
 ## Decisions
 
-- **Each kind opens at its rank.** `DomainOpenRankMap` holds Forgery at 16, Blessing at 22 and Mastery at 27, the ranks the proposal states. `checkIsDomainKindOpenAtRank` is open from the rank on. The wiki's Domain page is not yet read for them (see Open).
+- **Each kind opens at its rank.** `DomainOpenRankMap` holds Forgery at 16, Blessing at 22 and Mastery at 27, the ranks the proposal states. `checkIsDomainKindOpenAtRank` is open from the rank on. The wiki's Domain page gives the same three ranks (see Sources).
 - **A Domain of Blessing opens every day.** Its set days are not read.
-- **A Domain of Forgery or Mastery opens every Sunday and on its two set days.** `checkIsDomainKindOpenOnDay` takes the moment checked and the two weekdays the table sets for the kind, and reads the moment's game day from the reset clock. A Sunday opens every kind. Weekdays are Temporal's, Monday 1 to Sunday 7, with `SUNDAY_DAY_OF_WEEK` for Sunday.
-- **The day is the game's day.** The moment checked is read on the reset clock, so its game day turns at 04:00 in UTC+8 as the game's server does and as [Original Resin](../original-resin/design.md) counts its Primogem refills. A moment before that reset is still the previous game day, and a Domain of Forgery's day turns at the reset, not at midnight. This call is settled from the resin page's rule, not from a new source.
+- **A Domain of Forgery or Mastery opens every Sunday and on its two set days.** `checkIsDomainKindOpenOnDay` takes the moment checked and the two weekdays the table sets for the kind, and reads the moment's game day from the reset clock. A Sunday opens every kind, as the wiki's Domain page gives it for every stage (see Sources). Weekdays are Temporal's, Monday 1 to Sunday 7, with `SUNDAY_DAY_OF_WEEK` for Sunday.
+- **The day is the game's day.** The moment checked is read on the reset clock, so its game day turns at 04:00 in UTC+8 as the game's server does and as [Original Resin](../original-resin/design.md) counts its Primogem refills. A moment before that reset is still the previous game day, and a Domain of Forgery's day turns at the reset, not at midnight. The wiki's Reset page rotates the Domains of Forgery at the daily reset (see Sources), but gives only the player's server time zone, so UTC+8 rests on the resin page's rule.
 
 ## How it works
 
@@ -41,13 +41,11 @@ flowchart TD
 
 ## Sources
 
-- [Domains](https://genshin-impact.fandom.com/wiki/Domains), Genshin Impact Wiki: the unlocking ranks, not yet read: the page is not in the cache (see Open). The quest unlocks and the weekday schedule are not read yet.
-- [Daily Reset](https://genshin-impact.fandom.com/wiki/Daily_Reset), Genshin Impact Wiki: the Domains of Forgery and Mastery turning at the reset. Not yet read, for the same reason.
+- [Domain](https://genshin-impact.fandom.com/wiki/Domain), Genshin Impact Wiki: the unlocking ranks, "Players must reach Adventure Rank 16 or complete For a Tomorrow Without Tears" for Forgery, and 22 and 27 for Blessing and Mastery. Its Challenge Domains give each stage three days a week, with "the third day, Sunday, being consistent for all stages". The quests it names are not built, and it does not name the set days.
+- [Reset](https://genshin-impact.fandom.com/wiki/Reset), Genshin Impact Wiki (cached under Daily Reset): "The daily reset occurs at 04:00 (4 AM), based on the player's server's time zone." Under daily reset, "Domains of Forgery (Weapon Ascension Materials) and Domains of Mastery (Talent Level-Up Materials) rotate."
 
 ## Open
 
-- [ ] **Ranks 16, 22 and 27 open the three kinds** — no source yet: the wiki's Domain page is not in the cache, and no table read here ties 22 or 27 to a kind.
-- [ ] **A Domain of Blessing opens every day** — no source yet: the wiki's Domain page is not in the cache, and `DailyDungeonConfigData` keys its day rows by obfuscated names with no weekday mapping read here.
-- [ ] **Forgery and Mastery open on Sundays and their two set days** — no source yet: the same `DailyDungeonConfigData` rows are unmapped to weekdays, and the wiki's Domain page is not in the cache.
-- [ ] **The game's day turns at 04:00 in UTC+8** — no source yet: the wiki's Daily Reset page is not in the cache.
-- [ ] **A Domain of Forgery's day turns at the reset, not at midnight** — no source yet: the wiki's Daily Reset page is not in the cache.
+- [ ] **A Domain of Blessing opens every day** — no source yet: the Domain page, checked, gives each stage of the Challenge Domains three days each week, which does not state every day; the Domain of Blessing page is not in the cache, and `DailyDungeonConfigData` keys its day rows by obfuscated names with no weekday mapping read here.
+- [ ] **Forgery and Mastery open on their two set days** — no source yet: the Domain page, checked, gives Sunday for every stage and two set days a stage without naming them, and the same `DailyDungeonConfigData` rows are unmapped to weekdays.
+- [ ] **The day's 04:00 turn is in UTC+8** — no source yet: the wiki's Reset page, checked, gives the daily reset at 04:00 "based on the player's server's time zone", not in UTC+8.
