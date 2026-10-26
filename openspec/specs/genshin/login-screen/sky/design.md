@@ -13,7 +13,7 @@ The sky behind the login scene: each hour's clear sky, solved as the game's sky 
 - **The night passes through its own white balance before the curve.** The night is cooled to a temperature of minus 9.5 and tinted 16 (`genshin:parity balance` over both its frames; `whiteBalance` in `packages/genshin-world/src/services/login/scene/LoginSkyStateMap.ts`). This takes the stone's red under the curve's black as the game's does, which none of the scene's own colours did before it. The game's bloom is still left out.
 - **The sun and the moon are placed where their references show them.** A screen point measured off the reference becomes a direction through the login camera (`getLoginScreenDirection`, `packages/genshin-world/src/services/login/scene/getLoginScreenDirection.ts`). The dawn's and the dusk's suns sit just past the left edge a little over the horizon; the night's moon stands behind the lantern tower. The light, the sun and the moon all take that direction, the other body opposite (`packages/genshin-world/src/services/login/scene/LoginSkyStateMap.ts`). The day's sun is off its frame, so its direction is measured from the faces it lights.
 - **The dusk's sunlight is solved on the door recording.** The dusk's sunlight falls from the direction its shadows solve to on the door recording (`genshin:parity shadows`): 50 degrees up and 60 degrees left of the walkway. The solve casts the recording's tower shadows within 5.28 pixels of their edges, where the shading never settled a direction. The dusk's stone light is still solved under the older direction.
-- **The hemisphere lights upward faces from the sky.** The sky colour of the hemisphere is the bright cloud colour and its ground colour the shade, so a face turned up is lit by the sky as the references show it under a low sun. The haze scatters light toward the sun ([light](../light/design.md)).
+- **The hemisphere lights upward faces from the sky.** The sky colour of the hemisphere is near the bright cloud colour (`0xf2dfc8` against `0xf5efe8` at dawn, `packages/genshin-world/src/services/login/scene/LoginSkyStateMap.ts`) and its ground colour the shade, so a face turned up is lit by the sky as the references show it under a low sun. The haze scatters light toward the sun ([light](../light/design.md)).
 
 ## Key files
 
@@ -27,7 +27,6 @@ The sky behind the login scene: each hour's clear sky, solved as the game's sky 
 
 ## Open
 
-- [ ] **The frame is drawn through the game's tone curve alone, with no grade or bloom** — no source yet: the frame's draw chain was not read here.
 - [ ] **The night's sky is lavender away from the sun and rose toward it, as the recording's is** — no source yet: no colour comparison with the recording is kept.
 - [ ] **The night's white balance was solved over both its frames by `genshin:parity balance`** — no source yet: the balance run is not kept.
 - [ ] **The night's moon stands behind the lantern tower** — no source yet: the reference point is not annotated against the lantern tower in any kept file.
