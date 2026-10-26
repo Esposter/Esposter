@@ -16,18 +16,18 @@ A mark that is already a vector SHALL be drawn from its published paths unchange
 
 ### Requirement: A glyph is traced from the game's own mark at full resolution
 
-A glyph SHALL be traced from the game's own mark at the source's full resolution, never at a reduced one (`scripts/src/services/genshinParity/shared/traceImage.ts`).
+A glyph SHALL be traced from the game's own mark at the source's full resolution, never at a reduced one.
 
 #### Scenario: Glyph traced
 
 - **GIVEN** a glyph in a mark's reference
 - **WHEN** the glyph is traced
 - **THEN** the trace runs at the source's full resolution
-- **AND** the region is printed beside the trace for checking (`scripts/src/services/genshinParity/shared/traceImage.ts`)
+- **AND** the region is printed beside the trace for checking
 
 ### Requirement: Ink is told from paper by its contrast with the region's corners
 
-A mark's ink SHALL be told from its paper by how far each pixel strays from the colour at the region's corners, so that a mark dark on light, light on dark or coloured traces alike (`scripts/src/services/genshinParity/shared/traceImage.ts`).
+A mark's ink SHALL be told from its paper by how far each pixel strays from the colour at the region's corners, so that a mark dark on light, light on dark or coloured traces alike.
 
 #### Scenario: Marks in different colours
 
@@ -37,7 +37,7 @@ A mark's ink SHALL be told from its paper by how far each pixel strays from the 
 
 ### Requirement: Specks and small holes are cleared before tracing and every path is kept
 
-Runs of ink or holes smaller than a sliver of the region SHALL be cleared from the split before tracing, and every path the trace finds SHALL be kept (`scripts/src/services/genshinParity/shared/traceMask.ts`, `scripts/src/services/genshinParity/shared/removeMaskSpecks.ts`).
+Runs of ink or holes smaller than a sliver of the region SHALL be cleared from the split before tracing, and every path the trace finds SHALL be kept.
 
 #### Scenario: Speck beside a glyph
 
@@ -48,7 +48,7 @@ Runs of ink or holes smaller than a sliver of the region SHALL be cleared from t
 
 ### Requirement: A traced path is written in its shortest form with the same points
 
-A traced path SHALL be written in its shortest form, with the same points, and its opening move kept absolute so that joined paths keep their places (`scripts/src/services/genshinParity/shared/compactSvgPath.ts`).
+A traced path SHALL be written in its shortest form, with the same points, and its opening move kept absolute so that joined paths keep their places.
 
 #### Scenario: Paths joined into one shape
 
@@ -71,3 +71,8 @@ A screen SHALL ship only shapes derived from the game's marks through this traci
 
 - [ ] **Only traced shapes or published vectors ship with a screen** — no source yet: no check of the screens' shipped shapes against their source was run.
 - [ ] **A vector mark's published paths are drawn unchanged** — no source yet: the component that draws the Commons SVGs was not traced.
+- [ ] **A glyph is traced from the game's own mark at the source's full resolution, never a reduced one** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The region is printed beside the trace for checking** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Ink is told from paper by its contrast with the region's corners** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Specks and small holes are cleared before tracing, and every path the trace finds is kept** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A traced path is written in its shortest form with the same points, and its opening move kept absolute** — no source yet: game data or a snapshot that holds this behaviour
