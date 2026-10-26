@@ -18,7 +18,7 @@ export const writeResourceEntries = async (archive: UserDataArchive, userId: Use
     await archive.addJsonEntry(`${entryDirectory}/resource.json`, resource);
     // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one resource at a time, as its purge runs
     const publication = await db.query.resourcePublicationsInResource.findFirst({
-      columns: { publishedAt: true, publishedContentVersion: true, publishVersion: true },
+      columns: { createdAt: true, publishedAt: true, publishedContentVersion: true, publishVersion: true },
       where: { resourceId: { eq: resource.id } },
     });
     if (publication) await archive.addJsonEntry(`${entryDirectory}/publications.json`, publication);

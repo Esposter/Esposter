@@ -228,10 +228,10 @@ describe(buildUserDataArchive, () => {
       await mockDb.insert(postsInPost).values({ description, ranking: 0, title, userId: otherUserId }).returning(),
     );
     // The person likes the other post, and another person's dislike of the person's own post is not theirs to list
-    await mockDb.insert(likesInPost).values([
-      { postId: otherPost.id, userId, value: 1 },
-      { postId: post.id, userId: otherUserId, value: -1 },
-    ]);
+    const like = takeOne(
+      await mockDb.insert(likesInPost).values({ postId: otherPost.id, userId, value: 1 }).returning(),
+    );
+    await mockDb.insert(likesInPost).values({ postId: post.id, userId: otherUserId, value: -1 });
 
     // The person reacted in a room they are a member of, on a message whose reaction row another member shares, and
     // another member's reaction on the same message is not theirs
@@ -258,10 +258,15 @@ describe(buildUserDataArchive, () => {
     await createReaction([otherUserId]);
 
     // A request the person sent, one they received, and a friendship with a fourth account
-    await mockDb.insert(friendRequestsInSocial).values([
-      { id: crypto.randomUUID(), receiverId: otherUserId, senderId: userId },
-      { id: crypto.randomUUID(), receiverId: userId, senderId: receivedUserId },
-    ]);
+    const sentRequest = takeOne(
+      await mockDb
+        .insert(friendRequestsInSocial)
+        .values({ id: crypto.randomUUID(), receiverId: otherUserId, senderId: userId })
+        .returning(),
+    );
+    await mockDb
+      .insert(friendRequestsInSocial)
+      .values({ id: crypto.randomUUID(), receiverId: userId, senderId: receivedUserId });
     await mockDb
       .insert(friendsInSocial)
       .values({ id: crypto.randomUUID(), receiverId: userId, senderId: friendUserId });
@@ -275,22 +280,25 @@ describe(buildUserDataArchive, () => {
         .sort(),
     ).toStrictEqual([`posts/${post.id}.json`]);
     expect(readEntryJson(entries, `posts/${post.id}.json`)).toStrictEqual({
+      createdAt: post.createdAt,
       depth: 0,
       description,
       id: post.id,
       parentId: null,
       title,
     });
-    // Neither entry has a time: a post like stores none, and a reaction row's time is its first reactor's, not the
-    // person's, so the exact shape leaves it out
+    // A post like carries the time it was made. A reaction carries none: its row is shared by its reactors, so its time is
+    // the first reactor's, not the person's, and the exact shape leaves it out
     expect(readEntryJson(entries, "likes.json")).toStrictEqual([
-      { kind: ArchiveLikeKind.Post, targetId: otherPost.id, value: 1 },
+      { createdAt: like.createdAt, kind: ArchiveLikeKind.Post, targetId: otherPost.id, value: 1 },
       { kind: ArchiveLikeKind.Emoji, emojiTag, roomId: room.id, targetId: messageRowKey },
     ]);
+    // A request the person sent carries the time it was sent. One they received is the sender's act, and a friendship is one
+    // row for the pair, made when the receiver accepted it, so neither carries a time
     expect(readEntryJson(entries, "friends.json")).toStrictEqual({
       friends: [{ id: friendUserId, name }],
       received: [{ id: receivedUserId, name }],
-      sent: [{ id: otherUserId, name }],
+      sent: [{ createdAt: sentRequest.createdAt, id: otherUserId, name }],
     });
   });
 
@@ -332,6 +340,7 @@ describe(buildUserDataArchive, () => {
       ].sort(),
     );
     expect(readEntryJson(entries, `rooms/${room.id}/room.json`)).toStrictEqual({
+      createdAt: room.createdAt,
       emoji: [{ id: emoji.id, name }],
       id: room.id,
       name,
@@ -359,16 +368,18 @@ describe(buildUserDataArchive, () => {
       { roomId: room.id, userId },
       { roomId: room.id, userId: otherUserId },
     ]);
-    await mockDb.insert(searchHistoriesInMessage).values([
-      { query: message, roomId: room.id, userId },
-      { query: otherMessage, roomId: room.id, userId: otherUserId },
-    ]);
+    const search = takeOne(
+      await mockDb.insert(searchHistoriesInMessage).values({ query: message, roomId: room.id, userId }).returning(),
+    );
+    await mockDb.insert(searchHistoriesInMessage).values({ query: otherMessage, roomId: room.id, userId: otherUserId });
 
     await buildUserDataArchive(userId, blobName);
     const entries = readArchiveEntries(blobName);
 
-    // A search row stores no time, so the exact shape leaves one out
-    expect(readEntryJson(entries, "searches.json")).toStrictEqual([{ filters: [], query: message, roomId: room.id }]);
+    // A search carries the time it ran
+    expect(readEntryJson(entries, "searches.json")).toStrictEqual([
+      { createdAt: search.createdAt, filters: [], query: message, roomId: room.id },
+    ]);
   });
 
   test("writes a published resource's publication metadata, and none for a resource not published", async () => {
@@ -393,8 +404,10 @@ describe(buildUserDataArchive, () => {
     await buildUserDataArchive(userId, blobName);
     const entries = readArchiveEntries(blobName);
 
-    // The publication is the draft version it was taken at and its time, both as the row stores them
+    // The publication is the draft version it was taken at, the time it began, which a republish does not move, and the time
+    // it was last published, all as the row stores them
     expect(readEntryJson(entries, `resources/${publishedResource.id}/publications.json`)).toStrictEqual({
+      createdAt: publication.createdAt,
       publishedAt: publication.publishedAt,
       publishedContentVersion: 3,
       publishVersion: 2,
@@ -489,16 +502,18 @@ describe(buildUserDataArchive, () => {
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
     // A room holds one call per thread, so the other person's call is in a room of their own
     const otherRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
-    await mockDb.insert(callSessionsInMessage).values([
-      { id: callId, roomId: room.id, userId },
-      { id: otherCallId, roomId: otherRoom.id, userId: otherUserId },
-    ]);
+    const call = takeOne(
+      await mockDb.insert(callSessionsInMessage).values({ id: callId, roomId: room.id, userId }).returning(),
+    );
+    await mockDb.insert(callSessionsInMessage).values({ id: otherCallId, roomId: otherRoom.id, userId: otherUserId });
 
     await buildUserDataArchive(userId, blobName);
     const entries = readArchiveEntries(blobName);
 
-    // A call row stores no time, and its id is the key a knocker presents to join, so the exact shape leaves both out
-    expect(readEntryJson(entries, "calls.json")).toStrictEqual([{ roomId: room.id, threadRootRowKey: "" }]);
+    // A call carries the time it started. Its id is the key a knocker presents to join, so the exact shape leaves it out
+    expect(readEntryJson(entries, "calls.json")).toStrictEqual([
+      { createdAt: call.createdAt, roomId: room.id, threadRootRowKey: "" },
+    ]);
   });
 
   test("writes the person's own thread decisions, an unfollow included, and no other person's", async () => {
@@ -515,17 +530,22 @@ describe(buildUserDataArchive, () => {
       { roomId: room.id, userId: otherUserId },
     ]);
     // The person's unfollow is a decision they made, so its row stays; the other person's follow of the same thread is not theirs
-    await mockDb.insert(threadFollowsInMessage).values([
-      { isUnfollowed: true, roomId: room.id, threadRootRowKey, userId },
-      { isUnfollowed: false, roomId: room.id, threadRootRowKey, userId: otherUserId },
-    ]);
+    const follow = takeOne(
+      await mockDb
+        .insert(threadFollowsInMessage)
+        .values({ isUnfollowed: true, roomId: room.id, threadRootRowKey, userId })
+        .returning(),
+    );
+    await mockDb
+      .insert(threadFollowsInMessage)
+      .values({ isUnfollowed: false, roomId: room.id, threadRootRowKey, userId: otherUserId });
 
     await buildUserDataArchive(userId, blobName);
     const entries = readArchiveEntries(blobName);
 
-    // A follow stores no time, so the exact shape leaves one out
+    // A follow carries the time of the person's first decision about the thread
     expect(readEntryJson(entries, "follows.json")).toStrictEqual([
-      { isUnfollowed: true, roomId: room.id, threadRootRowKey },
+      { createdAt: follow.createdAt, isUnfollowed: true, roomId: room.id, threadRootRowKey },
     ]);
   });
 
@@ -555,9 +575,11 @@ describe(buildUserDataArchive, () => {
     await buildUserDataArchive(userId, blobName);
     const entries = readArchiveEntries(blobName);
 
-    // The membership keeps the person's own settings and the time they last read the room, and the roles they hold there
+    // The membership keeps the person's own settings, the time they joined and the time they last read the room, and the roles
+    // they hold there
     expect(readEntryJson(entries, "memberships.json")).toStrictEqual([
       {
+        createdAt: membership.createdAt,
         displayName: membership.displayName,
         isHidden: membership.isHidden,
         lastReadAt: membership.lastReadAt,
@@ -581,10 +603,10 @@ describe(buildUserDataArchive, () => {
         .values({ name, type: ResourceType.Blueprint, userId: otherUserId })
         .returning(),
     );
-    await mockDb.insert(resourceFavoritesInResource).values([
-      { resourceId: resource.id, userId },
-      { resourceId: resource.id, userId: otherUserId },
-    ]);
+    const favorite = takeOne(
+      await mockDb.insert(resourceFavoritesInResource).values({ resourceId: resource.id, userId }).returning(),
+    );
+    await mockDb.insert(resourceFavoritesInResource).values({ resourceId: resource.id, userId: otherUserId });
     const access = takeOne(
       await mockDb.insert(resourceAccessesInResource).values({ resourceId: resource.id, userId }).returning(),
     );
@@ -593,10 +615,13 @@ describe(buildUserDataArchive, () => {
     await buildUserDataArchive(userId, blobName);
     const entries = readArchiveEntries(blobName);
 
-    // A favorite stores no time, so the exact shape leaves one out; an access keeps the time it was opened at
-    expect(readEntryJson(entries, "favorites.json")).toStrictEqual([{ resourceId: resource.id }]);
+    // A favorite carries the time it was starred. An access carries the time it was first opened, as the row stores it
+    // beside the time it was last opened
+    expect(readEntryJson(entries, "favorites.json")).toStrictEqual([
+      { createdAt: favorite.createdAt, resourceId: resource.id },
+    ]);
     expect(readEntryJson(entries, "accesses.json")).toStrictEqual([
-      { accessedAt: access.accessedAt, resourceId: resource.id },
+      { accessedAt: access.accessedAt, createdAt: access.createdAt, resourceId: resource.id },
     ]);
   });
 

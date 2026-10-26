@@ -3,9 +3,9 @@ import type { UserInAuth } from "@esposter/db-schema";
 
 import { db } from "#src/services/shared/db";
 
-// The person's memberships in rooms they do not own, each with the person's own settings there, the time they last read
-// the room, and the roles they hold in it. The other members of a room are not listed. The mention count is derived from
-// other people's messages, and the slowmode and timeout clocks are operational, so none of them is written
+// The person's memberships in rooms they do not own, each with the person's own settings there, the time they joined and
+// the time they last read the room, and the roles they hold in it. The other members of a room are not listed. The mention
+// count is derived from other people's messages, and the slowmode and timeout clocks are operational, so none of them is written
 export const writeMembershipEntry = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
   const ownedRooms = await db.query.roomsInMessage.findMany({
     columns: { id: true },
@@ -14,7 +14,14 @@ export const writeMembershipEntry = async (archive: UserDataArchive, userId: Use
   const ownedRoomIds = new Set(ownedRooms.map(({ id }) => id));
   const memberships = (
     await db.query.usersToRoomsInMessage.findMany({
-      columns: { displayName: true, isHidden: true, lastReadAt: true, notificationType: true, roomId: true },
+      columns: {
+        createdAt: true,
+        displayName: true,
+        isHidden: true,
+        lastReadAt: true,
+        notificationType: true,
+        roomId: true,
+      },
       where: { userId: { eq: userId } },
     })
   ).filter(({ roomId }) => !ownedRoomIds.has(roomId));

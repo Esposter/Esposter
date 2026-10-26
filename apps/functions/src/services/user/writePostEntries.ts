@@ -3,11 +3,11 @@ import type { UserInAuth } from "@esposter/db-schema";
 
 import { db } from "#src/services/shared/db";
 
-// Each of the person's posts as its text and placement. A post's like and comment counts and its ranking are other
-// people's activity on it, so they are left out
+// Each of the person's posts as its text, its placement and the time it was written. A post's like and comment counts and
+// its ranking are other people's activity on it, so they are left out
 export const writePostEntries = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
   const posts = await db.query.postsInPost.findMany({
-    columns: { depth: true, description: true, id: true, parentId: true, title: true },
+    columns: { createdAt: true, depth: true, description: true, id: true, parentId: true, title: true },
     where: { userId: { eq: userId } },
   });
   for (const post of posts)
