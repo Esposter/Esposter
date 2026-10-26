@@ -296,3 +296,4 @@ A jump from the map SHALL place the character standing on the ground at the chos
 - [ ] **Running out of stamina in water drowns the character, which then returns to where its stamina was last full on foot, as the game does** — no source yet: the wiki's Fallen Character page is not in the cache, and no reference file records the drowning's return.
 - [ ] **The pool refills on foot and in the air outside the glider, and never on a wall, in water or under the glider** — no source yet: `Stamina.reference.ts` records the refill rate but not the states it runs in.
 - [ ] **The party's Impetuous Winds cuts the stamina each spend takes** — no source yet: the Team Bonus page is not in the cache, and the cached gcsim source has no Impetuous Winds rule.
+- [ ] **The pool starts at 100 and refills at 25 a second after a rest** — no source yet: the Stamina wiki page is not on disk.
