@@ -4,8 +4,6 @@ Read when writing or reshaping a branch — a guard, an `if/else`, or a chain. T
 (guard clauses first, one guard per outcome, a chain from first branch to last); this page is where each shape
 stops being right and what a reviewer's "use a guard clause" gets wrong.
 
-- **Guard clauses first** — `if (!condition) return` to exit early instead of wrapping the body in `if`. Invert and
-  return early aggressively.
 - **One guard per outcome, not one per condition** — consecutive guards whose bodies are identical collapse into
   one with `||` wherever the conditions are independent. Splitting them reads as though the branches differ and
   invites a later edit to give one its own body, which is how two conditions that must stay in lockstep drift
@@ -36,6 +34,6 @@ stops being right and what a reviewer's "use a guard clause" gets wrong.
 
 ## `switch`
 
-- **Use `switch` for type-based branching** — branching on an enum/discriminant with multiple cases uses `switch`, not an `if/else if` chain. Use `if/else if/else` only for non-enum expressions or exactly two branches. Never switch over a discriminant purely to dispatch different logic per case — key a map by the discriminant instead (`references/type-modelling.md`).
+- **Use `if/else if/else` only for non-enum expressions or exactly two branches.** Never switch over a discriminant purely to dispatch different logic per case — key a map by the discriminant instead (`references/type-modelling.md`).
 
 - **Every `switch` on an enum or discriminated-union discriminant needs `default: exhaustiveGuard(value)`** (or `return exhaustiveGuard(value)` in return-position), imported from `@esposter/shared`, so a new variant is a compile error. Nested switches each need their own guard. **Exception**: switches on non-enum values (strings, numbers, class instances).
