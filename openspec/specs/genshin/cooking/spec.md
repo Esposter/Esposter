@@ -347,7 +347,7 @@ A cook's cooking talent SHALL add one more dish of the recipe when its chance dr
 
 ## Open
 
-- [ ] **Auto Cook makes up to 99 dishes** — no source yet: `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/CookRecipeExcelConfigData.json` and `CookBonusExcelConfigData.json` hold no batch limit field, the English text map names no 99 limit on a cooking line, and no cooking wiki page is cached.
+- [ ] **Auto Cook makes up to 99 dishes** — no source yet: a batch limit in the game's data or text, since `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/CookRecipeExcelConfigData.json` and `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/CookBonusExcelConfigData.json` hold none, the English text's Auto Cook line (key `1879414003`) names none, and no cooking wiki page is cached.
 - [ ] **The game refuses Raiden Shogun as a cook** — no source yet: the code's check asserts it, and no dump table or cached wiki page was checked for it.
 - [ ] **A cook's passive bonuses each matching dish** — no source yet: no passive bonus is applied in the cooking services; the talent roll only adds a dish.
 - [ ] **Xiangling and Hu Tao carry the 12 and 18 percent talents** — no source yet: the dump's 1200 and 1800 cooking talent rows are not tied to these characters in the files checked.
