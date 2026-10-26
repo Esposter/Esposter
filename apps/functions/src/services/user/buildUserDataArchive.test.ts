@@ -193,7 +193,7 @@ describe(buildUserDataArchive, () => {
     await buildUserDataArchive(userId, blobName);
     const entries = readArchiveEntries(blobName);
 
-    expect(Object.keys(entries).sort()).toStrictEqual(
+    expect(Object.keys(entries).toSorted()).toStrictEqual(
       [
         "account.json",
         "accesses.json",
@@ -213,7 +213,7 @@ describe(buildUserDataArchive, () => {
         `rooms/${room.id}/messages.json`,
         "saves/genshin/save.json",
         "searches.json",
-      ].sort(),
+      ].toSorted(),
     );
     const messages = jsonDateParse<StandardMessageEntity[]>(readEntryText(entries, `rooms/${room.id}/messages.json`));
     expect(messages.map(({ message: text }) => text)).toStrictEqual([message]);
@@ -329,7 +329,7 @@ describe(buildUserDataArchive, () => {
     expect(
       Object.keys(entries)
         .filter((entryName) => entryName.startsWith("posts/"))
-        .sort(),
+        .toSorted(),
     ).toStrictEqual([`posts/${post.id}.json`]);
     expect(readEntryJson(entries, `posts/${post.id}.json`)).toStrictEqual({
       createdAt: post.createdAt,
@@ -382,14 +382,14 @@ describe(buildUserDataArchive, () => {
     expect(
       Object.keys(entries)
         .filter((entryName) => entryName.startsWith(`rooms/${room.id}/`))
-        .sort(),
+        .toSorted(),
     ).toStrictEqual(
       [
         `rooms/${room.id}/emoji/${emoji.id}`,
         `rooms/${room.id}/images/ProfileImage`,
         `rooms/${room.id}/messages.json`,
         `rooms/${room.id}/room.json`,
-      ].sort(),
+      ].toSorted(),
     );
     expect(readEntryJson(entries, `rooms/${room.id}/room.json`)).toStrictEqual({
       createdAt: room.createdAt,

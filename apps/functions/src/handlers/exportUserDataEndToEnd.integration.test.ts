@@ -154,7 +154,7 @@ describe(exportUserDataHandler, () => {
     const entries = unzipSync(archiveBytes);
 
     expect(exportRow).toStrictEqual({ blobName: getDataExportBlobName(dataExportId), status: DataExportStatus.Ready });
-    expect(Object.keys(entries).sort()).toStrictEqual(
+    expect(Object.keys(entries).toSorted()).toStrictEqual(
       [
         "account.json",
         "accesses.json",
@@ -179,7 +179,7 @@ describe(exportUserDataHandler, () => {
         `rooms/${room.id}/room.json`,
         "saves/genshin/save.json",
         "searches.json",
-      ].sort(),
+      ].toSorted(),
     );
   });
 });
