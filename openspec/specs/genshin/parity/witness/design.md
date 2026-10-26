@@ -25,5 +25,3 @@ A row stands where the exports lay it; only its phase along the glide is the ref
 - [ ] **A capital's exports ran the shooting tool past 4 GB until the browser's connection dropped** — no source yet: no run log or commit records that failure.
 - [ ] **Parts in one frame share one camera, with a barely fixed axis taken from a part that fixes it** — no source yet: the hand-off of a barely fixed axis from one part to another, which no step names; `scripts/src/services/genshinParity/witness/solveReferencePose.ts` takes its held axes only from the command's `--hold` flag (`scripts/src/services/genshinParity/commands/poseCommand.ts`).
 - [ ] **Correlating the ground frame to frame and placing a one-row template were tried and failed** — no source yet: no commit or note records those trials.
-- [ ] **The normal is halved and lifted into 0 to 1 and let down as it is read** — no source yet: `packages/genshin-world/parity/witness/renderWitnessTargets.ts` was not traced for the encoding.
-- [ ] **The targets are read one call each** — no source yet: `renderWitnessTargets.ts` was not traced for the read calls.
