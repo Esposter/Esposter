@@ -16,5 +16,7 @@ A recording is sampled to find its events, then each event is matched at its own
 
 ## Open
 
-- [ ] **Which step finds a recording's events** — checked against scripts/src/services/genshinParity/image/sampleFrames.ts: writes the frames at one fixed rate and a contact sheet, with no event search, and the claim is not settled by it because no file in scripts/src/services/genshinParity names a step that finds events from those frames.
-- [ ] **When the window delivers a frame** — partly cited: the Motion bullet's "takes whatever frames the window delivers, up to sixty a second" (`scripts/src/services/genshinParity/game/captureGame.ts`); checked against ~/Esposter/cache/ffmpeg/ffmpeg-9.0.2-essentials_build/doc/ffmpeg-filters.html, its gfxcapture section: frames come at whatever rate the compositor provides, capped by `max_framerate`, with no stable FPS; the claim is open for the timing of each frame because that section gives the rate, not when a frame is sent.
+- [ ] **A recording is sampled at one frame a second to find its events** — contradicted by `scripts/src/services/genshinParity/commands/framesCommand.ts`: its default is ten a second, not one.
+- [ ] **Window capture takes a frame only when the window changes** — no source yet: `scripts/src/services/genshinParity/game/captureGame.ts` was not traced for frame skipping.
+- [ ] **`props` applies the fixture's `motionProps` once the entry's animations finish** — no source yet: only the Startup fixture's `motionProps` was seen, and the order of application in `packages/genshin-world/parity/main.ts` was not traced.
+- [ ] **When the window delivers a frame** — no source yet: the ffmpeg gfxcapture section (`~/Esposter/cache/ffmpeg/ffmpeg-9.0.2-essentials_build/doc/ffmpeg-filters.html`) gives the rate but not when a frame is sent, and `scripts/src/services/genshinParity/game/captureGame.ts` is repo code, not a source for the timing.
