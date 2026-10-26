@@ -8,7 +8,7 @@ Bosses are the enemies whose reward is claimed rather than dropped, so their rul
 flowchart TD
   D["A normal boss defeated"] --> C{"Its Trounce Blossom claimed?"}
   C -->|"no"| S["Stays defeated until the player teleports away"]
-  C -->|"yes, at a time"| R["Back five seconds after the claim"]
+  C -->|"yes, at a time"| R["Back the respawn span after the claim"]
   W["Each weekly-boss claim, at a time"] --> N["Counted from the week's reset: Monday 04:00 on the server's clock"]
   N --> P["Priced by computeBlossomClaimResin: 30 for the first three, 60 after"]
 ```
@@ -16,7 +16,7 @@ flowchart TD
 ## Decisions
 
 - **An unclaimed boss has no respawn time.** `computeBossRespawnTime` returns undefined for a boss with no claim, since it stays defeated until the player teleports away, which the world will take as the claim's absence (`packages/genshin-world/src/services/bosses/computeBossRespawnTime.ts`).
-- **A claimed boss is back five seconds later.** `BOSS_RESPAWN_AFTER_CLAIM_DURATION` is the wiki's figure, and a claim at any time brings the boss back that many seconds after it. The five seconds are the constant's value in `packages/genshin-world/src/services/bosses/constants.ts`, and the return is `packages/genshin-world/src/services/bosses/computeBossRespawnTime.ts`.
+- **A claimed boss is back a fixed span later.** `BOSS_RESPAWN_AFTER_CLAIM_DURATION` is the wiki's figure, and a claim at any time brings the boss back that span after it. The span's value lives in `packages/genshin-world/src/services/bosses/constants.ts`, and the return is `packages/genshin-world/src/services/bosses/computeBossRespawnTime.ts`.
 - **The week resets on Monday at 04:00 on the server's clock.** `computeLastWeeklyReset`, in the [reset clock](../reset-clock/design.md), finds the most recent Monday at the server's 04:00 at or before the moment read, the one clock every reset is read on. A moment before that week's reset belongs to the week before. The Monday 04:00 is the weekly refresh row `REFRESH_WEEKlY`, id 800001, `14400;360000`, in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json` (14400 is the 4:00 hour, and 360000 seconds past the epoch's Thursday is Monday 04:00); the function is `packages/genshin-world/src/services/time/computeLastWeeklyReset.ts`.
 - **A claim at the reset counts toward the new week.** `countWeeklyClaims` counts a claim made at or after the reset and no later than the moment read, so the claim at exactly 04:00 Monday is this week's first and a claim after the moment is not yet counted (`packages/genshin-world/src/services/weekly/countWeeklyClaims.ts`).
 - **One count across every weekly boss.** `countWeeklyClaims` counts the claims of all weekly bosses together, since the cheap price is for the first three claims in the week, whichever boss they are for (`packages/genshin-world/src/services/weekly/countWeeklyClaims.ts`).
