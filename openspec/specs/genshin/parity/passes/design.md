@@ -57,7 +57,7 @@ flowchart TD
 ## Open
 
 - [ ] **Each component has its own report, so two components' passes can run at once** — no source yet: `scripts/src/services/genshinParity/passes/getParityPassesPath.ts` was not read for the per-component path, and no concurrent run was traced.
-- [ ] **The measures run in the order listed** — no source yet: `PARITY_PASS_ORDER` in `scripts/src/services/genshinParity/passes/constants.ts` runs Inventory, Layout, Camera, Shape, Motion, Surface, Display, Light, Atmosphere, Audio, so Motion comes before Surface here and the Display pass is not listed.
+- [ ] **The measures run in the order listed** — contradicted by scripts/src/services/genshinParity/passes/constants.ts: PARITY_PASS_ORDER runs Motion before Surface, and Display is unlisted.
 - [ ] **The page is handed the layout's placements by name and loads none of the exports** — no source yet: `packages/genshin-world/parity/main.ts` was not traced to a loader that skips the exports.
 - [ ] **The camera's eye moves along the glide alone** — no source yet: `scripts/src/services/genshinParity/passes/measureCamera.ts` and `solveReferenceCamera.ts` were not traced for a glide-only constraint.
 - [ ] **A family the two never both draw halts the shape pass** — no source yet: `compareFamilyTargets.ts` reports no overlap as a reason, but the halt in `scripts/src/services/genshinParity/passes/measureShape.ts` was not traced.
