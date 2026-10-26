@@ -114,22 +114,20 @@ The quest screen is scored whole-frame against `quest-screen`, the English clien
 
 ## Sources
 
-- [Quest](https://genshin-impact.fandom.com/wiki/Quest), Genshin Impact Wiki: the Archon, story and world quests and the commissions, and the beam that marks a navigated objective from 50 metres off.
+- [Quest](https://genshin-impact.fandom.com/wiki/Quest), Genshin Impact Wiki: the Archon, story and world quests and the commissions, and the beam that marks a navigated objective from 50 metres off: "The beam will only appear when the player's distance is 50m or more from the objective."
 - [Quest/Menu](https://genshin-impact.fandom.com/wiki/Quest/Menu), Genshin Impact Wiki: the quest screen's list grouped by Archon quests, story quests, commissions and world quests, its tabs, and its quest information with its Navigate button.
 - [Event Quest](https://genshin-impact.fandom.com/wiki/Event_Quest), Genshin Impact Wiki: most event quests are world quests, and a flagship event's are story quests.
 - [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: J for the quest menu, V for quest navigation, and holding V to show the step's objective.
-- ["The Seventh Samurai"](https://genshin-impact.fandom.com/wiki/%22The_Seventh_Samurai%22), Genshin Impact Wiki: Xavier's world quest in Inazuma City, its steps, and its unlock after Tatara Tales: The Last Act.
+- ["The Seventh Samurai"](https://genshin-impact.fandom.com/wiki/%22The_Seventh_Samurai%22), Genshin Impact Wiki: Xavier's world quest in Inazuma City, its steps, and its unlock: "It is unlocked after completing Tatara Tales: The Last Act."
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the quest table's types and words, each quest's binary output of steps and conditions, and the dialog and character tables a talk is read from.
 
 ## Open
 
-- [ ] **The screen is the English client's still at 1920 by 1080, and its marks are traced from it** — no source yet: the wiki's `File:Quest Screen.png` is not in `~/Esposter/cache/genshin-wiki`, so the still's size and language are unchecked.
+- [ ] **The screen is the English client's still at 1920 by 1080, and its marks are traced from it** — no source yet: the wiki's `File:Quest Screen.png` is not in `~/Esposter/cache/genshin-wiki`, so the still's size and language are unchecked. Checked the cached Quest page, which names no Quest Screen image; the cache holds no `File:Quest Screen.png`.
 - [ ] **The screen scores a mean difference of 44.32% and a FLIP of 0.8047** — no source yet: `~/Esposter/genshin-parity/comparisons/quest-screen.png` is the only file for the screen, and no text file there holds either number.
-- [ ] **The beam is drawn from 50 metres off, as the wiki says** — no source yet: the wiki's Quest page is not in `~/Esposter/cache/genshin-wiki`.
-- [ ] **J opens the quest menu, V navigates, and holding V shows the objective** — no source yet: the key bindings are not traced in the code, and the wiki's Controls page is not in `~/Esposter/cache/genshin-wiki`.
-- [ ] **The Seventh Samurai opens only once Tatara Tales: The Last Act is finished** — no source yet: the wiki's "The Seventh Samurai" page is not in `~/Esposter/cache/genshin-wiki`.
+- [ ] **J opens the quest menu, V navigates, and holding V shows the objective** — partly settled: the wiki's Controls page gives the PC keys J (Open Quest Menu), V (Quest Navigation) and holding V (Show objective for this phase of the quest). No source yet: the key bindings are not traced in the code.
 - [ ] **About half of an offered quest's lines show no words, in any language** — no source yet: the dialog table's lines are not counted against the text maps in `~/Esposter/genshin-parity/text/`.
 - [ ] **The carried prologue starts at Wanderer's Trail's first step, a go-to no region data places** — no source yet: neither the prologue's binary nor the region data is checked for that trigger.
-- [ ] **The objective kinds are the game's five** — no source yet: the wiki's Quest/Menu page, named in Sources, is not in the wiki cache.
-- [ ] **The three city openings' parents are the wiki's named prerequisites** — no source yet: the wiki's Quest page, named in Sources, is not in the wiki cache; the parents not yet read from `QuestExcelConfigData` in `~/Esposter/genshin-parity/text/ExcelBinOutput/`.
+- [ ] **The objective kinds are the game's five** — no source yet: the wiki's Quest/Menu page, named in Sources, is not in the wiki cache. Checked the cached Quest page, which gives no objective kinds; the cache holds no Quest/Menu page.
+- [ ] **The three city openings' parents are the wiki's named prerequisites** — no source yet: the wiki's Quest page, named in Sources, is not in the wiki cache; the parents not yet read from `QuestExcelConfigData` in `~/Esposter/genshin-parity/text/ExcelBinOutput/`. Checked the cached Quest page, which names no city opening's prerequisite.
 - [ ] **Liyue's opening waits on quest 384, which is carried** — no source yet: quest 384 in `QuestExcelConfigData` in `~/Esposter/genshin-parity/text/ExcelBinOutput/`, not yet read for Liyue's opening.
