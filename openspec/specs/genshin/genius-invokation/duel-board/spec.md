@@ -96,3 +96,4 @@ A duel's end SHALL return the player from the board to the world.
 
 ## Open
 
+The open items are held once, in [design.md](design.md#open).
