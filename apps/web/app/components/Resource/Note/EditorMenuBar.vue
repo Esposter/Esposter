@@ -3,7 +3,6 @@ import type { MenuItem } from "@/models/shared/MenuItem";
 import type { Editor } from "@tiptap/vue-3";
 
 import { NOTE_IMAGE_MIME_TYPES } from "#shared/services/resource/note/constants";
-import { useInsertNoteImages } from "@/composables/resource/note/useInsertNoteImages";
 import { getNoteBlockMenuItems } from "@/services/resource/note/getNoteBlockMenuItems";
 import { getListMenuItems } from "@/services/richTextEditor/getListMenuItems";
 import { getTextFormatMenuItems } from "@/services/richTextEditor/getTextFormatMenuItems";
