@@ -27,4 +27,4 @@ Chiori's kit is its record and one behaviour module, `createChioriKitBehaviour`,
 ## Sources
 
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/chiori), MIT: the kit's hitmarks, animations, reach, Tamoto's ticker and its 12 metre search, the upward sweep's box, the burst's circle, and the proud group indices behind each multiplier.
-- [Weaving Blade](https://genshin-impact.fandom.com/wiki/Weaving_Blade), Genshin Impact Wiki: the poise for her strikes, charged attack and high plunge.
+- [Weaving Blade](https://genshin-impact.fandom.com/wiki/Weaving_Blade), Genshin Impact Wiki: the poise for her strikes, charged attack, plunging collision and high plunge.
