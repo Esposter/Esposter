@@ -123,3 +123,8 @@ From constellation 1, Ice Unleashed SHALL add blades; from constellation 2, Atmo
 - **GIVEN** Chongyun is at constellation 6
 - **WHEN** Cloud-Parting Star casts its blades
 - **THEN** a fourth blade joins them with its own DMG Bonus, a provisional reach of 5 metres
+
+## Open
+
+- [ ] **Atmospheric Revolution's cut applies to casts within the Frost Field** — no source yet: the cached Chongyun page names the constellation without its text.
+- [ ] **Chongyun gains 1 energy from a Cryo hit at constellation 4** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/chongyun/cons.go`: AddEnergy 2 behind a 2-second cooldown.
