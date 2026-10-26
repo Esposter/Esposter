@@ -1,6 +1,6 @@
 # Dahlia
 
-Dahlia's kit is its record and one behaviour module, `createDahliaKitBehaviour`, avatar 10000115: her four strikes, a charged attack, Immersive Ordinance as her skill with its tap and hold, Radiant Psalter as her burst with its shield, and a low, high and collision plunge. Her multipliers are read from proud skill groups 11531, 11532 and 11539, the burst's shield, Favonian Favor's seconds and its multiplier among them. The charged attack costs 20 stamina, the skill cools for 9 seconds, and the burst takes 60 energy and a 15-second cooldown.
+Dahlia's kit is its record and one behaviour module, `createDahliaKitBehaviour`, avatar 10000115: her four strikes, a charged attack, Immersive Ordinance as her skill with its tap and hold, Radiant Psalter as her burst with its shield, and a low, high and collision plunge. Her multipliers are read from proud skill groups 11531, 11532 and 11539 (the game's `ProudSkillExcelConfigData`), the burst's shield, Favonian Favor's seconds and its multiplier among them: at level 1 group 11539 holds Favonian Favor's 12 seconds at index 3, the burst's 60 energy at index 4 and its 15-second cooldown at index 5 (gcsim's `burst.go` line 67 sets the 15 seconds, and line 74 the 12), and group 11531 holds the charged attack's 20 stamina at index 7. The charged attack costs 20 stamina, the skill cools for 9 seconds (`skill.go` line 70, `9*60`), and the burst takes 60 energy and a 15-second cooldown.
 
 ## Not yet built
 
@@ -13,10 +13,10 @@ The framework has no attack-speed buff for the party, so what depends on it wait
 
 ## Decisions
 
-- **The shield is a task's.** gcsim places Radiant Psalter's shield 31 frames in, so the burst sets a task that runs then; the shield reads her Max HP as it runs, as the table's share of Max HP plus a flat HP. It lasts the 12 seconds Favonian Favor holds, from its placement.
+- **The shield is a task's.** gcsim places Radiant Psalter's shield 31 frames in (`burst.go` line 20, `burstShieldInitial`, and the task at line 88), so the burst sets a task that runs then; the shield reads her Max HP as it runs, as the table's share of Max HP plus a flat HP. It lasts the 12 seconds Favonian Favor holds, from its placement (`burst.go` line 74, `12*60` plus the Constellation 4 bonus).
 - **The hold's threshold is provisional.** gcsim takes Immersive Ordinance's hold as its own variant but gives no threshold for it, so the kit uses the 0.5 seconds the other holds use. The roadmap's manual verification has the question.
-- **The plunges are borrowed.** Dahlia has no gcsim plunge file, so her three plunges are priced like the ones in [how a kit is read](../README.md#how-a-kit-is-read), with the 150, 100 and 25 poise Mizuki's plunges are given. The roadmap's manual verification has the question.
-- **Normal attacks and the charged attack take the wiki's poise.** gcsim gives her normal attacks and charged attack none, so the kit takes the wiki's rows: 45.6 for the first strike, 42 for the second, 27.6 for each hit of the third and 68.7 for the fourth, and 60 for each of the charged attack's two hits.
+- **The plunges are borrowed.** Dahlia has no gcsim plunge file (the dahlia package holds none, and the wiki's collision, low and high poise rows are 25, 100 and 150), so her three plunges are priced like the ones in [how a kit is read](../README.md#how-a-kit-is-read), with the 150, 100 and 25 poise Mizuki's plunges are given. The roadmap's manual verification has the question.
+- **Normal attacks and the charged attack take the wiki's poise.** gcsim gives her normal attacks and charged attack none, so the kit takes the wiki's rows (`cache/genshin-wiki/Category_Dahlia_Talents.json`, Advanced Properties): 45.6 for the first strike, 42 for the second, 27.6 for each hit of the third and 68.7 for the fourth, and 60 for each of the charged attack's two hits.
 
 ## Key files
 
