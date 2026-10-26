@@ -71,4 +71,4 @@ The rainforest city SHALL stand in for the houses the game draws in Sumeru City,
 
 ## Open
 
-- [ ] **The rainforest city stands where the game's houses stand** — no source yet: the city's place is not compared against the game's house positions in the Sumeru export.
+- [ ] **The rainforest city stands where the game's houses stand** — no source yet: the city's place in `packages/genshin-world/src/data/regions/sumeru.json` is not compared against the game's house positions in the Sumeru export.
