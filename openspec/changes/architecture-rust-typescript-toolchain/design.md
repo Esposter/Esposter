@@ -34,7 +34,7 @@ Rejected: removing `vue-tsc` now. `vue-tsc` reads the classic API that the overr
 
 ### Phase 4 and 5: the override and the `typescript` package
 
-The override stays while `vue-tsc`, `@volar/typescript` and the editor read the classic API. The `typescript` package stays while `scripts/src` imports it in-process (seventeen files import it, and five of them call `ts.createSourceFile` or `ts.factory`), and while build and tooling packages reach it through peers, including `rolldown-plugin-dts`, `tsdown`, `vite-plugin-checker` and `@arethetypeswrong/core`. `tsrs`'s `ast` subpaths do not cover the `scripts/` uses. They export the node guards, `SyntaxKind`, `ScriptTarget` and `ScriptKind`, but no parser from source text: `tsrs/ast/factory`'s `createSourceFile` builds a node from parts rather than parsing a string, and no subpath exports `forEachChild`. Every `scripts/` file that parses source text is blocked on a parser, so none of the imports move until one exists, and the parser choice is a separate dependency decision.
+The override stays while `vue-tsc`, `@volar/typescript` and the editor read the classic API. The `typescript` package stays while build and tooling packages reach it through peers, including `rolldown-plugin-dts`, `tsdown`, `vite-plugin-checker` and `@arethetypeswrong/core`. `scripts/` no longer imports it. `tsrs`'s `ast` subpaths export the node guards, `SyntaxKind`, `ScriptTarget` and `ScriptKind`, but no parser from source text, so the in-process uses moved to `oxc-parser` instead: `scripts/src/services/shared/parseSource.ts` parses a source and throws when it does not parse, and every `scripts/` check reads the tree through it. The parser choice is recorded here because it is the dependency decision that unblocked phase 5 for `scripts/`.
 
 ## Mechanism
 
@@ -66,7 +66,7 @@ flowchart TD
 | `packages/azure-mock/src/models/table/MockTableClient.ts`                | the source the `tsrs` false positive was reproduced in                   |
 | `openspec/specs/architecture/monorepo-tooling/design.md`                 | owns the TypeScript compiler section, rewritten as built at archive      |
 | `openspec/specs/architecture/lint-toolchain/design.md`                   | owns the type-aware lint pass, out of scope here                         |
-| `scripts/src/services/**` (in-process `typescript` imports)              | the uses phase 5 must replace or keep                                    |
+| `scripts/src/services/shared/parseSource.ts`                             | the parser that replaced every in-process `typescript` use in `scripts/` |
 
 ## Notes
 
