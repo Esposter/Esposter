@@ -1,6 +1,6 @@
 # Vesna
 
-Vesna's kit is its record and one behaviour module, `createVesnaKitBehaviour` (`packages/genshin-world/src/services/kit/characters/vesnaKit.ts`), avatar 10000143 (`~/Esposter/genshin-parity/text/ExcelBinOutput/AvatarExcelConfigData.json`). gcsim has no folder for Vesna at v2.47.2 (its `internal/characters/` holds no `vesna` folder at that tag), so Vesna's record follows [the kits index](../README.md).
+Vesna's kit is its record and one behaviour module, `createVesnaKitBehaviour` (`packages/genshin-world/src/services/kit/characters/vesnaKit.ts`), avatar 10000143 (`~/Esposter/genshin-parity/text/ExcelBinOutput/AvatarExcelConfigData.json`). gcsim has no folder for Vesna at v2.47.2 (its `~/Esposter/cache/gcsim-v2.47.2/internal/characters/` holds no `vesna` folder at that tag), so Vesna's record follows [the kits index](../README.md).
 
 ## Decisions
 
@@ -30,4 +30,4 @@ Vesna's kit is its record and one behaviour module, `createVesnaKitBehaviour` (`
 
 ## Open
 
-- [ ] **Her strikes and charged attack are Physical** — no source yet: the cached Vila Blade Dance page names no element for them, and gcsim has no Vesna folder. Checked the cache's Category_Vesna_Talents.json entries: Vila Blade Dance's infobox and advanced properties name no element, and The Art of Victory's Armed for Action text names Anemo only inside that form; no cached page says Physical.
+- [ ] **Her strikes and charged attack are Physical** — no source yet: the cached `~/Esposter/cache/genshin-wiki/Category_Vesna_Talents.json` never says Physical and names no element for the strikes, and gcsim has no Vesna folder.
