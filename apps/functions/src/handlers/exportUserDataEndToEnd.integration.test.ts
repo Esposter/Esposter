@@ -158,6 +158,7 @@ describe(exportUserDataHandler, () => {
       [
         "account.json",
         "calls.json",
+        "follows.json",
         "friends.json",
         "images/CallBackground/0",
         "images/ProfileImage",

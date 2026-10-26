@@ -40,6 +40,7 @@ import {
   roomEmojisInMessage,
   roomsInMessage,
   searchHistoriesInMessage,
+  threadFollowsInMessage,
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
@@ -181,6 +182,7 @@ describe(buildUserDataArchive, () => {
       [
         "account.json",
         "calls.json",
+        "follows.json",
         "friends.json",
         "images/ProfileImage",
         "likes.json",
@@ -488,6 +490,34 @@ describe(buildUserDataArchive, () => {
 
     // A call row stores no time, and its id is the key a knocker presents to join, so the exact shape leaves both out
     expect(readEntryJson(entries, "calls.json")).toStrictEqual([{ roomId: room.id, threadRootRowKey: "" }]);
+  });
+
+  test("writes the person's own thread decisions, an unfollow included, and no other person's", async () => {
+    expect.hasAssertions();
+
+    const userId = crypto.randomUUID();
+    const otherUserId = crypto.randomUUID();
+    const blobName = `${crypto.randomUUID()}.zip`;
+    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
+    const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
+    const threadRootRowKey = getReverseTickedTimestamp();
+    await mockDb.insert(usersToRoomsInMessage).values([
+      { roomId: room.id, userId },
+      { roomId: room.id, userId: otherUserId },
+    ]);
+    // The person's unfollow is a decision they made, so its row stays; the other person's follow of the same thread is not theirs
+    await mockDb.insert(threadFollowsInMessage).values([
+      { isUnfollowed: true, roomId: room.id, threadRootRowKey, userId },
+      { isUnfollowed: false, roomId: room.id, threadRootRowKey, userId: otherUserId },
+    ]);
+
+    await buildUserDataArchive(userId, blobName);
+    const entries = readArchiveEntries(blobName);
+
+    // A follow stores no time, so the exact shape leaves one out
+    expect(readEntryJson(entries, "follows.json")).toStrictEqual([
+      { isUnfollowed: true, roomId: room.id, threadRootRowKey },
+    ]);
   });
 
   test("reads an attachment as a stream, never into a buffer", async () => {
