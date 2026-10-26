@@ -60,7 +60,7 @@ A change's `design.md` takes the same template plus an explicit scope: what work
 
 **A design describes files that do not exist yet, and the citation check does not know that.** Every backticked repo path is checked to exist, so a Key files table in a change lists only the **existing** files the work touches or replaces, with the role each plays after the change. Paths the change would create go in a fenced block as a tree — which reads better for a layout anyway.
 
-**Every change carries that table, and the table is how it is sized.** `pnpm ai:proposals:report` reads its cost off the rows — a server path, a `packages/db-schema` path, an `apps/functions` or `apps/infra` path, and a package's manifest, which is a row whenever the change adds a package — so nothing about effort is written anywhere else (`building-proposals` skill). **A change that must wait on another links that change's design in its lead**, the prose before the first section ("built on [task rows](../resource-task-rows/design.md)"), which is where the report reads what blocks it; a link further down is a reference, not a prerequisite, and a change's own program is never a blocker.
+**Every change carries that table, and the table is how it is sized.** `pnpm ai:proposals:report` reads its cost off the rows — a server path, a `packages/db-schema` path, an `apps/functions` or `apps/infra` path, and a package's manifest, which is a row whenever the change adds a package — so nothing about effort is written anywhere else (`building-proposals` skill). **A change that must wait on another links that change's design in its lead**, the prose before the first section ("built on [task rows](../<other-change>/design.md)"), which is where the report reads what blocks it; a link further down is a reference, not a prerequisite, and a change's own program is never a blocker.
 
 ## A capability gains sub-capabilities once they exist
 
@@ -82,7 +82,7 @@ An area's roadmap is the change `<area>-roadmap`, with `skip_specs: true`. Its `
 
 A roadmap exists only while its area has open work. When the last item is built, moved to a change or decided against, the `<area>-roadmap` folder is deleted in the same change, never kept with an empty `## Later`.
 
-The Genshin roadmap's `## Manual verification` list is one line an item (the question, a link to the page that holds its source, the one fact to judge it by), its detail a decision on that page; `scripts/src/workspace/manualVerification.test.ts` enforces it, since a hundred paragraph-long questions cannot be read as a batch.
+The Genshin roadmap's `## Manual verification` list is one line per item (the question, a link to the page that holds its source, the one fact to judge it by), its detail a decision on that page; `scripts/src/workspace/manualVerification.test.ts` enforces it, since a hundred paragraph-long questions cannot be read as a batch.
 
 ## Lifecycle map
 

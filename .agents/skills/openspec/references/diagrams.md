@@ -40,8 +40,8 @@ better home:
   parallel chains being _compared_ (three transports differing only in their middle step — the shape is the
   comparison), and a chain where **a step's position is the claim**, so moving one box changes the outcome. The
   test for the second is whether a reader's default ordering is the wrong one: rewriting a rendered date
-  _before_ hydration rather than after is the whole reason it does not mismatch, while collect-then-resolve-then
-  -replace is the only order anyone would have guessed, and the claim there is really "one pass, not a loop" —
+  _before_ hydration rather than after is the whole reason it does not mismatch, while collect-then-resolve-then-replace
+  is the only order anyone would have guessed, and the claim there is really "one pass, not a loop" —
   which the boxes do not show.
 
 **A node label is a name, not a sentence.** It may carry one qualifier under a `<br/>` — the procedure that runs

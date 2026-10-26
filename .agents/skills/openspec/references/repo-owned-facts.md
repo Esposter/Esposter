@@ -8,7 +8,7 @@ Read when a page is about to state a number, a count, a list of a directory's co
 
 ## What the repo can count
 
-- **Never write down what the repo can count.** File counts, per-type tallies, "N packages", an exhaustive list of a directory's contents, a table whose every row is `X` → `path/X` — all restate what one `ls`/`find` answers, and all rot silently, because nothing fails when they drift. Record the **convention that generates** the fact (`src/azure/resources/<ARM type>/`) and let the reader run the command. A hand-maintained list is worth it only when every row carries something the tree cannot: a role, a purpose, a caveat — which is exactly why the Key Files table stays.
+- **Never write down what the repo can count.** File counts, per-type tallies, "N packages", an exhaustive list of a directory's contents, a table whose every row is `X` → `path/X` — all restate what one `ls`/`find` answers, and all rot silently, because nothing fails when they drift. Record the **convention that generates** the fact (`apps/infra/src/azure/resources/<ARM type>/`) and let the reader run the command. A hand-maintained list is worth it only when every row carries something the tree cannot: a role, a purpose, a caveat — which is exactly why the Key Files table stays.
 
 ## What a manifest or a constant declares
 
