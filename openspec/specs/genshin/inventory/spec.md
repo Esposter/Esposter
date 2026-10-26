@@ -1,6 +1,6 @@
 ## Purpose
 
-The game's bag and its currencies as pure state. Nine tabs in the game's order, items stacking to their own limits, weapons and artifacts one each, the bag's room per tab and by kind, each tab sorted as the game sorts it, and a wallet of Mora, Primogems, Genesis Crystals, the two Fates, Starglitter, Stardust, the Masterless Stella Fortuna and Original Resin, which regenerates. The materials the enemies drop are defined from the game's material table and taken into the bag on a pick up. Its screen opens on B, its words the game's own. Nothing is bought with money.
+The game's bag and its currencies as pure state. Nine tabs in the game's order, items stacking to their own limits, weapons and artifacts one each, the bag's room per tab and by kind, each tab sorted as the game sorts it, and a wallet of Mora, Primogems, Genesis Crystals, the two Fates, Starglitter, Stardust, the Masterless Stella Fortuna and Original Resin, which regenerates. The materials the enemies drop are defined from the game's material table and taken into the bag on a pick up. Its screen opens on B, its words the game's own. Nothing is bought with money. (The game's tables are `~/Esposter/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json`, `WeaponExcelConfigData.json` and `ReliquaryExcelConfigData.json`; the behaviour is tested in `packages/genshin-world/src/services/inventory/`, among others `addInventoryItem.test.ts`, `computeInventoryTab.test.ts`, `destroyInventoryItems.test.ts` and `useInventoryEntry.test.ts`.)
 
 ## Requirements
 
@@ -236,3 +236,8 @@ Using a food SHALL take one of that food from the bag and apply its heal to the 
 - **WHEN** the player tries to use that food
 - **THEN** the food is not used
 - **AND** no health changes
+
+## Open
+
+- [ ] **The bag opens on B** — no source yet: no key binding to `B` is traced in the code, and the wiki's Controls page is not cached in `~/Esposter/cache/genshin-wiki`.
+- [ ] **Every one- to three-star weapon is destroyable** — no source yet: ten one-star rows of `~/Esposter/genshin-parity/text/ExcelBinOutput/WeaponExcelConfigData.json` carry no destroy rule.
