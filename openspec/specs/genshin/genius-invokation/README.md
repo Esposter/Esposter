@@ -14,4 +14,4 @@ The card game is a rules engine of its own in `genshin-world`: a duel is a plain
 
 ## Open
 
-- [ ] **The plain fields carry everything a duel reads** — no source yet: the duel's reads were not traced against the plain fields of each dump row.
+- [ ] **The plain fields carry everything a duel reads** — checked against the GCG dump row types (ExcelGcgCardRow and its siblings): each names plain fields only, with no obfuscated key, and the claim is not settled by it because the duel's own reads of the built records are not traced to those rows here.
