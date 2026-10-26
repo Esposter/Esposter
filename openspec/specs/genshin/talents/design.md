@@ -66,9 +66,10 @@ A passive has no level. It is open where the character's ascension phase has rea
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `ProudSkillExcelConfigData`, the skill depot's inherent proud skill opens, and the skill and character tables the sets are read from.
 - [Talent](https://genshin-impact.fandom.com/wiki/Talent), Genshin Impact Wiki: the combat talents to level 10 by materials and the ascension phase, and the passives opened at the first and fourth phases.
 - [Combat Talents](https://genshin-impact.fandom.com/wiki/Combat_Talents), Genshin Impact Wiki: the talents upgraded with Character Talent Materials and the weekly bosses' materials, and the alternate sprint never levelled.
+- [Character/Menu](https://genshin-impact.fandom.com/wiki/Character/Menu), Genshin Impact Wiki, Talents section, quoted "a 1st Ascension Passive, and a 4th Ascension Passive talent": every character has both, so the passives open at phases 1 and 4.
 
 ## Open
 
-- [ ] **The alternate sprint has one row and no level** — no source yet: the wiki pages cached here do not name it, and its skill row is not read.
+- [ ] **The alternate sprint has one row and no level** — no source yet: the wiki pages cached here do not name it, and its skill row is not read. Checked again against the wiki cache: the Character/Menu page names an Alternate Sprint among some characters' additional talents, the Stamina page gives its costs (10 Stamina to start, then 15 per second while moving), and the Illusory Torrent page (type Alternate Sprint, in `Category_Mona_Talents.json`) has no level section; none states that it has no level or a single row.
 - [ ] **The Traveler's own form names only its normal attack, so the Anemo set is read** — no source yet: the skill depot's rows for the Traveler's forms are not read here, only the wiki's Anemo talents.
-- [ ] **Across the roster the passives open at phases 0, 1 and 4** — no source yet: only Xilonen's and the Traveler's wiki pages are cached, so the other characters' passives are unchecked.
+- [ ] **The utility passive opens at phase 0** — partly sourced: the wiki's Character/Menu page gives every character a 1st and a 4th Ascension Passive, which settles phases 1 and 4, and a Utility Passive for every character but the Traveler, with no phase given for it.
