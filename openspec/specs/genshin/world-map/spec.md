@@ -160,3 +160,7 @@ A region's landmarks SHALL appear when its data arrives and SHALL be removed whe
 - **GIVEN** a region's landmarks are shown
 - **WHEN** the region is released
 - **THEN** its landmarks are removed
+
+## Open
+
+- [ ] **Entering an area starts its first weather again** — no source yet: the cached Weather wiki page is not on disk.
