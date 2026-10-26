@@ -160,7 +160,3 @@ A region's landmarks SHALL appear when its data arrives and SHALL be removed whe
 - **GIVEN** a region's landmarks are shown
 - **WHEN** the region is released
 - **THEN** its landmarks are removed
-
-## Open
-
-- [ ] **Entering an area starts its first weather again** — no source yet: `packages/genshin-world/src/composables/useAreaWeather.ts` sets the area's first weather when the camera's area changes, which is the build, and no game file on disk shows the game restarts it.
