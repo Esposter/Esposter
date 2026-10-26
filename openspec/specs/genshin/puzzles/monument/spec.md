@@ -1,12 +1,12 @@
 ## Purpose
 
-An Elemental Monument as a state machine, lit by its element or a reaction of its own and, when timed, going out after its time (`packages/genshin-world/src/models/puzzle/ElementalMonument.ts`). Built in the world package; not yet placed, struck or solved in the world.
+An Elemental Monument as a state machine, lit by its element or a reaction of its own and, when timed, going out after its time. Built in the world package; not yet placed, struck or solved in the world.
 
 ## Requirements
 
 ### Requirement: A monument lights when struck by its own element or a reaction of it
 
-A monument SHALL light when struck by its own element or by a reaction whose element is its own (`packages/genshin-world/src/services/puzzle/strikeElementalMonument.ts`).
+A monument SHALL light when struck by its own element or by a reaction whose element is its own.
 
 #### Scenario: Reaction spreads the monument's element
 
@@ -22,7 +22,7 @@ A monument SHALL light when struck by its own element or by a reaction whose ele
 
 ### Requirement: A lit monument's clock restarts from each strike that lights it
 
-A lit monument's clock SHALL restart from the strike that lights it (`packages/genshin-world/src/services/puzzle/strikeElementalMonument.ts`).
+A lit monument's clock SHALL restart from the strike that lights it.
 
 #### Scenario: Timed monument struck again
 
@@ -32,7 +32,7 @@ A lit monument's clock SHALL restart from the strike that lights it (`packages/g
 
 ### Requirement: A timed monument goes out after its time, and an untimed one stays lit
 
-A timed monument that is not lit again SHALL go out once its lit time has passed since it was lit, and an untimed monument SHALL stay lit (`packages/genshin-world/src/services/puzzle/stepElementalMonument.ts`).
+A timed monument that is not lit again SHALL go out once its lit time has passed since it was lit, and an untimed monument SHALL stay lit.
 
 #### Scenario: Timed monument times out
 
@@ -48,7 +48,7 @@ A timed monument that is not lit again SHALL go out once its lit time has passed
 
 ### Requirement: A monument's elemental state moves on each fixed step
 
-A monument's elemental state SHALL move on each fixed step, so its auras decay and its Burning ticks Pyro, lighting it from any reaction of its own (`packages/genshin-world/src/services/puzzle/stepElementalMonument.ts`).
+A monument's elemental state SHALL move on each fixed step, so its auras decay and its Burning ticks Pyro, lighting it from any reaction of its own.
 
 #### Scenario: Burning ticks on the fixed step
 
@@ -59,7 +59,7 @@ A monument's elemental state SHALL move on each fixed step, so its auras decay a
 
 ### Requirement: A puzzle is solved only when all its monuments are lit together
 
-A puzzle of monuments SHALL count as solved only when every monument of it is lit together, and never when none is lit (`packages/genshin-world/src/services/puzzle/checkIsMonumentPuzzleSolved.ts`).
+A puzzle of monuments SHALL count as solved only when every monument of it is lit together, and never when none is lit.
 
 #### Scenario: Every monument lit together
 
@@ -82,3 +82,4 @@ A puzzle of monuments SHALL count as solved only when every monument of it is li
 ## Open
 
 - [ ] **A Swirl that spreads an element lights a monument of that element, and Burning ticks Pyro and auras decay on each step, as the game does** — no source yet: the wiki's Elemental Monument page and its elemental pages are not in the genshin-wiki cache.
+- [ ] **the Elemental Monument is a state machine, lit by its element or a reaction and going out after its time when timed** — no source yet: game data or a snapshot that holds this behaviour
