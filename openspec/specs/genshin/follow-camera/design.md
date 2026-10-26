@@ -70,27 +70,25 @@ The camera's numbers are in `packages/genshin-engine/src/camera/constants.ts`, e
 ## Sources
 
 - [Settings](https://genshin-impact.fandom.com/wiki/Settings), Genshin Impact Wiki: the camera's sensitivity, its default distance from 4.5 to 6.0 restored after a zoom, combat or a teleport, and the pitch that follows slopes.
-- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: the camera turned by the mouse and the right stick, its reset, and Show Cursor on Left Alt.
+- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: the camera turned by the mouse and the right stick, its reset, and Show Cursor on Left Alt; its rows read "Rotate Camera" and "Reset camera angle".
 - [Photo Mode](https://genshin-impact.fandom.com/wiki/Photo_Mode), Genshin Impact Wiki: photo mode reached from the Paimon menu.
-- [Time](https://genshin-impact.fandom.com/wiki/Time), Genshin Impact Wiki: the clock running in photo mode.
+- [Time](https://genshin-impact.fandom.com/wiki/Time), Genshin Impact Wiki: the clock running in photo mode, its exception to the pause, "except for Photo Mode".
 - [Fix your timestep!](https://gafferongames.com/post/fix_your_timestep/), Glenn Fiedler: the shown state as a blend of the two latest steps, weighted by what the accumulator has left over.
 - [WorldReverse](https://github.com/fengjixuchui/WorldReverse/tree/main/Assets/DummyScripts/Assembly-CSharp), fengjixuchui: the camera profile's classes, its global config's and each module config's fields in declaration order, and the numbers of its camera modules.
 - [genshin-utility](https://github.com/lanylow/genshin-utility/blob/main/src/library/src/hooks/hooks.cpp), lanylow: a field-of-view tool that takes the game's own call setting 45 as its world camera's.
 
 ## Open
 
-- [ ] **In the game the camera stays behind the character, turns freely, zooms, and is pulled in by a wall rather than hiding the character** — no source yet: the Settings and Controls wiki pages are not in the cache, and no capture of the orbit is checked frame by frame.
-- [ ] **The game's sensitivity runs from 1 to 5, and the look turns at its middle** — no source yet: the range is not read from the interface export in the cache.
+- [ ] **In the game the camera stays behind the character, zooms, and is pulled in by a wall rather than hiding the character** — no source yet: the Controls wiki page, checked, names the mouse and the right stick as the camera's rotation and nothing of a follow, a zoom or a wall; the Settings page, checked, names none of them either; no capture of the orbit is checked frame by frame.
+- [ ] **The look turns at the middle of the game's sensitivity range** — no source yet: the Settings wiki page, checked, gives the sensitivity's 1–5 range but not where the look turns; the range is not read from the interface export in the cache.
 - [ ] **The field of view is 45 degrees, the wheel runs from 1 to 6 metres, and the profile's elevation limit is 89 degrees** — no source yet: the cited path ~/Esposter.noindex/genshin-parity/extracted/camera is not exported on this machine, and the cached sources do not hold the profile.
-- [ ] **The Settings screen's default distance runs from 4.5 to 6.0 metres, topping out at the furthest radius** — no source yet: the Settings wiki page is not in the cache, and the camera profile is not exported.
-- [ ] **The middle mouse button and the right stick press are the game's camera reset** — no source yet: the Controls wiki page is not in the cache, and the controls capture is not checked frame by frame.
-- [ ] **The game hides its cursor in play, Left Alt is its Show Cursor, and Escape opens the Paimon menu** — no source yet: the Controls wiki page is not in the cache, and the controls capture is not checked frame by frame.
-- [ ] **The world's clock runs on in photo mode, as the game's does** — no source yet: the Time wiki page is not in the cache.
+- [ ] **The Settings screen's default distance is read in metres and tops out at the furthest radius** — no source yet: the Settings wiki page, checked, gives the default distance as 4.5–6.0 with no unit and nothing of a furthest radius; the camera profile is not exported.
+- [ ] **The game hides its cursor in play** — no source yet: the Controls wiki page, checked, gives Show Cursor on Left Alt and Open Paimon Menu on Escape, but not that the cursor is hidden in play; the controls capture is not checked frame by frame.
 - [ ] **The game raises its look by body type** — no source yet: the two body readings in `Camera.reference.ts` show a near-equal share, which does not establish the game's rule.
 - [ ] **The game ships its recentering switched off** — no source yet: the game's camera settings are not checked in the cache.
-- [ ] **The world's camera orbits the character's body as the game's camera does** — no source yet: the wiki's Controls page, named in Sources, is not in the wiki cache; the game's camera profile in `~/Esposter/genshin-parity/extracted/camera/MonoBehaviour/` is not yet read for the orbit.
+- [ ] **The world's camera orbits the character's body as the game's camera does** — no source yet: the wiki's Controls page, named in Sources, is checked and does not say the camera orbits the body; the game's camera profile in `~/Esposter/genshin-parity/extracted/camera/MonoBehaviour/` is not yet read for the orbit.
 - [ ] **A taller body's pivot stands higher, as the game raises its look by body type** — no source yet: the game's camera profile in `~/Esposter/genshin-parity/extracted/camera/MonoBehaviour/`, not yet read for the body-type height.
-- [ ] **The wheel's notches zoom the camera within the game's nearest and furthest distance** — no source yet: the wiki's Settings page, named in Sources, is not in the wiki cache; the distances in `~/Esposter/genshin-parity/extracted/camera/MonoBehaviour/` are not yet read.
+- [ ] **The wheel's notches zoom the camera within the game's nearest and furthest distance** — no source yet: the wiki's Settings page, named in Sources, is checked and gives only the default distance of 4.5 to 6.0, not a nearest or furthest zoom; the distances in `~/Esposter/genshin-parity/extracted/camera/MonoBehaviour/` are not yet read.
 - [ ] **The limits and distances are the game's camera profile, read from the install** — no source yet: the camera profile `~/Esposter/genshin-parity/extracted/camera/MonoBehaviour/`, not yet matched to the limits and distances the camera uses.
 - [ ] **The pivot is the share of a standing character's height at which the screen's centre falls** — no source yet: the game's pivot share in `~/Esposter/genshin-parity/extracted/camera/MonoBehaviour/`, not yet read.
 - [ ] **Each number the game's camera profile holds is read from it, and a later build makes the reader throw** — no source yet: the camera profile `~/Esposter/genshin-parity/extracted/camera/MonoBehaviour/` holds the numbers; the reader's throw on a later build is not yet tested.
