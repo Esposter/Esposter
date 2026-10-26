@@ -98,5 +98,5 @@ The published Oculi SHALL be those the official map marks on the ground, each wi
 
 ## Open
 
-- [ ] **The wiki's Oculus counts the report compares against** — no source yet: no cached Oculus wiki page is in `~/Esposter.noindex/cache/genshin-wiki/`; the 66 and the 271 for Fontaine, Natlan and Nod-Krai are the figures the interactive map region map carries, and the 271 is one figure for three elements.
+- [x] **The wiki's Oculus counts the report compares against** — settled by the Oculus wiki page's Total list, cached as `Oculus.json`: "66 Anemoculi can be found in Mondstadt." and "271 Hydroculi can be found in Fontaine & Sea of Bygone Eras.", with the same 271 for Pyroculi in Natlan and Lunoculi in Nod-Krai.
 - [ ] **Snezhnaya holds no transport points in the scene** — no source yet: the dump's transport points for Snezhnaya's areas were not counted, and `~/Esposter.noindex/genshin-parity/references/interactive-map/fit.json` shows only its zero matches.
