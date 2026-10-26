@@ -36,4 +36,4 @@ Zhongli's kit is its record and one behaviour module, `createZhongliKitBehaviour
 ## Open
 
 - [ ] **the Jade Shield's cut reaches 10 metres high** — no source yet: a source for the 10-metre height, since the enemy query in `~/Esposter/cache/gcsim-v2.47.2/internal/characters/zhongli/shield.go` is a circle of radius 7.5 with no height.
-- [ ] **a strike's touch engages an enemy as the Rain Swords' touch does, and Enduring Rock's Geo RES cut applies under the shield** — no source yet: a source for both interactions, which this page has not opened in gcsim or the wiki.
+- [ ] **a strike's touch engages an enemy as the Rain Swords' touch does, and Enduring Rock's Geo RES cut applies under the shield** — no source yet: gcsim's `zhongli` and `xingqiu` directories and the cached Zhongli and Xingqiu talent pages hold neither interaction, and the Enduring Rock wiki page is not in `~/Esposter/cache/genshin-wiki/`.
