@@ -28,6 +28,8 @@ The clouds over the login's cloud sea and above its towers: three bands of the g
 
 - [ ] **The cloud sea uploads about 5 KB a frame, where all three bands wrote 11 KB** — no source yet: the write sizes are not measured in the repository or the parity folders.
 - [ ] **The dusk's sky is clouded about a seventh of the time the recording's is, from 8 to 15 degrees up** — no source yet: the named source does not hold this value, since the roadmap link (`openspec/changes/genshin-roadmap/tasks.md`) gives its dusk cover as a solve with no figure, and no cover solve of `~/Esposter.noindex/genshin-parity/captures/login-dusk.mkv` is kept in `~/Esposter.noindex/genshin-parity/references`, `plans` or `comparisons`.
+- [ ] **The dusk's cloud shade is a bright pink** — no source yet: the shade's value is not read against a colour reference here.
+- [ ] **The sky's dome is `Cloud_LOD0` under `Enviro_Cloud_Layer_Mat`** — no source yet: neither name is in the login exports checked (`login-layout`, `login-behaviours`).
 - [ ] **The layer draws no settings until an hour's solve beats none** — no source yet: the gate on the layer's settings was not located in the code checked here.
 - [ ] **Each band is one of the game's painted clouds, traced** — no source yet: the cloud textures in `~/Esposter/genshin-parity/extracted/login-bytype-assets/Texture2D/`, not yet matched to the bands.
 - [ ] **Each cloud is coloured as the game's cloud particles are** — no source yet: `~/Esposter/genshin-parity/extracted/login-bytype-assets/Material/Enviro_Cloud_Mid_Particle_Mat.json` and `Enviro_Cloud_Layer_Mat.json`, not yet read for the particle colours.
