@@ -9,7 +9,7 @@ import type { VNode } from "vue";
 import { renderWebpageNode } from "#shared/services/pageBuilder/renderWebpageNode";
 import { serializeHtml } from "#shared/services/pageBuilder/serializeHtml";
 import { renderBlockNodes } from "headless-block-editor";
-import { createStaticVNode, createTextVNode, h } from "vue";
+import { createStaticVNode, createTextVNode } from "vue";
 
 const checkIsElement = (node: HtmlNode): node is HtmlElement => typeof node !== "string" && "tag" in node;
 const checkIsRawNode = (node: HtmlNode): node is HtmlRawNode => typeof node !== "string" && !checkIsElement(node);
