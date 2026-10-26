@@ -143,3 +143,5 @@ Photo mode SHALL hold the character where it stands and keep the camera orbiting
 ## Open
 
 - [ ] **The world clock keeps running in photo mode** — no source yet: the Time wiki page is not in the cache, and no recording of the clock in photo mode is checked.
+- [ ] **The camera's nearest and furthest distances are the game's** — no source yet: the game's follow-camera distances, not read from a table or a recording.
+- [ ] **A click locks the pointer and Left Alt shows the cursor, as the game's controls do** — no source yet: the Controls wiki page is not in the cache, and the settings recording is not checked for the Left Alt cursor.
