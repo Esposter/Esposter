@@ -8,7 +8,7 @@ Read when adding a colour pair, a style token or a theme, or when anything selec
 
 ## Lengths and motion
 
-- **A length is a whole number of `--ui-step`, and a duration of `--ui-motion-unit`**: a transition names `--ui-motion-short`, `--ui-motion-medium` or `--ui-motion-long`, each a duration on the one eased curve, and never a time, an easing or a `steps()` of its own, so reduced motion holds it still with the rest. Motion is never stepped: stepped frames read as frame drops and make every pop-in feel slow (the architecture page's Motion section).
+- **A length is a whole number of `--ui-step`, and a duration of `--ui-motion-unit`**: a transition names `--ui-motion-short`, `--ui-motion-medium` or `--ui-motion-long`, each a duration on the one eased curve, and never a time, an easing or a `steps()` of its own, so reduced motion holds it still with the rest. Motion is never stepped: stepped frames read as frame drops and make every pop-in feel slow (`openspec/specs/architecture/design-language/design.md`, "Motion").
 
 ## Type
 

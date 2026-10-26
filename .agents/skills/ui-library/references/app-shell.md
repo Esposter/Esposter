@@ -6,4 +6,4 @@ Read when a page places a fixed region, scrolls inside its own regions, has a dr
 
 - **A page with a drawer places `AppDrawerButton` in its own header**, and never wires a drawer toggle of its own — without one, a phone has no way into the drawer. The layout itself — the grid, the drawers, the height mode and which part draws each surface — is `openspec/specs/architecture/page-layout/design.md`.
 
-- **A page that is one of a kind of thing declares its mark** with `usePageMark` while mounted — the resource page its type — so the dock draws that kind's icon rather than its title's letter. A mark is data resolved to an icon when drawn, never a stored icon class (the architecture page's App shell).
+- **A page that is one of a kind of thing declares its mark** with `usePageMark` while mounted — the resource page its type — so the dock draws that kind's icon rather than its title's letter. A mark is data resolved to an icon when drawn, never a stored icon class (the App shell section of `openspec/specs/architecture/ui-library/design.md`).

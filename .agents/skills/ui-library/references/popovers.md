@@ -1,6 +1,6 @@
 # Popovers
 
-Read when a component opens a panel through `usePopover` — a popover, a menu, a caret popover, suggestions — or wires its open state to a parent. The panel is the library's own component, listed in `SKILL.md`; this page covers how its openness is held.
+Read when a component opens a panel through `usePopover` — a popover, a menu, a caret popover, suggestions — or wires its open state to a parent. The panel is the library's own component, listed in the Components section of `openspec/specs/architecture/ui-library/design.md`; this page covers how its openness is held.
 
 **A popover's open state is the ref handed to `usePopover`, never a mirror of the one it returns.** Its `isOpen` option takes the component's own `defineModel` and owns the rest: an immediate watch shows or hides the panel from the ref, and its `toggle` listener writes a light dismiss or a `popovertarget` press back into it. So the library writes no watcher between the two — a watcher each way echoes a parent's write back as an `update:` and misses a panel mounted open (`apps/web/app/components/Ui/Popover.vue`, `apps/web/app/components/Ui/Menu/Index.vue`).
 

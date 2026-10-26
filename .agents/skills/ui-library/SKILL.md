@@ -14,11 +14,11 @@ Every interface in the app is drawn by a library of its own, built in `apps/web`
 - **Auto-importing Vuetify 0.** Its names collide with VueUse's; the library imports it by name, and nothing else imports it at all.
 - **Keeping the palette in the library's services folder.** `uno.config.ts` reads it, and loads before any `@/` alias resolves, so it lives in `apps/web/configuration/` beside `breakpoints.ts` and imports its enums relatively.
 - **Dropping preset-wind4's preflight reset.** Every surface assumes its zeroed margins, markers and inherited links; a browser default the library needs is restated where it is needed, as a dialog's margins and a read list's markers are (`openspec/specs/architecture/ui-library/design.md`, "Rejected").
-- **Voxel as the app's only look.** Standard is the default, voxel is the games' look and Genshin is pinned by the agent console; why one look was rejected is the architecture page's "Design styles" section.
+- **Voxel as the app's only look.** Standard is the default, voxel is the games' look and Genshin is pinned by the agent console; why one look was rejected is in `openspec/specs/architecture/design-language/design.md`, "Design styles".
 
 ## A look is a style, not the library
 
-The look is a design style — standard, the default, voxel or Genshin — beside light and dark; the tiers, the selection and what each style draws are the architecture page's "Design styles" section. The rules an edit follows:
+The look is a design style — standard, the default, voxel or Genshin — beside light and dark; the tiers, the selection and what each style draws are in `openspec/specs/architecture/design-language/design.md`, "Design styles". The rules an edit follows:
 
 - **A feature never names a style** — it reaches the look through a surface rule, a token or an icon meaning; `useUiStyle` and `data-ui-style` are the library's alone (`references/design-styles.md`).
 - **A drawing no token can express belongs to the library**, keyed on `useUiStyle` with the same DOM and roles in every style (`references/design-styles.md`).
@@ -78,7 +78,7 @@ Scrollbars, selection, the caret, native accents and the focus ring live once in
 
 ## The design pass
 
-A unit is designed, not repainted. Before a unit or a library component is built, and again before it is handed over, walk `references/design-pass.md`: motion on whatever appears or disappears, placement from what the surface is for, the full width used, one thing to do first, every state designed, a signature detail drawn through the library rather than by hand, and a reason it beats the reference product rather than only matching it.
+A unit is designed, not repainted. Before a unit or a library component is built, and again before it is handed over, walk `references/design-pass.md`.
 
 ## Redesigning a unit
 
