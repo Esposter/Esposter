@@ -72,3 +72,4 @@ Noise covers every frequency, and no note in a piece sounds alone, so no note's 
 - [ ] **Fitted note by note, every voice died about twice as fast as its notes do in the game's sound** — no source yet: the curve-of-medians fit is cited (`scripts/src/services/genshinAssets/shared/fitInstrument.ts`), but no per-voice decay comparison is kept.
 - [ ] **A room's echo cannot fill the noise bands, since it only spreads what a note already holds** — no source yet: no run applying a reverb pass to the fit is kept; the argument is the page's own.
 - [ ] **Telling two instruments apart within one register waits until the listening score ranks that loss the largest** — no source yet: the listening score's loss ranking is not in the scripts package's notes command or the fit code cited here.
+- [ ] **The orchestra often doubles a line an octave up** — no source yet: no run output of `genshin:parity notes` recording the doubled lines in the game's sound is kept.
