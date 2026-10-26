@@ -1,6 +1,6 @@
 # Gadgets
 
-The game's tools are the widget config's entries: the Wind Catcher, the Treasure Compasses, the gather point finders and the devices, each a kind with its own cooldowns (`~/Esposter.noindex/genshin-parity/text/BinOutput/Widget/ConfigWidget.json`, and the names `Wind Catcher` and `Treasure Compass` in `~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`). This page is the first part of the [gadgets](../../../changes/genshin-gadgets/design.md) proposal, its data and its cooldowns. `Z` is already bound to the quick-use gadget ([controls](../controls/design.md)), but nothing is equipped to it and nothing is used yet: the bag's items do not yet include the widget material type, so a gadget has no item to equip.
+The game's tools are the widget config's entries: the Wind Catcher, the Treasure Compasses, the gather point finders and the devices, each a kind with its own cooldowns (`~/Esposter.noindex/genshin-parity/text/BinOutput/Widget/ConfigWidget.json`, and the names `Wind Catcher` and `Treasure Compass` in `~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`). This page is the first part of the [gadgets](../../../changes/genshin-gadgets/design.md) proposal, its data and its cooldowns. `Z` is already bound to the quick-use gadget ([controls](../controls/design.md)) (`packages/genshin-engine/src/input/InputActionBindingMap.ts`), but nothing is equipped to it and nothing is used yet: the bag's items do not yet include the widget material type, so a gadget has no item to equip.
 
 ## How it works
 
@@ -19,7 +19,7 @@ flowchart TD
 
 ## The kinds
 
-The config's widget type is the game's own kind, and a gadget is built as one of four kinds. Each kind is one widget type or a few that act alike.
+The config's widget type is the game's own kind, and a gadget is built as one of four kinds (`packages/genshin-world/src/models/gadget/GadgetKind.ts`, `scripts/src/services/genshinAssets/gadgets/ConfigWidgetTypeGadgetKindMap.ts`). Each kind is one widget type or a few that act alike.
 
 | Kind              | Widget types                                                    | What the config spawns                                                       |
 | :---------------- | :-------------------------------------------------------------- | :--------------------------------------------------------------------------- |
@@ -28,13 +28,13 @@ The config's widget type is the game's own kind, and a gadget is built as one of
 | GatherPointFinder | `ConfigWidgetOneoffGatherPointDetector`                         | the success and failure crystals of its gather point types (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/GadgetExcelConfigData.json`, ids 70290533 and 70290534) |
 | Device            | `ConfigWidgetGadgetBuilder`, `ConfigWidgetMiracleRing`          | a Seelie, a balloon widget and a miracle ring (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/GadgetExcelConfigData.json`, ids 70500014, 70500022 and 70500020) |
 
-The rest of the config's widgets, the cameras, the avatar attachments, the water sprite, the ability groups and the toys, are not among the four kinds and are left out of the slice until a page names them. The camera widgets wait on the [free camera](../free-camera/design.md) page.
+The rest of the config's widgets, the cameras, the avatar attachments, the water sprite, the ability groups and the toys, are not among the four kinds and are left out of the slice until a page names them (`scripts/src/services/genshinAssets/gadgets/toGadgetRows.ts`). The camera widgets wait on the [free camera](../free-camera/design.md) page.
 
 ## Cooldowns
 
-- **Each cooldown is a whole number of seconds from the config.** A gadget's cooldown is its `coolDown`, and its cooldown on a failed use its `coolDownOnFail` (`~/Esposter.noindex/genshin-parity/text/BinOutput/Widget/ConfigWidget.json`). A field the config omits reads as zero, so a collector has no cooldown on a failed use (`~/Esposter.noindex/genshin-parity/text/BinOutput/Widget/ConfigWidget.json`, the collector `220004`, which names a `coolDown` and no `coolDownOnFail`).
-- **A group is shared.** A gadget with a cooldown group shares its cooldown with every gadget of that group, and a gadget with none shares with no other, so it is kept under its own id. The game's groups are small numbers and the ids are not, so the two never meet (`~/Esposter.noindex/genshin-parity/text/BinOutput/Widget/ConfigWidget.json`, groups from 1 to 18 against widget ids from 220001).
-- **A cooldown is read, not ticked.** The group is kept as the moment it is ready again, and a gadget is ready once `now` has reached it. A pause changes nothing in it, so a cooldown started before a menu runs on while the menu is open, as the game's do.
+- **Each cooldown is a whole number of seconds from the config.** A gadget's cooldown is its `coolDown`, and its cooldown on a failed use its `coolDownOnFail` (`~/Esposter.noindex/genshin-parity/text/BinOutput/Widget/ConfigWidget.json`, `scripts/src/services/genshinAssets/gadgets/toGadgetRows.ts`). A field the config omits reads as zero, so a collector has no cooldown on a failed use (`~/Esposter.noindex/genshin-parity/text/BinOutput/Widget/ConfigWidget.json`, the collector `220004`, which names a `coolDown` and no `coolDownOnFail`).
+- **A group is shared.** A gadget with a cooldown group shares its cooldown with every gadget of that group, and a gadget with none shares with no other, so it is kept under its own id (`packages/genshin-world/src/services/gadget/getCooldownGroup.ts`). The game's groups are small numbers and the ids are not, so the two never meet (`~/Esposter.noindex/genshin-parity/text/BinOutput/Widget/ConfigWidget.json`, groups from 1 to 18 against widget ids from 220001).
+- **A cooldown is read, not ticked.** The group is kept as the moment it is ready again (`packages/genshin-world/src/models/gadget/CooldownGroupReadyAtMap.ts`), and a gadget is ready once `now` has reached it (`packages/genshin-world/src/services/gadget/checkIsGadgetReady.ts`). A pause changes nothing in it (`packages/genshin-world/src/services/gadget/checkIsGadgetReady.ts`), so a cooldown started before a menu runs on while the menu is open, as the game's do.
 
 ## Key files
 
@@ -60,9 +60,4 @@ The rest of the config's widgets, the cameras, the avatar attachments, the water
 
 - [ ] **A cooldown counts on through a paused world, as the game's do** — no source yet: the wiki's Gadget page, which the Sources name for the paused cooldowns, is not in `~/Esposter.noindex/cache/genshin-wiki/`.
 - [ ] **The success and failure crystals belong to each gather point type** — no source yet: the two grass crystals are named in `GadgetExcelConfigData.json`, but no table checked ties them to a gather point type of the one-off detector.
-- [ ] **`Z` is bound to the quick-use gadget** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The config's other widgets are left out of the slice until a page names them** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A gadget with a cooldown group shares its cooldown with every gadget of that group, and one with none is kept under its own id** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A cooldown is read, not ticked: the group is kept as the moment it is ready again, and a gadget is ready once `now` has reached it** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **Group numbers from 1 to 18 never meet widget ids from 220001** — contradicted by `~/Esposter.noindex/genshin-parity/text/BinOutput/Widget/ConfigWidget.json`: its widget keys include 101516, below 220001.
-- [ ] **A gadget is built as one of four kinds, each the game's own widget type or a few that act alike** — no source yet: game data or a snapshot that holds this behaviour
