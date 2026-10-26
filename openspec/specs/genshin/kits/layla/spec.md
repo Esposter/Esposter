@@ -55,22 +55,22 @@ From Constellation 1, the Curtain of Slumber that Nights of Formal Focus sets SH
 
 ### Requirement: Starlight Slug's field
 
-Starlight Slug SHALL strike from Layla's place every 1.5 seconds for twelve seconds, reaching every enemy within 13.5 metres of her body.
+Starlight Slug SHALL strike from Layla's place every 1.5 seconds for twelve seconds, reaching every enemy within 12 metres of her body.
 
 #### Scenario: Field strikes on each tick
 
 - **WHEN** the player casts Starlight Slug
 - **THEN** the field strikes every 1.5 seconds for twelve seconds
-- **AND** each tick reaches every enemy within 13.5 metres of Layla
+- **AND** each tick reaches every enemy within 12 metres of Layla
 
 ### Requirement: Burst strike
 
-Layla's burst SHALL deal a share of her Max HP as flat damage, which her talent multiplier does not scale.
+Layla's burst SHALL deal flat damage equal to its talent level's share of her Max HP, with no ATK multiplier.
 
 #### Scenario: Burst deals flat damage
 
 - **WHEN** the player casts Layla's burst
-- **THEN** the strike deals damage equal to a share of Layla's Max HP
+- **THEN** the strike deals damage equal to that talent level's share of Layla's Max HP
 
 ### Requirement: Night Stars fire Shooting Stars
 
@@ -80,7 +80,7 @@ Layla's shield SHALL build Night Stars, up to four, from its tick, her skill and
 
 - **GIVEN** Layla has her shield up and four Night Stars
 - **WHEN** an enemy is within 10 metres
-- **THEN** four Shooting Stars fire, the first 0.6 seconds later and the rest 0.45 seconds apart, and the Night Stars reset to zero
+- **THEN** four Shooting Stars fire, the first 0.5 seconds after the search finds the enemy and the rest 0.45 seconds apart, and the Night Stars reset to zero
 
 #### Scenario: The shield's tick adds a Night Star
 
