@@ -30,11 +30,11 @@ flowchart LR
 
 ## The tables
 
-`pnpm -C scripts genshin:assets home` builds two records from the game's tables in the dump and publishes them to the hosted game data as `home/blueprints` and `home/levels`, which `readHomeBlueprints` and `readHomeLevels` fetch by key `scripts/src/services/genshinAssets/home/buildHomeRules.ts`, `packages/genshin-world/src/services/home/readHomeBlueprints.ts`, `packages/genshin-world/src/services/home/readHomeLevels.ts`. Three of them are pulled from the AnimeGameData repository into the dump and kept out of the commit, as the [forging](../forging/design.md) tables are `scripts/src/services/genshinAssets/home/constants.ts`.
+`pnpm -C scripts genshin:assets home` builds two records from the game's tables in the dump and publishes them to the hosted game data as its blueprints and levels records, which `readHomeBlueprints` and `readHomeLevels` fetch by key `scripts/src/services/genshinAssets/home/buildHomeRules.ts`, `packages/genshin-world/src/services/home/readHomeBlueprints.ts`, `packages/genshin-world/src/services/home/readHomeLevels.ts`. Three of them are pulled from the AnimeGameData repository into the dump and kept out of the commit, as the [forging](../forging/design.md) tables are `scripts/src/services/genshinAssets/home/constants.ts`.
 
 - **Blueprints.** `FurnitureMakeExcelConfigData`: each furnishing, its materials, its seconds and the Trust EXP its first making gives. The seconds are the table's `makeTime` read as seconds `scripts/src/services/genshinAssets/home/toHomeBlueprint.ts`: between ten and twenty hours, the first blueprint fourteen `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/FurnitureMakeExcelConfigData.json`. Each order makes one furnishing `packages/genshin-world/src/services/home/startHomeMake.ts`.
 - **Diagrams.** The material table's `ITEM_USE_UNLOCK_FURNITURE_FORMULA` uses. Each diagram names the furnishing it opens by its item id, and over a thousand of the blueprints have one `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/MaterialExcelConfigData.json`. The few dozen that no diagram names are open from the start `packages/genshin-world/src/services/home/startHomeMake.ts`.
-- **Trust and Adeptal Energy.** `HomeworldLevelExcelConfigData` and `HomeWorldComfortLevelExcelConfigData`, published as one `home/levels` record: each Trust Rank's EXP, companions and store limits, and each Adeptal Energy rank's comfort and the rates its stores fill at `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/HomeworldLevelExcelConfigData.json`, `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/HomeWorldComfortLevelExcelConfigData.json`, `scripts/src/services/genshinAssets/home/buildHomeRules.ts`.
+- **Trust and Adeptal Energy.** `HomeworldLevelExcelConfigData` and `HomeWorldComfortLevelExcelConfigData`, published as one levels record: each Trust Rank's EXP, companions and store limits, and each Adeptal Energy rank's comfort and the rates its stores fill at `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/HomeworldLevelExcelConfigData.json`, `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/HomeWorldComfortLevelExcelConfigData.json`, `scripts/src/services/genshinAssets/home/buildHomeRules.ts`.
 
 The furnishings' own table, "HomeWorldFurnitureExcelConfigData", is not read yet: its comfort is for the placement editor, which is not built.
 
@@ -64,8 +64,8 @@ The furnishings' own table, "HomeWorldFurnitureExcelConfigData", is not read yet
 | `packages/genshin-world/src/services/home/computeHomeAccrued.ts`     | The amount a store holds at `now`, capped, and the instant it accrued to  |
 | `packages/genshin-world/src/services/home/learnHomeBlueprint.ts`     | A blueprint learned by using its diagram                                  |
 | `packages/genshin-world/src/services/shared/learnByDiagram.ts`       | The one diagram-learning rule the forge's recipes share                   |
-| `packages/genshin-world/src/services/home/readHomeBlueprints.ts`     | The furnishings Tubby makes, fetched by their `home/blueprints` key       |
-| `packages/genshin-world/src/services/home/readHomeLevels.ts`         | The Trust and Adeptal Energy ranks, fetched by their `home/levels` key    |
+| `packages/genshin-world/src/services/home/readHomeBlueprints.ts`     | The furnishings Tubby makes, fetched by their blueprints record key       |
+| `packages/genshin-world/src/services/home/readHomeLevels.ts`         | The Trust and Adeptal Energy ranks, fetched by their levels record key    |
 
 ## Notes
 
@@ -82,4 +82,4 @@ The furnishings' own table, "HomeWorldFurnitureExcelConfigData", is not read yet
 
 - [ ] **The wiki answered HTTP 402 to this build's read** — no source yet: no fetch log of the wiki's response is in the repo or the caches.
 - [ ] **The build slot appears on every Trust Rank** — no source yet: the dump's level row does not name the field that opens each build slot; the queue count is cited to `packages/genshin-world/src/services/home/constants.ts`.
-- [ ] **Realm Currency is not in the wallet until its game text name has a key in `genshin-text`** — checked against `packages/genshin-world/src/services/inventory/CurrencyGameTextKeyMap.ts` line 23, which maps Realm Currency to `GameTextKey.RealmCurrency`, so the wallet names it now; the "until" clause is not settled by that line alone.
+- [ ] **Realm Currency is not in the wallet until its game text name has a key in `genshin-text`** — no source yet: a check of whether the wallet still excludes Realm Currency, since `packages/genshin-world/src/services/inventory/CurrencyGameTextKeyMap.ts` (line 23) now maps it to `GameTextKey.RealmCurrency`.
