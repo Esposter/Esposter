@@ -267,11 +267,9 @@ Each enemy SHALL be drawn as a capsule tinted by its state, and SHALL be tinted 
 
 ## Open
 
-- [ ] **A defeated common enemy returns twelve hours after its defeat** — no source yet: the wiki's Reset page is not in the wiki cache.
-- [ ] **An elite camp's member returns at the next daily reset** — no source yet: the wiki's Reset page is not in the wiki cache, which gives the elite's rule.
-- [ ] **The server's clock is UTC+8** — no source yet: no row of the game's exports names the zone, and the wiki's Reset page is not in the wiki cache.
-- [ ] **A camp with a normal boss comes back whole with the boss** — no source yet: the Normal Bosses page gives the boss its return roughly five seconds after the claim, and says nothing of its camp's other members.
-- [ ] **An enemy drops its energy at each health threshold, once for its life** — no source yet: the wiki's Energy/Data page is not in the wiki cache.
-- [ ] **Each level band's Mora and Character EXP follow the wiki's table** — no source yet: the wiki's Module:Drops Table page is not in the wiki cache.
-- [ ] **No enemy gives Adventure EXP** — no source yet: the wiki's Adventure EXP page is not in the wiki cache.
-- [ ] **A hit that launches is one whose stagger level is Air** — no source yet: the wiki's Interruption Resistance/Stagger page is not in the wiki cache.
+- [ ] **A defeated common enemy returns twelve hours after its defeat** — partly settled: the cached Reset page lists "[[Common Enemies]] that are not part of an [[Elite Enemies|Elite Enemy]]'s group." under "Respawns 12 hours after harvest", and says the commons of an elite's group "will respawn along with the Elite Enemy at daily reset instead", so the twelve hours hold for commons outside an elite's group only.
+- [ ] **An elite camp's member returns at the next daily reset** — partly settled: the cached Reset page says the commons of an elite's group "will respawn along with the Elite Enemy at daily reset", and that "[[Elite Enemies]] with limited spawn points per day will respawn." at daily reset; it says nothing of an elite without limited daily spawn points.
+- [ ] **The server's clock is UTC+8** — no source yet: no row of the game's exports names the zone. The cached Reset page gives the daily reset at 04:00 "based on the player's server's time zone", not its offset.
+- [ ] **A camp with a normal boss comes back whole with the boss** — partly settled: the cached Normal Bosses page gives the boss its return roughly five seconds after the claim, and says nothing of its camp's other members.
+- [ ] **Each level band's Mora and Character EXP follow the wiki's table** — no source yet: the Module:Drops Table/data page holds the table and is not cached; the cached Module:Drops Table page is its display code.
+- [ ] **No enemy gives Adventure EXP** — contradicted by the cached Adventure EXP page: "For every [[Unusual Hilichurl]] defeated, the player will receive 18 AR EXP." The build grants none, so this stays open as the build's gap.
