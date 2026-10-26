@@ -128,11 +128,11 @@ The side that declares the round's end first SHALL go first in the next round, a
 
 ### Requirement: A duel ends with no winner after its fifteenth round
 
-A duel SHALL end with no winner once the fifteenth round's end phase has closed.
+A duel SHALL end with no winner if no winner is decided by the start of the fifteenth round, both sides losing as the game's text says (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMapEN.json`, key `199839675`).
 
-#### Scenario: Duel concedes after the fifteenth round
+#### Scenario: Duel concedes at the start of the fifteenth round
 
-- **GIVEN** the fifteenth round's end phase has closed
+- **GIVEN** no winner is decided by the start of the fifteenth round
 - **WHEN** the next step is due
 - **THEN** both sides concede with no winner
 
@@ -310,9 +310,10 @@ A character at no health SHALL be defeated: its equipment and statuses SHALL be 
 
 ## Open
 
-- [ ] **A duel ends with no winner after its fifteenth round, as the game does** — contradicted in timing: the Round Limit rule (`#6016`) reads "If a winner has not been decided by the start of Round 15, both sides will lose.", so the duel ends at the start of Round 15.
-- [ ] **Melt adds two, and the other reaction bonuses, as the game does** — partly settled: Melt's rule is "Deal +2 DMG for this instance" (`#5001`), and the other reactions' bonuses are not one id range: Overloaded's is `#5003`, Bloom's `#5016` and Quicken's `#5017` (two for Vaporize and Overloaded, one for the rest), and the rest are not located in the repository.
-- [ ] **A frozen target takes two more damage, as the game does** — qualified by the game's text: `#5006` gives "+2 DMG" only when the Frozen character receives Pyro or Physical DMG, and removes the status in advance. No rule text gives two more damage on every hit.
-- [ ] **Leave It to Me makes the next switch a fast action and is spent** — partly settled: card `332006`'s text reads "The next time you perform "Switch Character": This switch will be considered a $[K2] instead of a $[K1]." The keyword placeholders are not resolved here, so "fast action" and "spent" are not checked.
-- [ ] **Shimenawa's Reminiscence reduces a cost for its side, as the game's text says** — settled game-side: card `312014`'s text reads "Spend 1 fewer Elemental Die. (Once per Round)" when the side plays a Talent card or a Character uses an Elemental Skill. The build's reduction is not checked here.
-- [ ] **A second reaction of the same kind joins the card already there** — no source yet: the named source is repo code, which is not game evidence, and no wiki card page is in `~/Esposter/cache/genshin-wiki`.
+- [ ] **Each side rolls eight dice a round, as the game does** — no source yet: the rule table's dice count is an obfuscated key the build does not read, and the wiki's rules page is not in the cache.
+- [ ] **A duel ends with no winner after its fifteenth round, as the game does** — no source yet: the wiki's rules page is not in the cache.
+- [ ] **Melt adds two, and the other reaction bonuses, as the game does** — no source yet: the wiki's rules page is not in the cache, and the reaction card texts were not found in the medium text map.
+- [ ] **A frozen target takes two more damage, as the game does** — no source yet: the wiki's rules page is not in the cache.
+- [ ] **Leave It to Me makes the next switch a fast action and is spent** — no source yet: the card's text was not found in the medium text map.
+- [ ] **Shimenawa's Reminiscence reduces a cost for its side, as the game's text says** — no source yet: its card text was not found in the medium text map.
+- [ ] **A second reaction of the same kind joins the card already there** — no source yet: the join in the effect that places the reaction's card was not read.
