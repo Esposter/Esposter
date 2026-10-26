@@ -94,9 +94,9 @@ A landmark within an exported family's extent that the export stands in for SHAL
 
 ## Open
 
-- [ ] **No production build holds a byte of the exports** — no source yet: no build output check is cited.
-- [ ] **The body still collides with a landmark hidden for an export** — no source yet: no checked collider test or path is cited for it.
-- [ ] **The body stands on our ground and collides with our stand-ins while exports are drawn** — no source yet: no checked test or code path is cited for it.
+- [ ] **No production build holds a byte of the exports** — no source yet: a production build's output, which is not on disk.
+- [ ] **The body still collides with a landmark hidden for an export** — no source yet: a checked collider test of the body against a landmark hidden for an export.
+- [ ] **The body stands on our ground and collides with our stand-ins while exports are drawn** — no source yet: a checked test of the body standing on our ground and colliding with our stand-ins while exports are drawn.
 
 ### Requirement: Collision and ground remain our own data
 
