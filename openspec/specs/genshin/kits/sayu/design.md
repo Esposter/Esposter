@@ -17,8 +17,6 @@ Sayu's kit is its record and one behaviour module, `createSayuKitBehaviour`, on 
 - **The plunges land at half a second.** gcsim has no plunge file for Sayu, and no cached source gives her plunge frames.
 - **Each Daruma tick strikes and heals together.** The wiki's text gives one action per tick (or both from Constellation 1): a strike while every nearby character is above 70% HP, and a heal of the active character with the lowest HP when one is at 70% or under (`~/Esposter/cache/genshin-wiki/Category_Sayu_Talents.json`). gcsim strikes only when no heal is due, or at Constellation 1 as well (`burst.go:90`). The kit does both at every constellation, which neither source gives below Constellation 1, so it is open.
 - **Constellation 4's name is open.** Its wiki note is not in the cached Sayu page, which names constellations 1, 2, 3, 5 and 6 only, so the name "Skiving: New and Improved" in the kit's comment is not sourced here.
-- [ ] **Mujina Flurry's initial heal reaches every character** — no source yet: the two disagree, gcsim (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/sayu/burst.go` line 54, target -1) heals all characters, while the cached wiki (`~/Esposter/cache/genshin-wiki/Category_Sayu_Talents.json`) heals all nearby party members.
-- [ ] **The Daruma heals the on-field character at 70% HP or under** — no source yet: the two disagree, gcsim (`burst.go` lines 80 to 83 and 98) heals only the on-field character at 70% or under, while the cached wiki heals the lowest-HP active character nearby, and at any HP when no opponent is nearby.
 
 ## Not built
 
@@ -35,3 +33,8 @@ Sayu's kit is its record and one behaviour module, `createSayuKitBehaviour`, on 
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/sayu), MIT: Sayu's strikes' hitmarks, reaches, cancel frames and poise (`attack.go:16`), the Windwheel's DoT and kick circles and frames (`skill.go:22`, `skill.go:24`, `skill.go:137`), the roll's ticks and the short hold (`skill.go:27`, `skill.go:200`, `skill.go:222`, `skill.go:255`, `skill.go:260`), and Mujina Flurry's initial hit (`burst.go:41`), Muji-Muji Daruma's ticks and their frames (`burst.go:61` to `burst.go:68`, `burst.go:83`). The snapshot is on disk at `~/Esposter/cache/gcsim-v2.47.2/internal/characters/sayu/`.
 - [Yoohoo Art: Fuuin Dash](https://genshin-impact.fandom.com/wiki/Yoohoo_Art:_Fuuin_Dash), [Yoohoo Art: Mujina Flurry](https://genshin-impact.fandom.com/wiki/Yoohoo_Art:_Mujina_Flurry), [Someone More Capable](https://genshin-impact.fandom.com/wiki/Someone_More_Capable), [No Work Today!](https://genshin-impact.fandom.com/wiki/No_Work_Today!) and Sleep O'Clock on the Genshin Impact Wiki, cached at `~/Esposter/cache/genshin-wiki/Category_Sayu_Talents.json`: the scaling, cooldowns, durations, costs and constellation notes.
 - The proud skill groups 5331, 5332 and 5339, read from `~/Esposter/genshin-parity/text/ExcelBinOutput/ProudSkillExcelConfigData.json` at levels 1 to 15.
+
+## Open
+
+- [ ] **Mujina Flurry's initial heal reaches every character** — contradicted by ~/Esposter/cache/genshin-wiki/Category_Sayu_Talents.json: heals all nearby party members.
+- [ ] **The Daruma heals the on-field character at 70% HP or under** — contradicted by ~/Esposter/cache/genshin-wiki/Category_Sayu_Talents.json: heals the lowest-HP active character nearby.
