@@ -17,7 +17,7 @@ An offering SHALL take every offering item the bag holds out of the bag in one o
 
 ### Requirement: Each level the held count covers is reached once
 
-An offering SHALL reach each next level its held count covers, taking that level's items off the count and paying its rewards once.
+An offering SHALL reach each next level its held count covers, taking that level's items off the count and paying its rewards once (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/OfferingLevelUpExcelConfigData.json`).
 
 #### Scenario: Held count covers two levels
 
@@ -44,7 +44,7 @@ An offering SHALL drop at the tree, as pick ups lying there, any items the bag h
 
 ### Requirement: The first offer starts the tree
 
-The tree SHALL reach its first level on the first offer whatever the bag holds, paying that level's reward once.
+The tree SHALL reach its first level on the first offer whatever the bag holds, paying that level's reward once (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/OfferingLevelUpExcelConfigData.json`, offering 1 level 1 holds no items).
 
 #### Scenario: First offer with no offering items
 
@@ -120,3 +120,9 @@ The world SHALL draw the Frostbearing Tree as a stand-in at its place in Mondsta
 - **GIVEN** the tree's place is published in the game's data
 - **WHEN** the world shows Mondstadt's region
 - **THEN** the tree is drawn as a stand-in at that place
+
+## Open
+
+- [ ] **The bag's offering items all leave the bag at one offer** — no source yet: no cached wiki page, capture or table read here shows one offer taking every item at once.
+- [ ] **Oculi offered at a statue reach levels by the tree's rule** — no source yet: the statues' offering rows are not read here.
+- [ ] **The tree stands at its place in Mondstadt's region** — no source yet: the map point it is placed from was not read here.
