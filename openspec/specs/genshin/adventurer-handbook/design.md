@@ -32,3 +32,9 @@ The book is scored whole-frame against `handbook-experience`, the wiki's screens
 ## Reference
 
 - `handbook-open-close.mkv` — F1 pressed in the open world, the Adventurer Handbook opening over the blurred scene, a tab clicked and its hover in view, then F1 closing it, 30 seconds at most at 60 frames a second; the open and close timings and the blur behind the book are read off it. On the wiki and YouTube, none found (searched 2026-10-11).
+
+## Open
+
+- [ ] **The handbook tracks the experience chapters, the day's commissions, the open domains, the enemies and their spawns, the recommended quests and the party's elemental lineup, and each tab's pages come with the feature named for it** — no source yet: the cached Adventurer Handbook wiki page is not on disk.
+- [ ] **F1 opens the Adventurer Handbook in the game** — no source yet: the cached Controls wiki page is not on disk.
+- [ ] **The open and close timings and the blur behind the book are read off the reference clip** — no source yet: `handbook-open-close.mkv` is not on disk.
