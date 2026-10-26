@@ -180,7 +180,7 @@ The app's own interface SHALL stay in English, and only the game's own words SHA
 
 ### Requirement: Non-Latin game text draws in a system face
 
-Non-Latin game text SHALL be drawn in a system face, since the game's own faces do not cover it (`GAME_FONT_FAMILY`, see the open list; Signika's `index.css` in `node_modules/.pnpm/@fontsource+signika@5.3.0/node_modules/@fontsource/signika/index.css` has three `@font-face` blocks, none with a unicode range for Thai, CJK or Hangul).
+Non-Latin game text SHALL be drawn in a system face, since the game's own faces do not cover it (`GAME_FONT_FAMILY`, see the open list; Signika's `index.css` in the `@fontsource/signika` package has three `@font-face` blocks, none with a unicode range for Thai, CJK or Hangul).
 
 #### Scenario: Chinese text is drawn in a system face
 
