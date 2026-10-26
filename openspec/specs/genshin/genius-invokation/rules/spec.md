@@ -311,7 +311,7 @@ A character at no health SHALL be defeated: its equipment and statuses SHALL be 
 ## Open
 
 - [ ] **Each side rolls eight dice a round, as the game does** — no source yet: the rule table's dice count is an obfuscated key the build does not read, and the wiki's rules page is not in the cache.
-- [ ] **A duel ends with no winner after its fifteenth round, as the game does** — no source yet: the wiki's rules page is not in the cache.
+- [ ] **A duel ends with no winner once the fifteenth round's end phase has closed** — contradicted by `~/Esposter/genshin-parity/text/TextMap/TextMapEN.json`: no winner by the start of Round 15 means both sides lose.
 - [ ] **Melt adds two, and the other reaction bonuses, as the game does** — no source yet: the wiki's rules page is not in the cache, and the reaction card texts were not found in the medium text map.
 - [ ] **A frozen target takes two more damage, as the game does** — no source yet: the wiki's rules page is not in the cache.
 - [ ] **Leave It to Me makes the next switch a fast action and is spent** — no source yet: the card's text was not found in the medium text map.
