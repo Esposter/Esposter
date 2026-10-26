@@ -5,9 +5,8 @@ Read when a tooling script or sweep feels slow, or a whole-tree suite is added.
 A tooling script's walltime is measured end to end before any unit in it is, and the measurement is a bench —
 `scripts/src/workspace/sweepCommands.bench.ts` spawns every `ai:sweep:*` command as an agent types it, and its `*.bench.md` is
 the table to read before timing anything by hand (the `bench` skill, `references/speed-gate.md`). What it
-shows: a sweep over the whole tree is one to two seconds, of which the scan itself is tens to a few hundred
-milliseconds — the rest is the loader booting, a `git ls-files` per pathspec and every file read. So the savings sit
-at those three:
+shows: most of a sweep over the whole tree is the loader booting, a `git ls-files` per pathspec and every file read,
+and the scan itself is a small share. So the savings sit at those three:
 
 - **The runner.** `node` boots in a fraction of `vpx`'s time; which one a script gets is
   the `package-scripts` skill's rule (`references/typescript-scripts.md`), decided by the syntax in its import graph and never by rewriting that syntax.
