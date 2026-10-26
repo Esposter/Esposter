@@ -1,6 +1,6 @@
 # Parity
 
-The Genshin area recreates the game's own screens, so "does it look right" has an exact answer: the game. Parity is the loop that asks it. It is built for an agent, which reads images but drives no browser of its own: every step is one command that prints numbers and writes an image the agent reads. The user's eye stays the final check. The loop is fast enough that nobody has to wait on that check.
+The Genshin area recreates the game's own screens, so "does it look right" has an exact answer: the game. Parity is the loop that asks it. It is built for an agent, which reads images but drives no browser of its own: every step is one command that prints numbers and writes an image the agent reads (`scripts/src/services/genshinParity/commands/genshinParityCommand.ts`, `scripts/package.json` `genshin:parity`). The user's eye stays the final check. The loop is fast enough that nobody has to wait on that check (see Open).
 
 ## How it works
 
@@ -22,6 +22,8 @@ flowchart TD
   COMPARE -->|matches| VISUAL[Visual suite: our own image, committed beside the component]
 ```
 
+The steps are the commands of `scripts/src/services/genshinParity/commands/` (`genshin:parity` in `scripts/package.json`).
+
 ## The pieces
 
 - [References](references/design.md): where a screen's images and recordings come from, and how the game is recorded.
@@ -39,4 +41,10 @@ flowchart TD
 
 ## Shapes come from the game's assets
 
-The interface is rebuilt from screenshots, which its overlay compare holds exactly; a scene's towers, doors and profiles come from the installed game's files. AnimeStudio exports them with the game closed into the references folder, outside the repository like every other reference, and a transform fits our own kits' parameters to them, so only numbers of ours ship ([derived assets](../derived-assets/design.md)).
+The interface is rebuilt from screenshots, which its overlay compare holds exactly (`scripts/src/services/genshinParity/commands/overlayCommand.ts`, see Open); a scene's towers, doors and profiles come from the installed game's files. AnimeStudio exports them with the game closed into the references folder, outside the repository like every other reference (`scripts/src/services/genshinAssets/namecards/exportNamecards.ts`, `~/Esposter.noindex/genshin-parity/extracted/`), and a transform fits our own kits' parameters to them, so only numbers of ours ship (see Open) ([derived assets](../derived-assets/design.md)).
+
+## Open
+
+- [ ] **The loop is fast enough that nobody has to wait on the user's check** — no source yet: no timing of a loop run is recorded in the parity folder or in its benches.
+- [ ] **The overlay compare holds the rebuilt interface exactly** — no source yet: no overlay compare result is cited, and `scripts/src/services/genshinParity/commands/overlayCommand.ts` is the command, not a score.
+- [ ] **A transform fits the kits' parameters to the exported towers, doors and profiles** — no source yet: the fitting code was not traced to the kits' parameters.
