@@ -6,14 +6,15 @@ import { emitKitEvent } from "#src/services/kit/emitKitEvent";
 
 // Generates Nightsoul points for the character on the field, or for the one given, up to the maximum, and raises the
 // Generation event for the points it added, as gcsim's GeneratePoints does. A hook raises it in its own call, since a
-// Step returns its events
+// Step returns its events. Returns the points it could not hold, the overflow past the maximum that gcsim's pointsOverflow reads
 export const generateKitNightsoulPoints = (
   context: KitContext,
   points: number,
   maximum: number,
   characterId = context.activeCombatant.characterId,
-): void => {
+): number => {
   const { kitEffectState } = context;
   const gained = gainKitNightsoulPoints(kitEffectState, characterId, points, maximum);
   if (gained > 0) emitKitEvent({ characterId, kind: KitEventKind.NightsoulPointsGained, points: gained }, context);
+  return points - gained;
 };

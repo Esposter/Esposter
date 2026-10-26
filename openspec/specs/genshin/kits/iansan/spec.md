@@ -1,6 +1,6 @@
 ## Purpose
 
-Iansan's kit as built, with her three strikes, charged attack, provisional plunges, the skill's activation hit and the burst's hit, her skill's press entering the Nightsoul Blessing with its points, her burst's points and restore with Ascension 1's, and what is left waiting on the Stormflight swap and the party ATK buff.
+Iansan's kit as built, with her three strikes, charged attack, provisional plunges, the skill's activation hit and the burst's hit, her skill's press entering the Nightsoul Blessing with its points, her burst's points and restore with Ascension 1's and Ascension 4's, her Stormflight variant, and her constellations 1, 2, 4 and 6.
 
 ## Requirements
 
@@ -114,7 +114,7 @@ From Constellation 1, each 6 Nightsoul points her blessing consumes SHALL restor
 
 ### Requirement: Burst's points and restore
 
-Iansan's burst SHALL gain 15 Nightsoul points 40 frames after the press, entering a 16-second blessing if she holds none, and SHALL restore a point a second for the 12 seconds the burst lasts, for as long as the blessing it lands in holds, and not once that blessing has exited, even if she enters another.
+Iansan's burst SHALL gain 15 Nightsoul points 40 frames after the press, entering a 16-second blessing if she holds none, and SHALL restore a point a second for the 12 seconds the burst lasts (15 from Constellation 6), for as long as the blessing it lands in holds, and not once that blessing has exited, even if she enters another.
 
 #### Scenario: Burst enters a blessing
 
@@ -178,3 +178,66 @@ From Ascension 4, a nearby party member's Nightsoul burst SHALL give Iansan Warm
 - **GIVEN** Iansan is at Ascension 3
 - **WHEN** a Nightsoul burst goes off
 - **THEN** she gains no Warming Up
+
+### Requirement: Constellation 2 party ATK
+
+From Constellation 2, Iansan's burst SHALL give her Precise Movement at Ascension 1, and while Precise Movement lasts every other deployed member SHALL have 30% ATK, which ends when her blessing exits.
+
+#### Scenario: Burst gives Precise Movement and the party its ATK
+
+- **GIVEN** Iansan is at Constellation 2 and Ascension 1 on the field
+- **WHEN** she casts her burst
+- **THEN** she carries Precise Movement
+- **AND** each other deployed member has 30% ATK
+
+#### Scenario: The party ATK ends with the blessing
+
+- **GIVEN** the other members have Iansan's party ATK
+- **WHEN** her blessing exits
+- **THEN** they lose it
+
+#### Scenario: Below Constellation 2 nothing is given
+
+- **GIVEN** Iansan is at Constellation 1
+- **WHEN** she casts her burst
+- **THEN** no member gains ATK from her
+
+### Requirement: Constellation 4 Surging Force
+
+From Constellation 4, another member's burst while Iansan's restore runs and she is off the field SHALL give her two Surging Force stacks, once per burst of hers. Each stack SHALL add 4 points to a restore tick, and half the overflow of the previous tick SHALL add to the next.
+
+#### Scenario: Another burst gives two stacks once
+
+- **GIVEN** Iansan's restore is running and she is off the field at Constellation 4
+- **WHEN** another member casts a burst
+- **THEN** she gains two Surging Force stacks
+- **AND** a second burst during the same restore gives none
+
+#### Scenario: A stack adds four points to a restore tick
+
+- **GIVEN** Iansan holds a Surging Force stack
+- **WHEN** her restore ticks
+- **THEN** the tick gives her 4 more points
+- **AND** the stack is spent
+
+#### Scenario: Overflow adds half to the next tick
+
+- **GIVEN** a restore tick overflowed her maximum by 4 points
+- **WHEN** the next restore tick falls
+- **THEN** it gives her 2 more points
+
+### Requirement: Constellation 6 Extreme Force
+
+From Constellation 6, Iansan's burst restore SHALL run for 15 seconds, and each restore tick that overflows her maximum SHALL give the active character 25% DMG Bonus for 3 seconds.
+
+#### Scenario: The restore runs for 15 seconds
+
+- **GIVEN** Iansan is at Constellation 6
+- **WHEN** she casts her burst
+- **THEN** her restore runs for 15 seconds
+
+#### Scenario: An overflowing tick gives the active character DMG Bonus
+
+- **GIVEN** a restore tick overflows her maximum
+- **WHEN** the tick lands
+- **THEN** the active character has 25% DMG Bonus for 3 seconds
