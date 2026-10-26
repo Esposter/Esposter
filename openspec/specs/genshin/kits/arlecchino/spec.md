@@ -1,6 +1,6 @@
 ## Purpose
 
-Arlecchino's kit as built: her six strikes, charged attack, collision and two plunges, All Is Ash's Spike and Cleave and Balemoon Rising, with Bond of Life, the Blood-Debt Directive, her HP-debt heal and her constellations not built.
+Arlecchino's kit as built: her six strikes, charged attack, collision and two plunges, All Is Ash's Spike and Cleave and Balemoon Rising, with Constellation 6's CRIT on her Normal Attacks and Balemoon Rising built, and Bond of Life, the Blood-Debt Directive, her HP-debt heal, Constellations 1, 2 and 4 and Constellation 6's added DMG not built.
 
 ## Requirements
 
@@ -81,3 +81,31 @@ Arlecchino's elemental skill SHALL have a cooldown of 30 seconds.
 - **GIVEN** Arlecchino has just used her skill
 - **WHEN** she tries to use it again within 30 seconds
 - **THEN** the skill is not available
+
+### Requirement: Constellation 6 raises her Normal Attack and Balemoon Rising CRIT for 20 seconds after All Is Ash
+
+From Constellation 6, Arlecchino's Normal Attacks and Balemoon Rising SHALL have 10% more CRIT Rate and 70% more CRIT DMG for 20 seconds after she uses All Is Ash, and that bonus SHALL start at most once every 15 seconds.
+
+#### Scenario: A Normal Attack gains CRIT after All Is Ash
+
+- **GIVEN** Arlecchino has Constellation 6 and has just used All Is Ash
+- **WHEN** she lands a Normal Attack within 20 seconds
+- **THEN** the strike has 10% more CRIT Rate and 70% more CRIT DMG
+
+#### Scenario: Balemoon Rising gains CRIT while the bonus runs
+
+- **GIVEN** Arlecchino has Constellation 6 and her bonus is running
+- **WHEN** Balemoon Rising strikes
+- **THEN** the strike has 10% more CRIT Rate and 70% more CRIT DMG
+
+#### Scenario: The bonus starts at most once every 15 seconds
+
+- **GIVEN** the bonus started less than 15 seconds ago
+- **WHEN** Arlecchino uses All Is Ash again
+- **THEN** the bonus is not restarted, and runs out 20 seconds after it first started
+
+#### Scenario: Below Constellation 6 no CRIT is gained
+
+- **GIVEN** Arlecchino has Constellation 5 and has just used All Is Ash
+- **WHEN** she lands a Normal Attack
+- **THEN** the strike gains no CRIT from Constellation 6
