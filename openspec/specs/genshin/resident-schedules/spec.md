@@ -104,5 +104,5 @@ An operator generating the residents SHALL place each named NPC that has a talk 
 
 ## Open
 
-- [ ] **A resident the game shows only by day is marked absent at night** — no source yet: no generator or data file sets `absentAtNight` (only `Resident.ts` and `computeResidentSpot.ts` read it), and no resident in the region data files carries it.
-- [ ] **Residents keep their day spot from six in the morning to seven at night, the game's own hours** — checked against `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/GcgWorldWorkTimeExcelConfigData.json`: three rows, each with startTime 6 and endTime 19, and the claim is not settled by it because the table is named for GCG's world work time, not a resident's day spot.
+- [ ] **A resident the game shows only by day is marked absent at night** — no source yet: no generator or data file sets `absentAtNight` (only `packages/genshin-world/src/models/world/Resident.ts` and `packages/genshin-world/src/services/resident/computeResidentSpot.ts` read it), and no resident in `packages/genshin-world/src/data/regions/*.json` carries it.
+- [ ] **Residents keep their day spot from six in the morning to seven at night, the game's own hours** — no source yet: a source for a resident's day-spot hours, since `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/GcgWorldWorkTimeExcelConfigData.json` holds three rows of 6 to 19 but is GCG's world work time, not a resident's day spot.
