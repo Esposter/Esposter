@@ -107,6 +107,6 @@ A camp's enemy stands at its camp level under World Level 0. From World Level 1 
 
 ## Sources
 
-- [Adventure Rank](https://genshin-impact.fandom.com/wiki/Adventure_Rank), Genshin Impact Wiki: the World Level and Ascension table (each World Level's rank range and its enemy level range), the holds at 25, 35, 45 and 50 with EXP accruing toward rank 60's total, the 1:10 Mora conversion past rank 60, and lowering the World Level from World Level 3 once in 24 hours.
+- [Adventure Rank](https://genshin-impact.fandom.com/wiki/Adventure_Rank), Genshin Impact Wiki: not in the cache (see Still open), so nothing here cites it. The World Level table, the holds at 25, 35, 45 and 50 and lowering from World Level 3 are cited to the game's own text where they are stated above; the 1:10 Mora rate and the enemy level ranges have no source yet.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `PlayerLevelExcelConfigData`, `PlayerLevelLockExcelConfigData` and `WorldLevelExcelConfigData`, the tables the rank is read from. The dump at its revision lacked the three; they were taken from the same repository's files, which matched the dump's own tables byte for byte.
 - World Level tutorials recorded on the English PC client, [2024](https://www.youtube.com/watch?v=P13s7kSmVOE) and [2025](https://www.youtube.com/watch?v=ZGsragloQxU): the dialog the info icon opens on a click, open at the end of its help text, and the Change World Level prompt its button opens.
