@@ -170,3 +170,4 @@ Furina's first, second and fourth constellations SHALL change her Fanfare and he
 ## Open
 
 - [ ] **its most rises by 100 for Constellation 1** — no source yet: the line that raises the Fanfare's most was not located; `burst.go:79` sets 400 and is not a raise.
+- [ ] **the Arkhe hit is Spiritbreath Thorn in Ousia or Surging Blade in Pneuma, applying no elemental gauge** — no source yet: the cached Soloist's Solicitation page names both hits and Hydro DMG, but pairs neither hit with Ousia or Pneuma (it says a hit descends "based on her current alignment") and says nothing of gauge; a recording of Furina's Normal Attack in Ousia and in Pneuma, showing which hit lands and whether it gauges, would settle it.
