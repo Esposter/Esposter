@@ -80,4 +80,4 @@ A screen image written by a pass SHALL NOT count as approved until its compariso
 
 ## Open
 
-- [ ] **The opening's run fails when a screen is skipped** — no source yet: the skip assertion in `packages/genshin-world/src/components/Game/Opening/Index.browser.test.ts` was not traced.
+- [ ] **The opening's run fails when a screen is skipped** — no source yet: the skip assertion was not traced.
