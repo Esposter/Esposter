@@ -6,7 +6,7 @@ The characters, skills and action cards the built decks play, each as a module u
 
 ### Requirement: A named skill deals its stated damage in the element its name spells
 
-A skill whose effect is named by its damage SHALL deal the stated amount of the element the name spells, and the monsters' Electro SHALL count as Electro (`packages/genshin-world/src/services/gcg/constants.ts`, `GCG_EFFECT_DAMAGE_REGEX`).
+A skill whose effect is named by its damage SHALL deal the stated amount of the element the name spells, and the monsters' Electro SHALL count as Electro.
 
 #### Scenario: Physical damage named by its element
 
@@ -22,7 +22,7 @@ A skill whose effect is named by its damage SHALL deal the stated amount of the 
 
 ### Requirement: Every damage a side deals passes the field's bonuses before any doubling
 
-Every damage a side deals SHALL pass every additive bonus on its field before any doubling is applied, a skill's hit, a Swirl's spread, a piercing, an End Phase DMG and a switch's DMG alike (`packages/genshin-world/src/services/gcg/effects/modifyGcgDamageDealt.ts`).
+Every damage a side deals SHALL pass every additive bonus on its field before any doubling is applied, a skill's hit, a Swirl's spread, a piercing, an End Phase DMG and a switch's DMG alike.
 
 #### Scenario: Doubling applies after the field's bonus
 
@@ -42,7 +42,7 @@ A card's damage bonus SHALL apply only to the skills it names, such as the next 
 
 ### Requirement: A card in hand is placed by its kind
 
-A card played from a hand SHALL be placed by its kind: equipment is equipped to its target, a support takes the support zone, and an event is played and then gone (`packages/genshin-world/src/services/gcg/playGcgCard.ts`).
+A card played from a hand SHALL be placed by its kind: equipment is equipped to its target, a support takes the support zone, and an event is played and then gone.
 
 #### Scenario: Equipment is equipped to its target
 
@@ -64,7 +64,7 @@ A card played from a hand SHALL be placed by its kind: equipment is equipped to 
 
 ### Requirement: The field holds no more than its cards' limits
 
-The field SHALL hold at most sixteen dice, four supports, and one equipment of each kind per character (`packages/genshin-world/src/services/gcg/constants.ts`, `GCG_DICE_LIMIT` of 16 and `GCG_SUPPORT_LIMIT` of 4).
+The field SHALL hold at most sixteen dice, four supports, and one equipment of each kind per character.
 
 #### Scenario: Fifth support does not join the field
 
@@ -74,7 +74,7 @@ The field SHALL hold at most sixteen dice, four supports, and one equipment of e
 
 ### Requirement: A card a skill creates does not trigger on the use that created it
 
-A card that a skill creates SHALL NOT trigger on the use that created it, and SHALL trigger on the next skill (`packages/genshin-world/src/services/gcg/effects/runGcgOnSkillUsed.ts`).
+A card that a skill creates SHALL NOT trigger on the use that created it, and SHALL trigger on the next skill.
 
 #### Scenario: Created card waits for the next skill
 
@@ -84,7 +84,7 @@ A card that a skill creates SHALL NOT trigger on the use that created it, and SH
 
 ### Requirement: A passive acts after each skill its character uses
 
-A passive's hooks SHALL run after each skill its character uses, and a switch the passive makes SHALL happen after the skill (`packages/genshin-world/src/services/gcg/runGcgSkillUse.ts`, `packages/genshin-world/src/services/gcg/cards/hide.ts`).
+A passive's hooks SHALL run after each skill its character uses, and a switch the passive makes SHALL happen after the skill.
 
 #### Scenario: Passive switches the next character after a skill
 
@@ -94,7 +94,7 @@ A passive's hooks SHALL run after each skill its character uses, and a switch th
 
 ### Requirement: A passive's starting status is given when the battle begins
 
-A passive's starting status SHALL be given when its side is created at the start of the battle (`packages/genshin-world/src/services/gcg/cards/flowfireEdgeSkill.ts`, `packages/genshin-world/src/services/gcg/cards/electroCrystalCoreSkill.ts`, `packages/genshin-world/src/services/gcg/cards/fieryRebirthSkill.ts`, `packages/genshin-world/src/services/gcg/cards/kamisatoArtSenhoSkill.ts`, each through `getStartingStatuses`).
+A passive's starting status SHALL be given when its side is created at the start of the battle.
 
 #### Scenario: Flowfire Edge converts Physical damage for three usages
 
@@ -104,7 +104,7 @@ A passive's starting status SHALL be given when its side is created at the start
 
 ### Requirement: Guaranteed dice are set when the dice are rolled
 
-Guaranteed dice SHALL be set when the dice are rolled, and a reroll MAY still throw them (`packages/genshin-world/src/services/gcg/effects/setGcgDiceFaces.ts`).
+Guaranteed dice SHALL be set when the dice are rolled, and a reroll MAY still throw them.
 
 #### Scenario: Guaranteed dice are set at the first roll
 
@@ -114,7 +114,7 @@ Guaranteed dice SHALL be set when the dice are rolled, and a reroll MAY still th
 
 ### Requirement: A summon or combat status placed again is refreshed or stacks
 
-A summon or combat status SHALL be placed by its id: a card of that id already on the field SHALL be refreshed to its starting usages and rounds, and a second copy SHALL NOT be added, unless the card names a most usages it stacks to (`packages/genshin-world/src/services/gcg/effects/placeGcgZoneCard.ts`). A card that names one SHALL stack instead: placed again, its starting usages SHALL be added to the usages it has, up to that most.
+A summon or combat status SHALL be placed by its id: a card of that id already on the field SHALL be refreshed to its starting usages and rounds, and a second copy SHALL NOT be added, unless the card names a most usages it stacks to. A card that names one SHALL stack instead: placed again, its starting usages SHALL be added to the usages it has, up to that most.
 
 #### Scenario: A summon placed again refreshes the one on the field
 
@@ -130,7 +130,7 @@ A summon or combat status SHALL be placed by its id: a card of that id already o
 
 ### Requirement: An onstage placed again takes no slot of its own
 
-An onstage is a combat status and SHALL follow the same rule, so a second copy of an onstage SHALL NOT take a slot of its own, and the copy already there SHALL keep its counter (`packages/genshin-world/src/services/gcg/effects/placeGcgZoneCard.ts`).
+An onstage is a combat status and SHALL follow the same rule, so a second copy of an onstage SHALL NOT take a slot of its own, and the copy already there SHALL keep its counter.
 
 #### Scenario: An onstage placed again refreshes the one on the field
 
@@ -140,7 +140,7 @@ An onstage is a combat status and SHALL follow the same rule, so a second copy o
 
 ### Requirement: A support placed again takes a slot of its own
 
-A support SHALL NOT be refreshed: a second copy SHALL take a slot of its own (`packages/genshin-world/src/services/gcg/effects/placeGcgZoneCard.ts`).
+A support SHALL NOT be refreshed: a second copy SHALL take a slot of its own.
 
 #### Scenario: A support played again takes its own slot
 
@@ -150,7 +150,7 @@ A support SHALL NOT be refreshed: a second copy SHALL take a slot of its own (`p
 
 ### Requirement: A card hears the turn's start, a declared round's end and a summon's leaving
 
-A side handed its choice of action SHALL run its field's before-action hooks before the choice, and a side declaring its round's end SHALL run its round-end hooks before the declaration counts (`packages/genshin-world/src/services/gcg/runGcgSideDamageHook.ts`, `packages/genshin-world/src/services/gcg/cards/tenkoThunderbolts.ts`, `packages/genshin-world/src/services/gcg/cards/sesshouSakura.ts`, `packages/genshin-world/src/services/gcg/effects/notifyGcgSummonsDisappeared.ts`). The damage such a hook returns SHALL be dealt by its side through the damage seam. Each summon that leaves a side's field SHALL tell that side's supports once.
+A side handed its choice of action SHALL run its field's before-action hooks before the choice, and a side declaring its round's end SHALL run its round-end hooks before the declaration counts. The damage such a hook returns SHALL be dealt by its side through the damage seam. Each summon that leaves a side's field SHALL tell that side's supports once.
 
 #### Scenario: A before-action card deals its damage before the side chooses
 
@@ -172,7 +172,7 @@ A side handed its choice of action SHALL run its field's before-action hooks bef
 
 ### Requirement: The Oceanic Mimics are summoned by the kind fewest on the field
 
-The Oceanic Mimics SHALL be summoned as the kind the side holds fewest of, the earliest kind winning a tie (`packages/genshin-world/src/services/gcg/effects/summonGcgOceanicMimics.ts`).
+The Oceanic Mimics SHALL be summoned as the kind the side holds fewest of, the earliest kind winning a tie.
 
 #### Scenario: Fewest kind is summoned
 
@@ -188,7 +188,7 @@ The Oceanic Mimics SHALL be summoned as the kind the side holds fewest of, the e
 
 ### Requirement: A character eats one food a round
 
-A character SHALL eat no more than one food a round, and a second food in the same round SHALL be refused (`packages/genshin-world/src/services/gcg/effects/checkIsGcgFoodEatable.ts`).
+A character SHALL eat no more than one food a round, and a second food in the same round SHALL be refused.
 
 #### Scenario: Second food in a round is refused
 
@@ -208,7 +208,7 @@ An opponent deck SHALL be legal, meaning every talent card it holds has its char
 
 ### Requirement: Card and character words come from the game's text by id
 
-A card's and a character's name and description SHALL be shown in the game's words, looked up by the text id each carries (`packages/genshin-world/src/services/gcg/GcgTextLoaderMap.ts`).
+A card's and a character's name and description SHALL be shown in the game's words, looked up by the text id each carries.
 
 #### Scenario: Character with no description text shows none
 
@@ -218,7 +218,7 @@ A card's and a character's name and description SHALL be shown in the game's wor
 
 ### Requirement: Ellin's deck holds no cards and gives its side two statuses
 
-Ellin's opponent deck SHALL hold no cards and SHALL give its side only the two statuses its passives give at the start of the battle (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/GCGDeckExcelConfigData.json`, id 11002, with an empty `cardList`).
+Ellin's opponent deck SHALL hold no cards and SHALL give its side only the two statuses its passives give at the start of the battle (id 11002, with an empty `cardList`).
 
 #### Scenario: Ellin's side starts with its two statuses
 
@@ -228,7 +228,7 @@ Ellin's opponent deck SHALL hold no cards and SHALL give its side only the two s
 
 ### Requirement: A defeat a card answers restores the character, once
 
-A character about to fall SHALL first be offered to the cards attached to it. A card that answers SHALL restore the character to the HP it names and spend itself, and a character with no answer SHALL fall as before (`packages/genshin-world/src/services/gcg/applyGcgDamage.ts`, `packages/genshin-world/src/services/gcg/cards/embersRekindled.ts`).
+A character about to fall SHALL first be offered to the cards attached to it. A card that answers SHALL restore the character to the HP it names and spend itself, and a character with no answer SHALL fall as before.
 
 #### Scenario: Fiery Rebirth restores Abyss Lector to 4 HP once
 
@@ -244,7 +244,7 @@ A character about to fall SHALL first be offered to the cards attached to it. A 
 
 ### Requirement: A skill prepared for a side runs as its turn begins
 
-A side's prepared skills SHALL run when the turn passes to that side, before its before-action hooks, each for a preparer still standing, and a skill prepared while they run SHALL wait for the following turn (`packages/genshin-world/src/services/gcg/runGcgPreparedSkills.ts`).
+A side's prepared skills SHALL run when the turn passes to that side, before its before-action hooks, each for a preparer still standing, and a skill prepared while they run SHALL wait for the following turn.
 
 #### Scenario: Rock-Paper-Scissors Combo's preparations run at the next turn
 
@@ -264,7 +264,7 @@ While the opponent has declared its round's end, the side keeps the turn without
 
 ### Requirement: A prepared skill is heard as a skill used by its preparer's cards
 
-The cards on a preparer's field SHALL hear its prepared skill as a skill used, so a Crowfeather Cover on that character spends a usage on a prepared Elemental Skill (`packages/genshin-world/src/services/gcg/effects/runGcgOnSkillUsed.ts`, `packages/genshin-world/src/services/gcg/runGcgPreparedSkills.ts`).
+The cards on a preparer's field SHALL hear its prepared skill as a skill used, so a Crowfeather Cover on that character spends a usage on a prepared Elemental Skill.
 
 #### Scenario: A prepared skill is recorded as used this round
 
@@ -280,7 +280,7 @@ The cards on a preparer's field SHALL hear its prepared skill as a skill used, s
 
 ### Requirement: A card on one side surcharges the other side's switch once a round
 
-A card's surcharge on a switch SHALL add its dice to the switch cost the opposing side pays, once that cost is paid the surcharging card SHALL hear the payment, and Chains of Warding Thunder SHALL surcharge at most one switch a round (`packages/genshin-world/src/services/gcg/payGcgSubjectCost.ts`, `packages/genshin-world/src/services/gcg/cards/chainsOfWardingThunder.ts`).
+A card's surcharge on a switch SHALL add its dice to the switch cost the opposing side pays, once that cost is paid the surcharging card SHALL hear the payment, and Chains of Warding Thunder SHALL surcharge at most one switch a round.
 
 #### Scenario: Chains of Warding Thunder adds one die to the first switch of a round
 
@@ -290,7 +290,7 @@ A card's surcharge on a switch SHALL add its dice to the switch cost the opposin
 
 ### Requirement: A depleted shield is answered by the card attached to its character
 
-A hit that takes a standing character's shield to 0 SHALL call each card attached to that character that answers depletion, and the piercing DMG the card names SHALL reach every opposing character, the active one and those on standby alike (`packages/genshin-world/src/services/gcg/applyGcgDamage.ts`, `packages/genshin-world/src/services/gcg/cards/aegisOfAbyssalFlame.ts`).
+A hit that takes a standing character's shield to 0 SHALL call each card attached to that character that answers depletion, and the piercing DMG the card names SHALL reach every opposing character, the active one and those on standby alike.
 
 #### Scenario: Aegis of Abyssal Flame answers the depletion of Abyss Lector's shield
 
@@ -306,7 +306,7 @@ A hit that takes a standing character's shield to 0 SHALL call each card attache
 
 ### Requirement: Shimenawa's Reminiscence reduces a side's Talent card or Elemental Skill from any character
 
-Shimenawa's Reminiscence SHALL reduce, once per round, a Talent card or an Elemental Skill paid by any character on its side, whichever character carries the artifact (`packages/genshin-world/src/services/gcg/cards/shimenawasReminiscence.ts`). Its game text names the side ("you play a Talent card or a Character uses an Elemental Skill"). The wiki's Equipment Card page reads "the character", so this reading is provisional.
+Shimenawa's Reminiscence SHALL reduce, once per round, a Talent card or an Elemental Skill paid by any character on its side, whichever character carries the artifact. Its game text names the side ("you play a Talent card or a Character uses an Elemental Skill"). The wiki's Equipment Card page reads "the character", so this reading is provisional.
 
 #### Scenario: The artifact on a standby character reduces the active character's Elemental Skill
 
@@ -316,7 +316,7 @@ Shimenawa's Reminiscence SHALL reduce, once per round, a Talent card or an Eleme
 
 ### Requirement: A Technique is an action its character's equipment gives, not a skill
 
-A Technique that a character's equipment gives SHALL be used by that character, paying its dice as a skill is paid, and SHALL NOT be recorded as a used skill, so a rule that reduces a skill already used this Round does not read it (`packages/genshin-world/src/services/gcg/effects/findGcgTechnique.ts`).
+A Technique that a character's equipment gives SHALL be used by that character, paying its dice as a skill is paid, and SHALL NOT be recorded as a used skill, so a rule that reduces a skill already used this Round does not read it.
 
 #### Scenario: Ellin does not reduce a repeated Burning Assault
 
@@ -326,7 +326,7 @@ A Technique that a character's equipment gives SHALL be used by that character, 
 
 ### Requirement: A character hears the DMG it takes, whichever hit lands it
 
-A character still standing that loses HP or shield SHALL hear the DMG it takes through its cards and Passive skills (`packages/genshin-world/src/services/gcg/applyGcgDamage.ts`), whether the damage is its side's active hit, a reaction's piercing or spread, or standby piercing. Spirit of Omen's Power is the card that needs it.
+A character still standing that loses HP or shield SHALL hear the DMG it takes through its cards and Passive skills, whether the damage is its side's active hit, a reaction's piercing or spread, or standby piercing. Spirit of Omen's Power is the card that needs it.
 
 #### Scenario: Standby piercing takes the Eremite to 7 HP or less
 
@@ -340,3 +340,26 @@ A character still standing that loses HP or shield SHALL hear the DMG it takes t
 - [ ] **An opponent deck is legal only when every talent card it holds has its character in the deck** — no source yet: no legality check was found in the deck build or read scripts.
 - [ ] **While the opponent has declared its end, the side's prepared skills wait** — no source yet: the wait in `runGcgPreparedSkills.ts` was not read.
 - [ ] **The card values and card behaviours in the scenarios match the game** — no source yet: the wiki's card pages are not in the cache, and the medium text map holds no card texts.
+- [ ] **A named skill deals its stated damage in the element its name spells** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Every damage a side deals passes the field's bonuses before any doubling** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A card in hand is placed by its kind** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The field holds no more than its cards' limits** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A card a skill creates does not trigger on the use that created it** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A passive acts after each skill its character uses** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A passive's starting status is given when the battle begins** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Guaranteed dice are set when the dice are rolled** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A summon or combat status placed again is refreshed or stacks** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **An onstage placed again takes no slot of its own** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A support placed again takes a slot of its own** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A card hears the turn's start, a declared round's end and a summon's leaving** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The Oceanic Mimics are summoned by the kind fewest on the field** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A character eats one food a round** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Card and character words come from the game's text by id** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A defeat a card answers restores the character, once** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A skill prepared for a side runs as its turn begins** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A prepared skill is heard as a skill used by its preparer's cards** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A card on one side surcharges the other side's switch once a round** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A depleted shield is answered by the card attached to its character** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Shimenawa's Reminiscence reduces a side's Talent card or Elemental Skill from any character** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A Technique is an action its character's equipment gives, not a skill** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A character hears the DMG it takes, whichever hit lands it** — no source yet: game data or a snapshot that holds this behaviour
