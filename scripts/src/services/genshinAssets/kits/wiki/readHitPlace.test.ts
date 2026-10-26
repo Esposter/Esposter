@@ -14,6 +14,12 @@ describe(readHitPlace, () => {
     expect(readHitPlace("4-Hit DMG B")).toBe(2);
   });
 
+  test("reads a title's trailing level as its place, `Driftcloud Wave DMG Lv.2` as 2", () => {
+    expect.hasAssertions();
+
+    expect(readHitPlace("Driftcloud Wave DMG Lv.2")).toBe(2);
+  });
+
   test("reads no place where the title ends in no whole number or letter, as `4-Hit DMG` ends in its DMG", () => {
     expect.hasAssertions();
 
