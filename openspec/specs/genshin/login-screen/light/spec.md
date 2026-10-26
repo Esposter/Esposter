@@ -6,12 +6,12 @@ The light on the login scene, as built: the stone lit as the game's deferred pas
 
 ### Requirement: Stone edge glow
 
-The stone SHALL glow along its edges in its material's colour, with the door and the towers drawing an eighth of their material's glow strength, and the walkway and the bridges drawing no glow.
+The stone SHALL glow along its edges in its material's colour, with the door and the towers drawing an eighth of their material's glow strength, and the walkway and the bridges drawing no glow (`packages/genshin-engine/src/nodes/createStoneGlowNode.ts`, `scripts/src/services/genshinAssets/fit/fitLoginStone.ts`).
 
 #### Scenario: Door and towers glow
 
 - **WHEN** the door or a tower is shown
-- **THEN** its edges glow at an eighth of the material's strength
+- **THEN** its edges glow at an eighth of the material's strength (`scripts/src/services/genshinAssets/fit/fitLoginStone.ts`)
 
 #### Scenario: Walkway and bridges
 
@@ -20,7 +20,7 @@ The stone SHALL glow along its edges in its material's colour, with the door and
 
 ### Requirement: Stone darkens with height
 
-The stone SHALL darken with height at each hour's rate up to 20 metres, and the night SHALL darken at 0.14 per metre.
+The stone SHALL darken with height at each hour's rate up to 20 metres, and the night SHALL darken at 0.14 per metre (`packages/genshin-engine/src/nodes/computeStoneDarkening.ts`, `packages/genshin-engine/src/nodes/constants.ts`).
 
 #### Scenario: Night stone
 
@@ -34,7 +34,7 @@ The scene SHALL draw no outline round its stone.
 #### Scenario: Stone is drawn
 
 - **WHEN** the stone is drawn
-- **THEN** no outline is drawn round it
+- **THEN** no outline is drawn round it (`packages/genshin-world/src/components/Login/Scene/Index.vue`)
 
 ### Requirement: Haze hides the stone under the walkway
 
@@ -52,26 +52,26 @@ The cloud sea's haze SHALL hide the stone under the walkway at dawn and at night
 
 ### Requirement: Screen-space occlusion by hour
 
-The day, dusk and night frames SHALL darken creases and wall feet with screen-space occlusion reaching 8 metres, while the dawn frame and the phone client's frame draw none.
+The day, dusk and night frames SHALL darken creases and wall feet with screen-space occlusion reaching 8 metres, while the dawn frame and the phone client's frame draw none (`packages/genshin-world/src/services/login/scene/LoginOcclusionRadiusMap.ts`, `packages/genshin-world/src/services/login/scene/constants.ts`).
 
 #### Scenario: Day occlusion
 
 - **WHEN** the day is shown on the computer client
-- **THEN** creases and wall feet are darkened within 8 metres
+- **THEN** creases and wall feet are darkened within 8 metres (`packages/genshin-world/src/services/login/scene/constants.ts`)
 
 #### Scenario: Phone client
 
 - **WHEN** the login screen is shown on the phone client
-- **THEN** no occlusion is drawn
+- **THEN** no occlusion is drawn (`packages/genshin-engine/src/renderer/QualityTierSettingsMap.ts`)
 
 ### Requirement: Shadows across the walkway
 
-The sun and the moon SHALL cast shadows across the walkway, and the night's moon SHALL cast them at 0.8 strength, filtered over two texels.
+The sun and the moon SHALL cast shadows across the walkway, and the night's moon SHALL cast them at 0.8 strength, filtered over two texels (`packages/genshin-world/src/services/login/scene/constants.ts`, `packages/genshin-world/src/components/Login/Scene/Index.vue`).
 
 #### Scenario: Night moon shadows
 
 - **WHEN** the night is shown
-- **THEN** the moon casts shadows across the walkway at 0.8 strength, softened over two texels
+- **THEN** the moon casts shadows across the walkway at 0.8 strength, softened over two texels (`packages/genshin-world/src/services/login/scene/constants.ts`)
 
 ### Requirement: No god rays
 
@@ -81,3 +81,11 @@ The post chain SHALL draw no god rays.
 
 - **WHEN** any hour is shown
 - **THEN** no god rays are drawn
+
+## Open
+
+- [ ] **The walkway and the bridges draw no edge glow** — no source yet: their fitted strength is in the hosted login stone fit, which is not read here.
+- [ ] **The night darkens at 0.14 per metre of height** — no source yet: the rate is in the hosted `login/stoneLight` record, which is not kept locally.
+- [ ] **The haze hides the stone under the walkway, its wall's top about 3 metres under the walkway at night and 6 at dawn, and the dusk's haze hides no more than about three quarters of the far towers** — no source yet: the haze tops are not measured in any kept file.
+- [ ] **The login is drawn at the medium tier on the phone client** — no source yet: the phone client's tier is set by the client and is not read here.
+- [ ] **The post chain draws no god rays** — no source yet: the login scene's post chain was not read for a god-ray pass.
