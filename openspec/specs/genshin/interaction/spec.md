@@ -93,7 +93,7 @@ While more than one row is shown the mouse wheel SHALL move the selection one ro
 
 ### Requirement: F acts once on the selected row
 
-Pressing F SHALL act once on the selected row: a drop is picked up, a resident's talk begins, and a locked statue is unlocked (see Open).
+Pressing F SHALL act once on the selected row: a drop is picked up, a resident's talk begins, and a resonated statue opens the Worship screen, where an unresonated one is resonated with on the key instead.
 
 #### Scenario: F picks up a drop into the wallet or the bag
 
@@ -113,11 +113,11 @@ Pressing F SHALL act once on the selected row: a drop is picked up, a resident's
 - **WHEN** the player presses F
 - **THEN** the talk begins
 
-#### Scenario: F on a locked statue unlocks it
+#### Scenario: F on a resonated statue opens the Worship screen
 
-- **GIVEN** the selected row is a locked statue
+- **GIVEN** the selected row is a resonated statue
 - **WHEN** the player presses F
-- **THEN** the statue is unlocked and no longer has a row (see Open)
+- **THEN** the Worship screen opens
 
 ### Requirement: A held F repeats its pick up
 
