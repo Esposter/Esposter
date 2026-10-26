@@ -22,7 +22,7 @@ Build order. Section 1 lands the row and the container the rest write to, sectio
 
 - [x] 3.1 Add the `user.requestDataExport` mutation. It returns the active export when one exists, otherwise inserts a queued row and publishes the event after the write. Test first in the user router's test file: a second request returns the first export.
       Verify: the router test passes, and the publish happens once per new export.
-- [ ] 3.2 Add the `user.getDataExport` query and the `user.getDataExportLink` mutation. The link is a read SAS of fifteen minutes, issued only to the owner, only when the export is ready and unexpired. Test first: another person gets no link, and an expired export gets no link.
+- [x] 3.2 Add the `user.readDataExport` query and the `user.generateDataExportLink` mutation. The link is a read SAS of fifteen minutes, issued only to the owner, only when the export is ready and unexpired. Test first: another person gets no link, and an expired export gets no link.
       Verify: the owner, other-person and expired cases pass.
 - [x] 3.3 Point each environment's Event Grid subscription under `apps/infra` at the export's event type.
       Verify: both subscription files, dev and prod, name `AzureFunction.ExportUserData`.
