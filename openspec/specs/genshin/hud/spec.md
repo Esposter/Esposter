@@ -235,10 +235,14 @@ A mouse press on a heads-up display piece SHALL NOT act in the world, while a cl
 
 ## Open
 
-- [ ] **The backslash shows the HUD again, and every menu hides it** — no source yet: the cached Controls wiki page, which binds Hide UI to the backslash, is not on disk, and it names no second press or menus.
-- [ ] **V navigates to the tracked quest** — no source yet: the cached Controls wiki page, which binds Quest Navigation to V and names no tracked quest, is not on disk, and nor is the cached Quest page, whose beam marks the objective the Navigate feature pinpoints.
-- [ ] **The stamina meter is divided into sections of 100 Stamina** — no source yet: no on-disk frame of the meter is checked, and `hud-stamina-climb.png` shows none.
+- [ ] **The backslash hides and shows the HUD, and every menu hides it** — no source yet: the wiki's Controls page is not in the cache.
+- [ ] **V navigates to the tracked quest, and a beam rises over its objective** — no source yet: the wiki's Controls and Quest pages are not in the wiki cache.
+- [ ] **The stamina meter is divided into sections of 100 Stamina** — no source yet: no on-disk frame of the meter is checked, and `~/Esposter.noindex/genshin-parity/references/hud-stamina-climb.png` shows none.
 - [ ] **The stamina meter pulses red once the pool falls under an eighth of its full amount** — no source yet: no on-disk frame of the meter at a low pool is checked.
 - [ ] **A charged burst's disc takes its element's colour** — no source yet: no on-disk frame of a charged burst button is checked.
 - [ ] **A cooling skill's countdown runs in tenths of a second** — no source yet: no on-disk frame of a cooldown countdown is checked.
 - [ ] **Buttons carry the game's own icons** — no source yet: the wiki's icon renders are not in the cache. Checked the wiki cache: it holds no File pages, so no icon render is in it.
+- [ ] **The Paimon button and the minimap open the Paimon menu and the map** — no source yet: the wiki's Paimon Menu and Map pages are not in the cache.
+- [ ] **A shortcut opens the screen its key opens, as F3, F1, B and C do** — no source yet: the wiki's Controls page is not in the cache, and `~/Esposter.noindex/genshin-key-map` holds none of these bindings.
+- [ ] **Other portraits darken for a one-second cooldown after a switch** — no source yet: the wiki's Party page is not in the cache.
+- [ ] **The stamina meter stands beside the character and fades when full** — no source yet: the wiki's Stamina page is not in the cache.
