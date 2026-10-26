@@ -33,4 +33,4 @@ Amber's kit is its record and one behaviour module, `createAmberKitBehaviour`, a
 
 ## Open
 
-- [ ] **A bow's aimed shot turns to its enemy by the wiki's score** — no source yet: the cached Sharpshooter page in `~/Esposter.noindex/cache/genshin-wiki/Category_Amber_Talents.json` describes no turn and no score.
+- [ ] **A bow's aimed shot turns to its enemy by the wiki's score** — no source yet: the cached Sharpshooter page in `~/Esposter.noindex/cache/genshin-wiki/Category_Amber_Talents.json` describes no turn and no score. Checked the Sharpshooter page again (cached as `Category_Amber_Talents.json`, title Sharpshooter): its Aimed Shot rows give damage and poise, and the text says nothing of a turn or a score.
