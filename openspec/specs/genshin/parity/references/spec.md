@@ -6,7 +6,7 @@ Where a parity screen's reference images and recordings come from, how the insta
 
 ### Requirement: Reference images are kept outside the repository
 
-Reference images SHALL be kept outside the repository, which SHALL hold only the reference each screen is judged against, named by its wiki file or by the recording and the second it is taken at.
+Reference images SHALL be kept outside the repository, which SHALL hold only the reference each screen is judged against, named by its wiki file or by the recording and the second it is taken at (`scripts/src/services/genshinParity/shared/ParityReferenceMap.ts`).
 
 #### Scenario: Reference fetched
 
@@ -33,7 +33,7 @@ A reference SHALL come from published sources wherever the wiki, the community's
 
 ### Requirement: The installed game is recorded without any input sent to it
 
-A recording of the installed game SHALL send the game no input, the player playing while the recording runs.
+A recording of the installed game SHALL send the game no input, the player playing while the recording runs (`scripts/src/services/genshinParity/game/captureGame.ts`).
 
 #### Scenario: Recording runs during play
 
@@ -43,7 +43,7 @@ A recording of the installed game SHALL send the game no input, the player playi
 
 ### Requirement: A recording contains only the game's own window
 
-A recording SHALL contain only the game's own window, so that no other window, the desktop, the cursor or an overlay reaches the file.
+A recording SHALL contain only the game's own window, so that no other window, the desktop, the cursor or an overlay reaches the file (`scripts/src/services/genshinParity/game/captureGame.ts`).
 
 #### Scenario: Player switches to another window
 
@@ -53,7 +53,7 @@ A recording SHALL contain only the game's own window, so that no other window, t
 
 ### Requirement: An armed recording waits for the game's window
 
-A recording armed before the game starts SHALL wait for the game's window to open and SHALL take it from its first frame.
+A recording armed before the game starts SHALL wait for the game's window to open and SHALL take it from its first frame (`scripts/src/services/genshinParity/game/captureGame.ts`).
 
 #### Scenario: Recording armed before launch
 
@@ -63,7 +63,7 @@ A recording armed before the game starts SHALL wait for the game's window to ope
 
 ### Requirement: A recording is encoded at full frame rate and stays readable if cut short
 
-A recording SHALL be encoded at 60 frames a second, near-lossless, in a container that stays readable if the recording is cut short.
+A recording SHALL be encoded at 60 frames a second, near-lossless, in a container that stays readable if the recording is cut short (`scripts/src/services/genshinParity/game/captureGame.ts`).
 
 #### Scenario: Recording cut short
 
@@ -73,7 +73,7 @@ A recording SHALL be encoded at 60 frames a second, near-lossless, in a containe
 
 ### Requirement: A minimised game ends a recording by the clock
 
-A recording SHALL end at its length in real time when the game is minimised and gives no frames.
+A recording SHALL end at its length in real time when the game is minimised and gives no frames (`scripts/src/services/genshinParity/game/captureGame.ts`).
 
 #### Scenario: Game minimised during recording
 
@@ -83,7 +83,7 @@ A recording SHALL end at its length in real time when the game is minimised and 
 
 ### Requirement: The encoder is refused unless it matches its pinned checksum
 
-The encoder SHALL be fetched as one pinned release, and SHALL be refused when the fetched release does not match its pinned checksum.
+The encoder SHALL be fetched as one pinned release, and SHALL be refused when the fetched release does not match its pinned checksum (`scripts/src/services/shared/installPinnedTool.ts`).
 
 #### Scenario: Fetched encoder matches the pin
 
