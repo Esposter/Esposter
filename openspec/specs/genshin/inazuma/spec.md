@@ -1,12 +1,12 @@
 ## Purpose
 
-As built — Inazuma's building kit (a raised timber floor, post-and-beam walls with plaster panels, a hipped or gabled roof with deep eaves, storeys stacked by a setback), its island palette and its region data file. Inazuma City's first building stands at a provisional place; the terrain of its islands is not yet built.
+As built — Inazuma's building kit (a raised timber floor, post-and-beam walls with plaster panels, a hipped or gabled roof with deep eaves, storeys stacked by a setback), its island palette and its region data file (`packages/genshin-world/src/services/inazuma/createInazumaBuildingGeometry.ts`, `packages/genshin-world/src/services/inazuma/constants.ts`, `packages/genshin-world/src/data/regions/inazuma.json`). Inazuma City's first building stands at a provisional place; the terrain of its islands is not yet built.
 
 ## Requirements
 
 ### Requirement: A building stacks its storeys, each set back from the one below
 
-A building SHALL be made of a raised timber floor, corner posts with plaster panels between them, and a roof, and each storey above SHALL stand on the roof below it, set back from that roof's edge.
+A building SHALL be made of a raised timber floor, corner posts with plaster panels between them, and a roof, and each storey above SHALL stand on the roof below it, set back from that roof's edge (`packages/genshin-world/src/services/inazuma/createInazumaBuildingGeometry.ts`).
 
 #### Scenario: A tower's storeys step up
 
@@ -23,7 +23,7 @@ A building SHALL be made of a raised timber floor, corner posts with plaster pan
 
 ### Requirement: A roof slopes on the sides its shape calls for
 
-A hipped roof SHALL slope on all four sides, and a gabled roof SHALL close its two ends with gables.
+A hipped roof SHALL slope on all four sides, and a gabled roof SHALL close its two ends with gables (`packages/genshin-world/src/services/inazuma/createInazumaRoofGeometry.ts`).
 
 #### Scenario: A hipped roof slopes on four sides
 
@@ -39,7 +39,7 @@ A hipped roof SHALL slope on all four sides, and a gabled roof SHALL close its t
 
 ### Requirement: Each island is drawn in its own palette
 
-Each island of the region SHALL be drawn in its own colours, and the building kit SHALL use its timber, plaster and tile colours.
+Each island of the region SHALL be drawn in its own colours, and the building kit SHALL use its timber, plaster and tile colours (`packages/genshin-world/src/services/inazuma/constants.ts`).
 
 #### Scenario: An island takes its own colours
 
@@ -49,7 +49,7 @@ Each island of the region SHALL be drawn in its own colours, and the building ki
 
 ### Requirement: Inazuma City shows one building at a provisional place
 
-Inazuma City SHALL show its first building at a provisional place until the region's fit writes its real place.
+Inazuma City SHALL show its first building at a provisional place until the region's fit writes its real place (`packages/genshin-world/src/data/regions/inazuma.json`).
 
 #### Scenario: The city's building stands where the region data places it
 
@@ -59,7 +59,7 @@ Inazuma City SHALL show its first building at a provisional place until the regi
 
 ### Requirement: Each area of the region is fetched as the camera nears it
 
-Each area of the region SHALL take the game's own outline, and the region SHALL be fetched as the camera comes near any of its areas.
+Each area of the region SHALL take the game's own outline, and the region SHALL be fetched as the camera comes near any of its areas (`packages/genshin-world/src/composables/useRegionData.ts`, with the outlines in `packages/genshin-world/src/data/catalogue.json`).
 
 #### Scenario: Approaching an area loads the region
 
@@ -69,10 +69,14 @@ Each area of the region SHALL take the game's own outline, and the region SHALL 
 
 ### Requirement: Undrawn meshes are named as undrawn
 
-Each mesh of Inazuma City's exported scene that the parity witness does not draw SHALL be named as undrawn by its kind.
+Each mesh of Inazuma City's exported scene that the parity witness does not draw SHALL be named as undrawn by its kind (`packages/genshin-world/src/services/inazuma/InazumaUndrawnMeshRegexMap.ts`).
 
 #### Scenario: A mesh the witness does not draw is named
 
 - **GIVEN** a mesh in the exported scene is not one the witness draws
 - **WHEN** the parity witness is built
 - **THEN** the mesh is listed as undrawn under its kind
+
+## Open
+
+- [ ] **Each area of the region takes the game's own outline** — no source yet: the catalogue's Inazuma outlines are not matched here to the game's dumped area polygons.
