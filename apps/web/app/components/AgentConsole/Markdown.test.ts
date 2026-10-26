@@ -63,9 +63,9 @@ describe(AgentConsoleMarkdown, () => {
     await links[0]?.trigger("click");
     await links[1]?.trigger("click");
 
-    expect(sendCommand).toHaveBeenCalledTimes(2);
-    expect(sendCommand).toHaveBeenNthCalledWith(1, { path, sessionId: "session", type: CommandType.ReadFile });
-    expect(sendCommand).toHaveBeenNthCalledWith(2, { path, sessionId: "session", type: CommandType.ReadFile });
+    const readFileCommand = { path, sessionId: "session", type: CommandType.ReadFile };
+
+    expect(sendCommand.mock.calls).toStrictEqual([[readFileCommand], [readFileCommand]]);
   });
 
   test("opens a repository file through the session it is shown in, which in the side chat is not the console's", async () => {
