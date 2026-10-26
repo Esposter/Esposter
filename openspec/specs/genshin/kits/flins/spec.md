@@ -1,6 +1,6 @@
 ## Purpose
 
-Flins's kit as built, with his five strikes, charged attack, provisional plunges, Manifest Flame's press and the stance it starts, and Cometh the Night's initial, middle and final hits, and what is left waiting on the Lunar-Charged hook and a stance's own skill cooldown.
+Flins's kit as built, with his five strikes, charged attack, provisional plunges, Manifest Flame's press and the stance it starts, and Cometh the Night's initial, middle and final hits, with his first constellation's Energy built, and what is left waiting on the Lunar-Charged hook and a stance's own skill cooldown.
 
 ## Requirements
 
@@ -100,3 +100,25 @@ From constellation 4, Flins's ATK SHALL be raised by 20% as a passive bonus. Its
 - **GIVEN** Flins is at constellation 3
 - **WHEN** his passive bonuses are read
 - **THEN** they are empty
+
+### Requirement: First constellation gives Energy on a Lunar-Charged reaction
+
+From constellation 1, a Lunar-Charged reaction that any member of the team triggers SHALL give Flins 8 Energy, and it SHALL do so once every 5.5 seconds.
+
+#### Scenario: A Lunar-Charged reaction gives Energy
+
+- **GIVEN** Flins is at constellation 1
+- **WHEN** a Lunar-Charged reaction is triggered on an enemy
+- **THEN** Flins gains 8 Energy
+
+#### Scenario: A second reaction within 5.5 seconds gives nothing
+
+- **GIVEN** Flins is at constellation 1 and a Lunar-Charged reaction gave him Energy less than 5.5 seconds ago
+- **WHEN** another Lunar-Charged reaction is triggered
+- **THEN** Flins gains no Energy
+
+#### Scenario: A Flins below constellation 1 gains no Energy
+
+- **GIVEN** Flins is at constellation 0
+- **WHEN** a Lunar-Charged reaction is triggered
+- **THEN** Flins gains no Energy
