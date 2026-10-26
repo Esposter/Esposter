@@ -347,12 +347,11 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 
 ## Open
 
-- [ ] **The aura tax and decay: taxed to 0.8, decaying 2.5 seconds a unit plus 7, Bennett's 1.6U of Pyro for 12 seconds** — no source yet: the wiki's Elemental Gauge Theory page is not in `~/Esposter.noindex/cache/genshin-wiki/`, and gcsim's `0.8` at `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/reactable.go:207` was not confirmed as the tax.
 - [ ] **Frozen doubles its gauge, decays 0.4U a second and ramps 0.1 a second, lasting 2√(5G + 4) − 4 seconds** — no source yet: gcsim's freeze decay in `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/reactable.go:47-48` and `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/reactable.go:382-391` is in per-frame units not converted to these values.
 - [ ] **Swirl records the spread gauge (G − 0.04) × 1.25 + 1** — no source yet: gcsim's `calcSwirlAtkDurability` at `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/swirl.go:13-17` is in durability units, and no source converts it to gauge units.
 - [ ] **The table's cells that gcsim's `reduce` calls do not name: Burning, Frozen on Cryo and Hydro, Aggravate, Spread and the Geo row** — no source yet: a read of gcsim's `reduce` calls against each of these cells.
 - [ ] **Swirl on Burning is among the table's cells that gcsim's `reduce` calls do not name** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/swirl.go:170`: `reduce(Pyro)` takes Burning's aura, so Swirl names it.
-- [ ] **The order in which each element tries its reactions** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/reactable.go:131-135`: its Geo order is Electro, Hydro, Cryo, then Pyro, not Pyro second.
+- [ ] **The order in which each element tries its reactions** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/reactable.go:131-135`: its Geo order is Electro, Hydro, Cryo, Pyro, then Frozen, not Pyro second.
 - [ ] **An enemy of level L has 5 × L + 500 defence** — no source yet: gcsim's defence line at `~/Esposter/cache/gcsim-v2.47.2/pkg/enemy/damage.go:77-79` is (level + 100) terms only, and no enemy defence figure was opened.
 - [ ] **Transformative damage from 0.25 to 3 times the level multiplier** — no source yet: the wiki's Damage page is not in the cache, and no gcsim factor range was opened.
 - [ ] **Lunar-Bloom's coefficient is 1** — no source yet: no Lunar-Bloom case is among `~/Esposter/cache/gcsim-v2.47.2/pkg/core/combat/reaction.go` lines 20 to 30, where line 24 gives Stellar Swirl's 1.
