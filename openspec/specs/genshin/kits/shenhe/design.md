@@ -28,4 +28,4 @@ Shenhe's kit is its record and one behaviour module, `createShenheKitBehaviour`,
 
 ## Open
 
-- [ ] **Constellation 1 adds a skill charge to Spring Spirit Summoning** — no source yet: the cached wiki names Clarity of Heart without its text.
+- [ ] **Constellation 1 adds a skill charge to Spring Spirit Summoning** — no source yet: the cached wiki names Clarity of Heart without its text. Checked the cached Spring Spirit Summoning page (in `~/Esposter.noindex/cache/genshin-wiki/Category_Shenhe_Talents.json`): it lists Constellation 1 as Clarity of Heart with no text, and no other cached page names it.
