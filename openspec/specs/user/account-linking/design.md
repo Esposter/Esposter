@@ -54,7 +54,7 @@ The link round trip is the exception that needs its own handling: a rejection in
 
 ## The last account
 
-better-auth counts **every** `accounts` row for the user, not rows per provider, and refuses to delete the last one. The UI states that rule before the server has to: the final row is labelled as the only way back into the account and its Unlink button is disabled. Sign-in is OAuth-only with no password fallback, and there is no self-service deletion yet, which the [account deletion change](../../../changes/user-account-deletion/proposal.md) builds, so an account with no providers is one nobody can ever reach again. Unlinking everything is not a supported way to leave.
+better-auth counts **every** `accounts` row for the user, not rows per provider, and refuses to delete the last one. The UI states that rule before the server has to: the final row is labelled as the only way back into the account and its Unlink button is disabled. Sign-in is OAuth-only with no password fallback. Self-service deletion is built ([account deletion](../account-deletion/design.md)), so leaving the platform means deleting the account, not unlinking every provider: an account with no providers is one nobody can ever reach again. Unlinking everything is not a supported way to leave.
 
 Unlinking additionally demands a **fresh** session — better-auth measures freshness from when the session was created, not from the last request, so a session older than its freshness window is still valid for everything else and still rejected here. That rejection surfaces as an ordinary alert, and signing out and back in clears it.
 

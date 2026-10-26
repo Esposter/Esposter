@@ -2,7 +2,7 @@
 
 ## Why
 
-Every user is on a Free tier with a fixed storage allowance, and there is no way to buy more. The quota mechanism already derives each allowance from the user's tier, so a paid tier is one more value in a map rather than a schema change. The hard part is the money: taking payment, keeping the user's tier correct against the provider's events, and never stranding a downgraded user. Taking money also turns the deferred account deletion and data export obligations into the price of shipping.
+Every user is on a Free tier with a fixed storage allowance, and there is no way to buy more. The quota mechanism already derives each allowance from the user's tier, so a paid tier is one more value in a map rather than a schema change. The hard part is the money: taking payment, keeping the user's tier correct against the provider's events, and never stranding a downgraded user. Taking money also makes account deletion and data export part of the price of shipping.
 
 ## What Changes
 
@@ -22,7 +22,7 @@ Let a user buy a larger storage allowance through a merchant-of-record subscript
 
 ## Waiting on
 
-- Account deletion and data export: the design says paid tiers ship alongside them, or not at all. Both are deferred pages, not yet OpenSpec changes, so there is no change id to name.
+- Account deletion and data export: the design says paid tiers ship alongside them, or not at all. Account deletion is built ([account deletion](../../specs/user/account-deletion/design.md)), and data export is designed ([data export](../user-data-export/proposal.md)).
 
 ## Impact
 
