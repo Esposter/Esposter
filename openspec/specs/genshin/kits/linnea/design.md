@@ -13,7 +13,7 @@ Linnea's kit is its record and one behaviour module, `createLinneaKitBehaviour`,
 ## Provisional constants
 
 - **Her strikes, skill and charged shot's area have no matching donor yet.** The record's strike hitmarks (24, 22 and 23) and animations (154, 162 and 266), its skill's 21-metre circle and 60-frame animation, and its charged shot's radius-1 circle match neither Tighnari's normal attacks, skill nor aimed shot (`attack.go`, `skill.go`, `aimed.go`), and the record names no donor for them. Each is `NoActionFile` in `linnea.json`.
-- **Her plunges match Bennett's hitmarks and radii, not his animations.** The low and high plunges' 36 and 38 frames and 3- and 5-metre radii are Bennett's (`bennett/plunge.go`), but their 18- and 116-frame animations are not his 67 and 68 frames.
+- **Her plunges match Bennett's hitmarks and radii, not his animations.** The low and high plunges' 36 and 38 frames and 3- and 5-metre radii are Bennett's (`~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/bennett/plunge.go`), but their 18- and 116-frame animations are not his 67 and 68 frames.
 - **The skill chain's window is a placeholder.** `skillChain.windowSeconds` is 1 second, `Unsourced`.
 - **The burst's tick interval is not in the dump, and its zero hits are unsourced** (`burst.hits.length`).
 
