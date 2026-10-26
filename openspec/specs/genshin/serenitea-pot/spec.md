@@ -6,150 +6,154 @@ The Serenitea Pot's rules from the game's tables — Tubby's furnishings made fr
 
 ### Requirement: A furnishing is made only once its blueprint is open
 
-A furnishing SHALL be started only when its blueprint is open, either from the start or by learning its diagram.
+A furnishing SHALL be started only when its blueprint is open, either from the start or by learning its diagram `packages/genshin-world/src/services/home/startHomeMake.ts`.
 
 #### Scenario: A furnishing with an open blueprint can be started
 
 - **GIVEN** a furnishing's blueprint is open
 - **WHEN** the player starts it
-- **THEN** it is started
+- **THEN** it is started `packages/genshin-world/src/services/home/startHomeMake.ts`
 
 #### Scenario: A furnishing with a closed blueprint is refused
 
 - **GIVEN** a furnishing's blueprint is not open
 - **WHEN** the player tries to start it
-- **THEN** the start is refused
+- **THEN** the start is refused `packages/genshin-world/src/services/home/startHomeMake.ts`
 
 ### Requirement: Tubby runs one furnishing per Trust Rank at a time
 
-Tubby SHALL run one queue for each Trust Rank, and each queue SHALL hold one furnishing at a time, taking that furnishing's time in real time.
+Tubby SHALL run one queue for each Trust Rank, and each queue SHALL hold one furnishing at a time, taking that furnishing's time in real time `packages/genshin-world/src/services/home/startHomeMake.ts`.
 
 #### Scenario: A start is refused while every queue is busy
 
 - **GIVEN** every queue holds a furnishing
 - **WHEN** another furnishing is started
-- **THEN** the start is refused
+- **THEN** the start is refused `packages/genshin-world/src/services/home/startHomeMake.ts`
 
 #### Scenario: A furnishing started in a free queue runs while the page is closed
 
 - **GIVEN** a queue is free and the furnishing's materials are in the bag
 - **WHEN** the furnishing is started and the page is then closed
-- **THEN** the furnishing finishes in its queue while the page is closed
+- **THEN** the furnishing finishes in its queue while the page is closed `packages/genshin-world/src/services/home/collectHomeOrder.ts`
 
 ### Requirement: A furnishing needs its materials and takes them when it starts
 
-A furnishing SHALL start only when its materials are in the bag, and SHALL take those materials from the bag at the moment it starts.
+A furnishing SHALL start only when its materials are in the bag, and SHALL take those materials from the bag at the moment it starts `packages/genshin-world/src/services/home/startHomeMake.ts`.
 
 #### Scenario: Missing materials refuse the start
 
 - **GIVEN** a furnishing's materials are not all in the bag
 - **WHEN** the player starts it
-- **THEN** the start is refused
+- **THEN** the start is refused `packages/genshin-world/src/services/home/startHomeMake.ts`
 
 #### Scenario: Materials are taken at the start
 
 - **GIVEN** a furnishing's materials are all in the bag
 - **WHEN** the furnishing is started
-- **THEN** its materials are taken from the bag at once
+- **THEN** its materials are taken from the bag at once `packages/genshin-world/src/services/home/startHomeMake.ts`
 
 ### Requirement: A finished furnishing waits while the bag has no room
 
-A finished furnishing SHALL wait in its queue while the bag has no room for it, and SHALL move into the bag once there is room.
+A finished furnishing SHALL wait in its queue while the bag has no room for it, and SHALL move into the bag once there is room `packages/genshin-world/src/services/home/collectHomeOrder.ts`.
 
 #### Scenario: A finished furnishing waits for room in the bag
 
 - **GIVEN** a furnishing is finished and the bag is full
 - **WHEN** the player tries to collect it
-- **THEN** it waits in its queue
+- **THEN** it waits in its queue `packages/genshin-world/src/services/home/collectHomeOrder.ts`
 
 #### Scenario: A finished furnishing enters the bag once there is room
 
 - **GIVEN** a furnishing is waiting in its queue
 - **WHEN** the bag has room for it
-- **THEN** it moves into the bag
+- **THEN** it moves into the bag `packages/genshin-world/src/services/home/collectHomeOrder.ts`
 
 ### Requirement: Trust EXP is gained once per blueprint from its first making
 
-Trust EXP SHALL be gained when a furnishing is first collected into the bag, and only once for each blueprint.
+Trust EXP SHALL be gained when a furnishing is first collected into the bag, and only once for each blueprint `packages/genshin-world/src/services/home/collectHomeOrder.ts`.
 
 #### Scenario: The first making of a blueprint gives Trust EXP
 
 - **GIVEN** a blueprint has never been made
 - **WHEN** its furnishing is collected into the bag
-- **THEN** the blueprint's Trust EXP is gained
+- **THEN** the blueprint's Trust EXP is gained `packages/genshin-world/src/services/home/collectHomeOrder.ts`
 
 #### Scenario: A later making of the same blueprint gives no Trust EXP
 
 - **GIVEN** a blueprint has already been made once
 - **WHEN** its furnishing is collected again
-- **THEN** no Trust EXP is gained
+- **THEN** no Trust EXP is gained `packages/genshin-world/src/services/home/collectHomeOrder.ts`
 
 ### Requirement: A Trust Rank is reached once every rank below it is held
 
-A Trust Rank SHALL be reached once the EXP of every rank below it is held, and the last rank SHALL take no EXP.
+A Trust Rank SHALL be reached once the EXP of every rank below it is held, and the last rank SHALL take no EXP `packages/genshin-world/src/services/home/computeHomeTrustRank.ts`, `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/HomeworldLevelExcelConfigData.json`.
 
 #### Scenario: A rank is reached once the ranks below it are passed
 
 - **GIVEN** the EXP of every rank below a rank is held
 - **WHEN** the realm's Trust EXP is read
-- **THEN** the realm is at that rank
+- **THEN** the realm is at that rank `packages/genshin-world/src/services/home/computeHomeTrustRank.ts`
 
 #### Scenario: The last rank takes no EXP to reach
 
 - **GIVEN** the realm is at the last Trust Rank
 - **WHEN** Trust EXP is gained
-- **THEN** the realm stays at the last rank
+- **THEN** the realm stays at the last rank `packages/genshin-world/src/services/home/computeHomeTrustRank.ts`
 
 ### Requirement: Adeptal Energy rank is read off the realm's comfort
 
-The Adeptal Energy rank SHALL be the highest rank whose comfort the realm reaches, and no realm SHALL read below rank one.
+The Adeptal Energy rank SHALL be the highest rank whose comfort the realm reaches, and no realm SHALL read below rank one `packages/genshin-world/src/services/home/computeHomeAdeptalRank.ts`.
 
 #### Scenario: A realm reads as rank one at zero comfort
 
 - **GIVEN** a realm has no comfort
 - **WHEN** its Adeptal Energy rank is read
-- **THEN** the rank is rank one
+- **THEN** the rank is rank one `packages/genshin-world/src/services/home/computeHomeAdeptalRank.ts`
 
 #### Scenario: A realm reads as the highest rank its comfort reaches
 
 - **GIVEN** a realm's comfort reaches a rank's requirement
 - **WHEN** its Adeptal Energy rank is read
-- **THEN** the rank is that rank
+- **THEN** the rank is that rank `packages/genshin-world/src/services/home/computeHomeAdeptalRank.ts`
 
 ### Requirement: Realm Currency and Realm Bounty accrue per real hour up to the store's limit
 
-Realm Currency and Realm Bounty SHALL accrue per real hour at the Adeptal Energy rank in force, in whole units, and SHALL never pass the store limit of the Trust Rank.
+Realm Currency and Realm Bounty SHALL accrue per real hour at the Adeptal Energy rank in force, in whole units, and SHALL never pass the store limit of the Trust Rank `packages/genshin-world/src/services/home/settleHomeStores.ts`, `packages/genshin-world/src/services/home/computeHomeAccrued.ts`.
 
 #### Scenario: A store fills over real time
 
 - **GIVEN** a store is below its limit
 - **WHEN** a real hour passes at the Adeptal Energy rank in force
-- **THEN** the store gains its whole-unit rate for that hour
+- **THEN** the store gains its whole-unit rate for that hour `packages/genshin-world/src/services/home/computeHomeAccrued.ts`
 
 #### Scenario: A store stops at its limit
 
 - **GIVEN** a store is at its Trust Rank's limit
 - **WHEN** more real time passes
-- **THEN** the store does not grow past its limit
+- **THEN** the store does not grow past its limit `packages/genshin-world/src/services/home/computeHomeAccrued.ts`
 
 #### Scenario: A clock read earlier than the last claim produces nothing
 
 - **GIVEN** a store was last claimed at a later time than the clock now reads
 - **WHEN** the store is settled
-- **THEN** nothing accrues
+- **THEN** nothing accrues `packages/genshin-world/src/services/home/computeHomeAccrued.ts`
 
 ### Requirement: A Trust Rank holds as many companions as its rank allows
 
-A Trust Rank SHALL hold as many companions as its rank allows, from one companion at rank one to eight companions at rank ten.
+A Trust Rank SHALL hold as many companions as its rank allows, from one companion at rank one to eight companions at rank ten `scripts/src/services/genshinAssets/home/buildHomeRules.ts`, `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/HomeworldLevelExcelConfigData.json`.
 
 #### Scenario: A rank-ten realm holds eight companions
 
 - **GIVEN** the realm is at Trust Rank ten
 - **WHEN** its companion allowance is read
-- **THEN** eight companions are allowed
+- **THEN** eight companions are allowed `scripts/src/services/genshinAssets/home/buildHomeRules.ts`
 
 #### Scenario: A rank-one realm holds one companion
 
 - **GIVEN** the realm is at Trust Rank one
 - **WHEN** its companion allowance is read
-- **THEN** one companion is allowed
+- **THEN** one companion is allowed `scripts/src/services/genshinAssets/home/buildHomeRules.ts`
+
+## Open
+
+- [ ] **Realm Currency and Realm Bounty accrue per real hour, the unit the game's stores use** — no source yet: the per-hour unit is provisional until a recording of a store across an hour settles it (`packages/genshin-world/src/services/home/constants.ts`).
