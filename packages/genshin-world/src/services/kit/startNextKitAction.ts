@@ -26,8 +26,8 @@ import { takeOne } from "@esposter/shared";
 // Burst or a skill its gates allow in any state they may start in, else the string's next strike when it is pressed or
 // Queued on the ground. A charged attack spends its stamina at the factor the kit's passive gives it, a skill starts
 // While a charge of it stands, and a skill with holds starts on its release, at the hold level its seconds held reach,
-// Or the top one while a counter window stands. A skill's or a burst's cooldown is lowered by each field the body
-// Holds that lowers cooldowns. An action whose
+// Or the top one while a counter window stands. A skill's or a burst's cooldown is lowered by each infusion the
+// Active character holds that lowers cooldowns. An action whose
 // Start gate fails starts nothing, and what it would have spent or advanced stays as it was
 export const startNextKitAction = (
   kitState: KitState,
