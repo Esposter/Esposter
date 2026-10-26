@@ -51,7 +51,7 @@ Measured off the reference frame at 21:9, 3440 by 1440 pixels, in units: a pixel
 
 ## Notes
 
-- **Five states are scored, each a frame of the same recording.** `Character/Screen` fixes the roster of fifteen characters, the Traveler among them, with Xilonen chosen at level 90 and phase six, and its stat tables read by `readStatTables` from the hosted game data's local mirror. `initialTab` opens the screen on the tab the reference shows, and the fixture's `variants` open it on the other four. Each reference is a frame of the user's recording (`session-2.mp4`) at 21:9, the tab settled, and it is scored over the whole frame and the tab column:
+- **Five states are scored, each a frame of the same recording.** `packages/genshin-world/src/components/Character/Screen` fixes the roster of fifteen characters, the Traveler among them, with Xilonen chosen at level 90 and phase six, and its stat tables read by `readStatTables` from the hosted game data's local mirror. `initialTab` opens the screen on the tab the reference shows, and the fixture's `variants` open it on the other four. Each reference is a frame of the user's recording (`session-2.mp4`) at 21:9, the tab settled, and it is scored over the whole frame and the tab column:
 
 | Tab open            | Reference | Whole frame, mean / FLIP | Tab column, mean / FLIP |
 | :------------------ | :-------- | :----------------------- | :---------------------- |
