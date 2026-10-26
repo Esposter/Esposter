@@ -5,7 +5,6 @@ import { FlowchartExportFormat } from "@/models/resource/FlowchartExportFormat";
 import { useFlowchartEditorStore } from "@/store/flowchartEditor";
 import { useFlowchartExportStore } from "@/store/flowchartEditor/export";
 import { useResourceStore } from "@/store/resource";
-import { toRaw } from "vue";
 
 export const createFlowchartPortableFormat = (format: FlowchartExportFormat): PortableFormat => ({
   export: async () => {
