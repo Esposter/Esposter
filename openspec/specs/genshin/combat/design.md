@@ -371,7 +371,7 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 - [ ] **The Stellar-Conduct deals no damage on its own** — no source yet: the wiki's Stellar-Conduct page is not in the cache.
 - [ ] **The Lunar and Stellar Glimmer reactions share one formula** — no source yet: the wiki's Damage page is not in the cache.
 - [ ] **A Stellar Vortex's Lv. 2 comes at the third Stellar Swirl stack, and a restack does not renew its lifetime** — no source yet: the wiki's Stellar Swirl page is not in the cache.
-- [ ] **The second Stellar Swirl levels the vortex to Lv. 2, and the third explodes it** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl.go:239`: its stack add reaches 3 on the second swirl and 6 on the third.
+- [ ] **The second Stellar Swirl levels the vortex to Lv. 2, and the third explodes it** — no source yet: the wiki's Stellar Swirl page is not in the cache; gcsim's stack add at `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl.go:239` agrees with it, but gcsim is not the game.
 - [ ] **A member's DMG Reduction is subtracted from an enemy's strike's DMG Bonus, its sources adding up** — no source yet: the wiki's DMG Reduction page is not in the cache.
 - [ ] **Mona's Constellation 1 has no effect on Frozen's duration** — no source yet: the wiki's Prophecy of Submersion page is not in the cache.
 - [ ] **An attack's hit rolls once for energy however many enemies it strikes** — no source yet: the wiki's Energy page is not in the cache.
