@@ -83,7 +83,7 @@ A camp's enemy stands at its camp level under World Level 0. From World Level 1 
 - [ ] **The dialog stays open after a change** — no source yet: neither recording shows the game after Confirm.
 - [ ] **The card's values stand right-aligned beside the info disc, as the current client draws them** — no source yet: the menu's reference is the 1.3 build's, with its values redacted.
 - [ ] **Adventure EXP accrues toward rank 60's total while a quest holds the rank, and the rank catches up when it is done** — no source yet: the wiki's Adventure EXP page, named in the enemies page's Sources, is not in the wiki cache.
-- [ ] **The option to lower the World Level opens after World Level 5** — contradicted by ~/Esposter.noindex/genshin-parity/captures/yt-P13s7kSmVOE-world-level-dialog-2024.mp4: shows the option from World Level 5.
+- [ ] **The option to lower the World Level opens after World Level 5** — contradicted by `~/Esposter/genshin-parity/text/TextMap/TextMap_MediumEN.json`: text 2955635938 says World Level 3, the threshold this page takes; the 2024 recording (`~/Esposter.noindex/genshin-parity/captures/yt-P13s7kSmVOE-world-level-dialog-2024.mp4`) shows the option from World Level 5.
 
 ## Key files
 
