@@ -1,6 +1,6 @@
 # Water
 
-The game draws its water clear and bright. The floor shows through the shallows, a white band of foam marks every shore, and the sun breaks on the surface into hard glints. Windrise's creek round the oak and the lake beyond it are where the water is first shown.
+The game draws its water clear and bright. The floor shows through the shallows, a white band of foam marks every shore, and the sun breaks on the surface into hard glints. Windrise's creek round the oak and the lake beyond it are where the water is first shown (`packages/genshin-world/src/components/World/Windrise/Index.vue`).
 
 ## How it works
 
@@ -24,20 +24,20 @@ flowchart TD
   E -->|surfacing| A[The fog above given back]
 ```
 
-- **One surface for every sea and lake.** A single square at the region's water level is kept under the camera, so every place the ground dips beneath the level shows water through it and the ground hides it everywhere else. It is one draw for all of a region's still water.
-- **Colour by depth.** The surface reads the scene's depth behind it, and the distance between the surface and the floor along the view grades its colour from the shallow tint to the deep one by the region's deep depth.
-- **The floor through the shallows.** The scene behind the surface is read and shown through the shallows, tinted by the shallow colour and bent by the ripples. Where the bend would pull in something standing in front of the water, the unbent floor is read instead.
-- **Foam where water meets anything.** Where the depth behind the surface is under the foam depth, at every shore, rock and pillar, animated noise is cut into foam lines, so no foam mesh is authored.
-- **Ripples, glints and the sky.** Two layers of noise drift apart, and their slopes tilt the surface's normal. The light's reflection off it goes through a narrow step, so the sun breaks into bright shapes brighter than white, which bloom lifts where a scene draws it, rather than a smooth highlight. Toward the horizon the sky's colours are reflected by a Fresnel term.
-- **Caustics on the floor.** The ground under the water shimmers with two layers of animated Voronoi cells, stepped into veins in the light's colour, fading out by the deep depth (added to the ground by the terrain material), so they dim at night with the light.
-- **The world under the surface.** When the eye goes under the water's level, the fog turns even, thick from the eye outward and the water's own colour. Diving saves the fog above and surfacing gives it back, so the sky and the tuning panel keep their values.
-- **The water is region data.** Its level, colours, depths, caustics and underwater fog are `WaterUniforms`, which a region sets and the tuning panel's **Water** folder moves. Windrise's level is the game's own: the height its tile places the valley's water surface at, over the oak's foot, published by `genshin:assets fit windrise` as the `windrise/water` record, fetched at the world's gate from the [hosted game data](../hosted-game-data/design.md). The level sets the surface, the character's and the free camera's ground query, and the terrain worker's flowers, none of which grows under it.
+- **One surface for every sea and lake.** A single square at the region's water level is kept under the camera (`packages/genshin-world/src/components/World/Water/Index.vue`), so every place the ground dips beneath the level shows water through it and the ground hides it everywhere else. It is one draw for all of a region's still water.
+- **Colour by depth.** The surface reads the scene's depth behind it, and the distance between the surface and the floor along the view grades its colour from the shallow tint to the deep one by the region's deep depth (`createWaterMaterial`, `packages/genshin-engine/src/nodes/createWaterMaterial.ts`).
+- **The floor through the shallows.** The scene behind the surface is read and shown through the shallows, tinted by the shallow colour and bent by the ripples. Where the bend would pull in something standing in front of the water, the unbent floor is read instead (`packages/genshin-engine/src/nodes/createWaterMaterial.ts`).
+- **Foam where water meets anything.** Where the depth behind the surface is under the foam depth, at every shore, rock and pillar, animated noise is cut into foam lines, so no foam mesh is authored (`packages/genshin-engine/src/nodes/createWaterMaterial.ts`).
+- **Ripples, glints and the sky.** Two layers of noise drift apart, and their slopes tilt the surface's normal. The light's reflection off it goes through a narrow step, so the sun breaks into bright shapes brighter than white, which bloom lifts where a scene draws it, rather than a smooth highlight. Toward the horizon the sky's colours are reflected by a Fresnel term (`packages/genshin-engine/src/nodes/createWaterMaterial.ts`).
+- **Caustics on the floor.** The ground under the water shimmers with two layers of animated Voronoi cells, stepped into veins in the light's colour, fading out by the deep depth (`createCausticsNode`, `packages/genshin-engine/src/nodes/createCausticsNode.ts`, added to the ground by `packages/genshin-engine/src/terrain/createTerrainMaterial.ts`), so they dim at night with the light.
+- **The world under the surface.** When the eye goes under the water's level, the fog turns even, thick from the eye outward and the water's own colour (`updateUnderwaterFog`, `packages/genshin-engine/src/water/updateUnderwaterFog.ts`). Diving saves the fog above and surfacing gives it back, so the sky and the tuning panel keep their values.
+- **The water is region data.** Its level, colours, depths, caustics and underwater fog are `WaterUniforms`, which a region sets and the tuning panel's **Water** folder moves (`packages/genshin-engine/src/models/water/WaterUniforms.ts`, `packages/genshin-world/src/composables/useGenshinTuning.ts`). Windrise's level is the game's own: the height its tile places the valley's water surface at, over the oak's foot, published by `genshin:assets fit windrise` as the `windrise/water` record, fetched at the world's gate from the [hosted game data](../hosted-game-data/design.md) (`scripts/src/services/genshinAssets/fit/fitWindriseScene.ts`, `scripts/src/services/genshinAssets/world/readWorldWaterLevel.ts`, `packages/genshin-world/src/services/windrise/readWindriseData.ts`). The level sets the surface (`packages/genshin-world/src/components/World/Water/Index.vue`), the character's and the free camera's ground query (`packages/genshin-world/src/components/World/Character/Index.vue`, `packages/genshin-world/src/components/World/FreeCamera/Index.vue`), and the terrain worker's flowers (`packages/genshin-world/src/services/windrise/computeWindrisePlants.ts`), none of which grows under it.
 
 ## What it costs to run
 
-- **One draw**, a two-triangle square, whose shader samples the scene's depth twice and its colour once.
-- **The caustics are arithmetic in the ground's shader**, only where there is water, and nothing where there is none.
-- **Every frame writes a position and, under water, a colour**, with nothing allocated.
+- **One draw**, a two-triangle square, whose shader samples the scene's depth twice and its colour once (`packages/genshin-engine/src/nodes/createWaterMaterial.ts`).
+- **The caustics are arithmetic in the ground's shader**, only where there is water, and nothing where there is none (`packages/genshin-engine/src/nodes/createCausticsNode.ts`).
+- **Every frame writes a position and, under water, a colour**, with nothing allocated (`packages/genshin-world/src/components/World/Water/Index.vue`).
 
 ## Key files
 
@@ -52,7 +52,7 @@ flowchart TD
 
 ## Notes
 
-- **Still water is one level per region.** A lake above the sea would need its own surface; Windrise's ponds above its valley's water, beside the oak and up its cliffs, are dry until one is drawn (one level for the region). Rivers and waterfalls are the [flowing water](../../../changes/genshin-flowing-water/design.md) proposal.
+- **Still water is one level per region.** A lake above the sea would need its own surface; Windrise's ponds above its valley's water, beside the oak and up its cliffs, are dry until one is drawn (`packages/genshin-world/src/components/World/Water/Index.vue`, one level for the region). Rivers and waterfalls are the [flowing water](../../../changes/genshin-flowing-water/design.md) proposal.
 - **The surface seen from below is the same surface.** The game's window of sky through the surface and the mirrored depths around it are [deferred](../../../deferred/genshin/underwater-window/design.md) until Fontaine.
 - **Screen-space reflections are deferred.** The sky's reflection carries the look, and the proposal never let it depend on them ([screen-space reflections](../../../deferred/genshin/water-screen-space-reflections/design.md)).
 
@@ -65,17 +65,5 @@ flowchart TD
 
 - [ ] **The game draws its water clear and bright, with the floor showing through the shallows, a white foam band on every shore and hard sun glints** — no source yet: no capture under `~/Esposter.noindex/genshin-parity/captures/` is named for Windrise's creek or lake, and the wiki has no description of the rendering.
 - [ ] **Windrise's creek round the oak and the lake beyond it are where the water is first shown** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **One square at the water level shows water wherever the ground dips beneath it, in one draw for all of a region's still water** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The surface's colour grades from shallow to deep by the distance to the floor, up to the region's deep depth** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The floor shows through the shallows, bent by the ripples, and the unbent floor is read where the bend would pull in something in front of the water** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Animated foam lines form wherever the depth behind the surface is under the foam depth, with no foam mesh authored** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Two drifting noise layers tilt the surface's normal, the sun breaks into stepped glints brighter than white, and the sky is reflected by a Fresnel term** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The ground under the water shimmers with two layers of animated Voronoi cells, stepped into veins and fading out by the deep depth, and dims at night with the light** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Under the water's level the fog turns even, thick and the water's colour, and surfacing gives the fog above back** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The water's values are region data in `WaterUniforms`, which a region sets and the tuning panel's Water folder moves** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **Windrise's water level is the game's own, fitted from its tile and fetched at the world's gate** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The level sets the surface, the character's and free camera's ground query, and the terrain worker's flowers, none of which grows under the water** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The water is one draw of a two-triangle square that samples the scene's depth twice and its colour once** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The caustics are arithmetic in the ground's shader, drawn only where there is water** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Every frame writes a position and, under water, a colour, with nothing allocated** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **Still water is one level per region, and Windrise's ponds above the valley's water are dry** — no source yet: game data or a snapshot that holds this behaviour
