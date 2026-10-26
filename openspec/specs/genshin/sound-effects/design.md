@@ -1,6 +1,6 @@
 # Sound effects
 
-The login's door sounds as it opens, and so does ours (`packages/genshin-world/src/components/Login/Music/Index.vue`). The game's own sounds stay on the machine that measures them; each sound's levels and the engine's noise that plays them are what ships (the hosted record, `~/Esposter.noindex/cache/content/5523c4b4cee27020c460a2a08a930025fe6b69c05e10ffada78f373da3b8df97`, holds only the door's frame time and levels).
+The login's door sounds as it opens, and so does ours (`packages/genshin-world/src/components/Login/Music/Index.vue`). The game's own sounds stay on the machine that measures them; each sound's levels and the engine's noise that plays them are what ships (the hosted record, `~/Esposter.noindex/cache/content/5523c4b4cee27020c460a2a08a930025fe6b69c05e10ffada78f373da3b8df97`, holds only the door's frame time and, each frame, the left, right and shared levels of 24 bands).
 
 ## How it works
 
@@ -53,12 +53,11 @@ flowchart TD
 
 ## Open
 
-- [ ] **The login/sounds record holds three noises a band every 25 milliseconds** — no source yet: the lock records only the record's hash, and the record is hosted, not in the repo.
 - [ ] **A noise of a band built in one long transform would cost most of a second on the login's thread** — no source yet: no timing of either build is recorded in the repo.
 - [ ] **The levels keep five decimals, a hundred decibels under full scale** — no source yet: the precision and the floor were not found in `packages/genshin-engine/src/audio/computeSoundEffectSamples.ts`.
 - [ ] **our login door sounds as it opens, as the game's does** — no source yet: the game's door audio in `~/Esposter/genshin-parity/captures/yt-rBnfA4pXw6U-audio.webm`, named in Sources, not yet compared with our door's audio.
 - [ ] **the door is the rumble and a broadband rush 75 milliseconds after it, leaving 3.31 decibels** — no source yet: the game's door audio in `~/Esposter/genshin-parity/captures/yt-rBnfA4pXw6U-audio.webm`, not yet re-measured for the rush's delay and level.
-- [ ] **the door's channels correlate 0.46, its mono downmix reads about 3 decibels over each channel, and the sounds run to 20 kilohertz** — no source yet: the game's door audio in `~/Esposter/genshin-parity/captures/yt-rBnfA4pXw6U-audio.webm`, not yet re-measured for the channel correlation, the downmix level and the bandwidth.
+- [ ] **the door's channels correlate 0.53, its mono downmix reads about 3 decibels over each channel, and the sounds run to 20 kilohertz** — no source yet: the game's door audio in `~/Esposter/genshin-parity/captures/yt-rBnfA4pXw6U-audio.webm` measures 0.53 between its channels, and its downmix level and bandwidth are not yet re-measured.
 - [ ] **the door sits about two decibels off the game's, with its channels correlated 0.58 against 0.53** — no source yet: the game's door audio in `~/Esposter/genshin-parity/captures/yt-rBnfA4pXw6U-audio.webm`, not yet re-measured against our door.
 - [ ] **the door's sound delay is read once off the recording's first whitened frame at 14.633 seconds** — no source yet: `~/Esposter/genshin-parity/captures/yt-rBnfA4pXw6U.mp4`, not yet re-read at its first whitened frame, 14.633 seconds.
 - [ ] **the door's sound starts 0.32 seconds after the click** — no source yet: the game's door audio in `~/Esposter/genshin-parity/captures/yt-rBnfA4pXw6U-audio.webm`, not yet re-measured against the click.
