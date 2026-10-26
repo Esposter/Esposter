@@ -232,6 +232,6 @@ Using Fragile Resin from the bag SHALL restore sixty Original Resin and remove o
 ## Open
 
 - [ ] **a ley line's or a domain's 40 is two claims, and its Condensed Resin is three** — no source yet: the Original Resin page gives the costs "20 or 40 or 1× Condensed Resin" with no claim count (`Original_Resin.json` checked).
-- [ ] **the Primogem refill day starts at 04:00 in UTC+8** — no source yet: the game's refill-day rule is not in the dump's tables read for this, and no Original Resin wiki page is in the genshin-wiki cache; the page marks it settled, not checked.
+- [ ] **the Primogem refill day starts at 04:00 in UTC+8** — checked against `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/RefreshPolicyExcelConfigData.json`: its daily refresh is 14400 seconds (ids 1002 and 101000), which is 04:00 with no time zone, and the claim is not settled by it because the table names no time zone and no resin refill.
 - [ ] **a new player's wallet holds 200 Original Resin** — no source yet: the dump's reward tables grant no resin (the `resin` field is 0 in every row of `RewardExcelConfigData.json`), and no Original Resin wiki page is in the genshin-wiki cache.
 - [ ] **Its count is on the map's top bar** — no source yet: a recording of the map screen's top edge in the game would settle the bar; the cached wiki places the count at the top of the map screen (`Original_Resin.json`: "Click on the Resin icon on the top of the map screen") and in the Map Menu (`Map.json`: "Original Resin count"), but names no bar
