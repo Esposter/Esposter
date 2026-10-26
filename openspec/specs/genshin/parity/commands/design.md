@@ -61,4 +61,4 @@ From `scripts/`, as `pnpm genshin:parity <command>`, each with its own `--help` 
 
 ## Open
 
-- [ ] **Each row's described behaviour** — no source yet: only the registry, the record default, the approval gate and the pose bar were traced to their commands; the other rows' descriptions are not checked against their command files.
+- [ ] **Each row's described behaviour** — partly cited: the table's `fetch`, `frames` and `film` rows; checked against `scripts/src/services/genshinParity/commands/fetchCommand.ts`, `framesCommand.ts` and `filmCommand.ts`: each one's description read as its row says, and the defaults of `frames` and `film` as their rows say (ten a second, and two stills a second), and the claim is open for the other rows because their descriptions are not compared against their command files.
