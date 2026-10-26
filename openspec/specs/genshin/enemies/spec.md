@@ -131,7 +131,7 @@ An enemy whose health reaches zero SHALL be defeated and drop Mora, Character EX
 
 ### Requirement: Enemy stats grow by the game's level curves
 
-An enemy's max health and ATK SHALL be its base values times the multiplier of its level's curve, and its DEF SHALL be scaled by one plus a hundredth of its level (the defense curve's multipliers).
+An enemy's max health and ATK SHALL be its base values times the multiplier of its level's curve, and its DEF SHALL be scaled by one plus a hundredth of its level (the defense curve's multipliers in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/MonsterCurveExcelConfigData.json`).
 
 #### Scenario: A kind's stats are computed at its level
 
@@ -153,7 +153,7 @@ A defeated enemy SHALL NOT return before its respawn time, which depends on its 
 #### Scenario: An elite camp member returns at the next daily reset
 
 - **GIVEN** a camp with an elite and a member defeated
-- **WHEN** the next daily reset at 04:00 on the server's clock arrives (the `REFRESH_DAILY` rows with `14400`)
+- **WHEN** the next daily reset at 04:00 on the server's clock arrives (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, the `REFRESH_DAILY` rows with `14400`)
 - **THEN** the member returns
 
 #### Scenario: A boss camp returns on the next load with its reward claimed
@@ -275,4 +275,4 @@ Each enemy SHALL be drawn as a capsule tinted by its state, and SHALL be tinted 
 - [ ] **Each level band's Mora and Character EXP follow the wiki's table** — no source yet: the wiki's Module:Drops Table page is not in the wiki cache.
 - [ ] **No enemy gives Adventure EXP** — no source yet: the wiki's Adventure EXP page is not in the wiki cache.
 - [ ] **A hit that launches is one whose stagger level is Air** — no source yet: the wiki's Interruption Resistance/Stagger page is not in the wiki cache.
-- [ ] **An enemy's max health and ATK are its base values times the multiplier of its level's curve** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **An enemy's max health and ATK are its base values times the multiplier of its level's curve** — contradicted by `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/MonsterCurveExcelConfigData.json`: holds HP and ATTACK grow-curve multipliers per level.
