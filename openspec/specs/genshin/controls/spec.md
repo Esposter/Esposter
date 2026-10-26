@@ -149,4 +149,3 @@ The world SHALL leave unbound the keys of places and modes it does not have (whi
 - [ ] **The browser keeps Escape for a pointer lock and takes no lock from it** — no source yet: the Pointer Lock and user-activation specs, which this pass did not open.
 - [ ] **Chromium reports one spurious, very large pointer move after a lock** — no source yet: a recording of the first move after a lock, not taken here.
 - [ ] **F6, F7 and F8 are the Serenitea Pot, the Cat's Tail and Stellar Reunion** — no source yet: the game's controls list for those screens, which the wiki cache does not hold.
-- [ ] **The engine's input holds the game's default bindings and reads them once a frame** — no source yet: game data or a snapshot that holds this behaviour
