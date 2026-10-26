@@ -153,27 +153,28 @@ A capsule that a hit landed on is tinted white for 0.15 seconds after the hit, a
 - **`stepEnemy` is one deterministic step that reads no clock or random source** — `packages/genshin-world/src/services/enemy/stepEnemy.ts`.
 - **`damageEnemy` takes the damage and poise damage combat's formula computes for a hit** — `packages/genshin-world/src/services/enemy/damageEnemy.ts`, fed by `packages/genshin-world/src/services/kit/strikeEnemy.ts`, which prices the hit through `getDamage`.
 - **A kit's hit lands through `strikeEnemy`, shattering a Freeze first and applying its element** — `packages/genshin-world/src/services/kit/strikeEnemy.ts`, and `packages/genshin-world/src/services/combat/aura/applyBluntHit.ts` for the Freeze's shatter.
-- [ ] **An enemy's strike lands on the field member, its ATK cut by its statuses, the rest on the party's HP** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **An enemy in aggro range of a live taunt strikes the nearest one, the taunt's HP taking the damage** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **An enemy's auras decay and its Electro-Charged and Burning tick between hits** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **An enemy's strike lands on the field member, its ATK cut by its statuses, the rest on the party's HP** — no source yet: the wiki's Enemy page, named in Sources, is not in the wiki cache.
+- [ ] **An enemy in aggro range of a live taunt strikes the nearest one, the taunt's HP taking the damage** — no source yet: the wiki's Enemy page, named in Sources, is not in the wiki cache.
+- [ ] **An enemy's auras decay and its Electro-Charged and Burning tick between hits** — no source yet: a recording of an enemy's auras decaying between two hits, not yet captured.
 - **An Air hit knocks an enemy it leaves staggered airborne** — `packages/genshin-world/src/services/kit/strikeEnemy.ts` launches on the Stagger state, which a broken poise or a broken shield both give.
-- [ ] **A launching hit that leaves an enemy staggered gives it the launched status for the stagger's seconds** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A launching hit launches every enemy it staggers, and a hit on an airborne enemy does not lift it again** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A launching hit that leaves an enemy staggered gives it the launched status for the stagger's seconds** — no source yet: the wiki's Interruption Resistance/Stagger page, named in Sources, is not in the wiki cache.
+- [ ] **A launching hit launches every enemy it staggers, and a hit on an airborne enemy does not lift it again** — no source yet: the wiki's Interruption Resistance/Stagger page, named in Sources, is not in the wiki cache.
 - **A hit on an airborne enemy restarts its launched status rather than adding one** — `packages/genshin-world/src/services/enemy/addEnemyStatus.ts`, which restarts a status whose id the enemy already carries.
-- [ ] **A camp's idle enemies alert together once one of its members is engaged** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A leashed enemy walks home immune and arrives healed with its shield and poise restored** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A camp's idle enemies alert together once one of its members is engaged** — no source yet: the wiki's Enemy page, named in Sources, is not in the wiki cache.
+- [ ] **A leashed enemy walks home immune and arrives healed with its shield and poise restored** — no source yet: the wiki's Enemy page, named in Sources, is not in the wiki cache.
 - **`genshin:assets enemies` publishes each placed kind and its curves to the hosted game data** — `scripts/src/services/genshinAssets/enemies/buildEnemyKinds.ts`, which collects the kinds the camps place and every curve they name.
 - **The world reads the kind and curve records as it opens** — `packages/genshin-world/src/services/enemy/readEnemyTables.ts`.
-- [ ] **Each kind's poise type, energy and drop family are authored from the wiki** — no source yet: game data or a snapshot that holds this behaviour
+- **The kind table holds what the wiki gives of each kind the world places** — `packages/genshin-world/src/services/enemy/EnemyKindTraitsMap.ts`.
+- [ ] **Each kind's poise type, energy and drop family hold the wiki's values** — no source yet: the wiki's Interruption Resistance/Poise and Energy/Data pages, named in Sources, are not in the wiki cache.
 - **A camp spawns when its region's data arrives and drops when the region leaves reach** — `packages/genshin-world/src/components/World/Enemies/Index.vue` (the camps of the regions whose data has arrived), and `packages/genshin-world/src/composables/useRegionData.ts`.
-- [ ] **A defeated member spawns again only once its respawn time has passed** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A defeated member spawns again only once its respawn time has passed** — no source yet: the wiki's Reset page, named in Sources, is not in the wiki cache.
 - **A defeat's return instant is kept by the save, so a reload keeps the enemy away until it is due** — `packages/genshin-world/src/components/World/Enemies/Index.vue` (`saveRespawn`) and `packages/genshin-world/src/models/enemy/EnemyRespawnSave.ts`.
 - **A boss camp's return is held in memory alone, so a reload brings the boss back** — `packages/genshin-world/src/components/World/Enemies/Index.vue`, whose defeat times are kept in memory and whose `saveRespawn` is emitted only for a camp that gives a return time.
 - **Each spawned enemy is kept in one map by its spawn key** — `packages/genshin-world/src/components/World/Enemies/Index.vue` and `packages/genshin-world/src/services/enemy/getSpawnKey.ts`.
-- [ ] **A defeat's Mora and Character EXP are scaled by its level band** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Drops are rolled from the level's five-level band, the last band holding every level from 90** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Each material drops its expected count, plus one at the chance of its fraction** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A boss drops nothing, its reward being claimed from its blossom** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A defeat's Mora and Character EXP are scaled by its level band** — no source yet: the wiki's Module:Drops Table/data page, named in Sources, is not in the wiki cache.
+- [ ] **Drops are rolled from the level's five-level band, the last band holding every level from 90** — no source yet: the wiki's Module:Drops Table/data page, named in Sources, is not in the wiki cache.
+- [ ] **Each material drops its expected count, plus one at the chance of its fraction** — no source yet: the wiki's Module:Drops Table/data page, named in Sources, is not in the wiki cache.
+- [ ] **A boss drops nothing, its reward being claimed from its blossom** — no source yet: the wiki's Module:Drops Table/data page, named in Sources, is not in the wiki cache.
 - [ ] **A boss's reward is claimed from its Trounce Blossom, which respawns it** — no source yet: the cited file wiki-Reset.json is not on disk
 - **Enemies in reach step on the fixed-step loop and draw as one instanced capsule** — `packages/genshin-world/src/components/World/Enemies/Index.vue` (`createFixedStepLoop`, `createInstancedMesh`).
 - **A hit tints its capsule white for 0.15 seconds and flashes a 0.3 metre mark for 0.1 seconds** — `packages/genshin-world/src/services/enemy/constants.ts` (`ENEMY_HIT_TINT_SECONDS`, `ENEMY_HIT_FLASH_SECONDS`, `ENEMY_HIT_FLASH_RADIUS`, `HIT_TINT_COLOR`) and `packages/genshin-world/src/components/World/Enemies/Index.vue`.
@@ -181,6 +182,7 @@ A capsule that a hit landed on is tinted white for 0.15 seconds after the hit, a
 - **Only the camps of regions in reach are stepped** — `packages/genshin-world/src/composables/useRegionData.ts`, which holds only the wanted regions' data, and `packages/genshin-world/src/components/World/Enemies/Index.vue`.
 - **The component emits `strike` and `defeat` for a defeat** — `packages/genshin-world/src/components/World/Enemies/Index.vue`.
 - **Windrise's camp stands where we put it** — `packages/genshin-world/src/data/regions/mondstadt.json` (`mondstadt-camp-1`, authored in the repo).
-- [ ] **The party leaves combat once no enemy has been engaged on it for 5 seconds** — no source yet: game data or a snapshot that holds this behaviour
+- **The party leaves combat once no enemy has been engaged on it for `COMBAT_CLEAR_SECONDS`** — `packages/genshin-world/src/services/enemy/constants.ts`.
+- [ ] **The party leaves combat once no enemy has been engaged on it for 5 seconds in the game** — no source yet: no page in Sources gives the game's combat-exit delay; a recording of leaving combat, not yet captured, would settle it.
 - [ ] **The enemies notice, fight together, leash home and return on the game's timers, as the wiki documents** — no source yet: the wiki's Enemy and Reset pages, named in Sources, are not in the wiki cache.
-- [ ] **An Air hit knocks an enemy with broken poise airborne** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **An Air hit knocks an enemy with broken poise airborne** — no source yet: the wiki's Interruption Resistance/Stagger page, named in Sources, is not in the wiki cache.
