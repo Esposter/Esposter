@@ -1,6 +1,6 @@
 ## Purpose
 
-Cyno's kit as built, with the Invoker's Spear, Secret Rite: Chasmic Soulfarer, Sacred Rite: Wolf's Swiftness as Pactsworn Pathclearer with Mortuary Rite, Judication, Ascension 1 and 4, and Constellations 2, 4 and 6, and what is left of Constellation 1 and the stance's plunges.
+Cyno's kit as built, with the Invoker's Spear, Secret Rite: Chasmic Soulfarer, Sacred Rite: Wolf's Swiftness as Pactsworn Pathclearer with Mortuary Rite, Judication, Ascension 1 and 4, and Constellations 1, 2, 4 and 6, with the stance's plunges left unbuilt.
 
 ## Requirements
 
@@ -191,13 +191,19 @@ From constellation 6, the burst and each Judication field SHALL give Day of the 
 
 ### Requirement: Constellation 1 raises normal attack speed after Wolf's Swiftness
 
-From constellation 1, Sacred Rite: Wolf's Swiftness SHALL raise Cyno's normal attack speed by 20% for 10 seconds.
+From constellation 1, Sacred Rite: Wolf's Swiftness SHALL raise Cyno's normal attack speed by 20% for 10 seconds, and each Judication SHALL restore those 10 seconds while that speed stands.
 
 #### Scenario: Wolf's Swiftness raises his normal attack speed from the first constellation
 
 - **GIVEN** Cyno is at constellation 1
 - **WHEN** the player uses Sacred Rite: Wolf's Swiftness
 - **THEN** his normal attack speed is raised by 20% for 10 seconds
+
+#### Scenario: A Judication restores the attack speed's seconds
+
+- **GIVEN** Cyno is at constellation 1 and Ascension 1, the stance holds, and his attack speed has 3 seconds left
+- **WHEN** the player presses Mortuary Rite under Endseer
+- **THEN** his normal attack speed bonus lasts 10 seconds from that press
 
 #### Scenario: Below the first constellation Wolf's Swiftness raises no attack speed
 

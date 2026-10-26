@@ -105,7 +105,7 @@ const checkIsC4Reaction = ({ element, reactionType }: Reaction): boolean =>
 export const CYNO_CHARACTER_ID = 10_000_071;
 
 // Constellation 1, Ordinance: Unceasing Vigil: for 10 seconds after Sacred Rite: Wolf's Swiftness, his normal attack speed rises
-// By 20%, as the wiki's constellation page gives it. The Judication refresh waits on Ascension 1's Judication event
+// By 20%, as the wiki's constellation page gives it, and each Judication under Endseer restores those 10 seconds
 const CONSTELLATION_1 = 1;
 const WOLF_SWIFTNESS_NORMAL_ATTACK_SPEED_BONUS = 0.2;
 const WOLF_SWIFTNESS_NORMAL_ATTACK_SPEED_SECONDS = 10;
@@ -117,9 +117,8 @@ const WOLF_SWIFTNESS_NORMAL_ATTACK_SPEED_STATUS_ID = "cyno-wolf-swiftness-attack
 // Mortuary Rite, which extends the stance and, under Endseer, fires Duststalker Bolts; the burst adds its Elemental
 // Mastery, and from Ascension 1 casts Judication, a field giving Endseer. Leaving the field ends the Elemental Mastery
 // And Judication. Mortuary Rite's cooldown is priced as the factor of Secret Rite's while the stance holds, and
-// Constellation 4's reactions in the stance restore the other members' energy. Constellation 1's attack speed is built,
-// Its Judication refresh in Chasmic Soulfarer is not built, and neither are the plunges of Pactsworn Pathclearer
-// The kit has no hook for the refresh or the plunges
+// Constellation 4's reactions in the stance restore the other members' energy. Constellation 1's attack speed, and its
+// Refresh on each Judication, are built. The plunges of Pactsworn Pathclearer are not, as the kit has no hook for them
 export const createCynoKitBehaviour = ({
   kit,
   readHit,
@@ -220,6 +219,14 @@ export const createCynoKitBehaviour = ({
           });
         }
         if (!checkHasKitStatus(kitEffectState.effects, characterId, ENDSEER_STATUS_ID)) return;
+        // Constellation 1's attack speed restores its seconds on each Judication, while the status it set stands
+        const normalAttackSpeedStatus = findKitStatus(
+          kitEffectState.effects,
+          characterId,
+          WOLF_SWIFTNESS_NORMAL_ATTACK_SPEED_STATUS_ID,
+        );
+        if (normalAttackSpeedStatus)
+          normalAttackSpeedStatus.secondsRemaining = WOLF_SWIFTNESS_NORMAL_ATTACK_SPEED_SECONDS;
         addKitStatus(kitEffectState, characterId, {
           id: JUDICATION_DAMAGE_STATUS_ID,
           secondsRemaining: JUDICATION_DAMAGE_SECONDS,
