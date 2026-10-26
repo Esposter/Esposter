@@ -26,7 +26,7 @@ flowchart TD
   P["A row pressed: a tap, or a click with the cursor shown"] -->|"selects its thing, taps Interact"| F
 ```
 
-- **Six kinds.** `InteractionKind` is what acting on a thing does, and so its row's icon: `PickUp` takes an item into the [inventory](../inventory/design.md), `Open` opens a chest, `Talk` starts a character's dialogue, `Read` shows a book, a notice or a sign, `Activate` unlocks a waypoint for the map, and `Use` opens the screen an object of its own stands for, as the [crafting](../crafting/design.md) bench's does. A row's words are the thing's own name in the reader's language. The kind lives in `genshin-interface` beside the prompt list that draws it (`packages/genshin-interface/src/models/InteractionKind.ts`, see Open), and an `Interactable` in the world is an `InteractionPrompt` with a place (`packages/genshin-world/src/models/interaction/Interactable.ts`).
+- **Eight kinds.** `InteractionKind` is what acting on a thing does, and so its row's icon: `PickUp` takes an item into the [inventory](../inventory/design.md), `Open` opens a chest, `Dig` digs up the ground over a buried chest, `Talk` starts a character's dialogue, `Read` shows a book, a notice or a sign, `Activate` unlocks a waypoint for the map, `Claim` collects a blossom from an outcrop or a trounced boss, and `Use` acts on an object of its own, such as the [crafting](../crafting/design.md) bench or a fishing spot. A row's words are the thing's own name in the reader's language. The kind lives in `genshin-interface` beside the prompt list that draws it (`packages/genshin-interface/src/models/InteractionKind.ts`), and an `Interactable` in the world is an `InteractionPrompt` with a place (`packages/genshin-world/src/models/interaction/Interactable.ts`).
 - **In reach is a distance from the body.** `computeInteractionPrompts` keeps every thing within `INTERACTION_REACH` of the body's position, the same reach for every kind (`packages/genshin-world/src/services/interaction/computeInteractionPrompts.ts`).
 - **Nearest first, and still from frame to frame.** The rows run from the nearest thing to the farthest, two at one distance ordered by id, so the list never swaps two rows between frames (`packages/genshin-world/src/services/interaction/computeInteractionPrompts.ts`).
 - **The selection follows its thing.** The selection is the selected thing's id, never a row's index, so it stays on the same chest as rows come and go around it. When that thing leaves reach, the first row is selected (`packages/genshin-world/src/services/interaction/computeInteractionPrompts.ts`).
@@ -80,7 +80,7 @@ Provisional and unmeasured: the pill's right end (290 units, since the rock behi
 | `packages/genshin-world/src/components/World/Interactables/Index.vue`          | The drops' and the residents' stand-ins                                             |
 | `packages/genshin-world/src/components/Interaction/PromptList/Index.vue`       | The window's rows, drawn in the HUD 139 units right of the centre                   |
 | `packages/genshin-world/src/components/Hud/Screen/Index.vue`                   | The `prompts` slot the list is drawn in                                             |
-| `packages/genshin-interface/src/models/InteractionKind.ts`                     | The six kinds of interaction                                                        |
+| `packages/genshin-interface/src/models/InteractionKind.ts`                     | The eight kinds of interaction                                                      |
 | `packages/genshin-interface/src/components/InteractionPrompts/Index.vue`       | The rows as buttons, F's cap on the selected one, and none on touch                 |
 
 ## Notes
@@ -102,7 +102,6 @@ Provisional and unmeasured: the pill's right end (290 units, since the rock behi
 
 ## Open
 
-- [ ] **Six interaction kinds** — no source yet: `packages/genshin-interface/src/models/InteractionKind.ts` holds eight kinds, adding `Claim` and `Dig`, so the count and the list on this page need checking.
 - [ ] **A locked statue is an Activate row** — no source yet: `packages/genshin-world/src/services/statue/computeStatueInteractables.ts` builds the Activate rows from the unlocked landmarks, and F on one opens the Worship screen, which does not match a locked statue being the row.
 - [ ] **The wheel moves the selection through the rows** — no source yet: the still's caption says the mouse scroll speeds looting but shows no wheel step, the GameStegy tip is a player's note, and the pickup-scroll clip is still sought.
 - [ ] **Pick Up and Interact are X on Xbox and Square on PlayStation, as the game's defaults** — no source yet: no cached Controls page is in `~/Esposter.noindex/cache/genshin-wiki/`, and the binding in `packages/genshin-engine/src/input/InputActionBindingMap.ts` names `GamepadButton.FaceLeft`, not the buttons.

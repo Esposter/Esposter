@@ -4,9 +4,9 @@ The game's F prompts over the world, the list of what is in reach beside the cha
 
 ## Requirements
 
-### Requirement: The prompt list offers each thing in reach as a row of one of five kinds
+### Requirement: The prompt list offers each thing in reach as a row of one of eight kinds
 
-The prompt list SHALL offer a row for each thing within reach of the character, and each row SHALL be one of five kinds: pick up, open, talk, read or activate, named by the thing's own name in the reader's language (`packages/genshin-interface/src/models/InteractionKind.ts`, see Open).
+The prompt list SHALL offer a row for each thing within reach of the character, and each row SHALL be one of eight kinds: pick up, open, dig, talk, read, activate, claim or use, named by the thing's own name in the reader's language.
 
 #### Scenario: A thing in reach gets a row
 
@@ -179,7 +179,6 @@ The pick up and interact action SHALL be bound to F on a keyboard, to the X butt
 
 ## Open
 
-- [ ] **The prompt list offers five kinds** — no source yet: `packages/genshin-interface/src/models/InteractionKind.ts` holds eight kinds, and Claim, Dig and Use lie beyond the five named here.
 - [ ] **F unlocks a locked statue, which then has no row** — no source yet: `packages/genshin-world/src/services/statue/computeStatueInteractables.ts` gives Activate rows to the unlocked landmarks, F on a resonated one opens the Worship screen, and no path that unlocks a locked statue by F was traced.
 - [ ] **The wheel steps the selection one row per notch** — no source yet: the GameStegy tip is a player's note, no clip shows the wheel stepping the rows, and the pickup-scroll clip is still sought.
 - [ ] **Interact is X on an Xbox controller and Square on a PlayStation one** — no source yet: no cached Controls page is in `~/Esposter.noindex/cache/genshin-wiki/`, and the binding names `GamepadButton.FaceLeft`.
