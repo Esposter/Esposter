@@ -1,12 +1,12 @@
 ## Purpose
 
-The character's movement through the world as the game moves it — a kinematic capsule stepped by the fixed-step loop through the game's states, standing, walking, running, sprinting and dashing, jumping, falling and plunging, gliding, climbing and swimming, gated by what lies under and before it and by one stamina pool with the game's costs. The states' rules are a pure, tested function; the body's numbers are its body type's, read off its own clips and the game's data, with best estimates every type shares where neither holds them.
+The character's movement through the world as the game moves it — a kinematic capsule stepped by the fixed-step loop through the game's states, standing, walking, running, sprinting and dashing, jumping, falling and plunging, gliding, climbing and swimming, gated by what lies under and before it and by one stamina pool with the game's costs. The states' rules are a pure, tested function; the body's numbers are its body type's, read off its own clips and the game's data, with best estimates every type shares where neither holds them (`packages/genshin-world/src/services/world/locomotion/BodyTypeLocomotionMap.ts`).
 
 ## Requirements
 
 ### Requirement: The character walks, runs, sprints and dashes on foot
 
-The character SHALL move on foot through standing, walking, running, dashing and sprinting, changing between them as the controls and the ground allow.
+The character SHALL move on foot through standing, walking, running, dashing and sprinting, changing between them as the controls and the ground allow (`packages/genshin-engine/src/locomotion/computeLocomotionState.ts`).
 
 #### Scenario: Walk switch walks instead of running
 
@@ -18,7 +18,7 @@ The character SHALL move on foot through standing, walking, running, dashing and
 
 - **GIVEN** the character is running with stamina left
 - **WHEN** sprint is pressed and held
-- **THEN** the character dashes and then sprints
+- **THEN** the character dashes and then sprints (`packages/genshin-world/src/components/World/Character/Locomotion.reference.ts`)
 
 #### Scenario: Letting go of sprint drops back to running
 
@@ -28,7 +28,7 @@ The character SHALL move on foot through standing, walking, running, dashing and
 
 ### Requirement: The character jumps, falls and lands under gravity
 
-The character SHALL rise to its jump height, fall under gravity to a steady top speed, and land on the ground or in deep water.
+The character SHALL rise to its jump height, fall under gravity to a steady top speed, and land on the ground or in deep water (`packages/genshin-world/src/components/World/Character/Locomotion.reference.ts`, whose jump and fall are read from the clip).
 
 #### Scenario: Jump rises and falls back
 
@@ -50,7 +50,7 @@ The character SHALL rise to its jump height, fall under gravity to a steady top 
 
 ### Requirement: The glider opens only high enough and plunges on attack
 
-The character SHALL open its glider only when high enough above the ground, and SHALL plunge or close the glider on the player's press.
+The character SHALL open its glider only when high enough above the ground, and SHALL plunge or close the glider on the player's press (`packages/genshin-engine/src/locomotion/computeLocomotionState.ts`).
 
 #### Scenario: Jump high in the air opens the glider
 
@@ -84,7 +84,7 @@ The character SHALL open its glider only when high enough above the ground, and 
 
 ### Requirement: The character climbs any surface too steep to walk
 
-The character SHALL climb any surface too steep to walk when it moves into it with at least five stamina.
+The character SHALL climb any surface too steep to walk when it moves into it with at least five stamina (`packages/genshin-world/src/components/World/Character/Stamina.reference.ts`).
 
 #### Scenario: Moving into a wall with enough stamina climbs it
 
@@ -103,7 +103,7 @@ The character SHALL climb any surface too steep to walk when it moves into it wi
 - **GIVEN** the character is climbing
 - **WHEN** jump is pressed
 - **THEN** it jumps off the wall
-- **AND** it climbs again once that jump ends
+- **AND** it climbs again once that jump ends (`~/Esposter.noindex/genshin-parity/extracted/locomotion/Girl/locomotion.json`, whose climb-jump clip, ClimbDashU, lasts 1.08 s)
 
 #### Scenario: Drop or empty stamina lets go of the wall
 
@@ -121,11 +121,11 @@ The character SHALL climb any surface too steep to walk when it moves into it wi
 
 - **GIVEN** the character has only just begun to fall
 - **WHEN** it moves straight into a wall
-- **THEN** the wall does not catch it until it has fallen a moment
+- **THEN** the wall does not catch it until it has fallen a moment (`packages/genshin-engine/src/locomotion/computeLocomotionState.ts`)
 
 ### Requirement: The character swims in deep water and drowns when stamina runs out
 
-The character SHALL swim in water deeper than it can wade, and SHALL drown when its stamina runs out in water.
+The character SHALL swim in water deeper than it can wade, and SHALL drown when its stamina runs out in water (`packages/genshin-engine/src/locomotion/computeLocomotionState.ts`, `packages/genshin-engine/src/locomotion/createCharacterController.ts`).
 
 #### Scenario: Deep water starts swimming
 
@@ -137,13 +137,13 @@ The character SHALL swim in water deeper than it can wade, and SHALL drown when 
 
 - **GIVEN** the character is swimming and moving
 - **WHEN** sprint is pressed
-- **THEN** it makes a swim dash
+- **THEN** it makes a swim dash (`~/Esposter.noindex/genshin-parity/extracted/locomotion/Girl/locomotion.json`, whose swim-dash clip covers 3.6 m in a second)
 
 #### Scenario: Running out of stamina in water drowns the character
 
 - **GIVEN** the character is swimming
 - **WHEN** its stamina runs out
-- **THEN** it drowns
+- **THEN** it drowns (`~/Esposter.noindex/genshin-parity/extracted/locomotion/Girl/locomotion.json`, whose drowning clip, SwimDie, lasts 3 s)
 - **AND** after a while it returns to where its stamina was last full on foot, with stamina refilled
 
 #### Scenario: Ground within wading depth stands the character up
@@ -154,13 +154,13 @@ The character SHALL swim in water deeper than it can wade, and SHALL drown when 
 
 ### Requirement: One shared stamina pool is spent and refilled at the game's rates
 
-The character and its party SHALL share one stamina pool that starts at 100, refills at 25 a second after a rest, and is spent by each action at its cost.
+The character and its party SHALL share one stamina pool that starts at 100, refills at 25 a second after a rest, and is spent by each action at its cost (`packages/genshin-world/src/components/World/Character/Stamina.reference.ts`).
 
 #### Scenario: Pool refills after a rest on foot
 
 - **GIVEN** no stamina-costing action has happened for a second and a half
 - **WHEN** the character is on foot or in the air outside the glider
-- **THEN** the pool refills at 25 a second
+- **THEN** the pool refills at 25 a second (`packages/genshin-world/src/components/World/Character/Stamina.reference.ts`)
 
 #### Scenario: Pool does not refill on a wall, in water or under the glider
 
@@ -172,52 +172,52 @@ The character and its party SHALL share one stamina pool that starts at 100, ref
 
 - **GIVEN** the character has at least 18 stamina
 - **WHEN** a dash starts
-- **THEN** 18 stamina is spent
+- **THEN** 18 stamina is spent (`packages/genshin-world/src/components/World/Character/Stamina.reference.ts`)
 
 #### Scenario: Sprint costs 18 a second
 
 - **GIVEN** the character is sprinting
 - **WHEN** time passes
-- **THEN** 18 stamina is spent each second
+- **THEN** 18 stamina is spent each second (`packages/genshin-world/src/components/World/Character/Stamina.reference.ts`)
 
 #### Scenario: Charged attack spends 20
 
 - **GIVEN** the pool holds at least 20 stamina
 - **WHEN** a sword's charged attack starts
-- **THEN** 20 stamina is spent
+- **THEN** 20 stamina is spent (`~/Esposter.noindex/cache/gcsim-v2.47.2/internal/template/character/stam.go`, lines 19 to 21)
 
 #### Scenario: Charged attack that cannot be paid does not start
 
 - **GIVEN** the pool holds less than 20 stamina
 - **WHEN** a sword's charged attack is attempted
-- **THEN** the charged attack does not start
+- **THEN** the charged attack does not start (`packages/genshin-engine/src/locomotion/createStamina.ts`)
 
 #### Scenario: Party effect reduces what each action costs
 
 - **GIVEN** a party effect reduces stamina consumption
 - **WHEN** an action spends stamina
-- **THEN** the reduced amount is spent
+- **THEN** the reduced amount is spent (`packages/genshin-engine/src/locomotion/createStamina.ts`)
 
 ### Requirement: Each body type moves by its own numbers
 
-Each character's speeds, heights and thresholds SHALL be those of its own body type, so that sprints and dashes cover different distances as the game's do.
+Each character's speeds, heights and thresholds SHALL be those of its own body type, so that sprints and dashes cover different distances as the game's do (`~/Esposter.noindex/genshin-parity/extracted/locomotion/Male/locomotion.json`, `~/Esposter.noindex/genshin-parity/extracted/locomotion/Loli/locomotion.json`).
 
 #### Scenario: Tall male covers more ground than short female
 
 - **GIVEN** a tall male and a short female each sprint for the same time
 - **WHEN** the distances are compared
-- **THEN** the tall male covers more ground
+- **THEN** the tall male covers more ground (`~/Esposter.noindex/genshin-parity/extracted/locomotion/Male/locomotion.json`, 11.2 m over its dash clip, against the short female's 9.3 m in `~/Esposter.noindex/genshin-parity/extracted/locomotion/Loli/locomotion.json`)
 
 #### Scenario: Switching party character changes the numbers, not the place
 
 - **GIVEN** the party switches to another character
 - **WHEN** the next step moves the body
-- **THEN** the body moves by the new body type's numbers
-- **AND** its place and stamina are unchanged
+- **THEN** the body moves by the new body type's numbers (`packages/genshin-world/src/services/world/locomotion/getCharacterLocomotion.ts`)
+- **AND** its place and stamina are unchanged (`packages/genshin-engine/src/locomotion/createStamina.ts`)
 
 ### Requirement: The character stands on, slides along and is stopped by landmarks
 
-The character SHALL stand on, slide along and be stopped by landmark surfaces, and SHALL be pushed clear of any landmark it overlaps.
+The character SHALL stand on, slide along and be stopped by landmark surfaces, and SHALL be pushed clear of any landmark it overlaps (`packages/genshin-engine/src/collision/createLandmarkCollider.ts`, `packages/genshin-engine/src/locomotion/createCharacterController.ts`).
 
 #### Scenario: Rise within the step is climbed
 
@@ -245,7 +245,7 @@ The character SHALL stand on, slide along and be stopped by landmark surfaces, a
 
 ### Requirement: A press made during a frame is read by the next step
 
-A press made during a frame SHALL be read by the next movement step rather than lost.
+A press made during a frame SHALL be read by the next movement step rather than lost (`packages/genshin-engine/src/locomotion/createCharacterController.ts`).
 
 #### Scenario: Jump pressed in a frame with no step
 
@@ -255,7 +255,7 @@ A press made during a frame SHALL be read by the next movement step rather than 
 
 ### Requirement: Movement is relative to the camera
 
-W SHALL move the character along the camera's facing over the ground, and A and D SHALL move it across that facing.
+W SHALL move the character along the camera's facing over the ground, and A and D SHALL move it across that facing (`packages/genshin-engine/src/locomotion/createCharacterController.ts`).
 
 #### Scenario: W moves away from the camera
 
@@ -268,11 +268,11 @@ W SHALL move the character along the camera's facing over the ground, and A and 
 - **GIVEN** the character is against a wall
 - **WHEN** W, A or D is held
 - **THEN** it climbs up or across the wall
-- **AND** the camera's facing makes no difference
+- **AND** the camera's facing makes no difference (`packages/genshin-engine/src/locomotion/createCharacterController.ts`, where a climb takes the raw input rather than the camera's yaw)
 
 ### Requirement: A jump from the map places the character on the ground
 
-A jump from the map SHALL place the character standing on the ground at the chosen point, facing its current direction.
+A jump from the map SHALL place the character standing on the ground at the chosen point, facing its current direction (`packages/genshin-world/src/components/World/Character/Index.vue`).
 
 #### Scenario: Map jump lands on the ground
 
@@ -285,4 +285,14 @@ A jump from the map SHALL place the character standing on the ground at the chos
 
 - **GIVEN** the character jumped to a point on the map
 - **WHEN** it drowns before its stamina is next full on foot
-- **THEN** it returns to that point
+- **THEN** it returns to that point (`packages/genshin-engine/src/locomotion/createCharacterController.ts`, where a jump places the last full position and a drown returns to it)
+
+## Open
+
+- [ ] **The walk switch is the left Control, and a part-way stick push walks as a light push does in the game** — no source yet: the wiki's Controls page is not in the genshin-wiki cache, and the stick's walk threshold is marked provisional in `packages/genshin-engine/src/locomotion/constants.ts`.
+- [ ] **W, A and D move the character as the game's controls bind them** — no source yet: the wiki's Controls page is not in the cache, and the settings-controls clip is not read frame by frame.
+- [ ] **The glider opens from a jump only high enough above the ground, and a press plunges or closes it, as the game does** — no source yet: the wiki's Gliding page is not in the cache, and the height the glider opens at is provisional.
+- [ ] **A climb grips any surface too steep to walk, lets go on a drop or when stamina runs out, and stands the character on walkable ground at the top, as the game does** — no source yet: the wiki's Climbing page is not in the cache, and `Stamina.reference.ts` records the climb's start and cost only.
+- [ ] **Running out of stamina in water drowns the character, which then returns to where its stamina was last full on foot, as the game does** — no source yet: the wiki's Fallen Character page is not in the cache, and no reference file records the drowning's return.
+- [ ] **The pool refills on foot and in the air outside the glider, and never on a wall, in water or under the glider** — no source yet: `Stamina.reference.ts` records the refill rate but not the states it runs in.
+- [ ] **The party's Impetuous Winds cuts the stamina each spend takes** — no source yet: the Team Bonus page is not in the cache, and the cached gcsim source has no Impetuous Winds rule.
