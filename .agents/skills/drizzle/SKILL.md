@@ -21,7 +21,7 @@ description: Apply when writing or modifying DB schema files in packages/db-sche
 - `references/indexes.md` — when a query's filter or order needs an index, a count runs on a path every render pays for, or an index is added to a populated table.
 - `references/table-definition.md` — when adding or editing a table, a column or a reference.
 - `references/schemas-and-names.md` — when adding a table or an enum, choosing its schema, naming anything derived from a table, or moving a table to another schema.
-- `references/schema-registration.md` — when adding a table, an enum, a schema or a relation part, or a migration fails on a missing type or schema.
+- `references/schema-registration.md` — when adding a table, an enum, a schema or a relation part, regenerating the db-mock snapshot, or a migration fails on a missing type or schema.
 - `references/queries.md` — when writing a query: the select shape, relational or SQL-style, a self-join, a batch insert.
 - `references/returning.md` — when a write returns its rows: `requireMutation`, the full entity, `[0]` against `takeOne`, and a lost claim.
 - `references/primary-keys.md` — when choosing a new table's primary key.
@@ -84,4 +84,4 @@ A UUID for a referenced entity, a text natural key, a composite for a pure join 
 ## Migrations
 
 - **`db:gen` (from `packages/db-schema/`) is the only way to produce a migration, and `snapshot.json` is machine state, never hand-cloned** — a copied snapshot forks the chain the instant two migrations descend from one parent (`references/migrations.md`).
-- **`db:gen` is never run as an unprompted side effect** of a schema edit — note the pending migration and let the user decide; migrations apply through `pnpm --filter @esposter/db-schema db:migrate`, which `pnpm dev` and the deploy's pre-deploy step run; `db:gen` is still never run unprompted.
+- **`db:gen` is never run as an unprompted side effect** of a schema edit — note the pending migration and let the user decide; migrations apply through `pnpm --filter @esposter/db-schema db:migrate`, which `pnpm dev` and the deploy's pre-deploy step run.
