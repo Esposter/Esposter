@@ -30,7 +30,7 @@ Dependency versions live in the `catalog:` section of `pnpm-workspace.yaml` at t
 - **Renovate's `node` group bumps the pin with `@types/node`** (`references/updating-node.md`).
 - **A bump owes what it moves beyond the version, in the same commit** — the `@TODO`s linking the package, the PGlite and UnoCSS snapshots, and every library package rebuilt so `inlinedDependencies` and the bundle sizes land with it. The rebuild, the size refresh and the check after it are one ordered sequence (`references/bump-follow-through.md`).
 - **A hold is a `packageRules` entry naming the packages exactly, its reason the `description`**, paired with the catalog range that stops the same bump for pnpm (`references/holding-a-dependency.md`).
-- **Every catalog entry has `^`, a prerelease included**, except the tilde or exact pin a hold pairs with its rule (`references/caret-rules.md`).
+- **Every catalog entry has `^`, a prerelease included**, except the tilde or exact pin a hold pairs with its rule and an alias onto a dist-tag (`references/caret-rules.md`).
 - **A release shipped only under another package's name is an `npm:` alias onto its dist-tag**, moved by `pnpm refresh:lockfile` and back to a caret range when it reaches `latest` (`references/dist-tag-aliases.md`).
 - **An `overrides:` entry is a temporary force of a transitive dependency**, removed when upstream catches up (`references/overrides.md`).
 - **`oxlint-tsgolint` and the vitest pair update normally**, each with something a bump watches (`references/tracked-issues.md`).
