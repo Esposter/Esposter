@@ -2,6 +2,7 @@
 
 - [x] 1.1 Map each bird and beast kind to its drop, and mark an animal struck so that it gives its drop once. Verify: strikeWildlife.test.ts, written first and seen failing, named after 'A Crimson Fox gives two Raw Meat when struck' and 'A struck animal gives nothing when struck again'.
 - [x] 1.2 Keep a struck animal where it fell, so that stepping it does not flee. Verify: a test named after the scenario 'A struck animal does not flee', in stepWildlife.test.ts.
+- [ ] 1.3 When this change archives, remove the built wildlife spec's requirement that animals carry no drops or material sources yet, which 1.1 and 3.1 replace, so that no built requirement says a struck animal gives nothing. Verify: `pnpm exec openspec validate genshin-wildlife --strict --no-interactive` passes and the built spec no longer states that animals carry no drops.
 
 ## 2. Strikes reach the animals
 

@@ -1,3 +1,7 @@
+## REMOVED Requirements
+
+### Requirement: Animals carry no drops or material sources yet
+
 ## ADDED Requirements
 
 ### Requirement: A struck bird or beast falls and gives its drops once
