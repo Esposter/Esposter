@@ -1,12 +1,12 @@
 ## Purpose
 
-The game's sounds beside its music, the login's door first. Each is found among the game's own sounds by matching them against a recording that plays it, measured in both channels as three noises in each third of an octave over time, one the channels share and one each holds alone, and played by the engine's own noise from those levels alone, a measured delay after what sets it off. Scored against the game's own sounds, ours sits as near them as a second render of our own noise sits to the first.
+The game's sounds beside its music, the login's door first. Each is found among the game's own sounds by matching them against a recording that plays it, measured in both channels as three noises in each third of an octave over time, one the channels share and one each holds alone, and played by the engine's own noise from those levels alone, a measured delay after what sets it off (`scripts/src/services/genshinAssets/sound/computeStereoSoundBandPowers.ts`, `packages/genshin-engine/src/audio/computeSoundEffectSamples.ts`, `packages/genshin-world/src/services/login/constants.ts` for the delay). Scored against the game's own sounds, ours sits as near them as a second render of our own noise sits to the first (`scripts/src/services/genshinParity/passes/measureAudio.ts`).
 
 ## Requirements
 
 ### Requirement: Only measured levels and our own noise ship, never the game's sound
 
-The game's own sounds SHALL NOT ship, and the login's sounds SHALL be played from their measured levels by the product's own noise.
+The game's own sounds SHALL NOT ship, and the login's sounds SHALL be played from their measured levels by the product's own noise (`packages/genshin-engine/src/audio/computeSoundEffectSamples.ts`, `packages/genshin-engine/src/audio/createSoundEffectBuffer.ts`).
 
 #### Scenario: A deployed product holds no game sound
 
@@ -18,38 +18,38 @@ The game's own sounds SHALL NOT ship, and the login's sounds SHALL be played fro
 
 - **GIVEN** the login's door sound is played
 - **WHEN** it sounds
-- **THEN** it is the product's own noise shaped by the measured levels
+- **THEN** it is the product's own noise shaped by the measured levels (`packages/genshin-engine/src/audio/computeSoundEffectSamples.ts`)
 
 ### Requirement: The door sound starts a fixed delay after the click
 
-The login's door sound SHALL start a fixed delay after the click that opens the door, and SHALL NOT wait on the sound being ready.
+The login's door sound SHALL start a fixed delay after the click that opens the door, and SHALL NOT wait on the sound being ready (`packages/genshin-world/src/components/Login/Music/Index.vue`, with the delay in `packages/genshin-world/src/services/login/constants.ts`).
 
 #### Scenario: The door sound follows the click after its delay
 
 - **GIVEN** the login's music has started
 - **WHEN** the player clicks to open the door
-- **THEN** the door sound starts after its fixed delay
-- **AND** the rush of sound follows the click shortly after
+- **THEN** the door sound starts after its fixed delay (`packages/genshin-world/src/services/login/constants.ts`, `LOGIN_DOOR_SOUND_DELAY_MS`)
+- **AND** the rush of sound follows the click shortly after (`packages/genshin-world/src/components/Login/Music/DoorSound.reference.ts`, the rush 75 milliseconds after the rumble)
 
 ### Requirement: The door plays at the game's mix and is limited so it does not clip
 
-The door sound SHALL play with its rumble louder than its rush, as the game mixes them, and SHALL be limited so that its peaks do not clip.
+The door sound SHALL play with its rumble louder than its rush, as the game mixes them, and SHALL be limited so that its peaks do not clip (`packages/genshin-world/src/services/login/constants.ts`, `LOGIN_MASTER_LIMITER_OPTIONS`, and `packages/genshin-world/src/components/Login/Music/Index.vue`).
 
 #### Scenario: The rumble plays louder than the rush
 
 - **GIVEN** the door sound plays
 - **WHEN** its two parts are heard
-- **THEN** the rumble is louder than the rush
+- **THEN** the rumble is louder than the rush (`packages/genshin-world/src/components/Login/Music/DoorSound.reference.ts`, the rumble 16 decibels over its source and the rush 9)
 
 #### Scenario: Loud peaks are limited
 
 - **GIVEN** the door sound reaches its loudest peak
 - **WHEN** it is played through the output
-- **THEN** the peak is limited so that it does not clip
+- **THEN** the peak is limited so that it does not clip (`packages/genshin-world/src/services/login/constants.ts`)
 
 ### Requirement: The door keeps its two stereo channels apart as the game does
 
-The door sound SHALL keep its two stereo channels distinct, with the two channels as alike as the game's own channels are.
+The door sound SHALL keep its two stereo channels distinct, with the two channels as alike as the game's own channels are (`packages/genshin-world/src/components/Login/Music/DoorSound.reference.ts`, channels correlated 0.58 against the game's 0.53; `scripts/src/services/genshinAssets/sound/computeStereoSoundBandPowers.ts`).
 
 #### Scenario: The channels are as alike as the game's
 
@@ -59,7 +59,7 @@ The door sound SHALL keep its two stereo channels distinct, with the two channel
 
 ### Requirement: The door sound is accepted only within the grain of the noise
 
-The door sound SHALL be accepted by the audio pass only when its difference from the game's sound stays within the grain of a second take of the same levels.
+The door sound SHALL be accepted by the audio pass only when its difference from the game's sound stays within the grain of a second take of the same levels (`scripts/src/services/genshinParity/passes/measureAudio.ts`).
 
 #### Scenario: A door sound within grain is accepted
 
@@ -75,10 +75,15 @@ The door sound SHALL be accepted by the audio pass only when its difference from
 
 ### Requirement: The login's other sounds stay silent until they are matched
 
-The login's button clicks and its wind SHALL NOT play until a recording that plays them clearly enough has been matched.
+The login's button clicks and its wind SHALL NOT play until a recording that plays them clearly enough has been matched (`packages/genshin-world/src/components/Login/Music/Index.vue`, which plays only the door's sound).
 
 #### Scenario: A button click is silent before it is matched
 
 - **GIVEN** the login's button clicks have not been matched
 - **WHEN** the player presses a login button
 - **THEN** no click sound plays
+
+## Open
+
+- [ ] **A deployed product holds no game sound, only the measured levels** — no source yet: the product's contents are not inspected here, and the hosted `login/sounds` record is named in the game-data lock by its hash only.
+- [ ] **Our door sits as near the game's as a second render sits to the first** — no source yet: the reference records the door at 2.12 decibels off and two resyntheses 3.32 apart, but no grain for the audio pass to set beside it.
