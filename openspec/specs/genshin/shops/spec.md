@@ -44,7 +44,7 @@ A good with a buy limit SHALL be sold up to that limit between refreshes, and a 
 
 ### Requirement: Refreshes happen at four in the morning game time
 
-Daily and monthly refreshes SHALL happen at four in the morning in the game's time, and a monthly refresh SHALL fall on the first of the month.
+Daily and monthly refreshes SHALL happen at four in the morning in the game's time (the daily refresh's row, `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/RefreshPolicyExcelConfigData.json` row 101000, holds 14400 seconds), and a monthly refresh SHALL fall on the first of the month (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ShopExcelConfigData.json`, shop 102).
 
 #### Scenario: A purchase before the monthly refresh counts to the month before
 
@@ -87,5 +87,5 @@ A good priced in Mora SHALL cost the Mora amount its table gives.
 
 ## Open
 
-- [ ] **Refreshes happen at four in the morning in the game's time** — partly cited: the requirement above builds daily and monthly refreshes at four in the morning; checked against `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/RefreshPolicyExcelConfigData.json`: row 101000 (REFRESH_DAILY) holds 14400 seconds, four hours into the day, and the claim is open for the monthly refresh because the dump's monthly shop row (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ShopExcelConfigData.json`, shop 102) names the first of the month and no hour.
+- [ ] **Refreshes happen at four in the morning in the game's time** — no source yet: the monthly refresh's hour, since shop 102 (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ShopExcelConfigData.json`, monthly on day 1) names no hour and the refresh policy has no monthly row.
 - [ ] **A general good of the Mondstadt grocery costs its table's Mora amount** — no source yet: a recording of a purchase at Mondstadt General Goods that shows the Mora taken, or the wiki's Blanche (Mondstadt) page, which is not in the cache, if it gives her prices
