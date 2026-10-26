@@ -19,7 +19,7 @@ Marks and logos are traced rather than copied, so a screen ships only shapes der
 
 ## Sources
 
-- [imagetracerjs](https://github.com/jankovicsandras/imagetracerjs): the public-domain tracer behind `trace`.
+- [imagetracerjs](https://github.com/jankovicsandras/imagetracerjs): the public-domain tracer behind `trace` (`scripts/package.json`).
 
 ## Open
 
