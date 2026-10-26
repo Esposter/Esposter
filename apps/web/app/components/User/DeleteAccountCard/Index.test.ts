@@ -35,7 +35,6 @@ const typeName = (value: string) => {
 describe("userDeleteAccountCard", () => {
   afterEach(() => {
     document.body.innerHTML = "";
-    vi.clearAllMocks();
   });
 
   const { trpcMsw } = setupMswTrpc();

@@ -28,7 +28,6 @@ describe("userDataExportCard", () => {
   afterEach(() => {
     vi.useRealTimers();
     document.body.innerHTML = "";
-    vi.clearAllMocks();
   });
 
   const { trpcMsw } = setupMswTrpc();
