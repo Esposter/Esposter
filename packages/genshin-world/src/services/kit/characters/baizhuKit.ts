@@ -10,6 +10,7 @@ import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { createConstellationSkillChargeBonus } from "#src/services/kit/createConstellationSkillChargeBonus";
+import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
@@ -48,17 +49,22 @@ const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_ELEMENTAL_MASTERY = 80;
 const CONSTELLATION_4_SECONDS = 15;
 const CONSTELLATION_4_SOURCE = "baizhu-ancient-art-of-perception";
+// Constellation 6, Elimination of Malicious Qi: each Spiritvein deals 8% of Baizhu's Max HP more, and a Splice that strikes an
+// Enemy makes a Seamless Shield, as the dump's Constellation 6 paramList (0.08) and the game's text give. Its 100% chance is
+// Always taken. The Sprite's own hits making one are not built, as its bounces are not
+const CONSTELLATION_6 = 6;
+const CONSTELLATION_6_SPIRITVEIN_MAX_HEALTH_SHARE = 0.08;
 
 // Baizhu's behaviour: Holistic Revivification sets a seamless shield at the cast that lasts to gcsim's expiry of the
 // First, the gap-free window gcsim gives it, and casts a field that recasts the shield on gcsim's schedule wherever the
 // Body stands, each recast exploding the shield it replaces as Spiritvein, priced by Baizhu as the body on the field
-// Stands when it goes off. Constellations 1 and 4 are built, and Constellation 2's Splice without its heal. From Ascension 1
-// His Dendro hits deal more DMG while the character on the field is at half their HP or more. Not built yet: Constellation
-// 2's heal, 20% of the Gossamer Sprite's normal healing, which the kit does not price; Constellation 6, which needs the
-// Sprite's and the Splice's hits to make a Seamless Shield; Gossamer Sprite's bounces and healing; the Seamless Shield's
-// Heals and its removal's heal; Ascension 1's Healing Bonus, which no heal of his reads yet, and which a passive bonus
-// Cannot price from the Field's HP, since a passive is given only its wearer's HP share; and Ascension 4, which rides
-// The Seamless Shield's heals
+// Stands when it goes off. Constellations 1, 4 and 6 are built, and Constellation 2's Splice is built without its heal. From
+// Ascension 1 his Dendro hits deal more DMG while the character on the field is at half their HP or more. Not built yet:
+// Constellation 2's heal, 20% of the Gossamer Sprite's normal healing, which the kit does not price; the Seamless Shield a
+// Gossamer Sprite's own hit makes under Constellation 6, which waits on the Sprite's bounces; Gossamer Sprite's bounces and
+// Healing; the Seamless Shield's heals and its removal's heal; Ascension 1's Healing Bonus, which no heal of his reads yet, and
+// Which a passive bonus cannot price from the field's HP, since a passive is given only its wearer's HP share; and Ascension 4,
+// Which rides the Seamless Shield's heals
 // https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/baizhu
 // The Splice is queued at the enemy it strikes, so it lands in the step it is raised: gcsim gives it the skill's first
 // Hitmark as a placeholder, a TODO in its source, which a passive's hit does not price
@@ -79,7 +85,11 @@ export const createBaizhuKitBehaviour = ({ readHit, readParameter, readSeconds }
   const firstRefreshSeconds = readSeconds("firstSeamlessShieldRefresh");
   const refreshIntervalSeconds = readSeconds("seamlessShieldRefreshInterval");
   const refreshFieldSeconds = readSeconds("seamlessShieldRefreshField");
-  const spiritvein = readHit("spiritvein");
+  const spiritveinMaxHealthBonus = createMaxHealthScaledBonus(CONSTELLATION_6_SPIRITVEIN_MAX_HEALTH_SHARE);
+  const spiritvein = readHit("spiritvein", {
+    additiveBaseDamageBonus: (combatant) =>
+      combatant.constellationCount >= CONSTELLATION_6 ? spiritveinMaxHealthBonus(combatant) : 0,
+  });
   // The shield a cast or a recast sets on the team, its health the share of Max HP plus its flat amount, and its explosion
   const castShield = (context: KitContext, combatant: Combatant, secondsRemaining: number): KitShield => {
     const { characterIdCombatantMap, kitEffectState, party } = context;
@@ -92,6 +102,16 @@ export const createBaizhuKitBehaviour = ({ readHit, readParameter, readSeconds }
       secondsRemaining,
     });
   };
+  // The Splice a Constellation 2 queues, which under Constellation 6 makes a Seamless Shield as it strikes its enemy
+  const createSpliceHit = (combatant: Combatant): KitHit =>
+    combatant.constellationCount >= CONSTELLATION_6
+      ? {
+          ...gossamerSpliceHit,
+          onStrike: (context) => {
+            castShield(context, combatant, shieldSeconds);
+          },
+        }
+      : gossamerSpliceHit;
   return {
     burst: {
       onStart: (context) => {
@@ -134,7 +154,7 @@ export const createBaizhuKitBehaviour = ({ readHit, readParameter, readSeconds }
         )
       )
         return;
-      queueKitPassiveHit(context, combatant, gossamerSpliceHit, event.enemy);
+      queueKitPassiveHit(context, combatant, createSpliceHit(combatant), event.enemy);
     },
   };
 };

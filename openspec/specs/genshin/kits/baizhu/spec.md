@@ -1,6 +1,6 @@
 ## Purpose
 
-Baizhu's kit as built, with his strikes, charged attack, plunges, Universal Diagnosis's first hit, and Holistic Revivification's seamless shield with its Spiritvein explosions, with Five Fortunes Forever's Dendro DMG Bonus from Ascension 1, and what is left of his bounces, heals and passives.
+Baizhu's kit as built, with his strikes, charged attack, plunges, Universal Diagnosis's first hit, and Holistic Revivification's seamless shield with its Spiritvein explosions, with Five Fortunes Forever's Dendro DMG Bonus from Ascension 1, Constellation 6's Spiritvein damage and the Seamless Shield its Splice makes, and what is left of his bounces, heals and passives.
 
 ## Requirements
 
@@ -100,3 +100,25 @@ From Constellation 2, each enemy the active member hits SHALL be struck by a Gos
 - **GIVEN** a Splice was queued less than five seconds ago
 - **WHEN** his active member hits an enemy
 - **THEN** no Splice is queued, and one is queued once five seconds have passed
+
+### Requirement: Constellation 6 adds Max HP to each Spiritvein and makes a Seamless Shield from each Splice
+
+From Constellation 6, each Spiritvein SHALL deal 8% of Baizhu's Max HP more DMG, and each Gossamer Sprite: Splice that strikes an enemy SHALL make one Seamless Shield.
+
+#### Scenario: A Spiritvein deals more with Baizhu's Max HP
+
+- **GIVEN** Baizhu has Constellation 6
+- **WHEN** a Spiritvein from a recast of his shield deals damage
+- **THEN** its base damage includes 8% of his Max HP
+
+#### Scenario: A Splice that strikes an enemy makes a Seamless Shield
+
+- **GIVEN** Baizhu has Constellation 6
+- **WHEN** a Gossamer Sprite: Splice strikes an enemy
+- **THEN** a Seamless Shield is made
+
+#### Scenario: Below Constellation 6 a Splice makes no shield
+
+- **GIVEN** Baizhu has Constellation 5
+- **WHEN** a Gossamer Sprite: Splice strikes an enemy
+- **THEN** no Seamless Shield is made
