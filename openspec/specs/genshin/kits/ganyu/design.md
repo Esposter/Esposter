@@ -12,10 +12,9 @@ Ganyu's kit is its record and one behaviour module, `createGanyuKitBehaviour`, a
 
 ## Open
 
-- **The Ice Lotus's health.** The wiki's Trail of the Qilin scaling gives an Inherited HP as a share of Max HP, 120% at level 1 and 255% at level 13 (cached `~/Esposter/cache/genshin-wiki/Category_Ganyu_Talents.json`, Trail of the Qilin), where the kit's Ice Lotus takes no health, so it stands until its seconds run out. The Ice Lotus's health waits on that share being built.
-- **Constellation 1's Cryo RES cut lasts 5 seconds or 6.** gcsim's `~/Esposter/cache/gcsim-v2.47.2/internal/characters/ganyu/cons.go` gives the cut 300 frames, 5 seconds, and its own comment gives 6 seconds, which the kit's `packages/genshin-world/src/services/kit/characters/ganyuKit.ts` comment also cites from the wiki; the Constellation 1 page is not in the cache, so the duration waits on it.
-- **The field's radius.** The record's area is a 12.5-metre circle, `Unsourced`, while gcsim's field is a 10-metre circle (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/ganyu/burst.go`, `burstArea`), with each tick's strike a 2.5-metre circle on a random enemy in it. Waits on the record's area being settled.
-
+- [ ] **The Ice Lotus takes no health in the kit** — contradicted by `~/Esposter/cache/genshin-wiki/Category_Ganyu_Talents.json`: gives its Inherited HP as 120% to 255% of Max HP.
+- [ ] **Constellation 1's Cryo RES cut lasts 5 seconds or 6** — no source yet: the Constellation 1 wiki page is not in `~/Esposter.noindex/cache/genshin-wiki/`, and gcsim's `~/Esposter/cache/gcsim-v2.47.2/internal/characters/ganyu/cons.go` gives 300 frames beside a comment that says 6 seconds.
+- [ ] **The field's area is a 12.5-metre circle** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/ganyu/burst.go`: its field is a 10-metre circle (`burstArea`).
 - [ ] **The Ice Lotus flower's 120% multiplier** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/ganyu/zz_ganyu.dm.go`: its level-1 lotus table is 1.32, which both hits use.
 
 ## Key files
