@@ -498,14 +498,14 @@ A Stellar Swirl SHALL deal Anemo damage to its target and then leave one Stellar
 
 A Stellar Vortex's explosion SHALL be priced at a Base Reaction Coefficient of 2 at Lv. 1 and 3 at Lv. 2 (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl_gadget.go` line 14), and a Stellar Swirl's Anemo instance at 0.75 (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl.go` line 76), for the indirect Stellar Glimmer damage. Its contributors' damage is weighted as the Glimmer Reaction Damage requirement above states.
 
-#### Scenario: a Stellar Vortex explodes at a coefficient of 2 for its first two stacks
+#### Scenario: a Stellar Vortex that expires with one or two stacks explodes at a coefficient of 2
 
-- **WHEN** a vortex has one or two stacks of Stellar Swirl
+- **WHEN** a vortex has one or two stacks of Stellar Swirl and runs out
 - **THEN** its explosion's Base Reaction Coefficient is 2 (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl_gadget.go` line 14, `sswStackMult`: 2 at one and two stacks)
 
-#### Scenario: a Stellar Vortex explodes at a coefficient of 3 from its third stack
+#### Scenario: a Stellar Vortex detonated with three or more stacks uses a coefficient of 3
 
-- **WHEN** a vortex has three or more stacks of Stellar Swirl
+- **WHEN** a vortex has three or more stacks of Stellar Swirl and explodes, at its sixth stack or as it runs out
 - **THEN** its explosion's Base Reaction Coefficient is 3 (same table, `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl_gadget.go` line 14: 3 from three stacks up)
 
 #### Scenario: a Stellar Swirl's Anemo instance has a coefficient of 0.75
