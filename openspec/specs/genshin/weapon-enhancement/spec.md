@@ -78,7 +78,7 @@ A copy or a refinement material SHALL add its ranks, each rank gained costing th
 
 - **GIVEN** a three-star weapon at rank one
 - **WHEN** it is refined to rank five
-- **THEN** ranks two to five cost five hundred, one thousand, two thousand and four thousand Mora
+- **THEN** ranks two to five cost five hundred, one thousand, two thousand and four thousand Mora (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/WeaponExcelConfigData.json`)
 
 #### Scenario: Ranks past five lost
 
@@ -95,7 +95,7 @@ A copy or a refinement material SHALL add its ranks, each rank gained costing th
 
 ### Requirement: One- and two-star weapons never refined
 
-One-star and two-star weapons SHALL never be refined, and a four-star weapon the table gives no refinement costs SHALL never be refined either.
+One-star and two-star weapons SHALL never be refined, and a four-star weapon the table gives no refinement costs SHALL never be refined either (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/WeaponExcelConfigData.json`).
 
 #### Scenario: Two-star weapon refused
 
