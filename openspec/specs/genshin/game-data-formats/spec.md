@@ -145,9 +145,3 @@ A session deriving game data SHALL look for a scene's parts from its roots and f
 - [ ] **Open world: an unnamed prefab is counted with its placements in the extract report** — no source yet: the extract report's line for an unnamed prefab, which no record keeps.
 - [ ] **Scripts: a field with no known shape is measured off the captures** — no source yet: a measured value of such a field, which no record holds.
 - [ ] **Scripts: a group script looked up by path in the client's scripts is found** — no source yet: a lookup run over the client's Lua block, which no record keeps.
-- [ ] **Shaders keep their compiled programs as plain binary containers, with their constant layouts beside them** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A UI element's anchors sit in its transform's raw tail** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **An animation clip is streamed as cubic segments bound by hashes** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A renderer names its materials by path ID** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A scene's scripts export without their fields** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The open world is streamed, its placements mask-led varint records in blobs named by their path's hash** — no source yet: game data or a snapshot that holds this behaviour
