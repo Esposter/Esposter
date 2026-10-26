@@ -25,6 +25,9 @@ export const getVitestConfiguration = (
       conditions: [SOURCE_CONDITION, ...defaultServerConditions],
     },
     test: {
+      // Clears every mock's call history before each test, so a test reads the calls it made and not the ones an
+      // Earlier test made. Only the history goes: a `vi.mock` default or a `mockResolvedValue` stays in place.
+      clearMocks: true,
       exclude: [...configDefaults.exclude, BROWSER_TEST_GLOB],
       // Transforming the module graph is the largest share of a run and is otherwise redone from scratch every
       // Time; persisting it to `node_modules/.vitest-cache` reuses it across reruns and separate processes, and
