@@ -101,12 +101,11 @@ A recipe the table shows from the start is open from the start. One it hides is 
 - [Condensed Resin](https://genshin-impact.fandom.com/wiki/Condensed_Resin), Genshin Impact Wiki: the 60 resin a craft takes and the five a player can hold, the figures the proposal settles its decisions from.
 
 ## Open
-
-- [ ] **Mystic Offering opens at Adventure Rank 45** — no source yet: the dump's open-state row 1600 (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/OpenStateConfigData.json`) gates rank 45 but names no system, so the game's gate for this tab is unverified.
-- [ ] **The talent draws of 10%, 25%, 20%, 25% and 10%** — no source yet: the wiki's Crafting Talents category is not in the cache, and the dump's talent rows were not checked.
+- [ ] **Mystic Offering opens at Adventure Rank 45** — no source yet for the game's gate: `packages/genshin-world/src/services/crafting/constants.ts` holds `MYSTIC_OFFERING_ADVENTURE_RANK = 45`, and the dump's open-state row 1600 (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/OpenStateConfigData.json`) gates rank 45 but names no system, so the game's gate for this tab is unverified.
+- [ ] **The talent draws of 10%, 25%, 20%, 25% and 10%** — no source yet: the roll reads each talent's `chance` (`packages/genshin-world/src/services/crafting/rollCraftingTalent.ts`), but the wiki's Crafting Talents category is not in the cache, and the values were not traced to the dump's talent rows.
 - [ ] **The essential oils' instructions are not named by the material table** — no source yet: the material table's uses of the oils' instruction items were not checked.
 - [ ] **The Xiao Lantern is a quest's item, and the homeworld's rows belong to the Serenitea Pot** — no source yet: the dump's rows for both were not checked.
-- [ ] **A talent extra with no room is dropped rather than refusing the craft** — no source yet: the `addInventoryItem` call that drops it was not read.
-- [ ] **the open recipes are listed under one tab per combine type, named by the game's text** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **the Mystic Offering is listed as the last tab from Adventure Rank 45** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **the bench stands where its scene group record places it, and its prompt opens the crafting screen** — no source yet: game data or a snapshot that holds this behaviour
+- **A talent extra with no room is dropped rather than refusing the craft** — `packages/genshin-world/src/components/Crafting/Screen/Index.vue` adds each talent item with `addInventoryItem(...).inventory`, keeping the bag and discarding its overflow, after `craftRecipe.ts` has already accepted the craft.
+- **The open recipes are listed under one tab per combine type, named by the game's text** — `packages/genshin-world/src/services/crafting/CombineTypeGameTextKeyMap.ts`, used by `packages/genshin-world/src/services/crafting/computeCraftingTabCells.ts`.
+- **The Mystic Offering is listed as the last tab from Adventure Rank 45** — `packages/genshin-world/src/services/crafting/computeCraftingTabCells.ts`, which appends it after the recipe tabs from `checkIsMysticOfferingOpen`.
+- [ ] **The bench stands where its scene group record places it, and its prompt opens the crafting screen** — the place is read by `packages/genshin-world/src/services/crafting/readMondstadtCraftingBenchPlace.ts`, but the prompt's opening of the screen was not traced in this pass.
