@@ -2,7 +2,7 @@ export const MAX_ADVENTURE_RANK = 60;
 // Adventure EXP past the highest rank is paid in Mora at ten for each point
 export const MORA_PER_EXCESS_ADVENTURE_EXP = 10;
 // From this World Level the player may lower it by one
-export const WORLD_LEVEL_LOWERING_MINIMUM = 5;
+export const WORLD_LEVEL_LOWERING_MINIMUM = 3;
 // Any change of the World Level, lowering or restoring it, waits this long after the last one
 export const WORLD_LEVEL_ADJUSTMENT_COOLDOWN: Temporal.Duration = Temporal.Duration.from({ hours: 24 });
 // How often the World Level's tips look at the clock for the cooldown left, which they show to the minute
