@@ -1,12 +1,12 @@
 ## Purpose
 
-Genshin's ley line outcrops as built — each region's Blossom of Revelation and Blossom of Wealth read from the game's tables into genshin-world, opened by Adventure Rank and by a nation's unlocked area, started at a drawn section's first place and moved along the places each names. Touching, fighting and claiming them is the proposal's still.
+Genshin's ley line outcrops as built — each region's Blossom of Revelation and Blossom of Wealth read from the game's tables into genshin-world, opened by Adventure Rank and by a nation's unlocked area, started at a drawn section's first place and moved along the places each names (`scripts/src/services/genshinAssets/leyLine/buildLeyLineRegions.ts`, `packages/genshin-world/src/services/leyLine/computeOutcropKindOpen.ts`, `packages/genshin-world/src/services/leyLine/computeNextOutcropPlace.ts`). Touching, fighting and claiming them is the proposal's still.
 
 ## Requirements
 
 ### Requirement: Two kinds per region
 
-Each region's ley line SHALL offer two outcrop kinds, the Blossom of Revelation, which gives Character EXP materials, and the Blossom of Wealth, which gives Mora.
+Each region's ley line SHALL offer two outcrop kinds, the Blossom of Revelation, which gives Character EXP materials, and the Blossom of Wealth, which gives Mora (`scripts/src/services/genshinAssets/leyLine/constants.ts`).
 
 #### Scenario: Seven cities each have both kinds
 
@@ -15,32 +15,32 @@ Each region's ley line SHALL offer two outcrop kinds, the Blossom of Revelation,
 
 #### Scenario: Other challenges read no kind
 
-- **WHEN** the Dragonspine, Blitz Rush and Blossom Island refreshes are read
+- **WHEN** the Dragonspine, Blitz Rush and Blossom Island refreshes are read (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, rows 13 to 19)
 - **THEN** none of them yields a ley line kind
 
 ### Requirement: Opening by rank and nation
 
-Each kind SHALL open at the Adventure Rank its game table gives, and in every region except Mondstadt and Liyue it SHALL also need a nation's area unlocked.
+Each kind SHALL open at the Adventure Rank its game table gives, and in every region except Mondstadt and Liyue it SHALL also need a nation's area unlocked (`packages/genshin-world/src/services/leyLine/computeOutcropKindOpen.ts`).
 
 #### Scenario: Mondstadt's Revelation opens at rank 8
 
-- **WHEN** a player in Mondstadt reaches Adventure Rank 8
+- **WHEN** a player in Mondstadt reaches Adventure Rank 8 (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, row 2)
 - **THEN** the Blossom of Revelation opens
 
 #### Scenario: Mondstadt's Wealth opens at rank 12
 
-- **WHEN** a player in Mondstadt reaches Adventure Rank 12
+- **WHEN** a player in Mondstadt reaches Adventure Rank 12 (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, row 1)
 - **THEN** the Blossom of Wealth opens
 
 #### Scenario: Liyue opens both kinds at rank 18
 
-- **WHEN** a player in Liyue reaches Adventure Rank 18
+- **WHEN** a player in Liyue reaches Adventure Rank 18 (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, rows 3 and 4)
 - **THEN** both kinds open with no area condition
 
 #### Scenario: Other regions wait for a nation's area
 
 - **GIVEN** no nation's area is unlocked in Inazuma
-- **WHEN** a player in Inazuma reaches Adventure Rank 18
+- **WHEN** a player in Inazuma reaches Adventure Rank 18 (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, rows 20 and 21)
 - **THEN** its kinds stay closed
 
 ### Requirement: Start at a drawn section's first place
@@ -54,7 +54,7 @@ Each kind SHALL start, each daily draw, at the lowest numbered place of a sectio
 
 #### Scenario: Region without sections
 
-- **WHEN** the daily draw runs for Fontaine, Natlan or Snezhnaya
+- **WHEN** the daily draw runs for Fontaine, Natlan or Snezhnaya (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/BlossomSectionOrderExcelConfigData.json` has no section for them)
 - **THEN** no outcrop starts
 
 ### Requirement: Moving on along the named places
@@ -78,7 +78,7 @@ A claimed outcrop SHALL move to the next place its place names, or to the place 
 
 ### Requirement: Daily reset at 04:00
 
-The outcrops SHALL start over at the daily reset at 04:00 in the game's day.
+The outcrops SHALL start over at the daily reset at 04:00 in the game's day (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, `refreshTime`).
 
 #### Scenario: Reset starts the kinds over
 
@@ -93,3 +93,9 @@ Ley line outcrops SHALL not be placed, fought or claimed in the world yet.
 
 - **WHEN** a player enters a region with ley line kinds
 - **THEN** no outcrop is drawn and no claim is offered
+
+## Open
+
+- [ ] **The Blossom of Revelation gives Character EXP materials, and the Blossom of Wealth gives Mora** — no source yet: the refresh rows' reward previews do not resolve to item names in the dump.
+- [ ] **Each kind starts at the lowest numbered place of a drawn section** — no source yet: `computeDailyOutcrops` draws from every fitted place, and no section first-place step is found in the code.
+- [ ] **A claimed outcrop moves to the next place its place names** — no source yet: `computeNextOutcropPlace` takes the nearest free fitted place, and no place-chain link is read.
