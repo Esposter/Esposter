@@ -240,10 +240,6 @@ Paths relative to the repository root.
 - At a full bag, most of the client's time goes to the transformer's walk of the save, not to the JSON it produces, so the request body task in `saveGenshin.bench.md`, not its stringify, is the number a client speedup has to move.
 - Stored saves need the characters backfill (the backfills skill) before the schema reads them, since the characters slice has no default.
 
-## Sources
-
-- [Inventory](https://genshin-impact.fandom.com/wiki/Inventory), Genshin Impact Wiki: each tab's room and the highest maximum an item is held at, as "A maximum of 2,400 Artifacts can be held at a time."
-
 ## Open
 
 - [ ] **Save: the Archive's opened entries and each Living Being's defeat count are not held** — contradicted by `packages/genshin-world/src/models/archive/ArchiveSave.ts`: it holds each section's opened entry ids and the defeats of each Living Being.
@@ -254,5 +250,5 @@ Paths relative to the repository root.
 - [ ] **Save: a save written before the week's bounty and request claims were added is backfilled to `[]`** — no source yet: the backfill that writes those values, which no file names.
 - [ ] **Save: stored saves need the characters backfill before the schema reads them** — no source yet: the backfill file for the characters slice.
 - [ ] **Save: each draw's wish history is kept for the year** — no source yet: the retention rule for the wish history, which no record names.
-- [ ] **each stack's maximum follows the game's inventory limits, item by item** — no source yet for the bag's per-item ceiling: the wiki's Inventory page, checked, gives each item type its own maximum, 99,999 at the top and 9,999 for most items, while the bag bounds every stack at the highest, 99,999, and the page does not say which the bag should hold.
+- [ ] **each stack's maximum follows the game's inventory limits, item by item** — no source yet: the wiki's Inventory page, which the repo's `bagLimits.ts` cites, is not in the wiki cache, so the per-item ceiling is not checked against the game.
 - [ ] **a new player holds Original Resin at its cap from the epoch, with Mondstadt's Reputation at its first level** — no source yet: the new-player wallet in `packages/genshin-world/src/services/inventory/constants.ts` (`EMPTY_WALLET`), not yet read for its Original Resin value; the game's new-player state is not yet recorded.
