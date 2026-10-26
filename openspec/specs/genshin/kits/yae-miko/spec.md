@@ -1,6 +1,6 @@
 ## Purpose
 
-Yae Miko's kit as built, with her Sesshou Sakura totems, Great Secret Art: Tenko Kenshin, both passives and Constellation 6's DEF ignored, and what is left of her constellations.
+Yae Miko's kit as built, with her Sesshou Sakura totems, Great Secret Art: Tenko Kenshin, both passives, Constellation 4's burst DMG and team Electro DMG and Constellation 6's DEF ignored, and what is left of her constellations.
 
 ## Requirements
 
@@ -75,14 +75,36 @@ From Ascension 4, each totem strike SHALL deal 0.15% more DMG for each point of 
 - **WHEN** a totem strikes
 - **THEN** its DMG Bonus is 0.15% of her Elemental Mastery
 
+### Requirement: Constellation 4 burst DMG and team Electro DMG
+
+From Constellation 4, Yae Miko's Elemental Burst DMG SHALL rise 100%, and each lightning a Sesshou Sakura strikes SHALL give every deployed member 20% Electro DMG Bonus for 5 seconds.
+
+#### Scenario: Constellation 4 doubles her Elemental Burst DMG
+
+- **GIVEN** Yae Miko has Constellation 4
+- **WHEN** Great Secret Art: Tenko Kenshin's Tenko Thunderbolt strikes an enemy
+- **THEN** its Elemental Burst DMG Bonus includes 100%
+
+#### Scenario: A totem's lightning gives the team Electro DMG Bonus
+
+- **GIVEN** Yae Miko has Constellation 4
+- **WHEN** a totem's strike lands on an enemy
+- **THEN** every deployed member has 20% Electro DMG Bonus for 5 seconds
+
+#### Scenario: Constellation 3 changes nothing
+
+- **GIVEN** Yae Miko has Constellation 3
+- **WHEN** a totem's strike lands on an enemy
+- **THEN** no Electro DMG Bonus is gained
+
 ### Requirement: Unbuilt constellations
 
-Yae Miko's constellations other than Constellation 6's DEF ignored SHALL have no effect in the world yet.
+Yae Miko's Constellations 1 and 2 SHALL have no effect in the world yet, and Constellation 4's 8 Energy per 5 seconds is not built.
 
-#### Scenario: Constellation has no effect
+#### Scenario: Constellation 1 or 2 has no effect
 
-- **WHEN** Yae Miko holds Constellation 1, 2 or 4
-- **THEN** no constellation effect is applied
+- **WHEN** Yae Miko holds Constellation 1 or 2
+- **THEN** no effect of that constellation is applied
 
 #### Scenario: Constellation 6 ignores DEF on the totems' strikes
 

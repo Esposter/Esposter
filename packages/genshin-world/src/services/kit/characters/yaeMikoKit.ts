@@ -1,10 +1,14 @@
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
+import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
+import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { elementalMasteryMultiplier } from "#src/services/kit/elementalMasteryMultiplier";
 import { getPartyMember } from "#src/services/party/getPartyMember";
@@ -27,6 +31,14 @@ const ENLIGHTENED_BLESSING_DAMAGE_PER_ELEMENTAL_MASTERY = 0.0015;
 // Its c6DefIgnore gives 0.6, where the comment there says 45%, and the kit reads the code's value
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_DEFENCE_IGNORED = 0.6;
+// Constellation 4, as gcsim (MIT) yaemiko/cons.go gives it: her Elemental Burst DMG rises 100%, and each lightning a
+// Sesshou Sakura strikes gives the deployed team 20% Electro DMG Bonus for 5 seconds
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yaemiko/cons.go
+const CONSTELLATION_4 = 4;
+const CONSTELLATION_4_BURST_DAMAGE_BONUS = 1;
+const CONSTELLATION_4_ELECTRO_DAMAGE_BONUS = 0.2;
+const CONSTELLATION_4_ELECTRO_DAMAGE_SECONDS = 5;
+const CONSTELLATION_4_ELECTRO_DAMAGE_SOURCE = "yae-constellation-4";
 
 // A character's totems still standing, oldest first, as the effects are kept in the order they were added
 const findStandingTotems = (effects: KitEffect[], characterId: number): KitSummon[] =>
@@ -40,13 +52,25 @@ const findStandingTotems = (effects: KitEffect[], characterId: number): KitSummo
 
 export const YAE_MIKO_CHARACTER_ID = 10_000_058;
 
+// Each lightning Sesshou Sakura strikes gives the deployed team its Electro DMG Bonus from Constellation 4, a strike
+// Restarting it for its seconds
+const giveTeamElectroDamageBonus = ({ kitEffectState, party }: KitContext, { combatant }: KitStrike): void => {
+  if (combatant.constellationCount < CONSTELLATION_4) return;
+  buffKitTeam(kitEffectState, party, {
+    amount: CONSTELLATION_4_ELECTRO_DAMAGE_BONUS,
+    attribute: Attribute.ElectroDamageBonus,
+    secondsRemaining: CONSTELLATION_4_ELECTRO_DAMAGE_SECONDS,
+    source: CONSTELLATION_4_ELECTRO_DAMAGE_SOURCE,
+  });
+};
+
 // Yae Miko's behaviour: Sesshou Sakura's totems, which strike on their own schedule at a level by how many stand, and
 // Great Secret Art: Tenko Kenshin, which destroys the totems for a Tenko Thunderbolt each. From Ascension 1 each totem the
-// Burst destroys gives back a charge of the skill, and from Ascension 4 her Elemental Mastery raises the totems' DMG. Her
-// Constellations 1, 2 and 4 are not built, as the kit's events reach none of them yet
-// Constellation 1 needs the Tenko Thunderbolt's activation as an event, which the kit does not emit
-// Constellation 2 needs Sesshou Sakura's starting level, max level and range, which the kit does not build
-// Constellation 4 needs the Electro DMG Bonus from Sesshou Sakura's lightning hits, which the kit does not build
+// Burst destroys gives back a charge of the skill, and from Ascension 4 her Elemental Mastery raises the totems' DMG. From
+// Constellation 4 her Elemental Burst DMG rises 100%, and each lightning a totem strikes gives the team Electro DMG Bonus.
+// Constellation 4's 8 Energy per 5 seconds is not built, as the kit grants no energy a hit gives at once. Constellation 1
+// Needs the Superconduct and Stellar-Conduct DMG Bonus the team takes from her, which the kit's Stellar-Conduct revelation
+// Does not build, and Constellation 2 needs Sesshou Sakura's starting level, max level and range, none built
 // Constellation 6's CRIT DMG needs the Stellar-Conduct hits her Radiance gives, read from the Polestar Field's
 // RADIANCE_STELLAR_CONDUCT_STATUS_ID, which the kit does not deal, so only its DEF ignored is built
 export const createYaeMikoKitBehaviour = ({
@@ -72,7 +96,7 @@ export const createYaeMikoKitBehaviour = ({
     const talentMultiplier = takeOne(totemStrikeMultipliers, level - 1);
     const hits: KitHit[] = [];
     for (const hitmarkSeconds of totemStrikeSecondsList)
-      hits.push({ ...totemStrikeFields, hitmarkSeconds, talentMultiplier });
+      hits.push({ ...totemStrikeFields, hitmarkSeconds, onStrike: giveTeamElectroDamageBonus, talentMultiplier });
     return hits;
   };
   return {
@@ -94,10 +118,14 @@ export const createYaeMikoKitBehaviour = ({
         });
       },
     },
-    getStrikeDamageBonus: ({ attackTag, combatant }) =>
-      combatant.ascension >= ENLIGHTENED_BLESSING_ASCENSION && attackTag === AttackTag.ElementalSkill
+    // Constellation 4 raises her Elemental Burst DMG 100%, and Enlightened Blessing the totems' by her Elemental Mastery
+    getStrikeDamageBonus: ({ attackTag, combatant }) => {
+      if (attackTag === AttackTag.ElementalBurst && combatant.constellationCount >= CONSTELLATION_4)
+        return CONSTELLATION_4_BURST_DAMAGE_BONUS;
+      return combatant.ascension >= ENLIGHTENED_BLESSING_ASCENSION && attackTag === AttackTag.ElementalSkill
         ? elementalMasteryMultiplier(combatant, ENLIGHTENED_BLESSING_DAMAGE_PER_ELEMENTAL_MASTERY)
-        : 0,
+        : 0;
+    },
     // Constellation 6 ignores a share of each enemy's DEF on Sesshou Sakura's strikes, which are Elemental Skill DMG
     getStrikeDefenceIgnored: ({ attackTag, combatant }) =>
       combatant.constellationCount >= CONSTELLATION_6 && attackTag === AttackTag.ElementalSkill
