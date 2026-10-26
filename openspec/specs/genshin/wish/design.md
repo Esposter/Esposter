@@ -111,6 +111,7 @@ Compared with the game at 78 seconds of `yt-uhCW3MZTgL8`: mean 50.96%, shape 0.4
 - `wish-ten.mkv` — a ten-wish on the English PC client at 1080p, from Wish ×10 to the summary dismissed. A published 1080p clip (`yt-uhCW3MZTgL8.mp4`) shows the event banner and single pulls' reveals only, so the ten-pull results grid is still owed. Found 2026-10-11: https://www.youtube.com/watch?v=gFmdG_0s5L0 at 0–76 s (`~/Esposter.noindex/genshin-parity/captures/yt-gFmdG_0s5L0-wish-ten.mp4`), the English PC client at 1080p and 60 frames a second in 2022: Wish ×10 pressed at about 16.5 s, the reveals, the results grid at about 44–50 s, Obtained at about 50–51 s and the banner back at about 51.3 s; a small channel mark sits at the bottom right. Its stills from 16 s for 36 are under `frames/yt-gFmdG_0s5L0-wish-ten@16/`.
 
 ## Open
+
 - [ ] **The base rates and the hard pity are the game's published details, and the soft pity is the community's model from recorded wishes** — no source yet: the wiki's Character Event Wish and Weapon Event Wish pages are in neither `~/Esposter/cache/genshin-wiki` nor the snapshots, and the dump holds no gacha table.
 - [ ] **Character Event Wish-2 shares the first's counters, as the game does** — no source yet: the wiki's Character Event Wish page is not cached.
 - [ ] **Capturing Radiance's published base rate is a share of the five-star's, and with it the promotional character takes about 55% of the 50/50s** — no source yet: the wiki page is not cached and no measured run is recorded.
@@ -121,7 +122,6 @@ Compared with the game at 78 seconds of `yt-uhCW3MZTgL8`: mean 50.96%, shape 0.4
 - [ ] **The Starglitter and Stardust amounts each draw returns match the wiki's Wish page** — no source yet: the wiki page is not cached.
 - [ ] **One Fate costs 160 Primogems, as in the game** — the code holds `FATE_PRIMOGEM_COST = 160` (`packages/genshin-world/src/services/wish/constants.ts`), but the game's price is not checked against a recording or the wiki.
 - **The wish screen opens on F3** — `packages/genshin-engine/src/input/InputActionBindingMap.ts` binds `InputAction.OpenWish` to `F3`; the game's own default stays with the controls page's open item.
-- [ ] **The wish screen opens on F3, as in the game** — no source yet: the wiki's Controls page is not cached.
 - **The save's merge of a guest's history into an account's keeps the account's alone** — contradicted and corrected in the prose above: `packages/genshin-world/src/services/save/mergeGenshinSave.ts` (line 238) sets `wishHistory` to `account.wishHistory`, so the guest's draws are not kept.
 - [ ] **The parity figures at 78 seconds of `yt-uhCW3MZTgL8` (mean 50.96%, shape 0.425, FLIP 0.8743; 52.22% and 0.8926 before the rebuild)** — no source yet: the clip is in `~/Esposter.noindex/genshin-parity/captures/`, but no parity run output or snapshot holding these figures is kept in the repo.
 - [ ] **The 1080p clip shows the Character Event banner at about 96 to 117 seconds and 136 seconds, and single-pull reveals from about 104 seconds** — no source yet: the clip's frames were not checked.
