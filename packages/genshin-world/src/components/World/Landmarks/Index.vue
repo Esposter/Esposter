@@ -10,6 +10,7 @@ import type { LandmarkCollider, LightUniforms, TreeOptions, WindUniforms } from 
 import type { DataTexture } from "three";
 
 import WorldLandmarkBuilding from "#src/components/World/Landmark/Building/Index.vue";
+import WorldLandmarkDomainEntrance from "#src/components/World/Landmark/DomainEntrance/Index.vue";
 import WorldLandmarkStatue from "#src/components/World/Landmark/Statue/Index.vue";
 import WorldLandmarkTree from "#src/components/World/Landmark/Tree/Index.vue";
 import { LandmarkKind } from "#src/models/world/LandmarkKind";

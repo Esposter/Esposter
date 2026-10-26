@@ -262,6 +262,8 @@ const emit = defineEmits<{
   charge: [];
   coldDamage: [damage: number];
   defeat: [enemy: Enemy, enemyDrops: EnemyDrops];
+  enterCombat: [];
+  leaveCombat: [];
   ready: [];
   respawn: [spawnKey: string];
   saveRespawn: [spawnKey: string, respawnAt: string];
@@ -624,6 +626,8 @@ onUnmounted(() => {
       @camp-cleared="(camp) => emit('campCleared', camp)"
       @camp-locks="(locks) => emit('campLocks', locks)"
       @defeat="(enemy, enemyDrops) => emit('defeat', enemy, enemyDrops)"
+      @enter-combat="emit('enterCombat')"
+      @leave-combat="emit('leaveCombat')"
       @respawn="(spawnKey) => emit('respawn', spawnKey)"
       @save-respawn="(spawnKey, respawnAt) => emit('saveRespawn', spawnKey, respawnAt)"
       @shield-break="(enemy) => emit('shieldBreak', enemy)"

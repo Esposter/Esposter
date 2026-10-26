@@ -1968,7 +1968,6 @@ useWorldSaveSync({
         ref="windrise"
         :last-teleport-at
         :trounce-blossoms
-        :jump-pose
         :mining-outcrop-places="standingMiningOutcrops"
         :oculus-places="unfoundOculusPlaces"
         :active-character-id="getActiveCharacterId(party)"
