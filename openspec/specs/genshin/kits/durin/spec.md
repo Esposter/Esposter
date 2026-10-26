@@ -12,7 +12,7 @@ Durin's normal attacks SHALL be four strikes, a charged attack, a collision atta
 
 - **GIVEN** Durin is the character on the field
 - **WHEN** the player presses the attack button repeatedly
-- **THEN** his four strikes land at 11, 9, 14 and 37 frames into their animations, the third strike's two hits at 14 and 37, and the fourth at 38 frames
+- **THEN** his four strikes land at 11, 9, 14 and 38 frames into their animations, the third strike's two hits at 14 and 37, and the fourth at 38 frames
 
 #### Scenario: Charged attack hits the circle ahead of him
 
