@@ -1,6 +1,11 @@
+import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitHealthChangedEvent } from "#src/models/kit/KitHealthChangedEvent";
+
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { FIXED_STEP_SECONDS } from "#src/services/constants";
 import { createNeuvilletteKitBehaviour, NEUVILLETTE_CHARACTER_ID } from "#src/services/kit/characters/neuvilletteKit";
@@ -135,5 +140,71 @@ describe("the burst's droplets", () => {
       ...Array.from({ length: 19 }, () => 5),
       6,
     ]);
+  });
+});
+
+const createNeuvilletteCombatant = (constellationCount: number): Combatant => ({
+  ascension: 0,
+  attributes: computeCharacterAttributes([]),
+  characterId: NEUVILLETTE_CHARACTER_ID,
+  constellationCount,
+  elementalResonances: [],
+  kit: NEUVILLETTE_KIT,
+  level: 90,
+});
+
+// Neuvillette healed by a fifth of his Max HP
+const createHealEvent = (): KitHealthChangedEvent => ({
+  bondOfLifeShare: 0,
+  characterId: NEUVILLETTE_CHARACTER_ID,
+  healthShare: 0.2,
+  isFallRefused: false,
+  kind: KitEventKind.HealthChanged,
+  overflowHealthShare: 0,
+});
+
+const countDroplets = (context: KitContext): number =>
+  context.kitEffectState.effects.filter(
+    (effect) => effect.kind === "field" && effect.id === SOURCEWATER_DROPLET_FIELD_ID && effect.secondsRemaining > 0,
+  ).length;
+
+describe("constellation 4's droplet on a heal", () => {
+  test("spawns a droplet when he is healed on the field, then waits 4 seconds before the next", () => {
+    expect.hasAssertions();
+    const combatant = createNeuvilletteCombatant(4);
+    const context = createKitTestContext(combatant);
+    const behaviour = createNeuvilletteKitBehaviour({ kit: NEUVILLETTE_KIT, readHits: () => [] });
+    behaviour.onKitEvent?.(createHealEvent(), context, combatant);
+    expect(countDroplets(context)).toBe(1);
+    behaviour.onKitEvent?.(createHealEvent(), context, combatant);
+    expect(countDroplets(context)).toBe(1);
+    stepKitSeconds(context, 4.1);
+    behaviour.onKitEvent?.(createHealEvent(), context, combatant);
+    expect(countDroplets(context)).toBe(2);
+  });
+
+  test("spawns no droplet below constellation 4", () => {
+    expect.hasAssertions();
+    const combatant = createNeuvilletteCombatant(3);
+    const context = createKitTestContext(combatant);
+    createNeuvilletteKitBehaviour({ kit: NEUVILLETTE_KIT, readHits: () => [] }).onKitEvent?.(
+      createHealEvent(),
+      context,
+      combatant,
+    );
+    expect(countDroplets(context)).toBe(0);
+  });
+
+  test("spawns no droplet while another member is on the field", () => {
+    expect.hasAssertions();
+    const combatant = createNeuvilletteCombatant(4);
+    const otherCombatant = { ...createNeuvilletteCombatant(0), characterId: 10_000_049 };
+    const context = { ...createKitTestContext(combatant), activeCombatant: otherCombatant };
+    createNeuvilletteKitBehaviour({ kit: NEUVILLETTE_KIT, readHits: () => [] }).onKitEvent?.(
+      createHealEvent(),
+      context,
+      combatant,
+    );
+    expect(countDroplets(context)).toBe(0);
   });
 });

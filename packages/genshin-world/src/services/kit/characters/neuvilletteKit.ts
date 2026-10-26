@@ -1,14 +1,14 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
-import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
-import type { GroundPoint } from "genshin-engine";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { createEquitableJudgementLength } from "#src/services/kit/characters/neuvilletteEquitableJudgement";
+import { createSourcewaterDropletPoint } from "#src/services/kit/createSourcewaterDropletPoint";
 import { castSourcewaterDroplet } from "#src/services/kit/effects/castSourcewaterDroplet";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
-import { getKitBodyPoint } from "#src/services/kit/getKitBodyPoint";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 
 export const NEUVILLETTE_CHARACTER_ID = 10_000_087;
 
@@ -42,12 +42,11 @@ const getPassiveBonuses = (combatant: Combatant, healthShare: number): { amount:
 // Evaluation decides its length from the Sourcewater Droplets in its pick-up area, and its waves and HP drains are
 // Queued as it runs. It spends no stamina. The burst's three ticks spawn the droplets the judgement picks up.
 // Spiritbreath Thorn's aligned 10-second Cooldown is not built, as the skill's own twelve seconds always outlast it.
-// Ascension 4's Hydro DMG Bonus is built. Not built yet: Ascension 1, which raises the judgement by the reactions it
-// Counts; the waves' internal cooldown, which the enum has no tag for; the end lag of the action the charge is
-// Cancelled into (the default is used); and his constellations. Constellation 1 needs Past Draconic Glories from the
-// Ascension talent Heir to the Ancient Sea's Authority, Constellation 2 needs that talent's CRIT DMG per Past Draconic
-// Glories, Constellation 4 needs Sourcewater Droplets generated when he is healed, and Constellation 6 needs
-// Sourcewater Droplets and the judgement's currents.
+// Ascension 4's Hydro DMG Bonus and Constellation 4's droplet on a heal are built. Not built yet: Ascension 1, which
+// Raises the judgement by the reactions it counts; the waves' internal cooldown, which the enum has no tag for; the end
+// Lag of the action the charge is cancelled into (the default is used); and Constellations 1, 2 and 6. Constellation 1
+// Needs Past Draconic Glories from the Ascension talent Heir to the Ancient Sea's Authority, Constellation 2 needs that
+// Talent's CRIT DMG per Past Draconic Glories, and Constellation 6 needs the judgement's currents.
 
 // Measured: gcsim v2.47.2 (MIT) neuvillette/burst.go: each of the burst's three ticks spawns three, two and one
 // Sourcewater Droplets, each at a random point within its range of its offset from the player, ahead and to its side.
@@ -72,18 +71,14 @@ const DROPLET_TICKS: { offsets: { forward: number; right: number }[]; range: [nu
   { offsets: [{ forward: 6, right: 3.3 }], range: [0.5, 1.2] },
 ];
 
-// A point within the range of a centre, its radius drawn by area as gcsim's CalcRandomPointFromCenter draws it
-const createDropletPoint = (
-  body: KitBody,
-  { forward, right }: { forward: number; right: number },
-  [minimum, maximum]: [number, number],
-  random: () => number,
-): GroundPoint => {
-  const centre = getKitBodyPoint(body, forward, right);
-  const radius = Math.sqrt(minimum * minimum + random() * (maximum * maximum - minimum * minimum));
-  const bearing = random() * 2 * Math.PI;
-  return { x: centre.x + Math.cos(bearing) * radius, z: centre.z + Math.sin(bearing) * radius };
-};
+// Measured: gcsim v2.47.2 (MIT) neuvillette/cons.go, Constellation 4 spawns a Sourcewater Droplet 8 metres ahead of him, at
+// 1.3 to 3 metres from that point, each time he is healed on the field, once every 4 seconds
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/neuvillette/cons.go
+const CONSTELLATION_4 = 4;
+const CONSTELLATION_4_DROPLET_FORWARD = 8;
+const CONSTELLATION_4_DROPLET_RANGE: [number, number] = [1.3, 3];
+const CONSTELLATION_4_ICD_ID = "neuvillette-c4-icd";
+const CONSTELLATION_4_ICD_SECONDS = 4;
 
 export const createNeuvilletteKitBehaviour = ({
   kit,
@@ -100,7 +95,7 @@ export const createNeuvilletteKitBehaviour = ({
             castSourcewaterDroplet(
               tick.kitEffectState,
               characterId,
-              createDropletPoint(tick.body, offset, droplets.range, tick.random),
+              createSourcewaterDropletPoint(tick.body, offset, droplets.range, tick.random),
             );
         });
       }
@@ -108,4 +103,27 @@ export const createNeuvilletteKitBehaviour = ({
   },
   chargedAttack: { decideLength: createEquitableJudgementLength(readHits("judgement")) },
   getPassiveBonuses,
+  // Constellation 4 is read from the heals that restore him while he is on the field, from any healer
+  onKitEvent: (event, { activeCombatant, body, kitEffectState, random }, combatant) => {
+    if (event.kind !== KitEventKind.HealthChanged) return;
+    const { characterId, constellationCount } = combatant;
+    if (
+      constellationCount < CONSTELLATION_4 ||
+      event.characterId !== characterId ||
+      event.healthShare <= 0 ||
+      activeCombatant.characterId !== characterId ||
+      !startKitCooldown(kitEffectState, characterId, CONSTELLATION_4_ICD_ID, CONSTELLATION_4_ICD_SECONDS)
+    )
+      return;
+    castSourcewaterDroplet(
+      kitEffectState,
+      characterId,
+      createSourcewaterDropletPoint(
+        body,
+        { forward: CONSTELLATION_4_DROPLET_FORWARD, right: 0 },
+        CONSTELLATION_4_DROPLET_RANGE,
+        random,
+      ),
+    );
+  },
 });

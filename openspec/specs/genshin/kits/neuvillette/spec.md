@@ -1,6 +1,6 @@
 ## Purpose
 
-Neuvillette's kit as built, with his three hydro strikes, Equitable Judgment, his plunges, O Tears, I Shall Repay with its Spiritbreath Thorn, O Tides, I Have Returned's first hit and two Waterfalls, and the burst's droplets, with what is left of his passives and constellations.
+Neuvillette's kit as built, with his three hydro strikes, Equitable Judgment, his plunges, O Tears, I Shall Repay with its Spiritbreath Thorn, O Tides, I Have Returned's first hit and two Waterfalls, the burst's droplets and Constellation 4's droplet on a heal, with what is left of his passives and constellations.
 
 ## Requirements
 
@@ -67,12 +67,29 @@ Neuvillette's charged attack SHALL be Equitable Judgment, held: its legal evalua
 - **WHEN** the player casts O Tides, I Have Returned
 - **THEN** three, two and one Sourcewater Droplets are left at 95, 135 and 154 frames, each within its range of its offset from the player
 
+### Requirement: Constellation 4's droplet on a heal
+
+From Constellation 4, each heal that restores Neuvillette while he is on the field SHALL spawn a Sourcewater Droplet 8 metres ahead of him, 1.3 to 3 metres from that point, once every 4 seconds.
+
+#### Scenario: A heal spawns a droplet, then waits out the interval
+
+- **GIVEN** Neuvillette has Constellation 4 and is on the field
+- **WHEN** he is healed, and healed again within 4 seconds
+- **THEN** one droplet is spawned, and the second heal spawns none
+- **AND** a heal after 4 seconds spawns the next
+
+#### Scenario: A heal off the field, or below Constellation 4, spawns nothing
+
+- **GIVEN** Neuvillette has Constellation 3, or another member is on the field
+- **WHEN** he is healed
+- **THEN** no droplet is spawned
+
 ### Requirement: Unbuilt Neuvillette effects
 
-Spiritbreath Thorn's aligned cooldown, and Neuvillette's Ascension 1 passive and constellations SHALL NOT take effect.
+Spiritbreath Thorn's aligned cooldown, Neuvillette's Ascension 1 passive, and Constellations 1, 2 and 6 SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Neuvillette has his Ascension 1 passive unlocked, or a constellation
+- **GIVEN** Neuvillette has his Ascension 1 passive unlocked, or Constellation 1, 2 or 6
 - **WHEN** the player fights with Neuvillette
 - **THEN** those effects have no effect
