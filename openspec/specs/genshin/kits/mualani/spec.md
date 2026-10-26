@@ -72,3 +72,7 @@ Mualani's skill press SHALL enter her Nightsoul Blessing with 60 Nightsoul point
 - **GIVEN** Mualani is in the Nightsoul Blessing
 - **WHEN** the player presses Mualani's skill
 - **THEN** she is no longer in the blessing
+
+## Open
+
+- [ ] **Plunge attacks deal no poise** — contradicted by `~/Esposter/cache/genshin-wiki/Category_Mualani_Talents.json`: its plunge rows give poise 50 and 100, which the design takes.
