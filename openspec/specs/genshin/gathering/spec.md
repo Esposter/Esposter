@@ -155,5 +155,5 @@ A broken ore SHALL stand again on its own respawn: an iron chunk at the daily re
 - [ ] **A local specialty stands again 46 hours after its pick** — no source yet: the Local Specialty wiki page is not in `~/Esposter.noindex/cache/genshin-wiki/`, and no 46-hour value was found in the gathering respawn code checked.
 - [ ] **Gathering points stand where the official map marks their item** — no source yet: no label-tree file matching `teyvat`, `map-label` or `labels` was found under `~/Esposter.noindex/genshin-parity/references/`.
 - [ ] **F picks a gathering point into the bag, and F does not pick an ore** — no source yet: no gathering pick path was found in the files checked, so the pick, full-bag and no-ore scenarios are unchecked.
-- [ ] **Ningguang's plunge is not blunt, as the wiki's table excepts it** — no source yet: the wiki's Blunt Attacks table is not cached; `packages/genshin-world/src/services/kit/CharacterIdBluntActionMap.ts` carries the exception.
+- [ ] **Ningguang's plunge is not blunt, as the wiki's table excepts it** — no source yet: the wiki's Blunt Attacks table is not cached; the code carries the exception.
 - [ ] **A burst breaks a crystal chunk in one hit** — no source yet: the Zhongli clip `yt-EWYe-MYjmqU-ore-zhongli.mp4` was not frame-checked in this pass.
