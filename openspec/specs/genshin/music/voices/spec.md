@@ -90,4 +90,3 @@ Noise SHALL be solved for every voice together, band by band, so that the voices
 ## Open
 
 - [ ] **A voice rings on as long as the game's notes do rather than dying quickly** — no source yet: no decay comparison with the game's notes is recorded.
-- [ ] **A source's notes are transcribed, pruned and split into three voices by register** — no source yet: game data or a snapshot that holds this behaviour
