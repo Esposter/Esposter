@@ -6,11 +6,13 @@ import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { checkIsNormalOrChargedAttack } from "#src/services/kit/checkIsNormalOrChargedAttack";
 import { createKitBody } from "#src/services/kit/createKitBody";
 import { createMaxHealthScaledBonus } from "#src/services/kit/createMaxHealthScaledBonus";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
@@ -26,6 +28,7 @@ import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
+import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 
 // Measured: gcsim (MIT) layla/burst.go, Starlight Slug's field holds a circle of radius 12 round the body. Each tick strikes
@@ -39,6 +42,7 @@ export const LAYLA_CHARACTER_ID = 10_000_074;
 export const LAYLA_NIGHT_STARS_ID = "layla-night-stars";
 export const LAYLA_SHOOTING_STARS_ID = "layla-shooting-stars";
 const LAYLA_NIGHT_STAR_TICK_ID = "layla-night-star-tick";
+const LAYLA_DAWN_STAR_ID = "layla-dawn-star";
 
 const ASCENSION_4 = 4;
 // Gcsim's a4: a Shooting Star adds 1.5% of Max HP, flat, to its damage from Ascension 4
@@ -52,6 +56,14 @@ const CONSTELLATION_2 = 2;
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_DAMAGE_BONUS = 0.4;
 const CONSTELLATION_6_NIGHT_STAR_TICK_SHARE = 0.8;
+// Constellation 4's Dawn Star, as gcsim v2.47.2 (MIT) layla/cons.go gives it: the first Shooting Star gives every
+// Deployed member the status for 3 seconds, which adds 5% of Layla's Max HP as flat damage to its Normal and Charged
+// Attacks, and it is removed 0.05 seconds after one of them lands
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/layla/cons.go
+const CONSTELLATION_4 = 4;
+const CONSTELLATION_4_MAX_HEALTH_SHARE = 0.05;
+const CONSTELLATION_4_SECONDS = 3;
+const CONSTELLATION_4_REMOVAL_SECONDS = 0.05;
 
 // Gcsim's shield.go: four Night Stars fire the Shooting Stars, and a shield's tick adds one each 1.5 seconds while it lasts.
 // A skill adds two and a burst strike one, each on its own internal cooldown
@@ -85,14 +97,26 @@ const findShootingStarTarget = ({ body, enemyMap }: KitContext): Enemy | undefin
   return target;
 };
 
+// The flat damage a Normal or Charged Attack adds while its striker carries Dawn Star, priced off Layla's Max HP
+// Her own kit reads it for her strikes, and each member's kit for its own
+const getDawnStarBonus = (
+  layla: Combatant,
+  { attackTag, combatant }: KitStrike,
+  effects: readonly KitEffect[],
+): number =>
+  checkIsNormalOrChargedAttack(attackTag) && checkIsKitStatusActive(effects, combatant.characterId, LAYLA_DAWN_STAR_ID)
+    ? createMaxHealthScaledBonus(CONSTELLATION_4_MAX_HEALTH_SHARE)(layla)
+    : 0;
+
 // Layla's behaviour: Nights of Formal Focus sets her Cryo shield, its health its flat HP plus its share of her Max HP, as
 // It is cast. Starlight Slug casts its field where she stands, each tick striking from there with a flat damage of its share
 // Of her Max HP as the burst was cast, which its talent multiplier does not scale. Her shield's tick, her skill's and her
 // Burst strikes' Night Stars fire Shooting Stars at the nearest enemy in reach, each striking its circle after its travel,
 // Her Ascension 4 adds to each, Constellation 2 gives her energy on each one's first strike, and Constellation 6 adds 40%
-// DMG to them and to Starlight Slug and shortens the Night Stars' tick. Her Ascension 1 and Constellation 4's Dawn Star are
-// Not built, and neither are Constellation 1's team shields for members not under a Curtain, which need the Cryo
-// Effectiveness a shield does not carry
+// DMG to them and to Starlight Slug and shortens the Night Stars' tick. The first Shooting Star gives each deployed
+// Member Constellation 4's Dawn Star, which adds her Max HP's share to its Normal and Charged Attacks until one lands.
+// Her Ascension 1 is not built, and neither are Constellation 1's team shields for members not under a Curtain, which
+// Need the Cryo Effectiveness a shield does not carry
 export const createLaylaKitBehaviour = ({
   readFramesList,
   readHit,
@@ -161,9 +185,18 @@ export const createLaylaKitBehaviour = ({
   // Night Star, its travel the frames the Night Stars left before it allow, and the next one is fired 0.45 seconds on. The
   // Last one ends the Shooting Stars, and restarts the tick that adds Night Stars while the shield lasts
   const fireShootingStar = (context: KitContext, combatant: Combatant, lastTarget: Enemy) => {
-    const { kitEffectState } = context;
+    const { kitEffectState, party } = context;
     const target = findShootingStarTarget(context) ?? lastTarget;
     const stars = countKitResource(kitEffectState.effects, LAYLA_CHARACTER_ID, LAYLA_NIGHT_STARS_ID);
+    // The first Shooting Star, fired at four stars, gives each deployed member Dawn Star from Constellation 4,
+    // As gcsim's loop of Shooting Stars does on its first shot
+    if (stars === NIGHT_STARS_MAXIMUM && combatant.constellationCount >= CONSTELLATION_4) {
+      for (const characterId of getDeployedCharacterIds(party))
+        addKitStatus(kitEffectState, characterId, {
+          id: LAYLA_DAWN_STAR_ID,
+          secondsRemaining: CONSTELLATION_4_SECONDS,
+        });
+    }
     const travelFrames = shootingStarTravelFrames[NIGHT_STARS_MAXIMUM - stars];
     if (travelFrames !== undefined) castShootingStar(kitEffectState, combatant, target, travelFrames);
     spendKitResource(kitEffectState, LAYLA_CHARACTER_ID, LAYLA_NIGHT_STARS_ID);
@@ -263,6 +296,13 @@ export const createLaylaKitBehaviour = ({
         });
       },
     },
+    // Dawn Star's flat damage on each deployed member's strikes, priced off her Max HP as the member whose kit this is
+    getPartyStrikeBonus: (member, strike, _enemy, _party, effects) => ({
+      additiveBaseDamageBonus: getDawnStarBonus(member, strike, effects),
+    }),
+    // Dawn Star's flat damage on her own strikes
+    getStrikeAdditiveBaseDamageBonus: (strike, _enemy, _party, effects) =>
+      getDawnStarBonus(strike.combatant, strike, effects),
     onKitEvent: (event, context, combatant) => {
       const { kitEffectState } = context;
       // Any member's skill adds two Night Stars while the shield holds, as gcsim subscribes to every skill's use
@@ -278,6 +318,20 @@ export const createLaylaKitBehaviour = ({
         if (!checkIsKitStatusActive(kitEffectState.effects, LAYLA_CHARACTER_ID, LAYLA_SHOOTING_STARS_ID))
           spendKitResource(kitEffectState, LAYLA_CHARACTER_ID, LAYLA_NIGHT_STARS_ID);
         removeKitEffects(kitEffectState, (effect) => effect.kind === "field" && effect.id === LAYLA_NIGHT_STAR_TICK_ID);
+      } else if (
+        event.kind === KitEventKind.EnemyHit &&
+        checkIsNormalOrChargedAttack(event.attackTag) &&
+        checkIsKitStatusActive(kitEffectState.effects, event.striker.characterId, LAYLA_DAWN_STAR_ID)
+      ) {
+        // Once a holder's Normal or Charged Attack lands, its Dawn Star ends 0.05 seconds on, as gcsim queues it
+        const { characterId } = event.striker;
+        scheduleKitTask(kitEffectState, LAYLA_CHARACTER_ID, CONSTELLATION_4_REMOVAL_SECONDS, (tick) =>
+          removeKitEffects(
+            tick.kitEffectState,
+            (effect) =>
+              effect.kind === "status" && effect.characterId === characterId && effect.id === LAYLA_DAWN_STAR_ID,
+          ),
+        );
       }
     },
     skill: {

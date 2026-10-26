@@ -1,6 +1,6 @@
 ## Purpose
 
-Layla's kit as built, with her strikes, charged attack, plunges, Nights of Formal Focus's hit and shield, and Starlight Slug's field, her Night Stars with the Shooting Stars they fire, Ascension 4, Constellation 2 and Constellation 6, and what is left of her passives.
+Layla's kit as built, with her strikes, charged attack, plunges, Nights of Formal Focus's hit and shield, and Starlight Slug's field, her Night Stars with the Shooting Stars they fire, Ascension 4, Constellation 2, Constellation 4's Dawn Star and Constellation 6, and what is left of her passives.
 
 ## Requirements
 
@@ -126,12 +126,40 @@ Constellation 6 SHALL give Starlight Slug's ticks and each Shooting Star 40% DMG
 - **WHEN** the Night Stars tick comes due
 - **THEN** the next tick comes 1.2 seconds after it, not 1.5
 
-### Requirement: Ascension 1, Constellation 4, and Constellation 1's team shields not yet built
+### Requirement: Constellation 4's Dawn Star
 
-Layla's Ascension 1, her Constellation 4, and Constellation 1's team shields SHALL NOT take effect.
+From Constellation 4, the first Shooting Star SHALL give every deployed member Dawn Star for 3 seconds, which SHALL add 5% of Layla's Max HP as flat damage to that member's Normal and Charged Attacks until one lands.
+
+#### Scenario: The first Shooting Star gives the team Dawn Star
+
+- **GIVEN** Layla has Constellation 4 and four Night Stars
+- **WHEN** the first Shooting Star fires
+- **THEN** every deployed member gains Dawn Star for 3 seconds
+
+#### Scenario: Dawn Star adds damage to a Normal or Charged Attack
+
+- **GIVEN** a deployed member carries Dawn Star
+- **WHEN** its Normal or Charged Attack hits an enemy
+- **THEN** the hit deals 5% of Layla's Max HP as additional flat damage
+
+#### Scenario: Dawn Star ends after a hit
+
+- **GIVEN** a deployed member carries Dawn Star
+- **WHEN** its Normal or Charged Attack lands on an enemy
+- **THEN** its Dawn Star is removed 0.05 seconds later
+
+#### Scenario: Below Constellation 4 the team gets no Dawn Star
+
+- **GIVEN** Layla has Constellation 3
+- **WHEN** the first Shooting Star fires
+- **THEN** no member gains Dawn Star
+
+### Requirement: Ascension 1 and Constellation 1's team shields not yet built
+
+Layla's Ascension 1 and Constellation 1's team shields SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Layla has Ascension 1 or Constellation 4 unlocked
+- **GIVEN** Layla has Ascension 1 unlocked
 - **WHEN** the player fights with Layla
 - **THEN** that effect has no effect
