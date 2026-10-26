@@ -13,6 +13,7 @@ import { writeFriendEntries } from "#src/services/user/writeFriendEntries";
 import { writeThreadFollowEntry } from "#src/services/user/writeThreadFollowEntry";
 import { writeImageEntries } from "#src/services/user/writeImageEntries";
 import { writeLikeEntries } from "#src/services/user/writeLikeEntries";
+import { writeMembershipEntry } from "#src/services/user/writeMembershipEntry";
 import { writeModerationActionEntry } from "#src/services/user/writeModerationActionEntry";
 import { writeModerationEntry } from "#src/services/user/writeModerationEntry";
 import { writeOwnedRoomEntries } from "#src/services/user/writeOwnedRoomEntries";
@@ -52,6 +53,7 @@ export const buildUserDataArchive = async (userId: UserInAuth["id"], blobName: s
     await writeRoomEntries(archive, userId);
     await writeCallSessionEntry(archive, userId);
     await writeThreadFollowEntry(archive, userId);
+    await writeMembershipEntry(archive, userId);
     await writeOwnedRoomEntries(archive, userId);
     await writeResourceEntries(archive, userId);
     await writeSaveEntries(archive, userId);

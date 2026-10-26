@@ -38,10 +38,12 @@ import {
   resourceWorkingAssetsInResource,
   RoomType,
   roomEmojisInMessage,
+  roomRolesInMessage,
   roomsInMessage,
   searchHistoriesInMessage,
   threadFollowsInMessage,
   usersInAuth,
+  usersToRoomRolesInMessage,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
 import { jsonDateParse, takeOne } from "@esposter/shared";
@@ -185,6 +187,7 @@ describe(buildUserDataArchive, () => {
         "follows.json",
         "friends.json",
         "images/ProfileImage",
+        "memberships.json",
         "likes.json",
         "moderation-actions.json",
         "moderation.json",
@@ -517,6 +520,45 @@ describe(buildUserDataArchive, () => {
     // A follow stores no time, so the exact shape leaves one out
     expect(readEntryJson(entries, "follows.json")).toStrictEqual([
       { isUnfollowed: true, roomId: room.id, threadRootRowKey },
+    ]);
+  });
+
+  test("writes the person's memberships in rooms they do not own, with their roles, and no other member's", async () => {
+    expect.hasAssertions();
+
+    const userId = crypto.randomUUID();
+    const otherUserId = crypto.randomUUID();
+    const blobName = `${crypto.randomUUID()}.zip`;
+    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
+    const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
+    const ownedRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
+    const role = takeOne(await mockDb.insert(roomRolesInMessage).values({ name, roomId: room.id }).returning());
+    const membership = takeOne(
+      await mockDb.insert(usersToRoomsInMessage).values({ displayName: name, roomId: room.id, userId }).returning(),
+    );
+    // The other member's row and the person's row in a room they own are not the membership written
+    await mockDb.insert(usersToRoomsInMessage).values([
+      { roomId: room.id, userId: otherUserId },
+      { roomId: ownedRoom.id, userId },
+    ]);
+    await mockDb.insert(usersToRoomRolesInMessage).values([
+      { roleId: role.id, roomId: room.id, userId },
+      { roleId: role.id, roomId: room.id, userId: otherUserId },
+    ]);
+
+    await buildUserDataArchive(userId, blobName);
+    const entries = readArchiveEntries(blobName);
+
+    // The membership keeps the person's own settings and the time they last read the room, and the roles they hold there
+    expect(readEntryJson(entries, "memberships.json")).toStrictEqual([
+      {
+        displayName: membership.displayName,
+        isHidden: membership.isHidden,
+        lastReadAt: membership.lastReadAt,
+        notificationType: membership.notificationType,
+        roles: [{ id: role.id, name }],
+        roomId: room.id,
+      },
     ]);
   });
 
