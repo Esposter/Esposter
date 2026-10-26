@@ -1,6 +1,6 @@
 ## Purpose
 
-How a screen is shot and scored against its reference: the numbers first, FLIP as the approval number, and the committed scores that show what a change moved. A named reference's failure rethrows, while `--all` reports a throw as `failed:` and goes on (`scripts/src/services/genshinParity/commands/compareCommand.ts`, lines 77 to 79), and a reference in another language hands its screen that language's words (`packages/genshin-world/parity/main.ts`, lines 85 to 88).
+How a screen is shot and scored against its reference: the numbers first, FLIP as the approval number, and the committed scores that show what a change moved.
 
 ## Requirements
 
@@ -69,8 +69,8 @@ Each comparison SHALL rewrite its reference's row of the committed scores, so th
 
 - **GIVEN** a reference whose comparison throws
 - **WHEN** the comparisons run for all references
-- **THEN** the reference's row is reported as failed (see Open)
-- **AND** the run goes on (see Open)
+- **THEN** the reference's row is reported as failed
+- **AND** the run goes on
 
 ### Requirement: A screen is never approved without a comparison to its reference
 
@@ -110,4 +110,4 @@ A public video that letterboxes the game SHALL be cropped to its screen, and a r
 
 - **GIVEN** a reference recorded in another language
 - **WHEN** its screen is compared
-- **THEN** the screen shows the game's words in that language (see Open)
+- **THEN** the screen shows the game's words in that language
