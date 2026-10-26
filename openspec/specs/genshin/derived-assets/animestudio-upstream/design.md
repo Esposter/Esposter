@@ -1,6 +1,6 @@
 # AnimeStudio upstream defects
 
-The Ooz source AnimeStudio vendors (`AnimeStudio.Ooz/kraken.cpp` at the pinned commit) `~/Esposter.noindex/cache/animestudio-db860e1f/AnimeStudio.Ooz/kraken.cpp` has the defect below. This is drafted text for Escartem/AnimeStudio, kept here and not filed or posted anywhere.
+The Ooz source AnimeStudio vendors at the pinned commit, `~/Esposter.noindex/cache/animestudio-db860e1f/AnimeStudio.Ooz/kraken.cpp`, has the defect below. This is drafted text for Escartem/AnimeStudio, kept here and not filed or posted anywhere.
 
 **Title:** Ooz: the 8-byte match copy reads output not yet written when the match distance is under 8
 
