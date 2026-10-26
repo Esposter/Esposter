@@ -18,7 +18,7 @@ Jean's five strikes and charged attack SHALL be her normal attacks.
 
 - **GIVEN** Jean is the character on the field
 - **WHEN** the player holds the attack button to charge
-- **THEN** the charged attack strikes the enemies in a 160-degree fan ahead of her (`~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/jean/charge.go` lines 40 to 45: `NewCircleHitOnTargetFanAngle` with an angle of 160)
+- **THEN** the charged attack strikes the enemies in a 160-degree fan ahead of her
 
 ### Requirement: Gale Blade releases on the release of its press or hold
 
