@@ -40,6 +40,5 @@ Lohen's kit is its record and one behaviour module, `createLohenKitBehaviour`, a
 
 ## Open
 
-- [ ] **Lohen's skill is a named list of four hits** — no source yet: the cached wiki's Etched rows run hit1 to hit5, with hit3 three times and hit5 in two parts. Checked the cached Category:Lohen Talents page (its file is titled Moratorium on Questioning): it names Etched Into Bone and Soul but gives no hit rows, and the Lohen character page is not cached.
 - [ ] **Evilsbane Blade's 500%** — no source yet: neither the cached wiki nor the dump's English text map holds Evilsbane Blade text.
 - [ ] **The skill's 20-frame animation** — no source yet: gcsim has no Lohen folder, and the cached wiki's Lohen rows give no animation frames. Checked the cached Category:Lohen Talents page (titled Moratorium on Questioning): it gives no animation frames.
