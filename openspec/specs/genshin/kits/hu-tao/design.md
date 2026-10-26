@@ -4,8 +4,8 @@ Hu Tao's kit is its record and one behaviour module, `createHuTaoKitBehaviour`, 
 
 ## Open
 
-- **The stance's ATK rise is capped in gcsim, and the kit has no cap.** gcsim takes the share of Max HP at most four times her base ATK (`skill.go` lines 35 to 38), while the kit reads the share alone. Whether the cap binds at her levels is not checked.
-- **Constellation 1's zero stamina has no cached source.** gcsim has no stamina rule for her, and the cached Hu Tao wiki page names Crimson Bouquet without its wording, so the zero multiplier rests on the kit's own `getChargedAttackStaminaMultiplier` (`huTaoKit.ts`, line 150) until the constellation's text is cached.
+- [ ] **The stance's ATK rise reads the share of Max HP with no cap** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/hutao/skill.go`: gcsim caps the share at four times her base ATK (lines 35 to 38). Whether the cap binds at her levels is not checked.
+- [ ] **Constellation 1's charged attack costs zero stamina** — no source yet: gcsim has no stamina rule for her, and the cached Hu Tao wiki page (`~/Esposter.noindex/cache/genshin-wiki/Category_Hu_Tao_Talents.json`) names Crimson Bouquet without its wording, so the zero multiplier rests on the kit's own `getChargedAttackStaminaMultiplier` (`packages/genshin-world/src/services/kit/characters/huTaoKit.ts`, line 150) until the constellation's text is cached.
 
 ## Key files
 
@@ -16,5 +16,5 @@ Hu Tao's kit is its record and one behaviour module, `createHuTaoKitBehaviour`, 
 ## Sources
 
 - The game's English text for Ominous Rainfall, TextMap key 3620258903 of its `TextMap_MediumEN.json`: "Increases the Blood Blossom DMG by an amount equal to 10% of Hu Tao's Max HP at the time the effect is applied", and Spirit Soother will also apply the Blood Blossom effect.
-- [gcsim v2.47.2 Hu Tao plunge file](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/hutao/plunge.go), MIT: the plunges' poise, 150 for the high plunge and 100 for the low. The v2.47.2 source is on disk at `cache/gcsim-v2.47.2`, which the line references above read.
-- [Secret Spear of Wangsheng](https://genshin-impact.fandom.com/wiki/Secret_Spear_of_Wangsheng), [Spirit Soother](https://genshin-impact.fandom.com/wiki/Spirit_Soother) and [Guide to Afterlife](https://genshin-impact.fandom.com/wiki/Guide_to_Afterlife), Genshin Impact Wiki: the poise of her strikes, charged attack and collision, the Paramita's charged attack, Spirit Soother's hit and Blood Blossom. The cached pages, with Flutter By and Sanguine Rouge, are in `cache/genshin-wiki/Category_Hu_Tao_Talents.json`.
+- [gcsim v2.47.2 Hu Tao plunge file](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/hutao/plunge.go), MIT: the plunges' poise, 150 for the high plunge and 100 for the low. The v2.47.2 source is on disk at `~/Esposter.noindex/cache/gcsim-v2.47.2`, which the line references above read.
+- [Secret Spear of Wangsheng](https://genshin-impact.fandom.com/wiki/Secret_Spear_of_Wangsheng), [Spirit Soother](https://genshin-impact.fandom.com/wiki/Spirit_Soother) and [Guide to Afterlife](https://genshin-impact.fandom.com/wiki/Guide_to_Afterlife), Genshin Impact Wiki: the poise of her strikes, charged attack and collision, the Paramita's charged attack, Spirit Soother's hit and Blood Blossom. The cached pages, with Flutter By and Sanguine Rouge, are in `~/Esposter.noindex/cache/genshin-wiki/Category_Hu_Tao_Talents.json`.
