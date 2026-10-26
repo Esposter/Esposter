@@ -202,3 +202,4 @@ The Paimon menu SHALL keep a system's entry disabled until the player reaches th
 
 - [ ] **Ten Mora for each point of Adventure EXP past rank 60** — no source yet: the game's text converts the EXP to Mora (text 365981086 in `TextMap_MediumEN.json`) but gives no rate, and the wiki's Adventure Rank page is not in the cache.
 - [ ] **Five Adventure EXP for each point of Original Resin spent** — no source yet: neither the game's text nor the dump's tables checked here gives the resin's Adventure EXP rate.
+- [ ] **Katheryne gives a reached rank's reward once, at a branch of the Adventurers' Guild** — no source yet: game data or a snapshot that holds this behaviour
