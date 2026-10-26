@@ -1,6 +1,6 @@
 ## Purpose
 
-Chasca's kit as built: her four normal attacks, fully-charged Aimed Shot, collision and low plunge, Spirit Reins' Resonance and Galesplitting, and what is left of her Nightsoul Blessing, its Shadowhunt Shells and the burst's other shells.
+Chasca's kit as built: her four normal attacks, fully-charged Aimed Shot, collision and low plunge, Spirit Reins' Resonance and Galesplitting, and what is left of her Nightsoul Blessing, its Shadowhunt Shells and the burst's other shells. The sources of its numbers are cited inline on the [design page](design.md), which also lists what is open, including her charged attack's stamina.
 
 ## Requirements
 
