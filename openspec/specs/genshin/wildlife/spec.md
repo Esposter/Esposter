@@ -6,13 +6,13 @@ The official map's fleeing birds and beasts, the White Pigeon, the Crimson Fox a
 
 ### Requirement: Fleeing animals placed where the official map marks them
 
-The White Pigeon, the Crimson Fox and the Squirrel SHALL be placed at the places the official map marks them on the ground of a mapped region, and no other animal SHALL be placed (`scripts/src/services/genshinAssets/wildlife/buildWildlifePlaces.ts`, `scripts/src/services/genshinAssets/points/buildFittedMapPointSlices.ts`).
+The White Pigeon, the Crimson Fox and the Squirrel SHALL be placed at the places the official map marks them on the ground of a mapped region, and no other animal SHALL be placed.
 
 #### Scenario: Fleeing kind on the ground
 
 - **GIVEN** the official map marks a Squirrel on the ground of a mapped region
 - **WHEN** the animals are placed
-- **THEN** the Squirrel is placed at its marked place (`scripts/src/services/genshinAssets/wildlife/buildWildlifePlaces.ts`)
+- **THEN** the Squirrel is placed at its marked place
 
 #### Scenario: Underground animal left out
 
@@ -28,7 +28,7 @@ The White Pigeon, the Crimson Fox and the Squirrel SHALL be placed at the places
 
 ### Requirement: Animal runs from the character within its escape radius
 
-An animal SHALL run straight away from the character when the character comes within four metres of it (`packages/genshin-world/src/services/wildlife/stepWildlife.ts`, `packages/genshin-world/src/services/wildlife/constants.ts`, `WILDLIFE_ESCAPE_RADIUS` of 4).
+An animal SHALL run straight away from the character when the character comes within four metres of it (`WILDLIFE_ESCAPE_RADIUS` of 4).
 
 #### Scenario: Character comes near
 
@@ -39,7 +39,7 @@ An animal SHALL run straight away from the character when the character comes wi
 #### Scenario: Escape time passes
 
 - **GIVEN** an animal is running from the character
-- **WHEN** one second has passed (`packages/genshin-world/src/services/wildlife/constants.ts`, `WILDLIFE_ESCAPE_SECONDS` of 1)
+- **WHEN** one second has passed (`WILDLIFE_ESCAPE_SECONDS` of 1)
 - **THEN** the animal stands idle at its place
 - **AND** it runs again only if the character is still within reach
 
@@ -48,11 +48,11 @@ An animal SHALL run straight away from the character when the character comes wi
 - **GIVEN** an animal is running and the character has gone
 - **WHEN** the animal's escape time runs out
 - **THEN** the animal keeps running on its last heading until then
-- **AND** it then stands idle (`packages/genshin-world/src/services/wildlife/stepWildlife.ts`)
+- **AND** it then stands idle
 
 ### Requirement: Every animal of the slice exists from the scene's load
 
-Every animal of Mondstadt's slice SHALL exist in Windrise's scene from the scene's load (`packages/genshin-world/src/services/wildlife/createWildlife.ts`, `packages/genshin-world/src/components/World/Windrise/Index.vue`).
+Every animal of Mondstadt's slice SHALL exist in Windrise's scene from the scene's load.
 
 #### Scenario: Animals present on load
 
@@ -79,3 +79,5 @@ Animals SHALL carry no drops and offer no material sources yet, and striking one
 - [ ] **An animal under the ground is left out** — no source yet: the ground-layer filter in the map-point reader was not read.
 - [ ] **Animals carry no drops or material sources, and striking one has no effect** — no source yet: the code gives drops (`WildlifeKindDropMap.ts`) and strikes animals through `strikeKitEnemies.ts`, so this requirement is stale.
 - [ ] **Mondstadt's slice holds about a hundred animals** — no source yet: the published slice is in hosted storage, not the local dump, so its count was not checked.
+- [ ] **The White Pigeon, the Crimson Fox and the Squirrel are placed where the official map marks them** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **An animal running from a character that has gone keeps its last heading until its escape time runs out** — no source yet: game data or a snapshot that holds this behaviour
