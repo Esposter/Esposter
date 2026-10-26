@@ -32,7 +32,7 @@ committed.
 | `exit-prompt` | `MenuExit` | 8.36% | 0.909 | 33.71% | 0.2227 |
 | `forge-screen` | `ForgeScreen` | 6.72% | 0.685 | 5.60% | 0.2216 |
 | `gcg-duel-board` | `GcgScreen` | 13.97% | 0.470 | 9.63% | 0.4658 |
-| `handbook-experience` | `HandbookScreen` | 5.18% | 0.932 | 2.44% | 0.2456 |
+| `handbook-experience` | `HandbookScreen` | 5.28% | 0.859 | 2.95% | 0.2516 |
 | `health-notice` | `SplashHealthNotice` | 6.17% | 0.964 | 1.51% | 0.1780 |
 | `health-notice-mainland` | `SplashHealthNotice` | 7.06% | 0.829 | 3.03% | 0.1974 |
 | `hud-paimon-button` | `HudScreen` | 1.90% | 0.936 | 4.74% | 0.1188 |
@@ -78,7 +78,7 @@ committed.
 | `title-splash-mainland` | `SplashTitle` | 3.54% | 0.925 | 1.85% | 0.1038 |
 | `weapon-screen` | `WeaponScreen` | pending: no recording of the screen yet | | | |
 | `windrise-statue-day` | `WorldScreen` | 26.73% | 0.306 | 26.74% | 0.7579 |
-| `wish-screen` | `WishScreen` | 50.96% | 0.425 | 49.28% | 0.8743 |
+| `wish-screen` | `WishScreen` | 50.94% | 0.429 | 49.24% | 0.8740 |
 | `world-level-dialog` | `MenuWorldLevelDialog` | 5.86% | 0.862 | 1.99% | 0.1965 |
 | `world-realm-placement-editor` | `WorldRealmPlacementEditor` | pending: no recording of the screen yet | | | |
 

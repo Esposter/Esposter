@@ -37,6 +37,9 @@ export const props = {
   pityMap,
   statTables,
   stellaFortunaNameTextIdMap: new Map<number, string>(),
+  // The reference shows no trial button, and no wish is yet made on the banner, so the history is empty
+  trials: [],
   wallet,
+  wishHistory: [],
   wishSchedule,
 };
