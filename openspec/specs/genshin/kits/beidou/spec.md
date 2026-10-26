@@ -76,11 +76,11 @@ Stormbreaker SHALL summon the Thunderbeast's Targe, which stands for 15 seconds 
 - **WHEN** the player switches to another member
 - **THEN** the Targe stands where that member's body is on the field
 
-#### Scenario: The Targe outlasts Beidou's fall
+#### Scenario: The Targe ends with Beidou's fall
 
 - **GIVEN** the Targe stands
 - **WHEN** Beidou falls
-- **THEN** the Targe keeps standing until its 15 seconds run out
+- **THEN** the Targe ends when Beidou falls, as the wiki's Stormbreaker lists it, before its 15 seconds run out
 
 ### Requirement: Discharges from Beidou's attacks
 
@@ -91,7 +91,7 @@ While the Thunderbeast's Targe stands, Beidou's strikes and charged attack SHALL
 - **GIVEN** the Targe stands and a discharge has not been cast in the last second
 - **WHEN** one of Beidou's strikes or her charged attack starts its hit
 - **THEN** a discharge of 1 unit of Electro lands on each enemy inside the strike's reach
-- **AND** the discharge lands even when the strike misses
+- **AND** the discharge lands only when the strike hits, as the wiki's Thunderbeast's Targe text gives it
 
 #### Scenario: A second hit within a second casts no discharge
 
@@ -136,4 +136,4 @@ From constellation four, a hit Beidou takes while she is on the field SHALL give
 
 - [ ] **The Targe outlasts Beidou's fall** — contradicted by `~/Esposter/cache/genshin-wiki/Category_Beidou_Talents.json`: Stormbreaker lists "Effects End Character Fallen" as a utility.
 - [ ] **A discharge lands even when the strike misses** — contradicted by `~/Esposter/cache/genshin-wiki/Category_Beidou_Talents.json`: discharges arise when Normal and Charged Attacks hit.
-- [ ] **Constellation 4 counts HP lost to a drown or a wildlife's charge** — no source yet: the cached Beidou page gives the constellation no text.
+- [ ] **Constellation 4 counts HP lost to a drown or a wildlife's charge** — no source yet: the cached Beidou page names the constellation "Stunning Revenge" but gives it no text.
