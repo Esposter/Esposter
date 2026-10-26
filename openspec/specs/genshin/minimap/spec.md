@@ -56,5 +56,7 @@ Any landmark or area the map gains SHALL appear on the minimap with no change of
 
 ## Open
 
-- [ ] **The marks the game's interface tree places, and their scales** — no source yet: the in-level HUD's interface tree export, which this machine does not hold (no `hud` folder under `~/Esposter.noindex/genshin-parity/extracted/`).
-- [ ] **The fan a quarter turn wide** — no source yet: the game's sight-fan image width from the tree, which this machine does not hold; the `.fan` clip in `Hud/Minimap/Index.vue` cuts a wedge of about 72 degrees, not 90.
+- [ ] **The marks the game's interface tree places, and their scales** — no source yet: the tree is held (`~/Esposter.noindex/genshin-parity/extracted/character/interface/json/GameObject/MarkAreaAnchorMiniMap.json`), but its marks and their scales are not read against the built map.
+- [ ] **The fan a quarter turn wide** — no source yet: the sight fan's image width is not found in the exported tree (`~/Esposter.noindex/genshin-parity/extracted/character/interface/json/GameObject/MarkSightFan.json` holds only its object and a 1.25 scale); the minimap's `.fan` clip cuts a wedge of about 72 degrees, not 90.
+- [ ] **The minimap keeps north at the top of a circle round the character, with its N drawn there** — no source yet: the circle's cut and the N's place are not measured against `~/Esposter.noindex/genshin-parity/references/hud-world-keys.png`.
+- [ ] **Pressing the minimap opens the map, as M does** — no source yet: the game's M binding is not read against the engine's bindings here.
