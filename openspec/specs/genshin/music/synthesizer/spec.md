@@ -1,6 +1,6 @@
 ## Purpose
 
-The engine's synthesizer that plays a music record. Each note is an oscillator over its instrument's harmonics and its noise from a looped buffer, through one gain following its envelope, and a player schedules the notes ahead of the audio clock.
+The engine's synthesizer that plays a music record. Each note is an oscillator over its instrument's harmonics and its noise from a looped buffer, through one gain following its envelope, and a player schedules the notes ahead of the audio clock `packages/genshin-engine/src/audio/createMusicPlayer.ts`.
 
 ## Requirements
 
