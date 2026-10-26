@@ -30,10 +30,11 @@ flowchart TD
 
 ## Sources
 
-- [Investigation](https://genshin-impact.fandom.com/wiki/Investigation), Genshin Impact Wiki: spots that give artifacts, ingredients, ores or Mora, and the daily cap of a hundred investigations. The page reads "The number of investigations a player can conduct in a day in the open world, is limited to 100."
-- [Daily Reset](https://genshin-impact.fandom.com/wiki/Daily_Reset), Genshin Impact Wiki: what comes back at the daily reset and around it.
+- [Investigation](https://genshin-impact.fandom.com/wiki/Investigation), Genshin Impact Wiki: spots that give artifacts, ingredients, ores or Mora, and the daily cap of a hundred investigations. The page reads "The number of investigations a player can conduct in a day in the open world, is limited to 100." That page is not on disk, so the quote is unchecked (see Open).
+- [Daily Reset](https://genshin-impact.fandom.com/wiki/Daily_Reset), Genshin Impact Wiki: what comes back at the daily reset and around it. That page is not on disk, so nothing here is checked against it.
 
 ## Open
 
+- [ ] **A hundred investigations a game day is the game's daily cap** — no source yet: the Investigation wiki page quoted under Sources is not on disk.
 - [ ] **The reset is read in the game's time zone, `Asia/Shanghai`** — no source yet: the English text gives the reset as "4:00 AM ({TIMEZONE})" without naming the zone.
 - [ ] **The Mysterious Conch spots near Takashi are exempt from the cap** — no source yet: the Investigation wiki page, which says those spots "do not count towards the daily cap", is not on disk. The built rule has no such exemption (`packages/genshin-world/src/services/investigation/checkIsInvestigationSpawning.ts`), so it stays as built until the owner decides.
