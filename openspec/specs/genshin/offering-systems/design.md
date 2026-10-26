@@ -60,6 +60,5 @@ flowchart TD
 
 ## Open
 
-- [ ] **The tree's point lies in Mondstadt's area on the official map** — no source yet: the map is in `~/Esposter/genshin-parity/references/interactive-map`, and its point was not read here.
 - [ ] **Each region takes one Oculus at its statue** — no source yet: no cached wiki page or dump table read here holds the statues' Oculus counts.
 - [ ] **The wiki's Offering System page matches the rule's level thresholds and lists the published offerings one for one** — no source yet: the page, checked, says the player automatically offers all of Inventory and names its offerings, but gives no level thresholds, and the cache holds no set of published offerings to list against.
