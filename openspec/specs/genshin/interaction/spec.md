@@ -12,170 +12,170 @@ The prompt list SHALL offer a row for each thing within reach of the character, 
 
 - **GIVEN** a drop, a resident with a talk, or a locked statue lies within reach of the character
 - **WHEN** the prompt list is drawn
-- **THEN** the thing has a row named by its own name in the reader's language (`packages/genshin-world/src/composables/useWorldTalks.ts`, `packages/genshin-world/src/services/statue/computeStatueInteractables.ts`)
+- **THEN** the thing has a row named by its own name in the reader's language
 
 #### Scenario: A thing out of reach gets no row
 
 - **GIVEN** a thing lies beyond reach of the character
 - **WHEN** the prompt list is drawn
-- **THEN** no row is shown for it (`packages/genshin-world/src/services/interaction/computeInteractionPrompts.ts`)
+- **THEN** no row is shown for it
 
 #### Scenario: A resident with no talk gets no row
 
 - **GIVEN** a resident has neither a talk held nor a quest talk open to them
 - **WHEN** the prompt list is drawn
-- **THEN** no row is shown for that resident (`packages/genshin-world/src/composables/useWorldTalks.ts`)
+- **THEN** no row is shown for that resident
 
 ### Requirement: Rows run from the nearest thing to the farthest
 
-The rows SHALL run from the nearest thing to the farthest, with two things at the same distance ordered by id (`packages/genshin-world/src/services/interaction/computeInteractionPrompts.ts`).
+The rows SHALL run from the nearest thing to the farthest, with two things at the same distance ordered by id.
 
 #### Scenario: The nearest thing is the first row
 
 - **GIVEN** several things are in reach at different distances
 - **WHEN** the rows are listed
-- **THEN** the nearest thing is the first row (`packages/genshin-world/src/services/interaction/computeInteractionPrompts.ts`)
+- **THEN** the nearest thing is the first row
 
 #### Scenario: Two things at one distance keep a fixed order
 
 - **GIVEN** two things lie at the same distance
 - **WHEN** the rows are listed in consecutive frames
-- **THEN** they keep the same order in each frame (`packages/genshin-world/src/services/interaction/computeInteractionPrompts.ts`)
+- **THEN** they keep the same order in each frame
 
 ### Requirement: The selection stays on its thing
 
-The selection SHALL stay on the thing that was selected as rows come and go, and when that thing leaves reach the first row SHALL be selected (`packages/genshin-world/src/services/interaction/computeInteractionPrompts.ts`).
+The selection SHALL stay on the thing that was selected as rows come and go, and when that thing leaves reach the first row SHALL be selected.
 
 #### Scenario: The selection holds while other rows change
 
 - **GIVEN** a thing is selected
 - **WHEN** other things enter or leave reach
-- **THEN** the same thing stays selected (`packages/genshin-world/src/services/interaction/computeInteractionPrompts.ts`)
+- **THEN** the same thing stays selected
 
 #### Scenario: The first row is selected when the selected thing leaves reach
 
 - **GIVEN** the selected thing leaves reach
 - **WHEN** the rows are next listed
-- **THEN** the first row is selected (`packages/genshin-world/src/services/interaction/computeInteractionPrompts.ts`)
+- **THEN** the first row is selected
 
 ### Requirement: The list shows a fixed window of rows that scrolls only as far as needed
 
-The prompt list SHALL show a fixed number of rows and SHALL scroll only as far as needed to keep the selected row in view (`packages/genshin-world/src/services/interaction/computeInteractionPrompts.ts`, `packages/genshin-world/src/services/interaction/constants.ts`).
+The prompt list SHALL show a fixed number of rows and SHALL scroll only as far as needed to keep the selected row in view.
 
 #### Scenario: The window scrolls only to reveal the selection
 
 - **GIVEN** the selection moves below the visible window
 - **WHEN** the next frame is drawn
-- **THEN** the window scrolls just far enough to show the selected row (`packages/genshin-world/src/services/interaction/computeInteractionPrompts.ts`)
+- **THEN** the window scrolls just far enough to show the selected row
 
 ### Requirement: The mouse wheel steps the selection while more than one row shows
 
-While more than one row is shown the mouse wheel SHALL move the selection one row per notch without wrapping, and otherwise the wheel SHALL zoom the camera (`packages/genshin-world/src/services/interaction/stepInteractionSelection.ts`, `packages/genshin-world/src/composables/useInteraction.ts`, see Open).
+While more than one row is shown the mouse wheel SHALL move the selection one row per notch without wrapping, and otherwise the wheel SHALL zoom the camera (see Open).
 
 #### Scenario: The wheel moves the selection through several rows
 
 - **GIVEN** more than one row is shown
 - **WHEN** the player turns the wheel one notch
-- **THEN** the selection moves one row in that direction (`packages/genshin-world/src/services/interaction/stepInteractionSelection.ts`)
-- **AND** the camera does not zoom (`packages/genshin-world/src/composables/useInteraction.ts`)
+- **THEN** the selection moves one row in that direction
+- **AND** the camera does not zoom
 
 #### Scenario: The selection stops at the ends of the list
 
 - **GIVEN** the selection is on the first or last row
 - **WHEN** the wheel turns past that end
-- **THEN** the selection stays on that row (`packages/genshin-world/src/services/interaction/stepInteractionSelection.ts`)
+- **THEN** the selection stays on that row
 
 #### Scenario: With one row or none the wheel zooms the camera
 
 - **GIVEN** one row or no row is shown
 - **WHEN** the player turns the wheel
-- **THEN** the camera zooms (`packages/genshin-world/src/composables/useInteraction.ts`)
+- **THEN** the camera zooms
 
 ### Requirement: F acts once on the selected row
 
-Pressing F SHALL act once on the selected row: a drop is picked up, a resident's talk begins, and a locked statue is unlocked (`packages/genshin-world/src/services/interaction/pickUpDroppedItem.ts`, `packages/genshin-world/src/components/World/Session/Index.vue`, see Open).
+Pressing F SHALL act once on the selected row: a drop is picked up, a resident's talk begins, and a locked statue is unlocked (see Open).
 
 #### Scenario: F picks up a drop into the wallet or the bag
 
 - **GIVEN** the selected row is a drop
 - **WHEN** the player presses F
-- **THEN** a currency goes into the wallet and any other item into the bag (`packages/genshin-world/src/services/interaction/pickUpDroppedItem.ts`)
+- **THEN** a currency goes into the wallet and any other item into the bag
 
 #### Scenario: F on a drop the bag cannot hold leaves the rest on the ground
 
 - **GIVEN** the bag has no room for the selected drop's item
 - **WHEN** the player presses F
-- **THEN** the part the bag cannot take is left on the ground as a smaller drop (`packages/genshin-world/src/services/interaction/pickUpDroppedItem.ts`)
+- **THEN** the part the bag cannot take is left on the ground as a smaller drop
 
 #### Scenario: F on a resident begins their talk
 
 - **GIVEN** the selected row is a resident with a talk
 - **WHEN** the player presses F
-- **THEN** the talk begins (`packages/genshin-world/src/components/World/Session/Index.vue`)
+- **THEN** the talk begins
 
 #### Scenario: F on a locked statue unlocks it
 
 - **GIVEN** the selected row is a locked statue
 - **WHEN** the player presses F
-- **THEN** the statue is unlocked and no longer has a row (`packages/genshin-world/src/services/statue/computeStatueInteractables.ts`, see Open)
+- **THEN** the statue is unlocked and no longer has a row (see Open)
 
 ### Requirement: A held F repeats its pick up
 
-While F stays held after its press, the player's pick up SHALL repeat at a fixed interval, and a repeat SHALL NOT open, talk, read or activate anything (`packages/genshin-world/src/services/interaction/getHeldPickUp.ts`, `packages/genshin-world/src/services/interaction/constants.ts`, see Open).
+While F stays held after its press, the player's pick up SHALL repeat at a fixed interval, and a repeat SHALL NOT open, talk, read or activate anything (see Open).
 
 #### Scenario: A held F picks up items again
 
 - **GIVEN** the player holds F after pressing it
 - **WHEN** each repeat interval passes
-- **THEN** one item is picked up (`packages/genshin-world/src/services/interaction/getHeldPickUp.ts`)
+- **THEN** one item is picked up
 
 #### Scenario: A repeat does not start a talk or open a chest
 
 - **GIVEN** the selected row is a resident or a chest
 - **WHEN** F is held and a repeat interval passes
-- **THEN** no talk begins and no chest is opened (`packages/genshin-world/src/services/interaction/getHeldPickUp.ts`)
+- **THEN** no talk begins and no chest is opened
 
 ### Requirement: A defeated enemy's drops lie where it fell
 
-When an enemy is defeated its drops SHALL lie where it fell, with its Mora as one pile and each material on its own (`packages/genshin-world/src/services/enemy/getEnemyDroppedItems.ts`, `packages/genshin-world/src/services/interaction/placeDroppedItems.ts`).
+When an enemy is defeated its drops SHALL lie where it fell, with its Mora as one pile and each material on its own.
 
 #### Scenario: Mora falls as one pile
 
 - **GIVEN** a defeated enemy drops Mora
 - **WHEN** its drops are placed
-- **THEN** all its Mora lies as one pile at the point where it fell (`packages/genshin-world/src/services/enemy/getEnemyDroppedItems.ts`)
+- **THEN** all its Mora lies as one pile at the point where it fell
 
 #### Scenario: Each material falls on its own
 
 - **GIVEN** a defeated enemy drops several materials
 - **WHEN** its drops are placed
-- **THEN** each material lies on its own at the point where the enemy fell (`packages/genshin-world/src/services/enemy/getEnemyDroppedItems.ts`, `packages/genshin-world/src/services/interaction/placeDroppedItems.ts`)
+- **THEN** each material lies on its own at the point where the enemy fell
 
 ### Requirement: A row can be pressed to act on it
 
-Pressing a row SHALL select its thing and act on it as F would, with a touch screen showing no key cap and no selected row (`packages/genshin-world/src/composables/useInteraction.ts`, `packages/genshin-interface/src/components/InteractionPrompts/Index.vue`).
+Pressing a row SHALL select its thing and act on it as F would, with a touch screen showing no key cap and no selected row.
 
 #### Scenario: Tapping a row acts on it on a touch screen
 
 - **GIVEN** the player is on a touch screen
 - **WHEN** the player taps a row
-- **THEN** its thing is selected and acted on as F would act on it (`packages/genshin-world/src/composables/useInteraction.ts`)
+- **THEN** its thing is selected and acted on as F would act on it
 
 #### Scenario: Clicking a row acts on it with the cursor shown
 
 - **GIVEN** the cursor is shown
 - **WHEN** the player clicks a row
-- **THEN** its thing is selected and acted on as F would act on it (`packages/genshin-world/src/composables/useInteraction.ts`)
+- **THEN** its thing is selected and acted on as F would act on it
 
 ### Requirement: F is the interact key on every platform
 
-The pick up and interact action SHALL be bound to F on a keyboard, to the X button on an Xbox controller and to the Square button on a PlayStation controller (`packages/genshin-engine/src/input/InputActionBindingMap.ts`, see Open).
+The pick up and interact action SHALL be bound to F on a keyboard, to the X button on an Xbox controller and to the Square button on a PlayStation controller (see Open).
 
 #### Scenario: The interact action is bound on each device
 
 - **GIVEN** the player uses a keyboard, an Xbox controller or a PlayStation controller
 - **WHEN** the interact button is pressed
-- **THEN** the interact action runs (`packages/genshin-engine/src/input/InputActionBindingMap.ts`)
+- **THEN** the interact action runs
 
 ## Open
 
