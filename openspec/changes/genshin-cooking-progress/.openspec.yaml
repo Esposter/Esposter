@@ -19,4 +19,4 @@ x-touches:
     "packages/genshin-text/src/models/GameTextKey.ts",
     "scripts/src/services/genshinAssets/items/**",
   ]
-x-waiting: "2.4 waits on the items publish: the items table must name the instruction items, which only `genshin:assets items` writes, run by the main session. No recording or PC export is needed."
+x-waiting: "2.4 waited on the items publish, which names the instruction items. The items/materials publish of 2026-10-19 (lock commit `b014b2e15d`) is on the lock and includes item 109101, the instruction item, so nothing waits on a publish and 2.4 is ticked on its check. No recording or PC export is needed."
