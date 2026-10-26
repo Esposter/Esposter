@@ -42,7 +42,6 @@ describe(readCharacterMesh, () => {
 
   afterEach(() => {
     vi.unstubAllGlobals();
-    vi.clearAllMocks();
   });
 
   test("a texture drawn both as a colour and as a toon ramp is decoded once each way, not shared", async () => {

@@ -1,10 +1,14 @@
 import ExpeditionLoader from "#src/components/Expedition/Loader/Index.vue";
 import { EMPTY_WALLET } from "#src/services/inventory/constants";
 import { ENGLISH_GAME_TEXT } from "genshin-text";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 
 describe("expeditionLoader", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   // The hosted data is unreachable from this base, so the read fails on the way in, and the failure is logged
   // Rather than left unhandled
   test("should log a failed read of the expedition data", async () => {

@@ -21,9 +21,10 @@ import { describe, expect, test } from "vitest";
 
 const statTables = await readStatTables(GAME_DATA_LOCAL_BASE_URL);
 const KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
-const enemy = createEnemy(await readEnemyTables(GAME_DATA_LOCAL_BASE_URL), [], ENEMY_CAMP_MEMBER, "");
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 
 describe(createGoldenTroupeSetModule, () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
   const wearer = createKitCombatant(TRAVELER_CHARACTER_ID, KIT);
 
   test("raises Elemental Skill DMG by 20% from two pieces, and of no other strike", () => {

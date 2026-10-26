@@ -5,7 +5,7 @@ import { ShopRefresh } from "#src/models/shop/ShopRefresh";
 import { readGameData } from "#src/services/data/readGameData";
 import { REALM_DEPOT_GOODS_KEYS, REALM_DEPOT_SHOP_ID } from "#src/services/shop/constants";
 import { readShopGoodMap } from "#src/services/shop/readShopGoodMap";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/data/readGameData"));
 
@@ -24,10 +24,6 @@ describe(readShopGoodMap, () => {
     itemId: 1,
     minPlayerLevel: 1,
     refresh: ShopRefresh.None,
-  });
-
-  beforeEach(() => {
-    vi.clearAllMocks();
   });
 
   test("the Realm Depot's goods, split across its tabs' keys, are one list in the tabs' order", async () => {

@@ -12,8 +12,6 @@ import { describe, expect, test, vi } from "vitest";
 import { render } from "vitest-browser-vue";
 import { page } from "vitest/browser";
 
-const { duel } = screenFixtureProps;
-
 // The dice of the board's dice column by their index, clicked in the order the player picks them
 const clickDie = (dieIndex: number) => {
   document.querySelectorAll<HTMLButtonElement>("button.die").item(dieIndex)?.click();
@@ -21,6 +19,7 @@ const clickDie = (dieIndex: number) => {
 
 // The duel board's Toss-Up: its payment is picked first, then the dice it rerolls, numbered among the dice its payment leaves
 describe("gcgScreen", () => {
+  const { duel } = screenFixtureProps;
   // Toss-Up's name and description are made-up text ids, named by the test's own text map beside the fixture's
   const TOSS_UP_NAME_TEXT_ID = 900_001;
   const TOSS_UP_DESCRIPTION_TEXT_ID = 900_002;

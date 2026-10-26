@@ -70,9 +70,9 @@ const renderCharacter = (isMoveHeld?: true): Object3D => {
   return body;
 };
 
-const WALK_MS = 1000;
-
 describe("worldCharacter", () => {
+  const WALK_MS = 1000;
+
   test("holding Tab stops the character walking", async () => {
     expect.hasAssertions();
 

@@ -82,6 +82,20 @@ describe(strikeEnemy, () => {
     level: LEVEL,
   });
 
+  const createCombatantWithCriticalRate = (elementalResonances: Combatant["elementalResonances"] = []): Combatant => ({
+    ascension: 0,
+    attributes: computeCharacterAttributes([
+      { attribute: Attribute.Attack, value: ATTACK },
+      { attribute: Attribute.CriticalDamage, value: 0.5 },
+      { attribute: Attribute.CriticalRate, value: 0.1 },
+    ]),
+    characterId: CHARACTER_ID,
+    constellationCount: 0,
+    elementalResonances,
+    kit: TRAVELER_KIT,
+    level: LEVEL,
+  });
+
   test("gives Shattering Ice's CRIT Rate against a Cryo-affected enemy, and none without it", () => {
     expect.hasAssertions();
 
@@ -98,26 +112,13 @@ describe(strikeEnemy, () => {
         stat: ATTACK,
         talentMultiplier,
       });
-    const createCriticalCombatant = (elementalResonances: Combatant["elementalResonances"]): Combatant => ({
-      ascension: 0,
-      attributes: computeCharacterAttributes([
-        { attribute: Attribute.Attack, value: ATTACK },
-        { attribute: Attribute.CriticalDamage, value: CRITICAL_DAMAGE },
-        { attribute: Attribute.CriticalRate, value: 0.1 },
-      ]),
-      characterId: CHARACTER_ID,
-      constellationCount: 0,
-      elementalResonances,
-      kit: TRAVELER_KIT,
-      level: LEVEL,
-    });
     const resonatedEnemy = createCryoEnemy();
     const unresonatedEnemy = createCryoEnemy();
 
-    const resonatedCombatant = createCriticalCombatant([Element.Cryo]);
+    const resonatedCombatant = createCombatantWithCriticalRate([Element.Cryo]);
     const resonatedContext = createKitTestContext(resonatedCombatant, { enemyTables, random: () => ROLL });
     strikeEnemy(resonatedEnemy, TRAVELER_KIT.plungeCollision, resonatedCombatant, resonatedContext);
-    const unresonatedCombatant = createCriticalCombatant([]);
+    const unresonatedCombatant = createCombatantWithCriticalRate([]);
     const unresonatedContext = createKitTestContext(unresonatedCombatant, { enemyTables, random: () => ROLL });
     strikeEnemy(unresonatedEnemy, TRAVELER_KIT.plungeCollision, unresonatedCombatant, unresonatedContext);
 
@@ -133,19 +134,6 @@ describe(strikeEnemy, () => {
     const CRITICAL_DAMAGE_BONUS = 0.5;
     const boostedEnemy = createSturdyEnemy();
     const plainEnemy = createSturdyEnemy();
-    const createCombatantWithCriticalRate = (): Combatant => ({
-      ascension: 0,
-      attributes: computeCharacterAttributes([
-        { attribute: Attribute.Attack, value: ATTACK },
-        { attribute: Attribute.CriticalDamage, value: 0.5 },
-        { attribute: Attribute.CriticalRate, value: 0.1 },
-      ]),
-      characterId: CHARACTER_ID,
-      constellationCount: 0,
-      elementalResonances: [],
-      kit: TRAVELER_KIT,
-      level: LEVEL,
-    });
 
     const boostedCombatant = createCombatantWithCriticalRate();
     const boostedContext = createKitTestContext(boostedCombatant, { enemyTables, random: () => 0 });
@@ -167,19 +155,6 @@ describe(strikeEnemy, () => {
 
     const ROLL = 0.2;
     const CRITICAL_RATE_BONUS = 0.2;
-    const createCombatantWithCriticalRate = (): Combatant => ({
-      ascension: 0,
-      attributes: computeCharacterAttributes([
-        { attribute: Attribute.Attack, value: ATTACK },
-        { attribute: Attribute.CriticalDamage, value: 0.5 },
-        { attribute: Attribute.CriticalRate, value: 0.1 },
-      ]),
-      characterId: CHARACTER_ID,
-      constellationCount: 0,
-      elementalResonances: [],
-      kit: TRAVELER_KIT,
-      level: LEVEL,
-    });
     const boostedEnemy = createSturdyEnemy();
     const plainEnemy = createSturdyEnemy();
 

@@ -24,7 +24,6 @@ import { describe, expect, test } from "vitest";
 
 const DAHLIA_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, DAHLIA_CHARACTER_ID);
 const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
-const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
 const createDahliaCombatant = (constellationCount = 0): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([{ attribute: Attribute.BaseDefense, value: 1000 }]),
@@ -126,15 +125,6 @@ describe(createDahliaKitBehaviour, () => {
   });
 });
 
-// An enemy hit the striker lands with the attack tag given
-const createEnemyHit = (striker: Combatant, attackTag = AttackTag.NormalAttack): KitEvent => ({
-  attackTag,
-  element: Element.Hydro,
-  enemy,
-  kind: KitEventKind.EnemyHit,
-  striker,
-});
-
 // Radiant Psalter's burst, its task run so that Favonian Favor holds from its first step
 const startFavonianFavor = (constellationCount: number) => {
   const combatant = createDahliaCombatant(constellationCount);
@@ -147,15 +137,26 @@ const startFavonianFavor = (constellationCount: number) => {
   return { combatant, context, party };
 };
 
-// A normal attack hit by the active member, then the three frames its hit has a cooldown for before the next one counts
-const landNormalAttackHit = (context: ReturnType<typeof createKitTestContext>, combatant: Combatant) => {
-  DAHLIA_KIT.onKitEvent?.(createEnemyHit(combatant), context, combatant);
-  stepKitSeconds(context, 0.05);
-};
-
 const readEnergy = (party: ReturnType<typeof createParty>): number => getPartyMember(party, DAHLIA_CHARACTER_ID).energy;
 
 describe("benison stacks", () => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+
+  // An enemy hit the striker lands with the attack tag given
+  const createEnemyHit = (striker: Combatant, attackTag = AttackTag.NormalAttack): KitEvent => ({
+    attackTag,
+    element: Element.Hydro,
+    enemy,
+    kind: KitEventKind.EnemyHit,
+    striker,
+  });
+
+  // A normal attack hit by the active member, then the three frames its hit has a cooldown for before the next one counts
+  const landNormalAttackHit = (context: ReturnType<typeof createKitTestContext>, combatant: Combatant) => {
+    DAHLIA_KIT.onKitEvent?.(createEnemyHit(combatant), context, combatant);
+    stepKitSeconds(context, 0.05);
+  };
+
   test("four normal attack hits by the active member during Favonian Favor gain a stack, which is 2.5 energy at constellation 1", () => {
     expect.hasAssertions();
     const { combatant, context, party } = startFavonianFavor(1);
