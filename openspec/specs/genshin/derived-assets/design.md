@@ -210,11 +210,12 @@ The CLI that exports the game's blocks is built on macOS by its own page, [Anime
 
 ## Open
 
+- [ ] **Nothing the game draws ships, and the exports never enter a build or deployment** — no source yet: no build or deployment check is cited that keeps the exports out of the bundle.
 - [ ] **The character uber shader has 1553 carved programs, 693 DXBC and 860 DXIL** — contradicted by `~/Esposter/genshin-parity/extracted/shaders/asm/uber`: all 6,337 listings carry the D3D header, none a DXIL marker.
 - [ ] **`vkd3d-compiler` 2.1 disassembles all 1553, and `d3dcompiler_47` only the DXBC ones** — no source yet: the 2.1 install is at `~/Esposter.noindex/cache/vkd3d/vkd3d-2.1`, but no run log records the disassembly.
 - [ ] **The walkway's parent is `BridgeBeginNode`, set by hand at the door's 0.4 scale and 5 metres down** — no source yet: a dump or code that sets the walkway's parent by hand.
-- [ ] **The door stands on the walkway at the flight's end, 70 metres from its static anchor** — no source yet: a measurement that names the axis of the 70 metres; `~/Esposter/genshin-parity/extracted/login-layout/11790361/GameObject/DoorNode.json` gives the door's position under `SceneObj` as (-262, 341, 700) at 0.1 scale.
-- [ ] **The login's towers stand three times 200 metres apart, and its walkway three times 16** — no source yet: the named source does not hold this value: `~/Esposter/genshin-parity/extracted/login-layout` keeps no raw bytes, and `~/Esposter/genshin-parity/extracted/login-behaviours/MonoBehaviour/MonoLoginScene.json` keeps only its GameObject pointer
+- [ ] **The door stands on the walkway at the flight's end, 70 metres from its static anchor** — no source yet: a measurement that names the axis of the 70 metres; `~/Esposter/genshin-parity/extracted/login-layout/11790361/GameObject/DoorNode.json` gives the door's local position as (-262, 341, 700) at a local scale of 1.
+- [ ] **The login's towers stand three times 200 metres apart, and its walkway three times 16** — no source yet: `~/Esposter/genshin-parity/extracted/login-layout` keeps no raw bytes, and `~/Esposter/genshin-parity/extracted/login-behaviours/MonoBehaviour/MonoLoginScene.json` keeps only its GameObject pointer
 - [ ] **The character select's stage lays the login's meshes out at 0.4 scale** — no source yet: no export of the character select's layout is checked.
 - [ ] **The character select's block keeps about four times as many GameObjects as the login's** — no source yet: `~/Esposter/genshin-parity/extracted/login-layout` holds two layout folders, `11790361` with 398 GameObject dumps and `16000354` with 138, and nothing on disk records which one is the character select's block.
 - [ ] **`tree login --root SceneObj` shows three empty anchors** — no source yet: the `SceneObj` row in `packages/genshin-world/src/components/Login/Scene/Arrangement.reference.ts` is a repo copy, and the `tree` output on the login layout export is not kept.
@@ -230,3 +231,4 @@ The CLI that exports the game's blocks is built on macOS by its own page, [Anime
 - [ ] **The water's level is exact, and the ponds above it are not drawn** — no source yet: no checked comparison of the water's level with the game's exists.
 - [ ] **The Windrise statue and oak are placed and turned exact** — no source yet: no checked placement comparison exists for either.
 - [ ] **The Windrise paving is placed exact** — no source yet: no checked placement comparison exists for the paving.
+- [ ] **The oak is the tree kit fitted to its meshes** — no source yet: no checked file names the fit that does this.
