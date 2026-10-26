@@ -66,7 +66,7 @@ A passive has no level. It is open where the character's ascension phase has rea
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `ProudSkillExcelConfigData`, the skill depot's inherent proud skill opens, and the skill and character tables the sets are read from.
 - [Talent](https://genshin-impact.fandom.com/wiki/Talent), Genshin Impact Wiki: the combat talents to level 10 by materials and the ascension phase, and the passives opened at the first and fourth phases.
 - [Combat Talents](https://genshin-impact.fandom.com/wiki/Combat_Talents), Genshin Impact Wiki: the talents upgraded with Character Talent Materials and the weekly bosses' materials, and the alternate sprint never levelled.
-- [Character/Menu](https://genshin-impact.fandom.com/wiki/Character/Menu), Genshin Impact Wiki, Talents section, quoted "a 1st Ascension Passive, and a 4th Ascension Passive talent": every character has both, so the passives open at phases 1 and 4.
+- [Character/Menu](https://genshin-impact.fandom.com/wiki/Character/Menu), Genshin Impact Wiki: not on disk, so its claim that every character has both passives is open (see Open).
 
 ## Open
 
