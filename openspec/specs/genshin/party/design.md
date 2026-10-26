@@ -116,7 +116,9 @@ The character on the field fights through its kit, which prices every character'
 ## Open
 
 - [ ] **Party Setup opens on `L`, and the keys `1` to `4` and a pad's directions switch members** — no source yet: the game's own defaults are not read, since the wiki's Controls page is not in the cache; the code's bindings are in `packages/genshin-engine/src/input/InputActionBindingMap.ts`.
+- [ ] **`createParty` deploys Party 1 with its first member on the field** — no source yet: no test holds `createParty`'s default deployment.
 - [ ] **A `PartyMember` keeps its HP as a share of Max HP, as the game does, and a character joins a team at full HP** — no source yet: the game's own Health page is not in the cache, so "as the game does" is open; the member is built in `packages/genshin-world/src/services/party/createPartyMember.ts`.
+- [ ] **A revive and a statue's heal are not recorded for the kits** — no source yet: no test holds the unrecorded heals.
 - [ ] **A revive brings a fallen team back at 35% of Max HP** — no source yet: no English game text gives the 35%, and the revive clip is not measured (the code holds `REVIVE_HEALTH_SHARE = 0.35` in `packages/genshin-world/src/services/party/constants.ts`).
 - [ ] **A drowning takes a tenth of every member's Max HP** — no source yet: no English game text gives the 10%, and the wiki's Fallen Character page is not in the cache (the code holds `DROWN_HEALTH_SHARE_LOSS = 0.1` in `packages/genshin-world/src/services/party/constants.ts`).
 - [ ] **The game over screen's Revive jumps the team to the nearest unlocked waypoint, or leaves it where it fell** — no source yet: no test holds the jump or the no-waypoint case.
@@ -125,6 +127,8 @@ The character on the field fights through its kit, which prices every character'
 - [ ] **Impetuous Winds multiplies a skill's cooldown by 0.95 as it starts, and the wait for its other charges** — no source yet: no test holds `startNextKitAction` or the multiplier's use.
 - [ ] **Impetuous Winds multiplies each stamina spend by 0.85** — no source yet: no test holds the stamina pool built by `useWorldCombat`.
 - [ ] **The kit bench put two fifths of its minute in the party's writes** — no source yet: no bench output that records the share is cited.
+- [ ] **`getActiveCharacterId` returns the deployed team's member at the active index** — no source yet: no test holds it.
+- [ ] **The world screen makes the Traveler from the roster at level 1 with its weapon, and switches on the first party key once a frame** — no source yet: no test holds the world screen's party wiring.
 - [ ] **A domain's challenge revives its team without the screen** — no source yet: no domain-challenge revive call was located in `packages/genshin-world/src/services/party/` or `packages/genshin-world/src/composables/useWorldDomains.ts`.
 - [ ] **An enemy's strike that lands on a taunt is the taunt's to take, as the game does** — no source yet: `packages/genshin-world/src/composables/useWorldCombat.ts` (`strikeParty`) sends a taunted strike to the taunt and every other strike to the character on the field through the team's shields, but no game text or wiki page checks the taunt's targeting.
 - [ ] **A drowning takes every member's energy** — no source yet: a recording of a drowning, not yet captured.
