@@ -237,14 +237,13 @@ The weights are not in the tables. They are the wiki's: each slot's main affix c
 - [Loot System: Artifact Drop Distribution](https://genshin-impact.fandom.com/wiki/Loot_System/Artifact_Drop_Distribution), Genshin Impact Wiki: how many minor affixes a drop starts with, by its source and rarity.
 
 ## Open
-
-- [ ] **An artifact holds at most four minor affixes** — no source yet: the wiki's Artifact page is not in the cache.
+- [ ] **An artifact holds at most four minor affixes** — no source yet for the game rule: the wiki's Artifact page is not in the cache. The code holds the cap as `MAX_MINOR_AFFIX_COUNT = 4` (`packages/genshin-world/src/services/artifact/constants.ts`, line 115).
 - [ ] **A Sands of Eon rolls one of its five percentages** — no source yet: the wiki's Artifact/Distribution weights are not in the cache, and depot 1000 also lists flat HP, ATK and DEF.
-- [ ] **The main and minor affix weights, and each tier being as likely as the next** — no source yet: the Artifact/Distribution page is not in the cache, so the constants in `services/artifact/constants.ts` cannot be checked against it.
+- [ ] **The main and minor affix weights, and each tier being as likely as the next** — no source yet: the Artifact/Distribution page is not in the cache, so the constants in `packages/genshin-world/src/services/artifact/constants.ts` cannot be checked against it.
 - [ ] **A drop starts with three minor affixes at 80% and four at 20% for a domain's five-star, and at 66% and 34% for a boss's** — no source yet: the wiki's Loot System page is not in the cache.
 - [ ] **A character wears one piece of each slot** — no source yet: the wiki's Artifact page is not in the cache.
-- [ ] **Instructor's gives no Elemental Mastery for a summon's reaction after the wearer leaves** — no source yet: the wiki's Instructor page is not in the cache.
-- [ ] **The heals of Traveling Doctor and the other sets are raised by the Healing Bonuses** — no source yet: the wiki's Healing Bonus page is not in the cache.
-- [ ] **A failed Valley Rite check raises the next chance only while the wearer is on the field** — no source yet: the wiki's off-field note is not in the cache, and the game's text states no such limit.
-- [ ] **A defeat by wildlife counts for Bloodstained Chivalry, and a swap off the field does not end its status** — no source yet: the wiki's Bloodstained Chivalry page is not in the cache.
+- **Instructor's gives no Elemental Mastery for a summon's reaction after the wearer leaves** — `packages/genshin-world/src/services/artifact/sets/createInstructorSetModule.ts` (lines 9 to 11): a reaction its summon triggers once it has left the field gives the team none, and a second one restarts the buff rather than stacking it.
+- [ ] **The heals of Traveling Doctor and the other sets are raised by the Healing Bonuses** — partly cited: `packages/genshin-world/src/services/artifact/sets/createTravelingDoctorSetModule.ts` (lines 9 and 10) raises its burst heal by the Healing Bonuses; the other sets were not traced, and the wiki's Healing Bonus page is not in the cache.
+- [ ] **A failed Valley Rite check raises the next chance only while the wearer is on the field** — partly cited: `packages/genshin-world/src/services/artifact/sets/createEchoesOfAnOfferingSetModule.ts` (lines 17 and 18) raises the next chance on a failed check while the wearer is on the field; the game's own rule for the off-field case is not in the wiki cache, and the game's text states no such limit.
+- [ ] **A defeat by wildlife counts for Bloodstained Chivalry, and a swap off the field does not end its status** — partly cited: `packages/genshin-world/src/services/artifact/sets/createBloodstainedChivalrySetModule.ts` counts a `WildlifeStruck` event as a defeat (line 31) and checks the active character (lines 8 and 13 to 15); the wiki's Bloodstained Chivalry page is not in the cache, so the game's rule is open.
 - [ ] **A zero-cost Charged Attack needs some stamina to start** — no source yet: the wiki's note is not in the cache, and it gives no magnitude.
