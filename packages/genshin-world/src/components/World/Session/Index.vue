@@ -974,6 +974,8 @@ const { gcgGameId, getTalkDuelGameId, residentInteractables, talk, talkDuelGameI
   useWorldTalks({
     gameDataBaseUrl,
     getAdventureRank: () => rank.value,
+    getCardGameExp: () => cardGameExp.value,
+    getCompletedMainQuestIds: () => completedMainQuestIds.value,
     getGroundHeight,
     getResidents,
     getResidentSpot: (residentId) => windrise.value?.residentSpots.get(residentId),
