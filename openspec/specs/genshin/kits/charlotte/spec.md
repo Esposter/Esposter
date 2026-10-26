@@ -1,6 +1,6 @@
 ## Purpose
 
-Charlotte's kit as built, with her three strikes, charged attack and Spiritbreath Thorn, plunges, Framing's press and its Snappy Silhouette marks, and Still Photo's cast heal and Kamera, with her hold, passives and constellations not built.
+Charlotte's kit as built, with her three strikes, charged attack and Spiritbreath Thorn, plunges, Framing's press and its Snappy Silhouette marks, and Still Photo's cast heal and Kamera, with Constellations 1, 2 and 4 built on the press and her own heals, and her hold, passives and Constellation 6 not built.
 
 ## Requirements
 
@@ -98,12 +98,80 @@ Charlotte's strikes, charged attack and plunges SHALL keep their damage and pois
 - **THEN** the hit deals no poise
 - **AND** the values stay provisional until a recording settles them
 
-### Requirement: Constellations are not built
+### Requirement: Constellation 1 heals a member her heal lands on
 
-Charlotte's Constellations 1, 2, 4 and 6 SHALL NOT take effect, as each needs a status or a count that the kit does not hold yet: Constellation 1 needs a heal every two seconds for six seconds on the healed character, Constellation 2 needs Framing's Monsieur Verite hits counted per enemy, and Constellations 4 and 6 need the Focused Impression mark that her hold does not build.
+From constellation 1, each heal of Charlotte's own that lands on a party member SHALL heal that member at once and every two seconds for six seconds, for 80% of Charlotte's ATK, unless that member is already healed by it.
 
-#### Scenario: Constellations do nothing
+#### Scenario: A heal of hers starts the heal over time
 
-- **GIVEN** Charlotte has any of Constellations 1, 2, 4 or 6
+- **GIVEN** Charlotte is at constellation 1
+- **WHEN** her heal lands on a party member
+- **THEN** that member is healed at once for 80% of Charlotte's ATK
+- **AND** that member is healed again two and four seconds later
+
+#### Scenario: A heal landing while the heal over time runs starts none
+
+- **GIVEN** Charlotte is at constellation 1 and a member is healed over time by her
+- **WHEN** another heal of hers lands on that member within the six seconds
+- **THEN** no further heal over time starts for that member
+
+#### Scenario: Below constellation 1 a heal starts nothing
+
+- **GIVEN** Charlotte is at constellation 0
+- **WHEN** her heal lands on a party member
+- **THEN** no heal over time starts
+
+### Requirement: Constellation 2 raises her ATK from the press's hits
+
+From constellation 2, each of the first three hits Framing's press lands on an enemy SHALL raise Charlotte's ATK by 10% for 12 seconds, so the bonus is 10%, 20% or 30% by the third hit, and each press starts the count again.
+
+#### Scenario: Each press hit on an enemy adds to the ATK bonus
+
+- **GIVEN** Charlotte is at constellation 2
+- **WHEN** Framing's press lands its first hit on an enemy
+- **THEN** her ATK is raised by 10% for 12 seconds
+
+#### Scenario: A fourth hit raises the bonus no further
+
+- **GIVEN** Charlotte is at constellation 2 and Framing's press has landed three hits on enemies
+- **WHEN** the press lands a fourth hit on an enemy
+- **THEN** her ATK bonus stays at 30%
+
+#### Scenario: A new press starts the count from none
+
+- **GIVEN** Charlotte is at constellation 2 and a press has landed three hits
+- **WHEN** the player presses Framing again and it lands a hit on an enemy
+- **THEN** her ATK bonus is 10%
+
+### Requirement: Constellation 4 adds damage and energy to her burst on marked enemies
+
+From constellation 4, each burst hit of Charlotte's on an enemy marked by Framing's press SHALL deal 10% more DMG and give her 2 energy, for at most five such hits in 20 seconds from the first.
+
+#### Scenario: A burst hit on a marked enemy deals more damage and gives energy
+
+- **GIVEN** Charlotte is at constellation 4 and an enemy is marked by Framing's press
+- **WHEN** Still Photo or Kamera strikes that enemy
+- **THEN** the hit deals 10% more DMG
+- **AND** Charlotte gains 2 energy
+
+#### Scenario: The sixth hit in the window gives neither
+
+- **GIVEN** Charlotte is at constellation 4 and five marked-enemy burst hits have landed in the last 20 seconds
+- **WHEN** another burst hit lands on a marked enemy
+- **THEN** the hit deals no bonus DMG and gives no energy
+
+#### Scenario: A burst hit on an unmarked enemy gives neither
+
+- **GIVEN** Charlotte is at constellation 4 and an enemy is not marked by Framing's press
+- **WHEN** Still Photo or Kamera strikes that enemy
+- **THEN** the hit deals no bonus DMG and gives no energy
+
+### Requirement: Constellation 6 is not built
+
+Charlotte's Constellation 6 SHALL NOT take effect, as it needs the Focused Impression mark of her hold, which is not built.
+
+#### Scenario: Constellation 6 does nothing
+
+- **GIVEN** Charlotte has Constellation 6
 - **WHEN** the player fights with Charlotte
 - **THEN** that constellation has no effect
