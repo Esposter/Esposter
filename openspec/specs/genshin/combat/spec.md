@@ -13,7 +13,7 @@ An element an attack leaves on a target SHALL stay as an aura that decays over t
 - **GIVEN** an untouched target
 - **WHEN** a two unit Pyro attack lands on it
 - **THEN** 1.6 units of Pyro remain on the target as an aura
-- **AND** the aura decays out after 12 seconds (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/reactable.go` lines 206 to 213: 0.8 of the Durability, decaying over 6 times it plus 420 frames, with a unit at 25 Durability as in `internal/characters/xiangling/burst.go` line 35)
+- **AND** the aura decays out after 12 seconds (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/reactable.go` lines 206 to 213: 0.8 of the Durability, decaying over 6 times it plus 420 frames, with a unit at 25 Durability as in `~/Esposter/cache/gcsim-v2.47.2/internal/characters/xiangling/burst.go` line 35)
 
 #### Scenario: Anemo and Geo leave no aura
 
@@ -30,7 +30,7 @@ An element applied to a target that already holds another element SHALL trigger 
 - **GIVEN** a target is burning with Pyro and Dendro on it
 - **WHEN** two units of Hydro land on it
 - **THEN** Vaporize consumes the Burning and its Pyro
-- **AND** the Hydro left over blooms the Dendro beneath them (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/vaporize.go` lines 27 to 34 reduce the Pyro-element auras, the Burning among them, `pkg/reactable/burning.go` lines 138 to 145 drop the Burning's fuel once it is gone, and `pkg/reactable/bloom.go` lines 20 to 31 take the left-over Hydro on the Dendro-like auras)
+- **AND** the Hydro left over blooms the Dendro beneath them (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/vaporize.go` lines 27 to 34 reduce the Pyro-element auras, the Burning among them, `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/burning.go` lines 138 to 145 drop the Burning's fuel once it is gone, and `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/bloom.go` lines 20 to 31 take the left-over Hydro on the Dendro-like auras)
 
 #### Scenario: A reaction is recorded once however many auras it meets
 
@@ -115,7 +115,7 @@ A hit SHALL apply its element only on the hits its internal cooldown group lets 
 
 ### Requirement: Vaporize and Melt
 
-Vaporize and Melt SHALL multiply the hit they amplify, by two where Hydro vaporizes or Pyro melts (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/vaporize.go` line 33 and `pkg/reactable/melt.go` line 24; the reverse reactions, Pyro on Hydro and Cryo on Pyro, are 1.5 at `vaporize.go` line 26 and `melt.go` line 30).
+Vaporize and Melt SHALL multiply the hit they amplify, by two where Hydro vaporizes or Pyro melts (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/vaporize.go` line 33 and `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/melt.go` line 24; the reverse reactions, Pyro on Hydro and Cryo on Pyro, are 1.5 at `vaporize.go` line 26 and `melt.go` line 30).
 
 #### Scenario: Hydro vaporizing a Pyro target doubles the hit
 
@@ -131,7 +131,7 @@ Lunar-Bloom SHALL deal no damage of its own, and it SHALL leave a Dendro Core.
 
 - **GIVEN** a Moonsign turns a Bloom into Lunar-Bloom
 - **WHEN** the reaction triggers on an enemy
-- **THEN** the reaction deals no damage of its own (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/lunarbloom.go` lines 3 to 4 call only the Verdant Dew hook, and `pkg/reactable/bloom.go` lines 91 to 93 add a Dendro Core and no damage)
+- **THEN** the reaction deals no damage of its own (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/lunarbloom.go` lines 3 to 4 call only the Verdant Dew hook, and `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/bloom.go` lines 91 to 93 add a Dendro Core and no damage)
 - **AND** a Dendro Core is left by the enemy
 
 ### Requirement: Ascendant Gleam's reaction bonus
@@ -339,7 +339,7 @@ When every member of the party is down, the party SHALL revive at 35 percent hea
 
 ### Requirement: Glimmer Reaction Damage
 
-A Stellar Swirl's own damage SHALL be weighted across the four highest contributors, at 0.6, 0.3, 0.05 and 0.05, each contributor's damage worked out alone with standard crit (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl.go` line 15, `lunarcharged.go` line 22, `lunarcrystallize.go` line 27). A Stellar-Conduct SHALL deal no damage of its own: its damage is dealt only by a talent's or a constellation's direct hit.
+A Stellar Swirl's own damage SHALL be weighted across the four highest contributors, at 0.6, 0.3, 0.05 and 0.05, each contributor's damage worked out alone with standard crit (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl.go` line 15, `lunarcharged.go` line 22, `lunarcrystallize.go` line 27). A Stellar-Conduct SHALL deal no damage of its own: its damage is dealt only by a talent's or a constellation's direct hit (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct.go` lines 74 and 75 only emit `OnStellarConduct`).
 
 #### Scenario: a Glimmer reaction weights its four highest contributors
 
@@ -516,9 +516,9 @@ A Stellar Vortex's explosion SHALL be priced at a Base Reaction Coefficient of 2
 ## Open
 
 - [ ] **Each deployed Stellar Jubilee's Base DMG Bonus adds, two at 7% giving 14%** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/odette/stellar.go`: the Base DMG bonus is 0.7% per 100 ATK, capped at 14%.
-- [ ] **An enemy's strike is resisted by the member's RES to its attack element, or Physical RES with none** — no source yet: gcsim's `pkg/avatar/avatar.go` sets a member's resistance to zero, with a TODO that players have no resistances, so the source does not hold this rule.
+- [ ] **An enemy's strike is resisted by the member's RES to its attack element, or Physical RES with none** — no source yet: gcsim's `~/Esposter/cache/gcsim-v2.47.2/pkg/avatar/avatar.go` sets a member's resistance to zero, with a TODO that players have no resistances, so the source does not hold this rule.
 - [ ] **A DMG Reduction lowers a strike's damage by its share, and 120% leaves none** — no source yet: gcsim's `DamageReduction` in `~/Esposter/cache/gcsim-v2.47.2/pkg/core/player/character/mods.go` sums the active mods' amounts, and no gcsim code calls it on a strike, so the source does not hold this arithmetic
 - [ ] **A party that is all down revives at 35% health at the nearest statue** — no source yet: gcsim holds no party revive and no statue rule, so the named source does not hold this value
-- [ ] **The Starlight Prism lasts 7 seconds, sustains a radius-15 Polestar Field, and a refresh sets the field back to 7 seconds** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct_gadget.go`: its field lasts 6 seconds (`sscFieldDur`, line 17). The wiki's Stellar-Conduct page is not cached.
+- [ ] **The Starlight Prism lasts 7 seconds, sustains a radius-15 Polestar Field, and a refresh sets the field back to 7 seconds** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct_gadget.go`: its field lasts 6 seconds (`sscFieldDur`, line 17).
 - [ ] **The third Stellar Swirl levels the vortex to Lv. 2, and three more explode it at once** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl.go`: its stack add reaches 3 on the second swirl and 6 on the third.
-- [ ] **A direct Stellar Swirl hit has Base Reaction Coefficient 1, which the count does not raise** — no source yet: the direct hit's own coefficient, since `pkg/core/combat/reaction.go` gives 1 to the Stellar Swirl reaction tag (line 24) and not to a direct hit's tag.
+- [ ] **A direct Stellar Swirl hit has Base Reaction Coefficient 1, which the count does not raise** — no source yet: gcsim's direct-hit coefficient for a Stellar Swirl, since `~/Esposter/cache/gcsim-v2.47.2/pkg/core/combat/reaction.go` line 24 gives 1 to the reaction's tag alone.
