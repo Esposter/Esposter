@@ -1,6 +1,6 @@
 ## Purpose
 
-The game's bag and its currencies as pure state. Nine tabs in the game's order, items stacking to their own limits, weapons and artifacts one each, the bag's room per tab and by kind, each tab sorted as the game sorts it, and a wallet of Mora, Primogems, Genesis Crystals, the two Fates, Starglitter, Stardust, the Masterless Stella Fortuna and Original Resin, which regenerates. The materials the enemies drop are defined from the game's material table and taken into the bag on a pick up. Its screen opens on B, its words the game's own. Nothing is bought with money. (The game's tables are `~/Esposter/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json`, `WeaponExcelConfigData.json` and `ReliquaryExcelConfigData.json`; the behaviour is tested in `packages/genshin-world/src/services/inventory/`, among others `addInventoryItem.test.ts`, `computeInventoryTab.test.ts`, `destroyInventoryItems.test.ts` and `useInventoryEntry.test.ts`.)
+The game's bag and its currencies as pure state. Nine tabs in the game's order, items stacking to their own limits, weapons and artifacts one each, the bag's room per tab and by kind, each tab sorted as the game sorts it, and a wallet of Mora, Primogems, Genesis Crystals, the two Fates, Starglitter, Stardust, the Masterless Stella Fortuna and Original Resin, which regenerates. The materials the enemies drop are defined from the game's material table and taken into the bag on a pick up. Its screen opens on B, its words the game's own. Nothing is bought with money. (The game's tables are `~/Esposter/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json`, `~/Esposter/genshin-parity/text/ExcelBinOutput/WeaponExcelConfigData.json` and `~/Esposter/genshin-parity/text/ExcelBinOutput/ReliquaryExcelConfigData.json`; the behaviour is tested in `packages/genshin-world/src/services/inventory/`, among others `packages/genshin-world/src/services/inventory/addInventoryItem.test.ts`, `packages/genshin-world/src/services/inventory/computeInventoryTab.test.ts`, `packages/genshin-world/src/services/inventory/destroyInventoryItems.test.ts` and `packages/genshin-world/src/services/inventory/useInventoryEntry.test.ts`.)
 
 ## Requirements
 
@@ -239,6 +239,7 @@ Using a food SHALL take one of that food from the bag and apply its heal to the 
 
 ## Open
 
+- [ ] **The bag opens on B** — no source yet: no key binding to `B` is traced in the code, and the wiki's Controls page is not cached in `~/Esposter/cache/genshin-wiki`.
 - [ ] **Every one- to three-star weapon is destroyable** — contradicted by `~/Esposter/genshin-parity/text/ExcelBinOutput/WeaponExcelConfigData.json`: ten one-star weapons (`rankLevel` 1) have no `destroyRule`.
 - [ ] **The bag holds everything in nine tabs, in the game's order, each with the game's own name** — no source yet: the wiki's Inventory page, whose Inventory Categories section lists the nine in this order under their own names, is not on disk.
 - [ ] **The bag opens on the weapons tab, with its weapons sorted by level from the highest** — no source yet: a recording of the bag opened on B with nothing chosen, showing the tab and sort it opens on
