@@ -97,5 +97,5 @@ A Teleport Waypoint SHALL be unlocked by resonating with it on F, as a statue is
 ## Open
 
 - [ ] **A fallen party is taken to the unlocked landmark nearest its body** — no source yet: the revive takes only the nearest unlocked Teleport Waypoint (`findNearestTeleportWaypoint`), since a statue takes no revive.
-- [ ] **A statue's first unlock pays its Primogems and Adventure EXP** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A domain entrance unlocks the same way as a landmark of the world** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A statue's first unlock pays its Primogems and Adventure EXP** — source: the wiki page Statue of The Seven (cached `Statue_of_The_Seven.json`), its Statue Levels section, which gives the first unlock as 50 Adventure EXP and 5 Primogem.
+- [ ] **A domain entrance unlocks the same way as a landmark of the world** — source: the wiki page Domain (cached `Domain.json`). Its Permanent Domains section calls permanent domains landmarks usable as Teleport Waypoints once unlocked, and its Challenge Domains subsections give an Adventure Rank or a quest as the unlock of the Blessing, Forgery and Mastery entrances, naming no resonating. The built unlock on F is not in that page; the owner decides.
