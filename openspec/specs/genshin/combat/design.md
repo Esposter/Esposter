@@ -345,12 +345,12 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 
 ## Open
 
-- [ ] **The aura tax and decay: taxed to 0.8, decaying 2.5 seconds a unit plus 7, Bennett's 1.6U of Pyro for 12 seconds** — no source yet: the wiki's Elemental Gauge Theory page is not in `~/Esposter.noindex/cache/genshin-wiki/`, and gcsim's `0.8` at `pkg/reactable/reactable.go:207` was not confirmed as the tax.
+- [ ] **The aura tax and decay: taxed to 0.8, decaying 2.5 seconds a unit plus 7, Bennett's 1.6U of Pyro for 12 seconds** — no source yet: gcsim's `attachOrRefillNormalEle` (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/reactable.go`, line 207) takes `0.8 * dur` as the tax, which confirms the 0.8, but its duration `6*dur+420` is in gcsim's own units and does not reconcile the 2.5-second decay; the wiki's Elemental Gauge Theory page is not cached.
 - [ ] **Electro-Charged takes 0.4U from each aura per tick** — no source yet: gcsim's tick consumption in `pkg/reactable/electrocharged.go` was not opened for this value.
 - [ ] **Quicken's aura lasts 5 seconds a unit plus 6** — no source yet: gcsim's Quicken duration was not opened and the wiki's Advanced Mechanics page is not cached.
 - [ ] **Frozen doubles its gauge, decays 0.4U a second and ramps 0.1 a second, lasting 2√(5G + 4) − 4 seconds** — no source yet: gcsim's freeze decay in `pkg/reactable/reactable.go:47-48` and `:382-391` is in per-frame units not converted to these values.
 - [ ] **Burning's 2U aura, its drain at twice the decay and its 1U of Pyro under its cooldown** — no source yet: gcsim's Burning aura and drain lines in `pkg/reactable/burning.go` were not opened.
-- [ ] **Swirl records the spread gauge (G − 0.04) × 1.25 + 1** — no source yet: gcsim's `pkg/reactable/swirl.go:15` gives a different form in its own units, not reconciled.
+- [ ] **Swirl records the spread gauge (G − 0.04) × 1.25 + 1** — no source yet: gcsim's `calcSwirlAtkDurability` (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/swirl.go`, line 15) gives `1.25*(0.5*consumed-1)+25` or `1.25*(src-1)+25` in its own units, a different form, not reconciled.
 - [ ] **The table's cells that gcsim's `reduce` calls do not name: Burning, Frozen on Cryo and Hydro, Aggravate, Spread, the Geo row and Swirl on Burning** — no source yet: `pkg/reactable/freeze.go`, `crystallize.go` and the Aggravate and Spread paths in `catalyze.go` were not opened.
 - [ ] **The order in which each element tries its reactions** — no source yet: gcsim's reaction order was not checked against the table's order.
 - [ ] **The defence factor (5 × attacker level + 500) / (enemy defence + 5 × attacker level + 500)** — no source yet: gcsim's defence line in `pkg/enemy/damage.go` was not located.
@@ -368,7 +368,7 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 - [ ] **A weapon's attack energy chance starts at 10% for a sword and rises by 5, 10 or 4 percent a miss by weapon type** — no source yet: gcsim's attack energy code was not opened.
 - [ ] **Particles give 3 of their element, 1 of another and 2 of none, an orb three times that, and members off the field take 80%, 70% or 60%** — no source yet: gcsim's energy gain code was not opened.
 - [ ] **The Traveler's strikes, charged attack, plunges, Palm Vortex and Gust Surge figures** — no source yet: the wiki's Foreign Ironwind, Palm Vortex and Gust Surge pages are not cached.
-- [ ] **Only Odette's kit carries a Stellar Jubilee passive as built** — no source yet: the repository's kit passives were not checked against this claim.
+- **Only Odette's kit carries a Stellar Jubilee passive as built** — `packages/genshin-world/src/data/kits/odette.json` is the only kit record under `packages/genshin-world/src/data/kits/` that names one.
 - [ ] **The hit cylinders of 5 and 6 metres, the targeting zone of 15 metres and 10 high, and the score weights 0.7 and 0.3** — no source yet: the wiki's Area of Effect and Targeting pages are not cached.
 - [ ] **The Starlight Prism's coefficient and DMG Bonus by count, as the wiki's Stellar-Conduct page gives them** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **A Stellar Vortex's explosion coefficient at Lv. 1 and Lv. 2, as the wiki's Damage page gives them** — no source yet: game data or a snapshot that holds this behaviour
