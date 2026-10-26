@@ -4,7 +4,7 @@ Elemental Sight as the world plays it: a white range spreads from the character 
 
 ## Open
 
-- [ ] **the sight plays as the game does: white interactables, element colours, enemy names and the walk end** — no source yet: the wiki's Elemental Sight page, which the cache does not hold, or a recording of the sight (the design's open list has the parts).
+- [ ] **the sight plays as the game does: white interactables, element colours and enemy names** — no source yet: the wiki's Elemental Sight page, which the cache does not hold, or a recording of the sight (the design's open list has the parts).
 - [ ] **A white range spreads from the character on the middle mouse button or a pad's left bumper** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **The sight ends after a short walk** — no source yet: game data or a snapshot that holds this behaviour
 
