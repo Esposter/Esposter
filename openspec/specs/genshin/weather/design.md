@@ -60,7 +60,7 @@ The values are starting points, not the game's: each is marked provisional where
 - **One instanced draw for the particles and one for the splashes.** Both are instanced geometries placed in the vertex stage, so no particle is stored and no frame writes per particle.
 - **A frame writes the eye, and the blend while a change runs.** The flash writes a handful of colours while it lasts, and the bolt is one small mesh shown for under a second.
 - **A dry world costs nothing extra.** The wetness darkening and glint multiply by zero and add nothing, and a weather that tints no haze writes no colour.
-- **The desert clip is taken as a sandstorm.** `captures/yt-k_FKK0qcYHw-0-40.mp4` (0 to 40 seconds) and the wiki's `File:Desert of Hadramaveth.png` are the sandstorm the haze and streaks are matched to (the match is open below); a clip showing only a dust column would change the match.
+- **The desert clip is taken as a sandstorm.** `~/Esposter.noindex/genshin-parity/captures/yt-k_FKK0qcYHw-0-40.mp4` (0 to 40 seconds) and the wiki's `File:Desert of Hadramaveth.png` are the sandstorm the haze and streaks are matched to (the match is open below); a clip showing only a dust column would change the match.
 
 ## Key files
 
@@ -96,7 +96,7 @@ The values are starting points, not the game's: each is marked provisional where
 
 - [Weather](https://genshin-impact.fandom.com/wiki/Weather), Genshin Impact Wiki: weather tied to areas with only the current location's drawn, regular weather changing over time, no rain in cities or deserts, snow on Dragonspine, fog on Tsurumi Island, the perpetual thunderstorm of Yashiori Island, and sandstorms in the Desert of Hadramaveth.
 - [Lightning](https://genshin-impact.fandom.com/wiki/Lightning), Genshin Impact Wiki: lightning striking the land during thunderstorms.
-- A sandstorm recording in the Desert of Hadramaveth, the camera still, 20 seconds at most; the haze's colour and the sand's streaks are matched to it (the file itself is open below). Found 2026-10-11: the wiki's `File:Desert of Hadramaveth.png` and https://www.youtube.com/watch?v=k_FKK0qcYHw at 0–40 s (`captures/yt-k_FKK0qcYHw-0-40.mp4`).
+- A sandstorm recording in the Desert of Hadramaveth, the camera still, 20 seconds at most; the haze's colour and the sand's streaks are matched to it (the file itself is open below). Found 2026-10-11: the wiki's `File:Desert of Hadramaveth.png` and https://www.youtube.com/watch?v=k_FKK0qcYHw at 0–40 s (`~/Esposter.noindex/genshin-parity/captures/yt-k_FKK0qcYHw-0-40.mp4`).
 
 ## Open
 
