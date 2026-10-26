@@ -72,16 +72,13 @@ The top bar's place and type are provisional until a recording measures them. Th
 
 ## Sources
 
-- [Original Resin](https://genshin-impact.fandom.com/wiki/Original_Resin), Genshin Impact Wiki: the claims' prices, five Adventure EXP a point, one point every eight minutes to 200, the Fragile and Primogem refills, and the 2,000 cap.
+- [Original Resin](https://genshin-impact.fandom.com/wiki/Original_Resin), Genshin Impact Wiki: the claims' prices, five Adventure EXP a point, one point every eight minutes to 200, the Fragile and Primogem refills, and the 2,000 cap. Quoted: "regenerates at a rate of 1 unit every 8 minutes, if it is not fully capped (200 total)"; "will award Adventure EXP at a ratio of 1:5"; "a hard cap maximum of 2,000 Original Resin"; "up to 6 times a day" for the Primogem refills.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the material rows of items 106, 107009 and 220007, and the reward table.
 
 ## Open
 
-- [ ] **one Original Resin regenerates every eight minutes, up to 200** — no source yet: the wiki's Original Resin page, which the cache does not hold.
-- [ ] **a refill fills to 2,000, and six Primogem refills a game day restore 60 each** — no source yet: the wiki's Original Resin page, which the cache does not hold.
-- [ ] **a claim's price by blossom kind, and a weekly boss's 30 then 60 Original Resin** — no source yet: the wiki's Original Resin page, which the cache does not hold.
-- [ ] **a ley line or a domain offers two claims at twice the price, or a Condensed Resin for three claims** — no source yet: the wiki's Original Resin page, which the cache does not hold.
-- [ ] **a claim gives five Adventure EXP a point of resin** — no source yet: the wiki's Original Resin page, which the cache does not hold.
+- [ ] **six Primogem refills count per game day** — no source yet: the Original Resin page gives the 2,000 cap and "up to 6 times a day", but no day boundary, so the game day is the game's own design (`Original_Resin.json` checked).
+- [ ] **a ley line's or a domain's 40 is two claims, and its Condensed Resin is three** — no source yet: the Original Resin page gives the costs "20 or 40 or 1× Condensed Resin" with no claim count (`Original_Resin.json` checked).
 - [ ] **a new player holds 200 Original Resin, and the game day starts at 04:00 in UTC+8** — no source yet: the game's own design, which the dump does not hold; the page marks both settled, not checked.
 - [ ] **the ley line outcrops, the Petrified Tree and the Trounce Blossom are the blossoms that leave a claim** — no source yet: a read of the dump's blossom tables for the rows that leave a claim.
 - [ ] **the restore row reads "Can use Fragile Resin to restore"** — no source yet: the English text of `UI_GUIDE_FRAGILE_RESIN`, which the dump's English text map does not hold under that phrase.

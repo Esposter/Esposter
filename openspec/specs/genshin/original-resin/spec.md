@@ -225,13 +225,13 @@ Using Fragile Resin from the bag SHALL restore sixty Original Resin and remove o
 - **THEN** the player's Original Resin rises by sixty
 - **AND** one Fragile Resin leaves the bag
 
+## Sources
+
+- [Original Resin](https://genshin-impact.fandom.com/wiki/Original_Resin), Genshin Impact Wiki: the regeneration to 200, the Primogem refills at six daily prices up to 2,000, the weekly boss's price, and the Adventure EXP a point. Quoted: "regenerates at a rate of 1 unit every 8 minutes, if it is not fully capped (200 total)"; "players can replenish 60 Original Resin by using an increasingly expensive amount of Primogems"; "30 (60 after 3rd claimed reward)"; "will award Adventure EXP at a ratio of 1:5".
+
 ## Open
 
-- [ ] **the wallet regenerates one Original Resin every eight minutes, up to 200** — no source yet: the wiki's Original Resin page, which the cache does not hold.
-- [ ] **Primogems refill 60 Original Resin at six daily prices, filling to 2,000** — no source yet: the wiki's Original Resin page, which the cache does not hold.
+- [ ] **a ley line's or a domain's 40 is two claims, and its Condensed Resin is three** — no source yet: the Original Resin page gives the costs "20 or 40 or 1× Condensed Resin" with no claim count (`Original_Resin.json` checked).
 - [ ] **the Primogem refill day starts at 04:00 in UTC+8** — no source yet: the game's own design, which the dump does not hold; the page marks it settled, not checked.
-- [ ] **a claim costs by its blossom kind, with a weekly boss at 30 and then 60** — no source yet: the wiki's Original Resin page, which the cache does not hold.
-- [ ] **a ley line or a domain offers two claims at twice the price, or a Condensed Resin for three claims** — no source yet: the wiki's Original Resin page, which the cache does not hold.
-- [ ] **a claim gives five Adventure EXP a point** — no source yet: the wiki's Original Resin page, which the cache does not hold.
 - [ ] **a new player's wallet holds 200 Original Resin** — no source yet: the game's own design, which the dump does not hold; the page marks it settled, not checked.
 - [ ] **Its count is on the map's top bar** — no source yet: game data or a snapshot that holds this behaviour
