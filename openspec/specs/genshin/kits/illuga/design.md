@@ -18,13 +18,12 @@ Illuga's kit is its record and one behaviour module, `createIllugaKitBehaviour`,
 ## Not built
 
 - **The stacks Geo Constructs give Nightingale's Song are not built.** The state's gain helper exists, but the kit does not read the constructs on the field.
-- **Constellation 1, the Lunar-Crystallize enhancement, is not built.** It needs his Geo reactions and their fifteen-second cooldown, which the kit does not read.
+- **Constellation 1 is Vigilant Sentinel, which is not built.** Talent 1271 (openConfig `Illuga_Constellation_1`, `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json`) is named Vigilant Sentinel in the TextMap, key 1793938489. It needs his Geo reactions and their fifteen-second cooldown, which the kit does not read.
 - **Vigilant Sentinel is not built.** After Illuga triggers a Geo-related Reaction on the field, he regains 12 Elemental Energy at most once every 15 seconds (`~/Esposter.noindex/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`, key 796583231; talent 1271's `paramList` is 12 and 15, `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json`).
 
 ## Open
 
 - [ ] **The built record gives Zhongli's pole hold 16 hits, the first at a 48-frame hitmark** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/zhongli/skill.go:32-76`: gcsim queues one hit at 48 frames in a 96-frame hold.
-- [ ] **Constellation 1's fifteen-second cooldown** — no source yet: a dump row giving a Lunar-Crystallize enhancement to Constellation 1; talent 1271, the row at Illuga_Constellation_1, is Vigilant Sentinel.
 - [ ] **Aedon's hit takes the burst's first hit's area, with no hitmark and no poise** — no source yet: a source giving Aedon's hit an area, hitmark or poise; the constellation text gives only the damage and one nearby opponent.
 - [ ] **Press reads its 'Press DMG' label for two hits** — no source yet: a source giving the Press DMG row's hit count; the cached Dawnbearing Songbird page gives its rows without one.
 - [ ] **The burst reads its 'Skill DMG' label for two hits** — no source yet: a source giving the burst's Skill DMG hit count; the cached Shadowless Reflection page, Illuga's burst, gives one Skill DMG row over 13 levels with no hit count.
