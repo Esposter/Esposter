@@ -114,7 +114,7 @@ grep -n -i 'poise\|cooldown\|gauge\|area\|element' openspec/specs/genshin/kits/<
 | `vesna`              | 2026-10-19 · Haiku 5.5 |                    |
 | `vodyanitsa`         | 2026-10-19 · Haiku 5.5 |                    |
 | `wanderer`           | —                      |                    |
-| `wriothesley`        | 2026-10-19 · Haiku 5.5 |                    |
+| `wriothesley`        | 2026-10-26 · Haiku 5.5 |                    |
 | `xiangling`          | 2026-10-19 · Haiku 5.5 |                    |
 | `xianyun`            | 2026-10-19 · Haiku 5.5 |                    |
 | `xiao`               | 2026-10-19 · Haiku 5.5 |                    |

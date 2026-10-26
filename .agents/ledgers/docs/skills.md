@@ -1,78 +1,79 @@
 # Docs — skills
 
-| Unit                      | Swept                  | Notes |
-| ------------------------- | ---------------------- | ----- |
-| `absent-values`           | 2026-10-25 · Haiku 5.5 |       |
-| `azure-table`             | 2026-10-25 · Haiku 5.5 |       |
-| `backfills`               | 2026-10-25 · Haiku 5.5 |       |
-| `bench`                   | 2026-10-25 · Haiku 5.5 |       |
-| `build`                   | 2026-10-25 · Haiku 5.5 |       |
-| `building-proposals`      | 2026-10-25 · Haiku 5.5 |       |
-| `claude-mods`             | 2026-10-25 · Haiku 5.5 |       |
-| `claude-permissions`      | 2026-10-25 · Haiku 5.5 |       |
-| `cli`                     | 2026-10-25 · Haiku 5.5 |       |
-| `code-review`             | 2026-10-25 · Haiku 5.5 |       |
-| `context-efficiency`      | 2026-10-25 · Haiku 5.5 |       |
-| `dependency-absorption`   | 2026-10-25 · Haiku 5.5 |       |
-| `dependency-updates`      | 2026-10-25 · Haiku 5.5 |       |
-| `drizzle`                 | 2026-10-25 · Haiku 5.5 |       |
-| `error-handling`          | 2026-10-25 · Haiku 5.5 |       |
-| `esbabbler`               | 2026-10-25 · Haiku 5.5 |       |
-| `esbabbler-call`          | 2026-10-25 · Haiku 5.5 |       |
-| `fallacies`               | 2026-10-25 · Haiku 5.5 |       |
-| `file-organization`       | 2026-10-25 · Haiku 5.5 |       |
-| `finishing`               | 2026-10-25 · Haiku 5.5 |       |
-| `formatting`              | 2026-10-25 · Haiku 5.5 |       |
-| `genshin-data`            | 2026-10-25 · Haiku 5.5 |       |
-| `genshin-engine`          | 2026-10-25 · Haiku 5.5 |       |
-| `genshin-parity`          | 2026-10-25 · Haiku 5.5 |       |
-| `genshin-text`            | 2026-10-25 · Haiku 5.5 |       |
-| `git`                     | 2026-10-25 · Haiku 5.5 |       |
-| `github-actions`          | 2026-10-25 · Haiku 5.5 |       |
-| `invariants`              | 2026-10-25 · Haiku 5.5 |       |
-| `llm-delegation`          | 2026-10-25 · Haiku 5.5 |       |
-| `naming`                  | 2026-10-25 · Haiku 5.5 |       |
-| `no-compatibility-debt`   | 2026-10-25 · Haiku 5.5 |       |
-| `openspec`                | 2026-10-25 · Haiku 5.5 |       |
-| `over-engineering`        | 2026-10-25 · Haiku 5.5 |       |
-| `oxlint`                  | 2026-10-25 · Haiku 5.5 |       |
-| `package-scripts`         | 2026-10-25 · Haiku 5.5 |       |
-| `page-builder`            | —                      |       |
-| `pagination`              | 2026-10-25 · Haiku 5.5 |       |
-| `pinia`                   | 2026-10-25 · Haiku 5.5 |       |
-| `product-review`          | 2026-10-25 · Haiku 5.5 |       |
-| `pulumi-infra`            | 2026-10-25 · Haiku 5.5 |       |
-| `readme-standards`        | 2026-10-25 · Haiku 5.5 |       |
-| `recreation-tooling`      | 2026-10-25 · Haiku 5.5 |       |
-| `responsive`              | 2026-10-25 · Haiku 5.5 |       |
-| `resuming`                | 2026-10-25 · Haiku 5.5 |       |
-| `review-queue`            | 2026-10-25 · Haiku 5.5 |       |
-| `routing`                 | 2026-10-25 · Haiku 5.5 |       |
-| `run-app`                 | 2026-10-25 · Haiku 5.5 |       |
-| `running-checks`          | 2026-10-21 · Haiku 5.5 |       |
-| `runtime-efficiency`      | 2026-10-25 · Haiku 5.5 |       |
-| `score`                   | 2026-10-25 · Haiku 5.5 |       |
-| `security`                | 2026-10-25 · Haiku 5.5 |       |
-| `settle`                  | 2026-10-25 · Haiku 5.5 |       |
-| `skill-authoring`         | 2026-10-25 · Haiku 5.5 |       |
-| `skill-sweep`             | 2026-10-25 · Haiku 5.5 |       |
-| `slash-commands`          | 2026-10-25 · Haiku 5.5 |       |
-| `string-utils`            | 2026-10-25 · Haiku 5.5 |       |
-| `styling`                 | 2026-10-25 · Haiku 5.5 |       |
-| `sweeps`                  | 2026-10-25 · Haiku 5.5 |       |
-| `test-values`             | 2026-10-25 · Haiku 5.5 |       |
-| `testing`                 | 2026-10-25 · Haiku 5.5 |       |
-| `throughput`              | 2026-10-25 · Haiku 5.5 |       |
-| `tiptap`                  | 2026-10-25 · Haiku 5.5 |       |
-| `todos`                   | 2026-10-25 · Haiku 5.5 |       |
-| `trpc`                    | 2026-10-25 · Haiku 5.5 |       |
-| `typescript`              | 2026-10-25 · Haiku 5.5 |       |
-| `ui-library`              | 2026-10-25 · Haiku 5.5 |       |
-| `unocss`                  | 2026-10-25 · Haiku 5.5 |       |
-| `ux`                      | 2026-10-25 · Haiku 5.5 |       |
-| `vue`                     | 2026-10-25 · Haiku 5.5 |       |
-| `vue-component-patterns`  | 2026-10-25 · Haiku 5.5 |       |
-| `vue-composable-patterns` | 2026-10-25 · Haiku 5.5 |       |
-| `vue-page-composition`    | 2026-10-25 · Haiku 5.5 |       |
-| `vue-phaserjs`            | 2026-10-25 · Haiku 5.5 |       |
-| `zod`                     | 2026-10-25 · Haiku 5.5 |       |
+| Unit                      | Swept | Notes |
+| ------------------------- | ----- | ----- |
+| `absent-values`           | —     |       |
+| `azure-table`             | —     |       |
+| `backfills`               | —     |       |
+| `bench`                   | —     |       |
+| `build`                   | —     |       |
+| `building-proposals`      | —     |       |
+| `claude-mods`             | —     |       |
+| `claude-permissions`      | —     |       |
+| `cli`                     | —     |       |
+| `code-review`             | —     |       |
+| `context-efficiency`      | —     |       |
+| `dependency-absorption`   | —     |       |
+| `dependency-updates`      | —     |       |
+| `drizzle`                 | —     |       |
+| `error-handling`          | —     |       |
+| `esbabbler`               | —     |       |
+| `esbabbler-call`          | —     |       |
+| `fallacies`               | —     |       |
+| `file-organization`       | —     |       |
+| `finishing`               | —     |       |
+| `formatting`              | —     |       |
+| `genshin-data`            | —     |       |
+| `genshin-engine`          | —     |       |
+| `genshin-parity`          | —     |       |
+| `genshin-text`            | —     |       |
+| `git`                     | —     |       |
+| `github-actions`          | —     |       |
+| `invariants`              | —     |       |
+| `llm-delegation`          | —     |       |
+| `naming`                  | —     |       |
+| `no-compatibility-debt`   | —     |       |
+| `openspec`                | —     |       |
+| `over-engineering`        | —     |       |
+| `oxlint`                  | —     |       |
+| `package-scripts`         | —     |       |
+| `page-builder`            | —     |       |
+| `pagination`              | —     |       |
+| `pinia`                   | —     |       |
+| `product-review`          | —     |       |
+| `pulumi-infra`            | —     |       |
+| `readme-standards`        | —     |       |
+| `recreation-tooling`      | —     |       |
+| `responsive`              | —     |       |
+| `resuming`                | —     |       |
+| `reverse-engineering`     | —     |       |
+| `review-queue`            | —     |       |
+| `routing`                 | —     |       |
+| `run-app`                 | —     |       |
+| `running-checks`          | —     |       |
+| `runtime-efficiency`      | —     |       |
+| `score`                   | —     |       |
+| `security`                | —     |       |
+| `settle`                  | —     |       |
+| `skill-authoring`         | —     |       |
+| `skill-sweep`             | —     |       |
+| `slash-commands`          | —     |       |
+| `string-utils`            | —     |       |
+| `styling`                 | —     |       |
+| `sweeps`                  | —     |       |
+| `test-values`             | —     |       |
+| `testing`                 | —     |       |
+| `throughput`              | —     |       |
+| `tiptap`                  | —     |       |
+| `todos`                   | —     |       |
+| `trpc`                    | —     |       |
+| `typescript`              | —     |       |
+| `ui-library`              | —     |       |
+| `unocss`                  | —     |       |
+| `ux`                      | —     |       |
+| `vue`                     | —     |       |
+| `vue-component-patterns`  | —     |       |
+| `vue-composable-patterns` | —     |       |
+| `vue-page-composition`    | —     |       |
+| `vue-phaserjs`            | —     |       |
+| `zod`                     | —     |       |
