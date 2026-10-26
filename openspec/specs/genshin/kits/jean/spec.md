@@ -185,6 +185,6 @@ Jean's collision and two plunges SHALL keep provisional reaches until a recordin
 
 ## Open
 
-- [ ] **the charged attack strikes a 160-degree fan ahead of her** — no source yet: the charged attack's angle in gcsim's `charge.go` was not opened.
 - [ ] **Constellation 6 cuts 35% DMG for 3 strikes or 10 seconds** — no source yet: gcsim leaves Constellation 6 unimplemented, and the cached wiki holds no Lion's Fang text. The cached Dandelion Breeze page, checked, names Constellation 6 as Lion's Fang, Fair Protector of Mondstadt without its effect.
-- [ ] **an enemy walking in or out of the field is not struck by its entering or exiting damage** — no source yet: gcsim's enemy tracking for the field was not opened.
+- [ ] **an enemy walking in or out of the field is not struck by its entering or exiting damage** — contradicted by ~/Esposter.noindex/cache/genshin-wiki/Category_Jean_Talents.json: Dandelion Field deals Anemo DMG to opponents entering or exiting.
+- [ ] **each enemy a strike reaches gets its own 50% roll for Wind Companion** — checked against `~/Esposter.noindex/cache/genshin-wiki/Category_Jean_Talents.json`: its Wind Companion text is the ascension passive's infobox with no note on enemies, and the claim is not settled by it because the wiki's per-enemy note is not in that file.
