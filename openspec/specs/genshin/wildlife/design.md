@@ -64,11 +64,11 @@ Every animal of the slice exists from the scene's load (`packages/genshin-world/
 
 ## Open
 
-- [ ] **Nothing is struck, dropped or picked up yet** — contradicted by `packages/genshin-world/src/services/kit/strikeKitEnemies.ts`: its kit strike drops animals by kind through `strikeKitWildlife`, and `useWorldPickups.ts` picks up material sources. The owner's call that drops are not built conflicts with that code and with the proposal's task 1.1, which is ticked; the owner settles which holds.
+- [ ] **Nothing is struck, dropped or picked up yet** — contradicted by `packages/genshin-world/src/services/kit/strikeKitEnemies.ts`: strikes drop animals by kind; the owner defers wildlife drops.
 - [ ] **The three kinds of bird and beast** — contradicted by `packages/genshin-world/src/models/wildlife/WildlifeKind.ts`: it names four kinds, the boar too.
 - [ ] **The fleeing-kind check admits only White Pigeon, Crimson Fox or Squirrel** — contradicted by `scripts/src/services/genshinAssets/wildlife/buildWildlifePlaces.ts`: it maps every `WildlifeKind` to its label, Boar included.
 - [ ] **The archive files each kind as an animal or aviary monster** — no source yet: the dump's Monster and Gadget rows were not matched to the kinds' names.
 - [ ] **The environment table holds no row for a bird or a beast** — no source yet: its six Gadget rows' animal ids were not matched to a kind.
 - [ ] **No table gives a flight's speed** — no source yet: only the environment table's keys were read, not every table's.
 - [ ] **Mondstadt's slice holds about a hundred animals, and the other regions hold the same kinds where their labels are marked** — no source yet: the published slices are in hosted storage, not the local dump, so neither count was checked.
-- [ ] **No other animal is placed than the White Pigeon, the Crimson Fox and the Squirrel** — contradicted by `scripts/src/services/genshinAssets/wildlife/WildlifeKindLabelIdMap.ts`: label 313 is a Boar the builder places.
+- [ ] **The animals are not drawn in a witness render** — no source yet: the witness render's families were not checked against the animals.
