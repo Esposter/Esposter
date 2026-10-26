@@ -1,12 +1,12 @@
 ## Purpose
 
-The game's enemies in the world as built. Each kind's stats come from its base values and the game's level curves, read from the community's dump of the game's tables. An AI stepped on a fixed step idles or patrols, notices, chases, winds up and strikes, is staggered when its poise breaks, gives up past its leash and heals at home. Camps wake together, spawns come back on the game's timers when their region loads, and a defeated enemy drops Mora, Character EXP, materials and energy by the wiki's tables. Each enemy is drawn as a capsule tinted by its state, and tinted white with a small flash at its middle for a moment after a hit.
+The game's enemies in the world as built. Each kind's stats come from its base values and the game's level curves, read from the community's dump of the game's tables (`packages/genshin-world/src/services/enemy/readEnemyTables.ts`). An AI stepped on a fixed step idles or patrols, notices, chases, winds up and strikes, is staggered when its poise breaks, gives up past its leash and heals at home. Camps wake together, spawns come back on the game's timers when their region loads, and a defeated enemy drops Mora, Character EXP, materials and energy by the wiki's tables. Each enemy is drawn as a capsule tinted by its state, and tinted white with a small flash at its middle for a moment after a hit.
 
 ## Requirements
 
 ### Requirement: An idle enemy notices a target and alerts before it chases
 
-An idle enemy SHALL become alert when a target comes within its aggro range, and SHALL chase once its alert time passes or when it is hit.
+An idle enemy SHALL become alert when a target comes within its aggro range, and SHALL chase once its alert time passes or when it is hit (`packages/genshin-world/src/services/enemy/stepEnemy.ts`, with its ranges and timings in `packages/genshin-world/src/services/enemy/constants.ts`).
 
 #### Scenario: A target within aggro range alerts an idle enemy
 
@@ -28,7 +28,7 @@ An idle enemy SHALL become alert when a target comes within its aggro range, and
 
 ### Requirement: An enemy strikes only after its windup while the target is in reach
 
-A chasing enemy SHALL begin a windup when a target is within its attack range and its cooldown is over, and SHALL strike only when the windup passes with the target still in reach.
+A chasing enemy SHALL begin a windup when a target is within its attack range and its cooldown is over, and SHALL strike only when the windup passes with the target still in reach (`packages/genshin-world/src/services/enemy/stepEnemy.ts`).
 
 #### Scenario: A target in attack range starts a windup
 
@@ -51,7 +51,7 @@ A chasing enemy SHALL begin a windup when a target is within its attack range an
 
 ### Requirement: A staggered enemy cancels its attack until the stagger passes
 
-An enemy whose poise breaks SHALL be staggered and its attack cancelled, and SHALL chase again once the stagger passes.
+An enemy whose poise breaks SHALL be staggered and its attack cancelled, and SHALL chase again once the stagger passes (`packages/genshin-world/src/services/enemy/damageEnemy.ts`, `packages/genshin-world/src/services/enemy/stepEnemy.ts`).
 
 #### Scenario: A broken poise staggers the enemy
 
@@ -69,7 +69,7 @@ An enemy whose poise breaks SHALL be staggered and its attack cancelled, and SHA
 
 ### Requirement: A launching hit that staggers an enemy launches it
 
-A hit whose stagger level is Air SHALL leave an enemy it staggers launched while the stagger lasts, and a hit that leaves the enemy unstaggered, or does not launch, SHALL leave it unlaunched.
+A hit whose stagger level is Air SHALL leave an enemy it staggers launched while the stagger lasts, and a hit that leaves the enemy unstaggered, or does not launch, SHALL leave it unlaunched (`packages/genshin-world/src/services/kit/strikeEnemy.ts`, with `ENEMY_LAUNCHED_STATUS_ID` in `packages/genshin-world/src/services/enemy/constants.ts`).
 
 #### Scenario: A launching hit that staggers an enemy leaves it launched while the stagger lasts
 
@@ -85,7 +85,7 @@ A hit whose stagger level is Air SHALL leave an enemy it staggers launched while
 
 ### Requirement: An enemy past its leash returns home healed and immune on the way
 
-An enemy farther from its spawn than its leash distance, or with no target, SHALL walk home immune to damage and SHALL arrive healed to full with its shield and poise restored.
+An enemy farther from its spawn than its leash distance, or with no target, SHALL walk home immune to damage and SHALL arrive healed to full with its shield and poise restored (`packages/genshin-world/src/services/enemy/stepEnemy.ts`; a returning enemy is immune in `packages/genshin-world/src/services/enemy/damageEnemy.ts`).
 
 #### Scenario: An enemy past its leash walks home
 
@@ -109,7 +109,7 @@ An enemy farther from its spawn than its leash distance, or with no target, SHAL
 
 ### Requirement: A defeated enemy drops what its table gives and a boss drops nothing
 
-An enemy whose health reaches zero SHALL be defeated and drop Mora, Character EXP and materials by its level band, except that a boss drops nothing and no enemy gives Adventure EXP.
+An enemy whose health reaches zero SHALL be defeated and drop Mora, Character EXP and materials by its level band, except that a boss drops nothing and no enemy gives Adventure EXP (`packages/genshin-world/src/services/enemy/computeEnemyDrops.ts`, which gives a boss nothing).
 
 #### Scenario: A defeated common enemy drops by its level band
 
@@ -131,7 +131,7 @@ An enemy whose health reaches zero SHALL be defeated and drop Mora, Character EX
 
 ### Requirement: Enemy stats grow by the game's level curves
 
-An enemy's max health and ATK SHALL be its base values times the multiplier of its level's curve, and its DEF SHALL be scaled by one plus a hundredth of its level.
+An enemy's max health and ATK SHALL be its base values times the multiplier of its level's curve, and its DEF SHALL be scaled by one plus a hundredth of its level (`packages/genshin-world/src/services/enemy/computeEnemyStats.ts`; the defense curve's multipliers in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/MonsterCurveExcelConfigData.json`).
 
 #### Scenario: A kind's stats are computed at its level
 
@@ -142,7 +142,7 @@ An enemy's max health and ATK SHALL be its base values times the multiplier of i
 
 ### Requirement: A defeated camp member returns only after its camp's respawn time
 
-A defeated enemy SHALL NOT return before its respawn time, which depends on its camp: twelve hours for a camp of common enemies, the next daily reset for a camp with an elite, and on the next load for a camp with a boss.
+A defeated enemy SHALL NOT return before its respawn time, which depends on its camp: twelve hours for a camp of common enemies, the next daily reset for a camp with an elite, and on the next load for a camp with a boss (`packages/genshin-world/src/services/enemy/computeEnemyRespawnTime.ts`, with the twelve hours in `packages/genshin-world/src/services/enemy/constants.ts`).
 
 #### Scenario: A common camp member returns twelve hours after its defeat
 
@@ -153,18 +153,18 @@ A defeated enemy SHALL NOT return before its respawn time, which depends on its 
 #### Scenario: An elite camp member returns at the next daily reset
 
 - **GIVEN** a camp with an elite and a member defeated
-- **WHEN** the next daily reset at 04:00 on the server's clock arrives
+- **WHEN** the next daily reset at 04:00 on the server's clock arrives (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, the `REFRESH_DAILY` rows with `14400`)
 - **THEN** the member returns
 
 #### Scenario: A boss camp returns on the next load with its reward claimed
 
 - **GIVEN** a camp with a boss whose reward is claimed
 - **WHEN** the page is next loaded
-- **THEN** the boss's camp is spawned again
+- **THEN** the boss's camp is spawned again (`packages/genshin-world/src/components/World/Enemies/Index.vue`)
 
 ### Requirement: A camp wakes together
 
-When one member of a camp is engaged, every idle member of that camp SHALL be alerted.
+When one member of a camp is engaged, every idle member of that camp SHALL be alerted (`packages/genshin-world/src/services/enemy/wakeEnemyCamps.ts`).
 
 #### Scenario: An engaged member wakes its idle camp-mates
 
@@ -174,7 +174,7 @@ When one member of a camp is engaged, every idle member of that camp SHALL be al
 
 ### Requirement: Camps spawn when their region arrives and respawn when the World Level changes
 
-A camp SHALL spawn when its region's data arrives and leave when the region leaves reach, and every camp SHALL spawn anew when the World Level changes.
+A camp SHALL spawn when its region's data arrives and leave when the region leaves reach, and every camp SHALL spawn anew when the World Level changes (`packages/genshin-world/src/components/World/Enemies/Index.vue`).
 
 #### Scenario: A region arriving in reach spawns its camps
 
@@ -196,7 +196,7 @@ A camp SHALL spawn when its region's data arrives and leave when the region leav
 
 ### Requirement: An enemy's strike lands on the team's shields before the member's health
 
-An enemy's strike on a party member SHALL land first on the shields the team holds, all at once, and what none of them absorbs SHALL reduce the struck member's health by its share of maximum health.
+An enemy's strike on a party member SHALL land first on the shields the team holds, all at once, and what none of them absorbs SHALL reduce the struck member's health by its share of maximum health (`packages/genshin-world/src/services/kit/strikePartyMember.ts`).
 
 #### Scenario: Shields absorb a strike before health
 
@@ -207,7 +207,7 @@ An enemy's strike on a party member SHALL land first on the shields the team hol
 
 ### Requirement: An enemy in range of a live taunt strikes the nearest taunt
 
-An enemy within aggro range of a live taunt SHALL strike the nearest such taunt instead of the character.
+An enemy within aggro range of a live taunt SHALL strike the nearest such taunt instead of the character (`packages/genshin-world/src/services/kit/selectEnemyTaunt.ts`).
 
 #### Scenario: The nearest taunt takes the strike
 
@@ -217,7 +217,7 @@ An enemy within aggro range of a live taunt SHALL strike the nearest such taunt 
 
 ### Requirement: An enemy drops its energy once at each health threshold for its life
 
-An enemy SHALL drop its energy at each health threshold it falls to, once for its life however it is healed.
+An enemy SHALL drop its energy at each health threshold it falls to, once for its life however it is healed (`packages/genshin-world/src/services/enemy/damageEnemy.ts`).
 
 #### Scenario: Falling to a threshold drops energy
 
@@ -233,7 +233,7 @@ An enemy SHALL drop its energy at each health threshold it falls to, once for it
 
 ### Requirement: A page reload restores each defeated enemy by its saved respawn time
 
-A reload of the page SHALL bring back a defeated enemy only once its saved respawn time has passed, and SHALL bring back a boss's camp, whose respawn the save does not hold.
+A reload of the page SHALL bring back a defeated enemy only once its saved respawn time has passed, and SHALL bring back a boss's camp, whose respawn the save does not hold (`packages/genshin-world/src/models/enemy/EnemyRespawnSave.ts`, and `packages/genshin-world/src/components/World/Enemies/Index.vue` for the boss camps).
 
 #### Scenario: A defeated enemy stays away after a reload until its respawn time
 
@@ -250,7 +250,7 @@ A reload of the page SHALL bring back a defeated enemy only once its saved respa
 
 ### Requirement: Each enemy is drawn as a capsule tinted by its state
 
-Each enemy SHALL be drawn as a capsule tinted by its state, and SHALL be tinted white with a small flash at its middle for a moment after a hit.
+Each enemy SHALL be drawn as a capsule tinted by its state, and SHALL be tinted white with a small flash at its middle for a moment after a hit (`packages/genshin-world/src/components/World/Enemies/Index.vue`, with the tint and flash timings in `packages/genshin-world/src/services/enemy/constants.ts`).
 
 #### Scenario: An enemy is tinted by its state
 
@@ -264,3 +264,14 @@ Each enemy SHALL be drawn as a capsule tinted by its state, and SHALL be tinted 
 - **WHEN** the hit lands
 - **THEN** its capsule is tinted white
 - **AND** a small flash stands at its middle for a moment
+
+## Open
+
+- [ ] **A defeated common enemy returns twelve hours after its defeat** — no source yet: the wiki's Reset page is not in the wiki cache.
+- [ ] **An elite camp's member returns at the next daily reset** — no source yet: the wiki's Reset page is not in the wiki cache, which gives the elite's rule.
+- [ ] **The server's clock is UTC+8** — no source yet: no row of the game's exports names the zone, and the wiki's Reset page is not in the wiki cache.
+- [ ] **A camp with a boss returns on the next load with its reward claimed** — no source yet: the wiki's Reset page is not in the wiki cache.
+- [ ] **An enemy drops its energy at each health threshold, once for its life** — no source yet: the wiki's Energy/Data page is not in the wiki cache.
+- [ ] **Each level band's Mora and Character EXP follow the wiki's table** — no source yet: the wiki's Module:Drops Table page is not in the wiki cache.
+- [ ] **No enemy gives Adventure EXP** — no source yet: the wiki's Adventure EXP page is not in the wiki cache.
+- [ ] **A hit that launches is one whose stagger level is Air** — no source yet: the wiki's Interruption Resistance/Stagger page is not in the wiki cache.
