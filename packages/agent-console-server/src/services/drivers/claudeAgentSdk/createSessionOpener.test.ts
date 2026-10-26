@@ -32,7 +32,6 @@ describe(createSessionOpener, () => {
     })({ cwd, isFork: true, isSideChat, resumeAt: "", resumeFrom: sessionId, sessionId: forkedSessionId });
 
   beforeEach(() => {
-    vi.clearAllMocks();
     vi.mocked(getSessionMessages).mockResolvedValue([]);
     vi.mocked(watchSession).mockResolvedValue(undefined);
   });

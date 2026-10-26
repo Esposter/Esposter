@@ -18,6 +18,12 @@ describe(createPermissionBridge, () => {
   const requestId = crypto.randomUUID();
   const input = { a: "" };
   const suggestions = [{ destination: "session", mode: "acceptEdits", type: "setMode" } as const];
+  const requestAndResolutionEventTypes = [
+    AgentEventType.PermissionRequest,
+    SessionState.RequiresAction,
+    AgentEventType.PermissionResolution,
+    SessionState.Running,
+  ];
 
   test("answers the SDK with the verdict and announces it once, however often it is given", async () => {
     expect.hasAssertions();
@@ -41,12 +47,7 @@ describe(createPermissionBridge, () => {
       updatedPermissions: suggestions,
     });
     expect(pendingPermissionMap.size).toBe(0);
-    expect(readEventTypes(emit)).toStrictEqual([
-      AgentEventType.PermissionRequest,
-      SessionState.RequiresAction,
-      AgentEventType.PermissionResolution,
-      SessionState.Running,
-    ]);
+    expect(readEventTypes(emit)).toStrictEqual(requestAndResolutionEventTypes);
     expect(
       emit.mock.calls.flatMap(([, events]) =>
         events.flatMap((event) => (event.type === AgentEventType.PermissionResolution ? [event.behavior] : [])),
@@ -64,11 +65,6 @@ describe(createPermissionBridge, () => {
     abortController.abort();
 
     await expect(pendingResult).resolves.toStrictEqual({ behavior: "deny", message: DEFAULT_DENY_MESSAGE });
-    expect(readEventTypes(emit)).toStrictEqual([
-      AgentEventType.PermissionRequest,
-      SessionState.RequiresAction,
-      AgentEventType.PermissionResolution,
-      SessionState.Running,
-    ]);
+    expect(readEventTypes(emit)).toStrictEqual(requestAndResolutionEventTypes);
   });
 });

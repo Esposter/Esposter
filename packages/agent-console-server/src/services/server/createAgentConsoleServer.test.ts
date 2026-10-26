@@ -65,6 +65,18 @@ describe(createAgentConsoleServer, () => {
   const sessionId = crypto.randomUUID();
   const createdAt = new Date(0);
   const events: AgentEvent[] = [{ createdAt, id: " ", message: " ", type: AgentEventType.HostError }];
+  const closedSessionEvents: AgentEvent[] = [
+    { createdAt, id: " ", state: SessionState.Closed, type: AgentEventType.SessionState },
+  ];
+  const createSessionCommand = JSON.stringify({ cwd: " ", id: commandId, type: CommandType.CreateSession });
+  const openShellCommand = JSON.stringify({
+    cols: 1,
+    cwd: " ",
+    id: commandId,
+    rows: 1,
+    sessionId,
+    type: CommandType.OpenShell,
+  });
   let server: AgentConsoleServer;
   let callbacks: DriverCallbacks;
   let stateDirectory: string;
@@ -334,7 +346,7 @@ describe(createAgentConsoleServer, () => {
     const { paired, webSocket } = await pair();
     const pendingEvents = waitForMessage(webSocket, ServerMessageType.Events);
     const pendingSessionOpened = waitForMessage(webSocket, ServerMessageType.SessionOpened);
-    webSocket.send(JSON.stringify({ cwd: " ", id: commandId, type: CommandType.CreateSession }));
+    webSocket.send(createSessionCommand);
     const sessionOpened = await pendingSessionOpened;
     const liveEvents = await pendingEvents;
     const laterWebSocket = connect();
@@ -353,7 +365,7 @@ describe(createAgentConsoleServer, () => {
     const turnUsageEvents: AgentEvent[] = [{ createdAt, id: " ", outputTokens: 0, type: AgentEventType.TurnUsage }];
     const { paired, webSocket } = await pair();
     const pendingSessionOpened = waitForMessage(webSocket, ServerMessageType.SessionOpened);
-    webSocket.send(JSON.stringify({ cwd: " ", id: commandId, type: CommandType.CreateSession }));
+    webSocket.send(createSessionCommand);
     await pendingSessionOpened;
     const pendingLiveEvents = waitForMessage(webSocket, ServerMessageType.Events);
     callbacks.onEvents(sessionId, turnUsageEvents);
@@ -373,9 +385,7 @@ describe(createAgentConsoleServer, () => {
 
     const { paired, webSocket } = await pair();
     const pendingShellOpened = waitForMessage(webSocket, ServerMessageType.ShellOpened);
-    webSocket.send(
-      JSON.stringify({ cols: 1, cwd: " ", id: commandId, rows: 1, sessionId, type: CommandType.OpenShell }),
-    );
+    webSocket.send(openShellCommand);
     const { shellId } = await pendingShellOpened;
     const pendingShellOutput = waitForMessage(webSocket, ServerMessageType.ShellOutput);
     fakeTerminal.print(" ");
@@ -401,14 +411,10 @@ describe(createAgentConsoleServer, () => {
 
     const { webSocket } = await pair();
     const pendingShellOpened = waitForMessage(webSocket, ServerMessageType.ShellOpened);
-    webSocket.send(
-      JSON.stringify({ cols: 1, cwd: " ", id: commandId, rows: 1, sessionId, type: CommandType.OpenShell }),
-    );
+    webSocket.send(openShellCommand);
     const { shellId } = await pendingShellOpened;
     const pendingShellClosed = waitForMessage(webSocket, ServerMessageType.ShellClosed);
-    callbacks.onEvents(sessionId, [
-      { createdAt, id: " ", state: SessionState.Closed, type: AgentEventType.SessionState },
-    ]);
+    callbacks.onEvents(sessionId, closedSessionEvents);
 
     await expect(pendingShellClosed).resolves.toStrictEqual({ shellId, type: ServerMessageType.ShellClosed });
   });
@@ -417,14 +423,10 @@ describe(createAgentConsoleServer, () => {
     expect.hasAssertions();
 
     const { webSocket } = await pair();
-    callbacks.onEvents(sessionId, [
-      { createdAt, id: " ", state: SessionState.Closed, type: AgentEventType.SessionState },
-    ]);
+    callbacks.onEvents(sessionId, closedSessionEvents);
     callbacks.onSessionOpen(sessionId, false);
     const pendingShellOpened = waitForMessage(webSocket, ServerMessageType.ShellOpened);
-    webSocket.send(
-      JSON.stringify({ cols: 1, cwd: " ", id: commandId, rows: 1, sessionId, type: CommandType.OpenShell }),
-    );
+    webSocket.send(openShellCommand);
     const shellOpened = await pendingShellOpened;
 
     expect(shellOpened.sessionId).toBe(sessionId);

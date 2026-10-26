@@ -35,7 +35,6 @@ describe(createClaudeAgentSdkDriver, () => {
   const setPermissionMode = vi.fn<Query["setPermissionMode"]>();
 
   beforeEach(() => {
-    vi.clearAllMocks();
     vi.mocked(readSessionCwd).mockResolvedValue(cwd);
     vi.mocked(getSessionMessages).mockResolvedValue([]);
     vi.mocked(query).mockReturnValue({ setPermissionMode } as unknown as Query);

@@ -60,6 +60,13 @@ describe(createSdkMessageMapper, () => {
     readFileSync(resolve(import.meta.dirname, "recordedSession.json"), "utf8"),
   ) as RecordedSession;
   const createdAt = new Date(0);
+  const writeResultMessage = recordedSession.messages.find(
+    (message) =>
+      message.type === "user" &&
+      typeof message.tool_use_result === "object" &&
+      message.tool_use_result !== null &&
+      "filePath" in message.tool_use_result,
+  );
 
   test("maps the recorded session to events the wire contract accepts", async () => {
     expect.hasAssertions();
@@ -185,13 +192,6 @@ describe(createSdkMessageMapper, () => {
     expect.hasAssertions();
 
     const { mapMessage } = createSdkMessageMapper();
-    const writeResultMessage = recordedSession.messages.find(
-      (message) =>
-        message.type === "user" &&
-        typeof message.tool_use_result === "object" &&
-        message.tool_use_result !== null &&
-        "filePath" in message.tool_use_result,
-    );
     assert.exists(writeResultMessage);
     const readOriginalTexts = () =>
       mapMessage(writeResultMessage, createdAt).flatMap((event) =>
@@ -206,13 +206,6 @@ describe(createSdkMessageMapper, () => {
     expect.hasAssertions();
 
     const { mapHistory } = createSdkMessageMapper();
-    const writeResultMessage = recordedSession.messages.find(
-      (message) =>
-        message.type === "user" &&
-        typeof message.tool_use_result === "object" &&
-        message.tool_use_result !== null &&
-        "filePath" in message.tool_use_result,
-    );
     assert.exists(writeResultMessage);
     assert(writeResultMessage.type === "user");
     const { message, parent_tool_use_id, tool_use_result, uuid = "" } = writeResultMessage;

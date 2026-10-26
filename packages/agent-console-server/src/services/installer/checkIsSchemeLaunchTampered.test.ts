@@ -10,7 +10,7 @@ describe(checkIsSchemeLaunchTampered, () => {
     [["--port", "0"], false],
     [[], false],
     // A quote in the link closed the argument early, so what followed it arrived as flags of its own
-    [[`${HOST_SCHEME}://start`, "--origin", "https://a"], true],
+    [[link, "--origin", "https://a"], true],
     [["--hostname", "0.0.0.0", link], true],
   ])("reads %j as tampered: %s", (commandLineArguments, expected) => {
     expect.hasAssertions();
