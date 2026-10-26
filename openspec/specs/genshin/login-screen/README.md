@@ -84,10 +84,11 @@ flowchart TD
 
 - [ ] **The Japanese client's recording times the stages and shows each stage's corner buttons** — no source yet: no captured recording names the Japanese client, and the Reference lists none.
 - [ ] **A 1080 high English recording of an older build gives the words and every size** — no source yet: no English recording in `~/Esposter/genshin-parity/captures/` has its build and resolution named.
-- [ ] **The flight covers about two thirds of the way, and the door rises about three seconds after the bar fills, as the English recording does** — contradicted in its door timing by `~/Esposter.noindex/genshin-parity/captures/yt-rBnfA4pXw6U.mp4`, the English door recording (1920 by 1080, 60 fps): the door shows about five seconds after the bar reads 100%, not three; the flight's share is not measured here.
+- [ ] **The door rises about three seconds after the bar fills, as the English recording does** — contradicted by `~/Esposter/genshin-parity/captures/yt-rBnfA4pXw6U.mp4`: the door shows about five seconds after the bar reads 100%, not three.
+- [ ] **The flight covers about two thirds of the way** — no source yet: the flight's share is not measured in the captures.
 - [ ] **The scene alone, as a reference shows it with no interface, is silent** — no source yet: no scene-only reference with its audio is kept in `~/Esposter/genshin-parity/captures/`.
 - [ ] **The arrangement's unit test holds the cross-ratio of the dais over the walkway along the door's foot** — no source yet: `scripts/src/services/genshinAssets/scene/computeCrossRatio.test.ts` does not name the dais, the walkway or the door.
-- [ ] **Each fit that builds the login data has its own test** — no source yet: none of the ten `fitLogin*` fits in `scripts/src/services/genshinAssets/fit/` has a test beside it.
+- [ ] **Each fit that builds the login data has its own test** — contradicted by `scripts/src/services/genshinAssets/fit/`: none of its ten `fitLogin*` fits has a test beside it.
 - [ ] **The night title is the wiki's `File:Moon - Title screen - Night.png`** — no source yet: the wiki's still is not in `~/Esposter/cache/genshin-wiki/`. Partly found 2026-10-11: https://www.youtube.com/watch?v=D-iWDjSOL-s at 0–30 s (`~/Esposter.noindex/genshin-parity/captures/yt-D-iWDjSOL-s-login-dawn.mp4`); still sought: the build is not stated and the source is 720p30.
 - [ ] **The game opens on its login screen once the health notice has faded** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **The console's opening shows the login at the same place, stages and timings** — no source yet: game data or a snapshot that holds this behaviour
