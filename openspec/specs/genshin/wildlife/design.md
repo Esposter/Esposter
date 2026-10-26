@@ -6,8 +6,8 @@ The client does not place the game's animals, so the map's public points stand i
 
 ```mermaid
 flowchart TD
-  P["The official map's points, read into the references folder"] --> K{"An animal label: White Pigeon, Crimson Fox or Squirrel?"}
-  K -->|"no"| SKIP["Not a fleeing kind: left alone"]
+  P["The official map's points, read into the references folder"] --> K{"An animal label: White Pigeon, Crimson Fox, Squirrel or Boar?"}
+  K -->|"no"| SKIP["Not one of the four kinds: left alone"]
   K -->|"yes"| L{"On the ground layer, in a mapped region?"}
   L -->|"no"| UG["Left out, as the chests are"]
   L -->|"yes"| T["Carried into the game's coordinates by the fit's transform, then into its region's axes"]
