@@ -219,4 +219,5 @@ Lingering Aeon, Tranquility Aura and the Whirling Steps' later presses SHALL NOT
 ## Open
 
 - [ ] **Golden Chalice's Bounty needs a Dendro member and no member that is neither Dendro nor Hydro** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/nilou/asc.go`: its condition also needs a Hydro member (lines 19 and 20).
+- [ ] **A press of Nilou's skill inside Pirouette is refused by the cooldown** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/nilou/skill.go`: a press while Pirouette stands runs Whirling Steps (lines 92 to 93).
 - [ ] **An Electro or Pyro hit leaves a Bountiful Core standing** — no source yet: design.md names no element rule for the core, and gcsim's core takes a hit of any element alike.
