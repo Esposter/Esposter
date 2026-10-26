@@ -23,7 +23,7 @@ A character's Max HP, ATK and DEF SHALL each be its base multiplied by one plus 
 
 ### Requirement: Base attributes grow along the level curve and rise with ascension
 
-A character's and weapon's base attributes SHALL grow along the game's level curve and rise with each ascension phase they have reached.
+A character's and weapon's base attributes SHALL grow along the game's level curve and rise with each ascension phase they have reached (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/AvatarCurveExcelConfigData.json`, where level 90's HP curve is 8.349; `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/AvatarPromoteExcelConfigData.json`, whose phases add base props; `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/WeaponCurveExcelConfigData.json` and `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/WeaponPromoteExcelConfigData.json` alike).
 
 #### Scenario: Base grows to its level within its phase
 
@@ -119,7 +119,6 @@ The Traveler SHALL have no element until it resonates with a statue (`~/Esposter
 - [ ] **The Traveler has no element in the world before its statue resonance** — no source yet: no test holds the Traveler's element before resonance; the element test holds only its alignment mark.
 - [ ] **Max HP, ATK and DEF are each built from base, percentage and flat** — no source yet: the wiki's Attributes page (title Attributes) is not in the wiki cache, and the Attributes tab in `~/Esposter.noindex/genshin-parity/references/character-attributes.png` (Xilonen at level 90) is not yet summed from her lines.
 - [ ] **A weapon's ATK percentage raises the character's and the weapon's ATK bases** — no source yet: the wiki's Attributes page (title Attributes) is not in the wiki cache, and no weapon's ATK percentage is yet summed against an Attributes tab, the reference `~/Esposter.noindex/genshin-parity/references/character-attributes.png` among them.
-- [ ] **Base attributes grow along the level curve and rise with ascension** — no source yet: the dump's `AvatarCurveExcelConfigData.json` and `AvatarPromoteExcelConfigData.json` in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/`, on disk, are not yet read for a base at a level or a phase (the weapon's `WeaponCurveExcelConfigData.json` and `WeaponPromoteExcelConfigData.json` alike).
 - [ ] **Every line a character carries counts toward its attributes** — no source yet: the Attributes tab in `~/Esposter.noindex/genshin-parity/references/character-attributes.png` (Xilonen at level 90) is not yet summed from every line she carries.
-- [ ] **Four pieces of a set count both the two-piece and four-piece bonuses** — no source yet: the wiki's Artifact/Sets page (title Artifact/Sets) is not on disk, and the dump's `ReliquarySetExcelConfigData.json` in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/` is not yet read for a set's two- and four-piece bonuses.
+- [ ] **Four pieces of a set count both the two-piece and four-piece bonuses** — no source yet: the wiki's Artifact/Sets page (title Artifact/Sets) is not on disk, and the dump's `ReliquarySetExcelConfigData.json` in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/` gives each set's thresholds 2 and 4 but not that four pieces count both bonuses.
 - [ ] **A character's region is the one its association names** — contradicted by `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/FetterInfoExcelConfigData.json`: five characters name Snezhnaya associations the map leaves out.
