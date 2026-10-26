@@ -16,7 +16,7 @@ The stores this reads are the ones in the [user data inventory](../../specs/arch
 
 **One export is active per person.** A second request while one is queued or building returns the first one's status. This bounds the work an account can start.
 
-**The archive holds the person's own data, including what their activity left on the platform, and nobody else's.** Access and portability under the GDPR (Articles 15 and 20) cover the personal data concerning the person, which includes data observed from their activity, such as their likes, reactions and friend requests. Article 20(4) provides that the right to portability shall not adversely affect the rights and freedoms of others. So another person's content, counts and records are left out even where they sit beside the person's own, and the exclusions below name each one.
+**The archive holds the person's own data, including what their activity left on the platform, and nobody else's.** Access and portability under the GDPR (Articles 15 and 20) cover the personal data concerning the person, which includes data observed from their activity, such as their likes, reactions and friend requests. Article 20(4) provides that the right to portability shall not adversely affect the rights and freedoms of others. So another person's content, counts and records are left out even where they sit beside the person's own, and the exclusions below name each one. A credential is never written, whichever record holds it: a session, an account's token, or a webhook's token. A moderation action is the person's own act as moderator or admin, so its type, time and the id it was taken against are written; the target's content is left out under Article 20(4), and the target keeps the record of the action against them in their own `moderation.json`. A link, a publication and a search hold no credential, so each is written as its row stores it.
 
 ## What the archive holds
 
@@ -43,7 +43,9 @@ The stores this reads are the ones in the [user data inventory](../../specs/arch
 - **Resource version history.** Every saved version of a resource beyond its working copy, which is included. The resource's activity logs, which record other people's use of the resource.
 - **Derived files.** Thumbnails, which are derived from the original attachment the archive holds.
 - **Shared and staging data.** The shared character-pack files and the list of packs, which have no owner to attribute them to, the staging blobs of character packs not yet kept, and the storage ledger, which is accounting rather than the person's data.
-- **Sessions and tokens.** Sessions, API keys and every token in `accounts`, which the deletion removes with the user row.
+- **Moderation notes the person wrote.** A note is a moderator's words about a target, which are the target's content, and a note is not an action. The actions the person took are written in `moderation-actions.json`.
+- **Moderation actions in rooms the person does not own.** The room's owner keeps the record of what was done in it, and an action in another person's room is their record, not the person's.
+- **Sessions and tokens.** Sessions, API keys, every token in `accounts` and each webhook's token. The deletion removes the sessions, keys and account tokens with the user row, and a webhook with the room that owns it.
 
 ## Rejected
 
