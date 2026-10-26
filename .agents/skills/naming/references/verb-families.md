@@ -13,7 +13,7 @@ Web API.
 A fetch that answers with a count is still a fetch: `readFoosCount`, and the service behind it takes the
 procedure's name. `count*` names a pure in-memory tally (`countOccurrences`), where the verb is the whole
 operation and nothing is fetched. A fetch that groups answers with rows is plural and named for them
-(`readFooTagCounts`) — the `trpc` skill owns that ("Procedure & Result Naming").
+(`readFooTagCounts`) — the `trpc` skill ("Procedure & Result Naming") owns that.
 
 A thin wrapper over a dependency's own listing keeps that dependency's verb instead of either
 (`references/names-a-dependency-owns.md`).

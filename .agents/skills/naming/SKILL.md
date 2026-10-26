@@ -12,10 +12,10 @@ and the shapes it takes, is `references/names-a-dependency-owns.md`.
 
 ## Settled — do not re-propose
 
-- **A lint rule for filename-is-the-export** — a store file exports `use<Name>Store` for a `<name>.ts` and takes its parent's word where the leaf collides (`battle/player.ts` → `useBattlePlayerStore`), and `index.ts` and `constants.ts` are the two multi-export names, so the exceptions are a roster; it stays a reading rule.
+- **A lint rule for filename-is-the-export** — a store file exports `use<Name>Store` for a `<name>.ts` and takes its parent's word where the leaf collides (`battle/player.ts` → `useBattlePlayerStore`), and `index.ts` and `constants.ts` are the multi-export names, so the exceptions are a roster; it stays a reading rule.
 - **A word list for abbreviations** — only the short forms with no site left are denylisted (`references/abbreviations.md`); a name still in use would buy disables instead of coverage.
 - **A selector for a `<script setup>` constant's casing** — whether a top-level literal is fixed or captures a ref needs scope analysis no selector has.
-- **A ban on a bare-identifier initialiser (`const a = b`)** — it is also how a mutable binding is snapshotted before it is cleared and how a return shorthand is earned; a trial selector reported dozens of such sites and no alias.
+- **A ban on a bare-identifier initialiser (`const a = b`)** — it is also how a mutable binding is snapshotted before it is cleared and how a return shorthand is earned; a trial selector reported many such sites and no alias.
 - **A generic value in a shared namespace** (`host://`, `"SESSION_SECRET"`, a folder named `Host` in the user's app data) — another program claims the same name, and the reader's own variable or handler is read or deleted as ours (`references/shared-namespaces.md`).
 - **An enum member copying the outside casing** (`eq`, `objectgroup`) — one enum then reads in two casings and a member is indistinguishable from a value at the call site (`references/enum-members.md`).
 
@@ -95,7 +95,7 @@ and the shapes it takes, is `references/names-a-dependency-owns.md`.
 - **Interface fields use full type name** — `aggregationTransformationType: AggregationTransformationType` not `transform`, `mode`, or `type`. Never abbreviate enum field names
 - **A wrong name is corrected in place, never aliased** — no re-export shim, no version suffix, no comment explaining the history, and neither "it is deployed" nor "it is published" is an exemption (`openspec/specs/architecture/no-compatibility-debt/design.md`; the mechanics of the rename are the `file-organization` skill's `references/renames.md`). A name that is still accurate is left alone: correctness is the criterion, not symmetry with its neighbours.
 - **A file's name is its single export's name**, and renaming the export renames the file in the same change (`references/file-names.md`)
-- **An enum member is PascalCase; its value keeps the outside spelling** — `Dark = "dark"`, `Eq = "eq"`; lint refuses any other member casing. Where an outside spelling seems to belong on the member, and the two that keep it behind a disable — `references/enum-members.md`
+- **An enum member is PascalCase; its value keeps the outside spelling** — `Dark = "dark"`, `Eq = "eq"`; lint refuses any other member casing. Where an outside spelling seems to belong on the member, and the exceptions that keep it behind a disable — `references/enum-members.md`
 - A panel's subsections, or any list whose labels are also its ids, are one enum per group — `references/section-enums.md`
 
 ## Constants
