@@ -79,5 +79,6 @@ A talk is none of these: `MenuScreen` draws nothing for it, and the world screen
 
 ## Open
 
-- [ ] **The menus pause the world's simulation while their music and particles run on** — no source yet: the Time wiki page, checked, pauses the clock under the Paimon Menu and says nothing of the simulation, the music or the particles.
-- [ ] **Windrise's clock and clouds stand still under a menu and run on under a talk and in photo mode** — no source yet: no recording of Windrise's clock under each screen was checked.
+- [ ] **Each screen's shortcut is the game's binding (M, C, L, B, J, F1 to F5, O, Enter)** — no source yet: the Controls wiki page is not on disk.
+- [ ] **The menus pause the world's simulation while their music and particles run on** — no source yet: the Time wiki page is not on disk.
+- [ ] **Windrise's clock and clouds stand still under a menu and run on under a talk and in photo mode** — no source yet: a recording of Windrise's clock under each screen.
