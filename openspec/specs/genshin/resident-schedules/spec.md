@@ -105,5 +105,3 @@ An operator generating the residents SHALL place each named NPC that has a talk 
 ## Open
 
 - [ ] **A resident the game shows only by day is marked absent at night** — no source yet: no generator or data file sets `absentAtNight` (only `packages/genshin-world/src/models/world/Resident.ts` and `computeResidentSpot.ts` read it), and no resident in `packages/genshin-world/src/data/regions/*.json` carries it.
-- [ ] **Each resident has a day spot from six in the morning to seven at night, and a night spot or else keeps its day spot** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The clock picks the spot at each frame, and a change of spot waits while the resident is in view** — no source yet: game data or a snapshot that holds this behaviour
