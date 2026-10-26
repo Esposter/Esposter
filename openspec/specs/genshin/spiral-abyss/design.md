@@ -84,12 +84,10 @@ flowchart TD
 ## Sources
 
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `TowerScheduleExcelConfigData`, `TowerFloorExcelConfigData`, `TowerLevelExcelConfigData` and `TowerRewardExcelConfigData`, the tables the slices are written from. "TowerBuffExcelConfigData" is fetched beside them but not read.
-- [Spiral Abyss](https://genshin-impact.fandom.com/wiki/Spiral_Abyss), Genshin Impact Wiki: the source the proposal's clock, unlock rank and reset statements cite. The page could not be read, so those statements are the proposal's, checked only against the tables' marks, and the clock and the rank are provisional until a recording measures them.
+- [Spiral Abyss](https://genshin-impact.fandom.com/wiki/Spiral_Abyss), Genshin Impact Wiki: each chamber's clock and the unlock rank. Quotes: "For floors 1 to 4, each chamber must be cleared in 300 seconds." and "From floor 5 onward, each chamber must be cleared in 600 seconds."; "which can be unlocked at Adventure Rank 20".
 
 ## Open
 
-- [ ] **Each chamber's clock is five minutes on the Corridor's first four floors and ten minutes above** — no source yet: the dump's tower tables hold no clock length, and the wiki's Spiral Abyss page is not cached.
-- [ ] **The Abyss opens at Adventure Rank 20** — no source yet: the wiki's Spiral Abyss page is not cached, and no open-state row in the dump names the Abyss.
 - [ ] **The combine and forge tables match the dump byte for byte** — no source yet: no copy of the AnimeGameData tables is in the checkout to compare against.
 - [ ] **A two-team chamber can have no second wave in the table, as the monolith chambers have none** — no source yet: the two-team level lists are not checked against the dump.
 - [ ] **The Moon Spire floors' reward columns differ from the reward table for some floors** — no source yet: the floor-to-group mapping for Moon Spire floors is not checked.
