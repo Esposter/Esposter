@@ -176,13 +176,9 @@ const giveThreadsOfLifeHeal = (context: KitContext, combatant: Combatant): void 
   const { characterId } = combatant;
   if (
     !checkIsKitStatusActive(kitEffectState.effects, characterId, CONSTELLATION_1_STATUS_ID) ||
-    checkIsKitStatusActive(kitEffectState.effects, characterId, CONSTELLATION_1_COOLDOWN_ID)
+    !startKitCooldown(kitEffectState, characterId, CONSTELLATION_1_COOLDOWN_ID, CONSTELLATION_1_COOLDOWN_SECONDS)
   )
     return;
-  addKitStatus(kitEffectState, characterId, {
-    id: CONSTELLATION_1_COOLDOWN_ID,
-    secondsRemaining: CONSTELLATION_1_COOLDOWN_SECONDS,
-  });
   const health = elementalMasteryMultiplier(combatant, CONSTELLATION_1_HEAL_ELEMENTAL_MASTERY_SHARE);
   scheduleKitTask(kitEffectState, characterId, CONSTELLATION_1_HEAL_DELAY_SECONDS, (tick) =>
     changeKitMemberHealth(tick, combatant, tick.activeCombatant.characterId, health),
