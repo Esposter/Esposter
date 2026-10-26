@@ -73,17 +73,16 @@ A camp's enemy stands at its camp level under World Level 0. From World Level 1 
 ## Still open
 
 - [ ] **Adventure EXP from the sources not built yet** — no source yet: the sources' own pages, which add their EXP through `gainWorldAdventureExp`, the composable's gain, which takes the completed main quests along; until a page calls it, its EXP is not gained.
-- [ ] **The Paimon menu's rank gates for systems not built yet** — no source yet: the wiki's rank for each system not built, which its page takes in `ScreenKindOpenRankMap`; an entry whose system is not built stays disabled.
+- [ ] **The Paimon menu's rank gates for systems not built yet** — no source yet: the wiki's Game System Unlocks page, which is not on disk and gives the rank each system not built opens at; its page takes those ranks in `ScreenKindOpenRankMap`, and an entry whose system is not built stays disabled.
 - [ ] **Friends opens at Adventure Rank 2** — no source yet: an open-state row naming Friends at rank 2; the rank-2 rows (ids 30, 37 and 2101 of `~/Esposter/genshin-parity/text/ExcelBinOutput/OpenStateConfigData.json`) gate player level 2 and name no system.
 - [ ] **EXP past rank 60 pays ten Mora for each point** — no source yet: a game source for the rate, since the game's text converts the EXP to Mora (text 365981086) with no rate and the wiki's Adventure Rank page is not in the cache; the code applies it (`packages/genshin-world/src/services/adventureRank/gainAdventureExp.ts`).
 - [ ] **The lowest enemy at each World Level sits 14 to 17 under its monster level** — no source yet: the wiki's enemy level ranges are not in the cache, and the name-plate measurement is still on the References sought list.
-- [ ] **The wiki's table of Game System Unlocks gives the rank each system opens at** — no source yet: the cached Game System Unlocks wiki page is not on disk.
 - [ ] **The game has no tooltip on the World Level** — no source yet: the two recordings show the click and the dialog, not a hover over the info icon.
 - [ ] **The prompt's frame and choices are the quit prompt's measured layout** — no source yet: the quit prompt's 2026 recording, which is not on disk under the name the page gives; the still `~/Esposter/genshin-parity/references/menu-quit-prompt/exit-prompt-current.png` holds no measurement of the frame or buttons.
 - [ ] **The dialog stays open after a change** — no source yet: neither recording shows the game after Confirm.
 - [ ] **The card's values stand right-aligned beside the info disc, as the current client draws them** — no source yet: the menu's reference is the 1.3 build's, with its values redacted.
 - [ ] **Adventure EXP accrues toward rank 60's total while a quest holds the rank, and the rank catches up when it is done** — no source yet: the wiki's Adventure EXP page, named in the enemies page's Sources, is not in the wiki cache.
-- [ ] **The option to lower the World Level opens after World Level 5** — contradicted by `~/Esposter/genshin-parity/text/TextMap/TextMap_MediumEN.json`: text 2955635938 says World Level 3, the threshold this page takes; the 2024 recording (`~/Esposter.noindex/genshin-parity/captures/yt-P13s7kSmVOE-world-level-dialog-2024.mp4`) shows the option from World Level 5.
+- [ ] **The option to lower the World Level opens after World Level 5, as the 2024 recording (`~/Esposter.noindex/genshin-parity/captures/yt-P13s7kSmVOE-world-level-dialog-2024.mp4`) shows** — contradicted by `~/Esposter/genshin-parity/text/TextMap/TextMap_MediumEN.json`: text 2955635938 says the option opens after World Level 3.
 
 ## Key files
 
