@@ -16,7 +16,7 @@ import { SnezhnayaUndrawnMeshRegexMap } from "#src/services/snezhnaya/SnezhnayaU
 import { SumeruPartFamilyMeshRegexMap } from "#src/services/sumeru/SumeruPartFamilyMeshRegexMap";
 import { SumeruUndrawnMeshRegexMap } from "#src/services/sumeru/SumeruUndrawnMeshRegexMap";
 import { WindrisePartFamilyMeshRegexMap } from "#src/services/windrise/WindrisePartFamilyMeshRegexMap";
-import TerrainTileWorker from "#src/workers/terrainTile.worker?worker";
+import TerrainTileWorker from "../../../workers/terrainTile.worker?worker";
 import { QualityTier } from "genshin-engine";
 import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
 
