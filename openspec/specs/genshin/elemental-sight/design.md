@@ -75,9 +75,8 @@ flowchart TD
 - [Elemental Sight](https://genshin-impact.fandom.com/wiki/Elemental_Sight), Genshin Impact Wiki: the binding, the white range that spreads from the character, the colour key of white for what no element affects and the element hues, the interactables it highlights and those it leaves unlit, and its end after a short walk.
 
 ## Open
-
-- [ ] **things that cannot be acted on go dark, and interactables and residents show lit white** — no source yet: the wiki's Elemental Sight page, which the cache does not hold, or a recording of the sight.
-- [ ] **an enemy shows its aura's element, with Burning as Pyro and Freeze as Cryo** — no source yet: the wiki's colour key, which the cache does not hold, or a recording of an aura on an enemy.
-- [ ] **white is the colour of what no element affects** — no source yet: the wiki's colour key, which the cache does not hold.
-- [ ] **a walk past the limit ends the sight, as the game does** — no source yet: the wiki's Elemental Sight page, which the cache does not hold, or a recording of the walk.
-- [ ] **the element colours are the game's interface colours** — no source yet: the game's interface colour for each element, which no dump table holds (the repo keeps the table by hand in `genshin-text`).
+- [ ] **things that cannot be acted on go dark, and interactables and residents show lit white** — no source yet: the wiki's Elemental Sight page is not cached and no recording of the sight is on disk; `packages/genshin-world/src/services/elementalSight/computeEnemySightColor.ts` colours enemies alone, so the white of drops and residents rests on the proxy's default, which was not read.
+- **an enemy shows its aura's element, with Burning as Pyro and Freeze as Cryo** — `packages/genshin-world/src/services/combat/aura/AuraElementMap.ts` maps Burning to Pyro and Freeze to Cryo, and `packages/genshin-world/src/services/elementalSight/computeSightElement.ts` takes the strongest aura's element.
+- **white is the colour of what no element affects** — `packages/genshin-world/src/services/elementalSight/constants.ts` (`SIGHT_UNAFFECTED_COLOR`, `#ffffff`), which `computeEnemySightColor.ts` takes when no element is on the enemy.
+- [ ] **a walk past the limit ends the sight, as the game does** — `packages/genshin-world/src/services/elementalSight/stepElementalSight.ts` ends the sight past `SIGHT_WALK_LIMIT`, but the game's limit is open: the wiki's Elemental Sight page is not cached, and no recording of the walk is on disk.
+- [ ] **the element colours are the game's interface colours** — `packages/genshin-text/src/services/ElementColorMap.ts` names its colours the game's interface colours in a comment, and no table in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput` holds an element colour (searched by name), so the claim rests on that comment alone.
