@@ -18,4 +18,4 @@ Nothing here.
 - [ ] **Interaction: the pill's FLIP of 0.2144 and its shape of 0.949** — no source yet: the parity run that produced them, which the snapshot does not hold for this reference.
 - [ ] **Interaction: the item icon as a grey disc** — no source yet: a source that draws the icon, since the `InteractionPrompts` files name no grey disc.
 - [ ] **Interaction: the name's glyphs 1 to 2 pixels off the game's** — no source yet: a measured glyph offset against the game's name, which no record holds.
-- [ ] **the pill's ground and rim are drawn from the game's pickup** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **the pill's ground and rim are drawn from the game's pickup** — no source yet: a recording of the game's pickup pill, not yet captured.
