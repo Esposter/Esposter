@@ -49,6 +49,6 @@ flowchart TD
 
 ## Open
 
-- [ ] **Genshin's ground carries small flowers and pebbles that no placement record holds** — no source yet: the placements read off the streams (`scripts/src/services/genshinAssets/fit/readWindrisePlantPlacements.ts`) are not checked for flowers or pebbles, and no capture is named for them.
+- [ ] **Genshin's ground carries small flowers and pebbles that no placement record holds** — checked against the Windrise layout's object names (`~/Esposter.noindex/genshin-parity/extracted/windrise/layout`): flower-named objects such as `Area_MdProps_Flower26_Lod0` and `00_SnowFlower` appear there, and the claim is not settled by them because the streams' plant placements, which the claim concerns, are not checked for flowers or pebbles, and the layout does not say which objects lie on the ground.
 - [ ] **A draw for each finest tile round the eye, with tens of tiles and a few dozen flowers each** — no source yet: no count of the tiles drawn round the eye or of the flowers kept per tile is recorded; `FLOWER_CANDIDATE_COUNT` (48, `packages/genshin-world/src/services/windrise/constants.ts`) caps a tile's candidates but gives no kept count.
 - [ ] **The ground under a flower moves a few centimetres as its tile morphs** — no source yet: the height gap between a finest tile and the next level at the far end of its morph range is not measured.
