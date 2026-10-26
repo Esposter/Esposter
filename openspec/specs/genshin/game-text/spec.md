@@ -1,6 +1,6 @@
 ## Purpose
 
-The game's own words in all fifteen of its languages (`~/Esposter.noindex/genshin-parity/text/TextMap/`), in the published genshin-text package — the language registry, a matcher from a reader's locale, and every string a consumer references, looked up by the game's own text id with one lazily loaded chunk per language. A generator reads them out of the game's text, its text maps decoded from the installed client and its tables from a dump kept outside the repository; nothing is translated by hand. The persona plugin takes a generated copy rather than a dependency (`scripts/src/services/genshinText/getPersonaModuleSource.ts`).
+The game's own words in all fifteen of its languages (`~/Esposter.noindex/genshin-parity/text/TextMap/`), in the published genshin-text package — the language registry, a matcher from a reader's locale, and every string a consumer references, looked up by the game's own text id with one lazily loaded chunk per language. A generator reads them out of the game's text, its text maps from the community dump pinned to the install's revision until a decoder covers the current patch and then decoded from the installed client, and its tables from a dump kept outside the repository; nothing is translated by hand. The persona plugin takes a generated copy rather than a dependency (`scripts/src/services/genshinText/getPersonaModuleSource.ts`).
 
 ## Requirements
 
