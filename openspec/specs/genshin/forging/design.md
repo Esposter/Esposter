@@ -70,6 +70,7 @@ flowchart TD
 | `packages/genshin-world/src/services/forging/drawForgeResult.ts`                  | One unit's result drawn by weight                                           |
 | `packages/genshin-world/src/services/forging/checkIsForgeRecipeRefusedInRealm.ts` | Whether the Serenitea Pot refuses a recipe                                  |
 | `packages/genshin-world/src/services/forging/checkIsForgeDailyCapReached.ts`      | Whether an order would pass the game day's forge points                     |
+| `packages/genshin-world/src/services/forging/getBlacksmithPlace.ts`               | The blacksmith's place on the map                                           |
 | `packages/genshin-world/src/services/forging/computeForgeQueueCount.ts`           | The queues an Adventure Rank opens                                          |
 | `packages/genshin-world/src/services/forging/learnForgeRecipe.ts`                 | A recipe learned from a diagram in the bag                                  |
 | `packages/genshin-world/src/services/forging/readForgeRecipes.ts`                 | The blacksmith's recipes, fetched by their `forging/recipes` key            |

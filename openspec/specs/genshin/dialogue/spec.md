@@ -6,7 +6,7 @@ Genshin's dialogue as built. A talk is a graph of spoken lines and the Traveler'
 
 ### Requirement: A click advances a talk one step
 
-A click, F or Space SHALL show a line still being written out whole, and otherwise SHALL move the talk on to the line's next line, or end the talk, or wait for a reply (`packages/genshin-world/src/services/dialogue/advanceTalk.ts`).
+A click, F or Space SHALL show a line still being written out whole, and otherwise SHALL move the talk on to the line's next line, or end the talk, or wait for a reply.
 
 #### Scenario: A click on a line still being written shows it whole
 
@@ -34,7 +34,7 @@ A click, F or Space SHALL show a line still being written out whole, and otherwi
 
 ### Requirement: A reply is chosen only from those on offer
 
-A reply SHALL be chosen only from the replies a line offers, and a reply not on offer SHALL be refused (`packages/genshin-world/src/services/dialogue/chooseTalkLine.ts`).
+A reply SHALL be chosen only from the replies a line offers, and a reply not on offer SHALL be refused.
 
 #### Scenario: A reply on offer leads down its branch
 
@@ -58,7 +58,7 @@ A reply SHALL be chosen only from the replies a line offers, and a reply not on 
 
 ### Requirement: Skip runs the talk on without choosing a reply for the player
 
-Skip SHALL run the talk on to the next line that offers replies, written out whole, or to the end of the talk, and SHALL NOT choose a reply for the player (`packages/genshin-world/src/services/dialogue/skipTalk.ts`).
+Skip SHALL run the talk on to the next line that offers replies, written out whole, or to the end of the talk, and SHALL NOT choose a reply for the player.
 
 #### Scenario: Skip runs to the next replies with the line shown whole
 
@@ -77,11 +77,11 @@ Skip SHALL run the talk on to the next line that offers replies, written out who
 
 - **GIVEN** spoken lines that loop back to each other with no reply between them
 - **WHEN** the talk is run
-- **THEN** the talk is refused rather than run forever (`packages/genshin-world/src/services/dialogue/skipTalk.ts`)
+- **THEN** the talk is refused rather than run forever
 
 ### Requirement: The player's name fills every word of a talk
 
-Every line, reply and speaker name SHALL have the player's nickname and gender-specific words filled in before it is shown (`packages/genshin-text/src/services/fillLinePlaceholders.ts`, `packages/genshin-world/src/components/Dialogue/Talk/Index.vue`).
+Every line, reply and speaker name SHALL have the player's nickname and gender-specific words filled in before it is shown.
 
 #### Scenario: A line with the player's placeholders shows the player's words
 
@@ -91,7 +91,7 @@ Every line, reply and speaker name SHALL have the player's nickname and gender-s
 
 ### Requirement: Lines are written out one character at a time at the game's rate
 
-A line SHALL be written out one character every thirty milliseconds, a space taking no time, and SHALL keep its full layout from its first frame so it never rewraps (`packages/genshin-world/src/services/dialogue/constants.ts`, `packages/genshin-world/src/services/dialogue/getTalkRevealedLength.ts`).
+A line SHALL be written out one character every thirty milliseconds, a space taking no time, and SHALL keep its full layout from its first frame so it never rewraps.
 
 #### Scenario: A character appears every thirty milliseconds
 
@@ -113,7 +113,7 @@ A line SHALL be written out one character every thirty milliseconds, a space tak
 
 ### Requirement: Auto-play holds each whole line and stops at replies
 
-Auto-play SHALL hold each whole line for a fixed time and then go on, and SHALL stop at a line offering replies or quest talks (`packages/genshin-world/src/services/dialogue/constants.ts`; `packages/genshin-world/src/components/Dialogue/Talk/Index.vue`).
+Auto-play SHALL hold each whole line for a fixed time and then go on, and SHALL stop at a line offering replies or quest talks.
 
 #### Scenario: Auto-play goes on after holding a whole line
 
@@ -129,7 +129,7 @@ Auto-play SHALL hold each whole line for a fixed time and then go on, and SHALL 
 
 ### Requirement: F on a resident begins their talk
 
-F on a resident SHALL begin their standing talk, or else the first quest talk open to them, and a resident with neither SHALL offer no prompt (`packages/genshin-world/src/composables/useWorldTalks.ts`).
+F on a resident SHALL begin their standing talk, or else the first quest talk open to them, and a resident with neither SHALL offer no prompt.
 
 #### Scenario: F begins a resident's standing talk
 
@@ -151,7 +151,7 @@ F on a resident SHALL begin their standing talk, or else the first quest talk op
 
 ### Requirement: A standing talk's opening line offers the open quest talks ahead of its own replies
 
-A standing talk's opening line SHALL offer each quest talk open to the resident ahead of the talk's own replies and the duel (`packages/genshin-world/src/services/dialogue/getTalkOffers.ts`).
+A standing talk's opening line SHALL offer each quest talk open to the resident ahead of the talk's own replies and the duel.
 
 #### Scenario: The opening line offers the open quest first
 
@@ -167,7 +167,7 @@ A standing talk's opening line SHALL offer each quest talk open to the resident 
 
 ### Requirement: The dialogue screen names the speaker and centres narration on black
 
-The dialogue screen SHALL show the speaker's name and title above the line, and SHALL draw a line with no speaker centred on a black screen (`packages/genshin-interface/src/components/DialogueScreen/Index.vue`).
+The dialogue screen SHALL show the speaker's name and title above the line, and SHALL draw a line with no speaker centred on a black screen.
 
 #### Scenario: A spoken line shows its speaker's name and title above it
 
@@ -183,7 +183,7 @@ The dialogue screen SHALL show the speaker's name and title above the line, and 
 
 ### Requirement: Replies are lit only once selected
 
-The replies SHALL be drawn down the right beside their marks, none SHALL be lit until the pointer or an arrow selects one, and F SHALL choose the lit reply (`packages/genshin-interface/src/components/DialogueScreen/Index.vue`; `packages/genshin-world/src/components/Dialogue/Talk/Index.vue`, the arrows and F).
+The replies SHALL be drawn down the right beside their marks, none SHALL be lit until the pointer or an arrow selects one, and F SHALL choose the lit reply.
 
 #### Scenario: Replies are offered unlit beside their marks
 
@@ -201,7 +201,7 @@ The replies SHALL be drawn down the right beside their marks, none SHALL be lit 
 
 ### Requirement: A screen reader hears a whole line once
 
-The dialogue screen SHALL announce a whole line once to a screen reader rather than each character as it is written (`aria-live="polite"` in `packages/genshin-interface/src/components/DialogueScreen/Index.vue`).
+The dialogue screen SHALL announce a whole line once to a screen reader rather than each character as it is written.
 
 #### Scenario: A screen reader announces the whole line once
 
@@ -211,7 +211,7 @@ The dialogue screen SHALL announce a whole line once to a screen reader rather t
 
 ### Requirement: No voice plays for a line
 
-Dialogue SHALL play no voice-over, even for a line that carries one (no audio call in `packages/genshin-world/src/components/Dialogue/`).
+Dialogue SHALL play no voice-over, even for a line that carries one.
 
 #### Scenario: A voiced line plays no audio
 
@@ -221,7 +221,7 @@ Dialogue SHALL play no voice-over, even for a line that carries one (no audio ca
 
 ### Requirement: A standing talk that cannot run without words is left out of the record
 
-A standing talk that cannot run without its words SHALL be left out of the record, and the count of such talks SHALL be reported (`scripts/src/services/genshinText/skipWordlessTalkLines.ts`, `scripts/src/services/genshinText/buildStandingTalks.ts`).
+A standing talk that cannot run without its words SHALL be left out of the record, and the count of such talks SHALL be reported.
 
 #### Scenario: A talk with a reply that has no words is left out
 
