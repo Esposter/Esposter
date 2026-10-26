@@ -143,7 +143,7 @@ Spring Spirit Summoning's press SHALL give each other party member Shenhe's Icy 
 #### Scenario: A hit from no attack kind adds nothing
 
 - **GIVEN** a party member carries the Icy Quill
-- **WHEN** that member lands a Cryo hit that is dealt as no attack kind, such as a reaction
+- **WHEN** that member lands a Cryo hit that is dealt as no attack kind, such as a reaction; a field's tick is an elemental burst (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/burst.go` line 69), so it is not one
 - **THEN** no Icy Quill bonus applies (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/skill.go` lines 193 to 194)
 - **AND** the quill spends no trigger
 
@@ -199,8 +199,6 @@ Shenhe's other passives SHALL NOT take effect.
 
 ## Open
 
-- [ ] **Shenhe's normal attacks deal no poise damage** — contradicted by `~/Esposter/cache/genshin-wiki/Category_Shenhe_Talents.json`: the wiki lists 46.08 poise for a normal attack hit.
 - [ ] **Each tick's RES Decrease lasts one tick interval** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/burst.go`: the RES mod lasts 36 frames, two 18-frame field ticks.
-- [ ] **A field's tick is dealt as no attack kind** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/burst.go:69`: the field's DoT is tagged elemental burst.
 - [ ] **Holding Spring Spirit Summoning past half a second releases its hold** — no source yet: gcsim reads hold as a flag (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/skill.go` lines 50 to 53), and no recording of the threshold is on disk.
 - [ ] **The Skyfrost Mantra bonus lasts the press action's length** — no source yet: the wiki gives no window, and gcsim applies the bonus once to the summoning's damage snapshot (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/skill.go` lines 74 and 136) with no length stated.
