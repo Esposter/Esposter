@@ -220,6 +220,6 @@ The analysis commands SHALL rank each term of a frame's error by the most it cou
 
 ## Open
 
-- [ ] **compare keeps a reference's row when its images are missing, and reports a throwing one as failed** — checked against `scripts/src/services/genshinParity/commands/compareCommand.ts` lines 65 to 68 and 76 to 79: missing inputs print "not measured" and score nothing, and a throw under `--all` prints "failed:" and goes on; `scripts/src/services/genshinParity/reference/mergeParityScores.ts` keeps each unscored row as last scored. The built scenarios name no repo path, so the entry stays open here.
-- [ ] **A refused approval still writes the comparison's row** — no source yet: `decideApproval.ts` and `approveCommand.ts` show the refusal, not a row write.
-- [ ] **A pass run alone keeps the rows of the passes it did not run** — checked against `scripts/src/services/genshinParity/passes/writeParityPasses.ts` lines 12 to 14 and 22 to 31: a pass run alone keeps the rows of the passes it did not run, and `scripts/src/services/genshinParity/commands/passesCommand.ts` passes `isPassAlone` whenever a pass is named. The built scenario names no repo path, so the entry stays open here.
+- [ ] **compare keeps a reference's row when its images are missing, and reports a throwing one as failed** — no source yet: a recorded run of compare with its images missing or a throw, which the parity snapshot does not hold.
+- [ ] **A refused approval still writes the comparison's row** — no source yet: a recorded refused approval and the row it leaves, which the parity snapshot does not hold.
+- [ ] **A pass run alone keeps the rows of the passes it did not run** — no source yet: a recorded pass-alone run and the rows it leaves, which the parity snapshot does not hold.
