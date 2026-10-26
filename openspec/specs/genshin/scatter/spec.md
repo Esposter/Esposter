@@ -75,3 +75,7 @@ The flowers' spacing, sizes and colours SHALL be treated as provisional until th
 - **GIVEN** a reference screenshot shows the region's flowers
 - **WHEN** the flowers are compared with it
 - **THEN** their density, size spread and colour spread are matched by statistics rather than by individual flowers
+
+## Open
+
+- [ ] **The plants no record places are the small flowers among a region's grass** — no source yet: the placements read off the streams (`scripts/src/services/genshinAssets/fit/readWindrisePlantPlacements.ts`) are not checked for flowers, and no capture is named for them.
