@@ -24,7 +24,7 @@ sequenceDiagram
   F->>FO: the origin's shift reads where the camera now stands
 ```
 
-The diagram's steps are the fixed-step loop's, at most five a frame, and `FIXED_STEP_SECONDS`, a sixtieth of a second.
+The diagram's steps are the fixed-step loop's, at most five a frame (`MAX_STEPS_PER_FRAME` in `packages/genshin-engine/src/simulation/constants.ts`), and `FIXED_STEP_SECONDS`, a sixtieth of a second, in `packages/genshin-world/src/services/constants.ts`.
 
 The order is the reason for the priority. The floating origin reads the camera to decide whether to shift the world back under it, and the terrain and grass read the camera for their tiles, so both must see where it has been moved to. The free camera registers its frame callback at `CAMERA_FRAME_PRIORITY`, ahead of TresJS's default the origin runs at, so it runs first though it mounts after the scene.
 
@@ -32,7 +32,7 @@ The order is the reason for the priority. The floating origin reads the camera t
 
 - **Keyboard**: `W` and `S` move forward and back over the ground, `A` and `D` move left and right, `Space` rises and `Shift` falls. A pair held against each other cancels.
 - **Mouse**: a click on the canvas locks the pointer, and while it is locked the pointer turns the look.
-- **Gamepad**: the first connected gamepad's left stick moves over the ground, and its right stick turns the look at a rate of 2.5 radians a second. Both have a deadzone at the stick's centre (`GAMEPAD_STICK_DEADZONE`, 0.15).
+- **Gamepad**: the first connected gamepad's left stick moves over the ground, and its right stick turns the look at a rate of 2.5 radians a second (`GAMEPAD_LOOK_RADIANS_PER_SECOND` in `packages/genshin-engine/src/input/constants.ts`). Both have a deadzone at the stick's centre (`GAMEPAD_STICK_DEADZONE`, 0.15).
 - **Touch**: on a touch screen, a stick under the left thumb moves, a drag on the right half looks and a button rises, through the same input ([touch controls](../touch-controls/design.md)).
 
 The camera's motion is per second, so a key held for the same time moves it the same distance at any frame rate. The look is not: the mouse turns it by a fixed angle for each pixel the pointer moves, and only the gamepad's right stick turns it per second. The world screen reads the input once a frame, ahead of every frame callback, and hands the camera the state it read: its look turns the camera once, before the frame's steps, and the steps of that frame all use its move, so no pointer movement is lost or repeated at any frame rate. While a screen holds the world ([screens](../screens/design.md)), the camera neither looks nor steps. Losing focus clears the keys held, since their releases never reach the page. The input's listeners and the canvas's click are released when the component holding them unmounts, so a remount does not stack them.
