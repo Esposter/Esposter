@@ -6,7 +6,7 @@ Genshin's Adventure Rank as built — the rank to 60 on the game's own table, he
 
 ### Requirement: Rank follows Adventure EXP under the World Level cap
 
-The player's Adventure Rank SHALL be the rank their Adventure EXP reaches, held at the rank cap set by the last open World Level.
+The player's Adventure Rank SHALL be the rank their Adventure EXP reaches, held at the rank cap set by the last open World Level (the caps in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/PlayerLevelLockExcelConfigData.json`).
 
 #### Scenario: Rank holds at the cap while EXP keeps accruing
 
@@ -29,7 +29,7 @@ The player's Adventure Rank SHALL be the rank their Adventure EXP reaches, held 
 
 ### Requirement: A World Level opens after the rank and quest it needs
 
-A World Level SHALL open once the rank the World Level before it capped is reached and any quest its lock names is complete (the game's text at 2955635938 in TextMap_MediumEN.json gives the same ranks and quests).
+A World Level SHALL open once the rank the World Level before it capped is reached and any quest its lock names is complete (the game's text at 2955635938 in `~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json` gives the same ranks and quests).
 
 #### Scenario: World Level 1 opens at rank 20
 
@@ -61,13 +61,13 @@ Adventure EXP past rank 60's total SHALL be paid as Mora at ten Mora for each po
 - **THEN** the EXP past that total is not gained
 - **AND** no Mora is paid
 
-### Requirement: The World Level can be lowered and restored from World Level 3
+### Requirement: The World Level can be lowered and restored from World Level 5
 
-From World Level 3 the player SHALL be able to lower the World Level by one and restore it by one, with each change followed by a 24 hour wait before the next change (the game's text at 2955635938 and 2310679825 in TextMap_MediumEN.json).
+From World Level 5 the player SHALL be able to lower the World Level by one and restore it by one, with each change followed by a 24 hour wait before the next change (the game's text at 2955635938 and 2310679825 in `~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`; the dialog in `~/Esposter.noindex/genshin-parity/captures/yt-P13s7kSmVOE-world-level-dialog-2024.mp4` says the option opens after reaching World Level 5).
 
 #### Scenario: Lowering the World Level by one
 
-- **GIVEN** World Level 3 or higher is unlocked
+- **GIVEN** World Level 5 or higher is unlocked
 - **WHEN** the player lowers the World Level
 - **THEN** the World Level played at is one lower than the unlocked one
 
@@ -93,7 +93,7 @@ Clicking the info icon beside the World Level SHALL open the World Level dialog 
 - **GIVEN** the profile card shows the World Level
 - **WHEN** the info icon is clicked
 - **THEN** the World Level dialog opens over the dimmed menu
-- **AND** the game's help text is shown with its end in view
+- **AND** the game's help text is shown with its end in view (`~/Esposter.noindex/genshin-parity/captures/yt-P13s7kSmVOE-world-level-dialog-2024.mp4`)
 
 #### Scenario: Escape or the cross closes the dialog
 
@@ -200,6 +200,7 @@ The Paimon menu SHALL keep a system's entry disabled until the player reaches th
 
 ## Open
 
-- [ ] **Ten Mora for each point of Adventure EXP past rank 60** — no source yet: the game's text converts the EXP to Mora (text 365981086 in `TextMap_MediumEN.json`) but gives no rate, and the wiki's Adventure Rank page is not in the cache.
+- [ ] **Ten Mora for each point of Adventure EXP past rank 60** — no source yet: the game's text converts the EXP to Mora (text 365981086 in `~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`) but gives no rate, and the wiki's Adventure Rank page is not in the cache.
 - [ ] **Five Adventure EXP for each point of Original Resin spent** — no source yet: neither the game's text nor the dump's tables checked here gives the resin's Adventure EXP rate.
-- [ ] **Katheryne gives a reached rank's reward once, at a branch of the Adventurers' Guild** — source: the wiki page Adventure Rank/Adventurers' Guild Rewards (not in the cache), linked from the cached Adventure Rank page (`Adventure_Rank.json`). That page's Adventurers' Guild Rewards section says the rewards are claimable from Katheryne at each Adventure Rank increase, and says nothing of once or of which branch.
+- [ ] **The World Level can be lowered from World Level 3** — contradicted by `~/Esposter.noindex/genshin-parity/captures/yt-P13s7kSmVOE-world-level-dialog-2024.mp4`: after reaching World Level 5 the option to decrease appears
+- [ ] **Katheryne gives a reached rank's reward once, at a branch of the Adventurers' Guild** — no source yet: the Adventure Rank wiki page and its Adventurers' Guild Rewards page are not on disk
