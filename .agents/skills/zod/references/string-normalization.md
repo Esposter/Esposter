@@ -2,7 +2,7 @@
 
 Read when a string field is trimmed, lowercased or otherwise normalised before validation — which shared helper builds the chain, and where the constraints sit when one is written by hand. The rule (`.transform(fn).pipe(refined)`, constraints on the final pipe) is in `SKILL.md`.
 
-When normalizing a string (trim, lowercase, etc.) before further validation, use `.transform(fn).pipe(refinedSchema)`. Never `.overwrite()` — inconsistent with the codebase.
+Never `.overwrite()` for normalizing — it is inconsistent with the codebase.
 
 **Reach for a shared helper before writing the chain by hand**, and the choice between the two is only whether the field may be empty:
 

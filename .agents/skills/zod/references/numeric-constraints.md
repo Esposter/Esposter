@@ -2,7 +2,7 @@
 
 Read when adding a numeric field — which constraint its domain earns, and the Zod 4 spelling of each. The rule that every field carries the tightest constraint its domain allows is in `SKILL.md`.
 
-Every field carries the tightest constraint its domain allows — a bare `z.number()` / `z.string()` is only correct when the value is genuinely unbounded. Audit each numeric field against what it models, in the app and in `packages/*` libraries alike:
+Audit each numeric field against what it models, in the app and in `packages/*` libraries alike:
 
 - Count / quantity / index / byte size (whole, ≥ 0) → `z.int().nonnegative()`; a count that can't be zero (frequency, sample count) → `z.int().positive()`.
 - Price / rate / duration / timestamp (fractional, ≥ 0) → `z.number().nonnegative()`; one that can't be zero (price, multiplier) → `z.number().positive()`.
