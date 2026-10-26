@@ -209,28 +209,27 @@ The CLI that exports the game's blocks is built on macOS by its own page, [Anime
 - [AnimeStudio](https://github.com/Escartem/AnimeStudio): the exporter, and its command-line options.
 
 ## Open
-
-- [ ] **Nothing the game draws ships, and the exports never enter a build or deployment** — no source yet: no build or deployment check is cited that keeps the exports out of the bundle.
-- [ ] **The character uber shader has 1553 carved programs, 693 DXBC and 860 DXIL** — no source yet: no checked export report writes these counts.
-- [ ] **`vkd3d-compiler` 2.1 disassembles all 1553, and `d3dcompiler_47` only the DXBC ones** — no source yet: no checked run log records the disassembly, though the 2.1 install is at `~/Esposter.noindex/cache/vkd3d/vkd3d-2.1`.
-- [ ] **The walkway's parent is `BridgeBeginNode`, set by hand at the door's 0.4 scale and 5 metres down** — no source yet: no checked export reads the walkway's father or its placement.
-- [ ] **The door stands on the walkway at the flight's end, 70 metres from its static anchor** — no source yet: `login-door-recording.png` is on disk, but no checked file records the door's pose or the 70 metres.
-- [ ] **The login's towers stand three times 200 metres apart, and its walkway three times 16** — no source yet: the script's copy count and step are not read from a checked behaviour export.
+- **Nothing the game draws ships, and the exports never enter a build or deployment** — `apps/web/modules/serveGenshinExtractions.ts` registers the exports' route only when `nuxt.options.dev` is set, so no build bundles its handler.
+- [ ] **The character uber shader has 1553 carved programs, 693 DXBC and 860 DXIL** — no source yet: the 6,337 listings under `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber` all carry the D3D shader disassembler header and none marks DXIL, so the DXIL count is not borne out by them; no export report writes these counts.
+- [ ] **`vkd3d-compiler` 2.1 disassembles all 1553, and `d3dcompiler_47` only the DXBC ones** — no source yet: the 2.1 install is at `~/Esposter.noindex/cache/vkd3d/vkd3d-2.1`, but no run log records the disassembly.
+- [ ] **The walkway's parent is `BridgeBeginNode`, set by hand at the door's 0.4 scale and 5 metres down** — no source yet for the hand-set: `packages/genshin-world/src/components/Login/Scene/Arrangement.reference.ts` records the walkway's lost parent as the door's, at 0.4 scale 5 metres down, but no code that sets it by hand was located.
+- **The door stands on the walkway at the flight's end, 70 metres from its static anchor** — `packages/genshin-world/src/components/Login/Scene/Arrangement.reference.ts`, the fit row: in the spawned arrangement the door's anchor stands 70 metres out and 34 up from the walkway, which spans 16 metres.
+- **The login's towers stand three times 200 metres apart, and its walkway three times 16** — `packages/genshin-world/src/components/Login/Scene/Arrangement.reference.ts`, the `MonoLoginScene` row: `LoginScene_Build_All` as `(3, 200)` and `LoginScene_Bridge01_Vo` as `(3, 16)`, from the spawns' raw bytes.
 - [ ] **The character select's stage lays the login's meshes out at 0.4 scale** — no source yet: no export of the character select's layout is checked.
 - [ ] **The character select's block keeps about four times as many GameObjects as the login's** — no source yet: no GameObject count for either block is checked.
-- [ ] **`tree login --root SceneObj` shows three empty anchors** — no source yet: no checked `tree` output counts them, and `SceneObj.json` lists five children.
+- **`tree login --root SceneObj` shows three empty anchors, and `SceneObj` lists five children** — `packages/genshin-world/src/components/Login/Scene/Arrangement.reference.ts`, the `SceneObj` row: its five children are Atmosphere, ModelCamera and the three anchors, which carry no children and no renderer.
 - [ ] **A skinned door renderer draws its own mesh, named by its path ID through the asset index** — no source yet: no door dump is checked.
 - [ ] **A renderer carries no lightmap fields** — no source yet: no MeshRenderer dump is checked for those fields.
 - [ ] **The sky gradient is three falloff curves over the sky's height, and a cloud atlas holds two columns of four painted clouds** — no source yet: no decoded gradient or atlas texture is checked.
-- [ ] **A walkway 2.5 times too wide reads 1.23 against the recording's 1.00** — no source yet: the recording's 1.00 reading is in no checked file.
-- [ ] **The 600-metre architecture radius** — no source yet: no checked constant in the genshinAssets scripts sets it.
-- [ ] **No region is rooted at its capital's `Area_<code>_City_Index`, a MonoBehaviour with no game object** — no source yet: no checked export shows the index's type and its object.
+- [ ] **A walkway 2.5 times too wide reads 1.23 against the recording's 1.00** — no source yet: the reference records the walkway as 2.5 times too large and a door-to-walkway width ratio of 0.9 in the recording against 0.4 in ours, but no 1.23 reading is recorded, and the fit's cross-ratio is 1.0000 against the dais's 1.0023.
+- **The 600-metre architecture radius** — `scripts/src/services/genshinAssets/world/constants.ts` (`ARCHITECTURE_VIEW_METRES`, 600), read by `scripts/src/services/genshinAssets/commands/treeCommand.ts`.
+- [ ] **No region is rooted at its capital's `Area_<code>_City_Index`, a MonoBehaviour with no game object** — no source yet: `scripts/src/services/genshinAssets/world/readCityAreaCandidates.ts` reads every `Area_<code>_City_Index` the asset index names, but no checked export shows the index's type or its object.
 - [ ] **Each cloud band's spread is measured off the captures** — no source yet: no checked file records the spreads.
 - [ ] **The sky's colours and light strengths are measured** — no source yet: no checked file records the measured values.
 - [ ] **The broken pieces are exported, with no placement in the arrangements shown** — no source yet: no checked inventory lists them or the arrangements.
 - [ ] **The camera is solved on the exports and held still while the world glides toward it** — no source yet: no solve output is checked.
-- [ ] **The genshin-interface pieces are measured and approved in their own suite** — no source yet: the suite's approval is not cited by path.
+- [ ] **The genshin-interface pieces are measured and approved in their own suite** — `packages/genshin-interface/src/components/components.visual.ts` is the suite; no approval record is cited by path.
 - [ ] **The water's level is exact, and the ponds above it are not drawn** — no source yet: no checked comparison of the water's level with the game's exists.
 - [ ] **The Windrise statue and oak are placed and turned exact** — no source yet: no checked placement comparison exists for either.
-- [ ] **The oak is the tree kit fitted to its meshes** — no source yet: no checked file names the fit that does this.
+- **The oak is the tree kit fitted to its meshes** — `scripts/src/services/genshinAssets/fit/fitWindriseOak.ts` imports the engine's `TreeTube` and traces each bark submesh into tube records.
 - [ ] **The Windrise paving is placed exact** — no source yet: no checked placement comparison exists for the paving.
