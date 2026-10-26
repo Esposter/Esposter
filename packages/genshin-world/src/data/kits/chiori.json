@@ -2,8 +2,8 @@
   "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 60 },
   "chargedAttack.hits.1.poiseDamage": { "source": "Wiki", "value": 60 },
   "frames.tamotoEnds.length": { "cause": "Unsourced", "value": 2 },
-  "frames.tamotoEnds.0": { "source": "Tables", "value": 1039 },
-  "frames.tamotoEnds.1": { "source": "Tables", "value": 1054 },
+  "frames.tamotoEnds.0": { "cause": "Unsourced", "value": 1069 },
+  "frames.tamotoEnds.1": { "cause": "Unsourced", "value": 1084 },
   "hits.pressTamotoAttacks.length": { "cause": "Unsourced", "value": 5 },
   "hits.pressTamotoAttacks.0.area": {
     "cause": "Unsourced",

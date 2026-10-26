@@ -5,10 +5,10 @@ Chiori's kit is its record and one behaviour module, `createChioriKitBehaviour`,
 ## Decisions
 
 - **Tamoto is a summon cast where Chiori stands.** Its five attacks land at 60, 276, 492, 708 and 924 frames, from its first attack's 36 frames of start delay and 5 of attack delay, then every 216 frames while it stands. Each strikes a circle of radius 1.2 on the target it finds within 12 metres, priced as the search's radius plus the circle's, so the reach is 13.2 metres from the body. gcsim places the doll 1.2 metres to Chiori's side, which is not built, so its reach is priced from her body.
-- **The press and the hold differ by their sweep and their doll's cast.** The press's upward sweep lands at 21 frames and casts Tamoto at 19, lasting until 1039 frames; the hold's sweep lands at 37 frames and casts Tamoto at 34, lasting until 1054 frames. The sweep is a box from her body 3.5 metres ahead and 5.5 wide, priced to its far corner.
+- **The press and the hold differ by their sweep and their doll's cast.** The press's upward sweep lands at 21 frames and casts Tamoto at 19, lasting until 1069 frames; the hold's sweep lands at 37 frames and casts Tamoto at 34, lasting until 1084 frames. The sweep is a box from her body 3.5 metres ahead and 5.5 wide, priced to its far corner.
 - **Upward Sweep and Tamoto price their Defense share as additive base damage.** The sweep is its ATK share plus 1.866 of her Defense, and Tamoto 0.8208 of ATK plus 1.026 of Defense per attack, each added as flat damage to the base damage.
 - **The press's cooldown is the table's 16 seconds, and the burst's is 13.5 seconds on 50 energy.** Her burst strikes at 92 frames as a circle of radius 12 round her, 200 poise, its ATK share and 3.204 of Defense.
-- **Tamoto stands for the table's 17 seconds, where gcsim gives 17.5.** The game's proud skill table reads Tamoto Duration as 17 seconds in group 9432's parameter 2, and it settles the stand over gcsim's. Each end frame is its spawn plus those 17 seconds, so the record's 1039 and 1054 frames take the table as their source.
+- **Tamoto stands for gcsim's 17.5 seconds, where the table's duration reads 17.** The doll's last attack landing within the 17.5 seconds of its cast would confirm it; a stand of 17 would move it.
 - **Chiori's high plunge lands with the low plunge's 41 frames at 150 poise.** gcsim has no high plunge of its own, so the record takes the wiki's 150 poise; the frames stay provisional until a recording shows them.
 - **Her strikes, charged attack and plunging collision deal the wiki's poise.** gcsim gives them none, so the record takes the wiki's poise from Weaving Blade's advanced properties: 51.7, 49, 31.3 for each of the third strike's two hits, 78.6 for the fourth, 60 for each charged thrust, and 25 for the collision.
 
@@ -26,6 +26,5 @@ Chiori's kit is its record and one behaviour module, `createChioriKitBehaviour`,
 
 ## Sources
 
-- The install's proud skill table, `ProudSkillExcelConfigData`, group 9432: Tamoto's duration, 17 seconds, read from the game's own data.
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/chiori), MIT: the kit's hitmarks, animations, reach, Tamoto's ticker and its 12 metre search, the upward sweep's box, the burst's circle, and the proud group indices behind each multiplier.
 - [Weaving Blade](https://genshin-impact.fandom.com/wiki/Weaving_Blade), Genshin Impact Wiki: the poise for her strikes, charged attack, plunging collision and high plunge.

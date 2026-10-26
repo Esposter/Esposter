@@ -75,15 +75,15 @@ describe(createChioriKitBehaviour, () => {
     ]);
   });
 
-  test("the upward sweep prices its DEF share of her Defense, and a press holds Tamoto for 17 seconds from its cast", () => {
+  test("the upward sweep prices its DEF share of her Defense, and a press holds Tamoto for 17.5 seconds from its cast", () => {
     expect.hasAssertions();
     const combatant = createChioriCombatant(1000);
     const sweep = takeOne(CHIORI_KIT.elementalSkill.hits);
     const summon = takeOne(castSummons(CHIORI_KIT.elementalSkill, combatant));
 
     expect(Math.round(sweep.additiveBaseDamageBonus?.(combatant) ?? Number.NaN)).toBe(1866);
-    expect(summon.secondsRemaining * 60).toBeCloseTo(19 + 1020);
-    expect((summon.secondsRemaining - (summon.spawnSeconds ?? Number.NaN)) * 60).toBeCloseTo(1020);
+    expect(summon.secondsRemaining * 60).toBeCloseTo(19 + 1050);
+    expect((summon.secondsRemaining - (summon.spawnSeconds ?? Number.NaN)) * 60).toBeCloseTo(1050);
     expect(summon.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60))).toStrictEqual([
       60, 276, 492, 708, 924,
     ]);
@@ -99,8 +99,8 @@ describe(createChioriKitBehaviour, () => {
     expect(summon.hits.map(({ hitmarkSeconds }) => Math.round(hitmarkSeconds * 60))).toStrictEqual([
       75, 291, 507, 723, 939,
     ]);
-    expect(summon.secondsRemaining * 60).toBeCloseTo(34 + 1020);
-    expect((summon.secondsRemaining - (summon.spawnSeconds ?? Number.NaN)) * 60).toBeCloseTo(1020);
+    expect(summon.secondsRemaining * 60).toBeCloseTo(34 + 1050);
+    expect((summon.secondsRemaining - (summon.spawnSeconds ?? Number.NaN)) * 60).toBeCloseTo(1050);
   });
 
   test("her burst strikes at 92 frames as a circle of 12 metres, priced by her DEF share", () => {
