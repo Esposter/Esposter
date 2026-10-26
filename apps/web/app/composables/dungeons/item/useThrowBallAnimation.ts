@@ -1,6 +1,5 @@
 import type { SceneWithPlugins } from "vue-phaserjs";
 
-import { useSkippableAnimation } from "@/composables/dungeons/animation/useSkippableAnimation";
 import { CaptureResult } from "@/models/dungeons/item/CaptureResult";
 import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
 import { useBallStore } from "@/store/dungeons/battle/ball";

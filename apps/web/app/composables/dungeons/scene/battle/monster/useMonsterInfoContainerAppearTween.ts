@@ -1,4 +1,3 @@
-import { useSkippableAnimation } from "@/composables/dungeons/animation/useSkippableAnimation";
 import { getTweenRange } from "@/services/dungeons/animation/getTweenRange";
 import { phaserEventEmitter } from "@/services/phaser/phaserEventEmitter";
 import { useTween } from "vue-phaserjs";
