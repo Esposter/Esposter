@@ -1,6 +1,6 @@
 ## Purpose
 
-The game's Original Resin as pure state. It regenerates a point each eight minutes to 200, counted from the moment it last changed so it fills while the page is closed, refills from Primogems at six daily prices up to 2,000, and pays a claim five Adventure EXP a point (`packages/genshin-world/src/services/originalResin/constants.ts`). Its count is on the map's top bar (`packages/genshin-world/src/components/Map/Overlay/Index.vue`). The blossoms that spend it wait on the challenges that leave them.
+The game's Original Resin as pure state. It regenerates a point each eight minutes to 200, counted from the moment it last changed so it fills while the page is closed, refills from Primogems at six daily prices up to 2,000, and pays a claim five Adventure EXP a point. Its count is on the map's top bar. The blossoms that spend it wait on the challenges that leave them.
 
 ## Requirements
 
@@ -216,7 +216,7 @@ Choosing a claim SHALL spend its Original Resin and grant its rewards into the b
 
 ### Requirement: Fragile Resin restores sixty Original Resin
 
-Using Fragile Resin from the bag SHALL restore sixty Original Resin and remove one Fragile Resin from the bag (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json`, row `107009`, whose `itemUse` adds `106` by `60`).
+Using Fragile Resin from the bag SHALL restore sixty Original Resin and remove one Fragile Resin from the bag (row `107009`, whose `itemUse` adds `106` by `60`).
 
 #### Scenario: Using Fragile Resin restores sixty Original Resin
 
@@ -234,3 +234,4 @@ Using Fragile Resin from the bag SHALL restore sixty Original Resin and remove o
 - [ ] **a ley line or a domain offers two claims at twice the price, or a Condensed Resin for three claims** — no source yet: the wiki's Original Resin page, which the cache does not hold.
 - [ ] **a claim gives five Adventure EXP a point** — no source yet: the wiki's Original Resin page, which the cache does not hold.
 - [ ] **a new player's wallet holds 200 Original Resin** — no source yet: the game's own design, which the dump does not hold; the page marks it settled, not checked.
+- [ ] **Its count is on the map's top bar** — no source yet: game data or a snapshot that holds this behaviour
