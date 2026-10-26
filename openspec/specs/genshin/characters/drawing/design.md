@@ -57,6 +57,4 @@ The model [read from a pack](../pmx-reader/design.md) becomes one skinned mesh, 
 ## Open
 
 - [ ] **The face's depth term is 0.5** — no source yet: a face-depth default of 0.5 in `packages/genshin-engine/src/character/shading/constants.ts` or `createFaceShadeNode.ts`; neither holds it.
-- [ ] **The pose and mesh oracle is three-stdlib's `MMDLoader`** — no source yet: a test or script that loads `MMDLoader`; none is in `packages`, `apps` or `scripts`.
 - [ ] **The avatar's modules are a separate chunk the export index gates, so nothing reaches production** — no source yet: the production build's chunk graph for the avatar modules.
-- [ ] **A witness render draws no character** — no source yet: the witness render's scene composition.

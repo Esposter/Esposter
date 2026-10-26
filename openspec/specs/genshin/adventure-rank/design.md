@@ -75,12 +75,9 @@ A camp's enemy stands at its camp level under World Level 0. From World Level 1 
 - **Adventure EXP from the sources not built yet.** A source's page adds its EXP through `gainWorldAdventureExp`, the composable's gain, which takes the completed main quests along. Until a source's page calls it, its EXP is not gained.
 - **The Paimon menu's rank gates for systems not built yet.** An entry whose system is not built stays disabled. A system the wiki gates by rank takes its rank in `ScreenKindOpenRankMap` as its page is built.
 - [ ] **Friends opens at Adventure Rank 2** — no source yet: the rank-2 open-state rows (ids 30, 37 and 2101 of `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/OpenStateConfigData.json`) carry no system icon, so none is shown to name Friends.
-- [ ] **EXP past rank 60 pays ten Mora for each point** — no source yet: the game's text converts the EXP to Mora (text 365981086) but gives no rate, and the wiki's Adventure Rank page is not in the cache.
 - [ ] **The lowest enemy at each World Level sits 14 to 17 under its monster level** — no source yet: the wiki's enemy level ranges are not in the cache, and the name-plate measurement is still on the References sought list.
 - [ ] **The game has no tooltip on the World Level** — no source yet: the two recordings show the click and the dialog, not a hover over the info icon.
 - [ ] **The prompt's frame and choices are the quit prompt's measured layout** — no source yet: the quit prompt's measurement is not checked against the 2026 recording here.
-- [ ] **The dialog stays open after a change** — no source yet: neither recording shows the game after Confirm.
-- [ ] **The card's values stand right-aligned beside the info disc, as the current client draws them** — no source yet: the menu's reference is the 1.3 build's, with its values redacted.
 
 ## Key files
 
