@@ -1,6 +1,6 @@
 ## Purpose
 
-The official Teyvat Interactive Map's statues and waypoints read into the references folder and fitted to the scene's transport points by one similarity over the whole map, with its residual, and each region's Oculi counted against the wiki's, Mondstadt checked first (`~/Esposter.noindex/genshin-parity/references/interactive-map/fit.json`, `scripts/src/services/genshinAssets/fit/fitInteractiveMap.ts`).
+The official Teyvat Interactive Map's statues and waypoints read into the references folder and fitted to the scene's transport points by one similarity over the whole map, with its residual, and each region's Oculi counted against the wiki's, Mondstadt checked first (`~/Esposter.noindex/genshin-parity/references/interactive-map/fit.json`).
 
 ## Requirements
 
