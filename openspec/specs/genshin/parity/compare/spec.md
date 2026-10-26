@@ -114,5 +114,5 @@ A public video that letterboxes the game SHALL be cropped to its screen, and a r
 
 ## Open
 
-- [ ] **A comparison that throws is reported as failed and the run goes on** — no source yet: the throw branch was not traced.
-- [ ] **A reference in another language gives its screen that language's words** — no source yet: the parity page's language switch was not traced; the parity reference map sets `props.language` only.
+- [ ] **A comparison that throws is reported as failed and the run goes on** — checked against `scripts/src/services/genshinParity/commands/compareCommand.ts`: under `--all` a throw prints `failed:` and the loop goes on, while a named reference rethrows; the claim stays open here because this spec's scenario may name no repo path.
+- [ ] **A reference in another language gives its screen that language's words** — checked against `packages/genshin-world/parity/main.ts` lines 85 to 88: a game language loads its words into a screen's `gameText` prop, which the health notice takes; the claim stays open here because this spec's scenario may name no repo path.
