@@ -1,9 +1,6 @@
 {
   "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 60 },
   "chargedAttack.hits.1.poiseDamage": { "source": "Wiki", "value": 60 },
-  "frames.tamotoEnds.length": { "cause": "Unsourced", "value": 2 },
-  "frames.tamotoEnds.0": { "cause": "Unsourced", "value": 1069 },
-  "frames.tamotoEnds.1": { "cause": "Unsourced", "value": 1084 },
   "hits.pressTamotoAttacks.length": { "cause": "Unsourced", "value": 5 },
   "hits.pressTamotoAttacks.0.area": {
     "cause": "Unsourced",
@@ -84,6 +81,7 @@
   "normalAttacks.2.hits.1.poiseDamage": { "source": "Wiki", "value": 31.3 },
   "normalAttacks.3.hits.0.poiseDamage": { "source": "Wiki", "value": 78.6 },
   "parameters.tamotoDefenseShare": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 9432 } },
+  "parameters.tamotoSeconds": { "source": "Tables" },
   "parameters.sweepDefenseShare": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 9432 } },
   "parameters.burstDefenseShare": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 9439 } },
   "plungeCollision.poiseDamage": { "source": "Wiki", "value": 25 },
