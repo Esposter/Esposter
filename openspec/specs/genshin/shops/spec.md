@@ -1,12 +1,12 @@
 ## Purpose
 
-The game's shop goods read from its shop table into slices and bought by one rule, with a buy limit restocked on its refresh and nothing for Genesis Crystals. Paimon's Bargains' Fates and the Mondstadt grocery's Mora-priced general goods are built; the screens, the rotation, the weapons and materials, and the other shops are not yet built.
+The game's shop goods read from its shop table into slices and bought by one rule, with a buy limit restocked on its refresh and nothing for Genesis Crystals. Paimon's Bargains' Fates (`scripts/src/services/genshinAssets/shops/checkIsPaimonsBargainsFateGood.ts`) and the Mondstadt grocery's Mora-priced general goods (`scripts/src/services/genshinAssets/shops/buildMondstadtGeneralGoods.ts`) are built; the screens, the rotation, the weapons and materials, and the other shops are not yet built.
 
 ## Requirements
 
 ### Requirement: A good is offered only at its Adventure Rank and within its dates
 
-A shop good SHALL be offered only once the player's Adventure Rank reaches its rank and only within its dates.
+A shop good SHALL be offered only once the player's Adventure Rank reaches its rank and only within its dates (`packages/genshin-world/src/services/shop/buyShopGood.ts`).
 
 #### Scenario: A good below the player's rank is refused
 
@@ -22,7 +22,7 @@ A shop good SHALL be offered only once the player's Adventure Rank reaches its r
 
 ### Requirement: A buy limit counts purchases since the last refresh
 
-A good with a buy limit SHALL be sold up to that limit between refreshes, and a limit of zero SHALL mean no limit.
+A good with a buy limit SHALL be sold up to that limit between refreshes, and a limit of zero SHALL mean no limit (`packages/genshin-world/src/services/shop/checkIsShopGoodSoldOut.ts`).
 
 #### Scenario: A good at its limit is sold out until its refresh
 
@@ -44,17 +44,17 @@ A good with a buy limit SHALL be sold up to that limit between refreshes, and a 
 
 ### Requirement: Refreshes happen at four in the morning game time
 
-Daily and monthly refreshes SHALL happen at four in the morning in the game's time, and a monthly refresh SHALL fall on the first of the month.
+Daily and monthly refreshes SHALL happen at four in the morning in the game's time, and a monthly refresh SHALL fall on the first of the month (`packages/genshin-world/src/services/shop/computeShopRefreshTime.ts`, `packages/genshin-world/src/services/time/constants.ts`).
 
 #### Scenario: A purchase before the monthly refresh counts to the month before
 
 - **GIVEN** a purchase is made on the first of a month before four in the morning
 - **WHEN** the monthly buy limit is counted
-- **THEN** the purchase counts toward the month before
+- **THEN** the purchase counts toward the month before (`packages/genshin-world/src/services/shop/computeShopRefreshTime.ts`)
 
 ### Requirement: A purchase takes every cost from the wallet or the bag and gives the good
 
-A purchase SHALL take each cost of a good, from the wallet for a currency and from the bag for an item, and SHALL give the good. It SHALL be refused when the player holds too few of any one cost.
+A purchase SHALL take each cost of a good, from the wallet for a currency and from the bag for an item, and SHALL give the good. It SHALL be refused when the player holds too few of any one cost (`packages/genshin-world/src/services/shop/buyShopGood.ts`).
 
 #### Scenario: A purchase takes the costs and gives the item
 
@@ -77,10 +77,14 @@ A purchase SHALL take each cost of a good, from the wallet for a currency and fr
 
 ### Requirement: A Mora-priced good costs its Mora price
 
-A good priced in Mora SHALL cost the Mora amount its table gives.
+A good priced in Mora SHALL cost the Mora amount its table gives (`scripts/src/services/genshinAssets/shops/getShopGoodCosts.ts`, `scripts/src/services/genshinAssets/shops/constants.ts`, `MORA_ITEM_ID`).
 
 #### Scenario: A general good costs its Mora price
 
 - **GIVEN** a general good of the Mondstadt grocery is priced in Mora
 - **WHEN** the player buys it
-- **THEN** the good costs its table's Mora amount from the wallet
+- **THEN** the good costs its table's Mora amount from the wallet (`scripts/src/services/genshinAssets/shops/buildMondstadtGeneralGoods.ts`)
+
+## Open
+
+- [ ] **Refreshes happen at four in the morning in the game's time** — no source yet: the hour is read from `packages/genshin-world/src/services/time/constants.ts` (`GAME_DAY_START_HOUR`), but the game's own reset was not checked against a recording or the wiki.
