@@ -64,7 +64,7 @@ Every animal of the slice exists from the scene's load (`packages/genshin-world/
 
 ## Open
 
-- [ ] **Nothing is struck, dropped or picked up yet** — contradicted by `packages/genshin-world/src/services/kit/strikeKitEnemies.ts`: its kit strike drops animals by kind, and `useWorldPickups.ts` picks up material sources.
+- [ ] **Nothing is struck, dropped or picked up yet** — no source yet: the owner has set drops as not built, and the deferred drops stay open until they are built; `packages/genshin-world/src/services/kit/strikeKitEnemies.ts` drops animals by kind and `useWorldPickups.ts` picks up material sources.
 - [ ] **The three kinds of bird and beast** — contradicted by `packages/genshin-world/src/models/wildlife/WildlifeKind.ts`: it names four kinds, the boar too.
 - [ ] **The fleeing-kind check admits only White Pigeon, Crimson Fox or Squirrel** — contradicted by `scripts/src/services/genshinAssets/wildlife/buildWildlifePlaces.ts`: it maps every `WildlifeKind` to its label, Boar included.
 - [ ] **The archive files each kind as an animal or aviary monster** — no source yet: the dump's Monster and Gadget rows were not matched to the kinds' names.
