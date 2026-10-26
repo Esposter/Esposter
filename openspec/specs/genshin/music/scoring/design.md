@@ -58,3 +58,4 @@ The parity commands read three further measures from the same frames.
 - [ ] **A band gain fitted to half a segment's frames leaves about as much distance as none** — no source yet: no half-frame fit run is recorded.
 - [ ] **Solved in the score's own bands, the solve's distance came within a few tenths of a decibel of what `listen` measured** — no source yet: no solve-against-`listen` comparison is recorded.
 - [ ] **The game's noise reading reproduces what ships** — no source yet: no noise read-back output is recorded.
+- [ ] **A step is approved by ear once its numbers improve** — no source yet: no approval record is cited.

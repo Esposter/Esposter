@@ -49,13 +49,6 @@ A score SHALL be read between the game against itself shifted later and against 
 - **WHEN** a score is reported
 - **THEN** its distance is read between the game a quarter second off itself and the game two seconds off itself
 
-## Open
-
-- [ ] **A score's distance is read between the game a quarter second off itself and the game two seconds off itself** — no source yet: no self-shift run is recorded.
-- [ ] **A mix that loses pitch agreement counts as a regression** — no source yet: no check or record enforces this rule.
-- [ ] **No fixed band gain ships** — no source yet: no check that no band gain ships is cited.
-- [ ] **A step is approved by ear once its numbers improve** — no source yet: no approval record is cited.
-
 ### Requirement: Losing pitch agreement is a regression
 
 A mix that loses pitch agreement SHALL count as a regression, whatever it gains in the bands.
