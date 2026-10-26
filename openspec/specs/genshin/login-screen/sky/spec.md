@@ -6,7 +6,7 @@ The login sky, as built: each hour's clear sky solved as the game's sky draws it
 
 ### Requirement: Each hour's sky matches its references
 
-Each hour's clear sky SHALL be solved over every reference at that hour together, so that the sky reads as one sky across the frames of that hour.
+Each hour's clear sky SHALL be solved over every reference at that hour together, so that the sky reads as one sky across the frames of that hour (`scripts/src/services/genshinParity/sky/fitSky.ts`).
 
 #### Scenario: Hour's clear sky
 
@@ -24,7 +24,7 @@ The frame SHALL be drawn through the game's own tone curve with no grade or bloo
 
 ### Requirement: Night white balance
 
-The night SHALL pass through its own white balance before the tone curve, cooled to a temperature of minus 9.5 and tinted 16.
+The night SHALL pass through its own white balance before the tone curve, cooled to a temperature of minus 9.5 and tinted 16 (`packages/genshin-world/src/services/login/scene/LoginSkyStateMap.ts`).
 
 #### Scenario: Night frame
 
@@ -33,12 +33,12 @@ The night SHALL pass through its own white balance before the tone curve, cooled
 
 ### Requirement: Sun and moon placement
 
-The sun and the moon SHALL sit where their references show them, the light taking the direction of the body shown and the other body opposite.
+The sun and the moon SHALL sit where their references show them, the light taking the direction of the body shown and the other body opposite (`packages/genshin-world/src/services/login/scene/getLoginScreenDirection.ts`, `packages/genshin-world/src/services/login/scene/LoginSkyStateMap.ts`).
 
 #### Scenario: Dawn sun
 
 - **WHEN** the dawn is shown
-- **THEN** the sun sits just past the left edge, a little above the horizon
+- **THEN** the sun sits just past the left edge, a little above the horizon (`packages/genshin-world/src/services/login/scene/LoginSkyStateMap.ts`)
 
 #### Scenario: Night moon
 
@@ -62,3 +62,10 @@ Faces turned upward SHALL be lit by the sky's bright cloud colour and faces turn
 
 - **WHEN** a face turned upward is shown
 - **THEN** it is lit by the sky's bright cloud colour
+
+## Open
+
+- [ ] **The frame is drawn through the game's own tone curve alone, with no grade or bloom** — no source yet: the frame's draw chain was not read here.
+- [ ] **The night's moon stands behind the lantern tower** — no source yet: the reference point is not annotated against the lantern tower in any kept file.
+- [ ] **The dusk's sunlight falls 50 degrees up and 60 degrees left of the walkway** — contradicted: `DUSK_LIGHT_DIRECTION` (0.493, 0.763, 0.418) is 49.7 degrees up and 49.7 degrees off the walkway's +z axis, not 60.
+- [ ] **Faces turned upward are lit by the sky's bright cloud colour** — contradicted: at dawn `hemisphereSkyColor` is 0xf2dfc8 against `cloudLitColor` 0xf5efe8.
