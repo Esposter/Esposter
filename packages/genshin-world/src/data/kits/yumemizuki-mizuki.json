@@ -1,4 +1,7 @@
 {
   "burst.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 10939 } },
+  "plungeCollision.poiseDamage": { "source": "Wiki", "value": 5 },
+  "plunges.high.hits.0.poiseDamage": { "source": "Wiki", "value": 100 },
+  "plunges.low.hits.0.poiseDamage": { "source": "Wiki", "value": 50 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 3, "proudSkillGroupId": 10932 } }
 }
