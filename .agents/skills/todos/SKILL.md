@@ -10,7 +10,7 @@ An `@TODO` marks a workaround the repository carries because something outside i
 ## Settled — do not re-propose
 
 - **A TODO for our own work** — "retirement removes this", "until the actions name meanings", "clean up once X is migrated". Work of ours is done in the change that finds it, or it is a GitHub issue (`.agents/issue-tracker.md`) or a proposal (the `openspec` skill, `references/page-shapes.md`). A marker for it is a finding to fix now, never a line to reword.
-- **A TODO linking one of our own issues.** Same thing with a URL on it: the issue is the record, and the code carries no marker for it.
+- **A TODO linking one of our own issues.** The issue is the record, and the code carries no marker for it.
 - **A pull request to another project's repository, or a fork made for one.** Each one spends a maintainer's review time on a change they never asked for, and for now we keep that cost off them, even when the ask is to fix the gap. A gap only upstream can close goes to the user as its cause, the fix and the evidence. In the repo, it waits as a marker on the upstream record when a workaround is carried, or in the unfiled form when no record exists. Filing an issue stays the owner's, by hand ("Unfiled upstream issues").
 - **A condition in words in place of the link** — "once nuxt fixes its types", "in nitro v3". Nobody can check it, so it reads the same the day the condition is met as the day it was written; the link is what a later reader opens to find out.
 
