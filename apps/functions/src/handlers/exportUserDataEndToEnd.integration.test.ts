@@ -157,7 +157,9 @@ describe(exportUserDataHandler, () => {
     expect(Object.keys(entries).sort()).toStrictEqual(
       [
         "account.json",
+        "accesses.json",
         "calls.json",
+        "favorites.json",
         "follows.json",
         "friends.json",
         "images/CallBackground/0",

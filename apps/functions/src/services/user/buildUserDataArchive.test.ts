@@ -30,6 +30,8 @@ import {
   MessageMetadataType,
   MessageType,
   postsInPost,
+  resourceAccessesInResource,
+  resourceFavoritesInResource,
   resourceLinksInResource,
   ResourceLinkType,
   resourcePublicationsInResource,
@@ -183,7 +185,9 @@ describe(buildUserDataArchive, () => {
     expect(Object.keys(entries).sort()).toStrictEqual(
       [
         "account.json",
+        "accesses.json",
         "calls.json",
+        "favorites.json",
         "follows.json",
         "friends.json",
         "images/ProfileImage",
@@ -559,6 +563,38 @@ describe(buildUserDataArchive, () => {
         roles: [{ id: role.id, name }],
         roomId: room.id,
       },
+    ]);
+  });
+
+  test("writes the person's own favorites and accesses of a resource, and no other person's", async () => {
+    expect.hasAssertions();
+
+    const userId = crypto.randomUUID();
+    const otherUserId = crypto.randomUUID();
+    const blobName = `${crypto.randomUUID()}.zip`;
+    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
+    const resource = takeOne(
+      await mockDb
+        .insert(resourcesInResource)
+        .values({ name, type: ResourceType.Blueprint, userId: otherUserId })
+        .returning(),
+    );
+    await mockDb.insert(resourceFavoritesInResource).values([
+      { resourceId: resource.id, userId },
+      { resourceId: resource.id, userId: otherUserId },
+    ]);
+    const access = takeOne(
+      await mockDb.insert(resourceAccessesInResource).values({ resourceId: resource.id, userId }).returning(),
+    );
+    await mockDb.insert(resourceAccessesInResource).values({ resourceId: resource.id, userId: otherUserId });
+
+    await buildUserDataArchive(userId, blobName);
+    const entries = readArchiveEntries(blobName);
+
+    // A favorite stores no time, so the exact shape leaves one out; an access keeps the time it was opened at
+    expect(readEntryJson(entries, "favorites.json")).toStrictEqual([{ resourceId: resource.id }]);
+    expect(readEntryJson(entries, "accesses.json")).toStrictEqual([
+      { accessedAt: access.accessedAt, resourceId: resource.id },
     ]);
   });
 
