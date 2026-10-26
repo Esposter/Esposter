@@ -45,9 +45,8 @@ Not built, and in the [proposal](../../../changes/genshin-bosses/design.md): the
 - The weekly reset on Monday at 04:00, as the [reset clock](../reset-clock/design.md) gives it.
 
 ## Open
-
-- [ ] **A normal boss stays defeated until the player teleports away** — no source yet: the wiki's Normal Bosses page, named in Sources, is not in the wiki cache.
-- [ ] **A claimed normal boss returns five seconds after its claim** — no source yet: the wiki's Normal Bosses page, named in Sources, is not in the wiki cache, and no respawn row in the game's exports holds the five seconds.
-- [ ] **The weekly reset is read on the server's UTC+8 clock** — no source yet: no row of the game's exports names the zone, and the wiki's Domains page, named in Sources, is not in the wiki cache.
-- [ ] **A weekly boss's claim costs 30 resin for the first three of a week and 60 after** — no source yet: the export's weekly discount row gives three claims at 0.5 but no base price of 60, and the wiki's Weekly Bosses page is not in the wiki cache.
-- [ ] **The first three weekly claims count across every weekly boss together** — no source yet: the export's weekly discount row does not say the cheap claims are counted across bosses, and the wiki's Weekly Bosses page is not in the wiki cache.
+- [ ] **A normal boss stays defeated until the player teleports away** — no source yet: the wiki's Normal Bosses page, named in Sources, is not in the wiki cache, and no file in `packages/genshin-world/src/services/bosses/` ties the defeat to a teleport; `computeBossRespawnTime.ts` gives the respawn time from the last claim alone.
+- **A claimed normal boss returns five seconds after its claim** — `packages/genshin-world/src/services/bosses/computeBossRespawnTime.ts` (line 6) adds `BOSS_RESPAWN_AFTER_CLAIM_DURATION`, which is five seconds (`packages/genshin-world/src/services/bosses/constants.ts`, line 4).
+- **The weekly reset is read on the server's UTC+8 clock** — `packages/genshin-world/src/services/time/constants.ts` sets `GAME_TIME_ZONE` to `Asia/Shanghai`, UTC+8, and `packages/genshin-world/src/services/time/computeLastWeeklyReset.ts` (line 6) reads the reset in that zone.
+- **A weekly boss's claim costs 30 resin for the first three of a week and 60 after** — `packages/genshin-world/src/services/originalResin/constants.ts` (`WEEKLY_BOSS_CHEAP_RESIN = 30`, `WEEKLY_BOSS_CHEAP_CLAIMS = 3`, `WEEKLY_BOSS_RESIN = 60`) and `packages/genshin-world/src/services/originalResin/computeBlossomClaimResin.ts` (line 12).
+- **The first three weekly claims count across every weekly boss together** — `packages/genshin-world/src/composables/useWorldTrounceBlossoms.ts` (lines 98 to 103) counts the claims of every weekly boss for the price, while `packages/genshin-world/src/services/bosses/checkIsWeeklyBossClaimable.ts` counts only a boss's own claims for its once-a-week gate.
