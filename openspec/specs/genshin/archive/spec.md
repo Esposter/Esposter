@@ -133,4 +133,4 @@ Each section SHALL list its entries in the game's codex order, and a codex row t
 
 ## Open
 
-- [ ] **The seven sections are listed in the game's order** — no source yet: the game's tab order is not read from a dump table, and the Archive screen recording shows the sections as a ring (Books, Tutorials, Geography, Equipment, Materials at 12 seconds), which does not settle the list's order.
+- [ ] **The seven sections are listed in the game's order** — no source yet: the named source does not hold this value, since the dump's tables hold no Archive tab order (the three section-name hashes found in the manual text map appear in no other ExcelBinOutput table), and the Archive screen recording shows the sections as a ring (Books, Tutorials, Geography, Equipment, Materials at 12 seconds), which does not settle the list's order.
