@@ -92,8 +92,6 @@ describe(purgeSurveyResources, () => {
 
   afterEach(async () => {
     vi.restoreAllMocks();
-    groupMock.mockClear();
-    sendToAllMock.mockClear();
     MockContainerDatabase.clear();
     MockTableDatabase.clear();
     await mockDb.delete(resourcesInResource);

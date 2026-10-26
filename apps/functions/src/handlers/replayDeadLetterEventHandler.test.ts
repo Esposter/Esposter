@@ -53,6 +53,10 @@ describe(replayDeadLetterEventHandler, () => {
     id,
     subject,
   });
+  const cappedEvent = createDeadLetteredEvent(`${eventId}${ID_SEPARATOR}${MAX_DEAD_LETTER_REPLAY_ATTEMPTS}`);
+  const replayableEvent = createDeadLetteredEvent(
+    `${secondEventId}${ID_SEPARATOR}${MAX_DEAD_LETTER_REPLAY_ATTEMPTS - 1}`,
+  );
 
   afterEach(() => {
     MockContainerDatabase.clear();
@@ -154,29 +158,21 @@ describe(replayDeadLetterEventHandler, () => {
   test("quarantines with the dead-letter diagnostics kept and the replay count stripped", async () => {
     expect.hasAssertions();
 
-    const cappedEvent = {
-      ...createDeadLetteredEvent(`${eventId}${ID_SEPARATOR}${MAX_DEAD_LETTER_REPLAY_ATTEMPTS}`),
-      deadLetterReason: "deadLetterReason",
-      deliveryAttempts: 1,
-    };
-    await seedBlob(JSON.stringify([cappedEvent]));
+    const diagnosedEvent = { ...cappedEvent, deadLetterReason: "deadLetterReason", deliveryAttempts: 1 };
+    await seedBlob(JSON.stringify([diagnosedEvent]));
     await replayDeadLetterEventHandler(
       createEventGridEvent({ subject: `${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}` }),
       context,
     );
 
     expect(readContainer()).toStrictEqual({
-      [`${DEAD_LETTER_QUARANTINE_PREFIX}${blobName}`]: JSON.stringify([{ ...cappedEvent, id: eventId }]),
+      [`${DEAD_LETTER_QUARANTINE_PREFIX}${blobName}`]: JSON.stringify([{ ...diagnosedEvent, id: eventId }]),
     });
   });
 
   test("caps per event: quarantines the capped event and republishes the rest of the batch", async () => {
     expect.hasAssertions();
 
-    const cappedEvent = createDeadLetteredEvent(`${eventId}${ID_SEPARATOR}${MAX_DEAD_LETTER_REPLAY_ATTEMPTS}`);
-    const replayableEvent = createDeadLetteredEvent(
-      `${secondEventId}${ID_SEPARATOR}${MAX_DEAD_LETTER_REPLAY_ATTEMPTS - 1}`,
-    );
     const content = JSON.stringify([cappedEvent, replayableEvent]);
     const errorSpy = vi.spyOn(context, "error");
     await seedBlob(content);
@@ -351,10 +347,6 @@ describe(replayDeadLetterEventHandler, () => {
   test("quarantines and alerts exactly once when the send fails and the blob is redelivered", async () => {
     expect.hasAssertions();
 
-    const cappedEvent = createDeadLetteredEvent(`${eventId}${ID_SEPARATOR}${MAX_DEAD_LETTER_REPLAY_ATTEMPTS}`);
-    const replayableEvent = createDeadLetteredEvent(
-      `${secondEventId}${ID_SEPARATOR}${MAX_DEAD_LETTER_REPLAY_ATTEMPTS - 1}`,
-    );
     const content = JSON.stringify([cappedEvent, replayableEvent]);
     const error = new Error(" ");
     const blobEvent = createEventGridEvent({ subject: `${DEAD_LETTER_BLOB_SUBJECT_PREFIX}${blobName}` });

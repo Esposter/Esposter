@@ -86,6 +86,14 @@ describe(buildUserDataArchive, () => {
   const otherMessage = "b";
   const path = "path";
   const title = "title";
+  const file = {
+    filename,
+    hasThumbnail: false,
+    id: crypto.randomUUID(),
+    isSpoiler: false,
+    mimetype: "mimetype",
+    size: attachmentBytes.length,
+  };
 
   beforeAll(async () => {
     mockDb = await createMockDb();
@@ -131,14 +139,6 @@ describe(buildUserDataArchive, () => {
       { roomId: room.id, userId },
       { roomId: room.id, userId: otherUserId },
     ]);
-    const file = {
-      filename,
-      hasThumbnail: false,
-      id: crypto.randomUUID(),
-      isSpoiler: false,
-      mimetype: "mimetype",
-      size: attachmentBytes.length,
-    };
     const messageClient = await getTableClient(AzureTable.Messages);
     const messageAscendingClient = await getTableClient(AzureTable.MessagesAscending);
     await createMessage(messageClient, messageAscendingClient, {
@@ -711,14 +711,6 @@ describe(buildUserDataArchive, () => {
     await mockDb.insert(usersInAuth).values(createUser(userId));
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId }).returning());
     await mockDb.insert(usersToRoomsInMessage).values({ roomId: room.id, userId });
-    const file = {
-      filename,
-      hasThumbnail: false,
-      id: crypto.randomUUID(),
-      isSpoiler: false,
-      mimetype: "mimetype",
-      size: attachmentBytes.length,
-    };
     const attachmentBlobName = getFileBlobNames(room.id, file.id, file.filename).blobName;
     await createMessage(await getTableClient(AzureTable.Messages), await getTableClient(AzureTable.MessagesAscending), {
       files: [file],

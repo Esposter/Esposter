@@ -72,6 +72,7 @@ describe(processScheduledMessageJobHandler, () => {
     replyRowKey: "",
     type: ScheduledMessageJobType.ScheduledMessage,
   };
+  const threadReplyPayload = { ...scheduledMessagePayload, replyRowKey };
   const userId = crypto.randomUUID();
   // The room owner bypasses every moderation guard, so anything asserting one must send as a plain member
   const memberUserId = crypto.randomUUID();
@@ -238,7 +239,7 @@ describe(processScheduledMessageJobHandler, () => {
   test("creates the message under the thread root the payload names", async () => {
     expect.hasAssertions();
 
-    const job = await insertJob({ ...scheduledMessagePayload, replyRowKey });
+    const job = await insertJob(threadReplyPayload);
     await processScheduledMessageJobHandler({ id: job.id }, context);
 
     const messagesTable = MockTableDatabase.get(AzureTable.Messages);
@@ -252,7 +253,7 @@ describe(processScheduledMessageJobHandler, () => {
   test("follows the thread it replies into", async () => {
     expect.hasAssertions();
 
-    const job = await insertJob({ ...scheduledMessagePayload, replyRowKey });
+    const job = await insertJob(threadReplyPayload);
     await processScheduledMessageJobHandler({ id: job.id }, context);
 
     const follows = await mockDb
@@ -274,7 +275,7 @@ describe(processScheduledMessageJobHandler, () => {
 
     const sendSpy = vi.spyOn(eventGridPublisherClient, "send");
     vi.mocked(createReplyThreadFollows).mockRejectedValueOnce(error);
-    const job = await insertJob({ ...scheduledMessagePayload, replyRowKey });
+    const job = await insertJob(threadReplyPayload);
     await processScheduledMessageJobHandler({ id: job.id }, context);
 
     const room = await mockDb.query.roomsInMessage.findFirst({
