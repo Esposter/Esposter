@@ -115,7 +115,7 @@ flowchart TD
 
 The set table is read with the world's stat tables, since a worn set's bonuses are summed into its wearer. The rarity and EXP tables are read by the same stat tables for a worn artifact's enhancement, and the main affix pools wait on the drop that rolls an artifact, whose change reads them ([artifact screen](../../../changes/genshin-artifact-screen/design.md)).
 
-The weights are not in the tables. They are the wiki's: each slot's main affix chances and the minor affixes' weights from its [Artifact/Distribution](https://genshin-impact.fandom.com/wiki/Artifact/Distribution) page, and the EXP bonus from its [Artifact EXP](https://genshin-impact.fandom.com/wiki/Artifact_EXP) page, kept as constants beside the functions that draw by them, each naming the page it is read from.
+The weights are not in the tables. They are cited as the wiki's: each slot's main affix chances and the minor affixes' weights from its [Artifact/Distribution](https://genshin-impact.fandom.com/wiki/Artifact/Distribution) page, which is not on disk, so the cited figures are unchecked (see Open), and the EXP bonus from its [Artifact EXP](https://genshin-impact.fandom.com/wiki/Artifact_EXP) page, kept as constants beside the functions that draw by them, each naming the page it is read from.
 
 ## Key files
 
@@ -237,7 +237,8 @@ The weights are not in the tables. They are the wiki's: each slot's main affix c
 - [Loot System: Artifact Drop Distribution](https://genshin-impact.fandom.com/wiki/Loot_System/Artifact_Drop_Distribution), Genshin Impact Wiki: how many minor affixes a drop starts with, by its source and rarity.
 
 ## Open
-- [ ] **A Sands of Eon rolls one of its five percentages** — partly settled: the wiki's Artifact/Distribution page gives a Sands of Eon five main affixes, HP%, ATK%, DEF%, Energy Recharge% and Elemental Mastery, and no flat HP, ATK or DEF. It writes Elemental Mastery without a percent sign, so the wording "five percentages" has no source yet.
+
+- [ ] **A Sands of Eon rolls one of its five percentages** — no source yet: the wiki's Artifact/Distribution page, cited in Sources, is not on disk, so its account that a Sands of Eon has five main affixes (HP%, ATK%, DEF%, Energy Recharge% and Elemental Mastery, and no flat HP, ATK or DEF) is unchecked here. It writes Elemental Mastery without a percent sign, so the wording "five percentages" has no source yet.
 - [ ] **The main and minor affix weights in `packages/genshin-world/src/services/artifact/constants.ts` are the wiki's** — no source yet: the wiki's Artifact/Distribution page is not on disk (the cached genshin-wiki holds no Artifact page), so the constants are not compared with its weights here.
 - [ ] **A drop starts with three minor affixes at 80% and four at 20% for a domain's five-star, and at 66% and 34% for a boss's** — no source yet: the wiki's Loot System page is not in the cache. Checked the cached Loot System page: its Artifact Drop Distribution section gives the rolling order and no split of starting minor affixes, and its Loot System/Artifact Drop Distribution page is not in the cache.
 - **The code gives no Elemental Mastery for a summon's reaction after the wearer leaves** — `packages/genshin-world/src/services/artifact/sets/createInstructorSetModule.ts` (lines 9 to 11): a reaction its summon triggers once it has left the field gives the team none, and a second one restarts the buff rather than stacking it.
