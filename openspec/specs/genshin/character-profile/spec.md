@@ -100,4 +100,4 @@ The panel SHALL name the character's namecard once Friendship holds it, except f
 
 ## Open
 
-- [ ] **Xinyan, Yae Miko and Momoka have no namecard, and every other playable character has one** — contradicted by `~/Esposter/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json`: it holds namecards for Xinyan (210045) and Yae Miko (210112).
+- [ ] **Momoka has no namecard, and every other playable character has one** — no source yet: the dump's `~/Esposter/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json` holds namecards for Xinyan (210045) and Yae Miko (210112), and the rest of the roster was not counted.
