@@ -1,11 +1,35 @@
 {
-  "skill.hits.length": { "cause": "DiffersFromSource", "value": 3 },
+  "skill.hits.length": { "cause": "DiffersFromSource", "value": 7 },
   "skill.hits.0.hitmarkFrames": { "file": "skill.go", "line": 76, "source": "Gcsim", "value": 25 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 6232 } },
   "skill.hits.1.hitmarkFrames": { "file": "skill.go", "line": 101, "source": "Gcsim", "value": 31 },
   "skill.hits.1.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 6232 } },
   "skill.hits.2.hitmarkFrames": { "file": "skill.go", "line": 101, "source": "Gcsim", "value": 37 },
   "skill.hits.2.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 6232 } },
+  "skill.hits.3.area": {
+    "cause": "DiffersFromSource",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 17 }
+  },
+  "skill.hits.3.hitmarkFrames": { "cause": "DiffersFromSource", "value": 43 },
+  "skill.hits.3.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 6232 } },
+  "skill.hits.4.area": {
+    "cause": "DiffersFromSource",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 17 }
+  },
+  "skill.hits.4.hitmarkFrames": { "cause": "DiffersFromSource", "value": 49 },
+  "skill.hits.4.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 6232 } },
+  "skill.hits.5.area": {
+    "cause": "DiffersFromSource",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 17 }
+  },
+  "skill.hits.5.hitmarkFrames": { "cause": "DiffersFromSource", "value": 55 },
+  "skill.hits.5.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 6232 } },
+  "skill.hits.6.area": {
+    "cause": "DiffersFromSource",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 17 }
+  },
+  "skill.hits.6.hitmarkFrames": { "cause": "DiffersFromSource", "value": 61 },
+  "skill.hits.6.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 6232 } },
   "burst.hits.0.internalCooldownTag": { "source": "Wiki" },
   "frames.rushingIceDuration": { "file": "skill.go", "line": 30, "source": "Gcsim", "value": 600 }
 }
