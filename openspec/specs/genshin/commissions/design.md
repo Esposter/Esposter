@@ -81,7 +81,7 @@ The three daily task tables are fetched rather than read from the dump, as the [
 
 ## Reference
 
-- `commission-bonus.mkv` — found on YouTube at https://www.youtube.com/watch?v=x_vRlUlTm8A, 0–29.9 s (`captures/yt-x_vRlUlTm8A-commissions.mp4`), cut to `commission-bonus.mkv`: the English PC client at 1080p and 60 frames a second. It shows the fourth commission bonus.
+- `commission-bonus.mkv` — found on YouTube at https://www.youtube.com/watch?v=x_vRlUlTm8A, 0–29.9 s (`~/Esposter.noindex/genshin-parity/captures/yt-x_vRlUlTm8A-commissions.mp4`), cut to `commission-bonus.mkv`: the English PC client at 1080p and 60 frames a second. It shows the fourth commission bonus.
 
 ## Open
 
