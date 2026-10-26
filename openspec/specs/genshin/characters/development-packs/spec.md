@@ -1,6 +1,6 @@
 ## Purpose
 
-Under nuxt dev the development server serves the developer's own extracted official packs from disk, and no build registers the route.
+Under nuxt dev the development server serves the developer's own extracted official packs from disk, and no build registers the route (`apps/web/modules/serveGenshinExtractions.ts`, `apps/web/server/services/genshin/characterPack/serveGenshinCharacterPack.ts`).
 
 ## Requirements
 
