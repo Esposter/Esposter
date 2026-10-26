@@ -37,7 +37,7 @@ Each program is named by its index in the uber's named list: pass, then stage, t
 | Face     | "BODY"    | Pixel  |           432 | DXBC (SHEX) |
 | Face     | "BODY"    | Vertex |           788 | DXIL        |
 | Face     | "OUTLINE" | Pixel  |           885 | DXIL        |
-| Face     | "OUTLINE" | Vertex |           958 | DXBC (SHEX) |
+| Face     | "OUTLINE" | Pixel  |           958 | DXBC (SHEX) |
 
 Candidates before the choice: body 124 pixel and 41 vertex, hair 60 and 5, face 68 and 30, the face's outline 16 and 24 (Exact).
 
@@ -257,9 +257,9 @@ A face in shadow therefore takes its shadow colour and is never black. The tone 
 
 ## The outline
 
-The outline is the face's "OUTLINE" pass, whose base programs are vertex 958 (DXBC) and pixel 885 (no DXIL marker: `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber/00885.asm` is a D3D disassembly, and no listing holds DXIL). The width is set in the vertex program and the colour in the pixel program.
+The outline is the face's "OUTLINE" pass, whose base programs are pixel 958 (DXBC: `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber/00958.asm` is a `ps_5_0` pixel program with one `SV_Target`, its inputs SV_POSITION and TEXCOORD only) and pixel 885 (no DXIL marker: `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber/00885.asm` is a D3D disassembly, and no listing holds DXIL). No listing names the outline's vertex program, so the width below is not read from a listing (see the open items). The colour is set in the pixel program.
 
-### The width (vertex 958)
+### The width (vertex program not identified)
 
 The vertex program moves each vertex in view space, before the projection (the repo's `OUTLINE_PROJECTION_SCALE` in `packages/genshin-engine/src/character/shading/constants.ts` holds the same 2.414): along its ray from the eye by an offset, then along its screen normal by a width `W`. The depth term `D` picks one of three knots of "_OutlineWidthAdjustZs", and the scale is read from the matching knots of "_OutlineWidthAdjustScales" (Exact on the operators and the knot selection):
 
@@ -366,7 +366,8 @@ The only case where a ramp stays raw is an artist painting it in linear values, 
 - [ ] **TOON_SPECULAR_ON is defined by no uber variant** — no source yet: a compile-time dump of the uber variants' defines, since none of the 6,337 listings or 43 `Shader#*.dat` dumps names the keyword.
 - [ ] **The uber's 1,553 compiled programs sort into the five pass classes** — contradicted by `~/Esposter/genshin-parity/extracted/shaders/asm/uber`: it holds 6,337 listings, not 1,553.
 - [ ] **The candidate counts (body 124 and 41, hair 60 and 5, face 68 and 30, outline 16 and 24)** — no source yet: a count over the uber's keyword sets.
-- [ ] **Programs 795, 753, 788 and 958 are vertex programs** — contradicted by `~/Esposter/genshin-parity/extracted/shaders/asm/uber/00795.asm`: a `ps_5_0` pixel program with one `SV_Target`; so are 00753, 00788 and 00958.
+- [ ] **Programs 795, 753 and 788 are vertex programs** — contradicted by `~/Esposter/genshin-parity/extracted/shaders/asm/uber/00795.asm`: a `ps_5_0` pixel program with one `SV_Target`; so are 00753 and 00788.
+- [ ] **The outline's width equations (the vertex program's moves, knots, tangent push and offset above)** — no source yet: a listing of the outline's vertex program, since `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber/00958.asm` is a pixel program whose inputs are SV_POSITION and TEXCOORD only.
 - [ ] **Each program's container is DXBC or DXIL as the table says** — contradicted by `~/Esposter/genshin-parity/extracted/shaders/asm/uber`: all 6,337 listings carry the D3D disassembler header, none a DXIL marker.
 - [ ] **The metal gate's threshold `Lm.r > 0.9`** — no source yet: the threshold literal in the program holding the metal gate; pixel 460 holds 0.930000 and no listing under `~/Esposter/genshin-parity/extracted/shaders/asm/uber` holds 0.900000.
 - [ ] **The half-Lambert scale 0.4975 in `N_v`** — no source yet: a listing that holds the literal 0.4975; none under `~/Esposter/genshin-parity/extracted/shaders/asm/uber` holds 0.497500, and pixel 460 holds 0.498000 in one add.
