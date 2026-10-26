@@ -77,7 +77,7 @@ The three daily task tables are read from the dump (`scripts/src/services/genshi
 ## Sources
 
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `DailyTaskExcelConfigData`, `DailyTaskRewardExcelConfigData` and `DailyTaskLevelExcelConfigData`, the tasks, their reward tiers and the Adventure Rank bands, with `RewardPreviewExcelConfigData` for each reward's items.
-- [Commission](https://genshin-impact.fandom.com/wiki/Commission), Genshin Impact Wiki: the four commissions a day, the unlock at Adventure Rank 12, and the bonus's items the dump's preview is checked against. Its figures are the dump's.
+- [Commission](https://genshin-impact.fandom.com/wiki/Commission), Genshin Impact Wiki: the four commissions a day, and the unlock, "Commissions are unlocked upon reaching Adventure Rank 12", which the page also ties to completing Every Day a New Adventure (see Not built yet). The bonus's items the dump's preview is checked against. Its figures are the dump's.
 
 ## Reference
 
@@ -85,7 +85,7 @@ The three daily task tables are read from the dump (`scripts/src/services/genshi
 
 ## Open
 
-- [ ] **Nothing is dealt before Adventure Rank 12, where commissions open** — no source yet for the game's gate: `COMMISSION_UNLOCK_RANK = 12` (`packages/genshin-world/src/services/commission/constants.ts`) holds it, but the wiki's Commission page is not in `~/Esposter.noindex/cache/genshin-wiki/`, and no system-open UI in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/SystemOpenUIConfigData.json` names the commissions.
+- [ ] **Nothing is dealt before Adventure Rank 12, where commissions open** — partly settled: the Commission page (checked) gives the unlock as Adventure Rank 12 with completing Every Day a New Adventure, so nothing is dealt before rank 12 is settled, but the rank alone does not open them; the quest gate is not built (see Not built yet). `COMMISSION_UNLOCK_RANK = 12` (`packages/genshin-world/src/services/commission/constants.ts`) holds the rank, and no system-open UI in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/SystemOpenUIConfigData.json` names the commissions.
 - [ ] **An unfinished commission is claimed for one Encounter Point** — the code does it (`packages/genshin-world/src/services/commission/claimCommissionReward.ts`), but the game's text gives Encounter Points' use in place of a commission with no per-commission cost, and its one-per-commission line (`TextMap_MediumEN.json`, key `2417337778`) is for Long-Term Encounter Points.
 - [ ] **The stored saves written before the flag existed are backfilled once from outside the app** — no source yet: no backfill script or run record names `isBonusClaimed` in the repo or in the scratch folders under `~/Esposter.noindex`.
 - [ ] **The three daily task tables all come from the same pull** — no source yet: the level and reward tables are recorded as an 8 Oct fetch, while `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/DailyTaskExcelConfigData.json` carries the dump's 18 Oct pull, and no manifest of the dump's pulls is kept.
