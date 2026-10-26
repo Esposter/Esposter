@@ -6,7 +6,7 @@ The third-person camera behind the character, as the game's follows its own — 
 
 ### Requirement: The camera orbits the character from behind
 
-The follow camera SHALL orbit a pivot above the character, turned by the mouse or the right stick and zoomed by the wheel within the game's nearest and furthest distances.
+The follow camera SHALL orbit a pivot above the character, turned by the mouse or the right stick and zoomed by the wheel within the game's nearest and furthest distances (`packages/genshin-engine/src/camera/createFollowCamera.ts`).
 
 #### Scenario: Mouse turns the view round the character
 
@@ -28,7 +28,7 @@ The follow camera SHALL orbit a pivot above the character, turned by the mouse o
 
 ### Requirement: Pitch stops short of straight up and straight down
 
-The camera's pitch SHALL be clamped so the view never reaches straight up or straight down.
+The camera's pitch SHALL be clamped so the view never reaches straight up or straight down (`packages/genshin-engine/src/camera/createFollowCamera.ts`).
 
 #### Scenario: Looking up stops at the limit
 
@@ -38,7 +38,7 @@ The camera's pitch SHALL be clamped so the view never reaches straight up or str
 
 ### Requirement: The camera is pulled in by anything between it and the character
 
-The camera SHALL pull in toward the character as soon as the ground, the water's surface or a landmark stands between them, and SHALL ease back out at a steady pace once the way clears.
+The camera SHALL pull in toward the character as soon as the ground, the water's surface or a landmark stands between them, and SHALL ease back out at a steady pace once the way clears (`packages/genshin-engine/src/camera/createFollowCamera.ts`, `packages/genshin-engine/src/collision/createLandmarkCollider.ts`).
 
 #### Scenario: Wall between camera and character pulls the camera in at once
 
@@ -60,7 +60,7 @@ The camera SHALL pull in toward the character as soon as the ground, the water's
 
 ### Requirement: Reset swings the camera behind the character
 
-The reset input SHALL swing the camera level behind the way the character faces, at its default distance.
+The reset input SHALL swing the camera level behind the way the character faces, at its default distance (`packages/genshin-engine/src/camera/createFollowCamera.ts`).
 
 #### Scenario: Middle mouse button resets the view
 
@@ -76,7 +76,7 @@ The reset input SHALL swing the camera level behind the way the character faces,
 
 ### Requirement: The camera follows the character between steps without stutter
 
-The camera SHALL follow the character's place blended between its last two steps by how far the frame has come into the next step.
+The camera SHALL follow the character's place blended between its last two steps by how far the frame has come into the next step (`packages/genshin-engine/src/simulation/createFixedStepLoop.ts`, `packages/genshin-world/src/components/World/Character/Index.vue`).
 
 #### Scenario: Character moving at a fixed step rate is followed smoothly
 
@@ -86,7 +86,7 @@ The camera SHALL follow the character's place blended between its last two steps
 
 ### Requirement: A click locks the pointer and Left Alt shows the cursor
 
-A click on the world SHALL lock the pointer, and Left Alt SHALL release it to show the cursor without opening the menu.
+A click on the world SHALL lock the pointer, and Left Alt SHALL release it to show the cursor without opening the menu (`packages/genshin-world/src/components/World/Character/Index.vue`, `packages/genshin-world/src/components/World/Session/Index.vue`).
 
 #### Scenario: Click locks the pointer
 
@@ -104,7 +104,7 @@ A click on the world SHALL lock the pointer, and Left Alt SHALL release it to sh
 
 - **GIVEN** the pointer is locked
 - **WHEN** the player presses Escape
-- **THEN** the lock is released and the Paimon menu opens
+- **THEN** the lock is released and the Paimon menu opens (`packages/genshin-world/src/components/World/Session/Index.vue`)
 
 #### Scenario: First pointer move after a lock is ignored
 
@@ -114,7 +114,7 @@ A click on the world SHALL lock the pointer, and Left Alt SHALL release it to sh
 
 ### Requirement: Photo mode holds the character and orbits the view round it
 
-Photo mode SHALL hold the character where it stands and keep the camera orbiting it, and SHALL leave the world clock running as the game's does.
+Photo mode SHALL hold the character where it stands and keep the camera orbiting it, and SHALL leave the world clock running as the game's does (`packages/genshin-world/src/components/World/Session/Index.vue`).
 
 #### Scenario: Entering photo mode holds the character in place
 
@@ -138,4 +138,8 @@ Photo mode SHALL hold the character where it stands and keep the camera orbiting
 
 - **GIVEN** the tuning panel is open in photo mode
 - **WHEN** photo mode is active
-- **THEN** the view is handed to the free camera rather than the orbit
+- **THEN** the view is handed to the free camera rather than the orbit (`packages/genshin-world/src/components/World/Session/Index.vue`)
+
+## Open
+
+- [ ] **The world clock keeps running in photo mode** — no source yet: the Time wiki page is not in the cache, and no recording of the clock in photo mode is checked.
