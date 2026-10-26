@@ -72,4 +72,3 @@ A new character is `createCharacter` over the roster: level 1 in its first phase
 - [ ] **The Traveler's base HP, ATK and DEF match the wiki at each level and phase** — no source yet: the wiki's Traveler page is not cached.
 - [ ] **The Traveler at level 90 with a Dull Blade gives the wiki's 10,874.91 Max HP and 682.52 DEF** — no source yet: the wiki's Traveler page, named in Sources, is not in the wiki cache.
 - [ ] **The Snezhnaya association names Snezhnaya's region** — contradicted by `scripts/src/services/genshinAssets/stats/constants.ts`: maps only `ASSOC_TYPE_FATUI`, not the Snezhnaya associations the dump uses.
-- [ ] **The Fatui are counted as Snezhnaya's region, as the wiki counts them** — no source yet: the wiki page that gives the association count is not on disk.
