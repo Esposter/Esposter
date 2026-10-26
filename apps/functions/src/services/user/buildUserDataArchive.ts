@@ -1,0 +1,49 @@
+import type { UserInAuth } from "@esposter/db-schema";
+
+import { getContainerClient } from "#src/services/azure/getContainerClient";
+import {
+  DATA_EXPORT_CONTENT_TYPE,
+  DATA_EXPORT_UPLOAD_BUFFER_SIZE,
+  DATA_EXPORT_UPLOAD_MAX_CONCURRENCY,
+} from "#src/services/user/constants";
+import { createUserDataArchive } from "#src/services/user/createUserDataArchive";
+import { writeAccountEntry } from "#src/services/user/writeAccountEntry";
+import { writeImageEntries } from "#src/services/user/writeImageEntries";
+import { writeModerationEntry } from "#src/services/user/writeModerationEntry";
+import { writeResourceEntries } from "#src/services/user/writeResourceEntries";
+import { writeRoomEntries } from "#src/services/user/writeRoomEntries";
+import { writeSaveEntries } from "#src/services/user/writeSaveEntries";
+import { AzureContainer } from "@esposter/db-schema";
+import { getResultAsync, noop } from "@esposter/shared";
+
+// Streams one person's archive into the block blob named for it. The groups write the archive while the upload reads it,
+// so the build holds a block of it at a time, whatever the account holds. A failed write destroys the stream unfinished,
+// so the upload never commits a truncated archive, and the write's own error is the one reported. A failed upload is
+// rethrown as it is; the writes then wait on a stream nothing drains, which holds nothing more
+export const buildUserDataArchive = async (userId: UserInAuth["id"], blobName: string): Promise<void> => {
+  const containerClient = await getContainerClient(AzureContainer.DataExports);
+  const archive = createUserDataArchive();
+  const failArchive = (error: Error): never => {
+    archive.output.destroy();
+    throw error;
+  };
+  const uploading = getResultAsync(() =>
+    containerClient
+      .getBlockBlobClient(blobName)
+      .uploadStream(archive.output, DATA_EXPORT_UPLOAD_BUFFER_SIZE, DATA_EXPORT_UPLOAD_MAX_CONCURRENCY, {
+        blobHTTPHeaders: { blobContentType: DATA_EXPORT_CONTENT_TYPE },
+      }),
+  ).match(noop, (error) => {
+    throw error;
+  });
+  const writing = getResultAsync(async () => {
+    await writeAccountEntry(archive, userId);
+    await writeRoomEntries(archive, userId);
+    await writeResourceEntries(archive, userId);
+    await writeSaveEntries(archive, userId);
+    await writeImageEntries(archive, userId);
+    await writeModerationEntry(archive, userId);
+    archive.end();
+  }).match(noop, failArchive);
+  await Promise.all([uploading, writing]);
+};

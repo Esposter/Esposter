@@ -71,6 +71,7 @@
     "@esposter/db-schema": "workspace:*",
     "@esposter/shared": "workspace:*",
     "drizzle-orm": "catalog:",
+    "fflate": "catalog:",
     "node-html-parser": "catalog:",
     "postgres": "catalog:",
     "web-push": "catalog:",

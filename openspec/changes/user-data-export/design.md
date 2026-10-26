@@ -8,7 +8,7 @@ The stores this reads are the ones in the [user data inventory](../../specs/arch
 
 **The archive streams into a blob; nothing holds it whole.** `fflate`'s streaming zip writes each entry as it is read, and the entry's bytes are read from Blob one stream at a time. The output is a block blob uploaded from the same stream. The memory a large export uses is bounded by one attachment, not by the account.
 
-**The archive is one blob per request, named by its export id.** A retry of the same request overwrites its own blob, so a replayed handler cannot leave two archives. The row's status is the only pointer, and it moves to ready only after the upload commits.
+**The archive is one blob per request, named `{exportId}.zip`.** A retry of the same request overwrites its own blob, so a replayed handler cannot leave two archives. The row's status is the only pointer, and it moves to ready only after the upload commits.
 
 **Links are short-lived and owner-only.** The download is a read-only SAS valid for fifteen minutes, minted on request for the owner of a ready, unexpired export. The archive itself is private, so a link is the only way in.
 

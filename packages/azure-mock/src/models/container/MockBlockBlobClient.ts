@@ -9,8 +9,10 @@ import type {
   BlockBlobStageBlockResponse,
   BlockBlobUploadOptions,
   BlockBlobUploadResponse,
+  BlockBlobUploadStreamOptions,
   HttpRequestBody,
 } from "@azure/storage-blob";
+import type { Readable } from "node:stream";
 import type { Except } from "type-fest";
 
 import { MockBlobClient } from "#src/models/container/MockBlobClient";
@@ -90,7 +92,16 @@ export class MockBlockBlobClient extends MockBlobClient implements Except<BlockB
     throw new NotImplementedError(this.uploadFile.name);
   }
 
-  uploadStream(): Promise<BlobUploadCommonResponse> {
-    throw new NotImplementedError(this.uploadStream.name);
+  // Collected as raw bytes rather than handed to bodyToBuffer, which decodes a stream as UTF-8 and would corrupt a binary
+  // body such as an archive
+  async uploadStream(
+    stream: Readable,
+    _bufferSize?: number,
+    _maxConcurrency?: number,
+    options?: BlockBlobUploadStreamOptions,
+  ): Promise<BlobUploadCommonResponse> {
+    const chunks: Uint8Array[] = [];
+    for await (const chunk of stream) chunks.push(chunk);
+    return this.upload(Buffer.concat(chunks), 0, options);
   }
 }
