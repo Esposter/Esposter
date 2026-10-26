@@ -1,6 +1,6 @@
 ## Purpose
 
-The character screen's Profile tab as built — each playable character's stories and voice-overs read from the game's fetter tables by their text ids in every language, each opened at the Friendship Level its fetter gives and locked with the game's own unlock line until then, beside the chosen entry's title and text (the game's rows are `~/Esposter/genshin-parity/text/ExcelBinOutput/FetterStoryExcelConfigData.json` and `~/Esposter/genshin-parity/text/ExcelBinOutput/FettersExcelConfigData.json`, and the behaviour is tested in `packages/genshin-world/src/services/profile/toCharacterProfileEntries.test.ts` and `checkProfileStoryUnlocked.test.ts`). The model's space, the voice line with its voice actor and the namecard's art are not drawn yet.
+The character screen's Profile tab as built — each playable character's stories and voice-overs read from the game's fetter tables by their text ids in every language, each opened at the Friendship Level its fetter gives and locked with the game's own unlock line until then, beside the chosen entry's title and text (the game's rows are `~/Esposter/genshin-parity/text/ExcelBinOutput/FetterStoryExcelConfigData.json` and `~/Esposter/genshin-parity/text/ExcelBinOutput/FettersExcelConfigData.json`, and the behaviour is tested in `packages/genshin-world/src/services/profile/toCharacterProfileEntries.test.ts` and `packages/genshin-world/src/services/profile/checkProfileStoryUnlocked.test.ts`). The model's space, the voice line with its voice actor and the namecard's art are not drawn yet.
 
 ## Requirements
 
@@ -100,4 +100,4 @@ The panel SHALL name the character's namecard once Friendship holds it, except f
 
 ## Open
 
-- [ ] **Momoka has no namecard, and every other playable character has one** — no source yet: the dump's `~/Esposter/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json` holds namecards for Xinyan (210045) and Yae Miko (210112), and the rest of the roster was not counted.
+- [ ] **Momoka and the Traveler have no namecard, and every other playable character has one** — no source yet: the other characters' namecard rows in `~/Esposter/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json` were not counted (Xinyan's 210045 and Yae Miko's 210112 are there, and the Travellers' derived names `UI_NameCardIcon_PlayerBoy` and `_PlayerGirl` are absent).
