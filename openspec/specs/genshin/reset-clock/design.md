@@ -74,9 +74,9 @@ flowchart TD
 - The week's reset times are `computeLastWeeklyReset` and `computeNextWeeklyReset`, and the day's and month's are their pairs in the table above. The mining outcrop's respawn rule is in `checkIsMiningOutcropStanding`, and the game's zone, day start hour and reset days are the constants in `services/time/constants.ts`.
 - Gathering's overworld ingredients respawn at the server's midnight, a separate moment kept in the gathering rules and not a reset, so it is not moved into this module.
 
-
 ## Open
 
 - [ ] **The daily reset itself is at 04:00 on the Asia server's clock** — no source yet: the dump's `BlossomRefreshExcelConfigData.json` holds 04:00:00 for a refresh, not the reset, and the wiki's Reset page is not in the local wiki cache.
 - [ ] **The weekly reset is Monday at 04:00** — no source yet: no weekly-reset row was found in the dump, and the wiki's Daily Reset page is not cached.
+- [ ] **The monthly reset is the game's own 04:00 on the server's clock** — no source yet: its row in the dump and the wiki's Paimon's Bargains page are unread.
 - [ ] **The world keeps 04:00 where the wiki gives the mining respawn at 06:00** — no source yet: the dump's `BlossomRefreshExcelConfigData.json` holds a 06:00:00 refresh (`BLOSSOM_REFRESH_CRYSTAL`), and whether it is the mining respawn was not checked; the wiki's Mining Outcrop page is not cached.
