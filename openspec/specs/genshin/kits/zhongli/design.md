@@ -35,5 +35,5 @@ Zhongli's kit is its record and one behaviour module, `createZhongliKitBehaviour
 
 ## Open
 
-- [ ] **the Jade Shield's cut reaches 10 metres high** — no source yet: the height argument of the enemy query in gcsim's `shield.go` was not opened.
+- [ ] **the Jade Shield's cut reaches 10 metres high** — no source yet: the enemy query in `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/zhongli/shield.go` is a circle of radius 7.5 with `nil` as its other argument and no height, so the 10 metres is not set there.
 - [ ] **a strike's touch engages an enemy as the Rain Swords' touch does, and Enduring Rock's Geo RES cut applies under the shield** — no source yet: neither game interaction was opened in gcsim or the wiki.
