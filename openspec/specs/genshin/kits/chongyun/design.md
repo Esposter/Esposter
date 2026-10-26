@@ -13,7 +13,6 @@ Chongyun's kit is its record and one behaviour module, `createChongyunKitBehavio
 
 - **Chongyun's charged attack is provisional and open.** gcsim's `chongyun` package has no charged attack to read (its `~/Esposter/cache/gcsim-v2.47.2/internal/characters/chongyun/attack.go` holds the four strikes only), so the spinning slash at half a second, the final slash at a second and the attack's end at 1.2 seconds are the kit's own estimates, and the record's radii (3.3 and 3.5), its poise (60 and 120) and its stamina per second (group 3631's index 6, 40) are unsourced.
 - **Ice Unleashed's blades reach what the fourth strike reaches, and the fourth Cloud-Parting Star blade the other blades' 5 metres**, both provisional. gcsim's Ice Unleashed blades are radius-1 circles on the primary target (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/chongyun/attack.go` lines 73-92), and its Cloud-Parting Star blades are radius-3.5 circles (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/chongyun/burst.go` lines 46 and 57), so the record's 2.69-metre and 5-metre reaches are `DiffersFromSource` against gcsim and wait on a recording.
-- **Frozen Skies' energy is open.** The 1 energy is open against gcsim's 2 (see Decisions).
 - **Ice Unleashed's blades deal no kind of attack.** The wiki gives them 50% of Chongyun's ATK as Cryo DMG and names no kind, as gcsim tags them none (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/chongyun/attack.go` line 72, `AttackTagNone`), so no attack tag is set on them.
 
 ## Key files
@@ -31,5 +30,5 @@ Chongyun's kit is its record and one behaviour module, `createChongyunKitBehavio
 
 - [ ] **Fantastic Voyage's infusion reaches only melee wielders** — no source yet: no cached source for Fantastic Voyage is in this pass, and the repo's melee-weapon constant is not evidence.
 - [ ] **Atmospheric Revolution's cut applies to casts within the Frost Field** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/chongyun/skill.go`: a 15% cut to the wielder's skill, burst and special-skill cooldowns while infused.
-- [ ] **Frozen Skies gives 1 energy for each Cryo hit while he is on the field** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/chongyun/cons.go`: AddEnergy 2 behind a 2-second cooldown.
+- [ ] **Frozen Skies gives 1 energy for each Cryo hit while he is on the field** — gcsim disagrees: `~/Esposter/cache/gcsim-v2.47.2/internal/characters/chongyun/cons.go` gives AddEnergy 2 behind a 2-second cooldown. The design takes the English text map's 1 instead (see Decisions), so this entry records gcsim's value as the contradiction, not an unsettled energy.
 - [ ] **The wiki gives Ice Unleashed's blades 50% of Chongyun's ATK as Cryo DMG** — no source yet: the cached Chongyun page names Ice Unleashed as a constellation, with no text. Checked: Demonbane (`~/Esposter/cache/genshin-wiki/Category_Chongyun_Talents.json`), which gives no 50% figure for it.
