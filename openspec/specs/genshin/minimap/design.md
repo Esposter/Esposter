@@ -35,7 +35,6 @@ flowchart LR
 ## Notes
 
 - **What is measured, and what stands in.** Its size and every mark's place are the tree's. Its thin light ring, the drawing's fade over the rim's outer sixth (`packages/genshin-world/src/components/Hud/Minimap/Index.vue`, the mask's 84% to 96%), the fan's white and the arrow's cyan are measured at 1080 high on the references below. The N's serif capital and the arrow's notched head are written from their measures (`packages/genshin-world/src/components/Hud/Minimap/Index.vue`), since the recordings draw them too small to trace, and the metres it shows are not yet read. The terrain is the game's painted art (`~/Esposter/genshin-parity/extracted/maps/index.tsv`), kept out of the repository, so the drawing stands on the map's own ground, `MAP_GROUND`, as the overlay's does (`packages/genshin-world/src/services/map/constants.ts`, `packages/genshin-world/src/components/Map/Overlay/Index.vue`). Each of these is marked provisional in its file.
-- **The minimap's marks are placed by the HUD's interface rects** — `packages/genshin-world/src/components/Hud/Minimap/Index.vue`.
 
 ## Sources
 
