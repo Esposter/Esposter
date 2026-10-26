@@ -1,6 +1,6 @@
 ## Purpose
 
-A player loads the official release they downloaded on the character screen, the browser keeps its files, and a signed-in player's own copy is kept with their account, readable by them alone.
+A player loads the official release they downloaded on the character screen, the browser keeps its files, and a signed-in player's own copy is kept with their account, readable by them alone (`packages/genshin-world/src/components/Character/PackLoader/Index.vue`, `packages/genshin-world/src/services/character/createCharacterPackStore.ts`, `apps/web/server/services/genshin/accountCharacterPack/keepAccountCharacterPack.ts`).
 
 ## Requirements
 
