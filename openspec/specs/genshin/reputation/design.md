@@ -69,4 +69,4 @@ flowchart TD
 - [ ] **A Reputation discount is 10% off, rounded down to a multiple of five Mora** — no source yet: the wiki's Reputation page does not confirm it, and no cached game text states the percentage.
 - [ ] **The discount names shop types 1004 and 1005** — no source yet: the discount's function text does not resolve in the cached English text.
 - [ ] **The list scores within the parity loop's bar, and the game's face is HYWenHei** — no source yet: the parity score is not in the cache, and the face is not read from the game's assets here.
-- [ ] **Each level's unlock is shown in the game's words behind an info mark, by its function id** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Each level's unlock is shown in the game's words behind an info mark, by its function id** — no source yet: `ReputationCityExcelConfigData` in `~/Esposter/genshin-parity/text/ExcelBinOutput/`, not yet read for the function ids.
