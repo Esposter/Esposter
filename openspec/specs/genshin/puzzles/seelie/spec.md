@@ -6,7 +6,7 @@ A Seelie as a state machine, led along its route while followed and settled at i
 
 ### Requirement: A Seelie rests where it was found until it is followed
 
-A Seelie SHALL rest where it was found until the player follows it (`packages/genshin-world/src/services/puzzle/stepSeelie.ts`).
+A Seelie SHALL rest where it was found until the player follows it.
 
 #### Scenario: Seelie found
 
@@ -16,7 +16,7 @@ A Seelie SHALL rest where it was found until the player follows it (`packages/ge
 
 ### Requirement: A followed Seelie is led along its route to its court
 
-A Seelie that the player follows SHALL be led along its route, and SHALL settle at its court when the route reaches the court (`packages/genshin-world/src/services/puzzle/stepSeelie.ts`).
+A Seelie that the player follows SHALL be led along its route, and SHALL settle at its court when the route reaches the court.
 
 #### Scenario: Seelie followed to its court
 
@@ -26,7 +26,7 @@ A Seelie that the player follows SHALL be led along its route, and SHALL settle 
 
 ### Requirement: A Seelie left unfollowed returns to rest
 
-A Seelie left unfollowed for its return time SHALL go back to where it was found (`packages/genshin-world/src/services/puzzle/stepSeelie.ts`, `SEELIE_RETURN_SECONDS` in `packages/genshin-world/src/services/puzzle/constants.ts`).
+A Seelie left unfollowed for its return time SHALL go back to where it was found (`SEELIE_RETURN_SECONDS`).
 
 #### Scenario: Seelie left unfollowed
 
@@ -36,7 +36,7 @@ A Seelie left unfollowed for its return time SHALL go back to where it was found
 
 ### Requirement: A settled Seelie stays settled
 
-A Seelie that has settled at its court SHALL stay settled (`packages/genshin-world/src/services/puzzle/stepSeelie.ts`).
+A Seelie that has settled at its court SHALL stay settled.
 
 #### Scenario: Settled Seelie left unfollowed
 
@@ -47,3 +47,4 @@ A Seelie that has settled at its court SHALL stay settled (`packages/genshin-wor
 ## Open
 
 - [ ] **A Seelie rests until followed, is led to its court, and goes back to rest when left unfollowed, as the game does** — no source yet: the wiki's Seelie page is not in the genshin-wiki cache.
+- [ ] **A settled Seelie stays settled at its court** — no source yet: game data or a snapshot that holds this behaviour
