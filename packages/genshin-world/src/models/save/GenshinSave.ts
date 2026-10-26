@@ -2,7 +2,7 @@ import { achievementProgressSaveSchema } from "#src/models/achievement/Achieveme
 import { adventureExpSaveSchema } from "#src/models/adventureRank/AdventureExpSave";
 import { worldLevelAdjustmentSaveSchema } from "#src/models/adventureRank/WorldLevelAdjustmentSave";
 import { archiveSaveSchema } from "#src/models/archive/ArchiveSave";
-import { trounceBlossomsSaveSchema } from "#src/models/bosses/TrounceBlossomSave";
+import { trounceBlossomsSaveSchema } from "#src/models/bosses/TrounceBlossomsSave";
 import { characterSaveSchema } from "#src/models/character/CharacterSave";
 import { openedChestSaveSchema } from "#src/models/chest/OpenedChestSave";
 import { commissionDaySaveSchema } from "#src/models/commission/CommissionDaySave";
@@ -67,6 +67,9 @@ export const genshinSaveSchema = z
     ),
     // The entries the Archive has opened and the defeats it has counted
     archive: archiveSaveSchema,
+    // Each defeated boss's moment of defeat by its spawn key, on the server's clock. A boss stays down until its blossom's
+    // claim or the first teleport after the defeat, so a reload keeps it down. Absent until a boss is defeated
+    bossDefeats: bossDefeatSaveSchema.optional(),
     cardGameExp: cardGameExpSaveSchema,
     cardGameRewardedGameIds: createUniqueArraySchema(z.int().positive()).max(GCG_REWARDABLE_GAME_COUNT),
     // The characters the player holds, each once by its id, with the copies a wish has granted it
@@ -88,9 +91,6 @@ export const genshinSaveSchema = z
     // Each defeated enemy's moment of coming back, by its spawn key, for the camps with no boss among them
     // On the server's clock
     enemyRespawns: enemyRespawnSaveSchema,
-    // Each defeated boss's moment of defeat by its spawn key, on the server's clock. A boss stays down until its blossom's
-    // claim or the first teleport after the defeat, so a reload keeps it down. Absent until a boss is defeated
-    bossDefeats: bossDefeatSaveSchema.optional(),
     // The furnishings placed in the realm, each with the area it stands in and where, in the order they were placed
     homePlacements: homePlacementSaveSchema,
     // The seeds the realm's garden holds, each on its plot, with the instant it was planted at
@@ -140,10 +140,10 @@ export const genshinSaveSchema = z
     tips: tipSaveSchema,
     // The Traveler's birthday once the profile sets it, absent until then
     travelerBirthday: travelerBirthdaySaveSchema.optional(),
-    // The Trounce Blossoms the defeated bosses left, each by the spawn key its boss fell under, with the newest claims kept
-    trounceBlossoms: trounceBlossomsSaveSchema.optional(),
     // The name the player chose for the Traveler, empty while none is chosen
     travelerName: z.string().max(MAX_TRAVELER_NAME_LENGTH),
+    // The Trounce Blossoms the defeated bosses left, each by the spawn key its boss fell under, with the newest claims kept
+    trounceBlossoms: trounceBlossomsSaveSchema.optional(),
     unlockedLandmarks: unlockedLandmarkSaveSchema,
     wallet: walletSaveSchema,
     // The draws of the wish history, the newest last, each within the window the wish screen keeps

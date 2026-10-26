@@ -60,7 +60,7 @@ const toLowHealthBurstHits = (hits: KitHit[]): KitHit[] => {
   const gapSeconds = lastHit.hitmarkSeconds - previousHit.hitmarkSeconds;
   return [
     ...hits,
-    ...Array.from({ length: BURST_LOW_HEALTH_HIT_COUNT - hits.length }, (_, index) => ({
+    ...Array.from({ length: BURST_LOW_HEALTH_HIT_COUNT - hits.length }, (_value, index) => ({
       ...lastHit,
       hitmarkSeconds: lastHit.hitmarkSeconds + (index + 1) * gapSeconds,
     })),

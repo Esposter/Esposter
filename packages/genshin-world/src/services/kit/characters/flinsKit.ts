@@ -44,22 +44,6 @@ export const createFlinsKitBehaviour = ({ readParameter, readStance }: KitRecord
   // Flins/attack.go and charge.go, so each group takes its kit tag
   const manifestFlame = readStance("manifestFlame");
   return {
-    // Constellation 1: a Lunar-Charged reaction the team's hits trigger gives Energy, once every 5.5 seconds
-    onKitEvent: (event, { kitEffectState, party }, combatant) => {
-      if (
-        combatant.constellationCount < CONSTELLATION_1 ||
-        event.kind !== KitEventKind.ReactionTriggered ||
-        !event.reactions.some(({ reactionType }) => reactionType === ReactionType.LunarCharged) ||
-        !startKitCooldown(
-          kitEffectState,
-          combatant.characterId,
-          CONSTELLATION_1_ICD_ID,
-          CONSTELLATION_1_ICD_SECONDS,
-        )
-      )
-        return;
-      gainPartyMemberEnergy(party, combatant, CONSTELLATION_1_ENERGY);
-    },
     // Cometh the Night's middle hits: two land always, and two more at Ascendant Gleam, as gcsim's burst reads the Moonsign
     // Level when its initial hit lands, the team's composition not changing within the burst
     burst: { hits: [{}, {}, {}, { landsWhen: checkIsAscendantGleam }, { landsWhen: checkIsAscendantGleam }, {}] },
@@ -76,6 +60,17 @@ export const createFlinsKitBehaviour = ({ readParameter, readStance }: KitRecord
         ? [{ amount: CONSTELLATION_4_ATTACK_PERCENT, attribute: Attribute.AttackPercent }]
         : []),
     ],
+    // Constellation 1: a Lunar-Charged reaction the team's hits trigger gives Energy, once every 5.5 seconds
+    onKitEvent: (event, { kitEffectState, party }, combatant) => {
+      if (
+        combatant.constellationCount < CONSTELLATION_1 ||
+        event.kind !== KitEventKind.ReactionTriggered ||
+        !event.reactions.some(({ reactionType }) => reactionType === ReactionType.LunarCharged) ||
+        !startKitCooldown(kitEffectState, combatant.characterId, CONSTELLATION_1_ICD_ID, CONSTELLATION_1_ICD_SECONDS)
+      )
+        return;
+      gainPartyMemberEnergy(party, combatant, CONSTELLATION_1_ENERGY);
+    },
     skill: {
       onStart: ({ activeCombatant: combatant, kitEffectState }) =>
         enterKitStance(kitEffectState, combatant, manifestFlame, manifestFlameSeconds, { isEndedOnSwap: true }),

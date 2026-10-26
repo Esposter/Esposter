@@ -12,10 +12,10 @@ import { toHomeProgressSave } from "#src/services/save/toHomeProgressSave";
 import { toInventorySave } from "#src/services/save/toInventorySave";
 import { toInvestigationDaySave } from "#src/services/save/toInvestigationDaySave";
 import { toPartySave } from "#src/services/save/toPartySave";
-import { toTrounceBlossomSave } from "#src/services/save/toTrounceBlossomSave";
 import { toProcessingJobSaves } from "#src/services/save/toProcessingJobSaves";
 import { toShopPurchaseSaves } from "#src/services/save/toShopPurchaseSaves";
 import { toSpiralAbyssSave } from "#src/services/save/toSpiralAbyssSave";
+import { toTrounceBlossomSave } from "#src/services/save/toTrounceBlossomSave";
 import { toWalletSave } from "#src/services/save/toWalletSave";
 import { toWorldLevelAdjustmentSave } from "#src/services/save/toWorldLevelAdjustmentSave";
 
@@ -130,7 +130,7 @@ export const toGenshinSave = ({
   travelerName,
   ...(trounceBlossoms.size > 0 && {
     trounceBlossoms: Object.fromEntries(
-      [...trounceBlossoms].map(([spawnKey, trounceBlossom]) => [spawnKey, toTrounceBlossomSave(trounceBlossom)]),
+      Array.from(trounceBlossoms, ([spawnKey, trounceBlossom]) => [spawnKey, toTrounceBlossomSave(trounceBlossom)]),
     ),
   }),
   unlockedLandmarks: [...unlockedLandmarkIds],

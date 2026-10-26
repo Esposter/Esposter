@@ -129,6 +129,8 @@ import { HemisphereLight, Scene } from "three";
 interface Props {
   // The character on the field, whose game model the host's exports draw in place of the pack's when it is the Traveler
   activeCharacterId: number;
+  // The moments the defeated bosses fell, by their spawn keys, as the save holds them
+  bossDefeatMap: ReadonlyMap<string, string>;
   // The spots of the bounties' targets standing in the world, which the sight leads a trail to while it is on
   bountyTrailEnds: GroundPoint[];
   // The regions and their areas, whose outlines bring a region's data within reach and set the weather the camera
@@ -148,8 +150,6 @@ interface Props {
   elementalSight?: ElementalSight;
   // The enemies in the world by their spawn key, which the enemies write as camps load and enemies die
   enemyMap: Map<string, Enemy>;
-  // The moments the defeated bosses fell, by their spawn keys, as the save holds them
-  bossDefeatMap: ReadonlyMap<string, string>;
   // The moments the defeated enemies come back, by their spawn keys, for the camps with no boss among them
   enemyRespawnMap: ReadonlyMap<string, string>;
   // The game's enemy tables, which the camps spawn their enemies from
@@ -217,13 +217,13 @@ interface Props {
 
 const {
   activeCharacterId,
+  bossDefeatMap,
   bountyTrailEnds,
   catalogue,
   characterBody,
   characterLocomotion,
   characterPackReader,
   createTerrainWorker,
-  bossDefeatMap,
   elementalSight,
   enemyMap,
   enemyRespawnMap,

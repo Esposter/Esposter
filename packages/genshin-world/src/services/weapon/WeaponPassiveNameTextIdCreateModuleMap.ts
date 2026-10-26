@@ -160,12 +160,16 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "407790963": createWithoutHeedForDayNorNightPassiveModule,
   // Boundless Blessing (Lost Prayer to the Sacred Winds)
   "483941803": createBoundlessBlessingPassiveModule,
+  // Frost Burial (Snow-Tombed Starsilver, Dragonspine Spear, Frostbearer)
+  "486943795": createFrostBurialPassiveModule,
   // Bane of Water and Ice
   "523615731": createBaneOfWaterAndIcePassiveModule,
   // Smoke-and-Mirror Mystery (Flute of Ezpitzal)
   "641137867": createSmokeAndMirrorMysteryPassiveModule,
   // Offering Unto Wind and Sun (Starcaller's Watch)
   "646104387": createOfferingUntoWindAndSunPassiveModule,
+  // Golden Majesty (Summit Shaper, The Unforged, Memory of Dust), the same passive under text ids of their own
+  "649271795": createGoldenMajestyPassiveModule,
   // Bane of the Soft
   "651784635": createBaneOfTheSoftPassiveModule,
   // Fall Into Place (Master Key)
@@ -182,6 +186,8 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "916503587": createFocusPassiveModule,
   // Starfire Upon the Snowplains (Emberwell)
   "953016699": createStarfireUponTheSnowplainsPassiveModule,
+  // Oceanic Victory (Luxurious Sea-Lord)
+  "1016634707": createOceanicVictoryPassiveModule,
   // Traveler's Path (Exaiphanes Blade)
   "1043198987": createTravelersPathPassiveModule,
   // Sunken Song of the Sands (Key of Khaj-Nisut)
@@ -202,6 +208,7 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "1244741843": createCritEnergyPassiveModule,
   // Byakuya Kougetsu (Everlasting Moonglow)
   "1301139739": createByakuyaKougetsuPassiveModule,
+  "1340415043": createFrostBurialPassiveModule,
   // Spotless Heart (Cinnabar Spindle)
   "1348697123": createSpotlessHeartPassiveModule,
   // Falcon's Defiance (Aquila Favonia)
@@ -214,10 +221,13 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "1395787867": createSamuraiConductPassiveModule,
   // Undying Admiration (Festering Desire)
   "1399609651": createUndyingAdmirationPassiveModule,
+  "1405856115": createGoldenMajestyPassiveModule,
   // The Law's Equilibrium (Covenant of Frost and Snow)
   "1419973003": createLawsEquilibriumPassiveModule,
   // Press the Advantage (Blackcliff Warbow)
   "1421912251": createPressTheAdvantagePassiveModule,
+  // Nocturnal Dreams (Dawning Frost)
+  "1658621971": createNocturnalDreamsPassiveModule,
   // Infusion Scroll
   "1663313163": createInfusionScrollPassiveModule,
   // Whitehill's Bestowal (Azurelight)
@@ -265,6 +275,7 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   // Windblume Wish (Windblume Ode)
   "2243731691": (params) =>
     createSkillBuffPassiveModule(params, { attributes: [Attribute.AttackPercent], source: "windblumeWish" }),
+  "2253836555": createGoldenMajestyPassiveModule,
   // People of the Faltering Light (Oathsworn Eye)
   "2254346691": (params) =>
     createSkillBuffPassiveModule(params, {
@@ -291,6 +302,7 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "2430074939": createCrushPassiveModule,
   // Energy Shower
   "2433054179": createParticleHealPassiveModule,
+  "2459894187": createFrostBurialPassiveModule,
   // Cull the Weak (White Iron Greatsword)
   "2479230075": createCullTheWeakPassiveModule,
   // Smashed Stone
@@ -401,12 +413,16 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "3707047091": createCullTheWeakPassiveModule,
   // Rust
   "3717831139": createRustPassiveModule,
+  // Evernight Duet (Mitternachts Waltz)
+  "3737766939": createEvernightDuetPassiveModule,
   // Dolorous Stroke (Disaster and Remorse)
   "3742127275": createDolorousStrokePassiveModule,
   // Radiance on the Water (Silver Light)
   "3814375507": createRadianceOnTheWaterPassiveModule,
   // Eagle Spear of Justice (Primordial Jade Winged-Spear)
   "3835416843": createEagleSpearOfJusticePassiveModule,
+  // Dodoventure! (Dodoco Tales)
+  "3845860483": createDodocoTalesPassiveModule,
   // Archer's Message (Messenger)
   "3847632939": createArchersMessagePassiveModule,
   // Legacy of Lang-Gan (Lightbearing Moonshard)
@@ -465,22 +481,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "4236194011": createPressTheAdvantagePassiveModule,
   // Composed (Sacrificial Greatsword)
   "4267154851": createComposedPassiveModule,
-  // Golden Majesty (Summit Shaper, The Unforged, Memory of Dust), the same passive under text ids of their own
-  "649271795": createGoldenMajestyPassiveModule,
-  "1405856115": createGoldenMajestyPassiveModule,
-  "2253836555": createGoldenMajestyPassiveModule,
-  // Frost Burial (Snow-Tombed Starsilver, Dragonspine Spear, Frostbearer)
-  "486943795": createFrostBurialPassiveModule,
-  "1340415043": createFrostBurialPassiveModule,
-  "2459894187": createFrostBurialPassiveModule,
-  // Nocturnal Dreams (Dawning Frost)
-  "1658621971": createNocturnalDreamsPassiveModule,
-  // Dodoventure! (Dodoco Tales)
-  "3845860483": createDodocoTalesPassiveModule,
-  // Oceanic Victory (Luxurious Sea-Lord)
-  "1016634707": createOceanicVictoryPassiveModule,
   // Secret Wisdom's Favor (Ibis Piercer)
   "4279279011": createSecretWisdomsFavorPassiveModule,
-  // Evernight Duet (Mitternachts Waltz)
-  "3737766939": createEvernightDuetPassiveModule,
 };

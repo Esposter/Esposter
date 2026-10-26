@@ -84,7 +84,6 @@ describe(useWorldTrounceBlossoms, () => {
       characters: shallowRef<Character[]>([]),
       emitGrant: () => {},
       enemyKindMap: enemyTables.enemyKindMap,
-      savedState: { lastTeleportAt: undefined, trounceBlossoms: new Map() },
       events,
       friendshipLevels: shallowRef<FriendshipLevels>(),
       gainWorldAdventureExp: () => {},
@@ -95,6 +94,7 @@ describe(useWorldTrounceBlossoms, () => {
       materialDataMap: new Map(),
       nameText: {},
       party: createParty([TRAVELER_CHARACTER_ID]),
+      savedState: { lastTeleportAt: undefined, trounceBlossoms: new Map() },
       setInventory: () => {},
       setWallet: () => {},
       wallet: shallowRef(EMPTY_WALLET),
@@ -120,7 +120,6 @@ describe(useWorldTrounceBlossoms, () => {
       characters: ref([]),
       emitGrant: () => {},
       enemyKindMap: new Map(),
-      savedState: { lastTeleportAt: undefined, trounceBlossoms: new Map() },
       events: createWorldEvents(),
       friendshipLevels: ref<FriendshipLevels>(),
       gainWorldAdventureExp: vi.fn<(amount: number) => void>(),
@@ -131,6 +130,7 @@ describe(useWorldTrounceBlossoms, () => {
       materialDataMap: new Map(),
       nameText: {},
       party: createParty([TRAVELER_CHARACTER_ID]),
+      savedState: { lastTeleportAt: undefined, trounceBlossoms: new Map() },
       setInventory: vi.fn<(nextInventory: Inventory) => void>(),
       setWallet: vi.fn<(nextWallet: Wallet) => void>(),
       wallet: ref(EMPTY_WALLET),
@@ -155,7 +155,6 @@ describe(useWorldTrounceBlossoms, () => {
       characters: ref([]),
       emitGrant: () => {},
       enemyKindMap: new Map(),
-      savedState: { lastTeleportAt: undefined, trounceBlossoms: new Map() },
       events: createWorldEvents(),
       friendshipLevels: ref<FriendshipLevels>([{ exp: 0, level: 1 }]),
       gainWorldAdventureExp: (amount) => {
@@ -168,6 +167,7 @@ describe(useWorldTrounceBlossoms, () => {
       materialDataMap,
       nameText: { [UNIQUE_DROP_NAME_TEXT_ID]: "Test Boss Drop" },
       party: createParty([TRAVELER_CHARACTER_ID]),
+      savedState: { lastTeleportAt: undefined, trounceBlossoms: new Map() },
       setInventory: vi.fn<(nextInventory: Inventory) => void>(),
       setWallet: vi.fn<(nextWallet: Wallet) => void>(),
       wallet: ref<Wallet>({ ...EMPTY_WALLET, [Currency.OriginalResin]: BlossomClaimResinMap[BlossomKind.NormalBoss] }),
@@ -212,7 +212,6 @@ describe(useWorldTrounceBlossoms, () => {
       characters: ref([]),
       emitGrant: () => {},
       enemyKindMap: new Map(),
-      savedState: { lastTeleportAt: undefined, trounceBlossoms: new Map() },
       events,
       friendshipLevels: ref<FriendshipLevels>([{ exp: 0, level: 1 }]),
       gainWorldAdventureExp: adventureRank.gainWorldAdventureExp,
@@ -223,6 +222,7 @@ describe(useWorldTrounceBlossoms, () => {
       materialDataMap,
       nameText: { [UNIQUE_DROP_NAME_TEXT_ID]: "Test Boss Drop" },
       party: createParty([TRAVELER_CHARACTER_ID]),
+      savedState: { lastTeleportAt: undefined, trounceBlossoms: new Map() },
       setInventory: vi.fn<(nextInventory: Inventory) => void>(),
       setWallet: (nextWallet) => {
         wallet.value = nextWallet;
@@ -275,7 +275,6 @@ describe(useWorldTrounceBlossoms, () => {
       characters: ref([]),
       emitGrant: () => {},
       enemyKindMap: new Map(),
-      savedState: { lastTeleportAt: undefined, trounceBlossoms: new Map() },
       events: createWorldEvents(),
       friendshipLevels: ref<FriendshipLevels>([{ exp: 0, level: 1 }]),
       gainWorldAdventureExp: (amount) => {
@@ -288,6 +287,7 @@ describe(useWorldTrounceBlossoms, () => {
       materialDataMap: weeklyMaterialDataMap,
       nameText: names,
       party: createParty([TRAVELER_CHARACTER_ID]),
+      savedState: { lastTeleportAt: undefined, trounceBlossoms: new Map() },
       setInventory: (nextInventory) => {
         inventory.value = nextInventory;
       },

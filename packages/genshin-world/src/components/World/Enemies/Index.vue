@@ -16,8 +16,8 @@ import type { DataTexture, Scene } from "three";
 
 import { CombatEvent } from "#src/models/combat/CombatEvent";
 import { EnemyEvent } from "#src/models/enemy/EnemyEvent";
-import { EnemyType } from "#src/models/enemy/EnemyType";
 import { EnemyState } from "#src/models/enemy/EnemyState";
+import { EnemyType } from "#src/models/enemy/EnemyType";
 import { EnemyKindMovesMap } from "#src/services/bosses/EnemyKindMovesMap";
 import { advanceElementalState } from "#src/services/combat/aura/advanceElementalState";
 import { computeEnemySightColor } from "#src/services/elementalSight/computeEnemySightColor";
@@ -54,14 +54,14 @@ import { createFixedStepLoop, createInstancedMesh, createToonMaterial } from "ge
 import { CapsuleGeometry, Color, Matrix4, MeshBasicMaterial, SphereGeometry, Vector3 } from "three";
 
 interface Props {
+  // The moments the defeated bosses fell, by their spawn keys, as the save holds them: each boss stays down from its
+  // defeat until its blossom is claimed or the first teleport after it
+  bossDefeatMap: ReadonlyMap<string, string>;
   // The enemies in the world by their spawn key, which this writes as the camps load and unload and as enemies die
   enemyMap: Map<string, Enemy>;
   // The moments the defeated enemies come back, by their spawn keys, for the camps with no boss among them
   // As the save holds them
   enemyRespawnMap: ReadonlyMap<string, string>;
-  // The moments the defeated bosses fell, by their spawn keys, as the save holds them: each boss stays down from its
-  // defeat until its blossom is claimed or the first teleport after it
-  bossDefeatMap: ReadonlyMap<string, string>;
   // The game's enemy tables, which each spawn's kind, stats and drops are read from
   enemyTables: EnemyTables;
   // The world's ground at a point in its own coordinates, which each enemy stands on
@@ -122,10 +122,10 @@ const emit = defineEmits<{
   leaveCombat: [];
   // A boss comes back at its spawn, so its defeat and the blossom it left are gone
   respawn: [spawnKey: string];
-  // A defeated member of a camp with no boss comes back at this instant, which the save keeps
-  saveRespawn: [spawnKey: string, respawnAt: string];
   // A defeated boss's moment of defeat, which the save keeps until the boss comes back
   saveBossDefeat: [spawnKey: string, defeatedAt: string];
+  // A defeated member of a camp with no boss comes back at this instant, which the save keeps
+  saveRespawn: [spawnKey: string, respawnAt: string];
   // An enemy whose shield a hit broke, once for each time it breaks, which a boss's fight counts as its shield breaks
   shieldBreak: [enemy: Enemy];
   strike: [enemy: Enemy, taunt: KitTaunt | undefined];

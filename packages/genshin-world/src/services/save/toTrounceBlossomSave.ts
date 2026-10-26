@@ -1,5 +1,5 @@
-import type { TrounceBlossomSave } from "#src/models/bosses/TrounceBlossomSave";
 import type { TrounceBlossom } from "#src/models/bosses/TrounceBlossom";
+import type { TrounceBlossomSave } from "#src/models/bosses/TrounceBlossomSave";
 
 import { BlossomKind } from "#src/models/originalResin/BlossomKind";
 import { MAX_BLOSSOM_CLAIM_COUNT } from "#src/services/save/constants";

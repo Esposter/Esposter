@@ -140,15 +140,15 @@ export const createYunjinKitBehaviour = ({ kit, readParameter }: KitRecordReader
           });
       },
     },
-    // Opening Flourish's cooldown is cut from Constellation 1, as gcsim's skill sets its cooldown
-    getSkillCooldownMultiplier: ({ activeCombatant }) =>
-      activeCombatant.constellationCount >= CONSTELLATION_1 ? CONSTELLATION_1_SKILL_COOLDOWN_MULTIPLIER : 1,
     // The banner's DMG Increase on a teammate's normal attack while it stands, priced from Yun Jin's buffed DEF
     getPartyStrikeBonus: (member, strike, _enemy, party, effects, characterIdCombatantMap) => {
       if (strike.attackTag !== AttackTag.NormalAttack || !checkIsBannerStanding(effects, member.characterId)) return {};
       const buffedMember = getBuffedCombatant(member, effects, party, characterIdCombatantMap);
       return { additiveBaseDamageBonus: getBannerIncrease(buffedMember, party, characterIdCombatantMap) };
     },
+    // Opening Flourish's cooldown is cut from Constellation 1, as gcsim's skill sets its cooldown
+    getSkillCooldownMultiplier: ({ activeCombatant }) =>
+      activeCombatant.constellationCount >= CONSTELLATION_1 ? CONSTELLATION_1_SKILL_COOLDOWN_MULTIPLIER : 1,
     // The banner's DMG Increase on her own normal attacks while it stands, priced from the striker as its buffs leave it
     getStrikeAdditiveBaseDamageBonus: (strike, _enemy, party, effects, characterIdCombatantMap) =>
       strike.attackTag === AttackTag.NormalAttack && checkIsBannerStanding(effects, strike.combatant.characterId)
