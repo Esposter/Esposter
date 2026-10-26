@@ -216,5 +216,5 @@ While the party holds Dew, her charged attack SHALL be Moondew Cleanse, which sp
 
 ## Open
 
-- [ ] **Every hit is Hydro and deals one unit of Hydro gauge** — contradicted by `~/Esposter/cache/genshin-wiki/Category_Columbina_Talents.json`: Moonlit Melancholy's Skill DMG row gives 2U; Moondew Cleanse deals Dendro DMG with 0U.
+- [ ] **Every basic-attack hit is Hydro and applies one unit of Hydro gauge** — contradicted by `~/Esposter/cache/genshin-wiki/Category_Columbina_Talents.json`: Moondew Cleanse deals AoE Dendro DMG.
 - [ ] **A Lunar-Bloom consumes its auras as Bloom does** — no source yet: no cached line states how a Lunar-Bloom consumes its element.
