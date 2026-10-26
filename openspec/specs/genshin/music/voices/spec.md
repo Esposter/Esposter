@@ -1,6 +1,6 @@
 ## Purpose
 
-How a source's notes are transcribed from the game's decoded sound, pruned to the notes that sound holds, split into three voices by register, and how each voice's instrument and noise are measured from that sound.
+How a source's notes are transcribed from the game's decoded sound, pruned to the notes that sound holds, split into three voices by register, and how each voice's instrument and noise are measured from that sound `scripts/src/services/genshinAssets/shared/fitMusicVoices.ts`.
 
 ## Requirements
 
