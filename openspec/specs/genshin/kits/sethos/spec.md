@@ -6,7 +6,7 @@ Sethos's kit as built, with his three strikes, the fully-charged Aimed Shot, Anc
 
 ### Requirement: Sethos's strikes
 
-Sethos's three strikes SHALL land in order, the second strike being two hits, each hitting the enemies within reach with no poise damage.
+Sethos's three strikes SHALL land in order, the second strike being two hits, each hitting the enemies within reach with the poise the cached wiki gives them (18.879, 8.791 and 25.809).
 
 #### Scenario: Three strikes in sequence
 
