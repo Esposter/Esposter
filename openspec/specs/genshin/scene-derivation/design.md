@@ -181,5 +181,7 @@ Each other region's open world is derived by `extract` from its capital's catalo
 - [ ] **A feature costs every vertex it reaches about four hills' time** — no source yet: `packages/genshin-engine/src/terrain/createTerrainShapeHeight.bench.md` gives hills, 28 more hills and 28 features, and its ratios do not state a per-vertex four-hills figure.
 - [ ] **Each other region's `extract`, its index and its closure** — no source yet: the extraction's output for any capital is not on this machine.
 - [ ] **The Zhenzhong Yi talk, FLIP's perceptual score and its description** — no source yet: the talk was not fetched and the FLIP tool was not opened in this pass.
-- **The login's transform to the screen is the game's bloom curve, drawn by the pipeline with no canvas tone mapping over it** — `packages/genshin-engine/src/renderer/constants.ts` (`GENSHIN_TONE_MAPPING` is `NoToneMapping`, and the curve is drawn by the pipeline).
+- **The login's transform to the screen is drawn by the pipeline with no canvas tone mapping over it** — `packages/genshin-engine/src/renderer/constants.ts` (`GENSHIN_TONE_MAPPING` is `NoToneMapping`, and the curve is drawn by the pipeline).
+- [ ] **The login's transform to the screen is the game's bloom curve with no colour grading** — no source yet: game data or a snapshot that holds this behaviour
 - **Windrise's ground is our own hills fitted to the game's terrain** — `scripts/src/services/genshinAssets/fit/fitGroundPiece.ts`, which builds the ground from hills and features fitted to the game's heights.
+- [ ] **The layout pass's proportions, the camera solve on the silhouette and the light solve by least squares** — no source yet: the cross-ratio unit test, the camera solver and the light solver were not traced here.
