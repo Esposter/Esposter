@@ -133,4 +133,4 @@ Each section SHALL list its entries in the game's codex order, and a codex row t
 
 ## Open
 
-- [ ] **The seven sections are listed in the game's order** — no source yet: the dump table that holds the Archive's section order, since its section-name hashes appear only in `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ManualTextMapConfigData.json` and the Archive screen recording shows the sections as a ring (Books, Tutorials, Geography, Equipment, Materials at 12 seconds), which does not settle the order.
+- [ ] **The seven sections are listed in the game's order** — no source yet: the dump table that holds the Archive's section order; the Archive screen recording shows the sections as a ring (Books, Tutorials, Geography, Equipment, Materials at 12 seconds), which does not settle the order.
