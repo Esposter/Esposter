@@ -150,3 +150,7 @@ Kaeya's Constellation 6 fourth icicle SHALL NOT take effect.
 - **GIVEN** Kaeya has Constellation 6
 - **WHEN** the player fights with Kaeya
 - **THEN** the fourth icicle is not summoned
+
+## Open
+
+- [ ] **Glacial Waltz summons thirteen icicles** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/kaeya/burst.go`: three icicles, with thirteen ticks in all.
