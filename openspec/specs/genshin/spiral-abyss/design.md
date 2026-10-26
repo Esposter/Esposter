@@ -31,7 +31,7 @@ flowchart TD
 
 ## The rules
 
-- **The clock.** A chamber's clock is its floor's seconds: five minutes on the first four floors of the Corridor and ten minutes on every floor above. A chamber of two halves has one clock for both, so the second half starts on the seconds the first left.
+- **The clock.** A chamber's clock is its floor's seconds: five minutes on the first four floors of the Corridor and ten minutes on every floor above. A chamber of two halves has one clock for both, so the second half starts on the seconds the first left (`packages/genshin-world/src/services/spiralAbyss/stepAbyssChallenge.test.ts`).
 - **Failure.** A chamber is lost when its clock reaches zero or its monolith reaches zero health. A cleared chamber is never lost (`packages/genshin-world/src/services/spiralAbyss/checkIsAbyssChallengeFailed.test.ts`).
 - **Stars.** A clear earns one star for each condition that holds when it clears: the clock left above a time mark, or the monolith's health above a health mark. A chamber's stars are the most any of its clears has earned, and a chamber cleared with no condition met still counts as cleared (`packages/genshin-world/src/services/spiralAbyss/computeAbyssChamberStars.test.ts`; the best kept in `packages/genshin-world/src/services/spiralAbyss/recordAbyssChamberClear.test.ts`).
 - **Floors open.** The first floor is always open. A floor opens when the one below has all three chambers cleared and holds its unlock count of stars, six on every floor of the table (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/TowerFloorExcelConfigData.json`, 141 floors, each `unlockStarCount` 6; `packages/genshin-world/src/services/spiralAbyss/checkIsAbyssFloorUnlocked.test.ts`). The Moon Spire's first floor, floor nine, opens on the Corridor's floor eight (the floors with ids 1008 and 1009 in the same table).
@@ -79,7 +79,7 @@ flowchart TD
 ## Notes
 
 - **The dump ends at a period.** The community dump's schedule ends with the period that began on 2026-10-16 (scheduleId 124), so the Moon Spire runs that period until a newer dump holds the later ones.
-- **The readers are called from the world session.** The three readers load their slices on demand, and `useWorldSpiralAbyss` calls all three from the world session's screen (`packages/genshin-world/src/components/World/Session/Index.vue`).
+- **The readers are called from the world session.** The three readers load their slices on demand, and `useWorldSpiralAbyss` (`packages/genshin-world/src/composables/useWorldSpiralAbyss.ts`) calls all three from the world session's screen (`packages/genshin-world/src/components/World/Session/Index.vue`).
 
 ## Sources
 
