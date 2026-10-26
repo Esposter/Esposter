@@ -137,6 +137,4 @@ Every three Stellas earned in a run SHALL give one reward.
 
 ## Sources
 
-- [Imaginarium Theater](https://genshin-impact.fandom.com/wiki/Imaginarium_Theater), Genshin Impact Wiki: the page the open lines name. It is not on disk, so no quote from it is checked here.
-
-## Open
+- [Imaginarium Theater](https://genshin-impact.fandom.com/wiki/Imaginarium_Theater), Genshin Impact Wiki: the page the Vigor, Blessing Level, opening bonus and Stella figures are attributed to. It is not on disk, so no quote from it is checked here.
