@@ -24,15 +24,15 @@ Escoffier's plunges SHALL play as airborne moves, the low plunge landing at 41 f
 - **WHEN** the player plunges low
 - **THEN** the plunge lands at 41 frames of its 76-frame animation
 
-### Requirement: No poise from strikes, charged attack and collision
+### Requirement: Poise from strikes, charged attack and collision
 
-Escoffier's normal attacks, charged attack and collision attack SHALL deal no poise.
+Escoffier's normal attacks, charged attack and collision attack SHALL deal the wiki's poise: 47.95, 44.27 and 34.11 for the normal attacks, 120 for the charged attack and 25 for the collision. gcsim gives none, and the kit as built carries none, so the gap is open in the design.
 
-#### Scenario: A normal attack deals no poise
+#### Scenario: A normal attack deals the wiki's poise
 
 - **GIVEN** Escoffier is the character on the field
 - **WHEN** one of her normal attacks hits an enemy
-- **THEN** the enemy takes no poise damage
+- **THEN** the enemy takes the wiki's poise for that strike, an open value (see the design's Decisions)
 
 ### Requirement: Low-Temperature Cooking and Frosty Parfait
 
