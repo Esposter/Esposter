@@ -110,4 +110,4 @@ The free camera flown by touch SHALL climb on the jump button, and the touch lay
 
 ## Open
 
-- [ ] **The stick stands still where the game places it** — checked against `~/Esposter.noindex/genshin-parity/captures/touch-controls-mobile.mkv`: its frame at 20 s is a cutscene with no HUD, and the three YouTube recordings the design page cites are not on disk, so the claim is not settled by either because no frame shows the stick's placement.
+- [ ] **The stick stands still where the game places it** — no source yet: a frame of the stick's placement in the game; `~/Esposter.noindex/genshin-parity/captures/touch-controls-mobile.mkv` at 20 s is a cutscene with no HUD, and the three YouTube recordings the design page cites are not on disk.
