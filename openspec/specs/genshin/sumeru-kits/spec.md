@@ -65,7 +65,8 @@ The rainforest city SHALL stand in for the houses the game draws in Sumeru City,
 
 #### Scenario: Bridges and common buildings left undrawn
 
-- **GIVEN** Sumeru City's export holds bridges, common buildings and plants- **WHEN** the city is drawn
+- **GIVEN** Sumeru City's export holds bridges, common buildings and plants
+- **WHEN** the city is drawn
 - **THEN** those meshes are not drawn yet
 
 ## Open
