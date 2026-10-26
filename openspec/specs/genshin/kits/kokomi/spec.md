@@ -20,7 +20,7 @@ Kokomi's three strikes and her charged attack SHALL each land their hits on the 
 
 ### Requirement: Bake-Kurage's ripples and heal field
 
-Kokomi's elemental skill SHALL summon Bake-Kurage, which sends seven ripples and leaves a field that heals the active character from her Max HP while it stands within the field's circle, lasting 12.5 seconds on a 20-second cooldown.
+Kokomi's elemental skill SHALL summon Bake-Kurage, which sends seven ripples and leaves a field that heals the active character from her Max HP while it stands within the field's circle, lasting 12 seconds on a 20-second cooldown.
 
 #### Scenario: Active character heals within the field
 
