@@ -80,7 +80,7 @@ Stormbreaker SHALL summon the Thunderbeast's Targe, which stands for 15 seconds 
 
 - **GIVEN** the Targe stands
 - **WHEN** Beidou falls
-- **THEN** the Targe ends when Beidou falls, as the wiki's Stormbreaker lists it, before its 15 seconds run out
+- **THEN** the Targe ends when Beidou falls, before its 15 seconds run out
 
 ### Requirement: Discharges from Beidou's attacks
 
@@ -91,7 +91,7 @@ While the Thunderbeast's Targe stands, Beidou's strikes and charged attack SHALL
 - **GIVEN** the Targe stands and a discharge has not been cast in the last second
 - **WHEN** one of Beidou's strikes or her charged attack starts its hit
 - **THEN** a discharge of 1 unit of Electro lands on each enemy inside the strike's reach
-- **AND** the discharge lands only when the strike hits, as the wiki's Thunderbeast's Targe text gives it
+- **AND** the discharge lands only when the strike hits
 
 #### Scenario: A second hit within a second casts no discharge
 
