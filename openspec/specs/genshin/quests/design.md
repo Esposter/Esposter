@@ -130,6 +130,6 @@ The quest screen is scored whole-frame against `quest-screen`, the English clien
 - [ ] **The Seventh Samurai opens only once Tatara Tales: The Last Act is finished** — no source yet: the wiki's "The Seventh Samurai" page is not in `~/Esposter/cache/genshin-wiki`.
 - [ ] **About half of an offered quest's lines show no words, in any language** — no source yet: the dialog table's lines are not counted against the text maps in `~/Esposter/genshin-parity/text/`.
 - [ ] **The carried prologue starts at Wanderer's Trail's first step, a go-to no region data places** — no source yet: neither the prologue's binary nor the region data is checked for that trigger.
-- [ ] **The objective kinds are the game's five** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The three city openings' parents are the wiki's named prerequisites** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Liyue's opening waits on quest 384, which is carried** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The objective kinds are the game's five** — no source yet: the wiki's Quest/Menu page, named in Sources, is not in the wiki cache.
+- [ ] **The three city openings' parents are the wiki's named prerequisites** — no source yet: the wiki's Quest page, named in Sources, is not in the wiki cache; the parents not yet read from `QuestExcelConfigData` in `~/Esposter/genshin-parity/text/ExcelBinOutput/`.
+- [ ] **Liyue's opening waits on quest 384, which is carried** — no source yet: quest 384 in `QuestExcelConfigData` in `~/Esposter/genshin-parity/text/ExcelBinOutput/`, not yet read for Liyue's opening.
