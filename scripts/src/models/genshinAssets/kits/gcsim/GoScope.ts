@@ -16,5 +16,7 @@ export interface GoScope {
   // Not reach has its `=` left out and each it reaches takes its own, so a loop bounded by a local one raises reads the
   // Value that constellation gives it
   resolveConstellationName: (name: string, position: number, constellation: number) => GoValue | undefined;
-  resolveName: (name: string, position: number) => GoValue | undefined;
+  // The value a name takes at a position, where a local's value that reads a name of the iteration given takes that
+  // Iteration's value for it, as a loop body's `progress := i + firstTick` takes the iteration's `i`
+  resolveName: (name: string, position: number, iteration?: ReadonlyMap<string, number>) => GoValue | undefined;
 }

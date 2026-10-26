@@ -100,7 +100,8 @@ export const readGcsimQueuedAttacks = (
       for (const callVariant of callVariants)
         for (const loopIteration of loopIterations) {
           const iteration = new Map([...loopIteration, ...callVariant.parameters]);
-          const resolveIteration = (name: string) => iteration.get(name) ?? scope.resolveName(name, position);
+          const resolveIteration = (name: string) =>
+            iteration.get(name) ?? scope.resolveName(name, position, iteration);
           // The hitbox's numbers resolve through the iteration as the delay's do, so a loop's hit takes its own radius
           const ownHitbox =
             hitboxValueStart === undefined

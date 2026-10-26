@@ -75,6 +75,7 @@ export const createGoScope = (tokens: readonly GoToken[], constantMap: ReadonlyM
     position: number,
     depth: number,
     constellation: number | undefined,
+    iteration?: ReadonlyMap<string, number>,
   ): GoValue | undefined => {
     if (depth > MAX_DEPTH) return undefined;
     const scope = findScope(position);
@@ -88,9 +89,13 @@ export const createGoScope = (tokens: readonly GoToken[], constantMap: ReadonlyM
         ? { kind: "none" }
         : findAssignment(tokens, scope, name, position, constantMap, constellation);
     if (assignment.kind === "conditional") return undefined;
+    // A local's value that reads a loop variable, as `progress := i + firstTick` does in a loop body, reads that
+    // Iteration's value for it
     if (assignment.kind === "dominating")
-      return evaluateGoExpression(parseGoExpression(tokens, assignment.valueStart).expression, (inner) =>
-        resolveAt(inner, assignment.valueStart, depth + 1, constellation),
+      return evaluateGoExpression(
+        parseGoExpression(tokens, assignment.valueStart).expression,
+        (inner) =>
+          iteration?.get(inner) ?? resolveAt(inner, assignment.valueStart, depth + 1, constellation, iteration),
       );
     return constantMap.get(name)?.value;
   };
@@ -124,6 +129,7 @@ export const createGoScope = (tokens: readonly GoToken[], constantMap: ReadonlyM
     },
     resolveConstellationName: (name: string, position: number, constellation: number): GoValue | undefined =>
       resolveAt(name, position, 0, constellation),
-    resolveName: (name: string, position: number): GoValue | undefined => resolveAt(name, position, 0, undefined),
+    resolveName: (name: string, position: number, iteration?: ReadonlyMap<string, number>): GoValue | undefined =>
+      resolveAt(name, position, 0, undefined, iteration),
   };
 };

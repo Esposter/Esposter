@@ -35,7 +35,7 @@ export const readCallSiteDelays = (
       parameterIterations.map((parameterIteration) => new Map([...loopIteration, ...parameterIteration])),
     )
     .map((iteration) => {
-      const resolveIteration = (name: string) => iteration.get(name) ?? scope.resolveName(name, site);
+      const resolveIteration = (name: string) => iteration.get(name) ?? scope.resolveName(name, site, iteration);
       const closureDelay = sumOptionalDelays(
         closureDelayExpressions.map((expression) => evaluateGoNumber(expression, resolveIteration)),
       );
