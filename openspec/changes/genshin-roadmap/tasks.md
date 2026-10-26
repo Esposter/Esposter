@@ -98,7 +98,6 @@ The user's one batch, checked whenever convenient ([parity](../../specs/genshin/
 - [ ] **Dori's shot, Connector and collision stagger no enemy** — [Dori](../../specs/genshin/kits/dori/design.md): no recording shows any of the three staggering an enemy.
 - [ ] **Tighnari's arrows, mine and shaft stagger no enemy** — [Tighnari](../../specs/genshin/kits/tighnari/design.md): no recording shows any of them staggering an enemy.
 - [ ] **Yanfei's charged attack hits at 63 frames** — [Yanfei](../../specs/genshin/kits/yanfei/design.md): a standing charged attack's hit lands at 63 frames.
-- [ ] **Quest reply's mark has an exclamation mark in its ring** — [Dialogue](../../specs/genshin/dialogue/design.md): the game's quest reply shows the mark inside its gold ring, and a story quest reply its inner diamonds.
 - [ ] **Black-screen narration sits centred** — [Dialogue](../../specs/genshin/dialogue/design.md): the game's black-screen line is drawn at the screen's middle, with no name or title.
 - [ ] **PC reveal runs at the PlayStation's rate** — [Dialogue](../../specs/genshin/dialogue/design.md): the PC client writes a character every 30 milliseconds, a space taking no time.
 - [ ] **Resident's quest-title reply comes first** — [Dialogue](../../specs/genshin/dialogue/design.md): the game's reply reads the quest's title and sits above the resident's own replies.
