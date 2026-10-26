@@ -170,5 +170,5 @@ At constellation 4, Sacred Rite: Heron's Sanctum's charged hold SHALL share the 
 
 ## Open
 
-- [ ] **the charged hold starts after half a second of holding** — no source yet: no table or wiki page was opened for the threshold, and the design page names it provisional.
+- [ ] **the charged hold starts after half a second of holding** — no source yet: no table or wiki page was opened for the threshold, and the design page keeps the framework's half second, leaving the game's agreement to the roadmap.
 - [ ] **the Prayer's infusion lasts 1 second** — no source yet: the infusion's duration in gcsim's `burst.go` was not opened.

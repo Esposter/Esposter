@@ -37,4 +37,4 @@ Candace's kit is its record and one behaviour module, `createCandaceKitBehaviour
 - [ ] **a charged hold starts at half a second of holding** — no source yet: no table or wiki page was opened for the threshold, as the page itself says.
 - [ ] **the Prayer's infusion lasts one second** — no source yet: the infusion's duration in `burst.go` was not opened.
 - [ ] **a collision and two plunges are her kit's strikes** — no source yet: the plunge and charge frame lines in gcsim were not opened.
-- [ ] **changeKitSkillCooldown does Alhaitham's first constellation** — no source yet: `alhaithamKit.ts` does not name the function, and no other source was opened.
+- [ ] **changeKitSkillCooldown does Alhaitham's first constellation** — no source yet: `alhaithamKit.ts` calls it at line 237 with the constellation's cut, but the constellation's own text was not opened.
