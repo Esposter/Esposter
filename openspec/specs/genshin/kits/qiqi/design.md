@@ -33,5 +33,5 @@ Qiqi's kit is its record and one behaviour module, `createQiqiKitBehaviour`, on 
 
 ## Open
 
-- [ ] **Divine Suppression's ATK cut from four constellations** — no source yet: gcsim has no four-constellation hook for it, and the cached Qiqi talents page names constellation 4 as Divine Suppression without its text.
-- [ ] **Rite of Resurrection's revive from six constellations** — no source yet: gcsim has no revive, and the cached Qiqi talents page names constellation 6 as Rite of Resurrection without its text.
+- [ ] **Divine Suppression's ATK cut from four constellations** — contradicted by `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json`: talent 354's text gives the cut as 20%.
+- [ ] **Rite of Resurrection's revive from six constellations** — contradicted by `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json`: talent 356's text gives a revive every 15 minutes.
