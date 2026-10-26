@@ -1,6 +1,6 @@
 ## Purpose
 
-How a resident's talk opens a duel, the board's choices and the session that plays each one through the engine, then the opponent's turns. No duel is seated yet, since no challenger with a built deck stands in a built region's residents, so the board is reviewed through its parity fixture until one does.
+How a resident's talk opens a duel, the board's choices and the session that plays each one through the engine, then the opponent's turns. Three duels are seated, Marjorie's and Ellin's in Mondstadt and Kimiya's in Sumeru, each on a resident of a built region, and the board is also reviewed through its parity fixture.
 
 ## Requirements
 
