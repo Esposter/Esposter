@@ -37,6 +37,8 @@ The gather table's refresh ids do not name a policy in the dump. The ground rows
 
 An ore's respawn is its own, from the wiki's Reset page: an Iron Chunk at the daily reset, a White Iron Chunk or Starsilver two days after the break, and a Crystal Chunk, Amethyst Lump or Condessence Crystal three days after (`scripts/src/services/genshinAssets/gathering/constants.ts`). Those labels are keyed by the map's label id, since a plant's category does not settle them.
 
+**Owner decision.** The wiki's Reset page, `~/Esposter/cache/genshin-wiki/Reset.json`, places the Iron Chunk's spawn at 0:00 server time, four hours before the 04:00 daily reset, as it places the common cooking ingredients; the reading above is the reset itself. The page is tagged a stub asking for its timers and respawns to be verified, so the owner decides which the game keeps.
+
 A point is kept as picked with the instant of the pick, and stands again once its respawn has come (`packages/genshin-world/src/services/gathering/checkIsGatheringPlaceStanding.ts`). Nothing runs while the page is closed: each look at the clock compares the instant with its respawn, and the page's clock looks once a minute while it is open.
 
 ## The ores' rules
