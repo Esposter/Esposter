@@ -52,17 +52,17 @@ Low-Temperature Cooking SHALL summon Frosty Parfait, whose 21 ticks strike the p
 
 ### Requirement: Surging Blade interval
 
-Low-Temperature Cooking SHALL queue Surging Blade at 83 frames only when its 10-second interval is not running at the press.
+Low-Temperature Cooking SHALL check its 10-second Surging Blade interval at 83 frames after the press, and queue Surging Blade to strike there only when the interval is not running at that frame.
 
 #### Scenario: Surging Blade is queued when the interval is clear
 
-- **GIVEN** the Surging Blade interval is not running
+- **GIVEN** the Surging Blade interval is not running at 83 frames after the press
 - **WHEN** the player presses Low-Temperature Cooking
-- **THEN** Surging Blade is queued to strike at 83 frames and the interval starts
+- **THEN** Surging Blade strikes at 83 frames and the interval starts at 83 frames
 
 #### Scenario: Surging Blade is not queued during the interval
 
-- **GIVEN** the Surging Blade interval is running
+- **GIVEN** the Surging Blade interval is running at 83 frames after the press
 - **WHEN** the player presses Low-Temperature Cooking
 - **THEN** no Surging Blade is queued
 

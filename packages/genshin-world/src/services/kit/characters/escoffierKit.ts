@@ -8,21 +8,25 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
+import { copyKitBody } from "#src/services/kit/copyKitBody";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { changeKitMemberHealth } from "#src/services/kit/effects/changeKitMemberHealth";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
+import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getKitHitElement } from "#src/services/kit/getKitHitElement";
 import { countDeployedElements } from "#src/services/party/countDeployedElements";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 
 // Low-Temperature Cooking's Surging Blade lands only while the Aligned interval is not running, as gcsim v2.47.2 (MIT)
-// Escoffier/skill.go gates it, its cooldown starting 22 frames after the press there, which the framework does not hold.
-// Arkhe's application is a TODO in gcsim, so it is not applied here, and the interval is checked on the cast, not at the
-// Blade's hitmark as gcsim queues it
+// Escoffier/skill.go checks it, and starts it, in the task it queues at the blade's 83rd frame, its cooldown starting 22
+// Frames after the press there, which the framework does not hold. Arkhe's application is a TODO in gcsim, so it is not
+// Applied here
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/escoffier/skill.go
+const ALIGNED_HITMARK_FRAMES = 83;
 const ALIGNED_INTERVAL_STATUS_ID = "escoffier-aligned-icd";
 // Scoring Cuts' heal lands on the active character as a single tick of a field the burst sets going, as gcsim v2.47.2 (MIT)
 // Escoffier/burst.go heals
@@ -169,11 +173,24 @@ export const createEscoffierKitBehaviour = ({
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         startConstellation1(combatant, kitEffectState);
         castKitSummon(kitEffectState, body, combatant, skillTickHits, { attackTag: AttackTag.ElementalSkill });
-        if (
-          !startKitCooldown(kitEffectState, combatant.characterId, ALIGNED_INTERVAL_STATUS_ID, alignedIntervalSeconds)
-        )
-          return;
-        castKitSummon(kitEffectState, body, combatant, [surgingBladeHit], { attackTag: AttackTag.ElementalSkill });
+        // The blade is placed where she cast it, and queued at its 83rd frame, which checks the interval and
+        // Starts it there. It then lands with no delay of its own, as gcsim's queued attack has zero delays
+        // (skill.go lines 69 to 93)
+        const bladeBody = copyKitBody(body);
+        scheduleKitTask(kitEffectState, combatant.characterId, toKitSeconds(ALIGNED_HITMARK_FRAMES), (tick) => {
+          if (
+            !startKitCooldown(
+              tick.kitEffectState,
+              combatant.characterId,
+              ALIGNED_INTERVAL_STATUS_ID,
+              alignedIntervalSeconds,
+            )
+          )
+            return;
+          castKitSummon(tick.kitEffectState, bladeBody, combatant, [{ ...surgingBladeHit, hitmarkSeconds: 0 }], {
+            attackTag: AttackTag.ElementalSkill,
+          });
+        });
       },
     },
   };
