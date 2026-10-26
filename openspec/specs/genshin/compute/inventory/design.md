@@ -10,4 +10,4 @@ Nothing here.
 
 ## Open
 
-- [ ] **Inventory: the whole-frame moment cut at 20 seconds** — no source yet: the cut image `references/yt-_agTJviXj7s-bag/20s.png` is not on disk in the install.
+- [ ] **Inventory: the whole-frame moment cut at 20 seconds** — no source yet: the cut image is not on disk in the install.
