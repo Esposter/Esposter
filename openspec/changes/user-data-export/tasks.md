@@ -31,7 +31,7 @@ Build order. Section 1 lands the row and the container the rest write to, sectio
 
 - [ ] 4.1 Add the Download my data flow to `apps/web/app/pages/user/settings.vue`. It shows the three omissions before the request, shows the export's status while it builds, and offers the link once it is ready. Test first: the link is not shown while the export is building or failed.
       Verify: the settings test shows the omissions and withholds the link in those two states.
-- [ ] 4.2 Update the user data inventory's table to name the export entry for each store the archive reads, and its Known gaps to match what the archive omits.
+- [x] 4.2 Update the user data inventory's table to name the export entry for each store the archive reads, and its Known gaps to match what the archive omits.
       Verify: every store in the archive table names its entry, and every omission names the gap that states it.
 - [ ] 4.3 Run an export end to end against the in-memory database and the test blob container: seed an account that owns a room and a resource, and has messages, an attachment and a save, then request the export, build it, and unzip it.
       Verify: the end-to-end test passes and the unzipped archive holds each entry the design lists.
