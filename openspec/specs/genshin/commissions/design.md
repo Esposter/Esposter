@@ -84,9 +84,9 @@ The three daily task tables are read from the dump (`scripts/src/services/genshi
 - `commission-bonus.mkv` — found on YouTube at https://www.youtube.com/watch?v=x_vRlUlTm8A, 0–29.9 s (`~/Esposter.noindex/genshin-parity/captures/yt-x_vRlUlTm8A-commissions.mp4`), cut to `commission-bonus.mkv`: the English PC client at 1080p and 60 frames a second. It shows the fourth commission bonus.
 
 ## Open
+
 - [ ] **Nothing is dealt before Adventure Rank 12, where commissions open** — no source yet for the game's gate: `COMMISSION_UNLOCK_RANK = 12` (`packages/genshin-world/src/services/commission/constants.ts`) holds it, but the wiki's Commission page is not in `~/Esposter.noindex/cache/genshin-wiki/`, and no system-open UI in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/SystemOpenUIConfigData.json` names the commissions.
 - [ ] **An unfinished commission is claimed for one Encounter Point** — the code does it (`packages/genshin-world/src/services/commission/claimCommissionReward.ts`), but the game's text gives Encounter Points' use in place of a commission with no per-commission cost, and its one-per-commission line (`TextMap_MediumEN.json`, key `2417337778`) is for Long-Term Encounter Points.
 - [ ] **The stored saves written before the flag existed are backfilled once from outside the app** — no source yet: no backfill script or run record names `isBonusClaimed` in the repo or in the scratch folders under `~/Esposter.noindex`.
 - [ ] **The three daily task tables all come from the same pull** — no source yet: the level and reward tables are recorded as an 8 Oct fetch, while `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/DailyTaskExcelConfigData.json` carries the dump's 18 Oct pull, and no manifest of the dump's pulls is kept.
-- **The code claims a finished commission without spending an Encounter Point** — `packages/genshin-world/src/services/commission/claimCommissionReward.ts`.
-- [ ] **A finished commission is claimed free** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A finished commission is claimed free** — the code does it (`packages/genshin-world/src/services/commission/claimCommissionReward.ts`), but no source yet for the game's side: game data or a snapshot that holds this behaviour.
