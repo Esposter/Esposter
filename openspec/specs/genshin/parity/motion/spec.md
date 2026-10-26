@@ -6,13 +6,13 @@ Motion is matched frame by frame against sampled recordings, with a scene's own 
 
 ### Requirement: A recording's motion is matched frame by frame
 
-A recording's events SHALL be found by sampling it at one frame a second, and each event SHALL then be read at its full rate over its own window (see Open).
+A recording's events SHALL be found by sampling it at one frame a second, and each event SHALL then be read at its full rate over its own window (see the design's Open).
 
 #### Scenario: Events found and read
 
 - **GIVEN** a recording with motion in it
 - **WHEN** the motion is matched
-- **THEN** the recording is first sampled at one frame a second to find its events (see Open)
+- **THEN** the recording is first sampled at one frame a second to find its events (see the design's Open)
 - **AND** each event is then read at its full rate over its own window
 
 ### Requirement: A screen's motion is held at its start and then played by its fixture
@@ -82,6 +82,4 @@ When the witness is used, the scene's motion SHALL be filmed on the game's expor
 - **GIVEN** a scene filmed with the witness
 - **WHEN** the film is shot
 - **THEN** the game's exports are drawn in place of our parts
-
-## Open
 
