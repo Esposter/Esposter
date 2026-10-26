@@ -88,4 +88,4 @@ A good priced in Mora SHALL cost the Mora amount its table gives.
 ## Open
 
 - [ ] **Refreshes happen at four in the morning in the game's time** — partly cited: the requirement above builds daily and monthly refreshes at four in the morning; checked against `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/RefreshPolicyExcelConfigData.json`: row 101000 (REFRESH_DAILY) holds 14400 seconds, four hours into the day, and the claim is open for the monthly refresh because the dump's monthly shop row (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ShopExcelConfigData.json`, shop 102) names the first of the month and no hour.
-- [ ] **A general good of the Mondstadt grocery costs its table's Mora amount** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A general good of the Mondstadt grocery costs its table's Mora amount** — no source yet: a recording of a purchase at Mondstadt General Goods that shows the Mora taken, or the wiki's Blanche (Mondstadt) page, which is not in the cache, if it gives her prices
