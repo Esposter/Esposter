@@ -142,7 +142,7 @@ An enemy's max health and ATK SHALL be its base values times the multiplier of i
 
 ### Requirement: A defeated camp member returns only after its camp's respawn time
 
-A defeated enemy SHALL NOT return before its respawn time, which depends on its camp: twelve hours (a constant) for a camp of common enemies, the next daily reset for a camp with an elite, and five seconds after the Trounce Blossom's claim for a camp with a normal boss, or at the first teleport after its defeat while the blossom is unclaimed.
+A defeated enemy SHALL NOT return before its respawn time, which depends on its camp: twelve hours (a constant) for a camp of common enemies, the next daily reset for a camp with an elite, and five seconds after the Trounce Blossom's claim for a camp with a normal boss.
 
 #### Scenario: A common camp member returns twelve hours after its defeat
 
