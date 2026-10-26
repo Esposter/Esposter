@@ -23,7 +23,7 @@ one file and reports every other tree as clean.
 
 ## A resume set the size of the whole unit is a move, not churn
 
-The command above reports a file as changed whenever a commit in the range touched its **path**, and a
+The `git log` under "The command" reports a file as changed whenever a commit in the range touched its **path**, and a
 repo-wide relocation touches every one of them. Under a pathspec the rename is not even visible as a rename:
 `git log --name-status` limits itself to the new path, so the old half is outside the filter and every entry
 comes back `A`. The tell is the shape of the answer — a resume that returns the unit's whole file list, when the

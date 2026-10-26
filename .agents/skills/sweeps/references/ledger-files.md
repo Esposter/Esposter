@@ -15,7 +15,7 @@ Read when writing, splitting, merging, promoting or retiring a ledger in `.agent
 - **Open findings** — only while one is genuinely open. A closed finding is deleted: its rule is in a skill, its invariant is in a test, and git holds the argument.
 
 **Promotion to a folder splits that list, it never shortens it.** Coverage is what an area file holds — a table
-and nothing else — and every other item above moves to the folder's own `README.md`, open findings included. A
+and nothing else — and every other item in "What a ledger holds" moves to the folder's own `README.md`, open findings included. A
 finding has nowhere to sit on an area file, so a promoted ledger that keeps one on a leaf has put it in the one
 place the shape does not allow.
 

@@ -14,8 +14,8 @@ Each sweep's progress is a **ledger**: one file in `.agents/ledgers/`, one row i
 ## Settled — do not re-propose
 
 - **Filing a sweep as an OpenSpec change.** A sweep changes no behaviour and never ends, so it is repo state in `.agents/ledgers/` rather than something that leaves when it ships (`openspec/changes/`).
-- **A progress column, percentage or tick count on the index row.** A rolled-up number is a second copy of the truth that drifts, and it turns every pass into a write to the one file every other pass is also writing. State lives at the leaf (`references/ledger-files.md`).
-- **Splitting a ledger's units across parallel agents.** A ledger is one sequence of units: the first unit teaches every unit after it a carve-out, so one `haiku` agent per ledger works its units one at a time, carrying those carve-outs, while different ledgers run in parallel. A find-recipe sweep fans out further, one `haiku` agent per leaf, since its scan decides every edit (`references/one-pass.md`, "Who decides the edit"). The main session reviews each unit's diff and commits it before the next unit is judged.
+- **A progress column, percentage or tick count on the index row.** A rolled-up number is a second copy of the truth that drifts; state lives at the leaf (`references/ledger-files.md`).
+- **Splitting a ledger's units across parallel agents.** A ledger is one sequence of units, since each unit's carve-outs carry to the next; who runs which unit is `references/one-pass.md`, "Who decides the edit".
 - **Dating the `Swept` cell by hand in the sweep commit.** It is a second file in every sweep commit, the one every other pass is also writing, and it is the part a pass forgets; the commit's trailer dates the row and `pnpm ai:sweep:ledger-coverage` writes it in (`references/one-pass.md`).
 - **An empty commit to carry a clean unit's trailer.** A commit with no change is not a reliable carrier, so the trailer goes on the sitting's next commit (`references/one-pass.md`).
 - **A test holding the `Swept` dates to the trailers.** CI checks out one commit deep, so there `git log` holds no trailer and the test would reopen every row; the rows are held to the tree (`scripts/src/workspace/ledgerUnits.test.ts`) and the dates are written at the sitting.
@@ -26,7 +26,7 @@ Each sweep's progress is a **ledger**: one file in `.agents/ledgers/`, one row i
 
 ## The find recipe — `references/find-recipes.md`
 
-**Prove the scan can fail before believing it passed** — run it against a known violation; an empty result is the same shape as a clean tree. A grep stays inline in the ledger; anything with control flow is a script under `scripts/src/sweeps/` run as `pnpm ai:sweep:<scan>` (the rule is the `skill-authoring` skill's), where a colocated test keeps "prove the scan can fail" proved. **Writing one, or moving one out of a code block**, is that page.
+**Prove the scan can fail before believing it passed** — run it against a known violation; an empty result is the same shape as a clean tree. Which form a scan takes is the `skill-authoring` skill's rule; a script lives under `scripts/src/sweeps/`, runs as `pnpm ai:sweep:<scan>`, and a colocated test keeps "prove the scan can fail" proved. **Writing one, or moving one out of a code block**, is `references/find-recipes.md`.
 
 ## One pass
 
@@ -34,7 +34,7 @@ Behaviour-preserving only (a unit correcting toward the reference or spec is nam
 
 ## The ledger file — `references/ledger-files.md`
 
-A ledger holds only what exists nowhere else, never explanatory prose, and is keyed by the question it asks rather than by the files it reaches. **Writing, splitting, merging, promoting or retiring one**, deciding whether a mechanical pass earns a file at all or whether a new convention joins an existing ledger, and sizing a unit to what one pass can read, is that page.
+A ledger holds only what exists nowhere else, never explanatory prose, and is keyed by the question it asks rather than by the files it reaches. **Writing, splitting, merging, promoting or retiring one**, deciding whether a mechanical pass earns a file at all or whether a new convention joins an existing ledger, and sizing a unit to what one pass can read, is `references/ledger-files.md`.
 
 ## Every sweep is standing
 
@@ -44,7 +44,7 @@ There is no one-shot mode: a row carries a date and the model that read it, a pa
 
 A ledger is not finished in a sitting, and a sitting does not stop at one. When the ledger being worked runs out of
 open rows, take an open row from another — and never leave a unit half-read. **Planning a sitting**, and why a
-resume that reports nothing is the sweep converging rather than failing, is that page.
+resume that reports nothing is the sweep converging rather than failing, is `references/windows-and-convergence.md`.
 
 ## Draining beats scheduling
 
@@ -52,7 +52,7 @@ resume that reports nothing is the sweep converging rather than failing, is that
 
 ## When the rule runs out — `references/rule-gaps.md`
 
-The convention a pass carries is evidence rather than authority: a unit that will not fit it is as likely to have found a gap as to be a violation. **The shapes a gap takes**, and where the fix lands, are that page.
+The convention a pass carries is evidence rather than authority: a unit that will not fit it is as likely to have found a gap as to be a violation. **The shapes a gap takes**, and where the fix lands, are `references/rule-gaps.md`.
 
 ## Shrinking beats re-running
 
