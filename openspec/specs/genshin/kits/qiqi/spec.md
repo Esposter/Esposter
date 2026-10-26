@@ -95,3 +95,8 @@ From Ascension 1, a reaction the character on the field triggers SHALL give that
 - **GIVEN** Qiqi has Ascension 1 and Herald of Frost is not standing
 - **WHEN** the character on the field triggers a reaction
 - **THEN** that character gains 20% Healing Bonus for 8 seconds
+
+## Open
+
+- [ ] **Divine Suppression takes effect from the fourth constellation** — no source yet: gcsim has no four-constellation hook for it, and the cached wiki names the constellation without its text.
+- [ ] **Rite of Resurrection revives at most once every 15 minutes** — no source yet: gcsim has no revive, and the cached wiki names the constellation without its text.
