@@ -12,7 +12,7 @@ A recording's events SHALL be found by sampling it at ten frames a second, and e
 
 - **GIVEN** a recording with motion in it
 - **WHEN** the motion is matched
-- **THEN** the recording is first sampled at ten frames a second to find its events (see the design's Open)
+- **THEN** the recording is first sampled at ten frames a second to find its events
 - **AND** each event is then read at its full rate over its own window
 
 ### Requirement: A screen's motion is held at its start and then played by its fixture
@@ -82,4 +82,3 @@ When the witness is used, the scene's motion SHALL be filmed on the game's expor
 - **GIVEN** a scene filmed with the witness
 - **WHEN** the film is shot
 - **THEN** the game's exports are drawn in place of our parts
-
