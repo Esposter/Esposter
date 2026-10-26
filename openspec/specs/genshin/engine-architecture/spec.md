@@ -1,6 +1,6 @@
 ## Purpose
 
-How the Genshin engine is divided so every system is built, tested and replaced on its own — a published package of plain TypeScript and TSL modules, each with one job, under a world package that holds every place by name and the TresJS components that mount it. State flows one way, generators are pure and seeded, and every module is judged by what it costs a mid-range laptop.
+How the Genshin engine is divided so every system is built, tested and replaced on its own — a published package of plain TypeScript and TSL modules, each with one job, under a world package that holds every place by name and the TresJS components that mount it (`packages/genshin-engine/package.json`, `packages/genshin-world/src/components/World/Session/Index.vue`). State flows one way, generators are pure and seeded, and every module is judged by what it costs a mid-range laptop.
 
 ## Requirements
 
@@ -122,7 +122,7 @@ The engine's code and each region's data SHALL load only when the world needs th
 
 ### Requirement: Systems react to each other only through one typed event map
 
-Each system of the world SHALL react to another's doing only through the one typed event map that the screen creates.
+Each system of the world SHALL react to another's doing only through the one typed event map that the world's session creates.
 
 #### Scenario: A pickup reaches the quests through a typed event
 
@@ -142,8 +142,10 @@ A module SHALL be added only by the proposal that first needs it, never as an em
 
 ## Open
 
-- [ ] **Every generator and per-frame selection is benched at two scales** — no source yet: 16 `*.bench.ts` files have recorded results, but no inventory shows each generator and selection has one at two scales.
-- [ ] **A bench shows its cost follows what is visible** — no source yet: the terrain benches `selectTerrainTiles` and `resolveTerrainDraws` time tile selection at two eye heights and draw resolution with all or the coarsest tiles arrived, and none records the number of visible parts beside its time.
+- [ ] **Every generator and per-frame selection is benched at two scales** — no source yet: 16 `*.bench.ts` files under `packages/genshin-engine/src` have recorded results, but no inventory shows each generator and selection has one at two scales.
+- [ ] **A bench shows its cost follows what is visible** — no source yet: the recorded bench results are not checked against the amount visible.
 - [ ] **A generator gives the same output in a worker and in a test** — no source yet: no test runs one generator in both places and compares the outputs.
 - [ ] **A steady frame allocates nothing for its objects** — no source yet: no allocation test or measurement is in the repo.
-- [ ] **A region of thousands of parts is drawn in tens of calls** — no source yet: the code shows the instancing, but no draw-call count is recorded.
+- [ ] **A region of thousands of parts is drawn in tens of calls** — no source yet: `packages/genshin-engine/src/renderer/createInstancedMesh.ts` shows the instancing, but no draw-call count is recorded.
+- [ ] **A device missing the frame budget gets a lower tier** — no source yet: the tier is a prop the host passes (`packages/genshin-world/src/models/world/WorldScreenProps.ts`), and no code lowers it when a frame misses its budget.
+- [ ] **The engine's code loads only when the world needs it** — no source yet: no lazy import of the engine code is found under `packages/genshin-world/src/components/World`.
