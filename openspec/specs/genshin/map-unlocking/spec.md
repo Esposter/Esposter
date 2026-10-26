@@ -1,6 +1,6 @@
 ## Purpose
 
-The map filled in as the game fills it. A Statue of The Seven is resonated with on F, which fills its area in on the map and the minimap and unlocks it as a jump. Only unlocked statues are offered by the jump list, the map and a revive, and no statue is unlocked for a new player. A statue's first unlock pays its Primogems and Adventure EXP. A Teleport Waypoint unlocks the same way and pays its transport point's reward on its first unlock, and a domain entrance unlocks the same way as a landmark of the world.
+The map filled in as the game fills it. A Statue of The Seven is resonated with on F, which fills its area in on the map and the minimap and unlocks it as a jump. Only unlocked statues are offered by the jump list, the map and a revive (`packages/genshin-world/src/services/map/computeUnlockedJumpLandmarks.ts`), and no statue is unlocked for a new player. A statue's first unlock pays its Primogems and Adventure EXP. A Teleport Waypoint unlocks the same way and pays its transport point's reward on its first unlock, and a domain entrance unlocks the same way as a landmark of the world (`packages/genshin-world/src/composables/useWorldMap.ts`, `packages/genshin-world/src/services/map/computeUnlockedJumpLandmarks.ts`).
 
 ## Requirements
 
@@ -96,6 +96,6 @@ A Teleport Waypoint SHALL be unlocked by resonating with it on F, as a statue is
 
 ## Open
 
-- [ ] **A fallen party is taken to the unlocked landmark nearest its body** — no source yet: the revive takes only the nearest unlocked Teleport Waypoint (`findNearestTeleportWaypoint`), since a statue takes no revive.
-- [ ] **A statue's first unlock pays its Primogems and Adventure EXP** — source: the wiki page Statue of The Seven (cached `Statue_of_The_Seven.json`), its Statue Levels section, which gives the first unlock as 50 Adventure EXP and 5 Primogem.
-- [ ] **A domain entrance unlocks the same way as a landmark of the world** — source: the wiki page Domain (cached `Domain.json`). Its Permanent Domains section calls permanent domains landmarks usable as Teleport Waypoints once unlocked, and its Challenge Domains subsections give an Adventure Rank or a quest as the unlock of the Blessing, Forgery and Mastery entrances, naming no resonating. The built unlock on F is not in that page; the owner decides.
+- [ ] **A fallen party is taken to the unlocked landmark nearest its body** — no source yet: the wiki's revive rule is not cached, and the repo's `packages/genshin-world/src/services/map/findNearestTeleportWaypoint.ts` takes the nearest Teleport Waypoint, not a statue.
+- [ ] **A statue's first unlock pays its Primogems and Adventure EXP** — no source yet: the wiki page Statue of The Seven is not on disk, so its Statue Levels section (50 Adventure EXP and 5 Primogem) is unchecked.
+- [ ] **A domain entrance unlocks the same way as a landmark of the world** — no source yet: the wiki page Domain is not on disk, so its Permanent and Challenge Domains sections, which may name no resonating, are unchecked; the owner decides.
