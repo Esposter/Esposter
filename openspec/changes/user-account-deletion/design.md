@@ -17,7 +17,7 @@ The sweep also removes the account from reactions in shared rooms without an ann
 
 **Blob directories are swept by the user's prefix.** `{userId}/` in the public and private asset containers and in the game-save containers holds everything the user wrote there, and `character-packs/staging/{userId}/` in the game-asset container holds their pending character-pack uploads. The deletion lists no names.
 
-**The export archive is found by its row, not by a prefix.** The archive in `DataExports` is named by its export id and sits under no user prefix, so the sweep reads each `dataExports` row's `blobName` and deletes that blob before the user row, since the cascade drops the row that names it.
+**The export archive is found by its row, not by a prefix.** The archive in `DataExports` is named by its export id and sits under no user prefix, so the sweep reads each `dataExports` row's `blobName` and deletes that blob before the user row, since the cascade drops the row that names it. A queued row's `blobName` is null, as no archive exists until its build starts, so the sweep skips a row that names no blob and deletes only those that do.
 
 **Resources go through the purge that already exists.** `purgeResource` already deletes a resource's directory, its table partitions and its ledger rows, in the order that makes replay safe. Each owned resource is passed to it with the table clients of its type.
 
