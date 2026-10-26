@@ -72,7 +72,7 @@ From Ascension 4, a Talisman with six seconds or more left SHALL NOT be replaced
 
 ### Requirement: Qiqi's constellations
 
-Qiqi's Ascetics of Frost, Frozen to the Bone, Divine Suppression and Rite of Resurrection SHALL take effect from her first, second, fourth and sixth constellations.
+Qiqi's Ascetics of Frost, Frozen to the Bone, Divine Suppression and Rite of Resurrection SHALL take effect from her first, second, fourth and sixth constellations. The game's talent table gives Divine Suppression's 20% ATK cut and Rite of Resurrection's revive once every 15 minutes (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json`, talents 354 and 356).
 
 #### Scenario: Frozen to the Bone on a Cryo enemy
 
@@ -98,5 +98,4 @@ From Ascension 1, a reaction the character on the field triggers SHALL give that
 
 ## Open
 
-- [ ] **Divine Suppression takes effect from the fourth constellation** — no source yet: gcsim has no four-constellation hook for it, and the cached wiki names the constellation without its text.
-- [ ] **Rite of Resurrection revives at most once every 15 minutes** — no source yet: gcsim has no revive, and the cached wiki names the constellation without its text.
+- [ ] **Rite of Resurrection revives on the step after the burst starts** — no source yet: gcsim leaves the revival unbuilt (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/qiqi/qiqi.go` lines 21 to 22), and the game's text gives no timing for it.
