@@ -22,6 +22,10 @@ describe(useSurveyStore, () => {
   const resourceId = crypto.randomUUID();
   const model = JSON.stringify({ pages: [] });
   const newModel = JSON.stringify({ pages: [{ name: "" }] });
+  const identifiedNewModelContent = {
+    model: newModel,
+    settings: { ...surveySettingsSchema.parse({}), responseMode: SurveyResponseMode.Identified },
+  };
   const createResource = (contentVersion = 0) =>
     createResourceListItem({ contentVersion, id: resourceId, type: ResourceType.Survey });
   let content: SurveyResource;
@@ -113,10 +117,7 @@ describe(useSurveyStore, () => {
     expect(saveResourceContent).toHaveBeenCalledTimes(2);
     // The count alone passes on a settings save that wrote the model back as it was loaded, which is the
     // Regression this test is named for — so the payload itself has to say newModel
-    expect(saveResourceContent.mock.lastCall?.[0].input.content).toStrictEqual({
-      model: newModel,
-      settings: { ...surveySettingsSchema.parse({}), responseMode: SurveyResponseMode.Identified },
-    });
+    expect(saveResourceContent.mock.lastCall?.[0].input.content).toStrictEqual(identifiedNewModelContent);
   });
 
   // Saves of one resource queue, so a settings save issued while the model's write is in flight is sent after it —
@@ -133,10 +134,7 @@ describe(useSurveyStore, () => {
     ]);
 
     expect(storedModel.value).toBe(newModel);
-    expect(saveResourceContent.mock.lastCall?.[0].input.content).toStrictEqual({
-      model: newModel,
-      settings: { ...surveySettingsSchema.parse({}), responseMode: SurveyResponseMode.Identified },
-    });
+    expect(saveResourceContent.mock.lastCall?.[0].input.content).toStrictEqual(identifiedNewModelContent);
   });
 
   // A read issued for one resource can land after the blade opened another, and adopted it would show the first

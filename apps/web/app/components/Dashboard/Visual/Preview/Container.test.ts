@@ -12,7 +12,7 @@ import { downloadFile } from "@esposter/shared";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { TRPCError } from "@trpc/server";
 import { flushPromises } from "@vue/test-utils";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@esposter/shared"), async (importOriginal) => ({
   ...(await importOriginal()),
@@ -34,10 +34,6 @@ describe("dashboardVisualPreviewContainer", () => {
       },
       type: VisualType.Card,
     });
-
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
 
   // The tile's corner offers the file of the rows its visual draws, once the read has answered
   test("a bound visual's tile downloads the CSV of the rows it draws", async () => {

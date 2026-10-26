@@ -41,7 +41,7 @@ describe(exportDashboardPng, () => {
     Object.defineProperty(document, "fonts", { configurable: true, value: { ready: Promise.resolve() } });
   });
   afterEach(() => {
-    vi.clearAllMocks();
+    vi.restoreAllMocks();
     Reflect.deleteProperty(document, "fonts");
     document.querySelector(".dashboard-grid")?.remove();
   });

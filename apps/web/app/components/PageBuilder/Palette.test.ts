@@ -11,9 +11,13 @@ import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { MjmlNodeType } from "mjml-blocks";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe("pageBuilderPalette", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   test("a palette click still inserts the block", async () => {
     expect.hasAssertions();
     const pageBuilderDocumentStore = usePageBuilderDocumentStore();

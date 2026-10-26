@@ -11,7 +11,7 @@ import { createWebpageNode } from "@/services/pageBuilder/webpageNodeDefaults";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { createPinia, setActivePinia } from "pinia";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 const setup = (selectedNodeId: string, content: WebpageDocument["content"]) => {
   setActivePinia(createPinia());
@@ -34,6 +34,10 @@ const setup = (selectedNodeId: string, content: WebpageDocument["content"]) => {
 };
 
 describe("usePageBuilderInsert", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   test("an insert places the new node after the selected node", () => {
     expect.hasAssertions();
 

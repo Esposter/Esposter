@@ -6,11 +6,12 @@ import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { mountSuspended } from "@nuxt/test-utils/runtime";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
-afterEach(() => {
-  vi.unstubAllGlobals();
-});
-
 describe("pageBuilderCanvasOverlays", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+  });
+
   test("hovering a node outlines it", async () => {
     expect.hasAssertions();
 

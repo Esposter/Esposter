@@ -10,7 +10,7 @@ import { ColumnType } from "#shared/models/resource/sheet/column/ColumnType";
 import { exportDashboardVisualCsv } from "@/services/dashboard/export/exportDashboardVisualCsv";
 import { useAlertStore } from "@/store/alert";
 import { downloadFile } from "@esposter/shared";
-import { afterEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("@esposter/shared"), async (importOriginal) => ({
   ...(await importOriginal()),
@@ -34,10 +34,6 @@ describe(exportDashboardVisualCsv, () => {
       { [categoryColumn]: "South", [responseColumn]: "c", [scoreColumn]: 4 },
     ],
   };
-
-  afterEach(() => {
-    vi.clearAllMocks();
-  });
 
   // A card has no category, so its file is the one value it draws
   test("a bound card writes its one value as one row", () => {

@@ -44,7 +44,6 @@ describe("dashboardIndex", () => {
     );
   });
   afterEach(() => {
-    vi.clearAllMocks();
     vi.unstubAllGlobals();
   });
 

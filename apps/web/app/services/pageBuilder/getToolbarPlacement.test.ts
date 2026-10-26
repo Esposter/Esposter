@@ -3,7 +3,7 @@ import type { FramePlacement } from "@/models/pageBuilder/FramePlacement";
 import { getToolbarPlacement, TOOLBAR_HEIGHT } from "@/services/pageBuilder/getToolbarPlacement";
 import { describe, expect, test } from "vitest";
 
-describe(getToolbarPlacement.name, () => {
+describe(getToolbarPlacement, () => {
   const FRAME: FramePlacement = { height: 400, left: 300, scale: 1, top: 100 };
   const BOX = { height: 50, left: 20, top: 120, width: 200 };
 

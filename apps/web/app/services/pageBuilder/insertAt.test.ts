@@ -6,7 +6,7 @@ import { webpageKind } from "@/services/pageBuilder/webpageKind";
 import { usePageBuilderCanvasStore } from "@/store/pageBuilder/canvas";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { createPinia, setActivePinia } from "pinia";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 // Inserts into the document the store holds for the resource, the way the shell does
 const insertIntoResource = (resourceId: string, slotPointer: string, index: number, type: WebpageNodeType) => {
@@ -30,6 +30,10 @@ const setup = () => {
 };
 
 describe(insertAt, () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   test("an insert places the new node at the index of the slot and selects it", () => {
     expect.hasAssertions();
 

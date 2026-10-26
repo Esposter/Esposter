@@ -34,6 +34,10 @@ describe(usePageBuilderHistoryStore, () => {
     content: [createButton(TEST_ID), createButton(TEST_OTHER_ID)],
     root: TEST_ROOT,
   };
+  const TEST_C_INSERTED_DOCUMENT: WebpageDocument = {
+    content: [createButton(TEST_ID), createButton("c"), createButton(TEST_OTHER_ID)],
+    root: TEST_ROOT,
+  };
   const TEST_MOVE_LABEL = "Move block";
   const TEST_LABEL_LABEL = "Change label";
   const TEST_TEXT_LABEL = "Edit text";
@@ -140,10 +144,7 @@ describe(usePageBuilderHistoryStore, () => {
     });
     undo(resourceId);
 
-    expect(getDocument(resourceId)).toStrictEqual({
-      content: [createButton(TEST_ID), createButton("c"), createButton(TEST_OTHER_ID)],
-      root: TEST_ROOT,
-    });
+    expect(getDocument(resourceId)).toStrictEqual(TEST_C_INSERTED_DOCUMENT);
 
     undo(resourceId);
 
@@ -352,10 +353,7 @@ describe(usePageBuilderHistoryStore, () => {
     });
     undo(resourceId);
 
-    expect(getDocument(resourceId)).toStrictEqual({
-      content: [createButton(TEST_ID), createButton("c"), createButton(TEST_OTHER_ID)],
-      root: TEST_ROOT,
-    });
+    expect(getDocument(resourceId)).toStrictEqual(TEST_C_INSERTED_DOCUMENT);
 
     undo(resourceId);
 
