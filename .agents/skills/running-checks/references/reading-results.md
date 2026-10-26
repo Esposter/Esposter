@@ -7,8 +7,8 @@ and every leaf runs, so a passing one prints `Found 0 warnings and 0 errors` abo
 tail of the log belongs to whichever finished last (the `oxlint` skill, "Running lint"). Read the appended exit line first, then the
 log for what failed — all of it, since the point of the aggregate is that there may be more than one.
 
-**The exit code is the one in the log, never the one the completion notification carries.** The shape this page
-asks for — `(cmd > log 2>&1; echo "exit $?" >> log)` — makes the subshell's status the `echo`'s, so the
+**The exit code is the one in the log, never the one the completion notification carries.** The shape a background run
+is launched with — `(cmd > log 2>&1; echo "exit $?" >> log)` — makes the subshell's status the `echo`'s, so the
 notification says exit code 0 for a check that failed, every time. It is the more prominent of the two numbers
 and it arrives without being asked for, which is what makes it worth naming: a red typecheck read this way is a
 green light to keep building on the change that broke it, and the next check says the same thing.
