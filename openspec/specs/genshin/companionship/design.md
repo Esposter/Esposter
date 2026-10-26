@@ -52,8 +52,6 @@ flowchart LR
 ## Sources
 
 - [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump: the `AvatarFettersLevelExcelConfigData` rows the level totals are summed from.
-- [Companionship EXP](https://genshin-impact.fandom.com/wiki/Companionship_EXP), Genshin Impact Wiki: the per-claim ranges the provisional amounts take their low end from.
+- [Companionship EXP](https://genshin-impact.fandom.com/wiki/Companionship_EXP), Genshin Impact Wiki: the per-claim ranges the provisional amounts take their low end from, such as "Weekly Bosses (55–70 each, based on Adventure Rank or World Level)".
 
 ## Open
-
-- [ ] **Each claim kind's amount is the low end of the wiki's range** — no source yet: the wiki's Companionship EXP page is not in `~/Esposter.noindex/cache/genshin-wiki/`, so the ranges in the map's comment (`packages/genshin-world/src/services/originalResin/BlossomCompanionshipExpMap.ts`) cannot be checked.
