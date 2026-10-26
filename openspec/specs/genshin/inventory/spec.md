@@ -113,12 +113,12 @@ The bag SHALL NOT offer any purchase with money, so the wallet's Genesis Crystal
 
 An entry SHALL be destroyable only when the game's destroy rule for it returns materials, and a destruction SHALL return exactly the materials the game's table names.
 
-#### Scenario: A one to three star weapon is destroyable
+#### Scenario: A one to three star weapon with a destroy rule is destroyable
 
-- **GIVEN** a weapon of one to three stars
+- **GIVEN** a weapon of one to three stars whose row carries a destroy rule
 - **WHEN** it is chosen for destruction
 - **THEN** it is destroyed
-- **AND** it returns its enhancement ore times its rarity (`~/Esposter/genshin-parity/text/ExcelBinOutput/WeaponExcelConfigData.json`, where the destroyable 1- to 3-star rows return `104011` in a count of their rarity)
+- **AND** it returns its enhancement ore times its rarity (`~/Esposter/genshin-parity/text/ExcelBinOutput/WeaponExcelConfigData.json`, where the destroyable 1- to 3-star rows return `104011` in a count of their rarity, and ten one-star rows carry no rule)
 
 #### Scenario: A four or five star weapon is not destroyable
 
