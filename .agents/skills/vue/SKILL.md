@@ -52,7 +52,7 @@ Read it when an input needs the split `:model-value` + `@update:model-value` for
 - **Optional refs omit the initial value** — `ref<T>()`, never an explicit `undefined`; `no-restricted-syntax` enforces it, and a string ref's `""` is the `absent-values` skill (`references/string-sentinel.md`).
 - **Template refs use `useTemplateRef`** with no generic and no `Ref` suffix (`template-ref/require-ref-name`), and a Three object the script moves is created there and mounted with `<primitive>` rather than reached through one (`references/template-refs.md`).
 - **Sort at display time**, in the computed feeding the template, never in the store (`references/props.md`).
-- **Computed by cost and identity, never by use count — `references/computed-extraction.md`** — read it before extracting or inlining any `computed`. A computed is a cache with a price, so it earns its place on **reuse** (binds to 2+ props), **work** (parses, formats, filters, maps, sorts, reduces, walks a collection), or **identity** (allocates an object/array/function bound to a prop). Everything else inlines: comparisons, booleans, ternaries, template literals, property reads, arithmetic, map lookups. The page owns the traps, the keeps that override cost, and the cadence question — work run per event that only changes per boundary.
+- **A `computed` earns its place by reuse, work or identity, never by use count** — `references/computed-extraction.md`, read before extracting or inlining one; the traps, the keeps and the cadence question are on that page.
 - **Map lookups over computed** — when a value depends on an enum/discriminant key, use `Map[type]` directly in the template (`Map[type].value` for multiple properties). Fall back to a computed only when the lookup is duplicated in 2+ places.
 - **Writable computed over `watch` + local ref** (`references/watch-decision-tree.md`, case 1).
 
@@ -62,7 +62,7 @@ Read it when anything needs the signed-in user. Two call forms, and the access s
 
 ## When (not) to `watch` — `references/watch-decision-tree.md`
 
-Read it before writing any `watch`, or when a local `ref` mirrors a prop/store value. In short: a read-only derived value is a `computed`; form state initialized from a prop/store initializes the `ref` directly (`watchImmediate` to set an initial value is always a smell) and resyncs via `useCloned`; an id the instance is keyed by cannot change, so read it once in `onMounted`. Watching is correct for bridging imperative APIs (Phaser, Tiptap, Desmos) and for async side effects of state that genuinely varies under a live instance.
+Read it before writing any `watch`, or when a local `ref` mirrors a prop/store value. Reach for a watcher only after the page's cases 1–4 are ruled out.
 
 - **`watchDeep`/`watchImmediate` replace the option object on `watch`** (`no-restricted-syntax`), and **`deep` skips Vue's own changed check**. Why the rule reaches `.ts`, where the aliases do not exist, how both flags compose, and when a deep watcher's re-run is the bug: `references/watch-decision-tree.md` ("Writing the watch").
 - **Never `watchEffect`** (`no-restricted-syntax`, its `Post`/`Sync` twins included) — always `watch` with explicit dependencies; implicit tracking is hard to audit and re-runs on unrelated changes. Wrap a prop dependency in a getter: `watch(() => isActive, ...)`.

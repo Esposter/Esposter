@@ -35,10 +35,7 @@ The same `isCreate?: true` pattern applies to dialog buttons (e.g. `Foo/EditDial
 ## A settings draft is the form's, not the row's
 
 A settings panel that saves on blur binds **local refs seeded from the row**, never a clone of the row and never
-the row itself. The optimistic write rolls the row back when the server rejects it; the controls deliberately
-keep what the user typed, with `isDirty` still true, so the next blur retries it. The panel is still on screen
-beside the alert, which is what makes that draft worth keeping — a form that reset itself to the rolled-back row
-would throw the edit away at the moment the user most wants it.
+the row itself, so a rolled-back write leaves the draft where the user typed it (`references/watch-decision-tree.md`, section 3).
 
 ## Never normalize in Vue — trust the server schema
 
