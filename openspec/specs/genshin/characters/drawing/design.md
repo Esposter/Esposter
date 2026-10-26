@@ -55,7 +55,7 @@ The model [read from a pack](../pmx-reader/design.md) becomes one skinned mesh, 
 - [1 MMD unit in real world units](https://hogarth-mmd.deviantart.com/journal/1-MMD-unit-in-real-world-units-685870002), Hogarth-MMD: MMD's unit reckoned at about eight centimetres from a model's height.
 
 ## Open
-- [ ] **The face's depth term is 0.5** — no source yet: game data or a snapshot that holds the value, since the code holds no such default (`packages/genshin-engine/src/character/shading/constants.ts`, `packages/genshin-engine/src/character/createCharacterShadingInputs.ts`, `packages/genshin-engine/src/character/shading/createFaceShadeNode.ts` and `packages/genshin-engine/src/character/createCharacterMaterial.ts`), so the page no longer states one.
+- [ ] **The face's depth term is 0.5** — no source yet: the face shader's depth term in the raw exports under `~/Esposter/genshin-parity/extracted/shaders/Shader/`, not yet read.
 - [ ] **Nothing reaches production** — no source yet: whether the production export index lists `playergirl` is in the game data published to Blob storage by `genshin:data`, which is not in the repo or on this PC.
-- [ ] **The game's characters do not darken in the rain** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The reckoned unit is 0.08, and the Traveler's measured unit is 0.0909** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The game's characters do not darken in the rain** — no source yet: a recording of a character standing in rain, not yet captured.
+- [ ] **The reckoned unit is 0.08, and the Traveler's measured unit is 0.0909** — no source yet: the MMD-unit note named in Sources (hogarth-mmd), not in the dump; the Traveler's model in `~/Esposter/genshin-parity/extracted/playergirl/` not yet measured.
