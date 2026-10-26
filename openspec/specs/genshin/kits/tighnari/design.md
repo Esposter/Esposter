@@ -27,4 +27,4 @@ Not yet built: Vijnana Suffusion's Wreath Arrow, which turns the fully charged s
 
 ## Open
 
-- [ ] **The plunge collision's 25 poise** — no source yet: gcsim has no plunge file for Tighnari, and the wiki's advanced properties give no plunge row.
+- [ ] **The plunge collision's 25 poise** — no source yet: gcsim has no plunge file for Tighnari, and the wiki's advanced properties give no plunge row. Checked the Khanda Barrier-Buster page (in the cache's Category_Tighnari_Talents.json): its Advanced Properties list twelve rows, none a plunge collision, and its 25.5 is the four-hit normal attack's poise.
