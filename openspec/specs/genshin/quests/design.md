@@ -123,7 +123,7 @@ The quest screen is scored whole-frame against `quest-screen`, the English clien
 
 ## Open
 
-- [ ] **The screen is the English client's still at 1920 by 1080, and its marks are traced from it** — no source yet: the wiki's File:Quest Screen.png is not in `~/Esposter/cache/genshin-wiki`, so the marks' trace off it is unchecked.
+- [ ] **The screen is the English client's still at 1920 by 1080, and its marks are traced from it** — no source yet: the still is on disk as `~/Esposter.noindex/genshin-parity/references/quest-screen.png` (1920 by 1080, English), though the wiki's File:Quest Screen.png it comes from is not in `~/Esposter/cache/genshin-wiki`; the marks' trace off it is unchecked.
 - [ ] **The screen scores a mean difference of 44.32% and a FLIP of 0.8047** — contradicted by `scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md`: its quest-screen row reads 44.36% and 0.8054.
 - [ ] **The beam is drawn from 50 metres off, as the wiki says** — no source yet: the wiki's Quest page is not in `~/Esposter/cache/genshin-wiki`.
 - [ ] **J opens the quest menu, V navigates, and holding V shows the objective** — no source yet: the wiki's Controls page is not in `~/Esposter/cache/genshin-wiki`; the repo's bindings in `packages/genshin-engine/src/input/InputActionBindingMap.ts` (`KeyJ` to `OpenQuests`, `KeyV` to `QuestNavigation`, lines 32 and 35) are not game evidence.
