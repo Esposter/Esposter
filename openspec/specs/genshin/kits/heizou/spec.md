@@ -1,6 +1,6 @@
 ## Purpose
 
-Heizou's kit as built: his Anemo strikes, charged attack and plunges, Heartstopper Strike's press and full hold, and Fudou Style Vacuum Slugger with its Windmuster Iris, with his Ascension 1 passive and constellations left unbuilt.
+Heizou's kit as built: his Anemo strikes, charged attack and plunges, Heartstopper Strike's press and full hold, and Fudou Style Vacuum Slugger with its Windmuster Iris, with his Constellation 4 Energy built, and his Ascension 1 passive and Constellations 1, 2 and 6 left unbuilt.
 
 ## Requirements
 
@@ -83,3 +83,32 @@ Heizou's strikes, charged attack, plunges, skill and burst SHALL deal no poise.
 - **GIVEN** Heizou is the character on the field
 - **WHEN** any of his hits lands
 - **THEN** it deals no poise
+
+
+### Requirement: Fourth constellation regenerates Energy on each aura check tag
+
+From constellation 4, each enemy a Windmuster Kick's aura check tags SHALL regenerate 9 Energy for Heizou for the first, and 1.5 Energy for each of the three after it in the same cast.
+
+#### Scenario: The first tag regenerates 9 Energy
+
+- **GIVEN** Heizou is at constellation 4
+- **WHEN** his burst's aura check tags its first enemy
+- **THEN** Heizou regenerates 9 Energy
+
+#### Scenario: Later tags regenerate 1.5 Energy each
+
+- **GIVEN** Heizou is at constellation 4 and his burst has tagged one enemy
+- **WHEN** the check tags a second enemy
+- **THEN** Heizou regenerates 1.5 Energy
+
+#### Scenario: A fifth enemy regenerates nothing
+
+- **GIVEN** Heizou is at constellation 4 and his burst has tagged four enemies
+- **WHEN** the check reaches a fifth enemy
+- **THEN** no Energy is regenerated
+
+#### Scenario: A Heizou below constellation 4 regenerates nothing
+
+- **GIVEN** Heizou is at constellation 3
+- **WHEN** his burst's aura check tags an enemy
+- **THEN** no Energy is regenerated
