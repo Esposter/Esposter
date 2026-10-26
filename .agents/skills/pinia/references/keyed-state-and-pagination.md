@@ -40,6 +40,8 @@ const { data: trailingText } = useDataMap(() => fooStore.currentFooId, "");
 
 Selection state uses the same primitive — the selected id is `useDataMap(() => parentStore.currentId, "")` and the selected entity a `computed` that `find`s it, so mutations set the id directly (`setSelectedFooId(input.parentId, newFoo.id)` from a create's `onSuccess`) rather than emitting.
 
+- **Pass a factory** (`() => new CursorPaginationData()`) when the default is a class instance: plain defaults are `structuredClone`d per key so keys never share state, and `structuredClone` strips prototypes.
+
 ## Every field is keyed, and a write names its key
 
 **State describing one key must be keyed by it — a plain `ref` is only correct when the key cannot change under the store.** A global ref outlives the switch: at the moment the current id changes it still holds the previous key's value, so anything asking "is this the current key's data" reads a stale yes, and consumers grow guards over ambiguous state instead of getting an answer. Applies to **every field** of that state, not just the list — a keyed list beside global counts is the same bug, half-fixed (see `openspec/specs/esbabbler/offline-cache/design.md`).
@@ -94,9 +96,3 @@ const storeDeleteFoo = (fooId: string) => {
 ```
 
 **When to add `storeCreateXxx`/`storeDeleteXxx` subscription handlers:** only when a subscription fires to _all_ affected parties. When the subscription fires only to one party — the one who did not initiate the mutation — the initiator's store already updated locally after its own mutation, so no `storeCreateXxx` handler is needed.
-
-## `useDataMap` vs a plain map
-
-- Use `useDataMap<T>(currentId, defaultValue)` for state keyed by an id **when there's a meaningful "current" id** (e.g. `currentRoomId`). **Do not** use it when the store reads/writes arbitrary keys with no "current" concept — that is a plain `ref(new Map<string, T>())` with a manual getter.
-- **Pass a factory** (`() => new CursorPaginationData()`) when the default is a class instance: plain defaults are `structuredClone`d per key so keys never share state, and `structuredClone` strips prototypes.
-- Pass the explicit type generic when the default alone can't infer the full type (unions, empty `{}`/`[]`); primitives with unambiguous defaults don't need one. Never an as-cast instead of the generic.
