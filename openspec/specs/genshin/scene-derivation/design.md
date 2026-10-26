@@ -161,6 +161,7 @@ Each other region's open world is derived by `extract` from its capital's catalo
 - Zhenzhong Yi's [Console platform development in Genshin Impact](https://docswell.com/s/UnityJapan/KWRPQ5-210617-unity-dojo20211mihoyozhenzhongyi) (miHoYo, Unity Dojo 2021): the game's own account of its shadows, fog and god rays, read before the frame is calibrated.
 
 ## Open
+
 - [ ] **The interface converges within a few tenths of a percent** — no source yet: the parity page's interface error figures are not on this machine, and were not read in this pass.
 - [ ] **A tower's mesh of thousands of vertices, its textures and the material's several dozen values** — no source yet: the tower export's counts were not taken here.
 - [ ] **The login stone's programs and the game's deferred lighting: the sun ramp, the sky harmonics, the cube and the GGX highlight** — no source yet: the stone's program bytes in the login's raw export were not read here.
@@ -169,7 +170,7 @@ Each other region's open world is derived by `extract` from its capital's catalo
 - [ ] **Each TerrainData names the layer of every four-metre cell** — no source yet: the TerrainData layer bytes were not read here.
 - **The witness draws a back face with its geometry's own normal, and `normalWorld` flips it** — `packages/genshin-world/parity/witness/renderWitnessTargets.ts` (lines 155 to 160) takes `normalWorldGeometry` for a double-sided face and `normalWorld` for the rest.
 - **The layout pass's proportions are the cross-ratio unit test's** — `scripts/src/services/genshinAssets/scene/checkArrangement.ts`, with `scripts/src/services/genshinAssets/scene/computeCrossRatio.test.ts`.
-- [ ] **The camera solve on the silhouette and the light solve by least squares** — no source yet: no camera or light solver is named in the repo (searched for `solveCamera`, `solveLight` and `least squares`); the login's `Light.reference.ts` and `Sky.reference.ts` name solvers only in their records.
+- [ ] **The camera solve on the silhouette and the light solve by least squares** — not yet run against this scene: the solvers exist (`scripts/src/services/genshinParity/witness/solveCameraPose.ts` and `refineCameraPose.ts` for the camera, `solveStoneLight.ts` for the light by non-negative least squares), but their solve over the login's and Windrise's references was not read in this pass.
 - **The login's SceneObj at a tenth of its scale, its SceneBeginNode, DoorNode and ModelCamera children, the walkway's parent and MonoLoginScene's spawns** — `packages/genshin-world/src/components/Login/Scene/Arrangement.reference.ts`, its SceneObj, SceneBeginNode, DoorNode and MonoLoginScene rows.
 - [ ] **The login stone's shader `miHoYo/Scene/Login Base` and its material values** — no source yet: neither the name nor the values were found in the extracted login folders or the shader folder.
 - [ ] **The tone curve's bloom term `_MHYBloomTonemapping` and the clouds' Enviro sky terms** — no source yet: the curve is drawn by `packages/genshin-engine/src/renderer/constants.ts`, but the game's bloom term and the sky's raw bytes were not traced here.
