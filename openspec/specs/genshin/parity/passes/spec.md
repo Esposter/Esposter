@@ -35,7 +35,7 @@ The passes command SHALL run each pass's measure in order and stop at the first 
 - **GIVEN** a component whose measure fails at some pass
 - **WHEN** the passes command runs on it
 - **THEN** the run stops at that pass
-- **AND** the component's report names the pass as the next work (see Open)
+- **AND** the component's report names the pass as the next work (see the design's Open)
 
 #### Scenario: Pass with no measure yet
 
