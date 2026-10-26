@@ -8,6 +8,7 @@ import {
 } from "#src/services/user/constants";
 import { createUserDataArchive } from "#src/services/user/createUserDataArchive";
 import { writeAccountEntry } from "#src/services/user/writeAccountEntry";
+import { writeCallSessionEntry } from "#src/services/user/writeCallSessionEntry";
 import { writeFriendEntries } from "#src/services/user/writeFriendEntries";
 import { writeImageEntries } from "#src/services/user/writeImageEntries";
 import { writeLikeEntries } from "#src/services/user/writeLikeEntries";
@@ -48,6 +49,7 @@ export const buildUserDataArchive = async (userId: UserInAuth["id"], blobName: s
     await writePostEntries(archive, userId);
     await writeLikeEntries(archive, userId);
     await writeRoomEntries(archive, userId);
+    await writeCallSessionEntry(archive, userId);
     await writeOwnedRoomEntries(archive, userId);
     await writeResourceEntries(archive, userId);
     await writeSaveEntries(archive, userId);

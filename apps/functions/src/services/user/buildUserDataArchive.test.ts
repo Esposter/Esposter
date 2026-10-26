@@ -20,6 +20,7 @@ import {
   AdminActionType,
   AzureContainer,
   AzureTable,
+  callSessionsInMessage,
   friendRequestsInSocial,
   friendsInSocial,
   getReverseTickedTimestamp,
@@ -59,12 +60,14 @@ vi.mock(import("#src/services/azure/getTableClient"), () => import("#src/service
 
 describe(buildUserDataArchive, () => {
   const attachmentBytes = new Uint8Array([255]);
+  const callId = "callsession1";
   const content = JSON.stringify({});
   const description = "description";
   const emojiTag = "emojiTag";
   const filename = "name";
   const message = "a";
   const name = "name";
+  const otherCallId = "callsession2";
   const otherMessage = "b";
   const title = "title";
 
@@ -177,6 +180,7 @@ describe(buildUserDataArchive, () => {
     expect(Object.keys(entries).sort()).toStrictEqual(
       [
         "account.json",
+        "calls.json",
         "friends.json",
         "images/ProfileImage",
         "likes.json",
@@ -464,6 +468,26 @@ describe(buildUserDataArchive, () => {
     expect(readEntryJson(entries, "moderation-actions.json")).toStrictEqual([
       { roomId: ownedRoom.id, targetUserId: otherUserId, time: actionTime, type: AdminActionType.Warn },
     ]);
+  });
+
+  test("writes the calls the person started, without their join ids, and no other person's call", async () => {
+    expect.hasAssertions();
+
+    const userId = crypto.randomUUID();
+    const otherUserId = crypto.randomUUID();
+    const blobName = `${crypto.randomUUID()}.zip`;
+    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
+    const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
+    await mockDb.insert(callSessionsInMessage).values([
+      { id: callId, roomId: room.id, userId },
+      { id: otherCallId, roomId: room.id, userId: otherUserId },
+    ]);
+
+    await buildUserDataArchive(userId, blobName);
+    const entries = readArchiveEntries(blobName);
+
+    // A call row stores no time, and its id is the key a knocker presents to join, so the exact shape leaves both out
+    expect(readEntryJson(entries, "calls.json")).toStrictEqual([{ roomId: room.id, threadRootRowKey: "" }]);
   });
 
   test("reads an attachment as a stream, never into a buffer", async () => {
