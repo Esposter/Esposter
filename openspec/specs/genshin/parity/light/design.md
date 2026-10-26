@@ -17,5 +17,5 @@ The light pass recovers how the game lights its stone, from the exports the refe
 ## Open
 
 - [ ] **The self check's margin** — no source yet: a recorded run that states the residual, since `calibrateCommand.ts` prints the error and its scale but sets no threshold for `--self`.
-- [ ] **The haze's blend, the rim's glow, the grade and the bloom were skewed by a self check** — no source yet: no commit, snapshot or report records those finds.
+- [ ] **The self check found the haze's blend, the rim's glow, the grade and the bloom** — no source yet: no commit, snapshot or report records those finds.
 - [ ] **The cloud sea keeps the colours measured where it shows them** — no source yet: a recorded measure of the cloud-sea colours, since `packages/genshin-world/src/services/login/scene/LoginSkyStateMap.ts` (`cloudLitColor`, `cloudShadeColor`) fixes them per sky state.
