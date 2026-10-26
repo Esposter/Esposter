@@ -6,7 +6,7 @@ The two building kits Nod-Krai's structures are made from, both generators over 
 
 ### Requirement: Dieselpunk structures merge into one geometry
 
-The dieselpunk kit SHALL build a structure's boxes, pipe runs and smokestacks into one merged geometry drawn in one material.
+The dieselpunk kit SHALL build a structure's boxes, pipe runs and smokestacks into one merged geometry drawn in one material (`packages/genshin-world/src/services/nod-krai/createDieselpunkGeometry.ts`).
 
 #### Scenario: Structure with every part kind
 
@@ -19,11 +19,11 @@ The dieselpunk kit SHALL build a structure's boxes, pipe runs and smokestacks in
 
 - **GIVEN** a structure with a smokestack
 - **WHEN** the structure is built
-- **THEN** the smokestack is part of the merged geometry and is not dropped from it
+- **THEN** the smokestack is part of the merged geometry and is not dropped from it (`packages/genshin-world/src/services/nod-krai/createDieselpunkGeometry.ts`, `packages/genshin-engine/src/kits/architecture/createLatheStackGeometry.ts`)
 
 ### Requirement: Pipe runs stand between their two ends
 
-The dieselpunk kit SHALL stand each pipe run as a cylinder of the given radius between its two ends, whichever direction the run points.
+The dieselpunk kit SHALL stand each pipe run as a cylinder of the given radius between its two ends, whichever direction the run points (`packages/genshin-world/src/services/nod-krai/createPipeworkGeometry.ts`).
 
 #### Scenario: Run pointing in any direction
 
@@ -33,7 +33,7 @@ The dieselpunk kit SHALL stand each pipe run as a cylinder of the given radius b
 
 ### Requirement: Frostmoon stones stand in an even ring
 
-The Frostmoon kit SHALL stand its stones at even angles about the ring's centre, each standing on the ground and facing the centre.
+The Frostmoon kit SHALL stand its stones at even angles about the ring's centre, each standing on the ground and facing the centre (`packages/genshin-world/src/services/nod-krai/createStoneCircleGeometry.ts`).
 
 #### Scenario: Ring built from a count and a radius
 
@@ -44,22 +44,26 @@ The Frostmoon kit SHALL stand its stones at even angles about the ring's centre,
 
 ### Requirement: Nasha Town's works take the game's own meshes
 
-The world SHALL draw Nasha Town's dieselpunk works and ground from the game's meshes of those kinds and SHALL leave every other mesh kind undrawn.
+The world SHALL draw Nasha Town's dieselpunk works and ground from the game's meshes of those kinds and SHALL leave every other mesh kind undrawn (`packages/genshin-world/src/services/nod-krai/NodKraiPartFamilyMeshRegexMap.ts`, `packages/genshin-world/src/services/nod-krai/NodKraiUndrawnMeshRegexMap.ts`).
 
 #### Scenario: Nasha Town's export read by the parity inventory
 
 - **GIVEN** the game's export of Nasha Town
 - **WHEN** the parity inventory claims its meshes
 - **THEN** its halls, cranes and pipes are drawn by the dieselpunk works
-- **AND** its terrain tiles are drawn as the ground
-- **AND** every other mesh kind is listed as not drawn yet
+- **AND** its terrain tiles are drawn as the ground (`packages/genshin-world/src/services/nod-krai/NodKraiPartFamilyMeshRegexMap.ts`, `Ground`)
+- **AND** every other mesh kind is listed as not drawn yet (`packages/genshin-world/src/services/nod-krai/NodKraiUndrawnMeshRegexMap.ts`)
 
 ### Requirement: Kit numbers come from options supplied as data
 
-The kits SHALL take every number they build from options supplied to them, so a region's fitted values change the mesh without changing the kit.
+The kits SHALL take every number they build from options supplied to them, so a region's fitted values change the mesh without changing the kit (`packages/genshin-world/src/models/nod-krai/DieselpunkOptions.ts`, `packages/genshin-world/src/services/nod-krai/createStoneCircleGeometry.ts`).
 
 #### Scenario: Fitted values reach the mesh
 
 - **GIVEN** a region's fitted values supplied as options
 - **WHEN** the kit builds its structure
 - **THEN** the mesh reflects those values
+
+## Open
+
+- [ ] **Nasha Town's halls, cranes and pipes are drawn by the dieselpunk works** — no source yet: the `Area_Ndkl_Build_` pattern was found, but the names of the halls, cranes and pipes were not checked against the export.
