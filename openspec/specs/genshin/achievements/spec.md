@@ -1,6 +1,6 @@
 ## Purpose
 
-Genshin's achievements as built. Each is a counter of one doing the game's table names, a quest or a parent quest finished, counted to its count and paid in Primogems once finished, its tier before it chained by the table. The Achievements screen lists the categories with how many of each are finished and opens from the Paimon menu. The reader publishes the table and every title in fifteen languages from the community's data dump to the game data, and the other trigger types wait on the pages that record their doings.
+Genshin's achievements as built. Each is a counter of one doing the game's table names, a quest or a parent quest finished, counted to its count and paid in Primogems once finished, its tier before it chained by the table. The Achievements screen lists the categories with how many of each are finished and opens from the Paimon menu. The reader publishes the table and every title in fifteen languages from the community's data dump to the game data (`scripts/src/services/genshinAssets/achievements/buildAchievementText.ts`), and the other trigger types wait on the pages that record their doings.
 
 ## Requirements
 
