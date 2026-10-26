@@ -114,22 +114,21 @@ The character on the field fights through its kit, which prices every character'
 - [Movement SPD](https://genshin-impact.fandom.com/wiki/Movement_SPD), Genshin Impact Wiki: the walking, running, sprinting, dashing and jumping that Movement SPD alters.
 
 ## Open
-
-- [ ] **Party Setup opens on `L`, and the keys `1` to `4` and a pad's directions switch members** — no source yet: the party-setup clip shows the screen but not its keys, and the Controls page is not cached.
-- [ ] **`createParty` deploys Party 1 with its first member on the field** — no source yet: no test holds `createParty`'s default deployment.
-- [ ] **A `PartyMember` keeps its HP as a share of Max HP, as the game does, and a character joins a team at full HP** — no source yet: the wiki's Health page is not cached, and no test holds the share or the join HP.
-- [ ] **A revive and a statue's heal are not recorded for the kits** — no source yet: no test holds the unrecorded heals.
-- [ ] **A revive brings a fallen team back at 35% of Max HP** — no source yet: no 35% revive wording is in the English game text, and the revive clip is not measured.
-- [ ] **A drowning takes a tenth of every member's Max HP** — no source yet: no 10% drowning wording is in the English game text, and the wiki's Fallen Character page is not cached.
-- [ ] **The game over screen's Revive jumps the team to the nearest unlocked waypoint, or leaves it where it fell** — no source yet: no test holds the jump or the no-waypoint case.
-- [ ] **`PARTY_SWITCH_COOLDOWN_SECONDS` is one second** — no source yet: the wiki's Party page is not cached.
-- [ ] **Left Alt with a member's key uses that member's burst, and a refused switch uses none** — no source yet: no test holds the chord or the fixed step's read.
-- [ ] **Cryo's CRIT Rate +15% is read where a hit is struck** — no source yet: no party test holds it in combat.
-- [ ] **Impetuous Winds multiplies a skill's cooldown by 0.95 as it starts, and the wait for its other charges** — no source yet: no test holds `startNextKitAction` or the multiplier's use.
-- [ ] **Impetuous Winds multiplies each stamina spend by 0.85** — no source yet: no test holds the stamina pool built by `useWorldCombat`.
-- [ ] **The kit bench put two fifths of its minute in the party's writes** — no source yet: no bench output is cited.
-- [ ] **`getActiveCharacterId` returns the deployed team's member at the active index** — no source yet: no test holds it.
-- [ ] **The world screen makes the Traveler from the roster at level 1 with its weapon, and switches on the first party key once a frame** — no source yet: no test holds the world screen's party wiring.
-- [ ] **A domain's challenge revives its team without the screen** — no source yet: no test holds it.
-- [ ] **Only the character on the field takes an enemy's strike** — no source yet: no test holds it, and the wiki's Party page is not cached.
-- [ ] **A drowning takes every member's energy** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Party Setup opens on `L`, and the keys `1` to `4` and a pad's directions switch members** — the code binds them (`packages/genshin-engine/src/input/InputActionBindingMap.ts`, `OpenPartySetup` on `KeyL`, `SwitchToPartyMember1` to `4` on `Digit1` to `Digit4` and the directional pad); the game's own defaults are the controls page's open item, with the wiki's Controls page not cached.
+- **`createParty` deploys Party 1 with its first member on the field** — `packages/genshin-world/src/services/party/createParty.ts` sets the active index to the first slot (`activeIndex: 0`).
+- [ ] **A `PartyMember` keeps its HP as a share of Max HP, as the game does, and a character joins a team at full HP** — `packages/genshin-world/src/services/party/createPartyMember.ts` builds each member; the game's own Health page is not cached, so "as the game does" is open.
+- **A revive and a statue's heal are not recorded for the kits** — `packages/genshin-world/src/services/party/reviveParty.ts` sets each fallen member's share without pushing to `healthChanges`, and `packages/genshin-world/src/services/statue/autoRecoverParty.ts` brings a team back through it.
+- [ ] **A revive brings a fallen team back at 35% of Max HP** — the code holds `REVIVE_HEALTH_SHARE = 0.35` (`packages/genshin-world/src/services/party/constants.ts`), but no English game text gives the 35% and the revive clip is not measured.
+- [ ] **A drowning takes a tenth of every member's Max HP** — the code holds `DROWN_HEALTH_SHARE_LOSS = 0.1` (`packages/genshin-world/src/services/party/constants.ts`, read by `packages/genshin-world/src/services/party/drownParty.ts`), but no English game text gives the 10%, and the wiki's Fallen Character page is not cached.
+- **The game over screen's Revive jumps the team to the nearest unlocked waypoint, or leaves it where it fell** — `packages/genshin-world/src/composables/useWorldCombat.ts` (`reviveFallenParty`) hands the placing to the host, and `packages/genshin-world/src/components/World/Session/Index.vue` places it at `packages/genshin-world/src/services/map/findNearestTeleportWaypoint.ts`'s result.
+- **`PARTY_SWITCH_COOLDOWN_SECONDS` is one second** — `packages/genshin-world/src/services/party/constants.ts` (line 12).
+- [ ] **Left Alt with a member's key uses that member's burst, and a refused switch uses none** — the chord is read through `PARTY_MEMBER_BURST_INPUT_ACTIONS` (cited in the prose above), but whether a refused switch in `packages/genshin-world/src/services/party/switchPartyMember.ts` uses no burst was not traced in this pass.
+- [ ] **Cryo's CRIT Rate +15% is read where a hit is struck** — no source yet: the value is not checked against a game source, and no test or record in `packages/genshin-world/src/services/party/` holds it in combat.
+- **Impetuous Winds multiplies a skill's cooldown by 0.95 as it starts, and the wait for its other charges** — `packages/genshin-world/src/services/party/constants.ts` (`IMPETUOUS_WINDS_SKILL_COOLDOWN_MULTIPLIER`, 0.95) and `packages/genshin-world/src/services/kit/startNextKitAction.ts`.
+- **Impetuous Winds multiplies each stamina spend by 0.85** — `packages/genshin-world/src/services/party/constants.ts` (`IMPETUOUS_WINDS_STAMINA_CONSUMPTION_MULTIPLIER`, 0.85) and `packages/genshin-world/src/services/party/getImpetuousWindsStaminaConsumptionMultiplier.ts`.
+- [ ] **The kit bench put two fifths of its minute in the party's writes** — no source yet: no bench output that records the share is cited.
+- **`getActiveCharacterId` returns the deployed team's member at the active index** — `packages/genshin-world/src/services/party/getActiveCharacterId.ts`.
+- **The world screen makes the Traveler from the roster at level 1 with its weapon, and switches on the first party key once a frame** — `packages/genshin-world/src/services/character/createCharacter.ts` and `packages/genshin-world/src/components/World/Session/Index.vue`.
+- [ ] **A domain's challenge revives its team without the screen** — no source yet: no domain-challenge revive call was located in `packages/genshin-world/src/services/party/` or `packages/genshin-world/src/composables/useWorldDomains.ts`.
+- **Only the character on the field takes an enemy's strike** — contradicted in part: `packages/genshin-world/src/composables/useWorldCombat.ts` (`strikeParty`) lands an enemy's strike on the taunt it struck, or on the character on the field through the team's shields.
+- **A drowning takes every member's energy** — `packages/genshin-world/src/services/party/drownParty.ts`, where every member loses its energy as the drowning falls.
