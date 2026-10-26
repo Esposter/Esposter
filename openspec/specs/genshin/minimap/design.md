@@ -43,9 +43,9 @@ flowchart LR
 
 ## Reference
 
-- `hud-world-keys.png` and `hud-stamina-climb.png` — the English PC client's world HUD at 1080 high, the [HUD](../hud/design.md)'s references, which show the ring over olive ground and over a flat sky.
-- `bili-av251752644-stamina.mp4` — the Chinese client's play, its minimap over open sea from 488 to 496 seconds, where the fan, the ring, the fill and the N are each read on a flat ground.
-- `oculus-minimap.mkv` — walking in on an Anemoculus in Mondstadt from its far side until the minimap marks it, and the moment its sound plays, 30 seconds at most; the distance at which the mark shows and the sound's start are read from it. The sound's start is replaced by the audio pass. The distance at which the mark shows stays on the recording. On the wiki and YouTube, none found (searched 2026-10-11).
+- `~/Esposter/genshin-parity/references/hud-world-keys.png` and `~/Esposter/genshin-parity/references/hud-stamina-climb.png` — the English PC client's world HUD at 1080 high, the [HUD](../hud/design.md)'s references, which show the ring over olive ground and over a flat sky.
+- `~/Esposter/genshin-parity/captures/bili-av251752644-stamina.mp4` — the Chinese client's play, its minimap over open sea from 488 to 496 seconds, where the fan, the ring, the fill and the N are each read on a flat ground.
+- `~/Esposter/genshin-parity/captures/oculus-minimap.mkv` — walking in on an Anemoculus in Mondstadt from its far side until the minimap marks it, and the moment its sound plays, 30 seconds at most; the distance at which the mark shows and the sound's start are read from it. The sound's start is replaced by the audio pass. The distance at which the mark shows stays on the recording. On the wiki and YouTube, none found (searched 2026-10-11).
 
 ## Open
 
