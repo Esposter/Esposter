@@ -56,7 +56,7 @@ A kind with no reward entry stays unopened, and a buried or sealed place stays u
 
 ## Sources
 
-- [Chest](https://genshin-impact.fandom.com/wiki/Chest), Genshin Impact Wiki: the chest reward table's ranges per tier, and the Luxurious row's Mora, which reads "?".
+- [Chest](https://genshin-impact.fandom.com/wiki/Chest), Genshin Impact Wiki: the chest reward table's ranges per tier.
 - [Chest](https://genshin-impact.fandom.com/wiki/Chest), Genshin Impact Wiki: the highest Zone Level areas of Mondstadt and Liyue (Dragonspine, the Stormbearer Mountains, Guyun Stone Forest, Lisha and The Chasm): "give the maximum number of Primogems".
 - [Teyvat Interactive Map](https://act.hoyolab.com/ys/app/interactive-map/index.html), HoYoLAB: the official map, whose public label tree and point list the builder reads as references.
 - [Common Chest Windrise, Mondstadt](https://www.youtube.com/watch?v=JQEikGg8Nvk), OAT_OA, 30 to 42 seconds: a Common chest in Windrise's area opened from standing in reach, its rewards (Adventure EXP, Anemo Sigil, Enhancement Ore, Traveling Doctor's Medicine Pot and Mora) in the wallet's list. Read at 1080 high and 30 frames a second, with the interaction key shown as Enter rather than F, so its opening's timing is measured to a frame at 30 a second.
@@ -67,7 +67,10 @@ A kind with no reward entry stays unopened, and a buried or sealed place stays u
 
 ## Open
 
-- [ ] **The Luxurious chest's Mora is one of the wiki's chest reward table's ranges** — partly settled by the Chest page (checked: Chest): its Chest Rewards table gives the Primogem, Mora and Sigil ranges of Common, Exquisite, Precious and Remarkable, and Luxurious' Primogems, all matching `packages/genshin-world/src/services/chest/ChestKindRewardMap.ts`. The Luxurious row's Mora cell reads "?", so the code's zero (`mora: { max: 0, min: 0 }`) has no wiki figure behind it.
+- [ ] **The Primogem and Mora ranges per tier are the wiki's chest reward table** — no source yet: the cached Chest wiki page is not on disk, and the dump holds no chest reward table.
+- [ ] **The wiki's table leaves Luxurious' Mora unstated** — no source yet: the cached Chest wiki page is not on disk.
+- [ ] **The high zone-level areas give more Primogems than the default** — no source yet: the cached Chest wiki page is not on disk, and the dump holds no chest reward table for those zones.
+- [ ] **Opening pours out the wiki's pools for the tier, and the artifact's domain distribution** — no source yet: the cached Chest wiki page is not on disk, which names the pools' weapons, Character EXP materials and sets.
 - [ ] **A Buried chest is dug up where it stands, and a Sealed one is freed of its seal first** — no source yet: the `chest-dig` capture the Reference section names has not been read frame by frame, so the dig and seal are unchecked.
 - [ ] **The current run leaves no mapped-area chest out** — no source yet: the published chests dataset is not in the cache, and `scripts/src/services/genshinAssets/points/placeMapPoints.ts` counts what it leaves out, but no run's notes are kept.
 - [ ] **The chest-dig capture runs at 29.8 frames a second, not 60** — contradicted by `~/Esposter.noindex/genshin-parity/captures/chest-dig.mkv`: its stream probes at 59.6 frames a second, not 29.8.
