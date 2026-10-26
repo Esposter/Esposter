@@ -29,7 +29,7 @@ The character screen SHALL open over the held world with C or from the Paimon me
 
 ### Requirement: Characters are listed across the top and chosen by name
 
-The screen SHALL list the player's characters across its top, each named, and SHALL show the chosen character's name at its top left. The reference lays them out so (`~/Esposter.noindex/genshin-parity/comparisons/character-attributes.png`).
+The screen SHALL list the player's characters across its top, each named, and SHALL show the chosen character's name at its top left. The reference lays them out so.
 
 #### Scenario: Choosing a character in the top row
 
@@ -47,7 +47,7 @@ The screen SHALL list the player's characters across its top, each named, and SH
 
 ### Requirement: Six tabs down the left in the game's order
 
-The screen SHALL show six tabs down its left in the game's order, Attributes, Weapons, Artifacts, Constellation, Talents and Profile, each named in the game's own words, with the open tab lit (`~/Esposter.noindex/genshin-parity/comparisons/character-constellation-tabs.png`; the words are in `~/Esposter.noindex/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`).
+The screen SHALL show six tabs down its left in the game's order, Attributes, Weapons, Artifacts, Constellation, Talents and Profile, each named in the game's own words, with the open tab lit.
 
 #### Scenario: Attributes is lit when the screen opens
 
@@ -71,7 +71,7 @@ The Attributes tab SHALL show the character's name, its level over its phase's c
 
 - **GIVEN** the Attributes tab is open for a character
 - **WHEN** the panel is read
-- **THEN** Max HP, ATK, DEF, Elemental Mastery and Max Stamina are shown as whole numbers (`~/Esposter.noindex/genshin-parity/comparisons/character-attributes.png`)
+- **THEN** Max HP, ATK, DEF, Elemental Mastery and Max Stamina are shown as whole numbers
 
 #### Scenario: Advanced attributes shown as percentages
 
@@ -83,7 +83,7 @@ The Attributes tab SHALL show the character's name, its level over its phase's c
 
 - **GIVEN** a character is at its phase's level cap
 - **WHEN** the Attributes tab is shown
-- **THEN** its level is shown over that cap (the reference shows it over the cap as `~/Esposter.noindex/genshin-parity/comparisons/character-attributes.png`)
+- **THEN** its level is shown over that cap
 
 ### Requirement: Weapons, Artifacts, Constellation and Talents panels show the character's own record
 
