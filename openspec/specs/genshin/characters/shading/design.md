@@ -389,6 +389,6 @@ The only case where a ramp stays raw is an artist painting it in linear values, 
 - [ ] **The repo's outline projection scale holds the game's 2.414** — no source yet: the named source does not hold this value, since no listing under `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber` holds the literal 2.414000; the repo holds 2.414 as `OUTLINE_PROJECTION_SCALE` (`packages/genshin-engine/src/character/shading/constants.ts`).
 - [ ] **The outline's width is `_OutlineWidth` times 0.41425, weighted by the alpha, with no `T_w`** — no source yet: no listing under `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber` holds the literal 0.41425 (searched). The repo holds it as `OUTLINE_WIDTH_SCALE` (`packages/genshin-engine/src/character/shading/constants.ts`).
 - [ ] **The haze at the close-up is zero, by the fog's form** — no source yet: the form is in `packages/genshin-engine/src/post/createHeightFogNode.ts`, but its value at a close-up needs a run of that node, which this sitting does not run.
-- [ ] **The tone curve is the game's** — no source yet: the tone curve in the raw shader exports under `~/Esposter/genshin-parity/extracted/shaders/Shader/`, not yet read.
+- [ ] **The tone curve is the game's** — no source yet: the tone curve in the raw shader exports under `~/Esposter.noindex/genshin-parity/extracted/shaders/Shader/`, not yet read.
 
 Related: [drawing a character](../drawing/design.md), [derived assets](../../derived-assets/design.md), [game data formats](../../game-data-formats/design.md).
