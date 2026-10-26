@@ -128,7 +128,7 @@ The user's one batch, checked whenever convenient ([parity](../../specs/genshin/
 - [ ] **Opening Flourish's tap and Geo burst give 1U of Geo** — [Yun Jin](../../specs/genshin/kits/yun-jin/design.md): a recording shows 1U from each.
 - [ ] **Opening Flourish's levels come at half a second and a second** — [Yun Jin](../../specs/genshin/kits/yun-jin/design.md): the levels come at those held times.
 - [ ] **Beidou's Ascension 1 counter window is measured in frames, from her hit to the Tidecaller press that counters it** — [Beidou](../../specs/genshin/kits/beidou/design.md): no length is guessed, as the page explains; the passive also needs Tidecaller's hold, which the kit does not build.
-- [ ] **Kuki's plunges reach 1, 3 and 5 metres** — [Kuki](../../specs/genshin/kits/kuki/design.md): the plunges match the reaches and poise of 10, 50 and 100.
+- [ ] **Kuki's plunges reach 1, 3 and 5 metres** — [Kuki](../../specs/genshin/kits/kuki/design.md): the plunges match the reaches and poise of 25, 100 and 150.
 - [ ] **Nilou's plunge lands at 0.4 seconds** — [Nilou](../../specs/genshin/kits/nilou/design.md): her plunge lands at that point with poise 25, 100 and 150.
 - [ ] **Kyouka's water illusion explodes 35 frames after the cast** — [Kamisato Ayato](../../specs/genshin/kits/kamisato-ayato/design.md): a recording of the explosion lands about 0.58 seconds after the cast.
 - [ ] **The body moves as the game's does where nothing measures it** — [Character controller](../../specs/genshin/character-controller/design.md): glide 6 m/s and sink 2.5, glider at 3 m, plunge 30 m/s, step 0.4 m, slope 50°, radius 0.3 m, swim at 0.7, slide 4 m/s, still-water strokes.
