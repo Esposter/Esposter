@@ -49,7 +49,7 @@ flowchart TD
 
 - [ ] **The label appears once a statue in its area is unlocked, as the game does** — no source yet: the capture shows the label but not the unlock, and the wiki's Exploration page is not in the genshin-wiki cache.
 - [ ] **The Windrise statue is Galesong Hill's waypoint, the one doing its statue completes** — no source yet: event 40 of the table names point 4, and no row read ties that point to the statue at Windrise.
-- [ ] **Galesong Hill's counted doings at ten each sum to nearly twice its total** — no source yet: the dump's table gives 19 counted doings (190 in all) against a total of 146, about 1.3 times, not nearly twice.
+- [ ] **Galesong Hill's counted doings at ten each sum to nearly twice its total** — contradicted by `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/WorldAreaExploreEventConfigData.json`: 19 counted doings sum to 190 against a total of 146.
 - [ ] **A single chest took Galesong Hill from 99% to 100%** — no source yet: the capture shows the step near 10 s, but no frame read shows the chest that caused it.
 - [ ] **The label's capitals are 28.8 and 16.0 pixels high, their middles 45.9 apart** — no source yet: the frame at 4.6 s shows the label, but no measurement of it is recorded in a file.
 - [ ] **The label scores 7.76% against its still, against a bar of 2%** — no source yet: the still `~/Esposter.noindex/genshin-parity/comparisons/map-overlay-galesong.png` exists, but no file read records the score.
