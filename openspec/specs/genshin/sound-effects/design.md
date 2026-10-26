@@ -53,7 +53,7 @@ flowchart TD
 
 ## Open
 
-- [ ] **Only each sound's levels and the engine's noise ship** — no source yet: the hosted `login/sounds` record is named in the game-data lock by its hash only, so its contents are not checked here.
+- [ ] **Only each sound's levels and the engine's noise ship** — no source yet: the hosted `login/sounds` record is not on disk (the game-data lock names it by hash only), so its contents are not read here.
 - [ ] **The login/sounds record holds three noises a band every 25 milliseconds** — no source yet: the lock records only the record's hash, and the record is hosted, not in the repo.
 - [ ] **A noise of a band built in one long transform would cost most of a second on the login's thread** — no source yet: no timing of either build is recorded in the repo.
 - [ ] **The levels keep five decimals, a hundred decibels under full scale** — no source yet: the precision and the floor were not found in `packages/genshin-engine/src/audio/computeSoundEffectSamples.ts`.
