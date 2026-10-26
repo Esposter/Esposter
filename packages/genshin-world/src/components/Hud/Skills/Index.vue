@@ -162,7 +162,7 @@ onUnmounted(() => {
 
 /* The keys' skill and burst as `hud-world-keys` shows them at 1080 high, measured from the right edge and the foot of
    `GrpActionBtn`, which on a 16:9 screen are the screen's: the skill's disc of diameter 74 centred 228.5 in and 92 up,
-   Darkening what lies under it by a quarter, and the burst's of diameter 112 at 101 in and 109.5 up, ringed 6 wide in
+   Darkening what lies under it by a sixth (0.26 read the disc 17 levels too dark on `hud-world-keys`), and the burst's of diameter 112 at 101 in and 109.5 up, ringed 6 wide in
    Its element's bright tone once charged. Under each its key's cap, 30 by 25 and white, 28.5 up. Each icon's
    Square is 1.29 of the skill's disc and 1.066 of the burst's, Chonghua's Layered Frost's white 36 by 58 pixels against
    Its icon's 47 by 80 and Cloud-Parting Star's 77 by 77 against its icon's 82 by 83. Provisional: the uncharged burst,
@@ -174,7 +174,13 @@ onUnmounted(() => {
   bottom: calc(var(--unit) * 55);
   width: calc(var(--unit) * 74);
   height: calc(var(--unit) * 74);
-  background: conic-gradient(rgb(0 0 0 / 0.55) calc(var(--cooldown) * 1turn), rgb(0 0 0 / 0.26) 0);
+  background: conic-gradient(rgb(0 0 0 / 0.55) calc(var(--cooldown) * 1turn), rgb(0 0 0 / 0.16) 0);
+}
+
+/* The skill icon's paths lie 2.5 right and down of the disc's middle on `hud-world-keys`, so the icon is moved
+   there from its box */
+.keys .skill .glyph {
+  translate: calc(-50% + var(--unit) * 2.5) calc(-50% + var(--unit) * 2.5);
 }
 
 .keys .burst {

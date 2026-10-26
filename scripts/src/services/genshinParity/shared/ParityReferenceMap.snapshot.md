@@ -35,10 +35,10 @@ committed.
 | `handbook-experience` | `HandbookScreen` | 5.18% | 0.932 | 2.44% | 0.2456 |
 | `health-notice` | `SplashHealthNotice` | 6.17% | 0.964 | 1.51% | 0.1780 |
 | `health-notice-mainland` | `SplashHealthNotice` | 7.06% | 0.829 | 3.03% | 0.1974 |
-| `hud-paimon-button` | `HudScreen` | 3.41% | 0.938 | 5.95% | 0.1958 |
-| `hud-stamina-climb` | `HudScreen` | 1.94% | 0.728 | 2.15% | 0.1405 |
-| `hud-world-keys` | `HudScreen` | 4.22% | 0.928 | 3.30% | 0.2454 |
-| `hud-world-pickup` | `HudScreen` | 9.96% | 0.385 | 9.09% | 0.4268 |
+| `hud-paimon-button` | `HudScreen` | 1.90% | 0.936 | 4.74% | 0.1188 |
+| `hud-stamina-climb` | `HudScreen` | 0.62% | 0.787 | 0.75% | 0.0629 |
+| `hud-world-keys` | `HudScreen` | 2.51% | 0.963 | 1.72% | 0.1607 |
+| `hud-world-pickup` | `HudScreen` | 3.58% | 0.714 | 2.20% | 0.1451 |
 | `interaction-prompts-jueyun-chili` | `InteractionPromptList` | 5.07% | 0.949 | 1.78% | 0.2144 |
 | `interaction-prompts-pickup` | `InteractionPromptList` | 7.92% | 0.919 | 4.43% | 0.3313 |
 | `inventory-food` | `InventoryScreen` | 3.44% | 0.873 | 2.31% | 0.1928 |

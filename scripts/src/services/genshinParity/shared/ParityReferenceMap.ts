@@ -304,9 +304,11 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The English PC client's Paimon button at 1080 high, from the same public recording at 20 seconds, its emblem's place
   // And fill measured over the corner. The minimap's disc takes the emblem's right half, so only the rectangles left of
   // And above it are scored, and the rest of that frame's HUD is left out of the region
+  // Its plate is the emblem's own box, so the backdrop around it is the recording's own pixels, not a fill
   "hud-paimon-button": {
     capture: "world-pickup.mkv",
     isBackdrop: true,
+    plate: [{ height: 90, width: 90, x: 16, y: 2 }],
     mask: [
       { height: 100, width: 66, x: 0, y: 0 },
       { height: 32, width: 44, x: 66, y: 0 },
@@ -321,9 +323,11 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // White rock clear of the character. The meter is drawn round the pivot, so the frame's pivot is the circle its arc
   // Was fitted to (978.3, 501.3), and only the meter's looks are scored, the rest of that player's HUD left out of the
   // Region
+  // Its plate is the meter's own arc, so the sky around it is the recording's own pixels, not a fill
   "hud-stamina-climb": {
     capture: "yt-hRR2yoP3uY0-world-stamina.mp4",
     isBackdrop: true,
+    plate: [{ height: 105, width: 28, x: 1064, y: 449 }],
     props: { frame: { pivotX: 0.5095, pivotY: 0.4642, seconds: 0, stamina: 64 }, isTouch: false, maxStamina: 214 },
     region: { height: 140, width: 65, x: 1040, y: 430 },
     screen: "HudScreen",
@@ -332,9 +336,16 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // The English PC client's skill and burst at 1080 high, from the same public recording at 20 seconds, before it moves
   // To the phone: Chongyun on the field with his burst charged, scored over the keys' corner clear of the gadget above
   // And the UID below. Only the field member's figures change, so the rest of the frame's HUD is left out of the region
+  // Its plate is the keys' discs and caps, so the scene around them is the recording's own pixels, not a fill
   "hud-world-keys": {
     capture: "world-pickup.mkv",
     isBackdrop: true,
+    plate: [
+      { height: 75, width: 75, x: 14, y: 46 },
+      { height: 113, width: 112, x: 123, y: 9 },
+      { height: 27, width: 31, x: 36, y: 121 },
+      { height: 27, width: 31, x: 163, y: 121 },
+    ],
     props: {
       isTouch: false,
       member: {
@@ -360,10 +371,24 @@ export const ParityReferenceMap: Record<string, ParityReference> = {
   // Black letterbox bars cropped away and its subtitles left out of the region scored. The HUD is drawn over the
   // Recording's own frame, so a piece the HUD drops reads as the game's own (the screen is shot bare too, `isBackdrop`
   // Only shows the overlay)
+  // Its plate is the HUD's pieces alone, so the scene between them is the recording's own pixels
   "hud-world-pickup": {
     capture: "world-pickup.mkv",
     crop: { height: 935, width: 1920, x: 0, y: 72 },
     isBackdrop: true,
+    plate: [
+      { height: 240, width: 300, x: 100, y: 10 },
+      { height: 85, width: 280, x: 120, y: 255 },
+      { height: 80, width: 560, x: 1240, y: 10 },
+      { height: 30, width: 140, x: 1700, y: 85 },
+      { height: 300, width: 330, x: 1500, y: 150 },
+      { height: 235, width: 340, x: 1100, y: 350 },
+      { height: 320, width: 340, x: 1450, y: 540 },
+      { height: 75, width: 75, x: 1280, y: 660 },
+      { height: 65, width: 65, x: 115, y: 820 },
+      { height: 100, width: 560, x: 590, y: 780 },
+      { height: 80, width: 90, x: 1180, y: 800 },
+    ],
     region: { height: 880, width: 1920, x: 0, y: 0 },
     screen: "HudScreen",
     seconds: 70,

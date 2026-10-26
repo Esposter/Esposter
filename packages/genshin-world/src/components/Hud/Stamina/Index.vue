@@ -74,7 +74,7 @@ const sectionAngles = computed(() =>
   height: calc(var(--unit) * 104);
   opacity: 0;
   transition: opacity 200ms linear;
-  translate: calc(var(--pivot-x) * 100cqw + var(--unit) * 89) calc(var(--pivot-y) * 100cqh - var(--unit) * 52);
+  translate: calc(var(--pivot-x) * 100cqw + var(--unit) * 89.5) calc(var(--pivot-y) * 100cqh - var(--unit) * 52);
 }
 
 .shown {
@@ -90,10 +90,11 @@ const sectionAngles = computed(() =>
   stroke-width: 7;
 }
 
-/* The drained part a dark red at 0.55, fitted to the track over the white rock, the grass and the sky it crosses, and
-   The fill the yellow of its core's 144 pixels on the same frame */
+/* The drained part a dark red at 0.38, solved on `hud-stamina-climb`'s sky: the reference's track under our track's mask
+   reads (141, 119, 119) where ours reads (125, 89, 91) at 0.55 over the sky's (174, 186, 198). The fill the yellow of its
+   core's 144 pixels on the same frame */
 .track {
-  stroke: rgb(86 8 0 / 0.55);
+  stroke: rgb(86 8 0 / 0.38);
 }
 
 /* The cuts between the sections a white at a quarter across the track, under the fill, as the climb shows them on the
