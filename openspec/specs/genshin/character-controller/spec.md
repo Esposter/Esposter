@@ -290,7 +290,7 @@ A jump from the map SHALL place the character standing on the ground at the chos
 ## Open
 
 - [ ] **The walk switch is the left Control, and a part-way stick push walks as a light push does in the game** — no source yet: the wiki's Controls page is not in the genshin-wiki cache, and the stick's walk threshold is marked provisional in.
-- [ ] **W, A and D move the character as the game's controls bind them** — no source yet: the wiki's Controls page is not in the cache, and the settings-controls clip is not read frame by frame.
+- [ ] **W, A and D move the character as the game's controls bind them** — no source yet: the wiki's Controls page is not in the cache, and the settings-controls clip `~/Esposter.noindex/genshin-parity/captures/yt-4VkVOwpPgwE-settings-controls.mp4` does not hold this value: its frames at six-second steps to 66 seconds show the installer and the website, and no controls screen.
 - [ ] **The glider opens from a jump only high enough above the ground, and a press plunges or closes it, as the game does** — no source yet: the wiki's Gliding page is not in the cache, and the height the glider opens at is provisional.
 - [ ] **A climb grips any surface too steep to walk, lets go on a drop or when stamina runs out, and stands the character on walkable ground at the top, as the game does** — no source yet: the wiki's Climbing page is not in the cache, and `Stamina.reference.ts` records the climb's start and cost only.
 - [ ] **Running out of stamina in water drowns the character, which then returns to where its stamina was last full on foot, as the game does** — no source yet: the wiki's Fallen Character page is not in the cache, and no reference file records the drowning's return.
