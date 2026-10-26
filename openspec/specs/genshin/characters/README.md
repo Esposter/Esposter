@@ -31,7 +31,7 @@ flowchart LR
   HOST --> MODELFILE
 ```
 
-With no address, or an index that fails to load (which is logged), the host has none. A model that fails to read is logged and emitted, and the body's capsule is drawn in its place (`packages/genshin-world/src/composables/useCharacterPackIds.ts` for the index's log; `packages/genshin-world/src/components/Character/Model/Index.vue` for the model's log and emit). A texture the release does not ship is logged once and its material drawn untextured.
+With no address, or an index that fails to load (which is logged), the host has none. A model that fails to read is logged and emitted, and the body's capsule is drawn in its place (`packages/genshin-world/src/composables/useCharacterPackIds.ts` for the index's log; `packages/genshin-world/src/components/Character/Model/Index.vue` for the model's log and emit). A texture the release does not ship is logged once, and its material drawn untextured (`packages/genshin-world/src/services/character/readCharacterMesh.ts`).
 
 ## Decisions
 
@@ -69,4 +69,3 @@ With no address, or an index that fails to load (which is logged), the host has 
 ## Open
 
 - [ ] **Nothing of an official pack is uploaded to Blob Storage** — no source yet: a read of every Blob write path, showing none takes an official pack rather than a player's own copy.
-- [ ] **A texture the release does not ship is logged once and its material drawn untextured** — no source yet: a log call for a missing texture; `packages/genshin-world/src/services/character/resolveCharacterPackTextures.ts` drops a missing texture without logging it.
