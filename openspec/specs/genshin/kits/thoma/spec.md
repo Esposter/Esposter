@@ -1,6 +1,6 @@
 ## Purpose
 
-Thoma's kit as built: Blazing Blessing's hit, shield and Pyro infusion, and Crimson Ooyoroi's initial hit with its Fiery Collapses and their shield, with Flaming Assault from Ascension 1, with Constellations 2, 4 and 6 built, and his Ascension 1 passive and Constellation 1 left unbuilt.
+Thoma's kit as built: Blazing Blessing's hit, shield and Pyro infusion, and Crimson Ooyoroi's initial hit with its Fiery Collapses and their shield, with Flaming Assault from Ascension 4, with Constellations 2, 4 and 6 built, and his Ascension 1 passive and Constellation 1 left unbuilt.
 
 ## Requirements
 
@@ -62,13 +62,13 @@ The first enemy a Fiery Collapse strikes SHALL give the team a shield of a share
 - **THEN** the team's shield grows by the collapse's amount
 - **AND** the shield stops at the most Blazing Blessing's shield may hold
 
-### Requirement: A Fiery Collapse adds a share of Thoma's Max HP to its DMG from Ascension 1
+### Requirement: A Fiery Collapse adds a share of Thoma's Max HP to its DMG from Ascension 4
 
-From Ascension 1, each Fiery Collapse SHALL add 2.2% of Thoma's Max HP to its base DMG.
+From Ascension 4, each Fiery Collapse SHALL add 2.2% of Thoma's Max HP to its base DMG.
 
 #### Scenario: Flaming Assault raises a Fiery Collapse
 
-- **GIVEN** Thoma has reached Ascension 1 and Crimson Ooyoroi stands
+- **GIVEN** Thoma has reached Ascension 4 and Crimson Ooyoroi stands
 - **WHEN** a Fiery Collapse strikes
 - **THEN** its base DMG gains 2.2% of Thoma's Max HP
 
@@ -99,4 +99,3 @@ Thoma's Ascension 1 passive, Constellation 1 and Fiery Collapse on a shielded ch
 - **THEN** that effect has no effect
 
 ## Open
-
