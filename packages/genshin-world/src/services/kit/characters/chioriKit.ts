@@ -15,8 +15,8 @@ const createDefenseShareBehaviour = (defenseShare: number): KitHitBehaviour => (
 });
 
 // Tamoto is cast where the body stands, and stands from its spawn until its end frame, which the record counts from the
-// Action's start. gcsim spawns it 19 frames in for the press and 34 for the hold (chiori/skill.go line 16), and its 17.5
-// Seconds run from there (line 22)
+// Action's start. gcsim spawns it 19 frames in for the press and 34 for the hold (chiori/skill.go line 16), and the
+// Game's Tamoto Duration of 17 seconds runs from there, so the record's end frames are 1039 and 1054
 const TAMOTO_PRESS_SPAWN_SECONDS = toKitSeconds(19);
 const TAMOTO_HOLD_SPAWN_SECONDS = toKitSeconds(34);
 const castTamoto =

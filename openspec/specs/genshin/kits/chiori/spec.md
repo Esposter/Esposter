@@ -88,12 +88,12 @@ Tamoto SHALL attack 60, 276, 492, 708 and 924 frames after it is summoned and th
 
 ### Requirement: Tamoto standing time
 
-Tamoto SHALL stand for a provisional seventeen and a half seconds after it is summoned, a length a recording may change.
+Tamoto SHALL stand for seventeen seconds after it is summoned, the game's Tamoto Duration.
 
 #### Scenario: Tamoto leaves when its time runs out
 
 - **GIVEN** Tamoto was summoned
-- **WHEN** 17.5 seconds pass
+- **WHEN** 17 seconds pass
 - **THEN** Tamoto leaves the field
 
 ### Requirement: Hiyoku Twin Blades burst
