@@ -109,3 +109,7 @@ Resonant Waves, Chrysos, Bounty of Dominator, Petrification and the hold's Geo d
 
 - **WHEN** the Jade Shield absorbs a strike
 - **THEN** no Resonant Waves or Chrysos effect follows
+
+## Open
+
+- [ ] **the Jade Shield's RES cut reaches 10 metres high** — no source yet: the height argument of the enemy query in gcsim's `shield.go` was not opened.
