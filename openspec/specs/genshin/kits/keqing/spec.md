@@ -1,6 +1,6 @@
 ## Purpose
 
-Keqing's kit as built: five strikes, a charged attack of two slashes, a collision and two plunges, Stellar Restoration with its Lightning Stiletto's recast and infusion, and Starward Sword's initial hit, eight slashes and final strike, with her Ascension 4 passive and Constellations 1, 2, 4 and 6 built, and her other passives not built.
+Keqing's kit as built: five strikes, a charged attack of two slashes, a collision and two plunges, Stellar Restoration with its Lightning Stiletto's recast and infusion, and Starward Sword's initial hit, eight slashes and final strike, with her Ascension 4 passive and Constellations 1, 2, 4 and 6 built, and her other passives not built. The line references name files in gcsim's Keqing folder, `~/Esposter/cache/gcsim-v2.47.2/internal/characters/keqing/`.
 
 ## Requirements
 
