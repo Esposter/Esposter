@@ -105,5 +105,5 @@ Each reward item SHALL draw its count from its range, and a draw of zero SHALL g
 
 ## Open
 
-- [ ] **Daily commissions open at Adventure Rank 12** — no source yet: the wiki's Commission page is not in `~/Esposter.noindex/cache/genshin-wiki/`, and no system open UI in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/SystemOpenUIConfigData.json` names the commissions.
+- [ ] **Daily commissions open at Adventure Rank 12** — no source yet: the wiki's Commission page is not in `~/Esposter/cache/genshin-wiki/`, and no system open UI in `~/Esposter/genshin-parity/text/ExcelBinOutput/SystemOpenUIConfigData.json` names the commissions.
 - [ ] **An unfinished commission is claimed for one Encounter Point** — no source yet: the game's text gives Encounter Points' use in place of a commission but no per-commission cost, and its one-per-commission line (`~/Esposter/genshin-parity/text/TextMap/TextMap_MediumEN.json`, key `2417337778`) is for Long-Term Encounter Points.
