@@ -9,7 +9,7 @@ There are two ways to take it off the loop:
 
 ## Why deferred
 
-- **The cost is bounded, and paid only near the ceiling.** A save only takes this path above one request body, and the long pauses are confined to documents near the content limit. Reads no longer pay it at all: a large document is downloaded straight from Blob Storage.
+- **The cost is bounded, and paid only near the ceiling.** A save only takes this path above one request body, and the long pauses are confined to documents near the content limit. Reads do not pay it at all: a large document is downloaded straight from Blob Storage.
 - **A worker needs its own build entry.** The server has no worker thread today, so a worker file would be a module the app build has to emit beside the server bundle, locate at runtime and keep in step with the server's dependencies — standing maintenance for a pause that only near-ceiling documents cause.
 - **A Function would relocate the whole save, not one step.** The commit shares its version check, transaction, storage ledger charge, revision and save event with every other door into `saveResourceContent`. Moving the parse alone would ship the document back to the web server; moving the save moves all of those, and adds an asynchronous "saved" notification the browser has to wait on.
 
