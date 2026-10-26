@@ -30,7 +30,7 @@ The clouds over the login's cloud sea and above its towers: three bands of the g
 - [ ] **The dusk's sky is clouded about a seventh of the time the recording's is, from 8 to 15 degrees up** — no source yet: the roadmap link is the only reference, and its figure is not read against a capture here.
 - [ ] **The dusk's cloud shade is a bright pink** — no source yet: the shade's value is not read against a colour reference here.
 - [ ] **The layer draws no settings until an hour's solve beats none** — no source yet: the gate on the layer's settings was not located in the code checked here.
-- [ ] **Each band is one of the game's painted clouds, traced** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Each cloud is coloured as the game's cloud particles are** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The day's and the dusk's colours are measured, and those ship** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The sky's dome is ported as the game draws it** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Each band is one of the game's painted clouds, traced** — no source yet: the cloud textures in `~/Esposter/genshin-parity/extracted/login-bytype-assets/Texture2D/`, not yet matched to the bands.
+- [ ] **Each cloud is coloured as the game's cloud particles are** — no source yet: `~/Esposter/genshin-parity/extracted/login-bytype-assets/Material/Enviro_Cloud_Mid_Particle_Mat.json` and `Enviro_Cloud_Layer_Mat.json`, not yet read for the particle colours.
+- [ ] **The day's and the dusk's colours are measured, and those ship** — no source yet: the day and dusk cloud stills `~/Esposter/genshin-parity/tmp/day-clouds.png` and `dusk-clouds.png`, not yet re-measured for the shipped colours.
+- [ ] **The sky's dome is ported as the game draws it** — no source yet: `~/Esposter/genshin-parity/extracted/login-bytype-assets/Material/Enviro_Atmosphere_Layer_Mat.json`, not yet compared with the ported dome.
