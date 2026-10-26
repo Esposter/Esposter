@@ -100,7 +100,7 @@ Where a player's pack supplies no value, the body SHALL take the game's own valu
 
 ## Open
 
-- [ ] **Lumine's body draws without fog** — no source yet: `packages/genshin-engine/src/post/createPostPipeline.ts` applies the height fog to every pixel with depth below 1, the avatar's included (the design's own account), so no code path excludes the body and the requirement is not built as written.
+- [ ] **Lumine's body draws without fog** — no source yet: the post pipeline applies the height fog to every pixel with depth below 1, the avatar's included (the design's own account), so no code path excludes the body and the requirement is not built as written.
 - [ ] **A close-up of the body shows no haze in any sky state, at 3 metres** — no source yet: the evaluation of `createHeightFogNode` at the Windrise and login settings, which no test or script commits.
 - [ ] **The nose keeps a small mark at every light angle** — no source yet: the face map's two flank texels at its two ends are not read from the texture.
 - [ ] **A face with no face map is lit in full** — no source yet: the no-map branch of `createFaceShadeNode.ts` is not traced.
