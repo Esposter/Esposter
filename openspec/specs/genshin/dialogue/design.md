@@ -185,7 +185,7 @@ The reveal is timed off three lines of `~/Esposter.noindex/genshin-parity/captur
 - [ ] **The Parity trials for the line's place, the band's gradient and the pill's nudge** — no source yet: no committed run of these trials sits beside the snapshot.
 - [ ] **The recording's blur is sigma 0.641** — no source yet: the softness measure of `~/Esposter/genshin-parity/captures/yt-nWBqOXWZuFg.mp4` is not committed.
 - [ ] **The reply pill is 0.22 of black, the best of 0.15 to 0.45** — no source yet: `packages/genshin-interface/src/components/DialogueScreen/Index.vue` holds no 0.22 darkness, and the sweep is not committed.
-- [ ] **A talk's dialogs are the hundred numbered after its id** — contradicted by `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/TalkExcelConfigData_0.json` and `_1.json`: 1,773 talks whose first dialog resolves start outside their hundred.
+- [ ] **A talk's dialogs are the hundred numbered after its id** — contradicted by `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/TalkExcelConfigData_0.json`: 1,773 talks across both talk files start outside their hundred.
 - [ ] **The dialog table's talk title hash resolves to no text** — contradicted by `~/Esposter.noindex/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`: nine of the table's first 50,000 title hashes resolve in it.
 - [ ] **No carried quest's talk holds a gadget or mate-avatar line** — no source yet: 702 dialogs in `~/Esposter/genshin-parity/text/ExcelBinOutput/DialogExcelConfigData.json` hold a gadget or mate-avatar role, and the carried quests' talk ids are not matched to them in this pass.
 - [ ] **A black screen's dialog has a role id the character table does not hold** — no source yet: the character table was not searched for the role id.
