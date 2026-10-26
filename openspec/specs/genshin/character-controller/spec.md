@@ -103,7 +103,7 @@ The character SHALL climb any surface too steep to walk when it moves into it wi
 - **GIVEN** the character is climbing
 - **WHEN** jump is pressed
 - **THEN** it jumps off the wall
-- **AND** it climbs again once that jump ends (whose climb-jump clip, ClimbDashU, lasts 1.08 s)
+- **AND** it climbs again once that jump ends (`~/Esposter.noindex/genshin-parity/extracted/locomotion/Girl/locomotion.json`, whose climb-jump clip, ClimbDashU, lasts 1.08 s)
 
 #### Scenario: Drop or empty stamina lets go of the wall
 
@@ -137,13 +137,13 @@ The character SHALL swim in water deeper than it can wade, and SHALL drown when 
 
 - **GIVEN** the character is swimming and moving
 - **WHEN** sprint is pressed
-- **THEN** it makes a swim dash (whose swim-dash clip covers 3.6 m in a second)
+- **THEN** it makes a swim dash (`~/Esposter.noindex/genshin-parity/extracted/locomotion/Girl/locomotion.json`, whose swim-dash clip covers 3.6 m in a second)
 
 #### Scenario: Running out of stamina in water drowns the character
 
 - **GIVEN** the character is swimming
 - **WHEN** its stamina runs out
-- **THEN** it drowns (whose drowning clip, SwimDie, lasts 3 s)
+- **THEN** it drowns (`~/Esposter.noindex/genshin-parity/extracted/locomotion/Girl/locomotion.json`, whose drowning clip, SwimDie, lasts 3 s)
 - **AND** after a while it returns to where its stamina was last full on foot, with stamina refilled
 
 #### Scenario: Ground within wading depth stands the character up
@@ -184,7 +184,7 @@ The character and its party SHALL share one stamina pool that starts at 100, ref
 
 - **GIVEN** the pool holds at least 20 stamina
 - **WHEN** a sword's charged attack starts
-- **THEN** 20 stamina is spent
+- **THEN** 20 stamina is spent (`~/Esposter.noindex/cache/gcsim-v2.47.2/internal/template/character/stam.go`, lines 19 to 21)
 
 #### Scenario: Charged attack that cannot be paid does not start
 
@@ -200,13 +200,13 @@ The character and its party SHALL share one stamina pool that starts at 100, ref
 
 ### Requirement: Each body type moves by its own numbers
 
-Each character's speeds, heights and thresholds SHALL be those of its own body type, so that sprints and dashes cover different distances as the game's do.
+Each character's speeds, heights and thresholds SHALL be those of its own body type, so that sprints and dashes cover different distances as the game's do (`~/Esposter.noindex/genshin-parity/extracted/locomotion/Male/locomotion.json`, `~/Esposter.noindex/genshin-parity/extracted/locomotion/Loli/locomotion.json`).
 
 #### Scenario: Tall male covers more ground than short female
 
 - **GIVEN** a tall male and a short female each sprint for the same time
 - **WHEN** the distances are compared
-- **THEN** the tall male covers more ground (11.2 m over its dash clip, against the short female's 9.3 m)
+- **THEN** the tall male covers more ground (`~/Esposter.noindex/genshin-parity/extracted/locomotion/Male/locomotion.json`, 11.2 m over its dash clip, against the short female's 9.3 m in `~/Esposter.noindex/genshin-parity/extracted/locomotion/Loli/locomotion.json`)
 
 #### Scenario: Switching party character changes the numbers, not the place
 
@@ -289,6 +289,10 @@ A jump from the map SHALL place the character standing on the ground at the chos
 
 ## Open
 
-- [ ] **A part-way stick push walks as a light push does in the game** — no source yet: the wiki's Controls page (cached) binds the walk switch to Left Ctrl and says nothing about a stick's walk, and the stick's walk threshold is marked provisional in `packages/genshin-engine/src/locomotion/constants.ts`.
-- [ ] **A climb grips any surface too steep to walk, lets go on a drop, and stands the character on walkable ground at the top, as the game does** — no source yet: the wiki's Climbing page (cached) says a climbable surface is one that would not require hanging upside-down or nearly upside-down, and that running out of Stamina makes the character fall; it names no walk threshold, no drop and no top, and `Stamina.reference.ts` records the climb's start and cost only.
-- [ ] **A drowned character returns to where its stamina was last full on foot, as the game does** — no source yet for the "on foot" condition: the wiki's Fallen Character page (cached) says the character is "respawned where their stamina was last at maximum", with no on-foot condition, and no reference file records the drowning's return.
+- [ ] **The walk switch is the left Control, and a part-way stick push walks as a light push does in the game** — no source yet: the wiki's Controls page is not in the genshin-wiki cache, and the stick's walk threshold is marked provisional in.
+- [ ] **W, A and D move the character as the game's controls bind them** — no source yet: the wiki's Controls page is not in the cache, and the settings-controls clip is not read frame by frame.
+- [ ] **The glider opens from a jump only high enough above the ground, and a press plunges or closes it, as the game does** — no source yet: the wiki's Gliding page is not in the cache, and the height the glider opens at is provisional.
+- [ ] **A climb grips any surface too steep to walk, lets go on a drop or when stamina runs out, and stands the character on walkable ground at the top, as the game does** — no source yet: the wiki's Climbing page is not in the cache, and `packages/genshin-world/src/components/World/Character/Stamina.reference.ts` records the climb's start and cost only.
+- [ ] **Running out of stamina in water drowns the character, which then returns to where its stamina was last full on foot, as the game does** — no source yet: the wiki's Fallen Character page is not in the cache, and no reference file records the drowning's return.
+- [ ] **The pool refills on foot and in the air outside the glider, and never on a wall, in water or under the glider** — no source yet: `packages/genshin-world/src/components/World/Character/Stamina.reference.ts` records the refill rate but not the states it runs in.
+- [ ] **The party's Impetuous Winds cuts the stamina each spend takes** — no source yet: the Team Bonus page is not in the cache, and the cached gcsim source has no Impetuous Winds rule.
