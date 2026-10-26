@@ -120,12 +120,11 @@ The user's one batch, checked whenever convenient ([parity](../../specs/genshin/
 - [ ] **Nilou's plunge lands at 0.4 seconds** — [Nilou](../../specs/genshin/kits/nilou/design.md): her plunge lands at that point with poise 25, 100 and 150.
 - [ ] **Kyouka's water illusion explodes 35 frames after the cast** — [Kamisato Ayato](../../specs/genshin/kits/kamisato-ayato/design.md): a recording of the explosion lands about 0.58 seconds after the cast.
 - [ ] **The body moves as the game's does where nothing measures it** — [Character controller](../../specs/genshin/character-controller/design.md): glide 6 m/s and sink 2.5, glider at 3 m, plunge 30 m/s, step 0.4 m, slope 50°, radius 0.3 m, swim at 0.7, slide 4 m/s, still-water strokes.
-- [ ] **Nahida's plunges match Bennett's** — [Nahida](../../specs/genshin/kits/nahida/design.md): her plunge hits land at Bennett's frames with Bennett's poise, against her animation.
+- [ ] **Do Nahida's plunges land as her animation starts, at Bennett's frames?** — [Nahida](../../specs/genshin/kits/nahida/design.md): her plunge hits take Bennett's frames, and their poise is the wiki's rows.
 - [ ] **Dazzling Polyhedron stands 13 seconds** — [Faruzan](../../specs/genshin/kits/faruzan/design.md): the polyhedron still stands for its sixth Whirlwind Pulse at 13 seconds.
 - [ ] **Faruzan's poise matches her stand-ins** — [Faruzan](../../specs/genshin/kits/faruzan/design.md): the game's poise for her fully charged shot and plunges matches 20, 50 and 100.
 - [ ] **Yaoyao's fourth strike reaches 2.7 metres** — [Yaoyao](../../specs/genshin/kits/yaoyao/design.md): a recording hits an enemy 2.7 metres ahead, not 3.7.
 - [ ] **Yaoyao's plunge lands at 0.4 seconds** — [Yaoyao](../../specs/genshin/kits/yaoyao/design.md): a recording of her plunge lands at that point.
-- [ ] **Wanderer's high plunge matches Bennett's** — [Wanderer](../../specs/genshin/kits/wanderer/design.md): his high plunge lands at Bennett's frame with Bennett's poise.
 - [ ] **Aino's charged attack lands at 24 frames in 55, as the borrowed claymore charge does** — [Aino](../../specs/genshin/kits/aino/design.md): gcsim gives her no charged attack, so its frames and reach are Ayato's measured claymore charge.
 - [ ] **Are Lyney's plunge multipliers the table's entries 5 to 7?** — [Lyney](../../specs/genshin/kits/lyney/design.md): `lyneyKit.ts` takes Bennett's plunge frames, and the poise follows the bow class.
 - [ ] **Do Furina's Salon members neither drain nor attack with no enemy within 15 metres?** — [Furina](../../specs/genshin/kits/furina/design.md): gcsim always has a target, so `furinaKit.ts` skips the attack and drain with none, provisional.
