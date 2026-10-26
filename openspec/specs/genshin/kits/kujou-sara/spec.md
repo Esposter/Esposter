@@ -108,6 +108,3 @@ From Constellation 1, a Tengu Juurai hit that strikes an enemy SHALL cut a secon
 - **GIVEN** a cut was given within the last 3 seconds
 - **WHEN** another Tengu Juurai hit strikes an enemy
 - **THEN** no cut is given
-
-## Open
-
