@@ -102,6 +102,7 @@ describe(getFileOrganizationFindings, () => {
   test.each([
     ["a private arrow helper beside an exported function", "export const a = () => 0;\nconst b = () => 1;\n"],
     ["a private function declaration beside an exported arrow", "export const a = () => 0;\nfunction b() {}\n"],
+    ["a private function declaration beside a default export", "export default function a() {}\nfunction b() {}\n"],
   ])("reports %s as a function beside another", (_description, source) => {
     expect.hasAssertions();
 

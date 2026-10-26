@@ -11,7 +11,10 @@ import { checkIsFunctionInitializer } from "#src/services/sweeps/fileOrganizatio
 export const getTopLevelFunctions = (text: string): TopLevelFunction[] => {
   const functions: TopLevelFunction[] = [];
   for (const statement of parseSource(text).body) {
-    const declaration = statement.type === "ExportNamedDeclaration" ? statement.declaration : statement;
+    const declaration =
+      statement.type === "ExportNamedDeclaration" || statement.type === "ExportDefaultDeclaration"
+        ? statement.declaration
+        : statement;
     if (declaration?.type === "FunctionDeclaration" && declaration.id)
       functions.push({ isExported: checkIsExported(declaration), name: declaration.id.name });
     else if (declaration?.type === "VariableDeclaration")
