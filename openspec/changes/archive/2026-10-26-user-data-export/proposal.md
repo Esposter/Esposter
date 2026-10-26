@@ -2,7 +2,7 @@
 
 ## Why
 
-A person who uses the platform has a right to a copy of what the platform holds about them, and the same trigger that opens [account deletion](../../specs/user/account-deletion/design.md) opens this one: external people use the platform now. Export is also the check on deletion, since both need the same complete list of user-owned data, which the [user data inventory](../../specs/architecture/user-data-inventory/design.md) keeps.
+A person who uses the platform has a right to a copy of what the platform holds about them, and the same trigger that opens [account deletion](../../../specs/user/account-deletion/design.md) opens this one: external people use the platform now. Export is also the check on deletion, since both need the same complete list of user-owned data, which the [user data inventory](../../../specs/architecture/user-data-inventory/design.md) keeps.
 
 ## What Changes
 
@@ -18,4 +18,4 @@ A person who uses the platform has a right to a copy of what the platform holds 
 - `apps/web`: the request, status and link procedures, and the settings flow.
 - `apps/functions`: the archive build and the function that starts it.
 - `apps/infra`: the container, its lifecycle rule and the event subscription, in both environments.
-- Not included, as the [account deletion spec](../../specs/user/account-deletion/spec.md) states: other people's messages, the shared character-pack files, and messages in rooms the person has left.
+- Not included, as the [account deletion spec](../../../specs/user/account-deletion/spec.md) states: other people's messages, the shared character-pack files, and messages in rooms the person has left.

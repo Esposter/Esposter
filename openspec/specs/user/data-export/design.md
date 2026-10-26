@@ -1,6 +1,6 @@
 # Data export design
 
-The stores this reads are the ones in the [user data inventory](../../specs/architecture/user-data-inventory/design.md). An export that lists a store the inventory does not is a bug in the inventory, fixed there.
+The stores this reads are the ones in the [user data inventory](../../architecture/user-data-inventory/design.md). An export that lists a store the inventory does not is a bug in the inventory, fixed there.
 
 ## Decisions
 
