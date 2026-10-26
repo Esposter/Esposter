@@ -28,7 +28,7 @@ The Imaginarium Theater SHALL play the latest season that began before the curre
 
 ### Requirement: Each season's difficulties are ordered by level and carry a level floor
 
-A season SHALL play the difficulties its schedule names, ordered from the lowest level, and each difficulty SHALL carry a level floor of sixty for levels one and two and seventy for levels three to five (field `OHDBPBMODLP`).
+A season SHALL play the difficulties its schedule names, ordered from the lowest level, and each difficulty SHALL carry a level floor of sixty for levels one and two and seventy for levels three to five (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/RoleCombatDifficultyExcelConfigData.json`, field `OHDBPBMODLP`).
 
 #### Scenario: Difficulties are ordered from the lowest level
 
@@ -137,7 +137,7 @@ Every three Stellas earned in a run SHALL give one reward.
 
 ## Sources
 
-- [Imaginarium Theater](https://genshin-impact.fandom.com/wiki/Imaginarium_Theater), Genshin Impact Wiki: the Vigor and stage cast, the Blessing Level steps, the opening character's bonus and the Stella rewards. Quoted: "Every stage requires four stage members"; "Each character has two Vigor"; "Every character added to the Alternate Cast above the required number increases Blessing Level by 2"; "obtaining or upgrading any Brilliant Blessing increases Blessing Level by 1"; "The buff effects received by Special Guest Stars are increased by 100%"; "If the player possesses an Opening Character, their HP, ATK and DEF are increased by 20%"; "every 3 Stella obtained in a run" (its Stella Rewards table gives one card at 3, 6, 9 and 12).
+- [Imaginarium Theater](https://genshin-impact.fandom.com/wiki/Imaginarium_Theater), Genshin Impact Wiki: the page the open lines name. It is not on disk, so no quote from it is checked here.
 
 ## Open
 
