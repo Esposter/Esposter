@@ -23,7 +23,7 @@ flowchart TD
 
 ## The pipeline
 
-`pnpm -C scripts genshin:assets <step>` runs AnimeStudio's command-line tool (by default the CLI `genshin:animestudio:build` publishes on macOS, or under `~/Downloads/AnimeStudio` on Windows; `GENSHIN_ANIMESTUDIO_CLI` names a CLI kept elsewhere) over the installed game's blocks, with the game closed. On macOS every AnimeStudio run starts under the utility QoS clamp (`taskpolicy -c utility`) `scripts/src/services/machine/getUtilityClampedCommand.ts`, so a sweep of the blocks yields to the foreground apps; on Windows `city-areas` runs it at below-normal priority and the other steps at normal priority. Each step reads what the one before it wrote:
+`pnpm -C scripts genshin:assets <step>` runs AnimeStudio's command-line tool (by default the CLI `genshin:animestudio:build` publishes on macOS, or on Windows under an AnimeStudio folder in Downloads; `GENSHIN_ANIMESTUDIO_CLI` names a CLI kept elsewhere) over the installed game's blocks, with the game closed. On macOS every AnimeStudio run starts under the utility QoS clamp (`taskpolicy -c utility`) `scripts/src/services/machine/getUtilityClampedCommand.ts`, so a sweep of the blocks yields to the foreground apps; on Windows `city-areas` runs it at below-normal priority and the other steps at normal priority. Each step reads what the one before it wrote:
 
 ```mermaid
 flowchart LR
@@ -233,3 +233,4 @@ The CLI that exports the game's blocks is built on macOS by its own page, [Anime
 - [ ] **The Windrise statue and oak are placed and turned exact** — no source yet: no checked placement comparison exists for either.
 - **The oak is the tree kit fitted to its meshes** — `scripts/src/services/genshinAssets/fit/fitWindriseOak.ts` imports the engine's `TreeTube` and traces each bark submesh into tube records.
 - [ ] **The Windrise paving is placed exact** — no source yet: no checked placement comparison exists for the paving.
+- [ ] **The Windows default CLI sits in an AnimeStudio folder in Downloads** — no source yet: the cited file ~/Downloads/AnimeStudio is not on disk
