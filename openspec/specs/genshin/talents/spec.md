@@ -63,7 +63,7 @@ A refused upgrade SHALL leave the character, the wallet and the bag exactly as t
 
 ### Requirement: Talent levels need their ascension phases
 
-Talent level two SHALL need the second ascension phase, levels three and four the third, and each further pair of levels the phase after, so that levels nine and ten need the sixth (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`, where the rule holds in all 370 talent groups).
+Talent level two SHALL need the second ascension phase, levels three and four the third, and each further pair of levels the phase after, so that levels nine and ten need the sixth (the rule holds in all 370 talent groups of the table).
 
 #### Scenario: First-phase character levelled to one only
 
@@ -79,7 +79,7 @@ Talent level two SHALL need the second ascension phase, levels three and four th
 
 ### Requirement: Passives open at their ascension phase
 
-A passive SHALL be open once the character's ascension phase reaches the phase it opens at, and a passive SHALL have no level (the wiki's passive types, in `~/Esposter.noindex/cache/genshin-wiki/Category_Xilonen_Talents.json` and `Category_Traveler_Talents.json`, name the utility and the first and fourth ascension passives).
+A passive SHALL be open once the character's ascension phase reaches the phase it opens at, and a passive SHALL have no level (the wiki's passive types name the utility and the first and fourth ascension passives).
 
 #### Scenario: Utility passive open from the start
 
@@ -174,7 +174,7 @@ A talent's raised level SHALL be kept with the world, so that a reload shows it.
 
 ### Requirement: A talent plays at its own level plus its constellations' additions
 
-A talent SHALL play at the level the character holds for it plus the levels its constellations add, so that a level past ten comes from a constellation alone (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json` holds rows 11 to 15 in all 370 talent groups, none costing Mora).
+A talent SHALL play at the level the character holds for it plus the levels its constellations add, so that a level past ten comes from a constellation alone (the table holds rows 11 to 15 in all 370 talent groups, none costing Mora).
 
 #### Scenario: A constellation raises a talent above level ten
 
