@@ -63,5 +63,4 @@ flowchart LR
 - [ ] **The stick's rings and arcs are measured on the newest recording, which another phone draws 0.9 times as large** — no source yet: the recordings are not in `~/Esposter.noindex/genshin-parity/captures/`, so the 0.9 is not read back.
 - [ ] **The game's stick stands 87 units further in on a 19.5:9 recording and 95 on a 20:9 one** — no source yet: the recordings `HqQob991B8Q` and `quYgZtHhIa4` are not in `~/Esposter.noindex/genshin-parity/captures/`.
 - [ ] **The game's touch layout has no button to descend** — no source yet: no frame of `touch-controls-mobile.mkv` is recorded as showing the layout's buttons.
-- [ ] **`hud-world-pickup.png` shows the stick at rest** — no source yet: a measure of the stick's rest in `~/Esposter.noindex/genshin-parity/references/hud-world-pickup.png`, which was read only by eye.
 - [ ] **The held stick and the 16:9 recording's 199.5 and 172.5 units** — no source yet: the recordings `d9ZWM3cAlf0`, `HqQob991B8Q` and `quYgZtHhIa4` are not in `~/Esposter.noindex/genshin-parity/captures/`, so their frame counts and measures are not read back.
