@@ -20,7 +20,7 @@ flowchart TD
 - **A conical roof is a cone scaled to the footprint.** A unit cone is stretched to half the footprint's width and depth, so its base lies over the walls' outside edge on any rectangle, not only a square. Its apex stands the roof height above the walls.
 - **The result is merged** into one geometry, the parts freed once merged (`mergeGeometryParts`).
 
-The building is centred on the origin and stands on it, so a caller places it on the ground with its position (`packages/genshin-engine/src/kits/architecture/createBuildingGeometry.ts`). Natlan's tribes build with it, the People of the Springs' first building standing as a [building landmark](../region-buildings/design.md).
+The building is centred on the origin and stands on it, so a caller places it on the ground with its position (`packages/genshin-engine/src/kits/architecture/createBuildingGeometry.ts`). Natlan's tribes build with it (`packages/genshin-world/src/services/world/BuildingKitPartsMap.ts`), the People of the Springs' first building standing as a [building landmark](../region-buildings/design.md) (`packages/genshin-world/src/data/regions/natlan.json`).
 
 ## Key files
 
@@ -33,5 +33,4 @@ The building is centred on the origin and stands on it, so a caller places it on
 
 ## Open
 
-- [ ] **Natlan's tribes build with the kit** — no source yet: the Natlan export `~/Esposter/genshin-parity/extracted/natlan/`, not yet read for the tribes' building kit.
-- [ ] **The People of the Springs' first building stands as a building landmark** — no source yet: `packages/genshin-world/src/data/regions/natlan.json`, not yet read for the landmark's kind.
+- [ ] **Natlan's tribes build with the kit** — no source yet: the Natlan building meshes under `~/Esposter/genshin-parity/extracted/natlan/assets/Mesh/` (`Area_Nt_Build_*`) are not measured against the kit's box-and-cone form.
