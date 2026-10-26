@@ -4,9 +4,9 @@ Jahoda's kit as built: her three strikes, a fully charged shot, a collision and 
 
 ## Requirements
 
-### Requirement: Three strikes and fully charged shot deal no poise
+### Requirement: Three strikes and fully charged shot deal their poise
 
-Jahoda's three strikes and fully charged shot SHALL be her normal attacks, and none of their hits SHALL deal poise.
+Jahoda's three strikes and fully charged shot SHALL be her normal attacks, and their hits SHALL deal the poise the wiki gives them.
 
 #### Scenario: Strike chain plays three strikes in order
 
@@ -20,11 +20,11 @@ Jahoda's three strikes and fully charged shot SHALL be her normal attacks, and n
 - **WHEN** the player releases the shot
 - **THEN** the shot hits its target
 
-#### Scenario: Strikes and shot deal no poise
+#### Scenario: Strikes and shot deal their poise
 
 - **GIVEN** Jahoda is the character on the field
 - **WHEN** a strike or the fully charged shot lands
-- **THEN** it deals no poise
+- **THEN** it deals the poise the wiki gives it
 
 ### Requirement: Savvy Strategy drains its flask on a second press
 
