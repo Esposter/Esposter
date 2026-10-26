@@ -80,3 +80,4 @@ A screen image written by a pass SHALL NOT count as approved until its compariso
 
 ## Open
 
+- [ ] **The opening's run fails when a screen is skipped** — no source yet: no skip assertion in the opening's browser test was traced.
