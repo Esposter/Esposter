@@ -15,6 +15,7 @@
 ## 4. Boars and wildlife that fights back
 
 - [x] 4.1 Make a boar charge at a player in its way, and Sumeru's beasts fight back. Verify: a test named after 'A boar charges a player standing in its way'.
+- [ ] 4.2 When this change archives, rewrite the built wildlife spec's placement requirement, which says only the three fleeing kinds are placed, to admit the boar, and drop its scenario that an animal which does not flee is left alone. Verify: `pnpm exec openspec validate genshin-wildlife --strict --no-interactive` passes and the built spec no longer states that only the three kinds are placed.
 
 ## 5. Pets and each region's animals
 
