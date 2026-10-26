@@ -56,7 +56,7 @@ A weather change SHALL blend over nine seconds, eased in and out, starting from 
 
 - **GIVEN** a change is part way through blending
 - **WHEN** another change begins
-- **THEN** the new blend starts from where the first had reached
+- **THEN** the new blend starts from where the first had reached (`Index.vue` copies the blend it stands at into the new blend's start)
 
 #### Scenario: Weather at load set at once
 
@@ -104,7 +104,7 @@ A sandstorm SHALL tint the haze toward the colour of sand (where the sandstorm's
 
 ### Requirement: Rain splashes where it meets the ground
 
-Rain SHALL splash rings where it meets the ground or water, and snow and sand SHALL splash nothing.
+Rain SHALL splash rings where it meets the ground or water, and snow and sand SHALL splash nothing (`applyWeatherState.ts` gives splashes a density only for rain, and `createSplashMaterial.ts` draws them on the ground or water).
 
 #### Scenario: Rain splashing
 
@@ -126,7 +126,7 @@ A thunderstorm SHALL strike about 27.6 times a minute, each strike flashing the 
 
 - **GIVEN** a thunderstorm is on
 - **WHEN** a strike happens
-- **THEN** the sky flashes twice, the second dimmer than the first
+- **THEN** the sky flashes twice, the second dimmer than the first (`constants.ts` gives the second pulse 0.6 of the first's strength)
 
 #### Scenario: Bolt drops on the ground
 
@@ -142,7 +142,7 @@ A thunderstorm SHALL strike about 27.6 times a minute, each strike flashing the 
 
 ### Requirement: Wet ground darkens and glints in rain and storm
 
-Wet ground SHALL darken and glint in the sun while it rains or thunders, and SHALL stay dry in clear, cloudy, fog, snow and sandstorm weather (whose wetness is 0 for clear, cloudy and sandstorm and 1 for rain and thunderstorm).
+Wet ground SHALL darken and glint in the sun while it rains or thunders, and SHALL stay dry in clear, cloudy, fog, snow and sandstorm weather (whose wetness is 0 for clear, cloudy and sandstorm and 1 for rain and thunderstorm) (`constants.ts` sets fog's and snow's wetness to 0).
 
 #### Scenario: Ground wet in rain
 
@@ -158,7 +158,7 @@ Wet ground SHALL darken and glint in the sun while it rains or thunders, and SHA
 
 ### Requirement: Water's haze replaces the weather under the surface
 
-Under the water's surface the water's haze SHALL replace the weather's colour, and the fog the weather writes while the eye is under water SHALL be kept for surfacing.
+Under the water's surface the water's haze SHALL replace the weather's colour, and the fog the weather writes while the eye is under water SHALL be kept for surfacing (`updateUnderwaterFog.ts` writes the water's colour each frame under the surface, and saves the density the weather writes there for surfacing).
 
 #### Scenario: Under water
 
@@ -168,13 +168,8 @@ Under the water's surface the water's haze SHALL replace the weather's colour, a
 
 ## Open
 
-- [ ] **A change begun mid-blend starts from where the first reached** — no source yet: the mid-blend start was not read.
 - [ ] **The weather the world loads with is set at once** — no source yet: no load path was read.
-- [ ] **Rain splashes where it meets the ground, and snow and sand splash nothing** — no source yet: the splash rule was not read.
-- [ ] **A strike's second pulse is dimmer than the first** — no source yet: the intensities in `LIGHTNING_FLASH_PULSES` were not read.
 - [ ] **A bolt stands between one and six hundred metres from the eye** — no source yet: the code's `LIGHTNING_MIN_DISTANCE` is 150 m, not one, so the minimum is out of date.
-- [ ] **Snow and fog keep the ground dry** — no source yet: the snow and fog wetness values were not read.
-- [ ] **Under the water the water's haze replaces the weather's colour** — no source yet: the underwater fog update was not read.
 - [ ] **A weather change blends over nine seconds, eased in and out** — no source yet: a read of the turn in `~/Esposter/genshin-parity/captures/world-weather-turn.mkv`, the turn recording on disk, against the nine seconds.
 - [ ] **A weather change blends over nine seconds, eased in and out, from where the sky had reached** — no source yet: the same recording, `~/Esposter/genshin-parity/captures/world-weather-turn.mkv`, read for a change begun part way through another.
 - [ ] **A sandstorm tints the haze toward the colour of sand** — no source yet: the haze's colour in the Desert of Hadramaveth sandstorm clip, named in the design, which is not in `~/Esposter/genshin-parity/captures/`; the Weather page gives no colour.
