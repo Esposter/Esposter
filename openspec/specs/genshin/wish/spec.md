@@ -318,5 +318,5 @@ A schedule build SHALL fail when a banner names an item that joins none of the n
 
 ## Open
 
-- [ ] **The rule values match the game's published rules: the pity counts and soft-pity starts, Capturing Radiance's 3% and three second places, the four-star guarantee, Noelle on the eighth beginners' wish, the twenty wishes, the Acquaint Fates, the Starglitter and Stardust returns, and 160 Primogems per Fate** — no source yet: the wiki pages the design cites are not cached, and the dump holds no gacha table.
+- [ ] **The rule values match the game's published rules: Capturing Radiance's 3% and Noelle on the eighth beginners' wish** — no source yet: the Character Event Wish page gives Capturing Radiance's base probability as 0.018%, not a 3% share of the five-star, and the Beginners' Wish page is not in the cache; the dump holds no gacha table.
 - [ ] **The weapon event window (11:00 on 23 September to 18:00 on 13 October, at the Asia offset) and its two five-stars and five four-stars match the wiki's banner page** — no source yet: the banner page is not cached, and no fixture holding it was checked.
