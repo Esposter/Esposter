@@ -181,12 +181,12 @@ The reveal is timed off three lines of `~/Esposter.noindex/genshin-parity/captur
 
 - [ ] **The reveal is 30 milliseconds a character, at the PlayStation client's rate** — no source yet: the recording's character timing (1.79 to 1.81 frames a character at 60 frames a second, in `~/Esposter.noindex/genshin-parity/captures/yt-9I7XyJ2Z5RI-dialogue-npc-60.mp4`) was not re-measured here.
 - [ ] **The blurred-plate and bare-render columns of the Parity table** — no source yet: the parity snapshot holds only the softened column, and no run of the blurred or bare-render shots is committed.
-- [ ] **`dialogue-choices-replies` at 14.34% and FLIP 0.4678 on the softened shot** — no source yet: the parity snapshot holds 14.36% and FLIP 0.4588 for this reference, so the page's figures are not held.
+- [ ] **`dialogue-choices-replies` at 14.34% and FLIP 0.4678 on the softened shot** — contradicted by `scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md`: it holds 14.36% and FLIP 0.4588 for this reference.
 - [ ] **The Parity trials for the line's place, the band's gradient and the pill's nudge** — no source yet: no committed run of these trials sits beside the snapshot.
 - [ ] **The recording's blur is sigma 0.641** — no source yet: the softness measure of `~/Esposter.noindex/genshin-parity/captures/yt-nWBqOXWZuFg.mp4` is not committed.
 - [ ] **The reply pill is 0.22 of black, the best of 0.15 to 0.45** — no source yet: `packages/genshin-interface/src/components/DialogueScreen/Index.vue` holds no 0.22 darkness, and the sweep is not committed.
 - [ ] **A talk's dialogs are the hundred numbered after its id** — no source yet: `scripts/src/services/genshinText/readTalk.ts` holds no range of a hundred, and the numbering was not checked against the dump.
-- [ ] **The dialog table's talk title hash resolves to no text** — no source yet: the dialog rows' `talkTitleTextMapHash` was not looked up in the dump.
+- [ ] **The dialog table's talk title hash resolves to no text** — contradicted by `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/DialogExcelConfigData.json`: nine of its first 50,000 title hashes resolve in the English maps.
 - [ ] **No carried quest's talk holds a gadget or mate-avatar line** — no source yet: the carried quests' talks were not checked against those roles.
 - [ ] **A black screen's dialog has a role id the character table does not hold** — no source yet: the character table was not searched for the role id.
 - [ ] **The reply marks are named as the wiki's transcripts name the game's marks** — no source yet: game data or a snapshot that holds this behaviour
