@@ -23,7 +23,7 @@ The roof is a convex solid: its base closes it, so a camera under the eaves sees
 
 ## Region data
 
-`data/regions/inazuma.json` is the region's data in the shape `regionDataSchema` reads (`packages/genshin-world/src/services/world/readRegionData.ts`), holding Inazuma City's building. Each of its areas takes the game's own outline ([world map](../world-map/design.md), `packages/genshin-world/src/data/catalogue.json`, Inazuma's areas such as Kannazuka), so the region is fetched as the camera nears any of them (`packages/genshin-world/src/composables/useRegionData.ts`).
+`packages/genshin-world/src/data/regions/inazuma.json` is the region's data in the shape `regionDataSchema` reads (`packages/genshin-world/src/services/world/readRegionData.ts`), holding Inazuma City's building. Each of its areas takes the game's own outline ([world map](../world-map/design.md), `packages/genshin-world/src/data/catalogue.json`, Inazuma's areas such as Kannazuka), so the region is fetched as the camera nears any of them (`packages/genshin-world/src/composables/useRegionData.ts`).
 
 When the [parity](../parity/README.md) inventory draws Inazuma City's witness, the post-and-beam building stands in for the meshes named "Area_Dq_Build_", the Tenshukaku's tiers among them, and the terrain tiles are its ground (`packages/genshin-world/src/services/inazuma/InazumaPartFamilyMeshRegexMap.ts`; the names are in `~/Esposter/genshin-parity/extracted/inazuma/witness.json`, which holds `Area_Dq_Build_Common_LowHouse_01` and `BigWorldTerrain_` meshes); every other mesh there is named undrawn, kind by kind (`InazumaUndrawnMeshRegexMap`, `packages/genshin-world/src/services/inazuma/InazumaUndrawnMeshRegexMap.ts`).
 
@@ -41,5 +41,5 @@ When the [parity](../parity/README.md) inventory draws Inazuma City's witness, t
 
 ## Open
 
-- [ ] **The Tenshukaku's tiers are among the meshes named `Area_Dq_Build_`** — no source yet: no mesh name in the witness export is the Tenshukaku, and the cached wiki holds no Tenshukaku page. Checked: the genshin-wiki cache holds no Narukami Island: Tenshukaku page either, so the wiki's account of the tiers is unread.
+- [ ] **The Tenshukaku's tiers are among the meshes named `Area_Dq_Build_`** — no source yet: the cached wiki's Narukami Island: Tenshukaku page, which the genshin-wiki cache does not hold, and a mesh name in the witness export that is the Tenshukaku (none is there).
 - [ ] **Each area takes the game's own polygon as its outline** — no source yet: the catalogue's Inazuma outlines are not matched here to the game's dumped area polygons.
