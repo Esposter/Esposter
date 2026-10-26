@@ -6,7 +6,7 @@ Build order. Section 1 lands the row and the container the rest write to, sectio
 
 - [ ] 1.1 Add the `dataExports` table in `packages/db-schema`: id, user, status (queued, building, ready, failed), blob name, failure reason, ready time and expiry time. Test first in the schema test: a second active row for one user is refused.
       Verify: the test passes, and the migration from `db:gen` is checked by hand.
-- [ ] 1.2 Add the private `DataExports` container to `AzureContainer`, with a lifecycle rule that deletes blobs seven days after they are last written.
+- [x] 1.2 Add the private `DataExports` container to `AzureContainer`, with a lifecycle rule that deletes blobs seven days after they are last written.
       Verify: the container is listed in the infra container definitions as private, and the rule's age is the one the design states.
 
 ## 2. Archive
@@ -24,7 +24,7 @@ Build order. Section 1 lands the row and the container the rest write to, sectio
       Verify: the router test passes, and the publish happens once per new export.
 - [ ] 3.2 Add the `user.getDataExport` query and the `user.getDataExportLink` mutation. The link is a read SAS of fifteen minutes, issued only to the owner, only when the export is ready and unexpired. Test first: another person gets no link, and an expired export gets no link.
       Verify: the owner, other-person and expired cases pass.
-- [ ] 3.3 Point each environment's Event Grid subscription under `apps/infra` at the export's event type.
+- [x] 3.3 Point each environment's Event Grid subscription under `apps/infra` at the export's event type.
       Verify: both subscription files, dev and prod, name `AzureFunction.ExportUserData`.
 
 ## 4. Settings and sweep

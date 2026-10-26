@@ -27,6 +27,7 @@ Container names live in the `AzureContainer` enum (`packages/db-schema/src/model
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `AppAssets`                  | App-owned static assets, and the published game data under `genshin/data/` ([hosted game data](../../genshin/hosted-game-data/design.md))               |
 | `ClickerAssets`              | Clicker game save state (`{userId}/save`)                                                                                                               |
+| `DataExports`                | Data export archives, one blob per export id, deleted seven days after last write by a lifecycle rule                                                   |
 | `DeadLetter`                 | Event Grid dead-letter payloads plus their `archived/` and `quarantine/` copies → [Event Grid dead-letter](../../infra/eventgrid-dead-letter/design.md) |
 | `DungeonsAssets`             | Dungeons game save state (`{userId}/save`)                                                                                                              |
 | `MessageAssets`              | Message file attachments (`{roomId}/{fileId}\|{filename}`). Lifecycle policy tiers blobs Cool@30d → Cold@90d to cut storage cost                        |

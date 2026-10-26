@@ -3,6 +3,7 @@ import { z } from "zod";
 export enum AzureContainer {
   AppAssets = "app-assets",
   ClickerAssets = "clicker-assets",
+  DataExports = "data-exports",
   DeadLetter = "deadletter",
   DungeonsAssets = "dungeons-assets",
   GenshinAssets = "genshin-assets",

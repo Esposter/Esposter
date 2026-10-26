@@ -36,4 +36,13 @@ export const getStorageManagementPolicyRules = (
     name: "DeleteDeadLetter",
     type: azure_native.storage.RuleType.Lifecycle,
   },
+  {
+    definition: {
+      actions: { baseBlob: { delete: { daysAfterModificationGreaterThan: 7 } } },
+      filters: { blobTypes: ["blockBlob"], prefixMatch: [AzureContainer.DataExports] },
+    },
+    enabled: true,
+    name: "DeleteDataExports",
+    type: azure_native.storage.RuleType.Lifecycle,
+  },
 ];
