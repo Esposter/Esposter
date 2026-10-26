@@ -4,7 +4,7 @@ Build order. Section 1 lands the row and the container the rest write to, sectio
 
 ## 1. Row and container
 
-- [ ] 1.1 Add the `dataExports` table in `packages/db-schema`: id, user, status (queued, building, ready, failed), blob name, failure reason, ready time and expiry time. Test first in the schema test: a second active row for one user is refused.
+- [x] 1.1 Add the `dataExports` table in `packages/db-schema`: id, user, status (queued, building, ready, failed), blob name, failure reason, ready time and expiry time. Test first in the schema test: a second active row for one user is refused.
       Verify: the test passes, and the migration from `db:gen` is checked by hand.
 - [x] 1.2 Add the private `DataExports` container to `AzureContainer`, with a lifecycle rule that deletes blobs seven days after they are last written.
       Verify: the container is listed in the infra container definitions as private, and the rule's age is the one the design states.

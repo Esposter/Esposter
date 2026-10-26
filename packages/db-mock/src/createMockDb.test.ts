@@ -4,7 +4,7 @@ import { createMockDb } from "#src/createMockDb";
 import { SNAPSHOT_FILENAME } from "#src/services/constants";
 import { PGlite } from "@electric-sql/pglite";
 import { pg_trgm } from "@electric-sql/pglite/contrib/pg_trgm";
-import { accountsInAuth, schema, usersInAuth } from "@esposter/db-schema";
+import { accountsInAuth, dataExportsInUser, DataExportStatus, schema, usersInAuth } from "@esposter/db-schema";
 import { generateDrizzleJson, generateMigration } from "drizzle-kit/api-postgres";
 import { eq } from "drizzle-orm";
 import { readFile } from "node:fs/promises";
@@ -75,5 +75,21 @@ describe(createMockDb, () => {
     await db.delete(usersInAuth).where(eq(usersInAuth.id, userId));
 
     await expect(db.query.accountsInAuth.findMany({ where: { userId: { eq: userId } } })).resolves.toStrictEqual([]);
+  });
+
+  // A person has one export in flight at a time: the partial unique index refuses a second queued or building row for
+  // The same user, so a repeated request cannot start a second archive build
+  test("a second active data export for one user is refused", async () => {
+    expect.hasAssertions();
+
+    const userId = crypto.randomUUID();
+    await db
+      .insert(usersInAuth)
+      .values({ email: `${userId}@example.com`, emailVerified: false, id: userId, name: userId });
+    await db.insert(dataExportsInUser).values({ status: DataExportStatus.Queued, userId });
+
+    await expect(
+      db.insert(dataExportsInUser).values({ status: DataExportStatus.Building, userId }),
+    ).rejects.toMatchObject({ cause: { code: "23505", constraint: "dataExports_userId_status_unique" } });
   });
 });

@@ -50,6 +50,8 @@ import { friendsInSocial } from "#src/schema/social/friendsInSocial";
 import { socialSchema } from "#src/schema/social/socialSchema";
 import { azureContainerEnum, storageLedgerInStorage } from "#src/schema/storage/storageLedgerInStorage";
 import { storageSchema } from "#src/schema/storage/storageSchema";
+import { dataExportsInUser, dataExportStatusEnum } from "#src/schema/user/dataExportsInUser";
+import { userSchema } from "#src/schema/user/userSchema";
 
 export const schema = {
   accountsInAuth,
@@ -66,6 +68,8 @@ export const schema = {
   blocksInSocial,
   bookmarksInApp,
   callSessionsInMessage,
+  dataExportsInUser,
+  dataExportStatusEnum,
   friendRequestsInSocial,
   friendsInSocial,
   invitesInMessage,
@@ -110,6 +114,7 @@ export const schema = {
   storageTierEnum,
   threadFollowsInMessage,
   userAchievementsInAchievement,
+  userSchema,
   userSettingsInMessage,
   usersInAuth,
   userStatusEnum,

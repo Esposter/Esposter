@@ -1,0 +1,396 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "6613b018-8480-42b6-99a2-6043292e687f",
+  "prevIds": [
+    "3f96698a-9aea-44f8-ba36-ee83f8edeee7"
+  ],
+  "footprints": [
+    {
+      "statementType": "create_schema",
+      "statementTarget": [
+        "schema",
+        "user"
+      ],
+      "writes": [
+        "s|sch|user",
+        "n|sch|user",
+        "e|sch|user"
+      ]
+    },
+    {
+      "statementType": "create_enum",
+      "statementTarget": [
+        "enum",
+        "user",
+        "dataExportStatus"
+      ],
+      "writes": [
+        "s|enum|user.dataExportStatus",
+        "n|enum|user.dataExportStatus",
+        "e|enum|user.dataExportStatus",
+        "n|type|user.dataExportStatus"
+      ],
+      "reads": [
+        "n|sch|user"
+      ]
+    },
+    {
+      "statementType": "create_table",
+      "statementTarget": [
+        "table",
+        "user",
+        "dataExports"
+      ],
+      "writes": [
+        "s|tbl|user.dataExports",
+        "n|tbl|user.dataExports",
+        "e|tbl|user.dataExports",
+        "n|rel|user.dataExports",
+        "n|type|user.dataExports",
+        "n|rel|user.dataExports_pkey"
+      ],
+      "reads": [
+        "n|sch|user",
+        "n|enum|user.dataExportStatus"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "user",
+        "dataExports",
+        "dataExports_userId_status_unique"
+      ],
+      "writes": [
+        "s|idx|user.dataExports_userId_status_unique",
+        "n|idx|user.dataExports_userId_status_unique",
+        "e|idx|user.dataExports_userId_status_unique",
+        "n|rel|user.dataExports_userId_status_unique"
+      ],
+      "reads": [
+        "n|tbl|user.dataExports",
+        "n|sch|user",
+        "n|col|user.dataExports.userId"
+      ]
+    },
+    {
+      "statementType": "create_index",
+      "statementTarget": [
+        "index",
+        "user",
+        "dataExports",
+        "dataExports_userId_index"
+      ],
+      "writes": [
+        "s|idx|user.dataExports_userId_index",
+        "n|idx|user.dataExports_userId_index",
+        "e|idx|user.dataExports_userId_index",
+        "n|rel|user.dataExports_userId_index"
+      ],
+      "reads": [
+        "n|tbl|user.dataExports",
+        "n|sch|user",
+        "n|col|user.dataExports.userId"
+      ]
+    },
+    {
+      "statementType": "create_fk",
+      "statementTarget": [
+        "table",
+        "user",
+        "dataExports"
+      ],
+      "writes": [
+        "s|fk|user.dataExports.dataExports_userId_users_id_fkey",
+        "n|fk|user.dataExports.dataExports_userId_users_id_fkey",
+        "e|fk|user.dataExports.dataExports_userId_users_id_fkey",
+        "n|con|user.dataExports.dataExports_userId_users_id_fkey"
+      ],
+      "reads": [
+        "n|tbl|user.dataExports",
+        "n|sch|user",
+        "n|tbl|auth.users",
+        "n|sch|auth",
+        "n|col|user.dataExports.userId",
+        "n|col|auth.users.id",
+        "e|uniqueness|auth.users.id"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "name": "user",
+        "entityType": "schemas"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "user",
+        "name": "dataExports",
+        "isRlsEnabled": false,
+        "entityType": "tables"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "user",
+        "name": "dataExportStatus",
+        "values": [
+          "building",
+          "failed",
+          "queued",
+          "ready"
+        ],
+        "entityType": "enums"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "user",
+        "table": "dataExports",
+        "name": "createdAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "user",
+        "table": "dataExports",
+        "name": "deletedAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "user",
+        "table": "dataExports",
+        "name": "updatedAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "user",
+        "table": "dataExports",
+        "name": "blobName",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "user",
+        "table": "dataExports",
+        "name": "expiresAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "user",
+        "table": "dataExports",
+        "name": "failureReason",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "user",
+        "table": "dataExports",
+        "name": "id",
+        "type": "uuid",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "gen_random_uuid()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "user",
+        "table": "dataExports",
+        "name": "readyAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": false,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "user",
+        "table": "dataExports",
+        "name": "status",
+        "type": "dataExportStatus",
+        "typeSchema": "user",
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "user",
+        "table": "dataExports",
+        "name": "userId",
+        "type": "text",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": null,
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "user",
+        "table": "dataExports",
+        "name": "dataExports_userId_status_unique",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "userId",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": true,
+        "where": "\"status\" IN ('queued', 'building')",
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "user",
+        "table": "dataExports",
+        "name": "dataExports_userId_index",
+        "nameExplicit": true,
+        "columns": [
+          {
+            "value": "userId",
+            "isExpression": false,
+            "asc": true,
+            "nullsFirst": false,
+            "opclass": null
+          }
+        ],
+        "isUnique": false,
+        "where": null,
+        "with": "",
+        "method": "btree",
+        "concurrently": false,
+        "entityType": "indexes"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "user",
+        "table": "dataExports",
+        "name": "dataExports_userId_users_id_fkey",
+        "nameExplicit": false,
+        "columns": [
+          "userId"
+        ],
+        "schemaTo": "auth",
+        "tableTo": "users",
+        "columnsTo": [
+          "id"
+        ],
+        "onUpdate": "NO ACTION",
+        "onDelete": "CASCADE",
+        "entityType": "fks"
+      }
+    },
+    {
+      "op": "create",
+      "row": {
+        "schema": "user",
+        "table": "dataExports",
+        "name": "dataExports_pkey",
+        "columns": [
+          "id"
+        ],
+        "nameExplicit": false,
+        "entityType": "pks"
+      }
+    }
+  ]
+}
