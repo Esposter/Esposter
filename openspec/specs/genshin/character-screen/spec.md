@@ -29,7 +29,7 @@ The character screen SHALL open over the held world with C or from the Paimon me
 
 ### Requirement: Characters are listed across the top and chosen by name
 
-The screen SHALL list the player's characters across its top, each named, and SHALL show the chosen character's name at its top left. The reference lays them out so.
+The screen SHALL list the player's characters across its top, each named, and SHALL show the chosen character's name at its top left. The reference lays them out so (`~/Esposter/genshin-parity/comparisons/character-attributes.png`).
 
 #### Scenario: Choosing a character in the top row
 
@@ -47,7 +47,7 @@ The screen SHALL list the player's characters across its top, each named, and SH
 
 ### Requirement: Six tabs down the left in the game's order
 
-The screen SHALL show six tabs down its left in the game's order, Attributes, Weapons, Artifacts, Constellation, Talents and Profile, each named in the game's own words, with the open tab lit.
+The screen SHALL show six tabs down its left in the game's order, Attributes, Weapons, Artifacts, Constellation, Talents and Profile, each named in the game's own words, with the open tab lit (`~/Esposter/genshin-parity/comparisons/character-constellation-tabs.png`; the words are in `~/Esposter/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`).
 
 #### Scenario: Attributes is lit when the screen opens
 
@@ -71,7 +71,7 @@ The Attributes tab SHALL show the character's name, its level over its phase's c
 
 - **GIVEN** the Attributes tab is open for a character
 - **WHEN** the panel is read
-- **THEN** Max HP, ATK, DEF, Elemental Mastery and Max Stamina are shown as whole numbers
+- **THEN** Max HP, ATK, DEF, Elemental Mastery and Max Stamina are shown as whole numbers (`~/Esposter/genshin-parity/comparisons/character-attributes.png`)
 
 #### Scenario: Advanced attributes shown as percentages
 
@@ -83,7 +83,7 @@ The Attributes tab SHALL show the character's name, its level over its phase's c
 
 - **GIVEN** a character is at its phase's level cap
 - **WHEN** the Attributes tab is shown
-- **THEN** its level is shown over that cap
+- **THEN** its level is shown over that cap (the reference shows it over the cap as `~/Esposter/genshin-parity/comparisons/character-attributes.png`)
 
 ### Requirement: Weapons, Artifacts, Constellation and Talents panels show the character's own record
 
@@ -128,7 +128,7 @@ The screen SHALL leave out any label whose game text has not been decoded yet, r
 
 ## Open
 
-- [ ] **The Paimon menu's Character entry opens the screen** — partly settled: the wiki's Character Menu page, cited in design.md, names C as its key, but says nothing of the Paimon menu's Character entry, which no recording or page checks against this build.
+- [ ] **C and the Paimon menu open the character screen** — no source yet: no recording or wiki page of the C key or the Paimon menu's Character entry is checked against this build, and the cached Character Menu wiki page is not on disk.
 - [ ] **The layout is the reference's** — no source yet: the 21:9 reference frame at 154 seconds is not saved as a still, so its places cannot be checked.
 - [ ] **The Attributes tab's values are the game's sums** — no source yet: at the same state the reference's base five differ from the build's (`~/Esposter/genshin-parity/comparisons/character-attributes.png`), so no source holds the sums.
 - [ ] **The advanced group is shown as percentages to one place** — no source yet: the game holds that group behind Details, so no reference frame shows its values.
