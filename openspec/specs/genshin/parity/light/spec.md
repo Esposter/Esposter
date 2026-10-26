@@ -94,4 +94,4 @@ The haze over the stone SHALL take colours solved together with the light, while
 ## Open
 
 - [ ] **The solve hands back the light it was shown, within a small margin** — no source yet: no test or run in the repository compares the returned light with the known one.
-- [ ] **The cloud sea keeps the colours measured where it shows** — contradicted by packages/genshin-world/src/services/login/scene/LoginSkyStateMap.ts: day's and dusk's cloud colours are solved by spread against the recordings.
+- [ ] **The cloud sea keeps the colours measured where it shows** — contradicted by `packages/genshin-world/src/services/login/scene/LoginSkyStateMap.ts`: day's and dusk's cloud colours are solved by spread against the recordings.
