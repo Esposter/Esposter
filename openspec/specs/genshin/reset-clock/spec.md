@@ -8,7 +8,7 @@ The world's one reset clock: the server's 04:00 in UTC+8, on which every daily, 
 
 ### Requirement: The world reads every reset on the server's clock
 
-The world SHALL read every daily, weekly and monthly reset at 04:00 in Asia/Shanghai, whatever time zone the reader keeps (`packages/genshin-world/src/services/time/constants.ts:2,4`; `computeLastDailyReset.test.ts:10`).
+The world SHALL read every daily, weekly and monthly reset at 04:00 in Asia/Shanghai, whatever time zone the reader keeps.
 
 #### Scenario: a reader in another zone sees the daily reset at the server's 04:00
 
@@ -19,7 +19,7 @@ The world SHALL read every daily, weekly and monthly reset at 04:00 in Asia/Shan
 
 ### Requirement: The game day turns at the daily reset
 
-The game day SHALL turn at the daily reset, so a moment before 04:00 on the server's clock belongs to the day before (`packages/genshin-world/src/services/time/computeGameDay.ts:5`).
+The game day SHALL turn at the daily reset, so a moment before 04:00 on the server's clock belongs to the day before.
 
 #### Scenario: a moment after the day's 04:00 reset belongs to that day
 
@@ -35,7 +35,7 @@ The game day SHALL turn at the daily reset, so a moment before 04:00 on the serv
 
 ### Requirement: The last daily reset is the 04:00 at or before a moment
 
-The last daily reset SHALL be the 04:00 on the server's clock at or before the moment read (`packages/genshin-world/src/services/time/computeLastDailyReset.test.ts:23,31`).
+The last daily reset SHALL be the 04:00 on the server's clock at or before the moment read.
 
 #### Scenario: the instant just before 04:00 belongs to the previous day
 
@@ -51,7 +51,7 @@ The last daily reset SHALL be the 04:00 on the server's clock at or before the m
 
 ### Requirement: The next daily reset is the 04:00 a day after the last
 
-The next daily reset SHALL be the 04:00 a day after the last daily reset (`packages/genshin-world/src/services/time/computeNextDailyReset.test.ts:10,16`).
+The next daily reset SHALL be the 04:00 a day after the last daily reset.
 
 #### Scenario: the next daily reset is the 04:00 a day after the last one
 
@@ -67,7 +67,7 @@ The next daily reset SHALL be the 04:00 a day after the last daily reset (`packa
 
 ### Requirement: The week resets on Monday at 04:00 on the server's clock
 
-The week SHALL begin at the Monday 04:00 on the server's clock at or before the moment read (`packages/genshin-world/src/services/time/computeLastWeeklyReset.test.ts:10,17,25`).
+The week SHALL begin at the Monday 04:00 on the server's clock at or before the moment read.
 
 #### Scenario: the weekly reset falls on Monday's 04:00
 
@@ -89,7 +89,7 @@ The week SHALL begin at the Monday 04:00 on the server's clock at or before the 
 
 ### Requirement: The next weekly reset is the Monday 04:00 a week after
 
-The next weekly reset SHALL be the Monday 04:00 seven days after the last weekly reset (`packages/genshin-world/src/services/time/computeNextWeeklyReset.test.ts:10,16`).
+The next weekly reset SHALL be the Monday 04:00 seven days after the last weekly reset.
 
 #### Scenario: the next weekly reset is the Monday 04:00 after the week's reset
 
@@ -105,7 +105,7 @@ The next weekly reset SHALL be the Monday 04:00 seven days after the last weekly
 
 ### Requirement: The month resets on the first at 04:00 on the server's clock
 
-The month SHALL begin at the first of the month's 04:00 on the server's clock at or before the moment read (`packages/genshin-world/src/services/time/computeLastMonthlyReset.test.ts:10,17`).
+The month SHALL begin at the first of the month's 04:00 on the server's clock at or before the moment read.
 
 #### Scenario: the monthly reset falls on the first at 04:00
 
@@ -121,7 +121,7 @@ The month SHALL begin at the first of the month's 04:00 on the server's clock at
 
 ### Requirement: The next monthly reset is the first of the next month at 04:00
 
-The next monthly reset SHALL be the first of the following month at 04:00 on the server's clock (`packages/genshin-world/src/services/time/computeNextMonthlyReset.test.ts:10,16`).
+The next monthly reset SHALL be the first of the following month at 04:00 on the server's clock.
 
 #### Scenario: the next monthly reset is the first of the next month at 04:00
 
@@ -137,7 +137,7 @@ The next monthly reset SHALL be the first of the following month at 04:00 on the
 
 ### Requirement: The enemies' respawn check reads the world clock
 
-The enemies SHALL check whether a defeated camp member is back against the world clock, so a camp with an elite comes back at the server's daily reset (`packages/genshin-world/src/components/World/Enemies/Index.vue:66`).
+The enemies SHALL check whether a defeated camp member is back against the world clock, so a camp with an elite comes back at the server's daily reset.
 
 #### Scenario: an elite camp's member stays down until the server's reset arrives
 
