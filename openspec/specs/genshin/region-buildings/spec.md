@@ -129,4 +129,5 @@ A region whose data has not loaded SHALL load its ground and its capital when th
 ## Open
 
 - [ ] **Each capital stands at the place its city's waypoints give in the game's data** — no source yet: the waypoint rows the places are read from are not saved or checked here.
+- [ ] **A building's parts take the game's palette colours** — no source yet: only the published palette keys are checked (`packages/genshin-world/src/generated/gameDataLock.json`), not the colours they hold.
 - [ ] **Capitals sit in the game's coordinates, Inazuma east of Liyue and Fontaine to its north-west** — no source yet: the map positions in `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/CityConfigData.json` are not yet read into the axis convention.
