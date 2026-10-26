@@ -99,6 +99,5 @@ Ley line outcrops SHALL not be placed, fought or claimed in the world yet.
 - [ ] **The Blossom of Revelation gives Character EXP materials, and the Blossom of Wealth gives Mora** — no source yet: the refresh rows' reward previews do not resolve to item names in the dump.
 - [ ] **Each kind starts at the lowest numbered place of a drawn section** — no source yet: `computeDailyOutcrops` draws from every fitted place, and no section first-place step is found in the code.
 - [ ] **A claimed outcrop moves to the next place its place names** — no source yet: `computeNextOutcropPlace` takes the nearest free fitted place, and no place-chain link is read.
-- [ ] **Each region's Blossom of Revelation and Blossom of Wealth is read from the game's tables into genshin-world** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **Each region's ley line offers two outcrop kinds** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **Each kind opens at the Adventure Rank its game table gives, and in every region except Mondstadt and Liyue it also needs a nation's area unlocked** — no source yet: game data or a snapshot that holds this behaviour
