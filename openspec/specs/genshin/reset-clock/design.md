@@ -1,6 +1,6 @@
 # Reset clock
 
-Every daily, weekly and monthly reset in the world is read off one server clock, the Asia server's, UTC+8, where the daily reset is at 04:00, the weekly reset is Monday at 04:00 and the monthly reset is the first at 04:00 (`packages/genshin-world/src/services/time/constants.ts:2-8`; the game's own scoin refresh row is at 04:00:00 in `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/BlossomRefreshExcelConfigData.json`). One module in `packages/genshin-world/src/services/time/` owns the zone, the hour, and the weekday and day constants, and every system reads its functions rather than a copy of them.
+Every daily, weekly and monthly reset in the world is read off one server clock, the Asia server's, UTC+8, where the daily reset is at 04:00, the weekly reset is Monday at 04:00 and the monthly reset is the first at 04:00 (`packages/genshin-world/src/services/time/constants.ts:2-8`). One module in `packages/genshin-world/src/services/time/` owns the zone, the hour, and the weekday and day constants, and every system reads its functions rather than a copy of them.
 
 ## How it works
 
@@ -74,16 +74,9 @@ flowchart TD
 - The week's reset times are `computeLastWeeklyReset` and `computeNextWeeklyReset`, and the day's and month's are their pairs in the table above. The mining outcrop's respawn rule is in `checkIsMiningOutcropStanding`, and the game's zone, day start hour and reset days are the constants in `services/time/constants.ts`.
 - Gathering's overworld ingredients respawn at the server's midnight, a separate moment kept in the gathering rules and not a reset, so it is not moved into this module.
 
-## Sources
-
-- [Reset](https://genshin-impact.fandom.com/wiki/Reset), Genshin Impact Wiki: the daily reset at 04:00 server time, the same clock this module reads.
-- [Daily Reset](https://genshin-impact.fandom.com/wiki/Daily_Reset), Genshin Impact Wiki: the weekly reset on Monday at 04:00.
-- [Paimon's Bargains](https://genshin-impact.fandom.com/wiki/Paimon%27s_Bargains), Genshin Impact Wiki: the monthly reset on the first, which the bargains' month counts from.
-- [Mining Outcrop](https://genshin-impact.fandom.com/wiki/Mining_Outcrop), Genshin Impact Wiki: the respawn at 06:00, recorded here as the divergence the world does not follow.
-
 ## Open
 
-- [ ] **The daily reset itself is at 04:00 on the Asia server's clock** — no source yet: the dump's `BlossomRefreshExcelConfigData.json` holds 04:00:00 for a refresh, not the reset, and the wiki's Reset page is not in `~/Esposter.noindex/cache/genshin-wiki/`.
+- [ ] **The daily reset itself is at 04:00 on the Asia server's clock** — no source yet: the dump's `BlossomRefreshExcelConfigData.json` holds 04:00:00 for a refresh, not the reset, and the wiki's Reset page is not in the local wiki cache.
 - [ ] **The weekly reset is Monday at 04:00** — no source yet: no weekly-reset row was found in the dump, and the wiki's Daily Reset page is not cached.
 - [ ] **The monthly reset is the first at 04:00** — no source yet: the dump's shop tables were not opened for this rule, and the wiki's Paimon's Bargains page is not cached.
 - [ ] **The world keeps 04:00 where the wiki gives the mining respawn at 06:00** — no source yet: the dump's `BlossomRefreshExcelConfigData.json` holds a 06:00:00 refresh (`BLOSSOM_REFRESH_CRYSTAL`), and whether it is the mining respawn was not checked; the wiki's Mining Outcrop page is not cached.
