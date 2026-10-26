@@ -46,7 +46,7 @@ flowchart TD
 - **A locked statue is an activation in reach.** Each Statue of The Seven whose landmark is not yet unlocked is an `Activate` row named by its statue, and F on it unlocks it; an unlocked statue has no row ([map unlocking](../map-unlocking/design.md)) (`packages/genshin-world/src/services/statue/computeStatueInteractables.ts`, see Open).
 - **The stand-ins.** `World/Interactables` draws each drop as a small sphere and each resident as the locomotion capsule every body stands in as until its own is measured, one instanced mesh per kind rewritten only when the list changes (`packages/genshin-world/src/components/World/Interactables/Index.vue`). A witness render draws none (see Open).
 - **The held F repeats every 0.45 seconds.** The interval is read off three pick-ups 27 frames apart in `~/Esposter/genshin-parity/captures/world-pickup.mkv` from 38.5 to 39.6 seconds; a held F rather than a tap there would confirm it (`packages/genshin-world/src/services/interaction/constants.ts`, see Open).
-- **The list's row count and reach are best estimates.** No published source shows either: a pile of more things than the list has rows shows that many rows, and a thing's prompt first shows at the reach from the body. Both values live in `packages/genshin-world/src/services/interaction/constants.ts` (`packages/genshin-world/src/services/interaction/constants.ts`).
+- **The list's row count and reach are best estimates.** No published source shows either: a pile of more things than the list has rows shows that many rows, and a thing's prompt first shows at the reach from the body. Both values live in `packages/genshin-world/src/services/interaction/constants.ts`.
 
 ## Parity
 
