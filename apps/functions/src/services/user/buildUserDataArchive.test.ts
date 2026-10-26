@@ -29,6 +29,7 @@ import {
   MessageMetadataType,
   MessageType,
   postsInPost,
+  resourcePublicationsInResource,
   ResourceType,
   resourcesInResource,
   resourceWorkingAssetsInResource,
@@ -352,6 +353,37 @@ describe(buildUserDataArchive, () => {
 
     // A search row stores no time, so the exact shape leaves one out
     expect(readEntryJson(entries, "searches.json")).toStrictEqual([{ filters: [], query: message, roomId: room.id }]);
+  });
+
+  test("writes a published resource's publication metadata, and none for a resource not published", async () => {
+    expect.hasAssertions();
+
+    const userId = crypto.randomUUID();
+    const blobName = `${crypto.randomUUID()}.zip`;
+    await mockDb.insert(usersInAuth).values(createUser(userId));
+    const publishedResource = takeOne(
+      await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Blueprint, userId }).returning(),
+    );
+    const unpublishedResource = takeOne(
+      await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Blueprint, userId }).returning(),
+    );
+    const publication = takeOne(
+      await mockDb
+        .insert(resourcePublicationsInResource)
+        .values({ publishedContentVersion: 3, publishVersion: 2, resourceId: publishedResource.id })
+        .returning(),
+    );
+
+    await buildUserDataArchive(userId, blobName);
+    const entries = readArchiveEntries(blobName);
+
+    // The publication is the draft version it was taken at and its time, both as the row stores them
+    expect(readEntryJson(entries, `resources/${publishedResource.id}/publications.json`)).toStrictEqual({
+      publishedAt: publication.publishedAt,
+      publishedContentVersion: 3,
+      publishVersion: 2,
+    });
+    expect(Object.keys(entries)).not.toContain(`resources/${unpublishedResource.id}/publications.json`);
   });
 
   test("reads an attachment as a stream, never into a buffer", async () => {
