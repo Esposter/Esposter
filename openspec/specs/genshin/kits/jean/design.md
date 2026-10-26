@@ -19,11 +19,10 @@ Jean's kit is its record and one behaviour module, `createJeanKitBehaviour`, on 
 ## Open
 
 - [ ] **Jean's plunges reach 1, 3 and 5 metres** — no source yet: gcsim has no plunge file for her.
-- [ ] **Jean's plunges carry the wiki's poise: 25 for the collision, 100 low and 150 high** — no source yet: the cached Favonius Bladework rows (rows 7 to 9) are not checked against the kit's built data.
+- [ ] **Jean's plunges carry the wiki's poise: 25 for the collision, 100 low and 150 high** — contradicted by `packages/genshin-world/src/data/kits/jean.json`: its plunges hold no poise at all.
 - [ ] **Gale Blade's press and hold plays a hold level from one second** — no source yet: the wiki's text on the short hold is not read against gcsim's one-second gate (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/jean/skill.go` line 45).
 - [ ] **Gale Blade's 20 stamina a second drains while its skill is held, at the wiki's rate** — no source yet: the wiki's text on the hold is not read against the kit's drain.
 - [ ] **Constellation 6's 35% DMG Reduction, its 10 seconds and its 3 strikes** — no source yet: gcsim leaves Constellation 6 unimplemented (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/jean/cons.go` line 63), and the cached wiki category gives Constellation 6 only its title, Lion's Fang, Fair Protector of Mondstadt.
-- [ ] **The burst's 80 energy is spent at `burst.go` line 129** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/jean/burst.go`: line 128 spends energy, line 129 sets a 20-second cooldown.
 
 ## Not built
 
