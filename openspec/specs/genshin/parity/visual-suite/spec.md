@@ -39,7 +39,7 @@ The opening's run SHALL play the whole opening, including the login's flight, an
 - **GIVEN** the opening's run
 - **WHEN** it plays the opening
 - **THEN** every handoff between screens is checked
-- **AND** the run fails if a screen is skipped on the way (`Index.browser.test.ts` asserts each splash, the login's title and prompt, the marks and the finish in turn)
+- **AND** the run fails if a screen is skipped on the way
 
 ### Requirement: A moving screen is held still through its fixture's still state
 
