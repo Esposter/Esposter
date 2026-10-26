@@ -30,7 +30,7 @@ The hosted game data SHALL hold one strongbox record per set the Mystic Offering
 
 ### Requirement: Strongbox Roll
 
-A strongbox SHALL hold one piece of its chosen set, rolled as an artifact of five stars through the artifact roll.
+A strongbox SHALL hold one random piece of its chosen set, rolled as an artifact of five stars through the artifact roll.
 
 #### Scenario: a strongbox rolls a piece of its chosen set at five stars
 
@@ -85,8 +85,3 @@ The Mystic Offering's words SHALL come from the game's text by their text ids.
 - **GIVEN** the English game text
 - **WHEN** the offering's tip is filled with three artifacts of five stars
 - **THEN** the tip names three artifacts and five stars
-
-## Open
-
-- [ ] **the Mystic Offering opens at Adventure Rank 45** — no source yet: the unlock in the game's data, since the dump's tables do not hold the gate and the wiki's Mystic Offering page is not in the cache.
-- [ ] **a strongbox rolls a random piece of the chosen set** — no source yet: the wiki's Artifact Strongbox page, which is not in the cache, or a recording of a roll.
