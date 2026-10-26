@@ -10,7 +10,6 @@ export const createRecordingGcsimKitCandidateWriter = (
   addFrames: () => undefined,
   addHit: () => undefined,
   addNoActionFileRule: () => undefined,
-  addNoPoiseRule: () => undefined,
   toFile: (name) => name,
 });
 
