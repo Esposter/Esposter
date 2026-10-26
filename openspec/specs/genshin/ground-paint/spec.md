@@ -138,4 +138,3 @@ A region whose base maps are not exported SHALL keep its layer colours unpainted
 - [ ] **No grass blade grows on earth, rock, sand or path** — no source yet: no vegetation placement check is cited here.
 - [ ] **Flowers grow only where the weights are nearly all grass** — no source yet: no scatter placement check is cited here.
 - [ ] **The layer field is fitted from the layer the game's tiles paint each four-metre cell** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The layers' weights are solved per vertex in the terrain's worker** — no source yet: game data or a snapshot that holds this behaviour
