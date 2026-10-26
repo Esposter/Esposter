@@ -12,7 +12,7 @@ Ifa's three normal attacks and charged attack SHALL play outside her Nightsoul B
 
 - **GIVEN** Ifa is the character on the field and outside her Nightsoul Blessing
 - **WHEN** the player presses the attack button repeatedly
-- **THEN** her three normal attacks play in order (`attack.go` line 18)
+- **THEN** her three normal attacks play in order (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/ifa/attack.go` line 18)
 
 #### Scenario: The charged attack costs 50 stamina
 
@@ -29,8 +29,8 @@ Ifa's low plunge and its collision SHALL play outside her Nightsoul Blessing wit
 
 - **GIVEN** Ifa is in the air outside her Nightsoul Blessing
 - **WHEN** the player plunges
-- **THEN** the low plunge hits 38 frames into its 71-frame animation (`plunge.go` lines 17 and 22)
-- **AND** its collision lands 32 frames in as a circle of 1.5 metres (`plunge.go` lines 18 and 88)
+- **THEN** the low plunge hits 38 frames into its 71-frame animation (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/ifa/plunge.go` lines 17 and 22)
+- **AND** its collision lands 32 frames in as a circle of 1.5 metres (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/ifa/plunge.go` lines 18 and 88)
 
 ### Requirement: Provisional high plunge
 
@@ -41,7 +41,7 @@ Ifa's high plunge SHALL take gcsim's High_Plunge circle as its reach, and its ti
 - **GIVEN** Ifa is in the air
 - **WHEN** the player plunges from a height
 - **THEN** the hit lands at frame 0 of a 71-frame animation
-- **AND** its reach is a circle of 3.5 metres on her body, as gcsim's `High_Plunge` hitbox gives it (`config.yml` lines 102 to 105)
+- **AND** its reach is a circle of 3.5 metres on her body, as gcsim's `High_Plunge` hitbox gives it (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/ifa/config.yml` lines 102 to 105)
 
 ### Requirement: Compound Sedation Field's burst hit
 
@@ -51,7 +51,7 @@ Compound Sedation Field, Ifa's burst, SHALL deal an area hit on the primary targ
 
 - **GIVEN** Ifa has 60 energy
 - **WHEN** the player casts Compound Sedation Field
-- **THEN** its area hit lands on the primary target (`burst.go` line 57)
+- **THEN** its area hit lands on the primary target (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/ifa/burst.go` line 57)
 - **AND** 60 energy is spent (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`, group 11339 index 3)
 - **AND** the burst cools for 15 seconds (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`, group 11339 index 2)
 
@@ -80,7 +80,7 @@ Ifa's skill SHALL start its 7.5-second cooldown when pressed (`~/Esposter.noinde
 
 ### Requirement: Second constellation counts the party's points above 60 three times over
 
-From her second constellation, with her first ascension, the party's Nightsoul points above 60 SHALL count three times over toward Rescue Essentials, and the cap SHALL rise by 50 to 200 points. The rule is gcsim's (`internal/characters/ifa/cons.go`, lines 29 to 45). The in-game text of this constellation is not read: the wiki's Constellation table lists only levels 1, 3 and 6, and the dump's talent rows were not decoded for it.
+From her second constellation, with her first ascension, the party's Nightsoul points above 60 SHALL count three times over toward Rescue Essentials, and the cap SHALL rise by 50 to 200 points. The rule is gcsim's (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/ifa/cons.go`, lines 29 to 45). The in-game text of this constellation is not read: the wiki's Constellation table lists only levels 1, 3 and 6, and the dump's talent rows were not decoded for it.
 
 #### Scenario: Constellation 2 counts 80 party points as 140
 
@@ -96,7 +96,7 @@ From her second constellation, with her first ascension, the party's Nightsoul p
 
 ### Requirement: Below her second constellation the party's points count once
 
-Below her second constellation the party's points above 60 SHALL count once, and the cap SHALL stay at 150 (`cons.go` lines 29 to 31).
+Below her second constellation the party's points above 60 SHALL count once, and the cap SHALL stay at 150 (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/ifa/cons.go` lines 29 to 31).
 
 #### Scenario: Below her second constellation the points above 60 count once
 
@@ -106,7 +106,7 @@ Below her second constellation the party's points above 60 SHALL count once, and
 
 ### Requirement: Fourth constellation adds 100 Elemental Mastery for 15 seconds after her burst
 
-From constellation 4, Ifa SHALL gain 100 Elemental Mastery for 15 seconds when her burst starts (`cons.go` lines 52 to 56). Her wind current's three extra seconds are not built.
+From constellation 4, Ifa SHALL gain 100 Elemental Mastery for 15 seconds when her burst starts (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/ifa/cons.go` lines 52 to 56). Her wind current's three extra seconds are not built.
 
 #### Scenario: A burst at constellation 4 adds the Elemental Mastery
 
@@ -122,7 +122,7 @@ From constellation 4, Ifa SHALL gain 100 Elemental Mastery for 15 seconds when h
 
 ### Requirement: Skill press enters the Nightsoul Blessing
 
-Ifa's skill press SHALL enter her Nightsoul Blessing with 80 Nightsoul points, which drain eight a second, when she is not in it, and SHALL leave the blessing when she is (`skill.go` lines 67, 99 to 100 and 106 to 110). Neither press SHALL deal a hit yet.
+Ifa's skill press SHALL enter her Nightsoul Blessing with 80 Nightsoul points, which drain eight a second, when she is not in it, and SHALL leave the blessing when she is (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/ifa/skill.go` lines 67, 99 to 100 and 106 to 110). Neither press SHALL deal a hit yet.
 
 #### Scenario: Press enters the blessing and its points drain
 
@@ -138,7 +138,7 @@ Ifa's skill press SHALL enter her Nightsoul Blessing with 80 Nightsoul points, w
 
 ### Requirement: First ascension's Rescue Essentials add to the party's reactions
 
-From her first ascension, Ifa's Rescue Essentials SHALL add 1.5% DMG to each Swirl and Electro-Charged reaction her party makes, and 0.2% to each Lunar-Charged, for each of her Nightsoul points up to 150, or up to 200 from her second constellation. The points SHALL be the Nightsoul points of her whole deployed party, up to 150, and they SHALL count only while her own blessing lasts (`asc.go` lines 22 to 30, 41 and 46; `cons.go` lines 29 to 45). Below her first ascension they SHALL add nothing. Stellar Swirl SHALL NOT take them yet.
+From her first ascension, Ifa's Rescue Essentials SHALL add 1.5% DMG to each Swirl and Electro-Charged reaction her party makes, and 0.2% to each Lunar-Charged, for each of her Nightsoul points up to 150, or up to 200 from her second constellation. The points SHALL be the Nightsoul points of her whole deployed party, up to 150, and they SHALL count only while her own blessing lasts (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/ifa/asc.go` lines 22 to 30, 41 and 46; `~/Esposter/cache/gcsim-v2.47.2/internal/characters/ifa/cons.go` lines 29 to 45). Below her first ascension they SHALL add nothing. Stellar Swirl SHALL NOT take them yet.
 
 #### Scenario: Swirl and Electro-Charged take 1.5% a point, up to 150 points
 
