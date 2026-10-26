@@ -1,6 +1,6 @@
 # Puzzles
 
-The servers' puzzle mechanisms are not in the client's data, so the map's public points stand in for their places, per the [spawned places](../spawned-places/design.md) page. This page is the built half of the [puzzles](../../../changes/genshin-puzzles/design.md) proposal: each puzzle mark the map gives is carried into its region's slice by its kind, and an Elemental Monument is a small state machine that a strike or a reaction lights. The Mondstadt Seelies are paired with their courts and led in the world; the monuments are not yet placed in the world, drawn, struck or solved.
+The servers' puzzle mechanisms are not in the client's data, so the map's public points stand in for their places, per the [spawned places](../spawned-places/design.md) page. This page is the built half of the [puzzles](../../../changes/genshin-puzzles/design.md) proposal: each puzzle mark the map gives is carried into its region's slice by its kind (`scripts/src/services/genshinAssets/puzzles/buildPuzzlePlaces.ts`), and an Elemental Monument is a small state machine that a strike or a reaction lights (`packages/genshin-world/src/models/puzzle/ElementalMonument.ts`). The Mondstadt Seelies are paired with their courts and led in the world (`packages/genshin-world/src/services/puzzle/pairSeelieCourts.ts`); the monuments are not yet placed in the world, drawn, struck or solved.
 
 ## How it works
 
@@ -16,11 +16,11 @@ flowchart TD
 
 ## The builder
 
-`pnpm -C scripts genshin:assets puzzles` publishes one slice per region to the puzzles dataset of the [hosted game data](../hosted-game-data/design.md), in the shape the [chests](../chests/design.md) page describes. Its report lists each region's places and the ones it left out.
+`pnpm -C scripts genshin:assets puzzles` publishes one slice per region to the puzzles dataset of the [hosted game data](../hosted-game-data/design.md), in the shape the [chests](../chests/design.md) page describes. Its report lists each region's places and the ones it left out (`scripts/src/services/genshinAssets/commands/puzzlesCommand.ts`).
 
-- **The four kinds are the map's labels.** An Elemental Monument is the monument label, a Seelie is the Seelie label with the two variants the map names beside it (Electro and Warming), a Shrine of Depths is each nation's and the borderland's shrine label, and a Time Trial Challenge is the challenge label. The map gives each nation's shrine a label of its own, so the kind is the one thing those labels share.
-- **The ground only and the mapped areas only.** As the chests are, a point on a layer under the ground or in an area no region is mapped to is counted and left out.
-- **Only places.** The map gives no element, no timing and no wiring for a mark, so none of those is published. The builder shares its placement with the chests' builder, the `placeMapPoints` primitive, so a kind of point is one label map away from a slice.
+- **The four kinds are the map's labels.** An Elemental Monument is the monument label, a Seelie is the Seelie label with the two variants the map names beside it (Electro and Warming), a Shrine of Depths is each nation's and the borderland's shrine label, and a Time Trial Challenge is the challenge label. The map gives each nation's shrine a label of its own, so the kind is the one thing those labels share (`scripts/src/services/genshinAssets/puzzles/PuzzleKindLabelIdsMap.ts`).
+- **The ground only and the mapped areas only.** As the chests are, a point on a layer under the ground or in an area no region is mapped to is counted and left out (`scripts/src/services/genshinAssets/puzzles/buildPuzzlePlaces.ts`).
+- **Only places.** The map gives no element, no timing and no wiring for a mark, so none of those is published. The builder shares its placement with the chests' builder, the `placeMapPoints` primitive, so a kind of point is one label map away from a slice (`scripts/src/services/genshinAssets/points/placeMapPoints.ts`).
 
 ## The pages of this set
 
@@ -50,9 +50,5 @@ flowchart TD
 
 - [ ] **The servers' puzzle mechanisms are not in the client's data** — no source yet: the extracted game data was not searched for puzzle mechanisms.
 - [ ] **The four kinds are the official map's labels, and the map gives no element, timing or wiring for a mark** — no source yet: the official map's label tree the builder reads is not among the caches read, so its labels and what it omits are unchecked.
-- [ ] **each puzzle mark is carried into its region's slice by its kind** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **an Elemental Monument is a small state machine that a strike or a reaction lights** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **the Mondstadt Seelies are paired with their courts and led in the world** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **the builder publishes one slice per region, with a report of its places and omissions** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **a point off the ground or outside a mapped region is counted and left out** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **the builder shares its placement with the chests' builder** — no source yet: game data or a snapshot that holds this behaviour
