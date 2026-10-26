@@ -19,27 +19,27 @@ flowchart TD
 
 ## The fit
 
-Mondstadt is the first region fitted, and the regions the waypoints command writes are the ones `WAYPOINT_REGIONS` names, which holds `mondstadt` alone.
+Mondstadt is the first region fitted, and the regions the waypoints command writes are the ones `WAYPOINT_REGIONS` names (`scripts/src/services/genshinAssets/shared/constants.ts`, line 417, which holds `mondstadt` alone.
 
-- **Only ground waypoints pair.** A waypoint is a point the official map labels as a Teleport Waypoint on the ground layer, within the region's own map area. Waypoints on a floor under the ground are never listed. Each one is matched to a transport point of the scene under the fitted similarity, within the fit's bar (`INTERACTIVE_MAP_FIT_BAR`, 20), and a transport point no waypoint pairs with gives none.
-- **Each waypoint carries its arrival.** `toLandmarkArrival` carries the transport point's place and turn round the world's origin into the region's axes, as every other place is, and takes its height over the world's ground at that place. The waypoint's own position, rotation and height offset are that arrival's values, so the place it stands at and the place a jump lands are the same.
+- **Only ground waypoints pair.** A waypoint is a point the official map labels as a Teleport Waypoint on the ground layer, within the region's own map area. Waypoints on a floor under the ground are never listed (`scripts/src/services/genshinAssets/fit/toWaypointLandmarks.ts`, lines 17 to 20). Each one is matched to a transport point of the scene under the fitted similarity, within the fit's bar (`INTERACTIVE_MAP_FIT_BAR`, 20 in `scripts/src/services/genshinAssets/points/constants.ts`, line 28, used at `scripts/src/services/genshinAssets/fit/toWaypointLandmarks.ts`, line 47), and a transport point no waypoint pairs with gives none.
+- **Each waypoint carries its arrival.** `toLandmarkArrival` carries the transport point's place and turn round the world's origin into the region's axes, as every other place is, and takes its height over the world's ground at that place (`scripts/src/services/genshinAssets/shared/toLandmarkArrival.ts`). The waypoint's own position, rotation and height offset are that arrival's values, so the place it stands at and the place a jump lands are the same.
 - **Its id and its area.** A waypoint's id is its region, the word `waypoint` and the transport point's id, the same id its first-unlock reward would be keyed by (Mondstadt's waypoints, which `packages/genshin-world/src/data/regions/mondstadt.json` holds, carry ids such as `mondstadt-waypoint-1865`). Its area is the catalogue area whose outline is nearest its arrival, so a waypoint standing outside every outline still names one.
-- **One command writes it.** `pnpm -C scripts genshin:assets waypoints` writes each region's waypoints into its region file, replacing the waypoints an earlier run wrote and keeping the region's other landmarks. Its `--dry-run` counts them and writes nothing, and a region whose file would not change is not written.
-- **Statues get their arrival from the same scene.** `fitRegionLandmarks` gives each Statue of The Seven the arrival of the transport point it stands at. A statue with no such point is an error rather than a statue a jump cannot reach.
+- **One command writes it.** `pnpm -C scripts genshin:assets waypoints` writes each region's waypoints into its region file, replacing the waypoints an earlier run wrote and keeping the region's other landmarks. Its `--dry-run` counts them and writes nothing, and a region whose file would not change is not written (`scripts/src/services/genshinAssets/commands/waypointsCommand.ts` for the flag; `scripts/src/services/genshinAssets/fit/fitRegionWaypoints.ts`, lines 43 and 46, for the replacement and the unchanged file).
+- **Statues get their arrival from the same scene.** `fitRegionLandmarks` gives each Statue of The Seven the arrival of the transport point it stands at. A statue with no such point is an error rather than a statue a jump cannot reach (`scripts/src/services/genshinAssets/fit/fitRegionLandmarks.ts`, lines 44 to 48).
 
 ## The jump
 
 - **Two kinds jump.** `JUMP_LANDMARK_KINDS` holds the Statue of The Seven and the Teleport Waypoint. A tree or a building is never a jump target.
-- **A waypoint always has an arrival.** `WaypointLandmark` requires its `arrival` in its schema. Every landmark's base allows one, and `computeJumpPose` treats a jump to a landmark without one as an error, since there is nowhere to land.
-- **The landing is the arrival.** `computeJumpPose` puts the character at the arrival's place, at its height offset and facing its rotation.
-- **Only unlocked landmarks are offered.** `useWorldMap` gives the map, the minimap, the jump list and a revive the unlocked jump landmarks alone, whether they are statues or waypoints. A locked one is offered to F under its own title, a Teleport Waypoint's "Teleport Waypoint" and a statue's "Statue of The Seven" (`computeJumpLandmarkTextKey`), and activating it unlocks it.
-- **The jump list names by area.** It groups the jumps by region, and each is named by its area's name, so a waypoint and a statue in one area read alike.
+- **A waypoint always has an arrival.** `WaypointLandmark` requires its `arrival` in its schema (`packages/genshin-world/src/models/world/WaypointLandmark.ts`, line 16). Every landmark's base allows one, and `computeJumpPose` treats a jump to a landmark without one as an error, since there is nowhere to land (`packages/genshin-world/src/services/map/computeJumpPose.ts`, line 9).
+- **The landing is the arrival.** `computeJumpPose` puts the character at the arrival's place, at its height offset and facing its rotation (`packages/genshin-world/src/services/map/computeJumpPose.ts`, lines 11 to 14).
+- **Only unlocked landmarks are offered.** `useWorldMap` gives the map, the minimap, the jump list and a revive the unlocked jump landmarks alone, whether they are statues or waypoints (`packages/genshin-world/src/composables/useWorldMap.ts`, line 22). A locked one is offered to F under its own title, a Teleport Waypoint's "Teleport Waypoint" and a statue's "Statue of The Seven" (`computeJumpLandmarkTextKey`; `packages/genshin-text/src/generated/text/English.json`, lines 499 and 500), and activating it unlocks it.
+- **The jump list names by area.** It groups the jumps by region, and each is named by its area's name, so a waypoint and a statue in one area read alike (`packages/genshin-world/src/components/Map/JumpList/Index.vue`, lines 20 to 26).
 
 ## Data and measures
 
-- **Read from the game:** the scene's transport points, each with its place, turn and height, read by `readSceneTransportPoints` from the scene points of the kind Windrise's statue holds. The official map's ground waypoints come from the map's references, as the [spawned places](../spawned-places/design.md) page reads them, through `readFittedRegions`.
-- **Written into region data:** each waypoint's id, arrival, position, rotation, height offset and area, in the `TeleportWaypoint` kind.
-- **Measured:** nothing new. The pairing holds to the bar the statues' fit holds to (`INTERACTIVE_MAP_FIT_BAR`, which the statue fit and the waypoint fit both use).
+- **Read from the game:** the scene's transport points, each with its place, turn and height, read by `readSceneTransportPoints` from the scene points of the kind Windrise's statue holds (`scripts/src/services/genshinAssets/world/readSceneTransportPoints.ts`, lines 10 to 12). The official map's ground waypoints come from the map's references, as the [spawned places](../spawned-places/design.md) page reads them (`scripts/src/services/genshinAssets/fit/fitRegionWaypoints.ts`, line 19, through `readFittedRegions`.
+- **Written into region data:** each waypoint's id, arrival, position, rotation, height offset and area, in the `TeleportWaypoint` kind (`scripts/src/services/genshinAssets/fit/toWaypointLandmarks.ts`, line 17, and `fitRegionWaypoints.ts`, line 43).
+- **Measured:** nothing new. The pairing holds to the bar the statues' fit holds to (`INTERACTIVE_MAP_FIT_BAR`, `scripts/src/services/genshinAssets/points/constants.ts`, line 28, which `scripts/src/services/genshinAssets/fit/fitInteractiveMap.ts` and the waypoint fit both use).
 
 ## Key files
 
@@ -65,8 +65,8 @@ Mondstadt is the first region fitted, and the regions the waypoints command writ
 
 ## Notes
 
-- **A waypoint's first unlock pays its point's reward.** `computeLandmarkPointId` keys each waypoint by the point its id ends in, so its Primogems and Adventure EXP are the point's row, as the [map unlocking](../map-unlocking/design.md) page sets out, and the eleven waypoints the game's table gives no row pay nothing (`~/Esposter/genshin-parity/text/ExcelBinOutput/TransPointRewardConfigData.json` holds no row for points 1865 to 2051, and Mondstadt has 11 of its 43 waypoints in that range). The transport-point achievement counts only the statue `LandmarkIdStatuePointIdMap` names (over a map that holds only `windrise-statue-of-the-seven`), so a waypoint's unlock counts toward it not at all.
-- **Only the regions in `WAYPOINT_REGIONS` have waypoints.** Each further region is added to that list once its map fit is checked.
+- **A waypoint's first unlock pays its point's reward.** `computeLandmarkPointId` keys each waypoint by the point its id ends in (`packages/genshin-world/src/services/transPoint/computeLandmarkPointId.ts`), so its Primogems and Adventure EXP are the point's row, as the [map unlocking](../map-unlocking/design.md) page sets out, and the eleven waypoints the game's table gives no row pay nothing (`~/Esposter/genshin-parity/text/ExcelBinOutput/TransPointRewardConfigData.json` holds no row for points 1865 to 2051, and `packages/genshin-world/src/data/regions/mondstadt.json` has 11 of its 43 waypoints in that range). The transport-point achievement counts only the statue `LandmarkIdStatuePointIdMap` names (`packages/genshin-world/src/services/statue/computeUnlockedStatuePointIds.ts`, line 12, over a map that holds only `windrise-statue-of-the-seven`), so a waypoint's unlock counts toward it not at all.
+- **Only the regions in `WAYPOINT_REGIONS` have waypoints.** (`scripts/src/services/genshinAssets/shared/constants.ts`, line 417.) Each further region is added to that list once its map fit is checked.
 
 ## Sources
 
@@ -75,27 +75,9 @@ Mondstadt is the first region fitted, and the regions the waypoints command writ
 ## Open
 
 - [ ] **Two kinds jump, the Statue of The Seven and the Teleport Waypoint** — no source yet: `packages/genshin-world/src/services/map/constants.ts` also lists `DomainEntrance` in `JUMP_LANDMARK_KINDS`, so the count of two disagrees with the code.
-- [ ] **The waypoints command writes the regions `WAYPOINT_REGIONS` names** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Waypoints on a floor under the ground are never listed** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Each ground waypoint pairs with a transport point within the fit's bar** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A transport point no waypoint pairs with gives no waypoint** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Each waypoint carries its transport point's arrival, its position, rotation and height offset being the arrival's values** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A waypoint's id is its region, `waypoint` and its transport point's id** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A waypoint's area is the catalogue area whose outline is nearest its arrival** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **Mondstadt's region data holds 43 waypoints, with ids such as `mondstadt-waypoint-1865`** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The waypoints command writes each region's waypoints into its region file, and its dry run writes nothing** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **Each Statue of The Seven gets the arrival of the transport point it stands at** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A statue with no transport point is an error** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A waypoint always has an arrival, and a jump to a landmark without one is an error** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A jump lands the character at the arrival's place, facing its rotation** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Only unlocked jump landmarks are offered on the map, the minimap, the jump list and revive** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A locked jump landmark is offered to F under its own title, and activating it unlocks it** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The jump list groups jumps by region and names each by its area** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **Each scene transport point is read from the scene points Windrise's statue holds** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **The official map's ground waypoints are read from the map's references** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Each waypoint is written into region data as a `TeleportWaypoint`** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The pairing holds to the statues' fit bar** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **A waypoint's first unlock pays its point's reward, keyed by the point its id ends in** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **Mondstadt has 11 of its 43 waypoints in points 1865 to 2051** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The transport-point achievement counts only the statue `LandmarkIdStatuePointIdMap` names** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Only the regions in `WAYPOINT_REGIONS` have waypoints** — no source yet: game data or a snapshot that holds this behaviour
