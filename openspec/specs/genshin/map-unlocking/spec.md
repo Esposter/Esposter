@@ -1,6 +1,6 @@
 ## Purpose
 
-The map filled in as the game fills it. A Statue of The Seven is resonated with on F, which fills its area in on the map and the minimap and unlocks it as a jump. Only unlocked statues are offered by the jump list, the map and a revive (`packages/genshin-world/src/services/map/computeUnlockedJumpLandmarks.ts`), and no statue is unlocked for a new player. A statue's first unlock pays its Primogems and Adventure EXP. A Teleport Waypoint unlocks the same way and pays its transport point's reward on its first unlock, and a domain entrance unlocks the same way as a landmark of the world (`packages/genshin-world/src/composables/useWorldMap.ts`, `packages/genshin-world/src/services/map/computeUnlockedJumpLandmarks.ts`).
+The map filled in as the game fills it. A Statue of The Seven is resonated with on F, which fills its area in on the map and the minimap and unlocks it as a jump. Only unlocked statues and waypoints are offered by the jump list and the map (`packages/genshin-world/src/services/map/computeUnlockedJumpLandmarks.ts`), a revive goes to the unlocked Teleport Waypoint nearest the body (`packages/genshin-world/src/services/map/findNearestTeleportWaypoint.ts`), and no statue is unlocked for a new player. A statue's first unlock pays its Primogems and Adventure EXP. A Teleport Waypoint unlocks the same way and pays its transport point's reward on its first unlock, and a domain entrance unlocks the same way as a landmark of the world (`packages/genshin-world/src/composables/useWorldMap.ts`, `packages/genshin-world/src/services/map/computeUnlockedJumpLandmarks.ts`).
 
 ## Requirements
 
@@ -49,16 +49,16 @@ An area SHALL be filled on the map and the minimap while an unlocked landmark st
 
 ### Requirement: Only unlocked places are jumps
 
-The jump list, the map's marks and a revive SHALL use only unlocked landmarks, and a fallen party SHALL be taken to the unlocked landmark nearest its body.
+The jump list, the map's marks and a revive SHALL use only unlocked landmarks, and a fallen party SHALL be taken to the unlocked Teleport Waypoint nearest its body, a statue taking no revive.
 
 #### Scenario: Party falls with an unlocked landmark
 
-- **WHEN** the party falls and an unlocked landmark exists
-- **THEN** it is taken to the unlocked landmark nearest its body
+- **WHEN** the party falls and an unlocked Teleport Waypoint exists
+- **THEN** it is taken to the unlocked Teleport Waypoint nearest its body
 
 #### Scenario: Party falls with none unlocked
 
-- **WHEN** the party falls and no landmark is unlocked
+- **WHEN** the party falls and no Teleport Waypoint is unlocked
 - **THEN** it is left where it fell
 
 ### Requirement: First unlock pays Primogems
