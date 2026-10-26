@@ -6,14 +6,14 @@ Ifa's kit as built outside her Nightsoul Blessing: her three normal attacks, cha
 
 ### Requirement: Normal attacks and charged attack outside the Blessing
 
-Ifa's three normal attacks and charged attack SHALL play outside her Nightsoul Blessing, and none of their hits SHALL deal poise.
+Ifa's three normal attacks and charged attack SHALL play outside her Nightsoul Blessing, and their hits SHALL deal the poise the wiki gives them.
 
 #### Scenario: The three normal attacks play in order
 
 - **GIVEN** Ifa is the character on the field and outside her Nightsoul Blessing
 - **WHEN** the player presses the attack button repeatedly
 - **THEN** her three normal attacks play in order
-- **AND** none of their hits deals poise
+- **AND** each hit deals the poise the wiki gives it
 
 #### Scenario: The charged attack costs 50 stamina
 
