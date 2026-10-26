@@ -1,6 +1,6 @@
 ## Purpose
 
-Genshin's ground as one heightfield drawn on a CDLOD quadtree, by true distance from the eye, with every vertex morphing onto the coarser grid before its tile changes level. Tiles are generated in a small pool of workers, handed back without a copy, cached all round the eye whichever way it looks, and asked for coarsest first, a loaded ancestor drawn while a tile is still coming. The origin floats, so the world can stretch a continent without trembling (`packages/genshin-engine/src/terrain/selectTerrainTiles.ts`, `packages/genshin-engine/src/terrain/computeTerrainTile.ts`, `packages/genshin-engine/src/terrain/createTerrainMaterial.ts`, `packages/genshin-engine/src/streaming/createTileStreamer.ts`, `packages/genshin-world/src/composables/useFloatingOrigin.ts`).
+Genshin's ground as one heightfield drawn on a CDLOD quadtree, by true distance from the eye, with every vertex morphing onto the coarser grid before its tile changes level. Tiles are generated in a small pool of workers, handed back without a copy, cached all round the eye whichever way it looks, and asked for coarsest first, a loaded ancestor drawn while a tile is still coming. The origin floats, so the world can stretch a continent without trembling.
 
 ## Requirements
 
@@ -138,3 +138,9 @@ Once the camera has gone one kilometre from the origin, the world SHALL move bac
 - **WHEN** the origin is shifted
 - **THEN** the world moves back under the camera
 - **AND** the view shows the same scene with no jump
+
+## Open
+
+- [ ] **Ground is one heightfield drawn on a CDLOD quadtree, by true distance from the eye, with every vertex morphing onto the coarser grid before its tile changes level** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Tiles are generated in a small pool of workers, handed back without a copy, cached all round the eye, and asked for coarsest first, with a loaded ancestor drawn while a tile is still coming** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The origin floats, so the world can stretch a continent without trembling** — no source yet: game data or a snapshot that holds this behaviour
