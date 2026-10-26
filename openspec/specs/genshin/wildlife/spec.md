@@ -6,7 +6,7 @@ The official map's fleeing birds and beasts, the White Pigeon, the Crimson Fox a
 
 ### Requirement: Fleeing animals placed where the official map marks them
 
-The White Pigeon, the Crimson Fox and the Squirrel SHALL be placed at the places the official map marks them on the ground of a mapped region, and no other animal SHALL be placed.
+The White Pigeon, the Crimson Fox and the Squirrel SHALL be placed at the places the official map marks them on the ground of a mapped region, and the Boar SHALL be placed at the places the official map marks it too.
 
 #### Scenario: Fleeing kind on the ground
 
@@ -20,11 +20,11 @@ The White Pigeon, the Crimson Fox and the Squirrel SHALL be placed at the places
 - **WHEN** the animals are placed
 - **THEN** that animal is left out
 
-#### Scenario: Animal that does not flee is left alone
+#### Scenario: Animal that does not flee is placed too
 
 - **GIVEN** the official map marks an animal that is not a fleeing kind
 - **WHEN** the animals are placed
-- **THEN** that animal is not placed
+- **THEN** that animal is placed at its marked place
 
 ### Requirement: Animal runs from the character within its escape radius
 
