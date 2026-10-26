@@ -13,7 +13,7 @@ Furina's four strikes SHALL each open an Arkhe hit of their own, at most once wi
 - **GIVEN** Furina is in Ousia and her Arkhe hit is off cooldown
 - **WHEN** one of her four strikes lands
 - **THEN** her Arkhe hit follows 30 frames later
-- **AND** the hit is Spiritbreath Thorn in Ousia or Surging Blade in Pneuma, a Hydro hit that applies no elemental gauge
+- **AND** the hit is Spiritbreath Thorn in Ousia or Surging Blade in Pneuma, a Hydro hit (`~/Esposter.noindex/cache/genshin-wiki/Category_Furina_Talents.json` names both hits and Hydro) that applies no elemental gauge
 
 #### Scenario: A strike inside the cooldown opens no Arkhe hit
 
@@ -170,4 +170,3 @@ Furina's first, second and fourth constellations SHALL change her Fanfare and he
 ## Open
 
 - [ ] **its most rises by 100 for Constellation 1** — no source yet: the line that raises the Fanfare's most was not located; `burst.go:79` sets 400 and is not a raise.
-- [ ] **the Arkhe hit is Spiritbreath Thorn in Ousia or Surging Blade in Pneuma, a Hydro hit** — no source yet: the hit names and element were not opened in gcsim or the cached wiki.
