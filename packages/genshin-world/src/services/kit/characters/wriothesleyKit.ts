@@ -5,6 +5,7 @@ import type { KitHealthChangedEvent } from "#src/models/kit/KitHealthChangedEven
 import type { KitHitBehaviour } from "#src/models/kit/KitHitBehaviour";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
@@ -47,6 +48,10 @@ const ASCENSION_4 = 4;
 export const PROSECUTION_EDICT_ID = "wriothesley-prosecution-edict";
 const PROSECUTION_EDICT_MAX_STACKS = 5;
 const PROSECUTION_EDICT_ATTACK_SHARE = 0.06;
+// Constellation 2 raises Darkgold Wolfbite's DMG by 40% for each Prosecution Edict stack while Icefang Rush holds, as
+// gcsim v2.47.2 (MIT) internal/characters/wriothesley/cons.go's c2 gives it, at the burst's snapshot
+const CONSTELLATION_2 = 2;
+const CONSTELLATION_2_DAMAGE_BONUS_PER_STACK = 0.4;
 
 // Whether Icefang Rush holds on him and his strikes are enhanced, which needs his HP above half
 const checkIsEnhanced = ({ kitEffectState: { effects }, party }: KitContext, characterId: number): boolean =>
@@ -132,13 +137,23 @@ const strikeEnhanced: NonNullable<KitHitBehaviour["onStrike"]> = (context, { com
 // Not built yet: the enhanced strikes' damage multiplier and larger hitboxes, which the record does not hold (gcsim's
 // Snapshot multiplies a normal attack by the skill's own table, and skill.go's enhanced boxes differ from the base ones),
 // Darkgold Wolfbite's Surging Blade, which hits past the burst's animation with a multiplier the record does not hold, and
-// The charged attack's Ascension 1 Gracious Rebuke, which needs a charged attack variant and a damage bonus that reads an
-// Effect, where the strike damage bonus reads none. Constellation 1, 2, 4 and 6 all build on that Rebuke or on Prosecution
-// Edict's stacks in a damage bonus, and wait on the same pieces
+// The charged attack's Ascension 1 Gracious Rebuke, which needs a charged attack variant.
+// Constellations 1, 4 and 6 all build on that Rebuke, and wait on the same pieces
 export const createWriothesleyKitBehaviour = (): KitBehaviour => {
   // The five normal attacks, each strike enhanced as the skill's state allows, with the fourth attack's two strikes
   const enhancedStrike = { onStrike: strikeEnhanced };
   return {
+    // Constellation 2: each Prosecution Edict stack raises Darkgold Wolfbite's DMG while Icefang Rush holds
+    getStrikeDamageBonus: ({ attackTag, combatant }, _enemy, _party, effects) => {
+      if (
+        combatant.constellationCount < CONSTELLATION_2 ||
+        attackTag !== AttackTag.ElementalBurst ||
+        !checkIsKitStatusActive(effects, combatant.characterId, ICEFANG_RUSH_ID)
+      )
+        return 0;
+      const stacks = findKitStatus(effects, combatant.characterId, PROSECUTION_EDICT_ID)?.stacks ?? 0;
+      return stacks * CONSTELLATION_2_DAMAGE_BONUS_PER_STACK;
+    },
     normalAttacks: [
       { hits: [enhancedStrike] },
       { hits: [enhancedStrike] },

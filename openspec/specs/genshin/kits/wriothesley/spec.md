@@ -90,12 +90,28 @@ From Ascension 4, each self-drain of Wriothesley's HP, and each heal that restor
 - **WHEN** the player recasts Icefang Rush
 - **THEN** Prosecution Edict holds no stacks and raises his ATK by nothing
 
+### Requirement: Constellation 2's Prosecution Edict damage bonus
+
+From Constellation 2, each Prosecution Edict stack SHALL raise Darkgold Wolfbite's DMG by 40% while Icefang Rush holds.
+
+#### Scenario: Stacks raise Darkgold Wolfbite while Icefang Rush holds
+
+- **GIVEN** Wriothesley has Constellation 2 and Ascension 4, and Prosecution Edict holds three stacks while Icefang Rush holds
+- **WHEN** the player casts Darkgold Wolfbite
+- **THEN** its strikes gain a 120% DMG Bonus
+
+#### Scenario: Stacks raise nothing once Icefang Rush has ended
+
+- **GIVEN** Wriothesley has Constellation 2 and Prosecution Edict holds stacks, but Icefang Rush has ended
+- **WHEN** the player casts Darkgold Wolfbite
+- **THEN** its strikes gain no DMG Bonus from the stacks
+
 ### Requirement: Unbuilt Wriothesley effects
 
-The damage multiplier and the larger hitboxes of Icefang Rush's enhanced strikes, Surging Blade, Gracious Rebuke and Wriothesley's constellations SHALL NOT take effect.
+The damage multiplier and the larger hitboxes of Icefang Rush's enhanced strikes, Surging Blade, Gracious Rebuke and Wriothesley's Constellations 1, 4 and 6 SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Wriothesley has an enhanced strike, Surging Blade, Gracious Rebuke or a constellation unlocked
+- **GIVEN** Wriothesley has an enhanced strike, Surging Blade, Gracious Rebuke or Constellation 1, 4 or 6 unlocked
 - **WHEN** the player fights with Wriothesley
 - **THEN** the enhanced strike deals its base damage on its base hitbox, and that other effect has no effect
