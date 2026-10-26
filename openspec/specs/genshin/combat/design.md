@@ -1,6 +1,6 @@
 # Combat
 
-The game's combat is one small set of rules every character and enemy shares, and its community has documented them to the decimal. They live in `genshin-world` under `services/combat`, as functions over plain state with no rendering, no input and no three.js, since the engine knows no rule of the game as it knows no place. The world calls into them from its fixed steps: the character on the field's kit prices each of its hits, and the [enemies](../enemies/design.md) age their elements and strike the party through them.
+The game's combat is one small set of rules every character and enemy shares, and its community has documented them to the decimal. They live in `genshin-world` under `packages/genshin-world/src/services/combat`, as functions over plain state with no rendering, no input and no three.js, since the engine knows no rule of the game as it knows no place. The world calls into them from its fixed steps: the character on the field's kit prices each of its hits, and the [enemies](../enemies/design.md) age their elements and strike the party through them.
 
 ## How it works
 
