@@ -36,13 +36,13 @@ const CONSTELLATION_4_SECONDS = 10;
 const CONSTELLATION_4_DAMAGE_MULTIPLIER = 0.2;
 const CONSTELLATION_4_POISE_DAMAGE = 30;
 
-// Whether an effect is the Thunderbeast's Targe of a character's, still standing the given seconds from now: the Targe
-// Is her summon that follows the body on the field
-const checkIsTargeStanding = (effect: KitEffect, characterId: number, seconds: number): boolean =>
+// Whether an effect is the Thunderbeast's Targe of a character's, still standing: the Targe is her summon that follows
+// The body on the field
+const checkIsTargeStanding = (effect: KitEffect, characterId: number): boolean =>
   effect.kind === "summon" &&
   effect.isFollowing === true &&
   effect.combatant.characterId === characterId &&
-  effect.secondsRemaining >= seconds;
+  effect.secondsRemaining >= 0;
 
 export const BEIDOU_CHARACTER_ID = 10_000_024;
 
@@ -86,7 +86,7 @@ export const createBeidouKitBehaviour = ({
   ): void => {
     const { effects } = kitEffectState;
     if (
-      !effects.some((effect) => checkIsTargeStanding(effect, combatant.characterId, 0)) ||
+      !effects.some((effect) => checkIsTargeStanding(effect, combatant.characterId)) ||
       effects.some(
         (effect) =>
           effect.kind === "summon" &&
