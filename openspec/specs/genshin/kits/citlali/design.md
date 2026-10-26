@@ -39,4 +39,4 @@ Citlali's kit is its record and one behaviour module, `createCitlaliKitBehaviour
 
 ## Open
 
-- [ ] **Citlali's skill cooldown is 20 seconds (proud group 10732, index 3)** — contradicted by `~/Esposter/cache/genshin-wiki/Category_Citlali_Talents.json`: Dawnfrost Darkstar's infobox gives CD 16s.
+- [ ] **Citlali's skill cooldown is 20 seconds (proud group 10732, index 3)** — contradicted by `~/Esposter/cache/genshin-wiki/Category_Citlali_Talents.json`: the skill's infobox gives CD 16s.
