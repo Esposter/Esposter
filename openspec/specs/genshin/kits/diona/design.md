@@ -18,7 +18,7 @@ Diona's kit is its record and one behaviour module, `createDionaKitBehaviour`, a
 - **The plunges' frames are unsourced.** gcsim has no plunge file for Diona, so the plunges' frames wait on a recording.
 - **Constellation 6's buffs last until the next tick.** The wiki gives no duration for Cat's Tail Closing Time, and gcsim gives the active character's buff 2 seconds (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/diona/cons.go:48`); the kit's rule is its own, and gcsim's is the other source.
 - **Constellation 2 adds damage in gcsim too.** gcsim's `~/Esposter/cache/gcsim-v2.47.2/internal/characters/diona/cons.go:12-25` gives Icy Paws' elemental-skill attacks 15% DMG at Constellation 2, which the design and the spec leave out, beside the shield. The cached wiki's Shaken, Not Purred text is not in the cache to settle it.
-- **Drunkards' Farce's trigger.** The wiki says an opponent who enters Signature Mix's AoE takes the 10% cut, and the kit applies it to a strike, which has no source.
+- **Drunkards' Farce's trigger.** The wiki's gameplay note says the 10% ATK cut is not applied on entering Signature Mix's AoE but periodically to enemies inside it on each tick of its damage (`~/Esposter/cache/genshin-wiki/Category_Diona_Talents.json`, Drunkards' Farce), and the kit applies it to a strike that stands in for a tick, which has no source.
 
 ## Key files
 
