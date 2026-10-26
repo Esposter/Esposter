@@ -20,4 +20,4 @@
 - [ ] **Reputation: the round's scores of 2.07% mean, shape 0.879 and FLIP 0.1448, before the ItemTile slots** — no source yet: the recorded run of that round, which the snapshot no longer keeps.
 - [ ] **Reputation: the grid's worst cells at 4.6% to 7.9%, the slots of levels 4 to 7** — no source yet: a per-cell score of the reward grid, which the snapshot does not break down.
 - [ ] **Reputation: the unlock lines at 5.4% to 7.4%** — no source yet: a per-line score of the unlock lines, which the snapshot does not break down.
-- [ ] **Paimon: the menu over its whole frame is read from the wiki's Version 1.3 still** — no source yet: the cited file is not on disk.
+- [ ] **Paimon: the menu over its whole frame is read from the wiki's Version 1.3 still** — no source yet: the cited file is not on disk. Checked the Paimon Menu page (`Paimon_Menu.json`): its gallery names `Paimon Menu Version 1.3.png`, but the cache holds the page's text, not the image, and the text describes no frame.
