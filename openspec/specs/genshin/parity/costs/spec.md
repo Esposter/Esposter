@@ -35,7 +35,7 @@ Each parity step SHALL finish in seconds, so that the loop can run as often as a
 
 ### Requirement: Each command closes the browser it opened
 
-Each parity command SHALL close the browser it opened when its work is done (`scripts/src/services/genshinParity/shared/openParityPage.ts`).
+Each parity command SHALL close the browser it opened when its work is done.
 
 #### Scenario: Command finished
 
@@ -45,7 +45,7 @@ Each parity command SHALL close the browser it opened when its work is done (`sc
 
 ### Requirement: The parity page is served once per checkout on a port the operator can change
 
-The parity page SHALL be served once per checkout, on a port the operator can change (`packages/genshin-world/parity/vite.config.ts`, `scripts/src/services/genshinParity/shared/constants.ts`).
+The parity page SHALL be served once per checkout, on a port the operator can change.
 
 #### Scenario: Two checkouts served at once
 
@@ -61,7 +61,7 @@ A scene's cost SHALL be measured by its bench, which reports the scene's frame t
 
 - **GIVEN** a scene to bench
 - **WHEN** the bench runs
-- **THEN** the median frame time and the frame time of the slowest tenth are printed (`scripts/src/services/genshinParity/commands/benchCommand.ts`)
+- **THEN** the median frame time and the frame time of the slowest tenth are printed
 - **AND** the main thread's busy time per frame is printed beside them
 - **AND** the draw calls, the triangles and the objects drawn by kind are printed
 - **AND** the pipelines, geometries and textures the scene keeps are printed
@@ -74,7 +74,7 @@ A scene's cost SHALL be measured by its bench, which reports the scene's frame t
 
 ### Requirement: A surface's structure is reduced on the GPU
 
-A surface's structure statistics SHALL be computed on the GPU of the parity page, so that only partial sums return to the host (`packages/genshin-world/parity/surfaceStatistics/computeSurfaceStatistics.ts`, `scripts/src/services/genshinParity/shared/openSurfaceStatisticsPage.ts`).
+A surface's structure statistics SHALL be computed on the GPU of the parity page, so that only partial sums return to the host.
 
 #### Scenario: Surface pass run
 
@@ -91,7 +91,7 @@ A surface's structure statistics SHALL be computed on the GPU of the parity page
 
 ### Requirement: The comparison keeps its scoring on the CPU
 
-The compare command SHALL keep its scoring on the CPU (`scripts/src/services/genshinParity/reference/compareScreen.ts`).
+The compare command SHALL keep its scoring on the CPU.
 
 #### Scenario: Comparison scored
 
