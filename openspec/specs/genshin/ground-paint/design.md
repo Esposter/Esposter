@@ -69,4 +69,4 @@ flowchart TD
 - [ ] **Painting costs a fraction of a tile's heights** — no source yet: no timing of the worker is recorded.
 - [ ] **Windrise's field is a grid of 64 nodes a side, tens of kilobytes, with each layer's shares held to the hundredth** — no source yet: no node count, byte size or rounding of the published record is checked.
 - [ ] **The game's layer textures carry detail under a metre** — no source yet: no checked layer texture measurement is cited.
-- [ ] **Each cell in the terrain radius takes the layer its kind paints, and road stone is the path** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Each cell in the terrain radius takes the layer its kind paints, and road stone is the path** — no source yet: the terrain layers in `~/Esposter/genshin-parity/extracted/mondstadt/world/TerrainData/`, not yet read for the road stone's layer.
