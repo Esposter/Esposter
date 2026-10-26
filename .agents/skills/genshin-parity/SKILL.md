@@ -16,7 +16,7 @@ Each direction's full statement, with the pointers it carries, is `references/se
 - **Waiting on the user for a recording, or asking for one** — users do not record for this workflow; a value comes from a still, a public clip or an extracted animation, else a provisional estimate ships.
 - **Reading leaked server data, or looking in the client for group scripts** — the community's group scripts come from an unlicensed leak, and the client holds no group script at all.
 - **Sending input to the game** — the tool records the game and the user plays, since injected input is botting under the game's terms.
-- **Rendering a screen through Nuxt to check it** — the parity page renders a screen on plain Vite in about a second, where a Nuxt build per check sank the old suite.
+- **Rendering a screen through Nuxt to check it** — the parity page renders a screen on plain Vite, and a Nuxt build per check is too slow.
 - **A hand-kept list of screens** — a screen is on the page and in the suite by its `Index.fixture.ts`, never by a list.
 - **Shipping or committing anything taken from the game's files** — only the generated text slices are committed; images, audio, models, meshes and tables never are.
 - **Decoding the Excel and BinOutput tables through the code metadata** — the only public decoder is pinned to an older patch, so the tables stay the community dump's.
