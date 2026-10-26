@@ -24,4 +24,4 @@ A reference is a wiki image or one frame of a recording, judged against and kept
 ## Open
 
 - [ ] **A rectangle recording was tried first and took whatever was on screen** — no source yet: no commit, snapshot or note records that trial.
-- [ ] **FFmpeg 8 is the pinned version** — no source yet: the version was not found in `scripts/src/services/shared/installPinnedTool.ts` or `scripts/src/services/recreation/video/resolveFfmpeg.ts`.
+- [ ] **FFmpeg 8 is the pinned version** — contradicted by `scripts/src/services/recreation/video/constants.ts:12`: pins FFmpeg 9.0.2 archive.
