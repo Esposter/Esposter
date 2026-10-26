@@ -166,3 +166,8 @@ Furina's first, second and fourth constellations SHALL change her Fanfare and he
 - **WHEN** a Salon member's hit lands or the Singer heals
 - **THEN** Furina gains 4 energy
 - **AND** a second such event within five seconds gives no energy
+
+## Open
+
+- [ ] **its most rises by 100 for Constellation 1** — no source yet: the line that raises the Fanfare's most was not located; `burst.go:79` sets 400 and is not a raise.
+- [ ] **the Arkhe hit is Spiritbreath Thorn in Ousia or Surging Blade in Pneuma, a Hydro hit** — no source yet: the hit names and element were not opened in gcsim or the cached wiki.
