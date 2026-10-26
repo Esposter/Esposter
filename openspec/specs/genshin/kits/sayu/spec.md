@@ -1,6 +1,6 @@
 ## Purpose
 
-Sayu's kit as built: Fuufuu Windwheel's press, short hold and roll, and Mujina Flurry's field and Muji-Muji Daruma ticks, with her Ascension 1 heal, Ascension 4 wider Daruma and Constellation 4 Energy from Swirls built, and her Constellations 1, 2 and 6 and the roll's elemental kick left unbuilt.
+Sayu's kit as built: Fuufuu Windwheel's press, short hold and roll, and Mujina Flurry's field and Muji-Muji Daruma ticks, with her Ascension 1 heal, Ascension 4 wider Daruma, and Constellations 1, 4 and 6 built, and her Constellation 2 and the roll's elemental kick left unbuilt.
 
 ## Requirements
 
@@ -80,12 +80,44 @@ From Constellation 4, a Swirl Sayu triggers while she is on the field SHALL rest
 - **WHEN** she triggers a Swirl
 - **THEN** no Energy is gained
 
+### Requirement: Constellation 1 heal at any HP
+
+From Constellation 1, a Muji-Muji Daruma tick SHALL heal the active character whatever its HP, while she is in reach of the tick.
+
+#### Scenario: Constellation 1 heals a character above 70% HP
+
+- **GIVEN** Sayu has Constellation 1 and the active character is above 70% HP
+- **WHEN** a Muji-Muji Daruma tick lands
+- **THEN** the tick heals the active character
+
+#### Scenario: Below Constellation 1 the 70% limit holds
+
+- **GIVEN** Sayu has no Constellation 1 and the active character is above 70% HP
+- **WHEN** a Muji-Muji Daruma tick lands
+- **THEN** the tick does not heal the active character
+
+### Requirement: Constellation 6 Elemental Mastery on Muji-Muji Daruma
+
+From Constellation 6, each Muji-Muji Daruma tick SHALL add to its DMG her ATK times 0.2% of her Elemental Mastery, at most 400% of her ATK, and SHALL heal by 3 of her Elemental Mastery, at most 6000, read as she stood at the cast.
+
+#### Scenario: Constellation 6 adds Elemental Mastery to each tick
+
+- **GIVEN** Sayu has Constellation 6
+- **WHEN** Muji-Muji Daruma is cast
+- **THEN** each of its ticks adds to its DMG and heals by the Elemental Mastery shares, each at its cap
+
+#### Scenario: Below Constellation 6 the ticks add nothing
+
+- **GIVEN** Sayu has Constellation 5
+- **WHEN** Muji-Muji Daruma is cast
+- **THEN** its ticks add no DMG and no heal from Elemental Mastery
+
 ### Requirement: Unbuilt Sayu effects
 
-Sayu's Constellations 1, 2 and 6, and the roll's elemental kick SHALL NOT take effect.
+Sayu's Constellation 2 and the roll's elemental kick SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Sayu has Constellation 1, 2 or 6, or the roll's kick unlocked
+- **GIVEN** Sayu has Constellation 2, or the roll's kick unlocked
 - **WHEN** the player fights with Sayu
 - **THEN** that effect has no effect

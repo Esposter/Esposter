@@ -1,3 +1,4 @@
+import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
@@ -42,25 +43,57 @@ const withAscension4Radius = (hit: KitHit): KitHit => ({
   hitArea: { ...hit.hitArea, radius: ASCENSION_4_DARUMA_RADIUS },
 });
 
+const CONSTELLATION_1 = 1;
+// Constellation 1 and 6, as gcsim v2.47.2 (MIT) sayu/burst.go gives them: from Constellation 1 the Daruma's heal ignores the
+// HP threshold. From Constellation 6 each of its ticks adds ATK times 0.2% of Elemental Mastery, at most 400% of ATK, to its
+// DMG and heals by 3 Elemental Mastery, at most 6000, read from Sayu as she stood at the cast
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/sayu/burst.go
+const CONSTELLATION_6 = 6;
+const CONSTELLATION_6_DAMAGE_ELEMENTAL_MASTERY_SHARE = 0.002;
+const CONSTELLATION_6_DAMAGE_ATTACK_SHARE_MAX = 4;
+const CONSTELLATION_6_HEAL_ELEMENTAL_MASTERY_SHARE = 3;
+const CONSTELLATION_6_HEAL_MAX = 6000;
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_COOLDOWN_ID = "sayu-constellation-4-cooldown";
 const CONSTELLATION_4_ENERGY = 1.2;
 const CONSTELLATION_4_SECONDS = 2;
 
+// Constellation 6's flat DMG on each of the Daruma's ticks, from the striker's ATK and Elemental Mastery as it stands
+const getConstellation6DamageBonus = (striker: Combatant): number => {
+  if (striker.constellationCount < CONSTELLATION_6) return 0;
+  const attackShare = Math.min(
+    elementalMasteryMultiplier(striker, CONSTELLATION_6_DAMAGE_ELEMENTAL_MASTERY_SHARE),
+    CONSTELLATION_6_DAMAGE_ATTACK_SHARE_MAX,
+  );
+  return striker.attributes.attack * attackShare;
+};
+
+const withConstellation6Damage = (hit: KitHit): KitHit => ({
+  ...hit,
+  additiveBaseDamageBonus: getConstellation6DamageBonus,
+});
+
+// Constellation 6's heal on each of the Daruma's ticks, from Sayu's Elemental Mastery at the cast
+const getConstellation6TickHeal = (combatant: Combatant): number => {
+  if (combatant.constellationCount < CONSTELLATION_6) return 0;
+  return Math.min(
+    elementalMasteryMultiplier(combatant, CONSTELLATION_6_HEAL_ELEMENTAL_MASTERY_SHARE),
+    CONSTELLATION_6_HEAL_MAX,
+  );
+};
+
 // Sayu's behaviour: Yoohoo Art: Mujina Flurry heals the active character as it is cast, and casts Muji-Muji Daruma, whose
-// Ticks strike as a summon and heal as a field. Ascension 1's heal on a Swirl, Ascension 4's wider Daruma and
-// Constellation 4's Energy on a Swirl are built. Her Constellations 1, 2 and 6 are not built. The roll's
-// Elemental kick, which takes the element a roll absorbs, is not built, as the kit has no absorption check to read it
-// Constellation 1 needs the Muji-Muji Daruma's attacks on nearby opponents and its heals, which the kit does not build
-// Constellation 2 needs the roll's time spent rolling, which the kit does not read, for the kick's DMG
-// Constellation 6 needs an Elemental Mastery bonus on the Muji-Muji Daruma's attacks and heals, not built
+// Ticks strike as a summon and heal as a field. Ascension 1's heal on a Swirl, Ascension 4's wider Daruma, Constellation 1's
+// heal at any HP, Constellation 4's Energy on a Swirl and Constellation 6's Elemental Mastery on the Daruma are built. Her
+// Constellation 2 is not built: it needs the roll's time spent rolling for the kick's DMG, and the roll's elemental kick,
+// which takes the element a roll absorbs, is not built, as the kit has no absorption check to read it
 export const createSayuKitBehaviour = ({ readHits, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   // Mujina Flurry's heal and Muji-Muji Daruma's heal are each a flat amount and a share of Sayu's ATK, read at the cast
   const burstInitialHealFlat = readParameter("mujinaFlurryFlatHealing");
   const burstInitialHealAttackShare = readParameter("mujinaFlurryHealingAttackShare");
   const burstTickHealFlat = readParameter("mujiMujiDarumaFlatHealing");
   const burstTickHealAttackShare = readParameter("mujiMujiDarumaHealingAttackShare");
-  const darumaTicks = readHits("mujiMujiDarumaTicks");
+  const darumaTicks = readHits("mujiMujiDarumaTicks").map((hit) => withConstellation6Damage(hit));
   const darumaFirstTickSeconds = readSeconds("mujiMujiDarumaFirstTick");
   const darumaTickIntervalSeconds = readSeconds("mujiMujiDarumaTickInterval");
   const darumaSeconds = readSeconds("mujiMujiDaruma");
@@ -71,6 +104,7 @@ export const createSayuKitBehaviour = ({ readHits, readParameter, readSeconds }:
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) => {
         const { attack } = combatant.attributes;
         const initialHeal = burstInitialHealFlat + attack * burstInitialHealAttackShare;
+        const tickHeal = burstTickHealFlat + attack * burstTickHealAttackShare + getConstellation6TickHeal(combatant);
         scheduleKitTask(kitEffectState, combatant.characterId, 0, (tick) =>
           changeKitMemberHealth(tick, combatant, tick.activeCombatant.characterId, initialHeal),
         );
@@ -86,8 +120,13 @@ export const createSayuKitBehaviour = ({ readHits, readParameter, readSeconds }:
           nextTickSeconds: darumaFirstTickSeconds,
           onTick: (tick) => {
             const { characterId } = tick.activeCombatant;
-            if (getPartyMember(tick.party, characterId).healthShare > BURST_HEAL_HP_SHARE) return;
-            changeKitMemberHealth(tick, combatant, characterId, burstTickHealFlat + attack * burstTickHealAttackShare);
+            // Constellation 1 heals the active character whatever its HP
+            if (
+              combatant.constellationCount < CONSTELLATION_1 &&
+              getPartyMember(tick.party, characterId).healthShare > BURST_HEAL_HP_SHARE
+            )
+              return;
+            changeKitMemberHealth(tick, combatant, characterId, tickHeal);
           },
           radius: BURST_FIELD_RADIUS,
           secondsRemaining: darumaSeconds,
