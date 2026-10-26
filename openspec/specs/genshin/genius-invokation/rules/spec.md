@@ -128,7 +128,7 @@ The side that declares the round's end first SHALL go first in the next round, a
 
 ### Requirement: A duel ends with no winner after its fifteenth round
 
-A duel SHALL end with no winner once the fifteenth round's end-phase draws are made, both sides losing. The game's text (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMapEN.json`, key `199839675`) puts that loss at the start of Round 15, which Open records as contradicting the timing.
+A duel SHALL end with no winner once the fifteenth round's end-phase draws are made, both sides losing.
 
 #### Scenario: Duel concedes after the fifteenth round's draws
 
