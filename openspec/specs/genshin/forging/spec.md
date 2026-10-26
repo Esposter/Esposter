@@ -28,7 +28,7 @@ A forge recipe SHALL be refused an order until the player's Adventure Rank reach
 
 ### Requirement: Queues open by rank
 
-The blacksmith SHALL run one queue at first, a second at rank five, a third at rank ten and a fourth at rank fifteen, each queue holding one order of up to the recipe's queue size.
+The blacksmith SHALL run one queue at first, a second at rank five, a third at rank ten and a fourth at rank fifteen (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ForgeUpdateExcelConfigData.json`; `packages/genshin-world/src/services/forging/computeForgeQueueCount.test.ts`), each queue holding one order of up to the recipe's queue size.
 
 #### Scenario: Second queue opens at rank five
 
@@ -114,7 +114,7 @@ Forge points from enhancement ores SHALL be capped at 400,000 per game day, coun
 
 - **GIVEN** an order for Mystic Enhancement Ore built from Magical Crystal Chunks
 - **WHEN** the order starts
-- **THEN** it adds nothing to the day's forge points
+- **THEN** it adds nothing to the day's forge points (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ForgeExcelConfigData.json`, row 12001: `forgePoint` 0)
 
 ### Requirement: A unit yields a result drawn by weight
 
@@ -130,7 +130,7 @@ A forge unit SHALL yield one result drawn by the weight each of its recipe's res
 
 - **GIVEN** a Mystic Enhancement Ore unit is collected
 - **WHEN** its result is drawn
-- **THEN** it yields either six Mystic Enhancement Ores or one hundred Adventure EXP at equal weight
+- **THEN** it yields either six Mystic Enhancement Ores or one hundred Adventure EXP at equal weight (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ForgeRandomExcelConfigData.json`, table 20001: 6 of `104013` and 100 of `102`, each at weight 10000)
 
 ### Requirement: A forged weapon enters the bag as a weapon at level one
 
@@ -215,3 +215,15 @@ The forge SHALL NOT yet show a blacksmith's place on the map.
 - **GIVEN** the player views the official map
 - **WHEN** the map is shown
 - **THEN** no blacksmith is marked
+
+## Open
+
+- [ ] **Enhancement ore forge points are capped at 400,000 per game day** — no source yet: no cap value is in the dump, and the wiki's Forging page is not in `~/Esposter.noindex/cache/genshin-wiki/`.
+- [ ] **The game day restarts at four in the morning on the game's clock** — no source yet: the reset hour is not in the dump, and the wiki's Forging page is not cached.
+- [ ] **A refused enhancement ore order shows the game's own refusal line for that ore** — no source yet: the refusal lines' `forgePointNoticeTextMapHash` values were not found in `~/Esposter.noindex/genshin-dump-backup-6.6/TextMap/TextMapEN.json`.
+- [ ] **A recipe is refused until the player's rank and its diagram allow it** — no source yet: each recipe's rank and unlock uses were not tied to its row in `ForgeExcelConfigData.json` and `MaterialExcelConfigData.json`.
+- [ ] **The Reduce time, Extra result and Refund talents apply at a fifth less time, one in five, and 15%** — no source yet: the talent rows in `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json` were not opened.
+- [ ] **An order takes its cost as it starts, a finished unit waits when the bag is full, forging runs over real time and collects at any blacksmith, and a reload empties the queues** — no source yet: the forge service tests (`packages/genshin-world/src/services/forging/startForge.test.ts`, `collectForgeOrder.test.ts`) were not opened for these assertions.
+- [ ] **Adventure EXP past rank sixty is paid as Mora into the wallet** — no source yet: `packages/genshin-world/src/services/forging/obtainForgeOrder.test.ts` was not opened for this assertion, and the rank-60 rule is not in the dump.
+- [ ] **A forged weapon enters the bag as a weapon at level one** — no source yet: the weapons' bag path was not opened.
+- [ ] **The forge shows no blacksmith place on the map** — no source yet: `packages/genshin-world/src/services/forging/getBlacksmithPlace.ts` and its test (`getBlacksmithPlace.test.ts`) exist, and whether the map shows that place was not checked.
