@@ -79,7 +79,7 @@ From Constellation 6, Kujou Sara's ATK Bonus SHALL also mark the character it re
 
 ### Requirement: Decorum restores Energy from Ascension 4
 
-From Ascension 4, Kujou Sara's Ambush SHALL restore 1.2 Energy to every party member for each point of Energy Recharge she has, once every three seconds.
+From Ascension 4, Kujou Sara's Ambush SHALL restore 1.2 Energy to every party member for each 100% of Energy Recharge she has, once every three seconds.
 
 #### Scenario: Ambush restores Energy from Ascension 4
 
