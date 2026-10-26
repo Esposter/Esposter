@@ -213,3 +213,9 @@ While the party holds Dew, her charged attack SHALL be Moondew Cleanse, which sp
 - **GIVEN** Moondew Cleanse is playing
 - **WHEN** each of its three hits strikes an enemy
 - **THEN** each hit ignores all of that enemy's DEF, and her normal charged attack ignores none
+
+## Open
+
+- [ ] **Every hit is Hydro and deals one unit of Hydro gauge** — contradicted by `~/Esposter.noindex/cache/genshin-wiki/Category_Columbina_Talents.json`: Moonlit Melancholy's Skill DMG row gives 2U; Moondew Cleanse deals Dendro DMG with 0U.
+- [ ] **A Lunar-Bloom consumes its auras as Bloom does** — no source yet: no cached line states how a Lunar-Bloom consumes its element.
+- [ ] **Moondew Cleanse's hits ignore all of each enemy's DEF** — no source yet: no design line cites it; gcsim's `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/columbina/charge.go` line 101 gives `IgnoreDefPercent: 1.0`.
