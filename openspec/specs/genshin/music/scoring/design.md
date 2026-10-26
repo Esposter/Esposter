@@ -1,13 +1,13 @@
 # Music listening score
 
-Every render of the login's music is scored against the game's decoded segment. The score is the measure every music step is fitted and approved against, and it is run by the `listen` command of `genshin:parity`. The latest numbers are the committed snapshot `scripts/src/services/genshinParity/shared/ParityMusicScores.snapshot.md`, which `listen` rewrites, so this page holds the measures and their reading, not the readings.
+Every render of the login's music is scored against the game's decoded segment. The score is the measure every music step is fitted and approved against, and it is run by the `listen` command of `genshin:parity` `scripts/src/services/genshinParity/commands/listenCommand.ts`. The latest numbers are the committed snapshot `scripts/src/services/genshinParity/shared/ParityMusicScores.snapshot.md`, which `listen` rewrites, so this page holds the measures and their reading, not the readings.
 
 ## The measures
 
-- **Pitch agreement** is the mean dot product of the two's pitch classes over the game's audible frames. It is 1 when every frame names the same notes in the same balance.
-- **The distance** is each octave band's mean level gap in decibels, from 63 Hz to 8 kHz. It charges timbre and loudness alike.
-- **The bias** is each band's gap signed, under 0 where ours is the quieter. It tells a band ours leaves short from one it overfills.
-- **The render** is the segment as its own screen plays it, offline on the parity page (`renderMusicSegments`), so the score judges what ships.
+- **Pitch agreement** is the mean dot product of the two's pitch classes over the game's audible frames. It is 1 when every frame names the same notes in the same balance `scripts/src/services/genshinParity/music/scoreMusicSegment.ts`.
+- **The distance** is each octave band's mean level gap in decibels, from 63 Hz to 8 kHz. It charges timbre and loudness alike `scripts/src/services/genshinParity/music/scoreMusicSegment.ts`.
+- **The bias** is each band's gap signed, under 0 where ours is the quieter. It tells a band ours leaves short from one it overfills `scripts/src/services/genshinParity/music/scoreMusicSegment.ts`.
+- **The render** is the segment as its own screen plays it, offline on the parity page (`renderMusicSegments`) `scripts/src/services/genshinParity/music/renderMusicSegments.ts`, so the score judges what ships.
 
 ## What a score is worth
 
@@ -28,9 +28,9 @@ Each score is read between two ends: the game's segment against itself shifted l
 
 The parity commands read three further measures from the same frames.
 
-- **The noise read back** (`genshin:parity noise`) runs the noise solve over the notes we ship, twice: on the game's sound and on our render. The game's reading reproduces what ships, so where our reading parts from it, the solve and the player disagree about what a level means, and a band's bias there says nothing about the band until they agree. See [voices](../voices/design.md) for the solve.
-- **The attacks** (`genshin:parity attacks`) count how often each octave band's level jumps by the attack threshold from one frame to the next, in our render and in the game's (`computeAttackShares`). The listening score cannot hear this: a band's mean gap reads a note that dies too soon and the next one striking over it the same as two notes ringing. The attacks measure what the ear reports, scattered single notes rather than a smooth line.
-- **The decay** (`genshin:parity decay`) reads each band's gap by how long before it the last note began, so a band ringing over the game's shows by a note's age.
+- **The noise read back** (`genshin:parity noise`) runs the noise solve over the notes we ship `scripts/src/services/genshinParity/commands/noiseCommand.ts`, twice: on the game's sound and on our render. The game's reading reproduces what ships, so where our reading parts from it, the solve and the player disagree about what a level means, and a band's bias there says nothing about the band until they agree. See [voices](../voices/design.md) for the solve.
+- **The attacks** (`genshin:parity attacks`) count how often each octave band's level jumps by the attack threshold from one frame to the next, in our render and in the game's (`computeAttackShares`) `scripts/src/services/genshinParity/commands/attacksCommand.ts`, `scripts/src/services/genshinParity/music/computeAttackShares.ts`. The listening score cannot hear this `scripts/src/services/genshinParity/music/scoreMusicSegment.ts`: a band's mean gap reads a note that dies too soon and the next one striking over it the same as two notes ringing. The attacks measure what the ear reports, scattered single notes rather than a smooth line.
+- **The decay** (`genshin:parity decay`) `scripts/src/services/genshinParity/commands/decayCommand.ts` reads each band's gap by how long before it the last note began, so a band ringing over the game's shows by a note's age.
 
 ## Key files
 
@@ -48,3 +48,13 @@ The parity commands read three further measures from the same frames.
 ## Sources
 
 - [A Diffusion-Based Generative Equalizer for Music Restoration](https://arxiv.org/html/2403.18636), Moliner, Turunen, Elvander and Välimäki, section 3.4: the equaliser taken as the ratio of two long-term average spectra. A time average assumes the signal's balance holds throughout and weighs louder sections more, so it is a starting point rather than a remedy on its own, which is why no equaliser ships.
+
+## Open
+
+- [ ] **Pitch agreement falls to about a quarter once the game is two seconds or more off itself, and under a fifth for one piece against the other** — no source yet: no self-shift run of the score is recorded.
+- [ ] **A render holding above four in five names nearly the right notes at nearly the right time** — no source yet: no checked run supports this reading.
+- [ ] **The game a quarter second off itself is a few decibels from itself, two seconds off well over twice that, and the other piece about twice the distance of the nearer end** — no source yet: no self-shift distance run is recorded.
+- [ ] **The recordings' solve holds the regression rule** — no source yet: the sampled-instruments solve is not checked here.
+- [ ] **A band gain fitted to half a segment's frames leaves about as much distance as none** — no source yet: no half-frame fit run is recorded.
+- [ ] **Solved in the score's own bands, the solve's distance came within a few tenths of a decibel of what `listen` measured** — no source yet: no solve-against-`listen` comparison is recorded.
+- [ ] **The game's noise reading reproduces what ships** — no source yet: no noise read-back output is recorded.
