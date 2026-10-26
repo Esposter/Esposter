@@ -218,8 +218,8 @@ The forge SHALL NOT yet show a blacksmith's place on the map.
 
 ## Open
 
-- [ ] **Enhancement ore forge points are capped at 400,000 per game day** — no source yet: no cap value is in the dump, and the wiki's Forging page is not cached.
-- [ ] **The game day restarts at four in the morning on the game's clock** — no source yet: the reset hour is not in the dump, and the wiki's Forging page is not cached.
+- [ ] **Enhancement ore forge points are capped at 400,000 per game day** — partly settled by the wiki's Forging page, which gives an "invisible daily limit of 400,000 Weapon EXP worth of Enhancement Ore", shared by the three ores; it does not say a forge point is one Weapon EXP, so that equivalence is open, and no cap value is in the dump.
+- [ ] **The game day restarts at four in the morning on the game's clock** — no source yet: the reset hour is not in the dump, and the wiki's Forging page is not cached. Checked the wiki's Forging page, now cached: it gives the daily limit but no reset hour.
 - [ ] **A refused enhancement ore order shows the game's own refusal line for that ore** — no source yet: the refusal lines' `forgePointNoticeTextMapHash` values were not found in the game's English text map.
 - [ ] **A recipe is refused until the player's rank and its diagram allow it** — no source yet: each recipe's rank and unlock uses were not tied to its row in `ForgeExcelConfigData.json` and `MaterialExcelConfigData.json`.
 - [ ] **The Reduce time, Extra result and Refund talents apply at a fifth less time, one in five, and 15%** — no source yet: the talent rows were not opened.
