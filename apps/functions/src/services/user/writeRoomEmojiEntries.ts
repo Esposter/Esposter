@@ -2,9 +2,8 @@ import type { UserDataArchive } from "#src/models/user/UserDataArchive";
 import type { RoomInMessage } from "@esposter/db-schema";
 
 import { getContainerClient } from "#src/services/azure/getContainerClient";
-import { getRoomEmojiBlobName } from "#src/services/user/getRoomEmojiBlobName";
 import { writeBlobEntry } from "#src/services/user/writeBlobEntry";
-import { AzureContainer } from "@esposter/db-schema";
+import { AzureContainer, getRoomEmojiBlobName } from "@esposter/db-schema";
 
 // The emoji blobs of a room, one at a time, each under the room's emoji directory
 export const writeRoomEmojiEntries = async (

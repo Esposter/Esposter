@@ -2,8 +2,8 @@ import type { RoomEmojiWithSasUrl } from "#shared/models/message/emoji/RoomEmoji
 import type { ContainerClient } from "@azure/storage-blob";
 import type { RoomEmojiInMessage } from "@esposter/db-schema";
 
-import { getRoomEmojiBlobName } from "#server/services/message/emoji/getRoomEmojiBlobName";
 import { generateReadSasUrl } from "@esposter/db";
+import { getRoomEmojiBlobName } from "@esposter/db-schema";
 
 // Every surface renders an emoji from its row plus a read SAS for the blob the row's id names, so the two
 // Travel together everywhere a row leaves the router

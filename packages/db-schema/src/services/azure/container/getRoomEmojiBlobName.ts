@@ -1,4 +1,4 @@
-import type { RoomEmojiInMessage } from "@esposter/db-schema";
+import type { RoomEmojiInMessage } from "#src/schema/message/roomEmojisInMessage";
 
 // The one place a room emoji's blob name is spelled. It is derived from the id rather than stored, so the row
 // Can never disagree with storage about where the image is, and the whole `{roomId}/…` prefix is already swept

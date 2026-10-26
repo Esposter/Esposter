@@ -5,7 +5,6 @@ import { getTableClient } from "#src/services/azure/getTableClient";
 import { createUser } from "#src/services/shared/createUser.test";
 import { buildUserDataArchive } from "#src/services/user/buildUserDataArchive";
 import { getResourceAssetBlobName } from "#src/services/user/getResourceAssetBlobName";
-import { getRoomEmojiBlobName } from "#src/services/user/getRoomEmojiBlobName";
 import { ArchiveLikeKind } from "#src/models/user/ArchiveLikeKind";
 import {
   createMessage,
@@ -24,6 +23,7 @@ import {
   friendRequestsInSocial,
   friendsInSocial,
   getReverseTickedTimestamp,
+  getRoomEmojiBlobName,
   getUserProfileImageBlobName,
   likesInPost,
   MessageMetadataType,
