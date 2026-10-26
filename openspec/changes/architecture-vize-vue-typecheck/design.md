@@ -51,7 +51,7 @@ flowchart TD
   PILOT --> M{"diagnostics match vue-tsc, every one"}
   M -->|"no"| RECORD["record the mismatch here, report upstream if it is a defect"]
   RECORD --> PILOT
-  M -->|"yes"| SCOPE["extend to the four vue-tsc packages"]
+  M -->|"yes"| SCOPE["extend to the three vue-tsc packages"]
   SCOPE --> NUXT{"apps/web: nuxt typecheck replaceable?"}
   NUXT -->|"yes"| RETIRE["retire vue-tsc and the native-bridge override"]
   NUXT -->|"no"| BESIDE["run vize beside nuxt typecheck, decided here"]
@@ -74,7 +74,7 @@ flowchart TD
 
 - `tsrs --noEmit` on a config with `contentMappers` is refused without `--runExternalCode`. That flag is required for the mapper, and the scripts that will use it must pass it explicitly.
 - The `TS18069` message points at the mapper process. It is not a type error in the `.vue` file, so a green or red run here does not yet say anything about the Vue source.
-- Removing the native bridge and `vue-tsc` is not a consequence of the mapper working alone. The classic API has consumers outside the four `vue-tsc` packages: `scripts/` parses source text with it (`ts.createSourceFile`, about twenty files), `vite-plugin-checker` runs `vue-tsc` in dev, `rolldown-plugin-dts` generates `.vue` declarations through `dts.tsc.vue` (`packages/configuration/src/services/getTsdownConfigurationVue.ts`), and `@volar/typescript` backs the editor path. Each one needs a replacement or a decision to keep the classic API before the override can go.
+- Removing the native bridge and `vue-tsc` is not a consequence of the mapper working alone. The classic API has consumers outside the three `vue-tsc` packages: `scripts/` parses source text with it (`ts.createSourceFile`, about twenty files), `vite-plugin-checker` runs `vue-tsc` in dev, `rolldown-plugin-dts` generates `.vue` declarations through `dts.tsc.vue` (`packages/configuration/src/services/getTsdownConfigurationVue.ts`), and `@volar/typescript` backs the editor path. Each one needs a replacement or a decision to keep the classic API before the override can go.
 - The 7.1 beta package does not replace the native bridge. It exports the CLI and the sync and async APIs, and `createSourceFile` and `createProgram` are undefined on its classic module, so it cannot host the consumers above.
 
 ## Sources
