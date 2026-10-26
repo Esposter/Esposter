@@ -1,7 +1,6 @@
 import type { Editor } from "@tiptap/core";
 
 import { NOTE_IMAGE_MIME_TYPES } from "#shared/services/resource/note/constants";
-import { useUploadResourceFile } from "@/composables/resource/useUploadResourceFile";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { useResourceStore } from "@/store/resource";
 import { ResourceType } from "@esposter/db-schema";
