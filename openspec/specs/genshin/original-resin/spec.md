@@ -1,6 +1,6 @@
 ## Purpose
 
-The game's Original Resin as pure state. It regenerates a point each eight minutes to 200, counted from the moment it last changed so it fills while the page is closed, refills from Primogems at six daily prices up to 2,000, and pays a claim five Adventure EXP a point. Its count is on the map's top bar. The blossoms that spend it wait on the challenges that leave them.
+The game's Original Resin as pure state. It regenerates a point each eight minutes to 200, counted from the moment it last changed so it fills while the page is closed, refills from Primogems at six daily prices up to 2,000, and pays a claim five Adventure EXP a point (`packages/genshin-world/src/services/originalResin/constants.ts`). Its count is on the map's top bar (`packages/genshin-world/src/components/Map/Overlay/Index.vue`). The blossoms that spend it wait on the challenges that leave them.
 
 ## Requirements
 
