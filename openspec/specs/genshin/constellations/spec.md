@@ -6,7 +6,7 @@ Each playable character's six constellations read per skill set from the game's 
 
 ### Requirement: A character's constellations are activated one at a time in order
 
-A character's constellations SHALL be activated one at a time in order, each activation spending one Stella Fortuna of that character (`packages/genshin-world/src/services/character/activateConstellation.ts`).
+A character's constellations SHALL be activated one at a time in order, each activation spending one Stella Fortuna of that character.
 
 #### Scenario: The next constellation is activated and one Stella Fortuna is spent
 
@@ -17,7 +17,7 @@ A character's constellations SHALL be activated one at a time in order, each act
 
 ### Requirement: A refused activation leaves the character unchanged
 
-A constellation activation SHALL be refused when the set has no constellation left or none to activate, or when the character holds no Stella Fortuna, and a refused activation SHALL leave the character as it was (`packages/genshin-world/src/services/character/getConstellationActivationRefusal.ts`, `packages/genshin-world/src/services/character/activateConstellation.ts`).
+A constellation activation SHALL be refused when the set has no constellation left or none to activate, or when the character holds no Stella Fortuna, and a refused activation SHALL leave the character as it was.
 
 #### Scenario: An activation is refused for a set with every constellation active
 
@@ -42,7 +42,7 @@ A constellation activation SHALL be refused when the set has no constellation le
 
 ### Requirement: The third and fifth constellations raise a combat talent by three levels
 
-A character's third and fifth constellations SHALL each raise one combat talent by three levels, and its other four constellations SHALL raise no talent (`scripts/src/services/genshinAssets/stats/getCharacterConstellationKits.ts`, `scripts/src/services/genshinAssets/stats/toConstellationRaise.ts`, and `~/Esposter.noindex/genshin-parity/text/BinOutput/Talent/AvatarTalents/ConfigTalent_Ayaka.json`, whose third and fifth actions raise by 3).
+A character's third and fifth constellations SHALL each raise one combat talent by three levels, and its other four constellations SHALL raise no talent (whose third and fifth actions raise by 3).
 
 #### Scenario: An active third constellation raises its talent
 
@@ -55,11 +55,11 @@ A character's third and fifth constellations SHALL each raise one combat talent 
 
 - **GIVEN** a character with its second constellation active
 - **WHEN** the talents a kit reads are summed
-- **THEN** no talent is raised by the second constellation (`packages/genshin-world/src/services/character/getConstellationTalentAdditions.ts`)
+- **THEN** no talent is raised by the second constellation
 
 ### Requirement: The constellation table refuses a raise that disagrees with its description
 
-The constellation table SHALL refuse any raise whose named skill disagrees with the constellation's description, rather than raise the wrong talent (`scripts/src/services/genshinAssets/stats/toConstellationRaise.ts`).
+The constellation table SHALL refuse any raise whose named skill disagrees with the constellation's description, rather than raise the wrong talent.
 
 #### Scenario: A raise that names the wrong skill refuses the table
 
@@ -69,18 +69,18 @@ The constellation table SHALL refuse any raise whose named skill disagrees with 
 
 ### Requirement: A skill set whose constellations the game data cannot name is left out with a note
 
-A skill set with a constellation the game data gives no config for SHALL be left out of the table, with a note (`scripts/src/services/genshinAssets/stats/getCharacterConstellationKits.ts`).
+A skill set with a constellation the game data gives no config for SHALL be left out of the table, with a note.
 
 #### Scenario: A set with an unnamed constellation is left out
 
-- **GIVEN** a skill set with a constellation the game data gives no config for (depot 6201 of `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/AvatarSkillDepotExcelConfigData.json`, whose talents 621 to 626 name no config)
+- **GIVEN** a skill set with a constellation the game data gives no config for (depot 6201, whose talents 621 to 626 name no config)
 - **WHEN** the table is built
 - **THEN** that set is left out of the table
-- **AND** a note names the set (`scripts/src/services/genshinAssets/stats/getCharacterConstellationKits.ts`)
+- **AND** a note names the set
 
 ### Requirement: A skill set's six constellations spend one item of its own character
 
-The six constellations of a skill set SHALL all spend one Stella Fortuna of the set's own character (`scripts/src/services/genshinAssets/stats/getCharacterConstellationKits.ts`).
+The six constellations of a skill set SHALL all spend one Stella Fortuna of the set's own character.
 
 #### Scenario: A set whose six constellations spend different items is refused
 
@@ -90,7 +90,7 @@ The six constellations of a skill set SHALL all spend one Stella Fortuna of the 
 
 ### Requirement: A duplicate draw brings its character's Stella Fortuna up to the sixth duplicate
 
-A wish's duplicate of a character SHALL bring one Stella Fortuna of that character, up to and including the sixth duplicate, and no duplicate after it (`packages/genshin-world/src/services/wish/makeWishes.ts`).
+A wish's duplicate of a character SHALL bring one Stella Fortuna of that character, up to and including the sixth duplicate, and no duplicate after it.
 
 #### Scenario: A duplicate draw brings a Stella Fortuna
 
@@ -113,7 +113,7 @@ A wish's duplicate of a character SHALL bring one Stella Fortuna of that charact
 
 ### Requirement: A five-star drawn past six copies brings a Masterless Stella Fortuna
 
-A five-star drawn past its sixth copy SHALL bring a Masterless Stella Fortuna to the wallet, once for each copy (`packages/genshin-world/src/services/wish/makeWishes.ts`).
+A five-star drawn past its sixth copy SHALL bring a Masterless Stella Fortuna to the wallet, once for each copy.
 
 #### Scenario: A five-star past six copies adds a Masterless Stella Fortuna to the wallet
 
@@ -123,7 +123,7 @@ A five-star drawn past its sixth copy SHALL bring a Masterless Stella Fortuna to
 
 ### Requirement: A new character starts with no constellation active and no Stella Fortuna
 
-A newly created character SHALL start with no constellation active and no Stella Fortuna held (`packages/genshin-world/src/services/character/createCharacter.ts`).
+A newly created character SHALL start with no constellation active and no Stella Fortuna held.
 
 #### Scenario: A character is created
 
