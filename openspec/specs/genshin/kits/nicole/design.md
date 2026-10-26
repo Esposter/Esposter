@@ -8,7 +8,7 @@ gcsim sources: Nicole's attack, charge, skill and burst files, with the table da
 
 ## Decisions
 
-- **Her plunges borrow Bennett's plunge file, with the wiki's poise.** gcsim gives Nicole no plunge file (`nicole/` has no `plunge.go`), so her two plunges take Bennett's timings and reaches, and their poise is the wiki's 100 high and 50 low (Low Plunge 50 and High Plunge 100 on the Allegoria page of `~/Esposter.noindex/cache/genshin-wiki/Category_Nicole_Talents.json`).
+- **Her plunges borrow Bennett's plunge file, with the wiki's poise.** gcsim gives Nicole no plunge file (`nicole/` has no `plunge.go`), so her two plunges take Bennett's timings and reaches, and their poise is the wiki's 100 high and 50 low (Low Plunge 50 and High Plunge 100 on the Allegoria page of `~/Esposter/cache/genshin-wiki/Category_Nicole_Talents.json`).
 - **The burst's hit is her record's.** Her burst is a circle of 6.5 metres on her primary target (`burst.go:109`); the 21.5-metre area that would price it round the targeting zone is unsourced and open below.
 - **The skill's hit is a circle of 5 metres round her body** (`skill.go:46`), recorded by hand, as its hitbox has no name in gcsim's press list, so it names no cause for it.
 - **The skill's shield and team buff come on at frame 8, one frame before its hitmark (`skill.go` line 17, `skillHitmark` 9).** gcsim queues both on her task at `skillHitmark-1` (`skill.go:76`), so they land together, and a recast removes the buff it gave at cast, before its own snapshot, as gcsim deletes it there.

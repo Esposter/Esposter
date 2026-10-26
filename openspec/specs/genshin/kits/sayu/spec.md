@@ -30,7 +30,7 @@ Fuufuu Windwheel's press SHALL release a Windwheel damage over time and a kick (
 
 ### Requirement: Short hold and roll
 
-Holding Fuufuu Windwheel SHALL play the short hold at 48 frames (`skill.go` line 27), and holding longer SHALL play a roll whose level rises with each whole second held up to ten (`~/Esposter.noindex/cache/genshin-wiki/Category_Sayu_Talents.json`), each level carrying its own ticks and cooldown (`skill.go` lines 222 and 260).
+Holding Fuufuu Windwheel SHALL play the short hold at 48 frames (`skill.go` line 27), and holding longer SHALL play a roll whose level rises with each whole second held up to ten (`~/Esposter/cache/genshin-wiki/Category_Sayu_Talents.json`), each level carrying its own ticks and cooldown (`skill.go` lines 222 and 260).
 
 #### Scenario: Short hold plays at 48 frames
 

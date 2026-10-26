@@ -59,7 +59,7 @@ Sucrose's Ascension 1 Swirl Elemental Mastery share, her Ascension 4 team share 
 
 - **GIVEN** Sucrose has Ascension 4
 - **WHEN** a skill or burst hit lands
-- **THEN** the team gains a share of her Elemental Mastery for that hit (`~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/sucrose/asc.go`, lines 72 to 83, called from `skill.go` line 49 and `burst.go` line 74)
+- **THEN** the team gains a share of her Elemental Mastery for that hit (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/sucrose/asc.go`, lines 72 to 83, called from `skill.go` line 49 and `burst.go` line 74)
 
 ### Requirement: Constellation 4 cuts Astable's cooldown on every seventh attack
 
@@ -101,5 +101,5 @@ The skill's pull and her Hexerei team bonus SHALL NOT take effect.
 
 ## Open
 
-- [ ] **the enemy's aura is left in place when the absorbed element strikes** — checked against `~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/core/combat/absorb.go`: AbsorbCheck reads AuraContains and removes nothing, and the strike is an ordinary attack with the absorbed element (`~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/sucrose/burst.go`, lines 81 to 83), and the claim is not settled by it because the strike's aura result is left to gcsim's general reaction code, which was not traced.
+- [ ] **the enemy's aura is left in place when the absorbed element strikes** — checked against `~/Esposter/cache/gcsim-v2.47.2/pkg/core/combat/absorb.go`: AbsorbCheck reads AuraContains and removes nothing, and the strike is an ordinary attack with the absorbed element (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/sucrose/burst.go`, lines 81 to 83), and the claim is not settled by it because the strike's aura result is left to gcsim's general reaction code, which was not traced.
 - [ ] **Constellations 1, 2 and 6 take effect** — no source yet: Constellation 1 is cited on the design page, and 2 and 6 are named in its Sources list without a line.

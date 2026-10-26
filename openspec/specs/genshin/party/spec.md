@@ -23,7 +23,7 @@ A team SHALL hold up to four characters, each character at most once, and the de
 
 ### Requirement: A new player's party starts with four default teams
 
-A new player's party SHALL start with the four default teams, named Party 1 to Party 4, with the first deployed and its first member on the field (the names are in `~/Esposter.noindex/genshin-parity/text/TextMap/`).
+A new player's party SHALL start with the four default teams, named Party 1 to Party 4, with the first deployed and its first member on the field (the names are in `~/Esposter/genshin-parity/text/TextMap/`).
 
 #### Scenario: New player's party created
 
@@ -149,7 +149,7 @@ A team SHALL be refused deployment when it has no members, and when all its memb
 
 ### Requirement: Teams are added, renamed and disbanded under the game's limits
 
-The player SHALL be able to add a team, which is named Team Standing By until renamed, up to fifteen teams, to rename a team, and to disband a team, with the four default teams and the deployed team kept (the name "Team Standing By" is in `~/Esposter.noindex/genshin-parity/text/TextMap/`).
+The player SHALL be able to add a team, which is named Team Standing By until renamed, up to fifteen teams, to rename a team, and to disband a team, with the four default teams and the deployed team kept (the name "Team Standing By" is in `~/Esposter/genshin-parity/text/TextMap/`).
 
 #### Scenario: Team added
 
@@ -178,7 +178,7 @@ The player SHALL be able to add a team, which is named Team Standing By until re
 
 ### Requirement: The deployed team's elements give its Elemental Resonances
 
-A full team's elements SHALL give each element that two or more members share its Elemental Resonance, and four different elements SHALL give the Protective Canopy (the game's resonance texts in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json`).
+A full team's elements SHALL give each element that two or more members share its Elemental Resonance, and four different elements SHALL give the Protective Canopy (the game's resonance texts in `~/Esposter/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json`).
 
 #### Scenario: Two members share an element
 
@@ -202,7 +202,7 @@ A full team's elements SHALL give each element that two or more members share it
 
 - **GIVEN** the Pyro Elemental Resonance is given to the deployed team
 - **WHEN** each member's attributes are read
-- **THEN** every member of the deployed team has its ATK raised by 25 percent (Fervent Flames, +25% ATK, in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json`)
+- **THEN** every member of the deployed team has its ATK raised by 25 percent (Fervent Flames, +25% ATK, in `~/Esposter/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json`)
 
 ### Requirement: Enduring Rock lowers a struck enemy's Geo resistance while a shield holds
 
@@ -213,7 +213,7 @@ While a shield is up on a Geo team with the Enduring Rock resonance, the team's 
 - **GIVEN** a Geo team with the Enduring Rock resonance and a live shield
 - **WHEN** the team strikes an enemy
 - **THEN** the hit deals 15 percent more damage
-- **AND** the enemy loses 20 percent of its Geo resistance for 15 seconds before the hit's damage is read (the game's Enduring Rock text in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json`, DMG +15% and Geo RES -20% for 15s)
+- **AND** the enemy loses 20 percent of its Geo resistance for 15 seconds before the hit's damage is read (the game's Enduring Rock text in `~/Esposter/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json`, DMG +15% and Geo RES -20% for 15s)
 
 #### Scenario: No shield up
 
@@ -223,7 +223,7 @@ While a shield is up on a Geo team with the Enduring Rock resonance, the team's 
 
 ### Requirement: Sprawling Greenery gives Elemental Mastery after each reaction
 
-With the Sprawling Greenery resonance, each reaction a strike triggers SHALL give every party member Elemental Mastery for six seconds, 30 after Burning, Quicken, Bloom or Lunar-Bloom and 20 after Aggravate, Spread, Hyperbloom or Burgeon (the game's 30 and 20 Elemental Mastery for 6s, `paramList`, in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json`).
+With the Sprawling Greenery resonance, each reaction a strike triggers SHALL give every party member Elemental Mastery for six seconds, 30 after Burning, Quicken, Bloom or Lunar-Bloom and 20 after Aggravate, Spread, Hyperbloom or Burgeon (the game's 30 and 20 Elemental Mastery for 6s, `paramList`, in `~/Esposter/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json`).
 
 #### Scenario: Reaction triggered by a strike
 
@@ -245,19 +245,19 @@ With the Impetuous Winds resonance, a skill's cooldown SHALL be five percent sho
 
 - **GIVEN** an Anemo team with the Impetuous Winds resonance
 - **WHEN** a skill starts its cooldown
-- **THEN** the cooldown is five percent shorter (the game's "Shortens Skill CD by 5%" in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json`)
+- **THEN** the cooldown is five percent shorter (the game's "Shortens Skill CD by 5%" in `~/Esposter/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json`)
 
 #### Scenario: On-field character moves
 
 - **GIVEN** the on-field character with the Impetuous Winds resonance
 - **WHEN** the character walks, runs, sprints or dashes
-- **THEN** its speed is ten percent higher (the game's "Increases Movement SPD by 10%" in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json`)
+- **THEN** its speed is ten percent higher (the game's "Increases Movement SPD by 10%" in `~/Esposter/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json`)
 
 #### Scenario: Stamina spent
 
 - **GIVEN** the on-field character carries Anemo's resonance
 - **WHEN** the character spends stamina
-- **THEN** each stamina spend is 15 percent lower (the game's "Decreases Stamina Consumption by 15%" in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json`)
+- **THEN** each stamina spend is 15 percent lower (the game's "Decreases Stamina Consumption by 15%" in `~/Esposter/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json`)
 
 ### Requirement: Each HP change is recorded for the character kits
 

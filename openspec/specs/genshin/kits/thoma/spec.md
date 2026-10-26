@@ -100,4 +100,4 @@ Thoma's Ascension 1 passive, Constellation 1 and Fiery Collapse on a shielded ch
 
 ## Open
 
-- [ ] **Flaming Assault takes effect from Ascension 4** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/thoma/asc.go`: its gate is Ascension 1 (line 31).
+- [ ] **Flaming Assault takes effect from Ascension 4** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/thoma/asc.go`: its gate is Ascension 1 (line 31).

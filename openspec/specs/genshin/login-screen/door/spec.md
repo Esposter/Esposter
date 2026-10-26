@@ -81,6 +81,6 @@ The door SHALL cast no shadow onto the walkway.
 
 ## Open
 
-- [ ] **The door has 13 pieces, each rising from about 6 metres below and settling between 0.4 and 1.33 seconds** — no source yet: the door record is hosted, and the `Ani_LogginScene_Door01_Liftting` clip is not in `~/Esposter.noindex/genshin-parity/extracted/login-clips/AnimationClip/`.
+- [ ] **The door has 13 pieces, each rising from about 6 metres below and settling between 0.4 and 1.33 seconds** — no source yet: the door record is hosted, and the `Ani_LogginScene_Door01_Liftting` clip is not in `~/Esposter/genshin-parity/extracted/login-clips/AnimationClip/`.
 - [ ] **The line on a piece sits on that piece's own slit** — no source yet: the game's per-piece slit was not measured, so the eye-check settles it.
 - [ ] **The door casts no shadow** — no source yet: only the exported copies are set `castShadow = false`, and our door's setting was not located.

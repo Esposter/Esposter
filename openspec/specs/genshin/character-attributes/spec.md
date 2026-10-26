@@ -1,6 +1,6 @@
 ## Purpose
 
-The game's characters, weapons and artifacts as data in the game's own shapes, read from the community's dump of the game's tables by genshin:assets stats (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/`) and fetched from the hosted game data as the world opens (`packages/genshin-world/src/generated/gameDataLock.json`), and a character's attributes summed from them as the game sums them — each base grown along its curve and raised by its ascension, a weapon's and artifacts' lines added, and Max HP, ATK and DEF each built from its base, percentage and flat.
+The game's characters, weapons and artifacts as data in the game's own shapes, read from the community's dump of the game's tables by genshin:assets stats (`~/Esposter/genshin-parity/text/ExcelBinOutput/`) and fetched from the hosted game data as the world opens (`packages/genshin-world/src/generated/gameDataLock.json`), and a character's attributes summed from them as the game sums them — each base grown along its curve and raised by its ascension, a weapon's and artifacts' lines added, and Max HP, ATK and DEF each built from its base, percentage and flat.
 
 ## Requirements
 

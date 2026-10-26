@@ -67,7 +67,7 @@ flowchart TD
 
 ### Sources by question
 
-Every command runs from `scripts/` with `pnpm`. Outputs land under `~/Esposter/genshin-parity` (`PARITY_DIRECTORY`), outside the repository (`scripts/src/services/genshinAssets/commands/genshinAssetsCommand.ts`, `~/Esposter.noindex/genshin-parity/`).
+Every command runs from `scripts/` with `pnpm`. Outputs land under `~/Esposter/genshin-parity` (`PARITY_DIRECTORY`), outside the repository (`scripts/src/services/genshinAssets/commands/genshinAssetsCommand.ts`, `~/Esposter/genshin-parity/`).
 
 | Question                                  | Source                                                                         | Command                                                         | Lands in                                                                                                 | Owner                                                          |
 | :---------------------------------------- | :----------------------------------------------------------------------------- | :-------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------- |

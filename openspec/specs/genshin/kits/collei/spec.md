@@ -123,4 +123,4 @@ From Constellation 1, Collei SHALL gain 20% Energy Recharge while she is not the
 
 ## Open
 
-- [ ] **Collei's arrows, Floral Brush and Trump-Card Kitty deal no poise** — contradicted by `~/Esposter.noindex/cache/genshin-wiki/Category_Collei_Talents.json`: gives arrows 14.88 to 23.73, Skill DMG 40, Explosion 30, Leap 10 poise.
+- [ ] **Collei's arrows, Floral Brush and Trump-Card Kitty deal no poise** — contradicted by `~/Esposter/cache/genshin-wiki/Category_Collei_Talents.json`: gives arrows 14.88 to 23.73, Skill DMG 40, Explosion 30, Leap 10 poise.

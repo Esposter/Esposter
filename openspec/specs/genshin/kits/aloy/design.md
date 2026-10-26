@@ -28,4 +28,4 @@ Aloy's kit is its record and one behaviour module, `createAloyKitBehaviour`, ava
 
 ## Open
 
-- [ ] **Freeze Bomb's two Chillwater Bomblets** — contradicted by `~/Esposter.noindex/cache/genshin-wiki/Category_Aloy_Talents.json`: Frozen Wilds' Gameplay Notes give "The freeze bomb generates 6 Chillwater Bomblets", not two. gcsim's default of 2 at `skill.go:52` is its own, not the game's.
+- [ ] **Freeze Bomb's two Chillwater Bomblets** — contradicted by `~/Esposter/cache/genshin-wiki/Category_Aloy_Talents.json`: Frozen Wilds' Gameplay Notes give "The freeze bomb generates 6 Chillwater Bomblets", not two. gcsim's default of 2 at `skill.go:52` is its own, not the game's.

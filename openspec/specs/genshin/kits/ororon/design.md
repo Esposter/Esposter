@@ -29,7 +29,7 @@ Ororon's kit is its record and one behaviour module, `createOroronKitBehaviour`,
 
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/ororon), MIT, at v2.47.2: Ororon's strikes' hitmarks and cancels, the Aimed Shot's and the Spirit Orb's frames, Dark Voices' Echo's ritual, soundwave and field, and Ascension 4's and Constellations 2 and 4's values.
 - [Spiritvessel Snapshot](https://genshin-impact.fandom.com/wiki/Spiritvessel_Snapshot), [Night's Sling](https://genshin-impact.fandom.com/wiki/Night%27s_Sling) and [Dark Voices Echo](https://genshin-impact.fandom.com/wiki/Dark_Voices_Echo), Genshin Impact Wiki: the poise of his strikes, Aimed Shot, collision, plunges, Spirit Orb's hit, burst and soundwave.
-- The cached Genshin wiki, `~/Esposter.noindex/cache/genshin-wiki/Category_Ororon_Talents.json`: the three strike rows' poise (17.6, 15.48 and 24.35) and the constellation notes.
+- The cached Genshin wiki, `~/Esposter/cache/genshin-wiki/Category_Ororon_Talents.json`: the three strike rows' poise (17.6, 15.48 and 24.35) and the constellation notes.
 - The proud skill groups 10531, 10532 and 10539 in the hosted game data: the multipliers' indices, the Spirit Orb's 15-second cooldown (group 10532's index 1, `internal/characters/ororon/skill.go:68`), and the burst's 9 seconds, 15-second cooldown and 60 energy (group 10539's indices 2, 3 and 4).
 - No YouTube or Bilibili reference snapshot for Ororon is in the repo, so no claim here rests on video.
 

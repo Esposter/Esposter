@@ -54,4 +54,4 @@ Linnea's Lumi duration SHALL NOT take effect, so her skill leaves no timed field
 
 ## Open
 
-- [ ] **The burst lands no hit** — contradicted by `~/Esposter.noindex/cache/genshin-wiki/Category_Linnea_Talents.json`: Lumi strikes nearby opponents with Pound-Pound Pummeler in the burst.
+- [ ] **The burst lands no hit** — contradicted by `~/Esposter/cache/genshin-wiki/Category_Linnea_Talents.json`: Lumi strikes nearby opponents with Pound-Pound Pummeler in the burst.

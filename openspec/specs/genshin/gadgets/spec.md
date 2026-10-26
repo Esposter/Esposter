@@ -1,6 +1,6 @@
 ## Purpose
 
-The game's tools are the widget config's entries: the Wind Catcher, the Treasure Compasses, the gather point finders and the devices, each a kind with its own cooldowns (`~/Esposter.noindex/genshin-parity/text/BinOutput/Widget/ConfigWidget.json`). This page is the first part of the gadgets proposal, its data and its cooldowns. Z is already bound to the quick-use gadget, but nothing is equipped to it and nothing is used yet: the bag's items do not yet include the widget material type, so a gadget has no item to equip.
+The game's tools are the widget config's entries: the Wind Catcher, the Treasure Compasses, the gather point finders and the devices, each a kind with its own cooldowns (`~/Esposter/genshin-parity/text/BinOutput/Widget/ConfigWidget.json`). This page is the first part of the gadgets proposal, its data and its cooldowns. Z is already bound to the quick-use gadget, but nothing is equipped to it and nothing is used yet: the bag's items do not yet include the widget material type, so a gadget has no item to equip.
 
 ## Requirements
 

@@ -17,7 +17,7 @@ Sucrose's kit is its record and one behaviour module, `createSucroseKitBehaviour
 ## Sources
 
 - [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/sucrose), MIT: Sucrose's strikes' hitmarks, cancels and circles, the charged attack's box, Astable Anemohypostasis Creation-6308's circle, its frames and cooldown, Forbidden Creation's frames, ticks, absorb check and Constellations 2 and 6, Constellation 4's count and cut in `internal/characters/sucrose/cons.go`, and her Ascension 1 and 4 passives.
-- [Forbidden Creation - Isomer 75 / Type II](https://genshin-impact.fandom.com/wiki/Forbidden_Creation_-_Isomer_75_/_Type_II), Genshin Impact Wiki: the burst's tick poise. Cached with her other talents at `~/Esposter.noindex/cache/genshin-wiki/Category_Sucrose_Talents.json`, which also gives Mollis Favonius's 20% Elemental Mastery share for 8 seconds and Alchemania's cut.
+- [Forbidden Creation - Isomer 75 / Type II](https://genshin-impact.fandom.com/wiki/Forbidden_Creation_-_Isomer_75_/_Type_II), Genshin Impact Wiki: the burst's tick poise. Cached with her other talents at `~/Esposter/cache/genshin-wiki/Category_Sucrose_Talents.json`, which also gives Mollis Favonius's 20% Elemental Mastery share for 8 seconds and Alchemania's cut.
 
 ## Open
 

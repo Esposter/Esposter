@@ -1,6 +1,6 @@
 ## Purpose
 
-Each character's Friendship Level read from the Companionship EXP it has earned, the game's own level table (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/AvatarFettersLevelExcelConfigData.json`), and the Original Resin claims giving that EXP to the deployed team but the Traveler, with the Serenitea Pot dialogue and the namecard's art and description still unopened.
+Each character's Friendship Level read from the Companionship EXP it has earned, the game's own level table (`~/Esposter/genshin-parity/text/ExcelBinOutput/AvatarFettersLevelExcelConfigData.json`), and the Original Resin claims giving that EXP to the deployed team but the Traveler, with the Serenitea Pot dialogue and the namecard's art and description still unopened.
 
 ## Requirements
 

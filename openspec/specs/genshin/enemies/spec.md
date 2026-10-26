@@ -131,7 +131,7 @@ An enemy whose health reaches zero SHALL be defeated and drop Mora, Character EX
 
 ### Requirement: Enemy stats grow by the game's level curves
 
-An enemy's max health and ATK SHALL be its base values times the multiplier of its level's curve, and its DEF SHALL be scaled by one plus a hundredth of its level (the defense curve's multipliers in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/MonsterCurveExcelConfigData.json`).
+An enemy's max health and ATK SHALL be its base values times the multiplier of its level's curve, and its DEF SHALL be scaled by one plus a hundredth of its level (the defense curve's multipliers in `~/Esposter/genshin-parity/text/ExcelBinOutput/MonsterCurveExcelConfigData.json`).
 
 #### Scenario: A kind's stats are computed at its level
 
@@ -153,7 +153,7 @@ A defeated enemy SHALL NOT return before its respawn time, which depends on its 
 #### Scenario: An elite camp member returns at the next daily reset
 
 - **GIVEN** a camp with an elite and a member defeated
-- **WHEN** the next daily reset at 04:00 on the server's clock arrives (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, the `REFRESH_DAILY` rows with `14400`)
+- **WHEN** the next daily reset at 04:00 on the server's clock arrives (`~/Esposter/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, the `REFRESH_DAILY` rows with `14400`)
 - **THEN** the member returns
 
 #### Scenario: A boss camp returns on the next load with its reward claimed

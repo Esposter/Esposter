@@ -49,7 +49,7 @@ Holding Icy Paws SHALL cast paws that give Diona a larger shield, once the hold 
 
 ### Requirement: Constellation 2 shields
 
-From constellation 2, each Icy Paws shield, whether tapped or held, SHALL be 15 percent larger (gcsim's `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/diona/skill.go:96-97`). Its damage part, which gcsim also gives, is open in the design.
+From constellation 2, each Icy Paws shield, whether tapped or held, SHALL be 15 percent larger (gcsim's `~/Esposter/cache/gcsim-v2.47.2/internal/characters/diona/skill.go:96-97`). Its damage part, which gcsim also gives, is open in the design.
 
 #### Scenario: A shield at constellation 2 is larger
 

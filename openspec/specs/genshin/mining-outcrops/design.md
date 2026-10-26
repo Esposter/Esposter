@@ -1,6 +1,6 @@
 # Mining outcrops
 
-The rules a region's mining outcrops follow, the Magical Crystal Chunks a player mines for: the Adventure Rank that opens them, and when a mined one comes back. A mining outcrop is drawn each day at the daily reset, 04:00 on the server's clock (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`: its daily policies are `REFRESH_DAILY` at `14400` seconds from midnight), the reset the world's ley line outcrops are drawn at too, and a mined one stays gone until the day's next draw. Their places are built per region by `genshin:assets mining-outcrops`, which the main session publishes, the Magical Crystal Chunk points the fit places, but nothing draws them in the world yet, so none is drawn, mined or marked, and the [proposal](../../../changes/genshin-gathering/design.md) keeps the draw. The places are built by `scripts/src/services/genshinAssets/miningOutcrops/buildMiningOutcropPlaces.ts`.
+The rules a region's mining outcrops follow, the Magical Crystal Chunks a player mines for: the Adventure Rank that opens them, and when a mined one comes back. A mining outcrop is drawn each day at the daily reset, 04:00 on the server's clock (`~/Esposter/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`: its daily policies are `REFRESH_DAILY` at `14400` seconds from midnight), the reset the world's ley line outcrops are drawn at too, and a mined one stays gone until the day's next draw. Their places are built per region by `genshin:assets mining-outcrops`, which the main session publishes, the Magical Crystal Chunk points the fit places, but nothing draws them in the world yet, so none is drawn, mined or marked, and the [proposal](../../../changes/genshin-gathering/design.md) keeps the draw. The places are built by `scripts/src/services/genshinAssets/miningOutcrops/buildMiningOutcropPlaces.ts`.
 
 ## How it works
 
@@ -38,7 +38,7 @@ flowchart TD
 
 ## Notes
 
-- **The respawn is the world's reset, not the wiki's.** The wiki gives the respawn at 06:00, two hours after the reset. The world's one daily reset is 04:00, the reset the shops and commissions use, read on the server's clock, UTC+8, as the [reset clock](../reset-clock/design.md) reads every reset (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, the `REFRESH_DAILY` policies at `14400` seconds). A recording of a mined outcrop coming back would confirm which reset it is.
+- **The respawn is the world's reset, not the wiki's.** The wiki gives the respawn at 06:00, two hours after the reset. The world's one daily reset is 04:00, the reset the shops and commissions use, read on the server's clock, UTC+8, as the [reset clock](../reset-clock/design.md) reads every reset (`~/Esposter/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, the `REFRESH_DAILY` policies at `14400` seconds). A recording of a mined outcrop coming back would confirm which reset it is.
 
 ## Sources
 

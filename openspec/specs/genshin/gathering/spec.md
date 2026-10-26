@@ -1,6 +1,6 @@
 ## Purpose
 
-The plants and specialties the official map marks, placed by the fit into each region as gathering points, picked with F and kept gone until their respawn. A local specialty comes back 46 hours after it is picked, as the wiki gives it, and a cooking ingredient at the daily reset that follows. The gather table's refresh ids name no policy in the dump, so the category settles it (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/GatherExcelConfigData.json`, checked against `RefreshPolicyExcelConfigData.json`).
+The plants and specialties the official map marks, placed by the fit into each region as gathering points, picked with F and kept gone until their respawn. A local specialty comes back 46 hours after it is picked, as the wiki gives it, and a cooking ingredient at the daily reset that follows. The gather table's refresh ids name no policy in the dump, so the category settles it (`~/Esposter/genshin-parity/text/ExcelBinOutput/GatherExcelConfigData.json`, checked against `RefreshPolicyExcelConfigData.json`).
 
 ## Requirements
 
@@ -54,7 +54,7 @@ A picked local specialty SHALL stand again 46 hours after it was picked.
 
 ### Requirement: A picked cooking ingredient stands again at the next daily reset
 
-A picked cooking ingredient SHALL stand again at the game's next daily reset after the pick, which is 04:00 on the game's clock (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, a daily refresh of 14400 seconds).
+A picked cooking ingredient SHALL stand again at the game's next daily reset after the pick, which is 04:00 on the game's clock (`~/Esposter/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, a daily refresh of 14400 seconds).
 
 #### Scenario: Ingredient picked before the reset is back at the reset
 
@@ -116,7 +116,7 @@ An ore SHALL break once the poise its landed hits deal reaches its requirement f
 
 - **GIVEN** an Overloaded reaction lands on an enemy
 - **WHEN** the explosion resolves
-- **THEN** ores within three metres of that enemy take a blunt hit of ninety poise (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/overload.go`, lines 53-54 and 62)
+- **THEN** ores within three metres of that enemy take a blunt hit of ninety poise (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/overload.go`, lines 53-54 and 62)
 
 ### Requirement: A broken ore drops its pieces where it lay
 
@@ -156,13 +156,13 @@ A broken ore SHALL stand again on its own respawn: an iron chunk at the daily re
 
 ## Open
 
-- [ ] **Gathering points stand where the official map marks their item** — no source yet: no label-tree file matching `teyvat`, `map-label` or `labels` was found under `~/Esposter.noindex/genshin-parity/references/`.
+- [ ] **Gathering points stand where the official map marks their item** — no source yet: no label-tree file matching `teyvat`, `map-label` or `labels` was found under `~/Esposter/genshin-parity/references/`.
 - [ ] **F picks a gathering point into the bag, and F does not pick an ore** — no source yet: no gathering pick path was found in the files checked, so the pick, full-bag and no-ore scenarios are unchecked.
 - [ ] **Ningguang's plunge is not blunt, as the wiki's table excepts it** — no source yet: the wiki's Blunt Attacks table is not cached; the code carries the exception. Checked: the genshin-wiki cache holds no Blunt Attack page.
 - [ ] **A burst breaks a crystal chunk in one hit** — no source yet: the Zhongli clip `yt-EWYe-MYjmqU-ore-zhongli.mp4` was not frame-checked in this pass.
 - [ ] **An item a mining outcrop draws is not a gathering point** — no source yet: the mining outcrops' drops are not matched against the gather table's items.
 - [ ] **An ore breaks once its landed hits' poise reaches its requirement for blunt or melee** — no source yet: no poise requirement is in the dump's `ExcelBinOutput` tables.
 - [ ] **Claymore attacks, plunges and Geo damage strike blunt, and a Geo Traveler's skill does too; a Geo character's normal attack does not** — no source yet: the wiki's Blunt Attacks table is not cached. Checked: the genshin-wiki cache holds no Blunt Attack page.
-- [ ] **A hit that is neither blunt nor melee adds no poise, and converted poise does not reach an ore** — no source yet: the wiki's Blunt Attacks table is not in the genshin-wiki cache, and the game text at `~/Esposter.noindex/genshin-parity/text/TextMap/TextMapEN.json` names blunt attacks and poise only in flavour lines, with no rule for converted poise.
+- [ ] **A hit that is neither blunt nor melee adds no poise, and converted poise does not reach an ore** — no source yet: the wiki's Blunt Attacks table is not in the genshin-wiki cache, and the game text at `~/Esposter/genshin-parity/text/TextMap/TextMapEN.json` names blunt attacks and poise only in flavour lines, with no rule for converted poise.
 - [ ] **A broken ore drops its certain piece, and one more for each of two draws under ten per cent** — no source yet: the dump's gather table at `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/GatherExcelConfigData.json` holds no drop chance, the resident gadget config's keys carry no drop field, and no wiki ore page is in the genshin-wiki cache.
-- [ ] **Ores stand again on their own respawn: an iron chunk at the daily reset, a white iron chunk or starsilver after two days, a crystal chunk, amethyst lump or condessence crystal after three** — no source yet: the gather table's ore refresh ids, 999900 to 999932, name no policy in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`.
+- [ ] **Ores stand again on their own respawn: an iron chunk at the daily reset, a white iron chunk or starsilver after two days, a crystal chunk, amethyst lump or condessence crystal after three** — no source yet: the gather table's ore refresh ids, 999900 to 999932, name no policy in `~/Esposter/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`.

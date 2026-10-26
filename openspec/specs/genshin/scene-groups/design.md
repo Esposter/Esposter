@@ -39,9 +39,9 @@ A place (`SceneGroupPlace`) is a ground point in the game's own axes, the height
 | A viewpoint member's group, config and gadget | `ViewCodexExcelConfigData`, its open-world rows the codex keeps                                                 | `ViewCodex`        |
 | A viewpoint's place                           | The official map's Viewpoint label, matched by name and carried by the [map's fit](../spawned-places/design.md) | `OfficialMap`      |
 | A trigger member's group and id               | `TriggerExcelConfigData`, its open-world rows                                                                   | `TriggerTable`     |
-| A building point's service, place and turn    | The dump's `~/Esposter.noindex/genshin-parity/text/BinOutput/Scene/Point/scene3_point.json`, the points of Mondstadt's restaurant point's kind                               | `ScenePoints`      |
+| A building point's service, place and turn    | The dump's `~/Esposter/genshin-parity/text/BinOutput/Scene/Point/scene3_point.json`, the points of Mondstadt's restaurant point's kind                               | `ScenePoints`      |
 
-An NPC birth's own `configId` is the NPC's id, so it becomes the member's object id, and the member's config id within the group stays unset. The two tables name the scene each row belongs to, and only the open world's are kept (`scripts/src/services/genshinAssets/sceneGroups/readViewpointMembers.ts`, which filters on the open-world `sceneId`; `scripts/src/services/genshinAssets/sceneGroups/buildSceneGroups.ts`, which filters the triggers the same way; `packages/genshin-world/src/models/sceneGroup/SceneGroupSource.ts` for the five sources, and `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/ViewCodexExcelConfigData.json` and `TriggerExcelConfigData.json` as the tables they read).
+An NPC birth's own `configId` is the NPC's id, so it becomes the member's object id, and the member's config id within the group stays unset. The two tables name the scene each row belongs to, and only the open world's are kept (`scripts/src/services/genshinAssets/sceneGroups/readViewpointMembers.ts`, which filters on the open-world `sceneId`; `scripts/src/services/genshinAssets/sceneGroups/buildSceneGroups.ts`, which filters the triggers the same way; `packages/genshin-world/src/models/sceneGroup/SceneGroupSource.ts` for the five sources, and `~/Esposter/genshin-parity/text/ExcelBinOutput/ViewCodexExcelConfigData.json` and `TriggerExcelConfigData.json` as the tables they read).
 
 ## The viewpoints' match
 
@@ -85,7 +85,7 @@ Every field below is held only by the group scripts, which are the server's and 
 
 ## Open
 
-- [ ] **The scene's service points name Restaurant, Alchemy, Blacksmith, Reputation and Adventurers, with suffixes such as `Restaurant_liyue`** — contradicted by `~/Esposter.noindex/genshin-parity/text/BinOutput/Scene/Point/scene3_point.json`: it names all five services with `_liyue` suffixes; the cooking page's stove place rests on the same point.
+- [ ] **The scene's service points name Restaurant, Alchemy, Blacksmith, Reputation and Adventurers, with suffixes such as `Restaurant_liyue`** — contradicted by `~/Esposter/genshin-parity/text/BinOutput/Scene/Point/scene3_point.json`: it names all five services with `_liyue` suffixes; the cooking page's stove place rests on the same point.
 - [ ] **`viewpoints.json` keeps the viewpoints' text beside the other map references** — contradicted by `~/Esposter.noindex/genshin-parity/references/interactive-map/viewpoints.json`: 224 records, each with its viewpoint's text in `content`.
 - [ ] **The publish's notes count a handful of the codex's left-out rows** — no source yet: the publish notes were not run for the count in this pass.
 - [ ] **`nod-krai.json` keeps its residents empty** — contradicted by `packages/genshin-world/src/data/regions/nod-krai.json`: it holds one resident, `lempo-isle` (id 7086).

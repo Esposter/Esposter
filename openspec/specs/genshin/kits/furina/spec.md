@@ -13,7 +13,7 @@ Furina's four strikes SHALL each open an Arkhe hit of their own, at most once wi
 - **GIVEN** Furina is in Ousia and her Arkhe hit is off cooldown
 - **WHEN** one of her four strikes lands
 - **THEN** her Arkhe hit follows 30 frames later
-- **AND** the hit is Spiritbreath Thorn in Ousia or Surging Blade in Pneuma, a Hydro hit (`~/Esposter.noindex/cache/genshin-wiki/Category_Furina_Talents.json` names both hits and Hydro) that applies no elemental gauge
+- **AND** the hit is Spiritbreath Thorn in Ousia or Surging Blade in Pneuma, a Hydro hit (`~/Esposter/cache/genshin-wiki/Category_Furina_Talents.json` names both hits and Hydro) that applies no elemental gauge
 
 #### Scenario: A strike inside the cooldown opens no Arkhe hit
 

@@ -63,7 +63,7 @@ The jump list, the map's marks and a revive SHALL use only unlocked landmarks, a
 
 ### Requirement: First unlock pays Primogems
 
-Windrise's statue SHALL pay five Primogems and fifty Adventure EXP on its first unlock and no more after (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/RewardExcelConfigData.json`, rewardId 220311, and `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/TransPointRewardConfigData.json`, sceneId 3 pointId 4).
+Windrise's statue SHALL pay five Primogems and fifty Adventure EXP on its first unlock and no more after (`~/Esposter/genshin-parity/text/ExcelBinOutput/RewardExcelConfigData.json`, rewardId 220311, and `~/Esposter/genshin-parity/text/ExcelBinOutput/TransPointRewardConfigData.json`, sceneId 3 pointId 4).
 
 #### Scenario: First unlock of Windrise's statue
 
@@ -86,7 +86,7 @@ A Teleport Waypoint SHALL be unlocked by resonating with it on F, as a statue is
 
 #### Scenario: Waypoint whose point has no reward row pays nothing
 
-- **WHEN** a Teleport Waypoint whose transport point has no reward row is unlocked for the first time (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/TransPointRewardConfigData.json` has no row for points 1865 to 2051, the points of eleven Mondstadt waypoints)
+- **WHEN** a Teleport Waypoint whose transport point has no reward row is unlocked for the first time (`~/Esposter/genshin-parity/text/ExcelBinOutput/TransPointRewardConfigData.json` has no row for points 1865 to 2051, the points of eleven Mondstadt waypoints)
 - **THEN** nothing is added to the wallet or the adventure rank
 
 #### Scenario: A later unlock pays nothing again

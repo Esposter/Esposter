@@ -1,6 +1,6 @@
 ## Purpose
 
-The official Teyvat Interactive Map's statues and waypoints read into the references folder and fitted to the scene's transport points by one similarity over the whole map, with its residual, and each region's Oculi counted against the wiki's, Mondstadt checked first (`~/Esposter.noindex/genshin-parity/references/interactive-map/fit.json`).
+The official Teyvat Interactive Map's statues and waypoints read into the references folder and fitted to the scene's transport points by one similarity over the whole map, with its residual, and each region's Oculi counted against the wiki's, Mondstadt checked first (`~/Esposter/genshin-parity/references/interactive-map/fit.json`).
 
 ## Requirements
 
@@ -99,4 +99,4 @@ The published Oculi SHALL be those the official map marks on the ground, each wi
 ## Open
 
 - [x] **The wiki's Oculus counts the report compares against** — settled by the Oculus wiki page's Total list, cached as `Oculus.json`: "66 Anemoculi can be found in Mondstadt." and "271 Hydroculi can be found in Fontaine & Sea of Bygone Eras.", with the same 271 for Pyroculi in Natlan and Lunoculi in Nod-Krai.
-- [ ] **Snezhnaya holds no transport points in the scene** — no source yet: the dump's transport points for Snezhnaya's areas were not counted, and `~/Esposter.noindex/genshin-parity/references/interactive-map/fit.json` shows only its zero matches.
+- [ ] **Snezhnaya holds no transport points in the scene** — no source yet: the dump's transport points for Snezhnaya's areas were not counted, and `~/Esposter/genshin-parity/references/interactive-map/fit.json` shows only its zero matches.

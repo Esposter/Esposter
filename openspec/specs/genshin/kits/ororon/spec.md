@@ -93,4 +93,4 @@ Hypersense, the Spirit Orb's bounce, Constellation 4's energy on the burst's hit
 
 ## Open
 
-- [ ] **Ororon's strikes, Aimed Shot, Spirit Orb, burst and plunges deal no poise damage** — contradicted by ~/Esposter.noindex/cache/genshin-wiki/Category_Ororon_Talents.json: the wiki gives the strikes 17.6, 15.48 and 24.35 poise.
+- [ ] **Ororon's strikes, Aimed Shot, Spirit Orb, burst and plunges deal no poise damage** — contradicted by ~/Esposter/cache/genshin-wiki/Category_Ororon_Talents.json: the wiki gives the strikes 17.6, 15.48 and 24.35 poise.

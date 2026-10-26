@@ -6,7 +6,7 @@ Kujou Sara's kit as built: five strikes, a fully charged shot, Tengu Stormcall's
 
 ### Requirement: Kujou Sara's five strikes
 
-Kujou Sara's normal attack SHALL land five strikes in order, each hitting the enemies within its reach (`~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/sara/attack.go` line 19: `normalHitNum = 5`).
+Kujou Sara's normal attack SHALL land five strikes in order, each hitting the enemies within its reach (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/sara/attack.go` line 19: `normalHitNum = 5`).
 
 #### Scenario: Five strikes in sequence
 
@@ -41,7 +41,7 @@ Kujou Sara's Electro hits SHALL give the character on the field an ATK Bonus, a 
 
 ### Requirement: Titanbreaker and its Stormclusters
 
-Subjugation: Koukou Sendou's Titanbreaker SHALL set off Stormclusters in four bouts of six ticks each, and in six bouts from Constellation 4 (`~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/sara/burst.go` lines 74 to 85: six Stormclusters from Constellation 4, four before it, six ticks each).
+Subjugation: Koukou Sendou's Titanbreaker SHALL set off Stormclusters in four bouts of six ticks each, and in six bouts from Constellation 4 (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/sara/burst.go` lines 74 to 85: six Stormclusters from Constellation 4, four before it, six ticks each).
 
 #### Scenario: Four bouts without Constellation 4
 
