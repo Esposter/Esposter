@@ -115,7 +115,7 @@ A duel's enemy card group is its deck's id, and the built decks are these.
 - [ ] **Game 1103 pays 900 Lucky Coins and 200 Player EXP as its week reward** — no source yet: the week reward rows were not read.
 - [ ] **Deck 2 is the enemy deck of the Oceanid duel, game 11** — no source yet: game 11's row was not read.
 - [ ] **Deck 10 is not legal, since its Crossfire needs Xiangling** — no source yet: deck 10's cards were not checked for Crossfire.
-- [ ] **Marjorie and Ellin open at Genius Invokation level 0** — no source yet, and the dump disagrees: the week table gives game 1021 and game 1031 gcgLevel 1.
+- [ ] **Marjorie and Ellin open at Genius Invokation level 0** — contradicted by `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/GCGWeekLevelExcelConfigData.json`: games 1021 and 1031 need gcgLevel 1.
 - [ ] **The dice cap of sixteen and four supports match the game** — no source yet: the wiki's rules page is not in the cache.
 - [ ] **A character's description id names no text in any language** — no source yet: the character rows' description hashes were not looked up in the text maps.
 - [ ] **Kid Kujirai creates its Omni Element die once a phase, then moves to the opposing support zone** — no source yet: game data or a snapshot that holds this behaviour.
