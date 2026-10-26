@@ -33,5 +33,5 @@ The building is centred on the origin and stands on it, so a caller places it on
 
 ## Open
 
-- [ ] **Natlan's tribes build with the kit** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The People of the Springs' first building stands as a building landmark** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Natlan's tribes build with the kit** — no source yet: the Natlan export `~/Esposter/genshin-parity/extracted/natlan/`, not yet read for the tribes' building kit.
+- [ ] **The People of the Springs' first building stands as a building landmark** — no source yet: `packages/genshin-world/src/data/regions/natlan.json`, not yet read for the landmark's kind.
