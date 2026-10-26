@@ -40,7 +40,11 @@ const CONSTELLATION_4_DEFENSE_SHARE = 0.65;
 const CONSTELLATION_4_SECONDS = 15;
 const CONSTELLATION_4_STACKS = 6;
 const CONSTELLATION_4_STATUS_ID = "xilonen-constellation-4";
-const CONSTELLATION_4_ATTACK_TAGS = [AttackTag.ChargedAttack, AttackTag.NormalAttack, AttackTag.PlungingAttack];
+const CONSTELLATION_4_ATTACK_TAGS = new Set<AttackTag>([
+  AttackTag.ChargedAttack,
+  AttackTag.NormalAttack,
+  AttackTag.PlungingAttack,
+]);
 
 // Removes the Blade Roller stance the Blessing entered, which ends with the Blessing however the Blessing ends
 const removeBladeRollerStance = (kitEffectState: KitEffectState, characterId: number): void =>
@@ -67,6 +71,16 @@ const checkIsConstellation4Standing = (effects: readonly KitEffect[], characterI
   checkIsKitStatusActive(effects, characterId, CONSTELLATION_4_STATUS_ID) &&
   countKitResource(effects, characterId, CONSTELLATION_4_STATUS_ID) > 0;
 
+// Whether a strike is one Constellation 4 counts, by the attack it is and a striker who holds a stack
+const checkIsConstellation4Strike = (
+  attackTag: AttackTag | undefined,
+  characterId: number,
+  effects: readonly KitEffect[],
+): boolean =>
+  attackTag !== undefined &&
+  CONSTELLATION_4_ATTACK_TAGS.has(attackTag) &&
+  checkIsConstellation4Standing(effects, characterId);
+
 // Spends one of a character's Constellation 4 stacks, as gcsim spends one on each enemy hit that strike lands
 const spendConstellation4Stack = (effects: readonly KitEffect[], characterId: number): void => {
   const status = findKitStatus(effects, characterId, CONSTELLATION_4_STATUS_ID);
@@ -88,6 +102,19 @@ const spendConstellation4Stack = (effects: readonly KitEffect[], characterId: nu
 export const createXilonenKitBehaviour = ({ readStance }: KitRecordReader): KitBehaviour => {
   const bladeRoller = readStance("blessing");
   return {
+    // Constellation 4's flat damage on a teammate's strike, from Xilonen's DEF, while the striker holds a stack
+    getPartyStrikeBonus: (member, strike, _enemy, party, effects, characterIdCombatantMap) =>
+      checkIsConstellation4Strike(strike.attackTag, strike.combatant.characterId, effects)
+        ? {
+            additiveBaseDamageBonus:
+              CONSTELLATION_4_DEFENSE_SHARE * getKitDefense(member, effects, party, characterIdCombatantMap),
+          }
+        : {},
+    // Constellation 4's flat damage on her own strike, from her DEF, while she holds a stack
+    getStrikeAdditiveBaseDamageBonus: (strike, _enemy, party, effects, characterIdCombatantMap) =>
+      checkIsConstellation4Strike(strike.attackTag, strike.combatant.characterId, effects)
+        ? CONSTELLATION_4_DEFENSE_SHARE * getKitDefense(strike.combatant, effects, party, characterIdCombatantMap)
+        : 0,
     onKitEvent: (event, { kitEffectState }, combatant) => {
       const { characterId } = combatant;
       if (event.kind === KitEventKind.CharacterSwapped) {
@@ -105,29 +132,10 @@ export const createXilonenKitBehaviour = ({ readStance }: KitRecordReader): KitB
         removeBladeRollerStance(kitEffectState, characterId);
       else if (
         event.kind === KitEventKind.DamageTaken &&
-        event.attackTag !== undefined &&
-        CONSTELLATION_4_ATTACK_TAGS.includes(event.attackTag) &&
-        checkIsConstellation4Standing(kitEffectState.effects, event.striker.characterId)
+        checkIsConstellation4Strike(event.attackTag, event.striker.characterId, kitEffectState.effects)
       )
         spendConstellation4Stack(kitEffectState.effects, event.striker.characterId);
     },
-    // Constellation 4's flat damage on a teammate's strike, from Xilonen's DEF, while the striker holds a stack
-    getPartyStrikeBonus: (member, strike, _enemy, party, effects, characterIdCombatantMap) =>
-      strike.attackTag !== undefined &&
-      CONSTELLATION_4_ATTACK_TAGS.includes(strike.attackTag) &&
-      checkIsConstellation4Standing(effects, strike.combatant.characterId)
-        ? {
-            additiveBaseDamageBonus:
-              CONSTELLATION_4_DEFENSE_SHARE * getKitDefense(member, effects, party, characterIdCombatantMap),
-          }
-        : {},
-    // Constellation 4's flat damage on her own strike, from her DEF, while she holds a stack
-    getStrikeAdditiveBaseDamageBonus: (strike, _enemy, party, effects, characterIdCombatantMap) =>
-      strike.attackTag !== undefined &&
-      CONSTELLATION_4_ATTACK_TAGS.includes(strike.attackTag) &&
-      checkIsConstellation4Standing(effects, strike.combatant.characterId)
-        ? CONSTELLATION_4_DEFENSE_SHARE * getKitDefense(strike.combatant, effects, party, characterIdCombatantMap)
-        : 0,
     onSprint: (context, kitState, stepSeconds) =>
       drainKitSprintNightsoulPoints(
         context,
