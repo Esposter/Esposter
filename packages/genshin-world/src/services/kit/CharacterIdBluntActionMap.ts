@@ -24,8 +24,8 @@ export const CharacterIdBluntActionMap: Partial<Record<number, Partial<Record<At
   10_000_064: { ElementalBurst: true, ElementalSkill: false },
   // Candace: her skill
   10_000_072: { ElementalSkill: true },
-  // Chiori: her normal attack, skill and burst
-  10_000_094: { ElementalBurst: true, ElementalSkill: true, NormalAttack: true },
+  // Chiori: her skill and burst are blunt, her normal attack is not, as the wiki's Weaving Blade carries no blunt flag
+  10_000_094: { ElementalBurst: true, ElementalSkill: true, NormalAttack: false },
   // Xilonen: her burst is blunt, her skill is an exception
   10_000_103: { ElementalBurst: true, ElementalSkill: false },
 };

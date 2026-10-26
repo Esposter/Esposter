@@ -15,6 +15,7 @@ import { describe, expect, test } from "vitest";
 const TRAVELER_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, TRAVELER_CHARACTER_ID);
 
 describe(checkIsBluntHit, () => {
+  const CHIORI_CHARACTER_ID = 10_000_094;
   const GOROU_CHARACTER_ID = 10_000_055;
   const KLEE_CHARACTER_ID = 10_000_029;
   const NINGGUANG_CHARACTER_ID = 10_000_027;
@@ -101,6 +102,15 @@ describe(checkIsBluntHit, () => {
 
     expect(checkIsBluntHit(klee, { ...hit, actionAttackTag: AttackTag.NormalAttack })).toBe(true);
     expect(checkIsBluntHit(klee, { ...hit, actionAttackTag: AttackTag.ChargedAttack })).toBe(true);
+  });
+
+  test("chiori's normal attack is not blunt, as the wiki's weaving blade gives, though her plunge is", () => {
+    expect.hasAssertions();
+
+    const chiori: Combatant = { ...combatant, characterId: CHIORI_CHARACTER_ID, element: Element.Geo };
+
+    expect(checkIsBluntHit(chiori, { ...hit, actionAttackTag: AttackTag.NormalAttack })).toBe(false);
+    expect(checkIsBluntHit(chiori, { ...hit, actionAttackTag: AttackTag.PlungingAttack })).toBe(true);
   });
 
   test("ningguang's plunge is not blunt, though it deals geo damage, as the wiki's blunt table excepts it", () => {
