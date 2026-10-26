@@ -14,13 +14,14 @@ Not built, and why each is out of reach of the kit now:
 - Constellations 1, 2, 4 and 6. C1 extends Icefang Rush and needs Gracious Rebuke; C2 adds 40% per Prosecution Edict stack to Darkgold Wolfbite, a damage bonus the strike hook cannot read; C4 and C6 need Rebuke's heal and CRIT and icicle.
 - The charged attack's ascension and constellation boxes.
 
-Its `skill.hits.length`, zero, is `Unsourced`, as Icefang Rush queues no attack and no line gives a count. The five burst areas take gcsim's 8 by 16 box from `burst.go`, priced as a circle to its far corner, a radius of 16.49.
+Its `skill.hits.length`, zero, is `Unsourced`, as Icefang Rush queues no attack and no line gives a count. The five burst areas are a circle 8 metres forward of the body with a radius of 8.94, the owner's decision, which `wriothesley.json` holds at a radius of 16.94 as `DiffersFromSource`, in place of gcsim's 8 by 16 box from `burst.go`, priced as a circle to its far corner at 16.49. The circle approximates the 8 by 16 box gcsim spawns on Wriothesley himself, which reaches 16 metres forward: the circle is centred on the box's centre and its radius is the box's half-diagonal, so it reaches 16.94 forward and 8.94 to either side, where the box is 4 across. The record takes the circle at the next PC kit republish, and until then the published record holds the box's 16.49.
 
 ## Key files
 
 | File                                                                              | Role                                                                                                                                                              |
 | :-------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `packages/genshin-world/src/services/kit/characters/wriothesleyKit.ts`            | `createWriothesleyKitBehaviour`, Wriothesley's kit with his strikes, charged attack, plunges, Icefang Rush's enhancement, Prosecution Edict and Darkgold Wolfbite |
+| `packages/genshin-world/src/data/kits/wriothesley.json`                           | The overlay that holds Darkgold Wolfbite's five burst areas as the circle 8 metres forward with radius 8.94, `DiffersFromSource` at 16.94                         |
 | `packages/genshin-world/src/models/kit/KitStatus.ts`                              | `KitStatus`, which extends `KitSwapEndable` so a status such as Icefang Rush ends when its character leaves the field                                             |
 | `scripts/src/services/genshinAssets/kits/gcsim/addGcsimNormalAttackCandidates.ts` | The stance pass that emits Chilling Penalty's normal attacks, with the enhanced boxes and the factor                                                              |
 
