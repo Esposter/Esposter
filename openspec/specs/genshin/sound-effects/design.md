@@ -64,3 +64,4 @@ flowchart TD
 - [ ] **the door's sound starts 0.32 seconds after the click** — no source yet: the game's door audio in `~/Esposter/genshin-parity/captures/yt-rBnfA4pXw6U-audio.webm`, not yet re-measured against the click.
 - [ ] **the rush follows the click by about 0.4 seconds** — no source yet: the game's door audio in `~/Esposter/genshin-parity/captures/yt-rBnfA4pXw6U-audio.webm`, not yet re-measured against the click.
 - [ ] **the door's rumble plays 16 decibels over its source and the rush 9** — no source yet: the game's door audio in `~/Esposter/genshin-parity/captures/yt-rBnfA4pXw6U-audio.webm`, not yet re-measured against its source.
+- [ ] **A deployed product holds no game sound, only the measured levels** — no source yet: the product's contents are not inspected here, and the hosted record is named in `packages/genshin-world/src/generated/gameDataLock.json` by its hash only.
