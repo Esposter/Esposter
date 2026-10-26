@@ -6,18 +6,18 @@ The stone light is solved by regression from a reference's colours rather than s
 
 ### Requirement: The stone light is solved by regression, never searched
 
-The stone light SHALL be recovered from a reference's colours by a regression solve, and SHALL NOT be found by searching over candidate lights (`scripts/src/services/genshinParity/witness/solveStoneLight.ts`).
+The stone light SHALL be recovered from a reference's colours by a regression solve, and SHALL NOT be found by searching over candidate lights.
 
 #### Scenario: Light calibrated from a reference
 
 - **GIVEN** a reference showing the stone
 - **WHEN** the stone light is calibrated
-- **THEN** the light is solved by regression from the reference's interior colours (`scripts/src/services/genshinParity/witness/solveStoneLight.ts`)
+- **THEN** the light is solved by regression from the reference's interior colours
 - **AND** no search over candidate lights is run
 
 ### Requirement: The solve keeps every light physically possible
 
-The solve SHALL hold each light it returns to physically possible values, with the ramp rising from none without falling, the sky lighting no face below none, and the height fall-off and the haze colours none or more (`scripts/src/services/genshinParity/witness/solveStoneLight.ts`).
+The solve SHALL hold each light it returns to physically possible values, with the ramp rising from none without falling, the sky lighting no face below none, and the height fall-off and the haze colours none or more.
 
 #### Scenario: Unconstrained solve would cancel lights
 
@@ -29,7 +29,7 @@ The solve SHALL hold each light it returns to physically possible values, with t
 
 ### Requirement: Each part's bins weigh the same
 
-The solve SHALL weigh each part's bins equally, so that a thin far tower counts as much as the walkway (`scripts/src/services/genshinParity/witness/groupStoneBins.ts`).
+The solve SHALL weigh each part's bins equally, so that a thin far tower counts as much as the walkway.
 
 #### Scenario: Thin tower beside the walkway
 
@@ -39,7 +39,7 @@ The solve SHALL weigh each part's bins equally, so that a thin far tower counts 
 
 ### Requirement: The solve reports its residual and writes the light only when asked
 
-The solve SHALL print its residual beside the spread of its bins, and SHALL publish the light for the reference's hour only when it is told to write (`scripts/src/services/genshinParity/commands/calibrateCommand.ts`).
+The solve SHALL print its residual beside the spread of its bins, and SHALL publish the light for the reference's hour only when it is told to write.
 
 #### Scenario: Solve run without writing
 
@@ -52,7 +52,7 @@ The solve SHALL print its residual beside the spread of its bins, and SHALL publ
 
 - **GIVEN** a reference to calibrate
 - **WHEN** the solve runs with the write option
-- **THEN** the light is published under the reference's hour (`packages/genshin-world/src/services/login/readLoginData.ts`)
+- **THEN** the light is published under the reference's hour
 
 ### Requirement: The solve hands back a known light when run on its own renders
 
@@ -66,7 +66,7 @@ The solve SHALL hand back the light it was shown, within a small margin, when it
 
 ### Requirement: A solve with no usable bins fails
 
-A bin holding under thirty pixels SHALL be dropped, and a solve left with no bins SHALL fail rather than return a light of none (`scripts/src/services/genshinParity/witness/constants.ts`, `scripts/src/services/genshinParity/witness/groupStoneBins.ts`).
+A bin holding under thirty pixels SHALL be dropped, and a solve left with no bins SHALL fail rather than return a light of none.
 
 #### Scenario: No bin holds enough pixels
 
@@ -77,7 +77,7 @@ A bin holding under thirty pixels SHALL be dropped, and a solve left with no bin
 
 ### Requirement: The haze and the sky are solved beside the light
 
-The haze over the stone SHALL take colours solved together with the light (`scripts/src/services/genshinParity/witness/computeHazeResidual.ts`), while the cloud sea keeps the colours measured where it shows (see Open).
+The haze over the stone SHALL take colours solved together with the light, while the cloud sea keeps the colours measured where it shows (see Open).
 
 #### Scenario: Haze colours solved with the light
 
