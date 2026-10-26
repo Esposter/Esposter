@@ -162,7 +162,7 @@ A burst the wearer of The Exile's four-piece uses SHALL start a field that gives
 
 - **GIVEN** an energy field is still ticking
 - **WHEN** any wearer uses another burst
-- **THEN** no second field starts (gcsim ``~/Esposter.noindex/cache/gcsim-v2.47.2/internal/artifacts/exile/exile.go`, lines 50 to 54`).
+- **THEN** no second field starts (gcsim `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/artifacts/exile/exile.go`, lines 50 to 54).
 
 ### Requirement: Traveling Doctor's four-piece heals its wearer as its burst is used
 
