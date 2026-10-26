@@ -17,14 +17,14 @@ Clorinde's normal attacks SHALL be five strikes, the fourth striking three boxes
 
 ### Requirement: Charged attack
 
-Clorinde's charged attack SHALL hit a circle round her (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/clorinde/charge.go` lines 15 and 42 to 44) and SHALL cost 20 stamina.
+Clorinde's charged attack SHALL hit a circle round her (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/clorinde/charge.go` lines 15 and 42 to 44) and SHALL cost a provisional 20 stamina until a source gives the cost (see Open).
 
 #### Scenario: Charged attack hits the circle round her
 
 - **GIVEN** Clorinde has 20 stamina
 - **WHEN** the player holds the attack button to charge
 - **THEN** the charged attack hits the circle round her at 38 frames, in an animation of 68 frames (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/clorinde/charge.go` lines 14 and 19)
-- **AND** 20 stamina is spent
+- **AND** the provisional 20 stamina is spent (see Open)
 
 ### Requirement: Last Lightfall
 
