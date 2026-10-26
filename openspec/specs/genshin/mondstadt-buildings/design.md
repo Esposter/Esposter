@@ -41,4 +41,4 @@ Not built yet: the house's dressing (window boxes, shutters, lanterns and banner
 
 ## Open
 
-- [ ] **The house stands in for Mondstadt City's buildings, whose export family is Area_MdBuild_ and Area_Mdbuild_** — no source yet: `packages/genshin-world/src/services/mondstadt/MondstadtPartFamilyMeshRegexMap.ts:6` holds the family pattern, not yet checked against Mondstadt City's buildings.
+- [ ] **The house stands in for Mondstadt City's buildings, whose export family is Area_MdBuild_ and Area_Mdbuild_** — no source yet: a comparison of the house with one of the `Area_MdBuild_` or `Area_Mdbuild_` meshes under `~/Esposter.noindex/genshin-parity/extracted/mondstadt/assets/Mesh/`, which is not made.
