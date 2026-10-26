@@ -70,6 +70,9 @@ A Kresnik's Torch SHALL NOT light the scene around it until its light is built.
 - **GIVEN** a Kresnik's Torch stands in the scene
 - **WHEN** the scene is lit
 - **THEN** the torch's light does not reach its surroundings
+
+## Open
+
 - [ ] **The building kits are parametric generators over the engine's box and lathe kits, each a hall or a factory standing on the origin** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **The Kresnik's Torch is a stone plinth, shaft and brazier with a flame standing in its cup** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **Snezhnograd's first hall stands in the region's data at a provisional place** — no source yet: game data or a snapshot that holds this behaviour
