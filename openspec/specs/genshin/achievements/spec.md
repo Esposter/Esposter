@@ -65,7 +65,7 @@ A finished quest or parent quest SHALL count once toward each watched achievemen
 
 - **GIVEN** an achievement names a sub-quest that the game data does not carry
 - **WHEN** the doing happens
-- **THEN** its progress stays at zero (207 of the 541 sub-quest ids the kept quest triggers name are absent from it)
+- **THEN** its progress stays at zero (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/QuestExcelConfigData.json`: 207 of the 541 sub-quest ids the kept quest triggers name are absent from it)
 
 #### Scenario: Unwatched trigger type does not move
 
@@ -120,7 +120,7 @@ The Achievements screen SHALL list every category with how many of its achieveme
 #### Scenario: Screen opens from the Paimon menu
 
 - **GIVEN** the Paimon menu is open
-- **WHEN** Achievements is chosen (the Paimon menu grid shows Achievements)
+- **WHEN** Achievements is chosen (the Paimon menu grid in `~/Esposter.noindex/genshin-parity/references/paimon-menu.png` shows Achievements)
 - **THEN** the screen opens with its categories listed down the left
 - **AND** each category shows how many of its achievements are finished over how many it has
 
