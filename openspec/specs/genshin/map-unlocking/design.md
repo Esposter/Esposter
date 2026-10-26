@@ -14,7 +14,7 @@ flowchart TD
 ```
 
 - **Resonating is an interaction.** A locked jump landmark, a Statue of The Seven or a Teleport Waypoint, is an `Activate` row of the prompt list while it is in reach, named by its game name (`packages/genshin-world/src/services/map/computeJumpLandmarkTextKey.ts`), and a locked domain entrance is a row named Domain Entrance. F on the selected row unlocks it, and an unlocked landmark has no row (`packages/genshin-world/src/components/World/Session/Index.vue`, `packages/genshin-world/src/composables/useWorldMap.ts`). The row's icon is the interaction kind's, so the list shows what acting on it does without a verb of its own: no text id for the game's resonating prompt is in the text dump under a known key.
-- **Nothing is unlocked at the start.** A new player has unlocked no landmark, so the map is blank and no jump is offered (`packages/genshin-world/src/services/save/constants.ts`). The wiki says the first activation lights the statue's surrounding area and reveals its nearby waypoints, and that whether Windrise's statue is already active depends on the player's progress through the opening quest. Here an unlock is the player's own F (`packages/genshin-world/src/components/World/Session/Index.vue`), and the waypoints the game hides are not yet kept out (task 2.2 of the change).
+- **Nothing is unlocked at the start.** A new player has unlocked no landmark, so the map is blank and no jump is offered (`packages/genshin-world/src/services/save/constants.ts`). The first activation's lighting and reveal, and Windrise's active state, are open below. Here an unlock is the player's own F (`packages/genshin-world/src/components/World/Session/Index.vue`), and the waypoints the game hides are not yet kept out (task 2.2 of the change).
 - **A quest step can finish on an unlock.** An unlock tells the quests the waypoint's transport point id as an Interact target, so a `QUEST_CONTENT_UNLOCK_TRANS_POINT` step that names the point finishes on it (`packages/genshin-world/src/composables/useWorldMap.ts`, `scripts/src/services/genshinText/QuestContentObjectiveMap.ts`). The quest data has no step that unlocks a waypoint outright, so none is built.
 - **Kept with the player's progress, as the bag and the wallet are.** The unlocked ids are a slice of the [save](../save-data/design.md), so they last across a reload (`packages/genshin-world/src/models/save/GenshinSaveState.ts`, `packages/genshin-world/src/services/save/readGenshinSave.ts`).
 - **An area is filled while a landmark in it is unlocked.** `computeFilledAreaIds` gives the areas unlocked landmarks stand in. The map's drawing outlines only filled areas, `computeAreaLabels` names only filled areas, and the marks drawn are the unlocked landmarks alone, so the minimap shows the same (`packages/genshin-world/src/services/map/computeFilledAreaIds.ts`, `packages/genshin-world/src/services/map/computeAreaLabels.ts`, `packages/genshin-world/src/components/Map/Drawing/Index.vue`, `packages/genshin-world/src/components/Hud/Minimap/Index.vue`).
@@ -48,8 +48,6 @@ flowchart TD
 
 ## Sources
 
-- [Galesong Hill](https://www.icy-veins.com/genshin-impact/galesong-hill), Icy Veins: the first activation of a Statue of The Seven lights the surrounding area and reveals the nearby teleport waypoints.
-- [Let the Wind Lead](https://www.powerpyx.com/genshin-impact-let-the-wind-lead-walkthrough), PowerPyx: whether the Windrise statue is already active depends on the player's progress.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `TransPointRewardConfigData`, each transport point's reward, and `RewardExcelConfigData`, the Adventure EXP and Primogems each reward pays.
 
 ## Open
@@ -57,5 +55,6 @@ flowchart TD
 - [ ] **A locked domain entrance is a row named Domain Entrance** — no source yet: `computeJumpLandmarkTextKey` names it by the domain's own title (`titleTextKey`), not by a Domain Entrance text.
 - [ ] **No text id for the game's resonating prompt is in the text dump under a known key** — no source yet: the dump's `Resonate with <element>` entries are the element skills' prompts, and no key for the statue's prompt is identified.
 - [ ] **A party that falls is jumped to the unlocked landmark nearest its body** — no source yet: the revive takes only the nearest unlocked Teleport Waypoint (`findNearestTeleportWaypoint`), since a statue takes no revive.
-- [ ] **A domain entrance is a landmark that resonating unlocks the same way** — no source yet: the Icy Veins Galesong Hill page and the Let the Wind Lead page, named in Sources, are not in the wiki cache.
-- [ ] **The build follows the game's table for waypoint rewards** — no source yet: the game's waypoint reward table in `~/Esposter/genshin-parity/text/ExcelBinOutput/`, not yet named or read.
+- [ ] **A domain entrance is a landmark that resonating unlocks the same way** — no source yet: no game text on disk says a domain entrance resonates like a statue.
+- [ ] **A statue's first activation lights its surrounding area and reveals its nearby waypoints** — no source yet: the Icy Veins Galesong Hill page is not on disk.
+- [ ] **Whether Windrise's statue is already active depends on the player's progress through the opening quest** — no source yet: the PowerPyx Let the Wind Lead page is not on disk.
