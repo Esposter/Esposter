@@ -73,8 +73,8 @@ Animals SHALL carry no drops and offer no material sources yet, and striking one
 
 ## Open
 
-- [ ] **Striking, drops and material sources wait on the proposal's later steps** — no source yet: the code now strikes animals (`packages/genshin-world/src/services/kit/strikeKitEnemies.ts`), gives the drops in `WildlifeKindDropMap.ts`, and picks up material sources (`useWorldPickups.ts`), so this line is stale.
-- [ ] **No other animal is placed than the White Pigeon, the Crimson Fox and the Squirrel** — no source yet: the builder places a boar too (`packages/genshin-world/src/models/wildlife/WildlifeKind.ts`, label 313 in `WildlifeKindLabelIdMap.ts`).
+- [ ] **Striking, drops and material sources wait on the proposal's later steps** — no source yet: the code now strikes animals, gives the drops in `WildlifeKindDropMap.ts`, and picks up material sources (`useWorldPickups.ts`), so this line is stale.
+- [ ] **No other animal is placed than the White Pigeon, the Crimson Fox and the Squirrel** — no source yet: the builder places a boar too (label 313 in `WildlifeKindLabelIdMap.ts`).
 - [ ] **An animal that does not flee is not placed** — no source yet: the boar is a kind that charges rather than flees, and the builder places it.
 - [ ] **An animal under the ground is left out** — no source yet: the ground-layer filter in the map-point reader was not read.
 - [ ] **Animals carry no drops or material sources, and striking one has no effect** — no source yet: the code gives drops (`WildlifeKindDropMap.ts`) and strikes animals through `strikeKitEnemies.ts`, so this requirement is stale.
