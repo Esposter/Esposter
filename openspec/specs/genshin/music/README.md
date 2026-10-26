@@ -33,7 +33,7 @@ flowchart TD
 
 ## Open
 
-- [ ] **The first piece plays 5 decibels under its source and the second 16, so the second sounds about 11 decibels quieter, as in a public recording of the login** — no source yet: no mix-volume readout and no comparison with a public recording is on disk. The autoplay rule is MDN's, in [Sources](#sources).
+- [ ] **The first piece plays 5 decibels under its source and the second 16, so the second sounds about 11 decibels quieter, as in a public recording of the login** — no source yet: no mix-volume readout and no comparison with a public recording is on disk.
 
 ## The fit
 
