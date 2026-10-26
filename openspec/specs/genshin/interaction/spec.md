@@ -1,6 +1,6 @@
 ## Purpose
 
-The game's F prompts over the world, the list of what is in reach beside the character. The drops lying in the world, the residents with a talk and the locked Statues of The Seven are the things in reach: F picks a drop up into the wallet or the bag, begins a resident's talk, or resonates with a statue to unlock it, and a defeated enemy's drops lie where it fell. A pure selector rows what is in reach nearest first, keeps the selection on its thing, scrolls a window to keep it in view and steps it with the mouse wheel while more than one row shows; a held F repeats its pick up. F is the input's Interact action, and the list is drawn in the HUD by genshin-interface's prompt list (`packages/genshin-world/src/services/interaction/computeInteractionPrompts.ts`, `packages/genshin-world/src/services/interaction/stepInteractionSelection.ts`, `packages/genshin-world/src/services/interaction/getHeldPickUp.ts`, `packages/genshin-engine/src/input/InputActionBindingMap.ts`, `packages/genshin-interface/src/components/InteractionPrompts/Index.vue`).
+The game's F prompts over the world, the list of what is in reach beside the character. The drops lying in the world, the residents with a talk and the Statues of The Seven at unlocked landmarks are the things in reach: F picks a drop up into the wallet or the bag, begins a resident's talk, or resonates with an unresonated statue, and a defeated enemy's drops lie where it fell. A pure selector rows what is in reach nearest first, keeps the selection on its thing, scrolls a window to keep it in view and steps it with the mouse wheel while more than one row shows; a held F repeats its pick up. F is the input's Interact action, and the list is drawn in the HUD by genshin-interface's prompt list (`packages/genshin-world/src/services/interaction/computeInteractionPrompts.ts`, `packages/genshin-world/src/services/interaction/stepInteractionSelection.ts`, `packages/genshin-world/src/services/interaction/getHeldPickUp.ts`, `packages/genshin-engine/src/input/InputActionBindingMap.ts`, `packages/genshin-interface/src/components/InteractionPrompts/Index.vue`).
 
 ## Requirements
 
@@ -10,7 +10,7 @@ The prompt list SHALL offer a row for each thing within reach of the character, 
 
 #### Scenario: A thing in reach gets a row
 
-- **GIVEN** a drop, a resident with a talk, or a locked statue lies within reach of the character
+- **GIVEN** a drop, a resident with a talk, or the statue of an unlocked landmark lies within reach of the character
 - **WHEN** the prompt list is drawn
 - **THEN** the thing has a row named by its own name in the reader's language
 
