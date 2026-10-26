@@ -41,7 +41,7 @@ The steps are the commands of `scripts/src/services/genshinParity/commands/` (`g
 
 ## Shapes come from the game's assets
 
-The interface is rebuilt from screenshots, which its overlay compare holds exactly (`scripts/src/services/genshinParity/commands/overlayCommand.ts`, see Open); a scene's towers, doors and profiles come from the installed game's files. AnimeStudio exports them with the game closed into the references folder, outside the repository like every other reference (`scripts/src/services/genshinAssets/namecards/exportNamecards.ts`, `~/Esposter.noindex/genshin-parity/extracted/`), and a transform fits our own kits' parameters to them (`scripts/src/services/genshinAssets/fit/fitLoginTowers.ts`, `fitLoginDoor.ts` and `fitLatheProfile.ts`), so only numbers of ours ship (see Open) ([derived assets](../derived-assets/design.md)).
+The interface is rebuilt from screenshots, which its overlay compare holds exactly (`scripts/src/services/genshinParity/commands/overlayCommand.ts`, see Open); a scene's towers, doors and profiles come from the installed game's files. AnimeStudio exports them with the game closed into the references folder, outside the repository like every other reference (`scripts/src/services/genshinAssets/namecards/exportNamecards.ts`, `~/Esposter.noindex/genshin-parity/extracted/`), and a transform fits our own kits' parameters to them (`scripts/src/services/genshinAssets/fit/fitLoginTowers.ts`, `fitLoginDoor.ts` and `fitLatheProfile.ts`), so only numbers of ours ship ([derived assets](../derived-assets/design.md)).
 
 ## Open
 
