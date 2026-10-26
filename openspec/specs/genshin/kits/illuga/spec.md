@@ -145,8 +145,8 @@ Illuga's hit timings and areas SHALL stay provisional, borrowed from other chara
 
 ## Open
 
-- [ ] **The skill's Press deals two hits** — no source yet: the cached wiki gives the Press DMG row without a hit count.
-- [ ] **The burst deals two hits** — no source yet: the cached wiki gives one Skill DMG row without a hit count.
-- [ ] **Illuga's own hits spend no stack** — no source yet: the cached wiki's 'nearby active party members' wording does not say whether Illuga counts.
-- [ ] **Constellation 4's 200 DEF holds only while Haunted Night holds** — no source yet: the record gives 200 DEF at talent 1274, and the cached wiki gives that note without its text.
+- [ ] **The skill's Press deals two hits** — no source yet: the cached wiki gives the Press DMG row without a hit count. Checked the Dawnbearing Songbird page (`Category_Illuga_Talents.json`): its Press DMG row has no hit count.
+- [ ] **The burst deals two hits** — no source yet: the cached wiki gives one Skill DMG row without a hit count. No Illuga burst page is in the cache, and the Dawnbearing Songbird page has no Skill DMG row.
+- [ ] **Illuga's own hits spend no stack** — no source yet: the cached wiki's 'nearby active party members' wording does not say whether Illuga counts. The cache holds no such wording, and the Dawnbearing Songbird page does not mention Illuga's stacks.
+- [ ] **Constellation 4's 200 DEF holds only while Haunted Night holds** — no source yet: the record gives 200 DEF at talent 1274, and the cached wiki gives that note without its text. The cache holds no Haunted Night text, and the Dawnbearing Songbird page gives only Constellation 5, Hurricane Steed.
 - [ ] **Constellation 6's 80 Elemental Mastery applies under Ascendant Gleam** — no source yet: the record gives talent 1276's 80 Elemental Mastery, but no line gives its condition.

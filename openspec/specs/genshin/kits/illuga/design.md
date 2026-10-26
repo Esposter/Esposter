@@ -26,8 +26,8 @@ Illuga's kit is its record and one behaviour module, `createIllugaKitBehaviour`,
 - **The Hold's donor.** The record of Zhongli that this page cites does not hold the 96-frame, one-hit hold it describes: his `holdStele` action has 16 hits, its first at a 48-frame hitmark and its end at 1908 frames (`packages/genshin-world/src/data/kits/zhongli.json`), and no value of 96 or minimum-held key is in the record. Which of his actions is the pole hold waits on the coordinator's answer.
 - **Constellation 1's fifteen-second cooldown and Vigilant Sentinel's 12 Energy and 15 seconds** are the dump's TextMap wording, which this pass did not read against the record.
 - [ ] **Aedon's hit takes the burst's first hit's area, with no hitmark and no poise** — no source yet: the constellation text gives the damage and one nearby opponent, but no area, hitmark or poise.
-- [ ] **Press reads its 'Press DMG' label for two hits** — no source yet: the cached wiki gives the Press DMG row without a hit count.
-- [ ] **The burst reads its 'Skill DMG' label for two hits** — no source yet: the cached wiki gives one Skill DMG row without a hit count.
+- [ ] **Press reads its 'Press DMG' label for two hits** — no source yet: the cached wiki gives the Press DMG row without a hit count. Checked the Dawnbearing Songbird page (`Category_Illuga_Talents.json`): its Press DMG row gives scaling and poise, and no hit count.
+- [ ] **The burst reads its 'Skill DMG' label for two hits** — no source yet: the cached wiki gives one Skill DMG row without a hit count. Checked the cache: no Illuga burst page is in it, and the Dawnbearing Songbird page has Press and Hold rows, no Skill DMG row.
 
 ## Key files
 
