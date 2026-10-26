@@ -8,7 +8,7 @@ three ships no MMD loader and the workspace has no PMX parser, so the engine rea
 - **What is passed over.** The comments and every name in English, the specular and ambient colours, the edge's own colour and size, every bone field past its parent, the display frames, and a 2.1 file's soft bodies (`packages/genshin-engine/src/character/parsePmx.ts`).
 - **A texture is read once and decoded for each role it is drawn in.** A file a pack names is read once, but a texture that one material draws as its diffuse or sphere and another as its toon ramp is decoded twice: the colour decode is unflipped and sRGB, the toon's is flipped and read without sRGB (`createPmxToonTexture`). The material's `texture`, `sphereTexture` and `toonTexture` are separate options, so each takes its own decode, and the toon's flip never reaches a diffuse. A texture used both ways is two textures in memory, released with their materials (`packages/genshin-engine/src/character/createPmxTexture.ts`, whose toon sets `flipY` true and `NoColorSpace`, and whose colour sets `SRGBColorSpace` and `flipY` false).
 
-No parsed model is cached, a kept pack's included. The browser keeps a pack's files, and the model is parsed again each time it is drawn. `parsePmx.bench.md` reads a model of tens of megabytes in tens of milliseconds, and a structured clone of what it returns, the least an IndexedDB read of it would cost, takes about a third of that before any disk is read (`packages/genshin-engine/src/character/parsePmx.bench.md`: at 500,000 vertices, 17.9 ms for the parse and 6.6 ms for the clone, and no cache in `packages/genshin-engine/src/character/parsePmx.ts`). A cache would save a few milliseconds a character and add a store to keep.
+No parsed model is cached, a kept pack's included. The browser keeps a pack's files, and the model is parsed again each time it is drawn, with no cache in `packages/genshin-engine/src/character/parsePmx.ts`. The [rejected cache](../../../../rejected/genshin/pmx-model-cache/design.md) records why.
 
 ## Nothing swings yet
 
@@ -24,10 +24,6 @@ The rigid bodies and joints are read for the physics that will swing hair and cl
 | `packages/genshin-engine/src/character/parsePmxMorphs.ts`   | Vertex and group morphs read, every other kind passed over by its size  |
 | `packages/genshin-engine/src/character/parsePmx.bench.ts`   | A model's read timed at two sizes, against a structured clone of it     |
 | `packages/genshin-engine/src/character/constants.ts`        | MMD's unit in metres                                                    |
-
-## Open
-
-- [ ] **A cache would save a few milliseconds a character and add a store to keep** — no source yet: a timed read of a character's model served from a cache, set against the parse the bench times.
 
 ## Sources
 
