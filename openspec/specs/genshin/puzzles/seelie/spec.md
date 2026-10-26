@@ -47,4 +47,4 @@ A Seelie that has settled at its court SHALL stay settled.
 ## Open
 
 - [ ] **A Seelie rests until followed, is led to its court, and goes back to rest when left unfollowed, as the game does** — no source yet: the wiki's Seelie page is not in the genshin-wiki cache.
-- [ ] **A settled Seelie stays settled at its court** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A settled Seelie stays settled at its court** — no source yet: the wiki's Seelie page (checked: Seelie) says a Seelie returns to its start if it has not been led back, which bears on it but does not say a settled one stays; a recording of a settled Seelie left unfollowed would settle it

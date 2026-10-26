@@ -11,7 +11,7 @@ stateDiagram-v2
   Settled --> [*]
 ```
 
-The map gives one point per Seelie, and thirty courts for Mondstadt alone. Each Mondstadt court is paired with one Seelie by `pairSeelieCourts`, closest first, and the world's screen leads each paired Seelie from its place toward its court (`packages/genshin-world/src/services/puzzle/pairSeelieCourts.ts`, `packages/genshin-world/src/components/World/Screen/Index.vue`). The other regions' courts are still to come, and a settled Seelie's chest is not yet spawned, since the wiki's Seelie page names its kind.
+The map gives one point per Seelie, and thirty courts for Mondstadt alone. Each Mondstadt court is paired with one Seelie by `pairSeelieCourts`, closest first, and the world's screen leads each paired Seelie from its place toward its court (`packages/genshin-world/src/services/puzzle/pairSeelieCourts.ts`, `packages/genshin-world/src/components/World/Screen/Index.vue`). The other regions' courts are still to come, and a settled Seelie's chest is not yet spawned. The wiki's Seelie page says chests appear once the Seelie has settled back into its court, and names no chest kind (checked: Seelie).
 
 ## Key files
 
@@ -28,3 +28,4 @@ The map gives one point per Seelie, and thirty courts for Mondstadt alone. Each 
 
 - [ ] **The map gives one point per Seelie and thirty courts for Mondstadt** — no source yet: the official map's point list is not among the caches read.
 - [ ] **A Seelie rests until followed, and goes back to rest when left unfollowed, as the game does** — no source yet for either trigger: the wiki's Seelie page, checked, says a Seelie returns to its starting location if it has not been led back to its court after a certain amount of time, with no time given and nothing about a wait until followed.
+- [ ] **The chest a settled Seelie spawns** — partly settled by the wiki's Chest page (checked: Chest), which names the Common and Exquisite chests as spawned upon following a Seelie to its court; the Seelie page names no kind.
