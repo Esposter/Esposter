@@ -27,7 +27,7 @@ Dori's charged attack SHALL be provisional, with a spin that lands at the start 
 
 ### Requirement: Troubleshooter Shot and After-Sales Service Round
 
-Troubleshooter Shot SHALL deal its hit when pressed, and its After-Sales Service Round SHALL land two hits 72 and 85 frames after the press, cooling down before it can be pressed again.
+Troubleshooter Shot SHALL deal its hit when pressed, and its After-Sales Service Round SHALL land two hits 72 and 85 frames after the press (26 frames' hitmark plus gcsim's 46 and 59), cooling down for 9 seconds before it can be pressed again.
 
 #### Scenario: A press lands the shot and the service round
 
@@ -77,16 +77,10 @@ Alcazarzaray's Exactitude's Connector SHALL keep ticking until 772 frames after 
 
 ### Requirement: Poise from the shot, the Connector and the collision
 
-Troubleshooter Shot and the Connector SHALL deal no poise, and the plunging collision SHALL deal 25 poise, a value borrowed from another character.
+Troubleshooter Shot, the Connector and the plunging collision SHALL deal the wiki's poise: 30, 8 and 35. The kit as built deals none, as its record carries none and gcsim gives none: the gap is open in the design.
 
-#### Scenario: The shot and the Connector deal no poise
-
-- **GIVEN** Dori is the character on the field
-- **WHEN** Troubleshooter Shot or the Connector hits an enemy
-- **THEN** the enemy takes no poise damage
-
-#### Scenario: The plunging collision deals 25 poise
+#### Scenario: The plunging collision deals the wiki's 35 poise
 
 - **GIVEN** Dori is in the air
 - **WHEN** her plunging collision hits an enemy
-- **THEN** the enemy takes 25 poise damage
+- **THEN** the enemy takes 35 poise damage
