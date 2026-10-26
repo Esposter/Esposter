@@ -32,7 +32,7 @@ The light on the login scene's stone and haze: the stone is lit as the game's de
 
 - [ ] **The walkway and the bridges draw no glow, their fitted strength being none** — no source yet: the walkway's `~/Esposter/genshin-parity/extracted/login/Material/LoginScene_Bridge01.json` and `LoginScene_Bridge02.json` hold `_RGStrength` 0.0, and the Bridge03, Bridge04 and pillar materials are not on disk.
 - [ ] **The game draws no outline round its stone** — no source yet: no outline capture or game reference was read for this claim.
-- [ ] **The night darkens at 0.14 a metre of height** — no source yet: the hosted `login/stoneLight` record is not on disk, and no file in `comparisons/`, `captures/`, `extracted/login` or `extracted/login-layout` holds `stoneLight`.
+- [ ] **The night darkens at 0.14 a metre of height** — no source yet: the hosted `login/stoneLight` record is not on disk, and no file in `~/Esposter/genshin-parity/comparisons/`, `~/Esposter/genshin-parity/captures/`, `~/Esposter/genshin-parity/extracted/login` or `~/Esposter/genshin-parity/extracted/login-layout` holds `stoneLight`.
 - [ ] **The day's haze is dimmer and bluer than the cloud sea's, the dusk's warmer and redder, and the night's close to the sea's** — no source yet: the haze colours are hosted, and no comparison is kept locally.
 - [ ] **The haze's wall stands about 3 metres under the walkway at night and 6 at dawn, and the dusk hides no more than about three quarters of its far towers** — no source yet: the haze tops are not measured in any kept file.
 - [ ] **The phone's frame is drawn at the medium tier** — no source yet: the phone client is not on disk, and `~/Esposter.noindex/genshin-parity/game/config.ini` holds no quality tier.
