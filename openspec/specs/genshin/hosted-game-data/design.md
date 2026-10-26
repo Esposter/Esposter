@@ -255,7 +255,7 @@ There is no client-side hash check: TLS, the immutable keys and the schema parse
 - **A ground's features are any of the three kinds.** The ground fits draw plateaus, cliffs and ridges, so the schema takes the union of the three kinds' schemas (`terrainFeatureSchema`), and a region's authored ground, which holds plateaus alone, parses under the same union.
 - **A record keyed by an id refuses duplicates.** Plant names and wildlife place ids are unique in the records, so their arrays take `createUniqueArraySchema`. A residual's clearings repeat in the record, so theirs stay a plain array.
 - **A statue section is the engine's `StatueSection`.** Its centre, height and radii are not a lathe section's, so no lathe schema is reused (`packages/genshin-world/src/models/windrise/WindriseStatue.ts`).
-- **A surface part's palette is not read.** The surfaces' parts carry a palette no reader uses, and its schema drops it (`packages/genshin-world/src/models/windrise/WindriseSurface.ts`: the part schema keeps only `color` and `detail`, and zod's object strips the rest).
+- **A surface part's palette is not read.** The surfaces' parts carry a palette no reader uses, and its schema drops it.
 
 ## Notes
 
@@ -354,3 +354,4 @@ There is no client-side hash check: TLS, the immutable keys and the schema parse
 - [ ] **The parity loops `notes`, `expression` and `instruments` publish `login/music`, and `calibrate --write` publishes `login/stoneLight`** — no source yet: `scripts/src/services/genshinAssets/fit/fitLoginScene.ts` publishes `login/music`, but no parity loop or `login/stoneLight` publish was located.
 - [ ] **A book body must be a string when it is written** — no source yet: `scripts/src/services/genshinAssets/archive/buildBookBodyPublication.ts` shows no string check.
 - [ ] **`authored` refuses a ground file whose region's record holds hills** — contradicted by `scripts/src/services/gameData/readAuthoredGameData.ts`: it refuses on the region's fitted ground pieces, not the record's hills.
+- [ ] **The surfaces' parts carry a palette no reader uses** — no source yet: the surfaces' published record was not read for a palette key; `packages/genshin-world/src/models/windrise/WindriseSurface.ts` is repo code, not game evidence.
