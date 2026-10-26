@@ -15,7 +15,7 @@ Not yet built: Continuous Healing and Energy Regeneration, which the burst's own
 ## Provisional constants
 
 - **The charged attack's spin timing and both circles are unsourced.** The record holds the spin at 0 frames and the final at 300, against the claymore rule's 30 and 60 frames and 72 of animation (`scripts/src/services/genshinAssets/kits/constants.ts:92-93`), which the overlay names as the source they differ from (`DiffersFromSource`); the cached wiki does not name Dori's weapon type, so that classification is the overlay's. The 0 frames has no source, and the radius of 2 metres on both circles is marked `Unsourced`. Both wait on a recording.
-- **Poise is open.** The wiki gives 30, 8 and 35 (Troubleshooter Shot, the Connector and the collision), and gcsim and the record give none. Whether the kit takes the wiki's values waits on a decision: the spec's zero and 25 are not in either source.
+- **Poise is open.** The wiki gives 30, 8 and 35 (Troubleshooter Shot, the Connector and the collision), and gcsim and the record give none. Whether the kit takes the wiki's values waits on a decision: the spec already requires 30, 8 and 35, and the kit as built deals none.
 
 ## Key files
 
