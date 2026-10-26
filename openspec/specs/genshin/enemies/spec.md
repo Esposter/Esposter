@@ -275,7 +275,4 @@ Each enemy SHALL be drawn as a capsule tinted by its state, and SHALL be tinted 
 - [ ] **Each level band's Mora and Character EXP follow the wiki's table** — no source yet: the wiki's Module:Drops Table page is not in the wiki cache.
 - [ ] **No enemy gives Adventure EXP** — no source yet: the wiki's Adventure EXP page is not in the wiki cache.
 - [ ] **A hit that launches is one whose stagger level is Air** — no source yet: the wiki's Interruption Resistance/Stagger page is not in the wiki cache.
-- [ ] **A boss drops nothing when defeated** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **An enemy's max health and ATK are its base values times the multiplier of its level's curve** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **An enemy's strike lands first on the team's shields, all at once, and only what they do not absorb reduces the member's health** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **An enemy within aggro range of a live taunt strikes the nearest such taunt instead of the character** — no source yet: game data or a snapshot that holds this behaviour
