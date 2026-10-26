@@ -1,6 +1,6 @@
 ## Purpose
 
-The game's pause menu, opened over the world by Escape or a pad's Start, with its contents and side bar in the game's own order, the entries of screens not yet built drawn disabled, and the quit prompt and World Level dialog it opens.
+The game's pause menu, opened over the world by Escape or a pad's Start, with its contents and side bar in the game's own order, the entries of screens not yet built drawn disabled, and the quit prompt and World Level dialog it opens (`packages/genshin-world/src/components/Menu/Paimon/Index.vue`, `packages/genshin-world/src/components/Menu/Exit/Index.vue`, `packages/genshin-world/src/components/Menu/WorldLevelDialog/Index.vue`).
 
 ## Requirements
 
@@ -151,7 +151,7 @@ The profile card SHALL show the Traveler's rank and World Level, and the info ic
 
 - **GIVEN** the Traveler's birthday is not set
 - **WHEN** the profile card is shown
-- **THEN** the Birthday row stands over a Set Birthday button
+- **THEN** the Birthday row shows -/- with no button beneath it (`~/Esposter/genshin-parity/captures/menu-paimon-current.png`)
 
 ### Requirement: The World Level dialog shows its help text and lowering button
 
@@ -161,7 +161,7 @@ The World Level dialog SHALL show its help text and a cream lowering button with
 
 - **GIVEN** the World Level dialog is open
 - **WHEN** the player reads the dialog
-- **THEN** its help text is shown in the game's own words
+- **THEN** its help text is shown in the game's own words (`~/Esposter/genshin-parity/text/TextMap/TextMap_MediumEN.json`, text id 2955635938)
 - **AND** the cream lowering button with its red arrow is shown
 
 ### Requirement: The Settings screen shows the game's tabs and rows
@@ -172,7 +172,7 @@ The Settings screen SHALL list its tabs down the left in the game's order and dr
 
 - **GIVEN** the Settings screen is open on the Graphics tab
 - **WHEN** the player reads its rows
-- **THEN** the graphics quality row is set by the world, its words marking the device's own tier as the default
+- **THEN** the graphics quality row is set by the world, its words marking the device's own tier as the default (the frame at 144.5 seconds of `~/Esposter/genshin-parity/captures/yt-5EmJX_RyuY8-menu-settings.mp4` reads 'High (Default)', and text id 1676673275 in `~/Esposter/genshin-parity/text/TextMap/TextMap_MediumEN.json` reads '{0} (Default)')
 - **AND** every other row shows its value disabled
 
 #### Scenario: Pointer over a row
@@ -183,9 +183,7 @@ The Settings screen SHALL list its tabs down the left in the game's order and dr
 
 ## Open
 
-- [ ] **The contents run in the game's own order, Shop first** — no source yet: the 2560 wide 1.3 still is not in captures, and the 1920 wide `captures/menu-paimon-current.png` draws a shorter set, without Shop, Events, Adventurer Handbook, Wish, Battle Pass or Co-Op.
-- [ ] **Single-player pauses everything except particles and music** — no source yet: `MENU_SCREEN_BEHAVIOUR` holds the world with no particle or music carve-out in the files checked here.
-- [ ] **The Birthday row stands over a Set Birthday button** — the wording is settled: key `UI_FRIEND_BIRTHDAY_EDIT` reads 'Set Birthday' in `~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json` (hash 3030871116). The stand-over is not seen there: the 1920 frame `~/Esposter.noindex/genshin-parity/captures/menu-paimon-current.png` shows the unset row (-/-) with no button beneath it.
-- [ ] **The World Level dialog's help text is in the game's own words** — settled against the key: `UI_WORLDLEVEL_INFO` (hash 2955635938) reads the game's 'World Level' help in `~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, and the dialog renders that key. The scenario names no path, so the line stays open for a citation on the design page.
-- [ ] **The graphics quality row's default-tier words are the game's** — settled against the frame at 144.5 seconds of `~/Esposter.noindex/genshin-parity/captures/yt-5EmJX_RyuY8-menu-settings.mp4`, which reads 'High (Default)', and key `UI_SETTING_GRAPHICS_DEFAULT` reads '{0} (Default)' in `~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`. The scenario names no path, so the line stays open for a citation on the design page.
+- [ ] **The contents run in the game's own order, Shop first** — no source yet: the 2560 wide 1.3 still is not in captures, and the 1920 wide `~/Esposter/genshin-parity/captures/menu-paimon-current.png` draws a shorter set, without Shop, Events, Adventurer Handbook, Wish, Battle Pass or Co-Op.
+- [ ] **Single-player pauses everything except particles and music** — no source yet: no game data or snapshot checked holds the single-player pause; `MENU_SCREEN_BEHAVIOUR` holds the world with no particle or music carve-out.
+- [ ] **The Birthday row stands over a Set Birthday button** — contradicted by `~/Esposter/genshin-parity/captures/menu-paimon-current.png`: the unset row shows -/- with no button beneath it.
 - [ ] **The Paimon menu opens over the world from Escape or Start, and the quit prompt and World Level dialog open from it** — no source yet: game data or a snapshot that holds this behaviour.
