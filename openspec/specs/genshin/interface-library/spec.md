@@ -137,6 +137,6 @@ The pointer SHALL be drawn as the game's four-pointed star with its gold centre,
 
 ## Open
 
-- [ ] **The pointer is the game's four-pointed star at the size the game draws it on a screen of the same height** — no source yet: the wiki's Tutorial System Show Cursor image is not in the genshin-wiki cache, and the 25 px size is in no file read. Checked the cache's wikitext: no Tutorial page is cached, and Archive.json and Controls.json name the "Show Cursor" tutorial without giving the pointer's shape or size.
+- [ ] **The pointer is the game's four-pointed star at the size the game draws it on a screen of the same height** — no source yet: the wiki's Tutorial System Show Cursor image is not in the genshin-wiki cache, and the 25 px size is in no file read.
 - [ ] **The game fits its interface to a 1920 by 1080 screen, with a 1600 by 900 canvas inset up to 71 units, and its touch scale is the mobile client's** — no source yet: the 2560 and 3440 wide recordings are not among the captures, and the canvas size and touch scale are in no file read.
 - [ ] **A hover fades in over 0.05 s and back over 0.1 s, as the game's button transitions do** — contradicted by `~/Esposter.noindex/genshin-parity/extracted/interface-states/states-07356235.json`: its hover durations are 0.333, 0.167 and 1.333 s, never 0.05 s.
