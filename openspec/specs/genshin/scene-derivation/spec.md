@@ -148,6 +148,6 @@ A region's ground SHALL be published only when its fit holds the bar set for it 
 
 ## Open
 
-- [ ] **The classing of each piece, the closed-form camera, the least-representation order and the reference-camera judgement** — process rules: no code check in this pass covers them, and the solvers were not traced.
+- [ ] **The classing of each piece, the closed-form camera, the least-representation order and the reference-camera judgement** — no source yet: no code check in this pass covers them, and the solvers were not traced.
 - [ ] **Each object of a region rebuilt once, and the light, haze and sky calibrated only after every gap is within noise** — no source yet: the layout pass and the calibration order were not traced in this pass.
 - [ ] **A landmark moving more than five centimetres fails the fit** — no source yet: the five-centimetre gate was not found in `fitGroundPieces.ts` or `fitGroundPiece.ts` in this pass.
