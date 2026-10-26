@@ -5,7 +5,6 @@ import type { JsonPatchOperation } from "@esposter/shared";
 import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "headless-block-editor";
 import type { MaybeRefOrGetter } from "vue";
 
-import { usePageBuilderSelectedNode } from "@/composables/pageBuilder/usePageBuilderSelectedNode";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { PAGE_BUILDER_COMMAND_GROUP } from "@/services/pageBuilder/constants";
 import { getNodeIdAt } from "@/services/pageBuilder/getNodeIdAt";

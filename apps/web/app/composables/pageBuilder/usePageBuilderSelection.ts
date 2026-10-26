@@ -2,7 +2,6 @@ import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
 import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "headless-block-editor";
 import type { MaybeRefOrGetter } from "vue";
 
-import { usePageBuilderSelectedNode } from "@/composables/pageBuilder/usePageBuilderSelectedNode";
 import { getNodeIdAt } from "@/services/pageBuilder/getNodeIdAt";
 import { getNodePointer } from "@/services/pageBuilder/getNodePointer";
 import { getParentNodeId } from "@/services/pageBuilder/getParentNodeId";

@@ -7,7 +7,6 @@ import { authClient } from "@/services/auth/authClient";
 import { uploadBlocks } from "@/services/azure/container/uploadBlocks";
 import { getSha256Hex } from "@/services/shared/getSha256Hex";
 import { InvalidOperationError, Operation, takeOne } from "@esposter/shared";
-import { watchImmediate } from "@vueuse/core";
 
 // A write's result, or the reason it did not land: its own error where it failed, else that it was dropped or superseded
 const takeMutationResult = <TResult>(outcome: MutationOutcome<TResult>): TResult => {

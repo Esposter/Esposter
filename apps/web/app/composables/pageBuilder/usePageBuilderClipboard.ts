@@ -2,7 +2,6 @@ import type { PageBuilderKind } from "@/models/pageBuilder/PageBuilderKind";
 import type { BlockDocument, BlockNode, BlockRootProps, BlockTypeDefinition } from "headless-block-editor";
 import type { MaybeRefOrGetter } from "vue";
 
-import { usePageBuilderSelectedNode } from "@/composables/pageBuilder/usePageBuilderSelectedNode";
 import { CANNOT_GO_HERE_MESSAGE } from "@/services/pageBuilder/constants";
 import { getInsertTarget } from "@/services/pageBuilder/getInsertTarget";
 import { getNodeIdAt } from "@/services/pageBuilder/getNodeIdAt";

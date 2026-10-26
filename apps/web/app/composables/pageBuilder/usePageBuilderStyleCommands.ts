@@ -1,7 +1,6 @@
 import type { UiCommand } from "@/models/ui/UiCommand";
 import type { MaybeRefOrGetter } from "vue";
 
-import { usePageBuilderStyle } from "@/composables/pageBuilder/usePageBuilderStyle";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { PAGE_BUILDER_COMMAND_GROUP } from "@/services/pageBuilder/constants";
 
