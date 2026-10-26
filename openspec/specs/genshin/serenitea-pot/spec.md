@@ -157,7 +157,3 @@ A Trust Rank SHALL hold as many companions as its rank allows, from one companio
 ## Open
 
 - [ ] **Realm Currency and Realm Bounty accrue per real hour, the unit the game's stores use** — no source yet: the per-hour unit is provisional until a recording of a store across an hour settles it (`packages/genshin-world/src/services/home/constants.ts`).
-- [ ] **Tubby runs one queue for each Trust Rank, holding one furnishing at a time** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A queued furnishing finishes in its queue while the page is closed** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A furnishing's materials are taken from the bag when it starts, and missing materials refuse the start** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A finished furnishing waits in its queue while the bag has no room, and enters the bag once there is room** — no source yet: game data or a snapshot that holds this behaviour
