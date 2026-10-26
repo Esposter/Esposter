@@ -81,7 +81,7 @@ A camp's enemy stands at its camp level under World Level 0. From World Level 1 
 - [ ] **The prompt's frame and choices are the quit prompt's measured layout** — checked against `~/Esposter.noindex/genshin-parity/references/menu-quit-prompt/exit-prompt-current.png`: a still of the quit prompt with a question and Cancel and Confirm buttons, and the claim is not settled by it because the still holds no measurement of the prompt's frame or buttons, and the 2026 recording the page cites is not on disk under that name.
 - [ ] **The dialog stays open after a change** — no source yet: neither recording shows the game after Confirm.
 - [ ] **The card's values stand right-aligned beside the info disc, as the current client draws them** — no source yet: the menu's reference is the 1.3 build's, with its values redacted.
-- [ ] **Adventure EXP accrues toward rank 60's total while a quest holds the rank, the rank catches up when it is done, and EXP past rank 60 is paid in Mora** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Adventure EXP accrues toward rank 60's total while a quest holds the rank, the rank catches up when it is done, and EXP past rank 60 is paid in Mora** — no source yet: the wiki's Adventure EXP page, named in the enemies page's Sources, is not in the wiki cache.
 
 ## Key files
 
