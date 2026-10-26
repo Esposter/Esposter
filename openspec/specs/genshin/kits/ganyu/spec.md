@@ -41,7 +41,7 @@ Trail of the Qilin's Ice Lotus SHALL stand with its taunt for its seconds and ex
 - **GIVEN** the Ice Lotus stands
 - **WHEN** no time has yet passed for its seconds to run out
 - **THEN** the Ice Lotus keeps standing
-- **AND** it has no health, so it stands until its seconds run out
+- **AND** the kit gives it no health, so it stands until its seconds run out (open: see the design's Open list)
 
 ### Requirement: Celestial Shower leaves a field
 
@@ -62,12 +62,12 @@ Celestial Shower SHALL leave a field that ticks and strikes enemies for the burs
 
 ### Requirement: Ascension 1 gives CRIT Rate to later arrows
 
-From her first ascension, every Frostflake Arrow after the first SHALL gain 20% CRIT Rate.
+From her first ascension, a Frostflake Arrow fired within five seconds after another Frostflake Arrow SHALL gain 20% CRIT Rate.
 
 #### Scenario: A later arrow gains CRIT Rate
 
 - **GIVEN** Ganyu has her first ascension
-- **WHEN** a Frostflake Arrow fires after the first one
+- **WHEN** a Frostflake Arrow fires after the first one, within five seconds of it
 - **THEN** that arrow gains 20% CRIT Rate
 
 #### Scenario: The first arrow gains no CRIT Rate
@@ -104,18 +104,18 @@ From constellation 2, Trail of the Qilin SHALL hold one more charge than its bas
 
 ### Requirement: Fourth constellation stacks DMG taken within Celestial Shower
 
-From constellation 4, each enemy within Celestial Shower's field SHALL gain a stack of 5% DMG taken on every tenth of its ticks, up to five, and the stacks SHALL last 3 seconds from each tick, so that every character's hits on it read them.
+From constellation 4, each enemy within Celestial Shower's field SHALL gain a stack of 5% DMG taken on the field's first tick and on every tenth tick after it, up to five, and the stacks SHALL last 3 seconds from each tick, so that every character's hits on it read them.
 
-#### Scenario: An enemy in the field gains DMG taken from the tenth tick
+#### Scenario: An enemy in the field gains DMG taken on a stacking tick
 
 - **GIVEN** Ganyu is at constellation 4 and casts Celestial Shower
-- **WHEN** the field's tenth tick falls with an enemy inside it
+- **WHEN** a stacking tick falls with an enemy inside it
 - **THEN** that enemy takes 5% more DMG from every character's hits
 
 #### Scenario: Stacks reach five and hold
 
 - **GIVEN** an enemy has five stacks from the field
-- **WHEN** the field ticks again on a tenth tick
+- **WHEN** the field ticks again on a stacking tick
 - **THEN** it still has five stacks
 
 #### Scenario: An enemy outside the field gains nothing
