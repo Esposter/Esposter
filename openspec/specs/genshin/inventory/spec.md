@@ -239,8 +239,8 @@ Using a food SHALL take one of that food from the bag and apply its heal to the 
 
 ## Open
 
-- [ ] **The bag opens on B** — no source yet: `packages/genshin-engine/src/input/InputActionBindingMap.ts` binds the port's own inventory key to `B`, which is not the game's, and the wiki's Controls page is not cached in `~/Esposter/cache/genshin-wiki`.
-- **Every one- to three-star weapon is destroyable** — contradicted: `~/Esposter/genshin-parity/text/ExcelBinOutput/WeaponExcelConfigData.json` gives ten one-star weapons (`rankLevel` 1) no `destroyRule`, so the destroy rule decides each entry (`packages/genshin-world/src/services/inventory/checkIsInventoryItemDestroyable.ts`).
+- [ ] **The bag opens on B** — no source yet: the code binds the port's own inventory key to `B`, which is not the game's, and the wiki's Controls page is not cached in `~/Esposter/cache/genshin-wiki`.
+- **Every one- to three-star weapon is destroyable** — contradicted: `~/Esposter/genshin-parity/text/ExcelBinOutput/WeaponExcelConfigData.json` gives ten one-star weapons (`rankLevel` 1) no `destroyRule`, so the destroy rule decides each entry.
 - [ ] **The bag holds everything in nine tabs, in the game's order, each with the game's own name** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **The bag opens on the weapons tab, with its weapons sorted by level from the highest** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **An item stacks up to its own stack limit, and each weapon or artifact is an entry of its own** — no source yet: game data or a snapshot that holds this behaviour
