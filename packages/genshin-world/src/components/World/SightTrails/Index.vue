@@ -45,8 +45,10 @@ mesh.frustumCulled = false;
 sightScene.add(mesh);
 onBeforeRender(() => {
   const indexCount = writeSightTrails(ribbon, elementalSight, target, ends, getGroundHeight);
-  geometry.setDrawRange(0, indexCount);
+  // No trail while the sight is off, and an empty range still makes the draw call, so the mesh is hidden instead
+  mesh.visible = indexCount > 0;
   if (indexCount === 0) return;
+  geometry.setDrawRange(0, indexCount);
   positionAttribute.needsUpdate = true;
   colorAttribute.needsUpdate = true;
   indexAttribute.needsUpdate = true;
