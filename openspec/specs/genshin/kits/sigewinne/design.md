@@ -4,7 +4,7 @@ Sigewinne's kit is its record and one behaviour module, `createSigewinneKitBehav
 
 ## Decisions
 
-- **Her hits land on gcsim's hitmarks as they are.** Her strikes land at 12, 14 and 38 frames and the shot at 86, as gcsim lists them. gcsim's attack queue lands each projectile 10 frames after its hitmark, which is not added here, so these hits land 10 frames early against gcsim's own timing. Question on the roadmap.
+- **Her hits land 10 frames after gcsim's hitmarks, for the projectile's travel.** gcsim's attack queue lands each projectile 10 frames after its hitmark, so her strikes land at 22, 24 and 48 frames and the shot at 96, as gcsim gives them. The hosted record still holds the bare hitmarks, 12, 14, 38 and 86, which the kit takes as listed until the record is republished with the travel added. That republish is owed to the PC, and the roadmap's question on the travel stays open until it is done.
 - **The press casts Bolstering Bubblebalm where she stands.** Its five bubbles are circles on the primary target, each with a 16-metre reach from her (the 15-metre targeting area plus the bubble's radius of 1), at 35 frames and then every 107 frames, each a share of her Max HP. Its animation is 41 frames and its cooldown 18 seconds.
 - **Super Saturated Syringing is six waves from her.** Each wave is a box 4 metres wide and 10 long, at 99 frames and then every 25 frames, through its 241-frame animation, each a share of her Max HP. Its cooldown is 18 seconds on 70 energy.
 - **The charged shot is the Fully-Charged Aimed Shot, the charge's first level.** It is gcsim's default, hitting at 86 frames of its 94, in a box as her first strike is, and costs no stamina, as Ganyu's does not.
