@@ -38,7 +38,7 @@ Nightrider SHALL summon Oz 18 frames after it is pressed, and Oz SHALL attack ev
 
 ### Requirement: Midnight Phantasmagoria summons Oz
 
-Midnight Phantasmagoria SHALL summon Oz 113 frames after it is cast, ending any Oz already standing, and it SHALL be refused without the energy it costs.
+Midnight Phantasmagoria SHALL summon Oz 113 frames after it is cast, replacing any Oz already standing, and it SHALL be refused without the energy it costs.
 
 #### Scenario: The burst summons Oz after 113 frames
 
@@ -65,23 +65,23 @@ When Fischl is swapped out during Midnight Phantasmagoria, Oz SHALL spawn one fr
 
 ### Requirement: One Oz at a time
 
-At most one Oz SHALL stand at a time, and a new Nightrider press or Midnight Phantasmagoria cast SHALL end the Oz already standing.
+At most one Oz SHALL stand at a time, and a new Nightrider press or Midnight Phantasmagoria cast SHALL replace the Oz already standing, which takes a fresh duration.
 
-#### Scenario: A new Oz ends the one standing
+#### Scenario: A new Oz replaces the one standing
 
 - **GIVEN** Oz is standing
 - **WHEN** the player casts Midnight Phantasmagoria
-- **THEN** the Oz already standing ends and a new Oz takes its place
+- **THEN** the new Oz replaces the one standing with a fresh duration
 
 ### Requirement: Thundering Retribution from Ascension 4
 
-From Ascension 4, an Electro-related reaction SHALL trigger Thundering Retribution, a strike on the enemy that reacted, at most once every half second.
+From Ascension 4, while Oz is on the field, an Electro-related reaction SHALL trigger Thundering Retribution, a strike on the primary target (which enemy it strikes is open, see the design), at most once every half second.
 
 #### Scenario: A reaction triggers a strike
 
-- **GIVEN** Fischl is at Ascension 4
+- **GIVEN** Fischl is at Ascension 4 and Oz is on the field
 - **WHEN** an Electro-related reaction occurs and the half-second interval is clear
-- **THEN** Thundering Retribution strikes the enemy that reacted
+- **THEN** Thundering Retribution strikes the primary target
 
 #### Scenario: A reaction within the interval triggers no strike
 
@@ -91,17 +91,17 @@ From Ascension 4, an Electro-related reaction SHALL trigger Thundering Retributi
 
 ### Requirement: Constellation 2 gives Oz's hit Devourer of All Sins
 
-From constellation 2, the hit Oz's summon deals SHALL be Devourer of All Sins' in place of Oz's own.
+From constellation 2, the hit Oz's summon deals SHALL be Devourer of All Sins: its multiplier gains 2 and its circle is 3 metres wide.
 
 #### Scenario: Oz's hit is Devourer of All Sins from constellation 2
 
 - **GIVEN** Fischl is at constellation 2
 - **WHEN** Nightrider's Oz summons its hit
-- **THEN** the hit is Devourer of All Sins
+- **THEN** the hit's multiplier is 2 higher and its circle is 3 metres
 
 ### Requirement: Constellation 1 and 6 strikes
 
-From constellation 1, while Oz is not on the field and Fischl is the character on the field, Gaze of the Deep SHALL strike together with each of her normal attacks that lands, and from constellation 6, Evernight Raven SHALL strike together with each attack of the character on the field.
+From constellation 1, while Oz is not on the field and Fischl is the character on the field, Gaze of the Deep SHALL strike together with each of her normal attacks that lands, and from constellation 6, while Oz is on the field, Evernight Raven SHALL strike together with each normal attack of the character on the field.
 
 #### Scenario: Gaze of the Deep strikes with a normal attack while Oz is away
 
@@ -115,10 +115,10 @@ From constellation 1, while Oz is not on the field and Fischl is the character o
 - **WHEN** one of her arrows strikes
 - **THEN** Gaze of the Deep does not strike
 
-#### Scenario: Evernight Raven strikes with the field's attack
+#### Scenario: Evernight Raven strikes with the field's normal attack
 
-- **GIVEN** Fischl is at constellation 6
-- **WHEN** the character on the field makes an attack
+- **GIVEN** Fischl is at constellation 6 and Oz is on the field
+- **WHEN** the character on the field makes a normal attack
 - **THEN** Evernight Raven strikes along with it
 
 ### Requirement: Constellation 4 heal
