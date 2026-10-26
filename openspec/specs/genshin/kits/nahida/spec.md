@@ -29,7 +29,7 @@ Nahida's collision and two plunges SHALL land on the enemies within reach, with 
 
 ### Requirement: All Schemes to Know's press and full hold
 
-All Schemes to Know's press SHALL strike the enemies within reach as Dendro, and holding it for the full 300 frames SHALL release its full hold, while a shorter hold SHALL release the press. Each enemy a press or a full hold strikes SHALL gain Seeds of Skandha, as the Requirement below sets out.
+All Schemes to Know's press SHALL strike the enemies within reach as Dendro, and holding it for the full 300 frames SHALL release its full hold, while a shorter hold SHALL release the press (provisional: the record's five-second minimum is Unsourced, see the design). Each enemy a press or a full hold strikes SHALL gain Seeds of Skandha, as the Requirement below sets out.
 
 #### Scenario: Press strikes the enemies in reach
 
