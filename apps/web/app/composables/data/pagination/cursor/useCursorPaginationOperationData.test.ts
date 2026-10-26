@@ -16,6 +16,25 @@ describe(useCursorPaginationOperationData, () => {
   let readItems: ReturnType<typeof useCursorPaginationOperationData<string>>["readItems"];
   let readMoreItems: ReturnType<typeof useCursorPaginationOperationData<string>>["readMoreItems"];
 
+  const mountWithMorePages = async () => {
+    await mountSuspended(
+      defineComponent({
+        render: () => h("div"),
+        setup: () => {
+          const cursorPaginationData = ref(new CursorPaginationData<string>());
+          cursorPaginationData.value.hasMore = true;
+          cursorPaginationData.value.nextCursor = nextCursor;
+          const isLoadedSource = ref(false);
+          ({ readMoreItems } = useCursorPaginationOperationData(
+            () => cursorPaginationData,
+            () => isLoadedSource,
+          ));
+        },
+      }),
+    );
+    await flushPromises();
+  };
+
   beforeEach(() => {
     goOnline();
   });
@@ -98,22 +117,7 @@ describe(useCursorPaginationOperationData, () => {
     expect.hasAssertions();
 
     goOffline();
-    await mountSuspended(
-      defineComponent({
-        render: () => h("div"),
-        setup: () => {
-          const cursorPaginationData = ref(new CursorPaginationData<string>());
-          cursorPaginationData.value.hasMore = true;
-          cursorPaginationData.value.nextCursor = nextCursor;
-          const isLoadedSource = ref(false);
-          ({ readMoreItems } = useCursorPaginationOperationData(
-            () => cursorPaginationData,
-            () => isLoadedSource,
-          ));
-        },
-      }),
-    );
-    await flushPromises();
+    await mountWithMorePages();
 
     const query = vi.fn<(cursor?: string) => Promise<CursorPaginationData<string>>>();
     const onComplete = vi.fn<() => void>();
@@ -127,22 +131,7 @@ describe(useCursorPaginationOperationData, () => {
   test("paces retries with exponential backoff after a failing query", async () => {
     expect.hasAssertions();
 
-    await mountSuspended(
-      defineComponent({
-        render: () => h("div"),
-        setup: () => {
-          const cursorPaginationData = ref(new CursorPaginationData<string>());
-          cursorPaginationData.value.hasMore = true;
-          cursorPaginationData.value.nextCursor = nextCursor;
-          const isLoadedSource = ref(false);
-          ({ readMoreItems } = useCursorPaginationOperationData(
-            () => cursorPaginationData,
-            () => isLoadedSource,
-          ));
-        },
-      }),
-    );
-    await flushPromises();
+    await mountWithMorePages();
 
     // Fire timers immediately so the retry pacing is observable without waiting out the real delay
     const setTimeoutSpy = vi.spyOn(globalThis, "setTimeout").mockImplementation((callback) => {
