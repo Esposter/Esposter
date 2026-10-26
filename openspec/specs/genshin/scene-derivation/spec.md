@@ -1,12 +1,12 @@
 ## Purpose
 
-How a 3D scene is re-derived from the game's own assets, inside the recreation passes that order its unknowns. Each piece of information is sorted as exact, fieldless or on screen only and answered by the most exact query the data allows, never by a search over the frame. The witness render draws the exports through our own engine, so each stand-in is measured against the game's own data, and each is closed by the least representation that closes it: an exact value, a fitted generator or a richer kit. An open-world region is first laid out with every object at its exact place as a stand-in, then rebuilt one object at a time, each fitted against its own export.
+How a 3D scene is re-derived from the game's own assets, inside the recreation passes that order its unknowns. Each piece of information is sorted as exact, fieldless or on screen only and answered by the most exact query the data allows, never by a search over the frame. The witness render draws the exports through our own engine (`packages/genshin-world/parity/screens.ts`), so each stand-in is measured against the game's own data, and each is closed by the least representation that closes it: an exact value, a fitted generator or a richer kit. An open-world region is first laid out with every object at its exact place as a stand-in, then rebuilt one object at a time, each fitted against its own export.
 
 ## Requirements
 
 ### Requirement: Each piece of scene information is classed before it is derived
 
-Each piece of a scene's information SHALL be classed as exact, fieldless or on screen only before it is derived, and SHALL be derived by the most exact query the data allows.
+Each piece of a scene's information SHALL be classed as exact, fieldless or on screen only before it is derived, and SHALL be derived by the most exact query the data allows (see the open list).
 
 #### Scenario: A value held in the export is written exactly
 
@@ -24,7 +24,7 @@ Each piece of a scene's information SHALL be classed as exact, fieldless or on s
 
 ### Requirement: No unknown is settled by a search over the frame
 
-A scene's unknowns SHALL NOT be settled by searching over the score of a frame, and a camera pose SHALL be solved from landmarks in closed form and refined on edges.
+A scene's unknowns SHALL NOT be settled by searching over the score of a frame, and a camera pose SHALL be solved from landmarks in closed form and refined on edges (see the open list).
 
 #### Scenario: A camera pose is solved from landmarks
 
@@ -41,7 +41,7 @@ A scene SHALL be inventoried, listing every object, material, texture and script
 
 - **GIVEN** a scene is to be re-derived
 - **WHEN** the inventory is taken
-- **THEN** every renderer, material, texture slot and script spawn the scene uses is listed
+- **THEN** every renderer, material, texture slot and script spawn the scene uses is listed (`scripts/src/services/genshinAssets/shared/DerivedAssetComponentMap.ts`)
 - **AND** no stand-in is built until the inventory is complete
 
 ### Requirement: Each loss is priced in its pass and the largest is closed first
@@ -52,17 +52,17 @@ Each loss inside a pass SHALL be priced by the frame error it could recover, and
 
 - **GIVEN** a pass has several losses
 - **WHEN** the next loss is chosen
-- **THEN** the loss that recovers the most frame error is chosen
+- **THEN** the loss that recovers the most frame error is chosen (`scripts/src/services/genshinParity/witness/rankReferenceGains.ts`)
 
 #### Scenario: A later pass waits for the earlier pass to freeze
 
 - **GIVEN** an earlier pass has not yet met its measure
 - **WHEN** work is chosen
-- **THEN** no later pass begins
+- **THEN** no later pass begins (see the open list)
 
 ### Requirement: A loss is closed by the least representation that closes it
 
-A loss SHALL be closed by the least representation that closes it: an exact value first, then a fitted generator, and a richer kit only when neither reaches the reference's noise.
+A loss SHALL be closed by the least representation that closes it: an exact value first, then a fitted generator, and a richer kit only when neither reaches the reference's noise (see the open list).
 
 #### Scenario: An exact value closes a loss when one suffices
 
@@ -78,7 +78,7 @@ A loss SHALL be closed by the least representation that closes it: an exact valu
 
 ### Requirement: A representation is judged at the reference cameras
 
-A representation SHALL be judged by its pass's measure at the reference cameras, never by how it looks in isolation.
+A representation SHALL be judged by its pass's measure at the reference cameras, never by how it looks in isolation (see the open list).
 
 #### Scenario: A texture that looks different close up costs nothing at distance
 
@@ -88,34 +88,34 @@ A representation SHALL be judged by its pass's measure at the reference cameras,
 
 ### Requirement: Each layer of a reference is scored on its own
 
-Each layer of a reference SHALL be scored on its own, so that a change is judged where it lands.
+Each layer of a reference SHALL be scored on its own, so that a change is judged where it lands (`scripts/src/services/genshinParity/reference/compareScreen.ts`).
 
 #### Scenario: A change is judged on the layer it changes
 
 - **GIVEN** a change alters one layer of a scene
 - **WHEN** the scene is scored
-- **THEN** that layer's own shape, tone and detail scores show the change
+- **THEN** that layer's own shape, tone and detail scores show the change (`scripts/src/services/genshinParity/reference/compareScreen.ts`)
 - **AND** the other layers' scores are unchanged
 
 ### Requirement: An open-world region is laid out first and each object rebuilt once
 
-An open-world region SHALL be laid out with every object at its exact place, and then each object SHALL be rebuilt one at a time against its own export until its gap is within the reference's noise.
+An open-world region SHALL be laid out with every object at its exact place, and then each object SHALL be rebuilt one at a time against its own export until its gap is within the reference's noise (see the open list).
 
 #### Scenario: Objects are rebuilt one at a time
 
 - **GIVEN** a region is laid out with every object as a stand-in
 - **WHEN** the largest object gap is worked
-- **THEN** that object is rebuilt and fitted against its own export
+- **THEN** that object is rebuilt and fitted against its own export (see the open list)
 
 #### Scenario: Light and sky are calibrated only after every object is within noise
 
 - **GIVEN** some object's gap is still beyond the reference's noise
 - **WHEN** the frame is calibrated
-- **THEN** the light, haze and sky are not yet calibrated
+- **THEN** the light, haze and sky are not yet calibrated (see the open list)
 
 ### Requirement: Nothing of the game's files ships in the product
 
-The product SHALL NOT commit, build, upload or deploy any file, format or data of the game, and SHALL ship only its own shaders, geometry and fitted data.
+The product SHALL NOT commit, build, upload or deploy any file, format or data of the game, and SHALL ship only its own shaders, geometry and fitted data (`packages/genshin-engine/src/nodes/createToonMaterial.ts`, `scripts/src/services/genshinAssets/shared/constants.ts`).
 
 #### Scenario: A deployed product holds no game data
 
@@ -128,20 +128,26 @@ The product SHALL NOT commit, build, upload or deploy any file, format or data o
 
 - **GIVEN** the product is built
 - **WHEN** its contents are inspected
-- **THEN** the witness render page is not among them
+- **THEN** the witness render page is not among them (`packages/genshin-world/parity/screens.ts`)
 
 ### Requirement: A region's ground is published only once it holds its gate
 
-A region's ground SHALL be published only when its fit holds the bar set for it at its centre and its landmarks stand within the gate.
+A region's ground SHALL be published only when its fit holds the bar set for it at its centre and its landmarks stand within the gate (`scripts/src/services/genshinAssets/fit/fitGroundPieces.ts`).
 
 #### Scenario: A ground missing its gate is not published
 
 - **GIVEN** a region's fitted ground exceeds the bar at its centre
 - **WHEN** the fit is published
-- **THEN** the ground is not published
+- **THEN** the ground is not published (`scripts/src/services/genshinAssets/fit/fitGroundPieces.ts`)
 
 #### Scenario: A landmark moving more than the gate fails the fit
 
 - **GIVEN** a landmark's ground would move by more than five centimetres
 - **WHEN** the fit is checked
-- **THEN** the fit fails and the ground is not published
+- **THEN** the fit fails and the ground is not published (see the open list)
+
+## Open
+
+- [ ] **The classing of each piece, the closed-form camera, the least-representation order and the reference-camera judgement** — process rules: no code check in this pass covers them, and the solvers were not traced.
+- [ ] **Each object of a region rebuilt once, and the light, haze and sky calibrated only after every gap is within noise** — no source yet: the layout pass and the calibration order were not traced in this pass.
+- [ ] **A landmark moving more than five centimetres fails the fit** — no source yet: the five-centimetre gate was not found in `fitGroundPieces.ts` or `fitGroundPiece.ts` in this pass.
