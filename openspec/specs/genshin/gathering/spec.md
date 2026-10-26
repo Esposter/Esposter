@@ -1,6 +1,6 @@
 ## Purpose
 
-The plants and specialties the official map marks, placed by the fit into each region as gathering points, picked with F and kept gone until their respawn. A local specialty comes back 46 hours after it is picked, and a cooking ingredient at the game's midnight that follows, as the wiki gives each. The gather table's refresh ids name no policy in the dump, so the category settles it (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/GatherExcelConfigData.json`, checked against `RefreshPolicyExcelConfigData.json`).
+The plants and specialties the official map marks, placed by the fit into each region as gathering points, picked with F and kept gone until their respawn. A local specialty comes back 46 hours after it is picked, as the wiki gives it, and a cooking ingredient at the daily reset that follows. The gather table's refresh ids name no policy in the dump, so the category settles it (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/GatherExcelConfigData.json`, checked against `RefreshPolicyExcelConfigData.json`).
 
 ## Requirements
 
@@ -52,14 +52,14 @@ A picked local specialty SHALL stand again 46 hours after it was picked.
 - **WHEN** less than 46 hours have passed
 - **THEN** the specialty stays gone
 
-### Requirement: A picked cooking ingredient stands again at the next midnight
+### Requirement: A picked cooking ingredient stands again at the next daily reset
 
-A picked cooking ingredient SHALL stand again at the game's next midnight after the pick, on the game's clock.
+A picked cooking ingredient SHALL stand again at the game's next daily reset after the pick, which is 04:00 on the game's clock.
 
-#### Scenario: Ingredient picked before midnight is back at midnight
+#### Scenario: Ingredient picked before the reset is back at the reset
 
-- **GIVEN** a cooking ingredient was picked before the game's midnight
-- **WHEN** the game's midnight comes
+- **GIVEN** a cooking ingredient was picked before the game's daily reset
+- **WHEN** the game's daily reset comes
 - **THEN** the ingredient stands again
 
 ### Requirement: An ore is struck and broken rather than picked
@@ -136,7 +136,7 @@ A broken ore SHALL drop its certain piece where it lay, and one more for each of
 
 ### Requirement: An ore stands again on its own respawn
 
-A broken ore SHALL stand again on its own respawn: an iron chunk at the game's midnight, a white iron chunk or starsilver two days after it breaks, and a crystal chunk, amethyst lump or condessence crystal three days after it breaks (`scripts/src/services/genshinAssets/gathering/constants.ts`).
+A broken ore SHALL stand again on its own respawn: an iron chunk at the daily reset, a white iron chunk or starsilver two days after it breaks, and a crystal chunk, amethyst lump or condessence crystal three days after it breaks (`scripts/src/services/genshinAssets/gathering/constants.ts`).
 
 #### Scenario: White iron chunk is back two days after breaking
 
@@ -153,7 +153,6 @@ A broken ore SHALL stand again on its own respawn: an iron chunk at the game's m
 ## Open
 
 - [ ] **A local specialty stands again 46 hours after its pick** — no source yet: the Local Specialty wiki page is not in `~/Esposter.noindex/cache/genshin-wiki/`, and no 46-hour value was found in the gathering respawn code checked.
-- [ ] **A cooking ingredient stands again at the game's midnight** — no source yet: the code's daily respawn is the 04:00 reset (`packages/genshin-world/src/services/gathering/computeGatheringRespawn.ts`), and the design page says the same, so this midnight claim disagrees with the code.
 - [ ] **Gathering points stand where the official map marks their item** — no source yet: no label-tree file matching `teyvat`, `map-label` or `labels` was found under `~/Esposter.noindex/genshin-parity/references/`.
 - [ ] **F picks a gathering point into the bag, and F does not pick an ore** — no source yet: no gathering pick path was found in the files checked, so the pick, full-bag and no-ore scenarios are unchecked.
 - [ ] **Ningguang's plunge is not blunt, as the wiki's table excepts it** — no source yet: the wiki's Blunt Attacks table is not cached; `packages/genshin-world/src/services/kit/CharacterIdBluntActionMap.ts` carries the exception.
