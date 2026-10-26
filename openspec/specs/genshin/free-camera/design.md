@@ -26,7 +26,7 @@ sequenceDiagram
 
 The diagram's steps are `packages/genshin-engine/src/simulation/createFixedStepLoop.ts` (at most five a frame, `MAX_STEPS_PER_FRAME` in `packages/genshin-engine/src/simulation/constants.ts`) and `FIXED_STEP_SECONDS`, a sixtieth of a second, in `packages/genshin-world/src/services/constants.ts`.
 
-The order is the reason for the priority. The floating origin reads the camera to decide whether to shift the world back under it, and the terrain and grass read the camera for their tiles, so both must see where it has been moved to. The free camera registers its frame callback at `CAMERA_FRAME_PRIORITY`, ahead of TresJS's default the origin runs at, so it runs first though it mounts after the scene (`packages/genshin-world/src/components/World/FreeCamera/Index.vue`, `CAMERA_FRAME_PRIORITY` in `packages/genshin-world/src/services/constants.ts`).
+The order is the reason for the priority. The floating origin reads the camera to decide whether to shift the world back under it, and the terrain and grass read the camera for their tiles (`packages/genshin-world/src/components/World/Terrain/Index.vue`, `packages/genshin-world/src/components/World/Grass/Index.vue`), so both must see where it has been moved to. The free camera registers its frame callback at `CAMERA_FRAME_PRIORITY`, ahead of TresJS's default the origin runs at, so it runs first though it mounts after the scene (`packages/genshin-world/src/components/World/FreeCamera/Index.vue`, `CAMERA_FRAME_PRIORITY` in `packages/genshin-world/src/services/constants.ts`).
 
 ## The controls
 
