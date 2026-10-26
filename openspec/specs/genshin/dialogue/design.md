@@ -189,10 +189,10 @@ The reveal is timed off three lines of `~/Esposter.noindex/genshin-parity/captur
 - [ ] **The dialog table's talk title hash resolves to no text** — contradicted by `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/DialogExcelConfigData.json`: nine of its first 50,000 title hashes resolve in the English maps.
 - [ ] **No carried quest's talk holds a gadget or mate-avatar line** — no source yet: the carried quests' talks were not checked against those roles.
 - [ ] **A black screen's dialog has a role id the character table does not hold** — no source yet: the character table was not searched for the role id.
-- [ ] **The reply marks are named as the wiki's transcripts name the game's marks** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The reply marks are traced from the wiki's copies of the game's files** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **F and Space are read as the engine's Interact and Jump bindings, so they stay the game's defaults** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A reply's speaker is the Traveler, named with the game's own title for them** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The margin under the name is 13.5 units, so the line sits 30 units under the name with a role and 13.5 without** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The line is 26 units with 2.3 units of letter spacing, and its x-height, ascender and width match the recording's** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The speaker's name is gold `#ffc700`, and the replies are dark pills 45 high and 15 apart, the first at 1275 by 698 of 1920 by 1080** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The reply marks are named as the wiki's transcripts name the game's marks** — no source yet: the wiki's Template:DIcon page, named in Sources, is not in the wiki cache.
+- [ ] **The reply marks are traced from the wiki's copies of the game's files** — no source yet: the wiki's Template:DIcon page, named in Sources, is not in the wiki cache.
+- [ ] **F and Space are read as the engine's Interact and Jump bindings, so they stay the game's defaults** — no source yet: the wiki's Controls page, named in Sources, is not in the wiki cache.
+- [ ] **A reply's speaker is the Traveler, named with the game's own title for them** — no source yet: the wiki's NPC page, named in Sources, is not in the wiki cache; the game's title for the Traveler is not yet looked up in `~/Esposter/genshin-parity/text/TextMapEN.json`.
+- [ ] **The margin under the name is 13.5 units, so the line sits 30 units under the name with a role and 13.5 without** — no source yet: the dialogue recording named in Sources (`nWBqOXWZuFg`), not yet measured for the margin.
+- [ ] **The line is 26 units with 2.3 units of letter spacing, and its x-height, ascender and width match the recording's** — no source yet: the dialogue recording named in Sources (`nWBqOXWZuFg`), not yet measured for the line's size and spacing.
+- [ ] **The speaker's name is gold `#ffc700`, and the replies are dark pills 45 high and 15 apart, the first at 1275 by 698 of 1920 by 1080** — no source yet: the dialogue recording named in Sources (`nWBqOXWZuFg`), not yet measured for the name's colour and the reply pills.
