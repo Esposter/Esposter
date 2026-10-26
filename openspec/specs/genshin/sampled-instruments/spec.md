@@ -1,6 +1,6 @@
 ## Purpose
 
-The login's music layers public-domain recordings of real instruments over the engine's synthesizer. Each voice keeps its synthesized note, and a recording from an openly licensed library plays on top of it at a level solved against the game's sound, so a level of zero is the synthesizer exactly. A layering ships only where it brings a piece nearer the game's octave bands while keeping the synthesizer's pitch agreement.
+The login's music layers public-domain recordings of real instruments over the engine's synthesizer. Each voice keeps its synthesized note, and a recording from an openly licensed library plays on top of it at a level solved against the game's sound, so a level of zero is the synthesizer exactly (`packages/genshin-engine/src/audio/scheduleMusicRecording.ts`). A layering ships only where it brings a piece nearer the game's octave bands while keeping the synthesizer's pitch agreement (`scripts/src/services/genshinAssets/music/writeLayeredRecordings.ts`).
 
 ## Requirements
 
@@ -102,6 +102,3 @@ A segment SHALL NOT have reverb added unless its rendered notes end sooner than 
 ## Open
 
 - [ ] **Each sample library is dedicated to the public domain** — no source yet: the libraries' licence files are not kept locally, only the hashed sample downloads in the shared cache.
-- [ ] **each voice keeps its synthesized note, with a recording on top at a level solved against the game's sound** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **a level of zero is the synthesizer exactly** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **a layering ships only where it brings a piece nearer the game's octave bands while keeping pitch agreement** — no source yet: game data or a snapshot that holds this behaviour
