@@ -136,3 +136,7 @@ Chasca's high plunge SHALL land with the low plunge's timing in a circle of radi
 - **WHEN** the plunge lands at the low plunge's 50 frames
 - **THEN** it strikes the enemies inside a circle of radius 5 metres
 - **AND** the landing stays provisional until a recording settles it
+
+## Open
+
+- [ ] **Fully-charged Aimed Shot costs no stamina** — no source yet: a game value for her charged attack's stamina, since the wiki has no stamina row for her and the dump's 0 comes from the candidate builder's rule.
