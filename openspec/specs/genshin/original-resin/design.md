@@ -32,7 +32,7 @@ flowchart TD
 ## Data
 
 - **The item's row.** Original Resin is item 106 in the game's material table, with the rarity above. Its name's text id is the one `GameTextKey.OriginalResin` holds (`packages/genshin-text/src/models/GameTextKey.ts`, and row `106`'s `nameTextMapHash` 3246419172 in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json`).
-- **The other resins' rows.** Fragile Resin is item 107009 in the published material table (`items/materials`), whose use adds 60 of item 106, the restore the refill uses, and whose use the bag reaches through `useInventoryEntry` (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json`, row `107009`, whose `itemUse` adds `106` by `60`). Condensed Resin is item 220007, whose stack limit no source in this change or its specs records, so none is built (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json`, row `220007`).
+- **The other resins' rows.** Fragile Resin is item 107009 in the published material table (`items/materials`, the cached copy `~/Esposter.noindex/cache/content/33a86f139a7f5a88c3216e47e4d12762bc220cab50d476cab2e2bd07e482c246`, row 107009 with name text 3056266748, "Fragile Resin" in `~/Esposter.noindex/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`), whose use adds 60 of item 106, the restore the refill uses, and whose use the bag reaches through `useInventoryEntry` (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json`, row `107009`, whose `itemUse` adds `106` by `60`). Condensed Resin is item 220007, whose stack limit no source in this change or its specs records, so none is built (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json`, row `220007`).
 
 ## Not built yet
 
@@ -79,7 +79,6 @@ The top bar's place and type are provisional until a recording measures them. Th
 
 - [ ] **six Primogem refills count per game day** — no source yet: the Original Resin page gives the 2,000 cap and "up to 6 times a day", but no day boundary, so the game day is the game's own design (`Original_Resin.json` checked).
 - [ ] **a ley line's or a domain's 40 is two claims, and its Condensed Resin is three** — no source yet: the Original Resin page gives the costs "20 or 40 or 1× Condensed Resin" with no claim count (`Original_Resin.json` checked).
-- [ ] **a new player holds 200 Original Resin, and the game day starts at 04:00 in UTC+8** — no source yet: the game's own design, which the dump does not hold; the page marks both settled, not checked.
+- [ ] **a new player holds 200 Original Resin, and the game day starts at 04:00 in UTC+8** — checked against `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/RefreshPolicyExcelConfigData.json`: its daily refresh is 14400 seconds (ids 1002 and 101000), which is 04:00 with no time zone, and the claim is not settled by it because no table in the dump holds a starting Original Resin count or a UTC+8 offset.
 - [ ] **the ley line outcrops, the Petrified Tree and the Trounce Blossom are the blossoms that leave a claim** — no source yet: a read of the dump's blossom tables for the rows that leave a claim.
 - [ ] **the restore row reads "Can use Fragile Resin to restore"** — no source yet: the English text of `UI_GUIDE_FRAGILE_RESIN`, which the dump's English text map does not hold under that phrase.
-- [ ] **Fragile Resin is in the published `items/materials` table** — no source yet: the hosted game data in Blob, which this pass does not read.
