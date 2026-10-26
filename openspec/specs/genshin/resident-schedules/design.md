@@ -67,7 +67,6 @@ The record's NPCs are filled from the dump's NPC births, which give one place fo
 
 - [ ] **Most of the game's people stand in one place day and night** — no source yet: the wiki's NPC page is not in `~/Esposter.noindex/cache/genshin-wiki/`, so no count of residents by hour is checked.
 - [ ] **The game's residents stand at one spot by day and another by night** — no source yet: the wiki's NPC page is not in `~/Esposter.noindex/cache/genshin-wiki/`, and the dump gives no night spot for any resident (`RESIDENT_NIGHT_SPOT_MAP` is empty).
-- [ ] **Most of the game's people stand in one place day and night** — no source yet: the NPC wiki page is not on disk.
 - [ ] **The wiki gives a resident's daytime and nighttime location only as gallery pictures captioned by the hour** — no source yet: the NPC wiki page is not on disk.
 - [ ] **Draff's and Brook's shops open from six in the morning until seven at night** — no source yet: the NPC and Mining Outcrops wiki pages are not on disk.
 - [ ] **Blanche's and Sara's shops are open all day, and the rest give no hours** — no source yet: the NPC wiki page and the Blanche and Sara pages are not on disk.
