@@ -66,7 +66,7 @@ Starward Sword SHALL strike an initial hit, eight slashes and a final strike, al
 
 ### Requirement: Keqing's Constellations 1, 2, 4 and 6
 
-Constellation 1 SHALL add an Electro hit of 50% of ATK 3 frames into each Stellar Restoration recast and another at its hitmark (`skill.go` lines 98 to 104 and 110). Constellation 2 SHALL give a 50% chance of an Electro particle, delayed 100 frames, from each Normal Attack or Charged Attack hit on an enemy under Electro, at most once every 5 seconds (`cons.go` lines 36 to 37; delay at `pkg/core/player/character/character.go` line 144). Constellation 4 SHALL give Keqing 25% ATK for 10 seconds when an Electro-related reaction she triggers lands (`keqing.go` line 40, `cons.go` line 51). Constellation 6 SHALL give her 6% Electro DMG Bonus for 8 seconds from each Normal Attack, Charged Attack, Elemental Skill and Burst, a repeat of the same kind restarting its own (`keqing.go` line 45, `cons.go` line 77).
+Constellation 1 SHALL add an Electro hit of 50% of ATK 3 frames into each Stellar Restoration recast and another at its hitmark (`skill.go` lines 98 to 104 and 110). Constellation 2 SHALL give a 50% chance of an Electro particle, delayed 100 frames, from each Normal Attack or Charged Attack hit on an enemy under Electro, at most once every 5 seconds (`cons.go` lines 36 to 37; delay at `~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/core/player/character/character.go` line 144). Constellation 4 SHALL give Keqing 25% ATK for 10 seconds when an Electro-related reaction she triggers lands (`keqing.go` line 40, `cons.go` line 51). Constellation 6 SHALL give her 6% Electro DMG Bonus for 8 seconds from each Normal Attack, Charged Attack, Elemental Skill and Burst, a repeat of the same kind restarting its own (`keqing.go` line 45, `cons.go` line 77).
 
 #### Scenario: Recast adds Electro hits at Constellation 1
 
@@ -79,7 +79,7 @@ Constellation 1 SHALL add an Electro hit of 50% of ATK 3 frames into each Stella
 - **GIVEN** Keqing has Constellation 2 and the cooldown has run out
 - **WHEN** her Normal Attack or Charged Attack hits an enemy under Electro, and the 50% roll passes
 - **THEN** the cooldown starts for 5 seconds (`cons.go` line 37)
-- **AND** an Electro particle is collected 100 frames later (`pkg/core/player/character/character.go` line 144)
+- **AND** an Electro particle is collected 100 frames later (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/core/player/character/character.go` line 144)
 
 #### Scenario: Electro reaction raises ATK at Constellation 4
 
