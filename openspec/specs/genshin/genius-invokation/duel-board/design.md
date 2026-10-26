@@ -57,8 +57,7 @@ flowchart LR
 
 ## Open
 
-- [ ] **Marjorie sits on NPC 1435 of her Souvenir shop row** — no source yet: the GCG week table names NPC 9701 for her game 1021, not 1435, so the NPC id is unconfirmed.
+- [ ] **Marjorie sits on NPC 1435 of her Souvenir shop row** — contradicted by `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/GCGWeekLevelExcelConfigData.json`: its game 1021 row names NPC 9701, not 1435.
 - [ ] **Furuya Noboru, Patton and Kurisu are not seated** — no source yet: the region data's seats were not checked for them.
-- [ ] **The compare score is the snapshot row's mean difference** — no source yet: the row in `scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md` was not read here.
 - [ ] **Ellin stands at the Knights of Favonius headquarters' point, and Kimiya beside Sumeru's crafting bench** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **A resident holds one duel game, so Kimiya's game 1105 is not offered** — no source yet: game data or a snapshot that holds this behaviour
