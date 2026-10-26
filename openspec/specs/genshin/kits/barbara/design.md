@@ -14,7 +14,7 @@ Barbara's kit is its record and one behaviour module, `createBarbaraKitBehaviour
 
 ## Not built
 
-- **The revive's HP is open.** The page says the downed member is revived to all of its HP, but gcsim revives to 1 HP (`cons.go:57` to `:58`), and the wiki's Dedicating Everything to You text is not in the cache, so neither is confirmed.
+- **The revive's HP is open.** The page says the downed member is revived to all of its HP, but gcsim revives to 1 HP (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/barbara/cons.go` lines 57 to 58), and the wiki's Dedicating Everything to You text is not in the cache, so neither is confirmed.
 - **The constellation wording on the wiki is open.** The bonus's "your active character" reading is not in the cache, and gcsim's per-member reading is the one the kit follows.
 - **Glorious Season and the Melody Loop's Wet are not built.** Glorious Season's 12% stamina cut is not applied: every spend reads the pool's consumption multiplier ([character controller](../../character-controller/design.md)), but the one `useWorldCombat` builds the pool with reads only Impetuous Winds, and no kit effect adds a factor to it while the Melody Loop is up. Star of Tomorrow and The Purest Companionship raise talent levels, which the [talents](../../talents/design.md) page holds. The loop's Wet is left too: a party member holds no aura, and the ring's Hydro on each enemy it touches every 1.5 seconds follows the body, where a summon stands where it is cast or travels ahead.
 
