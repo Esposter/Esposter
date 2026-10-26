@@ -1,4 +1,5 @@
 import type { PagedAsyncIterableIterator } from "#src/models/shared/PagedAsyncIterableIterator";
+import type { PageSettings } from "#src/models/shared/PageSettings";
 import type { MapValue } from "#src/util/types/MapValue";
 import type {
   CreateTableEntityResponse,
@@ -103,7 +104,8 @@ export class MockTableClient<TEntity extends TableEntity = TableEntity> implemen
       for (const entity of entities) yield await Promise.resolve(withMetadata(entity));
     })(resultTableEntities);
     return {
-      byPage: ({ maxPageSize } = {}) =>
+      // @TODO: https://github.com/oxc-project/tsrs/issues/664 — tsrs reports TS7031 on the unannotated destructured default here, which tsc and stock TypeScript accept (the issue is the closest upstream report, not confirmed identical); back to `({ maxPageSize } = {})` once tsrs accepts it
+      byPage: ({ maxPageSize }: PageSettings = {}) =>
         (async function* (entities: TableEntity<T>[]): AsyncGenerator<TableEntityResultPage<T>> {
           if (maxPageSize !== undefined && maxPageSize <= 0)
             throw new RangeError("maxPageSize must be greater than 0.");

@@ -78,7 +78,7 @@
     "lint:fix": "eslint --fix .",
     "outdated:dependencies": "vpx src/outdatedDependencies/index.ts",
     "test": "vitest",
-    "typecheck": "tsc",
+    "typecheck": "tsrs --fast",
     "update:node": "node src/updateNode/index.ts"
   },
   "dependencies": {

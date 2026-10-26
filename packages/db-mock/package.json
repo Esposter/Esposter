@@ -58,7 +58,7 @@
     "lint:fix": "eslint --fix .",
     "snapshot:gen": "vpx scripts/generateSnapshot.ts",
     "test": "vitest",
-    "typecheck": "tsc"
+    "typecheck": "tsrs --fast"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",

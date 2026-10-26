@@ -51,7 +51,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "test": "vitest",
-    "typecheck": "tsc"
+    "typecheck": "tsrs --fast"
   },
   "dependencies": {
     "@esposter/shared": "workspace:*"

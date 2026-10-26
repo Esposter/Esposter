@@ -61,7 +61,7 @@
     "lint:fix": "eslint --fix .",
     "start": "node bin/cli.js",
     "test": "vitest",
-    "typecheck": "tsc"
+    "typecheck": "tsrs --fast"
   },
   "dependencies": {
     "@anthropic-ai/claude-agent-sdk": "catalog:",

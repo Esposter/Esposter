@@ -63,7 +63,7 @@
     "lint:fix": "eslint --fix .",
     "registry:gen": "node scripts/generateRegistry.ts",
     "test": "vitest",
-    "typecheck": "tsc"
+    "typecheck": "tsrs --fast"
   },
   "dependencies": {},
   "devDependencies": {
