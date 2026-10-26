@@ -77,7 +77,7 @@ A bin holding under thirty pixels SHALL be dropped, and a solve left with no bin
 
 ### Requirement: The haze and the sky are solved beside the light
 
-The haze over the stone SHALL take colours solved together with the light, while the cloud sea keeps the colours measured where it shows (see Open).
+The haze over the stone SHALL take colours solved together with the light, while the cloud sea keeps the colours measured where it shows (see the design's Open).
 
 #### Scenario: Haze colours solved with the light
 
