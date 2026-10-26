@@ -11,7 +11,7 @@ stateDiagram-v2
   Settled --> [*]
 ```
 
-The map gives one point per Seelie, and thirty courts for Mondstadt alone. Each Mondstadt court is paired with one Seelie by `pairSeelieCourts`, closest first, and the world's screen leads each paired Seelie from its place toward its court (`packages/genshin-world/src/services/puzzle/pairSeelieCourts.ts`, `packages/genshin-world/src/components/World/Screen/Index.vue`). The other regions' courts are still to come, and a settled Seelie's chest is not yet spawned. The Seelie wiki page, not on disk, says chests appear once the Seelie has settled back into its court, and names no chest kind.
+The map gives one point per Seelie, and thirty courts for Mondstadt alone. Each Mondstadt court is paired with one Seelie by `pairSeelieCourts`, closest first, and the world's screen leads each paired Seelie from its place toward its court (`packages/genshin-world/src/services/puzzle/pairSeelieCourts.ts`, `packages/genshin-world/src/components/World/Screen/Index.vue`). The other regions' courts are still to come, and a settled Seelie's chest is not yet spawned. The Seelie wiki page, not on disk, says chests appear once the Seelie has settled back into its court, and names its kind.
 
 ## Key files
 
@@ -22,7 +22,7 @@ The map gives one point per Seelie, and thirty courts for Mondstadt alone. Each 
 
 ## Sources
 
-- [Seelie](https://genshin-impact.fandom.com/wiki/Seelie), Genshin Impact Wiki: a Seelie returns to its starting location "if they have not been led back to their court after a certain amount of time." The page is not on disk, so the quote is unread here (see Open).
+- Seelie, Genshin Impact Wiki: a Seelie returns to its starting location "if they have not been led back to their court after a certain amount of time." The page is not on disk, and the quote is in none of the wiki or game caches (see Open).
 
 ## Open
 
