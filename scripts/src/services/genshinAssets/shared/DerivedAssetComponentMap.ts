@@ -14,11 +14,6 @@ import { SCENE_POINT_CATEGORY, SCENE_POINT_FILE } from "#src/services/genshinAss
 // And the door's; `Start` and `End`, a name the whole game reuses, are left to its reference. Its music is the playlist
 // `genshin:assets music` found over a recording of its title: two pieces with a rest after each, looping forever
 export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAssetComponentOptions> = {
-  // A region's open world is derived from its capital's place (`deriveCapitalWorld`), so no region is rooted at its
-  // Capital's index. Each `Area_<code>_City_Index` is the StreamGen chunk index of the capital's own area blob, a
-  // MonoBehaviour holding a blob's chunk offsets and no game object: a root that is one walks to nothing, since the
-  // Closure starts from the layout of game objects. The blob's placements, read beside the tiles its capital's view covers,
-  // Are what holds the city's props and buildings, each a prefab rooted by its game object's name
   // The character screen's page is the `AvatarInfoDialogV2` GameObject, the Animator beside `AvatarInfoDescDialog`, the
   // Details dialog, and `AvatarLevelUpDialog`. A tree that names none of the tabs is the wrong page
   [DerivedAssetComponent.Character]: {
@@ -26,6 +21,11 @@ export const DerivedAssetComponentMap: Record<DerivedAssetComponent, DerivedAsse
     roots: [],
     screen: "CharacterScreen",
   },
+  // A region's open world is derived from its capital's place (`deriveCapitalWorld`), so no region is rooted at its
+  // Capital's index. Each `Area_<code>_City_Index` is the StreamGen chunk index of the capital's own area blob, a
+  // MonoBehaviour holding a blob's chunk offsets and no game object: a root that is one walks to nothing, since the
+  // Closure starts from the layout of game objects. The blob's placements, read beside the tiles its capital's view covers,
+  // Are what holds the city's props and buildings, each a prefab rooted by its game object's name
   [DerivedAssetComponent.Fontaine]: { isCapitalWorld: true, roots: [], screen: "WorldScreen" },
   // The in-level HUD: its page is the `InLevelMainPage` GameObject, holding the minimap, the party and the skill buttons.
   // Its anchor is `TeamBtn_MP`, an Animator in no other block, since `GrpMainPage` is in four
