@@ -12,7 +12,7 @@ flowchart TD
   ST --> R["Rank: the EXP's rank, held at the cap the last open World Level sets"]
   ST --> WL["World Level unlocked"]
   ST --> CARD["Profile card: rank, EXP bar, World Level"]
-  WL --> L["Lowered by one from World Level 5, once a day"]
+  WL --> L["Lowered by one from World Level 3, once a day"]
   L --> W["World Level played at"]
   W --> S["Each camp's enemy stands at its level under that World Level"]
   G -->|"cap 60: EXP past the total"| M["Mora, ten for each point"]
@@ -47,7 +47,7 @@ The wiki's table of Game System Unlocks gives the rank each system opens at. Two
 
 ## Lowering the World Level
 
-From World Level 5 the player may lower it by one, and restore it by one (`toggleWorldLevelLowering`). Either change waits 24 hours after the last, so a lowering cannot be undone at once and a restore cannot be lowered again at once. The World Level played at is the unlocked one less that single step (`computeWorldLevel`). The game's text gives the 24 hour wait at 2955635938 and 2310679825 in `~/Esposter/genshin-parity/text/TextMap/TextMap_MediumEN.json`, and the 2024 recording (`~/Esposter/genshin-parity/captures/yt-P13s7kSmVOE-world-level-dialog-2024.mp4`) shows the option opens after World Level 5, the threshold this page takes.
+From World Level 3 the player may lower it by one, and restore it by one (`toggleWorldLevelLowering`). Either change waits 24 hours after the last, so a lowering cannot be undone at once and a restore cannot be lowered again at once. The World Level played at is the unlocked one less that single step (`computeWorldLevel`). The game's text at 2955635938 in `~/Esposter/genshin-parity/text/TextMap/TextMap_MediumEN.json` says the option opens after World Level 3, the threshold this page takes, and gives the 24 hour wait there and at 2310679825.
 
 The info icon beside the World Level on the profile card opens the World Level dialog on a click (`packages/genshin-world/src/components/Menu/WorldLevelDialog/Index.vue`; the 2024 and 2025 recordings `~/Esposter.noindex/genshin-parity/captures/yt-P13s7kSmVOE-world-level-dialog-2024.mp4` and `~/Esposter.noindex/genshin-parity/captures/yt-ZGsragloQxU-world-level-dialog-2025-4k.mp4` show the dialog over the dimmed menu), over the menu dimmed behind it. The dialog shows the game's own help text for the World Level by its text id, its headings and numbers in the colours its tags give them (`splitGameTextColors`), opened at its end where the change is told, and under it the button that lowers the World Level by one, or restores it once lowered. The button opens the Change World Level prompt over the dialog: its Confirm makes the change through `toggleWorldLevel`, and its Cancel closes the prompt back to the dialog. The button is drawn only while the World Level can be changed at all, and waits while the last change's cooldown runs (`computeWorldLevelCooldown`, `WORLD_LEVEL_COOLDOWN_CLOCK_INTERVAL_MS` in `packages/genshin-world/src/services/adventureRank/constants.ts`; the 2024 recording's prompt shows "Can be readjusted after 23 hours 58 minutes" in `~/Esposter.noindex/genshin-parity/captures/yt-P13s7kSmVOE-world-level-dialog-2024.mp4`), read against the server's clock as the dialog opens, at each minute while it stays open, and as a change is made. While the prompt is open the dialog is inert and the prompt takes Escape, which closes the prompt alone; the cross or Escape then closes the dialog back to the menu, focus returning to the icon; Escape stops at the dialog, short of the input that closes the menu to the world, and the menu behind it is inert while it is open. The help text is a focusable region, so a keyboard scrolls back up from its end. How it is measured against the game is the [screens](../screens/design.md) page's.
 
@@ -83,7 +83,7 @@ A camp's enemy stands at its camp level under World Level 0. From World Level 1 
 - [ ] **The dialog stays open after a change** — no source yet: neither recording shows the game after Confirm.
 - [ ] **The card's values stand right-aligned beside the info disc, as the current client draws them** — no source yet: the menu's reference is the 1.3 build's, with its values redacted.
 - [ ] **Adventure EXP accrues toward rank 60's total while a quest holds the rank, and the rank catches up when it is done** — no source yet: the wiki's Adventure EXP page, named in the enemies page's Sources, is not in the wiki cache.
-- [ ] **The option to lower the World Level opens after World Level 5** — contradicted by `~/Esposter/genshin-parity/text/TextMap/TextMap_MediumEN.json`: text 2955635938 says World Level 3.
+- [ ] **The option to lower the World Level opens after World Level 5** — contradicted by ~/Esposter.noindex/genshin-parity/captures/yt-P13s7kSmVOE-world-level-dialog-2024.mp4: shows the option from World Level 5.
 
 ## Key files
 
@@ -112,6 +112,6 @@ A camp's enemy stands at its camp level under World Level 0. From World Level 1 
 
 ## Sources
 
-- [Adventure Rank](https://genshin-impact.fandom.com/wiki/Adventure_Rank), Genshin Impact Wiki: not in the cache (see Still open), so nothing here cites it. The World Level table, the holds at 25, 35, 45 and 50 and lowering from World Level 5 are cited to the game's own text and the 2024 recording where they are stated above; the 1:10 Mora rate and the enemy level ranges have no source yet.
+- [Adventure Rank](https://genshin-impact.fandom.com/wiki/Adventure_Rank), Genshin Impact Wiki: not in the cache (see Still open), so nothing here cites it. The World Level table and the holds at 25, 35, 45 and 50 are cited to the game's own text and the 2024 recording where they are stated above, and lowering from World Level 3 to the game's own text; the 1:10 Mora rate and the enemy level ranges have no source yet.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `PlayerLevelExcelConfigData`, `PlayerLevelLockExcelConfigData` and `WorldLevelExcelConfigData`, the tables the rank is read from. The dump at its revision lacked the three; they were taken from the same repository's files, which matched the dump's own tables byte for byte.
 - World Level tutorials recorded on the English PC client, [2024](https://www.youtube.com/watch?v=P13s7kSmVOE) and [2025](https://www.youtube.com/watch?v=ZGsragloQxU): the dialog the info icon opens on a click, open at the end of its help text, and the Change World Level prompt its button opens.
