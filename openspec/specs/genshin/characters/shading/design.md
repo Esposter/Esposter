@@ -75,7 +75,7 @@ The body's pixel program writes six targets, and the lit colour is built from th
 
 ### The region
 
-The lightmap's alpha selects one of five regions. Exact, with the thresholds and toggles read from the program:
+The lightmap's alpha selects one of five regions. Exact on the toggles, read from the program; the thresholds are not literals in any listing under `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber/`, so they are open (see Open):
 
 ```
 region(A) = 2  if A >= 0.8 and _UseMaterial2 != 0
@@ -290,7 +290,7 @@ The code (`createGameOutlineMaterial`, `getGameOutlineOffset`, `createAvatarShad
 
 ### The colour (pixel 885)
 
-The outline's colour is its region's, drawn toward a fifth of the main texture by its region's intensity (Exact on every operator):
+The outline's colour is its region's, drawn toward a fifth of the main texture by its region's intensity (Exact on every operator but the 0.2, since `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber/00885.asm` holds no 0.200000 literal; see Open):
 
 ```
 Oc = "_OutlineColor"                       (no "_UseMaterial2" to "_UseMaterial5" on)
@@ -379,7 +379,8 @@ The only case where a ramp stays raw is an artist painting it in linear values, 
 - [ ] **The game's tone curve against ACES at scene 0.05, 0.18, 0.5, 1 and 4** — no source yet: a script evaluating both curves; none is committed.
 - [ ] **The face's flip, `_FaceFlipFactor` and its angle rule** — no source yet: a game listing that names `_FaceFlipFactor`, since none under `~/Esposter.noindex/genshin-parity/extracted/shaders` does, and the repo's `updateFaceDraw.ts` is repo code.
 - [ ] **The face's shadow colour `C = Cm * mix(S, 1, F)` and the no-face-map case lit** — no source yet: a rendered face that checks the equation, since `~/Esposter/genshin-parity/extracted/shaders/asm/uber/00432.asm` is not decoded to this form.
-- [ ] **The outline's colour tint `0.2 * T_m` and its region intensities** — no source yet: a literal scan of pixel 885, which is not made.
+- [ ] **The outline's colour tint `0.2 * T_m`** — contradicted by `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber/00885.asm:46`: no 0.200000 literal; T_m meets cb0[106].y, not 0.2.
+- [ ] **The outline's region intensities `_OutLineIntensity{k}`** — no source yet: the pixel program's read of each intensity, since the 885 listing's `cb0` indices are not matched to the names.
 - [ ] **The outline's `_OutLineZOffset` at `cb0[31].x` is not built** — no source yet: the game's `_OutLineZOffset` bias, which no listing under `~/Esposter/genshin-parity/extracted/shaders/asm/uber` or `Shader#*.dat` names.
 - [ ] **The output map `o0` to `o5` of the deferred body pass** — contradicted by `~/Esposter/genshin-parity/extracted/shaders/asm/uber/00460.asm`: its output signature has one SV_Target, o0.xyzw, and no o1 to o5.
 - [ ] **The hair's specular and ramp-row equations (pixel 272)** — contradicted by `~/Esposter/genshin-parity/extracted/shaders/asm/uber/00272.asm`: CB0 has 106 vectors, so cb0[220] and cb0[222] are not read; no 0.1 literal.
