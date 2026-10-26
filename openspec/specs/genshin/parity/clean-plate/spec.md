@@ -52,5 +52,5 @@ A captured frame SHALL be written for comparison without the colour tags its fil
 
 ## Open
 
-- [ ] **Translucent glass's colour is solved from the scene around it** — no source yet: no solver for translucent glass was found.
+- [ ] **Translucent glass's colour is solved from the scene around it** — no source yet: no solver for translucent glass was found under `scripts/src/services/genshinParity` or `scripts/src/services/recreation`.
 - [ ] **A written frame's brightness matches its file** — no source yet: no brightness comparison of a written frame against its tagged file was run.
