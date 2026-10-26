@@ -65,14 +65,14 @@ The record's NPCs are filled from the dump's NPC births, which give one place fo
 
 ## Open
 
-- [ ] **The game's residents stand at one spot by day and another by night** — no source yet: the wiki's NPC page is not in `~/Esposter.noindex/cache/genshin-wiki/`, and the dump gives no night spot for any resident (`RESIDENT_NIGHT_SPOT_MAP` is empty).
-- [ ] **Most of the game's people stand in one place day and night** — no source yet: the wiki's NPC page is not in `~/Esposter.noindex/cache/genshin-wiki/`, so no count of residents by hour is checked.
-- [ ] **The wiki gives a resident's daytime and nighttime location only as gallery pictures captioned by the hour** — no source yet: the wiki's NPC page is not in `~/Esposter.noindex/cache/genshin-wiki/`.
-- [ ] **Draff's and Brook's shops open from six in the morning until seven at night** — no source yet: the wiki's vendor pages are not in `~/Esposter.noindex/cache/genshin-wiki/`.
-- [ ] **Blanche's and Sara's shops are open all day, and the rest give no hours** — no source yet: the wiki's vendor pages are not in `~/Esposter.noindex/cache/genshin-wiki/`.
+- [ ] **The game's residents stand at one spot by day and another by night** — no source yet: the wiki's NPC page, checked, marks its gallery files for Draff and Doolan as Daytime but gives no night spot, so it does not state the claim; the dump gives no night spot for any resident (`RESIDENT_NIGHT_SPOT_MAP` is empty).
+- [ ] **Most of the game's people stand in one place day and night** — no source yet: the wiki's NPC page, checked, gives no count of residents by hour, so none is checked against it.
+- [ ] **The wiki gives a resident's daytime and nighttime location only as gallery pictures captioned by the hour** — no source yet: the wiki's NPC page, checked, captions its gallery pictures with a name and a location, not an hour, so it does not state the claim.
+- [ ] **Draff's and Brook's shops open from six in the morning until seven at night** — no source yet: the wiki's NPC page, checked, lists Draff among the Mining Outcrop search NPCs and gives no shop hours, and does not name Brook; their own vendor pages are not in the cache.
+- [ ] **Blanche's and Sara's shops are open all day, and the rest give no hours** — no source yet: the wiki's NPC page, checked, lists Blanche and Sara as Mondstadt vendors with no hours; the cached Blanche page is a disambiguation without hours, and Sara's own page is not in the cache.
 - [ ] **A repeated placement is the same NPC at nearly the same spot** — no source yet: no distance between an NPC's repeated births is recorded in the repo or under `~/Esposter.noindex`.
 - **`checkIsVendorHourOpen` takes a shop and the game clock's minutes and answers whether the shop's hours are open** — `packages/genshin-world/src/services/shop/checkIsVendorHourOpen.ts`.
-- [ ] **A city vendor's shop is open only in the hours its wiki page gives** — no source yet: the wiki's NPC page, named in Sources, is not in the wiki cache.
+- [ ] **A city vendor's shop is open only in the hours its wiki page gives** — no source yet: the wiki's NPC page, checked, says most shops restock every day and links the vendors' pages for their items, but gives no opening hours.
 - [ ] **Most residents have one place from the dump's NPC births, a day spot and no night spot** — no source yet: `NpcExcelConfigData` in `~/Esposter/genshin-parity/text/ExcelBinOutput/`, not yet counted for each resident's places.
 - **The reputation keeper's NPC is found by a point's name in `REPUTATION_KEEPER_NPC_ID_MAP`** — `scripts/src/services/genshinAssets/residents/writeResidents.ts`.
 - [ ] **Hertha keeps the point named Reputation, where Reputation is NPC `1663`** — no source yet: `NpcExcelConfigData` in `~/Esposter/genshin-parity/text/ExcelBinOutput/`, not yet read for NPC 1663's name.
