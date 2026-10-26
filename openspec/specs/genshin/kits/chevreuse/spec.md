@@ -103,3 +103,7 @@ At constellation 4, Ring of Bursting Grenades SHALL let the next two holds of Sh
 - **GIVEN** Chevreuse is at constellation 3
 - **WHEN** the player casts Ring of Bursting Grenades and then holds Short-Range Rapid Interdiction Fire
 - **THEN** the hold starts its ordinary cooldown
+
+## Open
+
+- [ ] **The plunge's area round her landing point** — no source yet: gcsim gives her no plunge (its template returns not implemented) and the wiki gives the plunge's damage and collision, not its area.
