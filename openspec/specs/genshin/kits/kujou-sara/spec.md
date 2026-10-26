@@ -108,3 +108,8 @@ From Constellation 1, a Tengu Juurai hit that strikes an enemy SHALL cut a secon
 - **GIVEN** a cut was given within the last 3 seconds
 - **WHEN** another Tengu Juurai hit strikes an enemy
 - **THEN** no cut is given
+
+## Open
+
+- [ ] **five strikes land in order on the enemies within reach** — no source yet: gcsim's `attack.go` strike list was not opened.
+- [ ] **six bouts of Stormcluster ticks from Constellation 4** — no source yet: gcsim's Constellation 4 stormcluster count was not opened.
