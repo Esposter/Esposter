@@ -138,3 +138,7 @@ The teleport behind the target SHALL NOT take effect.
 - **GIVEN** Rosaria has the teleport unlocked
 - **WHEN** the player fights with Rosaria
 - **THEN** that effect has no effect
+
+## Open
+
+- [ ] **Each Rites of Termination tick is a 9.5-metre circle round her body** — no source yet: gcsim's tick is a radius-6.5 circle three metres ahead, and no source settles which shape the game draws.
