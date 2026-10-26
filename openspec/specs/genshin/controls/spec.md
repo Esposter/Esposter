@@ -1,6 +1,6 @@
 ## Purpose
 
-The game's default bindings on a PC and a gamepad, stated once in the engine's input and read once a frame into the actions held and pressed. A binding is a list of chords over keys, mouse buttons and gamepad buttons alike, the longest chord a press completes winning, so a pad's bumper turns its face buttons into shortcuts as the game's does (see the open list). A bound key's browser default is prevented, but a key typed into a field stays the field's.
+The game's default bindings on a PC and a gamepad, stated once in the engine's input and read once a frame into the actions held and pressed (`packages/genshin-engine/src/input/createInput.ts`). A binding is a list of chords over keys, mouse buttons and gamepad buttons alike, the longest chord a press completes winning, so a pad's bumper turns its face buttons into shortcuts as the game's does (see the open list). A bound key's browser default is prevented, but a key typed into a field stays the field's.
 
 ## Requirements
 
