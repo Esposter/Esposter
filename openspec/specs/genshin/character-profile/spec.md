@@ -1,6 +1,6 @@
 ## Purpose
 
-The character screen's Profile tab as built — each playable character's stories and voice-overs read from the game's fetter tables by their text ids in every language, each opened at the Friendship Level its fetter gives and locked with the game's own unlock line until then, beside the chosen entry's title and text (the game's rows are `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/FetterStoryExcelConfigData.json` and `FettersExcelConfigData.json`, and the behaviour is tested in `packages/genshin-world/src/services/profile/toCharacterProfileEntries.test.ts` and `checkProfileStoryUnlocked.test.ts`). The model's space, the voice line with its voice actor and the namecard's art are not drawn yet.
+The character screen's Profile tab as built — each playable character's stories and voice-overs read from the game's fetter tables by their text ids in every language, each opened at the Friendship Level its fetter gives and locked with the game's own unlock line until then, beside the chosen entry's title and text (the game's rows are `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/FetterStoryExcelConfigData.json` and `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/FettersExcelConfigData.json`). The model's space, the voice line with its voice actor and the namecard's art are not drawn yet.
 
 ## Requirements
 
@@ -101,3 +101,4 @@ The panel SHALL name the character's namecard once Friendship holds it, except f
 ## Open
 
 - [ ] **Xinyan, Yae Miko and Momoka have no namecard, and every other playable character has one** — no source yet: `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json` holds a namecard named for Yae Miko (id 210112, `UI_NameCardIcon_Yae1`, "Kitsune Dreaming"), and the Travellers' derived names (`UI_NameCardIcon_PlayerBoy` and `_PlayerGirl`) are absent.
+- [ ] **Locked stories show the game's own unlock line, and the chosen entry's title and text sit beside the list** — no source yet: game data or a snapshot that holds this behaviour
