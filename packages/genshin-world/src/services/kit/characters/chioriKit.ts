@@ -6,6 +6,7 @@ import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 
 // A hit's share of its striker's DEF, added to the damage its ATK share makes
@@ -13,11 +14,19 @@ const createDefenseShareBehaviour = (defenseShare: number): KitHitBehaviour => (
   additiveBaseDamageBonus: ({ attributes }) => defenseShare * attributes.defense,
 });
 
-// Tamoto is cast where the body stands at the frame it is summoned, and stands until its duration from that frame ends
+// Tamoto is cast where the body stands, and stands from its spawn until its end frame, which the record counts from the
+// Action's start. gcsim spawns it 19 frames in for the press and 34 for the hold (chiori/skill.go line 16), and its 17.5
+// Seconds run from there (line 22)
+const TAMOTO_PRESS_SPAWN_SECONDS = toKitSeconds(19);
+const TAMOTO_HOLD_SPAWN_SECONDS = toKitSeconds(34);
 const castTamoto =
-  (hits: KitHit[], secondsRemaining: number): NonNullable<KitAction["onStart"]> =>
+  (hits: KitHit[], secondsRemaining: number, spawnSeconds: number): NonNullable<KitAction["onStart"]> =>
   ({ activeCombatant: combatant, body, kitEffectState }) => {
-    castKitSummon(kitEffectState, body, combatant, hits, { attackTag: AttackTag.ElementalSkill, secondsRemaining });
+    castKitSummon(kitEffectState, body, combatant, hits, {
+      attackTag: AttackTag.ElementalSkill,
+      secondsRemaining,
+      spawnSeconds,
+    });
   };
 
 export const CHIORI_CHARACTER_ID = 10_000_094;
@@ -41,7 +50,15 @@ export const createChioriKitBehaviour = ({
   const tamotoSecondsList = readSecondsList("tamotoEnds");
   return {
     burst: { hits: [burstHitBehaviour] },
-    skill: { hits: [sweepHitBehaviour], onStart: castTamoto(pressTamotoHits, takeOne(tamotoSecondsList, 0)) },
-    skillHolds: [{ hits: [sweepHitBehaviour], onStart: castTamoto(holdTamotoHits, takeOne(tamotoSecondsList, 1)) }],
+    skill: {
+      hits: [sweepHitBehaviour],
+      onStart: castTamoto(pressTamotoHits, takeOne(tamotoSecondsList, 0), TAMOTO_PRESS_SPAWN_SECONDS),
+    },
+    skillHolds: [
+      {
+        hits: [sweepHitBehaviour],
+        onStart: castTamoto(holdTamotoHits, takeOne(tamotoSecondsList, 1), TAMOTO_HOLD_SPAWN_SECONDS),
+      },
+    ],
   };
 };
