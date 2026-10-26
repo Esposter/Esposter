@@ -151,7 +151,7 @@ The PC runs no SSH server, so a transfer between the two runs from the PC to the
 ## Open
 
 - [ ] **What ships takes its defaults from public references or a derivation** — no source yet: the shipped defaults and the references or derivations they come from are not listed in the repository.
-- [ ] **The witness layout gives a material's floats and colours** — no source yet: the witness layout's reader is not checked against this claim.
+- [ ] **The witness layout gives a material's floats and colours** — no source yet: the witness layout's reader is repo code, which is not game evidence, and no game material file is read against the claim.
 - [ ] **The machines move exports between them only over SSH** — no source yet: the throughput fleet page names no SSH route.
 - [ ] **The PC runs no SSH server, and its transfers run by `ai:fleet:data push`** — no source yet: the throughput fleet page names neither the missing server nor the push.
 - [ ] **On 2026-10-18 most of the dump matched the 6.6 branch** — no source yet: that day's size comparison of the dump's tables against each branch is kept in neither the repository nor the cache.
