@@ -58,13 +58,13 @@ The game's pause menu, laid out as the English PC client's 1.3 still draws it at
 - [ ] **The World Level glyphs are traced from the 4K tutorial recording** — no source yet: `~/Esposter.noindex/genshin-parity/captures/world-level-dialog-2025.mkv` is in captures, but no file records that it is the 4K recording the glyphs came from.
 - [ ] **The current text map reads World Level 3 and "decrease" in the help text** — no source yet: the help text's key is not traced here to its line in `text/TextMapEN.json`.
 - [ ] **The agent console's world answers Escape through the Paimon menu too** — no source yet: the console's mount of the world is not in the files this page cites.
-- [ ] **Training Guide is left out, as no still of the menu the references hold draws it** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The HUD vanishes at 35.43 and returns over 110.07 to 110.48** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Quit Game is not animated, and its prompt replaces the menu at once** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The side bar's buttons light under the pointer, turning their icon cream and growing on a navy disc** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Cancel carries a blue cross and Confirm a yellow ring, each at its pill's left** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The Settings close is a Disc and its tabs are Rows, lit as the interface library sets out** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Only the graphics quality is the world's, and every other row draws the recording's value, disabled** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Anisotropic Filtering's 8x is written as a number, as no text id holds it** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Each profile value stands right-aligned beside its row's end, and the info icon opens the World Level dialog** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Birthday stands over an empty value until the profile is backed** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Training Guide is left out, as no still of the menu the references hold draws it** — no source yet: the menu stills in `~/Esposter/genshin-parity/references/`, not yet checked for a Training Guide entry.
+- [ ] **The HUD vanishes at 35.43 and returns over 110.07 to 110.48** — no source yet: the Paimon menu recording named in Sources (`yt-IegFADn-Lmk`), not in `~/Esposter/genshin-parity/captures/`, not yet read at those seconds.
+- [ ] **Quit Game is not animated, and its prompt replaces the menu at once** — no source yet: the Paimon menu recording named in Sources (`yt-IegFADn-Lmk`), not in `~/Esposter/genshin-parity/captures/`, not yet read for the Quit Game row.
+- [ ] **The side bar's buttons light under the pointer, turning their icon cream and growing on a navy disc** — no source yet: the Paimon menu recording named in Sources (`yt-IegFADn-Lmk`), not in `~/Esposter/genshin-parity/captures/`, not yet read for the side bar's highlight.
+- [ ] **Cancel carries a blue cross and Confirm a yellow ring, each at its pill's left** — no source yet: the menu stills in `~/Esposter/genshin-parity/references/`, not yet checked for the Cancel and Confirm buttons.
+- [ ] **The Settings close is a Disc and its tabs are Rows, lit as the interface library sets out** — no source yet: `~/Esposter/genshin-parity/captures/yt-5EmJX_RyuY8-menu-settings.mp4`, not yet read for the Settings close and its tabs.
+- [ ] **Only the graphics quality is the world's, and every other row draws the recording's value, disabled** — no source yet: `~/Esposter/genshin-parity/captures/yt-5EmJX_RyuY8-menu-settings.mp4`, not yet read for the rows' values.
+- [ ] **Anisotropic Filtering's 8x is written as a number, as no text id holds it** — no source yet: `~/Esposter/genshin-parity/text/TextMapEN.json`, not yet searched for an Anisotropic Filtering value text id.
+- [ ] **Each profile value stands right-aligned beside its row's end, and the info icon opens the World Level dialog** — no source yet: `~/Esposter/genshin-parity/captures/yt-5EmJX_RyuY8-menu-settings.mp4`, not yet read for the profile's layout and info icon.
+- [ ] **Birthday stands over an empty value until the profile is backed** — no source yet: the profile's backing is not yet read in `packages/genshin-world/src/components/Menu/`, and the Birthday row of `~/Esposter/genshin-parity/captures/yt-5EmJX_RyuY8-menu-settings.mp4` is not yet read.
