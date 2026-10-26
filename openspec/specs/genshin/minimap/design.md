@@ -15,7 +15,7 @@ flowchart LR
   MINI -->|"pressed"| MAP["The map opens"]
 ```
 
-- **The map's drawing, not a second one.** `Hud/Minimap` draws `Map/Drawing` with the unlocked landmarks the map holds (`packages/genshin-world/src/components/Hud/Minimap/Index.vue`), so a landmark the map gains, or an area a statue fills in, appears on the minimap with no change of its own ([map unlocking](../map-unlocking/design.md)).
+- **The map's drawing, not a second one.** `packages/genshin-world/src/components/Hud/Minimap` draws `packages/genshin-world/src/components/Map/Drawing` with the unlocked landmarks the map holds (`packages/genshin-world/src/components/Hud/Minimap/Index.vue`), so a landmark the map gains, or an area a statue fills in, appears on the minimap with no change of its own ([map unlocking](../map-unlocking/design.md)).
 - **North stays up.** The drawing is only moved, so the character's ground point sits at the centre, and never turned (`packages/genshin-world/src/components/Hud/Minimap/Index.vue`): on the English PC client's world HUD and the Chinese client's recording over open sea alike, the N holds the top of the rim while the fan and the arrow turn (`~/Esposter/genshin-parity/references/hud-world-keys.png`, and `~/Esposter.noindex/genshin-parity/captures/bili-av251752644-stamina.mp4` at 492 seconds). The circle shows `MINIMAP_RADIUS` metres each way (`packages/genshin-world/src/services/map/constants.ts`).
 - **The tree places every piece.** The back fills `GrpBackMap`'s rect (`packages/genshin-world/src/models/hud/HudInterfaceRectName.ts`), and the marks stand in `GrpMap`'s, which the game scales by 0.6 about its corner: `MarkSouth`'s `ImgSouth`, which the game names its south and draws as an N, five units under the top of a circle 24 units in from the group's edge; `MarkSightFan`, scaled by 1.25 about its foot at the centre; and `MarkLocalAvatar` at the centre. The stills agree with the tree: the rim's ring stands 107 pixels from the centre at 1080 high, `GrpBackMap`'s half of 180 units at the 1.2 pixels a unit spans there.
 - **The fan is the view, the arrow is the character.** The fan, a quarter turn wide, turns with the camera's yaw, and the cyan arrow at the centre with the way the character faces, so a character walking toward the camera points its arrow down (`packages/genshin-world/src/components/Hud/Minimap/Index.vue`).
@@ -35,6 +35,7 @@ flowchart LR
 ## Notes
 
 - **What is measured, and what stands in.** Its size and every mark's place are the tree's. Its thin light ring, the drawing's fade over the rim's outer sixth (`packages/genshin-world/src/components/Hud/Minimap/Index.vue`, the mask's 84% to 96%), the fan's white and the arrow's cyan are measured at 1080 high on the references below. The N's serif capital and the arrow's notched head are written from their measures (`packages/genshin-world/src/components/Hud/Minimap/Index.vue`), since the recordings draw them too small to trace, and the metres it shows are not yet read. The terrain is the game's painted art (`~/Esposter/genshin-parity/extracted/maps/index.tsv`), kept out of the repository, so the drawing stands on the map's own ground, `MAP_GROUND`, as the overlay's does (`packages/genshin-world/src/services/map/constants.ts`, `packages/genshin-world/src/components/Map/Overlay/Index.vue`). Each of these is marked provisional in its file.
+- **The minimap's marks are placed by the HUD's interface rects** — `packages/genshin-world/src/components/Hud/Minimap/Index.vue`.
 
 ## Sources
 
@@ -50,7 +51,6 @@ flowchart LR
 
 - [ ] **The marks' places and scales in the game's tree** — no source yet: the in-level HUD's interface tree export, which this machine does not hold (no `hud` folder under `~/Esposter/genshin-parity/extracted/`), so GrpMap's 0.6 scale, MarkSouth's inset, MarkSightFan's 1.25 scale and GrpBackMap's 180-unit half are unchecked.
 - [ ] **The stills agree with the tree: the ring 107 pixels from the centre at 1080 high, 1.2 pixels a unit** — no source yet: a pixel reading of the 1080-high still, which this pass did not take.
-- [ ] **The fan a quarter turn wide** — no source yet: the game's sight-fan image width from the tree, which this machine does not hold; the `.fan` clip in `Hud/Minimap/Index.vue` cuts a wedge of about 72 degrees, not 90.
+- [ ] **The fan a quarter turn wide** — no source yet: the game's sight-fan image width from the tree, which this machine does not hold; the `.fan` clip in `packages/genshin-world/src/components/Hud/Minimap/Index.vue` cuts a wedge of about 72 degrees, not 90.
 - [ ] **The ring, the fan's white, the arrow's cyan, and the N's and arrow's measures at 1080 high** — no source yet: a pixel reading of the 1080-high references, which this pass did not take.
-- **The minimap's marks are placed by the HUD's interface rects** — `packages/genshin-world/src/components/Hud/Minimap/Index.vue`.
 - [ ] **The back stands where the game's tree places it** — no source yet: the game's UI tree for the minimap's back, not yet read.
