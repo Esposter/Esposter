@@ -1,6 +1,6 @@
 ## Purpose
 
-Chongyun's kit as built: his strikes, charged attack and plunges, Spirit Blade Chonghua's Layered Frost field with its infusion, and Cloud-Parting Star with its blades and constellations, with the particles left unbuilt.
+Chongyun's kit as built: his strikes, charged attack and plunges, Spirit Blade Chonghua's Layered Frost field with its infusion, and Cloud-Parting Star with its blades and constellations, with the particles left unbuilt. The sources of its numbers are cited inline on the [design page](design.md), which also lists what is open: the charged attack's timings, the blades' reaches and Frozen Skies' energy.
 
 ## Requirements
 
