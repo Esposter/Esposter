@@ -6,18 +6,18 @@ Motion is matched frame by frame against sampled recordings, with a scene's own 
 
 ### Requirement: A recording's motion is matched frame by frame
 
-A recording's events SHALL be found by sampling it at one frame a second, and each event SHALL then be read at its full rate over its own window.
+A recording's events SHALL be found by sampling it at one frame a second, and each event SHALL then be read at its full rate over its own window (see Open).
 
 #### Scenario: Events found and read
 
 - **GIVEN** a recording with motion in it
 - **WHEN** the motion is matched
-- **THEN** the recording is first sampled at one frame a second to find its events
+- **THEN** the recording is first sampled at one frame a second to find its events (see Open)
 - **AND** each event is then read at its full rate over its own window
 
 ### Requirement: A screen's motion is held at its start and then played by its fixture
 
-The parity page SHALL hold a screen's own animations at their start as it mounts, then let them finish and apply the fixture's motion props before the transitions they start are held.
+The parity page SHALL hold a screen's own animations at their start as it mounts, then let them finish and apply the fixture's motion props before the transitions they start are held (`packages/genshin-world/parity/main.ts`, see Open).
 
 #### Scenario: Still of a moving screen
 
@@ -33,7 +33,7 @@ The parity page SHALL hold a screen's own animations at their start as it mounts
 
 ### Requirement: A fade or a wipe is judged by a curve of one region's darkness
 
-A fade's duration and a wipe's steps SHALL be read from the curve of one region's darkness across both sets of frames, not judged by eye.
+A fade's duration and a wipe's steps SHALL be read from the curve of one region's darkness across both sets of frames, not judged by eye (`scripts/src/services/genshinParity/commands/lumaCommand.ts`).
 
 #### Scenario: Fade compared with its recording
 
@@ -53,7 +53,7 @@ A curve taken from window capture SHALL be judged over the whole curve, since fr
 
 ### Requirement: A scene's own motion is filmed on a faked clock
 
-A scene's motion SHALL be filmed on a clock the tool moves one frame at a time, so the screen is shot at exact moments however slowly the page draws.
+A scene's motion SHALL be filmed on a clock the tool moves one frame at a time, so the screen is shot at exact moments however slowly the page draws (`scripts/src/services/genshinParity/commands/filmCommand.ts`).
 
 #### Scenario: Scene filmed at exact moments
 
@@ -64,7 +64,7 @@ A scene's motion SHALL be filmed on a clock the tool moves one frame at a time, 
 
 ### Requirement: Props are set at the moments a click or a load would set them
 
-The parity page SHALL set a screen's props at moments that play its stages as a click or a load would, and SHALL place the stills beside a recording sampled at the same rate.
+The parity page SHALL set a screen's props at moments that play its stages as a click or a load would, and SHALL place the stills beside a recording sampled at the same rate (`scripts/src/services/genshinParity/commands/filmCommand.ts`).
 
 #### Scenario: Stages played as a click would
 
@@ -75,10 +75,15 @@ The parity page SHALL set a screen's props at moments that play its stages as a 
 
 ### Requirement: With the witness, a scene's motion is filmed on the game's exports
 
-When the witness is used, the scene's motion SHALL be filmed on the game's exports in place of our parts.
+When the witness is used, the scene's motion SHALL be filmed on the game's exports in place of our parts (`scripts/src/services/genshinParity/commands/filmCommand.ts`).
 
 #### Scenario: Witness film
 
 - **GIVEN** a scene filmed with the witness
 - **WHEN** the film is shot
 - **THEN** the game's exports are drawn in place of our parts
+
+## Open
+
+- [ ] **A recording's events are found by sampling it at one frame a second** — no source yet: `scripts/src/services/genshinParity/commands/framesCommand.ts` defaults to 10 a second, and the one-a-second event sampling was not traced.
+- [ ] **The parity page applies the fixture's motion props after the animations finish** — no source yet: `packages/genshin-world/parity/main.ts` was not traced for the order.
