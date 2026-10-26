@@ -79,7 +79,7 @@ A season names its difficulties by id, and the writer refuses a season that name
 
 ## Sources
 
-- [Imaginarium Theater](https://genshin-impact.fandom.com/wiki/Imaginarium_Theater), Genshin Impact Wiki: the Vigor, the Blessing Level steps and stats, the opening character's bonus and the Stella rewards this page builds. Its quotes are listed under Sources in [spec.md](spec.md).
+- [Imaginarium Theater](https://genshin-impact.fandom.com/wiki/Imaginarium_Theater), Genshin Impact Wiki: the Vigor, the Blessing Level stats, the opening character's bonus and the Stella rewards this page builds. The source could not be read, so these are the proposal's statements.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `RoleCombatScheduleExcelConfigData` and `RoleCombatDifficultyExcelConfigData`, the two tables the slices are written from. Their revision matches the dump's tower tables.
 
 ## Open
@@ -90,5 +90,4 @@ A season names its difficulties by id, and the writer refuses a season that name
 - [ ] **each Blessing Level's stats are those of `IMAGINARIUM_BLESSING_LEVEL_STATS`, doubled for a special guest** — no source yet: the Imaginarium Theater wiki page is not on disk.
 - [ ] **an owned opening character gains a fifth of its Max HP, ATK and DEF** — no source yet: the Imaginarium Theater wiki page is not on disk.
 - [ ] **every three Stellas in a run give one reward** — no source yet: the Imaginarium Theater wiki page is not on disk.
-- [ ] **the Vigor, the Blessing Level steps and stats, the opening bonus and the Stella rewards are the wiki's** — no source yet: the Imaginarium Theater wiki page is not on disk.
 - [ ] **the Theater's season times are in UTC+8** — no source yet: the game's own server time zone, which the dump does not state.
