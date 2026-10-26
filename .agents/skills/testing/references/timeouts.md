@@ -4,7 +4,7 @@ Read when a test, suite or config sets a timeout, or a test fails with `Test tim
 
 ## The ladder
 
-1. **Measure the cost in a committed bench.** The speed gate is `.agents/skills/bench/references/speed-gate.md`: a timing belongs in a `*.bench.ts` whose `*.bench.md` is committed, and an ad-hoc stopwatch only locates where the time goes before the bench is written.
+1. **Measure the cost in a committed bench.** The speed gate is the `bench` skill, `references/speed-gate.md`: a timing belongs in a `*.bench.ts` whose `*.bench.md` is committed, and an ad-hoc stopwatch only locates where the time goes before the bench is written.
 2. **Under the default, there is no timeout.** The default is the one the suite's config sets: Vitest's five seconds in `scripts`, and the `testTimeout` `apps/web/vitest.config.ts` sets for the app. A slow run that passes is not a reason to add one.
 3. **Over the default, find the setup that repeats.** A read of the whole tree done again per test, a `git ls-files` walk per check, a `pnpm pack` per package in sequence: the fix is one shared read per run, a read narrowed to the directory the check owns, or the packs run concurrently. Bench the setup again after it.
 4. **Over the default, and the input is the cost.** A fixture that parses a long formula to build the tree it then tests spends its time in the parser, not the unit. Build the input directly where the test does not test the parser, and bench it again.
@@ -27,4 +27,4 @@ flowchart TD
   G -->|no| I["named constant sized to the bench"]
 ```
 
-Which suites carry an override, and the measurement each one rests on, is read off the tree with `git grep -n timeout` over the suites and configs above.
+Which suites carry an override, and the measurement each one rests on, is read off the tree with `git grep -n timeout` over the test files and the configs step 6 names.

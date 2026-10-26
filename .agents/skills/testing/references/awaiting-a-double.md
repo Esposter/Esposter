@@ -16,12 +16,10 @@ list nothing has shortened yet — which passes against the whole-list rollback 
 the failing handler on a promise the successful one resolves, so the order is the test's rather than the
 scheduler's.
 
-**The held call signals its arrival, and the next call waits for it.** The test client sends each tRPC call as its
-own request, so a second call issued beside a held one is answered without waiting for the release it was meant to
-follow. The order is still the test's to state: the held resolver resolves a second promise as it is reached, and
-the test awaits that before the next call, so the sequence it asserts is the one it means. Production batches the
-calls of one tick into one response, which is the one place a held call would hold the others; that is pinned by
-`createHttpBatchingLink`'s own test, not by the component tests.
+**The held call signals its arrival, and the next call waits for it.** A second call issued beside a held one is
+answered without waiting for the release it was meant to follow (`references/client-trpc-calls.md`), so the held
+resolver resolves a second promise as it is reached, and the test awaits that before the next call. The sequence it
+asserts is the one it means.
 
 ```ts
 const { promise: readGate, resolve: releaseRead } = Promise.withResolvers<void>();

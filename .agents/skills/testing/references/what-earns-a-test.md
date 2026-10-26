@@ -11,7 +11,7 @@ The default is delete. A test is kept only when it passes these four steps in or
 3. **Check the enforcer.** If typecheck, lint, a Zod constraint or another test already fails for the same break, this test adds nothing.
 4. **Keep it, and fold it.** A test that survives the first three is kept. A near-duplicate of it is folded into the test it shadows by widening that test's fixture, rather than kept beside it.
 
-A guard clause decided in this file is the one exception to step 2: it earns its own case even when a caller also reaches it, because the owner does not decide it here. Removing a test that a change made redundant is part of the change.
+A guard clause decided in this file is the one exception to step 2, "Check the owner": it earns its own case even when a caller also reaches it, because the owner does not decide it here. Removing a test that a change made redundant is part of the change.
 
 The keep test is the standard, not a budget: the aim is code with no test left that asserts nothing a reviewer would care about, and a test count is never a goal. A passing test that would still pass after the bug it names is not coverage, so it is deleted or rewritten until it would fail.
 

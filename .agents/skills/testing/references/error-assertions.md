@@ -14,9 +14,9 @@ is only unreconstructable when the test never sees it.
 
 ## Opaque third-party messages only
 
-A Zod error string you can't cleanly reconstruct: leave the snapshot empty and populate with `pnpm test -u`. The exception, not the default; still never `toBeInstanceOf`. A message no one can reconstruct portably is not snapshotted at all — `references/platform-and-bundle-tests.md`.
+A Zod error string you can't cleanly reconstruct: leave the snapshot empty and populate with `pnpm test <file> -u`. The exception, not the default; still never `toBeInstanceOf`. A message no one can reconstruct portably is not snapshotted at all — `references/platform-and-bundle-tests.md`.
 
-Where such a message is all a throw carries — a third-party parse error quoting the absolute path it read — assert the error's **`name`** instead: `getResult(…).match(() => "", ({ name }) => name)` compared to `InvalidOperationError.name`. It is exact, portable, and says the failure is ours rather than a silently defaulted value, which is what `toThrow(SomeError)` was reaching for before it lost the message.
+Where such a message is all a throw carries — a third-party parse error quoting the absolute path it read — assert the error's **`name`** instead: `getResult(…).match(() => "", ({ name }) => name)` compared to `InvalidOperationError.name`. It is exact, portable, and says the failure is ours rather than a silently defaulted value, which is what `toThrow(SomeError)` reaches for.
 
 ## An inline snapshot belongs to its call site
 
