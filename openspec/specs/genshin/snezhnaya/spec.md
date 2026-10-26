@@ -73,5 +73,5 @@ A Kresnik's Torch SHALL NOT light the scene around it until its light is built.
 
 ## Open
 
-- [ ] **The Kresnik's Torch is a stone plinth, shaft and brazier with a flame standing in its cup** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Snezhnograd's first hall stands in the region's data at a provisional place** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The Kresnik's Torch is a stone plinth, shaft and brazier with a flame standing in its cup** — no source yet: the game's Kresnik's Torch mesh, which `~/Esposter.noindex/genshin-parity/extracted/snezhnaya/witness.json` does not name, and no cached wiki page describes the torch's shape
+- [ ] **Snezhnograd's first hall stands in the region's data at a provisional place** — the source is `packages/genshin-world/src/data/regions/snezhnaya.json`, the repo's region data, whose `snezhnograd` landmark holds the hall's place
