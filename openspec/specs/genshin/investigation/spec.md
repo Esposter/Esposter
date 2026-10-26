@@ -22,7 +22,7 @@ Investigation spots SHALL keep spawning only while fewer than one hundred invest
 
 ### Requirement: The game day starts at the daily reset
 
-The investigation count SHALL be the one kept from the game's daily reset at four in the morning in the game's time zone (the English text gives the reset as "4:00 AM ({TIMEZONE})" in `~/Esposter.noindex/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`).
+The investigation count SHALL be the one kept from the game's daily reset at four in the morning in the game's time zone (the English text gives the reset as "4:00 AM ({TIMEZONE})").
 
 #### Scenario: Investigations before the reset do not count toward the new day
 
