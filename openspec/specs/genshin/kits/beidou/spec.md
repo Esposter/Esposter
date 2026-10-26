@@ -135,5 +135,4 @@ From constellation four, a hit Beidou takes while she is on the field SHALL give
 ## Open
 
 - [ ] **The built Targe outlasts Beidou's fall, against the scenario above** — contradicted by `~/Esposter/cache/genshin-wiki/Category_Beidou_Talents.json`: Stormbreaker lists "Effects End Character Fallen" as a utility.
-- [ ] **The built discharge lands even when the strike misses, against the scenario above** — contradicted by `~/Esposter/cache/genshin-wiki/Category_Beidou_Talents.json`: discharges arise when Normal and Charged Attacks hit.
 - [ ] **Constellation 4 counts HP lost to a drown or a wildlife's charge** — no source yet: the cached Beidou page names the constellation "Stunning Revenge" but gives it no text.
