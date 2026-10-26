@@ -74,7 +74,7 @@ The bindings of places and modes the world does not have are left out (`packages
 
 ## Open
 
-- [ ] **Each action's default key on a PC and an Xbox pad, as the game's controls list sets them out, and M, F1, F3 and F5 as the game's keys** — no source yet: the wiki's Controls page is not in `~/Esposter.noindex/cache/genshin-wiki/`, no capture shows the game's controls list, and no `ExcelBinOutput` table name or `genshin-parity` reference (`references/`) holds one (searched 2026-10-26).
+- [ ] **Each action's default key on a PC and an Xbox pad, as the game's controls list sets them out, and M, F1, F3 and F5 as the game's keys** — no source yet: the wiki's Controls page is not in `~/Esposter.noindex/cache/genshin-wiki/`, no capture shows the game's controls list, and no `ExcelBinOutput` table name or `genshin-parity` reference (`~/Esposter.noindex/genshin-parity/references/`) holds one (searched 2026-10-26).
 - [ ] **A pad's top face button is the burst, the bumper chords and the directional pad's chords are the game's** — no source yet: no capture of a pad's controls, and the wiki's Controls page is not cached.
 - [ ] **The browser's standard gamepad layout puts a PlayStation cross and an Xbox A at the same index** — no source yet: the W3C Gamepad spec, cited in Sources, is not on this PC, so its button order is unread here.
 - [ ] **The game's shortcut wheel turns the face buttons into its own while the bumper is held** — no source yet: a capture of the pad's bumper held in the game, not on this machine.
