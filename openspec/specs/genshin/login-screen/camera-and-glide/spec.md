@@ -6,49 +6,49 @@ Login camera and glide, as built: the login camera holds one pose, and the world
 
 ### Requirement: Camera pose
 
-The login camera SHALL hold the game's pose, looking straight down the walkway's middle, pitched 5.69 degrees up, with its eye one metre over the walkway (`packages/genshin-world/src/services/login/scene/constants.ts`).
+The login camera SHALL hold the game's pose, looking straight down the walkway's middle, pitched 5.69 degrees up, with its eye one metre over the walkway.
 
 #### Scenario: Login scene opens
 
 - **WHEN** the login scene is shown
-- **THEN** the camera looks down the middle of the walkway, pitched 5.69 degrees up (`packages/genshin-world/src/services/login/scene/constants.ts`)
+- **THEN** the camera looks down the middle of the walkway, pitched 5.69 degrees up
 
 ### Requirement: Field of view follows the screen width
 
-The vertical field of view SHALL be 45 degrees on a screen 18.5:9 or wider, and on a narrower screen SHALL widen so the view across matches what 18.5:9 shows (`packages/genshin-world/src/services/login/scene/constants.ts`, `packages/genshin-world/src/services/login/scene/getLoginCameraFov.ts`).
+The vertical field of view SHALL be 45 degrees on a screen 18.5:9 or wider, and on a narrower screen SHALL widen so the view across matches what 18.5:9 shows.
 
 #### Scenario: Wide screen
 
 - **WHEN** the screen is 21.5:9
-- **THEN** the field of view is the game's 45 degrees (`packages/genshin-world/src/services/login/scene/constants.ts`)
+- **THEN** the field of view is the game's 45 degrees
 
 #### Scenario: Narrower screen
 
 - **WHEN** the screen is 16:9
-- **THEN** the vertical field of view is 51.2 degrees (`packages/genshin-world/src/services/login/scene/getLoginCameraFov.test.ts`)
+- **THEN** the vertical field of view is 51.2 degrees
 
 ### Requirement: Glide pace
 
-The glide SHALL move at 3.5 metres a second while the title waits and at 4.5 metres a second once the game prepares, changing between the two over half a second (`packages/genshin-world/src/services/login/scene/constants.ts`).
+The glide SHALL move at 3.5 metres a second while the title waits and at 4.5 metres a second once the game prepares, changing between the two over half a second.
 
 #### Scenario: Title waits
 
 - **WHEN** the title is waiting
-- **THEN** the glide moves at 3.5 metres a second (`packages/genshin-world/src/services/login/scene/constants.ts`)
+- **THEN** the glide moves at 3.5 metres a second
 
 #### Scenario: Game prepares
 
 - **WHEN** the game is preparing
-- **THEN** the glide moves at 4.5 metres a second (`packages/genshin-world/src/services/login/scene/constants.ts`)
+- **THEN** the glide moves at 4.5 metres a second
 
 ### Requirement: Rest at the door
 
-The glide SHALL slow to rest on a whole copy of the walkway at the door, keeping on to the first copy that stands the door past the walkway's far end and can be stopped on at that rate (`packages/genshin-world/src/services/login/scene/advanceLoginGlide.ts`).
+The glide SHALL slow to rest on a whole copy of the walkway at the door, keeping on to the first copy that stands the door past the walkway's far end and can be stopped on at that rate.
 
 #### Scenario: Glide comes to rest
 
 - **WHEN** the glide reaches the door
-- **THEN** it slows evenly and rests on that copy of the walkway (`packages/genshin-world/src/services/login/scene/advanceLoginGlide.ts`, `packages/genshin-world/src/services/login/scene/advanceLoginGlide.test.ts`)
+- **THEN** it slows evenly and rests on that copy of the walkway
 
 ### Requirement: Scenery rows wrap by their own lengths
 
@@ -57,7 +57,7 @@ The scenery rows SHALL repeat by their own lengths, the walkway's copies 16 metr
 #### Scenario: Row passes its length
 
 - **WHEN** the glide carries a row past its own length
-- **THEN** the row repeats from its start (`packages/genshin-world/src/components/Login/Scene/Index.vue`)
+- **THEN** the row repeats from its start
 
 ### Requirement: Title opening point
 
@@ -70,14 +70,21 @@ The title SHALL open about 49 metres short of the door.
 
 ### Requirement: Bridge passes under the walkway
 
-The bridge whose deck crosses the glide's path SHALL pass under the walkway as the glide passes over it (`packages/genshin-world/src/services/login/scene/constants.ts`).
+The bridge whose deck crosses the glide's path SHALL pass under the walkway as the glide passes over it.
 
 #### Scenario: Glide crosses the bridge
 
 - **WHEN** the glide passes the bridge
-- **THEN** the walkway is above the bridge's deck (`packages/genshin-world/src/services/login/scene/constants.ts`)
+- **THEN** the walkway is above the bridge's deck
 
 ## Open
 
 - [ ] **The rows wrap at 16, 200 and 300 metres** — no source yet: the `login/scroll` record is hosted, and its lengths are not kept in the repository or the parity folders.
 - [ ] **The title opens about 49 metres short of the door** — no source yet: `computeLoginGlideTitleScrolled` takes its walkway copy length from the open 16 metres, and its result is not checked against 49 here.
+- [ ] **The login camera holds the game's pose: straight down the walkway's middle, pitched 5.69 degrees up, its eye one metre over the walkway** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The vertical field of view is 45 degrees at 18.5:9 or wider, and widens on a narrower screen to match 18.5:9's view across** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **At 16:9 the vertical field of view is 51.2 degrees** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The glide moves at 3.5 metres a second while the title waits and 4.5 once the game prepares, changing over half a second** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The glide rests on a whole copy of the walkway at the door, keeping on to the first copy that can be stopped on at its rate** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A scenery row repeats from its start once the glide carries it past its own length** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The bridge across the glide's path passes under the walkway as the glide passes over it** — no source yet: game data or a snapshot that holds this behaviour
