@@ -112,4 +112,4 @@ Resonant Waves, Chrysos, Bounty of Dominator, Petrification and the hold's Geo d
 
 ## Open
 
-- [ ] **the Jade Shield's RES cut reaches 10 metres high** — no source yet: a source giving the Jade Shield's RES cut a height, since gcsim's `shield.go` queries a 7.5 metre circle with a nil second argument and no height.
+- [ ] **the Jade Shield's RES cut reaches 10 metres high** — no source yet: a source giving the Jade Shield's RES cut a height, since gcsim's `~/Esposter/cache/gcsim-v2.47.2/internal/characters/zhongli/shield.go` queries a 7.5 metre circle with a nil second argument and no height.
