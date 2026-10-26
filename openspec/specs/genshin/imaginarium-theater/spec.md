@@ -135,10 +135,11 @@ Every three Stellas earned in a run SHALL give one reward.
 - **WHEN** its rewards are counted
 - **THEN** two rewards are given
 
+## Sources
+
+- [Imaginarium Theater](https://genshin-impact.fandom.com/wiki/Imaginarium_Theater), Genshin Impact Wiki: the Vigor and stage cast, the Blessing Level steps, the opening character's bonus and the Stella rewards. Quoted: "Every stage requires four stage members"; "Each character has two Vigor"; "Every character added to the Alternate Cast above the required number increases Blessing Level by 2"; "obtaining or upgrading any Brilliant Blessing increases Blessing Level by 1"; "If the player possesses an Opening Character, their HP, ATK and DEF are increased by 20%"; "every 3 Stella obtained in a run" (its Stella Rewards table gives one card at 3, 6, 9 and 12).
+
 ## Open
 
-- [ ] **a Principal Cast performs a stage with four members, each holding two Vigor** — no source yet: the wiki's Imaginarium Theater page, which could not be read when this was built.
-- [ ] **Blessing Level rises two per extra Alternate Cast member and one per Brilliant Blessing level** — no source yet: the wiki's Imaginarium Theater page, which could not be read when this was built.
-- [ ] **an owned opening character gains a fifth of its Max HP, ATK and DEF** — no source yet: the wiki's Imaginarium Theater page, which could not be read when this was built.
-- [ ] **every three Stellas in a run give one reward** — no source yet: the wiki's Imaginarium Theater page, which could not be read when this was built.
+- [ ] **every three Stellas give one reward past twelve** — no source yet: the Stella Rewards table gives one card at 3, 6, 9 and 12 Stellas, and the prose says "various artifact-related rewards" (`Imaginarium_Theater.json` checked).
 - [ ] **the Theater's season is read in UTC+8** — no source yet: the game's own server time zone, which the dump does not state.
