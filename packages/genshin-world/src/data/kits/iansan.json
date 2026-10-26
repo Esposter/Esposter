@@ -3,5 +3,8 @@
   "chargedAttackVariant.hits.0.area": {
     "cause": "DiffersFromSource",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 2.5 }
-  }
+  },
+  "plungeCollision.poiseDamage": { "source": "Wiki", "value": 25 },
+  "plunges.high.hits.0.poiseDamage": { "source": "Wiki", "value": 150 },
+  "plunges.low.hits.0.poiseDamage": { "source": "Wiki", "value": 100 }
 }
