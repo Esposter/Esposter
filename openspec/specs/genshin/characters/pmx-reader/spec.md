@@ -1,6 +1,6 @@
 ## Purpose
 
-The engine's own PMX reader turns an MMD model file into three's space as it reads, since three ships no MMD loader and the workspace has no PMX parser (`packages/genshin-engine/src/character/parsePmx.ts`, `packages/genshin-engine/src/models/character/PmxReader.ts`).
+The engine's own PMX reader turns an MMD model file into three's space as it reads, since three ships no MMD loader and the workspace has no PMX parser.
 
 ## Requirements
 
@@ -112,3 +112,7 @@ The rigid bodies, joints and morphs SHALL be read but not yet applied to the dra
 - **GIVEN** a model has morphs
 - **WHEN** it is drawn
 - **THEN** no morph is applied
+
+## Open
+
+- [ ] **The engine's own PMX reader turns an MMD model file into three's space as it reads** — no source yet: game data or a snapshot that holds this behaviour
