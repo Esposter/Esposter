@@ -79,8 +79,7 @@ The bridge whose deck crosses the glide's path SHALL pass under the walkway as t
 
 ## Open
 
-- [ ] **The rows wrap at 16, 200 and 300 metres** — no source yet: the `login/scroll` record is hosted, and its lengths are not kept in the repository or the parity folders.
-- [ ] **The title opens about 49 metres short of the door** — no source yet: a file that sets the 49 metres; `packages/genshin-world/src/services/login/scene/computeLoginGlideTitleScrolled.ts` holds no 49-metre value.
+- [ ] **The rows wrap at 16, 200 and 300 metres** — no source yet: the record is hosted, and its lengths are not kept in the repository or the parity folders.
 - [ ] **The login camera holds the game's pose: straight down the walkway's middle, pitched 5.69 degrees up, its eye one metre over the walkway** — no source yet: the game's `ModelCamera` export, `~/Esposter/genshin-parity/extracted/login-layout/11790361/GameObject/ModelCamera.json`, which design.md cites for the tilt, is not yet checked for the eye's height over the risen walkway.
 - [ ] **The vertical field of view is 45 degrees at 18.5:9 or wider, and widens on a narrower screen to match 18.5:9's view across** — no source yet: the game's login camera export in `~/Esposter/genshin-parity/extracted/login-camera/`, not yet read for its field of view or for the widening on a narrower screen.
 - [ ] **The glide moves at 3.5 metres a second while the title waits and 4.5 once the game prepares, changing over half a second** — no source yet: the `genshin:parity glide` report that times the pace is not kept in `~/Esposter/genshin-parity/`, and the MonoLoginScene export holds no speed or curve.
