@@ -54,10 +54,11 @@ flowchart TD
 
 ## Sources
 
-- [Mystic Offering](https://genshin-impact.fandom.com/wiki/Mystic_Offering), Genshin Impact Wiki: the offering is a Crafting Bench method open from Adventure Rank 45, and three five-star artifacts give one Artifact Strongbox.
+- [Mystic Offering](https://genshin-impact.fandom.com/wiki/Mystic_Offering), Genshin Impact Wiki: the offering is a Crafting Bench method open from Adventure Rank 45, and three five-star artifacts give one Artifact Strongbox. The Adventure Rank 45 gate is unverified, as its page is not in the cache (see Open).
 - [Artifact Strongbox](https://genshin-impact.fandom.com/wiki/Artifact_Strongbox), Genshin Impact Wiki: a strongbox holds a random artifact of the selected set, and at most 39 artifacts are offered at once. Not yet read: the page is not in the cache, so these claims, the roll included, are unverified (see Open).
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the decompose, display item and offer tables the record is joined from.
 
 ## Open
 
+- [ ] **the Mystic Offering opens at Adventure Rank 45** — no source yet: the wiki's Mystic Offering page is not in the cache, and the dump's tables do not hold the gate.
 - [ ] **a strongbox holds one random piece of the chosen set** — no source yet: the wiki's Artifact Strongbox page, which Sources cites, is not in the cache, and no recording shows a roll.
