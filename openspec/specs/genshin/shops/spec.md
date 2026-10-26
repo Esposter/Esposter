@@ -87,5 +87,5 @@ A good priced in Mora SHALL cost the Mora amount its table gives.
 
 ## Open
 
-- [ ] **Refreshes happen at four in the morning in the game's time** — no source yet: the hour is read from the repo's time constants (`GAME_DAY_START_HOUR`), but the game's own reset was not checked against a recording or the wiki.
-- [ ] **A general good of the Mondstadt grocery costs its table's Mora amount** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Refreshes happen at four in the morning in the game's time** — no source yet: the hour is read from the repo's time constants (`GAME_DAY_START_HOUR`), but the game's own reset is not checked against a recording, and the cached Reset page gives 04:00 server time with no zone named.
+- [ ] **A general good of the Mondstadt grocery costs its table's Mora amount** — no source yet: a recording of a purchase at Mondstadt General Goods that shows the Mora taken, or the wiki's Blanche (Mondstadt) page, which is not in the cache, if it gives her prices
