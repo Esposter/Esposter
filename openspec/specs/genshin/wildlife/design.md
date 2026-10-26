@@ -20,7 +20,7 @@ flowchart TD
 
 ## The kinds
 
-`WildlifeKind` names four: `Boar`, `CrimsonFox`, `Squirrel` and `WhitePigeon`, of which `Boar` charges and the other three flee. Each is one of the map's own labels under its Animals group, and `WildlifeKindLabelIdMap` gives its label id, so a point takes its kind by its label. The archive files each as an animal or aviary monster, and the capture table's rows and the monster rows hold the rest of what each one is.
+`WildlifeKind` names four: `Boar`, `CrimsonFox`, `Squirrel` and `WhitePigeon`, of which `Boar` charges and the other three flee. Each is one of the map's own labels under its Animals group, and `WildlifeKindLabelIdMap` gives its label id, so a point takes its kind by its label (`scripts/src/services/genshinAssets/wildlife/WildlifeKindLabelIdMap.ts`). The archive files each as an animal or aviary monster, and the capture table's rows and the monster rows hold the rest of what each one is.
 
 ## The flight
 
