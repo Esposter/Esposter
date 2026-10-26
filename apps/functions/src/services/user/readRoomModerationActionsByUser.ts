@@ -9,7 +9,8 @@ import type {
   UserInAuth,
 } from "@esposter/db-schema";
 
-import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
+import { readEntitiesByClauses } from "#src/services/azure/readEntitiesByClauses";
+import { BinaryOperator, CompositeKeyPropertyNames } from "@esposter/azure";
 import { getReverseTickedTimestamp } from "@esposter/db-schema";
 
 // The moderation actions one person took in one room, each with its action type, its time and the id of the person it
@@ -24,23 +25,18 @@ export const readRoomModerationActionsByUser = async (
     { key: CompositeKeyPropertyNames.partitionKey, operator: BinaryOperator.Eq, value: roomId },
     { key: "actorUserId", operator: BinaryOperator.Eq, value: userId },
   ];
-  const actions = [];
-  for await (const page of moderationLogClient
-    .listEntities<
-      CompositeKey & {
-        actorUserId: UserInAuth["id"];
-        rowKey: ReverseTickedTimestamp;
-        targetUserId: UserInAuth["id"];
-        type: AdminActionType;
-      }
-    >({ queryOptions: { filter: serializeClauses(clauses) } })
-    .byPage({ maxPageSize: AZURE_MAX_PAGE_SIZE }))
-    for (const { rowKey, targetUserId, type } of page)
-      actions.push({
-        roomId,
-        targetUserId,
-        time: new Date(Number(BigInt(getReverseTickedTimestamp(rowKey)) / 10n ** 6n)),
-        type,
-      });
-  return actions;
+  const entities = await readEntitiesByClauses<
+    CompositeKey & {
+      actorUserId: UserInAuth["id"];
+      rowKey: ReverseTickedTimestamp;
+      targetUserId: UserInAuth["id"];
+      type: AdminActionType;
+    }
+  >(moderationLogClient, clauses);
+  return entities.map(({ rowKey, targetUserId, type }) => ({
+    roomId,
+    targetUserId,
+    time: new Date(Number(BigInt(getReverseTickedTimestamp(rowKey)) / 10n ** 6n)),
+    type,
+  }));
 };
