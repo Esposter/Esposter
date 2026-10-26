@@ -6,6 +6,8 @@ import { createTerrainShapeHeight } from "#src/terrain/createTerrainShapeHeight"
 import { describe, expect, test } from "vitest";
 
 describe(createTerrainShapeHeight, () => {
+  const residual = { amplitude: 2, octaves: 2, scale: 8, seed: 3 };
+
   test("adds the hills, the features and the residual at a point, and a layer the shape leaves out adds nothing", () => {
     expect.hasAssertions();
 
@@ -27,7 +29,6 @@ describe(createTerrainShapeHeight, () => {
       features: [{ falloff: 0.5, height: 2, kind: TerrainFeatureKind.Plateau, radius: 4, x: 5, z: 9 }],
       hills: [],
     };
-    const residual = { amplitude: 2, octaves: 2, scale: 8, seed: 3 };
     const getHeight = createTerrainShapeHeight(shape);
     const getResidualHeight = createResidualHeight(residual);
     const getShapeHeight = createTerrainShapeHeight({ ...shape, residual });
@@ -40,7 +41,6 @@ describe(createTerrainShapeHeight, () => {
   test("draws a ground laid over another as it is drawn alone where its hills stand, and the base under it past them", () => {
     expect.hasAssertions();
 
-    const residual = { amplitude: 2, octaves: 2, scale: 8, seed: 3 };
     const overlay: TerrainShape = {
       base: 5,
       hills: [

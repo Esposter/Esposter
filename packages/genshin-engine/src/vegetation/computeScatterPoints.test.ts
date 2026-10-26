@@ -8,17 +8,16 @@ describe(computeScatterPoints, () => {
   const SEED = 0;
   // How far a float32 rounding may shorten a distance that the spacing already allows
   const ROUNDING = 1e-5;
+  const options = {
+    candidateCount: CANDIDATE_COUNT,
+    checkIsAccepted: () => true,
+    seed: SEED,
+    size: SIZE,
+    spacing: SPACING,
+  };
 
   test("grows the same plants for the same seed", () => {
     expect.hasAssertions();
-
-    const options = {
-      candidateCount: CANDIDATE_COUNT,
-      checkIsAccepted: () => true,
-      seed: SEED,
-      size: SIZE,
-      spacing: SPACING,
-    };
 
     expect(computeScatterPoints(options)).toStrictEqual(computeScatterPoints(options));
   });
@@ -26,13 +25,7 @@ describe(computeScatterPoints, () => {
   test("keeps every two plants the spacing apart", () => {
     expect.hasAssertions();
 
-    const points = computeScatterPoints({
-      candidateCount: CANDIDATE_COUNT,
-      checkIsAccepted: () => true,
-      seed: SEED,
-      size: SIZE,
-      spacing: SPACING,
-    });
+    const points = computeScatterPoints(options);
     const plantCount = points.length / 2;
 
     expect(plantCount).toBeGreaterThan(1);
@@ -49,14 +42,6 @@ describe(computeScatterPoints, () => {
   test("grows nothing where the ground refuses", () => {
     expect.hasAssertions();
 
-    expect(
-      computeScatterPoints({
-        candidateCount: CANDIDATE_COUNT,
-        checkIsAccepted: () => false,
-        seed: SEED,
-        size: SIZE,
-        spacing: SPACING,
-      }),
-    ).toStrictEqual(new Float32Array());
+    expect(computeScatterPoints({ ...options, checkIsAccepted: () => false })).toStrictEqual(new Float32Array());
   });
 });

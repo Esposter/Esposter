@@ -5,10 +5,11 @@ import { normalViewGeometry } from "three/tsl";
 import { describe, expect, test } from "vitest";
 
 describe(createLeafMaterial, () => {
+  const leafMaterial = createLeafMaterial({ lightUniforms: createLightUniforms(), rampTexture: new DataTexture() });
+
   test("is never outlined, since the outline pass would draw a card's unmasked back face as a solid patch", () => {
     expect.hasAssertions();
 
-    const leafMaterial = createLeafMaterial({ lightUniforms: createLightUniforms(), rampTexture: new DataTexture() });
     expect({
       toonFlag: leafMaterial.isMeshToonMaterial,
       toonNodeFlag: leafMaterial.isMeshToonNodeMaterial,
@@ -18,7 +19,6 @@ describe(createLeafMaterial, () => {
   test("cuts its card by a mask, which the shadow pass reads where it ignores an opacity", () => {
     expect.hasAssertions();
 
-    const leafMaterial = createLeafMaterial({ lightUniforms: createLightUniforms(), rampTexture: new DataTexture() });
     expect({
       alphaTest: leafMaterial.alphaTest,
       hasMaskNode: leafMaterial.maskNode !== null,
@@ -29,7 +29,6 @@ describe(createLeafMaterial, () => {
   test("lights both faces of a card by the crown's normal, which three would turn round on a back face", () => {
     expect.hasAssertions();
 
-    const leafMaterial = createLeafMaterial({ lightUniforms: createLightUniforms(), rampTexture: new DataTexture() });
     expect(leafMaterial.normalNode).toBe(normalViewGeometry);
   });
 });

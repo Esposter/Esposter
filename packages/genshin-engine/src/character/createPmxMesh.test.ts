@@ -10,6 +10,15 @@ import { describe, expect, test } from "vitest";
 const roundToTen = (value: number): number => Math.round(value * 1e6) / 1e6 + 0;
 
 describe(createPmxMesh, () => {
+  const emptyVertices: PmxModel["vertices"] = {
+    normals: new Float32Array(),
+    positions: new Float32Array(),
+    skinIndices: new Uint16Array(),
+    skinWeights: new Float32Array(),
+    subUvs: new Float32Array(),
+    uvs: new Float32Array(),
+  };
+
   test("places each bone from its parent, binds it where it stands, and draws each material's triangles in turn", () => {
     expect.hasAssertions();
 
@@ -42,14 +51,7 @@ describe(createPmxMesh, () => {
       name: "",
       rigidBodies: [],
       textures: [],
-      vertices: {
-        normals: new Float32Array(),
-        positions: new Float32Array(),
-        skinIndices: new Uint16Array(),
-        skinWeights: new Float32Array(),
-        subUvs: new Float32Array(),
-        uvs: new Float32Array(),
-      },
+      vertices: emptyVertices,
     };
     const mesh = createPmxMesh(pmxModel, [new MeshBasicMaterial(), new MeshBasicMaterial()], 0.5);
     const {
@@ -89,14 +91,7 @@ describe(createPmxMesh, () => {
       name: "",
       rigidBodies: [],
       textures: [],
-      vertices: {
-        normals: new Float32Array(),
-        positions: new Float32Array(),
-        skinIndices: new Uint16Array(),
-        skinWeights: new Float32Array(),
-        subUvs: new Float32Array(),
-        uvs: new Float32Array(),
-      },
+      vertices: emptyVertices,
     };
 
     expect(createPmxMesh(pmxModel, [], 0.5).scale.x).toBe(0.5);

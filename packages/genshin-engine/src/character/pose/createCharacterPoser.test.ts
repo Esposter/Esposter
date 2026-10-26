@@ -77,6 +77,7 @@ describe(createCharacterPoser, () => {
     swimSpeed: 1,
     walkSpeed: 1,
   };
+  const update = { delta: 1, locomotion: LOCOMOTION, phase: { state: LocomotionState.Idle, stateSeconds: 1 } };
 
   test("poses a bone in its rest frame, so a rotated rest holds the same pose as an identity one", () => {
     expect.hasAssertions();
@@ -85,7 +86,6 @@ describe(createCharacterPoser, () => {
     const headRest = new Quaternion().setFromAxisAngle(new Vector3(1, 0, 0), 0.4);
     const identity = createChain(new Quaternion(), new Quaternion(), [MmdBoneName.Upper, MmdBoneName.Head]);
     const rotated = createChain(upperRest, headRest, [MmdBoneName.Upper, MmdBoneName.Head]);
-    const update = { delta: 1, locomotion: LOCOMOTION, phase: { state: LocomotionState.Idle, stateSeconds: 1 } };
     createCharacterPoser(identity).update(update);
     createCharacterPoser(rotated).update(update);
 
@@ -100,7 +100,6 @@ describe(createCharacterPoser, () => {
 
     const tArm = createArm(new Quaternion());
     const aArm = createArm(new Quaternion().setFromAxisAngle(new Vector3(0, 0, 1), -0.7));
-    const update = { delta: 1, locomotion: LOCOMOTION, phase: { state: LocomotionState.Idle, stateSeconds: 1 } };
     createCharacterPoser(tArm).update(update);
     createCharacterPoser(aArm).update(update);
 
@@ -112,7 +111,6 @@ describe(createCharacterPoser, () => {
     expect.hasAssertions();
 
     const mesh = createChain(new Quaternion(), new Quaternion(), ["Spine", "Head"]);
-    const update = { delta: 1, locomotion: LOCOMOTION, phase: { state: LocomotionState.Idle, stateSeconds: 1 } };
     createCharacterPoser(mesh, { [MmdBoneName.Upper]: "Spine" }).update(update);
 
     expect(getWorldRotation(mesh, "Spine").angleTo(new Quaternion())).toBeGreaterThan(0);
