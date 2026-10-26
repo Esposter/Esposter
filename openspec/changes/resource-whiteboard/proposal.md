@@ -30,7 +30,7 @@ The Flowchart is a diagram editor that draws a fixed set of connected steps on a
 ## Waiting on
 
 - **The flowchart retirement** ([proposal](../resource-flowchart-retirement/proposal.md)). It removes the Flowchart type, and it runs after this whiteboard ships, once the whiteboard covers each row of the feature check in that change's design. Nothing in this change waits on the retirement, so the whiteboard can be built first.
-- **The headless graph question** is no longer open. The flowchart canvas change that once posed it is gone, and the retirement records that rebuilding the flowchart on the core is rejected. The whiteboard's arrows need only the core to check references between elements, and phase 1 builds that check.
+- **The headless graph question** is settled. The flowchart canvas change that posed it is gone, and the retirement records that rebuilding the flowchart on the core is rejected. The whiteboard's arrows need only the core to check references between elements, and phase 1 builds that check.
 - **Flowchart shapes** moved to [rejected](../../rejected/resource/flowchart-shapes/proposal.md). Its six shapes are part of this whiteboard's shape set, so nothing is lost.
 
 The gap analysis, the type's name and the sizing are in the [design](design.md).

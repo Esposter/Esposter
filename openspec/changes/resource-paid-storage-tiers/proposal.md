@@ -22,7 +22,7 @@ Let a user buy a larger storage allowance through a merchant-of-record subscript
 
 ## Waiting on
 
-- Account deletion and data export: the design says paid tiers ship alongside them, or not at all. Account deletion is built ([account deletion](../../specs/user/account-deletion/design.md)), and data export is designed ([data export](../user-data-export/proposal.md)).
+- Nothing. Account deletion and data export, which the design says paid tiers ship alongside, are both built ([account deletion](../../specs/user/account-deletion/design.md), [data export](../archive/2026-10-26-user-data-export/proposal.md)).
 
 ## Impact
 
