@@ -175,7 +175,7 @@ Under the water's surface the water's haze SHALL replace the weather's colour, a
 - [ ] **A bolt stands between one and six hundred metres from the eye** — no source yet: the code's `LIGHTNING_MIN_DISTANCE` is 150 m, not one, so the minimum is out of date.
 - [ ] **Snow and fog keep the ground dry** — no source yet: the snow and fog wetness values were not read.
 - [ ] **Under the water the water's haze replaces the weather's colour** — no source yet: the underwater fog update was not read.
-- [ ] **A weather change blends over nine seconds, eased in and out** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A weather change blends over nine seconds, eased in and out, from where the sky had reached** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A sandstorm tints the haze toward the colour of sand** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A thunderstorm strikes about 27.6 times a minute, each flashing the sky twice and dropping a bolt** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A weather change blends over nine seconds, eased in and out** — no source yet: a read of the turn in `~/Esposter/genshin-parity/captures/world-weather-turn.mkv`, the turn recording on disk, against the nine seconds.
+- [ ] **A weather change blends over nine seconds, eased in and out, from where the sky had reached** — no source yet: the same recording, `~/Esposter/genshin-parity/captures/world-weather-turn.mkv`, read for a change begun part way through another.
+- [ ] **A sandstorm tints the haze toward the colour of sand** — no source yet: the haze's colour in the Desert of Hadramaveth sandstorm clip, named in the design, which is not in `~/Esposter/genshin-parity/captures/`; the Weather page gives no colour.
+- [ ] **A thunderstorm strikes about 27.6 times a minute, each flashing the sky twice and dropping a bolt** — no source yet: a strike count over `~/Esposter/genshin-parity/captures/world-thunderstorm.mkv`, not yet read; the wiki's Lightning page is not in the cache.
