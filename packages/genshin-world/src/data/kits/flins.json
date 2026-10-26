@@ -26,6 +26,8 @@
   "normalAttacks.4.hits.0.poiseDamage": { "source": "Wiki", "value": 76.6 },
   "parameters.manifestFlameSeconds": { "cause": "Unsourced", "value": { "index": 8, "proudSkillGroupId": 12032 } },
   "plungeCollision.poiseDamage": { "source": "Wiki", "value": 25 },
+  "plunges.high.hits.0.poiseDamage": { "source": "Wiki", "value": 150 },
+  "plunges.low.hits.0.poiseDamage": { "source": "Wiki", "value": 100 },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "stances.manifestFlame.chargedAttack.animationFrames": { "cause": "Unsourced", "value": 60 },
   "stances.manifestFlame.chargedAttack.hits.length": { "cause": "Unsourced", "value": 1 },
