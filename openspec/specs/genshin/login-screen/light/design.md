@@ -37,12 +37,12 @@ The light on the login scene's stone and haze: the stone is lit as the game's de
 - [ ] **The haze's wall stands about 3 metres under the walkway at night and 6 at dawn, and the dusk hides no more than about three quarters of its far towers** — no source yet: the haze tops are not measured in any kept file.
 - [ ] **The phone's frame is drawn at the medium tier** — no source yet: the phone client's tier is set by the client and is not read here.
 - [ ] **These shadow settings bring the scene's edge count near the reference's** — no source yet: no edge-count comparison is kept in `~/Esposter.noindex/genshin-parity/comparisons/`.
-- [ ] **The stone's glow is its albedo plus an edge glow, drawn only where its length reaches the material's emission range** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The glow's strength is an eighth of the material's for the door and the towers** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The stone is lit with the sun's colour through a toon ramp, scaled by the sun's visibility** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A fitted light fades with height over tens of metres** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The stone darkens with height at each hour's rate, up to 20 metres** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The phone's frame draws no occlusion, at the medium quality tier** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The stone's glow is its albedo plus an edge glow, drawn only where its length reaches the material's emission range** — no source yet: the door's material export `~/Esposter/genshin-parity/extracted/login-bytype-assets/Material/LoginScene_Door01.json`, not yet read for the emission range.
+- [ ] **The glow's strength is an eighth of the material's for the door and the towers** — no source yet: the door materials `LoginScene_Door01.json` and `LoginScene_Door02.json` in `~/Esposter/genshin-parity/extracted/login-bytype-assets/Material/`, not yet read for the strength.
+- [ ] **The stone is lit with the sun's colour through a toon ramp, scaled by the sun's visibility** — no source yet: the login still `~/Esposter/genshin-parity/references/login-day-title.png`, not yet read for the toon ramp.
+- [ ] **A fitted light fades with height over tens of metres** — no source yet: the login layout export `~/Esposter/genshin-parity/extracted/login-layout/export.log`, not yet read for the light's height falloff.
+- [ ] **The stone darkens with height at each hour's rate, up to 20 metres** — no source yet: the login layout export `~/Esposter/genshin-parity/extracted/login-layout/export.log`, not yet read for the hourly darkening.
+- [ ] **The phone's frame draws no occlusion, at the medium quality tier** — no source yet: a recording of the phone frame at the game's medium tier, not yet captured.
 - [ ] **The day's haze thins slowest, with no most opacity, since a most opacity under all scored the phone's door frame worse** — no source yet: no haze-opacity score for the phone's door frame is kept in `~/Esposter.noindex/genshin-parity/comparisons/`.
 - [ ] **Under the dawn's and night's haze the far towers stand darker against their albedo rather than paler, and the stone under the walkway turns wholly to the haze's colour** — no source yet: no tone measurement of the towers under the haze is kept in `~/Esposter.noindex/genshin-parity/comparisons/`.
 - [ ] **The game's stone carries an occlusion strength, and its pipeline darkens creases and the feet of walls on screen** — no source yet: the stone's occlusion strength is not read from the game's material data here.
