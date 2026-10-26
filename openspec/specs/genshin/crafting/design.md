@@ -102,7 +102,7 @@ A recipe the table shows from the start is open from the start. One it hides is 
 
 ## Open
 
-- [ ] **Mystic Offering opens at Adventure Rank 45** — open on the [Artifact Strongbox](../artifact-strongbox/design.md) page's Open list, which owns the offering's gate.
+- [ ] **Mystic Offering opens at Adventure Rank 45** — no source yet: the offering's gate, which the [Artifact Strongbox](../artifact-strongbox/design.md) page's Open list holds.
 - [ ] **The talent draws of 10%, 25%, 20%, 25% and 10%** — no source yet: the wiki's Crafting Talents category is not in `~/Esposter.noindex/cache/genshin-wiki/`, and none of the 20 rows with a 0.25 parameter in `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json` names a crafting talent.
 - [ ] **A character's crafting talent gives a double, a refund or a regional extra** — no source yet: the wiki's Crafting Talents category is not in `~/Esposter.noindex/cache/genshin-wiki/`.
 - [ ] **The Xiao Lantern is a quest's item** — contradicted by `~/Esposter/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json`: row 200004 is MATERIAL_SEA_LAMP; five other rows named Xiao Lantern are MATERIAL_QUEST.
