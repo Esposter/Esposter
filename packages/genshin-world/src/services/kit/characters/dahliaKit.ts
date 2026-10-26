@@ -33,7 +33,7 @@ const BENISON_HIT_ICD_STATUS_ID = "dahlia-benison-hit-icd";
 
 // Dahlia's behaviour: Radiant Psalter places her Hydro shield for the seconds its Favonian Favor holds. Immersive
 // Ordinance's Hydro particles, which gcsim gives on an internal cooldown, wait on the particle hook. Her Benison stacks are
-// Counted, and a broken shield is made again from them, but that regeneration waits on two delays the records do not carry:
+// Counted, and a broken shield is made again from them. That regeneration is not built yet; its two delays are in the records:
 // 26 frames after a broken shield, and 31 after a stack is gained with none up (gcsim's burst.go gives them)
 // https://github.com/genshinsim/gcsim/blob/main/internal/characters/dahlia/burst.go
 // Constellation 2 needs the 25% Shield Strength a consumed Benison stack adds, which waits on that regeneration
