@@ -36,5 +36,5 @@ The walkway the camera looks down: its pieces, each its fitted outline extruded 
 - [ ] **The walkway is 23 pieces, with curbs 3 centimetres high and lanes' borders 9 millimetres** — no source yet: the piece count and the raised heights are fitted values in the hosted `login/walkway` record, which is not read here.
 - [ ] **Each cell is the mean of its repeats over two centimetres a side, and the pattern repeats twice a copy onto an 8 metre repeat** — no source yet: the fold's block size and the repeat length are fit inputs that are not read here.
 - [ ] **The rims of the pockets read as dark carving at low sun, as the recording shows them** — no source yet: no capture comparison of the carving is kept.
-- [ ] **each piece rises from 3 metres down at 17.5 metres ahead and settles by 13.5 metres** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **the far blocks stack over the surface in steps of about 15 centimetres** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **each piece rises from 3 metres down at 17.5 metres ahead and settles by 13.5 metres** — no source yet: the login layout export `~/Esposter/genshin-parity/extracted/login-layout/export.log`, not yet read for the piece heights and distances.
+- [ ] **the far blocks stack over the surface in steps of about 15 centimetres** — no source yet: the login layout export `~/Esposter/genshin-parity/extracted/login-layout/export.log`, not yet read for the block steps.
