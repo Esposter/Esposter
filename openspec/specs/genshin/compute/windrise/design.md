@@ -13,4 +13,4 @@
 ## Open
 
 - [ ] **Windrise: the sun solve over the red oak and statue drifting to a sun on the horizon, 32.91 px off** — no source yet: the recorded solve's output, which no snapshot keeps.
-- [ ] **Windrise: the shadow image the sun solve writes** — no source yet: the solve's output `windrise-statue-day.png` is not on disk, and no shadows folder exists under genshin-parity.
+- [ ] **Windrise: the shadow image the sun solve writes** — no source yet: the solve's output, a `windrise-statue-day.png` in a shadows folder, is not on disk, and no shadows folder exists under genshin-parity.
