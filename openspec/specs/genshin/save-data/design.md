@@ -243,8 +243,8 @@ Paths relative to the repository root.
 ## Open
 
 - [ ] **Save: the Archive's opened entries and each Living Being's defeat count are not held** — contradicted by `packages/genshin-world/src/models/archive/ArchiveSave.ts`: it holds each section's opened entry ids and the defeats of each Living Being.
-- [ ] **Save: the tips the world has shown are not held** — contradicted by `packages/genshin-world/src/models/save/GenshinSave.ts`: its schema holds a `tips` slice (line 133).
-- [ ] **Save: the exploration's camps cleared are not held** — contradicted by `packages/genshin-world/src/models/save/GenshinSave.ts`: its schema holds a `clearedCamps` slice (line 75).
+- [ ] **Save: the tips the world has shown are not held** — contradicted by `packages/genshin-world/src/models/save/GenshinSave.ts`: its schema holds a `tips` slice (line 140).
+- [ ] **Save: the exploration's camps cleared are not held** — contradicted by `packages/genshin-world/src/models/save/GenshinSave.ts`: its schema holds a `clearedCamps` slice (line 77).
 - [ ] **Save: the blob-state write does not charge the storage ledger** — no source yet: a check of the write path's ledger calls, which no record holds.
 - [ ] **Save: no source adds Reputation or Companionship EXP to the world yet** — contradicted by `packages/genshin-world/src/composables/useWorldMap.ts`: `payReputationReward` adds Reputation EXP at each exploration threshold passed.
 - [ ] **Save: a save written before the week's bounty and request claims were added is backfilled to `[]`** — no source yet: the backfill that writes those values, which no file names.
