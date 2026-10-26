@@ -128,6 +128,8 @@ export const CharacterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = n
       },
     },
   ],
+  // Chiori. Tamoto's duration reads its skill's Tamoto Duration label in seconds, and her kit adds each spawn to it
+  [10_000_094, { values: { "parameters.tamotoSeconds": { combatTalent: SKILL, label: "Tamoto Duration" } } }],
   // Sigewinne's avatar id, as her kit module names it. Her bubble's and final bounce's healing read their parameters
   // From her skill's labels, the share of Max HP first and the flat amount after
   [
