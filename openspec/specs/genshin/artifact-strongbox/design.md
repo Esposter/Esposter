@@ -59,6 +59,5 @@ flowchart TD
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the decompose, display item and offer tables the record is joined from.
 
 ## Open
-
-- [ ] **the Mystic Offering opens at Adventure Rank 45** — no source yet: the wiki's Mystic Offering page is not in the cache, and the dump's tables do not hold the gate.
-- [ ] **a strongbox holds one random piece of the chosen set** — no source yet: the wiki's Artifact Strongbox page, which Sources cites, is not in the cache, and no recording shows a roll.
+- [ ] **the Mystic Offering opens at Adventure Rank 45** — no source yet for the game's gate: the wiki's Mystic Offering page is not in the cache, and the dump's tables do not hold the gate. The code holds it as `MYSTIC_OFFERING_ADVENTURE_RANK = 45` (`packages/genshin-world/src/services/crafting/constants.ts`, line 17).
+- [ ] **a strongbox holds one random piece of the chosen set** — no source yet for the game's odds: the wiki's Artifact Strongbox page, which Sources cites, is not in the cache, and no recording shows a roll. The code draws one piece of the set at the strongbox's star rank, evenly among those it lists, in `packages/genshin-world/src/services/crafting/rollStrongboxArtifact.ts` (lines 9 to 20).
