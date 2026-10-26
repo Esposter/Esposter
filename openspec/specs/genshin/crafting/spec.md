@@ -271,6 +271,6 @@ A conversion SHALL be listed under a tab of its own, apart from the craft tab of
 
 ## Open
 
-- [ ] **The bench stands in Mondstadt's Market District** — no source yet: the scene group record's region name for the bench was not read.
+- [ ] **The bench stands in Mondstadt's Market District** — checked against `~/Esposter.noindex/genshin-dump-backup-6.6/BinOutput/Scene/SceneNpcBorn/scene3_npcborn.json`: NPC 10256 is born in group 133004082 at (2267.3, 216.0, -889.3), and the claim is not settled by it because that group's scene record, which names the region, is not in the dump backup.
 - [ ] **A combine type eleven row disassembles a mechanical fish into drops** — no source yet: the dump's type 11 rows disassemble Maintenance Mek parts and a Secret Source Scout Sweeper, and name no mechanical fish.
-- [ ] **A talent's extra with no room in the bag is dropped** — no source yet: the `addInventoryItem` call that drops it was not read.
+- [ ] **A talent's extra with no room in the bag is dropped** — no source yet: the game's overflow rule is not on disk; the repo's `packages/genshin-world/src/components/Crafting/Screen/Index.vue` (lines 182 to 185) keeps only the `.inventory` that `addInventoryItem` returns, which is the repo's rule and not evidence for the game's.
