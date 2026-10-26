@@ -336,7 +336,7 @@ A character still standing that loses HP or shield SHALL hear the DMG it takes t
 
 ## Open
 
-- [ ] **A card's damage bonus applies only to the skills it names** — no source yet: the game's text for Jueyun Guoba's Normal Attack limit is not checked here; the repo check at `packages/genshin-world/src/services/gcg/cards/jueyunGuoba.ts` line 15 reads `context.skill?.kind`, which is repo code, not game evidence.
+- [ ] **A card's damage bonus applies only to the skills it names** — no source yet: the game's text for Jueyun Guoba's Normal Attack limit is not checked here; the repo check in the card's module `jueyunGuoba.ts`, line 15, reads `context.skill?.kind`, which is repo code, not game evidence.
 - [ ] **An opponent deck is legal only when every talent card it holds has its character in the deck** — no source yet: no legality check was found in the deck build or read scripts.
 - [ ] **While the opponent has declared its end, the side's prepared skills wait** — no source yet: the named source is repo code, which is not game evidence, and the wiki's rules page is not in `~/Esposter.noindex/cache/genshin-wiki`.
 - [ ] **The card values and card behaviours in the scenarios match the game** — no source yet: the scenarios' card values are not yet checked against `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/GCGCardExcelConfigData.json`, and the wiki's card pages are not in the cache.
