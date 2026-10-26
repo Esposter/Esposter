@@ -1,6 +1,6 @@
 ## Purpose
 
-Eula's kit as built: her strikes, charged attack and plunges, Icetide Vortex's press and hold, and Glacial Illumination with the Lightfall Sword and its Grimheart stacks, with both passives built, Ascension 4's stack and its reset of Icetide Vortex's cooldown among them, and Constellation 2's hold cooldown and Constellation 6's random stack left unbuilt.
+Eula's kit as built: her strikes, charged attack and plunges, Icetide Vortex's press and hold, and Glacial Illumination with the Lightfall Sword and its Grimheart stacks, with both passives built, Ascension 4's stack and its reset of Icetide Vortex's cooldown among them, and Constellation 2's hold cooldown left unbuilt.
 
 ## Requirements
 
@@ -92,7 +92,7 @@ From Ascension 1, two Grimheart stacks SHALL raise a Shattered Lightfall Sword.
 
 ### Requirement: Constellation 1, 4 and 6 effects
 
-From constellation 1, Eula SHALL gain a Physical DMG Bonus; from constellation 4, Glacial Illumination's initial hit SHALL gain a bonus against an enemy below half its HP; and from constellation 6, Eula SHALL start with five stacks.
+From constellation 1, Eula SHALL gain a Physical DMG Bonus; from constellation 4, Glacial Illumination's initial hit SHALL gain a bonus against an enemy below half its HP; and from constellation 6, Eula SHALL start with five stacks, and each stack the Sword gains from her strikes SHALL have a 50% chance of a second one.
 
 #### Scenario: Constellation 1 adds a Physical DMG Bonus
 
@@ -111,3 +111,9 @@ From constellation 1, Eula SHALL gain a Physical DMG Bonus; from constellation 4
 - **GIVEN** Eula is at constellation 6
 - **WHEN** Glacial Illumination is cast
 - **THEN** the Lightfall Sword starts with five stacks
+
+#### Scenario: Constellation 6 gives a stack a 50% chance of a second
+
+- **GIVEN** Eula is at constellation 6 and her Lightfall Sword is lit
+- **WHEN** one of her strikes gains the Sword a stack
+- **THEN** that stack is a second one with a 50% chance, as gcsim v2.47.2 rolls it
