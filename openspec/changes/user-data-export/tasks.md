@@ -21,6 +21,15 @@ Build order. Section 1 lands the row and the container the rest write to, sectio
       Verify: the builder tests pass for the posts, likes, friends and owned-room cases.
 - [x] 2.5 Add the archive's own records the inventory names: `searches.json`, `resources/{resourceId}/publications.json`, `resources/{resourceId}/links.json` and `moderation-actions.json`. Each is the person's own record, written as its row stores it: a search and a link store no time, so none is written for them, and a moderation action carries its type, time and the id it was taken against. Test first: the builder's output holds each, and another person's searches and the actions taken in rooms they do not own are not among them.
       Verify: the builder tests pass for the search, publication, link and moderation action cases.
+- [x] 2.6 Add the calls the person started (`calls.json`), with their room and thread, and no join id or time. Test first: the builder's output holds the person's own calls, and another person's call is not among them.
+      Verify: the builder tests pass for the calls case.
+- [x] 2.7 Add the person's own thread follows (`follows.json`), unfollows included, with no time. Test first: the builder's output holds the person's own decisions, and another person's follow of the same thread is not among them.
+      Verify: the builder tests pass for the follows case.
+- [x] 2.8 Add the person's memberships in rooms they do not own (`memberships.json`), with their settings there and their roles, and no other member's row, derived count or operational clock. Test first: the builder's output holds the person's membership and its roles, and not the other member's row or the person's row in a room they own.
+      Verify: the builder tests pass for the memberships case.
+- [x] 2.9 Add the person's own favorites and accesses (`favorites.json`, `accesses.json`). An access keeps the time it stores, and a favorite stores none. Test first: the builder's output holds the person's favorite and access, and not another person's.
+      Verify: the builder tests pass for the favorites and accesses case.
+- [ ] 2.10 Decide the program participant and survey response exports. Their rows hold no user id, so the person's own rows cannot be selected; the design's Not included names the reason. Until a decision stores a user id on those rows, neither file is written.
 
 ## 3. Request and link
 
