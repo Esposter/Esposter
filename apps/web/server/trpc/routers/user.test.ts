@@ -98,7 +98,14 @@ describe("userRouter", () => {
     takeOne(
       await mockContext.db
         .insert(dataExportsInUser)
-        .values({ blobName, expiresAt, readyAt: new Date(), status: DataExportStatus.Ready, userId: ownerId })
+        .values({
+          blobName,
+          expiresAt,
+          readyAt: new Date(),
+          requestedAt: new Date(),
+          status: DataExportStatus.Ready,
+          userId: ownerId,
+        })
         .returning(),
     );
 
@@ -564,6 +571,21 @@ describe("userRouter", () => {
     const readyDataExport = await insertReadyDataExport(userId, unexpiredAt);
 
     await expect(caller.readDataExport()).resolves.toStrictEqual(readyDataExport);
+  });
+
+  // The failed export is requested after the ready one, so it is the latest, and the settings page must show it
+  test("readDataExport returns the latest export when none is being built, a failed one included", async () => {
+    expect.hasAssertions();
+
+    await insertReadyDataExport(userId, unexpiredAt);
+    const failedDataExport = takeOne(
+      await mockContext.db
+        .insert(dataExportsInUser)
+        .values({ failureReason: "a", requestedAt: new Date(1), status: DataExportStatus.Failed, userId })
+        .returning(),
+    );
+
+    await expect(caller.readDataExport()).resolves.toStrictEqual(failedDataExport);
   });
 
   test("generateDataExportLink mints a read link to the owner's ready export", async () => {

@@ -194,15 +194,15 @@ export const userRouter = router({
       })),
     );
   }),
-  // The export the settings page shows: the one being built, else the latest ready one. A failed build is not returned,
-  // So it reads as no export and the person can ask again
+  // The export the settings page shows: the one being built, else the latest export of any status, so a failed build is
+  // Shown rather than hidden behind an older ready one
   readDataExport: standardAuthedProcedure.query<DataExportInUser | undefined>(async ({ ctx }) => {
     const activeDataExport = await readActiveDataExport(ctx);
     if (activeDataExport) return activeDataExport;
     else
       return ctx.db.query.dataExportsInUser.findFirst({
-        orderBy: { readyAt: "desc" },
-        where: { status: { eq: DataExportStatus.Ready }, userId: { eq: ctx.getSessionPayload.user.id } },
+        orderBy: { requestedAt: "desc" },
+        where: { userId: { eq: ctx.getSessionPayload.user.id } },
       });
   }),
   readStatuses: standardAuthedProcedure
