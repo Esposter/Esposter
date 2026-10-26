@@ -17,4 +17,4 @@
 
 ## 5. The regions the dump does not cover
 
-- [ ] 5.1 Add the blossoms of Fontaine, Natlan, Snezhnaya and Nod-Krai once the dump names their refresh rows. Verify: tests named after the scenario "Touching an outcrop spawns its enemies", run for each of the four regions.
+- [ ] 5.1 Add the blossoms of Fontaine, Natlan, Snezhnaya and Nod-Krai once each one's Ley Line Blossom points are fitted into its region data as outcrop places, as Mondstadt's are, and the dump's section order table names its sections. Verify: tests named after the scenario "Touching an outcrop spawns its enemies", run for each of the four regions.
