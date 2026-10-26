@@ -87,7 +87,7 @@
   "stances.meleeStance.burst.animationFrames": { "file": "burst.go", "line": 24, "source": "Gcsim", "value": 103 },
   "stances.meleeStance.burst.hits.length": { "cause": "Unsourced", "value": 1 },
   "stances.meleeStance.burst.hits.0.area": {
-    "cause": "Unsourced",
+    "cause": "Unclassified",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 8 }
   },
   "stances.meleeStance.burst.hits.0.gauge": { "file": "burst.go", "line": 50, "source": "Gcsim", "value": 2 },
