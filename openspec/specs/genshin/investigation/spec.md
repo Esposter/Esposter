@@ -33,3 +33,4 @@ The investigation count SHALL be the one kept from the game's daily reset at fou
 ## Open
 
 - [ ] **The reset is read in the game's time zone, `Asia/Shanghai`** — no source yet: the English text gives the reset as "4:00 AM ({TIMEZONE})" without naming the zone.
+- [ ] **The Mysterious Conch spots near Takashi are exempt from the cap** — owner decision: the cached Investigation page says they "do not count towards the daily cap"; the built rule has no exemption, and `design.md` names the page and the gap.

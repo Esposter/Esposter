@@ -36,3 +36,4 @@ flowchart TD
 ## Open
 
 - [ ] **The reset is read in the game's time zone, `Asia/Shanghai`** — no source yet: the English text gives the reset as "4:00 AM ({TIMEZONE})" without naming the zone.
+- [ ] **The Mysterious Conch spots near Takashi are exempt from the cap** — owner decision: the cached [Investigation](https://genshin-impact.fandom.com/wiki/Investigation) page, under Daily Cap, says the spots that may hold Mysterious Conch on the coast near Takashi "do not count towards the daily cap", and stay available after it. The built rule has no such exemption (`packages/genshin-world/src/services/investigation/checkIsInvestigationSpawning.ts`), so it stays as built until the owner decides.
