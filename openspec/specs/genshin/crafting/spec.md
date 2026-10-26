@@ -87,7 +87,7 @@ The number of a recipe that can be crafted SHALL be the least count its material
 
 ### Requirement: Condensed Resin stops at the five a player can hold
 
-Crafting Condensed Resin SHALL be refused once the bag has no room for another (the game's text 953962629 says no more than 5 can be held).
+Crafting Condensed Resin SHALL be refused once the bag has no room for another (the game's text 953962629 in `~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json` says no more than 5 can be held).
 
 #### Scenario: A craft of Condensed Resin is refused with five held
 
@@ -231,11 +231,11 @@ The crafting bench SHALL show each recipe the party has learned together with it
 
 ### Requirement: A conversion turns one material into another with its catalyst
 
-The bench SHALL hold each conversion of the game's conversion sections as a recipe that takes one material and the catalyst it names, makes one item and costs no Mora (the convert rows carry no Mora). A conversion SHALL be open from the start.
+The bench SHALL hold each conversion of the game's conversion sections as a recipe that takes one material and the catalyst it names, makes one item and costs no Mora (the convert rows of `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/CombineExcelConfigData.json` carry no Mora). A conversion SHALL be open from the start.
 
 #### Scenario: a conversion takes its material and its catalyst
 
-- **GIVEN** a conversion row of combine type nine that takes a boss material and Dream Solvent (combine type 9: Dvalin's Claw and Dream Solvent make Dvalin's Plume)
+- **GIVEN** a conversion row of combine type nine that takes a boss material and Dream Solvent (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/CombineExcelConfigData.json`, combine type 9: Dvalin's Claw and Dream Solvent make Dvalin's Plume)
 - **WHEN** the recipe build runs
 - **THEN** the conversion is held with its material and its catalyst, one result and no Mora
 
@@ -271,6 +271,6 @@ A conversion SHALL be listed under a tab of its own, apart from the craft tab of
 
 ## Open
 
-- [ ] **The bench stands in Mondstadt's Market District** — checked against `~/Esposter.noindex/genshin-dump-backup-6.6/BinOutput/Scene/SceneNpcBorn/scene3_npcborn.json`: NPC 10256 is born in group 133004082 at (2267.3, 216.0, -889.3), and the claim is not settled by it because that group's scene record, which names the region, is not in the dump backup.
+- [ ] **The bench stands in Mondstadt's Market District** — no source yet: the scene group record that names the region is not in the dump backup; NPC 10256 is born in group 133004082 (`~/Esposter.noindex/genshin-dump-backup-6.6/BinOutput/Scene/SceneNpcBorn/scene3_npcborn.json`) at (2267.3, 216.0, -889.3), which does not name it.
 - [ ] **A combine type eleven row disassembles a mechanical fish into drops** — no source yet: the dump's type 11 rows disassemble Maintenance Mek parts and a Secret Source Scout Sweeper, and name no mechanical fish.
 - [ ] **A talent's extra with no room in the bag is dropped** — no source yet: the game's overflow rule is not on disk; the repo's `packages/genshin-world/src/components/Crafting/Screen/Index.vue` (lines 182 to 185) keeps only the `.inventory` that `addInventoryItem` returns, which is the repo's rule and not evidence for the game's.
