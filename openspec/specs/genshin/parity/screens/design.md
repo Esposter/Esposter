@@ -18,5 +18,5 @@ A screen to be matched is a presentational component in the world package, with 
 
 - [ ] **Scaling by height alone was tried first** — no source yet: no commit, snapshot or note records that trial.
 - [ ] **A window narrower than 16:9 keeps its text inside its boxes** — no source yet: no test or screenshot of a narrow window is cited for the `--unit` scaling.
-- [ ] **The opening shows the game's first screens in turn and hands each on by its own timing** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The screen scales the game's 1920 by 1080 by the window's smaller axis, as the game scales its interface** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The opening shows the game's first screens in turn and hands each on by its own timing** — no source yet: the game's opening captures in `~/Esposter/genshin-parity/captures/`, not yet read for the screens' order and timing.
+- [ ] **The screen scales the game's 1920 by 1080 by the window's smaller axis, as the game scales its interface** — no source yet: the reference stills in `~/Esposter/genshin-parity/references/`, not yet read for the game's interface scale.
