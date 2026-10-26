@@ -6,7 +6,7 @@ Motion is matched frame by frame against sampled recordings, with a scene's own 
 
 ### Requirement: A recording's motion is matched frame by frame
 
-A recording's events SHALL be found by sampling it at ten frames a second, and each event SHALL then be read at its full rate over its own window (see the design's Open).
+A recording's events SHALL be found by sampling it at ten frames a second, and each event SHALL then be read at its full rate over its own window.
 
 #### Scenario: Events found and read
 
