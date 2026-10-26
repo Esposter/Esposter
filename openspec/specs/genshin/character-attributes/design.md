@@ -70,4 +70,4 @@ A new character is `createCharacter` over the roster: level 1 in its first phase
 - [ ] **The crossbow rows are the Traveler's discarded shooter forms, from 7.1** — no source yet: the dump gives the five crossbow rows no English name and holds no patch version.
 - [ ] **The tables run to hundreds of kilobytes** — no source yet: the published stats files are not in the checkout.
 - [ ] **The Traveler's base HP, ATK and DEF match the wiki at each level and phase** — no source yet: the wiki's Traveler page is not cached.
-- [ ] **The Traveler at level 90 with a Dull Blade gives the wiki's 10,874.91 Max HP and 682.52 DEF** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The Traveler at level 90 with a Dull Blade gives the wiki's 10,874.91 Max HP and 682.52 DEF** — no source yet: the wiki's Traveler page, named in Sources, is not in the wiki cache; the AnimeGameData tables named in Sources are not yet read for these numbers.
