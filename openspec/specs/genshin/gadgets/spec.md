@@ -96,4 +96,4 @@ Gadgets SHALL NOT yet be equipped to the quick-use key or used from the world.
 
 ## Open
 
-- [ ] **Z is bound to the quick-use gadget** — source: `packages/genshin-engine/src/input/InputActionBindingMap.ts`, where `InputAction.QuickUseGadget` lists `KeyZ`
+- [ ] **Z is bound to the quick-use gadget** — provisional: `packages/genshin-engine/src/input/InputActionBindingMap.ts` binds `KeyZ` to `InputAction.QuickUseGadget`, which is the build's own table, not a read of the game; the game's own key binding, read from its settings or a recorded keypress, settles it.
