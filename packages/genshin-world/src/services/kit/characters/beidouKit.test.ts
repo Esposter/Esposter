@@ -1,22 +1,30 @@
+import type { Enemy } from "#src/models/enemy/Enemy";
 import type { Combatant } from "#src/models/kit/Combatant";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHealthChangedEvent } from "#src/models/kit/KitHealthChangedEvent";
+import type { KitHit } from "#src/models/kit/KitHit";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
+import { ENEMY_CAMP_MEMBER } from "#src/services/enemy/constants.test";
+import { createEnemy } from "#src/services/enemy/createEnemy";
+import { readEnemyTables } from "#src/services/enemy/readEnemyTables";
 import { BEIDOU_CHARACTER_ID, createBeidouKitBehaviour } from "#src/services/kit/characters/beidouKit";
 import { createKitBody } from "#src/services/kit/createKitBody";
 import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
 import { stepKitEffects } from "#src/services/kit/effects/stepKitEffects";
 import { stepKitTestEffects } from "#src/services/kit/effects/stepKitTestEffects.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { strikeKitEnemies } from "#src/services/kit/strikeKitEnemies";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
 const BEIDOU_KIT = await readCharacterKit(GAME_DATA_LOCAL_BASE_URL, BEIDOU_CHARACTER_ID);
+const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const createBeidouCombatant = (constellationCount: number): Combatant => ({
   ascension: 0,
   attributes: computeCharacterAttributes([
@@ -47,14 +55,25 @@ const getStunningRevengeHit = (combatant: Combatant, activeCombatant: Combatant,
     0,
   );
 
+// An enemy that survives every strike a test gives it, so each one still reaches it
+const createSturdyEnemy = (): Enemy => {
+  const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
+  enemy.health = 1_000_000_000;
+  return enemy;
+};
+const strikeEnemy = (context: KitContext, combatant: Combatant, hit: KitHit, enemy: Enemy): void =>
+  strikeKitEnemies([{ body: context.body, combatant, hit, target: enemy }], context);
+
 describe(createBeidouKitBehaviour, () => {
   const OTHER_CHARACTER_ID = 10_000_049;
 
   test("reads each talent multiplier from her proud skill groups, to the wiki's two decimal places", () => {
     expect.hasAssertions();
-    const context = createKitTestContext(createBeidouCombatant(0));
+    const combatant = createBeidouCombatant(0);
+    const enemy = createSturdyEnemy();
+    const context = createKitTestContext(combatant, { enemyMap: new Map([[enemy.id, enemy]]), enemyTables });
     BEIDOU_KIT.elementalBurst.onStart?.(context);
-    takeOne(BEIDOU_KIT.normalAttacks).onStart?.(context);
+    strikeEnemy(context, combatant, takeOne(takeOne(BEIDOU_KIT.normalAttacks).hits), enemy);
     const discharges = stepKitTestEffects(1, context);
     const multipliers = [
       ...BEIDOU_KIT.normalAttacks.map((action) => takeOne(action.hits).talentMultiplier),
@@ -95,20 +114,28 @@ describe(createBeidouKitBehaviour, () => {
     expect(kitEffectState.effects).toStrictEqual([]);
   });
 
-  test("while the Targe stands, her strikes and charged attack discharge at most once a second, and none after it", () => {
+  test("while the Targe stands, a strike that hits an enemy discharges at most once a second, and none after the Targe ends", () => {
     expect.hasAssertions();
+    const combatant = createBeidouCombatant(0);
+    const enemy = createSturdyEnemy();
     const kitEffectState: KitEffectState = { effects: [] };
-    const context = createKitTestContext(createBeidouCombatant(0), { kitEffectState });
-    const firstStrike = takeOne(BEIDOU_KIT.normalAttacks);
+    const context = createKitTestContext(combatant, {
+      enemyMap: new Map([[enemy.id, enemy]]),
+      enemyTables,
+      kitEffectState,
+    });
+    const strike = (hit: KitHit) => strikeEnemy(context, combatant, hit, enemy);
+    const firstStrike = takeOne(takeOne(BEIDOU_KIT.normalAttacks).hits);
+    const chargedAttackHit = takeOne(BEIDOU_KIT.chargedAttack.hits);
     BEIDOU_KIT.elementalBurst.onStart?.(context);
-    firstStrike.onStart?.(context);
-    takeOne(BEIDOU_KIT.normalAttacks, 1).onStart?.(context);
+    strike(firstStrike);
+    strike(takeOne(takeOne(BEIDOU_KIT.normalAttacks, 1).hits));
     const strikeDischarges = stepKitTestEffects(2, context);
-    BEIDOU_KIT.chargedAttack.onStart?.(context);
+    strike(chargedAttackHit);
     const chargedAttackDischarges = stepKitTestEffects(2, context);
     // The Targe's 15 seconds run out, so a strike after them discharges nothing
     stepKitEffects(11, context);
-    firstStrike.onStart?.(context);
+    strike(firstStrike);
 
     expect(strikeDischarges.map(({ hit }) => [hit.element, hit.talentMultiplier])).toStrictEqual([
       [Element.Electro, 0.96],
@@ -117,6 +144,20 @@ describe(createBeidouKitBehaviour, () => {
       [Element.Electro, 0.96],
     ]);
     expect(kitEffectState.effects).toStrictEqual([]);
+  });
+
+  test("a strike that hits no enemy discharges nothing, though its attack starts", () => {
+    expect.hasAssertions();
+    const combatant = createBeidouCombatant(0);
+    const context = createKitTestContext(combatant);
+    BEIDOU_KIT.elementalBurst.onStart?.(context);
+    takeOne(BEIDOU_KIT.normalAttacks).onStart?.(context);
+    strikeKitEnemies(
+      [{ body: context.body, combatant, hit: takeOne(takeOne(BEIDOU_KIT.normalAttacks).hits) }],
+      context,
+    );
+
+    expect(stepKitTestEffects(2, context)).toStrictEqual([]);
   });
 
   test.each([
