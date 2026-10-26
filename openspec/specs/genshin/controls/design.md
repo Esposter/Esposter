@@ -67,16 +67,7 @@ The bindings of places and modes the world does not have are left out (`packages
 
 ## Sources
 
-- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: the default PC, Xbox and PlayStation binding of every action and menu, the ones a player cannot change, and the bumper's combinations on a pad.
-- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki, Basic Settings table, quoted "Default PC Binding": each action's default key on a PC and an Xbox pad, with M for the map and F1, F3 and F5 for the handbook, the wish and the events.
-- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki, Basic Settings table, quoted "Switch to Party Member and Use Elemental Burst": bound to Left Alt on a PC.
-- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki, Basic Settings table, quoted "Open Paimon Menu": bound to Esc on a PC.
-- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki, Basic Settings table, quoted "Switch to Walk/Run": bound to Left Ctrl on a PC, and the walk switch.
-- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki, Basic Settings table, quoted "Quick-Use Gadget": the left bumper with B on an Xbox pad.
-- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki, Basic Settings table, quoted "Elemental Burst": Y on an Xbox pad and triangle on a PlayStation pad.
-- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki, Basic Settings table, quoted "Open the settings menu (within Serenitea Pot/The Cat's Tail)": F6.
-- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki, Basic Settings table, quoted "Open the Furnishing Screen (inside Serenitea Pot)": F7.
-- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki, Basic Settings table, quoted "Open Stellar Reunion (Only active when conditions are met)": F8.
+- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: the default PC, Xbox and PlayStation binding of every action and menu, the ones a player cannot change, and the bumper's combinations on a pad. The page is not in the cache, so these claims are unread here (see Open).
 - [Standard Gamepad](https://w3c.github.io/gamepad/#remapping), W3C Gamepad: the standard layout's button order, which `GAMEPAD_BUTTONS` follows.
 - [Pointer Lock 2.0](https://w3c.github.io/pointerlock/), W3C: the user agent leaving the lock on `Escape`.
 - [User activation](https://html.spec.whatwg.org/multipage/interaction.html#activation-triggering-input-event), WHATWG HTML: `Escape` gives no activation, so no lock can be requested from it.
@@ -95,3 +86,5 @@ The bindings of places and modes the world does not have are left out (`packages
 - [ ] **F6, F7 and F8 are the Serenitea Pot, the Cat's Tail and Stellar Reunion** — no source yet: the game's controls list for those screens, which the wiki cache does not hold.
 - [ ] **Esc opens the Paimon menu on PC** — no source yet: the wiki's Controls page is not in the cache.
 - [ ] **Left Shift is the game's sprint key** — no source yet: the wiki's Controls page is not in the cache.
+- [ ] **On a keyboard, Left Alt held with a number switches to that party member and uses its burst** — no source yet: the wiki's Controls page is not in the cache.
+- [ ] **Left Control is the game's walk switch on a PC** — no source yet: the wiki's Controls page is not in the cache.
