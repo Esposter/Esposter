@@ -24,10 +24,10 @@ flowchart TD
 
 ## The record
 
-`pnpm -C scripts genshin:assets scene-groups` publishes one record, `sceneGroups/scene3`, as the `sceneGroups` dataset of the [hosted game data](../hosted-game-data/design.md). It holds two maps.
+`pnpm -C scripts genshin:assets scene-groups` publishes one record, `sceneGroups/scene3`, as the `sceneGroups` dataset of the [hosted game data](../hosted-game-data/design.md). It holds two maps (`scripts/src/services/genshinAssets/sceneGroups/buildSceneGroups.ts`).
 
-- **`groups`, each group's members by group id.** A member (`SceneGroupMember`) is its kind, one of `SceneGroupMemberKind`'s NPC, gadget or trigger; its object id in that kind's own table; its config id within the group where a source names one; its place; the suites it is born in where known; and the `SceneGroupSource` that named it. One NPC may stand twice in a group, so the members are a list with no key of their own.
-- **`buildings`, the scene's service points by point id.** The scene marks each city's services with points of one kind, each naming its service (`Restaurant`, `Alchemy`, `Blacksmith`, `Reputation`, `Adventurers`, each region's carrying a suffix such as `Restaurant_liyue`) and holding its place and turn. They belong to no group, so they sit beside the groups rather than in one.
+- **`groups`, each group's members by group id.** A member (`SceneGroupMember`) is its kind, one of `SceneGroupMemberKind`'s NPC, gadget or trigger; its object id in that kind's own table; its config id within the group where a source names one; its place; the suites it is born in where known; and the `SceneGroupSource` that named it (`packages/genshin-world/src/models/sceneGroup/SceneGroupMember.ts`). One NPC may stand twice in a group, so the members are a list with no key of their own.
+- **`buildings`, the scene's service points by point id.** The scene marks each city's services with points of one kind, each naming its service (`Restaurant`, `Alchemy`, `Blacksmith`, `Reputation`, `Adventurers`, each region's carrying a suffix such as `Restaurant_liyue`) and holding its place and turn. They belong to no group, so they sit beside the groups rather than in one (`scripts/src/services/genshinAssets/sceneGroups/readSceneBuildingPoints.ts`).
 
 A place (`SceneGroupPlace`) is a ground point in the game's own axes, the height and the turn about the vertical in degrees where its source gives them, and the source that placed it. That source may differ from the member's: a viewpoint is named by the codex and placed by the official map.
 
@@ -41,23 +41,23 @@ A place (`SceneGroupPlace`) is a ground point in the game's own axes, the height
 | A trigger member's group and id               | `TriggerExcelConfigData`, its open-world rows                                                                   | `TriggerTable`     |
 | A building point's service, place and turn    | The dump's `scene3_point.json`, the points of Mondstadt's restaurant point's kind                               | `ScenePoints`      |
 
-An NPC birth's own `configId` is the NPC's id, so it becomes the member's object id, and the member's config id within the group stays unset. The two tables name the scene each row belongs to, and only the open world's are kept.
+An NPC birth's own `configId` is the NPC's id, so it becomes the member's object id, and the member's config id within the group stays unset. The two tables name the scene each row belongs to, and only the open world's are kept (`scripts/src/services/genshinAssets/sceneGroups/readViewpointMembers.ts`, which filters on the open-world `sceneId`; `scripts/src/services/genshinAssets/sceneGroups/buildSceneGroups.ts`, which filters the triggers the same way; `packages/genshin-world/src/models/sceneGroup/SceneGroupSource.ts` for the five sources, and `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/ViewCodexExcelConfigData.json` and `TriggerExcelConfigData.json` as the tables they read).
 
 ## The viewpoints' match
 
 `pnpm -C scripts genshin:assets points` reads each Viewpoint point's info as well as the point list, and keeps their text in `viewpoints.json` beside the other map references. Each point's text names the viewpoint it marks in English, often beside a region or a note on reaching it, and no id joins it to the codex. So `matchViewpointPoints` joins them by name:
 
-- **A candidate holds the name as whole words.** Both texts are lowercased, their apostrophes dropped (the codex writes "Islands" where the map writes "Island's"), and every other run of punctuation read as a space, so "Shut" is not found inside "Shutter".
-- **Points are taken by elimination.** A viewpoint left with one candidate that no other viewpoint with one candidate shares takes it; the point is then struck from every other viewpoint's candidates, and the round repeats. A name written inside a longer one, as "The Mausoleum of King Deshret" is in a point naming "Aaru's Shut" there, is settled once the longer one takes its own point.
-- **What stays ambiguous is left unplaced.** A viewpoint whose name is on several points, or which shares its only point, keeps no place, and so does one whose point lies on a layer under the ground, whose floor the place cannot hold. The publish's notes count those left out, a handful of the codex's open-world rows.
+- **A candidate holds the name as whole words.** Both texts are lowercased, their apostrophes dropped (the codex writes "Islands" where the map writes "Island's"), and every other run of punctuation read as a space, so "Shut" is not found inside "Shutter" (`scripts/src/services/genshinAssets/sceneGroups/matchViewpointPoints.ts`).
+- **Points are taken by elimination.** A viewpoint left with one candidate that no other viewpoint with one candidate shares takes it; the point is then struck from every other viewpoint's candidates, and the round repeats. A name written inside a longer one, as "The Mausoleum of King Deshret" is in a point naming "Aaru's Shut" there, is settled once the longer one takes its own point (`scripts/src/services/genshinAssets/sceneGroups/matchViewpointPoints.ts`).
+- **What stays ambiguous is left unplaced.** A viewpoint whose name is on several points, or which shares its only point, keeps no place, and so does one whose point lies on a layer under the ground, whose floor the place cannot hold (`scripts/src/services/genshinAssets/sceneGroups/matchViewpointPoints.ts`; `scripts/src/services/genshinAssets/sceneGroups/readViewpointMembers.ts`). The publish's notes count those left out, a handful of the codex's open-world rows.
 
 ## What the record leaves out
 
 Every field below is held only by the group scripts, which are the server's and never in the client ([game data formats](../game-data-formats/design.md)), so the record never fills them and nothing here guesses one from a nearby source. A unit needing one takes it from the next source on its own page: the official map's points for camps, puzzles, chests and outcrops, the quests' own location guides for a go-to, and the wiki for the keepers and the residents' hours, each an estimate marked provisional where no source gives it.
 
-- **A camp's monsters and their levels.** No member is a monster, so the [enemies](../enemies/design.md) keep Mondstadt's stand-in camp.
-- **A puzzle's mechanisms and a chest's gadget.** The only gadgets are the viewpoints.
-- **A trigger's region.** A trigger member names its group but has no place. A quest's go-to step is placed instead by its own location guide, which names a dummy point the client's scene3_dummy_points.lua holds ([quests](../quests/design.md)).
+- **A camp's monsters and their levels.** No member is a monster, so the [enemies](../enemies/design.md) keep Mondstadt's stand-in camp (`scripts/src/services/genshinAssets/sceneGroups/buildSceneGroups.ts`, whose sources hold no monster).
+- **A puzzle's mechanisms and a chest's gadget.** The only gadgets are the viewpoints (`scripts/src/services/genshinAssets/sceneGroups/buildSceneGroups.ts`).
+- **A trigger's region.** A trigger member names its group but has no place (`scripts/src/services/genshinAssets/sceneGroups/buildSceneGroups.ts`). A quest's go-to step is placed instead by its own location guide, which names a dummy point the client's scene3_dummy_points.lua holds ([quests](../quests/design.md)).
 - **The suites that move a resident by the hour.** The births give each NPC one spot, so no resident has a night spot.
 - **The NPCs the births leave out.** The cities' service keepers among them: Hertha, Wagner, Katheryne, Sara and Timaeus each have no birth, so the record places their services' building points but not them.
 - **Nod-Krai's NPC placements.** No Nod-Krai NPC is placed in the record, so `packages/genshin-world/src/data/regions/nod-krai.json` keeps its `residents` empty, and the [resident schedules](../../../changes/genshin-resident-schedules/proposal.md) change waits on them.
@@ -82,3 +82,12 @@ Every field below is held only by the group scripts, which are the server's and 
 
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the NPC births, the viewpoint codex, the trigger table and the scene's points.
 - [Teyvat Interactive Map](https://act.hoyolab.com/ys/app/interactive-map/index.html), HoYoLAB: the official map, whose Viewpoint points and their text place the viewpoints.
+
+## Open
+
+- [ ] **The hosted NPC births hold each NPC's spot, suites and config id, and leave out Hertha, Wagner, Katheryne, Sara and Timaeus** — no source yet: `sceneNpcBorn/scene3` is hosted, not in the local dump, so the births were not checked.
+- [ ] **The scene's service points name Restaurant, Alchemy, Blacksmith, Reputation and Adventurers, with suffixes such as `Restaurant_liyue`** — no source yet: no `scene3_point.json` was found under `~/Esposter.noindex/genshin-parity/extracted/`, and the cooking page's stove place rests on the same point.
+- [ ] **`viewpoints.json` keeps the viewpoints' text beside the other map references** — no source yet: no `viewpoints.json` was found in `~/Esposter.noindex/genshin-parity/`.
+- [ ] **The publish's notes count a handful of the codex's left-out rows** — no source yet: the publish notes were not run for the count in this pass.
+- [ ] **`nod-krai.json` keeps its residents empty** — the file holds one resident, `lempo-isle` (id 7086), so the claim is out of date (`packages/genshin-world/src/data/regions/nod-krai.json`).
+- [ ] **The group scripts hold the fields this page leaves out** — no source yet: the client's group scripts are not in the repo or the dump, and the dummy point in `~/Esposter.noindex/genshin-parity/extracted/lua/raw/scene3_dummy_points.json` was not checked against the quests' location guide.
