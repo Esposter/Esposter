@@ -15,12 +15,12 @@ export const FREE_CAMERA_MAX_PITCH: number = Math.PI / 2 - 0.01;
 // Provisional: the game's defaults, read off the Settings screen's Controls tab in the interface export. The wiki's
 // Settings page gives no default for the slope pitch, so it starts off and the camera changes only where a player turns
 // It on
-export const FOLLOW_CAMERA_DEFAULT_SETTINGS: FollowCameraSettings = {
+export const FOLLOW_CAMERA_DEFAULT_SETTINGS: Readonly<FollowCameraSettings> = Object.freeze({
   defaultDistance: 5,
   horizontalSensitivity: 3,
   slopePitch: false,
   verticalSensitivity: 3,
-};
+} satisfies FollowCameraSettings);
 export const FOLLOW_CAMERA_NEUTRAL_SENSITIVITY = 3;
 // The follow camera's pivot, at this share of the body's height above its feet, as recordings of the game frame its
 // Characters. Its vertical field of view in degrees, the one the game sets its world camera to. The steepest it looks
