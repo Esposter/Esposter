@@ -1,6 +1,6 @@
 ## Purpose
 
-Yoimiya's kit as built, with Niwabi Fire-Dance's Blazing Arrows and Ryuukin Saxifrage's initial hit with Aurous Blaze and its explosion, her Constellation 1 extension and defeat ATK, her Constellation 2 Pyro CRIT bonus, and her Ascension 4 ATK share and Constellations 4 and 6 left unbuilt.
+Yoimiya's kit as built, with Niwabi Fire-Dance's Blazing Arrows and Ryuukin Saxifrage's initial hit with Aurous Blaze and its explosion, her Constellation 1 extension and defeat ATK, her Constellation 2 Pyro CRIT bonus, her Constellation 4 cooldown cut on each explosion, and her Ascension 4 ATK share and Constellation 6 left unbuilt.
 
 ## Requirements
 
@@ -112,11 +112,27 @@ From Constellation 1, Aurous Blaze SHALL last 4 seconds longer, and defeating an
 - **WHEN** Ryuukin Saxifrage marks an enemy, and a hit then defeats it
 - **THEN** the mark lasts 10 seconds and no ATK is raised
 
-### Requirement: Unbuilt Ascension 4 passive and Constellations 4 and 6
+### Requirement: Constellation 4 cuts the skill cooldown on each explosion
 
-Yoimiya's Ascension 4 passive and Constellations 4 and 6 SHALL have no effect in the world yet.
+From Constellation 4, each Aurous Blaze explosion SHALL cut Niwabi Fire-Dance's cooldown by 1.2 seconds, whichever member's hit sets it off.
 
-#### Scenario: Constellation 4 or 6 has no effect
+#### Scenario: An explosion cuts the skill's cooldown
 
-- **WHEN** Yoimiya holds Constellation 4 or 6
+- **GIVEN** Yoimiya has Constellation 4 and Niwabi Fire-Dance's cooldown has 5 seconds left
+- **WHEN** an Aurous Blaze explosion sets off
+- **THEN** the cooldown has 3.8 seconds left
+
+#### Scenario: Constellation 3 changes nothing
+
+- **GIVEN** Yoimiya has Constellation 3
+- **WHEN** an Aurous Blaze explosion sets off
+- **THEN** Niwabi Fire-Dance's cooldown is unchanged
+
+### Requirement: Unbuilt Ascension 4 passive and Constellation 6
+
+Yoimiya's Ascension 4 passive and Constellation 6 SHALL have no effect in the world yet.
+
+#### Scenario: Constellation 6 has no effect
+
+- **WHEN** Yoimiya holds Constellation 6
 - **THEN** no effect of that constellation is applied

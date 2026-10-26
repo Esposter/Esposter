@@ -11,6 +11,7 @@ import { createKitBody } from "#src/services/kit/createKitBody";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { changeKitSkillCooldown } from "#src/services/kit/effects/changeKitSkillCooldown";
 import { checkHasKitStatus } from "#src/services/kit/effects/checkHasKitStatus";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { findKitStance } from "#src/services/kit/effects/findKitStance";
@@ -64,13 +65,16 @@ const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_PYRO_DAMAGE_BONUS = 0.25;
 const CONSTELLATION_2_SECONDS = 6;
 const CONSTELLATION_2_SOURCE = "yoimiya-constellation-2";
+const CONSTELLATION_4 = 4;
+// Each Aurous Blaze explosion cuts Niwabi Fire-Dance's cooldown by 72 frames, as gcsim (MIT) yoimiya/burst.go does
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yoimiya/burst.go
+const CONSTELLATION_4_SKILL_COOLDOWN_CUT_SECONDS = 1.2;
 
 // Yoimiya's behaviour: Niwabi Fire-Dance's stance of Blazing Arrows for the table's seconds, ending as she leaves the
 // Field, and Ryuukin Saxifrage marking the first enemy its hit strikes with Aurous Blaze, whose explosion another
 // Member's hits set off, and Constellation 1 extends it and raises her ATK on a defeat. Constellation 2 raises her
-// Pyro DMG on a CRIT. Ascension 1's Pyro DMG Bonus count is built. Her Ascension 4 passive and Constellations 4 and 6
-// Are not built yet
-// Constellation 4 needs Aurous Blaze's explosions to cut Niwabi Fire-Dance's cooldown, which the kit does not build
+// Pyro DMG on a CRIT, and Constellation 4 cuts Niwabi Fire-Dance's cooldown on each explosion. Ascension 1's Pyro DMG
+// Bonus count is built. Her Ascension 4 passive and Constellation 6 are not built yet
 // Constellation 6 needs the Niwabi Fire-Dance Normal Attacks' extra arrow chance, which the kit does not build
 export const createYoimiyaKitBehaviour = ({
   kit,
@@ -96,7 +100,7 @@ export const createYoimiyaKitBehaviour = ({
     },
     // The burst's hit marks the first enemy it strikes with Aurous Blaze, and a hit another member deals a marked enemy
     // As a kind of attack off its cooldown sets off the explosion on it
-    onKitEvent: (event, { activeCombatant, kitEffectState }, combatant) => {
+    onKitEvent: (event, { activeCombatant, kitEffectState, party }, combatant) => {
       const { characterId } = combatant;
       if (event.kind !== KitEventKind.DamageTaken) return;
       const { attackTag, enemy, hit, isCritical, isDefeated, striker } = event;
@@ -166,6 +170,8 @@ export const createYoimiyaKitBehaviour = ({
       castKitSummon(kitEffectState, createKitBody(enemy.position), combatant, [aurousBlazeExplosion], {
         attackTag: AttackTag.ElementalBurst,
       });
+      if (combatant.constellationCount >= CONSTELLATION_4)
+        changeKitSkillCooldown(party, characterId, -CONSTELLATION_4_SKILL_COOLDOWN_CUT_SECONDS);
     },
     // Niwabi Fire-Dance is a stance for the table's seconds whose normal attacks are the Blazing Arrows
     skill: {
