@@ -11,7 +11,7 @@ Lohen's five strikes, charged attack and plunges SHALL land on provisional timin
 #### Scenario: Five strikes in sequence
 
 - **WHEN** the player uses normal attack five times in a row
-- **THEN** the five strikes land in order on the enemies within reach (`attack.go` line 16)
+- **THEN** the five strikes land in order on the enemies within reach
 
 #### Scenario: Plunge lands on the enemies in reach
 
