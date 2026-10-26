@@ -316,4 +316,4 @@ A character at no health SHALL be defeated: its equipment and statuses SHALL be 
 - [ ] **A frozen target takes two more damage, as the game does** — no source yet: the wiki's rules page is not in the cache.
 - [ ] **Leave It to Me makes the next switch a fast action and is spent** — no source yet: the card's text was not found in the medium text map.
 - [ ] **Shimenawa's Reminiscence reduces a cost for its side, as the game's text says** — no source yet: its card text was not found in the medium text map.
-- [ ] **A second reaction of the same kind joins the card already there** — no source yet: the join in the effect that places the reaction's card was not read.
+- [ ] **A second reaction of the same kind joins the card already there** — no source yet: the named source is repo code, which is not game evidence, and the wiki's card pages are not in `~/Esposter.noindex/cache/genshin-wiki`.
