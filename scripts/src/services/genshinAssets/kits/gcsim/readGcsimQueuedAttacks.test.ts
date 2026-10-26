@@ -1076,6 +1076,66 @@ describe(readGcsimQueuedAttacks, () => {
     ).toStrictEqual([[8, 1]]);
   });
 
+  test("queues the call after an else if's return, which runs only where the branch before it does not", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          GO_PACKAGE_CLAUSE,
+          "",
+          "func (c *char) burst() {",
+          "\tc.Core.Tasks.Add(func() {",
+          "\t\tif c.extended {",
+          "\t\t\tc.extend()",
+          "\t\t} else if c.Base.Cons < 4 {",
+          "\t\t\treturn",
+          "\t\t}",
+          "\t\tc.Core.QueueAttack(ai, ap, 0, 0)",
+          "\t}, 137)",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(({ delay, line }) => [
+        line,
+        delay,
+      ]),
+    ).toStrictEqual([[10, 137]]);
+  });
+
+  test("drops the call after a constellation block that returns, at the constellations its test holds", () => {
+    expect.hasAssertions();
+
+    const sources = [
+      {
+        path: "burst.go",
+        source: [
+          GO_PACKAGE_CLAUSE,
+          "",
+          "func (c *char) burst() {",
+          "\tc.Core.Tasks.Add(func() {",
+          "\t\tif c.Base.Cons < 4 {",
+          "\t\t\treturn",
+          "\t\t}",
+          "\t\tc.Core.QueueAttack(ai, ap, 0, 0)",
+          "\t}, 137)",
+          "}",
+        ].join("\n"),
+      },
+    ];
+
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG).map(({ delay }) => delay),
+    ).toStrictEqual([]);
+    expect(
+      readGcsimQueuedAttacks(sources, evaluateGoConstants(sources), GCSIM_EMPTY_CONFIG, 4).map(({ delay }) => delay),
+    ).toStrictEqual([137]);
+  });
+
   test("reads no delay from a closure a function returns whose schedule's delay it cannot read", () => {
     expect.hasAssertions();
 

@@ -21,8 +21,11 @@ const checkIsReturning = (tokens: readonly GoToken[], open: number, close: numbe
 export const readReturnedConstellationGates = (tokens: readonly GoToken[]): ReturnedConstellationGate[] => {
   const gates: ReturnedConstellationGate[] = [];
   for (const [ifPosition, token] of tokens.entries()) {
+    // An `if` after `else` runs only where the branches before it do not, so its return does not end the code after its
+    // Block at every constellation its test holds
     if (
       token.text !== "if" ||
+      tokens[ifPosition - 1]?.text === "else" ||
       tokens[ifPosition + 1]?.text !== "c" ||
       !checkIsGoPunctuation(tokens[ifPosition + 2], ".") ||
       tokens[ifPosition + 3]?.text !== "Base" ||
