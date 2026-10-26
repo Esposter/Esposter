@@ -11,7 +11,7 @@ A Liyue building SHALL be a stone terrace with lacquered columns and beams, and 
 #### Scenario: Three tiers stack upward
 
 - **WHEN** a building is built with three roof tiers
-- **THEN** each tier above the first is raised one tier height above the one below
+- **THEN** each tier above the first is raised one tier height above the one below (`packages/genshin-world/src/services/liyue/createLiyueBuildingGeometries.test.ts:6`)
 
 #### Scenario: Single tier
 
@@ -25,7 +25,7 @@ Along each wall a building's bays SHALL be the fewest that keep each no wider th
 #### Scenario: Wall wider than a bay
 
 - **WHEN** a wall is longer than three metres
-- **THEN** it is divided into the fewest evenly spaced bays, none wider than three metres
+- **THEN** it is divided into the fewest evenly spaced bays, none wider than three metres (`packages/genshin-world/src/services/liyue/constants.ts:18`)
 
 ### Requirement: Lattice openwork
 
@@ -62,3 +62,12 @@ The building palette SHALL draw lacquer in red and gold and terraces in stone, w
 
 - **WHEN** a building is shown
 - **THEN** its columns and beams read red and gold and its terrace reads as stone
+
+## Open
+
+- [ ] **A single roof tier rises from the top of the walls** — no source yet: `createLiyueBuildingGeometries.test.ts` covers the three-tier stack only.
+- [ ] **Eave corners curl upward past the middle** — no source yet: `createLiyueRoofTierGeometry.test.ts` checks the rise to a flat top only.
+- [ ] **The lattice shows bars standing flat to the wall** — no source yet: no test or reference checks it.
+- [ ] **Columns and beams read red and gold, and the terrace reads as stone** — no source yet: no render of the kit has been measured against a Liyue reference.
+- [ ] **A building is drawn in three draws, one for each material** — no source yet: no test counts its draws.
+- [ ] **A wall is divided into the fewest evenly spaced bays, with a column at each bay's start and at the far end** — no source yet: `getLiyueBays` has no test.
