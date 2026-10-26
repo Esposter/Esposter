@@ -191,5 +191,4 @@ Non-Latin game text SHALL be drawn in a system face, since the game's own faces 
 ## Open
 
 - [ ] **The text maps are decoded from the installed client** — contradicted by `openspec/specs/genshin/game-text/design.md`: the text maps stay the community dump's until a decoder covers the current patch.
-- [ ] **The app's own labels stay English** — no source yet: the app was not searched for a locale switch in this pass.
 - [ ] **HYWenHei does not cover Chinese, Japanese, Korean or Thai** — no source yet: HYWenHei's glyph coverage, from a font file the repo does not track.
