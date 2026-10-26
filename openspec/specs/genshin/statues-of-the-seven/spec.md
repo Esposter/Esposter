@@ -113,8 +113,9 @@ Until the world screen holds the region's level, the pool and the auto-recover s
 - **THEN** the statue acts as a jump
 - **AND** no Oculus is offered to the region
 
-## Open
+## Sources
 
-- [ ] **The maximum stamina stops at 240, as the game's statues raise it** — no source yet: the wiki's Statue of The Seven page is not in the genshin-wiki cache, and no dump table read holds the cap.
-- [ ] **The Restorative Power holds 5,000 for each unlocked statue and refills 1% every 15 seconds** — no source yet: the wiki's page is not in the cache, and no dump table read holds these numbers.
-- [ ] **A click heals a tenth of Max HP, and auto-recover revives the fallen at 35%** — no source yet: the wiki's Statue of The Seven page is not in the genshin-wiki cache.
+- [Statue of The Seven](https://genshin-impact.fandom.com/wiki/Statue_of_The_Seven), Genshin Impact Wiki: the maximum stamina, "until a total of 240 Maximum Stamina is reached."
+- [Statue of The Seven](https://genshin-impact.fandom.com/wiki/Statue_of_The_Seven), Genshin Impact Wiki: the pool's refill, "Restorative Power regenerates itself at a rate of 1% of its maximum every 15 seconds"; its maximum is 5,000 for each unlocked Statue of The Seven and each unlocked Statue of the New Moon.
+- [Statue of The Seven](https://genshin-impact.fandom.com/wiki/Statue_of_The_Seven), Genshin Impact Wiki: the click heal, "Each click heals the character by 10% of their Max HP."
+- [Statue of The Seven](https://genshin-impact.fandom.com/wiki/Statue_of_The_Seven), Genshin Impact Wiki: the fallen's revive, "Fallen characters are revived immediately with 35% of their maximum HP."
