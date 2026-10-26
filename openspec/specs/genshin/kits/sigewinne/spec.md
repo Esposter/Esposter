@@ -1,6 +1,6 @@
 ## Purpose
 
-Sigewinne's kit as built: her three strikes, Fully-Charged Aimed Shot, collision and two plunges, Bolstering Bubblebalm's five bubbles, Super Saturated Syringing's six waves and Semi-Strict Bedrest, with her healing, her hold tiers and her Surging Blade not built.
+Sigewinne's kit as built: her three strikes, Fully-Charged Aimed Shot, collision and two plunges, Bolstering Bubblebalm's five bubbles, Super Saturated Syringing's six waves, Semi-Strict Bedrest and Constellation 2 built, with her healing, her hold tiers, her Surging Blade and her Constellations 1, 4 and 6 not built.
 
 ## Requirements
 
@@ -72,9 +72,31 @@ From Ascension 1, each press of Rebound Hydrotherapy SHALL give Sigewinne an 8% 
 - **WHEN** the player presses Rebound Hydrotherapy
 - **THEN** she gains no Hydro DMG Bonus
 
+### Requirement: Constellation 2 Hydro RES cut and Bubbly Shield
+
+From Constellation 2, each enemy that a bubble or a wave of hers strikes SHALL lose 35% Hydro RES for 8 seconds, and the press and the burst each SHALL cast a Bubbly Shield of 30% of her Max HP for the action's seconds.
+
+#### Scenario: A bubble or a wave cuts the enemy's Hydro RES
+
+- **GIVEN** Sigewinne has Constellation 2
+- **WHEN** a bubble or a wave strikes an enemy
+- **THEN** that enemy loses 35% Hydro RES for 8 seconds
+
+#### Scenario: The press and the burst cast a Bubbly Shield
+
+- **GIVEN** Sigewinne has Constellation 2
+- **WHEN** the player presses Rebound Hydrotherapy or casts Super Saturated Syringing
+- **THEN** she gains a Hydro Bubbly Shield of 30% of her Max HP for the action's seconds
+
+#### Scenario: Below Constellation 2 nothing is cast
+
+- **GIVEN** Sigewinne has Constellation 1
+- **WHEN** the player presses Rebound Hydrotherapy or casts Super Saturated Syringing
+- **THEN** no Bubbly Shield is cast and no Hydro RES is cut
+
 ### Requirement: Unbuilt Sigewinne effects
 
-The Mini-Stration Bubble, the bubbles' hold tiers, the bubbles' and final bounce's healing, Surging Blade, her Ascension 1 Convalescence, her Ascension 4 healing bonus, her constellation passives and the droplets her press and burst spawn SHALL NOT take effect.
+The Mini-Stration Bubble, the bubbles' hold tiers, the bubbles' and final bounce's healing, Surging Blade, her Ascension 1 Convalescence, her Ascension 4 healing bonus, her Constellations 1, 4 and 6, and the droplets her press and burst spawn SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
