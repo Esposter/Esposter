@@ -6,7 +6,7 @@ Every approved screen is held by a visual suite whose images live beside its com
 
 ### Requirement: Each approved screen matches its own last approved image
 
-The visual suite SHALL render every screen and each of its variants and SHALL match each against its own last approved image, kept beside its component.
+The visual suite SHALL render every screen and each of its variants and SHALL match each against its own last approved image, kept beside its component (`packages/genshin-world/parity/screens.visual.ts`).
 
 #### Scenario: Screen matches its image
 
@@ -22,7 +22,7 @@ The visual suite SHALL render every screen and each of its variants and SHALL ma
 
 ### Requirement: The visual suite runs apart from the ordinary test run
 
-The visual suite SHALL run in its own run, so that an ordinary test run never starts a browser.
+The visual suite SHALL run in its own run, so that an ordinary test run never starts a browser (`packages/genshin-world/vitest.browser.config.ts`).
 
 #### Scenario: Ordinary test run
 
@@ -32,7 +32,7 @@ The visual suite SHALL run in its own run, so that an ordinary test run never st
 
 ### Requirement: The opening's run covers every handoff
 
-The opening's run SHALL play the whole opening, including the login's flight, and SHALL fail if any screen is skipped along the way.
+The opening's run SHALL play the whole opening, including the login's flight, and SHALL fail if any screen is skipped along the way (`packages/genshin-world/src/components/Game/Opening/Index.browser.test.ts`, see Open).
 
 #### Scenario: Opening played through
 
@@ -43,7 +43,7 @@ The opening's run SHALL play the whole opening, including the login's flight, an
 
 ### Requirement: A moving screen is held still through its fixture's still state
 
-A moving screen SHALL be held still for the visual suite through its fixture's still state, which the parity page and the references do not read.
+A moving screen SHALL be held still for the visual suite through its fixture's still state, which the parity page and the references do not read (`packages/genshin-world/parity/screens.visual.ts`).
 
 #### Scenario: Login scene held still
 
@@ -53,7 +53,7 @@ A moving screen SHALL be held still for the visual suite through its fixture's s
 
 ### Requirement: An image is written only by approval
 
-An image SHALL be written only by approval of its screen, and a whole-suite run without the update option SHALL NOT write an image.
+An image SHALL be written only by approval of its screen, and a whole-suite run without the update option SHALL NOT write an image (`scripts/src/services/genshinParity/reference/approveReference.ts`).
 
 #### Scenario: First run with no image
 
@@ -70,10 +70,14 @@ An image SHALL be written only by approval of its screen, and a whole-suite run 
 
 ### Requirement: A pass's image waits on its comparison before it counts as approved
 
-A screen image written by a pass SHALL NOT count as approved until its comparison clears the screen's bar.
+A screen image written by a pass SHALL NOT count as approved until its comparison clears the screen's bar (`scripts/src/services/genshinParity/reference/decideApproval.ts`).
 
 #### Scenario: Pass image not yet compared
 
 - **GIVEN** a screen image written by a pass whose comparison has not cleared the bar
 - **WHEN** approval is judged
 - **THEN** the image is not counted as approved
+
+## Open
+
+- [ ] **The opening's run fails when a screen is skipped** — no source yet: the skip assertion in `packages/genshin-world/src/components/Game/Opening/Index.browser.test.ts` was not traced.
