@@ -84,7 +84,7 @@ flowchart TD
 
 - [ ] **The Japanese client's recording times the stages and shows each stage's corner buttons** — no source yet: no captured recording names the Japanese client, and the Reference lists none.
 - [ ] **A 1080 high English recording of an older build gives the words and every size** — no source yet: no English recording in `~/Esposter/genshin-parity/captures/` has its build and resolution named.
-- [ ] **The flight covers about two thirds of the way, and the door rises about three seconds after the bar fills, as the English recording does** — no source yet: the English recording's timings are not measured in this pass, and its capture is not checked frame by frame here.
+- [ ] **The flight covers about two thirds of the way, and the door rises about three seconds after the bar fills, as the English recording does** — contradicted in its door timing by `~/Esposter.noindex/genshin-parity/captures/yt-rBnfA4pXw6U.mp4`, the English door recording (1920 by 1080, 60 fps): the door shows about five seconds after the bar reads 100%, not three; the flight's share is not measured here.
 - [ ] **The scene alone, as a reference shows it with no interface, is silent** — no source yet: no scene-only reference with its audio is kept in `~/Esposter/genshin-parity/captures/`.
 - [ ] **The arrangement's unit test holds the cross-ratio of the dais over the walkway along the door's foot** — no source yet: `scripts/src/services/genshinAssets/scene/computeCrossRatio.test.ts` does not name the dais, the walkway or the door.
 - [ ] **Each fit that builds the login data has its own test** — no source yet: none of the ten `fitLogin*` fits in `scripts/src/services/genshinAssets/fit/` has a test beside it.
