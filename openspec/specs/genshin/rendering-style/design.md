@@ -132,10 +132,10 @@ In a Vite development build, `createGenshinRenderer` puts three's inspector on e
 - [Windrise](https://genshin-impact.fandom.com/wiki/Windrise), Genshin Impact Wiki: the first scene's layout, a valley whose oak shelters a statue.
 
 ## Open
+
 - [ ] **Every landmark shares its kind's material, so the view holds every program a turn or a walk draws** — no source yet: the programs a turn or a walk draws are a run record not kept (the compile figures in `openspec/specs/genshin/load-budget/design.md`); the sharing is cited to `packages/genshin-world/src/components/World/Landmarks/Index.vue` (lines 82 to 91).
 - [ ] **The warm-up compile of the view costs a frame of seconds** — no source yet: no timed warm-up frame from a load-budget measurement is on disk.
 - [ ] **The occlusion radius is the scene's, in metres, since nothing in the game's exports holds it** — no source yet: no search of the extracted exports for an occlusion radius field is recorded; the scene's radius is the `occlusionRadius` option (`packages/genshin-engine/src/models/post/PostPipelineOptions.ts`, `packages/genshin-engine/src/post/createPostPipeline.ts`).
-- [ ] **The sky redraws the god rays' map each time the light has turned half a degree** — contradicted by `packages/genshin-engine/src/atmosphere/constants.ts`: it holds `SUN_REDRAW_COSINE` as the cosine of 0.6 degrees.
 - [ ] **The god rays march at half resolution** — no source yet: the page's own comment in `packages/genshin-engine/src/post/createPostPipeline.ts` (line 41) says half resolution, and no resolution is set there, so the value is three's `GodraysNode` default, whose source is not on this machine.
 - [ ] **Over a valley nearly every ray reaches its most opacity, so the frame is veiled half in the sun's colour** — no source yet: no Windrise frame with the god rays drawn exists, since no scene draws them yet.
 - [ ] **Windrise's daylit sky is brighter than the bloom threshold over most of its area** — no source yet: no measured share of a Windrise frame above the bloom threshold is on disk.
@@ -148,7 +148,6 @@ In a Vite development build, `createGenshinRenderer` puts three's inspector on e
 - [ ] **Water saves a few milliseconds a frame, and the grass, the landmark trees and the terrain read at about zero** — no source yet: no per-kind hide run in a WorldScreen trace is on disk.
 - [ ] **Windrise's plants, enemies, animals, stand-ins and frostbearing trees rewrote their whole matrix set every frame before the storage buffer** — no source yet: no pre-change trace of matrix uploads per frame is on disk.
 - [ ] **The still frame now writes only the animals' and the enemies' matrices as they move, and its GPU time reads within the shared spread** — no source yet: no still-frame trace of matrix uploads per mesh after the change is on disk.
-- [ ] **The `--trace` run records every WebGPU call** — contradicted by `scripts/src/services/genshinParity/shared/traceGpuScript.ts`: it records only the calls that can stall a frame.
 - [ ] **The game draws no outline around its terrain** — no source yet: no game snapshot or recording of the terrain's edge is on disk.
 - [ ] **The game's deferred pass darkens creases, recesses and the foot of a wall the same way** — no source yet: no game snapshot or recording of the deferred pass's darkening is on disk.
 - [ ] **Far shadows soften into the blotches the game draws** — no source yet: no game snapshot or recording of far shadows is on disk.
