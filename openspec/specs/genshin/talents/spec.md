@@ -1,6 +1,6 @@
 ## Purpose
 
-Each playable character's three combat talents levelled from 1 by the game's proud skill table, each level raised by the ascension phase it needs and paid in Mora and talent materials, and the passives each phase opens. The stats run writes the table, the upgrade is a pure rule over it, and the Talents tab waits on its page.
+Each playable character's three combat talents levelled from 1 by the game's proud skill table (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`), each level raised by the ascension phase it needs and paid in Mora and talent materials, and the passives each phase opens. The stats run writes the table, the upgrade is a pure rule over it, and the Talents tab waits on its page.
 
 ## Requirements
 
@@ -63,7 +63,7 @@ A refused upgrade SHALL leave the character, the wallet and the bag exactly as t
 
 ### Requirement: Talent levels need their ascension phases
 
-Talent level two SHALL need the second ascension phase, levels three and four the third, and each further pair of levels the phase after, so that levels nine and ten need the sixth.
+Talent level two SHALL need the second ascension phase, levels three and four the third, and each further pair of levels the phase after, so that levels nine and ten need the sixth (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`, where the rule holds in all 370 talent groups).
 
 #### Scenario: First-phase character levelled to one only
 
@@ -79,7 +79,7 @@ Talent level two SHALL need the second ascension phase, levels three and four th
 
 ### Requirement: Passives open at their ascension phase
 
-A passive SHALL be open once the character's ascension phase reaches the phase it opens at, and a passive SHALL have no level.
+A passive SHALL be open once the character's ascension phase reaches the phase it opens at, and a passive SHALL have no level (the wiki's passive types, in `~/Esposter.noindex/cache/genshin-wiki/Category_Xilonen_Talents.json` and `Category_Traveler_Talents.json`, name the utility and the first and fourth ascension passives).
 
 #### Scenario: Utility passive open from the start
 
@@ -174,10 +174,16 @@ A talent's raised level SHALL be kept with the world, so that a reload shows it.
 
 ### Requirement: A talent plays at its own level plus its constellations' additions
 
-A talent SHALL play at the level the character holds for it plus the levels its constellations add, so that a level past ten comes from a constellation alone.
+A talent SHALL play at the level the character holds for it plus the levels its constellations add, so that a level past ten comes from a constellation alone (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json` holds rows 11 to 15 in all 370 talent groups, none costing Mora).
 
 #### Scenario: A constellation raises a talent above level ten
 
 - **GIVEN** a character at ten in a talent with a constellation that adds levels to it
 - **WHEN** the talent is played
 - **THEN** it plays at the level above ten that the constellation adds
+
+## Open
+
+- [ ] **The alternate sprint has no level and no upgrade** — no source yet: the wiki pages cached here do not name it, and its skill row is not read.
+- [ ] **Across the roster the passives open at phases 0, 1 and 4** — no source yet: only Xilonen's and the Traveler's wiki pages are cached, so the other characters' passives are unchecked.
+- [ ] **A constellation adds levels above ten to its own talent** — no source yet: the table's rows 11 to 15 are checked, but no constellation's row naming the talent it raises is read.
