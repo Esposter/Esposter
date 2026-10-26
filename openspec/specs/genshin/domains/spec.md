@@ -1,6 +1,6 @@
 ## Purpose
 
-The game's domains' opening rules as pure checks. A kind opens at its Adventure Rank, Forgery at 16, Blessing at 22 and Mastery at 27, as the proposal states them. A Domain of Blessing, Forgery or Mastery is open every Sunday and on the two days its table sets, and a Domain of Trounce every day. Entrances, levels and challenges wait on the proposal.
+The game's domains' opening rules as pure checks. A kind opens at its Adventure Rank, Forgery at 16, Blessing at 22 and Mastery at 27, as the proposal states them. A Domain of Forgery or Mastery is open every Sunday and on the two days its table sets, a Domain of Blessing every day. Entrances, levels and challenges wait on the proposal.
 
 ## Requirements
 
@@ -20,16 +20,15 @@ A domain kind SHALL be open once the player's Adventure Rank reaches its rank: F
 - **WHEN** a Domain of Mastery is checked
 - **THEN** it is closed
 
-### Requirement: A Domain of Blessing opens on Sundays and its two set days
+### Requirement: A Domain of Blessing opens every day
 
-A Domain of Blessing SHALL be open on every Sunday and on the two days its table sets for it, once its rank is reached.
+A Domain of Blessing SHALL be open on every game day once its rank is reached.
 
-#### Scenario: A Domain of Blessing is open on its set days and on every Sunday, and closed on any other day
+#### Scenario: A Domain of Blessing is open on any weekday
 
 - **GIVEN** an Adventure Rank that reaches the Domain of Blessing's rank
-- **WHEN** it is checked on a Sunday or on one of its set days
+- **WHEN** it is checked on any weekday
 - **THEN** it is open
-- **AND** on any other day it is closed
 
 ### Requirement: A Domain of Forgery or Mastery opens on Sundays and its two set days
 
@@ -71,5 +70,7 @@ The game's day SHALL turn at 04:00 in UTC+8, and a Domain of Forgery's day SHALL
 
 ## Open
 
-- [ ] **Blessing, Forgery and Mastery open on their two set days** — no source yet: the Domain page, checked, gives Sunday for every stage and names no set day, and the set days' weekday mapping is unread.
-- [ ] **The day's 04:00 turn is in UTC+8** — no source yet: the wiki's Reset page, checked, gives the daily reset at 04:00 "based on the player's server's time zone", not in UTC+8.
+- [ ] **Forgery opens at 16, Blessing at 22 and Mastery at 27** — no source yet: the wiki's Domain page is not in the cache, and no table read here ties 22 or 27 to a kind.
+- [ ] **A Domain of Blessing is open every day** — no source yet: the wiki's Domain page is not in the cache, and the day rows of `DailyDungeonConfigData` are not mapped to weekdays.
+- [ ] **Forgery and Mastery open on Sundays and their two set days** — no source yet: the set days' weekday mapping is unread, and the wiki's Domain page is not in the cache.
+- [ ] **The game's day turns at 04:00 in UTC+8, Forgery's at the reset** — no source yet: the wiki's Daily Reset page is not in the cache.
