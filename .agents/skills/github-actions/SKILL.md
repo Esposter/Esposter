@@ -50,8 +50,8 @@ A workflow comment keeps only what the owning page and the step itself leave uns
 ## Owned elsewhere — pointers, not copies
 
 - **Whether a workflow parses at all** — `vp run lint:workflows`, actionlint as a leaf of the root `vp run lint` (`openspec/specs/architecture/monorepo-tooling/design.md`, "Workflow lint").
-- **Which pnpm script a job runs and how it is invoked** — `package-scripts` ("Key Rules").
-- **Pinning a third-party action to a dereferenced commit SHA with its `# vX.Y.Z` comment, and bumping one** — `dependency-updates` (`references/github-actions.md`).
+- **Which pnpm script a job runs and how it is invoked** — the `package-scripts` skill ("Key Rules").
+- **Pinning a third-party action to a dereferenced commit SHA with its `# vX.Y.Z` comment, and bumping one** — the `dependency-updates` skill (`references/github-actions.md`).
 - **Job shape, the build caches, why a gate reads the disk rather than `cache-hit`, per-job `permissions`, and why `.github/workflows/` is flat** — `openspec/specs/architecture/monorepo-tooling/design.md`.
 - **Adding a third-party action** — its `owner/repo@*` goes into `patternsAlloweds` in `apps/infra/src/github/actionsPermissions.ts` in the same change, or GitHub refuses the whole workflow at startup (`openspec/specs/architecture/monorepo-tooling/design.md`, "Allowed actions").
 - **The review's own workflow**, `.github/workflows/Review.yaml` (`pnpm -C scripts ai:review`, and `ai:review:fix` in its fix matrix) — the `review-queue` skill, and `openspec/specs/infra/review/design.md`.
