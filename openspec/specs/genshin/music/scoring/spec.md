@@ -6,7 +6,7 @@ How a render of the login's music is judged against the game's own decoded sound
 
 ### Requirement: Pitch agreement
 
-Pitch agreement SHALL be the mean agreement of the two renders' pitch classes over the game's audible frames, and SHALL equal 1 when every frame names the same notes in the same balance.
+Pitch agreement SHALL be the mean agreement of the two renders' pitch classes over the game's audible frames, and SHALL equal 1 when every frame names the same notes in the same balance `scripts/src/services/genshinParity/music/scoreMusicSegment.ts`.
 
 #### Scenario: Same notes in every frame
 
@@ -15,7 +15,7 @@ Pitch agreement SHALL be the mean agreement of the two renders' pitch classes ov
 
 ### Requirement: Distance by octave band
 
-The distance SHALL be each octave band's mean level gap in decibels from 63 Hz to 8 kHz, charging timbre and loudness alike.
+The distance SHALL be each octave band's mean level gap in decibels from 63 Hz to 8 kHz, charging timbre and loudness alike `scripts/src/services/genshinParity/music/scoreMusicSegment.ts`.
 
 #### Scenario: Band gaps averaged
 
@@ -24,7 +24,7 @@ The distance SHALL be each octave band's mean level gap in decibels from 63 Hz t
 
 ### Requirement: Signed bias per band
 
-The bias SHALL report each band's gap signed, negative where the render is the quieter, so that a band left short is told from one overfilled.
+The bias SHALL report each band's gap signed, negative where the render is the quieter, so that a band left short is told from one overfilled `scripts/src/services/genshinParity/music/scoreMusicSegment.ts`.
 
 #### Scenario: Band left short
 
@@ -33,7 +33,7 @@ The bias SHALL report each band's gap signed, negative where the render is the q
 
 ### Requirement: Render is what ships
 
-The render SHALL be each segment as its own screen plays it, rendered offline on the parity page, so the score judges what ships.
+The render SHALL be each segment as its own screen plays it, rendered offline on the parity page, so the score judges what ships `scripts/src/services/genshinParity/music/renderMusicSegments.ts`.
 
 #### Scenario: Segment rendered for scoring
 
@@ -48,6 +48,13 @@ A score SHALL be read between the game against itself shifted later and against 
 
 - **WHEN** a score is reported
 - **THEN** its distance is read between the game a quarter second off itself and the game two seconds off itself
+
+## Open
+
+- [ ] **A score's distance is read between the game a quarter second off itself and the game two seconds off itself** — no source yet: no self-shift run is recorded.
+- [ ] **A mix that loses pitch agreement counts as a regression** — no source yet: no check or record enforces this rule.
+- [ ] **No fixed band gain ships** — no source yet: no check that no band gain ships is cited.
+- [ ] **A step is approved by ear once its numbers improve** — no source yet: no approval record is cited.
 
 ### Requirement: Losing pitch agreement is a regression
 
@@ -78,7 +85,7 @@ A step SHALL be approved by ear once its numbers improve, since the score cannot
 
 ### Requirement: Attack shares count jumps between frames
 
-The attacks measure SHALL count how often each octave band's level jumps by the attack threshold from one frame to the next, in both the render and the game's sound.
+The attacks measure SHALL count how often each octave band's level jumps by the attack threshold from one frame to the next, in both the render and the game's sound `scripts/src/services/genshinParity/commands/attacksCommand.ts`, `scripts/src/services/genshinParity/music/computeAttackShares.ts`.
 
 #### Scenario: Scattered single notes
 
