@@ -1,6 +1,6 @@
 ## Purpose
 
-Lauma's kit as built, with her three strikes, charged attack, provisional plunges, Hymn of Hunting's press and Hymn of Eternal Rest's hold with the Frostgrove Sanctuary each plants, her Lunar-Bloom hit, Moonsign Benediction and Pale Hymn stacks, and what is left waiting on the Spirit Envoy and her other constellations.
+Lauma's kit as built, with her three strikes, charged attack, provisional plunges, Hymn of Hunting's press and Hymn of Eternal Rest's hold with the Frostgrove Sanctuary each plants, her Lunar-Bloom hit, Moonsign Benediction and Pale Hymn stacks, Constellations 2 and 4, and what is left waiting on the Spirit Envoy and Constellations 1 and 6.
 
 ## Requirements
 
@@ -159,12 +159,29 @@ From Constellation 2, each Bloom, Hyperbloom and Burgeon the party makes while i
 - **WHEN** a Bloom reaction triggers
 - **THEN** its base damage adds her Elemental Mastery times the Bloom ratio alone
 
-### Requirement: Spirit Envoy and her other passives and constellations not yet built
+### Requirement: Constellation 4 energy from the Sanctuary's ticks
 
-Lauma's Spirit Envoy state, and her other passives and constellations, SHALL NOT take effect.
+From Constellation 4, each Frostgrove Sanctuary tick that strikes an enemy SHALL restore 5 energy to Lauma, at most once every 5 seconds.
+
+#### Scenario: A sanctuary tick restores energy at Constellation 4
+
+- **GIVEN** Lauma has Constellation 4 and the Frostgrove Sanctuary stands
+- **WHEN** a sanctuary tick strikes an enemy
+- **THEN** she gains 5 energy
+- **AND** another tick striking within 5 seconds gives none
+
+#### Scenario: Press and hold give no energy at Constellation 4
+
+- **GIVEN** Lauma has Constellation 4
+- **WHEN** her press or her hold strikes an enemy
+- **THEN** she gains no energy from it
+
+### Requirement: Spirit Envoy, her other passives, and Constellations 1 and 6 not yet built
+
+Lauma's Spirit Envoy state, her other passives, and Constellations 1 and 6 SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Lauma has the Spirit Envoy state or another passive or constellation unlocked
+- **GIVEN** Lauma has the Spirit Envoy state, another passive, or Constellation 1 or 6 unlocked
 - **WHEN** the player fights with Lauma
 - **THEN** that effect has no effect

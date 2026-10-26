@@ -8,6 +8,7 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitHitBehaviour } from "#src/models/kit/KitHitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
+import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { LunarReactionType } from "#src/models/combat/LunarReactionType";
@@ -21,8 +22,10 @@ import { consumeKitResource } from "#src/services/kit/effects/consumeKitResource
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { elementalMasteryMultiplier } from "#src/services/kit/elementalMasteryMultiplier";
 import { countDew } from "#src/services/party/countDew";
+import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { spendDew } from "#src/services/party/spendDew";
 import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 
@@ -144,6 +147,29 @@ const readConstellationPaleHymnIncrease = (constellationCount: number, isLunar: 
   return isLunar ? C2_LUNAR_BLOOM_INCREASE : C2_BLOOM_INCREASE;
 };
 
+// Constellation 4 restores 5 energy to Lauma as a Frostgrove Sanctuary tick strikes an enemy, once every 5 seconds, as gcsim
+// v2.47.2 (MIT) lauma/skill.go's tick callback and lauma/cons.go give it
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/lauma/cons.go
+const CONSTELLATION_4 = 4;
+const CONSTELLATION_4_COOLDOWN_ID = "lauma-constellation-4-cooldown";
+const CONSTELLATION_4_COOLDOWN_SECONDS = 5;
+const CONSTELLATION_4_ENERGY = 5;
+
+// A Sanctuary tick's strike gives its striker the energy, unless the cooldown from the last one has not run out
+const restoreSanctuaryEnergy = ({ kitEffectState, party }: KitContext, { combatant }: KitStrike): void => {
+  if (combatant.constellationCount < CONSTELLATION_4) return;
+  if (
+    !startKitCooldown(
+      kitEffectState,
+      combatant.characterId,
+      CONSTELLATION_4_COOLDOWN_ID,
+      CONSTELLATION_4_COOLDOWN_SECONDS,
+    )
+  )
+    return;
+  gainPartyMemberEnergy(party, combatant, CONSTELLATION_4_ENERGY);
+};
+
 // Lauma's behaviour: Hymn of Hunting's press and its hold each plant the Frostgrove Sanctuary where she stands, whose
 // Ticks add the table's share of her Elemental Mastery, and every hit of the skill's sheds the table's Dendro and Hydro
 // RES. Hymn of Eternal Rest plays while the party holds Dew, spending up to three on a direct Lunar-Bloom hit
@@ -155,7 +181,7 @@ const readConstellationPaleHymnIncrease = (constellationCount: number, isLunar: 
 // Constellations; the Spirit Envoy's cooldown reduction of Cleansing for the Spring, as the charged attack's cooldown is not
 // Read by a kit
 // Constellation 1 needs the Threads of Life heal on Lunar-Bloom reactions and the Spirit Envoy's stamina, not built
-// Constellation 4 needs a hit event from the Sanctuary's ticks to restore her energy, which no kit event carries
+// Constellation 4's energy is built, from each Sanctuary tick that strikes an enemy, once every 5 seconds
 // Constellation 6 needs the Pale Hymn stacks it gives and an extra Lunar-Bloom Dendro hit per Sanctuary attack, not built
 export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter }: KitRecordReader): KitBehaviour => {
   const shredResistanceReduction = readParameter("frostgroveSanctuaryResistanceDecrease");
@@ -175,6 +201,7 @@ export const createLaumaKitBehaviour = ({ readHitFields, readHits, readParameter
   const sanctuaryTicks = readHits("frostgroveSanctuaryTicks", {
     additiveBaseDamageBonus: (striker) => elementalMasteryMultiplier(striker, sanctuaryTickElementalMasteryShare),
     enemyStatus: createShredStatus,
+    onStrike: restoreSanctuaryEnergy,
   });
   // The hold's direct Lunar-Bloom hit, whose multiplier is set by the Dew it spends as it is cast
   const holdLunarBloomFields = readHitFields("hymnOfEternalRestLunarBloom", []);
