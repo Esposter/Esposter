@@ -74,8 +74,8 @@ A talk is none of these: `MenuScreen` draws nothing for it, and the world screen
 
 ## Sources
 
-- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: the shortcut of each screen, its PC rows bound to the keys listed here, such as "Open Adventurer Handbook Screen" on F1.
-- [Time](https://genshin-impact.fandom.com/wiki/Time), Genshin Impact Wiki: the clock paused in the menu and running in photo mode, its exception "except for Photo Mode".
+- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: the shortcut of each screen.
+- [Time](https://genshin-impact.fandom.com/wiki/Time), Genshin Impact Wiki: the clock paused in the menu and running in photo mode.
 
 ## Open
 
