@@ -131,19 +131,18 @@ flowchart TD
 - [Elemental Burst](https://genshin-impact.fandom.com/wiki/Elemental_Burst), Genshin Impact Wiki: the burst's icon at the bottom right showing its cooldown's time and filling with the character's energy, glowing once ready.
 
 ## Open
-
 - [ ] **`TeamBtn_MP` is held by no other block** — no source yet: only the `04803507` layout folder was searched, not every block.
 - [ ] **The minimap, Paimon's button and the skill buttons are in the HUD's tree** — no source yet: no export named for any of them was found in the `04803507` layout folder.
 - [ ] **`SPBar` is anchored at the screen's middle** — no source yet: `SPBarV2.json` holds no anchor fields, and its RectTransform was not matched here.
 - [ ] **The party rows sit 71.25 units above the container's middle on the keys' layout, and the party bar ends 155 units from the right edge on mobile** — no source yet: the RectTransforms of `TeamBtnContainer` and the party bar were not matched here.
 - [ ] **Each glyph is the game's icon, traced** — no source yet: the wiki's icon renders are not in the cache, so the traces cannot be checked against them.
-- [ ] **The burst fills in #309d6b over grass and #47bcea over water** — no source yet: the frames at 70 and 80 seconds of `~/Esposter.noindex/genshin-parity/captures/world-pickup.mkv` were not sampled here.
-- [ ] **The shortcuts open as F3, F1, B and C do** — no source yet: the wiki's Controls page is not in the cache, and `~/Esposter.noindex/genshin-key-map` holds none of these bindings.
-- [ ] **A party switch has a one-second cooldown** — no source yet: the wiki's Party page is not in the cache.
-- [ ] **Health shows the level and whole-number HP as the game writes them** — no source yet: no recording with a health bar was read here.
-- [ ] **The Paimon button and the minimap open the Paimon menu and the map, as Escape and M do** — no source yet: the wiki's Paimon Menu and Map pages are not in the cache.
-- [ ] **The backslash hides the HUD, and V navigates to the tracked quest** — no source yet: the wiki's Controls page is not in the cache.
-- [ ] **The meter cuts at 0.464 and 0.936 of its arc** — no source yet: no frame of `hud-stamina-climb` was measured.
+- [ ] **The burst fills in #309d6b over grass and #47bcea over water** — the values are in `packages/genshin-world/src/services/hud/ElementBurstColorsMap.ts`, with the recording's measurement in its comment, but the frames at 70 and 80 seconds of `~/Esposter.noindex/genshin-parity/captures/world-pickup.mkv` were not sampled here.
+- [ ] **The shortcuts open as F3, F1, B and C do** — the code binds `F3` to `OpenWish`, `F1` to `OpenAdventurerHandbook`, `B` to `OpenInventory` and `C` to `OpenCharacter` (`packages/genshin-engine/src/input/InputActionBindingMap.ts`); the game's own defaults are the controls page's open item, with the wiki's Controls page not cached.
+- **A party switch has a one-second cooldown** — `packages/genshin-world/src/services/party/constants.ts` (`PARTY_SWITCH_COOLDOWN_SECONDS`, 1).
+- [ ] **Health shows the level and whole-number HP as the game writes them** — the HUD's health view is `packages/genshin-world/src/components/Hud/Health/Index.vue`, but no recording with a health bar was read here, so the game's form is open.
+- [ ] **The Paimon button and the minimap open the Paimon menu and the map, as Escape and M do** — the code binds `Escape` to `OpenPaimonMenu` and `M` to `OpenMap` (`packages/genshin-engine/src/input/InputActionBindingMap.ts`); the wiki's Paimon Menu and Map pages are not in the cache.
+- [ ] **The backslash hides the HUD, and V navigates to the tracked quest** — the code binds `Backslash` to `HideInterface` and `V` to `QuestNavigation` (`packages/genshin-engine/src/input/InputActionBindingMap.ts`); the wiki's Controls page is not in the cache for the game's side.
+- [ ] **The meter cuts at 0.464 and 0.936 of its arc** — no source yet: no frame of `hud-stamina-climb` was measured, and the figures stand in the comment at `packages/genshin-world/src/components/Hud/Stamina/Index.vue`.
 - [ ] **The stamina meter is cut into sections of 100 and hides when full** — no source yet: the wiki's Stamina page is not in the cache.
-- [ ] **A navigated quest is beamed from 50 metres off** — no source yet: the wiki's Quest page is not in the cache.
+- [ ] **A navigated quest is beamed from 50 metres off** — the code holds `QUEST_BEAM_MIN_DISTANCE = 50` (`packages/genshin-world/src/services/quest/constants.ts`), citing the wiki, which is not in the cache.
 - [ ] **The touch buttons, health bar, tracker line and meter arc are measured off their recordings** — no source yet: no measurement record is in the cache or the parity snapshot.
