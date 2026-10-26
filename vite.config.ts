@@ -37,7 +37,6 @@ const PACKAGE_REWRITTEN_PATTERNS = [
   "_tmp_*",
   "src/components/index.ts",
   "src/index.ts",
-  "src/generated/**",
   // A tool's own cache, which a build writes into the package's `node_modules` and nothing reads back as an input
   "node_modules/.cache/**",
   // The parity page's production build, written into the world package by `build:parity`
