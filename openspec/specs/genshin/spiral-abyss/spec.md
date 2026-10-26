@@ -158,7 +158,7 @@ The Moon Spire SHALL run the period that began most recently before now in UTC+8
 - [ ] **The Abyss opens at Adventure Rank 20** — no source yet: the wiki's Spiral Abyss page is not cached, and no open-state row in the dump names the Abyss.
 - [ ] **A chamber's clock is five minutes on the Corridor's first four floors and ten minutes above** — no source yet: the dump's tower tables hold no clock length, and the test holds the repo's own constants.
 - [ ] **A chamber cleared with no condition met counts as cleared with no stars** — no source yet: no test holds a clear with no condition met.
-- [ ] **The first floor is always open, and a floor opens only when the floor below has all three chambers cleared and six stars** — contradicted by `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/TowerFloorExcelConfigData.json`: unlockStarCount is six on all 141 floors.
+- [ ] **The first floor is always open, and a floor opens only when the floor below has all three chambers cleared and six stars** — no source yet for the first floor or the chambers: `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/TowerFloorExcelConfigData.json` confirms the six stars, since unlockStarCount is six on all 141 floors, and says nothing of the rest.
 - [ ] **The second half starts on the clock the first half left** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **A chamber is lost when its clock or its monolith reaches zero before it is cleared, and a cleared chamber is never lost** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **A failed chamber keeps nothing from that attempt** — no source yet: game data or a snapshot that holds this behaviour

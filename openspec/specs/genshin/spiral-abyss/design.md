@@ -47,7 +47,7 @@ flowchart TD
 - **The Corridor draws reward group 1.** Its floors 1 to 8 give the same rewards in reward groups 1, 2 and 13, so the group the Corridor reads does not change its rewards (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/TowerRewardExcelConfigData.json`, floors 1 to 8 identical in groups 1, 2 and 13). The rewards slice holds every group, and a reader names the group it needs.
 - **The floor table's reward columns are not read.** Its three, six and nine-star columns agree with the reward table for the Corridor and differ for some Moon Spire floors, and its five, ten and fifteen-star columns repeat the three, six and nine on all but a few floors (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/TowerFloorExcelConfigData.json`: the Corridor's three, six and nine-star columns match group 1 of the reward table, and 125 of 141 floors repeat their three, six and nine in the five, ten and fifteen-star columns). The reward table names every floor's rewards.
 - **A monolith is not named.** A chamber has a monolith when one of its conditions reads a monolith, and the caller reports its health. The table's gadget and group ids for the monolith are not kept.
-- **A period starts at its first set of floors.** Each schedule row holds one set of floors with its start, and the next period's start is its end, so the close time is not read. A row with a second set of floors is refused rather than cut. A first set with no floors or no start is refused too, since a period cannot start at no time, and an empty later set is read as none (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/TowerScheduleExcelConfigData.json`: 124 rows, none with a second set; `scripts/src/services/genshinAssets/spiralAbyss/toAbyssPeriod.test.ts`).
+- **A period starts at its first set of floors.** Each schedule row holds one set of floors with its start, and its close time is read as the period's `closesAt`, which the period's end is taken from. A row with a second set of floors is refused rather than cut. A first set with no floors or no start is refused too, since a period cannot start at no time, and an empty later set is read as none (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/TowerScheduleExcelConfigData.json`: 124 rows, none with a second set; `scripts/src/services/genshinAssets/spiralAbyss/toAbyssPeriod.test.ts`).
 - **The period's star milestones are not built.** The schedule's forty-to-one-hundred-and-twenty-star rewards are zero in every row the table holds, so there is nothing to give (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/TowerScheduleExcelConfigData.json`: 620 star entries, none holding a reward).
 
 ## Key files
@@ -79,7 +79,7 @@ flowchart TD
 ## Notes
 
 - **The dump ends at a period.** The community dump's schedule ends with the period that began on 2026-06-16, so the Moon Spire runs that period until a newer dump holds the later ones.
-- **Nothing calls the readers yet.** The three readers load their slices on demand, and the screen that would call them is not built.
+- **The readers are called through one composable.** The three readers load their slices on demand, and `useWorldSpiralAbyss` calls all three from the world session's screen (`packages/genshin-world/src/components/World/Session/Index.vue`).
 
 ## Sources
 
@@ -93,6 +93,4 @@ flowchart TD
 - [ ] **The combine and forge tables match the dump byte for byte** — no source yet: no copy of the AnimeGameData tables is in the checkout to compare against.
 - [ ] **A two-team chamber can have no second wave in the table, as the monolith chambers have none** — no source yet: the two-team level lists are not checked against the dump.
 - [ ] **The Moon Spire floors' reward columns differ from the reward table for some floors** — no source yet: the floor-to-group mapping for Moon Spire floors is not checked.
-- [ ] **The close time is not read** — contradicted by `scripts/src/services/genshinAssets/spiralAbyss/toAbyssPeriod.test.ts`: it asserts a `closesAt`.
 - [ ] **The dump's schedule ends with the period that began on 2026-06-16** — contradicted by `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/TowerScheduleExcelConfigData.json`: its last row, scheduleId 124, begins 2026-10-16.
-- [ ] **Nothing calls the readers yet** — contradicted by `packages/genshin-world/src/components/World/Session/Index.vue`: it calls `useWorldSpiralAbyss`, which calls all three readers.
