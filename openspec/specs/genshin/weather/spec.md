@@ -77,7 +77,7 @@ Only one kind of particle SHALL fall at a time, with the old kind fading out as 
 
 ### Requirement: A weather raises the sky's clouds and fog but never lowers them
 
-A weather SHALL raise the region's cloud cover and fog density where it is above the region's own, and SHALL never lower them (which takes a `Math.max`).
+A weather SHALL raise the region's cloud cover and fog density where it is above the region's own, and SHALL never lower them, which takes a `Math.max`.
 
 #### Scenario: Clear weather leaves the sky as it was
 
