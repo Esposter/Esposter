@@ -80,7 +80,7 @@ Ifa's skill SHALL start its 7.5-second cooldown when pressed (`~/Esposter.noinde
 
 ### Requirement: Second constellation counts the party's points above 60 three times over
 
-From her second constellation, with her first ascension, the party's Nightsoul points above 60 SHALL count three times over toward Rescue Essentials, and the cap SHALL rise by 50 to 200 points. The rule is gcsim's (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/ifa/cons.go`, lines 29 to 45). The in-game text of this constellation is not read: the wiki's Constellation table lists only levels 1, 3 and 6, and the dump's talent rows were not decoded for it.
+From her second constellation, with her first ascension, the party's Nightsoul points above 60 SHALL count three times over toward Rescue Essentials, and the cap SHALL rise by 50 to 200 points. The rule is gcsim's (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/ifa/cons.go`, lines 29 to 45). The in-game text of this constellation is not read: the wiki's Constellation table lists only levels 1, 3 and 6 (`~/Esposter.noindex/cache/genshin-wiki/Category_Ifa_Talents.json`), and the dump's talent rows were not decoded for it.
 
 #### Scenario: Constellation 2 counts 80 party points as 140
 
