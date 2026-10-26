@@ -1,6 +1,6 @@
 # Domains
 
-A domain is an instance behind a temple-like entrance, challenged for a reward. The game opens each kind by [Adventure Rank](../adventure-rank/design.md) and, for Forgery and Mastery, by the day of the week. This page is those opening rules as pure checks in `genshin-world`, the first part of the [domains proposal](../../../changes/genshin-domains/design.md). Nothing enters a domain yet, so no screen reads them.
+A domain is an instance behind a temple-like entrance, challenged for a reward. The game opens each kind by [Adventure Rank](../adventure-rank/design.md) and, for Blessing, Forgery and Mastery, by the day of the week. This page is those opening rules as pure checks in `genshin-world`, the first part of the [domains proposal](../../../changes/genshin-domains/design.md). Nothing enters a domain yet, so no screen reads them.
 
 ## Decisions
 
@@ -33,7 +33,7 @@ flowchart TD
 
 | File                                                                         | Role                                                                                                                    |
 | :--------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/domains/DomainKind.ts`                    | The kinds that open by rank and by the day: Blessing, Forgery and Mastery                                               |
+| `packages/genshin-world/src/models/domains/DomainKind.ts`                    | The four kinds, each open from its rank; Blessing, Forgery and Mastery also by the day, Trounce every day               |
 | `packages/genshin-world/src/services/domains/DomainOpenRankMap.ts`           | Each kind's Adventure Rank of opening                                                                                   |
 | `packages/genshin-world/src/services/domains/constants.ts`                   | The Sunday weekday, numbered as Temporal numbers it                                                                     |
 | `packages/genshin-world/src/services/domains/checkIsDomainKindOpenAtRank.ts` | Open at the kind's rank or above                                                                                        |
@@ -46,6 +46,6 @@ flowchart TD
 
 ## Open
 
-- [ ] **Forgery and Mastery open on their two set days** — no source yet: the Domain page, checked, gives Sunday for every stage and two set days a stage without naming them, and the same `DailyDungeonConfigData` rows are unmapped to weekdays.
+- [ ] **Blessing, Forgery and Mastery open on their two set days** — no source yet: the Domain page, checked, gives Sunday for every stage and two set days a stage without naming them, and the same `DailyDungeonConfigData` rows are unmapped to weekdays.
 - [ ] **The day's 04:00 turn is in UTC+8** — no source yet: the wiki's Reset page, checked, gives the daily reset at 04:00 "based on the player's server's time zone", not in UTC+8.
 - [ ] **A Domain of Forgery's day turns at the reset, not at midnight** — no source yet: the cached Reset page says Domains of Forgery rotate under the daily reset, and gives no moment for the turn.

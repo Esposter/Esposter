@@ -71,5 +71,5 @@ The game's day SHALL turn at 04:00 in UTC+8, and a Domain of Forgery's day SHALL
 
 ## Open
 
-- [ ] **Forgery and Mastery open on their two set days** — no source yet: the Domain page, checked, gives Sunday for every stage and names no set day, and the set days' weekday mapping is unread.
+- [ ] **Blessing, Forgery and Mastery open on their two set days** — no source yet: the Domain page, checked, gives Sunday for every stage and names no set day, and the set days' weekday mapping is unread.
 - [ ] **The day's 04:00 turn is in UTC+8** — no source yet: the wiki's Reset page, checked, gives the daily reset at 04:00 "based on the player's server's time zone", not in UTC+8.
