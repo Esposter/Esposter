@@ -17,7 +17,7 @@ The Mondstadt City location's landmarks SHALL each be tied to a named mesh of th
 
 ### Requirement: The Mondstadt City camera
 
-The Mondstadt City camera SHALL be written only when its landmarks reproject within 2 pixels root mean square. It is blocked on the six landmark meshes: `DerivedAssetLandmarkMap` holds Mondstadt as an empty set until the extraction names a mesh for each landmark, so no pose can be solved from them. The camera pass reads its landmarks on the frozen layout, so it also waits on the layout being held.
+The Mondstadt City camera SHALL be written only when its landmarks reproject within 2 pixels root mean square. It is blocked on the six landmark meshes: `DerivedAssetLandmarkMap` holds Mondstadt as an empty set `scripts/src/services/genshinAssets/witness/DerivedAssetLandmarkMap.ts` until the extraction names a mesh for each landmark, so no pose can be solved from them. The camera pass reads its landmarks on the frozen layout, so it also waits on the layout being held.
 
 #### Scenario: A pose whose landmarks reproject beyond 2 pixels is not written
 
