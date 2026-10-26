@@ -37,6 +37,9 @@ What each pattern means is the owning skill's to say:
    half is enforced (below), so what a pass looks for is the shape: a diagram that is a catalog, an inventory or
    a straight line. None of the three has a form a pattern can see — the tells are a node whose label is an
    entity's attributes, a subgraph nothing reads in a direction, and a chain whose order is the sentence above it
+10. a requirement or scenario line naming a repo path in backticks, which belongs in the capability's `design.md` —
+    the `openspec` skill's Rules, over `openspec/specs` — ``(SHALL|MUST|WHEN|THEN|AND|GIVEN)[^`]*`(packages|apps|scripts|openspec)/``
+    with `--include=spec.md`
 
 Grep 8's cross-page form is `pnpm ai:sweep:duplicate-prose`: every run of ten words two specs or skills of
 different owners share, longest first, which is what a page restating another's rule leaves behind — a paraphrase
