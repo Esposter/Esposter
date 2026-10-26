@@ -6,7 +6,7 @@ Mondstadt's house kit, a parametric building of four materials. A stone ground f
 
 ### Requirement: House generated from its parameters
 
-A Mondstadt house SHALL be generated from its footprint and parameters alone, as one geometry for each of its four materials, so that a house is one draw per material.
+A Mondstadt house SHALL be generated from its footprint and parameters alone, as one geometry for each of its four materials, so that a house is one draw per material (`packages/genshin-world/src/services/mondstadt/createMondstadtBuildingGeometries.ts`, `packages/genshin-engine/src/kits/mergeGeometryParts.ts`).
 
 #### Scenario: House is drawn
 
@@ -15,7 +15,7 @@ A Mondstadt house SHALL be generated from its footprint and parameters alone, as
 
 ### Requirement: Stone ground floor
 
-A house SHALL have a stone ground floor the full size of its footprint and of the height given.
+A house SHALL have a stone ground floor the full size of its footprint and of the height given (`packages/genshin-world/src/services/mondstadt/createMondstadtBuildingGeometries.ts`).
 
 #### Scenario: Ground floor
 
@@ -24,7 +24,7 @@ A house SHALL have a stone ground floor the full size of its footprint and of th
 
 ### Requirement: Storeys overhang by one jetty each
 
-Each storey SHALL be plaster, its front and back walls overhanging the storey beneath by one jetty, so that the overhang accumulates by one jetty per storey, while its gable walls do not overhang.
+Each storey SHALL be plaster, its front and back walls overhanging the storey beneath by one jetty, so that the overhang accumulates by one jetty per storey, while its gable walls do not overhang (`packages/genshin-world/src/services/mondstadt/createMondstadtBuildingGeometries.ts`).
 
 #### Scenario: Three storeys
 
@@ -38,7 +38,7 @@ Each storey SHALL be plaster, its front and back walls overhanging the storey be
 
 ### Requirement: Timber frame stands proud of the plaster
 
-Each storey SHALL show a timber post at each corner and a beam along the top of each wall, standing a few centimetres proud of the plaster.
+Each storey SHALL show a timber post at each corner and a beam along the top of each wall, standing a few centimetres proud of the plaster (`packages/genshin-world/src/services/mondstadt/constants.ts`, `MONDSTADT_TIMBER_PROUD` of 0.05 m).
 
 #### Scenario: Timber on a storey
 
@@ -47,7 +47,7 @@ Each storey SHALL show a timber post at each corner and a beam along the top of 
 
 ### Requirement: Gable roof with dormers and chimney
 
-The roof SHALL be a gable running along the width with eaves overhanging the top storey, dormers evenly spaced at the middle of each slope, and a chimney a quarter of the way along the width rising past the ridge.
+The roof SHALL be a gable running along the width with eaves overhanging the top storey, dormers evenly spaced at the middle of each slope, and a chimney a quarter of the way along the width rising past the ridge (`packages/genshin-world/src/services/mondstadt/createMondstadtBuildingGeometries.ts`, `MONDSTADT_CHIMNEY_RISE` in `constants.ts`).
 
 #### Scenario: Roof with dormers
 
@@ -61,7 +61,7 @@ The roof SHALL be a gable running along the width with eaves overhanging the top
 
 ### Requirement: Dressing not yet built
 
-A house SHALL not yet have window boxes, shutters, lanterns or banners, and the windmill, the city wall, the gate bridge and the cathedral SHALL not yet be built.
+A house SHALL not yet have window boxes, shutters, lanterns or banners, and the windmill, the city wall, the gate bridge and the cathedral SHALL not yet be built (no module under `packages/genshin-world/src/services/mondstadt/` names a shutter, lantern or banner).
 
 #### Scenario: House without dressing
 
