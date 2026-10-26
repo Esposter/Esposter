@@ -120,7 +120,7 @@ Rain SHALL splash rings where it meets the ground or water, and snow and sand SH
 
 ### Requirement: A thunderstorm strikes and flashes
 
-A thunderstorm SHALL strike about 27.6 times a minute, each strike flashing the sky twice and dropping a bolt on the ground between one and six hundred metres from the eye (where the thunderstorm's `lightningRate` is 27.6 and the maximum distance is 600).
+A thunderstorm SHALL strike about 27.6 times a minute, each strike flashing the sky twice and dropping a bolt on the ground between 150 and six hundred metres from the eye (where the thunderstorm's `lightningRate` is 27.6 and the maximum distance is 600).
 
 #### Scenario: Strike flashes the sky
 
@@ -132,7 +132,7 @@ A thunderstorm SHALL strike about 27.6 times a minute, each strike flashing the 
 
 - **GIVEN** a strike happens
 - **WHEN** its bolt is drawn
-- **THEN** the bolt stands on the ground between one and six hundred metres from the eye
+- **THEN** the bolt stands on the ground between 150 and six hundred metres from the eye
 
 #### Scenario: No lightning outside a thunderstorm
 
@@ -158,7 +158,7 @@ Wet ground SHALL darken and glint in the sun while it rains or thunders, and SHA
 
 ### Requirement: Water's haze replaces the weather under the surface
 
-Under the water's surface the water's haze SHALL replace the weather's colour, and the fog the weather writes while the eye is under water SHALL be kept for surfacing (`updateUnderwaterFog.ts` writes the water's colour each frame under the surface, and saves the density the weather writes there for surfacing).
+Under the water's surface the water's haze SHALL replace the weather's colour, and the fog the weather writes while the eye is under water SHALL be kept for surfacing (writes the water's colour each frame under the surface, and saves the density the weather writes there for surfacing).
 
 #### Scenario: Under water
 
@@ -169,8 +169,8 @@ Under the water's surface the water's haze SHALL replace the weather's colour, a
 ## Open
 
 - [ ] **The weather the world loads with is set at once** — no source yet: no load path was read.
-- [ ] **A strike's second pulse is dimmer than the first** — no source yet: the intensities in `LIGHTNING_FLASH_PULSES` were not read.
-- [ ] **A weather change blends over nine seconds, eased in and out** — no source yet: a read of the turn in `~/Esposter/genshin-parity/captures/world-weather-turn.mkv`, the turn recording on disk, against the nine seconds.
+- [ ] **A strike's second pulse is dimmer than the first** — no source yet: a measure of the second pulse's strength on the thunderstorm recording, since the 0.6 in `LIGHTNING_FLASH_PULSES` is provisional.
 - [ ] **A weather change blends over nine seconds, eased in and out, from where the sky had reached** — no source yet: the same recording, `~/Esposter/genshin-parity/captures/world-weather-turn.mkv`, read for a change begun part way through another.
-- [ ] **A sandstorm tints the haze toward the colour of sand** — no source yet: the haze's colour in the Desert of Hadramaveth sandstorm clip, named in the design, which is not in `~/Esposter/genshin-parity/captures/`; the Weather page gives no colour.
+- [ ] **A sandstorm tints the haze toward the colour of sand** — no source yet: the haze's colour read off the Desert of Hadramaveth clip `~/Esposter/genshin-parity/captures/yt-k_FKK0qcYHw-0-40.mp4`, which is on disk but was not viewed; the Weather page gives no colour.
+- [ ] **An area with several weathers turns after its 300-second interval** — no source yet: a recording of an area's weather changing, to read its interval off, since the 300 seconds is a built stand-in.
 - [ ] **A thunderstorm strikes about 27.6 times a minute, each flashing the sky twice and dropping a bolt** — no source yet: a strike count over `~/Esposter/genshin-parity/captures/world-thunderstorm.mkv`, not yet read; the wiki's Lightning page is not in the cache.
