@@ -14,4 +14,4 @@ The card game is a rules engine of its own in `genshin-world`: a duel is a plain
 
 ## Open
 
-- [ ] **The plain fields carry everything a duel reads** — checked against the GCG dump row types (ExcelGcgCardRow and its siblings): each names plain fields only, with no obfuscated key, and the claim is not settled by it because the duel's own reads of the built records are not traced to those rows here.
+- [ ] **The plain fields carry everything a duel reads** — checked against the GCG dump row types (ExcelGcgCardRow and its siblings): each names plain fields only, with no obfuscated key; the built record schemas `packages/genshin-world/src/models/gcg/gcgDeckSchema.ts` and `gcgStandardRuleSchema.ts` also name plain keys only, and the claim is not settled by them, because the duel's own reads of the built records, across the files under that folder, are not traced to those keys here.
