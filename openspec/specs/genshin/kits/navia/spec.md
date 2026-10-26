@@ -53,7 +53,7 @@ Holding Rosula Shardshot SHALL charge the hold and fire on release.
 
 ### Requirement: As the Sunlit Sky's Singing Salute
 
-As the Sunlit Sky's Singing Salute SHALL fire a blast and a cannon whose ticks each strike every enemy within 13 metres of Navia, and the cannon's hits SHALL gain Navia Crystal Shrapnel up to six.
+As the Sunlit Sky's Singing Salute SHALL fire a blast and a cannon whose ticks each strike every enemy within 13 metres of Navia, provisionally, and the blast's and the cannon's hits SHALL gain Navia Crystal Shrapnel up to six.
 
 #### Scenario: Cannon ticks strike every enemy in range
 
@@ -63,7 +63,7 @@ As the Sunlit Sky's Singing Salute SHALL fire a blast and a cannon whose ticks e
 #### Scenario: Cannon hits gain Shrapnel up to six
 
 - **GIVEN** Navia holds five Crystal Shrapnel
-- **WHEN** the cannon's hits land on enemies
+- **WHEN** the blast's or the cannon's hits land on enemies
 - **THEN** Navia holds six Crystal Shrapnel
 - **AND** no more is gained beyond six
 
