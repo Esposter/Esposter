@@ -187,7 +187,7 @@ From Ascension 4, a Lunar-Bloom reaction while her burst's window is open SHALL 
 
 ### Requirement: Moondew Cleanse replaces her charged attack while Dew is there to spend
 
-While the party holds Dew, her charged attack SHALL be Moondew Cleanse, which spends one Dew, the verdant first, costs no stamina, and strikes three Lunar-Bloom hits that ignore all of each enemy's DEF.
+While the party holds Dew, her charged attack SHALL be Moondew Cleanse, which spends one Dew, the verdant first, costs no stamina, and strikes three Lunar-Bloom hits that ignore all of each enemy's DEF (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/columbina/charge.go` line 101, `IgnoreDefPercent: 1.0`).
 
 #### Scenario: A charged attack with Dew plays Moondew Cleanse and spends one Dew
 
@@ -218,4 +218,3 @@ While the party holds Dew, her charged attack SHALL be Moondew Cleanse, which sp
 
 - [ ] **Every hit is Hydro and deals one unit of Hydro gauge** — contradicted by `~/Esposter/cache/genshin-wiki/Category_Columbina_Talents.json`: Moonlit Melancholy's Skill DMG row gives 2U; Moondew Cleanse deals Dendro DMG with 0U.
 - [ ] **A Lunar-Bloom consumes its auras as Bloom does** — no source yet: no cached line states how a Lunar-Bloom consumes its element.
-- [ ] **Moondew Cleanse's hits ignore all of each enemy's DEF** — no source yet cited by the page, so the requirement above is unconfirmed: the candidate is gcsim's `~/Esposter/cache/gcsim-v2.47.2/internal/characters/columbina/charge.go` line 101, which gives `IgnoreDefPercent: 1.0`, not yet read from the cache.
