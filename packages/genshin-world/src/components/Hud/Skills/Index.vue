@@ -162,11 +162,12 @@ onUnmounted(() => {
 
 /* The keys' skill and burst as `hud-world-keys` shows them at 1080 high, measured from the right edge and the foot of
    `GrpActionBtn`, which on a 16:9 screen are the screen's: the skill's disc of diameter 74 centred 228.5 in and 92 up,
-   Darkening what lies under it by a sixth (0.26 read the disc 17 levels too dark on `hud-world-keys`), and the burst's of diameter 112 at 101 in and 109.5 up, ringed 6 wide in
-   Its element's bright tone once charged. Under each its key's cap, 30 by 25 and white, 28.5 up. Each icon's
-   Square is 1.29 of the skill's disc and 1.066 of the burst's, Chonghua's Layered Frost's white 36 by 58 pixels against
-   Its icon's 47 by 80 and Cloud-Parting Star's 77 by 77 against its icon's 82 by 83. Provisional: the uncharged burst,
-   Which no frame of the keys shows, drawn as the skill's disc filling as the touch layout's does */
+   darkening what lies under it by a sixth (0.26 read the disc 17 levels too dark on `hud-world-keys`), and the burst's
+   of diameter 112 at 101 in and 109.5 up, ringed 6 wide in its element's bright tone once charged. Under each its key's
+   cap, 30 by 25 and white, 28.5 up. Each icon's square is 1.29 of the skill's disc and 1.066 of the burst's, Chonghua's
+   Layered Frost's white 36 by 58 pixels against its icon's 47 by 80 and Cloud-Parting Star's 77 by 77 against its
+   icon's 82 by 83. Provisional: the uncharged burst, which no frame of the keys shows, drawn as the skill's disc
+   filling as the touch layout's does */
 .keys .skill {
   --glyph-size: calc(var(--unit) * 74 * 1.29);
 
