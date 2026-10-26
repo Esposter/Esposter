@@ -6,7 +6,7 @@ The login sky, as built: each hour's clear sky solved as the game's sky draws it
 
 ### Requirement: Each hour's sky matches its references
 
-Each hour's clear sky SHALL be solved over every reference at that hour together, so that the sky reads as one sky across the frames of that hour (`scripts/src/services/genshinParity/sky/fitSky.ts`).
+Each hour's clear sky SHALL be solved over every reference at that hour together, so that the sky reads as one sky across the frames of that hour.
 
 #### Scenario: Hour's clear sky
 
@@ -24,7 +24,7 @@ The frame SHALL be drawn through the game's own tone curve with no grade or bloo
 
 ### Requirement: Night white balance
 
-The night SHALL pass through its own white balance before the tone curve, cooled to a temperature of minus 9.5 and tinted 16 (`packages/genshin-world/src/services/login/scene/LoginSkyStateMap.ts`).
+The night SHALL pass through its own white balance before the tone curve, cooled to a temperature of minus 9.5 and tinted 16.
 
 #### Scenario: Night frame
 
@@ -33,12 +33,12 @@ The night SHALL pass through its own white balance before the tone curve, cooled
 
 ### Requirement: Sun and moon placement
 
-The sun and the moon SHALL sit where their references show them, the light taking the direction of the body shown and the other body opposite (`packages/genshin-world/src/services/login/scene/getLoginScreenDirection.ts`, `packages/genshin-world/src/services/login/scene/LoginSkyStateMap.ts`).
+The sun and the moon SHALL sit where their references show them, the light taking the direction of the body shown and the other body opposite.
 
 #### Scenario: Dawn sun
 
 - **WHEN** the dawn is shown
-- **THEN** the sun sits just past the left edge, a little above the horizon (`packages/genshin-world/src/services/login/scene/LoginSkyStateMap.ts`)
+- **THEN** the sun sits just past the left edge, a little above the horizon
 
 #### Scenario: Night moon
 
