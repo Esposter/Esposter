@@ -116,3 +116,4 @@ flowchart TD
 - [ ] **A shield takes damage before HP** — no source yet: the order of a shield against HP, which `#6006` does not state (it deducts a shield's points to block some DMG).
 - [ ] **Leave It to Me! makes the next switch a fast action and is spent by it** — no source yet: the keyword placeholders `$[K1]` and `$[K2]` in its card text are not resolved here.
 - [ ] **A second reaction of the same kind joins the card already there, up to its most usages** — no source yet: the effect that places a reaction's card was not among the files read under `packages/genshin-world/src/services/gcg/effects/`.
+- [ ] **Each dice face is one of the seven elements or Omni, equally likely** — no source yet: the game's dice-face odds, which no rule text read here states.
