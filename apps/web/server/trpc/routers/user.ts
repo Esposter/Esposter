@@ -2,7 +2,9 @@ import type { CallBackgroundBlob } from "#server/models/message/call/CallBackgro
 import type { ApiKeyPermissions } from "#shared/models/auth/ApiKeyPermissions";
 import type { CallBackground } from "#shared/models/message/call/CallBackground";
 import type {
+  DataExportInUser,
   DeleteAccountEventGridData,
+  ExportUserDataEventGridData,
   UserInAuth,
   UserSettingsInMessage,
   UserStatusInMessage,
@@ -21,6 +23,8 @@ import { readCallBackgroundBlobs } from "#server/services/message/call/readCallB
 import { getDetectedUserStatus } from "#server/services/message/getDetectedUserStatus";
 import { deleteAccountSessions } from "#server/services/user/deleteAccountSessions";
 import { userEventEmitter } from "#server/services/user/events/userEventEmitter";
+import { getDataExportLink } from "#server/services/user/getDataExportLink";
+import { readActiveDataExport } from "#server/services/user/readActiveDataExport";
 import { upsertConnectedStatus } from "#server/services/user/upsertConnectedStatus";
 import { router } from "#server/trpc";
 import { getInvalidOperationError } from "#server/trpc/guards/getInvalidOperationError";
@@ -30,6 +34,7 @@ import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedPr
 import { standardRateLimitedProcedure } from "#server/trpc/procedure/standardRateLimitedProcedure";
 import { createApiKeyInputSchema } from "#shared/models/db/user/CreateApiKeyInput";
 import { generateCallBackgroundUploadUrlInputSchema } from "#shared/models/db/user/GenerateCallBackgroundUploadUrlInput";
+import { generateDataExportLinkInputSchema } from "#shared/models/db/user/GenerateDataExportLinkInput";
 import { readUserInputSchema } from "#shared/models/db/user/ReadUserInput";
 import { updateUserInputSchema } from "#shared/models/db/user/UpdateUserInput";
 import { upsertStatusInputSchema } from "#shared/models/db/user/UpsertStatusInput";
@@ -43,6 +48,8 @@ import {
   AzureFunction,
   createEventGridEvent,
   DatabaseEntityType,
+  dataExportsInUser,
+  DataExportStatus,
   DEFAULT_AUTO_IDLE_THRESHOLD_MS,
   DEFAULT_INPUT_SENSITIVITY_DECIBELS,
   DEFAULT_MICROPHONE_VOLUME_PERCENTAGE,
@@ -130,6 +137,20 @@ export const userRouter = router({
       );
       return generateWriteSasUrl(blockBlobClient, { contentType: mimetype });
     }),
+  // An export that is another person's is not found rather than refused, so its existence is not disclosed. The
+  // Readiness and expiry checks are the service's, since they read the row the same way for every caller
+  generateDataExportLink: standardAuthedProcedure
+    .input(generateDataExportLinkInputSchema)
+    .mutation<string>(async ({ ctx, input }) => {
+      const dataExport = await requireEntity(
+        ctx.db.query.dataExportsInUser.findFirst({
+          where: { id: { eq: input }, userId: { eq: ctx.getSessionPayload.user.id } },
+        }),
+        DatabaseEntityType.DataExport,
+        input,
+      );
+      return getDataExportLink(dataExport);
+    }),
   generateProfileImageUploadUrl: standardAuthedProcedure.mutation<{ publicUrl: string; sasUrl: string }>(
     async ({ ctx }) => {
       const containerClient = await useContainerClient(AzureContainer.PublicUserAssets);
@@ -172,6 +193,17 @@ export const userRouter = router({
         slot,
       })),
     );
+  }),
+  // The export the settings page shows: the one being built, else the latest ready one. A failed build is not returned,
+  // So it reads as no export and the person can ask again
+  readDataExport: standardAuthedProcedure.query<DataExportInUser | undefined>(async ({ ctx }) => {
+    const activeDataExport = await readActiveDataExport(ctx);
+    if (activeDataExport) return activeDataExport;
+    else
+      return ctx.db.query.dataExportsInUser.findFirst({
+        orderBy: { readyAt: "desc" },
+        where: { status: { eq: DataExportStatus.Ready }, userId: { eq: ctx.getSessionPayload.user.id } },
+      });
   }),
   readStatuses: standardAuthedProcedure
     .input(userStatusIdsInputSchema)
@@ -238,6 +270,30 @@ export const userRouter = router({
         virtualBackground: "",
         voiceInputMode: VoiceInputMode.VoiceActivity,
       } satisfies UserSettingsInMessage;
+  }),
+  // A request while one is queued or building conflicts with that export's row, so nothing is inserted and the
+  // Active one comes back unpublished. The event goes out after the row lands; a refused publish deletes the row, so
+  // The retry queues a new export rather than returning one that nothing will build
+  requestDataExport: standardAuthedProcedure.mutation<DataExportInUser>(async ({ ctx }) => {
+    const userId = ctx.getSessionPayload.user.id;
+    const [insertedDataExport] = await ctx.db
+      .insert(dataExportsInUser)
+      .values({ status: DataExportStatus.Queued, userId })
+      .onConflictDoNothing()
+      .returning();
+    if (!insertedDataExport) return requireEntity(readActiveDataExport(ctx), DatabaseEntityType.DataExport, userId);
+    else {
+      const data: ExportUserDataEventGridData = { dataExportId: insertedDataExport.id };
+      const exportUserDataEvent = createEventGridEvent(AzureFunction.ExportUserData, userId, data);
+      await getResultAsync(() => useEventGridPublisherClient().send([exportUserDataEvent])).match(
+        noop,
+        async (error) => {
+          await ctx.db.delete(dataExportsInUser).where(eq(dataExportsInUser.id, insertedDataExport.id));
+          throw error;
+        },
+      );
+      return insertedDataExport;
+    }
   }),
   updateUser: standardAuthedProcedure
     .input(updateUserInputSchema)

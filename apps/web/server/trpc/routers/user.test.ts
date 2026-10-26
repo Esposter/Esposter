@@ -6,10 +6,12 @@ import type { DecorateRouterRecord } from "@trpc/server/unstable-core-do-not-imp
 import { createMockSession } from "#server/auth.test";
 import { getCallBackgroundBlobName } from "#server/services/message/call/getCallBackgroundBlobName";
 import { getCallBackgroundPrefix } from "#server/services/message/call/getCallBackgroundPrefix";
+import { DATA_EXPORT_LINK_DURATION_MS } from "#server/services/user/constants";
 import { createCallerFactory } from "#server/trpc";
 import {
   consumeMockSessionOnce,
   createMockContext,
+  createMockUser,
   getMockCreateApiKey,
   getMockRevokeSession,
   getMockSession,
@@ -26,6 +28,8 @@ import {
   AzureContainer,
   AzureFunction,
   DatabaseEntityType,
+  dataExportsInUser,
+  DataExportStatus,
   READ_SAS_DURATION_MS,
   sessionsInAuth,
   UserStatus,
@@ -57,12 +61,15 @@ describe("userRouter", () => {
   let mockContext: Context;
   let caller: DecorateRouterRecord<TRPCRouter["user"]>;
   const biography = "biography";
+  const blobName = "a";
+  const expiredAt = new Date(-1);
   const image = "image";
   const message = "message";
   const mimetype = MimeType.Png;
   const name = "name";
   const publishError = new Error(" ");
   const size = 1;
+  const unexpiredAt = new Date(Temporal.Duration.from({ days: 7 }).total("milliseconds"));
   const updatedMessage = "updatedMessage";
   const userId = getMockSession().user.id;
   const getCallBackgroundUrl = (slot: number) =>
@@ -86,6 +93,14 @@ describe("userRouter", () => {
 
     return otherSession;
   };
+  // An export as the handler leaves it once its archive is committed, owned by the given person
+  const insertReadyDataExport = async (ownerId: string, expiresAt: Date) =>
+    takeOne(
+      await mockContext.db
+        .insert(dataExportsInUser)
+        .values({ blobName, expiresAt, readyAt: new Date(), status: DataExportStatus.Ready, userId: ownerId })
+        .returning(),
+    );
 
   beforeAll(async () => {
     mockContext = await createMockContext();
@@ -102,6 +117,7 @@ describe("userRouter", () => {
     MockContainerDatabase.clear();
     MockEventGridDatabase.clear();
     MockTableDatabase.clear();
+    await mockContext.db.delete(dataExportsInUser);
     await mockContext.db.delete(userStatusesInMessage);
   });
 
@@ -489,5 +505,114 @@ describe("userRouter", () => {
       createdBefore: new Date(0),
       prefix: getCallBackgroundBlobName(userId, 0),
     });
+  });
+
+  test("requestDataExport queues an export and publishes it once", async () => {
+    expect.hasAssertions();
+
+    const dataExport = await caller.requestDataExport();
+    const dataExportEvents = MockEventGridDatabase.get("");
+    assert.exists(dataExportEvents);
+
+    expect(dataExport.status).toBe(DataExportStatus.Queued);
+    expect(dataExport.userId).toBe(userId);
+    expect(dataExportEvents).toHaveLength(1);
+    expect(takeOne(dataExportEvents).data).toStrictEqual({ dataExportId: dataExport.id });
+    expect(takeOne(dataExportEvents).eventType).toBe(AzureFunction.ExportUserData);
+    expect(takeOne(dataExportEvents).subject).toBe(userId);
+  });
+
+  test("requestDataExport returns the active export to a second request, and publishes nothing more", async () => {
+    expect.hasAssertions();
+
+    const firstDataExport = await caller.requestDataExport();
+    const secondDataExport = await caller.requestDataExport();
+
+    expect(secondDataExport).toStrictEqual(firstDataExport);
+    expect(MockEventGridDatabase.get("")).toHaveLength(1);
+  });
+
+  // The row is deleted when its event is refused, so a retry queues a new export rather than returning one that
+  // Nothing builds
+  test("requestDataExport fails when the event is not published, and a retry queues the export again", async () => {
+    expect.hasAssertions();
+
+    vi.spyOn(MockEventGridPublisherClient.prototype, "send").mockRejectedValueOnce(publishError);
+
+    await expect(caller.requestDataExport()).rejects.toMatchObject({ cause: publishError });
+    await expect(
+      mockContext.db.query.dataExportsInUser.findMany({ where: { userId: { eq: userId } } }),
+    ).resolves.toStrictEqual([]);
+
+    const dataExport = await caller.requestDataExport();
+
+    expect(dataExport.status).toBe(DataExportStatus.Queued);
+    expect(MockEventGridDatabase.get("")).toHaveLength(1);
+  });
+
+  test("readDataExport returns the export being built", async () => {
+    expect.hasAssertions();
+
+    const dataExport = await caller.requestDataExport();
+
+    await expect(caller.readDataExport()).resolves.toStrictEqual(dataExport);
+  });
+
+  test("readDataExport returns the ready export when none is being built", async () => {
+    expect.hasAssertions();
+
+    const readyDataExport = await insertReadyDataExport(userId, unexpiredAt);
+
+    await expect(caller.readDataExport()).resolves.toStrictEqual(readyDataExport);
+  });
+
+  test("generateDataExportLink mints a read link to the owner's ready export", async () => {
+    expect.hasAssertions();
+
+    const dataExport = await insertReadyDataExport(userId, unexpiredAt);
+    const link = await caller.generateDataExportLink(dataExport.id);
+
+    expect(link).toBe(
+      getMockSasUrl(
+        `${MOCK_BLOB_BASE_URL}/${AzureContainer.DataExports}/${blobName}`,
+        "r",
+        "b",
+        new Date(DATA_EXPORT_LINK_DURATION_MS),
+      ),
+    );
+  });
+
+  test.each([DataExportStatus.Building, DataExportStatus.Failed, DataExportStatus.Queued])(
+    "generateDataExportLink refuses a %s export",
+    async (status) => {
+      expect.hasAssertions();
+
+      const dataExport = takeOne(await mockContext.db.insert(dataExportsInUser).values({ status, userId }).returning());
+
+      await expect(caller.generateDataExportLink(dataExport.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+        `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.DataExport, dataExport.id).message}]`,
+      );
+    },
+  );
+
+  test("generateDataExportLink refuses another person's export", async () => {
+    expect.hasAssertions();
+
+    const otherUser = await createMockUser(mockContext.db);
+    const dataExport = await insertReadyDataExport(otherUser.id, unexpiredAt);
+
+    await expect(caller.generateDataExportLink(dataExport.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new NotFoundError(DatabaseEntityType.DataExport, dataExport.id).message}]`,
+    );
+  });
+
+  test("generateDataExportLink refuses an expired export", async () => {
+    expect.hasAssertions();
+
+    const dataExport = await insertReadyDataExport(userId, expiredAt);
+
+    await expect(caller.generateDataExportLink(dataExport.id)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Read, DatabaseEntityType.DataExport, dataExport.id).message}]`,
+    );
   });
 });

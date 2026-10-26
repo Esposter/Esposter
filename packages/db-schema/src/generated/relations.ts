@@ -38,6 +38,7 @@ import { blocksInSocialRelation } from "#src/relations/social/blocksInSocialRela
 import { friendRequestsInSocialRelation } from "#src/relations/social/friendRequestsInSocialRelation";
 import { friendsInSocialRelation } from "#src/relations/social/friendsInSocialRelation";
 import { storageLedgerInStorageRelation } from "#src/relations/storage/storageLedgerInStorageRelation";
+import { dataExportsInUserRelation } from "#src/relations/user/dataExportsInUserRelation";
 
 export const relations = {
   ...accountsInAuthRelation,
@@ -47,6 +48,7 @@ export const relations = {
   ...blocksInSocialRelation,
   ...bookmarksInAppRelation,
   ...callSessionsInMessageRelation,
+  ...dataExportsInUserRelation,
   ...friendRequestsInSocialRelation,
   ...friendsInSocialRelation,
   ...invitesInMessageRelation,

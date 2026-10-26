@@ -6,6 +6,7 @@ export enum DatabaseEntityType {
   Bookmark = "Bookmark",
   CallBackground = "CallBackground",
   CallSession = "CallSession",
+  DataExport = "DataExport",
   Friend = "Friend",
   FriendRequest = "FriendRequest",
   Invite = "Invite",
