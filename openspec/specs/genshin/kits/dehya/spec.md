@@ -27,7 +27,7 @@ Dehya's charged attack SHALL be provisional, with a spin that hits at once and a
 
 ### Requirement: Molten Inferno initial hit
 
-Molten Inferno SHALL deal an initial Pyro hit in a circle of radius 5 metres, landing 20 frames after it is cast, and SHALL cool down for 20 seconds. Molten Inferno costs no energy: its skill row in the dump has a cooldown and no energy cost, and the wiki's Molten Inferno page gives a CD of 20s and no energy.
+Molten Inferno SHALL deal an initial Pyro hit in a circle of radius 5 metres, landing 20 frames after it is cast, and SHALL cool down for 20 seconds. Molten Inferno costs no energy: its skill row in the dump (`~/Esposter/genshin-parity/text/ExcelBinOutput/AvatarSkillExcelConfigData.json`, id 10792) has a cooldown of 20 and no energy cost, and the wiki's Molten Inferno page gives a CD of 20s (`~/Esposter/cache/genshin-wiki/Category_Dehya_Talents.json`).
 
 #### Scenario: The initial hit lands 20 frames after the cast
 
@@ -48,4 +48,3 @@ Dehya's Constellations 1, 2, 4 and 6 SHALL NOT take effect: Constellation 1 need
 ## Open
 
 - [ ] **the final hit's 300 frames are the wiki's 5-second maximum duration** — no source yet: a source that gives the final hit's frame count, since the Sandstorm Assault page gives only its Max Duration of 5s (`~/Esposter/cache/genshin-wiki/Category_Dehya_Talents.json`), so the 300 frames stay the repo's conversion of those 5 seconds.
-- [ ] **Molten Inferno's wiki page gives a CD of 20s and no energy** — no source yet: the energy, since the page's infobox has no energy field, which is not a stated value of none (its CD of 20s is in `~/Esposter/cache/genshin-wiki/Category_Dehya_Talents.json`).
