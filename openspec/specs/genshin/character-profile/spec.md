@@ -100,4 +100,4 @@ The panel SHALL name the character's namecard once Friendship holds it, except f
 
 ## Open
 
-- [ ] **Xinyan, Yae Miko and Momoka have no namecard, and every other playable character has one** — no source yet: `~/Esposter/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json` holds a namecard named for Yae Miko (id 210112, `UI_NameCardIcon_Yae1`, "Kitsune Dreaming"), and the Travellers' derived names (`UI_NameCardIcon_PlayerBoy` and `_PlayerGirl`) are absent.
+- [ ] **Xinyan, Yae Miko and Momoka have no namecard, and every other playable character has one** — contradicted by `~/Esposter/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json`: it holds namecards for Xinyan (210045) and Yae Miko (210112).
