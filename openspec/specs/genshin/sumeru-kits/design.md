@@ -20,7 +20,7 @@ flowchart TD
 
 The city's tiers narrow by a fixed step each, every walkway ledge overhangs its tier, and the dome is a hemisphere stepped through a few rings, so the whole city is one lathe (`packages/genshin-world/src/services/sumeru/createRainforestCityGeometry.ts`). The desert ruin's columns, obelisk and pyramid are lathe stacks too, the obelisk and pyramid faceted over four sides and turned a quarter so their faces sit on the axes (`packages/genshin-world/src/services/sumeru/createDesertRuinGeometry.ts`). A hall is one box from below the sand to its roof (`packages/genshin-world/src/services/sumeru/createDesertRuinGeometry.ts`).
 
-Sumeru City's houses, "Area_Xm_Build_" in the game's names (`~/Esposter/genshin-parity/extracted/sumeru/`, which holds 3,710 files with that prefix), are what the rainforest city kit stands in for when [parity](../parity/README.md) takes inventory of the city's witness, its terrain tiles the ground beside them; `SumeruUndrawnMeshRegexMap` names the rest, bridges, common buildings and plants among them, as not drawn yet (`packages/genshin-world/src/services/sumeru/SumeruUndrawnMeshRegexMap.ts`, lines 6 to 11).
+Sumeru City's houses, "Area_Xm_Build_" in the game's names (`~/Esposter/genshin-parity/extracted/sumeru/`, which holds 3,710 files with that prefix), are what the rainforest city kit stands in for when [parity](../parity/README.md) takes inventory of the city's witness, its terrain tiles the ground beside them; `SumeruUndrawnMeshRegexMap` names the rest, bridges, common buildings and plants among them, as not drawn yet.
 
 ## Key files
 
@@ -35,3 +35,7 @@ Sumeru City's houses, "Area_Xm_Build_" in the game's names (`~/Esposter/genshin-
 | `packages/genshin-world/src/data/regions/sumeru.json`                        | Sumeru's region data: Sumeru City's terraces, at a provisional place              |
 | `packages/genshin-world/src/services/sumeru/SumeruPartFamilyMeshRegexMap.ts` | The families Sumeru City's houses and terrain tiles fall to                       |
 | `packages/genshin-world/src/services/sumeru/SumeruUndrawnMeshRegexMap.ts`    | What else Sumeru City's export holds, by kind, not drawn yet                      |
+
+## Open
+
+- [ ] **Bridges, common buildings and plants are not drawn yet** — no source yet: game data or a snapshot that holds this behaviour
