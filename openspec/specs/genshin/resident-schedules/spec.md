@@ -105,3 +105,4 @@ An operator generating the residents SHALL place each named NPC that has a talk 
 ## Open
 
 - [ ] **A resident the game shows only by day is marked absent at night** — no source yet: no generator or data file sets `absentAtNight` (only `Resident.ts` and `computeResidentSpot.ts` read it), and no resident in the region data files carries it.
+- [ ] **Residents keep their day spot from six in the morning to seven at night, the game's own hours** — no source yet: the game's day and night hours are not read from the game data here.
