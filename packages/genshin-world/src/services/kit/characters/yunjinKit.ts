@@ -14,6 +14,7 @@ import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { checkIsOwnReactionTriggered } from "#src/services/kit/checkIsOwnReactionTriggered";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
@@ -45,6 +46,17 @@ const ASCENSION_1 = 1;
 // https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/yunjin
 const ASCENSION_1_COUNTER_WINDOW_SECONDS = 0.5;
 const ASCENSION_1_COUNTER_WINDOW_ID = "yunjin-ascension-1-counter-window";
+// Opening Flourish's cooldown is cut by 18%, which gcsim (MIT) yunjin/skill.go gives as 443 frames for its 9 seconds, rounded up
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yunjin/skill.go
+const CONSTELLATION_1 = 1;
+const CONSTELLATION_1_SKILL_COOLDOWN_MULTIPLIER = 0.82;
+// Once the banner is unleashed, every deployed member's Normal Attack DMG rises 15% for 12 seconds, as gcsim (MIT)
+// yunjin/cons.go gives it
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yunjin/cons.go
+const CONSTELLATION_2 = 2;
+const CONSTELLATION_2_NORMAL_ATTACK_DAMAGE_BONUS = 0.15;
+const CONSTELLATION_2_SECONDS = 12;
+const CONSTELLATION_2_SOURCE = "yunjin-constellation-2";
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_DEFENSE_BONUS = 0.2;
 const CONSTELLATION_4_SECONDS = 12;
@@ -87,12 +99,12 @@ const getBannerIncrease = (
 // Yun Jin's behaviour: Opening Flourish's tap and each of its two charge levels set a shield of her Max HP as they start.
 // Cliffbreaker's Banner's DEF-scaled DMG Increase is party-wide, as gcsim gives it: her own normal attacks take it through
 // Her strike hook and a teammate's through the party strike hook, with Ascension 4's share of the Elemental Types on top
-// Ascension 1's counter window is built.
-// Constellation 4's DEF is built, from her own Crystallize
-// Constellation 1 needs the Opening Flourish cooldown cut, which the kit does not build
-// Constellation 2 needs the Cliffbreaker's Banner's Normal Attack DMG bonus for the party, not built
-// Constellation 6 needs a Normal Attack SPD bonus, which no attribute carries
+// Ascension 1's counter window is built. Constellation 1's Opening Flourish cooldown cut, Constellation 2's party Normal
+// Attack DMG Bonus from the unleashed banner and Constellation 4's DEF from her own Crystallize are built
+// Constellation 6's party Normal ATK SPD while the banner stands is not built: gcsim gates it on each member's own banner
+// Stacks, and the kit spends one pool of stacks for the banner, so the gate has no reading the kit can give
 export const createYunjinKitBehaviour = ({ kit, readParameter }: KitRecordReader): KitBehaviour => {
+  const burstHitmarkSeconds = takeOne(kit.elementalBurst.hits).hitmarkSeconds;
   const shieldShare = readParameter("shieldShare");
   const shieldFlat = readParameter("shieldFlatHealth");
   // Opening Flourish's shield is set as the skill starts, from Yun Jin's Max HP and the table's share and flat HP, until its
@@ -113,13 +125,24 @@ export const createYunjinKitBehaviour = ({ kit, readParameter }: KitRecordReader
     // Cliffbreaker's Banner is set as the burst starts, its seconds counted from its hit, as gcsim counts them from the
     // Hitmark: the burst's animation holds a normal attack past that hit, so nothing reads the banner before it lands
     burst: {
-      onStart: ({ activeCombatant, kitEffectState }) =>
+      onStart: ({ activeCombatant, kitEffectState, party }) => {
         addKitStatus(kitEffectState, activeCombatant.characterId, {
           id: BANNER_STATUS_ID,
-          secondsRemaining: takeOne(kit.elementalBurst.hits).hitmarkSeconds + BANNER_SECONDS,
+          secondsRemaining: burstHitmarkSeconds + BANNER_SECONDS,
           stacks: BANNER_STACKS,
-        }),
+        });
+        if (activeCombatant.constellationCount >= CONSTELLATION_2)
+          buffKitTeam(kitEffectState, party, {
+            amount: CONSTELLATION_2_NORMAL_ATTACK_DAMAGE_BONUS,
+            attribute: Attribute.NormalAttackDamageBonus,
+            secondsRemaining: burstHitmarkSeconds + CONSTELLATION_2_SECONDS,
+            source: CONSTELLATION_2_SOURCE,
+          });
+      },
     },
+    // Opening Flourish's cooldown is cut from Constellation 1, as gcsim's skill sets its cooldown
+    getSkillCooldownMultiplier: ({ activeCombatant }) =>
+      activeCombatant.constellationCount >= CONSTELLATION_1 ? CONSTELLATION_1_SKILL_COOLDOWN_MULTIPLIER : 1,
     // The banner's DMG Increase on a teammate's normal attack while it stands, priced from Yun Jin's buffed DEF
     getPartyStrikeBonus: (member, strike, _enemy, party, effects, characterIdCombatantMap) => {
       if (strike.attackTag !== AttackTag.NormalAttack || !checkIsBannerStanding(effects, member.characterId)) return {};

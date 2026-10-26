@@ -1,6 +1,6 @@
 ## Purpose
 
-Yun Jin's kit as built, with Opening Flourish's tap and its two charge levels, each with a shield of a share of her Max HP and a flat share, Cliffbreaker's Banner's initial hit, its DMG Increase on her normal attacks with Ascension 4's share, her Ascension 1 counter window, and what is left to build.
+Yun Jin's kit as built, with Opening Flourish's tap and its two charge levels, each with a shield of a share of her Max HP and a flat share, Cliffbreaker's Banner's initial hit, its DMG Increase on her normal attacks with Ascension 4's share, her Ascension 1 counter window, Constellations 1, 2 and 4, and what is left to build.
 
 ## Requirements
 
@@ -153,12 +153,44 @@ From Ascension 4, the banner's increase SHALL add a share of Yun Jin's DEF by th
 - **WHEN** her normal attack strikes
 - **THEN** the increase is 0.3216 of her DEF
 
-### Requirement: Constellations 1, 2 and 6 not built
+### Requirement: Constellation 1 cuts Opening Flourish's cooldown
 
-Yun Jin's Constellations 1, 2 and 6 SHALL give no effect yet.
+From Constellation 1, Opening Flourish's cooldown SHALL be 82% of its base.
 
-#### Scenario: Constellations 1, 2 and 6 change nothing
+#### Scenario: Constellation 1 shortens the cooldown
 
-- **GIVEN** Yun Jin has Constellation 1, 2 or 6 and the banner stands
-- **WHEN** her normal attack strikes
-- **THEN** the increase is 0.3216 of her DEF
+- **GIVEN** Yun Jin has Constellation 1
+- **WHEN** the player presses Opening Flourish
+- **THEN** its cooldown is 7.38 seconds
+
+#### Scenario: Constellation 0 keeps the cooldown
+
+- **GIVEN** Yun Jin has no constellation
+- **WHEN** the player presses Opening Flourish
+- **THEN** its cooldown is 9 seconds
+
+### Requirement: Constellation 2 raises the party's Normal Attack DMG
+
+From Constellation 2, once Cliffbreaker's Banner is unleashed, every deployed member's normal attacks SHALL deal 15% more DMG for 12 seconds.
+
+#### Scenario: Constellation 2 raises a teammate's normal attack
+
+- **GIVEN** Yun Jin has Constellation 2 and the banner is unleashed
+- **WHEN** a teammate's normal attack strikes
+- **THEN** its Normal Attack DMG Bonus includes 15% from the banner
+
+#### Scenario: Constellation 2 ends 12 seconds after the unleash
+
+- **GIVEN** Yun Jin has Constellation 2 and the banner was unleashed 12 seconds ago
+- **WHEN** a teammate's normal attack strikes
+- **THEN** no Constellation 2 bonus applies
+
+### Requirement: Constellation 6 not built
+
+Yun Jin's Constellation 6 SHALL give no effect yet.
+
+#### Scenario: Constellation 6 changes nothing
+
+- **GIVEN** Yun Jin has Constellation 6 and the banner stands
+- **WHEN** a deployed member's normal attack speed is read
+- **THEN** no Constellation 6 bonus applies
