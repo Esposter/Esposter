@@ -55,7 +55,7 @@ A character's total Companionship EXP SHALL stop at the top level's total.
 
 ### Requirement: A character
 
-A character SHALL hold its namecard once its total reaches the level its namecard row names, which is level 10 for all but four characters (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/FetterCharacterCardExcelConfigData.json`).
+A character SHALL hold its namecard once its total reaches level 10.
 
 #### Scenario: Reaching level 10 holds the namecard
 
@@ -72,4 +72,4 @@ A character SHALL hold its namecard once its total reaches the level its namecar
 ## Open
 
 - [ ] **The Original Resin claims give Companionship EXP to the deployed team but the Traveler** — no source yet: the cached Original Resin wiki page is not on disk.
-- [ ] **A character holds its namecard once its total reaches level 10** — contradicted by ~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/FetterCharacterCardExcelConfigData.json: four characters' namecard rows name level 6 or level 1.
+- [ ] **A character holds its namecard at the level its namecard row names, not a fixed level 10** — no code yet: the namecard is held at a fixed level 10 (`packages/genshin-world/src/services/friendship/constants.ts`), and `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/FetterCharacterCardExcelConfigData.json` names level 10 for all but four characters, whose rows name level 6 or level 1.
