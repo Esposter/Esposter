@@ -75,7 +75,7 @@ A season names its difficulties by id, and the writer refuses a season that name
 
 ## Notes
 
-- **The wiki's numbers are the page's.** The Vigor, the Blessing Level steps and stats, the opening bonus and the Stella rewards are the Imaginarium Theater page's statements, quoted under Sources. They are constants in `services/imaginarium/constants.ts` and need no measure from the game, but a reader who finds them wrong changes that file.
+- **The wiki's numbers are the page's.** The Vigor, the Blessing Level steps and stats, the opening bonus and the Stella rewards are the Imaginarium Theater page's statements, quoted under Sources. They are constants in `packages/genshin-world/src/services/imaginarium/constants.ts` and need no measure from the game, but a reader who finds them wrong changes that file.
 
 ## Sources
 
@@ -85,6 +85,10 @@ A season names its difficulties by id, and the writer refuses a season that name
 ## Open
 
 - [ ] **the AnimeGameData master matches the dump's tower tables byte for byte** — no source yet: the repository's revision, which the cache does not hold.
-- [ ] **`IMAGINARIUM_BLESSING_LEVEL_STATS` holds the page's per-level stats** — no source yet: the Imaginarium Theater page gives the per-level Max HP, ATK, DEF and Elemental Mastery, but not the constant's own values, which are the repo's to check (`Imaginarium_Theater.json` checked).
-- [ ] **every three Stellas give one reward past twelve** — no source yet: the Stella Rewards table gives one card at 3, 6, 9 and 12 Stellas, and the prose says "various artifact-related rewards" (`Imaginarium_Theater.json` checked).
+- [ ] **each character has two Vigor for a run, and a stage takes four performers** — no source yet: the Imaginarium Theater wiki page is not on disk.
+- [ ] **each Alternate Cast member past the required count adds two Blessing Levels, and each Brilliant Blessing its levels** — no source yet: the Imaginarium Theater wiki page is not on disk.
+- [ ] **each Blessing Level's stats are those of `IMAGINARIUM_BLESSING_LEVEL_STATS`, doubled for a special guest** — no source yet: the Imaginarium Theater wiki page is not on disk.
+- [ ] **an owned opening character gains a fifth of its Max HP, ATK and DEF** — no source yet: the Imaginarium Theater wiki page is not on disk.
+- [ ] **every three Stellas in a run give one reward** — no source yet: the Imaginarium Theater wiki page is not on disk.
+- [ ] **the Vigor, the Blessing Level steps and stats, the opening bonus and the Stella rewards are the wiki's** — no source yet: the Imaginarium Theater wiki page is not on disk.
 - [ ] **the Theater's season times are in UTC+8** — no source yet: the game's own server time zone, which the dump does not state.
