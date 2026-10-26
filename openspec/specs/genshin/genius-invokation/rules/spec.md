@@ -6,7 +6,7 @@ The card game's rules engine, a duel's dice, rounds and turns, the reactions and
 
 ### Requirement: Each side switches once before choosing its active character
 
-Each side SHALL switch its cards once during preparation, and the first round SHALL start once both sides have chosen their active characters.
+Each side SHALL switch its cards once during preparation, and the first round SHALL start once both sides have chosen their active characters (`packages/genshin-world/src/services/gcg/prepareGcgSide.ts`).
 
 #### Scenario: Preparation ends when both sides have chosen
 
@@ -16,7 +16,7 @@ Each side SHALL switch its cards once during preparation, and the first round SH
 
 ### Requirement: Each side rolls eight dice a round and may reroll once
 
-Each side SHALL roll eight dice each round and MAY reroll any dice it names once, and naming no dice SHALL pass the reroll.
+Each side SHALL roll eight dice each round and MAY reroll any dice it names once, and naming no dice SHALL pass the reroll (`packages/genshin-world/src/services/gcg/constants.ts`, `GCG_DICE_COUNT` of 8; `rerollGcgDice.ts`).
 
 #### Scenario: Naming no dice passes the reroll
 
@@ -38,7 +38,7 @@ Each side SHALL roll eight dice each round and MAY reroll any dice it names once
 
 ### Requirement: A combat action passes the turn unless the other side has declared its end
 
-A combat action SHALL pass the turn to the other side unless that side has already declared the round's end.
+A combat action SHALL pass the turn to the other side unless that side has already declared the round's end (`packages/genshin-world/src/services/gcg/useGcgSkill.ts`, `declareGcgRoundEnd.ts`).
 
 #### Scenario: Using a skill passes the turn
 
@@ -60,7 +60,7 @@ A combat action SHALL pass the turn to the other side unless that side has alrea
 
 ### Requirement: A refused action leaves the duel as it was
 
-A refused action SHALL leave the duel unchanged and SHALL say why it was refused.
+A refused action SHALL leave the duel unchanged and SHALL say why it was refused (`packages/genshin-world/src/services/gcg/useGcgSkill.ts`).
 
 #### Scenario: Skill the character cannot pay for is refused
 
@@ -70,7 +70,7 @@ A refused action SHALL leave the duel unchanged and SHALL say why it was refused
 
 ### Requirement: A card's cost reduction applies to the payer its text names
 
-A card attached to a character whose text names its holder SHALL reduce a cost only while that character is the active one, the one paying for the skill or card. A card whose text names the side SHALL reduce a cost paid by any character on it. The holder reading is the wiki's, which reads "the character" for Vermillion Hereafter and Capricious Visage, and the side reading is the game's, which names the side for Shimenawa's Reminiscence, as the decks design records.
+A card attached to a character whose text names its holder SHALL reduce a cost only while that character is the active one, the one paying for the skill or card. A card whose text names the side SHALL reduce a cost paid by any character on it (`packages/genshin-world/src/services/gcg/effects/checkIsGcgActiveHolder.ts`). The holder reading is the wiki's, which reads "the character" for Vermillion Hereafter and Capricious Visage, and the side reading is the game's, which names the side for Shimenawa's Reminiscence, as the decks design records.
 
 #### Scenario: A standby holder's status reduces no Normal Attack of the active character
 
@@ -80,7 +80,7 @@ A card attached to a character whose text names its holder SHALL reduce a cost o
 
 ### Requirement: A switch costs one die, less any reduction from the field
 
-A switch SHALL cost one die of any face, less any reduction the field's cards give to switches.
+A switch SHALL cost one die of any face, less any reduction the field's cards give to switches (`packages/genshin-world/src/services/gcg/switchGcgCharacter.ts`).
 
 #### Scenario: Switch with a field reduction may cost no die
 
@@ -96,7 +96,7 @@ A switch SHALL cost one die of any face, less any reduction the field's cards gi
 
 ### Requirement: A defeated active character is replaced by a free action
 
-A side SHALL replace its defeated active character by a free action, and only that side's turn actions SHALL wait on the replacement.
+A side SHALL replace its defeated active character by a free action, and only that side's turn actions SHALL wait on the replacement (`packages/genshin-world/src/services/gcg/replaceGcgCharacter.ts`).
 
 #### Scenario: Replacement is free and does not pass the turn
 
@@ -106,7 +106,7 @@ A side SHALL replace its defeated active character by a free action, and only th
 
 ### Requirement: The round's end gives the first side and the draws
 
-The side that declares the round's end first SHALL go first in the next round, and each side SHALL draw two cards, a draw past the hand's limit being discarded.
+The side that declares the round's end first SHALL go first in the next round, and each side SHALL draw two cards, a draw past the hand's limit being discarded (`packages/genshin-world/src/services/gcg/endGcgRound.ts`, `declareGcgRoundEnd.ts`).
 
 #### Scenario: First declarer goes first next round
 
@@ -128,7 +128,7 @@ The side that declares the round's end first SHALL go first in the next round, a
 
 ### Requirement: A duel ends with no winner after its fifteenth round
 
-A duel SHALL end with no winner once the fifteenth round's end phase has closed.
+A duel SHALL end with no winner once the fifteenth round's end phase has closed (`packages/genshin-world/src/services/gcg/constants.ts`, `GCG_ROUND_LIMIT` of 15; `endGcgRound.ts`).
 
 #### Scenario: Duel concedes after the fifteenth round
 
@@ -138,7 +138,7 @@ A duel SHALL end with no winner once the fifteenth round's end phase has closed.
 
 ### Requirement: A normal attack and an elemental skill gain energy, a burst pays it
 
-A normal attack or an elemental skill SHALL gain its character one energy, and a burst SHALL pay the energy its cost names.
+A normal attack or an elemental skill SHALL gain its character one energy, and a burst SHALL pay the energy its cost names (`packages/genshin-world/src/services/gcg/useGcgSkill.ts`).
 
 #### Scenario: Elemental skill gains one energy
 
@@ -154,7 +154,7 @@ A normal attack or an elemental skill SHALL gain its character one energy, and a
 
 ### Requirement: A normal attack after a switch is a plunging attack
 
-A normal attack SHALL be a plunging attack when its character was switched in to be the active character this round and no skill of hers has been used since the switch, the first skill used after the switch spending it whatever that skill is.
+A normal attack SHALL be a plunging attack when its character was switched in to be the active character this round and no skill of hers has been used since the switch, the first skill used after the switch spending it whatever that skill is (`packages/genshin-world/src/services/gcg/runGcgSkillUse.ts`, `effects/runGcgOnSkillUsed.ts`).
 
 A switch an effect makes SHALL count as a switch, and a defeat's replacement SHALL NOT. Both are provisional, as the wiki's Plunging Attack page is the open-world action and does not settle the TCG case (see the rules design).
 
@@ -184,7 +184,7 @@ A switch an effect makes SHALL count as a switch, and a defeat's replacement SHA
 
 ### Requirement: A normal attack is a charged attack when the side's dice are even before its action phase
 
-A normal attack SHALL be a charged attack when its side held an even number of Elemental Dice as its Action Phase began. That number SHALL be settled then and SHALL hold for the round, so a die added later does not change it.
+A normal attack SHALL be a charged attack when its side held an even number of Elemental Dice as its Action Phase began. That number SHALL be settled then and SHALL hold for the round, so a die added later does not change it (`packages/genshin-world/src/services/gcg/runGcgActionPhase.ts`, `effects/checkIsGcgChargedAttack.ts`).
 
 #### Scenario: An even number of dice makes the Normal Attacks charged
 
@@ -200,7 +200,7 @@ A normal attack SHALL be a charged attack when its side held an even number of E
 
 ### Requirement: Elements apply an aura and Anemo and Geo set none
 
-Cryo, Hydro, Pyro, Electro and Dendro damage SHALL set its aura on the target, and Anemo and Geo damage SHALL set no aura.
+Cryo, Hydro, Pyro, Electro and Dendro damage SHALL set its aura on the target, and Anemo and Geo damage SHALL set no aura (`packages/genshin-world/src/services/gcg/applyGcgDamage.ts`, `effects/applyGcgApplication.ts`).
 
 #### Scenario: Pyro sets the aura
 
@@ -216,7 +216,7 @@ Cryo, Hydro, Pyro, Electro and Dendro damage SHALL set its aura on the target, a
 
 ### Requirement: A reaction adds its bonus to the hit, and Swirl adds none
 
-A reaction SHALL add its bonus to the hit that makes it, and Swirl SHALL add no bonus.
+A reaction SHALL add its bonus to the hit that makes it, and Swirl SHALL add no bonus (`packages/genshin-world/src/services/gcg/constants.ts`, `GcgReactionKindBonusMap`).
 
 #### Scenario: Melt adds two to the hit
 
@@ -232,7 +232,7 @@ A reaction SHALL add its bonus to the hit that makes it, and Swirl SHALL add no 
 
 ### Requirement: A reaction summons its card on the attacker's side
 
-A reaction SHALL summon its card on the attacker's side, and a second reaction of the same kind SHALL add a usage to the card already there, up to its usage limit, rather than a second copy.
+A reaction SHALL summon its card on the attacker's side, and a second reaction of the same kind SHALL add a usage to the card already there, up to its usage limit, rather than a second copy (`packages/genshin-world/src/services/gcg/constants.ts`, `GCG_BURNING_FLAME_MAX_USAGES` of 2 for the Burning Flame example).
 
 #### Scenario: Second reaction joins the existing card
 
@@ -242,7 +242,7 @@ A reaction SHALL summon its card on the attacker's side, and a second reaction o
 
 ### Requirement: A frozen target takes extra damage from Pyro or Physical hits
 
-A frozen target SHALL take two more damage from a Pyro or Physical hit, and that hit SHALL remove the frozen status.
+A frozen target SHALL take two more damage from a Pyro or Physical hit, and that hit SHALL remove the frozen status (`packages/genshin-world/src/services/gcg/constants.ts`, `GCG_FROZEN_BONUS` of 2; `applyGcgDamage.ts`).
 
 #### Scenario: Pyro hit on a frozen target
 
@@ -252,7 +252,7 @@ A frozen target SHALL take two more damage from a Pyro or Physical hit, and that
 
 ### Requirement: A shield takes damage before health, and piercing skips it
 
-A shield SHALL take damage before the character's health, and piercing damage SHALL skip the shield.
+A shield SHALL take damage before the character's health, and piercing damage SHALL skip the shield (`packages/genshin-world/src/services/gcg/applyGcgDamage.ts`).
 
 #### Scenario: Shield absorbs damage first
 
@@ -268,7 +268,7 @@ A shield SHALL take damage before the character's health, and piercing damage SH
 
 ### Requirement: Swirl spreads damage to the other opposing characters without an aura
 
-A Swirl SHALL spread one of its aura's elements to each other opposing character as damage only, setting no aura and reacting with none. The spread SHALL be one damage of the side that made the Swirl, passing that side's damage modifiers once however many characters it reaches.
+A Swirl SHALL spread one of its aura's elements to each other opposing character as damage only, setting no aura and reacting with none. The spread SHALL be one damage of the side that made the Swirl, passing that side's damage modifiers once however many characters it reaches (`packages/genshin-world/src/services/gcg/applyGcgDamage.ts`, `constants.ts`, `GCG_SPREAD_DAMAGE` of 1).
 
 #### Scenario: Swirl spread sets no aura on the others
 
@@ -278,7 +278,7 @@ A Swirl SHALL spread one of its aura's elements to each other opposing character
 
 ### Requirement: An Overloaded active character is switched to the next standing character
 
-An Overloaded active character SHALL be switched to the next standing character in order, with no choice given to the player.
+An Overloaded active character SHALL be switched to the next standing character in order, with no choice given to the player (`packages/genshin-world/src/services/gcg/effects/applyGcgNonDamageReactionEffects.ts`).
 
 #### Scenario: Overloaded forces a switch
 
@@ -288,7 +288,7 @@ An Overloaded active character SHALL be switched to the next standing character 
 
 ### Requirement: A character at no health is defeated and its side owes a replacement or loses
 
-A character at no health SHALL be defeated: its equipment and statuses SHALL be discarded with its Energy, and its side SHALL owe a replacement while one of its characters stands and lose the duel once none does. The Genius Invokation TCG/Rules page (Other Rules, the Defeated row) states the discard.
+A character at no health SHALL be defeated: its equipment and statuses SHALL be discarded with its Energy, and its side SHALL owe a replacement while one of its characters stands and lose the duel once none does (`packages/genshin-world/src/services/gcg/applyGcgDamage.ts`). The Genius Invokation TCG/Rules page (Other Rules, the Defeated row) states the discard.
 
 #### Scenario: Defeated character with a standing ally owes a replacement
 
@@ -307,3 +307,13 @@ A character at no health SHALL be defeated: its equipment and statuses SHALL be 
 - **GIVEN** a character with equipment and statuses attached is defeated by a hit
 - **WHEN** the defeat is settled
 - **THEN** its equipment and statuses are discarded, and its Energy is cleared
+
+## Open
+
+- [ ] **Each side rolls eight dice a round, as the game does** — no source yet: the rule table's dice count is an obfuscated key the build does not read, and the wiki's rules page is not in the cache.
+- [ ] **A duel ends with no winner after its fifteenth round, as the game does** — no source yet: the wiki's rules page is not in the cache.
+- [ ] **Melt adds two, and the other reaction bonuses, as the game does** — no source yet: the wiki's rules page is not in the cache, and the reaction card texts were not found in the medium text map.
+- [ ] **A frozen target takes two more damage, as the game does** — no source yet: the wiki's rules page is not in the cache.
+- [ ] **Leave It to Me makes the next switch a fast action and is spent** — no source yet: the card's text was not found in the medium text map.
+- [ ] **Shimenawa's Reminiscence reduces a cost for its side, as the game's text says** — no source yet: its card text was not found in the medium text map.
+- [ ] **A second reaction of the same kind joins the card already there** — no source yet: the join in the effect that places the reaction's card was not read.
