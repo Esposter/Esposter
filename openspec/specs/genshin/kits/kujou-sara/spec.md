@@ -1,6 +1,6 @@
 ## Purpose
 
-Kujou Sara's kit as built: five strikes, a fully charged shot, Tengu Stormcall's Cover with its Ambush, Subjugation: Koukou Sendou's Titanbreaker with its Stormclusters, Ascension 4's Decorum and Constellation 6's mark, with Constellation 1 not built.
+Kujou Sara's kit as built: five strikes, a fully charged shot, Tengu Stormcall's Cover with its Ambush, Subjugation: Koukou Sendou's Titanbreaker with its Stormclusters, Ascension 4's Decorum, Constellation 1's skill cooldown cut and Constellation 6's mark.
 
 ## Requirements
 
@@ -93,12 +93,18 @@ From Ascension 4, Kujou Sara's Ambush SHALL restore 1.2 Energy to every party me
 - **WHEN** an Ambush hits an opponent
 - **THEN** no Energy is restored
 
-### Requirement: Constellation 1 not yet built
+### Requirement: Constellation 1 cuts the skill cooldown
 
-Constellation 1 SHALL NOT take effect.
+From Constellation 1, a Tengu Juurai hit that strikes an enemy SHALL cut a second off Kujou Sara's skill cooldown, at most once every 3 seconds.
 
-#### Scenario: Unbuilt effect does nothing
+#### Scenario: The burst's first hit cuts the skill cooldown
 
-- **GIVEN** Kujou Sara has Constellation 1
-- **WHEN** the player fights with Kujou Sara
-- **THEN** that effect has no effect
+- **GIVEN** Kujou Sara has Constellation 1 and her skill is cooling down
+- **WHEN** her burst's first hit strikes an enemy
+- **THEN** her skill's cooldown is cut by 1 second
+
+#### Scenario: A cut waits out its cooldown
+
+- **GIVEN** a cut was given within the last 3 seconds
+- **WHEN** another Tengu Juurai hit strikes an enemy
+- **THEN** no cut is given

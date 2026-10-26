@@ -16,8 +16,10 @@ import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { changeKitSkillCooldown } from "#src/services/kit/effects/changeKitSkillCooldown";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
+import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
 import { getKitHitElement } from "#src/services/kit/getKitHitElement";
 import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getActiveCharacterId } from "#src/services/party/getActiveCharacterId";
@@ -49,6 +51,13 @@ const C6_CONSTELLATION = 6;
 const C6_CRITICAL_DAMAGE = 0.6;
 const C6_MARK_SECONDS = 6;
 export const KUJOU_SARA_C6_MARK_ID = "sara-c6-mark";
+// Constellation 1 cuts a second off Sara's skill cooldown as a Tengu Juurai hit lands on an enemy, once every three seconds,
+// As gcsim v2.47.2 (MIT) sara/cons.go gives it, with the burst's and the Ambush's hits calling it
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/sara/cons.go
+const C1_CONSTELLATION = 1;
+const C1_COOLDOWN_ID = "sara-constellation-1-cooldown";
+const C1_COOLDOWN_SECONDS = 3;
+const C1_SKILL_COOLDOWN_CUT_SECONDS = 1;
 
 export const KUJOU_SARA_CHARACTER_ID = 10_000_056;
 
@@ -57,9 +66,9 @@ export const KUJOU_SARA_CHARACTER_ID = 10_000_056;
 // Sendou's Stormclusters, four bouts or six from Constellation 4. Her fully charged shot, Titanbreaker, the Ambushes and
 // The Stormclusters give the character on the field Tengu Stormcall's ATK Bonus, a share of her base ATK, as each lands.
 // Ascension 1's shorter charge is not built, as a charged attack has one duration. Ascension 4's Decorum restores Energy
-// As the Ambush lands. Constellation 1 is not built, as it needs the hits and ATK grants of Tengu Juurai as events, which
-// The kit does not emit. Constellation 6's mark gives the character it reaches 60% CRIT DMG on its Electro DMG and on its
-// Lunar-Charged reactions, for six seconds
+// As the Ambush lands. Constellation 1's cut to her skill's cooldown is built, from each Tengu Juurai hit that strikes an
+// Enemy, the burst's first hit and the Ambush. Constellation 6's mark gives the character it reaches 60% CRIT DMG on its
+// Electro DMG and on its Lunar-Charged reactions, for six seconds
 // Restores the party's Energy as the Ambush's hits land, once every three seconds, from the Energy Recharge its striker has
 const restoreDecorumEnergy = (
   { characterIdCombatantMap, kitEffectState, party }: KitContext,
@@ -76,6 +85,13 @@ const restoreDecorumEnergy = (
     const member = characterIdCombatantMap.get(characterId);
     if (member) gainPartyMemberEnergy(party, member, energy);
   }
+};
+
+// Constellation 1's cut to Sara's skill cooldown from a Tengu Juurai hit on an enemy, under the cooldown it starts
+const cutSkillCooldown = ({ kitEffectState, party }: KitContext, { combatant }: KitStrike): void => {
+  if (combatant.constellationCount < C1_CONSTELLATION) return;
+  if (!startKitCooldown(kitEffectState, combatant.characterId, C1_COOLDOWN_ID, C1_COOLDOWN_SECONDS)) return;
+  changeKitSkillCooldown(party, combatant.characterId, -C1_SKILL_COOLDOWN_CUT_SECONDS);
 };
 
 // The CRIT DMG Constellation 6 adds to an Electro strike of a character holding its mark, whichever kit reads it
@@ -105,6 +121,7 @@ export const createKujouSaraKitBehaviour = ({ readHit, readHits, readParameter }
     onStrike: (context, strike) => {
       addAtkBonus(context, strike);
       restoreDecorumEnergy(context, strike);
+      cutSkillCooldown(context, strike);
     },
   });
   const constellationAmbushHit = readHit("darkWingsAmbush", { onStrike: addAtkBonus });
@@ -123,7 +140,14 @@ export const createKujouSaraKitBehaviour = ({ readHit, readHits, readParameter }
   };
   return {
     burst: {
-      hits: [{ onStrike: addAtkBonus }],
+      hits: [
+        {
+          onStrike: (context, strike) => {
+            addAtkBonus(context, strike);
+            cutSkillCooldown(context, strike);
+          },
+        },
+      ],
       onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
         castStormclusters(kitEffectState, body, combatant),
     },
