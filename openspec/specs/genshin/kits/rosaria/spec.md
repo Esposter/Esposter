@@ -15,7 +15,7 @@ Rosaria's normal attack SHALL land a seven-hit string over five normal attacks, 
 
 ### Requirement: Rosaria's charged attack and plunges
 
-Rosaria's charged attack, collision and two plunges SHALL land on the enemies within reach, with their poise and plunge timings provisional.
+Rosaria's charged attack, collision and two plunges SHALL land on the enemies within reach, with their plunge timings provisional.
 
 #### Scenario: Charged attack lands
 
@@ -45,7 +45,7 @@ Ravaging Confession SHALL deal its two hits, reaching from Rosaria's body, and S
 
 ### Requirement: Rites of Termination's field
 
-Rites of Termination SHALL strike a slash and a lance, then leave a field that ticks every two seconds from Rosaria's body, each tick a circle three metres ahead of her body, and Constellation 2 SHALL add four seconds to the field.
+Rites of Termination SHALL strike a slash and a lance, then leave a field that ticks every two seconds from Rosaria's body, each tick a circle of 9.5 metres round her body, the reach of gcsim's circle of radius 6.5 three metres ahead of her, and Constellation 2 SHALL add four seconds to the field.
 
 #### Scenario: Field ticks every two seconds
 
