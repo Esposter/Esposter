@@ -1,6 +1,6 @@
 ## Purpose
 
-Where each of the recreation's shapes, colours and glyphs comes from, and how it becomes ours. The interface is rebuilt from screenshots and recordings. The world is measured off the installed game's own assets, exported locally and never committed. A transform fits our own kits' parameters to each export, and only those parameters ship. The inventory tracks every component, its source and how far it has come.
+Where each of the recreation's shapes, colours and glyphs comes from, and how it becomes ours. The interface is rebuilt from screenshots and recordings `scripts/src/services/genshinParity/commands/compareCommand.ts`. The world is measured off the installed game's own assets, exported locally and never committed `scripts/src/services/genshinAssets/blocks/extractComponent.ts`. A transform fits our own kits' parameters to each export, and only those parameters ship `scripts/src/services/genshinAssets/commands/fitCommand.ts`. The inventory tracks every component, its source and how far it has come `scripts/src/services/genshinAssets/materials/writeComponentInventory.ts`.
 
 ## Requirements
 
@@ -23,7 +23,7 @@ The 2D interface SHALL be measured from screenshots and recordings, and each int
 
 - **GIVEN** an interface component and the recording of its screen
 - **WHEN** the component is compared
-- **THEN** its score is taken over that recording's frame
+- **THEN** its score is taken over that recording's frame `scripts/src/services/genshinParity/commands/compareCommand.ts`
 
 #### Scenario: A screen drawn from atlases is measured from recordings
 
@@ -39,7 +39,7 @@ A world part the game holds as an asset SHALL be measured from the game's export
 
 - **GIVEN** the game closed and installed on the developer's machine
 - **WHEN** a world part is exported
-- **THEN** the export is written to the developer's local reference folder
+- **THEN** the export is written to the developer's local reference folder `scripts/src/services/genshinAssets/shared/constants.ts`
 
 #### Scenario: A part the game holds no asset for is measured from captures
 
@@ -55,7 +55,7 @@ A fit SHALL publish only the parameters our kits take, never a vertex, a pixel o
 
 - **GIVEN** a completed fit
 - **WHEN** its record is published
-- **THEN** the record holds only parameters our kits take
+- **THEN** the record holds only parameters our kits take `scripts/src/services/gameData/`
 
 #### Scenario: The exports stay out of the repository, the build and the deployment
 
@@ -71,7 +71,7 @@ Each fit SHALL publish its record under its own key, so that a fit run alone rep
 
 - **GIVEN** a fit selected to run alone
 - **WHEN** it runs
-- **THEN** only its own records are replaced
+- **THEN** only its own records are replaced `scripts/src/services/genshinAssets/fit/DerivedAssetFitMap.ts`, `scripts/src/services/genshinAssets/commands/fitCommand.ts`
 - **AND** every other record keeps its key and content
 
 #### Scenario: A dry run reports without publishing or writing
@@ -80,7 +80,7 @@ Each fit SHALL publish its record under its own key, so that a fit run alone rep
 - **WHEN** it runs
 - **THEN** it reports what it would publish
 - **AND** it sends no request
-- **AND** it writes no world data file
+- **AND** it writes no world data file `scripts/src/services/genshinAssets/commands/fitCommand.ts`
 
 ### Requirement: A step that runs the game's exporter fails on any logged exception
 
@@ -90,13 +90,13 @@ A step that runs the game's exporter SHALL fail when the run logs an exception, 
 
 - **GIVEN** an export run that exits cleanly but logs an exception
 - **WHEN** the step completes
-- **THEN** the step fails
+- **THEN** the step fails `scripts/src/services/recreation/animeStudio/readAnimeStudioExceptions.ts`
 
 #### Scenario: A run with no logged exception passes the step
 
 - **GIVEN** an export run that exits cleanly with no logged exception
 - **WHEN** the step completes
-- **THEN** the step passes
+- **THEN** the step passes `scripts/src/services/recreation/animeStudio/readAnimeStudioExceptions.ts`
 
 ### Requirement: An index written without the offsets is refused until it is rewritten
 
@@ -116,7 +116,7 @@ An extraction SHALL record the code revision that produced it, so that a later r
 
 - **GIVEN** an extraction made before a later change to the code that produced it
 - **WHEN** the world is read from it
-- **THEN** the stale output is reported
+- **THEN** the stale output is reported `scripts/src/services/producerStamp/readProducerStaleness.ts`
 
 ### Requirement: The avatar write fails rather than draw a guessed pose
 
@@ -126,7 +126,7 @@ The avatar write SHALL fail, rather than draw a bone at a guessed rest pose, whe
 
 - **GIVEN** a mesh whose bind poses do not match its renderer's bones
 - **WHEN** the avatar is written
-- **THEN** the write fails
+- **THEN** the write fails `scripts/src/services/genshinAssets/avatar/writeAvatar.ts`
 
 ### Requirement: A setting no export names is measured from captures
 
@@ -147,7 +147,7 @@ The inventory SHALL list every component with its source and its status.
 - **GIVEN** a component in the scene
 - **WHEN** the inventory is read
 - **THEN** its source is shown
-- **AND** its status is shown
+- **AND** its status is shown `scripts/src/services/genshinAssets/materials/writeComponentInventory.ts`
 
 ### Requirement: A screen's motion is played from the game's exported clips
 
@@ -158,3 +158,13 @@ A screen's motion SHALL be played from the game's exported animation clips, not 
 - **GIVEN** a screen with exported animation clips
 - **WHEN** its motion plays
 - **THEN** the clips' sampled curves drive it
+
+## Open
+
+- [ ] **The deployed build holds no game mesh, texture or material** — no source yet: no build check is cited that inspects the deployed output.
+- [ ] **A screen whose atlas names say little is measured from the wiki's copies and public recordings** — no source yet: no checked file names the copies or recordings used for a given screen.
+- [ ] **A light, haze or motion with no game asset is measured from captures of the game** — no source yet: no checked capture or measurement file is cited for such a setting.
+- [ ] **No export is included in the repository, the build or the deployment** — no source yet: no build or deployment check is cited that excludes the exports.
+- [ ] **A search refuses an index written before it kept each asset's offset, until it is written again** — no source yet: the search's refusal is not located in a checked file; `writeAssetIndex.ts` writes the offsets but holds no refusal.
+- [ ] **A camera path set in a script is measured from a capture of the game** — no source yet: no capture or measurement of the camera path is cited in a checked file.
+- [ ] **The clips' sampled curves drive a screen's motion** — no source yet: no checked consumer of the exported clips is cited.
