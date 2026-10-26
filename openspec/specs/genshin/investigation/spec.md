@@ -32,5 +32,4 @@ The investigation count SHALL be the one kept from the game's daily reset at fou
 
 ## Open
 
-- [ ] **The daily cap is one hundred investigations** — no source yet: no decoded table or cached wiki page holds the cap, since the Investigation page is not in `~/Esposter.noindex/cache/genshin-wiki/`.
 - [ ] **The reset is read in the game's time zone, `Asia/Shanghai`** — no source yet: the English text gives the reset as "4:00 AM ({TIMEZONE})" without naming the zone.
