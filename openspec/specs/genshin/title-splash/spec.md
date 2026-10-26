@@ -57,7 +57,7 @@ The opening SHALL hold its white backdrop until the reader's logo has arrived, s
 
 - **GIVEN** the reader's logo has not yet arrived
 - **WHEN** the opening reaches its first splash
-- **THEN** the white backdrop is held
+- **THEN** the white backdrop is held (`Index.vue` shows the splash only once the logo's path is read, and holds the white until then)
 
 #### Scenario: Logo arrived
 
@@ -104,6 +104,5 @@ The title splash SHALL be named to a screen reader by the game's own window titl
 ## Open
 
 - [ ] **The licence's lines fade in behind the logo** — no source yet: the fade was not measured on the Bilibili capture.
-- [ ] **The white backdrop is held until the reader's logo arrives** — no source yet: `packages/genshin-world/src/components/Game/Opening/Index.browser.test.ts` exists but was not opened for the hold.
 - [ ] **The Traditional Chinese, Japanese and Korean logos stand where their own clients' do** — no source yet: the parity snapshot measures only the English and the Simplified Chinese mainland splashes.
 - [ ] **The title splash shows the logo the game's login interface picks for the reader's language** — no source yet: the login interface's language-to-logo choice is not in the extracted login data (mapping is the repository's own).
