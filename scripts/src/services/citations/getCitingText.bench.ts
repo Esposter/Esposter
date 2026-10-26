@@ -1,4 +1,5 @@
 import { getCitingText } from "#src/services/citations/getCitingText";
+import { getText } from "#src/services/shared/getText.bench";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { describe, test } from "vitest";
 
@@ -7,8 +8,6 @@ import { describe, test } from "vitest";
 // Opener, a page of fences is spans skipped in blocks, and a page of double-backtick spans is the worst case,
 // Each opener's closer found by a scan across every run after it
 const BENCH_BYTE_COUNTS = [1000, 10_000, 100_000];
-const getText = (unit: string, byteCount: number) =>
-  unit.repeat(Math.ceil(byteCount / unit.length)).slice(0, byteCount);
 
 describe(getCitingText, () => {
   test.for(BENCH_BYTE_COUNTS)("%i bytes", async (byteCount, { bench }) => {

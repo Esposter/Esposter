@@ -26,6 +26,14 @@ describe(toSkyReadings, () => {
     spread: SPREAD,
     ...spread,
   });
+  const brightnessMissedHeld = {
+    "a clear sky colour": true,
+    "a cloud brightness": false,
+    "a cloud colour": true,
+    "a cloud cover": true,
+    "a cloud edges": true,
+    "a cloud spread": true,
+  };
 
   test("each hour's cloud layer matches its reference", () => {
     expect.hasAssertions();
@@ -62,14 +70,9 @@ describe(toSkyReadings, () => {
 
     const readings = toSkyReadings("a", createDistance({ brightness: MISS }), createSpread({ cover: MISS }));
 
-    expect(Object.fromEntries(readings.map((reading) => [reading.name, checkIsReadingHeld(reading)]))).toStrictEqual({
-      "a clear sky colour": true,
-      "a cloud brightness": false,
-      "a cloud colour": true,
-      "a cloud cover": true,
-      "a cloud edges": true,
-      "a cloud spread": true,
-    });
+    expect(Object.fromEntries(readings.map((reading) => [reading.name, checkIsReadingHeld(reading)]))).toStrictEqual(
+      brightnessMissedHeld,
+    );
   });
 
   test("a cloud layer that wins only on pixels is not accepted", () => {
@@ -77,13 +80,8 @@ describe(toSkyReadings, () => {
 
     const readings = toSkyReadings("a", createDistance({ brightness: MISS }), createSpread());
 
-    expect(Object.fromEntries(readings.map((reading) => [reading.name, checkIsReadingHeld(reading)]))).toStrictEqual({
-      "a clear sky colour": true,
-      "a cloud brightness": false,
-      "a cloud colour": true,
-      "a cloud cover": true,
-      "a cloud edges": true,
-      "a cloud spread": true,
-    });
+    expect(Object.fromEntries(readings.map((reading) => [reading.name, checkIsReadingHeld(reading)]))).toStrictEqual(
+      brightnessMissedHeld,
+    );
   });
 });

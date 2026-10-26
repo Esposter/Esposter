@@ -2,15 +2,11 @@ import { WORLD_DATA_DIRECTORY } from "#src/services/genshinAssets/shared/constan
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { writeJsonFile } from "#src/services/shared/writeJsonFile";
 import { join } from "node:path";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/shared/writeJsonFile"), () => ({ writeJsonFile: vi.fn<typeof writeJsonFile>() }));
 
 describe(writeWorldData, () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   test("a dry run writes no world data and returns the path it would write", async () => {
     expect.hasAssertions();
 

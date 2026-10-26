@@ -1,15 +1,11 @@
 import { OPEN_WORLD_SCENE_ID } from "#src/services/genshinAssets/shared/constants";
 import { buildTransPointUnlocks } from "#src/services/genshinAssets/transPoints/buildTransPointUnlocks";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/genshinText/readExcelTable"));
 
 describe(buildTransPointUnlocks, () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   test("keys the open world's unlock rows under the transport points dataset, sorted by point id", () => {
     expect.hasAssertions();
 

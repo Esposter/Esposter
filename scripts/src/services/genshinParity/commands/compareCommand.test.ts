@@ -3,7 +3,7 @@ import type { ParityReference } from "#src/models/genshinParity/shared/ParityRef
 import { genshinParityCommand } from "#src/services/genshinParity/commands/genshinParityCommand";
 import { compareScreen } from "#src/services/genshinParity/reference/compareScreen";
 import { runCommand } from "citty";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/genshinParity/reference/compareScreen"), () => ({
   compareScreen: vi.fn<typeof compareScreen>(),
@@ -25,6 +25,10 @@ vi.mock(import("#src/services/genshinParity/shared/ParityReferenceMap"), () => (
 }));
 
 describe("compareCommand", () => {
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   test("compares every scored reference and names a pending one as pending, scoring none of it", async () => {
     expect.hasAssertions();
 
@@ -41,6 +45,5 @@ describe("compareCommand", () => {
 
     expect(vi.mocked(compareScreen).mock.calls.map(([referenceId]) => referenceId)).toStrictEqual(["login-door"]);
     expect(log).toHaveBeenCalledWith("pending: no recording yet");
-    log.mockRestore();
   });
 });

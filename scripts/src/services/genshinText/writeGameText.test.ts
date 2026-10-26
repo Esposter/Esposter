@@ -30,7 +30,6 @@ vi.mock(import("node:fs"), async (importOriginal) => ({
 
 describe(writeGameText, () => {
   beforeEach(() => {
-    vi.clearAllMocks();
     vi.mocked(readManualTextMap).mockReturnValue(new Map());
     vi.mocked(readSdkText).mockReturnValue(new Map());
     vi.mocked(readTextMap).mockReturnValue(new Map([["1", "text"]]));

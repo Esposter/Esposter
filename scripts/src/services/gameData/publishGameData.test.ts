@@ -41,6 +41,7 @@ describe(publishGameData, () => {
   });
 
   afterEach(() => {
+    vi.restoreAllMocks();
     vi.useRealTimers();
     MockContainerDatabase.clear();
   });

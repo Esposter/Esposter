@@ -27,7 +27,6 @@ vi.mock(import("node:fs"), async (importOriginal) => ({
 
 describe(buildQuests, () => {
   beforeEach(() => {
-    vi.clearAllMocks();
     vi.mocked(buildQuestChapters).mockReturnValue([]);
     vi.mocked(readCarriedQuestRewards).mockReturnValue(new Map());
     vi.mocked(readExcelTable).mockImplementation((tableName) =>

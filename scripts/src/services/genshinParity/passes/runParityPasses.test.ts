@@ -3,7 +3,7 @@ import type { ParityPassMeasure } from "#src/models/genshinParity/passes/ParityP
 import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { ParityPass } from "#src/models/genshinParity/passes/ParityPass";
 import { runParityPasses } from "#src/services/genshinParity/passes/runParityPasses";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 const { measureCamera, measureInventory, measureLayout } = vi.hoisted(() => ({
   measureCamera: vi.fn<() => Promise<ParityPassMeasure>>(),
@@ -23,6 +23,15 @@ describe(runParityPasses, () => {
   const held: ParityPassMeasure = { notes: [], readings: [{ gate: 1, name: "", unit: "", value: 1 }] };
   const failed: ParityPassMeasure = { notes: [], readings: [{ gate: 0, name: "", unit: "", value: 1 }] };
 
+  const inventoryHeldLayoutFailed = [
+    { isHeld: true, measure: held, pass: ParityPass.Inventory },
+    { isHeld: false, measure: failed, pass: ParityPass.Layout },
+  ];
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   test("a frame outside its gate is not accepted", async () => {
     expect.hasAssertions();
 
@@ -30,10 +39,7 @@ describe(runParityPasses, () => {
     measureLayout.mockResolvedValueOnce(failed);
     const results = await runParityPasses(DerivedAssetComponent.Login);
 
-    expect(results).toStrictEqual([
-      { isHeld: true, measure: held, pass: ParityPass.Inventory },
-      { isHeld: false, measure: failed, pass: ParityPass.Layout },
-    ]);
+    expect(results).toStrictEqual(inventoryHeldLayoutFailed);
     expect(measureCamera).not.toHaveBeenCalled();
   });
 
@@ -93,7 +99,6 @@ describe(runParityPasses, () => {
       { isHeld: false, measure: { notes: ["no measure yet"], readings: [] }, pass: ParityPass.Shape },
     ]);
     expect(log).toHaveBeenCalledWith(`${ParityPass.Layout}: not owed for ${DerivedAssetComponent.Windrise}`);
-    log.mockRestore();
   });
 
   test("holds a pass on a reading no value could be read for, with its reason", async () => {
@@ -136,10 +141,7 @@ describe(runParityPasses, () => {
     measureLayout.mockResolvedValueOnce(failed);
     const results = await runParityPasses(DerivedAssetComponent.Login, ParityPass.Camera);
 
-    expect(results).toStrictEqual([
-      { isHeld: true, measure: held, pass: ParityPass.Inventory },
-      { isHeld: false, measure: failed, pass: ParityPass.Layout },
-    ]);
+    expect(results).toStrictEqual(inventoryHeldLayoutFailed);
     expect(measureCamera).not.toHaveBeenCalled();
   });
 

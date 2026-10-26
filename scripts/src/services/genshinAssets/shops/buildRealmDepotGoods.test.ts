@@ -5,7 +5,7 @@ import { buildRealmDepotGoods } from "#src/services/genshinAssets/shops/buildRea
 import { GAME_TIME_OFFSET, MORA_ITEM_ID, REALM_DEPOT_SHOP_TYPE } from "#src/services/genshinAssets/shops/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/genshinText/readExcelTable"));
 
@@ -47,10 +47,6 @@ describe(buildRealmDepotGoods, () => {
     minPlayerLevel: 1,
     refresh: ShopRefresh.None,
     tabId,
-  });
-
-  beforeEach(() => {
-    vi.clearAllMocks();
   });
 
   test("each depot good is in its own sub tab's record and names that tab, and another shop's goods are left out", () => {

@@ -4,11 +4,15 @@ import { runGit } from "#src/services/shared/runGit";
 import { setupFixtureRepository } from "#src/services/shared/setupFixtureRepository.test";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
-import { describe, expect, test, vi } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(landCommits, () => {
   const PATH = "README.md";
   const { commitFile, getCwd, publish, readSha, switchTo } = setupFixtureRepository();
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
 
   test("lands the checkout's commits on the queue's tip", () => {
     expect.hasAssertions();

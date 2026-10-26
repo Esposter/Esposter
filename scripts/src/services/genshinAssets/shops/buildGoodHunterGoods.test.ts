@@ -6,7 +6,7 @@ import { GAME_TIME_OFFSET, GOOD_HUNTER_SHOP_TYPE, MORA_ITEM_ID } from "#src/serv
 import { readCityDiscountLevel } from "#src/services/genshinAssets/shops/readCityDiscountLevel";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/genshinAssets/shops/readCityDiscountLevel"));
 vi.mock(import("#src/services/genshinText/readExcelTable"));
@@ -33,10 +33,6 @@ describe(buildGoodHunterGoods, () => {
     shopType: GOOD_HUNTER_SHOP_TYPE,
     subTabId: 0,
   };
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
 
   test("the Good Hunter's goods take the Mondstadt discount at its level", () => {
     expect.hasAssertions();

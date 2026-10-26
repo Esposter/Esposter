@@ -11,7 +11,6 @@ describe("readGameVersion", () => {
   });
 
   afterEach(() => {
-    vi.unstubAllEnvs();
     rmSync(directory, { force: true, recursive: true });
   });
 

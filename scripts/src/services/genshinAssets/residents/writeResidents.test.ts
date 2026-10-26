@@ -34,7 +34,6 @@ describe(writeResidents, () => {
   };
 
   beforeEach(() => {
-    vi.clearAllMocks();
     vi.mocked(readFittedRegions).mockResolvedValue({
       origin: [0, 0, 0],
       points: [],

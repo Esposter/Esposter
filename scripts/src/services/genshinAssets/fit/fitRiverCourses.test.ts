@@ -3,7 +3,7 @@ import { fitRiverCourses } from "#src/services/genshinAssets/fit/fitRiverCourses
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readFile } from "node:fs/promises";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("node:fs/promises"), () => ({ readFile: vi.fn<(...args: unknown[]) => Promise<never>>() }));
 vi.mock(import("#src/services/genshinAssets/shared/readObjMesh"), () => ({ readObjMesh: vi.fn<typeof readObjMesh>() }));
@@ -12,10 +12,6 @@ vi.mock(import("#src/services/genshinAssets/shared/writeWorldData"), () => ({
 }));
 
 describe(fitRiverCourses, () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   test("writes the course of each water surface that is a river as the region's rivers, and no other placement", async () => {
     expect.hasAssertions();
 

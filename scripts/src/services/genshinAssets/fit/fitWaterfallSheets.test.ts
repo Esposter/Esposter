@@ -3,7 +3,7 @@ import { fitWaterfallSheets } from "#src/services/genshinAssets/fit/fitWaterfall
 import { readObjMesh } from "#src/services/genshinAssets/shared/readObjMesh";
 import { writeWorldData } from "#src/services/genshinAssets/shared/writeWorldData";
 import { readFile } from "node:fs/promises";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("node:fs/promises"), () => ({ readFile: vi.fn<(...args: unknown[]) => Promise<never>>() }));
 vi.mock(import("#src/services/genshinAssets/shared/readObjMesh"), () => ({ readObjMesh: vi.fn<typeof readObjMesh>() }));
@@ -12,10 +12,6 @@ vi.mock(import("#src/services/genshinAssets/shared/writeWorldData"), () => ({
 }));
 
 describe(fitWaterfallSheets, () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   test("turns a placed fall's vertices into three's axes first, so its lip lands where the layout's placement stands it", async () => {
     expect.hasAssertions();
 

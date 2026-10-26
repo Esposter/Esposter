@@ -7,7 +7,7 @@ import { getParityPassesPath } from "#src/services/genshinParity/passes/getParit
 import { runCommand } from "citty";
 import { rmSync } from "node:fs";
 import { readFile } from "node:fs/promises";
-import { afterAll, describe, expect, test, vi } from "vitest";
+import { afterAll, afterEach, describe, expect, test, vi } from "vitest";
 
 const { measureInventory, measureLayout, passesDirectory } = await vi.hoisted(async () => {
   const { mkdtempSync } = await import("node:fs");
@@ -32,11 +32,14 @@ describe("passesCommand", () => {
   afterAll(() => {
     rmSync(passesDirectory, { force: true, recursive: true });
   });
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
 
   test("writes a pass run alone over its own rows, keeping the rest of the component's report", async () => {
     expect.hasAssertions();
 
-    const log = vi.spyOn(console, "log").mockReturnValue(undefined);
+    vi.spyOn(console, "log").mockReturnValue(undefined);
     measureInventory.mockResolvedValueOnce({ notes: [], readings: [{ gate: 0, name: "", unit: "", value: 0 }] });
     measureLayout.mockResolvedValueOnce({ notes: [], readings: [{ gate: 0, name: "", unit: "", value: 1 }] });
     await runCommand(genshinParityCommand, { rawArgs: ["passes", DerivedAssetComponent.Liyue] });
@@ -44,7 +47,6 @@ describe("passesCommand", () => {
     await runCommand(genshinParityCommand, {
       rawArgs: ["passes", DerivedAssetComponent.Liyue, "--pass", ParityPass.Inventory],
     });
-    log.mockRestore();
 
     await expect(readFile(getParityPassesPath(DerivedAssetComponent.Liyue), "utf8")).resolves.toMatchInlineSnapshot(`
       "# liyue

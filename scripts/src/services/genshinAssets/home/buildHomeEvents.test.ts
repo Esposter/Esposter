@@ -5,7 +5,7 @@ import {
 } from "#src/services/genshinAssets/home/constants";
 import { readExcelTable } from "#src/services/genshinText/readExcelTable";
 import { GameDataset } from "genshin-world";
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 
 vi.mock(import("#src/services/genshinText/readExcelTable"));
 
@@ -37,10 +37,6 @@ describe(buildHomeEvents, () => {
   const SECOND_TALK_ID = 2000;
   // The talk a reward row holds where the dump leaves its talk out, which the dump's defaults write back as zero
   const NO_TALK_ID = 0;
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
 
   test("each favour is published with its companion, suite, reward and talk, sorted by suite, and a summon is left out", () => {
     expect.hasAssertions();

@@ -60,7 +60,6 @@ describe(writeDomainEntrances, () => {
   const regionMapPoints = [{ position: { x: 1473.92, z: -321.24 }, region: "mondstadt" }];
 
   beforeEach(() => {
-    vi.clearAllMocks();
     vi.mocked(readFittedRegions).mockResolvedValue({
       origin: [0, 0, 0],
       points: [],
