@@ -1,6 +1,6 @@
 ## Purpose
 
-The parametric building kits of Sumeru, built in the world package from the engine's lathe and box primitives. A rainforest city of tiered terraces with a walkway on each tier and a dome on top, a stilt hut of boxes on posts, and a desert ruin that places colonnades, obelisks, stepped pyramids and half-buried halls by position. Each generator is pure and returns one merged geometry, and the rainforest city stands as Sumeru City's first landmark.
+The parametric building kits of Sumeru, built in the world package from the engine's lathe and box primitives. A rainforest city of tiered terraces with a walkway on each tier and a dome on top, a stilt hut of boxes on posts, and a desert ruin that places colonnades, obelisks, stepped pyramids and half-buried halls by position. Each generator is pure and returns one merged geometry, and the rainforest city stands as Sumeru City's first landmark (the kits are `packages/genshin-world/src/services/sumeru/createRainforestCityGeometry.ts`, `createStiltHutGeometry.ts` and `createDesertRuinGeometry.ts`, tested by `createRainforestCityGeometry.test.ts` and `createDesertRuinGeometry.test.ts`; the landmark is `sumeru-city`, kind `Building`, in `packages/genshin-world/src/data/regions/sumeru.json`).
 
 ## Requirements
 
@@ -65,6 +65,10 @@ The rainforest city SHALL stand in for the houses the game draws in Sumeru City,
 
 #### Scenario: Bridges and common buildings left undrawn
 
-- **GIVEN** Sumeru City's export holds bridges, common buildings and plants
+- **GIVEN** Sumeru City's export holds bridges, common buildings and plants (`packages/genshin-world/src/services/sumeru/SumeruUndrawnMeshRegexMap.ts`, lines 6 to 11)
 - **WHEN** the city is drawn
 - **THEN** those meshes are not drawn yet
+
+## Open
+
+- [ ] **The rainforest city stands where the game's houses stand** — no source yet: the city's place in `packages/genshin-world/src/data/regions/sumeru.json` is not compared against the game's house positions in the Sumeru export.
