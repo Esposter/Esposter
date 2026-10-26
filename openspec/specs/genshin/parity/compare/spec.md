@@ -114,5 +114,5 @@ A public video that letterboxes the game SHALL be cropped to its screen, and a r
 
 ## Open
 
-- [ ] **A comparison that throws is reported as failed and the run goes on** — no source yet: the throw branch of `scripts/src/services/genshinParity/commands/compareCommand.ts` was not traced.
-- [ ] **A reference in another language gives its screen that language's words** — no source yet: the parity page's language switch was not traced; `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts` sets `props.language` only.
+- [ ] **A comparison that throws is reported as failed and the run goes on** — no source yet: the throw branch was not traced.
+- [ ] **A reference in another language gives its screen that language's words** — no source yet: the parity page's language switch was not traced; the parity reference map sets `props.language` only.
