@@ -69,8 +69,8 @@ Each comparison SHALL rewrite its reference's row of the committed scores, so th
 
 - **GIVEN** a reference whose comparison throws
 - **WHEN** the comparisons run for all references
-- **THEN** the reference's row is reported as failed (see Open)
-- **AND** the run goes on (see Open)
+- **THEN** the reference's row is reported as failed
+- **AND** the run goes on
 
 ### Requirement: A screen is never approved without a comparison to its reference
 
@@ -110,9 +110,6 @@ A public video that letterboxes the game SHALL be cropped to its screen, and a r
 
 - **GIVEN** a reference recorded in another language
 - **WHEN** its screen is compared
-- **THEN** the screen shows the game's words in that language (see Open)
+- **THEN** the screen shows the game's words in that language
 
 ## Open
-
-- [ ] **A comparison that throws is reported as failed and the run goes on** — no source yet: the throw branch of the compare command was not traced.
-- [ ] **A reference in another language gives its screen that language's words** — no source yet: the parity page's language switch was not traced; the reference map sets its language prop only.
