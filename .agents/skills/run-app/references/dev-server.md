@@ -17,6 +17,7 @@ What bites, all of it cheaply:
 - **It binds `::1`, not `127.0.0.1`.** `curl http://localhost:PORT` fails with connection-refused while the server is perfectly healthy. Use `http://[::1]:PORT`, or PowerShell's `Invoke-WebRequest` (which resolves both).
 - **The first request builds the client bundle** and can sit for minutes; a 90s timeout looks like a hang. Give it 300s+ before concluding anything.
 - **Killing the wrapper leaves the server.** Stopping the background shell kills `pnpm`, not the `nuxt.mjs` child — it keeps the port and the lock. Kill by PID tree (`taskkill /PID <pid> /T /F`), and check `Get-NetTCPConnection -State Listen -LocalPort 3000,3001` afterwards.
+- **A rebuilt workspace package is served stale.** The app serves a package's `dist` from outside its own root, which the dev server does not watch: after a rebuild the page keeps the module it first served until the dev server restarts. A screen that looks unchanged after a rebuild is stale, not wrong; ask for a restart before judging it.
 
 **What a dev server is for:** reading what Vite actually serves — a transformed module, `/_nuxt/@vite/env` for the resolved `define` values, a resolved import graph. That is a fact a test cannot give you, and it is worth the boot. It is **not** for driving the app: no browser runs as part of a change, and the layout is the user's to look at (`SKILL.md`).
 
