@@ -1,12 +1,12 @@
 ## Purpose
 
-The game's expeditions as pure state. A character but the Traveler is sent to one of Mondstadt's places for 4, 8, 12 or 20 hours, kept by the moment it left so it returns while the page is closed, its items and Mora claimed into the bag and wallet, or forfeited by a recall. Two may be out at first, and Adventure Ranks 26, 31 and 36 each add one (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/PlayerLevelExcelConfigData.json`). Katheryne and the expedition screen are not built.
+The game's expeditions as pure state. A character but the Traveler is sent to one of Mondstadt's places for 4, 8, 12 or 20 hours, kept by the moment it left so it returns while the page is closed, its items and Mora claimed into the bag and wallet, or forfeited by a recall. Two may be out at first, and Adventure Ranks 26, 31 and 36 each add one. Katheryne and the expedition screen are not built.
 
 ## Requirements
 
 ### Requirement: A character is sent to an open place for an offered length of time
 
-A character other than the Traveler SHALL be sent to an open place for one of the four durations offered: 4, 8, 12 or 20 hours (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/ExpeditionDataExcelConfigData.json`; `packages/genshin-world/src/services/expedition/sendExpedition.test.ts`).
+A character other than the Traveler SHALL be sent to an open place for one of the four durations offered: 4, 8, 12 or 20 hours.
 
 #### Scenario: A character is sent for eight hours
 
@@ -16,7 +16,7 @@ A character other than the Traveler SHALL be sent to an open place for one of th
 
 ### Requirement: A send is refused for the Traveler, a character who is down, a closed place or past the limit
 
-A send SHALL be refused for the Traveler, for a character who is down or already away, for a closed place, and for a send past the expedition limit (`packages/genshin-world/src/services/expedition/sendExpedition.test.ts`).
+A send SHALL be refused for the Traveler, for a character who is down or already away, for a closed place, and for a send past the expedition limit.
 
 #### Scenario: The Traveler cannot be sent
 
@@ -50,7 +50,7 @@ A send SHALL be refused for the Traveler, for a character who is down or already
 
 ### Requirement: A place opens once its rank, statue and quest conditions are met
 
-A place SHALL open once its Adventure Rank, the statue it names and the quest it names are each met, and the lowest place SHALL open at Adventure Rank 14 (`packages/genshin-world/src/services/expedition/checkIsExpeditionPlaceOpen.test.ts`; `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/ExpeditionDataExcelConfigData.json`, where the lowest rank is 14).
+A place SHALL open once its Adventure Rank, the statue it names and the quest it names are each met, and the lowest place SHALL open at Adventure Rank 14.
 
 #### Scenario: A place below its Adventure Rank stays closed
 
@@ -78,7 +78,7 @@ A place SHALL open once its Adventure Rank, the statue it names and the quest it
 
 ### Requirement: The number of expeditions out rises with Adventure Rank
 
-Two expeditions SHALL be out at once at first, and one more SHALL be allowed at each of Adventure Ranks 26, 31 and 36 (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/PlayerLevelExcelConfigData.json`; `packages/genshin-world/src/services/expedition/computeExpeditionLimit.test.ts`).
+Two expeditions SHALL be out at once at first, and one more SHALL be allowed at each of Adventure Ranks 26, 31 and 36.
 
 #### Scenario: A third expedition is refused below Adventure Rank 26
 
@@ -94,7 +94,7 @@ Two expeditions SHALL be out at once at first, and one more SHALL be allowed at 
 
 ### Requirement: An expedition returns once its hours pass from the moment it left
 
-An expedition SHALL return once its hours have passed from the moment it left, whether or not its screen is open, and not a moment earlier (`packages/genshin-world/src/services/expedition/checkIsExpeditionReturned.test.ts`).
+An expedition SHALL return once its hours have passed from the moment it left, whether or not its screen is open, and not a moment earlier.
 
 #### Scenario: An expedition returns while the screen is closed
 
@@ -110,7 +110,7 @@ An expedition SHALL return once its hours have passed from the moment it left, w
 
 ### Requirement: A claim puts the rewards into the bag and wallet or is refused whole
 
-A claim SHALL put each rolled item into the bag and the Mora into the wallet, and SHALL be refused whole when an item would overflow the bag (`packages/genshin-world/src/services/expedition/claimExpedition.test.ts`, for the bag and the wallet).
+A claim SHALL put each rolled item into the bag and the Mora into the wallet, and SHALL be refused whole when an item would overflow the bag.
 
 #### Scenario: A claim puts the rewards into the bag and wallet
 
@@ -140,7 +140,7 @@ Recalling an expedition SHALL take its character off the list and give no reward
 
 ### Requirement: Each reward item's count is drawn between its least and most
 
-Each reward item's count SHALL be drawn between its least and its most by the game's random source (`packages/genshin-world/src/services/expedition/claimExpedition.test.ts`).
+Each reward item's count SHALL be drawn between its least and its most by the game's random source.
 
 #### Scenario: A rolled count lies between the least and the most
 
@@ -160,7 +160,7 @@ Expeditions SHALL be held for the session only, so that a reload of the page emp
 
 ### Requirement: Katheryne's talk opens the expedition screen
 
-Talking to Katheryne SHALL open the expedition screen, and a send SHALL be refused when the expedition rules refuse it (`packages/genshin-world/src/services/expedition/checkIsExpeditionTalk.test.ts`; the clip `~/Esposter.noindex/genshin-parity/captures/yt-fxIjhlV3vUA-expedition-screen.mp4`, where her talk at 18 seconds lists the dispatch; `packages/genshin-world/src/services/expedition/sendExpedition.test.ts`).
+Talking to Katheryne SHALL open the expedition screen, and a send SHALL be refused when the expedition rules refuse it.
 
 #### Scenario: Talking to Katheryne opens the expedition screen
 
@@ -176,7 +176,7 @@ Talking to Katheryne SHALL open the expedition screen, and a send SHALL be refus
 
 ### Requirement: A character on expedition stays usable in the party
 
-Every character except the Traveler SHALL stay usable in the party while on expedition (`packages/genshin-world/src/services/party/setPartyTeamCharacters.test.ts`).
+Every character except the Traveler SHALL stay usable in the party while on expedition.
 
 #### Scenario: A character on expedition stays in the party
 
@@ -186,7 +186,7 @@ Every character except the Traveler SHALL stay usable in the party while on expe
 
 ### Requirement: A place opens once its statue is resonated
 
-An expedition place SHALL be open only once its named statue has been resonated (`packages/genshin-world/src/services/expedition/checkIsExpeditionPlaceOpen.test.ts`).
+An expedition place SHALL be open only once its named statue has been resonated.
 
 #### Scenario: A place opens when its statue is resonated
 
@@ -202,7 +202,7 @@ An expedition place SHALL be open only once its named statue has been resonated 
 
 ### Requirement: The expedition bonus chance follows the sent character's level
 
-The chance of an expedition bonus SHALL rise with the level of the character sent, as the game's bonus table gives it (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/ExpeditionBonusExcelConfigData.json`; `packages/genshin-world/src/services/expedition/computeExpeditionBonusChance.test.ts`).
+The chance of an expedition bonus SHALL rise with the level of the character sent, as the game's bonus table gives it.
 
 #### Scenario: A level 1 character has a 20 percent bonus chance
 
@@ -224,7 +224,7 @@ The chance of an expedition bonus SHALL rise with the level of the character sen
 
 ### Requirement: An expedition talent applies to the expedition its character is sent on
 
-A character's expedition talent SHALL apply to the expedition on which that character is sent (`packages/genshin-world/src/services/expedition/computeExpeditionPassives.test.ts`; `packages/genshin-world/src/services/expedition/checkIsExpeditionReturned.test.ts`; `packages/genshin-world/src/services/expedition/claimExpedition.test.ts`).
+A character's expedition talent SHALL apply to the expedition on which that character is sent.
 
 #### Scenario: A talent that shortens expeditions shortens the one it is sent on
 
