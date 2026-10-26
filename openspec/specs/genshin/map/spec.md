@@ -97,3 +97,4 @@ Only Statues of The Seven and Teleport Waypoints SHALL be jump landmarks, and a 
 - [ ] **Map: Escape closes the open map** — no source yet: an input handler that routes Escape to the map's close; the session names Escape for the Paimon menu, and the map files name no Escape.
 - [ ] **Pressing M opens the full-screen map and hides the HUD** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **Choosing a statue on the map fades to pale grey, places the character at the statue's arrival facing its turn, and fades back in** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The map is the game's open map at full screen, with its close button and zoom slider** — no source yet: `~/Esposter.noindex/genshin-parity/comparisons/map-overlay-galesong.png` is a label close-up, not the full-screen map.
