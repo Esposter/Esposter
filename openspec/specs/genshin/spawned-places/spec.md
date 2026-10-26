@@ -100,12 +100,3 @@ The published Oculi SHALL be those the official map marks on the ground, each wi
 
 - [ ] **The wiki's Oculus counts the report compares against** — no source yet: no cached Oculus wiki page is in `~/Esposter.noindex/cache/genshin-wiki/`; the 66 and the 271 for Fontaine, Natlan and Nod-Krai are the figures `scripts/src/services/genshinAssets/points/InteractiveMapRegionMap.ts` carries, and the 271 is one figure for three elements.
 - [ ] **Snezhnaya holds no transport points in the scene** — no source yet: the dump's transport points for Snezhnaya's areas were not counted, and `~/Esposter.noindex/genshin-parity/references/interactive-map/fit.json` shows only its zero matches.
-- [ ] **The official map's label tree and point list are read into the references folder as the map gives them** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **No part of the official point list is committed to the repository** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The fit matches only the statues and waypoints on the ground** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The underground points are kept for their own floors** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A fit whose residual is over twenty game units is refused with an error naming it, and writes nothing** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **No Oculus is added to fill a region's shortfall** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The published Oculi are the ground ones, each with its map id, kind and game-coordinate position** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **An underground Oculus is counted but not published** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **An Oculus stands on the ground at its point, with no height published** — no source yet: game data or a snapshot that holds this behaviour
