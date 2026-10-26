@@ -20,7 +20,7 @@ Each region's ley line SHALL offer two outcrop kinds, the Blossom of Revelation,
 
 ### Requirement: Opening by rank and nation
 
-Each kind SHALL open at the Adventure Rank its game table gives, and in every region except Mondstadt and Liyue it SHALL also need a nation's area unlocked.
+Each kind SHALL open at the Adventure Rank its game table gives, and in every region except Mondstadt and Liyue it SHALL also need a nation's area unlocked (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, the area condition on the rows of cities 3 to 8 only).
 
 #### Scenario: Mondstadt's Revelation opens at rank 8
 
@@ -99,4 +99,3 @@ Ley line outcrops SHALL not be placed, fought or claimed in the world yet.
 - [ ] **The Blossom of Revelation gives Character EXP materials, and the Blossom of Wealth gives Mora** — no source yet: the refresh rows' reward previews do not resolve to item names in the dump.
 - [ ] **Each kind starts at the lowest numbered place of a drawn section** — no source yet: `computeDailyOutcrops` draws from every fitted place, and no section first-place step is found in the code.
 - [ ] **A claimed outcrop moves to the next place its place names** — no source yet: `computeNextOutcropPlace` takes the nearest free fitted place, and no place-chain link is read.
-- [ ] **Each kind opens at the Adventure Rank its game table gives, and in every region except Mondstadt and Liyue it also needs a nation's area unlocked** — no source yet: the area-unlock condition in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json` (rows 20 to 51), which is not read against this claim.
