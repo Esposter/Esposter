@@ -43,4 +43,4 @@ Nilou's kit is its record and one behaviour module, `createNilouKitBehaviour` (`
 
 ## Open
 
-- [ ] **the Bounty's team condition is a Dendro member and no member that is neither Dendro nor Hydro** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/nilou/asc.go`: its condition also needs a Hydro member (lines 19 and 20). Recorded in `openspec/changes/genshin-roadmap/tasks.md`, which asks whether a Dendro-only team gets the Bounty.
+- [ ] **the Bounty's team condition is a Dendro member and no member that is neither Dendro nor Hydro** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/nilou/asc.go:19-20`: its condition also needs a Hydro member.
