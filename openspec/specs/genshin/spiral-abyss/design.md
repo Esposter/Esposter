@@ -32,13 +32,13 @@ flowchart TD
 ## The rules
 
 - **The clock.** A chamber's clock is its floor's seconds: five minutes on the first four floors of the Corridor and ten minutes on every floor above. A chamber of two halves has one clock for both, so the second half starts on the seconds the first left.
-- **Failure.** A chamber is lost when its clock reaches zero or its monolith reaches zero health. A cleared chamber is never lost.
-- **Stars.** A clear earns one star for each condition that holds when it clears: the clock left above a time mark, or the monolith's health above a health mark. A chamber's stars are the most any of its clears has earned, and a chamber cleared with no condition met still counts as cleared.
+- **Failure.** A chamber is lost when its clock reaches zero or its monolith reaches zero health. A cleared chamber is never lost (`packages/genshin-world/src/services/spiralAbyss/checkIsAbyssChallengeFailed.test.ts`).
+- **Stars.** A clear earns one star for each condition that holds when it clears: the clock left above a time mark, or the monolith's health above a health mark. A chamber's stars are the most any of its clears has earned, and a chamber cleared with no condition met still counts as cleared (`packages/genshin-world/src/services/spiralAbyss/computeAbyssChamberStars.test.ts`; the best kept in `packages/genshin-world/src/services/spiralAbyss/recordAbyssChamberClear.test.ts`).
 - **Floors open.** The first floor is always open. A floor opens when the one below has all three chambers cleared and holds its unlock count of stars, six on every floor of the table (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/TowerFloorExcelConfigData.json`, 141 floors, each `unlockStarCount` 6; `packages/genshin-world/src/services/spiralAbyss/checkIsAbyssFloorUnlocked.test.ts`). The Moon Spire's first floor, floor nine, opens on the Corridor's floor eight (the floors with ids 1008 and 1009 in the same table).
-- **Rewards once a cycle.** A chamber's first clear gives its own reward, and each star milestone a floor's stars reach gives its reward. Each reward is given only the first time in its cycle, and a clear returns the rewards it gives now for the caller to hand out.
-- **Cycles.** The Corridor is one cycle that never resets. Each Moon Spire period is a cycle of its own, so its chambers, stars and rewards start again when the next period begins.
-- **Opening.** The Abyss is open from Adventure Rank 20, a constant the proposal settles.
-- **The period.** The Moon Spire runs the period that began latest before now, in the game's own time (UTC+8). A period has no recorded end, so a dump read months on keeps its last period rather than none. The search is `findLatestBegun`, the one the [Imaginarium Theater](../imaginarium-theater/design.md)'s season runs, and `findAbyssPeriodAt` calls it.
+- **Rewards once a cycle.** A chamber's first clear gives its own reward, and each star milestone a floor's stars reach gives its reward. Each reward is given only the first time in its cycle, and a clear returns the rewards it gives now for the caller to hand out (`packages/genshin-world/src/services/spiralAbyss/recordAbyssChamberClear.test.ts`).
+- **Cycles.** The Corridor is one cycle that never resets. Each Moon Spire period is a cycle of its own, so its chambers, stars and rewards start again when the next period begins (`packages/genshin-world/src/services/spiralAbyss/getAbyssCycleKey.test.ts`).
+- **Opening.** The Abyss is open from Adventure Rank 20, a constant the proposal settles (`packages/genshin-world/src/services/spiralAbyss/checkIsAbyssOpenAtRank.test.ts`).
+- **The period.** The Moon Spire runs the period that began latest before now, in the game's own time (UTC+8). A period has no recorded end, so a dump read months on keeps its last period rather than none. The search is `findLatestBegun`, the one the [Imaginarium Theater](../imaginarium-theater/design.md)'s season runs, and `findAbyssPeriodAt` calls it (`packages/genshin-world/src/services/spiralAbyss/findAbyssPeriodAt.test.ts`).
 
 ## Decisions
 
@@ -96,8 +96,3 @@ flowchart TD
 - [ ] **The close time is not read** — no source yet: `scripts/src/services/genshinAssets/spiralAbyss/toAbyssPeriod.test.ts` asserts a `closesAt`, so this line is out of date.
 - [ ] **The dump's schedule ends with the period that began on 2026-06-16** — no source yet: the local dump's schedule runs to the period begun 2026-10-16 (scheduleId 124), and 2026-06-16 is scheduleId 120, so this line describes an older dump.
 - [ ] **Nothing calls the readers yet** — no source yet: `packages/genshin-world/src/composables/useWorldSpiralAbyss.ts` calls all three readers, and whether a mounted screen uses that composable is not checked.
-- [ ] **A chamber is lost when its clock or its monolith reaches zero, and a cleared chamber is never lost** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A clear earns one star for each condition that holds when it clears, and a chamber's stars are the most any of its clears has earned** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A chamber's first clear and each star milestone give their reward once per cycle, and a clear returns the rewards it gives now** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The Corridor is one cycle that never resets, and each Moon Spire period is a cycle of its own** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The Moon Spire runs the period that began latest before now, in the game's own time (UTC+8)** — no source yet: game data or a snapshot that holds this behaviour
