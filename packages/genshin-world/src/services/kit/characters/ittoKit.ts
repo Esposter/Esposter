@@ -5,10 +5,12 @@ import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
+import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitTaunt } from "#src/services/kit/effects/castKitTaunt";
 import { countKitResource } from "#src/services/kit/effects/countKitResource";
 import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
@@ -19,6 +21,9 @@ import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { spendKitResource } from "#src/services/kit/effects/spendKitResource";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
+import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
+import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 
@@ -58,6 +63,26 @@ const CONSTELLATION_1 = 1;
 const CONSTELLATION_1_CAST_FRAMES = 75;
 const CONSTELLATION_1_TIMER_FRAMES = [60, 90, 120];
 
+// Constellation 2's energy and cooldown cut, as gcsim v2.47.2 (MIT) itto/cons.go c2 gives them: each Geo member of the team
+// Gives Itto 6 Energy and cuts Royal Descent's cooldown by 1.5 seconds, at most three of them, 9 frames after the cast
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/itto/cons.go
+const CONSTELLATION_2 = 2;
+const CONSTELLATION_2_COOLDOWN_CUT_SECONDS = 1.5;
+const CONSTELLATION_2_DELAY_FRAMES = 9;
+const CONSTELLATION_2_ENERGY = 6;
+const CONSTELLATION_2_MAXIMUM_GEO_MEMBERS = 3;
+
+// Constellation 4's buff, as gcsim v2.47.2 (MIT) itto/cons.go c4 gives it: when Royal Descent's Raging Oni King state ends, the
+// Team gains 20% ATK and 20% DEF for 10 seconds
+const CONSTELLATION_4 = 4;
+const CONSTELLATION_4_PERCENT = 0.2;
+const CONSTELLATION_4_SECONDS = 10;
+const CONSTELLATION_4_SOURCE = "itto-constellation-4";
+
+// Constellation 6's first part, as gcsim v2.47.2 (MIT) itto/cons.go c6 gives it: his Charged Attacks deal 70% more CRIT DMG
+const CONSTELLATION_6 = 6;
+const CONSTELLATION_6_CRITICAL_DAMAGE = 0.7;
+
 // Bloodline of the Crimson Oni: each slash of the Arataki Kesagiri adds its DEF share, from Ascension 4
 const addBloodlineDamage = (striker: Combatant): number =>
   striker.ascension < ASCENSION_4 ? 0 : BLOODLINE_DEFENSE_SHARE * striker.attributes.defense;
@@ -77,11 +102,8 @@ export const ITTO_CHARACTER_ID = 10_000_057;
 // Itto's behaviour: his normal attacks and Ushi give him Superlative Superstrength, whose stacks turn his charged attack
 // Into the Arataki Kesagiri. Masatsu Zetsugi throws Ushi, a taunt holding a share of his Max HP, and Royal Descent adds
 // His ATK per DEF with a Geo conversion carrying its Normal ATK SPD, both ending as he leaves the field. Bloodline of the
-// Crimson Oni and Constellation 1 are built; Arataki Ichiban's ATK SPD, which no attribute holds, and Constellations 2,
-// 4 and 6 are not
-// Constellation 2 needs each Geo party member's element, which the kit does not read, and the skill's cooldown cut
-// Constellation 4 needs the Raging Oni King state's end, which no stance hook reports, and the nearby buffs
-// Constellation 6 needs the charged attacks' CRIT DMG and Arataki Kesagiri's 50% stack save, neither built
+// Crimson Oni and Constellations 1, 2 and 4 are built, and Constellation 6's Charged Attack CRIT DMG is too. Arataki
+// Ichiban's ATK SPD, which no attribute holds, and Constellation 6's Arataki Kesagiri stack save are not
 export const createIttoKitBehaviour = ({
   kit,
   readActions,
@@ -167,12 +189,38 @@ export const createIttoKitBehaviour = ({
                 gainSuperstrength(timer.kitEffectState, combatant, 1),
               );
           });
+        if (combatant.constellationCount >= CONSTELLATION_2) {
+          const geoMemberCount = Math.min(
+            getDeployedCharacterIds(party).filter(
+              (characterId) => characterIdCombatantMap.get(characterId)?.element === Element.Geo,
+            ).length,
+            CONSTELLATION_2_MAXIMUM_GEO_MEMBERS,
+          );
+          scheduleKitTask(
+            kitEffectState,
+            combatant.characterId,
+            toKitSeconds(CONSTELLATION_2_DELAY_FRAMES),
+            ({ party: taskParty }) => {
+              gainPartyMemberEnergy(taskParty, combatant, geoMemberCount * CONSTELLATION_2_ENERGY);
+              const partyMember = getPartyMember(taskParty, combatant.characterId);
+              partyMember.burstCooldownSeconds = Math.max(
+                0,
+                partyMember.burstCooldownSeconds - geoMemberCount * CONSTELLATION_2_COOLDOWN_CUT_SECONDS,
+              );
+            },
+          );
+        }
       },
     },
     // A normal attack of his gives him its stacks as it lands, more as the Raging Oni King, and Ushi one as it takes an
     // Enemy's strike, off its cooldown, and one as it leaves. An Arataki Kesagiri that ends with stacks gained while it
     // Played readies the next
-    onKitEvent: (event, { kitEffectState }, combatant) => {
+    // Arataki Itto's Charged Attacks deal more CRIT DMG from Constellation 6, as gcsim's c6 gives it
+    getStrikeCriticalDamageBonus: ({ attackTag, combatant }) =>
+      attackTag === AttackTag.ChargedAttack && combatant.constellationCount >= CONSTELLATION_6
+        ? CONSTELLATION_6_CRITICAL_DAMAGE
+        : 0,
+    onKitEvent: (event, { kitEffectState, party }, combatant) => {
       const { characterId } = combatant;
       if (event.kind === KitEventKind.TauntDamaged) {
         if (
@@ -198,6 +246,22 @@ export const createIttoKitBehaviour = ({
         return;
       }
 
+      // The Raging Oni King state ends with its infusion, by its seconds or Itto's leaving the field, which gives the team
+      // Constellation 4's buff
+      if (
+        event.kind === KitEventKind.EffectExpired &&
+        event.effect.kind === "infusion" &&
+        event.effect.characterId === characterId &&
+        event.effect.isConverted === true &&
+        combatant.constellationCount >= CONSTELLATION_4
+      )
+        for (const attribute of [Attribute.AttackPercent, Attribute.DefensePercent])
+          buffKitTeam(kitEffectState, party, {
+            amount: CONSTELLATION_4_PERCENT,
+            attribute,
+            secondsRemaining: CONSTELLATION_4_SECONDS,
+            source: CONSTELLATION_4_SOURCE,
+          });
       if (event.kind !== KitEventKind.EffectExpired) return;
       const { effect } = event;
       if (effect.kind === "taunt" && effect.combatant.characterId === characterId)

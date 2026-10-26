@@ -1,6 +1,6 @@
 ## Purpose
 
-Itto's kit as built: four strikes, the Saichimonji Slash and the Arataki Kesagiri his Superlative Superstrength turns it into, a collision and two plunges, Masatsu Zetsugi's hit with Ushi, and Royal Descent's ATK bonus and Geo conversion, with his Ascension 4 passive built, and his Arataki Ichiban ATK SPD and constellations not built.
+Itto's kit as built: four strikes, the Saichimonji Slash and the Arataki Kesagiri his Superlative Superstrength turns it into, a collision and two plunges, Masatsu Zetsugi's hit with Ushi, and Royal Descent's ATK bonus and Geo conversion, with his Ascension 4 passive built, his constellations 1, 2 and 4 built and Constellation 6's Charged Attack CRIT DMG, and his Arataki Ichiban ATK SPD and Constellation 6's stack save not built.
 
 ## Requirements
 
@@ -119,3 +119,40 @@ Itto's collision and two plunges SHALL each deal their own hit.
 - **GIVEN** Itto is in the air
 - **WHEN** the player plunges
 - **THEN** the plunge deals its own hit
+
+### Requirement: Constellation 2 Energy and cooldown cut
+
+From Constellation 2, Royal Descent SHALL, 9 frames after the cast, give Itto 6 Energy and cut his burst's cooldown by 1.5 seconds for each Geo member of the team, at most three.
+
+#### Scenario: Geo members restore energy and cut the cooldown
+
+- **GIVEN** Itto is at Constellation 2 and the team holds two Geo members besides him
+- **WHEN** he casts Royal Descent
+- **THEN** 18 Energy is restored to him
+- **AND** his burst's cooldown is cut by 4.5 seconds
+
+#### Scenario: Below Constellation 2 nothing is given
+
+- **GIVEN** Itto is at Constellation 1
+- **WHEN** he casts Royal Descent
+- **THEN** no Energy is restored and the cooldown is not cut
+
+### Requirement: Constellation 4 team buff
+
+From Constellation 4, when Royal Descent's Raging Oni King state ends, every deployed member SHALL gain 20% ATK and 20% DEF for 10 seconds.
+
+#### Scenario: The state's end gives the team its buff
+
+- **GIVEN** Itto is at Constellation 4 and is the Raging Oni King
+- **WHEN** the state ends by its seconds or by his leaving the field
+- **THEN** every deployed member gains 20% ATK and 20% DEF for 10 seconds
+
+### Requirement: Constellation 6 Charged Attack CRIT DMG
+
+From Constellation 6, Itto's Charged Attacks SHALL deal 70% more CRIT DMG.
+
+#### Scenario: Charged Attack deals more CRIT DMG
+
+- **GIVEN** Itto is at Constellation 6
+- **WHEN** his Charged Attack lands
+- **THEN** its CRIT DMG is raised by 70%
