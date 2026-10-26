@@ -32,12 +32,3 @@ The book is scored whole-frame against `handbook-experience`, the wiki's screens
 ## Reference
 
 - `handbook-open-close.mkv` — F1 pressed in the open world, the Adventurer Handbook opening over the blurred scene, a tab clicked and its hover in view, then F1 closing it, 30 seconds at most at 60 frames a second; the open and close timings and the blur behind the book are read off it. On the wiki and YouTube, none found (searched 2026-10-11).
-
-## Open
-
-- [ ] **F1 opens the book in the open world** — no source yet: `handbook-open-close.mkv` is named under Reference but is not in `~/Esposter.noindex/genshin-parity/captures/`.
-- [ ] **The world opens the Experience page empty, and its close button returns to the world** — no source yet: no capture of the game's empty page or its close is on disk.
-- [ ] **Signika stands in for HYWenHei at the game's cap height and widths** — no source yet: the game's HYWenHei face and its metrics are in no checked export.
-- [ ] **A two-line commission title puts its pill 11.5 below the game's, which falls 18** — no source yet: the 18 is not measured in any checked file, and the reference png has no recorded value for it.
-- [ ] **The Experience rows are cards 242 tall at a 249.5 pitch** — no source yet: the 242 and 249.5 are pixel measurements off the reference png that no checked file records; `COMMISSION_STEP` is the code's own constant.
-- [ ] **The tabs' labels shrink to the tab as the game's do** — no source yet: the reference shows the English six at their fitted size only, with no capture of a longer label shrinking.

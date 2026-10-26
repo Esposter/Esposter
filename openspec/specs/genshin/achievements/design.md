@@ -79,7 +79,3 @@ The Achievements screen has no parity measure yet. Its look waits on `achievemen
 
 - [Achievements](https://genshin-impact.fandom.com/wiki/Achievements), Genshin Impact Wiki: the Primogems each pays, a namecard for a category done, open-ended categories, and tiers shown as stars.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the achievement table with each one's category, trigger, count, reward and tier, the category table, and the quest table whose sub-quest ids the quest triggers name.
-
-## Open
-
-- [ ] **Q and E are the quest screen's tab keys** — no source yet: a capture of the game's quest screen stepping its tabs with Q and E, and none was checked.
