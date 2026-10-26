@@ -487,9 +487,11 @@ describe(buildUserDataArchive, () => {
     const blobName = `${crypto.randomUUID()}.zip`;
     await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
     const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
+    // A room holds one call per thread, so the other person's call is in a room of their own
+    const otherRoom = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
     await mockDb.insert(callSessionsInMessage).values([
       { id: callId, roomId: room.id, userId },
-      { id: otherCallId, roomId: room.id, userId: otherUserId },
+      { id: otherCallId, roomId: otherRoom.id, userId: otherUserId },
     ]);
 
     await buildUserDataArchive(userId, blobName);
