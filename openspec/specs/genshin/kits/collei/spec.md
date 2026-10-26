@@ -1,6 +1,6 @@
 ## Purpose
 
-Collei's kit as built: her four strikes, fully charged shot, collision and two plunges, Floral Brush's two hits, and Trump-Card Kitty's explosion and leap field, with Constellation 1's Energy Recharge off the field built, and her other passives and constellations 2 and 6 left unbuilt.
+Collei's kit as built: her four strikes, fully charged shot, collision and two plunges, Floral Brush's two hits, and Trump-Card Kitty's explosion and leap field, with Constellation 1's Energy Recharge off the field and Constellation 4's Elemental Mastery built, and her other passives and constellations 2 and 6 left unbuilt.
 
 ## Requirements
 
