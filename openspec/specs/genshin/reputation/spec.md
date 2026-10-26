@@ -1,12 +1,12 @@
 ## Purpose
 
-Mondstadt's Reputation as the game's table gives it, a level reached by EXP carried up through each level's requirement, every level's reward and unlocks, its requests and weekly bounties paid in the nation's Reputation EXP and Mora, three of each kind claimed a week across nations, and the shop discount's rounding, with the keeper, the bounties' trails and the exploration thresholds not yet on a screen.
+Mondstadt's Reputation as the game's table gives it, a level reached by EXP carried up through each level's requirement, every level's reward and unlocks, its requests and weekly bounties paid in the nation's Reputation EXP and Mora, three of each kind claimed a week across nations, and the shop discount's rounding, with the keeper, the bounties' trails and the exploration thresholds not yet on a screen (`packages/genshin-world/src/services/reputation/readMondstadtReputation.ts`, `packages/genshin-world/src/services/reputation/constants.ts`).
 
 ## Requirements
 
 ### Requirement: Reputation levels rise as EXP carries past each requirement
 
-Mondstadt's Reputation SHALL rise one level at a time as its EXP carries past each level's requirement, and SHALL stop earning EXP at its last level.
+Mondstadt's Reputation SHALL rise one level at a time as its EXP carries past each level's requirement, and SHALL stop earning EXP at its last level (`packages/genshin-world/src/services/reputation/addReputationExp.ts`).
 
 #### Scenario: EXP past a requirement raises the level
 
@@ -29,7 +29,7 @@ Mondstadt's Reputation SHALL rise one level at a time as its EXP carries past ea
 
 ### Requirement: Each level pays its reward and opens its unlock
 
-Each Reputation level SHALL pay its reward when reached and SHALL show the feature it unlocks in the game's own words on the reward page.
+Each Reputation level SHALL pay its reward when reached and SHALL show the feature it unlocks in the game's own words on the reward page (`packages/genshin-world/src/services/reputation/ReputationFunctionGameTextKeyMap.ts`).
 
 #### Scenario: Reaching a level pays its reward
 
@@ -42,7 +42,7 @@ Each Reputation level SHALL pay its reward when reached and SHALL show the featu
 - **GIVEN** the reward page is opened on a level
 - **WHEN** the page is shown
 - **THEN** each level of the nation is listed with its items and the feature it unlocks
-- **AND** the list scrolls when it is taller than the panel
+- **AND** the list scrolls when it is taller than the panel (`packages/genshin-interface/src/components/ReputationScreen/Index.vue`)
 
 #### Scenario: A level not yet reached shows as not achieved
 
@@ -52,7 +52,7 @@ Each Reputation level SHALL pay its reward when reached and SHALL show the featu
 
 ### Requirement: Requests and bounties pay Reputation EXP and Mora
 
-Each request and each bounty SHALL pay the nation's Reputation EXP and Mora, with more of each at the harder difficulties.
+Each request and each bounty SHALL pay the nation's Reputation EXP and Mora, with more of each at the harder difficulties (`scripts/src/services/genshinAssets/reputation/toReputationReward.ts`).
 
 #### Scenario: Claiming a request pays its EXP and Mora
 
@@ -64,11 +64,11 @@ Each request and each bounty SHALL pay the nation's Reputation EXP and Mora, wit
 
 - **GIVEN** two bounties of the same kind differ in difficulty
 - **WHEN** each is claimed
-- **THEN** the harder one pays more Reputation EXP and more Mora
+- **THEN** the harder one pays more Reputation EXP and more Mora (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/RewardExcelConfigData.json`, bounty rewards 2010101 and 2010102)
 
 ### Requirement: Requests and bounties are claimable three times a week across nations
 
-Each kind of claim, requests and bounties counted apart, SHALL be limited to three claims a week across all nations, counted from the weekly reset.
+Each kind of claim, requests and bounties counted apart, SHALL be limited to three claims a week across all nations, counted from the weekly reset (`packages/genshin-world/src/services/reputation/constants.ts`, `packages/genshin-world/src/services/time/computeLastWeeklyReset.ts`).
 
 #### Scenario: A fourth claim of a kind in the week is refused
 
@@ -97,7 +97,7 @@ Each kind of claim, requests and bounties counted apart, SHALL be limited to thr
 
 ### Requirement: The shop discount is 10 percent rounded down to five Mora
 
-A Reputation discount SHALL take ten percent off a price and round the discounted price down to a multiple of five Mora.
+A Reputation discount SHALL take ten percent off a price and round the discounted price down to a multiple of five Mora (`packages/genshin-world/src/services/reputation/computeReputationDiscountedPrice.ts`).
 
 #### Scenario: A discounted price rounds in the player's favour
 
@@ -108,7 +108,7 @@ A Reputation discount SHALL take ten percent off a price and round the discounte
 
 ### Requirement: Each exploration threshold pays once
 
-Each exploration threshold SHALL pay its reward once, and only for the thresholds a progress passes between its previous and its new percentage.
+Each exploration threshold SHALL pay its reward once, and only for the thresholds a progress passes between its previous and its new percentage (`packages/genshin-world/src/services/reputation/computeReputationExploresReached.ts`).
 
 #### Scenario: Progress passing a threshold pays its reward
 
@@ -121,3 +121,8 @@ Each exploration threshold SHALL pay its reward once, and only for the threshold
 - **GIVEN** a threshold was paid earlier
 - **WHEN** the progress rises again within the same range
 - **THEN** no reward is paid for that threshold a second time
+
+## Open
+
+- [ ] **Requests and bounties are claimable three times a week** — no source yet: the wiki's Reputation page is not in the cache.
+- [ ] **A Reputation discount is ten percent off, rounded down to five Mora** — no source yet: the wiki's Reputation page does not confirm it, and no cached game text states the percentage.
