@@ -179,7 +179,6 @@ The pick up and interact action SHALL be bound to F on a keyboard, to the X butt
 
 ## Open
 
-- [ ] **F unlocks a locked statue, which then has no row** — no source yet: `packages/genshin-world/src/services/statue/computeStatueInteractables.ts` gives Activate rows to the unlocked landmarks, F on a resonated one opens the Worship screen, and no path that unlocks a locked statue by F was traced.
 - [ ] **The wheel steps the selection one row per notch** — no source yet: the GameStegy tip is a player's note, no clip shows the wheel stepping the rows, and the pickup-scroll clip is still sought.
-- [ ] **Interact is X on an Xbox controller and Square on a PlayStation one** — no source yet: no cached Controls page is in `~/Esposter/cache/genshin-wiki/`, and the binding in `packages/genshin-engine/src/input/InputActionBindingMap.ts` names `GamepadButton.FaceLeft`.
-- [ ] **A held F repeats its pick up every 0.45 seconds** — no source yet: the repo's `packages/genshin-world/src/services/interaction/constants.ts` sets the repeat to 0.45 seconds, which is not game evidence, and the 27-frame spacing in `~/Esposter/genshin-parity/captures/world-pickup.mkv` was not extracted and counted here.
+- [ ] **Interact is X on an Xbox controller and Square on a PlayStation one** — no source yet: no cached Controls page is in `~/Esposter/cache/genshin-wiki/`.
+- [ ] **A held F repeats its pick up every 0.45 seconds** — no source yet: the 27-frame spacing in `~/Esposter/genshin-parity/captures/world-pickup.mkv` was not extracted and counted here.
