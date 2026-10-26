@@ -14,21 +14,21 @@ Faruzan's normal attacks SHALL be four strikes, a fully charged shot, a collisio
 - **WHEN** the player presses the attack button repeatedly
 - **THEN** her four strikes play in order
 
-### Requirement: Borrowed poise on the shot and plunges
+### Requirement: Poise on the shot and plunges
 
-Faruzan's fully charged shot and plunges SHALL deal poise borrowed from other characters, 20 for the shot, 50 for the low plunge and 100 for the high plunge.
+Faruzan's fully charged shot and plunges SHALL deal the poise of her own Parthian Shot page, 20 for the shot, 50 for the low plunge and 100 for the high plunge. The kit as built deals none, as its record carries none, so the gap is open in the design.
 
 #### Scenario: The fully charged shot deals 20 poise
 
 - **GIVEN** Faruzan is the character on the field
 - **WHEN** her fully charged shot hits an enemy
-- **THEN** the enemy takes 20 poise damage
+- **THEN** the enemy takes 20 poise damage, an open value (see the design's Not built)
 
 #### Scenario: The plunges deal 50 and 100 poise
 
 - **GIVEN** Faruzan is in the air
 - **WHEN** her low plunge and then her high plunge hit enemies
-- **THEN** the low plunge deals 50 poise damage and the high plunge deals 100 poise damage
+- **THEN** the low plunge deals 50 poise damage and the high plunge deals 100 poise damage, an open value (see the design's Not built)
 
 ### Requirement: Wind Realm of Nasamjnin
 
@@ -55,7 +55,7 @@ The Wind's Secret Ways SHALL deal its initial hit and set Dazzling Polyhedron st
 - **GIVEN** Faruzan has enough energy
 - **WHEN** the player casts The Wind's Secret Ways
 - **THEN** its initial hit lands
-- **AND** Dazzling Polyhedron stands for 788 frames, about 13.1 seconds
+- **AND** Dazzling Polyhedron stands for 788 frames, about 13.1 seconds (gcsim's figure; the table's 12 seconds is open, see the design's Not built)
 
 #### Scenario: The burst is refused without enough energy
 
