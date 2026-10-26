@@ -6,7 +6,7 @@ A screen is a component folder with its fixture, placed in its section, so the p
 
 ### Requirement: Each screen is a component folder beside its fixture in its game section
 
-Each screen SHALL be a component folder in its game section, kept beside its fixture, its browser tests and its approved images (`packages/genshin-world/src/components/Login/Screen/Index.fixture.ts`).
+Each screen SHALL be a component folder in its game section, kept beside its fixture, its browser tests and its approved images.
 
 #### Scenario: Screen located by its name
 
@@ -17,7 +17,7 @@ Each screen SHALL be a component folder in its game section, kept beside its fix
 
 ### Requirement: A screen with a fixture appears on the parity page and in the visual suite without a list
 
-A screen with a fixture SHALL appear on the parity page and in the visual suite, with no separate list to maintain (`packages/genshin-world/parity/screens.ts`).
+A screen with a fixture SHALL appear on the parity page and in the visual suite, with no separate list to maintain.
 
 #### Scenario: New fixture added
 
@@ -28,7 +28,7 @@ A screen with a fixture SHALL appear on the parity page and in the visual suite,
 
 ### Requirement: A fixture's variants are approved as states of their screen
 
-A fixture's variants SHALL be approved as further states of their screen (`packages/genshin-world/parity/models/ScreenFixture.ts`).
+A fixture's variants SHALL be approved as further states of their screen.
 
 #### Scenario: Variant approved
 
@@ -38,7 +38,7 @@ A fixture's variants SHALL be approved as further states of their screen (`packa
 
 ### Requirement: A motion-only screen is shot but kept out of the suite
 
-A screen whose fixture marks it motion-only SHALL be shot on the parity page and SHALL be kept out of the visual suite (`packages/genshin-world/parity/screens.visual.ts`).
+A screen whose fixture marks it motion-only SHALL be shot on the parity page and SHALL be kept out of the visual suite.
 
 #### Scenario: Motion-only screen
 
@@ -49,7 +49,7 @@ A screen whose fixture marks it motion-only SHALL be shot on the parity page and
 
 ### Requirement: A screen scales to the window's smaller side
 
-A screen SHALL draw inside a frame scaled by the window's smaller side, as the game scales its interface (`packages/genshin-interface/src/components/GameScreen/Index.vue`).
+A screen SHALL draw inside a frame scaled by the window's smaller side, as the game scales its interface.
 
 #### Scenario: Window narrower than 16 by 9
 
@@ -59,7 +59,7 @@ A screen SHALL draw inside a frame scaled by the window's smaller side, as the g
 
 ### Requirement: A screen draws no heading element
 
-A screen SHALL draw no heading element, so that a host page's heading styles do not reach into it (`packages/genshin-interface/src/components/WishScreen/Index.vue`).
+A screen SHALL draw no heading element, so that a host page's heading styles do not reach into it.
 
 #### Scenario: Screen hosted in a page with heading styles
 
@@ -70,7 +70,7 @@ A screen SHALL draw no heading element, so that a host page's heading styles do 
 
 ### Requirement: The opening shows the game's first screens in turn and owns every handoff
 
-The game's opening SHALL show its first screens in turn, and SHALL own every handoff between them (`packages/genshin-world/src/components/Game/Opening/Index.vue`).
+The game's opening SHALL show its first screens in turn, and SHALL own every handoff between them.
 
 #### Scenario: Opening played
 
