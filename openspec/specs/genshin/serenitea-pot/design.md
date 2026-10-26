@@ -40,17 +40,17 @@ The furnishings' own table, "HomeWorldFurnitureExcelConfigData", is not read yet
 
 ## The rules
 
-- **Trust Rank.** A rank's EXP is what it takes to pass it, so a rank is reached once the EXP of every rank below it is held `packages/genshin-world/src/services/home/computeHomeTrustRank.ts`. The table has ten ranks; the last takes no EXP `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/HomeworldLevelExcelConfigData.json`. Trust EXP comes from a furnishing's first making, given when it is collected into the bag, never again for the same blueprint.
-- **Queues.** Tubby runs one queue for each Trust Rank, since every rank opens a build slot. A queue holds one furnishing at a time, each taking its blueprint's seconds from when it began, so it finishes while the page is closed.
-- **Making.** A furnishing is started only when its blueprint is open and a queue is free, and its materials are taken from the bag at once. A furnishing done waits in its queue while the bag has no room for it.
-- **Adeptal Energy.** The rank is the last whose comfort the realm's total reaches, and the lowest rank's comfort is zero, so every realm reads as at least rank one.
-- **Stores.** Realm Currency fills at the Adeptal rank's `homeCoinProduceRate` and Realm Bounty at its `companionshipExpProduceRate`, each per real hour of the rank in force, in whole units, and never past the Trust Rank's store limit, with the rates' mapping `scripts/src/services/genshinAssets/home/buildHomeRules.ts`. A clock read below zero produces nothing `packages/genshin-world/src/services/home/computeHomeAccrued.ts`.
+- **Trust Rank.** A rank's EXP is what it takes to pass it, so a rank is reached once the EXP of every rank below it is held `packages/genshin-world/src/services/home/computeHomeTrustRank.ts`. The table has ten ranks; the last takes no EXP `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/HomeworldLevelExcelConfigData.json`. Trust EXP comes from a furnishing's first making, given when it is collected into the bag, never again for the same blueprint `packages/genshin-world/src/services/home/collectHomeOrder.ts`.
+- **Queues.** Tubby runs one queue for each Trust Rank, since every rank opens a build slot `packages/genshin-world/src/services/home/startHomeMake.ts`. A queue holds one furnishing at a time, each taking its blueprint's seconds from when it began, so it finishes while the page is closed `packages/genshin-world/src/services/home/collectHomeOrder.ts`.
+- **Making.** A furnishing is started only when its blueprint is open and a queue is free, and its materials are taken from the bag at once `packages/genshin-world/src/services/home/startHomeMake.ts`. A furnishing done waits in its queue while the bag has no room for it `packages/genshin-world/src/services/home/collectHomeOrder.ts`.
+- **Adeptal Energy.** The rank is the last whose comfort the realm's total reaches, and the lowest rank's comfort is zero, so every realm reads as at least rank one `packages/genshin-world/src/services/home/computeHomeAdeptalRank.ts`.
+- **Stores.** Realm Currency fills at the Adeptal rank's `homeCoinProduceRate` and Realm Bounty at its `companionshipExpProduceRate`, each per real hour of the rank in force, in whole units, and never past the Trust Rank's store limit `packages/genshin-world/src/services/home/settleHomeStores.ts`, with the rates' mapping `scripts/src/services/genshinAssets/home/buildHomeRules.ts`. A clock read below zero produces nothing `packages/genshin-world/src/services/home/computeHomeAccrued.ts`.
 - **Companions.** A Trust Rank holds as many companions as its `deployNpcCount`, from one at rank one to eight at rank ten `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/HomeworldLevelExcelConfigData.json`, `scripts/src/services/genshinAssets/home/buildHomeRules.ts`. The companions themselves are not invited yet.
 
 ## Calls the table settled
 
 - **The per-hour unit is provisional.** The wiki could not be read from this build (it answered HTTP 402), so the rates' unit is the table's own reading of one real hour, marked provisional in `packages/genshin-world/src/services/home/constants.ts` until a recording of a store across an hour settles it.
-- **One queue per rank.** The build slot appears on every Trust Rank, so the count is the rank itself. A recording of the queues at two ranks would confirm it.
+- **One queue per rank.** The build slot appears on every Trust Rank, so the count is the rank itself `packages/genshin-world/src/services/home/constants.ts`. A recording of the queues at two ranks would confirm it.
 ## Key files
 
 | File                                                                 | Role                                                                      |
@@ -83,9 +83,3 @@ The furnishings' own table, "HomeWorldFurnitureExcelConfigData", is not read yet
 - [ ] **The wiki answered HTTP 402 to this build's read** — no source yet: no fetch log of the wiki's response is in the repo or the caches.
 - [ ] **The build slot appears on every Trust Rank** — no source yet: the dump's level row does not name the field that opens each build slot; the queue count is cited to `packages/genshin-world/src/services/home/constants.ts`.
 - [ ] **Realm Currency is not in the wallet until its game text name has a key in `genshin-text`** — no source yet: the key exists at `packages/genshin-text/src/models/GameTextKey.ts`, so whether the wallet still excludes it is not checked here.
-- [ ] **A furnishing's first making gives its Trust EXP when collected into the bag, and never again for the same blueprint** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Each furnishing takes its blueprint's seconds from when it began, so it finishes while the page is closed** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A furnishing starts only when its blueprint is open and a queue is free, and its materials are taken from the bag at once** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A finished furnishing waits in its queue while the bag has no room for it** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The Adeptal Energy rank is the last whose comfort the realm's total reaches, so every realm reads as at least rank one** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Realm Currency and Realm Bounty fill at the rank's rates per real hour, in whole units, never past the Trust Rank's store limit** — no source yet: game data or a snapshot that holds this behaviour
