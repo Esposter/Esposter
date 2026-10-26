@@ -70,7 +70,7 @@ The furnishings' own table, "HomeWorldFurnitureExcelConfigData", is not read yet
 ## Notes
 
 - **The bag does not hold the furnishings yet.** A finished furnishing is taken into the bag as an item the caller defines `packages/genshin-world/src/services/home/collectHomeOrder.ts`, since the Furnishings tab and its item definitions are not built.
-- **Realm Currency is not in the wallet.** It is a store of the realm's progress, not a currency the wallet counts, until its game text name has a key in `genshin-text`.
+- **Realm Currency is in the wallet.** It is a store of the realm's progress, counted as every currency is (`packages/genshin-world/src/models/inventory/Wallet.ts`, `packages/genshin-world/src/services/save/toWalletSave.ts`), and its game text name is mapped to `GameTextKey.RealmCurrency` (`packages/genshin-world/src/services/inventory/CurrencyGameTextKeyMap.ts`, line 23).
 - **The rates are read forward from a claim.** The caller settles a store at the rank in force before the rank changes, since a store accrues at the rank it was last claimed at `packages/genshin-world/src/services/home/settleHomeStores.ts`.
 
 ## Sources
@@ -82,4 +82,4 @@ The furnishings' own table, "HomeWorldFurnitureExcelConfigData", is not read yet
 
 - [ ] **The wiki answered HTTP 402 to this build's read** — no source yet: no fetch log of the wiki's response is in the repo or the caches.
 - [ ] **The build slot appears on every Trust Rank** — no source yet: the dump's level row does not name the field that opens each build slot; the queue count is cited to `packages/genshin-world/src/services/home/constants.ts`.
-- [ ] **Realm Currency is not in the wallet until its game text name has a key in `genshin-text`** — no source yet: a check of whether the wallet still excludes Realm Currency, since `packages/genshin-world/src/services/inventory/CurrencyGameTextKeyMap.ts` (line 23) now maps it to `GameTextKey.RealmCurrency`.
+- [ ] **Realm Currency is not in the wallet until its game text name has a key in `genshin-text`** — contradicted by `packages/genshin-world/src/services/inventory/CurrencyGameTextKeyMap.ts`: it maps RealmCurrency to its key, and the wallet holds every currency.
