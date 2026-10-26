@@ -1,5 +1,6 @@
 {
   "burst.hits.0.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 8939 } },
+  "burst.hits.0.poiseDamage": { "source": "Wiki", "value": 120 },
   "burst.hits.0.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
   "chargedAttack.hits.0.poiseDamage": { "source": "Wiki", "value": 120 },
   "frames.salonMemberInitialTicks.length": { "cause": "Unsourced", "value": 3 },
@@ -57,6 +58,7 @@
   "hits.salonMemberAttacks.2.multiplier": { "cause": "Unsourced", "value": 0 },
   "hits.salonMemberAttacks.2.poiseDamage": { "cause": "NoPoiseSource", "value": 0 },
   "hits.arkhe.multiplier": { "source": "Gcsim", "value": { "index": 9, "proudSkillGroupId": 8931 } },
+  "hits.arkhe.poiseDamage": { "source": "Wiki", "value": 20 },
   "hits.ousiaBubble.area": {
     "file": "skill.go",
     "line": 121,
@@ -66,6 +68,7 @@
   "hits.ousiaBubble.element": { "file": "skill.go", "line": 116, "source": "Gcsim", "value": "Water" },
   "hits.ousiaBubble.hitmarkFrames": { "file": "skill.go", "line": 26, "source": "Gcsim", "value": 18 },
   "hits.ousiaBubble.multiplier": { "cause": "Unsourced", "value": { "index": 0, "proudSkillGroupId": 8932 } },
+  "hits.ousiaBubble.poiseDamage": { "source": "Wiki", "value": 20 },
   "hits.ousiaBubble.scalingAttribute": { "cause": "Unsourced", "value": "FIGHT_PROP_HP" },
   "normalAttacks.0.hits.0.poiseDamage": { "source": "Wiki", "value": 50.5548 },
   "normalAttacks.1.hits.0.poiseDamage": { "source": "Wiki", "value": 48.4344 },
