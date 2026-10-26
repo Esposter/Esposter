@@ -90,6 +90,8 @@ flowchart LR
 
   What the crossing still settles over is the move's own new tiles, 80 m on, and the far rings over Liyue. Its long frames are its region's arrival, about 240 ms of them the landmark colliders' build, which the refresh never held. The crossing's budget holds the after figures: 3 requests, 95,524 bytes of game data and 33 tiles rebuilt, each plus a tenth (`WorldScreen.crossing` in `scripts/src/services/genshinParity/load/ScreenLoadBudgetMap.ts`: 4 requests, 105,077 bytes and 37 tiles).
 
+- **Every landmark shares its kind's material** — `packages/genshin-world/src/components/World/Landmarks/Index.vue` makes one material per kind, once: `partMaterial` for a building's, a statue's and a domain entrance's parts, `barkMaterial` and `leafMaterial` for a tree's.
+
 ## Key files
 
 | File                                                                     | Role                                                               |
@@ -121,6 +123,7 @@ flowchart LR
 - [PerformanceLongAnimationFrameTiming](https://developer.mozilla.org/en-US/docs/Web/API/PerformanceLongAnimationFrameTiming), MDN: the frames that held the main thread past 50 ms, summed for a crossing's long frames.
 
 ## Open
+
 - **A screen's load steps are named by its `measureLoadStep` calls, not by a `measures` section** — the world's names are `world-gate` (`packages/genshin-world/src/components/World/Screen/Index.vue`), `regions` (`packages/genshin-world/src/composables/useRegionData.ts`), `landmark-colliders` (`packages/genshin-world/src/components/World/Landmarks/Index.vue`), `terrain` (`packages/genshin-world/src/components/World/Terrain/Index.vue`) and `compile` (`packages/genshin-world/src/components/World/Windrise/Index.vue`); the opening's is `opening` (`packages/genshin-world/src/components/Game/Opening/Index.vue`); and the login has no call of its own.
 - [ ] **The request budget was recorded under the idle reading** — no source yet: no run record of its requests names the reading it was taken at, so it cannot be re-read. The budget's production figure of 132 is at `scripts/src/services/genshinParity/load/ScreenLoadBudgetMap.ts` (line 34).
 - [ ] **A world's load makes more requests than the browser's 250 resource timings** — the production budget's 132 requests is cited (`scripts/src/services/genshinParity/load/ScreenLoadBudgetMap.ts`, line 34), but the dev server's 2049 is a run record that is not kept in the repo or under `~/Esposter.noindex`, so that half is open.
@@ -132,5 +135,4 @@ flowchart LR
 - [ ] **The compile and gate figures** (programs 120 to 97, geometries 276 to 220, `world-gate` 77.5 ms to 65.3 ms, game data requests 80 to 76) — no source yet: the runs are not kept in the repo or under `~/Esposter.noindex`.
 - [ ] **The region-ground figures** (game data requests 76 to 63, `world-gate` 143.6 ms to 55.1 ms) — no source yet: the runs are not kept in the repo or under `~/Esposter.noindex`.
 - [ ] **The request split of 120** (65 game data, 39 kit chunks, 9 region reads, 7 page files), the dev server's 2049 requests and the paused counts — no source yet: the request kinds and the paused runs are not recorded in the repo or under `~/Esposter.noindex`.
-- **Every landmark shares its kind's material** — `packages/genshin-world/src/components/World/Landmarks/Index.vue` makes one material per kind, once: `partMaterial` for a building's, a statue's and a domain entrance's parts, `barkMaterial` and `leafMaterial` for a tree's.
 - [ ] **Bundled dev saves a few seconds of startup, with terrain unchanged** — no source yet: no bundled-dev run is recorded in the repo or under `~/Esposter.noindex`.
