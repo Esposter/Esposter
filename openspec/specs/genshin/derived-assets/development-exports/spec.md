@@ -1,6 +1,6 @@
 ## Purpose
 
-Under nuxt dev the development server serves the developer's own exports of the game's scenes from disk, and the world and the login scene draw them in place of our stand-ins of each family they hold. No build registers the route or holds a byte of them.
+Under nuxt dev the development server serves the developer's own exports of the game's scenes from disk, and the world and the login scene draw them in place of our stand-ins of each family they hold. No build registers the route or holds a byte of them `apps/web/modules/serveGenshinExtractions.ts`.
 
 ## Requirements
 
@@ -97,7 +97,6 @@ A landmark within an exported family's extent that the export stands in for SHAL
 - [ ] **No production build holds a byte of the exports** — no source yet: no build output check is cited.
 - [ ] **The body still collides with a landmark hidden for an export** — no source yet: no checked collider test or path is cited for it.
 - [ ] **The body stands on our ground and collides with our stand-ins while exports are drawn** — no source yet: no checked test or code path is cited for it.
-- [ ] **No build registers the export route** — no source yet: game data or a snapshot that holds this behaviour.
 
 ### Requirement: Collision and ground remain our own data
 
