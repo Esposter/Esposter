@@ -6,7 +6,7 @@ How the world moves between the screens the game opens over it — one at a time
 
 ### Requirement: One screen opens over the world at a time
 
-The world SHALL show at most one screen at a time, and each screen SHALL open from the world by its own shortcut or from the Paimon menu (`packages/genshin-world/src/services/screen/getNextScreenKind.ts`, `packages/genshin-world/src/services/screen/InputActionScreenKindMap.ts`, `packages/genshin-world/src/components/Menu/Screen/Index.vue`).
+The world SHALL show at most one screen at a time, and each screen SHALL open from the world by its own shortcut or from the Paimon menu.
 
 #### Scenario: A screen's shortcut opens it from the world
 
@@ -29,7 +29,7 @@ The world SHALL show at most one screen at a time, and each screen SHALL open fr
 
 ### Requirement: Escape, Start and cancel return a screen to the world
 
-Escape, the Start button and a pad's cancel SHALL close any screen back to the world, and a screen's own shortcut SHALL close it again (`packages/genshin-world/src/services/screen/getNextScreenKind.ts`, and `packages/genshin-world/src/components/Menu/Screen/Index.vue`, which sets the world back on each screen's `close`).
+Escape, the Start button and a pad's cancel SHALL close any screen back to the world, and a screen's own shortcut SHALL close it again.
 
 #### Scenario: Escape closes a screen
 
@@ -51,7 +51,7 @@ Escape, the Start button and a pad's cancel SHALL close any screen back to the w
 
 ### Requirement: A talk stays open until its own end
 
-A talk over the world SHALL stay open against every key, Escape and the Start button included, and SHALL close only at its own end (`packages/genshin-world/src/services/screen/getNextScreenKind.ts`, which keeps a talk and a duel open whatever is pressed).
+A talk over the world SHALL stay open against every key, Escape and the Start button included, and SHALL close only at its own end.
 
 #### Scenario: Escape does not close a talk
 
@@ -67,7 +67,7 @@ A talk over the world SHALL stay open against every key, Escape and the Start bu
 
 ### Requirement: A menu holds the world and a talk does not
 
-While a menu is open the world's fixed-step loops and its character SHALL stand still, while the world keeps drawing behind the screen (`packages/genshin-world/src/services/screen/ScreenBehaviourMap.ts`, `packages/genshin-world/src/services/screen/constants.ts`, `MENU_SCREEN_BEHAVIOUR`).
+While a menu is open the world's fixed-step loops and its character SHALL stand still, while the world keeps drawing behind the screen.
 
 #### Scenario: The world stays visible and still behind a menu
 
@@ -84,7 +84,7 @@ While a menu is open the world's fixed-step loops and its character SHALL stand 
 
 ### Requirement: A screen that needs a cursor releases the pointer
 
-A screen that needs a cursor SHALL release the pointer when it opens, and a click on the world SHALL take the pointer back (`packages/genshin-world/src/components/World/Session/Index.vue`, which exits the pointer lock on `isPointerReleased`; `packages/genshin-world/src/components/World/Character/Index.vue`, which requests the lock on a click).
+A screen that needs a cursor SHALL release the pointer when it opens, and a click on the world SHALL take the pointer back.
 
 #### Scenario: Opening a menu releases the pointer
 
@@ -100,7 +100,7 @@ A screen that needs a cursor SHALL release the pointer when it opens, and a clic
 
 ### Requirement: The key that closes a screen is spent
 
-The key or click that closes a screen SHALL NOT also act in the world (`packages/genshin-world/src/components/World/Session/Index.vue`, the watch on `screenKind` that reads the input once more with `readInput(0)` when the world is shown).
+The key or click that closes a screen SHALL NOT also act in the world.
 
 #### Scenario: A closing click does not interact with the world
 
@@ -110,7 +110,7 @@ The key or click that closes a screen SHALL NOT also act in the world (`packages
 
 ### Requirement: Losing the pointer in play opens the Paimon menu
 
-Losing the pointer lock while the world is in play SHALL open the Paimon menu, as the Escape key would (`packages/genshin-world/src/components/World/Session/Index.vue`, the `pointerlockchange` listener).
+Losing the pointer lock while the world is in play SHALL open the Paimon menu, as the Escape key would.
 
 #### Scenario: A lost pointer lock opens the menu
 
@@ -120,7 +120,7 @@ Losing the pointer lock while the world is in play SHALL open the Paimon menu, a
 
 ### Requirement: An unbuilt screen opens as a placeholder with a way back
 
-A screen nobody has built SHALL open as a placeholder under its title in the game's words, with a way back to the world (`packages/genshin-world/src/components/Menu/Screen/Index.vue`, `packages/genshin-world/src/components/Menu/Placeholder/Index.vue`).
+A screen nobody has built SHALL open as a placeholder under its title in the game's words, with a way back to the world.
 
 #### Scenario: An unbuilt screen shows its title
 
