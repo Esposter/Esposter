@@ -104,6 +104,7 @@ The plugin is installed alone by a stranger's frozen `npm ci`, and every release
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump of the game's data: the layout the text dump directory follows — `~/Esposter/genshin-parity/text/TextMap/`, the medium maps, and `~/Esposter/genshin-parity/text/ExcelBinOutput/ManualTextMapConfigData.json` and `FettersExcelConfigData.json`, the tables naming interface strings and characters' voice-over lines (`~/Esposter/genshin-parity/text/ExcelBinOutput/ManualTextMapConfigData.json`, `~/Esposter/genshin-parity/text/ExcelBinOutput/FettersExcelConfigData.json`).
 
 ## Open
+
 - [ ] **The `ExcelBinOutput` tables and text maps match the install's revision** — no source yet: the install's `config.ini` (on the PC, not this machine) says `game_version=7.1.0` (read 2026-10-26), and no file read records the dump's revision; `scripts/src/services/genshinText/fetchDump.ts` compares sizes with the remote `main` (`ANIME_GAME_DATA_BRANCH`, `scripts/src/services/genshinText/constants.ts`), which need not be the install's.
 - [ ] **The server's name stays as recorded** — no source yet: no source checked here shows how the server list names it.
 - [ ] **The opening's English is the current build's, so the health notice reads its current wording** — no source yet: the dump's revision is unrecorded (see the first item), so its health notice was not compared with the current client's.
