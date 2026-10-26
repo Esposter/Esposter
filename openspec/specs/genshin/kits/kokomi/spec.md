@@ -1,6 +1,6 @@
 ## Purpose
 
-Kokomi's kit as built: three strikes, a charged attack, Bake-Kurage's ripples and heal field, and Nereid's Ascension with its Ceremonial Garment stance, with her passives and Constellation 4's garment speed built, and Constellations 1, 2 and 6 and Constellation 4's energy not built.
+Kokomi's kit as built: three strikes, a charged attack, Bake-Kurage's ripples and heal field, and Nereid's Ascension with its Ceremonial Garment stance, with her passives and Constellation 4's garment speed and energy built, and Constellations 1, 2 and 6 not built.
 
 ## Requirements
 
@@ -60,9 +60,16 @@ While the Ceremonial Garment stands, Kokomi's normal attacks, charged attack and
 - **WHEN** a normal attack or charged attack strikes an enemy
 - **THEN** the party is healed by a share of Kokomi's Max HP and a flat amount
 
-### Requirement: Constellation 4's garment speed
+### Requirement: Constellation 4's garment speed and energy
 
-While Kokomi wears the Ceremonial Garment at Constellation 4, her Normal Attack SPD SHALL be raised by 10%. The energy her landed Normal Attacks give is not built.
+While Kokomi wears the Ceremonial Garment at Constellation 4, her Normal Attack SPD SHALL be raised by 10%, and each garment normal attack that hits an enemy SHALL restore 0.8 energy to her, once every 0.2 seconds.
+
+#### Scenario: Garment normal attack restores energy at Constellation 4
+
+- **GIVEN** Kokomi has Constellation 4 and the Ceremonial Garment stands
+- **WHEN** her garment normal attack hits an enemy
+- **THEN** she gains 0.8 energy
+- **AND** another hit within 0.2 seconds gives none
 
 #### Scenario: Garment raises Normal Attack SPD at Constellation 4
 
@@ -91,12 +98,12 @@ Kokomi's plunge attacks SHALL land half a second after they start, provisionally
 - **WHEN** the player starts a plunge attack
 - **THEN** the plunge lands half a second after it starts
 
-### Requirement: Kokomi's Constellations 1, 2 and 6, and Constellation 4's energy not yet built
+### Requirement: Kokomi's Constellations 1, 2 and 6 not yet built
 
-Kokomi's Constellations 1, 2 and 6, and Constellation 4's energy SHALL NOT take effect.
+Kokomi's Constellations 1, 2 and 6 SHALL NOT take effect.
 
 #### Scenario: Constellations do nothing
 
-- **GIVEN** Kokomi has Constellation 1, 2 or 6 unlocked, or Constellation 4 and dons the garment
+- **GIVEN** Kokomi has Constellation 1, 2 or 6 unlocked
 - **WHEN** the player fights with Kokomi
 - **THEN** that constellation has no effect
