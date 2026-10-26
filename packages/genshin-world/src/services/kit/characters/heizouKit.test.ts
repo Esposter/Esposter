@@ -56,7 +56,7 @@ describe(createHeizouKitBehaviour, () => {
     expect(HEIZOU_KIT.highPlunge.hits[0]?.talentMultiplier).toBe(1.419344);
   });
 
-  test("the full hold strikes with four Declension stacks and its Conviction bonus, from three seconds", () => {
+  test("the full hold from three seconds reads its first hit as one total of the skill's base, four Declension stacks and the Conviction bonus, and the skill's own hit stays at the base", () => {
     expect.hasAssertions();
     const [hold] = HEIZOU_KIT.elementalSkillHolds ?? [];
 
