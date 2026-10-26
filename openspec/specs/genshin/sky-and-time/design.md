@@ -1,6 +1,6 @@
 # Sky and time
 
-Genshin's landscapes are as much sky as ground. The dawn is apricot, the afternoon a high clear blue, the dusk violet and gold, and the night deep blue under a large moon, and the whole world is lit to match. So the sky is the one source of every colour the [rendering style](../rendering-style/design.md)'s materials, fog and post chain read: a region describes its day as a handful of keyframes, and the clock moves the world through them.
+Genshin's landscapes are as much sky as ground. The dawn is apricot (`~/Esposter.noindex/genshin-parity/captures/login-dawn.mkv`, a frame at 2 s, is apricot on the horizon under blue), the afternoon a high clear blue, the dusk violet and gold (`~/Esposter.noindex/genshin-parity/captures/world-weather-turn.dusk.mkv`, a frame at 2 s, shows apricot and gold cloud edges), and the night deep blue under a large moon, and the whole world is lit to match. So the sky is the one source of every colour the [rendering style](../rendering-style/design.md)'s materials, fog and post chain read: a region describes its day as a handful of keyframes, and the clock moves the world through them.
 
 ## How it works
 
@@ -71,3 +71,11 @@ The sky is the scene's background node (`createSkyNode`), drawn behind everythin
 - [Time](https://genshin-impact.fandom.com/wiki/Time), Genshin Impact Wiki: one in-game minute per real second, dawn, midday, dusk and midnight at six-hour marks, and the twenty-four-minute cycle.
 - [Console platform development in Genshin Impact](https://docswell.com/s/UnityJapan/KWRPQ5-210617-unity-dojo20211mihoyozhenzhongyi), Zhenzhong Yi, Unity Dojo 2021: ambient light from spherical harmonics probes, which the hemisphere colours simplify.
 - [SkyMesh](https://threejs.org/docs/pages/SkyMesh.html), three.js: the physical sky this page chooses not to use, since the game's skies are painted.
+
+## Open
+
+- [ ] **The dusk sky is violet, and the afternoon and night read as a high clear blue and deep blue under a large moon** — no source yet: the dusk frame reads indigo rather than violet, and no afternoon or night frame was read.
+- [ ] **One in-game minute passes per real second, with dawn at six, noon at twelve, dusk at eighteen and midnight at twenty-four** — no source yet: the wiki's Time page is not in the cache, and the time clip `~/Esposter.noindex/genshin-parity/captures/yt-a4_J84iMqR0-time.mp4` was not read.
+- [ ] **Windrise loads at three in the afternoon, its reference hour** — no source yet: the in-game hour of its reference screenshots was not read here.
+- [ ] **The sun rises due east at six and sets due west at eighteen** — no source yet: the Time page is not in the cache, and no frame's sun bearing was read.
+- [ ] **The painted sky draws as the game's own sky shader does, ported from its decompiled programs** — no source yet: the decompiled programs are not in the cache, and no in-world sky frame was compared.
