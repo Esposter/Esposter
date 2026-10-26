@@ -38,5 +38,5 @@ The door the glide comes to rest at: it assembles at the walkway's far end as th
 - [ ] **The door has 13 pieces, each rising from about 6 metres below and settling between 0.4 and 1.33 seconds** — no source yet: the door record is hosted, and the `Ani_LogginScene_Door01_Liftting` clip is not in `~/Esposter.noindex/genshin-parity/extracted/login-clips/AnimationClip/`.
 - [ ] **The scene's playback follows the clip's path within a centimetre** — no source yet: the clip is not read here, so the centimetre is not checked.
 - [ ] **At rest the door is the shape the mesh is, to within a millimetre on average** — no source yet: no per-piece shape comparison is kept in `~/Esposter.noindex/genshin-parity/comparisons/`.
-- [ ] **The glow reads the slit's point through `doorSlitWorldX`** — no source yet: no function of that name was located in the engine or the world package.
+- [ ] **The glow reads each piece's slit through `doorSlitWorldX`** — no source yet: the game's per-piece slit was not measured, so where the line sits during the rise is settled by the eye-check.
 - [ ] **The door casts no shadow** — no source yet: only the exported copies are set `castShadow = false` (`packages/genshin-world/src/services/login/door/rideLoginWitnessDoor.ts`), and our door's setting was not located.
