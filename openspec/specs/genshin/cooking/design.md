@@ -105,4 +105,4 @@ The quality weights the table gives each dish are all the Delicious weight in th
 - [ ] **Mondstadt's stove is the scene's `Restaurant` building point** — no source yet: no extracted game file was found that names a Restaurant building in Mondstadt's scene group.
 - [ ] **The 7.1 table names the eater for every heal dish** — no source yet: the table is not in the dump, and `CookBonusExcelConfigData.json` has no target field to check it against.
 - [ ] **A dish's bonus is read for the attack, defence and critical stats** — no source yet: the mapping from a bonus to these stats was not found in the files checked.
-- [ ] **Pyro lights a campfire; Anemo, Cryo, Electro, Geo and Hydro, and rain or thunderstorms in the open, put it out; Dendro leaves it** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Pyro lights a campfire; Anemo, Cryo, Electro, Geo and Hydro, and rain or thunderstorms in the open, put it out; Dendro leaves it** — no source yet: a recording of the campfire under each element, not yet captured.
