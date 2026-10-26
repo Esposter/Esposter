@@ -1,6 +1,6 @@
 ## Purpose
 
-Chevreuse's kit as built, with Short-Range Rapid Interdiction Fire's press and hold, the Overcharged Ball an Overloaded reaction sets going, and Ring of Bursting Grenades with Constellation 4's hold waiver, and what is left of her passives, her skill's heal and her other constellations.
+Chevreuse's kit as built, with Short-Range Rapid Interdiction Fire's press and hold, the Overcharged Ball an Overloaded reaction sets going, and Ring of Bursting Grenades with Constellation 4's hold waiver, and what is left of her passives, her skill's heal and her other constellations. The sources of its numbers are cited inline on the [design page](design.md), which also lists what is open.
 
 ## Requirements
 
@@ -27,13 +27,13 @@ Short-Range Rapid Interdiction Fire SHALL strike a Pyro box 2 metres wide and 6 
 
 - **GIVEN** Chevreuse is the character on the field and the skill is ready
 - **WHEN** the player presses Short-Range Rapid Interdiction Fire
-- **THEN** a Pyro box 2 metres wide and 6 metres long strikes the enemies in front of her at 25 frames
+- **THEN** a Pyro box 2 metres wide and 6 metres long strikes the enemies in its box at 25 frames
 
 #### Scenario: Holding the skill strikes the hold box
 
 - **GIVEN** Chevreuse is the character on the field and the skill is ready
 - **WHEN** the player holds Short-Range Rapid Interdiction Fire until its hold threshold
-- **THEN** a Pyro box 3 metres wide and 7 metres long strikes the enemies in front of her at 19 frames of the hold's release
+- **THEN** a Pyro box 3 metres wide and 7 metres long strikes the enemies in its box at 19 frames of the hold's release
 - **AND** the hold threshold stays provisional until a recording settles it
 
 ### Requirement: Overcharged Ball after an Overloaded reaction
