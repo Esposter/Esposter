@@ -7,7 +7,6 @@ import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
 import { getResourceAssetBlobName } from "#src/services/user/getResourceAssetBlobName";
-import { getSaveBlobName } from "#src/services/user/getSaveBlobName";
 import { InvocationContext } from "@azure/functions";
 import {
   createMessage,
@@ -25,6 +24,7 @@ import {
   DataExportStatus,
   friendsInSocial,
   getRoomEmojiBlobName,
+  getSaveBlobName,
   getUserProfileImageBlobName,
   likesInPost,
   MessageType,
