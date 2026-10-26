@@ -1,6 +1,6 @@
 ## Purpose
 
-Every screen's interface laid out from the game's own RectTransform tree. A fit publishes the tree's rects as the screen's record of the hosted game data (`hud/interfaceRects` and `login/interfaceRects`), and one nesting component, GameRect, places each piece inside its game parent, so nothing is positioned by hand. Unity's anchors, pivots and size deltas map exactly onto absolute positioning with calc, so the browser is the layout engine. Only what the tree cannot hold, a prefab loaded at run time, a layout group's spacing or a line of text inside its rect, is measured.
+Every screen's interface laid out from the game's own RectTransform tree. A fit publishes the tree's rects as the screen's record of the hosted game data (`packages/genshin-world/src/generated/gameDataLock.json`, `hud/interfaceRects` and `login/interfaceRects`), and one nesting component, GameRect, places each piece inside its game parent, so nothing is positioned by hand. Unity's anchors, pivots and size deltas map exactly onto absolute positioning with calc, so the browser is the layout engine (`packages/genshin-interface/src/services/computeRectOffsets.test.ts`, `packages/genshin-interface/src/services/toCanvasRectStyle.test.ts`). Only what the tree cannot hold, a prefab loaded at run time, a layout group's spacing or a line of text inside its rect, is measured.
 
 ## Requirements
 
@@ -10,9 +10,10 @@ Each piece of a screen's interface SHALL be placed inside its game parent's box 
 
 #### Scenario: A piece anchored to the bottom stays at the bottom
 
-- **GIVEN** a piece is anchored to the bottom of its parent, the login's `Bottom` with `anchorMin` [0, 0] and `anchorMax` [1, 0]
+- **GIVEN** a piece is anchored to the bottom of its parent
 - **WHEN** the window is resized to any shape
 - **THEN** the piece stays at the bottom of its parent
+- (`~/Esposter.noindex/genshin-parity/extracted/login-ui/rects.json`, the login's `Bottom` with `anchorMin` [0, 0] and `anchorMax` [1, 0])
 
 #### Scenario: A piece follows its parent
 
@@ -22,7 +23,7 @@ Each piece of a screen's interface SHALL be placed inside its game parent's box 
 
 ### Requirement: A scaled piece scales about its pivot
 
-A piece the game scales SHALL scale about its pivot, so the corner it is pivoted on stays where the layout places it (`GrpMap` with a local scale of 0.6).
+A piece the game scales SHALL scale about its pivot, so the corner it is pivoted on stays where the layout places it (`~/Esposter.noindex/genshin-parity/extracted/character/interface/json/RectTransform/RectTransform#324437.json`, `GrpMap` with a local scale of 0.6).
 
 #### Scenario: A corner-pivoted piece keeps its corner
 
@@ -78,5 +79,4 @@ A screen SHALL keep only the pieces of its published record that it places by na
 - [ ] **A clip that moves a parent piece moves every piece nested in it** — no source yet: no test holds `data-clip-target`, and no clip in the extracted set names `Center/SwitchServer`.
 - [ ] **A run-time prefab stays in its place inside its container on any window** — no source yet: no recording or test holds the prefab's place.
 - [ ] **A screen keeps only the named pieces of its record** — no source yet: no test holds the named filter; the fit test covers only the keys.
-- [ ] **A fit publishes the tree's rects as each screen's record of the hosted game data** — the repo files that would settle it: `scripts/src/services/genshinAssets/fit/fitInterfaceRects.ts` (the fit) and `packages/genshin-world/src/generated/gameDataLock.json` (the published `hud/interfaceRects` and `login/interfaceRects` entries).
-- [ ] **Unity's anchors, pivots and size deltas map exactly onto absolute positioning with calc** — the repo's side is `packages/genshin-interface/src/services/computeRectOffsets.ts` and `toCanvasRectStyle.ts`, with their two test files; the game's side has no source yet, and needs a recording of the login at a second window size.
+- [ ] **Unity's anchors, pivots and size deltas map exactly onto absolute positioning with calc** — no source yet: the game's side needs a recording of the login at a second window size, which this spec does not cite.
