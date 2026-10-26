@@ -1,5 +1,5 @@
 import type { ParityPageOptions } from "#src/models/genshinParity/shared/ParityPageOptions";
-import type { Page } from "playwright";
+import type { ConsoleMessage, Page } from "playwright";
 
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";
 import {
@@ -18,6 +18,20 @@ import { WITNESS_LAYOUT_FILE_NAME } from "genshin-world/sceneExport";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 import { chromium } from "playwright";
+
+// A console error printed with its first argument's message, and the URL of a resource that failed to load, since the
+// Page's text names only the error's class: a ZodError's issues are its message
+const reportConsoleError = (message: ConsoleMessage): Promise<void> =>
+  getResultAsync(async () => {
+    const [firstArgument] = message.args();
+    const detail = firstArgument
+      ? await firstArgument.evaluate((value) => (value instanceof Error ? value.message : String(value)))
+      : message.text();
+    console.error(`parity page: ${detail} ${message.location().url}`);
+  }).match(
+    () => undefined,
+    () => undefined,
+  );
 
 // The parity page on one screen, at the game's interface height and the reference's aspect, drawn at the reference's pixel
 // Size, once it has drawn. It launches its own Edge, with the flags an unlimited frame rate needs, and closes it with the page.
@@ -69,6 +83,12 @@ export const openParityPage = async ({
   const missingFiles: string[] = [];
   return getResultAsync(async () => {
     const page = await context.newPage();
+    // A page error is printed as it happens, so a failure the screen logs and carries on past reaches the terminal too
+    page.on("pageerror", (error) => console.error(`parity page: ${String(error)}`));
+    page.on("console", (message) => {
+      // oxlint-disable-next-line typescript/no-floating-promises -- the report's own result is an error it has already printed
+      if (message.type() === "error") void reportConsoleError(message);
+    });
     await page.addInitScript((size) => performance.setResourceTimingBufferSize(size), RESOURCE_TIMING_BUFFER_SIZE);
     const motionQuery = motion ? `&motion=${motion}` : "";
     const propsQuery = props ? `&props=${encodeURIComponent(JSON.stringify(props))}` : "";
