@@ -81,5 +81,5 @@ A puzzle of monuments SHALL count as solved only when every monument of it is li
 
 ## Open
 
-- [ ] **A Swirl that spreads an element lights a monument of that element, and Burning ticks Pyro and auras decay on each step, as the game does** — no source yet: the wiki's Elemental Monument page and its elemental pages are not in the genshin-wiki cache.
+- [ ] **A Swirl that spreads an element lights a monument of that element, and auras decay on each step, as the game does** — no source yet: the wiki's Elemental Monument page, checked, says an elemental reaction activates a monument but not which element a reaction carries onto one; the Elemental Gauge Theory page, checked, says auras decay linearly and Burning consumes Dendro per frame, neither per step; the Swirl page is not in the genshin-wiki cache.
 - [ ] **the Elemental Monument is a state machine, lit by its element or a reaction and going out after its time when timed** — no source yet: game data or a snapshot that holds this behaviour
