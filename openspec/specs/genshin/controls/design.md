@@ -68,14 +68,22 @@ The bindings of places and modes the world does not have are left out (`packages
 ## Sources
 
 - [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: the default PC, Xbox and PlayStation binding of every action and menu, the ones a player cannot change, and the bumper's combinations on a pad.
+- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki, Basic Settings table, quoted "Default PC Binding": each action's default key on a PC and an Xbox pad, with M for the map and F1, F3 and F5 for the handbook, the wish and the events.
+- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki, Basic Settings table, quoted "Switch to Party Member and Use Elemental Burst": bound to Left Alt on a PC.
+- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki, Basic Settings table, quoted "Open Paimon Menu": bound to Esc on a PC.
+- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki, Basic Settings table, quoted "Switch to Walk/Run": bound to Left Ctrl on a PC, and the walk switch.
+- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki, Basic Settings table, quoted "Quick-Use Gadget": the left bumper with B on an Xbox pad.
+- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki, Basic Settings table, quoted "Elemental Burst": Y on an Xbox pad and triangle on a PlayStation pad.
+- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki, Basic Settings table, quoted "Open the settings menu (within Serenitea Pot/The Cat's Tail)": F6.
+- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki, Basic Settings table, quoted "Open the Furnishing Screen (inside Serenitea Pot)": F7.
+- [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki, Basic Settings table, quoted "Open Stellar Reunion (Only active when conditions are met)": F8.
 - [Standard Gamepad](https://w3c.github.io/gamepad/#remapping), W3C Gamepad: the standard layout's button order, which `GAMEPAD_BUTTONS` follows.
 - [Pointer Lock 2.0](https://w3c.github.io/pointerlock/), W3C: the user agent leaving the lock on `Escape`.
 - [User activation](https://html.spec.whatwg.org/multipage/interaction.html#activation-triggering-input-event), WHATWG HTML: `Escape` gives no activation, so no lock can be requested from it.
 
 ## Open
 
-- [ ] **Each action's default key on a PC and an Xbox pad, as the game's controls list sets them out, and M, F1, F3 and F5 as the game's keys** — no source yet: the wiki's Controls page is not in `~/Esposter.noindex/cache/genshin-wiki/`, no capture shows the game's controls list, and no `ExcelBinOutput` table name or `genshin-parity` reference (`~/Esposter.noindex/genshin-parity/references/`) holds one (searched 2026-10-26).
-- [ ] **A pad's top face button is the burst, the bumper chords and the directional pad's chords are the game's** — no source yet: no capture of a pad's controls, and the wiki's Controls page is not cached.
+- [ ] **A pad's top face button is the burst** — partly sourced: the wiki's Controls page binds the Elemental Burst to Y on an Xbox pad and to triangle on a PlayStation pad, and names no face button by its place on the pad, so that naming waits on the standard layout (the W3C item below); no capture of a pad's controls is on disk.
 - [ ] **The browser's standard gamepad layout puts a PlayStation cross and an Xbox A at the same index** — no source yet: the W3C Gamepad spec, cited in Sources, is not on this PC, so its button order is unread here.
 - [ ] **The game's shortcut wheel turns the face buttons into its own while the bumper is held** — no source yet: a capture of the pad's bumper held in the game, not on this machine.
 - [ ] **The browser keeps Escape for a pointer lock and takes no lock from it** — no source yet: the Pointer Lock and user-activation specs, which this pass did not open.
@@ -83,7 +91,6 @@ The bindings of places and modes the world does not have are left out (`packages
 - [ ] **Control is the game's crouch key, and a held Control with W is the browser's close-tab shortcut** — no source yet: the game's controls list for crouch and the browser's shortcut list, neither checked here.
 - [ ] **The pad's touchpad is no button in the standard layout, and the View and Share buttons carry the chat on every pad** — no source yet: the game's controls list for a PlayStation pad, not on this machine.
 - [ ] **The game's defaults are the only ones, and the player-changeable keys are left at the game's own** — no source yet: the game's list of changeable keys; the `settings-controls` frames are a browser walkthrough, not the controls screen.
-- [ ] **F6, F7 and F8 are the Serenitea Pot, the Cat's Tail and Stellar Reunion** — no source yet: the game's controls list for those screens, which the wiki cache does not hold.
-- [ ] **Left Alt held with a number switches to that party member and uses its burst** — no source yet: the wiki's Controls page, named in Sources, is not in the wiki cache; the keyboard handler is not yet located under `packages/genshin-world/src`.
-- [ ] **`Escape` with the pointer free opens the Paimon menu** — no source yet: the wiki's Controls page, named in Sources, is not in the wiki cache; the keyboard handler is not yet located under `packages/genshin-world/src`.
-- [ ] **Left Control is the walk switch, and the free camera falls on left Shift** — no source yet: the wiki's Controls page, named in Sources, is not in the wiki cache; the keyboard handler is not yet located under `packages/genshin-world/src`.
+- [ ] **F6, F7 and F8 are the Serenitea Pot, the Cat's Tail and Stellar Reunion** — partly sourced: the wiki's Controls page gives F8 as Stellar Reunion, F6 as the settings menu within the Serenitea Pot and the Cat's Tail, and F7 as the Furnishing Screen inside the Serenitea Pot alone, so whether F7 also opens a Cat's Tail screen is not stated.
+- [ ] **`Escape` with the pointer free opens the Paimon menu** — partly sourced: the wiki's Controls page gives Esc as the Paimon Menu's PC key and says nothing of the pointer, so the free-pointer case stays open; the keyboard handler is not yet located under `packages/genshin-world/src`.
+- [ ] **the free camera falls on left Shift** — partly sourced: the wiki's Controls page gives Left Shift as Sprint and names no free camera; the keyboard handler is not yet located under `packages/genshin-world/src`.
