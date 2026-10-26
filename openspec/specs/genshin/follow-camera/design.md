@@ -88,9 +88,9 @@ The camera's numbers are in `packages/genshin-engine/src/camera/constants.ts`, e
 - [ ] **The world's clock runs on in photo mode, as the game's does** — no source yet: the Time wiki page is not in the cache.
 - [ ] **The game raises its look by body type** — no source yet: the two body readings in `Camera.reference.ts` show a near-equal share, which does not establish the game's rule.
 - [ ] **The game ships its recentering switched off** — no source yet: the game's camera settings are not checked in the cache.
-- [ ] **The world's camera orbits the character's body as the game's camera does** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A taller body's pivot stands higher, as the game raises its look by body type** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The wheel's notches zoom the camera within the game's nearest and furthest distance** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The limits and distances are the game's camera profile, read from the install** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The pivot is the share of a standing character's height at which the screen's centre falls** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Each number the game's camera profile holds is read from it, and a later build makes the reader throw** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The world's camera orbits the character's body as the game's camera does** — no source yet: the wiki's Controls page, named in Sources, is not in the wiki cache; the game's camera profile in `~/Esposter/genshin-parity/extracted/camera/MonoBehaviour/` is not yet read for the orbit.
+- [ ] **A taller body's pivot stands higher, as the game raises its look by body type** — no source yet: the game's camera profile in `~/Esposter/genshin-parity/extracted/camera/MonoBehaviour/`, not yet read for the body-type height.
+- [ ] **The wheel's notches zoom the camera within the game's nearest and furthest distance** — no source yet: the wiki's Settings page, named in Sources, is not in the wiki cache; the distances in `~/Esposter/genshin-parity/extracted/camera/MonoBehaviour/` are not yet read.
+- [ ] **The limits and distances are the game's camera profile, read from the install** — no source yet: the camera profile `~/Esposter/genshin-parity/extracted/camera/MonoBehaviour/`, not yet matched to the limits and distances the camera uses.
+- [ ] **The pivot is the share of a standing character's height at which the screen's centre falls** — no source yet: the game's pivot share in `~/Esposter/genshin-parity/extracted/camera/MonoBehaviour/`, not yet read.
+- [ ] **Each number the game's camera profile holds is read from it, and a later build makes the reader throw** — no source yet: the camera profile `~/Esposter/genshin-parity/extracted/camera/MonoBehaviour/` holds the numbers; the reader's throw on a later build is not yet tested.
