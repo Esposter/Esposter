@@ -1,10 +1,10 @@
 ## Purpose
 
-Elemental Sight as the world plays it: a white range spreads from the character on the middle mouse button or a pad's left bumper with the left of its pad, the world mutes outside what is lit, interactable things show white, enemies show their element's colour and their name, and it ends after a short walk.
+Elemental Sight as the world plays it: a white range spreads from the character on the middle mouse button or a pad's left bumper with the left of its pad (`packages/genshin-engine/src/input/InputActionBindingMap.ts`), the world mutes outside what is lit, interactable things show white, enemies show their element's colour and their name, and it ends after a short walk (`packages/genshin-world/src/services/elementalSight/stepElementalSight.ts`).
 
 ## Open
 
-- [ ] **the sight plays as the game does, to its exact colours, the walk's length and the white of every interactable** — partly sourced: the wiki's Elemental Sight page gives the element colours only as hues, says the sight ends after "a short distance" with no number, and says interactable NPCs appear white and most other interactables are "typically" white or element-coloured; a recording of the sight is still needed (the design's open list has the parts).
+- [ ] **the sight plays as the game does: white interactables, element colours, enemy names and the walk end** — no source yet: the wiki's Elemental Sight page, which the cache does not hold, or a recording of the sight (the design's open list has the parts).
 
 ## Requirements
 
