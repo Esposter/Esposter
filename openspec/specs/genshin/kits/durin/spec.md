@@ -12,7 +12,7 @@ Durin's normal attacks SHALL be four strikes, a charged attack, a collision atta
 
 - **GIVEN** Durin is the character on the field
 - **WHEN** the player presses the attack button repeatedly
-- **THEN** his four strikes land at 11, 9, 14 and 37 frames into their animations, the last of two hits at 38 frames
+- **THEN** his four strikes land at 11, 9, 14 and 37 frames into their animations, the third strike's two hits at 14 and 37, and the fourth at 38 frames
 
 #### Scenario: Charged attack hits the circle ahead of him
 
@@ -90,7 +90,7 @@ Durin's burst SHALL be As the Light Shifts, or As the Stars Smolder while the De
 
 ### Requirement: Dragon ticks
 
-Each burst SHALL leave a Dragon that strikes the primary target in sixteen ticks for As the Light Shifts or twenty for As the Stars Smolder, and a new burst SHALL end the Dragon standing.
+Each burst SHALL leave a Dragon that strikes the primary target in twenty ticks for As the Light Shifts or sixteen for As the Stars Smolder (gcsim's `burst.go:20-21`), and a new burst SHALL end the Dragon standing.
 
 #### Scenario: The Dragon strikes its ticks
 
