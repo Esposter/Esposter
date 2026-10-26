@@ -142,7 +142,7 @@ An enemy's max health and ATK SHALL be its base values times the multiplier of i
 
 ### Requirement: A defeated camp member returns only after its camp's respawn time
 
-A defeated enemy SHALL NOT return before its respawn time, which depends on its camp: twelve hours (a constant) for a camp of common enemies, the next daily reset for a camp with an elite, and five seconds after the Trounce Blossom's claim for a camp with a normal boss.
+A defeated enemy SHALL NOT return before its respawn time, which depends on its camp: twelve hours for a camp of common enemies, the next daily reset for a camp with an elite, and on the next load for a camp with a boss.
 
 #### Scenario: A common camp member returns twelve hours after its defeat
 
@@ -156,10 +156,10 @@ A defeated enemy SHALL NOT return before its respawn time, which depends on its 
 - **WHEN** the next daily reset at 04:00 on the server's clock arrives (`~/Esposter/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, the `REFRESH_DAILY` rows with `14400`)
 - **THEN** the member returns
 
-#### Scenario: A boss camp returns five seconds after its reward is claimed
+#### Scenario: A boss camp returns on the next load with its reward claimed
 
-- **GIVEN** a camp with a normal boss whose reward is claimed
-- **WHEN** five seconds pass after the claim
+- **GIVEN** a camp with a boss whose reward is claimed
+- **WHEN** the page is next loaded
 - **THEN** the boss's camp is spawned again
 
 ### Requirement: A camp wakes together
@@ -233,7 +233,7 @@ An enemy SHALL drop its energy at each health threshold it falls to, once for it
 
 ### Requirement: A page reload restores each defeated enemy by its saved respawn time
 
-A reload of the page SHALL bring back a defeated enemy only once its saved respawn time has passed, and SHALL bring back a boss's camp only by the return its saved defeat, blossom and last teleport give.
+A reload of the page SHALL bring back a defeated enemy only once its saved respawn time has passed, and SHALL bring back a boss's camp, whose respawn the save does not hold.
 
 #### Scenario: A defeated enemy stays away after a reload until its respawn time
 
@@ -242,12 +242,11 @@ A reload of the page SHALL bring back a defeated enemy only once its saved respa
 - **THEN** the enemy is not in the world
 - **AND** it is back in the world once its respawn time passes
 
-#### Scenario: A boss stays down after a reload until its blossom is claimed or the player teleports
+#### Scenario: A boss returns after a reload
 
-- **GIVEN** a boss defeated with its Trounce Blossom unclaimed
+- **GIVEN** a boss defeated in this page's session
 - **WHEN** the page is reloaded
-- **THEN** the boss is not in the world
-- **AND** it is back in the world at the first teleport after its defeat
+- **THEN** the boss is back in the world
 
 ### Requirement: Each enemy is drawn as a capsule tinted by its state
 
@@ -271,8 +270,7 @@ Each enemy SHALL be drawn as a capsule tinted by its state, and SHALL be tinted 
 - [ ] **A defeated common enemy returns twelve hours after its defeat** — no source yet: the wiki's Reset page is not in the wiki cache.
 - [ ] **An elite camp's member returns at the next daily reset** — no source yet: the wiki's Reset page is not in the wiki cache, which gives the elite's rule.
 - [ ] **The server's clock is UTC+8** — no source yet: no row of the game's exports names the zone, and the wiki's Reset page is not in the wiki cache.
-- [ ] **A camp with a normal boss returns five seconds after its reward is claimed** — no source yet: the wiki's Normal Bosses page is not in the wiki cache.
-- [ ] **A boss stays down across a reload until its Trounce Blossom is claimed or the first teleport after its defeat** — no source yet: the wiki's Normal Bosses page is not in the wiki cache.
+- [ ] **A camp with a boss returns on the next load with its reward claimed** — no source yet: the wiki's Reset page is not in the wiki cache.
 - [ ] **An enemy drops its energy at each health threshold, once for its life** — no source yet: the wiki's Energy/Data page is not in the wiki cache.
 - [ ] **Each level band's Mora and Character EXP follow the wiki's table** — no source yet: the wiki's Module:Drops Table page is not in the wiki cache.
 - [ ] **No enemy gives Adventure EXP** — no source yet: the wiki's Adventure EXP page is not in the wiki cache.
