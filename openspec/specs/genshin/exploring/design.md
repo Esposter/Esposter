@@ -74,6 +74,6 @@ Mondstadt is the first region fitted, and the regions the waypoints command writ
 
 ## Open
 
-- [ ] **Mondstadt's region data holds 43 waypoints, with ids such as `mondstadt-waypoint-1865`** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The game's side of the statues' arrival** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Mondstadt has 11 of its 43 waypoints in points 1865 to 2051** — no source yet: game data or a snapshot that holds this behaviour
+- **Mondstadt's region data holds 43 waypoints, with ids such as `mondstadt-waypoint-1865`** — `packages/genshin-world/src/data/regions/mondstadt.json`.
+- [ ] **The game's side of the statues' arrival** — no source yet: the scene point file `~/Esposter/genshin-parity/text/BinOutput/Scene/Point/scene3_point.json`, not yet read for the statues' arrival points.
+- **Mondstadt has 11 of its 43 waypoints in points 1865 to 2051** — `packages/genshin-world/src/data/regions/mondstadt.json`.
