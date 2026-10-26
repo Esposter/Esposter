@@ -36,6 +36,7 @@ import { createEchoingBalladPassiveModule } from "#src/services/weapon/passives/
 import { createEchoOfAVowPassiveModule } from "#src/services/weapon/passives/createEchoOfAVowPassiveModule";
 import { createElementalMasteryPassiveModule } from "#src/services/weapon/passives/createElementalMasteryPassiveModule";
 import { createEssenceOfFalsityPassiveModule } from "#src/services/weapon/passives/createEssenceOfFalsityPassiveModule";
+import { createEvernightDuetPassiveModule } from "#src/services/weapon/passives/createEvernightDuetPassiveModule";
 import { createExtinguishingPreceptPassiveModule } from "#src/services/weapon/passives/createExtinguishingPreceptPassiveModule";
 import { createFalconsDefiancePassiveModule } from "#src/services/weapon/passives/createFalconsDefiancePassiveModule";
 import { createFallIntoPlacePassiveModule } from "#src/services/weapon/passives/createFallIntoPlacePassiveModule";
@@ -480,4 +481,6 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "1016634707": createOceanicVictoryPassiveModule,
   // Secret Wisdom's Favor (Ibis Piercer)
   "4279279011": createSecretWisdomsFavorPassiveModule,
+  // Evernight Duet (Mitternachts Waltz)
+  "3737766939": createEvernightDuetPassiveModule,
 };
