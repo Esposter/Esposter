@@ -4,10 +4,10 @@ A character's three combat talents, the normal attack, the Elemental Skill and t
 
 ## The tables
 
-- **The proud skill table is the source.** `ProudSkillExcelConfigData` holds each combat talent's rows under its proud skill group, one a level from 1 to 15. The rows from 2 to 10 carry the phase the level needs (`breakLevel`), its Mora (`coinCost`) and its materials (`costItems`). The rows past 10 are a constellation's and cost nothing, so they are not written.
+- **The proud skill table is the source.** `ProudSkillExcelConfigData` holds each combat talent's rows under its proud skill group, one a level from 1 to 15. The rows from 2 to 10 carry the phase the level needs (`breakLevel`), its Mora (`coinCost`) and its materials (`costItems`). The rows past 10 are a constellation's and cost nothing, so they are not written (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`: 370 groups hold levels 1 to 15, and no row past 10 holds a coin cost).
 - **A skill set names its talents by group.** A skill row names the proud skill group of the talent it is. A set's first slot is the normal attack, its second the Elemental Skill, and its energy skill the burst. The third slot is the alternate sprint, which has one row and no level, so it is never levelled.
 - **The first set that names all three is the character's.** That is its own form's set, and then the element forms' in the order the game lists them. The Traveler's own form names only its normal attack, so the Traveler reads its Anemo set, the form it takes by default, which the world's Traveler kit also reads. A statue's element will pick another set once the [statues page](../../../changes/genshin-statues-of-the-seven/design.md) holds the resonance, and until then the stats run puts the Anemo set first.
-- **Passives come from that same set.** The skill depot's inherent proud skill opens name each passive and the phase it opens at. Across the roster the phases are 0, 1 and 4: the utility passive comes with the character, and the first and fourth ascension passives open at phases 1 and 4. A passive has no level.
+- **Passives come from that same set.** The skill depot's inherent proud skill opens name each passive and the phase it opens at. Across the roster the phases are 0, 1 and 4: the utility passive comes with the character, and the first and fourth ascension passives open at phases 1 and 4 (`~/Esposter.noindex/cache/genshin-wiki/Category_Xilonen_Talents.json` names Xilonen's utility, first and fourth ascension passives, and `Category_Traveler_Talents.json` the Traveler's first and fourth). A passive has no level.
 - **The table is fetched beside the dump.** The dump the game text is read from lacks this table at its revision. The community repository's `main` holds it at the install's 7.1.0 build; `master` holds an older copy at 6.6 that matches the dump, so it is the stale one. The table is fetched from `main`, as [genshin-parity](../parity/README.md) does for any table the dump lacks. The keys below were read at `master`'s revision and are checked against `main`'s before the stat run is trusted. It is not committed.
 
 ```mermaid
@@ -25,7 +25,7 @@ flowchart LR
 - **Every combat talent starts at level 1.** `createCharacter` sets all three to `TALENT_START_LEVEL`.
 - **An upgrade raises one talent one level.** The level above the talent's own is looked up among its upgrades. The upgrade is refused where there is none, which is past level 10 for the materials, where the character's ascension phase is below the level's phase, where the wallet lacks the Mora, and where the bag lacks an item. Those items leave the bag as [inventory](../inventory/design.md) describes.
 - **A refusal leaves nothing behind.** The rule throws before it returns anything, so the caller keeps the character, the wallet and the bag it passed in, with no part of the cost taken.
-- **The phase numbers are the ascension phases'.** Level 2 needs the second phase, levels 3 and 4 the third, 5 and 6 the fourth, 7 and 8 the fifth, and 9 and 10 the sixth. A character at the first phase can therefore be raised to level 1 only, and a character must reach the sixth phase to bring any talent to level 10.
+- **The phase numbers are the ascension phases'.** Level 2 needs the second phase, levels 3 and 4 the third, 5 and 6 the fourth, 7 and 8 the fifth, and 9 and 10 the sixth (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`, where the rule holds in all 370 talent groups). A character at the first phase can therefore be raised to level 1 only, and a character must reach the sixth phase to bring any talent to level 10.
 
 ```mermaid
 flowchart TD
@@ -66,3 +66,9 @@ A passive has no level. It is open where the character's ascension phase has rea
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `ProudSkillExcelConfigData`, the skill depot's inherent proud skill opens, and the skill and character tables the sets are read from.
 - [Talent](https://genshin-impact.fandom.com/wiki/Talent), Genshin Impact Wiki: the combat talents to level 10 by materials and the ascension phase, and the passives opened at the first and fourth phases.
 - [Combat Talents](https://genshin-impact.fandom.com/wiki/Combat_Talents), Genshin Impact Wiki: the talents upgraded with Character Talent Materials and the weekly bosses' materials, and the alternate sprint never levelled.
+
+## Open
+
+- [ ] **The alternate sprint has one row and no level** — no source yet: the wiki pages cached here do not name it, and its skill row is not read.
+- [ ] **The Traveler's own form names only its normal attack, so the Anemo set is read** — no source yet: the skill depot's rows for the Traveler's forms are not read here, only the wiki's Anemo talents.
+- [ ] **Across the roster the passives open at phases 0, 1 and 4** — no source yet: only Xilonen's and the Traveler's wiki pages are cached, so the other characters' passives are unchecked.
