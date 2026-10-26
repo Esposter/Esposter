@@ -50,7 +50,4 @@ The gains SHALL be fitted after the instruments against the game's sound, and a 
 
 - [ ] **The whole segment swells or fades by about twenty decibels across its voices** — no source yet: no level measurement of a swell is recorded.
 - [ ] **The gains change little when the expression is fitted a second time** — no source yet: no second run's output is recorded.
-- [ ] **Each segment swells or fades as a whole, with one gain per window over all its voices** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The swell is a gain on a segment's whole output, so a chord already ringing fades with its section** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Each segment's gain ramps between the windows' centres, evenly in decibels** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **The gains are fitted after the instruments against the game's sound** — no source yet: game data or a snapshot that holds this behaviour
