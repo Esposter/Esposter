@@ -6,23 +6,23 @@ The data the Genshin world is built from. A catalogue of every region, area and 
 
 ### Requirement: Catalogue follows the game's own hierarchy
 
-The world SHALL organise its regions, areas and subareas as the game does, with the separate maps as layers of their own.
+The world SHALL organise its regions, areas and subareas as the game does, with the separate maps as layers of their own (`packages/genshin-world/src/data/catalogue.json`, `packages/genshin-world/src/services/world/readCatalogue.ts`).
 
 #### Scenario: Windrise as a subarea
 
 - **GIVEN** the catalogue is read
 - **WHEN** Windrise is looked up
-- **THEN** Windrise is a subarea of Galesong Hill in Mondstadt
+- **THEN** Windrise is a subarea of Galesong Hill in Mondstadt (`packages/genshin-world/src/data/catalogue.json`)
 
 #### Scenario: Separate map as a layer
 
 - **GIVEN** Enkanomiya is a separate map of its own
 - **WHEN** the catalogue is read
-- **THEN** Enkanomiya is held as a layer of its own
+- **THEN** Enkanomiya is held as a layer of its own (`packages/genshin-world/src/data/catalogue.json`, layer `Enkanomiya`)
 
 ### Requirement: Region loads only within reach of its outlined areas
 
-A region SHALL load only when the camera comes within reach of one of its outlined areas, and a region with no outlined area SHALL never load.
+A region SHALL load only when the camera comes within reach of one of its outlined areas, and a region with no outlined area SHALL never load (`packages/genshin-world/src/composables/useRegionData.ts`, `packages/genshin-engine/src/world/computeOutlineDistance.ts`).
 
 #### Scenario: Camera comes within reach
 
@@ -38,7 +38,7 @@ A region SHALL load only when the camera comes within reach of one of its outlin
 
 ### Requirement: Region released when the camera leaves its reach
 
-A region SHALL be released when the camera leaves its reach, its ground excepted, which SHALL stay once it has arrived.
+A region SHALL be released when the camera leaves its reach, its ground excepted, which SHALL stay once it has arrived (`packages/genshin-world/src/composables/useRegionData.ts`).
 
 #### Scenario: Camera leaves reach
 
@@ -51,11 +51,11 @@ A region SHALL be released when the camera leaves its reach, its ground excepted
 
 - **GIVEN** a region's ground, or an area's piece of it, has arrived
 - **WHEN** the camera leaves the reach it came in by
-- **THEN** the ground is kept
+- **THEN** the ground is kept (`packages/genshin-world/src/services/world/selectGroundKeysInReach.ts`)
 
 ### Requirement: Ground fetched by reach
 
-A region's ground SHALL be fetched when the camera comes within reach of one of its outlined areas: its own record where no fit has drawn it, or else each of its areas' pieces when that area comes within reach. Nothing out of reach SHALL be fetched.
+A region's ground SHALL be fetched when the camera comes within reach of one of its outlined areas: its own record where no fit has drawn it, or else each of its areas' pieces when that area comes within reach. Nothing out of reach SHALL be fetched (`packages/genshin-world/src/services/world/selectGroundKeysInReach.ts`, `packages/genshin-world/src/services/world/selectLaidGroundKeys.ts`).
 
 #### Scenario: Region with no fitted ground
 
@@ -77,13 +77,13 @@ A region's ground SHALL be fetched when the camera comes within reach of one of 
 
 ### Requirement: Region failing validation or stalling hides only itself
 
-A region whose data fails validation, or whose data does not answer in time, SHALL be left undrawn while the rest of the continent loads.
+A region whose data fails validation, or whose data does not answer in time, SHALL be left undrawn while the rest of the continent loads (`packages/genshin-world/src/composables/useRegionData.ts`, `packages/genshin-world/src/services/constants.ts`, `DATA_FETCH_TIMEOUT_MS`).
 
 #### Scenario: Invalid region data
 
 - **GIVEN** a region's data fails its schema check
 - **WHEN** the region is loaded
-- **THEN** the failure is logged
+- **THEN** the failure is logged (`packages/genshin-world/src/composables/useRegionData.ts`, `console.error`)
 - **AND** that region is left undrawn
 - **AND** the rest of the continent loads
 
@@ -95,7 +95,7 @@ A region whose data fails validation, or whose data does not answer in time, SHA
 
 ### Requirement: Area outlines are the game's own where it gives them
 
-An area's outline SHALL be the game's own polygon where the game gives one, and a subarea the game files as a city SHALL be marked as one.
+An area's outline SHALL be the game's own polygon where the game gives one, and a subarea the game files as a city SHALL be marked as one (`scripts/src/services/genshinAssets/fit/fitAreaOutlines.ts`, `packages/genshin-world/src/models/world/AreaTerrainType.ts`).
 
 #### Scenario: Area with the game's polygon
 
@@ -107,17 +107,17 @@ An area's outline SHALL be the game's own polygon where the game gives one, and 
 
 - **GIVEN** the game gives an area no polygon
 - **WHEN** the catalogue is read
-- **THEN** the area keeps the outline it was given before
+- **THEN** the area keeps the outline it was given before (`packages/genshin-world/src/data/catalogue.json`)
 
 #### Scenario: City marked as a city
 
 - **GIVEN** the game files a subarea as a city
 - **WHEN** the catalogue is read
-- **THEN** the subarea is marked as a city
+- **THEN** the subarea is marked as a city (`packages/genshin-world/src/models/world/AreaTerrainType.ts`)
 
 ### Requirement: Outlines are flat
 
-An outline SHALL hold every height over the ground it covers, since the catalogue keeps only the outline on the ground.
+An outline SHALL hold every height over the ground it covers, since the catalogue keeps only the outline on the ground (`packages/genshin-world/src/models/world/Catalogue.ts`).
 
 #### Scenario: Area holds every height
 
@@ -127,7 +127,7 @@ An outline SHALL hold every height over the ground it covers, since the catalogu
 
 ### Requirement: Event-only places left out
 
-Places that existed only for an event SHALL be left out of the catalogue.
+Places that existed only for an event SHALL be left out of the catalogue (`packages/genshin-world/src/data/catalogue.json`).
 
 #### Scenario: Event area not in the catalogue
 
@@ -137,7 +137,7 @@ Places that existed only for an event SHALL be left out of the catalogue.
 
 ### Requirement: Each area names its weathers
 
-Each area SHALL name the weathers it can have, its own first, and the area holding the camera SHALL set the world's weather.
+Each area SHALL name the weathers it can have, its own first, and the area holding the camera SHALL set the world's weather (`packages/genshin-world/src/data/catalogue.json`, `weathers`).
 
 #### Scenario: Visiting an area
 
@@ -147,7 +147,7 @@ Each area SHALL name the weathers it can have, its own first, and the area holdi
 
 ### Requirement: Landmarks appear with their region's data
 
-A region's landmarks SHALL appear when its data arrives and SHALL be removed when the region is released.
+A region's landmarks SHALL appear when its data arrives and SHALL be removed when the region is released (`packages/genshin-world/src/components/World/Landmarks/Index.vue`).
 
 #### Scenario: Landmarks appear on arrival
 
@@ -160,3 +160,7 @@ A region's landmarks SHALL appear when its data arrives and SHALL be removed whe
 - **GIVEN** a region's landmarks are shown
 - **WHEN** the region is released
 - **THEN** its landmarks are removed
+
+## Open
+
+- [ ] **Entering an area starts its first weather again** — no source yet: the weather composable that restarts it was not read.
