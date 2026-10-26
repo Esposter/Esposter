@@ -32,7 +32,7 @@ flowchart TD
 ## Data
 
 - **The item's row.** Original Resin is item 106 in the game's material table, with the rarity above. Its name's text id is the one `GameTextKey.OriginalResin` holds (`packages/genshin-text/src/models/GameTextKey.ts`, and row `106`'s `nameTextMapHash` 3246419172 in `~/Esposter/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json`).
-- **The other resins' rows.** Fragile Resin is item 107009 in the published material table (the published material table, the cached copy `~/Esposter/cache/content/33a86f139a7f5a88c3216e47e4d12762bc220cab50d476cab2e2bd07e482c246`, row 107009 with name text 3056266748, "Fragile Resin" in `~/Esposter.noindex/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`), whose use adds 60 of item 106, the restore the refill uses, and whose use the bag reaches through `useInventoryEntry` (`~/Esposter/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json`, row `107009`, whose `itemUse` adds `106` by `60`). Condensed Resin is item 220007, whose stack limit no source in this change or its specs records, so none is built (`~/Esposter/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json`, row `220007`).
+- **The other resins' rows.** Fragile Resin is item 107009 in the published material table (the cached copy `~/Esposter/cache/content/33a86f139a7f5a88c3216e47e4d12762bc220cab50d476cab2e2bd07e482c246`, row 107009 with name text 3056266748, "Fragile Resin" in `~/Esposter.noindex/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`), whose use adds 60 of item 106, the restore the refill uses, and whose use the bag reaches through `useInventoryEntry` (`~/Esposter/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json`, row `107009`, whose `itemUse` adds `106` by `60`). Condensed Resin is item 220007, whose stack limit no source in this change or its specs records, so none is built (`~/Esposter/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json`, row `220007`).
 
 ## Not built yet
 
@@ -72,7 +72,6 @@ The top bar's place and type are provisional until a recording measures them. Th
 
 ## Sources
 
-- [Original Resin](https://genshin-impact.fandom.com/wiki/Original_Resin), Genshin Impact Wiki: the claims' prices, five Adventure EXP a point, one point every eight minutes to 200, the Fragile and Primogem refills, and the 2,000 cap.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the material rows of items 106, 107009 and 220007, and the reward table.
 
 ## Open
