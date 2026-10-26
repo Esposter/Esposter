@@ -6,7 +6,7 @@ The official Teyvat Interactive Map's chests, fitted into each region's slice of
 
 ### Requirement: The map's chests
 
-The map's chests SHALL be placed on the ground only, and every other chest point SHALL be left out of the world.
+The map's chests SHALL be placed on the ground only, and every other chest point SHALL be left out of the world (`scripts/src/services/genshinAssets/points/placeMapPoints.ts`).
 
 #### Scenario: A chest point under the ground layer is left out
 
@@ -24,11 +24,11 @@ The map's chests SHALL be placed on the ground only, and every other chest point
 
 - **GIVEN** the official map marks a Mora chest
 - **WHEN** the chests are placed
-- **THEN** no chest of the seven kinds is placed for it
+- **THEN** no chest of the seven kinds is placed for it (labels 129 and 359 of `~/Esposter.noindex/genshin-parity/references/interactive-map/label-tree.json` name Mora chests)
 
 ### Requirement: Opening a Common, Exquisite or Precious chest
 
-Opening a Common, Exquisite or Precious chest SHALL pay its Primogems and Mora once, and a second opening SHALL pay nothing.
+Opening a Common, Exquisite or Precious chest SHALL pay its Primogems and Mora once, and a second opening SHALL pay nothing (`packages/genshin-world/src/services/chest/openChest.ts`).
 
 #### Scenario: Opening a Common chest pays its rolled rewards and pours out its drops
 
@@ -45,7 +45,7 @@ Opening a Common, Exquisite or Precious chest SHALL pay its Primogems and Mora o
 
 ### Requirement: A chest of a kind with no reward entry
 
-A chest of a kind with no reward entry SHALL stay unopened.
+A chest of a kind with no reward entry SHALL stay unopened (`packages/genshin-world/src/services/chest/openChest.ts`).
 
 #### Scenario: A Luxurious chest does not open
 
@@ -61,7 +61,7 @@ A chest of a kind with no reward entry SHALL stay unopened.
 
 ### Requirement: Opened chests
 
-Opened chests SHALL be kept on the player's save, including across an account merge.
+Opened chests SHALL be kept on the player's save, including across an account merge (`packages/genshin-world/src/services/save/mergeGenshinSave.ts`).
 
 #### Scenario: A merge keeps the chests opened on either copy
 
