@@ -1,6 +1,6 @@
 ## Purpose
 
-Rosaria's kit as built: her seven-hit string, Ravaging Confession and Rites of Termination with its field of ticks, with both her passives built, and her other constellations and the teleport behind the target left unbuilt.
+Rosaria's kit as built: her seven-hit string, Ravaging Confession and Rites of Termination with its field of ticks, with both her passives and her Constellations 1, 4 and 6 built, and the teleport behind the target left unbuilt.
 
 ## Requirements
 
@@ -69,12 +69,72 @@ From Ascension 1, Ravaging Confession's first hit SHALL give Rosaria 12% CRIT Ra
 - **WHEN** Ravaging Confession's first hit strikes an enemy
 - **THEN** her CRIT Rate rises by 12% for 5 seconds
 
+### Requirement: Constellation 1 CRIT hit raises Normal Attack DMG and ATK SPD
+
+From Constellation 1, a CRIT hit of Rosaria's while she is on the field SHALL give her 10% Normal Attack DMG and 10% Normal ATK SPD for 4 seconds.
+
+#### Scenario: A CRIT hit on the field raises her Normal Attacks
+
+- **GIVEN** Rosaria has Constellation 1 and is on the field
+- **WHEN** one of her hits lands a CRIT
+- **THEN** her Normal Attack DMG and Normal ATK SPD rise by 10% for 4 seconds
+
+#### Scenario: A CRIT hit off the field raises nothing
+
+- **GIVEN** Rosaria has Constellation 1 and another character is on the field
+- **WHEN** one of her hits lands a CRIT
+- **THEN** her Normal Attack DMG and Normal ATK SPD are unchanged
+
+#### Scenario: The bonus does not reach her charged attack
+
+- **GIVEN** Rosaria has Constellation 1 and the bonus stands
+- **WHEN** her charged attack strikes an enemy
+- **THEN** its DMG is unchanged
+
+### Requirement: Constellation 4 Energy from a CRIT hit of Ravaging Confession
+
+From Constellation 4, the first CRIT hit of each cast of Ravaging Confession while Rosaria is on the field SHALL restore 5 Energy to her, and no later CRIT hit of that cast SHALL restore any.
+
+#### Scenario: The first CRIT hit of a cast restores Energy
+
+- **GIVEN** Rosaria has Constellation 4 and is on the field
+- **WHEN** a hit of Ravaging Confession lands a CRIT
+- **THEN** Rosaria restores 5 Energy
+
+#### Scenario: A second CRIT hit of the same cast restores nothing
+
+- **GIVEN** Rosaria has Constellation 4 and a hit of this cast has already restored Energy
+- **WHEN** the cast's other hit lands a CRIT
+- **THEN** no Energy is restored
+
+#### Scenario: Below Constellation 4 nothing is restored
+
+- **GIVEN** Rosaria has Constellation 3
+- **WHEN** a hit of Ravaging Confession lands a CRIT
+- **THEN** no Energy is restored
+
+### Requirement: Constellation 6 lowers enemies' Physical RES from Rites of Termination
+
+From Constellation 6, each enemy that an attack of Rites of Termination strikes SHALL have its Physical RES lowered by 20% for 10 seconds.
+
+#### Scenario: A Rites of Termination attack lowers Physical RES
+
+- **GIVEN** Rosaria has Constellation 6
+- **WHEN** the slash, the lance or a tick of Rites of Termination strikes an enemy
+- **THEN** that enemy's Physical RES is lowered by 20% for 10 seconds
+
+#### Scenario: Below Constellation 6 Physical RES is unchanged
+
+- **GIVEN** Rosaria has Constellation 5
+- **WHEN** Rites of Termination strikes an enemy
+- **THEN** that enemy's Physical RES is unchanged
+
 ### Requirement: Unbuilt Rosaria effects
 
-Rosaria's other constellations and the teleport behind the target SHALL NOT take effect.
+The teleport behind the target SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Rosaria has a constellation or the teleport unlocked
+- **GIVEN** Rosaria has the teleport unlocked
 - **WHEN** the player fights with Rosaria
 - **THEN** that effect has no effect
