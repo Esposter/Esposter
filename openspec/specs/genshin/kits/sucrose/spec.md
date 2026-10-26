@@ -49,7 +49,7 @@ Forbidden Creation SHALL leave an Anemo field whose absorb check runs every 18 f
 - **GIVEN** the field has taken an element
 - **WHEN** an Anemo tick comes due, at 137 frames and then every 113 frames
 - **THEN** the absorbed element strikes the enemies on that tick
-- **AND** the enemy's aura is left in place
+- **AND** the enemy's aura is left in place, as gcsim's `reactable.go` finds no reaction for a same-element strike and keeps the aura
 
 ### Requirement: Ascension 1, Ascension 4 and Constellations 1, 2 and 6
 
@@ -101,5 +101,4 @@ The skill's pull and her Hexerei team bonus SHALL NOT take effect.
 
 ## Open
 
-- [ ] **the enemy's aura is left in place when the absorbed element strikes** — checked against `~/Esposter/cache/gcsim-v2.47.2/pkg/core/combat/absorb.go`: AbsorbCheck reads AuraContains and removes nothing, and the strike is an ordinary attack with the absorbed element (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/sucrose/burst.go`, lines 81 to 83), and the claim is not settled by it because the strike's aura result is left to gcsim's general reaction code, which was not traced.
 - [ ] **Constellations 1, 2 and 6 take effect** — no source yet: Constellation 1 is cited on the design page, and 2 and 6 are named in its Sources list without a line.
