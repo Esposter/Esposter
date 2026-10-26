@@ -6,7 +6,7 @@ Alhaitham's kit as built, with Universality's tap and hold, Particular Field's b
 
 ### Requirement: Universality's tap and hold act on the press length
 
-Universality SHALL act as a tap when the skill is released quickly and as a hold when it is held past the hold threshold.
+Universality SHALL act as a tap when the skill is released quickly and as a hold when it is held past the hold threshold. The threshold's length is open: no source gives it (see design.md, Not built).
 
 #### Scenario: A quick press is a tap
 
