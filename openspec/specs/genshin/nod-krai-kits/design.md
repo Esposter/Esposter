@@ -38,5 +38,5 @@ flowchart TD
 
 ## Open
 
-- [ ] **`createBoxesGeometry` builds sheds, plates and cranes** — no source yet: `packages/genshin-engine/src/kits/architecture/createBoxesGeometry.ts` was not read for those kinds.
-- [ ] **Nasha Town's halls, cranes and pipes are drawn by the dieselpunk works** — no source yet: the `Area_Ndkl_Build_` pattern was found, but the names of the halls, cranes and pipes were not checked against the export.
+- [ ] **`createBoxesGeometry` builds sheds, plates and cranes** — contradicted by `packages/genshin-engine/src/kits/architecture/createBoxesGeometry.ts`: it merges the boxes it is given and knows no sheds, plates or cranes.
+- [ ] **Nasha Town's halls, cranes and pipes are drawn by the dieselpunk works** — checked against the export's `Area_Ndkl_Build_` mesh families (`~/Esposter.noindex/genshin-parity/extracted/nod-krai/assets/Mesh`): `NXZ_Qizhongji`, which reads as crane in pinyin, and `LJC_Guandao`, which reads as pipe, with no family named as a hall, and the claim is not settled by it because no hall family is named to match.
