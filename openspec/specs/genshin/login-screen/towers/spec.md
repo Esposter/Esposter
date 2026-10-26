@@ -58,8 +58,3 @@ Gilding SHALL take the stone's colour, and no bump SHALL tilt the light at a rec
 
 - [ ] **The towers stand on their walls rather than on the tips of their columns and cornices, and their mouldings and cornices turn as the game's do** — no source yet: no profile comparison with the game is kept.
 - [ ] **No bump tilts the light at a recess's edge** — no source yet: the material's bump setting is not read in the tower files.
-- [ ] **Each tower is a lathe of its wall's profile** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Each tower's surface is traced from the game's own mesh, with carvings, gilding and open colonnades drawn over its stone, and the sky shows through the colonnades** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **What stands out from a tower's wall, including ribs, pilasters, colonnade columns, emblems and balconies, is built as solid columns** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Windows and bays that sink four units or more into the wall are cut open as recesses, while shallower panels and flutes stay painted** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Gilding takes the stone's colour** — no source yet: game data or a snapshot that holds this behaviour
