@@ -81,14 +81,13 @@ flowchart LR
   Pick -->|pickUpMora| Combat[useWorldCombat]
   Combat -->|defeatEnemy| Archive[useWorldArchive]
   Combat -->|questEvent| Quests
-  Talks[useWorldTalks] -->|questEvent| Quests
   Save[useWorldSave] -->|bagChange| Archive
   Quests -->|achievementEvents| Achievements[useWorldAchievements]
   Quests -->|parentQuestFinish| Archive
   Map[useWorldMap] -->|questEvent| Quests
 ```
 
-The edges are emitted by `packages/genshin-world/src/composables/useWorldPickups.ts`, `useWorldCombat.ts`, `useWorldSave.ts`, `useWorldQuests.ts` and `useWorldMap.ts`; the `Talks` edge has no emitter in `useWorldTalks.ts` (see Open).
+The edges are emitted by `packages/genshin-world/src/composables/useWorldPickups.ts`, `useWorldCombat.ts`, `useWorldSave.ts`, `useWorldQuests.ts` and `useWorldMap.ts`, and `useWorldTalks.ts` raises none.
 
 ## Key files
 
@@ -103,8 +102,8 @@ The edges are emitted by `packages/genshin-world/src/composables/useWorldPickups
 | `packages/genshin-world/src/components/World/Session/Index.vue` | The world's session, owning its own canvas                                                                       |
 
 ## Open
+
 - [ ] **The generators and per-frame selections the bench files cover are benched at two scales** — no source yet: `packages/genshin-engine/src` holds 16 `*.bench.ts` files (`computeTerrainTile.bench.ts`, `computeLeafCards.bench.ts` and the rest), and no bench exists for `createGrassCell`; the two-scale shape of each bench was not read.
-- **The `Talks` edge does not raise a quest event into Quests, as the diagram draws it** — contradicted: `packages/genshin-world/src/composables/useWorldTalks.ts` emits no event and takes no `WorldEvents`, so the diagram's `questEvent` edge from `Talks` has no emitter, as the note above says.
 - **The session creates the `WorldEvents`, not the screen** — `createWorldEvents()` is called in `packages/genshin-world/src/components/World/Session/Index.vue` (line 328).
 - **The session composes, and defines a few functions of its own** — `packages/genshin-world/src/components/World/Session/Index.vue` defines `getGroundHeight` and others of its own.
 - [ ] **The screen loads the ground the first frame draws** — no source yet: the screen's load steps (`packages/genshin-world/src/components/World/Screen/Index.vue`) name no ground read, and its only ground mention is a comment (line 49); the ground read was not located in the session either.

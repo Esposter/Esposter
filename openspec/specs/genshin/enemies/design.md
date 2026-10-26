@@ -52,7 +52,7 @@ A region's data places its enemies in camps, each member with its kind, its leve
 | :--------------------- | :---------------------------------------------------------------------------------------------------------------------------- |
 | Common enemies only    | 12 hours after its defeat (`packages/genshin-world/src/services/enemy/constants.ts`)                                          |
 | With an elite among it | at the next daily reset, 04:00 on the server's clock (`packages/genshin-world/src/services/enemy/computeEnemyRespawnTime.ts`) |
-| With a boss among it   | 5 seconds after its Trounce Blossom is claimed                                                                                |
+| With a boss among it   | 5 seconds after its Trounce Blossom is claimed, and while unclaimed at the first teleport after its defeat                    |
 
 The daily reset is the server's 04:00, UTC+8, the one clock every reset of the world is read on, as the [reset clock](../reset-clock/design.md) sets out (`packages/genshin-world/src/services/time/constants.ts` for the hour and the zone, and the `REFRESH_DAILY` rows of `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json` with `14400`, the 4:00 hour).
 
