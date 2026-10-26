@@ -38,6 +38,7 @@ Mondstadt is the first region fitted, and the regions the waypoints command writ
 ## Data and measures
 
 - **Read from the game:** the scene's transport points, each with its place, turn and height, read by `readSceneTransportPoints` from the scene points of the kind Windrise's statue holds (`scripts/src/services/genshinAssets/world/readSceneTransportPoints.ts`, lines 10 to 12). The official map's ground waypoints come from the map's references, as the [spawned places](../spawned-places/design.md) page reads them (`scripts/src/services/genshinAssets/points/readFittedMapPoints.ts`, lines 12 to 22, with the fit's transform, and `scripts/src/services/genshinAssets/fit/fitRegionWaypoints.ts`, line 19, through `readFittedRegions`).
+- **The Windrise statue's arrival is the game's own.** Point 4 of the scene's points, `~/Esposter/genshin-parity/text/BinOutput/Scene/Point/scene3_point.json`, holds its `tranPos` (x 1934.3658, y 196.139, z -1266.3422) and `tranRot` (y 90), and its `gadgetId` 70110001 is the gadget `SceneObj_Resident_Goddess` of type `TransPointFirst` in `~/Esposter/genshin-parity/text/ExcelBinOutput/GadgetExcelConfigData.json`.
 - **Written into region data:** each waypoint's id, arrival, position, rotation, height offset and area, in the `TeleportWaypoint` kind (`scripts/src/services/genshinAssets/fit/toWaypointLandmarks.ts`, line 17, and `fitRegionWaypoints.ts`, line 43).
 - **Measured:** nothing new. The pairing holds to the bar the statues' fit holds to (`INTERACTIVE_MAP_FIT_BAR`, `scripts/src/services/genshinAssets/points/constants.ts`, line 28, which `scripts/src/services/genshinAssets/fit/fitInteractiveMap.ts` and `toWaypointLandmarks.ts` both use).
 
@@ -74,6 +75,4 @@ Mondstadt is the first region fitted, and the regions the waypoints command writ
 
 ## Open
 
-- **Mondstadt's region data holds 43 waypoints, with ids such as `mondstadt-waypoint-1865`** — `packages/genshin-world/src/data/regions/mondstadt.json`.
-- **The game's side of the Windrise statue's arrival is point 4's transport place and turn** — `~/Esposter/genshin-parity/text/BinOutput/Scene/Point/scene3_point.json`, point 4: `tranPos` (x 1934.3658, y 196.139, z -1266.3422) and `tranRot` (y 90), where point 4's `gadgetId` 70110001 is the gadget `SceneObj_Resident_Goddess` of type `TransPointFirst` in `~/Esposter/genshin-parity/text/ExcelBinOutput/GadgetExcelConfigData.json`.
-- **Mondstadt has 11 of its 43 waypoints in points 1865 to 2051** — `packages/genshin-world/src/data/regions/mondstadt.json`.
+Nothing open.
