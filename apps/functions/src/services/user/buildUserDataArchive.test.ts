@@ -29,6 +29,8 @@ import {
   MessageMetadataType,
   MessageType,
   postsInPost,
+  resourceLinksInResource,
+  ResourceLinkType,
   resourcePublicationsInResource,
   ResourceType,
   resourcesInResource,
@@ -384,6 +386,35 @@ describe(buildUserDataArchive, () => {
       publishVersion: 2,
     });
     expect(Object.keys(entries)).not.toContain(`resources/${unpublishedResource.id}/publications.json`);
+  });
+
+  test("writes an owned resource's link records as stored, and none for a resource with no links", async () => {
+    expect.hasAssertions();
+
+    const userId = crypto.randomUUID();
+    const blobName = `${crypto.randomUUID()}.zip`;
+    await mockDb.insert(usersInAuth).values(createUser(userId));
+    const linkingResource = takeOne(
+      await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Blueprint, userId }).returning(),
+    );
+    const linkedResource = takeOne(
+      await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Blueprint, userId }).returning(),
+    );
+    const unlinkedResource = takeOne(
+      await mockDb.insert(resourcesInResource).values({ name, type: ResourceType.Blueprint, userId }).returning(),
+    );
+    await mockDb
+      .insert(resourceLinksInResource)
+      .values({ sourceId: linkingResource.id, targetId: linkedResource.id, type: ResourceLinkType.Email });
+
+    await buildUserDataArchive(userId, blobName);
+    const entries = readArchiveEntries(blobName);
+
+    // A link holds no token, so nothing is withheld from it, and the record is written as the row stores it
+    expect(readEntryJson(entries, `resources/${linkingResource.id}/links.json`)).toStrictEqual([
+      { sourceId: linkingResource.id, targetId: linkedResource.id, type: ResourceLinkType.Email },
+    ]);
+    expect(Object.keys(entries)).not.toContain(`resources/${unlinkedResource.id}/links.json`);
   });
 
   test("reads an attachment as a stream, never into a buffer", async () => {
