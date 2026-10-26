@@ -2,8 +2,6 @@ import type { CommissionDay } from "#src/models/commission/CommissionDay";
 import type { CommissionSlice } from "#src/models/commission/CommissionSlice";
 import type { EncounterPoints } from "#src/models/commission/EncounterPoints";
 import type { LongTermEncounterPoints } from "#src/models/commission/LongTermEncounterPoints";
-import type { Quest } from "#src/models/quest/Quest";
-import type { QuestProgress } from "#src/models/quest/QuestProgress";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { ComputedRef, Ref } from "vue";
 
@@ -26,7 +24,6 @@ import { readCommissionSlices } from "#src/services/commission/readCommissionSli
 import { readEncounterPoints } from "#src/services/commission/readEncounterPoints";
 import { readLongTermEncounterPoints } from "#src/services/commission/readLongTermEncounterPoints";
 import { toHandbookDayCommissions } from "#src/services/handbook/toHandbookDayCommissions";
-import { getQuestTargetId } from "#src/services/quest/getQuestTargetId";
 import { getResultAsync } from "@esposter/shared";
 import { computed, shallowRef } from "vue";
 
@@ -38,8 +35,7 @@ export const useWorldCommissions = ({
   finishedMainQuestIds,
   gameDataBaseUrl,
   getWorldNow,
-  questProgressMap,
-  questsInProgress,
+  questTargetIds,
   rank,
   savedCommissionDay,
   savedEncounterPoints,
@@ -50,8 +46,7 @@ export const useWorldCommissions = ({
   finishedMainQuestIds: ComputedRef<ReadonlySet<number>>;
   gameDataBaseUrl: string;
   getWorldNow: () => Temporal.Instant;
-  questProgressMap: Ref<ReadonlyMap<string, QuestProgress>>;
-  questsInProgress: ComputedRef<Quest[]>;
+  questTargetIds: ComputedRef<string[]>;
   rank: ComputedRef<number>;
   savedCommissionDay: CommissionDay;
   savedEncounterPoints: EncounterPoints;
@@ -77,9 +72,7 @@ export const useWorldCommissions = ({
     (slices) => {
       commissionSlices.value = slices;
       const now = getWorldNow();
-      const heldPlaces = new Set(
-        questsInProgress.value.map((quest) => getQuestTargetId(quest, questProgressMap.value.get(quest.id))),
-      );
+      const heldPlaces = new Set(questTargetIds.value);
       commissionDay.value = computeCommissionDay(
         savedCommissionDay,
         now,

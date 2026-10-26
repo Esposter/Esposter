@@ -378,6 +378,7 @@ const {
   questsOffered,
   questStepTargets,
   questTargetId,
+  questTargetIds,
   questTextMap,
   trackedQuestId,
   trackerQuest,
@@ -452,8 +453,7 @@ const {
   finishedMainQuestIds,
   gameDataBaseUrl,
   getWorldNow,
-  questProgressMap,
-  questsInProgress,
+  questTargetIds,
   rank,
   savedCommissionDay: savedState.commissionDay,
   savedEncounterPoints: savedState.encounterPoints,
@@ -1633,13 +1633,6 @@ useRafFn(() => {
   hudFrame.pivotX = (pivot.x + 1) / 2;
   hudFrame.pivotY = (1 - pivot.y) / 2;
 });
-// The targets the quests in progress name at their current steps, which the sight leads trails to while it is on
-const questClueTargetIds = computed(() =>
-  questsInProgress.value.map((quest) => {
-    const progress = questProgressMap.value.get(quest.id);
-    return getQuestTargetId(quest, progress);
-  }),
-);
 // How far each quest in progress's objective stands from the character's ground point, in metres, which the quest
 // Screen lists. It is read only while that screen is drawn, and a quest whose target no region in reach places has none
 const questDistanceMap = computed(() => {
@@ -2002,7 +1995,7 @@ defineExpose({ jumpTo, readCameraPosition });
         :landmark-collider
         :origin
         :quality-tier="worldQualityTier"
-        :quest-clue-target-ids="questClueTargetIds"
+        :quest-clue-target-ids="questTargetIds"
         :quest-target-id
         :region-data-base-url
         :scene-export-base-url

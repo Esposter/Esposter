@@ -42,6 +42,10 @@ export const useWorldQuests = ({
       return progress !== undefined && !checkIsQuestFinished(quest, progress);
     }),
   );
+  // The targets the quests in progress name at their current steps, which the commissions hold places for and the sight leads trails to
+  const questTargetIds = computed(() =>
+    questsInProgress.value.map((quest) => getQuestTargetId(quest, questProgressMap.value.get(quest.id))),
+  );
   // The quests a talk offers that have not started yet, whose offering talks the world holds until one of them ends
   const questsOffered = computed(() =>
     quests.value.filter(({ id, offerTalkIds }) => offerTalkIds.length > 0 && !questProgressMap.value.has(id)),
@@ -133,6 +137,7 @@ export const useWorldQuests = ({
     questsOffered,
     questStepTargets,
     questTargetId,
+    questTargetIds,
     questTextMap,
     trackedQuestId,
     trackerQuest,

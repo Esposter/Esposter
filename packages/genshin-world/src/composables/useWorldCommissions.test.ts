@@ -16,7 +16,7 @@ import { GAME_DAY_START_HOUR } from "#src/services/time/constants";
 import { createWorldClock } from "#src/services/time/createWorldClock.test";
 import { createWorldEvents } from "#src/services/world/createWorldEvents";
 import { describe, expect, test, vi } from "vitest";
-import { computed, shallowRef } from "vue";
+import { computed } from "vue";
 
 vi.mock(import("#src/services/commission/readCommissionSlices"));
 
@@ -60,8 +60,7 @@ describe(useWorldCommissions, () => {
       finishedMainQuestIds: computed(() => new Set<number>()),
       gameDataBaseUrl: "",
       getWorldNow,
-      questProgressMap: shallowRef(new Map<string, QuestProgress>()),
-      questsInProgress: computed<Quest[]>(() => []),
+      questTargetIds: computed<string[]>(() => []),
       rank: computed(() => RANK),
       savedCommissionDay: {
         claimedCommissionIds: [],
@@ -83,8 +82,7 @@ describe(useWorldCommissions, () => {
       finishedMainQuestIds: computed(() => new Set<number>()),
       gameDataBaseUrl: "",
       getWorldNow,
-      questProgressMap: shallowRef(new Map<string, QuestProgress>()),
-      questsInProgress: computed<Quest[]>(() => []),
+      questTargetIds: computed<string[]>(() => []),
       rank: computed(() => rank),
       savedCommissionDay: {
         claimedCommissionIds: [],
@@ -107,8 +105,7 @@ describe(useWorldCommissions, () => {
       finishedMainQuestIds: computed(() => new Set<number>()),
       gameDataBaseUrl: "",
       getWorldNow,
-      questProgressMap: shallowRef(new Map<string, QuestProgress>()),
-      questsInProgress: computed<Quest[]>(() => []),
+      questTargetIds: computed<string[]>(() => []),
       rank: computed(() => RANK),
       savedCommissionDay: {
         claimedCommissionIds: [1],
