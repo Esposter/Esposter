@@ -73,10 +73,3 @@ A chord ringing past its segment's end SHALL fade from the level it ended at rat
 
 - [ ] **The noise loop has no audible seam and each band holds its own level** — no source yet: no seam or level measurement is recorded.
 - [ ] **The player loops the playlist** — no source yet: the loop is not located in `createMusicPlayer.ts`; the playlist's `isLooping` flag is the only checked source.
-- [ ] **A player schedules the notes ahead of the audio clock** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Each note sounds as an oscillator over its instrument's harmonics at the measured overtone amplitudes, through one gain following its envelope** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A note's envelope is scheduled to its computed value at the note's end, so it ends in browsers that lack holding** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Each note's noise starts from the loop clock's position, with one phase per band across every buffer** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The player schedules the notes due in the next two seconds every half second** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A segment renders offline through the same notes the player uses, so the parity score judges what the player plays** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A chord ringing past its segment's end fades from the level it ended at, rather than jumping to the next segment's level** — no source yet: game data or a snapshot that holds this behaviour
