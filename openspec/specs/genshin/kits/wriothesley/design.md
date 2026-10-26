@@ -14,7 +14,7 @@ Not built, and why each is out of reach of the kit now:
 - Constellations 1, 2, 4 and 6. C1 extends Icefang Rush and needs Gracious Rebuke; C2 adds 40% per Prosecution Edict stack to Darkgold Wolfbite, a damage bonus the strike hook cannot read; C4 and C6 need Rebuke's heal and CRIT and icicle.
 - The charged attack's ascension and constellation boxes.
 
-Its `skill.hits.length`, zero, is `Unsourced`, as Icefang Rush queues no attack and no line gives a count. The five burst areas are a circle 8 metres ahead of the body with a radius of 8.94, set by the overlay. gcsim's 8 by 16 box from `burst.go` spans from the body to 16 metres ahead and is 8 wide, and that circle circumscribes it: its four corners lie on the circle, so the circle covers the whole box and some ground beside and behind it. It approximates the box rather than matching its shape, which the area format cannot hold.
+Its `skill.hits.length`, zero, is `Unsourced`, as Icefang Rush queues no attack and no line gives a count. The five burst areas are a circle 8 metres ahead of the body with a radius of 8.94, set by the overlay. The converter folds a forward offset into the radius for every kit, so changing it would republish them all; the Wolfbite's offset is therefore set in its own overlay, which is where a kit's measured values are kept. gcsim's 8 by 16 box from `burst.go` spans from the body to 16 metres ahead and is 8 wide, and that circle circumscribes it: its four corners lie on the circle, so the circle covers the whole box and some ground beside and behind it. It approximates the box rather than matching its shape, which the area format cannot hold.
 
 ## Key files
 
