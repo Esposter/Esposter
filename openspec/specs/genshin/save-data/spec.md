@@ -12,14 +12,14 @@ A signed-in player's save SHALL be held as one record under the session that mos
 
 - **GIVEN** the game is open in one tab for a signed-in player
 - **WHEN** the game is started in a second tab
-- **THEN** the second tab takes the lease and resumes the saved game `apps/web/server/services/genshin/startGenshinSession.ts`
+- **THEN** the second tab takes the lease and resumes the saved game
 - **AND** the first tab is replaced
 
 #### Scenario: A replaced session's next save is refused
 
 - **GIVEN** a tab's session has been replaced by another start
 - **WHEN** that tab saves its game
-- **THEN** the save is refused as a replacement `apps/web/server/services/genshin/checkIsGenshinSessionCurrent.ts`
+- **THEN** the save is refused as a replacement
 
 ### Requirement: The save holds what the player did and nothing derived
 
@@ -29,19 +29,19 @@ The save SHALL hold the player's characters with their copies, wallet, bag, carr
 
 - **GIVEN** the player has bought an item and the save has been acknowledged
 - **WHEN** the page is reloaded
-- **THEN** the item is still in the bag `packages/genshin-world/src/models/inventory/InventorySave.ts`
+- **THEN** the item is still in the bag
 
 #### Scenario: Wish counters survive a reload
 
 - **GIVEN** the player has made wishes and the save has been acknowledged
 - **WHEN** the page is reloaded
-- **THEN** the wish counters are as they were `packages/genshin-world/src/models/wish/WishPityMapSave.ts`
+- **THEN** the wish counters are as they were
 
 #### Scenario: A derived value is read from its source on load
 
 - **GIVEN** a character's Friendship Level is shown
 - **WHEN** the save is loaded
-- **THEN** the level is read from the character's Companionship EXP rather than from a saved level `packages/genshin-world/src/models/friendship/CompanionshipExpSave.ts`
+- **THEN** the level is read from the character's Companionship EXP rather than from a saved level
 
 ### Requirement: A write from a replaced session is refused and never merged
 
@@ -52,7 +52,7 @@ A write from a session that is no longer current SHALL be refused as a replaceme
 - **GIVEN** another session has taken the lease since this tab last saved
 - **WHEN** this tab sends a save
 - **THEN** the save is refused as a replacement
-- **AND** none of the stale session's changes reach the stored save `apps/web/server/services/genshin/checkIsGenshinSessionCurrent.ts`
+- **AND** none of the stale session's changes reach the stored save
 
 ### Requirement: A stored save that does not parse is never overwritten
 
@@ -62,14 +62,14 @@ A stored save that does not parse SHALL be left as it is, and the start or save 
 
 - **GIVEN** the stored save does not parse
 - **WHEN** a start or a save reads it
-- **THEN** the call answers with a logged error `apps/web/server/services/genshin/readGenshinSaveState.ts`
+- **THEN** the call answers with a logged error
 - **AND** the stored save is left unchanged
 
 #### Scenario: A player with no stored save starts a new one
 
 - **GIVEN** no stored save exists for the account
 - **WHEN** the game is started
-- **THEN** a new player's save is written `packages/genshin-world/src/services/save/constants.ts`
+- **THEN** a new player's save is written
 
 ### Requirement: A start that fails holds the page until it takes
 
@@ -80,13 +80,13 @@ A signed-in player whose start fails SHALL see the loading screen held, with the
 - **GIVEN** a signed-in player's start fails
 - **WHEN** the failure is shown
 - **THEN** the loading screen holds
-- **AND** the start is retried after a wait that grows toward a cap `apps/web/app/services/genshin/getGenshinStartRetryDelayMs.ts`
+- **AND** the start is retried after a wait that grows toward a cap
 
 #### Scenario: Retry ends the wait early
 
 - **GIVEN** the start is waiting before its next attempt
 - **WHEN** the player presses Retry
-- **THEN** the next attempt begins at once `apps/web/app/components/Genshin/Index.vue`
+- **THEN** the next attempt begins at once
 
 ### Requirement: A retried start is answered by the start it already took
 
@@ -96,14 +96,14 @@ A start retried under the same session SHALL be answered by the start that its f
 
 - **GIVEN** a start's write landed but its response was lost
 - **WHEN** the same page retries the start
-- **THEN** the retry is answered with the start that already took `apps/web/server/services/genshin/startGenshin.ts`
+- **THEN** the retry is answered with the start that already took
 - **AND** the player's own session is not replaced
 
 #### Scenario: A guest's save is not uploaded again over the account
 
 - **GIVEN** a start created the account on its first attempt
 - **WHEN** the start is retried
-- **THEN** the guest's save is not uploaded again `apps/web/app/composables/genshin/useGenshinSave.ts`
+- **THEN** the guest's save is not uploaded again
 
 ### Requirement: An unacknowledged save is journaled and adopted by the same session's next start
 
@@ -113,19 +113,19 @@ A save the server has not acknowledged SHALL be kept in the browser under the ac
 
 - **GIVEN** a save has not been acknowledged
 - **WHEN** the page is hidden or left
-- **THEN** the save is kept in the browser under the account `apps/web/app/services/shared/LocalStorageKey.ts`
+- **THEN** the save is kept in the browser under the account
 
 #### Scenario: The next start adopts a journal of the session it replaced
 
 - **GIVEN** a journal holds an unacknowledged save
 - **WHEN** a start replaces the session that wrote the journal
-- **THEN** the journaled save is adopted `apps/web/app/services/genshin/parseGenshinJournal.ts`
+- **THEN** the journaled save is adopted
 
 #### Scenario: A journal of another session is discarded
 
 - **GIVEN** a journal holds an unacknowledged save from another session
 - **WHEN** a start is answered
-- **THEN** the journal is discarded `apps/web/app/services/genshin/parseGenshinJournal.ts`
+- **THEN** the journal is discarded
 
 ### Requirement: Saves are sent by value, one at a time, on the autosave interval and at each grant
 
@@ -135,20 +135,20 @@ Saves SHALL be sent one at a time, each carrying the whole game state, on the au
 
 - **GIVEN** a save is in flight
 - **WHEN** further changes are made
-- **THEN** one further save follows the one in flight `apps/web/app/services/shared/createSingleFlight.ts`
+- **THEN** one further save follows the one in flight
 - **AND** it carries the newest state
 
 #### Scenario: Idle play sends no save
 
 - **GIVEN** nothing in the game has changed since the last stored save
 - **WHEN** the autosave interval passes
-- **THEN** no save is sent `apps/web/app/composables/genshin/useGenshinSave.ts`
+- **THEN** no save is sent
 
 #### Scenario: A save the schema refuses is not sent
 
 - **GIVEN** the game state fails the save schema
 - **WHEN** a save is requested
-- **THEN** the save is not sent `apps/web/app/composables/genshin/useGenshinSave.ts`
+- **THEN** the save is not sent
 - **AND** the failure is logged and shown to the player
 
 ### Requirement: A guest's save merges into the account's by fixed rules
@@ -159,33 +159,33 @@ A guest's save SHALL merge into a signed-in account's save by fixed rules, with 
 
 - **GIVEN** a guest signs in to an account with no save
 - **WHEN** the sign-in completes
-- **THEN** the account's save is the guest's save `packages/genshin-world/src/services/save/mergeGenshinSave.ts`
+- **THEN** the account's save is the guest's save
 
 #### Scenario: Landmarks and achievements keep the larger progress
 
 - **GIVEN** a guest and the account each hold unlocked landmarks and achievement progress
 - **WHEN** the guest signs in
-- **THEN** the unlocked landmarks are the union of both `packages/genshin-world/src/services/save/mergeGenshinSave.ts`
-- **AND** each achievement keeps the larger count and the earlier finish `packages/genshin-world/src/services/save/mergeGenshinSave.ts`
+- **THEN** the unlocked landmarks are the union of both
+- **AND** each achievement keeps the larger count and the earlier finish
 
 #### Scenario: The account's bag and wallet are kept
 
 - **GIVEN** a guest and an account each hold a bag and a wallet
 - **WHEN** the guest signs in
-- **THEN** the account's bag and wallet are kept `packages/genshin-world/src/services/save/mergeGenshinSave.ts`
+- **THEN** the account's bag and wallet are kept
 
 #### Scenario: A statue region's claimed level is the account's
 
 - **GIVEN** the guest has claimed a level of a statue region that the account has not claimed, its rewards paid into the guest's bag
 - **WHEN** the guest signs in
-- **THEN** the account claims that level again, and is paid for it once from its own bag `packages/genshin-world/src/services/save/mergeGenshinSave.ts`
+- **THEN** the account claims that level again, and is paid for it once from its own bag
 - **AND** the rewards the guest's copy paid are lost with the guest's bag
 
 #### Scenario: A rank reward claimed only in the guest's copy is claimed again on the account
 
 - **GIVEN** the guest has claimed a rank's Katheryne reward, paid into the guest's bag, and the account has not claimed it
 - **WHEN** the guest signs in
-- **THEN** the account claims that rank's reward again, and is paid for it once from its own bag and wallet `packages/genshin-world/src/services/save/mergeGenshinSave.ts`
+- **THEN** the account claims that rank's reward again, and is paid for it once from its own bag and wallet
 
 #### Scenario: A mail is kept once per delivery, read on either copy stays so, and a claim only the guest made is not kept
 
@@ -203,13 +203,13 @@ A player whose session is replaced SHALL be told at once while the page is subsc
 
 - **GIVEN** a page is subscribed to session replacement for the player
 - **WHEN** another start replaces the session
-- **THEN** the page is told at once that its session was replaced `apps/web/server/services/genshin/events/genshinEventEmitter.ts`
+- **THEN** the page is told at once that its session was replaced
 
 #### Scenario: A page not subscribed is told at its next refused save
 
 - **GIVEN** a page is not subscribed to session replacement
 - **WHEN** its next save is refused as a replacement
-- **THEN** the page stops saving `apps/web/app/components/Genshin/Index.vue`
+- **THEN** the page stops saving
 - **AND** it offers the player the chance to take the game back
 
 ### Requirement: A save over its bounds is refused
@@ -220,14 +220,14 @@ A save whose bag, achievements, identifiers or serialized size pass their bounds
 
 - **GIVEN** a save would exceed the largest size a save may take
 - **WHEN** the save is sent
-- **THEN** the save is refused `packages/genshin-world/src/services/save/constants.ts`
+- **THEN** the save is refused
 - **AND** the stored save is unchanged
 
 #### Scenario: A save at every bound is accepted
 
 - **GIVEN** every collection in a save is at its own bound
 - **WHEN** the save is sent
-- **THEN** the save is accepted `packages/genshin-world/src/services/inventory/bagLimits.ts`
+- **THEN** the save is accepted
 
 ### Requirement: The save keeps the characters the player holds
 
@@ -237,20 +237,20 @@ The save SHALL keep each character the player holds with its level, ascension, c
 
 - **GIVEN** a player whose wish granted a character at level five with two copies
 - **WHEN** the world is reloaded
-- **THEN** the character is held again at level five with two copies `packages/genshin-world/src/models/character/CharacterSave.ts`
+- **THEN** the character is held again at level five with two copies
 - **AND** its weapon and artifacts are the ones it had
 
 #### Scenario: A new player starts with the Traveler alone
 
 - **GIVEN** a save that holds no characters
 - **WHEN** the world opens
-- **THEN** the player's party holds the Traveler alone `packages/genshin-world/src/composables/useWorldCombat.ts`
+- **THEN** the player's party holds the Traveler alone
 
 #### Scenario: A save past the character limit is refused
 
 - **GIVEN** a save that holds more characters than the save allows
 - **WHEN** the save is read
-- **THEN** the read fails and no character is loaded `packages/genshin-world/src/services/save/constants.ts`
+- **THEN** the read fails and no character is loaded
 
 ### Requirement: Companionship EXP is kept once, on the character it was earned by
 
@@ -260,13 +260,13 @@ The save SHALL keep each character's Companionship EXP under that character's id
 
 - **GIVEN** a save that holds a character and Companionship EXP for that character
 - **WHEN** the world is loaded
-- **THEN** the character shows that Companionship EXP `packages/genshin-world/src/services/save/toCharacters.ts`
+- **THEN** the character shows that Companionship EXP
 
 #### Scenario: A character missing from the roster keeps its saved Companionship EXP
 
 - **GIVEN** a save that holds Companionship EXP for a character the roster does not hold
 - **WHEN** the world is saved
-- **THEN** the save still holds that Companionship EXP `packages/genshin-world/src/models/friendship/CompanionshipExpSave.ts`
+- **THEN** the save still holds that Companionship EXP
 
 ### Requirement: A merge keeps one copy of a character both saves hold
 
@@ -276,20 +276,20 @@ The merge SHALL keep a character both saves hold as the copy further on by level
 
 - **GIVEN** a guest save holding a character at level ten and an account save holding it at level seven
 - **WHEN** the two saves are merged
-- **THEN** the merged save holds the guest's copy of the character at level ten `packages/genshin-world/src/services/save/mergeGenshinSave.ts`
-- **AND** its copy count is the larger of the two copy counts `packages/genshin-world/src/services/save/mergeGenshinSave.ts`
+- **THEN** the merged save holds the guest's copy of the character at level ten
+- **AND** its copy count is the larger of the two copy counts
 
 #### Scenario: Equal levels are settled by constellations
 
 - **GIVEN** a guest save and an account save each holding a character at level ten, the guest's with two constellations and the account's with four
 - **WHEN** the two saves are merged
-- **THEN** the merged save holds the account's copy of the character `packages/genshin-world/src/services/save/mergeGenshinSave.ts`
+- **THEN** the merged save holds the account's copy of the character
 
 #### Scenario: A character only the guest holds is kept
 
 - **GIVEN** a guest save holding a character the account save does not hold
 - **WHEN** the two saves are merged
-- **THEN** the merged save holds that character `packages/genshin-world/src/services/save/mergeGenshinSave.ts`
+- **THEN** the merged save holds that character
 
 ### Requirement: Systems not yet saved start fresh after a reload
 
@@ -299,7 +299,7 @@ The save SHALL NOT hold expeditions, forge queues or the camps cleared, and thos
 
 - **GIVEN** the player has a character on an expedition
 - **WHEN** the page is reloaded
-- **THEN** the expedition is not kept `packages/genshin-world/src/models/save/GenshinSave.ts`
+- **THEN** the expedition is not kept
 
 ### Requirement: The save holds each defeated enemy's respawn time in a camp with no boss
 
@@ -309,19 +309,19 @@ The save SHALL hold the instant each defeated enemy in a camp with no boss comes
 
 - **GIVEN** a common enemy defeated
 - **WHEN** the save is written
-- **THEN** it holds the enemy's spawn key with the instant twelve hours after its defeat `packages/genshin-world/src/services/enemy/constants.ts`
+- **THEN** it holds the enemy's spawn key with the instant twelve hours after its defeat
 
 #### Scenario: A defeat in a camp with a boss is not saved
 
 - **GIVEN** a camp with a boss and a member defeated
 - **WHEN** the save is written
-- **THEN** it holds no instant for the member `packages/genshin-world/src/models/save/GenshinSave.ts`
+- **THEN** it holds no instant for the member
 
 #### Scenario: The account's respawn time is kept when two saves merge
 
 - **GIVEN** a guest save and an account save each holding a respawn time for the same enemy, the guest's the later
 - **WHEN** the two saves are merged
-- **THEN** the merged save holds the account's respawn time for the enemy `packages/genshin-world/src/services/save/mergeGenshinSave.ts`
+- **THEN** the merged save holds the account's respawn time for the enemy
 
 ### Requirement: The save holds each mined outcrop until its respawn
 
@@ -331,7 +331,7 @@ The save SHALL hold each mined outcrop by its place's id with the instant it was
 
 - **GIVEN** an outcrop mined on the server's clock
 - **WHEN** the page is reloaded before the outcrop's respawn
-- **THEN** the outcrop is still gone, and it stands again from its respawn `packages/genshin-world/src/models/save/GenshinSave.ts`
+- **THEN** the outcrop is still gone, and it stands again from its respawn
 
 ## Open
 
