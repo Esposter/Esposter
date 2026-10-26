@@ -29,12 +29,11 @@ Mizuki's kit is its record and one behaviour module, `createMizukiKitBehaviour`,
 - [gcsim skill.go](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/mizuki), MIT: the Dreamdrifter state's five-second duration and its cancel on a second press.
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/mizuki), MIT: each strike's hitmark, animation and travel, the charged attack's hit, animation and windup, the skill's activation, animation and cooldown delay, and the burst's hit, animation and cooldown, read from its attack, charge, skill and burst files, with its snack, ascension and constellation files for the mechanics waiting on their hooks.
 - The proud skill groups' indices, read from gcsim's data file for the character, which lists each multiplier beside its group. Checked against the game data: all 15 of gcsim's multiplier blocks match their groups 10931, 10932 and 10939 at talent level 1 (groups from skill rows 11091, 11092 and 11095 in `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarSkillExcelConfigData.json`, the skill and burst cooldowns of 15 seconds and the burst's 60 energy on row 11095).
-- The cached wiki, `~/Esposter.noindex/cache/genshin-wiki/Category_Yumemizuki_Mizuki_Talents.json`: the strikes' poise rows 1 to 3 and the charged attack's stamina of 50.
+- The cached wiki, `~/Esposter.noindex/cache/genshin-wiki/Category_Yumemizuki_Mizuki_Talents.json`: the strikes' poise rows 1 to 3, the charged attack's stamina of 50, and the collision and plunge poise rows (5, 50 and 100).
 - [Pure Heart, Pure Dreams](https://genshin-impact.fandom.com/wiki/Pure_Heart,_Pure_Dreams), Genshin Impact Wiki: the poise for her strikes, charged attack, collision and plunges.
 
 ## Open
 
-- [ ] **the collision, low and high plunge poise is 5, 50 and 100** — cited to the Fandom page in Sources, not yet checked against the cached Mizuki talents file, which was not opened in this pass.
-- [ ] **the skill's activation hit has 30 poise** — no source yet: the skill's poise row in the cached Mizuki talents file was not opened.
-- [ ] **the burst's hit has 100 poise** — no source yet: the burst's poise row in the cached Mizuki talents file was not opened.
+- [ ] **the skill's activation hit has 30 poise** — checked against `~/Esposter.noindex/cache/genshin-wiki/Category_Yumemizuki_Mizuki_Talents.json`: its two `Skill DMG` rows read poise 30 and poise 100, and the file does not name which row is the activation hit, so the claim is not settled by it.
+- [ ] **the burst's hit has 100 poise** — checked against the same file: its two `Skill DMG` rows read poise 30 and poise 100, and the file does not name which row is the burst's hit, so the claim is not settled by it.
 - [ ] **the proud groups match gcsim's multipliers to four decimal places at every talent level** — no source yet: only the level-1 rows were opened in this pass.
