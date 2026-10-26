@@ -14,6 +14,8 @@ export default defineConfig({
   plugins: [...getVuePlugins(templateCompilerOptions), dynamicJsonImportPlugin, gameDataMirrorPlugin, regionDataPlugin],
   resolve: { conditions: [SOURCE_CONDITION, ...defaultClientConditions] },
   root: dirname(import.meta.dirname),
-  // A checkout other than the shared one serves on its own port through `GENSHIN_PARITY_PORT`
-  server: { port: Number(process.env.GENSHIN_PARITY_PORT ?? 3002), strictPort: true },
+  // The shared checkout serves on 3011, and a busy port is taken by the next one up, which the commands find by probing
+  // From their first port (`resolveParityPageRoot`). A checkout other than the shared one names its first port through
+  // `GENSHIN_PARITY_PORT`, the same variable the commands read
+  server: { port: Number(process.env.GENSHIN_PARITY_PORT ?? 3011), strictPort: false },
 });

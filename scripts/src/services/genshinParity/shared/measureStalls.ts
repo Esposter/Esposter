@@ -8,7 +8,8 @@ import type { GpuTrace } from "#src/models/genshinParity/shared/GpuTrace";
 import type { StallOptions } from "#src/models/genshinParity/shared/StallOptions";
 import type { StallRenderer } from "#src/models/genshinParity/shared/StallRenderer";
 
-import { PARITY_PAGE_URL, STALLS_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { STALLS_DIRECTORY } from "#src/services/genshinParity/shared/constants";
+import { resolveParityPageRoot } from "#src/services/genshinParity/shared/resolveParityPageRoot";
 import { hookRenderer } from "#src/services/genshinParity/shared/hookRenderer";
 import { measureSceneKinds } from "#src/services/genshinParity/shared/measureSceneKinds";
 import { measureStates } from "#src/services/genshinParity/shared/measureStates";
@@ -89,8 +90,9 @@ export const measureStalls = async ({ height, scale, screen, trace, width }: Sta
       if (message.type() === "error") errors.push(message.text());
     });
 
+    const pageRoot = await resolveParityPageRoot();
     const loadStart = Date.now();
-    await page.goto(`${PARITY_PAGE_URL}${screen}`, { waitUntil: "networkidle" });
+    await page.goto(`${pageRoot}?screen=${screen}`, { waitUntil: "networkidle" });
     await page.locator("body[data-parity-ready], body[data-parity-error]").waitFor({ timeout: LOAD_TIMEOUT_MS });
     const parityError = await page.evaluate(() => window.document.body.dataset.parityError);
     if (parityError) throw new InvalidOperationError(Operation.Read, screen, `page failed: ${parityError}`);

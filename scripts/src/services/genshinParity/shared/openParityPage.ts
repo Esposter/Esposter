@@ -7,12 +7,12 @@ import {
   INTERFACE_HEIGHT,
   PARITY_BACKDROP_FILE,
   PARITY_FRAME_MS,
-  PARITY_PAGE_ROOT,
   PARITY_READY_TIMEOUT_MS,
   RESOURCE_TIMING_BUFFER_SIZE,
   WITNESS_LAYOUT_PATH,
   WITNESS_PATH_PREFIX,
 } from "#src/services/genshinParity/shared/constants";
+import { resolveParityPageRoot } from "#src/services/genshinParity/shared/resolveParityPageRoot";
 import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
 import { WITNESS_LAYOUT_FILE_NAME } from "genshin-world/sceneExport";
 import { existsSync } from "node:fs";
@@ -93,11 +93,10 @@ export const openParityPage = async ({
     }
     // A faked clock runs only as far as the caller moves it, frame by frame, so a motion is shot at exact moments
     if (isClockFaked) await page.clock.install({ time: 0 });
+    const pageUrl = pageRoot ?? (await resolveParityPageRoot());
     // Opened at its load event rather than once idle, so a fetch the page issues after ready is not in the readings a
     // Caller takes at the ready signal
-    await page.goto(
-      `${pageRoot ?? PARITY_PAGE_ROOT}?screen=${screen}${motionQuery}${propsQuery}${backdropQuery}${witnessQuery}`,
-    );
+    await page.goto(`${pageUrl}?screen=${screen}${motionQuery}${propsQuery}${backdropQuery}${witnessQuery}`);
     // The page is drawn once it is ready, or never once a failure nothing caught has stopped it
     const readPageState = () =>
       page.evaluate(() => {

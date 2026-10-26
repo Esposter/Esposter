@@ -1,6 +1,6 @@
 import type { SurfaceStatisticsPage } from "#src/models/genshinParity/shared/SurfaceStatisticsPage";
 
-import { PARITY_PAGE_ROOT } from "#src/services/genshinParity/shared/constants";
+import { resolveParityPageRoot } from "#src/services/genshinParity/shared/resolveParityPageRoot";
 import { getResultAsync } from "@esposter/shared";
 import { chromium } from "playwright";
 
@@ -13,7 +13,8 @@ export const openSurfaceStatisticsPage = async (): Promise<SurfaceStatisticsPage
   };
   return getResultAsync(async (): Promise<SurfaceStatisticsPage> => {
     const page = await browser.newPage();
-    await page.goto(PARITY_PAGE_ROOT, { waitUntil: "load" });
+    const pageRoot = await resolveParityPageRoot();
+    await page.goto(pageRoot, { waitUntil: "load" });
     await page.waitForFunction(() => Reflect.has(window, "computeSurfaceStatistics"));
     return {
       close,

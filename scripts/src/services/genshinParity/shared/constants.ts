@@ -43,14 +43,15 @@ export const WHOLE_SCREEN_MAX_ASPECT_RATIO = 1.9;
 // A clip's file name carries its video's id, eleven characters, and a clip name of letters, digits and dashes
 // oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
 export const YT_CAPTURE_REGEX: RegExp = /^yt-(?<videoId>[\w-]{11})(?:-|\.)/u;
-// The world package's parity page, which renders a screen without Nuxt. Its port is 3011 unless `GENSHIN_PARITY_PORT`
-// Names another: the shared checkout's page, which the main session serves once for every agent. A runner's worktree
-// Serves its own on 3002 (`pnpm -C packages/genshin-world parity`) and names that port
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
-export const PARITY_PAGE_ROOT: string = `http://localhost:${process.env.GENSHIN_PARITY_PORT ?? "3011"}/parity/`;
-// The page a screen is shot on, by its query
-// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this pattern would otherwise infer
-export const PARITY_PAGE_URL: string = `${PARITY_PAGE_ROOT}?screen=`;
+// The world package's parity page, which renders a screen without Nuxt. The shared checkout serves it on 3011, and a busy
+// Port is taken by the next one up, so a command finds the page by probing from its first port (`resolveParityPageRoot`).
+// `GENSHIN_PARITY_PORT` names a different first port, as a runner's worktree does for its own page
+export const PARITY_DEFAULT_PORT = 3011;
+// How many ports from the first one a command probes for the page, and how long each probe waits for an answer
+export const PARITY_PORT_COUNT = 10;
+export const PARITY_PROBE_TIMEOUT_MS = 1000;
+// The title the parity page's HTML carries, which tells it apart from whatever else answers on a port
+export const PARITY_PAGE_TITLE = "<title>Genshin parity</title>";
 // The world package, whose parity page a load run builds for production and serves beside the dev server
 export const GENSHIN_WORLD_DIRECTORY: string = join(REPOSITORY_ROOT, "packages", "genshin-world");
 // The production build of the parity page: a folder inside that package, which git ignores, and the root task that builds it
