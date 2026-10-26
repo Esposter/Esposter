@@ -1,6 +1,6 @@
 ## Purpose
 
-Charlotte's kit as built, with her three strikes, charged attack and Spiritbreath Thorn, plunges, Framing's press and its Snappy Silhouette marks, and Still Photo's cast heal and Kamera, with Constellations 1, 2 and 4 built on the press and her own heals, and her hold, passives and Constellation 6 not built.
+Charlotte's kit as built, with her three strikes, charged attack and Spiritbreath Thorn, plunges, Framing's press and its Snappy Silhouette marks, and Still Photo's cast heal and Kamera, with Constellations 1, 2 and 4 built on the press and her own heals, and her hold, passives and Constellation 6 not built. The sources of its numbers and behaviour are cited inline on the [design page](design.md).
 
 ## Requirements
 
