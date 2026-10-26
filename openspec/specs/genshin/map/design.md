@@ -73,7 +73,6 @@ The overlay is scored against two references, each over its interface alone, the
 - **The pointer is the overlay's alone.** The minimap marks the character with the game's own arrow and the view with its fan, each placed by the HUD's tree ([minimap](../minimap/design.md)) `packages/genshin-world/src/components/Hud/Minimap/Index.vue`, so `Map/Pointer` `packages/genshin-world/src/components/Map/Pointer/Index.vue` is measured off the map's reference only.
 - **The fade does not wait on the ground.** A jump far from where the camera stood fades back in as soon as it is placed `packages/genshin-world/src/components/World/Session/Index.vue`, and the terrain streams in round it as it does after any flight.
 - **The zoom track's label is the game text key `GameTextKey.Zoom`** — `packages/genshin-world/src/components/Map/Overlay/Index.vue`.
-- **`JUMP_LANDMARK_KINDS` holds the Domain Entrance, the Statue of The Seven and the Teleport Waypoint** — `packages/genshin-world/src/services/map/constants.ts`.
 - **A jump puts the character at the landmark's arrival place, at its height offset and facing its rotation** — `packages/genshin-world/src/services/map/computeJumpPose.ts`.
 - **A jump's teleport fade runs to the loading screen's background and back, over `TELEPORT_FADE_IN_MS` and `TELEPORT_FADE_OUT_MS`** — `packages/genshin-world/src/components/World/Session/Index.vue`.
 - **The overlay draws only the outlines of the areas a statue has filled** — `packages/genshin-world/src/components/Map/Drawing/Index.vue`.
