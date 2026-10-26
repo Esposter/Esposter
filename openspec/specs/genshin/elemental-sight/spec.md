@@ -4,7 +4,7 @@ Elemental Sight as the world plays it: a white range spreads from the character 
 
 ## Open
 
-- [ ] **the sight plays as the game does: white interactables, element colours, enemy names and the walk end** — no source yet: the wiki's Elemental Sight page, which the cache does not hold, or a recording of the sight (the design's open list has the parts).
+- [ ] **the sight plays as the game does, to its exact colours, the walk's length and the white of every interactable** — partly sourced: the wiki's Elemental Sight page gives the element colours only as hues, says the sight ends after "a short distance" with no number, and says interactable NPCs appear white and most other interactables are "typically" white or element-coloured; a recording of the sight is still needed (the design's open list has the parts).
 
 ## Requirements
 
