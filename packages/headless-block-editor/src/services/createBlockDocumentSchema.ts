@@ -1,6 +1,7 @@
 import type { BlockChildren } from "#src/models/BlockChildren";
 import type { BlockCollection } from "#src/models/BlockCollection";
 import type { BlockDocument } from "#src/models/BlockDocument";
+import type { BlockDocumentInput } from "#src/models/BlockDocumentInput";
 import type { BlockNode } from "#src/models/BlockNode";
 import type { BlockRegistry } from "#src/models/BlockRegistry";
 import type { BlockRootProps } from "#src/models/BlockRootProps";
@@ -17,7 +18,7 @@ export const createBlockDocumentSchema = <TNode extends BlockNode, TRootProps ex
   registry: BlockRegistry<TNode, TRootProps>,
   children: BlockChildren<TNode>,
   maxNodes: number,
-): z.ZodType<BlockDocument<TNode, TRootProps>> =>
+): z.ZodType<BlockDocument<TNode, TRootProps>, BlockDocumentInput> =>
   z
     .object({ content: z.array(contentSchema).max(maxNodes), root: z.object({ props: registry.root.propsSchema }) })
     .superRefine(
