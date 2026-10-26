@@ -2,7 +2,7 @@
 
 Every place the platform keeps data that belongs to one account, with how each one is keyed to that account, what removes it today and which entry of the data export holds it. Account deletion and data export both read this page: a store missing here is a store a deletion would leave behind and an export would omit. It describes the code as it stands; a change to a store updates its row here in the same change.
 
-The export entry column names the entry of the data export archive (`openspec/changes/user-data-export/design.md`, "What the archive holds") that holds the store, and says None where the archive does not read it.
+The export entry column names the entry of the data export archive (`openspec/changes/archive/2026-10-26-user-data-export/design.md`, "What the archive holds") that holds the store, and says None where the archive does not read it.
 
 ## Postgres
 
