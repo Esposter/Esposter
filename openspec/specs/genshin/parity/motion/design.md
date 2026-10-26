@@ -16,5 +16,5 @@ A recording is sampled to find its events, then each event is matched at its own
 
 ## Open
 
-- [ ] **Which step finds a recording's events** — no source yet: the parity commands sample a recording at ten frames a second (`frames`) or two (`film`) by default, and the step that finds the events from those frames was not traced.
-- [ ] **When the window delivers a frame** — no source yet: `captureGame.ts` caps the capture at `RECORD_FRAME_RATE` (`max_framerate`) and does not say when frames are sent; the ffmpeg `gfxcapture` section (`ffmpeg.org/ffmpeg-filters.html#gfxcapture`) was not read, since the page is too long for the fetch to reach it.
+- [ ] **Which step finds a recording's events** — checked against scripts/src/services/genshinParity/image/sampleFrames.ts: writes the frames at one fixed rate and a contact sheet, with no event search, and the claim is not settled by it because no file in scripts/src/services/genshinParity names a step that finds events from those frames.
+- [ ] **When the window delivers a frame** — partly cited: the Motion bullet's "takes whatever frames the window delivers, up to sixty a second" (`scripts/src/services/genshinParity/game/captureGame.ts`); checked against ~/Esposter.noindex/cache/ffmpeg/ffmpeg-9.0.2-essentials_build/doc/ffmpeg-filters.html, its gfxcapture section: frames come at whatever rate the compositor provides, capped by `max_framerate`, with no stable FPS; the claim is open for the timing of each frame because that section gives the rate, not when a frame is sent.
