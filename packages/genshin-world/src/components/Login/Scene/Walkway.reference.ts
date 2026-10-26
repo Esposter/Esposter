@@ -103,9 +103,16 @@ export const walkwayTopic: ReferenceTopic = {
       result:
         "The walkway loses 0.086 a pixel, spread over its whole width: every band of its lanes, borders and pockets loses 0.07 to 0.10 a pixel, the lanes' borders (0.28 to 0.38 either side) at the top of that, and only the curbs stand out, the band along each curb's inner edge (0.86 to 0.94) losing 0.15 a pixel and the four curb bands a fifth of the loss over an eighth of the pixels. The plan loses most near the camera, where the exports' grain is a pixel or more wide. So the loss is not one feature misplaced but the texture's detail everywhere, which no few tones carry",
     },
+    {
+      method:
+        "genshin:assets clips login's Ani_Login_Lift decoded (login/clips/clips.json), its y curve against the walkway's back-out ease (getLoginWalkwaySink) at the walkway's depth and overshoot, with the depth and stagger read against MonoLoginScene's floats",
+      outcome: InvestigationOutcome.Rejected,
+      result:
+        "Each block's own animator lifts it 50 units over one second, peaking at 52.77 at 0.75 seconds, an overshoot of 5.5% of its rise, and settling at 1 (the walkway's 0.45 metres over a 3 metre depth takes 15%). No back-out fits both its peak height and its peak time, and at its height the back-out peaks at 0.63 of its rise where the clip peaks at 0.75, so the clip is not that ease at any tension. The depth 3 and stagger 2 the walkway uses equal the values at MonoLoginScene's 0x168 and 0x170 (3 and 2), a match of value rather than of name",
+    },
   ],
   openQuestions: [
     "Whether the walkway's gate, 0.017, can be met by any paint of ours: its loss of 0.088 lies a fifth on the curbs, the band along each curb's inner edge losing twice the rest, and the rest evenly over every lane at 0.07 to 0.10 a pixel, the texture's detail near the camera rather than a feature off its place (genshin:parity lost). The curbs are the one feature worth a what-if; past them it is the scoring topic's question of a grain of our own",
-    "What MonoBlockController does to each walkway piece: the rise is read by eye off the recording's far end; its raw bytes (genshin:assets behaviours login --script ^MonoBlockController$) hold its own curve",
+    "What starts each walkway block's Ani_Login_Lift, its one second of lift on the block's own animator: no script read names the trigger, so the rise stays distance-based and read by eye until one does. The one MonoBlockController read on a bridge piece holds only zeros (Light.reference.ts)",
   ],
 };

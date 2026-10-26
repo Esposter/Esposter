@@ -36,7 +36,7 @@ export const inventoryTopic: ReferenceTopic = {
     },
   ],
   openQuestions: [
-    "Which field of MonoLoginScene each of its remaining floats and curves is, its two speeds named the title's and the preparing glide's (Camera.reference.ts): the glide's easing, and the walkway's rise against its eye-read sink and distances",
+    "Which field of MonoLoginScene each of its remaining floats and curves is. Named: the two speeds at 0x68 and 0x6c (3.5 and 4.5), the speed-up at 0xa4 (0.2 to 1 over half a second, Camera.reference.ts), the hour bounds and clock at 0x178 and 0x18c. Matched by value only: 0x168, 0x16c and 0x170 (3, 5 and 2) against the walkway's depth, lift and stagger. Unnamed: the curve at 0x70 (1 to 0.02 over a second), 0xa0 (30), 0xd4 (50), 0x224 (25) and 0x228 (15)",
     "Which of EnviroSky's, LoginSceneEnviro's and LoginSceneWeather's gradients and curves is which of the environment's settings, each sampled at an hour against the colour solved off that hour's recording",
     "Whether the login draws any colour grade, its post profile holding none, and MHYBloom_Z's threshold, intensity and tint",
     "Which sound each button's click script names, through the Wwise banks' events",
