@@ -63,7 +63,8 @@ Each value the overlay holds as `Unsourced`, with the gcsim v2.47.2 file and lin
 
 ## Sources
 
-- [Odette](https://genshin-impact.fandom.com/wiki/Odette), Genshin Impact Wiki: her talent names (Adagio: Phantom Night Dancers and Presto: Bluebird Finale), the Stellar Glimmer text, and the rule that a Superconduct or Cryo Swirl triggered by a party member becomes a Stellar-Conduct or Stellar Swirl while she is in the party.
+- [Odette](https://genshin-impact.fandom.com/wiki/Odette), Genshin Impact Wiki: her talent names (Adagio: Phantom Night Dancers and Presto: Bluebird Finale), the Stellar Glimmer text, and the rule that a Superconduct or Cryo Swirl triggered by a party member becomes a Stellar-Conduct or Stellar Swirl while she is in the party. Quote: "When Odette is in the party, Superconduct reactions triggered by party members will be converted to Stellar-Conduct reactions."
+- [Stellar-Conduct](https://genshin-impact.fandom.com/wiki/Stellar-Conduct), Genshin Impact Wiki (the title the cache holds for the Starlight Prism redirect): the Starlight Prism's duration. Quote: "the resulting Starlight Prism lasts for 7s".
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/odette), MIT at v2.47.2: `config.yml` for the talent indices, `attack.go`, `charge.go`, `skill.go`, `burst.go` and `stellar.go` for the hitmarks, areas and the Stellar Glimmer state.
 - [gcsim `pkg/reactable`](https://github.com/genshinsim/gcsim/tree/v2.47.2/pkg/reactable), MIT at v2.47.2: `stellarconduct_gadget.go` for the Polestar Field's radius, lifetime and think interval, and `stellarswirl_gadget.go` for the vortex's lifetime.
 - The dump's `AvatarSkillExcelConfigData` and `ProudSkillExcelConfigData`: the proud skill groups 15031, 15032 and 15039, the skill's cooldown of 15 seconds (group 15032's index 11, which `skill.go:99`'s `SetCDWithDelay` sets as 15 seconds), and the burst's energy cost of 60 (group 15039's index 6) and cooldown of 15 seconds (index 5).
@@ -72,5 +73,4 @@ Each value the overlay holds as `Unsourced`, with the gcsim v2.47.2 file and lin
 
 ## Open
 
-- [ ] **Stellar Jubilee enables Stellar-Conduct and Stellar Swirl for the party** — no source yet: the Odette wiki page that states this passive is not in the wiki cache, which holds only her talent pages.
-- [ ] **The Starlight Prism lasts 7 seconds** — no source yet: no Starlight Prism page is in the wiki cache.
+- [ ] **The passive is named Stellar Jubilee** — no source yet for the name: the cached Odette wikitext gives the effect in its Stellar-Conduct and Stellar Swirl talent demos, but does not name the passive.
