@@ -70,7 +70,7 @@ flowchart TD
 ## Open
 
 - [ ] **Two components' passes can run at once** — no source yet: no concurrent run was traced.
-- [ ] **The page loads none of the exports, so a capital's inventory costs no more than the login's** — contradicted by `packages/genshin-world/parity/main.ts` line 110: with a witness URL, `loadWitness` loads the exports' drawn meshes.
+- [ ] **The page loads none of the exports, so a capital's inventory costs no more than the login's** — contradicted by `packages/genshin-world/parity/main.ts:110`: with a witness URL, `loadWitness` loads the exports' drawn meshes.
 - [ ] **The surface's finest scale reads detail and its coarsest reads layout** — no source yet: the scale naming, since `scripts/src/services/shared/computeDetailStatistics.ts` reads each octave band's detail from the finest up (line 5), but no layout reading at the coarsest scale was traced in `scripts/src/services/genshinParity/passes/computeStatisticalStructure.ts`.
 - [ ] **The softness gate is a pixel or two of a recording's softness** — no source yet: the value behind the gate, since `scripts/src/services/genshinParity/passes/shiftTargetAcross.ts` takes the pixels as an argument, and the gate that moves the reference across is `FRAME_GATE_PIXELS = 2` (`scripts/src/services/genshinParity/passes/constants.ts`, line 30), read by `scripts/src/services/genshinParity/passes/measureGlow.ts` (line 26); the recording's own softness was not measured.
 - [ ] **The pass option runs one named measure alone** — contradicted by `scripts/src/services/genshinParity/passes/runParityPasses.ts`: it runs every pass up to and including the named one.
