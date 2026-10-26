@@ -75,7 +75,7 @@ flowchart TD
 - [Elemental Sight](https://genshin-impact.fandom.com/wiki/Elemental_Sight), Genshin Impact Wiki: the binding, the white range that spreads from the character, the colour key of white for what no element affects and the element hues, the interactables it highlights and those it leaves unlit, and its end after a short walk.
 - [Elemental Sight](https://genshin-impact.fandom.com/wiki/Elemental_Sight), Genshin Impact Wiki, Highlighted Entities table, the None row, quoted "Objects and entities not currently affected by an element": coloured White.
 - [Elemental Sight](https://genshin-impact.fandom.com/wiki/Elemental_Sight), Genshin Impact Wiki, Interactable Entities, quoted "Interactable NPCs will appear white under Elemental Sight.": residents are lit white.
-- [Elemental Sight](https://genshin-impact.fandom.com/wiki/Elemental_Sight), Genshin Impact Wiki, opening paragraph, quoted "Elemental Sight automatically deactivates after moving a short distance": the walk end, with no distance given.
+- [Elemental Sight](https://genshin-impact.fandom.com/wiki/Elemental_Sight), Genshin Impact Wiki, Overview section, quoted "Elemental Sight automatically deactivates after moving a short distance": the walk end, with no distance given.
 
 ## Open
 
