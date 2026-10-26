@@ -4,6 +4,8 @@ import type { KitSwapEndable } from "#src/models/kit/KitSwapEndable";
 // An infusion a character's normal attacks, charged attack and plunges deal the element of, for the seconds left of it
 export interface KitInfusion extends KitSwapEndable {
   characterId: number;
+  // The factor the cooldown of a skill or a burst its character casts is multiplied by while it holds, if it lowers them
+  cooldownMultiplier?: number;
   // The DMG Bonus each hit it infuses carries, if it raises them
   damageBonus?: number;
   element: Element;
