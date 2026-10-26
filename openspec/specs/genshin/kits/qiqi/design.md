@@ -15,7 +15,7 @@ Qiqi's kit is its record and one behaviour module, `createQiqiKitBehaviour`, on 
 ## Not built
 
 - **The kit's ATK read for the Talisman heal is not traced.** gcsim reads her live total ATK, buffs included (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/qiqi/qiqi.go:51-55`, `~/Esposter/cache/gcsim-v2.47.2/internal/characters/qiqi/burst.go:90`), and the kit's own read has not been checked against it.
-- **Rite of Resurrection's revive, its 15-minute interval and its clearing by a drown or a jump have no source yet.** gcsim has no revive, and the cached Talents page names the constellation (`Talent Note`, constellation 6) without its text, so the interval waits on the constellation's text or a recording. Checked the cached Ancient Sword Art page (the Qiqi talents page): it names only constellation 2, Frozen to the Bone, and does not name Rite of Resurrection, so constellation 6's text is not in the cache.
+- **Rite of Resurrection's revive, its 15-minute interval and its clearing by a drown or a jump have no source yet.** gcsim has no revive, and the cached Talents page names the constellation (`Talent Note`, constellation 6) without its text, so the interval waits on the constellation's text or a recording. The cached Qiqi talents page names constellation 6 as Rite of Resurrection without its text (`~/Esposter/cache/genshin-wiki/Category_Qiqi_Talents.json`).
 
 ## Key files
 
@@ -33,5 +33,5 @@ Qiqi's kit is its record and one behaviour module, `createQiqiKitBehaviour`, on 
 
 ## Open
 
-- [ ] **Divine Suppression's ATK cut from four constellations** — no source yet: gcsim has no four-constellation hook for it, and the cached wiki names the constellation without its text. Checked the cached Ancient Sword Art page: it names only constellation 2, Frozen to the Bone, and does not name Divine Suppression.
-- [ ] **Rite of Resurrection's revive from six constellations** — no source yet: gcsim has no revive, and the cached wiki names the constellation without its text. Checked the cached Ancient Sword Art page: it names only constellation 2, and does not name Rite of Resurrection.
+- [ ] **Divine Suppression's ATK cut from four constellations** — no source yet: gcsim has no four-constellation hook for it, and the cached Qiqi talents page names constellation 4 as Divine Suppression without its text.
+- [ ] **Rite of Resurrection's revive from six constellations** — no source yet: gcsim has no revive, and the cached Qiqi talents page names constellation 6 as Rite of Resurrection without its text.
