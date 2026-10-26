@@ -21,8 +21,8 @@ A disable is one of exactly two shapes, and says which in its reason:
 | `.finally` deregistering a promise from its own registry   | It must run on both paths and leave the outcome alone; a finalizer rethrows               |
 | `.catch` on the promise under test, in that promise's test | The test asserts the primitive's own rejection; a Result wrapper would assert the wrapper |
 
-Anything else converts. The rule is what makes these two visible: before it they were indistinguishable from an
-ordinary `.then` someone had not got round to replacing.
+Anything else converts. The rule is what makes these two visible: without it they are indistinguishable from an
+ordinary `.then` someone has not got round to replacing.
 
 ## The ban in full
 

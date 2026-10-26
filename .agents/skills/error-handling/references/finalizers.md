@@ -9,7 +9,7 @@ Both live in `@esposter/shared`. Both run the finalizer regardless of success/fa
 - For simple loading flags around a `ResultAsync`, set the flag after `await` instead — a `ResultAsync` resolves to a `Result` rather than rejecting, so no finalizer is needed.
 
 ```ts
-// withFinalizer — restoring a global (see ignoreWarn.ts)
+// withFinalizer — restoring a global (see `apps/web/app/util/console/ignoreWarn.ts`)
 return withFinalizer(callback, () => {
   console.warn = warn;
 });

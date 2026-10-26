@@ -13,7 +13,7 @@ description: Apply when handling errors or logging in components, composables, s
 - **A rule for a fire-and-forget body that does not terminate** — whether the body has anything to terminate is a question about what it calls: a body whose whole work is an `executeMutation` with an `onError` is already done.
 - **Reaching a template's inline alert from `error-alert/no-raw-error-alert`** — oxlint hands a JS plugin no Vue template.
 - **Banning `console.warn` outright** — a notice with its own sentence is allowed; the handler slot is the swallow, and that half is the selector.
-- **A base error class writing `this.name = new.target.name`** — the minifier mangles class names, so every client-side error would report a one-letter name; each class writes its name as a literal (`references/error-classes.md`).
+- **A base error class writing `this.name = new.target.name`** — the minifier mangles class names (`references/error-classes.md`).
 
 ## Deep dives
 
@@ -67,11 +67,11 @@ import { getResult, getResultAsync, noop, withFinalizer, withFinalizerAsync } fr
 
 ## Who alerts a tRPC rejection — `references/alerting.md`
 
-`errorLink` alerts some rejection codes itself, so a caller that alerts them again stacks two identical toasts on one failure. **Wiring the error path of a tRPC call, or a background read that must not alert at all**, is that page.
+`errorLink` alerts some rejection codes itself, so a caller that alerts them again stacks two identical toasts on one failure.
 
 ## Finalizers — `references/finalizers.md`
 
-`withFinalizer` and `withFinalizerAsync` run cleanup either way and then unwrap, so no terminal consumer is needed. **Releasing something a chain acquired, whichever way it resolves**, is that page.
+`withFinalizer` and `withFinalizerAsync` run cleanup either way and then unwrap, so no terminal consumer is needed.
 
 ## tRPC Backend Guards
 
