@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import type { AnyPageBuilderKind } from "@/models/pageBuilder/AnyPageBuilderKind";
 
-import { usePageBuilderMoves } from "@/composables/pageBuilder/usePageBuilderMoves";
-import { usePageBuilderSelection } from "@/composables/pageBuilder/usePageBuilderSelection";
 import { UiIconMeaning } from "@/models/ui/UiIconMeaning";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 import { useCommandStore } from "@/store/ui/command";

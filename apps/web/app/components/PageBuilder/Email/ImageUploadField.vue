@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useUploadResourceFile } from "@/composables/resource/useUploadResourceFile";
 import { createErrorAlert } from "@/services/trpc/createErrorAlert";
 import { ResourceType } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";

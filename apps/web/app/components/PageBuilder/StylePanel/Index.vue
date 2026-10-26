@@ -2,8 +2,6 @@
 import type { StyleProperty } from "#shared/models/pageBuilder/StyleProperty";
 
 import { StyleState } from "#shared/models/pageBuilder/StyleState";
-import { usePageBuilderStyle } from "@/composables/pageBuilder/usePageBuilderStyle";
-import { usePageBuilderTheme } from "@/composables/pageBuilder/usePageBuilderTheme";
 import {
   DEFAULT_THEME_COLOR,
   STYLE_CHOICES,

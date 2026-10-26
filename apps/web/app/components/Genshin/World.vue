@@ -10,7 +10,6 @@ import {
 } from "#shared/services/genshin/constants";
 import { getGenshinGameDataBaseUrl } from "#shared/services/genshin/getGenshinGameDataBaseUrl";
 import { IS_DEVELOPMENT } from "#shared/util/environment/constants";
-import { useAccountCharacterPacks } from "@/composables/genshin/useAccountCharacterPacks";
 import { authClient } from "@/services/auth/authClient";
 import { GENSHIN_QUALITY_TIER } from "@/services/genshin/constants";
 import { RoutePath } from "@esposter/shared";

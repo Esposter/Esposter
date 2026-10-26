@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { usePageBuilderTheme } from "@/composables/pageBuilder/usePageBuilderTheme";
-
 interface Props {
   resourceId: string;
 }

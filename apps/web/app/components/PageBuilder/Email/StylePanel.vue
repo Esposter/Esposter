@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useEmailStyle } from "@/composables/pageBuilder/useEmailStyle";
-
 interface Props {
   resourceId: string;
 }

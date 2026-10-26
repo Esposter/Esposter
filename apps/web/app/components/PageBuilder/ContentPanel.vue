@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { AnyPageBuilderKind } from "@/models/pageBuilder/AnyPageBuilderKind";
 
-import { usePageBuilderContent } from "@/composables/pageBuilder/usePageBuilderContent";
 import { zodToJsonSchema } from "@/services/jsonSchema/zodToJsonSchema";
 import { usePageBuilderDocumentStore } from "@/store/pageBuilder/document";
 
