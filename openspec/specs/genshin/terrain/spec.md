@@ -1,6 +1,6 @@
 ## Purpose
 
-Genshin's ground as one heightfield drawn on a CDLOD quadtree, by true distance from the eye, with every vertex morphing onto the coarser grid before its tile changes level. Tiles are generated in a small pool of workers, handed back without a copy, cached all round the eye whichever way it looks, and asked for coarsest first, a loaded ancestor drawn while a tile is still coming. The origin floats, so the world can stretch a continent without trembling.
+Genshin's ground as one heightfield drawn on a CDLOD quadtree, by true distance from the eye, with every vertex morphing onto the coarser grid before its tile changes level. Tiles are generated in a small pool of workers, handed back without a copy, cached all round the eye whichever way it looks, and asked for coarsest first, a loaded ancestor drawn while a tile is still coming. The origin floats, so the world can stretch a continent without trembling (`packages/genshin-engine/src/terrain/selectTerrainTiles.ts`, `packages/genshin-engine/src/terrain/computeTerrainTile.ts`, `packages/genshin-engine/src/terrain/createTerrainMaterial.ts`, `packages/genshin-engine/src/streaming/createTileStreamer.ts`, `packages/genshin-world/src/composables/useFloatingOrigin.ts`).
 
 ## Requirements
 
