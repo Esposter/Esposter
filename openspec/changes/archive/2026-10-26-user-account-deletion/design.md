@@ -1,6 +1,6 @@
 # Account deletion design
 
-The inventory in [user data](../../specs/architecture/user-data-inventory/design.md) is the list of stores this sweeps. Each row there names the removal this change adds, and the sweep covers every row that is keyed to the user.
+The inventory in [user data](../../../specs/architecture/user-data-inventory/design.md) is the list of stores this sweeps. Each row there names the removal this change adds, and the sweep covers every row that is keyed to the user.
 
 ## Decisions
 
@@ -13,7 +13,7 @@ The inventory in [user data](../../specs/architecture/user-data-inventory/design
 **The user's messages are soft-deleted, and their charged attachments are removed.** A message is attributed to its author, so a deletion removes the author's content from every room the user is a member of, through the soft delete the moderation ban already uses. A reaction is one row shared by everyone who reacted with that emoji, so in each member room the sweep takes the account's id out of the reactions it shares and removes the ones it holds alone, as the reaction's own removal does. The soft delete moves into `packages/db` so the function and the web app share one implementation. The attachment list comes from the storage ledger, which holds one row per charged blob and its owner, so the sweep never scans a message partition to find files.
 
 **The soft delete does not announce itself to open rooms.** A moderation ban publishes each batch it commits, so members watching the room see the messages leave. The sweep passes a no-op in that place, so members keep seeing a deleted account's messages until they reload.
-The sweep also removes the account from reactions in shared rooms without an announcement, so open rooms show a removed reaction until reload. Both lags are accepted: a live announcement of these removals was decided against ([rejected](../../rejected/esbabbler/deleted-account-live-removal/proposal.md)).
+The sweep also removes the account from reactions in shared rooms without an announcement, so open rooms show a removed reaction until reload. Both lags are accepted: a live announcement of these removals was decided against ([rejected](../../../rejected/esbabbler/deleted-account-live-removal/proposal.md)).
 
 **Blob directories are swept by the user's prefix.** `{userId}/` in the public and private asset containers and in the game-save containers holds everything the user wrote there, and `character-packs/staging/{userId}/` in the game-asset container holds their pending character-pack uploads. The deletion lists no names.
 
