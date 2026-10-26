@@ -104,4 +104,4 @@ An operator generating the residents SHALL place each named NPC that has a talk 
 
 ## Open
 
-- [ ] **A resident the game shows only by day is marked absent at night** — no source yet: no generator or data file sets `absentAtNight` (only `packages/genshin-world/src/models/world/Resident.ts` and `computeResidentSpot.ts` read it), and no resident in `packages/genshin-world/src/data/regions/*.json` carries it.
+- [ ] **A resident the game shows only by day is marked absent at night** — no source yet: no generator or data file sets `absentAtNight` (only `Resident.ts` and `computeResidentSpot.ts` read it), and no resident in the region data files carries it.
