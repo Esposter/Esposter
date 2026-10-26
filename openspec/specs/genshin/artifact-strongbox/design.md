@@ -26,9 +26,9 @@ flowchart TD
 
 ## Notes
 
-- Piece odds are not known. The wiki gives none for the piece within the set, so the draw is even among the offer row's pieces, and the offer row is taken as the pool the game uses.
+- Piece odds are not known. The wiki gives none for the piece within the set, so the draw is even among the offer row's pieces (`packages/genshin-world/src/services/crafting/rollStrongboxArtifact.ts`), and the offer row is taken as the pool the game uses.
 - One strongbox per offering. The game's batch of up to 39 artifacts, which makes up to thirteen strongboxes at once, is not built.
-- The gate is the wiki's rank, not a value the dump's tables hold, and the wiki's Mystic Offering page states it (see Sources).
+- The gate is the wiki's rank, not a value the dump's tables hold. It stays provisional until the unlock is found in the game's data.
 - The tab's place after the recipe tabs, and the panel taking the screen over the bench, are not measured against the game. Both wait on a recording.
 - The locked check reads the artifact's saved `isLocked` flag. The lock toggle belongs to the artifact screen, not to this capability.
 
@@ -54,9 +54,13 @@ flowchart TD
 
 ## Sources
 
-- [Mystic Offering](https://genshin-impact.fandom.com/wiki/Mystic_Offering), Genshin Impact Wiki: the offering is a Crafting Bench method open from Adventure Rank 45, and three five-star artifacts give one Artifact Strongbox. Quote: "available at Crafting Benches at Adventure Rank 45 to perform Alchemy".
-- [Artifact Strongbox](https://genshin-impact.fandom.com/wiki/Artifact_Strongbox), Genshin Impact Wiki: a strongbox holds a random artifact of the selected set, and at most 39 artifacts can be sacrificed at once. It gives no odds for the piece (see Open). Quote: "contains a random Artifact from the selected set".
+- [Mystic Offering](https://genshin-impact.fandom.com/wiki/Mystic_Offering), Genshin Impact Wiki: the offering is a Crafting Bench method open from Adventure Rank 45, and three five-star artifacts give one Artifact Strongbox. The Adventure Rank 45 gate is unverified, as its page is not in the cache (see Open).
+- [Artifact Strongbox](https://genshin-impact.fandom.com/wiki/Artifact_Strongbox), Genshin Impact Wiki: a strongbox holds a random artifact of the selected set, and at most 39 artifacts are offered at once. Not yet read: the page is not in the cache, so these claims, the roll included, are unverified (see Open).
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the decompose, display item and offer tables the record is joined from.
 
 ## Open
-- [ ] **a strongbox's piece is drawn evenly among the set's pieces** — no source yet for the odds: the wiki's Artifact Strongbox page, checked, says a strongbox "contains a random Artifact from the selected set" and gives no odds for the piece within it, and no recording shows a roll. The code draws one piece of the set at the strongbox's star rank, evenly among those it lists, in `packages/genshin-world/src/services/crafting/rollStrongboxArtifact.ts` (lines 9 to 20).
+
+- [ ] **the Mystic Offering opens at Adventure Rank 45** — no source yet: the cached Mystic Offering wiki page is not on disk, and the dump's tables do not hold the gate.
+- [ ] **a strongbox holds one random piece of the chosen set** — no source yet: the cached Artifact Strongbox wiki page is not on disk, and no recording shows a roll.
+- [ ] **the game draws a strongbox's piece evenly from the offer row's pieces** — no source yet: the cached Artifact Strongbox wiki page is not on disk, and no recording shows a roll.
+- [ ] **the game offers up to 39 artifacts at once, which makes up to thirteen strongboxes** — no source yet: the cached Artifact Strongbox wiki page is not on disk.
