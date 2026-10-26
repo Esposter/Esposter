@@ -1,6 +1,6 @@
 # Music
 
-The login plays its music, and so does ours. The game's audio is a reference, read locally from the installed game and never shipped `~/Esposter.noindex/genshin-parity/extracted/login/music/`. What ships is ours: the playlist's structure, the notes, each voice's measured instrument, and a synthesizer that plays them, with recordings of real instruments layered over the voices where they bring a piece nearer the game `packages/genshin-engine/src/audio/scheduleMusicRecording.ts` ([sampled instruments](../sampled-instruments/design.md)). The login is the first piece, and every other piece of the game's music goes through the same steps.
+The login plays its music, and so does ours. The game's audio is a reference, read locally from the installed game and never shipped `~/Esposter.noindex/genshin-parity/extracted/login/music/`. What ships is ours: the playlist's structure, the notes, each voice's measured instrument, and a synthesizer that plays them, with recordings of real instruments layered over the voices where they bring a piece nearer the game ([sampled instruments](../sampled-instruments/design.md)). The login is the first piece, and every other piece of the game's music goes through the same steps.
 
 ## How it works
 
@@ -27,13 +27,18 @@ flowchart TD
 
 ## The playlist
 
-- **The structure is exact.** The login's playlist is a continuous sequence that loops forever: a first piece of 104 seconds, a silent segment of about ten seconds, a second piece of 92.75 seconds (its source's last 2.25 seconds trimmed), and the rest again `~/Esposter.noindex/genshin-parity/extracted/login/music/playlist.json`. Every length, trim and the order come from the sound banks (`genshin:assets playlist`), so the handoffs land where the game's do `scripts/src/services/genshinAssets/music/extractComponentPlaylist.ts`. A recording only found which playlist it is.
-- **It plays as loud as the game's mix plays it.** A segment's volume is read from the banks, through its track, every node above it and every bus to the master, with each game parameter at its default (`readGameMixVolumes`) `scripts/src/services/genshinAssets/music/readGameMixVolumes.ts`. The first piece plays 5 decibels under its source and the second 16, so the second sounds about 11 decibels quieter than the first, as it does in a public recording of the login. The live player applies it on each segment's gain. The fits, the expression and every score work at the source's own level, so a render scored against the source leaves it out.
-- **It starts as soon as the browser lets it.** `LoginMusic` renders nothing `packages/genshin-world/src/components/Login/Music/Index.vue`. It starts the player as the login screen mounts and stops it when the screen goes. The browser's autoplay policy decides whether a new audio context runs or starts suspended, so when it starts suspended the music waits for the first pointer press or key press anywhere on the window, usually the title's own click, and starts there from its beginning `packages/genshin-world/src/components/Login/Music/Index.vue`.
+- **The structure is exact.** The login's playlist is a continuous sequence that loops forever: a first piece of 104 seconds, a silent segment of about ten seconds, a second piece of 92.75 seconds (its source's last 2.25 seconds trimmed), and the rest again `~/Esposter.noindex/genshin-parity/extracted/login/music/playlist.json`. Every length, trim and the order come from the sound banks (`genshin:assets playlist`), so the handoffs land where the game's do. A recording only found which playlist it is.
+- **It plays as loud as the game's mix plays it.** A segment's volume is read from the banks, through its track, every node above it and every bus to the master, with each game parameter at its default (`readGameMixVolumes`). The first piece plays 5 decibels under its source and the second 16, so the second sounds about 11 decibels quieter than the first, as it does in a public recording of the login. The live player applies it on each segment's gain. The fits, the expression and every score work at the source's own level, so a render scored against the source leaves it out.
+- **It starts as soon as the browser lets it.** `LoginMusic` renders nothing. It starts the player as the login screen mounts and stops it when the screen goes. The browser's autoplay policy decides whether a new audio context runs or starts suspended, so when it starts suspended the music waits for the first pointer press or key press anywhere on the window, usually the title's own click, and starts there from its beginning.
 
 ## Open
 
 - [ ] **The first piece plays 5 decibels under its source and the second 16, so the second sounds about 11 decibels quieter, as in a public recording of the login** — no source yet: no mix-volume readout and no comparison with a public recording is on disk. The autoplay rule is MDN's, in [Sources](#sources).
+- [ ] **A synthesizer plays the notes, with recordings of real instruments layered over the voices where they bring a piece nearer the game** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Every length, trim and the order come from the sound banks, so the handoffs land where the game's do** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A segment's volume is read from the banks, through its track, every node above it and every bus** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **LoginMusic renders nothing, and starts the player as the login screen mounts, stopping it when the screen goes** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **When the browser starts the audio context suspended, the music waits for the first press and starts from its beginning** — no source yet: game data or a snapshot that holds this behaviour
 
 ## The fit
 
