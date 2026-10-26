@@ -142,3 +142,11 @@ Illuga's hit timings and areas SHALL stay provisional, borrowed from other chara
 - **GIVEN** a recording of Illuga's attacks exists
 - **WHEN** its timings and areas are compared with the kit's
 - **THEN** the timings and areas stay provisional until the comparison settles them
+
+## Open
+
+- [ ] **The skill's Press deals two hits** — no source yet: the cached wiki gives the Press DMG row without a hit count.
+- [ ] **The burst deals two hits** — no source yet: the cached wiki gives one Skill DMG row without a hit count.
+- [ ] **Illuga's own hits spend no stack** — no source yet: the cached wiki's 'nearby active party members' wording does not say whether Illuga counts.
+- [ ] **Constellation 4's 200 DEF holds only while Haunted Night holds** — no source yet: the record gives 200 DEF at talent 1274, and the cached wiki gives that note without its text.
+- [ ] **Constellation 6's 80 Elemental Mastery applies under Ascendant Gleam** — no source yet: the record gives talent 1276's 80 Elemental Mastery, but no line gives its condition.
