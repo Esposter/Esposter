@@ -38,6 +38,6 @@ Nefer's kit is its record and one behaviour module, `createNeferKitBehaviour`, a
 
 ## Open
 
-- [ ] **Nefer's skill deals two hits** — no source yet: the wiki gives one `Skill DMG` row for the skill, and the two-hit count is the record's own.
-- [ ] **Nefer's burst deals four hits** — no source yet: the wiki gives a `1-Hit DMG` and a `2-Hit DMG` row, and the four-hit count is the record's own.
-- [ ] **Nefer's burst takes 96 frames, her charged attack 190, and her normal attacks their listed frames** — no source yet: the wiki gives no frames for her, and her clips are not among this pass's sources.
+- [ ] **Nefer's skill deals two hits** — no source yet: the wiki gives one `Skill DMG` row for the skill, and the two-hit count is the record's own. Checked `~/Esposter.noindex/cache/genshin-wiki/Category_Nefer_Talents.json`: it holds only the Striking Serpent page (the normal attack), with no skill row.
+- [ ] **Nefer's burst deals four hits** — no source yet: the wiki gives a `1-Hit DMG` and a `2-Hit DMG` row, and the four-hit count is the record's own. Checked the same cached file: it has no burst row, so the labels are unread there.
+- [ ] **Nefer's burst takes 96 frames, her charged attack 190, and her normal attacks their listed frames** — no source yet: the wiki gives no frames for her, and her clips are not among this pass's sources. Checked the same cached file: the Striking Serpent page gives no frame count for any attack.
