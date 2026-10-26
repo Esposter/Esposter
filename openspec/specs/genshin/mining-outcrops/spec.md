@@ -57,4 +57,4 @@ Mining outcrops SHALL not be placed, drawn, mined or marked in the world yet.
 
 ## Open
 
-- [ ] **Adventure Rank 30 opens the mining outcrops** — no source yet: the wiki's Mining Outcrop page is not in `~/Esposter.noindex/cache/genshin-wiki/`, and the rank is only the code's constant in `packages/genshin-world/src/services/leyLine/constants.ts`.
+- [ ] **Adventure Rank 30 opens the mining outcrops** — no source yet: the wiki's Mining Outcrop page is not in `~/Esposter.noindex/cache/genshin-wiki/`, and the rank is only the code's constant.
