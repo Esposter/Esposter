@@ -76,6 +76,6 @@ The sky is the scene's background node (`createSkyNode`), drawn behind everythin
 
 - [ ] **The dusk sky is violet** — contradicted by `~/Esposter.noindex/genshin-parity/captures/world-weather-turn.dusk.mkv`: its frame at 2 s reads indigo, not violet.
 - [ ] **The afternoon and night read as a high clear blue and deep blue under a large moon** — no source yet: no afternoon or night frame was read.
-- [ ] **Windrise loads at three in the afternoon, its reference hour** — no source yet: the in-game hour of its reference screenshots was not read here.
+- [ ] **Windrise loads at three in the afternoon, its reference hour** — checked against `~/Esposter.noindex/genshin-parity/references/windrise-statue-day.png`: a daytime frame with no clock or sun in it, and `~/Esposter.noindex/genshin-parity/references/windrise-environment/README.md` reads Windrise's environment around 15:00 but names no screenshot's hour; the claim is not settled by either because neither gives the hour its screenshots were taken.
 - [ ] **The sun rises due east at six and sets due west at eighteen** — no source yet: the Time page is not in the cache, and no frame's sun bearing was read. Checked the Time page, now in the cache: it gives dawn at 06:00 and dusk at 18:00, and names no sun, its rising or its setting.
 - [ ] **The painted sky draws as the game's own sky shader does, ported from its decompiled programs** — no source yet: the decompiled programs are not in the cache, and no in-world sky frame was compared.
