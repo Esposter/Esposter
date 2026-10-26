@@ -14,7 +14,7 @@ Not built, and why each is out of reach of the kit now:
 - Constellations 1, 2, 4 and 6. C1 extends Icefang Rush and needs Gracious Rebuke; C2 adds 40% per Prosecution Edict stack to Darkgold Wolfbite, a damage bonus the strike hook cannot read; C4 and C6 need Rebuke's heal and CRIT and icicle.
 - The charged attack's ascension and constellation boxes.
 
-Its `skill.hits.length`, zero, is `Unsourced`, as Icefang Rush queues no attack and no line gives a count. The five burst areas take gcsim's 8 by 16 box from `burst.go`, priced as a circle to its far corner, a radius of 16.49.
+Its `skill.hits.length`, zero, is `Unsourced`, as Icefang Rush queues no attack and no line gives a count. The five burst areas are a circle 8 metres ahead of the body with a radius of 8.94, set by the overlay. gcsim's 8 by 16 box from `burst.go` spans from the body to 16 metres ahead and is 8 wide, and that circle circumscribes it: its four corners lie on the circle, so the circle covers the whole box and some ground beside and behind it. It approximates the box rather than matching its shape, which the area format cannot hold.
 
 ## Key files
 
@@ -22,6 +22,7 @@ Its `skill.hits.length`, zero, is `Unsourced`, as Icefang Rush queues no attack 
 | :-------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `packages/genshin-world/src/services/kit/characters/wriothesleyKit.ts`            | `createWriothesleyKitBehaviour`, Wriothesley's kit with his strikes, charged attack, plunges, Icefang Rush's enhancement, Prosecution Edict and Darkgold Wolfbite |
 | `packages/genshin-world/src/models/kit/KitStatus.ts`                              | `KitStatus`, which extends `KitSwapEndable` so a status such as Icefang Rush ends when its character leaves the field                                             |
+| `packages/genshin-world/src/data/kits/wriothesley.json`                           | The five Darkgold Wolfbite areas as a circle 8 metres ahead, with a radius of 8.94, approximating gcsim's 8 by 16 box                                             |
 | `scripts/src/services/genshinAssets/kits/gcsim/addGcsimNormalAttackCandidates.ts` | The stance pass that emits Chilling Penalty's normal attacks, with the enhanced boxes and the factor                                                              |
 
 ## Sources
