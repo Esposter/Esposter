@@ -28,10 +28,13 @@ const weapons: InventoryItem[] = Array.from({ length: WEAPON_COUNT }, (_value, i
 }));
 
 export const props = {
+  // The weapons hold no cooking instruction and the cook has learned nothing, so the bag's Use check reads no dish
+  cookingProgress: { learnedRecipeIds: [], proficiencies: {} },
   dishUseMap: new Map(),
   gadgetRows: [],
   gameText: ENGLISH_GAME_TEXT,
   initialCategory: ItemCategory.Weapon,
+  instructionRecipeMap: new Map(),
   inventory: { items: weapons, nextId: WEAPON_COUNT },
   materialDataMap: await readMaterialDataMap(GAME_DATA_LOCAL_BASE_URL),
   names: englishNameText,
