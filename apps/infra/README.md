@@ -6,14 +6,13 @@
 
 ## Table of Contents
 
+- 🚀 [Getting Started](#getting-started)
 - 📖 [Documentation](#documentation)
 - ⚖️ [License](#license)
 
 ---
 
-## <a name="documentation">📖 Documentation</a>
-
-We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs) to level up.
+## <a name="getting-started">🚀 Getting Started</a>
 
 ### Tooling
 
@@ -47,6 +46,10 @@ Select the stack:
 cd apps/infra
 pulumi stack select prod
 ```
+
+## <a name="documentation">📖 Documentation</a>
+
+We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/infra) to level up.
 
 ### Project Layout
 
