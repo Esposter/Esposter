@@ -74,6 +74,6 @@ The features keep the residual off their own ground too: the composed height mul
 ## Open
 
 - [ ] **A few hundred hills carry most of a valley** — no source yet: the hill count per valley is not measured in the cache.
-- [ ] **Inside Mondstadt City the land the city stands on is smoothed, its tiers and walls away** — no source yet: the fit step that smooths the city is not traced in this pass.
-- [ ] **The residual is cleared from every place a region file stands a landmark on** — no source yet: the landmark clearing in the fit is not traced in this pass.
-- [ ] **A coastline's water is drawn as a negative plateau basin** — no source yet: the coastline's water is not traced to the fit.
+- [ ] **Inside Mondstadt City the land the city stands on is smoothed, its tiers and walls away** — no source yet: `scripts/src/services/genshinAssets/fit/readGroundFootprints.ts` (lines 16 to 18) gives each capital's city the ground's height inside it, and whether `fit/smoothTerrainGrid.ts` smooths the city is not read here.
+- [ ] **The residual is cleared from every place a region file stands a landmark on** — no source yet: `scripts/src/services/genshinAssets/fit/readGroundFootprints.ts` (lines 14 to 15) makes a disc on every landmark a region file stands it on, and the residual's clearing from those discs is not traced in this pass.
+- [ ] **A coastline's water is drawn as a negative plateau basin** — no source yet: no file under `scripts/src/services/genshinAssets/fit/` names a coastline (searched), and none draws a negative plateau (searched).
