@@ -29,7 +29,8 @@ Build order. Section 1 lands the row and the container the rest write to, sectio
       Verify: the builder tests pass for the memberships case.
 - [x] 2.9 Add the person's own favorites and accesses (`favorites.json`, `accesses.json`). An access keeps the time it stores, and a favorite stores none. Test first: the builder's output holds the person's favorite and access, and not another person's.
       Verify: the builder tests pass for the favorites and accesses case.
-- [ ] 2.10 Decide the program participant and survey response exports. Their rows hold no user id, so the person's own rows cannot be selected; the design's Not included names the reason. Until a decision stores a user id on those rows, neither file is written.
+- [x] 2.10 Omit the program participant and survey response exports, as a named exclusion by decision. The server stores no user id on those rows, and adding one would link an anonymous survey answer to a person. The user can reverse it with a data change that stores a user id on new rows. Neither `programs.json` nor `surveys.json` is written.
+      Verify: the design's Not included and Decisions name the exclusion and its reason, and the inventory's rows for both stores name it.
 
 ## 3. Request and link
 
