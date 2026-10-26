@@ -80,4 +80,3 @@ Animals SHALL carry no drops and offer no material sources yet, and striking one
 - [ ] **Animals carry no drops or material sources, and striking one has no effect** — no source yet: the code gives drops (`WildlifeKindDropMap.ts`) and strikes animals through `strikeKitEnemies.ts`, so this requirement is stale.
 - [ ] **Mondstadt's slice holds about a hundred animals** — no source yet: the published slice is in hosted storage, not the local dump, so its count was not checked.
 - [ ] **The White Pigeon, the Crimson Fox and the Squirrel are placed where the official map marks them** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **An animal running from a character that has gone keeps its last heading until its escape time runs out** — no source yet: game data or a snapshot that holds this behaviour
