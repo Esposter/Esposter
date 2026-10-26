@@ -1,6 +1,6 @@
 ## Purpose
 
-The heads-up display over the world, holding only the pieces the world backs. The Paimon button and the minimap in the top left with the quest tracker under them, the shortcuts in the top right, the stamina meter following the character, the deployed team's portraits down the right, the member on the field's health at the bottom's middle, its skill and burst buttons at the bottom right, and on a touch screen the touch layout's attack, aim, jump and sprint buttons beside them and the touch controls under them all. It hides on the backslash, as the game's Hide UI does, and under any menu, a talk or photo mode. The corners, the tracker, the portraits and the health at the bottom's middle match the game's frame in `~/Esposter.noindex/genshin-parity/references/hud-stamina-climb.png`.
+The heads-up display over the world, holding only the pieces the world backs. The Paimon button and the minimap in the top left with the quest tracker under them, the shortcuts in the top right, the stamina meter following the character, the deployed team's portraits down the right, the member on the field's health at the bottom's middle, its skill and burst buttons at the bottom right, and on a touch screen the touch layout's attack, aim, jump and sprint buttons beside them and the touch controls under them all. It hides on the backslash, as the game's Hide UI does, and under any menu, a talk or photo mode.
 
 ## Requirements
 
@@ -237,11 +237,11 @@ A mouse press on a heads-up display piece SHALL NOT act in the world, while a cl
 
 - [ ] **The backslash hides and shows the HUD, and every menu hides it** — no source yet: the wiki's Controls page is not in the cache.
 - [ ] **V navigates to the tracked quest, and a beam rises over its objective** — no source yet: the wiki's Controls and Quest pages are not in the wiki cache.
-- [ ] **The stamina meter is divided into sections of 100 Stamina** — no source yet: no on-disk frame of the meter is checked, and `~/Esposter.noindex/genshin-parity/references/hud-stamina-climb.png` shows none.
+- [ ] **The stamina meter is divided into sections of 100 Stamina** — no source yet: the two cut lines in `~/Esposter.noindex/genshin-parity/references/hud-stamina-climb.png` are not checked against a 100-Stamina section.
 - [ ] **The stamina meter pulses red once the pool falls under an eighth of its full amount** — no source yet: no on-disk frame of the meter at a low pool is checked.
 - [ ] **A charged burst's disc takes its element's colour** — no source yet: no on-disk frame of a charged burst button is checked.
 - [ ] **A cooling skill's countdown runs in tenths of a second** — no source yet: no on-disk frame of a cooldown countdown is checked.
-- [ ] **Buttons carry the game's own icons** — no source yet: the wiki's icon renders are not in the cache. Checked the wiki cache: it holds no File pages, so no icon render is in it.
+- [ ] **Buttons carry the game's own icons** — no source yet: the wiki's icon renders, which the cache does not hold (it holds no File pages).
 - [ ] **The Paimon button and the minimap open the Paimon menu and the map** — no source yet: the wiki's Paimon Menu and Map pages are not in the cache.
 - [ ] **A shortcut opens the screen its key opens, as F3, F1, B and C do** — no source yet: the wiki's Controls page is not in the cache, and `~/Esposter.noindex/genshin-key-map` holds none of these bindings.
 - [ ] **Other portraits darken for a one-second cooldown after a switch** — no source yet: the wiki's Party page is not in the cache.
