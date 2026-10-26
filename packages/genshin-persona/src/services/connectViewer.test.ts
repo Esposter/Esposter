@@ -32,16 +32,18 @@ const createSocket = (isRefused: boolean) => {
 };
 
 describe(connectViewer, () => {
+  const registerFrame = JSON.stringify({ msg: ViewerMessage.Register, msgId: 1 });
+
   test("registers as a model event listener and answers with a link", async () => {
     expect.hasAssertions();
 
     const { emit, firstFrameSent, sent, socket } = createSocket(false);
     const connecting = connectViewer("ws://127.0.0.1:10086", () => socket);
     await firstFrameSent;
-    emit("message", { data: JSON.stringify({ msg: ViewerMessage.Register, msgId: 1 }) });
+    emit("message", { data: registerFrame });
 
     await expect(connecting).resolves.toBeDefined();
-    expect(sent).toStrictEqual([JSON.stringify({ msg: ViewerMessage.Register, msgId: 1 })]);
+    expect(sent).toStrictEqual([registerFrame]);
   });
 
   test("a malformed frame is ignored and the listener does not throw", async () => {
@@ -54,7 +56,7 @@ describe(connectViewer, () => {
     expect(() => {
       emit("message", { data: '{"msg":' });
     }).not.toThrow();
-    emit("message", { data: JSON.stringify({ msg: ViewerMessage.Register, msgId: 1 }) });
+    emit("message", { data: registerFrame });
 
     await expect(connecting).resolves.toBeDefined();
   });

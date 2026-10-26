@@ -31,6 +31,16 @@ describe(getSessionStartOutput, () => {
   const habit = "habit";
   // The session-start output never reads the voice or the verbs; production owns what those are
   const personaCard: PersonaCard = { greeting, habits: [habit], signOff, verbs: ["verb"] };
+  const bareCard: Card = {
+    description: "",
+    element: "",
+    greeting: "",
+    headline,
+    name,
+    note: "",
+    personaCard: undefined,
+    rarity,
+  };
 
   test("shows the person the nameplate, the note and the greeting, and hands the model the lore and the habits", () => {
     expect.hasAssertions();
@@ -78,18 +88,7 @@ ${greeting}`,
   test("drops every line the character does not have", () => {
     expect.hasAssertions();
 
-    const card: Card = {
-      description: "",
-      element: "",
-      greeting: "",
-      headline,
-      name,
-      note: "",
-      personaCard: undefined,
-      rarity,
-    };
-
-    expect(getSessionStartOutput(card, [], DEFAULT_LANGUAGE, DEFAULT_LANGUAGE)).toBe(
+    expect(getSessionStartOutput(bareCard, [], DEFAULT_LANGUAGE, DEFAULT_LANGUAGE)).toBe(
       JSON.stringify({
         hookSpecificOutput: {
           additionalContext: `${CONTEXT_HEADLINE_PREFIX}${headline}\n${characterLine}\n${rarityLine}`,
@@ -111,16 +110,7 @@ ${greeting}`,
   ])("carries an instruction naming the reply language %s beside a card in %s", (replyLanguage, interfaceLanguage) => {
     expect.hasAssertions();
 
-    const card: Card = {
-      description: "",
-      element,
-      greeting: "",
-      headline,
-      name,
-      note: "",
-      personaCard: undefined,
-      rarity,
-    };
+    const card: Card = { ...bareCard, element };
     const { hookSpecificOutput } = parseJsonObject(getSessionStartOutput(card, [], replyLanguage, interfaceLanguage));
 
     expect(hookSpecificOutput).toStrictEqual({
@@ -133,22 +123,12 @@ ${greeting}`,
   test("carries the welcome chart's rows as JSON, and none when the lore pick drew no rows", () => {
     expect.hasAssertions();
 
-    const card: Card = {
-      description: "",
-      element: "",
-      greeting: "",
-      headline,
-      name,
-      note: "",
-      personaCard: undefined,
-      rarity,
-    };
     const loreRates: LoreRate[] = [{ displayName: "displayName", name, probability: 0.5 }];
     const { hookSpecificOutput: withRates } = parseJsonObject(
-      getSessionStartOutput(card, [], DEFAULT_LANGUAGE, DEFAULT_LANGUAGE, loreRates),
+      getSessionStartOutput(bareCard, [], DEFAULT_LANGUAGE, DEFAULT_LANGUAGE, loreRates),
     );
     const { hookSpecificOutput: withoutRates } = parseJsonObject(
-      getSessionStartOutput(card, [], DEFAULT_LANGUAGE, DEFAULT_LANGUAGE),
+      getSessionStartOutput(bareCard, [], DEFAULT_LANGUAGE, DEFAULT_LANGUAGE),
     );
 
     expect(withRates).toStrictEqual({
