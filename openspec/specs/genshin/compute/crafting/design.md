@@ -11,5 +11,5 @@ Nothing here.
 ## Open
 
 - [ ] **Crafting: the mask scores of the first three parts, 54.43% to 52.26%, then 51.79% and 51.67%** — no source yet: a recorded parity run of each part's mask, which the snapshot keeps only for the final 39.00%.
-- [ ] **The compare reads the crafting-table plate** — no source yet: the cited file ~/Esposter/genshin-parity/references/crafting-table.png is not on disk
-- [ ] **The plate is the clip's frame at 39.5 seconds** — no source yet: the cited file captures/yt-qQILsaJKlsI-crafting-table.mp4 is not on disk
+- [ ] **The compare reads the crafting-table plate** — no source yet: the crafting-table plate `crafting-table.png` is not in genshin-parity's references.
+- [ ] **The plate is the clip's frame at 39.5 seconds, and the clip has no frame of the spot with the screen closed (37 seconds the camera still moving, 38 seconds the screen up)** — no source yet: the clip `yt-qQILsaJKlsI-crafting-table.mp4` is not in genshin-parity's captures.
