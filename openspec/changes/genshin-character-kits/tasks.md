@@ -23,7 +23,7 @@
 
 ## 6. Size ceiling
 
-- [ ] 6.1 Bring the world's entry back under its size ceiling. Verify: a test named after the scenario 'a world build over its size ceiling is refused', seen failing first, then the build's size check reports the entry under its ceiling. Blocked: the spec names no figure for the ceiling, and the design's 1,350,000 is an aim that gates nothing, while the entry's snapshot is 2,283,884 bytes; which chunk to cut is a design choice the design does not settle, and measuring the cut needs a build.
+- [ ] 6.1 Cut the world's entry to a lower size ceiling. The gate is the entry's measured size as it stands, 2,283,884 bytes, held by the snapshot in `packages/genshin-world/src/index.test.ts`, so a regression fails that test. Verify: the snapshot holds the cut's size once the cut lands. Blocked: a cut to a lower ceiling is a separate open item, not decided here, so this box stays open for it; measuring a cut needs a build.
 
 ## 7. Decisions
 
