@@ -38,6 +38,6 @@ Nefer's kit is its record and one behaviour module, `createNeferKitBehaviour`, a
 
 ## Open
 
-- [ ] **Nefer's skill deals two hits** — no source yet: the Senet Strategy page in `~/Esposter/cache/genshin-wiki/Category_Nefer_Talents.json` gives one `Skill DMG` row in its Advanced Properties and no hit count, so the two-hit count is the record's own. A recording of the skill's hits would settle it.
-- [ ] **Nefer's burst deals four hits** — no source yet: the Sacred Vow page in the same cached file gives a `1-Hit DMG` and a `2-Hit DMG` row and no hit count, so the four-hit count is the record's own. A recording of the burst's hits would settle it.
-- [ ] **Nefer's burst takes 96 frames, her charged attack 190, and her normal attacks their listed frames** — no source yet: the wiki gives no frames for her, and her clips are not among this pass's sources. Checked the same cached file: none of its pages gives a frame count, the Striking Serpent, Senet and Sacred Vow pages included.
+- [ ] **Nefer's skill deals two hits** — no source yet: a recording of the skill's hits, since the Senet Strategy page in `~/Esposter/cache/genshin-wiki/Category_Nefer_Talents.json` gives one `Skill DMG` row in its Advanced Properties and no hit count, so the two-hit count is the record's own.
+- [ ] **Nefer's burst deals four hits** — no source yet: a recording of the burst's hits, since the Sacred Vow page in the same cached file gives a `1-Hit DMG` and a `2-Hit DMG` row and no hit count, so the four-hit count is the record's own.
+- [ ] **Nefer's burst takes 96 frames, her charged attack 190, and her normal attacks their listed frames** — no source yet: a recording of her frames, since the wiki gives none for her, her clips are not among this pass's sources, and no page of `~/Esposter/cache/genshin-wiki/Category_Nefer_Talents.json` gives a frame count, the Striking Serpent, Senet and Sacred Vow pages included.
