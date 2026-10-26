@@ -1,6 +1,6 @@
 # Minimap
 
-In the world, the game keeps a small round map in the top left of its heads-up display (`~/Esposter.noindex/genshin-parity/references/hud-world-keys.png`), so they know where they stand without opening the full [map](../map/design.md). The world's minimap is that map's own drawing, viewed close round the character.
+In the world, the game keeps a small round map in the top left of its heads-up display (`~/Esposter.noindex/genshin-parity/references/hud-world-keys.png`), so they know where they stand without opening the full [map](../map/design.md). The world's minimap is that map's own drawing, viewed close round the character (`packages/genshin-world/src/components/Hud/Minimap/Index.vue`).
 
 ## How it works
 
@@ -15,12 +15,12 @@ flowchart LR
   MINI -->|"pressed"| MAP["The map opens"]
 ```
 
-- **The map's drawing, not a second one.** `Hud/Minimap` draws `Map/Drawing` with the unlocked landmarks the map holds, so a landmark the map gains, or an area a statue fills in, appears on the minimap with no change of its own ([map unlocking](../map-unlocking/design.md)).
-- **North stays up.** The drawing is only moved, so the character's ground point sits at the centre, and never turned: on the English PC client's world HUD and the Chinese client's recording over open sea alike, the N holds the top of the rim while the fan and the arrow turn (`~/Esposter.noindex/genshin-parity/references/hud-world-keys.png`, and `~/Esposter.noindex/genshin-parity/captures/bili-av251752644-stamina.mp4` at 492 seconds). The circle shows `MINIMAP_RADIUS` metres each way.
-- **The tree places every piece.** The back fills `GrpBackMap`'s rect, and the marks stand in `GrpMap`'s, which the game scales by 0.6 about its corner: `MarkSouth`'s `ImgSouth`, which the game names its south and draws as an N, five units under the top of a circle 24 units in from the group's edge; `MarkSightFan`, scaled by 1.25 about its foot at the centre; and `MarkLocalAvatar` at the centre. The stills agree with the tree: the rim's ring stands 107 pixels from the centre at 1080 high, `GrpBackMap`'s half of 180 units at the 1.2 pixels a unit spans there.
-- **The fan is the view, the arrow is the character.** The fan, a quarter turn wide, turns with the camera's yaw, and the cyan arrow at the centre with the way the character faces, so a character walking toward the camera points its arrow down.
-- **Read once a frame, handed on when it moves.** The world screen reads the character's body's ground point in world metres, the camera's yaw and the body's facing once a frame, and hands the HUD a new reading only when one of them moved, so a still player re-renders nothing.
-- **One button.** The minimap is a button named for the map in the game's words (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, key `3866697167` reads "Map", and `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/ManualTextMapConfigData.json`, `UI_STC_MAP_TITLE`); pressing it opens the map, as M does (`OpenMap` on `KeyM`). The drawing inside it is hidden from a screen reader and takes no pointer of its own.
+- **The map's drawing, not a second one.** `Hud/Minimap` draws `Map/Drawing` with the unlocked landmarks the map holds (`packages/genshin-world/src/components/Hud/Minimap/Index.vue`), so a landmark the map gains, or an area a statue fills in, appears on the minimap with no change of its own ([map unlocking](../map-unlocking/design.md)).
+- **North stays up.** The drawing is only moved, so the character's ground point sits at the centre, and never turned (`packages/genshin-world/src/components/Hud/Minimap/Index.vue`): on the English PC client's world HUD and the Chinese client's recording over open sea alike, the N holds the top of the rim while the fan and the arrow turn (`~/Esposter.noindex/genshin-parity/references/hud-world-keys.png`, and `~/Esposter.noindex/genshin-parity/captures/bili-av251752644-stamina.mp4` at 492 seconds). The circle shows `MINIMAP_RADIUS` metres each way (`packages/genshin-world/src/services/map/constants.ts`).
+- **The tree places every piece.** The back fills `GrpBackMap`'s rect (`packages/genshin-world/src/models/hud/HudInterfaceRectName.ts`), and the marks stand in `GrpMap`'s, which the game scales by 0.6 about its corner: `MarkSouth`'s `ImgSouth`, which the game names its south and draws as an N, five units under the top of a circle 24 units in from the group's edge; `MarkSightFan`, scaled by 1.25 about its foot at the centre; and `MarkLocalAvatar` at the centre. The stills agree with the tree: the rim's ring stands 107 pixels from the centre at 1080 high, `GrpBackMap`'s half of 180 units at the 1.2 pixels a unit spans there.
+- **The fan is the view, the arrow is the character.** The fan, a quarter turn wide, turns with the camera's yaw, and the cyan arrow at the centre with the way the character faces, so a character walking toward the camera points its arrow down (`packages/genshin-world/src/components/Hud/Minimap/Index.vue`).
+- **Read once a frame, handed on when it moves.** The world screen reads the character's body's ground point in world metres, the camera's yaw and the body's facing once a frame, and hands the HUD a new reading only when one of them moved, so a still player re-renders nothing (`packages/genshin-world/src/components/World/Session/Index.vue`).
+- **One button.** The minimap is a button named for the map in the game's words (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, key `3866697167` reads "Map", and `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/ManualTextMapConfigData.json`, `UI_STC_MAP_TITLE`); pressing it opens the map, as M does (`packages/genshin-engine/src/input/InputActionBindingMap.ts`, `OpenMap` on `KeyM`). The drawing inside it is hidden from a screen reader and takes no pointer of its own (`packages/genshin-world/src/components/Hud/Minimap/Index.vue`).
 
 ## Key files
 
@@ -34,7 +34,7 @@ flowchart LR
 
 ## Notes
 
-- **What is measured, and what stands in.** Its size and every mark's place are the tree's. Its thin light ring, the drawing's fade over the rim's outer sixth (the mask's 84% to 96%), the fan's white and the arrow's cyan are measured at 1080 high on the references below. The N's serif capital and the arrow's notched head are written from their measures, since the recordings draw them too small to trace, and the metres it shows are not yet read. The terrain is the game's painted art (`~/Esposter.noindex/genshin-parity/extracted/maps/index.tsv`), kept out of the repository, so the drawing stands on the map's own ground, `MAP_GROUND`, as the overlay's does. Each of these is marked provisional in its file.
+- **What is measured, and what stands in.** Its size and every mark's place are the tree's. Its thin light ring, the drawing's fade over the rim's outer sixth (`packages/genshin-world/src/components/Hud/Minimap/Index.vue`, the mask's 84% to 96%), the fan's white and the arrow's cyan are measured at 1080 high on the references below. The N's serif capital and the arrow's notched head are written from their measures (`packages/genshin-world/src/components/Hud/Minimap/Index.vue`), since the recordings draw them too small to trace, and the metres it shows are not yet read. The terrain is the game's painted art (`~/Esposter.noindex/genshin-parity/extracted/maps/index.tsv`), kept out of the repository, so the drawing stands on the map's own ground, `MAP_GROUND`, as the overlay's does (`packages/genshin-world/src/services/map/constants.ts`, `packages/genshin-world/src/components/Map/Overlay/Index.vue`). Each of these is marked provisional in its file.
 
 ## Sources
 
@@ -52,15 +52,4 @@ flowchart LR
 - [ ] **The stills agree with the tree: the ring 107 pixels from the centre at 1080 high, 1.2 pixels a unit** — no source yet: a pixel reading of the 1080-high still, which this pass did not take.
 - [ ] **The fan a quarter turn wide** — no source yet: the game's sight-fan image width from the tree, which this machine does not hold; the `.fan` clip in `Hud/Minimap/Index.vue` cuts a wedge of about 72 degrees, not 90.
 - [ ] **The ring, the fan's white, the arrow's cyan, and the N's and arrow's measures at 1080 high** — no source yet: a pixel reading of the 1080-high references, which this pass did not take.
-- [ ] **The world's minimap is the map's own drawing, viewed close round the character** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The minimap draws the map's drawing with the unlocked landmarks the map holds** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The drawing is only moved, never turned, so north stays up** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The circle shows `MINIMAP_RADIUS` metres each way** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **The back and the marks stand where the game's tree places them** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The fan turns with the camera's yaw, and the arrow with the character's facing** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The world screen hands the HUD a new reading only when one of the three moved** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Pressing the minimap opens the map, as M does** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The drawing inside the minimap is hidden from a screen reader and takes no pointer** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The drawing fades over the rim's outer sixth, its mask 84% to 96%** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The N's serif capital and the arrow's notched head are written from their measures** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The drawing stands on the map's own ground, `MAP_GROUND`, as the overlay's does** — no source yet: game data or a snapshot that holds this behaviour
