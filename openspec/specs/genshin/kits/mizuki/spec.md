@@ -87,12 +87,34 @@ Mizuki's skill press SHALL enter the Dreamdrifter state for five seconds, and a 
 - **WHEN** the player presses her skill
 - **THEN** the Dreamdrifter state ends
 
-### Requirement: Snacks, the windup and constellations not yet built
+### Requirement: Constellation 2's party Elemental Mastery bonus
 
-Mizuki's snack pick-ups, the charged attack's out-of-air windup and Mizuki's Ascension and constellation effects that wait on the Dreamdrifter state's hook or on the snacks SHALL NOT take effect.
+From Constellation 2, while Mizuki is in the Dreamdrifter state, each other party member's Pyro, Hydro, Cryo or Electro strike SHALL gain a DMG Bonus of 0.04% for each point of Mizuki's Elemental Mastery.
+
+#### Scenario: A party member's elemental strike gains the bonus while the state lasts
+
+- **GIVEN** Mizuki has Constellation 2 and is in the Dreamdrifter state
+- **WHEN** another party member lands a Pyro, Hydro, Cryo or Electro strike
+- **THEN** that strike gains the DMG Bonus from Mizuki's Elemental Mastery
+
+#### Scenario: Outside the state nothing is added
+
+- **GIVEN** Mizuki has Constellation 2 and is out of the Dreamdrifter state
+- **WHEN** another party member lands an elemental strike
+- **THEN** no DMG Bonus is added
+
+#### Scenario: Below Constellation 2 nothing is added
+
+- **GIVEN** Mizuki has Constellation 1 and is in the Dreamdrifter state
+- **WHEN** another party member lands a Pyro strike
+- **THEN** no DMG Bonus is added
+
+### Requirement: Snacks, the windup and Constellations 1, 4 and 6 not yet built
+
+Mizuki's snack pick-ups, the charged attack's out-of-air windup and Mizuki's Ascension effects and Constellations 1, 4 and 6 that wait on the Dreamdrifter state's hook or on the snacks SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
-- **GIVEN** Mizuki has a snack or constellation effect unlocked
+- **GIVEN** Mizuki has a snack, Ascension or unbuilt constellation effect unlocked
 - **WHEN** the player fights with Mizuki
 - **THEN** those effects have no effect

@@ -1,16 +1,21 @@
+import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitContext } from "#src/models/kit/KitContext";
+import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { AttackTag } from "#src/models/combat/AttackTag";
+import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { KitPlunge } from "#src/models/kit/record/KitPlunge";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
+import { elementalMasteryMultiplier } from "#src/services/kit/elementalMasteryMultiplier";
+import { getKitHitElement } from "#src/services/kit/getKitHitElement";
 
 export const MIZUKI_CHARACTER_ID = 10_000_109;
 
@@ -20,11 +25,34 @@ export const DREAMDRIFTER_STATUS_ID = "dreamdrifter-state";
 const DREAMDRIFTER_SECONDS = 5;
 // The summon her press casts for its clouds, the name it is found by among the team's effects
 const DREAMDRIFTER_CLOUDS_ID = "dreamdrifter-clouds";
+// Constellation 2's DMG Bonus, for each point of her Elemental Mastery, on a party member's Pyro, Hydro, Cryo or Electro strike
+// while she is in the state, as gcsim (MIT) mizuki/cons.go's c2EMMultiplier gives it
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/mizuki
+const CONSTELLATION_2 = 2;
+const CONSTELLATION_2_DAMAGE_BONUS_PER_ELEMENTAL_MASTERY = 0.0004;
+const CONSTELLATION_2_ELEMENTS: readonly Element[] = [Element.Pyro, Element.Hydro, Element.Cryo, Element.Electro];
 
 // While the state lasts she starts no attack, plunge or charged attack, as gcsim's ActionReady allows only her swap,
 // Dash and burst. Each of her attacks and plunges, and the collision her plunge strikes, carries the check as its own gate
 const checkCanStartAttack = ({ activeCombatant, kitEffectState }: KitContext): boolean =>
   !checkIsKitStatusActive(kitEffectState.effects, activeCombatant.characterId, DREAMDRIFTER_STATUS_ID);
+
+// The DMG Bonus a party member's strike gets from Constellation 2 while Mizuki is in the state, read as the strike is priced,
+// Where gcsim refreshes it every half second; the kit reads her live Elemental Mastery instead
+const getConstellation2DamageBonus = (
+  member: Combatant,
+  striker: Combatant,
+  hit: KitHit,
+  effects: readonly KitEffect[],
+): number => {
+  const element = getKitHitElement(hit, striker);
+  const isElementalDamage = element !== undefined && CONSTELLATION_2_ELEMENTS.includes(element);
+  return member.constellationCount >= CONSTELLATION_2 &&
+    isElementalDamage &&
+    checkIsKitStatusActive(effects, member.characterId, DREAMDRIFTER_STATUS_ID)
+    ? elementalMasteryMultiplier(member, CONSTELLATION_2_DAMAGE_BONUS_PER_ELEMENTAL_MASTERY)
+    : 0;
+};
 
 // Mizuki's behaviour: her skill's press enters the Dreamdrifter state for five seconds, and a press in it cancels the state,
 // As gcsim's Skill does. While the state lasts its clouds launch at 18 frames and every 45 frames after, as gcsim's cloudTask
@@ -37,7 +65,6 @@ const checkCanStartAttack = ({ activeCombatant, kitEffectState }: KitContext): b
 // Holds at the default
 // https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/mizuki
 // Constellation 1 needs the Dreamdrifter state and its Twenty-Three Nights' Awaiting effect, which are not built
-// Constellation 2 needs the Dreamdrifter state's Elemental Mastery bonus for the party, which is not built
 // Constellation 4 needs the Yumemi Style Special Snacks from her burst, which the kit does not build
 // Constellation 6 needs the Dreamdrifter state and a CRIT hook on the Swirl, which the kit does not build
 export const createMizukiKitBehaviour = ({ kit, readHit, readSeconds }: KitRecordReader): KitBehaviour => {
@@ -70,6 +97,9 @@ export const createMizukiKitBehaviour = ({ kit, readHit, readSeconds }: KitRecor
 
   return {
     chargedAttack: { canStart: checkCanStartAttack },
+    getPartyStrikeBonus: (member, { combatant, hit }, _enemy, _party, effects) => ({
+      damageBonus: getConstellation2DamageBonus(member, combatant, hit, effects),
+    }),
     normalAttacks: kit.normalAttacks.map(() => ({ canStart: checkCanStartAttack })),
     onKitEvent: (event, { kitEffectState }, { characterId }) => {
       if (

@@ -9,12 +9,13 @@ Mizuki's kit is its record and one behaviour module, `createMizukiKitBehaviour`,
 - **Her skill's activation hit is a circle of 5.5 metres round the body at 2 frames, with 30 poise, in an animation of 50 frames.** It is Anemo at one unit of gauge.
 - **Her burst's hit is a circle of 8 metres centred on the primary target at 93 frames, with 100 poise, in an animation of 94 frames.** It is Anemo at two units of gauge, as gcsim's 50 durability gives it.
 - **Her skill's press enters the Dreamdrifter state for five seconds, and a press in it cancels the state.** gcsim gives the state its five-second duration (`skill.go`'s `dreamDrifterBaseDuration`) and cancels it on a second press (`Skill`). The state is the kit's status, so it ends on its timer or the press.
+- **Constellation 2's party bonus is a DMG Bonus on each other member's Pyro, Hydro, Cryo or Electro strike, 0.04% for each point of her Elemental Mastery, while the state lasts.** gcsim (MIT) gives it in `cons.go`, refreshed every half second; the kit reads her Elemental Mastery as each strike is priced, and the strike's element as its striker's, through `getKitHitElement`.
 - **Her plunges are provisional.** Mizuki has no plunge in gcsim, so her collision, low and high plunge take Bennett's timings and reaches, with the wiki's poise: 5 for the collision, 100 high and 50 low. The [roadmap](../../../../changes/genshin-roadmap/tasks.md) asks whether a recording of her plunges agrees.
 
 ## Not built
 
 - **The snack pick-ups wait on the kit leaving them.** Her burst leaves a snack every 90 frames for 12 seconds, each a gadget that explodes on its own or when a member collects it, healing that member by a share of Elemental Mastery and flat HP. A snack is a `KitPickUp`, its explosion on running out an answer to its `EffectExpired` and its pickup's heal or Munen Shockwave its `onPickedUp`, so the heal, the shockwave and Constellation 4, which reads the snacks, wait only on her kit. The larger reach gcsim gives her pickups in the Dreamdrifter state (`mizuki/snack.go:76`) is not a radius a pick-up holds, so it waits on the state as well.
-- **Ascension 1 (Swirl extends the Dreamdrifter), Ascension 4 (the party's hits while she drifts) and Constellations 1, 2 and 6 wait on the Dreamdrifter state hook.** Each reads the state or the Swirl it gives, and Constellation 4 waits on her kit leaving the snacks as well.
+- **Ascension 1 (Swirl extends the Dreamdrifter), Ascension 4 (the party's hits while she drifts) and Constellations 1 and 6 wait on the Dreamdrifter state hook.** Each reads the state or the Swirl it gives, and Constellation 4 waits on her kit leaving the snacks as well.
 - **The charged attack's windup waits on a hook that times an action by the state it starts from**, the 14 frames gcsim gives it when it is cast out of the air, as above.
 
 ## Key files
