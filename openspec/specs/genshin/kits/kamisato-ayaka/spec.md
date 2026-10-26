@@ -67,12 +67,12 @@ Kamisato Art: Senho SHALL infuse Ayaka's attacks with Cryo for five seconds afte
 
 ### Requirement: First constellation cuts Hyouka's cooldown on her attacks
 
-From her first constellation, each of her normal or charged attacks' hits on an enemy SHALL have a 50% chance to cut Kamisato Art: Hyouka's running cooldown by 0.3 seconds, and the chance SHALL be rolled at most once every 0.1 seconds.
+From her first constellation, each of her normal or charged attacks' hits on an enemy that deal Cryo DMG SHALL have a 50% chance to cut Kamisato Art: Hyouka's running cooldown by 0.3 seconds, and the chance SHALL be rolled at most once every 0.1 seconds.
 
 #### Scenario: A hit cuts Hyouka's cooldown on the roll
 
 - **GIVEN** Ayaka is at constellation 1 and her Hyouka cooldown has 5 seconds left
-- **WHEN** a normal attack's hit strikes an enemy and the roll passes
+- **WHEN** a normal attack's Cryo hit strikes an enemy and the roll passes
 - **THEN** Hyouka's cooldown has 4.7 seconds left
 
 #### Scenario: Below the first constellation a hit cuts nothing
@@ -94,5 +94,4 @@ From her second constellation, Soumetsu's storm SHALL also raise two smaller sto
 
 ## Open
 
-- [ ] **The charged attack strikes only enemies within 5 metres** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/ayaka/charge.go`: its strikes reach 4 metres from the locked enemy, so past 5 is possible.
-- [ ] **A normal attack's hit cuts Hyouka's cooldown** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/ayaka/cons.go`: returns unless the hit deals Cryo; Ayaka's normal attacks are Physical.
+- [ ] **The charged attack strikes only enemies within 5 metres** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/ayaka/charge.go`: its strikes reach 4 metres from each anchor enemy, itself within 5 metres of her.
