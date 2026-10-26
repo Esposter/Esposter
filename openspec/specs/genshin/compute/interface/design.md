@@ -12,6 +12,6 @@ Nothing here.
 
 - [ ] **Forge: the Materials tab's earlier mean of 6.75% and FLIP of 0.2223, before the placement** — no source yet: the recorded parity run of that layout, which the snapshot no longer keeps.
 - [ ] **Forge: the game's name letters running about a third wider at the same height** — no source yet: a measured width of the game's letters at the reference's height, which no record holds.
-- [ ] **ForgeScreen places the tabs, recipe list, Materials box and Start on the frame's measures** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The recipe rows' name and time sit at the frame's measures** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The blurred scene is the backdrop, filled with the game's own pieces from round them** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **ForgeScreen places the tabs, recipe list, Materials box and Start on the frame's measures** — no source yet: `packages/genshin-world/src/components/Forge/Screen/Index.vue` holds the layout, not yet checked against the frame's measures.
+- [ ] **The recipe rows' name and time sit at the frame's measures** — no source yet: `packages/genshin-world/src/components/Forge/Screen/Index.vue` holds the rows, not yet checked against the frame's measures.
+- [ ] **The blurred scene is the backdrop, filled with the game's own pieces from round them** — no source yet: the game's pieces round the blurred scene, not yet compared with the backdrop.
