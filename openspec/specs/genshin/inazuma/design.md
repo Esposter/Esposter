@@ -41,5 +41,5 @@ When the [parity](../parity/README.md) inventory draws Inazuma City's witness, t
 
 ## Open
 
-- [ ] **The Tenshukaku's tiers are among the meshes named `Area_Dq_Build_`** — no source yet: the cached wiki's Narukami Island: Tenshukaku page, which the genshin-wiki cache does not hold, and a mesh name in the witness export that is the Tenshukaku (none is there).
+- [ ] **The Tenshukaku's tiers are among the meshes named `Area_Dq_Build_`** — no source yet: no mesh name in the witness export is the Tenshukaku, and the cached wiki holds no Tenshukaku page.
 - [ ] **Each area takes the game's own polygon as its outline** — no source yet: the catalogue's Inazuma outlines are not matched here to the game's dumped area polygons.
