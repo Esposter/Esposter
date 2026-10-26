@@ -77,6 +77,6 @@ flowchart TD
 ## Open
 
 - [ ] **The daily reset itself is at 04:00 on the Asia server's clock** — no source yet: the dump's `BlossomRefreshExcelConfigData.json` holds 04:00:00 for a refresh, not the reset, and the wiki's Reset page is not in the local wiki cache.
-- [ ] **The weekly reset is Monday at 04:00** — no source yet: no weekly-reset row was found in the dump, and the wiki's Daily Reset page is not cached.
+- [ ] **The weekly reset is Monday at 04:00** — no source yet: the dump's `~/Esposter/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json` row 800001 (REFRESH_WEEKlY, time `14400;360000`) is not read into a weekday, and the wiki's Daily Reset page is not cached.
 - [ ] **The monthly reset is the game's own 04:00 on the server's clock** — no source yet: its row in the dump and the wiki's Paimon's Bargains page are unread.
 - [ ] **The world keeps 04:00 where the wiki gives the mining respawn at 06:00** — no source yet: the dump's `BlossomRefreshExcelConfigData.json` holds a 06:00:00 refresh (`BLOSSOM_REFRESH_CRYSTAL`), and whether it is the mining respawn was not checked; the wiki's Mining Outcrop page is not cached.
