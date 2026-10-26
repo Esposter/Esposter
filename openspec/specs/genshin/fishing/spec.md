@@ -128,9 +128,4 @@ A fishing pool SHALL NOT be built with a stock the game's table does not hold.
 
 ## Open
 
-- [ ] **The fishing points stand where the official map marks them** — no source yet: no comparison of the fitted points against the official map is saved in the parity folders.
-- [ ] **A pool draws its day or night stock by six to eighteen on the game's clock, eight hours ahead of UTC** — no source yet: the pool table holds no time window and the Fishing wiki page is not in `~/Esposter.noindex/cache/genshin-wiki/`.
-- [ ] **An emptied stock is back in full after seventy-two hours** — no source yet: no decoded fishing table holds a refill time.
-- [ ] **A draw picks a fish by its share of the stock's weight** — no source yet: the stock table holds the weights, not the draw rule.
-- [ ] **A fish flees or turns to a lure by its ranges** — no source yet: the reaction rule is not in the decoded tables, and no recording of it is checked.
-- [ ] **The reel's tension holds in its zone until the fish is caught or the line breaks** — no source yet: `~/Esposter.noindex/genshin-parity/captures/fishing-reel.mkv` is not yet read against the rule.
+The claims this spec leaves open, and the sources each waits on, are listed in the [design](design.md)'s Open section.
