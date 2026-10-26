@@ -19,4 +19,35 @@ describe(findSharedLabelRows, () => {
       ]),
     );
   });
+
+  test("gives the first five of eighteen arrows no label finds the row titled `5 Main Arrows`, the rest `13 Sub Arrows`", () => {
+    expect.hasAssertions();
+
+    const mainRow: WikiAdvancedProperty = { poise: 7.22, row: 1, title: "5 Main Arrows" };
+    const subRow: WikiAdvancedProperty = { poise: 7.22, row: 2, title: "13 Sub Arrows" };
+    const hitPaths = Array.from({ length: 18 }, (_hit, index) => `hits.fieryRainArrows.${index}`);
+
+    expect(findSharedLabelRows("Fiery Rain DMG Per Wave", [mainRow, subRow], hitPaths)).toStrictEqual(
+      new Map(
+        hitPaths.map((hitPath, index): [string, WikiAdvancedProperty[]] => [hitPath, [index < 5 ? mainRow : subRow]]),
+      ),
+    );
+  });
+
+  test("gives no row to hits no label finds where the counts of the rows titled with counts miss the hits", () => {
+    expect.hasAssertions();
+
+    const hitPaths = ["hits.fieryRainArrows.0", "hits.fieryRainArrows.1", "hits.fieryRainArrows.2"];
+
+    expect(
+      findSharedLabelRows(
+        "Fiery Rain DMG Per Wave",
+        [
+          { poise: 7.22, row: 1, title: "5 Main Arrows" },
+          { poise: 7.22, row: 2, title: "13 Sub Arrows" },
+        ],
+        hitPaths,
+      ),
+    ).toStrictEqual(new Map(hitPaths.map((hitPath): [string, WikiAdvancedProperty[]] => [hitPath, []])));
+  });
 });

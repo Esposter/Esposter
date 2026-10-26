@@ -54,4 +54,32 @@ describe(findHitPathRowsMap, () => {
       ]),
     );
   });
+
+  test("gives each top-level list's hits sharing a label the rows numbered by their places, as each list is its action", () => {
+    expect.hasAssertions();
+
+    const properties: WikiAdvancedProperty[] = [
+      { poise: 26.96, row: 1, title: "4-Hit DMG 1" },
+      { poise: 10, row: 2, title: "4-Hit DMG 2" },
+    ];
+
+    expect(
+      findHitPathRowsMap(
+        [
+          ["hits.fieryRainArrows.0", "4-Hit DMG"],
+          ["hits.fieryRainArrows.1", "4-Hit DMG"],
+          ["hits.everyArrowFindsItsTargetFieryRainArrows.0", "4-Hit DMG"],
+          ["hits.everyArrowFindsItsTargetFieryRainArrows.1", "4-Hit DMG"],
+        ],
+        properties,
+      ),
+    ).toStrictEqual(
+      new Map([
+        ["hits.fieryRainArrows.0", [properties[0]]],
+        ["hits.fieryRainArrows.1", [properties[1]]],
+        ["hits.everyArrowFindsItsTargetFieryRainArrows.0", [properties[0]]],
+        ["hits.everyArrowFindsItsTargetFieryRainArrows.1", [properties[1]]],
+      ]),
+    );
+  });
 });
