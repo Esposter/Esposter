@@ -19,7 +19,7 @@ flowchart TD
 
 ## The fit
 
-Mondstadt is the first region fitted, and the regions the waypoints command writes are the ones `WAYPOINT_REGIONS` names (`scripts/src/services/genshinAssets/shared/constants.ts`, line 417, which holds `mondstadt` alone.
+Mondstadt is the first region fitted, and the regions the waypoints command writes are the ones `WAYPOINT_REGIONS` names (`scripts/src/services/genshinAssets/shared/constants.ts`, line 417, which holds `mondstadt` alone).
 
 - **Only ground waypoints pair.** A waypoint is a point the official map labels as a Teleport Waypoint on the ground layer, within the region's own map area. Waypoints on a floor under the ground are never listed (`scripts/src/services/genshinAssets/fit/toWaypointLandmarks.ts`, lines 17 to 20). Each one is matched to a transport point of the scene under the fitted similarity, within the fit's bar (`INTERACTIVE_MAP_FIT_BAR`, 20 in `scripts/src/services/genshinAssets/points/constants.ts`, line 28, used at `scripts/src/services/genshinAssets/fit/toWaypointLandmarks.ts`, line 47), and a transport point no waypoint pairs with gives none.
 - **Each waypoint carries its arrival.** `toLandmarkArrival` carries the transport point's place and turn round the world's origin into the region's axes, as every other place is, and takes its height over the world's ground at that place (`scripts/src/services/genshinAssets/shared/toLandmarkArrival.ts`). The waypoint's own position, rotation and height offset are that arrival's values, so the place it stands at and the place a jump lands are the same.
@@ -75,5 +75,5 @@ Mondstadt is the first region fitted, and the regions the waypoints command writ
 ## Open
 
 - **Mondstadt's region data holds 43 waypoints, with ids such as `mondstadt-waypoint-1865`** — `packages/genshin-world/src/data/regions/mondstadt.json`.
-- [ ] **The game's side of the statues' arrival** — no source yet: the scene point file `~/Esposter/genshin-parity/text/BinOutput/Scene/Point/scene3_point.json`, not yet read for the statues' arrival points.
+- **The game's side of the Windrise statue's arrival is point 4's transport place and turn** — `~/Esposter/genshin-parity/text/BinOutput/Scene/Point/scene3_point.json`, point 4: `tranPos` (x 1934.3658, y 196.139, z -1266.3422) and `tranRot` (y 90), where point 4's `gadgetId` 70110001 is the gadget `SceneObj_Resident_Goddess` of type `TransPointFirst` in `~/Esposter/genshin-parity/text/ExcelBinOutput/GadgetExcelConfigData.json`.
 - **Mondstadt has 11 of its 43 waypoints in points 1865 to 2051** — `packages/genshin-world/src/data/regions/mondstadt.json`.
