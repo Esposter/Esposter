@@ -168,13 +168,13 @@ Under the water's surface the water's haze SHALL replace the weather's colour, a
 
 ## Open
 
-- [ ] **A change begun mid-blend starts from where the first reached** — no source yet: the mid-blend start in `packages/genshin-engine/src/atmosphere/blendWeatherState.ts` was not read.
+- [ ] **A change begun mid-blend starts from where the first reached** — no source yet: the mid-blend start was not read.
 - [ ] **The weather the world loads with is set at once** — no source yet: no load path was read.
-- [ ] **Rain splashes where it meets the ground, and snow and sand splash nothing** — no source yet: the splash rule in `packages/genshin-engine/src/nodes/createSplashMaterial.ts` was not read.
+- [ ] **Rain splashes where it meets the ground, and snow and sand splash nothing** — no source yet: the splash rule was not read.
 - [ ] **A strike's second pulse is dimmer than the first** — no source yet: the intensities in `LIGHTNING_FLASH_PULSES` were not read.
-- [ ] **A bolt stands between one and six hundred metres from the eye** — the code's `LIGHTNING_MIN_DISTANCE` is 150 m, not one (`packages/genshin-engine/src/atmosphere/constants.ts`), so the minimum is out of date.
-- [ ] **Snow and fog keep the ground dry** — no source yet: the snow and fog wetness values were not read in `packages/genshin-engine/src/atmosphere/constants.ts`.
-- [ ] **Under the water the water's haze replaces the weather's colour** — no source yet: `packages/genshin-engine/src/water/updateUnderwaterFog.ts` was not read.
+- [ ] **A bolt stands between one and six hundred metres from the eye** — no source yet: the code's `LIGHTNING_MIN_DISTANCE` is 150 m, not one, so the minimum is out of date.
+- [ ] **Snow and fog keep the ground dry** — no source yet: the snow and fog wetness values were not read.
+- [ ] **Under the water the water's haze replaces the weather's colour** — no source yet: the underwater fog update was not read.
 - [ ] **A weather change blends over nine seconds, eased in and out** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **A weather change blends over nine seconds, eased in and out, from where the sky had reached** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **A sandstorm tints the haze toward the colour of sand** — no source yet: game data or a snapshot that holds this behaviour
