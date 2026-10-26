@@ -6,7 +6,7 @@ The login towers, bridges and pillars, as built: each tower a lathe of its wall'
 
 ### Requirement: Tower form from its wall
 
-Each tower SHALL be a lathe of its wall's profile, so that its mouldings and cornices turn as the game's do, and it SHALL stand on its walls rather than on the tips of its columns and cornices.
+Each tower SHALL be a lathe of its wall's profile, so that its mouldings and cornices turn as the game's do, and it SHALL reach the tips of its columns and cornices, each band's radius being its outermost vertex.
 
 #### Scenario: Tower is shown
 
