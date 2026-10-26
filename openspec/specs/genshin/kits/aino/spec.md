@@ -58,7 +58,7 @@ Musecatcher SHALL strike in two stages, the second centred on Aino's body rather
 
 ### Requirement: Cool Your Jets Ducky drops ten Water Balls over its burst
 
-Cool Your Jets Ducky SHALL drop one Water Ball every 90 frames from 123 frames for 14.2 seconds, and each ball SHALL land ten frames after it falls on a random enemy within eleven metres of Aino's body. Its count and window are open (see design.md, Not built).
+Cool Your Jets Ducky SHALL drop one Water Ball every 90 frames from 123 frames for 14.2 seconds, and each ball SHALL land ten frames after it falls on a random enemy within eleven metres of Aino's body. Its count, window and reach are open (see design.md, Not built and Open).
 
 #### Scenario: The burst drops balls on a fixed beat
 
@@ -218,5 +218,4 @@ From Constellation 6, for fifteen seconds after Aino's burst, each Electro-Charg
 
 ## Open
 
-- [ ] **Each Water Ball lands within eleven metres of Aino's body** — no source yet: no line gives the sum of the field's radius of 10 and the ball's hitbox of 1.
 - [ ] **Ascension 1's reach of fourteen metres** — no source yet: no line gives the sum of the 10-metre search and the 4-metre landing radius.
