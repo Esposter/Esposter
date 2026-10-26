@@ -68,3 +68,10 @@ A character SHALL hold its namecard once its total reaches level 10.
 - **GIVEN** a character's total is below level 10
 - **WHEN** its profile is shown
 - **THEN** its namecard is not held
+
+## Open
+
+- [ ] **A total below the first level's total is level 1** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A Companionship EXP claim grants its full amount to every deployed character except the Traveler** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A character's total Companionship EXP stops at the top level's total** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A character holds its namecard once its total reaches level 10** — no source yet: game data or a snapshot that holds this behaviour
