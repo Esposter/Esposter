@@ -1,12 +1,12 @@
 ## Purpose
 
-The plants no record places, the small flowers among a region's grass, scattered over each finest terrain tile by seeded dart throwing in the terrain's worker. Each candidate point is kept only where the ground is grass above the water and no kept plant stands closer than the spacing, so the same tile always grows the same flowers, drawn as one instanced draw a tile that shows and goes with it.
+The plants no record places, the small flowers among a region's grass, scattered over each finest terrain tile by seeded dart throwing in the terrain's worker. Each candidate point is kept only where the ground is grass above the water and no kept plant stands closer than the spacing, so the same tile always grows the same flowers, drawn as one instanced draw a tile that shows and goes with it (`packages/genshin-engine/src/vegetation/computeScatterPoints.ts`, `packages/genshin-world/src/workers/terrainTile.worker.ts`, `packages/genshin-world/src/components/World/Terrain/Index.vue`).
 
 ## Requirements
 
 ### Requirement: A tile always grows the same flowers
 
-Each finest terrain tile SHALL grow the same flowers in the same places every time it is generated.
+Each finest terrain tile SHALL grow the same flowers in the same places every time it is generated (`packages/genshin-engine/src/vegetation/computeScatterPoints.ts`, `packages/genshin-world/src/services/windrise/computeWindrisePlants.ts`).
 
 #### Scenario: A regenerated tile repeats its flowers
 
@@ -16,7 +16,7 @@ Each finest terrain tile SHALL grow the same flowers in the same places every ti
 
 ### Requirement: Flowers grow only on grass above the water and keep their spacing
 
-Flowers SHALL grow only on grass above the water, and no two flowers SHALL stand closer together than the spacing.
+Flowers SHALL grow only on grass above the water, and no two flowers SHALL stand closer together than the spacing (`packages/genshin-world/src/services/windrise/computeWindrisePlants.ts`, `packages/genshin-engine/src/vegetation/computeScatterPoints.ts`).
 
 #### Scenario: A candidate on bare ground or water grows no flower
 
@@ -32,7 +32,7 @@ Flowers SHALL grow only on grass above the water, and no two flowers SHALL stand
 
 ### Requirement: Only the finest tiles grow flowers
 
-Only the finest terrain tiles SHALL grow flowers, since a coarser tile is drawn too far away for a flower to show.
+Only the finest terrain tiles SHALL grow flowers, since a coarser tile is drawn too far away for a flower to show (`packages/genshin-world/src/workers/terrainTile.worker.ts`).
 
 #### Scenario: A coarser tile grows no flowers
 
@@ -42,7 +42,7 @@ Only the finest terrain tiles SHALL grow flowers, since a coarser tile is drawn 
 
 ### Requirement: A tile's flowers show, hide and go with their tile
 
-A tile's flowers SHALL show, hide and be removed together with the tile they grow on.
+A tile's flowers SHALL show, hide and be removed together with the tile they grow on (`packages/genshin-world/src/components/World/Terrain/Index.vue`).
 
 #### Scenario: Hiding a tile hides its flowers
 
@@ -58,7 +58,7 @@ A tile's flowers SHALL show, hide and be removed together with the tile they gro
 
 ### Requirement: Flowers bend with the wind more the taller they stand
 
-Flowers SHALL sway with the wind, and the taller a flower stands the further it bends.
+Flowers SHALL sway with the wind, and the taller a flower stands the further it bends (`packages/genshin-engine/src/vegetation/createFlowerMaterial.ts`).
 
 #### Scenario: A taller flower bends further in the wind
 
@@ -75,3 +75,7 @@ The flowers' spacing, sizes and colours SHALL be treated as provisional until th
 - **GIVEN** a reference screenshot shows the region's flowers
 - **WHEN** the flowers are compared with it
 - **THEN** their density, size spread and colour spread are matched by statistics rather than by individual flowers
+
+## Open
+
+- [ ] **The plants no record places are the small flowers among a region's grass** — no source yet: the placements read off the streams (`scripts/src/services/genshinAssets/fit/readWindrisePlantPlacements.ts`) are not checked for flowers, and no capture is named for them.
