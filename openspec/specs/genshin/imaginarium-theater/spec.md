@@ -1,6 +1,6 @@
 ## Purpose
 
-The Imaginarium Theater's rules as built, read from the game's role combat tables into genshin-world. The season the Theater plays is the latest begun, each season names its difficulties and each difficulty its level floor, a Principal Cast performs a stage only with four members holding Vigor, Blessing Level and its stats, the opening character's bonus and Stella rewards. The cast's elements and guests, the acts, the events, the rewind and the screen are not built yet.
+The Imaginarium Theater's rules as built, read from the game's role combat tables (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/RoleCombatScheduleExcelConfigData.json`, `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/RoleCombatDifficultyExcelConfigData.json`) into genshin-world. The season the Theater plays is the latest begun, each season names its difficulties and each difficulty its level floor, a Principal Cast performs a stage only with four members holding Vigor, Blessing Level and its stats, the opening character's bonus and Stella rewards. The cast's elements and guests, the acts, the events, the rewind and the screen are not built yet.
 
 ## Requirements
 
@@ -28,7 +28,7 @@ The Imaginarium Theater SHALL play the latest season that began before the curre
 
 ### Requirement: Each season's difficulties are ordered by level and carry a level floor
 
-A season SHALL play the difficulties its schedule names, ordered from the lowest level, and each difficulty SHALL carry a level floor of sixty for levels one and two and seventy for levels three to five.
+A season SHALL play the difficulties its schedule names, ordered from the lowest level, and each difficulty SHALL carry a level floor of sixty for levels one and two and seventy for levels three to five (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/RoleCombatDifficultyExcelConfigData.json`, field `OHDBPBMODLP`).
 
 #### Scenario: Difficulties are ordered from the lowest level
 
@@ -134,3 +134,11 @@ Every three Stellas earned in a run SHALL give one reward.
 - **GIVEN** a run has earned six Stellas
 - **WHEN** its rewards are counted
 - **THEN** two rewards are given
+
+## Open
+
+- [ ] **a Principal Cast performs a stage with four members, each holding two Vigor** — no source yet: the wiki's Imaginarium Theater page, which could not be read when this was built.
+- [ ] **Blessing Level rises two per extra Alternate Cast member and one per Brilliant Blessing level** — no source yet: the wiki's Imaginarium Theater page, which could not be read when this was built.
+- [ ] **an owned opening character gains a fifth of its Max HP, ATK and DEF** — no source yet: the wiki's Imaginarium Theater page, which could not be read when this was built.
+- [ ] **every three Stellas in a run give one reward** — no source yet: the wiki's Imaginarium Theater page, which could not be read when this was built.
+- [ ] **the Theater's season is read in UTC+8** — no source yet: the game's own server time zone, which the dump does not state.
