@@ -15,10 +15,11 @@ export const buildOculusPlaces = (): Promise<GameDataBuild> =>
     new Map(Object.values(OculusKind).map((kind) => [OculusKindLabelIdMap[kind], kind])),
     "oculus",
     "Oculi",
-    (regionPlaces) => regionPlaces,
-    (places) =>
-      Object.entries(InteractiveMapRegionMap).flatMap(([region, { oculus }]) => {
-        const note = reportKindCount(region, "Oculi", places[region]?.length ?? 0, oculus.count);
-        return note ? [note] : [];
-      }),
+    {
+      reportPlaces: (places) =>
+        Object.entries(InteractiveMapRegionMap).flatMap(([region, { oculus }]) => {
+          const note = reportKindCount(region, "Oculi", places[region]?.length ?? 0, oculus.count);
+          return note ? [note] : [];
+        }),
+    },
   );

@@ -13,8 +13,13 @@ export const buildFittedMapPointSlices = async <Kind>(
   labelIdKindMap: ReadonlyMap<number, Kind>,
   idPrefix: string,
   noun: string,
-  mapRegionPlaces: (regionPlaces: MapPointPlace<Kind>[]) => MapPointPlace<Kind>[] = (regionPlaces) => regionPlaces,
-  reportPlaces: (places: Readonly<Record<string, MapPointPlace<Kind>[]>>) => string[] = () => [],
+  {
+    mapRegionPlaces = (regionPlaces) => regionPlaces,
+    reportPlaces = () => [],
+  }: {
+    mapRegionPlaces?: (regionPlaces: MapPointPlace<Kind>[]) => MapPointPlace<Kind>[];
+    reportPlaces?: (places: Readonly<Record<string, MapPointPlace<Kind>[]>>) => string[];
+  } = {},
 ): Promise<GameDataBuild> => {
   const placement = await placeFittedMapPoints(labelIdKindMap, idPrefix);
   const places = Object.fromEntries(

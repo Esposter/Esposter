@@ -19,6 +19,8 @@ export const buildPuzzlePlaces = (): Promise<GameDataBuild> =>
     ),
     "puzzle",
     "puzzles",
-    (regionPlaces) => withSeelieCourt(regionPlaces).map((place) => withMonumentTiming(place)),
-    computeSeelieCountNotes,
+    {
+      mapRegionPlaces: (regionPlaces) => withSeelieCourt(regionPlaces).map((place) => withMonumentTiming(place)),
+      reportPlaces: computeSeelieCountNotes,
+    },
   );

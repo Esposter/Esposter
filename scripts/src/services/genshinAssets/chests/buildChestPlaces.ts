@@ -15,10 +15,11 @@ export const buildChestPlaces = (): Promise<GameDataBuild> =>
     new Map(Object.values(ChestKind).map((kind) => [ChestKindLabelIdMap[kind], kind])),
     "chest",
     "chests",
-    (regionPlaces) => regionPlaces,
-    (places) =>
-      Object.entries(ChestWikiCountMap).flatMap(([region, wikiCount]) => {
-        const note = reportKindCount(region, "chests", places[region]?.length ?? 0, wikiCount);
-        return note ? [note] : [];
-      }),
+    {
+      reportPlaces: (places) =>
+        Object.entries(ChestWikiCountMap).flatMap(([region, wikiCount]) => {
+          const note = reportKindCount(region, "chests", places[region]?.length ?? 0, wikiCount);
+          return note ? [note] : [];
+        }),
+    },
   );
