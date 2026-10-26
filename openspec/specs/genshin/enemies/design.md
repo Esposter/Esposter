@@ -42,7 +42,7 @@ A kind is the game's own monster, named by the game's monster id (`EnemyKindId`)
 
 `computeEnemyStats` scales each base stat by its curve's multiplier at the enemy's level, as the wiki's formulas do: max HP and ATK by their curves, and DEF by one plus a hundredth of the level (`packages/genshin-world/src/services/enemy/computeEnemyStats.ts`; the defense curve's multipliers 1.01, 1.02 and 1.03 at levels 1 to 3 in `~/Esposter/genshin-parity/text/ExcelBinOutput/MonsterCurveExcelConfigData.json`).
 
-What the game's table does not hold is authored from the wiki in `EnemyKindTraitsMap` (`packages/genshin-world/src/services/enemy/EnemyKindTraitsMap.ts`): the kind's poise type, the element its energy carries, its energy drops in falling order, and the family whose Mora and materials it drops. Each enemy poise type's bar (its length, refill speed, endurance and reset time) is the wiki's Poise Type table, read at its single-player length, which is the standard one.
+What the game's table does not hold is authored from the wiki in `EnemyKindTraitsMap` (`packages/genshin-world/src/services/enemy/EnemyKindTraitsMap.ts`): the kind's poise type, the element its energy carries, its energy drops in falling order, and the family whose Mora and materials it drops. Each poise type's bar (its length, refill speed, endurance and reset time) is the wiki's table.
 
 ## Spawns and respawn
 
@@ -147,7 +147,7 @@ A capsule that a hit landed on is tinted white for 0.15 seconds after the hit, a
 - [Reset](https://genshin-impact.fandom.com/wiki/Reset), Genshin Impact Wiki, not in the wiki cache: common enemies outside an elite's group back 12 hours after defeat, elites with limited spawn points per day and their groups' commons at the daily reset, and normal bosses immediately after claiming the Trounce Blossom.
 - [Module:Drops Table/data](https://genshin-impact.fandom.com/wiki/Module:Drops_Table/data), Genshin Impact Wiki, not in the wiki cache: Mora and Character EXP by level band, each family's materials and the tiers' shares by band.
 - [Module:Drops Table](https://genshin-impact.fandom.com/wiki/Module:Drops_Table), Genshin Impact Wiki, not in the wiki cache: the drops table's display code, which reads its rates, Mora and Character EXP from its data page.
-- [Adventure EXP](https://genshin-impact.fandom.com/wiki/Adventure_EXP), Genshin Impact Wiki, not in the wiki cache: Adventure EXP from bosses' rewards and from defeating Unusual Hilichurls.
+- [Adventure EXP](https://genshin-impact.fandom.com/wiki/Adventure_EXP), Genshin Impact Wiki, not in the wiki cache: Adventure EXP from bosses' rewards and none from defeating enemies.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's dump of the game's data: `MonsterExcelConfigData`, `MonsterCurveExcelConfigData` and `AnimalCodexExcelConfigData`, the tables the kinds are read from.
 
 ## Reference
@@ -167,7 +167,7 @@ A capsule that a hit landed on is tinted white for 0.15 seconds after the hit, a
 - [ ] **An enemy's max HP and ATK are its base value times its curve's multiplier, and its DEF one plus a hundredth of the level** — no source yet: the Enemy/Level Scaling wiki page is not in the wiki cache.
 - [ ] **The Mora shares and Character EXP by level band are the wiki's table** — no source yet: the Module:Drops Table/data wiki page is not in the wiki cache, and the Module:Drops Table page, which reads its values from it, is not either, so no band's share or Character EXP is stated.
 - [ ] **The second and third material tiers start at levels 40 and 60** — no source yet: the Module:Drops Table/data wiki page, which holds the tiers' rates by level, is not in the wiki cache. The tier shares in `packages/genshin-world/src/services/enemy/constants.ts` are the repo's own table, not evidence of the game's.
-- [ ] **Enemies give no Adventure EXP, the game awarding it only for a boss's reward** — no source yet: the Adventure EXP wiki page is not in the wiki cache, so its line that defeating an Unusual Hilichurl gives AR EXP cannot be checked here. No enemy code grants AR EXP, so this stays open as the build's gap, not a settled rule.
+- [ ] **Enemies give no Adventure EXP, the game awarding it only for a boss's reward** — no source yet: the wiki's Adventure EXP page, named in Sources, is not in the wiki cache.
 - [ ] **The daily reset is read on the server's UTC+8 clock** — no source yet: no row of the game's exports names the zone; the export's daily refresh rows give the 04:00 hour (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, `REFRESH_DAILY`), and the Reset wiki page is not in the wiki cache.
 - [ ] **The hosted `enemies/kinds` record holds the Hilichurl Fighter, and `enemies/levelCurves` its first ten levels** — no source yet: `packages/genshin-world/src/generated/gameDataLock.json` records only each record's hash (lines 115 and 116), and the record is in Blob storage, not on disk; reading it there settles this.
 - [ ] **An elite's camp comes back whole at the next daily reset, for an elite with no limited daily spawn points** — no source yet: the Reset wiki page is not in the wiki cache, and it would give daily-reset respawn only for elites with limited spawn points per day and for the commons of their groups.
