@@ -13,6 +13,8 @@ const SKILL = CombatTalent.ElementalSkill;
 // Hold is his skill's hold, read from its Hold DMG label. Vesna's skill tag is the wiki's, so her skill reads its label
 // Here like her burst
 export const CharacterIdSlotHitLabelsMap: ReadonlyMap<number, KitSlotLabels> = new Map<number, KitSlotLabels>([
+  // Venti. Stormeye's seconds read its burst's Duration label
+  [10_000_022, { values: { "parameters.stormeyeSeconds": { combatTalent: BURST, label: "Duration" } } }],
   // Xingqiu. Each rainscreen's two hits read the Skill DMG label's two multipliers, the first and second positions, and
   // Rain Sword and Raincutter's seconds read their skill's and burst's Duration labels
   [
