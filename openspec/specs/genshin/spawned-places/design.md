@@ -79,14 +79,14 @@ Each region is reported in turn, Mondstadt first, with its matched points, the r
 - [ ] **Snezhnaya's transport points are absent from the dump** — no source yet: the dump's transport points for Snezhnaya's areas were not counted, and `~/Esposter.noindex/genshin-parity/references/interactive-map/fit.json` shows only its zero matches.
 - [ ] **Fontaine holds the only underground Oculi** — no source yet: no count of Oculi on layers under the ground was made, so the ground count's gap is not traced to them.
 - [ ] **No kit draws an Oculus** — no source yet: `packages/genshin-world/src/models/oculus/OculusPlace.ts` is read by `packages/genshin-world/src/services/statue/readOculusPlaces.ts`, the minimap and the HUD, and no kit was checked for a draw of it.
-- [ ] **The map's points are read, fitted to the scene's transport points, and the Oculi published** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The fit's stages and commands are registered under their names** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Nothing from the point list is committed** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The anchors are the map's ground statue and waypoint labels, and underground points are left out of the fit** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The scene side reads the scene's transport points directly, not the region data** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The match starts from sixteen turns, drawn and mirrored, and refines each over sixty passes** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A fit whose residual is over twenty game units is an error that writes nothing** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The Oculus kinds are the map's eight labels, from Anemoculus to Cryoculus** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The writer keeps only the ground points, each with its region's area and kind** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A place is acted on by the statues' rules in its own model, not in LandmarkKind** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **No height is published, and an Oculus stands at its point, its height read where it is stood on** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The map's points are read, fitted to the scene's transport points, and the Oculi published** — no source yet: settled by `scripts/src/services/genshinAssets/points/readInteractiveMap.ts`, `scripts/src/services/genshinAssets/oculi/buildOculusPlaces.ts`
+- [ ] **The fit's stages and commands are registered under their names** — no source yet: settled by `scripts/src/services/genshinAssets/fit/fitInteractiveMap.ts`, `scripts/src/services/genshinAssets/points/matchSimilarity.ts`, `scripts/src/services/genshinAssets/oculi/buildOculusPlaces.ts`, `scripts/src/services/genshinAssets/commands/genshinAssetsCommand.ts`
+- [ ] **Nothing from the point list is committed** — no source yet: settled by `scripts/src/services/genshinAssets/points/constants.ts`
+- [ ] **The anchors are the map's ground statue and waypoint labels, and underground points are left out of the fit** — no source yet: settled by `scripts/src/services/genshinAssets/points/constants.ts`
+- [ ] **The scene side reads the scene's transport points directly, not the region data** — no source yet: settled by `scripts/src/services/genshinAssets/world/readSceneTransportPoints.ts`
+- [ ] **The match starts from sixteen turns, drawn and mirrored, and refines each over sixty passes** — no source yet: settled by `scripts/src/services/genshinAssets/points/constants.ts`, `scripts/src/services/genshinAssets/points/matchSimilarity.ts`
+- [ ] **A fit whose residual is over twenty game units is an error that writes nothing** — no source yet: settled by `scripts/src/services/genshinAssets/points/constants.ts`, `scripts/src/services/genshinAssets/fit/fitInteractiveMap.ts`
+- [ ] **The Oculus kinds are the map's eight labels, from Anemoculus to Cryoculus** — no source yet: settled by `scripts/src/services/genshinAssets/oculi/OculusKindLabelIdMap.ts`
+- [ ] **The writer keeps only the ground points, each with its region's area and kind** — no source yet: settled by `scripts/src/services/genshinAssets/oculi/buildOculusPlaces.ts`, `scripts/src/services/genshinAssets/points/InteractiveMapRegionMap.ts`
+- [ ] **A place is acted on by the statues' rules in its own model, not in LandmarkKind** — no source yet: settled by `packages/genshin-world/src/models/oculus/OculusPlace.ts`, `packages/genshin-world/src/services/statue/readOculusPlaces.ts`
+- [ ] **No height is published, and an Oculus stands at its point, its height read where it is stood on** — no source yet: settled by `packages/genshin-world/src/models/oculus/OculusPlace.ts`

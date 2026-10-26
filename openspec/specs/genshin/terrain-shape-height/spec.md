@@ -92,8 +92,8 @@ A ground laid over another SHALL be lifted onto its own base where its hills sta
 
 ## Open
 
-- [ ] **A ground's height is the sum of its optional layers** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A hill contributes nothing farther than three of its widths from its centre** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A sharp feature affects only the ground within its own bounds, and a negative plateau draws a basin** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The residual is drawn only where its fade was fitted, and never outside the fitted grid** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A ground laid over another is lifted onto its own base where its hills stand** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A ground's height is the sum of its optional layers** — no source yet: settled by `packages/genshin-engine/src/terrain/createTerrainShapeHeight.ts`
+- [ ] **A hill contributes nothing farther than three of its widths from its centre** — no source yet: settled by `packages/genshin-engine/src/terrain/getGaussianHillBlend.ts`, `packages/genshin-engine/src/terrain/constants.ts`
+- [ ] **A sharp feature affects only the ground within its own bounds, and a negative plateau draws a basin** — no source yet: settled by `packages/genshin-engine/src/terrain/getTerrainFeatureBounds.ts`, `packages/genshin-engine/src/terrain/createTerrainFeaturesHeight.ts`
+- [ ] **The residual is drawn only where its fade was fitted, and never outside the fitted grid** — no source yet: settled by `packages/genshin-engine/src/terrain/sampleTerrainResidualFade.ts`, `packages/genshin-engine/src/terrain/createTerrainShapeHeight.ts`
+- [ ] **A ground laid over another is lifted onto its own base where its hills stand** — no source yet: settled by `packages/genshin-engine/src/terrain/getTerrainShapeLevel.ts`

@@ -40,10 +40,10 @@ flowchart LR
 - [ ] **The licence's forty-unit spacing, its 400 ms fade and the splash's own hold** — no source yet: the bili recording has not been read frame by frame for these timings.
 - [ ] **The licence's second line runs narrower than the recording's** — no source yet: the licence line's width has not been measured against the recording.
 - [ ] **253 on the user's own recording** — no source yet: no still of the PC splash from the user's own recording is in `~/Esposter.noindex/genshin-parity/references/`.
-- [ ] **A Simplified Chinese reader is shown mainland China's client** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The traced paths ship as the world's `splash/titleLogo/<logo>` records, which `genshin:assets fit login` publishes** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The opening reads the reader's logo as it mounts, and holds the white until it arrives, so the first splash never shows a title with no logo** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The sequence hands the path to the splash, which draws it as given** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Every white of the opening, its splashes, its notice and the login screen's fades is `GAME_WHITE`, #fdfdfd** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The English splash is compared with the 2023 recording** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The splash is an image to a screen reader, named by the game's own window title in the reader's language** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A Simplified Chinese reader is shown mainland China's client** — no source yet: settled by `packages/genshin-world/src/services/splash/GameLanguageGameClientMap.ts`
+- [ ] **The traced paths ship as the world's `splash/titleLogo/<logo>` records, which `genshin:assets fit login` publishes** — no source yet: settled by `scripts/src/services/genshinAssets/fit/fitTitleLogos.ts`
+- [ ] **The opening reads the reader's logo as it mounts, and holds the white until it arrives, so the first splash never shows a title with no logo** — no source yet: settled by `packages/genshin-world/src/components/Game/Opening/Index.vue`
+- [ ] **The sequence hands the path to the splash, which draws it as given** — no source yet: settled by `packages/genshin-world/src/components/Splash/Sequence/Index.vue`
+- [ ] **Every white of the opening, its splashes, its notice and the login screen's fades is `GAME_WHITE`, #fdfdfd** — no source yet: settled by `packages/genshin-interface/src/services/constants.ts`
+- [ ] **The English splash is compared with the 2023 recording** — no source yet: settled by `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts`
+- [ ] **The splash is an image to a screen reader, named by the game's own window title in the reader's language** — no source yet: settled by `packages/genshin-world/src/components/Splash/Title/Index.vue`, `packages/genshin-text/src/models/GameTextKey.ts`
