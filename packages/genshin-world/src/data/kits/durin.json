@@ -104,6 +104,8 @@
   "normalAttacks.3.hits.0.poiseDamage": { "source": "Wiki", "value": 74.5 },
   "parameters.recastEnergy": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 12332 } },
   "plungeCollision.poiseDamage": { "source": "Wiki", "value": 25 },
+  "plunges.high.hits.0.poiseDamage": { "source": "Wiki", "value": 150 },
+  "plunges.low.hits.0.poiseDamage": { "source": "Wiki", "value": 100 },
   "skill.hits.length": { "cause": "DiffersFromSource", "value": 0 },
   "skillChain.followUps.length": { "cause": "Unsourced", "value": 1 },
   "skillChain.followUps.0.animationFrames": { "cause": "Unsourced", "value": 83 },
