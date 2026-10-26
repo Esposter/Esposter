@@ -50,15 +50,16 @@ flowchart TD
 - **The offer is on F.** Its prompt row is an `Activate` named by `GameTextKey.FrostbearingTree` while the character is in reach, and pressing F offers the bag through `offerBagItems`.
 - **The save holds its progress.** Its count held of each item and level are the `offerings.frostbearingTree` slice of the save, `{ heldCounts, level }` with `heldCounts` keyed by item id, and no default: a save holding the older `{ heldCount, level }` is refused until it is backfilled as `{ heldCounts: { "107010": heldCount }, level }`, the tree's one item (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/OfferingLevelUpExcelConfigData.json`, offering 1 level 2 takes 10 of `107010`). A guest's save does not change the tree when it merges into an account: the account's level and held count are kept, since the items the tree holds came out of the account's bag.
 - **One rule with the statues.** The statues use `offerItems` through the same level shape, `items` holding each item with its count. Each region takes one Oculus (unsourced, see Open), and its save keeps `{ claimedLevel, heldCount, level }` per region: `statueRegionProgress.ts` converts that to the rule's progress at the boundary and back, so the statues' save keeps the Oculi held and the level reached beside the level claimed.
-- **Reading the wiki.** The [Offering System](https://genshin-impact.fandom.com/wiki/Offering_System) page is the wiki's account of the rule, but its wording and offerings are not checked against it yet (task 3.1 of the change; see Open).
+- **Reading the wiki.** The [Offering System](https://genshin-impact.fandom.com/wiki/Offering_System) page is the wiki's account of the rule: its one offer of all the bag holds is checked against it in Sources, but its level thresholds and its list of published offerings are not (task 3.1 of the change; see Open).
 
 ## Sources
 
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the offering level-up table with each offering's items and rewards, the offering open-state table, and the reward table the rewards are joined from.
 - [Teyvat Interactive Map](https://act.hoyolab.com/ys/app/interactive-map/index.html), HoYoLAB: the map's point for the Frostbearing Tree, read into the references folder and carried through the fit.
+- [Offering System](https://genshin-impact.fandom.com/wiki/Offering_System), Genshin Impact Wiki: "the player automatically offers all in Inventory", the bag's one offer.
 
 ## Open
 
 - [ ] **The tree's point lies in Mondstadt's area on the official map** — no source yet: the map is in `~/Esposter.noindex/genshin-parity/references/interactive-map`, and its point was not read here.
 - [ ] **Each region takes one Oculus at its statue** — no source yet: no cached wiki page or dump table read here holds the statues' Oculus counts.
-- [ ] **The wiki's Offering System page matches the rule and lists the published offerings one for one** — no source yet: that wiki page is not in the cache.
+- [ ] **The wiki's Offering System page matches the rule's level thresholds and lists the published offerings one for one** — no source yet: the page, checked, says the player automatically offers all of Inventory and names its offerings, but gives no level thresholds, and the cache holds no set of published offerings to list against.
