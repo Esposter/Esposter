@@ -257,7 +257,7 @@ A face in shadow therefore takes its shadow colour and is never black. The tone 
 
 ## The outline
 
-The outline is the face's "OUTLINE" pass, whose base programs are vertex 958 (DXBC) and pixel 885 (DXIL). The width is set in the vertex program and the colour in the pixel program.
+The outline is the face's "OUTLINE" pass, whose base programs are vertex 958 (DXBC) and pixel 885 (no DXIL marker: `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber/00885.asm` is a D3D disassembly, and no listing holds DXIL). The width is set in the vertex program and the colour in the pixel program.
 
 ### The width (vertex 958)
 
@@ -367,7 +367,6 @@ The only case where a ramp stays raw is an artist painting it in linear values, 
 - [ ] **The uber's 1,553 compiled programs sort into the five pass classes** — contradicted by `~/Esposter/genshin-parity/extracted/shaders/asm/uber`: it holds 6,337 listings, not 1,553.
 - [ ] **The candidate counts (body 124 and 41, hair 60 and 5, face 68 and 30, outline 16 and 24)** — no source yet: a count over the uber's keyword sets.
 - [ ] **Programs 795, 753, 788 and 958 are vertex programs** — contradicted by `~/Esposter/genshin-parity/extracted/shaders/asm/uber/00795.asm`: a `ps_5_0` pixel program with one `SV_Target`; so are 00753, 00788 and 00958.
-- [ ] **The table's Vertex stage and the outline's "vertex 958" attribution** — no source yet: a re-derivation of the table's stage column from the listings.
 - [ ] **Each program's container is DXBC or DXIL as the table says** — contradicted by `~/Esposter/genshin-parity/extracted/shaders/asm/uber`: all 6,337 listings carry the D3D disassembler header, none a DXIL marker.
 - [ ] **The metal gate's threshold `Lm.r > 0.9`** — no source yet: the threshold literal in the program holding the metal gate; pixel 460 holds 0.930000 and no listing under `~/Esposter/genshin-parity/extracted/shaders/asm/uber` holds 0.900000.
 - [ ] **The half-Lambert scale 0.4975 in `N_v`** — no source yet: a listing that holds the literal 0.4975; none under `~/Esposter/genshin-parity/extracted/shaders/asm/uber` holds 0.497500, and pixel 460 holds 0.498000 in one add.
@@ -377,6 +376,7 @@ The only case where a ramp stays raw is an artist painting it in linear values, 
 - [ ] **No body variant reads a fog constant, and the properties declare the four fog values** — no source yet: a scan of the body variants' constant reads, which is not on disk.
 - [ ] **The haze at 3 m is 0.0000% for every setting that sets a density** — no source yet: an evaluation of `createHeightFogNode` at the stated settings; no script or test commits it.
 - [ ] **The game's tone curve against ACES at scene 0.05, 0.18, 0.5, 1 and 4** — no source yet: a script evaluating both curves; none is committed.
+- [ ] **The face's flip, `_FaceFlipFactor` and its angle rule** — no source yet: a game listing that names `_FaceFlipFactor`, since none under `~/Esposter.noindex/genshin-parity/extracted/shaders` does, and the repo's `updateFaceDraw.ts` is repo code.
 - [ ] **The face's shadow colour `C = Cm * mix(S, 1, F)` and the no-face-map case lit** — no source yet: a rendered face that checks the equation, since `~/Esposter/genshin-parity/extracted/shaders/asm/uber/00432.asm` is not decoded to this form.
 - [ ] **The outline's colour tint `0.2 * T_m` and its region intensities** — no source yet: a literal scan of pixel 885, which is not made.
 - [ ] **The outline's `_OutLineZOffset` at `cb0[31].x` is not built** — no source yet: the game's `_OutLineZOffset` bias, which no listing under `~/Esposter/genshin-parity/extracted/shaders/asm/uber` or `Shader#*.dat` names.
