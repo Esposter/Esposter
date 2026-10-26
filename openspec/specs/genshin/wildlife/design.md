@@ -70,4 +70,4 @@ Every animal of the slice exists from the scene's load (`packages/genshin-world/
 - [ ] **No table gives a flight's speed** — no source yet: only the environment table's keys were read, not every table's.
 - [ ] **Mondstadt's slice holds about a hundred animals, and the other regions hold the same kinds where their labels are marked** — no source yet: the published slices are in hosted storage, not the local dump, so neither count was checked.
 - [ ] **The animals are not drawn in a witness render** — no source yet: the witness render's families were not checked against the animals.
-- [ ] **Each kind is one of the map's own labels under its Animals group** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Each kind is one of the map's own labels under its Animals group** — no source yet: the map labels under the Animals group in `~/Esposter/genshin-parity/text/TextMapEN.json`, not yet matched to each kind.
