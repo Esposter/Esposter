@@ -1,6 +1,6 @@
 ## Purpose
 
-The plants no record places, the small flowers among a region's grass, scattered over each finest terrain tile by seeded dart throwing in the terrain's worker. Each candidate point is kept only where the ground is grass above the water and no kept plant stands closer than the spacing, so the same tile always grows the same flowers, drawn as one instanced draw a tile that shows and goes with it.
+The plants no record places, the small flowers among a region's grass, scattered over each finest terrain tile by seeded dart throwing in the terrain's worker. Each candidate point is kept only where the ground is grass above the water and no kept plant stands closer than the spacing, so the same tile always grows the same flowers, drawn as one instanced draw a tile that shows and goes with it (`packages/genshin-engine/src/vegetation/computeScatterPoints.ts`, `packages/genshin-world/src/workers/terrainTile.worker.ts`, `packages/genshin-world/src/components/World/Terrain/Index.vue`).
 
 ## Requirements
 
@@ -78,4 +78,4 @@ The flowers' spacing, sizes and colours SHALL be treated as provisional until th
 
 ## Open
 
-- [ ] **The plants no record places are the small flowers among a region's grass** — no source yet: no capture is named for the small flowers, and the placement streams are not searched for a flower kind in this pass.
+- [ ] **The plants no record places are the small flowers among a region's grass** — no source yet: the placements read off the streams (`scripts/src/services/genshinAssets/fit/readWindrisePlantPlacements.ts`) are not checked for flowers, and no capture is named for them.
