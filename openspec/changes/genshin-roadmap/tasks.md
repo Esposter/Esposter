@@ -99,7 +99,6 @@ The user's one batch, checked whenever convenient ([parity](../../specs/genshin/
 - [ ] **Tighnari's arrows, mine and shaft stagger no enemy** — [Tighnari](../../specs/genshin/kits/tighnari/design.md): no recording shows any of them staggering an enemy.
 - [ ] **Yanfei's charged attack hits at 63 frames** — [Yanfei](../../specs/genshin/kits/yanfei/design.md): a standing charged attack's hit lands at 63 frames.
 - [ ] **The world runs on behind a talk** — [Screens](../../specs/genshin/screens/design.md): the sky, clouds and residents move during a talk.
-- [ ] **Auto-play holds a whole line about a second and a half** — [Dialogue](../../specs/genshin/dialogue/design.md): a line with no voice-over holds about that long under auto-play before the next.
 - [ ] **Eula's charged attack lands at 0.5, 1 and 1.5 seconds** — [Eula](../../specs/genshin/kits/eula/design.md): a recording reads the spin at half a second, the final hit at one, in 1.5 seconds.
 - [ ] **Eula's hold begins at half a second** — [Eula](../../specs/genshin/kits/eula/design.md): a recording of the skill's input shows the hold starting at half a second.
 - [ ] **Sayu's short hold begins at 0.5 seconds** — [Sayu](../../specs/genshin/kits/sayu/design.md): a recording of her Skill held for half a second plays the short hold.
