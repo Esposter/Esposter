@@ -1,6 +1,6 @@
 ## Purpose
 
-The game's own words in all fifteen of its languages (`~/Esposter/genshin-parity/text/TextMap/`), in the published genshin-text package — the language registry, a matcher from a reader's locale, and every string a consumer references, looked up by the game's own text id with one lazily loaded chunk per language. A generator reads them out of the game's text, its text maps from the community dump pinned to the install's revision until a decoder covers the current patch and then decoded from the installed client, and its tables from a dump kept outside the repository; nothing is translated by hand. The persona plugin takes a generated copy rather than a dependency.
+The game's own words in all fifteen of its languages (`~/Esposter/genshin-parity/text/TextMap/`), in the published genshin-text package — the language registry, a matcher from a reader's locale, and every string a consumer references, looked up by the game's own text id with one lazily loaded chunk per language. A generator reads them out of the game's text, its text maps from the community dump, kept to the remote `main` by size until a decoder covers the current patch and then decoded from the installed client (`openspec/specs/genshin/game-text/design.md`), and its tables from a dump kept outside the repository; nothing is translated by hand. The persona plugin takes a generated copy rather than a dependency.
 
 ## Requirements
 
@@ -180,7 +180,7 @@ The app's own interface SHALL stay in English, and only the game's own words SHA
 
 ### Requirement: Non-Latin game text draws in a system face
 
-Non-Latin game text SHALL be drawn in a system face, since the game's own faces do not cover it (`GAME_FONT_FAMILY`, see the open list).
+Non-Latin game text SHALL be drawn in a system face, since the game's own faces do not cover it (`GAME_FONT_FAMILY`, see the open list; Signika's `index.css` in `node_modules/.pnpm/@fontsource+signika@5.3.0/node_modules/@fontsource/signika/index.css` has three `@font-face` blocks, none with a unicode range for Thai, CJK or Hangul).
 
 #### Scenario: Chinese text is drawn in a system face
 
@@ -190,6 +190,6 @@ Non-Latin game text SHALL be drawn in a system face, since the game's own faces 
 
 ## Open
 
-- [ ] **The text maps are decoded from the installed client** — partly settled: `scripts/src/services/genshinText/decodeGameText.ts` (the `decode` command) exports the install's text chunks, but the design's known-plaintext finding says the current patch's mixer constants stop the decode, and whether the command now decodes the current patch is not settled here: no source yet, as the installed client's chunks (`MiHoYoBinData`) are not on disk under `~/Esposter.noindex`, so the Purpose's "decoded from the installed client" is not yet proven for the current patch.
-- [ ] **The app's own labels stay English** — partly settled: `apps/web/package.json` and `apps/web/nuxt.config.ts` name no i18n module, so the app has no locale switch; the build config's only i18n mention is the survey library's locale chunks (`apps/web/configuration/vite.ts`). Checked against `apps/web/app` (3,424 `.ts` and `.vue` files): no `useI18n` or `$t(` call, and no non-Latin label text, its only CJK, Cyrillic or Thai characters being two slash-command emoticons. The claim is not settled by that, because the Latin-script labels are not checked word by word for their language.
-- [ ] **HYWenHei and Signika do not cover Chinese, Japanese, Korean or Thai** — partly settled: Signika's `index.css` in the installed `@fontsource/signika` package has three `@font-face` blocks, and no unicode range in them covers Thai, CJK or Hangul. No HYWenHei font file is tracked in the repo, so that half waits on the file.
+- [ ] **The text maps are decoded from the installed client** — no source yet: the design says the text maps stay the community dump's until a decoder covers the current patch, so the Purpose's "decoded from the installed client" is not yet built.
+- [ ] **The app's own labels stay English** — no source yet: the app's Latin-script labels, not checked word by word for their language; the app holds no `useI18n` or `$t(` call.
+- [ ] **HYWenHei does not cover Chinese, Japanese, Korean or Thai** — no source yet: no HYWenHei font file is tracked in the repo.
