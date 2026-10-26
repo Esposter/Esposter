@@ -18,7 +18,7 @@ Jean's five strikes and charged attack SHALL be her normal attacks.
 
 - **GIVEN** Jean is the character on the field
 - **WHEN** the player holds the attack button to charge
-- **THEN** the charged attack strikes the enemies in a 160-degree fan ahead of her
+- **THEN** the charged attack strikes the enemies in a 160-degree fan ahead of her (`~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/jean/charge.go` lines 40 to 45: `NewCircleHitOnTargetFanAngle` with an angle of 160)
 
 ### Requirement: Gale Blade releases on the release of its press or hold
 
@@ -185,6 +185,5 @@ Jean's collision and two plunges SHALL keep provisional reaches until a recordin
 
 ## Open
 
-- [ ] **the charged attack strikes a 160-degree fan ahead of her** — no source yet: the charged attack's angle in gcsim's `charge.go` was not opened.
 - [ ] **Constellation 6 cuts 35% DMG for 3 strikes or 10 seconds** — no source yet: gcsim leaves Constellation 6 unimplemented, and the cached wiki holds no Lion's Fang text. The cached Dandelion Breeze page, checked, names Constellation 6 as Lion's Fang, Fair Protector of Mondstadt without its effect.
 - [ ] **an enemy walking in or out of the field is not struck by its entering or exiting damage** — contradicted by ~/Esposter/cache/genshin-wiki/Category_Jean_Talents.json: Dandelion Field deals Anemo DMG to opponents entering or exiting.
