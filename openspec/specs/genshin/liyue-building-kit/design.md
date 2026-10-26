@@ -47,4 +47,4 @@ The palette's hues are the ones the game's Liyue reads as: ochre and grey rock, 
 - [ ] **Each bay's lattice has a rail at its sill and at its head, with bars standing flat to the wall** — no source yet: no test or reference checks the lattice.
 - [ ] **The export's buildings family is `Area_Ly_Build_` and `Area_LY_Build_`, with its terrain tiles as the ground** — no source yet: the terrain tiles as the ground are not traced in `~/Esposter.noindex/genshin-parity/extracted/maps/index.tsv`, which holds both family names.
 - [ ] **The harbour's other meshes are claimed undrawn by kind (`LiyueUndrawnMeshRegexMap`)** — no source yet: the export's 6,118 `Area_Ly_` rows in `~/Esposter.noindex/genshin-parity/extracted/maps/index.tsv` are not checked kind by kind against the undrawn claim.
-- [ ] **the bay width is 3 metres** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **the bay width is 3 metres** — no source yet: the Liyue building export in `~/Esposter/genshin-parity/extracted/liyue/`, not yet measured for the bay width.
