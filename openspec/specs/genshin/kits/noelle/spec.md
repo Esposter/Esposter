@@ -117,3 +117,7 @@ Sweeping Time SHALL convert Noelle's normal attacks to Geo with their own poise,
 
 - **WHEN** Sweeping Time starts
 - **THEN** Noelle gains an ATK bonus of 40% of her DEF after 80 frames for 15 seconds
+
+## Open
+
+- [ ] **Constellation 2 cuts the Charged Attack's stamina by 20%** — no source yet: neither gcsim's Noelle files nor the cached Talents page gives the 0.8 multiplier.
