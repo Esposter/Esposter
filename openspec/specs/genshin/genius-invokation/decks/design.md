@@ -118,6 +118,6 @@ A duel's enemy card group is its deck's id, and the built decks are these.
 - [ ] **Marjorie and Ellin open at Genius Invokation level 0** — contradicted by `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/GCGWeekLevelExcelConfigData.json`: games 1021 and 1031 need gcgLevel 1.
 - [ ] **The dice cap of sixteen and four supports match the game** — no source yet: the wiki's rules page is not in the cache.
 - [ ] **A character's description id names no text in any language** — no source yet: the character rows' description hashes were not looked up in the text maps.
-- [ ] **Kid Kujirai creates its Omni Element die once a phase, then moves to the opposing support zone** — no source yet: game data or a snapshot that holds this behaviour.
-- [ ] **Timmie's Pigeon is gained at each end phase** — no source yet: game data or a snapshot that holds this behaviour.
-- [ ] **The Mondstadt challengers' decks are the early opponents** — no source yet: game data or a snapshot that holds this behaviour.
+- [ ] **Kid Kujirai creates its Omni Element die once a phase, then moves to the opposing support zone** — no source yet: the Kid Kujirai card's entry in `GCGCardExcelConfigData` in `~/Esposter/genshin-parity/text/ExcelBinOutput/`, not yet read for its die and zone.
+- [ ] **Timmie's Pigeon is gained at each end phase** — no source yet: Timmie's Pigeon's card entry in `GCGCardExcelConfigData` in `~/Esposter/genshin-parity/text/ExcelBinOutput/`, not yet read for the end-phase gain.
+- [ ] **The Mondstadt challengers' decks are the early opponents** — no source yet: `GCGDeckExcelConfigData` in `~/Esposter/genshin-parity/text/ExcelBinOutput/`, not yet read for the Mondstadt challengers' decks.
