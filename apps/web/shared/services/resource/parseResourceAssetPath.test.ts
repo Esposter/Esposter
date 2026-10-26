@@ -1,7 +1,6 @@
-import { FILES_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
 import { getFilesDirectoryName } from "#shared/services/resource/getFilesDirectoryName";
 import { parseResourceAssetPath } from "#shared/services/resource/parseResourceAssetPath";
-import { SnapshotChannel } from "@esposter/db-schema";
+import { FILES_DIRECTORY_SEGMENT, SnapshotChannel } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 
 describe(parseResourceAssetPath, () => {

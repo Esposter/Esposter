@@ -1,7 +1,8 @@
 import type { ResourceAssetPath } from "#shared/models/resource/ResourceAssetPath";
 
-import { ASSET_HASH_REGEX, FILES_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
+import { ASSET_HASH_REGEX } from "#shared/services/resource/constants";
 import { checkIsUuidV4 } from "#shared/util/id/uuid/checkIsUuidV4";
+import { FILES_DIRECTORY_SEGMENT } from "@esposter/db-schema";
 import { getDecodedUriComponent } from "@esposter/shared";
 
 // The single decoder + validator for `/api/resource-assets/{encodedPath}` — shared by the serving endpoint and the

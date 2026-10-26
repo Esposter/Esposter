@@ -3,8 +3,7 @@ import type { Context } from "#server/trpc/context";
 import type { ContainerClient } from "@azure/storage-blob";
 
 import { generateReservedResourceAssetSasEntities } from "#server/services/resource/generateReservedResourceAssetSasEntities";
-import { FILES_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
-import { AzureContainer } from "@esposter/db-schema";
+import { AzureContainer, FILES_DIRECTORY_SEGMENT } from "@esposter/db-schema";
 import { takeOne } from "@esposter/shared";
 import { MockRestError } from "azure-mock";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";

@@ -1,6 +1,6 @@
 import type { ResourceInResource } from "@esposter/db-schema";
 
-import { RESOURCE_FILES_SEGMENT } from "#src/services/user/constants";
+import { FILES_DIRECTORY_SEGMENT } from "@esposter/db-schema";
 
 export const getResourceAssetBlobName = (resourceId: ResourceInResource["id"], assetHash: string) =>
-  `${resourceId}/${RESOURCE_FILES_SEGMENT}/${assetHash}`;
+  `${resourceId}/${FILES_DIRECTORY_SEGMENT}/${assetHash}`;

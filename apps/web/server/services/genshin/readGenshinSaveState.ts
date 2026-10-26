@@ -3,8 +3,8 @@ import type { GenshinSaveState } from "#server/models/genshin/GenshinSaveState";
 import type { ContainerClient } from "@azure/storage-blob";
 
 import { genshinSaveEnvelopeSchema } from "#server/models/genshin/GenshinSaveEnvelope";
-import { getSaveBlobName } from "#server/services/blobState/getSaveBlobName";
 import { readBlobState } from "#server/services/blobState/readBlobState";
+import { getSaveBlobName } from "@esposter/db-schema";
 import { getResult } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 

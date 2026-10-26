@@ -22,9 +22,6 @@ export const CONTENT_BASELINE_MISMATCH_ERROR_MESSAGE = new InvalidOperationError
 // Also the ceiling every content schema's free-form strings and lists take, rather than each picking a number a real
 // Document might one day cross. No string or list inside a document can outgrow the document holding it
 export const MAX_RESOURCE_CONTENT_SIZE = 100_000_000;
-// The blob-name directory segment for a resource's binary assets. A snapshot channel's segment is its own
-// `SnapshotChannel` value rather than a constant restating it
-export const FILES_DIRECTORY_SEGMENT = "files";
 // The address of an uploaded file: the lowercase hex SHA-256 of its bytes, the last segment of its blob name
 export const ASSET_HASH_REGEX = /^[0-9a-f]{64}$/u;
 // How long after the last revision the next save is worth keeping one of. Autosave fires on every coalesced

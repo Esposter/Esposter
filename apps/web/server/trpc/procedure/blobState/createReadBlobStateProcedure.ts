@@ -1,9 +1,9 @@
 import type { AzureContainer } from "@esposter/db-schema";
 
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
-import { getSaveBlobName } from "#server/services/blobState/getSaveBlobName";
 import { readBlobState } from "#server/services/blobState/readBlobState";
 import { standardAuthedProcedure } from "#server/trpc/procedure/standardAuthedProcedure";
+import { getSaveBlobName } from "@esposter/db-schema";
 import { getResult, jsonDateParse } from "@esposter/shared";
 
 // The init parameter is typed never so every state class with an optional-init constructor is accepted —

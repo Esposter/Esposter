@@ -1,13 +1,12 @@
 import type { SaveGenshinInput } from "#server/models/genshin/SaveGenshinInput";
 
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
-import { getSaveBlobName } from "#server/services/blobState/getSaveBlobName";
 import { writeBlobState } from "#server/services/blobState/writeBlobState";
 import { checkIsGenshinSessionCurrent } from "#server/services/genshin/checkIsGenshinSessionCurrent";
 import { getGenshinSessionReplacedError } from "#server/services/genshin/getGenshinSessionReplacedError";
 import { readGenshinSaveState } from "#server/services/genshin/readGenshinSaveState";
 import { writeGenshinSaveEnvelope } from "#server/services/genshin/writeGenshinSaveEnvelope";
-import { AzureContainer } from "@esposter/db-schema";
+import { AzureContainer, getSaveBlobName } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 

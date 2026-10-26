@@ -3,11 +3,10 @@ import type { UserInAuth } from "@esposter/db-schema";
 
 import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { db } from "#src/services/shared/db";
-import { RESOURCE_FILES_SEGMENT } from "#src/services/user/constants";
 import { getResourceAssetBlobName } from "#src/services/user/getResourceAssetBlobName";
 import { writeBlobEntry } from "#src/services/user/writeBlobEntry";
 import { getContentBlobName, readJsonBlob } from "@esposter/db";
-import { AzureContainer } from "@esposter/db-schema";
+import { AzureContainer, FILES_DIRECTORY_SEGMENT } from "@esposter/db-schema";
 
 // The resources the person owns, each as its record, its working copy and the assets its working copy embeds. A
 // resource they only work on belongs to its owner, so it is not read here
@@ -29,7 +28,7 @@ export const writeResourceEntries = async (archive: UserDataArchive, userId: Use
       // oxlint-disable-next-line no-await-in-loop -- One asset at a time, streamed as it is read
       await writeBlobEntry(
         archive,
-        `${entryDirectory}/${RESOURCE_FILES_SEGMENT}/${assetHash}`,
+        `${entryDirectory}/${FILES_DIRECTORY_SEGMENT}/${assetHash}`,
         containerClient,
         getResourceAssetBlobName(resource.id, assetHash),
       );

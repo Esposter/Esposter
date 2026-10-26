@@ -1,9 +1,9 @@
 import type { GenshinSaveEnvelope } from "#server/models/genshin/GenshinSaveEnvelope";
 import type { ContainerClient } from "@azure/storage-blob";
 
-import { getSaveBlobName } from "#server/services/blobState/getSaveBlobName";
 import { writeBlobState } from "#server/services/blobState/writeBlobState";
 import { getGenshinSessionReplacedError } from "#server/services/genshin/getGenshinSessionReplacedError";
+import { getSaveBlobName } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 

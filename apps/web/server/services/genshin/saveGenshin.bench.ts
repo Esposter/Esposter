@@ -1,11 +1,10 @@
 import type { GenshinSave } from "genshin-world/save";
 
 import { useContainerClient } from "#server/composables/azure/container/useContainerClient";
-import { getSaveBlobName } from "#server/services/blobState/getSaveBlobName";
 import { writeBlobState } from "#server/services/blobState/writeBlobState";
 import { saveGenshin } from "#server/services/genshin/saveGenshin";
 import { transformer } from "#shared/services/trpc/transformer";
-import { AzureContainer } from "@esposter/db-schema";
+import { AzureContainer, getSaveBlobName } from "@esposter/db-schema";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { BENCHMARK_RUN_OPTIONS } from "@esposter/shared-node/bench";
 import { EMPTY_GENSHIN_SAVE, genshinSaveSchema, InventoryItemKind, MAX_INVENTORY_ITEM_COUNT } from "genshin-world/save";

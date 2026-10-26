@@ -2,11 +2,11 @@ import type { ContainerClient } from "@azure/storage-blob";
 import type { Database } from "@esposter/db-schema";
 
 import { cloneContentAssets } from "#server/services/resource/cloneContentAssets";
-import { FILES_DIRECTORY_SEGMENT } from "#shared/services/resource/constants";
 import { getResourceAssetUrl } from "#shared/services/resource/getResourceAssetUrl";
 import { createMockDb } from "@esposter/db-mock";
 import {
   AzureContainer,
+  FILES_DIRECTORY_SEGMENT,
   resourcePublicationsInResource,
   resourcesInResource,
   ResourceType,
