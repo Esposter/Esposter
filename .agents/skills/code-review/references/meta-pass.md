@@ -1,6 +1,6 @@
 # The Meta Pass
 
-Read when a round's findings table is written, once per round: what did this round's own evidence say about the `code-review` skill's instructions? The rule itself is in `SKILL.md` — `.agents/` stays in every window and a round that changes nothing about the skill is a valid outcome; this page is the evidence table.
+Read when a round's findings table is written, once per round: what did this round's own evidence say about the `code-review` skill's instructions? The rule itself is in `SKILL.md`; this page is the evidence table.
 
 | Evidence                                                                                 | What it says                                     | The change that ends it                                         |
 | ---------------------------------------------------------------------------------------- | ------------------------------------------------ | --------------------------------------------------------------- |
