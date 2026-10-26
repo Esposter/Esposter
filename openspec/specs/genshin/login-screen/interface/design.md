@@ -22,3 +22,14 @@ The login page drawn over the scene: the title and its account label, the status
 | `packages/genshin-world/src/data/login/ageRating.json`                               | The age rating's traced paths, authored, which `genshin:data authored` publishes |
 | `packages/genshin-world/src/services/login/InterfaceIconGameTextKeyMap.ts`           | Each interface icon's game text key                                              |
 | `packages/genshin-world/src/services/login/LoginStatusStepGameTextKeyMap.ts`         | Each status step's game text key                                                 |
+
+## Open
+
+- [ ] **The rating's box and colours are measured off a public recording of the mainland client's launch** — no source yet: no mainland launch recording is kept in `~/Esposter.noindex/genshin-parity/captures/` or the parity folders.
+- [ ] **Its references are the English recording's frames** — no source yet: `Index.reference.ts`, `Layout.reference.ts` and `Motion.reference.ts` do not name the English recording frames they are compared with.
+- [ ] **The title and the door show the buttons their stage sets** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The door's buttons show 0.3 seconds after it forms, and its prompt fades in from one second over 0.3 seconds** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The login page's animation clips are decoded and fitted to keyframes** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The mainland client's rating shows at every stage in the top right corner, with its build string under the CNREL prefix** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The rating's age and notice are traced from the mainland launch recording** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The rating's CADPA is set in a serif** — no source yet: game data or a snapshot that holds this behaviour
