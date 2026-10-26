@@ -17,7 +17,7 @@ This page links them and does not restate them.
 
 - **A shader is ported through equations on its owning page, never straight from its assembly.**
   - The program's annotated assembly, or its HLSL where 3Dmigoto decompiles it, is read into equations on the page of the feature it draws.
-  - Each equation is tagged Exact or Provisional. Exact means read from a program, its registers or its keyword set. Provisional means estimated, with its basis named. The [character shading](../characters/shading/design.md) page does this for Lumine's body.
+  - Each equation is tagged Exact or Provisional. Exact means read from a program, its registers or its keyword set. Provisional means estimated, with its basis named. The [character shading](../characters/shading/design.md) page does this for Lumine's body (`openspec/specs/genshin/characters/shading/design.md`).
   - The TSL node is written from the equations, and its test pins their terms.
   - _Rejected: transliterating the node from the assembly._ The assembly is never committed, so the equations are the only record a reviewer or a later session can check the node against. A term no program shows would also hide among the ones read.
 - **Every term a program shows is read before any term is fitted.**
@@ -25,19 +25,19 @@ This page links them and does not restate them.
   - A term no readable program shows stays Provisional and is listed as open on its page.
   - _Rejected: fitting a whole shading model to the captures._ It settles at the minimum nearest its start.
 - **A material's values are read at run time from the developer's own exports, never committed as numbers.**
-  - The development world reads a material's floats and colours from the exports: the avatar's `avatar.json` and the witness layout.
+  - The development world reads a material's floats and colours from the exports: the avatar's `avatar.json` (`packages/genshin-world/src/services/scene/constants.ts`) and the witness layout.
   - What ships takes its defaults from public references or from a derivation.
   - _Rejected: the game's values as committed constants._ That would ship the game's data inside our source.
 - **A read runs on the machine that holds its source and the tool it needs.**
   - Each machine holds its own install and its own exports, and they move between LAN machines only over SSH (the `throughput` skill's fleet page).
-  - A read that the session's machine cannot run, with no judgement left in it, goes on the compute queue. Its item carries the capabilities it needs (`game-install`, `game-exports`), so only a machine holding them takes it.
+  - A read that the session's machine cannot run, with no judgement left in it, goes on the compute queue. Its item carries the capabilities it needs (`game-install`, `game-exports`), so only a machine holding them takes it (`.agents/skills/genshin-parity/references/compute-queue.md`).
   - A read that still needs judgement is the other machine's claim on the feature's unit.
   - A disassembler is a tool, not a capability, so an item that needs Windows or needs vkd3d says so in its text.
   - _Rejected: handing a read over by message alone._ A message holds no claim, so two machines can run the same read, and nothing records that it is owed once the session ends.
 - **A table is read only at the install's build, and its revision is measured before it is trusted.**
-  - The install's build is the one its own files name (`game_version`), and the community dump's tables are fetched from the branch at that build.
-  - A dump holds tables of several builds at once, so a table's size is compared with each branch's copy before its rows are used ([data sources](../../../../.agents/skills/genshin-parity/references/data-sources.md)).
-  - _Rejected: taking the dump's name for its revision._ On 2026-10-18 most of the dump matched the 6.6 branch while the install was 7.1.0.
+  - The install's build is the one its own files name (`game_version`, `scripts/src/services/genshinAssets/shared/readGameVersion.ts`), and the community dump's tables are fetched from the branch at that build (`.agents/skills/genshin-parity/references/data-sources.md`).
+  - A dump holds tables of several builds at once, so a table's size is compared with each branch's copy before its rows are used ([data sources](../../../../.agents/skills/genshin-parity/references/data-sources.md), `.agents/skills/genshin-parity/references/data-sources.md`).
+  - _Rejected: taking the dump's name for its revision._ On 2026-10-18 most of the dump matched the 6.6 branch while the install was 7.1.0 (`~/Esposter.noindex/genshin-parity/game/config.ini`).
 - **A value's role is a candidate until a field name confirms it.**
   - A scrambled object with no type data gives its values offsets and shapes only, so a role such as fog density or sun intensity is written as a candidate, and its page lists it as open.
   - _Rejected: naming a value from how it moves over the day alone._ A curve that rises at dusk could be a light, a blend or a fog, and a fit assigns it whichever the rest of the frame allows.
@@ -67,7 +67,7 @@ flowchart TD
 
 ### Sources by question
 
-Every command runs from `scripts/` with `pnpm`. Outputs land under `~/Esposter/genshin-parity` (`PARITY_DIRECTORY`), outside the repository.
+Every command runs from `scripts/` with `pnpm`. Outputs land under `~/Esposter/genshin-parity` (`PARITY_DIRECTORY`), outside the repository (`scripts/src/services/genshinAssets/commands/genshinAssetsCommand.ts`, `~/Esposter.noindex/genshin-parity/`).
 
 | Question                                  | Source                                                                         | Command                                                         | Lands in                                                                                                 | Owner                                                          |
 | :---------------------------------------- | :----------------------------------------------------------------------------- | :-------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------- |
@@ -87,22 +87,22 @@ The client holds no scene group script; those are the server's, and leaked serve
 
 ### Porting a shader
 
-1. **Inventory.** `genshin:assets inventory <component>` names each material's shader, keywords, texture slots and values.
-2. **Pick the variant.** A material's keywords select its programs from `programs.tsv`. An engine-wide keyword is run-time state the material does not set, so the base variant is chosen by the [character shading](../characters/shading/design.md) page's rule.
+1. **Inventory.** `genshin:assets inventory <component>` names each material's shader, keywords, texture slots and values (`scripts/src/services/genshinAssets/materials/writeComponentInventory.ts`).
+2. **Pick the variant.** A material's keywords select its programs from `programs.tsv` (`scripts/src/services/genshinAssets/materials/extractComponentShaders.ts`). An engine-wide keyword is run-time state the material does not set, so the base variant is chosen by the [character shading](../characters/shading/design.md) page's rule.
    - A scene's stone shader only writes the G-buffer. Its light is the deferred pass's, read beside it ([game data formats](../game-data-formats/design.md), "Shaders").
-3. **Read the programs.** `shaders <component>` writes each program's assembly beside it, headed by the names of the constants its registers hold (`annotateProgramConstants`).
-   - A DXBC program is disassembled on any machine.
-   - A DXIL one, shader model 6's, is disassembled only by `vkd3d-compiler`, so it is read off Windows.
-   - HLSL is decompiled only by 3Dmigoto's Windows decompiler, and only from DXBC.
+3. **Read the programs.** `shaders <component>` writes each program's assembly beside it, headed by the names of the constants its registers hold (`annotateProgramConstants`, `scripts/src/services/genshinAssets/materials/annotateProgramConstants.ts`).
+   - A DXBC program is disassembled on any machine (`scripts/src/services/genshinAssets/materials/disassembleDxbcDirectory.ts`).
+   - A DXIL one, shader model 6's, is disassembled only by `vkd3d-compiler`, so it is read off Windows (`scripts/src/services/genshinAssets/materials/disassembleWithVkd3d.ts`).
+   - HLSL is decompiled only by 3Dmigoto's Windows decompiler, and only from DXBC (`scripts/src/services/genshinAssets/materials/decompileDxbcDirectory.ts`, `scripts/src/services/genshinAssets/shared/constants.ts`).
 4. **Write the equations** on the owning page, each Exact or Provisional, with its open terms listed.
 5. **Write the node** in TSL from the equations:
    - in `genshin-engine` when nothing in it names the game, in `genshin-world` otherwise;
    - its test pins each equation's terms.
-6. **Gate it.** The witness draws the game's exports through our node at the references' cameras (`genshin:parity passes`, `compare --witness`), and the pass's gate closes the port ([parity passes](../parity/passes/design.md)).
+6. **Gate it.** The witness draws the game's exports through our node at the references' cameras (`genshin:parity passes`, `compare --witness`; `scripts/src/services/genshinParity/commands/passesCommand.ts`, `scripts/src/services/genshinParity/commands/compareCommand.ts`), and the pass's gate closes the port ([parity passes](../parity/passes/design.md)).
 
 ### Machines
 
-Both machines hold an install, under `~/Esposter/genshin-parity/game` on the Mac, and run every AnimeStudio step with the game closed.
+Both machines hold an install, under `~/Esposter/genshin-parity/game` on the Mac, and run every AnimeStudio step with the game closed (`~/Esposter.noindex/genshin-parity/game/config.ini`, `scripts/src/services/recreation/animeStudio/assertAnimeStudioReady.ts`).
 
 | Step                                                          | Mac                         | Windows PC                                 |
 | :------------------------------------------------------------ | :-------------------------- | :----------------------------------------- |
@@ -112,9 +112,11 @@ Both machines hold an install, under `~/Esposter/genshin-parity/game` on the Mac
 | HLSL                                                          | None: the assembly stands   | 3Dmigoto's `cmd_Decompiler` 1.3.16, pinned |
 | The parity page, witness and passes                           | Yes                         | Yes                                        |
 
+The table's rows are read from `scripts/src/services/recreation/animeStudio/runAnimeStudio.ts` (the Mac's QoS clamp), `scripts/src/services/genshinParity/shared/checkIsGameRunning.ts` (the PC's refusal), `scripts/src/services/genshinAssets/materials/disassembleDxbcDirectory.ts` (DXBC and DXIL by platform) and `scripts/src/services/genshinAssets/materials/decompileDxbcDirectory.ts` (HLSL, pinned in `scripts/src/services/genshinAssets/shared/constants.ts`).
+
 The PC runs no SSH server, so a transfer between the two runs from the PC to the Mac only, by `ai:fleet:data push` ([fleet](../../../../.agents/skills/throughput/references/fleet.md)). The Mac cannot pull from the PC.
 
-`vkd3d-compiler` is found by `VKD3D_COMPILER` or on `PATH`; the Mac's is a vkd3d 2.1 build, named by `VKD3D_COMPILER`. A step whose compiler is missing stops, rather than writing programs without their assembly.
+`vkd3d-compiler` is found by `VKD3D_COMPILER` or on `PATH` (`scripts/src/services/genshinAssets/materials/disassembleWithVkd3d.ts`); the Mac's is a vkd3d 2.1 build (`~/Esposter.noindex/cache/vkd3d/vkd3d-2.1`), named by `VKD3D_COMPILER`. A step whose compiler is missing stops, rather than writing programs without their assembly (`scripts/src/services/genshinAssets/materials/disassembleWithVkd3d.ts`).
 
 ### What is kept where
 
@@ -122,7 +124,7 @@ The PC runs no SSH server, so a transfer between the two runs from the PC to the
 | :----------------------------------------------------------------------- | :---------------------------------------------------------------------- |
 | Every export, converted or not                                           | Our TSL nodes, kits and their tests                                     |
 | Disassembly and decompiled HLSL                                          | The equations and prose on the owning page                              |
-| The decrypted code metadata and whatever it decodes                      | Fitted parameters, published as hosted records under the committed lock |
+| The decrypted code metadata and whatever it decodes                      | Fitted parameters, published as hosted records under the committed lock (`packages/genshin-world/src/generated/gameDataLock.json`) |
 | The install's text and the community dump, past the slices the app reads | The text slices the app reads, generated per language                   |
 | Reference stills, recordings and game portraits                          | `ParityReferenceMap`'s names for them                                   |
 | A material's byte values                                                 | A register line, only in a commit's body                                |
@@ -145,3 +147,14 @@ The PC runs no SSH server, so a transfer between the two runs from the PC to the
 - [D3DDisassemble](https://learn.microsoft.com/en-us/windows/win32/api/d3dcompiler/nf-d3dcompiler-d3ddisassemble), Microsoft: the DXBC disassembler in `d3dcompiler_47`.
 - [DXIL](https://github.com/microsoft/DirectXShaderCompiler/blob/main/docs/DXIL.rst), Microsoft: shader model 6's intermediate language, carried in the same container.
 - [3Dmigoto 1.3.16](https://github.com/bo3b/3Dmigoto/releases/tag/1.3.16), bo3b: the last release shipping `cmd_Decompiler` alone.
+
+## Open
+
+- [ ] **What ships takes its defaults from public references or a derivation** — no source yet: the shipped defaults and the references or derivations they come from are not listed in the repository.
+- [ ] **The witness layout gives a material's floats and colours** — no source yet: the witness layout's reader is not checked against this claim.
+- [ ] **The machines move exports between them only over SSH** — no source yet: the throughput fleet page names no SSH route.
+- [ ] **The PC runs no SSH server, and its transfers run by `ai:fleet:data push`** — no source yet: the throughput fleet page names neither the missing server nor the push.
+- [ ] **On 2026-10-18 most of the dump matched the 6.6 branch** — no source yet: that day's size comparison of the dump's tables against each branch is kept in neither the repository nor the cache.
+- [ ] **The Windows PC holds its own install** — no source yet: the PC's install is not on this machine, and no record of it is in the repository.
+- [ ] **The parity page, the witness and the passes run on both machines** — no source yet: which machine holds the `parity-page` capability is not recorded in the repository.
+- [ ] **The client holds no scene group script** — no source yet: no listing of the client's script files is kept to show that none is a scene group script.
