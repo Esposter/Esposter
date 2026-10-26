@@ -21,10 +21,6 @@ A reference is a wiki image or one frame of a recording, judged against and kept
 | `scripts/src/services/genshinParity/shared/ParityReferenceMap.ts` | Each reference (a wiki file or a frame), its screen, or a pending screen     |
 | `scripts/src/services/genshinParity/reference/hashFile.ts`        | A file's SHA-256, streamed, its first digits as the reference cache names it |
 
-## Sources
-
-- [Photo Mode](https://genshin-impact.fandom.com/wiki/Photo_Mode), Genshin Impact Wiki: not in the cache, so nothing here cites it.
-
 ## Open
 
 - [ ] **A rectangle recording was tried first and took whatever was on screen** — no source yet: no commit, snapshot or note records that trial.
