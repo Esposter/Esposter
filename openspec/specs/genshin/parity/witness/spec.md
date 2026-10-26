@@ -119,5 +119,4 @@ The pace of a glide SHALL be read from a repeating landmark's crossings of a col
 
 ## Open
 
-- [ ] **The parts in one frame share one camera, with a barely fixed axis taken from a part that fixes it** — no source yet: a code path that takes a barely fixed axis from another part, since `scripts/src/services/genshinParity/passes/solveReferenceCamera.ts` holds one pose per reference, with every axis but the glide's held.
 - [ ] **A scrolling row stands where the exports lay it, with only its phase taken from the reference** — no source yet: the row placement and the phase read were not traced to a file.
