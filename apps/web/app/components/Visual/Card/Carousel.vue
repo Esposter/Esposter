@@ -6,7 +6,6 @@ import type { CardStackState } from "@/models/visual/CardStackState";
 import type { CardStyleVariables } from "@/models/visual/CardStyleVariables";
 
 import CardBase from "@/components/Visual/Card/Base.vue";
-import { useCardCarousel } from "@/composables/visual/useCardCarousel";
 import { getCardStackClass } from "@/services/visual/getCardStackClass";
 import { getCardStyles } from "@/services/visual/getCardStyles";
 import { getInactiveCardScaleY } from "@/services/visual/getInactiveCardScaleY";
