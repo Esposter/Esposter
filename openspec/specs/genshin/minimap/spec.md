@@ -1,6 +1,6 @@
 ## Purpose
 
-The HUD's corner map, as the game keeps one in play (`~/Esposter/genshin-parity/references/hud-world-keys.png`). The map's one drawing of the catalogue, cut to a circle round the character with north up, under the game's own marks placed by its interface tree (see the open list), the N at the top of the rim, the view's fan and the character's arrow. Pressing it opens the map, as M does.
+The HUD's corner map, as the game keeps one in play (`~/Esposter/genshin-parity/references/hud-world-keys.png`). The map's one drawing of the catalogue, cut to a circle round the character with north up, under the game's own marks placed by its interface tree (see the open list), the N at the top of the rim, the view's fan and the character's arrow. Pressing it opens the map, as M does. The marks are the game's own, as its interface tree places them (`~/Esposter/genshin-parity/extracted/character/interface/json/GameObject/GrpMap.json`, scale 0.6; `~/Esposter/genshin-parity/extracted/character/interface/json/GameObject/MarkSightFan.json`, scale 1.25; `~/Esposter/genshin-parity/extracted/character/interface/json/GameObject/MarkLocalAvatar.json` and `~/Esposter/genshin-parity/extracted/character/interface/json/GameObject/MarkSouth.json`, at the centre at scale 1).
 
 ## Requirements
 
@@ -56,7 +56,7 @@ Any landmark or area the map gains SHALL appear on the minimap with no change of
 
 ## Open
 
-- [ ] **The marks the game's interface tree places, and their scales** — partly cited: the Purpose above and the design page's tree sentence place the marks by the tree; checked against `~/Esposter.noindex/genshin-parity/extracted/character/interface/json/GameObject/GrpMap.json` (scale 0.6), `MarkSightFan.json` (scale 1.25), and `MarkLocalAvatar.json` and `MarkSouth.json` (at the centre, scale 1), which agree with the built map, and the claim is open for the group's fourth child and MarkSouth's inset because neither is named in the held files.
-- [ ] **The fan a quarter turn wide** — no source yet: the sight fan's image width is not found in the exported tree (`~/Esposter.noindex/genshin-parity/extracted/character/interface/json/GameObject/MarkSightFan.json` holds only its object and a 1.25 scale); the minimap's `.fan` clip cuts a wedge of about 72 degrees, not 90.
+- [ ] **The marks the game's interface tree places, and their scales** — no source yet: the group's fourth child and MarkSouth's inset, which neither held file names.
+- [ ] **The fan a quarter turn wide** — no source yet: the sight fan's image width is not found in the exported tree (`~/Esposter.noindex/genshin-parity/extracted/character/interface/json/GameObject/MarkSightFan.json` holds only its object and a 1.25 scale); the minimap's `.fan` clip (`packages/genshin-world/src/components/Hud/Minimap/Index.vue`) cuts a wedge of about 72 degrees, not 90.
 - [ ] **The minimap keeps north at the top of a circle round the character, with its N drawn there** — no source yet: the circle's cut and the N's place are not measured against `~/Esposter/genshin-parity/references/hud-world-keys.png`.
 - [ ] **Pressing the minimap opens the map, as M does** — no source yet: the dump's table names hold no key-binding table, and the extracted SDK (`~/Esposter/genshin-parity/extracted/sdk/MonoBehaviour/`) holds only two input-field MonoBehaviours, so the game's M binding is not in the held data.
