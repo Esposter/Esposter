@@ -126,5 +126,5 @@ From constellation 1, Ice Unleashed SHALL add blades; from constellation 2, Atmo
 
 ## Open
 
-- [ ] **Atmospheric Revolution's cut applies to casts within the Frost Field** — no source yet: the cached Chongyun page names the constellation without its text.
+- [ ] **Atmospheric Revolution's cut applies to casts within the Frost Field** — no source yet: the cached Chongyun page names the constellation without its text. Checked: Demonbane (`Category_Chongyun_Talents.json`), which does not name Atmospheric Revolution.
 - [ ] **Chongyun gains 1 energy from a Cryo hit at constellation 4** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/chongyun/cons.go`: AddEnergy 2 behind a 2-second cooldown.

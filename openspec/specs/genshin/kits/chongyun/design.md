@@ -30,6 +30,6 @@ Chongyun's kit is its record and one behaviour module, `createChongyunKitBehavio
 ## Open
 
 - [ ] **Fantastic Voyage's infusion reaches only melee wielders** — no source yet: no cached source for Fantastic Voyage is in this pass, and the repo's melee-weapon constant is not evidence.
-- [ ] **Atmospheric Revolution's cut applies to casts within the Frost Field** — no source yet: the cached Chongyun page names the constellation without its text, so "cast within the Frost Field" is unread.
+- [ ] **Atmospheric Revolution's cut applies to casts within the Frost Field** — no source yet: the cached Chongyun page names the constellation without its text, so "cast within the Frost Field" is unread. Checked: Demonbane, the cached Chongyun talent page (`Category_Chongyun_Talents.json`), which does not name Atmospheric Revolution; its only constellation line is Ice Unleashed, with no text.
 - [ ] **Frozen Skies gives 1 energy for each Cryo hit while he is on the field** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/chongyun/cons.go`: AddEnergy 2 behind a 2-second cooldown.
-- [ ] **The wiki gives Ice Unleashed's blades 50% of Chongyun's ATK as Cryo DMG** — no source yet: the cached Chongyun page names Ice Unleashed as a constellation, with no text.
+- [ ] **The wiki gives Ice Unleashed's blades 50% of Chongyun's ATK as Cryo DMG** — no source yet: the cached Chongyun page names Ice Unleashed as a constellation, with no text. Checked: Demonbane (`Category_Chongyun_Talents.json`), which gives no 50% figure for it.
