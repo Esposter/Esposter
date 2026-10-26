@@ -2,6 +2,8 @@ import type { RegionData } from "#src/models/world/RegionData";
 import type { ResidentSpot } from "#src/models/world/ResidentSpot";
 import type { GroundPoint } from "genshin-engine";
 
+import { findGoToPlace } from "#src/services/quest/findGoToPlace";
+
 // Where an objective's target stands among the regions in reach, for the navigation marker to point at: a go-to place it
 // Names, the resident or landmark it names, or the resident whose talk it names, at the spot they are shown at now. An enemy
 // Or an item to collect is placed by no region data yet, and neither is a target out of reach or a resident absent at this
@@ -11,9 +13,9 @@ export const findQuestTargetPosition = (
   residentSpots: ReadonlyMap<string, ResidentSpot>,
   targetId: string,
 ): GroundPoint | undefined => {
-  const regionDatas = [...regionDataMap.values()];
-  const goToPlace = regionDatas.flatMap(({ goToPlaces }) => goToPlaces).find(({ id }) => id === targetId);
+  const goToPlace = findGoToPlace(regionDataMap, targetId);
   if (goToPlace) return goToPlace.position;
+  const regionDatas = [...regionDataMap.values()];
   const resident = regionDatas
     .flatMap(({ residents }) => residents)
     .find(({ id, talkId }) => id === targetId || talkId === targetId);
