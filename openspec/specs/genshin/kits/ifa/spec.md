@@ -1,6 +1,6 @@
 ## Purpose
 
-Ifa's kit as built outside her Nightsoul Blessing: her three normal attacks, charged attack, Compound Sedation Field's hit, and her low and collision plunges. Her skill's press enters and leaves the blessing with its points. Tonic Shot, her healing, the sedation marks and her passives and constellations wait on the Nightsoul hook and the sedation-mark hook.
+Ifa's kit as built outside her Nightsoul Blessing: her three normal attacks, charged attack, Compound Sedation Field's hit, her low and collision plunges, and her high plunge's reach. Her skill's press enters and leaves the blessing with its points. Tonic Shot, her healing, the sedation marks and her passives and constellations wait on the Nightsoul hook and the sedation-mark hook.
 
 ## Requirements
 
@@ -35,14 +35,14 @@ Ifa's low plunge and its collision SHALL play outside her Nightsoul Blessing wit
 
 ### Requirement: Provisional high plunge
 
-Ifa's high plunge SHALL use a borrowed reach and timing until a recording of it settles them.
+Ifa's high plunge SHALL take gcsim's High_Plunge circle as its reach, and its timing SHALL stay provisional until a recording of it settles it.
 
-#### Scenario: The high plunge uses the shared reach
+#### Scenario: The high plunge uses gcsim's High_Plunge reach
 
 - **GIVEN** Ifa is in the air
 - **WHEN** the player plunges from a height
 - **THEN** the hit lands at frame 0 of a 71-frame animation
-- **AND** its reach is the shared high plunge reach until a recording settles it
+- **AND** its reach is a circle of 3.5 metres on her body, as gcsim's `High_Plunge` hitbox gives it
 
 ### Requirement: Compound Sedation Field's burst hit
 
