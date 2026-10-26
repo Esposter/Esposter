@@ -22,7 +22,7 @@ A normal boss SHALL stay defeated until its Trounce Blossom is claimed, and SHAL
 
 ### Requirement: The weekly reset falls on Monday at 04:00
 
-The weekly reset SHALL fall on Monday at 04:00 on the server's clock (id 800001, `14400;360000`).
+The weekly reset SHALL fall on Monday at 04:00 on the server's clock (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, id 800001, `14400;360000`, for Monday 04:00).
 
 #### Scenario: Moment before the reset belongs to the week before
 
@@ -38,7 +38,7 @@ The weekly reset SHALL fall on Monday at 04:00 on the server's clock (id 800001,
 
 ### Requirement: The first three weekly claims of a week are priced at 30 resin
 
-The first three weekly-boss claims of each week SHALL cost 30 resin each, every later claim SHALL cost 60 resin, and the count SHALL cover all weekly bosses together (the export's weekly discount row, `CONST_VALUE_WEEKLY_BOSS_RESIN_DISCOUNT_PARAM`, gives three claims at 0.5).
+The first three weekly-boss claims of each week SHALL cost 30 resin each, every later claim SHALL cost 60 resin, and the count SHALL cover all weekly bosses together (the export's weekly discount row, `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/ConstValueExcelConfigData.json` `CONST_VALUE_WEEKLY_BOSS_RESIN_DISCOUNT_PARAM`, gives three claims at 0.5).
 
 #### Scenario: First claim of the week costs 30 resin
 
@@ -60,9 +60,9 @@ The first three weekly-boss claims of each week SHALL cost 30 resin each, every 
 
 ## Open
 
-- [ ] **A claimed normal boss returns exactly five seconds after its claim** — no source yet for the exact five: the wiki's Normal Boss page (cached under Normal_Bosses) says the boss "will respawn in roughly 5 seconds", and no respawn row in the game's exports holds the five seconds.
-- [ ] **The weekly reset is read on the server's UTC+8 clock** — no source yet: no row of the game's exports names the zone, and the wiki's Domains page, cached under Domain, names the Weekly World Reset with no time or zone.
-- [ ] **A normal boss stays defeated until its Trounce Blossom is claimed** — source: the wiki page Normal Boss, cached as `Normal_Bosses.json`
-- [ ] **A moment before Monday 04:00 belongs to the week before** — provisional: `packages/genshin-world/src/services/time/computeLastWeeklyReset.ts` assumes the 04:00 hour, and no game export or cached wiki page holds it; the game's own reset hour, read from its data, settles it.
-- [ ] **A moment at or after Monday 04:00 belongs to the new week** — provisional on the same 04:00 hour as the item above.
-- [ ] **A claim made at exactly Monday 04:00 counts toward the new week** — provisional: `packages/genshin-world/src/services/weekly/countWeeklyClaims.ts` is the build's own counting rule, not a read of the game; a claim recorded at the game's reset hour settles it.
+- [ ] **A normal boss stays defeated until the player teleports away** — no source yet: the wiki's Normal Bosses page is not in the wiki cache.
+- [ ] **A normal boss stays defeated until its Trounce Blossom is claimed** — no source yet: the wiki's Normal Bosses page is not in the wiki cache.
+- [ ] **A claimed normal boss returns five seconds after its claim** — no source yet: the wiki's Normal Bosses page is not in the wiki cache, and no respawn row in the game's exports holds the five seconds.
+- [ ] **The weekly reset is read on the server's UTC+8 clock** — no source yet: no row of the game's exports names the zone, and the wiki's Domains page is not in the wiki cache.
+- [ ] **A fourth weekly claim costs 60 resin, and the first three cost 30 each** — no source yet: the export's weekly discount row gives three claims at 0.5 but no base price of 60, and the wiki's Weekly Bosses page is not in the wiki cache.
+- [ ] **The first three weekly claims count across every weekly boss together** — no source yet: the export's weekly discount row does not say the cheap claims count across bosses, and the wiki's Weekly Bosses page is not in the wiki cache.
