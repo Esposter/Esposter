@@ -72,14 +72,16 @@ flowchart TD
 - **Collision and ground stay our data.** An export's meshes run to millions of triangles in a capital, and a collider built over them stalls the main thread; our hidden stand-ins and our ground answer the controller as in production, so nothing the body does differs between a development world and the deployed one.
 
 ## Open
-
-- [ ] **Nothing of the exports is committed, built, uploaded or deployed** — no source yet: no build, upload or deploy check is cited that excludes them.
-- [ ] **A capital's exports weigh over a gigabyte, mostly meshes that no family draws** — no source yet: no size measurement of the exports is on disk.
-- [ ] **The instanced families hold Windrise at about 39 frames a second, where it now holds 60** — no source yet: no frame-rate measurement is on disk.
-- [ ] **The export carries no vertex colours, and the `_VertexColorMul` multiplier would take the leaf to a dark brown** — no source yet: no vertex-colour check of the exported leaf is on disk.
-- [ ] **Windrise's exports place no grass, and Snezhnaya's place no building of its capital yet** — no source yet: no checked export lists the grass or the capital's buildings.
-- [ ] **A terrain tile's export holds its far base map alone, none of the layers painted near** — no source yet: no checked terrain export is cited for this.
-- [ ] **The OBJ holds the door only as it is bound, so drawn as it stands it would appear whole** — no source yet: no checked door export is cited.
-- [ ] **The door's pieces cast no shadow** — no source yet: no checked code line or render check for it is cited.
-- [ ] **A witness render's own parts are drawn where the parity page provides them** — no source yet: no parity page output is cited for this.
-- [ ] **An export's meshes run to millions of triangles in a capital, and a collider over them stalls the main thread** — no source yet: no triangle count or profile is on disk.
+- **Nothing of the exports is committed, built, uploaded or deployed** — `apps/web/modules/serveGenshinExtractions.ts` registers the exports' route only when `nuxt.options.dev` is set, so no build bundles its handler, and the parity directory is read from outside the repository's tree by default (`apps/web/server/services/genshin/sceneExport/constants.ts`).
+- **A capital's exports weigh over a gigabyte, mostly meshes that no family draws** — `~/Esposter.noindex/genshin-parity/extracted/mondstadt` holds about 1.3 GB of files, and most of its mesh bytes lie outside the Buildings family's pattern `^Area_Md[Bb]uild_` (`packages/genshin-world/src/services/mondstadt/MondstadtPartFamilyMeshRegexMap.ts`).
+- [ ] **The instanced families hold Windrise at about 39 frames a second, where it now holds 60** — no source yet: no frame-rate measurement is on disk; `~/Esposter.noindex/genshin-parity/extracted/timings` holds animation-clip timings only.
+- **The export carries no vertex colours** — `~/Esposter.noindex/genshin-parity/extracted/windrise/assets/Mesh/Stages_Unique_CyTree01_Leaf_Lod0.obj` gives each of its vertices three coordinates and no colour.
+- [ ] **The `_VertexColorMul` multiplier would take the leaf to a dark brown** — no source yet: the multiplier is `(0.515, 0.368, 0.314, 1)` in `~/Esposter.noindex/genshin-parity/extracted/windrise/assets/Material/Stages_Unique_CyTree01_Leaf_Lod0.json`, but no render of the leaf is on disk to show the colour it takes.
+- [ ] **Windrise's exports place no grass** — no source yet: no mesh name under `~/Esposter.noindex/genshin-parity/extracted/windrise/assets/Mesh` carries a grass, plant, bush or flower name, but the placement data (`windrise/layout`, `windrise/witness.json`) was not read for grass placements.
+- [ ] **Snezhnaya's exports place no building of its capital yet** — no source yet: `~/Esposter.noindex/genshin-parity/extracted/snezhnaya/assets/Mesh` holds building meshes (`Area_Common_Build_Hili_House_18_Vo`), and no capital building family was matched against them. The family map (`packages/genshin-world/src/services/world/WorldSceneExportFamilyMeshRegexMap.ts`) has no Snezhnaya entry, which is the code side of the claim.
+- [ ] **A terrain tile's export holds its far base map alone, none of the layers painted near** — no source yet: no terrain tile export was opened; `~/Esposter.noindex/genshin-parity/extracted/windrise/world` lists `TerrainData`, which was not read.
+- [ ] **The OBJ holds the door only as it is bound, so drawn as it stands it would appear whole** — no source yet: `~/Esposter.noindex/genshin-parity/extracted/login/assets/Mesh/LoginScene_Door01_Vo.json` is listed, but the bind pose of its mesh was not read.
+- **The door's pieces cast no shadow** — `packages/genshin-world/src/services/login/door/rideLoginWitnessDoor.ts` sets `castShadow = false` on the copy it places of each piece over ours.
+- **A witness render's own parts are drawn where the parity page provides them** — `packages/genshin-world/parity/main.ts` calls `loadWitness` on the layout (line 110), the same loader the world draws its exports through (`packages/genshin-world/src/services/scene/loadWitness.ts`).
+- **An export's meshes run to millions of triangles in a capital** — the 823 OBJ files under `~/Esposter.noindex/genshin-parity/extracted/mondstadt` hold about 3.4 million triangles, counted from their face lines.
+- [ ] **A collider over the exports stalls the main thread** — no source yet: no profile of a collider built over a capital's meshes is on disk; the decision's reason is not measured here.
