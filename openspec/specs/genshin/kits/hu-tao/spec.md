@@ -6,7 +6,7 @@ Hu Tao's kit as built: her string, charged attack, Guide to Afterlife's Paramita
 
 ### Requirement: String of six strikes and a seventh hit
 
-Hu Tao's string SHALL be six strikes, the fifth of which deals two hits, so that the string's seventh hit is its sixth strike, as her normal attacks (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/hutao/attack.go:16`).
+Hu Tao's string SHALL be six strikes, the fifth of which deals two hits, so that the string's seventh hit is its sixth strike, as her normal attacks (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/hutao/attack.go`, line 16).
 
 #### Scenario: The string plays through to its seventh hit
 
@@ -35,7 +35,7 @@ Guide to Afterlife SHALL start the Paramita Papilio stance, which infuses Hu Tao
 
 ### Requirement: Guide to Afterlife costs HP without going below 1
 
-Guide to Afterlife SHALL cost 30% of Hu Tao's current HP as the stance starts (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/hutao/skill.go:56`), and the cost SHALL never take her below 1 HP.
+Guide to Afterlife SHALL cost 30% of Hu Tao's current HP as the stance starts (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/hutao/skill.go`, line 56), and the cost SHALL never take her below 1 HP.
 
 #### Scenario: The HP cost is paid as the stance starts
 
@@ -51,7 +51,7 @@ Guide to Afterlife SHALL cost 30% of Hu Tao's current HP as the stance starts (`
 
 ### Requirement: Spirit Soother's half-HP hit
 
-Spirit Soother SHALL use its half-HP multiplier only when Hu Tao's HP is at or under half of her Max HP as the burst starts (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/hutao/burst.go:24`).
+Spirit Soother SHALL use its half-HP multiplier only when Hu Tao's HP is at or under half of her Max HP as the burst starts (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/hutao/burst.go`, line 24).
 
 #### Scenario: Low HP applies the half-HP multiplier
 
@@ -67,7 +67,7 @@ Spirit Soother SHALL use its half-HP multiplier only when Hu Tao's HP is at or u
 
 ### Requirement: Blood Blossom on enemies her charged attack hits
 
-Blood Blossom SHALL be applied to each enemy the Paramita charged attack hits and SHALL tick a Pyro hit on that enemy every four seconds for 9.5 seconds (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/hutao/skill.go:107`, `~/Esposter/cache/gcsim-v2.47.2/internal/characters/hutao/skill.go:111`).
+Blood Blossom SHALL be applied to each enemy the Paramita charged attack hits and SHALL tick a Pyro hit on that enemy every four seconds for 9.5 seconds (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/hutao/skill.go`, line 107, `~/Esposter/cache/gcsim-v2.47.2/internal/characters/hutao/skill.go`, line 111).
 
 #### Scenario: The charged attack applies Blood Blossom
 
@@ -79,7 +79,7 @@ Blood Blossom SHALL be applied to each enemy the Paramita charged attack hits an
 
 - **GIVEN** Blood Blossom is on an enemy
 - **WHEN** four seconds pass
-- **THEN** that enemy takes a Pyro tick of 1 unit of gauge (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/hutao/skill.go:135`)
+- **THEN** that enemy takes a Pyro tick of 1 unit of gauge (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/hutao/skill.go`, line 135)
 - **AND** the ticks continue every four seconds for 9.5 seconds
 
 ### Requirement: Provisional plunge timings
