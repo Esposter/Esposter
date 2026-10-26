@@ -102,7 +102,7 @@ The character on the field fights through its kit, which prices every character'
 ## Notes
 
 - **The cooldown is the single player's.** The wiki gives one second; co-op splits the four slots between players and is out of the world's scope.
-- **Only the character on the field takes an enemy's strike.** The others' HP falls only by a drowning, which takes every member's energy and a tenth of its Max HP together, while their cooldowns keep running off the field.
+- **Only the character on the field takes an enemy's strike, bar a strike that lands on a taunt it struck.** `strikeParty` (`packages/genshin-world/src/composables/useWorldCombat.ts`) sends a taunted strike to the taunt. The others' HP falls only by a drowning, which takes every member's energy and a tenth of its Max HP together, while their cooldowns keep running off the field.
 
 ## Sources
 
@@ -114,6 +114,7 @@ The character on the field fights through its kit, which prices every character'
 - [Movement SPD](https://genshin-impact.fandom.com/wiki/Movement_SPD), Genshin Impact Wiki: the walking, running, sprinting, dashing and jumping that Movement SPD alters.
 
 ## Open
+
 - [ ] **Party Setup opens on `L`, and the keys `1` to `4` and a pad's directions switch members** — the code binds them (`packages/genshin-engine/src/input/InputActionBindingMap.ts`, `OpenPartySetup` on `KeyL`, `SwitchToPartyMember1` to `4` on `Digit1` to `Digit4` and the directional pad); the game's own defaults are the controls page's open item, with the wiki's Controls page not cached.
 - **`createParty` deploys Party 1 with its first member on the field** — `packages/genshin-world/src/services/party/createParty.ts` sets the active index to the first slot (`activeIndex: 0`).
 - [ ] **A `PartyMember` keeps its HP as a share of Max HP, as the game does, and a character joins a team at full HP** — `packages/genshin-world/src/services/party/createPartyMember.ts` builds each member; the game's own Health page is not cached, so "as the game does" is open.
@@ -130,5 +131,5 @@ The character on the field fights through its kit, which prices every character'
 - **`getActiveCharacterId` returns the deployed team's member at the active index** — `packages/genshin-world/src/services/party/getActiveCharacterId.ts`.
 - **The world screen makes the Traveler from the roster at level 1 with its weapon, and switches on the first party key once a frame** — `packages/genshin-world/src/services/character/createCharacter.ts` and `packages/genshin-world/src/components/World/Session/Index.vue`.
 - [ ] **A domain's challenge revives its team without the screen** — no source yet: no domain-challenge revive call was located in `packages/genshin-world/src/services/party/` or `packages/genshin-world/src/composables/useWorldDomains.ts`.
-- **Only the character on the field takes an enemy's strike** — contradicted in part: `packages/genshin-world/src/composables/useWorldCombat.ts` (`strikeParty`) lands an enemy's strike on the taunt it struck, or on the character on the field through the team's shields.
+- [ ] **An enemy's strike that lands on a taunt is the taunt's to take, as the game does** — no source yet: `packages/genshin-world/src/composables/useWorldCombat.ts` (`strikeParty`) sends a taunted strike to the taunt and every other strike to the character on the field through the team's shields, but no game text or wiki page checks the taunt's targeting.
 - **A drowning takes every member's energy** — `packages/genshin-world/src/services/party/drownParty.ts`, where every member loses its energy as the drowning falls.
