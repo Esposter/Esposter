@@ -75,4 +75,4 @@ Mualani's skill press SHALL enter her Nightsoul Blessing with 60 Nightsoul point
 
 ## Open
 
-- [ ] **Plunge attacks deal no poise** — contradicted by `~/Esposter/cache/genshin-wiki/Category_Mualani_Talents.json`: its plunge rows give poise 50 and 100, which the design takes.
+- [ ] **Plunge attacks deal no poise** — contradicted by `~/Esposter.noindex/cache/genshin-wiki/Category_Mualani_Talents.json`: its plunge rows give poise 50 and 100, which the design takes.
