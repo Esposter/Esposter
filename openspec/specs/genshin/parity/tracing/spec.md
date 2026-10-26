@@ -6,28 +6,28 @@ How a glyph or a game mark is traced from its reference into the SVG path the co
 
 ### Requirement: A vector mark is drawn from its published paths as it is
 
-A mark that is already a vector SHALL be drawn from its published paths unchanged, so that no edge of it can chip.
+A mark that is already a vector SHALL be drawn from its published paths unchanged, so that no edge of it can chip (see Open).
 
 #### Scenario: Vector logo drawn
 
 - **GIVEN** a game logo published as a vector
 - **WHEN** the screen draws it
-- **THEN** its published paths are drawn as they are
+- **THEN** its published paths are drawn as they are (see Open)
 
 ### Requirement: A glyph is traced from the game's own mark at full resolution
 
-A glyph SHALL be traced from the game's own mark at the source's full resolution, never at a reduced one.
+A glyph SHALL be traced from the game's own mark at the source's full resolution, never at a reduced one (`scripts/src/services/genshinParity/shared/traceImage.ts`).
 
 #### Scenario: Glyph traced
 
 - **GIVEN** a glyph in a mark's reference
 - **WHEN** the glyph is traced
 - **THEN** the trace runs at the source's full resolution
-- **AND** the region is printed beside the trace for checking
+- **AND** the region is printed beside the trace for checking (`scripts/src/services/genshinParity/shared/traceImage.ts`)
 
 ### Requirement: Ink is told from paper by its contrast with the region's corners
 
-A mark's ink SHALL be told from its paper by how far each pixel strays from the colour at the region's corners, so that a mark dark on light, light on dark or coloured traces alike.
+A mark's ink SHALL be told from its paper by how far each pixel strays from the colour at the region's corners, so that a mark dark on light, light on dark or coloured traces alike (`scripts/src/services/genshinParity/shared/traceImage.ts`).
 
 #### Scenario: Marks in different colours
 
@@ -37,7 +37,7 @@ A mark's ink SHALL be told from its paper by how far each pixel strays from the 
 
 ### Requirement: Specks and small holes are cleared before tracing and every path is kept
 
-Runs of ink or holes smaller than a sliver of the region SHALL be cleared from the split before tracing, and every path the trace finds SHALL be kept.
+Runs of ink or holes smaller than a sliver of the region SHALL be cleared from the split before tracing, and every path the trace finds SHALL be kept (`scripts/src/services/genshinParity/shared/traceMask.ts`, `scripts/src/services/genshinParity/shared/removeMaskSpecks.ts`).
 
 #### Scenario: Speck beside a glyph
 
@@ -48,7 +48,7 @@ Runs of ink or holes smaller than a sliver of the region SHALL be cleared from t
 
 ### Requirement: A traced path is written in its shortest form with the same points
 
-A traced path SHALL be written in its shortest form, with the same points, and its opening move kept absolute so that joined paths keep their places.
+A traced path SHALL be written in its shortest form, with the same points, and its opening move kept absolute so that joined paths keep their places (`scripts/src/services/genshinParity/shared/compactSvgPath.ts`).
 
 #### Scenario: Paths joined into one shape
 
@@ -59,10 +59,15 @@ A traced path SHALL be written in its shortest form, with the same points, and i
 
 ### Requirement: Only shapes derived from the game's marks ship with a screen
 
-A screen SHALL ship only shapes derived from the game's marks through this tracing.
+A screen SHALL ship only shapes derived from the game's marks through this tracing (see Open).
 
 #### Scenario: Screen's shapes checked
 
 - **GIVEN** a screen that draws a game mark
 - **WHEN** its shapes are checked
 - **THEN** each shape is derived from the game's mark by this tracing or is a published vector
+
+## Open
+
+- [ ] **Only traced shapes or published vectors ship with a screen** — no source yet: no check of the screens' shipped shapes against their source was run.
+- [ ] **A vector mark's published paths are drawn unchanged** — no source yet: the component that draws the Commons SVGs was not traced.
