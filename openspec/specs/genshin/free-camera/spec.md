@@ -1,12 +1,12 @@
 ## Purpose
 
-The free camera, flown over the continent with the keyboard, the mouse and a gamepad's sticks from wherever the follow camera left the view, which the tuning panel mounts in photo mode (`packages/genshin-world/src/components/World/FreeCamera/Index.vue`). Its input is read once a frame and its look turns once a frame, its motion runs in fixed steps ahead of the floating origin's shift, and it is held above the ground and the water's surface (`packages/genshin-world/src/components/World/Session/Index.vue`, `packages/genshin-world/src/components/World/FreeCamera/Index.vue`).
+The free camera, flown over the continent with the keyboard, the mouse and a gamepad's sticks from wherever the follow camera left the view, which the tuning panel mounts in photo mode. Its input is read once a frame and its look turns once a frame, its motion runs in fixed steps ahead of the floating origin's shift, and it is held above the ground and the water's surface.
 
 ## Requirements
 
 ### Requirement: The free camera starts from the follow camera's view
 
-The free camera SHALL start from the view the follow camera left when photo mode mounts it, and SHALL be removed when photo mode is left (`packages/genshin-world/src/components/World/FreeCamera/Index.vue`, `packages/genshin-world/src/components/World/Session/Index.vue`).
+The free camera SHALL start from the view the follow camera left when photo mode mounts it, and SHALL be removed when photo mode is left.
 
 #### Scenario: Free camera starts where the follow camera left the view
 
@@ -22,7 +22,7 @@ The free camera SHALL start from the view the follow camera left when photo mode
 
 ### Requirement: Keys move the free camera over the ground and up and down
 
-The free camera SHALL move forward, back, left and right with W, S, A and D, and up and down with Space and Shift, and a pair of opposing keys held together SHALL cancel (`packages/genshin-engine/src/input/createInput.ts`).
+The free camera SHALL move forward, back, left and right with W, S, A and D, and up and down with Space and Shift, and a pair of opposing keys held together SHALL cancel.
 
 #### Scenario: W moves the camera forward
 
@@ -34,7 +34,7 @@ The free camera SHALL move forward, back, left and right with W, S, A and D, and
 
 - **GIVEN** the free camera is in the world
 - **WHEN** the player holds Space and then Shift
-- **THEN** the camera rises while Space is held and falls while Shift is held (`packages/genshin-engine/src/input/createInput.ts`)
+- **THEN** the camera rises while Space is held and falls while Shift is held
 
 #### Scenario: Opposing keys held together cancel
 
@@ -44,7 +44,7 @@ The free camera SHALL move forward, back, left and right with W, S, A and D, and
 
 ### Requirement: Mouse click locks the pointer and the locked pointer turns the look
 
-A click on the canvas SHALL lock the pointer, and while it is locked the pointer's movement SHALL turn the look (`packages/genshin-world/src/components/World/FreeCamera/Index.vue`, `packages/genshin-engine/src/input/createInput.ts`).
+A click on the canvas SHALL lock the pointer, and while it is locked the pointer's movement SHALL turn the look.
 
 #### Scenario: Click on the canvas turns the look with the pointer
 
@@ -54,7 +54,7 @@ A click on the canvas SHALL lock the pointer, and while it is locked the pointer
 
 ### Requirement: The gamepad's left stick moves and its right stick turns the look
 
-The first connected gamepad's left stick SHALL move the free camera and its right stick SHALL turn the look at two and a half radians a second, each with a dead zone at the stick's centre (`packages/genshin-engine/src/input/constants.ts`).
+The first connected gamepad's left stick SHALL move the free camera and its right stick SHALL turn the look at two and a half radians a second, each with a dead zone at the stick's centre.
 
 #### Scenario: Left stick moves the camera over the ground
 
@@ -66,7 +66,7 @@ The first connected gamepad's left stick SHALL move the free camera and its righ
 
 - **GIVEN** a gamepad is connected
 - **WHEN** the player holds the right stick away from its centre
-- **THEN** the look turns at two and a half radians a second (`GAMEPAD_LOOK_RADIANS_PER_SECOND` in `packages/genshin-engine/src/input/constants.ts`)
+- **THEN** the look turns at two and a half radians a second (`GAMEPAD_LOOK_RADIANS_PER_SECOND`)
 
 #### Scenario: Stick inside its dead zone does nothing
 
@@ -76,7 +76,7 @@ The first connected gamepad's left stick SHALL move the free camera and its righ
 
 ### Requirement: Touch moves and looks under the thumbs
 
-On a touch screen a stick under the left thumb SHALL move the camera, a drag on the right half SHALL turn the look, and a button SHALL rise (`packages/genshin-world/src/components/Hud/Stick/Index.vue`, `packages/genshin-world/src/components/Hud/Touch/Index.vue`, `packages/genshin-world/src/components/Hud/Actions/Index.vue`).
+On a touch screen a stick under the left thumb SHALL move the camera, a drag on the right half SHALL turn the look, and a button SHALL rise.
 
 #### Scenario: Left thumb stick moves and right drag looks
 
@@ -92,7 +92,7 @@ On a touch screen a stick under the left thumb SHALL move the camera, a drag on 
 
 ### Requirement: Motion is per second and the mouse look is per pixel
 
-The free camera's motion SHALL be per second, so a key held for the same time moves it the same distance at any frame rate, and the mouse look SHALL turn by a fixed angle for each pixel the pointer moves (`packages/genshin-engine/src/camera/createFreeCamera.ts`, `packages/genshin-engine/src/input/constants.ts`).
+The free camera's motion SHALL be per second, so a key held for the same time moves it the same distance at any frame rate, and the mouse look SHALL turn by a fixed angle for each pixel the pointer moves.
 
 #### Scenario: Same key time moves the same distance at any frame rate
 
@@ -108,7 +108,7 @@ The free camera's motion SHALL be per second, so a key held for the same time mo
 
 ### Requirement: The camera is never held below the ground or the water's surface
 
-The free camera's height SHALL be raised, after each step, to the higher of the ground's height at its place and the water's level, plus a clearance (`packages/genshin-engine/src/camera/createFreeCamera.ts`, `FREE_CAMERA_CLEARANCE` in `packages/genshin-engine/src/camera/constants.ts`).
+The free camera's height SHALL be raised, after each step, to the higher of the ground's height at its place and the water's level, plus a clearance (`FREE_CAMERA_CLEARANCE`).
 
 #### Scenario: Camera over the ground is held above it
 
@@ -124,7 +124,7 @@ The free camera's height SHALL be raised, after each step, to the higher of the 
 
 ### Requirement: Pitch is clamped so the view never flips
 
-The look's pitch SHALL be clamped short of straight up and straight down so the view never flips (`packages/genshin-engine/src/camera/createFreeCamera.ts`, `FREE_CAMERA_MAX_PITCH` in `packages/genshin-engine/src/camera/constants.ts`).
+The look's pitch SHALL be clamped short of straight up and straight down so the view never flips (`FREE_CAMERA_MAX_PITCH`).
 
 #### Scenario: Looking straight up stops short of the top
 
@@ -134,7 +134,7 @@ The look's pitch SHALL be clamped short of straight up and straight down so the 
 
 ### Requirement: Speed grows with the camera's height above the ground
 
-The free camera's motion speed SHALL grow with its height above the ground, so a crossing takes seconds and a slow pass over grass stays slow (`packages/genshin-engine/src/camera/createFreeCamera.ts`, `packages/genshin-engine/src/camera/constants.ts`).
+The free camera's motion speed SHALL grow with its height above the ground, so a crossing takes seconds and a slow pass over grass stays slow.
 
 #### Scenario: Higher camera moves faster
 
@@ -150,14 +150,19 @@ While a screen holds the world, the free camera SHALL neither look nor move.
 
 - **GIVEN** a screen holds the world
 - **WHEN** the player moves the input
-- **THEN** the camera neither looks nor moves (`packages/genshin-world/src/components/World/FreeCamera/Index.vue`)
+- **THEN** the camera neither looks nor moves
 
 ### Requirement: Losing focus releases every held key
 
-Losing focus SHALL release every key held, since their releases never reach the page (`packages/genshin-engine/src/input/createInput.ts`, its `blur` listener).
+Losing focus SHALL release every key held, since their releases never reach the page (its `blur` listener).
 
 #### Scenario: Focus lost while moving releases the keys
 
 - **GIVEN** the player holds a movement key
 - **WHEN** the page loses focus
-- **THEN** every held key is released and the camera stops moving (`packages/genshin-engine/src/input/createInput.ts`)
+- **THEN** every held key is released and the camera stops moving
+
+## Open
+
+- [ ] **The free camera is flown from where the follow camera left the view, mounted by photo mode** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The free camera's motion runs in fixed steps ahead of the floating origin's shift, and it is held above the ground and water** — no source yet: game data or a snapshot that holds this behaviour
