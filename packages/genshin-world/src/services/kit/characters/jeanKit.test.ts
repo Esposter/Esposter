@@ -4,6 +4,7 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitInput } from "#src/models/kit/KitInput";
+import type { KitPartyMemberStruckEvent } from "#src/models/kit/KitPartyMemberStruckEvent";
 
 import { GAME_DATA_LOCAL_BASE_URL } from "#scripts/gameData/constants";
 import { Attribute } from "#src/models/character/Attribute";
@@ -46,7 +47,7 @@ const getDamageReduction = (combatant: Combatant, context: KitContext): number =
     .attributes.attributeTotalMap[Attribute.DamageReduction];
 
 // An enemy's strike that lands on Jean, as the world tells the kits it did
-const createJeanStruckEvent = () => ({
+const createJeanStruckEvent = (): KitPartyMemberStruckEvent => ({
   isShielded: false,
   kind: KitEventKind.PartyMemberStruck,
   striker: createJeanEnemy(0, 0),

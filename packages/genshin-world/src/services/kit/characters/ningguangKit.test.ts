@@ -46,7 +46,7 @@ const stepEffects = (seconds: number, context: KitContext): KitStrike[] =>
 const stepKitWithStep = (seconds: number, context: KitContext, combatant: Combatant): void => {
   for (let index = 0; index < Math.round(seconds / FIXED_STEP_SECONDS); index++) {
     stepKitTestEffects(FIXED_STEP_SECONDS, context);
-    NINGGUANG_KIT.onStep?.(context, combatant, FIXED_STEP_SECONDS, 0);
+    NINGGUANG_KIT.onStep?.(context, combatant, FIXED_STEP_SECONDS);
   }
 };
 

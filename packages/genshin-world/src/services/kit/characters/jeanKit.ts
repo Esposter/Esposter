@@ -100,9 +100,8 @@ const createFieldTick =
 
 // Whether an effect is the cut that lasts after a character leaves the field, its buff or the strikes it has left
 const checkIsLionsFangAfter = (effect: KitEffect, characterId: number): boolean =>
-  effect.characterId === characterId &&
-  ((effect.kind === "buff" && effect.source === LIONS_FANG_AFTER_SOURCE) ||
-    (effect.kind === "status" && effect.id === LIONS_FANG_AFTER_STATUS_ID));
+  (effect.kind === "buff" && effect.characterId === characterId && effect.source === LIONS_FANG_AFTER_SOURCE) ||
+  (effect.kind === "status" && effect.characterId === characterId && effect.id === LIONS_FANG_AFTER_STATUS_ID);
 
 // Starts a character's cut after leaving the field, for 10 seconds or its 3 strikes, which replaces any it holds
 const startLionsFangAfter = (kitEffectState: KitEffectState, characterId: number): void => {
