@@ -6,7 +6,6 @@ import type { GoSource } from "#src/models/genshinAssets/kits/gcsim/GoSource";
 
 import { GoExpressionKind } from "#src/models/genshinAssets/kits/gcsim/GoExpressionKind";
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
-import { checkIsAfterTakenReturn } from "#src/services/genshinAssets/kits/gcsim/checkIsAfterTakenReturn";
 import { SINGLE_TARGET_HIT_CONSTRUCTOR } from "#src/services/genshinAssets/kits/gcsim/constants";
 import { createGoScope } from "#src/services/genshinAssets/kits/gcsim/createGoScope";
 import { evaluateGoNumber } from "#src/services/genshinAssets/kits/gcsim/evaluateGoNumber";
@@ -14,7 +13,6 @@ import { findInlineAttackPosition } from "#src/services/genshinAssets/kits/gcsim
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
 import { readCallVariants } from "#src/services/genshinAssets/kits/gcsim/readCallVariants";
 import { readEnemyQueryLoops } from "#src/services/genshinAssets/kits/gcsim/readEnemyQueryLoops";
-import { readReturnedConstellationGates } from "#src/services/genshinAssets/kits/gcsim/readReturnedConstellationGates";
 import { readConstantLoops } from "#src/services/genshinAssets/kits/gcsim/readGoConstantLoops";
 import { readGoEnclosingFunction } from "#src/services/genshinAssets/kits/gcsim/readGoEnclosingFunction";
 import { readGoHitbox } from "#src/services/genshinAssets/kits/gcsim/readGoHitbox";
@@ -57,15 +55,9 @@ export const readGcsimQueuedAttacks = (
     const enemyQueryLoops = readEnemyQueryLoops(tokens, scope, file);
     const returnedClosures = readReturnedClosures(tokens);
     const namedFunctions = readGoNamedFunctions(tokens);
-    // A return a constellation block gives ends the code after it in a task closure, which is delayed as a whole
-    const returnedGates = readReturnedConstellationGates(tokens).filter(({ scopeEnd, scopeStart }) =>
-      taskClosures.some(({ bodyEnd, bodyStart }) => bodyStart === scopeStart && bodyEnd === scopeEnd),
-    );
     const queuedAttacks: GcsimQueuedAttack[] = [];
     for (const [position, token] of tokens.entries()) {
       if (token.kind !== GoTokenKind.Identifier || !QUEUE_CALLEES.has(token.text)) continue;
-      // A call a task's constellation return ends the code before is not reached at that constellation
-      if (checkIsAfterTakenReturn(position, returnedGates, constellation)) continue;
       const { end: callEnd, expression: call } = parseGoExpression(tokens, position);
       if (call.kind !== GoExpressionKind.Call) continue;
       const argumentStarts = call.parameterStarts;
