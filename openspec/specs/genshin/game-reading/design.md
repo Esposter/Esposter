@@ -29,7 +29,7 @@ This page links them and does not restate them.
   - What ships takes its defaults from public references or from a derivation.
   - _Rejected: the game's values as committed constants._ That would ship the game's data inside our source.
 - **A read runs on the machine that holds its source and the tool it needs.**
-  - Each machine holds its own install and its own exports, and they move between LAN machines only over SSH (the `throughput` skill's fleet page).
+  - Each machine holds its own install and its own exports, and they move between LAN machines only over SSH (`scripts/src/fleet/data/index.ts`, which copies "over ssh on the local network only").
   - A read that the session's machine cannot run, with no judgement left in it, goes on the compute queue. Its item carries the capabilities it needs (`game-install`, `game-exports`), so only a machine holding them takes it (`.agents/skills/genshin-parity/references/compute-queue.md`).
   - A read that still needs judgement is the other machine's claim on the feature's unit.
   - A disassembler is a tool, not a capability, so an item that needs Windows or needs vkd3d says so in its text.
@@ -114,7 +114,7 @@ Both machines hold an install, under `~/Esposter/genshin-parity/game` on the Mac
 
 The table's rows are read from `scripts/src/services/recreation/animeStudio/runAnimeStudio.ts` (the Mac's QoS clamp), `scripts/src/services/genshinParity/shared/checkIsGameRunning.ts` (the PC's refusal), `scripts/src/services/genshinAssets/materials/disassembleDxbcDirectory.ts` (DXBC and DXIL by platform) and `scripts/src/services/genshinAssets/materials/decompileDxbcDirectory.ts` (HLSL, pinned in `scripts/src/services/genshinAssets/shared/constants.ts`).
 
-The PC runs no SSH server, so a transfer between the two runs from the PC to the Mac only, by `ai:fleet:data push` ([fleet](../../../../.agents/skills/throughput/references/fleet.md)). The Mac cannot pull from the PC.
+The PC runs no SSH server, so a transfer between the two runs from the PC to the Mac only, by `ai:fleet:data push` (`scripts/src/fleet/data/index.ts`). The Mac cannot pull from the PC.
 
 `vkd3d-compiler` is found by `VKD3D_COMPILER` or on `PATH` (`scripts/src/services/genshinAssets/materials/disassembleWithVkd3d.ts`); the Mac's is a vkd3d 2.1 build (`~/Esposter/cache/vkd3d/vkd3d-2.1`), named by `VKD3D_COMPILER`. A step whose compiler is missing stops, rather than writing programs without their assembly (`scripts/src/services/genshinAssets/materials/disassembleWithVkd3d.ts`).
 
@@ -152,8 +152,7 @@ The PC runs no SSH server, so a transfer between the two runs from the PC to the
 
 - [ ] **What ships takes its defaults from public references or a derivation** — no source yet: the shipped defaults and the references or derivations they come from are not listed in the repository.
 - [ ] **The witness layout gives a material's floats and colours** — no source yet: the witness layout's reader is repo code, which is not game evidence, and no game material file is read against the claim.
-- [ ] **The machines move exports between them only over SSH** — no source yet: the throughput fleet page names no SSH route.
-- [ ] **The PC runs no SSH server, and its transfers run by `ai:fleet:data push`** — no source yet: the throughput fleet page names neither the missing server nor the push.
+- [ ] **The PC runs no SSH server, and its transfers run by `ai:fleet:data push`** — no source yet: the PC's SSH server state, which no record keeps.
 - [ ] **On 2026-10-18 most of the dump matched the 6.6 branch** — no source yet: that day's size comparison of the dump's tables against each branch is kept in neither the repository nor the cache.
 - [ ] **The Windows PC holds its own install** — no source yet: the PC's install is not on this machine, and no record of it is in the repository.
 - [ ] **The parity page, the witness and the passes run on both machines** — no source yet: which machine holds the `parity-page` capability is not recorded in the repository.
