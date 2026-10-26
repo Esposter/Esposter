@@ -23,11 +23,11 @@ committed.
 | `court-of-fontaine-location` | `WorldScreen` | 31.74% | 0.202 | 27.65% | 0.8417 |
 | `crafting-strongbox` | `CraftingStrongbox` | pending: no recording of the screen yet | | | |
 | `crafting-table` | `CraftingScreen` | 39.00% | 0.243 | 44.59% | 0.7678 |
-| `dialogue-choices-line` | `DialogueTalk` | 9.22% | 0.934 | 1.91% | 0.2912 |
+| `dialogue-choices-line` | `DialogueTalk` | 8.99% | 0.924 | 2.15% | 0.2757 |
 | `dialogue-choices-replies` | `DialogueTalk` | 14.36% | 0.766 | 8.59% | 0.4588 |
-| `dialogue-choices-speaker` | `DialogueTalk` | 7.79% | 0.613 | 4.88% | 0.3167 |
-| `dialogue-line` | `DialogueTalk` | 10.80% | 0.982 | 2.06% | 0.3844 |
-| `dialogue-paimon-line` | `DialogueTalk` | 9.98% | 0.957 | 2.60% | 0.3151 |
+| `dialogue-choices-speaker` | `DialogueTalk` | 7.83% | 0.632 | 5.08% | 0.3161 |
+| `dialogue-line` | `DialogueTalk` | 10.56% | 0.982 | 2.29% | 0.3701 |
+| `dialogue-paimon-line` | `DialogueTalk` | 10.24% | 0.947 | 2.94% | 0.3025 |
 | `everfrozen-earth-location` | `WorldScreen` | 20.61% | 0.234 | 19.75% | 0.6327 |
 | `exit-prompt` | `MenuExit` | 8.36% | 0.909 | 33.71% | 0.2227 |
 | `forge-screen` | `ForgeScreen` | 6.72% | 0.685 | 5.60% | 0.2216 |

@@ -111,13 +111,15 @@ const lineParts = computed(() => {
   line-height: calc(var(--unit) * 16.5);
 }
 
+/* The letter-space is 2.35: the English client's first line spans 782 pixels at 720 high and this face sets it 3 pixels
+   narrower at 2.3, the mean difference lowest at 2.35 (2.38 and 2.42 raise it). The face itself is the remaining gap */
 .line {
   max-width: calc(var(--unit) * 1200);
   margin: calc(var(--unit) * 13.5) 0 0;
   color: #fff;
   font-size: calc(var(--unit) * 26);
   font-weight: 600;
-  letter-spacing: calc(var(--unit) * 2.3);
+  letter-spacing: calc(var(--unit) * 2.35);
   line-height: calc(var(--unit) * 32);
   text-align: center;
 }
