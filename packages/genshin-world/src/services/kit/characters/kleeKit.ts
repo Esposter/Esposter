@@ -1,3 +1,4 @@
+import type { Enemy } from "#src/models/enemy/Enemy";
 import type { KitActionBehaviour } from "#src/models/kit/KitActionBehaviour";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitContext } from "#src/models/kit/KitContext";
@@ -7,6 +8,7 @@ import type { KitStrike } from "#src/models/kit/KitStrike";
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
+import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
@@ -52,6 +54,15 @@ const SPARKLING_BURST_ASCENSION = 4;
 const SPARKLING_BURST_ENERGY = 2;
 const SPARKLING_BURST_COOLDOWN_SECONDS = 0.6;
 const SPARKLING_BURST_COOLDOWN_ID = "klee-sparkling-burst-cooldown";
+// Explosive Frags, from Constellation 2, lowers the DEF of each enemy a Jumpy Dumpty mine strikes by 23.3% for 10 seconds,
+// As gcsim v2.47.2 (MIT) klee/skill.go's mine callback and klee/cons.go give it
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/klee/cons.go
+const EXPLOSIVE_FRAGS_CONSTELLATION = 2;
+const EXPLOSIVE_FRAGS_DEFENSE_REDUCTION = 0.233;
+const EXPLOSIVE_FRAGS_ID = "klee-explosive-frags";
+const EXPLOSIVE_FRAGS_SECONDS = 10;
+// Jumpy Dumpty's three bounces come before its two mines in its record, as gcsim queues them
+const JUMPY_DUMPTY_BOUNCE_COUNT = 3;
 
 export const KLEE_CHARACTER_ID = 10_000_029;
 
@@ -76,11 +87,21 @@ const rollExplosiveSpark = ({ kitEffectState, random }: KitContext, { combatant 
   });
 };
 
+// Explosive Frags' DEF cut on an enemy a mine strikes, from Constellation 2, as the status refreshes rather than stacks
+const addExplosiveFrags = ({ combatant }: KitStrike, enemy: Enemy): void => {
+  if (combatant.constellationCount < EXPLOSIVE_FRAGS_CONSTELLATION) return;
+  addEnemyStatus(enemy, {
+    damageTakenBonus: 0,
+    defenseReduction: EXPLOSIVE_FRAGS_DEFENSE_REDUCTION,
+    id: EXPLOSIVE_FRAGS_ID,
+    secondsRemaining: EXPLOSIVE_FRAGS_SECONDS,
+  });
+};
+
 // Klee's behaviour: each strike's and the charged attack's bomb, Jumpy Dumpty's bounces and mines and Sparks 'n' Splash's
 // Sparks land from summons, the sparks' while she stays on the field, with Sparkly Explosion and Blazing Delight's Pyro DMG
-// Bonus. From Ascension 4 a CRIT hit of her charged attack gives the party energy
-// Constellation 1 needs its spark bombardment, which the kit does not build
-// Constellation 2 needs the DEF cut that Jumpy Dumpty's mines apply, which the kit does not build
+// Bonus. From Ascension 4 a CRIT hit of her charged attack gives the party energy. Constellation 2's Explosive Frags cuts the
+// DEF of each enemy a mine strikes. Constellation 1 needs its spark bombardment, which the kit does not build
 export const createKleeKitBehaviour = ({
   readHit,
   readHits,
@@ -90,7 +111,18 @@ export const createKleeKitBehaviour = ({
   // A bomb lands from a summon cast where Klee stands as the strike starts, as gcsim throws it whatever cancels the strike
   const bombs = readHits("bomb", { onStrike: rollExplosiveSpark });
   const chargedAttackBomb = readHit("chargedAttackBomb");
-  const jumpyDumptyHits = readHits("jumpyDumpty", { onStrike: rollExplosiveSpark });
+  // Each mine is a hit of its own from the bounces' list, so the mines take their DEF cut on top of the spark roll
+  const jumpyDumptyHits = readHits("jumpyDumpty", { onStrike: rollExplosiveSpark }).map((hit, index) =>
+    index < JUMPY_DUMPTY_BOUNCE_COUNT
+      ? hit
+      : {
+          ...hit,
+          onStrike: (context: KitContext, strike: KitStrike, enemy: Enemy) => {
+            rollExplosiveSpark(context, strike);
+            addExplosiveFrags(strike, enemy);
+          },
+        },
+  );
   const sparkHits = readHits("spark");
   // The burst stands from its start for its seconds
   const burstSeconds = readSeconds("burstStart") + readParameter("burstSeconds");

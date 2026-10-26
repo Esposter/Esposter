@@ -1,6 +1,6 @@
 ## Purpose
 
-Klee's kit as built: three strikes, a charged attack, Jumpy Dumpty's bounces and mines, and Sparks 'n' Splash with its Sparkly Explosion, with her Ascension 1 Explosive Spark and her Ascension 4 Sparkling Burst built, and her other constellations and her Hexerei kit not built.
+Klee's kit as built: three strikes, a charged attack, Jumpy Dumpty's bounces and mines, and Sparks 'n' Splash with its Sparkly Explosion, with her Ascension 1 Explosive Spark, her Ascension 4 Sparkling Burst and Constellation 2's DEF cut built, and her other constellations and her Hexerei kit not built.
 
 ## Requirements
 
@@ -98,6 +98,23 @@ From Ascension 4, a CRIT hit of Klee's charged attack SHALL give each member of 
 - **WHEN** her charged attack's bomb lands a CRIT hit
 - **THEN** each member of the deployed team gains 2 energy
 - **AND** another CRIT hit within 0.6 seconds gives none
+
+### Requirement: Explosive Frags from Constellation 2
+
+From Constellation 2, each enemy a Jumpy Dumpty mine strikes SHALL lose 23.3% of its DEF for 10 seconds, and a bounce SHALL give none.
+
+#### Scenario: A mine's hit cuts the enemy's DEF
+
+- **GIVEN** Klee has Constellation 2
+- **WHEN** a Jumpy Dumpty mine strikes an enemy
+- **THEN** the enemy loses 23.3% of its DEF for 10 seconds
+- **AND** another mine's hit refreshes that time rather than stacking
+
+#### Scenario: A bounce gives no DEF cut
+
+- **GIVEN** Klee has Constellation 2
+- **WHEN** a Jumpy Dumpty bounce strikes an enemy
+- **THEN** the enemy's DEF is not cut
 
 ### Requirement: Klee's other constellations not yet built
 
