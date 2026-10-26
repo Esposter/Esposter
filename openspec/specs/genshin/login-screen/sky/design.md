@@ -24,14 +24,16 @@ The sky behind the login scene: each hour's clear sky, solved as the game's sky 
 | `packages/genshin-world/src/components/Login/Scene/Sky.reference.ts`         | The sky the scene is compared with, per hour                           |
 | `packages/genshin-world/src/components/Login/Scene/Light.reference.ts`       | The light the scene is compared with, per hour                         |
 
+
 ## Open
 
+- [ ] **The frame is drawn through the game's tone curve alone, with no grade or bloom** — no source yet: the frame's draw chain was not read here.
 - [ ] **The night's sky is lavender away from the sun and rose toward it, as the recording's is** — no source yet: no colour comparison with the recording is kept.
 - [ ] **The night's white balance was solved over both its frames by `genshin:parity balance`** — no source yet: the balance run is not kept.
 - [ ] **The night's moon stands behind the lantern tower** — no source yet: the reference point is not annotated against the lantern tower in any kept file.
 - [ ] **The day's sun is measured from the faces it lights** — no source yet: the measurement is not kept, and the constant is only in `LoginSkyStateMap.ts`.
-- [ ] **The dusk's sunlight falls 50 degrees up and 60 degrees left of the walkway** — contradicted: `DUSK_LIGHT_DIRECTION` (0.493, 0.763, 0.418) is 49.7 degrees up and 49.7 degrees off the walkway's +z axis, not 60.
+- [ ] **The dusk's sunlight falls 50 degrees up and 60 degrees left of the walkway** — contradicted by `packages/genshin-world/src/services/login/scene/LoginSkyStateMap.ts`: `DUSK_LIGHT_DIRECTION` (0.493, 0.763, 0.418) is 49.7 degrees up and 49.7 degrees off the walkway's +z axis, not 60.
 - [ ] **The solve casts the recording's tower shadows within 5.28 pixels of their edges** — no source yet: the figure is only in a code comment, and the shadows solve output is not kept.
-- [ ] **The hemisphere's sky colour is the bright cloud colour** — contradicted: at dawn `hemisphereSkyColor` is 0xf2dfc8 against `cloudLitColor` 0xf5efe8.
+- [ ] **The hemisphere's sky colour is the bright cloud colour** — contradicted by `packages/genshin-world/src/services/login/scene/LoginSkyStateMap.ts`: at dawn `hemisphereSkyColor` is 0xf2dfc8 against `cloudLitColor` 0xf5efe8.
 - [ ] **The dawn's and the dusk's suns sit just past the left edge, a little over the horizon** — no source yet: the dawn login still `~/Esposter/genshin-parity/references/login-dawn-title.png`, not yet read for the sun's position.
 - [ ] **The dusk's sunlight falls from the direction its shadows solve to on the door recording** — no source yet: the door recording still `~/Esposter/genshin-parity/references/login-door-recording.png`, not yet read for the shadows' direction.
