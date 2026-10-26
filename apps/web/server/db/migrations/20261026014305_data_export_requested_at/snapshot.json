@@ -1,0 +1,79 @@
+{
+  "type": "diff",
+  "version": "9",
+  "dialect": "postgres",
+  "id": "a1fcdb84-b7a8-4abc-b95e-f67c3fa696cf",
+  "prevIds": [
+    "6613b018-8480-42b6-99a2-6043292e687f"
+  ],
+  "footprints": [
+    {
+      "statementType": "alter_enum",
+      "statementTarget": [
+        "enum",
+        "storage",
+        "azureContainer"
+      ],
+      "writes": [
+        "s|enum|storage.azureContainer"
+      ],
+      "reads": [
+        "n|sch|storage"
+      ]
+    },
+    {
+      "statementType": "add_column",
+      "statementTarget": [
+        "column",
+        "user",
+        "dataExports",
+        "requestedAt"
+      ],
+      "writes": [
+        "s|col|user.dataExports.requestedAt",
+        "n|col|user.dataExports.requestedAt",
+        "e|col|user.dataExports.requestedAt"
+      ],
+      "reads": [
+        "n|tbl|user.dataExports",
+        "n|sch|user"
+      ]
+    }
+  ],
+  "deltas": [
+    {
+      "op": "create",
+      "row": {
+        "schema": "user",
+        "table": "dataExports",
+        "name": "requestedAt",
+        "type": "timestamp",
+        "typeSchema": null,
+        "notNull": true,
+        "dimensions": 0,
+        "default": "now()",
+        "generated": null,
+        "identity": null,
+        "entityType": "columns"
+      }
+    },
+    {
+      "op": "alter",
+      "key": "enums\u0000[\"storage\",\"azureContainer\"]",
+      "set": {
+        "values": [
+          "app-assets",
+          "clicker-assets",
+          "data-exports",
+          "deadletter",
+          "dungeons-assets",
+          "genshin-assets",
+          "message-assets",
+          "private-user-assets",
+          "public-user-assets",
+          "resource-assets"
+        ]
+      }
+    }
+  ]
+}

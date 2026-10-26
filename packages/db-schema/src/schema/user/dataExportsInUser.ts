@@ -21,6 +21,9 @@ export const dataExportsInUser = pgTable(
     failureReason: text(),
     id: uuid().primaryKey().defaultRandom(),
     readyAt: timestamp(),
+    // When the person asked for the export. The settings page orders by it, so the latest export is the one it shows
+    // Whatever its status, a failed one included
+    requestedAt: timestamp().notNull().defaultNow(),
     status: dataExportStatusEnum().notNull(),
     userId: text()
       .notNull()
