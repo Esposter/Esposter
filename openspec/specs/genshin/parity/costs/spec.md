@@ -6,36 +6,36 @@ What a parity loop costs to run, how a scene's cost is benched, and how a surfac
 
 ### Requirement: Each parity step finishes in seconds
 
-Each parity step SHALL finish in seconds, so that the loop can run as often as a test would.
+Each parity step SHALL finish in seconds, so that the loop can run as often as a test would (see Open).
 
 #### Scenario: Parity page brought up
 
 - **GIVEN** an operator starts the parity page
 - **WHEN** the page is requested
-- **THEN** the page is up in about a second
+- **THEN** the page is up in about a second (see Open)
 
 #### Scenario: Comparison with its shot
 
 - **GIVEN** a reference to compare
 - **WHEN** the comparison runs, shot included
-- **THEN** it finishes in a few seconds
+- **THEN** it finishes in a few seconds (see Open)
 
 #### Scenario: Visual suite run
 
 - **GIVEN** the visual suite runs over several screens
 - **WHEN** the first screen is rendered
-- **THEN** it takes a few seconds
+- **THEN** it takes a few seconds (see Open)
 - **AND** each further screen takes a fraction of that
 
 #### Scenario: Trace at full resolution
 
 - **GIVEN** a mark traced at its full resolution
 - **WHEN** the trace runs
-- **THEN** it finishes in a second or two
+- **THEN** it finishes in a second or two (see Open)
 
 ### Requirement: Each command closes the browser it opened
 
-Each parity command SHALL close the browser it opened when its work is done.
+Each parity command SHALL close the browser it opened when its work is done (`scripts/src/services/genshinParity/shared/openParityPage.ts`).
 
 #### Scenario: Command finished
 
@@ -45,7 +45,7 @@ Each parity command SHALL close the browser it opened when its work is done.
 
 ### Requirement: The parity page is served once per checkout on a port the operator can change
 
-The parity page SHALL be served once per checkout, on a port the operator can change.
+The parity page SHALL be served once per checkout, on a port the operator can change (`packages/genshin-world/parity/vite.config.ts`, `scripts/src/services/genshinParity/shared/constants.ts`).
 
 #### Scenario: Two checkouts served at once
 
@@ -61,7 +61,7 @@ A scene's cost SHALL be measured by its bench, which reports the scene's frame t
 
 - **GIVEN** a scene to bench
 - **WHEN** the bench runs
-- **THEN** the median frame time and the frame time of the slowest tenth are printed
+- **THEN** the median frame time and the frame time of the slowest tenth are printed (`scripts/src/services/genshinParity/commands/benchCommand.ts`)
 - **AND** the main thread's busy time per frame is printed beside them
 - **AND** the draw calls, the triangles and the objects drawn by kind are printed
 - **AND** the pipelines, geometries and textures the scene keeps are printed
@@ -74,7 +74,7 @@ A scene's cost SHALL be measured by its bench, which reports the scene's frame t
 
 ### Requirement: A surface's structure is reduced on the GPU
 
-A surface's structure statistics SHALL be computed on the GPU of the parity page, so that only partial sums return to the host.
+A surface's structure statistics SHALL be computed on the GPU of the parity page, so that only partial sums return to the host (`packages/genshin-world/parity/surfaceStatistics/computeSurfaceStatistics.ts`, `scripts/src/services/genshinParity/shared/openSurfaceStatisticsPage.ts`).
 
 #### Scenario: Surface pass run
 
@@ -87,14 +87,18 @@ A surface's structure statistics SHALL be computed on the GPU of the parity page
 
 - **GIVEN** the windrise surface pass
 - **WHEN** its structure is reduced on the GPU
-- **THEN** the pass finishes in a few minutes rather than many
+- **THEN** the pass finishes in a few minutes rather than many (see Open)
 
 ### Requirement: The comparison keeps its scoring on the CPU
 
-The compare command SHALL keep its scoring on the CPU.
+The compare command SHALL keep its scoring on the CPU (`scripts/src/services/genshinParity/reference/compareScreen.ts`).
 
 #### Scenario: Comparison scored
 
 - **GIVEN** a comparison run
 - **WHEN** it scores the shot against its reference
 - **THEN** the scoring runs on the CPU
+
+## Open
+
+- [ ] **The parity step times** — no source yet: the page up in about a second, a comparison in a few seconds, the visual suite's first screen, a trace in a second or two, and the Windrise pass in a few minutes are not in any timing record in the repository.
