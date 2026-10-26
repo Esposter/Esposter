@@ -27,7 +27,7 @@ Chiori's kit is its record and one behaviour module, `createChioriKitBehaviour`,
 
 ## Sources
 
-- The install's proud skill table, `ProudSkillExcelConfigData` (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput`), group 9432: Tamoto's duration, 17 seconds, read from the game's own data, and groups 9431 and 9439 for the other values checked above.
+- The install's proud skill table, `ProudSkillExcelConfigData` (`~/Esposter/genshin-parity/text/ExcelBinOutput`), group 9432: Tamoto's duration, 17 seconds, read from the game's own data, and groups 9431 and 9439 for the other values checked above.
 - The line numbers above are gcsim v2.47.2's files in `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/chiori` (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/core/info/rectangle.go` in the same tree).
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/chiori), MIT: the kit's hitmarks, animations, reach, Tamoto's ticker and its 12 metre search, the upward sweep's box, the burst's circle, and the proud group indices behind each multiplier.
 - [Weaving Blade](https://genshin-impact.fandom.com/wiki/Weaving_Blade), Genshin Impact Wiki: the poise for her strikes, charged attack, plunging collision and high plunge.
