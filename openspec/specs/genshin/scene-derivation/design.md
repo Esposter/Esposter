@@ -161,24 +161,24 @@ Each other region's open world is derived by `extract` from its capital's catalo
 - Zhenzhong Yi's [Console platform development in Genshin Impact](https://docswell.com/s/UnityJapan/KWRPQ5-210617-unity-dojo20211mihoyozhenzhongyi) (miHoYo, Unity Dojo 2021): the game's own account of its shadows, fog and god rays, read before the frame is calibrated.
 
 ## Open
-
-- [ ] **The interface converges within a few tenths of a percent** — no source yet: the parity page's interface error figures were not read in this pass.
-- [ ] **A tower's mesh of thousands of vertices, its textures and the material's several dozen values** — no source yet: the tower export's counts were not read here.
+- [ ] **The interface converges within a few tenths of a percent** — no source yet: the parity page's interface error figures are not on this machine, and were not read in this pass.
+- [ ] **A tower's mesh of thousands of vertices, its textures and the material's several dozen values** — no source yet: the tower export's counts were not taken here.
 - [ ] **The login stone's programs and the game's deferred lighting: the sun ramp, the sky harmonics, the cube and the GGX highlight** — no source yet: the stone's program bytes in the login's raw export were not read here.
-- [ ] **The code metadata is decrypted offline from the user's own install** — no source yet: the decrypted type data is not on this machine.
-- [ ] **Under `nuxt dev` the world draws the same layout through the same loader, from the developer's own extraction** — no source yet: the development loader was not traced in this pass.
+- [ ] **The code metadata is decrypted offline from the user's own install** — no source yet: no decryptor is in `scripts/src` (searched for `global-metadata`), and the decrypted type data is not on this machine.
+- **Under `nuxt dev` the world draws the same layout through the same loader, from the developer's own extraction** — `packages/genshin-world/src/services/scene/loadSceneExport.ts` calls `loadWitness` on the layout (line 14), and `apps/web/modules/serveGenshinExtractions.ts` registers the exports' route only under `nuxt dev`.
 - [ ] **Each TerrainData names the layer of every four-metre cell** — no source yet: the TerrainData layer bytes were not read here.
-- [ ] **The witness draws a back face with its geometry's own normal, and `normalWorld` flips it** — no source yet: the witness's back-face target was not traced in this pass.
-- [ ] **The layout pass's proportions, the camera solve on the silhouette and the light solve by least squares** — no source yet: the cross-ratio unit test, the camera solver and the light solver were not traced here.
-- [ ] **The login's SceneObj at a tenth of its scale, its SceneBeginNode, DoorNode and ModelCamera children, the walkway's parent and MonoLoginScene's spawns** — no source yet: the login's script bytes and the scale were not read.
+- **The witness draws a back face with its geometry's own normal, and `normalWorld` flips it** — `packages/genshin-world/parity/witness/renderWitnessTargets.ts` (lines 155 to 160) takes `normalWorldGeometry` for a double-sided face and `normalWorld` for the rest.
+- **The layout pass's proportions are the cross-ratio unit test's** — `scripts/src/services/genshinAssets/scene/checkArrangement.ts`, with `scripts/src/services/genshinAssets/scene/computeCrossRatio.test.ts`.
+- [ ] **The camera solve on the silhouette and the light solve by least squares** — no source yet: no camera or light solver is named in the repo (searched for `solveCamera`, `solveLight` and `least squares`); the login's `Light.reference.ts` and `Sky.reference.ts` name solvers only in their records.
+- **The login's SceneObj at a tenth of its scale, its SceneBeginNode, DoorNode and ModelCamera children, the walkway's parent and MonoLoginScene's spawns** — `packages/genshin-world/src/components/Login/Scene/Arrangement.reference.ts`, its SceneObj, SceneBeginNode, DoorNode and MonoLoginScene rows.
 - [ ] **The login stone's shader `miHoYo/Scene/Login Base` and its material values** — no source yet: neither the name nor the values were found in the extracted login folders or the shader folder.
-- [ ] **The tone curve's bloom term `_MHYBloomTonemapping` and the clouds' Enviro sky terms** — no source yet: the bloom term and the sky's raw bytes were not traced here.
+- [ ] **The tone curve's bloom term `_MHYBloomTonemapping` and the clouds' Enviro sky terms** — no source yet: the curve is drawn by `packages/genshin-engine/src/renderer/constants.ts`, but the game's bloom term and the sky's raw bytes were not traced here.
 - [ ] **The Windrise figures: its water level, the statue's and the oak's shapes, the fixed camera, and the eighteen paving placements** — no source yet: the Windrise export and its recordings were not traced in this pass.
 - [ ] **The Mondstadt and Sumeru ground bars (1.24 against 0.87, 2.96 against 2.29), the unfitted-area counts, and the tiles' rounding** — no source yet: the fit's printed report is not kept on this machine, and the catalogue's areas were not counted.
 - [ ] **The city's terrace heights (−4, 2, 7 and 17 metres), its RMS figures and Natlan's and Inazuma's figures** — no source yet: the fit's printed report is not kept on this machine.
-- [ ] **A sample 200 metres from a piece's centre counts half and one 400 metres away a fifth** — no source yet: the weight formula was not traced here; `GROUND_FALLOFF` is 200 in `fitGroundPiece.ts`.
-- [ ] **A feature costs every vertex it reaches about four hills' time** — no source yet: the bench table in `packages/genshin-engine/src/terrain/createTerrainShapeHeight.bench.md` does not state that ratio.
+- **A sample 200 metres from a piece's centre counts half and one 400 metres away a fifth** — `scripts/src/services/genshinAssets/fit/fitGaussianHills.ts` (line 45) weights each sample `1 / (1 + (distance / falloff)²)`, with `GROUND_FALLOFF` of 200 in `scripts/src/services/genshinAssets/fit/fitGroundPiece.ts` (line 33).
+- [ ] **A feature costs every vertex it reaches about four hills' time** — no source yet: `packages/genshin-engine/src/terrain/createTerrainShapeHeight.bench.md` gives hills, 28 more hills and 28 features, and its ratios do not state a per-vertex four-hills figure.
 - [ ] **Each other region's `extract`, its index and its closure** — no source yet: the extraction's output for any capital is not on this machine.
 - [ ] **The Zhenzhong Yi talk, FLIP's perceptual score and its description** — no source yet: the talk was not fetched and the FLIP tool was not opened in this pass.
-- [ ] **The login's transform to the screen is the game's bloom curve with no colour grading** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Windrise's ground is our own hills fitted to the game's terrain** — no source yet: game data or a snapshot that holds this behaviour
+- **The login's transform to the screen is the game's bloom curve, drawn by the pipeline with no canvas tone mapping over it** — `packages/genshin-engine/src/renderer/constants.ts` (`GENSHIN_TONE_MAPPING` is `NoToneMapping`, and the curve is drawn by the pipeline).
+- **Windrise's ground is our own hills fitted to the game's terrain** — `scripts/src/services/genshinAssets/fit/fitGroundPiece.ts`, which builds the ground from hills and features fitted to the game's heights.
