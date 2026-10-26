@@ -1,6 +1,6 @@
 ## Purpose
 
-Heizou's kit as built: his Anemo strikes, charged attack and plunges, Heartstopper Strike's press and full hold, and Fudou Style Vacuum Slugger with its Windmuster Iris, with his Constellation 4 Energy built, and his Ascension 1 passive and Constellations 1, 2 and 6 left unbuilt.
+Heizou's kit as built: his Anemo strikes, charged attack and plunges, Heartstopper Strike's press and full hold, and Fudou Style Vacuum Slugger with its Windmuster Iris, with his Constellation 4 Energy built, and his Ascension 1 passive, the full hold's Declension stacks and Conviction bonus, and Constellations 1, 2 and 6 left unbuilt.
 
 ## Requirements
 
@@ -44,11 +44,11 @@ Heartstopper Strike SHALL release as a press when tapped and as a full hold when
 - **WHEN** the player holds Heartstopper Strike for less than three seconds
 - **THEN** it releases as the press
 
-#### Scenario: A full hold releases with four Declension stacks
+#### Scenario: A full hold releases one hit
 
 - **GIVEN** Heizou is the character on the field
 - **WHEN** the player holds Heartstopper Strike for three seconds
-- **THEN** it releases with four Declension stacks and its Conviction bonus
+- **THEN** it releases one hit
 
 ### Requirement: Fudou Style Vacuum Slugger sets a Windmuster Iris
 

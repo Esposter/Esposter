@@ -1,6 +1,6 @@
 ## Purpose
 
-Razor's kit as built: the strikes, charged attack and collision, Claw and Thunder's press and hold, and Lightning Fang with the Wolf Within and its Soul Companion over the Electro Sigils, with Awakening's cooldown cut and Bite's DEF cut built, and his other passives, his constellations other than 1, 2, 4 and 6, and his Hexerei kit left unbuilt.
+Razor's kit as built: the strikes, charged attack and collision, Claw and Thunder's press and hold, and Lightning Fang with the Wolf Within and its Soul Companion over the Electro Sigils, with Awakening's cooldown cut and Bite's DEF cut built, and his other passives, his third and fifth constellations, which add no kit effect and raise a talent by three levels on the constellations page, and his Hexerei kit left unbuilt.
 
 ## Requirements
 
@@ -147,7 +147,7 @@ From Constellation 4, each enemy Claw and Thunder's press strikes SHALL have its
 
 ### Requirement: Razor's other passives and Hexerei kit not yet built
 
-Razor's other passives, his constellations other than 1, 2, 4 and 6, his Hexerei kit, the Wolf Within's ATK SPD, his energy on leaving the field, and Hunger's Energy Recharge SHALL NOT take effect.
+Razor's other passives, the kit effects of his third and fifth constellations, his Hexerei kit, the Wolf Within's ATK SPD, his energy on leaving the field, and Hunger's Energy Recharge SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
