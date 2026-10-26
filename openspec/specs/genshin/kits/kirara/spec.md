@@ -56,14 +56,14 @@ Secret Art: Surprise Dispatch SHALL place six Cat Grass Cardamoms in a box, two 
 - **THEN** two Cat Grass Cardamoms detonate
 - **AND** the remaining four detonate when the box expires
 
-### Requirement: Kirara's attacks deal no poise
+### Requirement: Kirara's attacks deal the wiki's poise
 
-Kirara's strikes, charged attack, skill and burst SHALL deal no poise damage, provisionally.
+Kirara's strikes, charged attack, skill and burst SHALL deal the poise the wiki gives each hit, as gcsim gives none.
 
-#### Scenario: Attacks leave poise untouched
+#### Scenario: Attacks reduce poise by their wiki values
 
 - **WHEN** any of Kirara's strikes, charged attack, skill or burst hits an enemy
-- **THEN** the enemy's poise is not reduced
+- **THEN** the enemy's poise is reduced by the wiki's value for that hit
 
 ### Requirement: Constellation 6's team elemental damage bonus
 
