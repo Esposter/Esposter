@@ -129,6 +129,7 @@ Each system of the world SHALL react to another's doing only through the one typ
 - **GIVEN** a pickup completed in the world
 - **WHEN** the quest system is to react
 - **THEN** it reacts through a typed event on the event map
+
 ### Requirement: A module is added by the proposal that first needs it
 
 A module SHALL be added only by the proposal that first needs it, never as an empty folder ahead of that need.
@@ -141,7 +142,6 @@ A module SHALL be added only by the proposal that first needs it, never as an em
 
 ## Open
 
-- [ ] **the engine is a published package under a world package that holds every place** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **Every generator and per-frame selection is benched at two scales** — no source yet: 16 `*.bench.ts` files under `packages/genshin-engine/src` have recorded results, but no inventory shows each generator and selection has one at two scales.
 - [ ] **A bench shows its cost follows what is visible** — no source yet: the recorded bench results are not checked against the amount visible.
 - [ ] **A generator gives the same output in a worker and in a test** — no source yet: no test runs one generator in both places and compares the outputs.
