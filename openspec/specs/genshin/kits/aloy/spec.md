@@ -14,15 +14,15 @@ Aloy's strikes, fully charged shot and plunges SHALL deal their hits on the timi
 - **WHEN** the shot is released
 - **THEN** it deals its hit on its animation's timing
 
-### Requirement: Freeze Bomb throws a bomb and two bomblets
+### Requirement: Freeze Bomb throws a bomb and six bomblets
 
-Freeze Bomb SHALL deal three hits, the bomb and its two Chillwater Bomblets, and each hit SHALL give one unit of Cryo.
+Freeze Bomb SHALL deal seven hits, the bomb and its six Chillwater Bomblets, as the wiki's Frozen Wilds page gives them, and each hit SHALL give one unit of Cryo.
 
 #### Scenario: Each bomblet strikes once
 
 - **GIVEN** Aloy throws Freeze Bomb
 - **WHEN** the bomb and its bomblets land
-- **THEN** each of the three hits strikes its target
+- **THEN** each of the seven hits strikes its target
 
 #### Scenario: A bomblet adds a coil stack for each enemy it strikes
 
