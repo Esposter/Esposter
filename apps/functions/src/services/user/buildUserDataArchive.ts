@@ -17,6 +17,7 @@ import { writePostEntries } from "#src/services/user/writePostEntries";
 import { writeResourceEntries } from "#src/services/user/writeResourceEntries";
 import { writeRoomEntries } from "#src/services/user/writeRoomEntries";
 import { writeSaveEntries } from "#src/services/user/writeSaveEntries";
+import { writeSearchHistoryEntry } from "#src/services/user/writeSearchHistoryEntry";
 import { AzureContainer } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 
@@ -49,6 +50,7 @@ export const buildUserDataArchive = async (userId: UserInAuth["id"], blobName: s
     await writeOwnedRoomEntries(archive, userId);
     await writeResourceEntries(archive, userId);
     await writeSaveEntries(archive, userId);
+    await writeSearchHistoryEntry(archive, userId);
     await writeImageEntries(archive, userId);
     await writeModerationEntry(archive, userId);
     archive.end();

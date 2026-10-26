@@ -172,6 +172,7 @@ describe(exportUserDataHandler, () => {
         `rooms/${room.id}/messages.json`,
         `rooms/${room.id}/room.json`,
         "saves/genshin/save.json",
+        "searches.json",
       ].sort(),
     );
   });

@@ -35,6 +35,7 @@ import {
   RoomType,
   roomEmojisInMessage,
   roomsInMessage,
+  searchHistoriesInMessage,
   usersInAuth,
   usersToRoomsInMessage,
 } from "@esposter/db-schema";
@@ -183,6 +184,7 @@ describe(buildUserDataArchive, () => {
         `rooms/${room.id}/files/${file.id}/${file.filename}`,
         `rooms/${room.id}/messages.json`,
         "saves/genshin/save.json",
+        "searches.json",
       ].sort(),
     );
     const messages = jsonDateParse<StandardMessageEntity[]>(readEntryText(entries, `rooms/${room.id}/messages.json`));
@@ -326,6 +328,30 @@ describe(buildUserDataArchive, () => {
       topic: "",
       type: RoomType.Room,
     });
+  });
+
+  test("writes the person's own search queries with their filters, and no other person's", async () => {
+    expect.hasAssertions();
+
+    const userId = crypto.randomUUID();
+    const otherUserId = crypto.randomUUID();
+    const blobName = `${crypto.randomUUID()}.zip`;
+    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
+    const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
+    await mockDb.insert(usersToRoomsInMessage).values([
+      { roomId: room.id, userId },
+      { roomId: room.id, userId: otherUserId },
+    ]);
+    await mockDb.insert(searchHistoriesInMessage).values([
+      { query: message, roomId: room.id, userId },
+      { query: otherMessage, roomId: room.id, userId: otherUserId },
+    ]);
+
+    await buildUserDataArchive(userId, blobName);
+    const entries = readArchiveEntries(blobName);
+
+    // A search row stores no time, so the exact shape leaves one out
+    expect(readEntryJson(entries, "searches.json")).toStrictEqual([{ filters: [], query: message, roomId: room.id }]);
   });
 
   test("reads an attachment as a stream, never into a buffer", async () => {
