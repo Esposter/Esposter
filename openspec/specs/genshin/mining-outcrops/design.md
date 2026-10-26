@@ -42,11 +42,13 @@ flowchart TD
 
 ## Sources
 
-- [Mining Outcrop](https://genshin-impact.fandom.com/wiki/Mining_Outcrop), Genshin Impact Wiki: Magical Crystal Chunks from rank 30, and the respawn at 06:00, two hours after the reset. Quoted: "Mining Outcrops respawn at 6am which is 2 hours after each daily reset"; "Before Adventure Rank 30, Magical Crystal Chunks do not appear in Mining Outcrops."
+- [Mining Outcrop](https://genshin-impact.fandom.com/wiki/Mining_Outcrop), Genshin Impact Wiki: Magical Crystal Chunks from rank 30, and the respawn at 06:00, two hours after the reset.
 - [Daily Reset](https://genshin-impact.fandom.com/wiki/Daily_Reset), Genshin Impact Wiki: what comes back at the daily reset and around it.
+
 
 ## Open
 
-- [ ] **Adventure Rank 30 opens the outcrops** — partly settled by the Mining Outcrop wiki page, which says Magical Crystal Chunks do not appear in outcrops before Adventure Rank 30; what it does not say is whether the outcrops themselves are withheld below the rank, and the rank is only the code's constant.
+- [ ] **Adventure Rank 30 opens the outcrops** — no source yet: the wiki's Mining Outcrop page is not in `~/Esposter.noindex/cache/genshin-wiki/`, and the rank is only the code's constant.
 - [ ] **Reputation's mining outcrop search at level 2 of a nation marks them** — no source yet: no reputation source was checked for the search or its level.
-- [ ] **A break drops one to three Magical Crystal Chunks** — no source yet: the count is the code's rule in `packages/genshin-world/src/services/gathering/rollOreDropCount.ts`, not the wiki's; the Mining Outcrop page was checked and gives an outcrop as a cluster of 2–3 Magical Crystal Chunks, with no count per break, and the dump's gather rows hold no count, so the count stays open.
+- [ ] **The respawn is at 06:00 on the wiki, two hours after the reset** — no source yet: the wiki's Mining Outcrop page is not in the cache.
+- [ ] **A break drops one to three Magical Crystal Chunks** — no source yet: the figure is the wiki's and provisional, its page is not cached, and the dump's gather rows hold no count.
