@@ -8,8 +8,12 @@ import {
 } from "#src/services/user/constants";
 import { createUserDataArchive } from "#src/services/user/createUserDataArchive";
 import { writeAccountEntry } from "#src/services/user/writeAccountEntry";
+import { writeFriendEntries } from "#src/services/user/writeFriendEntries";
 import { writeImageEntries } from "#src/services/user/writeImageEntries";
+import { writeLikeEntries } from "#src/services/user/writeLikeEntries";
 import { writeModerationEntry } from "#src/services/user/writeModerationEntry";
+import { writeOwnedRoomEntries } from "#src/services/user/writeOwnedRoomEntries";
+import { writePostEntries } from "#src/services/user/writePostEntries";
 import { writeResourceEntries } from "#src/services/user/writeResourceEntries";
 import { writeRoomEntries } from "#src/services/user/writeRoomEntries";
 import { writeSaveEntries } from "#src/services/user/writeSaveEntries";
@@ -38,7 +42,11 @@ export const buildUserDataArchive = async (userId: UserInAuth["id"], blobName: s
   });
   const writing = getResultAsync(async () => {
     await writeAccountEntry(archive, userId);
+    await writeFriendEntries(archive, userId);
+    await writePostEntries(archive, userId);
+    await writeLikeEntries(archive, userId);
     await writeRoomEntries(archive, userId);
+    await writeOwnedRoomEntries(archive, userId);
     await writeResourceEntries(archive, userId);
     await writeSaveEntries(archive, userId);
     await writeImageEntries(archive, userId);

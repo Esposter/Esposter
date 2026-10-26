@@ -5,10 +5,13 @@ import { getTableClient } from "#src/services/azure/getTableClient";
 import { createUser } from "#src/services/shared/createUser.test";
 import { buildUserDataArchive } from "#src/services/user/buildUserDataArchive";
 import { getResourceAssetBlobName } from "#src/services/user/getResourceAssetBlobName";
+import { getRoomEmojiBlobName } from "#src/services/user/getRoomEmojiBlobName";
+import { ArchiveLikeKind } from "#src/models/user/ArchiveLikeKind";
 import {
   createMessage,
   getContentBlobName,
   getFileBlobNames,
+  serializeEntity,
   writeJsonBlob,
   writeModerationLogEntry,
 } from "@esposter/db";
@@ -18,11 +21,19 @@ import {
   AdminActionType,
   AzureContainer,
   AzureTable,
+  friendRequestsInSocial,
+  friendsInSocial,
+  getReverseTickedTimestamp,
   getUserProfileImageBlobName,
+  likesInPost,
+  MessageMetadataType,
   MessageType,
+  postsInPost,
   ResourceType,
   resourcesInResource,
   resourceWorkingAssetsInResource,
+  RoomType,
+  roomEmojisInMessage,
   roomsInMessage,
   usersInAuth,
   usersToRoomsInMessage,
@@ -45,10 +56,13 @@ vi.mock(import("#src/services/azure/getTableClient"), () => import("#src/service
 describe(buildUserDataArchive, () => {
   const attachmentBytes = new Uint8Array([255]);
   const content = JSON.stringify({});
+  const description = "description";
+  const emojiTag = "emojiTag";
   const filename = "name";
   const message = "a";
   const name = "name";
   const otherMessage = "b";
+  const title = "title";
 
   beforeAll(async () => {
     mockDb = await createMockDb();
@@ -70,6 +84,8 @@ describe(buildUserDataArchive, () => {
     assert.exists(entry);
     return strFromU8(entry);
   };
+  const readEntryJson = (entries: ReturnType<typeof unzipSync>, entryName: string) =>
+    jsonDateParse(readEntryText(entries, entryName));
   const seedAttachment = async (blobName: string) => {
     const containerClient = await getContainerClient(AzureContainer.MessageAssets);
     await containerClient.getBlockBlobClient(blobName).upload(attachmentBytes, attachmentBytes.length);
@@ -157,7 +173,9 @@ describe(buildUserDataArchive, () => {
     expect(Object.keys(entries).sort()).toStrictEqual(
       [
         "account.json",
+        "friends.json",
         "images/ProfileImage",
+        "likes.json",
         "moderation.json",
         `resources/${resource.id}/content.json`,
         `resources/${resource.id}/files/${assetHash}`,
@@ -169,6 +187,143 @@ describe(buildUserDataArchive, () => {
     );
     const messages = jsonDateParse<StandardMessageEntity[]>(readEntryText(entries, `rooms/${room.id}/messages.json`));
     expect(messages.map(({ message: text }) => text)).toStrictEqual([message]);
+  });
+
+  test("writes a person's own posts, likes and friends, leaving out other people's counts and records", async () => {
+    expect.hasAssertions();
+
+    const userId = crypto.randomUUID();
+    const otherUserId = crypto.randomUUID();
+    const receivedUserId = crypto.randomUUID();
+    const friendUserId = crypto.randomUUID();
+    const blobName = `${crypto.randomUUID()}.zip`;
+    await mockDb
+      .insert(usersInAuth)
+      .values([createUser(userId), createUser(otherUserId), createUser(receivedUserId), createUser(friendUserId)]);
+
+    // The person's post carries a like count from others, which the archive does not write
+    const post = takeOne(
+      await mockDb.insert(postsInPost).values({ description, likeCount: 1, ranking: 0, title, userId }).returning(),
+    );
+    const otherPost = takeOne(
+      await mockDb.insert(postsInPost).values({ description, ranking: 0, title, userId: otherUserId }).returning(),
+    );
+    // The person likes the other post, and another person's dislike of the person's own post is not theirs to list
+    await mockDb.insert(likesInPost).values([
+      { postId: otherPost.id, userId, value: 1 },
+      { postId: post.id, userId: otherUserId, value: -1 },
+    ]);
+
+    // The person reacted in a room they are a member of, on a message whose reaction row another member shares, and
+    // another member's reaction on the same message is not theirs
+    const room = takeOne(await mockDb.insert(roomsInMessage).values({ name, userId: otherUserId }).returning());
+    await mockDb.insert(usersToRoomsInMessage).values([
+      { roomId: room.id, userId },
+      { roomId: room.id, userId: otherUserId },
+    ]);
+    const messageRowKey = getReverseTickedTimestamp();
+    const messagesMetadataClient = await getTableClient(AzureTable.MessagesMetadata);
+    // A variable, not a literal: the table's entity type has no userIds, so a literal fails the excess-property check
+    const createReaction = (reactorUserIds: string[]) => {
+      const reaction = {
+        emojiTag,
+        messageRowKey,
+        partitionKey: room.id,
+        rowKey: getReverseTickedTimestamp(),
+        type: MessageMetadataType.Emoji,
+        userIds: reactorUserIds,
+      };
+      return messagesMetadataClient.createEntity(serializeEntity(reaction));
+    };
+    await createReaction([userId, otherUserId]);
+    await createReaction([otherUserId]);
+
+    // A request the person sent, one they received, and a friendship with a fourth account
+    await mockDb.insert(friendRequestsInSocial).values([
+      { id: crypto.randomUUID(), receiverId: otherUserId, senderId: userId },
+      { id: crypto.randomUUID(), receiverId: userId, senderId: receivedUserId },
+    ]);
+    await mockDb
+      .insert(friendsInSocial)
+      .values({ id: crypto.randomUUID(), receiverId: userId, senderId: friendUserId });
+
+    await buildUserDataArchive(userId, blobName);
+    const entries = readArchiveEntries(blobName);
+
+    expect(
+      Object.keys(entries)
+        .filter((entryName) => entryName.startsWith("posts/"))
+        .sort(),
+    ).toStrictEqual([`posts/${post.id}.json`]);
+    expect(readEntryJson(entries, `posts/${post.id}.json`)).toStrictEqual({
+      depth: 0,
+      description,
+      id: post.id,
+      parentId: null,
+      title,
+    });
+    expect(readEntryJson(entries, "likes.json")).toStrictEqual([
+      { kind: ArchiveLikeKind.Post, targetId: otherPost.id, value: 1 },
+      { kind: ArchiveLikeKind.Emoji, emojiTag, roomId: room.id, targetId: messageRowKey, time: expect.any(String) },
+    ]);
+    expect(readEntryJson(entries, "friends.json")).toStrictEqual({
+      friends: [{ id: friendUserId, name }],
+      received: [{ id: receivedUserId, name }],
+      sent: [{ id: otherUserId, name }],
+    });
+  });
+
+  test("writes an owned room's record with its settings, images and emoji, and no other member's record", async () => {
+    expect.hasAssertions();
+
+    const userId = crypto.randomUUID();
+    const otherUserId = crypto.randomUUID();
+    const blobName = `${crypto.randomUUID()}.zip`;
+    await mockDb.insert(usersInAuth).values([createUser(userId), createUser(otherUserId)]);
+    const room = takeOne(await mockDb.insert(roomsInMessage).values({ isReadOnly: true, name, userId }).returning());
+    await mockDb.insert(usersToRoomsInMessage).values([
+      { roomId: room.id, userId },
+      { roomId: room.id, userId: otherUserId },
+    ]);
+    const emoji = takeOne(await mockDb.insert(roomEmojisInMessage).values({ name, roomId: room.id }).returning());
+    const messageAssetsContainerClient = await getContainerClient(AzureContainer.MessageAssets);
+    await messageAssetsContainerClient
+      .getBlockBlobClient(getRoomEmojiBlobName(room.id, emoji.id))
+      .upload(attachmentBytes, attachmentBytes.length);
+    const publicContainerClient = await getContainerClient(AzureContainer.PublicUserAssets);
+    await publicContainerClient
+      .getBlockBlobClient(`rooms/${room.id}/ProfileImage`)
+      .upload(attachmentBytes, attachmentBytes.length);
+
+    await buildUserDataArchive(userId, blobName);
+    const entries = readArchiveEntries(blobName);
+
+    expect(
+      Object.keys(entries)
+        .filter((entryName) => entryName.startsWith(`rooms/${room.id}/`))
+        .sort(),
+    ).toStrictEqual(
+      [
+        `rooms/${room.id}/emoji/${emoji.id}`,
+        `rooms/${room.id}/images/ProfileImage`,
+        `rooms/${room.id}/messages.json`,
+        `rooms/${room.id}/room.json`,
+      ].sort(),
+    );
+    expect(readEntryJson(entries, `rooms/${room.id}/room.json`)).toStrictEqual({
+      emoji: [{ id: emoji.id, name }],
+      id: room.id,
+      name,
+      settings: {
+        allowedMimeCategories: expect.any(Array),
+        isInvitePaused: false,
+        isReadOnly: true,
+        maxFileSizeBytes: 0,
+        slowmodeMs: 0,
+      },
+      topic: "",
+      type: RoomType.Room,
+    });
   });
 
   test("reads an attachment as a stream, never into a buffer", async () => {

@@ -17,6 +17,8 @@ Build order. Section 1 lands the row and the container the rest write to, sectio
       Verify: the failed-build test passes, and a replayed event rebuilds the same blob name.
 - [x] 2.3 Register the handler as `AzureFunction.ExportUserData` in `apps/functions/src/functions/`, and add the event type to `packages/db-schema`.
       Verify: the function index test lists the new function.
+- [x] 2.4 Add the archive's own-activity entries: `posts/{postId}.json`, `likes.json`, `friends.json`, and each owned room's `rooms/{roomId}/room.json` with its images and emoji. Other people's counts and records are left out, and the design names each exclusion. Test first: the builder's output holds these entries, and another person's counts and records are not among them.
+      Verify: the builder tests pass for the posts, likes, friends and owned-room cases.
 
 ## 3. Request and link
 

@@ -1,0 +1,49 @@
+import type { UserDataArchive } from "#src/models/user/UserDataArchive";
+import type { UserInAuth } from "@esposter/db-schema";
+
+import { db } from "#src/services/shared/db";
+import { writeRoomEmojiEntries } from "#src/services/user/writeRoomEmojiEntries";
+import { writeRoomImageEntries } from "#src/services/user/writeRoomImageEntries";
+
+// Each room the person owns as its record: its name, topic, type and settings, with its emoji by id and name. The room's
+// members are not written, since membership is other people's record. Its images and emoji blobs follow it
+export const writeOwnedRoomEntries = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
+  const rooms = await db.query.roomsInMessage.findMany({
+    columns: {
+      allowedMimeCategories: true,
+      id: true,
+      isInvitePaused: true,
+      isReadOnly: true,
+      maxFileSizeBytes: true,
+      name: true,
+      slowmodeMs: true,
+      topic: true,
+      type: true,
+    },
+    where: { userId: { eq: userId } },
+  });
+  for (const room of rooms) {
+    const emoji = await db.query.roomEmojisInMessage.findMany({
+      columns: { id: true, name: true },
+      where: { roomId: { eq: room.id } },
+    });
+    await archive.addJsonEntry(`rooms/${room.id}/room.json`, {
+      emoji,
+      id: room.id,
+      name: room.name,
+      settings: {
+        allowedMimeCategories: room.allowedMimeCategories,
+        isInvitePaused: room.isInvitePaused,
+        isReadOnly: room.isReadOnly,
+        maxFileSizeBytes: room.maxFileSizeBytes,
+        slowmodeMs: room.slowmodeMs,
+      },
+      topic: room.topic,
+      type: room.type,
+    });
+    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one room at a time, as its record is written
+    await writeRoomImageEntries(archive, room.id);
+    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one room at a time, as its record is written
+    await writeRoomEmojiEntries(archive, room.id, emoji);
+  }
+};
