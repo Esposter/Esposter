@@ -196,3 +196,7 @@ Shenhe's other passives SHALL NOT take effect.
 - **GIVEN** Shenhe has a passive unlocked
 - **WHEN** the player fights with Shenhe
 - **THEN** that effect has no effect
+
+## Open
+
+- [ ] **Constellation 1 gives Spring Spirit Summoning one more charge** — no source yet: the cached wiki names Clarity of Heart without its text.
