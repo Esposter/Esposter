@@ -185,9 +185,9 @@ The reveal is timed off three lines of `~/Esposter.noindex/genshin-parity/captur
 - [ ] **The Parity trials for the line's place, the band's gradient and the pill's nudge** — no source yet: no committed run of these trials sits beside the snapshot.
 - [ ] **The recording's blur is sigma 0.641** — no source yet: the softness measure of `~/Esposter.noindex/genshin-parity/captures/yt-nWBqOXWZuFg.mp4` is not committed.
 - [ ] **The reply pill is 0.22 of black, the best of 0.15 to 0.45** — no source yet: `packages/genshin-interface/src/components/DialogueScreen/Index.vue` holds no 0.22 darkness, and the sweep is not committed.
-- [ ] **A talk's dialogs are the hundred numbered after its id** — no source yet: `scripts/src/services/genshinText/readTalk.ts` holds no range of a hundred, and the numbering was not checked against the dump.
+- [ ] **A talk's dialogs are the hundred numbered after its id** — contradicted by `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/TalkExcelConfigData_0.json` and `_1.json`: 1,773 talks whose first dialog resolves start outside their hundred.
 - [ ] **The dialog table's talk title hash resolves to no text** — contradicted by `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/DialogExcelConfigData.json`: nine of its first 50,000 title hashes resolve in the English maps.
-- [ ] **No carried quest's talk holds a gadget or mate-avatar line** — no source yet: the carried quests' talks were not checked against those roles.
+- [ ] **No carried quest's talk holds a gadget or mate-avatar line** — no source yet: 702 dialogs in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/DialogExcelConfigData.json` hold a gadget or mate-avatar role, and the carried quests' talk ids are not read from the quest tables to say which of them a carried quest holds.
 - [ ] **A black screen's dialog has a role id the character table does not hold** — no source yet: the character table was not searched for the role id.
 - [ ] **The reply marks are named as the wiki's transcripts name the game's marks** — no source yet: the wiki's Template:DIcon page, named in Sources, is not in the wiki cache.
 - [ ] **The reply marks are traced from the wiki's copies of the game's files** — no source yet: the wiki's Template:DIcon page, named in Sources, is not in the wiki cache.
