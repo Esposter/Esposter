@@ -100,8 +100,8 @@ The quality weights the table gives each dish are all the Delicious weight in th
 
 ## Open
 
-- [ ] **The cook recipe, cook bonus and compound tables are missing from the community dump** — no source yet: the dump holds all three, with 284, 119 and 69 rows in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/`, so the claim is out of date.
-- [ ] **Cooking progress and processing queues are not in the save yet** — no source yet: `packages/genshin-world/src/models/save/GenshinSave.ts` has a `cooking` slice (`cookingSaveSchema`), so the claim is out of date.
+- [ ] **The cook recipe, cook bonus and compound tables are missing from the community dump** — contradicted by `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/`: the dump holds all three, with 284, 119 and 69 rows.
+- [ ] **Cooking progress and processing queues are not in the save yet** — contradicted by `packages/genshin-world/src/models/save/GenshinSave.ts`: it has a cooking slice (`cookingSaveSchema`).
 - [ ] **Mondstadt's stove is the scene's `Restaurant` building point** — no source yet: no extracted game file was found that names a Restaurant building in Mondstadt's scene group.
 - [ ] **The 7.1 table names the eater for every heal dish** — no source yet: the table is not in the dump, and `CookBonusExcelConfigData.json` has no target field to check it against.
 - [ ] **A dish's bonus is read for the attack, defence and critical stats** — no source yet: the mapping from a bonus to these stats was not found in the files checked.
