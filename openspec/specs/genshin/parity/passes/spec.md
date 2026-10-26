@@ -118,7 +118,7 @@ The pass option SHALL run one named measure alone and rewrite only that pass's r
 
 ## Open
 
-- [ ] **The pass option runs one named measure alone** — no source yet: the code runs every pass up to and including the named one (`PARITY_PASS_ORDER.slice`), not that pass alone.
-- [ ] **The component's report names the pass as the next work** — checked against `scripts/src/services/genshinParity/passes/runParityPasses.ts`: the run stops at the first pass not held, so that pass's rows end the report; the report names no next work in words, so the claim stays open.
+- [ ] **The pass option runs one named measure alone** — contradicted by `scripts/src/services/genshinParity/passes/runParityPasses.ts`: it runs every pass up to and including the named one.
+- [ ] **The component's report names the pass as the next work** — no source yet: the run stops at the first pass not held, so its rows end the report, and no words in `scripts/src/services/genshinParity/passes/runParityPasses.ts` name it as the next work.
 - [ ] **Only the rows of the passes run are rewritten** — contradicted by `scripts/src/services/genshinParity/passes/writeParityPasses.ts`: a whole run writes only its own results, so unreached passes' rows are dropped.
 - [ ] **Exact game data outranks a value measured from a recording** — no source yet: no check traced the anchor and timing choice in the derivation for a rect; the rule is held in the passes design, not in code.
