@@ -13,13 +13,13 @@ An element an attack leaves on a target SHALL stay as an aura that decays over t
 - **GIVEN** an untouched target
 - **WHEN** a two unit Pyro attack lands on it
 - **THEN** 1.6 units of Pyro remain on the target as an aura
-- **AND** the aura decays out after 12 seconds
+- **AND** the aura decays out after 12 seconds (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/reactable.go` lines 206 to 213: 0.8 of the Durability, decaying over 6 times it plus 420 frames, with a unit at 25 Durability as in `internal/characters/xiangling/burst.go` line 35)
 
 #### Scenario: Anemo and Geo leave no aura
 
 - **GIVEN** an untouched target
 - **WHEN** an Anemo or a Geo attack lands on it
-- **THEN** no aura remains on the target
+- **THEN** no aura remains on the target (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/reactable.go` lines 147 to 169: `AttachOrRefill` attaches only Pyro, Electro, Hydro, Cryo and Dendro)
 
 ### Requirement: An element applied to a target that already holds another element
 
@@ -30,7 +30,7 @@ An element applied to a target that already holds another element SHALL trigger 
 - **GIVEN** a target is burning with Pyro and Dendro on it
 - **WHEN** two units of Hydro land on it
 - **THEN** Vaporize consumes the Burning and its Pyro
-- **AND** the Hydro left over blooms the Dendro beneath them
+- **AND** the Hydro left over blooms the Dendro beneath them (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/vaporize.go` lines 27 to 34 reduce the Pyro-element auras, the Burning among them, `pkg/reactable/burning.go` lines 138 to 145 drop the Burning's fuel once it is gone, and `pkg/reactable/bloom.go` lines 20 to 31 take the left-over Hydro on the Dendro-like auras)
 
 #### Scenario: A reaction is recorded once however many auras it meets
 
@@ -131,12 +131,12 @@ Lunar-Bloom SHALL deal no damage of its own, and it SHALL leave a Dendro Core.
 
 - **GIVEN** a Moonsign turns a Bloom into Lunar-Bloom
 - **WHEN** the reaction triggers on an enemy
-- **THEN** the reaction deals no damage of its own
+- **THEN** the reaction deals no damage of its own (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/lunarbloom.go` lines 3 to 4 call only the Verdant Dew hook, and `pkg/reactable/bloom.go` lines 91 to 93 add a Dendro Core and no damage)
 - **AND** a Dendro Core is left by the enemy
 
 ### Requirement: Ascendant Gleam's reaction bonus
 
-Ascendant Gleam's reaction bonus SHALL be capped at 36 percent, and a skill or burst outside the Moonsign SHALL light it for 20 seconds.
+Ascendant Gleam's reaction bonus SHALL be capped at 36 percent, and a skill or burst outside the Moonsign SHALL light it for 20 seconds (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/simulation/setup.go`: `min(x, 0.36)` at lines 458 to 466, the 20 seconds as `20*60` frames at line 486, lit on the skill and burst events of a character outside the Moonsign)
 
 #### Scenario: A reaction bonus past the cap is held at 36 percent
 
@@ -248,13 +248,13 @@ A shield SHALL absorb damage before the character takes any, and only the damage
 
 - **GIVEN** the member on the field holds a Cryo shield
 - **WHEN** an enemy whose attacks carry Cryo strikes it
-- **THEN** each point of the shield's health absorbs 2.5 points of the strike
+- **THEN** each point of the shield's health absorbs 2.5 points of the strike (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/core/player/shield/template.go` lines 51 and 62: `same = 2.5` for the shield's own element)
 
 #### Scenario: A Shield Strength buff raises what a shield absorbs
 
 - **GIVEN** the member on the field holds a shield and carries a buff of 25% Shield Strength
 - **WHEN** an enemy's strike lands on it
-- **THEN** each point of the shield's health absorbs 1.25 points of the strike
+- **THEN** each point of the shield's health absorbs 1.25 points of the strike (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/core/player/shield/template.go` lines 56 and 67: the bonus factor `(1 + bonus)`, which is 1.25 at 25 percent, with the `same` factor 1 for another element)
 
 #### Scenario: A shield that takes a strike reports the health it has left
 
@@ -306,7 +306,7 @@ A normal or charged attack's hit SHALL give its character one energy at a chance
 
 - **GIVEN** a character with a sword has a base chance of 10 percent
 - **WHEN** a hit does not give it energy
-- **THEN** its chance on the next hit rises by 5 percent
+- **THEN** its chance on the next hit rises by 5 percent (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/core/energy.go` lines 36 and 40: the base 0.10 for a sword and an increase of 0.05 per hit that gives none)
 
 #### Scenario: A hit that gives energy returns the chance to its base
 
@@ -324,7 +324,7 @@ A particle SHALL give energy of its own element to each standing party member at
 - **WHEN** it reaches the party
 - **THEN** a member of that element gains 3 energy
 - **AND** a member of another element gains 1 energy
-- **AND** a member with no element gains 2 energy
+- **AND** a member with no element gains 2 energy (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/core/player/character/energy.go` lines 58 to 67, before the energy regeneration and the off-field reduction)
 
 ### Requirement: When every member of the party is down, the party
 
@@ -458,12 +458,12 @@ Inside the field, a Cryo or Electro hit on an enemy that applies an element, as 
 #### Scenario: a field with no recorded hit gives a 20% Cryo and Electro DMG Bonus
 
 - **WHEN** no Cryo or Electro hit is recorded
-- **THEN** the body in the field has a 20% Cryo and Electro DMG Bonus
+- **THEN** the body in the field has a 20% Cryo and Electro DMG Bonus (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct_gadget.go` lines 25 to 38 and 134 to 154: the table's first entry, 0.2, applied to CryoP and ElectroP)
 
 #### Scenario: a field with recorded hits gives 28% plus 1% a hit
 
 - **WHEN** one Cryo or Electro hit is recorded
-- **THEN** the body in the field has a 29% Cryo and Electro DMG Bonus, rising by 1% for each further hit up to 12 hits, where it is 40%
+- **THEN** the body in the field has a 29% Cryo and Electro DMG Bonus, rising by 1% for each further hit up to 12 hits, where it is 40% (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct_gadget.go` lines 20 and 25 to 38: 12 is the most stacks, and the table steps from 0.29 at one hit by 0.01 to 0.4 at twelve)
 
 #### Scenario: a member's Radiance: Stellar-Conduct carries the count of hits the last tick took
 
@@ -473,7 +473,7 @@ Inside the field, a Cryo or Electro hit on an enemy that applies an element, as 
 #### Scenario: a field lowers the enemies' Physical RES by 40%
 
 - **WHEN** an enemy stands in the field
-- **THEN** its Physical RES is reduced by 40%
+- **THEN** its Physical RES is reduced by 40% (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct_gadget.go` lines 121 to 124: `Value: -0.40` on Physical)
 
 ### Requirement: Stellar Swirl Places a Stellar Vortex
 
@@ -501,12 +501,12 @@ A Stellar Vortex's explosion SHALL be priced at a Base Reaction Coefficient of 2
 #### Scenario: a Stellar Vortex explodes at a coefficient of 2 for its first two stacks
 
 - **WHEN** a vortex has one or two stacks of Stellar Swirl
-- **THEN** its explosion's Base Reaction Coefficient is 2
+- **THEN** its explosion's Base Reaction Coefficient is 2 (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl_gadget.go` line 14, `sswStackMult`: 2 at one and two stacks)
 
 #### Scenario: a Stellar Vortex explodes at a coefficient of 3 from its third stack
 
 - **WHEN** a vortex has three or more stacks of Stellar Swirl
-- **THEN** its explosion's Base Reaction Coefficient is 3
+- **THEN** its explosion's Base Reaction Coefficient is 3 (same table, `~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl_gadget.go` line 14: 3 from three stacks up)
 
 #### Scenario: a Stellar Swirl's Anemo instance has a coefficient of 0.75
 
@@ -515,23 +515,12 @@ A Stellar Vortex's explosion SHALL be priced at a Base Reaction Coefficient of 2
 
 ## Open
 
-- [ ] **A two-unit Pyro tap leaves 1.6 units of Pyro lasting 12 seconds** — no source yet: gcsim's aura tax and decay were not opened for this case, and the wiki's Elemental Gauge Theory page is not cached.
-- [ ] **Anemo and Geo leave no aura** — no source yet: gcsim's Swirl and Crystallize paths were not opened to show they attach none.
-- [ ] **Hydro on a burning target vaporizes the Burning and its Pyro, and blooms the Dendro with what is left** — no source yet: `pkg/reactable/vaporize.go` and `bloom.go` were not opened for the Burning step.
 - [ ] **A resistance past three quarters cuts damage to one over four times the resistance plus one** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/enemy/damage.go`: past 0.75 its resistance modifier is 1 / (4 × res + 1).
 - [ ] **Vaporize and Melt multiply the hit by two** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/vaporize.go`: Pyro on Hydro multiplies by 1.5, Hydro on Pyro by 2.
-- [ ] **A Lunar-Bloom deals no damage of its own and leaves a Dendro Core** — no source yet: gcsim's `pkg/reactable/lunarbloom.go` was not opened.
-- [ ] **Ascendant Gleam is capped at 36% and lasts 20 seconds** — no source yet: gcsim's Ascendant Gleam code was not opened for these values.
 - [ ] **Each deployed Stellar Jubilee's Base DMG Bonus adds, two at 7% giving 14%** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/odette/stellar.go`: the Base DMG bonus is 0.7% per 100 ATK, capped at 14%.
-- [ ] **An enemy's strike is resisted by the member's RES to its attack element, or Physical RES with none** — no source yet: gcsim's strike resistance was not opened for this rule.
-- [ ] **A DMG Reduction lowers a strike's damage by its share, and 120% leaves none** — no source yet: gcsim's `DamageReduction` arithmetic was not opened.
-- [ ] **A shield absorbs 2.5 points per point of its own element's strike, and a Shield Strength of 25% gives 1.25** — no source yet: gcsim's shield absorption code was not opened.
-- [ ] **A sword's energy chance starts at 10% and rises by 5% after each hit that gives none** — no source yet: gcsim's attack energy code was not opened.
-- [ ] **A particle gives 3 energy of its element, 1 of another and 2 of none** — no source yet: gcsim's particle gain was not opened.
-- [ ] **A party that is all down revives at 35% health at the nearest statue** — no source yet: gcsim's revive code was not opened.
+- [ ] **An enemy's strike is resisted by the member's RES to its attack element, or Physical RES with none** — no source yet: gcsim's `pkg/avatar/avatar.go` sets a member's resistance to zero, with a TODO that players have no resistances, so the source does not hold this rule.
+- [ ] **A DMG Reduction lowers a strike's damage by its share, and 120% leaves none** — no source yet: gcsim's `DamageReduction` in `~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/core/player/character/mods.go` sums the active mods' amounts, and no gcsim code calls it on a strike, so the source does not hold this arithmetic
+- [ ] **A party that is all down revives at 35% health at the nearest statue** — no source yet: gcsim holds no party revive and no statue rule, so the named source does not hold this value
 - [ ] **The Starlight Prism lasts 7 seconds, sustains a radius-15 Polestar Field, and a refresh sets the field back to 7 seconds** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct_gadget.go`: its field lasts 6 seconds (`sscFieldDur`, line 17). The wiki's Stellar-Conduct page is not cached.
-- [ ] **The Polestar Field lowers each enemy's Physical RES by 40%** — no source yet: gcsim's shred value (`stellarconduct_gadget.go:122`) was not opened.
-- [ ] **A Polestar Field gives its body 20% Cryo and Electro DMG Bonus with no hit, 28% plus 1% a hit up to 40%** — no source yet: gcsim's DMG Bonus lines for the field were not opened.
-- [ ] **A Stellar Vortex's explosion is at Base Reaction Coefficient 2 at Lv. 1 and 3 at Lv. 2** — no source yet: gcsim's vortex explosion coefficients were not opened, and the wiki's Damage page is not cached.
-- [ ] **The third Stellar Swirl levels the vortex to Lv. 2, and three more explode it at once** — no source yet: gcsim's vortex stacking in `pkg/reactable/stellarswirl.go` was not opened for these counts.
-- [ ] **A direct Stellar Swirl hit has Base Reaction Coefficient 1, which the count does not raise** — no source yet: gcsim's direct Stellar Swirl coefficient was not opened.
+- [ ] **The third Stellar Swirl levels the vortex to Lv. 2, and three more explode it at once** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl.go`: its stack add reaches 3 on the second swirl and 6 on the third.
+- [ ] **A direct Stellar Swirl hit has Base Reaction Coefficient 1, which the count does not raise** — checked against `~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/core/combat/reaction.go`: a multiplier of 1 for the Stellar Swirl reaction and none for the direct tag, and the claim is not settled by it because the source gives the 1 to the reaction, not to a direct hit.
