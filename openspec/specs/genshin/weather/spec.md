@@ -169,6 +169,7 @@ Under the water's surface the water's haze SHALL replace the weather's colour, a
 ## Open
 
 - [ ] **The weather the world loads with is set at once** — no source yet: no load path was read.
+- [ ] **A bolt stands between one and six hundred metres from the eye** — contradicted by the code's lightning minimum of 150 metres, listed in the [design](design.md)'s Open section.
 - [ ] **A strike's second pulse is dimmer than the first** — no source yet: the intensities in `LIGHTNING_FLASH_PULSES` were not read.
 - [ ] **A weather change blends over nine seconds, eased in and out** — no source yet: a read of the turn in `~/Esposter/genshin-parity/captures/world-weather-turn.mkv`, the turn recording on disk, against the nine seconds.
 - [ ] **A weather change blends over nine seconds, eased in and out, from where the sky had reached** — no source yet: the same recording, `~/Esposter/genshin-parity/captures/world-weather-turn.mkv`, read for a change begun part way through another.
