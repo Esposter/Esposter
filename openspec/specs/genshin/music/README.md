@@ -34,9 +34,6 @@ flowchart TD
 ## Open
 
 - [ ] **The first piece plays 5 decibels under its source and the second 16, so the second sounds about 11 decibels quieter, as in a public recording of the login** — no source yet: no mix-volume readout and no comparison with a public recording is on disk. The autoplay rule is MDN's, in [Sources](#sources).
-- [ ] **A synthesizer plays the notes, with recordings of real instruments layered over the voices where they bring a piece nearer the game** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Every length, trim and the order come from the sound banks, so the handoffs land where the game's do** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A segment's volume is read from the banks, through its track, every node above it and every bus** — no source yet: game data or a snapshot that holds this behaviour
 
 ## The fit
 
