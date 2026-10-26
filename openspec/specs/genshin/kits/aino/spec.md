@@ -215,3 +215,8 @@ From Constellation 6, for fifteen seconds after Aino's burst, each Electro-Charg
 - **GIVEN** Aino has Constellation 5
 - **WHEN** the active member makes a Bloom reaction after her burst
 - **THEN** the reaction gains no DMG
+
+## Open
+
+- [ ] **Each Water Ball lands within eleven metres of Aino's body** — no source yet: no line gives the sum of the field's radius of 10 and the ball's hitbox of 1.
+- [ ] **Ascension 1's reach of fourteen metres** — no source yet: no line gives the sum of the 10-metre search and the 4-metre landing radius.
