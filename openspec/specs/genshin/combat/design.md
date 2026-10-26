@@ -114,7 +114,7 @@ At Ascendant Gleam, a skill or burst of a character outside the Moonsign lights 
 
 ### Stellar Glimmer reactions
 
-Stellar-Conduct and Stellar Swirl are the two Stellar Glimmer reactions, and the deployed team's Stellar Jubilee passives enable them. Neither occurs without an enabler. Only Odette's kit carries a Stellar Jubilee passive as built, and it enables both reactions for its party. The Cryo Traveler's kit has no Cryo passive yet, and no other kit carries one.
+Stellar-Conduct and Stellar Swirl are the two Stellar Glimmer reactions, and the deployed team's Stellar Jubilee passives enable them. Neither occurs without an enabler. Only Odette's kit carries a Stellar Jubilee passive as built (`packages/genshin-world/src/data/kits/odette.json`, the only kit record under `packages/genshin-world/src/data/kits/` that names one), and it enables both reactions for its party. The Cryo Traveler's kit has no Cryo passive yet, and no other kit carries one.
 
 ```mermaid
 flowchart TD
@@ -350,7 +350,7 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 - [ ] **Quicken's aura lasts 5 seconds a unit plus 6** — no source yet: gcsim's Quicken duration was not opened and the wiki's Advanced Mechanics page is not cached.
 - [ ] **Frozen doubles its gauge, decays 0.4U a second and ramps 0.1 a second, lasting 2√(5G + 4) − 4 seconds** — no source yet: gcsim's freeze decay in `pkg/reactable/reactable.go:47-48` and `:382-391` is in per-frame units not converted to these values.
 - [ ] **Burning's 2U aura, its drain at twice the decay and its 1U of Pyro under its cooldown** — no source yet: gcsim's Burning aura and drain lines in `pkg/reactable/burning.go` were not opened.
-- [ ] **Swirl records the spread gauge (G − 0.04) × 1.25 + 1** — no source yet: gcsim's `calcSwirlAtkDurability` (`~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/swirl.go`, line 15) gives `1.25*(0.5*consumed-1)+25` or `1.25*(src-1)+25` in its own units, a different form, not reconciled.
+- [ ] **Swirl records the spread gauge (G − 0.04) × 1.25 + 1** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/swirl.go`: line 15 gives `1.25*(0.5*consumed-1)+25` or `1.25*(src-1)+25`.
 - [ ] **The table's cells that gcsim's `reduce` calls do not name: Burning, Frozen on Cryo and Hydro, Aggravate, Spread, the Geo row and Swirl on Burning** — no source yet: `pkg/reactable/freeze.go`, `crystallize.go` and the Aggravate and Spread paths in `catalyze.go` were not opened.
 - [ ] **The order in which each element tries its reactions** — no source yet: gcsim's reaction order was not checked against the table's order.
 - [ ] **The defence factor (5 × attacker level + 500) / (enemy defence + 5 × attacker level + 500)** — no source yet: gcsim's defence line in `pkg/enemy/damage.go` was not located.
@@ -360,7 +360,7 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 - [ ] **Lunar reaction coefficients of 1, 3 and 1.6, Lunar-Charged's 5.5-second cloud, its 8-metre reach, 2-second cooldown and contributor shares of 60, 30, 5 and 5 percent** — no source yet: gcsim's `pkg/reactable/lunarcharged.go` constants beyond its 9-frame tick were not opened.
 - [ ] **Moondrift Harmony's 37-frame limit and its hits landing 23, 35 and 47 frames on** — no source yet: gcsim's `stepMoondrifts` timing was not opened.
 - [ ] **Ascendant Gleam: 20 seconds, 0.9% per 100 ATK, 0.6% per 1,000 Max HP, 2.25% per 100 EM, 1% per 100 DEF, capped at 36%** — no source yet: gcsim's Ascendant Gleam code was not opened for these values.
-- [ ] **The Polestar Field lasts 7 seconds, with a 15-metre radius, a tick every 4 seconds and a 40% Physical RES shred** — no source yet: the wiki's Stellar-Conduct page is not cached, gcsim sets 6 seconds (`stellarconduct_gadget.go:17`), and its radius, tick and shred were not opened.
+- [ ] **The Polestar Field lasts 7 seconds, with a 15-metre radius, a tick every 4 seconds and a 40% Physical RES shred** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct_gadget.go`: its field lasts 6 seconds (line 17), not 7.
 - [ ] **A Stellar Vortex's third stack makes it Lv. 2 and its sixth explodes it** — no source yet: the wiki's Stellar Swirl page is not cached and gcsim's stack counts were not opened.
 - [ ] **A Crystallize shard lasts 15 seconds, the newest three are kept, and it drops 23 frames on and is picked up 31 frames after, within 2 metres** — no source yet: gcsim's shard timings in `internal/template/crystallize` were not opened in full.
 - [ ] **A Dendro Core lasts six seconds, five at most, bursts over 5 metres, and a Bountiful core bursts 0.4 seconds on over 6.5 metres** — no source yet: gcsim's dendro core template was not opened.
@@ -368,7 +368,6 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 - [ ] **A weapon's attack energy chance starts at 10% for a sword and rises by 5, 10 or 4 percent a miss by weapon type** — no source yet: gcsim's attack energy code was not opened.
 - [ ] **Particles give 3 of their element, 1 of another and 2 of none, an orb three times that, and members off the field take 80%, 70% or 60%** — no source yet: gcsim's energy gain code was not opened.
 - [ ] **The Traveler's strikes, charged attack, plunges, Palm Vortex and Gust Surge figures** — no source yet: the wiki's Foreign Ironwind, Palm Vortex and Gust Surge pages are not cached.
-- **Only Odette's kit carries a Stellar Jubilee passive as built** — `packages/genshin-world/src/data/kits/odette.json` is the only kit record under `packages/genshin-world/src/data/kits/` that names one.
 - [ ] **The hit cylinders of 5 and 6 metres, the targeting zone of 15 metres and 10 high, and the score weights 0.7 and 0.3** — no source yet: the wiki's Area of Effect and Targeting pages are not cached.
 - [ ] **The Starlight Prism's coefficient and DMG Bonus by count, as the wiki's Stellar-Conduct page gives them** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **A Stellar Vortex's explosion coefficient at Lv. 1 and Lv. 2, as the wiki's Damage page gives them** — no source yet: game data or a snapshot that holds this behaviour
