@@ -23,7 +23,7 @@ Illuga's kit is its record and one behaviour module, `createIllugaKitBehaviour`,
 
 ## Open
 
-- [ ] **Zhongli's pole hold is 96 frames with one hit at a 48-frame hitmark** — contradicted by `packages/genshin-world/src/data/kits/zhongli.json`: his holdStele has 16 hits, the first at a 48-frame hitmark.
+- [ ] **The built record gives Zhongli's pole hold 16 hits, the first at a 48-frame hitmark** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/zhongli/skill.go:32-76`: gcsim queues one hit at 48 frames in a 96-frame hold.
 - [ ] **Constellation 1's fifteen-second cooldown and Vigilant Sentinel's 12 Energy and 15 seconds** — no source yet: a reading of the dump's TextMap wording against the record, which this pass did not do.
 - [ ] **Aedon's hit takes the burst's first hit's area, with no hitmark and no poise** — no source yet: a source giving Aedon's hit an area, hitmark or poise; the constellation text gives only the damage and one nearby opponent.
 - [ ] **Press reads its 'Press DMG' label for two hits** — no source yet: a source giving the Press DMG row's hit count; the cached Dawnbearing Songbird page gives its rows without one.
