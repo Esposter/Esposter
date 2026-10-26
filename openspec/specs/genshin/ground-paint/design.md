@@ -61,7 +61,7 @@ flowchart TD
 
 ## Open
 
-- [ ] **Genshin's terrain blends its layers per texel in its shader** — no source yet: the game's terrain blend is not checked in any file cited here.
+- [ ] **Genshin's terrain blends its layers per texel in its shader** — no source yet: the extracted shaders in `~/Esposter.noindex/genshin-parity/extracted/shaders/Shader` name no terrain or splat blend (their only matches are the "ground" inside Background and Foreground names), so the game's terrain blend is not on disk.
 - [ ] **The game places its layers by cell, never by slope** — no source yet: no checked game data shows that placement ignores slope.
 - [ ] **Every region's tiles hold their cells, so any region's field is fitted the same way** — no source yet: only Windrise's tile cells are checked.
 - [ ] **Only Windrise's tiles have their base maps exported** — no source yet: only Windrise's `_BaseMap` textures are checked, and no listing covers the other regions.
