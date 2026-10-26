@@ -14,7 +14,7 @@ Alyosha's kit is its record and one behaviour module, `createAlyoshaKitBehaviour
 
 - **Hunter's Advance is waiting on its module.** Its field and Tugarin hits are not spawned, so her burst deals no damage yet.
 - **Thunderbolt Strike's hold is not built.** Her skill's hold has no record, so the skill deals its tap alone.
-- **The clip frames are open.** Her animation and hitmark frames are read from the installed game's clips, which are not among this pass's sources, so the values stand unchecked against them.
+- **The clip frames are open.** Her animation and hitmark frames are read from the installed game's clips, which are on disk under `~/Esposter/genshin-parity/extracted/timings/`, but the plunge clips hold no animation events, so the values stand unchecked against them.
 
 ## Key files
 
@@ -27,11 +27,11 @@ Alyosha's kit is its record and one behaviour module, `createAlyoshaKitBehaviour
 
 - [Alyosha](https://genshin-impact.fandom.com/wiki/Alyosha) and [Category:Alyosha Talents](https://genshin-impact.fandom.com/wiki/Category:Alyosha_Talents), Genshin Impact Wiki: Alyosha's multipliers, energy, cooldowns and costs, Skirmishing Spear's four strikes, Thunderbolt Strike and Hunter's Advance.
 - Alyosha's clips, `Ani_Avatar_Boy_Pole_Alyosha_*`, read with `genshin:assets timings` from the installed game.
-- The wiki page cached at `cache/genshin-wiki/Category_Alyosha_Talents.json`, its Thunderbolt Strike row (15 seconds, Electro DMG), and the dump's skill `11482`, whose `cdTime` is 15.
+- The wiki page cached at `~/Esposter.noindex/cache/genshin-wiki/Category_Alyosha_Talents.json`, its Thunderbolt Strike row (15 seconds, Electro DMG), and the dump's skill `11482`, whose `cdTime` is 15.
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/candace) at v2.47.2, MIT: Candace's hitmarks and areas for Alyosha's strikes, charged attack and tap; and [Bennett](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/bennett)'s for her plunges and collision.
 
 ## Open
 
-- [ ] **Her strikes and charged attack are Physical** — no source yet: the wiki's Skirmishing Spear and Charged Attack rows name no element, and no source of hers for it is in this pass.
-- [ ] **Her low and high plunges strike at 36 and 38 frames, with areas of 4 and 6 metres** — no source yet: the wiki gives her plunges' damage and poise but no frames or areas, and her clips are not among this pass's sources.
-- [ ] **The frames of her strikes, charged attack, tap and plunges come from her own clips** — no source yet: `Ani_Avatar_Boy_Pole_Alyosha_*` is not among this pass's sources.
+- [ ] **Her strikes and charged attack are Physical** — no source yet: the wiki's Skirmishing Spear and Charged Attack rows name no element, and the dump's skill rows for her strikes are not read here.
+- [ ] **Her low and high plunges strike at 36 and 38 frames, with areas of 4 and 6 metres** — no source yet: the wiki gives her plunges' damage and poise but no frames or areas, and her two plunge clips (`~/Esposter/genshin-parity/extracted/timings/06537046/AnimationClip/Ani_Avatar_Boy_Pole_Alyosha_FallingAttack_Strike.json` and `~/Esposter/genshin-parity/extracted/timings/02050112/AnimationClip/Ani_Avatar_Boy_Pole_Alyosha_FallingAttack_Strike_AS.json`) hold no animation events.
+- [ ] **The frames of her strikes, charged attack, tap and plunges come from her own clips** — no source yet: her clips are on disk under `~/Esposter/genshin-parity/extracted/timings/`, but the two plunge clips hold no animation events, so no hitmark frame is read from them here.
