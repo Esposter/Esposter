@@ -81,9 +81,3 @@ A screen image written by a pass SHALL NOT count as approved until its compariso
 ## Open
 
 - [ ] **The opening's run fails when a screen is skipped** — no source yet: the skip assertion in `packages/genshin-world/src/components/Game/Opening/Index.browser.test.ts` was not traced.
-- [ ] **The visual suite renders every screen and matches each against its own last approved image** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The visual suite runs in its own run, so an ordinary test run never starts a browser** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The opening's run plays the whole opening, including the login's flight** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A moving screen is held still through its fixture's still state** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **An image is written only by approval of its screen** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A pass's image does not count as approved until its comparison clears the screen's bar** — no source yet: game data or a snapshot that holds this behaviour
