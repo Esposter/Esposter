@@ -1,6 +1,6 @@
 ## Purpose
 
-Xiao's kit as built, with the Lemniscatic Wind Cycling dash, Bane of All Evil's converted attacks and drain, and Heaven Fall's stacks, Constellation 1's extra charge, Constellation 4's DEF Bonus, and what is left of his third charge, jump and the other constellations.
+Xiao's kit as built, with the Lemniscatic Wind Cycling dash, Bane of All Evil's converted attacks and drain, and Heaven Fall's stacks, Constellation 1's extra charge, Constellation 4's DEF Bonus, and what is left of his jump and Constellation 6.
 
 ## Requirements
 
@@ -164,7 +164,7 @@ From Constellation 2, Xiao SHALL gain 25% Energy Recharge while he is off the fi
 
 ### Requirement: Unbuilt effects
 
-Xiao's third skill charge, his jump, his Constellation 6 and his dash particles SHALL have no effect in the world yet.
+Xiao's jump, his Constellation 6 and his dash particles SHALL have no effect in the world yet.
 
 #### Scenario: Constellation 6 has no effect
 
