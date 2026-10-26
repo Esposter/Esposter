@@ -54,9 +54,3 @@ A captured frame SHALL be written for comparison without the colour tags its fil
 
 - [ ] **Translucent glass's colour is solved from the scene around it** — no source yet: no solver for translucent glass was found under `scripts/src/services/genshinParity` or `scripts/src/services/recreation`.
 - [ ] **A written frame's brightness matches its file** — no source yet: no brightness comparison of a written frame against its tagged file was run.
-- [ ] **A reference drawn behind an interface is compared over a clean plate whose scored region is filled from the pixels around it** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Each drawn piece is scored against what lies behind it** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A reference whose scored region covers the whole frame and names no pieces is scored as it stands** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Each named piece is filled from the pixels around it in turn, and the scene between the pieces stays as the frame draws it** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The opaque pieces and their placements are scored as drawn** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A captured frame is written for comparison without the colour tags its file states** — no source yet: game data or a snapshot that holds this behaviour
