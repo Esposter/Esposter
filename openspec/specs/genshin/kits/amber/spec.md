@@ -87,3 +87,7 @@ From Constellation 6, Fiery Rain SHALL give each deployed party member 15% Movem
 - **GIVEN** Amber has Constellation 5
 - **WHEN** Fiery Rain is cast
 - **THEN** no party member gains Movement SPD or ATK
+
+## Open
+
+- [ ] **The aimed shot turns to the enemy its aim is scored on** — no source yet: the cached Sharpshooter page in `~/Esposter.noindex/cache/genshin-wiki/Category_Amber_Talents.json` describes no turn and no score.
