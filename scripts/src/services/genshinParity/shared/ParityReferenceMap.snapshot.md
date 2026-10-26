@@ -33,14 +33,14 @@ committed.
 | `forge-screen` | `ForgeScreen` | 6.72% | 0.685 | 5.60% | 0.2216 |
 | `gcg-duel-board` | `GcgScreen` | 13.97% | 0.470 | 9.63% | 0.4658 |
 | `handbook-experience` | `HandbookScreen` | 5.18% | 0.932 | 2.44% | 0.2456 |
-| `health-notice` | `SplashHealthNotice` | 6.00% | 0.961 | 0.83% | 0.1853 |
-| `health-notice-mainland` | `SplashHealthNotice` | 6.88% | 0.834 | 2.70% | 0.2025 |
+| `health-notice` | `SplashHealthNotice` | 6.17% | 0.964 | 1.51% | 0.1780 |
+| `health-notice-mainland` | `SplashHealthNotice` | 7.06% | 0.829 | 3.03% | 0.1974 |
 | `hud-paimon-button` | `HudScreen` | 3.41% | 0.938 | 5.95% | 0.1958 |
 | `hud-stamina-climb` | `HudScreen` | 1.94% | 0.728 | 2.15% | 0.1405 |
 | `hud-world-keys` | `HudScreen` | 4.22% | 0.928 | 3.30% | 0.2454 |
 | `hud-world-pickup` | `HudScreen` | 9.96% | 0.385 | 9.09% | 0.4268 |
-| `interaction-prompts-jueyun-chili` | `InteractionPromptList` | 7.98% | 0.895 | 3.36% | 0.3158 |
-| `interaction-prompts-pickup` | `InteractionPromptList` | 8.93% | 0.848 | 5.11% | 0.3793 |
+| `interaction-prompts-jueyun-chili` | `InteractionPromptList` | 5.07% | 0.949 | 1.78% | 0.2144 |
+| `interaction-prompts-pickup` | `InteractionPromptList` | 7.92% | 0.919 | 4.43% | 0.3313 |
 | `inventory-food` | `InventoryScreen` | 3.44% | 0.873 | 2.31% | 0.1928 |
 | `inventory-weapons` | `InventoryScreen` | 16.34% | 0.523 | 12.38% | 0.4942 |
 | `liyue-harbor-location` | `WorldScreen` | 29.33% | 0.303 | 24.45% | 0.8094 |
@@ -75,7 +75,7 @@ committed.
 | `spiral-abyss-entry` | `SpiralAbyssEntry` | pending: no recording of the screen yet | | | |
 | `sumeru-city-location` | `WorldScreen` | 32.42% | 0.227 | 28.07% | 0.8157 |
 | `title-splash` | `SplashTitle` | 0.20% | 1.000 | 0.01% | 0.0090 |
-| `title-splash-mainland` | `SplashTitle` | 1.80% | 0.992 | 0.81% | 0.0787 |
+| `title-splash-mainland` | `SplashTitle` | 3.54% | 0.925 | 1.85% | 0.1038 |
 | `weapon-screen` | `WeaponScreen` | pending: no recording of the screen yet | | | |
 | `windrise-statue-day` | `WorldScreen` | 26.73% | 0.306 | 26.74% | 0.7579 |
 | `wish-screen` | `WishScreen` | 50.96% | 0.425 | 49.28% | 0.8743 |

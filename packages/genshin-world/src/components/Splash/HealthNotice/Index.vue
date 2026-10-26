@@ -27,10 +27,12 @@ const paragraphs = computed(() => gameText[GameTextKey.HealthNotice].split("\n\n
 
 <style scoped>
 /* Measured from the English PC client's notice at 1080 and held against the Japanese one's at 60 frames: the divider
-   Spans the screen's width less 190 units a side and the text 20 units inside it, so a wider screen sets the notice in
-   Fewer lines. The sizes are the ones that score best against the English notice in Signika (heading 57.1 units, its
-   Lines 48 apart, text 40.5, whose line breaks a smaller size or a tighter spacing moves), since its letters are
-   Proportioned apart from the game's own face. The heading's and the text's greys are the English recording's */
+   Spans the screen's width less 190 units a side and the text 15 units inside it, so a wider screen sets the notice in
+   Fewer lines. The game's first line runs about 1478 units; at 20 units inside, Signika's "when exposed" falls to the
+   Second line and the notice runs to eleven lines against the game's ten, so the box takes the line's last word. The
+   Sizes are the ones that score best against the English notice in Signika (heading 57.1 units, its lines 48 apart,
+   Text 40.5, whose line breaks a smaller size or a tighter spacing moves), since its letters are proportioned apart
+   From the game's own face. The heading's and the text's greys are the English recording's */
 .health-notice {
   display: grid;
   place-items: center;
@@ -59,7 +61,7 @@ const paragraphs = computed(() => gameText[GameTextKey.HealthNotice].split("\n\n
 }
 
 .paragraph {
-  max-width: calc(100cqw - var(--unit) * 420);
+  max-width: calc(100cqw - var(--unit) * 410);
   margin: calc(var(--unit) * 12.5) 0 0;
   color: #696969;
   font-size: calc(var(--unit) * 40.5);
