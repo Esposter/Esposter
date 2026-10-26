@@ -29,7 +29,7 @@ flowchart TD
 
 ## What it costs to run
 
-- **A draw per ring, of the blades in view.** Each ring is one instanced draw with no per-blade data. A compute pass tests every cell of the ring's grid against the view, the fade and whether it grows at all, and writes the cells it keeps into the draw's indirect instance count (`createGrassCulling` `packages/genshin-engine/src/vegetation/createGrassCulling.ts`, `createInstanceCulling` `packages/genshin-engine/src/culling/createInstanceCulling.ts`), so a blade out of view is not drawn and the CPU never sees the count. A cell's root, its top as it stands and its tip as the wind and the trail bend it are each tested, widened by a tenth of the clip space, so a blade whose root lies just outside the view is kept while its top shows, and one whose bent tip comes into view is kept while its root and top do not. The tip is the same point the blade is drawn at (`createGrassBladePoint` `packages/genshin-engine/src/vegetation/createGrassBladePoint.ts`), so the test cannot drift from the draw.
+- **A draw per ring, of the blades in view.** Each ring is one instanced draw with no per-blade data. A compute pass tests every cell of the ring's grid against the view, the fade and whether it grows at all, and writes the cells it keeps into the draw's indirect instance count (`createGrassCulling` `packages/genshin-engine/src/vegetation/createGrassCulling.ts`, `createInstanceCulling` `packages/genshin-engine/src/culling/createInstanceCulling.ts`), so a blade out of view is not drawn and the CPU never sees the count. A cell's root, its top as it stands and its tip as the wind and the trail bend it are each tested, widened by a tenth of the clip space (`packages/genshin-engine/src/culling/constants.ts`), so a blade whose root lies just outside the view is kept while its top shows, and one whose bent tip comes into view is kept while its root and top do not. The tip is the same point the blade is drawn at (`createGrassBladePoint` `packages/genshin-engine/src/vegetation/createGrassBladePoint.ts`), so the test cannot drift from the draw.
 - **Blade density is the first thing a tier lowers** (`QualityTierSettingsMap` `packages/genshin-engine/src/renderer/QualityTierSettingsMap.ts`), since the look survives thinner grass better than it survives lost shadows.
 - **The ground capture is one small render of the terrain's tiles**, only when it is owed.
 
@@ -63,8 +63,6 @@ flowchart TD
 
 ## Open
 
-- [ ] **Vegetation: the cell's culling test widened by a tenth of the clip space** — no source yet: the widening constant in the culling files, which `createGrassCulling.ts` does not hold.
 - [ ] **Vegetation: a blade a few centimetres off the drawn ground far from the eye** — no source yet: a measured offset of a blade from the drawn ground at the recapture distance, which no record holds.
-- [ ] **Vegetation: wet ground darkens the meadow and takes the sun's glint off the one normal** — no source yet: a wet-ground branch in the grass material, which the vegetation files do not name.
-- [ ] **Vegetation: Mondstadt's wind is a steady breeze from the west with gusts every half minute** — no source yet: a recording of Mondstadt's wind in `~/Esposter/genshin-parity/captures/`, not yet read for the gust interval.
 - [ ] **Vegetation: the rings fade into the ground's colour with no seam** — no source yet: a visual check of the seam on a recording, which no record holds.
+- [ ] **Vegetation: a meadow toon-shades as one surface with light rolling across it, as Genshin's grass does** — no source yet: a capture of Genshin's own grass shading, which the parity captures do not hold.
