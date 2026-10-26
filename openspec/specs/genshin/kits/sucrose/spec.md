@@ -101,4 +101,4 @@ The skill's pull and her Hexerei team bonus SHALL NOT take effect.
 
 ## Open
 
-- [ ] **Constellations 1, 2 and 6 take effect** — no source yet: Constellation 1 is cited on the design page, and 2 and 6 are named in its Sources list without a line.
+- [ ] **Constellations 1, 2 and 6 take effect** — no source yet: the cached Sucrose category names constellations 1, 2 and 6 (Clustered Vacuum Field, Beth: Unbound Form and Chaotic Entropy) without their text.
