@@ -1,6 +1,6 @@
 ## Purpose
 
-Ineffa's kit as built: her four strikes, charged attack, Cleaning Mode as her skill, Cyclonic Exterminator as her burst, a low, high and collision plunge, and her Moonsign Benediction. Her Ascension 4 passive, her Electro particles, Constellation 2's shield and Punishment Edit, and Constellation 4's energy are built; her Ascension 1 passive and Constellations 1 and 6 are not built yet.
+Ineffa's kit as built: her four strikes, charged attack, Cleaning Mode as her skill, Cyclonic Exterminator as her burst, a low, high and collision plunge, and her Moonsign Benediction. Her Ascension 4 passive, her Electro particles, Constellation 1's Carrier Flow Composite, Constellation 2's shield and Punishment Edit, and Constellation 4's energy are built; her Ascension 1 passive and Constellation 6 are not built yet.
 
 ## Requirements
 
@@ -174,3 +174,25 @@ From Constellation 2, Ineffa's burst SHALL place its Electro shield 37 frames in
 - **GIVEN** Ineffa's burst hits two enemies in turn
 - **WHEN** the first carries the mark
 - **THEN** the second carries none
+
+### Requirement: Constellation 1 Lunar-Charged DMG Bonus
+
+From Constellation 1, each shield Ineffa casts SHALL give the party a Lunar-Charged DMG Bonus for 20 seconds, of 2.5% per 100 of her total ATK and at most 50%, on each Lunar-Charged reaction a member makes.
+
+#### Scenario: A shield starts the bonus
+
+- **GIVEN** Ineffa has Constellation 1
+- **WHEN** she casts a shield
+- **THEN** a Lunar-Charged reaction of any party member gains the bonus for 20 seconds
+
+#### Scenario: The bonus scales with her ATK and is capped
+
+- **GIVEN** Ineffa's total ATK gives more than 50% by the scale
+- **WHEN** a member makes a Lunar-Charged reaction while the bonus holds
+- **THEN** the bonus is 50%
+
+#### Scenario: Below Constellation 1 nothing is given
+
+- **GIVEN** Ineffa has no constellation
+- **WHEN** she casts a shield
+- **THEN** no reaction gains the bonus

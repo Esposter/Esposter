@@ -18,10 +18,13 @@ import { EnergyDropKind } from "#src/models/shared/EnergyDropKind";
 import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { collectKitEnergyDrops } from "#src/services/kit/collectKitEnergyDrops";
 import { SUMMON_LINGER_SECONDS } from "#src/services/kit/constants";
+import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { delayKitEnergy } from "#src/services/kit/effects/delayKitEnergy";
+import { getBuffedCombatant } from "#src/services/kit/effects/getBuffedCombatant";
 import { removeKitEffects } from "#src/services/kit/effects/removeKitEffects";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { startKitCooldown } from "#src/services/kit/effects/startKitCooldown";
@@ -31,6 +34,14 @@ import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 
 export const INEFFA_CHARACTER_ID = 10_000_116;
+
+// Constellation 1's Carrier Flow Composite, as gcsim v2.47.2 (MIT) ineffa/cons.go gives it: each shield she casts starts 20
+// Seconds of a Lunar-Charged DMG Bonus for the party, of 2.5% per 100 of her ATK at most 50%, read from her total ATK
+const CONSTELLATION_1 = 1;
+const CONSTELLATION_1_DAMAGE_BONUS_CAP = 0.5;
+const CONSTELLATION_1_DAMAGE_BONUS_PER_ATTACK = 0.00025;
+const CONSTELLATION_1_SECONDS = 20;
+const CONSTELLATION_1_STATUS_ID = "ineffa-constellation-1";
 
 const CONSTELLATION_2 = 2;
 // Constellation 2, as gcsim v2.47.2 (MIT) ineffa/cons.go gives it: her burst's shield is placed 37 frames in (line 65). The
@@ -134,9 +145,10 @@ const movePermutation = (event: KitEvent, kitEffectState: KitEffectState, combat
 // Bonus by her ATK, and from Ascension 4 her burst gives her and the active member Elemental Mastery by her ATK.
 // Her Constellation 4 energy is built, from any Lunar-Charged reaction of her party once every 4 seconds, as gcsim
 // V2.47.2 (MIT) ineffa/cons.go gives it
-// Constellation 1 needs the Carrier Flow Composite team status and its Lunar-Charged DMG bonus, not built
+// Constellation 1's Carrier Flow Composite is built: each shield she casts gives the party a Lunar-Charged DMG Bonus, as the
+// Constellation file of gcsim gives it
 // Constellation 2 places its shield and marks the first enemy the burst hits for its Punishment Edit, as built above
-// Constellation 6 needs the Carrier Flow Composite status and the thunderclouds' bursts, not built
+// Constellation 6 needs the Lunar-Charged reaction's own attack, which the kit does not hear, not built
 export const createIneffaKitBehaviour = ({
   kit,
   readArea,
@@ -225,6 +237,20 @@ export const createIneffaKitBehaviour = ({
           scheduleShield(kitEffectState, combatant, CONSTELLATION_2_SHIELD_SECONDS);
       },
     },
+    getPartyReactionBonus: (_member, { reactionType }, context) => {
+      const { effects } = context.kitEffectState;
+      if (
+        reactionType !== LunarReactionType.LunarCharged ||
+        !checkIsKitStatusActive(effects, INEFFA_CHARACTER_ID, CONSTELLATION_1_STATUS_ID)
+      )
+        return {};
+      const ineffa = context.characterIdCombatantMap.get(INEFFA_CHARACTER_ID);
+      if (!ineffa) return {};
+      const { attack } = getBuffedCombatant(ineffa, effects, context.party, context.characterIdCombatantMap).attributes;
+      return {
+        damageBonus: Math.min(attack * CONSTELLATION_1_DAMAGE_BONUS_PER_ATTACK, CONSTELLATION_1_DAMAGE_BONUS_CAP),
+      };
+    },
     moonsignBenediction: {
       getBaseDamageBonus: ({ attributes }) =>
         Math.min(attributes.attack * BENEDICTION_BASE_DAMAGE_BONUS_PER_ATTACK, BENEDICTION_MAXIMUM_BASE_DAMAGE_BONUS),
@@ -256,6 +282,15 @@ export const createIneffaKitBehaviour = ({
           ![...context.enemyMap.values()].some((enemy) => checkHasPunishmentEdit(enemy))
         )
           markPunishmentEdit(context, combatant, event.enemy, punishmentEditHit);
+      if (
+        event.kind === KitEventKind.ShieldCast &&
+        event.shield.characterId === combatant.characterId &&
+        combatant.constellationCount >= CONSTELLATION_1
+      )
+        addKitStatus(kitEffectState, combatant.characterId, {
+          id: CONSTELLATION_1_STATUS_ID,
+          secondsRemaining: CONSTELLATION_1_SECONDS,
+        });
       if (
         event.kind !== KitEventKind.ReactionTriggered ||
         combatant.constellationCount < CONSTELLATION_4 ||
