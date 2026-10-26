@@ -147,7 +147,7 @@ catalog:
   apexcharts: ^8.5.0
   azurite: ^3.37.0
   better-auth: ^1.7.13
-  bowser: ^2.14.1
+  bowser: ^2.15.0
   # @TODO: no upstream issue — unstorage 2's fs driver, which a storage mount in Nitro 3's server bundle uses, loads
   # `chokidar` without declaring it, so the app installs it for the bundle to resolve (nitrojs/nitro)
   chokidar: ^6.0.0
