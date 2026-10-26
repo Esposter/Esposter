@@ -12,7 +12,7 @@ Vesna's kit is its record and one behaviour module, `createVesnaKitBehaviour` (`
 
 ## Not built
 
-- **Armed for Action is waiting on its hooks.** Her armed strikes (ExtraAttack_AS) and the Anemo they deal are not built, so her strikes deal Physical damage in every state.
+- **Armed for Action is waiting on its hooks.** Her armed strikes (ExtraAttack_AS) and the Anemo they deal are not built, so her strikes deal Physical damage in every state (no source yet, see Open).
 - **Her burst's Stellar Swirl hit is not built.** The cached For the Tsaritsa! page (`~/Esposter/cache/genshin-wiki/Category_Vesna_Talents.json`) gives a Spirit Blade Stellar Swirl DMG row beside the Spirit Blade DMG, and her burst deals its Spirit Blade hit alone.
 
 ## Key files
