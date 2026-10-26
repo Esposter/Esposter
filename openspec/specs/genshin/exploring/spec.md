@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Teleport Waypoints as jump targets: each ground waypoint on the official map, paired with the scene's transport point it stands at, is listed on the map, the minimap and the jump list once the player has unlocked it, named by its area. A jump to a statue or a waypoint lands the character at the game's own arrival place, facing its turn (the landing is `packages/genshin-world/src/services/map/computeJumpPose.ts`, tested by `computeJumpPose.test.ts`; the list is `packages/genshin-world/src/components/Map/JumpList/Index.vue`; the pairing is `scripts/src/services/genshinAssets/fit/toWaypointLandmarks.ts`, tested by `toWaypointLandmarks.test.ts`).
+Teleport Waypoints as jump targets: each ground waypoint on the official map, paired with the scene's transport point it stands at, is listed on the map, the minimap and the jump list once the player has unlocked it, named by its area. A jump to a statue or a waypoint lands the character at the game's own arrival place, facing its turn.
 
 ## Requirements
 
@@ -31,3 +31,9 @@ A jump SHALL land the character at the landmark's arrival place, facing the arri
 - **GIVEN** the player has jumped to a statue or a waypoint
 - **WHEN** the jump completes
 - **THEN** the character stands at the landmark's arrival place, facing its turn
+
+## Open
+
+- [ ] **A jump to a statue or a waypoint lands the character at the game's arrival place, facing its turn** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The jump list names each unlocked waypoint by its area** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Each ground waypoint pairs with the scene's transport point it stands at** — no source yet: game data or a snapshot that holds this behaviour
