@@ -18,7 +18,7 @@ Odette's kit is its record and one behaviour module, `createOdetteKitBehaviour`,
 
 - **Her burst's extra Stellar Glimmer damage is not built.** Presto: Bluebird Finale adds Stellar Glimmer damage for some time, and the combat's reactions carry it.
 - **The Stellar reactions are the combat's.** Stellar-Conduct, Stellar Swirl, the Radiance state and the Stellar Glimmer bonus are the combat change's to build, as `openspec/changes/archive/2026-10-22-genshin-combat/` describes. Odette's kit enables two of them through its Stellar Jubilee and places the gadgets they stand on.
-- **Ascension 1 and 4 are not built.** Ascension 1, Spring Rite of the Chosen One, gives her Marvelous Splendor stacks while her Dance Double stands, so it waits on those stacks, which no kit holds yet. Ascension 4, Pathetique of Pateticheskaya, raises the Stellar Glimmer hits of her Coda recast and her Dance Double's Plume and Wing by her ATK, so it waits on the Stellar Glimmer state, which the combat holds. Her constellations are the [constellations](../../../../changes/genshin-constellations/design.md) page's.
+- **Ascension 1 and 4 are not built.** Ascension 1, Spring Rite of the Chosen One, gives her Marvelous Splendor stacks while her Dance Double stands, so it waits on those stacks, which no kit holds yet. Ascension 4, Pathetique of Pateticheskaya, raises the Stellar Glimmer hits of her Coda recast and her Dance Double's Plume and Wing by her ATK, so it waits on the Stellar Glimmer state, which the combat holds. Her constellations are the [constellations](../../../../changes/genshin-constellations/design.md) page's, and Constellations 1, 2 and 4 wait on building the Stellar Swirl radiance state first.
 
 ## Overlay citations
 
