@@ -103,4 +103,4 @@ The open world SHALL NOT yet draw its rivers or the waterfalls its region data r
 ## Open
 
 - [ ] **A flowing water surface carries its ripples and foam downstream at its flow's speed in its direction** — no source yet: the river material draws still ("No flow yet"), so no flow moves a river's ripples or foam.
-- [ ] **The open world does not draw its rivers or the waterfalls its region data records** — no source yet, and the requirement is contradicted: the Windrise world component mounts `WorldWaterfalls` and `WorldRivers`. The delta that removes this requirement is commit `aba38417f6`.
+- [ ] **The open world does not draw its rivers or the waterfalls its region data records** — no source yet: the Windrise world component mounts `WorldWaterfalls` and `WorldRivers`, so the requirement is contradicted; the delta that removes it is commit `aba38417f6`.
