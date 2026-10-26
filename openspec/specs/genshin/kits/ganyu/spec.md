@@ -1,6 +1,6 @@
 ## Purpose
 
-Ganyu's kit as built: her six strikes, a fully charged shot with its Frostflake Arrow and Bloom, Ice Lotus and Celestial Shower's field, with Constellations 4 and 6 and the particles left unbuilt.
+Ganyu's kit as built: her six strikes, a fully charged shot with its Frostflake Arrow and Bloom, Ice Lotus and Celestial Shower's field, with Constellations 1, 2, 4 and 6 built and the particles left unbuilt.
 
 ## Requirements
 
@@ -101,3 +101,41 @@ From constellation 2, Trail of the Qilin SHALL hold one more charge than its bas
 - **GIVEN** Ganyu is at constellation 1
 - **WHEN** her skill's charge bonus is read
 - **THEN** it is zero
+
+### Requirement: Fourth constellation stacks DMG taken within Celestial Shower
+
+From constellation 4, each enemy within Celestial Shower's field SHALL gain a stack of 5% DMG taken on every tenth of its ticks, up to five, and the stacks SHALL last 3 seconds from each tick, so that every character's hits on it read them.
+
+#### Scenario: An enemy in the field gains DMG taken from the tenth tick
+
+- **GIVEN** Ganyu is at constellation 4 and casts Celestial Shower
+- **WHEN** the field's tenth tick falls with an enemy inside it
+- **THEN** that enemy takes 5% more DMG from every character's hits
+
+#### Scenario: Stacks reach five and hold
+
+- **GIVEN** an enemy has five stacks from the field
+- **WHEN** the field ticks again on a tenth tick
+- **THEN** it still has five stacks
+
+#### Scenario: An enemy outside the field gains nothing
+
+- **GIVEN** Ganyu is at constellation 4 and casts Celestial Shower
+- **WHEN** a tick falls with an enemy outside the field's circle
+- **THEN** that enemy gains no stack
+
+#### Scenario: A Ganyu below constellation 4 gives no stacks
+
+- **GIVEN** Ganyu is at constellation 3
+- **WHEN** Celestial Shower's field ticks on an enemy within it
+- **THEN** that enemy gains no DMG taken
+
+### Requirement: Sixth constellation starts the next fully charged shot 83 frames in
+
+From constellation 6, Trail of the Qilin SHALL grant Ganyu a charge skip for 30 seconds, which the next fully charged shot spends by starting 83 frames in.
+
+#### Scenario: A Ganyu at constellation 6 gets the skip from the Ice Lotus
+
+- **GIVEN** Ganyu is at constellation 6
+- **WHEN** the player casts Trail of the Qilin
+- **THEN** her next fully charged shot starts 83 frames in, for 30 seconds

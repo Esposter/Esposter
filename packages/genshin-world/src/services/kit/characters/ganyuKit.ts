@@ -1,16 +1,20 @@
+import type { Enemy } from "#src/models/enemy/Enemy";
 import type { EnemyStatus } from "#src/models/enemy/EnemyStatus";
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitField } from "#src/models/kit/KitField";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
+import { addEnemyStatus } from "#src/services/enemy/addEnemyStatus";
 import { createConstellationSkillChargeBonus } from "#src/services/kit/createConstellationSkillChargeBonus";
 import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { castKitTaunt } from "#src/services/kit/effects/castKitTaunt";
+import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
 import { grantKitChargeSkip } from "#src/services/kit/effects/grantKitChargeSkip";
 import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { takeOne } from "@esposter/shared";
@@ -57,13 +61,42 @@ const FROSTFLAKE_STATUS: EnemyStatus = {
 const getFrostflakeStatus = ({ constellationCount }: Combatant): EnemyStatus | undefined =>
   constellationCount >= FROSTFLAKE_CONSTELLATION ? FROSTFLAKE_STATUS : undefined;
 
+// Measured: gcsim v2.47.2 (MIT) ganyu/burst.go, each tick of Celestial Shower gives the enemies in its area Constellation 4's
+// Status for 3 seconds, and every tenth tick, 3 seconds, adds a stack of 5% DMG taken, up to five, which every character's
+// Hits on the enemy read
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ganyu/burst.go
+const CONSTELLATION_4 = 4;
+const CONSTELLATION_4_STATUS_ID = "ganyu-c4";
+const CONSTELLATION_4_DAMAGE_TAKEN_PER_STACK = 0.05;
+const CONSTELLATION_4_MAXIMUM_STACKS = 5;
+const CONSTELLATION_4_SECONDS = 3;
+const CONSTELLATION_4_STACK_TICKS = 10;
+
+// Each enemy in the field's circle is refreshed on every tick, and on every tenth tick gains a stack that its status keeps
+// Through the refresh, as the refresh carries none
+const applyConstellation4Status = (enemies: Iterable<Enemy>, field: KitField, tickIndex: number): void => {
+  const isStackTick = tickIndex % CONSTELLATION_4_STACK_TICKS === 0;
+  for (const enemy of enemies) {
+    if (!checkIsInKitField(field, enemy.position)) continue;
+    const earlier = enemy.statuses.find(({ id }) => id === CONSTELLATION_4_STATUS_ID);
+    const stacks = Math.min((earlier?.stacks ?? 0) + (isStackTick ? 1 : 0), CONSTELLATION_4_MAXIMUM_STACKS);
+    addEnemyStatus(enemy, {
+      damageTakenBonus: stacks * CONSTELLATION_4_DAMAGE_TAKEN_PER_STACK,
+      id: CONSTELLATION_4_STATUS_ID,
+      secondsRemaining: CONSTELLATION_4_SECONDS,
+    });
+    const status = enemy.statuses.find(({ id }) => id === CONSTELLATION_4_STATUS_ID);
+    if (status) status.stacks = stacks;
+  }
+};
+
 export const GANYU_CHARACTER_ID = 10_000_037;
 
 // Ganyu's behaviour: the fully charged shot's Frostflake Arrow and its Bloom cut the enemy's Cryo RES from Constellation
 // 1, and the arrow gives her Undivided Heart's CRIT Rate from Ascension 1. Ice Lotus casts its taunt where she stands,
 // Exploding as its seconds from the flower's hit run out. Celestial Shower casts its field, whose ticks each strike from
-// Where it was cast and give the active character Harmony between Heaven and Earth's Cryo DMG Bonus from Ascension 4
-// Constellation 4 needs the increased DMG taken within Celestial Shower, which no enemy stack carries yet
+// Where it was cast and give the active character Harmony between Heaven and Earth's Cryo DMG Bonus from Ascension 4, and
+// Each enemy in the field the DMG taken Constellation 4 stacks
 export const createGanyuKitBehaviour = ({
   kit,
   readHit,
@@ -82,7 +115,7 @@ export const createGanyuKitBehaviour = ({
       onStart: ({ activeCombatant: combatant, body: { facing, height, position }, kitEffectState }) => {
         const field = castKitField(kitEffectState, combatant.characterId, position, {
           nextTickSeconds: celestialShowerStartSeconds,
-          onTick: ({ activeCombatant, kitEffectState: tickEffectState }) => {
+          onTick: ({ activeCombatant, enemyMap, kitEffectState: tickEffectState }, tickIndex) => {
             if (combatant.ascension >= HARMONY_ASCENSION)
               buffKitMember(tickEffectState, activeCombatant.characterId, {
                 amount: HARMONY_CRYO_DAMAGE_BONUS,
@@ -90,6 +123,8 @@ export const createGanyuKitBehaviour = ({
                 secondsRemaining: HARMONY_SECONDS,
                 source: HARMONY_SOURCE,
               });
+            if (combatant.constellationCount >= CONSTELLATION_4)
+              applyConstellation4Status(enemyMap.values(), field, tickIndex);
             castKitSummon(
               tickEffectState,
               { facing, height, position: field.centre },
