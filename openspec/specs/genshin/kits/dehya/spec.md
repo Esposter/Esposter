@@ -47,5 +47,5 @@ Dehya's Constellations 1, 2, 4 and 6 SHALL NOT take effect: Constellation 1 need
 
 ## Open
 
-- [ ] **the final hit's 300 frames are the wiki's 5-second maximum duration** — partly settled by the Sandstorm Assault wiki page, whose Max Duration is 5s; the page gives no frame count, so the 300 frames stay the repo's conversion of those 5 seconds (the dump's group 7931 index 7 gives 5 seconds).
-- [ ] **Molten Inferno's wiki page gives a CD of 20s and no energy** — partly settled by the Molten Inferno wiki page, whose CD is 20s; its infobox has no energy field, which is not a stated value of none, so the energy stays open (the dump's skill row gives the 20 seconds and no energy).
+- [ ] **the final hit's 300 frames are the wiki's 5-second maximum duration** — no source yet: a source that gives the final hit's frame count, since the Sandstorm Assault page gives only its Max Duration of 5s (`~/Esposter/cache/genshin-wiki/Category_Dehya_Talents.json`), so the 300 frames stay the repo's conversion of those 5 seconds.
+- [ ] **Molten Inferno's wiki page gives a CD of 20s and no energy** — no source yet: the energy, since the page's infobox has no energy field, which is not a stated value of none (its CD of 20s is in `~/Esposter/cache/genshin-wiki/Category_Dehya_Talents.json`).
