@@ -159,7 +159,7 @@ A quest's titles and words SHALL come from the game's own text, referenced by it
 
 ### Requirement: The world carries only the quests its inventory lists
 
-The world SHALL carry only the quests `QuestIds` lists, read by their ids from the game's data: the prologue's first two, The Seventh Samurai and the other world quests and series the talks offer, the keeper's Reputation requests, and New Horizons of Adventure, whose finish pays the Mondstadt Shrine of Depths Key.
+The world SHALL carry only the quests `QuestIds` lists, read by their ids from the game's data: the prologue's first two, The Seventh Samurai and the other world quests and series the talks offer, the keeper's Reputation requests, and New Horizons of Adventure, whose finish pays the Mondstadt Shrine of Depths Key (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/RewardExcelConfigData.json` row 122111, which quest 22111 in `MainQuestExcelConfigData.json` gives, holds one of item 107006, the Mondstadt Shrine of Depths Key).
 
 #### Scenario: Carried quests read
 
@@ -200,5 +200,4 @@ Quest progress SHALL be kept in the save so that a reload resumes the quests in 
 
 ## Open
 
-- [ ] **New Horizons of Adventure pays the Mondstadt Shrine of Depths Key** — no source yet: its finish reward row is not checked against the quest's binary output or the reward table in this pass.
-- [ ] **Xavier offers The Seventh Samurai from the start** — no source yet: the offer's condition is not checked in the dump, and the wiki's "The Seventh Samurai" page is not in `~/Esposter/cache/genshin-wiki`.
+- [ ] **Xavier offers The Seventh Samurai from the start** — checked against `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/QuestExcelConfigData.json` sub quest 7215401 (quest 72154): its accept condition is a guide to NPC 3162 with no finished-quest condition, and the claim is not settled by it because the talk that offers the quest is not read, and the wiki's "The Seventh Samurai" page is not in `~/Esposter/cache/genshin-wiki`.
