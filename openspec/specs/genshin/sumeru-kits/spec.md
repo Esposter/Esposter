@@ -65,11 +65,10 @@ The rainforest city SHALL stand in for the houses the game draws in Sumeru City,
 
 #### Scenario: Bridges and common buildings left undrawn
 
-- **GIVEN** Sumeru City's export holds bridges, common buildings and plants
+- **GIVEN** Sumeru City's export holds bridges (`~/Esposter.noindex/genshin-parity/extracted/sumeru/layout`, mesh names `Area_Xm_Bridge_Common_A_02_ShadowMesh` and `Stages_MDRockBridge01_ShadowMesh`), common buildings and plants
 - **WHEN** the city is drawn
 - **THEN** those meshes are not drawn yet
 
 ## Open
 
 - [ ] **The rainforest city stands where the game's houses stand** — no source yet: the game's house positions in the Sumeru export, against which the city's place is not compared.
-- [ ] **Sumeru City's export holds bridges** — no source yet: no mesh name with `Bridge` was found in `~/Esposter/genshin-parity/extracted/sumeru/layout`, which holds its common buildings and plants.
