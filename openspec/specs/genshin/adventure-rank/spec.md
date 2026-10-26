@@ -63,7 +63,7 @@ Adventure EXP past rank 60's total SHALL be paid as Mora at ten Mora for each po
 
 ### Requirement: The World Level can be lowered and restored from World Level 3
 
-From World Level 3 the player SHALL be able to lower the World Level by one and restore it by one, with each change followed by a 24 hour wait before the next change (the game's text at 2955635938 and 2310679825).
+From World Level 3 the player SHALL be able to lower the World Level by one and restore it by one, with each change followed by a 24 hour wait before the next change (the game's text at 2955635938 and 2310679825 in `~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`).
 
 #### Scenario: Lowering the World Level by one
 
@@ -140,16 +140,6 @@ The Adventure Rank SHALL rise by the Adventure EXP that each source gives once t
 - **WHEN** that source's doing happens in the world
 - **THEN** the player's Adventure EXP does not change
 
-### Requirement: Mora Past Rank 60
-
-The Adventure Rank SHALL pay ten Mora for each point of Adventure EXP gained once the player is at rank 60.
-
-#### Scenario: a gain at rank 60 pays ten Mora for each point
-
-- **GIVEN** a player at Adventure Rank 60
-- **WHEN** the player gains Adventure EXP
-- **THEN** the player's Mora rises by ten for each point gained
-
 ### Requirement: Katheryne Rank Rewards
 
 Katheryne SHALL give a reached rank's reward to the player once, when the player talks to her at a branch of the Adventurers' Guild.
@@ -203,4 +193,6 @@ The Paimon menu SHALL keep a system's entry disabled until the player reaches th
 - [ ] **Ten Mora for each point of Adventure EXP past rank 60** — no source yet: the game's text converts the EXP to Mora (text 365981086 in `~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`) but gives no rate, and the wiki's Adventure Rank page is not in the cache.
 - [ ] **Five Adventure EXP for each point of Original Resin spent** — no source yet: the Original Resin wiki page is not on disk, and no game text on disk gives the resin's Adventure EXP rate.
 - [ ] **Katheryne gives a reached rank's reward once, at a branch of the Adventurers' Guild** — no source yet: the Adventure Rank wiki page and its Adventurers' Guild Rewards page are not on disk
+- [ ] **A camp's enemy stands at its camp level under World Level 0** — no source yet: the wiki's enemy level ranges are not in the cache, and no enemy name plate at World Level 0 is on disk.
+- [ ] **A camp at level 1 stands at level 9 under World Level 1** — no source yet: the wiki's enemy level ranges are not in the cache, and the enemies' name plates at World Levels 1, 5 and 9 are not on disk.
 - [ ] **The option to lower the World Level opens after World Level 5** — contradicted by `~/Esposter.noindex/genshin-parity/captures/yt-P13s7kSmVOE-world-level-dialog-2024.mp4`: the option shows from World Level 5; text 2955635938 says World Level 3.
