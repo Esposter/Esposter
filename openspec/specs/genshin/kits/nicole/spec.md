@@ -1,6 +1,6 @@
 ## Purpose
 
-Nicole's kit as built: her three strikes, charged attack, plunges, Pyro skill and Pyro burst's hit, her burst's projections, and her first and fourth ascension buffs, her first and second constellations. Her fourth and sixth constellations wait on their hooks.
+Nicole's kit as built: her three strikes, charged attack, plunges, Pyro skill and Pyro burst's hit, her burst's projections, and her first and fourth ascension buffs, and her first, second, fourth and sixth constellations.
 
 ## Requirements
 

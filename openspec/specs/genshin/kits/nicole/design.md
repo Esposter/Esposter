@@ -30,9 +30,9 @@ gcsim sources: Nicole's attack, charge, skill and burst files, with the table da
 - **The sixth constellation's defence ignore is a striker-side hook, as the fourth's damage is.** gcsim's `c6Init` (`cons.go`) adds 0.4 to the hit's `IgnoreDefPercent` on each `OnEnemyHit` by a character holding the first ascension's mod. The kit reads the striker's upgrade: `getStrikeDefenceIgnored` for her own strikes and the deployed party hook's `defenseIgnored` for the team's. `strikeKitEnemies` sums both with the hit's own into the priced hit, and `strikeEnemy` hands it to `getDamage` as its `defenseIgnored`.
 - **Her upgrades reach the team, and her own buff lasts the skill's time, from the sixth constellation.** gcsim's a1UpgradeBuff (`asc.go`) calls `c6OnUpgrade`, which upgrades each other character with duration -1 when Nicole is the one upgraded, and `c6SelfBuffDur` gives her own fourth-ascension upgrade -1 too, so each lasts as long as the skill's buff on its character. The swap's removal of the buff already stops at the sixth, as c6DeleteA1OnSwap does.
 
-## Not built
+## Constellation levels
 
-- **The third and fifth constellations raise her skill and burst levels, which this kit does not own.**
+Her third and fifth constellations raise her skill and burst levels from the constellation table, as [the constellations page](../../constellations/design.md) builds them.
 
 ## Key files
 
