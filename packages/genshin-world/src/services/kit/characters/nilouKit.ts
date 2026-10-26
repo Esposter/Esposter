@@ -3,11 +3,14 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { DeployedCombatant } from "#src/models/kit/DeployedCombatant";
 import type { KitAction } from "#src/models/kit/KitAction";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
+import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitStrike } from "#src/models/kit/KitStrike";
 
 import { Attribute } from "#src/models/character/Attribute";
+import { AttackTag } from "#src/models/combat/AttackTag";
 import { ReactionType } from "#src/models/combat/ReactionType";
 import { Element } from "#src/models/Element";
 import { DendroCoreKind } from "#src/models/kit/DendroCoreKind";
@@ -20,6 +23,7 @@ import { enterKitStance } from "#src/services/kit/effects/enterKitStance";
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
 import { GOLDEN_CHALICE_BOUNTY_STATUS_ID } from "#src/services/party/constants";
+import { gainPartyMemberEnergy } from "#src/services/party/gainPartyMemberEnergy";
 import { getDeployedCombatants } from "#src/services/party/getDeployedCombatants";
 import { takeOne } from "@esposter/shared";
 
@@ -92,6 +96,15 @@ const createConstellation2Status = (id: string, element: Element): EnemyStatus =
 });
 const GOLDEN_CHALICE_ELEMENTAL_MASTERY_SECONDS = 10;
 
+// Measured: gcsim (MIT) nilou/cons.go, Constellation 4 gives 15 Elemental Energy when the third step of Pirouette strikes an
+// Enemy, and raises Dance of Abzendegi's DMG by 50% for 8 seconds
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/nilou
+const CONSTELLATION_4 = 4;
+const CONSTELLATION_4_ENERGY = 15;
+const CONSTELLATION_4_BURST_DAMAGE_BONUS = 0.5;
+const CONSTELLATION_4_BURST_SECONDS = 8;
+const CONSTELLATION_4_BURST_STATUS_ID = "nilou-c4-burst";
+
 // Measured: gcsim (MIT) nilou/asc.go, Ascension 4 raises a Bountiful Core's DMG by 9% for each 1,000 Max HP above
 // 30,000, Capped at 400%
 // https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/nilou
@@ -106,12 +119,27 @@ const checkIsDendroHydroTeam = (members: DeployedCombatant[]): boolean =>
   members.some(({ element }) => element === Element.Dendro) &&
   members.every(({ element }) => element === Element.Dendro || element === Element.Hydro);
 
+// Constellation 4 gives Nilou 15 energy and a burst bonus once per attack, on the first enemy its strike lands on. It is set
+// On the Pirouette third step's copy of the illusion's hit alone: gcsim checks the stance as the step starts, and the step's
+// Hit lands after Lunar Prayer has taken the stance, so the copy's placement stands in for that check
+const constellation4Strike = (
+  { kitEffectState, party }: KitContext,
+  { combatant, isFirstEnemyStruck }: KitStrike,
+): void => {
+  if (!isFirstEnemyStruck || combatant.constellationCount < CONSTELLATION_4) return;
+  gainPartyMemberEnergy(party, combatant, CONSTELLATION_4_ENERGY);
+  addKitStatus(kitEffectState, combatant.characterId, {
+    id: CONSTELLATION_4_BURST_STATUS_ID,
+    secondsRemaining: CONSTELLATION_4_BURST_SECONDS,
+  });
+};
+
 // Nilou's behaviour: Dance of Haftkarsvar enters Pirouette, whose normal attacks are the sword dance and whose skill is
 // The first Whirling Steps, and the sword dance's third step sets off Lunar Prayer, which plays the sword dance again with
-// The dance as its skill. Constellations 1, 2 and 6 and Ascensions 1 and 4 are built, and Golden Chalice's Bounty is set
-// As the third step lands. Constellation 4 and the Pirouette's later steps are not built, nor is Dance of
-// Abzendegi's Lingering Aeon, as it lands on the enemy the first hit struck, and no hook hands that enemy on.
-// Constellations 3 and 5 raise talent levels, which no kit reads yet. Constellation 4 needs the third dance step's hit as an event, which the kit does not emit, for its buffs
+// The dance as its skill. Constellations 1, 2, 4 and 6 and Ascensions 1 and 4 are built, and Golden Chalice's Bounty is
+// Set as the third step lands. The Pirouette's later steps are not built, nor is Dance of Abzendegi's Lingering Aeon, as it
+// Lands on the enemy the first hit struck, and no hook hands that enemy on. Constellations 3 and 5 raise talent levels,
+// Which no kit reads yet
 export const createNilouKitBehaviour = ({
   kit,
   readAction,
@@ -128,6 +156,10 @@ export const createNilouKitBehaviour = ({
   const swordDance = readActions("swordDance");
   const luminousIllusion = takeOne(swordDance, LUMINOUS_ILLUSION_STEP);
   const luminousIllusionHit = takeOne(luminousIllusion.hits);
+  // The Pirouette third step's copy of the illusion's hit, which carries Constellation 4's strike
+  const pirouetteLuminousIllusionHit: KitHit = { ...luminousIllusionHit, onStrike: constellation4Strike };
+  // The illusion's hit in either stance, which Constellation 1 finds
+  const luminousIllusionHits = new Set<KitHit>([luminousIllusionHit, pirouetteLuminousIllusionHit]);
 
   const enterNilouStance = (
     kitEffectState: KitEffectState,
@@ -157,6 +189,7 @@ export const createNilouKitBehaviour = ({
   // The Pirouette's sword dance, whose third step ends Pirouette as it lands, handing the team Lunar Prayer
   const pirouetteSwordDance = swordDance.with(LUMINOUS_ILLUSION_STEP, {
     ...luminousIllusion,
+    hits: [pirouetteLuminousIllusionHit],
     onStart: ({ activeCombatant, kitEffectState }) =>
       scheduleKitTask(
         kitEffectState,
@@ -192,11 +225,19 @@ export const createNilouKitBehaviour = ({
         ),
       };
     },
-    // Constellation 1 raises Luminous Illusion's DMG, the one hit of the sword dance it is set on
-    getStrikeDamageBonus: (strike: KitStrike) =>
-      strike.combatant.constellationCount >= CONSTELLATION_1 && strike.hit === luminousIllusionHit
-        ? CONSTELLATION_1_ILLUSION_DAMAGE_BONUS
-        : 0,
+    // Constellation 1 raises Luminous Illusion's DMG, and Constellation 4 raises Dance of Abzendegi's while its status runs
+    getStrikeDamageBonus: ({ attackTag, combatant, hit }, _enemy, _party, effects) => {
+      const illusionDamageBonus =
+        combatant.constellationCount >= CONSTELLATION_1 && luminousIllusionHits.has(hit)
+          ? CONSTELLATION_1_ILLUSION_DAMAGE_BONUS
+          : 0;
+      const burstDamageBonus =
+        attackTag === AttackTag.ElementalBurst &&
+        checkIsKitStatusActive(effects, combatant.characterId, CONSTELLATION_4_BURST_STATUS_ID)
+          ? CONSTELLATION_4_BURST_DAMAGE_BONUS
+          : 0;
+      return illusionDamageBonus + burstDamageBonus;
+    },
     // A Dendro hit on a member under Golden Chalice's Bounty gives the team Elemental Mastery, and leaving the field
     // Ends, with Pirouette or Lunar Prayer, the field that would have handed the team Lunar Prayer
     onKitEvent: (event, { characterIdCombatantMap, kitEffectState, party }, combatant) => {

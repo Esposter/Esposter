@@ -84,6 +84,8 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
     for (const enemy of enemyMap.values()) {
       if ([EnemyState.Dead, EnemyState.Return].includes(enemy.state) || checkIsOutOfStrikeReach(targetedStrike, enemy))
         continue;
+      // The first enemy the strike lands on takes the flag an effect given once per attack reads
+      const isFirstEnemyStruck = !isStruck;
       isStruck = true;
       addEnduringRockStatus(
         enemy,
@@ -166,7 +168,10 @@ export const strikeKitEnemies = (strikes: KitStrike[], context: KitContext): voi
       for (const reaction of reachingReactions) reaches.push([enemy, reaction]);
       strikeKitBubble(kitEffectState, enemy, pricedCombatant, enemyHit);
       healKitStriker(context, combatant, pricedCombatant, enemyHit);
-      enemyHit.onStrike?.(context, targetedStrike, enemy);
+      const enemyStrike: KitStrike = isFirstEnemyStruck
+        ? { ...targetedStrike, isFirstEnemyStruck: true }
+        : targetedStrike;
+      enemyHit.onStrike?.(context, enemyStrike, enemy);
       if (!isPartyHealed) isPartyHealed = healKitParty(context, combatant, pricedCombatant, enemyHit);
       addPolestarField(kitEffectState, combatant.characterId, reactions, body.position);
       // The defeat the strike dealt is reported here, and a Stellar reaction's defeat by the damage point it deals

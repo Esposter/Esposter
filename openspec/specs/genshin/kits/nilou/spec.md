@@ -1,6 +1,6 @@
 ## Purpose
 
-Nilou's kit as built, with Dance of Haftkarsvar's Pirouette and Lunar Prayer, Dance of Abzendegi's hit, Constellations 1, 2 and 6, and what is left of Ascension, Lingering Aeon, Tranquility Aura and Constellations 3 to 5.
+Nilou's kit as built, with Dance of Haftkarsvar's Pirouette and Lunar Prayer, Dance of Abzendegi's hit, Constellations 1, 2, 4 and 6, and what is left of Ascension, Lingering Aeon, Tranquility Aura and Constellations 3 and 5.
 
 ## Requirements
 
@@ -108,6 +108,31 @@ From Constellation 2 with Ascension 1, a Hydro hit by a team member under Golden
 - **WHEN** a Hydro hit under the Bounty or a Bloom reaction lands
 - **THEN** no enemy RES is lowered
 
+### Requirement: Constellation 4's energy and burst bonus
+
+From Constellation 4, the third step of Pirouette SHALL give Nilou 15 Elemental Energy and raise the DMG of Dance of Abzendegi by 50% for eight seconds, once for each attack, on the first enemy the step strikes. Lunar Prayer's third step SHALL give neither.
+
+#### Scenario: Pirouette's third step gives energy and the burst bonus once
+
+- **GIVEN** Nilou has Constellation 4 and Pirouette is standing
+- **WHEN** the third step of Pirouette strikes two enemies
+- **THEN** Nilou gains 15 Elemental Energy once
+- **AND** Dance of Abzendegi deals 50% more DMG for eight seconds
+
+#### Scenario: A third step that strikes no enemy gives nothing
+
+- **GIVEN** Nilou has Constellation 4 and Pirouette is standing
+- **WHEN** the third step of Pirouette strikes no enemy
+- **THEN** Nilou gains no energy
+- **AND** Dance of Abzendegi gains no bonus
+
+#### Scenario: Lunar Prayer's third step gives nothing
+
+- **GIVEN** Nilou has Constellation 4 and Lunar Prayer is standing
+- **WHEN** the third step of Lunar Prayer strikes an enemy
+- **THEN** Nilou gains no energy
+- **AND** Dance of Abzendegi gains no bonus
+
 ### Requirement: Pirouette's later steps are blocked
 
 A press of Nilou's skill inside Pirouette SHALL be refused by the cooldown the cast set, so the Whirling Steps are reachable only after Pirouette ends.
@@ -182,7 +207,7 @@ From Ascension 4, every deployed member's Bountiful Core SHALL deal 9% more DMG 
 
 ### Requirement: Unbuilt Nilou effects
 
-Nilou's Constellation 4, Lingering Aeon, Tranquility Aura and the Whirling Steps' later presses SHALL NOT take effect.
+Lingering Aeon, Tranquility Aura and the Whirling Steps' later presses SHALL NOT take effect.
 
 #### Scenario: Unbuilt effects do nothing
 
