@@ -199,4 +199,4 @@ From Constellation 1, each shield Ineffa casts SHALL give the party a Lunar-Char
 
 ## Open
 
-- [ ] **Each discharge that lands drops an Electro particle two times in three** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/ineffa/skill.go` line 97: gcsim rolls below 0.66, not two in three.
+The open items are held once, in [design.md](design.md#open).
