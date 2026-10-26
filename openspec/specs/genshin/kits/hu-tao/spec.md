@@ -6,14 +6,15 @@ Hu Tao's kit as built: her string, charged attack, Guide to Afterlife's Paramita
 
 ### Requirement: String of six strikes and a seventh hit
 
-Hu Tao's string SHALL be six strikes followed by a seventh hit, as her normal attacks.
+Hu Tao's string SHALL be six strikes, the fifth of which deals two hits, so that the string's seventh hit is its sixth strike, as her normal attacks.
 
 #### Scenario: The string plays through to its seventh hit
 
 - **GIVEN** Hu Tao is the character on the field
 - **WHEN** the player presses the attack button repeatedly
 - **THEN** the six strikes play in order
-- **AND** the string ends with its seventh hit
+- **AND** the fifth strike deals two hits
+- **AND** the string ends with its seventh hit, the sixth strike
 
 ### Requirement: Guide to Afterlife's Paramita stance
 
