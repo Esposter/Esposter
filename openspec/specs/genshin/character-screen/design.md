@@ -92,11 +92,10 @@ The Artifacts and Constellation references are timed to where their tabs have se
 ## Sources
 
 - The English PC client's character screen, from the user's own recording of the build at 21:9 (`~/Esposter.noindex/genshin-parity/captures/session-2.mp4`): Attributes at about 154 seconds, then Weapons, Artifacts, Constellation and Talents one second apart, the reference frame at 154 seconds.
-- [Character Menu](https://genshin-impact.fandom.com/wiki/Character/Menu), Genshin Impact Wiki: `C`, the list of characters, the six tabs and what each shows, and the Attributes tab's summary and details. Its screenshots of this screen are phone-sized (`File:Traveler Pyro Character Details 1.png`, 700 by 1213), so they settle the phone's layout, not the PC's.
+- [Character Menu](https://genshin-impact.fandom.com/wiki/Character/Menu), Genshin Impact Wiki: `C`, the list of characters, the six tabs and what each shows, and the Attributes tab's summary and details. Its screenshots of this screen are phone-sized (`File:Traveler Pyro Character Details 1.png`, 700 by 1213), so they settle the phone's layout, not the PC's. On the keybind, it reads: "The default keybind for opening the Character Menu is C."
 
 ## Open
 
-- [ ] **In the game, `C` opens the character screen** — no source yet: no recording or wiki page of the key binding is in the parity folders, and the Character/Menu page is not in `~/Esposter.noindex/cache/genshin-wiki/`.
 - [ ] **The layout table's places** — no source yet: the 21:9 reference frame at 154 seconds is not saved as a still, so no measured place can be checked against it.
 - [ ] **The Attributes tab's sums** — contradicted by `~/Esposter.noindex/genshin-parity/comparisons/character-attributes.png`: the reference reads Max HP 18,414 where the build reads 12,405.
 - [ ] **The level line in the game's `Lv.` wording** — contradicted by `~/Esposter.noindex/genshin-parity/comparisons/character-attributes.png`: the game writes "Level 90 / 90", not "Lv. 90/90".

@@ -128,7 +128,6 @@ The screen SHALL leave out any label whose game text has not been decoded yet, r
 
 ## Open
 
-- [ ] **C and the Paimon menu open the character screen** — no source yet: no recording or wiki page of the C key or the Paimon menu's Character entry is checked against this build.
 - [ ] **The layout is the reference's** — no source yet: the 21:9 reference frame at 154 seconds is not saved as a still, so its places cannot be checked.
 - [ ] **The Attributes tab's values are the game's sums** — no source yet: at the same state the reference's base five differ from the build's (`~/Esposter.noindex/genshin-parity/comparisons/character-attributes.png`), so no source holds the sums.
 - [ ] **The advanced group is shown as percentages to one place** — no source yet: the game holds that group behind Details, so no reference frame shows its values.
