@@ -1,6 +1,7 @@
 const ATOM_KEYS = new Set(
   [
     ["angle", "height", "radius"],
+    ["angle", "forward", "height", "radius"],
     ["index", "proudSkillGroupId"],
     ["constellation", "index", "proudSkillGroupId"],
   ].map((keys) => keys.join(",")),
