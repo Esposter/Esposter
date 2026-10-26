@@ -79,3 +79,5 @@ A screen SHALL keep only the pieces of its published record that it places by na
 - [ ] **A clip that moves a parent piece moves every piece nested in it** — no source yet: no test holds `data-clip-target`, and no clip in the extracted set names `Center/SwitchServer`.
 - [ ] **A run-time prefab stays in its place inside its container on any window** — no source yet: no recording or test holds the prefab's place.
 - [ ] **A screen keeps only the named pieces of its record** — no source yet: no test holds the named filter; the fit test covers only the keys.
+- [ ] **A fit publishes the tree's rects as each screen's record of the hosted game data** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Unity's anchors, pivots and size deltas map exactly onto absolute positioning with calc** — no source yet: game data or a snapshot that holds this behaviour
