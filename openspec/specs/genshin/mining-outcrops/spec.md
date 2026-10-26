@@ -1,6 +1,6 @@
 ## Purpose
 
-Genshin's mining outcrops as built — the Adventure Rank that opens them, and the rule that a mined outcrop is gone until the next day's draw at 04:00 in the game's time zone, read as pure, tested functions (`packages/genshin-world/src/services/leyLine/checkIsMiningOutcropStanding.ts`, with `checkIsMiningOutcropStanding.test.ts` and `checkIsMiningOutcropOpen.test.ts` beside it). Their places, their draw and the reputation search that marks them are the proposal's still.
+Genshin's mining outcrops as built — the Adventure Rank that opens them, and the rule that a mined outcrop is gone until the next day's draw at 04:00 in the game's time zone, read as pure, tested functions (`packages/genshin-world/src/services/leyLine/checkIsMiningOutcropStanding.ts`, with `packages/genshin-world/src/services/leyLine/checkIsMiningOutcropStanding.test.ts` and `packages/genshin-world/src/services/leyLine/checkIsMiningOutcropOpen.test.ts` beside it). Their places, their draw and the reputation search that marks them are the proposal's still.
 
 ## Requirements
 
@@ -20,7 +20,7 @@ Mining outcrops SHALL be drawn for a player at Adventure Rank 30 or above.
 
 ### Requirement: Mined outcrop returns at the next 04:00
 
-A mined outcrop SHALL come back at the first 04:00 in UTC+8 strictly after the mining (the 04:00 is `REFRESH_DAILY` at `14400` seconds).
+A mined outcrop SHALL come back at the first 04:00 in UTC+8 strictly after the mining (the 04:00 is `REFRESH_DAILY` at `14400` seconds, policy 101000 in `~/Esposter/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`).
 
 #### Scenario: Mined before the day's draw
 
@@ -57,4 +57,4 @@ Mining outcrops SHALL not be placed, drawn, mined or marked in the world yet.
 
 ## Open
 
-- [ ] **Adventure Rank 30 opens the mining outcrops** — partly settled by the Mining Outcrop wiki page, which says Magical Crystal Chunks do not appear in outcrops before Adventure Rank 30; what it does not say is whether the outcrops themselves are withheld below the rank, and the rank is only the code's constant.
+- [ ] **Adventure Rank 30 opens the mining outcrops** — no source yet: the Mining Outcrop wiki page, which the note says gives Magical Crystal Chunks' absence before Adventure Rank 30, is not on disk; whether the outcrops themselves are withheld below the rank is unchecked, and the rank is only the code's constant.
