@@ -79,7 +79,7 @@ Talent level two SHALL need the second ascension phase, levels three and four th
 
 ### Requirement: Passives open at their ascension phase
 
-A passive SHALL be open once the character's ascension phase reaches the phase it opens at, and a passive SHALL have no level (the wiki's passive types, in `~/Esposter.noindex/cache/genshin-wiki/Category_Xilonen_Talents.json` and `~/Esposter.noindex/cache/genshin-wiki/Category_Traveler_Talents.json`, name the utility and the first and fourth ascension passives).
+A passive SHALL be open once the character's ascension phase reaches the phase it opens at, and a passive SHALL have no level (the wiki's passive types name the utility and the first and fourth ascension passives).
 
 #### Scenario: Utility passive open from the start
 
