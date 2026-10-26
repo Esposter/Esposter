@@ -1,12 +1,12 @@
 # Engine architecture
 
-The Genshin program is long: terrain, water, vegetation, every region, then a character and its play. A world built as one scene component would couple its terrain to its camera and its sky to its grass, and be rewritten by the third region. So the engine is divided into modules, each with one job, a typed interface and its own tests, and the modules meet only through those interfaces.
+The Genshin program is long: terrain, water, vegetation, every region, then a character and its play. A world built as one scene component would couple its terrain to its camera and its sky to its grass, and be rewritten by the third region. So the engine is divided into modules, each with one job, a typed interface and its own tests, and the modules meet only through those interfaces (`packages/genshin-engine/src/`).
 
 ## How it is divided
 
-- **The engine is a published package; the app only mounts it.** `genshin-engine`, public on npm like `keyframe-store` and `vue-phaserjs`, holds the engine as plain TypeScript and TSL node graphs, free of Vue, of stores and of any DOM past a canvas. It is tested without a DOM, and nothing in the app reaches past a module's interface.
-- **The game's world is a second package over the engine.** `genshin-world`, published beside it, holds what is Genshin's rather than any engine's: the catalogue of regions and areas, each region's data, the scenes and screens, and the TresJS components and composables that create the engine's modules for them. The engine knows no place by name. The world's session owns its canvas, which its screen only mounts; the app keeps its stores and hands the world only what a bundler or a server decides: the terrain worker, where region data is served, and whether the tuning panel shows.
-- **One module, one job.** Each is a folder of the engine's source:
+- **The engine is a published package; the app only mounts it.** `genshin-engine`, public on npm like `keyframe-store` and `vue-phaserjs` (`packages/genshin-engine/package.json`, `packages/keyframe-store/package.json`, `packages/vue-phaserjs/package.json`), holds the engine as plain TypeScript and TSL node graphs, free of Vue, of stores and of any DOM past a canvas (`packages/genshin-engine/src/`). It is tested without a DOM (`packages/genshin-engine/vitest.config.ts`, `packages/configuration/src/services/getVitestConfiguration.ts`), and nothing in the app reaches past a module's interface.
+- **The game's world is a second package over the engine.** `genshin-world`, published beside it (`packages/genshin-world/package.json`), holds what is Genshin's rather than any engine's: the catalogue of regions and areas, each region's data, the scenes and screens, and the TresJS components and composables that create the engine's modules for them. The engine knows no place by name (`packages/genshin-engine/src/`). The world's session owns its canvas, which its screen only mounts (`packages/genshin-world/src/components/World/Session/Index.vue`, `packages/genshin-world/src/components/World/Screen/Index.vue`); the app keeps its stores and hands the world only what a bundler or a server decides: the terrain worker, where region data is served, and whether the tuning panel shows (`packages/genshin-world/src/models/world/WorldScreenProps.ts`).
+- **One module, one job.** Each is a folder of the engine's source (`packages/genshin-engine/src/`):
 
   | Module       | Its job                                                                                                                                             |
   | :----------- | :-------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -33,10 +33,10 @@ The Genshin program is long: terrain, water, vegetation, every region, then a ch
   | `noise`      | simplex noise, the one source of procedural detail                                                                                                  |
   | `random`     | a seeded random source, so a generator runs the same everywhere                                                                                     |
 
-  A module is added by the proposal that first needs it, never ahead of it as an empty folder: `input`, `simulation`, `camera` and `collision` with the [free camera](../free-camera/design.md), `locomotion` with the [character controller](../character-controller/design.md), and per-instance culling with [trees and scatter](../../../changes/genshin-trees-and-scatter/design.md).
+  A module is added by the proposal that first needs it, never ahead of it as an empty folder: `input`, `simulation`, `camera` and `collision` with the [free camera](../free-camera/design.md), `locomotion` with the [character controller](../character-controller/design.md) (`packages/genshin-engine/src/input`, `packages/genshin-engine/src/simulation`, `packages/genshin-engine/src/camera`, `packages/genshin-engine/src/collision`, `packages/genshin-engine/src/locomotion`), and per-instance culling with [trees and scatter](../../../changes/genshin-trees-and-scatter/design.md).
 
-- **State flows one way.** Modules expose read-only state and commands. The light state and the wind are uniforms that materials read, so the hour and the wind move the whole world by writing a few values. Region data flows from the world package into the terrain worker, the vegetation and the kits. No module imports a sibling's internals, and a dependency that points back up the frame's order is a design error.
-- **Every generator is pure and seeded.** Tile heights, grass and kit geometry are pure functions of region data, a tile key and a seed, returning typed arrays. They run the same in a worker, a test or a bench, and the same spot always generates the same world. The ones the terrain worker runs are also the engine's second entry, `genshin-engine/terrainWorker`, so a worker loads them and three's math without the renderer the package's own entry reaches.
+- **State flows one way.** Modules expose read-only state and commands. The light state and the wind are uniforms that materials read, so the hour and the wind move the whole world by writing a few values (`packages/genshin-engine/src/atmosphere/createSkyUniforms.ts`, `packages/genshin-engine/src/wind/createWindUniforms.ts`). Region data flows from the world package into the terrain worker, the vegetation and the kits (`packages/genshin-world/src/workers/terrainTile.worker.ts`, `packages/genshin-world/src/components/World/Grass/Index.vue`, `packages/genshin-world/src/services/world/BuildingKitPartsMap.ts`). No module imports a sibling's internals, and a dependency that points back up the frame's order is a design error.
+- **Every generator is pure and seeded.** Tile heights, grass and kit geometry are pure functions of region data, a tile key and a seed, returning typed arrays (`packages/genshin-engine/src/terrain/computeTerrainTile.ts`, `packages/genshin-engine/src/vegetation/createGrassCell.ts`, `packages/genshin-engine/src/kits/tree/computeLeafCards.ts`). They run the same in a worker, a test or a bench, and the same spot always generates the same world. The ones the terrain worker runs are also the engine's second entry, `genshin-engine/terrainWorker` (`packages/genshin-engine/package.json`, `packages/genshin-engine/src/terrainWorker.ts`), so a worker loads them and three's math without the renderer the package's own entry reaches.
 
 ## How a frame runs
 
@@ -57,7 +57,7 @@ flowchart TD
   RND --> PST["post: outlines, occlusion, god rays, fog, the sight, bloom, grade, anti-aliasing"]
 ```
 
-The stages are the modules' own. Nothing reads state that a later stage of the same frame writes: the light is written before the scene draws, and only a tile already in the cache is drawn, its nearest cached ancestor standing in for one still asked for until it arrives in a later frame.
+The stages are the modules' own (`packages/genshin-engine/src/clock`, `packages/genshin-engine/src/world`, `packages/genshin-engine/src/streaming/createTileStreamer.ts`, `packages/genshin-engine/src/renderer/createGenshinRenderer.ts`). Nothing reads state that a later stage of the same frame writes: the light is written before the scene draws (`packages/genshin-engine/src/atmosphere/createSkyUniforms.ts`), and only a tile already in the cache is drawn, its nearest cached ancestor standing in for one still asked for until it arrives in a later frame (`packages/genshin-engine/src/streaming/createTileStreamer.ts`).
 
 ## It runs in the reader's browser, so it is minimal first
 
@@ -73,7 +73,7 @@ Every generator and every per-frame selection is benched under the `bench` skill
 
 ## The world screen is composition
 
-`World/Screen/Index.vue` loads the names and the game's tables the save is read by and the rules run on, and the ground, the catalogue and the animals the first frame draws, each from the [hosted game data](../hosted-game-data/design.md), then opens `World/Session/Index.vue`, which only composes. The session composes the ground every reader stands on once (`getGroundHeight`, [region buildings](../region-buildings/design.md)) and passes it and each record to what reads them. Each system of the world (the save and the bag, the pick ups, the quests, the talks and residents, the Archive, the party and its combat, the landmarks and the jump, the achievements) is one composable under `composables/`, taking its dependencies as arguments and returning what the template or another system reads. A system reacts to another's doing through one typed event map, `WorldEventMap`, emitted on one `WorldEvents` the screen creates:
+`World/Screen/Index.vue` loads the names and the game's tables the save is read by and the rules run on, and the ground, the catalogue and the animals the first frame draws, each from the [hosted game data](../hosted-game-data/design.md) (`packages/genshin-world/src/components/World/Screen/Index.vue`), then opens `World/Session/Index.vue`, which only composes (`packages/genshin-world/src/components/World/Session/Index.vue`). The session composes the ground every reader stands on once (`getGroundHeight`, [region buildings](../region-buildings/design.md)) and passes it and each record to what reads them (`packages/genshin-world/src/components/World/Session/Index.vue`). Each system of the world (the save and the bag, the pick ups, the quests, the talks and residents, the Archive, the party and its combat, the landmarks and the jump, the achievements) is one composable under `composables/` (`packages/genshin-world/src/composables/`), taking its dependencies as arguments and returning what the template or another system reads. A system reacts to another's doing through one typed event map, `WorldEventMap` (`packages/genshin-world/src/models/world/WorldEventMap.ts`), emitted on one `WorldEvents` the screen creates (`packages/genshin-world/src/services/world/createWorldEvents.ts`):
 
 ```mermaid
 flowchart LR
@@ -88,7 +88,7 @@ flowchart LR
   Map[useWorldMap] -->|questEvent| Quests
 ```
 
-The edges are emitted by `useWorldPickups`, `useWorldCombat`, `useWorldSave`, `useWorldQuests` and `useWorldMap`; the `Talks` edge has no emitter in `useWorldTalks.ts` (see Open).
+The edges are emitted by `packages/genshin-world/src/composables/useWorldPickups.ts`, `useWorldCombat.ts`, `useWorldSave.ts`, `useWorldQuests.ts` and `useWorldMap.ts`; the `Talks` edge has no emitter in `useWorldTalks.ts` (see Open).
 
 ## Key files
 
@@ -109,25 +109,3 @@ The edges are emitted by `useWorldPickups`, `useWorldCombat`, `useWorldSave`, `u
 - [ ] **WorldEvents the screen creates** — no source yet: `createWorldEvents()` is called in `packages/genshin-world/src/components/World/Session/Index.vue` (line 328), not in the screen, so the owner the claim names needs checking.
 - [ ] **The session only composes** — no source yet: `packages/genshin-world/src/components/World/Session/Index.vue` is 2669 lines and defines its own functions (`getGroundHeight`, line 523), so what it owns beyond composition needs checking.
 - [ ] **The screen loads the ground the first frame draws** — no source yet: the screen's load steps (`packages/genshin-world/src/components/World/Screen/Index.vue`, lines 84 to 125) name no ground read.
-- [ ] **the modules each have one job and meet only through typed interfaces** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **genshin-engine is public on npm like keyframe-store and vue-phaserjs** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **the engine is plain TypeScript and TSL node graphs, free of Vue, stores and any DOM past a canvas** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **the engine is tested without a DOM** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **genshin-world is published beside the engine** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **the engine knows no place by name** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **the world's session owns its canvas, which its screen only mounts** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **the app hands the world only what a bundler or a server decides** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **each module is a folder of the engine's source** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **the five modules were added by the proposal that first needed each** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **the hour and the wind move the whole world by writing a few values** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **region data flows from the world package into the terrain worker, the vegetation and the kits** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **tile heights, grass and kit geometry are pure functions of region data, a tile key and a seed** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **genshin-engine/terrainWorker is the engine's second entry** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **the stages are the modules' own** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **the light is written before the scene draws** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **only a cached tile is drawn, its nearest cached ancestor standing in for one still asked for** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **the screen loads its tables and first-frame ground, catalogue and animals from the hosted game data** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **the session passes the ground and each record to what reads them** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **each world system is one composable taking its dependencies as arguments** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **a system reacts to another through one typed event map** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **the diagram's edges are emitted by the composables it names** — no source yet: game data or a snapshot that holds this behaviour
