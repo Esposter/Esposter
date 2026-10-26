@@ -129,3 +129,7 @@ From constellation 2, each Blood Blossom tick SHALL add 10% of Hu Tao's Max HP a
 - **GIVEN** Hu Tao is at constellation 1
 - **WHEN** Spirit Soother's hit strikes an enemy
 - **THEN** no Blood Blossom is applied to that enemy
+
+## Open
+
+- [ ] **From constellation 1, a charged attack in the Paramita stance costs no stamina** — no source yet: the cached Hu Tao wiki page names Crimson Bouquet without its wording, and gcsim has no stamina rule for her.
