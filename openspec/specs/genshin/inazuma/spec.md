@@ -1,6 +1,6 @@
 ## Purpose
 
-As built — Inazuma's building kit (a raised timber floor, post-and-beam walls with plaster panels, a hipped or gabled roof with deep eaves, storeys stacked by a setback), its island palette and its region data file (`packages/genshin-world/src/services/inazuma/createInazumaBuildingGeometry.ts`, `packages/genshin-world/src/services/inazuma/constants.ts`, `packages/genshin-world/src/data/regions/inazuma.json`). Inazuma City's first building stands at a provisional place; the terrain of its islands is not yet built.
+As built — Inazuma's building kit (a raised timber floor, post-and-beam walls with plaster panels, a hipped or gabled roof with deep eaves, storeys stacked by a setback), its island palette and its region data. Inazuma City's first building stands at a provisional place; the terrain of its islands is not yet built.
 
 ## Requirements
 
