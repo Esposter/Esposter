@@ -8,11 +8,11 @@ Every package's `typecheck` runs the classic `tsc` API, and the `typescript` pac
 
 The migration runs in phases. Each phase ends at a gate that decides whether the next one starts.
 
-1. **Plain `tsc` typecheck to `tsrs --fast`.** Every package whose `typecheck` is plain `tsc` runs `tsrs --fast` instead, and the `noEmit` setting comes from the shared `tsconfig`. Its gate is a green workspace typecheck through the package scripts.
+1. **Plain `tsc` typecheck to `tsrs --fast`.** Every package whose `typecheck` is plain `tsc` runs `tsrs --fast` instead, and the `noEmit` setting comes from the shared `tsconfig`. Its gate is a green workspace typecheck through the package scripts. Every package but `packages/db` runs `tsrs --fast` today. `packages/db` still runs plain `tsc`, because `tsrs --fast` reports TS2883 on `createThreadFollow.ts` and `upsertThreadFollow.ts`: their inferred types name zod's `$brand` through a second zod copy under `azure/node_modules`, which the package's own zod does not match. Moving it needs a decision, either deduplicating zod so one copy resolves everywhere or annotating the two return types, and the decision belongs to this phase.
 2. **Find out why the file sets differ.** `tsrs --listFiles` reports 1736 files where `tsc --listFiles` reports 1640 for the same package. The difference is explained, and any case where `tsrs` checks a file `tsc` does not is either a `tsconfig` issue or a `tsrs` gap, recorded in the design.
 3. **Spike the Vue checks.** Run `vize` content mappers through `tsrs` on one small Vue package and compare its diagnostics with `vue-tsc`. The gate is a result that matches on that package. Nothing is removed in this phase.
 4. **Retire `vue-tsc` only if phase 3 passes everywhere.** Until then the `typescript-native-bridge` override stays, because `vue-tsc` and `@volar/typescript` read the classic API from it.
-5. **Drop the `typescript` package only if nothing in-process needs it.** Today `scripts/` imports `typescript` in-process in about fifteen files, and the build and lint tooling reach it through peers. The gate is either a replacement for each in-process use or a decision to keep the package.
+5. **Drop the `typescript` package only if nothing in-process needs it.** Today `scripts/` imports `typescript` in-process in seventeen files, and the build and lint tooling reach it through peers. The gate is either a replacement for each in-process use or a decision to keep the package.
 
 ## Out of scope
 
