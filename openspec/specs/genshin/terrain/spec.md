@@ -138,7 +138,3 @@ Once the camera has gone one kilometre from the origin, the world SHALL move bac
 - **WHEN** the origin is shifted
 - **THEN** the world moves back under the camera
 - **AND** the view shows the same scene with no jump
-
-## Open
-
-- [ ] **Once the camera has gone one kilometre from the origin, the world moves back under it** — contradicted by `packages/genshin-world/src/services/constants.ts`: the shift threshold is 1024 units, not 1000.
