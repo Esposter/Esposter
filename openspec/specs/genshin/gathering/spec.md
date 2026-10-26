@@ -159,7 +159,7 @@ A broken ore SHALL stand again on its own respawn: an iron chunk at the daily re
 - [ ] **Gathering points stand where the official map marks their item** — no source yet: no label-tree file matching `teyvat`, `map-label` or `labels` was found under `~/Esposter/genshin-parity/references/`.
 - [ ] **F picks a gathering point into the bag, and F does not pick an ore** — no source yet: no gathering pick path was found in the files checked, so the pick, full-bag and no-ore scenarios are unchecked.
 - [ ] **Ningguang's plunge is not blunt, as the wiki's table excepts it** — no source yet: the wiki's Blunt Attacks table is not cached; the code carries the exception. Checked: the genshin-wiki cache holds no Blunt Attack page.
-- [ ] **A burst breaks a crystal chunk in one hit** — no source yet: no frame of the Zhongli clip `yt-EWYe-MYjmqU-ore-zhongli.mp4` in genshin-parity's captures has been checked.
+- [ ] **A burst breaks a crystal chunk in one hit** — no source yet: no frame of the Zhongli clip `~/Esposter/genshin-parity/captures/yt-EWYe-MYjmqU-ore-zhongli.mp4` in genshin-parity's captures has been checked.
 - [ ] **An item a mining outcrop draws is not a gathering point** — no source yet: the mining outcrops' drops are not matched against the gather table's items.
 - [ ] **An ore breaks once its landed hits' poise reaches its requirement for blunt or melee** — no source yet: no poise requirement is in the dump's `ExcelBinOutput` tables.
 - [ ] **Claymore attacks, plunges and Geo damage strike blunt, and a Geo Traveler's skill does too; a Geo character's normal attack does not** — no source yet: the wiki's Blunt Attacks table is not cached. Checked: the genshin-wiki cache holds no Blunt Attack page.
