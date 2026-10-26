@@ -31,3 +31,4 @@ Ifa's kit is built around the Nightsoul Blessing. Her skill's press enters the b
 ## Sources
 
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/ifa), MIT, at v2.47.2: the strikes' and the charged attack's hitmarks, cancels and reaches, the low plunge and its collision, the `High_Plunge` hitbox in `config.yml`, the skill's blessing, Compound Sedation Field and its marks, and the passives and constellations the hook waits on. The v2.47.2 source is on disk at `cache/gcsim-v2.47.2`, which the line references above read.
+- [Category:Ifa Talents](https://genshin-impact.fandom.com/wiki/Category:Ifa_Talents), Genshin Impact Wiki: the poise of her normal attacks, charged attack and plunges, with the Rite of Dispelling Winds page it lists. The cached copy is `cache/genshin-wiki/Category_Ifa_Talents.json`, which the poise decision above reads; this link was not re-opened when it was written.
