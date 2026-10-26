@@ -42,7 +42,7 @@ The Hilichurl Fighter, the one kind the world places yet, has neither: an enemy 
 
 ### Reactions, in the game's priority
 
-`ElementReactionStepsMap` holds, for each applied element, the reactions it tries in the order the game tries them. The coefficients of the table's cells that gcsim's `reduce` calls name match them (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/overload.go`:23,30, `superconduct.go:34,40`, `vaporize.go:25,32`, `melt.go:19,20,29`, `bloom.go:31,32,40`, `catalyze.go:58,63`, `swirl.go:68,106,140,170,205`); the cells they do not name are open below. Each step names the auras it reacts with and the gauge of aura each unit of the trigger consumes. A step meeting several auras consumes them together, by the larger one's gauge. What is left of the trigger after a step goes on to the next, so 2U of Hydro on a Burning target vaporizes the Burning and its Pyro, then blooms the Dendro under them with the unit left over. A reaction is recorded once per application, however many auras it meets.
+`ElementReactionStepsMap` holds, for each applied element, the reactions it tries in the order the game tries them (gcsim's `React`, `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/reactable.go`:93-142). The coefficients of the table's cells that gcsim's `reduce` calls name match them (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/overload.go`:23,30, `superconduct.go:34,40`, `vaporize.go:25,32`, `melt.go:19,20,29`, `bloom.go:31,32,40`, `catalyze.go:58,63`, `swirl.go:68,106,140,170,205`); the cells they do not name are open below. Each step names the auras it reacts with and the gauge of aura each unit of the trigger consumes. A step meeting several auras consumes them together, by the larger one's gauge. What is left of the trigger after a step goes on to the next, so 2U of Hydro on a Burning target vaporizes the Burning and its Pyro, then blooms the Dendro under them with the unit left over. A reaction is recorded once per application, however many auras it meets.
 
 | Applied | Its reactions, in order                                                                                                |
 | :------ | :--------------------------------------------------------------------------------------------------------------------- |
@@ -52,7 +52,7 @@ The Hilichurl Fighter, the one kind the world places yet, has neither: an enemy 
 | Cryo    | Superconduct on Electro (1); Melt on Pyro and Burning (0.5); Frozen on Hydro (1)                                       |
 | Dendro  | Spread on Quicken; Quicken on Electro (1); Burning on Pyro or Burning; Bloom on Hydro (2)                              |
 | Anemo   | Swirl on Electro, Pyro and Burning, Hydro, Cryo, then Freeze (0.5 each)                                                |
-| Geo     | Shattered on Freeze; Crystallize on Electro, Pyro and Burning, Hydro, then Cryo (0.5 each)                             |
+| Geo     | Shattered on Freeze; Crystallize on Electro, Hydro, Cryo, Pyro and Burning, then Frozen (0.5 each)                     |
 
 What is left once every step has run stays as an aura, if the element leaves one and no aura it consumes remains. A reaction with no coefficient consumes neither side, which is how auras come to coexist.
 
@@ -351,7 +351,6 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 - [ ] **Swirl records the spread gauge (G − 0.04) × 1.25 + 1** — no source yet: gcsim's `calcSwirlAtkDurability` at `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/swirl.go:13-17` is in durability units, and no source converts it to gauge units.
 - [ ] **The table's cells that gcsim's `reduce` calls do not name: Burning, Frozen on Cryo and Hydro, Aggravate, Spread and the Geo row** — no source yet: a read of gcsim's `reduce` calls against each of these cells.
 - [ ] **Swirl on Burning is among the table's cells that gcsim's `reduce` calls do not name** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/swirl.go:170`: `reduce(Pyro)` takes Burning's aura, so Swirl names it.
-- [ ] **The order in which each element tries its reactions** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/reactable.go:131-135`: its Geo order is Electro, Hydro, Cryo, Pyro, then Frozen, not Pyro second.
 - [ ] **An enemy of level L has 5 × L + 500 defence** — no source yet: gcsim's defence line at `~/Esposter/cache/gcsim-v2.47.2/pkg/enemy/damage.go:77-79` is (level + 100) terms only, and no enemy defence figure was opened.
 - [ ] **Transformative damage from 0.25 to 3 times the level multiplier** — no source yet: the wiki's Damage page is not in the cache, and no gcsim factor range was opened.
 - [ ] **Lunar-Bloom's coefficient is 1** — no source yet: no Lunar-Bloom case is among `~/Esposter/cache/gcsim-v2.47.2/pkg/core/combat/reaction.go` lines 20 to 30, where line 24 gives Stellar Swirl's 1.
