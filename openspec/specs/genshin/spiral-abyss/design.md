@@ -93,6 +93,6 @@ flowchart TD
 - [ ] **The combine and forge tables match the dump byte for byte** — no source yet: no copy of the AnimeGameData tables is in the checkout to compare against.
 - [ ] **A two-team chamber can have no second wave in the table, as the monolith chambers have none** — no source yet: the two-team level lists are not checked against the dump.
 - [ ] **The Moon Spire floors' reward columns differ from the reward table for some floors** — no source yet: the floor-to-group mapping for Moon Spire floors is not checked.
-- [ ] **The close time is not read** — no source yet: `scripts/src/services/genshinAssets/spiralAbyss/toAbyssPeriod.test.ts` asserts a `closesAt`, so this line is out of date.
-- [ ] **The dump's schedule ends with the period that began on 2026-06-16** — no source yet: the local dump's schedule runs to the period begun 2026-10-16 (scheduleId 124), and 2026-06-16 is scheduleId 120, so this line describes an older dump.
-- [ ] **Nothing calls the readers yet** — no source yet: `packages/genshin-world/src/composables/useWorldSpiralAbyss.ts` calls all three readers, and whether a mounted screen uses that composable is not checked.
+- [ ] **The close time is not read** — contradicted by `scripts/src/services/genshinAssets/spiralAbyss/toAbyssPeriod.test.ts`: it asserts a `closesAt`.
+- [ ] **The dump's schedule ends with the period that began on 2026-06-16** — contradicted by `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/TowerScheduleExcelConfigData.json`: its last row, scheduleId 124, begins 2026-10-16.
+- [ ] **Nothing calls the readers yet** — contradicted by `packages/genshin-world/src/components/World/Session/Index.vue`: it calls `useWorldSpiralAbyss`, which calls all three readers.
