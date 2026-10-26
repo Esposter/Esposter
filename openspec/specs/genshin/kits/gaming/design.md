@@ -16,10 +16,11 @@ Gaming's kit is its record and one behaviour module, `createGamingKitBehaviour` 
 - **The burst's strike is one circle of radius 5 round the body**, at 60 frames, as gcsim queues it (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/gaming/burst.go:19`, `~/Esposter/cache/gcsim-v2.47.2/internal/characters/gaming/burst.go:70`, a circle of radius 5). The burst's status, its Man Chai and its heal are not built, so the burst's cooldown and energy cost are the whole of its state.
 
 - **Air of Prosperity's Incoming Healing Bonus is a passive bonus from Ascension 4, while he has under half his HP.** gcsim gives it as 20% of Incoming Healing Bonus below half HP (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/gaming/asc.go:54`, `~/Esposter/cache/gcsim-v2.47.2/internal/characters/gaming/asc.go:59`). It reads the HP share the party holds through the passive hook (`packages/genshin-world/src/services/kit/characters/gamingKit.ts`). Its other clause, 20% more Plunging Attack DMG at half HP or more, waits on the plunge variant.
-- **The charged attack's reach.** The record's area, a 5.8-metre circle, is `Unsourced`, and Ayato's charge that the frames come from hits a 0.8-metre circle, so no source gives Gaming's reach. Waits on a recording of the attack.
-- **The charged attack's stamina.** The wiki gives the charged attack 40 stamina per second over a 5-second maximum (Stellar Rend, `stamina=40/s`, `maxduration=5s`), but the spec's charged-attack scenario, which spends 40 stamina once, has no source for that single cost. The drain over time is not modelled.
 
 ## Open
+
+- [ ] **The charged attack's reach** — no source yet: a recording of the attack, since the record's 5.8-metre area is `Unsourced` and Ayato's 0.8-metre charge, which the frames come from, is no source for Gaming's reach.
+- [ ] **The charged attack's stamina** — no source yet: a source for the one 40-stamina cost the charged-attack scenario spends, since the wiki gives 40 stamina per second over a 5-second maximum (Stellar Rend, `stamina=40/s`, `maxduration=5s`) and the drain over time is not modelled.
 
 ## Key files
 
