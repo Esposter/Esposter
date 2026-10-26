@@ -11,7 +11,7 @@ A Liyue building SHALL be a stone terrace with lacquered columns and beams, and 
 #### Scenario: Three tiers stack upward
 
 - **WHEN** a building is built with three roof tiers
-- **THEN** each tier above the first is raised one tier height above the one below (`packages/genshin-world/src/services/liyue/createLiyueBuildingGeometries.test.ts:6`)
+- **THEN** each tier above the first is raised one tier height above the one below
 
 #### Scenario: Single tier
 
@@ -25,7 +25,7 @@ Along each wall a building's bays SHALL be the fewest that keep each no wider th
 #### Scenario: Wall wider than a bay
 
 - **WHEN** a wall is longer than three metres
-- **THEN** it is divided into the fewest evenly spaced bays, none wider than three metres (`packages/genshin-world/src/services/liyue/constants.ts:18`)
+- **THEN** it is divided into the fewest evenly spaced bays, none wider than three metres
 
 ### Requirement: Lattice openwork
 
