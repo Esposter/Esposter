@@ -78,4 +78,4 @@ The flowers' spacing, sizes and colours SHALL be treated as provisional until th
 
 ## Open
 
-- [ ] **The plants no record places are the small flowers among a region's grass** — no source yet: the placements read off the streams (`scripts/src/services/genshinAssets/fit/readWindrisePlantPlacements.ts`) are not checked for flowers, and no capture is named for them.
+- [ ] **The plants no record places are the small flowers among a region's grass** — no source yet: the placements read off the streams are not checked for flowers, and no capture is named for them.
