@@ -81,7 +81,7 @@ The camera's numbers are in `packages/genshin-engine/src/camera/constants.ts`, e
 
 - [ ] **In the game the camera stays behind the character, turns freely, zooms, and is pulled in by a wall rather than hiding the character** — no source yet: the Settings and Controls wiki pages are not in the cache, and no capture of the orbit is checked frame by frame.
 - [ ] **The game's sensitivity runs from 1 to 5, and the look turns at its middle** — no source yet: the range is not read from the interface export in the cache.
-- [ ] **The field of view is 45 degrees, the wheel runs from 1 to 6 metres, and the profile's elevation limit is 89 degrees** — no source yet: `~/Esposter.noindex/genshin-parity/extracted/camera` is not exported on this machine, and the cached sources do not hold the profile.
+- [ ] **The field of view is 45 degrees, the wheel runs from 1 to 6 metres, and the profile's elevation limit is 89 degrees** — no source yet: the cited path ~/Esposter.noindex/genshin-parity/extracted/camera is not exported on this machine, and the cached sources do not hold the profile.
 - [ ] **The Settings screen's default distance runs from 4.5 to 6.0 metres, topping out at the furthest radius** — no source yet: the Settings wiki page is not in the cache, and the camera profile is not exported.
 - [ ] **The middle mouse button and the right stick press are the game's camera reset** — no source yet: the Controls wiki page is not in the cache, and the controls capture is not checked frame by frame.
 - [ ] **The game hides its cursor in play, Left Alt is its Show Cursor, and Escape opens the Paimon menu** — no source yet: the Controls wiki page is not in the cache, and the controls capture is not checked frame by frame.
