@@ -1,6 +1,6 @@
 # Buildings
 
-A region's settlements are built from a small set of pieces that repeat, so the kit builds a building from its dimensions rather than from a stored mesh. One building is a platform the walls stand on, four walls and a roof, each given in metres from the ground. Its geometry is one mesh, so a building is one draw for its material.
+A region's settlements are built from a small set of pieces that repeat, so the kit builds a building from its dimensions rather than from a stored mesh (`packages/genshin-world/src/services/world/BuildingKitPartsMap.ts`, `packages/genshin-engine/src/kits/architecture/createBuildingGeometry.ts`). One building is a platform the walls stand on, four walls and a roof, each given in metres from the ground. Its geometry is one mesh, so a building is one draw for its material (`packages/genshin-engine/src/kits/mergeGeometryParts.ts`).
 
 ## How it works
 
@@ -15,12 +15,12 @@ flowchart TD
   CR --> MG
 ```
 
-- **The pieces are boxes, and the walls are the boxes' inner ring.** The platform spans the whole footprint. Each wall is a box along one edge, the two long walls running the full width and the two short walls fitting between them, so the four boxes meet at the corners without overlapping.
+- **The pieces are boxes, and the walls are the boxes' inner ring.** The platform spans the whole footprint. Each wall is a box along one edge, the two long walls running the full width and the two short walls fitting between them, so the four boxes meet at the corners without overlapping (`createBoxesGeometry`).
 - **A flat roof is one more box** over the walls, its thickness its roof height.
 - **A conical roof is a cone scaled to the footprint.** A unit cone is stretched to half the footprint's width and depth, so its base lies over the walls' outside edge on any rectangle, not only a square. Its apex stands the roof height above the walls.
-- **The result is merged** into one geometry, the parts freed once merged.
+- **The result is merged** into one geometry, the parts freed once merged (`mergeGeometryParts`).
 
-The building is centred on the origin and stands on it, so a caller places it on the ground with its position. Natlan's tribes build with it, the People of the Springs' first building standing as a [building landmark](../region-buildings/design.md).
+The building is centred on the origin and stands on it, so a caller places it on the ground with its position (`packages/genshin-engine/src/kits/architecture/createBuildingGeometry.ts`). Natlan's tribes build with it, the People of the Springs' first building standing as a [building landmark](../region-buildings/design.md).
 
 ## Key files
 
@@ -33,10 +33,5 @@ The building is centred on the origin and stands on it, so a caller places it on
 
 ## Open
 
-- [ ] **A building is built from its dimensions, not a stored mesh** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A building's geometry is one mesh, one draw for its material** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The walls are the boxes' inner ring, meeting at the corners without overlapping** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The parts are freed once merged into one geometry** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A building is centred on the origin and stands on it** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **Natlan's tribes build with the kit** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **The People of the Springs' first building stands as a building landmark** — no source yet: game data or a snapshot that holds this behaviour
