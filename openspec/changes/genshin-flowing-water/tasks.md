@@ -9,3 +9,8 @@
 - [x] 2.1 Fit each river's ribbon to the centreline, width and level of its water mesh once the water prefabs are exported. Verify: a test named after the scenario 'A river's ribbon follows the game's centreline' written first and seen failing.
 - [ ] 2.2 Fit the falls outside the capitals the same way, each region from its own witness: Inazuma (58 placements), Sumeru (49) and Natlan (2) have their fit entries, and `fit <region> --only waterfalls` writes their `waterfalls` when run. Waits on that run, not on an export. Verify: the frame checked against each region's capital, its waypoint median standing on the fit's centre and its falls near it, as Liyue's was; the scenario 'A fall stands at the game's lip' is pinned by the lip test in `fitWaterfallSheets.test.ts`.
 - [x] 2.3 Draw each fitted river's ribbon in the water's material, beside the still water, in each region its game export does not stand in. Verify: a test named after the scenario 'A region the game's export stands in draws no river or fall of its own' written first and seen failing; the ribbon is checked by eye at integration against Liyue's river, the scenario 'A river's ribbon is drawn along its course'.
+
+## 3. Verification
+
+- [ ] 3.1 Regenerate the Mondstadt and Liyue falls from their witnesses and diff them against the committed `waterfalls`: they reproduce exactly, with the one fall that has no width gone. Verify: a dry-run fit of both witnesses diffed against the committed records, the result recorded here; no source yet.
+- [ ] 3.2 Confirm the fit's axis turn against one placement and its fall's mesh vertices, read from the extracted Mondstadt or Liyue export. Verify: the turn leaves the vertices where the placement's own transform puts them; no source yet.
