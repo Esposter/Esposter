@@ -107,12 +107,11 @@ drawn away from the reference shows on its own row.
 | `login-day-title/Towers` | 55.6% | 4.24 | 11.69% | 0.5342 |
 | `login-day-title/Walkway` | 8.5% | 5.18 | 10.16% | 0.4929 |
 | `login-day-title/sky` | 34.1% | 1.06 | 7.09% | 0.3602 |
-| `login-door/frame` | 100.0% | 8.02 | 11.09% | 0.5029 |
-| `login-door/Door` | 13.9% | 18.67 | 14.94% | 0.6836 |
-| `login-door/Bridges` | 5.8% | 3.76 | 6.01% | 0.3906 |
-| `login-door/Towers` | 26.3% | 1.75 | 8.62% | 0.4706 |
-| `login-door/Walkway` | 20.2% | 13.06 | 11.49% | 0.5674 |
-| `login-door/sky` | 33.9% | 11.42 | 12.05% | 0.4344 |
+| `login-door/frame` | 100.0% | 8.01 | 11.09% | 0.5029 |
+| `login-door/Walkway` | 20.4% | 13.08 | 11.50% | 0.5684 |
+| `login-door/Bridges` | 8.3% | 9.40 | 8.46% | 0.4851 |
+| `login-door/Towers` | 30.1% | 1.19 | 9.48% | 0.4979 |
+| `login-door/sky` | 41.3% | 12.05 | 12.59% | 0.4777 |
 | `login-door-recording/frame` | 100.0% | 4.53 | 11.47% | 0.5796 |
 | `login-door-recording/Door` | 4.3% | 28.27 | 15.30% | 0.7293 |
 | `login-door-recording/Bridges` | 3.9% | 7.33 | 11.16% | 0.5714 |
