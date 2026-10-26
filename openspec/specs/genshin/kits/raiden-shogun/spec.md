@@ -101,3 +101,7 @@ The Eye's bonus to another member's burst, the Musou Isshin plunges and her skil
 - **GIVEN** another member casts a burst while the Eye stands
 - **WHEN** that burst hits
 - **THEN** the Eye's bonus does not apply to it
+
+## Open
+
+- [ ] **Her strikes deal no poise** — contradicted by `~/Esposter.noindex/cache/genshin-wiki/Category_Raiden_Shogun_Talents.json`: its poise rows give 36.88 to 120 per strike.
