@@ -122,7 +122,6 @@ The user's one batch, checked whenever convenient ([parity](../../specs/genshin/
 - [ ] **Kyouka's water illusion explodes 35 frames after the cast** — [Kamisato Ayato](../../specs/genshin/kits/kamisato-ayato/design.md): a recording of the explosion lands about 0.58 seconds after the cast.
 - [ ] **The body moves as the game's does where nothing measures it** — [Character controller](../../specs/genshin/character-controller/design.md): glide 6 m/s and sink 2.5, glider at 3 m, plunge 30 m/s, step 0.4 m, slope 50°, radius 0.3 m, swim at 0.7, slide 4 m/s, still-water strokes.
 - [ ] **Do Nahida's plunges land as her animation starts, at Bennett's frames?** — [Nahida](../../specs/genshin/kits/nahida/design.md): her plunge hits take Bennett's frames, and their poise is the wiki's rows.
-- [ ] **Faruzan's poise matches her stand-ins** — [Faruzan](../../specs/genshin/kits/faruzan/design.md): the game's poise for her fully charged shot and plunges matches 20, 50 and 100.
 - [ ] **Yaoyao's fourth strike reaches 2.7 metres** — [Yaoyao](../../specs/genshin/kits/yaoyao/design.md): a recording hits an enemy 2.7 metres ahead, not 3.7.
 - [ ] **Yaoyao's plunge lands at 0.4 seconds** — [Yaoyao](../../specs/genshin/kits/yaoyao/design.md): a recording of her plunge lands at that point.
 - [ ] **Aino's charged attack lands at 24 frames in 55, as the borrowed claymore charge does** — [Aino](../../specs/genshin/kits/aino/design.md): gcsim gives her no charged attack, so its frames and reach are Ayato's measured claymore charge.
