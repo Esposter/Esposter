@@ -78,3 +78,12 @@ The bindings of places and modes the world does not have are left out (`packages
 - [ ] **A pad's top face button is the burst, the bumper chords and the directional pad's chords are the game's** — no source yet: no capture of a pad's controls, and the wiki's Controls page is not cached.
 - [ ] **The browser's standard gamepad layout puts a PlayStation cross and an Xbox A at the same index** — no source yet: the W3C Gamepad spec, cited in Sources, is not on this PC, so its button order is unread here.
 - [ ] **The game's shortcut wheel turns the face buttons into its own while the bumper is held** — no source yet: a capture of the pad's bumper held in the game, not on this machine.
+- [ ] **The browser keeps Escape for a pointer lock and takes no lock from it** — no source yet: the Pointer Lock and user-activation specs, which this pass did not open.
+- [ ] **Chromium reports one spurious, very large pointer move after a lock** — no source yet: a recording of the first move after a lock, not taken here.
+- [ ] **Control is the game's crouch key, and a held Control with W is the browser's close-tab shortcut** — no source yet: the game's controls list for crouch and the browser's shortcut list, neither checked here.
+- [ ] **The pad's touchpad is no button in the standard layout, and the View and Share buttons carry the chat on every pad** — no source yet: the game's controls list for a PlayStation pad, not on this machine.
+- [ ] **The game's defaults are the only ones, and the player-changeable keys are left at the game's own** — no source yet: the game's list of changeable keys; the `settings-controls` frames are a browser walkthrough, not the controls screen.
+- [ ] **F6, F7 and F8 are the Serenitea Pot, the Cat's Tail and Stellar Reunion** — no source yet: the game's controls list for those screens, which the wiki cache does not hold.
+- [ ] **Left Alt held with a number switches to that party member and uses its burst** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **`Escape` with the pointer free opens the Paimon menu** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Left Control is the walk switch, and the free camera falls on left Shift** — no source yet: game data or a snapshot that holds this behaviour
