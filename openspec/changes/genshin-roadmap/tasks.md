@@ -83,7 +83,6 @@ The user's one batch, checked whenever convenient ([parity](../../specs/genshin/
 - [ ] **Do Kinich's plunges deal the wiki's 100, 150 and 25 poise, and land as their action starts?** — [Kinich](../../specs/genshin/kits/kinich/design.md): gcsim gives him no plunge file, so the kit borrows the shared reach and a provisional 0.4 seconds.
 - [ ] **Reputation reward page list** — [Reputation](../../specs/genshin/reputation/design.md): the rows, marks and sizes sit as the 18-second reference frame shows them.
 - [ ] **Desert clip is a sandstorm** — [Weather](../../specs/genshin/weather/design.md): what blows across the clip is the sandstorm the haze is matched to, not a dust column.
-- [ ] **Keys' burst fills while uncharged** — [HUD](../../specs/genshin/hud/design.md): an uncharged PC burst fills from its foot in the element's tone.
 - [ ] **Stamina pulse starts under an eighth** — [HUD](../../specs/genshin/hud/design.md): the pulse starts with stamina left, not only from empty.
 - [ ] **Snezhnaya's flakes are falling snow** — [Weather](../../specs/genshin/weather/design.md): the flakes in the wiki's frame are the snowfall, not a sky detail.
 - [ ] **Near teleport fades through the loading screen** — [Map](../../specs/genshin/map/design.md): a near teleport within one region fades as a cross-region one does.
