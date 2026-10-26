@@ -22,7 +22,6 @@ flowchart TD
 
 ## Open
 
-- [ ] **Chihayaburu's hold is reached at half a second** — no source yet: the table and the wiki give no seconds for a press's hold, so the kits README's half second stands in for it.
 - **Whether the built hits carry the wiki's poise.** `kazuhaKit.ts` has no poise field and `packages/genshin-world/src/data/kits/kaedehara-kazuha.json` no poise entries, so the figures in the decision above are unbuilt.
 
 ## Key files
