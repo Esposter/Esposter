@@ -152,7 +152,7 @@ A capsule that a hit landed on is tinted white for 0.15 seconds after the hit, a
 
 ## Reference
 
-- `world-camp.mkv` — walking up to a Hilichurl camp until it wakes, then backing away until it returns home. On the wiki and YouTube, none found (searched 2026-10-11).
+- world-camp.mkv (not on disk) — walking up to a Hilichurl camp until it wakes, then backing away until it returns home. On the wiki and YouTube, none found (searched 2026-10-11).
 
 ## Open
 
