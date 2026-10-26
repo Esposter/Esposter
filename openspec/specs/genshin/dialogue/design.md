@@ -99,8 +99,6 @@ Registered, not yet within the bar. Five references are cut from the English PC 
 
 The five are judged over their clean plate, the reference frame with its scored region filled from its surroundings (`isBackdrop`, see Parity above), so the overlay is scored against what the world shows there. The bare render is that plate with nothing drawn on it, so a state beats its bare render only by drawing the dialogue closer than the plate already is.
 
-The figures below were measured before the quest and story mark trace (`DialogueChoiceIconPathMap`). None of the five states draws a quest or story mark, only the plain reply's, so the trace is not expected to move them; a re-measure after it is on the roadmap.
-
 | Reference                  | Plate, component blurred | Plate, softened shot | Bare render |
 | :------------------------- | :----------------------- | :------------------- | :---------- |
 | `dialogue-choices-line`    | 8.66%, FLIP 0.2807       | 9.22%, FLIP 0.2912   | 9.64%       |
