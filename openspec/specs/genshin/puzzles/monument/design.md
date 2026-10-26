@@ -31,9 +31,9 @@ flowchart TD
 
 ## Sources
 
-- [Elemental Monument](https://genshin-impact.fandom.com/wiki/Elemental_Monument), Genshin Impact Wiki: monuments lit by their element, reactions included, some for good and some for a time.
-- [Elemental Gauge Theory](https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory), Genshin Impact Wiki, a community framework: "Burning DMG will re-apply 1U of Pyro."
+- [Elemental Monument](https://genshin-impact.fandom.com/wiki/Elemental_Monument), Genshin Impact Wiki: not in the cache, so nothing here cites it.
+- [Elemental Gauge Theory](https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory), Genshin Impact Wiki, a community framework: not in the cache, so nothing here cites it.
 
 ## Open
 
-- [ ] **A Swirl that spreads Pyro lights a Pyro monument, and auras decay on each step, as the game does** — no source yet: the wiki's Elemental Monument page, checked, says an elemental reaction activates a monument but not which element a reaction carries onto one; the Elemental Gauge Theory page, checked, says auras decay linearly and Burning consumes Dendro per frame, neither per step; the Swirl page is not in the genshin-wiki cache.
+- [ ] **A Swirl that spreads Pyro lights a Pyro monument, and auras decay on each step, as the game does** — no source yet: the Elemental Monument, Elemental Gauge Theory and Swirl wiki pages are not in the genshin-wiki cache.
