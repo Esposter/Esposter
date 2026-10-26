@@ -18,6 +18,8 @@ flowchart TD
   F -->|"no, once the escape time has passed"| I["Stands idle at its place"]
 ```
 
+Its ground-layer and mapped-region checks are `scripts/src/services/genshinAssets/points/placeMapPoints.ts`, which skips a point off the ground layer and one in no mapped region.
+
 ## The kinds
 
 `WildlifeKind` names four: `Boar`, `CrimsonFox`, `Squirrel` and `WhitePigeon`, of which `Boar` charges and the other three flee. Each is one of the map's own labels under its Animals group, and `WildlifeKindLabelIdMap` gives its label id, so a point takes its kind by its label (`scripts/src/services/genshinAssets/wildlife/WildlifeKindLabelIdMap.ts`). The archive files each as an animal or aviary monster, and the capture table's rows and the monster rows hold the rest of what each one is.
@@ -35,7 +37,7 @@ The numbers are provisional, each marked in `packages/genshin-world/src/services
 
 `pnpm -C scripts genshin:assets wildlife` (`scripts/src/services/genshinAssets/commands/wildlifeCommand.ts`) publishes each region's animals as one slice to the wildlife dataset of the [hosted game data](../hosted-game-data/design.md), the chest slices' pattern. Mondstadt's slice holds about a hundred animals, and the other regions hold the same kinds where their labels are marked.
 
-`WorldWildlife` stands each animal in Windrise's scene as a capsule of one instanced draw, the enemies' stand-in, stood on the ground under it and turned to its heading (`packages/genshin-world/src/components/World/Wildlife/Index.vue`, whose capsules are `WILDLIFE_CAPSULE_RADIUS`, `WILDLIFE_CAPSULE_HEIGHT` and `WILDLIFE_CAPACITY` in `packages/genshin-world/src/services/wildlife/constants.ts`). The world's screen reads the Mondstadt slice from the hosted game data before it opens (`readMondstadtWildlifePlaces`, each place's id unique) and hands it down to Windrise (`packages/genshin-world/src/components/World/Windrise/Index.vue`, its `wildlifeList` prop), and the animals are not drawn in a witness render, as the enemies are not.
+`WorldWildlife` stands each animal in Windrise's scene as a capsule of one instanced draw, the enemies' stand-in, stood on the ground under it and turned to its heading (`packages/genshin-world/src/components/World/Wildlife/Index.vue`, whose capsules are `WILDLIFE_CAPSULE_RADIUS`, `WILDLIFE_CAPSULE_HEIGHT` and `WILDLIFE_CAPACITY` in `packages/genshin-world/src/services/wildlife/constants.ts`). The world's screen reads the Mondstadt slice from the hosted game data before it opens (`readMondstadtWildlifePlaces`, each place's id unique) and hands it down to Windrise (`packages/genshin-world/src/components/World/Windrise/Index.vue`, its `wildlifeList` prop), and the animals are not drawn in a witness render, as the enemies are not (`packages/genshin-world/parity/witness/renderWitnessTargets.ts` draws the families of the component's `witness.parts`, and no file under `packages/genshin-world/parity/` or `scripts/src/services/genshinParity/` names a wildlife kind).
 
 Every animal of the slice exists from the scene's load (`packages/genshin-world/src/services/wildlife/createWildlife.ts`, which stands each place's animal at its place). The rule that most animals come into being only when the player is near is not built, and neither are their shadows nor the elemental sight over them.
 
@@ -64,10 +66,8 @@ Every animal of the slice exists from the scene's load (`packages/genshin-world/
 
 - [ ] **Nothing is struck, dropped or picked up yet** — contradicted by `packages/genshin-world/src/services/kit/strikeKitEnemies.ts`: its kit strike drops animals by kind, and `useWorldPickups.ts` picks up material sources.
 - [ ] **The fleeing-kind check admits only White Pigeon, Crimson Fox or Squirrel** — contradicted by `scripts/src/services/genshinAssets/wildlife/buildWildlifePlaces.ts`: it maps every `WildlifeKind` to its label, Boar included.
-- [ ] **A fleeing kind on the ground layer is placed, and an underground one left out** — no source yet: the ground-layer filter in the map-point reader was not read.
 - [ ] **The archive files each kind as an animal or aviary monster** — no source yet: the dump's Monster and Gadget rows were not matched to the kinds' names.
 - [ ] **The environment table holds no row for a bird or a beast** — no source yet: its six Gadget rows' animal ids were not matched to a kind.
 - [ ] **No table gives a flight's speed** — no source yet: only the environment table's keys were read, not every table's.
 - [ ] **Mondstadt's slice holds about a hundred animals, and the other regions hold the same kinds where their labels are marked** — no source yet: the published slices are in hosted storage, not the local dump, so neither count was checked.
-- [ ] **The animals are not drawn in a witness render** — no source yet: the witness render's families were not checked against the animals.
 - [ ] **Each kind is one of the map's own labels under its Animals group** — no source yet: the map labels under the Animals group in `~/Esposter/genshin-parity/text/TextMapEN.json`, not yet matched to each kind.
