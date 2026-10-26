@@ -11,7 +11,7 @@ Lohen's five strikes, charged attack and plunges SHALL land on provisional timin
 #### Scenario: Five strikes in sequence
 
 - **WHEN** the player uses normal attack five times in a row
-- **THEN** the five strikes land in order on the enemies within reach
+- **THEN** the five strikes land in order on the enemies within reach (`attack.go` line 16)
 
 #### Scenario: Plunge lands on the enemies in reach
 
@@ -20,12 +20,12 @@ Lohen's five strikes, charged attack and plunges SHALL land on provisional timin
 
 ### Requirement: Lohen's six-hit burst
 
-Lohen's elemental burst SHALL land six hits on the enemies within reach.
+Lohen's elemental burst SHALL land six hits on the enemies within reach (`~/Esposter/cache/genshin-wiki/Category_Lohen_Talents.json`, Skill DMG rows A to F).
 
 #### Scenario: Burst lands six hits
 
 - **WHEN** the player casts Lohen's elemental burst
-- **THEN** six hits land on the enemies within reach
+- **THEN** six hits land on the enemies within reach (`~/Esposter/cache/genshin-wiki/Category_Lohen_Talents.json`, Skill DMG rows A to F)
 
 ### Requirement: Lohen's skill deals no hit yet
 
