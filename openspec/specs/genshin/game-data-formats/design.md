@@ -204,7 +204,7 @@ The things that each cost a search to find, to reach for first:
 - [ ] **a region's open world is derived from its capital's place in the game** — no source yet: `~/Esposter/genshin-parity/extracted/mondstadt/world/world.json`, not yet compared with another region's world data.
 - **A tile's heightfield is read from its TerrainData** — `scripts/src/services/genshinAssets/world/parseTerrainHeights.ts`.
 - **A tile's splat database is read from its TerrainData's raw export, its layers as fixed records and its cell map found by shape** — `scripts/src/services/genshinAssets/world/parseTerrainSplat.ts`.
-- [ ] **a tile's splat database places its layers by texel in the game** — no source yet: the TerrainData files under `~/Esposter/genshin-parity/extracted/mondstadt/world/TerrainData/`, not yet read for their splat layers.
+- [ ] **The game's side of the splat layers' texel placement** — no source yet: the TerrainData files under `~/Esposter/genshin-parity/extracted/mondstadt/world/TerrainData/`, not yet read for their splat layers.
 - **A field is read by its shape** — `scripts/src/services/genshinAssets/scene/scanSerializedFields.ts`.
 - [ ] **The install's `global-metadata.dat` does not begin with Unity's IL2CPP magic** — no source yet: the install's file header was not read in this pass.
 - [ ] **The client ships no scene group script; the group scripts are the server's** — no source yet: the client's Lua block was not counted against the community's index.
@@ -221,10 +221,10 @@ The things that each cost a search to find, to reach for first:
 - [ ] **a material's export is its shader's path ID, texture slots and values by name** — no source yet: the material exports under `~/Esposter/genshin-parity/extracted/login-bytype-assets/Material/`, not yet checked against their shaders' slot names.
 - [ ] **a Transform's dump is its local position, rotation and scale** — no source yet: `~/Esposter/genshin-parity/extracted/mondstadt/world/world.json` holds no Transform records, so a raw scene record is still to be read.
 - [ ] **a MeshRenderer names its materials by file index and path ID** — no source yet: `~/Esposter/genshin-parity/extracted/mondstadt/witness.json` and `world/world.json` hold no MeshRenderer records, so a raw record is still to be read.
-- [ ] **a StreamGen blob is a length word, then chunks of placements** — no source yet: the blob `~/Esposter/genshin-parity/extracted/mondstadt/world/MiHoYoBinData/012854bd.dat`, not yet read for its length word.
+- [ ] **The game's side of the StreamGen blob's length word** — no source yet: the blob `~/Esposter/genshin-parity/extracted/mondstadt/world/MiHoYoBinData/012854bd.dat`, not yet read for its length word.
 - [ ] **a city's index object is its blob's chunk index, not a root** — no source yet: `~/Esposter/genshin-parity/extracted/mondstadt/world/MonoBehaviour/Area_Mengde_City_Index.dat` against its blob's chunk index, not yet compared.
-- [ ] **a placement's prefab is named by its path hash, and its root is found by name** — no source yet: the `PathHashLast` and `PathHashPre` pairs in `~/Esposter/genshin-parity/asset-index/gi-7.1.0-derived.json`, not yet matched to a placement's prefab.
-- [ ] **a tile's TerrainData is found by its name inside it** — no source yet: the `BigWorldTerrain_*` files under `~/Esposter/genshin-parity/extracted/mondstadt/world/TerrainData/`, not yet matched to their tiles by name.
+- [ ] **The game's side of the placement's prefab** — no source yet: the `PathHashLast` and `PathHashPre` pairs in `~/Esposter/genshin-parity/asset-index/gi-7.1.0-derived.json`, not yet matched to a placement's prefab.
+- [ ] **The game's side of the tile's TerrainData lookup** — no source yet: the `BigWorldTerrain_*` files under `~/Esposter/genshin-parity/extracted/mondstadt/world/TerrainData/`, not yet matched to their tiles by name.
 - [ ] **the two non-group scripts are Lua 5.3 bytecode in a dialect of their own** — no source yet: the client's two non-group Lua scripts, not yet read.
 - [ ] **a bank's music is its hierarchy chunk's objects** — no source yet: a music bank's hierarchy chunk in the install's Wwise packages, which `~/Esposter/genshin-parity/extracted/sounds/` does not hold.
 - [ ] **how loud the game plays a sound is in its nodes and buses** — no source yet: the Wwise nodes and buses of the install's packages, not yet read.
