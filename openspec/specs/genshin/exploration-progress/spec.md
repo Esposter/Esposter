@@ -108,5 +108,5 @@ Exploration SHALL be counted for the four level-one areas of Mondstadt, Galesong
 
 ## Open
 
-- [ ] **The label appears once a statue in its area is unlocked, as the game does** — partly settled by the wiki's Map page (checked: Map), which says the Exploration Progress percentage "is only visible after the map is revealed", and that unlocking a statue "lights up that Statue's area". It does not say an area's label waits on a statue in that area; the Exploration page says nothing of the label, and the capture shows the label but not the unlock.
+- [ ] **The label appears once a statue in its area is unlocked, as the game does** — no source yet: the capture shows the label but not the unlock, and the wiki's Exploration page is not in the genshin-wiki cache.
 - [ ] **The Windrise statue is Galesong Hill's waypoint, the one doing its statue completes** — no source yet: event 40 of the table names point 4, and no row read ties that point to the statue at Windrise.
