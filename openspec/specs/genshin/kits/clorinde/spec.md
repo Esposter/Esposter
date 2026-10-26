@@ -17,14 +17,14 @@ Clorinde's normal attacks SHALL be five strikes, the fourth striking three boxes
 
 ### Requirement: Charged attack
 
-Clorinde's charged attack SHALL hit a circle round her (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/clorinde/charge.go` lines 15 and 42 to 44) and SHALL cost a provisional 20 stamina until a source gives the cost (see Open).
+Clorinde's charged attack SHALL hit a circle round her (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/clorinde/charge.go` lines 15 and 42 to 44) and SHALL cost 20 stamina (`~/Esposter/cache/genshin-wiki/Category_Clorinde_Talents.json`, Attribute Scaling's `stamina=20`).
 
 #### Scenario: Charged attack hits the circle round her
 
 - **GIVEN** Clorinde has 20 stamina
 - **WHEN** the player holds the attack button to charge
 - **THEN** the charged attack hits the circle round her at 38 frames, in an animation of 68 frames (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/clorinde/charge.go` lines 14 and 19)
-- **AND** the provisional 20 stamina is spent (see Open)
+- **AND** 20 stamina is spent
 
 ### Requirement: Last Lightfall
 
@@ -59,15 +59,15 @@ Pressing Hunter's Vigil SHALL play its 33-frame animation (`~/Esposter/cache/gcs
 - **WHEN** the player presses it again
 - **THEN** it does not cast
 
-### Requirement: No poise from normal attacks and plunges
+### Requirement: Poise from normal attacks and plunges
 
-Clorinde's normal attacks and plunges SHALL deal no poise, and her plunges SHALL land as their action starts, both provisional until a recording settles them.
+Clorinde's normal attacks and plunges SHALL deal poise, as the wiki gives it (`~/Esposter/cache/genshin-wiki/Category_Clorinde_Talents.json`, Advanced Properties: normal attacks 24.234 to 94.2, Low Plunge 100, High Plunge 150), and her plunges SHALL land as their action starts, provisional until a recording settles it.
 
-#### Scenario: A normal attack deals no poise
+#### Scenario: A normal attack deals poise
 
 - **GIVEN** Clorinde is the character on the field
 - **WHEN** one of her normal attacks hits an enemy
-- **THEN** the enemy takes no poise damage
+- **THEN** the enemy takes that hit's poise, which the wiki gives per hit (`~/Esposter/cache/genshin-wiki/Category_Clorinde_Talents.json`, Advanced Properties)
 
 #### Scenario: A plunge lands as its action starts
 
@@ -92,6 +92,5 @@ From her sixth constellation, Hunter's Vigil SHALL raise Clorinde's CRIT Rate by
 
 ## Open
 
-- [ ] **Clorinde's normal attacks and plunges deal no poise** — no source yet: no Clorinde poise recording is in `~/Esposter/genshin-parity/captures/`, and gcsim's clorinde package models no poise.
+- [ ] **Clorinde's normal attacks and plunges deal no poise** — contradicted by `~/Esposter/cache/genshin-wiki/Category_Clorinde_Talents.json`: wiki gives normal attacks poise 24.234 to 94.2, plunges 100 and 150.
 - [ ] **Her plunges land as their action starts** — no source yet: no Clorinde plunge recording is in `~/Esposter/genshin-parity/captures/`, and gcsim's clorinde package holds plunge damage tables but no plunge timing.
-- [ ] **The charged attack costs 20 stamina** — no source yet: `~/Esposter/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json` group 9831 holds no stamina cost, and no row of `~/Esposter/genshin-dump-backup-6.6/ExcelBinOutput/AvatarSkillExcelConfigData.json` holds 20.
