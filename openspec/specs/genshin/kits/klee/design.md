@@ -17,8 +17,6 @@ Klee's kit is its record and one behaviour module, `createKleeKitBehaviour`, on 
 
 ## Provisional constants
 
-- **The sparks' target is open against the wiki.** The kit strikes every enemy near Klee with each spark, while the wiki's Sparks 'n' Splash text (`~/Esposter/cache/genshin-wiki/Category_Klee_Talents.json`) says each spark targets a random one of all enemies, and gcsim queues every spark on the primary target (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/klee/burst.go` lines 63-72). Open until the sparks' target is modelled as the source gives it.
-
 ## Not built
 
 - **Constellation 1 and her Hexerei kit are not built.** Chained Reactions' sparks come at a chance that rises with each miss, rolled the same way and not built yet; the wiki says (`~/Esposter/cache/genshin-wiki/Category_Klee_Talents.json`) each spark is considered Elemental Burst DMG, and their 120% of a spark is the burst group's index 3, which nothing reads yet. Exquisite Compound and Nova Burst raise talent levels, which the [talents](../../talents/design.md) page holds. The 9 frames gcsim adds to the first strike after a skill, a dash or a burst (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/klee/attack.go` lines 27-30, the `WithLag` hitmarks) are not built, as a strike reads nothing of what came before it, nor are the skill's 4 particles. The Hexerei rework of her passive and constellations is not built.
@@ -40,4 +38,4 @@ Klee's kit is its record and one behaviour module, `createKleeKitBehaviour`, on 
 ## Open
 
 - [ ] **The kit strikes every enemy near Klee with each spark** — contradicted by `~/Esposter/cache/genshin-wiki/Category_Klee_Talents.json`: each Sparks 'n' Splash sends 4 sparks, randomly targeting all enemies.
-- [ ] **The Sparkly Explosion's 555% of her ATK** — no source yet: the cached Klee talents file gives no 555 value, and the Sparkly Explosion wiki page is not on disk.
+- [ ] **The Sparkly Explosion's 555% of her ATK** — no source yet: the Sparkly Explosion wiki page is not on disk, and the cached Klee talents file gives no 555 value; gcsim's `~/Esposter/cache/gcsim-v2.47.2/internal/characters/klee/burst.go` line 144 gives `Mult: 5.55`, so only the wiki's confirmation is open.
