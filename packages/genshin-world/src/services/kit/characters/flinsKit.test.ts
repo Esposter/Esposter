@@ -74,7 +74,7 @@ describe(createFlinsKitBehaviour, () => {
     ]);
   });
 
-  test("his burst costs 80 energy and cools for 15 seconds, his skill cools for 16 seconds, and his charged attack costs 25 stamina", () => {
+  test("his burst costs 80 energy and cools for 20 seconds, his skill cools for 16 seconds, and his charged attack costs 25 stamina", () => {
     expect.hasAssertions();
     expect({
       burstCooldownSeconds: FLINS_KIT.burstCooldownSeconds,
@@ -82,7 +82,7 @@ describe(createFlinsKitBehaviour, () => {
       chargedAttackStamina: FLINS_KIT.chargedAttackStamina,
       skillCooldownSeconds: FLINS_KIT.skillCooldownSeconds,
     }).toStrictEqual({
-      burstCooldownSeconds: 15,
+      burstCooldownSeconds: 20,
       burstEnergyCost: 80,
       chargedAttackStamina: 25,
       skillCooldownSeconds: 16,
