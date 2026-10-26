@@ -6,7 +6,7 @@ The rules of a Statue of The Seven past being a jump, built and tested but not y
 
 ### Requirement: Oculi reach a region's levels in turn
 
-Oculi offered to a region SHALL be added to its held count, and each level SHALL be reached in turn as the held Oculi cover its cost, the Oculi it takes being taken off the count.
+Oculi offered to a region SHALL be added to its held count, and each level SHALL be reached in turn as the held Oculi cover its cost, the Oculi it takes being taken off the count (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/CityLevelupConfigData.json`, whose Mondstadt levels 1 to 10 cost 1, 2, 4, 6, 7, 8, 10, 12 and 15 of item 107001, an elemental crystal).
 
 #### Scenario: Offering reaches a level
 
