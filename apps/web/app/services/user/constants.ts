@@ -5,6 +5,8 @@ export const ACCOUNT_DELETION_MUTATION_KEY = "accountDeletion";
 
 export const API_KEYS_MUTATION_KEY = "apiKeys";
 
+export const DATA_EXPORT_MUTATION_KEY = "dataExport";
+
 export const LINKED_ACCOUNTS_MUTATION_KEY = "linkedAccounts";
 
 export const PROFILE_MUTATION_KEY = "profile";

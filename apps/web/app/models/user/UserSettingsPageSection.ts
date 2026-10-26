@@ -6,6 +6,7 @@ export enum UserSettingsPageSection {
   LinkedAccounts = "linked-accounts",
   Sessions = "sessions",
   ApiKeys = "api-keys",
+  DataExport = "data-export",
   DeleteAccount = "delete-account",
 }
 
