@@ -1,6 +1,6 @@
 ## Purpose
 
-Genshin's mining outcrops as built — the Adventure Rank that opens them, and the rule that a mined outcrop is gone until the next day's draw at 04:00 in the game's time zone, read as pure, tested functions. Their places, their draw and the reputation search that marks them are the proposal's still.
+Genshin's mining outcrops as built — the Adventure Rank that opens them, and the rule that a mined outcrop is gone until the next day's draw at 04:00 in the game's time zone, read as pure, tested functions (`packages/genshin-world/src/services/leyLine/checkIsMiningOutcropStanding.ts`, with `checkIsMiningOutcropStanding.test.ts` and `checkIsMiningOutcropOpen.test.ts` beside it). Their places, their draw and the reputation search that marks them are the proposal's still.
 
 ## Requirements
 
@@ -58,4 +58,3 @@ Mining outcrops SHALL not be placed, drawn, mined or marked in the world yet.
 ## Open
 
 - [ ] **Adventure Rank 30 opens the mining outcrops** — no source yet: the wiki's Mining Outcrop page is not in `~/Esposter.noindex/cache/genshin-wiki/`, and the rank is only the code's constant in `packages/genshin-world/src/services/leyLine/constants.ts`.
-- [ ] **Mining outcrops are read as pure, tested functions, and a mined outcrop is gone until the next day's draw at 04:00** — no source yet: game data or a snapshot that holds this behaviour.
