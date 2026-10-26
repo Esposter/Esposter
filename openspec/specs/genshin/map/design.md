@@ -89,15 +89,23 @@ The overlay is scored against two references, each over its interface alone, the
 - [ ] **Map: the fade runs 48 frames from darkness 176 to plateau 21, then 12 frames to darkness 84, with the plateau held 54 frames** — no source yet: a frame count of `~/Esposter.noindex/genshin-parity/captures/yt-UVCdkuNpmf4-world-teleport.mp4` at 60000/1001 a second, which no record holds.
 - [ ] **Map: a near teleport within one region fades through the loading screen as a cross-region one does** — no source yet: `~/Esposter.noindex/genshin-parity/captures/yt-UVCdkuNpmf4-world-teleport.mp4` is a cross-region teleport, so it shows no near one's fade.
 - [ ] **Map: a landmark's jump goes by its area's catalogue name, with no name of its own written anywhere** — no source yet: a check that the jump list reads the area name, since `useJumpLandmarks` names no landmark.
-- [ ] **Both views stand the drawing on one ground, where the game paints its terrain** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The map is the `Map` screen kind, holding the world under it as the game's menus do, with the HUD hidden while it is open** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The zoom slider's track is labelled `Zoom` from the text dump** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **`JUMP_LANDMARK_KINDS` holds the Statue of The Seven and the Teleport Waypoint, as the game teleports to its statues and waypoints and nowhere else** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A jump puts the character at the landmark's arrival place, facing the turn the game gives it** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A jump closes the map, fades a veil of the loading screen's pale grey over the screen, and once the fade ends places the body at the pose, then fades back in** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The overlay draws only the catalogue's outlines, each the game's own polygon of its area** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The reference shows the player's pointer 45 units right of and 50 under the centre at 1080 high** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The top bar's resin counter is Original Resin's, placed provisionally until its recording lands** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The minimap marks the character with the game's own arrow and the view with its fan** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **`Map/Pointer` is measured off the map's reference only** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A jump far from where the camera stood fades back in as soon as it is placed** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **Both views stand the drawing on one ground, where the game paints its terrain** — no source yet: the game's terrain on the Map, in `~/Esposter/genshin-parity/references/map-overlay-jueyun.png`, not yet compared with the drawing's ground.
+- [ ] **The map is the `Map` screen kind, holding the world under it as the game's menus do, with the HUD hidden while it is open** — no source yet: the wiki's Map page, named in Sources, is not in the wiki cache; the HUD's hiding is not yet read against a recording.
+- **The zoom track's label is the game text key `GameTextKey.Zoom`** — `packages/genshin-world/src/components/Map/Overlay/Index.vue`.
+- [ ] **The zoom slider's track reads `Zoom` in the game's text** — no source yet: the `Zoom` text id's string in `~/Esposter/genshin-parity/text/TextMapEN.json`, not yet looked up.
+- **`JUMP_LANDMARK_KINDS` holds the Domain Entrance, the Statue of The Seven and the Teleport Waypoint** — `packages/genshin-world/src/services/map/constants.ts`.
+- [ ] **The game teleports to its statues and waypoints and nowhere else** — no source yet: the wiki's Teleport Waypoint page, named in Sources, is not in the wiki cache; the Domain Entrance's place in the list is not yet checked against it.
+- **A jump puts the character at the landmark's arrival place, at its height offset and facing its rotation** — `packages/genshin-world/src/services/map/computeJumpPose.ts`.
+- [ ] **A jump faces the turn the game gives the arrival** — no source yet: the arrival's rotation in `~/Esposter/genshin-parity/text/BinOutput/Scene/Point/scene3_point.json` (point 1865), not yet compared with the jump's facing.
+- **A jump's teleport fade runs to the loading screen's background and back, over `TELEPORT_FADE_IN_MS` and `TELEPORT_FADE_OUT_MS`** — `packages/genshin-world/src/components/World/Session/Index.vue`.
+- [ ] **The veil is the loading screen's pale grey** — no source yet: a recording of the game's teleport fade, not yet captured, would name its colour.
+- **The overlay draws only the outlines of the areas a statue has filled** — `packages/genshin-world/src/components/Map/Drawing/Index.vue`.
+- [ ] **Each outline is the game's own polygon of its area** — no source yet: the wiki's Map page, named in Sources, is not in the wiki cache; the outlines in `packages/genshin-world/src/data/catalogue.json` are not yet checked against the game's polygons.
+- [ ] **The reference shows the player's pointer 45 units right of and 50 under the centre at 1080 high** — no source yet: `~/Esposter/genshin-parity/references/map-overlay-jueyun.png`, not yet measured at 1080 high.
+- **The top bar's resin counter reads Original Resin through `regenerateOriginalResin`** — `packages/genshin-world/src/components/Map/Overlay/Index.vue`.
+- [ ] **The top bar's resin counter is placed where the game places it** — no source yet: a recording of the game's top bar, not yet captured, would settle its placement.
+- **The minimap marks the character with its arrow at the centre and the view with its fan** — `packages/genshin-world/src/components/Hud/Minimap/Index.vue`.
+- [ ] **The arrow and the fan are the game's own** — no source yet: a recording of the game's minimap, not yet captured, would settle the arrow's and the fan's look.
+- **The pointer's colours are measured off the English PC client's map over Jueyun Karst at 1080 high, provisionally** — `packages/genshin-world/src/components/Map/Pointer/Index.vue`.
+- [ ] **The pointer's measures come from the map's reference alone** — no source yet: `~/Esposter/genshin-parity/references/map-overlay-jueyun.png` is not yet checked against the pointer's other measures.
+- [ ] **A jump far from where the camera stood fades back in as soon as it is placed** — no source yet: the teleport fade's `faded` binding to the jump pose in `packages/genshin-world/src/components/World/Session/Index.vue` is not yet read against the far-from-camera condition.
