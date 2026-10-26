@@ -17,7 +17,14 @@ describe(checkIsImaginariumCastEligible, () => {
     rewardGroup: 1,
     specialGuestIds: [2],
   };
-  const difficulty: ImaginariumDifficulty = { id: 1, level: 1, levelFloor: 60 };
+  const difficulty: ImaginariumDifficulty = {
+    actCount: 3,
+    alternateCastExtra: 2,
+    alternateCastMinimum: 2,
+    id: 1,
+    level: 1,
+    levelFloor: 60,
+  };
 
   test("a character of a season element joins the Alternate Cast", () => {
     expect.hasAssertions();

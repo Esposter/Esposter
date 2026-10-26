@@ -23,9 +23,9 @@ describe(getImaginariumSeasonDifficulties, () => {
     specialGuestIds: [2],
   };
   const difficulties: ImaginariumDifficulty[] = [
-    { id: 1, level: 1, levelFloor: 60 },
-    { id: 2, level: 2, levelFloor: 60 },
-    { id: 3, level: 3, levelFloor: 70 },
+    { actCount: 3, alternateCastExtra: 2, alternateCastMinimum: 2, id: 1, level: 1, levelFloor: 60 },
+    { actCount: 6, alternateCastExtra: 2, alternateCastMinimum: 6, id: 2, level: 2, levelFloor: 60 },
+    { actCount: 8, alternateCastExtra: 4, alternateCastMinimum: 10, id: 3, level: 3, levelFloor: 70 },
   ];
 
   test("should pick the season's difficulties and order them from the lowest level", () => {
