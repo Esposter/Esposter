@@ -142,4 +142,4 @@ Photo mode SHALL hold the character where it stands and keep the camera orbiting
 
 ## Open
 
-- [x] **The world clock keeps running in photo mode** — settled by the [Time](https://genshin-impact.fandom.com/wiki/Time) page, Genshin Impact Wiki: time is paused with the Paimon Menu open "except for Photo Mode".
+- [ ] **The world clock keeps running in photo mode** — no source yet: the Time wiki page is not in the cache, and no recording of the clock in photo mode is checked.
