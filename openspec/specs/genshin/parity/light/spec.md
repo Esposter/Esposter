@@ -94,4 +94,4 @@ The haze over the stone SHALL take colours solved together with the light, while
 ## Open
 
 - [ ] **The solve hands back the light it was shown, within a small margin** — no source yet: no test or run in the repository compares the returned light with the known one.
-- [ ] **The cloud sea keeps the colours measured where it shows** — no source yet: the cloud-sea colour measure was not traced to its code.
+- [ ] **The cloud sea keeps the colours measured where it shows** — contradicted by LoginSkyStateMap.ts: day's and dusk's cloud colours solved by spread, not read off references.
