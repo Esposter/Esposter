@@ -6,7 +6,7 @@ A ground's height composed in three layers, each read only where it reaches: Gau
 
 ### Requirement: Ground height is the sum of its optional layers
 
-A ground's height SHALL be the sum of its hills, its sharp features and its residual, where each layer a ground leaves out adds nothing (`packages/genshin-engine/src/terrain/createTerrainShapeHeight.ts`).
+A ground's height SHALL be the sum of its hills, its sharp features and its residual, where each layer a ground leaves out adds nothing.
 
 #### Scenario: Hills alone
 
@@ -22,7 +22,7 @@ A ground's height SHALL be the sum of its hills, its sharp features and its resi
 
 ### Requirement: A hill reaches no farther than three of its widths
 
-A hill SHALL contribute nothing to the ground farther than three of its widths from its centre along either axis (`packages/genshin-engine/src/terrain/getGaussianHillBlend.ts`, `packages/genshin-engine/src/terrain/constants.ts`).
+A hill SHALL contribute nothing to the ground farther than three of its widths from its centre along either axis.
 
 #### Scenario: Point inside a hill's reach
 
@@ -38,7 +38,7 @@ A hill SHALL contribute nothing to the ground farther than three of its widths f
 
 ### Requirement: Features affect only the ground they reach
 
-A sharp feature SHALL affect only the ground within its own bounds, and a plateau with a negative height SHALL draw a basin (`packages/genshin-engine/src/terrain/getTerrainFeatureBounds.ts`, `packages/genshin-engine/src/terrain/createTerrainFeaturesHeight.ts`).
+A sharp feature SHALL affect only the ground within its own bounds, and a plateau with a negative height SHALL draw a basin.
 
 #### Scenario: Plateau's flat top
 
@@ -54,7 +54,7 @@ A sharp feature SHALL affect only the ground within its own bounds, and a platea
 
 ### Requirement: Residual drawn only where its fade allows
 
-The residual SHALL be drawn only where its fade was fitted, SHALL draw nothing outside the fitted grid, and SHALL be kept off the top of every feature (`packages/genshin-engine/src/terrain/sampleTerrainResidualFade.ts`, `packages/genshin-engine/src/terrain/createTerrainShapeHeight.ts`).
+The residual SHALL be drawn only where its fade was fitted, SHALL draw nothing outside the fitted grid, and SHALL be kept off the top of every feature.
 
 #### Scenario: Residual outside the fitted grid
 
@@ -76,7 +76,7 @@ The residual SHALL be drawn only where its fade was fitted, SHALL draw nothing o
 
 ### Requirement: Ground laid over another lifted onto its own base
 
-A ground laid over another SHALL be lifted onto its own base where its hills stand, and inside that level SHALL stand exactly as it is drawn alone (`packages/genshin-engine/src/terrain/getTerrainShapeLevel.ts`).
+A ground laid over another SHALL be lifted onto its own base where its hills stand, and inside that level SHALL stand exactly as it is drawn alone.
 
 #### Scenario: Ground laid over keeps its own heights
 
@@ -89,3 +89,11 @@ A ground laid over another SHALL be lifted onto its own base where its hills sta
 - **GIVEN** a ground with no hills is laid over another ground
 - **WHEN** the composed ground is read
 - **THEN** its features stand on the first ground's base
+
+## Open
+
+- [ ] **A ground's height is the sum of its optional layers** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A hill contributes nothing farther than three of its widths from its centre** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A sharp feature affects only the ground within its own bounds, and a negative plateau draws a basin** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The residual is drawn only where its fade was fitted, and never outside the fitted grid** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A ground laid over another is lifted onto its own base where its hills stand** — no source yet: game data or a snapshot that holds this behaviour
