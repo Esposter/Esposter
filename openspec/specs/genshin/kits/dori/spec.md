@@ -84,3 +84,7 @@ Troubleshooter Shot, the Connector and the plunging collision SHALL deal the wik
 - **GIVEN** Dori is in the air
 - **WHEN** her plunging collision hits an enemy
 - **THEN** the enemy takes 35 poise damage
+
+## Open
+
+- [ ] **The charged attack's spin lands at the start** — no source yet: no source gives the spin's frame of 0, and gcsim has no charged attack for Dori to take it from.
