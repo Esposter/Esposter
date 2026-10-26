@@ -112,4 +112,4 @@ Resonant Waves, Chrysos, Bounty of Dominator, Petrification and the hold's Geo d
 
 ## Open
 
-- [ ] **the Jade Shield's RES cut reaches 10 metres high** — no source yet: the height argument of the enemy query in gcsim's `shield.go` was not opened.
+- [ ] **the Jade Shield's RES cut reaches 10 metres high** — no source yet: the named source does not hold this value, since gcsim's `shield.go` queries a 7.5 metre circle with a nil second argument and no height.
