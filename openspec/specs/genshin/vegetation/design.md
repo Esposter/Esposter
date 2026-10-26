@@ -66,5 +66,5 @@ flowchart TD
 - [ ] **Vegetation: the cell's culling test widened by a tenth of the clip space** — no source yet: the widening constant in the culling files, which `createGrassCulling.ts` does not hold.
 - [ ] **Vegetation: a blade a few centimetres off the drawn ground far from the eye** — no source yet: a measured offset of a blade from the drawn ground at the recapture distance, which no record holds.
 - [ ] **Vegetation: wet ground darkens the meadow and takes the sun's glint off the one normal** — no source yet: a wet-ground branch in the grass material, which the vegetation files do not name.
-- [ ] **Vegetation: Mondstadt's wind is a steady breeze from the west with gusts every half minute** — no source yet: game data or a snapshot that holds this behaviour.
+- [ ] **Vegetation: Mondstadt's wind is a steady breeze from the west with gusts every half minute** — no source yet: a recording of Mondstadt's wind in `~/Esposter/genshin-parity/captures/`, not yet read for the gust interval.
 - [ ] **Vegetation: the rings fade into the ground's colour with no seam** — no source yet: a visual check of the seam on a recording, which no record holds.
