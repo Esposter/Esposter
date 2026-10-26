@@ -109,7 +109,8 @@ Every colour the world is lit by SHALL be read from the sky at the current minut
 
 ## Open
 
-- [ ] **A region opens at its reference hour** — no source yet: the repo's region data and its clock code hold no reference-hour field, so the claim has no code or data side to check here.
+- [ ] **The day runs at one in-game minute per real second** — no source yet: the wiki's Time page is not in the cache.
+- [ ] **A region opens at its reference hour** — no source yet: the in-game hours of the reference screenshots were not read here.
 - [ ] **The sun rises due east at dawn and sets due west at dusk** — no source yet: no frame's sun bearing was read.
 - [ ] **The light passes from the sun to the moon at dawn and dusk without a visible jump** — no source yet: no dawn or dusk handover frame was compared.
 - [ ] **The sky shows a gradient, sun, moon, stars and stepped clouds in the region's colours** — no source yet: no in-world frame was compared for these elements.
