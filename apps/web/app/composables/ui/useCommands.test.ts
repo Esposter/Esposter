@@ -29,13 +29,13 @@ describe(useCommands, () => {
     press("x");
 
     expect(commands.value).toStrictEqual([command]);
-    expect(run).toHaveBeenCalledTimes(1);
+    expect(run).toHaveBeenCalledExactlyOnceWith();
 
     component.unmount();
     press("x");
 
     expect(commands.value).toStrictEqual([]);
-    expect(run).toHaveBeenCalledTimes(1);
+    expect(run).toHaveBeenCalledExactlyOnceWith();
   });
 
   // The hotkey composable only warns on a shortcut it cannot parse and binds nothing, so every shortcut written in
