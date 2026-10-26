@@ -4,9 +4,11 @@ import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitEffect } from "#src/models/kit/KitEffect";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitField } from "#src/models/kit/KitField";
+import type { KitHitBehaviour } from "#src/models/kit/KitHitBehaviour";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 import type { KitShield } from "#src/models/kit/KitShield";
 
+import { Attribute } from "#src/models/character/Attribute";
 import { AttackTag } from "#src/models/combat/AttackTag";
 import { Element } from "#src/models/Element";
 import { KitEventKind } from "#src/models/kit/KitEventKind";
@@ -14,9 +16,11 @@ import { checkIsStrikeOn } from "#src/services/kit/checkIsStrikeOn";
 import { MELEE_WEAPON_TYPES } from "#src/services/kit/constants";
 import { addKitEffect } from "#src/services/kit/effects/addKitEffect";
 import { addKitStatus } from "#src/services/kit/effects/addKitStatus";
+import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { castKitField } from "#src/services/kit/effects/castKitField";
 import { castKitShield } from "#src/services/kit/effects/castKitShield";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
+import { changeKitSkillCooldown } from "#src/services/kit/effects/changeKitSkillCooldown";
 import { completeKitSkillCharge } from "#src/services/kit/effects/completeKitSkillCharge";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { getKitMaxHealth } from "#src/services/kit/effects/getKitMaxHealth";
@@ -38,6 +42,15 @@ const CONSTELLATION_1_PRAYER_EXTRA_SECONDS = 3;
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_COOLDOWN_SECONDS = 2.3;
 const CONSTELLATION_6_STATUS_ID = "candace-constellation-6";
+// Constellation 2 raises her Max HP by 20% for 15 seconds from each Sacred Rite: Heron's Sanctum hit on an enemy, each hit
+// Restarting it. Constellation 4 sets the charged hold's cooldown to the tap's. Measured: gcsim v2.47.2 (MIT) candace/cons.go
+// and skill.go, the HPP mod of 0.2 for 15 seconds, and the hold's cooldown taken from skillCD[0] at Constellation 4
+// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/candace
+const CONSTELLATION_2 = 2;
+const CONSTELLATION_2_MAX_HEALTH_SHARE = 0.2;
+const CONSTELLATION_2_SECONDS = 15;
+const CONSTELLATION_2_SOURCE = "candace-constellation-2";
+const CONSTELLATION_4 = 4;
 
 // Whether the Prayer of the Crimson Crown field stands on a character, the field the burst sets going
 const findPrayerField = (effects: readonly KitEffect[], characterId: number): KitField | undefined =>
@@ -62,12 +75,12 @@ const ASCENSION_1 = 1;
 
 // Candace's behaviour: Sacred Rite: Heron's Sanctum's tap and charged hold each cast her shield until their hit lands, and
 // Sacred Rite: Wagtail's Tide sets its Prayer of the Crimson Crown going at its hitmark, infusing the character on the
-// Field, and on each swap while it holds infuses the one coming on and sets a wave off round the body. Constellations 1
-// And 6 are built, the sixth's wave on a party member's elemental normal attack. Ascension 1's Aegis of Crossed Arrows,
-// Which completes a charge on a hit taken, is built, see its design note. Not built: Ascension 4's DMG and the Prayer's
-// DMG Bonus of 20% on the Team's normal attacks, as no hook reads another member's normal attack DMG; Constellation 2's
-// Max HP buff, as No hook starts it on Heron's Sanctum's hit on an enemy; Constellation 4's shorter hold cooldown, as
-// A hold's Cooldown is one number on the Kit; and the talent levels of Constellations 3 and 5, which no kit reads yet
+// Field, and on each swap while it holds infuses the one coming on and sets a wave off round the body. Constellations 1,
+// 2, 4 and 6 are built: the sixth's wave on a party member's elemental normal attack, the second's Max HP from each
+// Heron's Sanctum hit on an enemy, and the fourth's shorter charged hold. Ascension 1's Aegis of Crossed Arrows, which
+// Completes a charge on a hit taken, is built, see its design note. Not built: Ascension 4's DMG and the Prayer's DMG
+// Bonus of 20% on the Team's normal attacks, as no hook reads another member's normal attack DMG; and the talent levels
+// Of Constellations 3 and 5, which no kit reads yet
 export const createCandaceKitBehaviour = ({
   kit,
   readHit,
@@ -81,6 +94,8 @@ export const createCandaceKitBehaviour = ({
   const prayerTickSeconds = readSeconds("prayerTick");
   const tapHitmarkSeconds = takeOne(kit.elementalSkill.hits).hitmarkSeconds;
   const chargedHitmarkSeconds = takeOne(takeOne(kit.elementalSkillHolds ?? []).action.hits).hitmarkSeconds;
+  const chargedHoldCooldownCutSeconds =
+    takeOne(kit.elementalSkillHolds ?? []).cooldownSeconds - kit.skillCooldownSeconds;
   const burstHitmarkSeconds = takeOne(kit.elementalBurst.hits).hitmarkSeconds;
   const wave = readHit("wave");
   const constellation6Wave = readHit("theOverflowWave");
@@ -97,6 +112,18 @@ export const createCandaceKitBehaviour = ({
     });
   };
 
+  // Heron's Sanctum's hit on an enemy gives its caster Constellation 2's Max HP, which each hit restarts
+  const heronsSanctumHit: KitHitBehaviour = {
+    onStrike: ({ kitEffectState }, { combatant }) => {
+      if (combatant.constellationCount < CONSTELLATION_2) return;
+      buffKitMember(kitEffectState, combatant.characterId, {
+        amount: CONSTELLATION_2_MAX_HEALTH_SHARE,
+        attribute: Attribute.HealthPercent,
+        secondsRemaining: CONSTELLATION_2_SECONDS,
+        source: CONSTELLATION_2_SOURCE,
+      });
+    },
+  };
   return {
     // The Prayer's field infuses the character on the field each tick, from the hitmark, and the wave count is a status,
     // Restarted by each burst
@@ -154,7 +181,20 @@ export const createCandaceKitBehaviour = ({
       )
         castKitSummon(kitEffectState, body, combatant, [constellation6Wave], { attackTag: AttackTag.ElementalBurst });
     },
-    skill: { onStart: (context) => castShield(context, context.activeCombatant, tapHitmarkSeconds) },
-    skillHolds: [{ onStart: (context) => castShield(context, context.activeCombatant, chargedHitmarkSeconds) }],
+    skill: {
+      hits: [heronsSanctumHit],
+      onStart: (context) => castShield(context, context.activeCombatant, tapHitmarkSeconds),
+    },
+    skillHolds: [
+      {
+        hits: [heronsSanctumHit],
+        onStart: (context) => {
+          castShield(context, context.activeCombatant, chargedHitmarkSeconds);
+          // Constellation 4 cuts the hold's cooldown down to the tap's, from the cooldown the hold's start has just set
+          if (context.activeCombatant.constellationCount >= CONSTELLATION_4)
+            changeKitSkillCooldown(context.party, context.activeCombatant.characterId, -chargedHoldCooldownCutSeconds);
+        },
+      },
+    ],
   };
 };

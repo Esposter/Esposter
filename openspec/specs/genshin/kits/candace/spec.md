@@ -1,6 +1,6 @@
 ## Purpose
 
-Candace's kit as built, with Sacred Rite: Heron's Sanctum's tap and charged hold and their shields, Sacred Rite: Wagtail's Tide's Prayer of the Crimson Crown with its waves, Constellations 1 and 6, and what is left to build, which includes Constellations 2 and 4.
+Candace's kit as built, with Sacred Rite: Heron's Sanctum's tap and charged hold and their shields, Sacred Rite: Wagtail's Tide's Prayer of the Crimson Crown with its waves, Constellations 1, 2, 4 and 6, and what is left to build.
 
 ## Requirements
 
@@ -136,12 +136,34 @@ At constellation 6, while the Prayer stands, an elemental normal attack by the c
 - **WHEN** another elemental normal attack lands
 - **THEN** no wave is set off
 
-### Requirement: Constellations 2 and 4 are not built
+### Requirement: Constellation 2 raises Max HP from Heron's Sanctum hits
 
-Candace's Constellations 2 and 4 SHALL NOT take effect: Constellation 2's Max HP buff is not started by Heron's Sanctum's hit on an opponent, and Constellation 4's shorter hold cooldown needs a cooldown that differs per hold, which a hold's cooldown does not carry.
+At constellation 2, each Sacred Rite: Heron's Sanctum hit on an enemy SHALL raise Candace's Max HP by 20% for 15 seconds, each hit restarting the bonus.
 
-#### Scenario: Constellation 2 and 4 do nothing
+#### Scenario: A hit on an enemy raises her Max HP
 
-- **GIVEN** Candace has Constellation 2 or Constellation 4
-- **WHEN** the player fights with Candace
-- **THEN** that constellation has no effect
+- **GIVEN** Candace is at constellation 2
+- **WHEN** Sacred Rite: Heron's Sanctum, tap or charged, hits an enemy
+- **THEN** Candace's Max HP is raised by 20% for 15 seconds
+
+#### Scenario: Below constellation 2 a hit raises no Max HP
+
+- **GIVEN** Candace is at constellation 1
+- **WHEN** Sacred Rite: Heron's Sanctum hits an enemy
+- **THEN** her Max HP is not raised
+
+### Requirement: Constellation 4 shortens the charged hold's cooldown
+
+At constellation 4, Sacred Rite: Heron's Sanctum's charged hold SHALL share the tap's cooldown of 6 seconds, rather than its own 9.
+
+#### Scenario: The charged hold starts with the tap's cooldown
+
+- **GIVEN** Candace is at constellation 4
+- **WHEN** the player releases the charged hold
+- **THEN** the skill's cooldown is 6 seconds, not 9
+
+#### Scenario: Below constellation 4 the charged hold keeps its cooldown
+
+- **GIVEN** Candace is at constellation 3
+- **WHEN** the player releases the charged hold
+- **THEN** the skill's cooldown is 9 seconds

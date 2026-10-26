@@ -1,6 +1,6 @@
 # Candace
 
-Candace's kit is its record and one behaviour module, `createCandaceKitBehaviour`, on avatar 10000072: four strikes, a charged attack, a collision and two plunges; Sacred Rite: Heron's Sanctum, a tap and a charged hold that each set a shield on the team and deal a share of her Max HP as flat DMG; and Sacred Rite: Wagtail's Tide, whose initial hit sets the Prayer of the Crimson Crown going for nine seconds. Her multipliers come from proud skill groups 7231, 7232 and 7239 at level 1. The tap's cooldown is 6 seconds and the charged hold's 9, the burst's cooldown 15 seconds and its cost 60 energy, and the charged attack's stamina 25. Ascension 1 and Constellations 1 and 6 are built. Ascension 4, Constellations 2 and 4, the Prayer's DMG Bonus on the team's normal attacks, and the talent levels of Constellations 3 and 5 are not, as the sections below give.
+Candace's kit is its record and one behaviour module, `createCandaceKitBehaviour`, on avatar 10000072: four strikes, a charged attack, a collision and two plunges; Sacred Rite: Heron's Sanctum, a tap and a charged hold that each set a shield on the team and deal a share of her Max HP as flat DMG; and Sacred Rite: Wagtail's Tide, whose initial hit sets the Prayer of the Crimson Crown going for nine seconds. Her multipliers come from proud skill groups 7231, 7232 and 7239 at level 1. The tap's cooldown is 6 seconds and the charged hold's 9, the burst's cooldown 15 seconds and its cost 60 energy, and the charged attack's stamina 25. Ascension 1 and Constellations 1, 2, 4 and 6 are built. Ascension 4, the Prayer's DMG Bonus on the team's normal attacks, and the talent levels of Constellations 3 and 5 are not, as the sections below give.
 
 ## Decisions
 
@@ -11,12 +11,12 @@ Candace's kit is its record and one behaviour module, `createCandaceKitBehaviour
 - **The Prayer of the Crimson Crown is a field that stands wherever the body is.** It starts with the burst at the 33-frame hitmark and runs nine seconds, twelve from Constellation 1. Every 30 frames it infuses the party member on the field with Hydro for one second, if that member wields a sword, claymore or polearm, and a swap infuses the one coming on at once.
 - **Each swap while the Prayer stands sets off a wave round the body, three at most.** A wave is a circle of radius 3.5 metres round the body, struck one frame on, for 6.6% of her Max HP as flat Hydro DMG, the table's wave share. The wave count is a status that each burst restarts, as gcsim resets it on each cast.
 - **Constellation 6 sets off a wave on a party member's elemental normal attack.** While the Prayer stands, a `DamageTaken` event for a normal attack of the character on the field, by another member and with an element, sets off a wave for 15% of her Max HP. It waits 2.3 seconds, as gcsim's cooldown does. The event carries the striker and its element, so the check is the one gcsim makes.
+- **Constellation 2's Max HP is a buff her own hit starts.** Each Heron's Sanctum hit on an enemy, tap or charged, gives her a 20% `HealthPercent` buff for 15 seconds under its own source, so the next hit restarts it, as gcsim's `AddStatMod` under one key does. It is read from the hit's `onStrike` on the skill and on the hold, which runs once for each enemy the hit lands on, as gcsim's callback does. The buff reaches her shields and her damage through her Max HP.
+- **Constellation 4's hold cooldown is cut at the hold's start.** The hold's cooldown is the hold's own nine seconds, which the start adds to her party cooldown; at Constellation 4 the hold's `onStart` cuts it by the difference from the tap's six, as `changeKitSkillCooldown` does for Alhaitham's first constellation. The cut is taken in seconds, so a cooldown multiplier that a field or a resonance applies to the hold's start is not applied to it; it is exact while none is active.
 
 ## Not built
 
 - **Ascension 4's DMG and the Prayer's 20% DMG Bonus on the team's normal attacks are not built.** The hook is a party buff read by another member's normal attack, as `getStrikeDamageBonus` reads only the kit's own strikes.
-- **Constellation 2's Max HP of 20% is not built.** A Max HP buff reaches her shields and damage, so what is missing is the buff's start: Heron's Sanctum's hit on an opponent gives it for 15 seconds, as gcsim does. The hook is a 20% `HealthPercent` buff on her, started by a `DamageTaken` event whose attack tag is the elemental skill and whose striker is her.
-- **Constellation 4's shorter hold cooldown is not built.** gcsim sets the charged hold's cooldown to the tap's 6 seconds, but a hold's cooldown is one number on the kit, and `getSkillCooldownMultiplier` reads no hold. The hook is a hold cooldown read from the holder's constellations.
 
 ## Key files
 
@@ -26,6 +26,6 @@ Candace's kit is its record and one behaviour module, `createCandaceKitBehaviour
 
 ## Sources
 
-- [gcsim (MIT)](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/candace): the strikes' hitmarks, cancel frames, reaches and poise, the charged attack and the plunges' frames, radii and poise, Heron's Sanctum's frames, hitboxes, shields and cooldowns, Wagtail's Tide's hitmark, duration, infusion and waves, and Constellations 1 and 6.
+- [gcsim (MIT)](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/candace): the strikes' hitmarks, cancel frames, reaches and poise, the charged attack and the plunges' frames, radii and poise, Heron's Sanctum's frames, hitboxes, shields and cooldowns, Wagtail's Tide's hitmark, duration, infusion and waves, and Constellations 1, 2, 4 and 6.
 - [genshin.gg's Candace](https://genshin.gg/characters/candace/): Aegis of Crossed Arrows's text, Ascension 1.
 - The proud skill groups 7231, 7232 and 7239 in the hosted game data: each multiplier's index, the shield's share and flat HP, the cooldowns, the burst's seconds, wave count, cooldown and energy cost, read at talent level 1.
