@@ -6,7 +6,7 @@ For the burst's 15 seconds, or 18 from Constellation 2 (`~/Esposter/cache/gcsim-
 
 ## Decisions
 
-- **Thoma's Fiery Collapse fires on a shielded character's damage, which no kit event reaches yet.** gcsim triggers it on each hit a shielded character takes, behind a one-second internal cooldown, and it sets off a shield of its own. The kit fires it from normal attacks instead, as the bullet below says.
+- **Thoma's Fiery Collapse fires on a shielded character's damage, which no kit event reaches yet.** gcsim triggers it on each hit a shielded character takes, behind a one-second internal cooldown (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/thoma/thoma.go:44`), and it sets off a shield of its own. The kit fires it from normal attacks instead, as the bullet below says.
 - **Thoma's plunges land 0.4 seconds in.** gcsim gives his plunges no timing (its thoma folder has no plunge file), so his reaches and landing are Ganyu's.
 - **Fiery Collapse answers the normal attacks of whoever is on the field, as Xingqiu's Raincutter does.** gcsim sets it off through the same watcher as Raincutter (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/thoma/thoma.go:44`), on the normal attacks the character on the field starts, behind its one-second interval, so the Ooyoroi is a summon that coordinates with them. Its shield stacks onto the one Thoma holds, as gcsim's does (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/thoma/burst.go:98`, `~/Esposter/cache/gcsim-v2.47.2/internal/characters/thoma/shield.go:20`), capped at Blazing Blessing's most (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/thoma/shield.go:25`).
 - **Flaming Assault takes effect from Ascension 4.** gcsim's `~/Esposter/cache/gcsim-v2.47.2/internal/characters/thoma/asc.go:31` gates it at Ascension 1 (its share is `~/Esposter/cache/gcsim-v2.47.2/internal/characters/thoma/asc.go:34`), but the talent table names Ascension 4, so the table's phase stands.
@@ -25,3 +25,5 @@ For the burst's 15 seconds, or 18 from Constellation 2 (`~/Esposter/cache/gcsim-
 ## Open
 
 - [ ] **Flaming Assault takes effect from Ascension 4** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/thoma/asc.go`: its gate is Ascension 1 (line 31).
+- [ ] **Thoma's plunges land 0.4 seconds in, with Ganyu's reaches** — no source yet: gcsim's thoma folder has no plunge file.
+- [ ] **The kit's Blazing Blessing recast is capped at its most** — no source yet: the kit's own recast is not read against the cap gcsim gives at `~/Esposter/cache/gcsim-v2.47.2/internal/characters/thoma/shield.go` line 25.
