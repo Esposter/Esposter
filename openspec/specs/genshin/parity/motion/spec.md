@@ -6,13 +6,13 @@ Motion is matched frame by frame against sampled recordings, with a scene's own 
 
 ### Requirement: A recording's motion is matched frame by frame
 
-A recording's events SHALL be found by sampling it at one frame a second, and each event SHALL then be read at its full rate over its own window.
+A recording's events SHALL be found by sampling it at one frame a second, and each event SHALL then be read at its full rate over its own window (see Open).
 
 #### Scenario: Events found and read
 
 - **GIVEN** a recording with motion in it
 - **WHEN** the motion is matched
-- **THEN** the recording is first sampled at one frame a second to find its events
+- **THEN** the recording is first sampled at one frame a second to find its events (see Open)
 - **AND** each event is then read at its full rate over its own window
 
 ### Requirement: A screen's motion is held at its start and then played by its fixture
@@ -85,5 +85,4 @@ When the witness is used, the scene's motion SHALL be filmed on the game's expor
 
 ## Open
 
-- [ ] **A recording's events are found by sampling it at one frame a second** — checked against `.agents/skills/genshin-parity/references/motion.md` line 5, which says to sample at 1 fps, and `scripts/src/services/genshinParity/commands/framesCommand.ts` takes any rate (line 9 defaults to 10 a second): no code runs the one-a-second sampling, so the claim is not settled by code.
-- [ ] **The parity page applies the fixture's motion props after the animations finish** — checked against `packages/genshin-world/parity/main.ts` lines 200 to 211: a `props` run awaits every animation's finish, then assigns `screen.motionProps`. The built requirement names no repo path, so the entry stays open here.
+- [ ] **A recording's events are found by sampling it at one frame a second** — no source yet: no code runs the one-a-second event sampling; `scripts/src/services/genshinParity/commands/framesCommand.ts` defaults to 10 a second, and the procedure is written only in `.agents/skills/genshin-parity/references/motion.md` line 5.
