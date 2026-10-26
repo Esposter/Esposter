@@ -15,10 +15,10 @@ flowchart TD
   CR --> MG
 ```
 
-- **The pieces are boxes, and the walls are the boxes' inner ring.** The platform spans the whole footprint. Each wall is a box along one edge, the two long walls running the full width and the two short walls fitting between them, so the four boxes meet at the corners without overlapping (`createBoxesGeometry`, `packages/genshin-engine/src/kits/architecture/createBoxesGeometry.ts`).
-- **A flat roof is one more box** over the walls, its thickness its roof height (`packages/genshin-engine/src/kits/architecture/createBuildingGeometry.ts`).
-- **A conical roof is a cone scaled to the footprint.** A unit cone is stretched to half the footprint's width and depth, so its base lies over the walls' outside edge on any rectangle, not only a square. Its apex stands the roof height above the walls (`packages/genshin-engine/src/kits/architecture/createBuildingGeometry.ts`).
-- **The result is merged** into one geometry, the parts freed once merged (`mergeGeometryParts`, `packages/genshin-engine/src/kits/mergeGeometryParts.ts`).
+- **The pieces are boxes, and the walls are the boxes' inner ring.** The platform spans the whole footprint. Each wall is a box along one edge, the two long walls running the full width and the two short walls fitting between them, so the four boxes meet at the corners without overlapping (`createBoxesGeometry`).
+- **A flat roof is one more box** over the walls, its thickness its roof height.
+- **A conical roof is a cone scaled to the footprint.** A unit cone is stretched to half the footprint's width and depth, so its base lies over the walls' outside edge on any rectangle, not only a square. Its apex stands the roof height above the walls.
+- **The result is merged** into one geometry, the parts freed once merged (`mergeGeometryParts`).
 
 The building is centred on the origin and stands on it, so a caller places it on the ground with its position (`packages/genshin-engine/src/kits/architecture/createBuildingGeometry.ts`). Natlan's tribes build with it (`packages/genshin-world/src/services/world/BuildingKitPartsMap.ts`), the People of the Springs' first building standing as a [building landmark](../region-buildings/design.md) (`packages/genshin-world/src/data/regions/natlan.json`).
 
