@@ -1,6 +1,6 @@
 ## Purpose
 
-The ground's colour painted in layers, as the game's terrain blends its own — grass, bare earth, sand, snow, path and rock. Where they lie is a field of each layer's shares fitted from the layer the game's tiles paint each four-metre cell, since the game places its layers by cell and never by slope; a rule of the slope, the height or a path's distance lays a layer over the field only where a biome has one. The layers' weights are solved per vertex in the terrain's worker, as the game holds its weights per texel, so the colour the ground morphs toward at the next level is painted the same way.
+The ground's colour painted in layers, as the game's terrain blends its own — grass, bare earth, sand, snow, path and rock. Where they lie is a field of each layer's shares fitted from the layer the game's tiles paint each four-metre cell in `scripts/src/services/genshinAssets/fit/fitGroundLayerField.ts`, since the game places its layers by cell and never by slope; a rule of the slope, the height or a path's distance lays a layer over the field only where a biome has one. The layers' weights are solved per vertex in the terrain's worker, as the game holds its weights per texel, so the colour the ground morphs toward at the next level is painted the same way `packages/genshin-world/src/workers/terrainTile.worker.ts`.
 
 ## Requirements
 
@@ -137,4 +137,4 @@ A region whose base maps are not exported SHALL keep its layer colours unpainted
 - [ ] **The game places its layers by cell, never by slope** — no source yet: no checked game data shows that placement ignores slope.
 - [ ] **No grass blade grows on earth, rock, sand or path** — no source yet: no vegetation placement check is cited here.
 - [ ] **Flowers grow only where the weights are nearly all grass** — no source yet: no scatter placement check is cited here.
-- [ ] **The layer field is fitted from the layer the game's tiles paint each four-metre cell** — no source yet: the layer each cell is painted in, which the `BigWorldTerrain_*.bin.dat` tiles under `~/Esposter/genshin-parity/extracted/mondstadt/world/TerrainData/` would settle, is not read here. `BigWorldTerrain_3_-1.bin.dat` has 256 cells a side, four metres only across a whole tile, a span not read from the game.
+- [ ] **The layer field is fitted from the layer the game's tiles paint each four-metre cell** — no source yet: the layer each cell is painted in, which the `BigWorldTerrain_*.bin.dat` tiles under `~/Esposter/genshin-parity/extracted/mondstadt/world/TerrainData/` would settle, is not read here; the tile's cell count and the four-metre span are not read from the game.
