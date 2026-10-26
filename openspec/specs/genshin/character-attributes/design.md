@@ -66,7 +66,7 @@ A new character is `createCharacter` over the roster: level 1 in its first phase
 ## Open
 
 - [ ] **Every Attributes-tab number is computed the way the game computes it** — no source yet: no test sums a recorded character's lines to its Attributes tab; the one capture, `~/Esposter.noindex/genshin-parity/captures/character-attributes-1080.png` (Jean at level 50: Max HP 8,639, ATK 625, DEF 397), has no test.
-- [ ] **Every attribute's name is filed under its id in the game's text** — no source yet: only `FIGHT_PROP_BASE_HP` is checked, in `ManualTextMapConfigData.json`.
+- [ ] **Every attribute's name is filed under its id in the game's text** — partly cited: `packages/genshin-world/src/services/character/constants.ts` (lines 77 to 84) keys the base and advanced attributes to their game text ids (`GameTextKey.AttributeBaseHealth` and the rest), and `packages/genshin-world/src/services/character/getAttributeDetailGroups.ts` reads them; whether every `Attribute` has its key was not traced, and only `FIGHT_PROP_BASE_HP` is checked, in `ManualTextMapConfigData.json`.
 - [ ] **The crossbow rows are the Traveler's discarded shooter forms, from 7.1** — no source yet: the dump gives the five crossbow rows no English name and holds no patch version.
 - [ ] **The tables run to hundreds of kilobytes** — no source yet: the published stats files are not in the checkout.
 - [ ] **The Traveler's base HP, ATK and DEF match the wiki at each level and phase** — no source yet: the wiki's Traveler page is not cached.
