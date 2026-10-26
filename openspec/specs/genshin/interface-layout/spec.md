@@ -79,5 +79,5 @@ A screen SHALL keep only the pieces of its published record that it places by na
 - [ ] **A clip that moves a parent piece moves every piece nested in it** — no source yet: no test holds `data-clip-target`, and no clip in the extracted set names `Center/SwitchServer`.
 - [ ] **A run-time prefab stays in its place inside its container on any window** — no source yet: no recording or test holds the prefab's place.
 - [ ] **A screen keeps only the named pieces of its record** — no source yet: no test holds the named filter; the fit test covers only the keys.
-- [ ] **A fit publishes the tree's rects as each screen's record of the hosted game data** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Unity's anchors, pivots and size deltas map exactly onto absolute positioning with calc** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A fit publishes the tree's rects as each screen's record of the hosted game data** — the repo files that would settle it: `scripts/src/services/genshinAssets/fit/fitInterfaceRects.ts` (the fit) and `packages/genshin-world/src/generated/gameDataLock.json` (the published `hud/interfaceRects` and `login/interfaceRects` entries).
+- [ ] **Unity's anchors, pivots and size deltas map exactly onto absolute positioning with calc** — the repo's side is `packages/genshin-interface/src/services/computeRectOffsets.ts` and `toCanvasRectStyle.ts`, with their two test files; the game's side has no source yet, and needs a recording of the login at a second window size.
