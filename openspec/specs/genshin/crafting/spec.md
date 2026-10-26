@@ -272,4 +272,5 @@ A conversion SHALL be listed under a tab of its own, apart from the craft tab of
 ## Open
 
 - [ ] **The bench stands in Mondstadt's Market District** — no source yet: the scene group record that names the region is not in the dump backup; NPC 10256 is born in group 133004082 (`~/Esposter.noindex/genshin-dump-backup-6.6/BinOutput/Scene/SceneNpcBorn/scene3_npcborn.json`) at (2267.3, 216.0, -889.3), which does not name it.
+- [ ] **A talent's extra with no room in the bag is dropped** — no source yet: the `addInventoryItem` call that drops it was not read.
 - [ ] **A combine type eleven row disassembles a mechanical fish into drops** — no source yet: the dump's type 11 rows disassemble Maintenance Mek parts and a Secret Source Scout Sweeper, and name no mechanical fish.
