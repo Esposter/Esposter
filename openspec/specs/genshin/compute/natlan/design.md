@@ -19,4 +19,3 @@
 
 - [ ] **The solve draws its posed frame to the pose folder** — no source yet: the cited path `~/Esposter/genshin-parity/pose/people-of-the-springs-location.png` is an output target, not evidence.
 - [ ] **The shadows solve draws its edge image outside the repository** — no source yet: the cited path `~/Esposter/genshin-parity/shadows/people-of-the-springs-location.png` is an output target, not evidence.
-- [ ] **Our kit colours come from the natlan region's palette** — no source yet: the cited file `regions/natlan/palette` is not on disk.
