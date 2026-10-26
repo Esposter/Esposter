@@ -54,7 +54,7 @@ single operation resolves is a bug wearing rigour.
 - **Shared reactive state lives in a Pinia store** — never `createSharedComposable`, never a bare `ref` at module scope (both `no-restricted-syntax`, `references/shared-state.md`).
 - **`Promise.resolve(value)` for sync-to-async** — when a sync expression must satisfy a `Promise<T>` return type, never `async () => value`.
 - **Don't annotate composable return types** — let TypeScript infer. Only annotate if inference fails or a contract must be enforced.
-- **Call a composable at setup, never inside a callback** — outside the component's effect scope its cleanup never registers, so the timer or listener outlives unmount and a fresh one leaks per invocation (`references/resource-cleanup.md`).
+- **Call a composable at setup, never inside a callback** (`references/resource-cleanup.md`).
 
 ## MaybeRefOrGetter vs Function Argument
 
@@ -64,7 +64,7 @@ single operation resolves is a bug wearing rigour.
 
 A validation rule lives in one of three layers, chosen by what it depends on: a builder in the library's `UiRules`, a shared composable,
 or a refinement on the form schema when the form is a schema form. Extract on the 2nd copy — never duplicate an inline
-rule across dialogs. Which layer, and where a schema form's refinement is built: `references/form-dialogs.md`.
+rule across dialogs. Where a schema form's refinement is built: `references/form-dialogs.md`.
 
 ## Extract Duplicate Mutation Blocks — Builder Arg for Discriminated-Union Inputs
 
@@ -86,7 +86,7 @@ Scroll, connectivity and every other browser-only reading has one right shape he
 
 ## Least API Calls — Dirty-Check Saves
 
-Every API call must be necessary. **Never fire a persistence call — tRPC mutation or localStorage write — when the payload equals what was last persisted.** The check belongs to `useSave`, and a load goes through its `setState` so the snapshot resets; the two silent offenders (save-on-mount from a `watch`, an interval saving every tick) and the snapshot semantics are `references/async-sequencing.md`.
+Every API call must be necessary. **Never fire a persistence call — tRPC mutation or localStorage write — when the payload equals what was last persisted.** The check belongs to `useSave`, and a load goes through its `setState` so the snapshot resets; the silent offenders and the snapshot semantics are `references/async-sequencing.md`.
 
 ## Async Sequencing — One Primitive
 
