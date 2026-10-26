@@ -41,3 +41,5 @@ The door the glide comes to rest at: it assembles at the walkway's far end as th
 - [ ] **The glow reads each piece's slit through `doorSlitWorldX`** — no source yet: the game's per-piece slit was not measured, so where the line sits during the rise is settled by the eye-check.
 - [ ] **The door casts no shadow** — no source yet: only the exported copies are set `castShadow = false` (`packages/genshin-world/src/services/login/door/rideLoginWitnessDoor.ts`), and our door's setting was not located.
 - [ ] **The door's shape is its mesh's front, traced and extruded layer by layer through each piece's depth** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The title's frames show the walkway running on with no door on it** — no source yet: no frame of the title is cited for the walkway before the door is due.
+- [ ] **The recording's door grows about 1.7 times during the rush** — no source yet: no measure of the door's size across the recording's frames is cited.
