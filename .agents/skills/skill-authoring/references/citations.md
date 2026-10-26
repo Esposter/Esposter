@@ -7,7 +7,7 @@ Nothing resolves a link out of a skill: no renderer opens one, and a relative `.
 So a citation is the **repo-relative path in backticks** — `openspec/specs/architecture/agent-configuration/design.md` —
 which is what a reader greps, opens and edits, and which stays right when the skill moves. The one other root is
 `apps/web`, for the prefixes `APP_RELATIVE_PREFIXES` in `packages/configuration/src/services/constants.ts` lists, since the
-docs' Key Files tables write app paths that way; a path relative to anything else (the old root `docs/` architecture page, say)
+docs' Key Files tables write app paths that way; a path relative to anything else (a `docs/` page at the root, say)
 resolves nowhere and is the form that silently rots.
 `scripts/src/workspace/citations.test.ts` resolves every backticked path, and every name written ``… `x` skill``,
 across the agent tree, the docs and the READMEs, so a citation of a moved file or a renamed skill fails `pnpm test` —

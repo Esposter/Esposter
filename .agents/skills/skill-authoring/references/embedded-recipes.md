@@ -33,4 +33,4 @@ A pnpm script whose only caller is an agent is named **`ai:<domain>:<verb>`** by
 
 The invocation and the reasons: why the recipe is not a grep, what its output means, which of its silences are lies. What it loses is the body and every paragraph that existed to explain a trap inside the body — those become the tests, which say it better and fail when they stop being true.
 
-A migration is finished when the page names the script, the script has a test for each trap the prose used to carry, and both manifests plus the script-table rows name it.
+A migration is finished when the page names the script, the script has a test for each trap in the prose it replaces, and both manifests plus the script-table rows name it.
