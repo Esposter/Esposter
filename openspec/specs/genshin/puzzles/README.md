@@ -1,6 +1,6 @@
 # Puzzles
 
-The servers' puzzle mechanisms are not in the client's data, so the map's public points stand in for their places, per the [spawned places](../spawned-places/design.md) page. This page is the built half of the [puzzles](../../../changes/genshin-puzzles/design.md) proposal: each puzzle mark the map gives is carried into its region's slice by its kind (`scripts/src/services/genshinAssets/puzzles/buildPuzzlePlaces.ts`), and an Elemental Monument is a small state machine that a strike or a reaction lights (`packages/genshin-world/src/models/puzzle/ElementalMonument.ts`). The Mondstadt Seelies are paired with their courts and led in the world (`packages/genshin-world/src/services/puzzle/pairSeelieCourts.ts`); the monuments are not yet placed in the world, drawn, struck or solved.
+The servers' puzzle mechanisms are not in the client's data, so the map's public points stand in for their places, per the [spawned places](../spawned-places/design.md) page. This page is the built half of the [puzzles](../../../changes/genshin-puzzles/design.md) proposal: each puzzle mark the map gives is carried into its region's slice by its kind (`scripts/src/services/genshinAssets/puzzles/buildPuzzlePlaces.ts`), and an Elemental Monument is a small state machine that a strike or a reaction lights (`packages/genshin-world/src/models/puzzle/ElementalMonument.ts`, lit by `packages/genshin-world/src/services/puzzle/strikeElementalMonument.ts`). The Mondstadt Seelies are paired with their courts and led in the world (`packages/genshin-world/src/services/puzzle/pairSeelieCourts.ts`, led by `packages/genshin-world/src/services/puzzle/stepSeelie.ts`); the monuments are not yet placed in the world, drawn, struck or solved.
 
 ## How it works
 
@@ -18,7 +18,7 @@ flowchart TD
 
 `pnpm -C scripts genshin:assets puzzles` publishes one slice per region to the puzzles dataset of the [hosted game data](../hosted-game-data/design.md), in the shape the [chests](../chests/design.md) page describes. Its report lists each region's places and the ones it left out (`scripts/src/services/genshinAssets/commands/puzzlesCommand.ts`).
 
-- **The four kinds are the map's labels.** An Elemental Monument is the monument label, a Seelie is the Seelie label with the two variants the map names beside it (Electro and Warming), a Shrine of Depths is each nation's and the borderland's shrine label, and a Time Trial Challenge is the challenge label. The map gives each nation's shrine a label of its own, so the kind is the one thing those labels share (`scripts/src/services/genshinAssets/puzzles/PuzzleKindLabelIdsMap.ts`).
+- **The five kinds are the map's labels.** An Elemental Monument is the monument label, a Seelie is the Seelie label with the two variants the map names beside it (Electro and Warming), a Seelie court is the Seelie Court label, a Shrine of Depths is each nation's and the borderland's shrine label, and a Time Trial Challenge is the challenge label. The map gives each nation's shrine a label of its own, so the kind is the one thing those labels share (`scripts/src/services/genshinAssets/puzzles/PuzzleKindLabelIdsMap.ts`).
 - **The ground only and the mapped areas only.** As the chests are, a point on a layer under the ground or in an area no region is mapped to is counted and left out (`scripts/src/services/genshinAssets/puzzles/buildPuzzlePlaces.ts`).
 - **Only places.** The map gives no element, no timing and no wiring for a mark, so none of those is published. The builder shares its placement with the chests' builder, the `placeMapPoints` primitive, so a kind of point is one label map away from a slice (`scripts/src/services/genshinAssets/points/placeMapPoints.ts`).
 
@@ -34,7 +34,7 @@ flowchart TD
 
 | File                                                                  | Role                                                                    |
 | :-------------------------------------------------------------------- | :---------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/puzzle/PuzzleKind.ts`              | The four kinds the official map marks as puzzles                        |
+| `packages/genshin-world/src/models/puzzle/PuzzleKind.ts`              | The five kinds the official map marks as puzzles                        |
 | `packages/genshin-world/src/models/puzzle/PuzzlePlace.ts`             | A placed puzzle mechanism: its id, kind and ground point                |
 | `packages/genshin-world/src/services/puzzle/constants.ts`             | The timed monument's lit time, and a Seelie's return and route times    |
 | `scripts/src/services/genshinAssets/puzzles/PuzzleKindLabelIdsMap.ts` | Each kind's labels on the official map                                  |
@@ -48,7 +48,6 @@ flowchart TD
 
 ## Open
 
-- [ ] **The servers' puzzle mechanisms are not in the client's data** — no source yet: the extracted game data was not searched for puzzle mechanisms.
-- [ ] **The four kinds are the official map's labels, and the map gives no element, timing or wiring for a mark** — no source yet: the official map's label tree the builder reads is not among the caches read, so its labels and what it omits are unchecked.
-- [ ] **an Elemental Monument is a small state machine that a strike or a reaction lights** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **the Mondstadt Seelies are paired with their courts and led in the world** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The servers' puzzle mechanisms are not in the client's data** — no source yet: the servers' puzzle logic is not on disk; the extracted `lua` folder holds only `~/Esposter/genshin-parity/extracted/lua/raw/scene3_dummy_points.json`, which places quest points.
+- [ ] **The map gives no element, timing or wiring for a mark** — no source yet: what the points' `ext_attrs` key 11 means for a mark is not settled; its values 71 to 73 are named Torch Puzzle, Large Rock Pile and Small Rock Pile in `~/Esposter/genshin-parity/references/interactive-map/label-tree.json`.
+- [ ] **The monuments are not yet placed in the world, drawn, struck or solved** — contradicted by `packages/genshin-world/src/composables/useWorldPuzzles.ts`: monuments are created, struck and solved there.
