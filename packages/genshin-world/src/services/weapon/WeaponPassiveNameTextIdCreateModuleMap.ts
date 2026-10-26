@@ -28,6 +28,7 @@ import { createDebutPassiveModule } from "#src/services/weapon/passives/createDe
 import { createDecimatePassiveModule } from "#src/services/weapon/passives/createDecimatePassiveModule";
 import { createDeterminationPassiveModule } from "#src/services/weapon/passives/createDeterminationPassiveModule";
 import { createDiffusingBoundaryPassiveModule } from "#src/services/weapon/passives/createDiffusingBoundaryPassiveModule";
+import { createDodocoTalesPassiveModule } from "#src/services/weapon/passives/createDodocoTalesPassiveModule";
 import { createDolorousStrokePassiveModule } from "#src/services/weapon/passives/createDolorousStrokePassiveModule";
 import { createEagleSpearOfJusticePassiveModule } from "#src/services/weapon/passives/createEagleSpearOfJusticePassiveModule";
 import { createEchoesOfThePlentifulLandPassiveModule } from "#src/services/weapon/passives/createEchoesOfThePlentifulLandPassiveModule";
@@ -43,6 +44,7 @@ import { createFinaleOfTheDeepPassiveModule } from "#src/services/weapon/passive
 import { createFlowerFeatherSongPassiveModule } from "#src/services/weapon/passives/createFlowerFeatherSongPassiveModule";
 import { createFlowingPurityPassiveModule } from "#src/services/weapon/passives/createFlowingPurityPassiveModule";
 import { createFocusPassiveModule } from "#src/services/weapon/passives/createFocusPassiveModule";
+import { createFrostBurialPassiveModule } from "#src/services/weapon/passives/createFrostBurialPassiveModule";
 import { createFullHPCriticUpPassiveModule } from "#src/services/weapon/passives/createFullHPCriticUpPassiveModule";
 import { createGashPassiveModule } from "#src/services/weapon/passives/createGashPassiveModule";
 import { createGildingPassiveModule } from "#src/services/weapon/passives/createGildingPassiveModule";
@@ -68,7 +70,9 @@ import { createLegacyOfLangGanPassiveModule } from "#src/services/weapon/passive
 import { createMagicAffinityPassiveModule } from "#src/services/weapon/passives/createMagicAffinityPassiveModule";
 import { createManyOathsOfDawnAndDuskPassiveModule } from "#src/services/weapon/passives/createManyOathsOfDawnAndDuskPassiveModule";
 import { createMournfulTributePassiveModule } from "#src/services/weapon/passives/createMournfulTributePassiveModule";
+import { createNocturnalDreamsPassiveModule } from "#src/services/weapon/passives/createNocturnalDreamsPassiveModule";
 import { createOathOfQhapaqNanPassiveModule } from "#src/services/weapon/passives/createOathOfQhapaqNanPassiveModule";
+import { createOceanicVictoryPassiveModule } from "#src/services/weapon/passives/createOceanicVictoryPassiveModule";
 import { createOfferingUntoWindAndSunPassiveModule } from "#src/services/weapon/passives/createOfferingUntoWindAndSunPassiveModule";
 import { createPactOfFlowingSpringsPassiveModule } from "#src/services/weapon/passives/createPactOfFlowingSpringsPassiveModule";
 import { createParticleHealPassiveModule } from "#src/services/weapon/passives/createParticleHealPassiveModule";
@@ -85,6 +89,7 @@ import { createRepentanceAndRedemptionPassiveModule } from "#src/services/weapon
 import { createRustPassiveModule } from "#src/services/weapon/passives/createRustPassiveModule";
 import { createSamuraiConductPassiveModule } from "#src/services/weapon/passives/createSamuraiConductPassiveModule";
 import { createSeasonedSymphonyPassiveModule } from "#src/services/weapon/passives/createSeasonedSymphonyPassiveModule";
+import { createSecretWisdomsFavorPassiveModule } from "#src/services/weapon/passives/createSecretWisdomsFavorPassiveModule";
 import { createSharpPassiveModule } from "#src/services/weapon/passives/createSharpPassiveModule";
 import { createSkillAndBurstDamagePassiveModule } from "#src/services/weapon/passives/createSkillAndBurstDamagePassiveModule";
 import { createSkillBuffPassiveModule } from "#src/services/weapon/passives/createSkillBuffPassiveModule";
@@ -459,4 +464,20 @@ export const WeaponPassiveNameTextIdCreateModuleMap: Readonly<
   "4236194011": createPressTheAdvantagePassiveModule,
   // Composed (Sacrificial Greatsword)
   "4267154851": createComposedPassiveModule,
+  // Golden Majesty (Summit Shaper, The Unforged, Memory of Dust), the same passive under text ids of their own
+  "649271795": createGoldenMajestyPassiveModule,
+  "1405856115": createGoldenMajestyPassiveModule,
+  "2253836555": createGoldenMajestyPassiveModule,
+  // Frost Burial (Snow-Tombed Starsilver, Dragonspine Spear, Frostbearer)
+  "486943795": createFrostBurialPassiveModule,
+  "1340415043": createFrostBurialPassiveModule,
+  "2459894187": createFrostBurialPassiveModule,
+  // Nocturnal Dreams (Dawning Frost)
+  "1658621971": createNocturnalDreamsPassiveModule,
+  // Dodoventure! (Dodoco Tales)
+  "3845860483": createDodocoTalesPassiveModule,
+  // Oceanic Victory (Luxurious Sea-Lord)
+  "1016634707": createOceanicVictoryPassiveModule,
+  // Secret Wisdom's Favor (Ibis Piercer)
+  "4279279011": createSecretWisdomsFavorPassiveModule,
 };
