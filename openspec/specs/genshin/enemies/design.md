@@ -48,11 +48,11 @@ What the game's table does not hold is authored from the wiki in `EnemyKindTrait
 
 A region's data places its enemies in camps, each member with its kind, its level at World Level 0, its spawn and its patrol. The world spawns each member at the level its World Level raises it to, as the [Adventure Rank](../adventure-rank/design.md) page sets out, and a change of World Level spawns every camp anew. The world spawns a camp when its region's data arrives, and drops it when the region leaves reach (`packages/genshin-world/src/components/World/Enemies/Index.vue`). A member defeated earlier is spawned again only once its respawn time has passed (`packages/genshin-world/src/services/enemy/computeEnemyRespawnTime.ts`, `packages/genshin-world/src/services/enemy/checkIsEnemyRespawned.ts`), so an enemy never comes back in view:
 
-| Camp                   | A defeated member comes back                              |
-| :--------------------- | :-------------------------------------------------------- |
-| Common enemies only    | 12 hours after its defeat (`packages/genshin-world/src/services/enemy/constants.ts`) |
+| Camp                   | A defeated member comes back                                                                                                  |
+| :--------------------- | :---------------------------------------------------------------------------------------------------------------------------- |
+| Common enemies only    | 12 hours after its defeat (`packages/genshin-world/src/services/enemy/constants.ts`)                                          |
 | With an elite among it | at the next daily reset, 04:00 on the server's clock (`packages/genshin-world/src/services/enemy/computeEnemyRespawnTime.ts`) |
-| With a boss among it   | 5 seconds after its Trounce Blossom is claimed |
+| With a boss among it   | 5 seconds after its Trounce Blossom is claimed                                                                                |
 
 The daily reset is the server's 04:00, UTC+8, the one clock every reset of the world is read on, as the [reset clock](../reset-clock/design.md) sets out (`packages/genshin-world/src/services/time/constants.ts` for the hour and the zone, and the `REFRESH_DAILY` rows of `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json` with `14400`, the 4:00 hour).
 
@@ -128,6 +128,7 @@ A capsule that a hit landed on is tinted white for 0.15 seconds after the hit, a
 - `world-camp.mkv` — walking up to a Hilichurl camp until it wakes, then backing away until it returns home. On the wiki and YouTube, none found (searched 2026-10-11).
 
 ## Open
+
 - [ ] **The enemies notice whoever comes near, fight together and leash home, as the wiki documents** — no source yet: the wiki's Enemy page, named in Sources, is in neither the wiki cache nor the wiki snapshots under `~/Esposter.noindex/genshin-parity/` (searched 2026-10-26).
 - [ ] **Stormterror's shield is a fifth of its max HP** — no source yet: the wiki's Stormterror page is in neither the wiki cache nor the `genshin-parity` snapshots.
 - [ ] **Each energy threshold gives its energy once for the enemy's life** — no source yet: the wiki's Energy/Data page, named in Sources, is in neither the wiki cache nor the `genshin-parity` snapshots.
@@ -145,9 +146,9 @@ A capsule that a hit landed on is tinted white for 0.15 seconds after the hit, a
 - [ ] **An elite's camp comes back whole at the next daily reset** — no source yet: the cited file wiki-Reset.json is not on disk
 - [ ] **A camp with a boss among it comes back at once, its reward taken as claimed** — no source yet: the cited file wiki-Reset.json is not on disk
 - **The family is the archive's group, and the type is the security level** — `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/AnimalCodexExcelConfigData.json` (`subType`) and `MonsterExcelConfigData.json` (`securityLevel`, ELITE on 439 rows and BOSS on 300, common where absent), as `scripts/src/services/genshinAssets/enemies/buildEnemyKinds.ts` reads them.
-- **A common enemy comes back 12 hours after its defeat** — ("Respawns 12 hours after harvest": common enemies outside an elite's group), and `packages/genshin-world/src/services/enemy/computeEnemyRespawnTime.ts`.
-- **An elite's camp comes back whole at the next daily reset** — (common enemies in an elite's group respawn with the elite at daily reset), and `packages/genshin-world/src/services/enemy/computeEnemyRespawnTime.ts`.
-- **A camp with a boss among it comes back at once, its reward taken as claimed** — ("Normal Bosses respawn immediately after claiming the Trounce Blossom"); the repo waits five seconds after the claim (`packages/genshin-world/src/services/bosses/constants.ts`).
+- **A common enemy comes back 12 hours after its defeat** — the wiki's Reset rule, unsourced until the Open item above is resolved (its file is not on disk), and `packages/genshin-world/src/services/enemy/computeEnemyRespawnTime.ts`.
+- **An elite's camp comes back whole at the next daily reset** — the wiki's Reset rule, unsourced until the Open item above is resolved (its file is not on disk), and `packages/genshin-world/src/services/enemy/computeEnemyRespawnTime.ts`.
+- **A camp with a boss among it comes back at once, its reward taken as claimed** — the wiki's Reset rule, unsourced until the Open item above is resolved (its file is not on disk); the repo waits five seconds after the claim (`packages/genshin-world/src/services/bosses/constants.ts`).
 - **An enemy is drawn as a capsule, tinted by its AI's state** — `packages/genshin-world/src/components/World/Enemies/Index.vue`, which tints each capsule by `EnemyStateColorMap`.
 - **`stepEnemy` is one deterministic step that reads no clock or random source** — `packages/genshin-world/src/services/enemy/stepEnemy.ts`.
 - **`damageEnemy` takes the damage and poise damage combat's formula computes for a hit** — `packages/genshin-world/src/services/enemy/damageEnemy.ts`, fed by `packages/genshin-world/src/services/kit/strikeEnemy.ts`, which prices the hit through `getDamage`.
