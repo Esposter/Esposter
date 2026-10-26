@@ -280,7 +280,5 @@ A verification SHALL fetch every object the lock reaches from each account and S
 
 ## Open
 
-- [ ] **An entity missing from its index fails with "not in its index"** — no source yet: no error text "not in its index" was found in `packages/genshin-world/src/services/data/` or `scripts/src/services/`.
-- [ ] **A failed or timed-out fetch is retried by the next read** — no source yet: the failure path of `createEvictingPromiseCache` in `@esposter/shared` was not read.
 - [ ] **A screen keeps what it showed and logs a later read's failure** — no source yet: only the world's gate and the opening's logging were checked.
 - [ ] **A book record is parsed by its schema before it is published** — no source yet: `scripts/src/services/genshinAssets/archive/buildBookBodyPublication.ts` shows no schema parse.

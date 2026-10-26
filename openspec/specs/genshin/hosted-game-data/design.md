@@ -108,7 +108,7 @@ flowchart TD
 
 ## Reading
 
-`readGameData` reads the lock, then the record its key names; `readGameDataEntry` reads the lock, then the index object, then the one record (`packages/genshin-world/src/services/data/readGameData.ts`, `readGameDataEntry.ts`). Each fetch is memoized by URL for the page's life, a failed fetch is dropped from the memo so the next read retries it, and a fetch is abandoned after `DATA_FETCH_TIMEOUT_MS` (`packages/genshin-world/src/services/data/readGameDataObject.ts`; `packages/genshin-world/src/services/constants.ts`, 10 seconds). A reader parses the value with its own schema each time, so each caller holds a value of its own, and every function over a record stays pure and synchronous, taking it as an argument.
+`readGameData` reads the lock, then the record its key names; `readGameDataEntry` reads the lock, then the index object, then the one record (`packages/genshin-world/src/services/data/readGameData.ts`, `readGameDataEntry.ts`). Each fetch is memoized by URL for the page's life, a failed fetch is dropped from the memo so the next read retries it, and a fetch is abandoned after `DATA_FETCH_TIMEOUT_MS` (`packages/genshin-world/src/services/data/readGameDataObject.ts`, `packages/shared/src/util/promise/createEvictingPromiseCache.ts`; `packages/genshin-world/src/services/constants.ts`, 10 seconds). A reader parses the value with its own schema each time, so each caller holds a value of its own, and every function over a record stays pure and synchronous, taking it as an argument.
 
 The base URL is the AppAssets path of the account the page reads (`getGenshinGameDataBaseUrl`, `apps/web/shared/services/genshin/getGenshinGameDataBaseUrl.ts`): dev reads the dev account, production the production account. Two async boundaries hold every read the world needs before it draws, and a third entry point hands a worker what one of them read:
 
@@ -219,7 +219,7 @@ There is no client-side hash check: TLS, the immutable keys and the schema parse
 
 - **Azure serves the objects directly, with no CDN.** Immutable caching already answers a repeat visit without a request, and [a CDN in front of Blob storage](../../../rejected/infra/cdn-in-front-of-blob-storage/design.md) would change only the base URL.
 - **Nothing is served through the app.** No Nitro route carries the data, so no build compresses it, and [static data in public assets](../../../rejected/genshin/static-data-in-public-assets/design.md) stays rejected.
-- **Each language is one index,** not one object per entity, so a reader fetches the one index of its language rather than an object for each entry it shows (``packages/genshin-world/src/generated/gameDataLock.json``, its `profile/<Language>` and `bookBody/<Language>` indexes).
+- **Each language is one index,** not one object per entity, so a reader fetches the one index of its language rather than an object for each entry it shows (`packages/genshin-world/src/generated/gameDataLock.json`, its `profile/<Language>` and `bookBody/<Language>` indexes).
 - **The keys are `profile/<Language>` and `bookBody/<Language>`,** with the entity id as the entry key, in decimal (`packages/genshin-world/src/generated/gameDataLock.json`).
 - **Each dataset is one builder that returns records.** A step hands its records to the publisher, scoped to the dataset it replaces, and a code-named record takes a key of its own (`stats/weapons`, `gcg/standardRule`), each deck `gcg/deck<id>` (`scripts/src/models/gameData/GameDataBuild.ts`).
 - **The lock imports statically,** through the package's own `#src/*.json` import, as achievementCount does, and nothing else the package imports is data.
@@ -356,5 +356,4 @@ There is no client-side hash check: TLS, the immutable keys and the schema parse
 - [ ] **A book body must be a string when it is written** — no source yet: `scripts/src/services/genshinAssets/archive/buildBookBodyPublication.ts` shows no string check.
 - [ ] **`authored` refuses a ground file whose region's record holds hills** — no source yet: `scripts/src/services/gameData/readAuthoredGameData.ts` was not read for the refusal.
 - [ ] **The app server builds the save schema at import, where no read can be awaited** — no source yet: `apps/web/server/models/genshin/GenshinSaveEnvelope.ts` was found, but its import of the achievement bound was not read.
-- [ ] **A failed fetch is dropped from the memo, so the next read retries it** — no source yet: `createEvictingPromiseCache` in `@esposter/shared` was not read for its failure path.
 - [ ] **A surface part's palette is not read, and its schema drops it** — no source yet: the surfaces' schema was not located or read.
