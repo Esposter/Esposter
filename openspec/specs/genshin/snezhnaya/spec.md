@@ -1,6 +1,6 @@
 ## Purpose
 
-Snezhnaya's built parts. Its industrial and capital building kits are parametric generators over the engine's box and lathe kits, each a hall or a factory standing on the origin, and the Kresnik's Torch is a stone plinth, shaft and brazier with a flame standing in its cup. Snezhnograd's first hall stands in its region data at a provisional place.
+Snezhnaya's built parts. Its industrial and capital building kits are parametric generators over the engine's box and lathe kits (`packages/genshin-world/src/services/snezhnaya/createFactoryGeometry.ts`, `packages/genshin-world/src/services/snezhnaya/createHallGeometry.ts`), each a hall or a factory standing on the origin, and the Kresnik's Torch is a stone plinth, shaft and brazier with a flame standing in its cup (`packages/genshin-world/src/services/snezhnaya/createKresnikTorchGeometry.ts`). Snezhnograd's first hall stands in its region data (`packages/genshin-world/src/data/regions/snezhnaya.json`) at a provisional place.
 
 ## Requirements
 
