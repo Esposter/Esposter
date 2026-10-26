@@ -1,6 +1,6 @@
 ## Purpose
 
-The plants and specialties the official map marks, placed by the fit into each region as gathering points, picked with F and kept gone until their respawn. A local specialty comes back 46 hours after it is picked, as the wiki gives it, and a cooking ingredient at the daily reset that follows. The gather table's refresh ids name no policy in the dump, so the category settles it (`~/Esposter/genshin-parity/text/ExcelBinOutput/GatherExcelConfigData.json`, checked against `RefreshPolicyExcelConfigData.json`).
+The plants and specialties the official map marks, placed by the fit into each region as gathering points, picked with F and kept gone until their respawn. A local specialty comes back 46 hours after it is picked, as the wiki gives it, and a cooking ingredient at the daily reset that follows. The gather table's refresh ids name no policy in the dump, so the category settles it (`~/Esposter/genshin-parity/text/ExcelBinOutput/GatherExcelConfigData.json`, checked against `~/Esposter/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`).
 
 ## Requirements
 
@@ -152,7 +152,7 @@ A broken ore SHALL stand again on its own respawn: an iron chunk at the daily re
 
 ## Sources
 
-- [Local Specialty](https://genshin-impact.fandom.com/wiki/Local_Specialty), Genshin Impact Wiki: "After a local specialty is harvested, it will respawn after 46 hours." The [Reset](https://genshin-impact.fandom.com/wiki/Reset) page lists All Local Specialties at 48 hours (see the design's Open).
+- [Local Specialty](https://genshin-impact.fandom.com/wiki/Local_Specialty), Genshin Impact Wiki, not in the wiki cache: "After a local specialty is harvested, it will respawn after 46 hours." The [Reset](https://genshin-impact.fandom.com/wiki/Reset) page, also not in the wiki cache, lists All Local Specialties at 48 hours (see the design's Open).
 
 ## Open
 
