@@ -62,3 +62,8 @@ Kachina's skill SHALL play its 48-frame animation and SHALL deal no hit yet.
 - **WHEN** the player presses the skill
 - **THEN** its 48-frame animation plays
 - **AND** no hit lands
+
+## Open
+
+- [ ] **Her action lengths of 160, 186, 198 and 206 frames for the normal attacks, 48 for the skill and 50 for the burst** — no source yet: the clip lengths sit in the extracted timings, and the JSON export does not decode them.
+- [ ] **The burst's Geo hit at 18 frames** — no source yet: neither the clip nor a source gives the frame.
