@@ -5,7 +5,7 @@ A domain is an instance behind a temple-like entrance, challenged for a reward. 
 ## Decisions
 
 - **Each kind opens at its rank.** `DomainOpenRankMap` holds Forgery at 16, Blessing at 22 and Mastery at 27, the ranks the proposal states. `checkIsDomainKindOpenAtRank` is open from the rank on. The wiki's Domain page is not yet read for them (see Open).
-- **A Domain of Blessing opens on Sundays and its two set days.** `checkIsDomainKindOpenOnDay` reads its set days the way it reads Forgery's and Mastery's; the game's own days for it are not read (see Open).
+- **A Domain of Blessing opens on Sundays and its two set days.** `checkIsDomainKindOpenOnDay` reads its set days the way it reads Forgery's and Mastery's; the game's own days for it are not read (see Open). The builder gives every Blessing level all seven weekdays (`scripts/src/services/genshinAssets/domains/toDomainLevels.ts`), so the data opens it every day until those days are read.
 - **A Domain of Forgery or Mastery opens every Sunday and on its two set days.** `checkIsDomainKindOpenOnDay` takes the moment checked and the two weekdays the table sets for the kind, and reads the moment's game day from the reset clock. A Sunday opens every kind. Weekdays are Temporal's, Monday 1 to Sunday 7, with `SUNDAY_DAY_OF_WEEK` for Sunday.
 - **The day is the game's day.** The moment checked is read on the reset clock, so its game day turns at 04:00 in UTC+8 as the game's server does and as [Original Resin](../original-resin/design.md) counts its Primogem refills. A moment before that reset is still the previous game day, and a Domain of Forgery's day turns at the reset, not at midnight. This call is settled from the resin page's rule, not from a new source.
 
@@ -24,9 +24,9 @@ flowchart TD
 ## Not built yet
 
 - **The entrances and their landmark.** Each entrance is placed from the streaming records, which the fit does not read yet. No `LandmarkKind` is added until a fit produces one.
-- **The days each kind sets.** They sit in DailyDungeonConfigData, which the dump does not hold, so no caller passes them yet. DungeonExcelConfigData and DungeonEntryExcelConfigData are missing from the dump too, so the levels wait on the same reader.
+- **The days each kind sets.** They sit in DailyDungeonConfigData, which the dump holds under obfuscated keys (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/DailyDungeonConfigData.json`) and no builder reads, so no caller passes them yet. The builder reads DungeonExcelConfigData and DungeonEntryExcelConfigData (`scripts/src/services/genshinAssets/domains/buildDomainLevels.ts`).
 - **The levels, challenges and scenes.** Waves, time limits, ley line disorders and the domain's own scene wait on those tables and on scene derivation.
-- **The Petrified Tree's reward.** Its claim is already priced at 20 as a domain blossom ([Original Resin](../original-resin/design.md)). Its reward rows wait on BlossomChestExcelConfigData, which the dump does not hold.
+- **The Petrified Tree's reward.** Its claim is already priced at 20 as a domain blossom ([Original Resin](../original-resin/design.md)). Its reward rows wait on BlossomChestExcelConfigData, which the dump holds (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/BlossomChestExcelConfigData.json`) and no builder reads yet.
 - **One-time domains and the quests' unlocks.** The first-clear rewards come with their table rows. A kind opens by its rank alone here, and an unlock by a quest, apart from the rank checks, waits on the wiki's quest rows being read.
 
 ## Key files
