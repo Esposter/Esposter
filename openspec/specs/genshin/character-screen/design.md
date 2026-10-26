@@ -39,7 +39,7 @@ Measured off the reference frame at 21:9, 3440 by 1440 pixels, in units: a pixel
 
 ## Decisions
 
-- **The layout is the reference's.** The game draws the characters across the top and the tabs down the left. It was read off the user's own recording of the build at 21:9 (`captures/session-2.mp4`, its English text, 49.9 frames a second), the character screen from about 154 seconds on, every tab in turn.
+- **The layout is the reference's.** The game draws the characters across the top and the tabs down the left. It was read off the user's own recording of the build at 21:9 (`~/Esposter.noindex/genshin-parity/captures/session-2.mp4`, its English text, 49.9 frames a second), the character screen from about 154 seconds on, every tab in turn.
 - **The panel is anchored to the right edge.** It moves with the window's width. Where the game anchors it at 16:9 is not measured yet: the reference is 21:9 only.
 - **The name has no element prefix yet.** The game writes the element before the name (`Geo / Xilonen`, `~/Esposter.noindex/genshin-parity/comparisons/character-attributes.png`). That needs the element on `CharacterMenuEntry`, which is not built, so the breadcrumb shows the name alone.
 - **The open tab's pill slides.** At 158 seconds the pill is still moving from Constellation to Talents while Talents' text is already bold, and by 159 seconds the pill has faded out of its old place. The slide is not measured yet; it waits on the recording named in the roadmap.
@@ -98,8 +98,8 @@ The Artifacts and Constellation references are timed to where their tabs have se
 
 - [ ] **In the game, `C` opens the character screen** — no source yet: no recording or wiki page of the key binding is in the parity folders, and the Character/Menu page is not in `~/Esposter.noindex/cache/genshin-wiki/`.
 - [ ] **The layout table's places** — no source yet: the 21:9 reference frame at 154 seconds is not saved as a still, so no measured place can be checked against it.
-- [ ] **The Attributes tab's sums** — no source yet: at the same state the reference reads Max HP 18,414, ATK 1,163, DEF 3,432 and Elemental Mastery 100 where the build reads 12,405, 817, 2,034 and 0 (`~/Esposter.noindex/genshin-parity/comparisons/character-attributes.png`).
-- [ ] **The level line in the game's `Lv.` wording** — no source yet: the reference writes "Level 90 / 90", not the "Lv." the Attributes bullet gives.
+- [ ] **The Attributes tab's sums** — contradicted by `~/Esposter.noindex/genshin-parity/comparisons/character-attributes.png`: the reference reads Max HP 18,414 where the build reads 12,405.
+- [ ] **The level line in the game's `Lv.` wording** — contradicted by `~/Esposter.noindex/genshin-parity/comparisons/character-attributes.png`: the game writes "Level 90 / 90", not "Lv. 90/90".
 - [ ] **The advanced group's values and percentage format** — no source yet: the game holds this group behind Details, so no reference frame shows its values.
 - [ ] **The Constellation panel's six lit rings** — no source yet: the reference's constellation list is too small in the saved still to count its lit rings, and no crop of it is saved.
 - [ ] **The five parity scores in the Notes table** — no source yet: no saved output of the scoring run holds the means or FLIP values.
