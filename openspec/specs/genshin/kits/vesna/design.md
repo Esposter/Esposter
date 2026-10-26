@@ -30,4 +30,4 @@ Vesna's kit is its record and one behaviour module, `createVesnaKitBehaviour` (`
 
 ## Open
 
-- [ ] **Her strikes and charged attack are Physical** — no source yet: the cached Vila Blade Dance page names no element for them, and gcsim has no Vesna folder.
+- [ ] **Her strikes and charged attack are Physical** — no source yet: the cached Vila Blade Dance page names no element for them, and gcsim has no Vesna folder. Checked the cache's Category_Vesna_Talents.json entries: Vila Blade Dance's infobox and advanced properties name no element, and The Art of Victory's Armed for Action text names Anemo only inside that form; no cached page says Physical.
