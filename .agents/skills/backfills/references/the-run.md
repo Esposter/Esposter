@@ -6,6 +6,6 @@ Read when running a backfill: writing its scratchpad script, the dry run, the de
 2. **Upload with `ifMatch` on the listed etag**, so a user's save landing mid-run wins and the document is simply retried on the next run.
 3. **Get the connection string from the Azure CLI** — `az storage account show-connection-string -n <account> -g <group>`; the accounts are `devstesposter001` and `prodstesposter001`.
 4. **Dry run, then write, on dev.** The dry run prints each document and slot count; the write run follows.
-5. **Prod straight after dev, without waiting for the deploy.** The code still serving prod reads the old shape, so a rewritten document fails there until the change deploys; that window is accepted; holding the backfill for a deploy the session cannot see is not.
+5. **Prod straight after dev, without waiting for the deploy**, the window `SKILL.md`'s settled list accepts.
 6. **Re-run until it reports nothing to change**, so a document skipped by a conflicting save is caught.
 7. **Delete the script.** Report the counts per store.
