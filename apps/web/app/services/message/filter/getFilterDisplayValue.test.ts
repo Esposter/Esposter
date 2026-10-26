@@ -6,6 +6,11 @@ import { describe, expect, test } from "vitest";
 
 describe(getFilterDisplayValue, () => {
   const value = "a";
+  const invalidValueMessage = new InvalidOperationError(
+    Operation.Read,
+    getFilterDisplayValue.name,
+    serializeValue(value),
+  ).message;
 
   // The chip a picker is still filling in shows its keyword alone
   test("a filter still waiting for its value renders as its keyword", () => {
@@ -40,7 +45,7 @@ describe(getFilterDisplayValue, () => {
     expect.hasAssertions();
 
     expect(() => getFilterDisplayValue({ type: FilterType.Pinned, value })).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, getFilterDisplayValue.name, serializeValue(value)).message}]`,
+      `[InvalidOperationError: ${invalidValueMessage}]`,
     );
   });
 
@@ -48,7 +53,7 @@ describe(getFilterDisplayValue, () => {
     expect.hasAssertions();
 
     expect(() => getFilterDisplayValue({ type: FilterType.AuthorType, value })).toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: ${new InvalidOperationError(Operation.Read, getFilterDisplayValue.name, serializeValue(value)).message}]`,
+      `[InvalidOperationError: ${invalidValueMessage}]`,
     );
   });
 });
