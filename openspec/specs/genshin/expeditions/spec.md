@@ -240,6 +240,7 @@ A character's expedition talent SHALL apply to the expedition on which that char
 
 ## Open
 
-- [ ] **A claim whose items would overflow the bag is refused** — no source yet: no test in `claimExpedition.test.ts` holds an overflowing bag.
+- [ ] **Two expeditions out at first** — no source yet: the wiki's Expedition page is not cached and the dump holds no base limit.
+- [ ] **A claim whose items would overflow the bag is refused** — no source yet: no test in `packages/genshin-world/src/services/expedition/claimExpedition.test.ts` holds an overflowing bag.
 - [ ] **A recall forfeits the reward** — no source yet: no test holds `recallExpedition`.
 - [ ] **A reload empties the expedition list** — no source yet: no test holds the session-only list.
