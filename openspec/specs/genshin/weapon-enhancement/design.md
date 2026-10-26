@@ -77,4 +77,4 @@ A bag weapon's entry holds its level, EXP, ascension and refinement, so the [wea
 
 - [ ] **Ten points of EXP cost one Mora, and a fodder gives back 80% of its invested EXP** — no source yet: the wiki's Weapon EXP page is not in `~/Esposter.noindex/cache/genshin-wiki/`, and the stats tables opened here state neither rate.
 - [ ] **A copy adds its own rank, a material adds one, and the ranks past the fifth are lost** — no source yet: the wiki's Refinement page is not in `~/Esposter.noindex/cache/genshin-wiki/`, and no table opened here states the refinement rule.
-- [ ] **A refinement material of zero means a copy alone refines the weapon** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A refinement material of zero means a copy alone refines the weapon** — no source yet: the weapon refinement records in `~/Esposter/genshin-parity/text/ExcelBinOutput/`, not yet read for a refinement material of zero.
