@@ -18,5 +18,4 @@ A recording is sampled to find its events, then each event is matched at its own
 
 - [ ] **A recording is sampled at one frame a second to find its events** — contradicted by `scripts/src/services/genshinParity/commands/framesCommand.ts`: its default is ten a second, not one.
 - [ ] **Window capture takes a frame only when the window changes** — no source yet: `scripts/src/services/genshinParity/game/captureGame.ts` was not traced for frame skipping.
-- [ ] **`props` applies the fixture's `motionProps` once the entry's animations finish** — no source yet: only the Startup fixture's `motionProps` was seen, and the order of application in `packages/genshin-world/parity/main.ts` was not traced.
 - [ ] **When the window delivers a frame** — no source yet: the ffmpeg gfxcapture section (`~/Esposter/cache/ffmpeg/ffmpeg-9.0.2-essentials_build/doc/ffmpeg-filters.html`) gives the rate but not when a frame is sent, and `scripts/src/services/genshinParity/game/captureGame.ts` is repo code, not a source for the timing.
