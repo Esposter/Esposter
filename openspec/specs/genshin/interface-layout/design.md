@@ -44,7 +44,7 @@ flowchart LR
 - [ ] **The login's loading row, account, build string and button columns ride in `Bottom` on any window** — no source yet: no recording at another window size, and no test, shows them riding in it.
 - [ ] **A nested `GameRect` is placed inside its parent's box** — no source yet: no test holds the nesting, and `GameRect` has no fixture.
 - [ ] **A scaled piece keeps its pivot corner where the tree places it** — no source yet: the export holds `GrpMap`'s scale of 0.6 but no pivot, and no test holds the scale origin.
-- [ ] **A `GridLayoutGroup`'s children read zero rects and are spaced as the recording shows** — no source yet: the children's rects are not checked against a recording, and the recording is not named.
+- [ ] **A `GridLayoutGroup`'s children read zero rects and are spaced as the recording shows** — no source yet: the page names no recording the spacing was measured from, so no recording on disk is named to check the children's rects against.
 - [ ] **A prefab or text line the tree cannot hold is measured on a recording** — no source yet: the recordings for `BtnPressStart` and the age rating's layout adaptor are not named, and no test holds their measures.
 - [ ] **A clip-moved `GameRect` carries its clip path as `data-clip-target`, and the door's prompt fades with `Center/SwitchServer`** — no source yet: no test holds `data-clip-target`, and no clip in the extracted set names `Center/SwitchServer`.
 - [ ] **The prompt's 38-unit measure is taken off a recording** — no source yet: the recording is not named.
