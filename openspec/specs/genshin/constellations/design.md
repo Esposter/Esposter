@@ -55,6 +55,7 @@ A non-raising constellation is a switch its character's kit module reads off the
 - [Masterless Stella Fortuna](https://genshin-impact.fandom.com/wiki/Masterless_Stella_Fortuna), Genshin Impact Wiki: one for a five-star drawn at its full constellations.
 
 ## Open
+
 - [ ] **All six of a set spend one item, the character's own** — no source yet for the character's own part: `scripts/src/services/genshinAssets/stats/getCharacterConstellationKits.ts` checks that the six share one item, that each costs one, and that the item is in the materials table, but does not compare the item with the character.
 - [ ] **Aloy's constellations cannot be activated, as the game's rule** — no source yet: the wiki's Aloy talent pages in the cache name no constellation rule.
-- [ ] **A few talent configs are missing from the revision the talent table matches** — no source yet: no listing of the configs against the matched revision is kept; the fetch from the default branch is in `scripts/src/services/genshinText/listDumpFiles.ts`, with `ANIME_GAME_DATA_BRANCH` in `scripts/src/services/genshinText/constants.ts`.
+- [ ] **A few talent configs are missing from the revision the talent table matches** — no source yet: no listing of the configs against the matched revision is kept; the fetch from the default branch is in `scripts/src/services/genshinText/listRemoteDirectory.ts`, which reads `ANIME_GAME_DATA_BRANCH` from `scripts/src/services/genshinText/constants.ts`.
