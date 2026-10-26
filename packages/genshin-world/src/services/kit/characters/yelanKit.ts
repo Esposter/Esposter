@@ -17,6 +17,7 @@ import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStat
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { gainKitResource } from "#src/services/kit/effects/gainKitResource";
 import { scheduleKitTask } from "#src/services/kit/effects/scheduleKitTask";
+import { toKitSeconds } from "#src/services/shared/toKitSeconds";
 import { takeOne } from "@esposter/shared";
 
 // Provisional: Depth-Clarion Dice waves an Exquisite Throw each second, its first a second after the burst's hit, as
@@ -56,7 +57,7 @@ const CONSTELLATION_1 = 1;
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yelan/burst.go
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_HEALTH_SHARE = 0.14;
-const CONSTELLATION_2_HITMARK_SECONDS = 17 / 60;
+const CONSTELLATION_2_HITMARK_SECONDS = toKitSeconds(17);
 const CONSTELLATION_2_INTERVAL_SECONDS = 1.8;
 const CONSTELLATION_2_INTERVAL_ID = "yelan-constellation-2-interval";
 const CONSTELLATION_2_RADIUS = 0.5;
