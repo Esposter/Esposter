@@ -6,7 +6,7 @@
 
 ## 2. Scene tasks
 
-- [ ] 2.1 Replace an area's enemies and objects with a scene task's while the task is open. Verify: a test named after the scenario 'a scene task replaces its area's enemies while it is open', seen failing first. Open: the region data holds one stand-in camp, three members in Mondstadt, and none for the scene groups a task's `newGroupIds` name. `EnemyCamp` carries no game group id, so a swap cannot say which camps it replaces, and the commission names no area for it to stand in. Waits on the spawned places writing the scene groups' camps with their group ids.
+- [ ] 2.1 Replace an area's enemies and objects with a scene task's while the task is open. Verify: a test named after the scenario 'a scene task replaces its area's enemies while it is open', seen failing first. Open: the region data's camps are now the spawned places' (881 in Mondstadt, each with its area and members), and none carries the game group id a task's `newGroupIds` name. `EnemyCamp` carries no game group id, so a swap cannot say which camps it replaces, and the commission names no area for it to stand in. Waits on camps that carry their scene groups' ids, which the spawned places does not write.
 - [ ] 2.2 Restore the area's own enemies and objects when the scene task is done and the area reloads. Verify: a test named after the scenario 'the area's own enemies return when the scene task is done', seen failing first. Open: the area's own groups are not extracted from the dump, so there is no set to restore. This waits on 2.1 and on that extraction, which no build reads yet.
 
 ## 3. Quest tasks and blocking
