@@ -109,7 +109,3 @@ Where a player's pack supplies no value, the body SHALL take the game's own valu
 - [ ] **The default light area and band width keep the lookup from clamping across the light's full range** — no source yet: a computed trace at the defaults; no test asserts it.
 - [ ] **A pack's region toggles stay off, and its values come from the game's inventory** — no source yet: the code path that fills a pack's material from the inventory record is not traced, and `createCharacterShadingInputs.ts`'s own defaults (brightness 1, contrast and desaturate 0) are not the inventory's values.
 - [ ] **A pack without a lightmap takes the flat default lightmap of red 0, green 0.5 and alpha 0** — no source yet: the flat lightmap's red and alpha are not traced to a constant.
-- [ ] **A part in a region whose toggle is on takes that region's colour and emission** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Lumine's face turns its shadow with the light's angle to her head** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Lumine's outline is drawn in her region's colour, toned as her body is** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A material's field with no value takes its default** — no source yet: game data or a snapshot that holds this behaviour
