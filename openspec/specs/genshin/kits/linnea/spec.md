@@ -23,7 +23,7 @@ Linnea's charged shot SHALL cost no stamina, provisionally.
 - **WHEN** the player uses the charged shot
 - **THEN** the charged shot starts
 
-### Requirement: Skill's four hits
+### Requirement: Skill's three hits
 
 Linnea's skill SHALL deal three hits from its three Lumi labels, and SHALL leave no field.
 
