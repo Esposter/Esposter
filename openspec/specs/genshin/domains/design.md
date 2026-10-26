@@ -5,7 +5,7 @@ A domain is an instance behind a temple-like entrance, challenged for a reward. 
 ## Decisions
 
 - **Each kind opens at its rank.** `DomainOpenRankMap` holds Forgery at 16, Blessing at 22 and Mastery at 27, the ranks the proposal states. `checkIsDomainKindOpenAtRank` is open from the rank on. The wiki's Domain page gives the same three ranks (see Sources).
-- **A Domain of Blessing opens every day.** Its set days are not read.
+- **A Domain of Blessing opens on Sundays and its two set days.** Its set days are read the way Forgery's and Mastery's are, since the Domain page gives every Challenge Domains stage three days a week (see Sources).
 - **A Domain of Forgery or Mastery opens every Sunday and on its two set days.** `checkIsDomainKindOpenOnDay` takes the moment checked and the two weekdays the table sets for the kind, and reads the moment's game day from the reset clock. A Sunday opens every kind, as the wiki's Domain page gives it for every stage (see Sources). Weekdays are Temporal's, Monday 1 to Sunday 7, with `SUNDAY_DAY_OF_WEEK` for Sunday.
 - **The day is the game's day.** The moment checked is read on the reset clock, so its game day turns at 04:00 in UTC+8 as the game's server does and as [Original Resin](../original-resin/design.md) counts its Primogem refills. A moment before that reset is still the previous game day, and a Domain of Forgery's day turns at the reset, not at midnight. The wiki's Reset page rotates the Domains of Forgery at the daily reset (see Sources), but gives only the player's server time zone, so UTC+8 rests on the resin page's rule.
 
@@ -31,13 +31,13 @@ flowchart TD
 
 ## Key files
 
-| File                                                                         | Role                                                                                                |
-| :--------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/models/domains/DomainKind.ts`                    | The kinds that open by rank and by the day: Blessing, Forgery and Mastery                           |
-| `packages/genshin-world/src/services/domains/DomainOpenRankMap.ts`           | Each kind's Adventure Rank of opening                                                               |
-| `packages/genshin-world/src/services/domains/constants.ts`                   | The Sunday weekday, numbered as Temporal numbers it                                                 |
-| `packages/genshin-world/src/services/domains/checkIsDomainKindOpenAtRank.ts` | Open at the kind's rank or above                                                                    |
-| `packages/genshin-world/src/services/domains/checkIsDomainKindOpenOnDay.ts`  | Open on the game day of a moment: every day for Blessing, Sundays and the table's days for the rest |
+| File                                                                         | Role                                                                                                                    |
+| :--------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/models/domains/DomainKind.ts`                    | The kinds that open by rank and by the day: Blessing, Forgery and Mastery                                               |
+| `packages/genshin-world/src/services/domains/DomainOpenRankMap.ts`           | Each kind's Adventure Rank of opening                                                                                   |
+| `packages/genshin-world/src/services/domains/constants.ts`                   | The Sunday weekday, numbered as Temporal numbers it                                                                     |
+| `packages/genshin-world/src/services/domains/checkIsDomainKindOpenAtRank.ts` | Open at the kind's rank or above                                                                                        |
+| `packages/genshin-world/src/services/domains/checkIsDomainKindOpenOnDay.ts`  | Open on the game day of a moment: every day for Trounce, Sundays and the table's days for Blessing, Forgery and Mastery |
 
 ## Sources
 
@@ -46,6 +46,6 @@ flowchart TD
 
 ## Open
 
-- [ ] **A Domain of Blessing opens every day** — no source yet: the Domain page, checked, gives each stage of the Challenge Domains three days each week, which does not state every day; the Domain of Blessing page is not in the cache, and `DailyDungeonConfigData` keys its day rows by obfuscated names with no weekday mapping read here.
 - [ ] **Forgery and Mastery open on their two set days** — no source yet: the Domain page, checked, gives Sunday for every stage and two set days a stage without naming them, and the same `DailyDungeonConfigData` rows are unmapped to weekdays.
 - [ ] **The day's 04:00 turn is in UTC+8** — no source yet: the wiki's Reset page, checked, gives the daily reset at 04:00 "based on the player's server's time zone", not in UTC+8.
+- [ ] **A Domain of Forgery's day turns at the reset, not at midnight** — no source yet: the cached Reset page says Domains of Forgery rotate under the daily reset, and gives no moment for the turn.
