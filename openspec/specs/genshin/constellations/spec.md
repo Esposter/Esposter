@@ -134,4 +134,4 @@ A newly created character SHALL start with no constellation active and no Stella
 
 ## Open
 
-- [ ] **The six constellations of a set spend one item of the set's own character** — no source yet: the writer checks that the six share one item, not that the item is the character's own.
+- [ ] **The six constellations of a set spend one item of the set's own character** — no source yet: a game table naming the item each constellation spends, since the writer checks only that the six share one item, not that it is the character's own.
