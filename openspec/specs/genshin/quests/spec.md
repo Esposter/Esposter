@@ -200,4 +200,4 @@ Quest progress SHALL be kept in the save so that a reload resumes the quests in 
 
 ## Open
 
-- [ ] **Xavier offers The Seventh Samurai from the start** — checked against `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/QuestExcelConfigData.json` sub quest 7215401 (quest 72154): its accept condition is a guide to NPC 3162 with no finished-quest condition, and the claim is not settled by it because the talk that offers the quest is not read, and the wiki's "The Seventh Samurai" page is not in `~/Esposter/cache/genshin-wiki`.
+- [ ] **Xavier offers The Seventh Samurai from the start** — checked against `~/Esposter.noindex/genshin-dump-backup-6.6/BinOutput/Quest/72154.json`: the talk that offers it (talk 7215401, NPC 3162) begins manually once its sub quest 7215401 is at state 2, naming no finished quest, and the claim is not settled by that because what starts that sub quest is in its Lua script (`Actor/Quest/WQ72154`), which is not on disk, and the wiki's "The Seventh Samurai" page is not in `~/Esposter/cache/genshin-wiki`.
