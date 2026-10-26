@@ -31,7 +31,7 @@ Each target holds an `ElementalState`: its auras, its own clock, and when its El
 
 ### Auras
 
-An attack applies a gauge of its element, in gauge units. Pyro, Hydro, Electro, Cryo and Dendro left as an aura are taxed to 0.8 of that gauge and decay evenly over 2.5 seconds a unit of the attack plus 7, so Bennett's 2U tap leaves 1.6U of Pyro for 12 seconds. Anemo and Geo leave no aura. A second attack of the same element keeps the larger gauge at the first aura's rate, except Pyro: a larger Pyro replaces the aura with its own rate.
+An attack applies a gauge of its element, in gauge units. Pyro, Hydro, Electro, Cryo and Dendro left as an aura are taxed to 0.8 of that gauge (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/reactable.go`:207) and decay evenly over 2.5 seconds a unit of the attack plus 7 (`reactable.go`:209,211,224: a length of 6 × durability + 420 frames, 25 durability to a unit as `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/burning.go`:86 has it, and 60 frames to a second as `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/freeze.go`:73 has it), so Bennett's 2U tap (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/bennett/skill.go`:91) leaves 1.6U of Pyro for 12 seconds. Anemo and Geo leave no aura (`reactable.go`:168-169). A second attack of the same element keeps the larger gauge at the first aura's rate (`reactable.go`:215-227), except Pyro: a larger Pyro replaces the aura with its own rate (`reactable.go`:229-240).
 
 Not every aura comes from an attack.
 
@@ -53,6 +53,8 @@ The Hilichurl Fighter, the one kind the world places yet, has neither: an enemy 
 | Dendro  | Spread on Quicken; Quicken on Electro (1); Burning on Pyro or Burning; Bloom on Hydro (2)                              |
 | Anemo   | Swirl on Electro, Pyro and Burning, Hydro, Cryo, then Freeze (0.5 each)                                                |
 | Geo     | Shattered on Freeze; Crystallize on Electro, Hydro, Cryo, Pyro and Burning, then Frozen (0.5 each)                     |
+
+The Geo row's order is gcsim's. Shattered comes first, from `ShatterCheck` on a Geo or blunt hit on a Frozen target (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/freeze.go`:58-62), which `Enemy.attack` runs before `React` (`~/Esposter/cache/gcsim-v2.47.2/pkg/enemy/attack.go`:101,125). `React` then tries Crystallize on Electro, Hydro, Cryo and Pyro (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/reactable.go`:131-134, Pyro's test taking Burning too at `crystallize.go`:41), then Frozen (`reactable.go`:135, `crystallize.go`:49-51), each at `reduce`'s 0.5 (`crystallize.go`:67).
 
 What is left once every step has run stays as an aura, if the element leaves one and no aura it consumes remains. A reaction with no coefficient consumes neither side, which is how auras come to coexist.
 
@@ -349,7 +351,7 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 
 - [ ] **Frozen doubles its gauge, decays 0.4U a second and ramps 0.1 a second, lasting 2√(5G + 4) − 4 seconds** — no source yet: gcsim's freeze decay in `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/reactable.go:47-48` and `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/reactable.go:382-391` is in per-frame units not converted to these values.
 - [ ] **Swirl records the spread gauge (G − 0.04) × 1.25 + 1** — no source yet: gcsim's `calcSwirlAtkDurability` at `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/swirl.go:13-17` is in durability units, and no source converts it to gauge units.
-- [ ] **The table's cells that gcsim's `reduce` calls do not name: Burning, Frozen on Cryo and Hydro, Aggravate, Spread and the Geo row** — no source yet: a read of gcsim's `reduce` calls against each of these cells.
+- [ ] **The table's cells that gcsim's `reduce` calls do not name: Burning, Frozen on Cryo and Hydro, Aggravate and Spread** — no source yet: a read of gcsim's `reduce` calls against each of these cells.
 - [ ] **Swirl on Burning is among the table's cells that gcsim's `reduce` calls do not name** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/swirl.go:170`: `reduce(Pyro)` takes Burning's aura, so Swirl names it.
 - [ ] **An enemy of level L has 5 × L + 500 defence** — no source yet: gcsim's defence line at `~/Esposter/cache/gcsim-v2.47.2/pkg/enemy/damage.go:77-79` is (level + 100) terms only, and no enemy defence figure was opened.
 - [ ] **Transformative damage from 0.25 to 3 times the level multiplier** — no source yet: the wiki's Damage page is not in the cache, and no gcsim factor range was opened.
