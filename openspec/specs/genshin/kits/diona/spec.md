@@ -108,7 +108,7 @@ From constellation 6, each half-second tick of Signature Mix's field SHALL give 
 
 ### Requirement: Signature Mix cuts the ATK of the enemies it strikes from Ascension 4
 
-From Ascension 4, each enemy Signature Mix's initial hit or one of its ticks strikes SHALL lose 10% of its ATK for 15 seconds (the wiki's Drunkards' Farce: an opponent who enters the AoE; a strike stands in for entering, open in the design).
+From Ascension 4, each enemy Signature Mix's initial hit or one of its ticks strikes SHALL lose 10% of its ATK for 15 seconds (the wiki's Drunkards' Farce: the decrease is applied periodically to enemies inside the AoE each time its damage ticks, not on entering; a strike stands in for a tick, open in the design).
 
 #### Scenario: Drunkards' Farce weakens an enemy
 
