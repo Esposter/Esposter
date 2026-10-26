@@ -2,7 +2,7 @@ import { placeHomePot } from "#src/services/home/placeHomePot";
 import { describe, expect, test } from "vitest";
 
 describe(placeHomePot, () => {
-  test("the pot is set down at the player's feet, and a second is refused while the first stands", () => {
+  test("the pot is set down at the player's feet, and a second is refused while one stands", () => {
     expect.hasAssertions();
 
     const pot = { maxCountByPlayer: 1, maxCountInScene: 1 };
