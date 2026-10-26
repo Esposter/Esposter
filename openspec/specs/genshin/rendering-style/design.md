@@ -132,7 +132,7 @@ In a Vite development build, `createGenshinRenderer` puts three's inspector on e
 - [Windrise](https://genshin-impact.fandom.com/wiki/Windrise), Genshin Impact Wiki: the first scene's layout, a valley whose oak shelters a statue.
 
 ## Open
-- [ ] **Every landmark shares its kind's material, so the view holds every program a turn or a walk draws** — no source yet for the per-kind part: `packages/genshin-world/src/components/World/Landmark/Statue/Index.vue` takes the one `partMaterial` every landmark's part draws in, and where each kind's material is made was not traced.
+- [ ] **Every landmark shares its kind's material, so the view holds every program a turn or a walk draws** — the sharing is cited to `packages/genshin-world/src/components/World/Landmarks/Index.vue` (lines 82 to 91: one part, bark and leaf material, each made once for its kind); the programs a turn or a walk draws are a run record not kept (the compile figures in `openspec/specs/genshin/load-budget/design.md`).
 - [ ] **The warm-up compile of the view costs a frame of seconds** — no source yet: no timed warm-up frame from a load-budget measurement is on disk.
 - [ ] **The occlusion radius is the scene's, in metres, since nothing in the game's exports holds it** — the scene's radius is the `occlusionRadius` option (`packages/genshin-engine/src/models/post/PostPipelineOptions.ts`, `packages/genshin-engine/src/post/createPostPipeline.ts`); no search of the extracted exports for an occlusion radius field is recorded.
 - **The sky redraws the god rays' map each time the light has turned 0.6 degrees** — corrected in the prose above: `packages/genshin-engine/src/atmosphere/constants.ts` holds `SUN_REDRAW_COSINE` as the cosine of 0.6 degrees, not half a degree.
