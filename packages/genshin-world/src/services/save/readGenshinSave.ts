@@ -17,6 +17,7 @@ import { toParty } from "#src/services/save/toParty";
 import { toProcessingJobs } from "#src/services/save/toProcessingJobs";
 import { toShopPurchases } from "#src/services/save/toShopPurchases";
 import { toSpiralAbyssProgressMap } from "#src/services/save/toSpiralAbyssProgressMap";
+import { toTrounceBlossom } from "#src/services/save/toTrounceBlossom";
 import { toWallet } from "#src/services/save/toWallet";
 import { toWorldLevelAdjustment } from "#src/services/save/toWorldLevelAdjustment";
 
@@ -39,12 +40,14 @@ export const readGenshinSave = (
     cooking,
     crafting,
     encounterPoints,
+    bossDefeats,
     enemyRespawns,
     homePlacements,
     homePlantings,
     homeProgress,
     inventory,
     investigationDay,
+    lastTeleportAt,
     longTermEncounterPoints,
     mails,
     minedOutcrops,
@@ -64,6 +67,7 @@ export const readGenshinSave = (
     tips,
     travelerBirthday,
     travelerName,
+    trounceBlossoms,
     unlockedLandmarks,
     wallet,
     wishHistory,
@@ -99,6 +103,7 @@ export const readGenshinSave = (
     ),
     craftingProgress: { learnedRecipeIds: crafting.learnedRecipeIds },
     encounterPoints: toEncounterPoints(encounterPoints),
+    bossDefeatMap: new Map(Object.entries(bossDefeats ?? {})),
     enemyRespawnMap: new Map(Object.entries(enemyRespawns)),
     foundOculusIds: new Set(statues.foundOculusIds),
     frostbearingTreeProgress: offerings.frostbearingTree,
@@ -107,6 +112,7 @@ export const readGenshinSave = (
     homeProgress: toHomeProgress(homeProgress),
     inventory: toInventory(inventory, nameText, weaponDataMap, materialDataMap, reliquaryPieceEntryMap),
     investigationDay: toInvestigationDay(investigationDay),
+    lastTeleportAt: lastTeleportAt ? Temporal.Instant.from(lastTeleportAt) : undefined,
     longTermEncounterPoints,
     mails,
     minedOutcrops: (minedOutcrops ?? []).map(({ id, minedAt }) => ({ id, minedAt: Temporal.Instant.from(minedAt) })),
@@ -128,6 +134,12 @@ export const readGenshinSave = (
     spiralAbyssProgressMap: toSpiralAbyssProgressMap(spiralAbyss),
     travelerBirthday,
     travelerName,
+    trounceBlossoms: new Map(
+      Object.entries(trounceBlossoms ?? {}).map(([spawnKey, trounceBlossom]) => [
+        spawnKey,
+        toTrounceBlossom(trounceBlossom),
+      ]),
+    ),
     unlockedLandmarkIds: new Set(unlockedLandmarks),
     wallet: toWallet(wallet),
     wishHistory,

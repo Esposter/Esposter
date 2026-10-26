@@ -34,6 +34,7 @@ export const useWorldSave = ({
     | "achievementProgressMap"
     | "archiveKillsMap"
     | "archiveProgressMap"
+    | "bossDefeatMap"
     | "clearedCamps"
     | "clearedDomainIds"
     | "cookingProgress"
@@ -77,6 +78,7 @@ export const useWorldSave = ({
   const processingJobs = shallowRef<Record<number, ProcessingJob>>(savedState.processingJobs);
   const craftedCountMap = shallowRef<ReadonlyMap<number, number>>(savedState.craftedCountMap);
   const craftingProgress = shallowRef<CraftingProgress>(savedState.craftingProgress);
+  const bossDefeatMap = shallowRef<ReadonlyMap<string, string>>(savedState.bossDefeatMap);
   const enemyRespawnMap = shallowRef<ReadonlyMap<string, string>>(savedState.enemyRespawnMap);
   const foundOculusIds = shallowRef<ReadonlySet<string>>(savedState.foundOculusIds);
   const frostbearingTreeProgress = shallowRef<OfferingProgressSave>(savedState.frostbearingTreeProgress);
@@ -92,6 +94,7 @@ export const useWorldSave = ({
       achievementProgressMap,
       archiveKillsMap,
       archiveProgressMap,
+      bossDefeatMap,
       clearedCamps,
       clearedDomainIds,
       cookingProgress,
@@ -129,6 +132,17 @@ export const useWorldSave = ({
   const setEnemyRespawnAt = (spawnKey: string, respawnAt: string) => {
     enemyRespawnMap.value = new Map([...enemyRespawnMap.value, [spawnKey, respawnAt]]);
   };
+  // A defeated boss's moment of defeat is the save's too, since its return waits on a claim or a teleport the save keeps
+  const setBossDefeatAt = (spawnKey: string, defeatedAt: string) => {
+    bossDefeatMap.value = new Map([...bossDefeatMap.value, [spawnKey, defeatedAt]]);
+  };
+  // A boss that comes back has no defeat left in the save, its blossom having been claimed or left behind by a teleport
+  const forgetBossDefeat = (spawnKey: string) => {
+    if (!bossDefeatMap.value.has(spawnKey)) return;
+    const nextBossDefeatMap = new Map(bossDefeatMap.value);
+    nextBossDefeatMap.delete(spawnKey);
+    bossDefeatMap.value = nextBossDefeatMap;
+  };
   const setNamecardItemId = (nextItemId: number) => {
     namecardItemId.value = nextItemId;
   };
@@ -140,6 +154,7 @@ export const useWorldSave = ({
     achievementProgressMap,
     archiveKillsMap,
     archiveProgressMap,
+    bossDefeatMap,
     chooseTravelerBirthday,
     clearedCamps,
     clearedDomainIds,
@@ -147,6 +162,7 @@ export const useWorldSave = ({
     craftedCountMap,
     craftingProgress,
     enemyRespawnMap,
+    forgetBossDefeat,
     foundOculusIds,
     frostbearingTreeProgress,
     inventory,
@@ -155,6 +171,7 @@ export const useWorldSave = ({
     processingJobs,
     queuedTipIds,
     regionStatueProgressMap,
+    setBossDefeatAt,
     setEnemyRespawnAt,
     setInventory,
     setNamecardItemId,

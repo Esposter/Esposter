@@ -16,6 +16,7 @@ import type { DataTexture, Scene } from "three";
 
 import { CombatEvent } from "#src/models/combat/CombatEvent";
 import { EnemyEvent } from "#src/models/enemy/EnemyEvent";
+import { EnemyType } from "#src/models/enemy/EnemyType";
 import { EnemyState } from "#src/models/enemy/EnemyState";
 import { EnemyKindMovesMap } from "#src/services/bosses/EnemyKindMovesMap";
 import { advanceElementalState } from "#src/services/combat/aura/advanceElementalState";
@@ -58,6 +59,9 @@ interface Props {
   // The moments the defeated enemies come back, by their spawn keys, for the camps with no boss among them
   // As the save holds them
   enemyRespawnMap: ReadonlyMap<string, string>;
+  // The moments the defeated bosses fell, by their spawn keys, as the save holds them: each boss stays down from its
+  // defeat until its blossom is claimed or the first teleport after it
+  bossDefeatMap: ReadonlyMap<string, string>;
   // The game's enemy tables, which each spawn's kind, stats and drops are read from
   enemyTables: EnemyTables;
   // The world's ground at a point in its own coordinates, which each enemy stands on
@@ -88,6 +92,7 @@ interface Props {
 }
 
 const {
+  bossDefeatMap,
   enemyMap,
   enemyRespawnMap,
   enemyTables,
@@ -115,10 +120,12 @@ const emit = defineEmits<{
   // The party entering combat once an enemy is aggravated on it, and leaving it once none has been for the grace period
   enterCombat: [];
   leaveCombat: [];
-  // A boss comes back at its spawn, so the blossom it left is gone
+  // A boss comes back at its spawn, so its defeat and the blossom it left are gone
   respawn: [spawnKey: string];
   // A defeated member of a camp with no boss comes back at this instant, which the save keeps
   saveRespawn: [spawnKey: string, respawnAt: string];
+  // A defeated boss's moment of defeat, which the save keeps until the boss comes back
+  saveBossDefeat: [spawnKey: string, defeatedAt: string];
   // An enemy whose shield a hit broke, once for each time it breaks, which a boss's fight counts as its shield breaks
   shieldBreak: [enemy: Enemy];
   strike: [enemy: Enemy, taunt: KitTaunt | undefined];
@@ -129,6 +136,9 @@ const getCampEnemyTypes = (members: EnemyCamp["members"]) =>
   members.map(({ enemyKindId }) => getEnemyKind(enemyTables.enemyKindMap, enemyKindId).enemyType);
 // When each spawn was last defeated, kept for the page's life until a saved game keeps it
 const spawnKeyDefeatedAtMap = new Map<string, Temporal.Instant>();
+// The bosses the save holds as defeated, so a reload keeps each one down until its return
+for (const [spawnKey, defeatedAt] of bossDefeatMap)
+  spawnKeyDefeatedAtMap.set(spawnKey, Temporal.Instant.from(defeatedAt));
 // The party's combat as the enemies aggravated on it hold it, kept for the page's life
 const combat: CombatState = { clearSeconds: 0, isInCombat: false };
 const loadedCampIds = new Set<string>();
@@ -173,7 +183,7 @@ watchImmediate(
             continue;
         } else if (Temporal.Instant.compare(Temporal.Instant.from(savedRespawnAt), now) > 0) continue;
         spawnKeyDefeatedAtMap.delete(spawnKey);
-        if (trounceBlossoms.has(spawnKey)) emit("respawn", spawnKey);
+        if (campEnemyTypes.includes(EnemyType.Boss)) emit("respawn", spawnKey);
         enemyMap.set(spawnKey, createEnemy(enemyTables, worldLevelRows, member, id, currentWorldLevel));
       }
     }
@@ -224,8 +234,11 @@ const fixedStepLoop = createFixedStepLoop(ENEMY_STEP_SECONDS, () => {
       // A camp is cleared once every one of its members is defeated, which this defeat completes when they all are down
       const camp = getEnemyCamps().find(({ id }) => id === enemy.campId);
       // A camp with no boss brings each defeated member back at an instant the save keeps
-      const respawnAt = camp && computeEnemyRespawnTime(getCampEnemyTypes(camp.members), defeatedAt);
+      const campEnemyTypes = camp && getCampEnemyTypes(camp.members);
+      const respawnAt = campEnemyTypes && computeEnemyRespawnTime(campEnemyTypes, defeatedAt);
       if (respawnAt) emit("saveRespawn", spawnKey, respawnAt.toString());
+      // A boss's defeat is kept too, since its return waits on a claim or a teleport that the save holds
+      if (campEnemyTypes?.includes(EnemyType.Boss)) emit("saveBossDefeat", spawnKey, defeatedAt.toString());
       const [firstMember] = camp?.members ?? [];
       if (camp && firstMember && camp.members.every(({ id }) => spawnKeyDefeatedAtMap.has(getSpawnKey(camp.id, id))))
         emit("campCleared", { id: camp.id, position: firstMember.position });

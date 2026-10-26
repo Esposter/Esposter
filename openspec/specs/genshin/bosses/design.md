@@ -30,13 +30,13 @@ Not built, and in the [proposal](../../../changes/genshin-bosses/design.md): the
 
 ## Key files
 
-| File                                                                   | Role                                                                         |
-| :--------------------------------------------------------------------- | :--------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/bosses/constants.ts`              | The five-second respawn after a claim                                        |
-| `packages/genshin-world/src/services/bosses/computeBossRespawnTime.ts` | A claimed boss's time back, and none while it is unclaimed                   |
-| `packages/genshin-world/src/services/time/computeLastWeeklyReset.ts`   | The Monday 04:00 server reset at or before a moment                          |
-| `packages/genshin-world/src/services/weekly/countWeeklyClaims.ts`      | The claims made since the week's reset, the count that prices the next claim |
-| `packages/genshin-world/src/services/enemy/computeEnemyRespawnTime.ts` | Still brings a boss back at once until the claim is wired to the defeat map  |
+| File                                                                   | Role                                                                                      |
+| :--------------------------------------------------------------------- | :---------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/bosses/constants.ts`              | The five-second respawn after a claim                                                     |
+| `packages/genshin-world/src/services/bosses/computeBossRespawnTime.ts` | A claimed boss's time back, and none while it is unclaimed                                |
+| `packages/genshin-world/src/services/time/computeLastWeeklyReset.ts`   | The Monday 04:00 server reset at or before a moment                                       |
+| `packages/genshin-world/src/services/weekly/countWeeklyClaims.ts`      | The claims made since the week's reset, the count that prices the next claim              |
+| `packages/genshin-world/src/services/enemy/computeEnemyRespawnTime.ts` | A normal boss back five seconds after its claim, or at the first teleport while unclaimed |
 
 ## Sources
 

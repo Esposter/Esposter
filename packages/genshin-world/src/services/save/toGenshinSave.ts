@@ -12,6 +12,7 @@ import { toHomeProgressSave } from "#src/services/save/toHomeProgressSave";
 import { toInventorySave } from "#src/services/save/toInventorySave";
 import { toInvestigationDaySave } from "#src/services/save/toInvestigationDaySave";
 import { toPartySave } from "#src/services/save/toPartySave";
+import { toTrounceBlossomSave } from "#src/services/save/toTrounceBlossomSave";
 import { toProcessingJobSaves } from "#src/services/save/toProcessingJobSaves";
 import { toShopPurchaseSaves } from "#src/services/save/toShopPurchaseSaves";
 import { toSpiralAbyssSave } from "#src/services/save/toSpiralAbyssSave";
@@ -25,6 +26,7 @@ export const toGenshinSave = ({
   adventureRankRewardsClaimed,
   archiveKillsMap,
   archiveProgressMap,
+  bossDefeatMap,
   cardGameExp,
   cardGameRewardedGameIds,
   characterCopyCountMap,
@@ -46,6 +48,7 @@ export const toGenshinSave = ({
   homeProgress,
   inventory,
   investigationDay,
+  lastTeleportAt,
   longTermEncounterPoints,
   mails,
   minedOutcrops,
@@ -67,6 +70,7 @@ export const toGenshinSave = ({
   spiralAbyssProgressMap,
   travelerBirthday,
   travelerName,
+  trounceBlossoms,
   unlockedLandmarkIds,
   wallet,
   wishHistory,
@@ -95,12 +99,14 @@ export const toGenshinSave = ({
   },
   crafting: { craftedCounts: Object.fromEntries(craftedCountMap), learnedRecipeIds: craftingProgress.learnedRecipeIds },
   encounterPoints: toEncounterPointsSave(encounterPoints),
+  ...(bossDefeatMap.size > 0 && { bossDefeats: Object.fromEntries(bossDefeatMap) }),
   enemyRespawns: Object.fromEntries(enemyRespawnMap),
   homePlacements,
   homePlantings: homePlantings.map((planting) => toHomePlantingSave(planting)),
   homeProgress: toHomeProgressSave(homeProgress),
   inventory: toInventorySave(inventory),
   investigationDay: toInvestigationDaySave(investigationDay),
+  ...(lastTeleportAt && { lastTeleportAt: lastTeleportAt.toString() }),
   longTermEncounterPoints,
   mails,
   ...(minedOutcrops.length > 0 && {
@@ -122,6 +128,11 @@ export const toGenshinSave = ({
   tips: { queued: [...queuedTipIds], shown: [...shownTipIds] },
   ...(travelerBirthday && { travelerBirthday }),
   travelerName,
+  ...(trounceBlossoms.size > 0 && {
+    trounceBlossoms: Object.fromEntries(
+      [...trounceBlossoms].map(([spawnKey, trounceBlossom]) => [spawnKey, toTrounceBlossomSave(trounceBlossom)]),
+    ),
+  }),
   unlockedLandmarks: [...unlockedLandmarkIds],
   wallet: toWalletSave(wallet),
   wishHistory,

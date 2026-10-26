@@ -10,6 +10,7 @@ import { Attribute } from "#src/models/character/Attribute";
 import { CombatTalent } from "#src/models/character/CombatTalent";
 import { Currency } from "#src/models/inventory/Currency";
 import { InventoryItemKind } from "#src/models/inventory/InventoryItemKind";
+import { BlossomKind } from "#src/models/originalResin/BlossomKind";
 import { MAX_ADVENTURE_RANK } from "#src/services/adventureRank/constants";
 import { MAX_MINOR_AFFIX_COUNT } from "#src/services/artifact/constants";
 import { COMMISSIONS_PER_DAY, MAX_ENCOUNTER_HALF_POINTS } from "#src/services/commission/constants";
@@ -93,6 +94,14 @@ export const MAX_SHOWN_TIP_COUNT = 4096;
 // The enemies a player defeats in the camps with no boss among them, one entry each, bounded by the 7421 enemy members
 // The mapped regions' data holds, counted on 2026-10-18, with room to spare
 export const MAX_ENEMY_RESPAWN_COUNT = 8192;
+// The bosses a player defeats and has not seen come back, one entry each, bounded by the bosses the mapped regions hold
+// with room to spare
+export const MAX_BOSS_DEFEAT_COUNT = 512;
+// The Trounce Blossoms the bosses leave, one each, bounded the same way as the defeats
+export const MAX_TROUNCE_BLOSSOM_COUNT = 512;
+// The newest claims a Trounce Blossom keeps in a save: a weekly boss's blossom takes one claim a week, so these reach
+// back over a year
+export const MAX_BLOSSOM_CLAIM_COUNT = 64;
 export const MAX_QUEST_COUNT = 512;
 export const MAX_OBJECTIVE_COUNT = 16;
 export const MAX_CHARACTER_COUNT = 512;
@@ -297,6 +306,13 @@ const SKELETON_GENSHIN_SAVE_LENGTH = JSON.stringify({
 }).length;
 // The longest planting a save holds: its plot and seed at the largest number, and its instant at the longest
 const LONGEST_HOME_PLANTING = { plantedAt: MAX_SAVE_INSTANT, plotId: MAX_SAVE_NUMBER, seedItemId: MAX_SAVE_NUMBER };
+// The longest Trounce Blossom a save holds: a normal boss's, with its drop and its newest claims at their longest
+const LONGEST_TROUNCE_BLOSSOM_SAVE = {
+  claimedAts: Array.from({ length: MAX_BLOSSOM_CLAIM_COUNT }, () => MAX_SAVE_INSTANT),
+  kind: BlossomKind.NormalBoss,
+  place: { x: MAX_SAVE_NUMBER, z: MAX_SAVE_NUMBER },
+  uniqueDropId: MAX_SAVE_NUMBER,
+};
 // The longest mail a save holds, its flags at their longer value of false
 const LONGEST_MAIL_SAVE = {
   deliveredAt: MAX_SAVE_INSTANT,
@@ -327,6 +343,9 @@ export const MAX_GENSHIN_SAVE_LENGTH: number =
   MAX_SHOP_PURCHASE_COUNT *
     getListEntryLength({ count: MAX_SAVE_NUMBER, goodsId: MAX_SAVE_NUMBER, lastPurchasedAt: MAX_SAVE_INSTANT }) +
   MAX_ENEMY_RESPAWN_COUNT * getRecordEntryLength(MAX_SAVE_INSTANT) +
+  MAX_BOSS_DEFEAT_COUNT * getRecordEntryLength(MAX_SAVE_INSTANT) +
+  MAX_TROUNCE_BLOSSOM_COUNT * getRecordEntryLength(LONGEST_TROUNCE_BLOSSOM_SAVE) +
+  getRecordEntryLength(MAX_SAVE_INSTANT) +
   MAX_HOME_PLACEMENT_COUNT * getListEntryLength(LONGEST_HOME_PLACEMENT) +
   MAX_HOME_PLACEMENT_COUNT * getListEntryLength(LONGEST_HOME_PLANTING) +
   MAX_HOME_COMPANION_COUNT * getListEntryLength(MAX_SAVE_NUMBER) +

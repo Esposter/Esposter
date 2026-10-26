@@ -2,6 +2,7 @@ import type { AchievementProgress } from "#src/models/achievement/AchievementPro
 import type { WorldLevelAdjustment } from "#src/models/adventureRank/WorldLevelAdjustment";
 import type { ArchiveKills } from "#src/models/archive/ArchiveKills";
 import type { ArchiveProgress } from "#src/models/archive/ArchiveProgress";
+import type { TrounceBlossom } from "#src/models/bosses/TrounceBlossom";
 import type { Character } from "#src/models/character/Character";
 import type { CommissionDay } from "#src/models/commission/CommissionDay";
 import type { EncounterPoints } from "#src/models/commission/EncounterPoints";
@@ -48,6 +49,8 @@ export interface GenshinSaveState {
   adventureRankRewardsClaimed: number[];
   archiveKillsMap: ArchiveKills;
   archiveProgressMap: ArchiveProgress;
+  // Each defeated boss's moment of defeat by its spawn key, on the server's clock
+  bossDefeatMap: ReadonlyMap<string, string>;
   cardGameExp: number;
   cardGameRewardedGameIds: number[];
   characterCopyCountMap: ReadonlyMap<number, number>;
@@ -69,6 +72,8 @@ export interface GenshinSaveState {
   homeProgress: HomeProgress;
   inventory: Inventory;
   investigationDay: InvestigationDay;
+  // The last teleport, none before the player's first
+  lastTeleportAt?: Temporal.Instant;
   longTermEncounterPoints: LongTermEncounterPoints;
   mails: MailSave[];
   minedOutcrops: readonly MinedOutcrop[];
@@ -91,6 +96,8 @@ export interface GenshinSaveState {
   spiralAbyssProgressMap: ReadonlyMap<string, AbyssProgress>;
   travelerBirthday?: TravelerBirthdaySave;
   travelerName: string;
+  // The Trounce Blossoms the defeated bosses left, each by the spawn key its boss fell under
+  trounceBlossoms: ReadonlyMap<string, TrounceBlossom>;
   unlockedLandmarkIds: ReadonlySet<string>;
   wallet: Wallet;
   wishHistory: WishDrawSave[];

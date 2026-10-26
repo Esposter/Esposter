@@ -2,6 +2,7 @@ import { achievementProgressSaveSchema } from "#src/models/achievement/Achieveme
 import { adventureExpSaveSchema } from "#src/models/adventureRank/AdventureExpSave";
 import { worldLevelAdjustmentSaveSchema } from "#src/models/adventureRank/WorldLevelAdjustmentSave";
 import { archiveSaveSchema } from "#src/models/archive/ArchiveSave";
+import { trounceBlossomsSaveSchema } from "#src/models/bosses/TrounceBlossomSave";
 import { characterSaveSchema } from "#src/models/character/CharacterSave";
 import { openedChestSaveSchema } from "#src/models/chest/OpenedChestSave";
 import { commissionDaySaveSchema } from "#src/models/commission/CommissionDaySave";
@@ -10,6 +11,7 @@ import { longTermEncounterPointsSaveSchema } from "#src/models/commission/LongTe
 import { cookingSaveSchema } from "#src/models/cooking/CookingSave";
 import { craftingSaveSchema } from "#src/models/crafting/CraftingSave";
 import { clearedDomainSaveSchema } from "#src/models/domains/ClearedDomainSave";
+import { bossDefeatSaveSchema } from "#src/models/enemy/BossDefeatSave";
 import { enemyRespawnSaveSchema } from "#src/models/enemy/EnemyRespawnSave";
 import { clearedCampSchema } from "#src/models/exploration/ClearedCamp";
 import { companionshipExpSaveSchema } from "#src/models/friendship/CompanionshipExpSave";
@@ -86,6 +88,9 @@ export const genshinSaveSchema = z
     // Each defeated enemy's moment of coming back, by its spawn key, for the camps with no boss among them
     // On the server's clock
     enemyRespawns: enemyRespawnSaveSchema,
+    // Each defeated boss's moment of defeat by its spawn key, on the server's clock. A boss stays down until its blossom's
+    // claim or the first teleport after the defeat, so a reload keeps it down. Absent until a boss is defeated
+    bossDefeats: bossDefeatSaveSchema.optional(),
     // The furnishings placed in the realm, each with the area it stands in and where, in the order they were placed
     homePlacements: homePlacementSaveSchema,
     // The seeds the realm's garden holds, each on its plot, with the instant it was planted at
@@ -96,6 +101,8 @@ export const genshinSaveSchema = z
     // The game day's investigations: how many were made, up to the daily cap, and when the day's count began
     // (empty before the day's first investigation)
     investigationDay: investigationDaySaveSchema,
+    // The last teleport, which brings back a boss whose blossom is unclaimed, on the server's clock. Absent before the player's first teleport
+    lastTeleportAt: z.iso.datetime().max(MAX_SAVE_INSTANT_LENGTH).optional(),
     // The Long-Term Encounter Points held and the major version they were earned in, reset when the major version moves on
     longTermEncounterPoints: longTermEncounterPointsSaveSchema,
     // The mails the player holds, each once per delivery by its id and when it was delivered, with whether it was
@@ -133,6 +140,8 @@ export const genshinSaveSchema = z
     tips: tipSaveSchema,
     // The Traveler's birthday once the profile sets it, absent until then
     travelerBirthday: travelerBirthdaySaveSchema.optional(),
+    // The Trounce Blossoms the defeated bosses left, each by the spawn key its boss fell under, with the newest claims kept
+    trounceBlossoms: trounceBlossomsSaveSchema.optional(),
     // The name the player chose for the Traveler, empty while none is chosen
     travelerName: z.string().max(MAX_TRAVELER_NAME_LENGTH),
     unlockedLandmarks: unlockedLandmarkSaveSchema,

@@ -5,6 +5,7 @@ import type { EnemyKind } from "#src/models/enemy/EnemyKind";
 import type { FriendshipLevels } from "#src/models/friendship/FriendshipLevels";
 import type { BlossomClaimOffer } from "#src/models/originalResin/BlossomClaimOffer";
 import type { Party } from "#src/models/party/Party";
+import type { GenshinSaveState } from "#src/models/save/GenshinSaveState";
 import type { WorldBagDependencies } from "#src/models/world/WorldBagDependencies";
 import type { WorldEvents } from "#src/models/world/WorldEvents";
 import type { Ref } from "vue";
@@ -32,7 +33,7 @@ import { computeBlossomClaimPrompt } from "#src/services/originalResin/computeBl
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
 import { countWeeklyClaims } from "#src/services/weekly/countWeeklyClaims";
 import { takeOne } from "@esposter/shared";
-import { computed, shallowRef } from "vue";
+import { computed, shallowRef, watch } from "vue";
 
 // The Trounce Blossoms the defeated normal bosses leave where they fell, keyed by the spawn each boss fell under. A
 // Blossom waits until it is claimed or the boss respawns after a teleport, and a claim spends the boss's Original Resin
@@ -40,6 +41,7 @@ import { computed, shallowRef } from "vue";
 // A claim the holdings or the bag cannot pay whole is refused, and the blossom stays as it was
 export const useWorldTrounceBlossoms = ({
   characters,
+  emitGrant,
   enemyKindMap,
   events,
   friendshipLevels,
@@ -51,12 +53,14 @@ export const useWorldTrounceBlossoms = ({
   materialDataMap,
   nameText,
   party,
+  savedState,
   setInventory,
   setWallet,
   wallet,
   worldNow,
 }: WorldBagDependencies & {
   characters: Ref<Character[]>;
+  emitGrant: () => void;
   enemyKindMap: ReadonlyMap<number, EnemyKind>;
   events: WorldEvents;
   friendshipLevels: Readonly<Ref<FriendshipLevels | undefined>>;
@@ -65,11 +69,12 @@ export const useWorldTrounceBlossoms = ({
   getGroundHeight: (x: number, z: number) => number;
   getWorldNow: () => Temporal.Instant;
   party: Party;
+  savedState: Pick<GenshinSaveState, "lastTeleportAt" | "trounceBlossoms">;
   worldNow: Readonly<Ref<Temporal.Instant>>;
 }) => {
-  const trounceBlossoms = shallowRef<ReadonlyMap<string, TrounceBlossom>>(new Map());
+  const trounceBlossoms = shallowRef<ReadonlyMap<string, TrounceBlossom>>(savedState.trounceBlossoms);
   // The last teleport, which brings back a boss whose blossom is unclaimed, none until the player has teleported
-  const lastTeleportAt = shallowRef<Temporal.Instant>();
+  const lastTeleportAt = shallowRef<Temporal.Instant | undefined>(savedState.lastTeleportAt);
   const claimPrompt = shallowRef<{ offers: BlossomClaimOffer[]; spawnKey: string }>();
   const trounceBlossomInteractables = computed(() =>
     computeTrounceBlossomInteractables(trounceBlossoms.value, gameText, getGroundHeight, worldNow.value),
@@ -88,6 +93,8 @@ export const useWorldTrounceBlossoms = ({
   events.on("teleport", () => {
     lastTeleportAt.value = getWorldNow();
   });
+  // The blossoms and the last teleport are the save's, so a change to either is a grant the host saves
+  watch([trounceBlossoms, lastTeleportAt], () => emitGrant(), { flush: "pre" });
   // The blossom of a respawned boss is gone, since it was either claimed or left behind by a teleport
   const forgetTrounceBlossom = (spawnKey: string) => {
     if (!trounceBlossoms.value.has(spawnKey)) return;

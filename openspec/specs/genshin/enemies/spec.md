@@ -233,7 +233,7 @@ An enemy SHALL drop its energy at each health threshold it falls to, once for it
 
 ### Requirement: A page reload restores each defeated enemy by its saved respawn time
 
-A reload of the page SHALL bring back a defeated enemy only once its saved respawn time has passed, and SHALL bring back a boss's camp, whose respawn the save does not hold (for the boss camps).
+A reload of the page SHALL bring back a defeated enemy only once its saved respawn time has passed, and SHALL bring back a boss's camp only by the return its saved defeat, blossom and last teleport give.
 
 #### Scenario: A defeated enemy stays away after a reload until its respawn time
 
@@ -242,11 +242,12 @@ A reload of the page SHALL bring back a defeated enemy only once its saved respa
 - **THEN** the enemy is not in the world
 - **AND** it is back in the world once its respawn time passes
 
-#### Scenario: A boss returns after a reload
+#### Scenario: A boss stays down after a reload until its blossom is claimed or the player teleports
 
-- **GIVEN** a boss defeated in this page's session
+- **GIVEN** a boss defeated with its Trounce Blossom unclaimed
 - **WHEN** the page is reloaded
-- **THEN** the boss is back in the world
+- **THEN** the boss is not in the world
+- **AND** it is back in the world at the first teleport after its defeat
 
 ### Requirement: Each enemy is drawn as a capsule tinted by its state
 

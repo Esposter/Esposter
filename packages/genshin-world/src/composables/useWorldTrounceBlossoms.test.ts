@@ -82,7 +82,9 @@ describe(useWorldTrounceBlossoms, () => {
     const events = createWorldEvents();
     useWorldTrounceBlossoms({
       characters: shallowRef<Character[]>([]),
+      emitGrant: () => {},
       enemyKindMap: enemyTables.enemyKindMap,
+      savedState: { lastTeleportAt: undefined, trounceBlossoms: new Map() },
       events,
       friendshipLevels: shallowRef<FriendshipLevels>(),
       gainWorldAdventureExp: () => {},
@@ -116,7 +118,9 @@ describe(useWorldTrounceBlossoms, () => {
     const clock = createWorldClock(epoch.add({ hours: 1 }));
     const { trounceBlossomInteractables, trounceBlossoms } = useWorldTrounceBlossoms({
       characters: ref([]),
+      emitGrant: () => {},
       enemyKindMap: new Map(),
+      savedState: { lastTeleportAt: undefined, trounceBlossoms: new Map() },
       events: createWorldEvents(),
       friendshipLevels: ref<FriendshipLevels>(),
       gainWorldAdventureExp: vi.fn<(amount: number) => void>(),
@@ -149,7 +153,9 @@ describe(useWorldTrounceBlossoms, () => {
     const adventureExp = ref(0);
     const { chooseTrounceBlossomClaim, openTrounceBlossomClaim, trounceBlossoms } = useWorldTrounceBlossoms({
       characters: ref([]),
+      emitGrant: () => {},
       enemyKindMap: new Map(),
+      savedState: { lastTeleportAt: undefined, trounceBlossoms: new Map() },
       events: createWorldEvents(),
       friendshipLevels: ref<FriendshipLevels>([{ exp: 0, level: 1 }]),
       gainWorldAdventureExp: (amount) => {
@@ -204,7 +210,9 @@ describe(useWorldTrounceBlossoms, () => {
     });
     const { chooseTrounceBlossomClaim, openTrounceBlossomClaim, trounceBlossoms } = useWorldTrounceBlossoms({
       characters: ref([]),
+      emitGrant: () => {},
       enemyKindMap: new Map(),
+      savedState: { lastTeleportAt: undefined, trounceBlossoms: new Map() },
       events,
       friendshipLevels: ref<FriendshipLevels>([{ exp: 0, level: 1 }]),
       gainWorldAdventureExp: adventureRank.gainWorldAdventureExp,
@@ -265,7 +273,9 @@ describe(useWorldTrounceBlossoms, () => {
     const inventory = ref<Inventory>(EMPTY_INVENTORY);
     const { chooseTrounceBlossomClaim, openTrounceBlossomClaim, trounceBlossoms } = useWorldTrounceBlossoms({
       characters: ref([]),
+      emitGrant: () => {},
       enemyKindMap: new Map(),
+      savedState: { lastTeleportAt: undefined, trounceBlossoms: new Map() },
       events: createWorldEvents(),
       friendshipLevels: ref<FriendshipLevels>([{ exp: 0, level: 1 }]),
       gainWorldAdventureExp: (amount) => {

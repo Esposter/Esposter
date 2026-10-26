@@ -148,6 +148,8 @@ interface Props {
   elementalSight?: ElementalSight;
   // The enemies in the world by their spawn key, which the enemies write as camps load and enemies die
   enemyMap: Map<string, Enemy>;
+  // The moments the defeated bosses fell, by their spawn keys, as the save holds them
+  bossDefeatMap: ReadonlyMap<string, string>;
   // The moments the defeated enemies come back, by their spawn keys, for the camps with no boss among them
   enemyRespawnMap: ReadonlyMap<string, string>;
   // The game's enemy tables, which the camps spawn their enemies from
@@ -221,6 +223,7 @@ const {
   characterLocomotion,
   characterPackReader,
   createTerrainWorker,
+  bossDefeatMap,
   elementalSight,
   enemyMap,
   enemyRespawnMap,
@@ -266,6 +269,7 @@ const emit = defineEmits<{
   leaveCombat: [];
   ready: [];
   respawn: [spawnKey: string];
+  saveBossDefeat: [spawnKey: string, defeatedAt: string];
   saveRespawn: [spawnKey: string, respawnAt: string];
   sheerCold: [value: number];
   shieldBreak: [enemy: Enemy];
@@ -609,6 +613,7 @@ onUnmounted(() => {
       :kit-effect-state
       :enemy-map
       :enemy-respawn-map
+      :boss-defeat-map
       :enemy-tables
       :get-ground-height
       :get-world-now
@@ -629,6 +634,7 @@ onUnmounted(() => {
       @enter-combat="emit('enterCombat')"
       @leave-combat="emit('leaveCombat')"
       @respawn="(spawnKey) => emit('respawn', spawnKey)"
+      @save-boss-defeat="(spawnKey, defeatedAt) => emit('saveBossDefeat', spawnKey, defeatedAt)"
       @save-respawn="(spawnKey, respawnAt) => emit('saveRespawn', spawnKey, respawnAt)"
       @shield-break="(enemy) => emit('shieldBreak', enemy)"
       @strike="(enemy, taunt) => emit('strike', enemy, taunt)"

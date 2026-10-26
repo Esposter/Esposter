@@ -333,10 +333,12 @@ const {
   chooseTravelerBirthday,
   clearedCamps,
   clearedDomainIds,
+  bossDefeatMap,
   cookingProgress,
   craftedCountMap,
   craftingProgress,
   enemyRespawnMap,
+  forgetBossDefeat,
   foundOculusIds,
   frostbearingTreeProgress,
   inventory,
@@ -345,6 +347,7 @@ const {
   processingJobs,
   queuedTipIds,
   regionStatueProgressMap,
+  setBossDefeatAt,
   setEnemyRespawnAt,
   setInventory,
   setNamecardItemId,
@@ -1241,6 +1244,7 @@ const {
   trounceBlossoms,
 } = useWorldTrounceBlossoms({
   characters,
+  emitGrant: () => emit("grant"),
   enemyKindMap: enemyTables.enemyKindMap,
   events,
   friendshipLevels,
@@ -1252,6 +1256,7 @@ const {
   materialDataMap,
   nameText,
   party,
+  savedState,
   setInventory,
   setWallet,
   wallet,
@@ -1647,6 +1652,7 @@ useWorldSaveSync({
     characterTrialClaimedStageIds: trialClaimedStageIds.value,
     clearedCamps: clearedCamps.value,
     clearedDomainIds: clearedDomainIds.value,
+    bossDefeatMap: bossDefeatMap.value,
     commissionDay: commissionDay.value,
     companionshipExpMap: savedState.companionshipExpMap,
     cookingProgress: cookingProgress.value,
@@ -1661,6 +1667,7 @@ useWorldSaveSync({
     homeProgress: savedState.homeProgress,
     inventory: inventory.value,
     investigationDay: savedState.investigationDay,
+    lastTeleportAt: lastTeleportAt.value,
     longTermEncounterPoints: longTermEncounterPoints.value,
     mails: mails.value,
     minedOutcrops: minedOutcrops.value,
@@ -1682,6 +1689,7 @@ useWorldSaveSync({
     spiralAbyssProgressMap: abyssProgressMap.value,
     travelerBirthday: travelerBirthday.value,
     travelerName: savedState.travelerName,
+    trounceBlossoms: trounceBlossoms.value,
     unlockedLandmarkIds: unlockedLandmarkIds.value,
     wallet: wallet.value,
     wishHistory: wishHistory.value,
@@ -1982,6 +1990,7 @@ useWorldSaveSync({
         :elemental-sight
         :enemy-map="kitContext.enemyMap"
         :enemy-respawn-map
+        :boss-defeat-map
         :enemy-tables
         :grass-trail
         :game-data-base-url
@@ -2015,7 +2024,13 @@ useWorldSaveSync({
         @leave-combat="events.emit('leaveCombat')"
         @shield-break="(enemy) => events.emit('shieldBreak', enemy)"
         @ready="emit('ready')"
-        @respawn="(spawnKey) => forgetTrounceBlossom(spawnKey)"
+        @respawn="
+          (spawnKey) => {
+            forgetTrounceBlossom(spawnKey);
+            forgetBossDefeat(spawnKey);
+          }
+        "
+        @save-boss-defeat="(spawnKey, defeatedAt) => setBossDefeatAt(spawnKey, defeatedAt)"
         @save-respawn="(spawnKey, respawnAt) => setEnemyRespawnAt(spawnKey, respawnAt)"
         @sheer-cold="(value) => (hudFrame.sheerCold = value)"
         @cold-damage="(damage) => coldDamageParty(damage)"

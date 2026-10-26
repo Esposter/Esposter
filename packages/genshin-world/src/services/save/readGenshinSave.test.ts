@@ -14,6 +14,7 @@ import { CombatTalent } from "#src/models/character/CombatTalent";
 import { Currency } from "#src/models/inventory/Currency";
 import { DestroyRule } from "#src/models/inventory/DestroyRule";
 import { InventoryItemKind } from "#src/models/inventory/InventoryItemKind";
+import { BlossomKind } from "#src/models/originalResin/BlossomKind";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { COMMISSION_UNLOCK_RANK, COMMISSIONS_PER_DAY } from "#src/services/commission/constants";
 import { EMPTY_CURRENCIES, SIGIL_CURRENCIES } from "#src/services/inventory/constants";
@@ -337,6 +338,26 @@ describe(readGenshinSave, () => {
     expect.hasAssertions();
     expect(toGenshinSave(readGenshinSave(POPULATED_SAVE, NAMES, WEAPON_DATA_MAP, new Map(), new Map()))).toStrictEqual(
       POPULATED_SAVE,
+    );
+  });
+
+  test("a boss's defeat, its Trounce Blossom and the last teleport survive a reload", () => {
+    expect.hasAssertions();
+    const bossSave: GenshinSave = {
+      ...EMPTY_GENSHIN_SAVE,
+      bossDefeats: { boss: "2026-10-18T04:00:00Z" },
+      lastTeleportAt: "2026-10-18T05:00:00Z",
+      trounceBlossoms: {
+        boss: {
+          claimedAts: ["2026-10-18T06:00:00Z"],
+          kind: BlossomKind.NormalBoss,
+          place: { x: 1, z: 2 },
+          uniqueDropId: 3,
+        },
+      },
+    };
+    expect(toGenshinSave(readGenshinSave(bossSave, NAMES, WEAPON_DATA_MAP, new Map(), new Map()))).toStrictEqual(
+      bossSave,
     );
   });
 
