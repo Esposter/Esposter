@@ -122,7 +122,6 @@ The Traveler SHALL have no element until it resonates with a statue (the Travele
 - [ ] **Max HP, ATK and DEF are each built from base, percentage and flat** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **A weapon's ATK percentage raises the character's and the weapon's ATK bases** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **Base attributes grow along the level curve and rise with ascension** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A level outside a phase's range is refused** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **Every line a character carries counts toward its attributes** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **Four pieces of a set count both the two-piece and four-piece bonuses** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **A character's region is the one its association names** — no source yet: game data or a snapshot that holds this behaviour
