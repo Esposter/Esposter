@@ -22,7 +22,7 @@ flowchart TD
 - **Openwork.** Each bay between two columns is a lattice panel: a rail at its sill and another at its head, with a bar every cell between them (`packages/genshin-world/src/services/liyue/constants.ts:27-29`). The bars stand flat to the wall, so the lattice reads as openwork from the street.
 - **Upturned eaves.** A roof tier is a shell of rings stepping inward from its eave to a flat top. The eave's corners lift by the curl over its middle (`packages/genshin-world/src/services/liyue/constants.ts:32`), and the shell's rise is steep at the eave and levels toward the top. Each top corner carries a finial.
 - **Stacked tiers.** Each tier above the first has its eave scaled by the tier scale of the one below and is raised one tier height (`packages/genshin-world/src/services/liyue/constants.ts:34-35`; `createLiyueBuildingGeometries.test.ts:6`), so a building with three tiers stands three rises above its walls.
-- **The kit stands in for Liyue Harbor's houses.** When the [parity](../parity/README.md) inventory claims the harbour's export, the export's buildings family is `Area_Ly_Build_` and `Area_LY_Build_`, with its terrain tiles as its ground. The harbour's other meshes are claimed undrawn by kind (`LiyueUndrawnMeshRegexMap`).
+- **The kit stands in for Liyue Harbor's houses.** When the [parity](../parity/README.md) inventory claims the harbour's export, the export's buildings family is `Area_Ly_Build_` and `Area_LY_Build_` (`~/Esposter.noindex/genshin-parity/extracted/maps/index.tsv`), with its terrain tiles as its ground. The harbour's other meshes are claimed undrawn by kind (`LiyueUndrawnMeshRegexMap`).
 
 ## Palette
 
@@ -45,6 +45,6 @@ The palette's hues are the ones the game's Liyue reads as: ochre and grey rock, 
 - [ ] **The palette's hues are the ones the game's Liyue reads as** — no source yet: the hues are the first reading, and none has been measured against `~/Esposter.noindex/genshin-parity/references/liyue-harbor-location.png`.
 - [ ] **The eave corners lift by the curl, and the shell rises steep at the eave and levels toward the top** — no source yet: no roof edge is measured from a Liyue reference, and `createLiyueRoofTierGeometry.test.ts` checks only the rise to a flat top.
 - [ ] **Each bay's lattice has a rail at its sill and at its head, with bars standing flat to the wall** — no source yet: no test or reference checks the lattice.
-- [ ] **The export's buildings family is `Area_Ly_Build_` and `Area_LY_Build_`, with its terrain tiles as the ground** — no source yet: neither name is in `~/Esposter.noindex/genshin-parity/extracted/`.
-- [ ] **The harbour's other meshes are claimed undrawn by kind (`LiyueUndrawnMeshRegexMap`)** — no source yet: the export holds none of the harbour's families to check the claim against.
+- [ ] **The export's buildings family is `Area_Ly_Build_` and `Area_LY_Build_`, with its terrain tiles as the ground** — no source yet: the terrain tiles as the ground are not traced in `~/Esposter.noindex/genshin-parity/extracted/maps/index.tsv`, which holds both family names.
+- [ ] **The harbour's other meshes are claimed undrawn by kind (`LiyueUndrawnMeshRegexMap`)** — no source yet: the export's 6,118 `Area_Ly_` rows in `~/Esposter.noindex/genshin-parity/extracted/maps/index.tsv` are not checked kind by kind against the undrawn claim.
 - [ ] **the bay width is 3 metres** — no source yet: game data or a snapshot that holds this behaviour
