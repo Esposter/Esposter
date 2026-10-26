@@ -74,3 +74,4 @@ The record's NPCs are filled from the dump's NPC births, which give one place fo
 - [ ] **A city vendor's shop is open only in the hours its wiki page gives** — no source yet: the NPC wiki page is not on disk.
 - [ ] **Most residents have one place from the dump's NPC births, a day spot and no night spot** — no source yet: `NpcExcelConfigData` in `~/Esposter/genshin-parity/text/ExcelBinOutput/`, not yet counted for each resident's places.
 - [ ] **Hertha keeps the point named Reputation, where Reputation is NPC `1663`** — no source yet: `NpcExcelConfigData` in `~/Esposter/genshin-parity/text/ExcelBinOutput/`, not yet read for NPC 1663's name.
+- [ ] **A resident the game shows only by day is marked absent at night** — no source yet: no generator or data file sets `absentAtNight` (only `packages/genshin-world/src/models/world/Resident.ts` and `packages/genshin-world/src/services/resident/computeResidentSpot.ts` read it), and no resident in the region data carries it.
