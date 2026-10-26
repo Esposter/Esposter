@@ -57,6 +57,8 @@ const CONSTELLATION_1_MAX_ENERGY = 10;
 // Is a summon whose discharges land from her body, and from Ascension 4 each discharge lowers the DEF of the enemy it hits.
 // Constellations 1 and 6 are built. Constellation 2 needs a DEF buff for as long as the hold lasts, which the skill holds do
 // Not carry the length of. Constellation 4 needs the simultaneous bolt count of Lightning Rose, which the kit does not read
+// Measured: gcsim v2.47.2 (MIT) lisa/burst.go lines 60 to 62: the discharges are queued from the cast, the first at 119
+// Frames and one every 30 frames after it, thirty in all. The record's discharge hitmarks are that schedule
 export const createLisaKitBehaviour = ({ readHits, readSeconds }: KitRecordReader): KitBehaviour => {
   const discharges = readHits("discharges", { enemyStatus: getLightningRoseStatus });
   const lightningRoseSeconds = readSeconds("lightningRose");
@@ -95,6 +97,8 @@ export const createLisaKitBehaviour = ({ readHits, readSeconds }: KitRecordReade
     skill: { hits: [{ enemyStatus: () => CONDUCTIVE_STACK }] },
     skillHolds: [
       {
+        // Measured: gcsim v2.47.2 (MIT) lisa/zz_lisa.dm.go, skillHold's rows {0} to {3}: the non-Conductive hold, then
+        // One row per stack of Conductive, each a parameter of proud skill group 432 at its index, read in skill.go
         // Constellation 1: each opponent the hold hits regenerates Energy for her, 10 at most per hold
         hits: [
           {
