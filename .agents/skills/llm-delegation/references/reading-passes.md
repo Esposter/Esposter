@@ -8,7 +8,7 @@ That ratio is what the reader's family multiplies. On the main session's family,
 
 So the pass is split by **who decides each edit**, not by how tedious it is:
 
-- **A find recipe or a pattern decides it** — the `sweeps` skill's recipe proven able to fail (`.agents/skills/sweeps/SKILL.md`), an exact rename map, a mechanical rewrite whose every site a grep finds: a `haiku` agent per leaf runs it, and the main session reads the diff.
+- **A find recipe or a pattern decides it** — a recipe the `sweeps` skill (`references/find-recipes.md`) proves able to fail, an exact rename map, a mechanical rewrite whose every site a grep finds: a `haiku` agent per leaf runs it, and the main session reads the diff.
 - **Reading decides it** — a claim checked against the code, prose held against a rule, a carve-out the rule never stated: haiku readers still take the reading, one per batch of units and in parallel. Each applies the fix its rule settles, names every edit it made, and reports each call it could not settle instead of making it. The main session judges every reported call and every diff before it lands, and writes a carve-out it finds into the rule, so later rounds start from it. Missed carve-outs are the risk this accepts, and the report-back and the judged diff are what catch them. Rejected: the main session reading every unit itself, one at a time, since opus pays for each file read and carries every file's content.
 
 Three costs compound when the work looks parallel, whichever family runs it:

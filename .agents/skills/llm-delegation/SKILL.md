@@ -32,8 +32,8 @@ There are two tiers and no middle one: `opus` thinks in the main session, and `h
 - **The main session reads one hop deep.** One read of a file it can already name, or one grep whose output mode is the answer, stays in place. A lookup that needs a second hop — find the file, then read it, then follow what it names — is a chain, and the chain goes to a `haiku` agent as one question with a bounded answer before its second call. The tell is two lookups in a row with no decision between them. A log, a dump, a shader or a long run's output is a haiku read whatever its hop count, since only its conclusion reaches a decision.
 - **The report is the only thing the main context pays for.** The prompt fixes its shape and its bound — paths with line numbers, the numbers measured, an error verbatim — and never asks for file contents back. The session verifies a writing agent by its diff and its done-definition, never by re-reading the files it changed.
 - **A `fork` ignores `model`** and runs on the main session's family with the whole conversation, so it is refused with the rest.
-- **A workflow's `agent()` passes `model: "haiku"` just as an `Agent` call does.** No hook reads a workflow's script, so this line is its only rule. One left to inherit runs on the session's `opus`. Past a usage line the `genshin-mods` reserve refuses the launch outright (`.agents/skills/throughput/SKILL.md`, "The usage reserve").
-- **An agent's price is its turns times its context.** Every turn re-reads the whole cached context, so cached reads, not output, are most of the bill. A unit is scoped to finish in a short context, its prompt names the pages to read rather than whole skills to load, and a unit that would run long is split into agents that each start clean. The main session pays the same price, and `.agents/settings.json` sets the context it compacts at with `autoCompactWindow`, a trade between re-reading a long context every turn and losing what a compaction drops; a resume carries what it dropped (`.agents/skills/resuming/SKILL.md`). (`pnpm ai:usage` tallies it by bucket and family)
+- **A workflow's `agent()` passes `model: "haiku"` just as an `Agent` call does.** No hook reads a workflow's script, so this line is its only rule. One left to inherit runs on the session's `opus`. Past a usage line the `genshin-mods` reserve refuses the launch outright (the `throughput` skill, "The usage reserve").
+- **An agent's price is its turns times its context.** Every turn re-reads the whole cached context, so cached reads, not output, are most of the bill. A unit is scoped to finish in a short context, its prompt names the pages to read rather than whole skills to load, and a unit that would run long is split into agents that each start clean. The main session pays the same price, and `.agents/settings.json` sets the context it compacts at with `autoCompactWindow`, a trade between re-reading a long context every turn and losing what a compaction drops; a resume carries what it dropped (the `resuming` skill). (`pnpm ai:usage` tallies it by bucket and family)
 
 ## A reading pass is delegated by who decides the edit
 
@@ -42,10 +42,6 @@ A pass over a whole tree is split by who decides each edit. A find recipe or an 
 ## Writing the delegation prompt
 
 The prompt is the agent's whole world: the spec with its judgement calls resolved, the skills it must load, a done-definition it can prove, git discipline, and a report-back contract with a length bound (`references/delegation-prompt.md`).
-
-## While agents run
-
-A batch's agents work as `references/running-agents.md` sets out.
 
 ## In automation — the tiers
 
@@ -63,7 +59,7 @@ Ask the lowest tier first, and let it hand up what it cannot answer. A tier that
 
 ## A headless session delegates in the foreground
 
-No headless session currently delegates: the review's reviewers and its fixer are separate `claude -p` sessions its script launches, never subagents of one (`openspec/specs/infra/review/design.md`). One that does delegate waits on each subagent, since a `claude -p` session has no next turn in which to read a backgrounded result, and names the subagent tier per call.
+A headless session that delegates waits on each subagent, since a `claude -p` session has no next turn in which to read a backgrounded result, and names the subagent tier per call. The review's reviewers and its fixer are separate `claude -p` sessions its script launches, never subagents of one (`openspec/specs/infra/review/design.md`).
 
 ## A deterministic tier does not have to know whether it applies
 
