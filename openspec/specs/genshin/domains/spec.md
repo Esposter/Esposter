@@ -1,6 +1,6 @@
 ## Purpose
 
-The game's domains' opening rules as pure checks. A kind opens at its Adventure Rank, Forgery at 16, Blessing at 22 and Mastery at 27, as the wiki gives them. A Domain of Forgery or Mastery is open every Sunday and on the two days its table sets, a Domain of Blessing every day. Entrances, levels and challenges wait on the proposal.
+The game's domains' opening rules as pure checks. A kind opens at its Adventure Rank, Forgery at 16, Blessing at 22 and Mastery at 27, as the proposal states them. A Domain of Forgery or Mastery is open every Sunday and on the two days its table sets, a Domain of Blessing every day. Entrances, levels and challenges wait on the proposal.
 
 ## Requirements
 
