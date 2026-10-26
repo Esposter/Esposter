@@ -159,6 +159,7 @@ A capsule that a hit landed on is tinted white for 0.15 seconds after the hit, a
 - **An Air hit knocks an enemy it leaves staggered airborne** — `packages/genshin-world/src/services/kit/strikeEnemy.ts` launches on the Stagger state, which a broken poise or a broken shield both give.
 - [ ] **A launching hit that leaves an enemy staggered gives it the launched status for the stagger's seconds** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **A launching hit launches every enemy it staggers, and a hit on an airborne enemy does not lift it again** — no source yet: game data or a snapshot that holds this behaviour
+- **A hit on an airborne enemy restarts its launched status rather than adding one** — `packages/genshin-world/src/services/enemy/addEnemyStatus.ts`, which restarts a status whose id the enemy already carries.
 - [ ] **A camp's idle enemies alert together once one of its members is engaged** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **A leashed enemy walks home immune and arrives healed with its shield and poise restored** — no source yet: game data or a snapshot that holds this behaviour
 - **`genshin:assets enemies` publishes each placed kind and its curves to the hosted game data** — `scripts/src/services/genshinAssets/enemies/buildEnemyKinds.ts`, which collects the kinds the camps place and every curve they name.
