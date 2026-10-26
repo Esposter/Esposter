@@ -86,6 +86,7 @@
   "parameters.tamotoDefenseShare": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 9432 } },
   "parameters.sweepDefenseShare": { "cause": "Unsourced", "value": { "index": 5, "proudSkillGroupId": 9432 } },
   "parameters.burstDefenseShare": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 9439 } },
+  "plungeCollision.poiseDamage": { "source": "Wiki", "value": 25 },
   "plunges.high.animationFrames": { "cause": "Unsourced", "value": 69 },
   "plunges.high.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 41 },
   "plunges.high.hits.0.poiseDamage": { "source": "Wiki", "value": 150 },

@@ -10,7 +10,7 @@ Chiori's kit is its record and one behaviour module, `createChioriKitBehaviour`,
 - **The press's cooldown is the table's 16 seconds, and the burst's is 13.5 seconds on 50 energy.** Her burst strikes at 92 frames as a circle of radius 12 round her, 200 poise, its ATK share and 3.204 of Defense.
 - **Tamoto stands for gcsim's 17.5 seconds, where the table's duration reads 17.** The doll's last attack landing within the 17.5 seconds of its cast would confirm it; a stand of 17 would move it.
 - **Chiori's high plunge lands with the low plunge's 41 frames at 150 poise.** gcsim has no high plunge of its own, so the record takes the wiki's 150 poise; the frames stay provisional until a recording shows them.
-- **Her strikes and charged attack deal the wiki's poise.** gcsim gives them none, so the record takes the wiki's poise from Weaving Blade's advanced properties: 51.7, 49, 31.3 for each of the third strike's two hits, 78.6 for the fourth, and 60 for each charged thrust.
+- **Her strikes, charged attack and plunging collision deal the wiki's poise.** gcsim gives them none, so the record takes the wiki's poise from Weaving Blade's advanced properties: 51.7, 49, 31.3 for each of the third strike's two hits, 78.6 for the fourth, 60 for each charged thrust, and 25 for the collision.
 
 ## Not built
 
