@@ -220,6 +220,6 @@ The analysis commands SHALL rank each term of a frame's error by the most it cou
 
 ## Open
 
-- [ ] **compare keeps a reference's row when its images are missing, and reports a throwing one as failed** — no source yet: the missing-image and throw branches of were not traced.
+- [ ] **compare keeps a reference's row when its images are missing, and reports a throwing one as failed** — no source yet: the missing-image and throw branches of `scripts/src/services/genshinParity/commands/compareCommand.ts` were not traced.
 - [ ] **A refused approval still writes the comparison's row** — no source yet: `decideApproval.ts` and `approveCommand.ts` show the refusal, not a row write.
-- [ ] **Passes rewrite only the rows of the passes run** — no source yet: was not traced to its row writes.
+- [ ] **Passes rewrite only the rows of the passes run** — no source yet: `scripts/src/services/genshinParity/passes/runParityPasses.ts` was not traced to its row writes.
