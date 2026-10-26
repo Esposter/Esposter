@@ -15,6 +15,7 @@ import type { WorldEvents } from "#src/models/world/WorldEvents";
 
 import { computeBagObtainEvents } from "#src/services/achievement/computeBagObtainEvents";
 import { setTravelerBirthday } from "#src/services/profile/setTravelerBirthday";
+import { withoutMapEntry } from "#src/services/shared/withoutMapEntry";
 import { ref, shallowRef, watch } from "vue";
 
 // The bag, the wallet, the wish counters, the achievements' progress, the bench's crafting and the Archive's entries and
@@ -138,10 +139,7 @@ export const useWorldSave = ({
   };
   // A boss that comes back has no defeat left in the save, its blossom having been claimed or left behind by a teleport
   const forgetBossDefeat = (spawnKey: string) => {
-    if (!bossDefeatMap.value.has(spawnKey)) return;
-    const nextBossDefeatMap = new Map(bossDefeatMap.value);
-    nextBossDefeatMap.delete(spawnKey);
-    bossDefeatMap.value = nextBossDefeatMap;
+    bossDefeatMap.value = withoutMapEntry(bossDefeatMap.value, spawnKey);
   };
   const setNamecardItemId = (nextItemId: number) => {
     namecardItemId.value = nextItemId;

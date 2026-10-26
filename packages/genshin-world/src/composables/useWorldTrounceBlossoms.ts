@@ -31,6 +31,7 @@ import { gainCompanionshipExp } from "#src/services/friendship/gainCompanionship
 import { BlossomClaimResinMap } from "#src/services/originalResin/BlossomClaimResinMap";
 import { computeBlossomClaimPrompt } from "#src/services/originalResin/computeBlossomClaimPrompt";
 import { getDeployedCharacterIds } from "#src/services/party/getDeployedCharacterIds";
+import { withoutMapEntry } from "#src/services/shared/withoutMapEntry";
 import { countWeeklyClaims } from "#src/services/weekly/countWeeklyClaims";
 import { takeOne } from "@esposter/shared";
 import { computed, shallowRef, watch } from "vue";
@@ -97,10 +98,7 @@ export const useWorldTrounceBlossoms = ({
   watch([trounceBlossoms, lastTeleportAt], () => emitGrant(), { flush: "pre" });
   // The blossom of a respawned boss is gone, since it was either claimed or left behind by a teleport
   const forgetTrounceBlossom = (spawnKey: string) => {
-    if (!trounceBlossoms.value.has(spawnKey)) return;
-    const nextTrounceBlossoms = new Map(trounceBlossoms.value);
-    nextTrounceBlossoms.delete(spawnKey);
-    trounceBlossoms.value = nextTrounceBlossoms;
+    trounceBlossoms.value = withoutMapEntry(trounceBlossoms.value, spawnKey);
   };
   // The claims made this week at every weekly boss, the count a weekly boss's price is read from
   const countWeeklyBossClaims = (now: Temporal.Instant) =>
