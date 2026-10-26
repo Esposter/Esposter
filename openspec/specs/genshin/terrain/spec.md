@@ -130,11 +130,11 @@ A region's ground arriving after its tiles were built SHALL replace every tile w
 
 ### Requirement: Origin floats to keep the world steady far out
 
-Once the camera has gone one kilometre from the origin, the world SHALL move back under the camera without the view jumping.
+Once the camera has gone 1024 units from the origin, the world SHALL move back under the camera without the view jumping.
 
-#### Scenario: Camera past one kilometre
+#### Scenario: Camera past 1024 units
 
-- **GIVEN** the camera has gone one kilometre from the origin
+- **GIVEN** the camera has gone 1024 units from the origin
 - **WHEN** the origin is shifted
 - **THEN** the world moves back under the camera
 - **AND** the view shows the same scene with no jump
