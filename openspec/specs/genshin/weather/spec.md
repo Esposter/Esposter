@@ -56,7 +56,7 @@ A weather change SHALL blend over nine seconds, eased in and out, starting from 
 
 - **GIVEN** a change is part way through blending
 - **WHEN** another change begins
-- **THEN** the new blend starts from where the first had reached (`Index.vue` copies the blend it stands at into the new blend's start)
+- **THEN** the new blend starts from where the first had reached (the blend it stands at is copied into the new blend's start)
 
 #### Scenario: Weather at load set at once
 
@@ -104,7 +104,7 @@ A sandstorm SHALL tint the haze toward the colour of sand (where the sandstorm's
 
 ### Requirement: Rain splashes where it meets the ground
 
-Rain SHALL splash rings where it meets the ground or water, and snow and sand SHALL splash nothing (`applyWeatherState.ts` gives splashes a density only for rain, and `createSplashMaterial.ts` draws them on the ground or water).
+Rain SHALL splash rings where it meets the ground or water, and snow and sand SHALL splash nothing (splashes get a density only for rain, and they are drawn on the ground or water).
 
 #### Scenario: Rain splashing
 
@@ -126,7 +126,7 @@ A thunderstorm SHALL strike about 27.6 times a minute, each strike flashing the 
 
 - **GIVEN** a thunderstorm is on
 - **WHEN** a strike happens
-- **THEN** the sky flashes twice, the second dimmer than the first (`constants.ts` gives the second pulse 0.6 of the first's strength)
+- **THEN** the sky flashes twice, the second dimmer than the first (the second pulse is 0.6 of the first's strength)
 
 #### Scenario: Bolt drops on the ground
 
@@ -142,7 +142,7 @@ A thunderstorm SHALL strike about 27.6 times a minute, each strike flashing the 
 
 ### Requirement: Wet ground darkens and glints in rain and storm
 
-Wet ground SHALL darken and glint in the sun while it rains or thunders, and SHALL stay dry in clear, cloudy, fog, snow and sandstorm weather (whose wetness is 0 for clear, cloudy and sandstorm and 1 for rain and thunderstorm) (`constants.ts` sets fog's and snow's wetness to 0).
+Wet ground SHALL darken and glint in the sun while it rains or thunders, and SHALL stay dry in clear, cloudy, fog, snow and sandstorm weather (whose wetness is 0 for clear, cloudy and sandstorm and 1 for rain and thunderstorm) (fog's and snow's wetness is 0).
 
 #### Scenario: Ground wet in rain
 
