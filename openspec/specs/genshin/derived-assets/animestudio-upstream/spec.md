@@ -1,6 +1,6 @@
 ## Purpose
 
-The two defects in the AnimeStudio decoder found by the macOS build, drafted as upstream issues and kept here, not filed.
+The two defects in the AnimeStudio decoder found by the macOS build, drafted as upstream issues and kept here, not filed `openspec/specs/genshin/derived-assets/animestudio-upstream/design.md`.
 
 ## Requirements
 
@@ -12,8 +12,12 @@ A decoder defect found by the macOS build SHALL be drafted as an upstream issue 
 
 - **GIVEN** a decoder defect found by the macOS build
 - **WHEN** it is recorded
-- **THEN** its upstream issue is drafted and kept in the repository
+- **THEN** its upstream issue is drafted and kept in the repository `openspec/specs/genshin/derived-assets/animestudio-upstream/design.md`
 - **AND** nothing is filed or posted upstream
+
+## Open
+
+- [ ] **Nothing is filed or posted upstream** — no source yet: no issue-tracker record is cited.
 
 ### Requirement: A defect draft gives its reproduction and the effect of its patch
 
@@ -23,8 +27,8 @@ Each defect draft SHALL give a reproduction and the observed output before and a
 
 - **GIVEN** a defect draft
 - **WHEN** it is read
-- **THEN** it names the game version and block that reproduce the defect
-- **AND** it gives the exception and texture counts before the patch and after it
+- **THEN** it names the game version and block that reproduce the defect `openspec/specs/genshin/derived-assets/animestudio-upstream/design.md`
+- **AND** it gives the exception and texture counts before the patch and after it `openspec/specs/genshin/derived-assets/animestudio-upstream/design.md`
 
 ### Requirement: A cause the draft cannot confirm is marked as such
 
@@ -34,11 +38,11 @@ A defect draft SHALL mark any cause it has not verified as not established or as
 
 - **GIVEN** a cause for a defect that has not been verified
 - **WHEN** the draft is written
-- **THEN** the cause is marked not established
+- **THEN** the cause is marked not established `openspec/specs/genshin/derived-assets/animestudio-upstream/design.md`
 
 #### Scenario: An inferred cause is marked inferred while the observed read stands
 
 - **GIVEN** a cause inferred from generated code and a stale read that was observed
 - **WHEN** the draft is written
-- **THEN** the cause is marked inferred
-- **AND** the observed stale read is stated as observed
+- **THEN** the cause is marked inferred `openspec/specs/genshin/derived-assets/animestudio-upstream/design.md`
+- **AND** the observed stale read is stated as observed `openspec/specs/genshin/derived-assets/animestudio-upstream/design.md`
