@@ -1,12 +1,12 @@
 ## Purpose
 
-What a screen loads before it shows, measured and held to a budget. Each awaited load step is a browser performance measure, and the load meter prints the time to ready, the requests and game data fetched, and the renderer's and scene's counts against the screen's budget.
+What a screen loads before it shows, measured and held to a budget. Each awaited load step is a browser performance measure (`packages/genshin-world/src/services/loading/measureLoadStep.ts`), and the load meter prints the time to ready, the requests and game data fetched, and the renderer's and scene's counts against the screen's budget (`scripts/src/services/genshinParity/shared/formatLoadMeter.ts`).
 
 ## Requirements
 
 ### Requirement: Measured load steps
 
-Each awaited load step SHALL be measured in the browser from its call to its settling under its own name, and a rejected step SHALL still be measured and pass its rejection through unchanged.
+Each awaited load step SHALL be measured in the browser from its call to its settling under its own name, and a rejected step SHALL still be measured and pass its rejection through unchanged (`packages/genshin-world/src/services/loading/measureLoadStep.ts`).
 
 #### Scenario: Step settles
 
@@ -30,7 +30,7 @@ The time to ready SHALL be the milliseconds from navigation start to the screen 
 
 ### Requirement: Request and game data counts
 
-The load SHALL count every request the page made with its transferred bytes, and SHALL count as game data the requests under the game data's base.
+The load SHALL count every request the page made with its transferred bytes, and SHALL count as game data the requests under the game data's base (`packages/genshin-world/parity/benchLoad.ts`).
 
 #### Scenario: Requests after ready count
 
@@ -39,7 +39,7 @@ The load SHALL count every request the page made with its transferred bytes, and
 
 ### Requirement: Renderer and object counts
 
-The load SHALL report the renderer's geometries, textures and programs and the visible objects by kind, each read once at ready, and a screen with no scene at ready SHALL read zero.
+The load SHALL report the renderer's geometries, textures and programs and the visible objects by kind, each read once at ready, and a screen with no scene at ready SHALL read zero (`packages/genshin-world/parity/benchLoad.ts`).
 
 #### Scenario: Screen without a scene
 
@@ -48,21 +48,21 @@ The load SHALL report the renderer's geometries, textures and programs and the v
 
 ### Requirement: Production build by default
 
-The load SHALL be measured on a production build of the page served by a preview server, and only the dev flag SHALL measure the dev server instead.
+The load SHALL be measured on a production build of the page served by a preview server, and only the dev flag SHALL measure the dev server instead (`scripts/src/services/genshinParity/load/getParityServerArgs.ts`, `scripts/src/services/genshinParity/load/startParityServer.ts`).
 
 #### Scenario: Default run
 
 - **WHEN** the load is measured without a flag
-- **THEN** the production build is served and measured
+- **THEN** the production build is served and measured (`scripts/src/services/genshinParity/load/getParityServerArgs.ts`)
 
 #### Scenario: Dev flag
 
 - **WHEN** the load is measured with the dev flag
-- **THEN** the dev server is measured instead of a build
+- **THEN** the dev server is measured instead of a build (`scripts/src/services/genshinParity/load/startParityServer.ts`)
 
 ### Requirement: Crossing measured after a move
 
-A screen with a crossing SHALL load with its crossing's props and, when the crossing is requested, move once ready and report the requests, game data, tiles rebuilt and time to settle from the move.
+A screen with a crossing SHALL load with its crossing's props and, when the crossing is requested, move once ready and report the requests, game data, tiles rebuilt and time to settle from the move (`scripts/src/services/genshinParity/load/ScreenCrossingMap.ts`, `scripts/src/services/genshinParity/page/crossScreen.ts`).
 
 #### Scenario: Crossing run
 
@@ -72,11 +72,11 @@ A screen with a crossing SHALL load with its crossing's props and, when the cros
 #### Scenario: Crossing with paused loading
 
 - **WHEN** the crossing is requested together with paused loading
-- **THEN** the run is refused
+- **THEN** the run is refused (`scripts/src/services/genshinParity/commands/loadCommand.ts`)
 
 ### Requirement: Meter against budgets
 
-The meter SHALL print each figure against its budget and SHALL exit non-zero when a figure checked there is over its budget.
+The meter SHALL print each figure against its budget and SHALL exit non-zero when a figure checked there is over its budget (`scripts/src/services/genshinParity/commands/loadCommand.ts`).
 
 #### Scenario: Figure within its budget
 
@@ -91,7 +91,7 @@ The meter SHALL print each figure against its budget and SHALL exit non-zero whe
 #### Scenario: Time on another machine
 
 - **WHEN** the run is on a machine other than the one the budget names
-- **THEN** its time is printed and does not fail the run
+- **THEN** its time is printed and does not fail the run (`scripts/src/services/genshinParity/shared/formatLoadMeter.ts`)
 
 ### Requirement: Budgets only tighten
 
@@ -104,7 +104,7 @@ A change that lowers a measured load SHALL lower its budget in the same change, 
 
 ### Requirement: World ready waits on the finest terrain
 
-The world SHALL signal ready only once every region in reach has arrived or failed and every finest terrain tile the view wants is held or given up.
+The world SHALL signal ready only once every region in reach has arrived or failed and every finest terrain tile the view wants is held or given up (`packages/genshin-world/src/components/World/Terrain/Index.vue`).
 
 #### Scenario: Ready after the tiles settle
 
@@ -114,4 +114,9 @@ The world SHALL signal ready only once every region in reach has arrived or fail
 #### Scenario: Coarser rings keep streaming
 
 - **WHEN** the coarser terrain rings are still streaming
-- **THEN** ready does not wait on them
+- **THEN** ready does not wait on them (`packages/genshin-world/src/components/World/Terrain/Index.vue`)
+
+## Open
+
+- [ ] **The time to ready is read after the network idle window** — no source yet: the reading is taken at the ready signal (`scripts/src/services/genshinParity/page/loadScreen.ts`), and `openParityPage.ts` opens the page at its load event, so the idle window does not hold.
+- [ ] **Requests the page fetches after ready are included in the counts** — no source yet: the readings are taken at the ready signal (`scripts/src/services/genshinParity/page/loadScreen.ts`), and the design page says a fetch after ready is not counted.
