@@ -1,6 +1,6 @@
 ## Purpose
 
-Diona's kit as built: her strikes, charged attack and plunges, Icy Paws' tap and hold with their shields, and Signature Mix's field with Drunkards' Farce's ATK cut from Ascension 4, with her Ascension 1 passive and Constellations 4 and 6 left unbuilt.
+Diona's kit as built: her strikes, charged attack and plunges, Icy Paws' tap and hold with their shields, and Signature Mix's field with Drunkards' Farce's ATK cut from Ascension 4 and Cat's Tail Closing Time's buffs from Constellation 6, with her Ascension 1 passive and Constellation 4 left unbuilt.
 
 ## Requirements
 
@@ -83,6 +83,28 @@ From constellation 1, Signature Mix SHALL give 15 energy as its field ends.
 - **GIVEN** Diona is at constellation 1 and her Signature Mix field stands
 - **WHEN** the field ends
 - **THEN** 15 energy is given
+
+### Requirement: Constellation 6 buffs the team
+
+From constellation 6, each half-second tick of Signature Mix's field SHALL give every deployed member 200 Elemental Mastery if it is above half its HP, or 30 percent Incoming Healing Bonus if it is at or below half, each lasting until the next tick.
+
+#### Scenario: A member above half HP gains Elemental Mastery
+
+- **GIVEN** Diona is at constellation 6 and the character on the field stands in her Signature Mix field
+- **WHEN** the field ticks
+- **THEN** each member above half its HP gains 200 Elemental Mastery
+
+#### Scenario: A member at or below half HP gains Incoming Healing Bonus
+
+- **GIVEN** Diona is at constellation 6 and the character on the field stands in her Signature Mix field
+- **WHEN** the field ticks
+- **THEN** each member at or below half its HP gains 30 percent Incoming Healing Bonus
+
+#### Scenario: A team below constellation 6 gains no buff
+
+- **GIVEN** Diona is at constellation 5 and the character on the field stands in her Signature Mix field
+- **WHEN** the field ticks
+- **THEN** no member gains either buff
 
 ### Requirement: Signature Mix cuts the ATK of the enemies it strikes from Ascension 4
 

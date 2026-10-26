@@ -1,5 +1,7 @@
 import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitAction } from "#src/models/kit/KitAction";
+import type { KitBuff } from "#src/models/kit/KitBuff";
+import type { KitEffectState } from "#src/models/kit/KitEffectState";
 import type { KitShield } from "#src/models/kit/KitShield";
 import type { KitSummon } from "#src/models/kit/KitSummon";
 
@@ -8,8 +10,10 @@ import { Attribute } from "#src/models/character/Attribute";
 import { WeaponType } from "#src/models/weapon/WeaponType";
 import { computeCharacterAttributes } from "#src/services/character/computeCharacterAttributes";
 import { createDionaKitBehaviour, DIONA_CHARACTER_ID } from "#src/services/kit/characters/dionaKit";
-import { createKitTestContext } from "#src/services/kit/createKitTestContext.test";
+import { createKitTestContext, stepKitSeconds } from "#src/services/kit/createKitTestContext.test";
 import { readCharacterKit } from "#src/services/kit/readCharacterKit";
+import { createParty } from "#src/services/party/createParty";
+import { getPartyMember } from "#src/services/party/getPartyMember";
 import { takeOne } from "@esposter/shared";
 import { describe, expect, test } from "vitest";
 
@@ -88,5 +92,52 @@ describe("drunkards' Farce", () => {
     expect.hasAssertions();
 
     expect(readSignatureMixEnemyStatuses(3).every((status) => status === undefined)).toBe(true);
+  });
+});
+
+describe("cat's Tail Closing Time", () => {
+  const ABOVE_HALF_CHARACTER_ID = 1;
+  const AT_HALF_CHARACTER_ID = 2;
+  // The buffs on a character, each as its attribute and amount
+  const readBuffs = (effects: KitEffectState["effects"], characterId: number) =>
+    effects
+      .filter((effect): effect is KitBuff => effect.kind === "buff" && effect.characterId === characterId)
+      .map(({ amount, attribute }) => ({ amount, attribute }));
+  // Diona casts Signature Mix at the constellation on a team of herself and two members, one above half its HP and one
+  // At it, then the cast is stepped to a quarter second past its first tick, inside the half-second that tick's buffs last
+  const readTickEffects = (constellationCount: number) => {
+    const combatant = createDionaCombatant(constellationCount);
+    const party = createParty([DIONA_CHARACTER_ID, ABOVE_HALF_CHARACTER_ID, AT_HALF_CHARACTER_ID]);
+    getPartyMember(party, AT_HALF_CHARACTER_ID).healthShare = 0.5;
+    const context = createKitTestContext(combatant, { party });
+    DIONA_KIT.elementalBurst.onStart?.(context);
+    stepKitSeconds(context, takeOne(DIONA_KIT.elementalBurst.hits).hitmarkSeconds + 0.25);
+    return context.kitEffectState.effects;
+  };
+
+  test("each member gains Elemental Mastery above half its HP and Incoming Healing Bonus at or below it", () => {
+    expect.hasAssertions();
+    const effects = readTickEffects(6);
+
+    expect(readBuffs(effects, DIONA_CHARACTER_ID)).toStrictEqual([
+      { amount: 200, attribute: Attribute.ElementalMastery },
+    ]);
+    expect(readBuffs(effects, ABOVE_HALF_CHARACTER_ID)).toStrictEqual([
+      { amount: 200, attribute: Attribute.ElementalMastery },
+    ]);
+    expect(readBuffs(effects, AT_HALF_CHARACTER_ID)).toStrictEqual([
+      { amount: 0.3, attribute: Attribute.IncomingHealingBonus },
+    ]);
+  });
+
+  test("a team below constellation 6 gains no buff", () => {
+    expect.hasAssertions();
+    const effects = readTickEffects(5);
+
+    expect(
+      [DIONA_CHARACTER_ID, ABOVE_HALF_CHARACTER_ID, AT_HALF_CHARACTER_ID].map((characterId) =>
+        readBuffs(effects, characterId),
+      ),
+    ).toStrictEqual([[], [], []]);
   });
 });
