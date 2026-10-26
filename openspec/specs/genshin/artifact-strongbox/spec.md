@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The Mystic Offering at the Crafting Bench turns three five-star artifacts (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/ReliquaryDecomposeExcelConfigData.json`) into an Artifact Strongbox, which rolls a random piece of a set the player chooses. The offering unlocks at Adventure Rank 45, and the bag holds each artifact as its own individual (`packages/genshin-world/src/services/crafting/craftStrongbox.ts`) so the offering can give up three of them.
+The Mystic Offering at the Crafting Bench turns three five-star artifacts (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/ReliquaryDecomposeExcelConfigData.json`) into an Artifact Strongbox, which rolls a random piece of a set the player chooses. The offering is set to unlock at Adventure Rank 45, a rank with no source on disk yet (see Open), and the bag holds each artifact as its own individual (`packages/genshin-world/src/services/crafting/craftStrongbox.ts`) so the offering can give up three of them.
 
 ## Requirements
 
