@@ -15,7 +15,7 @@ flowchart TD
 
 ## Rules
 
-- **A hundred a day.** `INVESTIGATION_DAILY_CAP` is the most investigations in one game day. At the cap, no more spots spawn; below it, they do. The Investigation page gives the same cap, for investigations in the open world.
+- **A hundred a day.** `INVESTIGATION_DAILY_CAP` is the most investigations in one game day. At the cap, no more spots spawn; below it, they do.
 - **The count is the game day's.** The game day starts at the daily reset, 04:00 in the game's time zone (`~/Esposter.noindex/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json` gives the reset as "4:00 AM ({TIMEZONE})"), so the count that the cap compares is the one kept from that reset. `computeInvestigationDay` keeps a day's count while its key is at or after the latest reset, read by `computeLastDailyReset`, the reset the commissions read, so the game day is the one the commissions keep and not a second reset. `recordInvestigation` counts one more investigation and keys a day that has none at its first. The day is saved as the `investigationDay` slice, `{ count, dayKey }`, whose key is empty before the first investigation. A merge keeps the account's day and count, as the [save data](../save-data/design.md) page's merge does.
 
 ## Key files
