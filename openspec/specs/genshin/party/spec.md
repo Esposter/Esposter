@@ -6,7 +6,7 @@ The player's party as the game keeps it — up to four characters in each team P
 
 ### Requirement: A team holds up to four characters, one each
 
-A team SHALL hold up to four characters, each character at most once, and the deployed team's first member SHALL stand on the field (`packages/genshin-world/src/services/party/createParty.test.ts`, `packages/genshin-world/src/services/party/setPartyTeamCharacters.test.ts`, `packages/genshin-world/src/services/party/deployPartyTeam.test.ts`; the four slots on screen are in `~/Esposter.noindex/genshin-parity/captures/yt-greLeGJE-Jg-party-setup.mp4` at 30 seconds).
+A team SHALL hold up to four characters, each character at most once, and the deployed team's first member SHALL stand on the field (the four slots on screen are in the recording at 30 seconds).
 
 #### Scenario: Team set with its members
 
@@ -23,7 +23,7 @@ A team SHALL hold up to four characters, each character at most once, and the de
 
 ### Requirement: A new player's party starts with four default teams
 
-A new player's party SHALL start with the four default teams, named Party 1 to Party 4, with the first deployed and its first member on the field (the names are in `~/Esposter.noindex/genshin-parity/text/TextMap/`).
+A new player's party SHALL start with the four default teams, named Party 1 to Party 4, with the first deployed and its first member on the field (the names are in the game's text).
 
 #### Scenario: New player's party created
 
@@ -34,7 +34,7 @@ A new player's party SHALL start with the four default teams, named Party 1 to P
 
 ### Requirement: A member's key switches it onto the field past the cooldown
 
-A party member's key SHALL switch that member onto the field when the member is in the deployed team and the switch cooldown since the last switch has passed (`packages/genshin-world/src/services/party/switchPartyMember.test.ts`).
+A party member's key SHALL switch that member onto the field when the member is in the deployed team and the switch cooldown since the last switch has passed.
 
 #### Scenario: Key switches a member in
 
@@ -50,7 +50,7 @@ A party member's key SHALL switch that member onto the field when the member is 
 
 ### Requirement: A switch never brings on a fallen member or changes an empty slot
 
-A switch SHALL NOT bring on a character who is down, and SHALL leave the field unchanged for an empty slot or the member already on the field (`packages/genshin-world/src/services/party/switchPartyMember.test.ts`).
+A switch SHALL NOT bring on a character who is down, and SHALL leave the field unchanged for an empty slot or the member already on the field.
 
 #### Scenario: Fallen member's key pressed
 
@@ -94,7 +94,7 @@ A character SHALL keep its own HP as a share of its Max HP, its energy toward it
 
 ### Requirement: A member who falls leaves the field to the next standing member
 
-When the member on the field falls, the next standing member of the deployed team SHALL take the field (`packages/genshin-world/src/services/party/damagePartyMember.test.ts`, `packages/genshin-world/src/services/party/checkIsNextMemberAsked.test.ts`).
+When the member on the field falls, the next standing member of the deployed team SHALL take the field.
 
 #### Scenario: Member on the field falls
 
@@ -102,7 +102,6 @@ When the member on the field falls, the next standing member of the deployed tea
 - **WHEN** the member falls
 - **THEN** the member is down and loses its energy
 - **AND** the next standing member of the deployed team takes the field
-- (`packages/genshin-world/src/services/party/damagePartyMember.test.ts`)
 
 ### Requirement: A fallen deployed team is revived at 35 percent and jumped to the nearest statue
 
@@ -123,7 +122,7 @@ A deployed team whose members have all fallen SHALL be revived at 35 percent of 
 
 ### Requirement: A drowning takes every member's energy and a tenth of its Max HP
 
-A drowning SHALL take every member's energy and a tenth of each member's Max HP (`packages/genshin-world/src/services/party/drownParty.test.ts`).
+A drowning SHALL take every member's energy and a tenth of each member's Max HP.
 
 #### Scenario: Player drowns
 
@@ -134,23 +133,23 @@ A drowning SHALL take every member's energy and a tenth of each member's Max HP 
 
 ### Requirement: A team is deployed only with a standing member
 
-A team SHALL be refused deployment when it has no members, and when all its members are down (`packages/genshin-world/src/services/party/deployPartyTeam.test.ts`).
+A team SHALL be refused deployment when it has no members, and when all its members are down.
 
 #### Scenario: Empty team deployed
 
 - **GIVEN** a team with no members
 - **WHEN** the player deploys it
-- **THEN** the deployment is refused as an empty team (`packages/genshin-world/src/services/party/deployPartyTeam.test.ts`)
+- **THEN** the deployment is refused as an empty team
 
 #### Scenario: Team of fallen members deployed
 
 - **GIVEN** a team whose members are all down
 - **WHEN** the player deploys it
-- **THEN** the deployment is refused because the team is down (`packages/genshin-world/src/services/party/deployPartyTeam.test.ts`)
+- **THEN** the deployment is refused because the team is down
 
 ### Requirement: Teams are added, renamed and disbanded under the game's limits
 
-The player SHALL be able to add a team, which is named Team Standing By until renamed, up to fifteen teams, to rename a team, and to disband a team, with the four default teams and the deployed team kept (`packages/genshin-world/src/services/party/addPartyTeam.test.ts`, `packages/genshin-world/src/services/party/renamePartyTeam.test.ts`, `packages/genshin-world/src/services/party/disbandPartyTeam.test.ts`; the name "Team Standing By" is in `~/Esposter.noindex/genshin-parity/text/TextMap/`).
+The player SHALL be able to add a team, which is named Team Standing By until renamed, up to fifteen teams, to rename a team, and to disband a team, with the four default teams and the deployed team kept (the name "Team Standing By" is in the game's text).
 
 #### Scenario: Team added
 
@@ -162,7 +161,7 @@ The player SHALL be able to add a team, which is named Team Standing By until re
 
 - **GIVEN** fifteen teams exist
 - **WHEN** the player adds a team
-- **THEN** the addition is refused as full (`packages/genshin-world/src/services/party/addPartyTeam.test.ts`)
+- **THEN** the addition is refused as full
 
 #### Scenario: Team disbanded
 
@@ -170,17 +169,16 @@ The player SHALL be able to add a team, which is named Team Standing By until re
 - **WHEN** the disbanding completes
 - **THEN** the team is removed
 - **AND** the four default teams and the deployed team remain
-- (`packages/genshin-world/src/services/party/disbandPartyTeam.test.ts`)
 
 #### Scenario: Team renamed to an empty name
 
 - **GIVEN** a team the player has renamed
 - **WHEN** the player renames it to an empty name
-- **THEN** the team takes back its own name (`packages/genshin-world/src/services/party/renamePartyTeam.test.ts`)
+- **THEN** the team takes back its own name
 
 ### Requirement: The deployed team's elements give its Elemental Resonances
 
-A full team's elements SHALL give each element that two or more members share its Elemental Resonance, and four different elements SHALL give the Protective Canopy (`packages/genshin-world/src/services/party/getElementalResonances.test.ts`; the game's resonance texts in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json`).
+A full team's elements SHALL give each element that two or more members share its Elemental Resonance, and four different elements SHALL give the Protective Canopy (the game's resonance texts).
 
 #### Scenario: Two members share an element
 
@@ -204,7 +202,7 @@ A full team's elements SHALL give each element that two or more members share it
 
 - **GIVEN** the Pyro Elemental Resonance is given to the deployed team
 - **WHEN** each member's attributes are read
-- **THEN** every member of the deployed team has its ATK raised by 25 percent (`packages/genshin-world/src/services/character/computeCharacterAttributes.test.ts`; Fervent Flames, +25% ATK, in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json`)
+- **THEN** every member of the deployed team has its ATK raised by 25 percent (Fervent Flames, +25% ATK)
 
 ### Requirement: Enduring Rock lowers a struck enemy's Geo resistance while a shield holds
 
@@ -215,7 +213,7 @@ While a shield is up on a Geo team with the Enduring Rock resonance, the team's 
 - **GIVEN** a Geo team with the Enduring Rock resonance and a live shield
 - **WHEN** the team strikes an enemy
 - **THEN** the hit deals 15 percent more damage
-- **AND** the enemy loses 20 percent of its Geo resistance for 15 seconds before the hit's damage is read (`packages/genshin-world/src/services/kit/effects/getBuffedCombatant.test.ts`, `packages/genshin-world/src/services/party/addEnduringRockStatus.test.ts`; the game's Enduring Rock text in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json`, DMG +15% and Geo RES -20% for 15s)
+- **AND** the enemy loses 20 percent of its Geo resistance for 15 seconds before the hit's damage is read (the game's Enduring Rock text, DMG +15% and Geo RES -20% for 15s)
 
 #### Scenario: No shield up
 
@@ -225,7 +223,7 @@ While a shield is up on a Geo team with the Enduring Rock resonance, the team's 
 
 ### Requirement: Sprawling Greenery gives Elemental Mastery after each reaction
 
-With the Sprawling Greenery resonance, each reaction a strike triggers SHALL give every party member Elemental Mastery for six seconds, 30 after Burning, Quicken, Bloom or Lunar-Bloom and 20 after Aggravate, Spread, Hyperbloom or Burgeon (`packages/genshin-world/src/services/party/addSprawlingGreeneryBuffs.test.ts`; the game's 30 and 20 Elemental Mastery for 6s, `paramList`, in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json`).
+With the Sprawling Greenery resonance, each reaction a strike triggers SHALL give every party member Elemental Mastery for six seconds, 30 after Burning, Quicken, Bloom or Lunar-Bloom and 20 after Aggravate, Spread, Hyperbloom or Burgeon (the game's 30 and 20 Elemental Mastery for 6s, `paramList`).
 
 #### Scenario: Reaction triggered by a strike
 
@@ -247,23 +245,23 @@ With the Impetuous Winds resonance, a skill's cooldown SHALL be five percent sho
 
 - **GIVEN** an Anemo team with the Impetuous Winds resonance
 - **WHEN** a skill starts its cooldown
-- **THEN** the cooldown is five percent shorter (the game's "Shortens Skill CD by 5%" in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json`)
+- **THEN** the cooldown is five percent shorter (the game's "Shortens Skill CD by 5%")
 
 #### Scenario: On-field character moves
 
 - **GIVEN** the on-field character with the Impetuous Winds resonance
 - **WHEN** the character walks, runs, sprints or dashes
-- **THEN** its speed is ten percent higher (`packages/genshin-world/src/services/party/getImpetuousWindsLocomotion.test.ts`; the game's "Increases Movement SPD by 10%" in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json`)
+- **THEN** its speed is ten percent higher (the game's "Increases Movement SPD by 10%")
 
 #### Scenario: Stamina spent
 
 - **GIVEN** the on-field character carries Anemo's resonance
 - **WHEN** the character spends stamina
-- **THEN** each stamina spend is 15 percent lower (the game's "Decreases Stamina Consumption by 15%" in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json`)
+- **THEN** each stamina spend is 15 percent lower (the game's "Decreases Stamina Consumption by 15%")
 
 ### Requirement: Each HP change is recorded for the character kits
 
-Every HP change made in combat SHALL be recorded for the character kits, and a revive or a statue's heal SHALL NOT be recorded (`packages/genshin-world/src/services/party/healPartyMember.test.ts`, `packages/genshin-world/src/services/party/damagePartyMember.test.ts`).
+Every HP change made in combat SHALL be recorded for the character kits, and a revive or a statue's heal SHALL NOT be recorded.
 
 #### Scenario: Combat heal recorded
 
@@ -289,7 +287,7 @@ Only the character on the field SHALL take an enemy's strike, while the other me
 
 ### Requirement: The HUD redraws as the party changes
 
-The world's HUD SHALL redraw as members' HP, energy and cooldowns change and as the teams change (`packages/genshin-world/src/services/party/createWorldParty.test.ts`).
+The world's HUD SHALL redraw as members' HP, energy and cooldowns change and as the teams change.
 
 #### Scenario: Member's HP falls
 
