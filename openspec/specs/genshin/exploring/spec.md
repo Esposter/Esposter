@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Teleport Waypoints as jump targets: each ground waypoint on the official map, paired with the scene's transport point it stands at, is listed on the map, the minimap and the jump list once the player has unlocked it, named by its area. A jump to a statue or a waypoint lands the character at the game's own arrival place, facing its turn.
+Teleport Waypoints as jump targets: each ground waypoint on the official map, paired with the scene's transport point it stands at, is listed on the map, the minimap and the jump list once the player has unlocked it, named by its area. A jump to a statue or a waypoint lands the character at the game's own arrival place, facing its turn (the landing is `packages/genshin-world/src/services/map/computeJumpPose.ts`, tested by `computeJumpPose.test.ts`; the list is `packages/genshin-world/src/components/Map/JumpList/Index.vue`; the pairing is `scripts/src/services/genshinAssets/fit/toWaypointLandmarks.ts`, tested by `toWaypointLandmarks.test.ts`).
 
 ## Requirements
 
