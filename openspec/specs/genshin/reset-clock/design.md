@@ -74,11 +74,14 @@ flowchart TD
 - The week's reset times are `computeLastWeeklyReset` and `computeNextWeeklyReset`, and the day's and month's are their pairs in the table above. The mining outcrop's respawn rule is in `checkIsMiningOutcropStanding`, and the game's zone, day start hour and reset days are the constants in `services/time/constants.ts`.
 - Gathering's overworld ingredients respawn at the server's midnight, a separate moment kept in the gathering rules and not a reset, so it is not moved into this module.
 
+## Sources
+
+- [Reset](https://genshin-impact.fandom.com/wiki/Reset), Genshin Impact Wiki (cached as `Daily_Reset.json`, which redirects to it): the weekly reset is Monday at 04:00, "The weekly reset occurs each Monday, also at 04:00 (4 AM)."
+
 ## Open
 
-- [ ] **The daily reset itself is at 04:00 on the Asia server's clock** — no source yet: the dump's `BlossomRefreshExcelConfigData.json` holds 04:00:00 for a refresh, not the reset, and the wiki's Reset page is not in the local wiki cache.
-- [ ] **The weekly reset is Monday at 04:00** — no source yet: no weekly-reset row was found in the dump, and the wiki's Daily Reset page is not cached.
-- [ ] **The monthly reset is the first at 04:00** — no source yet: the dump's shop tables were not opened for this rule, and the wiki's Paimon's Bargains page is not cached.
-- [ ] **The world keeps 04:00 where the wiki gives the mining respawn at 06:00** — no source yet: the dump's `BlossomRefreshExcelConfigData.json` holds a 06:00:00 refresh (`BLOSSOM_REFRESH_CRYSTAL`), and whether it is the mining respawn was not checked; the wiki's Mining Outcrop page is not cached.
+- [ ] **The daily reset itself is at 04:00 on the Asia server's clock** — partly settled: the wiki's Reset page (cache `Reset.json`) gives the daily reset at 04:00, "based on the player's server's time zone", and names no zone or offset for the Asia server. Still open: that the Asia server's clock is UTC+8.
+- [ ] **The monthly reset is the first at 04:00** — partly settled: the wiki's Paimon's Bargains page (cache `Paimon_s_Bargains.json`) gives the reset on "the 1st day of each month" and no hour. Still open: the 04:00 hour, which the Reset page gives for the daily and weekly resets only, and the dump's shop tables, not yet opened for this rule.
+- [ ] **The world keeps 04:00 where the wiki gives the mining respawn at 06:00** — partly settled: the wiki's Mining Outcrop page (cache `Mining_Outcrop.json`) gives the respawn at 6am, "2 hours after each daily reset", so the wiki's 06:00 stands. Still open: whether the dump's `BLOSSOM_REFRESH_CRYSTAL` 06:00:00 refresh (`BlossomRefreshExcelConfigData.json`) is the mining respawn, which no wiki page names.
 - [ ] **A moment at the reset belongs to the period it opens** — no source yet: `packages/genshin-world/src/services/time/computeLastDailyReset.test.ts` exists but was not opened for the at-04:00 assertion.
 - [ ] **The save keeps game-day dates and instants as ISO strings, the enemy's instant by its spawn key** — no source yet: the ISO-string shape in `packages/genshin-world/src/models/enemy/EnemyRespawnSave.ts` was not opened.
