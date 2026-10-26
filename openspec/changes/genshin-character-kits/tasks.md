@@ -23,7 +23,7 @@
 
 ## 6. Size ceiling
 
-- [ ] 6.1 Bring the world's entry back under its size ceiling. Verify: a test named after the scenario 'a world build over its size ceiling is refused', seen failing first, then the build's size check reports the entry under its ceiling.
+- [ ] 6.1 Bring the world's entry back under its size ceiling. Verify: a test named after the scenario 'a world build over its size ceiling is refused', seen failing first, then the build's size check reports the entry under its ceiling. Blocked: the spec names no figure for the ceiling, and the design's 1,350,000 is an aim that gates nothing, while the entry's snapshot is 2,283,884 bytes; which chunk to cut is a design choice the design does not settle, and measuring the cut needs a build.
 
 ## 7. Decisions
 
