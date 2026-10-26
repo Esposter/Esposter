@@ -505,9 +505,8 @@ onMounted(() => {
 }
 
 /* The row's glass, lighter over its label and a tan panel under its value from 977 across, solved from the clip's rows
-   Over the world between them. Its colour is 240 231 215 rather than 239 231 221: the clip's pill interior reads 226 217 202
-   There over the same world, where the old glass read 225 218 207. Provisional: the faint shadow round its edge, read off
-   The clip's column through a row against the world beside it */
+   Over the world between them. Its colour is 240 231 215: the clip's pill interior reads 226 217 202 over the same world.
+   Provisional: the faint shadow round its edge, read off the clip's column through a row against the world beside it */
 .row {
   position: relative;
   flex: none;
