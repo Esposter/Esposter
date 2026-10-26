@@ -9,10 +9,10 @@ import type { StallOptions } from "#src/models/genshinParity/shared/StallOptions
 import type { StallRenderer } from "#src/models/genshinParity/shared/StallRenderer";
 
 import { STALLS_DIRECTORY } from "#src/services/genshinParity/shared/constants";
-import { resolveParityPageRoot } from "#src/services/genshinParity/shared/resolveParityPageRoot";
 import { hookRenderer } from "#src/services/genshinParity/shared/hookRenderer";
 import { measureSceneKinds } from "#src/services/genshinParity/shared/measureSceneKinds";
 import { measureStates } from "#src/services/genshinParity/shared/measureStates";
+import { resolveParityPageRoot } from "#src/services/genshinParity/shared/resolveParityPageRoot";
 import { startCpuProfile } from "#src/services/genshinParity/shared/startCpuProfile";
 import { summarizeGpuTrace } from "#src/services/genshinParity/shared/summarizeGpuTrace";
 import { TRACE_GPU_PASSES_SCRIPT } from "#src/services/genshinParity/shared/traceGpuPassesScript";

@@ -13,7 +13,7 @@ import {
   WITNESS_PATH_PREFIX,
 } from "#src/services/genshinParity/shared/constants";
 import { resolveParityPageRoot } from "#src/services/genshinParity/shared/resolveParityPageRoot";
-import { getResultAsync, InvalidOperationError, Operation } from "@esposter/shared";
+import { getResultAsync, InvalidOperationError, noop, Operation } from "@esposter/shared";
 import { WITNESS_LAYOUT_FILE_NAME } from "genshin-world/sceneExport";
 import { existsSync } from "node:fs";
 import { join } from "node:path";
@@ -28,10 +28,7 @@ const reportConsoleError = (message: ConsoleMessage): Promise<void> =>
       ? await firstArgument.evaluate((value) => (value instanceof Error ? value.message : String(value)))
       : message.text();
     console.error(`parity page: ${detail} ${message.location().url}`);
-  }).match(
-    () => undefined,
-    () => undefined,
-  );
+  }).match(noop, noop);
 
 // The parity page on one screen, at the game's interface height and the reference's aspect, drawn at the reference's pixel
 // Size, once it has drawn. It launches its own Edge, with the flags an unlimited frame rate needs, and closes it with the page.

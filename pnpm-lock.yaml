@@ -2466,6 +2466,9 @@ importers:
       onnxruntime-node:
         specifier: 'catalog:'
         version: 1.31.1
+      oxc-parser:
+        specifier: ^0.155.0
+        version: 0.155.0
       pitch-transcription:
         specifier: workspace:*
         version: link:../packages/pitch-transcription
@@ -2481,9 +2484,6 @@ importers:
       type-fest:
         specifier: 'catalog:'
         version: 5.10.0
-      typescript:
-        specifier: npm:typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2
-        version: typescript-native-bridge@6.0.3-bridge.19.tsgo.7.0.2
 
 packages:
 

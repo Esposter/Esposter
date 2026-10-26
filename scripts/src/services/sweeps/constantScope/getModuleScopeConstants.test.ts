@@ -139,7 +139,7 @@ const fixture = await readFile(${name});`,
     expect(
       getModuleScopeConstants(
         `const fixture = await readFile("");
-const ${name} = fixture.split("\n");
+const ${name} = fixture.split("\\n");
 
 describe("suite", () => {
   test("", () => {

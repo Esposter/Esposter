@@ -1,7 +1,6 @@
-import { getDescendants } from "#src/services/sweeps/getDescendants";
-import ts from "typescript";
+import type { SyntaxNode } from "#src/models/syntax/SyntaxNode";
 
-export const getIdentifierNames = (node: ts.Node): string[] =>
-  getDescendants(node)
-    .filter((descendant) => ts.isIdentifier(descendant))
-    .map((identifier) => identifier.text);
+import { getDescendants } from "#src/services/sweeps/getDescendants";
+
+export const getIdentifierNames = (node: SyntaxNode): string[] =>
+  getDescendants(node).flatMap((descendant) => (descendant.type === "Identifier" ? [descendant.name] : []));

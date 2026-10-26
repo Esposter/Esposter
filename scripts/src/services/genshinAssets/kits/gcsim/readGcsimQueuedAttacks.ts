@@ -14,7 +14,6 @@ import { findInlineAttackPosition } from "#src/services/genshinAssets/kits/gcsim
 import { parseGoExpression } from "#src/services/genshinAssets/kits/gcsim/parseGoExpression";
 import { readCallVariants } from "#src/services/genshinAssets/kits/gcsim/readCallVariants";
 import { readEnemyQueryLoops } from "#src/services/genshinAssets/kits/gcsim/readEnemyQueryLoops";
-import { readReturnedConstellationGates } from "#src/services/genshinAssets/kits/gcsim/readReturnedConstellationGates";
 import { readConstantLoops } from "#src/services/genshinAssets/kits/gcsim/readGoConstantLoops";
 import { readGoEnclosingFunction } from "#src/services/genshinAssets/kits/gcsim/readGoEnclosingFunction";
 import { readGoHitbox } from "#src/services/genshinAssets/kits/gcsim/readGoHitbox";
@@ -24,6 +23,7 @@ import { readHitboxStart } from "#src/services/genshinAssets/kits/gcsim/readHitb
 import { readIterations } from "#src/services/genshinAssets/kits/gcsim/readIterations";
 import { readPassedName } from "#src/services/genshinAssets/kits/gcsim/readPassedName";
 import { readReturnedClosures } from "#src/services/genshinAssets/kits/gcsim/readReturnedClosures";
+import { readReturnedConstellationGates } from "#src/services/genshinAssets/kits/gcsim/readReturnedConstellationGates";
 import { readTaskClosures } from "#src/services/genshinAssets/kits/gcsim/readTaskClosures";
 import { sumOptionalDelays } from "#src/services/genshinAssets/kits/gcsim/sumOptionalDelays";
 import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";

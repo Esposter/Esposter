@@ -112,11 +112,11 @@
     "keyframe-store": "workspace:*",
     "onnxruntime-common": "catalog:",
     "onnxruntime-node": "catalog:",
+    "oxc-parser": "catalog:",
     "pitch-transcription": "workspace:*",
     "playwright": "catalog:",
     "sharp": "catalog:",
     "three": "catalog:",
-    "type-fest": "catalog:",
-    "typescript": "catalog:"
+    "type-fest": "catalog:"
   }
 }

@@ -1,5 +1,7 @@
-import { RESULT_CALLEE_NAMES } from "#src/services/sweeps/unterminatedResults/constants";
-import ts from "typescript";
+import type { SyntaxNode } from "#src/models/syntax/SyntaxNode";
+import type { CallExpression } from "oxc-parser";
 
-export const checkIsResultCall = (node: ts.Node): node is ts.CallExpression =>
-  ts.isCallExpression(node) && ts.isIdentifier(node.expression) && RESULT_CALLEE_NAMES.has(node.expression.text);
+import { RESULT_CALLEE_NAMES } from "#src/services/sweeps/unterminatedResults/constants";
+
+export const checkIsResultCall = (node: SyntaxNode): node is CallExpression =>
+  node.type === "CallExpression" && node.callee.type === "Identifier" && RESULT_CALLEE_NAMES.has(node.callee.name);

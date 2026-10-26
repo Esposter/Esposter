@@ -75,10 +75,10 @@ describe(findHitPathRowsMap, () => {
       ),
     ).toStrictEqual(
       new Map([
-        ["hits.fieryRainArrows.0", [properties[0]]],
-        ["hits.fieryRainArrows.1", [properties[1]]],
         ["hits.everyArrowFindsItsTargetFieryRainArrows.0", [properties[0]]],
         ["hits.everyArrowFindsItsTargetFieryRainArrows.1", [properties[1]]],
+        ["hits.fieryRainArrows.0", [properties[0]]],
+        ["hits.fieryRainArrows.1", [properties[1]]],
       ]),
     );
   });

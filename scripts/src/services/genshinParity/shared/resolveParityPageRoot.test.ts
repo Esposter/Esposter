@@ -4,16 +4,17 @@ import { createServer, type Server } from "node:http";
 import { afterEach, describe, expect, test } from "vitest";
 
 describe(resolveParityPageRoot, () => {
-  const servers: Server[] = [];
+  let servers: Server[] = [];
 
   afterEach(() => {
-    for (const server of servers.splice(0)) server.close();
+    for (const server of servers) server.close();
+    servers = servers.toSpliced(0);
   });
 
   // Serves `body` on a free port, and returns the port
   const serve = (body: string): Promise<number> =>
     new Promise((resolve) => {
-      const server = createServer((_, response) => response.end(body));
+      const server = createServer((_request, response) => response.end(body));
       servers.push(server);
       server.listen(0, () => {
         const address = server.address();

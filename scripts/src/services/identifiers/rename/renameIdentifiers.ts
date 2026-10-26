@@ -1,8 +1,12 @@
 import type { RenameMap } from "#src/models/identifiers/rename/RenameMap";
+import type { SyntaxNode } from "#src/models/syntax/SyntaxNode";
 
+import { checkIsName } from "#src/services/identifiers/rename/checkIsName";
 import { getAlternation } from "#src/services/identifiers/rename/getAlternation";
 import { getBoundNames } from "#src/services/identifiers/rename/getBoundNames";
-import ts from "typescript";
+import { getChildren } from "#src/services/shared/getChildren";
+import { getParent } from "#src/services/shared/getParent";
+import { parseSource } from "#src/services/shared/parseSource";
 
 // Renames every name the map holds in one TypeScript source, where the source binds it and only in code, read from
 // The syntax tree rather than the text. A key that merely shares the spelling (`{ users: … }`) and a property read
@@ -27,53 +31,46 @@ export const renameIdentifiers = (text: string, renameMap: RenameMap, isSource: 
     : text;
   let renamedText = aliasedText;
   if (boundNames.size > 0 || accessors.some((accessor) => aliasedText.includes(`${accessor}.`))) {
-    const sourceFile = ts.createSourceFile("", aliasedText, ts.ScriptTarget.Latest, true, ts.ScriptKind.TS);
-    const getReplacement = (identifier: ts.Identifier): string | undefined => {
-      const { parent, text: name } = identifier;
-      if (ts.isPropertyAccessExpression(parent) && parent.name === identifier) {
-        const { expression } = parent;
-        const accessor = ts.isPropertyAccessExpression(expression) ? expression.name : expression;
-        return Object.hasOwn(renames, name) && ts.isIdentifier(accessor) && accessors.includes(accessor.text)
+    const program = parseSource(aliasedText);
+    const getReplacement = (identifier: Extract<SyntaxNode, { type: "Identifier" }>): string | undefined => {
+      const { name } = identifier;
+      const parent = getParent(identifier);
+      if (parent?.type === "MemberExpression" && !parent.computed && parent.property === identifier) {
+        const { object } = parent;
+        const accessor = object.type === "MemberExpression" && !object.computed ? object.property : object;
+        return Object.hasOwn(renames, name) && accessor.type === "Identifier" && accessors.includes(accessor.name)
           ? getRename(name)
           : undefined;
-      } else if (!boundNames.has(name)) return undefined;
-      else if (
-        (ts.isShorthandPropertyAssignment(parent) && parent.name === identifier) ||
-        (ts.isBindingElement(parent) &&
-          parent.name === identifier &&
-          ts.isObjectBindingPattern(parent.parent) &&
-          !parent.propertyName &&
-          !parent.dotDotDotToken)
+      }
+      if (!boundNames.has(name)) return undefined;
+      // A shorthand property, in an object literal or a destructuring, and a default in one: both keep their key
+      const grandparent = parent?.type === "AssignmentPattern" ? getParent(parent) : undefined;
+      if (
+        (parent?.type === "Property" && parent.shorthand) ||
+        (grandparent?.type === "Property" &&
+          grandparent.shorthand &&
+          parent?.type === "AssignmentPattern" &&
+          parent.left === identifier)
       )
         return `${name}: ${getRename(name)}`;
-      else if (
-        ((ts.isPropertyAssignment(parent) ||
-          ts.isPropertySignature(parent) ||
-          ts.isPropertyDeclaration(parent) ||
-          ts.isMethodDeclaration(parent) ||
-          ts.isMethodSignature(parent) ||
-          ts.isAccessor(parent) ||
-          ts.isEnumMember(parent)) &&
-          parent.name === identifier) ||
-        (ts.isBindingElement(parent) && parent.propertyName === identifier) ||
-        (ts.isQualifiedName(parent) && parent.right === identifier)
-      )
-        return undefined;
-      return getRename(name);
+      return checkIsName(parent, identifier) ? undefined : getRename(name);
     };
     let last = 0;
     renamedText = "";
-    // A comment is trivia the tree never visits, and a string or a template literal's text is never an identifier
-    const visit = (node: ts.Node) => {
-      const replacement = ts.isIdentifier(node) ? getReplacement(node) : undefined;
-      if (replacement !== undefined) {
-        const start = node.getStart(sourceFile);
-        renamedText += `${aliasedText.slice(last, start)}${replacement}`;
-        last = node.end;
+    // A comment is trivia the tree never visits, and a string or a template literal's text is never an identifier. A
+    // Shorthand property lists its key and its value at one position, so a position already rewritten is skipped
+    const visit = (node: SyntaxNode): void => {
+      if (node.type === "Identifier" && node.start >= last) {
+        const replacement = getReplacement(node);
+        if (replacement !== undefined) {
+          renamedText += `${aliasedText.slice(last, node.start)}${replacement}`;
+          // An identifier's span takes in its type annotation, which must survive the rename, so only its name is replaced
+          last = node.start + node.name.length;
+        }
       }
-      ts.forEachChild(node, visit);
+      for (const child of getChildren(node)) visit(child);
     };
-    visit(sourceFile);
+    visit(program);
     renamedText += aliasedText.slice(last);
   }
   // A moved file's specifier is a string, so it is rewritten whole and never as a fragment of another specifier
