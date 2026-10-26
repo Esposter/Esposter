@@ -20,7 +20,7 @@ The runnable form of the skill pass over the whole tree. What one skill's pass d
 2. **Mechanical checks first**, and fix what they report before reading prose: `pnpm ai:sweep:skill-docs`, `pnpm ai:sweep:duplicate-prose`, and from `scripts/` `pnpm test src/workspace --run` — citations, ledger units, package scripts. A timeout on a cold cache reruns the one file alone before it is read as a failure.
 3. **Per skill, through the `skill-authoring` skill's pass** (`references/skill-pass.md`), a haiku reader per batch of skills running in parallel; concurrent writes are allowed, since readers edit disjoint skill folders and a clash is settled when the run converges:
    - read `SKILL.md` and every `references/` page whole;
-   - check it against the audit below;
+   - check it against the audit on this page;
    - verify every code claim against the tree — identifiers, paths, signatures and example code as they exist now, written in the newest APIs and the `error-handling` skill's result chains;
    - apply the fixes the audit settles, code included when the claim is right and the code is wrong, and report every call it did not settle.
    - The main session then reads each skill's diff and report, decides every reported call, and commits the skill's fixes in one commit carrying `Ledger: docs/skills | `<skill>``; a clean skill's trailer rides the next commit, never an empty one. A round that leaves findings runs again until a full pass finds nothing.
