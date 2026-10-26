@@ -14,7 +14,6 @@ A character's Max HP, ATK and DEF SHALL each be its base multiplied by one plus 
 - **WHEN** its attributes are summed
 - **THEN** its Max HP is 10,874.91
 - **AND** its DEF is 682.52
-- The wiki's pair is open below.
 
 #### Scenario: A weapon's ATK percentage raises both ATK bases
 

@@ -10,10 +10,9 @@ Each piece of a screen's interface SHALL be placed inside its game parent's box 
 
 #### Scenario: A piece anchored to the bottom stays at the bottom
 
-- **GIVEN** a piece is anchored to the bottom of its parent
+- **GIVEN** a piece is anchored to the bottom of its parent, the login's `Bottom` with `anchorMin` [0, 0] and `anchorMax` [1, 0]
 - **WHEN** the window is resized to any shape
 - **THEN** the piece stays at the bottom of its parent
-- (the login's `Bottom` with `anchorMin` [0, 0] and `anchorMax` [1, 0])
 
 #### Scenario: A piece follows its parent
 
