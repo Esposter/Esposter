@@ -70,4 +70,4 @@ A screen SHALL ship only shapes derived from the game's marks through this traci
 ## Open
 
 - [ ] **Only traced shapes or published vectors ship with a screen** — no source yet: no check of the screens' shipped shapes against their source was run.
-- [ ] **A vector mark's published paths are drawn unchanged** — checked against the splash publisher's drawing, which passes each published letter path to its SVG `d` attribute with no tracing, and the claim is not settled in this spec because its citation is repo code, which a spec names no path for; the citation belongs beside it in the design.
+- [ ] **A vector mark's published paths are drawn unchanged** — no source yet: the component that draws the Commons SVGs was not traced.
