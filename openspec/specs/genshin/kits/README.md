@@ -219,7 +219,7 @@ flowchart LR
   GC["gcsim at v2.47.2: hitboxes, hitmarks, frames, tags, gauge and talent indices"] --> B["genshin:assets kits"]
   WK["the wiki's Advanced Properties at each page's revision: poise, gauge, ICD tag"] --> B
   TB["the published tables: proud skill groups and their labels"] --> B
-  OV["the character's overlay in packages/genshin-world/src/data/kits: what no source holds, each with its cause"] --> B
+  OV["the overlay in packages/genshin-world/src/data/kits: what no source holds, with its cause"] --> B
   PB["the published kits index"] -->|"the record each built one must reproduce unless --only names its kit"| B
   B -->|"values"| K["kits index, one record per avatar"]
   B -->|"where each value came from"| S["kitSources index"]
