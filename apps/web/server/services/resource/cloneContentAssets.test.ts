@@ -59,6 +59,9 @@ describe(cloneContentAssets, () => {
       .map((blobName) => `<img src="${getResourceAssetUrl(blobName)}">`)
       .join(""),
   };
+  const threeDestinationBlobNames = [hash, otherHash, thirdHash]
+    .map((assetHash) => `${destinationResourceId}/${FILES_DIRECTORY_SEGMENT}/${assetHash}`)
+    .toSorted();
   // The clone asks the same question the serving endpoint does, so the rows that answer it are what a case varies: an
   // Owned working copy is readable to its owner, and an unowned one is readable to nobody
   const createDatabase = (isOwned: boolean) =>
@@ -211,11 +214,7 @@ describe(cloneContentAssets, () => {
     expect(findFirstResource).toHaveBeenCalledTimes(1);
     expect(findFirstPublication).not.toHaveBeenCalled();
     expect(findFirstPublishedAsset).not.toHaveBeenCalled();
-    expect((await getBlobNames(`${destinationResourceId}/`)).toSorted()).toStrictEqual(
-      [hash, otherHash, thirdHash]
-        .map((assetHash) => `${destinationResourceId}/${FILES_DIRECTORY_SEGMENT}/${assetHash}`)
-        .toSorted(),
-    );
+    expect((await getBlobNames(`${destinationResourceId}/`)).toSorted()).toStrictEqual(threeDestinationBlobNames);
   });
 
   test("asks ownership and publication once each for a published resource a stranger clones, and the published lookup once per asset", async () => {
@@ -231,10 +230,6 @@ describe(cloneContentAssets, () => {
     expect(findFirstResource).toHaveBeenCalledTimes(1);
     expect(findFirstPublication).toHaveBeenCalledTimes(1);
     expect(findFirstPublishedAsset).toHaveBeenCalledTimes(3);
-    expect((await getBlobNames(`${destinationResourceId}/`)).toSorted()).toStrictEqual(
-      [hash, otherHash, thirdHash]
-        .map((assetHash) => `${destinationResourceId}/${FILES_DIRECTORY_SEGMENT}/${assetHash}`)
-        .toSorted(),
-    );
+    expect((await getBlobNames(`${destinationResourceId}/`)).toSorted()).toStrictEqual(threeDestinationBlobNames);
   });
 });
