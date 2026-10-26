@@ -17,7 +17,7 @@ An offering SHALL take every offering item the bag holds out of the bag in one o
 
 ### Requirement: Each level the held count covers is reached once
 
-An offering SHALL reach each next level its held count covers, taking that level's items off the count and paying its rewards once (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/OfferingLevelUpExcelConfigData.json`).
+An offering SHALL reach each next level its held count covers, taking that level's items off the count and paying its rewards once.
 
 #### Scenario: Held count covers two levels
 
@@ -44,7 +44,7 @@ An offering SHALL drop at the tree, as pick ups lying there, any items the bag h
 
 ### Requirement: The first offer starts the tree
 
-The tree SHALL reach its first level on the first offer whatever the bag holds, paying that level's reward once (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/OfferingLevelUpExcelConfigData.json`, offering 1 level 1 holds no items).
+The tree SHALL reach its first level on the first offer whatever the bag holds, paying that level's reward once (offering 1 level 1 holds no items).
 
 #### Scenario: First offer with no offering items
 
