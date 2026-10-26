@@ -105,4 +105,3 @@ Blade density SHALL be the first detail a lower quality tier reduces, before the
 ## Open
 
 - [ ] **Vegetation: the grass fades into the ground's colour with no visible seam** — no source yet: a visual check of the seam on a recording, which no record holds.
-- [ ] **Vegetation: a wet meadow darkens and glints as one surface** — no source yet: a wet-ground branch in the grass material, which the vegetation files do not name.
