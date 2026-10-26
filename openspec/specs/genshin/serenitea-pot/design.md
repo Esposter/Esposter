@@ -51,6 +51,7 @@ The furnishings' own table, "HomeWorldFurnitureExcelConfigData", is not read yet
 
 - **The per-hour unit is provisional.** The wiki could not be read from this build (it answered HTTP 402), so the rates' unit is the table's own reading of one real hour, marked provisional in `packages/genshin-world/src/services/home/constants.ts` until a recording of a store across an hour settles it.
 - **One queue per rank.** The build slot appears on every Trust Rank, so the count is the rank itself `packages/genshin-world/src/services/home/constants.ts`. A recording of the queues at two ranks would confirm it.
+
 ## Key files
 
 | File                                                                 | Role                                                                      |
