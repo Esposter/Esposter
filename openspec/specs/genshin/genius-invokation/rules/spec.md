@@ -16,7 +16,7 @@ Each side SHALL switch its cards once during preparation, and the first round SH
 
 ### Requirement: Each side rolls eight dice a round and may reroll once
 
-Each side SHALL roll eight dice each round and MAY reroll any dice it names once, and naming no dice SHALL pass the reroll. The game's Roll Phase rule text gives both sides 8 Elemental Dice (`GCGRuleTextDetail` #1003).
+Each side SHALL roll eight dice each round and MAY reroll any dice it names once, and naming no dice SHALL pass the reroll.
 
 #### Scenario: Naming no dice passes the reroll
 
