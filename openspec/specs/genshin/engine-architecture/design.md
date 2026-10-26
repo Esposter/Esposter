@@ -69,11 +69,11 @@ Every module is judged by what it costs a mid-range laptop's integrated GPU and 
 - the engine's code and each region's data load only when needed
 - a quality tier lowers cost before the frame budget is missed, and never removes the style
 
-The generators and per-frame selections the engine's 16 bench files cover (`packages/genshin-engine/src`) are benched under the `bench` skill at two scales or more, so their cost is shown to follow what is visible; `createGrassCell` has no bench yet. A module whose bench grows with the continent is redesigned, not tuned.
+The generators and per-frame selections the engine's 16 bench files cover (`packages/genshin-engine/src`) are benched under the `bench` skill at two scales or more in fifteen of them, so their cost is shown to follow what is visible; the terrain shape height is benched at one hill count with added variants (`packages/genshin-engine/src/terrain/createTerrainShapeHeight.bench.ts`), and `createGrassCell` (`packages/genshin-engine/src/vegetation/createGrassCell.ts`) has no bench yet. A module whose bench grows with the continent is redesigned, not tuned.
 
 ## The world screen is composition
 
-`World/Screen/Index.vue` loads the names and the game's tables the save is read by and the rules run on, and the ground, the catalogue and the animals the first frame draws, each from the [hosted game data](../hosted-game-data/design.md) (`packages/genshin-world/src/components/World/Screen/Index.vue`), then opens `World/Session/Index.vue`, which composes the systems and their records, and defines a few functions of its own such as `getGroundHeight` (`packages/genshin-world/src/components/World/Session/Index.vue`). The session composes the ground every reader stands on once (`getGroundHeight`, [region buildings](../region-buildings/design.md)) and passes it and each record to what reads them (`packages/genshin-world/src/components/World/Session/Index.vue`). Each system of the world (the save and the bag, the pick ups, the quests, the talks and residents, the Archive, the party and its combat, the landmarks and the jump, the achievements) is one composable under `composables/` (`packages/genshin-world/src/composables/`), taking its dependencies as arguments and returning what the template or another system reads. A system reacts to another's doing through one typed event map, `WorldEventMap` (`packages/genshin-world/src/models/world/WorldEventMap.ts`), emitted on one `WorldEvents` the screen creates (`packages/genshin-world/src/services/world/createWorldEvents.ts`):
+`World/Screen/Index.vue` loads the names and the game's tables the save is read by and the rules run on, and the ground, the catalogue and the animals the first frame draws, each from the [hosted game data](../hosted-game-data/design.md) (`packages/genshin-world/src/components/World/Screen/Index.vue`), then opens `World/Session/Index.vue`, which composes the systems and their records, and defines a few functions of its own such as `getGroundHeight` (`packages/genshin-world/src/components/World/Session/Index.vue`). The session composes the ground every reader stands on once (`getGroundHeight`, [region buildings](../region-buildings/design.md)) and passes it and each record to what reads them (`packages/genshin-world/src/components/World/Session/Index.vue`). Each system of the world (the save and the bag, the pick ups, the quests, the talks and residents, the Archive, the party and its combat, the landmarks and the jump, the achievements) is one composable under `composables/` (`packages/genshin-world/src/composables/`), taking its dependencies as arguments and returning what the template or another system reads. A system reacts to another's doing through one typed event map, `WorldEventMap` (`packages/genshin-world/src/models/world/WorldEventMap.ts`), emitted on one `WorldEvents` the session creates (`packages/genshin-world/src/services/world/createWorldEvents.ts`):
 
 ```mermaid
 flowchart LR
@@ -87,7 +87,7 @@ flowchart LR
   Map[useWorldMap] -->|questEvent| Quests
 ```
 
-The edges are emitted by `packages/genshin-world/src/composables/useWorldPickups.ts`, `useWorldCombat.ts`, `useWorldSave.ts`, `useWorldQuests.ts` and `useWorldMap.ts`, and `useWorldTalks.ts` raises none.
+The edges are emitted by `packages/genshin-world/src/composables/useWorldPickups.ts`, `useWorldCombat.ts`, `useWorldSave.ts`, `useWorldQuests.ts` and `useWorldMap.ts`, and `packages/genshin-world/src/composables/useWorldTalks.ts` raises none.
 
 ## Key files
 
@@ -103,6 +103,6 @@ The edges are emitted by `packages/genshin-world/src/composables/useWorldPickups
 
 ## Open
 
-- [ ] **The generators and per-frame selections the bench files cover are benched at two scales** — contradicted by packages/genshin-engine/src/terrain/createTerrainShapeHeight.bench.ts: one test at one scale (76 hills); the other 15 bench files run two.
+- [ ] **The generators and per-frame selections the bench files cover are benched at two scales** — contradicted by `packages/genshin-engine/src/terrain/createTerrainShapeHeight.bench.ts`: one test at one scale (76 hills); the other 15 bench files run two.
 - [ ] **The screen creates the `WorldEvents`** — contradicted by `packages/genshin-world/src/components/World/Session/Index.vue`: the session calls `createWorldEvents()` at line 328, not the screen.
-- [ ] **The screen loads the ground the first frame draws** — no source yet: the screen's load steps (`packages/genshin-world/src/components/World/Screen/Index.vue`) name no ground read, and its only ground mention is a comment (line 49); the ground read was not located in the session either.
+- [ ] **The screen loads the ground the first frame draws** — no source yet: the screen's load steps (`packages/genshin-world/src/components/World/Screen/Index.vue`) name no ground read, and its only ground mention is a comment (line 49).
