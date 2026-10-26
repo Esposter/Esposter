@@ -1,6 +1,6 @@
 ## Purpose
 
-Mona's kit as built: four strikes, a charged attack, Mirror Reflection of Doom's summon, Stellaris Phantasm's bubble and Omen, A1's phantom, A4's Hydro bonus and Constellation 2's Charged Attack follow-up and Constellation 6's sprint stacks on her Charged Attack, with her plunges' reach provisional and Constellations 1 and 4 left out.
+Mona's kit as built: four strikes, a charged attack, Mirror Reflection of Doom's summon, Stellaris Phantasm's bubble and Omen, A1's phantom, A4's Hydro bonus, Constellations 1, 2, 4 and 6 (Constellation 1's Frozen duration left out, as the game has no such effect), with her plunges' reach provisional.
 
 ## Requirements
 
