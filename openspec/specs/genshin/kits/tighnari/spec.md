@@ -6,7 +6,7 @@ Tighnari's kit as built: his four strikes, a fully charged shot, a collision and
 
 ### Requirement: Tighnari's strikes, shot and plunges
 
-Tighnari's four strikes, fully charged shot, collision and two plunges SHALL land on the enemies within reach, carrying no poise.
+Tighnari's four strikes, fully charged shot, collision and two plunges SHALL land on the enemies within reach, each carrying the poise its record gives it.
 
 #### Scenario: Four strikes in sequence
 
