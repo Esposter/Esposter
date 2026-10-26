@@ -111,8 +111,8 @@ const lineParts = computed(() => {
   line-height: calc(var(--unit) * 16.5);
 }
 
-/* The letter-space is 2.35: the English client's first line spans 782 pixels at 720 high and this face sets it 3 pixels
-   narrower at 2.3, the mean difference lowest at 2.35 (2.38 and 2.42 raise it). The face itself is the remaining gap */
+/* The letter-space is the one that keeps the line's width closest to the game's; the face's own letter widths are
+   the remaining gap */
 .line {
   max-width: calc(var(--unit) * 1200);
   margin: calc(var(--unit) * 13.5) 0 0;
