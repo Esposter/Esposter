@@ -4,13 +4,12 @@ import type { MessageEmojiMetadataEntity } from "#shared/models/db/message/metad
 import type { UpdateEmojiInput } from "#shared/models/db/message/metadata/UpdateEmojiInput";
 
 import { createMessageEmojiMetadataEntity } from "#shared/services/message/createMessageEmojiMetadataEntity";
-import { getUpdatedUserIds } from "#shared/services/message/emoji/getUpdatedUserIds";
 import { CompositeAzureKeyPath } from "@/models/cache/indexedDb/keyPaths/CompositeAzureKeyPath";
 import { authClient } from "@/services/auth/authClient";
 import { getEntityIdEqualComparator } from "@/services/entity/getEntityIdEqualComparator";
 import { createAzureMetadataMap } from "@/services/shared/metadata/createAzureMetadataMap";
 import { MessageMetadataType } from "@esposter/db-schema";
-import { ID_SEPARATOR, takeOne } from "@esposter/shared";
+import { checkIsOnlyReactor, getUpdatedUserIds, ID_SEPARATOR, takeOne } from "@esposter/shared";
 
 export const useEmojiStore = defineStore("message/emoji", () => {
   const session = authClient.useSession();
@@ -78,7 +77,7 @@ export const useEmojiStore = defineStore("message/emoji", () => {
     if (!session.value.data) return;
 
     const { messageRowKey, partitionKey, rowKey, userIds } = emoji;
-    if (userIds.length === 1 && userIds.includes(session.value.data.user.id))
+    if (checkIsOnlyReactor(userIds, session.value.data.user.id))
       await deleteEmoji({ messageRowKey, partitionKey, rowKey });
     else await updateEmoji({ messageRowKey, partitionKey, rowKey, userIds });
   };

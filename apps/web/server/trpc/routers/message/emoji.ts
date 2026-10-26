@@ -18,18 +18,10 @@ import {
 import { updateEmojiInputSchema } from "#shared/models/db/message/metadata/UpdateEmojiInput";
 import { readMetadataInputSchema } from "#shared/models/db/message/ReadMetadataInput";
 import { createMessageEmojiMetadataEntity } from "#shared/services/message/createMessageEmojiMetadataEntity";
-import { getUpdatedUserIds } from "#shared/services/message/emoji/getUpdatedUserIds";
 import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
-import {
-  checkIsOnlyReactor,
-  createEntity,
-  getEntity,
-  getEntityWithEtag,
-  getTopNEntities,
-  updateEntity,
-} from "@esposter/db";
+import { createEntity, getEntity, getEntityWithEtag, getTopNEntities, updateEntity } from "@esposter/db";
 import { MessageMetadataType } from "@esposter/db-schema";
-import { Operation } from "@esposter/shared";
+import { checkIsOnlyReactor, getUpdatedUserIds, Operation } from "@esposter/shared";
 
 export const emojiRouter = router({
   createEmoji: getMemberProcedure(

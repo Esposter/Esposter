@@ -9,9 +9,9 @@ import type {
 } from "@esposter/db-schema";
 
 import { AZURE_MAX_PAGE_SIZE, BinaryOperator, CompositeKeyPropertyNames, serializeClauses } from "@esposter/azure";
-import { checkIsOnlyReactor, updateEntity } from "@esposter/db";
+import { updateEntity } from "@esposter/db";
 import { MessageMetadataType, userIdsSchema } from "@esposter/db-schema";
-import { jsonDateParse } from "@esposter/shared";
+import { checkIsOnlyReactor, getUpdatedUserIds, jsonDateParse } from "@esposter/shared";
 
 // One row holds every member who reacted with one emoji, so the account is taken out of a shared row's
 // Reactor list, and a row it holds alone goes. Each write is conditional on the version it read, so a
@@ -39,12 +39,9 @@ export const deleteAccountRoomReactions = async (
         // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one reaction at a time, as the room's partition is walked
         await messagesMetadataClient.deleteEntity(partitionKey, rowKey, { etag });
       else {
+        // The account is on the row (checked above), so the toggle takes it off
         // A variable, not a literal: the table's entity type has no userIds, so a literal fails the excess-property check
-        const remainingReaction = {
-          partitionKey,
-          rowKey,
-          userIds: userIds.filter((reactorUserId) => reactorUserId !== userId),
-        };
+        const remainingReaction = { partitionKey, rowKey, userIds: getUpdatedUserIds(userIds, userId) };
         // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one reaction at a time, as the room's partition is walked
         await updateEntity(messagesMetadataClient, remainingReaction, "Merge", { etag });
       }

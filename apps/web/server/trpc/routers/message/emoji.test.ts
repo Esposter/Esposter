@@ -167,6 +167,20 @@ describe("emojiRouter", () => {
     );
   });
 
+  test("fails update by a member who is the only reactor", async () => {
+    expect.hasAssertions();
+
+    const { emojiKey, newEmoji, newMessage } = await setupEmoji();
+
+    await expect(emojiCaller.updateEmoji(emojiKey)).rejects.toThrow(
+      `Invalid operation: ${Operation.Update}, name: ${MessageMetadataType.Emoji}`,
+    );
+
+    const emojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId });
+
+    expect(emojis).toStrictEqual([newEmoji]);
+  });
+
   test("deletes", async () => {
     expect.hasAssertions();
 
