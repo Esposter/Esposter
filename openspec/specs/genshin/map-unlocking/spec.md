@@ -96,6 +96,5 @@ A Teleport Waypoint SHALL be unlocked by resonating with it on F, as a statue is
 
 ## Open
 
-- [ ] **A fallen party is taken to the unlocked landmark nearest its body** — no source yet: the wiki's revive rule is not cached, and the repo's `packages/genshin-world/src/services/map/findNearestTeleportWaypoint.ts` takes the nearest Teleport Waypoint, not a statue.
 - [ ] **A statue's first unlock pays its Primogems and Adventure EXP** — no source yet: the wiki page Statue of The Seven is not on disk, so its Statue Levels section (50 Adventure EXP and 5 Primogem) is unchecked.
 - [ ] **A domain entrance unlocks the same way as a landmark of the world** — no source yet: the wiki page Domain is not on disk, so its Permanent and Challenge Domains sections, which may name no resonating, are unchecked; the owner decides.
