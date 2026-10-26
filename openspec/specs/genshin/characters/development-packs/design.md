@@ -1,8 +1,8 @@
 # Development packs
 
-Under `nuxt dev`, the app's module `apps/web/modules/serveGenshinExtractions.ts` registers a route at `GENSHIN_CHARACTER_PACK_BASE_URL`, and the app's world component hands the world that address (`apps/web/modules/serveGenshinExtractions.ts`, `apps/web/app/components/Genshin/World.vue`, `apps/web/shared/services/genshin/constants.ts`). A build registers no route, bundles neither the route's handler nor the readers it imports, and hands the world no address. The module returns before registering anything unless Nuxt runs under `nuxt dev`, since a route that refused outside development would still be bundled into the production server with the readers it imports (`apps/web/modules/serveGenshinExtractions.ts`, which returns early unless `nuxt.options.dev`). The same module registers the route the world reads the developer's own exports of the game's scenes from ([development exports](../../derived-assets/development-exports/design.md)).
+Under `nuxt dev`, the app's module `apps/web/modules/serveGenshinExtractions.ts` registers a route at `GENSHIN_CHARACTER_PACK_BASE_URL`, and the app's world component hands the world that address (`apps/web/app/components/Genshin/World.vue`, `apps/web/shared/services/genshin/constants.ts`). A build registers no route, bundles neither the route's handler nor the readers it imports, and hands the world no address. The module returns before registering anything unless Nuxt runs under `nuxt dev`, since a route that refused outside development would still be bundled into the production server with the readers it imports (which returns early unless `nuxt.options.dev`). The same module registers the route the world reads the developer's own exports of the game's scenes from ([development exports](../../derived-assets/development-exports/design.md)).
 
-The route reads the folder `GENSHIN_CHARACTER_PACKS_DIRECTORY` names, by default `~/Esposter/character-packs/extracted` (`apps/web/server/development/genshinCharacterPacks.ts`, `apps/web/server/services/genshin/characterPack/constants.ts`). That folder holds one subfolder per character, named by its id, each an official release extracted as it shipped. `serveGenshinCharacterPack` answers the [pack layout](../README.md) from it (`apps/web/server/services/genshin/characterPack/serveGenshinCharacterPack.ts`). The server reaches the world's rules through the package's `genshin-world/characterPack` entry, which reaches none of its components (`packages/genshin-world/src/characterPack.ts`, which re-exports services only).
+The route reads the folder `GENSHIN_CHARACTER_PACKS_DIRECTORY` names, by default `~/Esposter/character-packs/extracted`. That folder holds one subfolder per character, named by its id, each an official release extracted as it shipped. `serveGenshinCharacterPack` answers the [pack layout](../README.md) from it. The server reaches the world's rules through the package's `genshin-world/characterPack` entry, which reaches none of its components (`packages/genshin-world/src/characterPack.ts`, which re-exports services only).
 
 ```mermaid
 flowchart TD
@@ -16,9 +16,9 @@ flowchart TD
   PATH -->|"no folder of that id, or no such texture"| MISSING["404"]
 ```
 
-The folder rules, the model's, the textures' and the terms', are the same ones a player's extracted release is read by ([a player's own pack](../player-packs/design.md)) (`packages/genshin-world/src/characterPack.ts`).
+The folder rules, the model's, the textures' and the terms', are the same ones a player's extracted release is read by ([a player's own pack](../player-packs/design.md)).
 
-Only a folder named by a character's id is read, and only a file the folder's own listing holds is served, so no request reaches outside the directory (`apps/web/server/services/genshin/characterPack/serveGenshinCharacterPack.ts`). Nothing is cached: an edited pack is read again on the next request (`apps/web/server/services/genshin/characterPack/serveGenshinCharacterPack.ts`, which holds no cache).
+Only a folder named by a character's id is read, and only a file the folder's own listing holds is served, so no request reaches outside the directory. Nothing is cached: an edited pack is read again on the next request (the service holds no cache).
 
 ## Key files
 
@@ -34,5 +34,5 @@ Only a folder named by a character's id is read, and only a file the folder's ow
 
 ## Decisions
 
-- **The development server serves the packs, and no build holds the route.** The route is the only way a folder on the developer's disk reaches the world, so a production build carries neither it nor a request to it (`apps/web/modules/serveGenshinExtractions.ts`).
-- **A host's files are served at their character's id, read as they stand.** The developer's folder is edited in place, so each request reads it fresh, as the [player's kept packs](../player-packs/design.md) are stored under their hash instead (`apps/web/server/services/genshin/characterPack/serveGenshinCharacterPack.ts`, which reads the folder on each request).
+- **The development server serves the packs, and no build holds the route.** The route is the only way a folder on the developer's disk reaches the world, so a production build carries neither it nor a request to it.
+- **A host's files are served at their character's id, read as they stand.** The developer's folder is edited in place, so each request reads it fresh, as the [player's kept packs](../player-packs/design.md) are stored under their hash instead (the service reads the folder on each request).
