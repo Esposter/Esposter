@@ -144,4 +144,4 @@ A session deriving game data SHALL look for a scene's parts from its roots and f
 - [ ] **Derived values: every derived value names the key of its source** — no source yet: a check over every derived data file for its source key, which no record holds.
 - [ ] **Open world: an unnamed prefab is counted with its placements in the extract report** — no source yet: the extract report's line for an unnamed prefab, which no record keeps.
 - [ ] **Scripts: a field with no known shape is measured off the captures** — no source yet: a measured value of such a field, which no record holds.
-- [ ] **Scripts: a group script looked up by path in the client's scripts is found** — no source yet: a lookup run over the client's Lua block, which no record keeps.
+- [ ] **Scripts: a group script looked up by path in the client's scripts is found** — contradicted by `openspec/specs/genshin/game-data-formats/design.md:80`: the 2026-10-12 scan resolved no group script; four resolve only in BinOutput.
