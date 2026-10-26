@@ -35,5 +35,5 @@ Build order. Section 1 lands the row and the container the rest write to, sectio
       Verify: the settings test shows the omissions and withholds the link in those two states.
 - [x] 4.2 Update the user data inventory's table to name the export entry for each store the archive reads, and its Known gaps to match what the archive omits.
       Verify: every store in the archive table names its entry, and every omission names the gap that states it.
-- [ ] 4.3 Run an export end to end against the in-memory database and the test blob container: seed an account that owns a room and a resource, and has messages, an attachment and a save, then request the export, build it, and unzip it.
+- [x] 4.3 Run an export end to end against the in-memory database and the test blob container: seed an account that owns a room and a resource, and has messages, an attachment and a save, then request the export, build it, and unzip it.
       Verify: the end-to-end test passes and the unzipped archive holds each entry the design lists.
