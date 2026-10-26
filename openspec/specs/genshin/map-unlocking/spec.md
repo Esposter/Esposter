@@ -97,13 +97,5 @@ A Teleport Waypoint SHALL be unlocked by resonating with it on F, as a statue is
 ## Open
 
 - [ ] **A fallen party is taken to the unlocked landmark nearest its body** — no source yet: the revive takes only the nearest unlocked Teleport Waypoint (`findNearestTeleportWaypoint`), since a statue takes no revive.
-- [ ] **A locked statue in reach is unlocked at once by F on its row** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A new player's world starts with no statue unlocked** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Unlocked statues last across a reload** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **An area is filled on the map and minimap while an unlocked landmark stands in it** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The jump list, the map's marks and a revive use only unlocked landmarks** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A party with no unlocked landmark is left where it fell** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A Teleport Waypoint is unlocked by F, as a statue is, and its first unlock pays its point's reward once** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A Teleport Waypoint already unlocked pays nothing when unlocked again** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **A statue's first unlock pays its Primogems and Adventure EXP** — no source yet: game data or a snapshot that holds this behaviour
 - [ ] **A domain entrance unlocks the same way as a landmark of the world** — no source yet: game data or a snapshot that holds this behaviour
