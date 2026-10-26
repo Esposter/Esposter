@@ -1,6 +1,6 @@
 ## Purpose
 
-Kuki's kit as built: four strikes, a charged attack, Grass Ring of Sanctification with its ring and drain, and Gyoei Narukami Kariyama Rite's seven hits, with Ascension 1's healing bonus and Constellations 4 and 6 not built.
+Kuki's kit as built: four strikes, a charged attack, Grass Ring of Sanctification with its ring and drain, and Gyoei Narukami Kariyama Rite's seven hits or twelve at half health or less, with Ascension 1's healing bonus and Constellations 4 and 6 not built.
 
 ## Requirements
 
@@ -43,7 +43,7 @@ Kuki's elemental skill SHALL create a ring that every 90 frames from its 23rd he
 
 ### Requirement: Gyoei Narukami Kariyama Rite
 
-Kuki's elemental burst SHALL deal seven hits, each dealing a share of her Max HP as flat damage.
+Kuki's elemental burst SHALL deal seven hits, or twelve at half her health or less, each dealing a share of her Max HP as flat damage.
 
 #### Scenario: Seven hits land
 
@@ -53,13 +53,19 @@ Kuki's elemental burst SHALL deal seven hits, each dealing a share of her Max HP
 
 ### Requirement: Kuki's burst hit count at half health
 
-Kuki's burst SHALL land seven hits at any health, and its twelve-hit form at half her health or less SHALL NOT take effect yet.
+Kuki's burst SHALL land seven hits while her health is above half, and twelve at half or less, the hits past the seventh each a gap of the record's own on from the last.
 
-#### Scenario: Seven hits at half health or less
+#### Scenario: Seven hits above half health
+
+- **GIVEN** Kuki's health is above half
+- **WHEN** the player casts Gyoei Narukami Kariyama Rite
+- **THEN** seven hits land
+
+#### Scenario: Twelve hits at half health or less
 
 - **GIVEN** Kuki's health is at half or less
 - **WHEN** the player casts Gyoei Narukami Kariyama Rite
-- **THEN** seven hits still land
+- **THEN** twelve hits land on the enemies in reach
 
 ### Requirement: Kuki's Ascension and constellations
 

@@ -2,6 +2,7 @@ import type { Combatant } from "#src/models/kit/Combatant";
 import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitBody } from "#src/models/kit/KitBody";
 import type { KitEffectState } from "#src/models/kit/KitEffectState";
+import type { KitHit } from "#src/models/kit/KitHit";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
 import { Attribute } from "#src/models/character/Attribute";
@@ -38,6 +39,9 @@ const ASCENSION_4_DAMAGE_ELEMENTAL_MASTERY_SHARE = 0.25;
 const INITIAL_HIT_ELEMENTAL_MASTERY_SHARE = 0.25;
 // Measured: gcsim (MIT) kuki/burst.go, Constellation 1 widens Gyoei Narukami Kariyama Rite's hits
 const BURST_CONSTELLATION = 1;
+// Measured: gcsim (MIT) kuki/burst.go, the burst casts twelve hits rather than seven at half her HP or less
+const BURST_HALF_HEALTH_SHARE = 0.5;
+const BURST_LOW_HEALTH_HIT_COUNT = 12;
 
 export const KUKI_CHARACTER_ID = 10_000_065;
 
@@ -46,6 +50,22 @@ const getPassiveBonuses = (combatant: Combatant, healthShare: number): { amount:
   combatant.ascension < ASCENSION_1 || healthShare > BREAKING_FREE_HEALTH_SHARE
     ? []
     : [{ amount: BREAKING_FREE_HEALING_BONUS, attribute: Attribute.HealingBonus }];
+
+// The burst's hits at half her HP or less: the record's, then each further one a gap on from the last, as gcsim's loop
+// Casts them. The gap is the record's own between its last two hits
+const toLowHealthBurstHits = (hits: KitHit[]): KitHit[] => {
+  const lastHit = hits.at(-1);
+  const previousHit = hits.at(-2);
+  if (!lastHit || !previousHit) return hits;
+  const gapSeconds = lastHit.hitmarkSeconds - previousHit.hitmarkSeconds;
+  return [
+    ...hits,
+    ...Array.from({ length: BURST_LOW_HEALTH_HIT_COUNT - hits.length }, (_, index) => ({
+      ...lastHit,
+      hitmarkSeconds: lastHit.hitmarkSeconds + (index + 1) * gapSeconds,
+    })),
+  ];
+};
 
 // Kuki's behaviour: Grass Ring of Sanctification's HP drain and its ring with the ring's Ascension 4 bonuses, the initial
 // Hit's share of Elemental Mastery, Gyoei Narukami Kariyama Rite's hits and Breaking Free's Healing Bonus. Constellations
@@ -71,8 +91,7 @@ export const createKukiKitBehaviour = ({
         ? elementalMasteryMultiplier(striker, ASCENSION_4_DAMAGE_ELEMENTAL_MASTERY_SHARE)
         : 0,
   });
-  // The burst's hits, and Constellation 1's wider ones. gcsim casts more while her HP is at 50% or less, which a kit with
-  // No current HP cannot tell, so the healthy count stands
+  // The burst's hits, and Constellation 1's wider ones, which her health share at the cast picks as seven or twelve
   const burstHits = readHits("gyoeiNarukamiKariyamaRite");
   const constellationBurstHits = readHits("toCloisterCompassionGyoeiNarukamiKariyamaRite");
 
@@ -116,14 +135,17 @@ export const createKukiKitBehaviour = ({
 
   return {
     burst: {
-      onStart: ({ activeCombatant: combatant, body, kitEffectState }) =>
+      onStart: ({ activeCombatant: combatant, body, kitEffectState, party }) => {
+        const hits = combatant.constellationCount >= BURST_CONSTELLATION ? constellationBurstHits : burstHits;
+        const { healthShare } = getPartyMember(party, combatant.characterId);
         castKitSummon(
           kitEffectState,
           body,
           combatant,
-          combatant.constellationCount >= BURST_CONSTELLATION ? constellationBurstHits : burstHits,
+          healthShare <= BURST_HALF_HEALTH_SHARE ? toLowHealthBurstHits(hits) : hits,
           { attackTag: AttackTag.ElementalBurst },
-        ),
+        );
+      },
     },
     getPassiveBonuses,
     skill: {
