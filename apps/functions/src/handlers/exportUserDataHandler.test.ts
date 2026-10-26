@@ -4,7 +4,6 @@ import { exportUserDataHandler } from "#src/handlers/exportUserDataHandler";
 import { getTableClient } from "#src/services/azure/getTableClient";
 import { readBlobNames } from "#src/services/azure/readBlobNames.test";
 import { createUser } from "#src/services/shared/createUser.test";
-import { DATA_EXPORT_RETENTION } from "#src/services/user/constants";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
 import { InvocationContext } from "@azure/functions";
 import { createMessage } from "@esposter/db";
@@ -77,7 +76,9 @@ describe(exportUserDataHandler, () => {
     await mockDb.insert(usersToRoomsInMessage).values({ roomId: room.id, userId });
     // The message attaches a file whose blob was never written, so reading that entry fails
     await createMessage(await getTableClient(AzureTable.Messages), await getTableClient(AzureTable.MessagesAscending), {
-      files: [{ filename: name, hasThumbnail: false, id: crypto.randomUUID(), isSpoiler: false, mimetype: name, size: 0 }],
+      files: [
+        { filename: name, hasThumbnail: false, id: crypto.randomUUID(), isSpoiler: false, mimetype: name, size: 0 },
+      ],
       message: name,
       roomId: room.id,
       type: MessageType.Message,
@@ -108,8 +109,9 @@ describe(exportUserDataHandler, () => {
     const row = await readExportRow(dataExportId);
     expect(row.status).toBe(DataExportStatus.Ready);
     assert.exists(row.readyAt);
+    // Seven days, stated in milliseconds here rather than through the retention constant, so the test holds the number
     expect(row.expiresAt).toStrictEqual(
-      new Date(Temporal.Instant.fromEpochMilliseconds(row.readyAt.getTime()).add(DATA_EXPORT_RETENTION).epochMilliseconds),
+      new Date(row.readyAt.getTime() + Temporal.Duration.from({ days: 7 }).total("milliseconds")),
     );
   });
 
