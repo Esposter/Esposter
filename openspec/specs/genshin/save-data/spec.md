@@ -172,7 +172,7 @@ A guest's save SHALL merge into a signed-in account's save by fixed rules, with 
 
 - **GIVEN** a guest and an account each hold a bag and a wallet
 - **WHEN** the guest signs in
-- **THEN** the account's bag and wallet are kept
+- **THEN** the account's bag and wallet are kept, except that the wallet's primogem refill count from the same game day takes the larger of the two copies
 
 #### Scenario: A statue region's claimed level is the account's
 
@@ -293,7 +293,7 @@ The merge SHALL keep a character both saves hold as the copy further on by level
 
 ### Requirement: Systems not yet saved start fresh after a reload
 
-The save SHALL NOT hold expeditions, forge queues or the camps cleared, and those SHALL start fresh after a reload.
+The save SHALL NOT hold expeditions or forge queues, and those SHALL start fresh after a reload.
 
 #### Scenario: An expedition starts fresh after a reload
 
@@ -335,5 +335,6 @@ The save SHALL hold each mined outcrop by its place's id with the instant it was
 
 ## Open
 
-- [ ] **Save: the camps cleared are not saved and start fresh after a reload** — no source yet: the schema composes a `clearedCamps` slice, so the requirement and the schema disagree.
+- [ ] **Save: the camps cleared are not saved and start fresh after a reload** — contradicted by `packages/genshin-world/src/models/save/GenshinSave.ts`: holds a clearedCamps slice, each camp by its id
+- [ ] **Save: the account's bag and wallet are kept in a merge** — contradicted by `packages/genshin-world/src/services/save/mergeGenshinSave.ts`: the same-day primogem refill count takes the larger
 - [ ] **Save: a guest's claimed statue level is paid again on the account from its own bag** — no source yet: a run of the merge over a guest and an account save with a claimed statue level, which no record holds.
