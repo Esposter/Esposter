@@ -35,9 +35,9 @@ The door the glide comes to rest at: it assembles at the walkway's far end as th
 
 ## Open
 
-- [ ] **The door has 13 pieces, each rising from about 6 metres below and settling between 0.4 and 1.33 seconds** — no source yet: the door record is hosted, and the `Ani_LogginScene_Door01_Liftting` clip is not in `~/Esposter.noindex/genshin-parity/extracted/login-clips/AnimationClip/`.
-- [ ] **The scene's playback follows the clip's path within a centimetre** — no source yet: the `Ani_LogginScene_Door01_Liftting` clip is not in `~/Esposter.noindex/genshin-parity/extracted/login-clips/AnimationClip/`, which holds eight clips and none of them a door clip.
-- [ ] **At rest the door is the shape the mesh is, to within a millimetre on average** — no source yet: no per-piece shape comparison is kept in `~/Esposter.noindex/genshin-parity/comparisons/`.
+- [ ] **The door has 13 pieces, each rising from about 6 metres below and settling between 0.4 and 1.33 seconds** — no source yet: the door record is hosted, and the `Ani_LogginScene_Door01_Liftting` clip is not in `~/Esposter/genshin-parity/extracted/login-clips/AnimationClip/`.
+- [ ] **The scene's playback follows the clip's path within a centimetre** — no source yet: the `Ani_LogginScene_Door01_Liftting` clip is not in `~/Esposter/genshin-parity/extracted/login-clips/AnimationClip/`, which holds eight clips and none of them a door clip.
+- [ ] **At rest the door is the shape the mesh is, to within a millimetre on average** — no source yet: no per-piece shape comparison is kept in `~/Esposter/genshin-parity/comparisons/`.
 - [ ] **The glow reads each piece's slit through `doorSlitWorldX`** — no source yet: the game's per-piece slit was not measured, so where the line sits during the rise is settled by the eye-check.
 - [ ] **The door casts no shadow** — no source yet: only the exported copies are set `castShadow = false` (`packages/genshin-world/src/services/login/door/rideLoginWitnessDoor.ts`), and our door's setting was not located.
 - [ ] **The door's shape is its mesh's front, traced and extruded layer by layer through each piece's depth** — no source yet: `packages/genshin-world/src/components/Login/Scene/Door.reference.ts` traces the door, not yet read against the door mesh in `~/Esposter/genshin-parity/extracted/login-bytype-assets/Mesh/`.

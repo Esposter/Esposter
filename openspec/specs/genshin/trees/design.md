@@ -90,7 +90,7 @@ flowchart TD
 
 - [ ] **A forest of the game's is a handful of species placed many times** — no source yet: no table checked names the game's forest species.
 - [ ] **The oak's bark and leaves are coloured from the `windrise/surfaces` record** — no source yet: that record is read only by the ground paint in `packages/genshin-world/src/workers/terrainTile.worker.ts`, not by the oak's colours.
-- [ ] **The oak has a few dozen surface roots and a few dozen limbs** — checked against the bark export `~/Esposter.noindex/genshin-parity/extracted/windrise/assets/Mesh/Stages_Unique_CyTree01_Bark_Lod1.obj`: 340 connected pieces, 28 of them 50 faces or more, the largest 712 faces, and the claim is not settled by it because the pieces are not told apart as roots and limbs, and touching ones merge into one piece.
+- [ ] **The oak has a few dozen surface roots and a few dozen limbs** — checked against the bark export `~/Esposter/genshin-parity/extracted/windrise/assets/Mesh/Stages_Unique_CyTree01_Bark_Lod1.obj`: 340 connected pieces, 28 of them 50 faces or more, the largest 712 faces, and the claim is not settled by it because the pieces are not told apart as roots and limbs, and touching ones merge into one piece.
 - [ ] **The oak's hundred or so tubes make a few tens of thousands of vertices** — no source yet: `computeTreeTubes.bench.md` measures 8 and 32 tubes, not the oak's.
 - [ ] **The switch is read off a recording of a walk away from one of the game's trees** — no source yet: no capture of that walk is in `~/Esposter/genshin-parity/captures/`.
 - [ ] **the oak's surface roots are the bark mesh's second submesh** — no source yet: the oak's mesh export under `~/Esposter/genshin-parity/extracted/windrise/`, not yet read for its submeshes.
