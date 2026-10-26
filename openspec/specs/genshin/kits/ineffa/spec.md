@@ -198,5 +198,3 @@ From Constellation 1, each shield Ineffa casts SHALL give the party a Lunar-Char
 - **THEN** no reaction gains the bonus
 
 ## Open
-
-The open items are held once, in [design.md](design.md#open).
