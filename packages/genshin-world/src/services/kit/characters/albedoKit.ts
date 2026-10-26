@@ -15,6 +15,7 @@ import { buffKitMember } from "#src/services/kit/effects/buffKitMember";
 import { buffKitTeam } from "#src/services/kit/effects/buffKitTeam";
 import { castKitSummon } from "#src/services/kit/effects/castKitSummon";
 import { checkIsInKitField } from "#src/services/kit/effects/checkIsInKitField";
+import { checkIsKitShieldLive } from "#src/services/kit/effects/checkIsKitShieldLive";
 import { checkIsKitStatusActive } from "#src/services/kit/effects/checkIsKitStatusActive";
 import { findKitStatus } from "#src/services/kit/effects/findKitStatus";
 import { findStandingKitSummon } from "#src/services/kit/effects/findStandingKitSummon";
@@ -54,6 +55,14 @@ const CONSTELLATION_4_SECONDS = 1;
 const CONSTELLATION_4_CHECK_SECONDS = 0.3;
 const CONSTELLATION_4_CHECK_STATUS_ID = "albedo-constellation-4-check";
 const CONSTELLATION_4_SOURCE = "albedo-constellation-4";
+// Constellation 6, Dust of Purification: on the same check as Constellation 4, the active member within the standing Solar
+// Isotoma's field has its DMG raised 17% for a second while a Crystallize shield protects it or a Moondrift stands within the
+// Field, as the game's text gives it. gcsim (MIT) albedo/cons.go checks the shield alone, so the Moondrift clause is the text's
+// https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/albedo/cons.go
+const ALBEDO_CONSTELLATION_6 = 6;
+const CONSTELLATION_6_DAMAGE_BONUS = 0.17;
+const CONSTELLATION_6_SECONDS = 1;
+const CONSTELLATION_6_SOURCE = "albedo-constellation-6";
 const TRANSIENT_BLOSSOM_ENERGY = 1.2;
 const SOLAR_ISOTOMA_DEFENSE_PERCENT = 0.5;
 const SOLAR_ISOTOMA_DEFENSE_SECONDS = 20;
@@ -114,10 +123,9 @@ const consumeFatalReckoningBonus = (context: KitContext): number => {
 // The deployed team. From Ascension 1 a Transient Blossom deals more to an enemy under half its HP. Constellation 1's energy
 // And Constellation 2's Fatal Reckoning stacks follow each Transient Blossom, and Tectonic Tide adds the stacks as flat
 // Damage to each Fatal Blossom, though not to its own first hit, which the record plays and the kit cannot change per cast.
-// Constellation 4's plunging attack bonus reaches the active member within the Solar Isotoma's field, and Constellation 6 is
-// Not built: it needs the shield a Crystallize gives a member read at a strike, which the kit does not yet hold. The Silver
-// Isotoma clause an earlier note named for Constellation 4 is not built: gcsim v2.47.2 does not model it, and the wiki text
-// Was not checked
+// Constellation 4's plunging attack bonus reaches the active member within the Solar Isotoma's field, and Constellation 6's
+// DMG bonus does too, read off the team's Crystallize shield and the Moondrifts the field holds. The Silver Isotoma clause an
+// Earlier note named for Constellation 4 is not built: gcsim v2.47.2 does not model it, and the wiki text was not checked
 export const createAlbedoKitBehaviour = ({
   readHit,
   readHits,
@@ -191,9 +199,10 @@ export const createAlbedoKitBehaviour = ({
       const member = getPartyMember(party, characterId);
       member.energy = Math.min(combatant.kit.burstEnergyCost, member.energy + TRANSIENT_BLOSSOM_ENERGY);
     },
-    // Constellation 4: the active member's plunges, while it stands in the standing Solar Isotoma's field, checked every
-    // 0.3 seconds from the Solar Isotoma's spawn
-    onStep: ({ activeCombatant, body, kitEffectState }, combatant) => {
+    // Constellations 4 and 6: the active member, while it stands in the standing Solar Isotoma's field, has its plunges raised
+    // And, with a Crystallize shield or a Moondrift in the field, its DMG too, checked every 0.3 seconds from the Solar
+    // Isotoma's spawn
+    onStep: ({ activeCombatant, body, kitEffectState, party }, combatant) => {
       if (combatant.constellationCount < ALBEDO_CONSTELLATION_4) return;
       if (
         !startKitCooldown(
@@ -206,18 +215,26 @@ export const createAlbedoKitBehaviour = ({
         return;
       const solarIsotoma = findStandingKitSummon(kitEffectState.effects, SOLAR_ISOTOMA_ID, combatant.characterId);
       // A field whose seconds have run out raises nothing, though the step has not dropped it yet
-      if (
-        !solarIsotoma ||
-        solarIsotoma.secondsRemaining <= 0 ||
-        !checkIsInKitField({ centre: solarIsotoma.body.position, radius: solarIsotomaRadius }, body.position)
-      )
-        return;
+      if (!solarIsotoma || solarIsotoma.secondsRemaining <= 0) return;
+      const field = { centre: solarIsotoma.body.position, radius: solarIsotomaRadius };
+      if (!checkIsInKitField(field, body.position)) return;
       buffKitMember(kitEffectState, activeCombatant.characterId, {
         amount: CONSTELLATION_4_PLUNGING_ATTACK_BONUS,
         attribute: Attribute.PlungingAttackDamageBonus,
         secondsRemaining: CONSTELLATION_4_SECONDS,
         source: CONSTELLATION_4_SOURCE,
       });
+      if (
+        combatant.constellationCount >= ALBEDO_CONSTELLATION_6 &&
+        (kitEffectState.effects.some((effect) => checkIsKitShieldLive(effect) && effect.isCrystallize === true) ||
+          party.lunarCrystallize.moondrifts.some((moondrift) => checkIsInKitField(field, moondrift.position)))
+      )
+        buffKitMember(kitEffectState, activeCombatant.characterId, {
+          amount: CONSTELLATION_6_DAMAGE_BONUS,
+          attribute: Attribute.AllDamageBonus,
+          secondsRemaining: CONSTELLATION_6_SECONDS,
+          source: CONSTELLATION_6_SOURCE,
+        });
     },
     // A new Solar Isotoma ends the one standing, as Fischl's Oz does
     skill: {

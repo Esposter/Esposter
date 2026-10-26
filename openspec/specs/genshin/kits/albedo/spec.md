@@ -1,6 +1,6 @@
 ## Purpose
 
-Albedo's kit as built: his strikes, charged attack and plunges, with Solar Isotoma and its Transient Blossoms and Rite of Progeniture's Fatal Blossoms, with his Ascension 1 and 4 passives built, his Constellations 1 and 2 built, his Constellation 4's plunging attack bonus in the field built, and his Constellation 6 left unbuilt.
+Albedo's kit as built: his strikes, charged attack and plunges, with Solar Isotoma and its Transient Blossoms and Rite of Progeniture's Fatal Blossoms, with his Ascension 1 and 4 passives built, his Constellations 1 and 2 built, his Constellation 4's plunging attack bonus in the field built, and his Constellation 6's DMG bonus in the field built.
 
 ## Requirements
 
@@ -119,3 +119,31 @@ From Constellation 4, the active party member SHALL have its Plunging Attack DMG
 - **GIVEN** Albedo has Constellation 3
 - **WHEN** the active member stands within a standing Solar Isotoma's field
 - **THEN** its plunges deal no extra DMG
+
+### Requirement: Constellation 6 raises the active member's DMG inside the Solar Isotoma
+
+From Constellation 6, the active party member SHALL have its DMG raised 17% for a second while it stands within the standing Solar Isotoma's field and either a Crystallize shield protects the team or a Moondrift stands within the field. The field SHALL be checked every 0.3 seconds from the Solar Isotoma's spawn, as Constellation 4's is, and no other party member SHALL have the bonus.
+
+#### Scenario: A Crystallize shield inside the field gets the bonus
+
+- **GIVEN** Albedo has Constellation 6, a Solar Isotoma stands, and the team is under a Crystallize shield
+- **WHEN** the active member stands within the field
+- **THEN** its DMG is raised 17%
+
+#### Scenario: A Moondrift inside the field gets the bonus
+
+- **GIVEN** Albedo has Constellation 6, a Solar Isotoma stands, and no Crystallize shield is up
+- **WHEN** the active member stands within the field and a Moondrift stands within it too
+- **THEN** its DMG is raised 17%
+
+#### Scenario: Neither a shield nor a Moondrift gives nothing
+
+- **GIVEN** Albedo has Constellation 6 and a Solar Isotoma stands
+- **WHEN** the active member stands within the field with no Crystallize shield and no Moondrift in it
+- **THEN** its DMG is not raised by Constellation 6
+
+#### Scenario: Below Constellation 6 nothing is raised
+
+- **GIVEN** Albedo has Constellation 5
+- **WHEN** the active member stands within a standing Solar Isotoma's field under a Crystallize shield
+- **THEN** its DMG is not raised by Constellation 6
