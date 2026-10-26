@@ -20,7 +20,7 @@ Gaming's kit is its record and one behaviour module, `createGamingKitBehaviour` 
 ## Open
 
 - [ ] **The charged attack's reach** — no source yet: a recording of the attack, since the record's 5.8-metre area is `Unsourced` and Ayato's 0.8-metre charge, which the frames come from, is no source for Gaming's reach.
-- [ ] **The charged attack's stamina** — no source yet: a source that says whether the table's 40 (group 9231 index 6, cited in the Provisional bullet above) is the charged attack's one cost or the rate; the wiki's Stellar Rend gives 40 stamina per second over a 5-second maximum (`~/Esposter.noindex/cache/genshin-wiki/Category_Gaming_Talents.json`), and the drain over time is not modelled.
+- [ ] **The charged attack's stamina** — no source yet: a source that says whether the table's 40 (group 9231 index 6, cited in the Provisional bullet above) is the charged attack's one cost or the rate; the wiki's Stellar Rend gives 40 stamina per second over a 5-second maximum (`~/Esposter/cache/genshin-wiki/Category_Gaming_Talents.json`), and the drain over time is not modelled.
 
 ## Key files
 
