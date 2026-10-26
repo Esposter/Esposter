@@ -72,7 +72,7 @@ From Constellation 1, a fully charged shot SHALL cast two more arrows from where
 
 ### Requirement: Breeze of Reminiscence and Storm of Defiance
 
-From Constellation 2, each Skyward Sonnet hit SHALL cut the Anemo RES and Physical RES of each enemy it strikes by 12% for 10 seconds (`~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/venti/cons.go` lines 38 to 57), and from Constellation 6, each Stormeye tick SHALL cut it by a further 20% for 10 seconds (`~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/venti/cons.go` lines 83 to 105)s, the two adding up.
+From Constellation 2, each Skyward Sonnet hit SHALL cut the Anemo RES and Physical RES of each enemy it strikes by 12% for 10 seconds (`~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/venti/cons.go` lines 38 to 57), and from Constellation 6, each Stormeye tick SHALL cut it by a further 20% for 10 seconds (`~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/venti/cons.go` lines 83 to 105), the two adding up.
 
 #### Scenario: Skyward Sonnet cuts Anemo RES
 
