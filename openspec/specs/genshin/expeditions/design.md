@@ -78,3 +78,4 @@ stateDiagram-v2
 
 - [ ] **A talent applies once its passive is unlocked at the character's ascension** — no source yet: the dump's rows for these talents carry no `breakLevel`, and no test holds the ascension unlock.
 - [ ] **The base limit of two** — no source yet: the wiki's Expedition page is not cached and the dump holds no base limit; the clip's "Expedition Limit: 1/2" does not show its player's Adventure Rank.
+- [ ] **A claim whose items would overflow the bag is refused** — no source yet: no test in `packages/genshin-world/src/services/expedition/claimExpedition.test.ts` holds an overflowing bag.
