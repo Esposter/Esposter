@@ -3,6 +3,7 @@ import type { KitBehaviour } from "#src/models/kit/KitBehaviour";
 import type { KitContext } from "#src/models/kit/KitContext";
 import type { KitRecordReader } from "#src/models/kit/KitRecordReader";
 
+import { Attribute } from "#src/models/character/Attribute";
 import { checkIsInAttackArea } from "#src/services/kit/checkIsInAttackArea";
 import { NIGHTSOUL_BLESSING_STATUS_ID, NIGHTSOUL_POINTS_ID } from "#src/services/kit/constants";
 import { castKitField } from "#src/services/kit/effects/castKitField";
@@ -33,13 +34,19 @@ const OPAL_FIRE_DRAIN_FRAMES = 6;
 const FROSTFALL_STORM_FRAMES = 59;
 const OPAL_FIRE_FIELD_ID = "citlali-opal-fire";
 
+// Constellation 2 gives Citlali 125 Elemental Mastery for good, as gcsim (MIT) citlali/cons.go's c2 gives her own share
+const CONSTELLATION_2 = 2;
+const CONSTELLATION_2_SELF_ELEMENTAL_MASTERY = 125;
+
 // Citlali's behaviour: her skill's press enters the Nightsoul Blessing for 20 seconds with its points plus 24, and her burst
 // Gives 24 points. Built: the Opal Fire, and Itzpapa's Frostfall Storm, which strikes every enemy in its circle every 59
 // Frames while the Opal Fire is on, its Cryo gauge sharing the Frostfall group's cooldown and its damage landing on every hit
-// Not built: Ascension 1 and 4 and Constellations 1, 2, 4 and 6, among them Constellation 6, which lets the Opal Fire start
-// Below 50 points and outlast its points, Itzpapa's Opal Shield, and the skulls her burst summons on enemies within 7 metres,
-// Which the burst's start cannot place since it reads no enemies but its target. Ascension 4's flat damage on the Frostfall
-// Storm from Elemental Mastery is not built either
+// Constellation 2 gives Citlali her own 125 Elemental Mastery. Built: that share alone; the 250 it gives the active member
+// While the Opal Shield or the Blessing stands waits on the Opal Shield, which is not built. Not built: Ascension 1 and 4,
+// Constellations 1, 4 and 6, among them Constellation 6, which lets the Opal Fire start Below 50 points and outlast its
+// Points, Itzpapa's Opal Shield, and the skulls her burst summons on enemies within 7 metres, which the burst's start
+// Cannot place since it reads no enemies but its target. Ascension 4's flat damage on the Frostfall Storm from Elemental
+// Mastery is not built either
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/citlali/burst.go
 export const createCitlaliKitBehaviour = ({ readHit }: KitRecordReader): KitBehaviour => {
   // The Frostfall Storm as its record holds it, the strike every enemy in its circle takes on each storm
@@ -97,6 +104,10 @@ export const createCitlaliKitBehaviour = ({ readHit }: KitRecordReader): KitBeha
         enterOpalFire(context);
       },
     },
+    getPassiveBonuses: ({ constellationCount }) =>
+      constellationCount >= CONSTELLATION_2
+        ? [{ amount: CONSTELLATION_2_SELF_ELEMENTAL_MASTERY, attribute: Attribute.ElementalMastery }]
+        : [],
     skill: {
       onStart: (context) => {
         const { activeCombatant, kitEffectState } = context;

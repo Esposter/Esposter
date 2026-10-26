@@ -1,6 +1,6 @@
 ## Purpose
 
-Citlali's kit as built: her three strikes, charged attack, Obsidian Tzitzimitl's hit, Ice Storm, her plunges, and the Opal Fire with Itzpapa's Frostfall Storm. The Opal Shield, the Spirit Vessel skulls and her passives wait on their hooks.
+Citlali's kit as built: her three strikes, charged attack, Obsidian Tzitzimitl's hit, Ice Storm, her plunges, and the Opal Fire with Itzpapa's Frostfall Storm. Constellation 2's Elemental Mastery for herself is built, and the Opal Shield, the Spirit Vessel skulls and her passives wait on their hooks.
 
 ## Requirements
 
@@ -137,3 +137,19 @@ Citlali's strikes and charged attack SHALL deal no poise, a provisional value un
 - **GIVEN** Citlali is the character on the field
 - **WHEN** one of her strikes hits an enemy
 - **THEN** the enemy takes no poise damage
+
+### Requirement: Constellation 2 gives her own Elemental Mastery
+
+From constellation 2, Citlali SHALL gain 125 Elemental Mastery for as long as she has the constellation.
+
+#### Scenario: Citlali gains Elemental Mastery at constellation 2
+
+- **GIVEN** Citlali is at constellation 2
+- **WHEN** her hits are priced
+- **THEN** her Elemental Mastery is 125 higher
+
+#### Scenario: Below constellation 2 she gains none
+
+- **GIVEN** Citlali is at constellation 1
+- **WHEN** her hits are priced
+- **THEN** her Elemental Mastery is not raised by the constellation
