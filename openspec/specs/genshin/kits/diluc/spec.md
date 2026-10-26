@@ -52,14 +52,14 @@ Dawn's phoenix SHALL launch from the slash, strike eight ticks at intervals of a
 - **THEN** it strikes eight ticks, one every fifth of a second
 - **AND** it explodes 1.7 seconds after its launch
 
-### Requirement: Dawn stamina drain
+### Requirement: Charged attack stamina drain
 
-While Dawn plays, stamina SHALL drain at 40 a second, 48 in all over its 1.2 seconds.
+While the charged attack plays, stamina SHALL drain at 40 a second, 48 in all over its 1.2 seconds. The 40 a second is the wiki's Tempered Sword stamina and the dump's group 1631 at index 6; the 1.2 seconds is provisional (the design's Provisional constants).
 
-#### Scenario: Dawn drains stamina as it plays
+#### Scenario: The charged attack drains stamina as it plays
 
 - **GIVEN** Diluc has stamina
-- **WHEN** Dawn plays
+- **WHEN** his charged attack plays
 - **THEN** stamina drains at 40 a second until the slash ends
 
 ### Requirement: Poise from the skill, burst and collision
@@ -106,7 +106,7 @@ From constellation 1, each strike Diluc makes SHALL deal 15% more DMG to an enem
 
 ### Requirement: Second constellation stacks Searing Ember on each hit Diluc takes
 
-From constellation 2, each hit on Diluc that costs him HP, or that a shield takes whole or in part, SHALL add a stack of Searing Ember, at most one every 1.5 seconds and up to three stacks. Each stack gives 10% ATK and 5% ATK SPD for 10 seconds, and a new stack restarts those 10 seconds.
+From constellation 2, each hit on Diluc that costs him HP, or that a shield takes whole or in part, SHALL add a stack of Searing Ember, at most one every 1.5 seconds (an open interval, see the design's Not built) and up to three stacks. Each stack gives 10% ATK and 5% ATK SPD for 10 seconds, and a new stack restarts those 10 seconds.
 
 #### Scenario: A hit that costs Diluc HP adds a stack
 
@@ -140,7 +140,7 @@ From constellation 2, each hit on Diluc that costs him HP, or that a shield take
 
 ### Requirement: Fourth constellation adds 40% to a follow-up Searing Onslaught press two seconds after the one before
 
-From constellation 4, a Searing Onslaught press that follows the one before it by two seconds or more SHALL deal 40% more DMG for two seconds, its skill strikes taking the bonus while it runs. The wiki's Flowing Flame text and gcsim v2.47.2's `cons.go` agree on the window.
+From constellation 4, a Searing Onslaught press that follows the one before it by two seconds or more SHALL deal 40% more DMG for two seconds, its skill strikes taking the bonus while it runs. gcsim v2.47.2's `skill.go` and `cons.go` give the window; the cached wiki holds no Flowing Flame text to check it against.
 
 #### Scenario: A press two seconds after the last gets the bonus
 
