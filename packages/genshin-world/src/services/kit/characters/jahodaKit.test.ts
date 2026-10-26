@@ -73,7 +73,7 @@ describe(createJahodaKitBehaviour, () => {
       kit: { ...JAHODA_KIT, moonsignBenediction: isPartnerMoonsign ? MOONSIGN_BENEDICTION : undefined },
     };
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-    applyElement(enemy.elementalState, Element.Pyro, 1);
+    applyElement(enemy.elementalState, Element.Pyro, 1, { auraDecayRateScale: 1 });
     const context = createKitTestContext(combatant, {
       characterIdCombatantMap: new Map([
         [combatant.characterId, combatant],
@@ -130,7 +130,7 @@ describe(createJahodaKitBehaviour, () => {
       kit: { ...JAHODA_KIT, moonsignBenediction: MOONSIGN_BENEDICTION },
     };
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-    applyElement(enemy.elementalState, Element.Pyro, 1);
+    applyElement(enemy.elementalState, Element.Pyro, 1, { auraDecayRateScale: 1 });
     const context = createKitTestContext(combatant, {
       characterIdCombatantMap: new Map([
         [combatant.characterId, combatant],

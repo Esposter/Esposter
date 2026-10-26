@@ -67,7 +67,7 @@ describe(createKazuhaKitBehaviour, () => {
     whirlwind.elapsedSeconds = takeOne(whirlwind.hits).hitmarkSeconds;
     const absorb = (element: Element) => {
       enemy.elementalState.auras.clear();
-      applyElement(enemy.elementalState, element, 1);
+      applyElement(enemy.elementalState, element, 1, { auraDecayRateScale: 1 });
       absorbField.onTick(context, 0);
     };
     absorb(Element.Cryo);

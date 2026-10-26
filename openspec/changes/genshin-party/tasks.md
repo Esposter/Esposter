@@ -26,4 +26,4 @@
 
 ## 6. Application's aura decay scale
 
-- [ ] 6.1 Settle the shape of `auraDecayRateScale`: a required number on the four `applyElement` callers, or left out of `ElementApplication` where every application is 1 or above. Today an omitted scale and a scale of 1 mean the same thing, which `applyElement` defaults to 1 and the absent-values rule does not allow. Verify: the `applyElement` aura decay tests pin the chosen shape, and no optional field keeps the identity default.
+- [x] 6.1 Settle the shape of `auraDecayRateScale`: a required number on the four `applyElement` callers, or left out of `ElementApplication` where every application is 1 or above. Today an omitted scale and a scale of 1 mean the same thing, which `applyElement` defaults to 1 and the absent-values rule does not allow. Verify: the `applyElement` aura decay tests pin the chosen shape, and no optional field keeps the identity default.

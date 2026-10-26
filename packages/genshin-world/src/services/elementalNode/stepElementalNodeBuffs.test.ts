@@ -22,7 +22,7 @@ describe(stepElementalNodeBuffs, () => {
 
     pulseElementalNode(enemy, Element.Pyro);
     // Melt spends half its Cryo gauge of the Pyro aura, so twice the buff's gauge spends all of the buff
-    applyElement(enemy.elementalState, Element.Cryo, 2 * ELEMENTAL_NODE_PULSE_GAUGE);
+    applyElement(enemy.elementalState, Element.Cryo, 2 * ELEMENTAL_NODE_PULSE_GAUGE, { auraDecayRateScale: 1 });
     expect(checkIsElementalNodeBuffed(enemy, Element.Pyro)).toBe(false);
     expect(enemy.statuses).toHaveLength(1);
 

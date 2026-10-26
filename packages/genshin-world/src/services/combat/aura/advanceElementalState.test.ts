@@ -30,7 +30,7 @@ describe(advanceElementalState, () => {
     expect.hasAssertions();
 
     const state = createElementalState();
-    applyElement(state, Element.Pyro, 2);
+    applyElement(state, Element.Pyro, 2, { auraDecayRateScale: 1 });
     run(state, 11.9);
 
     expect(state.auras.has(AuraType.Pyro)).toBe(true);
@@ -117,7 +117,7 @@ describe(advanceElementalState, () => {
 
     const hydro = { decayRate: 0, gauge: 1, isImmutable: true };
     const state = createState([[AuraType.Hydro, hydro]]);
-    applyElement(state, Element.Electro, 1);
+    applyElement(state, Element.Electro, 1, { auraDecayRateScale: 1 });
     const reactions = run(state, 10);
 
     expect(reactions).toStrictEqual(
@@ -131,8 +131,8 @@ describe(advanceElementalState, () => {
 
     const state = createElementalState();
     const lunarReactionTypes = [LunarReactionType.LunarCharged];
-    applyElement(state, Element.Hydro, 1, { lunarReactionTypes });
-    applyElement(state, Element.Electro, 1, { lunarReactionTypes });
+    applyElement(state, Element.Hydro, 1, { auraDecayRateScale: 1, lunarReactionTypes });
+    applyElement(state, Element.Electro, 1, { auraDecayRateScale: 1, lunarReactionTypes });
     const reactions = run(state, 3);
 
     expect(reactions).toStrictEqual([]);

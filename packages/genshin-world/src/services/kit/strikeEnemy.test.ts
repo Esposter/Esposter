@@ -67,7 +67,7 @@ describe(strikeEnemy, () => {
 
   const createCryoEnemy = (): Enemy => {
     const enemy = createSturdyEnemy();
-    applyElement(enemy.elementalState, Element.Cryo, 1);
+    applyElement(enemy.elementalState, Element.Cryo, 1, { auraDecayRateScale: 1 });
     return enemy;
   };
 

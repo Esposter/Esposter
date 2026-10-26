@@ -8,7 +8,7 @@ import { lightElementalMonument } from "#src/services/puzzle/lightElementalMonum
 // Enemy, and the monument is lit by the element itself or by a reaction whose element is its own, reactions included.
 // A lit monument's clock restarts from the strike
 export const strikeElementalMonument = (monument: ElementalMonument, element: Element, gauge: number): void => {
-  const reactions = applyElement(monument.elementalState, element, gauge);
+  const reactions = applyElement(monument.elementalState, element, gauge, { auraDecayRateScale: 1 });
   if (element === monument.element || reactions.some((reaction) => reaction.element === monument.element))
     lightElementalMonument(monument);
 };

@@ -44,8 +44,16 @@ describe(strikeLunarChargedCloud, () => {
       maxHealth: STURDY_HEALTH,
     };
     const lunarReactionTypes = isLunar ? [LunarReactionType.LunarCharged] : [];
-    applyElement(enemy.elementalState, Element.Hydro, 1, { lunarReactionTypes, sourceId: combatant.characterId });
-    applyElement(enemy.elementalState, Element.Electro, 1, { lunarReactionTypes, sourceId: combatant.characterId });
+    applyElement(enemy.elementalState, Element.Hydro, 1, {
+      auraDecayRateScale: 1,
+      lunarReactionTypes,
+      sourceId: combatant.characterId,
+    });
+    applyElement(enemy.elementalState, Element.Electro, 1, {
+      auraDecayRateScale: 1,
+      lunarReactionTypes,
+      sourceId: combatant.characterId,
+    });
     return enemy;
   };
   const createContext = (enemies: Enemy[]): KitContext =>

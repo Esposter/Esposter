@@ -70,8 +70,16 @@ describe(strikeLunarCharged, () => {
 
     const enemy = createSturdyEnemy();
     const lunarReactionTypes = [LunarReactionType.LunarCharged];
-    applyElement(enemy.elementalState, Element.Hydro, 1, { lunarReactionTypes, sourceId: TRAVELER_CHARACTER_ID });
-    applyElement(enemy.elementalState, Element.Electro, 1, { lunarReactionTypes, sourceId: SECOND_CHARACTER_ID });
+    applyElement(enemy.elementalState, Element.Hydro, 1, {
+      auraDecayRateScale: 1,
+      lunarReactionTypes,
+      sourceId: TRAVELER_CHARACTER_ID,
+    });
+    applyElement(enemy.elementalState, Element.Electro, 1, {
+      auraDecayRateScale: 1,
+      lunarReactionTypes,
+      sourceId: SECOND_CHARACTER_ID,
+    });
     strikeLunarCharged(enemy, createContext(enemy));
 
     expect(STURDY_HEALTH - enemy.health).toBeCloseTo(
@@ -87,8 +95,8 @@ describe(strikeLunarCharged, () => {
 
     const enemy = createSturdyEnemy();
     const lunarReactionTypes = [LunarReactionType.LunarCharged];
-    applyElement(enemy.elementalState, Element.Hydro, 1, { lunarReactionTypes });
-    applyElement(enemy.elementalState, Element.Electro, 1, { lunarReactionTypes });
+    applyElement(enemy.elementalState, Element.Hydro, 1, { auraDecayRateScale: 1, lunarReactionTypes });
+    applyElement(enemy.elementalState, Element.Electro, 1, { auraDecayRateScale: 1, lunarReactionTypes });
     strikeLunarCharged(enemy, createContext(enemy));
 
     expect(enemy.health).toBe(STURDY_HEALTH);
@@ -102,8 +110,16 @@ describe(strikeLunarCharged, () => {
     const member: Combatant = { ...createMember(TRAVELER_CHARACTER_ID, 100), kit: { ...TRAVELER_KIT, onKitEvent } };
     const enemy = { ...createSturdyEnemy(), health: 1 };
     const lunarReactionTypes = [LunarReactionType.LunarCharged];
-    applyElement(enemy.elementalState, Element.Hydro, 1, { lunarReactionTypes, sourceId: TRAVELER_CHARACTER_ID });
-    applyElement(enemy.elementalState, Element.Electro, 1, { lunarReactionTypes, sourceId: TRAVELER_CHARACTER_ID });
+    applyElement(enemy.elementalState, Element.Hydro, 1, {
+      auraDecayRateScale: 1,
+      lunarReactionTypes,
+      sourceId: TRAVELER_CHARACTER_ID,
+    });
+    applyElement(enemy.elementalState, Element.Electro, 1, {
+      auraDecayRateScale: 1,
+      lunarReactionTypes,
+      sourceId: TRAVELER_CHARACTER_ID,
+    });
     enemy.electroChargedCombatant = member;
 
     strikeLunarCharged(
@@ -132,8 +148,16 @@ describe(strikeLunarCharged, () => {
     };
     const enemy = createSturdyEnemy();
     const lunarReactionTypes = [LunarReactionType.LunarCharged];
-    applyElement(enemy.elementalState, Element.Hydro, 1, { lunarReactionTypes, sourceId: TRAVELER_CHARACTER_ID });
-    applyElement(enemy.elementalState, Element.Electro, 1, { lunarReactionTypes, sourceId: TRAVELER_CHARACTER_ID });
+    applyElement(enemy.elementalState, Element.Hydro, 1, {
+      auraDecayRateScale: 1,
+      lunarReactionTypes,
+      sourceId: TRAVELER_CHARACTER_ID,
+    });
+    applyElement(enemy.elementalState, Element.Electro, 1, {
+      auraDecayRateScale: 1,
+      lunarReactionTypes,
+      sourceId: TRAVELER_CHARACTER_ID,
+    });
     const context = createKitTestContext(member, {
       enemyMap: new Map([["", enemy]]),
       enemyTables,
@@ -157,8 +181,16 @@ describe(strikeLunarCharged, () => {
     castKitAction(IFA_KIT.elementalSkill, { ...ifa, characterId: SECOND_CHARACTER_ID }, kitEffectState);
     const enemy = createSturdyEnemy();
     const lunarReactionTypes = [LunarReactionType.LunarCharged];
-    applyElement(enemy.elementalState, Element.Hydro, 1, { lunarReactionTypes, sourceId: TRAVELER_CHARACTER_ID });
-    applyElement(enemy.elementalState, Element.Electro, 1, { lunarReactionTypes, sourceId: SECOND_CHARACTER_ID });
+    applyElement(enemy.elementalState, Element.Hydro, 1, {
+      auraDecayRateScale: 1,
+      lunarReactionTypes,
+      sourceId: TRAVELER_CHARACTER_ID,
+    });
+    applyElement(enemy.elementalState, Element.Electro, 1, {
+      auraDecayRateScale: 1,
+      lunarReactionTypes,
+      sourceId: SECOND_CHARACTER_ID,
+    });
     const context = createKitTestContext(takeOne(members), {
       characterIdCombatantMap: new Map(deployed.map((member) => [member.characterId, member])),
       enemyMap: new Map([["", enemy]]),

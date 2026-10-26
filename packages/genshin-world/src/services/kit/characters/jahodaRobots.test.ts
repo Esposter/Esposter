@@ -22,7 +22,7 @@ const enemyTables = await readEnemyTables(GAME_DATA_LOCAL_BASE_URL);
 const createEnemyAt = (x: number, z: number, element?: Element) => {
   const enemy = createEnemy(enemyTables, [], { ...ENEMY_CAMP_MEMBER, id: `robot-test-enemy-${x}-${z}` }, "");
   enemy.position = { x, z };
-  if (element !== undefined) applyElement(enemy.elementalState, element, 1);
+  if (element !== undefined) applyElement(enemy.elementalState, element, 1, { auraDecayRateScale: 1 });
   return enemy;
 };
 
@@ -94,7 +94,7 @@ describe(startJahodaRobots, () => {
     startJahodaRobots(context, COMBATANT, BURST_SECONDS, { ...SETTINGS, robotCount: 1 });
     // The first check at 6 finds no aura, and the enemy takes one before the second check at 52
     const strikes = readStrikes(context, 800, (frame) => {
-      if (frame === 30) applyElement(enemy.elementalState, Element.Hydro, 1);
+      if (frame === 30) applyElement(enemy.elementalState, Element.Hydro, 1, { auraDecayRateScale: 1 });
     });
     expect(strikes.map(({ frame }) => frame)).toStrictEqual([93, 233, 373, 513, 653]);
     expect(strikes.every(({ element }) => element === Element.Hydro)).toBe(true);

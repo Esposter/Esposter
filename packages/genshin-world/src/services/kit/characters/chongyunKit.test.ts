@@ -263,7 +263,7 @@ describe(createChongyunKitBehaviour, () => {
     const combatant = createChongyunCombatant(0, 4);
     const context = createKitTestContext(combatant);
     const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-    applyElement(enemy.elementalState, Element.Cryo, 1);
+    applyElement(enemy.elementalState, Element.Cryo, 1, { auraDecayRateScale: 1 });
     const hitEnemy = (): void =>
       CHONGYUN_KIT.onKitEvent?.(
         {

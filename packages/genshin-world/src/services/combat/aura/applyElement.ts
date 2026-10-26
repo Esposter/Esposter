@@ -49,12 +49,12 @@ export const applyElement = (
   element: Element,
   gauge: number,
   {
-    auraDecayRateScale = 1,
+    auraDecayRateScale,
     lunarReactionTypes = [],
     selfAuraSeconds,
     sourceId,
     stellarReactionTypes = [],
-  }: ElementApplication = {},
+  }: ElementApplication,
 ): Reaction[] => {
   const { auras, seconds } = state;
   const steps = ElementReactionStepsMap[element];

@@ -6,8 +6,8 @@ import type { StellarReactionType } from "#src/models/combat/StellarReactionType
 // Applying it, whose share of the aura it leaves is kept as one of the aura's sources
 export interface ElementApplication {
   // The factor the decay rate of the aura this application leaves takes, which a Resonance that shortens the affliction
-  // Raises above one, none at one
-  auraDecayRateScale?: number;
+  // Raises above one, and every other application leaves at one
+  auraDecayRateScale: number;
   lunarReactionTypes?: readonly LunarReactionType[];
   selfAuraSeconds?: number;
   sourceId?: number;

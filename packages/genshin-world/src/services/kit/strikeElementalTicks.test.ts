@@ -73,7 +73,7 @@ describe(strikeElementalTicks, () => {
     const wet = createSturdyEnemy(2);
     charged.electroChargedCombatant = combatant;
     charged.elementalReactions.push(ELECTRO_CHARGED_TICK);
-    applyElement(wet.elementalState, Element.Hydro, 1);
+    applyElement(wet.elementalState, Element.Hydro, 1, { auraDecayRateScale: 1 });
 
     strikeElementalTicks(createContext([charged, wet]));
 
@@ -89,7 +89,7 @@ describe(strikeElementalTicks, () => {
     const wet = createSturdyEnemy(1);
     burning.burningCombatant = combatant;
     burning.elementalReactions.push(BURNING_TICK);
-    applyElement(wet.elementalState, Element.Hydro, 1);
+    applyElement(wet.elementalState, Element.Hydro, 1, { auraDecayRateScale: 1 });
     const context = createContext([burning, wet]);
 
     strikeElementalTicks(context);

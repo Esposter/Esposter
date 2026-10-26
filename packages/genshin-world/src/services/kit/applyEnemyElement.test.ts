@@ -38,7 +38,7 @@ describe(applyEnemyElement, () => {
       expect.hasAssertions();
 
       const enemy = createEnemy(enemyTables, [], ENEMY_CAMP_MEMBER, "");
-      applyElement(enemy.elementalState, aura, 1);
+      applyElement(enemy.elementalState, aura, 1, { auraDecayRateScale: 1 });
       applyEnemyElement(enemy, element, 1, combatant);
 
       expect([enemy.electroChargedCombatant, enemy.burningCombatant]).toStrictEqual([

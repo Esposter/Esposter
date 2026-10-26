@@ -11,12 +11,12 @@ describe(getAuraSourceIds, () => {
     expect.hasAssertions();
 
     const state = createElementalState();
-    applyElement(state, Element.Hydro, 1, { sourceId: 1 });
-    applyElement(state, Element.Hydro, 2, { sourceId: 2 });
+    applyElement(state, Element.Hydro, 1, { auraDecayRateScale: 1, sourceId: 1 });
+    applyElement(state, Element.Hydro, 2, { auraDecayRateScale: 1, sourceId: 2 });
     const appliedSourceIds = getAuraSourceIds(state, AuraType.Hydro);
     consumeAuras(state.auras, [AuraType.Hydro], 1);
     const reducedSourceIds = getAuraSourceIds(state, AuraType.Hydro);
-    applyElement(state, Element.Hydro, 1, { sourceId: 1 });
+    applyElement(state, Element.Hydro, 1, { auraDecayRateScale: 1, sourceId: 1 });
     const reappliedSourceIds = getAuraSourceIds(state, AuraType.Hydro);
 
     expect([appliedSourceIds, reducedSourceIds, reappliedSourceIds]).toStrictEqual([[1, 2], [2], [1, 2]]);
@@ -26,7 +26,7 @@ describe(getAuraSourceIds, () => {
     expect.hasAssertions();
 
     const state = createElementalState();
-    applyElement(state, Element.Hydro, 1, { sourceId: 1 });
+    applyElement(state, Element.Hydro, 1, { auraDecayRateScale: 1, sourceId: 1 });
     consumeAuras(state.auras, [AuraType.Hydro], 1);
 
     expect(getAuraSourceIds(state, AuraType.Hydro)).toStrictEqual([]);

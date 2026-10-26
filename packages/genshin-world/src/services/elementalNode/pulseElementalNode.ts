@@ -35,6 +35,7 @@ export const pulseElementalNode = (enemy: Enemy, element: Element): Reaction[] =
     : ELEMENTAL_NODE_PULSE_GAUGE;
   addEnemyStatus(enemy, createElementalNodeStatus(element));
   return applyElement(enemy.elementalState, element, gauge, {
+    auraDecayRateScale: 1,
     selfAuraSeconds: Infinity,
     sourceId: ELEMENTAL_NODE_SOURCE_ID,
   });

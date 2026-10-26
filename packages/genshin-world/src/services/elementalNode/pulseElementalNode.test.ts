@@ -41,7 +41,7 @@ describe(pulseElementalNode, () => {
     const enemy = createTestEnemy();
 
     pulseElementalNode(enemy, Element.Pyro);
-    applyElement(enemy.elementalState, Element.Cryo, 1);
+    applyElement(enemy.elementalState, Element.Cryo, 1, { auraDecayRateScale: 1 });
     const gaugeBefore = enemy.elementalState.auras.get(AuraType.Pyro)?.gauge ?? 0;
     expect(gaugeBefore).toBeLessThan(ELEMENTAL_NODE_MAX_GAUGE);
 

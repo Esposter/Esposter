@@ -24,6 +24,7 @@ export const applyEnemyElement = (
 ): Reaction[] => {
   const { auras } = enemy.elementalState;
   const reactions = applyElement(enemy.elementalState, element, gauge, {
+    auraDecayRateScale: 1,
     lunarReactionTypes,
     sourceId: combatant.characterId,
     stellarReactionTypes,

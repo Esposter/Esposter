@@ -256,7 +256,7 @@ describe(createQiqiKitBehaviour, () => {
 
     expect(getDamageBonus(AttackTag.NormalAttack)).toBe(0);
 
-    applyElement(enemy.elementalState, Element.Cryo, 1);
+    applyElement(enemy.elementalState, Element.Cryo, 1, { auraDecayRateScale: 1 });
 
     expect(
       [AttackTag.NormalAttack, AttackTag.ChargedAttack, AttackTag.ElementalSkill].map((attackTag) =>

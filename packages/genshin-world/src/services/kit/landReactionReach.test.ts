@@ -236,7 +236,8 @@ describe(landReactionReach, () => {
     const dry = createSturdyEnemy(1);
     const wet = createSturdyEnemy(2);
     const fartherWet = createSturdyEnemy(-3);
-    for (const enemy of [wet, fartherWet]) applyElement(enemy.elementalState, Element.Hydro, 1);
+    for (const enemy of [wet, fartherWet])
+      applyElement(enemy.elementalState, Element.Hydro, 1, { auraDecayRateScale: 1 });
     const electroCharged: TransformativeReaction = {
       element: Element.Electro,
       reactionType: TransformativeReactionType.ElectroCharged,
@@ -263,8 +264,8 @@ describe(landReactionReach, () => {
     const origin = createSturdyEnemy(0);
     const wet = createSturdyEnemy(2);
     const charged = createSturdyEnemy(-2);
-    applyElement(wet.elementalState, Element.Hydro, 4);
-    applyElement(charged.elementalState, Element.Electro, 1);
+    applyElement(wet.elementalState, Element.Hydro, 4, { auraDecayRateScale: 1 });
+    applyElement(charged.elementalState, Element.Electro, 1, { auraDecayRateScale: 1 });
     const swirl: TransformativeReaction = {
       element: Element.Pyro,
       reactionType: TransformativeReactionType.Swirl,

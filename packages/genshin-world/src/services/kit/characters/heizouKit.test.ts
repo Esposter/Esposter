@@ -92,7 +92,7 @@ describe(createHeizouKitBehaviour, () => {
     const auraElements = [[Element.Electro, Element.Hydro], [], [Element.Pyro], [Element.Cryo], [Element.Pyro]];
     for (const elements of auraElements) {
       const enemy = createHeizouEnemy();
-      for (const element of elements) applyElement(enemy.elementalState, element, 1);
+      for (const element of elements) applyElement(enemy.elementalState, element, 1, { auraDecayRateScale: 1 });
       HEIZOU_KIT.onKitEvent?.(
         {
           attackTag: AttackTag.ElementalBurst,

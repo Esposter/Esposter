@@ -49,7 +49,7 @@ export const advanceElementalState = (state: ElementalState, deltaSeconds: numbe
     const pyroGauge = applyBurningInternalCooldown(state);
     reactions.push(
       { element: Element.Pyro, reactionType: ReactionType.Burning, spreadGauge: pyroGauge },
-      ...applyElement(state, Element.Pyro, pyroGauge),
+      ...applyElement(state, Element.Pyro, pyroGauge, { auraDecayRateScale: 1 }),
     );
   }
 };

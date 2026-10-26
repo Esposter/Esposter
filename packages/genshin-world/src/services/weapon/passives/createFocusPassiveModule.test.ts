@@ -104,10 +104,12 @@ describe(createFocusPassiveModule, () => {
       focusPassiveModule.onKitEvent?.(createDamageTaken(false), context, focusWielder);
       const lunarReactionTypes = [LunarReactionType.LunarCharged];
       applyElement(sturdyEnemy.elementalState, Element.Hydro, 1, {
+        auraDecayRateScale: 1,
         lunarReactionTypes,
         sourceId: focusWielder.characterId,
       });
       applyElement(sturdyEnemy.elementalState, Element.Electro, 1, {
+        auraDecayRateScale: 1,
         lunarReactionTypes,
         sourceId: focusWielder.characterId,
       });
