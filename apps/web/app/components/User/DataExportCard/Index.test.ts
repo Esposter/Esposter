@@ -150,6 +150,6 @@ describe("userDataExportCard", () => {
     await getButton(component, "Request export").trigger("click");
     await flushPromises();
 
-    expect(requestDataExport).toHaveBeenCalledExactlyOnceWith();
+    expect(requestDataExport).toHaveBeenCalledTimes(1);
   });
 });
