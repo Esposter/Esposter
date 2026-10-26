@@ -146,11 +146,27 @@ From Constellation 4, Xiao SHALL gain a 100% DEF Bonus while his HP is under hal
 - **WHEN** his HP falls under half
 - **THEN** no DEF Bonus is gained
 
+### Requirement: Constellation 2 Energy Recharge off the field
+
+From Constellation 2, Xiao SHALL gain 25% Energy Recharge while he is off the field.
+
+#### Scenario: Constellation 2 gives Energy Recharge off the field
+
+- **GIVEN** Xiao has Constellation 2
+- **WHEN** he is off the field
+- **THEN** he gains 25% Energy Recharge
+
+#### Scenario: Constellation 2 gives nothing on the field
+
+- **GIVEN** Xiao has Constellation 2
+- **WHEN** he is on the field
+- **THEN** no Energy Recharge is gained
+
 ### Requirement: Unbuilt effects
 
-Xiao's third skill charge, his jump, his Constellations 2 and 6 and his dash particles SHALL have no effect in the world yet.
+Xiao's third skill charge, his jump, his Constellation 6 and his dash particles SHALL have no effect in the world yet.
 
-#### Scenario: Constellations have no effect
+#### Scenario: Constellation 6 has no effect
 
-- **WHEN** Xiao holds Constellation 2 or 6
-- **THEN** no effect of those constellations is applied in the fight
+- **WHEN** Xiao holds Constellation 6
+- **THEN** no effect of it is applied in the fight
