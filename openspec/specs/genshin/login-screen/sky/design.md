@@ -34,5 +34,5 @@ The sky behind the login scene: each hour's clear sky, solved as the game's sky 
 - [ ] **The dusk's sunlight falls 50 degrees up and 60 degrees left of the walkway** — contradicted: `DUSK_LIGHT_DIRECTION` (0.493, 0.763, 0.418) is 49.7 degrees up and 49.7 degrees off the walkway's +z axis, not 60.
 - [ ] **The solve casts the recording's tower shadows within 5.28 pixels of their edges** — no source yet: the figure is only in a code comment, and the shadows solve output is not kept.
 - [ ] **The hemisphere's sky colour is the bright cloud colour** — contradicted: at dawn `hemisphereSkyColor` is 0xf2dfc8 against `cloudLitColor` 0xf5efe8.
-- [ ] **The dawn's and the dusk's suns sit just past the left edge, a little over the horizon** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The dusk's sunlight falls from the direction its shadows solve to on the door recording** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **The dawn's and the dusk's suns sit just past the left edge, a little over the horizon** — no source yet: the dawn login still `~/Esposter/genshin-parity/references/login-dawn-title.png`, not yet read for the sun's position.
+- [ ] **The dusk's sunlight falls from the direction its shadows solve to on the door recording** — no source yet: the door recording still `~/Esposter/genshin-parity/references/login-door-recording.png`, not yet read for the shadows' direction.
