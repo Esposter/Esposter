@@ -29,10 +29,10 @@ Mondstadt is the first region fitted, and the regions the waypoints command writ
 
 ## The jump
 
-- **Two kinds jump.** `JUMP_LANDMARK_KINDS` holds the Statue of The Seven and the Teleport Waypoint. A tree or a building is never a jump target.
+- **Three kinds jump.** `JUMP_LANDMARK_KINDS` holds the Statue of The Seven, the Teleport Waypoint and the domain entrance (`packages/genshin-world/src/services/map/constants.ts`). A tree or a building is never a jump target.
 - **A waypoint always has an arrival.** `WaypointLandmark` requires its `arrival` in its schema (`packages/genshin-world/src/models/world/WaypointLandmark.ts`, line 16). Every landmark's base allows one, and `computeJumpPose` treats a jump to a landmark without one as an error, since there is nowhere to land (`packages/genshin-world/src/services/map/computeJumpPose.ts`, line 9).
 - **The landing is the arrival.** `computeJumpPose` puts the character at the arrival's place, at its height offset and facing its rotation (`packages/genshin-world/src/services/map/computeJumpPose.ts`, lines 11 to 14).
-- **Only unlocked landmarks are offered.** `useWorldMap` gives the map, the minimap, the jump list and a revive the unlocked jump landmarks alone, whether they are statues or waypoints (`packages/genshin-world/src/composables/useWorldMap.ts`, line 22). A locked one is offered to F under its own title, a Teleport Waypoint's "Teleport Waypoint" and a statue's "Statue of The Seven" (`computeJumpLandmarkTextKey`; `packages/genshin-text/src/generated/text/English.json`, lines 499 and 500), and activating it unlocks it.
+- **Only unlocked landmarks are offered.** `useWorldMap` gives the map, the minimap, the jump list and a revive the unlocked jump landmarks alone, whether they are statues, waypoints or domain entrances (`packages/genshin-world/src/composables/useWorldMap.ts`, line 22). A locked one is offered to F under its own title, a Teleport Waypoint's "Teleport Waypoint" and a statue's "Statue of The Seven" (`computeJumpLandmarkTextKey`; `packages/genshin-text/src/generated/text/English.json`, lines 499 and 500), and activating it unlocks it.
 - **The jump list names by area.** It groups the jumps by region, and each is named by its area's name, so a waypoint and a statue in one area read alike (`packages/genshin-world/src/components/Map/JumpList/Index.vue`, lines 20 to 26).
 
 ## Data and measures
@@ -65,7 +65,7 @@ Mondstadt is the first region fitted, and the regions the waypoints command writ
 
 ## Notes
 
-- **A waypoint's first unlock pays its point's reward.** `computeLandmarkPointId` keys each waypoint by the point its id ends in (`packages/genshin-world/src/services/transPoint/computeLandmarkPointId.ts`), so its Primogems and Adventure EXP are the point's row, as the [map unlocking](../map-unlocking/design.md) page sets out, and the eleven waypoints the game's table gives no row pay nothing (`~/Esposter/genshin-parity/text/ExcelBinOutput/TransPointRewardConfigData.json` holds no row for points 1865 to 2051, and `packages/genshin-world/src/data/regions/mondstadt.json` has 11 of its 43 waypoints in that range). The transport-point achievement counts only the statue `LandmarkIdStatuePointIdMap` names (`packages/genshin-world/src/services/statue/computeUnlockedStatuePointIds.ts`, line 12, over a map that holds only `windrise-statue-of-the-seven`), so a waypoint's unlock counts toward it not at all.
+- **A waypoint's first unlock pays its point's reward.** `computeLandmarkPointId` keys each waypoint by the point its id ends in (`packages/genshin-world/src/services/transPoint/computeLandmarkPointId.ts`), so its Primogems and Adventure EXP are the point's row, as the [map unlocking](../map-unlocking/design.md) page sets out, and the waypoints in points 1865 to 2051 pay nothing (`~/Esposter/genshin-parity/text/ExcelBinOutput/TransPointRewardConfigData.json` holds no row for those points, and `packages/genshin-world/src/data/regions/mondstadt.json` holds the waypoints in that range). The transport-point achievement counts only the statue `LandmarkIdStatuePointIdMap` names (`packages/genshin-world/src/services/statue/computeUnlockedStatuePointIds.ts`, line 12, over a map that holds only `windrise-statue-of-the-seven`), so a waypoint's unlock counts toward it not at all.
 - **Only the regions in `WAYPOINT_REGIONS` have waypoints.** (`scripts/src/services/genshinAssets/shared/constants.ts`, line 417.) Each further region is added to that list once its map fit is checked.
 
 ## Sources
@@ -73,11 +73,9 @@ Mondstadt is the first region fitted, and the regions the waypoints command writ
 - [Teleport Waypoint](https://genshin-impact.fandom.com/wiki/Teleport_Waypoint), Genshin Impact Wiki: the fast-travel points a jump goes to.
 
 ## Open
-
-- [ ] **Two kinds jump, the Statue of The Seven and the Teleport Waypoint** — no source yet: `packages/genshin-world/src/services/map/constants.ts` also lists `DomainEntrance` in `JUMP_LANDMARK_KINDS`, so the count of two disagrees with the code.
-- [ ] **Mondstadt's region data holds 43 waypoints, with ids such as `mondstadt-waypoint-1865`** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Each Statue of The Seven gets the arrival of the transport point it stands at** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Each scene transport point is read from the scene points Windrise's statue holds** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The official map's ground waypoints are read from the map's references** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A waypoint's first unlock pays its point's reward, keyed by the point its id ends in** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Mondstadt has 11 of its 43 waypoints in points 1865 to 2051** — no source yet: game data or a snapshot that holds this behaviour
+- **Mondstadt's region data holds its waypoints, with ids such as `mondstadt-waypoint-1865`** — `packages/genshin-world/src/data/regions/mondstadt.json` holds that id, and eleven of its waypoints fall in points 1865 to 2051 by the number after each id's last hyphen.
+- **Each Statue of The Seven gets the arrival of the transport point it stands at** — `scripts/src/services/genshinAssets/fit/fitRegionLandmarks.ts` (lines 44 to 48), which errors on a statue with no transport point.
+- **Each scene transport point is read from the scene points Windrise's statue holds** — `scripts/src/services/genshinAssets/world/readSceneTransportPoints.ts` (lines 10 to 12), whose kind is the one the Windrise statue point names.
+- **The official map's ground waypoints are read from the map's references** — `scripts/src/services/genshinAssets/points/readFittedMapPoints.ts` (lines 12 to 22) reads the official map's points with the fit's transform, and `scripts/src/services/genshinAssets/fit/fitRegionWaypoints.ts` (line 19) takes them through `readFittedRegions`.
+- **A waypoint's first unlock pays its point's reward, keyed by the point its id ends in** — `packages/genshin-world/src/services/transPoint/computeLandmarkPointId.ts`, and the reward table holds no row for points 1865 to 2051 (`~/Esposter/genshin-parity/text/ExcelBinOutput/TransPointRewardConfigData.json`, its `pointId` field).
+- **Mondstadt has eleven of its waypoints in points 1865 to 2051** — counted from `packages/genshin-world/src/data/regions/mondstadt.json` by the number after each id's last hyphen.
