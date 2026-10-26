@@ -77,3 +77,7 @@ stateDiagram-v2
 ## Open
 
 - [ ] **The base limit of two** — no source yet: the wiki's Expedition page is not cached and the dump holds no base limit; the clip's "Expedition Limit: 1/2" does not show its player's Adventure Rank. The code starts `computeExpeditionLimit` at two (`packages/genshin-world/src/services/expedition/computeExpeditionLimit.ts`), which is the claim's source-less half.
+- [ ] **The game's menus hold no expedition entry** — no source yet: no capture of the Paimon menu's entries shows that none is an expedition.
+- [ ] **A talent applies once its passive is unlocked at the character's ascension** — no source yet: the dump's rows for these talents carry no `breakLevel`, and no test holds the ascension unlock.
+- **The session keeps each character's passives at or below its ascension** — `packages/genshin-world/src/components/World/Session/Index.vue` filters them by `phase <= ascension`, and only those reach the expedition talents.
+- **A talent's region the model does not hold is refused at the read** — `packages/genshin-world/src/models/expedition/ExpeditionPassive.ts` parses `region` as `z.enum(ExpeditionRegion)`, and `packages/genshin-world/src/services/data/readGameData.ts` (`schema.parse`) throws on a region outside it.
