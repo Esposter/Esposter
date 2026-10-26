@@ -19,31 +19,31 @@ flowchart TD
 
 ## The schedule and the difficulties
 
-`pnpm -C scripts genshin:assets imaginarium` builds two records from the role combat tables and publishes them to the hosted game data as `imaginarium/seasons` and `imaginarium/difficulties`, which `readImaginariumSeasons` and `readImaginariumDifficulties` fetch by key. The two tables are missing from the community dump, so they were fetched from the AnimeGameData repository into the dump and never committed. The repository's master matched the dump's tower tables byte for byte, so the two share a revision.
+`pnpm -C scripts genshin:assets imaginarium` builds two records from the role combat tables and publishes them to the hosted game data as `imaginarium/seasons` and `imaginarium/difficulties`, which `readImaginariumSeasons` and `readImaginariumDifficulties` fetch by key. The two tables are missing from the community dump, so they were fetched from the AnimeGameData repository into the dump and never committed (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/RoleCombatScheduleExcelConfigData.json`, `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/RoleCombatDifficultyExcelConfigData.json`). The repository's master matched the dump's tower tables byte for byte, so the two share a revision.
 
-- **Seasons.** Every row of the schedule: its id, the moments it begins and ends in the game's time zone, the difficulty ids it runs and the reward group its Stellas draw from. The schedule ends with a season scheduled far ahead, which is not begun, so it is never played.
-- **Difficulties.** Every difficulty row: its id, its level from one to five, and its level floor. The floors are 60 for levels one and two and 70 for levels three to five.
+- **Seasons.** Every row of the schedule: its id, the moments it begins and ends in the game's time zone, the difficulty ids it runs and the reward group its Stellas draw from. The schedule ends with a season scheduled far ahead, which is not begun, so it is never played (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/RoleCombatScheduleExcelConfigData.json`, whose last row, `scheduleId` 101, begins `2099-11-01`).
+- **Difficulties.** Every difficulty row: its id, its level from one to five, and its level floor. The floors are 60 for levels one and two and 70 for levels three to five (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/RoleCombatDifficultyExcelConfigData.json`, field `OHDBPBMODLP`).
 
 A season names its difficulties by id, and the writer refuses a season that names one the difficulty table lacks.
 
 ## The rules
 
-- **The season.** The Theater plays the latest season that began before now, read in the game's time zone, UTC+8. A season is never played before it begins, and after the last one ends the last begun season is held, so a dump read months on plays its final season rather than none.
+- **The season.** The Theater plays the latest season that began before now, read in the game's time zone, UTC+8 (`packages/genshin-world/src/services/time/constants.ts`, `GAME_TIME_ZONE`). A season is never played before it begins, and after the last one ends the last begun season is held, so a dump read months on plays its final season rather than none.
 - **The difficulties.** A season's difficulties are the rows its ids name, ordered from the lowest level.
-- **Vigor.** Each character has two Vigor for a run. A stage is performed by a Principal Cast of four, each with Vigor left, and performing it spends one Vigor from each. A cast of fewer than four, or one with a member out of Vigor, performs nothing.
-- **Blessing Level.** Each Alternate Cast member past the number its difficulty asks adds two, and each Brilliant Blessing adds the levels it has been gained and raised to, one each. A short Alternate Cast adds nothing.
-- **Blessing stats.** Each level of Blessing adds the stats `IMAGINARIUM_BLESSING_LEVEL_STATS` gives to a cast member, and a special guest's stats are doubled by `IMAGINARIUM_SPECIAL_GUEST_BLESSING_MULTIPLIER`.
-- **The opening character.** An owned opening character's Max HP, ATK and DEF rise by a fifth, rounded down to whole units. Its Elemental Mastery is unchanged.
-- **Stellas.** Every three Stellas in a run give one reward, so five Stellas give one and six give two.
+- **Vigor.** Each character has two Vigor for a run. A stage is performed by a Principal Cast of four, each with Vigor left, and performing it spends one Vigor from each. A cast of fewer than four, or one with a member out of Vigor, performs nothing (`packages/genshin-world/src/services/imaginarium/checkIsImaginariumStageReady.ts`).
+- **Blessing Level.** Each Alternate Cast member past the number its difficulty asks adds two, and each Brilliant Blessing adds the levels it has been gained and raised to, one each. A short Alternate Cast adds nothing (`packages/genshin-world/src/services/imaginarium/computeImaginariumBlessingLevel.ts`).
+- **Blessing stats.** Each level of Blessing adds the stats `IMAGINARIUM_BLESSING_LEVEL_STATS` gives to a cast member, and a special guest's stats are doubled by `IMAGINARIUM_SPECIAL_GUEST_BLESSING_MULTIPLIER` (`packages/genshin-world/src/services/imaginarium/getImaginariumBlessingStats.ts`).
+- **The opening character.** An owned opening character's Max HP, ATK and DEF rise by a fifth, rounded down to whole units. Its Elemental Mastery is unchanged (`packages/genshin-world/src/services/imaginarium/applyImaginariumOpeningBonus.ts`).
+- **Stellas.** Every three Stellas in a run give one reward, so five Stellas give one and six give two (`packages/genshin-world/src/services/imaginarium/countImaginariumStellaRewards.ts`).
 
 ## Decisions
 
-- **The season is read off the schedule's own dates, not the table's position.** The schedule lists its seasons in order, but the latest begun is found by its start, so a row added out of order plays as it should.
-- **A season names its difficulties by the difficulty rows' ids.** The schedule's difficulty list holds the ids of rows in the difficulty table, the season in the dump running ids 105 to 109 and those rows' levels one to five. The join is by id, so no position is assumed.
+- **The season is read off the schedule's own dates, not the table's position.** The schedule lists its seasons in order, but the latest begun is found by its start, so a row added out of order plays as it should (`packages/genshin-world/src/services/imaginarium/findImaginariumSeason.ts`).
+- **A season names its difficulties by the difficulty rows' ids.** The schedule's difficulty list holds the ids of rows in the difficulty table, the season in the dump running ids 105 to 109 and those rows' levels one to five (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/RoleCombatDifficultyExcelConfigData.json`). The join is by id, so no position is assumed.
 - **The level floors are the table's, and the lower difficulties are levels one and two.** The table's floor column reads 60 for levels one and two and 70 above, as the proposal settles, so the floor is read from the column and not written in.
-- **The opening bonus rounds down.** The game's stats are whole units, and the bonus is taken on each stat in whole units, rounded down, rather than kept as a fraction.
+- **The opening bonus rounds down.** The game's stats are whole units, and the bonus is taken on each stat in whole units, rounded down, rather than kept as a fraction (`packages/genshin-world/src/services/imaginarium/applyImaginariumOpeningBonus.ts`).
 - **The Blessing Level's required count is an input.** The table field that holds each difficulty's required count is not yet named, so the caller states the count, and the rule is built against it.
-- **One latest-begun search.** The search for the item that began latest before a moment is `findLatestBegun`, which the Theater's season uses. The Spiral Abyss's period is to use it too, so the two schedules share one rule and one test.
+- **One latest-begun search.** The search for the item that began latest before a moment is `findLatestBegun`, which the Theater's season uses (`packages/genshin-world/src/services/shared/findLatestBegun.ts`). The Spiral Abyss's period is to use it too, so the two schedules share one rule and one test.
 
 ## Key files
 
@@ -81,3 +81,13 @@ A season names its difficulties by id, and the writer refuses a season that name
 
 - [Imaginarium Theater](https://genshin-impact.fandom.com/wiki/Imaginarium_Theater), Genshin Impact Wiki: the Vigor, the Blessing Level stats, the opening character's bonus and the Stella rewards this page builds. The source could not be read, so these are the proposal's statements.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `RoleCombatScheduleExcelConfigData` and `RoleCombatDifficultyExcelConfigData`, the two tables the slices are written from. Their revision matches the dump's tower tables.
+
+## Open
+
+- [ ] **the AnimeGameData master matches the dump's tower tables byte for byte** — no source yet: the repository's revision, which the cache does not hold.
+- [ ] **each character has two Vigor for a run, and a stage takes four performers** — no source yet: the wiki's Imaginarium Theater page, which could not be read when this was built.
+- [ ] **each Alternate Cast member past the required count adds two Blessing Levels, and each Brilliant Blessing its levels** — no source yet: the wiki's Imaginarium Theater page, which could not be read when this was built.
+- [ ] **each Blessing Level's stats are those of `IMAGINARIUM_BLESSING_LEVEL_STATS`, doubled for a special guest** — no source yet: the wiki's Imaginarium Theater page, which could not be read when this was built.
+- [ ] **an owned opening character gains a fifth of its Max HP, ATK and DEF** — no source yet: the wiki's Imaginarium Theater page, which could not be read when this was built.
+- [ ] **every three Stellas in a run give one reward** — no source yet: the wiki's Imaginarium Theater page, which could not be read when this was built.
+- [ ] **the Theater's season times are in UTC+8** — no source yet: the game's own server time zone, which the dump does not state.
