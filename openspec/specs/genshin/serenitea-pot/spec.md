@@ -156,4 +156,4 @@ A Trust Rank SHALL hold as many companions as its rank allows, from one companio
 
 ## Open
 
-- [ ] **Realm Currency and Realm Bounty accrue per real hour, the unit the game's stores use** — no source yet: the per-hour unit is provisional until a recording of a store across an hour settles it (`packages/genshin-world/src/services/home/constants.ts`).
+- [ ] **Realm Currency and Realm Bounty accrue per real hour, the unit the game's stores use** — no source yet: the per-hour unit is provisional until a recording of a store across an hour settles it.
