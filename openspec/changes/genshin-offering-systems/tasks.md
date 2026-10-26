@@ -5,7 +5,7 @@
 
 ## 2. Items
 
-- [ ] 2.1 Place each offering's items at its spawned places, once the spawned places change exists. Verify: a test named after the scenario 'An item for an offering is found exploring its place'.
+- [ ] 2.1 Place each offering's items at its spawned places, once the spawned places change exists. Verify: a test named after the scenario 'An item for an offering is found exploring its place'. Blocked: the spawned places change's fitted places do not reach the world yet (its task 1.2 is open, and nothing reads them), so there is no place for an offering's item to stand at, and no test or code places one.
 
 ## 3. Rule check
 
