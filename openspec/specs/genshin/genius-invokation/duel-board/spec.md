@@ -96,4 +96,7 @@ A duel's end SHALL return the player from the board to the world.
 
 ## Open
 
-The open items are held once, in [design.md](design.md#open).
+The open items are held once, in [design.md](design.md#open), and the two below are not in it.
+
+- [ ] **A game whose opponent deck is missing fails the run** — no source yet: the deck check in `scripts/src/services/genshinAssets/gcg/toGcgGames.ts` was not read.
+- [ ] **The board's leave returns the player to the world** — no source yet: the world's handler for the board's leave was not read.
