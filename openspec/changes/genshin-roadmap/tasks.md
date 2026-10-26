@@ -127,7 +127,6 @@ The user's one batch, checked whenever convenient ([parity](../../specs/genshin/
 - [ ] **Faruzan's poise matches her stand-ins** — [Faruzan](../../specs/genshin/kits/faruzan/design.md): the game's poise for her fully charged shot and plunges matches 20, 50 and 100.
 - [ ] **Yaoyao's fourth strike reaches 2.7 metres** — [Yaoyao](../../specs/genshin/kits/yaoyao/design.md): a recording hits an enemy 2.7 metres ahead, not 3.7.
 - [ ] **Yaoyao's plunge lands at 0.4 seconds** — [Yaoyao](../../specs/genshin/kits/yaoyao/design.md): a recording of her plunge lands at that point.
-- [ ] **Layla's plunges match Bennett's** — [Layla](../../specs/genshin/kits/layla/design.md): her plunge hits land at Bennett's frames with Bennett's poise.
 - [ ] **Wanderer's high plunge matches Bennett's** — [Wanderer](../../specs/genshin/kits/wanderer/design.md): his high plunge lands at Bennett's frame with Bennett's poise.
 - [ ] **Aino's charged attack lands at 24 frames in 55, as the borrowed claymore charge does** — [Aino](../../specs/genshin/kits/aino/design.md): gcsim gives her no charged attack, so its frames and reach are Ayato's measured claymore charge.
 - [ ] **Aino's plunges match Bennett's** — [Aino](../../specs/genshin/kits/aino/design.md): her plunge hits land at Bennett's frames with Bennett's poise.
