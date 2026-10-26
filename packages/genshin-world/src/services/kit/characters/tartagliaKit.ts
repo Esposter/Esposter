@@ -95,6 +95,8 @@ export const createTartagliaKitBehaviour = ({
   // The Melee Stance's strikes are Normal Attack DMG and its charged attack Charged Attack DMG, gcsim's AttackTagNormal
   // In tartaglia/attack.go's meleeAttack and AttackTagExtra in tartaglia/charge.go's ChargeAttack
   const meleeStanceActions = readStance("meleeStance", {
+    // Measured: gcsim v2.47.2 (MIT) tartaglia/burst.go line 67: under the Melee Stance status, Light of Obliteration's
+    // Circle has a radius of 8 metres, where line 58 gives Flash of Havoc's 6 out of it
     // Light of Obliteration lands round the body, and from six constellations it marks the stance's end to end the
     // Stance's cooldown
     burst: {
