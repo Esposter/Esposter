@@ -1,12 +1,12 @@
 ## Purpose
 
-The game's pause menu, opened over the world by Escape or a pad's Start, with its contents and side bar in the game's own order, the entries of screens not yet built drawn disabled, and the quit prompt and World Level dialog it opens.
+The game's pause menu, opened over the world by Escape or a pad's Start, with its contents and side bar in the game's own order, the entries of screens not yet built drawn disabled, and the quit prompt and World Level dialog it opens (`packages/genshin-world/src/components/Menu/Paimon/Index.vue`, `packages/genshin-world/src/components/Menu/Exit/Index.vue`, `packages/genshin-world/src/components/Menu/WorldLevelDialog/Index.vue`).
 
 ## Requirements
 
 ### Requirement: The menu opens over the world from Escape or Start
 
-The world SHALL open the Paimon menu over play when Escape or a pad's Start is pressed, and in single-player SHALL pause everything except particles and music while it is open.
+The world SHALL open the Paimon menu over play when Escape or a pad's Start is pressed, and in single-player SHALL pause everything except particles and music while it is open (`packages/genshin-world/src/services/screen/getNextScreenKind.ts` for Escape and Start, `packages/genshin-world/src/services/screen/constants.ts` for the hold).
 
 #### Scenario: Opened from the keyboard
 
@@ -28,7 +28,7 @@ The world SHALL open the Paimon menu over play when Escape or a pad's Start is p
 
 ### Requirement: Contents and side bar follow the game's order and words
 
-The Paimon menu SHALL list its side bar from Back to Quit Game and its contents in the game's own order, each labelled in the game's own text.
+The Paimon menu SHALL list its side bar from Back to Quit Game and its contents in the game's own order, each labelled in the game's own text (`packages/genshin-world/src/services/menu/constants.ts`).
 
 #### Scenario: Menu open
 
@@ -36,12 +36,12 @@ The Paimon menu SHALL list its side bar from Back to Quit Game and its contents 
 - **WHEN** the player looks over its side bar and contents
 - **THEN** the side bar runs from Back to Quit Game in the game's order
 - **AND** the contents follow the game's order, labelled with the game's own words
-- **AND** Community, Version Highlights, Feedback and Survey are drawn disabled at the foot of the contents
-- **AND** entries the game shows but the references do not are left out
+- **AND** Community, Version Highlights, Feedback and Survey are drawn disabled at the foot of the contents (`packages/genshin-world/src/services/menu/constants.ts`)
+- **AND** entries the game shows but the references do not are left out (`packages/genshin-world/src/services/menu/constants.ts`, where the Training Guide is left out)
 
 ### Requirement: Entries whose screen is not built are drawn disabled
 
-The Paimon menu SHALL draw each entry whose screen is not built as disabled, and SHALL open the entry's screen once that screen is built.
+The Paimon menu SHALL draw each entry whose screen is not built as disabled, and SHALL open the entry's screen once that screen is built (`packages/genshin-world/src/components/Menu/Paimon/Index.vue`).
 
 #### Scenario: Entry whose screen is not built
 
@@ -57,7 +57,7 @@ The Paimon menu SHALL draw each entry whose screen is not built as disabled, and
 
 ### Requirement: Back closes the menu and Quit Game asks first
 
-The Paimon menu SHALL close when Back is chosen, and SHALL open the quit prompt over the menu when Quit Game is chosen.
+The Paimon menu SHALL close when Back is chosen, and SHALL open the quit prompt over the menu when Quit Game is chosen (`packages/genshin-world/src/components/Menu/Paimon/Index.vue`).
 
 #### Scenario: Back closes the menu
 
@@ -70,7 +70,7 @@ The Paimon menu SHALL close when Back is chosen, and SHALL open the quit prompt 
 - **GIVEN** the Paimon menu is open
 - **WHEN** the player chooses Quit Game
 - **THEN** the quit prompt opens over the menu
-- **AND** the menu stays visible behind it, dimmed, while the prompt shows
+- **AND** the menu stays visible behind it, dimmed, while the prompt shows (`packages/genshin-world/src/components/Menu/Exit/Index.vue`, its backdrop)
 
 #### Scenario: Cancel from the prompt
 
@@ -81,7 +81,7 @@ The Paimon menu SHALL close when Back is chosen, and SHALL open the quit prompt 
 
 ### Requirement: The quit prompt offers Cancel and Confirm, and Confirm leaves the world
 
-The quit prompt SHALL offer Cancel and Confirm, and Confirm SHALL leave the world for the app's home.
+The quit prompt SHALL offer Cancel and Confirm, and Confirm SHALL leave the world for the app's home (`packages/genshin-world/src/components/Menu/Exit/Index.vue`, and `apps/web/app/components/Genshin/World.vue` for the leaving).
 
 #### Scenario: Confirm leaves for the app's home
 
@@ -91,7 +91,7 @@ The quit prompt SHALL offer Cancel and Confirm, and Confirm SHALL leave the worl
 
 ### Requirement: The menu opens and closes on a fixed timing
 
-The Paimon menu SHALL fade its side bar in on opening and draw its panel a tenth of a second later on the same curve, and SHALL close in reverse with its panel first, while Quit Game SHALL replace the menu at once.
+The Paimon menu SHALL fade its side bar in on opening and draw its panel a tenth of a second later on the same curve, and SHALL close in reverse with its panel first, while Quit Game SHALL replace the menu at once (`packages/genshin-world/src/services/menu/constants.ts` for the 160 millisecond fade and 100 millisecond panel delay, `packages/genshin-world/src/components/Menu/Paimon/Index.vue`).
 
 #### Scenario: Menu opening
 
@@ -99,7 +99,7 @@ The Paimon menu SHALL fade its side bar in on opening and draw its panel a tenth
 - **WHEN** the Paimon menu opens
 - **THEN** the side bar fades in
 - **AND** the panel follows a tenth of a second later on the same curve
-- **AND** the menu is fully open within 26 hundredths of a second
+- **AND** the menu is fully open within 26 hundredths of a second (`packages/genshin-world/src/services/menu/constants.ts`, 160 plus 100 milliseconds)
 
 #### Scenario: Menu closing
 
@@ -116,7 +116,7 @@ The Paimon menu SHALL fade its side bar in on opening and draw its panel a tenth
 
 ### Requirement: Side bar buttons and entries light under the pointer
 
-A side bar button SHALL light when the pointer rests on it, and a panel entry SHALL take its tint under the pointer.
+A side bar button SHALL light when the pointer rests on it, and a panel entry SHALL take its tint under the pointer (`packages/genshin-world/src/components/Menu/Paimon/Index.vue`, its Disc buttons).
 
 #### Scenario: Pointer rests on a side bar button
 
@@ -133,13 +133,13 @@ A side bar button SHALL light when the pointer rests on it, and a panel entry SH
 
 ### Requirement: The profile card shows the rank and opens the World Level dialog
 
-The profile card SHALL show the Traveler's rank and World Level, and the info icon beside the World Level SHALL open the World Level dialog over the dimmed menu.
+The profile card SHALL show the Traveler's rank and World Level, and the info icon beside the World Level SHALL open the World Level dialog over the dimmed menu (`packages/genshin-world/src/components/Menu/Paimon/Index.vue`).
 
 #### Scenario: Card shows rank and World Level
 
 - **GIVEN** the Paimon menu is open
 - **WHEN** the profile card is shown
-- **THEN** the rank and the World Level each stand right-aligned beside their row's end
+- **THEN** the rank and the World Level each stand right-aligned beside their row's end (`packages/genshin-world/src/components/Menu/Paimon/Index.vue`)
 
 #### Scenario: Info icon opens the dialog
 
@@ -155,7 +155,7 @@ The profile card SHALL show the Traveler's rank and World Level, and the info ic
 
 ### Requirement: The World Level dialog shows its help text and lowering button
 
-The World Level dialog SHALL show its help text and a cream lowering button with a red arrow.
+The World Level dialog SHALL show its help text and a cream lowering button with a red arrow (`packages/genshin-world/src/components/Menu/WorldLevelDialog/Index.vue`).
 
 #### Scenario: Dialog open
 
@@ -166,17 +166,25 @@ The World Level dialog SHALL show its help text and a cream lowering button with
 
 ### Requirement: The Settings screen shows the game's tabs and rows
 
-The Settings screen SHALL list its tabs down the left in the game's order and draw the open tab's headings and rows in the game's own words.
+The Settings screen SHALL list its tabs down the left in the game's order and draw the open tab's headings and rows in the game's own words (`packages/genshin-world/src/components/Menu/Settings/Index.vue`, `packages/genshin-world/src/services/menu/SettingsTabSectionsMap.ts`).
 
 #### Scenario: Graphics tab open
 
 - **GIVEN** the Settings screen is open on the Graphics tab
 - **WHEN** the player reads its rows
 - **THEN** the graphics quality row is set by the world, its words marking the device's own tier as the default
-- **AND** every other row shows its value disabled
+- **AND** every other row shows its value disabled (`packages/genshin-world/src/services/menu/SettingsTabSectionsMap.ts`)
 
 #### Scenario: Pointer over a row
 
 - **GIVEN** the Settings screen is open
 - **WHEN** the pointer rests on a row or the row holds keyboard focus
-- **THEN** the row lights with a white rim round its edge
+- **THEN** the row lights with a white rim round its edge (`packages/genshin-world/src/components/Menu/Settings/Index.vue`)
+
+## Open
+
+- [ ] **The contents run in the game's own order, Shop first** — no source yet: the 2560 wide 1.3 still is not in captures, and the 1920 wide `captures/menu-paimon-current.png` draws a shorter set, without Shop, Events, Adventurer Handbook, Wish, Battle Pass or Co-Op.
+- [ ] **Single-player pauses everything except particles and music** — no source yet: `MENU_SCREEN_BEHAVIOUR` holds the world with no particle or music carve-out in the files checked here.
+- [ ] **The Birthday row stands over a Set Birthday button** — no source yet: the button's wording is not traced here to a text id.
+- [ ] **The World Level dialog's help text is in the game's own words** — no source yet: its help text's key is not traced here to `text/TextMapEN.json`.
+- [ ] **The graphics quality row's default-tier words are the game's** — no source yet: the Graphics frame at 144.5 seconds is not checked against those words here.
