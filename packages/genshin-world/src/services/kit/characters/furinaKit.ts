@@ -58,9 +58,6 @@ const SINGER_FIELD_ID = "furina-singer";
 const SALON_DRAINED_HEALTH_SHARE_MIN = 0.5;
 const SALON_DAMAGE_BONUS_PER_DRAINED_MEMBER = 0.1;
 
-// Measured: gcsim (MIT) furina/burst.go, the Fanfare lasting 18.2 seconds, against the table's 18
-// https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/furina
-const FANFARE_SECONDS = 18.2;
 const FANFARE_STATUS_ID = "furina-fanfare";
 const FANFARE_DEBOUNCE_STATUS_ID = "furina-fanfare-debounce";
 const FANFARE_BUFF_SOURCE = "furina-fanfare";
@@ -244,7 +241,7 @@ export const createFurinaKitBehaviour = ({
   const surgingBladeCooldownSeconds = takeOne(arkheCooldownSecondsList, 0);
   const spiritbreathThornCooldownSeconds = takeOne(arkheCooldownSecondsList, 1);
   const ousiaBubble = readHit("ousiaBubble");
-  const salonSeconds = readSeconds("salon");
+  const salonSeconds = readParameter("salonSeconds");
   const pneumaSummonDelaySeconds = readSeconds("pneumaSummonDelay");
   const arkheSwitchSeconds = readSeconds("arkheSwitch");
   const salonMemberAttacks = readHits("salonMemberAttacks");
@@ -266,6 +263,7 @@ export const createFurinaKitBehaviour = ({
   const singerInitialTickSeconds = readSeconds("singerInitialTick");
   const singerIntervalFrames = readFrames("singerInterval");
   const fanfareMax = readParameter("fanfareMax");
+  const fanfareSeconds = readParameter("fanfareSeconds");
   const fanfareHealthShare = readParameter("fanfareHealthSharePerPoint");
   const fanfareDamageBonusPerPoint = readParameter("fanfareDamageBonusPerPoint");
   const fanfareIncomingHealingBonusPerPoint = readParameter("fanfareIncomingHealingBonusPerPoint");
@@ -488,7 +486,7 @@ export const createFurinaKitBehaviour = ({
             characterId,
             id: FANFARE_STATUS_ID,
             kind: "status",
-            secondsRemaining: FANFARE_SECONDS,
+            secondsRemaining: fanfareSeconds,
             stacks: 0,
           };
           addKitEffect(tick.kitEffectState, fanfareStatus);

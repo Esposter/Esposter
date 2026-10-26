@@ -15,7 +15,6 @@
   "frames.fanfareDebounce": { "file": "burst.go", "line": 26, "source": "Gcsim", "value": 35 },
   "frames.arkheSwitch": { "file": "charge.go", "line": 75, "source": "Gcsim", "value": 34 },
   "frames.pneumaSummonDelay": { "file": "skill.go", "line": 23, "source": "Gcsim", "value": 10 },
-  "frames.salon": { "file": "skill.go", "line": 21, "source": "Gcsim", "value": 1736 },
   "frames.fanfareStart": { "file": "burst.go", "line": 174, "source": "Gcsim", "value": 95 },
   "hits.salonMemberAttacks.length": { "cause": "Unsourced", "value": 3 },
   "hits.salonMemberAttacks.0.area": {
@@ -104,8 +103,10 @@
   "parameters.salonMemberMultipliers.0": { "cause": "Unsourced", "value": { "index": 3, "proudSkillGroupId": 8932 } },
   "parameters.salonMemberMultipliers.1": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 8932 } },
   "parameters.salonMemberMultipliers.2": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 8932 } },
+  "parameters.salonSeconds": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 8932 } },
   "parameters.singerHealFlatHealth": { "cause": "Unsourced", "value": { "index": 9, "proudSkillGroupId": 8932 } },
   "parameters.singerHealMaxHealthShare": { "cause": "Unsourced", "value": { "index": 8, "proudSkillGroupId": 8932 } },
+  "parameters.fanfareSeconds": { "cause": "Unsourced", "value": { "index": 1, "proudSkillGroupId": 8939 } },
   "parameters.fanfareMax": { "cause": "Unsourced", "value": { "index": 3, "proudSkillGroupId": 8939 } },
   "parameters.fanfareHealthSharePerPoint": { "cause": "Unsourced", "value": { "index": 2, "proudSkillGroupId": 8939 } },
   "parameters.fanfareDamageBonusPerPoint": { "cause": "Unsourced", "value": { "index": 4, "proudSkillGroupId": 8939 } },
