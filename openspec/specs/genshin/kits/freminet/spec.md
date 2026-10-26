@@ -16,13 +16,13 @@ Freminet's normal attacks SHALL be four strikes, a charged attack, a collision a
 
 ### Requirement: Provisional charged attack
 
-Freminet's charged attack SHALL be provisional, hitting a circle of radius 2.4 metres round the target at 42 frames and costing 40 stamina, until a recording of the game settles it.
+Freminet's charged attack SHALL be provisional, hitting a circle of radius 2.4 metres half a metre ahead of him at 42 frames and costing 40 stamina, until a recording of the game settles it.
 
 #### Scenario: The charged attack hits the circle at 42 frames
 
 - **GIVEN** Freminet has 40 stamina
 - **WHEN** the player holds the attack button to charge
-- **THEN** the charged attack hits a circle of radius 2.4 metres round the target at 42 frames
+- **THEN** the charged attack hits a circle of radius 2.4 metres half a metre ahead of him at 42 frames
 - **AND** 40 stamina is spent
 
 ### Requirement: Pressurized Floe upward thrust
