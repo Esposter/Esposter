@@ -1,9 +1,8 @@
 import type { MjmlDocument } from "#src/models/MjmlDocument";
 import type { MjmlNode } from "#src/models/MjmlNode";
 import type { MjmlRegistry } from "#src/models/MjmlRegistry";
-import type { z } from "zod";
-
 import type { BlockDocumentInput } from "headless-block-editor";
+import type { z } from "zod";
 
 import { createBlockDocumentSchema } from "headless-block-editor";
 

@@ -1,8 +1,8 @@
 import type { UserDataArchive } from "#src/models/user/UserDataArchive";
 
+import { Zip, ZipDeflate } from "fflate";
 import { once } from "node:events";
 import { PassThrough } from "node:stream";
-import { Zip, ZipDeflate } from "fflate";
 
 // fflate's streaming zip pushes each entry's bytes into the PassThrough the upload reads, so the archive is built as it
 // is read rather than in memory. Pushing is synchronous, so an entry checks the stream after each push and waits for it

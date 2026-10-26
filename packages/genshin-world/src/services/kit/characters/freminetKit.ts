@@ -33,7 +33,7 @@ const CONSTELLATION_4_MAXIMUM_STACKS = 2;
 const CONSTELLATION_6_ID = "freminet-c6";
 const CONSTELLATION_6_CRIT_DAMAGE_PER_STACK = 0.12;
 const CONSTELLATION_6_MAXIMUM_STACKS = 3;
-const PROC_REACTION_TYPES = new Set([
+const PROC_REACTION_TYPES = new Set<ReactionType>([
   ReactionType.Frozen,
   ReactionType.Shattered,
   ReactionType.StellarConduct,

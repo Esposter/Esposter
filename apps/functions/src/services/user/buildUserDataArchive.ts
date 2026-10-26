@@ -10,7 +10,6 @@ import { createUserDataArchive } from "#src/services/user/createUserDataArchive"
 import { writeAccountEntry } from "#src/services/user/writeAccountEntry";
 import { writeCallSessionEntry } from "#src/services/user/writeCallSessionEntry";
 import { writeFriendEntries } from "#src/services/user/writeFriendEntries";
-import { writeThreadFollowEntry } from "#src/services/user/writeThreadFollowEntry";
 import { writeImageEntries } from "#src/services/user/writeImageEntries";
 import { writeLikeEntries } from "#src/services/user/writeLikeEntries";
 import { writeMembershipEntry } from "#src/services/user/writeMembershipEntry";
@@ -24,6 +23,7 @@ import { writeResourceFavoriteEntry } from "#src/services/user/writeResourceFavo
 import { writeRoomEntries } from "#src/services/user/writeRoomEntries";
 import { writeSaveEntries } from "#src/services/user/writeSaveEntries";
 import { writeSearchHistoryEntry } from "#src/services/user/writeSearchHistoryEntry";
+import { writeThreadFollowEntry } from "#src/services/user/writeThreadFollowEntry";
 import { AzureContainer } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 

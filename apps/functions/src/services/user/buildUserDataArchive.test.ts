@@ -1,11 +1,11 @@
 import type { Database, StandardMessageEntity } from "@esposter/db-schema";
 
+import { ArchiveLikeKind } from "#src/models/user/ArchiveLikeKind";
 import { getContainerClient } from "#src/services/azure/getContainerClient";
 import { getTableClient } from "#src/services/azure/getTableClient";
 import { createUser } from "#src/services/shared/createUser.test";
 import { buildUserDataArchive } from "#src/services/user/buildUserDataArchive";
 import { getResourceAssetBlobName } from "#src/services/user/getResourceAssetBlobName";
-import { ArchiveLikeKind } from "#src/models/user/ArchiveLikeKind";
 import {
   createMessage,
   getContentBlobName,
@@ -42,18 +42,18 @@ import {
   resourceLinksInResource,
   ResourceLinkType,
   resourcePublicationsInResource,
-  ResourceType,
   resourcesInResource,
+  ResourceType,
   resourceWorkingAssetsInResource,
-  RoomType,
   roomEmojisInMessage,
   roomRolesInMessage,
   roomsInMessage,
+  RoomType,
   searchHistoriesInMessage,
   threadFollowsInMessage,
   userAchievementsInAchievement,
-  usersInAuth,
   userSettingsInMessage,
+  usersInAuth,
   userStatusesInMessage,
   usersToRoomRolesInMessage,
   usersToRoomsInMessage,
@@ -343,7 +343,7 @@ describe(buildUserDataArchive, () => {
     // the first reactor's, not the person's, and the exact shape leaves it out
     expect(readEntryJson(entries, "likes.json")).toStrictEqual([
       { createdAt: like.createdAt, kind: ArchiveLikeKind.Post, targetId: otherPost.id, value: 1 },
-      { kind: ArchiveLikeKind.Emoji, emojiTag, roomId: room.id, targetId: messageRowKey },
+      { emojiTag, kind: ArchiveLikeKind.Emoji, roomId: room.id, targetId: messageRowKey },
     ]);
     // A request the person sent carries the time it was sent. One they received is the sender's act, and a friendship is one
     // row for the pair, made when the receiver accepted it, so neither carries a time

@@ -6,7 +6,7 @@ import { seedBlob } from "#src/services/azure/seedBlob.test";
 import { createUser } from "#src/services/shared/createUser.test";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
 import { createMockDb } from "@esposter/db-mock";
-import { AzureContainer, DataExportStatus, dataExportsInUser, usersInAuth } from "@esposter/db-schema";
+import { AzureContainer, dataExportsInUser, DataExportStatus, usersInAuth } from "@esposter/db-schema";
 import { MockContainerDatabase } from "azure-mock";
 import { afterEach, beforeAll, describe, expect, test, vi } from "vitest";
 

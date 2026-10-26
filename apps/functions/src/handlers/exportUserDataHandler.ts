@@ -5,7 +5,7 @@ import { db } from "#src/services/shared/db";
 import { buildUserDataArchive } from "#src/services/user/buildUserDataArchive";
 import { DATA_EXPORT_RETENTION } from "#src/services/user/constants";
 import { getDataExportBlobName } from "#src/services/user/getDataExportBlobName";
-import { AzureFunction, DataExportStatus, dataExportsInUser } from "@esposter/db-schema";
+import { AzureFunction, dataExportsInUser, DataExportStatus } from "@esposter/db-schema";
 import { getResultAsync } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 

@@ -20,7 +20,7 @@ const isParityPage = (root: string): Promise<boolean> =>
 // So the page is asked for port by port rather than assumed to be on one. The first port is `GENSHIN_PARITY_PORT` when it
 // Is set, read at the call so a caller's environment is the one searched
 export const resolveParityPageRoot = async (
-  firstPort = Number(process.env.GENSHIN_PARITY_PORT ?? PARITY_DEFAULT_PORT),
+  firstPort: number = Number(process.env.GENSHIN_PARITY_PORT ?? PARITY_DEFAULT_PORT),
 ): Promise<string> => {
   for (let port = firstPort; port < firstPort + PARITY_PORT_COUNT; port++) {
     const root = `http://localhost:${port}/parity/`;

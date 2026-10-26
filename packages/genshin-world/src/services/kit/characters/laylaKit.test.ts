@@ -430,6 +430,7 @@ describe(createLaylaKitBehaviour, () => {
         enemy,
         context.party,
         context.kitEffectState.effects,
+        context.characterIdCombatantMap,
       ) ?? 0;
 
     expect(bonusOf(AttackTag.NormalAttack)).toBeCloseTo(0.05 * MAX_HEALTH);

@@ -1,7 +1,7 @@
 import type { WeatherState } from "#src/models/atmosphere/WeatherState";
 
-import { WEATHER_SETTINGS_MAP } from "#src/atmosphere/constants";
 import { blendWeatherState } from "#src/atmosphere/blendWeatherState";
+import { WEATHER_SETTINGS_MAP } from "#src/atmosphere/constants";
 import { PrecipitationKind } from "#src/models/atmosphere/PrecipitationKind";
 import { WeatherKind } from "#src/models/atmosphere/WeatherKind";
 import { describe, expect, test } from "vitest";
