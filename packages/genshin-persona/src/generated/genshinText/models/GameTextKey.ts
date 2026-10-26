@@ -205,7 +205,7 @@ export const GameTextKey = {
   CrystalChunk: "1448077684",
   CrystalCore: "2435040556",
   CrystalMarrow: "307506436",
-  DadaupaGorge: "3497395333",
+  DadaupaGorge: "3497395845",
   // The enemies' drops by their item names
   DamagedMask: "461826100",
   DandelionSeed: "2071890124",
@@ -759,8 +759,8 @@ export const GameTextKey = {
   StatueOfTheSeven: "UI_MAPMARK_MarkGoddess_TITLE",
   // The title of a Statue of The Seven's Worship screen, which F on a resonated statue opens
   StatueWorship: "1652053571",
-  StormbearerMountains: "490004829",
-  StormterrorsLair: "775762325",
+  StormbearerMountains: "490005341",
+  StormterrorsLair: "775762837",
   // A story the Profile tab shows before its Friendship Level is reached, with the level and the story's title
   StoryUnlocksAt: "2616170868",
   StrangeTooth: "2715317724",
@@ -821,9 +821,9 @@ export const GameTextKey = {
   WeaponAscend: "UI_EQUIP_PAGE_STARUP_BUTTON",
   WeaponEnhance: "UI_EQUIP_PAGE_LEVELUP_BUTTON",
   WeaponRefine: "UI_EQUIP_PAGE_AWAKEN_BUTTON",
-  WhisperingWoods: "2498537973",
+  WhisperingWoods: "2498538485",
   WhiteIronChunk: "1747175596",
-  Windrise: "3796215893",
+  Windrise: "3796216405",
   WindwheelAster: "3920833836",
   WinterIcelea: "3798480364",
   Wish: "UI_GACHA_TITLE",
@@ -845,7 +845,7 @@ export const GameTextKey = {
   WishStandard: "UI_GACHA_TYPE_02",
   WishWeaponEvent: "UI_GACHA_TYPE_04",
   WitheringPurpurbloom: "1419660612",
-  Wolvendom: "3611930813",
+  Wolvendom: "3611931325",
   WorldLevel: "UI_WORLDLEVEL_TITLE",
   // The Change World Level prompt's lines: the World Level it sets and the one now, the lowering's question and tips, and
   // The restoring's tips and label
