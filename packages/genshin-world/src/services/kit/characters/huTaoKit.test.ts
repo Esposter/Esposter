@@ -88,6 +88,16 @@ const takeLethalHits = (constellationCount: number, hits: number) => {
   });
 };
 
+// The first hit of the Paramita Papilio charged attack, which puts Blood Blossom on each enemy it strikes
+const getParamitaChargedAttackHit = (combatant: Combatant): KitHit => {
+  const kitEffectState: KitEffectState = { effects: [] };
+  HU_TAO_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
+  const stance = kitEffectState.effects.find((effect): effect is KitStance => effect.kind === "stance");
+  const hit = stance?.combatant.kit.chargedAttack.hits[0];
+  if (!hit) throw new Error("Guide to Afterlife held no charged attack hit");
+  return hit;
+};
+
 describe(createHuTaoKitBehaviour, () => {
   test("guide to Afterlife holds the Paramita stance, its Pyro infusion and an ATK share of her Max HP", () => {
     expect.hasAssertions();
@@ -145,9 +155,7 @@ describe(createHuTaoKitBehaviour, () => {
     expect.hasAssertions();
     const combatant = createHuTaoCombatant();
     const kitEffectState: KitEffectState = { effects: [] };
-    HU_TAO_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
-    const stance = kitEffectState.effects.find((effect): effect is KitStance => effect.kind === "stance");
-    const bloodBlossom = stance?.combatant.kit.chargedAttack.hits[0]?.enemyStatus?.(
+    const bloodBlossom = getParamitaChargedAttackHit(combatant).enemyStatus?.(
       combatant,
       combatant.attributes.maxHealth,
     );
@@ -341,16 +349,6 @@ describe("spirit Soother", () => {
 });
 
 describe("constellation 2", () => {
-  // The first hit of the Paramita Papilio charged attack, which puts Blood Blossom on each enemy it strikes
-  const getParamitaChargedAttackHit = (combatant: Combatant): KitHit => {
-    const kitEffectState: KitEffectState = { effects: [] };
-    HU_TAO_KIT.elementalSkill.onStart?.(createKitTestContext(combatant, { kitEffectState }));
-    const stance = kitEffectState.effects.find((effect): effect is KitStance => effect.kind === "stance");
-    const hit = stance?.combatant.kit.chargedAttack.hits[0];
-    if (!hit) throw new Error("Guide to Afterlife held no charged attack hit");
-    return hit;
-  };
-
   test("Blood Blossom's tick adds 10% of the Max HP Hu Tao had when it was applied, not the Max HP she has as it ticks", () => {
     expect.hasAssertions();
     const combatant = { ...createHuTaoCombatant(), constellationCount: 2 };
