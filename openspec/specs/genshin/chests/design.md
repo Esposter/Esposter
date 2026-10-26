@@ -65,9 +65,10 @@ A kind with no reward entry stays unopened, and a buried or sealed place stays u
 - `chest-dig.mkv` — found on YouTube at https://www.youtube.com/watch?v=j5ggVp4ffyc at 0–33 s (`~/Esposter.noindex/genshin-parity/captures/yt-j5ggVp4ffyc-chest-dig.mp4`), cut to `chest-dig.mkv` at 10–30 s: 59.6 frames a second, at 1080p in English. The dig prompt, the dig and its rewards are shown.
 
 ## Open
+
 - [ ] **The Primogem and Mora ranges per tier are the wiki's chest reward table** — no source yet for the wiki's side: the Chest page is in neither `~/Esposter/cache/genshin-wiki` nor the wiki snapshots, and the dump holds no reward table (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/ChestLevelSetConfigData.json` maps chest levels to zone levels only). The ranges are held in `packages/genshin-world/src/services/chest/ChestKindRewardMap.ts`.
 - [ ] **The wiki's table leaves Luxurious' Mora unstated, and the code records it as zero** — no source yet: the Chest page is not cached; `packages/genshin-world/src/services/chest/ChestKindRewardMap.ts` holds `mora: { max: 0, min: 0 }` for Luxurious.
 - [ ] **The high zone-level areas give more Primogems than the default** — no source yet: the Chest page is not cached, and `ChestLevelSetConfigData.json` gives each chest level's zone level, not the Primogems it pays.
-- [ ] **A Buried chest is dug up where it stands, and a Sealed one is freed of its seal first** — no source yet: the `chest-dig` capture the Reference section names is not in `~/Esposter.noindex/genshin-parity/captures/` (only `chest-open.mkv` is), so the dig and seal were not checked frame by frame.
+- [ ] **A Buried chest is dug up where it stands, and a Sealed one is freed of its seal first** — no source yet: the `chest-dig` capture the Reference section names has not been read frame by frame, so the dig and seal are unchecked.
 - [ ] **The current run leaves no mapped-area chest out** — no source yet: the published chests dataset is not in the cache, and `scripts/src/services/genshinAssets/points/placeMapPoints.ts` counts what it leaves out, but no run's notes are kept.
 - [ ] **The chest-dig capture runs at 29.8 frames a second, not 60** — contradicted by `~/Esposter.noindex/genshin-parity/captures/chest-dig.mkv`: its stream probes at 59.6 frames a second, not 29.8.
