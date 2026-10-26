@@ -4,11 +4,12 @@ Freminet's kit is its record and one behaviour module, `createFreminetKitBehavio
 
 The charged attack is provisional. gcsim gives Freminet no charged attack, so it takes the fourth strike's hitmark, animation and reach with the table's charged multiplier and stamina, and a yes-or-no question is on the roadmap.
 
-Not built: Pressurized Floe's Pers Time stance, which holds the frost of each strike and the stacks it gains, and the detonation that replaces the skill on its next press; Shadowhunter's Ambush's stalking state, which lowers the skill's cooldown to three seconds and resets it; and his ascension and constellation passives. The fandom wiki was out of reach for the elemental gauge of each hit, so no gauge is set.
+Not built: Pressurized Floe's Pers Time stance, which holds the frost of each strike and the stacks it gains, and the detonation that replaces the skill on its next press; Shadowhunter's Ambush's stalking state, which lowers the skill's cooldown to three seconds and resets it; and his ascension and constellation passives.
 
 ## Decisions
 
 - **Freminet's charged attack is provisional at 42 frames, in the fourth strike's circle of radius 2.4 half a metre ahead of him, for 40 stamina.** gcsim gives him none ("action charge not implemented"), so the record takes the fourth strike's hitmark, animation and reach, the table's attack multiplier at index 4 and its stamina at index 6; a recording of the attack showing another timing, reach or stamina would replace them.
+- **Pressurized Floe's upward thrust and Shadowhunter's Ambush each apply 1U of Cryo; Spiritbreath Thorn applies none.** gcsim gives the thrust and the burst a durability of 25, one unit of gauge (`skill.go` line 75, `burst.go` line 42), and Spiritbreath Thorn a durability of 0 (`skill.go` line 119), so the record's overlay cites the first two's gauge and Spiritbreath Thorn takes none.
 
 ## Key files
 
@@ -18,4 +19,4 @@ Not built: Pressurized Floe's Pers Time stance, which holds the frost of each st
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/freminet), MIT: Freminet's strikes' hitmarks, cancel frames, reaches and poise, the low and high plunges and their collision, Pressurized Floe's Upward Thrust, and Shadowhunter's Ambush.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/freminet), MIT: Freminet's strikes' hitmarks, cancel frames, reaches and poise, the low and high plunges and their collision, Pressurized Floe's Upward Thrust and Shadowhunter's Ambush with their gauge.

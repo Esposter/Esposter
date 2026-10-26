@@ -1,4 +1,5 @@
 {
+  "burst.hits.0.gauge": { "file": "burst.go", "line": 42, "source": "Gcsim", "value": 1 },
   "chargedAttack.animationFrames": { "cause": "Unsourced", "value": 86 },
   "chargedAttack.hits.length": { "cause": "Unsourced", "value": 1 },
   "chargedAttack.hits.0.area": {
@@ -7,6 +8,7 @@
   },
   "chargedAttack.hits.0.hitmarkFrames": { "cause": "Unsourced", "value": 42 },
   "skill.hits.length": { "cause": "Unsourced", "value": 1 },
+  "skill.hits.0.gauge": { "file": "skill.go", "line": 75, "source": "Gcsim", "value": 1 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 8532 } },
   "hits.spiritbreathThorn.multiplier": { "source": "Gcsim", "value": { "index": 1, "proudSkillGroupId": 8532 } }
 }
