@@ -35,5 +35,3 @@ A jump SHALL land the character at the landmark's arrival place, facing the arri
 ## Open
 
 - [ ] **A jump to a statue or a waypoint lands the character at the game's arrival place, facing its turn** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The jump list names each unlocked waypoint by its area** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Each ground waypoint pairs with the scene's transport point it stands at** — no source yet: game data or a snapshot that holds this behaviour
