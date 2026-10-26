@@ -23,7 +23,7 @@ Marks and logos are traced rather than copied, so a screen ships only shapes der
 
 ## Open
 
-- [ ] **The Commons logos are drawn directly from their published paths** — no source yet: the screens' use of the SVG files in `~/Esposter.noindex/genshin-parity/references/` was not traced to a component.
+- [ ] **The Commons logos are drawn directly from their published paths** — checked against `packages/genshin-world/src/services/splash/constants.ts` lines 58 to 78: the publisher's letter and ring paths match the `d` data of `~/Esposter.noindex/genshin-parity/references/commons-HoYoverse_Logo.svg`, and `packages/genshin-world/src/components/Splash/Publisher/Index.vue` draws them; the claim is not settled for the wordmark, since no repo file names `commons-Genshin_Impact_wordmark.svg` or draws it.
 - [ ] **The tracer starts from the wiki's standalone render where one exists** — no source yet: no standalone render for a traced mark is cited in the repository or the wiki cache.
-- [ ] **Nothing from the game ships except traced shapes** — no source yet: the shipped assets were not checked for files derived from the game.
+- [ ] **Nothing from the game ships except traced shapes** — contradicted by `packages/genshin-world/src/services/splash/constants.ts` lines 54 to 57: the publisher's letters and ring are Commons SVG paths, copied, not traced.
 - [ ] **A trace adds a third to a half of the absolute form's bytes** — no source yet: no size comparison of a trace in both forms is recorded.
