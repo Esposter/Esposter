@@ -65,3 +65,7 @@ The first three weekly-boss claims of each week SHALL cost 30 resin each, every 
 - [ ] **The weekly reset is read on the server's UTC+8 clock** — no source yet: no row of the game's exports names the zone, and the wiki's Domains page is not in the wiki cache.
 - [ ] **A fourth weekly claim costs 60 resin, and the first three cost 30 each** — no source yet: the export's weekly discount row gives three claims at 0.5 but no base price of 60, and the wiki's Weekly Bosses page is not in the wiki cache.
 - [ ] **The first three weekly claims count across every weekly boss together** — no source yet: the export's weekly discount row does not say the cheap claims count across bosses, and the wiki's Weekly Bosses page is not in the wiki cache.
+- [ ] **A normal boss stays defeated until its Trounce Blossom is claimed** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A moment before Monday 04:00 belongs to the week before** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A moment at or after Monday 04:00 belongs to the new week** — no source yet: game data or a snapshot that holds this behaviour
+- [ ] **A claim made at exactly Monday 04:00 counts toward the new week** — no source yet: game data or a snapshot that holds this behaviour
