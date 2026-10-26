@@ -20,5 +20,5 @@ Nothing here.
 ## Open
 
 - [ ] **The re-extraction now holds the four candidate meshes** — contradicted by `~/Esposter.noindex/genshin-parity/extracted/mondstadt/layout/`: no file in it names `Area_MdBuild_Gate02_Lod0`.
-- [ ] **mondstadt-city-location: the pose image the camera solve writes** — the cited path ~/Esposter/genshin-parity/pose/mondstadt-city-location.png is an output target, not evidence
-- [ ] **mondstadt-city-location: the shadow image the sun solve writes** — the cited path ~/Esposter/genshin-parity/shadows/mondstadt-city-location.png is an output target, not evidence
+- [ ] **mondstadt-city-location: the pose image the camera solve writes** — no source yet: the cited path ~/Esposter/genshin-parity/pose/mondstadt-city-location.png is an output target the solve has not written, so it is no evidence
+- [ ] **mondstadt-city-location: the shadow image the sun solve writes** — no source yet: the cited path ~/Esposter/genshin-parity/shadows/mondstadt-city-location.png is an output target the solve has not written, so it is no evidence
