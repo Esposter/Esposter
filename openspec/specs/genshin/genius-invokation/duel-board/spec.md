@@ -18,7 +18,7 @@ A resident with a seated duel SHALL offer the duel as a reply on the opening lin
 
 - **GIVEN** the duel reply is offered
 - **WHEN** the player chooses it
-- **THEN** the talk ends and the duel board opens
+- **THEN** the talk's screen gives way and the duel board opens, with no talk-end quest event
 
 #### Scenario: Resident with no seated duel offers none
 
