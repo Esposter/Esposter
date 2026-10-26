@@ -28,13 +28,13 @@ A season names its difficulties by id, and the writer refuses a season that name
 
 ## The rules
 
-- **The season.** The Theater plays the latest season that began before now, read in the game's time zone, UTC+8 (`packages/genshin-world/src/services/time/constants.ts`, `GAME_TIME_ZONE`). A season is never played before it begins, and after the last one ends the last begun season is held, so a dump read months on plays its final season rather than none.
+- **The season.** The Theater plays the latest season that began before now, read in the game's time zone, UTC+8. A season is never played before it begins, and after the last one ends the last begun season is held, so a dump read months on plays its final season rather than none.
 - **The difficulties.** A season's difficulties are the rows its ids name, ordered from the lowest level.
-- **Vigor.** Each character has two Vigor for a run. A stage is performed by a Principal Cast of four, each with Vigor left, and performing it spends one Vigor from each. A cast of fewer than four, or one with a member out of Vigor, performs nothing (`packages/genshin-world/src/services/imaginarium/checkIsImaginariumStageReady.ts`).
-- **Blessing Level.** Each Alternate Cast member past the number its difficulty asks adds two, and each Brilliant Blessing adds the levels it has been gained and raised to, one each. A short Alternate Cast adds nothing (`packages/genshin-world/src/services/imaginarium/computeImaginariumBlessingLevel.ts`).
-- **Blessing stats.** Each level of Blessing adds the stats `IMAGINARIUM_BLESSING_LEVEL_STATS` gives to a cast member, and a special guest's stats are doubled by `IMAGINARIUM_SPECIAL_GUEST_BLESSING_MULTIPLIER` (`packages/genshin-world/src/services/imaginarium/getImaginariumBlessingStats.ts`).
-- **The opening character.** An owned opening character's Max HP, ATK and DEF rise by a fifth, rounded down to whole units. Its Elemental Mastery is unchanged (`packages/genshin-world/src/services/imaginarium/applyImaginariumOpeningBonus.ts`).
-- **Stellas.** Every three Stellas in a run give one reward, so five Stellas give one and six give two (`packages/genshin-world/src/services/imaginarium/countImaginariumStellaRewards.ts`).
+- **Vigor.** Each character has two Vigor for a run. A stage is performed by a Principal Cast of four, each with Vigor left, and performing it spends one Vigor from each. A cast of fewer than four, or one with a member out of Vigor, performs nothing.
+- **Blessing Level.** Each Alternate Cast member past the number its difficulty asks adds two, and each Brilliant Blessing adds the levels it has been gained and raised to, one each. A short Alternate Cast adds nothing.
+- **Blessing stats.** Each level of Blessing adds the stats `IMAGINARIUM_BLESSING_LEVEL_STATS` gives to a cast member, and a special guest's stats are doubled by `IMAGINARIUM_SPECIAL_GUEST_BLESSING_MULTIPLIER`.
+- **The opening character.** An owned opening character's Max HP, ATK and DEF rise by a fifth, rounded down to whole units. Its Elemental Mastery is unchanged.
+- **Stellas.** Every three Stellas in a run give one reward, so five Stellas give one and six give two.
 
 ## Decisions
 
@@ -91,3 +91,4 @@ A season names its difficulties by id, and the writer refuses a season that name
 - [ ] **an owned opening character gains a fifth of its Max HP, ATK and DEF** — no source yet: the wiki's Imaginarium Theater page, which could not be read when this was built.
 - [ ] **every three Stellas in a run give one reward** — no source yet: the wiki's Imaginarium Theater page, which could not be read when this was built.
 - [ ] **the Theater's season times are in UTC+8** — no source yet: the game's own server time zone, which the dump does not state.
+- [ ] **The Theater plays the latest season that began before now, holding the last begun season after the last one ends** — no source yet: game data or a snapshot that holds this behaviour
