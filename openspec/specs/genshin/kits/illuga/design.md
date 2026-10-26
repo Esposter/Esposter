@@ -18,7 +18,7 @@ Illuga's kit is its record and one behaviour module, `createIllugaKitBehaviour`,
 ## Not built
 
 - **The stacks Geo Constructs give Nightingale's Song are not built.** The state's gain helper exists, but the kit does not read the constructs on the field.
-- **Constellation 1 is Vigilant Sentinel, which is not built.** Talent 1271 (openConfig `Illuga_Constellation_1`, `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json`) is named Vigilant Sentinel in the TextMap, key 1793938489. It needs his Geo reactions and their fifteen-second cooldown, which the kit does not read.
+- **Constellation 1 is talent 1271, which is not built.** Its openConfig is `Illuga_Constellation_1` (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json`), and the TextMap names it Vigilant Sentinel, key 1793938489, which the bullet below gives.
 - **Vigilant Sentinel is not built.** After Illuga triggers a Geo-related Reaction on the field, he regains 12 Elemental Energy at most once every 15 seconds (`~/Esposter.noindex/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`, key 796583231; talent 1271's `paramList` is 12 and 15, `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json`).
 
 ## Open
