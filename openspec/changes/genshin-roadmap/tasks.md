@@ -247,17 +247,17 @@ Clips and stills a value needs, which agents find in published material (see [pa
 - [ ] **Processing queue** — `processing-queue.mkv`, on the built [cooking](../../specs/genshin/cooking/design.md).
 - [ ] **Campfire elements** — `campfire-elements.mkv`, on the built [cooking](../../specs/genshin/cooking/design.md).
 - [ ] **Forge order queue** — `forge-order-queue.mkv`, waits on [forging](../genshin-forging/design.md).
-- [ ] **Forge refusal** — `forge-refusal.mkv`, waits on [forging](../genshin-forging/design.md).
-- [ ] **Achievements screen** — `achievements-screen.mkv`, waits on [achievements](../genshin-achievements/design.md). Partly found 2026-10-11: the page it waits on holds the find and what is still sought.
-- [ ] **Realm stores fill** — `realm-store-start.png`, `realm-store-hour.png`, waits on [Serenitea Pot](../genshin-serenitea-pot/design.md).
-- [ ] **Trust queues** — `trust-queues.mkv`, waits on [Serenitea Pot](../genshin-serenitea-pot/design.md).
-- [ ] **Realm load** — `realm-load.png`, waits on [Serenitea Pot](../genshin-serenitea-pot/design.md).
-- [ ] **Archive screen** — `archive-screen.mkv`, waits on [Archive](../genshin-archive/design.md). Partly found 2026-10-11: the page it waits on holds the find and what is still sought.
-- [ ] **Book reader** — `book-reader.mkv`, waits on [Archive](../genshin-archive/design.md). Partly found 2026-10-11: the page it waits on holds the find and what is still sought.
-- [ ] **Japanese launch** — `japanese-launch.mkv`, waits on [localized opening](../genshin-localized-opening/design.md).
-- [ ] **Korean launch** — `korean-launch.mkv`, waits on [localized opening](../genshin-localized-opening/design.md).
-- [ ] `zoom-ends.mkv` — **Zoom slider ends**: the English PC map's thumb fully zoomed in and fully out at 1080 high, still sought, so the ends ship as estimates. Read by [map](../../specs/genshin/map/design.md).
-- [ ] `region-tag.mkv` — **Region tag**: the English PC map's bottom-right line at 1080 high, still sought (the Indonesian clip reads `Kemajuan Eksplorasi`). Read by [map](../../specs/genshin/map/design.md).
+- [ ] **Forge refusal** — `forge-refusal.mkv`, waits on [forging](../genshin-forging/design.md). Searched 2026-10-26 on the wiki and YouTube, standard and extended, none found.
+- [ ] **Achievements screen** — `achievements-screen.mkv`, waits on [achievements](../genshin-achievements/design.md). Partly found 2026-10-11: the page it waits on holds the find and what is still sought. Searched 2026-10-26 on the wiki and YouTube, standard and extended, none found.
+- [ ] **Realm stores fill** — `realm-store-start.png`, `realm-store-hour.png`, waits on [Serenitea Pot](../genshin-serenitea-pot/design.md). Searched 2026-10-26 on the wiki and YouTube, standard and extended, none found.
+- [ ] **Trust queues** — `trust-queues.mkv`, waits on [Serenitea Pot](../genshin-serenitea-pot/design.md). Searched 2026-10-26 on the wiki and YouTube, standard and extended, none found.
+- [ ] **Realm load** — `realm-load.png`, waits on [Serenitea Pot](../genshin-serenitea-pot/design.md). Searched 2026-10-26 on the wiki and YouTube, standard and extended, none found.
+- [ ] **Archive screen** — `archive-screen.mkv`, waits on [Archive](../genshin-archive/design.md). Partly found 2026-10-11: the page it waits on holds the find and what is still sought. Searched 2026-10-26 on the wiki and YouTube, standard and extended, none found.
+- [ ] **Book reader** — `book-reader.mkv`, waits on [Archive](../genshin-archive/design.md). Partly found 2026-10-11: the page it waits on holds the find and what is still sought. Searched 2026-10-26 on the wiki and YouTube, standard and extended, none found.
+- [ ] **Japanese launch** — `japanese-launch.mkv`, waits on [localized opening](../genshin-localized-opening/design.md). Searched 2026-10-26 on the wiki and YouTube, standard and extended, none found.
+- [ ] **Korean launch** — `korean-launch.mkv`, waits on [localized opening](../genshin-localized-opening/design.md). Searched 2026-10-26 on the wiki and YouTube, standard and extended, none found.
+- [x] `zoom-ends.mkv` — **Zoom slider ends**: the English PC map's thumb fully zoomed in and fully out at 1080 high, still sought, so the ends ship as estimates. Read by [map](../../specs/genshin/map/design.md). Found 2026-10-26 as `captures/zoom-ends.mp4` (https://files.catbox.moe/p2acf7.mp4, linked from https://github.com/34736384/genshin-fps-unlock/issues/448). Near match: 1920x1080 at 60 frames a second, English, the thumb at the top of the track near 2.5 s and at the bottom from about 4.7 s to the end. It is a third-party capture from a GitHub issue rather than YouTube or the wiki, its client is not named, and it is saved as `.mp4` in place of the line's `.mkv`.
+- [x] `region-tag.mkv` — **Region tag**: the English PC map's bottom-right line at 1080 high, still sought (the Indonesian clip reads `Kemajuan Eksplorasi`). Read by [map](../../specs/genshin/map/design.md). Found 2026-10-26 in the same clip, `captures/zoom-ends.mp4` (https://files.catbox.moe/p2acf7.mp4, linked from https://github.com/34736384/genshin-fps-unlock/issues/448): its bottom-right line reads `Starfell Valley` over `Exploration Progress: 100%` at 1920x1080 in English. Same near-match difference as the zoom clip.
 
 ## Opening
 
