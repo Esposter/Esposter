@@ -30,28 +30,3 @@ The login camera holds one pose, and the world glides toward it. The walkway, it
 | `packages/genshin-world/src/services/login/scene/computeLoginCameraZ.ts`            | The eye's place along the walkway, read from its record                            |
 | `packages/genshin-world/src/services/login/scene/getLoginCameraFov.ts`              | The vertical field of view for a screen's width                                    |
 | `packages/genshin-world/src/services/login/door/getLoginDoorPosition.ts`            | Where the door stands on the walkway's far end                                     |
-
-## Open
-
-- [ ] **`ModelCamera`'s 6 metres put the eye 1 metre over the walkway** — no source yet: no `ModelCamera` export was read for its height.
-- [ ] **At 21.5:9 the solved eye lands the door within a pixel and a quarter of the recording's door** — no source yet: no door-position comparison at 21.5:9 is kept in `~/Esposter.noindex/genshin-parity/comparisons/`.
-- [ ] **The rows wrap at 16, 200 and 300 metres** — no source yet: the `login/scroll` record is hosted, and its lengths are not kept in the repository or the parity folders.
-- [ ] **The current build's title reads about 3.5 metres a second, and a braking repeat about 4.35** — no source yet: the `genshin:parity glide` report is not kept in `~/Esposter.noindex/genshin-parity/`.
-- [ ] **The glide's two speeds and MonoLoginScene's curve at 0xa4 are the game's** — no source yet: the `MonoLoginScene` export names its object `LoginScene` and holds no speed or curve.
-- [ ] **Every door frame shows the lantern tower close to the door's right and the colonnade low behind it** — no source yet: the door frames are not read against the captures here.
-- [ ] **The current build's door frame stands the towers 120 metres along, held at `heldScrolled` 320** — no source yet: no constant or capture records the 120-metre phase or the 320.
-- [ ] **The title opens about 49 metres short of the door** — no source yet: `computeLoginGlideTitleScrolled` takes its walkway copy length from the open 16 metres, and its result is not checked against 49 here.
-- [ ] **The current build's door frame lands the towers' edges within 0.03 metres of the exports' place** — no source yet: no frame measurement of the door is kept in the captures or comparisons.
-- [ ] **The eye stands and turns as the game's `ModelCamera` does, straight along +z and pitched 5.69 degrees up** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The eye's height is set by the walkway's own lift** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The eye's distance and rest are read from the login record** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The vertical field of view is the game's 45 degrees on a screen 18.5:9 or wider** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **On a narrower screen the field shows as wide a view across as 18.5:9 does, 51.2 degrees at 16:9** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The camera never moves during the glide, and only the scene's rows move** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **MonoLoginScene lays each row ahead of its own place and wraps it by its length** — no source yet: the `login/scroll` record is hosted, not on disk
-- [ ] **The wings' edges crossing a column of the recording time the glide's pace to a few thousandths** — no source yet: the glide report is not kept in `~/Esposter.noindex/genshin-parity/`
-- [ ] **At the door the glide keeps on to the first copy that stands the door past the walkway's far end and can be stopped on at that rate, then slows to rest there** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The door comes to rest with the towers' row 144 metres along its loop** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The towers' row keeps its laid place while the walkway rises 5 metres, so it stands 5 metres lower beside it** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The bridge whose deck crosses the glide's path passes under the walkway, as the game's glide passes over it** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Along the glide the towers' row stands 8.94 metres nearer, the phase the older door frame showed** — no source yet: game data or a snapshot that holds this behaviour

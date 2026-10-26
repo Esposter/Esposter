@@ -27,27 +27,3 @@ The light on the login scene's stone and haze: the stone is lit as the game's de
 | `packages/genshin-world/src/services/login/scene/LoginShadowIntensityMap.ts` | Each hour's shadow strength, the night's at 0.8           |
 | `packages/genshin-world/src/services/login/scene/LoginShadowRadiusMap.ts`    | Each hour's shadow softness, the night's over two texels  |
 | `packages/genshin-world/src/components/Login/Scene/Light.reference.ts`       | The light the scene is compared with, per hour            |
-
-## Open
-
-- [ ] **The walkway and the bridges draw no glow, their fitted strength being none** — no source yet: their strengths are in the hosted login stone fit, which is not read here.
-- [ ] **The game draws no outline round its stone** — no source yet: no outline capture or game reference was read for this claim.
-- [ ] **Each hour's ramp, harmonics and height fall-off are solved over the exports' interior pixels, with the bins averaged** — no source yet: the solve is hosted under `login/stoneLight`, and its calibrate run is not kept locally.
-- [ ] **The night darkens at 0.14 a metre of height** — no source yet: the rate is in the hosted `login/stoneLight` record, which is not kept locally, so 0.14 was not read here.
-- [ ] **The day's haze is dimmer and bluer than the cloud sea's, the dusk's warmer and redder, and the night's close to the sea's** — no source yet: the haze colours are hosted, and no comparison is kept locally.
-- [ ] **The haze's wall stands about 3 metres under the walkway at night and 6 at dawn, and the dusk hides no more than about three quarters of its far towers** — no source yet: the haze tops are not measured in any kept file.
-- [ ] **The phone's frame is drawn at the medium tier** — no source yet: the phone client's tier is set by the client and is not read here.
-- [ ] **These shadow settings bring the scene's edge count near the reference's** — no source yet: no edge-count comparison is kept in `~/Esposter.noindex/genshin-parity/comparisons/`.
-- [ ] **The post chain has no god rays** — no source yet: the login scene's post chain was not read for a god-ray pass, and `QualityTierSettingsMap` sets `godraysStepCount` per tier.
-- [ ] **The stone's glow is its albedo plus an edge glow, drawn only where its length reaches the material's emission range** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The glow's strength is an eighth of the material's for the door and the towers** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The stone is lit with the sun's colour through a toon ramp, scaled by the sun's visibility** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A fitted light fades with height over tens of metres** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The stone darkens with height at each hour's rate, up to 20 metres** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Every hour writes its light into one set of shared uniforms, read from the login stone-light record** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The scene draws no outline round the stone** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Each stone material marks itself in the haze, blending toward the stone light's own haze colours** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The computer's frames draw screen-space occlusion reaching 8 metres** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The phone's frame draws no occlusion, at the medium quality tier** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The sun and the moon cast shadows across the walkway from a shadow camera over it** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The night's moon reads its shadows through a deeper bias, at 0.8 strength over two texels** — no source yet: game data or a snapshot that holds this behaviour

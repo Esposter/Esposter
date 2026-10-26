@@ -95,9 +95,3 @@ The trunk, the limbs and the surface roots SHALL be drawn as round tubes that do
 - **WHEN** the tree is drawn near the eye
 - **THEN** the limb is a round tube
 - **AND** it does not twist along its length
-
-## Open
-
-- [ ] **Genshin's trees are species, each a set of the tree kit's parameters, drawn as a mesh near the eye and an impostor far from it** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A tree's wood is swept as tubes along splines traced off its export's bark** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The impostor is baked once from the tree's mesh and drawn on one card that crosses over with the mesh by dither** — no source yet: game data or a snapshot that holds this behaviour

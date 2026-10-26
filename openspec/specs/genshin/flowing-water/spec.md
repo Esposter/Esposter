@@ -104,7 +104,3 @@ The open world SHALL NOT yet draw its rivers or the waterfalls its region data r
 
 - [ ] **A flowing water surface carries its ripples and foam downstream at its flow's speed in its direction** — no source yet: `packages/genshin-engine/src/nodes/createRiverMaterial.ts` draws still ("No flow yet", line 12), so no flow moves a river's ripples or foam.
 - [ ] **The open world does not draw its rivers or the waterfalls its region data records** — contradicted by `packages/genshin-world/src/components/World/Windrise/Index.vue`: mounts `WorldWaterfalls` and `WorldRivers` at lines 575 and 576. The delta that removes this requirement is commit `aba38417f6`.
-- [ ] **Still water draws with a flow of zero, so its ripples and foam do not move** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A river is laid as a ribbon at each course point's level, across its width and centred on the course; a turn straight back takes the way it came in, and a point with no direction narrows to nothing** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Bend foam on the outer bank is `min(curvature * width * BEND_FOAM_FULL_RADIUS_WIDTHS, 1)`, and zero on the inner bank** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A waterfall is one quad from the lip to the foot, its streaks stepped hard and falling in sheet heights a second** — no source yet: game data or a snapshot that holds this behaviour

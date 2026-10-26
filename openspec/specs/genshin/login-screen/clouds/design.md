@@ -27,18 +27,3 @@ The clouds over the login's cloud sea and above its towers: three bands of the g
 ## Open
 
 - [ ] **The cloud sea uploads about 5 KB a frame, where all three bands wrote 11 KB** — no source yet: the write sizes are not measured in the repository or the parity folders.
-- [ ] **The dusk's sky is clouded about a seventh of the time the recording's is, from 8 to 15 degrees up** — no source yet: the roadmap link is the only reference, and its figure is not read against a capture here.
-- [ ] **The dusk's cloud shade is a bright pink** — no source yet: the shade's value is not read against a colour reference here.
-- [ ] **The sky's dome is `Cloud_LOD0` under `Enviro_Cloud_Layer_Mat`** — no source yet: neither name is in the login exports checked (`login-layout`, `login-behaviours`).
-- [ ] **The layer draws no settings until an hour's solve beats none** — no source yet: the gate on the layer's settings was not located in the code checked here.
-- [ ] **Each band is one of the game's painted clouds, traced** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **A band is one instanced sprite, its clouds laid out farthest first** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **Each cloud is coloured as the game's cloud particles are** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The bands stand between one scene's heights for every hour** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **No billow stands where the walkway glides, each clearing it to its side or staying under it** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **`LoginCloudBandMap` holds each band's heights, spread and widths** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **`LoginCloudCoverMap` gives each hour's share of each band's clouds** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The day's and the dusk's colours are measured, and those ship** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The sky's dome is ported as the game draws it** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The layer's density, curl, normal and wisps textures are synthesized, so none of the game's texels ship** — no source yet: game data or a snapshot that holds this behaviour
-- [ ] **The layer's textures are written in place after the scene mounts, in an idle moment** — no source yet: game data or a snapshot that holds this behaviour
