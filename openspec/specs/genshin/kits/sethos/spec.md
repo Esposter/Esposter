@@ -53,7 +53,7 @@ Sethos's plunge attacks SHALL land on the enemies within reach as their action s
 
 ### Requirement: Constellation 1's CRIT Rate on the charged attack
 
-Constellation 1 SHALL add 15% CRIT Rate to the fully-charged Aimed Shot alone, and to no normal attack.
+Constellation 1 SHALL add 15% CRIT Rate to the fully-charged Aimed Shot alone, and to no normal attack (open on the design page: gcsim gives it to the Shadowpiercing Shot).
 
 #### Scenario: Constellation 1 raises the fully-charged Aimed Shot's CRIT Rate
 
