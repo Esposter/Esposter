@@ -20,7 +20,7 @@ Mika's five strikes SHALL land in order and his charged attack SHALL land on the
 
 ### Requirement: Starfrost Swirl's press and held Rimestar Flare
 
-Starfrost Swirl's press SHALL strike a Cryo box 0.4 metres behind Mika, and holding it past half a second SHALL release Rimestar Flare, a Cryo hit on the primary target.
+Starfrost Swirl's press SHALL strike a Cryo box 0.4 metres behind Mika, and holding it past half a second, a provisional threshold, SHALL release Rimestar Flare, a Cryo hit on the primary target.
 
 #### Scenario: Tap presses Starfrost Swirl
 
@@ -34,7 +34,7 @@ Starfrost Swirl's press SHALL strike a Cryo box 0.4 metres behind Mika, and hold
 
 ### Requirement: Skyfeather Song's initial heal
 
-Skyfeather Song SHALL heal the active character once at its 51st frame.
+Skyfeather Song SHALL heal the active character once at its 51st frame (gcsim's value, which depends on ping).
 
 #### Scenario: Initial heal lands
 
