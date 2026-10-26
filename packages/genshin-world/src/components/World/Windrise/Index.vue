@@ -65,6 +65,7 @@ import { LandmarkKind } from "#src/models/world/LandmarkKind";
 import { StandInShape } from "#src/models/world/StandInShape";
 import { updateAvatarFaces } from "#src/services/character/avatar/updateAvatarFaces";
 import { GRASS_CAPTURE_RESOLUTION, GRASS_CAPTURE_SIZE, TILE_SELECTION_CAPACITY } from "#src/services/constants";
+import { computeQuestClueTrailEnds } from "#src/services/elementalSight/computeQuestClueTrailEnds";
 import { getSightRadius } from "#src/services/elementalSight/getSightRadius";
 import { MINING_OUTCROP_STAND_IN_COLOR, MINING_OUTCROP_STAND_IN_RADIUS } from "#src/services/gathering/constants";
 import { measureLoadStep } from "#src/services/loading/measureLoadStep";
@@ -189,6 +190,8 @@ interface Props {
   // The camps of the ley line outcrops whose fights run, which the world's enemies spawn whole as each fight starts
   outcropCamps?: EnemyCamp[];
   qualityTier: QualityTier;
+  // The targets the quests in progress name at their current steps, which the sight leads trails to while it is on
+  questClueTargetIds: string[];
   // The navigated quest's objective, by the target its condition names, which a beam rises over, "" with none
   questTargetId: string;
   // Where the app serves each region's data, fetched by id as the camera comes within reach
@@ -242,6 +245,7 @@ const {
   origin,
   outcropCamps,
   qualityTier,
+  questClueTargetIds,
   questTargetId,
   regionDataBaseUrl,
   sceneExportBaseUrl,
@@ -400,8 +404,11 @@ const questTargetPosition = computed(() =>
 const seelieCourts = computed(() =>
   seelies.filter(({ state }) => state === SeelieState.Resting).map(({ court }) => court),
 );
-// The ends the sight's trails lead to: the courts of the Seelies still resting, and the bounties' targets standing
-const sightTrailEnds = computed(() => [...seelieCourts.value, ...bountyTrailEnds]);
+// The go-to places the quests' clues name, which the sight leads a trail to once each is placed in the region data
+const questClueTrailEnds = computed(() => computeQuestClueTrailEnds(regionDataMap, questClueTargetIds));
+// The ends the sight's trails lead to: the courts of the Seelies still resting, the bounties' targets standing, and the
+// Go-to places the quests' clues name
+const sightTrailEnds = computed(() => [...seelieCourts.value, ...bountyTrailEnds, ...questClueTrailEnds.value]);
 // The pack whose model failed to load, by its reader's key, drawn as its body's capsule in its place
 const failedCharacterPackKey = ref("");
 // The tiles the terrain draws, which it writes each frame and what reads the ground compares against what it last read
