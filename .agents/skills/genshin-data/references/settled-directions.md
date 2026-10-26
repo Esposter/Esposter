@@ -2,7 +2,7 @@
 
 Read when a proposal matches a Settled line and its full statement is needed.
 
-Each Settled line in `SKILL.md` is one line; this page holds the argument behind each.
+Each Settled line in `SKILL.md` is one line. This page holds the argument behind the ones that name no design there; the rest name their design in `SKILL.md`.
 
 ## Bundling or committing a dataset the browser reads
 

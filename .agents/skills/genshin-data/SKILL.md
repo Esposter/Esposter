@@ -14,7 +14,7 @@ How it works, from a builder's publish to a reader's fetch, the full lifecycle a
 - **Per-version folders, per-dataset manifests, git-style trees or a mutable pointer blob** in place of the lock (`openspec/specs/genshin/hosted-game-data/design.md`, "Notes").
 - **A test fixture holding a copy of a record** — `references/settled-directions.md`.
 - **Deleting an authored file once it is published** — `references/settled-directions.md`.
-- **A client-side hash check, or a prune at the end of each publish.**
+- **A client-side hash check, or a prune at the end of each publish** — `openspec/specs/genshin/hosted-game-data/design.md` ("Integrity" and "Decisions").
 
 ## Rules
 
