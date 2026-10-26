@@ -153,4 +153,4 @@ Kaeya's Constellation 6 fourth icicle SHALL NOT take effect.
 
 ## Open
 
-- [ ] **Glacial Waltz summons thirteen icicles** — contradicted by `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/kaeya/burst.go`: three icicles, with thirteen ticks in all.
+The open items are held once, in [design.md](design.md#open).

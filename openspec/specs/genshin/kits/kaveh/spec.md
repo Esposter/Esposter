@@ -139,4 +139,4 @@ From constellation 4, the Bloom reaction DMG of each Dendro Core Kaveh's Bloom l
 
 ## Open
 
-- [ ] **Constellation 1 gives Kaveh 50% Dendro RES for three seconds after Artistic Ingenuity** — no source yet: the cached Artistic Ingenuity page names Sublime Salutations without its text, and gcsim leaves the RES out.
+The open items are held once, in [design.md](design.md#open).
