@@ -24,7 +24,6 @@ Kamisato Art: Kyouka SHALL explode a water illusion 35 frames after its cast and
 - **WHEN** the player casts Kamisato Art: Kyouka
 - **THEN** the illusion's hit lands 35 frames after the cast
 - **AND** the Soukai Kanka stance begins
-- **AND** the 35-frame delay stays provisional until a recording settles it
 
 ### Requirement: Soukai Kanka strikes build Namisen stacks
 
