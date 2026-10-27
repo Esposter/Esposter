@@ -27,7 +27,7 @@ The lint rule sits beside the wrappers in `oxlint.config.ts`. It bans `child_pro
 
 ## Notes
 
-- The scenario titles are the names of the wrappers' own tests. Each of the five wrapper test files asserts the window flag on the arguments node receives, and the `execSync` and `execFile` tests cover the undefined-options and trailing-callback shapes.
+- The scenario titles are the names of the wrappers' own tests. Each wrapper's test file asserts the window flag on the arguments node receives, and the `execSync` and `execFile` tests cover the undefined-options and trailing-callback shapes.
 - `scripts/src/workspace/childProcessImport.test.ts` runs the real oxlint over a probe file kept outside the repo, so the root pass never lints it. The probe sits outside every scope, so it is judged by the root rules alone. The test shows that the root entries fire, and it does not show that each scope's override carries them: a scope that dropped its entries would pass it.
 
 ## Key files

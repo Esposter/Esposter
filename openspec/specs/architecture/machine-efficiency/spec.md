@@ -45,7 +45,7 @@ A multi-task run SHALL run at most four tasks at once unless its caller sets a h
 
 - **GIVEN** a whole-workspace typecheck started with no heap cap
 - **WHEN** it runs
-- **THEN** free memory on the machine can fall to about half a gigabyte
+- **THEN** free memory on the machine can fall close to zero
 
 ### Requirement: A commit from a fresh worktree needs no install and runs no check
 

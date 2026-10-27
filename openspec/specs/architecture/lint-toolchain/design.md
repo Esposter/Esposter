@@ -12,10 +12,10 @@ Two linters, one direction: a rule moves from ESLint to oxlint whenever oxlint g
 
 ```mermaid
 flowchart LR
-  config["oxlint.config.ts (single source of truth)"]
+  config["oxlint.config.ts"]
   oxlint["oxlint + oxlint-tsgolint (type-aware)"]
   plugin["eslint-plugin-oxlint (buildFromOxlintConfig)"]
-  eslint["ESLint (only rules oxlint lacks)"]
+  eslint["ESLint"]
   config -->|"categories + rules + typeAware"| oxlint
   config -->|"same file"| plugin
   plugin -->|"appends off for every covered rule"| eslint
@@ -57,7 +57,7 @@ Once the type-aware rules were gone, `vue/no-child-content` became the pass — 
 
 **`neverthrow/must-use-result` was dropped, not migrated.** It was the single most expensive rule (~a third of rule time) because it is the only one that needed `parserOptions.projectService`, and type-aware parsing dominates the whole ESLint pass rather than just that rule's share. Deleting it — plugin file, config entry and `@ninoseki/eslint-plugin-neverthrow` dependency — is what makes `pnpm lint` fast enough to run on every change. The cost is real and accepted: an unterminated `Result` chain is caught only by review, with `pnpm ai:sweep:unterminated-results` listing the candidates, and it fails silently (the call still runs, but the `Err` it returns is never read, so no error surfaces). Re-adding any type-aware ESLint plugin gives back the same multiplier, so the answer to "this convention needs types" is a review rule or a runtime assertion, never a rule here.
 
-Everything else in the ESLint pass is either Nuxt/Vue-specific (`vue/*` SFC rules, `nuxt/*`) or a plugin oxlint has not implemented (`perfectionist/*`, `pinia/*`, `unocss/*`, `jsonc/*`, `link-checker/*` — oxlint reads no JSON at all); apart from the `perfectionist/sort-*` family none of them individually costs meaningful time, and the whole tail together is worth a fraction of `vue/no-child-content`. `typescript/naming-convention` is parked as a commented-out block in `typescriptRules.js` — it was too expensive under typescript-eslint to ever ship, and is waiting on oxlint to support it.
+Everything else in the ESLint pass is either Nuxt/Vue-specific (`vue/*` SFC rules, `nuxt/*`) or a plugin oxlint has not implemented (`perfectionist/*`, `pinia/*`, `unocss/*`, `jsonc/*`, `link-checker/*` — oxlint reads no JSON at all); apart from the `perfectionist/sort-*` family none of them individually costs meaningful time, and the whole tail together is worth a fraction of `vue/no-child-content`. `typescript/naming-convention` is parked as a commented-out block in `typescriptRules.js` — it is too expensive under typescript-eslint to ship, and is waiting on oxlint to support it.
 
 ## Ongoing process
 
@@ -94,7 +94,7 @@ for is permanent, and a note saying so is what stops the next audit re-deriving 
 rather than the second: it is surface this repo then owns, tests and maintains, so it is only right when nothing
 else can express the ban at all.
 
-**What has moved, and what has not.** `expect.any`, the polling ban, `JSON.parse` and `useRoute` are now
+**Where each ban is configured.** `expect.any`, the polling ban, `JSON.parse` and `useRoute` are now
 `no-restricted-properties` and `no-restricted-globals` in `oxlint.config.ts`; the sites that disable them spell the
 directive `oxlint-disable-next-line` with the reporting rule's name. `useRoute` also takes a
 `no-restricted-imports` entry, because `no-restricted-globals` sees the auto-imported form and not an explicit
@@ -126,7 +126,7 @@ What stays in ESLint, and why:
 
 ## The HTML data behind the scoped-styles ban
 
-`scopedStyles.js` reads two static tables of the HTML standard: the tag names, in `htmlTagNames.js`, and each element's attributes, in `htmlElementAttributes.js`. Both are our own typed constants, copied from the upstream `html-tag-names` 2.1.0 and `html-element-attributes` 3.5.0 packages under their MIT notice, and each file's header names the release and the date of the standard it was crawled from. A refresh re-crawls the standard and re-checks those headers.
+`scopedStyles.js` reads two static tables of the HTML standard: the tag names, in `htmlTagNames.js`, and each element's attributes, in `htmlElementAttributes.js`. Both are our own typed constants, copied from the upstream `html-tag-names` and `html-element-attributes` 3.5.0 packages under their MIT notice, and each file's header names the release and the date of the standard it was crawled from. A refresh re-crawls the standard and re-checks those headers.
 
 | Upstream issue or pull request                                                                                                                                                           | Verdict                                                                                                                                           | Where it is proven                                                                                                                            |
 | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------- |

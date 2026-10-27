@@ -237,7 +237,7 @@ A check or build whose traced inputs are unchanged SHALL replay its recorded res
 
 ### Requirement: A whole-tree workspace suite's timeout is the one its contended run earns
 
-A whole-tree suite in `scripts/src/workspace` SHALL declare `TREE_READ_TIMEOUT_MS` only where the full parallel `scripts` run shows it exceeding Vitest's default, and the rule that governs that choice SHALL be the same in every skill that states it.
+A whole-tree suite SHALL declare `TREE_READ_TIMEOUT_MS` only where the full parallel `scripts` run shows it exceeding Vitest's default, and the rule that governs that choice SHALL be the same in every skill that states it.
 
 #### Scenario: a whole-tree suite passes the parallel run at the default
 
