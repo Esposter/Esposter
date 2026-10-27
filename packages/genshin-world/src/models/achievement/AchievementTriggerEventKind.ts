@@ -1,0 +1,16 @@
+export enum AchievementTriggerEventKind {
+  TriggerBattleForMonsterDieAnd = "TRIGGER_BATTLE_FOR_MONSTER_DIE_AND",
+  TriggerBattleForMonsterDieOr = "TRIGGER_BATTLE_FOR_MONSTER_DIE_OR",
+  TriggerCityLevelUp = "TRIGGER_CITY_LEVEL_UP",
+  TriggerCombineItem = "TRIGGER_COMBINE_ITEM",
+  TriggerFinishParentQuestAnd = "TRIGGER_FINISH_PARENT_QUEST_AND",
+  TriggerFinishParentQuestOr = "TRIGGER_FINISH_PARENT_QUEST_OR",
+  TriggerFinishQuestAnd = "TRIGGER_FINISH_QUEST_AND",
+  TriggerFinishQuestOr = "TRIGGER_FINISH_QUEST_OR",
+  TriggerForgeWeapon = "TRIGGER_FORGE_WEAPON",
+  TriggerObtainItemNum = "TRIGGER_OBTAIN_ITEM_NUM",
+  TriggerObtainMaterialNum = "TRIGGER_OBTAIN_MATERIAL_NUM",
+  TriggerOfferingLevel = "TRIGGER_OFFERING_LEVEL",
+  TriggerOpenWorldChest = "TRIGGER_OPEN_WORLD_CHEST",
+  TriggerUnlockTransPoint = "TRIGGER_UNLOCK_TRANS_POINT",
+}
