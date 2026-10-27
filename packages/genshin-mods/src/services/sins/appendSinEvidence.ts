@@ -1,3 +1,4 @@
+import type { SinStatusKind } from "../../models/SinStatusKind";
 import type { SinsResult } from "../../models/SinsResult";
 
 import { SIN_HISTORY_LENGTH, SIN_TOP_LEVEL } from "./constants";
@@ -7,7 +8,7 @@ import { SIN_NAMES } from "../../models/SinName";
 // Away past the history's length
 export const appendSinEvidence = (
   history: Record<string, number[]>,
-  answers: Extract<SinsResult, { result: "answered" }>["answers"],
+  answers: Extract<SinsResult, { result: SinStatusKind.Answered }>["answers"],
 ): Record<string, number[]> =>
   Object.fromEntries(
     SIN_NAMES.map((name) => {
