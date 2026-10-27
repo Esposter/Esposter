@@ -358,7 +358,7 @@ The only case where a ramp stays raw is an artist painting it in linear values, 
 - [ ] **The colour space of each texture** — no source yet: a rendered frame that confirms the per-slot rule above.
 - [ ] **The shade term's `z` and `w`** — no source yet: their fitted values; the expressions are read.
 - [ ] **The lit colour `C`** — no source yet: the sum of the main colour, the ramp, the sun, the sky ambient, the specular and the rim, not yet assembled into one expression.
-- [ ] **Hair constants** — no source yet: the face's threshold and flip, read from the game's own light and root bone; the hair equations are written.
+- [ ] **Hair constants** — no source yet: a rendered hair frame that fits the hair's equations, which are written and not fitted; the face's threshold and flip, read from the game's own light and root bone, need a rendered face frame to check them.
 - [ ] **The deferred pass's character branch** — no source yet: a decoded listing of program 394 in the deferred block `~/Esposter/genshin-parity/extracted/maps/blocks/00/00612967.blk`, whose light loops, shadow terms and final output are not decoded.
 - [ ] **The metal gate** — no source yet: a body variant that reads `_MTMap`, since the variant read for the emission and the specular uses no metal constant, so the "Lm.r > 0.9" gate and the matcap are unconfirmed.
 - [ ] **The register-to-texture binding** — no source yet: a check against a rendered frame of the order the parameter table lists the textures, which the bindings above use.
@@ -375,7 +375,7 @@ The only case where a ramp stays raw is an artist painting it in linear values, 
 - [ ] **The deferred lighting pass's block `~/Esposter/genshin-parity/extracted/maps/blocks/00/00612967.blk`, its 765 programs and its 34 character pixel programs** — no source yet: "Hidden/Internal-DeferredShading" is not in the extracted shader dump (`~/Esposter/genshin-parity/extracted/shaders`, searched in full, no hit).
 - [ ] **240 of the 693 body variants read `_ES_CharacterMainLightBrightness` as one `mul`** — no source yet: a count over `Shader#0`'s variants, which is not reproduced.
 - [ ] **No body variant reads a fog constant, and the properties declare the four fog values** — no source yet: a scan of the body variants' constant reads, which is not on disk.
-- [ ] **The haze at 3 m is 0.0000% for every setting that sets a density** — no source yet: an evaluation of `createHeightFogNode` at the stated settings; no script or test commits it.
+- [ ] **The haze at the close-up is zero, and at 3 m it is 0.0000% for every setting that sets a density** — no source yet: an evaluation of `createHeightFogNode` at the stated settings and a close-up distance; no script or test commits it.
 - [ ] **The game's tone curve against ACES at scene 0.05, 0.18, 0.5, 1 and 4** — no source yet: a script evaluating both curves; none is committed.
 - [ ] **The face's flip, `_FaceFlipFactor` and its angle rule** — no source yet: a game listing that names `_FaceFlipFactor`, since none under `~/Esposter.noindex/genshin-parity/extracted/shaders` does, and the repo's `updateFaceDraw.ts` is repo code.
 - [ ] **The face's shadow colour `C = Cm * mix(S, 1, F)` and the no-face-map case lit** — no source yet: a rendered face that checks the equation, since `~/Esposter/genshin-parity/extracted/shaders/asm/uber/00432.asm` is not decoded to this form.
@@ -390,9 +390,8 @@ The only case where a ramp stays raw is an artist painting it in linear values, 
 - [ ] **A pale dot on the nose of a back-lit face is the lit flank** — no source yet: a rendered back-lit frame of the face.
 - [ ] **The repo's outline projection scale holds the game's 2.414** — no source yet: a game listing holding the literal 2.414000; none under `~/Esposter/genshin-parity/extracted/shaders/asm/uber` does.
 - [ ] **The outline's width is `_OutlineWidth` times 0.41425, weighted by the alpha, with no `T_w`** — no source yet: a game listing holding the literal 0.41425; none under `~/Esposter/genshin-parity/extracted/shaders/asm/uber` does.
-- [ ] **The haze at the close-up is zero, by the fog's form** — no source yet: a run of `packages/genshin-engine/src/post/createHeightFogNode.ts` at a close-up distance, which is not on disk.
 - [ ] **The tone curve is the game's** — no source yet: a read of the game's tone curve from the raw shader exports under `~/Esposter/genshin-parity/extracted/shaders/Shader/`.
-- [ ] **Lumine's body draws without fog** — contradicted by `packages/genshin-engine/src/post/createPostPipeline.ts`: applies height fog to every pixel with depth below 1, the body's included.
+- [ ] **Lumine's body draws without fog** — no source yet: the game's own post pass for characters, whether it fogs the body, is not read; the body's program reads no fog constant, which is the shader side only.
 - [ ] **A pack's toon is read down its one column as the lookup, with the flat default lightmap as the threshold** — no source yet: the pack path through `packages/genshin-engine/src/character/shading/createCharacterShadingNode.ts` is not traced.
 - [ ] **A pack's region toggles stay off, and its values come from the game's inventory** — no source yet: the code path that fills a pack's material from the inventory record is not traced; `packages/genshin-engine/src/character/createCharacterShadingInputs.ts` defaults the region toggles to off, but neither it nor `packages/genshin-engine/src/character/createCharacterMaterial.ts` fills from the inventory record.
 
