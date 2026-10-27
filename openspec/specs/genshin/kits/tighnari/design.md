@@ -4,6 +4,13 @@ Tighnari's kit is its record and one behaviour module, `createTighnariKitBehavio
 
 Not yet built: Vijnana Suffusion's Wreath Arrow, which turns the fully charged shot into a shot of its own while the suffusion lasts, since the kit offers no charged variant yet (gcsim's `~/Esposter/cache/gcsim-v2.47.2/internal/characters/tighnari/aimed.go`, lines 46-53); its Ascension 1 passive (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/tighnari/asc.go`, lines 11-24); and Constellations 2 and 6 (Constellation 2 at `~/Esposter/cache/gcsim-v2.47.2/internal/characters/tighnari/cons.go`, lines 28-47, and Constellation 6 at `~/Esposter/cache/gcsim-v2.47.2/internal/characters/tighnari/aimed.go`, lines 126-128 and 193-216). Constellations 1 and 4 are built.
 
+```mermaid
+flowchart TD
+  CAST["Tanglevine Shaft cast"] -- "each member gets 60 Elemental Mastery for 8 seconds" --> BUFF["Team buff at 60"]
+  BUFF -- "the burst triggers a reaction" --> REACT{"Reaction from the burst"}
+  REACT -- "Burning, Bloom, Lunar-Bloom, Quicken or Spread" --> RAISE["Each member raised to 120<br/>by buffKitTeam, the 8 seconds restart"]
+```
+
 ## Decisions
 
 - **Each action ends at its gcsim cancel, and its arrows land on their own.** Tanglevine Shaft's six hits and its secondary's six land from 112 to 175 frames, past the 118-frame animation; the strikes' arrows land past their cancels, and the fully charged arrow at 96 frames, past its 94 (gcsim's strike frames at `~/Esposter/cache/gcsim-v2.47.2/internal/characters/tighnari/attack.go`, lines 24-27 and 47-61, the charged shot's at `~/Esposter/cache/gcsim-v2.47.2/internal/characters/tighnari/aimed.go`, lines 31 and 84-95, and the Shaft's at `~/Esposter/cache/gcsim-v2.47.2/internal/characters/tighnari/burst.go`, lines 17-18 and 49-56). Each is the action's own hit, queued past its end as gcsim queues it, so a later action or a swap does not stop it.

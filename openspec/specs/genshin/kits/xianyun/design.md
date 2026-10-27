@@ -4,17 +4,25 @@ Xianyun's kit is its record and one behaviour module, `createXianyunKitBehaviour
 
 ## Decisions
 
-- **Constellation 1's extra charge is a skill charge.** Constellation 1 adds one through `getSkillChargeBonus` to White Clouds at Dawn, as the [kits README](../README.md#how-a-kit-is-read) gives. gcsim's `c1()` sets the skill's charges to two (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/xianyun/cons.go`, lines 30-36), the same one extra charge.
+- **Constellation 1's extra charge is a skill charge.** Constellation 1 adds one through `getSkillChargeBonus` to White Clouds at Dawn, as the [kits README](../README.md#framework-decisions) gives. gcsim's `c1()` sets the skill's charges to two (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/xianyun/cons.go`, lines 30-36), the same one extra charge.
 - **The Cloud Transmogrification state's length is provisional.** The cached White Clouds at Dawn note (`~/Esposter/cache/genshin-wiki/Category_Xianyun_Talents.json`) gives three seconds, which is 180 frames, against gcsim's 220 for the first press (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/xianyun/skill.go` line 16), and the kit keeps gcsim's value. The roadmap's manual verification has the question.
 - **The follow-ups' element is provisional.** gcsim sets `attributes.Anemo` at `~/Esposter/cache/gcsim-v2.47.2/internal/characters/xianyun/skill.go` line 95, a Go constant this reader does not evaluate, so the record keeps the element `Unsourced`. The roadmap's manual verification has the question.
 - **Constellation 4's ratio per press count is provisional.** The cached pages do not hold its text, so whether the game gives a ratio per press count is open; gcsim indexes its first ratio, and the kit reads the leap's own count. The roadmap's manual verification has the question.
-- **The leap's hitmarks and radii are recorded `Unsourced`.** gcsim gives them at `~/Esposter/cache/gcsim-v2.47.2/internal/characters/xianyun/plunge.go` lines 17 and 18, so the overlay holds values with a source under a cause to correct. The roadmap's manual verification has the question.
+- **The leap's hitmarks and radii are recorded `Unsourced`.** gcsim gives them at `~/Esposter/cache/gcsim-v2.47.2/internal/characters/xianyun/plunge.go` lines 17 and 18, and the [kits README](../README.md#framework-decisions) refuses `Unsourced` at a path a source gives, so the overlay's entries are wrong as they stand.
 
 ## Skyladder's presses
 
 Skyladder's first press sets the Cloud Transmogrification state for 220 frames, as gcsim's `skillStateDur` does (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/xianyun/skill.go`, line 16), and holds one press in it as the state's stacks. The state's second and third presses are `skillChain` follow-ups, which play their own animations (243 and 178 frames) and set the state for 238 and 179 frames. Each follow-up's frames are cited to gcsim's `~/Esposter/cache/gcsim-v2.47.2/internal/characters/xianyun/skill.go` (lines 46 and 56), its state's length to line 16, and its hitmark to line 20. Its element is `Unsourced`, as gcsim sets `attributes.Anemo` at line 95, a Go constant this reader does not evaluate (open above). A chained press starts no cooldown, which matches gcsim: it sets the cooldown only when the chain starts, and a chain's presses are its own (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/xianyun/skill.go`, lines 69-81).
 
 The engine has one chain window, `windowSeconds`, where gcsim closes each press's window at its own state's end. The window here is 238 frames, the second press's, so a second press up to 18 frames past the first state's end still plays as a follow-up. That is the approximation.
+
+```mermaid
+flowchart TD
+  PLUNGE["Plunge starts"] --> STATE{"Cloud Transmogrification state<br/>stands with presses"}
+  STATE -- "no state" --> STD["Standard plunge<br/>the fallback variant"]
+  STATE -- "one, two or three presses" --> LEAP["Leap for the press count<br/>4, 5 or 6.5 metres"]
+  LEAP -- "onStart spends the state" --> STATUS["Driftcloud status<br/>holds the count for 76 frames"]
+```
 
 ## Driftcloud Wave
 
@@ -37,7 +45,7 @@ Constellation 6's burst gives eight presses that cost no cooldown for 16 seconds
 
 ## Constellation 2
 
-From Constellation 2, each White Clouds at Dawn press gives Xianyun 20% ATK for 15 seconds, as gcsim's `c2buff` does from its skill function (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/xianyun/cons.go` line 19, `~/Esposter/cache/gcsim-v2.47.2/internal/characters/xianyun/cons.go` line 43, [gcsim `~/Esposter/cache/gcsim-v2.47.2/internal/characters/xianyun/cons.go`](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/xianyun/cons.go), MIT). The buff is a `buffKitMember` on her own `AttackPercent`, keyed by attribute and source, so a press restarts the 15 seconds rather than stacking a second buff, as gcsim's AddStatMod under its one key does.
+From Constellation 2, each White Clouds at Dawn press gives Xianyun 20% ATK for 15 seconds, as gcsim's `c2buff` does from its skill function (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/xianyun/cons.go` line 19, `~/Esposter/cache/gcsim-v2.47.2/internal/characters/xianyun/cons.go` line 43, [gcsim's constellation file](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/xianyun/cons.go), MIT). The buff is a `buffKitMember` on her own `AttackPercent`, keyed by attribute and source, so a press restarts the 15 seconds rather than stacking a second buff, as gcsim's AddStatMod under its one key does.
 
 ## Key files
 
@@ -53,5 +61,5 @@ From Constellation 2, each White Clouds at Dawn press gives Xianyun 20% ATK for 
 
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/xianyun), MIT: the strikes' hitmarks, cancel frames and circles, the charged attack's frames and circle, the plunges' frames and circles, Skyladder's press and Stars Gather at Dusk's hit, and the travel each strike takes.
 - The game's proud skill groups 9331, 9332 and 9339, read through the hosted talent multipliers: each multiplier and cooldown matches gcsim's `~/Esposter/cache/gcsim-v2.47.2/internal/characters/xianyun/zz_xianyun.dm.go` tables at talent level 1.
-- [gcsim `~/Esposter/cache/gcsim-v2.47.2/internal/characters/xianyun/cons.go`](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/xianyun/cons.go), MIT: Constellation 1's charges, Constellation 2's buff, Constellation 4's ratios and ICD, and Constellation 6's CRIT DMG and presses. The `~/Esposter/cache/gcsim-v2.47.2/internal/characters/xianyun/skill.go` lines cited in the overlay are the state durations at line 16, the press hitmark at 20, and the leaps at 46 and 56.
+- [gcsim's constellation file](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/xianyun/cons.go), MIT: Constellation 1's charges, Constellation 2's buff, Constellation 4's ratios and ICD, and Constellation 6's CRIT DMG and presses. The `~/Esposter/cache/gcsim-v2.47.2/internal/characters/xianyun/skill.go` lines cited in the overlay are the state durations at line 16, the press hitmark at 20, and the leaps at 46 and 56.
 - [Word of Wind and Flower](https://genshin-impact.fandom.com/wiki/Word_of_Wind_and_Flower) and [White Clouds at Dawn](https://genshin-impact.fandom.com/wiki/White_Clouds_at_Dawn), Genshin Impact Wiki: the poise of her strikes, charged attack, collision, plunges and Skyladder presses, and on [White Clouds at Dawn](https://genshin-impact.fandom.com/wiki/White_Clouds_at_Dawn) the Driftcloud Wave gauge and poise, and the state's note and cooldown cut; and [Stars Gather at Dusk](https://genshin-impact.fandom.com/wiki/Stars_Gather_at_Dusk) for Starwicker's 2.5-second interval.

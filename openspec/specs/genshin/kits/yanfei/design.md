@@ -2,6 +2,15 @@
 
 Yanfei's kit is its record and one behaviour module, `createYanfeiKitBehaviour`, on avatar 10000048 (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarExcelConfigData.json`): three strikes (`attack.go` line 17), a charged attack that spends her Scarlet Seals, a collision and two plunges, Signed Edict and Done Deal. Her multipliers are read from proud skill groups 4831, 4832 and 4839 (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`); the charged attack's stamina (group 4831's 50, the wiki's `stamina`) and its per-seal values, the skill's cooldown, and the burst's seconds, cooldown and energy cost are read from the same groups. The seals are a status for each of four slots, which a gain restarts together for 10 seconds (`attack.go` line 60, `skill.go` line 44, 600 frames), so they run out together, as gcsim's do. A normal attack's hit on the field, Signed Edict and Done Deal set her seals (`attack.go` lines 45 to 62, `skill.go` lines 40 to 46, `burst.go` lines 101 to 109), and Done Deal adds one each second for its 15 seconds (`burst.go` lines 35 and 85). Each seal the charged attack spends widens its circle, raises its multiplier and cuts its stamina, and Ascension 1 gives 5% Pyro DMG Bonus per seal for 6 seconds (`asc.go` lines 16 to 27). Constellation 1 cuts the stamina more (`yanfei.go` lines 36 to 38), and Constellation 6 holds a fourth seal (`yanfei.go` line 33). Done Deal's DMG Bonus goes to the charged attack while it stands (`burst.go` lines 35 to 41). From Ascension 4, Blazing Eye answers the first CRIT hit each charged attack lands while she is on the field with 80% of her ATK as 1U of Pyro, Charged Attack DMG, in a circle of radius 3.5 round the enemy struck, 10 frames on (`asc.go` lines 33 to 68); gcsim gives it no poise, so it deals none. The poise of the plunges and the collision takes the wiki's values (50 and 100 for the low and high plunges, 5 for the collision, `~/Esposter/cache/genshin-wiki/Category_Yanfei_Talents.json`), and the charged attack lands at 63 frames from every start (`charge.go` line 18).
 
+```mermaid
+flowchart TD
+  STRIKE["Normal attack hit on the field<br/>or Signed Edict"] -- "sets the seals" --> SEALS["Scarlet Seals<br/>four slots, restart for 10 seconds"]
+  DONE["Done Deal"] -- "one seal a second for 15 seconds" --> SEALS
+  SEALS -- "charged attack spends them, widening its circle" --> CHG["Charged attack"]
+  CHG -- "Ascension 1, per seal spent" --> PYRO["Pyro DMG Bonus<br/>5 percent for 6 seconds"]
+  CHG -- "Ascension 4, first CRIT hit" --> BLAZE["Blazing Eye<br/>80 percent of ATK as Pyro"]
+```
+
 ## Decisions
 
 - **Yanfei's seals are four statuses, one a slot, and her charged attack reads them as it starts.** A kit status of one id restarts rather than stacks, so each seal has its own slot id and a gain restarts the held slots together. The charged attack's hit is cast as a summon at her body as the seals are spent, as Ganyu's Bloom is, so its circle is priced round the body at the charge's radius plus the targeting area. gcsim's circle sits on the primary target, at the radius its seal count gives (`charge.go` lines 15 and 58 to 64).
@@ -20,3 +29,11 @@ Yanfei's kit is its record and one behaviour module, `createYanfeiKitBehaviour`,
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/yanfei), MIT: the kit's hitmarks, cancel frames and areas, the charged attack's animation, hit and radii by seal count, the plunges' and collision's circles, Signed Edict's hit and cooldown, Done Deal's hit, seals and bonus, Ascension 1's Pyro DMG Bonus, Ascension 4's Blazing Eye, and Constellations 1 and 6.
 - [Seal of Approval](https://genshin-impact.fandom.com/wiki/Seal_of_Approval), Genshin Impact Wiki: the poise of her strikes, charged attack's seals, collision and plunges. The cached copy is `~/Esposter/cache/genshin-wiki/Category_Yanfei_Talents.json`, with its Signed Edict, Done Deal, Seal of Approval and Blazing Eye pages; its constellation pages are not cached.
 - Local copies: `~/Esposter/genshin-parity/text/ExcelBinOutput/ProudSkillExcelConfigData.json` (groups 4831, 4832 and 4839, read by level) and `~/Esposter/cache/gcsim-v2.47.2/internal/characters/yanfei/` (on disk; the line numbers above are its files').
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/yanfei/charge.go` line 15, grounding the requirement "Charged attack spends seals".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/yanfei/yanfei.go` lines 36 to 38, grounding the requirement "Charged attack spends seals".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/yanfei/asc.go` lines 21 to 22, grounding the requirement "Seal damage bonus".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/yanfei/burst.go` line 41, grounding the requirement "Done Deal damage bonus on the charged attack".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/yanfei/cons.go` lines 15 to 35, grounding the requirement "Constellation 2 Charged Attack CRIT Rate".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/yanfei/asc.go` lines 58 to 67, grounding the requirement "A CRIT charged attack sets off Blazing Eye from Ascension 4".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/yanfei/cons.go` lines 52 and 54, grounding the requirement "Constellation 4 shields Done Deal".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/yanfei/cons.go` lines 39 to 41, grounding the requirement "Constellation 4 shields Done Deal".

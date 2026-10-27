@@ -15,6 +15,13 @@ gcsim sources: the folder `~/Esposter/cache/gcsim-v2.47.2/internal/characters/va
 
 ## Not built
 
+```mermaid
+flowchart TD
+  PRESS["Second skill press"] -- "converts the skill into Four Winds" --> STATE{"Four Winds conversion stands"}
+  STATE -- "yes, the first hit takes the converted element" --> ELEM["Burst's first hit<br/>converted element"]
+  STATE -- "no, Anemo by default" --> ANEMO["Burst's first hit<br/>Anemo"]
+```
+
 - **Four Winds waits on the conversion hook.** A second press converts his skill into Four Winds (`skill.go`, lines 84-86 and 105-125), and the burst's first hit takes the element it converts to (`burst.go`, lines 30-32). The kit keeps no record of the conversion, so each hit is its Anemo hit alone.
 - **His passives wait on their hooks.** Each one reads his Four Winds or the party's Elemental Resonance (`asc.go` and `cons.go`), so none is built.
 

@@ -2,6 +2,14 @@
 
 Xilonen's kit is its record and one behaviour module, `createXilonenKitBehaviour`, on avatar 10000103 (`~/Esposter/genshin-parity/text/ExcelBinOutput/AvatarExcelConfigData.json`): three strikes with the second of two hits, a charged attack, a collision and two plunges, and Yohual's Scratch's hit. Her multipliers are read from proud skill groups 10331, 10332 and 10339 (`~/Esposter/genshin-parity/text/ExcelBinOutput/ProudSkillExcelConfigData.json`), and match gcsim's values, which `~/Esposter/cache/gcsim-v2.47.2/internal/characters/xilonen/zz_xilonen.dm.go` carries to six decimal places, to four. Her plunges' and Yohual's Scratch's damage is her share of Defense (`UseDef`: `~/Esposter/cache/gcsim-v2.47.2/internal/characters/xilonen/plunge.go` lines 107, 160 and 214, `~/Esposter/cache/gcsim-v2.47.2/internal/characters/xilonen/skill.go` line 183), added as flat damage to each hit's base damage as it is priced, as Chiori's Defense shares are.
 
+```mermaid
+flowchart TD
+  PRESS["Skill press"] -- "enters the Blessing with 45 points" --> BLESS["Nightsoul Blessing<br/>nine seconds, five points a second"]
+  BLESS -- "a press, a swap, nine seconds or no points" --> ENDS["Blade Roller stance ends"]
+  PRESS -- "Constellation 4 gives six stacks" --> STACKS["Each deployed member<br/>six stacks for 15 seconds"]
+  STACKS -- "a hit on an enemy spends one" --> SHARE["Flat base damage<br/>65 percent of Xilonen's DEF"]
+```
+
 ## Decisions
 
 - **Her skill's press enters the Nightsoul Blessing with 45 points.** The points drain five a second, and the Blessing lasts nine seconds and ends when they run out, as gcsim's `enterNightsoul` and `nightsoulPointReduceTask` do (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/xilonen/skill.go` lines 58 to 71 and 89 to 98, where half a point every six frames is five a second). The wiki's Yohual's Scratch page gives the 9-second limit and 7-second cooldown (`~/Esposter/cache/genshin-wiki/Category_Xilonen_Talents.json`), and the file's point limit is 90, so the kit's cap at 45 is the open item below. A sprint in it drains five more once, as the sprint starts (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/xilonen/dash.go` line 9). Its Blade Roller stance ends with the Blessing however the Blessing ends, a press, a swap, its seconds or its points draining to none. A press in the Blessing leaves it; the strike that press still lands is recorded under Not built.

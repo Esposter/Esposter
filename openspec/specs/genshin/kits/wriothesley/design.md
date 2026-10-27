@@ -18,6 +18,14 @@ Not built, and why each is out of reach of the kit now:
 
 Its `skill.hits.length`, zero, is `Unsourced`, as Icefang Rush queues no attack (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/wriothesley/skill.go` has no `QueueAttack` call) and no line gives a count. The five burst areas are a circle 8 metres ahead of the body with a radius of 8.94, set by the overlay. The converter folds a forward offset into the radius for every kit, so changing it would republish them all; the Wolfbite's offset is therefore set in its own overlay, which is where a kit's measured values are kept. gcsim's 8 by 16 box from `~/Esposter/cache/gcsim-v2.47.2/internal/characters/wriothesley/burst.go`, line 38, spans from the body to 16 metres ahead and is 8 wide (gcsim's `NewRectangle` runs its corners from the spawn point to the height, `~/Esposter/cache/gcsim-v2.47.2/pkg/core/info/rectangle.go:18`), and that circle circumscribes it: its four corners lie on the circle, so the circle covers the whole box and some ground beside and behind it. It approximates the box rather than matching its shape, which the area format cannot hold.
 
+```mermaid
+flowchart TD
+  STRIKE{"Normal attack strike<br/>Icefang Rush holds, HP above half"} -- "every 6 frames" --> DRAIN["Chilling Penalty<br/>drains 4.5 percent of Max HP"]
+  DRAIN -- "Ascension 4 stack, up to five" --> EDICT["Prosecution Edict<br/>6 percent ATK per stack"]
+  RUSH["Icefang Rush status"] -- "one Cryo particle every 2 seconds" --> PARTICLE["Cryo particle"]
+  PARTICLE -- "held 100 frames, then collected on expiry" --> ENERGY["Delayed energy"]
+```
+
 ## Key files
 
 | File                                                                              | Role                                                                                                                                                              |
