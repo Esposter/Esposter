@@ -101,10 +101,10 @@ Each Genshin spec.md page's requirements state behaviour only, and the game code
 | `openspec/specs/genshin/scene-groups/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/shops/spec.md`                               | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/snezhnaya/spec.md`                           | 2026-10-27 · Haiku 5.5 |       |
-| `openspec/specs/genshin/sound-effects/spec.md`                       | —                      |       |
+| `openspec/specs/genshin/sound-effects/spec.md`                       | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/vegetation/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/weapon-enhancement/spec.md`                  | 2026-10-27 · Haiku 5.5 |       |
-| `openspec/specs/genshin/wish/spec.md`                                | —                      |       |
+| `openspec/specs/genshin/wish/spec.md`                                | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/archive/spec.md`                             | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/character-profile/spec.md`                   | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/characters/drawing/spec.md`                  | 2026-10-27 · Haiku 5.5 |       |
@@ -134,7 +134,7 @@ Each Genshin spec.md page's requirements state behaviour only, and the game code
 | `openspec/specs/genshin/kits/sucrose/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/thoma/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/zhongli/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
-| `openspec/specs/genshin/login-screen/clouds/spec.md`                 | —                      |       |
+| `openspec/specs/genshin/login-screen/clouds/spec.md`                 | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/mining-outcrops/spec.md`                     | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/music/voices/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/nod-krai-kits/spec.md`                       | 2026-10-27 · Haiku 5.5 |       |
@@ -146,7 +146,7 @@ Each Genshin spec.md page's requirements state behaviour only, and the game code
 | `openspec/specs/genshin/scatter/spec.md`                             | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/screens/spec.md`                             | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/serenitea-pot/spec.md`                       | 2026-10-27 · Haiku 5.5 |       |
-| `openspec/specs/genshin/spawned-places/spec.md`                      | —                      |       |
+| `openspec/specs/genshin/spawned-places/spec.md`                      | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/sumeru-kits/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/touch-controls/spec.md`                      | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/achievements/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
@@ -157,7 +157,7 @@ Each Genshin spec.md page's requirements state behaviour only, and the game code
 | `openspec/specs/genshin/characters/pmx-reader/spec.md`               | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/chests/spec.md`                              | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/companionship/spec.md`                       | 2026-10-27 · Haiku 5.5 |       |
-| `openspec/specs/genshin/compute/capitals/spec.md`                    | —                      |       |
+| `openspec/specs/genshin/compute/capitals/spec.md`                    | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/compute/character/spec.md`                   | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/compute/crafting/spec.md`                    | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/compute/dialogue/spec.md`                    | 2026-10-27 · Haiku 5.5 |       |
@@ -176,20 +176,20 @@ Each Genshin spec.md page's requirements state behaviour only, and the game code
 | `openspec/specs/genshin/compute/nod-krai/spec.md`                    | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/compute/paimon/spec.md`                      | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/compute/quest/spec.md`                       | 2026-10-27 · Haiku 5.5 |       |
-| `openspec/specs/genshin/compute/settings/spec.md`                    | —                      |       |
+| `openspec/specs/genshin/compute/settings/spec.md`                    | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/compute/snezhnaya/spec.md`                   | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/compute/sumeru/spec.md`                      | 2026-10-27 · Haiku 5.5 |       |
-| `openspec/specs/genshin/compute/text/spec.md`                        | —                      |       |
+| `openspec/specs/genshin/compute/text/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/compute/windrise/spec.md`                    | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/compute/wish/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/compute/world/spec.md`                       | 2026-10-27 · Haiku 5.5 |       |
-| `openspec/specs/genshin/fishing/spec.md`                             | —                      |       |
+| `openspec/specs/genshin/fishing/spec.md`                             | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/follow-camera/spec.md`                       | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/free-camera/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/game-reading/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/albedo/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/alhaitham/spec.md`                      | 2026-10-27 · Haiku 5.5 |       |
-| `openspec/specs/genshin/kits/aloy/spec.md`                           | —                      |       |
+| `openspec/specs/genshin/kits/aloy/spec.md`                           | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/alyosha/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/arlecchino/spec.md`                     | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/baizhu/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
@@ -209,24 +209,24 @@ Each Genshin spec.md page's requirements state behaviour only, and the game code
 | `openspec/specs/genshin/kits/eula/spec.md`                           | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/faruzan/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/fischl/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
-| `openspec/specs/genshin/kits/flins/spec.md`                          | —                      |       |
+| `openspec/specs/genshin/kits/flins/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/freminet/spec.md`                       | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/gaming/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/ganyu/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/gorou/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/heizou/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
-| `openspec/specs/genshin/kits/iansan/spec.md`                         | —                      |       |
+| `openspec/specs/genshin/kits/iansan/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/ifa/spec.md`                            | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/ineffa/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/itto/spec.md`                           | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/jahoda/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/kaeya/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/kamisato-ayato/spec.md`                 | 2026-10-27 · Haiku 5.5 |       |
-| `openspec/specs/genshin/kits/kaveh/spec.md`                          | —                      |       |
+| `openspec/specs/genshin/kits/kaveh/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/kazuha/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/keqing/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/kinich/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
-| `openspec/specs/genshin/kits/kirara/spec.md`                         | —                      |       |
+| `openspec/specs/genshin/kits/kirara/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/klee/spec.md`                           | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/kokomi/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/kujou-sara/spec.md`                     | 2026-10-27 · Haiku 5.5 |       |
@@ -245,7 +245,7 @@ Each Genshin spec.md page's requirements state behaviour only, and the game code
 | `openspec/specs/genshin/kits/navia/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/neuvillette/spec.md`                    | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/nicole/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
-| `openspec/specs/genshin/kits/ningguang/spec.md`                      | —                      |       |
+| `openspec/specs/genshin/kits/ningguang/spec.md`                      | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/odette/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/prune/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
 | `openspec/specs/genshin/kits/razor/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
