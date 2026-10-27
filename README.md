@@ -37,7 +37,7 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
       <td width="80" align="center" valign="top">
         <br />
         <a href="https://viteplus.dev/guide/">
-          <img src="./.github/assets/vite-plus/logo.svg" height="24" />
+          <img src="./.github/assets/vite-plus/logo.svg" />
         </a>
       </td>
       <td valign="top">
@@ -64,7 +64,7 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
       <td width="80" align="center" valign="top">
         <br />
         <a href="https://nuxt.com">
-          <img src="./.github/assets/nuxt/logo.svg" height="40" />
+          <img src="./.github/assets/nuxt/logo.svg" />
         </a>
       </td>
       <td valign="top">
@@ -78,7 +78,7 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
       <td width="80" align="center" valign="top">
         <br />
         <a href="https://vuejs.org">
-          <img src="./.github/assets/vue/logo.svg" height="40" />
+          <img src="./.github/assets/vue/logo.svg" />
         </a>
       </td>
       <td valign="top">
@@ -92,7 +92,7 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
       <td width="80" align="center" valign="top">
         <br />
         <a href="https://0.vuetifyjs.com">
-          <img src="./.github/assets/vuetify/logo.svg" height="40" />
+          <img src="./.github/assets/vuetify/logo.svg" />
         </a>
       </td>
       <td valign="top">
@@ -119,7 +119,7 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
       <td width="80" align="center" valign="top">
         <br />
         <a href="https://orm.drizzle.team">
-          <img src="./.github/assets/drizzle/logo.svg" height="40" />
+          <img src="./.github/assets/drizzle/logo.svg" />
         </a>
       </td>
       <td valign="top">
@@ -133,7 +133,7 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
       <td width="80" align="center" valign="top">
         <br />
         <a href="https://www.postgresql.org">
-          <img src="./.github/assets/postgresql/logo.svg" height="40" />
+          <img src="./.github/assets/postgresql/logo.svg" />
         </a>
       </td>
       <td valign="top">
@@ -147,10 +147,10 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
       <td width="80" align="center" valign="top">
         <br />
         <a href="https://trpc.io">
-          <img src="./.github/assets/trpc/logo.svg" height="40" />
+          <img src="./.github/assets/trpc/logo.svg" />
         </a>
       </td>
-      <td>
+      <td valign="top">
         <h3><a href="https://trpc.io/docs">tRPC</a></h3>
         <p>
           🧙‍♀️ Move Fast and Break Nothing. End-to-end typesafe APIs made easy.
@@ -161,10 +161,10 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
       <td width="80" align="center" valign="top">
         <br />
         <a href="https://zod.dev">
-          <img src="./.github/assets/zod/logo.svg" height="40" />
+          <img src="./.github/assets/zod/logo.svg" />
         </a>
       </td>
-      <td>
+      <td valign="top">
         <h3><a href="https://zod.dev/">Zod</a></h3>
         <p>
           TypeScript-first schema validation with static type inference.
@@ -188,7 +188,7 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
       <td width="80" align="center" valign="top">
         <br />
         <a href="https://www.pulumi.com">
-          <img src="./.github/assets/pulumi/logo.svg" height="40" />
+          <img src="./.github/assets/pulumi/logo.svg" />
         </a>
       </td>
       <td valign="top">
@@ -215,7 +215,7 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
       <td width="80" align="center" valign="top">
         <br />
         <a href="https://www.namecheap.com">
-          <img src="./.github/assets/namecheap/logo.svg" height="40" />
+          <img src="./.github/assets/namecheap/logo.svg" />
         </a>
       </td>
       <td valign="top">
@@ -229,10 +229,10 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
       <td width="80" align="center" valign="top">
         <br />
         <a href="https://railway.app">
-          <img src="./.github/assets/railway/logo.svg" height="40" />
+          <img src="./.github/assets/railway/logo.svg" />
         </a>
       </td>
-      <td>
+      <td valign="top">
         <h3><a href="https://docs.railway.com/">Railway</a></h3>
         <p>
           Infrastructure, Instantly.

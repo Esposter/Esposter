@@ -15,7 +15,7 @@ An icon set such as Streamline, a traced or redrawn copy, and any file found und
 ## Form
 
 - One file per project at `.github/assets/<name>/logo.svg`, copied byte for byte: nothing recoloured, resized or re-exported. The one exception is the simple-icons fill in Order step 3.
-- A logo column takes the mark. A wordmark is used only when the project has no mark, and is sized by height in the README, not by width.
+- A logo column takes the mark. A wordmark is used only when the project has no mark. The README gives no logo a size attribute, so each file's own size stands, and every cell in a README table is top-aligned (`valign="top"`), so the rows line up whatever the mark's shape.
 - Fetch from `raw.githubusercontent.com/<owner>/<repo>/HEAD/<path>`. A refresh fetches the same path.
 
 ## Sources
