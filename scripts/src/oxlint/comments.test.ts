@@ -5,8 +5,6 @@ describe("comments/no-capitalized-identifier", () => {
   const CAPITALISED = "AB";
   const IDENTIFIER = "aB";
   const PREFIXED = "GetA";
-  const SNAKE_CAPITALISED = "A_b";
-  const SNAKE_IDENTIFIER = "a_b";
   const RULE = "comments/no-capitalized-identifier";
   const FIXTURES = [
     {
@@ -21,11 +19,7 @@ describe("comments/no-capitalized-identifier", () => {
     },
     { name: "opensOnCapitalisedReference", source: `// A\n// ${CAPITALISED} b\n${IDENTIFIER}();`, violations: 1 },
     { name: "opensOnCapitalisedMember", source: `// A\n// ${CAPITALISED} b\na.${IDENTIFIER}();`, violations: 1 },
-    {
-      name: "opensOnCapitalisedSnakeCase",
-      source: `// A\n// ${SNAKE_CAPITALISED} c\nexport const ${SNAKE_IDENTIFIER} = 0;`,
-      violations: 1,
-    },
+    { name: "opensOnCapitalisedSnakeCase", source: `// A\n// A_b c\nexport const a_b = 0;`, violations: 1 },
     // A function prefix and a capital spell a name wherever it is declared, at a sentence start as much as mid-sentence
     { name: "opensOnForeignPrefixedName", source: `// A\n// ${PREFIXED} b\nexport const b = 0;`, violations: 1 },
     { name: "opensSentenceOnPrefixedName", source: `// ${PREFIXED} b\nexport const b = 0;`, violations: 1 },
