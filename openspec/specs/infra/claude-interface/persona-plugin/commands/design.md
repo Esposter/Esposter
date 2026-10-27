@@ -16,7 +16,11 @@ sequenceDiagram
     Person->>Command: the verb typed as a command
     Command->>Script: run in the session, session id handed in
     Script-->>Command: the script's lines
-    Command-->>Model: the output, with a note to answer as the card when a card prints
+    alt the verb prints a card
+        Command-->>Model: the output, with a note to answer as the card
+    else the verb prints lines only
+        Command-->>Model: the output
+    end
     Model-->>Person: the answer
 ```
 

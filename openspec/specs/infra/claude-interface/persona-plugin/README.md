@@ -64,7 +64,7 @@ The install copies the plugin into the plugin cache and, because the plugin root
 
 ## Notes
 
-- Markdown files, a few scripts of a few dozen lines, and Renovate-owned dependencies in a workspace that already has hundreds; that is the whole maintenance surface.
+- Its upkeep is the package's Markdown and scripts, and the Renovate-owned dependencies of a workspace that already has hundreds.
 
 ## Key files
 

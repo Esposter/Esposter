@@ -33,7 +33,9 @@ flowchart LR
     Plugin["The plugin<br/>fetches the stem in the chosen dub"]
     Card["Card<br/>reference, if the ear overrules"]
 
-    Page --> Files --> Profile --> Pick --> Clone --> Score --> Map
+    Page --> Files --> Enough{"Enough usable clips?"}
+    Enough -- yes --> Profile --> Pick --> Clone --> Score --> Map
+    Enough -- no --> Left["Reported, left out of the map"]
     Pick --> Map
     Map --> Plugin
     Card --> Plugin
