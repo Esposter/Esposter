@@ -28,7 +28,7 @@ Alyosha's kit is its record and one behaviour module, `createAlyoshaKitBehaviour
 - [Alyosha](https://genshin-impact.fandom.com/wiki/Alyosha) and [Category:Alyosha Talents](https://genshin-impact.fandom.com/wiki/Category:Alyosha_Talents), Genshin Impact Wiki: Alyosha's multipliers, energy, cooldowns and costs, Skirmishing Spear's four strikes, Thunderbolt Strike and Hunter's Advance.
 - Alyosha's clips, `Ani_Avatar_Boy_Pole_Alyosha_*`, read with `genshin:assets timings` from the installed game.
 - The wiki page cached at `{data-root}/cache/genshin-wiki/Category_Alyosha_Talents.json`, its Thunderbolt Strike row (15 seconds, Electro DMG), and the dump's skill `11482`, whose `cdTime` is 15.
-- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/candace) at v2.47.2, MIT: Candace's hitmarks and areas for Alyosha's strikes, charged attack and tap; and [Bennett](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/bennett)'s for her plunges and collision.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/candace) at v2.47.2, MIT: [Bennett](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/bennett)'s for her plunges and collision, and Candace's hitmarks and areas for Alyosha's strikes, charged attack and tap.
 
 ## Open
 
