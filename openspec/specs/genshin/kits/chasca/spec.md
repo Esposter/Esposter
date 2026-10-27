@@ -90,7 +90,7 @@ Spirit Reins' press SHALL enter the Nightsoul Blessing with 80 points, which dra
 - **GIVEN** Chasca is in the Blessing
 - **WHEN** the player presses Spirit Reins' Resonance
 - **THEN** the Blessing ends
-- **AND** the press lands no strike, as gcsim's exit press lands none
+- **AND** the press lands no strike
 
 #### Scenario: A sprint in the Blessing drains 13.3 points
 
