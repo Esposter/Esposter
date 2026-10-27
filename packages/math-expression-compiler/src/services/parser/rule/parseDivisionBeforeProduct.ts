@@ -8,6 +8,7 @@ import { checkIsToken } from "#src/services/parser/checkIsToken";
 import { createBinaryNode } from "#src/services/parser/createBinaryNode";
 import { getMathExpressionToken } from "#src/services/parser/getMathExpressionToken";
 import { MathExpressionBinaryOperatorMap } from "#src/services/parser/MathExpressionBinaryOperatorMap";
+import { MathExpressionBinaryOperatorSymbol } from "#src/models/parser/MathExpressionBinaryOperatorSymbol";
 
 // A division of one signed number by another, followed by a name or a parenthesis, is taken first, so `1/2 col0` is
 // `(1/2) * col0`, as mathjs reads it
@@ -30,7 +31,7 @@ export const parseDivisionBeforeProduct: MathExpressionRuleParser = (state, pars
     getMathExpressionToken(state);
     return createBinaryNode(
       dividend,
-      MathExpressionBinaryOperatorMap["/"].name,
+      MathExpressionBinaryOperatorMap[MathExpressionBinaryOperatorSymbol.Divide].name,
       parse(state, MathExpressionGrammarRule.Percentage),
     );
   }
