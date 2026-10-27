@@ -194,6 +194,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `three-globe`                           | —                     | Keep — engine    | the globe                                                                                              |
 | `three-mesh-bvh`                        | 2026-10-11 · Opus 5.5 | Keep — engine    | the landmark collider's bounding volume hierarchy                                                      |
 | `tsdown`                                | —                     | Keep — tooling   | the package bundler                                                                                    |
+| `tsrs`                                  | —                     |                  |                                                                                                        |
 | `type-fest`                             | —                     | Keep — types     | type utilities                                                                                         |
 | `typescript`                            | —                     | Keep — tooling   | the compiler                                                                                           |
 | `unicode-emoji-json`                    | —                     | Keep — data      | the emoji list, tracking Unicode                                                                       |
@@ -206,6 +207,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `vite-plus`                             | —                     | Keep — tooling   | the task runner, lint, format and the `vpx` script runner                                              |
 | `vitest`                                | —                     | Keep — tooling   | the test runner                                                                                        |
 | `vitest-browser-vue`                    | —                     | Keep — tooling   | browser-mode component tests                                                                           |
+| `vize`                                  | —                     |                  |                                                                                                        |
 | `vue`                                   | —                     | Keep — framework | the UI framework                                                                                       |
 | `vue-eslint-parser`                     | —                     | Keep — tooling   | ESLint's Vue parser                                                                                    |
 | `vue-router`                            | —                     | Keep — framework | routing                                                                                                |
