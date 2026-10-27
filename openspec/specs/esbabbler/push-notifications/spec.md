@@ -65,7 +65,7 @@ A reply SHALL notify the followers of its thread, except the replier and members
 - **THEN** the follower is notified
 - **AND** the muted follower is not notified
 
-### Requirement: A notification shows the author's name and the first line of the message
+### Requirement: A notification shows the author's name and the first paragraph of the message
 
 A notification SHALL show the author's room name and the first paragraph of the message as plain text.
 
