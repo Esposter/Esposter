@@ -14,6 +14,17 @@ The package's block types as built. The requirements are in [the spec](spec.md),
 - **A navbar's default icons are the characters they name.** `ico-open` defaults to `☰` and `ico-close` to `⊗`, the characters MJML's entities `&#9776;` and `&#8855;` decode to. The render escapes each attribute value once, so an entity default would reach MJML escaped twice.
 - **A unit's numeric grammar is MJML's, except that a comma is refused.** MJML's validator takes a comma as a digit, so `1,5px` passes it, but CSS reads that as no length. The attribute schema drops the comma from the numeric pattern, and every other form of MJML's grammar is kept as its validator matches it.
 
+The attribute table's path to the read back:
+
+```mermaid
+flowchart LR
+  table["Component attribute table"] --> shape["createMjmlAttributeShape"]
+  shape --> props["Props schema"]
+  props --> parse["parseMjmlDocument round trip"]
+  parse -->|"table and schema agree"| accepted["Accepted"]
+  parse -->|"a missing or stray key"| refused["Refused"]
+```
+
 ## Key files
 
 | File                                                             | Role                                                                                                                 |

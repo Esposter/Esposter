@@ -2,7 +2,7 @@
 
 `packages/pitch-transcription` (npm `pitch-transcription`) hears the notes played in a recording: each note's pitch, start, length, loudness and pitch bend. The hearing is Spotify's Basic Pitch, a small trained network that reads several notes at once on any instrument. The package ships the network's published ONNX export unmodified, runs it on the consumer's own ONNX Runtime session, and turns the network's readings into notes, bends and a MIDI file.
 
-It stands in for `@spotify/basic-pitch`, which held its consumers to TensorFlow.js 3, and is absorbed through [dependency admission](../architecture/dependency-admission/design.md): the engine (ONNX Runtime, a peer the consumer installs) and the data (the model file) are kept, and the layer between them is ours. TensorFlow.js left the package and the workspace when the network moved onto ONNX Runtime. Its first consumer is the [Genshin music](../genshin/music/README.md) re-derivation, whose fit transcribes the game's decoded sources with it.
+It stands in for `@spotify/basic-pitch`, which held its consumers to TensorFlow.js 3, and is absorbed through [dependency admission](../architecture/dependency-admission/design.md): the engine (ONNX Runtime, a peer the consumer installs) and the data (the model file) are kept, and the layer between them is ours. TensorFlow.js is in neither the package nor the workspace, since the network runs on ONNX Runtime. Its first consumer is the [Genshin music](../genshin/music/README.md) re-derivation, whose fit transcribes the game's decoded sources with it.
 
 ## How a recording becomes notes
 

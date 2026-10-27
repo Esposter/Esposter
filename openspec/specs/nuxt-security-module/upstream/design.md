@@ -19,7 +19,7 @@ Across the whole tracker, 13 items carry a high security severity and 92 a mediu
 
 ## What our configuration triggers
 
-This audit compares against `nuxt-security@2.6.0`, the upstream package the module replaced, which the app no longer installs. While it was installed, four settings in `apps/web/configuration/security.ts` decided which of its defects could reach the app:
+This audit compares against `nuxt-security@2.6.0`, the upstream package the module replaces. Four of its options decide which of its defects can reach the app:
 
 - **`xssValidator: false`** keeps every XSS validator defect off the request path: the 400s and hangs on uploads, multipart and socket.io bodies (#147, #364, #400, #472, #616), the body consumed before tRPC reads it (#613), and the rich-text rejection (#720). The measurement behind the setting was taken against the `xss` package, which the app does not depend on.
 - **`rateLimiter: false`** keeps the rate limiter defects off the path too: client-supplied `X-Forwarded-For` spoofing (#83, #196), the proxied-route skip (#619), and the prerender crash (#680). The rate limiter itself is ours to rebuild if we ever want one.
@@ -27,6 +27,17 @@ This audit compares against `nuxt-security@2.6.0`, the upstream package the modu
 - **`nonce: true`** is exposed to the nonce-handling defects. `nuxt-security` 2.6.0 carries the fixes for #594, #610, #699 and #704, which phase 2 pins with tests. The streaming defect #757 is still open and needs `experimental.ssrStreaming`, which our Nuxt config does not enable, so it does not reach us today.
 
 The SRI defects that remain open are the ones to watch: `sri: true` is the default, and #655 and #657 concern how it treats preload links and entry import maps. #657 does not reach the built app: it needs an entry import map, and the app emits none, since `entryImportMap` is off in `apps/web/configuration/experimental.ts`. #655 does reach it. The module hashes every file the build writes to its public directory, the client bundles included, once Nitro has copied the public assets and before it builds the server, so each modulepreload link carries an integrity attribute. The hook is not Nitro's `build:before`, which runs before the client bundles are written. The built check ran on a minimal app built with the module, not on the app's root page: its `/_nuxt` script, its stylesheet and both of its modulepreload links each carry the sha384 of the bytes the server serves. Whether a browser ignores or warns on an integrity attribute on a preload link is the effect #655 reports, and no browser runs in the check, so #655 stays open. The module does not hash in development, which serves the bundles from memory. A prerendered route renders before the hook fires, by the order of Nitro's build, so it carries no client-bundle hash; that order is read from the build's source, not measured.
+
+The build order the hook sits in:
+
+```mermaid
+flowchart TD
+  before["Nitro build:before"] --> bundles["Client bundles written"]
+  bundles --> copy["Nitro copies the public assets"]
+  copy --> hook["Public-assets hook hashes the files"]
+  prerender["Prerendered routes render"] --> hook
+  hook --> server["Server build"]
+```
 
 ## Verdicts
 
