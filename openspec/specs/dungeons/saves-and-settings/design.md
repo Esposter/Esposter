@@ -11,13 +11,13 @@ flowchart TD
   readBlob --> entity[("Dungeons — one optional save plus settings")]
   readLocal --> entity
   entity --> titleScene{"Title scene"}
-  titleScene -->|"Continue, offered only when a save exists"| run["the run — player, party, inventory, per-map world state"]
+  titleScene -->|"Continue, offered only when a save exists"| run["the run"]
   titleScene -->|"New Game"| run
-  run -->|"world menu Save — never automatic"| saveData["saveData assigns the run onto dungeons.save"]
+  run -->|"world menu Save — never automatic"| saveData["saveData"]
   settingsScene["Settings scene"] --> saveData
   saveData -->|"useSave"| write["dungeons.saveDungeons, or localStorage"]
   write --> entity
-  write -->|"trigger path"| achievements["achievements — save counts, and milestones read from the saved run"]
+  write -->|"trigger path"| achievements["achievements"]
 ```
 
 A `Save` is the full run state: `player` (position, direction, party monsters, inventory, respawn location), the active `tilemapKey`, and per-map `world` state (chest opened-flags). `useReadDungeons` loads the blob at page setup (authed: `dungeons.readDungeons`; anonymous: localStorage `DungeonsStore`, parsed by `toLocalDungeons`, so a stored value that is not a save starts a fresh run rather than failing the page); the Title scene's Continue resumes `dungeons.save` (enabled only when one exists), New Game starts from a fresh `Save`. Saving is **manual** — the world menu's Save option calls `saveData`, which assigns the active save onto `dungeons.save` and persists via `useSave` — there is no autosave.
