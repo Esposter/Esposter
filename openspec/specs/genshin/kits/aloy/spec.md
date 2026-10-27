@@ -6,7 +6,7 @@ Aloy's kit as built: her strikes, fully charged shot and plunges, with Freeze Bo
 
 ### Requirement: Aloy's strikes, fully charged shot and plunges deal physical damage
 
-Aloy's strikes, fully charged shot and plunges SHALL deal their hits on the timings of their animations, and their poise SHALL be the values design.md gives them.
+Aloy's strikes, fully charged shot and plunges SHALL deal their hits on the timings of their animations, and SHALL deal no poise yet.
 
 #### Scenario: A fully charged shot deals its hit
 
@@ -24,11 +24,11 @@ Freeze Bomb SHALL deal seven hits, the bomb and its six Chillwater Bomblets, and
 - **WHEN** the bomb and its bomblets land
 - **THEN** each of the seven hits strikes its target
 
-#### Scenario: A bomblet adds a coil stack for each enemy it strikes
+#### Scenario: A bomblet adds one coil stack however many enemies it strikes
 
-- **GIVEN** a Chillwater Bomblet strikes an enemy
+- **GIVEN** a Chillwater Bomblet strikes one or more enemies
 - **WHEN** the hit lands
-- **THEN** one coil stack is added for that enemy
+- **THEN** one coil stack is added for that bomblet
 
 ### Requirement: Four coil stacks give Aloy's attacks Cryo infusion for ten seconds
 
