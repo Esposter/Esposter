@@ -347,7 +347,7 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 - [Exploration](https://genshin-impact.fandom.com/wiki/Exploration), Genshin Impact Wiki: no combat while climbing, gliding or swimming.
 - [Elemental Gauge Theory](https://library.keqingmains.com/combat-mechanics/elemental-effects/elemental-gauge-theory) and [Transformative Reactions](https://library.keqingmains.com/combat-mechanics/elemental-effects/transformative-reactions), KeqingMains Theorycrafting Library: the decay rate, Electro-Charged's ticks, Burning's tick, Superconduct's 40% Physical RES shred for 12 seconds, and the Dendro Core's lifetime and limit.
 - `~/Esposter/cache/gcsim-v2.47.2/pkg/enemy/damage.go` lines 86 and 87; grounds "An enemy's resistance".
-- `~/Esposter/cache/gcsim-v2.47.2/pkg/enemy/damage.go` lines 88 and 89 (same file); grounds "An enemy's resistance".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/enemy/damage.go` lines 88 and 89 (same file); grounds "An enemy's resistance" and scenario "A resistance past three quarters cuts damage by a diminishing factor".
 - `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/vaporize.go` line 33; grounds "Vaporize and Melt".
 - `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/melt.go` line 24; grounds "Vaporize and Melt".
 - `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/vaporize.go` line 26 (the reverse reaction, Pyro on Hydro, 1.5); grounds "Vaporize and Melt".
@@ -359,10 +359,35 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 - `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl.go` line 15; grounds "Glimmer Reaction Damage".
 - `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/lunarcharged.go` line 22 (the same folder as `stellarswirl.go`); grounds "Glimmer Reaction Damage".
 - `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/lunarcrystallize.go` line 27 (the same folder as `stellarswirl.go`); grounds "Glimmer Reaction Damage".
-- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct.go` lines 74 and 75 only emit `OnStellarConduct`; grounds "Glimmer Reaction Damage".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct.go` lines 74 and 75 only emit `OnStellarConduct`; grounds "Glimmer Reaction Damage" and scenario "a Stellar-Conduct places a Polestar Field round the point given for 7 seconds, ticking every 4" (gcsim places the field at the player, as the Decisions section's line 74 reference gives it).
 - `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl_gadget.go` line 19; grounds "Stellar Swirl Places a Stellar Vortex".
-- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl_gadget.go` line 14; grounds "Stellar Vortex Explosion Coefficient".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl_gadget.go` line 14 (`sswStackMult`: 2 at one and two stacks, 3 from three stacks up); grounds "Stellar Vortex Explosion Coefficient", and scenarios "a Stellar Vortex that expires with one or two stacks explodes at a coefficient of 2" and "a Stellar Vortex detonated with three or more stacks uses a coefficient of 3".
 - `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl.go` line 76; grounds "A Stellar Swirl's Anemo instance has a Base Reaction Coefficient of 0.75".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/reactable.go` lines 206 to 213: 0.8 of the Durability, decaying over 6 times it plus 420 frames; grounds scenario "A two unit Pyro tap leaves 1.6 units of Pyro that lasts 12 seconds".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/xiangling/burst.go` line 35: the unit at 25 Durability; grounds scenario "A two unit Pyro tap leaves 1.6 units of Pyro that lasts 12 seconds".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/reactable.go` lines 147 to 169: `AttachOrRefill` attaches only Pyro, Electro, Hydro, Cryo and Dendro; grounds scenario "Anemo and Geo leave no aura".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/vaporize.go` lines 27 to 34: reduce the Pyro-element auras, the Burning among them; grounds scenario "Two unit Hydro on a burning target vaporizes the Burning and blooms the Dendro with what is left".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/burning.go` lines 138 to 145: drop the Burning's fuel once it is gone; grounds scenario "Two unit Hydro on a burning target vaporizes the Burning and blooms the Dendro with what is left".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/bloom.go` lines 20 to 31: take the left-over Hydro on the Dendro-like auras; grounds scenario "Two unit Hydro on a burning target vaporizes the Burning and blooms the Dendro with what is left".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/electrocharged.go` lines 78 to 82: a new Electro-Charged triggers its tick immediately; grounds scenario "Electro-Charged ticks when Electro and Hydro meet and every second after".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/electrocharged.go` line 181; grounds scenario "Electro-Charged ticks when Electro and Hydro meet and every second after".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/enemy/damage.go` lines 77 to 82: at equal levels and no defence adjustment the defence modifier is one half; grounds scenario "A hit from an attacker of the enemy's own level is halved by defence".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/lunarbloom.go` lines 3 to 4: call only the Verdant Dew hook; grounds scenario "A Lunar-Bloom leaves a core and deals no damage".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/bloom.go` lines 91 to 93: add a Dendro Core and no damage; grounds scenario "A Lunar-Bloom leaves a core and deals no damage".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/core/combat/reaction.go` line 30; grounds scenario "A direct Lunar hit takes the party reaction bonuses its Lunar reaction takes, and its Elevation last".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/odette/stellar.go` lines 60 and 75; grounds scenario "A Stellar reaction's Base DMG takes the Base DMG Bonus each deployed Stellar Jubilee gives, two adding up".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/odette/stellar.go` line 66: the two bonuses added together; grounds scenario "A Stellar reaction's Base DMG takes the Base DMG Bonus each deployed Stellar Jubilee gives, two adding up".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/odette/stellar.go` lines 47 and 48; grounds scenario "a Stellar Jubilee passive enables both reactions for its party".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/core/player/shield/template.go` lines 51 and 62: `same = 2.5` for the shield's own element; grounds scenario "An elemental shield absorbs an enemy's strike of its own element 250% as effectively".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/core/player/shield/template.go` lines 56 and 67: the bonus factor `(1 + bonus)`, which is 1.25 at 25 percent, with the `same` factor 1 for another element; grounds scenario "A Shield Strength buff raises what a shield absorbs".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/core/energy.go` lines 36 and 40: the base 0.10 for a sword and an increase of 0.05 per hit that gives none; grounds scenario "A sword's chance of energy rises after a hit that gives none".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/core/player/character/energy.go` lines 58 to 67, before the energy regeneration and the off-field reduction; grounds scenario "A particle gives its own element the largest share".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct.go` line 9; grounds scenarios "prices a direct Stellar-Conduct hit by the Glimmer formula at its coefficient by the Starlight Prism's count its striker carries, with no Defence" and "a recorded hit raises the Stellar-Conduct's coefficient".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/swirl.go` line 130; grounds scenario "a Cryo Swirl starts Stellar Swirl while the party enables it".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/superconduct.go` line 17; grounds scenario "a Superconduct becomes Stellar-Conduct while the party enables it".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct_gadget.go` lines 25 to 38 and 134 to 154: the table's first entry, 0.2, applied to CryoP and ElectroP; grounds scenario "a field with no recorded hit gives a 20% Cryo and Electro DMG Bonus".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct_gadget.go` lines 20 and 25 to 38: 12 is the most stacks, and the table steps from 0.29 at one hit by 0.01 to 0.4 at twelve; grounds scenario "a field with recorded hits gives 28% plus 1% a hit".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct_gadget.go` lines 121 to 124: `Value: -0.40` on Physical; grounds scenario "a field lowers the enemies' Physical RES by 40%".
 
 ## Open
 

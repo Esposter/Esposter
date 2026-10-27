@@ -13,13 +13,13 @@ An element an attack leaves on a target SHALL stay as an aura that decays over t
 - **GIVEN** an untouched target
 - **WHEN** a two unit Pyro attack lands on it
 - **THEN** 1.6 units of Pyro remain on the target as an aura
-- **AND** the aura decays out after 12 seconds (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/reactable.go` lines 206 to 213: 0.8 of the Durability, decaying over 6 times it plus 420 frames, with a unit at 25 Durability as in `~/Esposter/cache/gcsim-v2.47.2/internal/characters/xiangling/burst.go` line 35)
+- **AND** the aura decays out after 12 seconds
 
 #### Scenario: Anemo and Geo leave no aura
 
 - **GIVEN** an untouched target
 - **WHEN** an Anemo or a Geo attack lands on it
-- **THEN** no aura remains on the target (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/reactable.go` lines 147 to 169: `AttachOrRefill` attaches only Pyro, Electro, Hydro, Cryo and Dendro)
+- **THEN** no aura remains on the target
 
 ### Requirement: An element applied to a target that already holds another element
 
@@ -30,7 +30,7 @@ An element applied to a target that already holds another element SHALL trigger 
 - **GIVEN** a target is burning with Pyro and Dendro on it
 - **WHEN** two units of Hydro land on it
 - **THEN** Vaporize consumes the Burning and its Pyro
-- **AND** the Hydro left over blooms the Dendro beneath them (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/vaporize.go` lines 27 to 34 reduce the Pyro-element auras, the Burning among them, `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/burning.go` lines 138 to 145 drop the Burning's fuel once it is gone, and `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/bloom.go` lines 20 to 31 take the left-over Hydro on the Dendro-like auras)
+- **AND** the Hydro left over blooms the Dendro beneath them
 
 #### Scenario: A reaction is recorded once however many auras it meets
 
@@ -46,8 +46,8 @@ Electro and Hydro lying together on a target SHALL tick Electro-Charged damage u
 
 - **GIVEN** an Electro aura and a Hydro aura stand on a target
 - **WHEN** they meet on the target
-- **THEN** an Electro-Charged tick lands at once (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/electrocharged.go` lines 78 to 82: a new Electro-Charged triggers its tick immediately)
-- **AND** another tick lands each second after (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/electrocharged.go` line 181)
+- **THEN** an Electro-Charged tick lands at once
+- **AND** another tick lands each second after
 
 #### Scenario: Electro-Charged ends once one of its auras decays away
 
@@ -63,7 +63,7 @@ A hit's damage SHALL be cut by the enemy's defence against the attacker's level,
 
 - **GIVEN** an enemy at a level with the defence that level gives it
 - **WHEN** an attacker of the same level hits it with no other reduction
-- **THEN** defence halves the damage (`~/Esposter/cache/gcsim-v2.47.2/pkg/enemy/damage.go` lines 77 to 82: at equal levels and no defence adjustment the defence modifier is one half)
+- **THEN** defence halves the damage
 
 ### Requirement: An enemy's resistance
 
@@ -79,17 +79,21 @@ An enemy's resistance SHALL cut damage by its share, up to three quarters, and b
 
 - **GIVEN** an enemy with 90 percent resistance to an element
 - **WHEN** a hit of that element lands
-- **THEN** the damage is cut to one over four times the resistance plus one (`~/Esposter/cache/gcsim-v2.47.2/pkg/enemy/damage.go` line 89)
+- **THEN** the damage is cut to one over four times the resistance plus one
 
 ### Requirement: The primary target
 
-The enemy an action turns to as it starts SHALL be the primary target until another action targets, and a primary target that dies or leaves the world SHALL be let go.
+The enemy an action turns to as it starts SHALL be the primary target until another action targets.
 
 #### Scenario: An action that starts makes the enemy it turns to the primary target, which outlasts the action
 
 - **GIVEN** an enemy inside the targeting area of a normal attack
 - **WHEN** the attack starts and plays out
 - **THEN** the enemy is the primary target, during the attack and after it
+
+### Requirement: A primary target that dies or leaves the world is let go
+
+A primary target that dies or leaves the world SHALL be let go.
 
 #### Scenario: A primary target that dies, or leaves the world, is let go
 
@@ -131,20 +135,22 @@ Lunar-Bloom SHALL deal no damage of its own, and it SHALL leave a Dendro Core.
 
 - **GIVEN** a Moonsign turns a Bloom into Lunar-Bloom
 - **WHEN** the reaction triggers on an enemy
-- **THEN** the reaction deals no damage of its own (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/lunarbloom.go` lines 3 to 4 call only the Verdant Dew hook, and `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/bloom.go` lines 91 to 93 add a Dendro Core and no damage)
+- **THEN** the reaction deals no damage of its own
 - **AND** a Dendro Core is left by the enemy
 
 ### Requirement: Ascendant Gleam's reaction bonus
 
 Ascendant Gleam's reaction bonus SHALL be capped at 36 percent.
 
-A skill or burst outside the Moonsign SHALL light Ascendant Gleam for 20 seconds.
-
 #### Scenario: A reaction bonus past the cap is held at 36 percent
 
 - **GIVEN** the lighter's stats would give a bonus above 36 percent
 - **WHEN** a Lunar damage is priced
 - **THEN** the bonus is 36 percent
+
+### Requirement: A skill or burst outside the Moonsign lights Ascendant Gleam
+
+A skill or burst outside the Moonsign SHALL light Ascendant Gleam for 20 seconds.
 
 #### Scenario: A skill or burst outside the Moonsign lights Ascendant Gleam for 20 seconds
 
@@ -174,7 +180,7 @@ A deployed member's party reaction bonus SHALL raise a Lunar or Stellar reaction
 - **GIVEN** a deployed member's kit gives a Lunar-Bloom a DMG Bonus, a CRIT Rate, a CRIT DMG and an Elevation
 - **WHEN** a direct Lunar-Bloom hit is priced on an enemy
 - **THEN** the DMG Bonus adds to its reaction bonus, the CRIT Rate to its roll and the CRIT DMG to a CRIT hit
-- **AND** the whole is multiplied by one plus the Elevation (`~/Esposter/cache/gcsim-v2.47.2/pkg/core/combat/reaction.go` line 30)
+- **AND** the whole is multiplied by one plus the Elevation
 
 ### Requirement: A Stellar Jubilee's Base DMG Bonus
 
@@ -182,9 +188,9 @@ A Stellar reaction's damage SHALL take the Base DMG Bonus each deployed Stellar 
 
 #### Scenario: A Stellar reaction's Base DMG takes the Base DMG Bonus each deployed Stellar Jubilee gives, two adding up
 
-- **GIVEN** two deployed members whose Stellar Jubilees each give a Base DMG Bonus of 0.7 percent per 100 of the holder's ATK, capped at 14 percent (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/odette/stellar.go` lines 60 and 75)
+- **GIVEN** two deployed members whose Stellar Jubilees each give a Base DMG Bonus of 0.7 percent per 100 of the holder's ATK, capped at 14 percent
 - **WHEN** a Stellar Swirl is priced
-- **THEN** its base damage is raised by the two bonuses added together (same file, line 66)
+- **THEN** its base damage is raised by the two bonuses added together
 
 ### Requirement: An enemy's strike's element
 
@@ -252,13 +258,13 @@ A shield cast SHALL be told to every deployed member's kit once it stands, its o
 
 - **GIVEN** the member on the field holds a Cryo shield
 - **WHEN** an enemy whose attacks carry Cryo strikes it
-- **THEN** each point of the shield's health absorbs 2.5 points of the strike (`~/Esposter/cache/gcsim-v2.47.2/pkg/core/player/shield/template.go` lines 51 and 62: `same = 2.5` for the shield's own element)
+- **THEN** each point of the shield's health absorbs 2.5 points of the strike
 
 #### Scenario: A Shield Strength buff raises what a shield absorbs
 
 - **GIVEN** the member on the field holds a shield and carries a buff of 25% Shield Strength
 - **WHEN** an enemy's strike lands on it
-- **THEN** each point of the shield's health absorbs 1.25 points of the strike (`~/Esposter/cache/gcsim-v2.47.2/pkg/core/player/shield/template.go` lines 56 and 67: the bonus factor `(1 + bonus)`, which is 1.25 at 25 percent, with the `same` factor 1 for another element)
+- **THEN** each point of the shield's health absorbs 1.25 points of the strike
 
 #### Scenario: A shield that takes a strike reports the health it has left
 
@@ -310,7 +316,7 @@ A normal or charged attack's hit SHALL give its character one energy at a chance
 
 - **GIVEN** a character with a sword has a base chance of 10 percent
 - **WHEN** a hit does not give it energy
-- **THEN** its chance on the next hit rises by 5 percent (`~/Esposter/cache/gcsim-v2.47.2/pkg/core/energy.go` lines 36 and 40: the base 0.10 for a sword and an increase of 0.05 per hit that gives none)
+- **THEN** its chance on the next hit rises by 5 percent
 
 #### Scenario: A hit that gives energy returns the chance to its base
 
@@ -328,7 +334,7 @@ A particle SHALL give energy of its own element to each standing party member at
 - **WHEN** it reaches the party
 - **THEN** a member of that element gains 3 energy
 - **AND** a member of another element gains 1 energy
-- **AND** a member with no element gains 2 energy (`~/Esposter/cache/gcsim-v2.47.2/pkg/core/player/character/energy.go` lines 58 to 67, before the energy regeneration and the off-field reduction)
+- **AND** a member with no element gains 2 energy
 
 ### Requirement: When every member of the party is down, the party
 
@@ -365,7 +371,7 @@ A talent's or a constellation's direct Stellar hit SHALL be priced by the Glimme
 
 - **GIVEN** a striker carrying the Starlight Prism's count of 3 recorded hits
 - **WHEN** its direct Stellar-Conduct hit strikes an enemy
-- **THEN** it is priced at a coefficient of 1.55, with no Defence (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct.go` line 9)
+- **THEN** it is priced at a coefficient of 1.55, with no Defence
 
 #### Scenario: prices a direct Stellar Swirl hit by the Glimmer formula at its coefficient by the Starlight Prism's count its striker carries, with no Defence
 
@@ -391,7 +397,7 @@ Anemo SHALL turn a Cryo Swirl into Stellar Swirl while the party holds a Stellar
 
 - **GIVEN** the party holds a Stellar Jubilee passive that enables Stellar Swirl
 - **WHEN** Anemo Swirls a Cryo aura
-- **THEN** the reaction is Stellar Swirl (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/swirl.go` line 130)
+- **THEN** the reaction is Stellar Swirl
 
 #### Scenario: a Cryo Swirl stays an ordinary Swirl without the enabler
 
@@ -413,7 +419,7 @@ A Superconduct SHALL become Stellar-Conduct while the party holds a Stellar Jubi
 
 - **GIVEN** the party holds a Stellar Jubilee passive that enables Stellar-Conduct
 - **WHEN** Electro meets a Cryo aura
-- **THEN** the reaction is Stellar-Conduct (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/superconduct.go` line 17)
+- **THEN** the reaction is Stellar-Conduct
 
 #### Scenario: no Stellar-Conduct occurs without the enabler
 
@@ -429,7 +435,7 @@ A Stellar Linchpin user's Stellar Jubilee passive SHALL enable Stellar Swirl and
 
 - **GIVEN** a party member holds a Stellar Jubilee passive
 - **WHEN** the party's reactions are read
-- **THEN** Stellar Swirl and Stellar-Conduct are both enabled (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/odette/stellar.go` lines 47 and 48)
+- **THEN** Stellar Swirl and Stellar-Conduct are both enabled
 
 ### Requirement: Starlight Prism Sustains a Polestar Field
 
@@ -438,7 +444,7 @@ A Stellar-Conduct SHALL leave a Starlight Prism that lasts 7 seconds and sustain
 #### Scenario: a Stellar-Conduct places a Polestar Field round the point given for 7 seconds, ticking every 4
 
 - **WHEN** a Stellar-Conduct is triggered and no Polestar Field stands
-- **THEN** a Polestar Field of radius 15 stands at the body on the field for 7 seconds, as gcsim places it at the player, placed by the reaction path for any enabler
+- **THEN** a Polestar Field of radius 15 stands at the body on the field for 7 seconds, placed by the reaction path for any enabler
 
 #### Scenario: a Stellar-Conduct refreshes a standing Polestar Field
 
@@ -457,17 +463,17 @@ Inside the field, a Cryo or Electro hit on an enemy that applies an element, as 
 #### Scenario: a recorded hit raises the Stellar-Conduct's coefficient
 
 - **WHEN** one Cryo or Electro hit is recorded
-- **THEN** the Base Reaction Coefficient is 1.45, rising by 0.05 for each further hit up to 12 hits, where it is 2 (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct.go` line 9)
+- **THEN** the Base Reaction Coefficient is 1.45, rising by 0.05 for each further hit up to 12 hits, where it is 2
 
 #### Scenario: a field with no recorded hit gives a 20% Cryo and Electro DMG Bonus
 
 - **WHEN** no Cryo or Electro hit is recorded
-- **THEN** the body in the field has a 20% Cryo and Electro DMG Bonus (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct_gadget.go` lines 25 to 38 and 134 to 154: the table's first entry, 0.2, applied to CryoP and ElectroP)
+- **THEN** the body in the field has a 20% Cryo and Electro DMG Bonus
 
 #### Scenario: a field with recorded hits gives 28% plus 1% a hit
 
 - **WHEN** one Cryo or Electro hit is recorded
-- **THEN** the body in the field has a 29% Cryo and Electro DMG Bonus, rising by 1% for each further hit up to 12 hits, where it is 40% (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct_gadget.go` lines 20 and 25 to 38: 12 is the most stacks, and the table steps from 0.29 at one hit by 0.01 to 0.4 at twelve)
+- **THEN** the body in the field has a 29% Cryo and Electro DMG Bonus, rising by 1% for each further hit up to 12 hits, where it is 40%
 
 #### Scenario: a member's Radiance: Stellar-Conduct carries the count of hits the last tick took
 
@@ -477,7 +483,7 @@ Inside the field, a Cryo or Electro hit on an enemy that applies an element, as 
 #### Scenario: a field lowers the enemies' Physical RES by 40%
 
 - **WHEN** an enemy stands in the field
-- **THEN** its Physical RES is reduced by 40% (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct_gadget.go` lines 121 to 124: `Value: -0.40` on Physical)
+- **THEN** its Physical RES is reduced by 40%
 
 ### Requirement: Stellar Swirl Places a Stellar Vortex
 
@@ -502,17 +508,19 @@ A Stellar Swirl SHALL deal Anemo damage to its target and then leave one Stellar
 
 A Stellar Vortex's explosion SHALL be priced at a Base Reaction Coefficient of 2 at Lv. 1 and 3 at Lv. 2, for the indirect Stellar Glimmer damage. Its contributors' damage is weighted as the Glimmer Reaction Damage requirement above states.
 
-A Stellar Swirl's Anemo instance SHALL be priced at a Base Reaction Coefficient of 0.75, for the indirect Stellar Glimmer damage.
-
 #### Scenario: a Stellar Vortex that expires with one or two stacks explodes at a coefficient of 2
 
 - **WHEN** a vortex has one or two stacks of Stellar Swirl and runs out
-- **THEN** its explosion's Base Reaction Coefficient is 2 (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl_gadget.go` line 14, `sswStackMult`: 2 at one and two stacks)
+- **THEN** its explosion's Base Reaction Coefficient is 2
 
 #### Scenario: a Stellar Vortex detonated with three or more stacks uses a coefficient of 3
 
 - **WHEN** a vortex has three or more stacks of Stellar Swirl and explodes, at its sixth stack or as it runs out
-- **THEN** its explosion's Base Reaction Coefficient is 3 (same table, `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl_gadget.go` line 14: 3 from three stacks up)
+- **THEN** its explosion's Base Reaction Coefficient is 3
+
+### Requirement: Stellar Swirl's Anemo Instance Coefficient
+
+A Stellar Swirl's Anemo instance SHALL be priced at a Base Reaction Coefficient of 0.75, for the indirect Stellar Glimmer damage.
 
 #### Scenario: a Stellar Swirl's Anemo instance has a coefficient of 0.75
 
