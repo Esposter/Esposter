@@ -26,7 +26,7 @@ description: Apply when creating, updating or referencing any spec, design, prop
 - `openspec/deferred/<area>/<idea>/` holds ideas chosen **not to build yet**, each with a revisit trigger; `openspec/rejected/<area>/<idea>/` holds ideas decided **against**. The CLI does not read either tree, so a deferred idea revived is moved into `changes/`.
 - `openspec/changes/archive/` holds shipped changes. It is history: nothing rewrites it, and the prose checks skip it.
 
-**A target the code does not meet is not a requirement.** A requirement that names a value the code does not yet carry — a poise, a multiplier, a timing — misstates the build. Check the code that would carry the value before a `SHALL` states it. Until it does, the requirement says the behaviour is absent ("deals no poise yet"), and the target value moves to the design's `Not built` or `Decisions`, where nothing is dropped.
+**A target the code does not meet is not a requirement.** A requirement that names a value the code does not yet carry — a poise, a multiplier, a timing — misstates the build. Check the built kit, not the hand-written module: the builder fills a value from the wiki, so a module can hold none while the kit carries it. Until it does, the requirement says the behaviour is absent ("deals no poise yet"), and the target value moves to the design's `Not built` or `Decisions`, where nothing is dropped.
 
 **Specs move with the code that changes them** — update the owning `design.md` and `spec.md` in the same change that ships the behaviour, and cover the full lifecycle it describes (creation _and_ cleanup or teardown), not just the happy path.
 
