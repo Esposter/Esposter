@@ -3,7 +3,7 @@
   "frames.stormeyeStart": { "file": "burst.go", "line": 14, "source": "Gcsim", "value": 94 },
   "hits.splittingGalesArrows.length": { "file": "cons.go", "line": 18, "source": "Gcsim", "value": 2 },
   "hits.splittingGalesArrows.0.area": {
-    "cause": "Unclassified",
+    "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
   },
   "hits.splittingGalesArrows.0-1.element": { "file": "aimed.go", "line": 56, "source": "Gcsim", "value": "Wind" },
@@ -15,13 +15,13 @@
     "source": "Gcsim",
     "value": "ChargedAttack"
   },
-  "hits.splittingGalesArrows.0.multiplier": { "cause": "Unclassified", "value": 0.4092 },
+  "hits.splittingGalesArrows.0.multiplier": { "cause": "DiffersFromSource", "value": 0.4092 },
   "hits.splittingGalesArrows.0.poiseDamage": { "cause": "Unclassified", "value": 2 },
   "hits.splittingGalesArrows.1.area": {
-    "cause": "Unclassified",
+    "cause": "TargetCentred",
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 1 }
   },
-  "hits.splittingGalesArrows.1.multiplier": { "cause": "Unclassified", "value": 0.4092 },
+  "hits.splittingGalesArrows.1.multiplier": { "cause": "DiffersFromSource", "value": 0.4092 },
   "hits.splittingGalesArrows.1.poiseDamage": { "cause": "Unclassified", "value": 2 },
   "hits.stormeyeTicks.length": { "file": "burst.go", "line": 61, "source": "Gcsim", "value": 20 },
   "hits.stormeyeTicks.0-19.area": {
@@ -95,7 +95,10 @@
     "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
   },
   "plunges.low.hits.0.hitmarkFrames": { "cause": "Unclassified", "value": 0 },
-  "skill.hits.0.area": { "cause": "Unclassified", "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 } },
+  "skill.hits.0.area": {
+    "cause": "DiffersFromSource",
+    "value": { "angle": 6.283185307179586, "height": 2, "radius": 3 }
+  },
   "skill.hits.length": { "cause": "Unsourced", "value": 1 },
   "skill.hits.0.hitmarkFrames": { "file": "skill.go", "line": 55, "source": "Gcsim", "value": 51 },
   "skill.hits.0.multiplier": { "source": "Gcsim", "value": { "index": 0, "proudSkillGroupId": 2232 } },
