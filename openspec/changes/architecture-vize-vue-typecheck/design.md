@@ -34,9 +34,13 @@ If the Vue packages move before `tsrs` does, they need the TypeScript 7.1 beta, 
 
 The choice is taken at the pilot gate, against which in-process uses `scripts/` has.
 
+### Formatter and linter stay on oxfmt and oxlint
+
+`vize fmt` formats the pilot's 258 files identically to oxfmt on the current tree, but it has no `objectWrap` option: on a multi-line object literal oxfmt collapses it under the repo's `objectWrap: "collapse"`, and `vize fmt` keeps it expanded with trailing commas. `vize lint` has no plugin API, and oxlint runs sixteen repo-owned JS plugins (`scripts/src/oxlint/*.ts`) with type-aware rules, so those rules would be lost. Both stay.
+
 ### Pilot before scope
 
-`packages/vue-canvas-frame-headless` was proposed as the pilot for its size, but it is not a valid one. Its `typecheck` is `tsrs --fast`, not `vue-tsc`, and it has no `.vue` file: its only `defineComponent` sits in a browser test fixture. A diagnostic match on it would compare two outputs with no Vue source behind them. The pilot is therefore an open decision, recorded as task 2.2: a small package that runs `vue-tsc` today and has real `.vue` files. Its gate is that the mapper's diagnostics match `vue-tsc`'s on the same program, every diagnostic, both the error set and the locations. A mismatch is recorded in this design before the next package starts, and a mismatch that is a `vize` or `tsrs` defect is reported upstream.
+`packages/vue-canvas-frame-headless` was proposed as the pilot for its size, but it is not a valid one. Its `typecheck` is `tsrs --fast`, not `vue-tsc`, and it has no `.vue` file: its only `defineComponent` sits in a browser test fixture. A diagnostic match on it would compare two outputs with no Vue source behind them. The pilot is `packages/vue-phaserjs`: the smallest package that runs `vue-tsc` today and has real `.vue` files (27). Its result: `vue-tsc` reports nothing, and the `tsrs` run through the mapper reports no diagnostic in any `.vue` file, with 27 `.vue` files in the program. It reported one `.ts` diagnostic, the canvas mock in `src/test/setupCanvas.ts` missing `lang`. That diagnostic also appears with `tsrs` and no mapper, so it comes from the TypeScript 7.1 DOM typings, and the mock gained `lang` in the same change. Its gate is that the mapper's diagnostics match `vue-tsc`'s on the same program, every diagnostic, both the error set and the locations. A mismatch is recorded in this design before the next package starts, and a mismatch that is a `vize` or `tsrs` defect is reported upstream.
 
 ### `apps/web` last
 
@@ -59,23 +63,37 @@ flowchart TD
 
 ## Key files
 
-| File                                                       | Role                                                                                                               |
-| :--------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-interface/package.json`                  | `typecheck` runs `vue-tsc`                                                                                         |
-| `packages/genshin-world/package.json`                      | `typecheck` runs `vue-tsc`                                                                                         |
-| `packages/vue-phaserjs/package.json`                       | `typecheck` runs `vue-tsc`                                                                                         |
-| `packages/vue-canvas-frame-headless/package.json`          | the proposed pilot, rejected: its `typecheck` is `tsrs` today, and it has no `.vue` file (see the pilot paragraph) |
-| `apps/web/package.json`                                    | `typecheck` is `nuxt typecheck` followed by the service-worker `tsrs` check                                        |
-| `pnpm-workspace.yaml`                                      | the `typescript` override onto `typescript-native-bridge`, and the `vue-tsc` pin                                   |
-| `openspec/specs/architecture/monorepo-tooling/design.md`   | owns the TypeScript compiler section, rewritten as built at archive                                                |
-| `openspec/changes/architecture-rust-typescript-toolchain/` | the change this one depends on, for every plain `tsc` path                                                         |
+| File                                                       | Role                                                                                                                                    |
+| :--------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-interface/package.json`                  | `typecheck` runs `vue-tsc`                                                                                                              |
+| `packages/genshin-world/package.json`                      | `typecheck` runs `vue-tsc`                                                                                                              |
+| `packages/vue-phaserjs/package.json`                       | `typecheck` runs `tsrs --fast --runExternalCode`; its tsconfig's `contentMappers` names vize; `vue-tsc` stays for the declaration build |
+| `apps/web/package.json`                                    | `typecheck` is `nuxt typecheck` followed by the service-worker `tsrs` check                                                             |
+| `pnpm-workspace.yaml`                                      | the `typescript` override onto `typescript-native-bridge`, and the `vue-tsc` pin                                                        |
+| `openspec/specs/architecture/monorepo-tooling/design.md`   | owns the TypeScript compiler section, rewritten as built at archive                                                                     |
+| `openspec/changes/architecture-rust-typescript-toolchain/` | the change this one depends on, for every plain `tsc` path                                                                              |
 
 ## Notes
 
 - `tsrs --noEmit` on a config with `contentMappers` is refused without `--runExternalCode`. That flag is required for the mapper, and the scripts that will use it must pass it explicitly.
 - The `TS18069` message points at the mapper process. It is not a type error in the `.vue` file, so a green or red run here does not yet say anything about the Vue source.
-- Removing the native bridge and `vue-tsc` is not a consequence of the mapper working alone. The classic API has consumers outside the three `vue-tsc` packages: `scripts/` parses source text with it (`ts.createSourceFile`, about twenty files), `vite-plugin-checker` runs `vue-tsc` in dev, `rolldown-plugin-dts` generates `.vue` declarations through `dts.tsc.vue` (`packages/configuration/src/services/getTsdownConfigurationVue.ts`), and `@volar/typescript` backs the editor path. Each one needs a replacement or a decision to keep the classic API before the override can go.
+- Removing `vue-tsc` from a package is not the same as switching its `typecheck` script. Every non-private Vue package builds its declarations through `dts.tsc.vue` (`packages/configuration/src/services/getTsdownConfigurationVue.ts`), and `rolldown-plugin-dts` loads `vue-tsc` with `require.resolve("vue-tsc")` and runs it in a separate process. So `vue-tsc` stays a build dependency until declarations for `.vue` files come from somewhere else. `apps/web`'s `nuxt typecheck` runs `vue-tsc` the same way, through Nuxt. `scripts/` no longer uses the classic API: it reads sources through `oxc-parser` (`969e141dec`). `vite-plugin-checker` and `@volar/typescript` have no tracked references in the repo.
+- On Windows, `tsrs` does not launch the mapper's bare `node` command: with `node` in `exec` it reports `TS18069` without spawning anything. The same command with `node.exe` spawns and checks normally. The cause is not pinned down. The mapper's `exec` is declared by the `vize` package, so a local run on Windows needs a workaround until `tsrs` launches the bare name. CI on Linux is not checked by this.
+- `vize`'s Nuxt module (`@vizejs/nuxt`) does not touch `nuxt typecheck`. It replaces Nuxt's Vue SFC compiler and adds an oxlint-based lint checker in dev. Registering it would change how every component compiles, so it is a separate decision from the typecheck migration.
 - The 7.1 beta package does not replace the native bridge. It exports the CLI and the sync and async APIs, and `createSourceFile` and `createProgram` are undefined on its classic module, so it cannot host the consumers above.
+
+## Landmines
+
+Found while running the mapper on the repo. Each has its status against the upstream trackers; none is filed from this repo, since the owner files upstream reports by hand.
+
+- **Dynamic event listeners on components break the mapper's virtual code.** A `@[\`...\`]`listener on a component (not a native element) makes the mapper write the expression raw into a type literal as a key, which is a syntax error in the virtual file.`apps/web`has a set of`components/Dungeons`files that use it, and`vue-tsc`accepts them. No upstream issue matches; the nearest are vize`#10617`(undeclared`$`-prefixed template globals) and `#10251`(dynamic component refs), which are different. Candidate to report, with`components/Dungeons/MobileJoystick/ConfirmThumb.vue` as the reproduction.
+- **`tsrs` stops using the mapper after five transform failures.** It prints `TS18070` and skips the mapper for every file after that, so the rest of the `.vue` files go unchecked with no diagnostic. On `apps/web`, five files failed this way although the mapper transforms each of them when asked directly, and the failures were not seen on an earlier run. No upstream issue found for `TS18070` or the failure budget.
+- **`tsrs` does not spawn the mapper's bare `node` on Windows.** `node.exe` works. No upstream issue matches; `tsrs` `#694` (Windows path handling in default library lookup) is related but not the same failure.
+- **The mapper's virtual code imports `vize/content-mapper-helpers`**, so every package that uses the mapper needs `vize` resolvable from its own folder. This is a requirement, not a defect, and it changes the lockfile per package.
+- **`vue-tsc` is still needed for `.vue` declarations** (see Notes). Switching a package's `typecheck` script does not remove it.
+- **TypeScript 7.1's DOM typings require `lang` on `CanvasRenderingContext2D`**, which fails the canvas mock under `tsrs` and not under TypeScript 6.0.3. This is a compiler-version difference, not a vize defect.
+- **Nuxt's `typecheck` takes only `vue-tsc` or `golar`.** The checker list is fixed in `@nuxt/cli`, and no module can add to it, so the Nuxt route to the mapper is not in Nuxt's own command.
+- **Upstream performance is open:** vize `#10620` reports `vize check` slower than `tsc` with the same mapper on a mid-size Nuxt app. Speed is not measured here.
 
 ## Sources
 
