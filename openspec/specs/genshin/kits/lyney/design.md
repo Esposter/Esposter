@@ -35,9 +35,9 @@ flowchart LR
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/lyney), MIT: Lyney's strikes' hitmarks, cancel frames and reach, the Prop Arrow and its Grin-Malkin Hat, Bewildering Lights' hit and reach, and Wondrous Trick: Miracle Parade's Explosive Firework and its hat with their timings and the Pyrotechnic Strike's travel.
 - The game data, `~/Esposter/genshin-parity/text/ExcelBinOutput/`: groups 8431, 8432 and 8439 (the normal attack, Bewildering Lights and Miracle Parade groups, skill rows 10841, 10842 and 10845), with the skill's and burst's 15-second cooldowns and the burst's 60 energy on row 10845.
 - The cached wiki, `~/Esposter/cache/genshin-wiki/Category_Lyney_Talents.json`: the Normal Attack's plunge poise (10, 50 and 100), Miracle Parade's poise of 40, and Bewildering Lights' poise of 60.
-- Requirement "Prop Arrow and its Grin-Malkin Hat" (the 387-frame strike): provisional: the record marks the 387 Unsourced.
-- Requirement "Wondrous Trick: Miracle Parade" (the 563-frame strike): provisional: the record marks the 563 Unsourced.
 
 ## Open
 
 - [ ] **Lyney's plunges are physical or Pyro** — no source yet: gcsim's folder has no plunge file to give their element.
+- [ ] **The 387-frame Prop Arrow strike** — provisional: the record marks the 387 Unsourced.
+- [ ] **The 563-frame Miracle Parade strike** — provisional: the record marks the 563 Unsourced.

@@ -28,6 +28,6 @@ Her skill spawns a Yuegui two metres ahead of her, 63 frames after the cast (`~/
 ## Sources
 
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/yaoyao), MIT: Yaoyao's strikes' hitmarks, reaches and cancel frames, the charged attack's circle and frames, the skill's cast animation, and Moonjade Descent's circle, animation and frames. The source is on disk at `~/Esposter/cache/gcsim-v2.47.2/internal/characters/yaoyao/`, and the line numbers above are its files'; the proud skill groups 7731, 7732 and 7739 are in `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`.
-- **Constellation 1's stamina restore** (requirement): as gcsim's Constellation 1 does on each radish heal behind its own cooldown.
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/yaoyao/cons.go` lines 26 to 34, which restore 15 stamina on each radish heal behind a five-second cooldown, grounding the requirement "Constellation 1's stamina restore".
 
 ## Open

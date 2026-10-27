@@ -43,4 +43,3 @@ flowchart LR
 - [gcsim skill.go and dash.go](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/chasca), MIT: the Blessing's 80 points, its drain and its sprint drain.
 - [Hosted game data](../../hosted-game-data/design.md): the avatar's talent groups 10431, 10432 and 10439, read from the talent and skill kit tables. Checked here against the game's `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json` at level 1.
 - The line numbers above are gcsim v2.47.2's files in `~/Esposter/cache/gcsim-v2.47.2/internal/characters/chasca/`, and the wiki's Chasca talent page is `~/Esposter/cache/genshin-wiki/Category_Chasca_Talents.json`.
-- Requirement "Spirit Reins' Nightsoul Blessing", scenario "A press inside the Blessing leaves it": as gcsim's exit press lands none

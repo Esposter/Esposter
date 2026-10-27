@@ -53,5 +53,3 @@ flowchart TD
 
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/jahoda), MIT: her normal attacks' hitmarks and cancel windows, the charged shot's frames, Hidden Aces' frames, Savvy Strategy's windup, pursuit, fill, drains and cooldown, and the robots and heals the page lists as not yet built.
 - [Savvy Strategy: Splitting the Spoils](https://genshin-impact.fandom.com/wiki/Savvy_Strategy:_Splitting_the_Spoils) and [Hidden Aces: Seven Tools of the Hunter](https://genshin-impact.fandom.com/wiki/Hidden_Aces:_Seven_Tools_of_the_Hunter), Genshin Impact Wiki: the poise, gauge and internal cooldown of her flask hits, Meowball and robot strikes.
-- Three strikes and fully charged shot deal their poise: the wiki gives them
-- Three strikes and fully charged shot deal their poise, scenario "Strikes and shot deal their poise": the wiki gives it

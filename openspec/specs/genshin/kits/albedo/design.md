@@ -36,7 +36,6 @@ flowchart LR
 
 ## Sources
 
-- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/albedo), MIT: Albedo's strikes' hitmarks and cancels, the charged attack, Solar Isotoma's hit and its Transient Blossom's tick, Tectonic Tide's and the Fatal Blossoms' frames and areas, and Constellation 2's and the passives' values, read for the reach they give.
+- [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/albedo), MIT: Albedo's strikes' hitmarks and cancels, the charged attack, Solar Isotoma's hit and its Transient Blossom's tick, Tectonic Tide's and the Fatal Blossoms' frames and areas, and Constellation 2's and the passives' values, read for the reach they give, and Constellation 4's Plunging Attack DMG raise of 30% for a second, grounding the requirement "Constellation 4 raises the active member's plunges inside the Solar Isotoma".
 - The dump's proud skill groups `3831`, `3832` and `3839`, and its talents `381` to `386`, which hold Constellations 1 to 6, read from `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json` and `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json`.
 - The wiki pages cached at `~/Esposter/cache/genshin-wiki/Category_Albedo_Talents.json`: Abiogenesis: Solar Isotoma (duration 30 seconds, cooldown 4 seconds), Rite of Progeniture: Tectonic Tide (the Fatal Blossom row's gauge, tag and poise, and its 12-second cooldown and 40 energy) and Calcite Might.
-- gcsim v2.47.2 gives it: the Constellation 4 Plunging Attack DMG raise of 30% for a second, grounding the requirement "Constellation 4 raises the active member's plunges inside the Solar Isotoma".

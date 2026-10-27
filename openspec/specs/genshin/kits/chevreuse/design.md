@@ -44,9 +44,8 @@ flowchart LR
 - The wiki's Chevreuse talent page (`~/Esposter/cache/genshin-wiki/Category_Chevreuse_Talents.json`): the poise of the Overcharged Ball (125), the cooldowns, the burst's energy cost and the Attribute Scaling's charged attack stamina (25).
 - The game's `ProudSkillExcelConfigData` (`~/Esposter/genshin-parity/text/ExcelBinOutput`), which holds proud skill groups 9031, 9032 and 9039.
 - The line numbers above are gcsim v2.47.2's files in `~/Esposter/cache/gcsim-v2.47.2/internal/characters/chevreuse/`, and `~/Esposter/cache/gcsim-v2.47.2/pkg/core/combat/hitbox.go` and `~/Esposter/cache/gcsim-v2.47.2/pkg/enemy/enemy.go` in the same tree.
-- Requirement _Short-Range Rapid Interdiction Fire press and hold_: with the hold threshold provisional until a recording settles it.
-- Scenario _Holding the skill strikes the hold box_: the hold threshold stays provisional until a recording settles it.
 
 ## Open
 
 - [ ] **The 21-metre reach of the shells** — no source yet: the 15-metre targeting area it is built from is in no gcsim file or wiki page on disk.
+- [ ] **The hold threshold** — provisional until a recording settles it.
