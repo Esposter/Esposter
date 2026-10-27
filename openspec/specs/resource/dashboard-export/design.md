@@ -20,9 +20,6 @@ The Dashboard declares the Portable capability for export only, so its resource 
 
 ```mermaid
 flowchart LR
-  PAGE["Export PNG<br/>resource menu"] --> CAP["capture the dashboard grid<br/>markup to SVG with styles"]
-  CAP --> RAS["rasterize at two times the pixel ratio"]
-  RAS --> FILE1["name.png"]
   TILE["Export CSV<br/>tile menu, bound visual"] --> DRAW["computeDatasetVisualPropsData<br/>the grouped rows the visual draws"]
   DRAW --> CSV["createDatasetCsv<br/>formula cells neutralised"]
   CSV --> FILE2["visual-title.csv"]
@@ -57,9 +54,7 @@ flowchart LR
 | `apps/web/app/components/Resource/Dashboard/View.vue`                      | the published renderer that hosts the page export                                 |
 | `apps/web/server/services/dashboard/projectDatasetToQuery.ts`              | the publish projection that decides which columns the snapshot holds              |
 
-Three files live under `apps/web/app/services/dashboard/export/`: `exportDashboardPng.ts`, `exportDashboardVisualCsv.ts` and `createDrawnDataset.ts`.
-
 ## Notes
 
-- The page image is a picture, so it is not an import format. The Portable capability's import path stays off for the Dashboard.
+- The page image is a picture, so it is not an import format.
 - The page image reflects the column count the page is drawn at when the command runs. A published view captures at the breakpoint column count the viewer's width picks, the same one it draws at.

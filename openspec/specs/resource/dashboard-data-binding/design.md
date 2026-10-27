@@ -8,7 +8,7 @@ A dashboard visual can bind to a `DatasetReference` (survey responses, a Sheet r
 flowchart LR
   ED["Dashboard Editor blade<br/>Bind-to-data form"] -->|"pick provider → resource →<br/>x column + series rows"| VIS["Visual.dataset<br/>{ reference, query }"]
   VIS -->|render / per-visual refresh| READ["dataset.readDataset"]
-  READ --> PROV["DatasetProviderMap<br/>ProgramStatus · Sheet · SurveyResponses"]
+  READ --> PROV["DatasetProviderMap"]
   PROV -->|rows| AGG["client aggregation<br/>count/sum/avg/min/max per series"]
   AGG --> CHART["chart data"]
   PUB["publishResource"] -->|bakes resolved data| SNAP["published snapshot<br/>(no live reads on /view)"]
@@ -53,4 +53,4 @@ interface VisualDatasetBinding {
 - Aggregation runs client-side over the row-capped dataset — no server query language. Revisit only if the row cap becomes a real limit ([dataset row cap](../../../deferred/resource/dataset-row-cap-pagination/design.md)).
 - Fetch on dashboard load + manual refresh; live updates are deferred ([realtime dataset refresh](../../../deferred/resource/realtime-dataset-refresh/design.md)).
 - A bound visual whose source is deleted or unreadable renders an error state, never breaks the dashboard; a source that is gone says to pick another or restore it, there and under the binding form's Source picker ([datasets](../../architecture/dataset/design.md)).
-- A viewer's CSV and the published page image are read from the snapshot, so they hold no live value and no column the visual's query does not read ([dashboard export](../dashboard-export/design.md)).
+- A viewer's CSV and the published page image are read from the snapshot, so they hold no live value ([dashboard export](../dashboard-export/design.md)).

@@ -38,7 +38,7 @@ So the `import "apexcharts/features/…"` sits beside the option that needs it r
 | `features/link`                                      | `getVisualLinkChartOptions` — `chart.link` and the group      |
 | `features/perspectives`                              | `useVisualPerspective` — `chart.perspectives` on the instance |
 
-Importing the module that builds an option is what makes that option real, so a new consumer of any of them cannot pick up the config without the feature. Adding an option from a module not listed above means adding its import next to it — the major-version upgrade turned every one of these off at once, which is why they are colocated rather than gathered.
+Importing the module that builds an option is what makes that option real, so a new consumer of any of them cannot pick up the config without the feature. Adding an option from a module not listed above means adding its import next to it — each registration is opt-in, so one library upgrade can switch every one of these off at once, which is why they are colocated rather than gathered.
 
 ## The watermark
 

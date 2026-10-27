@@ -66,8 +66,8 @@ Soft delete leaves the partition intact: history survives the [recycle bin](../r
 
 ## Notes
 
-- Resources are single-owner and every procedure is owner-scoped, so every actor on a resource's trail is its owner. The blade therefore shows no actor column — it would say the same name on every line — and the one distinction it draws is an agent's key, named in the detail.
+- Resources are single-owner and every procedure is owner-scoped, so every actor on a resource's trail is its owner. The blade therefore shows no actor column — it would say the same name on every line.
 - Icons are severity-neutral. An activity trail records what happened; it does not judge it.
 - Activity is the durable trail; the [notifications bell](../notifications/design.md) is ephemeral session feedback. They share event sources but never storage.
 - No cross-resource feed (the portal's subscription-level log) — per-resource only until something needs more.
-- If partitions ever grow uncomfortable, add a timer sweep in the same shape as message retention rather than capping writes.
+- Entries are not aged out by a timer and writes are not capped; they are removed only by the purge-time sweep under Cleanup.

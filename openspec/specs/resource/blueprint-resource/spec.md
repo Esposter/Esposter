@@ -145,16 +145,16 @@ The deploy dialog SHALL list each entry under the name it will be created with, 
 
 ### Requirement: A Blueprint's webpage and email entries deploy as fresh documents
 
-The cutover SHALL remove the editor content from each Blueprint entry of webpage or email type, so that deploying the entry creates an empty document.
+A Blueprint's webpage or email entry deploys as an empty document, and a revision whose entry still holds editor content is refused on deploy for that entry.
 
 #### Scenario: A Blueprint's webpage entry deploys as a fresh document
 
 - **GIVEN** a Blueprint whose captured entry is a webpage
-- **WHEN** an owner deploys the Blueprint after the cutover
+- **WHEN** an owner deploys the Blueprint
 - **THEN** the deployed webpage starts as an empty document
 
 #### Scenario: A Blueprint revision from before the cutover is refused
 
-- **GIVEN** a Blueprint revision saved before the cutover that holds a webpage entry with editor content
+- **GIVEN** a Blueprint revision whose webpage or email entry still holds editor content
 - **WHEN** an owner deploys that revision
 - **THEN** the deploy fails for that entry with the parse error

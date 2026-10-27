@@ -4,6 +4,13 @@ A dashboard visual carries a visual type, a chart configuration and a dataset bi
 
 ## How it works
 
+```mermaid
+flowchart LR
+  DUP["Duplicate visual"] --> CLONE["duplicateVisual"] --> SAVE{"Dashboard save refused?"}
+  SAVE -->|"yes"| TAKE["Take the copy back out"]
+  SAVE -->|"no"| KEEP["Keep the copy"]
+```
+
 - **Duplicate visual** sits on the tile's corner between Edit and Delete. The visual store's `duplicateVisual` creates a new `Visual` with a new id and the original's type, chart configuration and binding — its reference and query, never the publish snapshot baked into a published dashboard's binding, which would draw that frozen data forever — placed directly under the original at its width and height.
 - **One write path.** The copy is saved with the dashboard through the same save as every edit, on the dashboard it was issued on, and taken back out if the save is refused, as a refused delete puts its visual back.
 - **The copy opens nothing.** It is the original's twin on the grid; clicking it edits it like any tile.

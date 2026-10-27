@@ -27,7 +27,7 @@ flowchart TD
   RESOLVE --> OUT{"Outside the area,<br/>or the landing page?"}
   OUT -->|yes| EMPTY["No trail — this is where one starts"]
   OUT -->|no| BACKUP{"Destination already on the trail?"}
-  BACKUP -->|yes| TRUNCATE["Truncate to it<br/>(a crumb, or a close affordance)"]
+  BACKUP -->|yes| TRUNCATE["Truncate to it"]
   BACKUP -->|no| DRILL{"Did it leave a page<br/>that can be a crumb?"}
   DRILL -->|yes| APPEND["Append that page"]
   DRILL -->|no| CARRY["Carry the trail through unchanged"]
@@ -91,7 +91,7 @@ A link you send someone lands them on the direct view: they did not walk your pa
 
 ## Notes
 
-- Adding a page to the model is one map entry; adding a page that should never be a crumb is nothing at all.
+- Adding a page to the model is one map entry.
 - **Leaving the area or landing back on `/resource-explorer` is the only reset**, and everything short of a real drill-in carries the trail untouched. A direct arrival is therefore not a case the resolver detects — it is the empty trail that navigating out of the area already left behind. The consequence is the one worth stating: a rule that instead reset on "did not come from a crumb page" empties the trail on the second resource opened in a row, and one that appends without checking the navigation left the page turns a filter change on the list into a crumb linking to the page already open.
 - A trail read back off an entry is validated against the map before it renders — an entry written by an older release, or edited in devtools, is filtered down to slugs that exist in the map rather than rendering a crumb to nowhere.
 - A crumb is a real link; the title is plain text. Anything not navigable is not a crumb, which is why the current page cannot be one.

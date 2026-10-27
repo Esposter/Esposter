@@ -11,7 +11,7 @@ Upload and verification. The client hashes the file and asks for a write target 
 ```mermaid
 flowchart TD
   upload["Client hashes the file"] --> held{"Address already held?"}
-  held -->|yes| touch["Server touches the blob — nothing reserved, no PUT"]
+  held -->|yes| touch["Server touches the blob"]
   held -->|no| reserve["Reserve quota, sign a create-only SAS"]
   reserve --> put["Client PUTs with If-None-Match: *"]
   put --> raced{"Blob Storage answers 412?"}
@@ -28,7 +28,7 @@ Release. Every path that can leave a file unreferenced hands its candidate hashe
 
 ```mermaid
 flowchart TD
-  released["Release, on every path"] --> lock["Under the resource lock, read the version rows and the working-copy rows"]
+  released["Release, on every path"] --> lock["Read the rows under the resource lock"]
   lock --> held{"Named by a version or working-copy row, or written within the grace window?"}
   held -->|yes| keep["Kept"]
   held -->|no| gate{"Collection enabled?"}
@@ -100,10 +100,8 @@ A reserve names the old content's assets and the new content's together, so a wr
 ## Notes
 
 - The scan is the sharp edge, and it runs at write time: a scan that misses a reference leaves a row unwritten, and release then deletes a file a version or the working copy embeds, which fails as a broken image in a published page rather than as an error. The counting-only period is the guard: an undercount shows up as a file nothing deletes.
-- **The working-copy rows need no backfill, by evidence.** The migration does not backfill them. Checked against the stores: production's 11 resources with a working copy have no `files/` blob and no working copy naming an asset, and develop has no resource with a working copy. So no asset reference exists to be missing a row, and the rows are complete from the first save after deploy. Collection still starts counting-only; the same check reruns before the flag flips, since a later upload is covered only by its own save.
-- The grace window is judged by the blob's last-modified time at the moment release decides, so an upload that dedupes onto a file moves it out of collection before the save that names it is stored.
-- A held upload is free. Only a fresh address reserves quota, and a duplicate charges each copy it makes.
-- Anonymous reads are not a grant. The published channel's current row is the only thing that makes a file public, so a file a revision or the working copy alone holds is refused to anonymous callers.
+- **The working-copy rows need no backfill, by evidence.** The migration does not backfill them. Checked against the stores: production's resources with a working copy have no `files/` blob and no working copy naming an asset, and develop has none with a working copy. So no asset reference exists to be missing a row, and the rows are complete from the first save after deploy. Collection still starts counting-only; the same check reruns before the flag flips, since a later upload is covered only by its own save.
+- The grace window is judged by the blob's last-modified time at the moment release decides.
 - `releaseResourceAssets` publishes its deletions after the transaction, so a failed publish leaves the file stored and charged until a release names it again.
 
 ## Sources

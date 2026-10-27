@@ -10,8 +10,9 @@ This is the authoring path that makes blueprints practical: the Editor blade's s
 flowchart LR
   SEL["explorer multi-select or<br/>row menu command"] -->|"captureBlueprint { ids, name }"| READ["read each resource's<br/>content blob (owner-gated)"]
   READ --> KEYS["derive entry keys<br/>from resource names"]
-  KEYS --> REWRITE["deep-walk content strings —<br/>a selected id becomes {{entry:key}}"]
-  REWRITE --> CREATE["create Blueprint resource<br/>manifest = entries, parameters = []"]
+  KEYS --> REWRITE{"a selected id?"}
+  REWRITE -->|"yes, becomes {{entry:key}}"| CREATE["create Blueprint resource<br/>manifest = entries, parameters = []"]
+  REWRITE -->|"no, kept as raw id"| CREATE
   CREATE --> NAV["navigate to the new<br/>blueprint's Editor blade"]
 ```
 
@@ -42,6 +43,6 @@ flowchart LR
 ## Notes
 
 - Capture + deploy together generalize Duplicate from one resource to a wired graph — Duplicate stays (one click, no manifest); capture is for setups worth repeating.
-- Round-trip property worth a test: capture a set, deploy it with no parameters, and the deployed set's internal wiring is isomorphic to the original — this is the natural integration spec for both proposals.
+- Round-trip property worth a test: capture a set, deploy it with no parameters, and the deployed set's internal wiring is isomorphic to the original.
 - Contents are captured verbatim (only ids rewritten): volatile runtime state that lives _outside_ content blobs (survey responses, program participants, publications) is naturally excluded — a captured funnel deploys clean.
 - Capture is also the cheapest **agent training set**: a captured manifest is a ground-truth example of a working resource graph in exactly the format an AI author would need to emit ([agentic-by-design note](../blueprint-resource/design.md)).
