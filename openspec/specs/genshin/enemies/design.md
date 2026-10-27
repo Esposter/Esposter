@@ -48,15 +48,15 @@ What the game's table does not hold is authored from the wiki in `EnemyKindTrait
 
 A region's data places its enemies in camps, each member with its kind, its level at World Level 0, its spawn and its patrol. The world spawns each member at the level its World Level raises it to, as the [Adventure Rank](../adventure-rank/design.md) page sets out, and a change of World Level spawns every camp anew. The world spawns a camp when its region's data arrives, and drops it when the region leaves reach (`packages/genshin-world/src/components/World/Enemies/Index.vue`). A member defeated earlier is spawned again only once its respawn time has passed (`packages/genshin-world/src/services/enemy/computeEnemyRespawnTime.ts`, `packages/genshin-world/src/services/enemy/checkIsEnemyRespawned.ts`), so an enemy never comes back in view:
 
-| Camp                   | A defeated member comes back                                                                                                  |
-| :--------------------- | :---------------------------------------------------------------------------------------------------------------------------- |
-| Common enemies only    | 12 hours after its defeat (`packages/genshin-world/src/services/enemy/constants.ts`)                                          |
-| With an elite among it | at the next daily reset, 04:00 on the server's clock (`packages/genshin-world/src/services/enemy/computeEnemyRespawnTime.ts`) |
-| With a boss among it   | 5 seconds after its Trounce Blossom is claimed, and while unclaimed at the first teleport after its defeat                    |
+| Camp                   | A defeated member comes back                                                                                                                     |
+| :--------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Common enemies only    | 12 hours after its defeat (`packages/genshin-world/src/services/enemy/constants.ts`)                                                             |
+| With an elite among it | at the next daily reset, 04:00 on the server's clock (`packages/genshin-world/src/services/enemy/computeEnemyRespawnTime.ts`)                    |
+| With a boss among it   | 5 seconds (`BOSS_RESPAWN_AFTER_CLAIM_DURATION`) after its Trounce Blossom is claimed, and while unclaimed at the first teleport after its defeat |
 
 The wiki's Reset page gives the first two rows' timers: a common enemy outside an elite's group comes back 12 hours after its defeat, and the commons of an elite's group come back with the elite at the daily reset, as the wiki gives for elites with limited spawn points per day. The boss row's five seconds is the build's `BOSS_RESPAWN_AFTER_CLAIM_DURATION` (`packages/genshin-world/src/services/bosses/constants.ts`), applied by `packages/genshin-world/src/services/enemy/computeEnemyRespawnTime.ts`; no page on disk gives it as the game's.
 
-The daily reset is the server's 04:00, UTC+8, the one clock every reset of the world is read on, as the [reset clock](../reset-clock/design.md) sets out (`packages/genshin-world/src/services/time/constants.ts` for the hour and the zone, and the `REFRESH_DAILY` rows of `~/Esposter/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json` with `14400`, the 4:00 hour).
+The daily reset is the server's 04:00, UTC+8, as the [reset clock](../reset-clock/design.md) sets out (`packages/genshin-world/src/services/time/constants.ts` for the hour and the zone, and the `REFRESH_DAILY` rows of `~/Esposter/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json` with `14400`, the 4:00 hour).
 
 A common or elite member's return is saved as the [save data](../save-data/design.md) page keeps it (`packages/genshin-world/src/models/enemy/EnemyRespawnSave.ts`). A boss camp's defeat is saved as its moment of defeat (`packages/genshin-world/src/models/enemy/BossDefeatSave.ts`), beside the blossom it left and the last teleport, so a reload reads the same return.
 
@@ -70,7 +70,7 @@ A defeated enemy's drops are rolled by `computeEnemyDrops` from its level's band
 
 The World Enemies component (`packages/genshin-world/src/components/World/Enemies/Index.vue`) steps every enemy in reach on the engine's fixed-step loop, and draws them all as one instanced capsule, stood on the ground, turned to its heading and tinted by its state. Its target is the character's feet, which the world screen hands down, so every enemy turns on the body wherever it goes. Where no character stands, as on a reference's held camera or a witness render, the enemies have no target. A screen holding the world holds its enemies too, and a witness render draws none, since the references it is judged against show none.
 
-A capsule that a hit landed on is tinted white for 0.15 seconds after the hit, and a flash 0.3 metres across stands at its middle for 0.1 seconds, drawn as a second instanced mesh. Both timings, the flash's size and the tint's colour are provisional (`ENEMY_HIT_TINT_SECONDS`, `ENEMY_HIT_FLASH_SECONDS` and `ENEMY_HIT_FLASH_RADIUS`, in `packages/genshin-world/src/services/enemy/constants.ts`).
+A capsule that a hit landed on is tinted white for 0.15 seconds (`ENEMY_HIT_TINT_SECONDS`) after the hit, and a flash of radius 0.3 metres (`ENEMY_HIT_FLASH_RADIUS`) stands at its middle for 0.1 seconds (`ENEMY_HIT_FLASH_SECONDS`), drawn as a second instanced mesh. Both timings, the flash's size and the tint's colour are provisional, as `packages/genshin-world/src/services/enemy/constants.ts` marks them.
 
 ## Cost
 
@@ -107,32 +107,11 @@ A capsule that a hit landed on is tinted white for 0.15 seconds after the hit, a
 ## Notes
 
 - **The published tables hold a partial dump.** The `enemies/kinds` record holds the Hilichurl Fighter as the game's table has it, and `enemies/levelCurves` its curves' first ten levels; `genshin:assets enemies` publishes every kind and curve from the dump when it is run over it.
-- **The AI's numbers are provisional.** Its ranges, speeds and timings, the leash, the capsule's size, and the hit's tint and flash are starting points marked in `packages/genshin-world/src/services/enemy/constants.ts`, each to be measured off a recording or the Hilichurl's own clips.
+- **The AI's numbers are provisional.** Its ranges, speeds and timings, the leash and the capsule's size are starting points marked in `packages/genshin-world/src/services/enemy/constants.ts`, each to be measured off a recording or the Hilichurl's own clips.
 - **Character EXP is computed, not yet given.** The party's levels take it, since a quest's finish gives its Character EXP through `raiseCharacterByExp`, but nothing grants a defeat's roll yet, so a defeat's EXP is rolled and left. A defeat's drops are placed and picked up by the world's screen, and the component emits `strike` and `defeat` for it (`packages/genshin-world/src/components/World/Enemies/Index.vue`).
-- **A boss's defeat lasts until the boss comes back.** Its moment of defeat is saved with its blossom and the last teleport, as [save data](../save-data/design.md) holds, so a reload keeps the boss down until its blossom is claimed or the next teleport. The component seeds its defeats from the save as it mounts (`packages/genshin-world/src/components/World/Enemies/Index.vue`). Every other defeat's return instant is kept by the save, so a reload keeps the enemy away until it is due (`packages/genshin-world/src/models/enemy/EnemyRespawnSave.ts`).
 - **Windrise's camp stands where we put it.** Its place and level are ours until the game's own spawns are read (`packages/genshin-world/src/data/regions/mondstadt.json`).
 - **A launch lasts the stagger, and every enemy can be launched.** The game's airtime follows the impulse's vertical force against the enemy's weight, and an Air hit on the ground falls to Heavy when its vertical force is under 5.5 times the enemy's weight, or does nothing for the kinds immune to Air staggers. Neither weight nor that immunity is built, so a launching hit launches every enemy it staggers (`packages/genshin-world/src/services/kit/strikeEnemy.ts`), for the provisional `ENEMY_STAGGER_SECONDS` (`packages/genshin-world/src/services/enemy/constants.ts`), and a hit on an enemy already in the air restarts its launched status rather than adding one (`packages/genshin-world/src/services/enemy/addEnemyStatus.ts`).
 - **The party's combat leaves after a provisional grace.** The party is in combat while an enemy is in an engaged state on it, and leaves once none has been for `COMBAT_CLEAR_SECONDS` (`packages/genshin-world/src/services/enemy/constants.ts`), 5 seconds, provisional until a recording measures it (`packages/genshin-world/src/services/enemy/stepCombat.ts`): the wiki gives the clear timers but no figure.
-
-- **The family is the archive's group, and the type is the security level** — `~/Esposter/genshin-parity/text/ExcelBinOutput/AnimalCodexExcelConfigData.json` (`subType`) and `~/Esposter/genshin-parity/text/ExcelBinOutput/MonsterExcelConfigData.json` (`securityLevel`, ELITE on 439 rows and BOSS on 300, common where absent), as `scripts/src/services/genshinAssets/enemies/buildEnemyKinds.ts` reads them.
-- **An enemy is drawn as a capsule, tinted by its AI's state** — `packages/genshin-world/src/components/World/Enemies/Index.vue`, which tints each capsule by `EnemyStateColorMap`.
-- **`stepEnemy` is one deterministic step that reads no clock or random source** — `packages/genshin-world/src/services/enemy/stepEnemy.ts`.
-- **`damageEnemy` takes the damage and poise damage combat's formula computes for a hit** — `packages/genshin-world/src/services/enemy/damageEnemy.ts`, fed by `packages/genshin-world/src/services/kit/strikeEnemy.ts`, which prices the hit through `getDamage`.
-- **A kit's hit lands through `strikeEnemy`, shattering a Freeze first and applying its element** — `packages/genshin-world/src/services/kit/strikeEnemy.ts`, and `packages/genshin-world/src/services/combat/aura/applyBluntHit.ts` for the Freeze's shatter.
-- **An Air hit knocks an enemy it leaves staggered airborne** — `packages/genshin-world/src/services/kit/strikeEnemy.ts` launches on the Stagger state, which a broken poise or a broken shield both give.
-- **A hit on an airborne enemy restarts its launched status rather than adding one** — `packages/genshin-world/src/services/enemy/addEnemyStatus.ts`, which restarts a status whose id the enemy already carries.
-- **`genshin:assets enemies` publishes each placed kind and its curves to the hosted game data** — `scripts/src/services/genshinAssets/enemies/buildEnemyKinds.ts`, which collects the kinds the camps place and every curve they name.
-- **The world reads the kind and curve records as it opens** — `packages/genshin-world/src/services/enemy/readEnemyTables.ts`.
-- **The kind table holds what the wiki gives of each kind the world places** — `packages/genshin-world/src/services/enemy/EnemyKindTraitsMap.ts`.
-- **A camp spawns when its region's data arrives and drops when the region leaves reach** — `packages/genshin-world/src/components/World/Enemies/Index.vue` (the camps of the regions whose data has arrived), and `packages/genshin-world/src/composables/useRegionData.ts`.
-- **A defeat's return instant is kept by the save, so a reload keeps the enemy away until it is due** — `packages/genshin-world/src/components/World/Enemies/Index.vue` (`saveRespawn`) and `packages/genshin-world/src/models/enemy/EnemyRespawnSave.ts`.
-- **A boss camp's defeat is saved, so a reload keeps the boss down until its return** — `packages/genshin-world/src/components/World/Enemies/Index.vue` (`saveBossDefeat`, and the seeding of its defeat map from the save) and `packages/genshin-world/src/models/enemy/BossDefeatSave.ts`. `saveRespawn` is emitted only for a camp that gives a return time.
-- **Each spawned enemy is kept in one map by its spawn key** — `packages/genshin-world/src/components/World/Enemies/Index.vue` and `packages/genshin-world/src/services/enemy/getSpawnKey.ts`.
-- **Enemies in reach step on the fixed-step loop and draw as one instanced capsule** — `packages/genshin-world/src/components/World/Enemies/Index.vue` (`createFixedStepLoop`, `createInstancedMesh`).
-- **A hit tints its capsule white for 0.15 seconds and flashes a 0.3 metre mark for 0.1 seconds** — `packages/genshin-world/src/services/enemy/constants.ts` (`ENEMY_HIT_TINT_SECONDS`, `ENEMY_HIT_FLASH_SECONDS`, `ENEMY_HIT_FLASH_RADIUS`, `HIT_TINT_COLOR`) and `packages/genshin-world/src/components/World/Enemies/Index.vue`.
-- **Enemies draw in two instanced meshes and allocate nothing per frame** — `packages/genshin-world/src/components/World/Enemies/Index.vue` (two instanced meshes, their colour and matrix objects made once at module scope) and `packages/genshin-world/src/services/world/composeHeadingMatrix.ts`.
-- **Only the camps of regions in reach are stepped** — `packages/genshin-world/src/composables/useRegionData.ts`, which holds only the wanted regions' data, and `packages/genshin-world/src/components/World/Enemies/Index.vue`.
-- **The component emits `strike` and `defeat` for a defeat** — `packages/genshin-world/src/components/World/Enemies/Index.vue`.
 
 ## Sources
 
@@ -148,6 +127,7 @@ A capsule that a hit landed on is tinted white for 0.15 seconds after the hit, a
 - [Module:Drops Table](https://genshin-impact.fandom.com/wiki/Module:Drops_Table), Genshin Impact Wiki, not in the wiki cache: the drops table's display code, which reads its rates, Mora and Character EXP from its data page.
 - [Adventure EXP](https://genshin-impact.fandom.com/wiki/Adventure_EXP), Genshin Impact Wiki, not in the wiki cache: the Adventure EXP sources the open item below rests on.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's dump of the game's data: `MonsterExcelConfigData`, `MonsterCurveExcelConfigData` and `AnimalCodexExcelConfigData`, the tables the kinds are read from.
+- `~/Esposter/genshin-parity/text/ExcelBinOutput/MonsterCurveExcelConfigData.json`, the defense curve's multipliers; grounds the requirement "Enemy stats grow by the game's level curves".
 
 ## Reference
 

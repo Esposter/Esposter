@@ -6,7 +6,9 @@ The game's bosses as pure rules in genshin-world. A normal boss stays defeated u
 
 ### Requirement: A normal boss returns only after its blossom is claimed
 
-A normal boss SHALL stay defeated until its Trounce Blossom is claimed, and SHALL return five seconds after a claim.
+A normal boss SHALL stay defeated until its Trounce Blossom is claimed.
+
+A normal boss SHALL return five seconds after a claim.
 
 #### Scenario: Unclaimed boss stays defeated
 
@@ -22,7 +24,7 @@ A normal boss SHALL stay defeated until its Trounce Blossom is claimed, and SHAL
 
 ### Requirement: The weekly reset falls on Monday at 04:00
 
-The weekly reset SHALL fall on Monday at 04:00 on the server's clock (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, id 800001, `14400;360000`, for Monday 04:00).
+The weekly reset SHALL fall on Monday at 04:00 on the server's clock.
 
 #### Scenario: Moment before the reset belongs to the week before
 
@@ -38,7 +40,9 @@ The weekly reset SHALL fall on Monday at 04:00 on the server's clock (`~/Esposte
 
 ### Requirement: The first three weekly claims of a week are priced at 30 resin
 
-The first three weekly-boss claims of each week SHALL cost 30 resin each, every later claim SHALL cost 60 resin, and the count SHALL cover all weekly bosses together (the export's weekly discount row, `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/ConstValueExcelConfigData.json` `CONST_VALUE_WEEKLY_BOSS_RESIN_DISCOUNT_PARAM`, gives three claims at 0.5).
+The first three weekly-boss claims of each week SHALL cost 30 resin each.
+
+Every later claim SHALL cost 60 resin, and the count SHALL cover all weekly bosses together.
 
 #### Scenario: First claim of the week costs 30 resin
 

@@ -6,7 +6,7 @@ An artifact rolled, enhanced and locked as the game does it: a drop's main and m
 
 ### Requirement: A new artifact's main affix comes from its slot
 
-A new artifact's main affix SHALL be drawn from the attributes its slot may carry, in proportion to the game's weights. (a Plume's depot 2000 holds only flat ATK, in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/ReliquaryMainPropExcelConfigData.json`).
+A new artifact's main affix SHALL be drawn from the attributes its slot may carry, in proportion to the game's weights.
 
 #### Scenario: Plume of Death rolls flat ATK
 
@@ -45,7 +45,9 @@ A new artifact's minor affixes SHALL be drawn from its rarity's pool, never repe
 
 ### Requirement: Enhancing costs Mora per EXP point and the recovered share is free
 
-The Mora an enhancement costs SHALL be one for each point of EXP its materials give and each fodder's base EXP, and the recovered share of a fodder's levelling SHALL cost nothing.
+The Mora an enhancement costs SHALL be one for each point of EXP its materials give and each fodder's base EXP.
+
+The recovered share of a fodder's levelling SHALL cost nothing.
 
 #### Scenario: Recovered share of a fodder costs no Mora
 
@@ -62,7 +64,7 @@ The Mora an enhancement costs SHALL be one for each point of EXP its materials g
 
 ### Requirement: Each enhancement's EXP has a chance of a bonus
 
-Each enhancement's EXP SHALL be multiplied by five one time in a hundred, by two nine times in a hundred, and otherwise left as it is. (the multiples two and five are in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/ReliquaryPowerupExcelConfigData.json`)
+Each enhancement's EXP SHALL be multiplied by five one time in a hundred, by two nine times in a hundred, and otherwise left as it is.
 
 #### Scenario: Five-times bonus
 
@@ -84,7 +86,7 @@ Each enhancement's EXP SHALL be multiplied by five one time in a hundred, by two
 
 ### Requirement: Levels follow the table and EXP past the top is lost
 
-An artifact's level SHALL rise as far as its EXP reaches the table's costs, and EXP beyond its highest level SHALL be lost. (each level's `exp` in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/ReliquaryLevelExcelConfigData.json`).
+An artifact's level SHALL rise as far as its EXP reaches the table's costs, and EXP beyond its highest level SHALL be lost.
 
 #### Scenario: EXP past the highest level is wasted
 
@@ -95,7 +97,9 @@ An artifact's level SHALL rise as far as its EXP reaches the table's costs, and 
 
 ### Requirement: Every fourth level adds or raises a minor affix
 
-Each fourth level an artifact passes SHALL add a minor affix to an artifact holding fewer than four, or raise one of its four minor affixes. (`addPropLevels` 5, 9, 13, 17 and 21 in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/ReliquaryExcelConfigData.json`).
+Each fourth level an artifact passes SHALL add a minor affix to an artifact holding fewer than four.
+
+Each fourth level an artifact passes SHALL raise one of its four minor affixes.
 
 #### Scenario: Fewer than four minor affixes gains one
 
@@ -127,7 +131,9 @@ A locked artifact SHALL never be used as fodder for another artifact.
 
 ### Requirement: Instructor's four-piece gives the team Elemental Mastery on a reaction
 
-A reaction the Instructor's wearer triggers on the field SHALL give every deployed member of the team the bonus's Elemental Mastery for its seconds, restarted rather than stacked. (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, affix 2100071: EM 120 for 8s).
+A reaction the Instructor's wearer triggers on the field SHALL give every deployed member of the team the bonus's Elemental Mastery for its seconds.
+
+The Elemental Mastery buff SHALL be restarted rather than stacked.
 
 #### Scenario: Reaction on the field gives the team the buff
 
@@ -149,7 +155,7 @@ A reaction the Instructor's wearer triggers on the field SHALL give every deploy
 
 ### Requirement: The Exile's four-piece regenerates the others' energy after a burst
 
-A burst the wearer of The Exile's four-piece uses SHALL start a field that gives every other deployed member energy at three ticks, two seconds apart. (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, affix 2100091: 2 Energy every 2s for 6s).
+A burst the wearer of The Exile's four-piece uses SHALL start a field that gives every other deployed member energy at three ticks, two seconds apart.
 
 #### Scenario: Burst starts the energy field
 
@@ -166,7 +172,9 @@ A burst the wearer of The Exile's four-piece uses SHALL start a field that gives
 
 ### Requirement: Traveling Doctor's four-piece heals its wearer as its burst is used
 
-A burst the wearer of Traveling Doctor's four-piece uses SHALL restore the wearer twenty percent of its Max HP, raised by the wearer's Healing Bonus. (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, affix 2100131: 20% of Max HP).
+A burst the wearer of Traveling Doctor's four-piece uses SHALL restore the wearer twenty percent of its Max HP.
+
+The restore SHALL be raised by the wearer's Healing Bonus.
 
 #### Scenario: Burst restores the wearer
 
@@ -182,7 +190,7 @@ A burst the wearer of Traveling Doctor's four-piece uses SHALL restore the weare
 
 ### Requirement: Berserker's four-piece raises CRIT Rate at low HP
 
-While the wearer of Berserker's four-piece has HP below seventy percent of its Max HP, the wearer SHALL gain 24% CRIT Rate. (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, affix 2100051).
+While the wearer of Berserker's four-piece has HP below seventy percent of its Max HP, the wearer SHALL gain 24% CRIT Rate.
 
 #### Scenario: Low HP adds the CRIT Rate
 
@@ -198,7 +206,7 @@ While the wearer of Berserker's four-piece has HP below seventy percent of its M
 
 ### Requirement: Adventurer's four-piece restoration
 
-The wearer of four Adventurer's pieces SHALL have HP restored by 6% of its maximum each second for 5 seconds when a chest is opened. (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, affix 2100101: 30% over 5s, 6% of Max HP a second).
+The wearer of four Adventurer's pieces SHALL have HP restored by 6% of its maximum each second for 5 seconds when a chest is opened.
 
 #### Scenario: a chest opened by a four-piece wearer restores HP for five seconds
 

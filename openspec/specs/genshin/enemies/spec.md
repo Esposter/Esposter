@@ -6,7 +6,9 @@ The game's enemies in the world as built. Each kind's stats come from its base v
 
 ### Requirement: An idle enemy notices a target and alerts before it chases
 
-An idle enemy SHALL become alert when a target comes within its aggro range, and SHALL chase once its alert time passes or when it is hit.
+An idle enemy SHALL become alert when a target comes within its aggro range.
+
+An enemy SHALL chase once its alert time passes or when it is hit.
 
 #### Scenario: A target within aggro range alerts an idle enemy
 
@@ -28,7 +30,9 @@ An idle enemy SHALL become alert when a target comes within its aggro range, and
 
 ### Requirement: An enemy strikes only after its windup while the target is in reach
 
-A chasing enemy SHALL begin a windup when a target is within its attack range and its cooldown is over, and SHALL strike only when the windup passes with the target still in reach.
+A chasing enemy SHALL begin a windup when a target is within its attack range and its cooldown is over.
+
+An enemy SHALL strike only when the windup passes with the target still in reach.
 
 #### Scenario: A target in attack range starts a windup
 
@@ -51,7 +55,9 @@ A chasing enemy SHALL begin a windup when a target is within its attack range an
 
 ### Requirement: A staggered enemy cancels its attack until the stagger passes
 
-An enemy whose poise breaks SHALL be staggered and its attack cancelled, and SHALL chase again once the stagger passes.
+An enemy whose poise breaks SHALL be staggered and its attack cancelled.
+
+An enemy SHALL chase again once the stagger passes.
 
 #### Scenario: A broken poise staggers the enemy
 
@@ -69,7 +75,9 @@ An enemy whose poise breaks SHALL be staggered and its attack cancelled, and SHA
 
 ### Requirement: A launching hit that staggers an enemy launches it
 
-A hit whose stagger level is Air SHALL leave an enemy it staggers launched while the stagger lasts, and a hit that leaves the enemy unstaggered, or does not launch, SHALL leave it unlaunched (with `ENEMY_LAUNCHED_STATUS_ID`).
+A hit whose stagger level is Air SHALL leave an enemy it staggers launched while the stagger lasts.
+
+A hit that leaves the enemy unstaggered, or does not launch, SHALL leave it unlaunched.
 
 #### Scenario: A launching hit that staggers an enemy leaves it launched while the stagger lasts
 
@@ -85,7 +93,9 @@ A hit whose stagger level is Air SHALL leave an enemy it staggers launched while
 
 ### Requirement: An enemy past its leash returns home healed and immune on the way
 
-An enemy farther from its spawn than its leash distance, or with no target, SHALL walk home immune to damage and SHALL arrive healed to full with its shield and poise restored (a returning enemy is immune).
+An enemy farther from its spawn than its leash distance, or with no target, SHALL walk home immune to damage (a returning enemy is immune).
+
+An enemy walking home SHALL arrive healed to full with its shield and poise restored.
 
 #### Scenario: An enemy past its leash walks home
 
@@ -109,7 +119,11 @@ An enemy farther from its spawn than its leash distance, or with no target, SHAL
 
 ### Requirement: A defeated enemy drops what its table gives and a boss drops nothing
 
-An enemy whose health reaches zero SHALL be defeated and drop Mora, Character EXP and materials by its level band, except that a boss drops nothing and no enemy gives Adventure EXP (which gives a boss nothing).
+An enemy whose health reaches zero SHALL be defeated and drop Mora, Character EXP and materials by its level band.
+
+A boss drops nothing.
+
+No enemy gives Adventure EXP (which gives a boss nothing).
 
 #### Scenario: A defeated common enemy drops by its level band
 
@@ -131,7 +145,7 @@ An enemy whose health reaches zero SHALL be defeated and drop Mora, Character EX
 
 ### Requirement: Enemy stats grow by the game's level curves
 
-An enemy's max health and ATK SHALL be its base values times the multiplier of its level's curve, and its DEF SHALL be scaled by one plus a hundredth of its level (the defense curve's multipliers in `~/Esposter/genshin-parity/text/ExcelBinOutput/MonsterCurveExcelConfigData.json`).
+An enemy's max health and ATK SHALL be its base values times the multiplier of its level's curve, and its DEF SHALL be scaled by one plus a hundredth of its level.
 
 #### Scenario: A kind's stats are computed at its level
 
@@ -174,7 +188,9 @@ When one member of a camp is engaged, every idle member of that camp SHALL be al
 
 ### Requirement: Camps spawn when their region arrives and respawn when the World Level changes
 
-A camp SHALL spawn when its region's data arrives and leave when the region leaves reach, and every camp SHALL spawn anew when the World Level changes.
+A camp SHALL spawn when its region's data arrives and leave when the region leaves reach.
+
+Every camp SHALL spawn anew when the World Level changes.
 
 #### Scenario: A region arriving in reach spawns its camps
 
@@ -233,7 +249,9 @@ An enemy SHALL drop its energy at each health threshold it falls to, once for it
 
 ### Requirement: A page reload restores each defeated enemy by its saved respawn time
 
-A reload of the page SHALL bring back a defeated enemy only once its saved respawn time has passed, and SHALL bring back a boss's camp only by the return its saved defeat, blossom and last teleport give.
+A reload of the page SHALL bring back a defeated enemy only once its saved respawn time has passed.
+
+A reload of the page SHALL bring back a boss's camp only by the return its saved defeat, blossom and last teleport give.
 
 #### Scenario: A defeated enemy stays away after a reload until its respawn time
 
@@ -251,7 +269,9 @@ A reload of the page SHALL bring back a defeated enemy only once its saved respa
 
 ### Requirement: Each enemy is drawn as a capsule tinted by its state
 
-Each enemy SHALL be drawn as a capsule tinted by its state, and SHALL be tinted white with a small flash at its middle for a moment after a hit (with the tint and flash timings as constants).
+Each enemy SHALL be drawn as a capsule tinted by its state.
+
+Each enemy SHALL be tinted white with a small flash at its middle for a moment after a hit (with the tint and flash timings as constants).
 
 #### Scenario: An enemy is tinted by its state
 

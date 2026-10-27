@@ -16,12 +16,12 @@ flowchart TD
   RAD -->|"yes"| PROMO
   RAD -->|"no"| FIFTY{"50/50"}
   FIFTY -->|"win"| PROMO
-  FIFTY -->|"lose"| STD["Another five-star; the next guaranteed"]
+  FIFTY -->|"lose"| STD["Another five-star, the next guaranteed"]
   KIND -->|"weapon event"| PATH{"A Fate Point toward the charted weapon?"}
   PATH -->|"yes"| CHART["Charted weapon"]
   PATH -->|"no"| SHARE{"Guaranteed, or the 75% share"}
   SHARE -->|"yes"| EITHER["Either promotional weapon"]
-  SHARE -->|"no"| STDW["Another five-star weapon; the next guaranteed"]
+  SHARE -->|"no"| STDW["Another five-star weapon, the next guaranteed"]
   KIND -->|"standard or beginners'"| ANY["A character or a weapon with equal chance, then any of it"]
   ROLL -->|"four-star"| F4["Featured by share or guarantee, else any of a kind"]
   ROLL -->|"three-star"| F3["A three-star weapon"]
@@ -83,13 +83,13 @@ flowchart TD
 
 ## Notes
 
-- **The rarity stars are one shared piece.** `RarityStars` is a shared piece of the interface package, alongside its other pieces rather than the wish's, since the game draws its stars the same way on every screen that shows a rarity. `WishDetails`, `WishScreen` and `WishHistory` draw a rarity's stars through it `packages/genshin-interface/src/components/RarityStars/Index.vue`.
+- **The rarity stars are one shared piece.** `RarityStars` is a shared piece of the interface package, alongside its other pieces rather than the wish's, since the game draws its stars the same way on every screen that shows a rarity. `packages/genshin-interface/src/components/RarityStars/Index.vue`.
 - **The banners' pools are the wiki's, by the game's ids.** `packages/genshin-world/src/services/wish/constants.ts` lists the standard wish's and the beginners' characters and weapons as the wiki's Wanderlust Invocation and Beginners' Wish item pools give them, and `createBanners` builds the two permanent banners from the stat tables, each item's rarity read from them and its name from the world's names in the reader's language `packages/genshin-world/src/services/wish/createBanners.ts`. The beginners' wish takes the standard wish's three-star weapons alone `packages/genshin-world/src/services/wish/constants.ts`. A member the wiki's pool lists that the dump's tables do not hold yet, Alyosha, is left out until a later dump carries it `packages/genshin-world/src/services/wish/constants.ts`. Each event banner the wish schedule has open at the game's time is built on the standard wish's pool, derived once, with its promoted five-stars and featured four-stars read from the schedule by id ([wish proposal](../../../changes/archive/2026-10-18-genshin-wish/design.md)) `packages/genshin-world/src/services/wish/createBanners.ts`.
 - **The beginners' wish keeps counters of its own.** The game's details do not say whether it shares the standard wish's, and the guides that say anything say it does not `packages/genshin-world/src/services/wish/InitialBannerKindWishPityMap.ts`.
 
 ## Parity
 
-Compared with the game at 78 seconds of `yt-uhCW3MZTgL8`: mean 50.96%, shape 0.425, FLIP 0.8743, from 52.22% and 0.8926 before the body was rebuilt. The FLIP bar of 0.05 is not reached: the card's art, the banner tabs' portraits, the element mark, the star and coin icons and the Intertwined Fate icon are the plate's, which cannot ship, and the card's time remaining is not drawn yet (it needs the banner's end date).
+Compared with the game over the reference clip `yt-uhCW3MZTgL8`, the FLIP bar of 0.05 is not reached: the card's art, the banner tabs' portraits, the element mark, the star and coin icons and the Intertwined Fate icon are the plate's, which cannot ship, and the card's time remaining is not drawn yet (it needs the banner's end date).
 
 - **References held.** The published 1080p clip (`yt-uhCW3MZTgL8`) shows the Character Event banner whole, Born of Ocean Swell with Eula, at about 96 to 117 seconds and again at about 136 seconds, with its Shop, Details and History and its Wish ×1 and ×10 buttons `~/Esposter/genshin-parity/captures/yt-uhCW3MZTgL8.mp4`. Later in the clip come the single pulls' reveals, from about 104 seconds. Its ten-pull results grid is not in it; a second published clip (`yt-gFmdG_0s5L0-wish-ten`, the English PC client at 1080p and 60 frames a second) holds a ten from Wish ×10 at about 16.5 seconds to the results grid at about 44 to 50, its stills under `~/Esposter.noindex/genshin-parity/frames/yt-gFmdG_0s5L0-wish-ten@16/` `~/Esposter.noindex/genshin-parity/captures/yt-gFmdG_0s5L0-wish-ten.mp4`. The wiki's Details popups (`wish-details-1` to `wish-details-4`, 2560 by 1440) are popups over a blurred sky, not the screen beneath them; `wish-details-1` is the Promotional Items tab of a Viridescent Vigil event wish `~/Esposter/genshin-parity/references/wish-details-1.png`.
 - **The compare is over the event banner.** The wrapper's fixture pins its clock inside the window of Born of Ocean Swell (2021-05-20) `packages/genshin-world/src/components/Wish/Screen/Index.fixture.ts`, so the schedule offers that Character Event banner, and `wish-screen` is scored over its sky with the game's pieces filled. The Standard banner has no whole-frame reference until `wish-standard.png` lands.
@@ -122,7 +122,6 @@ Compared with the game at 78 seconds of `yt-uhCW3MZTgL8`: mean 50.96%, shape 0.4
 - [ ] **The Starglitter and Stardust amounts each draw returns match the wiki's Wish page** — no source yet: the wiki page is not cached.
 - [ ] **One Fate costs 160 Primogems, as in the game** — no source yet: the price is not checked against a recording or the wiki.
 - [ ] **The wish screen opens on F3, as in the game** — no source yet: the wiki's Controls page is not cached.
-- [ ] **The parity figures at 78 seconds of `yt-uhCW3MZTgL8` (mean 50.96%, shape 0.425, FLIP 0.8743; 52.22% and 0.8926 before the rebuild)** — no source yet: no parity run output or snapshot holds them in the repo.
 - [ ] **`wish-details-2` to `wish-details-4` are 2560 by 1440 popups over a blurred sky** — no source yet: a view of the blurred sky behind each popup in `~/Esposter.noindex/genshin-parity/references/wish-details-2.png` to `-4.png`, which are 2560 by 1440 on disk and were not viewed.
 - [ ] **The stills under `~/Esposter.noindex/genshin-parity/frames/yt-gFmdG_0s5L0-wish-ten@16/` and the clip's timestamps (16.5 to 51.3 seconds)** — no source yet: the timestamps, not checked against the stills, which are held in `frames/` rather than `captures/`.
 - [ ] **`wish-ten.mkv` is a ten-wish capture on the English PC client** — no source yet: no `wish-ten.mkv` is in the captures; `captures/yt-gFmdG_0s5L0-wish-ten.mp4` is the clip present.

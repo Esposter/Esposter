@@ -6,7 +6,6 @@ The Crafting Bench's Mystic Offering turns three five-star artifacts from the ba
 
 ```mermaid
 flowchart TD
-  T["Publish: decompose, display item and offer tables joined per strongbox"] --> R["crafting/strongboxes, read by key and checked against its shape"]
   G{"Adventure Rank 45 reached?"} -->|"no"| X["No Mystic Offering tab"]
   G -->|"yes"| TAB["Bench lists the Mystic Offering after its recipe tabs"]
   TAB --> PANEL["Panel lists the bag's unlocked five-star artifacts"]
@@ -26,7 +25,6 @@ flowchart TD
 
 ## Notes
 
-- Piece odds are not known. The wiki gives none for the piece within the set, so the draw is even among the offer row's pieces (`packages/genshin-world/src/services/crafting/rollStrongboxArtifact.ts`), and the offer row is taken as the pool the game uses.
 - One strongbox per offering. The game's batch of up to 39 artifacts (`maxReliquaryNum` is 39 in every row of `~/Esposter/genshin-parity/text/ExcelBinOutput/ReliquaryDecomposeExcelConfigData.json`), which makes up to thirteen strongboxes at once, is not built.
 - The gate is the wiki's rank, not a value the dump's tables hold. It stays provisional until the unlock is found in the game's data.
 - The tab's place after the recipe tabs, and the panel taking the screen over the bench, are not measured against the game. Both wait on a recording.

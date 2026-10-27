@@ -8,12 +8,12 @@ A weapon grows three ways a player spends on it: its level, its ascension phase 
 flowchart TD
   DUMP["The dump's weapon, promotion and levelling tables"] -->|"genshin:assets stats"| TABLES["stats/weapons and stats/weaponLevelRequiredExps"]
   TABLES -->|"the levelling table, fetched by its key"| REQUIRED["RarityRequiredExpsMap: each rarity's EXP per level"]
-  TABLES -->|"WeaponData"| DATA["Fodder EXP, phases' costs, refinement costs and material"]
+  TABLES -->|"WeaponData"| DATA["WeaponData"]
   REQUIRED --> ENHANCE["enhanceWeapon: paid EXP at Mora, levels gained, excess returned as ores"]
   DATA --> ENHANCE
   DATA --> ASCEND["ascendWeapon: at the cap, the next phase's Mora, items and Adventure Rank"]
   DATA --> REFINE["refineWeapon: each rank gained at its Mora, past the fifth lost"]
-  ENHANCE --> WEAPON["Weapon: level, EXP towards the next, ascension, refinement"]
+  ENHANCE --> WEAPON["Weapon"]
   ASCEND --> WEAPON
   REFINE --> WEAPON
 ```
@@ -23,7 +23,7 @@ flowchart TD
 - **The stats run writes the weapon's own rows.** Each `WeaponData` (`packages/genshin-world/src/models/weapon/WeaponData.ts`, filled by `scripts/src/services/genshinAssets/stats/getWeaponDatas.ts`) holds its fodder EXP (`baseExp`, from `weaponBaseExp` in `~/Esposter/genshin-parity/text/ExcelBinOutput/WeaponExcelConfigData.json`), its ascension phases each with the Mora, items and Adventure Rank that entering it costs, and its refinement costs and refinement material. A refinement material of zero means a copy alone refines it (`packages/genshin-world/src/components/Weapon/Screen/Index.vue`).
 - **The levelling table is written once per rarity.** `weaponLevelRequiredExps.json` holds each rarity's EXP to rise past each level, one column per rarity, so the EXP is not copied into every weapon (`~/Esposter/genshin-parity/text/ExcelBinOutput/WeaponLevelExcelConfigData.json`, five `requiredExps` per level; `scripts/src/services/genshinAssets/stats/toWeaponLevelRequiredExps.ts`).
 - **A phase's costs are its own row.** Entering a phase pays the row of that phase (`scripts/src/services/genshinAssets/stats/getWeaponDatas.ts`), and a weapon at a phase's cap starts the next phase at the same level (`packages/genshin-world/src/services/character/ascendToNextPhase.ts`).
-- **A weapon with no refinement costs cannot be refined.** The one- and two-star weapons are given none, and so are the four-star weapons the table leaves without (`~/Esposter/genshin-parity/text/ExcelBinOutput/WeaponExcelConfigData.json`: 15 one-star and 5 two-star rows carry no `awakenCosts`, as do 9 four-star rows; `packages/genshin-world/src/services/weapon/refineWeapon.ts`, `packages/genshin-world/src/services/weapon/checkCanRefineWeapon.ts`).
+- **A weapon with no refinement costs cannot be refined.** The one- and two-star weapons are given none, and so are the four-star weapons the table leaves without (`~/Esposter/genshin-parity/text/ExcelBinOutput/WeaponExcelConfigData.json`: one-star and two-star rows, and some four-star rows, carry no `awakenCosts`; `packages/genshin-world/src/services/weapon/refineWeapon.ts`, `packages/genshin-world/src/services/weapon/checkCanRefineWeapon.ts`).
 
 ## Levelling
 
@@ -77,4 +77,4 @@ A bag weapon's entry holds its level, EXP, ascension and refinement, so the [wea
 
 - [ ] **Ten points of EXP cost one Mora, and a fodder gives back 80% of its invested EXP** — no source yet: the wiki's Weapon EXP page is not in `~/Esposter/cache/genshin-wiki/`, and the stats tables opened here state neither rate.
 - [ ] **A copy adds its own rank, a material adds one, and the ranks past the fifth are lost** — no source yet: the wiki's Refinement page is not in `~/Esposter/cache/genshin-wiki/`, and no table opened here states the refinement rule.
-- [ ] **A refinement material of zero means a copy alone refines the weapon** — no source yet: the game's rule for a weapon with no `awakenMaterial`, since `~/Esposter/genshin-parity/text/ExcelBinOutput/WeaponExcelConfigData.json` holds that key on 27 rows, omits it on the others, and states no rule.
+- [ ] **A refinement material of zero means a copy alone refines the weapon** — no source yet: the game's rule for a weapon with no `awakenMaterial`, since `~/Esposter/genshin-parity/text/ExcelBinOutput/WeaponExcelConfigData.json` holds that key on some rows, omits it on the others, and states no rule.
