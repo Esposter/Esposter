@@ -181,8 +181,6 @@ Every issue of `apexcharts/vue3-apexcharts` has one verdict, open or closed, rea
 | [#151](https://github.com/apexcharts/vue3-apexcharts/issues/151) | False positive — fixed upstream | yaxis formatter lost on series/xaxis update; function-preserving copy (1.11.2) and Date/RegExp-safe copy (PR 153)                                                                     |
 | [#152](https://github.com/apexcharts/vue3-apexcharts/issues/152) | False positive — fixed upstream | Client-only import wanted; ./core entry imports apexcharts/core without the SSR bundle (1.11.0); closed stale 2026-09-11                                                              |
 
-Verdict counts: 5 in-scope defects, 49 fixed upstream and kept, 49 out of scope (ApexCharts), 27 usage questions, 4 documentation gaps.
-
 ## Key files
 
 | Path                                                        | Role                                                                   |

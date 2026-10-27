@@ -129,7 +129,7 @@ The declaration build seeds its program from the entry files and follows imports
 
 ## A subpath needs a consumer, a load by path, or a public contract
 
-A package keeps the flat `.` export by default. A subpath export or entry is added only when a consumer cannot take the whole package at a cost it can bear, when the entry is loaded by path (a worker, a bin, a Nuxt runtime, a reporter). A second bundle that repeats functions the barrel already exports is removed, and so is a program exposed as an export, since importing it would run it. Every published package is experimental (the monorepo-tooling spec's Stability section), so a removed export is a changelog line, not a breaking change. `.agents/skills/build/references/subpaths.md` holds the test and the worked decisions.
+A package keeps the flat `.` export by default. A subpath export or entry is added only when a consumer cannot take the whole package at a cost it can bear, when the entry is loaded by path (a worker, a bin, a Nuxt runtime, a reporter). A second bundle that repeats functions the barrel already exports is removed, and so is a program exposed as an export, since importing it would run it. Stability for every published package is settled in [monorepo tooling](../monorepo-tooling/design.md#stability-every-published-package-is-experimental), so a removed export is a changelog line. `.agents/skills/build/references/subpaths.md` holds the test and the worked decisions.
 
 ## Key files
 

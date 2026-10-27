@@ -39,7 +39,7 @@ The engine's slots are typed by the engine, and a few of the repository's rules 
 
 ```mermaid
 flowchart TD
-  Pure[Pure logic in its own module, beside its test] --> Wire[Hooks: unmatched events in the lifecycle file, matched ones in the mod's file, the band in one file]
+  Pure[Pure logic in its own module, beside its test] --> Wire[Register the hooks]
   Wire --> Validate{claude plugin validate}
   Validate -->|refused| Read[Read the rule, then probe a cut message with a minimal mod]
   Read --> Wire
@@ -54,21 +54,6 @@ flowchart TD
 ```
 
 Validation comes before the typecheck because it is the engine's own reading and costs a second; a module the engine refuses is restructured, and a restructure moves more than any type error does.
-
-## The file shape it adds up to
-
-```mermaid
-flowchart LR
-  Register[register.ts] --> Lifecycle[registerLifecycle: every unmatched event, the switch commands]
-  Register --> Band[registerBand: the one band, its rows and button actions]
-  Register --> Mods[register&lt;Mod&gt;: matched hooks, a tool, a command, a component]
-  Lifecycle --> Pure[Pure modules: parsing, figures, folding, redaction]
-  Band --> Pure
-  Mods --> Pure
-  Lifecycle -. atoms .-> State[(Session state, initials from InitialState)]
-  Band -. atoms .-> State
-  Mods -. atoms .-> State
-```
 
 ## Key files
 

@@ -12,7 +12,7 @@ A day on a calendar has no time zone: the 25th is the 25th wherever the reader i
 - **A range field** holds its two ends as plain days, since a span of days is what it picks; the call site decides which instant each end means, as the resource list's Updated filter reads each as the start of its day and extends the end to the close of its own.
 - **A sheet's date cell** stores its day as text in its column's format. Its editor is a date field, and the text is parsed into the instant it names on the way in and written back in the same format on the way out, so the format never reaches the field.
 - **An event** starts at an instant. The event calendar files it under the day it starts on in the reader's zone, which only the browser knows, so the views render on the client alone behind a skeleton — a server render would file an evening event under the wrong day for half the world.
-- **A rendered date** is still a `<NuxtTime>` ([date and time display](../date-time-display/design.md)). A plain date has no instant of its own, so it is handed over as its ISO date with the UTC zone, which renders exactly the day it names.
+- **A rendered date** follows [date and time display](../date-time-display/design.md), which covers a plain date with no instant of its own.
 
 Vuetify 0 ships a date adapter rather than a date picker, and that adapter is written against a Temporal polyfill of its own — a second copy of Temporal in the bundle beside the platform's, for arithmetic a plain date already does. The components use the platform's instead. Where the platform has none — Safari, and so every browser on iOS, until Temporal is [Baseline](https://webstatus.dev/features/temporal) — `temporal-polyfill` installs it ahead of the bundle, per [polyfills](../polyfills/design.md).
 
@@ -49,10 +49,10 @@ Both kinds of view are drawn as a grid of cells on the frame's panel, every line
 
 ### The views are walked from the keyboard
 
-Each view is a WAI-ARIA grid with one stop in the tab order, as the date grid is, so a reader without a pointer does everything a pointer does:
+Each view is a WAI-ARIA grid walked by the [keyboard contracts](../ui-library/design.md#keyboard-contracts), so a reader without a pointer does everything a pointer does:
 
 - **The month** is a grid of days in rows of weeks, walked by exactly the date grid's keys ([keyboard contracts](../ui-library/design.md#keyboard-contracts)), so a step of a month by Page Down is the same press in the navigator and in the view.
-- **The hours** are a grid of slots, each day's column a row of it. The arrows walk a slot up and down within its day and a day across, Home and End go to the day's first and last slot, and Page Up and Page Down step the view. A step off the first or the last day lands on the view before or after, a work week stepping over the weekend it leaves out. The tab stop starts on the working day's first slot, and only the slot holding it carries its date and time as its name, since no other empty slot is ever focused.
+- **The hours** are a grid of slots, each day's column a row of it. Its keys are the [keyboard contracts](../ui-library/design.md#keyboard-contracts). A step off the first or the last day lands on the view before or after, a work week stepping over the weekend it leaves out. The tab stop starts on the working day's first slot, and only the slot holding it carries its date and time as its name, since no other empty slot is ever focused.
 - **Selection follows the focus.** The cell walked to is selected, as a click selects it, and its day becomes the day shown — so the navigator and the title follow, and a step off the month turns the page.
 - **Enter on a day or a slot** creates there, as a double click does. On an event it opens it.
 - **Alt and an arrow move the focused event**: a day across, and down or up a slot in the hours or a week in the month. It goes through the same move a drop makes, the view follows it to its new day, the focus stays on it, and its new time is read out in a polite live region.
