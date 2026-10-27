@@ -145,7 +145,7 @@ The deploy dialog SHALL list each entry under the name it will be created with, 
 
 ### Requirement: A Blueprint's webpage and email entries deploy as fresh documents
 
-A Blueprint's webpage or email entry deploys as an empty document, and a revision whose entry still holds editor content is refused on deploy for that entry.
+A Blueprint's webpage or email entry SHALL deploy as an empty document, and a revision whose entry still holds editor content SHALL be refused on deploy for that entry.
 
 #### Scenario: A Blueprint's webpage entry deploys as a fresh document
 
