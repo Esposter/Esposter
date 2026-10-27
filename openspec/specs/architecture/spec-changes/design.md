@@ -26,6 +26,7 @@ The proposals report (`pnpm ai:proposals:report`) ranks the open changes. A chan
 | File                                                      | Role                                                                                                |
 | --------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
 | `openspec/config.yaml`                                    | The spec-driven schema and the rules each artifact is written to                                    |
+| `openspec/specs/`                                         | The spec of record: each capability's `spec.md`, merged by the archive that ships its change        |
 | `scripts/src/workspace/openspecValidate.test.ts`          | The CLI's strict validation over every open change and every capability                             |
 | `scripts/src/services/openspec/readSpecFindings.ts`       | The scenario check: each scenario's steps in GIVEN, WHEN, THEN order with nothing else between them |
 | `scripts/src/workspace/openspecLinks.test.ts`             | Every relative link in the tree resolves                                                            |

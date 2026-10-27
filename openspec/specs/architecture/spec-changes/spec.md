@@ -44,14 +44,14 @@ Every scenario in every OpenSpec spec in the repository SHALL read as one option
 
 ### Requirement: Shipped changes are merged into the spec of record
 
-The repository SHALL merge a change's requirements into the spec of record in the change that ships them, so the spec of record matches the code as soon as the change lands on `ai/queue`.
+The repository SHALL merge a change's requirements into the spec of record in the change that ships them, so the spec of record matches the code as soon as the change lands on ai/queue.
 
 #### Scenario: A shipped change is archived
 
 - **WHEN** the change's commit that ships it lands on `ai/queue`
-- **THEN** archiving the change moves its folder into the archive of shipped changes and updates `openspec/specs/` in that same commit
+- **THEN** archiving the change moves its folder into the archive of shipped changes and updates the spec of record in that same commit
 
 #### Scenario: An unshipped change stays in place
 
 - **WHEN** the change has not yet been shipped
-- **THEN** its folder stays among the open changes and `openspec/specs/` is unchanged
+- **THEN** its folder stays among the open changes and the spec of record is unchanged
