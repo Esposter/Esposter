@@ -7,6 +7,7 @@ import type { Promisable } from "type-fest";
 
 import { createHookRegistry } from "@/services/shared/createHookRegistry";
 import { Operation } from "@esposter/shared";
+import { MessageHook } from "@/models/message/MessageHook";
 
 export const MessageHookMap = {
   // Runs once the server has accepted the send: the attachments `ResetSend` was holding are dropped for good.
@@ -15,7 +16,7 @@ export const MessageHookMap = {
   // Carries the ids the accepted message actually persisted, never "whatever the composer holds now": the
   // Commit runs behind the send, and an attachment the user added while it was in flight belongs to their next
   // Message — released here, it leaves the composer with no grant left to reclaim its blob
-  CommitSend: createHookRegistry<(target: ComposerTarget, fileIds: string[]) => Promisable<void>>(),
+  [MessageHook.CommitSend]: createHookRegistry<(target: ComposerTarget, fileIds: string[]) => Promisable<void>>(),
   [Operation.Create]: createHookRegistry<(message: MessageEntity) => Promisable<void>>(),
   [Operation.Delete]: createHookRegistry<(input: DeleteMessageInput) => Promisable<void>>(),
   [Operation.Update]: createHookRegistry<(input: MessageEvents["updateMessage"][0][0]) => Promisable<void>>(),
@@ -27,8 +28,9 @@ export const MessageHookMap = {
   // Carries the composer it is resetting — the room's own, or the thread pane's — rather than reading whichever
   // Is current: the reset runs behind the optimistic bubble, so an await separates it from the send and the
   // User may already have switched rooms, or opened another thread, while it was in flight
-  ResetSend: createHookRegistry<(target: ComposerTarget, fileIds: string[], editor?: Editor) => Promisable<void>>(),
+  [MessageHook.ResetSend]:
+    createHookRegistry<(target: ComposerTarget, fileIds: string[], editor?: Editor) => Promisable<void>>(),
   // The composer's attachments were handed back — a send the server rejected. They never left the store, so
   // Their grants are intact and the user retries with the files already uploaded instead of re-picking them
-  RollbackSend: createHookRegistry<(target: ComposerTarget, fileIds: string[]) => Promisable<void>>(),
+  [MessageHook.RollbackSend]: createHookRegistry<(target: ComposerTarget, fileIds: string[]) => Promisable<void>>(),
 };

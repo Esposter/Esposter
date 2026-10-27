@@ -6,17 +6,18 @@ import {
   EN_US_SHORT_WEEKDAY_FORMATTER,
 } from "#shared/services/intl/constants";
 import { DateToken } from "#shared/util/date/DateToken";
+import { OrdinalSuffix } from "#shared/models/util/date/OrdinalSuffix";
 
 const PADDED_LENGTH = 2;
 const YEAR_LENGTH = 4;
 const NOON_HOUR = 12;
 const OrdinalSuffixMap: Record<Intl.LDMLPluralRule, string> = {
-  few: "rd",
-  many: "th",
-  one: "st",
-  other: "th",
-  two: "nd",
-  zero: "th",
+  [OrdinalSuffix.Few]: "rd",
+  [OrdinalSuffix.Many]: "th",
+  [OrdinalSuffix.One]: "st",
+  [OrdinalSuffix.Other]: "th",
+  [OrdinalSuffix.Two]: "nd",
+  [OrdinalSuffix.Zero]: "th",
 };
 
 const padNumber = (value: number, length = PADDED_LENGTH): string => String(value).padStart(length, "0");

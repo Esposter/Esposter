@@ -6,6 +6,7 @@ import { getComposerKey } from "@/services/message/composer/getComposerKey";
 import { SPOILER_FILENAME_PREFIX } from "@/services/message/file/constants";
 import { MessageHookMap } from "@/services/message/MessageHookMap";
 import { getResultAsync, noop } from "@esposter/shared";
+import { MessageHook } from "@/models/message/MessageHook";
 
 export const useUploadFileStore = defineStore("message/input/uploadFile", () => {
   const { $trpc } = useNuxtApp();
@@ -185,13 +186,13 @@ export const useUploadFileStore = defineStore("message/input/uploadFile", () => 
   // The only thing that can ever name them again. Dropped at the bubble, a send the server then rejects
   // (slowmode, the word filter) would leave the blobs referenced by no message and reclaimable by nothing, and
   // The user re-picking every attachment to try again
-  MessageHookMap.ResetSend.register((target, fileIds) => {
+  MessageHookMap[MessageHook.ResetSend].register((target, fileIds) => {
     holdSendUploadFiles(target, fileIds);
   });
-  MessageHookMap.CommitSend.register((target, fileIds) => {
+  MessageHookMap[MessageHook.CommitSend].register((target, fileIds) => {
     removeUploadFiles(target, fileIds);
   });
-  MessageHookMap.RollbackSend.register((target, fileIds) => {
+  MessageHookMap[MessageHook.RollbackSend].register((target, fileIds) => {
     releaseSendUploadFiles(target, fileIds);
   });
   return {

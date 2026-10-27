@@ -18,6 +18,7 @@ import { useRoomStore } from "@/store/message/room";
 import { useThreadFollowStore } from "@/store/message/threadFollow";
 import { AzureEntityType, createMessageEntity } from "@esposter/db-schema";
 import { getResultAsync, Operation } from "@esposter/shared";
+import { MessageHook } from "@/models/message/MessageHook";
 
 export const useDataStore = defineStore("message/data", () => {
   const session = authClient.useSession();
@@ -96,7 +97,7 @@ export const useDataStore = defineStore("message/data", () => {
         delete newMessage.isLoading;
         // The server has the message, so the attachments held since the bubble are dropped for good — with them
         // Go the grants that authorize reclaiming their blobs, which only a rejection could have needed back
-        await MessageHookMap.CommitSend.run(target, sentFileIds);
+        await MessageHookMap[MessageHook.CommitSend].run(target, sentFileIds);
         // The server auto-follows the thread a reply lands in, so mirror it here — the follow state is loaded
         // Once per room and would otherwise stay stale until a reload, showing Follow for a followed thread.
         // A local array write with nothing fallible in it, so it is called bare; anything genuinely fallible
@@ -118,7 +119,7 @@ export const useDataStore = defineStore("message/data", () => {
         // Affordance would reclaim blobs it is still using. That trades a rare broken attachment the user chose
         // Against a certain leak plus lost work on every deterministic rejection, which is what slowmode and the
         // Word filter are
-        await MessageHookMap.RollbackSend.run(target, sentFileIds);
+        await MessageHookMap[MessageHook.RollbackSend].run(target, sentFileIds);
         createErrorAlert(error);
         return false;
       },
@@ -204,10 +205,16 @@ export const useDataStore = defineStore("message/data", () => {
     // Target, so a send that fails before the bubble exists would take the text the user just typed with it.
     // The attachments leave the composer here too, but only held — they are dropped on `CommitSend` once the
     // Server has accepted the message, and handed back on `RollbackSend` if it rejects
-    if (await createMessage(input, (sentFileIds) => MessageHookMap.ResetSend.run(target, sentFileIds, editor), target))
+    if (
+      await createMessage(
+        input,
+        (sentFileIds) => MessageHookMap[MessageHook.ResetSend].run(target, sentFileIds, editor),
+        target,
+      )
+    )
       clearComposer(target);
   };
-  MessageHookMap.ResetSend.register((_target, _fileIds, editor) => {
+  MessageHookMap[MessageHook.ResetSend].register((_target, _fileIds, editor) => {
     editor?.commands.clearContent(true);
   });
   // Only expose the internal store CRUD functions for subscriptions; everything else directly calls

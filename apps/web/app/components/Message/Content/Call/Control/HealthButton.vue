@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { MediaDeviceKind } from "@/models/message/room/call/MediaDeviceKind";
 import type { UiStatus } from "@/models/ui/UiStatus";
 
 import { MediaDeviceKindMetadataMap } from "@/services/message/room/call/MediaDeviceKindMetadataMap";
@@ -20,9 +21,9 @@ const healthRows = computed(() => [
   { ...connectionQualityMetadata.value, label: "Quality" },
 ]);
 const deviceRows = computed(() => [
-  { ...MediaDeviceKindMetadataMap.audioinput, value: inputDeviceId.value },
-  { ...MediaDeviceKindMetadataMap.audiooutput, value: outputDeviceId.value },
-  { ...MediaDeviceKindMetadataMap.videoinput, value: cameraDeviceId.value },
+  { ...MediaDeviceKindMetadataMap[MediaDeviceKind.Audioinput], value: inputDeviceId.value },
+  { ...MediaDeviceKindMetadataMap[MediaDeviceKind.Audiooutput], value: outputDeviceId.value },
+  { ...MediaDeviceKindMetadataMap[MediaDeviceKind.Videoinput], value: cameraDeviceId.value },
 ]);
 </script>
 

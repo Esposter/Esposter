@@ -1,4 +1,4 @@
-import type { ResourceType } from "@esposter/db-schema";
+import { ResourceType, ResourceTypes } from "@esposter/db-schema";
 import type { JSONSchema } from "zod/v4/core";
 
 import { checkIsUnwritableJsonSchema } from "#server/services/mcp/checkIsUnwritableJsonSchema";
@@ -7,7 +7,6 @@ import { getReferencedJsonSchema } from "#server/services/mcp/getReferencedJsonS
 import { WEBPAGE_PLACEABLE_NODE_TYPES } from "#shared/services/pageBuilder/constants";
 import { webpageDocumentSchema } from "#shared/services/pageBuilder/webpageDocumentSchema";
 import { ResourceDefinitionMap } from "#shared/services/resource/ResourceDefinitionMap";
-import { ResourceTypes } from "@esposter/db-schema";
 import { describe, expect, test } from "vitest";
 import { z } from "zod";
 
@@ -74,21 +73,21 @@ describe(getAgentJsonSchema, () => {
   // What each type's agent may not write: a new undescribed or read-only node fails here until it is described or
   // Recorded, so no type's reach widens or narrows unseen
   const ResourceTypeUnwritablePathsMap = {
-    Blueprint: ["/entries/-/content"],
-    Dashboard: [],
-    Email: [...childRichTextPaths, "/html"],
-    Flowchart: [],
-    Note: ["/doc/*", "/doc/attrs/*", "/doc/marks/-/*", "/doc/marks/-/attrs/*"],
-    Program: [],
-    Sheet: [
+    [ResourceType.Blueprint]: ["/entries/-/content"],
+    [ResourceType.Dashboard]: [],
+    [ResourceType.Email]: [...childRichTextPaths, "/html"],
+    [ResourceType.Flowchart]: [],
+    [ResourceType.Note]: ["/doc/*", "/doc/attrs/*", "/doc/marks/-/*", "/doc/marks/-/attrs/*"],
+    [ResourceType.Program]: [],
+    [ResourceType.Sheet]: [
       "/data/columns/-/sourceName",
       "/data/columns/-/transformation/type",
       "/data/columns/-/type",
       "/settings/type",
     ],
-    Survey: [],
-    TodoList: [],
-    Webpage: [...richTextPaths("/content/-"), "/html"],
+    [ResourceType.Survey]: [],
+    [ResourceType.TodoList]: [],
+    [ResourceType.Webpage]: [...richTextPaths("/content/-"), "/html"],
   } as const satisfies Record<ResourceType, string[]>;
 
   test.each(ResourceTypes)("a type whose content schema is not an object fails CI: %s", (type) => {

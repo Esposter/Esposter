@@ -1,4 +1,9 @@
 // Largest first, which is the order a duration is rounded to the first unit it fills
-export const DurationUnits = ["day", "hour", "minute", "second"] as const;
+export enum DurationUnit {
+  Day = "day",
+  Hour = "hour",
+  Minute = "minute",
+  Second = "second",
+}
 
-export type DurationUnit = (typeof DurationUnits)[number];
+export const DurationUnits = Object.values(DurationUnit);

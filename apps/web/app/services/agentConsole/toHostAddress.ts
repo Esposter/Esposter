@@ -1,9 +1,11 @@
+import { SocketProtocol } from "@/models/agentConsole/SocketProtocol";
+
 // The socket scheme for each scheme a reader may type a host's address in
 const SocketProtocolMap: Readonly<Record<string, string>> = {
-  "http:": "ws:",
-  "https:": "wss:",
-  "ws:": "ws:",
-  "wss:": "wss:",
+  [SocketProtocol.Http]: "ws:",
+  [SocketProtocol.Https]: "wss:",
+  [SocketProtocol.Ws]: "ws:",
+  [SocketProtocol.Wss]: "wss:",
 };
 
 // The socket address a machine's host is reached at, from what the reader typed: an `https://` address, as a host

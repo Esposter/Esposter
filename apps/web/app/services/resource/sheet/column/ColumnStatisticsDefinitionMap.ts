@@ -7,46 +7,47 @@ import { getSummation } from "#shared/services/resource/sheet/column/getSummatio
 import { defineColumnStatistics } from "@/services/resource/sheet/column/defineColumnStatistics";
 import { formatOptionalColumnValue } from "@/services/resource/sheet/column/formatOptionalColumnValue";
 import { formatOptional } from "@/util/text/formatOptional";
+import { ColumnStatisticName } from "#shared/models/resource/sheet/column/ColumnStatisticName";
 
 export const ColumnStatisticsDefinitionMap = {
-  average: defineColumnStatistics({
+  [ColumnStatisticName.Average]: defineColumnStatistics({
     applicableColumnTypes: [ColumnType.Number],
     compute: ({ nonNullNumbers }) => {
       if (nonNullNumbers.length === 0) return undefined;
       else return Math.round(getAverage(nonNullNumbers) * 100) / 100;
     },
     format: formatOptionalColumnValue,
-    key: "average",
+    key: ColumnStatisticName.Average,
     title: "Average",
   }),
-  falseCount: defineColumnStatistics({
+  [ColumnStatisticName.FalseCount]: defineColumnStatistics({
     applicableColumnTypes: [ColumnType.Boolean],
     compute: ({ nonNullBooleans }) => nonNullBooleans.filter((value) => !value).length,
     format: formatOptional,
-    key: "falseCount",
+    key: ColumnStatisticName.FalseCount,
     title: "False",
   }),
-  maximum: defineColumnStatistics({
+  [ColumnStatisticName.Maximum]: defineColumnStatistics({
     applicableColumnTypes: [ColumnType.Number],
     compute: ({ nonNullNumbers }) =>
       nonNullNumbers.length > 0
         ? nonNullNumbers.reduce((maximum, value) => Math.max(maximum, value), -Infinity)
         : undefined,
     format: formatOptionalColumnValue,
-    key: "maximum",
+    key: ColumnStatisticName.Maximum,
     title: "Maximum",
   }),
-  minimum: defineColumnStatistics({
+  [ColumnStatisticName.Minimum]: defineColumnStatistics({
     applicableColumnTypes: [ColumnType.Number],
     compute: ({ nonNullNumbers }) =>
       nonNullNumbers.length > 0
         ? nonNullNumbers.reduce((minimum, value) => Math.min(minimum, value), Infinity)
         : undefined,
     format: formatOptionalColumnValue,
-    key: "minimum",
+    key: ColumnStatisticName.Minimum,
     title: "Minimum",
   }),
-  mostFrequentValue: defineColumnStatistics({
+  [ColumnStatisticName.MostFrequentValue]: defineColumnStatistics({
     applicableColumnTypes: [ColumnType.String, ColumnType.Date],
     compute: ({ stringCountMap }) => {
       let mostFrequentValue: string | undefined = undefined;
@@ -60,26 +61,26 @@ export const ColumnStatisticsDefinitionMap = {
       return mostFrequentValue;
     },
     format: formatOptional,
-    key: "mostFrequentValue",
+    key: ColumnStatisticName.MostFrequentValue,
     sortable: false,
     title: "Most Frequent",
   }),
-  nullCount: defineColumnStatistics({
+  [ColumnStatisticName.NullCount]: defineColumnStatistics({
     applicableColumnTypes: [ColumnType.Boolean, ColumnType.Date, ColumnType.Number, ColumnType.String],
     compute: ({ nullCount }) => nullCount,
     format: (value) => value.toString(),
-    key: "nullCount",
+    key: ColumnStatisticName.NullCount,
     title: "Nulls",
   }),
-  nullPercentage: defineColumnStatistics({
+  [ColumnStatisticName.NullPercentage]: defineColumnStatistics({
     applicableColumnTypes: [ColumnType.Boolean, ColumnType.Date, ColumnType.Number, ColumnType.String],
     compute: ({ nullCount, values }) =>
       values.length === 0 ? undefined : Math.round((nullCount / values.length) * 1000) / 10,
     format: (value) => (value === undefined ? "—" : `${value}%`),
-    key: "nullPercentage",
+    key: ColumnStatisticName.NullPercentage,
     title: "Null %",
   }),
-  standardDeviation: defineColumnStatistics({
+  [ColumnStatisticName.StandardDeviation]: defineColumnStatistics({
     applicableColumnTypes: [ColumnType.Number],
     compute: ({ nonNullNumbers }) => {
       if (nonNullNumbers.length === 0) return undefined;
@@ -89,29 +90,29 @@ export const ColumnStatisticsDefinitionMap = {
       return Math.round(Math.sqrt(variance) * 100) / 100;
     },
     format: formatOptionalColumnValue,
-    key: "standardDeviation",
+    key: ColumnStatisticName.StandardDeviation,
     title: "Standard Deviation",
   }),
-  summation: defineColumnStatistics({
+  [ColumnStatisticName.Summation]: defineColumnStatistics({
     applicableColumnTypes: [ColumnType.Number],
     compute: ({ nonNullNumbers }) => Math.round(getSummation(nonNullNumbers) * 100) / 100,
     format: formatOptionalColumnValue,
-    key: "summation",
+    key: ColumnStatisticName.Summation,
     title: "Sum",
   }),
-  trueCount: defineColumnStatistics({
+  [ColumnStatisticName.TrueCount]: defineColumnStatistics({
     applicableColumnTypes: [ColumnType.Boolean],
     compute: ({ nonNullBooleans }) => nonNullBooleans.filter(Boolean).length,
     format: formatOptional,
-    key: "trueCount",
+    key: ColumnStatisticName.TrueCount,
     title: "True",
   }),
-  uniqueCount: defineColumnStatistics({
+  [ColumnStatisticName.UniqueCount]: defineColumnStatistics({
     applicableColumnTypes: [ColumnType.Number, ColumnType.String, ColumnType.Date],
     compute: ({ columnType, nonNullNumbers, nonNullStrings }) =>
       columnType === ColumnType.Number ? new Set(nonNullNumbers).size : new Set(nonNullStrings).size,
     format: formatOptional,
-    key: "uniqueCount",
+    key: ColumnStatisticName.UniqueCount,
     title: "Unique",
   }),
 } as const satisfies { [K in ColumnStatisticsKey]: ColumnStatisticsDefinition<K> };

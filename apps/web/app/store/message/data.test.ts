@@ -16,6 +16,7 @@ import { createMessageEntity, getReverseTickedTimestamp, MessageType } from "@es
 import { Operation, takeOne } from "@esposter/shared";
 import { TRPCError } from "@trpc/server";
 import { afterEach, beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { MessageHook } from "@/models/message/MessageHook";
 
 interface MockSessionValue {
   data?: { user: { id: string } };
@@ -115,7 +116,7 @@ describe(useDataStore, () => {
     const dataStore = useDataStore();
     const { sendMessage } = dataStore;
     vi.spyOn(MessageHookMap[Operation.Create], "run").mockRejectedValueOnce(new Error(message));
-    const resetSendSpy = vi.spyOn(MessageHookMap.ResetSend, "run");
+    const resetSendSpy = vi.spyOn(MessageHookMap[MessageHook.ResetSend], "run");
     await sendMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
 
     expect(resetSendSpy).not.toHaveBeenCalled();
@@ -133,7 +134,7 @@ describe(useDataStore, () => {
     trpcMsw.message.createMessage.mutation(() =>
       createMessageEntity({ message, roomId, type: MessageType.Message, userId }),
     );
-    const resetSendSpy = vi.spyOn(MessageHookMap.ResetSend, "run");
+    const resetSendSpy = vi.spyOn(MessageHookMap[MessageHook.ResetSend], "run");
     await sendMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
 
     expect(resetSendSpy).toHaveBeenCalledExactlyOnceWith(target, [], undefined);
@@ -210,7 +211,7 @@ describe(useDataStore, () => {
     trpcMsw.message.createMessage.mutation(() => {
       throw new TRPCError({ code: "TOO_MANY_REQUESTS", message });
     });
-    const commitSendSpy = vi.spyOn(MessageHookMap.CommitSend, "run");
+    const commitSendSpy = vi.spyOn(MessageHookMap[MessageHook.CommitSend], "run");
     await createMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
 
     expect(commitSendSpy).not.toHaveBeenCalled();
@@ -225,7 +226,7 @@ describe(useDataStore, () => {
     trpcMsw.message.createMessage.mutation(() =>
       createMessageEntity({ message, roomId, type: MessageType.Message, userId }),
     );
-    const commitSendSpy = vi.spyOn(MessageHookMap.CommitSend, "run");
+    const commitSendSpy = vi.spyOn(MessageHookMap[MessageHook.CommitSend], "run");
     await createMessage({ files: [], message, replyRowKey: "", roomId, type: MessageType.Message });
 
     expect(commitSendSpy).toHaveBeenCalledExactlyOnceWith(target, []);
