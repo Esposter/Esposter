@@ -122,7 +122,7 @@ From Constellation 4, the active party member SHALL have its Plunging Attack DMG
 
 ### Requirement: Constellation 6 raises the active member's DMG inside the Solar Isotoma
 
-From Constellation 6, the active party member SHALL have its DMG raised 17% for a second while it stands within the standing Solar Isotoma's field and either a Crystallize shield protects the team or a Moondrift stands within the field. The field SHALL be checked every 0.3 seconds from the Solar Isotoma's spawn, as Constellation 4's is, and no other party member SHALL have the bonus. The Moondrift clause is open: gcsim does not read Moondrifts, and the local text does not hold the wording (see design.md, Not built).
+From Constellation 6, the active party member SHALL have its DMG raised 17% for a second while it stands within the standing Solar Isotoma's field and either a Crystallize shield protects the team or a Moondrift stands within the field. The field SHALL be checked every 0.3 seconds from the Solar Isotoma's spawn, as Constellation 4's is, and no other party member SHALL have the bonus.
 
 #### Scenario: A Crystallize shield inside the field gets the bonus
 
