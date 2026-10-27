@@ -27,7 +27,7 @@ Sigewinne's kit is its record and one behaviour module, `createSigewinneKitBehav
 | :------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `packages/genshin-world/src/services/kit/characters/sigewinneKit.ts`      | `createSigewinneKitBehaviour`, Sigewinne's kit with her strikes, Fully-Charged Aimed Shot, plunges, Bolstering Bubblebalm and Super Saturated Syringing |
 | `packages/genshin-world/src/services/kit/effects/healKitOtherMembers.ts`  | Heals each deployed member other than the healer, which a bubble's bounce does with no chance roll and no shield gate                                   |
-| `scripts/src/services/genshinAssets/kits/tables/getTableKitCandidates.ts` | Sigewinne's three skill parameters, read from her bubble's healing and final bounce labels                                                              |
+| `scripts/src/services/genshinAssets/kits/tables/getTableKitCandidates.ts` | Sigewinne's skill parameters, read from her bubble's healing and final bounce labels                                                                    |
 
 ## Sources
 

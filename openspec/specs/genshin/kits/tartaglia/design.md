@@ -2,6 +2,21 @@
 
 Tartaglia's kit is its record and one behaviour module, `createTartagliaKitBehaviour` (`packages/genshin-world/src/services/kit/characters/tartagliaKit.ts`), on avatar 10000033 (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarExcelConfigData.json`): six arrows (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/tartaglia/attack.go:14`), a fully charged aimed shot, a collision and two plunges in his Ranged Stance, Foul Legacy: Raging Tide's change into his Melee Stance with its six Hydro strikes, the sixth of two hits (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/tartaglia/attack.go:92`), its charged attack of two hits and its press back, and Havoc: Obliteration in either stance. His multipliers are read from proud skill groups 3331, 3332 and 3339 (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`), and match the wiki's Cutting Torrent, Foul Legacy: Raging Tide and Havoc: Obliteration values to two decimal places (`~/Esposter/cache/genshin-wiki/Category_Tartaglia_Talents.json`); Riptide's seconds, the Melee Stance's charged attack stamina, its longest seconds and the cooldowns its end sets, and the burst's energy back, cooldown and cost are read from the same groups. The Melee Stance is a stance among the team's effects that ends on a press back, at its longest or as he leaves the field, and its end sets the skill's cooldown by the whole seconds it held. Riptide is a status on the enemy that a fully charged aimed shot, Flash of Havoc, Riptide Burst and Sword of Torrents give (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/tartaglia/riptide.go:46`), and it sets off Riptide Flash, Riptide Slash, Riptide Blast and Riptide Burst, each on its own interval. Never Ending and Sword of Torrents from Ascension 1 and 4, and Tide Withholder, Understream, Hydrospout and Havoc: Annihilation from one, two, four and six constellations are built. Master of Weaponry, the particles and the Melee Stance's refusal of plunges are not built.
 
+## How it works
+
+```mermaid
+flowchart TD
+  FOUL["Foul Legacy"] --> MELEE["Melee Stance"]
+  MELEE -->|"press back or leaving the field"| STOPS["Stance ends"]
+  MELEE -->|"held its longest"| STOPS
+  STOPS --> COOL["Skill cooldown by the whole seconds held"]
+  SRC["Riptide sources"] --> RIPTIDE["Riptide on the enemy"]
+  RIPTIDE --> FLASH["Riptide Flash"]
+  RIPTIDE --> SLASH["Riptide Slash"]
+  RIPTIDE --> BLAST["Riptide Blast"]
+  RIPTIDE --> RBURST["Riptide Burst"]
+```
+
 ## Decisions
 
 - **Tartaglia's ranged kit is his kit and his Melee Stance a stance.** The skill's cooldown is the 1 second before a press back may end the stance (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/tartaglia/skill.go:146`), and the stance's end sets it to the table's 6 seconds plus each whole second the stance held, or its 45 once it held its longest 30, as the wiki's in-game formula gives it (`~/Esposter/cache/genshin-wiki/Category_Tartaglia_Talents.json`, Foul Legacy: Raging Tide, CD 6–36s/45s); gcsim's 7, 8 and 9 seconds for a stance under 5 seconds are not taken (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/tartaglia/skill.go:204` to `~/Esposter/cache/gcsim-v2.47.2/internal/characters/tartaglia/skill.go:208`, against the table at `~/Esposter/cache/gcsim-v2.47.2/internal/characters/tartaglia/skill.go:210` to `~/Esposter/cache/gcsim-v2.47.2/internal/characters/tartaglia/skill.go:214`, whose comment names the wiki as its source). Tide Withholder and Impetuous Winds cut it, and Havoc: Annihilation ends it.

@@ -6,6 +6,15 @@ Her skill and burst are read from proud skill groups 13232 and 13239 (`~/Esposte
 
 gcsim sources: Prune's attack, charge, skill and burst files, with the table data in gcsim's Prune data file.
 
+## How it works
+
+```mermaid
+flowchart TD
+  BELL["Witchlure Bell tick"] --> NEAR["Nearest standing enemy within 10 metres"]
+  NEAR -->|"enemy found"| DOT["DoT on that enemy alone"]
+  NEAR -->|"none in reach"| NOTICK["No tick"]
+```
+
 ## Decisions
 
 - **The skill and burst's hitboxes are circles by hand.** The skill's press is a circle of 2.5 metres offset 1.4 metres ahead (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/prune/skill.go:69`), priced at 3.9 metres (2.5 plus 1.4), and the burst's initial hit is a circle of 6.5 metres (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/prune/burst.go:43`). gcsim names neither in a form the builder matches, so each is recorded by hand, and Prune's overlay names no cause for either hitbox's geometry.

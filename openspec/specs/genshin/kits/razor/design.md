@@ -2,6 +2,20 @@
 
 Razor's kit is its record and one behaviour module, `createRazorKitBehaviour`, on avatar 10000020 (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarExcelConfigData.json`, named Razor in `~/Esposter.noindex/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`): four strikes, a charged attack, a collision and two plunges, Claw and Thunder's press and its hold, and Lightning Fang's blast (`~/Esposter.noindex/cache/genshin-wiki/Category_Razor_Talents.json`). His multipliers are read from proud skill groups 2031, 2032 and 2039 (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`), and match the wiki's Steel Fang, Claw and Thunder and Lightning Fang values to two decimal places (level 1 of group 2031 is 0.9592 for the first strike, the wiki's 95.92% in `~/Esposter.noindex/cache/genshin-wiki/Category_Razor_Talents.json`). An Electro Sigil's Energy Recharge, energy and seconds, the press's and the hold's cooldowns, and the Soul Companion's share, the Electro RES bonus, the Wolf Within's seconds and the burst's cooldown and cost are read from the same groups (2032 at indices 2 to 6, 2039 at indices 1 and 3 to 6). The press's Electro Sigils and their clearing into energy by the hold and the burst, and Lightning Fang's Wolf Within with its Soul Companion beside each strike and its Electro RES, are built over the shared effects, with Awakening's cooldown cut and reset from Ascension 1 and Lupus Fulguris's lightning from six constellations, with Wolf's Instinct's all-DMG bonus from Constellation 1 and Bite's DEF cut from Constellation 4. The Wolf Within's ATK SPD, its disabled charged attack and its energy back as Razor leaves the field, Hunger, and his other constellations and Hexerei kit are not built.
 
+## How it works
+
+```mermaid
+flowchart TD
+  PRESS["Claw and Thunder press"] --> SIGIL["Electro Sigil, up to three"]
+  HOLD["Claw and Thunder hold"] --> CLEAR["Sigils clear into energy"]
+  SIGIL --> CLEAR
+  BURST["Lightning Fang burst"] --> CLEAR
+  BURST --> WOLF["Wolf Within field"]
+  WOLF --> STRIKE["Each strike while the field stands"]
+  STRIKE --> COMPANION["Soul Companion lands beside the strike"]
+  WOLF -->|"Razor leaves the field"| STOPS["Field ends"]
+```
+
 ## Decisions
 
 - **Razor's Electro Sigils are one Energy Recharge buff.** Each press gives a sigil as it starts, up to three, as a buff of the skill group's 20% Energy Recharge a sigil, restarted at its 18 seconds, and the count is read back off the buff. The hold at its hit, 55 frames, and the burst at 7 frames clear them, each sigil giving Razor the group's 5 energy, capped at his burst's cost, through a one-tick field. The 20%, 5 energy and 18 seconds are the wiki's Claw and Thunder page (`~/Esposter/cache/genshin-wiki/Category_Razor_Talents.json`) and group 2032's indices 2 to 4 (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`). The hold's clear is `~/Esposter/cache/gcsim-v2.47.2/internal/characters/razor/skill.go`, line 172 and the burst's `~/Esposter/cache/gcsim-v2.47.2/internal/characters/razor/burst.go`, line 73, each giving energy at `~/Esposter/cache/gcsim-v2.47.2/internal/characters/razor/skill.go`, line 240, and the cap is the burst's cost, as the kit's `Math.min` reads it and as the [kits README](../README.md#framework-decisions) gives a flat gain up to a burst's cost (`gainPartyMemberEnergy`). The wiki and gcsim give a sigil on striking an opponent (the wiki's "Upon striking an opponent", `~/Esposter.noindex/cache/genshin-wiki/Category_Razor_Talents.json`, and `~/Esposter/cache/gcsim-v2.47.2/internal/characters/razor/skill.go`, line 121, `addSigil`), but no hit writes the team's effects as it strikes, so the press gives it struck or not. A drop's energy reads the combatant's own Energy Recharge, `packages/genshin-world/src/services/party/gainPartyEnergy.ts`, line 30, not its buffs, so the sigils raise no drop's energy yet.

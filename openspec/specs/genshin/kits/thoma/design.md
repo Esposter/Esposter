@@ -4,6 +4,16 @@ Thoma's kit is its record and one behaviour module, `createThomaKitBehaviour`, o
 
 For the burst's 15 seconds, or 18 from Constellation 2 (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/thoma/burst.go:51`), the Ooyoroi stands as a summon, and a normal attack the character on the field starts sets off a Fiery Collapse from its body, at most once a second (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/thoma/thoma.go:44`, `~/Esposter/cache/gcsim-v2.47.2/internal/characters/thoma/burst.go:109`): a box 4.5 metres wide and 8 long, 1U of Pyro at 11 frames (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/thoma/burst.go:103`, `~/Esposter/cache/gcsim-v2.47.2/internal/characters/thoma/burst.go:105`). The first enemy a collapse strikes gives the team Thoma's shield, its share of his Max HP and its flat HP added to his shield already standing, up to the most Blazing Blessing's shield may hold, for 8 seconds (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/thoma/burst.go:98`, `~/Esposter/cache/gcsim-v2.47.2/internal/characters/thoma/shield.go:37`). From Ascension 4, Flaming Assault adds 2.2% of Thoma's Max HP to each Fiery Collapse's DMG. His Ascension 1 passive, Imbricated Armor, is not built, as a shield's absorption reads the struck character's attributes without its buffs, so a Shield Strength bonus would reach no shield; Constellations 2 and 4 are built, the Ooyoroi's three seconds (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/thoma/burst.go:51`) and Constellation 4's 15 energy, delayed 8 frames into the burst as gcsim gives it (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/thoma/burst.go:57` to `~/Esposter/cache/gcsim-v2.47.2/internal/characters/thoma/burst.go:60`); Constellation 6 is built as above, and his other constellations are not built. Constellation 1 stays open, as its wiki Constellation page is not cached, so no source settles it. The plunges' timing, the charged attack's stamina and the burst's energy cost are provisional.
 
+## How it works
+
+```mermaid
+flowchart TD
+  OOYO["Crimson Ooyoroi stands as a summon"] --> NORMAL["Normal attack by the character on the field"]
+  NORMAL --> FC["Fiery Collapse, at most once a second"]
+  FC --> FIRST["First enemy struck"]
+  FIRST --> SHIELD["Team shield, capped at Blazing Blessing's most"]
+```
+
 ## Decisions
 
 - **Thoma's Fiery Collapse fires on a shielded character's damage, which no kit event reaches yet.** gcsim triggers it on each hit a shielded character takes, behind a one-second internal cooldown (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/thoma/thoma.go:44`), and it sets off a shield of its own. The kit fires it from normal attacks instead, as the bullet below says.

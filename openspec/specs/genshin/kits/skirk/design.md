@@ -2,6 +2,16 @@
 
 Skirk's kit is its record and one behaviour module, `createSkirkKitBehaviour`, on avatar 10000114 (`~/Esposter/genshin-parity/text/ExcelBinOutput/AvatarExcelConfigData.json`): five strikes, a charged attack of two hits, a collision and two plunges (`~/Esposter/cache/genshin-wiki/Category_Skirk_Talents.json`, Havoc: Sunder), and Seven-Phase Flash, whose press enters a stance of its own strikes and charged attack. Her multipliers are read from proud skill groups 11431, 11432 and 11439 (`~/Esposter/genshin-parity/text/ExcelBinOutput/ProudSkillExcelConfigData.json`), her normal strikes and charged attack from the first, her Seven-Phase Flash's from the second and Havoc: Ruin's from the third. Her skill's cooldown is 8 seconds, counted from the end of the Seven-Phase Flash as gcsim counts it (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/skirk/skill.go:87`; the wiki's Havoc: Warp CD of 8s), her burst's 15 seconds (group 11439's index 7; the wiki's Havoc: Ruin CD of 15s), and the charged attack costs 20 stamina (group 11431's index 7). Her burst costs no energy (the wiki's Havoc: Ruin text, `Category_Skirk_Talents.json`), so its gate is her Serpent's Subtlety, which is not built.
 
+## How it works
+
+```mermaid
+flowchart TD
+  PRESS["Seven-Phase Flash press"] --> ENTRY["Stance entry after 19 frames"]
+  ENTRY --> STANCE["Stance lasts 754 frames"]
+  STANCE --> COOL["Cooldown runs from the press through the stance and 8 seconds"]
+  SWAP["Swap"] -->|"ends the stance early, cooldown unchanged"| STANCE
+```
+
 ## Decisions
 
 - **Seven-Phase Flash is a stance that starts 19 frames on from its press.** Its press lands no hit, so its action has no hits and animates for 43 frames, and a task runs after 19 frames to add the stance, as gcsim's skill enters its state after its delay (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/skirk/skill.go:24`, `skill.go:25`, `skill.go:33`). The stance lasts 754 frames from then (`skill.go:25`). Its strikes are the Seven-Phase Flash's five normal attacks in Cryo (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/skirk/attack.go:170`), and its charged attack is three Cryo slashes (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/skirk/charge.go:19`, `:92`), both from gcsim's stance attack and charge handlers.
