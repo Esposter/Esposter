@@ -207,6 +207,7 @@ The CLI that exports the game's blocks is built on macOS by its own page, [Anime
 ## Sources
 
 - [AnimeStudio](https://github.com/Escartem/AnimeStudio): the exporter, and its command-line options.
+- `~/Esposter/genshin-parity/extracted/login-layout/11790361/GameObject/DoorNode.json`: the login layout's door node, at a local position of (-262, 341, 700) and a local scale of 1.
 
 ## Open
 
@@ -215,10 +216,10 @@ The CLI that exports the game's blocks is built on macOS by its own page, [Anime
 - [ ] **A DXIL program is shader model 6, with no SHDR/SHEX chunk** — no source yet: no DXIL program is among the listings under `~/Esposter/genshin-parity/extracted/shaders/asm/uber`, so no DXIL header is read.
 - [ ] **`vkd3d-compiler` 2.1 disassembles all 1553, and `d3dcompiler_47` only the DXBC ones** — no source yet: the 2.1 install is at `~/Esposter.noindex/cache/vkd3d/vkd3d-2.1`, but no run log records the disassembly.
 - [ ] **The walkway's parent is `BridgeBeginNode`, set by hand at the door's 0.4 scale and 5 metres down** — no source yet: a dump or code that sets the walkway's parent by hand.
-- [ ] **The door stands on the walkway at the flight's end, 70 metres from its static anchor** — no source yet: a measurement that names the axis of the 70 metres; `~/Esposter/genshin-parity/extracted/login-layout/11790361/GameObject/DoorNode.json` gives the door's local position as (-262, 341, 700) at a local scale of 1.
+- [ ] **The door stands on the walkway at the flight's end, 70 metres from its static anchor** — no source yet: a measurement that names the axis of the 70 metres.
 - [ ] **The login's towers stand three times 200 metres apart, and its walkway three times 16** — no source yet: `~/Esposter/genshin-parity/extracted/login-layout` keeps no raw bytes, and `~/Esposter/genshin-parity/extracted/login-behaviours/MonoBehaviour/MonoLoginScene.json` keeps only its GameObject pointer
 - [ ] **The character select's stage lays the login's meshes out at 0.4 scale** — no source yet: no export of the character select's layout is checked.
-- [ ] **The character select's block keeps about four times as many GameObjects as the login's** — no source yet: `~/Esposter/genshin-parity/extracted/login-layout` holds two layout folders, `11790361` with 398 GameObject dumps and `16000354` with 138, and nothing on disk records which one is the character select's block.
+- [ ] **The character select's block keeps about four times as many GameObjects as the login's** — contradicted by `~/Esposter/genshin-parity/extracted/login-layout`: its two folders hold 398 and 138 GameObjects, about 2.9 times.
 - [ ] **`tree login --root SceneObj` shows three empty anchors** — no source yet: the `SceneObj` row in `packages/genshin-world/src/components/Login/Scene/Arrangement.reference.ts` is a repo copy, and the `tree` output on the login layout export is not kept.
 - [ ] **A skinned door renderer draws its own mesh, named by its path ID through the asset index** — no source yet: the asset index's entry for the mesh's path ID, since `~/Esposter/genshin-parity/asset-index/gi-2.6.0.json` keys its names by `PathHashPre` and `PathHashLast`.
 - [ ] **The sky gradient is three falloff curves over the sky's height, and a cloud atlas holds two columns of four painted clouds** — no source yet: no decoded gradient or atlas texture is checked.
