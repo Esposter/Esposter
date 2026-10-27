@@ -41,3 +41,7 @@ flowchart LR
 - [ ] **The licence's second line runs narrower than the recording's** — no source yet: the licence line's width has not been measured against the recording.
 - [ ] **253 on the user's own recording** — no source yet: no still of the PC splash from the user's own recording is in `~/Esposter/genshin-parity/references/`.
 - [ ] **A Simplified Chinese reader is shown mainland China's client** — no source yet: `~/Esposter/genshin-parity/references/cn-login.png`, not yet read for which client a Simplified Chinese reader sees.
+
+## Sources
+
+- Requirement "Every white of the opening is the game's near-white": "as the game's PC client draws it".

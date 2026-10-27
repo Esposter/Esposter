@@ -67,7 +67,7 @@ The opening SHALL hold its white backdrop until the reader's logo has arrived, s
 
 ### Requirement: Every white of the opening is the game's near-white
 
-Every white of the opening SHALL be a shade a step under full white, as the game's PC client draws it.
+Every white of the opening SHALL be a shade a step under full white.
 
 #### Scenario: Splash white
 
