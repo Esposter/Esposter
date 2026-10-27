@@ -10,14 +10,14 @@ That difference is invisible while the only writer is the editor, and it is the 
 
 ```mermaid
 flowchart TD
-  RESTORE["a restore writes the content and bumps contentVersion"] --> RELOAD
+  RESTORE["Restore<br/>contentVersion bumped"] --> RELOAD
   RELOAD["reloadResourceContent — re-read the row"] --> HOOK1["ResourceContentHookMap.Reload<br/>the content stores re-read their own blob"]
-  HOOK1 --> RENDER["a Vue-rendered type is finished — its blade renders the ref"]
+  HOOK1 --> RENDER["Vue-rendered type<br/>blade renders the ref"]
   HOOK1 --> HOOK2["ResourceContentHookMap.Adopt<br/>useAdoptResourceContent, per blade"]
   HOOK2 --> LIB["the library takes the new document"]
 
-  HOOK1 -.->|"no adopt registered"| HELD["the library still holds the pre-restore document"]
-  HELD -.->|"its next autosave writes that document back<br/>at the restore's own fresh contentVersion"| GONE(["the server accepts — the restore is undone, silently"])
+  HOOK1 -.->|"no adopt registered"| HELD["Library holds<br/>pre-restore document"]
+  HELD -.->|"its next autosave writes that document back<br/>at the restore's own fresh contentVersion"| GONE(["Restore undone<br/>silently"])
 ```
 
 They are two registries rather than one because a registry runs its hooks together: the adopt stage reads what the reload stage landed, so it cannot be a peer of it. The ordering is the only reason the second stage exists, and it is what `reloadResourceContent` is tested on.
@@ -51,4 +51,4 @@ Register before the first `await` in an async composable. Past it the caller's s
 ## Notes
 
 - Real-time content sync is the same shape arriving from a different direction — another device's save streams `{ content, contentVersion, id }` and subscribers adopt both ([resources](../resource/design.md)). Only TodoList wires it, and it is Vue-rendered, so it needs no second stage; a third-party editor opting in would route its subscription through its adopt rather than a second replace path.
-- Nothing derives "is this type editor-owned" from a map. The adopt is registered where the editor is constructed, which is the only place that knows — a registry keyed by `ResourceType` would be a second list to keep in step with the blades, and the [capability admission rule](../resource/design.md) refuses exactly that.
+- Nothing derives "is this type editor-owned" from a map. Only the place that constructs the editor knows, so a registry keyed by `ResourceType` would be a second list to keep in step with the blades, and the [capability admission rule](../resource/design.md) refuses exactly that.

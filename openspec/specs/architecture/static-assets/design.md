@@ -22,7 +22,7 @@ Everything else is in `app/assets/`. Packages whose files the server must hand o
 
 A value a user's data stores is a name the code resolves to a URL when it reads it. A call background is saved as its preset's enum member, `CallVirtualBackground.Sunrise`, and `CallVirtualBackgroundUrlMap` resolves that member to the bundled URL of its file. The map is typed over every member, so a preset added to the enum without its file fails the typecheck. A rebuild changes the URL but not the name, so a saved setting never goes stale.
 
-The enum follows the repo's convention: each member's value is spelled like its key, and the enum has no `None` member. "No background" is the empty string the setting already defaults to, and the definitions list it as the first entry with an empty `id`, so the picker draws its tile from the same markup as every other preset. A separate None control was tried and dropped, because it repeated the tile's markup. Absence is never an enum member, as the `typescript` skill's enum reference says.
+The enum follows the repo's convention: each member's value is spelled like its key, and the enum has no `None` member. "No background" is the empty string the setting already defaults to, and the definitions list it as the first entry with an empty `id`, so the picker draws its tile from the same markup as every other preset. A separate None control would repeat the tile's markup, so there is none. Absence is never an enum member, as the `typescript` skill's enum reference says.
 
 ## How a bundled file is read
 
@@ -76,4 +76,4 @@ A file under `shared/` is parsed by the server and read by the Nuxt config in No
 
 ## Notes
 
-- **Settings saved before the preset ids existed hold a path, which no preset matches.** They read as no background. The project is not in production and keeps no compatibility shims, so nothing migrates them.
+- **Settings that hold a path rather than a preset id match no preset.** They read as no background. The project is not in production and keeps no compatibility shims, so nothing migrates them.

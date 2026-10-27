@@ -27,4 +27,4 @@ Connecting the [agent console](../../infra/claude-interface/agent-console/README
 
 ## Where this sits
 
-This page decides the words and the number of paths. Where an action lives and from where a person reaches it is the `ux` skill's; the reference product a surface is judged against is [design sources](../design-sources/design.md)'. A reference product that shows its plumbing is not followed there.
+This page decides the words and the number of paths. Where an action lives and from where a person reaches it is the `ux` skill's; the reference product a surface is judged against is [design sources](../design-sources/design.md). A reference product that shows its plumbing is not followed there.

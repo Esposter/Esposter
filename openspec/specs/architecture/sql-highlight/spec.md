@@ -1,6 +1,6 @@
 ## Purpose
 
-highlightSql in apps/web, the replacement for the sql-highlight package in the dev query log — its token kinds, its colour map and the upstream audit, with every issue given a verdict.
+highlightSql in apps/web, the dev query log's highlighter — its token kinds, its colour map and the upstream audit, with every issue given a verdict.
 
 ## Requirements
 

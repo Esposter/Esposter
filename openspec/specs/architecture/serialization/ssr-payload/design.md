@@ -9,4 +9,4 @@ definePayloadReducer(name, (data) => data instanceof cls && JSON.stringify(data)
 definePayloadReviver(name, (data) => new cls(jsonDateParse(data)));
 ```
 
-The reducer writes the entity with `JSON.stringify`, so its dates reach the HTML as ISO strings. The reviver passes that string through `jsonDateParse`, which turns the dates back into `Date` objects and constructs `new cls(...)`, so the hydrated value is `instanceof cls` with its methods, not a plain object.
+The reducer writes the entity with `JSON.stringify`, so its dates reach the HTML as ISO strings. The reviver passes that string through `jsonDateParse`, as the [serialization](../README.md) page's shared rule describes, and constructs `new cls(...)`, so the hydrated value is `instanceof cls` with its methods, not a plain object.

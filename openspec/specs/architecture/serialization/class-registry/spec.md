@@ -18,7 +18,7 @@ A class that crosses a serialization boundary SHALL be listed once in the shared
 
 - **GIVEN** a new message kind read from table storage
 - **WHEN** it is added
-- **THEN** it is registered in the message kind map used for table reads as well as in the shared registry
+- **THEN** the shared registry needs no entry for it, since table reads select the class through `MessageTypeEntityMap`
 
 ### Requirement: A registered class name is never renamed
 
