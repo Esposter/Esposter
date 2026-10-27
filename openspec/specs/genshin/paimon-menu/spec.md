@@ -161,7 +161,7 @@ The World Level dialog SHALL show its help text and a cream lowering button with
 
 - **GIVEN** the World Level dialog is open
 - **WHEN** the player reads the dialog
-- **THEN** its help text is shown in the game's own words (`~/Esposter/genshin-parity/text/TextMap/TextMap_MediumEN.json`, text id 2955635938)
+- **THEN** its help text is shown in the game's own words
 - **AND** the cream lowering button with its red arrow is shown
 
 ### Requirement: The Settings screen shows the game's tabs and rows
@@ -172,7 +172,7 @@ The Settings screen SHALL list its tabs down the left in the game's order and dr
 
 - **GIVEN** the Settings screen is open on the Graphics tab
 - **WHEN** the player reads its rows
-- **THEN** the graphics quality row is set by the world, its words marking the device's own tier as the default (the frame at 144.5 seconds of `~/Esposter/genshin-parity/captures/yt-5EmJX_RyuY8-menu-settings.mp4` reads 'High (Default)', and text id 1676673275 in `~/Esposter/genshin-parity/text/TextMap/TextMap_MediumEN.json` reads '{0} (Default)')
+- **THEN** the graphics quality row is set by the world, its words marking the device's own tier as the default
 - **AND** every other row shows its value disabled
 
 #### Scenario: Pointer over a row
