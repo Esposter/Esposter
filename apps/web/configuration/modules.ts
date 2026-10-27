@@ -34,6 +34,9 @@ export const nonVitestModules: NonNullable<NuxtConfig["modules"]> = [
   "@pinia/nuxt",
   "@unocss/nuxt",
   "@vite-pwa/nuxt",
+  // Vize compiles the app's SFCs. Nuxt's builder still installs @vitejs/plugin-vue, which compiles only the SFCs Vize
+  // Excludes, such as nuxt-og-image's renderers
+  "@vizejs/nuxt",
   "@vueuse/nuxt",
   NUXT_SECURITY_MODULE_PATH,
   TRESJS_NUXT_MODULE_PATH,

@@ -32,7 +32,8 @@
     "#scripts/*": "./scripts/*.ts",
     "#src/*": "./src/*.ts",
     "#src/*.json": "./src/*.json",
-    "#src/*.vue": "./src/*.vue"
+    "#src/*.vue": "./src/*.vue",
+    "#src/*?worker": "./src/*.ts?worker"
   },
   "exports": {
     ".": {

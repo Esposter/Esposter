@@ -107,6 +107,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@vue/test-utils`                       | —                     | Keep — tooling   | component tests                                                                                        |
 | `@vuetify/v0`                           | —                     | Keep — framework | the UI library's headless base, on the stop list for accessibility                                     |
 | `@vueuse/core`                          | —                     | Keep — framework | the composable library                                                                                 |
+| `@vizejs/nuxt`                          | —                     | Keep — framework | the Nuxt module that compiles the app's SFCs with Vize, beside Nuxt's Vue plugin                       |
 | `@vueuse/nuxt`                          | —                     | Keep — framework | auto-imports the composables                                                                           |
 | `@vueuse/router`                        | —                     | Keep — framework | route-query composables, auto-imported                                                                 |
 | `@wasm-audio-decoders/ogg-vorbis`       | —                     | Keep — engine    | an Ogg Vorbis decoder                                                                                  |
@@ -207,7 +208,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `vite-plus`                             | —                     | Keep — tooling   | the task runner, lint, format and the `vpx` script runner                                              |
 | `vitest`                                | —                     | Keep — tooling   | the test runner                                                                                        |
 | `vitest-browser-vue`                    | —                     | Keep — tooling   | browser-mode component tests                                                                           |
-| `vize`                                  | —                     |                  |                                                                                                        |
+| `vize`                                  | —                     | Keep — tooling   | the Vize compiler the Nuxt module runs on, and the content mapper spike                                |
 | `vue`                                   | —                     | Keep — framework | the UI framework                                                                                       |
 | `vue-eslint-parser`                     | —                     | Keep — tooling   | ESLint's Vue parser                                                                                    |
 | `vue-router`                            | —                     | Keep — framework | routing                                                                                                |
