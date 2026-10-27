@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "genshin-mods",
   "displayName": "Genshin Mods",
-  "description": "Six Claude Code mods: five under one band above the prompt, waypoints (the next steps, one press each), resin (cache, context, limits and cost, with warm, compact and a one-click handoff), veil (recording mode), commission (a goal's task list and clock) ward (a question before editing a file another session just changed), pulse (the machine watcher), and three guards: a delegation guard that nudges a run of lookups toward a haiku agent, a disk-scan guard that refuses a Bash scan from a root or home folder, and a whole-index guard that refuses a git command over the whole index while another session shares the checkout.",
+  "description": "Six Claude Code mods, each switched by its own command: five under one band above the prompt, waypoints (the next steps, one press each), resin (cache, context, limits and cost, with warm, compact and a one-click handoff), veil (recording mode), commission (a goal's task list and clock), ward (a question before editing a file another session just changed, and a refusal of a git command over the whole index while another session shares the checkout), and pulse (the machine watcher). Two guards run in every session without a command: a delegation guard that nudges a run of lookups toward a haiku agent, and a disk-scan guard that refuses a Bash scan from a root or home folder.",
   "author": { "name": "Esposter", "url": "https://github.com/Esposter" },
   "homepage": "https://github.com/Esposter/Esposter/tree/main/openspec/specs/infra/claude-interface/genshin-mods",
   "repository": "https://github.com/Esposter/Esposter",
