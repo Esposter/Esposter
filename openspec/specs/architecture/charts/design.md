@@ -1,6 +1,6 @@
 # Charts
 
-`apps/web/app/components/Styled/ApexChart.vue` is the app's one chart: every dashboard chart visual, the survey response summary and the sheet's column chart mount it. It mounts ApexCharts directly It mounts ApexCharts directly, with no component wrapper, since that mount is all a wrapper would add. It is a component of the app rather than a package, because what it adds over the engine (the app's theme, its tokens and where the engine sits in a component's lifecycle) is this app's alone ([dependency admission](../dependency-admission/design.md)).
+`apps/web/app/components/Styled/ApexChart.vue` is the app's one chart: every dashboard chart visual, the survey response summary and the sheet's column chart mount it. It mounts ApexCharts directly, with no component wrapper, since that mount is all a wrapper would add. It is a component of the app rather than a package, because what it adds over the engine (the app's theme, its tokens and where the engine sits in a component's lifecycle) is this app's alone ([dependency admission](../dependency-admission/design.md)).
 
 ## How a chart is drawn
 

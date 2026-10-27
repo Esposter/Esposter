@@ -10,7 +10,7 @@ flowchart TD
   scan["One pass over the text<br/>a single alternation, read with matchAll"]
   token{"Which alternative matched?"}
   painted["A token of a painted kind"]
-  plain["Unpainted text, kept as typed<br/>bracket, operator or space: kept as typed"]
+  plain["Unpainted text<br/>bracket, operator or space: kept as typed"]
   styled["styleText paints the token<br/>and drops the colour off a non-terminal"]
   output["Output with colour stripped equals the input"]
   input --> scan --> token

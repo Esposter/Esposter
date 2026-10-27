@@ -54,4 +54,4 @@ The repository SHALL merge a change's requirements into the spec of record in th
 #### Scenario: An unshipped change stays in place
 
 - **WHEN** the change has not yet been shipped
-- **THEN** its folder stays among the open changes and the spec of record is unchanged and `openspec/specs/` is unchanged
+- **THEN** its folder stays among the open changes and `openspec/specs/` is unchanged

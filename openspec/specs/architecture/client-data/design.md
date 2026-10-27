@@ -176,7 +176,7 @@ Post counts have one owner, `usePostCountStore`: a write that changes a count as
 
 ## Anti-patterns, and what enforces each
 
-Each entry is a shape to keep out of the code, with the shape to use instead and the check that stops it., with the shape that replaced it and the check that now stops it coming back.
+Each entry is a shape the repo used and then left behind, with the shape that replaced it and the check that now stops it coming back.
 
 - **A count moved by a delta.** `count++` on a join, `likeCount += delta` on a vote, `commentCount += 1` on a reply. Replaced by a re-read of the aggregate. **Enforced** by the `no-restricted-syntax` selectors in `packages/configuration/eslint/restrictedSyntaxes.js`, which fail a `++`, `--`, `+=` or `-=` on a server-derived count field, and a count set to a sum or difference (`likeCount = likeCount + n`). A delta computed into a variable first (`const next = count + 1; count = next`) is not matched; review owns that case.
 - **A delta from an event payload.** A subscription echo read as a number to add to the count. An echo says the inputs changed; the count is read again. **Enforced** by the same lint selectors: a payload's count added to the stored one is a `+=` or a sum on a count field.
