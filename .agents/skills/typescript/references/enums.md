@@ -55,7 +55,7 @@ export const fooTypeSchema = z.enum(FooType) satisfies z.ZodType<FooType>;
   BarTypes.has(barType); // O(1)
   ```
 
-  In published packages (packages extending `tsconfig.library.json`, e.g. `packages/shared`) annotate the array explicitly: `export const FooTypes: readonly FooType[] = Object.values(FooType);`. In the app, let it infer.
+  In published packages (packages whose declarations are emitted, i.e. with `isolatedDeclarations` on, e.g. `packages/shared` and `packages/parse-tmx`) annotate the array explicitly: `export const FooTypes: readonly FooType[] = Object.values(FooType);`. In the app, let it infer.
 
 - **Never write `Object.values(SomeEnum)` inline** — use the exported array.
 - **The values array lives in the source's own file, never at a consumption site** — a `const FooTypes = Object.values(FooType)` declared locally in a service/component (or duplicated across two consumers) is the violation shape even when typed and named correctly; move it to the enum's file and import it. Same rule for map-derived collections: `export const FooDefinitions = Object.values(FooDefinitionMap)` sits at the bottom of the map's file. Exception: test files may derive values locally when the point of the test is independently re-deriving them (e.g. exhaustiveness assertions against a map).
