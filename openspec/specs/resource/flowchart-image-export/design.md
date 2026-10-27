@@ -7,10 +7,10 @@ The resource menu exports a Flowchart as a PNG or SVG named after the resource. 
 ```mermaid
 flowchart LR
   MENU[Export PNG or SVG] --> LOAD[Load Flowchart content]
-  LOAD --> SNAP[Snapshot nodes and edges]
-  SNAP --> CANVAS[Offscreen read-only VueFlow fits every node]
-  CANVAS --> CSS[Copy computed styles and embed font faces]
-  CSS --> SVG[Wrap the styled canvas in SVG foreignObject]
+  LOAD --> SNAP[Snapshot the graph]
+  SNAP --> CANVAS[Offscreen read-only canvas]
+  CANVAS --> CSS[Computed styles and font faces]
+  CSS --> SVG[Wrap in SVG foreignObject]
   SVG -->|SVG| FILE[Download named file]
   SVG -->|PNG| RASTER[Rasterize at twice device pixel ratio]
   RASTER --> FILE

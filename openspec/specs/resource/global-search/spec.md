@@ -56,7 +56,7 @@ The palette SHALL show the owner's recent searches and recently opened resources
 
 - **GIVEN** the owner has searched for terms before
 - **WHEN** the palette opens with an empty query
-- **THEN** their recent searches are listed, up to five
+- **THEN** their recent searches are listed, up to five (`RECENT_SEARCHES_LIMIT`)
 
 #### Scenario: Recently opened resources are listed on an empty query
 

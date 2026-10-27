@@ -4,6 +4,13 @@ An email's preview text — the preheader — is the line an inbox shows beside 
 
 ## How it works
 
+```mermaid
+flowchart LR
+  ROOT[Root form preview] --> HEAD[renderMjmlHead as mj-preview]
+  HEAD --> HTML[Compiled HTML]
+  HTML --> SUB[substituteMergeFields per row]
+```
+
 - **The field is the root's form.** The email's root form holds one field, `preview`, and nothing else of the head. It is edited through the page builder's history like any other root edit, so an undo takes the line back.
 - **It compiles to markup.** The [MJML blocks](../../mjml-blocks/README.md) package writes the root's `preview` as an `mj-preview` in the head, its text escaped, and reads the element back into the same prop on import. A preview left unset writes no element.
 - **A new email starts with a placeholder.** The starter document carries a short line that shows under the subject in most inboxes, which the author replaces.

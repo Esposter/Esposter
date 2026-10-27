@@ -37,7 +37,7 @@ The warning is advisory. Delete stays enabled, because the delete is a soft one:
 
 ## Notes
 
-- The index is written by every save, and it shipped before any consumer held content, so the warning never undercounts a resource saved before it existed ([resource links](../../architecture/resource-links/design.md)).
+- The index is written by every save. No consumer predates the index, so every stored reference has its index row, and the warning never undercounts ([resource links](../../architecture/resource-links/design.md)).
 - Each chunk's read is capped at `MAX_READ_LIMIT`, which is far past the consumers a selection has.
 
 ## Sources

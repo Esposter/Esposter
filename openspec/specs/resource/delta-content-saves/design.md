@@ -6,14 +6,14 @@ The [resource version store](../resource-version-store/design.md) already stores
 
 ```mermaid
 flowchart TD
-  save["saveContent — a request body over MAX_REQUEST_SIZE"] --> held{"stored bytes held — read, or confirmed by a save?"}
-  held -->|no| staged["staged save — gzip, PUT, commit"]
-  held -->|yes| encode["encodeContentDelta — wasm zstd in a worker, baseline as dictionary"]
+  save["saveContent<br/>a request body over MAX_REQUEST_SIZE"] --> held{"stored bytes held<br/>read, or confirmed by a save?"}
+  held -->|no| staged["staged save<br/>gzip, PUT, commit"]
+  held -->|yes| encode["encodeContentDelta<br/>wasm zstd in a worker, baseline as dictionary"]
   encode --> fits{"encoded, and fits one body?"}
   fits -->|no| staged
-  fits -->|yes| commit["saveResourceContentDelta — id, contentVersion, baseline hash, delta"]
+  fits -->|yes| commit["saveResourceContentDelta<br/>gated on the baseline hash"]
   commit --> match{"row and blob hash equal the baseline hash?"}
-  match -->|"no — CONFLICT"| staged
+  match -->|"no, CONFLICT"| staged
   match -->|yes| decode["node:zlib zstd against the decoded content blob, capped at the content limit"]
   decode --> door["saveResourceContent service"]
   staged --> door

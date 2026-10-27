@@ -31,7 +31,7 @@ With a query set the scope shows three groups plus a last row:
 | Pages     | static `PageSearchItems`                                                                   | page icon · title                    | every [service menu](../resource-service-menu/design.md) entry, plus Create a resource |
 | last row  | always when a query is set                                                                 | "See all results for {q}"            | `/resource-explorer/all?search={q}`                                                    |
 
-- **Empty query**: two groups instead — recent searches (`LocalStorageKey.ResourceRecentSearches`, capped at `RECENT_SEARCHES_LIMIT`, pushed on submit/pick) and **Recently opened**, the caller's own server-side access rows read through the recents store ([favorites & recents](../favorites-and-recents/design.md)). The two are stored differently on purpose ([favorites & recents](../favorites-and-recents/design.md) says why): the resources you opened follow you between machines; a query you typed does not.
+- **Empty query**: two groups instead — recent searches (`LocalStorageKey.ResourceRecentSearches`, capped at `RECENT_SEARCHES_LIMIT`, pushed on submit/pick) and **Recently opened**, the caller's own server-side access rows read through the recents store ([favorites & recents](../favorites-and-recents/design.md)). The two are stored differently on purpose ([favorites & recents](../favorites-and-recents/design.md) says why).
 - **No match highlight**: the palette draws its rows the one way for every scope.
 - **No results**: the See-all row alone.
 - `/resource-explorer/all` reads `?search=` and `?types=` on load, so the See-all and Services rows deep-link into a pre-filtered list.

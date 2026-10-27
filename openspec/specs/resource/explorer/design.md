@@ -36,7 +36,7 @@ The whole explorer is **client-only rendered**: `apps/web/configuration/routeRul
 
 ```mermaid
 flowchart LR
-  HOME["/resource-explorer (Home)<br/>search · quick-create tiles · recent resources"]
+  HOME["/resource-explorer (Home)"]
   HOME -->|☰| SMENU["ResourceServiceMenu drawer"]
   SMENU --> ALL["/resource-explorer/all<br/>full list · search"]
   HOME -->|See all| ALL
@@ -85,7 +85,7 @@ One header, then the blade — no absolute overlay, no `z-index`. The `resource`
 Like every route but Home it does not pass `is-service-menu-shown`: the blade tabs are the navigation on this page, and a second menu beside them would be two answers to "where am I".
 
 ```text
-  Resource Explorer › All               ▣▣▣▣▢▢▢▢▢▢ 3.2 GB of 10 GB used Free plan   ← trail + storage meter
+  Resource Explorer › All               ▣▣▣▣▢▢▢▢▢▢ storage used of the plan allowance   ← trail + storage meter
 [▦] Q3 Report                            ☁ Saved 2m ago  [Share] [★] [⋯] [✕]      ← the resource's title row
     Sheet
  Overview   Activity   Data   Settings                                              ← blade tabs
@@ -94,7 +94,7 @@ Like every route but Home it does not pass `is-service-menu-shown`: the blade ta
 ```
 
 - **No list pane beside the blade.** A resource fills the surface however the visitor reached it: a pane would duplicate a way back that the breadcrumb and the header's close ✕ both already give, and it would spend width the blade itself uses better.
-- **The blades are tabs under the title.** A type has three or four of them, so a row of tab links costs no width the blade could use, where a rail beside it took a column or a collapse toggle to give one back. They stay on screen on every width, a row that scrolls sideways where it is too short, and the current one is marked by the route. The Azure rail, its collapse caret and the dropdown it became on a narrow screen were retired with the UI library's first page header.
+- **The blades are tabs under the title.** A type has three or four of them, so a row of tab links costs no width the blade could use, where a rail beside it took a column or a collapse toggle to give one back. They stay on screen on every width, a row that scrolls sideways where it is too short, and the current one is marked by the route.
 - **The title row is the resource as an item in its slot**: the type's mark in its block, beside the name as the page's heading and the type under it. The blade is not named beside it, since its tab already says which face is open.
 - **One action shown, the rest in the page's overflow menu** ([resource page parity](../resource-page-parity/design.md)). A right-click, a long press or the menu key on the title opens the same list.
 - **Nested close** — the ✕ peels back to whatever the trail says the visitor came through (`navigationTrail` store's `closeTo`), falling back to the hub on a direct arrival. Clicking it and clicking the last crumb are the same move, on the list page and the resource page alike.

@@ -32,9 +32,9 @@ flowchart LR
 
 ## Notes
 
-- Export surfaces through the **Portable** capability (`PortableFormatMap[Email]` personalized-HTML `export()`), rendered as Import/Export entries in the resource command bar — the email's page builder is mounted over the email store, so the command-bar export compiles the stored document.
+- Export surfaces through the **Portable** capability (`PortableFormatMap[Email]` personalized-HTML `export()`), rendered as Import/Export entries in the resource command bar, so the command-bar export compiles the stored document.
 - Merge-field palette entries read the bound dataset's columns on render, so no per-item re-sync is kept. The survey invite is bound from a picker of the owner's published surveys, the one the [webpage survey invite](../webpage-survey-invite-blocks/design.md) uses.
-- Substituted values are HTML-escaped: merge fields personalize text, never inject markup. Tokens are inserted escaped and substitution matches both raw and escaped token forms, since the canvas entity-encodes special characters (e.g. a "P&L" column) on serialization.
+- Tokens are inserted escaped and substitution matches both raw and escaped token forms, since the canvas entity-encodes special characters (e.g. a "P&L" column) on serialization.
 - Export is one download, so no directory permission prompt stands between the sender and the artifact.
 - Exported files keep app-origin asset urls (`/api/resource-assets/…`), which resolve only for a request carrying the owner's session cookie — images are blank in a file opened straight off disk. Durable public asset urls come with [email sending](../../../deferred/resource/email-sending/design.md).
 - The `EmailEditor` content class name is frozen (registered in `JSONClassMap` — renaming breaks superjson deserialization of persisted blobs).

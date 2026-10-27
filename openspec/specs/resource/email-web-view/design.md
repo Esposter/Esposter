@@ -11,10 +11,11 @@ The server compiles the email at publish, so the snapshot's HTML is derived from
 ```mermaid
 flowchart LR
   PUB["publishResource"] -->|"transformPublishedEmail: compileEmailContent under strict validation"| SNAP[("published version n")]
-  VIEW["/view/Email/[id]<br/>ViewComponentMap[Email]"] -->|readPublishedResourceContent| RENDER["sandboxed iframe srcdoc<br/>(same posture as the Webpage view)"]
+  SNAP -->|readPublishedResourceContent| VIEW["/view/Email/[id]<br/>ViewComponentMap[Email]"]
+  VIEW --> RENDER["sandboxed iframe srcdoc"]
 ```
 
-- **Content schema** — `EmailEditor` carries the compiled `html` of a published snapshot, which the server writes at publish. The class name stays frozen (it is registered in `JSONClassMap`, so renaming it would break superjson deserialization of persisted blobs).
+- **Content schema** — `EmailEditor` carries the compiled `html` of a published snapshot, which the server writes at publish.
 - **Capability** — `publishable: true` on Email in `ResourceDefinitionMap`. The derived union then _requires_ a `ViewComponentMap[Email]` entry (a compile error until it exists) and _grants_ the publish procedures — zero bespoke endpoints, which is the whole point of the capability model. Publish and Unpublish appear in the command bar automatically through the existing capability gate.
 - **View component** — serves the snapshot's `html` through a sandboxed iframe `srcdoc`, identically to the Webpage view: scripts run, but `allow-same-origin` is withheld, so a published email cannot touch a viewer's session. OG meta tags come with the existing view-page behaviour.
 
@@ -30,6 +31,5 @@ flowchart LR
 
 ## Notes
 
-- The same `compileEmailContent` compile backs the personalized HTML export ([email personalization](../email-personalization/design.md)) — one compile path, two consumers.
 - A personalized web version per recipient (resolving merge fields server-side per invite token) is deliberately out: it would make the public view do per-request dataset reads, which is exactly what publishing exists to avoid. The published copy is one static artifact.
 - Hosted images inside the published copy come from [resource file assets](../resource-file-assets/design.md); external-URL images work unchanged.

@@ -25,14 +25,14 @@ flowchart LR
 ## Decisions
 
 - **Path choices.** The panel offers curved, right-angled and straight. Vue Flow's step and simple-bezier types stay valid in the schema, since a stored edge may hold either, but the panel does not offer them.
-- **Legacy edges.** An edge saved with no `markerEnd` draws the default arrow the moment the canvas loads it.
+- **Stored edges without a marker.** An edge saved with no `markerEnd` draws the default arrow when the canvas loads it.
 - **One write path.** Label and path edits go through `setEdges`, so they reach the same `update:edges` autosave as a drag does. Both hand their patch to `patchEdge`, which lays it over the one edge it names, so the two fields cannot drift apart.
 - **One panel at a time.** A node selected together with an edge keeps the node's panel, so the two never stack.
 
 ## Left out
 
-- Edge colours, widths and dash styles: the node colour groups steps, and a styled line is decoration a flowchart does not need to be read.
-- Waypoints (dragging a segment to reroute it): right-angled routing between four handles covers ordinary charts.
+- Edge colours, widths and dash styles are not offered.
+- Waypoints, dragging a segment to reroute it, are not offered.
 
 ## Key files
 

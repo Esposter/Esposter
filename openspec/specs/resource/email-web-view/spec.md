@@ -33,18 +33,18 @@ The public view SHALL show merge-field tokens exactly as the author wrote them, 
 
 ### Requirement: The public view holds the last compiled copy
 
-The system SHALL keep the compiled copy saved on each editor save, and SHALL publish that copy, warning the author when the latest compile failed.
+The system SHALL compile the email when it is published, SHALL publish that compiled copy, and SHALL keep the last published copy when a compile fails.
 
 #### Scenario: A failed compile keeps the last good copy and warns
 
-- **GIVEN** the author saves an email whose compile fails
-- **WHEN** the save finishes
-- **THEN** the save is kept
-- **AND** the author is warned that the hosted copy is behind until a compile succeeds
+- **GIVEN** the owner publishes an email whose compile fails
+- **WHEN** the publish runs
+- **THEN** the publish is refused with the validator's message
+- **AND** the public view keeps the last published copy
 
 #### Scenario: A publish after a good compile shows the new content
 
-- **GIVEN** the author's latest compile succeeded
+- **GIVEN** the email compiles
 - **WHEN** the owner publishes the email
 - **THEN** the public view shows that compiled content
 

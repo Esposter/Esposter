@@ -23,7 +23,7 @@ The flowchart editor SHALL draw every connector with an arrowhead at its end, an
 
 #### Scenario: A connector stored without an arrowhead gains one
 
-- **GIVEN** a flowchart was saved before connectors had arrowheads
+- **GIVEN** a stored connector has no arrowhead
 - **WHEN** the owner opens it
 - **THEN** its connectors show an arrowhead
 
