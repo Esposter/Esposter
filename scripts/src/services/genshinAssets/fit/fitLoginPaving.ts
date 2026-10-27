@@ -24,6 +24,7 @@ import { toLinear } from "#src/services/shared/toLinear";
 import { join } from "node:path";
 import sharp from "sharp";
 import { Color } from "three";
+import { LoginStoneFamilyMaterialRegex } from "#src/models/genshinAssets/fit/LoginStoneFamilyMaterialRegex";
 
 // The materials whose stone is set with pockets, the side lanes' and the wings'
 const POCKET_MATERIALS = new Set(["LoginScene_Bridge01", "LoginScene_Bridge02"]);
@@ -170,7 +171,7 @@ export const fitLoginPaving = async (
   const stone = new Color(
     await fitAlbedo(
       materialNames
-        .filter((name) => LoginStoneFamilyMaterialRegexMap.walkway.test(name))
+        .filter((name) => LoginStoneFamilyMaterialRegexMap[LoginStoneFamilyMaterialRegex.Walkway].test(name))
         .map((name) => join(textureDirectory, `${name}_Diffuse.png`)),
     ),
   );

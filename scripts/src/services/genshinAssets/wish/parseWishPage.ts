@@ -3,14 +3,15 @@ import type { WishEventPage } from "#src/models/genshinAssets/wish/WishEventPage
 import { WishEventKind } from "#src/models/genshinAssets/wish/WishEventKind";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 import { sliceWikiTemplate } from "genshin-persona/src/services/sliceWikiTemplate.ts";
+import { WikiTypeWishEventKind } from "#src/models/genshinAssets/wish/WikiTypeWishEventKind";
 
 const TEMPLATE_START = "{{Wish\n";
 const POOL_TEMPLATE_START = "{{Wish Pool\n";
 const OFFSET_REGEX = /^(?:GMT|UTC)(?<sign>[+-])(?<hours>\d{1,2})$/u;
 // The wiki's `type` for each event banner. Chronicled Wish and the standard wishes are not read by the schedule
 const WikiTypeWishEventKindMap: Partial<Record<string, WishEventKind>> = {
-  "Character Event": WishEventKind.CharacterEvent,
-  "Weapon Event": WishEventKind.WeaponEvent,
+  [WikiTypeWishEventKind.CharacterEvent]: WishEventKind.CharacterEvent,
+  [WikiTypeWishEventKind.WeaponEvent]: WishEventKind.WeaponEvent,
 };
 // The Item Pool's parameters that name each kind of banner's featured five-stars and featured four-stars
 const WishEventKindFeaturedParametersMap: Record<WishEventKind, { fiveStar: string; fourStar: string }> = {

@@ -4,6 +4,7 @@ import type { ScenePointExemplar } from "#src/models/genshinAssets/world/ScenePo
 
 import { SCENE_POINT_CATEGORY, SCENE_POINT_FILE } from "#src/services/genshinAssets/shared/constants";
 import { DomainKind, GameDataset, SUNDAY_DAY_OF_WEEK } from "genshin-world";
+import { DungeonEntryTypeDomainKind } from "#src/models/genshinAssets/domains/DungeonEntryTypeDomainKind";
 
 // The game's dungeon entry table in the dump, read by its name
 export const DUNGEON_ENTRY_TABLE_NAME = "DungeonEntryExcelConfigData";
@@ -24,9 +25,9 @@ export const DOMAIN_ENTRANCE_TITLE_FIELD = "titleTextID";
 // The entry types that name a challenge domain's kind. The other entry types are one-time, trounce and event entrances,
 // Which their own pages own
 export const DungeonEntryTypeDomainKindMap: Partial<Record<string, DomainKind>> = {
-  DUNGEN_ENTRY_TYPE_AVATAR_TALENT: DomainKind.Mastery,
-  DUNGEN_ENTRY_TYPE_RELIQUARY: DomainKind.Blessing,
-  DUNGEN_ENTRY_TYPE_WEAPON_PROMOTE: DomainKind.Forgery,
+  [DungeonEntryTypeDomainKind.DungeonEntryTypeAvatarTalent]: DomainKind.Mastery,
+  [DungeonEntryTypeDomainKind.DungeonEntryTypeReliquary]: DomainKind.Blessing,
+  [DungeonEntryTypeDomainKind.DungeonEntryTypeWeaponPromote]: DomainKind.Forgery,
 };
 // The dungeon level entity table in the dump, read by its name
 export const DUNGEON_LEVEL_ENTITY_TABLE_NAME = "DungeonLevelEntityConfigData";

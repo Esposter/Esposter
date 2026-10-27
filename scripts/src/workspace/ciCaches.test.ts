@@ -12,9 +12,9 @@ const readWorkflowFiles = (): { path: string; content: string }[] =>
 // Each list item is one step or one entry, so a save step's `if:` and its `uses:` are read together
 const getListItems = (content: string): string[] => content.split(/^\s*- /mu);
 
-describe("CI caches", () => {
-  // A cache is saved from the default branch and `ai/queue` alone, so every other branch restores what those two saved
-  // rather than writing its own copy. Each save has to carry this condition, which
+describe("ciCaches", () => {
+  // A cache is saved from the default branch and `ai/queue` alone, so every other branch restores what those two saved.
+  // Restoring rather than writing its own copy is the point. Each save has to carry this condition, which
   // `openspec/specs/architecture/ci-caches/design.md` states
   const SAVING_BRANCH_CONDITION = "github.ref_name == 'main' || github.ref_name == 'ai/queue'";
 

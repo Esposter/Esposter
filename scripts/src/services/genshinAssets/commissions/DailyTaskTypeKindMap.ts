@@ -1,7 +1,8 @@
 import { CommissionKind } from "genshin-world";
+import { DailyTaskTypeKind } from "#src/models/genshinAssets/commissions/DailyTaskTypeKind";
 
 // Each daily task's type in the dump's table, as the world names its kind
 export const DailyTaskTypeKindMap: Readonly<Record<string, CommissionKind>> = {
-  DAILY_TASK_QUEST: CommissionKind.Quest,
-  DAILY_TASK_SCENE: CommissionKind.Scene,
+  [DailyTaskTypeKind.DailyTaskQuest]: CommissionKind.Quest,
+  [DailyTaskTypeKind.DailyTaskScene]: CommissionKind.Scene,
 };

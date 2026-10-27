@@ -1,3 +1,5 @@
+import type { ExcelRoleCombatDifficultyRowFieldDumpKey } from "#src/models/genshinAssets/imaginarium/ExcelRoleCombatDifficultyRowFieldDumpKey";
+
 // The fields read off one row of the game's Imaginarium Theater difficulty table: a difficulty's id, its level from one to
 // Five, and the character level a cast member must reach to take part at it. The dump scrambles most keys, so each is read
 // Under the key the dump holds at 7.1, named here by its evidence. `levelFloor` is `OHDBPBMODLP`: 60 at levels one and two
@@ -8,10 +10,10 @@
 // 10 and 10, the acts a difficulty runs: the wiki names Easy's three acts in 26 of its 29 seasons and Normal's six in 21, and
 // The other three are read, not labelled per act
 export interface ExcelRoleCombatDifficultyRow {
-  actCount: number;
-  alternateCastExtra?: number;
-  alternateCastMinimum: number;
-  difficultyId: number;
-  difficultyLevel: number;
-  levelFloor: number;
+  [ExcelRoleCombatDifficultyRowFieldDumpKey.ActCount]: number;
+  [ExcelRoleCombatDifficultyRowFieldDumpKey.AlternateCastExtra]?: number;
+  [ExcelRoleCombatDifficultyRowFieldDumpKey.AlternateCastMinimum]: number;
+  [ExcelRoleCombatDifficultyRowFieldDumpKey.DifficultyId]: number;
+  [ExcelRoleCombatDifficultyRowFieldDumpKey.DifficultyLevel]: number;
+  [ExcelRoleCombatDifficultyRowFieldDumpKey.LevelFloor]: number;
 }

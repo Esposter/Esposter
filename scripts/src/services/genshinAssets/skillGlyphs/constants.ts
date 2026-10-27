@@ -1,4 +1,5 @@
 import type { GlyphTones } from "#src/models/genshinAssets/skillGlyphs/GlyphTones";
+import { SkillGlyphTones } from "genshin-world";
 import type { SkillGlyphs } from "genshin-world";
 
 import { WORLD_GENERATED_DIRECTORY } from "#src/services/genshinAssets/stats/constants";
@@ -11,8 +12,8 @@ export const SKILL_GLYPHS_GENERATED_DIRECTORY: string = join(WORLD_GENERATED_DIR
 // Charged burst's pale tone 0.54 and its white whole, as Cloud-Parting Star's in `hud-world-keys` reads. An icon of one
 // Tone is drawn in the white's share alone
 export const SkillGlyphTonesMap: Readonly<Record<keyof SkillGlyphs, GlyphTones>> = {
-  burst: { pale: 0.54, white: 1 },
-  skill: { pale: 0.38, white: 0.78 },
+  [SkillGlyphTones.Burst]: { pale: 0.54, white: 1 },
+  [SkillGlyphTones.Skill]: { pale: 0.38, white: 0.78 },
 };
 // A talent's icon is enlarged this many times before it is traced, so its antialiased edge becomes a curve rather than
 // A staircase of its pixels, and its paths are written to a tenth of a unit of the glyph's 128 unit square

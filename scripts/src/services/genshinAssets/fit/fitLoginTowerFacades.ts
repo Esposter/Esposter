@@ -40,6 +40,7 @@ import { computeUpperMedian } from "#src/services/recreation/statistics/computeU
 import { toLinear } from "#src/services/shared/toLinear";
 import { join } from "node:path";
 import { Color } from "three";
+import { LoginStoneFamilyMaterialRegex } from "#src/models/genshinAssets/fit/LoginStoneFamilyMaterialRegex";
 
 // Each login tower's surface as the game paints and carves it, read off its finest mesh unrolled round its own axis,
 // The way the scene's lathe stands it: each cell of the unrolled surface keeps the face standing farthest out over it,
@@ -59,7 +60,7 @@ export const fitLoginTowerFacades = async (
   const stoneColor = new Color(
     await fitAlbedo(
       [...new Set(pathIdNameMap.values())]
-        .filter((name) => LoginStoneFamilyMaterialRegexMap.towers.test(name))
+        .filter((name) => LoginStoneFamilyMaterialRegexMap[LoginStoneFamilyMaterialRegex.Towers].test(name))
         .map((name) => join(textureDirectory, `${name}_Diffuse.png`)),
     ),
   );

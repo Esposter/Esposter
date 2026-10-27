@@ -8,12 +8,13 @@ import { CombatTalent } from "genshin-world";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { z } from "zod";
+import { InfoboxTypeCombatTalent } from "#src/models/genshinAssets/kits/wiki/InfoboxTypeCombatTalent";
 
 const INFOBOX_TYPE_REGEX = /\|\s*type\s*=\s*(?<type>[^\n|]+)/u;
 const InfoboxTypeCombatTalentMap: Partial<Record<string, CombatTalent>> = {
-  "Elemental Burst": CombatTalent.ElementalBurst,
-  "Elemental Skill": CombatTalent.ElementalSkill,
-  "Normal Attack": CombatTalent.NormalAttack,
+  [InfoboxTypeCombatTalent.ElementalBurst]: CombatTalent.ElementalBurst,
+  [InfoboxTypeCombatTalent.ElementalSkill]: CombatTalent.ElementalSkill,
+  [InfoboxTypeCombatTalent.NormalAttack]: CombatTalent.NormalAttack,
 };
 
 const categoryResponseSchema = z.object({

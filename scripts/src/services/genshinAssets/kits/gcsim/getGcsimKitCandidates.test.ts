@@ -26,6 +26,7 @@ import { CombatTalent, Element, InternalCooldownTag, SKILL_TARGETING_AREA, Weapo
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
+import { GcsimElement } from "#src/models/genshinAssets/kits/gcsim/GcsimElement";
 
 const toConstant = (value: GoValue) => ({ elementLines: {}, file: "skill.go", line: 1, value });
 const plungeConstant = (value: GoValue, line: number) => ({ elementLines: {}, file: "plunge.go", line, value });
@@ -1074,7 +1075,7 @@ describe(getGcsimKitCandidates, () => {
       [147],
       [103],
       [{ index: 1, proudSkillGroupId: 1 }],
-      [GcsimElementMap["attributes.Anemo"]],
+      [GcsimElementMap[GcsimElement.Anemo]],
       [{ index: 2, proudSkillGroupId: 1 }],
       undefined,
       [1],

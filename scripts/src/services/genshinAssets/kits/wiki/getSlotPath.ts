@@ -1,4 +1,5 @@
 import { KitPlunge } from "genshin-world";
+import { WikiTitlePath } from "#src/models/genshinAssets/kits/wiki/WikiTitlePath";
 
 const NORMAL_ATTACK_TITLE_REGEX = /^Normal Attack (?<strike>\d+)(?:-Hit)?(?: (?<hit>[A-Z]))?$/u;
 const CHARGED_ATTACK_TITLE_REGEX =
@@ -6,9 +7,9 @@ const CHARGED_ATTACK_TITLE_REGEX =
 const HIT_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 // The plunges' rows by their titles
 const WikiTitlePathMap: Partial<Record<string, string>> = {
-  "High Plunge": `plunges.${KitPlunge.High}.hits.0`,
-  "Low Plunge": `plunges.${KitPlunge.Low}.hits.0`,
-  "Plunging Attack Collision": "plungeCollision",
+  [WikiTitlePath.HighPlunge]: `plunges.${KitPlunge.High}.hits.0`,
+  [WikiTitlePath.LowPlunge]: `plunges.${KitPlunge.Low}.hits.0`,
+  [WikiTitlePath.PlungingAttackCollision]: "plungeCollision",
 };
 
 // The record path a normal attack's, charged attack's or plunge's row titled as given fills, `normalAttacks.0.hits.0`

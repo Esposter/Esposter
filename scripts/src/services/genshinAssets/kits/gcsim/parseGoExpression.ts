@@ -7,8 +7,15 @@ import { checkIsGoFloatLiteral } from "#src/services/genshinAssets/kits/gcsim/ch
 import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
 import { readGoNumberToken } from "#src/services/genshinAssets/kits/gcsim/readGoNumberToken";
 import { skipGoBrackets } from "#src/services/genshinAssets/kits/gcsim/skipGoBrackets";
+import { BinaryOperatorPrecedence } from "#src/models/genshinAssets/kits/gcsim/BinaryOperatorPrecedence";
 
-const BinaryOperatorPrecedenceMap: Partial<Record<string, number>> = { "%": 2, "*": 2, "+": 1, "-": 1, "/": 2 };
+const BinaryOperatorPrecedenceMap: Partial<Record<string, number>> = {
+  [BinaryOperatorPrecedence.Modulo]: 2,
+  [BinaryOperatorPrecedence.Multiply]: 2,
+  [BinaryOperatorPrecedence.Add]: 1,
+  [BinaryOperatorPrecedence.Subtract]: 1,
+  [BinaryOperatorPrecedence.Divide]: 2,
+};
 const UNKNOWN_EXPRESSION: GoExpression = Object.freeze({ kind: GoExpressionKind.Unknown });
 
 // One Go expression read from its first token: the literals, integer sums, calls, indexes and composite literals

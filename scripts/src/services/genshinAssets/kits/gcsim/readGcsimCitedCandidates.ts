@@ -19,14 +19,15 @@ import { tokenizeGo } from "#src/services/genshinAssets/kits/gcsim/tokenizeGo";
 import { Attribute } from "genshin-world";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { NamedFieldCitation } from "#src/models/genshinAssets/kits/gcsim/NamedFieldCitation";
 
 // A named field of a kit record, by its last key, with the gcsim field its citing line names and the kit value that
 // Field's identifier gives, through the same mapping the writer maps a hit's values by
 const NamedFieldCitationMap: Partial<Record<string, { field: string; toValue: (identifier: string) => unknown }>> = {
-  attackTag: { field: "AttackTag", toValue: toGcsimAttackTag },
-  element: { field: "Element", toValue: toGcsimElement },
-  internalCooldownTag: { field: "ICDTag", toValue: toGcsimInternalCooldownTag },
-  scalingAttribute: {
+  [NamedFieldCitation.AttackTag]: { field: "AttackTag", toValue: toGcsimAttackTag },
+  [NamedFieldCitation.Element]: { field: "Element", toValue: toGcsimElement },
+  [NamedFieldCitation.InternalCooldownTag]: { field: "ICDTag", toValue: toGcsimInternalCooldownTag },
+  [NamedFieldCitation.ScalingAttribute]: {
     field: "UseDef",
     toValue: (identifier) => (identifier === "true" ? Attribute.Defense : undefined),
   },

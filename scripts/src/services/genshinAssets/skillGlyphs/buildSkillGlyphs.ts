@@ -11,7 +11,7 @@ import { readSkillMap } from "#src/services/genshinAssets/stats/readSkillMap";
 import { resolveWikiFiles } from "#src/services/genshinParity/shared/resolveWikiFiles";
 import { readTextMap } from "#src/services/genshinText/readTextMap";
 import { GameLanguage } from "genshin-text";
-import { GameDataset, skillGlyphsSchema } from "genshin-world";
+import { GameDataset, skillGlyphsSchema, SkillGlyphTones } from "genshin-world";
 
 // The wiki files a talent's name with its colons dropped, or, for a few, made dashes
 const getTitles = (talentName: string) => [
@@ -73,9 +73,9 @@ export const buildSkillGlyphs = async (): Promise<{
       characterId,
       skillGlyphsSchema.parse({
         // oxlint-disable-next-line no-await-in-loop -- Each trace holds a whole enlarged icon, so one is traced at a time
-        burst: await traceTalentIcon(burstPath, SkillGlyphTonesMap.burst),
+        burst: await traceTalentIcon(burstPath, SkillGlyphTonesMap[SkillGlyphTones.Burst]),
         // oxlint-disable-next-line no-await-in-loop -- Each trace holds a whole enlarged icon, so one is traced at a time
-        skill: await traceTalentIcon(skillPath, SkillGlyphTonesMap.skill),
+        skill: await traceTalentIcon(skillPath, SkillGlyphTonesMap[SkillGlyphTones.Skill]),
       }),
     ]);
   }
