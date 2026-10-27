@@ -99,10 +99,10 @@ flowchart TD
   write[A control fires a write] --> optimistic{Does the state flip before the server answers?}
   optimistic -->|yes| none[No guard]
   optimistic -->|no| dialog{Is the control a dialog's answer?}
-  dialog -->|yes| answer[useDialogAnswer spins and disables the confirm button]
+  dialog -->|yes| answer[useDialogAnswer]
   dialog -->|no| item{Does one instance serve many items?}
-  item -->|yes| key["is-pending bound to checkIsPending(item.id)"]
-  item -->|no| button["is-pending bound to isPending on UiButton or UiIconButton"]
+  item -->|yes| key["checkIsPending(item.id)"]
+  item -->|no| button["UiButton or UiIconButton"]
 ```
 
 - **Dialogs** — free. `UiConfirmDialog`, `StyledDialog` and `StyledFormDialog` answer through `useDialogAnswer`, which early-returns a re-entrant answer and drives the confirm button's spinner and `disabled`. Consumers wire nothing. An optimistic write passes `isOptimistic`, and the dialog closes the moment it is called.
@@ -176,13 +176,13 @@ Post counts have one owner, `usePostCountStore`: a write that changes a count as
 
 ## Anti-patterns, and what enforces each
 
-Each entry is a shape the repo used and then left behind, with the shape that replaced it and the check that now stops it coming back.
+Each entry names a shape to avoid, the shape that takes its place, and the check that stops it coming back.
 
-- **A count moved by a delta.** `count++` on a join, `likeCount += delta` on a vote, `commentCount += 1` on a reply. Replaced by a re-read of the aggregate. **Enforced** by the `no-restricted-syntax` selectors in `packages/configuration/eslint/restrictedSyntaxes.js`, which fail a `++`, `--`, `+=` or `-=` on a server-derived count field, and a count set to a sum or difference (`likeCount = likeCount + n`). A delta computed into a variable first (`const next = count + 1; count = next`) is not matched; review owns that case.
+- **A count moved by a delta.** `count++` on a join, `likeCount += delta` on a vote, `commentCount += 1` on a reply. Use a re-read of the aggregate. **Enforced** by the `no-restricted-syntax` selectors in `packages/configuration/eslint/restrictedSyntaxes.js`, which fail a `++`, `--`, `+=` or `-=` on a server-derived count field, and a count set to a sum or difference (`likeCount = likeCount + n`). A delta computed into a variable first (`const next = count + 1; count = next`) is not matched; review owns that case.
 - **A delta from an event payload.** A subscription echo read as a number to add to the count. An echo says the inputs changed; the count is read again. **Enforced** by the same lint selectors: a payload's count added to the stored one is a `+=` or a sum on a count field.
 - **Guessing an unknown prior state.** Treating a member with no read roles as roleless (`?? ""`), or a read-tracking set that says whether the roles were read. An unknown prior state is not a value. The owner re-reads the aggregate instead of computing a change it cannot prove. **Not yet mechanically enforced**; the review lane owns it, and the entries above are its reference.
 - **Ordering reads one at a time.** `createBatchedRefresh` runs one read at a time per owner: reads never overlap, the newest is always last, and a change marked during a read is read by the run after it. An older read can therefore never finish last and overwrite the newer one. **Enforced** by its own suite (`services/shared/createBatchedRefresh.test.ts`) and by every store that uses it.
-- **One read per element.** A loop of `readPost` over the ancestors of a reply. Replaced by a batch read keyed by the ids, one statement per set (`post.readPostCounts`, bounded to `MAX_POST_COUNTS_PER_READ`). **Enforced** by the runtime-efficiency rule and the server test that reads several posts in one call.
+- **One read per element.** A loop of `readPost` over the ancestors of a reply. Use a batch read keyed by the ids, one statement per set (`post.readPostCounts`, bounded to `MAX_POST_COUNTS_PER_READ`). **Enforced** by the runtime-efficiency rule and the server test that reads several posts in one call.
 - **An optimistic count.** Moving a displayed count before the server answers. The viewer's own vote is optimistic, since the client holds it exactly; the count is not, and it is read back when the write settles. **Enforced** by the `count-write-after-settle/no-count-write-before-settle` oxlint rule (`scripts/src/oxlint/countWriteAfterSettle.ts`), which fails a write to a server-derived count that comes before the await settling the function's first mutation, including a write inside a mutation's `applyOptimistic`; and by the like store's tests, which assert the count holds while its write is in flight. A count written after its write settles and before the re-read lands is not matched, and review owns that case.
 - **A refresh fired from inside `onSuccess` and not awaited.** The mutation settles before the count does, so a caller that reads the count next sees the old value. `onSuccess` is awaited by `useMutation`; the re-read is awaited inside it. **Enforced** by the store tests, which read the count straight after the write resolves.
 - **A read with no index on its filter.** A room-wide count or a feed by author on a table whose only index leads with another column. Every re-read of it becomes a scan, and the cost grows with the table, not the answer. The index follows the read, per the drizzle skill's constraint reference (`references/table-constraints.md`). **Enforced** by review against that reference, and by the migration reviewed in the change that adds the read.

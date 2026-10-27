@@ -24,16 +24,16 @@ The `"Replace"` row is the one that gets missed, and it is the worst of the thre
 
 ```mermaid
 flowchart TD
-  R["getEntityWithEtag<br/>the entity and its version"] --> D["getUpdateEntity(entity) — apply the intent to this version"]
-  D --> W["Conditional write — updateEntity/updateMessage with { etag }"]
-  W -->|"accepted"| N["Notify — emit the delta, never the replaced body"]
+  R["getEntityWithEtag<br/>the entity and its version"] --> D["getUpdateEntity(entity)<br/>apply the intent to this version"]
+  D --> W["Conditional write<br/>updateEntity/updateMessage with { etag }"]
+  W -->|"accepted"| N["Notify<br/>emit the delta, never the replaced body"]
   W -->|"rejected — any error, not only a 412"| RR["Re-read the entity"]
-  RR -->|"gone"| NF["NOT_FOUND — the entity was deleted under the write"]
-  RR -->|"the read itself failed"| RF["Log it, then CONFLICT — the attempt could not be classified"]
-  RR -->|"version unchanged"| PE["Rethrow — the write failed for something a retry cannot fix"]
+  RR -->|"gone"| NF["NOT_FOUND<br/>the entity was deleted under the write"]
+  RR -->|"the read itself failed"| RF["Log it, then CONFLICT<br/>the attempt could not be classified"]
+  RR -->|"version unchanged"| PE["Rethrow<br/>the write failed for something a retry cannot fix"]
   RR -->|"version moved"| B{"Attempts left?"}
   B -->|"yes"| D
-  B -->|"no"| C["CONFLICT — the caller sends it again"]
+  B -->|"no"| C["CONFLICT<br/>the caller sends it again"]
 ```
 
 The loop back to `getUpdateEntity` is the whole design: **the retry re-applies the intent, it does not replay the body.** "Record this vote", "drop this file", "clear this field" are all still valid after losing a race — only the body computed against the version that moved is stale. Writing that body again is the bug the conditional write exists to prevent.

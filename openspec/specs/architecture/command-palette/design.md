@@ -5,18 +5,18 @@ Ctrl+K opens one palette on every page. It offers what the page in front of the 
 ```mermaid
 flowchart TD
   M[A surface mounts] --> REG[useCommands and useCommandScope]
-  U[It unmounts] --> UN[Its entries and their keys leave with it]
+  U[It unmounts] --> UN[Its entries and keys leave]
   REG --> S[The command store]
-  REG -->|a command with a shortcut and something to do| HK[Its key, bound through Vuetify 0's hotkey composable]
+  REG -->|a command with a shortcut and something to do| HK["Bind its key<br/>through Vuetify 0"]
   K[Ctrl+K or the dock's command button] --> P{Is a scope registered?}
-  P -->|yes| SC[The palette searches the scope: the docs, the rooms, the resources]
+  P -->|yes| SC[The palette searches the scope]
   P -->|no| APP[The palette searches every offered command]
   SC -->|Backspace on an empty query| APP
   APP --> MS[MiniSearch over the registered titles]
   SC --> ST[The surface's own search stack, unchanged]
   MS --> RUN[A link followed or a command run]
   ST --> RUN
-  Q[Shift+?] --> D[The shortcuts dialog: every command with a shortcut, grouped by surface]
+  Q[Shift+?] --> D[The shortcuts dialog]
   S --> D
 ```
 

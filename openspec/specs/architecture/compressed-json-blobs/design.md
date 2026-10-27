@@ -9,8 +9,8 @@ flowchart TD
   save["saveResourceContent, a game's save procedure"] --> write["writeJsonBlob<br/>async zstd on the libuv threadpool"]
   write --> blob[("a zstd frame, Content-Encoding zstd")]
   write --> charge["Owner charge<br/>the stored length"]
-  blob --> server["readJsonBlob — web server and Function app, async decompress"]
-  blob --> browser["browser read SAS — the network stack decodes zstd"]
+  blob --> server["readJsonBlob<br/>web server and Function app"]
+  blob --> browser["browser read SAS<br/>the network stack decodes zstd"]
   server --> json["the JSON bytes"]
   browser --> json
 ```
@@ -21,11 +21,11 @@ flowchart TD
 - **`readJsonBlob(containerClient, blobName)`** downloads and decompresses the blob, and reads a 404 as undefined, meaning nothing has been saved yet. Every other failure surfaces rather than passing for an empty document.
 - **A browser reading through a SAS needs neither.** Blob Storage serves a blob's stored `Content-Encoding` on every read, and the network stack decodes it before `fetch` returns the body. A large resource's read therefore still receives the JSON bytes that it hashes, parses and keeps as its delta baseline ([large documents](../large-documents/design.md)).
 
-The staged upload of a large save stays gzip. The browser's `CompressionStream` has no zstd, and the server re-serializes what it validates rather than storing the upload ([compression](../compression/design.md)).
+The staged upload of a large save stays gzip, the exception the [compression standard](../compression/design.md) records for browser-written bytes, and the server re-serializes what it validates rather than storing the upload.
 
 ## Decisions
 
-**zstd, because both readers can decode it.** The [compression standard](../compression/design.md) picks zstd wherever the repo chooses the bytes. Here the browser is a counterparty, and zstd is in its codec set: every current engine decodes `Content-Encoding: zstd` natively, and the repo targets current engines only. So there is no gzip fallback and no browser-side decoder to ship.
+**zstd, because both readers can decode it.** The [compression standard](../compression/design.md) gives the general rule. Here the browser is a counterparty, and zstd is in its codec set: every current engine decodes `Content-Encoding: zstd` natively, and the repo targets current engines only. So there is no gzip fallback and no browser-side decoder to ship.
 
 **The window is pinned at 8 MB.** RFC 9659 forbids an HTTP zstd encoder from producing a frame that needs a window larger than 8 MB. The writer therefore sets `ZSTD_c_windowLog` to `MAX_CONTENT_ENCODING_WINDOW_LOG` explicitly. This is part of the stored format, not a tunable. No dictionary is used, because a browser decoding a `Content-Encoding` has none.
 

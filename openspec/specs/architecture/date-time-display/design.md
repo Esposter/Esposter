@@ -16,9 +16,9 @@ A date rendered by a component is formatted twice: once on the server, once agai
 ```mermaid
 flowchart LR
   server["Server render<br/>the instant and options as attributes"] --> html["html sent to the browser"]
-  html --> prehydrate["onPrehydrate script — Intl in the reader's locale/timezone, window._nuxtTimeNow"]
+  html --> prehydrate["onPrehydrate script<br/>Intl in the reader's locale and zone"]
   prehydrate --> text["textContent rewritten"]
-  text --> hydrate["Vue hydrates — computes the same string, matches"]
+  text --> hydrate["Vue hydrates<br/>computes the same string"]
   hydrate --> tick["relative mode re-renders each second"]
 ```
 

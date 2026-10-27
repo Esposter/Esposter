@@ -11,7 +11,7 @@ flowchart TD
   OE --> S
   S --> H[UiContextMenuHost, the one mounted menu]
   H --> P{Picked, clicked away from, or Escape?}
-  P -->|picked| R[Close with focus back on the element, then run the item]
+  P -->|picked| R["Close<br/>then run the item"]
   P -->|Escape| F[Close with focus back on the element]
   P -->|clicked away| C[Close]
 ```
