@@ -63,6 +63,7 @@ A non-raising constellation is a switch its character's kit module reads off the
 - [Stella Fortuna](https://genshin-impact.fandom.com/wiki/Stella_Fortuna), Genshin Impact Wiki: a duplicate from a wish as the source of a character's own Stella Fortuna, six at most.
 - [Masterless Stella Fortuna](https://genshin-impact.fandom.com/wiki/Masterless_Stella_Fortuna), Genshin Impact Wiki: one for a five-star drawn at its full constellations.
 - `~/Esposter/genshin-parity/text/BinOutput/Talent/AvatarTalents/ConfigTalent_Ayaka.json`, whose third and fifth actions raise by 3: grounds the requirement "The third and fifth constellations raise a combat talent by three levels".
+- depot 6201 of `~/Esposter/genshin-parity/text/ExcelBinOutput/AvatarSkillDepotExcelConfigData.json`, whose talents 621 to 626 name no config: grounds scenario "A set with an unnamed constellation is left out".
 
 ## Open
 

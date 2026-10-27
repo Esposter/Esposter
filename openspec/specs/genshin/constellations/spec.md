@@ -44,14 +44,16 @@ A constellation activation SHALL be refused when the set has no constellation le
 
 A character's third and fifth constellations SHALL each raise one combat talent by three levels.
 
-A character's other four constellations SHALL raise no talent.
-
 #### Scenario: An active third constellation raises its talent
 
 - **GIVEN** a character with its third constellation active
 - **WHEN** a kit reads the talent that constellation raises
 - **THEN** the talent is raised by three levels
 - **AND** the raise is not paid for with materials
+
+### Requirement: The other four constellations raise no talent
+
+A character's other four constellations SHALL raise no talent.
 
 #### Scenario: A switch constellation raises no talent
 
@@ -75,7 +77,7 @@ A skill set with a constellation the game data gives no config for SHALL be left
 
 #### Scenario: A set with an unnamed constellation is left out
 
-- **GIVEN** a skill set with a constellation the game data gives no config for (depot 6201 of `~/Esposter/genshin-parity/text/ExcelBinOutput/AvatarSkillDepotExcelConfigData.json`, whose talents 621 to 626 name no config)
+- **GIVEN** a skill set with a constellation the game data gives no config for
 - **WHEN** the table is built
 - **THEN** that set is left out of the table
 - **AND** a note names the set
