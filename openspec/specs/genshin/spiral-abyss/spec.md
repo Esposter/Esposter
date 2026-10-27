@@ -20,15 +20,19 @@ The Spiral Abyss SHALL be open only to a player whose Adventure Rank is twenty o
 - **WHEN** the Abyss is checked against the player's rank
 - **THEN** the Abyss reads as open
 
-### Requirement: Floors open in turn
+### Requirement: The first floor is always open
 
-The first floor SHALL always be open, and a floor above it SHALL open only when the floor below has all three of its chambers cleared and holds at least six stars (the six in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/TowerFloorExcelConfigData.json`, `unlockStarCount` on all 141 floors).
+The first floor SHALL always be open.
 
 #### Scenario: First floor always open
 
 - **GIVEN** no chamber has been cleared
 - **WHEN** the first floor is checked
 - **THEN** the first floor is open
+
+### Requirement: Floors open in turn
+
+A floor above another SHALL open only when the floor below has all three of its chambers cleared and holds at least six stars.
 
 #### Scenario: Floor locked until the floor below is cleared
 
@@ -50,7 +54,7 @@ The first floor SHALL always be open, and a floor above it SHALL open only when 
 
 ### Requirement: Chamber clock set by its floor
 
-A chamber's clock SHALL run for its floor's time, five minutes on the Corridor's first four floors and ten minutes on every floor above, and both halves of a chamber SHALL share that one clock.
+A chamber's clock SHALL run for its floor's time, five minutes on the Corridor's first four floors and ten minutes on every floor above.
 
 #### Scenario: Clock on the Corridor's early floors
 
@@ -58,15 +62,19 @@ A chamber's clock SHALL run for its floor's time, five minutes on the Corridor's
 - **WHEN** its clock starts
 - **THEN** the clock runs for five minutes
 
+### Requirement: Both halves of a chamber share one clock
+
+Both halves of a chamber SHALL share one clock.
+
 #### Scenario: Second half starts on the time the first left
 
 - **GIVEN** the first half of a chamber ends with two minutes left on the clock
 - **WHEN** the second half begins
 - **THEN** the clock reads two minutes
 
-### Requirement: Chamber lost at zero clock or zero monolith
+### Requirement: Chamber lost at zero clock
 
-A chamber SHALL be lost when its clock reaches zero or its monolith reaches zero health before it is cleared, and a cleared chamber SHALL never be lost.
+A chamber SHALL be lost when its clock reaches zero before it is cleared.
 
 #### Scenario: Clock runs out
 
@@ -75,11 +83,19 @@ A chamber SHALL be lost when its clock reaches zero or its monolith reaches zero
 - **THEN** the chamber is failed
 - **AND** nothing from that attempt is kept
 
+### Requirement: Chamber lost at zero monolith
+
+A chamber SHALL be lost when its monolith reaches zero health before it is cleared.
+
 #### Scenario: Monolith destroyed
 
 - **GIVEN** a chamber is being fought with a monolith and has not been cleared
 - **WHEN** the monolith reaches zero health
 - **THEN** the chamber is failed
+
+### Requirement: A cleared chamber is never lost
+
+A cleared chamber SHALL never be lost.
 
 #### Scenario: Cleared chamber stays cleared
 
@@ -89,7 +105,7 @@ A chamber SHALL be lost when its clock reaches zero or its monolith reaches zero
 
 ### Requirement: Stars count the conditions a clear meets
 
-A clear SHALL earn one star for each star condition it meets at the moment it clears, and a chamber SHALL keep the most stars any of its clears has earned.
+A clear SHALL earn one star for each star condition it meets at the moment it clears.
 
 #### Scenario: Stars from the conditions met
 
@@ -103,6 +119,10 @@ A clear SHALL earn one star for each star condition it meets at the moment it cl
 - **WHEN** it is cleared
 - **THEN** the chamber counts as cleared with no stars
 
+### Requirement: A chamber keeps its best stars
+
+A chamber SHALL keep the most stars any of its clears has earned.
+
 #### Scenario: Best stars kept
 
 - **GIVEN** an earlier clear of a chamber earned two stars
@@ -111,7 +131,7 @@ A clear SHALL earn one star for each star condition it meets at the moment it cl
 
 ### Requirement: Each reward given once per cycle
 
-Each reward SHALL be given only the first time it is earned within its cycle, while the Corridor SHALL be one cycle that never resets and each Moon Spire period SHALL be a cycle of its own.
+Each reward SHALL be given only the first time it is earned within its cycle.
 
 #### Scenario: First clear gives its reward
 
@@ -131,6 +151,10 @@ Each reward SHALL be given only the first time it is earned within its cycle, wh
 - **WHEN** the chamber is cleared again
 - **THEN** that reward is not returned again
 
+### Requirement: The Corridor and each Moon Spire period are cycles
+
+The Corridor SHALL be one cycle that never resets, and each Moon Spire period SHALL be a cycle of its own.
+
 #### Scenario: New period starts its rewards afresh
 
 - **GIVEN** a Moon Spire period's rewards were given in the period before
@@ -139,13 +163,17 @@ Each reward SHALL be given only the first time it is earned within its cycle, wh
 
 ### Requirement: Moon Spire runs the latest period begun
 
-The Moon Spire SHALL run the period that began most recently before now in UTC+8, and SHALL keep its last period when no later one is known.
+The Moon Spire SHALL run the period that began most recently before now in UTC+8.
 
 #### Scenario: Latest begun period runs
 
 - **GIVEN** several Moon Spire periods have begun
 - **WHEN** the Moon Spire is checked
 - **THEN** the period that began most recently runs
+
+### Requirement: Moon Spire keeps its last period when no later one is known
+
+The Moon Spire SHALL keep its last period when no later one is known.
 
 #### Scenario: Last period kept when no later one is known
 
