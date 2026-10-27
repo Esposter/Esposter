@@ -110,7 +110,7 @@ Every issue about the two absorbed functions, the version grammar and the range 
 
 The fixtures are node-semver 7.8.5's own `range-include`, `range-exclude`, `range-parse`, `valid-versions`, `invalid-versions` and `comparisons` fixtures, ported as literal rows in the co-located tests. Rows that rely on `loose`, or on a version above `Number.MAX_SAFE_INTEGER` that 7.8.5 rejects, are not ported; the first is out of surface and the second is #393's fix.
 
-Each fixed defect has a regression test that names its issue, and the differential check was run against node-semver 7.8.5 over the grid described above. The `outdated:dependencies` report prints the same rows before and after the change.
+Each fixed defect has a regression test that names its issue.
 
 ## Key files
 

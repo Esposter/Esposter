@@ -15,9 +15,9 @@ flowchart LR
   end
 
   subgraph blob ["Azure Blob resource-assets — every path under {id}/"]
-    CONTENT["content.json — the working copy"]
-    PUB["objects/{hash} — every retained version, keyframe or delta"]
-    FILES["files/… — binary assets, FileAssets only"]
+    CONTENT["content.json<br/>the working copy"]
+    PUB["objects/{hash}<br/>every retained version"]
+    FILES["files/…<br/>binary assets, FileAssets only"]
   end
 
   DEF["ResourceDefinitionMap entry"]

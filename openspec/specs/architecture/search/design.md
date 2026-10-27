@@ -7,10 +7,10 @@ Every search UI in the repo composes from one small stack instead of hand-rollin
 ```mermaid
 flowchart TD
   Palette["A command palette scope"] -- "its query" --> Core
-  Cursor["useCursorSearcher (cursor-paginated results)"] --> Core["useAutoSearch"]
+  Cursor["useCursorSearcher<br/>cursor-paginated results"] --> Core["useAutoSearch"]
   Core -- "search(sanitizedQuery, signal)" --> Trpc["tRPC search procedure"]
   Palette -- "its query" --> Client["computed over a MiniSearch index"]
-  Client --> Loaded["already-loaded data - no server call"]
+  Client --> Loaded["already-loaded data<br/>no server call"]
 ```
 
 **Which branch a feature takes is decided by one question: does answering the query need the server?** If it does, it is the `useAutoSearch` stack and nothing about that is optional. If the data is already in memory, it is the right branch below and the stack would be pure ceremony — there is no request to throttle, abort, or show pending state for.
@@ -19,7 +19,7 @@ flowchart TD
 
 `app/composables/useAutoSearch.ts` owns everything reactive about search-as-you-type, exactly once:
 
-- **1s throttle** on the search call itself (`useThrottleFn`), so typing doesn't fire a request per keystroke. It sits on the call rather than on a throttled copy of the query, because a copy would keep a stale value when the box is emptied and retyped within one window, and the watcher would never fire.
+- **1s throttle** on the search call itself (`useThrottleFn`, its window declared as `AUTO_SEARCH_THROTTLE_MS` in `apps/web/app/services/shared/constants.ts`), so typing doesn't fire a request per keystroke. It sits on the call rather than on a throttled copy of the query, because a copy would keep a stale value when the box is emptied and retyped within one window, and the watcher would never fire.
 - **In-flight abort** — each new search aborts the previous request via `AbortController`; the `AbortSignal` is passed to the `search` callback to forward to tRPC as `{ signal }`.
 - **Normalized change detection** — queries run through `normalizeString`, and a throttled value that normalizes to the same string as before does not re-query.
 - **Reset on empty** — when the query empties out, the in-flight request aborts and the consumer's `reset` callback drops stale results (skipped with `isIncludeEmptySearchQuery`, for pickers where an empty query should list everything).
@@ -108,6 +108,6 @@ Three search shapes legitimately sit outside `useAutoSearch`, because there is n
 
 ## Notes
 
-- The 1-second throttle and the `normalizeString` sanitization are deliberately inside the core, not per consumer — a feature wanting a different cadence is a smell, not a parameter.
+- A feature wanting a different cadence is a smell, not a parameter.
 - Zero-result and pending UI stay with the consumer; the stack only guarantees the query lifecycle.
 - Delete confirmation has the same "one shell, never re-roll" treatment — see [destructive confirmation](../destructive-confirmation/design.md).

@@ -7,25 +7,25 @@ The sheet's settings, its column dialogs and the dashboard's visual editor rende
 ```mermaid
 flowchart TD
   Z[The form's Zod schema] --> J[zodToJsonSchema]
-  J --> F["UiSchemaForm: JSON Forms' core state and dispatch, passed down as form"]
+  J --> F["UiSchemaForm<br/>JSON Forms' core state and dispatch"]
   F -->|"form, as a prop"| D{UiSchemaFormDispatch, by rank}
   D -->|"a fixed value, or no renderer ranks the node"| N[Nothing drawn]
   D -->|"an enum, a titled enum, a field naming a context key"| S["UiSelect over mapStateToControlProps"]
   D -->|"a union of objects"| O["The variant choice over mapStateToOneOfProps"]
-  D -->|"a string declared as a link to a resource"| R["The shared select over the owner's resources of that type"]
+  D -->|"a string declared as a link to a resource"| R["Resource link<br/>the shared select"]
   D -->|"a string or a number"| T["UiTextField over mapStateToControlProps"]
   D -->|"a boolean"| C["UiCheckbox over mapStateToControlProps"]
-  D -->|"a layout, or a nested object over its detail mapping"| L["The fields stacked, under a label when nested"]
-  D -->|"an array over mapStateToArrayControlProps"| A["A card per item, added, moved and removed"]
+  D -->|"a layout, or a nested object over its detail mapping"| L["Layout<br/>fields stacked"]
+  D -->|"an array over mapStateToArrayControlProps"| A["Array<br/>a card per item"]
   L -->|"form, as a prop"| D
   A -->|"form, as a prop"| D
-  S -->|"handleChange"| W["The core reduces the change, and the value is written back once"]
+  S -->|"handleChange"| W["Core reducer<br/>one write back"]
   O -->|"handleChange"| W
   R -->|"handleChange"| W
   T -->|"handleChange"| W
   C -->|"handleChange"| W
-  W --> Q[The Zod schema validates the whole value]
-  Q --> I["Each issue shown on the field at its path, once the reader has changed it"]
+  W --> Q["Zod validation<br/>the whole value"]
+  Q --> I["Issue<br/>shown on its field"]
 ```
 
 - **JSON Schema is the input.** JSON Forms generates the layout from the schema where no UI schema is given, which is every form the app has, and `zodToJsonSchema`'s inline snapshot tests pin the schema each form receives.
@@ -38,7 +38,7 @@ flowchart TD
 ## Decisions
 
 - **The core is adopted, and the Vue shell is ours.** A schema form engine is most of the work: laying a form out from its schema, ranking each node's renderer, detecting which variant of a union the data is in, and applying every change to a nested value immutably. Writing that for a handful of dialogs would put an engine in the repository that nothing else maintains, so JSON Forms' core is adopted. Its Vue components are not. The JsonForms root keeps its state in data(), its dispatch picks a renderer in a computed, and the vanilla renderers are written the same way, all in the Options API, which the app compiles out. Mounted there, the root rendered off an undefined store and aborted the patch around it.
-- **The @jsonforms/vue bindings are rejected.** Their composables read the state and the dispatch with inject from a provide on the root, so every renderer depends on a provider its signature does not name, and a test must mount that provider. The [Vue conventions](../../../../.agents/skills/vue/SKILL.md) ban that for an input a component could take as a prop. The form adopted the bindings first. Each one also brings its own copy of the core's mapping, a control id per scope, and lodash as the package's only runtime dependency. Rejected too: keeping the composables under our own names, which keeps the injection for no library's sake.
+- **The @jsonforms/vue bindings are rejected.** Their composables read the state and the dispatch with inject from a provide on the root, so every renderer depends on a provider its signature does not name, and a test must mount that provider. The [Vue conventions](../../../../.agents/skills/vue/SKILL.md) ban that for an input a component could take as a prop. Each one also brings its own copy of the core's mapping, a control id per scope, and lodash as the package's only runtime dependency. Rejected too: keeping the composables under our own names, which keeps the injection for no library's sake.
 - **Each binding is the core's mapping function.** A composable wrapping one call would be a one-line composable, which the app does not write. `useSchemaFormControl` is the only composable, because every field reads the same layout meta and issue beside its control. The array's `addItem`, `removeItems`, `moveUp` and `moveDown` stay thunks, as the core returns them, and the renderer calls them.
 - **One change per edit.** The root reduces each action and writes the value back only when it differs, so an edit emits once (#2003), and the renderers add no emit of their own.
 - **Nothing proxied deeply.** The state stays shallow, so the renderer registry and the Ajv instance inside the core are never made reactive (#1832, #2025).
@@ -48,7 +48,7 @@ flowchart TD
 
 ## Upstream
 
-Every issue and pull request the audit of @jsonforms/vue selected from [eclipsesource/jsonforms](https://github.com/eclipsesource/jsonforms), open and closed, has one verdict, read from its comments, the pull request diffs and the installed 3.8.0 source. Four defects are in scope. #1832, #2025 and PR 2623 are settled by the shallow state, and #2250 by construction, since the bindings are the app's own modules with no CommonJS build that evaluates its components eagerly. #2025 and PR 2623 are checked by one test that names them, and #1832 and #2250 by construction. Six feature requests are in the audit's scope and none is built: the bindings have one consumer, so no Nuxt module, side-effect flag or exposed validator ships. A row fixed upstream is a report the package has since answered with a change, and where this form does not take that change, the Notes section says so.
+Every issue and pull request the audit of @jsonforms/vue selected from [the JSON Forms repository](https://github.com/eclipsesource/jsonforms), open and closed, has one verdict, read from its comments, the pull request diffs and the installed 3.8.0 source. Five defects are in scope. #1832, #2025 and PR 2623 are settled by the shallow state, #2250 by construction, since the bindings are the app's own modules with no CommonJS build that evaluates its components eagerly, and #2369 by construction, since the UI schema the form generates carries no rules, so no control is hidden to keep its space. #2025 and PR 2623 are checked by one test that names them, and #1832, #2250 and #2369 by construction. Six feature requests are in the audit's scope and none is built: the bindings have one consumer, so no Nuxt module, side-effect flag or exposed validator ships. A row fixed upstream is a report the package has since answered with a change, and where this form does not take that change, the Notes section says so.
 
 | Upstream                                                        | Verdict                               | Proof                                                                                                                                                                                    |
 | :-------------------------------------------------------------- | :------------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

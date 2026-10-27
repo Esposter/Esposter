@@ -34,7 +34,7 @@ A field that holds another resource's id is written as `createResourceLinkSchema
 
 ## Keeping the index in step
 
-Every content write goes through `saveResourceContent` — an editor save, a delta or staged save, a duplicate, a restore, a blueprint deploy — so that is where the links are projected, and nowhere else. The index authorizes participant tokens, so a link the content no longer backs would accept a token its owner revoked; every partial outcome therefore lands on no links, which authorize nothing, rather than on a stale set.
+Every content write goes through `saveResourceContent` ([resources](../resource/design.md)), so that is where the links are projected, and nowhere else. The index authorizes participant tokens, so a link the content no longer backs would accept a token its owner revoked; every partial outcome therefore lands on no links, which authorize nothing, rather than on a stale set.
 
 ```mermaid
 flowchart TD
@@ -64,6 +64,7 @@ flowchart LR
   LINKS -->|"sourceId"| PROGRAMS["the owner's Programs"]
   PROGRAMS -->|"partition = program, token"| PARTICIPANTS[("ProgramParticipants")]
   PARTICIPANTS -->|"a match"| ACCEPT["token accepted"]
+  PARTICIPANTS -->|"no match"| REFUSE["token refused"]
 ```
 
 Two surfaces read the same index the other way, by target: the [delete-time reference warning](../../resource/delete-reference-warning/design.md) names the owner's live resources linking to what a delete is about to bin, and the Overview's [Related resources](../../resource/resource-references/design.md) card lists them beside what the resource itself references.
@@ -86,7 +87,7 @@ Two surfaces read the same index the other way, by target: the [delete-time refe
 ## Notes
 
 - **Resource Graph is eventually consistent; this index is not.** Azure keeps its index current from change notifications plus a periodic full scan, and documents that its data lags. Here the index authorizes, so the save itself keeps it in step and every failure leaves it cleared rather than behind — the cost being that a Program whose save failed after its blob landed rejects its survey's tokens until its next save.
-- **A resource is indexed by its saves, and the migration that created the table carries over only the link the dropped column held.** Each link is written by the save that writes the content holding it, so a Dashboard, Email or Program gets its links from the save that creates it. That migration wrote a `Survey` link from each resource's bound resource id, a column it then dropped; its comment also names a one-off blob backfill for the other links of existing content, which is not part of the migration ([persisted data — latest shape only](../persisted-data-latest-shape-only/design.md)).
+- **A resource is indexed by its saves.** Each link is written by the save that writes the content holding it, so a Dashboard, Email or Program gets its links from the save that creates it.
 
 ## Sources
 
