@@ -21,7 +21,7 @@ Chevreuse's normal attacks SHALL be four normal attacks, a charged attack, a col
 
 ### Requirement: Short-Range Rapid Interdiction Fire press and hold
 
-Short-Range Rapid Interdiction Fire SHALL strike a Pyro box 2 metres wide and 6 metres long when pressed, and a Pyro box 3 metres wide and 7 metres long when held.
+Short-Range Rapid Interdiction Fire SHALL strike a Pyro box 2 metres wide and 6 metres long when pressed, and a Pyro box 3 metres wide and 7 metres long when held, with the hold threshold provisional until a recording settles it.
 
 #### Scenario: Pressing the skill strikes the press box
 
@@ -34,6 +34,7 @@ Short-Range Rapid Interdiction Fire SHALL strike a Pyro box 2 metres wide and 6 
 - **GIVEN** Chevreuse is the character on the field and the skill is ready
 - **WHEN** the player holds Short-Range Rapid Interdiction Fire until its hold threshold
 - **THEN** a Pyro box 3 metres wide and 7 metres long strikes the enemies in its box at 19 frames of the hold's release
+- **AND** the hold threshold stays provisional until a recording settles it
 
 ### Requirement: Overcharged Ball after an Overloaded reaction
 

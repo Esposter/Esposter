@@ -55,7 +55,7 @@ The Wind's Secret Ways SHALL deal its initial hit and set Dazzling Polyhedron st
 - **GIVEN** Faruzan has enough energy
 - **WHEN** the player casts The Wind's Secret Ways
 - **THEN** its initial hit lands
-- **AND** Dazzling Polyhedron stands for 788 frames, about 13.1 seconds
+- **AND** Dazzling Polyhedron stands for 788 frames, about 13.1 seconds (open on the design page)
 
 #### Scenario: The burst is refused without enough energy
 
