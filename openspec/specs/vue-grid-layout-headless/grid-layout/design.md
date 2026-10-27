@@ -21,7 +21,7 @@ flowchart TD
   preview -->|"pointerup over this grid, or a resize"| commit["one commit of the changed cells"]
   preview -->|"pointerup over another mounted grid"| handoff["the grid under the pointer accepts the item"]
   handoff -->|"accepted"| transferred["removal committed here, addition committed there"]
-  handoff -->|"refused under prevent"| refused["nothing committed, the item stays in its source"]
+  handoff -->|"refused under prevent"| refused["Item stays in source"]
   preview -->|"a drag released over no grid"| dropped["nothing written"]
   gesture -->|"pointercancel"| discarded["gesture and preview discarded"]
 ```
@@ -46,7 +46,7 @@ flowchart TD
 
 ## Notes
 
-- The package draws no per-edge handles. It builds every edge's resize, and a consumer binds the handles it chooses to draw, so the dashboard binds one.
+- The package draws no per-edge handles. It builds every edge's resize, and a consumer binds the handles it chooses to draw.
 - A drag over another grid shows no preview in that grid until the release. The source grid's tile follows the pointer, and the target grid commits the addition on release, so the target's cells are not drawn as the item moves across it.
 - A release with the pointer outside the browser's viewport hits no element, so it finds no grid and the drag is dropped.
 - A press whose release happens outside the grid never reaches the grid's release. A move with no button held ends the gesture, so a press released elsewhere does not start a drag when the pointer comes back.

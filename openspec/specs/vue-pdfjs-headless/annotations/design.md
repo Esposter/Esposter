@@ -10,7 +10,7 @@
 
 ## What the renderer saves
 
-These are pdf.js 6.4.299 behaviours, probed in Node on 2026-10-23 with its legacy build, because the storage's rules belong to the renderer and not to the package:
+These are pdf.js behaviours at the version the workspace catalog pins, probed in Node with its legacy build, because the storage's rules belong to the renderer and not to the package:
 
 | Entry                          | Storage key                          | Result on save and reload                                                                                          |
 | :----------------------------- | :----------------------------------- | :----------------------------------------------------------------------------------------------------------------- |
@@ -38,11 +38,11 @@ An untouched document's storage is empty, so "the storage has changed" is its si
 - **Comments cannot be added.** The renderer's save drops text annotations (see Decisions). Resume when pdf.js writes them on save: on each pdf.js bump, rerun the probe that stores a text annotation entry and reloads the file. If it survives, add `addComment` and a requirement for it in the spec.
 - **Several free texts in one save log a pdf.js error.** The saved bytes reload with every free text, but pdf.js logs `Object already resolved` as an unhandled rejection. Resume: the user files it upstream by hand, with a reproduction (two free texts in one `saveDocument` call on pdf.js 6.4.299, run with the legacy build in Node), and the issue is linked here.
 - **The browser check is open.** A drawn free text's export and the watermark's grey have not been seen in a browser. The export was checked against pdf.js's source and a stub, not a run. Resume: a harness page that mounts `usePdfAnnotations` and `usePdfViewer` in a browser test with the renderer's worker, draws one free text, exports it, and reads the saved file's FreeText annotation and its colour back with pdf.js. The app's PDF viewer draws none of these controls, so no existing page drives them.
-- **The upstream rows are not re-judged.** The annotation issues on both trackers have not been read against this change (tasks 2.1). Resume: `gh issue view` each annotation issue on the two trackers, judge it against this change, and update the package page's Upstream table. The `#68` row is already updated.
+- **The upstream rows are not re-judged.** The annotation issues on both trackers have not been read against this capability. Resume: `gh issue view` each annotation issue on the two trackers, judge it against this change, and update the package page's Upstream table.
 
 ## Key files
 
-The package's annotation files, created by this change:
+The package's annotation files:
 
 ```text
 packages/vue-pdfjs-headless/src/composables/usePdfAnnotations.ts  editor mode, change events, comments, XFDF import and export

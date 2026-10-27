@@ -1,8 +1,8 @@
 # vue-grid-layout-headless
 
-`packages/vue-grid-layout-headless` (npm `vue-grid-layout-headless`) is a grid's placement and pointer gestures with no styling: a composable that returns the state and handlers a consumer draws, and the pure functions it runs on. It replaces the `grid-layout-plus` library the dashboard used, whose markup and drag library carried the defects the Upstream table below judges.
+`packages/vue-grid-layout-headless` (npm `vue-grid-layout-headless`) is a grid's placement and pointer gestures with no styling: a composable that returns the state and handlers a consumer draws, and the pure functions it runs on. It replaces the `grid-layout-plus` library, whose markup and drag library carry the defects the Upstream table below judges.
 
-The package has one capability so far, with its own design page and requirements:
+The package's capabilities, each with its own design page and requirements:
 
 - [Grid layout](grid-layout/design.md) places items on a grid of cells and runs the pointer gestures that move, resize, drop and compact them, from any edge, into another grid, or into a grid from outside.
 
@@ -10,7 +10,7 @@ The app's own use of the package is the [dashboard grid](../resource/dashboard-g
 
 ## Upstream
 
-The library the package replaces is `qmhc/grid-layout-plus`. Its tracker holds fifty-four issues, and each has one verdict, open or closed, read with its comments and checked against the 1.1.1 source. The defects in scope are the ones the grid must not repeat. Each in-scope row names the test that pins it where one exists, and otherwise the construction that rules the defect out. A "usage" verdict means the reporter's setup, not the library, is the cause, or that the behaviour is documented and by design. A feature the dashboard does not draw is still in scope, because the verdict is the grid's and not one consumer's: those rows link the [grid layout](grid-layout/design.md) that builds them, with the test that pins each.
+The library the package replaces is `qmhc/grid-layout-plus`. Its tracker is read in full, and each issue has one verdict, open or closed, read with its comments and checked against the upstream source. The defects in scope are the ones the grid must not repeat. Each in-scope row names the test that pins it where one exists, and otherwise the construction that rules the defect out. A "usage" verdict means the reporter's setup, not the library, is the cause, or that the behaviour is documented and by design. A feature the dashboard does not draw is still in scope, because the verdict is the grid's and not one consumer's: those rows link the [grid layout](grid-layout/design.md) that builds them, with the test that pins each.
 
 | Upstream                                                  | Verdict                         | Proof                                                                                                                                                            |
 | :-------------------------------------------------------- | :------------------------------ | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- |

@@ -17,7 +17,7 @@ flowchart TD
   source["source: URL, bytes or File"] --> load["loadPdfDocument: the renderer's getDocument"]
   parameters["loading parameters, as given"] --> load
   load -->|"progress"| progress["progress: loaded and total"]
-  load -->|"password requested"| password["isPasswordRequested, isPasswordWrong"]
+  load -->|"password requested"| password["Password prompt state"]
   password -->|"submitPassword"| load
   load -->|"resolved"| document["pdfDocument"]
   load -->|"rejected"| failed["isFailed"]
