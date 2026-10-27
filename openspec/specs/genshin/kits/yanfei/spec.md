@@ -57,13 +57,17 @@ Yanfei's charged attack SHALL spend her held Scarlet Seals as it starts, and eac
 
 ### Requirement: Seal damage bonus
 
-From Ascension 1, each seal spent SHALL give Yanfei 5% Pyro DMG Bonus for 6 seconds, and while Done Deal stands its DMG Bonus SHALL apply to her charged attack.
+From Ascension 1, each seal spent SHALL give Yanfei 5% Pyro DMG Bonus for 6 seconds.
 
 #### Scenario: Pyro bonus from spent seals
 
 - **GIVEN** Yanfei is at Ascension 1
 - **WHEN** she spends seals
 - **THEN** she gains 5% Pyro DMG Bonus per seal for 6 seconds
+
+### Requirement: Done Deal damage bonus on the charged attack
+
+From Ascension 1, while Done Deal stands its DMG Bonus SHALL apply to Yanfei's charged attack.
 
 #### Scenario: Done Deal bonus on the charged attack
 
