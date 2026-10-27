@@ -34,7 +34,7 @@ Starfrost Swirl's press SHALL strike a Cryo box 0.4 metres behind Mika, and hold
 
 ### Requirement: Skyfeather Song's initial heal
 
-Skyfeather Song SHALL heal the active character once at its 51st frame (gcsim's value, which depends on ping).
+Skyfeather Song SHALL heal the active character once at its 51st frame.
 
 #### Scenario: Initial heal lands
 
