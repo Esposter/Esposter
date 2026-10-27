@@ -80,7 +80,7 @@ Cool Your Jets Ducky SHALL drop one Water Ball every 90 frames from 123 frames f
 
 ### Requirement: Ascension 1 at Ascendant Gleam drops the Water Balls faster and wider
 
-At Ascension 1 with the team at Ascendant Gleam, Cool Your Jets Ducky SHALL drop one Water Ball every 0.7 seconds, and each ball SHALL land on a random enemy within ten metres of Aino's body with a landing radius of four metres, so its reach is fourteen metres. The interval and radius SHALL be read as the burst is cast. The 0.7-second interval is open: the wiki gives 0.75 seconds (see design.md, Not built).
+At Ascension 1 with the team at Ascendant Gleam, Cool Your Jets Ducky SHALL drop one Water Ball every 0.7 seconds, and each ball SHALL land on a random enemy within ten metres of Aino's body with a landing radius of four metres, so its reach is fourteen metres. The interval and radius SHALL be read as the burst is cast. The 0.7-second interval is open (see design.md, Not built).
 
 #### Scenario: Ascendant Gleam drops the balls every 0.7 seconds
 
@@ -190,7 +190,7 @@ From Constellation 2, while Aino is off the field and her burst's zone stands, e
 
 ### Requirement: Constellation 6 raises the active member's reactions for fifteen seconds after the burst
 
-From Constellation 6, for fifteen seconds after Aino's burst, each Electro-Charged, Bloom, Lunar-Charged, Lunar-Bloom or Lunar-Crystallize reaction the active member makes SHALL deal 15% more DMG, and 20% more with the team at Ascendant Gleam. The reaction list is open against the wiki's text, which the cache does not hold (see design.md, Not built).
+From Constellation 6, for fifteen seconds after Aino's burst, each Electro-Charged, Bloom, Lunar-Charged, Lunar-Bloom or Lunar-Crystallize reaction the active member makes SHALL deal 15% more DMG, and 20% more with the team at Ascendant Gleam. The reaction list is open (see design.md, Not built).
 
 #### Scenario: A reaction of the active member gains DMG during the burst's fifteen seconds
 

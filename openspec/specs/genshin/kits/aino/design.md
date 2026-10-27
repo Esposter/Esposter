@@ -49,6 +49,8 @@ flowchart LR
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/ayato), MIT: the claymore charge's frames and reach, borrowed as Aino's charged attack's are provisional.
 - [gcsim](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/plunge.go), MIT: the plunges' timings, borrowed as Aino's own folder has no plunge file.
 - [Musecatcher](https://genshin-impact.fandom.com/wiki/Musecatcher), [Bish-Bash-Bosh Repair](https://genshin-impact.fandom.com/wiki/Bish-Bash-Bosh_Repair) and [Precision Hydronic Cooler](https://genshin-impact.fandom.com/wiki/Precision_Hydronic_Cooler), Genshin Impact Wiki: the poise of Musecatcher's two stages, the Water Ball, the plunges and the collision.
+- Requirement "Ascension 1 at Ascendant Gleam drops the Water Balls faster and wider": the wiki gives 0.75 seconds.
+- Requirement "Constellation 6 raises the active member's reactions for fifteen seconds after the burst": against the wiki's text, which the cache does not hold.
 
 ## Open
 
