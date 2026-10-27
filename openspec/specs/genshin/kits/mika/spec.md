@@ -6,7 +6,7 @@ Mika's kit as built, with his five strikes, charged attack, plunges, Starfrost S
 
 ### Requirement: Mika's five strikes and charged attack
 
-Mika's five strikes SHALL land in order and his charged attack SHALL land on the enemies within reach, with no poise damage.
+Mika's five strikes SHALL land in order and his charged attack SHALL land on the enemies within reach.
 
 #### Scenario: Five strikes in sequence
 

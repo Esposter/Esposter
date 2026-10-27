@@ -128,15 +128,15 @@ The Opal Fire SHALL take effect in the Nightsoul Blessing at 50 Nightsoul points
 - **THEN** the first and third strikes apply Cryo to it and the second applies none
 - **AND** every strike deals its damage
 
-### Requirement: Strikes and charged attack deal no poise
+### Requirement: Strikes and charged attack deal their poise
 
-Citlali's strikes and charged attack SHALL deal no poise, a provisional value until a recording of the game's poise settles it.
+Citlali's strikes and charged attack SHALL deal the poise the design gives them, a provisional value until a recording of the game's poise settles it.
 
-#### Scenario: A strike deals no poise
+#### Scenario: A strike deals its poise
 
 - **GIVEN** Citlali is the character on the field
 - **WHEN** one of her strikes hits an enemy
-- **THEN** the enemy takes no poise damage
+- **THEN** the enemy takes the poise the design gives that strike
 
 ### Requirement: Constellation 2 gives her own Elemental Mastery
 

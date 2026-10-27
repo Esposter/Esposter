@@ -91,11 +91,11 @@ From Ascension 4 Charlotte SHALL gain 5% Healing Bonus for each other member of 
 
 Charlotte's strikes, charged attack and plunges SHALL keep their damage and poise provisional until a recording of the game settles them.
 
-#### Scenario: Strikes deal no poise until a recording settles them
+#### Scenario: Hits deal their poise until a recording settles them
 
 - **GIVEN** Charlotte's strikes, charged attack or plunges are used
 - **WHEN** the hit lands on an enemy
-- **THEN** the hit deals no poise
+- **THEN** the hit deals the poise the design gives it
 - **AND** the values stay provisional until a recording settles them
 
 ### Requirement: Constellation 1 heals a member her heal lands on

@@ -6,7 +6,7 @@ Sigewinne's kit as built: her three strikes, Fully-Charged Aimed Shot, collision
 
 ### Requirement: Sigewinne's strikes, shot and plunges
 
-Sigewinne's three strikes, Fully-Charged Aimed Shot, collision and two plunges SHALL land on the enemies within reach, carrying no poise, provisionally.
+Sigewinne's three strikes, Fully-Charged Aimed Shot, collision and two plunges SHALL land on the enemies within reach, carrying the poise the design gives them, provisionally.
 
 #### Scenario: Three strikes in sequence
 

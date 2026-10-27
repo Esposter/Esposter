@@ -44,7 +44,7 @@ Sethos's burst SHALL deal no damage itself and SHALL cost energy and go on a coo
 
 ### Requirement: Sethos's plunge attacks
 
-Sethos's plunge attacks SHALL land on the enemies within reach as their action starts, with no poise, provisionally.
+Sethos's plunge attacks SHALL land on the enemies within reach as their action starts, with the poise the design gives them, provisionally.
 
 #### Scenario: Plunge lands as it starts
 
@@ -76,7 +76,3 @@ Shadowpiercing Shot, the plain Aimed Shot, Secret Rite's Dusk Bolts, Ancient Rit
 - **GIVEN** Sethos has Shadowpiercing Shot, Dusk Bolts or a passive unlocked
 - **WHEN** the player fights with Sethos
 - **THEN** that effect has no effect
-
-## Open
-
-- [ ] **Sethos's strikes deal no poise damage** — contradicted by `{data-root}/cache/genshin-wiki/Category_Sethos_Talents.json`: Royal Reed Archery gives the strikes poise 18.879, 8.791 and 25.809.

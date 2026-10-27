@@ -124,12 +124,12 @@ From Ascension 4, each enemy Signature Mix's initial hit or one of its ticks str
 - **WHEN** Signature Mix strikes an enemy
 - **THEN** that enemy strikes with 10% less ATK for 15 seconds
 
-### Requirement: Paws deal no poise
+### Requirement: Paws deal their poise
 
-Icy Paws' paws SHALL deal no poise, a provisional zero until the game's own values are measured. The kit does not build 30 poise each: the difference is open in the design.
+Icy Paws' paws SHALL deal the poise the design gives each, a provisional value until the game's own values are measured.
 
-#### Scenario: A paw deals no poise
+#### Scenario: A paw deals its poise
 
 - **GIVEN** Diona is the character on the field
 - **WHEN** a paw hits an enemy
-- **THEN** the enemy takes no poise damage
+- **THEN** the enemy takes the poise the design gives that paw

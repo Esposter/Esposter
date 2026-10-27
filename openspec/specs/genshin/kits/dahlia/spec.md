@@ -6,14 +6,14 @@ Dahlia's kit as built: her four strikes, charged attack, Immersive Ordinance's t
 
 ### Requirement: Strikes and charged attack
 
-Dahlia's normal attacks SHALL be four strikes and a charged attack, and neither SHALL deal poise.
+Dahlia's normal attacks SHALL be four strikes and a charged attack, and they SHALL deal the poise the design gives them.
 
 #### Scenario: Strike chain plays four strikes in order
 
 - **GIVEN** Dahlia is the character on the field
 - **WHEN** the player presses the attack button repeatedly
 - **THEN** her four strikes play in order
-- **AND** no poise damage is dealt
+- **AND** each hit deals the poise the design gives it
 
 #### Scenario: Charged attack costs 20 stamina
 
@@ -23,13 +23,13 @@ Dahlia's normal attacks SHALL be four strikes and a charged attack, and neither 
 
 ### Requirement: Plunge poise
 
-Dahlia's low, high and collision plunges SHALL deal 150, 100 and 25 poise, a provisional value.
+Dahlia's low, high and collision plunges SHALL deal 100, 150 and 25 poise, a provisional value.
 
-#### Scenario: A low plunge deals 150 poise
+#### Scenario: A low plunge deals 100 poise
 
 - **GIVEN** Dahlia is in the air
 - **WHEN** her low plunge hits an enemy
-- **THEN** the enemy takes 150 poise damage
+- **THEN** the enemy takes 100 poise damage
 
 #### Scenario: A collision plunge deals 25 poise
 

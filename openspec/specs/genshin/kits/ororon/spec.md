@@ -72,14 +72,14 @@ Ororon's collision and two plunges SHALL land the moment their action starts, wi
 - **WHEN** the player starts a plunge attack
 - **THEN** the collision and plunge hits land as the action starts
 
-### Requirement: Zero poise
+### Requirement: Ororon's hits deal their poise
 
-Ororon's strikes, Aimed Shot, Spirit Orb, burst and plunges SHALL deal no poise damage, provisionally.
+Ororon's strikes, Aimed Shot, Spirit Orb, burst and plunges SHALL deal the poise the design gives each, provisionally.
 
-#### Scenario: No poise damage
+#### Scenario: Hits deal their poise
 
 - **WHEN** any of Ororon's hits lands on an enemy
-- **THEN** no poise damage is dealt
+- **THEN** the enemy takes the poise the design gives that hit
 
 ### Requirement: Unbuilt Ororon effects
 
@@ -90,7 +90,3 @@ Hypersense, the Spirit Orb's bounce, Constellation 4's energy on the burst's hit
 - **GIVEN** Ororon has one of these effects unlocked
 - **WHEN** the player fights with Ororon
 - **THEN** that effect has no effect
-
-## Open
-
-- [ ] **Ororon's strikes, Aimed Shot, Spirit Orb, burst and plunges deal no poise damage** — contradicted by {data-root}/cache/genshin-wiki/Category_Ororon_Talents.json: the wiki gives the strikes 17.6, 15.48 and 24.35 poise.
