@@ -18,7 +18,7 @@ An editor SHALL make no request to a third-party origin, except for content the 
 
 ### Requirement: Rendering a large document renders every node
 
-A document of 2,000 nodes SHALL render every node to HTML, in document order. Its render time is reported by the committed bench `renderWebpageDocument.bench.ts` and asserted by no test.
+A document of 2,000 nodes SHALL render every node to HTML, in document order.
 
 #### Scenario: Rendering a large document renders every node
 
@@ -26,15 +26,19 @@ A document of 2,000 nodes SHALL render every node to HTML, in document order. It
 - **WHEN** the document is rendered to HTML
 - **THEN** every node's text appears in the HTML once, in document order
 
-### Requirement: A single edit changes only the node it names and can be reversed exactly
+### Requirement: A single edit changes only the node it names
 
-One edit SHALL change only the node its path names in a 2,000-node document, and applying its recorded inverse SHALL restore the document exactly. Its time is reported by the committed bench `applyWebpageEdit.bench.ts` and asserted by no test.
+One edit SHALL change only the node its path names in a 2,000-node document.
 
 #### Scenario: A single edit changes only the node it names
 
 - **GIVEN** a document of 2,000 nodes
 - **WHEN** one edit is applied
 - **THEN** the named node holds the edit's value and every other node is unchanged
+
+### Requirement: An edit's recorded inverse restores the document exactly
+
+Applying an edit's recorded inverse SHALL restore the document exactly.
 
 #### Scenario: An edit's inverse restores the document exactly
 
@@ -44,7 +48,7 @@ One edit SHALL change only the node its path names in a 2,000-node document, and
 
 ### Requirement: An edit shows on the canvas
 
-A prop or style edit in a document open in the editor SHALL show on the canvas. Its timing is recorded as performance marks and asserted by no test.
+A prop or style edit in a document open in the editor SHALL show on the canvas.
 
 #### Scenario: An edit shows on the canvas
 
@@ -64,7 +68,7 @@ A selection change SHALL show its outline on the canvas.
 
 ### Requirement: The starter email compiles under strict validation
 
-The starter email SHALL read back as an email and compile on the server under strict validation. Its compile time is reported by the committed bench `compileEmailDocument.bench.ts` and asserted by no test.
+The starter email SHALL read back as an email and compile on the server under strict validation.
 
 #### Scenario: The starter email compiles under strict validation
 
@@ -100,13 +104,17 @@ The email canvas SHALL hold each section, column and leaf within a few pixels of
 
 ### Requirement: Every type's output matches its expected output
 
-Each node type's published output SHALL match its expected output for every edge value of its props, and hostile markup SHALL be removed from raw HTML.
+Each node type's published output SHALL match its expected output for every edge value of its props.
 
 #### Scenario: A type's output matches for every edge value
 
 - **GIVEN** a node type and a fixture for each edge value of its props
 - **WHEN** the type's output is produced for each fixture
 - **THEN** each output equals its expected output
+
+### Requirement: Hostile markup is removed from raw HTML
+
+Hostile markup SHALL be removed from raw HTML.
 
 #### Scenario: A hostile markup vector in custom HTML is removed
 
@@ -116,13 +124,17 @@ Each node type's published output SHALL match its expected output for every edge
 
 ### Requirement: Every string and array in a document's input is bounded, or is named as opaque
 
-A procedure whose input holds a resource-owned document SHALL bound every string and array outside that document, and the bounds guard SHALL fail on an unbounded string or array anywhere in the input except inside the opaque subschema it names. The starter document's own strings SHALL carry length limits in the shared schema, so the email and webpage procedures pass the guard without an opaque exemption that hides the document's fields.
+A procedure whose input holds a resource-owned document SHALL bound every string and array outside that document, and the bounds guard SHALL fail on an unbounded string or array anywhere in the input except inside the opaque subschema it names.
 
 #### Scenario: An unbounded string beside an opaque document fails the guard
 
 - **GIVEN** a procedure whose input is an opaque document alongside a plain string with no length limit
 - **WHEN** the bounds guard runs over that procedure
 - **THEN** the guard reports the plain string's path
+
+### Requirement: The starter document's own strings carry length limits
+
+The starter document's own strings SHALL carry length limits in the shared schema, so the email and webpage procedures pass the guard without an opaque exemption that hides the document's fields.
 
 #### Scenario: The MJML root's strings are bounded
 
