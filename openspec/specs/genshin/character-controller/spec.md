@@ -48,9 +48,9 @@ The character SHALL rise to its jump height, fall under gravity to a steady top 
 - **WHEN** it lands
 - **THEN** it swims
 
-### Requirement: The glider opens only high enough and plunges on attack
+### Requirement: The glider opens only high enough above the ground
 
-The character SHALL open its glider only when high enough above the ground, and SHALL plunge or close the glider on the player's press.
+The character SHALL open its glider only when high enough above the ground.
 
 #### Scenario: Jump high in the air opens the glider
 
@@ -63,6 +63,10 @@ The character SHALL open its glider only when high enough above the ground, and 
 - **GIVEN** the character is in the air below the height the glider needs
 - **WHEN** jump is pressed
 - **THEN** the glider does not open
+
+### Requirement: The glider plunges or closes on the player's press
+
+The character SHALL plunge or close the glider on the player's press.
 
 #### Scenario: Attack from the glider plunges
 
@@ -103,7 +107,7 @@ The character SHALL climb any surface too steep to walk when it moves into it wi
 - **GIVEN** the character is climbing
 - **WHEN** jump is pressed
 - **THEN** it jumps off the wall
-- **AND** it climbs again once that jump ends (`~/Esposter.noindex/genshin-parity/extracted/locomotion/Girl/locomotion.json`, whose climb-jump clip, ClimbDashU, lasts 1.08 s)
+- **AND** it climbs again once that jump ends
 
 #### Scenario: Drop or empty stamina lets go of the wall
 
@@ -123,9 +127,9 @@ The character SHALL climb any surface too steep to walk when it moves into it wi
 - **WHEN** it moves straight into a wall
 - **THEN** the wall does not catch it until it has fallen a moment
 
-### Requirement: The character swims in deep water and drowns when stamina runs out
+### Requirement: The character swims in deep water
 
-The character SHALL swim in water deeper than it can wade, and SHALL drown when its stamina runs out in water.
+The character SHALL swim in water deeper than it can wade.
 
 #### Scenario: Deep water starts swimming
 
@@ -137,14 +141,7 @@ The character SHALL swim in water deeper than it can wade, and SHALL drown when 
 
 - **GIVEN** the character is swimming and moving
 - **WHEN** sprint is pressed
-- **THEN** it makes a swim dash (`~/Esposter.noindex/genshin-parity/extracted/locomotion/Girl/locomotion.json`, whose swim-dash clip covers 3.6 m in a second)
-
-#### Scenario: Running out of stamina in water drowns the character
-
-- **GIVEN** the character is swimming
-- **WHEN** its stamina runs out
-- **THEN** it drowns (`~/Esposter.noindex/genshin-parity/extracted/locomotion/Girl/locomotion.json`, whose drowning clip, SwimDie, lasts 3 s)
-- **AND** after a while it returns to where its stamina was last full on foot, with stamina refilled
+- **THEN** it makes a swim dash
 
 #### Scenario: Ground within wading depth stands the character up
 
@@ -152,9 +149,20 @@ The character SHALL swim in water deeper than it can wade, and SHALL drown when 
 - **WHEN** the ground rises to within wading depth
 - **THEN** the character stands
 
-### Requirement: One shared stamina pool is spent and refilled at the game's rates
+### Requirement: The character drowns when stamina runs out in water
 
-The character and its party SHALL share one stamina pool that starts at 100, refills at 25 a second after a rest, and is spent by each action at its cost.
+The character SHALL drown when its stamina runs out in water.
+
+#### Scenario: Running out of stamina in water drowns the character
+
+- **GIVEN** the character is swimming
+- **WHEN** its stamina runs out
+- **THEN** it drowns
+- **AND** after a while it returns to where its stamina was last full on foot, with stamina refilled
+
+### Requirement: One shared stamina pool refills at the game's rate after a rest
+
+The character and its party SHALL share one stamina pool that starts at 100 and refills at 25 a second after a rest.
 
 #### Scenario: Pool refills after a rest on foot
 
@@ -167,6 +175,10 @@ The character and its party SHALL share one stamina pool that starts at 100, ref
 - **GIVEN** the character is on a wall, in water or under the glider
 - **WHEN** time passes
 - **THEN** the pool does not refill
+
+### Requirement: One shared stamina pool is spent by each action at its cost
+
+The character and its party SHALL share one stamina pool that is spent by each action at its cost.
 
 #### Scenario: Dash costs 18 as it starts
 
@@ -184,7 +196,7 @@ The character and its party SHALL share one stamina pool that starts at 100, ref
 
 - **GIVEN** the pool holds at least 20 stamina
 - **WHEN** a sword's charged attack starts
-- **THEN** 20 stamina is spent (`~/Esposter.noindex/cache/gcsim-v2.47.2/internal/template/character/stam.go`, lines 19 to 21)
+- **THEN** 20 stamina is spent
 
 #### Scenario: Charged attack that cannot be paid does not start
 
@@ -200,13 +212,13 @@ The character and its party SHALL share one stamina pool that starts at 100, ref
 
 ### Requirement: Each body type moves by its own numbers
 
-Each character's speeds, heights and thresholds SHALL be those of its own body type, so that sprints and dashes cover different distances as the game's do (`~/Esposter.noindex/genshin-parity/extracted/locomotion/Male/locomotion.json`, `~/Esposter.noindex/genshin-parity/extracted/locomotion/Loli/locomotion.json`).
+Each character's speeds, heights and thresholds SHALL be those of its own body type, so that sprints and dashes cover different distances as the game's do.
 
 #### Scenario: Tall male covers more ground than short female
 
 - **GIVEN** a tall male and a short female each sprint for the same time
 - **WHEN** the distances are compared
-- **THEN** the tall male covers more ground (`~/Esposter.noindex/genshin-parity/extracted/locomotion/Male/locomotion.json`, 11.2 m over its dash clip, against the short female's 9.3 m in `~/Esposter.noindex/genshin-parity/extracted/locomotion/Loli/locomotion.json`)
+- **THEN** the tall male covers more ground
 
 #### Scenario: Switching party character changes the numbers, not the place
 

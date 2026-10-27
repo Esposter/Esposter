@@ -161,8 +161,12 @@ Every speed, height and threshold is a body type's, since how far a character sp
 - [Octree](https://threejs.org/docs/#examples/en/math/Octree), three.js: the capsule and sphere tests against one triangle the landmark collider runs.
 - [Fix your timestep!](https://gafferongames.com/post/fix_your_timestep/), Glenn Fiedler: the state drawn blended between the last two steps by the accumulator's remainder.
 - [KinematicCharacterController](https://rapier.rs/javascript3d/classes/KinematicCharacterController.html), Rapier: a kinematic controller that hits and slides against obstacles, confirming that the movement the game needs is queries and sliding rather than a rigid-body solve; weighed and not taken.
-- `~/Esposter.noindex/genshin-parity/extracted/locomotion/Male/locomotion.json`; grounds "Each body type moves by its own numbers".
-- `~/Esposter.noindex/genshin-parity/extracted/locomotion/Loli/locomotion.json`; grounds "Each body type moves by its own numbers".
+- `~/Esposter.noindex/genshin-parity/extracted/locomotion/Male/locomotion.json`; grounds "Each body type moves by its own numbers" and scenario "Tall male covers more ground than short female", 11.2 m over its dash clip.
+- `~/Esposter.noindex/genshin-parity/extracted/locomotion/Loli/locomotion.json`; grounds "Each body type moves by its own numbers" and scenario "Tall male covers more ground than short female", the short female's 9.3 m.
+- `~/Esposter.noindex/genshin-parity/extracted/locomotion/Girl/locomotion.json`, whose climb-jump clip, ClimbDashU, lasts 1.08 s; grounds scenario "Climb jump leaves the wall and resumes climbing".
+- `~/Esposter.noindex/genshin-parity/extracted/locomotion/Girl/locomotion.json`, whose swim-dash clip covers 3.6 m in a second; grounds scenario "Sprint while swimming makes a swim dash".
+- `~/Esposter.noindex/genshin-parity/extracted/locomotion/Girl/locomotion.json`, whose drowning clip, SwimDie, lasts 3 s; grounds scenario "Running out of stamina in water drowns the character".
+- `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/template/character/stam.go`, lines 19 to 21; grounds scenario "Charged attack spends 20".
 
 ## Reference
 
