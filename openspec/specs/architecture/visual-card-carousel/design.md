@@ -12,9 +12,9 @@ Each card's look is computed rather than written into the stylesheet. `getNormal
 flowchart TD
   timer["timer, every duration"] --> cycle["useCardCarousel: the moving card and the rotated stack"]
   replaced["the card list is replaced"] -->|"restarts with the first card's turn"| cycle
-  cycle --> state["CardStackState: the ids, the moving card, the card that has just moved"]
+  cycle --> state["CardStackState<br/>where each card is in the cycle"]
   state --> classes["getCardStackClass: each card's animation class"]
-  breakpoint["breakpoint scale, card count, shown cards"] --> geometry["getNormalCardStyles and getInactiveCardScaleY"]
+  breakpoint["breakpoint scale<br/>and card count"] --> geometry["getNormalCardStyles and getInactiveCardScaleY"]
   geometry --> styles["getCardStyles: custom properties and stacking per offset"]
   classes --> rendered["Carousel.vue renders each card"]
   styles --> rendered

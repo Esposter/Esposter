@@ -35,7 +35,7 @@ Every cached task is probed against this tree before it is trusted: a source edi
 
 The repository's TypeScript scripts run under `vpx`, the bin the `vite-plus` devDependency ships, in place of `tsx`. It runs a file with full TypeScript support (enums, namespaces, tsconfig `paths`) and no devDependency of its own, and every workspace script finds it on its PATH through the root's `node_modules/.bin`. `vpx --tsconfig tsconfig.root.json` is the form `apps/web/scripts/*` take, and `vpx` resolves `paths` aliases for every file under that config. A script that needs `--eval`, the REPL or `--check` stays on `node`, since `vpx` does not transform TypeScript for any of them, and the `package-scripts` skill's `references/typescript-scripts.md` owns which runner a file gets.
 
-`tsx` is gone from the repository. The persona plugin, the one place it survived, runs its TypeScript under plain `node`: its enums are `const` objects, so no loader is registered. The [persona plugin](../../infra/claude-interface/persona-plugin/README.md) records that.
+The persona plugin runs its TypeScript under plain `node`: its enums are `const` objects, so no loader is registered. The [persona plugin](../../infra/claude-interface/persona-plugin/README.md) records that.
 
 ## One copy of every tool
 

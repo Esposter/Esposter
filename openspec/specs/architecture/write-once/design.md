@@ -12,8 +12,8 @@ Esposter is written for **zero maintenance and zero churn**: code that, once wri
 ```mermaid
 flowchart TD
   NEW["a new case"] --> FITS{"does the source already describe it the way the mechanism reads?"}
-  FITS -->|"yes"| DECLARE["one declaration at the source — a map key, a meta flag"]
-  FITS -->|"no"| RESHAPE["reshape the source — a procedure or schema shaped for this consumer"]
+  FITS -->|"yes"| DECLARE["one declaration at the source<br/>a map key or a meta flag"]
+  FITS -->|"no"| RESHAPE["reshape the source<br/>a procedure or schema shaped for this consumer"]
   RESHAPE --> DECLARE
   DECLARE --> MECHANISM["the mechanism, unchanged, serves it"]
 ```
