@@ -26,6 +26,6 @@ None. The other five mods' requirements do not change.
 ## Impact
 
 - `packages/genshin-mods`: a new `services/sins/` folder with a node script, `sinsScript.ts`, whose code runs inline through `node -e`; a shared `services/readHome.ts` that ward's records path also uses; a pane, a band line, a prompt hook in the lifecycle, a switch, a button and state keys. The package gains no dependency and no lockfile: the script calls the documented HTTP API with `fetch`.
-- No service, database server or Azure resource. The evidence log is one node:sqlite file in the person's `.claude/genshin-mods` folder, beside the ward mod's records.
-- Node 22.13 or later, the first release where node:sqlite runs without a flag.
+- No service, database server or Azure resource. The evidence log is one node:sqlite file in the person's Claude config folder, beside the ward mod's records.
+- The first Node release where node:sqlite runs without a flag, or a later one.
 - The genshin-mods README and the typed-decisions design each gain a sentence on ship (see the design's Notes).

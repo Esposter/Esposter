@@ -216,7 +216,7 @@ packages/genshin-mods/src/models/   ← SinPosterior, SinFigures, SinScore and S
 ## Sources
 
 - [Taming Non-stationary Bandits: A Bayesian Approach](https://arxiv.org/abs/1707.09727), Raj and Kalyani, 2017. The abstract names discounting the prior's parameters to reduce the effect of past observations. Taken: the idea of discounting a Beta's counts. The rule here is this design's own; the full paper was not read for its exact form.
-- [node:sqlite](https://nodejs.org/api/sqlite.html), Node.js documentation. A built-in module with a synchronous API, release-candidate stability, and no flag from Node 22.13 and 23.4. Taken: the evidence log and the version floor.
+- [node:sqlite](https://nodejs.org/api/sqlite.html), Node.js documentation. A built-in module with a synchronous API, release-candidate stability, and no flag from the first release that ships it unflagged. Taken: the evidence log and the version floor.
 - [TypeSafe System One HTTP API](https://docs.typesafe.ai/api.md). The endpoint, the Bearer header, the `score` question's shape and the response's `score`, `confidence` and `probabilities`. Taken: the one call the script makes.
 - [TypeSafe Score primitive](https://docs.typesafe.ai/primitives/score.md). The score is the probability-weighted level, from 0 to the top level. Taken: the evidence is the score divided by the top level.
 - [TypeSafe Jev pricing write-up](https://www.eesel.ai/blog/typesafe-jev-pricing), September 2026. A secondary source for $0.042 per million input tokens with output free. Unverified; read off the bill in use.

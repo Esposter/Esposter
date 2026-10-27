@@ -182,7 +182,7 @@ Before a sin has any evidence, the band and the pane SHALL leave that sin out ra
 
 ### Requirement: The band and pane say why evidence cannot be stored
 
-When the session's Node lacks node:sqlite, the band and pane SHALL say that Node 22.13 or later is needed, and SHALL record nothing.
+When the session's Node lacks node:sqlite, the band and pane SHALL say that a newer Node is needed, and SHALL record nothing.
 
 #### Scenario: An older Node
 
