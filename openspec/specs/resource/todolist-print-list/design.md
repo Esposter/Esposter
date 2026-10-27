@@ -11,7 +11,7 @@ Part of [TodoList to a todo product](../README.md#shipped-log), built on [task r
 
 ```mermaid
 flowchart LR
-  M[Export → Print] --> D[Dialog: Print steps, Print notes]
+  M[Export → Print] --> D[Print dialog]
   D -->|Print| S[Mount the print sheet]
   S --> P[window.print]
   P --> U[afterprint → unmount the sheet]

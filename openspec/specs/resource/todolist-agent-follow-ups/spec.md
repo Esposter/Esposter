@@ -1,6 +1,6 @@
 ## Purpose
 
-Claude Code sessions in any repository write the follow-ups they leave unfinished into the owner's TodoList, tagged with the repository and session that found them, and drain them again one change at a time until none is left, through the follow-ups plugin and four procedures the MCP endpoint serves.
+Claude Code sessions in any repository write the follow-ups they leave unfinished into the owner's TodoList, tagged with the repository and session that found them, and drain them again one change at a time until none is left, through the follow-ups plugin and the procedures the MCP endpoint serves.
 
 ## Requirements
 

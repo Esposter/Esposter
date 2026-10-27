@@ -7,8 +7,8 @@ No model runs inside Esposter. The model stays in the terminal; Esposter stores 
 ```mermaid
 flowchart LR
   subgraph Terminal["Claude Code, any repository"]
-    HOOK["SessionStart hook — list, repository, session, time zone"]
-    CAP["capture skill — a follow-up the moment it is found"]
+    HOOK["SessionStart hook"]
+    CAP["capture skill"]
     DRAIN["drain skill — take, do, tick, repeat"]
   end
   subgraph App["Esposter app"]
@@ -150,7 +150,7 @@ A long drain runs in one session, so its context grows with every follow-up and 
 | File                                                                  | Role                                                                                                                                               |
 | --------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `apps/web/shared/models/resource/todoList/TodoListItemOrigin.ts`      | the origin, and the `owner/name` rule its repository keeps                                                                                         |
-| `apps/web/server/trpc/routers/todoList.ts`                            | the four follow-up procedures, opted into the MCP bridge                                                                                           |
+| `apps/web/server/trpc/routers/todoList.ts`                            | the follow-up procedures, opted into the MCP bridge                                                                                                |
 | `apps/web/server/services/resource/todoList/updateTodoListContent.ts` | the change to the parsed list, through the generic read, change and save ([agent content tools](../../architecture/agent-content-tools/design.md)) |
 | `apps/web/server/services/resource/todoList/checkIsOpenFollowUp.ts`   | the line between the owner's todos and a session's                                                                                                 |
 | `apps/web/app/components/Resource/TodoList/Origin.vue`                | where a follow-up came from, its resume command, and clearing a handback                                                                           |
