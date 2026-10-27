@@ -4,45 +4,46 @@ import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
 import { RenderableSetterMap } from "#src/services/setterMap/shared/RenderableSetterMap";
+import { BitmapTextSetter } from "#src/models/setterMap/BitmapTextSetter";
 
 export const BitmapTextSetterMap: SetterMap<
   BitmapTextConfiguration,
   GameObjects.BitmapText,
   BitmapTextEventEmitsOptions
 > = {
-  align: (gameObject) => (value) => {
+  [BitmapTextSetter.Align]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.align = value;
   },
-  dropShadow: (gameObject) => (value) => {
+  [BitmapTextSetter.DropShadow]: (gameObject) => (value) => {
     if (!value) return;
     gameObject.setDropShadow(...value);
   },
-  font: (gameObject) => (value) => {
+  [BitmapTextSetter.Font]: (gameObject) => (value) => {
     if (!value) return;
     gameObject.setFont(value);
   },
-  fontSize: (gameObject) => (value) => {
+  [BitmapTextSetter.FontSize]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setFontSize(value);
   },
-  letterSpacing: (gameObject) => (value) => {
+  [BitmapTextSetter.LetterSpacing]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setLetterSpacing(value);
   },
-  lineSpacing: (gameObject) => (value) => {
+  [BitmapTextSetter.LineSpacing]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setLineSpacing(value);
   },
-  maxWidth: (gameObject) => (value) => {
+  [BitmapTextSetter.MaxWidth]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setMaxWidth(value);
   },
-  text: (gameObject) => (value) => {
+  [BitmapTextSetter.Text]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setText(value);
   },
-  wordWrapCharCode: (gameObject) => (value) => {
+  [BitmapTextSetter.WordWrapCharCode]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.wordWrapCharCode = value;
   },

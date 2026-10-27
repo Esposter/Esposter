@@ -4,6 +4,7 @@ import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
 import { Tweens } from "phaser";
+import { TweenSetter } from "#src/models/setterMap/global/TweenSetter";
 
 // A game object runs one tween at a time, so a new one replaces the running one rather than running beside it
 const activeTweens = new WeakMap<GameObjects.GameObject, Tweens.Tween | Tweens.TweenChain>();
@@ -18,14 +19,14 @@ const replaceActiveTween = (
 };
 
 export const TweenSetterMap = {
-  tween: (gameObject, emit) => (value) => {
+  [TweenSetter.Tween]: (gameObject, emit) => (value) => {
     if (!value) return;
 
     replaceActiveTween(gameObject, gameObject.scene.add.tween({ ...value, targets: gameObject }), () => {
       emit("update:tween", undefined);
     });
   },
-  tweenchain: (gameObject, emit) => (value) => {
+  [TweenSetter.Tweenchain]: (gameObject, emit) => (value) => {
     if (!value) return;
 
     replaceActiveTween(

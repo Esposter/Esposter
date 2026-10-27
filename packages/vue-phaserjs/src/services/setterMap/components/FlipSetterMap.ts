@@ -2,13 +2,14 @@ import type { FlipConfiguration } from "#src/models/configuration/components/Fli
 import type { FlipEventEmitsOptions } from "#src/models/emit/components/FlipEventEmitsOptions";
 import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
+import { FlipSetter } from "#src/models/setterMap/components/FlipSetter";
 
 export const FlipSetterMap = {
-  flipX: (gameObject) => (value) => {
+  [FlipSetter.FlipX]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setFlipX(value);
   },
-  flipY: (gameObject) => (value) => {
+  [FlipSetter.FlipY]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setFlipY(value);
   },

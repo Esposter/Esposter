@@ -4,9 +4,10 @@ import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
 import { getDepthInsertIndex } from "#src/services/shared/getDepthInsertIndex";
+import { DepthSetter } from "#src/models/setterMap/components/DepthSetter";
 
 export const DepthSetterMap = {
-  depth: (gameObject) => (value) => {
+  [DepthSetter.Depth]: (gameObject) => (value) => {
     if (value === undefined) return;
 
     gameObject.setDepth(value);

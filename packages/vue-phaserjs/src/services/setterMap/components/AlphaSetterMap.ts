@@ -2,25 +2,26 @@ import type { AlphaConfiguration } from "#src/models/configuration/components/Al
 import type { AlphaEventEmitsOptions } from "#src/models/emit/components/AlphaEventEmitsOptions";
 import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
+import { AlphaSetter } from "#src/models/setterMap/components/AlphaSetter";
 
 export const AlphaSetterMap = {
-  alpha: (gameObject) => (value) => {
+  [AlphaSetter.Alpha]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setAlpha(value, value, value, value);
   },
-  alphaBottomLeft: (gameObject) => (value) => {
+  [AlphaSetter.AlphaBottomLeft]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setAlpha(gameObject.alphaTopLeft, gameObject.alphaTopRight, value, gameObject.alphaBottomRight);
   },
-  alphaBottomRight: (gameObject) => (value) => {
+  [AlphaSetter.AlphaBottomRight]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setAlpha(gameObject.alphaTopLeft, gameObject.alphaTopRight, gameObject.alphaBottomLeft, value);
   },
-  alphaTopLeft: (gameObject) => (value) => {
+  [AlphaSetter.AlphaTopLeft]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setAlpha(value, gameObject.alphaTopRight, gameObject.alphaBottomLeft, gameObject.alphaBottomRight);
   },
-  alphaTopRight: (gameObject) => (value) => {
+  [AlphaSetter.AlphaTopRight]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setAlpha(gameObject.alphaTopLeft, value, gameObject.alphaBottomLeft, gameObject.alphaBottomRight);
   },

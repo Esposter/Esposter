@@ -2,41 +2,42 @@ import type { TransformConfiguration } from "#src/models/configuration/component
 import type { TransformEventEmitsOptions } from "#src/models/emit/components/TransformEventEmitsOptions";
 import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
+import { TransformSetter } from "#src/models/setterMap/components/TransformSetter";
 
 export const TransformSetterMap = {
-  angle: (gameObject) => (value) => {
+  [TransformSetter.Angle]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setAngle(value);
   },
-  rotation: (gameObject) => (value) => {
+  [TransformSetter.Rotation]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setRotation(value);
   },
-  scale: (gameObject) => (value) => {
+  [TransformSetter.Scale]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setScale(value, value);
   },
-  scaleX: (gameObject) => (value) => {
+  [TransformSetter.ScaleX]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setScale(value, gameObject.scaleY);
   },
-  scaleY: (gameObject) => (value) => {
+  [TransformSetter.ScaleY]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setScale(gameObject.scaleX, value);
   },
-  w: (gameObject) => (value) => {
+  [TransformSetter.W]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setW(value);
   },
-  x: (gameObject) => (value) => {
+  [TransformSetter.X]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setX(value);
   },
-  y: (gameObject) => (value) => {
+  [TransformSetter.Y]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setY(value);
   },
-  z: (gameObject) => (value) => {
+  [TransformSetter.Z]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setZ(value);
   },

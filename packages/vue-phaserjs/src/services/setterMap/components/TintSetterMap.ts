@@ -2,25 +2,26 @@ import type { TintConfiguration } from "#src/models/configuration/components/Tin
 import type { TintEventEmitsOptions } from "#src/models/emit/components/TintEventEmitsOptions";
 import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
+import { TintSetter } from "#src/models/setterMap/components/TintSetter";
 
 export const TintSetterMap = {
-  tint: (gameObject) => (value) => {
+  [TintSetter.Tint]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setTint(value, value, value, value);
   },
-  tintBottomLeft: (gameObject) => (value) => {
+  [TintSetter.TintBottomLeft]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setTint(gameObject.tintTopLeft, gameObject.tintTopRight, value, gameObject.tintBottomRight);
   },
-  tintBottomRight: (gameObject) => (value) => {
+  [TintSetter.TintBottomRight]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setTint(gameObject.tintTopLeft, gameObject.tintTopRight, gameObject.tintBottomLeft, value);
   },
-  tintTopLeft: (gameObject) => (value) => {
+  [TintSetter.TintTopLeft]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setTint(value, gameObject.tintTopRight, gameObject.tintBottomLeft, gameObject.tintBottomRight);
   },
-  tintTopRight: (gameObject) => (value) => {
+  [TintSetter.TintTopRight]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setTint(gameObject.tintTopLeft, value, gameObject.tintBottomLeft, gameObject.tintBottomRight);
   },

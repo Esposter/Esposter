@@ -1,6 +1,7 @@
 import { ShapeSetterMap } from "#src/services/setterMap/shared/ShapeSetterMap";
 import { removeTestScene, startTestScene } from "#src/test/fixtures/headlessGame.test";
 import { afterEach, describe, expect, test } from "vitest";
+import { ShapeSetter } from "#src/models/setterMap/shared/ShapeSetter";
 
 describe("shapeSetterMap", () => {
   const sceneKey = "sceneKey";
@@ -15,7 +16,7 @@ describe("shapeSetterMap", () => {
 
     const scene = startTestScene(sceneKey);
     const circle = scene.add.circle();
-    ShapeSetterMap.fillAlpha(circle)(alpha);
+    ShapeSetterMap[ShapeSetter.FillAlpha](circle)(alpha);
 
     expect(circle.fillAlpha).toBe(alpha);
     expect(circle.isFilled).toBe(false);

@@ -11,16 +11,17 @@ import { TextureCropSetterMap } from "#src/services/setterMap/components/Texture
 import { TintSetterMap } from "#src/services/setterMap/components/TintSetterMap";
 import { GlobalSetterMap } from "#src/services/setterMap/global/GlobalSetterMap";
 import { SceneObjectSetterMap } from "#src/services/setterMap/shared/SceneObjectSetterMap";
+import { VideoSetter } from "#src/models/setterMap/VideoSetter";
 
 export const VideoSetterMap: SetterMap<VideoConfiguration, GameObjects.Video, VideoEventEmitsOptions> = {
-  key: (gameObject) => (value) => {
+  [VideoSetter.Key]: (gameObject) => (value) => {
     if (!value) return;
     gameObject.changeSource(value);
   },
-  muted: (gameObject) => (value) => {
+  [VideoSetter.Muted]: (gameObject) => (value) => {
     gameObject.setMute(value);
   },
-  volume: (gameObject) => (value) => {
+  [VideoSetter.Volume]: (gameObject) => (value) => {
     gameObject.setVolume(value);
   },
   ...AlphaSetterMap,

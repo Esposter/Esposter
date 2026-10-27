@@ -6,6 +6,12 @@ import type { GameObjects } from "phaser";
 import { ComputedSizeSetterMap } from "#src/services/setterMap/components/ComputedSizeSetterMap";
 import { GlobalSetterMap } from "#src/services/setterMap/global/GlobalSetterMap";
 import { ShapeSetterMap } from "#src/services/setterMap/shared/ShapeSetterMap";
+import { ComputedSizeSetter } from "#src/models/setterMap/components/ComputedSizeSetter";
 
 export const RectangleSetterMap: SetterMap<RectangleConfiguration, GameObjects.Rectangle, RectangleEventEmitsOptions> =
-  { height: ComputedSizeSetterMap.height, width: ComputedSizeSetterMap.width, ...ShapeSetterMap, ...GlobalSetterMap };
+  {
+    [ComputedSizeSetter.Height]: ComputedSizeSetterMap[ComputedSizeSetter.Height],
+    [ComputedSizeSetter.Width]: ComputedSizeSetterMap[ComputedSizeSetter.Width],
+    ...ShapeSetterMap,
+    ...GlobalSetterMap,
+  };

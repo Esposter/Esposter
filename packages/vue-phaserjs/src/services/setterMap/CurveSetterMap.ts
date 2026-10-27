@@ -5,9 +5,10 @@ import type { GameObjects } from "phaser";
 
 import { GlobalSetterMap } from "#src/services/setterMap/global/GlobalSetterMap";
 import { ShapeSetterMap } from "#src/services/setterMap/shared/ShapeSetterMap";
+import { CurveSetter } from "#src/models/setterMap/CurveSetter";
 
 export const CurveSetterMap: SetterMap<CurveConfiguration, GameObjects.Curve, CurveEventEmitsOptions> = {
-  smoothness: (gameObject) => (value) => {
+  [CurveSetter.Smoothness]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setSmoothness(value);
   },

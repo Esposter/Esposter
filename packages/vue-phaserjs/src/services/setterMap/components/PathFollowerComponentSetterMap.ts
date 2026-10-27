@@ -2,9 +2,10 @@ import type { PathFollowerComponentConfiguration } from "#src/models/configurati
 import type { PathFollowerComponentEventEmitsOptions } from "#src/models/emit/components/PathFollowerComponentEventEmitsOptions";
 import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
+import { PathFollowerComponentSetter } from "#src/models/setterMap/components/PathFollowerComponentSetter";
 
 export const PathFollowerComponentSetterMap = {
-  path: (gameObject) => (value) => {
+  [PathFollowerComponentSetter.Path]: (gameObject) => (value) => {
     if (!value) return;
     gameObject.setPath(value);
   },

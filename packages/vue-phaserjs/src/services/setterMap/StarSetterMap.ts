@@ -5,17 +5,18 @@ import type { GameObjects } from "phaser";
 
 import { GlobalSetterMap } from "#src/services/setterMap/global/GlobalSetterMap";
 import { ShapeSetterMap } from "#src/services/setterMap/shared/ShapeSetterMap";
+import { StarSetter } from "#src/models/setterMap/StarSetter";
 
 export const StarSetterMap: SetterMap<StarConfiguration, GameObjects.Star, StarEventEmitsOptions> = {
-  innerRadius: (gameObject) => (value) => {
+  [StarSetter.InnerRadius]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setInnerRadius(value);
   },
-  outerRadius: (gameObject) => (value) => {
+  [StarSetter.OuterRadius]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setOuterRadius(value);
   },
-  points: (gameObject) => (value) => {
+  [StarSetter.Points]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setPoints(value);
   },

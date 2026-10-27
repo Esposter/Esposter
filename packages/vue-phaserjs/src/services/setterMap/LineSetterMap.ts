@@ -5,13 +5,14 @@ import type { GameObjects } from "phaser";
 
 import { GlobalSetterMap } from "#src/services/setterMap/global/GlobalSetterMap";
 import { ShapeSetterMap } from "#src/services/setterMap/shared/ShapeSetterMap";
+import { LineSetter } from "#src/models/setterMap/LineSetter";
 
 export const LineSetterMap: SetterMap<LineConfiguration, GameObjects.Line, LineEventEmitsOptions> = {
-  lineWidth: (gameObject) => (value) => {
+  [LineSetter.LineWidth]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setLineWidth(value);
   },
-  to: (gameObject) => (value) => {
+  [LineSetter.To]: (gameObject) => (value) => {
     if (!value) return;
     gameObject.setTo(...value);
   },

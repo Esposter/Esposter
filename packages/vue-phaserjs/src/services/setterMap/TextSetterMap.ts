@@ -7,17 +7,18 @@ import { ComputedSizeSetterMap } from "#src/services/setterMap/components/Comput
 import { FlipSetterMap } from "#src/services/setterMap/components/FlipSetterMap";
 import { RenderableSetterMap } from "#src/services/setterMap/shared/RenderableSetterMap";
 import { omitUndefined } from "#src/services/shared/omitUndefined";
+import { TextSetter } from "#src/models/setterMap/TextSetter";
 
 export const TextSetterMap: SetterMap<TextConfiguration, GameObjects.Text, TextEventEmitsOptions> = {
-  padding: (gameObject) => (value) => {
+  [TextSetter.Padding]: (gameObject) => (value) => {
     if (!value) return;
     gameObject.setPadding(value);
   },
-  style: (gameObject) => (value) => {
+  [TextSetter.Style]: (gameObject) => (value) => {
     if (!value) return;
     gameObject.setStyle(omitUndefined(value));
   },
-  text: (gameObject, emit) => (value) => {
+  [TextSetter.Text]: (gameObject, emit) => (value) => {
     if (value === undefined) return;
     // Setting the text changes the derived width values too, and vue cannot see a phaser property change,
     // So they are emitted back explicitly

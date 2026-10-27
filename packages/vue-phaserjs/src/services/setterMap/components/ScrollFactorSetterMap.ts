@@ -2,17 +2,18 @@ import type { ScrollFactorConfiguration } from "#src/models/configuration/compon
 import type { ScrollFactorEventEmitsOptions } from "#src/models/emit/components/ScrollFactorEventEmitsOptions";
 import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
+import { ScrollFactorSetter } from "#src/models/setterMap/components/ScrollFactorSetter";
 
 export const ScrollFactorSetterMap = {
-  scrollFactor: (gameObject) => (value) => {
+  [ScrollFactorSetter.ScrollFactor]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setScrollFactor(value, value);
   },
-  scrollFactorX: (gameObject) => (value) => {
+  [ScrollFactorSetter.ScrollFactorX]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setScrollFactor(value, gameObject.scrollFactorY);
   },
-  scrollFactorY: (gameObject) => (value) => {
+  [ScrollFactorSetter.ScrollFactorY]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setScrollFactor(gameObject.scrollFactorX, value);
   },

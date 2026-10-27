@@ -10,11 +10,12 @@ import { RenderNodesSetterMap } from "#src/services/setterMap/components/RenderN
 import { TextureSetterMap } from "#src/services/setterMap/components/TextureSetterMap";
 import { GlobalSetterMap } from "#src/services/setterMap/global/GlobalSetterMap";
 import { SceneObjectSetterMap } from "#src/services/setterMap/shared/SceneObjectSetterMap";
+import { ComputedSizeSetter } from "#src/models/setterMap/components/ComputedSizeSetter";
 
 export const NinesliceSetterMap: SetterMap<NinesliceConfiguration, GameObjects.NineSlice, NinesliceEventEmitsOptions> =
   {
-    height: ComputedSizeSetterMap.height,
-    width: ComputedSizeSetterMap.width,
+    [ComputedSizeSetter.Height]: ComputedSizeSetterMap[ComputedSizeSetter.Height],
+    [ComputedSizeSetter.Width]: ComputedSizeSetterMap[ComputedSizeSetter.Width],
     ...AlphaSingleSetterMap,
     ...SceneObjectSetterMap,
     ...OriginSetterMap,

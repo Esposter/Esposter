@@ -5,9 +5,10 @@ import type { GameObjects } from "phaser";
 
 import { GlobalSetterMap } from "#src/services/setterMap/global/GlobalSetterMap";
 import { ShapeSetterMap } from "#src/services/setterMap/shared/ShapeSetterMap";
+import { TriangleSetter } from "#src/models/setterMap/TriangleSetter";
 
 export const TriangleSetterMap: SetterMap<TriangleConfiguration, GameObjects.Triangle, TriangleEventEmitsOptions> = {
-  to: (gameObject) => (value) => {
+  [TriangleSetter.To]: (gameObject) => (value) => {
     if (!value) return;
     gameObject.setTo(...value);
   },

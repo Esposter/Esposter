@@ -8,13 +8,14 @@ import { RenderNodesSetterMap } from "#src/services/setterMap/components/RenderN
 import { TextureSetterMap } from "#src/services/setterMap/components/TextureSetterMap";
 import { GlobalSetterMap } from "#src/services/setterMap/global/GlobalSetterMap";
 import { SceneObjectSetterMap } from "#src/services/setterMap/shared/SceneObjectSetterMap";
+import { ParticlesSetter } from "#src/models/setterMap/ParticlesSetter";
 
 export const ParticlesSetterMap: SetterMap<
   ParticlesConfiguration,
   GameObjects.Particles.ParticleEmitter,
   ParticlesEventEmitsOptions
 > = {
-  config: (gameObject) => (value) => {
+  [ParticlesSetter.Configuration]: (gameObject) => (value) => {
     if (!value) return;
     gameObject.setConfig(value);
   },

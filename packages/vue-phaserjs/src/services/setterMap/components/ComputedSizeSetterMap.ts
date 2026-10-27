@@ -4,14 +4,15 @@ import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
 import { DisplaySizeSetterMap } from "#src/services/setterMap/components/DisplaySizeSetterMap";
+import { ComputedSizeSetter } from "#src/models/setterMap/components/ComputedSizeSetter";
 
 export const ComputedSizeSetterMap = {
   ...DisplaySizeSetterMap,
-  height: (gameObject) => (value) => {
+  [ComputedSizeSetter.Height]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setSize(gameObject.width, value);
   },
-  width: (gameObject) => (value) => {
+  [ComputedSizeSetter.Width]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setSize(value, gameObject.height);
   },

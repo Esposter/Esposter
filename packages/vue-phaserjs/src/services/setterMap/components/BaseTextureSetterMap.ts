@@ -2,13 +2,14 @@ import type { BaseTextureConfiguration } from "#src/models/configuration/compone
 import type { BaseTextureEventEmitsOptions } from "#src/models/emit/components/BaseTextureEventEmitsOptions";
 import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
+import { BaseTextureSetter } from "#src/models/setterMap/components/BaseTextureSetter";
 
 export const BaseTextureSetterMap = {
-  frame: (gameObject) => (value) => {
+  [BaseTextureSetter.Frame]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setFrame(value);
   },
-  texture: (gameObject) => (value) => {
+  [BaseTextureSetter.Texture]: (gameObject) => (value) => {
     if (!value) return;
     gameObject.setTexture(value);
   },

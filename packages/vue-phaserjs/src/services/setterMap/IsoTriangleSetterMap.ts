@@ -6,13 +6,14 @@ import type { GameObjects } from "phaser";
 import { GlobalSetterMap } from "#src/services/setterMap/global/GlobalSetterMap";
 import { IsoSetterMap } from "#src/services/setterMap/shared/IsoSetterMap";
 import { ShapeSetterMap } from "#src/services/setterMap/shared/ShapeSetterMap";
+import { IsoTriangleSetter } from "#src/models/setterMap/IsoTriangleSetter";
 
 export const IsoTriangleSetterMap: SetterMap<
   IsoTriangleConfiguration,
   GameObjects.IsoTriangle,
   IsoTriangleEventEmitsOptions
 > = {
-  isReversed: (gameObject) => (value) => {
+  [IsoTriangleSetter.IsReversed]: (gameObject) => (value) => {
     if (value === undefined) return;
     gameObject.setReversed(value);
   },

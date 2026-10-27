@@ -9,6 +9,7 @@ import { OriginSetterMap } from "#src/services/setterMap/components/OriginSetter
 import { RenderNodesSetterMap } from "#src/services/setterMap/components/RenderNodesSetterMap";
 import { GameObjectSetterMap } from "#src/services/setterMap/global/GameObjectSetterMap";
 import { SceneObjectSetterMap } from "#src/services/setterMap/shared/SceneObjectSetterMap";
+import { ShapeSetter } from "#src/models/setterMap/shared/ShapeSetter";
 
 export const ShapeSetterMap = {
   ...AlphaSingleSetterMap,
@@ -18,15 +19,15 @@ export const ShapeSetterMap = {
   ...OriginSetterMap,
   ...RenderNodesSetterMap,
   // Setting the alpha on its own must not fill the shape, which `setFillStyle` would do
-  fillAlpha: (gameObject) => (value) => {
+  [ShapeSetter.FillAlpha]: (gameObject) => (value) => {
     if (value === undefined) return;
 
     gameObject.fillAlpha = value;
   },
-  fillColor: (gameObject) => (value) => {
+  [ShapeSetter.FillColor]: (gameObject) => (value) => {
     gameObject.setFillStyle(value, gameObject.fillAlpha);
   },
-  strokeStyle: (gameObject) => (value) => {
+  [ShapeSetter.StrokeStyle]: (gameObject) => (value) => {
     if (!value) return;
     gameObject.setStrokeStyle(...value);
   },

@@ -2,6 +2,7 @@ import type { SceneWithPlugins } from "#src/models/scene/SceneWithPlugins";
 import type { GameObjects, Types } from "phaser";
 import type { SetupContext } from "vue";
 
+import { GameObjectEvent } from "#src/models/emit/GameObjectEvent";
 import { checkIsEvent } from "#src/services/emit/checkIsEvent";
 import { GameObjectEventMap } from "#src/services/emit/GameObjectEventMap";
 import { getEventName } from "#src/services/emit/getEventName";
@@ -36,7 +37,7 @@ export const useInitializeGameObjectEvents = () => {
         emit(gameObjectEvent, ...args);
       };
       // The rex plugin emits its event from a component of its own rather than from the game object
-      const emitter = gameObjectEvent === "clickoutside" ? new ClickOutside(gameObject) : gameObject;
+      const emitter = gameObjectEvent === GameObjectEvent.Clickoutside ? new ClickOutside(gameObject) : gameObject;
       emitter.on(gameObjectEvent, eventListener);
       eventStopHandles.push(() => {
         emitter.off(gameObjectEvent, eventListener);

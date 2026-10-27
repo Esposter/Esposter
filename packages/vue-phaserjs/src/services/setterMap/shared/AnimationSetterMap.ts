@@ -5,6 +5,7 @@ import type { GameObjects } from "phaser";
 
 import { ANIMATION_COMPLETE_EVENT_PREFIX } from "#src/services/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
+import { AnimationSetter } from "#src/models/setterMap/shared/AnimationSetter";
 
 // This setter's own completion listener, per sprite and per event. `off(event)` with no callback would take the
 // Consumer's listeners for the same animation with it, and a published package cannot know what a consumer
@@ -12,7 +13,7 @@ import { InvalidOperationError, Operation } from "@esposter/shared";
 const completionListeners = new WeakMap<GameObjects.Sprite, Map<string, () => void>>();
 
 export const AnimationSetterMap = {
-  animations: (gameObject, emit) => (configurations) => {
+  [AnimationSetter.Animations]: (gameObject, emit) => (configurations) => {
     if (!(configurations && configurations.length > 0)) return;
 
     const listeners = completionListeners.get(gameObject) ?? new Map<string, () => void>();
@@ -36,7 +37,7 @@ export const AnimationSetterMap = {
         throw new InvalidOperationError(Operation.Create, "Animation", configuration.key);
     }
   },
-  playAnimationKey: (gameObject) => (value) => {
+  [AnimationSetter.PlayAnimationKey]: (gameObject) => (value) => {
     if (value === undefined) {
       gameObject.stop();
       return;
