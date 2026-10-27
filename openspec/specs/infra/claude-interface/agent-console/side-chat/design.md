@@ -31,7 +31,7 @@ flowchart TD
 
 ## Notes
 
-- The drawer's state is not kept through a reload: the store holds it in memory only, and closing the drawer discards its answers.
+- The drawer's state is not kept through a reload: the store holds it in memory only.
 
 ## Key files
 

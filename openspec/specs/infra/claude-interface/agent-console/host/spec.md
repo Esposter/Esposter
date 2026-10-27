@@ -59,12 +59,12 @@ The host SHALL print a one-time pairing link whose code pairs one page for the l
 #### Scenario: Pairing from the printed link
 
 - **GIVEN** a printed link and its code
-- **WHEN** a page uses the code within ten minutes
+- **WHEN** a page uses the code within ten minutes (`PRINTED_PAIRING_CODE_DURATION_MS`)
 - **THEN** the page is paired
 
 #### Scenario: Using the printed link after ten minutes
 
-- **GIVEN** a printed link past ten minutes
+- **GIVEN** a printed link past ten minutes (`PRINTED_PAIRING_CODE_DURATION_MS`)
 - **WHEN** a page uses its code
 - **THEN** the pairing is refused
 
@@ -124,7 +124,7 @@ When the host stops, every connected page SHALL be told before its sessions clos
 
 ### Requirement: A page retries a dropped connection with growing waits
 
-A page whose socket drops SHALL retry with growing waits up to thirty seconds until the host answers.
+A page whose socket drops SHALL retry with growing waits up to thirty seconds (`MAX_RECONNECT_DELAY_MS`) until the host answers.
 
 #### Scenario: The host restarts after a drop
 

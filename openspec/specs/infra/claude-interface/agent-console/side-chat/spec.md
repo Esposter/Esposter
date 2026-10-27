@@ -12,7 +12,7 @@ The console SHALL open a side chat drawer beside the conversation when the reade
 
 #### Scenario: The chord opens the side chat
 
-- **GIVEN** the reader has a session open in the Code tab
+- **GIVEN** the reader has a session open in the Conversation tab
 - **WHEN** the reader presses Ctrl+;
 - **THEN** a side chat drawer opens beside the conversation
 - **AND** the drawer has its own composer

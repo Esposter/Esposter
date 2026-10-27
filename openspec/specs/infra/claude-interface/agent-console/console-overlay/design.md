@@ -88,7 +88,7 @@ The page is open all day beside an editor, so the overlay adds nothing per frame
 
 ## Notes
 
-- Escape does what the thing in front of the person needs. In the console while a turn runs, it stops the turn, as the terminal's does. In the console otherwise, it closes the console, and over the world it pauses. None of them leaves the page, since leaving is a choice (the bar's home mark or the pause menu's last entry), so a key pressed to stop the agent never takes the person out.
+- Escape never leaves the page. Leaving is a choice, the bar's home mark or the pause menu's last entry, so a key pressed to stop the agent never takes the person out.
 - Leaving the dock behind also leaves the account menu and notifications behind on this page. The bar's home mark is the way back to them. The app's toasts still show over the page, since the connection store's errors are raised through them.
 
 ## Settled

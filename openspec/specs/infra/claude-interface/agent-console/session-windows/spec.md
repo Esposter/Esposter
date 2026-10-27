@@ -66,28 +66,28 @@ A session SHALL keep running when its host is killed without stopping, and a lat
 
 - **GIVEN** a host with sessions running in windows
 - **WHEN** the host is killed without stopping
-- **THEN** each session keeps running, its window says so, and it tries to reconnect every second
+- **THEN** each session keeps running, its window says so, and it tries to reconnect every second (`SESSION_WINDOW_RECONNECT_DELAY_MS`)
 
 #### Scenario: A new host started within the minute
 
 - **GIVEN** windows waiting to reconnect after their host was killed
-- **WHEN** a new host starts within a minute
+- **WHEN** a new host starts within a minute (`SESSION_WINDOW_REJOIN_DURATION_MS`)
 - **THEN** it takes each session back with its whole log and every page resets and replays it
 
 #### Scenario: A new host started after the minute
 
 - **GIVEN** windows waiting to reconnect after their host was killed
-- **WHEN** a new host starts after the minute has passed
+- **WHEN** a new host starts after the minute (`SESSION_WINDOW_REJOIN_DURATION_MS`) has passed
 - **THEN** each window refuses the new host and ends its session
 
 ### Requirement: A window is admitted by a secret that works once and expires
 
-A session window SHALL be admitted by a secret that works once and expires after thirty seconds.
+A session window SHALL be admitted by a secret that works once and expires after thirty seconds (`SESSION_WINDOW_CONNECT_TIMEOUT_MS`).
 
 #### Scenario: A window connecting with its secret
 
 - **GIVEN** a freshly started window holding its secret
-- **WHEN** it connects within thirty seconds
+- **WHEN** it connects within thirty seconds (`SESSION_WINDOW_CONNECT_TIMEOUT_MS`)
 - **THEN** the host admits it
 
 #### Scenario: A secret used a second time
@@ -99,7 +99,7 @@ A session window SHALL be admitted by a secret that works once and expires after
 #### Scenario: A secret presented after thirty seconds
 
 - **GIVEN** a secret that has not been used
-- **WHEN** it is presented after thirty seconds
+- **WHEN** it is presented after thirty seconds (`SESSION_WINDOW_CONNECT_TIMEOUT_MS`)
 - **THEN** the host refuses it
 
 ### Requirement: The session cannot read the window's secret

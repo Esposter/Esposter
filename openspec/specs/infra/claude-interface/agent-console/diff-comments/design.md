@@ -8,7 +8,9 @@ The comments are a draft, not a message. They collect across files until the per
 
 ```mermaid
 flowchart LR
-  L[Click a diff line] --> B[Comment box] -->|Ctrl+Enter| D[Draft, per session]
+  L[Click a diff line] --> B[Comment box]
+  B -->|Ctrl+Enter, with text| D[Draft, per session]
+  B -->|Ctrl+Enter, emptied| R[Comment removed from the draft]
   D -->|Send comments| C["Composer: path:line, the line, the comment"] -->|Enter| S[Session]
 ```
 
