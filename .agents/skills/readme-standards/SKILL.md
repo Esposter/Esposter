@@ -20,7 +20,7 @@ Anchor-plus-emoji headings, a `---` after the table of contents, and the skeleto
 
 ## Badge Rules
 
-A published package carries all four badges, a private one the licence badge alone, both in the palette's colours (`references/template.md`).
+A published package carries all four badges, a private one the licence badge alone, both in shields.io's named colours (`references/template.md`).
 
 ## Which packages, and which are published
 
