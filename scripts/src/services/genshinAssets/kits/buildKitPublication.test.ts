@@ -83,12 +83,12 @@ describe(buildKitPublication, () => {
   test("names the kit and the record path of a talent reference its sources do not read", async () => {
     expect.hasAssertions();
 
-    // Amber's first overlay entry no source gives is her wiki poise damage, the gcsim multiplier it sits beside being a
-    // Choice held until the named-hit join has read the record, so the refusal reaches the poise damage first
+    // Amber's first overlay entry no source gives is her first Fiery Rain arrow's gcsim multiplier, a choice held until
+    // The named-hit join has read the record, so the refusal names that multiplier's path
     await expect(
       buildKitPublication([{ ...createInput(1, false, readKitOverlay("amber")), name: "Amber", overlayName: "amber" }]),
     ).rejects.toThrowErrorMatchingInlineSnapshot(
-      `[InvalidOperationError: Invalid operation: Create, name: Amber, its record cannot be built: Invalid operation: Read, name: hits.fieryRainArrows.0.poiseDamage, has no Wiki value for the overlay to choose]`,
+      `[InvalidOperationError: Invalid operation: Create, name: Amber, its record cannot be built: Invalid operation: Read, name: hits.fieryRainArrows.0.multiplier, has no Gcsim value for the overlay to choose]`,
     );
   });
 
