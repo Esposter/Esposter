@@ -6,19 +6,19 @@ The witness runs that lay out the capitals as the game draws them, owed for Font
 
 ### Requirement: The capital areas of Nod-Krai and Snezhnaya
 
-The capital areas of Nod-Krai and Snezhnaya SHALL be outlined from the game's own area polygons once the catalogue holds them.
+The capital areas of Nod-Krai and Snezhnaya SHALL be outlined from the game's own area polygons once the community dump holds them.
 
 #### Scenario: The game's own outline replaces the provisional square
 
-- **GIVEN** the catalogue holds the polygon of each capital's area
-- **WHEN** the outlines are fitted
+- **GIVEN** the community dump's area file holds the polygon of each capital's area
+- **WHEN** the outlines are fitted from the dump
 - **THEN** each capital's outline is the game's own
 - **AND** Everfrozen Earth's provisional square is replaced
 
 #### Scenario: A capital whose polygon is missing from the dump gets no outline yet
 
-- **GIVEN** the catalogue lacks a capital's area polygon
-- **WHEN** the outlines are fitted
+- **GIVEN** the community dump lacks a capital's area polygon
+- **WHEN** the outlines are fitted from the dump
 - **THEN** that capital's outline is not written
 
 ### Requirement: The capital outlines
