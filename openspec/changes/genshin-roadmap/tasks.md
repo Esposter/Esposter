@@ -106,6 +106,7 @@ The user's one batch, checked whenever convenient ([parity](../../specs/genshin/
 - [ ] **Sayu's charged attack and plunges** — [Sayu](../../specs/genshin/kits/sayu/design.md): a recording of them matches the table's charged slots and the half-second plunges.
 - [ ] **Kokomi's plunges land at half a second** — [Kokomi](../../specs/genshin/kits/kokomi/design.md): a recording of her plunge lands at that point.
 - [ ] **Does Bake-Kurage's field last 12 seconds, or 12.5?** — [Kokomi](../../specs/genshin/kits/kokomi/design.md): a recording of the field's end settles the open item there.
+- [ ] **Does Bake-Kurage's field tick six times or seven?** — [Kokomi](../../specs/genshin/kits/kokomi/design.md): the kit's 24-frame first tick and 120-frame interval give six ticks in 12 seconds, where the wiki and gcsim give seven; a recording of the field's ticks settles the count.
 - [ ] **Raiden Shogun's hits deal the wiki's poise** — [Raiden Shogun](../../specs/genshin/kits/raiden-shogun/design.md): a recording against a poised enemy shows her polearm strikes staggering it, as the wiki's rows give.
 - [ ] **Masatsu Zetsugi gives 2U of Geo gauge** — [Itto](../../specs/genshin/kits/itto/design.md): a recording of the hit shows a Geo gauge of 2U, not 1U.
 - [ ] **Heartstopper's short hold gives fewer stacks** — [Heizou](../../specs/genshin/kits/heizou/design.md): a hold released before three seconds gives its own stack count, not the press's.
