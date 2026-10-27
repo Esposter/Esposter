@@ -144,7 +144,7 @@ Each limit is one named constant in the review's code, with its reason beside it
 | `FIXER_TIMEOUT_MS`          | The wall clock of one fixer, past which its process tree is killed.                                                        |
 | `SETTLER_TIMEOUT_MS`        | The wall clock of one settler, past which its process tree is killed.                                                      |
 
-The excluded paths are the generated output, snapshots, the lockfile, migrations, the changelog and binary files, the same set the bot's path filters used. The list lives beside the reason for each entry, and a path is dropped from every window and batch the same way.
+The excluded paths are the generated output, snapshots, the lockfile, migrations, the changelog and binary files. The list lives beside the reason for each entry, and a path is dropped from every window and batch the same way.
 
 ## The session launcher
 

@@ -10,9 +10,9 @@ flowchart TD
     Deterministic{Does the tree, git or the API state it —<br/>or can the repo produce it and verify it?}
     Typed{Is the answer one of a fixed set,<br/>over state already in hand?}
     Confident{Inside the confidence band?}
-    Code[Answered in code — free]
+    Code[Answered in code<br/>free]
     Jev[Answered by a typed decision]
-    Session[A Claude Code session — a slice of the window]
+    Session[A Claude Code session<br/>a slice of the window]
 
     Question --> Deterministic
     Deterministic -- yes --> Code

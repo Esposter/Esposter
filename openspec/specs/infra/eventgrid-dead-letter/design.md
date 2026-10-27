@@ -73,7 +73,7 @@ flowchart TD
   egst -->|"endpoint down past the delivery TTL —<br/>trigger dropped, never dead-lettered"| stranded["blob stranded at the container root"]
   stranded -->|"app start — drainDeadLetterContainer re-uploads"| dead
   egst -->|filtered subscription| guard{"subject under the dead-letter container<br/>and not an archived/ or quarantine/ copy"}
-  guard -->|no| ignored["return — nothing downloaded, nothing deleted"]
+  guard -->|no| ignored["return<br/>nothing downloaded or deleted"]
   guard -->|yes| exists{"blob still present?"}
   exists -->|no, a prior delivery already finished it| ignored
   exists -->|yes| fn[ReplayDeadLetterEvent function]
