@@ -17,6 +17,7 @@ Open work, each item linking its proposal. Ideas parked behind a revisit trigger
 - [ ] [PDF annotations' form values](../../specs/vue-pdfjs-headless/annotations/design.md) — choose between setting the flag before every save or narrowing the requirement
 - [ ] [PDF annotations' comments](../../specs/vue-pdfjs-headless/annotations/design.md) — comments cannot be added, because the renderer's save drops text annotations; add `addComment` once a pdf.js upgrade keeps them
 - [ ] [PDF annotations' upstream](../../specs/vue-pdfjs-headless/annotations/design.md) — file the pdf.js "Object already resolved" reproduction upstream by hand, then re-judge each annotation issue on both trackers against this capability
+- [ ] [Genshin-mods state contract](../../specs/architecture/claude-mods/design.md) — `SinStatus` and `TaskStatus` in `packages/genshin-mods/types/index.d.ts` restate the values of `SinStatusKind` and `TaskStatus` in `packages/genshin-mods/src/models/`, so each value is declared twice; the contract is self-contained by its header and has no imports, so merging them means deciding whether the contract may import the mod's own enums by relative path, and if it may, the two unions become aliases of the enums; if it may not, the duplication stays and the contract says so in its header
 - [ ] [PDF annotations' browser check](../../specs/vue-pdfjs-headless/annotations/design.md) — run the harness page that mounts `usePdfAnnotations` and `usePdfViewer`
 
 ## Blocked (the character voice still switched on after two weeks of daily use)
