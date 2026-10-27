@@ -12,7 +12,7 @@ A Discord-style fullscreen settings dialog for **message/communication** prefere
 
 The dialog is opened by the gear in `MessageLeftSideBarStatusBar` and mirrors the [room settings](../room-settings/design.md) pattern (`SettingsType` enum → list-item map → content map → `Type/*` panels) with its own parallel wrappers under `Message/Model/User/Settings/`. Unlike room settings there is no permission gating — every panel is self-scoped to the current user.
 
-Both settings dialogs share three conventions: panels are lazy async components rendered inside `<Suspense>` with a shared `MessageModelSettingsSkeleton` fallback (shown on every tab switch); every settings mutation is **optimistic** (apply to the store immediately, mutate in the background, roll back + surface the error on failure — [`useMutation`](../../architecture/client-data/design.md)); and the sidebar section rail is `StyledSlideIndicator` stretched across **all** visible sections, pinned to the target while a click-scroll runs.
+Both settings dialogs share three conventions: panels are lazy async components rendered inside `<Suspense>` with a shared `MessageModelSettingsSkeleton` fallback (shown on every tab switch); every settings mutation is **optimistic** (apply to the store immediately, mutate in the background, roll back + surface the error on failure — [`useMutation`](../../architecture/client-data/design.md)); and the sidebar section rail is `StyledSlideIndicator` stretched across **all** visible sections.
 
 They also share the responsive shell — the sidebar that sits beside the panel on a wide screen and covers it while open on a narrow one, closed on selection — which [room settings](../room-settings/design.md) describes with its diagram. The user dialog holds that open flag as `isDrawerOpen` on its dialog store; the room dialog threads it through its `Dialog`.
 
@@ -45,6 +45,17 @@ On the `user` router:
 | `updateUserSettings` | authed | partial settings (`updateUserSettingsInputSchema`, `refineAtLeastOne`) | upsert; returns the full row            |
 
 The client store (`store/message/user/settings/index.ts`) applies updates optimistically and reverts + alerts on failure. The read is one record for the whole session, so it goes through [`useCachedRead`](../../architecture/caching/design.md) — every surface that raises the dialog asks for it, the concurrent asks join one request, and no write invalidates it because `updateUserSettings` stores the row it is answered with.
+
+```mermaid
+flowchart TD
+  D["settings dialog opened"] --> C["useCachedRead"]
+  C -->|one request for the session| R["readUserSettings"]
+  R --> S["store userSettings"]
+  W["control changed"] --> O["optimistic update in the store"]
+  O --> U["updateUserSettings"]
+  U -->|returned row stored| S
+  U -->|failure| V["revert and alert"]
+```
 
 ## Navigation / scrollspy
 

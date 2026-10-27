@@ -8,11 +8,20 @@ The composer turns `||text||` into a Tiptap spoiler mark as the closing bars are
 
 The HTML sanitizer preserves the mark attribute. Push notification text replaces spoiler content with blocks, while message search continues to match the original text. Link previews are not made for URLs inside a spoiler.
 
+```mermaid
+flowchart TD
+  C["composer or /spoiler"] --> M["spoiler mark on the message text"]
+  M -->|kept by the sanitizer| S["HTML sanitizer"]
+  M -->|content replaced with blocks| P["push notification"]
+  M -->|matched against the original text| Q["message search"]
+  M -->|no preview for URLs inside| L["link previews"]
+```
+
 ## Attachments
 
 The composer marks an attachment as a spoiler when its filename starts with `SPOILER_`. The eye button on the attachment preview can toggle the mark. A marked image or video is blurred behind a **SPOILER** label; its first activation reveals it and its next activation opens the viewer.
 
-`FileEntity.isSpoiler` is persisted with the message. Older attachment rows without the field read as `false`, so they remain visible as before. The composer has no text-formatting toolbar, so there is no toolbar button for the text mark.
+`FileEntity.isSpoiler` is persisted with the message. Attachment rows without the field read as `false`, so they stay visible. The composer has no text-formatting toolbar, so there is no toolbar button for the text mark.
 
 ## Key files
 

@@ -9,7 +9,7 @@ Replying to a message is an implicit follow (Discord behaviour) for the replier 
 ```mermaid
 flowchart TD
   R["createMessage with replyRowKey"] --> P["persist the reply — Azure Table"]
-  P --> AF["auto-follow the replier — clears their own unfollow"]
+  P --> AF["auto-follow the replier"]
   P --> AR["auto-follow the root's author — insert only, never clears theirs"]
   P --> Q["publishNotification — the reply names its thread root"]
   Q --> E["ProcessNotification unions followers into the room's recipients"]

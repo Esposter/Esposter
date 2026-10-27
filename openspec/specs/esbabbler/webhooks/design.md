@@ -8,7 +8,7 @@ This page is about **inbound** webhooks only. Posting room events out to a user-
 
 Two tables, one-to-one. `webhooksInMessage` holds the room membership and the secret: `roomId`, `creatorId` (the member who made it), `token`, an `isActive` switch, a display `name`, and a `userId` that is `unique` and references the second table. `appUsersInMessage` is the bot identity — nothing but `id`, `name` and `image`. Separating them is what lets a webhook message carry an author at all: the identity is a row a message can point at, so rendering does not have to special-case "no user".
 
-The pairing is enforced by construction. `createWebhook` inserts both rows in one transaction, and `deleteWebhook` deletes the app user, which cascades the webhook away with it. A room may hold `WEBHOOK_MAX_LENGTH` webhooks — currently one — checked inside that same transaction.
+The pairing is enforced by construction. `createWebhook` inserts both rows in one transaction, and `deleteWebhook` deletes the app user, which cascades the webhook away with it. A room may hold up to `WEBHOOK_MAX_LENGTH` webhooks (declared in `apps/web/shared/services/message/constants.ts`), checked inside that same transaction.
 
 ## Delivery
 
@@ -38,7 +38,7 @@ The url a member copies points at the **app**, not at Azure: `server/api/webhook
 
 `PushWebhook` is a public Azure Function HTTP trigger, mounted at `webhooks/{id}/{token}` with `authLevel: "function"`. **The token in the url is the credential**: the handler looks for a webhook row whose id and token both match and whose `isActive` is true, and answers 404 when there is none — an inactive webhook and a wrong token are indistinguishable from outside. It then parses the body against `webhookPayloadSchema` (a Discord-shaped `content` / `username` / `avatar_url` payload with `content` required — and sanitized by `sanitizeTextHtml` before its length bound applies, since it renders as message markup like every other body — and strict: a key it does not declare fails the request with 400 — Discord's `embeds` among them, beside `content` or alone, since a message has nowhere to store one and a field accepted but never stored would be dropped silently), publishes an Event Grid event, and answers 202 without waiting for the message to exist. That split is deliberate: the sender gets a fast, cheap acknowledgement, and the work that can fail happens behind a retrying event.
 
-`ProcessWebhook` turns the payload into a `MessageType.Webhook` message — the payload's `username` and `avatar_url` override the stored bot name and image for that message — writes it to Azure Table, broadcasts over Web PubSub, and publishes a [push notification](../push-notifications/design.md) event titled with the bot's name. Both of those last two steps are best-effort: the message is already persisted, and Event Grid delivery is at-least-once, so throwing after the write would replay the event and duplicate the message.
+`ProcessWebhook` turns the payload into a `MessageType.Webhook` message — the payload's `username` and `avatar_url` override the stored bot name and image for that message — writes it to Azure Table, broadcasts over Web PubSub, and publishes a [push notification](../push-notifications/design.md) event titled with the bot's name. Both of those last two steps are best-effort, as [persist then notify](../../architecture/persist-then-notify/design.md) requires of every step after the write.
 
 ## Rendering
 
@@ -65,7 +65,7 @@ The webhook surface is the **Integrations → Webhooks** tab of the [room settin
 
 ## Key files
 
-Paths are relative to `apps/web`; an entry that begins with `packages/` is relative to the repository root instead.
+Paths are relative to `apps/web`, except those under `apps/functions/` and `packages/`, which are relative to the repository root.
 
 | File                                                                  | Role                                                        |
 | --------------------------------------------------------------------- | ----------------------------------------------------------- |

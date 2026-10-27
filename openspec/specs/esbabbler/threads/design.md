@@ -22,7 +22,7 @@ flowchart TD
   M --> B["optimistic bubble — room list"]
   M --> HK["MessageHookMap Create / Update / Delete"]
   HK --> P["thread pane — replies belonging to the open root"]
-  HK --> RS["ResetSend(target) — clear the composer that sent, release its attachments"]
+  HK --> RS["ResetSend(target)"]
 ```
 
 ## The composer
