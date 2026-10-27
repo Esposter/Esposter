@@ -34,7 +34,7 @@ flowchart TD
 
 - [ ] **Royal Descent lasts 13.25 seconds** — contradicted by `{data-root}/genshin-parity/text/ExcelBinOutput/ProudSkillExcelConfigData.json`: group 5739's index 3 gives 11 seconds.
 - [ ] **Ushi's stack for an enemy's strike comes only from the gcsim ushihit parameter** — no source yet: gcsim sets it at `{data-root}/cache/gcsim-v2.47.2/internal/characters/itto/skill.go` lines 56 to 62 and 100 to 105, and the game's own strike gate is not read here.
-- [ ] **Superlative Superstrength stacks have no expiry in its kit** — contradicted by `{data-root}/cache/genshin-wiki/Category_Arataki_Itto_Talents.json`: gives its duration as 60s.
+- [ ] **Superlative Superstrength stacks have no expiry in the kit** — contradicted by `{data-root}/cache/genshin-wiki/Category_Arataki_Itto_Talents.json`: gives its duration as 60s.
 - [ ] **The Arataki Kesagiri's hitmarks, frames and areas match the game** — no source yet: gcsim picks each slash's row and hitmark by the stacks left and subtracts a windup, so no line gives the record's values, which the record marks Unsourced.
 
 ## Key files

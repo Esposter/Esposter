@@ -23,7 +23,7 @@ flowchart TD
 ## Decisions
 
 - **The strikes are the ring-state ones.** gcsim's ring-state attack is her four strikes outside the Flamestrider, and this kit takes those until the Flamestrider hook is built. The second and third strikes are boxes of 3.3 by 4.3 and 2.8 by 5.0 metres (`{data-root}/cache/gcsim-v2.47.2/internal/characters/mavuika/attack.go` line 19), priced as the circle to their far corner, as the framework prices a box (the framework's pricing is not checked here).
-- **Her plunge collision is the framework's.** gcsim queues the collision only when a plunge's collision option is set, at `{data-root}/cache/gcsim-v2.47.2/internal/characters/mavuika/plunge.go` lines 103 to 109. The framework's collision strikes on every plunge, which the Emilie page's manual question covers.
+- **Her plunge collision is the framework's.** gcsim queues the collision only when a plunge's collision option is set (`{data-root}/cache/gcsim-v2.47.2/internal/characters/mavuika/plunge.go` lines 103 to 109). The framework's collision strikes on every plunge, which the Emilie page's manual question covers.
 - **Her charged attack costs the stamina gcsim's `ActionStam` gives a charge (`mavuika.go` lines 90 and 91).** The table's stamina index is the same 50 (index 5 of group 10631, which the game data gives as 50 at level 1), so the table and gcsim agree.
 
 ## Key files
