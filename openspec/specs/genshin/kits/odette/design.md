@@ -73,4 +73,4 @@ Each value the overlay holds as `Unsourced`, with the gcsim v2.47.2 file and lin
 
 ## Open
 
-- [ ] **The Starlight Prism lasts 7 seconds** — no source yet: the Stellar-Conduct wiki page the quote comes from is not on disk, and the cached Category file holds no Starlight Prism text.
+- [ ] **The Starlight Prism lasts 7 seconds** — no source yet: the Stellar-Conduct wiki page the quote comes from is not on disk, and the cached Category file holds no Starlight Prism text; gcsim's Polestar Field lasts 6 s (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct_gadget.go`, `sscFieldDur`) and the page cannot tie the two.
