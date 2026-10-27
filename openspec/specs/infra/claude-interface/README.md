@@ -27,7 +27,7 @@ There is no speech in the terminal itself; what links the two is a hook talking 
 
 ```mermaid
 flowchart TD
-    Terminal[Claude Code terminal but the console]
+    Terminal[Claude Code terminal — the driver of every stage but the console]
     Persona[Persona plugin<br/>output style + a card picked by birthday]
     Voice[Spoken replies<br/>a resident engine on this machine, the character's own clone]
     Companion[The desktop stage<br/>the viewer already running the model, then a chat page as a channel<br/>proposed]
