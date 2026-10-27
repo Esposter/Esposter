@@ -34,9 +34,9 @@ Ifa's low plunge and its collision SHALL play outside her Nightsoul Blessing wit
 
 ### Requirement: Provisional high plunge
 
-Ifa's high plunge SHALL take the High_Plunge circle as its reach, and its timing SHALL stay provisional until a recording of it settles it.
+Ifa's high plunge SHALL take a circle of 3.5 metres on her body as its reach, and its timing SHALL stay provisional.
 
-#### Scenario: The high plunge uses gcsim's High_Plunge reach
+#### Scenario: The high plunge reaches a circle of 3.5 metres on her body
 
 - **GIVEN** Ifa is in the air
 - **WHEN** the player plunges from a height

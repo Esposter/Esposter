@@ -56,7 +56,7 @@ Ifa's kit is built around the Nightsoul Blessing. Her skill's press enters the b
 - `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`, group 11331 index 4: grounds scenario "The charged attack costs 50 stamina".
 - `~/Esposter/cache/gcsim-v2.47.2/internal/characters/ifa/plunge.go` lines 17 and 22: grounds scenario "The low plunge and its collision land".
 - `~/Esposter/cache/gcsim-v2.47.2/internal/characters/ifa/plunge.go` lines 18 and 88: grounds scenario "The low plunge and its collision land".
-- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/ifa/config.yml` lines 102 to 105: grounds requirement "Provisional high plunge" and scenario "The high plunge uses gcsim's High_Plunge reach".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/ifa/config.yml` lines 102 to 105: grounds requirement "Provisional high plunge" and scenario "The high plunge reaches a circle of 3.5 metres on her body".
 - `~/Esposter/cache/gcsim-v2.47.2/internal/characters/ifa/burst.go` line 57: grounds scenario "Casting the burst strikes the primary target".
 - `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`, group 11339 index 3: grounds scenario "Casting the burst strikes the primary target".
 - `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`, group 11339 index 2: grounds scenario "Casting the burst strikes the primary target".
