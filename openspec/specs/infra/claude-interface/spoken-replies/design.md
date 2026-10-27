@@ -103,7 +103,7 @@ The plugin ships code and cards. The engine's runtime is a few hundred megabytes
    Nothing is written into settings: the plugin's hooks module already listens on the event and reads the dub file for every piece, so replies are read from the next reply on.
 
 ```text
-~/.claude/genshin-persona/
+{home}/.claude/genshin-persona/
   picks.tsv · pin · muted · volume     ← the persona's
   voice-language                       ← the dub's code, and the gate
   device                               ← the rung the synthesizer last spoke on, where the next one starts

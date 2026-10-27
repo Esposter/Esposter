@@ -16,7 +16,7 @@ A refused command is denied with a message that names the known homes, so the ne
 
 - the repo, searched with `rg` or `git grep`;
 - `{data-root}/genshin-parity`, for game data and captures;
-- `~/.claude/genshin-persona`, for the voice;
+- `{home}/.claude/genshin-persona`, for the voice;
 - a pinned tool (FFmpeg, yt-dlp) through `resolvePinnedTool`;
 - a package through `require.resolve` from the package that depends on it.
 
@@ -38,7 +38,7 @@ The check is a regular expression over the command's text, a few microseconds pe
 
 ## When it does not refuse
 
-- A scan from anywhere that is not a root or a home folder, such as `find packages`, `du -sh ~/Desktop/Software` or `ls -R packages`.
+- A scan from anywhere that is not a root or a home folder, such as `find packages`, `du -sh {home}/Desktop/Software` or `ls -R packages`.
 - A grep without recursion from a root, and an `ls -r` (a reverse sort).
 - A root named as data: a commit message, or a pattern argument of `grep -r`.
 
