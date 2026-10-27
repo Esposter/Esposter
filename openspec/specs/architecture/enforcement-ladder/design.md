@@ -21,7 +21,7 @@ flowchart TD
   R["A rule that must hold in many places"] --> C{"Can the types make the wrong version unwritable?"}
   C -->|yes| T1["1. By construction — change the shape"]
   C -->|no| P{"Can one primitive own the job, so callers only pass data?"}
-  P -->|yes| T2["2. Structural — build the primitive, route every caller through it"]
+  P -->|yes| T2["2. Structural — one primitive"]
   P -->|no| L{"Visible in one file's syntax, with no growing exception list?"}
   T2 --> L
   L -->|yes| T3["3. Lint — stock rule, then a selector, then a plugin"]

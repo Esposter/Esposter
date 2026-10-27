@@ -1,6 +1,6 @@
 # Drag reorder
 
-`useDragReorder` moves a row by pointer: a row is pressed and dragged to a new place in its list, table or sidebar, and the call site is handed the new order. The keyboard half — Alt+Up and Alt+Down, read out through a live region — is `useReorder`'s, and both make their move through `getMovedItems`. The drag used to be [vue-draggable-plus](https://github.com/Alfred-Skyblue/vue-draggable-plus), a Vue wrapper bundling [SortableJS](https://github.com/SortableJS/Sortable) 1.15.2. It is now a composable in the [UI library](../ui-library/design.md), written on Pointer Events. How it works, what it leaves out, and every upstream issue with its verdict are below, as [dependency admission](../dependency-admission/design.md) requires of an absorbed package.
+`useDragReorder` moves a row by pointer: a row is pressed and dragged to a new place in its list, table or sidebar, and the call site is handed the new order. The keyboard half — Alt+Up and Alt+Down, read out through a live region — is `useReorder`'s, and both make their move through `getMovedItems`. The drag is a composable in the [UI library](../ui-library/design.md), written on Pointer Events in place of [vue-draggable-plus](https://github.com/Alfred-Skyblue/vue-draggable-plus), a Vue wrapper bundling [SortableJS](https://github.com/SortableJS/Sortable). How it works, what it leaves out, and every upstream issue with its verdict are below, as [dependency admission](../dependency-admission/design.md) requires of an absorbed package.
 
 ## Why it is ours
 
@@ -26,16 +26,16 @@ The call site spreads the result on the container, whose element children are th
 
 ```mermaid
 flowchart TD
-  down["pointerdown on a row"] --> claim{"Primary button,<br/>inside the handle,<br/>not in a field?"}
+  down["pointerdown on a row"] --> claim{"Drag-start press?"}
   claim -->|no| ignore["Left to the page"]
-  claim -->|yes| press["A press: window listeners for the pointer,<br/>Escape, dragstart, selectstart and scroll"]
+  claim -->|yes| press["A press with window listeners"]
   press --> kind{"Pointer type"}
   kind -->|mouse or pen| distance["Moves 4px"]
   kind -->|touch| rest["Rests 200ms within 10px"]
   rest -->|drifts first| scroll["The press ends<br/>and the browser scrolls"]
   distance --> drag
-  rest --> drag["A drag: the slots measured,<br/>the pointer captured,<br/>the ghost class worn"]
-  drag --> move["The held row follows,<br/>the rows it passes move aside,<br/>an edge autoscrolls"]
+  rest --> drag["A drag begins"]
+  drag --> move["The held row follows<br/>the rows it passes move aside"]
   move --> ends{"Ends by"}
   ends -->|pointerup| drop["The new order<br/>handed to the call site"]
   ends -->|"Escape, pointercancel<br/>or rows changing"| back["The old order kept"]

@@ -21,7 +21,7 @@ flowchart TD
   end
 
   subgraph change ["Change loop — every change"]
-    FINISH["finishing — review, tests, docs, skills, ledgers"] --> CHECKS["the touched tests"]
+    FINISH["finishing audit"] --> CHECKS["the touched tests"]
     CHECKS --> QUEUE["review-queue — ai/queue"]
     QUEUE -->|"every push"| CI["CI — format, typecheck, lint, the whole suite"]
     QUEUE --> REVIEW["review — haiku reviewers over each window of ai/queue"]

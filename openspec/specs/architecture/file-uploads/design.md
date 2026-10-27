@@ -73,7 +73,7 @@ flowchart TD
   put --> commit["saveStagedResourceContent — id, contentVersion, hash"]
   commit --> verify{"size under the limit, hash matches, inflates within the limit?"}
   verify -->|no| reject["rejected — version unchanged"]
-  verify -->|yes| door["saveResourceContent service — version check, content blob, charge, hooks, save event"]
+  verify -->|yes| door["saveResourceContent service"]
   inline --> door
   door --> release["deleteStorageBlobs on the staging blob — its ledger row released with it"]
 ```

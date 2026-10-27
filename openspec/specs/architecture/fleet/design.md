@@ -11,7 +11,7 @@ flowchart LR
     MAC["MacBook"]
     MORE["more machines"]
   end
-  QUEUE[("origin ai/queue<br/>the compute queue's pages<br/>and the open proposal units")]
+  QUEUE[("origin ai/queue<br/>the open entries")]
   CLAIMS[("refs/claims/&lt;entry&gt;<br/>one parentless commit per claim")]
   MACHINES[("refs/machines/&lt;id&gt;<br/>one heartbeat every ten minutes")]
   COORD["Coordinator: pnpm ai:fleet:status"]
