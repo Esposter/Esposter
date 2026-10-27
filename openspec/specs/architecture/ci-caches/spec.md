@@ -2,7 +2,7 @@
 
 ## Purpose
 
-TBD - created by archiving change architecture-ci-caches. Update Purpose after archive.
+Which CI runs save a cache and which only read one: the default branch and ai/queue save, every other branch restores the newest cache it can see, and each save is made under a content key so it happens only once per key.
 
 ## Requirements
 
