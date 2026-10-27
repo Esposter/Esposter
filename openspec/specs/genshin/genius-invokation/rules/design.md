@@ -99,6 +99,9 @@ flowchart TD
 
 - [Genius Invokation TCG: Rules](https://genshin-impact.fandom.com/wiki/Genius_Invokation_TCG/Rules), Genshin Impact Wiki: the preparation, the round's phases, the zones, the elemental reactions and their bonuses, the piercing and the spread, and the fifteen-round limit.
 - [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump: the rule and element reaction tables the standard rule is written from.
+- A card's cost reduction applies to the payer its text names: "The holder reading is the wiki's, which reads "the character" for Vermillion Hereafter and Capricious Visage, and the side reading is the game's, which names the side for Shimenawa's Reminiscence, as the decks design records."
+- A normal attack after a switch is a plunging attack: as the wiki's Plunging Attack page is the open-world action and does not settle the TCG case (see the rules design).
+- A character at no health is defeated and its side owes a replacement or loses: "The Genius Invokation TCG/Rules page (Other Rules, the Defeated row) states the discard."
 
 ## Open
 

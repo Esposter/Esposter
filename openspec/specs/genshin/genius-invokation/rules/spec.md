@@ -70,7 +70,7 @@ A refused action SHALL leave the duel unchanged and SHALL say why it was refused
 
 ### Requirement: A card's cost reduction applies to the payer its text names
 
-A card attached to a character whose text names its holder SHALL reduce a cost only while that character is the active one, the one paying for the skill or card. A card whose text names the side SHALL reduce a cost paid by any character on it. The holder reading is the wiki's, which reads "the character" for Vermillion Hereafter and Capricious Visage, and the side reading is the game's, which names the side for Shimenawa's Reminiscence, as the decks design records.
+A card attached to a character whose text names its holder SHALL reduce a cost only while that character is the active one, the one paying for the skill or card. A card whose text names the side SHALL reduce a cost paid by any character on it.
 
 #### Scenario: A standby holder's status reduces no Normal Attack of the active character
 
@@ -156,7 +156,7 @@ A normal attack or an elemental skill SHALL gain its character one energy, and a
 
 A normal attack SHALL be a plunging attack when its character was switched in to be the active character this round and no skill of hers has been used since the switch, the first skill used after the switch spending it whatever that skill is.
 
-A switch an effect makes SHALL count as a switch, and a defeat's replacement SHALL NOT. Both are provisional, as the wiki's Plunging Attack page is the open-world action and does not settle the TCG case (see the rules design).
+A switch an effect makes SHALL count as a switch, and a defeat's replacement SHALL NOT. Both are provisional.
 
 #### Scenario: A switched-in character's next Normal Attack is a plunge
 
@@ -288,7 +288,7 @@ An Overloaded active character SHALL be switched to the next standing character 
 
 ### Requirement: A character at no health is defeated and its side owes a replacement or loses
 
-A character at no health SHALL be defeated: its equipment and statuses SHALL be discarded with its Energy, and its side SHALL owe a replacement while one of its characters stands and lose the duel once none does. The Genius Invokation TCG/Rules page (Other Rules, the Defeated row) states the discard.
+A character at no health SHALL be defeated: its equipment and statuses SHALL be discarded with its Energy, and its side SHALL owe a replacement while one of its characters stands and lose the duel once none does.
 
 #### Scenario: Defeated character with a standing ally owes a replacement
 
