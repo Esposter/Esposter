@@ -23,7 +23,7 @@ Dahlia's normal attacks SHALL be four strikes and a charged attack, and neither 
 
 ### Requirement: Plunge poise
 
-Dahlia's low, high and collision plunges SHALL deal 150, 100 and 25 poise, a provisional value until the game's own values are checked.
+Dahlia's low, high and collision plunges SHALL deal 150, 100 and 25 poise, a provisional value.
 
 #### Scenario: A low plunge deals 150 poise
 

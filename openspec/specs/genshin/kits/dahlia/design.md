@@ -37,3 +37,4 @@ flowchart LR
 
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/dahlia), MIT, at v2.47.2: hitmarks, cancels and reaches for the strikes and the charged attack, the skill's tap and hold, the burst and its shield, and the Benison and attack-speed states the hooks wait on.
 - [Hosted game data](../../hosted-game-data/design.md): the proud skill groups 11531, 11532 and 11539 and the skill-kit record.
+- Requirement "Plunge poise": "until the game's own values are checked".
