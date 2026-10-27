@@ -4,9 +4,9 @@ Qiqi's kit as built: five strikes, a charged attack, Herald of Frost with its sw
 
 ## Requirements
 
-### Requirement: Qiqi's strikes, charged attack and plunges
+### Requirement: Qiqi's strikes and charged attack
 
-Qiqi's five strikes and charged attack of two slashes SHALL land on the enemies within reach, and her collision and two plunges SHALL land on the enemies within reach.
+Qiqi's five strikes and charged attack of two slashes SHALL land on the enemies within reach.
 
 #### Scenario: Five strikes in sequence
 
@@ -18,6 +18,10 @@ Qiqi's five strikes and charged attack of two slashes SHALL land on the enemies 
 - **WHEN** the player uses the charged attack
 - **THEN** both slashes land on the enemies within reach
 
+### Requirement: Qiqi's plunges
+
+Qiqi's collision and two plunges SHALL land on the enemies within reach.
+
 #### Scenario: Plunge lands on the enemies in reach
 
 - **WHEN** the player starts a plunge attack
@@ -25,18 +29,26 @@ Qiqi's five strikes and charged attack of two slashes SHALL land on the enemies 
 
 ### Requirement: Herald of Frost
 
-Herald of Frost SHALL be a summon that follows Qiqi on the field, dealing initial damage and swipes, and while it stands each Normal and Charged Attack hit SHALL heal the party, and a continuous field SHALL heal the active character every 4.5 seconds.
+Herald of Frost SHALL be a summon that follows Qiqi on the field, dealing initial damage and swipes.
 
 #### Scenario: Herald follows Qiqi
 
 - **WHEN** the player casts Herald of Frost
 - **THEN** the summon follows Qiqi on the field
 
+### Requirement: Herald of Frost's party heal
+
+While Herald of Frost stands, each Normal and Charged Attack hit SHALL heal the party.
+
 #### Scenario: Attacks heal the party while the Herald stands
 
 - **GIVEN** Herald of Frost is standing
 - **WHEN** a Normal Attack or Charged Attack hit lands
 - **THEN** the party is healed
+
+### Requirement: Herald of Frost's continuous heal
+
+Herald of Frost's continuous field SHALL heal the active character every 4.5 seconds.
 
 #### Scenario: Continuous heal every 4.5 seconds
 
@@ -46,12 +58,16 @@ Herald of Frost SHALL be a summon that follows Qiqi on the field, dealing initia
 
 ### Requirement: Fortune-Preserving Talisman
 
-Fortune-Preserving Talisman SHALL deal damage and mark each enemy it strikes with a Talisman before the damage lands, and damage the active character deals an enemy holding the Talisman SHALL heal that character, at most once a second for each enemy.
+Fortune-Preserving Talisman SHALL deal damage and mark each enemy it strikes with a Talisman before the damage lands.
 
 #### Scenario: Talisman marks enemies struck by the burst
 
 - **WHEN** the player casts Fortune-Preserving Talisman
 - **THEN** each enemy the burst strikes gains a Talisman before the damage lands
+
+### Requirement: Fortune-Preserving Talisman's heal
+
+Damage the active character deals an enemy holding the Talisman SHALL heal that character, at most once a second for each enemy.
 
 #### Scenario: Hit on a marked enemy heals at most once a second
 
@@ -72,7 +88,7 @@ From Ascension 4, a Talisman with six seconds or more left SHALL NOT be replaced
 
 ### Requirement: Qiqi's constellations
 
-Qiqi's Ascetics of Frost, Frozen to the Bone, Divine Suppression and Rite of Resurrection SHALL take effect from her first, second, fourth and sixth constellations. The game's talent table gives Divine Suppression's 20% ATK cut and Rite of Resurrection's revive once every 15 minutes (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json`, talents 354 and 356).
+Qiqi's Ascetics of Frost, Frozen to the Bone, Divine Suppression and Rite of Resurrection SHALL take effect from her first, second, fourth and sixth constellations. Her constellations give Divine Suppression's 20% ATK cut and Rite of Resurrection's revive once every 15 minutes.
 
 #### Scenario: Frozen to the Bone on a Cryo enemy
 
