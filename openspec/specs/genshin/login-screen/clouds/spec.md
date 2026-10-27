@@ -52,12 +52,12 @@ Each hour SHALL draw its own share of each band's clouds, and a thinner sky SHAL
 
 ### Requirement: Unsolved day and night cover
 
-The day's and the night's cloud cover SHALL keep its current share until their clouds match the recordings' kind.
+The day's and the night's cloud cover SHALL keep its current share until their clouds match the game's kind.
 
 #### Scenario: Day cover
 
 - **WHEN** the day is shown
-- **THEN** its cloud cover is the current share, not yet solved against the recording
+- **THEN** its cloud cover is the current share, not yet solved
 
 ### Requirement: Cloud layer over the bands
 

@@ -41,3 +41,7 @@ flowchart LR
 - [ ] **Each cloud is coloured as the game's cloud particles are** — no source yet: the particle system's colour over its life, which neither cloud material on disk holds.
 - [ ] **The day's and the dusk's colours are measured, and those ship; the day's cloud still is measured** — no source yet: the day and dusk cloud stills, not yet re-measured for the shipped colours; the still the measurement would write is not on disk.
 - [ ] **The sky's dome is ported as the game draws it** — no source yet: the `Sky_LOD0` mesh that `~/Esposter/genshin-parity/extracted/login/witness.json` places with the `Enviro_Atmosphere_Layer_Mat` material (`~/Esposter/genshin-parity/extracted/login-bytype-assets/Material/Enviro_Atmosphere_Layer_Mat.json`), not yet compared with the ported dome.
+
+## Sources
+
+- The recordings' kind, which the day's and the night's clouds are matched against: the day's clouds read grey where the recording's are white, and the night's dark where the recording's are pale, as How it works has them. Grounds Requirement: Unsolved day and night cover, and its scenario Day cover.
