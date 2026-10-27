@@ -9,6 +9,9 @@
     "ms-vscode.PowerShell",
     "oxc.oxc-vscode",
     "PKief.material-icon-theme",
+    "pulumi.pulumi-vscode-tools",
+    "vitest.explorer",
+    "VoidZero.vite-plus-extension-pack",
     "Vue.volar"
   ]
 }

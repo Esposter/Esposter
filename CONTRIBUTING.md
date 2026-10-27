@@ -19,6 +19,26 @@ Thanks for taking the time to contribute!
    pnpm dev
    ```
 
+## Editor Setup
+
+Install these VS Code extensions, in alphabetical order:
+
+| Name                       | Link                                                                                    |
+| :------------------------- | :-------------------------------------------------------------------------------------- |
+| Azure Functions            | https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurefunctions |
+| Better Comments            | https://marketplace.visualstudio.com/items?itemName=aaron-bond.better-comments          |
+| ESLint                     | https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint              |
+| GitHub Actions             | https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-github-actions        |
+| GitLens — Git supercharged | https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens                     |
+| Material Icon Theme        | https://marketplace.visualstudio.com/items?itemName=PKief.material-icon-theme           |
+| Oxc                        | https://marketplace.visualstudio.com/items?itemName=oxc.oxc-vscode                      |
+| Powershell                 | https://marketplace.visualstudio.com/items?itemName=ms-vscode.PowerShell                |
+| Pulumi                     | https://marketplace.visualstudio.com/items?itemName=pulumi.pulumi-vscode-tools          |
+| UnoCSS                     | https://marketplace.visualstudio.com/items?itemName=antfu.unocss                        |
+| Vite Plus Extension Pack   | https://marketplace.visualstudio.com/items?itemName=VoidZero.vite-plus-extension-pack   |
+| Vitest                     | https://marketplace.visualstudio.com/items?itemName=vitest.explorer                     |
+| Vue - Official (Volar)     | https://marketplace.visualstudio.com/items?itemName=Vue.volar                           |
+
 ## Monorepo Structure
 
 Esposter is a pnpm workspaces monorepo. Every package, what it holds and whether it is published are in the [package table](README.md#packages), and each package's own `README.md` covers it in full.

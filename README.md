@@ -23,13 +23,39 @@
 
 We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs) to level up.
 
+### Toolchain
+
+<table>
+  <thead>
+    <tr>
+      <th width="2000" colspan="2">
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td width="80" align="center" valign="top">
+        <br />
+        <a href="https://viteplus.dev/guide/">
+          <img src="./.github/assets/vite-plus/logo.svg" height="40" />
+        </a>
+      </td>
+      <td valign="top">
+        <h3><a href="https://viteplus.dev/guide/">Vite+</a></h3>
+        <p>
+          The unified toolchain for the web: Vite, Vitest, oxlint, oxfmt and the <code>vp</code> command in one install.
+        </p>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
 ### Frontend
 
 <table>
   <thead>
     <tr>
       <th width="2000" colspan="2">
-        <img src="./.github/assets/nuxt/banner.png" />
       </th>
     </tr>
   </thead>
@@ -38,13 +64,13 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
       <td width="80" align="center" valign="top">
         <br />
         <a href="https://nuxt.com">
-          <img src="./.github/assets/nuxt/logo.svg" />
+          <img src="./.github/assets/nuxt/logo.svg" height="40" />
         </a>
       </td>
       <td valign="top">
-        <h3>Nuxt</h3>
+        <h3><a href="https://nuxt.com/docs">Nuxt</a></h3>
         <p>
-          The Intuitive Web Framework, based on Vue.
+          The Intuitive Web Framework, based on Vue, with Pinia for state.
         </p>
       </td>
     </tr>
@@ -52,11 +78,11 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
       <td width="80" align="center" valign="top">
         <br />
         <a href="https://vuejs.org">
-          <img src="./.github/assets/vue/logo.svg" />
+          <img src="./.github/assets/vue/logo.svg" height="40" />
         </a>
       </td>
       <td valign="top">
-        <h3>Vue</h3>
+        <h3><a href="https://vuejs.org/guide/introduction.html">Vue</a></h3>
         <p>
           🖖 Vue.js is a progressive, incrementally-adoptable JavaScript framework for building UI on the web.
         </p>
@@ -66,27 +92,13 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
       <td width="80" align="center" valign="top">
         <br />
         <a href="https://0.vuetifyjs.com">
-          <img src="./.github/assets/vuetify/logo.svg" />
+          <img src="./.github/assets/vuetify/logo.svg" height="40" />
         </a>
       </td>
       <td valign="top">
-        <h3>Vuetify 0</h3>
+        <h3><a href="https://0.vuetifyjs.com/">Vuetify 0</a></h3>
         <p>
           🐉 Headless building blocks for Vue, under the app's own UI library.
-        </p>
-      </td>
-    </tr>
-    <tr>
-      <td width="80" align="center" valign="top">
-        <br />
-        <a href="https://pinia.vuejs.org">
-          <img src="./.github/assets/pinia/logo.svg" />
-        </a>
-      </td>
-      <td valign="top">
-        <h3>Pinia</h3>
-        <p>
-          🍍 Intuitive, type safe, light and flexible Store for Vue using the composition api with DevTools support.
         </p>
       </td>
     </tr>
@@ -106,40 +118,12 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
     <tr>
       <td width="80" align="center" valign="top">
         <br />
-        <a href="https://trpc.io">
-          <img src="./.github/assets/trpc/logo.svg" />
-        </a>
-      </td>
-      <td>
-        <h3>tRPC</h3>
-        <p>
-          🧙‍♀️ Move Fast and Break Nothing. End-to-end typesafe APIs made easy.
-        </p>
-      </td>
-    </tr>
-    <tr>
-      <td width="80" align="center" valign="top">
-        <br />
-        <a href="https://zod.dev">
-          <img src="./.github/assets/zod/logo.svg" />
-        </a>
-      </td>
-      <td>
-        <h3>Zod</h3>
-        <p>
-          TypeScript-first schema validation with static type inference.
-        </p>
-      </td>
-    </tr>
-    <tr>
-      <td width="80" align="center" valign="top">
-        <br />
         <a href="https://orm.drizzle.team">
-          <img src="./.github/assets/drizzle/logo.svg" />
+          <img src="./.github/assets/drizzle/logo.svg" height="40" />
         </a>
       </td>
       <td valign="top">
-        <h3>Drizzle ORM</h3>
+        <h3><a href="https://orm.drizzle.team/docs/overview">Drizzle ORM</a></h3>
         <p>
           TypeScript ORM that feels like writing SQL.
         </p>
@@ -149,13 +133,41 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
       <td width="80" align="center" valign="top">
         <br />
         <a href="https://www.postgresql.org">
-          <img src="./.github/assets/postgresql/logo.svg" />
+          <img src="./.github/assets/postgresql/logo.svg" height="40" />
         </a>
       </td>
       <td valign="top">
-        <h3>PostgreSQL</h3>
+        <h3><a href="https://www.postgresql.org/docs/current/">PostgreSQL</a></h3>
         <p>
           PostgreSQL is a powerful, open source object-relational database system with over 35 years of active development that has earned it a strong reputation for reliability, feature robustness, and performance.
+        </p>
+      </td>
+    </tr>
+    <tr>
+      <td width="80" align="center" valign="top">
+        <br />
+        <a href="https://trpc.io">
+          <img src="./.github/assets/trpc/logo.svg" height="40" />
+        </a>
+      </td>
+      <td>
+        <h3><a href="https://trpc.io/docs">tRPC</a></h3>
+        <p>
+          🧙‍♀️ Move Fast and Break Nothing. End-to-end typesafe APIs made easy.
+        </p>
+      </td>
+    </tr>
+    <tr>
+      <td width="80" align="center" valign="top">
+        <br />
+        <a href="https://zod.dev">
+          <img src="./.github/assets/zod/logo.svg" height="40" />
+        </a>
+      </td>
+      <td>
+        <h3><a href="https://zod.dev/">Zod</a></h3>
+        <p>
+          TypeScript-first schema validation with static type inference.
         </p>
       </td>
     </tr>
@@ -176,11 +188,11 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
       <td width="80" align="center" valign="top">
         <br />
         <a href="https://www.pulumi.com">
-          <img src="./.github/assets/pulumi/logo.svg" />
+          <img src="./.github/assets/pulumi/logo.svg" height="40" />
         </a>
       </td>
       <td valign="top">
-        <h3>Pulumi</h3>
+        <h3><a href="https://www.pulumi.com/docs/">Pulumi</a></h3>
         <p>
           Infrastructure as Code in any programming language.
         </p>
@@ -202,48 +214,33 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
     <tr>
       <td width="80" align="center" valign="top">
         <br />
-        <a href="https://railway.app">
-          <img src="./.github/assets/railway/logo.svg" />
+        <a href="https://www.namecheap.com">
+          <img src="./.github/assets/namecheap/logo.svg" height="40" />
         </a>
       </td>
-      <td>
-        <h3>Railway</h3>
+      <td valign="top">
+        <h3><a href="https://www.namecheap.com/support/knowledgebase/">Namecheap</a></h3>
         <p>
-          Infrastructure, Instantly.
+          ICANN-accredited domain name registrar providing domain name registration and web hosting.
         </p>
       </td>
     </tr>
     <tr>
       <td width="80" align="center" valign="top">
         <br />
-        <a href="https://www.namecheap.com">
-          <img src="./.github/assets/namecheap/logo.svg" />
+        <a href="https://railway.app">
+          <img src="./.github/assets/railway/logo.svg" height="40" />
         </a>
       </td>
-      <td valign="top">
-        <h3>Namecheap</h3>
+      <td>
+        <h3><a href="https://docs.railway.com/">Railway</a></h3>
         <p>
-          ICANN-accredited domain name registrar providing domain name registration and web hosting.
+          Infrastructure, Instantly.
         </p>
       </td>
     </tr>
   </tbody>
 </table>
-
-### VSCode Extensions
-
-| Name                       | Link                                                                                    |
-| -------------------------- | --------------------------------------------------------------------------------------- |
-| Better Comments            | https://marketplace.visualstudio.com/items?itemName=aaron-bond.better-comments          |
-| UnoCSS                     | https://marketplace.visualstudio.com/items?itemName=antfu.unocss                        |
-| ESLint                     | https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint              |
-| GitLens — Git supercharged | https://marketplace.visualstudio.com/items?itemName=eamodio.gitlens                     |
-| GitHub Actions             | https://marketplace.visualstudio.com/items?itemName=GitHub.vscode-github-actions        |
-| Azure Functions            | https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurefunctions |
-| Powershell                 | https://marketplace.visualstudio.com/items?itemName=ms-vscode.PowerShell                |
-| Oxfmt - Code formatter     | https://marketplace.visualstudio.com/items?itemName=oxc.oxc-vscode                      |
-| Material Icon Theme        | https://marketplace.visualstudio.com/items?itemName=PKief.material-icon-theme           |
-| Vue - Official (Volar)     | https://marketplace.visualstudio.com/items?itemName=Vue.volar                           |
 
 ## <a name="local-development">🏠 Local Development</a>
 
@@ -316,7 +313,7 @@ pnpm build
 Locally preview production build:
 
 ```bash
-pnpm preview
+pnpm -C apps/web preview
 ```
 
 ## <a name="architecture">🧱 Architecture</a>
@@ -361,42 +358,42 @@ flowchart LR
 > [!WARNING]
 > The published packages are built for this repository first. Use them at your own risk: their APIs may change in any release, without a deprecation period, in pursuit of better performance and simpler code.
 
-| Package                                                                                                                   | Description                                                                                                                                                                                                                          | Published |
-| ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | :-------: |
-| [`apps/functions`](https://github.com/Esposter/Esposter/tree/main/apps/functions)                                         | Serverless Azure Functions backend — push notifications, webhooks, EventGrid                                                                                                                                                         |     —     |
-| [`apps/infra`](https://github.com/Esposter/Esposter/tree/main/apps/infra)                                                 | Pulumi infrastructure code and migration tools for Azure resources                                                                                                                                                                   |     —     |
-| [`apps/web`](https://github.com/Esposter/Esposter/tree/main/apps/web)                                                     | Main Nuxt web application — frontend, server routes, tRPC API                                                                                                                                                                        |     —     |
-| [`packages/agent-console-server`](https://github.com/Esposter/Esposter/tree/main/packages/agent-console-server)           | Agent console host — Claude Code sessions over a token-gated loopback WebSocket                                                                                                                                                      |     ✓     |
-| [`packages/azure`](https://github.com/Esposter/Esposter/tree/main/packages/azure)                                         | Azure wire conventions — OData filter clauses, entity key casing, service limits                                                                                                                                                     |     ✓     |
-| [`packages/azure-mock`](https://github.com/Esposter/Esposter/tree/main/packages/azure-mock)                               | Mock Azure service classes for local dev and testing                                                                                                                                                                                 |     ✓     |
-| [`packages/configuration`](https://github.com/Esposter/Esposter/tree/main/packages/configuration)                         | Shared ESLint, TSConfig, and tsdown build configurations                                                                                                                                                                             |     —     |
-| [`packages/db`](https://github.com/Esposter/Esposter/tree/main/packages/db)                                               | Database connection utilities for Drizzle ORM, Azure Table, Blob, and WebPubSub                                                                                                                                                      |     —     |
-| [`packages/db-mock`](https://github.com/Esposter/Esposter/tree/main/packages/db-mock)                                     | In-memory PGlite database factory for unit and integration tests                                                                                                                                                                     |     —     |
-| [`packages/db-schema`](https://github.com/Esposter/Esposter/tree/main/packages/db-schema)                                 | Drizzle ORM schemas and migrations (PostgreSQL source of truth)                                                                                                                                                                      |     —     |
-| [`packages/follow-ups`](https://github.com/Esposter/Esposter/tree/main/packages/follow-ups)                               | Claude Code plugin — a session's unfinished follow-ups written into a TodoList and drained until none is left                                                                                                                        |     —     |
-| [`packages/genshin-engine`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-engine)                       | Anime-style open-world engine for three.js WebGPU — toon materials, outlines, post-processing, world kits and music                                                                                                                  |     ✓     |
-| [`packages/genshin-interface`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-interface)                 | Genshin's 2D interface — the screen root, its units and pointer, and the pieces the game's screens share                                                                                                                             |     ✓     |
-| [`packages/genshin-mods`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-mods)                           | Claude Code plugin — six mods under one band: next steps, cache and usage with a one-click handoff, recording mode, a goal meter, a collision guard and a delegation guard                                                           |     ✓     |
-| [`packages/genshin-persona`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-persona)                     | Claude Code plugin — a Genshin character picked by birthday, replies spoken in its own cloned voice                                                                                                                                  |     ✓     |
-| [`packages/genshin-text`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-text)                           | The game's own text in its fifteen languages — the language registry, a locale matcher, and the game's strings by text id                                                                                                            |     ✓     |
-| [`packages/genshin-world`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-world)                         | Genshin's world on the engine — the region catalogue, each region's data, the TresJS components and the interface screens                                                                                                            |     ✓     |
-| [`packages/headless-block-editor`](https://github.com/Esposter/Esposter/tree/main/packages/headless-block-editor)         | A headless block editor: a typed node tree over a registry, the commands that edit it as JSON Patch operations, navigation and undo history, with no framework or DOM.                                                               |     ✓     |
-| [`packages/keyframe-store`](https://github.com/Esposter/Esposter/tree/main/packages/keyframe-store)                       | Content-addressed version store — zstd keyframes and deltas over any backend                                                                                                                                                         |     ✓     |
-| [`packages/math-expression-compiler`](https://github.com/Esposter/Esposter/tree/main/packages/math-expression-compiler)   | Math expressions compiled once into a function of plain numbers — mathjs's numeric language, held to parity with its recorded answers                                                                                                |     ✓     |
-| [`packages/mjml-blocks`](https://github.com/Esposter/Esposter/tree/main/packages/mjml-blocks)                             | MJML's components as block types on the headless block editor — each component's attributes, defaults and nesting rules, a render to MJML's JSON form and source, and a read back from MJML, with no framework, DOM or MJML runtime. |     ✓     |
-| [`packages/nuxt-security-module`](https://github.com/Esposter/Esposter/tree/main/packages/nuxt-security-module)           | Nuxt security module for Nitro 3 and h3 2 — security headers, a nonce Content Security Policy, subresource integrity, CORS, basic auth, a rate limiter and a request size limit                                                      |     ✓     |
-| [`packages/parse-tmx`](https://github.com/Esposter/Esposter/tree/main/packages/parse-tmx)                                 | Parser for Tiled Map Editor `.tmx` files                                                                                                                                                                                             |     ✓     |
-| [`packages/pitch-transcription`](https://github.com/Esposter/Esposter/tree/main/packages/pitch-transcription)             | The notes in a recording — Basic Pitch on ONNX Runtime, its readings turned into notes, bends and MIDI                                                                                                                               |     ✓     |
-| [`packages/shared`](https://github.com/Esposter/Esposter/tree/main/packages/shared)                                       | Shared TypeScript types, utilities, and error classes                                                                                                                                                                                |     ✓     |
-| [`packages/shared-node`](https://github.com/Esposter/Esposter/tree/main/packages/shared-node)                             | Node-only shared tooling — the machine-wide download cache, hidden-window child processes and benchmark reporting for vitest bench runs                                                                                              |     ✓     |
-| [`packages/tresjs-nuxt`](https://github.com/Esposter/Esposter/tree/main/packages/tresjs-nuxt)                             | TresJS for Nuxt — a Nuxt module that auto-imports the TresJS core API, registers TresCanvas for client and server, and registers every installed @tresjs package's components and composables, with no devtools UI of its own.       |     ✓     |
-| [`packages/trpc-msw`](https://github.com/Esposter/Esposter/tree/main/packages/trpc-msw)                                   | tRPC for Mock Service Worker — every transport answered by tRPC's own handlers                                                                                                                                                       |     ✓     |
-| [`packages/trpc-nuxt-module`](https://github.com/Esposter/Esposter/tree/main/packages/trpc-nuxt-module)                   | tRPC for Nuxt — a module registering the router's HTTP and WebSocket handlers, with composables over `useAsyncData`                                                                                                                  |     ✓     |
-| [`packages/vue-canvas-frame-headless`](https://github.com/Esposter/Esposter/tree/main/packages/vue-canvas-frame-headless) | A headless canvas frame: an isolated document at a width, scaled down to fit a narrower pane, with its styles adopted into it, and no styling of its own.                                                                            |     ✓     |
-| [`packages/vue-grid-layout-headless`](https://github.com/Esposter/Esposter/tree/main/packages/vue-grid-layout-headless)   | A headless grid: the placement of items on a grid of cells, and the pointer gestures that move and resize them, with no styling.                                                                                                     |     ✓     |
-| [`packages/vue-pdfjs-headless`](https://github.com/Esposter/Esposter/tree/main/packages/vue-pdfjs-headless)               | Headless Vue composables over pdfjs-dist: a document's loading, a page's drawing and the viewer's state, with no styling and no renderer of its own.                                                                                 |     ✓     |
-| [`packages/vue-phaserjs`](https://github.com/Esposter/Esposter/tree/main/packages/vue-phaserjs)                           | Phaser game engine integration for Vue                                                                                                                                                                                               |     ✓     |
-| [`scripts`](https://github.com/Esposter/Esposter/tree/main/scripts)                                                       | The repository's own tooling — workspace graph, dependency report, sweep scans                                                                                                                                                       |     —     |
+| Package                                                                                                                   | Description                                                                                                                                                                                                                                 | Published |
+| ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------: |
+| [`apps/functions`](https://github.com/Esposter/Esposter/tree/main/apps/functions)                                         | Serverless Azure Functions backend — push notifications, webhooks, EventGrid                                                                                                                                                                |     —     |
+| [`apps/infra`](https://github.com/Esposter/Esposter/tree/main/apps/infra)                                                 | Pulumi infrastructure code and migration tools for Azure resources                                                                                                                                                                          |     —     |
+| [`apps/web`](https://github.com/Esposter/Esposter/tree/main/apps/web)                                                     | Main Nuxt web application — frontend, server routes, tRPC API                                                                                                                                                                               |     —     |
+| [`packages/agent-console-server`](https://github.com/Esposter/Esposter/tree/main/packages/agent-console-server)           | Agent console host — Claude Code sessions over a token-gated loopback WebSocket                                                                                                                                                             |     ✓     |
+| [`packages/azure`](https://github.com/Esposter/Esposter/tree/main/packages/azure)                                         | Azure wire conventions — OData filter clauses, entity key casing, service limits                                                                                                                                                            |     ✓     |
+| [`packages/azure-mock`](https://github.com/Esposter/Esposter/tree/main/packages/azure-mock)                               | Mock Azure service classes for local dev and testing                                                                                                                                                                                        |     ✓     |
+| [`packages/configuration`](https://github.com/Esposter/Esposter/tree/main/packages/configuration)                         | Shared ESLint, TSConfig, and tsdown build configurations                                                                                                                                                                                    |     —     |
+| [`packages/db`](https://github.com/Esposter/Esposter/tree/main/packages/db)                                               | Database connection utilities for Drizzle ORM, Azure Table, Blob, and WebPubSub                                                                                                                                                             |     —     |
+| [`packages/db-mock`](https://github.com/Esposter/Esposter/tree/main/packages/db-mock)                                     | In-memory PGlite database factory for unit and integration tests                                                                                                                                                                            |     —     |
+| [`packages/db-schema`](https://github.com/Esposter/Esposter/tree/main/packages/db-schema)                                 | Drizzle ORM schemas and migrations (PostgreSQL source of truth)                                                                                                                                                                             |     —     |
+| [`packages/follow-ups`](https://github.com/Esposter/Esposter/tree/main/packages/follow-ups)                               | Claude Code plugin — a session's unfinished follow-ups written into a TodoList and drained until none is left                                                                                                                               |     —     |
+| [`packages/genshin-engine`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-engine)                       | Anime-style open-world engine for three.js WebGPU — toon materials, outlines, post-processing, world kits and music                                                                                                                         |     ✓     |
+| [`packages/genshin-interface`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-interface)                 | Genshin's 2D interface — the screen root, its units and pointer, and the pieces the game's screens share                                                                                                                                    |     ✓     |
+| [`packages/genshin-mods`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-mods)                           | Claude Code plugin — eight mods, five under one band and three guards: next steps, cache and usage with a one-click handoff, recording mode, a goal meter, a collision guard, a delegation guard, a disk-scan guard and a whole-index guard |     ✓     |
+| [`packages/genshin-persona`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-persona)                     | Claude Code plugin — a Genshin character picked by birthday, replies spoken in its own cloned voice                                                                                                                                         |     ✓     |
+| [`packages/genshin-text`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-text)                           | The game's own text in its fifteen languages — the language registry, a locale matcher, and the game's strings by text id                                                                                                                   |     ✓     |
+| [`packages/genshin-world`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-world)                         | Genshin's world on the engine — the region catalogue, each region's data, the TresJS components and the interface screens                                                                                                                   |     ✓     |
+| [`packages/headless-block-editor`](https://github.com/Esposter/Esposter/tree/main/packages/headless-block-editor)         | A headless block editor: a typed node tree over a registry, the commands that edit it as JSON Patch operations, navigation and undo history, with no framework or DOM.                                                                      |     ✓     |
+| [`packages/keyframe-store`](https://github.com/Esposter/Esposter/tree/main/packages/keyframe-store)                       | Content-addressed version store — zstd keyframes and deltas over any backend                                                                                                                                                                |     ✓     |
+| [`packages/math-expression-compiler`](https://github.com/Esposter/Esposter/tree/main/packages/math-expression-compiler)   | Math expressions compiled once into a function of plain numbers — mathjs's numeric language, held to parity with its recorded answers                                                                                                       |     ✓     |
+| [`packages/mjml-blocks`](https://github.com/Esposter/Esposter/tree/main/packages/mjml-blocks)                             | MJML's components as block types on the headless block editor — each component's attributes, defaults and nesting rules, a render to MJML's JSON form and source, and a read back from MJML, with no framework, DOM or MJML runtime.        |     ✓     |
+| [`packages/nuxt-security-module`](https://github.com/Esposter/Esposter/tree/main/packages/nuxt-security-module)           | Nuxt security module for Nitro 3 and h3 2 — security headers, a nonce Content Security Policy, subresource integrity, CORS, basic auth, a rate limiter and a request size limit                                                             |     ✓     |
+| [`packages/parse-tmx`](https://github.com/Esposter/Esposter/tree/main/packages/parse-tmx)                                 | Parser for Tiled Map Editor `.tmx` files                                                                                                                                                                                                    |     ✓     |
+| [`packages/pitch-transcription`](https://github.com/Esposter/Esposter/tree/main/packages/pitch-transcription)             | The notes in a recording — Basic Pitch on ONNX Runtime, its readings turned into notes, bends and MIDI                                                                                                                                      |     ✓     |
+| [`packages/shared`](https://github.com/Esposter/Esposter/tree/main/packages/shared)                                       | Shared TypeScript types, utilities, and error classes                                                                                                                                                                                       |     ✓     |
+| [`packages/shared-node`](https://github.com/Esposter/Esposter/tree/main/packages/shared-node)                             | Node-only shared tooling — the machine-wide download cache, hidden-window child processes and benchmark reporting for vitest bench runs                                                                                                     |     ✓     |
+| [`packages/tresjs-nuxt`](https://github.com/Esposter/Esposter/tree/main/packages/tresjs-nuxt)                             | TresJS for Nuxt — a Nuxt module that auto-imports the TresJS core API, registers TresCanvas for client and server, and registers every installed @tresjs package's components and composables, with no devtools UI of its own.              |     ✓     |
+| [`packages/trpc-msw`](https://github.com/Esposter/Esposter/tree/main/packages/trpc-msw)                                   | tRPC for Mock Service Worker — every transport answered by tRPC's own handlers                                                                                                                                                              |     ✓     |
+| [`packages/trpc-nuxt-module`](https://github.com/Esposter/Esposter/tree/main/packages/trpc-nuxt-module)                   | tRPC for Nuxt — a module registering the router's HTTP and WebSocket handlers, with composables over `useAsyncData`                                                                                                                         |     ✓     |
+| [`packages/vue-canvas-frame-headless`](https://github.com/Esposter/Esposter/tree/main/packages/vue-canvas-frame-headless) | A headless canvas frame: an isolated document at a width, scaled down to fit a narrower pane, with its styles adopted into it, and no styling of its own.                                                                                   |     ✓     |
+| [`packages/vue-grid-layout-headless`](https://github.com/Esposter/Esposter/tree/main/packages/vue-grid-layout-headless)   | A headless grid: the placement of items on a grid of cells, and the pointer gestures that move and resize them, with no styling.                                                                                                            |     ✓     |
+| [`packages/vue-pdfjs-headless`](https://github.com/Esposter/Esposter/tree/main/packages/vue-pdfjs-headless)               | Headless Vue composables over pdfjs-dist: a document's loading, a page's drawing and the viewer's state, with no styling and no renderer of its own.                                                                                        |     ✓     |
+| [`packages/vue-phaserjs`](https://github.com/Esposter/Esposter/tree/main/packages/vue-phaserjs)                           | Phaser game engine integration for Vue                                                                                                                                                                                                      |     ✓     |
+| [`scripts`](https://github.com/Esposter/Esposter/tree/main/scripts)                                                       | The repository's own tooling — workspace graph, dependency report, sweep scans                                                                                                                                                              |     —     |
 
 ## <a name="claude-code-plugins">🔌 Claude Code Plugins</a>
 
@@ -408,16 +405,16 @@ claude plugin install genshin-persona@esposter
 claude plugin install genshin-mods@esposter
 ```
 
-| Plugin                                                                                       | What it does                                                                                                                                                                                                                                                                                                                                                                                          |
-| :------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [`genshin-mods`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-mods)       | Six mods: five under one band above the prompt, waypoints (the next steps, one press each), resin (cache, context, limits and cost, with warm, compact and a one-click handoff), veil (recording mode), commission (a goal's task list and clock) and ward (a question before editing a file another session just changed), and a delegation guard that nudges a run of lookups toward a haiku agent. |
-| [`genshin-persona`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-persona) | Speaks as the Genshin Impact character whose birthday is nearest to today, in prose only, and reads each reply aloud, a sentence at a time, in the character's own cloned voice.                                                                                                                                                                                                                      |
+| Plugin                                                                                       | What it does                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| :------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`genshin-mods`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-mods)       | Eight mods: five under one band above the prompt, waypoints (the next steps, one press each), resin (cache, context, limits and cost, with warm, compact and a one-click handoff), veil (recording mode), commission (a goal's task list and clock) and ward (a question before editing a file another session just changed), and three guards: a delegation guard that nudges a run of lookups toward a haiku agent, a disk-scan guard that refuses a Bash scan from a root or home folder, and a whole-index guard that refuses a git command over the whole index while another session shares the checkout. |
+| [`genshin-persona`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-persona) | Speaks as the Genshin Impact character whose birthday is nearest to today, with each answer opening on a spoken line and the rest in plain prose, and reads each reply aloud in the character's own cloned voice.                                                                                                                                                                                                                                                                                                                                                                                               |
 
 A plugin here is an ordinary workspace package, so it is formatted, linted, tested and dependency-bumped with everything else, and a merge to `main` is its release: an installed copy follows the marketplace on the next plugin update. How that is built, and what it deliberately does not do, is on the [Claude interface](https://github.com/Esposter/Esposter/tree/main/openspec/specs/infra/claude-interface) page.
 
 ## <a name="community">🤝 Community</a>
 
-We welcome contributions from everyone and are committed to maintaining a friendly, safe, and welcoming community. Please see our [Code of Conduct](CODE_OF_CONDUCT.md) and [Security Policy](SECURITY.md) for more information.
+We welcome contributions from everyone and are committed to maintaining a friendly, safe, and welcoming community. Start with the [Contributing guide](CONTRIBUTING.md), which also lists the recommended editor extensions. Please see our [Code of Conduct](CODE_OF_CONDUCT.md) and [Security Policy](SECURITY.md) for more information.
 
 ## <a name="license">⚖️ License</a>
 
@@ -434,4 +431,3 @@ This project is licensed under the [Apache-2.0 license](https://github.com/Espos
 [url-skills]: https://skills.sh/Esposter/Esposter
 [badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
-[url-npm]: https://www.npmjs.com/package/Esposter/v/latest
