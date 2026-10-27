@@ -21,6 +21,7 @@ import { readSceneLayout } from "#src/services/genshinAssets/shared/readSceneLay
 import { resolveObjectPointer } from "#src/services/genshinAssets/shared/resolveObjectPointer";
 import { reviveSourcePathId } from "#src/services/genshinAssets/shared/reviveSourcePathId";
 import { toMaterialTextures } from "#src/services/genshinAssets/shared/toMaterialTextures";
+import { DerivedAssetLandmarkMap } from "#src/services/genshinAssets/witness/DerivedAssetLandmarkMap";
 import { WORLD_JSON_NAME } from "#src/services/genshinAssets/world/constants";
 import { deriveCapitalWorld } from "#src/services/genshinAssets/world/deriveCapitalWorld";
 import { exportWorld } from "#src/services/genshinAssets/world/exportWorld";
@@ -43,7 +44,14 @@ import { join } from "node:path";
 // Returned as counts, with every pointer that could not be resolved
 export const extractComponent = async (component: DerivedAssetComponent): Promise<string> => {
   const options = DerivedAssetComponentMap[component];
-  const { namePattern, roots: componentRoots, spawns = [] } = options;
+  const { roots: componentRoots, spawns = [] } = options;
+  // A landmark's mesh is exported by its name too, so `pose` finds it where no pointer reaches it
+  const landmarkMeshes = Object.values(DerivedAssetLandmarkMap[component]).map(({ mesh }) => mesh);
+  const landmarkPattern = landmarkMeshes.length > 0 ? `^(${landmarkMeshes.join("|")})$` : "";
+  const namePattern = [options.namePattern || "", landmarkPattern]
+    .filter((pattern) => pattern !== "")
+    .map((pattern) => `(?:${pattern})`)
+    .join("|");
   const directory = getComponentDirectory(component);
   const cabMap = parseCabMap(await readFile(CAB_MAP_PATH));
   await Promise.all(
