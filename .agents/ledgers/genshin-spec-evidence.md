@@ -1,6 +1,6 @@
 # Genshin spec evidence
 
-Each Genshin spec.md page's claims cited to game code or a reference snapshot, or left open with the source that would settle them. Find recipe: `grep -l "no source yet" openspec/specs/genshin/**/spec.md`, and a page with no `## Sources` and no reference path.
+Each Genshin spec.md page's requirements state behaviour only, and the game code or reference snapshot behind them is cited in the sibling design's `## Sources` (repo paths in its `## Key files`), or left open in the spec's `## Open` with the source that would settle it. Find recipe: `grep -l "no source yet" openspec/specs/genshin/**/spec.md`; the requirement-body check is `scripts/src/services/openspec/lintRequirementSources.ts`, which `pnpm test` in `scripts` runs.
 
 | Unit                                                                 | Swept | Notes |
 | :------------------------------------------------------------------- | :---- | :---- |
