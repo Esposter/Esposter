@@ -32,7 +32,7 @@ Git is the only coordination. A claim is created by pushing a parentless commit 
 
 ## Machines
 
-A machine's profile is `{home}/.esposter/machine.json`, written by `pnpm ai:fleet:profile`:
+A machine's profile is `{state-root}/machine.json`, written by `pnpm ai:fleet:profile`. `{state-root}` is the folder named for the site under the home folder, the one `scripts/src/services/fleet/constants.ts` builds from the site's name, so a rename of the site moves it with the constant and no page changes:
 
 - `id`, the name the machine's claims and heartbeat carry. A new profile takes the hostname.
 - `areas`, the areas the user lent the machine for. A new profile is lent every area. An area a machine was not lent is never worked, however idle it is.
