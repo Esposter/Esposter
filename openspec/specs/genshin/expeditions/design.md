@@ -64,11 +64,6 @@ stateDiagram-v2
 | `packages/genshin-world/src/components/Expedition/Screen/Index.vue`               | The expedition screen's world wrapper over Mondstadt's slice                                                                                   |
 | `packages/genshin-interface/src/components/ExpeditionScreen/Index.vue`            | The expedition screen's layout, drawn from the public clip (`~/Esposter.noindex/genshin-parity/captures/yt-fxIjhlV3vUA-expedition-screen.mp4`) |
 
-## Notes
-
-- **The statue map is one entry.** `LandmarkIdStatuePointIdMap` names Windrise's statue alone, since the component map holds its scene point and no other statue's point is in the region data. Each further statue adds its entry with its point.
-- **The limit's ranks are read off the table.** The ranks that raise it are the game's (`~/Esposter/genshin-parity/text/ExcelBinOutput/PlayerLevelExcelConfigData.json`); the base, `EXPEDITION_BASE_LIMIT`, is the proposal's settled two, with no source yet (see Open).
-
 ## Sources
 
 - [Expedition](https://genshin-impact.fandom.com/wiki/Expedition), Genshin Impact Wiki: the unlock at rank 14 through Katheryne, any character but the Traveler for 4, 8, 12 or 20 hours, still usable while away, places opened by their statues, the timer running offline, recall forfeiting the reward, and two at once rising with rank.

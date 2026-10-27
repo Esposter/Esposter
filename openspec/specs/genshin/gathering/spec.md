@@ -6,7 +6,9 @@ The plants and specialties the official map marks, placed by the fit into each r
 
 ### Requirement: Gathering points stand where the official map marks their item
 
-Gathering points SHALL stand in each region where the official map marks their item, and an item the game excludes SHALL NOT be a gathering point.
+Gathering points SHALL stand in each region where the official map marks their item.
+
+An item the game excludes SHALL NOT be a gathering point.
 
 #### Scenario: Plant stands at its official map mark
 
@@ -22,7 +24,9 @@ Gathering points SHALL stand in each region where the official map marks their i
 
 ### Requirement: F picks a gathering point into the bag
 
-Pressing F on a gathering point SHALL pick its item into the bag, and the point SHALL stay standing when the bag has no room for it.
+Pressing F on a gathering point SHALL pick its item into the bag.
+
+A gathering point SHALL stay standing when the bag has no room for it.
 
 #### Scenario: Pick puts the item in the bag
 
@@ -54,7 +58,7 @@ A picked local specialty SHALL stand again 46 hours after it was picked.
 
 ### Requirement: A picked cooking ingredient stands again at the next daily reset
 
-A picked cooking ingredient SHALL stand again at the game's next daily reset after the pick, which is 04:00 on the game's clock (`~/Esposter/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, a daily refresh of 14400 seconds).
+A picked cooking ingredient SHALL stand again at the game's next daily reset after the pick, which is 04:00 on the game's clock (a daily refresh of 14400 seconds).
 
 #### Scenario: Ingredient picked before the reset is back at the reset
 
@@ -120,7 +124,9 @@ An ore SHALL break once the poise its landed hits deal reaches its requirement f
 
 ### Requirement: A broken ore drops its pieces where it lay
 
-A broken ore SHALL drop its certain piece where it lay, and one more for each of two draws that comes under ten per cent.
+A broken ore SHALL drop its certain piece where it lay.
+
+A broken ore SHALL drop one more for each of two draws that comes under ten per cent.
 
 #### Scenario: Broken ore drops its certain piece
 

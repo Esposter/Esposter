@@ -14,6 +14,7 @@ flowchart TD
   CARRY -->|"no"| HOLD["Held at the level"]
   UP --> LAST{"The nation's last level?"}
   LAST -->|"yes"| NONE["No more EXP earned there"]
+  LAST -->|"no"| CARRY
 ```
 
 ## Data
@@ -36,25 +37,25 @@ flowchart TD
 
 ## Key files
 
-| File                                                                                    | Role                                                                                                  |
-| :-------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------- |
-| `packages/genshin-interface/src/components/ReputationScreen/Index.vue`                  | The reward page: each level's mark, item slots and unlock line                                        |
-| `packages/genshin-world/src/components/Reputation/Screen/Index.vue`                     | The nation's reward page wired to its levels and the Reputation's level                               |
-| `packages/genshin-world/src/services/reputation/ReputationFunctionGameTextKeyMap.ts`    | Each unlock function's line in the game's words, by its id                                            |
-| `packages/genshin-world/src/services/reputation/addReputationExp.ts`                    | The EXP carried up through each level's requirement, held at the last level                           |
-| `packages/genshin-world/src/services/reputation/computeReputationDiscountedPrice.ts`    | A price's 10% off, rounded down to a multiple of five Mora                                            |
-| `packages/genshin-world/src/services/reputation/checkIsReputationWeeklyLimitReached.ts` | Whether a kind's claims this week have reached the limit across nations                               |
-| `packages/genshin-world/src/services/reputation/addWeeklyReputationClaim.ts`            | The one claim a bounty makes: its claims this week with one more, refused past the limit              |
-| `packages/genshin-world/src/services/reputation/recordWeeklyReputationClaim.ts`         | The claims this week with one more, kept to the limit's newest; a request's claim, past the limit too |
-| `packages/genshin-world/src/services/reputation/computeReputationExploresReached.ts`    | The exploration thresholds a progress passes between two percentages                                  |
-| `packages/genshin-world/src/services/reputation/offerReputationRequest.ts`              | The request the keeper offers at a level by weight, none while the week's requests are at the limit   |
-| `packages/genshin-world/src/services/reputation/readMondstadtReputation.ts`             | The slice, fetched by its key and checked against its shape                                           |
-| `packages/genshin-world/src/services/reputation/constants.ts`                           | The discount, its rounding and the weekly claim limit                                                 |
-| `packages/genshin-world/src/services/weekly/countWeeklyClaims.ts`                       | The claims the weekly limit counts, across nations                                                    |
-| `packages/genshin-world/src/services/time/computeLastWeeklyReset.ts`                    | The weekly reset on the server's clock the limit counts from                                          |
-| `packages/genshin-world/src/models/reputation/ReputationCity.ts`                        | A nation's slice, with the schemas of its levels, quests, requests and bounties                       |
-| `scripts/src/services/genshinAssets/reputation/buildMondstadtReputation.ts`             | Builds the slice from the dump's tables, for publishing                                               |
-| `scripts/src/services/genshinAssets/reputation/toReputationReward.ts`                   | Splits a reward into the Reputation EXP and the items it also pays                                    |
+| File                                                                                    | Role                                                                                                                        |
+| :-------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-interface/src/components/ReputationScreen/Index.vue`                  | The reward page: each level's mark, item slots and unlock line                                                              |
+| `packages/genshin-world/src/components/Reputation/Screen/Index.vue`                     | The nation's reward page wired to its levels and the Reputation's level                                                     |
+| `packages/genshin-world/src/services/reputation/ReputationFunctionGameTextKeyMap.ts`    | Each unlock function's line in the game's words, by its id                                                                  |
+| `packages/genshin-world/src/services/reputation/addReputationExp.ts`                    | The EXP carried up through each level's requirement, held at the last level                                                 |
+| `packages/genshin-world/src/services/reputation/computeReputationDiscountedPrice.ts`    | A price's 10% off (`REPUTATION_DISCOUNT_PERCENT`), rounded down to a multiple of five Mora (`REPUTATION_DISCOUNT_ROUNDING`) |
+| `packages/genshin-world/src/services/reputation/checkIsReputationWeeklyLimitReached.ts` | Whether a kind's claims this week have reached the limit across nations                                                     |
+| `packages/genshin-world/src/services/reputation/addWeeklyReputationClaim.ts`            | The one claim a bounty makes: its claims this week with one more, refused past the limit                                    |
+| `packages/genshin-world/src/services/reputation/recordWeeklyReputationClaim.ts`         | The claims this week with one more, kept to the limit's newest; a request's claim, past the limit too                       |
+| `packages/genshin-world/src/services/reputation/computeReputationExploresReached.ts`    | The exploration thresholds a progress passes between two percentages                                                        |
+| `packages/genshin-world/src/services/reputation/offerReputationRequest.ts`              | The request the keeper offers at a level by weight, none while the week's requests are at the limit                         |
+| `packages/genshin-world/src/services/reputation/readMondstadtReputation.ts`             | The slice, fetched by its key and checked against its shape                                                                 |
+| `packages/genshin-world/src/services/reputation/constants.ts`                           | The discount, its rounding and the weekly claim limit                                                                       |
+| `packages/genshin-world/src/services/weekly/countWeeklyClaims.ts`                       | The claims the weekly limit counts, across nations                                                                          |
+| `packages/genshin-world/src/services/time/computeLastWeeklyReset.ts`                    | The weekly reset on the server's clock the limit counts from                                                                |
+| `packages/genshin-world/src/models/reputation/ReputationCity.ts`                        | A nation's slice, with the schemas of its levels, quests, requests and bounties                                             |
+| `scripts/src/services/genshinAssets/reputation/buildMondstadtReputation.ts`             | Builds the slice from the dump's tables, for publishing                                                                     |
+| `scripts/src/services/genshinAssets/reputation/toReputationReward.ts`                   | Splits a reward into the Reputation EXP and the items it also pays                                                          |
 
 ## Sources
 
@@ -68,5 +69,5 @@ flowchart TD
 - [ ] **The weekly reset is Monday at 04:00 on the server's clock** — no source: the export's weekly row 800001, `14400;360000` (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`), gives the 04:00 hour, and this page does not read `360000` as a weekday.
 - [ ] **A Reputation discount is 10% off, rounded down to a multiple of five Mora** — no source: the Reputation wiki page is not in the wiki cache, and no cached game text states the percentage.
 - [ ] **The discount names shop types 1004 and 1005** — no source: the discount's function text does not resolve in the cached English text.
-- [ ] **The list scores within the parity loop's bar, and the game's face is HYWenHei** — no source: the snapshot's `reputation-screen` row reads 2.10% and 0.877 in `scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md`, with no bar named beside them, and no file under `~/Esposter/genshin-parity/extracted/` names HYWenHei.
+- [ ] **The list scores within the parity loop's bar, and the game's face is HYWenHei** — no source: the snapshot's `reputation-screen` row in `scripts/src/services/genshinParity/shared/ParityReferenceMap.snapshot.md`, with no bar named beside its score, and no file under `~/Esposter/genshin-parity/extracted/` names HYWenHei.
 - [ ] **Each level's unlock is shown in the game's words behind an info mark, by its function id** — no source: the 18-second frame `~/Esposter.noindex/genshin-parity/references/reputation-screen/18s.png` shows the info marks at Lv. 2 and Lv. 4 but cuts off Lv. 8, and the level table gives Mondstadt's function ids at levels 2 and 4 only (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/ReputationLevelExcelConfigData.json`).

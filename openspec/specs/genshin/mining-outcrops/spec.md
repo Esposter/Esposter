@@ -20,7 +20,7 @@ Mining outcrops SHALL be drawn for a player at Adventure Rank 30 or above.
 
 ### Requirement: Mined outcrop returns at the next 04:00
 
-A mined outcrop SHALL come back at the first 04:00 in UTC+8 strictly after the mining (the 04:00 is `REFRESH_DAILY` at `14400` seconds, policy 101000 in `~/Esposter/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`).
+A mined outcrop SHALL come back at the first 04:00 in UTC+8 strictly after the mining.
 
 #### Scenario: Mined before the day's draw
 

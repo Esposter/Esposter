@@ -6,7 +6,9 @@ The game's shop goods read from its shop table into slices and bought by one rul
 
 ### Requirement: A good is offered only at its Adventure Rank and within its dates
 
-A shop good SHALL be offered only once the player's Adventure Rank reaches its rank and only within its dates.
+A shop good SHALL be offered only once the player's Adventure Rank reaches its rank.
+
+A shop good SHALL be offered only within its dates.
 
 #### Scenario: A good below the player's rank is refused
 
@@ -22,7 +24,9 @@ A shop good SHALL be offered only once the player's Adventure Rank reaches its r
 
 ### Requirement: A buy limit counts purchases since the last refresh
 
-A good with a buy limit SHALL be sold up to that limit between refreshes, and a limit of zero SHALL mean no limit.
+A good with a buy limit SHALL be sold up to that limit between refreshes.
+
+A limit of zero SHALL mean no limit.
 
 #### Scenario: A good at its limit is sold out until its refresh
 
@@ -44,7 +48,7 @@ A good with a buy limit SHALL be sold up to that limit between refreshes, and a 
 
 ### Requirement: Refreshes happen at four in the morning game time
 
-Daily and monthly refreshes SHALL happen at four in the morning in the game's time (the daily refresh's row, `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/RefreshPolicyExcelConfigData.json` row 101000, holds 14400 seconds), and a monthly refresh SHALL fall on the first of the month (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ShopExcelConfigData.json`, shop 102).
+Daily and monthly refreshes SHALL happen at four in the morning in the game's time, and a monthly refresh SHALL fall on the first of the month.
 
 #### Scenario: A purchase before the monthly refresh counts to the month before
 
@@ -54,7 +58,9 @@ Daily and monthly refreshes SHALL happen at four in the morning in the game's ti
 
 ### Requirement: A purchase takes every cost from the wallet or the bag and gives the good
 
-A purchase SHALL take each cost of a good, from the wallet for a currency and from the bag for an item, and SHALL give the good. It SHALL be refused when the player holds too few of any one cost.
+A purchase SHALL take each cost of a good, from the wallet for a currency and from the bag for an item, and SHALL give the good.
+
+A purchase SHALL be refused when the player holds too few of any one cost.
 
 #### Scenario: A purchase takes the costs and gives the item
 

@@ -50,13 +50,14 @@ flowchart TD
 - **The offer is on F.** Its prompt row is an `Activate` named by `GameTextKey.FrostbearingTree` while the character is in reach, and pressing F offers the bag through `offerBagItems`.
 - **The save holds its progress.** Its count held of each item and level are the `offerings.frostbearingTree` slice of the save, `{ heldCounts, level }` with `heldCounts` keyed by item id, and no default: a save holding the older `{ heldCount, level }` is refused until it is backfilled as `{ heldCounts: { "107010": heldCount }, level }`, the tree's one item (`~/Esposter/genshin-parity/text/ExcelBinOutput/OfferingLevelUpExcelConfigData.json`, offering 1 level 2 takes 10 of `107010`). A guest's save does not change the tree when it merges into an account: the account's level and held count are kept, since the items the tree holds came out of the account's bag.
 - **One rule with the statues.** The statues use `offerItems` through the same level shape, `items` holding each item with its count. Each region takes one Oculus (unsourced, see Open), and its save keeps `{ claimedLevel, heldCount, level }` per region: `statueRegionProgress.ts` converts that to the rule's progress at the boundary and back, so the statues' save keeps the Oculi held and the level reached beside the level claimed.
-- **Reading the wiki.** The [Offering System](https://genshin-impact.fandom.com/wiki/Offering_System) page is the wiki's account of the rule, but it is not on disk, so none of its wording is checked here (task 3.1 of the change; see Open).
 
 ## Sources
 
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the offering level-up table with each offering's items and rewards, the offering open-state table, and the reward table the rewards are joined from.
 - [Teyvat Interactive Map](https://act.hoyolab.com/ys/app/interactive-map/index.html), HoYoLAB: the map's point for the Frostbearing Tree, read into the references folder and carried through the fit.
 - [Offering System](https://genshin-impact.fandom.com/wiki/Offering_System), Genshin Impact Wiki: not on disk, so no wording from it is checked here.
+- `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/OfferingLevelUpExcelConfigData.json` grounds the requirement "Each level the held count covers is reached once".
+- `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/OfferingLevelUpExcelConfigData.json`, offering 1 level 1 holds no items, grounds the requirement "The first offer starts the tree".
 
 ## Open
 

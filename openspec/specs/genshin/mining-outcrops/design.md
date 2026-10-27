@@ -6,7 +6,6 @@ The rules a region's mining outcrops follow, the Magical Crystal Chunks a player
 
 ```mermaid
 flowchart TD
-  R["Adventure Rank: at 30 or above, the outcrops are drawn"] --> O{"checkIsMiningOutcropOpen"}
   M["A mined outcrop's instant"] --> P["computeNextDailyReset: the next 04:00 reset after the mining, on the server's clock"]
   P --> S{"checkIsMiningOutcropStanding: now at or past it"}
   S -->|"yes"| D["Stands again, from the day's draw"]
@@ -16,7 +15,7 @@ flowchart TD
 ## Rules
 
 - **Opened at `MINING_OUTCROP_ADVENTURE_RANK`.** `checkIsMiningOutcropOpen` compares the rank with the constant (`packages/genshin-world/src/services/leyLine/checkIsMiningOutcropOpen.ts`; the constant is in `packages/genshin-world/src/services/leyLine/constants.ts`). The rank only opens the outcrops; Reputation's mining outcrop search, at level 2 of a nation, is what marks them.
-- **A mined outcrop comes back at the next draw.** The respawn is the first reset at `GAME_DAY_START_HOUR` strictly after the mining, read in the game's time zone, `GAME_TIME_ZONE` (`packages/genshin-world/src/services/time/computeNextDailyReset.ts`). A mining before a day's draw is back at that draw, and one at or after it at the next day's.
+- **A mined outcrop comes back at the next draw.** The respawn is the first daily reset strictly after the mining, as the [reset clock](../reset-clock/design.md) defines it. A mining before a day's draw is back at that draw, and one at or after it at the next day's.
 - **Standing once the respawn has come.** One never mined stands. A mined one stands from its respawn, and gone before it. The day's unmined outcrops are gone with the next day's draw: `computeStandingMiningOutcrops` stands a place only in the day's draw (`packages/genshin-world/src/services/leyLine/checkIsMiningOutcropStanding.ts`; `packages/genshin-world/src/services/gathering/computeStandingMiningOutcrops.ts`).
 - **Mined outcrops are the save's.** A mined outcrop is saved as `minedOutcrops`, absent while none is mined, each by its place's id and the instant it was mined, so a reload keeps it gone until its respawn (`packages/genshin-world/src/models/save/GenshinSave.ts`). A mining drops the outcrops whose respawn has come, so the save holds the day's mined ones only ([save data](../save-data/design.md); `packages/genshin-world/src/composables/useMiningOutcrops.ts`).
 - **Struck as an ore.** A standing outcrop breaks as an ore does, and a break drops one to three Magical Crystal Chunks, provisional from the wiki, since the dump's gather rows hold no count field (`~/Esposter/genshin-parity/text/ExcelBinOutput/GatherExcelConfigData.json`); the code drops `ORE_CERTAIN_DROP_COUNT` for certain and rolls up to `ORE_EXTRA_DROP_DRAW_COUNT` more at `ORE_EXTRA_DROP_CHANCE` each (`packages/genshin-world/src/services/gathering/rollOreDropCount.ts`). The break sets the outcrop's instant, so the respawn above applies (`packages/genshin-world/src/composables/useMiningOutcrops.ts`, which strikes with `strikeOre` and records the mined instant).
@@ -36,14 +35,11 @@ flowchart TD
 | `packages/genshin-world/src/services/gathering/computeStandingMiningOutcrops.ts` | The places standing at an instant: the day's draw, not mined since          |
 | `packages/genshin-world/src/components/World/StandIns/Index.vue`                 | The stand-in at each standing place, shared with the Oculi                  |
 
-## Notes
-
-- **The respawn is the world's reset, not the wiki's.** The wiki gives the respawn at 06:00, two hours after the reset. The world's one daily reset is at `GAME_DAY_START_HOUR`, the reset the shops and commissions use, read on the server's clock, `GAME_TIME_ZONE`, as the [reset clock](../reset-clock/design.md) reads every reset (`~/Esposter/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, the `REFRESH_DAILY` policies at `14400` seconds). A recording of a mined outcrop coming back would confirm which reset it is.
-
 ## Sources
 
 - [Mining Outcrop](https://genshin-impact.fandom.com/wiki/Mining_Outcrop), Genshin Impact Wiki: Magical Crystal Chunks from rank 30, and the respawn at 06:00, two hours after the reset.
 - [Daily Reset](https://genshin-impact.fandom.com/wiki/Daily_Reset), Genshin Impact Wiki: what comes back at the daily reset and around it.
+- `~/Esposter/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, policy 101000, the 04:00 as `REFRESH_DAILY` at `14400` seconds. Grounds the requirement "Mined outcrop returns at the next 04:00".
 
 ## Open
 
