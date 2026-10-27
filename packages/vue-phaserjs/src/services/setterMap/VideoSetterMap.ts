@@ -3,6 +3,7 @@ import type { VideoEventEmitsOptions } from "#src/models/emit/VideoEventEmitsOpt
 import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
+import { VideoSetter } from "#src/models/setterMap/VideoSetter";
 import { AlphaSetterMap } from "#src/services/setterMap/components/AlphaSetterMap";
 import { FlipSetterMap } from "#src/services/setterMap/components/FlipSetterMap";
 import { OriginSetterMap } from "#src/services/setterMap/components/OriginSetterMap";
@@ -11,7 +12,6 @@ import { TextureCropSetterMap } from "#src/services/setterMap/components/Texture
 import { TintSetterMap } from "#src/services/setterMap/components/TintSetterMap";
 import { GlobalSetterMap } from "#src/services/setterMap/global/GlobalSetterMap";
 import { SceneObjectSetterMap } from "#src/services/setterMap/shared/SceneObjectSetterMap";
-import { VideoSetter } from "#src/models/setterMap/VideoSetter";
 
 export const VideoSetterMap: SetterMap<VideoConfiguration, GameObjects.Video, VideoEventEmitsOptions> = {
   [VideoSetter.Key]: (gameObject) => (value) => {

@@ -3,8 +3,8 @@ import type { DepthEventEmitsOptions } from "#src/models/emit/components/DepthEv
 import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
-import { getDepthInsertIndex } from "#src/services/shared/getDepthInsertIndex";
 import { DepthSetter } from "#src/models/setterMap/components/DepthSetter";
+import { getDepthInsertIndex } from "#src/services/shared/getDepthInsertIndex";
 
 export const DepthSetterMap = {
   [DepthSetter.Depth]: (gameObject) => (value) => {

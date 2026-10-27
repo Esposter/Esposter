@@ -2,6 +2,7 @@ import type { BlendModeConfiguration } from "#src/models/configuration/component
 import type { BlendModeEventEmitsOptions } from "#src/models/emit/components/BlendModeEventEmitsOptions";
 import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
+
 import { BlendModeSetter } from "#src/models/setterMap/components/BlendModeSetter";
 
 export const BlendModeSetterMap = {

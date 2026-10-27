@@ -3,11 +3,11 @@ import type { TextEventEmitsOptions } from "#src/models/emit/TextEventEmitsOptio
 import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
+import { TextSetter } from "#src/models/setterMap/TextSetter";
 import { ComputedSizeSetterMap } from "#src/services/setterMap/components/ComputedSizeSetterMap";
 import { FlipSetterMap } from "#src/services/setterMap/components/FlipSetterMap";
 import { RenderableSetterMap } from "#src/services/setterMap/shared/RenderableSetterMap";
 import { omitUndefined } from "#src/services/shared/omitUndefined";
-import { TextSetter } from "#src/models/setterMap/TextSetter";
 
 export const TextSetterMap: SetterMap<TextConfiguration, GameObjects.Text, TextEventEmitsOptions> = {
   [TextSetter.Padding]: (gameObject) => (value) => {

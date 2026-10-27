@@ -1,7 +1,7 @@
+import { ShapeSetter } from "#src/models/setterMap/shared/ShapeSetter";
 import { ShapeSetterMap } from "#src/services/setterMap/shared/ShapeSetterMap";
 import { removeTestScene, startTestScene } from "#src/test/fixtures/headlessGame.test";
 import { afterEach, describe, expect, test } from "vitest";
-import { ShapeSetter } from "#src/models/setterMap/shared/ShapeSetter";
 
 describe("shapeSetterMap", () => {
   const sceneKey = "sceneKey";

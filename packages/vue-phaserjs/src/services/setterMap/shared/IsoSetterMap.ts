@@ -1,6 +1,7 @@
 import type { IsoBoxConfiguration } from "#src/models/configuration/IsoBoxConfiguration";
 import type { IsoBoxEventEmitsOptions } from "#src/models/emit/IsoBoxEventEmitsOptions";
 import type { SetterMap } from "#src/models/setterMap/SetterMap";
+
 import { IsoSetter } from "#src/models/setterMap/shared/IsoSetter";
 
 // The faces and fill of an isometric shape, shared by IsoBox and IsoTriangle. The game object is typed structurally

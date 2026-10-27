@@ -3,9 +3,9 @@ import type { SpriteEventEmitsOptions } from "#src/models/emit/SpriteEventEmitsO
 import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
+import { AnimationSetter } from "#src/models/setterMap/shared/AnimationSetter";
 import { ANIMATION_COMPLETE_EVENT_PREFIX } from "#src/services/shared/constants";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import { AnimationSetter } from "#src/models/setterMap/shared/AnimationSetter";
 
 // This setter's own completion listener, per sprite and per event. `off(event)` with no callback would take the
 // Consumer's listeners for the same animation with it, and a published package cannot know what a consumer

@@ -2,6 +2,7 @@ import type { GameObjectConfiguration } from "#src/models/configuration/global/G
 import type { GameObjectEventEmitsOptions } from "#src/models/emit/global/GameObjectEventEmitsOptions";
 import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
+
 import { GameObjectSetter } from "#src/models/setterMap/global/GameObjectSetter";
 
 export const GameObjectSetterMap = {

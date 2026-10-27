@@ -3,9 +3,9 @@ import type { StarEventEmitsOptions } from "#src/models/emit/StarEventEmitsOptio
 import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
+import { StarSetter } from "#src/models/setterMap/StarSetter";
 import { GlobalSetterMap } from "#src/services/setterMap/global/GlobalSetterMap";
 import { ShapeSetterMap } from "#src/services/setterMap/shared/ShapeSetterMap";
-import { StarSetter } from "#src/models/setterMap/StarSetter";
 
 export const StarSetterMap: SetterMap<StarConfiguration, GameObjects.Star, StarEventEmitsOptions> = {
   [StarSetter.InnerRadius]: (gameObject) => (value) => {

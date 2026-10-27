@@ -2,6 +2,7 @@ import type { TransformConfiguration } from "#src/models/configuration/component
 import type { TransformEventEmitsOptions } from "#src/models/emit/components/TransformEventEmitsOptions";
 import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
+
 import { TransformSetter } from "#src/models/setterMap/components/TransformSetter";
 
 export const TransformSetterMap = {

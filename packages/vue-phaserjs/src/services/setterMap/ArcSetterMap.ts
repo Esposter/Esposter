@@ -3,9 +3,9 @@ import type { ArcEventEmitsOptions } from "#src/models/emit/ArcEventEmitsOptions
 import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
+import { ArcSetter } from "#src/models/setterMap/ArcSetter";
 import { GlobalSetterMap } from "#src/services/setterMap/global/GlobalSetterMap";
 import { ShapeSetterMap } from "#src/services/setterMap/shared/ShapeSetterMap";
-import { ArcSetter } from "#src/models/setterMap/ArcSetter";
 
 export const ArcSetterMap: SetterMap<ArcConfiguration, GameObjects.Arc, ArcEventEmitsOptions> = {
   [ArcSetter.ClosePath]: (gameObject) => (value) => {

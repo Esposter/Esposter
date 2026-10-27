@@ -3,13 +3,13 @@ import type { ShapeEventEmitsOptions } from "#src/models/emit/shared/ShapeEventE
 import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
+import { ShapeSetter } from "#src/models/setterMap/shared/ShapeSetter";
 import { AlphaSingleSetterMap } from "#src/services/setterMap/components/AlphaSingleSetterMap";
 import { DisplaySizeSetterMap } from "#src/services/setterMap/components/DisplaySizeSetterMap";
 import { OriginSetterMap } from "#src/services/setterMap/components/OriginSetterMap";
 import { RenderNodesSetterMap } from "#src/services/setterMap/components/RenderNodesSetterMap";
 import { GameObjectSetterMap } from "#src/services/setterMap/global/GameObjectSetterMap";
 import { SceneObjectSetterMap } from "#src/services/setterMap/shared/SceneObjectSetterMap";
-import { ShapeSetter } from "#src/models/setterMap/shared/ShapeSetter";
 
 export const ShapeSetterMap = {
   ...AlphaSingleSetterMap,

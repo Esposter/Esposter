@@ -2,6 +2,7 @@ import type { FlipConfiguration } from "#src/models/configuration/components/Fli
 import type { FlipEventEmitsOptions } from "#src/models/emit/components/FlipEventEmitsOptions";
 import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
+
 import { FlipSetter } from "#src/models/setterMap/components/FlipSetter";
 
 export const FlipSetterMap = {

@@ -2,6 +2,7 @@ import type { TintConfiguration } from "#src/models/configuration/components/Tin
 import type { TintEventEmitsOptions } from "#src/models/emit/components/TintEventEmitsOptions";
 import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
+
 import { TintSetter } from "#src/models/setterMap/components/TintSetter";
 
 export const TintSetterMap = {

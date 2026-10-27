@@ -3,9 +3,9 @@ import type { CurveEventEmitsOptions } from "#src/models/emit/CurveEventEmitsOpt
 import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
+import { CurveSetter } from "#src/models/setterMap/CurveSetter";
 import { GlobalSetterMap } from "#src/services/setterMap/global/GlobalSetterMap";
 import { ShapeSetterMap } from "#src/services/setterMap/shared/ShapeSetterMap";
-import { CurveSetter } from "#src/models/setterMap/CurveSetter";
 
 export const CurveSetterMap: SetterMap<CurveConfiguration, GameObjects.Curve, CurveEventEmitsOptions> = {
   [CurveSetter.Smoothness]: (gameObject) => (value) => {

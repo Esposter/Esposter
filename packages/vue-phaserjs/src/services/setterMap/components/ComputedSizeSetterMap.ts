@@ -3,8 +3,8 @@ import type { ComputedSizeEventEmitsOptions } from "#src/models/emit/components/
 import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
-import { DisplaySizeSetterMap } from "#src/services/setterMap/components/DisplaySizeSetterMap";
 import { ComputedSizeSetter } from "#src/models/setterMap/components/ComputedSizeSetter";
+import { DisplaySizeSetterMap } from "#src/services/setterMap/components/DisplaySizeSetterMap";
 
 export const ComputedSizeSetterMap = {
   ...DisplaySizeSetterMap,

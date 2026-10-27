@@ -2,6 +2,7 @@ import type { OriginConfiguration } from "#src/models/configuration/components/O
 import type { OriginEventEmitsOptions } from "#src/models/emit/components/OriginEventEmitsOptions";
 import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
+
 import { OriginSetter } from "#src/models/setterMap/components/OriginSetter";
 
 export const OriginSetterMap = {

@@ -3,8 +3,8 @@ import type { TweenEventEmitsOptions } from "#src/models/emit/global/TweenEventE
 import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
-import { Tweens } from "phaser";
 import { TweenSetter } from "#src/models/setterMap/global/TweenSetter";
+import { Tweens } from "phaser";
 
 // A game object runs one tween at a time, so a new one replaces the running one rather than running beside it
 const activeTweens = new WeakMap<GameObjects.GameObject, Tweens.Tween | Tweens.TweenChain>();

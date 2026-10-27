@@ -2,6 +2,7 @@ import type { MaskConfiguration } from "#src/models/configuration/components/Mas
 import type { MaskEventEmitsOptions } from "#src/models/emit/components/MaskEventEmitsOptions";
 import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
+
 import { MaskSetter } from "#src/models/setterMap/components/MaskSetter";
 
 export const MaskSetterMap = {

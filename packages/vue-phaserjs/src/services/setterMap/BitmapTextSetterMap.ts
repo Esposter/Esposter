@@ -3,8 +3,8 @@ import type { BitmapTextEventEmitsOptions } from "#src/models/emit/BitmapTextEve
 import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
-import { RenderableSetterMap } from "#src/services/setterMap/shared/RenderableSetterMap";
 import { BitmapTextSetter } from "#src/models/setterMap/BitmapTextSetter";
+import { RenderableSetterMap } from "#src/services/setterMap/shared/RenderableSetterMap";
 
 export const BitmapTextSetterMap: SetterMap<
   BitmapTextConfiguration,

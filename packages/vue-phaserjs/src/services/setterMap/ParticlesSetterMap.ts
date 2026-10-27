@@ -3,12 +3,12 @@ import type { ParticlesEventEmitsOptions } from "#src/models/emit/ParticlesEvent
 import type { SetterMap } from "#src/models/setterMap/SetterMap";
 import type { GameObjects } from "phaser";
 
+import { ParticlesSetter } from "#src/models/setterMap/ParticlesSetter";
 import { AlphaSingleSetterMap } from "#src/services/setterMap/components/AlphaSingleSetterMap";
 import { RenderNodesSetterMap } from "#src/services/setterMap/components/RenderNodesSetterMap";
 import { TextureSetterMap } from "#src/services/setterMap/components/TextureSetterMap";
 import { GlobalSetterMap } from "#src/services/setterMap/global/GlobalSetterMap";
 import { SceneObjectSetterMap } from "#src/services/setterMap/shared/SceneObjectSetterMap";
-import { ParticlesSetter } from "#src/models/setterMap/ParticlesSetter";
 
 export const ParticlesSetterMap: SetterMap<
   ParticlesConfiguration,

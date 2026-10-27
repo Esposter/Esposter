@@ -1,7 +1,7 @@
+import { TweenSetter } from "#src/models/setterMap/global/TweenSetter";
 import { TweenSetterMap } from "#src/services/setterMap/global/TweenSetterMap";
 import { removeTestScene, startTestScene } from "#src/test/fixtures/headlessGame.test";
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { TweenSetter } from "#src/models/setterMap/global/TweenSetter";
 
 describe("tweenSetterMap", () => {
   const sceneKey = "sceneKey";
