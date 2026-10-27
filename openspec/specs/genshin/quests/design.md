@@ -120,6 +120,7 @@ The quest screen is scored whole-frame against `quest-screen`, the English clien
 - [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: J for the quest menu, V for quest navigation, and holding V to show the step's objective.
 - ["The Seventh Samurai"](https://genshin-impact.fandom.com/wiki/%22The_Seventh_Samurai%22), Genshin Impact Wiki: Xavier's world quest in Inazuma City, its steps, and its unlock after Tatara Tales: The Last Act.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the quest table's types and words, each quest's binary output of steps and conditions, and the dialog and character tables a talk is read from.
+- `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/RewardExcelConfigData.json` row 122111, which quest 22111 in `MainQuestExcelConfigData.json` gives, holds one of item 107006, the Mondstadt Shrine of Depths Key; grounds "The world carries only the quests its inventory lists".
 
 ## Open
 

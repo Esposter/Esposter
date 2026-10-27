@@ -15,9 +15,9 @@ A quest SHALL be one of the game's five kinds, holding ordered steps, each with 
 - **THEN** each step lists its objectives in the order the game gives them
 - **AND** each objective is one of go to, talk to, defeat, collect or interact
 
-### Requirement: The Archon quests run in order and a talk-offered quest starts from its talk
+### Requirement: The Archon quests run in order from the prologue's first
 
-The Archon quests SHALL run in order from the prologue's first, and every quest a talk offers SHALL start at its first shown step once the talk offering it has ended, and in a series only once the quest before it is finished.
+The Archon quests SHALL run in order from the prologue's first.
 
 #### Scenario: Archon quests started
 
@@ -25,11 +25,25 @@ The Archon quests SHALL run in order from the prologue's first, and every quest 
 - **WHEN** the quests start
 - **THEN** the first unfinished Archon quest in order is started from its first step
 
+### Requirement: A talk-offered quest starts from its talk
+
+Every quest a talk offers SHALL start at its first shown step once the talk offering it has ended.
+
 #### Scenario: Offering talk ends
 
 - **GIVEN** a talk that offers a quest ends, and the quest is not in a series or is the first of its series
 - **WHEN** the talk ends
 - **THEN** the quest starts at its first shown step
+
+#### Scenario: Offering talk repeated
+
+- **GIVEN** a quest has already been started by its offering talk
+- **WHEN** the same talk ends again
+- **THEN** the quest is not started a second time
+
+### Requirement: A talk-offered quest in a series waits for the quest before it
+
+A quest a talk offers in a series SHALL start only once the quest before it is finished.
 
 #### Scenario: Offering talk ends before the quest before it is finished
 
@@ -37,12 +51,6 @@ The Archon quests SHALL run in order from the prologue's first, and every quest 
 - **WHEN** the talk ends
 - **THEN** the quest is not started
 - **AND** an offering talk that ends once the quest before it is finished starts it
-
-#### Scenario: Offering talk repeated
-
-- **GIVEN** a quest has already been started by its offering talk
-- **WHEN** the same talk ends again
-- **THEN** the quest is not started a second time
 
 ### Requirement: A quest with parent quests starts once they are all finished
 
@@ -82,15 +90,19 @@ A quest in progress SHALL advance when the Traveler's doing meets an objective o
 - **WHEN** a doing names none of its objectives
 - **THEN** the quest stays where it was
 
-### Requirement: A finished quest reaches the Travel Log when it is a main quest
+### Requirement: A quest is finished when its last step finishes
 
-A quest that its last step finishes SHALL be finished, and a finished main quest SHALL open its Travel Log entry.
+A quest that its last step finishes SHALL be finished.
 
 #### Scenario: Last step finished
 
 - **GIVEN** a quest whose last step is met
 - **WHEN** the step is finished
 - **THEN** the quest is finished
+
+### Requirement: A finished main quest opens its Travel Log entry
+
+A finished main quest SHALL open its Travel Log entry.
 
 #### Scenario: Main quest finished
 
@@ -100,7 +112,7 @@ A quest that its last step finishes SHALL be finished, and a finished main quest
 
 ### Requirement: J opens the quest screen with the game's lists and progress
 
-J SHALL open the quest screen, which lists the quests in progress and the game's four lists, each quest with how far it stands, and Q and E SHALL step between its tabs.
+J SHALL open the quest screen, which lists the quests in progress and the game's four lists, each quest with how far it stands.
 
 #### Scenario: Quest screen opened
 
@@ -109,21 +121,29 @@ J SHALL open the quest screen, which lists the quests in progress and the game's
 - **THEN** the quest screen opens with the quests in progress under its first tab
 - **AND** each quest shows how far its objective stands
 
+### Requirement: Q and E step between the quest screen's tabs
+
+Q and E SHALL step between its tabs.
+
 #### Scenario: Stepping between tabs
 
 - **GIVEN** the quest screen is open
 - **WHEN** the player presses Q or E
 - **THEN** the screen steps to the previous or next tab
 
-### Requirement: The navigate button sets or cancels the navigated quest with F
+### Requirement: The navigate button sets the navigated quest with F
 
-The quest screen's navigate button SHALL navigate to the selected quest when F is pressed, and SHALL cancel the navigation of the quest already navigated to.
+The quest screen's navigate button SHALL navigate to the selected quest when F is pressed.
 
 #### Scenario: Navigating to the selected quest
 
 - **GIVEN** a quest is selected on the quest screen and no quest is navigated to
 - **WHEN** the player presses F
 - **THEN** the selected quest becomes the one navigated to
+
+### Requirement: The navigate button cancels the navigation with F
+
+The quest screen's navigate button SHALL cancel the navigation of the quest already navigated to when F is pressed.
 
 #### Scenario: Cancelling navigation
 
@@ -159,7 +179,7 @@ A quest's titles and words SHALL come from the game's own text, referenced by it
 
 ### Requirement: The world carries only the quests its inventory lists
 
-The world SHALL carry only the quests `QuestIds` lists, read by their ids from the game's data: the prologue's first two, The Seventh Samurai and the other world quests and series the talks offer, the keeper's Reputation requests, and New Horizons of Adventure, whose finish pays the Mondstadt Shrine of Depths Key (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/RewardExcelConfigData.json` row 122111, which quest 22111 in `MainQuestExcelConfigData.json` gives, holds one of item 107006, the Mondstadt Shrine of Depths Key).
+The world SHALL carry only the quests `QuestIds` lists, read by their ids from the game's data: the prologue's first two, The Seventh Samurai and the other world quests and series the talks offer, the keeper's Reputation requests, and New Horizons of Adventure, whose finish pays the Mondstadt Shrine of Depths Key.
 
 #### Scenario: Carried quests read
 
