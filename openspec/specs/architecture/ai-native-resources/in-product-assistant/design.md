@@ -1,6 +1,6 @@
 # In-product assistant
 
-Built on the [agent content tools](../../agent-content-tools/design.md) and [live edits](../live-edits/design.md). A person working in an editor should not have to leave it to ask an agent for an edit, and asking from inside it must not open a second way in. So the assistant is a shortcut into the person's own Claude Code session, which then works through the tools any agent uses. It also waits on something outside this proposal: a host the page can pair with, which the [agent console](../../../infra/claude-interface/agent-console/README.md) offers only once it is shown again.
+Built on the [agent content tools](../../agent-content-tools/design.md) and [live edits](../live-edits/design.md). A person working in an editor should not have to leave it to ask an agent for an edit, and asking from inside it must not open a second way in. So the assistant is a shortcut into the person's own Claude Code session, which then works through the tools any agent uses. It also needs a host the page can pair with, which the [agent console](../../../infra/claude-interface/agent-console/README.md) already offers.
 
 ## One path
 
@@ -36,11 +36,11 @@ With no host paired, the command shows how to pair one rather than falling back 
 
 ## Key files
 
-| File                                                                       | Role                                                               |
-| -------------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `apps/web/app/components/Resource/Blade/Header.vue`                        | registers Ask Claude for every type                                |
-| `apps/web/app/store/agentConsole/connection.ts`                            | sends the prompt to the paired host, unchanged                     |
-| `apps/web/app/components/AgentConsole/Panel/NewSession.vue`                | unchanged; the command types its own folder                        |
-| `packages/agent-console-server/src/models/command/PromptCommand.ts`        | the wire a prompt crosses, unchanged                               |
-| `packages/agent-console-server/src/models/command/CreateSessionCommand.ts` | the wire a new session crosses, unchanged                          |
-| `packages/follow-ups/.mcp.json`                                            | the MCP server entry a session reaches Esposter through, unchanged |
+| File                                                                       | Role                                                                  |
+| -------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| `apps/web/app/components/Resource/Blade/Header.vue`                        | registers Ask Claude for every type                                   |
+| `apps/web/app/store/agentConsole/connection.ts`                            | sends the prompt to the paired host                                   |
+| `apps/web/app/components/AgentConsole/Panel/NewSession.vue`                | the new-session panel, whose folder picker the command does not share |
+| `packages/agent-console-server/src/models/command/PromptCommand.ts`        | the wire a prompt crosses                                             |
+| `packages/agent-console-server/src/models/command/CreateSessionCommand.ts` | the wire a new session crosses                                        |
+| `packages/follow-ups/.mcp.json`                                            | the MCP server entry a session reaches Esposter through               |

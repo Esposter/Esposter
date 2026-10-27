@@ -6,7 +6,7 @@ Every user-facing async operation on the client declares exactly two things: **w
 
 **No call site chains promises, holds a map of in-flight promises, or tracks a generation counter, a call id or an `isSaving` flag to order its own async work.** If an ordering is worth having, it belongs in the primitive, keyed by target — and it is already there.
 
-The reason is not tidiness. Protection applied by hand is protection that gets forgotten: every surface that forgot it was silently losing writes or serving stale reads, and every surface that remembered wrote a subtly different version of the same queue, so a bug fixed in one never reached the others. If a surface seems to need an ordering of its own, it needs the right `key` instead.
+The reason is not tidiness. Protection applied by hand is protection that gets forgotten: a forgotten one silently loses writes or serves stale reads, and a copy that remembers drifts into its own version of the queue, so a fix in one never reaches the others. If a surface seems to need an ordering of its own, it needs the right `key` instead.
 
 ## The principle that decides the default
 

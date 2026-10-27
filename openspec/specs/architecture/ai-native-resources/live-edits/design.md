@@ -12,7 +12,7 @@ The stream carries the new content version and the writing device rather than th
 
 An open editor that holds no unwritten edit — no save pending, no autosave armed, content equal to what it last persisted — adopts the save. It stores the new version and runs `ResourceContentHookMap`'s two stages in order, as [third-party document adapters](../../third-party-document-adapters/design.md) describe for a restore: `Reload`, where each content store re-reads through `createContentData`, then `Adopt`, where a library holding its own copy — Tiptap, SurveyJS — takes the new document.
 
-Two things describe a document that is gone, and clear. An editor's undo history clears, as a restore clears it: the Sheet's command history, the page builder's patch history once it ships. The [delta content saves](../../../resource/delta-content-saves/design.md) baseline clears too, since it names bytes the server does not hold, so one large save crosses whole before deltas resume.
+Two things describe a document that is gone, and clear. An editor's undo history clears, as a restore clears it: the Sheet's command history, the page builder's patch history. The [delta content saves](../../../resource/delta-content-saves/design.md) baseline clears too, since it names bytes the server does not hold, so one large save crosses whole before deltas resume.
 
 The TodoList saves each edit as it happens, so it rarely holds an unwritten one, and it re-reads on another device's save in place of taking the streamed list.
 
@@ -23,7 +23,7 @@ An editor holding an unwritten edit overwrites nothing in either direction. The 
 - **Take theirs** adopts as above and drops the local edit.
 - **Keep mine** re-saves the local document through the existing save mutation at the newer version, replacing the other write, which stays in version history.
 
-Until it is answered, the store's stale latch holds autosave, as it does after a refused save today. What changes is the timing and the choice: the latch is raised when the other save lands rather than at the person's next save, and a reload that drops their edit is no longer the only way out. After Keep mine, an agent's next pinned patch is stale and it reads again; an unpinned one reapplies over the owner's document under its tests.
+Until it is answered, the store's stale latch holds autosave, as it does after a refused save. The latch is raised when the other save lands. After Keep mine, an agent's next pinned patch is stale and it reads again; an unpinned one reapplies over the owner's document under its tests.
 
 ```mermaid
 flowchart TD
@@ -46,8 +46,8 @@ A save the server refuses is the one case the save stream did not deliver, so it
 | File                                                                  | Role                                                                                               |
 | --------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
 | `apps/web/app/components/Resource/Explorer/Index.vue`                 | runs the open resource's save subscription, whatever its type                                      |
-| `apps/web/app/composables/resource/useResourceSaveSubscribable.ts`    | the one save subscription every type shares; the per-type subscribables it replaces are deleted    |
-| `apps/web/app/store/resource/todoList/index.ts`                       | its own adoption of a streamed list goes                                                           |
+| `apps/web/app/composables/resource/useResourceSaveSubscribable.ts`    | the one save subscription every type shares; no type keeps a subscribable of its own               |
+| `apps/web/app/store/resource/todoList/index.ts`                       | re-reads on another device's save in place of taking the streamed list                             |
 | `apps/web/app/store/resource/index.ts`                                | adopts or asks from its unwritten-edit state, and owns the notice and its answers                  |
 | `apps/web/app/services/resource/createContentData.ts`                 | its reload stage is the adoption; it registers the `Keep` stage, which saves the document it holds |
 | `apps/web/app/services/resource/ResourceContentHookMap.ts`            | the two stages a restore runs, and the `Keep` stage keep mine runs                                 |

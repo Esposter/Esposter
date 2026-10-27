@@ -65,7 +65,7 @@ A key reaches only the kinds of work it was made for. `McpScope` holds them — 
 
 ## Attribution
 
-An agent writes as the key's owner, so its writes need a mark of their own. The route puts the verified key's id and name on the context as `apiKey`, absent on a person's own request, and `writeResourceActivity` copies both onto every [activity log](../../resource/activity-log/design.md) entry, `""` for the owner's own hand. A saved-content entry coalesces per user and key, so an agent's run of saves and a stretch of the owner's typing stay separate lines, and the log names the key on an agent's entries by the name it held when it wrote. The trail tells keys apart rather than devices: the owner's own browsers are one hand, and a key is the unit the owner creates, names and revokes.
+An agent writes as the key's owner, so its writes need a mark of their own. The route puts the verified key's id and name on the context as `apiKey`, absent on a person's own request, and `writeResourceActivity` copies both onto every [activity log](../../resource/activity-log/design.md) entry, `""` for the owner's own hand. A saved-content entry coalesces per owner and API key within an hour (`CONTENT_SAVED_COALESCE_WINDOW_MS` in `apps/web/server/services/resource/constants.ts`), as the activity log sets out, so an agent's run of saves and a stretch of the owner's typing stay separate lines, and the log names the key on an agent's entries by the name it held when it wrote. The trail tells keys apart rather than devices: the owner's own browsers are one hand, and a key is the unit the owner creates, names and revokes.
 
 ## The credential
 

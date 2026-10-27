@@ -1,18 +1,18 @@
 # Lifecycle tools
 
-Ships beside the owner's-alone declaration in [agent keys](../agent-keys/design.md). An edit to a document is only half of what a person does with a resource: they create it, name and tag it, bin and restore it, publish it, follow what links to it and roll it back. Each of those already has a procedure, and most of them are typeless, on the cross-type `resource` router. This unit serves them as one tool per operation, under the `Resources` scope a key is made with ([agent access](../../agent-access/design.md)), so the tool list does not grow with the number of types.
+Sits beside the owner's-alone declaration in [agent keys](../agent-keys/design.md). An edit to a document is only half of what a person does with a resource: they create it, name and tag it, bin and restore it, publish it, follow what links to it and roll it back. Each of those already has a procedure, and most of them are typeless, on the cross-type `resource` router. They are served as one tool per operation, under the `Resources` scope a key is made with ([agent access](../../agent-access/design.md)), so the tool list does not grow with the number of types.
 
 ## One tool per operation
 
 | Operation                 | Procedure                                                         | How it is served                                                                   |
 | ------------------------- | ----------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| Create                    | `resource.createResource`                                         | new, taking a type and a name, through the `createResourceRow` the factory calls   |
-| Rename and tag            | `resource.updateResource`                                         | new, typeless, the factory's body, which names no type                             |
+| Create                    | `resource.createResource`                                         | taking a type and a name, through the `createResourceRow` the factory calls        |
+| Rename and tag            | `resource.updateResource`                                         | typeless, the factory's body, which names no type                                  |
 | Bin and restore           | `resource.deleteResources`, `resource.restoreResources`           | opted in — a binned resource comes back whole                                      |
 | Duplicate                 | `resource.duplicateResource`                                      | opted in                                                                           |
 | Read one, publication too | `resource.readResource`                                           | opted in                                                                           |
-| Publish and unpublish     | `resource.publishResource`, `resource.unpublishResource`          | new, dispatched to the type's own generated procedure                              |
-| Upload and remove a file  | `resource.generateUploadFileSasEntities`, `resource.deleteFile`   | new, dispatched — the agent's own shell PUTs the bytes to the signed URL           |
+| Publish and unpublish     | `resource.publishResource`, `resource.unpublishResource`          | dispatched to the type's own generated procedure                                   |
+| Upload and remove a file  | `resource.generateUploadFileSasEntities`, `resource.deleteFile`   | dispatched — the agent's own shell PUTs the bytes to the signed URL                |
 | References                | `resource.readResourceReferences`                                 | opted in — what this resource links to, and what links to it                       |
 | Activity                  | `resource.readActivities`                                         | opted in                                                                           |
 | History                   | `resource.readSnapshotHistory`, `resource.restoreSnapshotVersion` | opted in — a restore takes a revision first, so it is undone as easily             |
@@ -48,19 +48,14 @@ A procedure only one type has stays on that type's router, opted in where it is 
 
 ## Key files
 
-| File                                                                  | Role                                                                                       |
-| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `apps/web/server/trpc/routers/resource.ts`                            | its typeless procedures opted in, with a typeless create and update                        |
-| `apps/web/server/trpc/routers/index.ts`                               | merges the dispatching router after the base router                                        |
-| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts` | unchanged — the dispatch reaches its publish and file procedures through the type's router |
-| `apps/web/shared/services/resource/checkHasCapability.ts`             | the capability gate the dispatch asks                                                      |
-| `apps/web/server/trpc/routers/blueprint.ts`                           | capture and deploy opted in                                                                |
-| `apps/web/server/trpc/routers/program.ts`                             | participants and status opted in                                                           |
-| `apps/web/server/trpc/routers/survey.ts`                              | the response reads opted in                                                                |
-| `apps/web/server/trpc/routers/dataset.ts`                             | `readDataset` opted in                                                                     |
-
-New code lands here:
-
-```text
-apps/web/server/trpc/routers/resourceDispatch.ts   publish, unpublish and file assets, dispatched to the type's own procedure
-```
+| File                                                                  | Role                                                                           |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `apps/web/server/trpc/routers/resource.ts`                            | its typeless procedures opted in, with a typeless create and update            |
+| `apps/web/server/trpc/routers/index.ts`                               | merges the dispatching router after the base router                            |
+| `apps/web/server/trpc/routers/resourceDispatch.ts`                    | publish, unpublish and file assets, dispatched to the type's own procedure     |
+| `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts` | the dispatch reaches its publish and file procedures through the type's router |
+| `apps/web/shared/services/resource/checkHasCapability.ts`             | the capability gate the dispatch asks                                          |
+| `apps/web/server/trpc/routers/blueprint.ts`                           | capture and deploy opted in                                                    |
+| `apps/web/server/trpc/routers/program.ts`                             | participants and status opted in                                               |
+| `apps/web/server/trpc/routers/survey.ts`                              | the response reads opted in                                                    |
+| `apps/web/server/trpc/routers/dataset.ts`                             | `readDataset` opted in                                                         |

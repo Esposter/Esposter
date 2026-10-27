@@ -41,7 +41,7 @@ An edit is a list of RFC 6902 operations — add, remove, replace, move, copy an
 
 ```mermaid
 flowchart TD
-  IN["updateResourceContent — id, operations, a version or none"] --> PATHS{"a write at or under a readOnly or x-opaque node?"}
+  IN["updateResourceContent"] --> PATHS{"a write at or under a readOnly or x-opaque node?"}
   PATHS -->|yes| REFUSE["refused, naming the path"]
   PATHS -->|no| PIN{"pinned, and the row has moved past that version?"}
   PIN -->|yes| STALE["refused as stale — the agent reads again"]

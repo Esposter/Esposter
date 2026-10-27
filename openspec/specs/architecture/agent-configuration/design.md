@@ -26,7 +26,7 @@ flowchart LR
   Tooling -. ignored .-> Worktrees
 ```
 
-`AGENT_DIRECTORY`, `AGENT_ALIAS_DIRECTORY` and `AGENT_WORKTREES_DIRECTORY` in `@esposter/configuration` are the single source for all three paths, so anything that can import interpolates them instead of repeating a literal. The rest cannot reach them — `.gitignore` has no imports, and `oxlint.config.ts` and `oxfmt.config.ts` are loaded by their tool before any workspace package is built (the CI format job installs the root project alone) — so they repeat the literal and `scripts/src/workspace/agentDirectories.test.ts` pins every copy to its constant. A copy has been silently un-excluded before by an unrelated edit widening a glob, and nothing else would have noticed.
+`AGENT_DIRECTORY`, `AGENT_ALIAS_DIRECTORY` and `AGENT_WORKTREES_DIRECTORY` in `@esposter/configuration` are the single source for all three paths, so anything that can import interpolates them instead of repeating a literal. The rest cannot reach them — `.gitignore` has no imports, and `oxlint.config.ts` and `oxfmt.config.ts` are loaded by their tool before any workspace package is built (the CI format job installs the root project alone) — so they repeat the literal and `scripts/src/workspace/agentDirectories.test.ts` pins every copy to its constant. A copy can be silently un-excluded by an unrelated edit that widens a glob, and nothing else would notice.
 
 Which literal a tool needs follows from how far it walks, so the two exclusions are not interchangeable:
 
