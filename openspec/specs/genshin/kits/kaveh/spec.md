@@ -14,11 +14,11 @@ Kaveh's four strikes, collision and two plunges SHALL be his normal attacks and 
 - **WHEN** the player presses the attack button repeatedly
 - **THEN** his four strikes play in order and each deals its own hit
 
-#### Scenario: The collision deals no poise yet
+#### Scenario: The collision deals 35 poise
 
 - **GIVEN** Kaveh is in the air
 - **WHEN** the collision lands
-- **THEN** the enemy's poise is not reduced by the collision
+- **THEN** it deals 35 poise
 
 ### Requirement: Provisional charged attack that spins then finishes
 
