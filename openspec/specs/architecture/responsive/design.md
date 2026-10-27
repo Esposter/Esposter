@@ -9,8 +9,8 @@ flowchart TD
   scale["configuration/breakpoints.ts — one scale"]
   scale -->|"BREAKPOINTS"| plugin["plugins/ui.ts — Vuetify 0's breakpoints plugin"]
   scale -->|"UNOCSS_BREAKPOINTS"| uno["uno.config.ts — theme.breakpoint"]
-  plugin -->|"useUiDisplay"| script["script setup — smAndDown, isMobile, width"]
-  uno -->|"variant prefixes"| template["template — md:grid-cols-2, lg:flex-row"]
+  plugin -->|"useUiDisplay"| script["script setup"]
+  uno -->|"variant prefixes"| template["template"]
   script --> layout["a structurally different layout"]
   template --> values["the same layout with different values"]
 ```
@@ -38,9 +38,9 @@ flowchart TD
   start["A surface that must work on a phone"] --> fits{"Does it fit and work<br/>with no branch at all?"}
   fits -->|yes| one["1 · One markup that reflows<br/>min-w-0, truncate, wrap, sizes in min() of the viewport"]
   fits -->|no| value{"Is it the same layout<br/>with a value moved?"}
-  value -->|yes| prefix["2 · A breakpoint prefix<br/>sm:inline, md:flex-col — never the hidden attribute"]
+  value -->|yes| prefix["2 · A breakpoint prefix<br/>sm:inline, md:flex-col"]
   value -->|no| fewer{"Would fewer controls fit?"}
-  fewer -->|yes| overflow["3 · The occasional ones into the overflow menu<br/>at every width (responsive skill)"]
+  fewer -->|yes| overflow["3 · The occasional ones into the overflow menu<br/>at every width"]
   fewer -->|no| container{"Is it one content in a<br/>different container?"}
   container -->|yes| library["4 · A script branch in the library<br/>docked column or sheet, never in the feature"]
   container -->|no| device["5 · A component per input device<br/>chosen by what the reader holds, never by width"]

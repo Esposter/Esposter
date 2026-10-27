@@ -1,6 +1,6 @@
 ## Purpose
 
-Which of node-semver's issues the outdated-dependency report's own range matching answers, and how each was settled, before scripts absorbed the two functions it calls.
+Which of node-semver's issues the outdated-dependency report's own range matching answers, and how each was settled.
 
 ## Requirements
 

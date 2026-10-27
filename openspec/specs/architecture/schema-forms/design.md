@@ -176,7 +176,7 @@ Every issue and pull request the audit of @jsonforms/vue selected from [eclipses
 
 ## Notes
 
-- **AJV is JSON Forms'.** JSON Forms' core imports AJV and builds an instance when a form mounts, even with its validation off, to match a union's variants. So AJV and its formats stay, as JSON Forms' own dependencies rather than the app's. Their CommonJS needs nothing of ours: rolldown wraps it in its own interop helper in the production build, and the dev pre-bundle names them through their importer (`apps/web/configuration/vite.ts`). The app writes nothing on top of AJV: it carries no validation keywords of its own and no error-message or translation package.
+- **AJV is JSON Forms'.** JSON Forms' core imports AJV and builds an instance when a form mounts, to match a union's variants. So AJV and its formats stay, as JSON Forms' own dependencies rather than the app's. Their CommonJS needs nothing of ours: rolldown wraps it in its own interop helper in the production build, and the dev pre-bundle names them through their importer (`apps/web/configuration/vite.ts`). The app writes nothing on top of AJV: it carries no validation keywords of its own and no error-message or translation package.
 - **Every change runs each renderer's mapping again.** The reuse that keeps an unchanged binding the same object, so that a change re-renders only the fields it touches, is in the package's master branch and not taken here, so a change re-runs every mapping on the form. The package's 3.8.0 bindings did the same.
 
 ## Sources

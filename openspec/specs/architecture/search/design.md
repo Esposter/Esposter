@@ -6,8 +6,8 @@ Every search UI in the repo composes from one small stack instead of hand-rollin
 
 ```mermaid
 flowchart TD
-  Palette["A command palette scope (Ctrl+K)"] -- "its query" --> Core
-  Cursor["useCursorSearcher (cursor-paginated results)"] --> Core["useAutoSearch (throttle + abort + pending)"]
+  Palette["A command palette scope"] -- "its query" --> Core
+  Cursor["useCursorSearcher (cursor-paginated results)"] --> Core["useAutoSearch"]
   Core -- "search(sanitizedQuery, signal)" --> Trpc["tRPC search procedure"]
   Palette -- "its query" --> Client["computed over a MiniSearch index"]
   Client --> Loaded["already-loaded data - no server call"]

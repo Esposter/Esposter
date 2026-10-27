@@ -18,7 +18,7 @@ flowchart TD
   PANEL --> WATCH
   WATCH --> SPAN["getVisibleSectionIds — each section runs to the next anchor, so overlap decides"]
   SPAN --> KEEP{"is the new set empty"}
-  KEEP -->|"yes"| HOLD["keep the last non-empty set — the highlight never drops out"]
+  KEEP -->|"yes"| HOLD["keep the last non-empty set"]
   KEEP -->|"no"| EMIT["visibleIds — the sidebar's active items and the rail's active keys"]
 ```
 

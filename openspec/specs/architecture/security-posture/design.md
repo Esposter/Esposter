@@ -1,6 +1,6 @@
 # Security Posture
 
-The app's runtime hardening is [`nuxt-security-module`](../../nuxt-security-module/README.md), which replaces nuxt-security and is registered in `configuration/modules.ts`. It appears only in the production branch of that list: the Vitest branch is an allowlist of the modules a unit test actually exercises, and security headers are something no test asserts, so including the module would only slow config resolution. Nothing about the posture is therefore observable from a unit test — it is a property of a running server.
+The app's runtime hardening is [`nuxt-security-module`](../../nuxt-security-module/README.md) and is registered in `configuration/modules.ts`. It appears only in the production branch of that list: the Vitest branch is an allowlist of the modules a unit test actually exercises, and security headers are something no test asserts, so including the module would only slow config resolution. Nothing about the posture is therefore observable from a unit test — it is a property of a running server.
 
 This page covers the **app**. The Azure estate's posture — network exposure, managed identities, key handling — is owned by the [cost and security posture](../../infra/cost-and-security-posture/design.md).
 

@@ -2,7 +2,7 @@
 
 The [outdated-dependency report](../monorepo-tooling/design.md) reads two things through [node-semver](https://github.com/npm/node-semver): whether a specifier is a dist-tag or a range (`checkIsValidRange`), and whether a package's `latest` falls inside a Renovate `allowedVersions` cap (`checkIsVersionInRange`). Those are the only two functions the `scripts` package calls, so they are the only two absorbed; `scripts/src/services/semver/` holds them, with the version parser, comparison and range grammar behind them.
 
-The replacement follows SemVer 2.0.0 for version precedence and build metadata, and node-semver 7.8.5 for the range grammar and the prerelease rule. Its behaviour is checked against node-semver 7.8.5 over a grid of 238 ranges and their versions, both with and without `includePrerelease`. The only differences left are values above `Number.MAX_SAFE_INTEGER`, which SemVer allows and #393 covers below.
+The replacement follows SemVer 2.0.0 for version precedence and build metadata, and node-semver 7.8.5 for the range grammar and the prerelease rule. Its behaviour is checked against node-semver 7.8.5 over a grid of a couple hundred ranges and their versions, both with and without `includePrerelease`. The only differences left are values above `Number.MAX_SAFE_INTEGER`, which SemVer allows and #393 covers below.
 
 ## Scope
 
