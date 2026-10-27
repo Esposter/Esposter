@@ -213,11 +213,14 @@ const drawSinsRow = async (
   const { Box, Button, Text } = $.ui.resolve(e);
   return Box({
     children: [
-      Text({ bold: true, children: "Sins", color: accent }),
-      ...(summary ? [Text({ children: summary, dimColor: true })] : []),
-      ...(scores.length === 0 && !summary ? [Text({ children: "no prompt scored yet", dimColor: true })] : []),
+      Text({ bold: true, children: "Sins  ", color: accent }),
+      ...(summary ? [Text({ children: `${summary}  `, dimColor: true })] : []),
+      ...(scores.length === 0 && !summary ? [Text({ children: "no prompt scored yet  ", dimColor: true })] : []),
       ...scores.map(({ name, score }) =>
-        Text({ children: `${name} ${Math.round(score * 100)}%`, color: SinColorMap[name][isLight ? "light" : "dark"] }),
+        Text({
+          children: `${name} ${Math.round(score * 100)}%  `,
+          color: SinColorMap[name][isLight ? "light" : "dark"],
+        }),
       ),
       Button({
         hotkey: "p",
@@ -227,7 +230,6 @@ const drawSinsRow = async (
         plain: true,
       }),
     ],
-    columnGap: 2,
     flexDirection: "row",
     flexWrap: "wrap",
   });
