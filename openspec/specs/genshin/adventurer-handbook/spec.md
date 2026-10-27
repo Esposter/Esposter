@@ -12,7 +12,7 @@ The Adventurer Handbook SHALL list its six tabs down its left edge in the Englis
 
 - **GIVEN** the Adventurer Handbook is open
 - **WHEN** its tabs are read from top to bottom
-- **THEN** they are Experience, Commissions, Domains, Enemies, Guide and Embattle `~/Esposter.noindex/genshin-parity/references/handbook-experience.png`
+- **THEN** they are Experience, Commissions, Domains, Enemies, Guide and Embattle
 
 ### Requirement: F1 opens the handbook on its Experience tab
 
@@ -45,20 +45,20 @@ The Experience page SHALL show the chapter's investigation panel and bar, its re
 - **GIVEN** the Experience tab is open
 - **WHEN** the page is read
 - **THEN** the investigation panel is on the left
-- **AND** the chapter's commissions are listed down the right `~/Esposter.noindex/genshin-parity/references/handbook-experience.png`
+- **AND** the chapter's commissions are listed down the right
 
 #### Scenario: Reward tile takes its rarity's colours
 
 - **GIVEN** a commission offers a reward
 - **WHEN** it is shown
-- **THEN** its tile takes the colours of the reward's rarity `~/Esposter.noindex/genshin-parity/references/handbook-experience.png`
-- **AND** the reward's count is shown on the strip across its foot `~/Esposter.noindex/genshin-parity/references/handbook-experience.png`
+- **THEN** its tile takes the colours of the reward's rarity
+- **AND** the reward's count is shown on the strip across its foot
 
 #### Scenario: Commission row shows its progress
 
 - **GIVEN** a commission is listed on the Experience page
 - **WHEN** the row is shown
-- **THEN** it shows the commission's title, its progress, its rewards and its tick `~/Esposter.noindex/genshin-parity/references/handbook-experience.png`
+- **THEN** it shows the commission's title, its progress, its rewards and its tick
 
 ## Open
 

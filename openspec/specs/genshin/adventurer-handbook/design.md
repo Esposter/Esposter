@@ -28,6 +28,11 @@ The book is scored whole-frame against `handbook-experience`, the wiki's screens
 
 - [Adventurer Handbook](https://genshin-impact.fandom.com/wiki/Adventurer_Handbook), Genshin Impact Wiki: the Experience, Commissions, Domains, Enemies, Guide and Embattle tabs and what each shows.
 - [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: F1 opens the Adventurer Handbook.
+- Requirement "Six tabs listed in the English client's order", scenario "Tabs read top to bottom": `~/Esposter.noindex/genshin-parity/references/handbook-experience.png`
+- Requirement "The Experience page shows the chapter and its commissions", scenario "Layout of the Experience page": `~/Esposter.noindex/genshin-parity/references/handbook-experience.png`
+- Requirement "The Experience page shows the chapter and its commissions", scenario "Reward tile takes its rarity's colours" (tile colours): `~/Esposter.noindex/genshin-parity/references/handbook-experience.png`
+- Requirement "The Experience page shows the chapter and its commissions", scenario "Reward tile takes its rarity's colours" (count on the strip): `~/Esposter.noindex/genshin-parity/references/handbook-experience.png`
+- Requirement "The Experience page shows the chapter and its commissions", scenario "Commission row shows its progress": `~/Esposter.noindex/genshin-parity/references/handbook-experience.png`
 
 ## Reference
 
