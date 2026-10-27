@@ -45,7 +45,7 @@ Ravaging Confession SHALL deal its two hits, reaching from Rosaria's body, and S
 
 ### Requirement: Rites of Termination's field
 
-Rites of Termination SHALL strike a slash and a lance, then leave a field that ticks every two seconds from Rosaria's body, each tick a circle of 9.5 metres round her body, the reach of gcsim's circle of radius 6.5 three metres ahead of her, and Constellation 2 SHALL add four seconds to the field.
+Rites of Termination SHALL strike a slash and a lance, then leave a field that ticks every two seconds from Rosaria's body, each tick a circle of 9.5 metres round her body, and Constellation 2 SHALL add four seconds to the field.
 
 #### Scenario: Field ticks every two seconds
 
