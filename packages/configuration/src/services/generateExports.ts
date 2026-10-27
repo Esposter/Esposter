@@ -14,6 +14,7 @@ const COMPONENT_BARREL_PATH = join(COMPONENTS_DIRECTORY, BARREL_FILE);
 // Changed its answer. It is removed: the package's own typecheck would still read it, naming modules the package may
 // Since have deleted, and CI restores every package's barrel from the last run's cache, so nothing else would
 // Ever clear it
+// oxlint-disable enum-map/no-literal-map-key -- an enum here breaks tsdown loading this package's own config through strip-only type stripping, as ExportsGeneration.ts says
 const BarrelsMap: Record<
   ExportsGeneration,
   { barrelPaths: string[]; generators: ((sourceDirectory: string, lazyDirectories: string[]) => void)[] }
@@ -25,6 +26,7 @@ const BarrelsMap: Record<
     generators: [generateComponentBarrel, generateSourceBarrel],
   },
 };
+// oxlint-enable enum-map/no-literal-map-key
 const ALL_BARREL_PATHS = new Set(Object.values(BarrelsMap).flatMap(({ barrelPaths }) => barrelPaths));
 // Writes the barrels into `src` under the package directory tsdown resolved, from the build's `build:prepare` hook.
 // `lazyDirectories` are `src`-relative directories the package loads on demand, and the source barrel leaves them out.
