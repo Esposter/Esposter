@@ -13,7 +13,7 @@ readThings: standardAuthedProcedure
   .query<Thing[]>(async ({ ctx, input }) => { … }),
 ```
 
-- **The description and the scope are the only new things.** An agent chooses a tool by what it is told the tool is for, and a procedure has no other place to say it. Written for the agent: when to call it, and what its fields mean where their names do not say. The scope says which keys reach the tool, below.
+- **The description and the scope are the procedure's only declarations.** An agent chooses a tool by what it is told the tool is for, and a procedure has no other place to say it. Written for the agent: when to call it, and what its fields mean where their names do not say. The scope says which keys reach the tool, below.
 - **Its input is one object.** An MCP tool's input schema must be one, so every procedure that opts in is a query or a mutation with exactly one object input. No two may map to one tool name either, since turning dots to underscores could give two paths the same name. `getMcpTools.test.ts` walks the router and fails on either.
 - **A procedure shaped for the browser may be the wrong shape for an agent.** The answer is a procedure shaped for the agent, never a branch in the bridge: a whole-list save at a content version is a poor tool for adding one todo, so the TodoList has its own follow-up procedures ([TodoList agent follow-ups](../../resource/todolist-agent-follow-ups/design.md)).
 

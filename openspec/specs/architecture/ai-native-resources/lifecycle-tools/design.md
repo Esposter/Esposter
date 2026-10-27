@@ -44,11 +44,11 @@ A procedure only one type has stays on that type's router, opted in where it is 
 | Blueprint | `blueprint.captureBlueprint`, `blueprint.deployBlueprint`             | a capture reads resources the owner owns, a deploy creates new ones        |
 | Program   | `program.generateProgramParticipants`, `program.readProgramStatus`    | issuing one idempotent token per audience member, and reading who answered |
 | Survey    | `survey.readSurveyResponseRecords`, `survey.readSurveyResponsesCount` | reading answers the owner already reads                                    |
-| TodoList  | the follow-up procedures                                              | unchanged, under the follow-ups scope                                      |
+| TodoList  | the follow-up procedures                                              | under the follow-ups scope                                                 |
 
 ## Key files
 
-| File                                                                  | Role after the change                                                                      |
+| File                                                                  | Role                                                                                       |
 | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
 | `apps/web/server/trpc/routers/resource.ts`                            | its typeless procedures opted in, with a typeless create and update                        |
 | `apps/web/server/trpc/routers/index.ts`                               | merges the dispatching router after the base router                                        |

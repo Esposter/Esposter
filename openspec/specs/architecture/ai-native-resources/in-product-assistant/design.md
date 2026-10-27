@@ -36,7 +36,7 @@ With no host paired, the command shows how to pair one rather than falling back 
 
 ## Key files
 
-| File                                                                       | Role after the change                                              |
+| File                                                                       | Role                                                               |
 | -------------------------------------------------------------------------- | ------------------------------------------------------------------ |
 | `apps/web/app/components/Resource/Blade/Header.vue`                        | registers Ask Claude for every type                                |
 | `apps/web/app/store/agentConsole/connection.ts`                            | sends the prompt to the paired host, unchanged                     |

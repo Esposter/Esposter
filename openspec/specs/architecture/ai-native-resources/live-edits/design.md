@@ -12,7 +12,7 @@ The stream carries the new content version and the writing device rather than th
 
 An open editor that holds no unwritten edit — no save pending, no autosave armed, content equal to what it last persisted — adopts the save. It stores the new version and runs `ResourceContentHookMap`'s two stages in order, as [third-party document adapters](../../third-party-document-adapters/design.md) describe for a restore: `Reload`, where each content store re-reads through `createContentData`, then `Adopt`, where a library holding its own copy — Tiptap, SurveyJS — takes the new document.
 
-Two things describe a document that is gone, and clear. An editor's undo history clears, as a restore clears it: the Sheet's command history today, the page builder's patch history once it ships. The [delta content saves](../../../resource/delta-content-saves/design.md) baseline clears too, since it names bytes the server no longer holds, so one large save crosses whole before deltas resume.
+Two things describe a document that is gone, and clear. An editor's undo history clears, as a restore clears it: the Sheet's command history, the page builder's patch history once it ships. The [delta content saves](../../../resource/delta-content-saves/design.md) baseline clears too, since it names bytes the server does not hold, so one large save crosses whole before deltas resume.
 
 The TodoList saves each edit as it happens, so it rarely holds an unwritten one, and it re-reads on another device's save in place of taking the streamed list.
 
@@ -43,7 +43,7 @@ A save the server refuses is the one case the save stream did not deliver, so it
 
 ## Key files
 
-| File                                                                  | Role after the change                                                                              |
+| File                                                                  | Role                                                                                               |
 | --------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
 | `apps/web/app/components/Resource/Explorer/Index.vue`                 | runs the open resource's save subscription, whatever its type                                      |
 | `apps/web/app/composables/resource/useResourceSaveSubscribable.ts`    | the one save subscription every type shares; the per-type subscribables it replaces are deleted    |
@@ -51,7 +51,7 @@ A save the server refuses is the one case the save stream did not deliver, so it
 | `apps/web/app/store/resource/index.ts`                                | adopts or asks from its unwritten-edit state, and owns the notice and its answers                  |
 | `apps/web/app/services/resource/createContentData.ts`                 | its reload stage is the adoption; it registers the `Keep` stage, which saves the document it holds |
 | `apps/web/app/services/resource/ResourceContentHookMap.ts`            | the two stages a restore runs, and the `Keep` stage keep mine runs                                 |
-| `apps/web/app/store/resource/sheet/index.ts`                          | its history clears when the content ref is replaced, which adoption does: unchanged                |
+| `apps/web/app/store/resource/sheet/index.ts`                          | its history clears when the content ref is replaced, which adoption does.                          |
 | `apps/web/app/components/Resource/OtherSaveNotice.vue`                | the notice over an unwritten edit: names the saver, and takes theirs or keeps mine                 |
 | `apps/web/server/services/resource/events/resourceEventEmitter.ts`    | the save event carries the key an agent wrote with, "" for a person's own save                     |
 | `apps/web/server/trpc/procedure/resource/createResourceProcedures.ts` | the save stream carries the version and the device rather than the content                         |

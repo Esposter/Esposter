@@ -22,7 +22,7 @@ The test is in `getMcpTools.test.ts`, and it landed with [lifecycle tools](../li
 
 ## Key files
 
-| File                                                                                   | Role after the change                                                         |
+| File                                                                                   | Role                                                                          |
 | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
 | `apps/web/server/models/trpc/Meta.ts`                                                  | `humanOnly` names why a procedure is never served                             |
 | `apps/web/server/services/mcp/getMcpTools.ts`                                          | skips a human-only procedure                                                  |
