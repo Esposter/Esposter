@@ -62,7 +62,6 @@
     "@vue/test-utils": "catalog:",
     "tsdown": "catalog:",
     "type-fest": "catalog:",
-    "vize": "catalog:",
     "vue-tsc": "catalog:"
   },
   "peerDependencies": {
