@@ -23,10 +23,10 @@ Every language's text map SHALL be decoded from the installed game with every ch
 
 ### Requirement: The generated game text
 
-The generated game text SHALL differ from the community dump only where the game itself changed.
+The generated game text SHALL differ from the text already kept only where the game itself changed.
 
 #### Scenario: The text write runs green with an empty or reworded diff
 
 - **GIVEN** the decoded maps are written into the generated text
 - **WHEN** the diff is read against the generated text already kept
-- **THEN** the diff is empty or holds only reworded lines, each read against the dump's map of the same revision
+- **THEN** the diff is empty or holds only reworded lines, each read against the generated text already kept
