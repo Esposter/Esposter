@@ -29,13 +29,13 @@ Iansan's charged attack SHALL strike a small circle on the primary target and SH
 
 ### Requirement: Provisional plunges
 
-Iansan's plunges SHALL use the standard borrowed plunge and stay provisional until a recording of them settles it.
+Iansan's plunges SHALL use the standard borrowed plunge and stay provisional.
 
-#### Scenario: A recording settles the plunges
+#### Scenario: The plunges stay provisional
 
-- **GIVEN** a recording of Iansan's plunges exists
-- **WHEN** its timings are compared with the kit's
-- **THEN** the plunges stay provisional until the comparison settles them
+- **GIVEN** Iansan's plunges take the standard borrowed plunge
+- **WHEN** the kit is read
+- **THEN** the plunges stay provisional
 
 ### Requirement: Skill's activation hit
 
