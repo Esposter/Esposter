@@ -15,7 +15,7 @@ Lyney's four strikes SHALL land in order, hitting the enemies within reach.
 
 ### Requirement: Prop Arrow and its Grin-Malkin Hat
 
-Lyney's Prop Arrow SHALL set a Grin-Malkin Hat, whose Pyrotechnic Strike lands 36 frames after the hat expires, 387 frames after the cast (provisional: the record marks the 387 Unsourced).
+Lyney's Prop Arrow SHALL set a Grin-Malkin Hat, whose Pyrotechnic Strike lands 36 frames after the hat expires, 387 frames after the cast (provisional).
 
 #### Scenario: Hat's strike lands after it expires
 
@@ -42,7 +42,7 @@ Bewildering Lights' press SHALL strike the enemies within its reach.
 
 ### Requirement: Wondrous Trick: Miracle Parade
 
-Wondrous Trick: Miracle Parade's Explosive Firework SHALL set a Grin-Malkin Hat, whose Pyrotechnic Strike lands 36 frames after the hat expires, 563 frames after the cast (provisional: the record marks the 563 Unsourced).
+Wondrous Trick: Miracle Parade's Explosive Firework SHALL set a Grin-Malkin Hat, whose Pyrotechnic Strike lands 36 frames after the hat expires, 563 frames after the cast (provisional).
 
 #### Scenario: Burst's hat strike lands after it expires
 
