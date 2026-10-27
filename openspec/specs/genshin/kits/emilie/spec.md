@@ -17,7 +17,7 @@ Emilie's normal attacks SHALL be four strikes, a charged attack, a collision att
 
 ### Requirement: Plunge poise
 
-Emilie's low and high plunges SHALL deal 100 and 150 poise, and her collision attack SHALL deal the wiki's 25 poise. gcsim gives the collision none, so its poise is open in the design.
+Emilie's low and high plunges SHALL deal 100 and 150 poise, and her collision attack SHALL deal 25 poise.
 
 #### Scenario: The low and high plunges deal poise
 
@@ -26,11 +26,11 @@ Emilie's low and high plunges SHALL deal 100 and 150 poise, and her collision at
 - **THEN** the enemy takes 100 poise damage
 - **AND** her high plunge deals 150 poise damage
 
-#### Scenario: The collision attack deals the wiki's poise
+#### Scenario: The collision attack deals poise
 
 - **GIVEN** Emilie is in the air
 - **WHEN** her collision attack hits an enemy
-- **THEN** the enemy takes 25 poise damage, an open value (see the design's Decisions)
+- **THEN** the enemy takes 25 poise damage
 
 ### Requirement: Lumidouce Case and Spiritbreath Thorn
 
