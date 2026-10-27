@@ -49,6 +49,7 @@ Losing the row costs nothing, which is what makes the cascade cheap rather than 
 Writing a subscription requires its session to exist as a row. The test mock for `auth.api.getSession` writes the row it fabricates, as sign-in does, so the suite exercises the same invariant production does.
 
 One genuine schema fix travels with this: `sessions.userId` cascades on the user row, like every other row a user owns, so deleting a user who still holds a session removes it.
+
 **Live connections are closed explicitly**, because a Web PubSub client access url outlives the session that minted it. Web PubSub identifies a connection by _device_ — `userId⟂sessionId`, see `generateWebPubSubClientAccessUrl` — so `closeUserConnections` addresses exactly one session's connections. It is best-effort in full, the service client included: the revoke has already landed by then, so a hub that cannot be reached costs a connection living until it drops on its own, rather than a revoke reported as failed.
 
 Revoking your **own** row is sign-out: the wording says so before the click, and the card lands on the login route rather than refreshing a listing the page can no longer read. The auth cookie is left in place and inert — it names a session row that no longer exists, so the next request resolves no session.
