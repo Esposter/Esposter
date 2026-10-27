@@ -10,7 +10,7 @@ for await (const chunk of process.stdin) input += chunk;
 const { apiUrl, questions, session, state, storePath } = JSON.parse(input);
 const finish = (result) => process.stdout.write(JSON.stringify(result));
 const key = process.env.TYPESAFE_API_KEY;
-const sqlite = process.getBuiltinModule("node:sqlite");
+const sqlite = process.getBuiltinModule?.("node:sqlite");
 
 if (!key) finish({ result: "no-key" });
 else if (!sqlite) finish({ result: "node-too-old" });

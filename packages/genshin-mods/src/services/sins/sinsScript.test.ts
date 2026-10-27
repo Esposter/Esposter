@@ -1,11 +1,11 @@
+import type { AddressInfo } from "node:net";
+
 import { spawn } from "node:child_process";
 import { mkdtempSync } from "node:fs";
 import { createServer, type Server } from "node:http";
-import type { AddressInfo } from "node:net";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { Database } from "node:sqlite";
-
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
 import { SIN_NAMES } from "./constants";
@@ -13,9 +13,9 @@ import { getSinQuestions } from "./getSinQuestions";
 import { SINS_SCRIPT } from "./sinsScript";
 
 // Runs the script as the module runs it, with the payload on stdin and the key in its environment, and reads its result
-const runScript = (payload: object, key: string) =>
+const runScript = (payload: object, key: string, script = SINS_SCRIPT) =>
   new Promise<string>((resolve) => {
-    const child = spawn("node", ["--input-type=module", "-e", SINS_SCRIPT], {
+    const child = spawn("node", ["--input-type=module", "-e", script], {
       env: { ...process.env, TYPESAFE_API_KEY: key },
     });
     let stdout = "";
@@ -54,6 +54,14 @@ describe("sinsScript", () => {
     expect.hasAssertions();
 
     expect(JSON.parse(await runScript(getPayload(), ""))).toStrictEqual({ result: "no-key" });
+  });
+
+  test("answers node-too-old where process.getBuiltinModule is missing, before Node 22.3", async () => {
+    expect.hasAssertions();
+
+    expect(
+      JSON.parse(await runScript(getPayload(), "test-key", `delete process.getBuiltinModule;\n${SINS_SCRIPT}`)),
+    ).toStrictEqual({ result: "node-too-old" });
   });
 
   test("records one evidence row for the prompt, holding its seven answers", async () => {
