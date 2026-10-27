@@ -32,6 +32,7 @@ flowchart TD
 
 - [Investigation](https://genshin-impact.fandom.com/wiki/Investigation), Genshin Impact Wiki: spots that give artifacts, ingredients, ores or Mora, and the daily cap of a hundred investigations. The page reads "The number of investigations a player can conduct in a day in the open world, is limited to 100." That page is not on disk, so the quote is unchecked (see Open).
 - [Daily Reset](https://genshin-impact.fandom.com/wiki/Daily_Reset), Genshin Impact Wiki: what comes back at the daily reset and around it. That page is not on disk, so nothing here is checked against it.
+- The game day starts at the daily reset: (the English text gives the reset as "4:00 AM ({TIMEZONE})").
 
 ## Open
 
