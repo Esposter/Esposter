@@ -83,7 +83,7 @@
     "parity": "vite --config parity/vite.config.ts",
     "test": "vitest",
     "test:visual": "vitest --config vitest.browser.config.ts",
-    "typecheck": "vue-tsc"
+    "typecheck": "tsrs --fast --runExternalCode"
   },
   "dependencies": {
     "fflate": "catalog:"
