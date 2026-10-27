@@ -94,7 +94,7 @@ The user's one batch, checked whenever convenient ([parity](../../specs/genshin/
 - [ ] **Trump-Card Kitty's leap ends at 6.3 seconds** — [Collei](../../specs/genshin/kits/collei/design.md): a recording of the leap ends 6.3 seconds after its explosion.
 - [ ] **Collei's arrows, Floral Brush and Kitty stagger no enemy** — [Collei](../../specs/genshin/kits/collei/design.md): no recording shows any of them staggering an enemy.
 - [x] **Collei's arrows, charged shot, Floral Brush, Kitty's explosion and leap deal the wiki's poise** — [Collei](../../specs/genshin/kits/collei/design.md): the built kit fills the wiki's poise on these hits, and the spec states it.
-- [ ] **Collei's plunges deal 50 low and 100 high, the wiki's rows** — [Collei](../../specs/genshin/kits/collei/design.md): the design names no wiki row, the Collei page is not on disk, and other kits give the wiki's plunge rows as 100 and 150.
+- [ ] **Collei's plunges deal 50 low and 100 high, the wiki's rows** — [Collei](../../specs/genshin/kits/collei/design.md): the design takes them from the wiki's Low Plunge and High Plunge rows, and other kits give the wiki's plunge rows as 100 and 150, so the Collei page's rows need reading to settle them.
 - [ ] **Dori's charged attack hits at the spin's end** — [Dori](../../specs/genshin/kits/dori/design.md): a recording's final hit lands when the spin ends.
 - [ ] **Connector ticks run past 12 seconds** — [Dori](../../specs/genshin/kits/dori/design.md): a recording shows a tick after 12 seconds from the burst.
 - [ ] **Dori's shot, Connector and collision stagger no enemy** — [Dori](../../specs/genshin/kits/dori/design.md): no recording shows any of the three staggering an enemy.
