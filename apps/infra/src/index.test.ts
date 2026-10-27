@@ -8,6 +8,6 @@ describe("@esposter/infra", () => {
   test("bundle size", () => {
     expect.hasAssertions();
 
-    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 109.20 KB (111823 bytes)"`);
+    expect(getFileSizeReport(distFile)).toMatchInlineSnapshot(`"index.js: 111.88 KB (114562 bytes)"`);
   });
 });
