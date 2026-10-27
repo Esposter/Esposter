@@ -3,7 +3,7 @@ description: Pre-accept Claude Code's trust dialog for the checkout, so a headle
 runs:
   using: composite
   steps:
-    # A fresh runner has no ~/.claude.json, so Claude Code treats the checkout as untrusted and ignores every
+    # A fresh runner has no {home}/.claude.json, so Claude Code treats the checkout as untrusted and ignores every
     # permissions.allow entry in .agents/settings.local.json. Pre-accepting the trust dialog silences that. One
     # definition for every workflow that runs Claude Code headless — the warmup and the review.
     - name: 🤝 Trust the workspace

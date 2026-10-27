@@ -7,7 +7,7 @@ import { describe, expect, test } from "vitest";
 /**
  * Every CLI entry is a command line, and its run is timed by the shared wrapper (`cli` skill). A new entry is covered
  * with no opt-in because the wrapper is the one way an entry starts; an entry that calls `runMain` directly, or
- * reaches citty around the wrapper, leaves its runs out of `~/.esposter/timings` and is what this test names.
+ * reaches citty around the wrapper, leaves its runs out of `{state-root}/timings` and is what this test names.
  */
 describe("commandEntries", () => {
   const ENTRY_PATHSPEC = "scripts/src/**/index.ts";
