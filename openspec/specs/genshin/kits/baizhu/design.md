@@ -30,4 +30,4 @@ flowchart LR
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/baizhu), MIT: Baizhu's strikes' hitmarks, cancel frames and boxes, the charged attack, Universal Diagnosis' first hit and animation, and Holistic Revivification's animation, shield timings and recasts.
 - [gcsim](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/plunge.go), MIT: the plunges' timings, borrowed as Baizhu's own folder has none.
 - The dump's proud skill groups `8231`, `8232` and `8239`, and its talents `822` (Constellation 2: 2.5 and 5 seconds, and the 0.2 heal) and `826` (Constellation 6: 0.08), read from `ProudSkillExcelConfigData.json` and `AvatarTalentExcelConfigData.json`.
-- The wiki page cached at `{data-root}/cache/genshin-wiki/Category_Baizhu_Talents.json`: the Baizhu page's plunge poise, 50 low and 100 high.
+- `{data-root}/cache/genshin-wiki/Category_Baizhu_Talents.json`: the Baizhu page's plunge poise, 50 low and 100 high.

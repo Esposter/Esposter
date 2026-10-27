@@ -38,7 +38,7 @@ flowchart LR
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/clorinde), MIT: every strike's hitmarks, frames and areas, the circle and hitmark of the charged attack, Last Lightfall's five boxes and their hitmarks, the press's cooldown and state, and the passives and constellations listed as not built. The line numbers above are its files at v2.47.2 (`{data-root}/cache/gcsim-v2.47.2/internal/characters/clorinde/`).
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/clorinde), MIT: every strike's hitmarks, frames and areas, the circle and hitmark of the charged attack, Last Lightfall's five boxes and their hitmarks, the press's cooldown and state, and the passives and constellations listed as not built.
 - The wiki's Clorinde talent page (`{data-root}/cache/genshin-wiki/Category_Clorinde_Talents.json`): the poise of each strike, the charged attack, the plunges and the Swift Hunt and Impale the Night hits.
 - The game's `ProudSkillExcelConfigData` (`{data-root}/genshin-parity/text/ExcelBinOutput`), which holds proud skill groups 9831, 9832 and 9839.
 - `{data-root}/cache/gcsim-v2.47.2/internal/characters/clorinde/attack.go` line 20: grounds the requirement Normal attack chain.

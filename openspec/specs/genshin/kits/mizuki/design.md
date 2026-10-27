@@ -35,10 +35,10 @@ flowchart TD
 ## Sources
 
 - [gcsim skill.go](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/mizuki), MIT: the Dreamdrifter state's five-second duration and its cancel on a second press.
-- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/mizuki), MIT: each strike's hitmark, animation and travel, the charged attack's hit, animation and windup, the skill's activation, poise, animation and cooldown delay, and the burst's hit, poise, animation and cooldown, read from its attack, charge, skill and burst files, with its snack, ascension and constellation files for the mechanics waiting on their hooks.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/mizuki), MIT: each strike's hitmark, animation and travel, the charged attack's hit, animation and windup, the skill's activation, poise, animation and cooldown delay, and the burst's hit, poise, animation and cooldown, read from its attack, charge, skill and burst files.
 - The proud skill groups' indices, read from gcsim's data file for the character, which lists each multiplier beside its group. Checked against the game data at every talent level: gcsim's multiplier blocks match their groups 10931, 10932 and 10939 exactly, save the Swirl and Stellar Swirl blocks below (groups from skill rows 11091, 11092 and 11095 in `{data-root}/genshin-parity/text/ExcelBinOutput/AvatarSkillExcelConfigData.json`, the skill and burst cooldowns of 15 seconds and the burst's 60 energy on row 11095). The Swirl block matches at 100 times the dump's per-point value, as gcsim states it per 100 points of Elemental Mastery (`{data-root}/cache/gcsim-v2.47.2/internal/characters/mizuki/skill.go` line 154). The Stellar Swirl block matches no proud group, so it stays open below.
 - The cached wiki, `{data-root}/cache/genshin-wiki/Category_Yumemizuki_Mizuki_Talents.json`: the strikes' poise rows 1 to 3, the charged attack's stamina of 50, and the collision and plunge poise rows (5, 50 and 100).
-- [Pure Heart, Pure Dreams](https://genshin-impact.fandom.com/wiki/Pure_Heart,_Pure_Dreams), Genshin Impact Wiki: the poise for her strikes, charged attack, collision and plunges.
+- [Pure Heart, Pure Dreams](https://genshin-impact.fandom.com/wiki/Pure_Heart,_Pure_Dreams), Genshin Impact Wiki.
 
 ## Open
 

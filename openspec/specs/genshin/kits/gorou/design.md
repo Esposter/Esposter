@@ -28,4 +28,4 @@ flowchart LR
 
 ## Sources
 
-- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/gorou), MIT: the kit's hitmarks, the banner's and Juuga's ticks, Crystal Collapse's interval and the circles, the Constellation 1 cut and its internal cooldown, Constellation 4's heal and its tick, and Constellation 6's modifier. The v2.47.2 source is on disk at `{data-root}/cache/gcsim-v2.47.2`, which the citations above read.
+- [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/gorou), MIT: the kit's hitmarks, the banner's and Juuga's ticks, Crystal Collapse's interval and the circles, the Constellation 1 cut and its internal cooldown, Constellation 4's heal and its tick, and Constellation 6's modifier.

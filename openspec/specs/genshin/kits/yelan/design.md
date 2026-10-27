@@ -15,7 +15,7 @@ flowchart TD
 
 - **Depth-Clarion Dice's first wave comes a second after the initial hit, and its throws land 20, 26 and 32 frames after their wave.** `packages/genshin-world/src/services/kit/characters/yelanKit.ts` starts the wave a second after the hit, as gcsim's ticker does (`{data-root}/cache/gcsim-v2.47.2/internal/characters/yelan/yelan.go` lines 61 to 63, a 60-frame ticker, and `{data-root}/cache/gcsim-v2.47.2/internal/characters/yelan/burst.go` lines 87 to 89).
 - **Ascension 4's damage bonus follows the active character from the burst's hit.** A 15-second status starts at the burst's hitmark, as gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/yelan/burst.go` starts its status (lines 65 to 68, the hitmark at line 20), and while it runs the active character deals 1% more DMG, rising 3.5% each whole second up to 50%, as gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/yelan/asc.go` gives it (lines 43 to 58). Each step sets the bonus on whoever is active, so a swap moves it, and a recast of the burst restarts the status. The description's "in play" is read as that window.
-- **Constellation 1's extra charge is a skill charge.** Constellation 1 adds one through `getSkillChargeBonus` to Lingering Lifeline, as the [kits README](../README.md#how-a-kit-is-read) gives, which is gcsim's two charges at Constellation 1 (`{data-root}/cache/gcsim-v2.47.2/internal/characters/yelan/yelan.go` lines 48 to 49).
+- Constellation 1 adds one through `getSkillChargeBonus` to Lingering Lifeline, as the [kits README](../README.md#framework-decisions) gives, which is gcsim's two charges at Constellation 1 (`{data-root}/cache/gcsim-v2.47.2/internal/characters/yelan/yelan.go` lines 48 to 49).
 
 ## Key files
 
