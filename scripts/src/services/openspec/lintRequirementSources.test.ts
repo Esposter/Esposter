@@ -25,7 +25,7 @@ describe(lintRequirementSources, () => {
 
     const markdown = [
       "### Requirement: Example",
-      "The system SHALL example (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/example/skill.go` lines 21 to 23).",
+      "The system SHALL example (`{data-root}/cache/gcsim-v2.47.2/internal/characters/example/skill.go` lines 21 to 23).",
     ].join("\n");
 
     expect(lintRequirementSources(SPEC_PATH, markdown)).toStrictEqual([
@@ -51,7 +51,7 @@ describe(lintRequirementSources, () => {
       "The system SHALL example.",
       "",
       "#### Scenario: Example",
-      "- **THEN** the form is refused (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/example/skill.go` line 22)",
+      "- **THEN** the form is refused (`{data-root}/cache/gcsim-v2.47.2/internal/characters/example/skill.go` line 22)",
     ].join("\n");
 
     expect(lintRequirementSources(SPEC_PATH, markdown)).toStrictEqual([]);

@@ -141,7 +141,7 @@ describe(advanceQuest, () => {
 
   // New Horizons of Adventure (22111), a world quest of two steps, each asking the Traveler to talk to one NPC. Its ids
   // And talk targets are the game's, read from its binary in the dump (`BinOutput/Quest/22111.json` under
-  // `~/Esposter.noindex/genshin-parity/text`), the way `pnpm -C scripts genshin:text quests` reads them. Its steps show no
+  // `{data-root}/genshin-parity/text`), the way `pnpm -C scripts genshin:text quests` reads them. Its steps show no
   // Cutscene or CG, so the walk has none to leave out
   test("walks a real quest from its first step to its last", () => {
     expect.hasAssertions();
