@@ -49,7 +49,6 @@ flowchart LR
 ## Open
 
 - [ ] **The marks' pivots, MarkSouth's inset and GrpBackMap's 180-unit half in the game's tree** — no source yet: the held records (`~/Esposter/genshin-parity/extracted/character/interface/json/`) carry each mark's position and scale, but no pivot and no rect size.
-- [ ] **The stills agree with the tree: the ring 107 pixels from the centre at 1080 high, 1.2 pixels a unit** — no source yet: a pixel reading of the 1080-high still, which this pass did not take.
-- [ ] **The fan a quarter turn wide** — no source yet: the game's sight-fan image width from the tree, which this machine does not hold.
-- [ ] **The ring, the fan's white, the arrow's cyan, and the N's and arrow's measures at 1080 high** — no source yet: a pixel reading of the 1080-high references, which this pass did not take.
-- [ ] **The back stands where the game's tree places it** — no source yet: the game's UI tree for the minimap's back, not yet read.
+- [ ] **The stills agree with the tree: the ring 107 pixels from the centre at 1080 high, 1.2 pixels a unit; and the thin light ring, the fan's white, the arrow's cyan, and the N's and arrow's measures at 1080 high** — no source yet: a pixel reading of the 1080-high still and references, which this pass did not take.
+- [ ] **The fan a quarter turn wide** — no source yet: the game's sight-fan image width from the tree, which this machine does not hold; `packages/genshin-world/src/components/Hud/Minimap/Index.vue` calls it a quarter turn, but its clip-path cuts about 72 degrees from a square box.
+- [ ] **The back stands where the game's tree places it** — no source yet: the fitted `GrpBackMap` rect, held only in the published game data, to set against the tree's `RectTransform#323865` (`~/Esposter/genshin-parity/extracted/character/interface/json/RectTransform/RectTransform#323865.json`, local 139.99997 by -104.000015 under its parent).
