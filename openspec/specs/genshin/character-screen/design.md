@@ -97,7 +97,7 @@ The Artifacts and Constellation references are timed to where their tabs have se
 ## Open
 
 - [ ] **In the game, `C` opens the character screen** — no source yet: no recording or wiki page of the key binding is in the parity folders, and the Character/Menu page is not in `~/Esposter.noindex/cache/genshin-wiki/`.
-- [ ] **The layout table's places** — contradicted by `~/Esposter/genshin-parity/comparisons/character-attributes.png`: its left panel is the Attributes reference, saved as a still.
+- [ ] **The layout table's places** — no checked disagreement yet: `~/Esposter/genshin-parity/comparisons/character-attributes.png` holds the Attributes reference as its left panel, a still, and no place in it is measured against the table.
 - [ ] **The Attributes tab's sums** — contradicted by `~/Esposter/genshin-parity/comparisons/character-attributes.png`: reference 18,414/1,163/3,432/100 and build 12,405/817/2,034/0 for Max HP, ATK, DEF, EM.
 - [ ] **The level line in the game's `Lv.` wording** — contradicted by `~/Esposter/genshin-parity/comparisons/character-attributes.png`: the game writes "Level 90 / 90", not "Lv. 90/90".
 - [ ] **The advanced group's values and percentage format** — no source yet: the game holds this group behind Details, so no reference frame shows its values.
