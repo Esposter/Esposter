@@ -4,17 +4,19 @@ The game's bosses as pure rules in genshin-world. A normal boss stays defeated u
 
 ## Requirements
 
-### Requirement: A normal boss returns only after its blossom is claimed
+### Requirement: A normal boss stays defeated until its blossom is claimed
 
 A normal boss SHALL stay defeated until its Trounce Blossom is claimed.
-
-A normal boss SHALL return five seconds after a claim.
 
 #### Scenario: Unclaimed boss stays defeated
 
 - **GIVEN** a normal boss is defeated and its Trounce Blossom is not claimed
 - **WHEN** time passes
 - **THEN** the boss stays defeated until the player teleports away
+
+### Requirement: A normal boss returns five seconds after its blossom is claimed
+
+A normal boss SHALL return five seconds after a claim.
 
 #### Scenario: Claimed boss returns five seconds later
 
