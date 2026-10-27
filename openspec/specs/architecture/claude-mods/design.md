@@ -39,7 +39,7 @@ The engine's slots are typed by the engine, and a few of the repository's rules 
 
 ```mermaid
 flowchart TD
-  Pure[Pure logic in its own module, beside its test] --> Wire[Hooks wired per file in the mod's file, the band in one file]
+  Pure[Pure logic in its own module, beside its test] --> Wire[Hooks: unmatched events in the lifecycle file, matched ones in the mod's file, the band in one file]
   Wire --> Validate{claude plugin validate}
   Validate -->|refused| Read[Read the rule, then probe a cut message with a minimal mod]
   Read --> Wire

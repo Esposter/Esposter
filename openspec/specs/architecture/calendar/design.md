@@ -12,7 +12,7 @@ A day on a calendar has no time zone: the 25th is the 25th wherever the reader i
 - **A range field** holds its two ends as plain days, since a span of days is what it picks; the call site decides which instant each end means, as the resource list's Updated filter reads each as the start of its day and extends the end to the close of its own.
 - **A sheet's date cell** stores its day as text in its column's format. Its editor is a date field, and the text is parsed into the instant it names on the way in and written back in the same format on the way out, so the format never reaches the field.
 - **An event** starts at an instant. The event calendar files it under the day it starts on in the reader's zone, which only the browser knows, so the views render on the client alone behind a skeleton — a server render would file an evening event under the wrong day for half the world.
-- **A rendered date** is still a `<NuxtTime>` ([date and time display](../date-time-display/design.md)).
+- **A rendered date** is still a `<NuxtTime>` ([date and time display](../date-time-display/design.md)). A plain date has no instant of its own, so it is handed over as its ISO date with the UTC zone, which renders exactly the day it names.
 
 Vuetify 0 ships a date adapter rather than a date picker, and that adapter is written against a Temporal polyfill of its own — a second copy of Temporal in the bundle beside the platform's, for arithmetic a plain date already does. The components use the platform's instead. Where the platform has none — Safari, and so every browser on iOS, until Temporal is [Baseline](https://webstatus.dev/features/temporal) — `temporal-polyfill` installs it ahead of the bundle, per [polyfills](../polyfills/design.md).
 
