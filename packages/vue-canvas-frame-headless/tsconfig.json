@@ -1,1 +1,5 @@
-{ "extends": "../configuration/tsconfig.vue.json", "include": ["../configuration/types/*.d.ts", "*.ts", "src/**/*.ts"] }
+{
+  "compilerOptions": { "lib": ["ESNext", "DOM", "DOM.Iterable"] },
+  "extends": "../configuration/tsconfig.library.json",
+  "include": ["../configuration/types/*.d.ts", "*.ts", "src/**/*.ts"]
+}
