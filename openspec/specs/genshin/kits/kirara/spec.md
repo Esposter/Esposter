@@ -56,14 +56,14 @@ Secret Art: Surprise Dispatch SHALL place six Cat Grass Cardamoms in a box, two 
 - **THEN** two Cat Grass Cardamoms detonate
 - **AND** the remaining four detonate when the box expires
 
-### Requirement: Kirara's attacks deal no poise yet
+### Requirement: Kirara's attacks deal their poise
 
-Kirara's strikes, charged attack, skill and burst SHALL deal no poise yet.
+Kirara's strikes, charged attack, skill and burst SHALL deal the poise the design gives each hit.
 
-#### Scenario: Attacks do not reduce poise yet
+#### Scenario: Attacks reduce poise by their values
 
 - **WHEN** any of Kirara's strikes, charged attack, skill or burst hits an enemy
-- **THEN** the enemy's poise is not reduced by the hit
+- **THEN** the enemy's poise is reduced by that hit's value
 
 ### Requirement: Constellation 6's team elemental damage bonus
 
