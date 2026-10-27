@@ -28,7 +28,7 @@ flowchart TD
   B --> C{Permission prompt}
   C -->|full input shown on the card| D[Click allow or deny]
   D --> B
-  B --> E[Turn ends — a notification if the tab is hidden]
+  B --> E[Turn ends<br/>notifies if the tab is hidden]
   E --> F[The turn's diff is already open, per file]
   E --> G[Context gauge in view, warns before compaction]
   E --> H[Session list shows every session's state — one click to switch]
