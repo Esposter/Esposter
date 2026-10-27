@@ -17,7 +17,7 @@ An offering SHALL take every offering item the bag holds out of the bag in one o
 
 ### Requirement: Each level the held count covers is reached once
 
-An offering SHALL reach each next level its held count covers, taking that level's items off the count and paying its rewards once (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/OfferingLevelUpExcelConfigData.json`).
+An offering SHALL reach each next level its held count covers, taking that level's items off the count and paying its rewards once.
 
 #### Scenario: Held count covers two levels
 
@@ -44,7 +44,7 @@ An offering SHALL drop at the tree, as pick ups lying there, any items the bag h
 
 ### Requirement: The first offer starts the tree
 
-The tree SHALL reach its first level on the first offer whatever the bag holds, paying that level's reward once (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/OfferingLevelUpExcelConfigData.json`, offering 1 level 1 holds no items).
+The tree SHALL reach its first level on the first offer whatever the bag holds, paying that level's reward once.
 
 #### Scenario: First offer with no offering items
 
@@ -55,13 +55,17 @@ The tree SHALL reach its first level on the first offer whatever the bag holds, 
 
 ### Requirement: The offer is made on F in reach of the tree
 
-The tree SHALL show an Activate prompt named by the game's own text while the character is in reach, and SHALL offer the bag when the player presses F there.
+The tree SHALL offer the bag when the player presses F there.
 
 #### Scenario: Pressing F in reach
 
 - **GIVEN** the character is in reach of the tree
 - **WHEN** the player presses F
 - **THEN** the bag's offering items are offered at the tree
+
+### Requirement: The tree's Activate prompt shows while the character is in reach
+
+The tree SHALL show an Activate prompt named by the game's own text while the character is in reach.
 
 #### Scenario: Out of reach
 
