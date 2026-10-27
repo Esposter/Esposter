@@ -18,20 +18,20 @@ Kaveh's four strikes, collision and two plunges SHALL be his normal attacks and 
 
 - **GIVEN** Kaveh is in the air
 - **WHEN** the collision lands
-- **THEN** it deals 35 poise, the wiki's Plunging Attack Collision value
+- **THEN** it deals 35 poise
 
 ### Requirement: Provisional charged attack that spins then finishes
 
-Kaveh's charged attack SHALL spin at once and finish with a final hit at the longest duration the table allows, and both hits SHALL stay provisional until a recording settles them.
+Kaveh's charged attack SHALL spin at once and finish with a final hit at the longest duration the design gives, and both hits SHALL stay provisional.
 
 #### Scenario: Holding the charged attack spins and finishes
 
 - **GIVEN** Kaveh is the character on the field
 - **WHEN** the player holds the attack button to charge
 - **THEN** a spin of two-metre circles round his body lands at once
-- **AND** a final two-metre circle round his body lands at the longest duration the table allows
+- **AND** a final two-metre circle round his body lands at the longest duration the design gives
 - **AND** stamina drains for each second the attack is held
-- **AND** both hits stay provisional until a recording settles them
+- **AND** both hits stay provisional
 
 ### Requirement: Artistic Ingenuity strikes a Dendro circle
 
