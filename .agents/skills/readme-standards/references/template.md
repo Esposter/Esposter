@@ -5,9 +5,9 @@ Read when writing a README's skeleton or its badges.
 ## Headings and sections
 
 Headings use the anchor+emoji form and a `---` rule closes the ToC — the ToC links the explicit `name`, not the
-hyphen-prefixed slug GitHub derives from the emoji (`SKILL.md`, Settled). Copy the shape from a sibling README:
+hyphen-prefixed slug GitHub derives from the emoji (`SKILL.md`, Settled). Every list and table is ordered alphabetically, case-insensitively, except a table grouped by layer, which keeps its layers in the order the stack runs and is alphabetical within each layer. The table of contents and the sections follow the skeleton's order. Importance is not an order, since no measure of it holds still. Copy the shape from a sibling README:
 
-```markdown
+````markdown
 # <npm-name>
 
 [badges — see "Badges" on this page]
@@ -18,6 +18,8 @@ One-sentence description (from package.json `description`, expanded for clarity)
 
 - 🚀 [Getting Started](#getting-started) ← omit when the package has no install/run step
 - 📖 [Documentation](#documentation)
+- ⌨️ [Commands](#commands) ← omit when the package has no scripts
+- 🔗 [Related Documentation](#related) ← omit when the package uses no technology with a page of its own
 - ⚖️ [License](#license)
 
 ---
@@ -31,10 +33,26 @@ One-sentence description (from package.json `description`, expanded for clarity)
 We highly recommend you take a look at the [documentation](<the package's specs or the specs root — `references/content-rules.md`>) to level up.
 Key exports table / usage examples / architecture notes
 
+## <a name="commands">⌨️ Commands</a>
+
+Every script a reader runs by hand from the package's `package.json`, one per line, sorted. Generators and lifecycle hooks may be left out:
+
+```bash
+pnpm lint
+pnpm test
+```
+````
+
+## <a name="related">🔗 Related Documentation</a>
+
+- [Nuxt](https://nuxt.com/docs)
+- [Vue](https://vuejs.org/guide/introduction.html)
+
 ## <a name="license">⚖️ License</a>
 
 Apache-2.0 reference + badge refs at the bottom
-```
+
+````
 
 ## Badges
 
@@ -45,7 +63,7 @@ Apache-2.0 reference + badge refs at the bottom
 [![NPM version][badge-npm-version]][url-npm]
 [![NPM downloads][badge-npm-downloads]][url-npm]
 [![NPM Unpacked Size (with version)][badge-npm-unpacked-size]][url-npm]
-```
+````
 
 **Private packages** — license badge only:
 

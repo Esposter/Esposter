@@ -36,3 +36,5 @@ Package READMEs carry no experimental notice: the root README states it once (`o
 
 - `references/template.md` — when writing a README's skeleton or its badges.
 - `references/content-rules.md` — when writing a README's description, Getting Started, docs link, commands or links.
+- `references/logo-sources.md` — when adding, replacing or refreshing a logo under `.github/assets/`, or when a logo's source is in question.
+- `references/technology-links.md` — when a README names a technology and links its documentation, or a technology is added to or dropped from a README.
