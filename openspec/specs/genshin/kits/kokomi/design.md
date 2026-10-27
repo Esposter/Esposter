@@ -11,13 +11,24 @@ Kokomi's kit is its record and one behaviour module, `createKokomiKitBehaviour`,
 - **Kokomi's Constellation 4 energy is a garment normal attack's hit, on a 0.2-second cooldown on her.** Each garment normal attack that hits an enemy restores 0.8 energy to the striker, from the hit's own `onStrike` and not a stance check (`kokomiKit.ts` lines 51-63 and 152-156). gcsim's C4 callback (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/kokomi/cons.go` lines 48-63) gives the same 0.8 on a 0.2-second cooldown during the burst, but with no attack-tag check, and it is attached to the charged attack as well as the normal attacks (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/kokomi/charge.go:61`). The kit gives none on the charged attack, which is listed under Provisional constants.
 - **Kokomi's Constellation 4 speed reads any stance she holds, and her garment is her only one.** The check is `findKitStance` on her effects (`kokomiKit.ts` lines 175-181), which for her is the garment; a second stance would need the check to name the garment. gcsim gives the same 10% Normal Attack SPD for ten seconds from the burst (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/kokomi/burst.go` lines 68-76).
 
+```mermaid
+flowchart TD
+    Burst["Nereid's Ascension starts the garment"] --> Stance["Garment stance for ten seconds"]
+    Stance --> Attacks["Normal and charged attacks"]
+    Attacks --> Bonus["Max HP share added to damage"]
+    Attacks --> Heal["Party heal on each enemy struck"]
+    Attacks --> Energy["Constellation 4 energy on normal attack hits"]
+    Stance --> Swap["A swap ends the garment"]
+```
+
 ## Provisional constants
 
-- **The plunges land at half a second.** gcsim's kokomi folder has no plunge file, so the half-second landing and the plunges' reaches are the kit's own choice, borrowed from the other kits. Open until a plunge source is read.
+- **The plunges land at half a second.** gcsim's kokomi folder has no plunge file, so the half-second landing and the plunges' reaches are the kit's own placeholders, which no donor sets, and the [roadmap](../../../../changes/genshin-roadmap/tasks.md) asks a recording to settle them.
 - **The burst costs 70 energy, where gcsim consumes 57.** The table's 70 is proud group 5439 index 7 and the wiki's `energycost=70`; gcsim's `burst.go` line 80 is `ConsumeEnergy(57)`. The kit follows the table. Open until the two agree.
 - **The garment's heal rolls on each enemy, where gcsim heals once per attack.** The kit's garment heal is rolled on every enemy a strike hits (`kokomiKit.ts` line 79, `healPartyChance: () => 1` on each hit). gcsim's burst heal callback has a `done` flag set once per attack event (`burst.go` lines 113-127, attached to each attack at `attack.go` line 68 and to each charged attack at `charge.go` line 60). Open until the heal is once per attack.
 - **Constellation 4's energy is not given on the charged attack.** gcsim's C4 callback is attached to the charged attack (`charge.go` line 61) and checks no attack tag (`cons.go` lines 48-63), so it gives 0.8 energy on a charged hit during the burst. The kit gives none on the charged attack, as its spec says. Open against gcsim.
 - **The garment's reach is the base reach, where gcsim widens it.** The kit's garment actions keep the base hits' reach (`kokomiKit.ts` lines 152-164), so the strike is 5.7 metres and the charged attack 8.5 in and out of the garment. gcsim's `attack.go` lines 57-59 widen the strike's circle to 1.2 metres and `charge.go` lines 50-52 the charged attack's to 4 metres while the burst status stands, which is 6.2 and 9 metres. Open against gcsim.
+- **The kit's field ticks six times in its 12 seconds, where gcsim and the wiki give seven, including the initial hit.** The kit's 24-frame first tick and 120-frame interval set six ticks, against the wiki's seven (`~/Esposter/cache/genshin-wiki/Category_Sangonomiya_Kokomi_Talents.json`). Open against gcsim and the wiki.
 - **Tamakushi Casket's refresh lands at the cast, where gcsim queues it 46 frames later.** The kit refreshes Bake-Kurage from the burst's start (`kokomiKit.ts` lines 168-170), while gcsim's burst queues `a1` at 46 frames (`Tasks.Add(c.a1, 46)`), when the summon's status must still stand (`asc.go` lines 26-36). The two differ only when Bake-Kurage ends within those 46 frames. Open against gcsim.
 
 ## Not built
@@ -42,4 +53,3 @@ Kokomi's kit is its record and one behaviour module, `createKokomiKitBehaviour`,
 ## Open
 
 - [ ] **Bake-Kurage's field lasts 12 seconds, as the wiki and the dump give** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/kokomi/skill.go:31`: gcsim's status is `12*60+30+1` frames, about 12.5 seconds.
-- [ ] **Bake-Kurage's field ticks six times in its 12 seconds, from the kit's 24-frame first tick and 120-frame interval** — contradicted by `~/Esposter/cache/genshin-wiki/Category_Sangonomiya_Kokomi_Talents.json`: the wiki's note gives seven ticks, including the initial hit.

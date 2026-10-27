@@ -12,6 +12,15 @@ Layla's kit is its record and one behaviour module, `createLaylaKitBehaviour`, o
 
 - **Constellation 4's Dawn Star is granted by the first Shooting Star and priced by the kit's strike hooks.** gcsim's `shootStars` (`shield.go`, lines 112 to 117) gives `layla-c4` for three seconds to every party member when the first Shooting Star fires, and its `c4` (`cons.go`, lines 18 to 38) adds 5% of Layla's Max HP as flat damage to each Normal or Charged Attack a holder lands on an enemy, removing the status 0.05 seconds later. The kit prices her own strikes through its own strike hook and each member's through its party strike hook, both off her Max HP, and removes a holder's status 0.05 seconds after its `EnemyHit`, so a hit on several enemies is priced on each as gcsim's `OnEnemyHit` prices it.
 
+```mermaid
+flowchart TD
+    Tick["Shield tick adds a Night Star every 1.5 seconds"] --> Stars["Night Stars capped at four"]
+    Skill["Skill adds two Night Stars"] --> Stars
+    Burst["Burst strike adds one Night Star"] --> Stars
+    Stars -->|"four stars"| Search["Search for an enemy within 10 metres"]
+    Search --> Fire["Shooting Star fires at the nearest living enemy"]
+```
+
 ## Provisional constants
 
 - **The record's 13.5-metre strike area is unsourced, and gcsim's and the kit's field use 12.** `hits.starlightSlugStrike.area` in `layla.json` reads 13.5 with cause `Unsourced`; gcsim's circle is 12 round the body (`burst.go` line 52), and `laylaKit.ts` holds `STARLIGHT_SLUG_RADIUS` at 12. The record should be brought to the source; this pass does not change it.

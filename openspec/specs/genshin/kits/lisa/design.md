@@ -12,6 +12,14 @@ Lisa's kit is its record and one behaviour module, `createLisaKitBehaviour`, on 
 - **Lightning Rose's Ascension 4 lowers the DEF of each enemy a discharge hits by 15% for 10 seconds.** The wiki's 4th Ascension Passive text (`~/Esposter/cache/genshin-wiki/Category_Lisa_Talents.json`) and gcsim's `~/Esposter/cache/gcsim-v2.47.2/internal/characters/lisa/asc.go` (lines 26 to 38, `Value: -0.15` for 600 frames) give the same values. The reduction is a status's `defenseReduction`, which the enemy's DEF takes off where a hit reads it. gcsim applies it after the hit that carries it, and the framework applies a hit's own status before pricing that hit, so the first discharge of a cast is priced with the reduction where gcsim's is not; the later discharges match, as the status refreshes on each one.
 - **Violet Arc's hold is released by itself at 4 seconds.** A kit's `elementalSkillMaximumHeldSeconds` caps the seconds a skill is held at its maximum, and the skill is released there, once: the hold level its seconds reach at that moment starts, and holding on past it starts nothing again. The wiki's Violet Arc page gives the maximum of 4 seconds (`~/Esposter.noindex/cache/genshin-wiki/Category_Lisa_Talents.json`).
 
+```mermaid
+flowchart TD
+    Press["Violet Arc press hit"] --> Stack["Conductive stack, up to three"]
+    Charged["Charged attack from Ascension 1"] --> Stack
+    Stack --> Hold["Violet Arc hold reads each enemy's stacks"]
+    Hold --> Consume["Hold consumes the stacks"]
+```
+
 ## Provisional constants
 
 - **Conductive stacks never expire, and gcsim does not say how long they last.** `~/Esposter/cache/gcsim-v2.47.2/internal/characters/lisa/skill.go` line 67 is a TODO asking that very question, so the no-expiry rule is the kit's own choice until a recording settles it.

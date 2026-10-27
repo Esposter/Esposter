@@ -15,7 +15,15 @@ Klee's kit is its record and one behaviour module, `createKleeKitBehaviour`, on 
 - **Blazing Delight's bonus is a task.** From six constellations, the burst's start sets a task that runs on the next step and gives each member of the deployed team 10% Pyro DMG Bonus for 25 seconds, gcsim's 1500 frames (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/klee/burst.go` lines 78-102), which the next burst restarts. Its 3 energy every 3 seconds (lines 81-92) to the other members is not built: a task holds no member's kit, so it cannot cap the energy at that member's burst cost.
 - **Klee's plunges are gcsim's from Xianyun's lift.** gcsim models them only from Xianyun's lift, so the low plunge lands at 47 frames and the high at 48, ending at 67 and 71, counted from the plunge's action, and reaching 3 and 3.5 metres round the body and the collision 1.5. Their gauges and poise are the wiki's Kaboom!'s (`~/Esposter/cache/genshin-wiki/Category_Klee_Talents.json`): Pyro at 1U, 50 and 100 poise, and the collision at 0U with 5 (its Low and High Plunge and Plunging Attack Collision rows; `~/Esposter/cache/gcsim-v2.47.2/internal/characters/klee/plunge.go` lines 21-28 give the hitmarks and radii).
 
-## Provisional constants
+```mermaid
+flowchart TD
+    Cast["Burst casts Sparks 'n' Splash"] --> Follow["Summon follows Klee on the field"]
+    Follow --> Waves["Six waves land from 186 to 718 frames"]
+    Follow --> Swap["Klee swaps off the field"]
+    Swap --> Ends["Summon ends on the swap"]
+    Swap --> C4{"Constellation 4"}
+    C4 -->|"yes"| Explosion["Sparkly Explosion goes off where Klee left"]
+```
 
 ## Not built
 
@@ -37,5 +45,4 @@ Klee's kit is its record and one behaviour module, `createKleeKitBehaviour`, on 
 
 ## Open
 
-- [ ] **The kit strikes every enemy near Klee with each spark** — contradicted by `~/Esposter/cache/genshin-wiki/Category_Klee_Talents.json`: each Sparks 'n' Splash sends 4 sparks, randomly targeting all enemies.
 - [ ] **The Sparkly Explosion's 555% of her ATK** — no source yet: the Sparkly Explosion wiki page is not on disk, and the cached Klee talents file gives no 555 value; gcsim's `~/Esposter/cache/gcsim-v2.47.2/internal/characters/klee/burst.go` line 144 gives `Mult: 5.55`, so only the wiki's confirmation is open.

@@ -21,6 +21,15 @@ Her burst starts a 96-frame timer as a status (`~/Esposter/cache/gcsim-v2.47.2/i
 
 While the party holds any Pale Hymn, each Bloom, Hyperbloom, Burgeon and Lunar-Bloom reaction the party makes takes base damage of her Elemental Mastery times the burst's table value: 2.7776 at talent level 1 for Bloom, Hyperbloom and Burgeon, and 2.2224 for Lunar-Bloom, as gcsim (MIT) `~/Esposter/cache/gcsim-v2.47.2/internal/characters/lauma/burst.go` gives them in bloomDmgIncrease and lunarBloomDmgIncrease. The values are the third and fourth entries (indices 2 and 3) of the burst's proud skill group 11939's `paramList`, read at her burst's talent level as `paleHymnBloomDamageIncrease` and `paleHymnLunarBloomDamageIncrease`, and the bonus comes through the party reaction hook from her kit, on her own Elemental Mastery. From Constellation 2 each Bloom, Hyperbloom and Burgeon takes 5 more of that ratio, and each Lunar-Bloom 4 more, as gcsim (MIT) `~/Esposter/cache/gcsim-v2.47.2/internal/characters/lauma/cons.go` gives them. Those two constants stay in the kit, cited here, rather than in the record.
 
+```mermaid
+flowchart TD
+    Burst["Burst starts a 96-frame timer"] --> Gain["Party gains 18 Pale Hymn for 15 seconds"]
+    Dew["Hymn of Eternal Rest spends a Dew"] --> Moon["Moon Song gains six Pale Hymn, once per burst"]
+    Gain --> Moon
+    Gain --> Bonus["Bloom, Hyperbloom, Burgeon and Lunar-Bloom take bonus base damage"]
+    Bonus --> Spend["Each reaction spends one stack"]
+```
+
 Two differences from gcsim are named here. The kit spends one stack for each reaction on each enemy from the reaction event, after the hit is priced, where gcsim spends one for each enemy hit with a Bloom tag (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/lauma/burst.go` lines 83 to 97), so Bountiful Core's hits, which are not reaction types here, spend none. And the Dew is spent as the hold starts, where gcsim spends it at 29 frames, as the hold's own note says.
 
 ## Provisional constants

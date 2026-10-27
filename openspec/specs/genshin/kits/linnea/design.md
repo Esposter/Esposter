@@ -20,6 +20,7 @@ Linnea's kit is its record and one behaviour module, `createLinneaKitBehaviour`,
 ## Not built
 
 - **Lumi is not summoned yet.** Her record has no Lumi duration, and no behaviour summons Lumi.
+- **The burst's Lumi hit is not built.** The wiki's Pound-Pound Pummeler strikes nearby opponents in the burst (`~/Esposter/cache/genshin-wiki/Category_Linnea_Talents.json`), and her record holds no burst hit, so the burst heals with none.
 
 ## Key files
 
@@ -36,7 +37,3 @@ Linnea's kit is its record and one behaviour module, `createLinneaKitBehaviour`,
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/tighnari), MIT at v2.47.2: Tighnari's hitmarks, areas and his aimed shot's frames, checked against Linnea's record as Decisions and Provisional constants give. Only the charged shot's 94 frames and 96-frame landing match.
 - [gcsim](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/bennett/plunge.go), MIT at v2.47.2: Bennett's plunges' hitmarks and radii, which her low and high plunges match.
 - The cached game data, `~/Esposter/genshin-parity/text/ExcelBinOutput/`: skill row 11302's cooldown of 18 and group 13032's index 4 at 18, and the burst row 11305's cooldown of 15 and energy cost of 60, with group 13039's heal values.
-
-## Open
-
-- [ ] **Her burst deals no hit** — contradicted by `~/Esposter/cache/genshin-wiki/Category_Linnea_Talents.json`: Lumi strikes nearby opponents with Pound-Pound Pummeler in the burst.

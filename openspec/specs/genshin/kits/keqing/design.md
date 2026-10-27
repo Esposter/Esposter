@@ -10,6 +10,14 @@ Keqing's kit is its record and one behaviour module, `createKeqingKitBehaviour`,
 - **Constellation 6 keys its bonus by kind of action.** The start of each Normal Attack, Charged Attack, Elemental Skill and Burst gives a 6% Electro DMG Bonus from a source of its own, so a repeat of the same kind restarts it and the four kinds stack, as gcsim's per-source keys do (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/keqing/cons.go` lines 75-83 for the 480-frame bonus, `~/Esposter/cache/gcsim-v2.47.2/internal/characters/keqing/keqing.go` line 45 for the 6%, and the calls at `~/Esposter/cache/gcsim-v2.47.2/internal/characters/keqing/attack.go` line 86, `~/Esposter/cache/gcsim-v2.47.2/internal/characters/keqing/charge.go` line 85, `~/Esposter/cache/gcsim-v2.47.2/internal/characters/keqing/skill.go` line 70 and `~/Esposter/cache/gcsim-v2.47.2/internal/characters/keqing/burst.go` line 60).
 - **Constellation 2's particle is a delayed Electro particle from the hit that rolls it.** gcsim's roll is 50%, on a normal or charged attack's hit on an enemy under Electro, at most once every 5 seconds (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/keqing/cons.go` lines 15-40). The kit reads the enemy's aura once the hit has landed, as gcsim's attack callback does, and holds the cooldown as a status. A pass delays one particle by the default ParticleDelay of 100 frames (`~/Esposter/cache/gcsim-v2.47.2/pkg/core/player/character/character.go` line 144 of gcsim's `~/Esposter/cache/gcsim-v2.47.2/pkg/core/player/character`), and the particle is distributed as a drop when the delay runs out, as Birgitta's is.
 
+```mermaid
+flowchart TD
+    Hit["Normal or charged attack hits an Electro enemy"] --> Gate{"Five-second cooldown over"}
+    Gate -->|"yes"| Roll["50% roll for a particle"]
+    Roll -->|"success"| Delay["Particle delayed 100 frames"]
+    Delay --> Drop["Particle distributed as a drop"]
+```
+
 ## Provisional constants
 
 - **The charged attack's stamina is open against the wiki.** The kit reads the 25 as a rate a second (the record's `chargedAttack.staminaPerSecond`, index 8 of group 4231, its cause Unsourced), where the wiki's Yunlai Swordsmanship page says Keqing's Charged Attack costs 25 Stamina, a flat cost, instead of the 20 most Sword characters pay. Open until the record names the cost the wiki gives.
@@ -26,3 +34,14 @@ Keqing's kit is its record and one behaviour module, `createKeqingKitBehaviour`,
 - The game data dump's `~/Esposter/genshin-parity/text/ExcelBinOutput/ProudSkillExcelConfigData.json` (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`): proud skill groups 4231 (level 1 indices 0-9), 4232 (0 to 3) and 4239 (0 to 4) match the cached wiki's Yunlai Swordsmanship, Stellar Restoration and Starward Sword scaling tables to two decimal places: the hits at 41.02, 41.02, 54.44, 31.48 and 34.4, 66.99%, the charged attack at 76.8 and 86%, the plunge at 63.93%, the Stiletto's 50.4%, the slash's 168% and the thunderclap's 84% with its 7.5-second cooldown, and Starward Sword's 88%, 24% and 188.8% with its 12-second cooldown and 40 energy. gcsim's `ConsumeEnergy(55)` (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/keqing/burst.go` line 63) differs from the table's 40, and the kit reads the table.
 - The wiki's cached Stellar Restoration page (the Stiletto lasts 5 seconds), Thundering Penance (the 5-second infusion), Aristocratic Dignity (15% CRIT Rate and 15% Energy Recharge for 8 seconds), all in `~/Esposter/cache/genshin-wiki/Category_Keqing_Talents.json`.
 - [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/keqing), MIT: the kit's hitmarks, cancel frames and areas, Stellar Restoration and its recast's frames and circles, Constellations 1, 2, 4 and 6 in `~/Esposter/cache/gcsim-v2.47.2/internal/characters/keqing/cons.go` and `~/Esposter/cache/gcsim-v2.47.2/internal/characters/keqing/skill.go`, Starward Sword's hitmarks and circle, and the burst's cooldown and energy cost.
+- `attack.go` line 16 in `~/Esposter/cache/gcsim-v2.47.2/internal/characters/keqing/`, grounding "Five strikes and two-slash charged attack".
+- `charge.go` line 16 in `~/Esposter/cache/gcsim-v2.47.2/internal/characters/keqing/`, grounding "Five strikes and two-slash charged attack".
+- `skill.go` line 74 in `~/Esposter/cache/gcsim-v2.47.2/internal/characters/keqing/`, grounding "Stellar Restoration leaves Lightning Stiletto for a recast".
+- `burst.go` line 44 in `~/Esposter/cache/gcsim-v2.47.2/internal/characters/keqing/`, grounding "Starward Sword strikes its initial hit, eight slashes and final strike".
+- `skill.go` lines 98 to 104 and 110 in `~/Esposter/cache/gcsim-v2.47.2/internal/characters/keqing/`, grounding "Keqing's Constellation 1".
+- `cons.go` lines 36 to 37 in `~/Esposter/cache/gcsim-v2.47.2/internal/characters/keqing/`, grounding "Keqing's Constellation 2".
+- `~/Esposter.noindex/cache/gcsim-v2.47.2/pkg/core/player/character/character.go` line 144, the delay of Constellation 2's particle, grounding "Keqing's Constellation 2".
+- `keqing.go` line 40 in `~/Esposter/cache/gcsim-v2.47.2/internal/characters/keqing/`, grounding "Keqing's Constellation 4".
+- `cons.go` line 51 in `~/Esposter/cache/gcsim-v2.47.2/internal/characters/keqing/`, grounding "Keqing's Constellation 4".
+- `keqing.go` line 45 in `~/Esposter/cache/gcsim-v2.47.2/internal/characters/keqing/`, grounding "Keqing's Constellation 6".
+- `cons.go` line 77 in `~/Esposter/cache/gcsim-v2.47.2/internal/characters/keqing/`, grounding "Keqing's Constellation 6".

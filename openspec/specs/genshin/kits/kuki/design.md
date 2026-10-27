@@ -11,6 +11,14 @@ Kuki's kit is its record and one behaviour module, `createKukiKitBehaviour` (`pa
 - **Ascension 4's Elemental Mastery bonuses are the ring's healing and tick damage, and the initial hit's damage at every Ascension.** gcsim's Ascension 4 adds 75% of Elemental Mastery to the ring's healing (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/kuki/asc.go` lines 31-36) and 25% to each tick's damage (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/kuki/asc.go` lines 41-46). Its initial hit adds 25% of Elemental Mastery as flat damage without an Ascension check (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/kuki/skill.go` line 58). The kit does the same (`packages/genshin-world/src/services/kit/characters/kukiKit.ts` lines 30-31, 39, 87-90 and 111-112).
 - **Breaking Free raises the Healing Bonus at Ascension 1 while her health is at half or less.** gcsim's note on Ascension 1 gives the +15% Healing Bonus at 50% health or less (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/kuki/asc.go` line 9), and the kit reads her health share for it (`packages/genshin-world/src/services/kit/characters/kukiKit.ts` lines 33-36 and 47-50).
 
+```mermaid
+flowchart TD
+    Drain["Grass Ring drains current HP"] --> Health["Health share, no lower than 20 percent of Max HP"]
+    Health -->|"half or less"| Breaking["Breaking Free raises Healing Bonus"]
+    Health -->|"half or less"| Twelve["Burst strikes twelve times"]
+    Health -->|"above half"| Seven["Burst strikes seven times"]
+```
+
 ## Provisional constants
 
 - **The plunges' reaches are the generic plunges', and the plunges take the wiki's poise.** gcsim's `~/Esposter/cache/gcsim-v2.47.2/internal/characters/kuki/` folder has no plunge file (only `asc`, `attack`, `burst`, `charge`, `cons`, `kuki` and `skill`), so the 1, 3 and 5-metre reaches are the kit's own. The plunges take the wiki's poise, 25 for the collision, 100 for the low plunge and 150 for the high. Open until a plunge source gives the reaches.

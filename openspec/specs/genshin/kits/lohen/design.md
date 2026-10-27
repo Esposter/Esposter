@@ -37,6 +37,7 @@ Lohen's kit is its record and one behaviour module, `createLohenKitBehaviour`, a
 - The game's `ProudSkillExcelConfigData` rows for Lohen's skill and burst groups (12932, 12939): his multipliers, durations, cooldowns, costs and Will to Win values.
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/xiangling), MIT at v2.47.2: Xiangling's hitmarks and areas, which the first two strikes, the charged attack's first hit and the burst's first three hits match (see Decisions).
 - The cached wiki, `~/Esposter/cache/genshin-wiki/Category_Lohen_Talents.json`: the strikes' hit counts and multipliers and the charged attack's two hits (page Spear of Favonius — Broken Oath), the Unforeseen Strike's 18-second cooldown and 35 poise (page Unforeseen Strike).
+- The cached wiki, `~/Esposter/cache/genshin-wiki/Category_Lohen_Talents.json`, page Manifest Judgment, its Skill DMG scaling at × 6: the burst's six hits, grounding the requirement "Lohen's six-hit burst".
 
 ## Open
 
