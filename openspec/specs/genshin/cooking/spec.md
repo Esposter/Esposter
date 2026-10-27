@@ -133,7 +133,7 @@ The cooking SHALL make no dish with Raiden Shogun, by hand or by Auto Cook.
 
 ### Requirement: A processing takes its ingredients when a unit is queued
 
-A processing SHALL take the ingredients of each unit when the unit is queued, and SHALL run its units one after another, each taking its table's seconds.
+A processing SHALL take the ingredients of each unit when the unit is queued.
 
 #### Scenario: A unit queued on an idle processing starts at once
 
@@ -141,6 +141,10 @@ A processing SHALL take the ingredients of each unit when the unit is queued, an
 - **WHEN** a unit is queued
 - **THEN** the unit's ingredients are taken from the bag
 - **AND** the unit starts at the moment it is queued
+
+### Requirement: A processing runs its units one after another
+
+A processing SHALL run its units one after another, each taking its table's seconds.
 
 #### Scenario: A unit queued behind a running one waits its turn
 
@@ -150,13 +154,17 @@ A processing SHALL take the ingredients of each unit when the unit is queued, an
 
 ### Requirement: Finished processing units collect into the bag together
 
-Each processing unit that is done by a moment SHALL be put into the bag together, and a unit whose result the bag has no room for SHALL wait in the queue with the units behind it.
+Each processing unit that is done by a moment SHALL be put into the bag together.
 
 #### Scenario: Units done by a moment are put into the bag
 
 - **GIVEN** processing units whose seconds have passed
 - **WHEN** the moment is read
 - **THEN** their results are put into the bag together
+
+### Requirement: A unit with no room in the bag waits in the queue
+
+A unit whose result the bag has no room for SHALL wait in the queue with the units behind it.
 
 #### Scenario: A unit with no room in the bag waits in the queue
 
@@ -187,7 +195,7 @@ A processing SHALL be queued only once it is known.
 
 ### Requirement: A stove offers its cooking and its processing beside it
 
-A city's stove SHALL offer the cooking screen and the processing screen as two rows of the prompts at its place, and a city with no stove SHALL offer neither.
+A city's stove SHALL offer the cooking screen and the processing screen as two rows of the prompts at its place.
 
 #### Scenario: A city stove cooks where a campfire would be out
 
@@ -201,16 +209,20 @@ A city's stove SHALL offer the cooking screen and the processing screen as two r
 - **WHEN** the player stands within reach of the stove
 - **THEN** the processing row is offered beside the cooking row
 
-#### Scenario: A city with no stove offers none
-
-- **GIVEN** a city with no stove in its scene group record
-- **WHEN** the prompts are computed
-- **THEN** no stove row is offered
-
 #### Scenario: A stove offers no prompt out of reach
 
 - **GIVEN** a city with a stove
 - **WHEN** the player stands beyond the interaction reach
+- **THEN** no stove row is offered
+
+### Requirement: A city with no stove offers neither the cooking nor the processing screen
+
+A city with no stove SHALL offer neither the cooking screen nor the processing screen.
+
+#### Scenario: A city with no stove offers none
+
+- **GIVEN** a city with no stove in its scene group record
+- **WHEN** the prompts are computed
 - **THEN** no stove row is offered
 
 ### Requirement: Pyro lights a campfire and the other elements put it out
@@ -313,7 +325,7 @@ A cook's passive SHALL bonus each dish the cook makes whose food type matches th
 
 ### Requirement: A cooking talent adds a dish by chance
 
-A cook's cooking talent SHALL add one more dish of the recipe when its chance draw succeeds. The 12 percent talent is Xiangling's Chef de Cuisine (`~/Esposter.noindex/cache/genshin-wiki/Category_Xiangling_Talents.json`), and the 18 percent one is Hu Tao's The More the Merrier (`~/Esposter.noindex/cache/genshin-wiki/Category_Hu_Tao_Talents.json`).
+A cook's cooking talent SHALL add one more dish of the recipe when its chance draw succeeds. The 12 percent talent is Xiangling's Chef de Cuisine, and the 18 percent one is Hu Tao's The More the Merrier.
 
 #### Scenario: A perfect cook doubles a delicious dish
 
