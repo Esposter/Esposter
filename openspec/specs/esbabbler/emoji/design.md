@@ -8,12 +8,12 @@ Owning the picker is what buys the single vocabulary. An off-the-shelf grid brin
 
 ```mermaid
 flowchart LR
-  Picker["StyledEmojiPicker - grid, rail, search"] --> Index
-  React["reactions - useSelectEmoji, MessageModelMessageEmojiListItem"] --> Index
+  Picker["StyledEmojiPicker<br/>grid, rail, search"] --> Index
+  React["reactions<br/>useSelectEmoji, MessageModelMessageEmojiListItem"] --> Index
   Composer["composer ':' autocomplete - EmojiSuggestion"] --> Index
   Tooltip["quick-reaction tooltips"] --> Index
-  Index["getEmojiIndex<br/>one shared index"] --> Data["unicode-emoji-json joined with emojilib on the character"]
-  Index --> Search["searchEmojis - MiniSearch, built separately"]
+  Index["getEmojiIndex<br/>one shared index"] --> Data["unicode-emoji-json<br/>joined with emojilib"]
+  Index --> Search["searchEmojis<br/>MiniSearch"]
 ```
 
 ## The dataset

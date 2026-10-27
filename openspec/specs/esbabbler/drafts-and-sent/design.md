@@ -35,8 +35,8 @@ flowchart TD
   EDITOR["Composer input, per room"] -- "debounced autosave" --> SYNC
   ACTION["setDraft / clearDraft"] --> SYNC
   RESTORE["Boot scan of stored draft keys"] --> SYNC
-  SYNC["Sanitize the content"] -- "text survives" --> KEEP["Set the room's draft and persist it"]
-  SYNC -- "sanitizes to nothing" --> DROP["Delete the room's draft and its stored key"]
+  SYNC["Sanitize the content"] -- "text survives" --> KEEP["Persist the draft"]
+  SYNC -- "sanitizes to nothing" --> DROP["Remove the draft"]
   KEEP --> STORE["Reactive drafts map, keyed by room"]
   DROP --> STORE
   STORE --> UI["Room list pencil indicator and the Drafts tab"]

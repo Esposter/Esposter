@@ -258,7 +258,7 @@ A reader SHALL be able to send a room's invite link to a friend from the friend'
 
 ### Requirement: Direct message conversations never accept invite links
 
-Direct message conversations SHALL NOT be joined through invite links.
+Direct message conversations SHALL NOT offer an invite link; the refusal of a join through one is specified by [direct messages are private to their members](../friends-and-dms/spec.md).
 
 #### Scenario: Invite to a direct message is not offered
 

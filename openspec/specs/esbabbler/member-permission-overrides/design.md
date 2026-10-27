@@ -16,8 +16,8 @@ A bit set in both fields would be a state the model does not have, so the table 
 
 ```mermaid
 flowchart TD
-  union["@everyone bits, union every role the member holds"] --> allow["OR in the member's allow bits"]
-  allow --> deny["clear the member's deny bits"]
+  union["Role union<br/>@everyone bits"] --> allow["Member allow bits"]
+  allow --> deny["Member deny bits"]
   deny --> effective["effective bitfield"]
   effective --> check["checkHasPermission reads it"]
 ```

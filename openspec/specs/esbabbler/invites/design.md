@@ -24,7 +24,7 @@ of the usable links behind it.
 
 ```mermaid
 flowchart TD
-    dialog["Invite friends dialog<br/>(expire-after + max-uses selects)"] -->|createInvite| create["createInvite<br/>deletes old link, computes expiresAt from a Temporal.Duration"]
+    dialog["Invite friends dialog<br/>expire-after and max-uses selects"] -->|createInvite| create["createInvite<br/>replaces the old link"]
     create --> row[("invitesInMessage<br/>expiresAt · maxUses · uses")]
     joiner["User with token"] -->|joinRoom| check{"one conditional UPDATE … RETURNING<br/>unexpired and under its cap?"}
     row --> check

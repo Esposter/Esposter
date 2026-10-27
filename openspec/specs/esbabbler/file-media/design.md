@@ -15,20 +15,20 @@ The two limits are not enforced equally, and the difference matters:
 - **The mime category is enforced.** The category is derived from the declared mimetype, and that same mimetype is signed into the write SAS as the blob's content type, so the PUT cannot store the blob as anything else.
 - **The size cap is not enforced — it is checked against the size the client declares.** An Azure write SAS carries no length constraint, and the persisted `FileEntity.size` is what the client declared, never a measurement. The stored size does reach the uploader's allowance, through the `BlobCreated` reconcile, but not this field. A client that declares a small size receives a SAS and can write past the room's cap with it until the SAS expires (`WRITE_SAS_DURATION_MS`). The check rejects an honest oversized drop early; it is not a defence against a client that lies.
 
-Rejecting an over-cap upload outright needs something the direct-to-blob design does not have: the upload would have to pass back through the server, or the stored size would have to be checked against the cap and the blob removed. The post-commit reader that measures the blob now exists and charges the uploader, so an over-cap blob moves the counter and the uploader's next reserve is refused. Nothing rejects or deletes the blob itself, so the size cap is a room-configured guardrail rather than a security boundary, and nothing downstream should assume an attachment is no larger than `maxFileSizeBytes`.
+Rejecting an over-cap upload outright needs something the direct-to-blob design does not have: the upload would have to pass back through the server, or the stored size would have to be checked against the cap and the blob removed. The post-commit reader that measures the blob charges the uploader, so an over-cap blob moves the counter and the uploader's next reserve is refused. Nothing rejects or deletes the blob itself, so the size cap is a room-configured guardrail rather than a security boundary, and nothing downstream should assume an attachment is no larger than `maxFileSizeBytes`.
 
 One rejected file rejects the whole drop, and the alert names it — the repo-wide rule for batch input ([file uploads](../../architecture/file-uploads/design.md)).
 
 ```mermaid
 flowchart TD
-  drop[User drops files into the composer] --> validate[useUploadFiles checks size and category]
-  validate -->|rejected| alert[Alert shown and upload aborts]
+  drop["Composer drop"] --> validate[useUploadFiles checks size and category]
+  validate -->|rejected| alert["Upload alert"]
   validate -->|ok| thumb[generateImageThumbnail downscales images to WebP]
   validate --> sas[message.generateUploadFileSasEntities]
   sas --> enforce[Server<br/>re-checks limits, issues SAS write SAS]
   enforce --> upload[uploadFileToSas PUTs original blocks]
-  thumb --> upthumb[Thumbnail blob PUT to thumbnailSasUrl]
-  upload --> render[Message list renders the thumbnail]
+  thumb --> upthumb["Thumbnail upload"]
+  upload --> render["Message list"]
   upthumb --> render
   render -->|click| viewer["ViewerDialog<br/>viewingFileId + viewingRoomId"]
 ```

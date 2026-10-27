@@ -21,7 +21,7 @@ flowchart TD
     O -->|action item writes deletingRowKey / pinningRowKey| DS[(messageDialogStore)]
     DS -->|deletingRowKey| D[ConfirmDeleteDialog - singleton in List/Index.vue]
     DS -->|pinningRowKey| P[ConfirmPinDialog - singleton in List/Index.vue]
-    O --> E[StyledEmojiPicker - a popover, or a sheet on a narrow screen]
+    O --> E[StyledEmojiPicker<br/>popover at every width]
     E -->|its panel mounts on first open| X[getEmojiIndex - built once]
 ```
 
@@ -37,7 +37,7 @@ flowchart TD
 flowchart TD
   Map["MessageComponentMap[message.type]"] --> Authored{"authored prose?"}
   Authored -->|"Message, Webhook"| Index["Type/Index.vue<br/>authored shell"]
-  Authored -->|"Call, EditRoom, PinMessage, System"| Line["Type/SystemLine.vue — icon, timestamp, reactions"]
+  Authored -->|"Call, EditRoom, PinMessage, System"| Line["Type/SystemLine.vue<br/>shared shell"]
   Authored -->|"Poll"| PollType["Type/Poll.vue — its own card"]
   Index --> Forward{"message.isForward?"}
   Forward -->|"yes"| Rail["quote rail plus Forwarded label"]
@@ -74,4 +74,3 @@ The emoji index follows the same once-for-the-whole-list rule from the other dir
 - One options-menu or context-menu store write must never fan out re-renders: per-item computeds (`isDisabled`, `isMenuTarget`) only propagate when their own value changes, so untargeted items stay untouched.
 - Where the list is anchored — present detection, jump-to-present, bidirectional paging — is
   [message list scrolling](../message-list-scrolling/design.md).
-- List virtualization is the remaining lever if very long scrollback sessions become a problem.
