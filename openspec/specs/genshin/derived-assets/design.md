@@ -198,6 +198,7 @@ The CLI that exports the game's blocks is built on macOS by its own page, [Anime
 
 - [AnimeStudio](https://github.com/Escartem/AnimeStudio): the exporter, and its command-line options.
 - `~/Esposter/genshin-parity/extracted/login-layout/11790361/GameObject/DoorNode.json`: the login layout's door node, at a local position of (-262, 341, 700) and a local scale of 1.
+- Scenario "A screen drawn from atlases is measured from recordings" (under "The interface is measured from screenshots and recordings"): "the wiki's copies", the screen's source for its glyph paths, sizes and colours.
 
 ## Open
 

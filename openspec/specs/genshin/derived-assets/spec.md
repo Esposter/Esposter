@@ -31,7 +31,7 @@ The 2D interface SHALL be measured from screenshots and recordings, and each int
 
 - **GIVEN** a game screen whose atlas names say little
 - **WHEN** its glyph paths, sizes and colours are measured
-- **THEN** they are read from the wiki's copies and public recordings of the screen
+- **THEN** they are read from public recordings of the screen
 
 ### Requirement: The world is measured from the installed game's own assets
 
