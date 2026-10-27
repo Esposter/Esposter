@@ -12,8 +12,7 @@ Each piece of a screen's interface SHALL be placed inside its game parent's box 
 
 - **GIVEN** a piece is anchored to the bottom of its parent
 - **WHEN** the window is resized to any shape
-- **THEN** the piece stays at the bottom of its parent
-- (`~/Esposter.noindex/genshin-parity/extracted/login-ui/rects.json`, the login's `Bottom` with `anchorMin` [0, 0] and `anchorMax` [1, 0])
+- **THEN** the piece stays at the bottom of its parent, as the login's `Bottom` does with `anchorMin` [0, 0] and `anchorMax` [1, 0] (`~/Esposter.noindex/genshin-parity/extracted/login-ui/rects.json`)
 
 #### Scenario: A piece follows its parent
 

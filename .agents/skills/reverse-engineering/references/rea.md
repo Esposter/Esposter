@@ -4,7 +4,7 @@ Read when running REA: its pinned install, the command shape, `doctor`, and whic
 
 ## Install
 
-REA is the `rea-agents` package on npm: MIT licensed, published by its maintainer `morluto`, whose repository is `github.com/morluto/rea`. The install lives in the machine cache, which is `CACHE_ROOT` in `packages/shared-node` (`~/Esposter/cache`), at `~/Esposter/cache/rea-agents/6.8.0`.
+REA is the `rea-agents` package on npm: MIT licensed, published by its maintainer `morluto`, whose repository is `github.com/morluto/rea`. The install lives in the machine cache, which is `CACHE_ROOT` in `packages/shared-node`, at `rea-agents/6.8.0` beneath it.
 
 To install or re-pin it, make that folder, run `npm init -y` in it, then run `npm install rea-agents@6.8.0 --ignore-scripts --no-audit --no-fund`. The `--ignore-scripts` flag skips the native build of the terminal binding, which only the terminal capture needs. The static commands below ran with it skipped.
 

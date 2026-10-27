@@ -4,7 +4,7 @@ Read when reading the Genshin install's files, deciding what a probe copies, or 
 
 ## Location and rule
 
-The install is `C:\Program Files\Genshin Impact\Genshin Impact Game`. Agents only read it: nothing is written there, the game is never launched, and no process is started or stopped. Analysis runs on a copy.
+The install is the game's own folder, `<game install>` in these pages, wherever the launcher placed it. Agents only read it: nothing is written there, the game is never launched, and no process is started or stopped. Analysis runs on a copy.
 
 ## What it holds
 
@@ -20,6 +20,6 @@ The repo reads the install through its own code: `genshin:assets` reads the asse
 
 ## Probe copies
 
-1. Copy the one file into `~/Esposter/cache/genshin-probe/`.
+1. Copy the one file into `genshin-probe/` beneath `CACHE_ROOT` in `packages/shared-node`, as REA's install does.
 2. Run the question against the copy, saving its JSON answer or refusal beside the copy.
 3. Delete the copy once the question is answered. The answer stays; the game's file does not.
