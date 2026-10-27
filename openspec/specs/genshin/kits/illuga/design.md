@@ -2,6 +2,18 @@
 
 Illuga's kit is its record and one behaviour module, `createIllugaKitBehaviour`, avatar 10000127 (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarExcelConfigData.json`). Its moves are the wiki's rows (`~/Esposter/cache/genshin-wiki/Category_Illuga_Talents.json`): the normal attack's 1-Hit to 4-Hit, the Charged Attack, and the Plunging Attack Collision, Low Plunge and High Plunge. gcsim has no folder for Illuga at v2.47.2, so Illuga's record follows [the kits index](../README.md).
 
+## How it works
+
+Each Geo hit a nearby active member lands spends a Nightingale's Song stack for its bonus, and at Constellation 2 every seven stacks consumed summons Aedon's hit.
+
+```mermaid
+flowchart TD
+  Hit["nearby active member's Geo hit"] --> Spend["spends one Nightingale's Song stack"]
+  Spend --> Bonus["hit gains the Geo DMG bonus"]
+  Spend --> Seven{"Constellation 2 and every seven stacks consumed?"}
+  Seven -->|yes| Aedon["Aedon's hit summoned"]
+```
+
 ## Decisions
 
 - **Illuga is a pole user.** The installed game's avatar table gives his `weaponType` as `WEAPON_POLE` (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarExcelConfigData.json`, avatar 10000127).
@@ -43,3 +55,10 @@ Illuga's kit is its record and one behaviour module, `createIllugaKitBehaviour`,
 - The built record of Zhongli (10000030), for the Hold's donor above.
 - The installed game's TextMap and avatar talent table, for Illuga's constellations: Elk With Fanged Antlers (talent 1272), Solarhunting Wolf (1274) and Nightmare Orioles (1276), and the Torchforger's Covenant passive (P1272101) it enhances.
 - The installed game's proud skill group 12739, Shadowless Reflection's, for the Geo DMG bonus of a stack, whose label is read from its TextMap.
+- `~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, hash 1078666392: the game's text naming the nearby active party members as the ones whose hits spend a stack, grounding "A nearby active member's Geo hit spends a stack and gains the bonus".
+- `~/Esposter/cache/genshin-wiki/Category_Illuga_Talents.json`: the 33.6 Geo DMG Bonus at talent level 1, grounding "A nearby active member's Geo hit spends a stack and gains the bonus".
+- `~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, hash 3921016055: the game's text giving Aedon's hit 400% of Elemental Mastery and 200% of DEF, grounding "Constellation 2 summons Aedon's hit".
+- `~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, hash 2798755983: the game's text giving the condition and the 200 DEF, grounding "Constellation 4 gives the active member DEF".
+- `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json`, talent 1274: the 200 DEF, grounding "Constellation 4 gives the active member DEF".
+- `~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, hash 208718975: the game's text giving the 10% CRIT Rate, 30% CRIT DMG and 80 Elemental Mastery, grounding "Constellation 6 enhances Lightkeeper's Oath".
+- `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json`, talent 1276: the 10% CRIT Rate, 30% CRIT DMG and 80 Elemental Mastery, grounding "Constellation 6 enhances Lightkeeper's Oath".

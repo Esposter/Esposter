@@ -14,15 +14,19 @@ Illuga's four strikes SHALL play in order from the attack button as his normal a
 - **WHEN** the player presses the attack button repeatedly
 - **THEN** his four strikes play in order
 
-### Requirement: Charged attack and plunges
+### Requirement: Charged attack deals its own hits
 
-Illuga's charged attack and plunges SHALL each deal their own hits.
+Illuga's charged attack SHALL deal its own hits.
 
 #### Scenario: Charged attack deals its hits
 
 - **GIVEN** Illuga is the character on the field
 - **WHEN** the player holds the attack button to charge
 - **THEN** the charged attack deals its own hits
+
+### Requirement: Plunges deal their own hits
+
+Illuga's plunges SHALL each deal their own hits.
 
 #### Scenario: Plunge deals its own hit
 
@@ -57,9 +61,9 @@ Illuga's burst SHALL deal its two hits.
 - **WHEN** the player casts the burst
 - **THEN** both of its hits land
 
-### Requirement: Haunted Night and Nightingale's Song
+### Requirement: The burst starts Haunted Night and Nightingale's Song
 
-Illuga's burst SHALL start Haunted Night's Oriole-Song for twenty seconds with twenty-one stacks of Nightingale's Song. Each Geo hit a nearby active party member lands on an enemy SHALL spend one stack, and that hit SHALL gain Geo DMG of 33.6% of Illuga's Elemental Mastery for the stack it spends. Illuga's own hits SHALL spend no stack and gain no bonus. The game's text names the nearby active party members as the ones whose hits spend a stack (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, hash 1078666392), and the cached wiki gives the 33.6 Geo DMG Bonus at talent level 1 (`~/Esposter/cache/genshin-wiki/Category_Illuga_Talents.json`).
+Illuga's burst SHALL start Haunted Night's Oriole-Song for twenty seconds with twenty-one stacks of Nightingale's Song.
 
 #### Scenario: The burst starts Haunted Night
 
@@ -67,12 +71,20 @@ Illuga's burst SHALL start Haunted Night's Oriole-Song for twenty seconds with t
 - **WHEN** the player casts the burst
 - **THEN** Haunted Night's Oriole-Song holds for twenty seconds with twenty-one stacks
 
+### Requirement: A nearby active member's Geo hit spends a stack and gains the bonus
+
+Each Geo hit a nearby active party member lands on an enemy SHALL spend one stack, and that hit SHALL gain Geo DMG of 33.6% of Illuga's Elemental Mastery for the stack it spends.
+
 #### Scenario: A Geo hit by the active member spends a stack and gains the bonus
 
 - **GIVEN** Haunted Night holds and a party member other than Illuga is on the field
 - **WHEN** that member's Geo hit lands on an enemy
 - **THEN** one stack is spent
 - **AND** the hit's base damage gains 33.6% of Illuga's Elemental Mastery
+
+### Requirement: Illuga's own hits spend no stack and gain no bonus
+
+Illuga's own hits SHALL spend no stack and gain no bonus.
 
 #### Scenario: Illuga's own hit gains nothing
 
@@ -99,7 +111,7 @@ From ascension 1, Illuga's skill or burst SHALL give each other deployed party m
 
 ### Requirement: Constellation 2 summons Aedon's hit
 
-At Constellation 2, for every seven stacks of Nightingale's Song consumed, Illuga SHALL summon one Geo hit of 400% of his Elemental Mastery and 200% of his DEF as Elemental Burst DMG on one nearby opponent. The game's text gives the same values (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, hash 3921016055).
+At Constellation 2, for every seven stacks of Nightingale's Song consumed, Illuga SHALL summon one Geo hit of 400% of his Elemental Mastery and 200% of his DEF as Elemental Burst DMG on one nearby opponent.
 
 #### Scenario: Seven stacks consumed summon one hit
 
@@ -115,7 +127,7 @@ At Constellation 2, for every seven stacks of Nightingale's Song consumed, Illug
 
 ### Requirement: Constellation 4 gives the active member DEF
 
-At Constellation 4, while Haunted Night holds, the active party member SHALL gain 200 DEF. The game's text gives the condition and the value (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, hash 2798755983; talent 1274 of `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json`).
+At Constellation 4, while Haunted Night holds, the active party member SHALL gain 200 DEF.
 
 #### Scenario: The active member gains 200 DEF
 
@@ -125,7 +137,7 @@ At Constellation 4, while Haunted Night holds, the active party member SHALL gai
 
 ### Requirement: Constellation 6 enhances Lightkeeper's Oath
 
-At Constellation 6, Lightkeeper's Oath SHALL give 10% CRIT Rate and 30% CRIT DMG to Geo hits, and under Ascendant Gleam, 80 Elemental Mastery. The game's text gives both (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, hash 208718975; talent 1276 of `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json`).
+At Constellation 6, Lightkeeper's Oath SHALL give 10% CRIT Rate and 30% CRIT DMG to Geo hits, and under Ascendant Gleam, 80 Elemental Mastery.
 
 #### Scenario: The enhanced Oath raises the CRIT and the Elemental Mastery
 
@@ -135,7 +147,7 @@ At Constellation 6, Lightkeeper's Oath SHALL give 10% CRIT Rate and 30% CRIT DMG
 
 ### Requirement: Provisional timings and areas
 
-Illuga's hit timings and areas SHALL stay provisional, borrowed from other characters' attacks, until a recording of his attacks settles them.
+Illuga's hit timings and areas SHALL stay provisional until a recording of his attacks settles them.
 
 #### Scenario: A recording settles the timings
 
