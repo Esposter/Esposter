@@ -98,7 +98,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@vitest/snapshot`                      | —                     | Keep — tooling   | pinned for vite-plus's own vitest                                                                      |
 | `@vitest/spy`                           | —                     | Keep — tooling   | pinned for vite-plus's own vitest                                                                      |
 | `@vitest/utils`                         | —                     | Keep — tooling   | pinned for vite-plus's own vitest                                                                      |
-| `@vizejs/nuxt`                          | —                     | Keep — framework | the Nuxt module that compiles the app's SFCs with Vize, beside Nuxt's Vue plugin                       |
 | `@vue-flow/background`                  | —                     | Keep — hold      | held while the flowchart's future is decided (flowchart on the editor core, deferred)                  |
 | `@vue-flow/controls`                    | —                     | Keep — hold      | held while the flowchart's future is decided (flowchart on the editor core, deferred)                  |
 | `@vue-flow/core`                        | —                     | Keep — engine    | the flow-diagram engine                                                                                |
@@ -208,7 +207,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `vite-plus`                             | —                     | Keep — tooling   | the task runner, lint, format and the `vpx` script runner                                              |
 | `vitest`                                | —                     | Keep — tooling   | the test runner                                                                                        |
 | `vitest-browser-vue`                    | —                     | Keep — tooling   | browser-mode component tests                                                                           |
-| `vize`                                  | —                     | Keep — tooling   | the Vize compiler the Nuxt module runs on, and the content mapper spike                                |
+| `vize`                                  | —                     | Keep — tooling   | the content mapper spike in the TypeScript toolchain change                                            |
 | `vue`                                   | —                     | Keep — framework | the UI framework                                                                                       |
 | `vue-eslint-parser`                     | —                     | Keep — tooling   | ESLint's Vue parser                                                                                    |
 | `vue-router`                            | —                     | Keep — framework | routing                                                                                                |
