@@ -32,3 +32,6 @@ flowchart LR
 ## Sources
 
 - [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/collei), MIT: Collei's strikes' hitmarks and cancels, the fully charged shot's frames, Floral Brush's hitmarks, and Trump-Card Kitty's explosion, leap ticks and status.
+- Requirement "No poise from arrows, Floral Brush and Trump-Card Kitty": "as the wiki gives it".
+- Scenario "An arrow deals no poise": "as the wiki gives it".
+- Requirement "Leap length": "until a recording settles it against the table's six-second duration".

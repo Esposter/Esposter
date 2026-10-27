@@ -54,7 +54,7 @@ Trump-Card Kitty SHALL explode when it is cast, then leap, and each leap tick SH
 
 ### Requirement: Leap length
 
-The Trump-Card Kitty leap SHALL run 378 frames from its explosion, a provisional length until a recording settles it against the table's six-second duration.
+The Trump-Card Kitty leap SHALL run 378 frames from its explosion, a provisional length.
 
 #### Scenario: The leap ends after 378 frames
 
@@ -74,13 +74,13 @@ Each leap tick SHALL deal damage using the stats and team buffs present when tha
 
 ### Requirement: No poise from arrows, Floral Brush and Trump-Card Kitty
 
-Collei's arrows, Floral Brush and Trump-Card Kitty SHALL deal poise, as the wiki gives it.
+Collei's arrows, Floral Brush and Trump-Card Kitty SHALL deal poise.
 
 #### Scenario: An arrow deals no poise
 
 - **GIVEN** Collei is the character on the field
 - **WHEN** one of her arrows hits an enemy
-- **THEN** the enemy takes the arrow's poise, as the wiki gives it
+- **THEN** the enemy takes the arrow's poise
 
 ### Requirement: Fourth constellation raises the other members' Elemental Mastery from Trump-Card Kitty
 
