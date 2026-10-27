@@ -2,6 +2,19 @@
 
 Ifa's kit is its record and one behaviour module, `createIfaKitBehaviour`, avatar 10000113 (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarExcelConfigData.json`): her three normal attacks (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/ifa/attack.go` line 18), a charged attack, Compound Sedation Field's hit as her burst, and the low plunge with its collision (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/ifa/plunge.go` lines 17 and 18), all played outside her Blessing. Her multipliers are read from proud skill groups 11331, 11332 and 11339 (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`: 11331's index 4 is the charged attack's 50 stamina, 11332's index 4 the skill's 7.5 seconds and index 3 its 80 points, and 11339's index 2 the burst's 15 seconds and index 3 its 60 energy). The charged attack costs 50 stamina, the burst 60 energy with a 15-second cooldown, and the skill cools for 7.5 seconds.
 
+## How it works
+
+Rescue Essentials reads the party's Nightsoul points only while Ifa's own blessing holds, and Constellation 2 changes how points above 60 count.
+
+```mermaid
+flowchart TD
+  Points["party Nightsoul points, up to 150 or 200"] --> Holds{"Ifa in her blessing?"}
+  Holds -->|no| Nothing["no bonus"]
+  Holds -->|yes| Rescue["Rescue Essentials, from her first ascension"]
+  Rescue --> Count["points above 60 count three times, from Constellation 2"]
+  Count --> Reactions["Swirl, Electro-Charged and Lunar-Charged bonus"]
+```
+
 ## Not yet built
 
 Ifa's kit is built around the Nightsoul Blessing. Her skill's press enters the blessing with its points, which drain eight a second, and a press in it leaves it. Still waiting on the Nightsoul hook: Tonic Shot in place of her strikes, her healing, her plunge's gate, and Ascension 4 and the constellations that read the points.
@@ -32,5 +45,20 @@ Ifa's kit is built around the Nightsoul Blessing. Her skill's press enters the b
 
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/ifa), MIT, at v2.47.2: the strikes' and the charged attack's hitmarks, cancels and reaches, the low plunge and its collision, the `High_Plunge` hitbox in `~/Esposter/cache/gcsim-v2.47.2/internal/characters/ifa/config.yml`, the skill's blessing, Compound Sedation Field and its marks, and the passives and constellations the hook waits on. The v2.47.2 source is on disk at `~/Esposter/cache/gcsim-v2.47.2`, which the line references above read.
 - [Category:Ifa Talents](https://genshin-impact.fandom.com/wiki/Category:Ifa_Talents), Genshin Impact Wiki: the poise of her normal attacks, charged attack and plunges, with the Rite of Dispelling Winds page it lists. The cached copy is `~/Esposter/cache/genshin-wiki/Category_Ifa_Talents.json`, which the Not yet built poise bullet reads; this link was not re-opened when it was written.
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/ifa/cons.go`, lines 29 to 45: the second constellation's rule that the party's points above 60 count three times over and the cap rises to 200, grounding "Second constellation counts the party's points above 60 three times over", "Second constellation raises the cap to 200 points", "First ascension's Rescue Essentials add to the party's Swirl and Electro-Charged reactions" and "First ascension's Rescue Essentials add to the party's Lunar-Charged reactions".
+- `~/Esposter.noindex/cache/genshin-wiki/Category_Ifa_Talents.json`: the wiki's Constellation table lists only levels 1, 3 and 6, grounding the note in "Second constellation counts the party's points above 60 three times over" that the in-game text is not read.
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/ifa/cons.go`, lines 29 to 31: the rule that below the second constellation the points above 60 count once and the cap stays at 150, grounding "Below her second constellation the party's points count once".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/ifa/cons.go`, lines 52 to 56: the fourth constellation's 100 Elemental Mastery for 15 seconds when the burst starts, grounding "Fourth constellation adds 100 Elemental Mastery for 15 seconds after her burst".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/ifa/skill.go`, lines 67, 99 to 100 and 106 to 110: the blessing's entry with 80 points, its drain and its exit, grounding "Skill press enters the Nightsoul Blessing" and "Skill press leaves the Nightsoul Blessing".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/ifa/asc.go`, lines 22 to 30, 41 and 46: the Rescue Essentials' blessing gate, party points, cap and reaction values, grounding "First ascension's Rescue Essentials add to the party's Swirl and Electro-Charged reactions", "First ascension's Rescue Essentials add to the party's Lunar-Charged reactions", "First ascension's Rescue Essentials count the party's Nightsoul points", "First ascension's Rescue Essentials count the points only while her blessing lasts" and "Rescue Essentials add nothing below her first ascension".
+- `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`, group 11332 index 4: the skill's 7.5-second cooldown, grounding "Skill cooldown without a hit yet".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/ifa/attack.go`, line 18: grounds scenario "The three normal attacks play in order".
+- `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`, group 11331 index 4: grounds scenario "The charged attack costs 50 stamina".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/ifa/plunge.go` lines 17 and 22: grounds scenario "The low plunge and its collision land".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/ifa/plunge.go` lines 18 and 88: grounds scenario "The low plunge and its collision land".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/ifa/config.yml` lines 102 to 105: grounds requirement "Provisional high plunge" and scenario "The high plunge uses gcsim's High_Plunge reach".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/ifa/burst.go` line 57: grounds scenario "Casting the burst strikes the primary target".
+- `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`, group 11339 index 3: grounds scenario "Casting the burst strikes the primary target".
+- `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`, group 11339 index 2: grounds scenario "Casting the burst strikes the primary target".
 
 ## Open
