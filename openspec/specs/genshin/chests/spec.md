@@ -24,7 +24,7 @@ The map's chests SHALL be placed on the ground only, and every other chest point
 
 - **GIVEN** the official map marks a Mora chest
 - **WHEN** the chests are placed
-- **THEN** no chest of the seven kinds is placed for it (labels 129 and 359 of `~/Esposter/genshin-parity/references/interactive-map/label-tree.json` name Mora chests)
+- **THEN** no chest of the seven kinds is placed for it
 
 ### Requirement: Opening a Common, Exquisite or Precious chest
 
