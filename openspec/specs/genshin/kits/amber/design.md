@@ -34,7 +34,7 @@ flowchart LR
 - [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/amber), MIT: the kit's hitmarks, cancel frames and areas, the bunny's explosion.
 - [gcsim v2.47.2 aimed shot file](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/amber/aimed.go), MIT: Constellation 1's second arrow, at 20% of the first (`aimed.go:103`, with the dump's talent `211` at 0.2).
 - [gcsim v2.47.2 burst file](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/amber/burst.go), MIT: Constellation 6's ATK buff, which gives no Movement SPD.
-- The dump's proud skill groups `2131`, `2132` and `2139`, and its talents `211`, `212` and `216`, read from `ProudSkillExcelConfigData.json` and `AvatarTalentExcelConfigData.json`.
+- The dump's proud skill groups `2131`, `2132` and `2139`, and its talents `211`, `212` and `216`, read from the two files [Alhaitham's kit](../alhaitham/design.md) cites.
 - The wiki pages cached at `{data-root}/cache/genshin-wiki/Category_Amber_Talents.json`: Sharpshooter, Explosive Puppet and Fiery Rain.
 - [gcsim v2.47.2 constellation file](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/amber/cons.go), MIT: Constellation 2, which is left.
 
