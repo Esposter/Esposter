@@ -1,6 +1,6 @@
 # Dataset Row-Cap Warning
 
-Every dataset provider caps its read at `AZURE_MAX_PAGE_SIZE` (1000) rows. Unannounced, that cap is invisible: a survey with 1400 responses would chart, export and tabulate as though it had 1000, a bound dashboard would quietly under-report, and a personalized email export would quietly skip 400 people.
+Every dataset provider caps its read at `AZURE_MAX_PAGE_SIZE` rows. Unannounced, that cap is invisible: a survey with 1400 responses would chart, export and tabulate as though it had 1000, a bound dashboard would quietly under-report, and a personalized email export would quietly skip 400 people.
 
 The fix is metadata, not pagination. A [`Dataset`](../../architecture/dataset/design.md) now carries the uncapped total alongside its capped rows, and every consumer surfaces the gap in the shape that fits it — a footnote on a chart, a banner over a table, a confirm before an export you cannot take back. Actually loading more rows stays [deferred](../../../deferred/resource/dataset-row-cap-pagination/design.md); this warning is that page's explicit revisit trigger.
 

@@ -8,7 +8,7 @@ Every edge, drawn by hand or created in code, takes its defaults from one consta
 
 ```mermaid
 flowchart LR
-  DRAW[drag from a handle] -->|DEFAULT_EDGE_OPTIONS| EDGE["edge: smoothstep · arrow · no label"]
+  DRAW[drag from a handle] -->|DEFAULT_EDGE_OPTIONS| EDGE["edge"]
   EDGE -->|double click the path or label| LABEL[inline label editor]
   EDGE -->|select| PANEL[properties panel<br/>label · path · Delete connector]
   PANEL -->|setEdges| SAVE[autosave]

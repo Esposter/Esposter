@@ -37,7 +37,7 @@ The whole explorer is **client-only rendered**: `apps/web/configuration/routeRul
 ```mermaid
 flowchart LR
   HOME["/resource-explorer (Home)<br/>search · quick-create tiles · recent resources"]
-  HOME -->|☰| SMENU["ResourceServiceMenu drawer<br/>Home · All · Favorites · Recent · Tags · Recycle bin"]
+  HOME -->|☰| SMENU["ResourceServiceMenu drawer"]
   SMENU --> ALL["/resource-explorer/all<br/>full list · search"]
   HOME -->|See all| ALL
   HOME -->|Create a resource| CREATE["/resource-explorer/create<br/>type gallery"]

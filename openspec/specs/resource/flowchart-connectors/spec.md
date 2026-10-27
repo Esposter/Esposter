@@ -21,7 +21,7 @@ The flowchart editor SHALL draw every connector with an arrowhead at its end, an
 - **WHEN** it is drawn
 - **THEN** it shows the same arrowhead and right-angled path as a drawn connector
 
-#### Scenario: A connector saved before this change gains an arrowhead
+#### Scenario: A connector stored without an arrowhead gains one
 
 - **GIVEN** a flowchart was saved before connectors had arrowheads
 - **WHEN** the owner opens it

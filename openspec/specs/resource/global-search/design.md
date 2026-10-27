@@ -61,6 +61,6 @@ With a query set the scope shows three groups plus a last row:
 
 ## Notes
 
-- Explorer-scoped, not app chrome — elsewhere the palette searches the whole app.
+- Elsewhere the palette searches the whole app.
 - The Services group answers "search matches type names" client-side ("survey" surfaces the Survey service row) — pushing type-title matching into the server `where` was rejected; the client already knows `ResourceDefinitionMap`. The Services and Pages groups rank their small registries through `searchItems`, the repo's one client-side index ([search](../../architecture/search/design.md)), never server work.
 - Server-side search history is not worth a table. Recently opened resources live server-side in `resource_accesses`, because the `Last accessed` column they feed has to agree between machines.

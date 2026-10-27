@@ -1,6 +1,6 @@
 ## Purpose
 
-Every dataset consumer says "showing N of M" when a read hits the 1000-row AZURE_MAX_PAGE_SIZE cap, instead of rendering truncated data as complete. The cap is shown as a warning on each surface; it does not load more rows.
+Every dataset consumer says "showing N of M" when a read hits the AZURE_MAX_PAGE_SIZE row cap, instead of rendering truncated data as complete. The cap is shown as a warning on each surface; it does not load more rows.
 
 ## Requirements
 

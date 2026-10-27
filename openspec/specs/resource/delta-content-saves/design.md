@@ -15,7 +15,7 @@ flowchart TD
   commit --> match{"row and blob hash equal the baseline hash?"}
   match -->|"no — CONFLICT"| staged
   match -->|yes| decode["node:zlib zstd against the decoded content blob, capped at the content limit"]
-  decode --> door["saveResourceContent service — version check, blob, contentHash"]
+  decode --> door["saveResourceContent service"]
   staged --> door
   door --> confirm{"returned contentHash equals the sent bytes' hash?"}
   confirm -->|yes| keep["the sent bytes become the next baseline"]
