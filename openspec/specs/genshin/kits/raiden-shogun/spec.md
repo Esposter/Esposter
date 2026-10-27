@@ -6,7 +6,7 @@ Raiden Shogun's kit as built: five strikes, a charged attack, the Eye of Stormy 
 
 ### Requirement: Raiden Shogun's strikes, charged attack and plunges
 
-Raiden Shogun's five strikes, charged attack and collision and two plunges SHALL land on the enemies within reach, dealing the poise the design gives each, provisionally.
+Raiden Shogun's five strikes, charged attack and collision and two plunges SHALL land on the enemies within reach, dealing no poise damage, provisionally.
 
 #### Scenario: Five strikes in sequence
 
@@ -104,4 +104,4 @@ The Eye's bonus to another member's burst, the Musou Isshin plunges and her skil
 
 ## Open
 
-The open items are held once, in [design.md](design.md#open).
+- [ ] **Her strikes deal no poise** — contradicted by `{data-root}/cache/genshin-wiki/Category_Raiden_Shogun_Talents.json`: its Advanced Properties give 36.88 poise for a Musou Isshin 1-Hit DMG.

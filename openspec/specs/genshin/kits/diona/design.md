@@ -4,7 +4,7 @@ Diona's kit is its record and one behaviour module, `createDionaKitBehaviour`, a
 
 ## Decisions
 
-- **Diona's shields are set as the press starts, and her paws reach 5 metres.** gcsim sets a shield as each paw lands and prices a paw as a circle of radius 0.5 on the primary target (`{data-root}/cache/gcsim-v2.47.2/internal/characters/diona/skill.go:165-169`); an area does not hold a target, so the paws reach as the targeting does, the record's `skill.hits.1.area` giving the 5-metre reach. The hold threshold is open (see Provisional constants).
+- **Diona's shields are set as the press starts, and her paws reach 5 metres.** gcsim sets a shield as each paw lands and prices a paw as a circle of radius 0.5 on the primary target (`{data-root}/cache/gcsim-v2.47.2/internal/characters/diona/skill.go:165-169`); an area does not hold a target, so the paws reach as the targeting does, the record's `skill.hits.1.area` giving the 5-metre reach. Each paw's poise and the hold threshold are open (see Provisional constants).
 
 - **Signature Mix's field stands where Diona cast it.** gcsim centres its ticks on the primary target (`{data-root}/cache/gcsim-v2.47.2/internal/characters/diona/burst.go:41`), which the [framework decisions](../README.md#framework-decisions) price at the targeting reach plus the ticks' radius, 21.5. The ticks keep gcsim's 6.5 round the field instead (`{data-root}/cache/gcsim-v2.47.2/internal/characters/diona/burst.go:41`), held as `DiffersFromSource`, as they are a summon from the cast.
 
@@ -22,7 +22,7 @@ flowchart LR
 ## Provisional constants
 
 - **The shield's seconds read the hold's cooldown.** The kit reads group 3932 at index 4, which the dump gives as 15, the hold's cooldown (the wiki's Holding CD 15s, gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/diona/skill.go:80`), where the shield's duration is index 5, 1.8 seconds at level 1 (the wiki's "1.8–2.4s per Paw", and gcsim's `pawDur`, which adds one such duration for each paw that hits, capped at five). The kit's shield outlasts the game's: the overlay's `parameters.shieldSeconds` reads index 4 (`packages/genshin-world/src/data/kits/diona.json`).
-- **The paws take the wiki's 30 poise each.** The wiki's Icy Paw DMG gives 30 poise each (its advanced properties), and the framework fills each paw with it, provisional until the game's own values are measured.
+- **The paws' poise is the spec's provisional zero.** The wiki's Icy Paw DMG gives 30 poise each (its advanced properties), but the spec pins that zero as provisional, so the kit's paws deal none.
 - **The hold's threshold is open.** The half-second hold threshold has no source in gcsim, whose hold is a release at 29 frames (`{data-root}/cache/gcsim-v2.47.2/internal/characters/diona/skill.go:20`), or in the cached wiki.
 - **The plunges' frames are unsourced.** gcsim has no plunge file for Diona, so the plunges' frames wait on a recording.
 - **Constellation 6's buffs last until the next tick.** The wiki gives no duration for Cat's Tail Closing Time, and gcsim gives the active character's buff 2 seconds (`{data-root}/cache/gcsim-v2.47.2/internal/characters/diona/cons.go:48`); the kit's rule is its own, and gcsim's is the other source.
@@ -43,4 +43,4 @@ flowchart LR
 - `{data-root}/cache/gcsim-v2.47.2/internal/characters/diona/skill.go`, lines 96 to 97 (gcsim): grounds the requirement Constellation 2 shields.
 - The wiki gives no duration for Cat's Tail Closing Time, and gcsim sets the buff at 2 seconds (`{data-root}/cache/gcsim-v2.47.2/internal/characters/diona/cons.go:48`): grounds the requirement Constellation 6 buffs the team, its buffs lasting until the next tick.
 - Genshin Impact Wiki, Drunkards' Farce's gameplay note on when the ATK cut applies, in the wiki cache above: grounds the requirement Signature Mix cuts the ATK of the enemies it strikes from Ascension 4.
-- Genshin Impact Wiki, Icy Paw DMG's advanced properties (30 poise each), in the wiki cache above: grounds the requirement Paws deal their poise.
+- Genshin Impact Wiki, Icy Paw DMG's advanced properties (30 poise each), in the wiki cache above: grounds the requirement Paws deal no poise.

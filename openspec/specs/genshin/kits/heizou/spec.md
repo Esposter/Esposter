@@ -74,20 +74,14 @@ Fudou Style Vacuum Slugger SHALL strike a circle and set a Windmuster Iris on ea
 - **WHEN** the cast ends
 - **THEN** no Windmuster Iris is set
 
-### Requirement: Heizou's hits deal their poise
+### Requirement: Heizou's hits deal no poise
 
-Heizou's strikes, charged attack, plunges and burst's hit SHALL deal the poise the design gives each, and his press and hold SHALL deal none until the design settles their stack count.
+Heizou's strikes, charged attack, plunges, skill and burst SHALL deal no poise.
 
-#### Scenario: A strike deals its poise
-
-- **GIVEN** Heizou is the character on the field
-- **WHEN** one of his strikes lands
-- **THEN** it deals the poise the design gives it
-
-#### Scenario: A press or hold deals no poise yet
+#### Scenario: A hit deals no poise
 
 - **GIVEN** Heizou is the character on the field
-- **WHEN** his Heartstopper press or hold lands
+- **WHEN** any of his hits lands
 - **THEN** it deals no poise
 
 ### Requirement: Fourth constellation regenerates Energy on each aura check tag

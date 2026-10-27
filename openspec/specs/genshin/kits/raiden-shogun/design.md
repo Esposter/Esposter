@@ -17,10 +17,11 @@ flowchart TD
 ## Decisions
 
 - **Constellation 2's DEF ignored is read off her Musou Isshin stance.** gcsim gives it while her burst's status stands or the burst's animation plays (`{data-root}/cache/gcsim-v2.47.2/internal/characters/raiden/cons.go:21-25`). The kit has no such status, so the hook reads the stance the burst takes at its cast, and prices only the strikes her own kit deals while it stands (`packages/genshin-world/src/services/kit/characters/raidenKit.ts`).
-- **Her strikes, charged attack and collision take the wiki's poise, provisionally.** The record carries none, and the framework fills them from the wiki, as the values below show (`{data-root}/cache/genshin-wiki/Category_Raiden_Shogun_Talents.json`). Her polearm strikes take 36.88, 36.96, 46.4, 26.96 for each of the fourth's two hits and 60.88, her charged attack 120 and her collision 25; the Musou Isshin stance's strikes take the same five, its charged attack's two hits 60 each, Musou no Hitotachi 150, Eye of Stormy Judgment's hit 80 and its coordinated attacks 30. gcsim gives her plunges theirs (`{data-root}/cache/gcsim-v2.47.2/internal/characters/raiden/plunge.go:38-43`) and none of the rest any.
+- **Her strikes deal no poise yet, provisionally.** The record takes no poise for them, so they deal none (spec.md), though the wiki gives her poise, as the values below show (`{data-root}/cache/genshin-wiki/Category_Raiden_Shogun_Talents.json`). Her polearm strikes take 36.88, 36.96, 46.4, 26.96 for each of the fourth's two hits and 60.88, her charged attack 120 and her collision 25; the Musou Isshin stance's strikes take the same five, its charged attack's two hits 60 each, Musou no Hitotachi 150, Eye of Stormy Judgment's hit 80 and its coordinated attacks 30. gcsim gives her plunges theirs (`{data-root}/cache/gcsim-v2.47.2/internal/characters/raiden/plunge.go:38-43`) and none of the rest any.
 
 ## Not built
 
+- **Her poise is not recorded.** The wiki's values are in the decision above, and the record takes none of them, so her strikes deal no poise until the record takes them.
 - **The Musou Isshin plunges are not built.** gcsim has three (`{data-root}/cache/gcsim-v2.47.2/internal/characters/raiden/plunge.go:151`, `:244`, `:293`), and the kit does not take them yet.
 - **Resolve's clearing on a drown or a jump has no source.** gcsim keeps the stacks when the stance ends on a swap (`{data-root}/cache/gcsim-v2.47.2/internal/characters/raiden/burst.go:106-118` clears only the stance), and the cache says nothing on how the game treats a drown or a jump.
 
@@ -39,4 +40,5 @@ flowchart TD
 
 ## Open
 
+- [ ] **Her strikes deal no poise** — contradicted by `{data-root}/cache/genshin-wiki/Category_Raiden_Shogun_Talents.json`: its poise rows give 36.88 to 120 per strike.
 - [ ] **Resolve clears on a drown or a jump** — no source yet: gcsim keeps the stacks on a swap, and the cache says nothing on drowns or jumps.
