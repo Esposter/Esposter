@@ -71,7 +71,7 @@ The Attributes tab SHALL show the character's name, its level over its phase's c
 
 - **GIVEN** the Attributes tab is open for a character
 - **WHEN** the panel is read
-- **THEN** Max HP, ATK, DEF, Elemental Mastery and Max Stamina are shown as whole numbers (`~/Esposter/genshin-parity/comparisons/character-attributes.png`)
+- **THEN** Max HP, ATK, DEF, Elemental Mastery and Max Stamina are shown as whole numbers
 
 #### Scenario: Advanced attributes shown as percentages
 
@@ -83,17 +83,11 @@ The Attributes tab SHALL show the character's name, its level over its phase's c
 
 - **GIVEN** a character is at its phase's level cap
 - **WHEN** the Attributes tab is shown
-- **THEN** its level is shown over that cap (the reference shows it over the cap as `~/Esposter/genshin-parity/comparisons/character-attributes.png`)
+- **THEN** its level is shown over that cap
 
-### Requirement: Weapons, Artifacts, Constellation and Talents panels show the character's own record
+### Requirement: Weapons panel shows the character's own record
 
 The Weapons panel SHALL show the chosen character's own weapon.
-
-The Artifacts panel SHALL show the chosen character's own worn artifacts.
-
-The Constellation panel SHALL show the chosen character's own activated constellations.
-
-The Talents panel SHALL show the chosen character's own talent levels.
 
 #### Scenario: Weapons panel shows the weapon at its level and phase
 
@@ -102,6 +96,10 @@ The Talents panel SHALL show the chosen character's own talent levels.
 - **THEN** it shows the character's weapon's name, rarity, base ATK and secondary attribute at its level and phase
 - **AND** its refinement rank and ascension phase
 
+### Requirement: Artifacts panel shows the character's own record
+
+The Artifacts panel SHALL show the chosen character's own worn artifacts.
+
 #### Scenario: Artifacts panel shows the five slots in order
 
 - **GIVEN** the Artifacts tab is open
@@ -109,12 +107,20 @@ The Talents panel SHALL show the chosen character's own talent levels.
 - **THEN** the five slots are listed in the game's order
 - **AND** each shows whether an artifact is worn in it
 
+### Requirement: Constellation panel shows the character's own record
+
+The Constellation panel SHALL show the chosen character's own activated constellations.
+
 #### Scenario: Constellation panel lights the activated constellations
 
 - **GIVEN** the Constellation tab is open for a character
 - **WHEN** the panel is read
 - **THEN** six rings are shown
 - **AND** only the activated constellations are lit
+
+### Requirement: Talents panel shows the character's own record
+
+The Talents panel SHALL show the chosen character's own talent levels.
 
 #### Scenario: Talents panel shows the three combat talent levels
 

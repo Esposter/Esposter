@@ -84,7 +84,7 @@ The Artifacts and Constellation references are timed to where their tabs have se
 
 - The English PC client's character screen, from the user's own recording of the build at 21:9 (`~/Esposter/genshin-parity/captures/session-2.mp4`): Attributes at about 154 seconds, then Weapons, Artifacts, Constellation and Talents one second apart, the reference frame at 154 seconds.
 - [Character Menu](https://genshin-impact.fandom.com/wiki/Character/Menu), Genshin Impact Wiki: `C`, the list of characters, the six tabs and what each shows, and the Attributes tab's summary and details. Its screenshots of this screen are phone-sized (`File:Traveler Pyro Character Details 1.png`, 700 by 1213), so they settle the phone's layout, not the PC's.
-- The reference lays them out so: `~/Esposter/genshin-parity/comparisons/character-attributes.png`; grounds "Characters are listed across the top and chosen by name".
+- The reference lays them out so: `~/Esposter/genshin-parity/comparisons/character-attributes.png`; grounds "Characters are listed across the top and chosen by name", and the scenarios "Base five attributes shown whole" and "Level shown over its phase's cap".
 - `~/Esposter/genshin-parity/comparisons/character-constellation-tabs.png`; grounds "Six tabs down the left in the game's order".
 - The words are in `~/Esposter/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`; grounds "Six tabs down the left in the game's order".
 
