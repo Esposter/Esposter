@@ -67,7 +67,7 @@ Cometh the Night SHALL deal an initial Electro hit 93 frames after it is cast, t
 
 ### Requirement: Cometh the Night cooldown
 
-Cometh the Night SHALL cool for the game's 20 seconds before it can be cast again, as its table and the wiki give it; gcsim's 15 is not taken, and the built value is open in the design.
+Cometh the Night SHALL cool for 20 seconds before it can be cast again; the built value is open in the design.
 
 #### Scenario: A cast during the cooldown does nothing
 
@@ -77,11 +77,11 @@ Cometh the Night SHALL cool for the game's 20 seconds before it can be cast agai
 
 ### Requirement: Provisional plunges
 
-Flins's plunges SHALL take their timings from another character's gcsim plunge file and their poise from his own Pocztowy Demonspear page, provisional until a recording of the game settles them.
+Flins's plunges SHALL land at the borrowed timings and deal the poise the design gives, and both stay provisional.
 
 #### Scenario: A recording settles the plunges
 
-- **GIVEN** a recording of Flins's plunge exists
+- **GIVEN** the game's own timing and poise for Flins's plunge are known
 - **WHEN** its timing and poise are compared with the kit's
 - **THEN** the borrowed values stay provisional until the comparison settles them
 
