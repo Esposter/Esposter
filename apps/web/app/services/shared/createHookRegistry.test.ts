@@ -1,4 +1,5 @@
 import { createHookRegistry } from "@/services/shared/createHookRegistry";
+import { noop } from "@esposter/shared";
 import { afterEach, describe, expect, test, vi } from "vitest";
 
 describe(createHookRegistry, () => {
@@ -70,7 +71,7 @@ describe(createHookRegistry, () => {
 
     vi.stubGlobal("window", {});
     const registry = createHookRegistry<() => void>();
-    let unregisterFirst = (): void => {};
+    let unregisterFirst = noop;
     const firstHook = vi.fn<() => void>(() => unregisterFirst());
     const secondHook = vi.fn<() => void>();
     unregisterFirst = registry.register(firstHook);
