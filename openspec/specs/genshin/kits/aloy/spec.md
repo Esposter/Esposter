@@ -6,7 +6,7 @@ Aloy's kit as built: her strikes, fully charged shot and plunges, with Freeze Bo
 
 ### Requirement: Aloy's strikes, fully charged shot and plunges deal physical damage
 
-Aloy's strikes, fully charged shot and plunges SHALL deal their hits on the timings of their animations, and their poise SHALL be the wiki's, as design.md gives it.
+Aloy's strikes, fully charged shot and plunges SHALL deal their hits on the timings of their animations, and their poise SHALL be the values design.md gives them.
 
 #### Scenario: A fully charged shot deals its hit
 
@@ -16,7 +16,7 @@ Aloy's strikes, fully charged shot and plunges SHALL deal their hits on the timi
 
 ### Requirement: Freeze Bomb throws a bomb and six bomblets
 
-Freeze Bomb SHALL deal seven hits, the bomb and its six Chillwater Bomblets, as the wiki's Frozen Wilds page gives them, and each hit SHALL give one unit of Cryo.
+Freeze Bomb SHALL deal seven hits, the bomb and its six Chillwater Bomblets, and each hit SHALL give one unit of Cryo.
 
 #### Scenario: Each bomblet strikes once
 
