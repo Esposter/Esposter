@@ -26,24 +26,26 @@ The model draws five LOD0 meshes under its root "Avatar_Girl_Sword_PlayerGirl_Mo
 
 ### The base programs
 
-Each program is named by its index in the uber's named list: pass, then stage, then record order, the same index as its `NNNNN.dxbc` and its programs.tsv line. Each material's base variant is one keyword set with a vertex and a pixel program, chosen by the rule in the Decisions below. The variant's two programs are (listings named by the pattern `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber/NNNNN.asm`, where `NNNNN` is the program's index and the pattern is not one file; the stage each listing shows is checked in the open items):
+Each program is named by its index in the uber's named list: pass, then stage, then record order, the same index as its `NNNNN.dxbc` and its programs.tsv line. Each material's base variant is one keyword set with a pixel program, chosen by the rule in the Decisions below. The variant's programs are (listings named by the pattern `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber/NNNNN.asm`, where `NNNNN` is the program's index and the pattern is not one file; the stage each listing shows is given in the note below the table):
 
-| Material | Pass      | Stage  | Program index | Container     |
-| :------- | :-------- | :----- | ------------: | :------------ |
-| Body     | "BODY"    | Pixel  |           460 | DXBC (SHEX)   |
-| Body     | "BODY"    | Vertex |           795 | DXIL          |
-| Hair     | "BODY"    | Pixel  |           272 | DXBC (SHEX)   |
-| Hair     | "BODY"    | Vertex |           753 | DXIL          |
-| Face     | "BODY"    | Pixel  |           432 | DXBC (SHEX)   |
-| Face     | "BODY"    | Vertex |           788 | DXIL          |
-| Face     | "OUTLINE" | Pixel  |           885 | D3D (no DXIL) |
-| Face     | "OUTLINE" | Pixel  |           958 | DXBC (SHEX)   |
+| Material | Pass      | Stage          | Program index | Container |
+| :------- | :-------- | :------------- | ------------: | :-------- |
+| Body     | "BODY"    | Pixel          |           460 | D3D       |
+| Body     | "BODY"    | Not identified |           795 | D3D       |
+| Hair     | "BODY"    | Pixel          |           272 | D3D       |
+| Hair     | "BODY"    | Not identified |           753 | D3D       |
+| Face     | "BODY"    | Pixel          |           432 | D3D       |
+| Face     | "BODY"    | Not identified |           788 | D3D       |
+| Face     | "OUTLINE" | Pixel          |           885 | D3D       |
+| Face     | "OUTLINE" | Pixel          |           958 | D3D       |
+
+Programs 795, 753 and 788 are pixel programs, so the vertex stage of the body, hair and face rows is not identified: `00795.asm` is a `ps_5_0` pixel program with one `SV_Target`, and 00753 and 00788 are the same. Every listing carries the D3D disassembler header, so the containers in the table are all D3D.
 
 Candidates before the choice: body 124 pixel and 41 vertex, hair 60 and 5, face 68 and 30, the face's outline 16 and 24 (Exact).
 
 ## Decisions
 
-- **The base variant.** A material matches many candidate programs, because engine-wide keywords (shadows, fog, light probes and the like) are runtime state the material does not set. A candidate carrying another Lumine material's own keyword is not a candidate for it: "BACK_FACE_ON" and "FACE_MAP_NEW_ON" exclude the body, for instance. The base variant is the keyword set, among those with both a vertex and a pixel program, with the fewest keywords beyond the material's own set. Two sets tied on that count go to the one whose two programs are both DXBC (SHEX) over a DXIL one, and a tie past that goes to the lowest index. The equations are read from the base variant's pixel program, and its vertex program gives the outline's width and the vertex stage.
+- **The base variant.** A material matches many candidate programs, because engine-wide keywords (shadows, fog, light probes and the like) are runtime state the material does not set. A candidate carrying another Lumine material's own keyword is not a candidate for it: "BACK_FACE_ON" and "FACE_MAP_NEW_ON" exclude the body, for instance. The base variant is the keyword set, among those with a pixel program, with the fewest keywords beyond the material's own set. Two sets tied on that count go to the one whose two programs are both DXBC (SHEX) over a DXIL one (Provisional: no listing carries a DXIL marker, see the note under the table), and a tie past that goes to the lowest index. The equations are read from the base variant's pixel program, and its vertex program is not yet identified (see the note under the table).
 - **A pack's light area and band width are derived, not fitted.** A pack's toon is drawn for MMD's lookup, which reads it down its whole column at `0.5 + 0.5 * (N . L)`. Under the flat lightmap the threshold runs linearly in `N . L` from `z(-1)` to `z(1)`, so the defaults take the light area `W = z(1) = (0.5 + 0.5 + 0.4975) / 2` and the band width `w = 0.4975 / W`, and the column is then MMD's exactly, the clamp never reached. A pack is drawn as its own toon was authored, and no material value is copied.
 - **An engine-wide keyword's addition is noted only where it touches the shade**, as one line under the equation it changes, such as a shadow keyword's attenuation factor. The equation itself is written once, never a second copy per keyword.
 - **A PMX sphere is laid over the diffuse, not read as the metal map.** The metal gate reads the lightmap's red above 0.9, and a PMX file has no lightmap, so a PMX sphere passed as "_MTMap" never reaches its branch, whatever its mode. MMD's loader lays a sphere over the diffuse before the toon lighting, so a Multiply or Add sphere is that composite on `M.rgb * tint`, read through the normal's view-space x and negated y (the file's top is the surface that faces up). The metal branch stays the game's own, for a model that ships a lightmap and a matcap. Provisional: the pack's sphere is the nearest stand-in for a game input the page does not have.
@@ -51,7 +53,7 @@ Candidates before the choice: body 124 pixel and 41 vertex, hair 60 and 5, face 
 
 ## The pass classes
 
-The uber's 1,553 compiled programs, by their own output signatures (Exact):
+The uber's compiled programs, by their own output signatures (Exact on each class's signature):
 
 | Class               | Signature                                             | Programs |
 | :------------------ | :---------------------------------------------------- | -------: |
@@ -61,7 +63,7 @@ The uber's 1,553 compiled programs, by their own output signatures (Exact):
 | No colour           | programs with no colour target (vertex-only or depth) |      390 |
 | MotionVectors       | a two-channel target                                  |        0 |
 
-Of the 1,553, 693 are DXBC and 860 are DXIL. `vkd3d-compiler` disassembles both, detecting each program's type, where `d3dcompiler_47` reads only the DXBC ones.
+The class counts are Provisional: the listing directory holds more files than the table's programs (`~/Esposter/genshin-parity/extracted/shaders/asm/uber`), and no listing carries a DXIL marker.
 
 ## The body's Deferred pass
 
@@ -77,7 +79,7 @@ The body's pixel program writes six targets, and the lit colour is built from th
 
 The lightmap's alpha selects one of five regions. Exact on the toggles, read from the program; the thresholds are not literals in any listing under `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber/`, so they are open (see Open):
 
-```
+```text
 region(A) = 2  if A >= 0.8 and _UseMaterial2 != 0
           = 5  if 0.6 <= A < 0.8 and _UseMaterial5 != 0
           = 3  if 0.4 <= A < 0.6 and _UseMaterial3 != 0
@@ -89,37 +91,37 @@ Each region past 1 takes its own colour, emission and specular values from its m
 
 ### The metal gate
 
-```
+```text
 metal = (Lm.r > 0.9)
 ```
 
-Exact on the threshold. Where `metal` holds, the colour is a matcap read of "_MTMap" at the view-space normal, mixed between "_MTMapDarkColor" and "_MTMapLightColor" (Provisional on the matcap's coordinate derivation, which is read from the sampling site but not yet checked against a rendered metal).
+Provisional on the threshold, see Open. Where `metal` holds, the colour is a matcap read of "_MTMap" at the view-space normal, mixed between "_MTMapDarkColor" and "_MTMapLightColor" (Provisional on the matcap's coordinate derivation, which is read from the sampling site but not yet checked against a rendered metal).
 
 ### The ramp row
 
 Outside the metal gate the colour is shaded on the packed ramp. The ramp's rows are per region:
 
-```
+```text
 v_row(r) = 0.05 + 0.1 * (r - 1)      (first row, Exact)
 v_row2(r) = 0.55 + 0.1 * (r - 1)     (second row, used where _CoolShadowColorOrTex is set, Exact)
 ```
 
-Both are sampled at `1 - v`, so a region's row is read from the ramp's own bottom-up layout (Exact on the coordinate, Provisional on the ramp's row order, which is the Body_Shadow_Ramp's 20 rows as the texture reports them).
+Both are sampled at `1 - v`, so a region's row is read from the ramp's own bottom-up layout (Exact on the coordinate, Provisional on the ramp's row order, which is the Body_Shadow_Ramp's rows as the texture reports them).
 
 ### The shade term
 
 The ramp is sampled at a column `u` and a row `v`, read from the program's sampling sites (Exact):
 
-```
+```text
 W  = "_LightArea"
 x  = clamp((W - z) / W / w, 0, 1)
 u  = 1 - x          (0 where the program's "v8.w" exceeds 1e-5)
 S  = "_PackedShadowRampTex".sample(u, 1 - v_row(r)).rgb
 ```
 
-`z` is the toon threshold, with its three branches read from the program's compare chain (Exact on the form, Provisional on the vertex input "v1.x" as the vertex colour's AO). The sun term `N_v` is a half Lambert with a scale just under a half (Exact): the body's program takes it per pixel from its shading normal and the light's direction, and the vertex programs that hand it to the hair's write the same form:
+`z` is the toon threshold, with its three branches read from the program's compare chain (Exact on the form, Provisional on the vertex input "v1.x" as the vertex colour's AO). The sun term `N_v` is a half Lambert with a scale just under a half (Provisional on the scale, see Open): the body's program takes it per pixel from its shading normal and the light's direction, and the vertex programs that hand it to the hair's write the same form:
 
-```
+```text
 N_v = 0.4975 * (N . L) + 0.5
 L  = (_UseLightMapColorAO > 0.001) ? Lm.g : 0.5
 Q  = 2 * (L - 0.5) * |L - 0.5| + 0.5
@@ -129,7 +131,7 @@ z  = 0 if Q' < 0.05;  1 if Q' > 0.95;  else (Q' + N_v) / 2
 
 `w` is "_ShadowRampWidth", scaled by the vertex's ramp weight when "_UseVertexRampWidth" is set (Exact):
 
-```
+```text
 w = (_UseVertexRampWidth != 0) ? max(2 * v1.y, 0.01) * "_ShadowRampWidth" : "_ShadowRampWidth"
 ```
 
@@ -141,7 +143,7 @@ The shade term is not yet fitted to a numeric value, so no number is claimed for
 
 The non-metal branch builds the lit colour from these terms, in the order the program applies them (Exact on each term and its operator, Provisional on the light factor and the hit terms):
 
-```
+```text
 Mc   = M.rgb * tint                        (tint: "_Color" for region 1, "_Color2" to "_Color5" for the others)
 Lit  = Mc * S * "_ES_CharacterMainLightBrightness"
 Em   = Mc * "_EmissionColor_MHY" * "_EmissionScaler"   (the region's own colour and scaler)
@@ -155,9 +157,9 @@ The emission's factor `E` is the main texture's alpha, gated, and not the lightm
 
 `H` is the half vector of the view and the light, and `N` is "v7" (Exact on its form). The specular's own weight is "_SpecualrInShaow", added, not an attenuation of the specular. The light factor `f` is "min(2 * _LightColor0.w, 1)" where "mhy_AvatarLightDir.w" exceeds 0.5, and 1 otherwise, and it scales the specular and the lit colour in the branch that tests it (Provisional on its meaning). The main light's colour scales the lit colour and the specular, and not the emission (Provisional on the order; the material leaves `f` out, since the world's light carries no strength beside its colour). The rim and hit terms ("_ElementRimColor", "_HitColor") are added after this (Provisional on the order). The outputs use `C` through the desaturation below.
 
-### The outputs (Exact)
+### The outputs (Provisional beyond `o0`)
 
-```
+```text
 o0.xyz = 0.5 * N + 0.5                      (N as above)
 o0.w   = 1/3 when region == 2, else 0       (the float bits of 0.333)
 o1.xyz = 0.5 + (C_d - 0.5) * (1 + K)        (the tone-adjusted lit colour)
@@ -167,6 +169,8 @@ o3.x   = q / 255, with q in {4, 21}         (region-dependent, Exact on the valu
 o4.x   = a flag in {0, 1}                   (Provisional on its meaning)
 o5.x   = (floor(F) & 15) / 255              (the material's nibble, Exact on the mask)
 ```
+
+`00460.asm` has one `SV_Target`, `o0`, so its listing confirms `o0` alone and the terms for `o1` to `o5` are not yet confirmed.
 
 `D` is "_DesaturateScale", read from the body's constant layout at byte 640, which is register 40's `x` (Exact by offset). `K` is "_ContrastScale", at byte 652, register 40's `w` (Exact by offset). `F` is the register 261 `x` field, which the layout names "_FlareType" (Exact on the value, Provisional on the name, since a "_FlareType" on a body would be unusual).
 
@@ -178,17 +182,17 @@ The hair's base pixel program is 272 (DXBC), in the "BODY" pass (`~/Esposter/gen
 
 The specular is the body's form, with the same gate and the same lightmap channels (Exact on the operators, and on the channel each term reads):
 
-```
+```text
 H    = normalize(V + L)                         (the half vector, as the body's)
 Spec = step(1 - Lm.b, pow(max(N . H, 1e-4), "_Shininess"))
 C_s  = Spec * Lm.r * "_SpecMulti" * "_SpecularColor" * tint * brightness
 ```
 
-`Lm` is the "Hair_Lightmap" (the hair's program reads its red as the metal-free specular weight). Where the region is 1 the program takes "_Shininess", "_SpecMulti" and "_SpecularColor" from the base block (cb0[222] and cb0[220]); other regions take their own block. The hair's specular is added to the colour as `"_SpecualrInShaow" * C_s` (Exact).
+`Lm` is the "Hair_Lightmap" (the hair's program reads its red as the metal-free specular weight). Where the region is 1 the program takes "_Shininess", "_SpecMulti" and "_SpecularColor" from its base block, whose slots are not identified: `00272.asm` has 106 constant vectors, so cb0[220] and cb0[222] are not read there; other regions take their own block. The hair's specular is added to the colour as `"_SpecualrInShaow" * C_s` (Exact).
 
 ### The hair's ramp row
 
-The ramp row is the body's: `v_row(r) = 0.05 + 0.1 * (r - 1)`, and the second row `0.55 + 0.1 * (r - 1)` where the cool shadow is on (Exact on the constants, from the program's `mad` pairs). The hair's packed ramp is sampled from texture slot "t3" in this program, where the body's is "t4", so the slot order differs between programs (Exact on the slot number here). Its column is `1 - x` as the body's, which is not traced in this program (Provisional).
+The ramp row is the body's: `v_row(r) = 0.05 + 0.1 * (r - 1)`, and the second row `0.55 + 0.1 * (r - 1)` where the cool shadow is on (Provisional: `00272.asm` holds no 0.1 literal, so the constants are the body's and not read from this program). The hair's packed ramp is sampled from texture slot "t3" in this program, where the body's is "t4", so the slot order differs between programs (Exact on the slot number here). Its column is `1 - x` as the body's, which is not traced in this program (Provisional).
 
 Hair's equations are not fitted to a rendered frame, so no number is claimed.
 
@@ -196,11 +200,21 @@ Hair's equations are not fitted to a rendered frame, so no number is claimed.
 
 The face is not shaded on the body's ramp (`packages/genshin-engine/src/character/shading/createFaceShadeNode.ts`). Its shadow is its face map compared with a threshold that turns with the light, and both the threshold and the flip of the face map are set once a frame on the CPU from the light and the face's root bone. The shadow colour is set per pixel, and its equations are below.
 
+```mermaid
+flowchart LR
+  LIGHT["the main light and the root bone"] --> ANGLE["angle"]
+  ANGLE -->|"CPU, once a frame"| THRESHOLD["threshold"]
+  ANGLE -->|"CPU, once a frame"| FLIP["flip"]
+  THRESHOLD --> LOOKUP["face-map lookup"]
+  FLIP --> LOOKUP
+  LOOKUP -->|"shader"| COLOUR["shadow colour"]
+```
+
 ### The light's angle to the root bone
 
 Let `L` be the main light's direction, the same the body is lit by, and let `A` and `B` be the root bone's local Y and Z axes in world space, the root bone's world rotation applied to the unit vectors `(0, 1, 0)` and `(0, 0, 1)`. Then with `a = L · A` and `b = L · B` (`packages/genshin-engine/src/character/shading/updateFaceDraw.ts` takes the same `-atan2` of the two dots, in its own units):
 
-```
+```text
 angle = -atan2(b, a)                       in degrees, when a ≠ 0
 angle = +90 if b < 0, otherwise -90        when a = 0
 t     = |angle| / 180
@@ -210,7 +224,7 @@ t     = |angle| / 180
 
 With `lo = max(_FaceMapRotateOffset, 0)` and `hi = min(_FaceMapRotateOffset + 1, 1)`:
 
-```
+```text
 s         = saturate((t - lo) / (hi - lo))
 threshold = clamp(s * s * (3 - 2s), 1e-4, 0.9999)
 ```
@@ -221,7 +235,7 @@ A light straight along the root's Y axis gives the minimum, `1e-4`, and a light 
 
 `flip = angle > 0`, unless `_FaceFlipFactor` decides it (`packages/genshin-engine/src/character/shading/updateFaceDraw.ts`, `checkIsFlipped`): above one half the flip is on, below minus one half it is off. The face map is then sampled at the raw UV, with its u mirrored where the flip is on:
 
-```
+```text
 uv = (flip ? 1 - uv.x : uv.x, uv.y)
 ```
 
@@ -229,7 +243,7 @@ uv = (flip ? 1 - uv.x : uv.x, uv.y)
 
 With the face map's texel `T` at that UV, which is its alpha, not its red (Exact: the program samples "t2" into a destination's `.w`), the softness window `s = max(_FaceMapSoftness, 1e-6)`, and the threshold above (`packages/genshin-engine/src/character/shading/createFaceShadeNode.ts`, a `smoothstep` of a saturated ratio):
 
-```
+```text
 lo = clamp(threshold - s, 1e-4, 0.9989)
 hi = min(threshold + s, 0.9999)
 F  = smoothstep(0, 1, saturate((T - lo) / (hi - lo)))
@@ -241,15 +255,15 @@ The face map holds the nose's two flanks at its two ends, and both are at full a
 
 ### The shadow colour
 
-The face's colour is the material colour blended toward white by the lookup, over the face's shadow colour. With `Cm` the material colour on the main texture and `F` the lookup above (Exact, from the pixel program):
+The face's colour is the material colour blended toward white by the lookup, over the face's shadow colour. With `Cm` the material colour on the main texture and `F` the lookup above (Provisional, see Open):
 
-```
+```text
 C = Cm * mix(S, 1, F)
 ```
 
 `S` is the pixel's region's first shadow colour, read from the lightmap's alpha as the body's region is: `_FirstShadowMultColor` for region one and `_FirstShadowMultColor2` to `5` for regions two to five. Where `_UseCoolShadowColorOrTex` is set, `S` is mixed toward the cool shadow colour of the same region, `_CoolShadowMultColor` (and `2` to `5`), by the colour tone:
 
-```
+```text
 S = mix(S, S_cool, tone)    where _UseCoolShadowColorOrTex is set
 ```
 
@@ -261,9 +275,9 @@ The outline is the face's "OUTLINE" pass, whose base programs are pixel 958 (DXB
 
 ### The width (vertex program not identified)
 
-The vertex program moves each vertex in view space, before the projection (the repo's `OUTLINE_PROJECTION_SCALE` in `packages/genshin-engine/src/character/shading/constants.ts` holds the same 2.414): along its ray from the eye by an offset, then along its screen normal by a width `W`. The depth term `D` picks one of three knots of "_OutlineWidthAdjustZs", and the scale is read from the matching knots of "_OutlineWidthAdjustScales" (Exact on the operators and the knot selection):
+The vertex program moves each vertex in view space, before the projection (the repo's `OUTLINE_PROJECTION_SCALE` in `packages/genshin-engine/src/character/shading/constants.ts` holds the same 2.414): along its ray from the eye by an offset, then along its screen normal by a width `W`. The depth term `D` picks one of three knots of "_OutlineWidthAdjustZs", and the scale is read from the matching knots of "_OutlineWidthAdjustScales" (Provisional: no listing names this vertex program, see Open):
 
-```
+```text
 k  = 2.414 / cb2[7].y                       (the projection's y scale)
 D  = -k * z                                 (z the view-space depth)
 (Z0, Z1, S0, S1) = (Zs.x, Zs.y, Sc.x, Sc.y) if D < Zs.y, else (Zs.y, Zs.z, Sc.y, Sc.z)
@@ -279,7 +293,7 @@ The push is along the vertex's tangent, not its normal (Exact on the input): the
 
 The offset comes first, along the ray from the eye, not along the normal (Exact):
 
-```
+```text
 f = (_OutlineOffsetBlockBChannel < 0.5) ? (v1.z - 0.5) : 1
 V += normalize(V) * "_MaxOutlineZOffset" * 0.01 * f
 ```
@@ -290,13 +304,13 @@ The code (`createGameOutlineMaterial`, `getGameOutlineOffset`, `createAvatarShad
 
 ### The colour (pixel 885)
 
-The outline's colour is its region's, drawn toward a fifth of the main texture by its region's intensity (Exact on every operator but the 0.2, since `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber/00885.asm` holds no 0.200000 literal; see Open):
+The outline's colour is its region's, drawn toward the main texture by its region's intensity (Exact on every operator, the factor read from `cb0[106].y` in `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber/00885.asm`, which holds no 0.200000 literal):
 
-```
+```text
 Oc = "_OutlineColor"                       (no "_UseMaterial2" to "_UseMaterial5" on)
 Oc = "_Color{k}" * "_OutlineColor{k}"      (any on; k the region, selected as the body's region(A) is)
 I  = "_OutLineIntensity{k}"                (k one where none is on)
-C  = Oc + I * (0.2 * T_m - Oc)             (T_m the rgb of the main texture at the pixel's coordinates)
+C  = Oc + I * (cb0[106].y * T_m - Oc)             (T_m the rgb of the main texture at the pixel's coordinates)
 ```
 
 The region's `A` is the alpha of texture "t1" at the main texture's coordinates, taken as the lightmap's, as the body's is (Provisional on the texture's name). `T_m` is texture "t0" at the pixel's own coordinates, the sample the pixel's alpha clip reads. The code does not apply "_MainTex_ST" to it (Provisional: whether the game's values are the identity for these materials is not settled). With no region on, `Oc` is the colour the vertex program hands on: "_OutlineColor", or the vertex's colour where "_OutlineVertexColorPassthrough" is set.
@@ -309,7 +323,7 @@ Nothing in the outline's equations has been fitted to a rendered outline, so no 
 
 ## The deferred lighting pass's character branch
 
-The pass is "Hidden/Internal-DeferredShading", in the block "00/00612967.blk", exported raw as one shader with 765 programs. The parser reads all of them, its pass trailer being one word or two. Its character programs are the 34 pixel programs keyed by "HAS_CHARACTER_LIGHT". None of them carries "DEFERRED_TOON_ON", so that keyword marks no character program and does not pair with the character set.
+The pass is "Hidden/Internal-DeferredShading", in the block "00/00612967.blk" (Provisional: the name is not in the extracted dump, see Open). The parser reads all of its programs, its pass trailer being one word or two. Its character programs are the pixel programs keyed by "HAS_CHARACTER_LIGHT". None of them carries "DEFERRED_TOON_ON", so that keyword marks no character program and does not pair with the character set.
 
 Program 394 (keywords "ELEMENT_VIEW_ON", "HAS_CHARACTER_LIGHT", "MHY_SHADER_HIGH", DXBC) is the chosen base: the first of the fewest-keyword character sets.
 
@@ -339,9 +353,9 @@ In development the Traveler's model reads these from the game's own values in `a
 
 The body's program is "Shader#0" of the layout's shader export, with 693 compiled variants (Exact on the counts; the register is the variant's header and its instructions).
 
-- **The brightness is a plain multiply, Exact.** 240 of the 693 variants read "_ES_CharacterMainLightBrightness" (`cb0[269].x` in each header), each as a single `mul` on the lit colour and on the specular term (the first `mul` into `r11` and the `mul` on `cb0[269].x` before the `movc`). The value is not on the material: the body's saved properties hold no "_ES_CharacterMainLightBrightness", and no extracted dump carries it (Exact on the absence; `~/Esposter.noindex/genshin-parity/extracted/characters/playergirl/inventory-values.txt` holds no such key). Its value is the game's own and is not read, so the world takes 1 (Provisional: a game-set value below 1 would be missing from the lit colour).
-- **No fog reaches the body's program, Exact.** None of the 693 variants reads a fog constant. The shader's properties declare "_FogStart", "_FogEnd", "_FogDensity" and "_FogColor", but no compiled variant reads them, so the game's body draws without fog. The world's height fog is a depth pass in the post pipeline (`createHeightFogNode`, `createPostPipeline`), applied to every scene pixel with depth below 1, the avatar's included. Whether the game's own post pass fogs characters is not read (Provisional).
-- **The haze at the close-up is zero, Exact on the form.** The fog's integral starts at the world's start distance, so a pixel nearer than that gets no haze. At 3 m the factor is 0.0000% for every setting that sets a density: Windrise (start 60 m, density 0.0024, falloff 0.02) and the login's sky states (start 10 m, densities 818 to 339400, falloffs 0.12 to 1.16), both level and tilted 10 degrees up. The evaluation is of the form `createHeightFogNode` writes, at the eye's height of 1.5 m, with the world's unit taken as the metre (the ground tiles are 1024 metres, Provisional on the unit). So the fog does not reach a close-up.
+- **The brightness is a plain multiply, Exact on the form.** About a third of the body's variants read "_ES_CharacterMainLightBrightness" (`cb0[269].x` in each header), each as a single `mul` on the lit colour and on the specular term (the first `mul` into `r11` and the `mul` on `cb0[269].x` before the `movc`; the count is Provisional, see Open). The value is not on the material: the body's saved properties hold no "_ES_CharacterMainLightBrightness", and no extracted dump carries it (Exact on the absence; `~/Esposter.noindex/genshin-parity/extracted/characters/playergirl/inventory-values.txt` holds no such key). Its value is the game's own and is not read, so the world takes 1 (Provisional: a game-set value below 1 would be missing from the lit colour).
+- **No fog reaches the body's program, Provisional on the scan.** None of the variants reads a fog constant, see Open. The shader's properties declare "_FogStart", "_FogEnd", "_FogDensity" and "_FogColor", but no compiled variant reads them, so the game's body draws without fog. The world's height fog is a depth pass in the post pipeline (`createHeightFogNode`, `createPostPipeline`), applied to every scene pixel with depth below 1, the avatar's included. Whether the game's own post pass fogs characters is not read (Provisional).
+- **The haze at the close-up is zero, Exact on the form and Provisional on the evaluation.** The fog's integral starts at the world's start distance, so a pixel nearer than that gets no haze. At 3 m the factor is zero for every setting that sets a density: Windrise (`FOG_START_DISTANCE` 60 m, `FOG_DENSITY` 0.0024 and `FOG_HEIGHT_FALLOFF` 0.02, in `packages/genshin-world/src/services/windrise/constants.ts`) and the login's sky states (starting at 10 m, with densities in the hundreds to hundreds of thousands and falloffs of a tenth to one, each state in `packages/genshin-world/src/services/login/scene/LoginSkyStateMap.ts`), both level and tilted 10 degrees up. The evaluation is of the form `createHeightFogNode` writes, at the eye's height of 1.5 m, with the world's unit taken as the metre (the ground tiles are 1024 metres, Provisional on the unit). So the fog does not reach a close-up.
 - **The tone curve is the game's, Exact on the code path.** Both canvases pass the renderer's `GENSHIN_TONE_MAPPING`, which is `NoToneMapping`, and the post pipeline ends every pixel on `toneMapGenshinNode`, the avatar's included. Three's ACES Filmic is the canvas's default only where a canvas omits the prop, and none does. Against three's ACES Filmic, per channel on a grey, the game's curve gives 0.179 against 0.032 at scene 0.05, 0.335 against 0.213 at 0.18, 0.535 against 0.558 at 0.5, 0.702 against 0.763 at 1 (white, the sides differ by 0.061), and 0.968 against 0.952 at 4. The two cross near scene 0.5, so the shadows of the game's curve are lighter and its highlights darker than ACES. The game's own curve on characters is not read (Provisional).
 
 ### The colour space of each texture, per slot (Derived, Provisional)
@@ -364,11 +378,8 @@ The only case where a ramp stays raw is an artist painting it in linear values, 
 - [ ] **The register-to-texture binding** — no source yet: a check against a rendered frame of the order the parameter table lists the textures, which the bindings above use.
 - [ ] **A PMX AdditionalUv sphere is not drawn** — no source yet: its colour checked against a rendered pack. Its mode reads the mesh's second UV set (`subUv`), which the geometry carries, but the sphere is laid over the diffuse only for Multiply and Add.
 - [ ] **TOON_SPECULAR_ON is defined by no uber variant** — no source yet: a compile-time dump of the uber variants' defines, since none of the 6,337 listings or 43 `Shader#*.dat` dumps names the keyword.
-- [ ] **The uber's 1,553 compiled programs sort into the five pass classes** — contradicted by `~/Esposter/genshin-parity/extracted/shaders/asm/uber`: it holds 6,337 listings, not 1,553.
 - [ ] **The candidate counts (body 124 and 41, hair 60 and 5, face 68 and 30, outline 16 and 24)** — no source yet: a count over the uber's keyword sets.
-- [ ] **Programs 795, 753 and 788 are vertex programs** — contradicted by `~/Esposter/genshin-parity/extracted/shaders/asm/uber/00795.asm`: a `ps_5_0` pixel program with one `SV_Target`; so are 00753 and 00788.
 - [ ] **The outline's width equations (the vertex program's moves, knots, tangent push and offset above)** — no source yet: a listing of the outline's vertex program, since `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber/00958.asm` is a pixel program whose inputs are SV_POSITION and TEXCOORD only.
-- [ ] **Each program's container is DXBC or DXIL as the table says** — contradicted by `~/Esposter/genshin-parity/extracted/shaders/asm/uber`: all 6,337 listings carry the D3D disassembler header, none a DXIL marker.
 - [ ] **The metal gate's threshold `Lm.r > 0.9`** — no source yet: the threshold literal in the program holding the metal gate; pixel 460 holds 0.930000 and no listing under `~/Esposter/genshin-parity/extracted/shaders/asm/uber` holds 0.900000.
 - [ ] **The half-Lambert scale 0.4975 in `N_v`** — no source yet: a listing that holds the literal 0.4975; none under `~/Esposter/genshin-parity/extracted/shaders/asm/uber` holds 0.497500, and pixel 460 holds 0.498000 in one add.
 - [ ] **The region thresholds 0.8, 0.6, 0.4 and 0.2** — no source yet: a listing that holds the thresholds 0.8, 0.6 or 0.4; none under `~/Esposter/genshin-parity/extracted/shaders/asm/uber` holds them, and pixel 460 holds 0.200000 but not 0.8, 0.6 or 0.4.
@@ -379,14 +390,10 @@ The only case where a ramp stays raw is an artist painting it in linear values, 
 - [ ] **The game's tone curve against ACES at scene 0.05, 0.18, 0.5, 1 and 4** — no source yet: a script evaluating both curves; none is committed.
 - [ ] **The face's flip, `_FaceFlipFactor` and its angle rule** — no source yet: a game listing that names `_FaceFlipFactor`, since none under `~/Esposter.noindex/genshin-parity/extracted/shaders` does, and the repo's `updateFaceDraw.ts` is repo code.
 - [ ] **The face's shadow colour `C = Cm * mix(S, 1, F)` and the no-face-map case lit** — no source yet: a rendered face that checks the equation, since `~/Esposter/genshin-parity/extracted/shaders/asm/uber/00432.asm` is not decoded to this form.
-- [ ] **The outline's colour tint `0.2 * T_m`** — contradicted by `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber/00885.asm:46`: no 0.200000 literal; T_m meets cb0[106].y, not 0.2.
 - [ ] **The outline's region intensities `_OutLineIntensity{k}`** — no source yet: the pixel program's read of each intensity, since the 885 listing's `cb0` indices are not matched to the names.
 - [ ] **The outline's `_OutLineZOffset` at `cb0[31].x` is not built** — no source yet: the game's `_OutLineZOffset` bias, which no listing under `~/Esposter/genshin-parity/extracted/shaders/asm/uber` or `Shader#*.dat` names.
-- [ ] **The output map `o0` to `o5` of the deferred body pass** — contradicted by `~/Esposter/genshin-parity/extracted/shaders/asm/uber/00460.asm`: its output signature has one SV_Target, o0.xyzw, and no o1 to o5.
-- [ ] **The hair's specular and ramp-row equations (pixel 272)** — contradicted by `~/Esposter/genshin-parity/extracted/shaders/asm/uber/00272.asm`: CB0 has 106 vectors, so cb0[220] and cb0[222] are not read; no 0.1 literal.
 - [ ] **Each program's index is the same in its `NNNNN.dxbc` and its `programs.tsv` line** — no source yet: the cited file `programs.tsv` is not on disk
 - [ ] **The nose shows a dark mark in front light, as the character screen draws it** — no source yet: the Hydro Lumine character-screen video (https://www.youtube.com/watch?v=KPlvZW6udfk, 0:18) is not on disk.
-- [ ] **The nose shows a small mark at every light angle, from a flank in shadow** — contradicted by `~/Esposter.noindex/genshin-parity/extracted/characters/playergirl/raw/tex-12271586/Texture2D/Avatar_Tex_Face_Shadow.png`: both flanks at full alpha, so neither is shadowed.
 - [ ] **A pale dot on the nose of a back-lit face is the lit flank** — no source yet: a rendered back-lit frame of the face.
 - [ ] **The repo's outline projection scale holds the game's 2.414** — no source yet: a game listing holding the literal 2.414000; none under `~/Esposter/genshin-parity/extracted/shaders/asm/uber` does.
 - [ ] **The outline's width is `_OutlineWidth` times 0.41425, weighted by the alpha, with no `T_w`** — no source yet: a game listing holding the literal 0.41425; none under `~/Esposter/genshin-parity/extracted/shaders/asm/uber` does.
@@ -394,5 +401,9 @@ The only case where a ramp stays raw is an artist painting it in linear values, 
 - [ ] **Lumine's body draws without fog** — no source yet: the game's own post pass for characters, whether it fogs the body, is not read; the body's program reads no fog constant, which is the shader side only.
 - [ ] **A pack's toon is read down its one column as the lookup, with the flat default lightmap as the threshold** — no source yet: the pack path through `packages/genshin-engine/src/character/shading/createCharacterShadingNode.ts` is not traced.
 - [ ] **A pack's region toggles stay off, and its values come from the game's inventory** — no source yet: the code path that fills a pack's material from the inventory record is not traced; `packages/genshin-engine/src/character/createCharacterShadingInputs.ts` defaults the region toggles to off, but neither it nor `packages/genshin-engine/src/character/createCharacterMaterial.ts` fills from the inventory record.
+- [ ] **The default light area and band width keep the lookup from clamping across the light's full range** — no source yet: a computed trace at the defaults; no test asserts it.
+- [ ] **A pack without a lightmap takes the flat default lightmap of red 0, green 0.5 and alpha 0** — no source yet: the flat lightmap's red and alpha are not traced to a constant.
+- [ ] **A part in a region whose toggle is off keeps the first region's colours, and a material with no region toggle on draws in the first region only** — no source yet: which constant buffer slots are the region toggles and what each selects, which `~/Esposter/genshin-parity/extracted/shaders/asm/uber/00460.asm` does not name.
+- [ ] **Lumine's outline takes her region's colour, toned as her body is, and the outline colour when no region toggle is on** — no source yet: which constant buffer slot is her region toggle and what each slot holds, which `~/Esposter/genshin-parity/extracted/shaders/asm/uber/00885.asm` does not name.
 
 Related: [drawing a character](../drawing/design.md), [derived assets](../../derived-assets/design.md), [game data formats](../../game-data-formats/design.md).

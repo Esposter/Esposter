@@ -1,3 +1,5 @@
+# genshin/characters/shading Specification
+
 ## Purpose
 
 How the game's Character_Base_Uber material lights Lumine's body, as equations read from the program that draws it, each tagged Exact or Provisional, with the inputs a player's pack can supply and the defaults for the rest.
@@ -40,7 +42,7 @@ A player's pack SHALL shade the body along its own toon column, with no value co
 
 ### Requirement: Lumine's body (2)
 
-Lumine's body SHALL draw without fog, so a close-up keeps its colour.
+Lumine's body SHALL take the scene's height fog, which adds no haze at a close-up.
 
 #### Scenario: A close-up of the body shows no haze in any sky state
 
@@ -57,7 +59,7 @@ Lumine's face SHALL turn its shadow with the light's angle to her head, and a fa
 - **GIVEN** Lumine's face has its face map
 - **WHEN** the light turns from in front of her head to behind it
 - **THEN** the face's shadow edge moves across the face
-- **AND** the nose keeps a small mark at every light angle
+- **AND** the nose's flanks stay lit at every light angle
 
 #### Scenario: A face with no face map is lit in full
 
@@ -97,18 +99,3 @@ Where a player's pack supplies no value, the body SHALL take the game's own valu
 - **GIVEN** a material holds no value for a field
 - **WHEN** the body is drawn
 - **THEN** that field takes its default
-
-## Open
-
-- [ ] **Lumine's body draws without fog** — contradicted by `packages/genshin-engine/src/post/createPostPipeline.ts`: applies the height fog to every pixel with depth below 1, the body's included.
-- [ ] **A close-up of the body shows no haze in any sky state, at 3 metres** — no source yet: the evaluation of `createHeightFogNode` at the Windrise and login settings, which no test or script commits.
-- [ ] **The nose keeps a small mark at every light angle** — no source yet: the face map's flank texels at its two ends, which are not read from the texture; `~/Esposter/genshin-parity/extracted/characters/playergirl/inventory.md` holds no texel values.
-- [ ] **The outline's colour is drawn toward a fifth of the main texture, by the region's intensity** — no source yet: the constant buffer value that makes the fifth, which `~/Esposter/genshin-parity/extracted/shaders/asm/uber/00885.asm` (the outline's pixel program) does not give: it has no `0.200000` literal, and its buffer reads are not matched to their values.
-- [ ] **The default light area and band width keep the lookup from clamping across the light's full range** — no source yet: a computed trace at the defaults; no test asserts it.
-- [ ] **A pack's toon is read down its one column as the lookup, with the flat default lightmap as the threshold** — no source yet: the pack path through `packages/genshin-engine/src/character/shading/createCharacterShadingNode.ts` is not traced.
-- [ ] **A pack without a lightmap takes the flat default lightmap of red 0, green 0.5 and alpha 0** — no source yet: the flat lightmap's red and alpha are not traced to a constant.
-- [ ] **A pack's region toggles stay off, and its values come from the game's inventory** — no source yet: the code path that fills a pack's material from the inventory record is not traced; `packages/genshin-engine/src/character/createCharacterShadingInputs.ts` sets its own defaults (brightness 1, contrast and desaturate 0) at lines 20-25, which the inventory's values are not yet compared against.
-- [ ] **Lumine's body takes the colour and emission of the region its lightmap alpha selects, from an alpha of at least 0.8** — no source yet: the constant buffer slot that holds the 0.8 threshold, which `~/Esposter/genshin-parity/extracted/shaders/asm/uber/00460.asm` (the body's pixel program) does not give: it has no `0.800000` literal.
-- [ ] **A part in a region whose toggle is off keeps the first region's colours, and a material with no region toggle on draws in the first region only** — no source yet: which constant buffer slots are the region toggles and what each selects, which `~/Esposter/genshin-parity/extracted/shaders/asm/uber/00460.asm` does not name.
-- [ ] **Lumine's outline takes her region's colour, toned as her body is, and the outline colour when no region toggle is on** — no source yet: which constant buffer slot is her region toggle and what each slot holds, which `~/Esposter/genshin-parity/extracted/shaders/asm/uber/00885.asm` does not name.
-- [ ] **Lumine's face turns its shadow edge across the face as the light turns around her head** — no source yet: the shadow branch's match to the face map's sampling, which `~/Esposter/genshin-parity/extracted/shaders/asm/uber/00432.asm` (the face's pixel program) does not give.

@@ -1,3 +1,5 @@
+# genshin/characters/pmx-reader Specification
+
 ## Purpose
 
 The engine's own PMX reader turns an MMD model file into three's space as it reads, since three ships no MMD loader and the workspace has no PMX parser.

@@ -1,3 +1,5 @@
+# genshin/characters/development-packs Specification
+
 ## Purpose
 
 Under nuxt dev the development server serves the developer's own extracted official packs from disk, and no build registers the route.
