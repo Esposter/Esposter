@@ -1,6 +1,6 @@
+import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { SITE_NAME } from "@esposter/shared";
 import { CONTENT_CACHE_DIRECTORY } from "@esposter/shared-node/cache";
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
 import { readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join, relative } from "node:path";
