@@ -47,16 +47,18 @@ Nicole's burst SHALL deal Pyro damage in a 6.5-metre circle on the primary targe
 - **WHEN** the player casts the burst
 - **THEN** the burst does not start
 
-### Requirement: Nicole's skill shields the team and buffs its ATK
+### Requirement: Nicole's skill shields the team
 
 Nicole's elemental skill SHALL shield the team with a Pyro shield scaled by her attack, 8 frames after the cast and lasting 20 seconds.
-
-Nicole's elemental skill SHALL give each deployed member an ATK buff scaled by her attack and capped, 8 frames after the cast and lasting 20 seconds.
 
 #### Scenario: Shield lands 8 frames after the cast
 
 - **WHEN** the player presses Nicole's skill
 - **THEN** a Pyro shield of 2.21184 times her attack plus 1386.6697, at level 1, covers the team 8 frames later, for 20 seconds
+
+### Requirement: Nicole's skill buffs the team's ATK
+
+Nicole's elemental skill SHALL give each deployed member an ATK buff scaled by her attack and capped, 8 frames after the cast and lasting 20 seconds.
 
 #### Scenario: Team ATK buff is capped
 
@@ -103,11 +105,9 @@ Nicole's burst SHALL project a copy of each hit the active character lands on an
 - **WHEN** that other character's hit lands on an enemy
 - **THEN** no projection lands
 
-### Requirement: Nicole's first and fourth ascensions
+### Requirement: Nicole's first ascension
 
 Her first ascension SHALL give the character swapped in ATK 300 for as long as her skill's buff on that character stands, three seconds after the swap or at once for a Hexerei.
-
-Her fourth ascension SHALL give her the same buff for eight seconds on each elemental hit of the active character, bounded by her skill's buff.
 
 #### Scenario: A swap in gets the buff three seconds on
 
@@ -138,6 +138,16 @@ Her fourth ascension SHALL give her the same buff for eight seconds on each elem
 - **WHEN** Nicole casts her skill
 - **THEN** every ATK 300 ascension buff is removed before her skill's own buffs land
 
+#### Scenario: Below the first ascension nothing applies
+
+- **GIVEN** Nicole is below ascension 1
+- **WHEN** a character is swapped in
+- **THEN** no ascension buff applies
+
+### Requirement: Nicole's fourth ascension
+
+Her fourth ascension SHALL give her the same ATK 300 buff for eight seconds on each elemental hit of the active character, bounded by her skill's buff.
+
 #### Scenario: Her fourth ascension buffs her on each elemental hit
 
 - **GIVEN** Nicole is at least ascension 4 and her skill's buff stands on her
@@ -149,12 +159,6 @@ Her fourth ascension SHALL give her the same buff for eight seconds on each elem
 - **GIVEN** Nicole is at least ascension 4
 - **WHEN** the active character lands a physical hit
 - **THEN** she gains no ascension buff
-
-#### Scenario: Below the first ascension nothing applies
-
-- **GIVEN** Nicole is below ascension 1
-- **WHEN** a character is swapped in
-- **THEN** no ascension buff applies
 
 ### Requirement: Nicole's first constellation
 
@@ -190,11 +194,9 @@ Her first constellation SHALL project each hit of the active character at six ti
 - **WHEN** the active character lands a hit
 - **THEN** no projection lands
 
-### Requirement: Nicole's second constellation
+### Requirement: Nicole's second constellation gives the team ATK
 
 Her second constellation SHALL give each deployed member ATK 300 with her skill.
-
-Her second constellation SHALL, while an upgraded character's buff stands, lower the RES of that character's element by a quarter on each enemy within 10 metres of the team.
 
 #### Scenario: Her skill gives the team ATK 300 with it
 
@@ -207,6 +209,16 @@ Her second constellation SHALL, while an upgraded character's buff stands, lower
 - **GIVEN** the team holds the second constellation's ATK 300 buff
 - **WHEN** she casts her skill again
 - **THEN** that buff is removed before her skill's own buffs land
+
+#### Scenario: Below the second constellation nothing applies
+
+- **GIVEN** Nicole is constellation 1
+- **WHEN** she casts her skill
+- **THEN** no ATK 300 constellation buff applies
+
+### Requirement: Nicole's second constellation lowers RES
+
+Her second constellation SHALL, while an upgraded character's buff stands, lower the RES of that character's element by a quarter on each enemy within 10 metres of the team.
 
 #### Scenario: An upgraded character lowers RES within 10 metres
 
@@ -226,17 +238,9 @@ Her second constellation SHALL, while an upgraded character's buff stands, lower
 - **WHEN** an enemy stands within 10 metres of the team
 - **THEN** no RES is lowered
 
-#### Scenario: Below the second constellation nothing applies
-
-- **GIVEN** Nicole is constellation 1
-- **WHEN** she casts her skill
-- **THEN** no ATK 300 constellation buff applies
-
-### Requirement: Nicole's fourth constellation
+### Requirement: Nicole's fourth constellation hit bonus
 
 Her fourth constellation SHALL give an upgraded character 0.7 of Nicole's attack in flat base damage on each of its normal, charged, plunging, skill or burst hits, for eight hits.
-
-An upgrade SHALL give the character its eight stacks again only once its 16-second cooldown has run out.
 
 #### Scenario: An upgraded character's hit gains 0.7 of her attack
 
@@ -256,23 +260,25 @@ An upgrade SHALL give the character its eight stacks again only once its 16-seco
 - **WHEN** a projection of its hit lands
 - **THEN** the projection's damage gains no bonus and no stack is spent
 
-#### Scenario: An upgrade within the cooldown gives no fresh stacks
-
-- **GIVEN** an upgraded character has spent some of its stacks less than 16 seconds ago
-- **WHEN** it is upgraded again
-- **THEN** it keeps the stacks it has left
-
 #### Scenario: Below the fourth constellation nothing applies
 
 - **GIVEN** Nicole is below constellation 4
 - **WHEN** an upgraded character lands a hit
 - **THEN** its flat base damage gains nothing
 
-### Requirement: Nicole's sixth constellation
+### Requirement: Nicole's fourth constellation stack refresh
+
+An upgrade SHALL give the upgraded character its eight stacks again only once its 16-second cooldown has run out.
+
+#### Scenario: An upgrade within the cooldown gives no fresh stacks
+
+- **GIVEN** an upgraded character has spent some of its stacks less than 16 seconds ago
+- **WHEN** it is upgraded again
+- **THEN** it keeps the stacks it has left
+
+### Requirement: Nicole's sixth constellation ignores defence
 
 Her sixth constellation SHALL ignore 40% of the defence an upgraded character's hit is dealt against, her own hits and the team's.
-
-Her sixth constellation SHALL hold her upgrades for as long as her skill's buff stands, her own and each one she gives the team.
 
 #### Scenario: An upgraded character's hit ignores 40% of defence
 
@@ -285,6 +291,10 @@ Her sixth constellation SHALL hold her upgrades for as long as her skill's buff 
 - **GIVEN** Nicole is at least constellation 6 and holds her first ascension's buff
 - **WHEN** she lands a hit
 - **THEN** 40% of the enemy's defence is ignored on it
+
+### Requirement: Nicole's sixth constellation holds her upgrades
+
+Her sixth constellation SHALL hold her upgrades for as long as her skill's buff stands, her own and each one she gives the team.
 
 #### Scenario: Her fourth ascension holds for her skill's remaining time
 
