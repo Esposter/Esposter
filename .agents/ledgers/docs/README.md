@@ -41,7 +41,7 @@ What each pattern means is the owning skill's to say:
     the `openspec` skill's Rules, over `openspec/specs` — ``(SHALL|MUST|WHEN|THEN|AND|GIVEN)[^`]*`(packages|apps|scripts|openspec)/``
     with `--include=spec.md`
 
-Grep 8's cross-page form is `pnpm ai:sweep:duplicate-prose`: every run of fourteen words two specs or skills of
+Grep 8's cross-page form is `pnpm ai:sweep:duplicate-prose`: every run of `SHINGLE_SIZE` words two specs or skills of
 different owners share, longest first, which is what a page restating another's rule leaves behind — a paraphrase
 does not, and is still the pass's to read. A run three pages share is a template rather than a copy and is left
 out, and neither a URL nor the words of a path both pages cite are counted — a citation is the same string on both by design,
