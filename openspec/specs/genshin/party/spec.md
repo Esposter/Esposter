@@ -6,7 +6,9 @@ The player's party as the game keeps it — up to four characters in each team P
 
 ### Requirement: A team holds up to four characters, one each
 
-A team SHALL hold up to four characters, each character at most once, and the deployed team's first member SHALL stand on the field (the four slots on screen are in `~/Esposter.noindex/genshin-parity/captures/yt-greLeGJE-Jg-party-setup.mp4` at 30 seconds).
+A team SHALL hold up to four characters, each character at most once.
+
+The deployed team's first member SHALL stand on the field.
 
 #### Scenario: Team set with its members
 
@@ -23,7 +25,7 @@ A team SHALL hold up to four characters, each character at most once, and the de
 
 ### Requirement: A new player's party starts with four default teams
 
-A new player's party SHALL start with the four default teams, named Party 1 to Party 4, with the first deployed and its first member on the field (the names are in `~/Esposter/genshin-parity/text/TextMap/`).
+A new player's party SHALL start with the four default teams, named Party 1 to Party 4, with the first deployed and its first member on the field.
 
 #### Scenario: New player's party created
 
@@ -50,7 +52,9 @@ A party member's key SHALL switch that member onto the field when the member is 
 
 ### Requirement: A switch never brings on a fallen member or changes an empty slot
 
-A switch SHALL NOT bring on a character who is down, and SHALL leave the field unchanged for an empty slot or the member already on the field.
+A switch SHALL NOT bring on a character who is down.
+
+A switch SHALL leave the field unchanged for an empty slot or the member already on the field.
 
 #### Scenario: Fallen member's key pressed
 
@@ -149,7 +153,11 @@ A team SHALL be refused deployment when it has no members, and when all its memb
 
 ### Requirement: Teams are added, renamed and disbanded under the game's limits
 
-The player SHALL be able to add a team, which is named Team Standing By until renamed, up to fifteen teams, to rename a team, and to disband a team, with the four default teams and the deployed team kept (the name "Team Standing By" is in `~/Esposter/genshin-parity/text/TextMap/`).
+The player SHALL be able to add a team, which is named Team Standing By until renamed, up to fifteen teams.
+
+The player SHALL be able to disband a team, with the four default teams and the deployed team kept.
+
+The player SHALL be able to rename a team.
 
 #### Scenario: Team added
 
@@ -178,7 +186,7 @@ The player SHALL be able to add a team, which is named Team Standing By until re
 
 ### Requirement: The deployed team's elements give its Elemental Resonances
 
-A full team's elements SHALL give each element that two or more members share its Elemental Resonance, and four different elements SHALL give the Protective Canopy (the game's resonance texts in `~/Esposter/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json`).
+A full team's elements SHALL give each element that two or more members share its Elemental Resonance, and four different elements SHALL give the Protective Canopy.
 
 #### Scenario: Two members share an element
 
@@ -223,7 +231,7 @@ While a shield is up on a Geo team with the Enduring Rock resonance, the team's 
 
 ### Requirement: Sprawling Greenery gives Elemental Mastery after each reaction
 
-With the Sprawling Greenery resonance, each reaction a strike triggers SHALL give every party member Elemental Mastery for six seconds, 30 after Burning, Quicken, Bloom or Lunar-Bloom and 20 after Aggravate, Spread, Hyperbloom or Burgeon (the game's 30 and 20 Elemental Mastery for 6s, `paramList`, in `~/Esposter/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json`).
+With the Sprawling Greenery resonance, each reaction a strike triggers SHALL give every party member Elemental Mastery for six seconds, 30 after Burning, Quicken, Bloom or Lunar-Bloom and 20 after Aggravate, Spread, Hyperbloom or Burgeon.
 
 #### Scenario: Reaction triggered by a strike
 
@@ -239,7 +247,11 @@ With the Sprawling Greenery resonance, each reaction a strike triggers SHALL giv
 
 ### Requirement: Impetuous Winds shortens skills, speeds movement and cuts stamina spent
 
-With the Impetuous Winds resonance, a skill's cooldown SHALL be five percent shorter, the on-field character's walking, running, sprinting and dashing SHALL be ten percent faster, and each stamina spend SHALL be 15 percent lower while the on-field character carries Anemo's resonance.
+With the Impetuous Winds resonance, a skill's cooldown SHALL be five percent shorter.
+
+With the Impetuous Winds resonance, the on-field character's walking, running, sprinting and dashing SHALL be ten percent faster.
+
+With the Impetuous Winds resonance, each stamina spend SHALL be 15 percent lower while the on-field character carries Anemo's resonance.
 
 #### Scenario: Skill started on an Anemo team
 

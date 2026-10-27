@@ -23,7 +23,7 @@ A character's Max HP, ATK and DEF SHALL each be its base multiplied by one plus 
 
 ### Requirement: Base attributes grow along the level curve and rise with ascension
 
-A character's and weapon's base attributes SHALL grow along the game's level curve and rise with each ascension phase they have reached (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/AvatarCurveExcelConfigData.json`, where level 90's HP curve is 8.349; `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/AvatarPromoteExcelConfigData.json`, whose phases add base props; `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/WeaponCurveExcelConfigData.json` and `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/WeaponPromoteExcelConfigData.json` alike).
+A character's and weapon's base attributes SHALL grow along the game's level curve and rise with each ascension phase they have reached.
 
 #### Scenario: Base grows to its level within its phase
 
@@ -101,7 +101,7 @@ A character's region SHALL be the region its association names, with the Fatui c
 
 ### Requirement: The Traveler has no element until it resonates with a statue
 
-The Traveler SHALL have no element until it resonates with a statue (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/AvatarSkillDepotExcelConfigData.json`, the Traveler's default depots 501 and 701, whose skills carry no `energySkill`).
+The Traveler SHALL have no element until it resonates with a statue.
 
 #### Scenario: Traveler before resonance has no element
 

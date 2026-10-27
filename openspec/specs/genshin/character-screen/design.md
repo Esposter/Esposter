@@ -14,7 +14,7 @@ flowchart TD
   TAB -->|Weapons| WEAPONS["CharacterMenuWeapons: the weapon at its level and phase"]
   TAB -->|Artifacts| ARTIFACTS["CharacterMenuArtifacts: the five slots, worn or not"]
   TAB -->|Constellation| CONSTELLATIONS["CharacterMenuConstellation: six rings, activated ones lit"]
-  TAB -->|Talents| TALENTS["CharacterMenuTalents: each combat talent's level, next phase, cost and Upgrade"]
+  TAB -->|Talents| TALENTS["CharacterMenuTalents: the three combat talents' rows"]
   TAB -->|Profile| PROFILE["CharacterProfile: the story list and the text panel"]
   CHOSEN --> LIST
 ```
@@ -51,24 +51,15 @@ Measured off the reference frame at 21:9, 3440 by 1440 pixels, in units: a pixel
 
 ## Notes
 
-- **Five states are scored, each a frame of the same recording.** `packages/genshin-world/src/components/Character/Screen` fixes the roster of fifteen characters, the Traveler among them, with Xilonen chosen at level 90 and phase six, and its stat tables read by `readStatTables` from the hosted game data's local mirror. `initialTab` opens the screen on the tab the reference shows, and the fixture's `variants` open it on the other four. Each reference is a frame of the user's recording (`session-2.mp4`) at 21:9, the tab settled, and it is scored over the whole frame and the tab column:
+- **Five states are scored, each a frame of the same recording.** `packages/genshin-world/src/components/Character/Screen` fixes the roster, the Traveler among them, with Xilonen chosen at level 90 and phase six, and its stat tables read by `readStatTables` from the hosted game data's local mirror. `initialTab` opens the screen on the tab the reference shows, and the fixture's `variants` open it on the other four. Each reference is a frame of the user's recording (`session-2.mp4`) at 21:9, the tab settled, and it is scored over the whole frame and the tab column. The readings belong to the run's output.
 
-| Tab open            | Reference | Whole frame, mean / FLIP | Tab column, mean / FLIP |
-| :------------------ | :-------- | :----------------------- | :---------------------- |
-| Attributes, Xilonen | 154.4 s   | 7.78% / 0.3535           | 6.37% / 0.3096          |
-| Weapons             | 156 s     | 10.21% / 0.4153          | 7.39% / 0.3384          |
-| Artifacts           | 157.5 s   | 10.44% / 0.4314          | 7.93% / 0.3583          |
-| Constellation       | 158.3 s   | 6.74% / 0.2813           | 5.32% / 0.2054          |
-| Talents             | 159 s     | 7.94% / 0.3512           | 6.94% / 0.3231          |
-
-The Artifacts and Constellation references are timed to where their tabs have settled, 157.5 and 158.3 seconds, since the tab is still fading in earlier. Their tab-column references are `character-artifacts-tabs` and `character-constellation-tabs`, timed the same way. The Constellation tab's node list is drawn in full at 158.3 seconds, and the Artifacts and Constellation references do not show their tabs at the frames their panels need, so their whole-frame scores cannot show the panels beyond that. The pill's slide stays provisional until it is timed off a recording (the owed clip `menu-character.mkv`, and the Profile still on the roadmap's References sought list).
+The Artifacts and Constellation references are timed to where their tabs have settled, 157.5 and 158.3 seconds, since the tab is still fading in earlier. Their tab-column references are `character-artifacts-tabs` and `character-constellation-tabs`, timed the same way. The Constellation tab's node list is drawn in full at 158.3 seconds, and the Artifacts and Constellation references do not show their tabs at the frames their panels need, so their whole-frame scores cannot show the panels beyond that.
 
 - **The Constellation panel is drawn.** Its six rings sit where the tab's list is at 158.3 seconds: 72 units across, their centres 111 units apart down the panel on an arc that bows right at the middle, all six lit, as the reference still shows (`~/Esposter/genshin-parity/comparisons/character-constellation.png`, its left panel) and as Xilonen's record holds six constellations (`constellationCount` 6). The icons are the game's art, which the rules keep out of the repository, and the names wait on the game's text, so neither is drawn.
 - **The backdrop samples the whole frame.** The middle is the held scene: the golden beams and particles and the character's model, which rises over 154.4 to 155.6 seconds and is the game's art, so the screen draws each tab's backdrop from its reference's scene and nothing more. The backdrop is sampled over the whole frame less its head band and its foot, as the median of six horizontal bands: the panels and the tab column are text over the scene, with no fill of their own in the reference. Sampling only the area the panels leave bare scores worse on every tab column but one.
-- **Not drawn yet, for want of text or art.** The Details button and the Friendship row with its bar, which the default panel shows under the base rows, and the character's description: their words are not in the decoded English text yet. The element emblem, the element-coloured stars, the Q and E keys, W and S, the arrows, the Ascension Limit pill and the UID wait on the glyph pass or the text. The panel shows the advanced and elemental groups beneath the base five, which the game holds behind Details (`~/Esposter/genshin-parity/comparisons/character-attributes.png`).
-- **The level line reads "Lv. 90/90".** The game writes "Level 90 / 90" (`~/Esposter/genshin-parity/comparisons/character-attributes.png`), a wording not in the decoded text yet.
-- **The Attributes tab's motion is owed.** The pill's slide and the model's rise are read off the recording at 60 frames a second once `character-details.mkv` and the other owed clips land on the roadmap's References sought list.
-- **The 16:9 layout is anchored, not measured.** At 16:9 the panel stays right-anchored, as the settled call holds, and `character-attributes-1080.png` on the roadmap's References sought list checks it.
+- **Not drawn yet, for want of text or art.** The Details button and the Friendship row with its bar, which the default panel shows under the base rows, and the character's description: their words are not in the decoded English text yet. The element emblem, the element-coloured stars, the Q and E keys, W and S, the arrows, the Ascension Limit pill and the UID wait on the glyph pass or the text.
+- **The Attributes tab's motion is owed.** The model's rise is read off the recording at 60 frames a second once `character-details.mkv` and the other owed clips land on the roadmap's References sought list.
+- At 16:9 the panel stays right-anchored, as the settled call holds, and `character-attributes-1080.png` on the roadmap's References sought list checks it.
 - **Only the Traveler and the roster's names come from the game's text.** Every other character's name is read from the name text map (`nameText`), which the world screen loads for the banners as well (`~/Esposter.noindex/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json` holds "Xilonen" and "Traveler").
 
 ## Key files
@@ -93,6 +84,9 @@ The Artifacts and Constellation references are timed to where their tabs have se
 
 - The English PC client's character screen, from the user's own recording of the build at 21:9 (`~/Esposter/genshin-parity/captures/session-2.mp4`): Attributes at about 154 seconds, then Weapons, Artifacts, Constellation and Talents one second apart, the reference frame at 154 seconds.
 - [Character Menu](https://genshin-impact.fandom.com/wiki/Character/Menu), Genshin Impact Wiki: `C`, the list of characters, the six tabs and what each shows, and the Attributes tab's summary and details. Its screenshots of this screen are phone-sized (`File:Traveler Pyro Character Details 1.png`, 700 by 1213), so they settle the phone's layout, not the PC's.
+- The reference lays them out so: `~/Esposter/genshin-parity/comparisons/character-attributes.png`; grounds "Characters are listed across the top and chosen by name".
+- `~/Esposter/genshin-parity/comparisons/character-constellation-tabs.png`; grounds "Six tabs down the left in the game's order".
+- The words are in `~/Esposter/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`; grounds "Six tabs down the left in the game's order".
 
 ## Open
 

@@ -25,6 +25,15 @@ flowchart LR
 
 ## Stella Fortuna from wishes
 
+```mermaid
+flowchart LR
+  DRAW["A wish's draw"] --> COPY{"Which copy of the character it is"}
+  COPY -->|"a new character"| NONE["None"]
+  COPY -->|"a duplicate among the first six"| OWN["The character's own Stella Fortuna, counted to it"]
+  COPY -->|"a five-star past six copies"| MASTERLESS["A Masterless Stella Fortuna, to the wallet"]
+  COPY -->|"any other past six copies"| NONE
+```
+
 - **A duplicate among the first six brings its character's Stella Fortuna.** `makeWishes` counts it to the character the wish drew, in `stellaFortunaCountMap`, for the caller to hand over, and onto its draw's result as `stellaFortunaCount`. A new character brings none, and the sixth duplicate is the last to bring one (`packages/genshin-world/src/services/wish/makeWishes.ts`).
 - **A five-star past six copies brings a Masterless Stella Fortuna.** (`~/Esposter.noindex/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`, text 1206078570, whose quantity is the 5-star characters with constellations exceeding the maximum) It goes to the wallet, once per copy, beside the Starglitter that a complete set returns, and onto its draw's result as `masterlessStellaFortunaCount`. It is counted in `makeWishes` rather than `getWishReturn`, since that returns one currency and a five-star past six brings two (`packages/genshin-world/src/services/wish/makeWishes.ts`).
 - **A new character starts with none.** `createCharacter` sets the constellations active and the Stella Fortuna held to zero (`packages/genshin-world/src/services/character/createCharacter.ts`).
@@ -53,6 +62,7 @@ A non-raising constellation is a switch its character's kit module reads off the
 - [Constellation](https://genshin-impact.fandom.com/wiki/Constellation), Genshin Impact Wiki: six levels per character, the third and fifth raising a combat talent by three, and one Stella Fortuna each.
 - [Stella Fortuna](https://genshin-impact.fandom.com/wiki/Stella_Fortuna), Genshin Impact Wiki: a duplicate from a wish as the source of a character's own Stella Fortuna, six at most.
 - [Masterless Stella Fortuna](https://genshin-impact.fandom.com/wiki/Masterless_Stella_Fortuna), Genshin Impact Wiki: one for a five-star drawn at its full constellations.
+- `~/Esposter/genshin-parity/text/BinOutput/Talent/AvatarTalents/ConfigTalent_Ayaka.json`, whose third and fifth actions raise by 3: grounds the requirement "The third and fifth constellations raise a combat talent by three levels".
 
 ## Open
 

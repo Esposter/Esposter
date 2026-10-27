@@ -63,7 +63,7 @@ A refused upgrade SHALL leave the character, the wallet and the bag exactly as t
 
 ### Requirement: Talent levels need their ascension phases
 
-Talent level two SHALL need the second ascension phase, levels three and four the third, and each further pair of levels the phase after, so that levels nine and ten need the sixth (the rule holds in all 370 talent groups of the table).
+Talent level two SHALL need the second ascension phase, levels three and four the third, and each further pair of levels the phase after, so that levels nine and ten need the sixth (the rule holds in every talent group of the table).
 
 #### Scenario: First-phase character levelled to one only
 
@@ -174,7 +174,7 @@ A talent's raised level SHALL be kept with the world, so that a reload shows it.
 
 ### Requirement: A talent plays at its own level plus its constellations' additions
 
-A talent SHALL play at the level the character holds for it plus the levels its constellations add, so that a level past ten comes from a constellation alone (the table holds rows 11 to 15 in all 370 talent groups, none costing Mora).
+A talent SHALL play at the level the character holds for it plus the levels its constellations add, so that a level past ten comes from a constellation alone (the table holds rows 11 to 15 in every talent group, none costing Mora).
 
 #### Scenario: A constellation raises a talent above level ten
 

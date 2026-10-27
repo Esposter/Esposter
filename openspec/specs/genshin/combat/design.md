@@ -11,7 +11,7 @@ flowchart TD
   SHATTER --> APPLY
   ICD -->|"its share of the gauge"| APPLY["applyElement: the element's reactions, in the game's priority"]
   APPLY --> STEP{"An aura this step reacts with?"}
-  STEP -->|"yes"| CONSUME["Consume the auras by coefficient × what is left of the trigger; record the reaction once"]
+  STEP -->|"yes"| CONSUME["Consume the auras by coefficient × what is left of the trigger, record the reaction once"]
   CONSUME --> LEFT{"Any trigger left?"}
   LEFT -->|"yes"| STEP
   STEP -->|"none left to try"| AURA{"Left over, and nothing it consumes remains?"}
@@ -22,7 +22,7 @@ flowchart TD
   EC -->|"yes"| TICK["Electro-Charged ticks at once"]
   EC -->|"no"| OUT["The reactions"]
   TICK --> OUT
-  FIXED["Each fixed step"] --> ADVANCE["advanceElementalState: auras decay; Electro-Charged and Burning tick"]
+  FIXED["Each fixed step"] --> ADVANCE["advanceElementalState: auras decay, Electro-Charged and Burning tick"]
   ADVANCE --> OUT
   OUT --> DAMAGE["getDamage, getAmplifyingMultiplier, getCatalyzeBonus or getTransformativeDamage"]
 ```
@@ -192,7 +192,7 @@ flowchart TD
   GATE -->|"yes"| ACTION["The kit's action: string, charged attack, plunge, skill or burst"]
   ACTION -->|"it starts"| AIM["The body turns to the enemy its area scores highest"]
   ACTION -->|"each hitmark, past the action's end too"| HIT["A hit lands on each enemy in its area"]
-  HIT --> STRIKE["strikeEnemy: blunt, internal cooldown, element, reactions' limits, getDamage, damageEnemy"]
+  HIT --> STRIKE["strikeEnemy: the hit priced and applied"]
   STRIKE -->|"an Overloaded, Superconduct, Swirl or Electro-Charged that lands"| REACH["landReactionReach: the enemies round it"]
   REACH -->|"a reaction its Swirl triggers that reaches"| REACH
   TICKS["strikeElementalTicks: each enemy's ticks"] -->|"an arc or a Burning tick's Pyro"| REACH
@@ -306,18 +306,18 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 
 ## Notes
 
-- **What is left of a trigger stays at its own gauge.** An aura left over after a reaction is taxed and decays as an attack of the gauge left would, since the sources give no rate for a leftover.
+- An aura left over after a reaction is taxed and decays as an attack of the gauge left would, since the sources give no rate for a leftover.
 - **A Freeze over a Freeze keeps the larger.** Frozen triggered again over a Freeze keeps the larger gauge at the Freeze's growing rate, as any aura reapplied keeps its rate. A new Freeze starts at 0.4U a second.
 - **No Frozen duration is extended.** Mona's Constellation 1 names a Frozen 15% longer, but the wiki's notes find it has no effect on Frozen's duration, contrary to its description ([Prophecy of Submersion](https://genshin-impact.fandom.com/wiki/Prophecy_of_Submersion)), and gcsim leaves it out as bugged (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/mona/cons.go:39`). No other source extends a Frozen, so the Frozen gauge's decay has no hook to lengthen it.
 - **A Moondrift's place is gcsim's guess.** gcsim leaves the three a metre out from the enemy at even bearings and marks the place a guess; it matters only to whether three stand within 20 metres of the character on the field. The kit keeps the three even bearings at a metre: gcsim gives no measured placement, so the even spacing is the least-biased choice until a recording says otherwise. The roadmap's manual verification has the question.
-- **Every source's share of an aura falls with the aura.** A source's share is kept as how far the aura stands above it, so the aura's decay and each reaction's consumption take every share alike, and a source contributes to Lunar-Charged while the aura holds more than the others laid above its share. gcsim keeps each source's durability apart; one rate for all of them is the simplification.
+- A source contributes to Lunar-Charged while the aura holds more than the others laid above its share. gcsim keeps each source's durability apart; one rate for all of them is the simplification.
 - **Burning's first tick is a quarter second after it lights.** The library places its first Pyro between a quarter second and 0.42 seconds after the text, and the rules take the earliest.
 - **Electro-Charged's last tick is seen at the step.** An aura decaying out between two steps ends it at the step after, so a target advanced at the world's fixed step ends within a sixtieth of a second of the game's.
-- **Electro-Charged arcs to the nearest Wet enemy.** The wiki names a single other Wet enemy within 5 metres, marking the radius to verify, and says nothing of which one is taken when several stand there, so the nearest is a provisional choice.
-- **An attack's hit rolls once for energy, however many enemies it strikes.** The wiki has a hit roll as it hits an enemy and does not say what several enemies do; gcsim rolls for each enemy, with a fifth of a second after a pass in which none rolls, which its own source calls a guess. One roll a hit is the provisional choice, and a swap starting the misses afresh is gcsim's assumption.
-- **A Dendro Core is reached as an enemy's capsule is, and drawn by nothing yet.** No source gives the size a hit finds a core at, so a kit's hit sets one off where it would strike an enemy standing on the core's ground point, provisionally. The core stands unseen until the world draws it.
+- The wiki names a single other Wet enemy within 5 metres, marking the radius to verify, and says nothing of which one is taken when several stand there, so the nearest is a provisional choice.
+- The wiki has a hit roll as it hits an enemy and does not say what several enemies do; gcsim rolls for each enemy, with a fifth of a second after a pass in which none rolls, which its own source calls a guess. One roll a hit is the provisional choice, and a swap starting the misses afresh is gcsim's assumption.
+- **A Dendro Core is drawn by nothing yet.** No source gives the size a hit finds a core at, so a kit's hit sets one off where it would strike an enemy standing on the core's ground point, provisionally. The core stands unseen until the world draws it.
 - **Only a kit's own hit sets a Dendro Core off.** A Swirl's spread, a Burning tick's Pyro and an explosion leave the cores be, and a core's burst, Burgeon and Hyperbloom deal the 2% the wiki gives the party nothing yet.
-- **A Crystallize shard is picked up within 2 metres, and drawn by nothing yet.** No source gives the reach the game draws a shard to the character from, so it is gcsim's shard radius, provisionally. The shard lies unseen until the world draws it.
+- **A Crystallize shard is drawn by nothing yet.** No source gives the reach the game draws a shard to the character from, so it is gcsim's shard radius, provisionally. The shard lies unseen until the world draws it.
 - **The wiki's mastery scales are taken as written.** Its 2.78 and 4.44 are rounded, and its tables of the bonus they give read them as written.
 
 ## Sources
@@ -343,9 +343,26 @@ The enemies' strikes go the other way: `strikePartyMember` prices an enemy's ATK
 - [Energy](https://genshin-impact.fandom.com/wiki/Energy), Genshin Impact Wiki: particles and orbs by element, the shares off the field, Energy Recharge, and each weapon's chance of energy from a normal or charged attack's hit, with the average hits each takes.
 - [Foreign Ironwind](https://genshin-impact.fandom.com/wiki/Foreign_Ironwind), [Palm Vortex](https://genshin-impact.fandom.com/wiki/Palm_Vortex) and [Gust Surge](https://genshin-impact.fandom.com/wiki/Gust_Surge), Genshin Impact Wiki: the Traveler's multipliers, stamina, poise, tags and blunt plunges, and the Anemo skill's and burst's cooldowns and energy.
 - [Normal Attack](https://genshin-impact.fandom.com/wiki/Normal_Attack), [Charged Attack](https://genshin-impact.fandom.com/wiki/Charged_Attack) and [Plunging Attack](https://genshin-impact.fandom.com/wiki/Plunging_Attack), Genshin Impact Wiki: a string of strikes, the stamina each charged attack costs, and the low and high plunge either side of 2.4 metres.
-- [Area of Effect](https://genshin-impact.fandom.com/wiki/Area_of_Effect), [Targeting](https://genshin-impact.fandom.com/wiki/Targeting) and [Targeting/Data](https://genshin-impact.fandom.com/wiki/Targeting/Data), Genshin Impact Wiki: the hit cylinders, the targeting score and its altitude limit, and the swords' targeting zone.
+- [Area of Effect](https://genshin-impact.fandom.com/wiki/Area_of_Effect), [Targeting](https://genshin-impact.fandom.com/wiki/Targeting) and [Targeting Data](https://genshin-impact.fandom.com/wiki/Targeting/Data), Genshin Impact Wiki: the hit cylinders, the targeting score and its altitude limit, and the swords' targeting zone.
 - [Exploration](https://genshin-impact.fandom.com/wiki/Exploration), Genshin Impact Wiki: no combat while climbing, gliding or swimming.
 - [Elemental Gauge Theory](https://library.keqingmains.com/combat-mechanics/elemental-effects/elemental-gauge-theory) and [Transformative Reactions](https://library.keqingmains.com/combat-mechanics/elemental-effects/transformative-reactions), KeqingMains Theorycrafting Library: the decay rate, Electro-Charged's ticks, Burning's tick, Superconduct's 40% Physical RES shred for 12 seconds, and the Dendro Core's lifetime and limit.
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/enemy/damage.go` lines 86 and 87; grounds "An enemy's resistance".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/enemy/damage.go` lines 88 and 89 (same file); grounds "An enemy's resistance".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/vaporize.go` line 33; grounds "Vaporize and Melt".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/melt.go` line 24; grounds "Vaporize and Melt".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/vaporize.go` line 26 (the reverse reaction, Pyro on Hydro, 1.5); grounds "Vaporize and Melt".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/melt.go` line 30 (the reverse reaction, Cryo on Pyro, 1.5); grounds "Vaporize and Melt".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/simulation/setup.go`: `min(x, 0.36)` at lines 458 to 466, the 20 seconds as `20*60` frames at line 486, lit on the skill and burst events of a character outside the Moonsign; grounds "Ascendant Gleam's reaction bonus is capped at 36 percent" and "A skill or burst outside the Moonsign lights Ascendant Gleam".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct_gadget.go` line 58; grounds "Starlight Prism Sustains a Polestar Field".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct_gadget.go` line 21; grounds "Starlight Prism Buffs by Recorded Hits".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct_gadget.go` line 22 (same file); grounds "Starlight Prism Buffs by Recorded Hits".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl.go` line 15; grounds "Glimmer Reaction Damage".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/lunarcharged.go` line 22 (the same folder as `stellarswirl.go`); grounds "Glimmer Reaction Damage".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/lunarcrystallize.go` line 27 (the same folder as `stellarswirl.go`); grounds "Glimmer Reaction Damage".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct.go` lines 74 and 75 only emit `OnStellarConduct`; grounds "Glimmer Reaction Damage".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl_gadget.go` line 19; grounds "Stellar Swirl Places a Stellar Vortex".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl_gadget.go` line 14; grounds "Stellar Vortex Explosion Coefficient".
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl.go` line 76; grounds "A Stellar Swirl's Anemo instance has a Base Reaction Coefficient of 0.75".
 
 ## Open
 

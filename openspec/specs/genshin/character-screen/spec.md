@@ -29,7 +29,7 @@ The character screen SHALL open over the held world with C or from the Paimon me
 
 ### Requirement: Characters are listed across the top and chosen by name
 
-The screen SHALL list the player's characters across its top, each named, and SHALL show the chosen character's name at its top left. The reference lays them out so (`~/Esposter/genshin-parity/comparisons/character-attributes.png`).
+The screen SHALL list the player's characters across its top, each named, and SHALL show the chosen character's name at its top left.
 
 #### Scenario: Choosing a character in the top row
 
@@ -47,7 +47,7 @@ The screen SHALL list the player's characters across its top, each named, and SH
 
 ### Requirement: Six tabs down the left in the game's order
 
-The screen SHALL show six tabs down its left in the game's order, Attributes, Weapons, Artifacts, Constellation, Talents and Profile, each named in the game's own words, with the open tab lit (`~/Esposter/genshin-parity/comparisons/character-constellation-tabs.png`; the words are in `~/Esposter/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`).
+The screen SHALL show six tabs down its left in the game's order, Attributes, Weapons, Artifacts, Constellation, Talents and Profile, each named in the game's own words, with the open tab lit.
 
 #### Scenario: Attributes is lit when the screen opens
 
@@ -87,7 +87,13 @@ The Attributes tab SHALL show the character's name, its level over its phase's c
 
 ### Requirement: Weapons, Artifacts, Constellation and Talents panels show the character's own record
 
-Each of the Weapons, Artifacts, Constellation and Talents panels SHALL show the chosen character's own weapon, worn artifacts, activated constellations or talent levels.
+The Weapons panel SHALL show the chosen character's own weapon.
+
+The Artifacts panel SHALL show the chosen character's own worn artifacts.
+
+The Constellation panel SHALL show the chosen character's own activated constellations.
+
+The Talents panel SHALL show the chosen character's own talent levels.
 
 #### Scenario: Weapons panel shows the weapon at its level and phase
 

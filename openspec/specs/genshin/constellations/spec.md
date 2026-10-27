@@ -42,7 +42,9 @@ A constellation activation SHALL be refused when the set has no constellation le
 
 ### Requirement: The third and fifth constellations raise a combat talent by three levels
 
-A character's third and fifth constellations SHALL each raise one combat talent by three levels, and its other four constellations SHALL raise no talent (`~/Esposter/genshin-parity/text/BinOutput/Talent/AvatarTalents/ConfigTalent_Ayaka.json`, whose third and fifth actions raise by 3).
+A character's third and fifth constellations SHALL each raise one combat talent by three levels.
+
+A character's other four constellations SHALL raise no talent.
 
 #### Scenario: An active third constellation raises its talent
 

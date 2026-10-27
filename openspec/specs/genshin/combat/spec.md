@@ -67,7 +67,7 @@ A hit's damage SHALL be cut by the enemy's defence against the attacker's level,
 
 ### Requirement: An enemy's resistance
 
-An enemy's resistance SHALL cut damage by its share, up to three quarters (`~/Esposter/cache/gcsim-v2.47.2/pkg/enemy/damage.go` lines 86 and 87), and beyond that by a diminishing factor (same file, lines 88 and 89).
+An enemy's resistance SHALL cut damage by its share, up to three quarters, and beyond that by a diminishing factor.
 
 #### Scenario: A resistance of half cuts half the damage
 
@@ -115,7 +115,7 @@ A hit SHALL apply its element only on the hits its internal cooldown group lets 
 
 ### Requirement: Vaporize and Melt
 
-Vaporize and Melt SHALL multiply the hit they amplify, by two where Hydro vaporizes or Pyro melts (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/vaporize.go` line 33 and `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/melt.go` line 24; the reverse reactions, Pyro on Hydro and Cryo on Pyro, are 1.5 at `vaporize.go` line 26 and `melt.go` line 30).
+Vaporize and Melt SHALL multiply the hit they amplify, by two where Hydro vaporizes or Pyro melts (the reverse reactions, Pyro on Hydro and Cryo on Pyro, are 1.5).
 
 #### Scenario: Hydro vaporizing a Pyro target doubles the hit
 
@@ -136,7 +136,9 @@ Lunar-Bloom SHALL deal no damage of its own, and it SHALL leave a Dendro Core.
 
 ### Requirement: Ascendant Gleam's reaction bonus
 
-Ascendant Gleam's reaction bonus SHALL be capped at 36 percent, and a skill or burst outside the Moonsign SHALL light it for 20 seconds (`~/Esposter/cache/gcsim-v2.47.2/pkg/simulation/setup.go`: `min(x, 0.36)` at lines 458 to 466, the 20 seconds as `20*60` frames at line 486, lit on the skill and burst events of a character outside the Moonsign)
+Ascendant Gleam's reaction bonus SHALL be capped at 36 percent.
+
+A skill or burst outside the Moonsign SHALL light Ascendant Gleam for 20 seconds.
 
 #### Scenario: A reaction bonus past the cap is held at 36 percent
 
@@ -235,7 +237,9 @@ An enemy's strike that lands on a party member SHALL be told to every deployed m
 
 ### Requirement: A shield
 
-A shield SHALL absorb damage before the character takes any, and only the damage it cannot absorb SHALL reach the character. A shield cast SHALL be told to every deployed member's kit once it stands, its owner the character that cast it, a Crystallize shard's the character whose reaction left the shard.
+A shield SHALL absorb damage before the character takes any, and only the damage it cannot absorb SHALL reach the character.
+
+A shield cast SHALL be told to every deployed member's kit once it stands, its owner the character that cast it, a Crystallize shard's the character whose reaction left the shard.
 
 #### Scenario: Damage past what a shield can absorb reaches the character
 
@@ -339,7 +343,7 @@ When every member of the party is down, the party SHALL revive at 35 percent hea
 
 ### Requirement: Glimmer Reaction Damage
 
-A Stellar Swirl's own damage SHALL be weighted across the four highest contributors, at 0.6, 0.3, 0.05 and 0.05, each contributor's damage worked out alone with standard crit (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl.go` line 15, `lunarcharged.go` line 22, `lunarcrystallize.go` line 27). A Stellar-Conduct SHALL deal no damage of its own: its damage is dealt only by a talent's or a constellation's direct hit (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct.go` lines 74 and 75 only emit `OnStellarConduct`).
+A Stellar Swirl's own damage SHALL be weighted across the four highest contributors, at 0.6, 0.3, 0.05 and 0.05, each contributor's damage worked out alone with standard crit. A Stellar-Conduct SHALL deal no damage of its own: its damage is dealt only by a talent's or a constellation's direct hit.
 
 #### Scenario: a Glimmer reaction weights its four highest contributors
 
@@ -429,7 +433,7 @@ A Stellar Linchpin user's Stellar Jubilee passive SHALL enable Stellar Swirl and
 
 ### Requirement: Starlight Prism Sustains a Polestar Field
 
-A Stellar-Conduct SHALL leave a Starlight Prism that lasts 7 seconds and sustains a Polestar Field of radius 15 around it (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct_gadget.go` line 58), the field standing for as long as the prism does. A Stellar-Conduct triggered with the body inside a standing field SHALL set that field's time back to 7 seconds rather than leave a second field, and one triggered with the body inside none SHALL leave a new field beside any that stand. While it stands, the enemies inside it have their Physical RES lowered by 40%.
+A Stellar-Conduct SHALL leave a Starlight Prism that lasts 7 seconds and sustains a Polestar Field of radius 15 around it, the field standing for as long as the prism does. A Stellar-Conduct triggered with the body inside a standing field SHALL set that field's time back to 7 seconds rather than leave a second field, and one triggered with the body inside none SHALL leave a new field beside any that stand. While it stands, the enemies inside it have their Physical RES lowered by 40%.
 
 #### Scenario: a Stellar-Conduct places a Polestar Field round the point given for 7 seconds, ticking every 4
 
@@ -448,7 +452,7 @@ A Stellar-Conduct SHALL leave a Starlight Prism that lasts 7 seconds and sustain
 
 ### Requirement: Starlight Prism Buffs by Recorded Hits
 
-Inside the field, a Cryo or Electro hit on an enemy that applies an element, as its internal cooldown allows, SHALL be recorded by the prism, the hit that created the prism excepted. Every 4 seconds the count resets (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarconduct_gadget.go` line 21), and the buffs it grants last 4 seconds (same file, line 22): the Base Reaction Coefficient of the Stellar-Conduct, the Cryo and Electro DMG Bonus of the body in the field, and the Physical RES reduction of the enemies in it.
+Inside the field, a Cryo or Electro hit on an enemy that applies an element, as its internal cooldown allows, SHALL be recorded by the prism, the hit that created the prism excepted. Every 4 seconds the count resets, and the buffs it grants last 4 seconds: the Base Reaction Coefficient of the Stellar-Conduct, the Cryo and Electro DMG Bonus of the body in the field, and the Physical RES reduction of the enemies in it.
 
 #### Scenario: a recorded hit raises the Stellar-Conduct's coefficient
 
@@ -477,7 +481,7 @@ Inside the field, a Cryo or Electro hit on an enemy that applies an element, as 
 
 ### Requirement: Stellar Swirl Places a Stellar Vortex
 
-A Stellar Swirl SHALL deal Anemo damage to its target and then leave one Stellar Vortex lasting 3 seconds (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl_gadget.go` line 19), and a standing vortex SHALL NOT be doubled. A vortex SHALL explode at its expiry for AoE Cryo damage. The third Stellar Swirl SHALL level it to Lv. 2, which deals more damage across a wider area, and three further Stellar Swirls SHALL explode it at once.
+A Stellar Swirl SHALL deal Anemo damage to its target and then leave one Stellar Vortex lasting 3 seconds, and a standing vortex SHALL NOT be doubled. A vortex SHALL explode at its expiry for AoE Cryo damage. The third Stellar Swirl SHALL level it to Lv. 2, which deals more damage across a wider area, and three further Stellar Swirls SHALL explode it at once.
 
 #### Scenario: a Stellar Swirl leaves one Stellar Vortex for 3 seconds
 
@@ -496,7 +500,9 @@ A Stellar Swirl SHALL deal Anemo damage to its target and then leave one Stellar
 
 ### Requirement: Stellar Vortex Explosion Coefficient
 
-A Stellar Vortex's explosion SHALL be priced at a Base Reaction Coefficient of 2 at Lv. 1 and 3 at Lv. 2 (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl_gadget.go` line 14), and a Stellar Swirl's Anemo instance at 0.75 (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/stellarswirl.go` line 76), for the indirect Stellar Glimmer damage. Its contributors' damage is weighted as the Glimmer Reaction Damage requirement above states.
+A Stellar Vortex's explosion SHALL be priced at a Base Reaction Coefficient of 2 at Lv. 1 and 3 at Lv. 2, for the indirect Stellar Glimmer damage. Its contributors' damage is weighted as the Glimmer Reaction Damage requirement above states.
+
+A Stellar Swirl's Anemo instance SHALL be priced at a Base Reaction Coefficient of 0.75, for the indirect Stellar Glimmer damage.
 
 #### Scenario: a Stellar Vortex that expires with one or two stacks explodes at a coefficient of 2
 
