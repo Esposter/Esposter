@@ -29,9 +29,6 @@ export const getVitestConfiguration = (
       // Earlier test made. Only the history goes: a `vi.mock` default or a `mockResolvedValue` stays in place.
       clearMocks: true,
       exclude: [...configDefaults.exclude, BROWSER_TEST_GLOB],
-      // The default leaves one core to the main process, which does little while the workers run, so a four-core
-      // Runner ran three workers. Every core runs one, which is the faster run on the runners the suite is timed on
-      maxWorkers: "100%",
       // Transforming the module graph is the largest share of a run and is otherwise redone from scratch every
       // Time; persisting it to `node_modules/.vitest-cache` reuses it across reruns and separate processes, and
       // A reinstall drops the directory along with the dependencies it was keyed on.
@@ -40,6 +37,9 @@ export const getVitestConfiguration = (
       // Because a run spawns a worker per file and they compete for cores — the 10s default is a starvation
       // Detector rather than a hook bound, and this is the one setting that keeps a green suite green
       hookTimeout: Temporal.Duration.from({ minutes: 1 }).total("milliseconds"),
+      // The default leaves one core to the main process, which does little while the workers run, so a four-core
+      // Runner ran three workers. Every core runs one, which is the faster run on the runners the suite is timed on
+      maxWorkers: "100%",
       ...(projectDirectory ? { name: getVitestProjectName(projectDirectory) } : {}),
       silent: "passed-only",
       // Restores every vi.stubEnv before each test, so no file needs its own unstubAllEnvs teardown. The globals
