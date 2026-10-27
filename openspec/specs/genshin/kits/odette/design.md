@@ -85,4 +85,4 @@ Each value the overlay holds as `Unsourced`, with the gcsim v2.47.2 file and lin
 
 ## Open
 
-- [ ] **The Starlight Prism lasts 7 seconds** — no source yet: the Stellar-Conduct wiki page the quote comes from is not on disk, and the cached Category file and the install's English text map (`{data-root}/genshin-parity/text/TextMap/TextMapEN.json`) name the Starlight Prism or Polestar Field only as "for a short period of time", with no seconds; gcsim's Polestar Field lasts 6 s (`sscFieldDur`, on the [combat](../../combat/design.md) page) and the page cannot tie the two.
+- [ ] **The Starlight Prism lasts 7 seconds** — no source yet: the Stellar-Conduct wiki page the quote comes from is not on disk, the cached Category file names only the Polestar Field, as "for a short period of time", with no seconds, and the install's English text map (`{data-root}/genshin-parity/text/TextMap/TextMapEN.json`) is not on disk in this checkout, so what it says about the Starlight Prism cannot be rechecked here; gcsim's Polestar Field lasts 6 s (`sscFieldDur`, on the [combat](../../combat/design.md) page) and the page cannot tie the two.
