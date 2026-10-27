@@ -70,15 +70,19 @@ Dance of Abzendegi SHALL deal damage equal to a share of Nilou's Max HP on the e
 - **WHEN** the player casts Dance of Abzendegi
 - **THEN** the hit deals damage equal to a share of Nilou's Max HP
 
-### Requirement: Constellations 1 and 6
+### Requirement: Constellation 1's Luminous Illusion bonus
 
-Constellation 1 SHALL add 65% damage to the sword dance's Luminous Illusion hit alone, and Constellation 6 SHALL give 0.6% CRIT Rate and 1.2% CRIT DMG for each 1,000 of Max HP, capped at 30% CRIT Rate and 60% CRIT DMG.
+Constellation 1 SHALL add 65% damage to the sword dance's Luminous Illusion hit alone.
 
 #### Scenario: Constellation 1 boosts the Luminous Illusion hit
 
 - **GIVEN** Nilou has Constellation 1
 - **WHEN** the Luminous Illusion hit lands
 - **THEN** that hit gains 65% damage
+
+### Requirement: Constellation 6's CRIT from Max HP
+
+Constellation 6 SHALL give 0.6% CRIT Rate and 1.2% CRIT DMG for each 1,000 of Max HP, capped at 30% CRIT Rate and 60% CRIT DMG.
 
 #### Scenario: Constellation 6 CRIT is capped
 
@@ -145,7 +149,7 @@ A press of Nilou's skill inside Pirouette SHALL be refused by the cooldown the c
 
 ### Requirement: Golden Chalice's Bounty from Ascension 1
 
-From Ascension 1, Pirouette's third sword dance SHALL give each deployed member Golden Chalice's Bounty for 30 seconds when the team holds a Dendro member and a Hydro member and no member that is neither Dendro nor Hydro. A Dendro hit on a member under the Bounty SHALL give every deployed member 100 Elemental Mastery for 10 seconds, and a Bloom by a member under it SHALL leave a Bountiful Core, which bursts 0.4 seconds after it is made over 6.5 metres.
+From Ascension 1, Pirouette's third sword dance SHALL give each deployed member Golden Chalice's Bounty for 30 seconds when the team holds a Dendro member and a Hydro member and no member that is neither Dendro nor Hydro.
 
 #### Scenario: A Dendro and Hydro team gains the Bounty
 
@@ -159,11 +163,19 @@ From Ascension 1, Pirouette's third sword dance SHALL give each deployed member 
 - **WHEN** Pirouette's third sword dance lands
 - **THEN** no member gains the Bounty
 
+### Requirement: Dendro hits under the Bounty give Elemental Mastery
+
+A Dendro hit on a member under the Bounty SHALL give every deployed member 100 Elemental Mastery for 10 seconds.
+
 #### Scenario: A Dendro hit on a member under the Bounty
 
 - **GIVEN** a member holds the Bounty
 - **WHEN** that member takes a Dendro hit
 - **THEN** every deployed member gains 100 Elemental Mastery for 10 seconds
+
+### Requirement: A Bloom under the Bounty leaves a Bountiful Core
+
+A Bloom by a member under the Bounty SHALL leave a Bountiful Core, which bursts 0.4 seconds after it is made over 6.5 metres.
 
 #### Scenario: A Bloom under the Bounty leaves a Bountiful Core
 
