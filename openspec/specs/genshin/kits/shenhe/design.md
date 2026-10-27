@@ -76,6 +76,5 @@ flowchart TD
 - `{data-root}/cache/gcsim-v2.47.2/internal/characters/shenhe/cons.go` lines 54 to 55: grounds scenario "A trigger gives a stack from Constellation 4".
 - `{data-root}/cache/gcsim-v2.47.2/internal/characters/shenhe/skill.go` lines 218 to 220: grounds scenario "A trigger gives a stack from Constellation 4".
 - `{data-root}/cache/gcsim-v2.47.2/internal/characters/shenhe/cons.go` line 31: grounds scenario "No stack below Constellation 4".
-- `{data-root}/cache/gcsim-v2.47.2/internal/characters/shenhe/cons.go` line 38: grounds scenario "Spring Spirit Summoning consumes the stacks".
-- `{data-root}/cache/gcsim-v2.47.2/internal/characters/shenhe/cons.go` line 42: grounds scenario "Spring Spirit Summoning consumes the stacks".
 - `{data-root}/cache/gcsim-v2.47.2/internal/characters/shenhe/skill.go` lines 186 and 205 to 206: grounds scenario "A skill still spends the quota".
+- `{data-root}/cache/gcsim-v2.47.2/internal/characters/shenhe/cons.go` lines 38 and 42: grounds scenario "Spring Spirit Summoning consumes the stacks".
