@@ -30,4 +30,4 @@ Paths relative to `apps/web`.
 ## Notes
 
 - Monsters already caught keep their stored stats ([saves embed monster instances](../saves-and-settings/design.md)) — an instance's stats are earned progression, not content to hot-patch; only newly encountered monsters pick up rebalanced species data.
-- The roster deliberately stays at five species until sprite art for new ones exists — mechanical depth beats headcount. The signature attacks reuse existing animation components and sound effects; distinct art per move is follow-up work.
+- The roster deliberately stays at five species until sprite art for new ones exists — mechanical depth beats headcount. The signature attacks reuse existing sound effects; distinct art per move is follow-up work.

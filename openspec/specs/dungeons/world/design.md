@@ -13,7 +13,7 @@ The overworld: tile-based maps authored in Tiled Map Editor, walked with grid-en
 ```mermaid
 flowchart TD
   confirm[Confirm input] --> gio[useGetInteractiveObject<br/>position + facing match]
-  gio --> npc[NPC: effect list<br/>messages / heal / scene fade]
+  gio --> npc[NPC<br/>effect list]
   gio --> sign[Sign: message dialog]
   gio --> chest[Chest: grant item<br/>opened state → save world.chestMap]
   gio --> door[Door: teleport<br/>switchToTilemap + spawn at target id]
