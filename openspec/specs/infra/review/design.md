@@ -12,18 +12,18 @@ Every finding ends in exactly one of three states:
 
 Until a finding reaches one of these, it lives in an open issue labelled `review` (`REVIEW_ISSUE_LABEL`). That issue is durable: it outlives the job that opened it, and a job that crashes leaves it whole for the settle job. Sessions and triage never take a `review` issue, since the review's settle job owns it until it closes.
 
-## Why it replaced CodeRabbit
+## Why not CodeRabbit
 
-CodeRabbit's limits were time-based. The plan allowed a set number of reviews an hour, and a repository that sent more than that in a week was cut down to one an hour. Commits came in faster than that, and a backlog of many commits and thousands of files sat unreviewed.
+CodeRabbit's limits are time-based. Its plan allows a set number of reviews an hour, and a repository that sends more than that in a week is cut down to one an hour. Commits arrive faster than that, and a backlog of many commits and thousands of files sits unreviewed.
 
-The review collector existed to work around the bot. It cut windows to the bot's file cap and opened a stack of pull requests to `main`, with `develop` behind them. That machinery was most of the code paid for one job, getting a review. Without a bot, none of it is needed: there are no pull requests, so there is no `develop`, and nothing is rewritten. `main` is the reviewed prefix of `ai/queue`, and a review moves it forward.
+A review collector would exist only to work around a bot: it would cut windows to the bot's file cap and open a stack of pull requests to `main`, with `develop` behind them. That machinery is most of the code paid for one job, getting a review. Without a bot, none of it is needed: there are no pull requests, so there is no `develop`, and nothing is rewritten. `main` is the reviewed prefix of `ai/queue`, and a review moves it forward.
 
 ## How a run goes
 
 ```mermaid
 flowchart TD
   T[Push to ai/queue, or a dispatch] --> P[Plan every window owed, each cut by the file cap]
-  P --> POOL[One pool over every batch of every window, stopped at the run's deadline]
+  P --> POOL[One pool of batches<br/>stopped at the run deadline]
   POOL -->|a window's last batch lands| W{Window status}
   W -->|passed, and the passed prefix reaches it| I[Open the window's review issues, each with its findings file]
   I -->|an issue did not open| STOP[The prefix stops for this run]
@@ -32,7 +32,7 @@ flowchart TD
   W -->|limited, failed or unreached| STOP
   POOL -->|the deadline left windows unreviewed| D[Dispatch the next run once]
   I --> FX[Fix job per issue: fixes what it can, then narrows or closes the issue]
-  FX --> S[Settle job, after every fix: settles each open review issue, oldest first]
+  FX --> S[Settle job<br/>oldest issue first]
   S --> CL[Each finding fixed, refuted or recorded, then the issue closes]
 ```
 
@@ -65,7 +65,7 @@ The fixer runs once over the issue's findings at the tip of `ai/queue`. Its comm
 
 A fix job that crashes leaves its issue open and whole, which is correct: the settle job takes it. The fixer never opens an issue.
 
-A fixer's or a settler's commit lands on `ai/queue` with nothing else to stop a red, so before committing each session runs its checks (`REVIEW_SESSION_CHECKS`): the workspace rules, which read every page, skill and test file, the tests of the files it touched, the typecheck and lint of each package it touched, oxlint over the files it touched, which CI's Lint runs beside each package's ESLint, the bundle size snapshot of each package whose source it changed and of the Functions app that bundles it, re-recorded after a fresh build since only one moves it, and every check the touched files' skills name, such as a reader run over all its real inputs, since a reader's own tests cover only the inputs someone wrote down. A fix they refuse is not made. The workspace rules also run before the first edit, and only a failure that run did not list is the session's: the tip is often red from other work, and fixers told only to keep a red suite green committed duplicated prose they could not tell apart from the red already there. Tests alone let a fixer strip return types that `isolatedDeclarations` needs, and a settler write roadmap items past the workspace rules' length rule.
+A fixer's or a settler's commit lands on `ai/queue` with nothing else to stop a red, so before committing each session runs its checks (`REVIEW_SESSION_CHECKS`): the workspace rules, which read every page, skill and test file, the tests of the files it touched, the typecheck and lint of each package it touched, oxlint over the files it touched, which CI's Lint runs beside each package's ESLint, the bundle size snapshot of each package whose source it changed and of the Functions app that bundles it, re-recorded after a fresh build since only one moves it, and every check the touched files' skills name, such as a reader run over all its real inputs, since a reader's own tests cover only the inputs someone wrote down. A fix they refuse is not made. The workspace rules also run before the first edit, and only a failure that run did not list is the session's: the tip is often red from other work, and fixers told only to keep a red suite green would commit duplicated prose they cannot tell apart from the red already there. Tests alone let a fixer strip return types that `isolatedDeclarations` needs, and a settler write roadmap items past the workspace rules' length rule.
 
 ### The settle job
 
@@ -164,7 +164,7 @@ Each job runs with a committer identity that is the repository's own automation 
 
 ## CI on the queue
 
-A review does not gate on CI. A window's review completes and `main` moves, whatever CI says at that point. A red typecheck or lint on a session's push is that session's to fix, on `ai/queue`, once the user asks for verification (`AGENTS.md`, step 6), before the next push. A red on `main` came from the queue, where its fix lands and then travels with the next window; `main` is never repaired in place.
+A review does not gate on CI. A window's review completes and `main` moves, whatever CI says at that point. A red check on a session's push is handled as `AGENTS.md`, step 6 sets out, before the next push. A red on `main` came from the queue, where its fix lands and then travels with the next window; `main` is never repaired in place.
 
 ## Key files
 
@@ -199,5 +199,4 @@ A review does not gate on CI. A window's review completes and `main` moves, what
 
 ## Notes
 
-- **A review reads commits, not pull requests.** There is no pull request to comment on, so a finding lives in the run's summary and, from then on, in its issue until a settlement closes it.
-- **A commit over the window cap is a window of its own.** A window holds at least one commit, so an oversized commit is reviewed whole, in batches, rather than held back.
+- There is no pull request to comment on, so a finding lives in the run's summary and, from then on, in its issue until a settlement closes it.

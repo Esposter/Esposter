@@ -1,6 +1,6 @@
 # Observability
 
-This estate runs with **no Application Insights and no Log Analytics**. Neither is provisioned in either environment, and the Function Apps carry no `APPINSIGHTS_*` / `APPLICATIONINSIGHTS_*` app settings. This is a deliberate cost decision, not an omission: paid telemetry ingestion (and the alert rules layered on it) recurred at a daily cost that bought nothing this estate acts on. Removing it is the single largest line-item saving in the infrastructure.
+This estate runs with **no Application Insights and no Log Analytics**. Neither is provisioned in either environment, and the Function Apps carry no `APPINSIGHTS_*` / `APPLICATIONINSIGHTS_*` app settings. This is a deliberate cost decision, not an omission: paid telemetry ingestion (and the alert rules layered on it) would recur at a daily cost that buys nothing this estate acts on. Removing it is the single largest line-item saving in the infrastructure.
 
 ## What we rely on instead
 

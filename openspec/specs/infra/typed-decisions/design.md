@@ -42,6 +42,6 @@ Nothing acts on an answer below `0.6`; a decision that writes outside the checko
 
 ## With no key, everything still runs
 
-`TYPESAFE_API_KEY` is a Pulumi-managed repository secret. Where it is absent — a fork, a local run, any test — every gate answers nothing and its caller escalates, so the pipeline behaves exactly as it did before there were gates. No path depends on a decision this tier made.
+`TYPESAFE_API_KEY` is a Pulumi-managed repository secret. Where it is absent — a fork, a local run, any test — every gate answers nothing and its caller escalates, so every judgement escalates to its session or to needs-triage. No path depends on a decision this tier made.
 
 The key never reaches a spawned session either: the launcher withholds every secret-shaped variable from the child, and the session is given nothing but the credential that authenticates itself.

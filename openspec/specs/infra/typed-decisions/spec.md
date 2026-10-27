@@ -59,7 +59,7 @@ An answer below its threshold SHALL escalate to a Claude Code session or to the 
 
 ### Requirement: Without a key every gate escalates
 
-Where no typed-decision key is set, every gate SHALL answer nothing and its caller SHALL escalate, so the pipeline behaves as it did before the gates existed.
+Where no typed-decision key is set, every gate SHALL answer nothing and its caller SHALL escalate, so every judgement escalates to its session or to needs-triage.
 
 #### Scenario: Fork or local run with no key
 

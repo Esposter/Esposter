@@ -14,9 +14,9 @@ Two of those are easy to get subtly wrong. **EventGrid Contributor, not EventGri
 
 ```mermaid
 flowchart LR
-  budget["$0.01 budget<br/>(Microsoft.Consumption, per resource group)"] -->|threshold exceeded| actionGroup["Action group<br/>(Microsoft.Insights)"]
+  budget["$0.01 budget<br/>per resource group"] -->|threshold exceeded| actionGroup["Action group"]
   actionGroup -->|HTTP trigger| stopLogic["Logic App 001 / 003"]
-  stopLogic -->|Website Contributor| functionApps["Stop Function Apps<br/>(Microsoft.Web/sites)"]
+  stopLogic -->|Website Contributor| functionApps["Stop Function Apps"]
   stopLogic -->|EventGrid Contributor| eventSubs["Delete Event Grid subscriptions"]
   restoreLogic["Logic App 002 / 004"] -->|start / recreate| functionApps
   restoreLogic -->|EventGrid plus Storage Account Contributor| eventSubs
@@ -33,7 +33,7 @@ Logic App HTTP trigger callback URLs are external secrets — rotating them is a
 | Function Apps    | Dynamic Y1 consumption plans, public inbound, system-assigned identity                                                                                   | Event Grid triggers and the HTTP webhook endpoint need reachability; identities hold Event Grid Data Sender + Storage Blob/Queue/Table Data Contributor                                                                                                                                                                          |
 | Cognitive Search | Free SKU, one replica/partition, local auth kept                                                                                                         | App Search client still uses `AzureKeyCredential`                                                                                                                                                                                                                                                                                |
 | Event Grid       | Topic local auth kept; 10 delivery attempts / 1-hour TTL retry; dead-letter destination on every application subscription                                | App publisher still uses `AzureKeyCredential` (Functions already use `DefaultAzureCredential`); the short window lands a doomed event while it is still relevant, and the blob write push-triggers the automatic replay — see [dead-letter replay](../eventgrid-dead-letter/design.md)                                           |
-| Observability    | No App Insights or Log Analytics — telemetry is not provisioned in either environment                                                                    | Deliberate free-tier decision: paid ingestion (and the alerting layered on it) bought nothing this estate acts on, so the `$0.01` budget guard is the cost ceiling — see [observability](../observability/design.md)                                                                                                             |
+| Observability    | No App Insights or Log Analytics — telemetry is not provisioned in either environment                                                                    | Deliberate free-tier decision — see [observability](../observability/design.md)                                                                                                                                                                                                                                                  |
 | Budgets          | `$0.01`, identical dev/prod behavior                                                                                                                     | They are automated guards, not operating limits                                                                                                                                                                                                                                                                                  |
 
 ## Security constraints

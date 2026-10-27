@@ -160,7 +160,7 @@ A redelivered creation event whose blob is already gone SHALL be treated as a co
 
 ### Requirement: Replay exhaustion discards events without a page
 
-A replay whose own delivery exhausts its attempts SHALL discard its events without raising an alert, and the dead letter SHALL remain until the thirty-day lifecycle deletes it.
+A replay whose own delivery exhausts its attempts SHALL discard its events and raise no alert, and the dead letter SHALL remain until the thirty-day lifecycle deletes it.
 
 #### Scenario: Replay delivery exhausts
 
