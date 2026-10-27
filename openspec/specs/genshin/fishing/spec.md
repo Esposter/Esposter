@@ -4,15 +4,15 @@ Fishing's points, stocks, fish and rods read from the game's tables (`~/Esposter
 
 ## Requirements
 
-### Requirement: Fishing points stand where the official map marks them
+### Requirement: Fishing points stand at their fitted places
 
-The fishing points SHALL stand in each region where the official map marks them.
+The fishing points SHALL stand in each region at their fitted places.
 
 #### Scenario: Region's points are placed from the official map
 
 - **GIVEN** a region's fishing points are published
 - **WHEN** the world loads that region
-- **THEN** each point stands at the place the official map marks for it
+- **THEN** each point stands at its fitted place
 
 ### Requirement: A pool draws its day or night stock by the game's clock
 
@@ -116,13 +116,13 @@ Fishing SHALL NOT yet offer casting, bites, bait, a fish's skills, a screen or a
 - **WHEN** the player is in the world
 - **THEN** no cast prompt or fishing screen is offered
 
-### Requirement: A pool stock missing from the game's table is an error
+### Requirement: A pool stock with no record is an error
 
-A fishing pool SHALL NOT be built with a stock the game's table does not hold.
+A fishing pool SHALL NOT be built with a stock that has no record.
 
-#### Scenario: Stock the table does not hold fails the build
+#### Scenario: Stock with no record fails the build
 
-- **GIVEN** a pool lists a stock the game's table does not hold
+- **GIVEN** a pool lists a stock that has no record
 - **WHEN** the fishing data is built
 - **THEN** the build fails rather than leaving that stock out of the pool
 

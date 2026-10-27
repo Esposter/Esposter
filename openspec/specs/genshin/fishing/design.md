@@ -64,8 +64,8 @@ The fish, stock, pool and rod tables are not in the community dump the repositor
 ## Sources
 
 - [Fishing](https://genshin-impact.fandom.com/wiki/Fishing), Genshin Impact Wiki: the day and night stocks, the seventy-two hour refill and the bite.
-- [Teyvat Interactive Map](https://act.hoyolab.com/ys/app/interactive-map/index.html), HoYoLAB: the Fishing Point label whose points the fit places.
-- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the fish, pool, stock and rod tables read here.
+- [Teyvat Interactive Map](https://act.hoyolab.com/ys/app/interactive-map/index.html), HoYoLAB: the Fishing Point label whose points the fit places. Grounds the requirement "Fishing points stand at their fitted places" and the scenario "Region's points are placed from the official map" (the place the official map marks for it).
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the fish, pool, stock and rod tables read here. Grounds the requirement "A pool stock with no record is an error" (a pool stock the game's table does not hold, now stated as a stock that has no record) and the scenario "Stock with no record fails the build" (a pool lists a stock the game's table does not hold).
 
 ## Open
 
