@@ -29,4 +29,4 @@ The generated game text SHALL differ from the text already kept only where the g
 
 - **GIVEN** the decoded maps are written into the generated text
 - **WHEN** the diff is read against the generated text already kept
-- **THEN** the diff is empty or holds only reworded lines, each read against the generated text already kept
+- **THEN** the diff is empty or holds only reworded lines, each read against the community dump's map of the same revision before it is kept
