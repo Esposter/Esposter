@@ -18,7 +18,7 @@
 
 ## Open
 
-- [ ] **court-of-fontaine-location's pose image** — no source yet: the cited file court-of-fontaine-location.png is not on disk
-- [ ] **court-of-fontaine-location's shadow image** — no source yet: the cited file court-of-fontaine-location.png is not on disk
+- [ ] **court-of-fontaine-location's pose image** — no source yet: the pose is not solved from `~/Esposter/genshin-parity/references/court-of-fontaine-location.png`, which is on disk, as its camera pass above is not yet run.
+- [ ] **court-of-fontaine-location's shadow image** — no source yet: the shadows are not read from `~/Esposter/genshin-parity/references/court-of-fontaine-location.png`, which is on disk, as its sun-direction pass above is not yet run.
 - [ ] **Fontaine: the surface pass's kit colours** — no source yet: the Fontaine palette file of the hosted game data, which is not on disk
 - [ ] **The Court's clock tower and its 35 Zongzhan pieces, and its 85-metre towers** — no source yet: a count of the Zongzhan pieces placed at the Court and the towers' height from the layout dumps, which hold 195 names with that prefix and no count by place
