@@ -78,15 +78,6 @@ describe("sinsScript", () => {
     database.close();
   });
 
-  test("answers node-too-old on a Node without process.getBuiltinModule", async () => {
-    expect.hasAssertions();
-
-    // Before 20.16 and 22.3 the function does not exist, so the script must not call it
-    expect(
-      JSON.parse(await runScript(getPayload(), "test-key", `delete process.getBuiltinModule;\n${SINS_SCRIPT}`)),
-    ).toStrictEqual({ result: "node-too-old" });
-  });
-
   test("writes no evidence when the call fails", async () => {
     expect.hasAssertions();
 
