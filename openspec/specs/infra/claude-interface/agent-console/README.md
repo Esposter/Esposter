@@ -13,7 +13,7 @@ flowchart LR
   subgraph Browser
     P[The agent console page] --> C[Connection store: one socket, reconnects on its own]
     C --> S[Session store: one event log per session]
-    S --> W[Genshin world and its console: the bar, conversation, composer, permission requests]
+    S --> W[Genshin world and its console]
     W -->|commands| C
   end
   subgraph Host[agent-console-server, on the machine with the code]

@@ -1,12 +1,12 @@
 # Side Chat
 
-A question about the work in progress, such as what a function the agent just wrote does, asked beside the conversation. It starts from the session's latest message, so it has the whole conversation as context, but it runs in plan mode and is never saved. Nothing it says is written back into the main conversation. Its drawer is opened with Ctrl+; from the Code tab, and it asks the session's host for a fork that exists only while the drawer is open.
+A question about the work in progress, such as what a function the agent just wrote does, asked beside the conversation. It starts from the session's latest message, so it has the whole conversation as context, but it runs in plan mode and is never saved. Nothing it says is written back into the main conversation. Its drawer is opened with Ctrl+; in the console, with a session open, and it asks the session's host for a fork that exists only while the drawer is open.
 
 ## How it works
 
 ```mermaid
 flowchart TD
-  K["Ctrl+; in the console, with a session open"] --> OPEN["Drawer opens, store holds the question"]
+  K["Ctrl and the semicolon key in the console, with a session open"] --> OPEN["Drawer opens, store holds the question"]
   OPEN -->|"first question"| FORK["Fork command, isSideChat, at the session's latest message"]
   FORK --> HOST["Host opens the fork: plan mode, persistSession false"]
   HOST -->|"onSessionOpen with the flag"| HELD["Store keeps the fork's id and host"]
@@ -31,9 +31,7 @@ flowchart TD
 
 ## Notes
 
-- The first question needs no new fork behaviour. The whole-conversation fork, an empty message uuid, already starts at the session's latest message, so the side chat uses it unchanged.
 - The drawer's state is not kept through a reload: the store holds it in memory only, and closing the drawer discards its answers.
-- The Ctrl+; chord is the only way in that this page covers.
 
 ## Key files
 

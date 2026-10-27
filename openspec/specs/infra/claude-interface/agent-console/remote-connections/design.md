@@ -11,9 +11,9 @@ flowchart TD
   L --> P[Pair, as device pairing does]
   M --> P
   P --> C[One connection per host, kept in local storage]
-  C --> K[Each with its own socket, status, retry and credential]
+  C --> K[Each with its own socket and credential]
   K --> G[Sessions listed under the host that runs them]
-  K -->|one host stops| X[That host shown stopped, its sessions closed; the others stay connected]
+  K -->|one host stops| X[That host shown stopped, its sessions closed, and the others stay connected]
 ```
 
 - **Connections are a list.** The page keeps every paired host in local storage (`LocalStorageKey.AgentConsoleConnections`), each with its address, this browser's credential for it, the device id and the host's public key. Each has its own socket, retry backoff and status, the status held per connection id in `useDataMap`, so one host stopping, or not answering, never touches another. The page as a whole reads as its best-placed host, so a reader with any host reached can work.
