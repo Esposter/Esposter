@@ -22,7 +22,7 @@ Every game string a consumer shows SHALL be referenced by the game's own text id
 
 ### Requirement: The game's text is available in its fifteen languages
 
-The game's text SHALL be available in the game's fifteen languages, each as one chunk for that language (`~/Esposter.noindex/genshin-parity/text/TextMap/`).
+The game's text SHALL be available in the game's fifteen languages, each as one chunk for that language.
 
 #### Scenario: Each language has its own chunk
 
@@ -32,7 +32,7 @@ The game's text SHALL be available in the game's fifteen languages, each as one 
 
 ### Requirement: A reader's preferences resolve to the nearest game language
 
-A reader's language preferences SHALL resolve to the nearest game language by language and script, and to English when none matches.
+A reader's language preferences SHALL resolve to the nearest game language by language and script.
 
 #### Scenario: Traditional Chinese readers get Traditional Chinese
 
@@ -46,27 +46,35 @@ A reader's language preferences SHALL resolve to the nearest game language by la
 - **WHEN** the language is matched
 - **THEN** the game's Simplified Chinese is chosen
 
-#### Scenario: Unmatched preferences get English
-
-- **GIVEN** no game language matches any of a reader's preferences
-- **WHEN** the language is matched
-- **THEN** English is chosen
-
 #### Scenario: Malformed locale tag is skipped
 
 - **GIVEN** a reader's preferences include a malformed tag
 - **WHEN** the language is matched
 - **THEN** the malformed tag is skipped and the next preference is used
 
-### Requirement: English is bundled and other languages load on first use
+### Requirement: A reader with no matching preference gets English
 
-English SHALL be bundled with the package, and each other language SHALL load only when a reader first needs it.
+A reader's language preferences SHALL resolve to English when none matches.
+
+#### Scenario: Unmatched preferences get English
+
+- **GIVEN** no game language matches any of a reader's preferences
+- **WHEN** the language is matched
+- **THEN** English is chosen
+
+### Requirement: English is bundled with the package
+
+English SHALL be bundled with the package.
 
 #### Scenario: English reader loads no extra chunk
 
 - **GIVEN** a reader's language is English
 - **WHEN** the page loads
 - **THEN** no other language's chunk is loaded
+
+### Requirement: Other languages load on first use
+
+Each other language SHALL load only when a reader first needs it.
 
 #### Scenario: Other language loads on first use
 
@@ -76,7 +84,7 @@ English SHALL be bundled with the package, and each other language SHALL load on
 
 ### Requirement: Numbered interface values are filled in place
 
-A numbered interface string SHALL show its values in place, with a number that has no value left as it is, and a value containing a replacement pattern SHALL be shown literally.
+A numbered interface string SHALL show its values in place.
 
 #### Scenario: Values fill the numbered places
 
@@ -84,11 +92,19 @@ A numbered interface string SHALL show its values in place, with a number that h
 - **WHEN** the string is shown
 - **THEN** each numbered place shows its value
 
+### Requirement: A number with no value is left in place
+
+A numbered interface string SHALL leave a number with no value left as it is.
+
 #### Scenario: Number with no value is left in place
 
 - **GIVEN** an interface string has a numbered place with no value
 - **WHEN** the string is shown
 - **THEN** that place is left as written
+
+### Requirement: A value with a replacement pattern is shown literally
+
+A value containing a replacement pattern SHALL be shown literally.
 
 #### Scenario: Value with a replacement pattern is shown literally
 
@@ -98,7 +114,7 @@ A numbered interface string SHALL show its values in place, with a number that h
 
 ### Requirement: A game string's line breaks are real line breaks
 
-The game writes a line break in its text as a backslash and an n. Every chunk the writer publishes or generates SHALL hold a real line break in its place (`~/Esposter.noindex/genshin-parity/text/TextMap/TextMapEN.json`), and a screen SHALL show the string's line breaks without splitting on the escaped form.
+The game writes a line break in its text as a backslash and an n. Every chunk the writer publishes or generates SHALL hold a real line break in its place, and a screen SHALL show the string's line breaks without splitting on the escaped form.
 
 #### Scenario: A line break in an interface string is a real line break
 
@@ -114,13 +130,17 @@ The game writes a line break in its text as a backslash and an n. Every chunk th
 
 ### Requirement: Colour tags split a game string into coloured runs
 
-A game string's colour tags SHALL split it into runs, each shown in the colour its tag gives, and every other markup SHALL be dropped.
+A game string's colour tags SHALL split it into runs, each shown in the colour its tag gives.
 
 #### Scenario: Coloured text is split into runs
 
 - **GIVEN** a game string has a colour tag around some words
 - **WHEN** the string is shown
 - **THEN** those words are shown in the tag's colour as their own run
+
+### Requirement: Other markup in a game string is dropped
+
+Every other markup SHALL be dropped.
 
 #### Scenario: Other markup is dropped
 
@@ -180,7 +200,7 @@ The app's own interface SHALL stay in English, and only the game's own words SHA
 
 ### Requirement: Non-Latin game text draws in a system face
 
-Non-Latin game text SHALL be drawn in a system face, since the game's own faces do not cover it (`GAME_FONT_FAMILY`, see the open list; Signika's `index.css` in the `@fontsource/signika` package has three `@font-face` blocks, none with a unicode range for Thai, CJK or Hangul).
+Non-Latin game text SHALL be drawn in a system face, since the game's own faces do not cover it.
 
 #### Scenario: Chinese text is drawn in a system face
 
