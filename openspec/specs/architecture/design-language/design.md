@@ -6,7 +6,7 @@ Every interface in the app is drawn from one set of tokens through one set of ru
 flowchart TD
   P[UiPaletteMap: colours per style and mode] --> TP[Vuetify 0's theme plugin: one theme per style and mode]
   S[UiStyleMap: drawing per style] -->|at config time| SR[One rule per style on its data-ui-style value]
-  L[The layout tier in globals.css: the step, the dock, motion] --> R
+  L["The layout tier in globals.css<br/>shared by every style"] --> R
   TP --> H[The first response]
   H --> R[The surface, type and shortcut rules in uno.config.ts]
   SR --> R
@@ -69,7 +69,7 @@ The surfaces keep their roles in every style: a frame holds content, a lifted fr
 | Skeleton         | A lighter band stepping across the block                        | A lighter band easing across it                                                                                                                                | Standard's eased band                                                                                                        |
 
 - **Standard draws in tones, not lines.** A hairline around every surface makes every frame, field, button and menu the same outlined box, so nothing leads and the page reads as a wireframe. Material 3 tells surfaces apart by tone rather than by line, so standard takes Material's way of drawing — surface containers, state layers, a container rounding more than the controls inside it — and keeps the app's density.
-- **The standard column is taken, not invented**: the token vocabulary from Nuxt UI (a background, an elevated fill, a border), the role of each step of Radix's neutral scale (app background, panel, lifted panel, divider, border, then low- and high-contrast text), the tones and state layers from Material 3, and the quiet chrome around the content from Linear's refresh. The accent is Vue's green: in dark the bright one Vue's docs lead with, and in light its hue darkened as far as passing on its own tonal fill, since Radix's green reads as bland beside it.
+- **The standard column is taken, not invented**: each of its values follows a source that [design sources](../design-sources/design.md) lists with what it gave. The accent is Vue's green: in dark the bright one Vue's docs lead with, and in light its hue darkened as far as passing on its own tonal fill, since Radix's green reads as bland beside it.
 - **The Genshin column is the game's own menus, redrawn.** Its cream is the in-game settings screen's, its navy the HUD's and its gold the menus' accent, each tuned until it passes AA. Its capsules, its inner gold line and its row of gems are drawn in CSS, so nothing of the game's art is used, and its face is the game's own HYWenHei where a reader has it installed, which is not free to ship, and otherwise Signika. Signika was picked by setting the game's own lines in each of a set of open candidates, scaling each to the game's box, and scoring how much of its ink overlaps the game's, where it overlapped most.
 - **A drawing that differs by more than a value is keyed in the library, never in a feature.** The spinner and the skeleton carry the nearest style on their own element through `useUiStyle` and key their scoped style on it, and the loading bar's and the meter's row do the same through the `ui-blocks` shortcut, so a region pinned to voxel inside a standard page still draws voxel's blocks. The row carries its reading as `--ui-blocks-value` and its colour as `--ui-blocks-fill`, which the meter's levels set, so voxel's filled blocks and standard's track read the one value. The DOM and the roles are the same in every style.
 - **The icon's box is the layout's.** Every icon is `size-6` in every style: a pixel icon needs it to land on whole pixels, and a Lucide icon in the same box keeps a row of controls lined up.
@@ -199,9 +199,9 @@ flowchart TD
   MQ[The system's scheme, after hydration] --> ST
   ST --> NT[NuxtTheme]
   NT --> W[useSelectUiTheme's immediate watcher]
-  W --> SEL[Vuetify 0's theme for the pair is selected]
-  W -->|system mode, served light| HR[A head rule repainting the root dark under a dark colour-scheme query]
-  SEL --> H[The first response already in the right theme]
+  W --> SEL[Select Vuetify 0's theme for the pair]
+  W -->|system mode, served light| HR["Head rule for a dark system scheme"]
+  SEL --> H[The first response]
   HR --> H
 ```
 

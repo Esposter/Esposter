@@ -13,7 +13,7 @@ flowchart TD
   R -->|no| G[A gallery of shipped screens: how several products arrange it]
   RP --> D[The design systems: what the look should be, drawn in our tokens]
   G --> D
-  D --> B[Usability references: whether it interrupts, where it sits, how fast it answers]
+  D --> B["Usability references<br/>the rules a control is held to"]
   B --> A[Accessibility patterns: the keyboard and ARIA contract]
   A --> P[Platform documents: the browser feature that implements it]
   P --> C{Better than the reference, or only like it?}
@@ -75,14 +75,14 @@ These are where the look comes from: the palette's structure, the surfaces, the 
 
 ## Absorptions that draw an interface
 
-A dependency whose output is an interface a person sees is absorbed only after its design sources are surveyed, the way a new surface is designed: its reference product's own screens first, then the galleries above for its category, then the design language. The sources the survey consulted are written into the replacement's own design page with what each gave the surface, so the arrangement it settled on survives the next rewrite. The procedure is the `dependency-absorption` skill's `references/design-survey.md`, and the stage it runs in is `openspec/specs/architecture/dependency-admission/design.md`'s "Executing an absorption".
+An absorption that draws an interface surveys its design sources in the order above, as [dependency admission](../dependency-admission/design.md) requires. The sources the survey consulted are written into the replacement's own design page with what each gave the surface, so the arrangement it settled on survives the next rewrite. The procedure is the `dependency-absorption` skill's `references/design-survey.md`, and the stage it runs in is `openspec/specs/architecture/dependency-admission/design.md`'s "Executing an absorption".
 
 ## Usability
 
 | Source                                                                                                               | What it gave                                                                                                                                                                                                                                                                                                                              |
 | :------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [NN/g, modal and nonmodal dialogs](https://www.nngroup.com/articles/modal-nonmodal-dialog/)                          | A modal only for what must interrupt; anything else is a popover or a panel beside the content                                                                                                                                                                                                                                            |
-| [NN/g, confirmation dialogs](https://www.nngroup.com/articles/confirmation-dialog/)                                  | A confirmation's answer named by the act rather than "OK" — its "only before what cannot be undone" is [rejected here](../../../rejected/architecture/no-confirm-for-undoable-deletes/design.md) for deletes                                                                                                                              |
+| [Nielsen Norman Group, modal and nonmodal dialogs](https://www.nngroup.com/articles/modal-nonmodal-dialog/)          | A modal only for what must interrupt; anything else is a popover or a panel beside the content                                                                                                                                                                                                                                            |
+| [Nielsen Norman Group, confirmation dialogs](https://www.nngroup.com/articles/confirmation-dialog/)                  | A confirmation's answer named by the act rather than "OK" — its "only before what cannot be undone" is [rejected here](../../../rejected/architecture/no-confirm-for-undoable-deletes/design.md) for deletes                                                                                                                              |
 | [Apple's Human Interface Guidelines on motion](https://developer.apple.com/design/human-interface-guidelines/motion) | Motion says where something came from or went, never decorates a frequent action, and never carries a meaning alone                                                                                                                                                                                                                       |
 | [Laws of UX](https://lawsofux.com/)                                                                                  | The Doherty threshold (feedback within 400ms), [Fitts's law](https://lawsofux.com/fittss-law/) for target size and placement, [Hick's law](https://lawsofux.com/hicks-law/) for how many choices a menu offers, and the [aesthetic-usability effect](https://lawsofux.com/aesthetic-usability-effect/) for why the look is worth the work |
 | [Firefox's address bar ranking](https://firefox-source-docs.mozilla.org/browser/urlbar/ranking.html)                 | Frecency, which ranks the dock's recent pages and the command palette's places                                                                                                                                                                                                                                                            |
@@ -104,7 +104,7 @@ A dependency whose output is an interface a person sees is absorbed only after i
 
 ## Notes
 
-- **A proposal lists the sources it draws on in its own Sources section**, and they join this page when it ships, since this page names only what a shipped surface took from somewhere. A source weighed and not taken stays with the decision that weighed it, as Reka UI does on the [UI library](../ui-library/design.md#rejected) page.
+- **A source weighed and not taken stays with the decision that weighed it**, as Reka UI does on the [UI library](../ui-library/design.md#rejected) page.
 - **A new source is added the day a surface takes something from it**, with the one line saying what it gave. A link without that line is a bookmark, and it is not kept.
 
 ## Key files

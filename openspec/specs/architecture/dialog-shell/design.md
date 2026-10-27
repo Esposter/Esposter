@@ -10,11 +10,11 @@ Two shells build on it. `StyledFormDialog` wraps the base around a `UiForm` with
 
 ```mermaid
 flowchart TD
-  CONSUMER["consumer — title, optional confirmLabel, body slot"] --> SHELL["StyledDialog — UiDialog in the middle"]
+  CONSUMER["consumer<br/>the call site"] --> SHELL["StyledDialog — UiDialog in the middle"]
   SHELL --> HEADER["the library dialog's title bar — title and close button"]
   HEADER --> OPEN{"is it open"}
   OPEN -->|"no"| NOTHING["no body — nothing of it exists"]
-  OPEN -->|"yes"| BODY["default slot — padded, scrollable, one column with its own rhythm"]
+  OPEN -->|"yes"| BODY["default slot<br/>the scrolling body"]
   BODY --> HASACTIONS{"is there anything to confirm"}
   HASACTIONS -->|"no confirmLabel and no action slots"| CLOSE["no actions row — the title bar's close button is the way out"]
   HASACTIONS -->|"yes"| ACTIONS["actions row"]
@@ -24,7 +24,7 @@ flowchart TD
   SUBMIT --> ANSWER
   ANSWER --> MODE{"is the write optimistic"}
   MODE -->|"yes"| GONE["closes at once — a rejection rolls back and toasts"]
-  MODE -->|"no"| PENDING["pending until it settles — closes, or stays open on false"]
+  MODE -->|"no"| PENDING["pending until it settles<br/>closes, or stays open on false"]
 ```
 
 ## The rules the shell enforces

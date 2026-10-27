@@ -14,7 +14,7 @@ flowchart TD
   PRESS["a delete pressed"] --> DIALOG["UiConfirmDialog :confirm"]
   DIALOG --> WRITE{"is the write optimistic"}
   WRITE -->|"yes"| CLOSE["close on the answer — a rejection rolls back and toasts"]
-  WRITE -->|"no"| WAIT["pending until it settles — closes, or stays open on false"]
+  WRITE -->|"no"| WAIT["pending until it settles<br/>closes, or stays open on false"]
   CLOSE --> UNDO{"can the app undo it"}
   WAIT --> UNDO
   UNDO -->|"yes — the recycle bin, the sheet's undo"| OFFER["offer the undo too — the toast's Restore, the toolbar's Undo"]
@@ -69,4 +69,4 @@ A confirmation that names one message, post or comment shows it, so the reader s
 - A button keeps its own look by opening the dialog itself: the dashboard-visual delete is a `UiIconButton` whose click sets the dialog's model, and the edit-form delete is a `UiIconButton` beside its dialog in the same way.
 - The alternative, deleting on click, is [rejected](../../../rejected/architecture/no-confirm-for-undoable-deletes/design.md).
 - List-item deletes mount the dialog once per list and target it through a dialog store — see [Singleton dialogs](../singleton-dialogs/design.md).
-- `StyledEditFormDialogConfirmCloseDialog` (save/discard/cancel on dirty close) is a three-action decision dialog, not a destructive confirmation — it composes the [dialog shell](../dialog-shell/design.md) directly, carrying discard in `prepend-confirm`, and stays outside this component on purpose.
+- `StyledEditFormDialogConfirmCloseDialog` (save/discard/cancel on dirty close) is a three-action decision dialog, not a destructive confirmation — it composes the [dialog shell](../dialog-shell/design.md) directly, and stays outside this component on purpose.
