@@ -27,7 +27,7 @@ Resource operations — published, unpublished, duplicated, deleted, restored, p
 
 ```mermaid
 flowchart TD
-  LOCAL["This tab's own action<br/>error · save conflict · export"] -->|createNotification| ST
+  LOCAL["This tab's own action"] -->|createNotification| ST
   PUSH["Delivered push"] --> SW["service worker postMessage"]
   SW -->|type reaches the bell| RE["re-read page 1"]
   RE --> ST["store/notification"]

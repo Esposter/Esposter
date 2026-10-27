@@ -21,7 +21,7 @@ The preview text is a root prop, so the bar's field binds it through a patch lik
 
 **Preview** is the truth: the email editor's header holds a Design / Preview toggle beside the dataset picker, and Preview takes the design's place, with the canvas's device toggle above it. Preview shows the open document compiled by the server, through a mutation that carries the document in its request body to the document model's compile service, debounced like the autosave so Preview shows an edit before it is saved. It draws in the sandboxed frame the published view uses, at desktop and mobile width, with MJML's validation messages above it as an alert. The design stays mounted beneath Preview, so an edit and a selection survive the toggle. The design canvas is where an email is edited and Preview is what a client receives, because email-client HTML — nested tables and conditional comments — is output to inspect, not a surface to edit in place.
 
-The compile runs in the app server, on MJML's Node package in place of the browser build bundled inside `grapesjs-mjml`.
+The compile runs in the app server, on MJML's Node package.
 
 ## The shell's document kind
 

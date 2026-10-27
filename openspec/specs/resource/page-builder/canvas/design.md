@@ -28,13 +28,13 @@ The [headless core](../../../headless-block-editor/editor-core/design.md) comput
 
 ```mermaid
 flowchart TD
-  POINTER["pointer drag — palette block or node handle"] --> CAPTURE["editor's pointer events off, so the frame does not take the pointer"]
+  POINTER["pointer drag — palette block or node handle"] --> CAPTURE["pointer events off"]
   CAPTURE --> HIT["hit test the frame's document at the pointer, less its offset, over its scale"]
   HIT --> SLOT{"nearest slot whose allow list accepts the type?"}
   SLOT -->|no| NONE["no indicator, a drop cancels"]
   SLOT -->|yes| INDEX["index from child midpoints along the slot's axis"]
   INDEX --> DROP["release: insert or move patch"]
-  KEYS["Alt+arrow on the selected node"] --> STRUCT["previous or next sibling, into the previous sibling's slot, or out after the parent"]
+  KEYS["Alt+arrow on the selected node"] --> STRUCT["sibling or parent move"]
   STRUCT --> DROP
   MOVETO["Move to… in the toolbar, menu or palette"] --> SCOPE["command palette scope listing every slot that accepts the node"]
   SCOPE --> DROP
@@ -53,7 +53,7 @@ flowchart TD
 
 **Text editing.** Enter on a selected text node, in the tree or the canvas, mounts TipTap on that node inside the frame and moves focus into it; Escape leaves the text and returns focus to the tree row. Inside the text, TipTap's own keys and undo apply; leaving it commits one history entry. The editor is the Note's, over the node's `content`, and each change while it is open is an update-props edit of `content` under the session's interaction id, so the history merges the session into that one entry and the canvas never holds a draft of its own. Composition and paste are ProseMirror's, which reads an input method's text and pasted markup through its schema rather than through `execCommand`.
 
-The canvas itself is one tab stop named after the page. With focus in it, Up and Down select the previous and next node in document order, Enter edits, and Escape selects the parent — the same commands as the tree, so neither surface is the only way to do anything.
+The canvas itself is one tab stop named after the page. With focus in it, its keys are the canvas rows of the [key table](../keyboard/design.md) — the same commands as the tree, so neither surface is the only way to do anything.
 
 ## The shell
 

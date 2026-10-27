@@ -107,12 +107,12 @@ The bell SHALL keep a single-use action such as Restore only until it has been u
 
 ### Requirement: Toasts share one queue and errors stay until dismissed
 
-The system SHALL show notification toasts one at a time from a single queue, dismissing ordinary toasts after about five seconds and keeping errors until the owner dismisses them.
+The system SHALL show notification toasts one at a time from a single queue, dismissing ordinary toasts after five seconds and keeping errors until the owner dismisses them.
 
 #### Scenario: An ordinary toast goes away on its own
 
 - **GIVEN** a success toast is shown
-- **WHEN** about five seconds pass without the owner interacting
+- **WHEN** five seconds pass without the owner interacting
 - **THEN** the toast is dismissed
 
 #### Scenario: An error toast stays until dismissed

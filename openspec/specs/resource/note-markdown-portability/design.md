@@ -1,6 +1,6 @@
 # Note Markdown Portability
 
-A Note can be read only inside the app or through its published page ([note resource](../note-resource/design.md)); that page named Markdown export "a natural follow-on, not bundled", and this change bundles it. Markdown is the format documents travel in — a README, a wiki, a pasted answer — and a Note that cannot leave as `.md` or arrive from one is a document you are locked into.
+A Note can be read only inside the app or through its published page ([note resource](../note-resource/design.md)). Markdown is the format documents travel in — a README, a wiki, a pasted answer — and a Note that cannot leave as `.md` or arrive from one is a document you are locked into.
 
 ## What it adds
 

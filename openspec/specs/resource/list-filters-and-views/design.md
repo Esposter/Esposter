@@ -9,14 +9,14 @@ The workbench is one component, `ResourceListView`, and every list route renders
 - **Filter-pill row** (`ResourceListFilterBar`): each active filter is a pill reading what it holds, "Status: all", that opens a panel to change it and is taken off by its own ✕; `+ Add filter` is a menu of the remaining filters. A pill stays visible while empty ("all") until its ✕ removes it; a deep-linked value surfaces its pill automatically. A pill of one choice closes on the pick; the Type pill takes several and stays open.
   - **Type** — multi-select over `ResourceDefinitionMap` (icon + title), bound to the `types` ref `useReadResources` accepts.
   - **Status** — Published/Draft; `isPublished?: boolean` on `resourceFilterInputSchema`, implemented as an `exists`/`notExists` on `resource_publications` inside `getResourcesWhere` (the one filter source for both `readResourcesCount` and `readResources`).
-  - **Updated** — date-range presets (24h / 7d / 30d / custom), `gte`/`lte` on `updatedAt`, resolved at fetch time (`getResourceUpdatedRange`) so relative presets stay anchored to "now". Custom's bounds are one range field ([calendar](../../architecture/calendar/design.md)), each end a day read as its start in the reader's zone.
-  - **Tag** — name + optional value ([tags](../tags/design.md)): a value pins the tag through jsonb containment, a name alone matches any value through key-existence.
+  - **Updated** — date-range presets (24h / 7d / 30d / custom), `gte`/`lte` on `updatedAt`, resolved at fetch time (`getResourceUpdatedRange`) so relative presets stay anchored to "now". Custom's bounds are one [range field](../../architecture/calendar/design.md).
+  - **Tag** — name + optional value, filtered as [tags](../tags/design.md) describes.
 - **URL state** (`useResourceListFilters`): `search`, `types`, `status`, `sortBy`, `page` mirror to query params via `useRouteQuery` (defaults drop out of the URL); `?search=` from Home stays the entry point. `sortBy` serializes to `key:order,…`. The widths the reader drags the columns to are a `columnWidths` param beside them, serialized to `key:width,…` and read back dropping any entry that names no column or a width no handle reaches. Named saved views are [deferred](../../../deferred/resource/saved-views/design.md).
 
 ## Bulk operations
 
 - A checkbox column, the header's selecting the page and showing it mixed; a selection toolbar replaces the filter row while items are selected (`n selected · Delete (n) · Export CSV · Save as blueprint · Clear`). `useResourceSelection` remembers full rows selected on other pages, since the table's selection model only carries ids.
-- `resource.deleteResources`: owner-scoped `inArray` soft delete returning the deleted rows, stamping `deletedAt` and dropping their publication rows — blobs stay put until purge ([recycle bin](../recycle-bin/design.md)). The selection's Delete sends at once, as a row's does, because the [recycle bin](../recycle-bin/design.md) undoes it: its toast restores the whole selection in one `restoreResources` write ([resource page parity](../resource-page-parity/design.md)).
+- `resource.deleteResources`: owner-scoped `inArray` soft delete returning the deleted rows, stamping `deletedAt` and dropping their publication rows ([recycle bin](../recycle-bin/design.md)). The selection's Delete sends at once, as a row's does, because the [recycle bin](../recycle-bin/design.md) undoes it: its toast restores the whole selection in one `restoreResources` write ([resource page parity](../resource-page-parity/design.md)).
 
 ## Views
 
@@ -39,7 +39,7 @@ One filter state, mirrored to the URL, consumed by count + list:
 
 ```mermaid
 flowchart LR
-  URL["query params<br/>search · types · status · sortBy · page"] <-->|"useRouteQuery ↔ the table's models"| STATE["useResourceListFilters refs"]
+  URL["query params"] <-->|"useRouteQuery ↔ the table's models"| STATE["useResourceListFilters refs"]
   PILLS["FilterBar pills"] --> STATE
   STATE --> WHERE["getResourcesWhere<br/>(single filter source)"]
   WHERE --> RR["resource.readResources"] --> TABLE["UiDataTable"]

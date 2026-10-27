@@ -27,8 +27,8 @@ There is nothing saved to hold the new editors to, so parity is proved against t
 
 ```mermaid
 flowchart TD
-  FIXTURE["a 2,000-node fixture and the starter webpage and email"] --> BENCH["benches: render, one patch with its inverse, the server compile"]
-  FIXTURE --> OUTPUT["output tests: every type, every edge value, the sanitiser's vectors"]
+  FIXTURE["a 2,000-node fixture and the starter webpage and email"] --> BENCH["benches"]
+  FIXTURE --> OUTPUT["output tests"]
   FIXTURE --> BROWSER["browser suite (owed)"]
   BROWSER --> MARKS["performance marks: an edit to paint, a selection to outline"]
   BROWSER --> BOXES{"every node's box: canvas against the published frame"}
