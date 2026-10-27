@@ -46,10 +46,13 @@ flowchart TD
 | `scripts/src/services/genshinAssets/music/parseSoundBankSounds.ts`         | The sounds a sound bank holds in itself                            |
 | `packages/genshin-world/src/components/Login/Music/Index.vue`              | The login's music and its door's sound, through one context        |
 | `packages/genshin-world/src/components/Login/Music/Index.reference.ts`     | Where the door's sounds sit, and their topic of every search       |
+| `packages/genshin-world/src/components/Login/Music/DoorSound.reference.ts` | The door's mix volumes, read from the game's banks                 |
 
 ## Sources
 
 - [GENSHIN IMPACT | CELESTIA DOOR | LOADING SCREEN](https://www.youtube.com/watch?v=rBnfA4pXw6U): the English client's door, clicked, with its sound.
+- The game's mix of the door's rumble and rush, read from the game's banks: each is laid at the volume its banks give its source through every bus up to the master's, the door's rumble 16 decibels over its source and the rush 9 (grounds Requirement: The door plays at the game's mix and is limited so it does not clip).
+- a recording that plays them clearly enough to match (grounds Requirement: The login's other sounds stay silent until they are matched): the login's button clicks and its wind each wait on one and go through the same fit (see Not yet).
 
 ## Open
 

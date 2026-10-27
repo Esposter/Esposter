@@ -12,7 +12,7 @@ The game's own sounds SHALL NOT ship, and the login's sounds SHALL be played fro
 
 - **GIVEN** the product is built and deployed
 - **WHEN** its contents are inspected
-- **THEN** it holds the measured levels of each sound and no recording of the game's sound
+- **THEN** it holds the measured levels of each sound and no copy of the game's sound
 
 #### Scenario: The door plays from the product's own noise
 
@@ -33,7 +33,7 @@ The login's door sound SHALL start a fixed delay after the click that opens the 
 
 ### Requirement: The door plays at the game's mix and is limited so it does not clip
 
-The door sound SHALL play with its rumble louder than its rush, as the game mixes them, and SHALL be limited so that its peaks do not clip (`LOGIN_MASTER_LIMITER_OPTIONS`).
+The door sound SHALL play with its rumble louder than its rush, and SHALL be limited so that its peaks do not clip (`LOGIN_MASTER_LIMITER_OPTIONS`).
 
 #### Scenario: The rumble plays louder than the rush
 
@@ -75,7 +75,7 @@ The door sound SHALL be accepted by the audio pass only when its difference from
 
 ### Requirement: The login's other sounds stay silent until they are matched
 
-The login's button clicks and its wind SHALL NOT play until a recording that plays them clearly enough has been matched (which plays only the door's sound).
+The login's button clicks and its wind SHALL NOT play until they have been matched (which plays only the door's sound).
 
 #### Scenario: A button click is silent before it is matched
 
