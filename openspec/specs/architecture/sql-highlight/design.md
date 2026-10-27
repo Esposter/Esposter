@@ -10,7 +10,7 @@ flowchart TD
   scan["One pass over the text<br/>a single alternation, read with matchAll"]
   token{"Which alternative matched?"}
   painted["Comment, string, double-quoted identifier,<br/>parameter, keyword, function or number"]
-  plain["A word that is none of them, and any<br/>bracket, operator or space: kept as typed"]
+  plain["Unpainted text, kept as typed<br/>bracket, operator or space: kept as typed"]
   styled["styleText paints the token<br/>and drops the colour off a non-terminal"]
   output["Output with colour stripped equals the input"]
   input --> scan --> token
@@ -25,7 +25,7 @@ flowchart TD
 
 ## Colours
 
-The colour map, `HighlightStyleMap` in the db constants, is the one place the colours live, and the suite reads its colours from it, so a test asserts which kind a token is and never which colour that kind has. The palette is chosen to read on a dark terminal's default colours rather than to match the app's editors: plain blue is too dark there, so a quoted name, a table or a column, is green as the log showed it before, a function call bright blue, a string cyan, keywords magenta, numbers and parameters yellow, and comments a grey italic. Only the named ANSI colours `styleText` accepts are used, so the terminal's theme still chooses the shades.
+The colour map, `HighlightStyleMap` in the db constants, is the one place the colours live, and the suite reads its colours from it, so a test asserts which kind a token is and never which colour that kind has. The palette is chosen to read on a dark terminal's default colours rather than to match the app's editors: plain blue is too dark there, so a quoted name, a table or a column, is green, a function call bright blue, a string cyan, keywords magenta, numbers and parameters yellow, and comments a grey italic. Only the named ANSI colours `styleText` accepts are used, so the terminal's theme still chooses the shades.
 
 | Token kind                  | Style                |
 | :-------------------------- | :------------------- |
@@ -90,6 +90,6 @@ Verdict counts: 4 in-scope defects, 1 in-scope feature, 13 fixed upstream and pi
 
 ## Sources
 
-- The upstream repository and its issue tracker, [scriptcoded/sql-highlight](https://github.com/scriptcoded/sql-highlight), read at the 6.1.0 source.
+- The upstream repository and its issue tracker, [sql-highlight](https://github.com/scriptcoded/sql-highlight), read at the 6.1.0 source.
 - The Postgres keyword list, [Appendix C. SQL Key Words](https://www.postgresql.org/docs/current/sql-keywords-appendix.html), for what counts as a keyword.
 - Node's [`util.styleText`](https://nodejs.org/api/util.html#utilstyletextformat-text-options), for the colour rules and the terminal check.

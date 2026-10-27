@@ -12,7 +12,7 @@ That difference is invisible while the only writer is the editor, and it is the 
 flowchart TD
   RESTORE["a restore writes the content and bumps contentVersion"] --> RELOAD
   RELOAD["reloadResourceContent — re-read the row"] --> HOOK1["ResourceContentHookMap.Reload<br/>the content stores re-read their own blob"]
-  HOOK1 --> RENDER["a Vue-rendered type is finished — its blade renders the ref"]
+  HOOK1 --> RENDER["Vue-rendered type"]
   HOOK1 --> HOOK2["ResourceContentHookMap.Adopt<br/>useAdoptResourceContent, per blade"]
   HOOK2 --> LIB["the library takes the new document"]
 

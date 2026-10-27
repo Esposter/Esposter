@@ -7,7 +7,7 @@ Every interface in the app is built from a library of its own, in `apps/web`, on
 ```mermaid
 flowchart TD
   F[Feature component] -->|uses only| U[The library: look, layout, the surfaces]
-  U -->|behaviour from| Z[Vuetify 0: focus, keys, ARIA, selection, validation, placement]
+  U -->|behaviour from| Z[Vuetify 0 behaviour]
   U -->|colours, type, edges from| T[The design tokens as custom properties]
   F -->|utilities that read| T
   F -.->|refused by oxlint| Z
@@ -39,7 +39,7 @@ flowchart TD
   S[An icon class in source, written in full] --> X[UnoCSS's extractor]
   L[A library component: an icon by what it means] --> M[UiIconMap: the nearest style's row]
   M --> X
-  X --> G[That icon's rule alone: its SVG as a mask in the current colour]
+  X --> G[One icon rule: a mask in the current colour]
   G --> P[The page ships the icons it draws and nothing else]
 ```
 
@@ -195,7 +195,7 @@ The Styled components are the app's composites over the library, each with a rol
 - **A field validates through Vuetify 0, with the library's rules.** `UiRules` builds each rule a field takes — `required`, `maxLength`, `minValue`, `maxValue`, `pattern` and `isNotProfanity` — worded as one voice, and a rule a field needs once is a `UiRule` beside it. They are builders rather than Vuetify 0's rule aliases, since an alias is a fixed check and all but two of these take the length, value or pattern they check against. An empty field passes every rule but `required`.
 - **A confirmation is an alert dialog on `UiDialog`, not on Vuetify 0's alert dialog.** Vuetify 0's `AlertDialog` has the right role and focuses Cancel, but its action closes the dialog when it settles, success or not, and Cancel takes focus only when the primitive renders its own element. `UiConfirmDialog` therefore passes the alert dialog role through `UiDialog` and gives Cancel `autofocus`, which the browser's dialog focusing steps honour, and holds its own pending state so a failed delete stays open. happy-dom runs no focusing steps, so its test asserts which button carries `autofocus` rather than where focus went.
 - **Breadcrumbs measure with a gap of their own.** Vuetify 0's breadcrumbs decide what fits from each crumb's width plus a `gap` prop, eight pixels by default, so the list's CSS gap is two steps to match it; a wider one would let the row overflow before anything folds. The primitive places no divider and no ellipsis itself: a divider goes before every crumb after the first, and the ellipsis after the first divider, which is where the fold keeps it.
-- **A calendar is ours, over the platform's Temporal.** Vuetify 0 ships no date picker yet, only a date adapter written against a Temporal polyfill of its own, so the grid, the date field and the event calendar walk the platform's plain dates; why, and what the event calendar takes from Outlook, is the [calendar](../calendar/design.md) page.
+- **A calendar is ours, over the platform's Temporal.** Vuetify 0 ships no date picker, only a date adapter written against a Temporal polyfill of its own, so the grid, the date field and the event calendar walk the platform's plain dates; why, and what the event calendar takes from Outlook, is the [calendar](../calendar/design.md) page.
 - **A server's table is not `createDataTable`.** Vuetify 0's data table keeps its own sort, grouping and page: its sort changes only through a toggle, and what it groups by is fixed when it is made. The resource list keeps its page, size and order in the address, so a link lands on the same page, and a second copy inside the primitive would have to be walked into agreement on every back and forward. `UiDataTable` therefore takes those as models and draws the table itself, on the library's checkbox, select and buttons, with the ARIA the table pattern asks for. A table given every row, as a sheet's, is the same component with no count from a server: it searches, sorts and pages them through the same models, sorts by several columns where the call site asks, and orders a column by the call site's own comparison where its text would order it wrongly.
 - **What a reader lays out is a model too.** Each column's width, keyed by the column, is a model the call site keeps — the sheet in its settings by the column's id, the resource list in the address as `key:width` pairs — as the density is, and the grid's active cell is a model a surface follows, as the sheet makes each cell the grid lands on its selection. A width is set on the header in the table's automatic layout, so a column widens past its content but never narrows below the text it cannot wrap. A sticky first column sticks at the start beside the selection column, which sticks with it, so its one offset is that column's measured width; its edge takes a shade only once the table has scrolled sideways, and a row's tint is laid over its opaque cell rather than lost under it.
 - **A skeleton never blinks as a whole.** A whole block stepping between two shades reads well on a card and as a strobe on a blade's full height or a table's rows blinking in step, so the block holds still in the panel colour and a lighter band steps across it, ten steps a sweep, timed in the motion unit so reduced motion holds it with the rest.
@@ -212,7 +212,7 @@ flowchart TD
   L -->|any other| W{At least the md breakpoint?}
   W -->|yes| RL[The dock as a rail down the left edge]
   W -->|no| BB[The dock as a bar along the bottom]
-  RL --> D[Home, launcher, the palette, bookmarks and recent pages, notifications, account]
+  RL --> D[The dock's places]
   BB --> DN[Home, launcher holding the places, the palette, notifications, account]
   D --> P[The page, its drawers docked past the dock]
   DN --> P
