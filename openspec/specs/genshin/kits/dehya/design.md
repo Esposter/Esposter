@@ -6,9 +6,18 @@ Gcsim gives Dehya no charged attack, its attack file leaving it a TODO (`~/Espos
 
 Not built yet: the Sanctum her skill leaves, its Molten Inferno DoT, which strikes an enemy each time it takes damage in the field (the wiki's Fiery Sanctum, once every 2.5 seconds), and Redmane's Blood, which takes a share of the damage her party takes in the field and gives it back to her as a DoT (the wiki's Redmane's Blood, 10% a second for 10 seconds), as it waits on the wearer's HP; Ranging Flame's reposition (the wiki's Molten Inferno page); her burst's punches and Incineration Drive, which play no hits yet (the burst's animation is its first punch's 105 frames, `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/dehya/burst.go:16`); her Ascension 1 passive, which waits on the Sanctum's mitigation (the wiki's Unstinting Succor: 60% less DMG from Redmane's Blood within 6 seconds of retrieving the field); and her Constellations, which are read from gcsim's `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/dehya/cons.go` as Constellation 1's Molten Inferno DMG (`~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/dehya/cons.go:13-15`), Constellation 2's Ranging Flame field (`~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/dehya/cons.go:35-36`), and Constellations 4 and 6 on Leonine Bite's Flame-Mane's Fist and Incineration Drive (`~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/dehya/cons.go:79-80` and `:110-113`). Her Ascension 4 passive, Stalwart and True, is built as a drain's hook (`packages/genshin-world/src/services/kit/characters/dehyaKit.ts`): a drain under 40% HP heals her 20% at once and 6% on each of five ticks, once every 20 seconds (`~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/dehya/asc.go:16-21` and the wiki's Stalwart and True: 6% "every 2s for the next 10s", `~/Esposter/cache/genshin-wiki/Category_Dehya_Talents.json`). The field and its mitigation wait on a hook for an enemy's damage.
 
+## How it works
+
+```mermaid
+flowchart LR
+  A["Party takes damage in the field"] --> B["Redmane's Blood takes a share"]
+  B --> C["Share returns to Dehya as a DoT, 10 percent a second for 10 seconds"]
+  A --> D["Sanctum strikes an enemy each time it takes damage in the field"]
+```
+
 ## Provisional constants
 
-- **The charged attack's spin and its circle's radius are unsourced.** Neither the wiki's Sandstorm Assault page nor gcsim, which has no charged attack, gives the spin's timing: the record holds it at 0 frames where the claymore rule gives 30. The circle's radius of 2 metres has no source either, and the record marks it `Unsourced`. Both wait on a recording.
+- **The charged attack's spin and its circle's radius are unsourced.** Neither the wiki's Sandstorm Assault page nor gcsim, which has no charged attack, gives the spin's timing: the record holds it at 0 frames where the claymore rule gives 30 (`NO_ACTION_FILE_CLAYMORE_CHARGED_HITMARK_FRAMES` in `scripts/src/services/genshinAssets/kits/constants.ts`). The circle's radius of 2 metres has no source either, and the record marks it `Unsourced`. Both wait on a recording.
 
 ## Key files
 
@@ -21,3 +30,6 @@ Not built yet: the Sanctum her skill leaves, its Molten Inferno DoT, which strik
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/dehya), MIT: Dehya's strikes' hitmarks, cancel frames, reaches and poise, Molten Inferno's initial hit and its animation, the plunges' timings and poise, and the burst's first punch. The v2.47.2 source is on disk at `~/Esposter/cache/gcsim-v2.47.2/internal/characters/dehya`, and the lines cited above are in it.
 - Genshin Impact Wiki, cached at `~/Esposter/cache/genshin-wiki/Category_Dehya_Talents.json`: the pages Sandstorm Assault (the charged attack's maximum duration, stamina and the collision's poise), Molten Inferno (the Fiery Sanctum, Redmane's Blood and Ranging Flame), Unstinting Succor and Stalwart and True.
 - The dump, `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/`: `ProudSkillExcelConfigData.json` (groups 7931, 7932 and 7939) and `AvatarSkillExcelConfigData.json` (skills 10791, 10792 and 10795).
+- `~/Esposter/genshin-parity/text/ExcelBinOutput/AvatarSkillExcelConfigData.json`, id 10792: Molten Inferno's skill row, with a cooldown of 20 and no energy cost, grounding requirement "Molten Inferno initial hit".
+- `~/Esposter/cache/genshin-wiki/Category_Dehya_Talents.json`: the wiki's Molten Inferno page, giving a CD of 20s, grounding requirement "Molten Inferno initial hit".
+- the design's Provisional constants, a pointer to this page's own section: the spin's timing and the circle's radius have no source, grounding requirement "Provisional charged attack".

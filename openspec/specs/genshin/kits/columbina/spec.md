@@ -6,7 +6,7 @@ Columbina's kit as built: her three strikes, charged attack, plunges, Gravity In
 
 ### Requirement: Basic attacks deal Hydro, and Moondew Cleanse deals Dendro
 
-Columbina's normal attacks SHALL be three strikes, a charged attack, a collision attack and two plunging attacks. Her strikes SHALL deal Hydro damage that applies one unit of Hydro gauge, her plunges SHALL deal Hydro damage that applies one unit on landing and none on the collision, and her charged attack SHALL deal Hydro damage at one unit while no Dew stands. While Dew stands her charged attack is Moondew Cleanse, which deals Dendro damage and applies no gauge. The wiki's Normal Attack and Plunging Attack text and its gauge units give these (`~/Esposter/cache/genshin-wiki/Category_Columbina_Talents.json`).
+Columbina's normal attacks SHALL be three strikes, a charged attack, a collision attack and two plunging attacks. Her strikes SHALL deal Hydro damage that applies one unit of Hydro gauge, her plunges SHALL deal Hydro damage that applies one unit on landing and none on the collision, and her charged attack SHALL deal Hydro damage at one unit while no Dew stands. While Dew stands her charged attack is Moondew Cleanse, which deals Dendro damage and applies no gauge. The wiki's Normal Attack and Plunging Attack text and its gauge units give these.
 
 #### Scenario: Strike chain plays three strikes in order
 
@@ -41,7 +41,9 @@ Gravity Interference SHALL deal damage scaled to Columbina's max HP and SHALL se
 
 ### Requirement: Gravity builds from Lunar reactions and fires a Gravity Ripple
 
-Gravity Interference SHALL build gravity while it stands from the Lunar reactions in the team, and a Gravity Ripple SHALL fire when the gravity reaches 60, clearing it.
+Gravity Interference SHALL build gravity while it stands from the Lunar reactions in the team.
+
+A Gravity Ripple SHALL fire when the gravity reaches 60, clearing it.
 
 #### Scenario: A Lunar reaction builds gravity for two seconds
 
@@ -95,7 +97,7 @@ Columbina's burst SHALL deal its hit, scaled to her max HP.
 
 ### Requirement: Poise from strikes, the charged attack and plunges
 
-Columbina's strikes SHALL deal the poise the wiki gives, 8.8, 6.9 and 11 by the strike's place in the chain, her charged attack SHALL deal 100, and her plunges SHALL deal 50 when low and 100 when high, as the cached Advanced Properties give them (`~/Esposter/cache/genshin-wiki/Category_Columbina_Talents.json`).
+Columbina's strikes SHALL deal the poise the wiki gives, 8.8, 6.9 and 11 by the strike's place in the chain, her charged attack SHALL deal 100, and her plunges SHALL deal 50 when low and 100 when high, as the cached Advanced Properties give them.
 
 #### Scenario: A strike deals its poise
 
@@ -115,7 +117,11 @@ Columbina's plunges SHALL take a provisional four tenths of a second to land, th
 
 ### Requirement: Her Moonsign Benediction turns her team's reactions Lunar and adds Base DMG from her max HP
 
-Columbina SHALL count toward the Moonsign level, turn her team's Electro-Charged, Bloom and Hydro-Crystallize reactions Lunar, and add Base DMG to their Lunar damage at 0.2% for every 1,000 of her max HP, up to 7%.
+Columbina SHALL count toward the Moonsign level.
+
+Columbina SHALL turn her team's Electro-Charged, Bloom and Hydro-Crystallize reactions Lunar.
+
+Columbina SHALL add Base DMG to her team's Lunar reaction damage at 0.2% for every 1,000 of her max HP, up to 7%.
 
 #### Scenario: Her Benediction counts her toward the Moonsign level
 
@@ -187,7 +193,11 @@ From Ascension 4, a Lunar-Bloom reaction while her burst's window is open SHALL 
 
 ### Requirement: Moondew Cleanse replaces her charged attack while Dew is there to spend
 
-While the party holds Dew, her charged attack SHALL be Moondew Cleanse, which spends one Dew, the verdant first, costs no stamina, and strikes three Lunar-Bloom hits that ignore all of each enemy's DEF (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/columbina/charge.go` line 101, `IgnoreDefPercent: 1.0`).
+While the party holds Dew, her charged attack SHALL be Moondew Cleanse, which spends one Dew, the verdant first.
+
+While the party holds Dew, Moondew Cleanse SHALL cost no stamina.
+
+Moondew Cleanse SHALL strike three Lunar-Bloom hits that ignore all of each enemy's DEF.
 
 #### Scenario: A charged attack with Dew plays Moondew Cleanse and spends one Dew
 

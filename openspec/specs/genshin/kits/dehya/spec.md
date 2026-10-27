@@ -16,7 +16,7 @@ Dehya's normal attacks SHALL be four blunt strikes, a charged attack, a collisio
 
 ### Requirement: Provisional charged attack
 
-Dehya's charged attack SHALL be provisional, with a spin that hits at once and a final hit at its longest charge, until a recording of the game settles them. The final hit's 300 frames are the wiki's 5-second maximum duration; the spin's timing and the circle's radius have no source (the design's Provisional constants).
+Dehya's charged attack SHALL be provisional, with a spin that hits at once and a final hit at its longest charge, until a recording of the game settles them. The final hit's 300 frames are the wiki's 5-second maximum duration; the spin's timing and the circle's radius have no source.
 
 #### Scenario: Charging plays the spin and the final hit
 
@@ -27,7 +27,7 @@ Dehya's charged attack SHALL be provisional, with a spin that hits at once and a
 
 ### Requirement: Molten Inferno initial hit
 
-Molten Inferno SHALL deal an initial Pyro hit in a circle of radius 5 metres, landing 20 frames after it is cast, and SHALL cool down for 20 seconds. Molten Inferno costs no energy: its skill row in the dump (`~/Esposter/genshin-parity/text/ExcelBinOutput/AvatarSkillExcelConfigData.json`, id 10792) has a cooldown of 20 and no energy cost, and the wiki's Molten Inferno page gives a CD of 20s (`~/Esposter/cache/genshin-wiki/Category_Dehya_Talents.json`).
+Molten Inferno SHALL deal an initial Pyro hit in a circle of radius 5 metres, landing 20 frames after it is cast, and SHALL cool down for 20 seconds. Molten Inferno costs no energy: its skill row in the dump has a cooldown of 20 and no energy cost, and the wiki's Molten Inferno page gives a CD of 20s.
 
 #### Scenario: The initial hit lands 20 frames after the cast
 
