@@ -82,7 +82,7 @@ From Constellation 2, each Transient Blossom SHALL add a stack of Fatal Reckonin
 
 ### Requirement: Constellation 4 raises the active member's plunges inside the Solar Isotoma
 
-From Constellation 4, the active party member SHALL have its Plunging Attack DMG raised 30% for a second while it stands within the standing Solar Isotoma's field, as gcsim v2.47.2 gives it. The field SHALL be checked every 0.3 seconds from the Solar Isotoma's spawn, and no other party member SHALL have the bonus.
+From Constellation 4, the active party member SHALL have its Plunging Attack DMG raised 30% for a second while it stands within the standing Solar Isotoma's field. The field SHALL be checked every 0.3 seconds from the Solar Isotoma's spawn, and no other party member SHALL have the bonus.
 
 #### Scenario: A plunge inside the field gets the bonus
 
