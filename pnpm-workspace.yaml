@@ -191,7 +191,7 @@ catalog:
   mocked-exports: ^0.1.1
   msw: ^3.0.3
   neverthrow: ^8.2.0
-  # @TODO: https://github.com/nitrojs/nitro/pull/4827 — Nuxt's nitro-server still hands its Vite services under `experimental.vite`, which Nitro moves to `vite` through a shim that logs a deprecation on every build: drop the warning once a `5x` Nuxt nightly hands them under `vite`
+  # @TODO: no upstream issue — nuxt/nuxt: Nuxt's nitro-server still hands its Vite services under `experimental.vite`, which Nitro moves to `vite` through a shim that logs a deprecation on every build: drop the warning once a `5x` Nuxt nightly hands them under `vite`
   nitro: npm:nitro-nightly@latest
   node-html-parser: ^9.0.5
   node-pty: ^1.1.0
