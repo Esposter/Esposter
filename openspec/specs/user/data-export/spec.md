@@ -2,7 +2,7 @@
 
 ## Purpose
 
-TBD - created by archiving change user-data-export. Update Purpose after archive.
+A person can ask for a zip of everything their account holds, built in the background and fetched from their settings page. This capability covers the request, the one export a person has active at a time, and the archive's contents.
 
 ## Requirements
 
