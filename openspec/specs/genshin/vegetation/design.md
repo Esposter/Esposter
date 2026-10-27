@@ -12,7 +12,7 @@ flowchart TD
   CAM{Camera crossed part of the capture, or a tile drawn under it came or went?} -->|yes| CAP[Ground capture: colour and height from above]
   CAP --> G
   I[Blade's instance index] --> CELL[Its cell in the ring's grid, moving with the camera in whole cells]
-  CELL --> H[A hash of the cell: jitter, turn, size, and whether the tier grows it]
+  CELL --> H[A hash of the cell]
   H --> K{Green ground, above the water, in the capture?}
   K -->|yes| G
   K -->|no| X[Shrunk to nothing]

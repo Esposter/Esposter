@@ -60,4 +60,3 @@ flowchart TD
 ## Notes
 
 - **The bend's foam is per vertex, not read from depth.** A depth-only bend would need the floor to rise under the outer bank, which the fitted ground does not hold where the game's own river bed does not, so the course itself carries it: two values a point, which a ribbon already spends nothing else on.
-- **How tight a bend gathers full foam is provisional** (`BEND_FOAM_FULL_RADIUS_WIDTHS`), fitted to a recording of a bending river once the game's courses are placed.

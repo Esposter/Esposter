@@ -142,7 +142,7 @@ A module SHALL be added only by the proposal that first needs it, never as an em
 
 ## Open
 
-- [ ] **Every generator and per-frame selection is benched at two scales** — no source yet: 16 `*.bench.ts` files under `packages/genshin-engine/src` have recorded results, but no inventory shows each generator and selection has one at two scales.
+- [ ] **Every generator and per-frame selection is benched at two scales** — no source yet: `*.bench.ts` files under `packages/genshin-engine/src` have recorded results, but no inventory shows each generator and selection has one at two scales.
 - [ ] **A bench shows its cost follows what is visible** — no source yet: the recorded bench results are not checked against the amount visible.
 - [ ] **A generator gives the same output in a worker and in a test** — no source yet: no test runs one generator in both places and compares the outputs.
 - [ ] **A steady frame allocates nothing for its objects** — no source yet: no allocation test or measurement is in the repo.

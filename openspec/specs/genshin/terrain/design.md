@@ -14,7 +14,7 @@ flowchart TD
   LOAD[Load: the ground's records, posted to each worker as it starts] --> WK
   RGN[RegionGrounds: a region's ground as the region arrives, posted to each worker] --> WK
   RGN -->|every held tile stale, drawn until replaced| REQ
-  REQ --> WK[Worker pool: heights, normals, colours, and the coarser grid's position, normal and colour]
+  REQ --> WK[Worker pool]
   WK -->|transferable buffers| M[Tile mesh, held in the cache]
   WK -->|cannot build| F[Failed: released, asked for again, given up after three failures]
   F --> REQ
@@ -94,4 +94,3 @@ flowchart TD
 - [ ] **The fit leaves an error under a metre round the oak and a few metres at the valley's edge** — no source yet: the error a `genshin:assets fit windrise` run prints.
 - [ ] **At a share of a range as wide as the CDLOD paper's, the ground would draw several times the tiles** — no source yet: a count of the tiles drawn at that range share.
 - [ ] **Every region's ground is fitted with its hills, sharp features and residual held to a gate its own ground sets** — no source yet: the per-region fit gates in the scene-derivation records.
-- [ ] **Once the camera has gone one kilometre from the origin, the world moves back under it** — contradicted by `packages/genshin-world/src/services/constants.ts`: the shift threshold is 1024 units, not 1000.

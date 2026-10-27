@@ -9,7 +9,7 @@ flowchart TD
   F[Frame's real seconds] --> C[Clock: minutes into the day, at its rate]
   C --> K{Keyframes either side of the minute}
   K --> S[Sky state: colours and strengths blended]
-  C --> D[Sun on a tilted circle; moon opposite]
+  C --> D[Sun on a tilted circle, moon opposite]
   D --> L{Sun above the horizon?}
   L -->|yes| SL[Light from the sun]
   L -->|no| ML[Light from the moon]
@@ -29,7 +29,7 @@ flowchart TD
 - **The sun and the moon.** The sun rises due east at six, stands highest at noon on a path tilted toward the south by the region's tilt, and sets due west at eighteen (`computeSunDirection`). The moon stands opposite it. The world is lit by whichever of the two is above the horizon, and a region's keyframes bring the light near zero at six and eighteen, where one hands over to the other, so the swap never shows.
 - **Keyframes, blended.** A region's day is a handful of `SkyKeyframe`s in order of their minute: the zenith and horizon colours, the light's colour and strength, the hemisphere's sky and ground colours and strength, the clouds' lit and shade colours, and how bright the stars are. `sampleSkyState` blends linearly between the two either side of the clock's minute, wrapping through midnight, into one `SkyState` that is reused every frame. The colours away from the sun and the two halos are a whole `SkyState`'s alone, as a scene solved for one hour sets them, so a keyframe cannot carry one that nothing would blend.
 - **The sky drives the world's light.** `applySkyState` writes the state into everything it lights: the light's direction, colour and strength, which the cascades follow on their own; the hemisphere, whose colours are the shade; the materials' light direction, light colour and rim colour; the fog's colour, which is the horizon's; the god rays' colour; and the sky's own uniforms. Every write is to an existing value, each measured colour inverted straight into its uniform, so an hour passing rebuilds and allocates nothing.
-- **The god rays' map follows the light in steps**, in a scene that draws them. Their one shadow map is redrawn once the light has turned a little over half a degree, about every two real seconds, rather than every frame.
+- **The god rays' map follows the light in steps**, in a scene that draws them. Their one shadow map is redrawn once the light has turned by the angle `SUN_REDRAW_COSINE` sets, rather than every frame.
 
 ### The painted sky
 
@@ -46,7 +46,6 @@ The sky is the scene's background node (`createSkyNode`), drawn behind everythin
 
 - **A frame's sky is arithmetic.** Sampling walks a handful of keyframes with no callback and writes into the one reused state, so a frame allocates nothing. The bench beside `sampleSkyState` holds its cost flat from a region's handful of keyframes to four times as many.
 - **The sky is one full-screen background**, with no dome mesh and no texture.
-- **The god rays' map is redrawn about every two seconds**, not every frame, while the sun moves, where a scene draws them.
 
 ## Key files
 

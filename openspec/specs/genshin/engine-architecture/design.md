@@ -69,7 +69,7 @@ Every module is judged by what it costs a mid-range laptop's integrated GPU and 
 - the engine's code and each region's data load only when needed
 - a quality tier lowers cost before the frame budget is missed, and never removes the style
 
-The generators and per-frame selections the engine's 16 bench files cover (`packages/genshin-engine/src`) are benched under the `bench` skill at two or more named cases each; the terrain shape height varies its hill count (`packages/genshin-engine/src/terrain/createTerrainShapeHeight.bench.ts`), and `createGrassCell` (`packages/genshin-engine/src/vegetation/createGrassCell.ts`) has no bench yet. A module whose bench grows with the continent is redesigned, not tuned.
+The generators and per-frame selections the engine's bench files cover (`packages/genshin-engine/src`) are benched under the `bench` skill at two or more named cases each; the terrain shape height varies its hill count (`packages/genshin-engine/src/terrain/createTerrainShapeHeight.bench.ts`), and `createGrassCell` (`packages/genshin-engine/src/vegetation/createGrassCell.ts`) has no bench yet. A module whose bench grows with the continent is redesigned, not tuned.
 
 ## The world screen is composition
 
@@ -104,6 +104,5 @@ The edges are emitted by `packages/genshin-world/src/composables/useWorldPickups
 ## Open
 
 - [ ] **Every generator and per-frame selection is benched at two scales** — contradicted by `packages/genshin-engine/src/vegetation/createGrassCell.ts`: a generator with no bench file; the bench files mostly vary cases, not sizes.
-- [ ] **The screen creates the `WorldEvents`** — contradicted by `packages/genshin-world/src/components/World/Session/Index.vue`: the session calls `createWorldEvents()` at line 328, not the screen.
 - [ ] **A device missing the frame budget gets a lower tier** — no source yet: the tier is a prop the host passes (`packages/genshin-engine/src/models/renderer/QualityTierSettings.ts` is its shape). A grep of `tier` lines in `packages/genshin-engine/src` and `packages/genshin-world/src` that name a frame or a budget finds no code that lowers it.
 - [ ] **The engine's code loads only when the world needs it** — no source yet: the app's lazy mount of the world is not checked; the engine's source holds one dynamic import, of three.js's Inspector, which `packages/genshin-engine/src/renderer/attachInspector.ts:8` loads on demand.
