@@ -118,13 +118,13 @@ An entry SHALL be destroyable only when the game's destroy rule for it returns m
 - **GIVEN** a weapon of one to three stars whose row carries a destroy rule
 - **WHEN** it is chosen for destruction
 - **THEN** it is destroyed
-- **AND** it returns its enhancement ore times its rarity (`~/Esposter/genshin-parity/text/ExcelBinOutput/WeaponExcelConfigData.json`, where the destroyable 1- to 3-star rows return `104011` in a count of their rarity, and ten one-star rows carry no rule)
+- **AND** it returns its enhancement ore times its rarity
 
 #### Scenario: A four or five star weapon is not destroyable
 
 - **GIVEN** a weapon of four or five stars
 - **WHEN** it is chosen for destruction
-- **THEN** it cannot be destroyed (`~/Esposter/genshin-parity/text/ExcelBinOutput/WeaponExcelConfigData.json`, where no 4- or 5-star row holds a `destroyRule`)
+- **THEN** it cannot be destroyed
 
 #### Scenario: A selection holding an entry that cannot be destroyed is refused
 
@@ -153,7 +153,7 @@ The destroy mode SHALL tick the entries the player picks, offer quick selects by
 - **GIVEN** the player chooses Destroy with entries ticked
 - **WHEN** the confirm opens
 - **THEN** it lists the chosen entries
-- **AND** it lists the materials they return under the game's Recovered line (text id `UI_STC_BAGPAGE_DESTROY_CONFIRM_2` in `~/Esposter/genshin-parity/text/ManualTextMapConfigData.json`)
+- **AND** it lists the materials they return under the game's Recovered line
 - **AND** it warns that the action cannot be undone
 
 #### Scenario: Leaving the destroy mode drops the ticks
@@ -171,7 +171,7 @@ A destruction whose returned materials have no room in the bag SHALL be refused,
 - **GIVEN** the materials a destruction returns have no room in the bag
 - **WHEN** the destruction is confirmed
 - **THEN** nothing is destroyed
-- **AND** the OK button is held off under the game's bag-full line (text id `UI_BEYOND_RUNTIME_UI_DROP_PICKTIPS_FAIL` in `~/Esposter/genshin-parity/text/ManualTextMapConfigData.json`)
+- **AND** the OK button is held off under the game's bag-full line
 
 ### Requirement: A take the bag cannot cover is refused
 
@@ -197,7 +197,7 @@ Each material SHALL be read from the game's material table and named in the read
 
 - **GIVEN** the reader's language is set
 - **WHEN** a material is picked up
-- **THEN** its name is shown in that language (`~/Esposter/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json`'s `nameTextMapHash`, read through the reader's language's map in `~/Esposter/genshin-parity/text/TextMap/`)
+- **THEN** its name is shown in that language
 
 #### Scenario: A saved weapon is rebuilt on load
 

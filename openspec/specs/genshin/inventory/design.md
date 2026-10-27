@@ -89,6 +89,11 @@ flowchart TD
 - [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: the inventory on B.
 - [Damaged Mask](https://genshin-impact.fandom.com/wiki/Damaged_Mask), Genshin Impact Wiki: the hilichurls' masks, filed among the Character Development Items.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's dump of the game's data: `MaterialExcelConfigData`, each material's type, name, rank, rarity and stack limit.
+- Scenario _A one to three star weapon with a destroy rule is destroyable_: `~/Esposter/genshin-parity/text/ExcelBinOutput/WeaponExcelConfigData.json`, where the destroyable 1- to 3-star rows return `104011` in a count of their rarity, and ten one-star rows carry no rule.
+- Scenario _A four or five star weapon is not destroyable_: `~/Esposter/genshin-parity/text/ExcelBinOutput/WeaponExcelConfigData.json`, where no 4- or 5-star row holds a `destroyRule`.
+- Scenario _The confirm lists the entries and what they return_: text id `UI_STC_BAGPAGE_DESTROY_CONFIRM_2` in `~/Esposter/genshin-parity/text/ManualTextMapConfigData.json`.
+- Scenario _Returns with no room refuse the whole destruction_: text id `UI_BEYOND_RUNTIME_UI_DROP_PICKTIPS_FAIL` in `~/Esposter/genshin-parity/text/ManualTextMapConfigData.json`.
+- Scenario _A picked up material shows its name in the reader's language_: `~/Esposter/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json`'s `nameTextMapHash`, read through the reader's language's map in `~/Esposter/genshin-parity/text/TextMap/`.
 
 ## Open
 
