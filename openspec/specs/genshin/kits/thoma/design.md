@@ -31,6 +31,7 @@ flowchart TD
 ## Sources
 
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/thoma), MIT: the kit's hitmarks, cancel frames and areas, the charged attack's frames, Blazing Blessing's hit, animation and shield, Crimson Ooyoroi's initial hit and animation, and Fiery Collapse's trigger, interval, box, hitmark and gauge, its shield's stacking and cap, and Flaming Assault's share of Max HP.
+- Requirement "Blazing Blessing" (recast clause): gcsim keeps the larger of the two, capped
 
 ## Open
 
