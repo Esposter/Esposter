@@ -58,6 +58,15 @@ flowchart TD
 
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the blossom refresh, group and section order tables, and the chest table's resin.
 - [Ley Line Outcrop Guide](https://game8.co/games/Genshin-Impact/archives/317049), Game8: Revelation at Adventure Rank 8 and Wealth at 12 in Mondstadt and Liyue, and from version 5.8 Adventure Rank 18 and a statue in the other regions. Its Liyue figures are the ones the table disagrees with. The guide is not on disk, so these figures are unread (see Open).
+- `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, its EXP and SCOIN rows for each city, grounding the requirement "Two kinds per region".
+- `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, the area condition on the rows of cities 3 to 8 only, grounding the requirement "Opening by a nation's area".
+- `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, `refreshTime`, grounding the requirement "Daily reset at 04:00".
+- `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, rows 13 to 19, grounding scenario "Other challenges read no kind".
+- `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, row 2, grounding scenario "Mondstadt's Revelation opens at rank 8".
+- `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, row 1, grounding scenario "Mondstadt's Wealth opens at rank 12".
+- `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, rows 3 and 4, grounding scenario "Liyue opens both kinds at rank 18".
+- `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, rows 20 and 21, grounding scenario "Other regions wait for a nation's area".
+- `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/BlossomSectionOrderExcelConfigData.json` has no section for Fontaine, Natlan or Snezhnaya, grounding scenario "Region without sections".
 
 ## Open
 

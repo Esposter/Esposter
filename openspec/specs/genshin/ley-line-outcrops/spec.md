@@ -6,7 +6,7 @@ Genshin's ley line outcrops as built — each region's Blossom of Revelation and
 
 ### Requirement: Two kinds per region
 
-Each region's ley line SHALL offer two outcrop kinds, the Blossom of Revelation, which gives Character EXP materials, and the Blossom of Wealth, which gives Mora (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, its EXP and SCOIN rows for each city).
+Each region's ley line SHALL offer two outcrop kinds, the Blossom of Revelation, which gives Character EXP materials, and the Blossom of Wealth, which gives Mora.
 
 #### Scenario: Seven cities each have both kinds
 
@@ -15,32 +15,36 @@ Each region's ley line SHALL offer two outcrop kinds, the Blossom of Revelation,
 
 #### Scenario: Other challenges read no kind
 
-- **WHEN** the Dragonspine, Blitz Rush and Blossom Island refreshes are read (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, rows 13 to 19)
+- **WHEN** the Dragonspine, Blitz Rush and Blossom Island refreshes are read
 - **THEN** none of them yields a ley line kind
 
-### Requirement: Opening by rank and nation
+### Requirement: Opening by Adventure Rank
 
-Each kind SHALL open at the Adventure Rank its game table gives, and in every region except Mondstadt and Liyue it SHALL also need a nation's area unlocked (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, the area condition on the rows of cities 3 to 8 only).
+Each kind SHALL open at its own Adventure Rank.
 
 #### Scenario: Mondstadt's Revelation opens at rank 8
 
-- **WHEN** a player in Mondstadt reaches Adventure Rank 8 (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, row 2)
+- **WHEN** a player in Mondstadt reaches Adventure Rank 8
 - **THEN** the Blossom of Revelation opens
 
 #### Scenario: Mondstadt's Wealth opens at rank 12
 
-- **WHEN** a player in Mondstadt reaches Adventure Rank 12 (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, row 1)
+- **WHEN** a player in Mondstadt reaches Adventure Rank 12
 - **THEN** the Blossom of Wealth opens
 
 #### Scenario: Liyue opens both kinds at rank 18
 
-- **WHEN** a player in Liyue reaches Adventure Rank 18 (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, rows 3 and 4)
+- **WHEN** a player in Liyue reaches Adventure Rank 18
 - **THEN** both kinds open with no area condition
+
+### Requirement: Opening by a nation's area
+
+In every region except Mondstadt and Liyue, each kind SHALL also need a nation's area unlocked.
 
 #### Scenario: Other regions wait for a nation's area
 
 - **GIVEN** no nation's area is unlocked in Inazuma
-- **WHEN** a player in Inazuma reaches Adventure Rank 18 (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, rows 20 and 21)
+- **WHEN** a player in Inazuma reaches Adventure Rank 18
 - **THEN** its kinds stay closed
 
 ### Requirement: Start at a drawn section's first place
@@ -54,12 +58,12 @@ Each kind SHALL start, each daily draw, at the lowest numbered place of a sectio
 
 #### Scenario: Region without sections
 
-- **WHEN** the daily draw runs for Fontaine, Natlan or Snezhnaya (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/BlossomSectionOrderExcelConfigData.json` has no section for them)
+- **WHEN** the daily draw runs for Fontaine, Natlan or Snezhnaya
 - **THEN** no outcrop starts
 
 ### Requirement: Moving on along the named places
 
-A claimed outcrop SHALL move to the next place its place names, or to the place after when the other kind stands there, and SHALL stay where it is when neither is free or no next place is named.
+A claimed outcrop SHALL move to the next place its place names, or to the place after when the other kind stands there.
 
 #### Scenario: Next place is free
 
@@ -71,6 +75,10 @@ A claimed outcrop SHALL move to the next place its place names, or to the place 
 - **WHEN** an outcrop is claimed and the other kind stands at its next place
 - **THEN** it moves to the place after that
 
+### Requirement: Staying where it is when neither place is free
+
+A claimed outcrop SHALL stay where it is when neither its next place nor the place after is free or no next place is named.
+
 #### Scenario: Neither place is free
 
 - **WHEN** an outcrop is claimed and neither its next place nor the place after is free
@@ -78,7 +86,7 @@ A claimed outcrop SHALL move to the next place its place names, or to the place 
 
 ### Requirement: Daily reset at 04:00
 
-The outcrops SHALL start over at the daily reset at 04:00 in the game's day (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/BlossomRefreshExcelConfigData.json`, `refreshTime`).
+The outcrops SHALL start over at the daily reset at 04:00 in the game's day.
 
 #### Scenario: Reset starts the kinds over
 
