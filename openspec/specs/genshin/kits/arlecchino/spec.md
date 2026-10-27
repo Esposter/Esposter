@@ -40,9 +40,19 @@ Arlecchino's low and high plunges SHALL land at 47 and 48 frames with poise of 1
 - **WHEN** each plunge lands
 - **THEN** the high plunge carries the greater poise
 
-### Requirement: Balemoon Rising strikes once at 110 frames and costs 60 energy
+### Requirement: Balemoon Rising strikes once at 110 frames
 
-Balemoon Rising SHALL strike once at 110 frames of its 146 frame animation, SHALL cost 60 energy and SHALL have a cooldown of 15 seconds.
+Balemoon Rising SHALL strike once at 110 frames of its 146 frame animation.
+
+#### Scenario: Balemoon Rising strikes at 110 frames
+
+- **GIVEN** Arlecchino uses Balemoon Rising
+- **WHEN** the animation reaches 110 frames
+- **THEN** it strikes once
+
+### Requirement: Balemoon Rising costs 60 energy
+
+Balemoon Rising SHALL cost 60 energy.
 
 #### Scenario: Balemoon Rising is refused without enough energy
 
@@ -50,11 +60,9 @@ Balemoon Rising SHALL strike once at 110 frames of its 146 frame animation, SHAL
 - **WHEN** she tries to use Balemoon Rising
 - **THEN** the burst is not used
 
-#### Scenario: Balemoon Rising strikes at 110 frames
+### Requirement: Balemoon Rising has a cooldown of 15 seconds
 
-- **GIVEN** Arlecchino uses Balemoon Rising
-- **WHEN** the animation reaches 110 frames
-- **THEN** it strikes once
+Balemoon Rising SHALL have a cooldown of 15 seconds.
 
 #### Scenario: Balemoon Rising goes on cooldown
 
@@ -84,7 +92,7 @@ Arlecchino's elemental skill SHALL have a cooldown of 30 seconds.
 
 ### Requirement: Constellation 6 raises her Normal Attack and Balemoon Rising CRIT for 20 seconds after All Is Ash
 
-From Constellation 6, Arlecchino's Normal Attacks and Balemoon Rising SHALL have 10% more CRIT Rate and 70% more CRIT DMG for 20 seconds after she uses All Is Ash, and that bonus SHALL start at most once every 15 seconds.
+From Constellation 6, Arlecchino's Normal Attacks and Balemoon Rising SHALL have 10% more CRIT Rate and 70% more CRIT DMG for 20 seconds after she uses All Is Ash.
 
 #### Scenario: A Normal Attack gains CRIT after All Is Ash
 
@@ -98,17 +106,21 @@ From Constellation 6, Arlecchino's Normal Attacks and Balemoon Rising SHALL have
 - **WHEN** Balemoon Rising strikes
 - **THEN** the strike has 10% more CRIT Rate and 70% more CRIT DMG
 
-#### Scenario: The bonus starts at most once every 15 seconds
-
-- **GIVEN** the bonus started less than 15 seconds ago
-- **WHEN** Arlecchino uses All Is Ash again
-- **THEN** the bonus is not restarted, and runs out 20 seconds after it first started
-
 #### Scenario: Below Constellation 6 no CRIT is gained
 
 - **GIVEN** Arlecchino has Constellation 5 and has just used All Is Ash
 - **WHEN** she lands a Normal Attack
 - **THEN** the strike gains no CRIT from Constellation 6
+
+### Requirement: The Constellation 6 bonus starts at most once every 15 seconds
+
+The Constellation 6 bonus SHALL start at most once every 15 seconds.
+
+#### Scenario: The bonus starts at most once every 15 seconds
+
+- **GIVEN** the bonus started less than 15 seconds ago
+- **WHEN** Arlecchino uses All Is Ash again
+- **THEN** the bonus is not restarted, and runs out 20 seconds after it first started
 
 ## Open
 
