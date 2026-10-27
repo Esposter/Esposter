@@ -107,6 +107,10 @@ A duel's enemy card group is its deck's id, and the built decks are these.
 - The Genshin Impact Wiki's character card skill, card and summon pages for decks 3 and 4, such as [Oceanid Mimic Summoning (Character Card Skill)](<https://genshin-impact.fandom.com/wiki/Oceanid_Mimic_Summoning_(Character_Card_Skill)>), [Tide and Torrent (Character Card Skill)](<https://genshin-impact.fandom.com/wiki/Tide_and_Torrent_(Character_Card_Skill)>) and [Lightning Fang (Character Card Skill)](<https://genshin-impact.fandom.com/wiki/Lightning_Fang_(Character_Card_Skill)>), for each script's damage and summons, and each card's text. None of those pages is in the cache, so their values are open (see Open).
 - The Genshin Impact Wiki's character card skill pages, such as [Dawn (Character Card Skill)](<https://genshin-impact.fandom.com/wiki/Dawn_(Character_Card_Skill)>), for each character script's damage and its after-effect.
 - [AnimeGameData](https://gitlab.com/Dimbreath/AnimeGameData), the community's per-patch dump: the deck, character, skill, card and cost tables the decks are written from.
+- `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/GCGDeckExcelConfigData.json`, id 11002, which has no `cardList` key. Grounds the requirement "Ellin's deck holds no cards and gives its side two statuses".
+- `~/Esposter.noindex/genshin-parity/text/TextMap/TextMapEN.json`, text 455966544, which reads "you play a Talent card or a Character uses an Elemental Skill". Grounds the requirement "Shimenawa's Reminiscence reduces a side's Talent card or Elemental Skill from any character".
+- `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/GCGCardExcelConfigData.json`, id 312014, the card's row. Grounds the requirement "Shimenawa's Reminiscence reduces a side's Talent card or Elemental Skill from any character".
+- The wiki's Equipment Card page reads "the character", so this reading is provisional (the Genshin Impact Wiki, not in the genshin-wiki cache). Grounds the requirement "Shimenawa's Reminiscence reduces a side's Talent card or Elemental Skill from any character".
 
 ## Open
 

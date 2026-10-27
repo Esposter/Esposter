@@ -6,13 +6,17 @@ The characters, skills and action cards the built decks play, each as a module u
 
 ### Requirement: A named skill deals its stated damage in the element its name spells
 
-A skill whose effect is named by its damage SHALL deal the stated amount of the element the name spells, and the monsters' Electro SHALL count as Electro.
+A skill whose effect is named by its damage SHALL deal the stated amount of the element the name spells.
 
 #### Scenario: Physical damage named by its element
 
 - **GIVEN** a skill's effect names a Physical damage of a stated amount
 - **WHEN** the skill is used
 - **THEN** that amount of Physical damage is dealt
+
+### Requirement: The monsters' Electro counts as Electro
+
+The monsters' Electro SHALL count as Electro.
 
 #### Scenario: Monster's Electro damage is Electro
 
@@ -112,15 +116,19 @@ Guaranteed dice SHALL be set when the dice are rolled, and a reroll MAY still th
 - **WHEN** the dice are rolled
 - **THEN** the two guaranteed dice are set
 
-### Requirement: A summon or combat status placed again is refreshed or stacks
+### Requirement: A summon or combat status placed again is refreshed
 
-A summon or combat status SHALL be placed by its id: a card of that id already on the field SHALL be refreshed to its starting usages and rounds, and a second copy SHALL NOT be added, unless the card names a most usages it stacks to. A card that names one SHALL stack instead: placed again, its starting usages SHALL be added to the usages it has, up to that most.
+A summon or combat status SHALL be placed by its id: a card of that id already on the field SHALL be refreshed to its starting usages and rounds, and a second copy SHALL NOT be added, unless the card names a most usages it stacks to.
 
 #### Scenario: A summon placed again refreshes the one on the field
 
 - **GIVEN** a Frostflake Seki no To is on a side with one usage left
 - **WHEN** Kamisato Art: Soumetsu summons a Frostflake again
 - **THEN** the one Frostflake on the field is refreshed to its starting usages, and no second copy appears
+
+### Requirement: A summon or combat status that names a most usages stacks when placed again
+
+A card that names one SHALL stack instead: placed again, its starting usages SHALL be added to the usages it has, up to that most.
 
 #### Scenario: A summon that stacks adds its usages up to its most
 
@@ -148,15 +156,19 @@ A support SHALL NOT be refreshed: a second copy SHALL take a slot of its own.
 - **WHEN** a second Wagner is played
 - **THEN** the second Wagner takes a slot of its own, and the first keeps its counter
 
-### Requirement: A card hears the turn's start, a declared round's end and a summon's leaving
+### Requirement: A card hears the turn's start and a declared round's end
 
-A side handed its choice of action SHALL run its field's before-action hooks before the choice, and a side declaring its round's end SHALL run its round-end hooks before the declaration counts. The damage such a hook returns SHALL be dealt by its side through the damage seam. Each summon that leaves a side's field SHALL tell that side's supports once.
+A side handed its choice of action SHALL run its field's before-action hooks before the choice, and a side declaring its round's end SHALL run its round-end hooks before the declaration counts. The damage such a hook returns SHALL be dealt by its side through the damage seam.
 
 #### Scenario: A before-action card deals its damage before the side chooses
 
 - **GIVEN** a side holds Tenko Thunderbolts, which deals 3 Electro before its choice
 - **WHEN** the turn passes to that side
 - **THEN** the opposing active character takes 3 Electro DMG before the side chooses its action, and the card leaves the field
+
+### Requirement: A card hears a summon's leaving
+
+Each summon that leaves a side's field SHALL tell that side's supports once.
 
 #### Scenario: Hanachirusato gains Progress when a summon disappears
 
@@ -218,7 +230,7 @@ A card's and a character's name and description SHALL be shown in the game's wor
 
 ### Requirement: Ellin's deck holds no cards and gives its side two statuses
 
-Ellin's opponent deck SHALL hold no cards and SHALL give its side only the two statuses its passives give at the start of the battle (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/GCGDeckExcelConfigData.json`, id 11002, which has no `cardList` key).
+Ellin's opponent deck SHALL hold no cards and SHALL give its side only the two statuses its passives give at the start of the battle.
 
 #### Scenario: Ellin's side starts with its two statuses
 
@@ -306,7 +318,7 @@ A hit that takes a standing character's shield to 0 SHALL call each card attache
 
 ### Requirement: Shimenawa's Reminiscence reduces a side's Talent card or Elemental Skill from any character
 
-Shimenawa's Reminiscence SHALL reduce, once per round, a Talent card or an Elemental Skill paid by any character on its side, whichever character carries the artifact. Its game text names the side ("you play a Talent card or a Character uses an Elemental Skill", `~/Esposter.noindex/genshin-parity/text/TextMap/TextMapEN.json`, text 455966544, on the card `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/GCGCardExcelConfigData.json` id 312014). The wiki's Equipment Card page reads "the character", so this reading is provisional.
+Shimenawa's Reminiscence SHALL reduce, once per round, a Talent card or an Elemental Skill paid by any character on its side, whichever character carries the artifact.
 
 #### Scenario: The artifact on a standby character reduces the active character's Elemental Skill
 
