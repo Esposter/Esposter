@@ -34,7 +34,7 @@ flowchart TD
   OPEN["Panel opened / dock mounted"] --> RE
   ST --> PANEL["bell panel — merged, newest first<br/>StyledWaypoint pages the delivered half"]
   ST --> BADGE["unread count on the trigger + PWA icon badge"]
-  ST --> SNACK["toast queue (~5s, errors persist)"]
+  ST --> SNACK["toast queue (TOAST_DURATION_MS, errors persist)"]
   PANEL -->|closed| READ["updateNotificationsReadStatus"]
 ```
 
@@ -43,9 +43,9 @@ The service worker has always posted every delivered push to each open tab befor
 ## UI
 
 - **Bell** (`AppNotificationBell`, on the dock, authed sessions): the unread count sits on its trigger, and the trigger opens a `UiPopover` panel — newest first, severity icon, relative time, per-item dismiss, "Dismiss all". Closing the panel marks everything read. The delivered half is cursor-paginated, with a `StyledWaypoint` at the foot of the list paging the next page in. Empty state: "No notifications".
-- **Toasts** (`AppNotificationToast`): one `UiToast` in the app's toast stack rendering the store's queue head (~5s, dismissible, held while hovered); errors persist until dismissed. One queue, never ad-hoc toasts beside it.
+- **Toasts** (`AppNotificationToast`): one `UiToast` in the app's toast stack rendering the store's queue head (`TOAST_DURATION_MS`, dismissible, held while hovered); errors persist until dismissed. One queue, never ad-hoc toasts beside it.
 - `G N` opens the panel ([global search](../global-search/design.md) chords).
-- **App icon badge**: the same unread count is mirrored onto the installed PWA's icon through the Badging API, so an install that is not in the foreground still shows what is waiting. Best-effort — the write is feature-detected and its rejection is logged, never surfaced. It is now the honest count rather than the tab's guess: a push delivered while the app was closed is a row, and the next load counts it.
+- **App icon badge**: the same unread count is mirrored onto the installed PWA's icon through the Badging API, so an install that is not in the foreground still shows what is waiting. Best-effort — the write is feature-detected and its rejection is logged, never surfaced. It is the honest count rather than the tab's guess: a push delivered while the app was closed is a row, and the next load counts it.
 
 ## Key files
 
@@ -63,5 +63,5 @@ The service worker has always posted every delivered push to each open tab befor
 
 ## Notes
 
-- The delivered half is bounded by retention rather than by the session ([notifications](../../architecture/notifications/design.md)); a durable audit trail is still the activity log's job ([activity log](../activity-log/design.md)).
+- The delivered half is bounded by retention rather than by the session ([notifications](../../architecture/notifications/design.md)); a durable audit trail is the activity log's job ([activity log](../activity-log/design.md)).
 - The store no-ops local notifications on the server (`checkIsServer`) so SSR renders never enqueue toasts.

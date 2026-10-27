@@ -34,5 +34,4 @@ flowchart LR
 
 ## Notes
 
-- Exports contain the complete diagram, including nodes outside the editor's current viewport.
 - There is no import path because an image cannot restore the diagram's node and edge model.

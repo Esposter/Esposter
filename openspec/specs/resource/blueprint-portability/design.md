@@ -10,16 +10,16 @@ flowchart LR
   SAVED --> DL["download name.json"]
   IMP["Import command"] --> PICK["file picker<br/>validateFile"]
   PICK --> PARSE["parseBlueprintManifest<br/>JSON.parse, then blueprintResourceSchema"]
-  PARSE -->|"rejected"| REFUSE["notify; nothing changes"]
+  PARSE -->|"rejected"| REFUSE["notify, nothing changes"]
   PARSE -->|"accepted"| REV["revision of the saved manifest<br/>saveResourceRevision"]
   REV --> WORK["blueprint store<br/>manifest text"]
-  WORK --> EDITOR["Editor blade shows it unsaved;<br/>Deploy stays disabled"]
-  EDITOR -->|"Save"| SAVE["saveBlueprint;<br/>text becomes the saved manifest"]
+  WORK --> EDITOR["Editor blade shows it unsaved,<br/>Deploy stays disabled"]
+  EDITOR -->|"Save"| SAVE["saveBlueprint,<br/>text becomes the saved manifest"]
 ```
 
 - **Export reads the saved manifest.** Deploy runs the saved copy, so a file must match what a deploy would create. Exporting the text on screen could write a manifest that deploy would reject, or one it never runs.
 - **The file is the manifest, verbatim.** A wrapper such as `{ format, version, manifest }` was rejected: the Editor already displays this exact JSON, the schema is the one stated shape of a manifest, and a wrapper would be a second format to version. A change to the manifest is a schema change, checked on import like any other.
-- **The text lives in the blueprint store.** The Editor used to hold its own copy, which an import outside the Editor cannot reach. The store now holds it and resets it on every read of the saved content. Leaving the Editor discards unsaved text, as the navigation guard already warns, so the text shown next time is the saved manifest again.
+- **The text lives in the blueprint store.** That is where an import outside the Editor can reach it, and the store resets it on every read of the saved content. Leaving the Editor discards unsaved text, as the navigation guard already warns, so the text shown next time is the saved manifest again.
 - **Import lands as unsaved text, not in a preview dialog.** The Note's import previews in a dialog because a Note replaces its document as soon as it is confirmed. A blueprint's Save is the one commit, and Deploy already refuses to run text the owner has not saved, so a preview would repeat that review.
 - **An import takes a revision first, and Save takes none.** An automatic save keeps a revision only once per interval, so a Save soon after another could leave the replaced manifest out of [version history](../resource-snapshots/design.md). The import takes the `BeforeImport` revision the platform takes before any import replaces a draft. The alternative, a revision on Save, needs an imported flag in the store that a discard would have to clear.
 - **Import checks the manifest schema, not each entry's content.** Save already checks the schema, so an import is no looser than pasting the same JSON into the Editor. Deploy validates every entry against its type and creates nothing if one fails, so a bad entry cannot become a bad resource.

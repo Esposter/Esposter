@@ -20,12 +20,12 @@ Note joins `PortableResourceType` with one Markdown format in `PortableFormatMap
 - **No HTML or `.docx` export.** The published view already is the HTML form; `.docx` is a heavy dependency for a Word user who can paste the Markdown.
 - **No live Markdown editing mode.** The Note is a rich-text editor; Markdown is its file format, not a second editing surface.
 - **No images in the round trip.** An image is stored at an address in the app's resource storage, which a file read outside the app cannot reach, so the export writes the image's alt text as a paragraph and the import reads it back as that paragraph. Carrying the picture is a decision for when that storage address can be read outside the app.
-- **No tables in the round trip.** CommonMark has no table syntax, so a table the note's kit inserts does not survive an export and import; the round trip keeps the blocks CommonMark carries. A GFM table form is a later decision, recorded here until it is made.
+- **No tables in the round trip.** CommonMark has no table syntax, so a table the note's kit inserts does not survive an export and import; the round trip keeps the blocks CommonMark carries. A GFM table form is undecided and is recorded here.
 - **Blank paragraphs do not survive an export.** Markdown separates blocks by blank lines rather than storing them, so an empty paragraph the editor holds writes nothing and reads back as no block.
 
 ## Key files
 
-| File                                                            | Role after the change                         |
+| File                                                            | Role                                          |
 | --------------------------------------------------------------- | --------------------------------------------- |
 | `apps/web/shared/services/resource/ResourceDefinitionMap.ts`    | Note declares `portable`                      |
 | `apps/web/app/services/resource/PortableFormatMap.ts`           | the Markdown format for Note                  |

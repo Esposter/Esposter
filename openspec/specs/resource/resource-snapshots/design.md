@@ -26,13 +26,13 @@ A version is a `resourceVersions` row keyed by resource, channel and version num
 | restore — reconstitute, then `saveResourceContent`         | publish's activity entry, notification and view counting |
 | the ledger charge on write and release on evict            |                                                          |
 
-Reconstitution is the row that matters, because sharing it fixed a defect rather than saving lines — see the boundary below.
+Reconstitution is the row that matters, because sharing it prevents a defect rather than saving lines — see the boundary below.
 
 The counter lives in Postgres and is never derived from the listing: the listing answers _which snapshots exist_, the row answers _what the next version is and which one is live_, and the two are allowed to disagree, because a number is claimed before its write and a write that fails leaves the number with no row. Revisions take two columns on `resources` rather than a table — `revisionVersion` numbers them and `revisionTakenAt` is the clock the automatic trigger reads. A revision's reason and its one-line summary are columns on its version row, which the listing returns.
 
 ### Both channels hold their files by reference
 
-Neither channel copies its files. A version's reference rows, keyed by channel, name the files its content embeds, so a published version and a revision keep the working copy's files alive the same way: an owner who deletes a file keeps it for every version that still names it, and a file is released only when no version and no working-copy row names it. A publish and a revision are therefore the same content write, with the publication's visibility on top.
+Neither channel copies its files. A version's reference rows, keyed by channel, name the files its content embeds, so a published version and a revision keep the working copy's files alive the same way: an owner who deletes a file keeps it for every version that names it, and a file is released only when no version and no working-copy row names it. A publish and a revision are therefore the same content write, with the publication's visibility on top.
 
 The published channel is frozen: a publish writes a new version, and the working copy never rewrites one. Anonymous reads of a file honour only the published channel's rows ([content-addressed assets](../content-addressed-assets/design.md)), so a file a revision names alone is never public.
 
@@ -87,7 +87,7 @@ Two things sit outside the invariant: **retention** ends a revision at its age o
 
 | Trigger                                   | Channel     | Rationale                                                                          |
 | ----------------------------------------- | ----------- | ---------------------------------------------------------------------------------- |
-| Publish command                           | `published` | the outward act, unchanged                                                         |
+| Publish command                           | `published` | the outward act                                                                    |
 | Before a restore                          | `revisions` | the undo, taken by the restore itself                                              |
 | Before a Sheet import                     | `revisions` | the other write that replaces a draft wholesale; the import is refused if it fails |
 | First save an interval after the last one | `revisions` | at most one per interval, so a working session leaves a handful of recovery points |
@@ -103,9 +103,9 @@ A resource's first content write takes none — there is no prior state to keep,
 
 The published channel prunes nothing: publishes are deliberate and rare, and a retired public artifact is something an owner may need to point at.
 
-Revisions are kept for **30 days**, with at most **100** standing at once — the channel's `maxAgeMs` and `maxRetained`. Time is the standard the reference products retain by: Figma's free tier, Dropbox Basic and Google Drive's uploaded files keep 30 days, Notion keeps 7 to 90 by plan, and SharePoint, whose own guidance calls less than 30 days a risk of "inadvertent data loss", pairs an age with a count. The ceiling is Google Drive's hundred, so a resource edited all day — a revision every 15 minutes is up to a few thousand in 30 days — keeps a bounded history inside the window.
+Revisions are kept for the channel's `maxAgeMs`, with at most `maxRetained` standing at once. Time is the standard the reference products retain by: Figma's free tier, Dropbox Basic and Google Drive's uploaded files keep 30 days, Notion keeps 7 to 90 by plan, and SharePoint, whose own guidance calls less than 30 days a risk of "inadvertent data loss", pairs an age with a count. The ceiling is Google Drive's hundred, so a resource edited all day — a revision every 15 minutes is up to a few thousand in 30 days — keeps a bounded history inside the window.
 
-Expiry has no job behind it. **A revision past its age is gone to every read the moment it expires**: `getSnapshotRetainedSince` is the cutoff both the history listing and the version read compare `createdAt` against, so a resource nobody edits loses its old revisions on time like any other. **The next revision taken deletes the rows** past the age or the count, and hands the deletion event exactly the objects no surviving version still needs ([resource version store](../resource-version-store/design.md)), so the evicted bytes' ledger entries are released with them; a bare delete would make eviction a slow quota leak nothing reconciles ([storage quotas](../storage-quotas/design.md)).
+Expiry has no job behind it. **A revision past its age is gone to every read the moment it expires**: `getSnapshotRetainedSince` is the cutoff both the history listing and the version read compare `createdAt` against, so a resource nobody edits loses its old revisions on time like any other. **The next revision taken deletes the rows** past the age or the count, and hands the deletion event exactly the objects no surviving version needs ([resource version store](../resource-version-store/design.md)), so the evicted bytes' ledger entries are released with them; a bare delete would make eviction a slow quota leak nothing reconciles ([storage quotas](../storage-quotas/design.md)).
 
 ```mermaid
 flowchart TD
@@ -130,11 +130,11 @@ The two counters that reach the UI are different axes: **`publishVersion` is wha
 | Publishable     | published, draft unchanged since | `Published` chip, `v{publishVersion}`, up to date                       |
 | Publishable     | published, draft moved since     | `Published` chip, `v{publishVersion}`, and that changes are unpublished |
 
-"A restore point exists" holds while the newest revision is inside its 30 days: the row reads `revisionTakenAt` against the same cutoff every version read uses, since `revisionVersion` only ever counts up and would claim a restore point on a resource whose revisions have all expired.
+"A restore point exists" holds while the newest revision is inside its `maxAgeMs`: the row reads `revisionTakenAt` against the same cutoff every version read uses, since `revisionVersion` only ever counts up and would claim a restore point on a resource whose revisions have all expired.
 
 The last row is a comparison rather than a guess: `resourcePublications.publishedContentVersion` records the `contentVersion` the publish was taken from, and `updatedAt` cannot answer it because a rename or a tag edit moves that too.
 
-`revisionVersion` itself is never rendered — an owner picks a version by time, reason and summary, never by ordinal — but it remains what the mechanism counts with.
+`revisionVersion` itself is never rendered — an owner picks a version by time, reason and summary, never by ordinal — but it is what the mechanism counts with.
 
 ## The rollback surface
 

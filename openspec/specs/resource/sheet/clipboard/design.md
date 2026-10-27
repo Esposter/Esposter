@@ -51,7 +51,7 @@ sequenceDiagram
 
 The anchor is preserved across Shift+click and Shift+Arrow; dragging re-anchors on mousedown.
 
-The rows are the data table's grid ([UI library](../../../architecture/ui-library/design.md)), so the plain arrows, Home and End, Page Up and Page Down belong to the table: they walk its active cell, the one stop in the tab order, and the sheet makes each cell they land on the selection, as a spreadsheet's active cell is. A press selects its cell first and then takes it as the active one, so a Shift+click range survives the focus it brings. Enter on a cell opens its editor, and Enter or Escape in the editor hands focus back to the cell, saving or dropping the edit. The shortcuts dialog still shows the plain arrows as the sheet's, registered with nothing to run, while Shift+Arrow and the clipboard keys stay bound, since the grid reads no chord but Ctrl+Home and Ctrl+End — so the table and the sheet never both answer one key.
+The rows are the data table's grid ([UI library](../../../architecture/ui-library/design.md)), so the plain arrows, Home and End, Page Up and Page Down belong to the table: they walk its active cell, the one stop in the tab order, and the sheet makes each cell they land on the selection, as a spreadsheet's active cell is. A press selects its cell first and then takes it as the active one, so a Shift+click range survives the focus it brings. Enter on a cell opens its editor, and Enter or Escape in the editor hands focus back to the cell, saving or dropping the edit. The shortcuts dialog shows the plain arrows as the sheet's, registered with nothing to run, while Shift+Arrow and the clipboard keys stay bound, since the grid reads no chord but Ctrl+Home and Ctrl+End — so the table and the sheet never both answer one key.
 
 ## Key files
 
@@ -72,4 +72,4 @@ All paths relative to `apps/web/app`.
 
 ## Notes
 
-- Copying is keyboard-only — the toolbar carries no copy button, just the `isCopyIncludingHeaders` toggle deciding whether a copied range leads with its header row.
+- Copying is keyboard-only: the toolbar carries no copy button.

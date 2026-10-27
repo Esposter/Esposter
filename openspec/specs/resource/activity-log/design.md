@@ -10,7 +10,7 @@ Events are emitted inside the `createResourceProcedures` mutations, in the best-
 
 The `Created`/`Duplicated` entry is the one exception to the fire-and-forget tail: `createResourceRow` awaits it. That entry is the only one a caller can roll back over — a failed content clone or a mid-deploy failure rolls back through `deleteCreatedResources`, which deletes the trail partition — and an in-flight write landing after that delete would resurrect the entry as an orphan no read can reach, since reading a trail is gated on the row. The write never rejects, so awaiting it costs latency and nothing else.
 
-`ContentSaved` is coalesced, or autosave would flood the partition with one entry per keystroke burst. The rule is "this user, through this API key or by hand, already has a `ContentSaved` inside the last hour" — an existence question, asked with a filter, rather than an inspection of the newest entry. Phrasing it that way makes the answer independent of the order entities come back in, and keying it by the API key as well keeps an agent's run of saves a line apart from the owner's typing.
+`ContentSaved` is coalesced, or autosave would flood the partition with one entry per keystroke burst. The rule is "this user, through this API key or by hand, already has a `ContentSaved` inside `CONTENT_SAVED_COALESCE_WINDOW_MS`" — an existence question, asked with a filter, rather than an inspection of the newest entry. Phrasing it that way makes the answer independent of the order entities come back in, and keying it by the API key as well keeps an agent's run of saves a line apart from the owner's typing.
 
 ```mermaid
 sequenceDiagram
@@ -43,7 +43,7 @@ The API key fields are the key an agent wrote through, read off the request's co
 
 ### Cleanup
 
-Azure Table has no partition-drop, so clearing a resource's history means enumerating its partition and batch-deleting in transactions of up to 100 — all within one partition, which the batch API requires anyway. Already-gone entities are the success case, so a retry is safe.
+Azure Table has no partition-drop, so clearing a resource's history means enumerating its partition and batch-deleting in transactions of up to `AZURE_MAX_BATCH_SIZE` — all within one partition, which the batch API requires anyway. Already-gone entities are the success case, so a retry is safe.
 
 Soft delete leaves the partition intact: history survives the [recycle bin](../recycle-bin/design.md) window and a restore appends `Restored` to it. The sweep runs at purge time, before the Postgres row is deleted, so a failed sweep is re-driven by the surviving row on the next pass.
 

@@ -24,15 +24,15 @@ flowchart LR
 
 ## Decisions
 
-- **Items are read off the menus, not listed twice.** The block items moved out of the menu bar into `getNoteBlockMenuItems`, and the slash menu takes those with the composer's shared `getListMenuItems`. The Code Block and Divider items exist only in the slash menu, since the menu bar has no room for them and the inline Code button is a different command.
-- **The menu bar's order changed.** Paragraph, the headings, Task List and Blockquote now form the first group, then a divider, the text marks and inline Code, then a divider and the two lists. Before, the task list and blockquote sat after the lists. Both menus share the one block group, so its order is set once.
+- **Items are read off the menus, not listed twice.** The block items live in `getNoteBlockMenuItems`, not the menu bar, and the slash menu takes those with the composer's shared `getListMenuItems`. The Code Block and Divider items exist only in the slash menu, since the menu bar has no room for them and the inline Code button is a different command.
+- **The menu bar puts the block items first.** Paragraph, the headings, Task List and Blockquote form the first group, then a divider, the text marks and inline Code, then a divider and the two lists. Both menus share the one block group, so its order is set once.
 - **The slash menu's order follows the menu bar's**: blocks, then lists, then the code block and divider, rather than the proposal's table order, so the two menus read the same way.
 - **Aliases live in one constant map keyed by title** (`NoteSlashAliasMap`). A block with no entry is found by its title alone.
 - **The command deletes the typed `/query` first, then runs the item's own `onClick`** at the emptied line, so a slash command and a menu click run the same code.
 - **`Item.onClick`'s event is optional.** A suggestion runs an item with no pointer or key event, so the type says so rather than passing a placeholder.
 - **The popover passes its own title, `BLOCKS`.** It shares the `/` character, `SuggestionTrigger.Slash`, with the composer's slash commands, so a title keyed by the trigger would head both `COMMANDS`; each list hands `getSuggestionListTitle` its title instead.
 - **The extension is added in the editor, not in `getNoteExtensions`.** That set also builds the published `generateHTML` render, which must not carry a suggestion plugin.
-- **The list draws in the editor's caret popover** through `RichTextEditorSuggestions`, which the Note editor now hosts beside its menu bar, so the page's theme scope reaches the list.
+- **The list draws in the editor's caret popover** through `RichTextEditorSuggestions`, which the Note editor hosts beside its menu bar, so the page's theme scope reaches the list.
 - **No slash menu in the message composer.** Its `/` stays the message slash commands.
 - **Embeds and database blocks are left out** (`/table`, `/image`, `/page`), since each is a new node type with its own design.
 
@@ -47,7 +47,7 @@ flowchart LR
 | `apps/web/app/services/resource/note/NoteSlashAliasMap.ts`        | the aliases a reader types, keyed by title                         |
 | `apps/web/app/components/Resource/Note/BlockList.vue`             | the list drawn in the caret popover                                |
 | `apps/web/app/components/Resource/Note/Editor.vue`                | adds the extension and hosts the suggestion list                   |
-| `apps/web/app/components/Resource/Note/EditorMenuBar.vue`         | the menu bar, now built from `getNoteBlockMenuItems`               |
+| `apps/web/app/components/Resource/Note/EditorMenuBar.vue`         | the menu bar, built from `getNoteBlockMenuItems`                   |
 | `apps/web/app/models/shared/SuggestionTrigger.ts`                 | the `Slash` trigger the Note shares with the slash commands        |
 | `apps/web/app/models/resource/note/NoteSlashItem.ts`              | the item type: a menu item with its aliases                        |
 

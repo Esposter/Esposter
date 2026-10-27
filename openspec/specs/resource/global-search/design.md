@@ -10,7 +10,7 @@ flowchart LR
   CK["Ctrl+K / G /<br/>(explorer home)"] --> DLG
   DLG --> SM["useResourceSearchItems"]
 
-  SM -->|"query (useAutoSearch throttle)"| RR["resource.readResources<br/>{ searchQuery, limit: 5 }"] --> RG["Resources group"]
+  SM -->|"query (useAutoSearch throttle)"| RR["resource.readResources<br/>{ searchQuery, limit: RESOURCE_SEARCH_LIMIT }"] --> RG["Resources group"]
   SM -->|client substring| RDM["ResourceDefinitionMap +<br/>ResourceTypeDescriptionMap"] --> SG["Services group"]
   SM --> PG["Pages group (static)"]
   SM -->|empty query| LS["LocalStorageKey.ResourceRecentSearches<br/>(per-device)"]
@@ -24,14 +24,14 @@ flowchart LR
 
 With a query set the scope shows three groups plus a last row:
 
-| Group     | Source                                                                 | Row                                  | Target                                                                                 |
-| --------- | ---------------------------------------------------------------------- | ------------------------------------ | -------------------------------------------------------------------------------------- |
-| Resources | `resource.readResources { searchQuery, limit: 5 }` via `useAutoSearch` | type icon · name · type caption      | `RoutePath.Resource(id)`                                                               |
-| Services  | client-side match over type titles + descriptions                      | type icon · title, then a Create row | `/resource-explorer/all?types=X`; Create → `/resource-explorer/create/[type]`          |
-| Pages     | static `PageSearchItems`                                               | page icon · title                    | every [service menu](../resource-service-menu/design.md) entry, plus Create a resource |
-| last row  | always when a query is set                                             | "See all results for {q}"            | `/resource-explorer/all?search={q}`                                                    |
+| Group     | Source                                                                                     | Row                                  | Target                                                                                 |
+| --------- | ------------------------------------------------------------------------------------------ | ------------------------------------ | -------------------------------------------------------------------------------------- |
+| Resources | `resource.readResources { searchQuery, limit: RESOURCE_SEARCH_LIMIT }` via `useAutoSearch` | type icon · name · type caption      | `RoutePath.Resource(id)`                                                               |
+| Services  | client-side match over type titles + descriptions                                          | type icon · title, then a Create row | `/resource-explorer/all?types=X`; Create → `/resource-explorer/create/[type]`          |
+| Pages     | static `PageSearchItems`                                                                   | page icon · title                    | every [service menu](../resource-service-menu/design.md) entry, plus Create a resource |
+| last row  | always when a query is set                                                                 | "See all results for {q}"            | `/resource-explorer/all?search={q}`                                                    |
 
-- **Empty query**: two groups instead — recent searches (`LocalStorageKey.ResourceRecentSearches`, capped at 5, pushed on submit/pick) and **Recently opened**, the caller's own server-side access rows read through the recents store ([favorites & recents](../favorites-and-recents/design.md)). The two are stored differently on purpose ([favorites & recents](../favorites-and-recents/design.md) says why): the resources you opened follow you between machines; a query you typed does not.
+- **Empty query**: two groups instead — recent searches (`LocalStorageKey.ResourceRecentSearches`, capped at `RECENT_SEARCHES_LIMIT`, pushed on submit/pick) and **Recently opened**, the caller's own server-side access rows read through the recents store ([favorites & recents](../favorites-and-recents/design.md)). The two are stored differently on purpose ([favorites & recents](../favorites-and-recents/design.md) says why): the resources you opened follow you between machines; a query you typed does not.
 - **No match highlight**: the palette draws its rows the one way for every scope.
 - **No results**: the See-all row alone.
 - `/resource-explorer/all` reads `?search=` and `?types=` on load, so the See-all and Services rows deep-link into a pre-filtered list.
@@ -61,7 +61,6 @@ With a query set the scope shows three groups plus a last row:
 
 ## Notes
 
-- One search, one surface — `useResourceSearchItems` feeds the palette's scope, and Home's button opens it rather than keeping a dropdown of its own ([command palette](../../architecture/command-palette/design.md)).
-- Explorer-scoped, not app chrome — the scope exists only while the explorer home page is open; elsewhere the palette searches the whole app.
+- Explorer-scoped, not app chrome — elsewhere the palette searches the whole app.
 - The Services group answers "search matches type names" client-side ("survey" surfaces the Survey service row) — pushing type-title matching into the server `where` was rejected; the client already knows `ResourceDefinitionMap`. The Services and Pages groups rank their small registries through `searchItems`, the repo's one client-side index ([search](../../architecture/search/design.md)), never server work.
-- Recent searches are per-device by design (localStorage); server-side search history is not worth a table. Recently opened resources are the opposite: they live server-side in `resource_accesses`, because the `Last accessed` column they feed has to agree between machines.
+- Server-side search history is not worth a table. Recently opened resources live server-side in `resource_accesses`, because the `Last accessed` column they feed has to agree between machines.

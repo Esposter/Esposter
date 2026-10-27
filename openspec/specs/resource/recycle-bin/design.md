@@ -1,6 +1,6 @@
 # Recycle Bin
 
-Deleting a resource marks it rather than destroying it. `/resource-explorer/recycle-bin` lists what you deleted, restores it, or destroys it for good, and a timer sweeps anything older than 30 days.
+Deleting a resource marks it rather than destroying it. `/resource-explorer/recycle-bin` lists what you deleted, restores it, or destroys it for good, and a timer sweeps anything older than `RECYCLE_BIN_RETENTION_MS`.
 
 ## How it works
 
@@ -32,7 +32,7 @@ The timer purges per resource rather than as one batch, so one poisoned resource
 
 `resources.deletedAt` is a nullable timestamp — null is live. It costs no migration: `metadataSchema` already gives every table `createdAt`, `updatedAt` and `deletedAt`, so soft delete rides a column the table already has.
 
-`RECYCLE_BIN_RETENTION_MS` (30 days) lives in `@esposter/db-schema` — browser-safe, so both the app UI (the retention column, the delete dialogs) and the purge timer can import the one value from the same source. The retention column says how long is left in words beside a meter of the window used, the storage meter's blocks filling towards the purge and turning to the warning colour with nine days left and the danger colour with three.
+`RECYCLE_BIN_RETENTION_MS` (30 days) lives in `@esposter/db-schema` — browser-safe, so both the app UI (the retention column, the delete dialogs) and the purge timer can import the one value from the same source. The retention column says how long is left in words beside a meter of the window used, the storage meter's blocks filling towards the purge and turning to the warning colour past `RETENTION_WARNING_PERCENTAGE` (nine days left) and the danger colour past `RETENTION_ERROR_PERCENTAGE` (three).
 
 The bin is a `UiDataTable` whose rows go nowhere, since a deleted resource has no page to open onto: its two answers, Restore and Delete forever, are the row's overflow menu and its context menu. Delete forever asks for the resource's name in a `UiConfirmDialog` first.
 
@@ -48,21 +48,21 @@ The bin is a `UiDataTable` whose rows go nowhere, since a deleted resource has n
 
 ## Key files
 
-| File                                                    | Role                                      |
-| ------------------------------------------------------- | ----------------------------------------- |
-| `packages/db/src/services/resource/purgeResource.ts`    | The shared, retry-ordered purge protocol  |
-| `packages/db-schema/src/services/resource/constants.ts` | `RECYCLE_BIN_RETENTION_MS`                |
-| `server/trpc/routers/resource.ts`                       | Bin/restore/purge + the `where` predicate |
-| `server/trpc/procedure/resource/getOwnerProcedure.ts`   | Soft-delete guard + `isDeletedOnly` mode  |
-| `apps/functions/src/functions/purgeDeletedResources.ts` | Daily 30-day timer sweep                  |
-| `app/pages/resource-explorer/recycle-bin.vue`           | The bin page                              |
-| `app/components/Resource/RecycleBin/Index.vue`          | The bin's table, its toolbar and menus    |
-| `app/composables/resource/list/useReadResourcesPage.ts` | The paged reader it shares with `/all`    |
+| File                                                    | Role                                        |
+| ------------------------------------------------------- | ------------------------------------------- |
+| `packages/db/src/services/resource/purgeResource.ts`    | The shared, retry-ordered purge protocol    |
+| `packages/db-schema/src/services/resource/constants.ts` | `RECYCLE_BIN_RETENTION_MS`                  |
+| `server/trpc/routers/resource.ts`                       | Bin/restore/purge + the `where` predicate   |
+| `server/trpc/procedure/resource/getOwnerProcedure.ts`   | Soft-delete guard + `isDeletedOnly` mode    |
+| `apps/functions/src/functions/purgeDeletedResources.ts` | Daily sweep past `RECYCLE_BIN_RETENTION_MS` |
+| `app/pages/resource-explorer/recycle-bin.vue`           | The bin page                                |
+| `app/components/Resource/RecycleBin/Index.vue`          | The bin's table, its toolbar and menus      |
+| `app/composables/resource/list/useReadResourcesPage.ts` | The paged reader it shares with `/all`      |
 
 ## Notes
 
 - Delete asks first, then the post-delete toast offers **Restore** directly, from the list and the resource page alike, so the common undo never needs a trip to the bin. A bulk delete's toast restores the whole selection in one batch write, `restoreResources`, which the bin's own row restore goes through too.
-- Purge keeps the type-the-name guard. It is the only destroy that is now real. The bin reads through the same [`useReadResourcesPage`](../list-filters-and-views/design.md) as `/all`, so paging quickly or refreshing mid-read can never leave the table showing an earlier page's rows — a purge fired from a stale row is unrecoverable in a way a stale list elsewhere is not.
+- Purge keeps the type-the-name guard. It is the only destroy that is real. The bin reads through the same [`useReadResourcesPage`](../list-filters-and-views/design.md) as `/all`, so paging quickly or refreshing mid-read can never leave the table showing an earlier page's rows — a purge fired from a stale row is unrecoverable in a way a stale list elsewhere is not.
 - A dataset reference to a binned source reads as a missing one, exactly as after a purge, and its consumer says so where the reference is picked ([datasets](../../architecture/dataset/design.md)), as a Program's Email or Survey binding to a binned resource does under its picker in Setup. A restore heals it, because nothing rewrote the consumer's content in the meantime ([dangling reference cleanup](../../../rejected/resource/dangling-reference-cleanup/design.md)).
 - Names are not unique, so a restore can never conflict.
 - The [activity log](../activity-log/design.md) partition survives the bin window, and its sweep runs at purge time — that page says how.

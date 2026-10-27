@@ -35,7 +35,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Global search relevance](global-search-relevance/design.md) — `pg_trgm` trigram index and `similarity()` ranking, so a typo still finds its resource
 - [Favorites & recents](favorites-and-recents/design.md) — server-side stars and server-side opens, as Home tabs and as full list routes
 - [Resource tags](tags/design.md) — name:value pairs in Essentials, edited in place, filterable on `/all`
-- [Recycle bin](recycle-bin/design.md) — soft delete with restore, permanent purge, and a 30-day timer sweep
+- [Recycle bin](recycle-bin/design.md) — soft delete with restore, permanent purge, and a timer sweep past `RECYCLE_BIN_RETENTION_MS`
 - [Delete-time reference warning](delete-reference-warning/design.md) — a delete confirmation naming the other resources that use what is being deleted
 - [Resource references](resource-references/design.md) — the Overview's Related resources card: what uses a resource and what it uses, each a link
 - [Activity log](activity-log/design.md) — the per-resource audit trail blade, in Azure Table Storage
@@ -70,7 +70,7 @@ The standards the area applies live in architecture: the layer model ([cross-pro
 - [Dashboard card and table visuals](dashboard-card-and-table-visuals/design.md) — a card's one aggregated number and a table of exact values beside the charts, over the same binding
 - [Dashboard export](dashboard-export/design.md) — the dashboard page as a PNG and each visual's drawn rows as CSV, read from the published snapshot for a viewer
 - [Email personalization](email-personalization/design.md) — merge fields, survey invite blocks, personalized HTML export
-- [Dataset row-cap warning](dataset-row-cap-warning/design.md) — "showing N of M" wherever a dataset read hits the 1000-row cap
+- [Dataset row-cap warning](dataset-row-cap-warning/design.md) — "showing N of M" wherever a dataset read hits the `AZURE_MAX_PAGE_SIZE` row cap
 - [Dataset CSV export](dataset-csv-export/design.md) — Export CSV on any dataset-serving resource: survey answers with question titles as headers, formula cells neutralised
 - [Email preview text](email-preview-text/design.md) — the inbox line under the subject, written into the MJML as its `mj-preview`
 - [Email web view](email-web-view/design.md) — Email is Publishable: HTML compiled at publish, `/view/Email/[id]` browser copy

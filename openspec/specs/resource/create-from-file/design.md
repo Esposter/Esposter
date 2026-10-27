@@ -11,7 +11,7 @@ There is no new machinery here. The parse is the same client-side deserializer t
 ```mermaid
 flowchart LR
   DROP["file drop / picker on<br/>/resource-explorer/create/Sheet"] -->|"extension → DataSourceConfigurationMap"| PARSE["client parse<br/>(deserialize)"]
-  PARSE --> PREV["5-row preview +<br/>name pre-filled from filename"]
+  PARSE --> PREV["SHEET_IMPORT_PREVIEW_ROW_COUNT-row preview +<br/>name pre-filled from filename"]
   PREV -->|Create| CR["sheet.createResource"]
   CR -->|"first saveResourceContent<br/>{ settings, data }"| BLOB[("content blob")]
   BLOB --> DATA["/resource-explorer/[id]/data<br/>(rows ready)"]
@@ -35,6 +35,6 @@ flowchart LR
 
 ## Notes
 
-- Client-side parse only, same as Import — there is no upload path, and the [1000-row dataset cap](../dataset-row-cap-warning/design.md) realities are identical to the Import command's.
+- Client-side parse only, same as Import — there is no upload path, and the [`AZURE_MAX_PAGE_SIZE`-row dataset cap](../dataset-row-cap-warning/design.md) realities are identical to the Import command's.
 - **Only Sheet opts in.** This is a per-type branch on the create form, which is the "type-specific initial settings" affordance the form already reserved — not a new framework. If more types ever want rich create forms, that is the [create wizard tabs](../../../deferred/resource/create-wizard-tabs/design.md) revisit trigger.
-- The Home quick-create tile and the gallery tile for Sheet are unchanged — they lead to this same form; the drop zone is simply on it.
+- The Home quick-create tile and the gallery tile for Sheet lead to this same form; the drop zone is simply on it.

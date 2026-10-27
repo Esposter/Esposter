@@ -49,6 +49,6 @@ Names are non-empty through the `normalizeString` pipe; values are not. An empty
 
 - Flat name:value only, faithful to Azure — no hierarchies, no typed values.
 - A tags-only update leaves no `Renamed` entry in the [activity log](../activity-log/design.md): changing a label is not renaming a resource.
-- [Global search](../global-search/design.md) matches a tag's name and value as a substring, so a label the owner remembers finds its resource. The `/all` filter pill and the `/resource-explorer/tags` list ([service menu](../resource-service-menu/design.md)) remain the exact retrieval paths.
+- [Global search](../global-search/design.md) matches a tag's name and value as a substring, so a label the owner remembers finds its resource. The `/all` filter pill and the `/resource-explorer/tags` list ([service menu](../resource-service-menu/design.md)) are the exact retrieval paths.
 - `readResourceTagCounts` groups by **name only**. Tag names live inside one `jsonb` column, so the read expands the keys in a subquery and groups over that — a set-returning function cannot sit beside an aggregate in one select list. A value narrows the result afterwards, through the pill.
 - If tag usage grows into "give me a folder", that is the [resource groups](../../../deferred/resource/resource-groups/design.md) revisit trigger, not more tag features.

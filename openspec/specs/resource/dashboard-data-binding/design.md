@@ -1,6 +1,6 @@
 # Dashboard Data Binding
 
-A dashboard visual can bind to a `DatasetReference` (survey responses, a Sheet resource) instead of only embedding static chart data — the marquee cross-product integration, applying the [datasets standard](../../architecture/dataset/design.md) to the dashboard product. A bound visual resolves its chart data from `dataset.readDataset` at render time; static visuals work unchanged — binding is additive.
+A dashboard visual can bind to a `DatasetReference` (survey responses, a Sheet resource) instead of only embedding static chart data — the marquee cross-product integration, applying the [datasets standard](../../architecture/dataset/design.md) to the dashboard product. A bound visual resolves its chart data from `dataset.readDataset` at render time; static visuals work without one — binding is additive.
 
 ## How it works
 

@@ -12,7 +12,7 @@ Four rules follow:
 
 1. **The current page is the title, never a crumb.** A disabled leaf repeating the title is a second copy of the same string, and on a narrow viewport it is the copy that pushes the real trail off the row.
 2. **A crumb exists only for a page you actually navigated through.** Reaching a resource from the list makes the list a crumb; reaching it directly does not, because there is nothing to go back up to that the visitor ever had open.
-3. **The hub leads every trail.** The portal keeps a root crumb on every blade, and so do we: `Resource Explorer` claims no ancestry — it is the one page everything in the area genuinely sits under — so a resource opened from a link still has a way out and the header does not change shape between that and a drilled-in one. A visitor who came through the hub already carries it, so it is never doubled; the hub itself renders no crumb at all, because rule 1 outranks this one. **Home is not a crumb** — the logo is that link on every route, and a second one would spend the row on a control the chrome already has.
+3. **The hub leads every trail.** The portal keeps a root crumb on every blade, and so do we: `Resource Explorer` claims no ancestry — it is the one page everything in the area genuinely sits under — so a resource opened from a link has a way out and the header does not change shape between that and a drilled-in one. A visitor who came through the hub already carries it, so it is never doubled; the hub itself renders no crumb at all, because rule 1 outranks this one. **Home is not a crumb** — the logo is that link on every route, and a second one would spend the row on a control the chrome already has.
 4. **One writer.** A router hook resolves the trail after every navigation and records it on the entry. Links stay plain — a trail appended by hand at each drill-down is one the next link silently drops, and a page that lost it looks exactly like a page nobody drilled into.
 
 **The trail also decides where a close ✕ goes.** The store exposes the last crumb as `closeTo`, so every ✕ in the area (the list page, the recycle bin, and a resource's command bar) peels back exactly one layer — to the page the visitor came through, or to the hub when they arrived directly. Closing and clicking the last crumb are one move, and neither needs a destination hardcoded at its call site.
@@ -43,7 +43,7 @@ flowchart TD
 The url stays the canonical address of the page and nothing else:
 
 ```text
-/resource-explorer                    entry state: —                        no crumb            title: Resource Explorer
+/resource-explorer                    entry state: —                        no crumb                   title: Resource Explorer
 /resource-explorer/all                entry state: [resources]              Resource Explorer          title: All
 /resource-explorer/8f2e…              entry state: [resources, all]         Resource Explorer › All    — (blade names it)
 /resource-explorer/8f2e…              entry state: —                        Resource Explorer          — (blade names it)
@@ -93,7 +93,7 @@ A link you send someone lands them on the direct view: they did not walk your pa
 
 - Adding a page to the model is one map entry; adding a page that should never be a crumb is nothing at all.
 - **Leaving the area or landing back on `/resource-explorer` is the only reset**, and everything short of a real drill-in carries the trail untouched. A direct arrival is therefore not a case the resolver detects — it is the empty trail that navigating out of the area already left behind. The consequence is the one worth stating: a rule that instead reset on "did not come from a crumb page" empties the trail on the second resource opened in a row, and one that appends without checking the navigation left the page turns a filter change on the list into a crumb linking to the page already open.
-- A trail read back off an entry is validated against the map before it renders — an entry written by an older release, or edited in devtools, is filtered down to slugs that still exist rather than rendering a crumb to nowhere.
+- A trail read back off an entry is validated against the map before it renders — an entry written by an older release, or edited in devtools, is filtered down to slugs that exist in the map rather than rendering a crumb to nowhere.
 - A crumb is a real link; the title is plain text. Anything not navigable is not a crumb, which is why the current page cannot be one.
 - Pasting a url into the address bar is a direct arrival even in a tab that was on the list: it is a new entry with no trail, which is the honest reading of typing an address.
 - **A page never hardcodes its own ancestor.** Giving the recycle bin a fixed `All` crumb is the route-tree model wearing the trail's clothes: it offers a way back to a list the visitor may never have had open.

@@ -20,12 +20,12 @@ flowchart LR
 - **Drawing.** Every path type is rendered by one labelled edge component (`apps/web/app/components/FlowchartEditor/Edge/Index.vue`), which draws the path with Vue Flow's own path function for its type (`EdgePathMap`) and places the label at that path's midpoint.
 - **Editing.** Double clicking the path or the label opens an input; Enter or leaving the input writes the label back, and an Enter that confirms an input method's composition does not.
 - **Panel.** `FlowchartEditor/Panel/Index.vue` shows one panel for a single selected node or, when no node is selected, a single selected edge. The edge's content (`Panel/EdgeContent.vue`) holds the label and a path toggle with three choices: Curved, Right-angled and Straight.
-- **Published view.** A published flowchart draws its labels and arrowheads from the stored edges with Vue Flow's built-in edges, so it needed no change.
+- **Published view.** A published flowchart draws its labels and arrowheads from the stored edges with Vue Flow's built-in edges, so the published view has no edge code of its own.
 
 ## Decisions
 
 - **Path choices.** The panel offers curved, right-angled and straight. Vue Flow's step and simple-bezier types stay valid in the schema, since a stored edge may hold either, but the panel does not offer them.
-- **Legacy edges.** An edge saved before this change has no `markerEnd`, so it draws the default arrow the moment the canvas loads it.
+- **Legacy edges.** An edge saved with no `markerEnd` draws the default arrow the moment the canvas loads it.
 - **One write path.** Label and path edits go through `setEdges`, so they reach the same `update:edges` autosave as a drag does. Both hand their patch to `patchEdge`, which lays it over the one edge it names, so the two fields cannot drift apart.
 - **One panel at a time.** A node selected together with an edge keeps the node's panel, so the two never stack.
 

@@ -53,6 +53,4 @@ Each surface is chosen by what an unnoticed truncation would cost there:
 
 ## Notes
 
-- Deliberately metadata-only. The fix for _actually needing_ more rows is [pagination](../../../deferred/resource/dataset-row-cap-pagination/design.md), and this warning is what gives that page a consumer: once users see "of M" and complain, it has earned its build.
 - One phrasing service backs every surface, so a chart footnote and a table banner can never quote different numbers for the same read.
-- `readEntitiesCount` is never free and never on the happy path — the guard that only calls it on a filled page is load-bearing, not an optimization. Its `maxCount` bound is load-bearing too: without it, every open of a huge partition's blade pays a full key-walk to render one number.

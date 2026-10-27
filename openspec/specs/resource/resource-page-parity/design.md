@@ -48,5 +48,5 @@ sequenceDiagram
 
 ## Notes
 
-- Listing snapshots, previewing one, and rolling back to it are [resource snapshots](../resource-snapshots/design.md), not command-bar parity — the one command that reaches them lives in the page's overflow menu, where `Version history` opens the panel, and nothing else about it does. Whether the open resource's own edits have landed is [save state](../resource-save-state/design.md), which is a readout beside those commands rather than one of them.
+- Listing snapshots, previewing one, and rolling back to it are [resource snapshots](../resource-snapshots/design.md), not command-bar parity. Whether the open resource's own edits have landed is [save state](../resource-save-state/design.md), a readout beside the commands rather than one of them.
 - JSON view / export-template parity is [out of scope](../../../rejected/resource/json-config-parity/design.md).

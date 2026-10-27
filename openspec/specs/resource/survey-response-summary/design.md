@@ -1,10 +1,10 @@
 # Survey Response Summary
 
-The Responses blade was a table of raw responses, one column per question ([survey response management](../survey-response-management/design.md)). Seeing what the responses say — how many picked each option, the average rating — meant building a Dashboard over the survey's dataset. Google Forms answers it on the response page itself: a **Summary** tab of one chart per question beside the **Individual** view.
+The Responses blade's Individual view is a table of raw responses, one column per question ([survey response management](../survey-response-management/design.md)). Seeing what the responses say — how many picked each option, the average rating — would mean building a Dashboard over the survey's dataset. Google Forms answers it on the response page itself: a **Summary** tab of one chart per question beside the **Individual** view.
 
 ## How it works
 
-The blade is a `UiTabs` pair, **Summary** (the default) and **Individual**, which is the table and detail dialog as they were. Summary is a column of cards, one per question in the survey's own order, each drawn by `getSurveySummaryCards` from what kind of question it is:
+The blade is a `UiTabs` pair, **Summary** (the default) and **Individual**, which is the table and detail dialog. Summary is a column of cards, one per question in the survey's own order, each drawn by `getSurveySummaryCards` from what kind of question it is:
 
 | Question kind (SurveyJS)               | Card                                                                               |
 | -------------------------------------- | ---------------------------------------------------------------------------------- |
@@ -17,7 +17,7 @@ The blade is a `UiTabs` pair, **Summary** (the default) and **Individual**, whic
 Each card is headed by the question's title and "_n_ responses", counting the responses that answered it, so a skipped optional question reads honestly.
 
 - **No new procedure.** The blade reads the survey's content beside its response records, both existing owner reads, and parses the model with `survey-core`'s `Model`, as the respondent page does — so a question's kind, its title and its choices' labels (a boolean's _Yes_ and _No_, a rating's scale) are SurveyJS's own. Choices are shown by their labels rather than their stored values. Only questions the records hold a column for are summarised, so presentation elements have no card. The two reads fail apart: a survey that cannot be read shows its error in the Summary alone, and the Individual view still lists the responses.
-- **Charts are the dashboard's engine.** The bars are `StyledApexChart`'s horizontal bar chart, themed as every chart in the app is; no chart dependency is added.
+- **Charts are the dashboard's engine.** The bars are `StyledApexChart`'s horizontal bar chart, themed as every chart in the app is, and it adds no chart dependency.
 - **The row cap applies as everywhere.** A survey past it shows the truncation alert above both views ([dataset row-cap warning](../dataset-row-cap-warning/design.md)), since the summary is computed from what was read.
 - **Before the first response** the Summary view is the same empty state the table shows.
 

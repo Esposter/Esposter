@@ -32,13 +32,13 @@ flowchart LR
 ## Survey response columns
 
 - **Submitted**: the response's last save. A response is saved as it is submitted, so this is its submission time unless the respondent edits it afterwards.
-- **Respondent**: present only when the survey is Identified ([survey response modes](../survey-response-modes/design.md)). It is the participant's `publicId`, the same non-secret identifier the Program's status dataset publishes, never the recipient's key value and never the token. A response with no participant, such as an anonymous-era row, reads as empty. A program whose participant read reached the row cap may have left a respondent out, and the column is then flagged as possibly under-reporting.
+- **Respondent**: present only when the survey is Identified ([survey response modes](../survey-response-modes/design.md)). It is the participant's `publicId`, the same non-secret identifier the Program's status dataset publishes, never the recipient's key value and never the token. A response with no participant, such as a row from an anonymous survey, reads as empty. A program whose participant read reached the row cap may have left a respondent out, and the column is then flagged as possibly under-reporting.
 
 The two reserved names, `submittedAt` and `respondent`, are not reserved in the survey model, since a question may be named either. A question that takes one keeps its own column, and the reserved column takes a trailing `_` (`submittedAt_`, `respondent_`) that no question has, so the question's column name and its answers are never changed.
 
 ## What is deliberately not in it
 
-- **No live-synced spreadsheet** (Google Forms' linked Sheet). A Sheet can import the dataset today; a live link is [realtime dataset refresh](../../../deferred/resource/realtime-dataset-refresh/design.md).
+- **No live-synced spreadsheet** (Google Forms' linked Sheet). A Sheet can import the dataset; a live link is [realtime dataset refresh](../../../deferred/resource/realtime-dataset-refresh/design.md).
 - **No other file formats.** A dataset is rows and columns, and CSV opens everywhere.
 
 ## Key files

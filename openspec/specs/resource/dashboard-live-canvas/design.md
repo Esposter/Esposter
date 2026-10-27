@@ -26,10 +26,10 @@ flowchart LR
 ## Decisions
 
 - **One renderer for the editor and the published page.** The editor tile reuses `DashboardVisual` rather than a twin, so the editor and the reader cannot disagree about a chart.
-- **The stock icons are gone.** The preview component, the per-type icon map and its icon components had no other consumer; the visual-type select's entries come from `VisualTypeItemCategoryDefinitions`, which never used them.
+- **No stock icons.** The visual-type select's entries come from `VisualTypeItemCategoryDefinitions`, each with the chart icon meaning rather than a stock image.
 - **The corner actions are a slot, not a second corner.** Two absolutely positioned rows at the same corner would overlap, so the tile passes its actions into the visual's own row.
-- **Nothing is persisted differently.** The editor still saves the dashboard content; only what a tile draws changes.
-- **No new test.** The change is template wiring over components whose behaviour the existing suites cover; a chart-mounting test would only pin the markup.
+- **Nothing is persisted differently.** The editor saves the dashboard content; only what a tile draws changes.
+- **No new test.** It is template wiring over components whose behaviour the existing suites cover; a chart-mounting test would only pin the markup.
 
 ## Key files
 

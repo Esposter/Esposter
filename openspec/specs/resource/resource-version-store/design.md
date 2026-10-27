@@ -9,7 +9,7 @@ Every trigger, channel and retention rule stays what [resource snapshots](../res
 The codec is the `keyframe-store` workspace package, a general library that never sees a schema: it takes bytes and returns bytes, addresses an object by the SHA-256 of its plaintext, and decides per write whether a delta or a keyframe is cheaper. The [keyframe store's object format](../../keyframe-store/object-format/design.md) page is the reference for the promotion ratio, the segment budget and the compression parameters. Two properties of it are what the resource layer is built on:
 
 - **Reconstruction is at most two reads.** A delta's own header names its keyframe, so there is no chain to walk and no version depends on the one written before it.
-- **An object is write-once and content-addressed.** A version whose content the store already holds is a row pointing at the existing object — nothing written, nothing charged. That is the case that makes the meter honest about a save that changed nothing, and about a restore back to a version the store still has.
+- **An object is write-once and content-addressed.** A version whose content the store already holds is a row pointing at the existing object — nothing written, nothing charged. That is the case that makes the meter honest about a save that changed nothing, and about a restore back to a version the store has.
 
 The store's only contact with Azure is `createSnapshotObjectStore`: one resource's objects under `{id}/objects/{hash}`, written create-only so two writers of the same content cannot race, and deleted through the blob deletion event rather than directly, because that path already deletes and releases the ledger entry as one retried unit.
 
@@ -28,10 +28,10 @@ flowchart TD
   commit -->|yes| claim["The publication claim commits with the row"]
   commit -->|no| charge
   claim --> charge["Charge the stored bytes to the owner — nothing for a deduplicated write"]
-  charge --> evict{"A revision past 30 days, or past the hundred?"}
+  charge --> evict{"A revision past maxAgeMs, or past maxRetained?"}
   evict -->|no| done["Save proceeds"]
   evict -->|yes| shed["Delete those rows"]
-  shed --> collect["Subtract every hash a surviving row still names, as its own or as its base"]
+  shed --> collect["Subtract every hash a surviving row names, as its own or as its base"]
   collect --> publish["Publish the remainder for deletion — the handler deletes and releases each"]
   publish --> done
 ```
@@ -57,10 +57,10 @@ flowchart TD
 ```mermaid
 flowchart TD
   released["Rows an eviction or an unpublish deleted"] --> named["Every hash they named — their own, and their base"]
-  survivors["Every surviving row of the resource"] --> retained["Every hash those still name, as own or as base"]
+  survivors["Every surviving row of the resource"] --> retained["Every hash those name, as own or as base"]
   named --> subtract{"Named by a survivor?"}
   retained --> subtract
-  subtract -->|yes| keep["Keep — a delta still decodes against it"]
+  subtract -->|yes| keep["Keep — a delta decodes against it"]
   subtract -->|no| drop["Publish for deletion — bytes released when the handler lands"]
 ```
 
@@ -87,6 +87,6 @@ Eviction hands the deletion path the exact set of objects nothing references, ra
 ## Notes
 
 - Existing snapshots written as full blobs under `{id}/revisions/` and `{id}/published/` were discarded rather than converted: a resource published before the store shipped has to be published again, and the blobs stay charged until purge takes the directory. Migration was scoped out because the history was recoverable by a republish and a conversion would have paid a full read of every snapshot for versions the ring buffer evicts within a session.
-- Collection publishes the deletion of what it freed, and the publish is best-effort once the rows are gone: a publish that fails leaves the objects stored and charged until purge takes the directory. That is a harsher term than the write-path orphan above, which was never charged in the first place — this one was live and billed, and nothing hands the charge back until purge clears the whole directory. The order is deliberate — publishing first and then failing to delete the rows would free objects a surviving row still names, which is a version that cannot be read rather than bytes that cost. What is not built for it is an outbox of released hashes: that is a second write path and a sweep to drain it, for a failure the SDK's own retries already make rare, and the same trade the ledger's charges settled (../storage-quotas/design.md).
-- A write always encodes twice — standalone and against the anchor — because the promotion ratio compares the two. The two overlap on the threadpool, so the save path pays the slower of them rather than their sum: on a multi-megabyte document that is still hundreds of milliseconds, where a full copy was an upload of the same size; the committed bench beside `createKeyframeStore` is the record of what each shape costs, and the compression level is an option so a sweep of it never touches the implementation.
-- The second phase the same substrate unlocks — addressing assets by content so a publish references them instead of cloning them — shipped as [content-addressed assets](../content-addressed-assets/design.md). Its correctness rests on a scan of content rather than on a column, so the files it releases are counted before any is deleted.
+- Collection publishes the deletion of what it freed, and the publish is best-effort once the rows are gone: a publish that fails leaves the objects stored and charged until purge takes the directory. That is a harsher term than the write-path orphan above, which was never charged in the first place — this one was live and billed, and nothing hands the charge back until purge clears the whole directory. The order is deliberate — publishing first and then failing to delete the rows would free objects a surviving row still names, which is a version that cannot be read rather than bytes that cost. What is not built for it is an outbox of released hashes: that is a second write path and a sweep to drain it, for a failure the SDK's own retries already make rare, and the same trade the ledger's charges settled ([storage quotas](../storage-quotas/design.md)).
+- A write always encodes twice — standalone and against the anchor — because the promotion ratio compares the two. The two overlap on the threadpool, so the save path pays the slower of them rather than their sum: on a multi-megabyte document that is hundreds of milliseconds, where a full copy would be an upload of the same size; the committed bench beside `createKeyframeStore` is the record of what each shape costs, and the compression level is an option so a sweep of it never touches the implementation.
+- The same substrate also addresses assets by content, so a publish references them instead of cloning them ([content-addressed assets](../content-addressed-assets/design.md)). That addressing's correctness rests on a scan of content rather than on a column, so the files it releases are counted before any is deleted.

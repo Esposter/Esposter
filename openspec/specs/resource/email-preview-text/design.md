@@ -11,7 +11,7 @@ An email's preview text — the preheader — is the line an inbox shows beside 
 
 ## What is deliberately not in it
 
-- **No subject line.** A subject belongs to a send, and nothing sends ([email sending](../../../deferred/resource/email-sending/design.md)); the preheader is part of the HTML itself, which is why it is useful before sending exists.
+- **No subject line.** A subject belongs to a send, and nothing sends ([email sending](../../../deferred/resource/email-sending/design.md)); the preheader is part of the HTML itself, which is why it is useful without sending.
 - **No `mj-title`.** The published web view is titled by the resource's name already.
 
 ## Key files

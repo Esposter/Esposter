@@ -1,6 +1,6 @@
 # TodoList Task Rows
 
-The first part of [TodoList to a todo product](../README.md#shipped-log), and the row every later part draws on. The Items blade is a `UiList` of task rows rather than a data table, since a todo list is read top to bottom, and a table squeezed each todo's notes into one column beside its title.
+The first part of [TodoList to a todo product](../README.md#shipped-log), and the row every other part draws on. The Items blade is a `UiList` of task rows rather than a data table, since a todo list is read top to bottom, and a table squeezed each todo's notes into one column beside its title.
 
 ```text
 ☐  Buy the train tickets
@@ -14,9 +14,9 @@ The first part of [TodoList to a todo product](../README.md#shipped-log), and th
 - **The metadata line holds only what is set**: the due date through `NuxtTime`, in the error colour and read out as overdue once it has passed, or when a [completed](../todolist-completion/design.md) todo was done. A row with neither has no such line.
 - **The notes are drawn under it**, as the editor's rich text (`rich-text-content`), a size down in the text colour rather than muted, muted only once the todo is completed. This departs from Microsoft To Do, which hides a task's notes behind a mark until its detail view opens: the notes are what a todo is read for, and a list that makes the reader open each row to see them is worse than one that shows them. They are clamped to six lines with an ellipsis (`line-clamp-6`), since notes run far longer than a row should and the detail dialog shows them whole. The clamp is by rendered line rather than by character count: the notes are HTML, so a character cut could land inside a tag, and a note of many short paragraphs is just as tall as one long one. A link in the notes is drawn but not pressed from the row, which is one button — a click opens the todo, where the link works.
 - **The checkbox leads the row**, in `UiList`'s `leading` slot beside the row's button, so the row keeps no mark column of its own ([completion](../todolist-completion/design.md)).
-- **Search** keeps the rows whose title or notes text holds the query, the notes read as text through `node-html-parser` rather than as markup, so a search for `p` no longer matches every todo with a paragraph.
-- **Order is the `items` array's.** The table's sort header went with the table; ordering is [importance](../todolist-importance/design.md)'s sort and [manual order](../todolist-manual-order/design.md)'s job.
-- **No item type.** The todo item type enum had one member, `Todo`, and its column drew the same check beside every row, so the enum, its chip, its category definitions and the `type` field are gone. Content saved with a `type` still parses: the schema strips the key it no longer declares.
+- **Search** keeps the rows whose title or notes text holds the query, the notes read as text through `node-html-parser` rather than as markup, so a search for `p` does not match every todo with a paragraph.
+- **Order is the `items` array's.** There is no table sort header; ordering is [importance](../todolist-importance/design.md)'s sort and [manual order](../todolist-manual-order/design.md)'s job.
+- **No item type.** The todo item type enum had one member, `Todo`, and its column drew the same check beside every row, so the item has no enum, chip, category definitions or `type` field. Content saved with a `type` parses: the schema strips the key it does not declare.
 
 ## Key files
 

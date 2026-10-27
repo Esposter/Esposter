@@ -44,7 +44,7 @@ A star is a toggle, and `toggleFavorite` implements it as a delete-then-insert r
 | `resource.readFavorites`  | authed | —        | Favorites joined to live resources, newest starred |
 | `resource.recordAccess`   | owner  | `{ id }` | Upsert this user's access row for the resource     |
 
-The list routes use neither of the reads above: they are `resource.readResources` with `isFavorite: true` or `isAccessed: true`, so they inherit the whole workbench. `readFavorites` remains for the star lookup set and Home's tab.
+The list routes use neither of the reads above: they are `resource.readResources` with `isFavorite: true` or `isAccessed: true`, so they inherit the whole workbench. `readFavorites` serves the star lookup set and Home's tab.
 
 ## Key files
 
@@ -62,7 +62,7 @@ The list routes use neither of the reads above: they are `resource.readResources
 ## Notes
 
 - The `/all` star renders always rather than on hover: hover does not exist on touch, and a star you cannot find is a star you do not use.
-- Favorites are read once per list rather than once per row — every row asks "am I starred?", so the store exposes a `Set` of ids and the rows read it. The set itself is read once per session, not once per mount: the workbench list mounts inside the blade, so concurrent mounts share the in-flight query instead of each running the same joined read, and a delete invalidates it because only the server knows which stars still resolve.
+- Favorites are read once per list rather than once per row — every row asks "am I starred?", so the store exposes a `Set` of ids and the rows read it. The set itself is read once per session, not once per mount: the workbench list mounts inside the blade, so concurrent mounts share the in-flight query instead of each running the same joined read, and a delete invalidates it because only the server knows which stars resolve.
 - Soft-deleted resources are filtered out of every read here, so a starred resource sitting in the [recycle bin](../recycle-bin/design.md) disappears from Favorites and returns when restored — the star itself is never lost. The same is true of an access row.
 - The palette's resources scope reads the same server-side set for its **Recently opened** group, so it and the Recent route can never disagree. Recent _searches_ stay in `localStorage`: a query you typed is not something to follow you between machines.
-- Recents are a store for the same reason favorites are: Home mounts the Recent tab and registers the palette's resources scope together, and both want the same capped list — the set is read once per session and the two mounts share the in-flight query rather than each issuing it.
+- Recents are a store for the same reason favorites are: Home mounts the Recent tab and registers the palette's resources scope together, and both want the same capped list.

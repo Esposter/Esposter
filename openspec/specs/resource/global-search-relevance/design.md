@@ -6,7 +6,7 @@
 
 Exact-substring matching — ranked prefix-first, then newest-first — is fine until you mistype, at which point a resource you can see in the list simply does not exist as far as search is concerned. Name search therefore scores by similarity rather than by containment alone.
 
-The `pg_trgm` extension makes Postgres compare strings by the trigrams they share. `similarity(name, query)` returns the fraction in common, so a transposition costs a little similarity instead of all of it. `SEARCH_SIMILARITY_THRESHOLD` is pg_trgm's own default cutoff — the point where "survye" still reaches "Survey" without unrelated names leaking in.
+The `pg_trgm` extension makes Postgres compare strings by the trigrams they share. `similarity(name, query)` returns the fraction in common, so a transposition costs a little similarity instead of all of it. `SEARCH_SIMILARITY_THRESHOLD` is pg_trgm's own default cutoff — the point where "survye" reaches "Survey" without unrelated names leaking in.
 
 Similarity is added as an **OR-arm** next to the existing substring match, not as a replacement. Trigram similarity degrades on very short queries, where a two-character search shares few trigrams with anything, and dropping the substring arm would lose exact matches the user can see on screen. Both arms live in `getResourcesWhere`, so `readResourcesCount` and `readResources` stay in lockstep.
 
@@ -51,6 +51,6 @@ Tests run against PGlite, which loads `pg_trgm` as a contrib extension in both `
 
 ## Notes
 
-- Azure AI Search stays [deferred](../../../deferred/resource/azure-ai-search/design.md) — nothing at current volumes needs it, and this is the cheap 80%.
+- Azure AI Search stays [deferred](../../../deferred/resource/azure-ai-search/design.md) — nothing at this scale needs it, and this is the cheap 80%.
 - Only `resources.name` is trigram-indexed. The tag arm is a substring scan over each tag's name and value with no index, because the [tags](../tags/design.md) GIN index serves containment and key existence and neither answers a substring; the owner filter bounds the rows it reaches. Searching content is a different feature with a different index.
 - Bundling a PGlite contrib extension breaks it: the extension resolves its own `.tar.gz` relative to `import.meta.url`, so `@electric-sql/pglite` and its subpaths are externalized in the shared rolldown config.

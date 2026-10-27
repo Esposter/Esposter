@@ -1,6 +1,6 @@
 # TodoList Agent Follow-ups
 
-Built on [due reminders](../todolist-due-reminders/design.md), [task rows](../todolist-task-rows/design.md) and [agent access](../../architecture/agent-access/design.md). The TodoList holds state that outlives any session, acts on a clock through its reminders and reaches a phone through web push; a Claude Code session has none of the three, so a follow-up it noticed and left alone — "the same guard is missing in the sibling router", "the spec still names the old flag" — used to survive only in its scrollback. A session now writes each one into the owner's TodoList as it finds it, the owner reads them with everything else, and a session in the repository drains them again, one change at a time, until the work converges.
+Built on [due reminders](../todolist-due-reminders/design.md), [task rows](../todolist-task-rows/design.md) and [agent access](../../architecture/agent-access/design.md). The TodoList holds state that outlives any session, acts on a clock through its reminders and reaches a phone through web push; a Claude Code session has none of the three, so a follow-up it noticed and left alone — "the same guard is missing in the sibling router", "the spec still names the old flag" — survives only in its scrollback. A session writes each one into the owner's TodoList as it finds it, the owner reads them with everything else, and a session in the repository drains them again, one change at a time, until the work converges.
 
 No model runs inside Esposter. The model stays in the terminal; Esposter stores the follow-ups and shows them, and its reminders and live sync do the rest.
 
@@ -26,7 +26,7 @@ flowchart LR
 
 ## Why this and not more products
 
-The owner keeps one TodoList, holding everything to do, and works at a desk nine times in ten. That ruled out the other candidates for the next piece of product work: the cross-list views stay deferred because their trigger never fires with one list ([smart lists](../../../deferred/resource/todo-smart-lists/design.md), [global calendar](../../../deferred/resource/global-calendar/design.md)), and phone capture or natural-language dates save little for someone at a desk ([quick add](../todolist-quick-add/design.md)). At the desk, the place a todo is born is a terminal session, so the missing piece was the route from that terminal to the list.
+The owner keeps one TodoList, holding everything to do, and works at a desk nine times in ten. That ruled out the other candidates for product work: the cross-list views stay deferred because their trigger never fires with one list ([smart lists](../../../deferred/resource/todo-smart-lists/design.md), [global calendar](../../../deferred/resource/global-calendar/design.md)), and phone capture or natural-language dates save little for someone at a desk ([quick add](../todolist-quick-add/design.md)). At the desk, the place a todo is born is a terminal session, so this adds the route from that terminal to the list.
 
 It also sidesteps the platform decision [AI resource generation](../../../deferred/resource/ai-resource-generation/design.md) waits on, the first LLM dependency inside Esposter: every model call is the owner's own Claude Code session, and Esposter serves plain tools over data it already stores.
 
@@ -36,7 +36,7 @@ A todo a session wrote carries an `origin`, and one the owner wrote carries none
 
 ```ts
 interface TodoListItemOrigin {
-  // Set once a drain hands it to the owner, and absent while an agent may still take it
+  // Set once a drain hands it to the owner, and absent while an agent may take it
   handedBackAt?: Date;
   // `owner/name` from the origin remote, so the same repository matches from every clone and machine
   repository: string;
@@ -137,13 +137,13 @@ It is the convergence test every loop in the repository uses: each pass should f
 
 A drain can run while the owner is away, which is what makes it worth having. It runs in whatever permission mode its session has and relies on the repository's own safety net rather than one of its own: in Esposter every change it pushes lands on `ai/queue`, where the review workflow reviews it before fast-forwarding `main` to it ([review](../../infra/review/design.md)). In Esposter the drain is also a step of what a session runs next when nothing is asked, after a red review run and before an area owed a product review, since the owner wrote each follow-up down or accepted a session writing it.
 
-A long drain runs in one session, so its context grows with every follow-up and relies on automatic compaction. A fresh session per follow-up, started by the [agent console](../../infra/claude-interface/agent-console/README.md)'s host, would keep each one clean — a later step, once a drain has been seen to degrade.
+A long drain runs in one session, so its context grows with every follow-up and relies on automatic compaction. A fresh session per follow-up, started by the [agent console](../../infra/claude-interface/agent-console/README.md)'s host, would keep each one clean — a step deferred until a drain has been seen to degrade.
 
 ## What is deliberately not in it
 
 - **A model inside Esposter.** No summarising, ranking or generating in the app: a session does the thinking, the app keeps the state.
 - **A second list for agents.** Follow-ups go into the one list the owner reads, filtered by `origin` when a session asks for them.
-- **Running sessions from the app.** A session the user started does the work; a fresh session per follow-up is the later step the drain's notes name.
+- **Running sessions from the app.** A session the user started does the work; a fresh session per follow-up is the deferred step the drain's notes name.
 
 ## Key files
 

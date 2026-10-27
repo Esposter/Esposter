@@ -22,7 +22,7 @@ flowchart LR
 ## What is deliberately not in it
 
 - **No sub-tasks with their own due dates, notes or steps.** A step is a line of a checklist; a task that needs a date of its own is its own task. Nesting is how a todo list turns into a project tool, which is Planner's job and not this one's.
-- **No promote-a-step-to-a-task.** Microsoft To Do has it; the lean scope does not earn a second write path for it yet.
+- **No promote-a-step-to-a-task.** Microsoft To Do has it; the lean scope does not earn a second write path for it.
 
 ## Key files
 

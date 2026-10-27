@@ -17,7 +17,7 @@ flowchart LR
   R[Selected range] --> D[filterDataSourceRange]
   D -- "displayed columns select the cells" --> F[filterDataSourceColumns]
   D -- "full column set is the compute context" --> F
-  F --> C[compileSheetColumns bound once, read per cell]
+  F --> C[compileSheetColumns]
   C --> S[Sliced sub-DataSource]
   S --> CB[copyToClipboard TSV and HTML]
 ```

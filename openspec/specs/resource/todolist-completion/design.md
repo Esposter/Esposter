@@ -1,6 +1,6 @@
 # TodoList Completion
 
-The second part of [TodoList to a todo product](../README.md#shipped-log), built on [task rows](../todolist-task-rows/design.md). Finishing a todo used to mean deleting it, which lost the record that it was done; now a tick keeps it, with the date it was done.
+The second part of [TodoList to a todo product](../README.md#shipped-log), built on [task rows](../todolist-task-rows/design.md). Finishing a todo by deleting it lost the record that it was done; a tick keeps it, with the date it was done.
 
 ## How it works
 

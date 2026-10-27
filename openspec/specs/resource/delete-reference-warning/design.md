@@ -19,7 +19,7 @@ flowchart LR
   LINKS -->|"sourceId"| FILTER{"the caller's own, live,<br/>not being deleted?"}
   FILTER -->|"none"| PLAIN["plain confirmation"]
   FILTER -->|"some"| WARN["warning naming each consumer"]
-  WARN --> CONFIRM["Delete moves to the bin;<br/>each consumer shows its source missing"]
+  WARN --> CONFIRM["Delete moves to the bin,<br/>each consumer shows its source missing"]
   CONFIRM -->|"Restore"| HEAL["every consumer reads it again"]
 ```
 
@@ -38,7 +38,7 @@ The warning is advisory. Delete stays enabled, because the delete is a soft one:
 ## Notes
 
 - The index is written by every save, and it shipped before any consumer held content, so the warning never undercounts a resource saved before it existed ([resource links](../../architecture/resource-links/design.md)).
-- Each chunk's read is capped at the list read limit, which is far past the consumers a selection has.
+- Each chunk's read is capped at `MAX_READ_LIMIT`, which is far past the consumers a selection has.
 
 ## Sources
 

@@ -41,7 +41,7 @@ A delta is proportional to the edit, so it rides the ordinary tRPC body, base64-
 - **Parameters shared, not restated.** The window must span the dictionary and the document, or the encoder cannot reach back into the baseline past a few megabytes and the delta degrades to plain compression. `getWindowLog` and `DEFAULT_COMPRESSION_LEVEL` live in `@esposter/shared`, read by the version store's encoder and this one alike, and the server's decoder admits the window the same derivation gives at the content limit.
 - **Loaded lazily, run in a worker.** The delta path imports `encodeContentDelta` with `await import`, which starts a worker of its own for the one save and terminates it after, so no page that never saves a large document fetches the module, and the encoder's memory — the size of both documents and then some — is handed back rather than held.
 
-What a delta does not change is the server's work: it still reads, parses, validates and writes the whole document on every save, in-region and off the owner's connection. The committed benches put both commit paths at a small multiple of the bare parse every save already pays, and the wasm encoder close to Node's native one.
+What a delta does not change is the server's work: it reads, parses, validates and writes the whole document on every save, in-region and off the owner's connection. The committed benches put both commit paths at a small multiple of the bare parse every save already pays, and the wasm encoder close to Node's native one.
 
 ## Key files
 

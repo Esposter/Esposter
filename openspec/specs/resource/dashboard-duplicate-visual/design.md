@@ -1,6 +1,6 @@
 # Dashboard Duplicate Visual
 
-A dashboard visual carries a visual type, a chart configuration and a dataset binding ([dashboard data binding](../dashboard-data-binding/design.md)). Two charts over the same data — a Bar and a Line of the same series, or the same query split by another column — are the common case, and the second used to be built from nothing, every picker walked again. Power BI copies a visual with its settings; here the copy is one button.
+A dashboard visual carries a visual type, a chart configuration and a dataset binding ([dashboard data binding](../dashboard-data-binding/design.md)). Two charts over the same data — a Bar and a Line of the same series, or the same query split by another column — are the common case, and building the second from nothing walks every picker again. Power BI copies a visual with its settings; here the copy is one button.
 
 ## How it works
 

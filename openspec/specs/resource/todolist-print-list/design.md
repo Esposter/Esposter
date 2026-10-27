@@ -19,7 +19,7 @@ flowchart LR
 
 ## What is deliberately not in it
 
-- **No CSV or Markdown export yet.** Portable makes either one more entry in the same map, but To Do offers neither and no one has asked for one; printing to PDF already makes a file.
+- **No CSV or Markdown export.** Portable makes either one more entry in the same map, but To Do offers neither and no one has asked for one; printing to PDF already makes a file.
 - **No email list.** To Do reaches email only through sharing, which is the [smart lists](../../../deferred/resource/todo-smart-lists/design.md)' and sharing's territory.
 
 ## Key files

@@ -4,11 +4,11 @@ A Dashboard exports its page as a PNG from the resource menu, and each bound vis
 
 ## Scope
 
-The Dashboard declares the Portable capability for export only, so its resource menu offers the page as a PNG. Each bound visual's tile offers a CSV of the rows it draws, in the editor and in the published view. A bound visual resolves its rows at render time through `computeDatasetVisualPropsData`, and a published dashboard holds the projected rows in its snapshot, so the published view exports without a read. The change adds no server procedure and no stored data.
+The Dashboard declares the Portable capability for export only, so its resource menu offers the page as a PNG. Each bound visual's tile offers a CSV of the rows it draws, in the editor and in the published view. A bound visual resolves its rows at render time through `computeDatasetVisualPropsData`, and a published dashboard holds the projected rows in its snapshot, so the published view exports without a read. It adds no server procedure and no stored data.
 
 ## Decisions
 
-- **The page is captured in the browser, not on the server.** A server render needs a headless browser, which is a service or a dependency the owner has ruled out. The flowchart's capture already turns live markup into an SVG with its styles and rasterizes it, and the dashboard reuses that path, so the capture is moved into a shared folder rather than copied.
+- **The page is captured in the browser, not on the server.** A server render needs a headless browser, which is a service or a dependency the owner has ruled out. The flowchart's capture already turns live markup into an SVG with its styles and rasterizes it, and the dashboard reuses that path, so the capture lives in a shared folder rather than being copied.
 - **PNG only.** The alternative, a PDF, needs a renderer. The browser's print path would need a print stylesheet for the grid, which is its own piece of work, so it waits for a request.
 - **A visual's CSV holds what the visual draws.** The alternative was the bound dataset's raw rows. Those rows carry every column of the source, and the publish snapshot deliberately keeps only the columns a query reads, so a public file of raw rows would leak what the snapshot removes. The drawn rows are the query's result: one row per category with a column per series, and one value for a Card.
 - **Every visual with categories writes the grouped rows its Table form draws, except a pie-shaped visual.** A table is the grouped result itself, and a bar, a treemap or a slope draws the same grouped numbers over one binding, so its file is those rows. A pie, a polar area or a radial bar draws only its first series, so its file is the grouped rows of that series alone. Exporting every series for a pie would write columns its chart never shows. No visual reads a second query either way.
@@ -41,9 +41,9 @@ flowchart LR
 | -------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
 | `apps/web/shared/services/resource/ResourceDefinitionMap.ts`               | the Dashboard opts into the Portable capability, export only                      |
 | `apps/web/app/services/resource/PortableFormatMap.ts`                      | the Dashboard's PNG entry, with no import                                         |
-| `apps/web/app/services/capture/captureFlowchart.ts`                        | the capture and rasterizer the page image reuses, moved to the shared folder      |
-| `apps/web/app/services/capture/createFlowchartSvg.ts`                      | copies computed styles and embeds font faces, moved with the capture              |
-| `apps/web/app/services/capture/rasterizeFlowchartSvg.ts`                   | rasterizes the SVG at two times the pixel ratio, moved with the capture           |
+| `apps/web/app/services/capture/captureFlowchart.ts`                        | the capture and rasterizer the page image reuses, in the shared folder            |
+| `apps/web/app/services/capture/createFlowchartSvg.ts`                      | copies computed styles and embeds font faces                                      |
+| `apps/web/app/services/capture/rasterizeFlowchartSvg.ts`                   | rasterizes the SVG at two times the pixel ratio                                   |
 | `apps/web/app/services/dashboard/export/exportDashboardPng.ts`             | captures the dashboard grid and downloads it as a PNG                             |
 | `apps/web/app/services/dashboard/export/exportDashboardVisualCsv.ts`       | the drawn rows of one visual, as a CSV file                                       |
 | `apps/web/app/services/dashboard/export/createDrawnDataset.ts`             | the drawn values of one visual, as the dataset its CSV is written from            |
@@ -57,7 +57,7 @@ flowchart LR
 | `apps/web/app/components/Resource/Dashboard/View.vue`                      | the published renderer that hosts the page export                                 |
 | `apps/web/server/services/dashboard/projectDatasetToQuery.ts`              | the publish projection that decides which columns the snapshot holds              |
 
-Three files are new, all under `apps/web/app/services/dashboard/export/`: `exportDashboardPng.ts`, `exportDashboardVisualCsv.ts` and `createDrawnDataset.ts`.
+Three files live under `apps/web/app/services/dashboard/export/`: `exportDashboardPng.ts`, `exportDashboardVisualCsv.ts` and `createDrawnDataset.ts`.
 
 ## Notes
 

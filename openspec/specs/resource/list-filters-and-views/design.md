@@ -31,7 +31,7 @@ The workbench is one component, `ResourceListView`, and every list route renders
 - **Context menu** on right-click, long press or the menu key (the [one context menu](../../architecture/context-menus/design.md)), the same command list as the row's overflow menu: Open in new tab, Copy link, Save as blueprint, Rename, Delete — the rename/delete dialogs are store-driven singletons (`useListDialogStore`). A plain **Open** command is deliberately absent, since clicking the row already does that.
 - **Export CSV**: serializes the current filtered result via `getResourcesCsv`, re-querying the same filter in page-sized chunks up to `MAX_CSV_EXPORT_ROWS` — never a single query with the full count as its limit; hitting the cap truncates the export with a warning notification. Bulk-selection export uses the selected rows.
 - **Refresh**, **Export CSV** and **Recycle bin** sit in the toolbar's overflow menu on every width; the two view toggles, the column chooser and the close ✕ stay out. Refresh re-runs `readResources` with the last options.
-- **Empty states**: filters active → "No resources match your filters" + Clear-filters action; otherwise the source's own empty state; a failed read with no rows → the error state with Try again, announced as an alert. Loading with no rows yet renders skeleton rows; a later read keeps the rows showing and marks the table busy.
+- **Empty states**: filters active → "No resources match your filters" + Clear-filters action; otherwise the source's own empty state; a failed read with no rows → the error state with Try again, announced as an alert. Loading with no rows renders skeleton rows; a later read keeps the rows showing and marks the table busy.
 
 ## Flow
 
@@ -74,7 +74,7 @@ flowchart LR
 ## Notes
 
 - Publish **status stays off the default columns** — it appears only as an opt-in filter pill.
-- One filter source: every filter lands in `getResourcesWhere` so `readResourcesCount` and `readResources` can never disagree. That includes a source's own preset, which is why Favorites and Recent get the pill row, the total and the summary cards without a line of their own.
+- A source's own preset also lands in `getResourcesWhere`, which is why Favorites and Recent get the pill row, the total and the summary cards without a line of their own.
 - The `Last accessed` column is sortable because the join that produces it is also the sort space: `readResources` selects the resource columns alongside `resourceAccesses.accessedAt` once and hands that same selection to `parseSortByToSql`, so a column the list can show is a column it can sort by.
 - All filters funnel through one key (a JSON of the filter state): a change to it sends the list back to page 1, and the list reads whenever that key, the page, its size or the order changes. That is also why every text filter — the search box and a tag pill's name and value — writes through `useDebouncedFilter` instead of per keystroke: a raw binding would reset to page 1 and re-run both queries on every character.
 - **The total is only ever written by a read.** A bulk delete drops its rows from the page optimistically, because those rows are what the user is looking at, but the count is the server's number over the whole filter — so the delete re-reads instead of nudging it. Nudging is wrong in both directions: a refresh landing mid-flight has already re-counted, so the adjustment is applied on top of a number that no longer needs it, and the rollback of a rejected delete then adds back rows the fresh count never included.

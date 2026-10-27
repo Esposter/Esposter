@@ -17,7 +17,7 @@ flowchart TD
   E["Published view: breakpoint columns, and no commit"] -.-> A
 ```
 
-**Breakpoints are published only.** The published view picks a column count from its width, 12 at 1200 pixels and above down to 2 below 480, and reflows its visuals with it. It draws the grid only once that width is known, so a first frame never picks the narrowest breakpoint. The editor always has the full 12 columns and saves what the user sets.
+**Breakpoints are published only.** The published view picks a column count from `DASHBOARD_BREAKPOINTS` by its width, from `DASHBOARD_NO_COLUMNS` at the widest breakpoint down to the fewest at the narrowest, and reflows its visuals with it. It draws the grid only once that width is known, so a first frame never picks the narrowest breakpoint. The editor always has the full `DASHBOARD_NO_COLUMNS` and saves what the user sets.
 
 ## Data model
 
@@ -25,7 +25,7 @@ A placed visual is a `LayoutItem` of four integers in grid cells: `x` and `y` fo
 
 ## Decisions
 
-- **The library is replaced, not patched.** `grid-layout-plus` carried the drag library, its layout shape and its own resize rules, and keeping it would keep the defects its [upstream verdicts](../../vue-grid-layout-headless/README.md) judge. The placement and gestures now live in the package, which the dashboard consumes like any other.
+- **The library is replaced, not patched.** `grid-layout-plus` carried the drag library, its layout shape and its own resize rules, and keeping it would keep the defects its [upstream verdicts](../../vue-grid-layout-headless/README.md) judge. The placement and gestures live in the package, which the dashboard consumes like any other.
 - **Resize has one corner handle.** A dashboard resizes from its bottom-right corner, so that is the one handle the editor draws. Per-edge handles were rejected for this component, since each edge's resize would need the placement logic on its own side. The grid package builds them once, for every consumer.
 - **The grid emits changes, not a whole layout.** Emitting a new layout array on each move, which a parent would copy back, was rejected. The commit carries only the changed visuals and fires once on release. The store applies it one visual at a time, and its autosave flushes once for the gesture rather than once per pointer move.
 - **Rendering compacts; it does not write back.** A saved layout can overlap: a new visual is placed at a fixed cell without checking its neighbours, so rendering a fitted layout can draw a visual above or below its saved row while the store keeps the saved cell. Writing the compacted layout back to the store on render was rejected: it would write on every open.
@@ -35,15 +35,15 @@ A placed visual is a `LayoutItem` of four integers in grid cells: `x` and `y` fo
 
 ## Key files
 
-| File                                                                | Role                                                                        |
-| :------------------------------------------------------------------ | :-------------------------------------------------------------------------- |
-| `apps/web/app/components/Dashboard/Grid.vue`                        | The dashboard's markup over the package: tiles, corner handle, placeholder  |
-| `apps/web/app/components/Dashboard/Editor/Content.vue`              | The editor binding: twelve columns, each changed visual of a commit stored  |
-| `apps/web/app/components/Dashboard/Index.vue`                       | The published view: breakpoint columns, nothing saved                       |
-| `apps/web/app/services/dashboard/constants.ts`                      | The dashboard's column counts, row heights, the grid margin and breakpoints |
-| `apps/web/app/services/dashboard/grid/getBreakpointColumnNumber.ts` | The column count a published view's width picks                             |
-| `apps/web/shared/models/dashboard/data/LayoutItem.ts`               | The placement schema: `x`, `y`, `w` and `h` as cells                        |
-| `apps/web/app/components/Resource/Dashboard/Editor.vue`             | The autosave that the store write feeds                                     |
+| File                                                                | Role                                                                                       |
+| :------------------------------------------------------------------ | :----------------------------------------------------------------------------------------- |
+| `apps/web/app/components/Dashboard/Grid.vue`                        | The dashboard's markup over the package: tiles, corner handle, placeholder                 |
+| `apps/web/app/components/Dashboard/Editor/Content.vue`              | The editor binding: `DASHBOARD_NO_COLUMNS` columns, each changed visual of a commit stored |
+| `apps/web/app/components/Dashboard/Index.vue`                       | The published view: breakpoint columns, nothing saved                                      |
+| `apps/web/app/services/dashboard/constants.ts`                      | The dashboard's column counts, row heights, the grid margin and breakpoints                |
+| `apps/web/app/services/dashboard/grid/getBreakpointColumnNumber.ts` | The column count a published view's width picks                                            |
+| `apps/web/shared/models/dashboard/data/LayoutItem.ts`               | The placement schema: `x`, `y`, `w` and `h` as cells                                       |
+| `apps/web/app/components/Resource/Dashboard/Editor.vue`             | The autosave that the store write feeds                                                    |
 
 The package the grid is built on is [grid layout](../../vue-grid-layout-headless/grid-layout/design.md).
 
