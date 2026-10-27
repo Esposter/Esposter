@@ -1,4 +1,4 @@
-import { REPOSITORY_ROOT } from "#src/services/shared/constants";
+import { REPOSITORY_ROOT, VUE_SCRIPT_BODY_REGEX } from "#src/services/shared/constants";
 import { readSweepFilePaths } from "#src/services/sweeps/readSweepFilePaths";
 import { checkIsInScope } from "#src/services/sweeps/unterminatedResults/checkIsInScope";
 import { getUnterminatedResults } from "#src/services/sweeps/unterminatedResults/getUnterminatedResults";
@@ -8,14 +8,13 @@ import { resolve } from "node:path";
 
 timeCommand("ai:sweep:unterminated-results");
 
-const SCRIPT_BODY_REGEX = /(?<=<script\b(?:[^>"']|"[^"]*"|'[^']*')*>)[\s\S]*?(?=<\/script\s*>)/gu;
 const NOT_LINE_BREAK_REGEX = /[^\n]/gu;
 // A `.vue` file is markup around its `<script>` bodies, which the TypeScript parser cannot read. Everything outside
-// a body is blanked and every line break kept, so a call's offset and line are still the file's own
+// A body is blanked and every line break kept, so a call's offset and line are still the file's own
 const maskOutsideScript = (text: string): string => {
   let masked = "";
   let cursor = 0;
-  for (const match of text.matchAll(SCRIPT_BODY_REGEX)) {
+  for (const match of text.matchAll(VUE_SCRIPT_BODY_REGEX)) {
     masked += text.slice(cursor, match.index).replaceAll(NOT_LINE_BREAK_REGEX, " ") + match[0];
     cursor = match.index + match[0].length;
   }

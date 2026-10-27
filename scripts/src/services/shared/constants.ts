@@ -48,6 +48,10 @@ export const EMPTY_TREE_SHA = "4b825dc642cb6eb9a060e54bf8d69288fbee4904";
 // The manifest every member and the root carry, which is how a workspace glob's children are told from a plain
 // Directory and how an npm-installed project is found beside its lockfile
 export const PACKAGE_JSON_FILENAME = "package.json";
+// The text between a `.vue` file's `<script>` tags, quoted attributes and all, which every scan and rename of a Vue file
+// Reads through: two readers that parse an attribute differently would disagree on which block a call sits in
+// oxlint-disable-next-line typescript/no-inferrable-types -- `isolatedDeclarations` demands the annotation this regex literal would otherwise infer
+export const VUE_SCRIPT_BODY_REGEX: RegExp = /(?<=<script\b(?:[^>"']|"[^"]*"|'[^']*')*>)[\s\S]*?(?=<\/script\s*>)/gu;
 
 export const LOCKFILE_PATH: string = join(REPOSITORY_ROOT, LOCKFILE);
 // Npm's lockfile, beside every manifest that is installed by `npm ci` rather than by the workspace — a Claude Code
