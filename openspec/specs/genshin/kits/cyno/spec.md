@@ -117,7 +117,7 @@ From Ascension 1, the burst SHALL add a Judication field that gives Endseer whil
 
 - **GIVEN** a Duststalker Bolt is fired
 - **WHEN** the bolt hits an enemy
-- **THEN** it deals the talent multiplier once, a provisional value until the game's ratio is confirmed
+- **THEN** it deals the talent multiplier once
 
 #### Scenario: Mortuary Rite's own hit under Endseer deals 35% more
 
