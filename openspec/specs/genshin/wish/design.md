@@ -109,6 +109,8 @@ Compared with the game over the reference clip `yt-uhCW3MZTgL8`, the FLIP bar of
 - [Beginners' Wish](https://genshin-impact.fandom.com/wiki/Beginners%27_Wish), Genshin Impact Wiki: its item pool, twenty wishes, eight Acquaint Fates for ten, no four-star or five-star weapons, and Noelle on the eighth wish.
 - [Controls](https://genshin-impact.fandom.com/wiki/Controls), Genshin Impact Wiki: the wish screen on F3.
 - `wish-ten.mkv` — a ten-wish on the English PC client at 1080p, from Wish ×10 to the summary dismissed. A published 1080p clip (`yt-uhCW3MZTgL8.mp4`) shows the event banner and single pulls' reveals only, so the ten-pull results grid is still owed. Found 2026-10-11: https://www.youtube.com/watch?v=gFmdG_0s5L0 at 0–76 s (`~/Esposter.noindex/genshin-parity/captures/yt-gFmdG_0s5L0-wish-ten.mp4`), the English PC client at 1080p and 60 frames a second in 2022: Wish ×10 pressed at about 16.5 s, the reveals, the results grid at about 44–50 s, Obtained at about 50–51 s and the banner back at about 51.3 s; a small channel mark sits at the bottom right. Its stills from 16 s for 36 are under `frames/yt-gFmdG_0s5L0-wish-ten@16/`.
+- a wiki banner page for a weapon event from the twenty-third of September to the thirteenth of October, grounding the scenario _An event banner page is read into its window and featured items_. The Open section's weapon event item says the banner page is not cached.
+- a banner page that names an item the names do not hold, one of the wiki's `Category:Wish` event banner pages that `buildWishSchedule` reads, grounding the scenario _A schedule naming an unknown item fails the build_.
 
 ## Open
 

@@ -236,10 +236,10 @@ An event banner SHALL be offered to the player only while the server's time is i
 
 #### Scenario: An event banner page is read into its window and featured items
 
-- **GIVEN** a wiki banner page for a weapon event from the twenty-third of September to the thirteenth of October
-- **WHEN** the page is read
+- **GIVEN** a weapon event banner from the twenty-third of September to the thirteenth of October
+- **WHEN** the banner is read
 - **THEN** its window runs from the twenty-third of September at eleven in the morning to the thirteenth of October at six in the evening, at the Asia server's offset
-- **AND** its featured items are the two five-stars and the five four-stars named on the page
+- **AND** its featured items are the two five-stars and the five four-stars the banner features
 
 ### Requirement: Two character event banners run side by side and share counters
 
@@ -312,7 +312,7 @@ A schedule build SHALL fail when a banner names an item that joins none of the n
 
 #### Scenario: A schedule naming an unknown item fails the build
 
-- **GIVEN** a banner page that names an item the names do not hold
+- **GIVEN** a banner that names an item the names do not hold
 - **WHEN** the schedule is built
 - **THEN** the build fails and names the item
 
