@@ -1,3 +1,4 @@
+// @vitest-environment nuxt
 import type { MockInstance } from "vitest";
 import type { SceneWithPlugins } from "vue-phaserjs";
 
