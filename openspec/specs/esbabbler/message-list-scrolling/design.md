@@ -11,12 +11,12 @@ A reader is in the present when **the newest loaded message is on screen** _and_
 
 The same sentinel is observed twice, because the two consumers want different edges: the affordance wants the screenful above, while the list's `overflow-anchor` class wants the strict bottom — it may only be disabled where the reader is genuinely pinned, and half a screen up it is the browser's own anchoring that holds their place as a message arrives. Both observers start pinned (`initialValue: true`), the answer that costs nothing when wrong for the first frame an observer has not yet reported — otherwise the affordance flashes over every room the reader opens.
 
-**A scroll offset cannot answer either half.** A scroll offset is only ever written by a scroll event, so a list that remounts (a room switch, the jump that leaves the permalink route) keeps reporting the torn-down list's offset until the reader scrolls the new one — the general rule is `.agents/skills/vue-composable-patterns/references/browser-observation.md`. That is what left the affordance on screen after a jump had already reached the present: the click navigated, the new list mounted at the origin, and the stale offset still said the reader was thousands of pixels back. An `IntersectionObserver` re-observes and reports as soon as its target changes, which is why the sentinel — not a threshold — is the instrument.
+**A scroll offset cannot answer either half.** A scroll offset is only ever written by a scroll event, so a list that remounts (a room switch, the jump that leaves the permalink route) keeps reporting the torn-down list's offset until the reader scrolls the new one — the general rule is `.agents/skills/vue-composable-patterns/references/browser-observation.md`. Read from a stale offset, the affordance would stay on screen after a jump had already reached the present: the new list mounts at the origin while the old offset still says the reader is thousands of pixels back. An `IntersectionObserver` re-observes and reports as soon as its target changes, which is why the sentinel — not a threshold — is the instrument.
 
 ```mermaid
 flowchart TD
-  SENTINEL["bottom sentinel — observed at the list's newest end"] --> PINNED{"newest message within one screen?"}
-  PINNED -->|"no — a screenful back"| SHOW["snackbar — You're Viewing Older Messages"]
+  SENTINEL["bottom sentinel<br/>observed at the list's newest end"] --> PINNED{"newest message within one screen?"}
+  PINNED -->|"no — a screenful back"| SHOW["snackbar<br/>You're Viewing Older Messages"]
   PINNED -->|"yes"| TAIL{"hasMoreNewer — newer messages unloaded?"}
   TAIL -->|"yes — a deep link opened an older window"| SHOW
   TAIL -->|"no"| HIDE["no affordance — the reader is in the present"]
@@ -55,5 +55,4 @@ A permalink lands through `useScrollToMessage`: if the room and the message are 
 
 ## Notes
 
-- Both halves of the predicate live in the store, so a new surface that needs "is the reader in the present" reads it rather than measuring a scroll offset of its own.
-- There is no tuned number here: the threshold is a viewport and everything else is observed state. Message age is deliberately not a signal — nobody's client uses it, and it would announce history constantly in a busy room and never in a quiet one.
+- Message age is deliberately not a signal — nobody's client uses it, and it would announce history constantly in a busy room and never in a quiet one.

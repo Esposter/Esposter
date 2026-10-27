@@ -1,6 +1,6 @@
 ## Purpose
 
-Room-shell polish — role-grouped member list, resizable sidebars, message density, empty states, one room header at every width, category drag-reorder. A cohesive pass over how the room looks and is arranged, with visual preferences kept on the device and category order kept for everyone.
+Room-shell polish — role-grouped member list, resizable sidebars, message density, empty states, one room header at every width, category drag-reorder. The room looks and is arranged as one cohesive surface, with visual preferences kept on the device and category order kept for everyone.
 
 ## Requirements
 

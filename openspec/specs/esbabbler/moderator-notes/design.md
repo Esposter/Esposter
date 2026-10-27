@@ -17,7 +17,7 @@ Room deletion cleans the partition the same way messages are cleaned.
 
 ## Data model
 
-Azure Table `AzureTable.ModerationNotes`: `partitionKey = roomId`, `rowKey = reverseTickedTimestamp`, fields `targetUserId`, `actorUserId`, and `note` (bounded by a max-length constant). There is no edit or delete.
+Azure Table `AzureTable.ModerationNotes`: `partitionKey = roomId`, `rowKey = reverseTickedTimestamp`, fields `targetUserId`, `actorUserId`, and `note` (bounded by `MODERATION_NOTE_MAX_LENGTH`, declared in `packages/db-schema/src/services/message/constants.ts`). There is no edit or delete.
 
 ## Procedures
 

@@ -1,6 +1,6 @@
 # Room UI
 
-One cohesive polish pass over the room shell, matching Discord's refinements. Visual preferences (sidebar widths, message density) are device-local `localStorage`, per the [settings](../settings/design.md) persistence rule; the one exception is category ordering, which is server-persisted through a dedicated `reorderRoomCategories` procedure.
+The room shell's polish, matching Discord's refinements. Visual preferences (sidebar widths, message density) are device-local `localStorage`, per the [settings](../settings/design.md) persistence rule; the one exception is category ordering, which is server-persisted through a dedicated `reorderRoomCategories` procedure.
 
 ## Role-grouped member list
 
@@ -27,17 +27,17 @@ flowchart TD
 
 Each room's re-read is one pair: the total and the per-role groups are read together and written only once both return, so a failed read leaves the last settled pair standing. A total is never written beside groups from another read, which keeps the roleless remainder from going negative on a mixed pair.
 
-On failure the batched refresh puts the room back as dirty and retries with exponential backoff, up to five retries in a row. After that the room waits for the next change to mark it, and that change's re-read is the retry. Until a read settles, the counts show the pre-change pair.
+On failure the batched refresh puts the room back as dirty and retries with exponential backoff, up to five retries in a row, the bound `MAX_RETRIES` declares in `apps/web/app/services/shared/createBatchedRefresh.ts`. After that the room waits for the next change to mark it, and that change's re-read is the retry. Until a read settles, the counts show the pre-change pair.
 
 Options rejected for a failed read:
 
 - **Reset the room's totals to zero.** Every group heading would read 0 beside the members listed under it, and the roleless group would show the whole room. The reset shows a count the room does not have, with nothing marking it as unknown.
 - **Reset the totals from a fresh read.** A failed read has no value to reset to, and a read that later succeeds is only the retry. A reset to a read the store has not seen settle can drop a change the settled pair already counted, and no event brings that change back.
-- **Retry without a bound.** A server that stays down would be read forever. The five retries and the next change bound it.
+- **Retry without a bound.** A server that stays down would be read forever. The retry bound and the next change bound it.
 
 The snapshot race is the case where a role event for a loaded member is committed before a re-read but delivered after it, so the change looks counted twice. A double count needs a delta, and no delta is ever applied to these totals ([client data](../../architecture/client-data/design.md)): the event's own re-read reads state at or after the commit, so the change is counted once. What remains is a window. While a re-read is in flight, the counts show the last settled read, and they are exact once the latest re-read settles, because the read ordering in [client data](../../architecture/client-data/design.md) makes that read reflect every change the client has been told of.
 
-Closing that window by numbering the server's member events, so a delta and a snapshot could be ordered, was rejected for size. It needs a server sequence on every join, leave and role event, a protocol change on each subscription that carries them, and an ordering across the subscriptions that feed the counts. That is more change than the window costs. The requirement that the counts stay exact is therefore weakened to what the design delivers: exact once the latest re-read settles.
+Closing that window by numbering the server's member events, so a delta and a snapshot could be ordered, was rejected for size. It needs a server sequence on every join, leave and role event, a protocol change on each subscription that carries them, and an ordering across the subscriptions that feed the counts. That is more change than the window costs.
 
 ## Resizable, persisted sidebars
 
@@ -57,7 +57,7 @@ The room header is the same component on a phone and on a desktop, and there is 
 
 ```mermaid
 flowchart LR
-  header["MessageContentHeader — every width"]
+  header["MessageContentHeader<br/>every width"]
   header --> rooms["Rooms toggle<br/>(only while the rooms are not docked)"]
   header --> name["Name, topic from sm up<br/>(the creator edits from it)"]
   header --> call["Call"]
@@ -66,7 +66,7 @@ flowchart LR
   header --> overflow["Room actions menu"]
   overflow --> threads["Followed Threads"] --> panel
   overflow --> pinned["Pinned Messages"] --> panel
-  overflow --> level["Notification level — radios"]
+  overflow --> level["Notification level<br/>radios"]
 ```
 
 Discord keeps a bell of its own in the header; folding it into the menu is the one mark fewer that lets the header fit a phone. The rule the header follows — one presentation per surface, promoted to a device-specific one only by the test in [Responsive layout](../../architecture/responsive/design.md) — is the architecture page's.
@@ -98,5 +98,4 @@ Room categories in the left sidebar reorder by dragging their headers by the UI 
 
 ## Notes
 
-- Member-list search does not exist yet, so it has no empty state — if a search field lands it should reuse `UiEmptyState`.
 - Room drag-reorder (rooms within/between categories) is out of scope — only categories reorder.

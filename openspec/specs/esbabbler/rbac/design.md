@@ -9,7 +9,7 @@ Each room has roles (`roomRoles`) carrying a `permissions` **bigint bitfield** o
 ```mermaid
 flowchart TD
     P["Procedure built with getPermissionsProcedure(permission, schema, roomIdKey)"] --> O{"Caller is room owner?<br/>(rooms.userId)"}
-    O -->|yes| Allow[Allowed — owner bypasses everything]
+    O -->|yes| Allow["Allowed<br/>owner bypasses everything"]
     O -->|no| Q["OR over roomRoles.permissions<br/>of @everyone + assigned roles"]
     Q --> A{"Administrator bit set?"}
     A -->|yes| Allow
@@ -38,7 +38,7 @@ A bitfield bounds **permissions**, never roles. A role is a `roomRoles` row and 
 
 This is the same shape Discord uses, and for the same reason: a room is a **flat scope over a fixed vocabulary**, so a permission check is one aggregate and one `AND` rather than a join per action name. Azure's RBAC solves a different problem — role definitions listing action strings (`Microsoft.Storage/*/read`) evaluated against a scope tree — which is what an open-ended, hierarchical resource surface needs and what a room does not have. Adopting it here would buy a wildcard syntax nobody would write and pay for it in a string match per check.
 
-The one real limit is width: `permissions` is a signed 64-bit `bigint`, so bit 62 is the highest a stored value can carry. The number to watch is how many permissions the vocabulary has, not how many roles a room has. If the vocabulary ever exhausts them, the escape hatch is the storage, not the model: the column becomes arbitrary-precision (`numeric`) and the wire format a decimal string, which is exactly the step Discord took when 64 bits stopped being enough. Nothing about the roles, the grants or the checks changes with it.
+The one real limit is width: `permissions` is a signed 64-bit `bigint`, so bit 62 is the highest a stored value can carry. The number to watch is how many permissions the vocabulary has, not how many roles a room has. If the vocabulary ever exhausts them, the escape hatch is the storage, not the model: the column becomes arbitrary-precision (`numeric`) and the wire format a decimal string. Nothing about the roles, the grants or the checks changes with it.
 
 ## Data model
 
@@ -86,4 +86,4 @@ tRPC procedure builders in `server/trpc/procedure/room/`:
 ## Notes
 
 - `readMemberRoles` is deliberately a separate procedure from `readMembers` (called in parallel from `useReadMembers`) rather than a join.
-- Default `@everyone` permissions: `ReadMessages | SendMessages | MentionEveryone | ManageInvites`.
+- Default `@everyone` permissions, the set `createRoom` seeds in `apps/web/server/trpc/routers/room/index.ts`: `ReadMessages | SendMessages | MentionEveryone | ManageInvites`.

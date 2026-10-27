@@ -14,7 +14,7 @@ There is exactly one rule, and `getFilterTypeFromSearchQuery` is the only place 
 flowchart TD
   Type["User types in the field"] --> Update["the field's text changes"]
   Update --> Rule{"getFilterTypeFromSearchQuery<br/>keyword + colon?"}
-  Rule -- "names a FilterType" --> Create["createFilter — push a pending chip, clear the query"]
+  Rule -- "names a FilterType" --> Create["createFilter<br/>push a pending chip, clear the query"]
   Rule -- "anything else" --> Text["searchQuery = the text, verbatim"]
   Create --> Picker["picker panel for the chip's type"]
   Text --> Wait["Nothing happens until Enter"]
