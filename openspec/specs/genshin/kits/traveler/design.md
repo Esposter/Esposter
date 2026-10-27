@@ -20,3 +20,4 @@ The Traveler's kit is her record, with `createTravelerKitBehaviour` adding to it
 - [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/traveler/common/anemo), MIT: the Traveler's anemo attack, skill and burst frames, and the multipliers of its [stats file](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/traveler/common/anemo/stats.go).
 - [gcsim v2.47.2 pyro plunge file](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/traveler/common/pyro/plunge.go), MIT: the plunges' frames.
 - [Foreign Ironwind](https://genshin-impact.fandom.com/wiki/Foreign_Ironwind) and [Gust Surge](https://genshin-impact.fandom.com/wiki/Gust_Surge), Genshin Impact Wiki: the poise of her strikes, charged attack, plunges, plunge collision and burst, the plunges' 100 for the low plunge and 150 for the high.
+- **The Traveler's poise** (requirement): her burst carries the wiki's 13 poise.

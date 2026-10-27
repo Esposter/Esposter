@@ -46,7 +46,7 @@ The Traveler's skill SHALL have a 5-second cooldown and one charge, and her burs
 
 ### Requirement: The Traveler's poise
 
-The Traveler's skill SHALL deal no poise damage, her burst SHALL carry the wiki's 13 poise, and her strikes, charged attack and plunge collision SHALL carry provisional poise.
+The Traveler's skill SHALL deal no poise damage, her burst SHALL carry 13 poise, and her strikes, charged attack and plunge collision SHALL carry provisional poise.
 
 #### Scenario: Skill carries no poise
 
