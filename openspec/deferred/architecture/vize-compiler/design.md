@@ -1,6 +1,6 @@
 # Vize compiler
 
-Vize compiles Vue single-file components in Rust, and its packages are marked as a compatibility preview. Its Nuxt module and its Vite plugin were tried in place of the Vue plugins the repo uses today. Both attempts failed on the repo's own setup, so the Vue plugins stay.
+Vize compiles Vue single-file components in Rust. Its Nuxt module was tried in the app in place of `@vitejs/plugin-vue` and failed on the repo's own setup, so it was taken back out. Its Vite plugin was assessed from its published code but never run in the repo, so the library builds and Vitest keep `unplugin-vue`.
 
 ## Blockers
 
@@ -10,7 +10,7 @@ With the Nuxt module installed, the home page answered every request with `NUXT_
 
 ### The Nuxt module's peer range stops short of Nuxt 5
 
-The module declares a peer range for Nuxt 2, 3 and 4 only. The repo runs the Nuxt 5 nightly, so every install warns about an unmet peer. The module loads anyway, but no range it declares covers the Nuxt in use.
+The module's peer range is Nuxt 2 through 4. The repo runs the Nuxt 5 nightly, which that range does not cover.
 
 ### Nuxt's builder keeps the Vue plugin installed
 
@@ -38,5 +38,4 @@ Each blocker has a fix that the repo's own setup passes: the Nuxt module renders
 
 ## Sources
 
-- [Vize repository](https://github.com/ubugeeei-prod/vize) — the package set and its compatibility-preview stability tier.
-- [Nuxt error E1006](https://nuxt.com/docs/4.x/errors/e1006) — the `onPrehydrate` build-pipeline error the Nuxt module produced.
+- [Vize repository](https://github.com/ubugeeei-prod/vize) — the repository of `@vizejs/nuxt`, from its npm metadata, which gives the peer range the blockers cite.
