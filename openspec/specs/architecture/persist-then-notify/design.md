@@ -8,12 +8,12 @@ The phase that gets skipped in practice is the third. A write that lands but who
 
 ```mermaid
 flowchart TD
-  G["Guards — membership, RBAC, rate limit, moderation"] -->|throws| F["Caller sees the error, nothing happened"]
+  G["Guards<br/>membership, RBAC, rate limit, moderation"] -->|throws| F["Caller sees the error, nothing happened"]
   G --> C["Controls that gate the next attempt<br/>advance here, before the write"]
   C --> P["Primary write — the entity the mutation is named for"]
   P -->|throws| F
   P --> E["Notify — EventEmitter emit, Web PubSub broadcast"]
-  E --> S["Secondary effects — counters, activity log, achievements, push publish, archive"]
+  E --> S["Secondary effects<br/>counters, activity log, achievements, push publish, archive"]
   S -->|logged, never rethrown| R["Caller sees success — the entity is real"]
   E --> R
 ```

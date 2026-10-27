@@ -8,7 +8,7 @@ The publisher states **what happened and who it concerns**. Everything about how
 
 ```mermaid
 flowchart TD
-  SRC["Any mutation — message, friend request, reminder, resource operation"] --> PUB["publishNotification<br/>one typed event, one topic"]
+  SRC["Any mutation<br/>message, friend request, reminder, resource operation"] --> PUB["publishNotification<br/>one typed event, one topic"]
   PUB --> FN["ProcessNotification<br/>one Azure Function"]
   FN --> RES["resolveNotification<br/>copy, deep link, recipient user ids"]
   RES --> POL{"AppNotificationTypeChannelMap[type]"}

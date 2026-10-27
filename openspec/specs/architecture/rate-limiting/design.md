@@ -23,7 +23,7 @@ The webhook and asset limiters sit outside that map deliberately, because neithe
 
 ```mermaid
 flowchart TD
-  call["$trpc call"] --> builder["standardAuthedProcedure — slowAuthedProcedure — standardRateLimitedProcedure"]
+  call["$trpc call"] --> builder["Procedure builder<br/>one of three, set by its budget"]
   builder -->|"getAuthedMiddleware pipes getRateLimitedMiddleware before the session check"| middleware["getRateLimitedMiddleware(type)"]
   middleware -->|"RateLimiterMap[type].consume(key)"| procedureLimiter["standardRateLimiter or slowRateLimiter"]
   webhookRoute["POST /api/webhooks/{id}/{token}"] -->|"consume(webhook id)"| webhookLimiter["webhookRateLimiter"]
@@ -51,7 +51,7 @@ Three procedure builders sit on top: `standardRateLimitedProcedure` (public, sta
 ## Notes
 
 - better-auth's own endpoints are budgeted to match: `server/auth.ts` sets its `rateLimit.max` and `rateLimit.window` from `standardRateLimiter.points` and `standardRateLimiter.duration`, so the numbers stay in one place even though better-auth keeps its own counters.
-- `nuxt-security-module` ships a rate limiter and it is explicitly turned off (`rateLimiter: false`) — see [security posture](../security-posture/design.md). This page describes the only rate limiting the app performs.
+- `nuxt-security-module` ships a rate limiter and it is explicitly turned off (`rateLimiter: false`) — see [security posture](../security-posture/design.md).
 
 ## Key files
 

@@ -9,13 +9,13 @@ flowchart TD
   Night[Nightly at 15:16 UTC] --> Check{check: an unfinished latest tag, or release commits?}
   Check -- unfinished tag --> Finish
   Check -- no commits --> Skip[Skipped: every later job]
-  Check -- release commits --> Release[release: pnpm release on main, gates, version, tag, push, npm publish]
-  Release -- failure --> Held[No finish: the tag may exist without a release, and the next night's check finishes it]
+  Check -- release commits --> Release[release: pnpm release on main]
+  Release -- failure --> Held[No finish, and the next night's check finishes it]
   Release -- success --> Main[Push to main, MergeMain merges it back into ai/queue]
   Release --> Finish
   Push[Tag pushed, or dispatched by name] --> Recover[RecoverRelease: the tag]
   Recover --> Finish
-  Finish[FinishRelease: publish the versions npm lacks, draft, host, public last]
+  Finish[FinishRelease]
 ```
 
 ## Workflows
@@ -39,7 +39,7 @@ flowchart TD
 
 - The first publish of a new package is manual, because trusted publishing needs the package to exist on npm first. [Monorepo tooling](../monorepo-tooling/design.md) gives the command. A package that exists but has no trusted publisher configured on npm fails `packages` with a 404 for the whole tag, so the finish stops before the draft.
 - **Open: which workflow npm matches for a trusted publish from a reusable job.** The trust is registered as `Release.yaml` (`npm trust github … --file Release.yaml`), and `FinishRelease.yaml`'s `packages` publishes under it when the nightly calls it. When `RecoverRelease.yaml` is the top-level caller, the job's OIDC token may name `RecoverRelease.yaml` rather than `Release.yaml`, and npm may then reject the publish with a 401 or 404 for a tag whose versions are not yet on npm. Repository files cannot settle whether npm matches the top-level caller or the reusable job's workflow ref. Confirm it on npm, either by a manual trust registration for `RecoverRelease.yaml` or by a recovery run against a version still unpublished; until then a hand-pushed tag whose versions are missing is finished by hand.
-- A finish does not run `pnpm release` or bump versions again: `forcePublish` versions every member, so a finish publishes only what npm lacks.
+- A finish does not run `pnpm release` or bump versions again: `forcePublish` versions every member.
 - The nightly's own tag push also starts `RecoverRelease.yaml`. That run queues behind the nightly and mostly does nothing: its `packages` finds every version on npm and its `draft` finds the release already published. It costs a few runner minutes a night, and it is the price of one run that finishes every tag however it was pushed.
 
 ## Key files

@@ -56,7 +56,7 @@ An immersive page never scrolls the window at all: its layout hides the document
 
 ## Notes
 
-- **`/messages` has nothing to show of its own.** It opens the reader's last room, or with none the friends page, as Discord's home is its friends list — so the room list is always the left drawer, never a page, and no page in the app has a surface to paint.
+- **`/messages` has nothing to show of its own.** It opens the reader's last room, or with none the friends page, as Discord's home is its friends list — so the room list is always the left drawer, never a page.
 
 ## Key files
 
