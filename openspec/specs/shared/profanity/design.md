@@ -85,5 +85,5 @@ The API is one function, `checkContainsProfanity(text, { isWholeWord })`. It is 
 
 ## Sources
 
-- [the upstream repository](https://github.com/2Toad/Profanity) — the upstream repository, its tests and its issue tracker.
+- [2Toad/Profanity](https://github.com/2Toad/Profanity) — the upstream repository, its tests and its issue tracker.
 - `packages/shared/src/services/profanity/NOTICE` — the MIT notice for the copied word list.

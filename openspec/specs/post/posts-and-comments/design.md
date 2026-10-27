@@ -71,5 +71,3 @@ Paths relative to `apps/web`; `packages/` ones to the repo root.
 | `app/components/Post/Comment/Branch.vue`               | one node's replies — the recursion                                   |
 | `app/store/post/comment/index.ts`                      | the branch-keyed comment map, the thread's sort and expanded replies |
 | `app/composables/post/usePagedPostRead.ts`             | the paging each branch's replies are read with                       |
-
-## Notes
