@@ -2,6 +2,15 @@
 
 Yelan's kit is its record and one behaviour module, `createYelanKitBehaviour`, on avatar 10000060: four strikes, a fully charged shot with its arrow, a collision and two plunges (`~/Esposter/cache/genshin-wiki/Category_Yelan_Talents.json`), Lingering Lifeline's hit, and Depth-Clarion Dice's field, which waves an Exquisite Throw each second and throws one on each Lingering Lifeline hit while it stands. Her multipliers are read from proud skill groups 6031, 6032 and 6039 (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`), and the Lifeline's cooldown, and the burst's cooldown and energy cost, from the same groups (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/yelan/skill.go` line 151, `~/Esposter/cache/gcsim-v2.47.2/internal/characters/yelan/burst.go` line 76, and the 70 at group 6039 index 4, `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`); each hit's share of her Max HP is priced as flat damage on the caster's Max HP. Breakthrough Barb, the 34% roll each Lifeline hit takes for it (group 6032 index 1), is not built, and her Constellations 4 and 6 are not built (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/yelan/skill.go` lines 86 and 131, `~/Esposter/cache/gcsim-v2.47.2/internal/characters/yelan/burst.go` lines 69 to 71). Constellation 2 is built as each volley's hit on the primary enemy, 14% of her Max HP 17 frames after the volley and at most once each 1.8 seconds, as gcsim (MIT) `~/Esposter/cache/gcsim-v2.47.2/internal/characters/yelan/burst.go` gives it (lines 120 to 136, the 17 frames at line 21). Her Ascension 1 passive is built: it raises Max HP by 6% for each Elemental Type the team holds, herself included, and 30% with four, not 24%, as gcsim v2.47.2 `~/Esposter/cache/gcsim-v2.47.2/internal/characters/yelan/asc.go` gives it (lines 10 and 22 to 25), and `getBuffedCombatant` prices it into the Max HP that Lingering Lifeline's share reads. Her Ascension 4 passive is built. Her strikes take the wiki's poise, 7.56 to 18 a hit, and her plunges the wiki's 100 high and 50 low (`~/Esposter/cache/genshin-wiki/Category_Yelan_Talents.json`, Stealthy Bowshot); the plunges' seconds and the wave's phase are provisional, as gcsim's Yelan directory has no plunge file.
 
+```mermaid
+flowchart TD
+    A["Depth-Clarion Dice field"] -->|"each second, one Exquisite Throw"| B["Exquisite Throw"]
+    C["Lingering Lifeline hit"] -->|"while the field stands, one Exquisite Throw"| B
+    B -->|"Constellation 2, 17 frames after the volley"| D{"Within 1.8 seconds of the last hit?"}
+    D -->|"yes"| E["No hit"]
+    D -->|"no"| F["Hit on the primary enemy"]
+```
+
 ## Decisions
 
 - **Depth-Clarion Dice's first wave comes a second after the initial hit, and its throws land 20, 26 and 32 frames after their wave.** `packages/genshin-world/src/services/kit/characters/yelanKit.ts` starts the wave a second after the hit, as gcsim's ticker does (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/yelan/yelan.go` lines 61 to 63, a 60-frame ticker, and `~/Esposter/cache/gcsim-v2.47.2/internal/characters/yelan/burst.go` lines 87 to 89).

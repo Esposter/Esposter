@@ -109,5 +109,3 @@ Resonant Waves, Chrysos, Bounty of Dominator, Petrification and the hold's Geo d
 
 - **WHEN** the Jade Shield absorbs a strike
 - **THEN** no Resonant Waves or Chrysos effect follows
-
-## Open

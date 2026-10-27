@@ -6,7 +6,7 @@ Zibai's kit as built: her four strikes, charged attack, plunges and burst's two 
 
 ### Requirement: Borrowed strike and burst timing
 
-Zibai's four strikes, charged attack, plunges and burst's two hits SHALL land with the timing and reach of Keqing's, provisionally.
+Zibai's four strikes, charged attack and burst's two hits SHALL land with the timing and reach of Keqing's, and her plunges with Bennett's, provisionally.
 
 #### Scenario: Strikes land on Keqing's timing
 
