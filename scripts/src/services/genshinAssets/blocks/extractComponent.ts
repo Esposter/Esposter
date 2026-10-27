@@ -48,8 +48,8 @@ export const extractComponent = async (component: DerivedAssetComponent): Promis
   // A landmark's mesh is exported by its name too, so `pose` finds it where no pointer reaches it
   const landmarkMeshes = Object.values(DerivedAssetLandmarkMap[component]).map(({ mesh }) => mesh);
   const landmarkPattern = landmarkMeshes.length > 0 ? `^(${landmarkMeshes.join("|")})$` : "";
-  const namePattern = [options.namePattern || "", landmarkPattern]
-    .filter((pattern) => pattern !== "")
+  const namePattern = [options.namePattern, landmarkPattern]
+    .filter(Boolean)
     .map((pattern) => `(?:${pattern})`)
     .join("|");
   const directory = getComponentDirectory(component);
