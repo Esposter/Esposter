@@ -74,7 +74,7 @@ Every step treats an already-gone target as done. A 404 from a blob delete count
 
 **Resources go through the purge that exists.** `purgeResource` already deletes a resource's directory, partitions and ledger rows in a safe order, so each owned resource is passed to it.
 
-**The `accounts` foreign key cascades.** It blocked the user row's deletion, so it cascades in the schema. The deletion then declares what it removes, and no step deletes accounts by hand.
+**The `accounts` foreign key cascades.** It cascades in the schema, because a non-cascading key would block the user row's deletion. The deletion then declares what it removes, and no step deletes accounts by hand.
 
 **Shared character-pack files stay.** They are keyed by content hash and shared across accounts, and nothing counts their references, so removing one could break another account. The user's staging prefix is removed, and the shared files are not under it.
 

@@ -6,12 +6,12 @@ The account surface: signing in at `/login` (Google, GitHub, or Facebook — see
 
 - **Login** — a provider-button card (`LoginButton` per provider) driving better-auth's social sign-in; the `guest` middleware keeps signed-in users out.
 - **Settings** — an introduction card plus a sidebar of sections: Profile, Linked Accounts, Sessions, API Keys, and Delete account, each highlighted as it scrolls into view ([section navigation](../architecture/section-navigation/design.md)). Name and biography save through `user.updateUser` (biography length enforced by the users schema).
-- **Profile image** — the standard [two-step SAS upload](../architecture/file-uploads/design.md): `user.generateProfileImageUploadUrl` returns a one-hour write SAS for the fixed blob `${userId}/ProfileImage` in the public user-assets container, the client PUTs the image, and the stable public URL is saved on the user.
+- **Profile image** — the standard [two-step SAS upload](../architecture/file-uploads/design.md): `user.generateProfileImageUploadUrl` returns a write SAS whose lifetime `WRITE_SAS_DURATION_MS` sets for the fixed blob `${userId}/ProfileImage` in the public user-assets container, the client PUTs the image, and the stable public URL is saved on the user.
 - **Account linking** — one account can hold several social providers, listed and managed at `/user/settings`. See [account linking](account-linking/design.md).
 - **Public profile** — every user has a public page at `/user/[id]` showing their identity, achievement showcase, and posts. See [public profile](public-profile/design.md).
 - **Sessions** — every active session listed at `/user/settings`, revocable one at a time or all but the current one, with push subscriptions and live connections going with the session. See [session and device management](session-device-management/design.md).
 - **Account deletion** — the Delete account card signs the person out everywhere and starts a sweep that removes the account and the content it owns, with the user row last. See [account deletion](account-deletion/design.md).
-- **Data export** — the Download my data card builds a zip of every row attributable to the person, served through a read-only link for seven days. See [data export](data-export/design.md).
+- **Data export** — the Download my data card builds a zip of every row attributable to the person, served through a short-lived read-only link, and kept for seven days. See [data export](data-export/design.md).
 - Message-scoped user state (presence/status, voice settings, per-room personas) is esbabbler's, not this page's — see [profiles and presence](../esbabbler/profiles-and-presence/design.md) and [settings](../esbabbler/settings/design.md).
 
 ## Procedures

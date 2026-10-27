@@ -12,7 +12,7 @@ flowchart TD
   POST --> GUARD["updatePost, deletePost — ownedBy plus a parentId IS NULL check"]
   COMMENT --> GUARDC["updateComment, deleteComment — ownedBy plus a parentId IS NOT NULL check"]
   GUARD --> CASCADE["deleting a post cascades to its comments"]
-  POST --> SHARED["one table, so likes, ranking and profanity filtering reach both"]
+  POST --> SHARED["shared posts table"]
   COMMENT --> SHARED
 ```
 
@@ -30,12 +30,12 @@ The two guards are why a post procedure cannot touch a comment and vice versa, e
 
 **Reading** — the post page takes the feed's width: the post's card with its title as the page heading, the comment editor for a signed-in session, then the thread, or an empty state for zero comments. The author's edit and delete sit in each card's overflow menu, which a right-click or long press on the card opens too; deleting asks first in the library's confirm dialog, over a preview of what goes.
 
-**The tree** — every node is a branch that pages independently through the same `readPosts` procedure with its own `parentId`, keyed in the store by the comment whose replies it holds. The route's own post is simply the branch keyed by its id, so the page and a reply ten levels down mount the same component and run the same read. A branch is collapsed until asked for: expanding one is what reads it, and re-expanding costs nothing because the rows outlive the component that read them. Every branch of a thread reads under one comment sort, which [comment sort](../comment-sort/design.md) owns. Each level of replies sits under a line running down from its parent's picture, as Reddit draws a thread, so which comment a reply answers stays visible. Depth counts levels below the comment the **route** names rather than the stored `depth`, so a rerooted thread opens at zero rather than already clamped. Past the clamp a node offers to continue the thread on its own page, which needs no route of its own: a comment is a post, so `/post/[id]` on its id renders it as a root with one level of context instead of ten.
+**The tree** — every node is a branch that pages independently through the same `readPosts` procedure with its own `parentId`, keyed in the store by the comment whose replies it holds. The route's own post is simply the branch keyed by its id, so the page and a reply ten levels down mount the same component and run the same read. A branch is collapsed until asked for: expanding one is what reads it, and re-expanding costs nothing because the rows outlive the component that read them. Every branch of a thread reads under one comment sort, which [comment sort](../comment-sort/design.md) owns. Each level of replies sits under a line running down from its parent's picture, as Reddit draws a thread, so which comment a reply answers stays visible. Depth counts levels below the comment the **route** names rather than the stored `depth`, so a rerooted thread opens at zero rather than already clamped. Past the clamp a node offers to continue the thread on its own page, which needs no route of its own: a comment is a post, so `/post/[id]` on its id renders it as a root with one level of context.
 
 ```mermaid
 flowchart TD
   ROUTE["/post/[id]"] -->|"readPosts — parentId is the route id"| BRANCH["a branch — one node's replies, keyed by that node"]
-  BRANCH --> CARD["a card per reply, one level below its parent, under its thread line"]
+  BRANCH --> CARD["reply card"]
   CARD -->|"expand — the read is the expansion"| BRANCH
   CARD -->|"scroll — the waypoint on that branch"| BRANCH
   CARD -->|"past the clamp — continue this thread"| ROUTE
@@ -73,5 +73,3 @@ Paths relative to `apps/web`; `packages/` ones to the repo root.
 | `app/composables/post/usePagedPostRead.ts`             | the paging each branch's replies are read with                       |
 
 ## Notes
-
-- Comments have no title by design; the shared table means any future post feature (likes, achievements, profanity filtering) applies to comments for free.

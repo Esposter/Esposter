@@ -10,7 +10,7 @@ The stores this reads are the ones in the [user data inventory](../../architectu
 
 **The archive is one blob per request, named `{exportId}.zip`.** A retry of the same request overwrites its own blob, so a replayed handler cannot leave two archives. The row's status is the only pointer, and it moves to ready only after the upload commits.
 
-**Links are short-lived and owner-only.** The download is a read-only SAS valid for fifteen minutes, minted on request for the owner of a ready, unexpired export. The archive itself is private, so a link is the only way in.
+**Links are short-lived and owner-only.** The download is a read-only SAS valid for fifteen minutes (`DATA_EXPORT_LINK_DURATION_MS`), minted on request for the owner of a ready, unexpired export. The archive itself is private, so a link is the only way in.
 
 **Expiry is enforced twice.** The row carries an expiry seven days after it is ready, and the private container's lifecycle rule deletes the blob after the same period. A link is refused once the row has expired, even if the blob still exists.
 

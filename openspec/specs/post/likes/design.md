@@ -14,7 +14,7 @@ flowchart TD
   updateLike --> txn
   deleteLike --> txn["one transaction — the likes row, likeCount, and the recomputed ranking"]
   txn --> row[("posts row")]
-  txn --> patch["useLikeStore patches viewerLike on each copy, then usePostCountStore re-reads"]
+  txn --> patch["useLikeStore<br/>then usePostCountStore"]
   row -->|"getViewerPostRelations — the caller's own like row, never the list"| viewer["every read carries viewerLike"]
   viewer --> arrows
 ```

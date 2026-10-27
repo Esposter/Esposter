@@ -35,7 +35,7 @@ flowchart LR
 
 ## Notes
 
-- A sort change clears the slices rather than re-sorting them in place: a cursor from one order is meaningless under another, so the only correct page one is a fresh read.
+- A cursor from one order is meaningless under another, so the only correct page one is a fresh read.
 
 ## Key files
 

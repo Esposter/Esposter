@@ -56,5 +56,5 @@ Paths relative to `apps/web`.
 
 ## Notes
 
-- Top is all-time (no time windows) — casual scale doesn't need "top this week" partitioning yet; revisit if the feed ages badly.
+- Casual scale doesn't need "top this week" partitioning yet; revisit if the feed ages badly.
 - Every post ships at most the viewer's own like row (`viewerLike`) — see [likes](../likes/design.md) for the viewer-scoped read contract.
