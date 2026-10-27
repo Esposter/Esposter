@@ -39,6 +39,7 @@ The fleet reads every page here except this one, and an id that two pages share 
 
 The bars the region passes and the area pages' pass items share, each gate named by its constant.
 
+- **Approval**: a whole-frame reference with no approval recorded is approved when its mean difference is under 1% (`DEFAULT_APPROVAL`, `APPROVAL_MEAN_DIFFERENCE_BAR`); a reference that records its own keeps that bar.
 - **Layout**: each family's part within 0.02 m (`PART_GATE_METRES`) and its pixel gap within 2 px (`FRAME_GATE_PIXELS`).
 - **Surface**: each family's mean colour within 2.3 DeltaE (`COLOUR_GATE`) and its structure within the outline gate. A surface pass reads the exports' albedo at the reference's camera and its kit colours from the region's palette.
 - **Shape**: outline within 1 px (`SHAPE_OUTLINE_GATE_PIXELS`), depth within 0.01 (`SHAPE_DEPTH_GATE`), normals within 10 degrees (`SHAPE_NORMAL_GATE_DEGREES`).
