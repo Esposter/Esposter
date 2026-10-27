@@ -40,6 +40,7 @@ Each task names the test it writes first, where a unit test earns its line. The 
 ## 7. Ship
 
 - [ ] Manual verification: the owner checks the band line, the pane, and `/sins on` without a key in a live terminal session. Owner's eyes, not a browser.
+- [ ] The evidence table left by the first version on `main`: decide whether its rows are converted into the answers shape or discarded (design, "The evidence log"), then make the script do it in the same change. Until then a machine that ran the first version reads every scored prompt as `failed`.
 - [x] `packages/genshin-mods/README.md`: the command row.
 - [ ] `packages/genshin-mods/README.md` Decisions and the shipped genshin-mods spec's README: the bullet rewritten to name the sins mod as the exception, with the old direction named as rejected. Done at archive, with the shipped spec.
 - [ ] The typed-decisions design's Notes: the sins script named as a second consumer of Jev. Done at archive.

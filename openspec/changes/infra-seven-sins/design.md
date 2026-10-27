@@ -139,6 +139,8 @@ One node:sqlite database, `${home}/.claude/genshin-mods/sins.sqlite`, written on
 
 Two sessions on one machine can write the log at once. The script sets a five-second busy timeout on every open, because without it a second writer fails at once with "database is locked" and loses its prompt's evidence. The timeout must be on every writer: a writer without it also fails its own commit while another connection reads.
 
+The table's shape changed after its first version reached `main` (`648353f4a7` wrote one row per sin, with `sin`, `score` and `confidence` columns, all `NOT NULL`). `CREATE TABLE IF NOT EXISTS` leaves that table as it is, so on a machine that ran the first version this shape's `INSERT` fails and every scored prompt there reads `failed`. The script neither migrates nor drops the old table. Converting its rows into this shape (one row per session and `recorded_at`) or discarding them as pre-release evidence is the owner's call, and it is open until the change ships.
+
 The log is what a later change would replay under a different half-life. The scores the person sees do not read from it.
 
 ### The drawn history
