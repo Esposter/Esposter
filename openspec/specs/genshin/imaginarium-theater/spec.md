@@ -6,7 +6,7 @@ The Imaginarium Theater's rules as built, read from the game's role combat table
 
 ### Requirement: The Theater plays the latest season that has begun
 
-The Imaginarium Theater SHALL play the latest season that began before the current moment, read in the game's time zone, and SHALL hold the last begun season after the schedule's last season ends.
+The Imaginarium Theater SHALL play the latest season that began before the current moment, read in the game's time zone.
 
 #### Scenario: A season scheduled for later is not played
 
@@ -14,21 +14,25 @@ The Imaginarium Theater SHALL play the latest season that began before the curre
 - **WHEN** the current moment is read
 - **THEN** that season is not played
 
-#### Scenario: The last begun season is held after the schedule ends
-
-- **GIVEN** every season in the schedule has ended
-- **WHEN** the Theater's season is read months later
-- **THEN** the last begun season is played
-
 #### Scenario: Seasons listed out of order still resolve by their start
 
 - **GIVEN** the schedule lists its seasons out of order
 - **WHEN** the season played is found
 - **THEN** the season that began latest before now is played
 
-### Requirement: Each season's difficulties are ordered by level and carry a level floor
+### Requirement: The Theater holds the last begun season once the schedule ends
 
-A season SHALL play the difficulties its schedule names, ordered from the lowest level, and each difficulty SHALL carry a level floor of sixty for levels one and two and seventy for levels three to five (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/RoleCombatDifficultyExcelConfigData.json`, field `OHDBPBMODLP`).
+The Imaginarium Theater SHALL hold the last begun season after the schedule's last season ends.
+
+#### Scenario: The last begun season is held after the schedule ends
+
+- **GIVEN** every season in the schedule has ended
+- **WHEN** the Theater's season is read months later
+- **THEN** the last begun season is played
+
+### Requirement: Each season's difficulties are ordered by level
+
+A season SHALL play the difficulties its schedule names, ordered from the lowest level.
 
 #### Scenario: Difficulties are ordered from the lowest level
 
@@ -36,17 +40,21 @@ A season SHALL play the difficulties its schedule names, ordered from the lowest
 - **WHEN** the season's difficulties are listed
 - **THEN** they appear from the lowest level to the highest
 
-#### Scenario: A low difficulty has the lower level floor
-
-- **GIVEN** a difficulty of level one or two
-- **WHEN** its level floor is read
-- **THEN** the floor is sixty
-
 #### Scenario: A season naming an unknown difficulty is refused
 
 - **GIVEN** a season names a difficulty the difficulty table does not hold
 - **WHEN** the season is built
 - **THEN** the build is refused
+
+### Requirement: Each difficulty carries a level floor
+
+Each difficulty SHALL carry a level floor of sixty for levels one and two and seventy for levels three to five.
+
+#### Scenario: A low difficulty has the lower level floor
+
+- **GIVEN** a difficulty of level one or two
+- **WHEN** its level floor is read
+- **THEN** the floor is sixty
 
 ### Requirement: A Principal Cast performs a stage only with four members holding Vigor
 
@@ -89,13 +97,17 @@ Blessing Level SHALL rise by two for each Alternate Cast member past the number 
 
 ### Requirement: Each Blessing level adds stats to a cast member
 
-Each Blessing level SHALL add the stats its constant gives to a cast member, and a special guest SHALL receive double those stats.
+Each Blessing level SHALL add the stats its constant gives to a cast member.
 
 #### Scenario: A regular member gains the Blessing stats
 
 - **GIVEN** a cast member is not a special guest
 - **WHEN** one Blessing level is applied
 - **THEN** the member gains the stats one Blessing level adds
+
+### Requirement: A special guest receives double the Blessing stats
+
+A special guest SHALL receive double those stats.
 
 #### Scenario: A special guest gains double the Blessing stats
 
@@ -105,13 +117,17 @@ Each Blessing level SHALL add the stats its constant gives to a cast member, and
 
 ### Requirement: An owned opening character gains a fifth of its Max HP, ATK and DEF
 
-An owned opening character SHALL gain a fifth of its Max HP, ATK and DEF, rounded down to whole units, and its Elemental Mastery SHALL be unchanged.
+An owned opening character SHALL gain a fifth of its Max HP, ATK and DEF, rounded down to whole units.
 
 #### Scenario: The opening bonus rounds down to whole units
 
 - **GIVEN** an owned opening character has stats that do not divide evenly by five
 - **WHEN** its bonus is applied
 - **THEN** each of Max HP, ATK and DEF rises by a fifth rounded down
+
+### Requirement: An owned opening character's Elemental Mastery is unchanged
+
+Its Elemental Mastery SHALL be unchanged.
 
 #### Scenario: The opening bonus leaves Elemental Mastery unchanged
 

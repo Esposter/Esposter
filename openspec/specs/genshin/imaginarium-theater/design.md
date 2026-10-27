@@ -81,6 +81,7 @@ A season names its difficulties by id, and the writer refuses a season that name
 
 - [Imaginarium Theater](https://genshin-impact.fandom.com/wiki/Imaginarium_Theater), Genshin Impact Wiki: the Vigor, the Blessing Level stats, the opening character's bonus and the Stella rewards this page builds. The source could not be read, so these are the proposal's statements.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `RoleCombatScheduleExcelConfigData` and `RoleCombatDifficultyExcelConfigData`, the two tables the slices are written from. Their revision matches the dump's tower tables.
+- `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/RoleCombatDifficultyExcelConfigData.json`, field `OHDBPBMODLP`. Grounds the requirement "Each difficulty carries a level floor".
 
 ## Open
 
