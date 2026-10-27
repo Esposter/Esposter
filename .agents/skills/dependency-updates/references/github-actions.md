@@ -2,7 +2,7 @@
 
 Read when bumping an action under `.github/workflows/` or `.github/actions/` to a new release. That an action is pinned to a dereferenced commit SHA is `SKILL.md`'s; this page is the bump.
 
-When updating a GitHub Action to a new release tag:
+When updating a GitHub Action to its latest stable release tag, `vX.Y.Z`, never a broad alias such as `v6` or a pre-release:
 
 1. Fetch tags from the remote repo:
    ```bash
