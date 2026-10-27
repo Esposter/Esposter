@@ -1,6 +1,5 @@
 import type { GlyphTones } from "#src/models/genshinAssets/skillGlyphs/GlyphTones";
 import { SkillGlyphTones } from "genshin-world";
-import type { SkillGlyphs } from "genshin-world";
 
 import { WORLD_GENERATED_DIRECTORY } from "#src/services/genshinAssets/stats/constants";
 import { join } from "node:path";
@@ -11,7 +10,7 @@ export const SKILL_GLYPHS_GENERATED_DIRECTORY: string = join(WORLD_GENERATED_DIR
 // White 0.78, as Skyward Sonnet's in `hud-world-pickup` and Chonghua's Layered Frost's in `hud-world-keys` both read, and a
 // Charged burst's pale tone 0.54 and its white whole, as Cloud-Parting Star's in `hud-world-keys` reads. An icon of one
 // Tone is drawn in the white's share alone
-export const SkillGlyphTonesMap: Readonly<Record<keyof SkillGlyphs, GlyphTones>> = {
+export const SkillGlyphTonesMap: Readonly<Record<SkillGlyphTones, GlyphTones>> = {
   [SkillGlyphTones.Burst]: { pale: 0.54, white: 1 },
   [SkillGlyphTones.Skill]: { pale: 0.38, white: 0.78 },
 };
