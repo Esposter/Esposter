@@ -63,15 +63,15 @@ flowchart TD
 
 ## Key files
 
-| File                                                       | Role                                                                                                                                    |
-| :--------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-interface/package.json`                  | `typecheck` runs `vue-tsc`                                                                                                              |
-| `packages/genshin-world/package.json`                      | `typecheck` runs `vue-tsc`                                                                                                              |
-| `packages/vue-phaserjs/package.json`                       | `typecheck` runs `tsrs --fast --runExternalCode`; its tsconfig's `contentMappers` names vize; `vue-tsc` stays for the declaration build |
-| `apps/web/package.json`                                    | `typecheck` is `nuxt typecheck` followed by the service-worker `tsrs` check                                                             |
-| `pnpm-workspace.yaml`                                      | the `typescript` override onto `typescript-native-bridge`, and the `vue-tsc` pin                                                        |
-| `openspec/specs/architecture/monorepo-tooling/design.md`   | owns the TypeScript compiler section, rewritten as built at archive                                                                     |
-| `openspec/changes/architecture-rust-typescript-toolchain/` | the change this one depends on, for every plain `tsc` path                                                                              |
+| File                                                       | Role                                                                                                                            |
+| :--------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------ |
+| `packages/genshin-interface/package.json`                  | `typecheck` runs `vue-tsc`                                                                                                      |
+| `packages/genshin-world/package.json`                      | `typecheck` runs `vue-tsc`                                                                                                      |
+| `packages/vue-phaserjs/package.json`                       | `typecheck` runs `tsrs --fast --runExternalCode`; the shared Vue tsconfig names vize; `vue-tsc` stays for the declaration build |
+| `apps/web/package.json`                                    | `typecheck` is `nuxt typecheck` followed by the service-worker `tsrs` check                                                     |
+| `pnpm-workspace.yaml`                                      | the `typescript` override onto `typescript-native-bridge`, and the `vue-tsc` pin                                                |
+| `openspec/specs/architecture/monorepo-tooling/design.md`   | owns the TypeScript compiler section, rewritten as built at archive                                                             |
+| `openspec/changes/architecture-rust-typescript-toolchain/` | the change this one depends on, for every plain `tsc` path                                                                      |
 
 ## Notes
 
