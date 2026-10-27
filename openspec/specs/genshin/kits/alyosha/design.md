@@ -14,7 +14,7 @@ Alyosha's kit is its record and one behaviour module, `createAlyoshaKitBehaviour
 
 - **Hunter's Advance is waiting on its module.** Its field and Tugarin hits are not spawned, so her burst deals no damage yet.
 - **Thunderbolt Strike's hold is not built.** Her skill's hold has no record, so the skill deals its tap alone.
-- **The clip frames are open.** Her animation and hitmark frames are read from the installed game's clips, which are on disk under `~/Esposter/genshin-parity/extracted/timings/`, but the plunge clips hold no animation events, so the values stand unchecked against them.
+- **The clip frames are open.** Her animation and hitmark frames are read from the installed game's clips, which are on disk under `~/Esposter/genshin-parity/extracted/timings/`; the open list below names the values that stand unchecked against them.
 
 ## Key files
 
