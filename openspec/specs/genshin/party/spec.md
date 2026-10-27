@@ -8,14 +8,16 @@ The player's party as the game keeps it — up to four characters in each team P
 
 A team SHALL hold up to four characters, each character at most once.
 
-The deployed team's first member SHALL stand on the field.
-
 #### Scenario: Team set with its members
 
 - **GIVEN** a team in Party Setup
 - **WHEN** its members are set
 - **THEN** each character appears in the team once
 - **AND** the team holds no more than four characters
+
+### Requirement: The deployed team's first member stands on the field
+
+The deployed team's first member SHALL stand on the field.
 
 #### Scenario: Team deployed
 
@@ -50,17 +52,19 @@ A party member's key SHALL switch that member onto the field when the member is 
 - **WHEN** the player presses another member's key
 - **THEN** the switch is refused for cooldown
 
-### Requirement: A switch never brings on a fallen member or changes an empty slot
+### Requirement: A switch never brings on a fallen member
 
 A switch SHALL NOT bring on a character who is down.
-
-A switch SHALL leave the field unchanged for an empty slot or the member already on the field.
 
 #### Scenario: Fallen member's key pressed
 
 - **GIVEN** the member in that slot is down
 - **WHEN** the player presses its key
 - **THEN** the switch is refused because the character is down
+
+### Requirement: A switch leaves an empty slot or the member on the field unchanged
+
+A switch SHALL leave the field unchanged for an empty slot or the member already on the field.
 
 #### Scenario: Empty slot or member already on the field
 
@@ -70,7 +74,7 @@ A switch SHALL leave the field unchanged for an empty slot or the member already
 
 ### Requirement: Left Alt with a member's key uses that member's burst
 
-Left Alt with a party member's key SHALL use that member's burst once the member is on the field, and a refused switch SHALL use no burst.
+Left Alt with a party member's key SHALL use that member's burst once the member is on the field.
 
 #### Scenario: Burst on switch
 
@@ -78,6 +82,10 @@ Left Alt with a party member's key SHALL use that member's burst once the member
 - **WHEN** the player presses Left Alt with that member's key
 - **THEN** the member takes the field
 - **AND** the member uses its burst
+
+### Requirement: A refused switch uses no burst
+
+A refused switch SHALL use no burst.
 
 #### Scenario: Refused switch uses no burst
 
@@ -135,9 +143,9 @@ A drowning SHALL take every member's energy and a tenth of each member's Max HP.
 - **THEN** every member loses all its energy
 - **AND** every member loses a tenth of its Max HP
 
-### Requirement: A team is deployed only with a standing member
+### Requirement: A team is refused deployment with no members
 
-A team SHALL be refused deployment when it has no members, and when all its members are down.
+A team SHALL be refused deployment when it has no members.
 
 #### Scenario: Empty team deployed
 
@@ -145,19 +153,19 @@ A team SHALL be refused deployment when it has no members, and when all its memb
 - **WHEN** the player deploys it
 - **THEN** the deployment is refused as an empty team
 
+### Requirement: A team is refused deployment when all its members are down
+
+A team SHALL be refused deployment when all its members are down.
+
 #### Scenario: Team of fallen members deployed
 
 - **GIVEN** a team whose members are all down
 - **WHEN** the player deploys it
 - **THEN** the deployment is refused because the team is down
 
-### Requirement: Teams are added, renamed and disbanded under the game's limits
+### Requirement: Teams are added under the game's limit
 
 The player SHALL be able to add a team, which is named Team Standing By until renamed, up to fifteen teams.
-
-The player SHALL be able to disband a team, with the four default teams and the deployed team kept.
-
-The player SHALL be able to rename a team.
 
 #### Scenario: Team added
 
@@ -171,6 +179,10 @@ The player SHALL be able to rename a team.
 - **WHEN** the player adds a team
 - **THEN** the addition is refused as full
 
+### Requirement: Teams are disbanded, the defaults and the deployed team kept
+
+The player SHALL be able to disband a team, with the four default teams and the deployed team kept.
+
 #### Scenario: Team disbanded
 
 - **GIVEN** the player disbands a team that is neither a default team nor the deployed one
@@ -178,27 +190,25 @@ The player SHALL be able to rename a team.
 - **THEN** the team is removed
 - **AND** the four default teams and the deployed team remain
 
+### Requirement: Teams are renamed
+
+The player SHALL be able to rename a team.
+
 #### Scenario: Team renamed to an empty name
 
 - **GIVEN** a team the player has renamed
 - **WHEN** the player renames it to an empty name
 - **THEN** the team takes back its own name
 
-### Requirement: The deployed team's elements give its Elemental Resonances
+### Requirement: Elements shared by two or more members give their Elemental Resonance
 
-A full team's elements SHALL give each element that two or more members share its Elemental Resonance, and four different elements SHALL give the Protective Canopy.
+A full team's elements SHALL give each element that two or more members share its Elemental Resonance.
 
 #### Scenario: Two members share an element
 
 - **GIVEN** a full deployed team with two Pyro members
 - **WHEN** the team's resonances are read
 - **THEN** the Pyro Elemental Resonance is given
-
-#### Scenario: Four different elements
-
-- **GIVEN** a full deployed team whose four members have four different elements
-- **WHEN** the team's resonances are read
-- **THEN** the Protective Canopy is given and no other resonance is given
 
 #### Scenario: Team not full
 
@@ -210,7 +220,17 @@ A full team's elements SHALL give each element that two or more members share it
 
 - **GIVEN** the Pyro Elemental Resonance is given to the deployed team
 - **WHEN** each member's attributes are read
-- **THEN** every member of the deployed team has its ATK raised by 25 percent (Fervent Flames, +25% ATK, in `~/Esposter/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json`)
+- **THEN** every member of the deployed team has its ATK raised by 25 percent
+
+### Requirement: Four different elements give the Protective Canopy
+
+A full team's four different elements SHALL give the Protective Canopy.
+
+#### Scenario: Four different elements
+
+- **GIVEN** a full deployed team whose four members have four different elements
+- **WHEN** the team's resonances are read
+- **THEN** the Protective Canopy is given and no other resonance is given
 
 ### Requirement: Enduring Rock lowers a struck enemy's Geo resistance while a shield holds
 
@@ -221,7 +241,7 @@ While a shield is up on a Geo team with the Enduring Rock resonance, the team's 
 - **GIVEN** a Geo team with the Enduring Rock resonance and a live shield
 - **WHEN** the team strikes an enemy
 - **THEN** the hit deals 15 percent more damage
-- **AND** the enemy loses 20 percent of its Geo resistance for 15 seconds before the hit's damage is read (the game's Enduring Rock text in `~/Esposter/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json`, DMG +15% and Geo RES -20% for 15s)
+- **AND** the enemy loses 20 percent of its Geo resistance for 15 seconds before the hit's damage is read
 
 #### Scenario: No shield up
 
@@ -245,41 +265,49 @@ With the Sprawling Greenery resonance, each reaction a strike triggers SHALL giv
 - **WHEN** a strike triggers a Spread reaction
 - **THEN** every party member gains 20 Elemental Mastery for six seconds
 
-### Requirement: Impetuous Winds shortens skills, speeds movement and cuts stamina spent
+### Requirement: Impetuous Winds shortens a skill's cooldown
 
 With the Impetuous Winds resonance, a skill's cooldown SHALL be five percent shorter.
-
-With the Impetuous Winds resonance, the on-field character's walking, running, sprinting and dashing SHALL be ten percent faster.
-
-With the Impetuous Winds resonance, each stamina spend SHALL be 15 percent lower while the on-field character carries Anemo's resonance.
 
 #### Scenario: Skill started on an Anemo team
 
 - **GIVEN** an Anemo team with the Impetuous Winds resonance
 - **WHEN** a skill starts its cooldown
-- **THEN** the cooldown is five percent shorter (the game's "Shortens Skill CD by 5%" in `~/Esposter/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json`)
+- **THEN** the cooldown is five percent shorter
+
+### Requirement: Impetuous Winds speeds the on-field character's movement
+
+With the Impetuous Winds resonance, the on-field character's walking, running, sprinting and dashing SHALL be ten percent faster.
 
 #### Scenario: On-field character moves
 
 - **GIVEN** the on-field character with the Impetuous Winds resonance
 - **WHEN** the character walks, runs, sprints or dashes
-- **THEN** its speed is ten percent higher (the game's "Increases Movement SPD by 10%" in `~/Esposter/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json`)
+- **THEN** its speed is ten percent higher
+
+### Requirement: Impetuous Winds cuts each stamina spend
+
+With the Impetuous Winds resonance, each stamina spend SHALL be 15 percent lower while the on-field character carries Anemo's resonance.
 
 #### Scenario: Stamina spent
 
 - **GIVEN** the on-field character carries Anemo's resonance
 - **WHEN** the character spends stamina
-- **THEN** each stamina spend is 15 percent lower (the game's "Decreases Stamina Consumption by 15%" in `~/Esposter/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json`)
+- **THEN** each stamina spend is 15 percent lower
 
-### Requirement: Each HP change is recorded for the character kits
+### Requirement: Each combat HP change is recorded for the character kits
 
-Every HP change made in combat SHALL be recorded for the character kits, and a revive or a statue's heal SHALL NOT be recorded.
+Every HP change made in combat SHALL be recorded for the character kits.
 
 #### Scenario: Combat heal recorded
 
 - **GIVEN** a heal in combat restores HP to a member
 - **WHEN** the heal takes effect
 - **THEN** the change is recorded with its member, its share and the character whose kit made it
+
+### Requirement: A revive or a statue's heal is not recorded for the character kits
+
+A revive or a statue's heal SHALL NOT be recorded for the character kits.
 
 #### Scenario: Statue heal not recorded
 

@@ -114,9 +114,14 @@ The character on the field fights through its kit, which prices every character'
 - [Movement SPD](https://genshin-impact.fandom.com/wiki/Movement_SPD), Genshin Impact Wiki: the walking, running, sprinting, dashing and jumping that Movement SPD alters.
 - `~/Esposter.noindex/genshin-parity/captures/yt-greLeGJE-Jg-party-setup.mp4` at 30 seconds, the four slots on screen; grounds "A team holds up to four characters, one each".
 - `~/Esposter/genshin-parity/text/TextMap/`, the names Party 1 to Party 4; grounds "A new player's party starts with four default teams".
-- `~/Esposter/genshin-parity/text/TextMap/`, the name "Team Standing By"; grounds "A team is added up to fifteen, named Team Standing By until renamed".
-- `~/Esposter/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json`, the game's resonance texts; grounds "The deployed team's elements give its Elemental Resonances".
+- `~/Esposter/genshin-parity/text/TextMap/`, the name "Team Standing By"; grounds "Teams are added under the game's limit".
+- `~/Esposter/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json`, the game's resonance texts; grounds "Elements shared by two or more members give their Elemental Resonance" and "Four different elements give the Protective Canopy".
 - `~/Esposter/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json`, the game's 30 and 20 Elemental Mastery for 6s, `paramList`; grounds "Sprawling Greenery gives Elemental Mastery after each reaction".
+- `~/Esposter/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json` (Fervent Flames, +25% ATK) grounds scenario 'Stat resonance applied'.
+- `~/Esposter/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json` (the game's Enduring Rock text, DMG +15% and Geo RES -20% for 15s) grounds scenario 'Shield up on a Geo team'.
+- `~/Esposter/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json` (the game's "Shortens Skill CD by 5%") grounds scenario 'Skill started on an Anemo team'.
+- `~/Esposter/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json` (the game's "Increases Movement SPD by 10%") grounds scenario 'On-field character moves'.
+- `~/Esposter/genshin-parity/text/ExcelBinOutput/TeamResonanceExcelConfigData.json` (the game's "Decreases Stamina Consumption by 15%") grounds scenario 'Stamina spent'.
 
 ## Open
 
