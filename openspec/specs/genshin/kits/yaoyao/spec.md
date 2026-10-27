@@ -167,7 +167,7 @@ While Moonjade Descent lasts at Ascension 1, Yaoyao SHALL throw a burst radish e
 
 ### Requirement: Constellation 1's stamina restore
 
-At Constellation 1, each radish heal SHALL restore 15 stamina to the party's pool, once each five seconds, as gcsim's Constellation 1 does on each radish heal behind its own cooldown. A heal inside the cooldown SHALL restore nothing.
+At Constellation 1, each radish heal SHALL restore 15 stamina to the party's pool, once each five seconds. A heal inside the cooldown SHALL restore nothing.
 
 #### Scenario: a radish heal restores 15 stamina, and the next heal inside five seconds restores none
 
