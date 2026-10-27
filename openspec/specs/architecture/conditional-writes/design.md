@@ -24,7 +24,7 @@ The `"Replace"` row is the one that gets missed, and it is the worst of the thre
 
 ```mermaid
 flowchart TD
-  R["Read through getEntityWithEtag — entity plus the version it came from"] --> D["getUpdateEntity(entity) — apply the intent to this version"]
+  R["getEntityWithEtag<br/>the entity and its version"] --> D["getUpdateEntity(entity) — apply the intent to this version"]
   D --> W["Conditional write — updateEntity/updateMessage with { etag }"]
   W -->|"accepted"| N["Notify — emit the delta, never the replaced body"]
   W -->|"rejected — any error, not only a 412"| RR["Re-read the entity"]

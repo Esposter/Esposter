@@ -6,9 +6,9 @@ The stored form is a **standalone zstd frame, with the blob's `Content-Encoding`
 
 ```mermaid
 flowchart TD
-  save["saveResourceContent, a game's save procedure"] --> write["writeJsonBlob — async zstd on the libuv threadpool"]
+  save["saveResourceContent, a game's save procedure"] --> write["writeJsonBlob<br/>async zstd on the libuv threadpool"]
   write --> blob[("a zstd frame, Content-Encoding zstd")]
-  write --> charge["a resource charges its owner the stored length"]
+  write --> charge["Owner charge<br/>the stored length"]
   blob --> server["readJsonBlob — web server and Function app, async decompress"]
   blob --> browser["browser read SAS — the network stack decodes zstd"]
   server --> json["the JSON bytes"]

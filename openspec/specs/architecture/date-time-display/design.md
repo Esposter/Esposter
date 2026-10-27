@@ -15,7 +15,7 @@ A date rendered by a component is formatted twice: once on the server, once agai
 
 ```mermaid
 flowchart LR
-  server["server render — time datetime=ISO data-*=options, text in the server's locale"] --> html["html sent to the browser"]
+  server["Server render<br/>the instant and options as attributes"] --> html["html sent to the browser"]
   html --> prehydrate["onPrehydrate script — Intl in the reader's locale/timezone, window._nuxtTimeNow"]
   prehydrate --> text["textContent rewritten"]
   text --> hydrate["Vue hydrates — computes the same string, matches"]
@@ -38,7 +38,7 @@ A `<NuxtTime>` is a component, so it cannot live inside a prop string. A subtitl
 
 ## Where a format string still belongs
 
-`formatDate` formats **data**, not display: filenames, CSV exports, the value accessors a data table sorts on, and the cell value a date input writes back. It is the repo's own token formatter — the dayjs `format` subset the repo actually writes, over `Temporal` — and `parseDate` is its strict inverse over the numeric tokens and the offset, which is what a sheet's date column round-trips a cell through. A format carrying month or weekday names, an ordinal or a meridiem is display-only, and `parseDate` refuses it rather than guessing. The date _logic_ underneath is Temporal directly, through the day-level helpers (`getStartOfDay` in `packages/db/src/util/date/`, `checkIsSameDay` and `checkIsToday` in `apps/web/app/util/date/`); a duration is a `Temporal.Duration`, never a library's. The lint rule only covers `.vue` files; services and server code format freely.
+`formatDate` formats **data**, not display: filenames, CSV exports, the value accessors a data table sorts on, and the cell value a date input writes back. It is the repo's own token formatter — the `format` token subset the repo actually writes, over `Temporal` — and `parseDate` is its strict inverse over the numeric tokens and the offset, which is what a sheet's date column round-trips a cell through. A format carrying month or weekday names, an ordinal or a meridiem is display-only, and `parseDate` refuses it rather than guessing. The date _logic_ underneath is Temporal directly, through the day-level helpers (`getStartOfDay` in `packages/db/src/util/date/`, `checkIsSameDay` and `checkIsToday` in `apps/web/app/util/date/`); a duration is a `Temporal.Duration`, never a library's. The lint rule only covers `.vue` files; services and server code format freely.
 
 The one display exception is the message list. Its labels (`Yesterday at 14:03`, the day divider, the compact 24-hour gutter clock) branch on the reader's own day boundary, which no single `<NuxtTime>` expresses, and its 24-hour format has to stay identical across three surfaces. That is safe because `/messages/**` is client-rendered — like `/resource-explorer/**`, it is auth-gated with no SEO value, so there is no server render to disagree with. The labels live in `app/util/date/`, outside any component.
 

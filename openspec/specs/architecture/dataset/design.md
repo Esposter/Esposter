@@ -49,7 +49,7 @@ Public viewers never call this: published resources bake resolved datasets in at
 flowchart LR
   DASH["Dashboard binding form"] -->|DatasetReference| RD["dataset.readDataset"]
   EMAIL["Email merge fields"] -->|DatasetReference| RD
-  IMPORT["Sheet import (one-time row copy)"] -->|DatasetReference| RD
+  IMPORT["Sheet import<br/>one-time row copy"] -->|DatasetReference| RD
   RD --> OWN["readDataset<br/>readOwnedResource"]
   OWN -->|"nothing owned"| MISSING["NOT_FOUND<br/>source missing"]
   OWN --> MAP["DatasetProviderMap[type]"]

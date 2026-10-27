@@ -4,7 +4,7 @@ Ctrl+K opens one palette on every page. It offers what the page in front of the 
 
 ```mermaid
 flowchart TD
-  M[A surface mounts] --> REG[useCommands: its commands. useCommandScope: its search]
+  M[A surface mounts] --> REG[useCommands and useCommandScope]
   U[It unmounts] --> UN[Its entries and their keys leave with it]
   REG --> S[The command store]
   REG -->|a command with a shortcut and something to do| HK[Its key, bound through Vuetify 0's hotkey composable]

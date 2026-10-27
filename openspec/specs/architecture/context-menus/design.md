@@ -7,7 +7,7 @@ flowchart TD
   RC[Right-click] --> O[At the pointer]
   LP[Long press on a touch screen] --> O
   KB[Shift+F10 or the menu key on the focused element] --> OE[At the element's corner]
-  O --> S[The context menu store: items, point, the element that opened it]
+  O --> S[The context menu store<br/>what it shows, where, and over what]
   OE --> S
   S --> H[UiContextMenuHost, the one mounted menu]
   H --> P{Picked, clicked away from, or Escape?}
