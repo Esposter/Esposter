@@ -57,7 +57,17 @@ Subjugation: Koukou Sendou's Titanbreaker SHALL set off Stormclusters in four bo
 
 ### Requirement: Constellation 6's mark on the character the ATK Bonus reaches
 
-From Constellation 6, Kujou Sara's ATK Bonus SHALL also mark the character it reaches for six seconds, giving that character's Electro DMG 60% CRIT DMG, and its Lunar-Charged reactions 60% CRIT DMG.
+From Constellation 6, Kujou Sara's ATK Bonus SHALL also mark the character it reaches for six seconds.
+
+#### Scenario: Mark runs out after six seconds
+
+- **GIVEN** the mark stands on a character
+- **WHEN** six seconds pass
+- **THEN** the mark is gone and its strikes take no CRIT DMG from it
+
+### Requirement: Constellation 6's mark gives Electro DMG 60% CRIT DMG
+
+From Constellation 6, the mark on the character the ATK Bonus reaches SHALL give that character's Electro DMG 60% CRIT DMG.
 
 #### Scenario: Electro strike of the marked character
 
@@ -65,17 +75,15 @@ From Constellation 6, Kujou Sara's ATK Bonus SHALL also mark the character it re
 - **WHEN** that character lands an Electro strike
 - **THEN** the strike takes 60% CRIT DMG
 
+### Requirement: Constellation 6's mark gives Lunar-Charged reactions 60% CRIT DMG
+
+From Constellation 6, the mark on the character the ATK Bonus reaches SHALL give that character's Lunar-Charged reactions 60% CRIT DMG.
+
 #### Scenario: Lunar-Charged reaction by the marked character
 
 - **GIVEN** the mark stands on a character
 - **WHEN** that character causes a Lunar-Charged reaction
 - **THEN** the reaction takes 60% CRIT DMG
-
-#### Scenario: Mark runs out after six seconds
-
-- **GIVEN** the mark stands on a character
-- **WHEN** six seconds pass
-- **THEN** the mark is gone and its strikes take no CRIT DMG from it
 
 ### Requirement: Decorum restores Energy from Ascension 4
 
