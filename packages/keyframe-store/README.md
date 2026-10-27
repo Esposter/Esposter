@@ -68,7 +68,7 @@ const plaintext = await keyframeStore.read(second.hash).match(
 
 ## <a name="documentation">📖 Documentation</a>
 
-We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/keyframe-store) to level up. The object format on disk and the contract a caller writes and reads through are specified in the [keyframe store area](https://github.com/Esposter/Esposter/tree/main/openspec/specs/keyframe-store).
+We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/keyframe-store) to level up. The object format on disk and the contract a caller writes and reads through are specified there.
 
 Each delta is compressed against exactly one keyframe, using that keyframe's plaintext as the dictionary. Reconstructing any version is at most two reads, a version whose content is already held costs nothing, and the backend is anything that can store bytes by key.
 

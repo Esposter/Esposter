@@ -32,9 +32,7 @@ export default defineNuxtConfig({ modules: ["nuxt-security-module"] });
 
 We highly recommend you take a look at the [documentation](https://github.com/Esposter/Esposter/tree/main/openspec/specs/nuxt-security-module) to level up.
 
-The nonce is written onto the page's own tags, the prerender policy is a `<meta>` element, and the framework's `X-Powered-By` header is removed. It replaces [nuxt-security](https://github.com/Baroshem/nuxt-security). Its upstream audit, every issue it was held to, and the defaults it ships are on the documentation page: [nuxt-security-module](https://github.com/Esposter/Esposter/blob/main/openspec/specs/nuxt-security-module/README.md).
-
-The module's option reference, its upstream audit and its defaults review live in the repository's [specs](https://github.com/Esposter/Esposter/tree/main/openspec/specs/nuxt-security-module). The package's status and the steps not yet built are in its `README.md` there.
+The nonce is written onto the page's own tags, the prerender policy is a `<meta>` element, and the framework's `X-Powered-By` header is removed. It replaces [nuxt-security](https://github.com/Baroshem/nuxt-security). Its upstream audit, every issue it was held to, and the defaults it ships are on the documentation page, with the package's status and the steps not yet built: [nuxt-security-module](https://github.com/Esposter/Esposter/blob/main/openspec/specs/nuxt-security-module/README.md).
 
 ### Key Exports
 
