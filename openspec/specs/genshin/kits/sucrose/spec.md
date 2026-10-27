@@ -49,7 +49,7 @@ Forbidden Creation SHALL leave an Anemo field whose absorb check runs every 18 f
 - **GIVEN** the field has taken an element
 - **WHEN** an Anemo tick comes due, at 137 frames and then every 113 frames
 - **THEN** the absorbed element strikes the enemies on that tick
-- **AND** the enemy's aura is left in place, as gcsim's `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/reactable.go` finds no reaction for a same-element strike and keeps the aura
+- **AND** the enemy's aura is left in place
 
 ### Requirement: Ascension 1, Ascension 4 and Constellations 1, 2 and 6
 
@@ -59,7 +59,7 @@ Sucrose's Ascension 1 Swirl Elemental Mastery share, her Ascension 4 team share 
 
 - **GIVEN** Sucrose has Ascension 4
 - **WHEN** a skill or burst hit lands
-- **THEN** the team gains a share of her Elemental Mastery for that hit (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/sucrose/asc.go`, lines 72 to 83, called from `~/Esposter/cache/gcsim-v2.47.2/internal/characters/sucrose/skill.go` line 49 and `~/Esposter/cache/gcsim-v2.47.2/internal/characters/sucrose/burst.go` line 74)
+- **THEN** the team gains a share of her Elemental Mastery for that hit
 
 ### Requirement: Constellation 4 cuts Astable's cooldown on every seventh attack
 
