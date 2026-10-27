@@ -126,6 +126,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
   jsPlugins: [
     "./scripts/src/oxlint/comments.ts",
     "./scripts/src/oxlint/countWriteAfterSettle.ts",
+    "./scripts/src/oxlint/enumMap.ts",
     "./scripts/src/oxlint/errorAlert.ts",
     "./scripts/src/oxlint/errorHandling.ts",
     "./scripts/src/oxlint/literalUnion.ts",
@@ -317,6 +318,7 @@ const oxlintConfiguration: OxlintConfig = defineConfig({
     "comments/require-directive-reason": "error",
     complexity: "off",
     curly: ["error", "multi"],
+    "enum-map/no-literal-map-key": "error",
     "error-alert/no-raw-error-alert": "error",
     "error-handling/no-bare-error": "error",
     "func-names": "off",

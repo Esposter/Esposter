@@ -2,57 +2,52 @@ import { setupPluginSuite } from "#src/services/oxlint/shared/setupPluginSuite.t
 import { describe } from "vitest";
 
 describe("countWriteAfterSettle", () => {
+  const APPLY_OPTIMISTIC = "applyOptimistic";
+  const COUNT = "count";
+  const COUNTS_BY_TOP_ROLE = "countsByTopRole";
+  const LIKE_COUNT = "likeCount";
+  const MUTATE = "mutate";
+  const ON_SUCCESS = "onSuccess";
+  const VIEWER_LIKE = "viewerLike";
   const RULE = "count-write-after-settle/no-count-write-before-settle";
   const FIXTURES = [
-    {
-      name: "countStepBeforeAwaitOfMutation",
-      source: `post.likeCount++; await $trpc.like.createLike.mutate(input);`,
-      violations: 1,
-    },
-    {
-      name: "countStepAfterAwaitOfMutation",
-      source: `await $trpc.like.createLike.mutate(input); post.likeCount++;`,
-      violations: 0,
-    },
+    { name: "countStepBeforeAwaitOfMutation", source: `a.${LIKE_COUNT}++; await x.a.b.${MUTATE}(c);`, violations: 1 },
+    { name: "countStepAfterAwaitOfMutation", source: `await x.a.b.${MUTATE}(c); a.${LIKE_COUNT}++;`, violations: 0 },
     {
       name: "countCompoundBeforeAwaitOfMutation",
-      source: `post.likeCount += 1; await $trpc.like.createLike.mutate(input);`,
+      source: `a.${LIKE_COUNT} += 1; await x.a.b.${MUTATE}(c);`,
       violations: 1,
     },
     // The viewer's own mark is held exactly by the client, so a write to it before the server answers is correct
     {
       name: "viewerMarkBeforeAwaitOfMutation",
-      source: `post.viewerLike = like; await $trpc.like.createLike.mutate(input);`,
+      source: `a.${VIEWER_LIKE} = c; await x.a.b.${MUTATE}(c);`,
       violations: 0,
     },
-    { name: "countBeforeAwaitWithoutMutation", source: `post.likeCount++; await g();`, violations: 0 },
+    { name: "countBeforeAwaitWithoutMutation", source: `a.${LIKE_COUNT}++; await g();`, violations: 0 },
     // With no await at all, the count moves before any answer from the server, so it is still a write before settle
-    {
-      name: "countBeforeMutationWithoutAwait",
-      source: `post.likeCount++; $trpc.like.createLike.mutate(input);`,
-      violations: 1,
-    },
+    { name: "countBeforeMutationWithoutAwait", source: `a.${LIKE_COUNT}++; x.a.b.${MUTATE}(c);`, violations: 1 },
     // The mutation's optimistic callback runs when the write is sent, before the server answers
     {
       name: "countInApplyOptimistic",
-      source: `await executeMutation(() => $trpc.like.createLike.mutate(input), { applyOptimistic: () => { post.likeCount += 1; return noop; } });`,
+      source: `await g(() => x.a.b.${MUTATE}(c), { ${APPLY_OPTIMISTIC}: () => { a.${LIKE_COUNT} += 1; return h; } });`,
       violations: 1,
     },
     // The success callback runs after the server answers, so a count set there is the read-back value
     {
       name: "countInOnSuccess",
-      source: `await executeMutation(() => $trpc.like.createLike.mutate(input), { onSuccess: () => { post.likeCount = 1; } });`,
+      source: `await g(() => x.a.b.${MUTATE}(c), { ${ON_SUCCESS}: () => { a.${LIKE_COUNT} = 1; } });`,
       violations: 0,
     },
     {
       name: "roleCountStepBeforeAwaitOfMutation",
-      source: `roles.countsByTopRole[0].count++; await $trpc.like.createLike.mutate(input);`,
+      source: `a.${COUNTS_BY_TOP_ROLE}[0].${COUNT}++; await x.a.b.${MUTATE}(c);`,
       violations: 1,
     },
     // A callback passed to a mutation is still the function's own call to one, so a write before its await is caught
     {
       name: "countBeforeAwaitOfNestedMutation",
-      source: `post.likeCount++; await executeMutation(() => $trpc.like.createLike.mutate(input));`,
+      source: `a.${LIKE_COUNT}++; await g(() => x.a.b.${MUTATE}(c));`,
       violations: 1,
     },
   ];

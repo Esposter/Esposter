@@ -2,6 +2,7 @@ import { setupPluginSuite } from "#src/services/oxlint/shared/setupPluginSuite.t
 import { describe } from "vitest";
 
 describe("passThroughHelper", () => {
+  const CONSTANT = "UUIDV4_REGEX";
   const RULE = "pass-through-helper/no-forwarding-wrapper";
   const FIXTURES = [
     { name: "forwardsEveryParameter", source: `export const a = (b: string) => f(b);`, violations: 1 },
@@ -12,7 +13,7 @@ describe("passThroughHelper", () => {
     // A receiver taken from the caller is forwarded too, so a rest arg over it is still a pure forward.
     {
       name: "forwardsToParameterReceiver",
-      source: `export const a = (b: Client, ...c: string[]) => b.d(...c);`,
+      source: `export const a = (b: X, ...c: string[]) => b.a(...c);`,
       violations: 1,
     },
     // A rest parameter handed over unspread is an array the caller never wrote, and the reverse spreads one out.
@@ -27,19 +28,15 @@ describe("passThroughHelper", () => {
     { name: "readsParameterProperty", source: `export const a = (b: X) => b.c;`, violations: 1 },
     // A computed read is a lookup the caller did not spell, and an argument the caller never passed is absorbed.
     { name: "readsComputedProperty", source: `export const a = (b: X, c: string) => b[c];`, violations: 0 },
-    { name: "readsResultOfSuppliedArgument", source: `export const a = () => f(LIMIT).b;`, violations: 0 },
-    { name: "suppliesConstantArgument", source: `export const a = (b: string) => f(b, LIMIT);`, violations: 0 },
+    { name: "readsResultOfSuppliedArgument", source: `export const a = () => f(x).b;`, violations: 0 },
+    { name: "suppliesConstantArgument", source: `export const a = (b: string) => f(b, x);`, violations: 0 },
     { name: "suppliesLiteralArgument", source: `export const a = (b: string) => f(b, "");`, violations: 0 },
     { name: "suppliesCallback", source: `export const a = (b: string[]) => f(b, (c) => c);`, violations: 0 },
     { name: "reordersArguments", source: `export const a = (b: string, c: string) => f(c, b);`, violations: 0 },
     { name: "dropsArgument", source: `export const a = (b: string, _c: string) => f(b);`, violations: 0 },
     { name: "suppliesDefault", source: `export const a = (b: string, c = "") => f(b, c);`, violations: 0 },
     // The receiver is the constant the wrapper exists to hold — the `UUIDV4_REGEX.test(uuid)` shape.
-    {
-      name: "suppliesConstantReceiver",
-      source: `export const a = (b: string) => UUIDV4_REGEX.test(b);`,
-      violations: 0,
-    },
+    { name: "suppliesConstantReceiver", source: `export const a = (b: string) => ${CONSTANT}.test(b);`, violations: 0 },
     // A destructured parameter is a shape the caller did not have to know.
     { name: "destructuresParameter", source: `export const a = ({ b }: { b: string }) => f(b);`, violations: 0 },
     // Not a call at all: a member read, a literal, or a body doing real work.
@@ -49,7 +46,7 @@ describe("passThroughHelper", () => {
     // A type predicate absorbs the narrowing: its callee returns a boolean and the wrapper a guard.
     {
       name: "narrowsWithTypePredicate",
-      source: `export const a = (b: string): b is X => Xs.includes(b);`,
+      source: `export const a = (b: string): b is X => xs.includes(b);`,
       violations: 0,
     },
     // An identity function pins inference; it forwards nothing because it calls nothing.
