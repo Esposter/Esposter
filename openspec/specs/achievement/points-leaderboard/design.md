@@ -45,5 +45,5 @@ Paths relative to `apps/web`.
 
 ## Notes
 
-- Opt-out/privacy is out of scope: achievements are already readable per user via `readUserAchievements`.
-- The aggregate returns one row per user with an unlock; ranking (and the caller's global rank) still happens in the server over that set. If it ever hurts, denormalize a `points` total onto users and rank in SQL.
+- Opt-out/privacy is out of scope.
+- The aggregate returns one row per user with an unlock; ranking (and the caller's global rank) still happens in the server over that set.

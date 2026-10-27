@@ -6,7 +6,7 @@ The area has one capability, its [language](language/design.md): the grammar, th
 
 ## Upstream
 
-The verdicts below are mathjs's, reproduced against mathjs 15.2, the release the parity snapshot records. Every issue labelled `category:expressions`, and every `bug` issue touching parsing, a numeric function in the table, rounding or precedence, is here, open and closed, found by reading the labelled lists and searching the tracker for each function's name. An issue about a part of mathjs the column never used is out of scope, with that part named. Each in-scope defect has a regression test whose title names its issue.
+The verdicts below are mathjs's, reproduced against mathjs 15.2, the release the parity snapshot records. Every issue labelled `category:expressions`, and every `bug` issue touching parsing, a numeric function in the table, rounding or precedence, is here, open and closed, found by reading the labelled lists and searching the tracker for each function's name. An issue about a part of mathjs the column never used is out of scope, with that part named.
 
 ### mathjs
 

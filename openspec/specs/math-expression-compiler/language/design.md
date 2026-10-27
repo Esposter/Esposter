@@ -14,7 +14,7 @@ The compiler turns the tree and the names of its variables into one function. `c
 
 ```mermaid
 flowchart TD
-  FORMULA["formula text, such as col0 * (1 - col1)"] --> TOKENS["getMathExpressionToken<br/>one token at a time"]
+  FORMULA["formula text"] --> TOKENS["getMathExpressionToken<br/>one token at a time"]
   TOKENS --> RULE["parseMathExpressionRule<br/>MathExpressionRuleParserMap[rule]"]
   RULE -->|"each rule parses its operands at the rule beneath it"| RULE
   RULE --> TREE["MathExpressionNode tree"]
@@ -120,7 +120,7 @@ The precedence is mathjs's. From the loosest binding to the tightest:
 ## Notes
 
 - **The value model is numbers alone, on purpose.** The survey runner of [the survey form engine](../../../changes/resource-survey-form-engine/design.md) would need the survey condition language: strings, booleans and arrays, `{name}` references bound to answers, `=` as equality and list operators such as `contains`. That is a different grammar over a different value model, so it would be its own parser and compiler, reusing this one's numeric function table and its error wording. Widening this language to it would put a type check into every operator of every sheet cell, the per-row dispatch the compiler exists to remove.
-- **The sheet's use of the language is the computed columns capability.** The stored schema, the edit form's parse and unbound-name check, and the compile once per column list are in [computed columns](../../resource/sheet/computed-columns/design.md).
+- **The sheet's use of the language is the [computed columns](../../resource/sheet/computed-columns/design.md) capability.**
 
 ## Upstream
 

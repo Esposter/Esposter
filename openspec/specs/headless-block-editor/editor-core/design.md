@@ -6,8 +6,8 @@ The editing model of a block editor: a registry-checked document whose root decl
 
 ```mermaid
 flowchart TD
-  REG["a consumer's registry: its root and its types"] --> SCHEMA["createBlockDocumentSchema: the root's content schema, then the id and count walk"]
-  CMD["a command, update props or paste"] --> GATE{"getAcceptedTypes: does the slot the command fills accept the node?"}
+  REG["consumer registry"] --> SCHEMA["createBlockDocumentSchema"]
+  CMD["a command, update props or paste"] --> GATE{"Slot accepts the node?"}
   PASTE["a paste's copies, with fresh ids"] --> COPIES{"createBlockNodesSchema: the copies against the slot's types, then the id walk"}
   GATE -->|no| NONE["no operations, and the document is unchanged"]
   COPIES -->|no| NONE
@@ -39,7 +39,7 @@ flowchart TD
 - **Move out and duplicate are compositions.** `moveOutAfterParent` is a `moveBlockNode` into the parent's slot at the parent's index plus one; the removal shifts only the node's own siblings, never the parent, so the refusals are the move's own. `duplicateBlockNode(document, registry, children, nodeSchema, pointer)` is a `pasteBlockNodes` of the node into its own slot at its index plus one, so the copy gets fresh ids the same way a paste does.
 - **The undo history is not the core's.** The bounded history that undoes a document's edits lives in `@esposter/shared`, [as its own capability](../../shared/bounded-history/design.md), so the core keeps no copy of it.
 - **A document folds from its leaves up.** `renderBlockNodes(nodes, registry, children, render)` renders each node of a slot in order, after each of the node's slots has rendered, and hands the consumer's render function the node, its type's definition and each slot's output. A node whose type the registry lacks renders nothing, so a fold over a document that skipped its parse still renders what the registry knows. Each renderer walks the tree through this one fold rather than its own recursion.
-- **A test's title is its scenario's name in lowercase.** The suites' titles are lowercase, so a scenario `A renderer reads a child through the port` is the test `a renderer reads a child through the port`. A type-level scenario is a `@ts-expect-error` in a `.test-d.ts` beside the helper it checks.
+- **A type-level scenario is a `@ts-expect-error`.** It sits in a `.test-d.ts` beside the helper it checks.
 
 ## Key files
 
@@ -78,5 +78,5 @@ flowchart TD
 
 - **The applier's schema stayed in the app.** The applier and its types live in `@esposter/shared`, but the zod schemas for a pointer and an operation, and their two limits, have only the resource content inputs as consumers. `scripts/src/workspace/sharedExportConsumers.test.ts` flags such exports in shared, so they sit beside `ReadResourceContentInput.ts` and `UpdateResourceContentInput.ts`. Shared keeps the operation types, `applyPatches` and the pointer parser.
 - **Coalescing is the consumer's.** The core applies each edit whole and records nothing, so merging an interaction's edits into one undo entry belongs to the history that holds them: the page builder's [undo as patches](../../resource/page-builder/undo-as-patches/design.md) merges the edits of one interaction that set the same paths.
-- **A slot has no model of its own.** A slot is an entry of the registry's type `slots` record and a key of the node's props.
+- **A slot has no model of its own.** A slot is an entry of the registry's type `slots` record.
 - **The node limit is the consumer's.** `pasteBlockNodes` checks the copies against the slot and the registry but not the destination's node count; the consumer passes the limit to `createBlockDocumentSchema` and refuses an over-limit result.

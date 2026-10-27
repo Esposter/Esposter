@@ -61,7 +61,7 @@ Collection is the caller's answer. The caller passes the hashes an eviction rele
 
 ## Notes
 
-- **The store keeps no chains, generations or rewrites.** An object once written is never touched until it is collected, and the store records no lineage beside its objects, because the anchor is the caller's state and the store never has to know what a lineage is.
+- **An object once written is never touched until it is collected.**
 - **The anchor's figures are trusted, not checked.** The segment budget is computed from the anchored bytes the caller supplies. The store does not sum stored sizes itself, so a caller whose figure drifts moves the budget with it.
 - **The base a write reports is the one the record carries.** On a dedupe hit the report carries the stored object's base, which need not equal the anchor the caller passed. Recording the anchor in its place would name a keyframe that the stored delta may never decode against, so a collection could delete a keyframe a live version still depends on.
 - **Content must serialize to the same bytes.** The address is the hash of the plaintext, so a caller whose serialization changes between writes gets a new address, and deduplication stops without any error. The store takes bytes and returns bytes, so it cannot detect this.

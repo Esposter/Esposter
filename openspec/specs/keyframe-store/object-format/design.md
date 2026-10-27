@@ -70,8 +70,7 @@ The magic, the version, the flag values and the byte offsets of each field are c
 
 - **Adoption reads the whole object.** A write of content the store already holds, and a create-only write that a twin won, both read the stored object and verify it rather than checking its header. Checking the header alone was rejected: it can pass on an object whose payload no longer decodes to the address, and adopting such an object would credit a damaged write to this one.
 - **A keyframe is verified before a delta is encoded against it.** Its plaintext is the dictionary, so a delta written over damage would depend on the damage and stop decoding once the keyframe was repaired. The write is refused instead.
-- **The window is chosen per write.** It is the power-of-two window that spans the dictionary and the input together, clamped to the range the shared package sets. A window too narrow to span both leaves the encoder unable to match across them, and the output grows by a large factor. The decoder admits a frame only up to the window its header records, so a frame that needs more is refused.
-- **A base is never a delta.** Reconstruction stays at two objects rather than a chain, so the store refuses a delta as a keyframe and never writes one.
+- **The window is chosen per write.** It is the power-of-two window that spans the dictionary and the input together, clamped to the range the shared package sets. A window too narrow to span both leaves the encoder unable to match across them, and the output grows by a large factor.
 - **A diff format was not used.** Dictionary compression gives the edit between two versions without a patch grammar or any knowledge of the document, which is the reason the [compression](../../architecture/compression/design.md) standard gives for zstd.
 
 ## Sources
