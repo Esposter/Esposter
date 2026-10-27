@@ -6,13 +6,17 @@ Venti's kit as built, with Skyward Sonnet's Wind Domain, the Stormeye and Splitt
 
 ### Requirement: Venti's shots
 
-Venti's six shots, the first and fourth of which fire two arrows each, and his fully charged aimed shot SHALL land on the enemies within reach, with their arrows and shots priced round his body.
+Venti's six shots, the first and fourth of which fire two arrows each, SHALL land on the enemies within reach, with their arrows and shots priced round his body.
 
 #### Scenario: Six shots in sequence
 
 - **WHEN** the player uses normal attack six times in a row
 - **THEN** the six shots land in order on the enemies within reach
 - **AND** the first and fourth shots each fire two arrows
+
+### Requirement: Venti's fully charged aimed shot
+
+Venti's fully charged aimed shot SHALL land on the enemies within reach, with it priced round his body.
 
 #### Scenario: Fully charged aimed shot lands
 
@@ -70,15 +74,19 @@ From Constellation 1, a fully charged shot SHALL cast two more arrows from where
 - **WHEN** the fully charged shot is fired
 - **THEN** two more arrows land at the shot's hitmark
 
-### Requirement: Breeze of Reminiscence and Storm of Defiance
+### Requirement: Breeze of Reminiscence from Constellation 2
 
-From Constellation 2, each Skyward Sonnet hit SHALL cut the Anemo RES and Physical RES of each enemy it strikes by 12% for 10 seconds, and from Constellation 6, each Stormeye tick SHALL cut it by a further 20% for 10 seconds, the two adding up.
+From Constellation 2, each Skyward Sonnet hit SHALL cut the Anemo RES and Physical RES of each enemy it strikes by 12% for 10 seconds.
 
 #### Scenario: Skyward Sonnet cuts Anemo RES
 
 - **GIVEN** Venti has Constellation 2
 - **WHEN** a Skyward Sonnet hit strikes an enemy
 - **THEN** that enemy's Anemo RES and Physical RES drop by 12% for 10 seconds
+
+### Requirement: Storm of Defiance from Constellation 6
+
+From Constellation 6, each Stormeye tick SHALL cut the Anemo RES and Physical RES of each enemy it strikes by a further 20% for 10 seconds, the two adding up.
 
 #### Scenario: Two cuts add up
 
