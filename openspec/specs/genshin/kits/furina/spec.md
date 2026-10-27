@@ -32,13 +32,9 @@ Furina's charged attack SHALL strike a circle round her and turn her Arkhe.
 - **THEN** its circle strikes 33 frames in, or 22 frames in after a normal attack
 - **AND** her Arkhe turns between Ousia and Pneuma
 
-### Requirement: Salon Solitaire brings out Ousia members or Pneuma's Singer
+### Requirement: Salon Solitaire brings out Ousia members
 
 Salon Solitaire SHALL bring out Gentilhomme Usher, Surintendante Chevalmarin and Mademoiselle Crabaletta in Ousia.
-
-Salon Solitaire SHALL bring out the Singer of Many Waters in Pneuma.
-
-Its summons SHALL stand for 30 seconds.
 
 #### Scenario: Ousia members drain the team and strike
 
@@ -54,12 +50,20 @@ Its summons SHALL stand for 30 seconds.
 - **THEN** it neither drains the team nor strikes
 - **AND** this reading stays provisional until a recording settles it
 
+### Requirement: Salon Solitaire brings out Pneuma's Singer
+
+Salon Solitaire SHALL bring out the Singer of Many Waters in Pneuma.
+
 #### Scenario: The Singer heals in Pneuma
 
 - **GIVEN** Furina is in Pneuma
 - **WHEN** the player casts Salon Solitaire
 - **THEN** the Singer of Many Waters appears 10 frames in
 - **AND** every two seconds it heals the character on the field by a flat amount and a share of Furina's Max HP
+
+### Requirement: Salon Solitaire's summons stand for 30 seconds
+
+Salon Solitaire's summons SHALL stand for 30 seconds.
 
 #### Scenario: A new Salon Solitaire ends the one before
 
@@ -71,8 +75,6 @@ Its summons SHALL stand for 30 seconds.
 ### Requirement: Let the People Rejoice builds Fanfare from HP changes
 
 Let the People Rejoice SHALL build Fanfare from changes to team members' HP, up to 300 points.
-
-Each point SHALL raise every deployed member's DMG Bonus and Incoming Healing Bonus while the Fanfare lasts.
 
 #### Scenario: Casting Let the People Rejoice strikes and starts the Fanfare
 
@@ -86,13 +88,6 @@ Each point SHALL raise every deployed member's DMG Bonus and Incoming Healing Bo
 - **GIVEN** the Fanfare stands
 - **WHEN** a deployed member's HP changes by 5% of their HP
 - **THEN** the Fanfare gains 5 points
-
-#### Scenario: Points give every member DMG and healing bonuses
-
-- **GIVEN** the Fanfare holds points
-- **WHEN** a hit or a heal lands on the deployed team
-- **THEN** each point gives every deployed member a 0.07% DMG Bonus to every element and Physical at talent level 1
-- **AND** each point gives every deployed member a 0.01% Incoming Healing Bonus at talent level 1
 
 #### Scenario: The Fanfare stops at its most
 
@@ -114,6 +109,17 @@ Each point SHALL raise every deployed member's DMG Bonus and Incoming Healing Bo
 - **THEN** the earlier Fanfare ends
 - **AND** the new Fanfare lasts 18 seconds
 
+### Requirement: Let the People Rejoice's Fanfare points give DMG and healing bonuses
+
+Each point SHALL raise every deployed member's DMG Bonus and Incoming Healing Bonus while the Fanfare lasts.
+
+#### Scenario: Points give every member DMG and healing bonuses
+
+- **GIVEN** the Fanfare holds points
+- **WHEN** a hit or a heal lands on the deployed team
+- **THEN** each point gives every deployed member a 0.07% DMG Bonus to every element and Physical at talent level 1
+- **AND** each point gives every deployed member a 0.01% Incoming Healing Bonus at talent level 1
+
 ### Requirement: Endless Waltz from another character's overheal
 
 From her first ascension, Endless Waltz SHALL regenerate 2% of each deployed member's own Max HP every two seconds for four seconds after another character's heal runs past full HP on the character on the field.
@@ -131,11 +137,9 @@ From her first ascension, Endless Waltz SHALL regenerate 2% of each deployed mem
 - **WHEN** another character's heal brings the character on the field to full HP without running past it
 - **THEN** Endless Waltz does not start
 
-### Requirement: Ascension 4 raises Salon members and speeds the Singer
+### Requirement: Ascension 4 raises Salon members' DMG
 
 From her fourth ascension, Salon Solitaire's members SHALL deal more DMG, capped.
-
-From her fourth ascension, the Singer SHALL heal more often, capped.
 
 #### Scenario: Members deal more DMG as Max HP grows
 
@@ -144,6 +148,10 @@ From her fourth ascension, the Singer SHALL heal more often, capped.
 - **THEN** its DMG rises by 0.7% for each 1,000 of Furina's Max HP
 - **AND** the rise stops at 28%
 
+### Requirement: Ascension 4 speeds the Singer
+
+From her fourth ascension, the Singer SHALL heal more often, capped.
+
 #### Scenario: The Singer heals more often as Max HP grows
 
 - **GIVEN** Furina has her fourth ascension and is in Pneuma
@@ -151,13 +159,9 @@ From her fourth ascension, the Singer SHALL heal more often, capped.
 - **THEN** its interval shortens by 0.4% for each 1,000 of Furina's Max HP
 - **AND** the shortening stops at 16%
 
-### Requirement: Constellations 1, 2 and 4 change the Fanfare and her energy
+### Requirement: Constellation 1 changes the Fanfare
 
 Furina's first constellation SHALL change her Fanfare as set out in its scenario.
-
-Furina's second constellation SHALL change her Fanfare as set out in its scenario.
-
-Furina's fourth constellation SHALL change her energy as set out in its scenario.
 
 #### Scenario: The first constellation starts the Fanfare higher
 
@@ -166,11 +170,19 @@ Furina's fourth constellation SHALL change her energy as set out in its scenario
 - **THEN** the Fanfare starts at 150 points
 - **AND** its most rises by 100
 
+### Requirement: Constellation 2 changes the Fanfare
+
+Furina's second constellation SHALL change her Fanfare as set out in its scenario.
+
 #### Scenario: The second constellation builds more Fanfare from each change
 
 - **GIVEN** Furina is at constellation 2
 - **WHEN** a deployed member's HP changes
 - **THEN** each change gives 250% more Fanfare
+
+### Requirement: Constellation 4 changes her energy
+
+Furina's fourth constellation SHALL change her energy as set out in its scenario.
 
 #### Scenario: The fourth constellation gives energy once every five seconds
 
