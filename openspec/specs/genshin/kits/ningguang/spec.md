@@ -122,7 +122,7 @@ From one constellation, each strike's gem SHALL be a 3.5-metre circle, so it str
 
 ### Requirement: Exquisite be the Jade from Constellation 4
 
-From Constellation 4, while a Jade Screen stands the active member SHALL hold 10% more RES to each element, and the bonus SHALL lapse within two steps of the screen's end or shatter, as the screen stands for nearby characters until a source measures its box.
+From Constellation 4, while a Jade Screen stands the active member SHALL hold 10% more RES to each element, and the bonus SHALL lapse within two steps of the screen's end or shatter.
 
 #### Scenario: Elemental RES while the screen stands
 
