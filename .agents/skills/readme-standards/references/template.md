@@ -67,14 +67,14 @@ Licensed under [Apache-2.0][url-license].
 [![Apache-2.0 licensed][badge-license]][url-license]
 ```
 
-Badge colours are the brand's: the Standard style of `apps/web/configuration/UiPaletteMap.ts`, the app's default (`DEFAULT_UI_STYLE`). A shield carries white label text, so a badge takes the light-mode tone rather than the dark one: success `1b7a5f` for the npm version, info `0b6ac0` for the licence. GitHub strips `style` attributes from markdown, so the palette reaches the badges and nothing else.
+Badge colours are shields.io's named colours, not hex values: `brightgreen` for the npm version and for the duplicate-code and score badges, `blue` for the licence.
 
 Badge ref format (bottom of file):
 
 ```markdown
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
-[badge-npm-version]: https://img.shields.io/npm/v/<npm-name>/latest?color=1b7a5f
+[badge-npm-version]: https://img.shields.io/npm/v/<npm-name>/latest?color=brightgreen
 [url-npm]: https://www.npmjs.com/package/<npm-name>/v/latest
 [badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/<npm-name>/latest?label=npm
 [badge-npm-downloads]: https://img.shields.io/npm/dm/<npm-name>.svg

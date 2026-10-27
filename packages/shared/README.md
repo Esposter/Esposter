@@ -78,9 +78,9 @@ import { getResult, getResultAsync, withFinalizer } from "@esposter/shared";
 
 This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).
 
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
-[badge-npm-version]: https://img.shields.io/npm/v/@esposter/shared/latest?color=1b7a5f
+[badge-npm-version]: https://img.shields.io/npm/v/@esposter/shared/latest?color=brightgreen
 [url-npm]: https://www.npmjs.com/package/@esposter/shared/v/latest
 [badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/@esposter/shared/latest?label=npm
 [badge-npm-downloads]: https://img.shields.io/npm/dm/@esposter/shared.svg

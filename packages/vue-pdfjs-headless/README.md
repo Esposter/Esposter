@@ -64,9 +64,9 @@ Bind `canvas` to a `<canvas ref="canvas" />` in the component's template, and th
 
 Licensed under [Apache-2.0][url-license].
 
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
-[badge-npm-version]: https://img.shields.io/npm/v/vue-pdfjs-headless/latest?color=1b7a5f
+[badge-npm-version]: https://img.shields.io/npm/v/vue-pdfjs-headless/latest?color=brightgreen
 [url-npm]: https://www.npmjs.com/package/vue-pdfjs-headless/v/latest
 [badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/vue-pdfjs-headless/latest?label=npm
 [badge-npm-downloads]: https://img.shields.io/npm/dm/vue-pdfjs-headless.svg
