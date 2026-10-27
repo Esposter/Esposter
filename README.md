@@ -37,7 +37,7 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
       <td width="80" align="center" valign="top">
         <br />
         <a href="https://viteplus.dev/guide/">
-          <img src="./.github/assets/vite-plus/logo.svg" height="40" />
+          <img src="./.github/assets/vite-plus/logo.svg" height="24" />
         </a>
       </td>
       <td valign="top">

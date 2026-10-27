@@ -44,22 +44,22 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
 
 ```ts
 import { parseTmx } from "parse-tmx";
-// The *.tmx file can be loaded as a string or URL encoded data
-import map from "map.tmx";
+
+// The *.tmx file is read as text, here from a URL
+const xmlString = await (await fetch("/maps/dungeon.tmx")).text();
 
 // Translates the tile flips in the layer data (default: false)
 const translateFlips = true;
 
-const loadMap = async () => {
-  // parseTmx resolves to a neverthrow Result, so the map is taken from its Ok branch and an error is rethrown
-  const data = (await parseTmx(map, translateFlips)).match(
-    (tmxParsed) => tmxParsed.map,
-    (error) => {
-      throw error;
-    },
-  );
-  ...
-};
+// parseTmx resolves to a neverthrow Result, so the parsed map is taken from its Ok branch and an error is rethrown
+const { map } = (await parseTmx(xmlString, translateFlips)).match(
+  (tmxParsed) => tmxParsed,
+  (error) => {
+    throw error;
+  },
+);
+
+console.log(map.layers.length);
 ```
 
 ### Example data

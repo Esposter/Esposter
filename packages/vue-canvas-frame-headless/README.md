@@ -41,10 +41,17 @@ We highly recommend you take a look at the [documentation](https://github.com/Es
 ```vue
 <script setup lang="ts">
 import { CANVAS_FRAME_SRCDOC, useCanvasFrame } from "vue-canvas-frame-headless";
+import { useTemplateRef } from "vue";
 
-const frame = useTemplateRef("frame");
-const pane = useTemplateRef("pane");
-const { frameBody, frameStyle } = useCanvasFrame({ css: pageCss, fill: true, frame, pane, width: 992 });
+const frame = useTemplateRef<HTMLIFrameElement>("frame");
+const pane = useTemplateRef<HTMLElement>("pane");
+const { frameBody, frameStyle } = useCanvasFrame({
+  css: "body { margin: 0; font-family: sans-serif; }",
+  fill: true,
+  frame,
+  pane,
+  width: 992,
+});
 </script>
 
 <template>

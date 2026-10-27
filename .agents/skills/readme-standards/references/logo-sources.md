@@ -20,15 +20,16 @@ An icon set such as Streamline, a traced or redrawn copy, and any file found und
 
 ## Sources
 
-| Project                                 | Source                          | Path (upstream, not a repo path, so not backticked)         |
-| :-------------------------------------- | :------------------------------ | :---------------------------------------------------------- |
-| Vue                                     | `vuejs/art`                     | logo.svg                                                    |
-| Nuxt                                    | `nuxt/nuxt.com`                 | public/assets/design-kit/icon-green.svg                     |
-| tRPC                                    | `trpc/trpc`                     | www/static/img/logo.svg                                     |
-| Zod                                     | `colinhacks/zod`                | logo.svg                                                    |
-| Drizzle                                 | `drizzle-team/drizzle-orm-docs` | public/svg/drizzle.svg                                      |
-| Pulumi                                  | `pulumi/docs`                   | assets/fingerprinted/logos/brand/pulumi-mark.svg            |
-| Vite+                                   | `voidzero-dev/vite-plus`        | docs/public/logo.svg (wordmark; the repository has no mark) |
-| PostgreSQL, Railway, Namecheap, Vuetify | `simple-icons/simple-icons`     | icons/<name>.svg                                            |
+| Project                     | Source                          | Path (upstream, not a repo path, so not backticked)         |
+| :-------------------------- | :------------------------------ | :---------------------------------------------------------- |
+| Vue                         | `vuejs/art`                     | logo.svg                                                    |
+| Nuxt                        | `nuxt/nuxt.com`                 | public/assets/design-kit/icon-green.svg                     |
+| tRPC                        | `trpc/trpc`                     | www/static/img/logo.svg                                     |
+| Zod                         | `colinhacks/zod`                | logo.svg                                                    |
+| Drizzle                     | `drizzle-team/drizzle-orm-docs` | public/svg/drizzle.svg                                      |
+| Pulumi                      | `pulumi/docs`                   | assets/fingerprinted/logos/brand/pulumi-mark.svg            |
+| Vite+                       | `voidzero-dev/vite-plus`        | docs/public/logo.svg (wordmark; the repository has no mark) |
+| PostgreSQL                  | `postgres/pgweb`                | media/img/misc/Postgresql_elephant.svg                      |
+| Railway, Namecheap, Vuetify | `simple-icons/simple-icons`     | icons/<name>.svg                                            |
 
-PostgreSQL, Railway, Namecheap and Vuetify had no logo SVG in their project's repository or website when sourced, so they take the simple-icons fallback.
+Railway, Namecheap and Vuetify had no logo SVG in their project's repository or website when sourced, so they take the simple-icons fallback. Namecheap's website is behind a bot challenge, so its own SVG could not be fetched, and its simple-icons mark is black. The PostgreSQL elephant is the project's own vector art, the same as the colour PNG on postgresql.org.

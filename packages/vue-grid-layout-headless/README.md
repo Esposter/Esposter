@@ -51,7 +51,7 @@ import { shallowRef, useTemplateRef } from "vue";
 
 const root = useTemplateRef<HTMLElement>("root");
 const items = shallowRef([{ h: 2, id: "a", w: 4, x: 0, y: 0 }]);
-const { startGesture, tiles } = useGridLayout(root, () => ({
+const { gridHeight, startGesture, tiles } = useGridLayout(root, () => ({
   collision: CollisionMode.Push,
   columnNumber: 12,
   compactType: CompactType.Vertical,
@@ -60,19 +60,34 @@ const { startGesture, tiles } = useGridLayout(root, () => ({
   items: items.value,
   rowHeight: 40,
   spacing: { gap: 10, padding: 10 },
-  // onCommit receives what each gesture changed, once its pointer is released
-  onCommit: () => {},
+  // A release replaces the cells it changed and drops the ids it removed
+  onCommit: ({ changes, removed }) => {
+    const changedIds = new Set(changes.map(({ id }) => id));
+    items.value = [...items.value.filter(({ id }) => !changedIds.has(id) && !removed.includes(id)), ...changes];
+  },
 }));
 </script>
 
 <template>
-  <div ref="root">
-    <div v-for="{ item } in tiles" :key="item.id" @pointerdown="startGesture($event, item)" />
+  <div ref="root" :style="{ height: `${gridHeight}px`, position: 'relative' }">
+    <div
+      v-for="{ geometry, item, offset } in tiles"
+      :key="item.id"
+      :style="{
+        height: `${geometry.height}px`,
+        left: `${geometry.left}px`,
+        position: 'absolute',
+        top: `${geometry.top}px`,
+        transform: `translate(${offset.x}px, ${offset.y}px)`,
+        width: `${geometry.width}px`,
+      }"
+      @pointerdown="startGesture($event, item)"
+    />
   </div>
 </template>
 ```
 
-Each tile's `geometry` is the box to draw it in, in pixels from the grid's top left corner.
+Each tile's `geometry` is the box to draw it in, in pixels from the grid's top left corner, and its `offset` moves a dragged tile so it stays under the pointer.
 
 ## <a name="commands">⌨️ Commands</a>
 
