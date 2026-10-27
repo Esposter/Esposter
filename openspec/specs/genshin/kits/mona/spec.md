@@ -27,16 +27,18 @@ Mona's skill SHALL summon Mirror Reflection of Doom.
 - **WHEN** the player presses Mona's skill
 - **THEN** Mirror Reflection of Doom is summoned
 
-### Requirement: Stellaris Phantasm's bubble and Omen
+### Requirement: Stellaris Phantasm's bubble
 
 Stellaris Phantasm SHALL hold each enemy it strikes in a bubble for 8 seconds.
-
-A hit with poise damage SHALL burst the bubble and start an Omen lasting 4 seconds that adds 42% damage to hits on that enemy.
 
 #### Scenario: Bubble holds the enemy
 
 - **WHEN** the player casts Stellaris Phantasm
 - **THEN** each enemy it strikes is held in a bubble for 8 seconds
+
+### Requirement: Stellaris Phantasm's Omen
+
+A hit with poise damage on an enemy held in a bubble SHALL burst the bubble and start an Omen lasting 4 seconds that adds 42% damage to hits on that enemy.
 
 #### Scenario: Poise hit bursts the bubble into an Omen
 
@@ -98,11 +100,9 @@ From Constellation 1, a party member's hit on an enemy under the Omen SHALL give
 - **WHEN** that member's reaction lands
 - **THEN** the bonus is 24% more DMG
 
-### Requirement: Constellation 4 adds CRIT to strikes and Lunar reactions on an Omen or a bubble
+### Requirement: Constellation 4 adds CRIT to strikes on an Omen or a bubble
 
 From Constellation 4, each party member's strike on an enemy under the Omen or Mona's bubble SHALL gain 15% CRIT Rate, and a Hexerei member's strike SHALL gain 15% CRIT DMG while Mona is Hexerei with a second Hexerei member on the team.
-
-From Constellation 4, each party member's Lunar-Charged and Lunar-Crystallize reaction on such an enemy SHALL gain 15% CRIT Rate, and a Hexerei member's such reaction 15% CRIT DMG while Mona is Hexerei with a second Hexerei member on the team.
 
 #### Scenario: A strike on an Omen or a bubble gains CRIT Rate
 
@@ -110,17 +110,21 @@ From Constellation 4, each party member's Lunar-Charged and Lunar-Crystallize re
 - **WHEN** any party member strikes an enemy under the Omen or in her bubble
 - **THEN** that strike gains 15% CRIT Rate
 
-#### Scenario: A Lunar reaction on an Omen gains CRIT
-
-- **GIVEN** Mona has Constellation 4 and is Hexerei with a second Hexerei member on the team
-- **WHEN** a Hexerei member's Lunar-Crystallize lands on an enemy under the Omen
-- **THEN** that reaction gains 15% CRIT Rate and 15% CRIT DMG
-
 #### Scenario: A Hexerei strike gains CRIT DMG while the team is Hexerei
 
 - **GIVEN** Mona has Constellation 4 and is Hexerei with a second Hexerei member on the team
 - **WHEN** a Hexerei member strikes an enemy under the Omen
 - **THEN** that strike gains 15% CRIT DMG
+
+### Requirement: Constellation 4 adds CRIT to Lunar reactions on an Omen or a bubble
+
+From Constellation 4, each party member's Lunar-Charged and Lunar-Crystallize reaction on an enemy under the Omen or Mona's bubble SHALL gain 15% CRIT Rate, and a Hexerei member's such reaction 15% CRIT DMG while Mona is Hexerei with a second Hexerei member on the team.
+
+#### Scenario: A Lunar reaction on an Omen gains CRIT
+
+- **GIVEN** Mona has Constellation 4 and is Hexerei with a second Hexerei member on the team
+- **WHEN** a Hexerei member's Lunar-Crystallize lands on an enemy under the Omen
+- **THEN** that reaction gains 15% CRIT Rate and 15% CRIT DMG
 
 ### Requirement: Constellation 2's Charged Attack follow-up
 
@@ -148,19 +152,11 @@ From Constellation 2, a normal attack's last hit SHALL have a 20% chance to be f
 
 From Constellation 6, each second of sprint SHALL give her next Charged Attack 60% more DMG, up to three seconds' worth, for eight seconds from the last stack.
 
-A Charged Attack that strikes SHALL reset the stacks.
-
 #### Scenario: Each sprinted second adds a stack, up to three
 
 - **GIVEN** Mona has Constellation 6
 - **WHEN** she sprints for 3.5 seconds and then lands a Charged Attack
 - **THEN** that attack deals 180% more DMG, from three stacks
-
-#### Scenario: The stacks reset when a Charged Attack strikes
-
-- **GIVEN** Mona has Constellation 6 and has sprinted for 2.5 seconds
-- **WHEN** her Charged Attack strikes
-- **THEN** the stacks are gone and the next Charged Attack gains nothing
 
 #### Scenario: Stacks run out eight seconds after the last one
 
@@ -173,6 +169,16 @@ A Charged Attack that strikes SHALL reset the stacks.
 - **GIVEN** Mona has Constellation 5
 - **WHEN** she sprints and lands a Charged Attack
 - **THEN** the attack gains nothing
+
+### Requirement: Constellation 6's stack reset
+
+A Charged Attack that strikes SHALL reset the sprint stacks.
+
+#### Scenario: The stacks reset when a Charged Attack strikes
+
+- **GIVEN** Mona has Constellation 6 and has sprinted for 2.5 seconds
+- **WHEN** her Charged Attack strikes
+- **THEN** the stacks are gone and the next Charged Attack gains nothing
 
 ### Requirement: Unbuilt Mona effects
 
