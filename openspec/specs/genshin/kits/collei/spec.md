@@ -74,13 +74,13 @@ Each leap tick SHALL deal damage using the stats and team buffs present when tha
 
 ### Requirement: No poise from arrows, Floral Brush and Trump-Card Kitty
 
-Collei's arrows, Floral Brush and Trump-Card Kitty SHALL deal poise.
+Collei's arrows, Floral Brush and Trump-Card Kitty SHALL deal no poise.
 
 #### Scenario: An arrow deals no poise
 
 - **GIVEN** Collei is the character on the field
 - **WHEN** one of her arrows hits an enemy
-- **THEN** the enemy takes the arrow's poise
+- **THEN** the enemy takes no poise damage
 
 ### Requirement: Fourth constellation raises the other members' Elemental Mastery from Trump-Card Kitty
 
@@ -120,3 +120,7 @@ From Constellation 1, Collei SHALL gain 20% Energy Recharge while she is not the
 - **GIVEN** Collei has no constellation
 - **WHEN** her passive bonuses are read off the field
 - **THEN** she gains no Energy Recharge from it
+
+## Open
+
+- [ ] **Collei's arrows, Floral Brush and Trump-Card Kitty deal no poise** — contradicted by `~/Esposter/cache/genshin-wiki/Category_Collei_Talents.json`: gives arrows 14.88 to 23.73, Skill DMG 40, Explosion 30, Leap 10 poise.

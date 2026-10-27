@@ -45,4 +45,5 @@ flowchart TD
 
 ## Open
 
+- [ ] **The kit strikes every enemy near Klee with each spark** — contradicted by `~/Esposter/cache/genshin-wiki/Category_Klee_Talents.json`: each Sparks 'n' Splash sends 4 sparks, randomly targeting all enemies.
 - [ ] **The Sparkly Explosion's 555% of her ATK** — no source yet: the Sparkly Explosion wiki page is not on disk, and the cached Klee talents file gives no 555 value; gcsim's `~/Esposter/cache/gcsim-v2.47.2/internal/characters/klee/burst.go` line 144 gives `Mult: 5.55`, so only the wiki's confirmation is open.

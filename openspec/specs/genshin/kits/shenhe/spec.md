@@ -181,7 +181,7 @@ Each Icy Quill trigger SHALL give Shenhe a Skyfrost Mantra stack from Constellat
 
 ### Requirement: Constellation 4 Skyfrost Mantra consumed by Spring Spirit Summoning
 
-Shenhe's Spring Spirit Summoning SHALL consume all of her stacks as it starts, adding 5% DMG to each of its hits for each stack consumed, for the seconds the summoning plays. The window is the press action's length.
+Shenhe's Spring Spirit Summoning SHALL consume all of her stacks as it starts, adding 5% DMG to each of its hits for each stack consumed, for the seconds the summoning plays. The window is the press action's length, flagged rather than read: no source gives it (see Open).
 
 #### Scenario: Spring Spirit Summoning consumes the stacks
 
