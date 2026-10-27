@@ -4,6 +4,19 @@ Kachina's kit is its record and one behaviour module, `createKachinaKitBehaviour
 
 gcsim has no folder for Kachina at v2.47.2, so no value comes from gcsim. Her record is built from the tables, the wiki and her overlay, and most of its frames and areas are provisional.
 
+## How it works
+
+Her press enters a Nightsoul Blessing of 60 points once Turbo Twirly is built, and Turbo Twirly's actions spend those points until none are left.
+
+```mermaid
+flowchart TD
+  Press["skill press"] --> Blessing["Nightsoul Blessing with 60 points, once Turbo Twirly is built"]
+  Blessing --> Spend["Turbo Twirly's actions spend points"]
+  Spend --> Gone{"points gone?"}
+  Gone -->|no| Spend
+  Gone -->|yes| Exit["blessing ends"]
+```
+
 ## Decisions
 
 - **Frames come from the clips' durations, as totals only.** The clips carry no events, so no event is read as a hit or a cancel. Each action's frames are its clip's length at 60 a second: the four normal attacks are `Attack_01` to `Attack_04` (160, 186, 198 and 206 frames, from `~/Esposter/genshin-parity/extracted/timings/11290214/AnimationClip/`, each clip's `m_StopTime` at 60 a second), the charged attack "ExtraAttack_AS" (102), the low plunge "FallingAttack_Strike" (18), the high plunge "FallingAttack_Strike_As" (102), the skill "ElementalArt_Throw" (48) and the burst `ElementalBurst` (50). Which clip is which action is read from its name, not from a recording.
@@ -12,7 +25,7 @@ gcsim has no folder for Kachina at v2.47.2, so no value comes from gcsim. Her re
 - **The burst's hit is Geo, scaled by DEF.** The wiki's Time to Get Serious! page gives her burst's Skill DMG as a share of her DEF, 380.57% at level 1 (`skilldmg_1`, `~/Esposter/cache/genshin-wiki/Category_Kachina_Talents.json`), and proud skill group 10039's index 0 is 3.805672 (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`), which the kit reads with the scaling attribute set to Defense. Its poise is none as built: the wiki's Skill DMG poise row on the same page is 150 (`~/Esposter/cache/genshin-wiki/Category_Kachina_Talents.json`), but the table reader does not take that label (see the labels it takes, below), so the burst deals no poise until the roadmap settles it. Its gauge is unset: no source gives one.
 - **The burst's energy and cooldown are the table's (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`, group 10039 indices 2 and 3).** Her burst is one hit at 18 frames of a 50-frame animation, and its field and its Turbo Twirly are not built.
 
-- **Her values no source gives are `NoGcsimUnit`.** gcsim has no folder for Kachina, so her values no source gives take `NoGcsimUnit`, as the [kits README](../README.md#framework-decisions) states: her frames, areas, hit counts and scaling attribute. Her burst's multiplier is the dump's proud skill group 10039 at index 0, 3.805672 (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`), held in her overlay: the table reader takes only the normal attack, charged attack, plunge and cooldown labels, and a generic `Skill DMG` label reads for every burst and skill would move the wiki's poise and gauge values of other kits, through the label map the wiki reads by. Her burst's Geo element is no overlay value: the energy element rule takes the energy skill's `costElemType` through the element map, where no source gives one.
+- **Her frames, areas, hit counts and scaling attribute take `NoGcsimUnit`.** That is the [framework decisions](../README.md#framework-decisions)' cause for a value no source gives on a character gcsim has no folder for. Her burst's multiplier is the dump's proud skill group 10039 at index 0, 3.805672 (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`), held in her overlay: the table reader takes only the normal attack, charged attack, plunge and cooldown labels, and a generic `Skill DMG` label reads for every burst and skill would move the wiki's poise and gauge values of other kits, through the label map the wiki reads by. Her burst's Geo element is no overlay value: the energy element rule takes the energy skill's `costElemType` through the element map, where no source gives one.
 
 ## Not built
 

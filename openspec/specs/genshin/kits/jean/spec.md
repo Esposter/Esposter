@@ -185,5 +185,4 @@ Jean's collision and two plunges SHALL keep provisional reaches until a recordin
 
 ## Open
 
-- [ ] **Constellation 6 cuts 35% DMG for 3 strikes or 10 seconds** — no source yet: gcsim leaves Constellation 6 unimplemented, and the cached wiki holds no Lion's Fang text. The cached Jean talents page (`~/Esposter.noindex/cache/genshin-wiki/Category_Jean_Talents.json`) names Constellation 6 as Lion's Fang, Fair Protector of Mondstadt without its effect.
 - [ ] **an enemy walking in or out of the field is not struck by its entering or exiting damage** — contradicted by ~/Esposter/cache/genshin-wiki/Category_Jean_Talents.json: Dandelion Field deals Anemo DMG to opponents entering or exiting.

@@ -2,6 +2,20 @@
 
 Jean's kit is its record and one behaviour module, `createJeanKitBehaviour`, on avatar 10000003 (`packages/genshin-world/src/services/kit/characters/jeanKit.ts`): five strikes, a charged attack, a collision and two plunges, Gale Blade's press and its hold, and Dandelion Breeze's blast. Her multipliers are read from proud skill groups 331, 332 and 339 (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`), and match the wiki's Favonius Bladework, Gale Blade and Dandelion Breeze values to two decimal places (her first strike at level 1 is 48.33% on the wiki, proud 331's index 0 is 0.48332, `~/Esposter/cache/genshin-wiki/Category_Jean_Talents.json`); the skill's cooldown and longest hold and the burst's cooldown and cost are read from the same groups. Dandelion Breeze's field, its activation heal and regeneration, and its entering and exiting damage are built as the [shared effects](../README.md), with A1's party heal on her strikes, A4's energy back, Spiraling Tempest's DMG bonus on a held Gale Blade from one constellation, Constellation 2's party speed on each pickup and Constellation 4's Anemo RES cut in the field. The activation heal's off-field members, the field's Anemo on the character, and Gale Blade's pull are not built, and its hold's stamina is open.
 
+## How it works
+
+Constellation 6's cut is held by each step of Dandelion Breeze's field, and a character who leaves the field keeps the cut for 10 seconds or three strikes.
+
+```mermaid
+flowchart TD
+  Step["each step while the field stands"] --> Inside{"active character inside the field?"}
+  Inside -->|yes| Held["the cut holds while inside"]
+  Inside -->|no| Leave["cut after leaving starts"]
+  Leave --> Back{"re-enters the field?"}
+  Back -->|yes| Replace["the field's cut takes its place"]
+  Back -->|no| Lasts["cut lasts 10 seconds or 3 strikes"]
+```
+
 ## Decisions
 
 - **Jean's reaches are priced with their offsets, and Gale Blade's box to its far corner.** gcsim centres her first, fourth and fifth strikes and her charged attack's 160-degree fan ahead of the body, so each reach is its offset plus its radius, while her second and third strikes' fans of 150 and 30 degrees behind it, so each reaches its radius less the offset, 1.7 and 1.8 metres. gcsim's rectangle spawns on its near edge, so Gale Blade's box (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/jean/skill.go:52`), 4 wide and 4.1 long from the body, is priced as the circle to its far corner, 4.56 metres. (`packages/genshin-world/src/services/kit/characters/jeanKit.ts`)

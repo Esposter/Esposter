@@ -1,6 +1,6 @@
 ## Purpose
 
-Jahoda's kit as built: her three strikes, a fully charged shot, a collision and two plunges, Savvy Strategy's pursuit with its flask and drains, and Hidden Aces' first hit, heals and robots, Constellation 6's Moonsign buff, and her Moonsign Benediction, Rooftop Dash, as her record holds it, with Ascension 1 and 4 and Constellations 2 and 4 built, her Meowball built on the values the next publish adds, and Constellation 1 not yet built.
+Jahoda's kit as built: her three strikes, a fully charged shot, a collision and two plunges, Savvy Strategy's pursuit with its flask and drains, and Hidden Aces' first hit, heals and robots, Constellation 6's Moonsign buff, and her Moonsign Benediction, Rooftop Dash, as her record holds it, with Ascension 1 and 4 and Constellations 2 and 4 built, her Meowball built, and Constellation 1 not yet built.
 
 ## Requirements
 

@@ -4,6 +4,20 @@ Heizou's kit is its record and one behaviour module, `createHeizouKitBehaviour`,
 
 The burst lands an aura check just before its hit, with no damage, element or poise (`burst.go`, lines 45 to 58: Physical at Durability 0 and Mult 0, and no poise). Each of the first four enemies it strikes in a cast is tagged, and one holding Pyro, Hydro, Electro or Cryo, the first of them in gcsim's priority, has a Windmuster Iris cast where it stands, which explodes 40 frames on in that element, 1U, round it (`burst.go` line 129, a 2.5-metre circle at 40 frames, and line 110, Durability 25). His Ascension 4 passive, Penetrative Reasoning, and Constellation 4's Energy, which each tag gives Heizou as it is made, are built (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/heizou/asc.go`, lines 52 to 54, for Penetrative Reasoning). His Ascension 1 passive and Constellations 1, 2 and 6 are not built, and neither are the full hold's Declension stacks and Conviction bonus: its one hit carries the stacks' total as one multiplier, and no stack is counted or read.
 
+## How it works
+
+The burst's aura check reads each of the first four enemies before its Anemo hit, and an enemy holding a matching element gets a Windmuster Iris that explodes 40 frames later.
+
+```mermaid
+flowchart TD
+  Check["burst aura check, no damage, ahead of its Anemo hit"] --> Tag["tag each of the first four enemies"]
+  Tag --> Match{"holds Pyro, Hydro, Electro or Cryo?"}
+  Match -->|yes| Iris["Windmuster Iris set on the enemy"]
+  Iris --> Explode["Iris explodes 40 frames later in that element"]
+  Match -->|no| Nothing["no Iris"]
+  Tag --> Energy["Constellation 4 Energy on each tag"]
+```
+
 ## Decisions
 
 - **Heizou's hold is gcsim's full charge.** gcsim's Heartstopper hold charges its four Declension stacks over 180 frames (`skill.go` lines 31 to 36), so the kit's hold is one level at three seconds, and a shorter hold reads as the press. That reading is provisional: gcsim's hold is binary and gives no stack count for a release before three seconds, so the count a short hold gives is unsourced until a recording shows it. The full hold's one hit is the stacks' total as one multiplier, 568.8% at level 1: the skill's 227.52% plus four stacks of 56.88% plus the Conviction bonus of 113.76% (`~/Esposter/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`, group 5932's indices 0 to 2, gcsim `skill.go` lines 59 to 72, and the cached wiki's Heartstopper Strike scaling, `~/Esposter/cache/genshin-wiki/Category_Shikanoin_Heizou_Talents.json`).

@@ -4,6 +4,19 @@ Itto's kit is its record and one behaviour module, `createIttoKitBehaviour`, on 
 
 Superlative Superstrength is a resource of up to 5 on the team's effects (gcsim `~/Esposter/cache/gcsim-v2.47.2/internal/characters/itto/itto.go` lines 119 and 120). His second strike gives 1 as it lands and his fourth 2, and as the Raging Oni King his first and third 1 each (gcsim `~/Esposter/cache/gcsim-v2.47.2/internal/characters/itto/attack.go` lines 121 to 127; the wiki's Fight Club Legend text in `~/Esposter/cache/genshin-wiki/Category_Arataki_Itto_Talents.json`). Ushi gives 1 the first time Masatsu Zetsugi's hit strikes, 1 as it takes an enemy's strike, at most once every 2 seconds, and 1 as it leaves, its seconds run out, its health spent or a second Ushi sending it away (gcsim `skill.go` lines 34 and 111, and `~/Esposter/cache/gcsim-v2.47.2/internal/characters/itto/ushi.go` line 26). Ushi is a taunt on the enemy the skill turned to, holding all of Itto's Max HP for 6 seconds from the hit (gcsim `~/Esposter/cache/gcsim-v2.47.2/internal/characters/itto/skill.go` line 95, `6*60`; the wiki's Masatsu Zetsugi page in `~/Esposter/cache/genshin-wiki/Category_Arataki_Itto_Talents.json` gives a 6-second duration and Inherited HP of 100% Max HP, which proud group 5732's index 1 holds at 1). While he holds stacks a stance turns his charged attack into the Arataki Kesagiri for them, at no stamina: a combo slash from the left and the right in turn for each stack but the last, then the final slash, with its poise from gcsim (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/itto/charge.go` lines 225, 228, 233 and 240) and its hitmarks, windups, boxes and circles unsourced. His Ascension 4 passive, Bloodline of the Crimson Oni, is built, and so is Constellation 1: two stacks 75 frames after Royal Descent's cast, then one at each of 1, 1.5 and 2 seconds after that (gcsim `~/Esposter/cache/gcsim-v2.47.2/internal/characters/itto/burst.go` line 90 and `~/Esposter/cache/gcsim-v2.47.2/internal/characters/itto/cons.go` lines 16 to 22). Arataki Ichiban's ATK SPD, which gcsim gives each slash for the next at 10%, to 30% (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/itto/asc.go` lines 14 and 31), and Constellation 6's stack save are not built.
 
+## How it works
+
+Constellation 4's team buff starts when Royal Descent's state ends, and each Superlative Superstrength stack gives the next charged attack one more Arataki Kesagiri slash.
+
+```mermaid
+flowchart TD
+  State["Raging Oni King state ends by its seconds or a swap"] --> Expire["Royal Descent's infusion expires"]
+  Expire --> Buff["every deployed member gains the team buff"]
+  Strike["an enemy strikes Ushi"] --> Stack["Superlative Superstrength stack"]
+  Stack --> Charged["next charged attack"]
+  Charged --> Kesagiri["Arataki Kesagiri, a slash per stack"]
+```
+
 ## Decisions
 
 - **Itto's charged attack is the Saichimonji Slash while he holds no stacks.** gcsim's charged attack is the Saichimonji Slash only with no Superlative Superstrength (`charge.go` line 202), and the Arataki Kesagiri combo and final slashes with stacks, which the kit plays as a stance while he holds them.

@@ -2,6 +2,22 @@
 
 Iansan's kit is its record and one behaviour module, `createIansanKitBehaviour`, on avatar 10000110 (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarExcelConfigData.json`): her three strikes and charged attack, a plunge collision with two plunges (`~/Esposter/cache/genshin-wiki/Category_Iansan_Talents.json`), and the hits of the skill's activation and the burst. Her multipliers are read from proud skill groups 11031, 11032 and 11039, matching gcsim's to four decimal places (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/iansan/zz_iansan.dm.go` line 111; `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`: 11031's index 4 is the Swift Stormflight's 84.194% at level 1, 11032's index 1 the skill's 54 points, and 11039's indices 6 and 7 the burst's 18 seconds and 70 energy). Her skill cools for 16 seconds (11032's index 2; gcsim `~/Esposter/cache/gcsim-v2.47.2/internal/characters/iansan/skill.go` line 64), her burst for 18 at 70 energy (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/iansan/burst.go` line 73), and her charged attack costs 25 stamina (11031's index 5; the wiki's Weighted Spike, `chargedattack&swiftstormflightstaminacost`, cached in `~/Esposter/cache/genshin-wiki/Category_Iansan_Talents.json`).
 
+## How it works
+
+The burst's 15 points land 40 frames after the press, and the restore that follows feeds Ascension 1's arming and Ascension 4's Warming Up heal.
+
+```mermaid
+flowchart TD
+  Burst["burst press"] --> Points["15 points land, 40 frames after the press"]
+  Points --> Holds{"holds a blessing?"}
+  Holds -->|no| Enter["a 16-second blessing is entered"]
+  Holds -->|yes| Generate["points generate onto the blessing"]
+  Enter --> Restore["burst restore tick, once a second"]
+  Generate --> Restore
+  Restore --> Arm["Ascension 1 arming, 4 points once"]
+  Restore --> Heal["Ascension 4 Warming Up heal"]
+```
+
 ## Decisions
 
 - **Her strikes land at their hitmarks, with no travel.** gcsim queues each strike's damage at its hitmark, so the strikes land at 14, 7 and 22 frames in animations of 27, 31 and 55 frames (gcsim `~/Esposter/cache/gcsim-v2.47.2/internal/characters/iansan/attack.go` lines 16 and 29 to 37). The first is a fan of 260 degrees and 1.75 metres centred 0.4 metres ahead of the body (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/iansan/config.yml` lines 37 to 42), the second a circle of 1.6 metres centred 0.5 metres ahead, reaching 2.1 metres from the body, and the third a box of 2.2 metres by 3 on its near edge 0.5 metres behind the body, with 59.896 blunt poise (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/iansan/attack.go` line 69). They are Physical, so they carry no gauge (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/iansan/attack.go` line 55).

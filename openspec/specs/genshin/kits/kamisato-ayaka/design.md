@@ -2,6 +2,18 @@
 
 Kamisato Ayaka's kit is its record and one behaviour module, `createAyakaKitBehaviour`, avatar 10000002 (`~/Esposter/genshin-parity/text/ExcelBinOutput/AvatarExcelConfigData.json`): five strikes, the fourth of three hits (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/ayaka/attack.go` line 18), a three-hit charged attack, a collision and two plunges (`~/Esposter/cache/genshin-wiki/Category_Kamisato_Ayaka_Talents.json`), Kamisato Art: Hyouka, Kamisato Art: Soumetsu's storm and Kamisato Art: Senho's Cryo infusion. Her multipliers are read from proud skill groups 231, 232 and 239, (`packages/genshin-world/src/services/kit/characters/ayakaKit.ts`, `~/Esposter/genshin-parity/text/ExcelBinOutput/ProudSkillExcelConfigData.json`), and match the wiki's Kamisato Art: Kabuki, Hyouka and Soumetsu values to two decimal places (`~/Esposter/cache/genshin-wiki/Category_Kamisato_Ayaka_Talents.json`). Soumetsu's storm is a summon of nineteen cuts and a bloom (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/ayaka/burst.go` lines 40 to 90), built as the shared effects below, with Blizzard Blade Seki no To's two smaller storms from two constellations, and Senho's infusion is built on the kit's sprint hook. Senho's Cryo application and its movement, A1's and A4's effects and her other constellations are not built.
 
+## How it works
+
+Constellation 4's DEF cut is applied after a storm hit's damage lands, so a hit that deals no damage applies none.
+
+```mermaid
+flowchart TD
+  Hit["storm hit lands"] --> Damage["hit's damage applied first"]
+  Damage --> Zero{"damage is zero?"}
+  Zero -->|yes| Nothing["no DEF cut"]
+  Zero -->|no| Cut["enemy DEF cut, restarted under one id"]
+```
+
 ## Decisions
 
 - **Ayaka's reaches are priced with their offsets, and her fifth strike round her body.** gcsim centres her first, second and fourth strikes and her plunges ahead of the body, which prices each reach as its offset plus its radius (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/ayaka/attack.go` lines 20-22 and 67-72, `~/Esposter/cache/gcsim-v2.47.2/internal/characters/ayaka/plunge.go` lines 28, 33 and 92); her third strike's 60-degree fan, centred half a metre behind, reaches 2.3 metres (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/ayaka/attack.go` offset -0.5, radius 2.8). Her fifth strike is a circle of 0.8 metres gcsim centres on the primary target (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/ayaka/attack.go` lines 48-51, "N5 is a bullet"), which an area does not hold, so it is priced round her body, as Mona's strikes are (`packages/genshin-world/src/services/kit/characters/ayakaKit.ts`).
@@ -33,4 +45,4 @@ Kamisato Ayaka's kit is its record and one behaviour module, `createAyakaKitBeha
 - [Amatsumi Kunitsumi Sanctification](https://genshin-impact.fandom.com/wiki/Amatsumi_Kunitsumi_Sanctification), [Kanten Senmyou Blessing](https://genshin-impact.fandom.com/wiki/Kanten_Senmyou_Blessing) and [Blizzard Blade Seki no To](https://genshin-impact.fandom.com/wiki/Blizzard_Blade_Seki_no_To), Genshin Impact Wiki: Ayaka's A1 and A4, and the second constellation's smaller storms, their share and their gauges and poise.
 - [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/ayaka), MIT: the kit's hitmarks, cancel frames and areas, the storm's cuts and bloom, the smaller storms' areas, and Senho's infusion.
 - The game data dump's `~/Esposter/genshin-parity/text/ExcelBinOutput/ProudSkillExcelConfigData.json`: proud skill groups 231, 232 and 239 at level 1 (231's indices 0-3, 6, 7 and 9-11, 232's 0, 239's 0-1) match the cached Kabuki scaling table's `hit1_1` to `plungehigh_1` (45.73 to 159.68), Hyouka's `skilldmg_1` (239.2) and Soumetsu's `cuttingdmg_1` (112.3) and `bloomdmg_1` (168.45) to two decimal places.
-- [gcsim v2.47.2 `~/Esposter/cache/gcsim-v2.47.2/internal/characters/ayaka/asc.go`](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ayaka/asc.go) and [`~/Esposter/cache/gcsim-v2.47.2/internal/characters/ayaka/cons.go`](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ayaka/cons.go) (MIT): Amatsumi Kunitsumi Sanctification's bonus and window, Constellation 4's DEF cut, Constellation 6's clear and recharge, and Ascension 4's stamina and Cryo bonus.
+- [gcsim v2.47.2 asc.go](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ayaka/asc.go) and [gcsim v2.47.2 cons.go](https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/ayaka/cons.go) (MIT): Amatsumi Kunitsumi Sanctification's bonus and window, Constellation 4's DEF cut, Constellation 6's clear and recharge, and Ascension 4's stamina and Cryo bonus.
