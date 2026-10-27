@@ -166,8 +166,12 @@ const areaLabels = computed(() =>
 // Where it stands in one, else its area, whose progress line it carries
 const regionTag = computed(() => {
   const area = findAreaAt(catalogue, camera.x, camera.z);
-  const name = findAreaNameAt(catalogue, camera.x, camera.z);
-  return area && name && { name, progressSegments: progressSegmentsMap.value.get(area.id) ?? [] };
+  return (
+    area && {
+      name: findAreaNameAt(area, camera.x, camera.z),
+      progressSegments: progressSegmentsMap.value.get(area.id) ?? [],
+    }
+  );
 });
 // The filled areas' progress, read out of the hidden drawing by a screen reader as a list of its own
 const areaProgresses = computed(() => areaLabels.value.filter(({ progressSegments }) => progressSegments.length > 0));
