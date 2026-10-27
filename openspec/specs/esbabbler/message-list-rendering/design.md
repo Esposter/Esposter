@@ -14,7 +14,7 @@ The confirm dialogs follow the repo-wide [singleton dialog standard](../../archi
 flowchart TD
     C[List/Container.vue - one Item per message] --> I[List/Item.vue - display:contents hover wrapper]
     I -->|always mounted| M[Message component via MessageComponentMap]
-    I -->|v-if hovered or menu open| O[OptionsMenu - quick reactions, picker, main actions, More]
+    I -->|v-if hovered or menu open| O[OptionsMenu<br/>hover bar and More menu]
     M -->|right-click sets contextMenuRequest| S[(messageStore)]
     S -->|mounts over the target| O
     O -->|opens with its items| CM[UiContextMenuHost]
@@ -36,7 +36,7 @@ flowchart TD
 ```mermaid
 flowchart TD
   Map["MessageComponentMap[message.type]"] --> Authored{"authored prose?"}
-  Authored -->|"Message, Webhook"| Index["Type/Index.vue — avatar, batch header, reply spine"]
+  Authored -->|"Message, Webhook"| Index["Type/Index.vue<br/>authored shell"]
   Authored -->|"Call, EditRoom, PinMessage, System"| Line["Type/SystemLine.vue — icon, timestamp, reactions"]
   Authored -->|"Poll"| PollType["Type/Poll.vue — its own card"]
   Index --> Forward{"message.isForward?"}
@@ -46,7 +46,7 @@ flowchart TD
   Body --> Slot{"parent passed the inline editor?"}
   Slot -->|"yes"| Editor["MessageModelMessageEditor"]
   Slot -->|"no"| Text["rich text plus (edited) marker"]
-  Body --> Trailing["Type/Trailing.vue — files, link preview, reactions"]
+  Body --> Trailing["Type/Trailing.vue<br/>trailing row"]
   Line --> Sentence["the type's own sentence"]
 ```
 

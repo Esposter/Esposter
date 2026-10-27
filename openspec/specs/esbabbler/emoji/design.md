@@ -12,7 +12,7 @@ flowchart LR
   React["reactions - useSelectEmoji, MessageModelMessageEmojiListItem"] --> Index
   Composer["composer ':' autocomplete - EmojiSuggestion"] --> Index
   Tooltip["quick-reaction tooltips"] --> Index
-  Index["getEmojiIndex - characterEmojiMap, slugEmojiMap, groupEmojisMap"] --> Data["unicode-emoji-json joined with emojilib on the character"]
+  Index["getEmojiIndex<br/>one shared index"] --> Data["unicode-emoji-json joined with emojilib on the character"]
   Index --> Search["searchEmojis - MiniSearch, built separately"]
 ```
 

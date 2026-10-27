@@ -25,12 +25,12 @@ flowchart TD
   validate -->|rejected| alert[Alert shown and upload aborts]
   validate -->|ok| thumb[generateImageThumbnail downscales images to WebP]
   validate --> sas[message.generateUploadFileSasEntities]
-  sas --> enforce[Server re-checks the declared limits and issues original plus thumbnail write SAS]
+  sas --> enforce[Server<br/>re-checks limits, issues SAS write SAS]
   enforce --> upload[uploadFileToSas PUTs original blocks]
   thumb --> upthumb[Thumbnail blob PUT to thumbnailSasUrl]
   upload --> render[Message list renders the thumbnail]
   upthumb --> render
-  render -->|click| viewer["viewingFileId + viewingRoomId open the media viewer"]
+  render -->|click| viewer["ViewerDialog<br/>viewingFileId + viewingRoomId"]
 ```
 
 ## The media viewer

@@ -19,7 +19,7 @@ flowchart TD
   union["@everyone bits, union every role the member holds"] --> allow["OR in the member's allow bits"]
   allow --> deny["clear the member's deny bits"]
   deny --> effective["effective bitfield"]
-  effective --> check["checkHasPermission reads it as before"]
+  effective --> check["checkHasPermission reads it"]
 ```
 
 The fold happens in `getPermissions`, so `checkHasPermission`, `readMyPermissions` and the client's role store read one answer. The owner and an Administrator are still answered before any row is read: an Administrator bit comes from a role only, and the override bits never include it, so an override can neither grant Administrator nor strip it.
@@ -38,7 +38,7 @@ Leaving a room deletes the row with the membership, through the composite foreig
 
 The Roles settings panel lists roles and members in two groups. A member appears while an override holds them, and while they are being added, which has no row until a first state is set.
 
-- **`Add role or member`** creates a role from the typed name, as before. A member is added from the `Add member` picker, which offers the members the room's list has loaded and opens their entry to set.
+- **`Add role or member`** creates a role from the typed name. A member is added from the `Add member` picker, which offers the members the room's list has loaded and opens their entry to set.
 - Selecting a role opens the role editor unchanged. Selecting a member opens the member editor: the same categories of permissions, each row a three-state segmented control — `Deny`, `Inherit`, `Allow`. The inherit segment names what the roles give, so `inherit` reads as the concrete answer it resolves to.
 - `Remove override` asks first, then deletes the row, and the member falls back to their roles.
 
