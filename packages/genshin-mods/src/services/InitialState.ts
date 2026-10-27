@@ -4,7 +4,7 @@ import type { PluginState } from "claude-code";
 // The file that uses it, so each file makes its own and this is the one place their initials are written
 export const InitialState: PluginState["genshin-mods"] = {
   commission: { goal: "", openedAt: 0, tasks: [] },
-  enabledMods: { commission: true, pulse: true, resin: true, veil: false, ward: true, waypoints: true },
+  enabledMods: { commission: true, pulse: true, resin: true, sins: false, veil: false, ward: true, waypoints: true },
   isCommissionExpanded: false,
   isHandingOff: false,
   lastCacheRequestAt: 0,
@@ -12,5 +12,8 @@ export const InitialState: PluginState["genshin-mods"] = {
   lookupStreak: 0,
   now: 0,
   reserveWindow: { isAheadOfPace: false, isWindDown: false, name: "", percentage: 0, resetsAt: "" },
+  sinHistory: {},
+  sinSession: 0,
+  sinStatus: "unchecked",
   waypoints: [],
 };

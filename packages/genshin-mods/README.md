@@ -44,6 +44,7 @@ Each mod is switched by its own slash command; bare, it flips, and the choice is
 | `/commission [on \| off]` | Shows the goal meter while a turn works through a task list                                                                     |
 | `/pulse [on \| off]`      | Keeps the machine watcher running, or stops                                                                                     |
 | `/resin [on \| off]`      | Shows the cache, context, limits and cost row and its warning toast                                                             |
+| `/sins [on \| off]`       | Scores each prompt's seven sins with TypeSafe, drawn as bars in a pane; needs a `TYPESAFE_API_KEY`                              |
 | `/veil [on \| off]`       | Turns recording mode on or off; off by default                                                                                  |
 | `/ward [on \| off]`       | Asks before an edit to a file another session just changed, and refuses a whole-index git command while one shares the checkout |
 | `/waypoints [on \| off]`  | Suggests the next steps after each answered turn, or stops                                                                      |

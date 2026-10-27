@@ -2,11 +2,14 @@ import type { EngineInterface, On, RenderElement, RenderInput } from "claude-cod
 
 import { atom, read, update } from "claude-code";
 
-import type { EnabledMods } from "../../../types";
+import type { EnabledMods, SinStatus } from "../../../types";
 
 import { ACCENT_COLOR, HANDOFF_QUESTION, MAX_SHOWN_TASKS, WARM_QUESTION } from "../constants";
 import { InitialState } from "../InitialState";
 import { getResinFigures } from "../resin/getResinFigures";
+import { SinColorMap, SINS_PANE_ID } from "../sins/constants";
+import { getSinScores } from "../sins/getSinScores";
+import { readIsLightTheme } from "../sins/readIsLightTheme";
 import { getCommissionSummary } from "./getCommissionSummary";
 
 // The plugin's one band, a row per mod with something to say. `$` is followed only into functions in the file that
@@ -23,6 +26,8 @@ const lastCacheRequestAtAtom = atom(
   InitialState.lastCacheRequestAt,
 );
 const nowAtom = atom({ key: "now", plugin: "genshin-mods" } as const, InitialState.now);
+const sinHistoryAtom = atom({ key: "sinHistory", plugin: "genshin-mods" } as const, InitialState.sinHistory);
+const sinStatusAtom = atom({ key: "sinStatus", plugin: "genshin-mods" } as const, InitialState.sinStatus);
 const waypointsAtom = atom({ key: "waypoints", plugin: "genshin-mods" } as const, InitialState.waypoints);
 
 // The engine's press slot takes no promise; every action here resolves each of its outcomes itself
@@ -189,6 +194,49 @@ const drawWaypointsRow = async (
   });
 };
 
+// Why the band's sins row says so instead of the scores, for the statuses that have a reason to say
+const SinStatusSummaryMap: Partial<Record<SinStatus, string>> = {
+  "no-key": "needs a TypeSafe key",
+  "node-too-old": "needs Node 22.13 or later",
+};
+
+// The sins as one line, each in its colour, with the pane's own button; the pane holds the bars and the trends
+const drawSinsRow = async (
+  $: EngineInterface,
+  e: RenderInput<"AbovePrompt">,
+  enabledMods: EnabledMods,
+  accent: string,
+): Promise<RenderElement | undefined> => {
+  if (!enabledMods.sins) return undefined;
+
+  const scores = getSinScores(await read($, sinHistoryAtom));
+  const isLight = await readIsLightTheme($);
+  const summary = SinStatusSummaryMap[await read($, sinStatusAtom)];
+  const { Box, Button, Text } = $.ui.resolve(e);
+  return Box({
+    children: [
+      Text({ bold: true, children: "Sins  ", color: accent }),
+      ...(summary ? [Text({ children: summary, dimColor: true })] : []),
+      ...(scores.length === 0 && !summary ? [Text({ children: "no prompt scored yet", dimColor: true })] : []),
+      ...scores.map(({ name, score }) =>
+        Text({
+          children: `${name} ${Math.round(score * 100)}%  `,
+          color: SinColorMap[name][isLight ? "light" : "dark"],
+        }),
+      ),
+      Button({
+        hotkey: "p",
+        key: "sins-panel",
+        label: "Panel",
+        onPress: press(() => $.ui.open({ id: SINS_PANE_ID, title: "Seven sins" })),
+        plain: true,
+      }),
+    ],
+    flexDirection: "row",
+    flexWrap: "wrap",
+  });
+};
+
 // The veil's marker first, so a recording never runs with it off unnoticed, and the engine's own band whenever no
 // Mod has anything to say
 export const registerBand = (on: On): void => {
@@ -202,6 +250,7 @@ export const registerBand = (on: On): void => {
         drawResinRow($, e, enabledMods, accent),
         drawCommissionRow($, e, enabledMods, accent),
         drawWaypointsRow($, e, enabledMods, accent),
+        drawSinsRow($, e, enabledMods, accent),
       ])
     ).filter((row) => row !== undefined);
     if (rows.length === 0 && !enabledMods.veil) return next(e);

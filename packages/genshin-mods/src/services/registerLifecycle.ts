@@ -4,6 +4,14 @@ import { atom, read, update } from "claude-code";
 
 import type { EnabledMods } from "../../types";
 
+import { readHome } from "./readHome";
+import { veilText } from "./veil/veilText";
+import { appendSinEvidence } from "./sins/appendSinEvidence";
+import { SINS_API_URL, SINS_TIMEOUT_MS } from "./sins/constants";
+import { getSinQuestions } from "./sins/getSinQuestions";
+import { getSinsStorePath } from "./sins/getSinsStorePath";
+import { parseSinsResult } from "./sins/parseSinsResult";
+import { SINS_SCRIPT } from "./sins/sinsScript";
 import {
   CACHE_WARNING_MS,
   MACHINE_WATCHER_RETRY_MILLISECONDS,
@@ -36,6 +44,9 @@ const lastCacheRequestAtAtom = atom(
 const lookupStreakAtom = atom({ key: "lookupStreak", plugin: "genshin-mods" } as const, InitialState.lookupStreak);
 const nowAtom = atom({ key: "now", plugin: "genshin-mods" } as const, InitialState.now);
 const reserveWindowAtom = atom({ key: "reserveWindow", plugin: "genshin-mods" } as const, InitialState.reserveWindow);
+const sinHistoryAtom = atom({ key: "sinHistory", plugin: "genshin-mods" } as const, InitialState.sinHistory);
+const sinSessionAtom = atom({ key: "sinSession", plugin: "genshin-mods" } as const, InitialState.sinSession);
+const sinStatusAtom = atom({ key: "sinStatus", plugin: "genshin-mods" } as const, InitialState.sinStatus);
 const waypointsAtom = atom({ key: "waypoints", plugin: "genshin-mods" } as const, InitialState.waypoints);
 
 // The events a plugin may hook once with no matcher, each hooked here for every mod, with the commands that switch
@@ -79,6 +90,41 @@ const armCacheWarning = async ($: EngineInterface) => {
 const suggestWaypoints = async ($: EngineInterface) => {
   const answer = await $.model.fork({ prompt: WAYPOINTS_QUESTION });
   if (answer.isAnswered) await update($, waypointsAtom, () => parseWaypoints(answer.text));
+};
+
+// The sins are scored beside the prompt's turn, never in front of it: the call and the evidence log run in the plugin's
+// Node script, and a run that fails, or a machine that cannot open the log, records nothing and says why in the band
+const scoreSins = async ($: EngineInterface, text: string) => {
+  if (!(await read($, enabledModsAtom)).sins) return;
+
+  if (!(await $.env.get("TYPESAFE_API_KEY"))) {
+    await update($, sinStatusAtom, () => "no-key");
+    return;
+  }
+
+  const session = (await read($, sinSessionAtom)) || (await $.clock.now());
+  await update($, sinSessionAtom, () => session);
+  const home = await readHome($);
+  const [outcome] = await Promise.allSettled([
+    $.process.run(["node", "--input-type=module", "-e", SINS_SCRIPT], {
+      stdin: JSON.stringify({
+        apiUrl: SINS_API_URL,
+        questions: getSinQuestions(),
+        session,
+        state: veilText(text),
+        storePath: getSinsStorePath(home),
+      }),
+      timeoutMs: SINS_TIMEOUT_MS,
+    }),
+  ]);
+  const result =
+    outcome.status === "fulfilled" && outcome.value.exitCode === 0
+      ? parseSinsResult(outcome.value.stdout)
+      : { result: "failed" as const };
+  if (result.result === "answered")
+    await update($, sinHistoryAtom, (history) => appendSinEvidence(history, result.answers));
+
+  await update($, sinStatusAtom, () => result.result);
 };
 
 // Keeps the machine watcher running as this session's child. The watcher writes the machine's state, holds its lock and
@@ -137,6 +183,8 @@ export const registerLifecycle = (on: On): void => {
   on("session.end", async ($, e, next) => {
     if (e.reason === "clear" || e.reason === "resume") {
       await update($, lastCacheRequestAtAtom, () => InitialState.lastCacheRequestAt);
+      await update($, sinHistoryAtom, () => InitialState.sinHistory);
+      await update($, sinSessionAtom, () => InitialState.sinSession);
       await update($, waypointsAtom, () => InitialState.waypoints);
       await closeCommission($);
     }
@@ -153,6 +201,10 @@ export const registerLifecycle = (on: On): void => {
     await update($, lastPromptAtom, () => e.text);
     const { tasks } = await read($, commissionAtom);
     if (tasks.length > 0 && tasks.every(({ status }) => status === "completed")) await closeCommission($);
+    $.clock.after(0, () => {
+      // oxlint-disable-next-line typescript/no-floating-promises -- The engine's timer slot takes no promise, and scoring resolves every outcome itself
+      scoreSins($, e.text);
+    });
     return next(e);
   });
 

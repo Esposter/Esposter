@@ -18,6 +18,7 @@ export interface EnabledMods {
   commission: boolean;
   pulse: boolean;
   resin: boolean;
+  sins: boolean;
   veil: boolean;
   ward: boolean;
   waypoints: boolean;
@@ -33,6 +34,9 @@ export interface ReserveWindow {
   percentage: number;
   resetsAt: string;
 }
+
+// What the sins mod last found: its scores when the call answered, or why it could not score the last prompt
+export type SinStatus = "answered" | "failed" | "no-key" | "node-too-old" | "unchecked";
 
 export interface WardRecord {
   editedAt: number;
@@ -51,6 +55,10 @@ declare module "claude-code" {
       lookupStreak: number;
       now: number;
       reserveWindow: ReserveWindow;
+      // Keyed by sin name, the last evidence values of each sin in order
+      sinHistory: Record<string, number[]>;
+      sinSession: number;
+      sinStatus: SinStatus;
       waypoints: string[];
     };
   }
