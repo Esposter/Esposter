@@ -6,13 +6,13 @@ Each character's Friendship Level read from the Companionship EXP it has earned,
 
 ### Requirement: Each character's Friendship Level
 
-Each character's Friendship Level SHALL be the number of the game's levels its total Companionship EXP has reached (`~/Esposter/genshin-parity/text/ExcelBinOutput/AvatarFettersLevelExcelConfigData.json`).
+Each character's Friendship Level SHALL be the number of the game's levels its total Companionship EXP has reached.
 
 #### Scenario: A total of 1,000 EXP reaches level 2
 
 - **GIVEN** a character has 1,000 total Companionship EXP
 - **WHEN** its Friendship Level is read
-- **THEN** the level is 2 (`~/Esposter/genshin-parity/text/ExcelBinOutput/AvatarFettersLevelExcelConfigData.json`)
+- **THEN** the level is 2
 
 #### Scenario: A total below the first level's total is level 1
 
