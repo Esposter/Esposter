@@ -28,8 +28,8 @@ flowchart TD
 
 ## Provisional constants
 
-- **Bennett's 0.5-second minimum for the hold borrowed by Spirit Steed's Stride is open.** No gcsim line gives it ([Bennett's kit](../bennett/design.md) cites its skill file), and no cached source does.
-- **The plunges' timing is open.** The design takes Bennett's plunge timing (`{data-root}/cache/gcsim-v2.47.2/internal/characters/bennett/plunge.go`, low hitmark 36), and Keqing's (`{data-root}/cache/gcsim-v2.47.2/internal/characters/keqing/plunge.go`, low hitmark 46) is the other reading. Both gcsim files give the same reaches, 3 and 5 metres, so only the timing differs. The record the kit reads is in published game data, not the repo cache, so neither reading is confirmed.
+- **Bennett's 0.5-second minimum for the hold borrowed by Spirit Steed's Stride is open.** No gcsim line gives it (`{data-root}/cache/gcsim-v2.47.2/internal/characters/bennett/skill.go` has no hold seconds), and no cached source does.
+- **The plunges' timing is open.** The design takes Bennett's plunge timing (`{data-root}/cache/gcsim-v2.47.2/internal/characters/bennett/plunge.go`, low hitmark 36), as the [kits index](../README.md#how-a-kit-is-read) gives a plunge with no gcsim file, and Keqing's (`{data-root}/cache/gcsim-v2.47.2/internal/characters/keqing/plunge.go`, low hitmark 46) is the other reading. Both gcsim files give the same reaches, 3 and 5 metres, so only the timing differs. The record the kit reads is in published game data, not the repo cache, so neither reading is confirmed.
 - **The burst's Jadelight Canopy geometry and its four paths are open.** The cached wiki text gives the canopy no geometry, so its paths stay provisional.
 
 ## Not built

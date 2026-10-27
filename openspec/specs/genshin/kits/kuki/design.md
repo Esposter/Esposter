@@ -21,8 +21,8 @@ flowchart TD
 
 ## Provisional constants
 
-- **The plunges' reaches are the generic plunges', and the plunges take the wiki's poise.** gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/kuki/` folder has no plunge file (only `asc`, `attack`, `burst`, `charge`, `cons`, `kuki` and `skill`), so the 1, 3 and 5-metre reaches are the kit's own. Open until a plunge source gives the reaches.
-- **The burst's energy is the table's 60, where gcsim calls "ConsumeEnergy(4)".** The table's 60 is proud group 6539 index 6 and the wiki's `energycost=60`; gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/kuki/burst.go` line 60 consumes 4.
+- **The plunges' reaches are the generic plunges', and the plunges take the wiki's poise.** gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/kuki/` folder has no plunge file (only `asc`, `attack`, `burst`, `charge`, `cons`, `kuki` and `skill`), so the 1, 3 and 5-metre reaches are the kit's own. The plunges take the wiki's poise, 25 for the collision, 100 for the low plunge and 150 for the high. Open until a plunge source gives the reaches.
+- **The burst's energy is the table's 60, where gcsim calls "ConsumeEnergy(4)".** The table's 60 is proud group 6539 index 6 and the wiki's `energycost=60`; gcsim's `{data-root}/cache/gcsim-v2.47.2/internal/characters/kuki/burst.go` line 60 consumes 4. The kit follows the table. Open until the two agree.
 
 ## Not built
 

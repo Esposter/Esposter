@@ -1,6 +1,6 @@
 # Vesna
 
-Vesna's kit is its record and one behaviour module, `createVesnaKitBehaviour` (`packages/genshin-world/src/services/kit/characters/vesnaKit.ts`), avatar 10000143 (`{data-root}/genshin-parity/text/ExcelBinOutput/AvatarExcelConfigData.json`). Its `{data-root}/cache/gcsim-v2.47.2/internal/characters/` holds no `vesna` folder at that tag, so the record follows [the kits index](../README.md).
+Vesna's kit is its record and one behaviour module, `createVesnaKitBehaviour` (`packages/genshin-world/src/services/kit/characters/vesnaKit.ts`), avatar 10000143 (`{data-root}/genshin-parity/text/ExcelBinOutput/AvatarExcelConfigData.json`). gcsim has no folder for Vesna at v2.47.2 (its `{data-root}/cache/gcsim-v2.47.2/internal/characters/` holds no `vesna` folder at that tag), so Vesna's record follows [the kits index](../README.md).
 
 ## Decisions
 

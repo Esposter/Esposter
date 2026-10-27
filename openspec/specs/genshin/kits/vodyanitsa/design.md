@@ -1,6 +1,6 @@
 # Vodyanitsa
 
-Vodyanitsa's kit is its record and one behaviour module, `createVodyanitsaKitBehaviour`, avatar 10000140. gcsim has no folder for Vodyanitsa at v2.47.2, so Vodyanitsa's record follows [the kits index](../README.md).
+Vodyanitsa's kit is its record and one behaviour module, `createVodyanitsaKitBehaviour`, avatar 10000140. gcsim has no folder for Vodyanitsa at v2.47.2 (its `{data-root}/cache/gcsim-v2.47.2/internal/characters/` holds none at that tag), so Vodyanitsa's record follows [the kits index](../README.md).
 
 ## Decisions
 
