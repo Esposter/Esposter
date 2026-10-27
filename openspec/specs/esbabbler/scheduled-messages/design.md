@@ -30,7 +30,11 @@ sequenceDiagram
             F->>F: exit (no-op)
         else claimed
             F->>F: ScheduledMessage → assertCanCreateMessage
-            F->>DB: word filter blocked → apply the room's automod action, UPDATE cancelledAt = now(), exit
+            alt guard rejects
+                F->>DB: word filter blocked → apply the room's automod action, UPDATE cancelledAt = now(), exit
+            else any other rejection (read-only, slowmode, timeout, lost membership)
+                F->>DB: UPDATE processingStartedAt = null, rethrow — Service Bus redelivers
+            end
             F->>EG: Reminder → publishNotification — best-effort, logged
             F->>DB: ScheduledMessage → advance the room clocks
             F->>F: ScheduledMessage → createAndBroadcastMessage
