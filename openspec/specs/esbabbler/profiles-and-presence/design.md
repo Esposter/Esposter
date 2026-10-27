@@ -17,7 +17,7 @@ flowchart TD
   Idle["idle timer passes autoIdleThresholdMs"] --> Proc
   Manual["user picks Online / Idle / DND, with an optional expiry"] --> Proc
   Socket["connection opens or drops"] --> Proc
-  Proc["user.upsertStatus — onConflictDoUpdate on userId"] --> Row[("userStatuses — status, isConnected, message, expiresAt")]
+  Proc["user.upsertStatus — onConflictDoUpdate on userId"] --> Row[("userStatuses")]
   Row --> D1["getDetectedUserStatus"]
   Row -->|"user.readStatuses on member-list load"| D2["getDetectedUserStatus"]
   D1 -->|"userEventEmitter, onUpsertStatus"| Client

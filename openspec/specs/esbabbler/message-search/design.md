@@ -16,7 +16,7 @@ flowchart TD
   Update --> Rule{"getFilterTypeFromSearchQuery<br/>keyword + colon?"}
   Rule -- "names a FilterType" --> Create["createFilter — push a pending chip, clear the query"]
   Rule -- "anything else" --> Text["searchQuery = the text, verbatim"]
-  Create --> Picker["The panel swaps to the type's picker"]
+  Create --> Picker["picker panel for the chip's type"]
   Text --> Wait["Nothing happens until Enter"]
   Enter["User presses Enter"] --> Empty{"checkIsSearchQueryEmpty"}
   Empty -- "no text and no valued chip" --> Noop["Do nothing"]
