@@ -80,13 +80,13 @@ The progress SHALL count only the camp, chest and waypoint events of an area, le
 
 #### Scenario: Gathered item adds no weight
 
-- **GIVEN** the game's table lists an item gathered in an area (EventIDs 21 to 38, each `EXPLORE_EVENT_ITEM_ADD` in `~/Esposter/genshin-parity/text/ExcelBinOutput/WorldAreaExploreEventConfigData.json`)
+- **GIVEN** the game's table lists an item gathered in an area
 - **WHEN** the area's events are counted
 - **THEN** the gathered item adds no weight
 
 #### Scenario: Force entered adds no weight
 
-- **GIVEN** the game's table lists a force entered in an area (EventID 39, `EXPLORE_EVENT_ENTER_FORCE` in `~/Esposter/genshin-parity/text/ExcelBinOutput/WorldAreaExploreEventConfigData.json`)
+- **GIVEN** the game's table lists a force entered in an area
 - **WHEN** the area's events are counted
 - **THEN** the force entered adds no weight
 
