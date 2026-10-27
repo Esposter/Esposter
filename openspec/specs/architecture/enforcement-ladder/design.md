@@ -44,7 +44,7 @@ The rungs stack rather than replace each other. A primitive is usually backed by
 
 ## A worked example
 
-[Nested interactions](../nested-interactions/design.md) climbed the ladder in one change. A link in a todo's notes opened a new tab and the todo's dialog, because each clickable row relied on `@click.stop` walls someone had to remember around each control — rung 5, and a wall can never reach a link inside rendered HTML. The fix is structural: one guard, `checkIsNestedInteraction`, asked by the table row and the drag-aware click composable, so every control inside is covered without being named. Lint bans the bare `@click.stop` wall so the old way cannot come back, and unit tests pin the guard and the table's wiring. Only the why is prose.
+[Nested interactions](../nested-interactions/design.md) moves a rule from rung 5 to rung 2. Where each clickable row relies on `@click.stop` walls someone has to remember around each control, a link in a todo's notes opens a new tab and the todo's dialog, and a wall can never reach a link inside rendered HTML. The structural form is one guard, `checkIsNestedInteraction`, asked by the table row and the drag-aware click composable, so every control inside is covered without being named. Lint bans the bare `@click.stop` wall so the pattern cannot return, and unit tests pin the guard and the table's wiring. Only the why is prose.
 
 ## Key files
 

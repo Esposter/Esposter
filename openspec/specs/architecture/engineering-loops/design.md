@@ -15,7 +15,7 @@ flowchart TD
 
   subgraph product ["Product loop"]
     PR["product-review — a surface against its reference product"] -->|"a gap"| PROPOSAL["proposal · deferred · rejected page"]
-    PROPOSAL -->|"ai:proposals:report"| BUILD["building-proposals — choose, verify, build"]
+    PROPOSAL -->|"ai:proposals:report"| BUILD["building-proposals"]
     BUILD -->|"ship"| SHIPPED["as-built page"]
     SHIPPED -->|"area owed a pass"| PR
   end
@@ -23,7 +23,7 @@ flowchart TD
   subgraph change ["Change loop — every change"]
     FINISH["finishing audit"] --> CHECKS["the touched tests"]
     CHECKS --> QUEUE["review-queue — ai/queue"]
-    QUEUE -->|"every push"| CI["CI — format, typecheck, lint, the whole suite"]
+    QUEUE -->|"every push"| CI["CI on the push"]
     QUEUE --> REVIEW["review — haiku reviewers over each window of ai/queue"]
     REVIEW -->|"main fast-forwards to the window's end"| CI
     REVIEW -->|"fixer fixes the findings on ai/queue"| QUEUE

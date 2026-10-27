@@ -4,7 +4,7 @@
 
 ## Why it is ours
 
-The register kept vue-draggable-plus as an engine, on the stop list's accessibility item. Neither reason holds:
+Keeping vue-draggable-plus as an engine would rest on the stop list's accessibility item. Neither reason holds:
 
 - **The accessible half was already ours.** `UiList` and `UiDataTable` move a row by Alt and an arrow and read the move out, and the room categories move by the same keys. SortableJS did only the pointer drag, which has no focus, role or announcement of its own.
 - **The algorithm is small.** The call sites use one vertical container, an optional handle, a touch delay, rows moving aside and autoscroll. SortableJS's other surfaces — groups, cloning, multi-drag, swap, grids — were never called.
