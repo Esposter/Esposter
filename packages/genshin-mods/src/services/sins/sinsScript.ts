@@ -1,7 +1,10 @@
+import { SinStatusKind } from "../../models/SinStatusKind";
+
 // The plugin's node script, run as `node --input-type=module -e` with its request on stdin: the one network call and the
 // Evidence log run here, since the hooks module has no Node. It is a string because a plugin reaches none of its own
 // Files from inside the module, and it writes exactly one JSON result, so a run that exits otherwise reads as failed
-export const SINS_SCRIPT = `
+// oxlint-disable-next-line typescript/no-inferrable-types -- isolatedDeclarations asks for the type of an exported template that interpolates, and this rule would refuse that annotation
+export const SINS_SCRIPT: string = `
 import { mkdirSync } from "node:fs";
 import { dirname } from "node:path";
 
@@ -12,8 +15,8 @@ const finish = (result) => process.stdout.write(JSON.stringify(result));
 const key = process.env.TYPESAFE_API_KEY;
 const sqlite = process.getBuiltinModule?.("node:sqlite");
 
-if (!key) finish({ result: "no-key" });
-else if (!sqlite) finish({ result: "node-too-old" });
+if (!key) finish({ result: "${SinStatusKind.NoKey}" });
+else if (!sqlite) finish({ result: "${SinStatusKind.NodeTooOld}" });
 else {
   const response = await fetch(apiUrl, {
     body: JSON.stringify({ model: "jev-latest", questions, state }),
@@ -25,7 +28,7 @@ else {
   const isAnswered = names.every(
     (name) => typeof answers[name]?.score === "number" && typeof answers[name]?.confidence === "number",
   );
-  if (!isAnswered) finish({ reason: response.ok ? "unanswered" : "HTTP " + response.status, result: "failed" });
+  if (!isAnswered) finish({ reason: response.ok ? "unanswered" : "HTTP " + response.status, result: "${SinStatusKind.Failed}" });
   else {
     mkdirSync(dirname(storePath), { recursive: true });
     const database = new sqlite.Database(storePath);
@@ -36,7 +39,7 @@ else {
     const picked = Object.fromEntries(names.map((name) => [name, { confidence: answers[name].confidence, score: answers[name].score }]));
     database.prepare("INSERT INTO evidence (session, answers, recorded_at) VALUES (?, ?, ?)").run(session, JSON.stringify(picked), Date.now());
     database.close();
-    finish({ answers: picked, result: "answered" });
+    finish({ answers: picked, result: "${SinStatusKind.Answered}" });
   }
 }
 `;

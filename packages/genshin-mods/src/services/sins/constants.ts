@@ -1,8 +1,3 @@
-// The seven sins, in the order the pane draws them. Each is one `score` question Jev answers about a prompt
-export const SIN_NAMES = ["pride", "greed", "wrath", "envy", "lust", "gluttony", "sloth"] as const;
-
-export type SinName = (typeof SIN_NAMES)[number];
-
 // The five levels every question grades on, from none to extreme, so the sins are comparable with one another
 export const SIN_CRITERIA = [
   "Absent: the prompt shows none of it",
@@ -10,16 +5,16 @@ export const SIN_CRITERIA = [
   "Moderate: it shapes part of the prompt",
   "Strong: it shapes most of the prompt",
   "Extreme: it is the whole prompt",
-];
+] as const;
 
 // The top level the score reads, so a score divides by it to lie between none and extreme
-export const SIN_TOP_LEVEL = SIN_CRITERIA.length - 1;
+export const SIN_TOP_LEVEL: number = SIN_CRITERIA.length - 1;
 
 // The half-life in prompts: a sin's score moves about halfway toward a new pattern within this many prompts
 export const SIN_HALF_LIFE_PROMPTS = 30;
 
 // Applied to the old counts on each prompt, so each count halves every half-life
-export const SIN_DISCOUNT = 2 ** (-1 / SIN_HALF_LIFE_PROMPTS);
+export const SIN_DISCOUNT: number = 2 ** (-1 / SIN_HALF_LIFE_PROMPTS);
 
 // One pseudo-count of each outcome, so a sin with no evidence reads as an even half
 export const SIN_PRIOR = 1;
@@ -28,7 +23,7 @@ export const SIN_PRIOR = 1;
 export const SIN_HISTORY_LENGTH = 300;
 
 // The trend is the score over the half-life's own window
-export const SIN_TREND_LENGTH = SIN_HALF_LIFE_PROMPTS;
+export const SIN_TREND_LENGTH: number = SIN_HALF_LIFE_PROMPTS;
 
 // The bar's width in cells, the solid run to the score and the tinted run to the score plus its spread
 export const SIN_BAR_WIDTH = 24;

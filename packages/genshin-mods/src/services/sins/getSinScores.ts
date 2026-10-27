@@ -1,6 +1,6 @@
 import type { SinScore } from "../../models/SinScore";
 
-import { SIN_NAMES } from "./constants";
+import { SIN_NAMES } from "../../models/SinName";
 import { getPosterior, getPosteriorTrail } from "./getPosteriorTrail";
 import { getScoreAndSpread } from "./getScoreAndSpread";
 import { getTrend } from "./getTrend";

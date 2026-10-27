@@ -1,3 +1,4 @@
+import { SinStatusKind } from "../models/SinStatusKind";
 import type { PluginState } from "claude-code";
 
 // Every state value's initial, read by each file's atoms: the engine traces a state reference only to an atom made in
@@ -14,6 +15,6 @@ export const InitialState: PluginState["genshin-mods"] = {
   reserveWindow: { isAheadOfPace: false, isWindDown: false, name: "", percentage: 0, resetsAt: "" },
   sinHistory: {},
   sinSession: 0,
-  sinStatus: "unchecked",
+  sinStatus: SinStatusKind.Unchecked,
   waypoints: [],
 };

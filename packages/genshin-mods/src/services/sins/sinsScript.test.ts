@@ -1,14 +1,17 @@
+/* oxlint-disable no-restricted-properties -- The script writes plain JSON with no date in it, so the shared reviver is not needed */
 import type { AddressInfo } from "node:net";
 
+// oxlint-disable-next-line no-restricted-imports -- A mod has no shared-node dependency, so this test's own spawn passes windowsHide, as the other plugins' helpers do
 import { spawn } from "node:child_process";
 import { mkdtempSync } from "node:fs";
-import { createServer, type Server } from "node:http";
+import type { Server } from "node:http";
+import { createServer } from "node:http";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { Database } from "node:sqlite";
+import { DatabaseSync } from "node:sqlite";
 import { afterEach, beforeEach, describe, expect, test } from "vitest";
 
-import { SIN_NAMES } from "./constants";
+import { SIN_NAMES } from "../../models/SinName";
 import { getSinQuestions } from "./getSinQuestions";
 import { SINS_SCRIPT } from "./sinsScript";
 
@@ -17,6 +20,7 @@ const runScript = (payload: object, key: string, script = SINS_SCRIPT) =>
   new Promise<string>((resolve) => {
     const child = spawn("node", ["--input-type=module", "-e", script], {
       env: { ...process.env, TYPESAFE_API_KEY: key },
+      windowsHide: true,
     });
     let stdout = "";
     child.stdout.on("data", (chunk: Buffer) => {
@@ -39,13 +43,17 @@ describe("sinsScript", () => {
       response.writeHead(status, { "Content-Type": "application/json" });
       response.end(JSON.stringify({ answers, model: "jev-latest" }));
     });
-    await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
+    await new Promise<void>((resolve) => {
+      server.listen(0, "127.0.0.1", resolve);
+    });
     apiUrl = `http://127.0.0.1:${(server.address() as AddressInfo).port}/v1/systemone`;
   });
 
   afterEach(async () => {
     status = 200;
-    await new Promise<void>((resolve) => server.close(() => resolve()));
+    await new Promise<void>((resolve) => {
+      server.close(() => resolve());
+    });
   });
 
   const getPayload = () => ({ apiUrl, questions: getSinQuestions(), session: 1, state: "a prompt", storePath });
@@ -72,7 +80,7 @@ describe("sinsScript", () => {
     expect(result.result).toBe("answered");
     expect(Object.keys(result.answers)).toStrictEqual([...SIN_NAMES]);
 
-    const database = new Database(storePath);
+    const database = new DatabaseSync(storePath);
     const rows = database.prepare("SELECT answers FROM evidence").all();
     expect(rows).toHaveLength(1);
     expect(Object.keys(JSON.parse(String(rows[0]?.answers)))).toStrictEqual([...SIN_NAMES]);

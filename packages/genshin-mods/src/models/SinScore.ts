@@ -1,4 +1,4 @@
-import type { SinName } from "../services/sins/constants";
+import type { SinName } from "./SinName";
 import type { SinFigures } from "./SinFigures";
 
 export interface SinScore extends SinFigures {

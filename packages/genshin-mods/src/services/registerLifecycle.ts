@@ -3,6 +3,7 @@ import type { EngineInterface, On } from "claude-code";
 import { atom, read, update } from "claude-code";
 
 import type { EnabledMods } from "../../types";
+import { SinStatusKind } from "../models/SinStatusKind";
 
 import {
   CACHE_WARNING_MS,
@@ -97,7 +98,7 @@ const scoreSins = async ($: EngineInterface, text: string) => {
   if (!(await read($, enabledModsAtom)).sins) return;
 
   if (!(await $.env.get("TYPESAFE_API_KEY"))) {
-    await update($, sinStatusAtom, () => "no-key");
+    await update($, sinStatusAtom, () => SinStatusKind.NoKey);
     return;
   }
 
@@ -119,7 +120,7 @@ const scoreSins = async ($: EngineInterface, text: string) => {
   const result =
     outcome.status === "fulfilled" && outcome.value.exitCode === 0
       ? parseSinsResult(outcome.value.stdout)
-      : { result: "failed" as const };
+      : { result: SinStatusKind.Failed as const };
 
   // A `/clear` or a resume during the run has reset the session, and a switch turned off has turned the mod off, so this
   // Run's answers belong to nothing shown
@@ -127,7 +128,7 @@ const scoreSins = async ($: EngineInterface, text: string) => {
   const { sins } = await read($, enabledModsAtom);
   if (sessionNow !== session || !sins) return;
 
-  if (result.result === "answered")
+  if (result.result === SinStatusKind.Answered)
     await update($, sinHistoryAtom, (history) => appendSinEvidence(history, result.answers));
 
   await update($, sinStatusAtom, () => result.result);

@@ -1,6 +1,7 @@
 import type { SinsResult } from "../../models/SinsResult";
 
-import { SIN_HISTORY_LENGTH, SIN_NAMES, SIN_TOP_LEVEL } from "./constants";
+import { SIN_HISTORY_LENGTH, SIN_TOP_LEVEL } from "./constants";
+import { SIN_NAMES } from "../../models/SinName";
 
 // Each sin's evidence gains this prompt's score as a share of the top level, clamped to [0, 1], and the oldest values fall
 // Away past the history's length

@@ -1,3 +1,4 @@
+import { TaskStatus } from "../../models/TaskStatus";
 import type { EngineInterface, On, RenderElement, RenderInput } from "claude-code";
 
 import { atom, read, update } from "claude-code";
@@ -38,7 +39,7 @@ const press = (action: () => Promise<unknown>) => () => {
   action();
 };
 
-const StatusMarkMap = { completed: "✓", in_progress: "▸", pending: "·" } as const;
+const StatusMarkMap = { [TaskStatus.Completed]: "✓", [TaskStatus.InProgress]: "▸", [TaskStatus.Pending]: "·" } as const;
 
 // A fork re-sends the conversation's prefix, which renews the cache from the moment it is sent, and adds no row to the
 // Transcript
@@ -132,7 +133,7 @@ const drawCommissionRow = async (
   const isExpanded = await read($, isCommissionExpandedAtom);
   const shownTasks = isExpanded
     ? commission.tasks.slice(0, MAX_SHOWN_TASKS)
-    : commission.tasks.filter(({ status }) => status === "in_progress");
+    : commission.tasks.filter(({ status }) => status === TaskStatus.InProgress);
   const { Box, Button, Text } = $.ui.resolve(e);
   return Box({
     children: [
@@ -153,7 +154,7 @@ const drawCommissionRow = async (
       ...shownTasks.map(({ status, subject }) =>
         Text({
           children: `  ${StatusMarkMap[status]} ${subject}`,
-          dimColor: status !== "in_progress",
+          dimColor: status !== TaskStatus.InProgress,
           wrap: "truncate-end",
         }),
       ),

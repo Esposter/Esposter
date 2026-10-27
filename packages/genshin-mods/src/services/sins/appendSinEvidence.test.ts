@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 
-import { SIN_HISTORY_LENGTH, SIN_NAMES } from "./constants";
+import { SIN_HISTORY_LENGTH } from "./constants";
+import { SIN_NAMES } from "../../models/SinName";
 import { appendSinEvidence } from "./appendSinEvidence";
 
 describe(appendSinEvidence, () => {
