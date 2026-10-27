@@ -5,7 +5,7 @@ import { dirname } from "node:path";
 
 // The publish each path's last writer queued, so writers of one path move their partial files in one after another:
 // On Windows a rename onto a file another rename is replacing at the same moment fails with EPERM
-const queuedPublishes = new Map<string, PromiseLike<unknown>>();
+const queuedPublishes = new Map<string, ReturnType<typeof getResultAsync<void>>>();
 
 const writePartialThenMove = async (path: string, data: string | Uint8Array): Promise<void> => {
   await mkdir(dirname(path), { recursive: true });
