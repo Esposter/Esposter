@@ -8,6 +8,15 @@ gcsim sources: Nicole's attack, charge, skill and burst files, with the table da
 
 ## Decisions
 
+```mermaid
+flowchart TD
+  A["Active character's hit lands"] --> B{"Burst status stands, from frame 109"}
+  B -- "no" --> C["No projection"]
+  B -- "yes" --> D{"Projection gate, three-second cooldown and cap of four"}
+  D -- "no" --> C
+  D -- "yes" --> E["Projection lands 30 frames on, with any Hexerei bonus"]
+```
+
 - **Her plunges borrow Bennett's plunge file, with the wiki's poise.** gcsim gives Nicole no plunge file (`nicole/` has no `plunge.go`), so her two plunges take Bennett's timings and reaches, and their poise is the wiki's 100 high and 50 low (Low Plunge 50 and High Plunge 100 on the Allegoria page of `~/Esposter/cache/genshin-wiki/Category_Nicole_Talents.json`).
 - **The burst's hit is her record's.** Her burst is a circle of 6.5 metres on her primary target (`burst.go:109`); the 21.5-metre area that would price it round the targeting zone is unsourced and open below.
 - **The skill's hit is a circle of 5 metres round her body** (`skill.go:46`), recorded by hand, as its hitbox has no name in gcsim's press list, so it names no cause for it.
@@ -25,8 +34,8 @@ gcsim sources: Nicole's attack, charge, skill and burst files, with the table da
 - **The fourth ascension reads the element of the active character's hit.** gcsim's `a4Init` (`asc.go:60-85`, its element switch at `:72`) upgrades her own buff on each elemental hit by the active character. A physical hit carries no element in the kit, so it is excluded.
 - **The first constellation projects from each hit of the active character, on a cooldown of its own.** gcsim's `c1Init` (`cons.go:22`, `:44`) takes any hit of the active character with no element filter, so a physical hit projects at the striker's element. Its six-second cooldown (`cons.go:42`) is Nicole's own (`nicole-c1-icd`), separate from the burst's three-second one, and it shares the burst's scheduling and Hexerei bonus, with multiplier six (`cons.go:55`) and a 4.5-metre circle about the enemy (`cons.go:59`) in place of the burst's own.
 - **The second constellation's team buff is at the skill's snapshot, and its RES reduction is a ticker per upgraded character.** gcsim's c2OnSkillAddBuff (`cons.go:71`, `:84-88`) adds ATK 300 to every party member in the skill's queued task (`skill.go`, the same task as the skill's buff), and c2OnSkillRemoveBuff takes it off at cast. Its c2OnUpgrade starts `c2Ticker` on each A1 upgrade of a character that holds an A1 buff, every 0.3 seconds (`cons.go:135`): each enemy within 10 metres of the player (`cons.go:122`) takes a quarter off its RES (`cons.go:132`) for the character's element for one second (`cons.go:130`). The kit keeps one field per upgraded character (`nicole-c2-ticker|<id>`), which a newer upgrade of that character replaces, and each enemy's status has an id per element, so `addEnemyStatus` refreshes it.
-- **The fourth constellation's stacks are a status on the striker, spent by the hits that land.** gcsim's `c4OnUpgrade` (`cons.go:193-195`) gives the upgraded character a 16-second cooldown, then a 20-second status with eight tags, and its `c4Init` (`cons.go:138`, `:149-155`) takes one tag on each `OnEnemyHit` whose attack tag is a burst, skill, normal, charged or plunging attack. The kit keeps the status with its stacks and takes one in its enemy-hit handler. The enemy-hit event now carries the attack tag of the strike that landed it, so a projection, which has none, neither gets the bonus nor spends a stack.
-- **The fourth constellation's flat damage is a striker-side hook, read by each strike.** The bonus is 0.7 of Nicole's attack (`cons.go:170`). Another member's strike takes it through her `getPartyStrikeBonus`, and her own strikes through `getStrikeAdditiveBaseDamageBonus`, which is now a kit behaviour hook like the other strike hooks, since weapon passives were its only source. Each enemy struck prices with the stacks left after the enemy before it lands, as gcsim's `OnEnemyHit` does one hit at a time.
+- **The fourth constellation's stacks are a status on the striker, spent by the hits that land.** gcsim's `c4OnUpgrade` (`cons.go:193-195`) gives the upgraded character a 16-second cooldown, then a 20-second status with eight tags, and its `c4Init` (`cons.go:138`, `:149-155`) takes one tag on each `OnEnemyHit` whose attack tag is a burst, skill, normal, charged or plunging attack. The kit keeps the status with its stacks and takes one in its enemy-hit handler. The enemy-hit event carries the attack tag of the strike that landed it, so a projection, which has none, neither gets the bonus nor spends a stack.
+- **The fourth constellation's flat damage is a striker-side hook, read by each strike.** The bonus is 0.7 of Nicole's attack (`cons.go:170`). Another member's strike takes it through her `getPartyStrikeBonus`, and her own strikes through `getStrikeAdditiveBaseDamageBonus`, which is a kit behaviour hook like the other strike hooks, and the passive modules and artifact sets feed it too. Each enemy struck prices with the stacks left after the enemy before it lands, as gcsim's `OnEnemyHit` does one hit at a time.
 - **The sixth constellation's defence ignore is a striker-side hook, as the fourth's damage is.** gcsim's `c6Init` (`cons.go:209`) adds 0.4 to the hit's `IgnoreDefPercent` on each `OnEnemyHit` by a character holding the first ascension's mod. The kit reads the striker's upgrade: `getStrikeDefenceIgnored` for her own strikes and the deployed party hook's `defenseIgnored` for the team's. `strikeKitEnemies` sums both with the hit's own into the priced hit, and `strikeEnemy` hands it to `getDamage` as its `defenseIgnored`.
 - **Her upgrades reach the team, and her own buff lasts the skill's time, from the sixth constellation.** gcsim's a1UpgradeBuff (`asc.go:90`) calls `c6OnUpgrade` (`cons.go:220`), which upgrades each other character with duration -1 when Nicole is the one upgraded, and `c6SelfBuffDur` (`cons.go:213-215`, which returns 8 seconds below six) gives her own fourth-ascension upgrade -1 too, so each lasts as long as the skill's buff on its character. The swap's removal of the buff already stops at the sixth, as c6DeleteA1OnSwap does.
 
@@ -48,9 +57,28 @@ Her third and fifth constellations raise her skill and burst levels from the con
 ## Sources
 
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/nicole), MIT: the timings of her strikes, her charged attack, skill, burst and elements, and her table data file (`zz_nicole.dm.go`, which holds the shield's 2.21184 and 1386.6697).
+- The gcsim lines the spec's scenarios cite, by file: `attack.go` line 17, `charge.go` line 47, `asc.go` lines 15 to 17, 22, 26 to 28, 34, 36 to 38, 42, 50 to 55, 72 to 85 and 89 to 90, `cons.go` lines 42, 54, 55, 71, 84 to 90, 122, 130 to 132, 149 to 158, 170, 190 to 195, 209, 213 to 220 and 235, `burst.go` lines 16, 17, 106, 109, 113 to 114, 133 to 150, 137, 149, 158 and 162, `skill.go` lines 17, 20, 46, 54, 62 to 67, 76 and 78, `nicole.go` line 24, `shield.go` line 24, and `zz_nicole.dm.go` lines 124, 142, 160 and 178.
 - The proud skill groups 13131, 13132 and 13139 in the hosted game data: the multipliers, the shield and buff parameters, the cooldowns, the burst's energy and the charged stamina, read at talent level 1.
 - The cached Genshin wiki's `Category_Nicole_Talents.json` (the Allegoria page): the plunge poise rows, 50 low and 100 high.
 - No YouTube or Bilibili reference snapshot for Nicole is in the repo, so no claim here rests on video.
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/nicole/attack.go` line 17, grounding the requirement Nicole's three strikes.
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/nicole/charge.go` line 47, grounding the requirement Nicole's charged attack and plunges.
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/nicole/skill.go` line 46, grounding the requirement Nicole's Pyro skill.
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/nicole/skill.go` line 78, grounding the requirement Nicole's Pyro skill.
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/nicole/burst.go` line 109, grounding the requirement Nicole's Pyro burst.
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/nicole/nicole.go` line 24, grounding the requirement Nicole's Pyro burst.
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/nicole/burst.go` line 106, grounding the requirement Nicole's Pyro burst.
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/nicole/skill.go` lines 17 and 76, grounding the requirements Nicole's skill shields the team and Nicole's skill buffs the team's ATK.
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/nicole/skill.go` line 20, grounding the requirements Nicole's skill shields the team and Nicole's skill buffs the team's ATK.
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/nicole/burst.go` lines 17, 137 and 149, grounding the requirement Nicole's burst projections.
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/nicole/asc.go` lines 22, 36 to 38 and 72 to 85, grounding the requirements Nicole's first ascension and Nicole's fourth ascension.
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/nicole/cons.go` lines 213 to 218, grounding the requirement Nicole's fourth ascension.
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/nicole/cons.go` lines 42 and 55, grounding the requirement Nicole's first constellation.
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/nicole/burst.go` line 17, grounding the requirement Nicole's first constellation.
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/nicole/cons.go` lines 71, 84 to 88, 122 and 132, grounding the requirements Nicole's second constellation gives the team ATK and Nicole's second constellation lowers RES.
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/nicole/cons.go` lines 170 and 195, grounding the requirement Nicole's fourth constellation hit bonus.
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/nicole/cons.go` lines 190 to 193, grounding the requirement Nicole's fourth constellation stack refresh.
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/nicole/cons.go` lines 209, 213 to 218 and 220, grounding the requirements Nicole's sixth constellation ignores defence and Nicole's sixth constellation holds her upgrades.
 
 ## Open
 

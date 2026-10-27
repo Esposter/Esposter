@@ -40,7 +40,7 @@ Mualani's skill press SHALL deal no damage and SHALL go on a six-second cooldown
 
 ### Requirement: Plunge attacks
 
-Mualani's plunge attacks SHALL land on the enemies within a provisional reach, with no poise.
+Mualani's plunge attacks SHALL land on the enemies within a provisional reach, with the wiki's poise: 5 on the collision, 50 on the low plunge and 100 on the high.
 
 #### Scenario: Plunge lands within a provisional reach
 
@@ -72,7 +72,3 @@ Mualani's skill press SHALL enter her Nightsoul Blessing with 60 Nightsoul point
 - **GIVEN** Mualani is in the Nightsoul Blessing
 - **WHEN** the player presses Mualani's skill
 - **THEN** she is no longer in the blessing
-
-## Open
-
-- [ ] **Plunge attacks deal no poise** — contradicted by `~/Esposter/cache/genshin-wiki/Category_Mualani_Talents.json`: its plunge rows give poise 50 and 100, which the design takes.

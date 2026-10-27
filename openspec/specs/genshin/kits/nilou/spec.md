@@ -38,7 +38,7 @@ Nilou's Dance of Haftkarsvar SHALL deal damage equal to a share of her Max HP an
 
 - **GIVEN** Pirouette is standing
 - **WHEN** the player casts Dance of Haftkarsvar again
-- **THEN** Whirling Steps runs in place of a new Pirouette (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/nilou/skill.go` lines 92 and 93)
+- **THEN** Whirling Steps runs in place of a new Pirouette
 
 ### Requirement: Lunar Prayer from the third step
 
@@ -145,7 +145,7 @@ A press of Nilou's skill inside Pirouette SHALL be refused by the cooldown the c
 
 ### Requirement: Golden Chalice's Bounty from Ascension 1
 
-From Ascension 1, Pirouette's third sword dance SHALL give each deployed member Golden Chalice's Bounty for 30 seconds when the team holds a Dendro member and a Hydro member and no member that is neither Dendro nor Hydro (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/nilou/asc.go` comment, lines 19 and 20). A Dendro hit on a member under the Bounty SHALL give every deployed member 100 Elemental Mastery for 10 seconds, and a Bloom by a member under it SHALL leave a Bountiful Core, which bursts 0.4 seconds after it is made over 6.5 metres.
+From Ascension 1, Pirouette's third sword dance SHALL give each deployed member Golden Chalice's Bounty for 30 seconds when the team holds a Dendro member and a Hydro member and no member that is neither Dendro nor Hydro. A Dendro hit on a member under the Bounty SHALL give every deployed member 100 Elemental Mastery for 10 seconds, and a Bloom by a member under it SHALL leave a Bountiful Core, which bursts 0.4 seconds after it is made over 6.5 metres.
 
 #### Scenario: A Dendro and Hydro team gains the Bounty
 

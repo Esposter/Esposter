@@ -6,6 +6,14 @@ Not built yet: the tap-released Physical Aimed Shot and the Pyro shot at a parti
 
 Provisional: his plunges' timings and poise. gcsim's folder has no plunge file, so the design gives the collision, low and high plunge Bennett's shared timings, but `lyney.json` carries no plunge keys yet. The wiki's poise is 10 for the collision, and 50 and 100 for the low and high plunges (`~/Esposter/cache/genshin-wiki/Category_Lyney_Talents.json`, Normal Attack rows 13 to 15). Their multipliers are the table's entries 5, 6 and 7, counted from zero as the record's index counts them: the `Plunge DMG` row, then the first and second values of `Low/High Plunge DMG`, which group 8431 gives as 0.568288, 1.136335 and 1.419344 at level 1.
 
+```mermaid
+flowchart LR
+  A["Prop Arrow charged attack"] --> B["Grin-Malkin Hat set"]
+  B --> C["Hat expires"]
+  C --> D["Pyrotechnic Strike on the primary target"]
+  D --> E["Constellation 4 Pyro RES cut on the enemy struck"]
+```
+
 ## Provisional constants
 
 - **The Prop Arrow's strike at 387 frames and the burst's at 563 are `Unsourced`.** gcsim gives each hat's duration (238 frames for the Prop Arrow, `~/Esposter/cache/gcsim-v2.47.2/internal/characters/lyney/aimed.go` line 29; 245 for the burst, `~/Esposter/cache/gcsim-v2.47.2/internal/characters/lyney/aimed.go` line 30) and the 36-frame travel (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/lyney/lyney.go` line 49), but no literal places the hat's creation, so the sums 387 and 563 are the record's, not derived here.

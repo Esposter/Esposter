@@ -5,6 +5,13 @@ Provisional: gcsim gives Neuvillette no plunge file (`~/Esposter/cache/gcsim-v2.
 
 Built as well: Equitable Judgment, held, its length decided as it runs (`KitAction.decideLength`) from the Sourcewater Droplets its legal evaluation picks up (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/neuvillette/charge.go:23`, `:25`, `:96`, `:139`, with the 51-frame end lag at `:41`), with its waves at the frames `~/Esposter/cache/gcsim-v2.47.2/internal/characters/neuvillette/charge.go:208-210` gives them, its HP drains (`charge.go:133-134`) and a 16% heal per droplet picked up (`charge.go:310`). Not built: the waves' internal cooldown, which the enum has no tag for; the end lag of the action the charge is cancelled into, the default of 51 frames used; Spiritbreath Thorn's aligned 10-second cooldown, which the skill's own 12 always outlast; his Ascension 1, which raises Equitable Judgment by the reactions it counts; and Constellations 1, 2 and 6. Ascension 4's Hydro DMG Bonus, read from his HP share (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/neuvillette/asc.go` lines 111 to 121), is built as a passive bonus. Constellation 4 is built: each heal that restores him on the field spawns a Sourcewater Droplet 8 metres ahead, 1.3 to 3 metres from that point, once every 4 seconds, as gcsim's `cons.go` gives it (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/neuvillette/cons.go:47-61`, `:63-72`).
 
+```mermaid
+flowchart TD
+  A["Equitable Judgment legal evaluation picks up droplets"] --> B["Length decided from the droplets"]
+  B --> C["Waves, HP drains and droplet heals queued"]
+  D["Constellation 4 heal restores him on the field"] --> E["Sourcewater Droplet spawned ahead"]
+```
+
 ## Not yet built
 
 - **The plunges and their reaches are borrowed.** gcsim has no plunge file for Neuvillette, so Bennett's timings and reaches stand in until a recording of his own plunge gives his.

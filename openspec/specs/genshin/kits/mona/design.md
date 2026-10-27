@@ -4,6 +4,14 @@ Mona's kit is its record and one behaviour module, `createMonaKitBehaviour` (`pa
 
 ## Decisions
 
+```mermaid
+flowchart TD
+  A["Burst casts a bubble on each enemy struck"] --> B{"Poise hit or running out bursts the bubble"}
+  B --> C["Explosion on that enemy, on the step after"]
+  B --> D["Omen starts"]
+  D --> E["Constellation 1 and 4 bonuses read the Omen"]
+```
+
 - **Mona's strikes are priced round her body.** gcsim centres them on the primary target (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/mona/attack.go` lines 16 to 17 and 50 to 54), which an area does not hold yet. Her plunges' reach is provisional (see Provisional constants). Their poise is the wiki's 100 high and 50 low (`~/Esposter/cache/genshin-wiki/Category_Mona_Talents.json`, rows 7 and 8).
 - **Mona's A1 phantom is cast from a sprint.** `onSprint` spends each 2 seconds of the sprint on a phantom, cast where Mona stands, which explodes at its end for half of Mirror Reflection's explosion, 0.664 at level 1, half of the explosion's 1.328 at group 4132's index 1 (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`; `~/Esposter/cache/gcsim-v2.47.2/internal/characters/mona/asc.go` lines 27 to 58, the 5-metre explosion at line 58). gcsim casts one only when an opponent is within 15 metres at each 2-second check (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/mona/asc.go` lines 36 to 42 and 63, rechecked from `~/Esposter/cache/gcsim-v2.47.2/internal/characters/mona/dash.go` line 50), and the kit makes no such check. The two differ when an opponent comes within 5 metres of a phantom that gcsim would not have cast, which is open (see Provisional constants).
 - **Mona's A4 is a passive bonus read as a hit is priced.** `getPassiveBonuses` adds 20% of her Energy Recharge to her Hydro DMG Bonus (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/mona/asc.go:83`) in `getBuffedCombatant` (`packages/genshin-world/src/services/kit/characters/monaKit.ts`), for every hit she prices, her summons' included.
@@ -17,7 +25,7 @@ Mona's kit is its record and one behaviour module, `createMonaKitBehaviour` (`pa
 ## Provisional constants
 
 - **Her plunge reach is the kit's own.** gcsim has no plunge file for Mona and `mona.json` has no plunge keys, so the reach stays provisional until a recording settles it.
-- **The explosion's 2U and 200 poise are `Unsourced` in the record.** `mona.json` marks `burst.bubble.explosion.gauge` and `poiseDamage` `Unsourced`, though gcsim gives the 2U (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/mona/burst.go` line 173) and the wiki gives the 200, so their causes should name those sources. The record is data, and this pass does not change it.
+- **The explosion's 2U and 200 poise are `Unsourced` in the record.** `mona.json` marks `burst.bubble.explosion.gauge` and `poiseDamage` `Unsourced`, though gcsim gives the 2U (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/mona/burst.go` line 173) and the wiki gives the 200, so their causes should name those sources. The record is data.
 - **The A1 phantom's 15-metre check is not made.** gcsim casts a phantom at each 2-second check only while an opponent is within 15 metres (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/mona/asc.go` line 40); the kit casts one at each 2 seconds of sprint regardless. The two differ when an opponent comes within 5 metres of a phantom gcsim would not have cast. Open: no source or recording here settles whether the game makes the check.
 - **The 0.1-second sprint grace is the kit's own.** gcsim checks for a sprint at each one-second tick with no grace (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/mona/cons.go` lines 376 to 396). Open for the same reason.
 - **A Frozen enemy's bubble is not held.** The wiki's exception, that a Frozen enemy takes no poise damage and keeps its bubble, is not modelled, so its poise bursts the bubble as any enemy's does. Open: no recording here settles it.
@@ -37,5 +45,6 @@ Mona's kit is its record and one behaviour module, `createMonaKitBehaviour` (`pa
 
 - [Ripple of Fate](https://genshin-impact.fandom.com/wiki/Ripple_of_Fate), [Mirror Reflection of Doom](https://genshin-impact.fandom.com/wiki/Mirror_Reflection_of_Doom) and [Stellaris Phantasm](https://genshin-impact.fandom.com/wiki/Stellaris_Phantasm), Genshin Impact Wiki: Mona's advanced properties, gauges, poise and the phantom's values.
 - [gcsim v2.47.2](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/mona), MIT: the kit's hitmarks, cancel frames and areas, the phantom's ticks and explosion, and Constellation 2's follow-up in `~/Esposter/cache/gcsim-v2.47.2/internal/characters/mona/cons.go`.
-- The game data, `~/Esposter/genshin-parity/text/ExcelBinOutput/`: groups 4131, 4132 and 4139 (skill rows 10411, 10412 and 10415), with the skill's 12-second cooldown and the burst's 15 seconds and 60 energy on row 10415. Checked against gcsim's multiplier blocks: all 10 match their groups at every talent level.
+- The game data, `~/Esposter/genshin-parity/text/ExcelBinOutput/`: groups 4131, 4132 and 4139 (skill rows 10411, 10412 and 10415), with the skill's 12-second cooldown and the burst's 15 seconds and 60 energy on row 10415. Checked against gcsim's multiplier blocks: every multiplier block matches its group at every talent level.
 - The cached wiki, `~/Esposter/cache/genshin-wiki/Category_Mona_Talents.json`: the plunge poise (rows 6 to 8: 5, 50 and 100), the Illusory Bubble Explosion row (poise 200, 442.4% at level 1), the Omen and bubble durations, and the Frozen talent note.
+- gcsim v2.47.2's `cons.go`, which gives the Charged Attack's reset of the stacks: grounding the requirement "Constellation 6's stack reset".

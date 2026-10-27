@@ -29,7 +29,9 @@ Mona's skill SHALL summon Mirror Reflection of Doom.
 
 ### Requirement: Stellaris Phantasm's bubble and Omen
 
-Stellaris Phantasm SHALL hold each enemy it strikes in a bubble for 8 seconds, and a hit with poise damage SHALL burst the bubble and start an Omen lasting 4 seconds that adds 42% damage to hits on that enemy.
+Stellaris Phantasm SHALL hold each enemy it strikes in a bubble for 8 seconds.
+
+A hit with poise damage SHALL burst the bubble and start an Omen lasting 4 seconds that adds 42% damage to hits on that enemy.
 
 #### Scenario: Bubble holds the enemy
 
@@ -98,7 +100,9 @@ From Constellation 1, a party member's hit on an enemy under the Omen SHALL give
 
 ### Requirement: Constellation 4 adds CRIT to strikes and Lunar reactions on an Omen or a bubble
 
-From Constellation 4, each party member's strike on an enemy under the Omen or Mona's bubble SHALL gain 15% CRIT Rate, and a Hexerei member's strike SHALL gain 15% CRIT DMG while Mona is Hexerei with a second Hexerei member on the team. Each party member's Lunar-Charged and Lunar-Crystallize reaction on such an enemy SHALL gain the same CRIT Rate, and a Hexerei member's such reaction the same CRIT DMG under the same condition.
+From Constellation 4, each party member's strike on an enemy under the Omen or Mona's bubble SHALL gain 15% CRIT Rate, and a Hexerei member's strike SHALL gain 15% CRIT DMG while Mona is Hexerei with a second Hexerei member on the team.
+
+From Constellation 4, each party member's Lunar-Charged and Lunar-Crystallize reaction on such an enemy SHALL gain 15% CRIT Rate, and a Hexerei member's such reaction 15% CRIT DMG while Mona is Hexerei with a second Hexerei member on the team.
 
 #### Scenario: A strike on an Omen or a bubble gains CRIT Rate
 
@@ -142,7 +146,9 @@ From Constellation 2, a normal attack's last hit SHALL have a 20% chance to be f
 
 ### Requirement: Constellation 6's sprint stacks on her Charged Attack
 
-From Constellation 6, each second of sprint SHALL give her next Charged Attack 60% more DMG, up to three seconds' worth, for eight seconds from the last stack. A Charged Attack that strikes SHALL reset the stacks, as gcsim v2.47.2's `cons.go` gives them.
+From Constellation 6, each second of sprint SHALL give her next Charged Attack 60% more DMG, up to three seconds' worth, for eight seconds from the last stack.
+
+A Charged Attack that strikes SHALL reset the stacks.
 
 #### Scenario: Each sprinted second adds a stack, up to three
 

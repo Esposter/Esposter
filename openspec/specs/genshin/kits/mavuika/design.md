@@ -6,6 +6,15 @@ Mavuika's kit is its record and one behaviour module, `createMavuikaKitBehaviour
 
 Her Nightsoul state is built on the shared primitive: her skill's press enters the Flamestrider Blessing with her points, which drain as gcsim's do. Her Flamestrider's strikes and the Fighting Spirit that the party's Nightsoul points feed still wait on the Nightsoul hook.
 
+```mermaid
+flowchart TD
+  A["Party Nightsoul points are consumed"] --> B["Fighting Spirit gained"]
+  B --> C{"Fighting Spirit at least half of its maximum"}
+  C -- "yes" --> D["Sunfell Slice spends all of it"]
+  C -- "no" --> E["Sunfell Slice waits"]
+  F["Blessing press"] --> G["Blessing points drain"]
+```
+
 - **The skill's Flamestrider is entered, its Ring of Searing Radiance is not.** The press enters the Blessing with 80 points, or 120 from Constellation 1 (the wiki's point limit of 80, `~/Esposter/cache/genshin-wiki/Category_Mavuika_Talents.json`; `~/Esposter/cache/gcsim-v2.47.2/internal/characters/mavuika/cons.go` lines 18 to 22), drains them five a second as gcsim mavuika/skill.go does (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/mavuika/skill.go` lines 68 to 81), and a press while in it refills them to their maximum (`skill.go` lines 112 to 148). Its Ring of Searing Radiance hit, the drain's pause while her burst lasts and its extra drain on the bike and in the charged attack are not built, so the press has no hit yet and spends its 15-second cooldown. While the blessing lasts, her strikes, charged attack, sprint and plunges are the Flamestrider's, not the ones built here.
 - **Sunfell Slice waits on Fighting Spirit.** The burst needs at least half her Fighting Spirit, 100 of gcsim's maximum of 200 (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/mavuika/burst.go` line 20), and spends it all rather than energy, as the wiki's Fighting Spirit text gives it (`~/Esposter/cache/genshin-wiki/Category_Mavuika_Talents.json`); its ATK share grows with the Fighting Spirit spent, at 1.6% ATK a point. Fighting Spirit is fed by the party's Nightsoul points as they are consumed. Until the hook lands, the burst's energy cost is unreachable, so it cannot be cast and has no hit.
 - **The Flamestrider's strikes, charged attack and plunges wait on the Nightsoul hook.** gcsim's bike strikes, biked charged attack and bike plunges replace hers inside the blessing, the stance the Nightsoul hook waits on, and a stance holds no plunges to play in place of the kit's.
