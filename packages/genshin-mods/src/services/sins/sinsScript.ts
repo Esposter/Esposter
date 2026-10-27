@@ -30,14 +30,13 @@ else {
   if (!isAnswered) finish({ reason: response.ok ? "unanswered" : "HTTP " + response.status, result: "${SinStatusKind.Failed}" });
   else {
     mkdirSync(dirname(storePath), { recursive: true });
-    const database = new sqlite.Database(storePath);
+    using database = new sqlite.DatabaseSync(storePath);
     database.exec("PRAGMA busy_timeout = 5000");
     database.exec(
       "CREATE TABLE IF NOT EXISTS evidence (id INTEGER PRIMARY KEY, session INTEGER NOT NULL, answers TEXT NOT NULL, recorded_at INTEGER NOT NULL)",
     );
     const picked = Object.fromEntries(names.map((name) => [name, { confidence: answers[name].confidence, score: answers[name].score }]));
     database.prepare("INSERT INTO evidence (session, answers, recorded_at) VALUES (?, ?, ?)").run(session, JSON.stringify(picked), Date.now());
-    database.close();
     finish({ answers: picked, result: "${SinStatusKind.Answered}" });
   }
 }
