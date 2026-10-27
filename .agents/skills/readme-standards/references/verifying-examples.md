@@ -33,7 +33,7 @@ No check reads a README's code fences: no tsconfig includes them, and CI typeche
    }
    ```
 
-   A `.vue` config replaces `files` with `"include": ["./*.vue"]`. Write the paths as `C:/…`: `cygpath -m` converts a Git Bash path, and `tsrs` reads a `/c/…` path as relative.
+   A `.vue` config replaces `files` with `"include": ["./*.vue"]`. Write the paths with the drive letter, a colon and a forward slash: `cygpath -m` converts a Git Bash path to that form, and `tsrs` reads a `/c/…` path as relative.
 
 3. **Run it.** A `.ts` example: from the package directory, `pnpm exec tsrs --fast -p <config>`. A `.vue` example: from the package directory, `../../apps/web/node_modules/.bin/vue-tsc --noEmit -p .readme-check/tsconfig.json`. A pass is exit 0; the `TNB ACTIVE` banner is not an error.
 4. **Prove the checker can fail.** Add one line, `const planted: number = "x";`, to the copy, rerun, and expect a `TS2322` error with a non-zero exit. Remove the line after. A zero exit alone proves nothing, since a config that matches no file passes too.
