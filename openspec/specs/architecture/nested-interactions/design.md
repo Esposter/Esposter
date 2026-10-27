@@ -1,6 +1,6 @@
 # Nested Interactions
 
-A click does one thing. When something that opens on a click — a table row, a dashboard tile, a folded tool call — holds a link, a button or a dialog of its own, a click on that inner thing is its alone: the link opens and the row does not. Before this standard, a link in a todo's notes opened in a new tab _and_ opened the todo's edit dialog behind it, and a still click anywhere inside a dashboard tile's open edit dialog re-opened the dialog over itself, throwing away the unsaved edits.
+A click does one thing. When something that opens on a click — a table row, a dashboard tile, a folded tool call — holds a link, a button or a dialog of its own, a click on that inner thing is its alone: the link opens and the row does not. A link in a todo's notes must not also open the todo's edit dialog behind it, and a still click anywhere inside a dashboard tile's open edit dialog must not re-open the dialog over itself, throwing away the unsaved edits.
 
 ## Is opening a new tab right?
 

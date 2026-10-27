@@ -1,6 +1,6 @@
 # Lint Toolchain
 
-Two linters, one direction: a rule moves from ESLint to oxlint whenever oxlint gains coverage, prioritized by what actually costs time in the ESLint pass. The move is gated on upstream — each rule still in ESLint waits on a trigger the table below names — so this page is the mechanism as it stands and the blocker table a bump is read against, never a schedule. Oxlint clears the whole repo in under a minute, nearly all of it the type-aware rules; ESLint is the slower half, and its cost is concentrated in a handful of rules rather than spread across the set. Since the type-aware rules left (`neverthrow/must-use-result` dropped, `typescript-eslint` removed), the remaining pass is short enough to run on every change — `lint` is no longer near CI's critical path, which belongs to `build app`.
+Two linters, one direction: a rule moves from ESLint to oxlint whenever oxlint gains coverage, prioritized by what actually costs time in the ESLint pass. The move is gated on upstream — each rule still in ESLint waits on a trigger the table below names — so this page is the mechanism as it stands and the blocker table a bump is read against, never a schedule. Oxlint clears the whole repo in under a minute, nearly all of it the type-aware rules; ESLint is the slower half, and its cost is concentrated in a handful of rules rather than spread across the set. With no type-aware rule left in ESLint (`neverthrow/must-use-result` is deleted, `typescript-eslint` is not installed), the remaining pass is short enough to run on every change — `lint` is not near CI's critical path, which belongs to `build app`.
 
 ## What works today
 
@@ -53,9 +53,9 @@ The remaining expensive rules, in descending cost order, and the trigger for mig
 | `perfectionist/sort-*` | ~a sixth, combined | oxlint has no sorting rules            | upstream implements sorting                                                                |
 | `no-restricted-syntax` | negligible         | oxlint has no AST-selector rule        | per ban, not per rule — the ladder and the standing list are below                         |
 
-Once the type-aware rules were gone, `vue/no-child-content` became the pass — it alone is worth more than everything else combined, so it is the only migration here that would move the number.
+With the type-aware rules out, `vue/no-child-content` is the pass — it alone is worth more than everything else combined, so it is the only migration here that would move the number.
 
-**`neverthrow/must-use-result` was dropped, not migrated.** It was the single most expensive rule (~a third of rule time) because it is the only one that needed `parserOptions.projectService`, and type-aware parsing dominates the whole ESLint pass rather than just that rule's share. Deleting it — plugin file, config entry and `@ninoseki/eslint-plugin-neverthrow` dependency — is what makes `pnpm lint` fast enough to run on every change. The cost is real and accepted: an unterminated `Result` chain is caught only by review, with `pnpm ai:sweep:unterminated-results` listing the candidates, and it fails silently (the call still runs, but the `Err` it returns is never read, so no error surfaces). Re-adding any type-aware ESLint plugin gives back the same multiplier, so the answer to "this convention needs types" is a review rule or a runtime assertion, never a rule here.
+**`neverthrow/must-use-result` is deleted, not migrated:** it is the single most expensive rule (~a third of rule time) because it is the only one that needs `parserOptions.projectService`, and type-aware parsing dominates the whole ESLint pass rather than just that rule's share. Deleting it — plugin file, config entry and `@ninoseki/eslint-plugin-neverthrow` dependency — is what makes `pnpm lint` fast enough to run on every change. The cost is real and accepted: an unterminated `Result` chain is caught only by review, with `pnpm ai:sweep:unterminated-results` listing the candidates, and it fails silently (the call still runs, but the `Err` it returns is never read, so no error surfaces). Re-adding any type-aware ESLint plugin gives back the same multiplier, so the answer to "this convention needs types" is a review rule or a runtime assertion, never a rule here.
 
 Everything else in the ESLint pass is either Nuxt/Vue-specific (`vue/*` SFC rules, `nuxt/*`) or a plugin oxlint has not implemented (`perfectionist/*`, `pinia/*`, `unocss/*`, `jsonc/*`, `link-checker/*` — oxlint reads no JSON at all); apart from the `perfectionist/sort-*` family none of them individually costs meaningful time, and the whole tail together is worth a fraction of `vue/no-child-content`. `typescript/naming-convention` is parked as a commented-out block in `typescriptRules.js` — it is too expensive under typescript-eslint to ship, and is waiting on oxlint to support it.
 
@@ -94,7 +94,7 @@ for is permanent, and a note saying so is what stops the next audit re-deriving 
 rather than the second: it is surface this repo then owns, tests and maintains, so it is only right when nothing
 else can express the ban at all.
 
-**Where each ban is configured.** `expect.any`, the polling ban, `JSON.parse` and `useRoute` are now
+**Where each ban is configured.** `expect.any`, the polling ban, `JSON.parse` and `useRoute` are
 `no-restricted-properties` and `no-restricted-globals` in `oxlint.config.ts`; the sites that disable them spell the
 directive `oxlint-disable-next-line` with the reporting rule's name. `useRoute` also takes a
 `no-restricted-imports` entry, because `no-restricted-globals` sees the auto-imported form and not an explicit
@@ -126,7 +126,7 @@ What stays in ESLint, and why:
 
 ## The HTML data behind the scoped-styles ban
 
-`scopedStyles.js` reads two static tables of the HTML standard: the tag names, in `htmlTagNames.js`, and each element's attributes, in `htmlElementAttributes.js`. Both are our own typed constants, copied from the upstream `html-tag-names` and `html-element-attributes` 3.5.0 packages under their MIT notice, and each file's header names the release and the date of the standard it was crawled from. A refresh re-crawls the standard and re-checks those headers.
+`scopedStyles.js` reads two static tables of the HTML standard: the tag names, in `htmlTagNames.js`, and each element's attributes, in `htmlElementAttributes.js`. Both are our own typed constants, copied from the upstream `html-tag-names` and `html-element-attributes` packages under their MIT notice, and each file's header names the release and the date of the standard it was crawled from. A refresh re-crawls the standard and re-checks those headers.
 
 | Upstream issue or pull request                                                                                                                                                           | Verdict                                                                                                                                           | Where it is proven                                                                                                                            |
 | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------ | :-------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -144,6 +144,4 @@ The tag names predate the standard's `selectedcontent` element, which the standa
 
 ## Notes
 
-- Never remove `correctness` from the explicit category list — oxlint would still run those rules (its own default), but `eslint-plugin-oxlint` would silently re-enable their ESLint twins and double-lint them.
-- Coverage parity is verified, not assumed: before relying on oxlint for a migrated rule, reproduce a violation in a scratch file and confirm oxlint reports it (tsgolint rules included).
 - The tileset ignore glob has one definition: a named export of `oxlint.config.ts`, which its `ignorePatterns` spreads and `packages/configuration/eslint/ignores.js` imports. ESLint already loads that file through `eslint/oxlint.js`, so the import adds no dependency edge and no file. A third data module would be one more place to edit when the tilesets move. ESLint's ignores are not derived from all of oxlint's `ignorePatterns`, because that would widen what ESLint skips (`.claude`, `auto-imports.d.ts`, `useFluidSimulator.ts`) without a review of each entry.

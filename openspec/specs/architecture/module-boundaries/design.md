@@ -58,8 +58,7 @@ The seam that is worth keeping is the opposite shape: a local function that _wra
 An import never leads back to the module it came from, however many modules it passes through. A cycle is not a
 type error and usually not a crash, since a function one module exports is only read when it is called — until
 something reads a binding while its module is still evaluating, as an async component loader can, and the page throws
-`Cannot access '…' before initialization`. The room's thread store did exactly that: it called the metadata read,
-which reads files through the file store, which reads the thread store back.
+`Cannot access '…' before initialization`. A thread store that calls the metadata read closes that loop: the read goes through the file store, which reads the thread store back.
 
 ```mermaid
 flowchart LR

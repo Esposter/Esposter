@@ -2,16 +2,15 @@
 
 Nothing in this repository exists to keep an older version of itself working. When a name, a shape or a deployed identity turns out to be wrong, it is corrected in place and every reference moves with it in the same commit. The old form is deleted, not aliased.
 
-This is the rule the codebase's other absences follow from: there are no `@deprecated` markers, no `fooV2`, no re-export shims pointing an old path at a new one, no Pulumi `aliases`, no legacy union arms in a schema, and no read path that accepts two shapes because one of them used to be written.
+This is the rule the codebase's other absences follow from: there are no `@deprecated` markers, no `fooV2`, no re-export shims pointing an old path at a new one, no Pulumi `aliases`, no legacy union arms in a schema, and no read path that accepts two shapes because an older writer produced one of them.
 
 ## Why the cost argument does not apply here
 
 The usual reason to keep a wrong name is that changing it is expensive. Here it is not, and each of the places that could have been expensive has already been paid for:
 
-- **Names in code** — the compiler finds every reference. A rename that typechecks is complete, and what typecheck cannot see (a path in a docs table, a name in prose) is covered by the workspace tests and a grep across `openspec`, `.agents` and the READMEs.
+- **Names in code** — the compiler finds every reference. A rename that typechecks is complete, and what typecheck cannot see (a path in a docs table, a name in prose) is covered by the workspace tests and the prose sweep the `finishing` skill owns.
 - **Deployed identities** — infrastructure is Pulumi code ([infra](../../infra/README.md)), so renaming an Azure resource, a function, or the identifier a subscription points at is an ordinary edit followed by `pnpm infra:preview`. The plan says exactly what will happen before anything happens. "This would be a risky infra change" is a claim a preview either supports or refutes, and it is not allowed to stand unpreviewed.
-- **A published package's exports** — `parse-tmx`, `vue-phaserjs`, `azure-mock`, `@esposter/azure`,
-  `genshin-world` and `@esposter/shared` are published, and renaming, folding away or removing an export from one
+- **A published package's exports** — a package whose manifest is not `private` is published, and renaming, folding away or removing an export from one
   is **not treated as a breaking change here**. Each is kept at its smallest, most refactored form: an export the
   simplest shape no longer needs is deleted like any other code, never kept behind a forwarding wrapper for a caller
   outside the repository. The packages exist because this repository needed them factored out, not because they
@@ -19,7 +18,7 @@ The usual reason to keep a wrong name is that changing it is expensive. Here it 
   this monorepo, where the compiler finds them. Paying a major — which in lerna's fixed mode drags every published
   package to the next whole number, including the ones that changed nothing — to protect a consumer nobody has is the same
   cost argument this page refuses everywhere else. So a rename or a removal lands as a `refactor` like any other, and no
-  commit carries a `BREAKING CHANGE:` footer for one. This is a statement about _these_ packages: it stops
+  commit carries a `BREAKING CHANGE:` footer for one. This is a statement about every package that is not `private`: it stops
   applying the day one of them is adopted somewhere that is not this repository.
 - **Runtimes and platform APIs** — the node version `.node-version` pins (or a published package's own `engines.node`) is the floor, and a native API
   available on that floor is used directly rather than reimplemented behind a stand-in for an older one. A

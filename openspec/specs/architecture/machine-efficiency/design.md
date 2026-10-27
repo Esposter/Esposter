@@ -14,12 +14,10 @@ A **lane** is one thing doing work on the machine: the main session, a `haiku` a
 
 ```mermaid
 flowchart TD
-  W["pnpm ai:machine:watch, kept running by the pulse mod —<br/>writes its reading each minute"] -->|"idle line"| L
+  W["pnpm ai:machine:watch, kept running by the pulse mod —<br/>writes its reading each minute"] -.->|"idle line, which starts nothing"| L
   L["A lane — the main session, a haiku agent or a runner"] --> DS["Its worktree's dev server<br/>3002 runner, 3011 shared checkout"]
   L --> CMD["A parity command"]
   CMD --> EDGE["Its own Edge, closed with its page"]
-  L --> SEARCH["rg over what git tracks"]
-  L --> VIDEO["GPU video decode for a whole-video scan"]
 ```
 
 ## What each mechanism buys

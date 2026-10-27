@@ -29,13 +29,13 @@ flowchart TD
 
 **Server-side readers.** A dataset read for a dashboard, a blueprint capture or a revision interprets content on the server. Its whole job is to compute something from the document, so no signed url can stand in for it.
 
-**Real-time sync.** Every save emits the parsed document it just validated on `resourceEventEmitter`, and `onSaveResourceContent` streams it whole to the owner's other devices with that resource open ([resource](../resource/design.md)). So a device subscribed to a large document still receives it through the server on each save from another device, at any size. Only TodoList subscribes today. A type whose documents outgrow one request body would have the subscription send the new `contentVersion` alone past `MAX_REQUEST_SIZE`, and the device read the blob through a read SAS like any other large read.
+**Real-time sync.** Every save emits the parsed document it just validated on `resourceEventEmitter`, and `onSaveResourceContent` streams it whole to the owner's other devices with that resource open ([resource](../resource/design.md)). So a device subscribed to a large document still receives it through the server on each save from another device, at any size. A type whose documents outgrow one request body would have the subscription send the new `contentVersion` alone past `MAX_REQUEST_SIZE`, and the device read the blob through a read SAS like any other large read.
 
 Nowhere else does the server hold a large document: carrying one from the browser to storage, or back, is never a reason to.
 
 ## A write that changes nothing stores nothing
 
-Every stored copy is content-addressed or rewritten in place: `{id}/content.json` is overwritten, and a retained version deduplicates identical bytes and stores a near-duplicate as a delta ([resource version store](../../resource/resource-version-store/design.md)). That saving only exists if an unchanged document serializes to the same bytes. So **a write must not mint identity it did not need.** A random id or a fresh timestamp on an item whose values did not change makes a byte-identical document look new, and every history entry pays for all of it again. A Sheet import is the case that proved it: every import built each row new, with a new UUID and new timestamps, so re-importing the same file stored every row id again. `reconcileDataSource` now hands the replaced sheet's identities to the imported one — a column by the header it came from, a row by its position — so the same file imports to the same bytes, and a changed file costs its changed rows.
+Every stored copy is content-addressed or rewritten in place: `{id}/content.json` is overwritten, and a retained version deduplicates identical bytes and stores a near-duplicate as a delta ([resource version store](../../resource/resource-version-store/design.md)). That saving only exists if an unchanged document serializes to the same bytes. So **a write must not mint identity it did not need.** A random id or a fresh timestamp on an item whose values did not change makes a byte-identical document look new, and every history entry pays for all of it again. A Sheet import is the case the rule guards: a re-import that built each row anew, with a new UUID and new timestamps, would store every row id again. `reconcileDataSource` hands the replaced sheet's identities to the imported one — a column by the header it came from, a row by its position — so the same file imports to the same bytes, and a changed file costs its changed rows.
 
 ## Reusing it
 
@@ -56,7 +56,7 @@ No generic transport abstraction sits above them, because resource content is th
 ## Notes
 
 - A browser reads Blob Storage cross-origin, so the storage accounts' CORS rules allow `GET` beside the uploads' `PUT`. An infrastructure deploy that dropped it would fail every large read with a CORS error the owner cannot act on.
-- A row written before `contentSize` existed carries its default of zero and is read inline until its next save writes the size. That inline read is the expected path for such a row, not a broken one.
+- A row no save has yet sized carries the default of zero and is read inline until its next save writes the size. That inline read is the expected path for such a row, not a broken one.
 - The read SAS lives minutes, like the one behind `/api/resource-assets`, because it is used the moment it is issued.
 
 ## Key files

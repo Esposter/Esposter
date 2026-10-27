@@ -44,7 +44,7 @@ A save larger than the request size limit SHALL be sent as a delta against the s
 
 ### Requirement: A document is read inline when its size was never recorded
 
-A document whose size was not recorded before the size field existed SHALL be read inline until its next save records the size.
+A document whose size no save has recorded SHALL be read inline until its next save records the size.
 
 #### Scenario: A row saved before its size was recorded
 
