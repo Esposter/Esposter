@@ -67,7 +67,7 @@
     "lint:fix": "eslint --fix .",
     "test": "vitest",
     "test:visual": "vitest --config vitest.browser.config.ts",
-    "typecheck": "vue-tsc"
+    "typecheck": "tsrs --fast --runExternalCode"
   },
   "devDependencies": {
     "@esposter/configuration": "workspace:*",
