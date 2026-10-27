@@ -49,10 +49,7 @@ export const createChioriKitBehaviour = ({ readHits, readParameter }: KitRecordR
       onStart: castTamoto(pressTamotoHits, tamotoSeconds, TAMOTO_PRESS_SPAWN_SECONDS),
     },
     skillHolds: [
-      {
-        hits: [sweepHitBehaviour],
-        onStart: castTamoto(holdTamotoHits, tamotoSeconds, TAMOTO_HOLD_SPAWN_SECONDS),
-      },
+      { hits: [sweepHitBehaviour], onStart: castTamoto(holdTamotoHits, tamotoSeconds, TAMOTO_HOLD_SPAWN_SECONDS) },
     ],
   };
 };

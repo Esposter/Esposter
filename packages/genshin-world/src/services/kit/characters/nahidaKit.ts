@@ -221,7 +221,8 @@ export const createNahidaKitBehaviour = ({
     chargedAttack: { hits: kit.chargedAttack.hits.map(() => karmicOblivionHitBehaviour) },
     getPartyStrikeBonus: (member, { hit }, enemy) => {
       const isLunarBloomStrike = hit.lunarHit?.lunarReactionType === LunarReactionType.LunarBloom;
-      const isBonusedStrike = member.constellationCount >= CONSTELLATION_2 && isLunarBloomStrike && checkHasSeeds(enemy);
+      const isBonusedStrike =
+        member.constellationCount >= CONSTELLATION_2 && isLunarBloomStrike && checkHasSeeds(enemy);
       return {
         criticalDamageBonus: isBonusedStrike ? CONSTELLATION_2_LUNAR_BLOOM_CRITICAL_DAMAGE_BONUS : 0,
         criticalRateBonus: isBonusedStrike ? CONSTELLATION_2_LUNAR_BLOOM_CRITICAL_RATE_BONUS : 0,
@@ -233,7 +234,9 @@ export const createNahidaKitBehaviour = ({
       return [
         {
           amount:
-            count === 0 ? 0 : CONSTELLATION_4_BASE_ELEMENTAL_MASTERY + count * CONSTELLATION_4_ELEMENTAL_MASTERY_PER_ENEMY,
+            count === 0
+              ? 0
+              : CONSTELLATION_4_BASE_ELEMENTAL_MASTERY + count * CONSTELLATION_4_ELEMENTAL_MASTERY_PER_ENEMY,
           attribute: Attribute.ElementalMastery,
         },
       ];

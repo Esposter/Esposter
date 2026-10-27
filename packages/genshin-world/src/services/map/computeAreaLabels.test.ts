@@ -39,16 +39,14 @@ describe(computeAreaLabels, () => {
       "flamefeather-valley",
       "volkodlak-tundra",
       "white-birch-snowgrave",
-    ].map(
-      (areaId): StatueLandmark => ({
-        areaId,
-        heightOffset: 0,
-        id: "",
-        kind: LandmarkKind.StatueOfTheSeven,
-        position: { x: 0, z: 0 },
-        rotation: 0,
-      }),
-    );
+    ].map((areaId): StatueLandmark => ({
+      areaId,
+      heightOffset: 0,
+      id: "",
+      kind: LandmarkKind.StatueOfTheSeven,
+      position: { x: 0, z: 0 },
+      rotation: 0,
+    }));
 
     expect(computeAreaLabels(catalogue, landmarks).map(({ name }) => name)).toStrictEqual([
       "Everfrozen Earth",

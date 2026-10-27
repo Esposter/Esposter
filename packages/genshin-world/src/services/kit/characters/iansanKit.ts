@@ -253,12 +253,7 @@ export const createIansanKitBehaviour = (): KitBehaviour => ({
       {
         onStrike: ({ activeCombatant, kitEffectState, party }) => {
           if (activeCombatant.ascension >= ASCENSION_1)
-            addPreciseMovement(
-              kitEffectState,
-              party,
-              activeCombatant.characterId,
-              activeCombatant.constellationCount,
-            );
+            addPreciseMovement(kitEffectState, party, activeCombatant.characterId, activeCombatant.constellationCount);
         },
       },
     ],
@@ -302,10 +297,7 @@ export const createIansanKitBehaviour = (): KitBehaviour => ({
     ) {
       endKitStatus(kitEffectState, characterId, PRECISE_MOVEMENT_ID);
       endKitStatus(kitEffectState, characterId, BURST_RESTORE_ID);
-      removeKitEffects(
-        kitEffectState,
-        (effect) => effect.kind === "buff" && effect.source === CONSTELLATION_2_SOURCE,
-      );
+      removeKitEffects(kitEffectState, (effect) => effect.kind === "buff" && effect.source === CONSTELLATION_2_SOURCE);
     }
     // Ascension 1 arms its four points on a gain or consumption of her points while she is on the field, as gcsim's
     // Nightsoul generate and consume callbacks do, and holds the arming for 2.8 seconds once it has

@@ -67,7 +67,12 @@ export const createArlecchinoKitBehaviour = (): KitBehaviour => ({
     onStart: ({ activeCombatant: combatant, kitEffectState }) => {
       if (
         combatant.constellationCount >= CONSTELLATION_6 &&
-        startKitCooldown(kitEffectState, combatant.characterId, CONSTELLATION_6_COOLDOWN_ID, CONSTELLATION_6_COOLDOWN_SECONDS)
+        startKitCooldown(
+          kitEffectState,
+          combatant.characterId,
+          CONSTELLATION_6_COOLDOWN_ID,
+          CONSTELLATION_6_COOLDOWN_SECONDS,
+        )
       )
         addKitStatus(kitEffectState, combatant.characterId, {
           id: CONSTELLATION_6_STATUS_ID,
