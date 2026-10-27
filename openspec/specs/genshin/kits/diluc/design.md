@@ -51,6 +51,7 @@ flowchart LR
 - the design's Provisional constants, a pointer within this page: the 1.2 seconds of the charged attack's stamina drain is provisional, grounding requirement "Charged attack stamina drain".
 - the design's Not built, which holds the 1.5-second interval as open: grounding requirement "Second constellation stacks Searing Ember on each hit Diluc takes".
 - gcsim v2.47.2's `skill.go` and `cons.go`, which give the Flowing Flame window of two seconds: grounding requirement "Fourth constellation adds 40% to a follow-up Searing Onslaught press two seconds after the one before".
+- `~/Esposter/cache/genshin-wiki/Category_Diluc_Talents.json`: the cached wiki holds no Flowing Flame text to check it against: grounding requirement "Fourth constellation adds 40% to a follow-up Searing Onslaught press two seconds after the one before".
 
 ## Open
 

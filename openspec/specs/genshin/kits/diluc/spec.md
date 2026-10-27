@@ -29,13 +29,15 @@ Diluc's charged attack SHALL be provisional, its slashes timed at half a second 
 
 Searing Onslaught SHALL chain up to three presses, each pressed within four seconds of the one before.
 
-Searing Onslaught's ten-second cooldown SHALL start on the first press.
-
 #### Scenario: A follow-up press plays inside the window
 
 - **GIVEN** Searing Onslaught was pressed less than four seconds ago
 - **WHEN** the player presses it again
 - **THEN** its next press plays even while the cooldown runs
+
+### Requirement: Searing Onslaught's cooldown starts on the first press
+
+Searing Onslaught's ten-second cooldown SHALL start on the first press.
 
 #### Scenario: A press after the chain lapses waits out the cooldown
 
@@ -56,7 +58,7 @@ Dawn's phoenix SHALL launch from the slash, strike eight ticks at intervals of a
 
 ### Requirement: Charged attack stamina drain
 
-While the charged attack plays, stamina SHALL drain at 40 a second, 48 in all over its 1.2 seconds. The 40 a second is the wiki's Tempered Sword stamina and the dump's group 1631 at index 6; the 1.2 seconds is provisional.
+While the charged attack plays, stamina SHALL drain at 40 a second, 48 in all over its 1.2 seconds. The 1.2 seconds is provisional.
 
 #### Scenario: The charged attack drains stamina as it plays
 
@@ -142,7 +144,7 @@ From constellation 2, each hit on Diluc that costs him HP, or that a shield take
 
 ### Requirement: Fourth constellation adds 40% to a follow-up Searing Onslaught press two seconds after the one before
 
-From constellation 4, a Searing Onslaught press that follows the one before it by two seconds or more SHALL deal 40% more DMG for two seconds, its skill strikes taking the bonus while it runs. The cached wiki holds no Flowing Flame text to check it against.
+From constellation 4, a Searing Onslaught press that follows the one before it by two seconds or more SHALL deal 40% more DMG for two seconds, its skill strikes taking the bonus while it runs.
 
 #### Scenario: A press two seconds after the last gets the bonus
 
