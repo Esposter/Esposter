@@ -7,11 +7,12 @@ import type {
 
 import { AgentEventType } from "#src/models/event/AgentEventType";
 import { HookPhase } from "#src/models/event/HookPhase";
+import { SdkHookPhase } from "#src/models/drivers/claudeAgentSdk/SdkHookPhase";
 
 const HookPhaseMap = {
-  hook_progress: HookPhase.Progress,
-  hook_response: HookPhase.Response,
-  hook_started: HookPhase.Started,
+  [SdkHookPhase.HookProgress]: HookPhase.Progress,
+  [SdkHookPhase.HookResponse]: HookPhase.Response,
+  [SdkHookPhase.HookStarted]: HookPhase.Started,
 } as const satisfies Record<
   (SDKHookProgressMessage | SDKHookResponseMessage | SDKHookStartedMessage)["subtype"],
   HookPhase

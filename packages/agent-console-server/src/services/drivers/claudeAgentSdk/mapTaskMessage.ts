@@ -9,15 +9,16 @@ import type {
 import { AgentEventType } from "#src/models/event/AgentEventType";
 import { SubagentStatus } from "#src/models/event/SubagentStatus";
 import { exhaustiveGuard } from "@esposter/shared";
+import { SdkSubagentStatus } from "#src/models/drivers/claudeAgentSdk/SdkSubagentStatus";
 
 const SubagentStatusMap = {
-  completed: SubagentStatus.Completed,
-  failed: SubagentStatus.Failed,
-  killed: SubagentStatus.Stopped,
-  paused: SubagentStatus.Running,
-  pending: SubagentStatus.Started,
-  running: SubagentStatus.Running,
-  stopped: SubagentStatus.Stopped,
+  [SdkSubagentStatus.Completed]: SubagentStatus.Completed,
+  [SdkSubagentStatus.Failed]: SubagentStatus.Failed,
+  [SdkSubagentStatus.Killed]: SubagentStatus.Stopped,
+  [SdkSubagentStatus.Paused]: SubagentStatus.Running,
+  [SdkSubagentStatus.Pending]: SubagentStatus.Started,
+  [SdkSubagentStatus.Running]: SubagentStatus.Running,
+  [SdkSubagentStatus.Stopped]: SubagentStatus.Stopped,
 } as const satisfies Record<
   NonNullable<SDKTaskUpdatedMessage["patch"]["status"]> | SDKTaskNotificationMessage["status"],
   SubagentStatus

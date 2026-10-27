@@ -12,11 +12,12 @@ import { SessionState } from "#src/models/session/SessionState";
 import { mapHookMessage } from "#src/services/drivers/claudeAgentSdk/mapHookMessage";
 import { mapTaskMessage } from "#src/services/drivers/claudeAgentSdk/mapTaskMessage";
 import { toUnknownEvent } from "#src/services/drivers/claudeAgentSdk/toUnknownEvent";
+import { SdkSessionState } from "#src/models/drivers/claudeAgentSdk/SdkSessionState";
 
 const SessionStateMap = {
-  idle: SessionState.Idle,
-  requires_action: SessionState.RequiresAction,
-  running: SessionState.Running,
+  [SdkSessionState.Idle]: SessionState.Idle,
+  [SdkSessionState.RequiresAction]: SessionState.RequiresAction,
+  [SdkSessionState.Running]: SessionState.Running,
 } as const satisfies Record<Extract<SDKMessage, { subtype: "session_state_changed" }>["state"], SessionState>;
 // Every system message but the three carrying what the mapper keeps, which it reads itself. A subtype this does not
 // Name is kept as a raw row: the SDK adds them between releases.
