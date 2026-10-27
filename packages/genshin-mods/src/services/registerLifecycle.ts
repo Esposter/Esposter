@@ -9,7 +9,6 @@ import { veilText } from "./veil/veilText";
 import { appendSinEvidence } from "./sins/appendSinEvidence";
 import { SINS_API_URL, SINS_TIMEOUT_MS } from "./sins/constants";
 import { getSinQuestions } from "./sins/getSinQuestions";
-import { getSinsStorePath } from "./sins/getSinsStorePath";
 import { parseSinsResult } from "./sins/parseSinsResult";
 import { SINS_SCRIPT } from "./sins/sinsScript";
 import {
@@ -112,7 +111,7 @@ const scoreSins = async ($: EngineInterface, text: string) => {
         questions: getSinQuestions(),
         session,
         state: veilText(text),
-        storePath: getSinsStorePath(home),
+        storePath: `${home}/.claude/genshin-mods/sins.sqlite`,
       }),
       timeoutMs: SINS_TIMEOUT_MS,
     }),
@@ -121,6 +120,11 @@ const scoreSins = async ($: EngineInterface, text: string) => {
     outcome.status === "fulfilled" && outcome.value.exitCode === 0
       ? parseSinsResult(outcome.value.stdout)
       : { result: "failed" as const };
+  // A run can outlive the conversation or the switch it started under, so its outcome lands only while both still hold
+  const sessionNow = await read($, sinSessionAtom);
+  const { sins } = await read($, enabledModsAtom);
+  if (sessionNow !== session || !sins) return;
+
   if (result.result === "answered")
     await update($, sinHistoryAtom, (history) => appendSinEvidence(history, result.answers));
 
@@ -158,10 +162,15 @@ export const registerLifecycle = (on: On): void => {
   for (const name of ModNames)
     on("command.run", { command: name }, async ($, e) => {
       const argument = e.args.trim().toLowerCase();
-      const enabledMods = await update($, enabledModsAtom, (value) => ({
-        ...value,
-        [name]: argument ? argument === "on" : !value[name],
-      }));
+      const current = await read($, enabledModsAtom);
+      const isNext = argument ? argument === "on" : !current[name];
+      // Sins scores only with a TypeSafe key, so turning it on without one is refused and its value is left as it was
+      if (name === "sins" && isNext) {
+        const key = await $.env.get("TYPESAFE_API_KEY");
+        if (!key) return { text: "Sins needs a TypeSafe key: set TYPESAFE_API_KEY first." };
+      }
+
+      const enabledMods = await update($, enabledModsAtom, (value) => ({ ...value, [name]: isNext }));
       await $.store.set(enabledModsAtom.ref.key, enabledMods);
       return { text: `${name} is ${enabledMods[name] ? "on" : "off"}.` };
     });
@@ -185,6 +194,7 @@ export const registerLifecycle = (on: On): void => {
       await update($, lastCacheRequestAtAtom, () => InitialState.lastCacheRequestAt);
       await update($, sinHistoryAtom, () => InitialState.sinHistory);
       await update($, sinSessionAtom, () => InitialState.sinSession);
+      await update($, sinStatusAtom, () => InitialState.sinStatus);
       await update($, waypointsAtom, () => InitialState.waypoints);
       await closeCommission($);
     }

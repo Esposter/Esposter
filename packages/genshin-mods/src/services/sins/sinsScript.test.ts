@@ -56,15 +56,18 @@ describe("sinsScript", () => {
     expect(JSON.parse(await runScript(getPayload(), ""))).toStrictEqual({ result: "no-key" });
   });
 
-  test("records the seven answers in the evidence log", async () => {
+  test("records one evidence row for the prompt, holding its seven answers", async () => {
     expect.hasAssertions();
 
     const result = JSON.parse(await runScript(getPayload(), "test-key"));
     expect(result.result).toBe("answered");
     expect(Object.keys(result.answers)).toStrictEqual([...SIN_NAMES]);
 
-    const row = new Database(storePath).prepare("SELECT COUNT(*) AS count FROM evidence").get();
-    expect(Number(row?.count)).toBe(SIN_NAMES.length);
+    const database = new Database(storePath);
+    const rows = database.prepare("SELECT answers FROM evidence").all();
+    expect(rows).toHaveLength(1);
+    expect(Object.keys(JSON.parse(String(rows[0]?.answers)))).toStrictEqual([...SIN_NAMES]);
+    database.close();
   });
 
   test("writes no evidence when the call fails", async () => {

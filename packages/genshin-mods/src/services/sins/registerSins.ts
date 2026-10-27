@@ -2,25 +2,18 @@ import type { On } from "claude-code";
 
 import { atom, read } from "claude-code";
 
-import type { SinStatus } from "../../../types";
-
 import { InitialState } from "../InitialState";
-import { SIN_BAR_WIDTH, SinColorMap, SINS_PANE_ID } from "./constants";
+import { SIN_BAR_WIDTH, SINS_PANE_ID } from "./constants";
 import { getBarCells } from "./getBarCells";
 import { getSinScores } from "./getSinScores";
 import { getTrendGlyphs } from "./getTrend";
 import { readIsLightTheme } from "./readIsLightTheme";
+import { readSinStatus } from "./readSinStatus";
+import { SinColorMap } from "./SinColorMap";
+import { SinStatusTextMap } from "./SinStatusTextMap";
 
 const enabledModsAtom = atom({ key: "enabledMods", plugin: "genshin-mods" } as const, InitialState.enabledMods);
 const sinHistoryAtom = atom({ key: "sinHistory", plugin: "genshin-mods" } as const, InitialState.sinHistory);
-const sinStatusAtom = atom({ key: "sinStatus", plugin: "genshin-mods" } as const, InitialState.sinStatus);
-
-// Why the pane shows no fresh scores, for the statuses that have a reason to show
-const SinStatusLineMap: Partial<Record<SinStatus, string>> = {
-  failed: "The last prompt was not scored; the bars keep their last scores.",
-  "no-key": "Needs a TypeSafe key: set TYPESAFE_API_KEY.",
-  "node-too-old": "Needs Node 22.13 or later for the evidence log.",
-};
 
 // The seven sins in full: one bar per measured sin in the same order every time, its spread as the tinted tail, and its
 // Last thirty prompts as a trend. It is drawn from the state alone, so a reload redraws it as it was, and it says so
@@ -36,7 +29,7 @@ export const registerSins = (on: On): void => {
 
     const scores = getSinScores(await read($, sinHistoryAtom));
     const isLight = await readIsLightTheme($);
-    const statusLine = SinStatusLineMap[await read($, sinStatusAtom)];
+    const statusText = SinStatusTextMap[await readSinStatus($)];
     return Box({
       children: [
         Text({ bold: true, children: "Seven sins" }),
@@ -55,7 +48,7 @@ export const registerSins = (on: On): void => {
             flexDirection: "row",
           });
         }),
-        ...(statusLine ? [Text({ children: statusLine, dimColor: true })] : []),
+        ...(statusText ? [Text({ children: statusText, dimColor: true })] : []),
       ],
       flexDirection: "column",
     });
