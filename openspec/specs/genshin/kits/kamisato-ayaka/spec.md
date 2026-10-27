@@ -52,7 +52,6 @@ Kamisato Art: Soumetsu SHALL raise a storm that stands where Ayaka cast it and s
 - **WHEN** the player casts Kamisato Art: Soumetsu
 - **THEN** the storm stands where Ayaka cast it
 - **AND** its cuts strike within 3.3 metres and its bloom within 5 metres
-- **AND** the storm's path stays provisional until a recording measures it
 
 ### Requirement: Senho's infusion runs from the sprint
 
