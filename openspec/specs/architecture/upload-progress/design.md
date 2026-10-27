@@ -13,7 +13,7 @@ flowchart LR
 
 ## Upstream
 
-Every issue on `sindresorhus/p-progress`, open and closed, was read with its comments before the counter was written. No issue is an in-scope defect of the counter: each is either outside the surface the upload uses, or a question the upstream README answers. The counter is tested against the mixed case below.
+Every issue on `sindresorhus/p-progress` is judged by the [triage](../dependency-admission/design.md) before the counter is written. No issue is an in-scope defect of the counter: each is either outside the surface the upload uses, or a question the upstream README answers. The counter is tested against the mixed case below.
 
 | Issue                                                                            | Verdict        | Evidence                                                                                                                                                                |
 | :------------------------------------------------------------------------------- | :------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
