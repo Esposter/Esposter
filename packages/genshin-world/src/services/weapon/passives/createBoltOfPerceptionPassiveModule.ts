@@ -1,8 +1,6 @@
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
-import { KitEventKind } from "#src/models/kit/KitEventKind";
-import { checkIsNormalOrChargedAttack } from "#src/services/kit/checkIsNormalOrChargedAttack";
-import { queueCooldownHit } from "#src/services/weapon/passives/queueCooldownHit";
+import { createAttackCooldownHitPassiveModule } from "#src/services/weapon/passives/createAttackCooldownHitPassiveModule";
 import { takeOne } from "@esposter/shared";
 
 const BOLT_COOLDOWN_ID = "boltOfPerceptionCooldown";
@@ -14,23 +12,10 @@ export const createBoltOfPerceptionPassiveModule = (params: number[]): PassiveMo
   const chance = takeOne(params, 0);
   const talentMultiplier = takeOne(params, 2);
   const cooldownSeconds = takeOne(params, 3);
-  return {
-    onKitEvent: (event, context, combatant) => {
-      if (
-        event.kind !== KitEventKind.DamageTaken ||
-        event.striker.characterId !== combatant.characterId ||
-        !checkIsNormalOrChargedAttack(event.attackTag) ||
-        context.random() >= chance
-      )
-        return;
-      queueCooldownHit(
-        context,
-        combatant,
-        BOLT_COOLDOWN_ID,
-        cooldownSeconds,
-        { hitArea: event.hit.hitArea, hitmarkSeconds: 0, poiseDamage: 0, talentMultiplier },
-        event.enemy,
-      );
-    },
-  };
+  return createAttackCooldownHitPassiveModule({
+    buildHit: (event) => ({ hitArea: event.hit.hitArea, hitmarkSeconds: 0, poiseDamage: 0, talentMultiplier }),
+    chance,
+    cooldownId: BOLT_COOLDOWN_ID,
+    cooldownSeconds,
+  });
 };

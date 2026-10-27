@@ -1,11 +1,9 @@
 import type { PassiveModule } from "#src/models/kit/PassiveModule";
 
 import { Element } from "#src/models/Element";
-import { KitEventKind } from "#src/models/kit/KitEventKind";
 import { checkIsEnemyAffectedByElement } from "#src/services/combat/aura/checkIsEnemyAffectedByElement";
-import { checkIsNormalOrChargedAttack } from "#src/services/kit/checkIsNormalOrChargedAttack";
 import { SMALL_AOE_AREA } from "#src/services/weapon/passives/constants";
-import { queueCooldownHit } from "#src/services/weapon/passives/queueCooldownHit";
+import { createAttackCooldownHitPassiveModule } from "#src/services/weapon/passives/createAttackCooldownHitPassiveModule";
 import { takeOne } from "@esposter/shared";
 
 const FROST_BURIAL_COOLDOWN_ID = "frostBurialCooldown";
@@ -18,30 +16,17 @@ export const createFrostBurialPassiveModule = (params: number[]): PassiveModule 
   const talentMultiplier = takeOne(params, 1);
   const cryoTalentMultiplier = takeOne(params, 2);
   const cooldownSeconds = takeOne(params, 3);
-  return {
-    onKitEvent: (event, context, combatant) => {
-      if (
-        event.kind !== KitEventKind.DamageTaken ||
-        event.striker.characterId !== combatant.characterId ||
-        !checkIsNormalOrChargedAttack(event.attackTag) ||
-        context.random() >= chance
-      )
-        return;
-      queueCooldownHit(
-        context,
-        combatant,
-        FROST_BURIAL_COOLDOWN_ID,
-        cooldownSeconds,
-        {
-          hitArea: SMALL_AOE_AREA,
-          hitmarkSeconds: 0,
-          poiseDamage: 0,
-          talentMultiplier: checkIsEnemyAffectedByElement(event.enemy, Element.Cryo)
-            ? cryoTalentMultiplier
-            : talentMultiplier,
-        },
-        event.enemy,
-      );
-    },
-  };
+  return createAttackCooldownHitPassiveModule({
+    buildHit: (event) => ({
+      hitArea: SMALL_AOE_AREA,
+      hitmarkSeconds: 0,
+      poiseDamage: 0,
+      talentMultiplier: checkIsEnemyAffectedByElement(event.enemy, Element.Cryo)
+        ? cryoTalentMultiplier
+        : talentMultiplier,
+    }),
+    chance,
+    cooldownId: FROST_BURIAL_COOLDOWN_ID,
+    cooldownSeconds,
+  });
 };
