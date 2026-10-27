@@ -1,6 +1,6 @@
 ## Purpose
 
-The game's own words in all fifteen of its languages (`~/Esposter.noindex/genshin-parity/text/TextMap/`), in the published genshin-text package — the language registry, a matcher from a reader's locale, and every string a consumer references, looked up by the game's own text id with one lazily loaded chunk per language. A generator reads them out of the game's text, its text maps from the community dump, kept to the remote `main` by size until a decoder covers the current patch (`openspec/specs/genshin/game-text/design.md`), and its tables from a dump kept outside the repository; nothing is translated by hand. The persona plugin takes a generated copy rather than a dependency.
+The game's own words in all fifteen of its languages (`~/Esposter.noindex/genshin-parity/text/TextMap/`), in the published genshin-text package — the language registry, a matcher from a reader's locale, and every string a consumer references, looked up by the game's own text id with one lazily loaded chunk per language. A generator reads them out of the game's text, its text maps from the community dump, kept to the remote `main` by size until a decoder covers the current patch (`openspec/specs/genshin/game-text/design.md`), and its tables from a dump kept outside the repository; nothing is translated by hand. The persona plugin takes a generated copy rather than a dependency (`scripts/src/services/genshinText/getPersonaModuleSource.ts`).
 
 ## Requirements
 
@@ -170,13 +170,13 @@ The persona plugin SHALL carry a generated copy of the game text modules it runs
 
 ### Requirement: The app's own interface is not translated
 
-The app's own interface SHALL stay in English, and only the game's own words SHALL be translated through this package (see the open list).
+The app's own interface SHALL stay in English, and only the game's own words SHALL be translated through this package.
 
 #### Scenario: App's own labels stay in English
 
 - **GIVEN** a reader's language is not English
 - **WHEN** the app's own labels are shown
-- **THEN** they remain in English (see the open list)
+- **THEN** they remain in English
 
 ### Requirement: Non-Latin game text draws in a system face
 
