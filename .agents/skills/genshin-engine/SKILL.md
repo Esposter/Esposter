@@ -49,7 +49,7 @@ The design, from each module's job to the order a frame runs in, is `openspec/sp
 - **Game data is published, never imported** — `references/game-data.md`.
 - **The world package is published and builds through the Vue tsdown configuration** — `references/world-package.md`.
 - **A system that holds player state adds its slice to the save schema in the same change** — `references/save-data.md`.
-- **Every exported function states its return type**, since the package is published with isolated declarations (`packages/configuration/tsconfig.library.json`); the file and import rules are the `file-organization` and `build` skills'.
+- **Every exported function states its return type**, since the package is published with isolated declarations (`packages/configuration/tsconfig.browser.json`); the file and import rules are the `file-organization` and `build` skills'.
 
 ## Reference pages
 

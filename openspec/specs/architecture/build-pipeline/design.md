@@ -106,9 +106,11 @@ The presets are `@esposter/configuration`'s, extended by path, and the root carr
 ```mermaid
 flowchart TD
   B["tsconfig.base.json — strict, ESNext, no framework"] --> L["tsconfig.library.json — composite + isolatedDeclarations"]
+  B --> N["tsconfig.node.json — types: node, composite + isolatedDeclarations"]
+  B --> BR["tsconfig.browser.json — DOM libs, composite + isolatedDeclarations"]
   B --> V["tsconfig.vue.json — SFC, DOM libs, dxup plugins"]
-  L --> N["tsconfig.node.json — types: node"]
   N --> P["a package's tsconfig.json"]
+  BR --> P
   L --> P
   V --> P
   P --> BU["a published Vue package's tsconfig.build.json"]

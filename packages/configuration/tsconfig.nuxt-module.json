@@ -1,1 +1,9 @@
-{ "compilerOptions": { "lib": ["ESNext", "dom", "dom.iterable"] }, "extends": "./tsconfig.node.json" }
+{
+  "compilerOptions": {
+    "composite": true,
+    "isolatedDeclarations": true,
+    "lib": ["ESNext", "dom", "dom.iterable"],
+    "types": ["node"]
+  },
+  "extends": "./tsconfig.base.json"
+}
