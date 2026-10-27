@@ -7,7 +7,7 @@ flowchart TD
   P[UiPaletteMap: colours per style and mode] --> TP[Vuetify 0's theme plugin: one theme per style and mode]
   S[UiStyleMap: drawing per style] -->|at config time| SR[One rule per style on its data-ui-style value]
   L[The layout tier in globals.css: the step, the dock, motion] --> R
-  TP --> H[The first response: token stylesheet, data-theme, colour scheme]
+  TP --> H[The first response]
   H --> R[The surface, type and shortcut rules in uno.config.ts]
   SR --> R
   R --> C[Library components and feature markup: one DOM in every style]
@@ -197,7 +197,7 @@ flowchart TD
   C[Theme mode and style cookies] --> ST[The theme-mode and style stores]
   AM[A choice in the dock's theme or style menu or the palette] --> ST
   MQ[The system's scheme, after hydration] --> ST
-  ST --> NT[NuxtTheme: the style, the mode and the resolved mode]
+  ST --> NT[NuxtTheme]
   NT --> W[useSelectUiTheme's immediate watcher]
   W --> SEL[Vuetify 0's theme for the pair is selected]
   W -->|system mode, served light| HR[A head rule repainting the root dark under a dark colour-scheme query]

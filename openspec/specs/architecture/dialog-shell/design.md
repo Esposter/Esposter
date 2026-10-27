@@ -17,10 +17,10 @@ flowchart TD
   OPEN -->|"yes"| BODY["default slot — padded, scrollable, one column with its own rhythm"]
   BODY --> HASACTIONS{"is there anything to confirm"}
   HASACTIONS -->|"no confirmLabel and no action slots"| CLOSE["no actions row — the title bar's close button is the way out"]
-  HASACTIONS -->|"yes"| ACTIONS["actions row — prepend-actions, spacer, Cancel, prepend-confirm, confirm in the accent"]
+  HASACTIONS -->|"yes"| ACTIONS["actions row"]
   ACTIONS --> FORM{"inside StyledFormDialog"}
   FORM -->|"no"| ANSWER["confirm calls the consumer's confirm function"]
-  FORM -->|"yes"| SUBMIT["confirm submits the form — every field validates, then it calls submit"]
+  FORM -->|"yes"| SUBMIT["form submit"]
   SUBMIT --> ANSWER
   ANSWER --> MODE{"is the write optimistic"}
   MODE -->|"yes"| GONE["closes at once — a rejection rolls back and toasts"]

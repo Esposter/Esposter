@@ -25,7 +25,7 @@ The last gate is the design pass's own question. Matching the reference product 
 
 ## Reference products
 
-Each product area follows one product that already solved its domain, so its arrangement, its copy and its behaviour are taken rather than reinvented. A screenshot of the reference product handed over in a conversation is the specification for that surface (the `ux` skill).
+Each product area follows one product that already solved its domain, so its arrangement, its copy and its behaviour are taken rather than reinvented. How a screenshot of the reference product is used is the `ux` skill's.
 
 | Area                                                                  | Reference product                                                                                                      | What it gave                                                                                                                                                                                                                                   |
 | :-------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
