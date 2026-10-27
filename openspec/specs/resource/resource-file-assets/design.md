@@ -10,13 +10,13 @@ Content embeds a **stable, relative app url** — `/api/resource-assets/{blobNam
 
 ```mermaid
 flowchart LR
-  DEF["ResourceDefinitionMap<br/>fileAssets: true<br/>Survey · Note · Webpage · Email"] -->|derives| UNION["FileAssetsResourceType"]
+  DEF["ResourceDefinitionMap<br/>fileAssets: true"] -->|derives| UNION["FileAssetsResourceType"]
   UNION -->|"conditional spread<br/>(like the publish procedures)"| FACTORY["createResourceProcedures<br/>+ upload SAS + deleteFile"]
   WS["Webpage Settings<br/>share image"] -->|"useUploadResourceFile"| FACTORY
   NOTE["Note<br/>useInsertNoteImages"] -->|useUploadResourceFile| FACTORY
   CREATOR["SurveyJS creator<br/>onUploadFile"] -->|useUploadResourceFile| FACTORY
   FACTORY -->|SAS PUT target| BLOB[("{id}/files/{sha256}<br/>ResourceAssets container")]
-  WS -->|"stores the stable url"| CANVAS["content blob stores /api/resource-assets/{blobName}"]
+  WS -->|"stores the stable url"| CANVAS["content blob<br/>stable app url"]
   PUB["publishResource"] -->|"references by hash, no copy"| BLOB
   VIEW["editor + published views"] -->|"GET /api/resource-assets/…"| EP["authorize · rate limit<br/>302 to minutes-scale SAS"]
   EP --> BLOB

@@ -13,7 +13,7 @@ A map from `ResourceType` to a save mode would therefore describe a difference t
 ```mermaid
 flowchart TD
   AUTO["watchAutosave / useAutosaveFunction<br/>Autosaving editors"] --> DOOR
-  CMD["a command or a dialog's Save<br/>Sheet toolbar, TodoList items, Dashboard visuals"] --> DOOR
+  CMD["command or dialog Save"] --> DOOR
   LIB["a third-party editor's own cadence<br/>SurveyJS creator"] --> DOOR
   DOOR["resourceStore.saveContent<br/>dirty check, queue, contentVersion guard"]
 

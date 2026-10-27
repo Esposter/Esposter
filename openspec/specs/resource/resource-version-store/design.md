@@ -21,7 +21,7 @@ The same codec works on the wire as well: a large document's save is compressed 
 
 ```mermaid
 flowchart TD
-  trigger["A trigger takes a version — revision interval, restore, import, publish"] --> anchor["Read the channel anchor — the newest keyframe row, and the bytes anchored above it"]
+  trigger["version trigger"] --> anchor["Read the channel anchor — the newest keyframe row, and the bytes anchored above it"]
   anchor --> store["Write to the store — dedupe, delta, or promote to a keyframe"]
   store --> row[("Upsert the version row — hash, base, both sizes, reason, summary")]
   row --> commit{"Inside a publish transaction?"}
@@ -61,7 +61,7 @@ flowchart TD
   named --> subtract{"Named by a survivor?"}
   retained --> subtract
   subtract -->|yes| keep["Keep — a delta decodes against it"]
-  subtract -->|no| drop["Publish for deletion — bytes released when the handler lands"]
+  subtract -->|no| drop["Publish for deletion"]
 ```
 
 An object survives while any row of the resource names it, as its own hash or as its base. `collectSnapshotObjects` answers that with one query over the resource's rows, which is what the base hash is denormalised onto the row for: without it, deciding whether a keyframe is still needed would mean reading every surviving delta's header. Because a delta is anchored to a keyframe that is itself a version, a keyframe is collectable only once its own row and every delta anchored to it are gone — eviction therefore sheds the oldest segment whole.
