@@ -36,5 +36,6 @@ Mualani's kit is its record and one behaviour module, `createMualaniKitBehaviour
 - [Cooling Treatment](https://genshin-impact.fandom.com/wiki/Cooling_Treatment) and [Boomsharka-laka](https://genshin-impact.fandom.com/wiki/Boomsharka-laka), Genshin Impact Wiki: the poise of her strikes, charged attack, collision, plunges and burst.
 - The cached wiki, `~/Esposter/cache/genshin-wiki/Category_Mualani_Talents.json`: the poise rows 1 to 7 (9.6, 8.39 and 13.1 for the three strikes, 50 for the charged attack, 5 for the collision, and 50 and 100 for the low and high plunges).
 - The game data, `~/Esposter/genshin-parity/text/ExcelBinOutput/`: groups 10231, 10232 and 10239 (skill rows 30000, 30002 and 30007), with the skill's six-second cooldown on row 30002 and the burst's 15 seconds and 60 energy on row 30007. Checked against gcsim's multiplier blocks: every multiplier block matches its group at every talent level.
+- Requirement "Plunge attacks": "the wiki's poise", the source of the poise values of 5 on the collision, 50 on the low plunge and 100 on the high.
 
 ## Open

@@ -40,7 +40,7 @@ Mualani's skill press SHALL deal no damage and SHALL go on a six-second cooldown
 
 ### Requirement: Plunge attacks
 
-Mualani's plunge attacks SHALL land on the enemies within a provisional reach, with the wiki's poise: 5 on the collision, 50 on the low plunge and 100 on the high.
+Mualani's plunge attacks SHALL land on the enemies within a provisional reach, with poise: 5 on the collision, 50 on the low plunge and 100 on the high.
 
 #### Scenario: Plunge lands within a provisional reach
 
