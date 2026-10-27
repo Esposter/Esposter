@@ -160,19 +160,19 @@ The forging talents of the party's characters SHALL apply to the forge types the
 
 - **GIVEN** a party member with the reduce time talent is in the party
 - **WHEN** an enhancement ore order starts
-- **THEN** each unit takes a fifth less time (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`, row 22501's 0.2)
+- **THEN** each unit takes a fifth less time
 
 #### Scenario: Extra result talent may add a copy of a unit's result
 
 - **GIVEN** a party member with the extra result talent is in the party
 - **WHEN** an enhancement ore unit is collected
-- **THEN** the unit has a one in five chance of yielding an extra copy of its result (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`, row 32501's 2000 of 10000)
+- **THEN** the unit has a one in five chance of yielding an extra copy of its result
 
 #### Scenario: Refund talent gives back ore from weapons of its type
 
 - **GIVEN** a party member with the refund talent is in the party
 - **WHEN** a weapon of the talent's type is forged
-- **THEN** fifteen per cent of the ores its units take are refunded when the order starts (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`, row 302301's 0.15)
+- **THEN** fifteen per cent of the ores its units take are refunded when the order starts
 
 #### Scenario: Refund the bag cannot hold is lost
 
