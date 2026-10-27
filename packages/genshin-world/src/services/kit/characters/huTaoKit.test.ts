@@ -349,7 +349,7 @@ describe("spirit Soother", () => {
 });
 
 describe("constellation 2", () => {
-  test("Blood Blossom's tick adds 10% of the Max HP Hu Tao had when it was applied, not the Max HP she has as it ticks", () => {
+  test("blood Blossom's tick adds 10% of the Max HP Hu Tao had when it was applied, not the Max HP she has as it ticks", () => {
     expect.hasAssertions();
     const combatant = { ...createHuTaoCombatant(), constellationCount: 2 };
     const healthBuff: KitBuff = {
@@ -385,7 +385,7 @@ describe("constellation 2", () => {
     );
   });
 
-  test("Spirit Soother also applies Blood Blossom to each enemy its hit strikes", () => {
+  test("spirit Soother also applies Blood Blossom to each enemy its hit strikes", () => {
     expect.hasAssertions();
     const combatant = { ...createHuTaoCombatant(), constellationCount: 2 };
 

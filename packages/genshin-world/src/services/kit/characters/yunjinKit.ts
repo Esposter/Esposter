@@ -51,7 +51,7 @@ const ASCENSION_1_COUNTER_WINDOW_ID = "yunjin-ascension-1-counter-window";
 const CONSTELLATION_1 = 1;
 const CONSTELLATION_1_SKILL_COOLDOWN_MULTIPLIER = 0.82;
 // Once the banner is unleashed, every deployed member's Normal Attack DMG rises 15% for 12 seconds, as gcsim (MIT)
-// yunjin/cons.go gives it
+// `yunjin/cons.go` gives it
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/yunjin/cons.go
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_NORMAL_ATTACK_DAMAGE_BONUS = 0.15;

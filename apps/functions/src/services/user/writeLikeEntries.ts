@@ -9,8 +9,8 @@ import { readRoomEmojiReactionsByUser } from "#src/services/user/readRoomEmojiRe
 import { AzureTable } from "@esposter/db-schema";
 
 // The person's likes and dislikes of posts, and their emoji reactions in the rooms they are a member of. Each entry names
-// its target and carries no counts, and no other person's reaction is listed. A post like carries the time it was made. A
-// reaction carries none: its row is shared by its reactors, so its time is the first reactor's
+// Its target and carries no counts, and no other person's reaction is listed. A post like carries the time it was made. A
+// Reaction carries none: its row is shared by its reactors, so its time is the first reactor's
 export const writeLikeEntries = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
   const postLikes = await db.query.likesInPost.findMany({
     columns: { createdAt: true, postId: true, value: true },

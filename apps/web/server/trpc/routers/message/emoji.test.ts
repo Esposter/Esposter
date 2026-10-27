@@ -172,8 +172,8 @@ describe("emojiRouter", () => {
 
     const { emojiKey, newEmoji, newMessage } = await setupEmoji();
 
-    await expect(emojiCaller.updateEmoji(emojiKey)).rejects.toThrow(
-      `Invalid operation: ${Operation.Update}, name: ${MessageMetadataType.Emoji}`,
+    await expect(emojiCaller.updateEmoji(emojiKey)).rejects.toThrowErrorMatchingInlineSnapshot(
+      `[TRPCError: ${new InvalidOperationError(Operation.Update, MessageMetadataType.Emoji, JSON.stringify(newEmoji)).message}]`,
     );
 
     const emojis = await emojiCaller.readEmojis({ messageRowKeys: [newMessage.rowKey], roomId });

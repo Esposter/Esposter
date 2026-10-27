@@ -45,7 +45,7 @@ describe(blendWeatherState, () => {
     });
   });
 
-  test("An eruption stops the rain", () => {
+  test("an eruption stops the rain", () => {
     expect.hasAssertions();
 
     const raining: WeatherState = { ...clear, precipitationDensity: 1, precipitationKind: PrecipitationKind.Rain };

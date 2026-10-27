@@ -16,10 +16,9 @@ import { SnezhnayaUndrawnMeshRegexMap } from "#src/services/snezhnaya/SnezhnayaU
 import { SumeruPartFamilyMeshRegexMap } from "#src/services/sumeru/SumeruPartFamilyMeshRegexMap";
 import { SumeruUndrawnMeshRegexMap } from "#src/services/sumeru/SumeruUndrawnMeshRegexMap";
 import { WindrisePartFamilyMeshRegexMap } from "#src/services/windrise/WindrisePartFamilyMeshRegexMap";
+import TerrainTileWorker from "#src/workers/terrainTile.worker?worker";
 import { QualityTier } from "genshin-engine";
 import { ENGLISH_GAME_TEXT, GameLanguage } from "genshin-text";
-
-import TerrainTileWorker from "../../../workers/terrainTile.worker?worker";
 
 // Windrise at its first hour, drawn every frame, so the visual suite's screenshot never settles on it. No reference of
 // The game's compares clean on it yet, so it is on the page to be looked at and shot, never approved. The region data is

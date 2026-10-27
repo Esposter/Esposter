@@ -5,7 +5,7 @@ import { checkIsName } from "#src/services/identifiers/rename/checkIsName";
 import { getAlternation } from "#src/services/identifiers/rename/getAlternation";
 import { getBoundNames } from "#src/services/identifiers/rename/getBoundNames";
 import { getChildren } from "#src/services/shared/getChildren";
-import { getParent } from "#src/services/shared/getParent";
+import { parents } from "#src/services/shared/getParent";
 import { parseSource } from "#src/services/shared/parseSource";
 
 // Renames every name the map holds in one TypeScript source, where the source binds it and only in code, read from
@@ -34,7 +34,7 @@ export const renameIdentifiers = (text: string, renameMap: RenameMap, isSource: 
     const program = parseSource(aliasedText);
     const getReplacement = (identifier: Extract<SyntaxNode, { type: "Identifier" }>): string | undefined => {
       const { name } = identifier;
-      const parent = getParent(identifier);
+      const parent = parents.get(identifier);
       if (parent?.type === "MemberExpression" && !parent.computed && parent.property === identifier) {
         const { object } = parent;
         const accessor = object.type === "MemberExpression" && !object.computed ? object.property : object;
@@ -44,7 +44,7 @@ export const renameIdentifiers = (text: string, renameMap: RenameMap, isSource: 
       }
       if (!boundNames.has(name)) return undefined;
       // A shorthand property, in an object literal or a destructuring, and a default in one: both keep their key
-      const grandparent = parent?.type === "AssignmentPattern" ? getParent(parent) : undefined;
+      const grandparent = parent?.type === "AssignmentPattern" ? parents.get(parent) : undefined;
       if (
         (parent?.type === "Property" && parent.shorthand) ||
         (grandparent?.type === "Property" &&

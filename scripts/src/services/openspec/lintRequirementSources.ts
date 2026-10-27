@@ -6,7 +6,7 @@ const HEADING_REGEX = /^#{1,6}\s/u;
 const SOURCE_PATH_REGEX = /`[^`\s]*(?:\/[^`\s]*|\.(?:cs|go|js|json|md|png|snap|ts|txt|vue))`/u;
 
 // Returns one finding per requirement-body line that cites a source, formatted `path:line: message`. A requirement's body
-// ends at the next heading of any level, so a scenario's own citations and the design's Sources are never read as body.
+// Ends at the next heading of any level, so a scenario's own citations and the design's Sources are never read as body.
 export const lintRequirementSources = (path: string, markdown: string): string[] => {
   const findings: string[] = [];
   let requirement: string | undefined;
@@ -21,11 +21,10 @@ export const lintRequirementSources = (path: string, markdown: string): string[]
       requirement = undefined;
       continue;
     }
-    if (requirement !== undefined && SOURCE_PATH_REGEX.test(text)) {
+    if (requirement !== undefined && SOURCE_PATH_REGEX.test(text))
       findings.push(
         `${path}:${index + 1}: requirement "${requirement}" cites a source in its body; move the citation to the design's Sources or Key files`,
       );
-    }
   }
 
   return findings;

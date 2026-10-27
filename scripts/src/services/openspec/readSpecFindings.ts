@@ -15,5 +15,7 @@ const isArchivedDelta = (path: string) => path.startsWith(`${PROPOSALS_DIRECTORY
 export const readSpecFindings = (): string[] =>
   readSweepFilePaths(OPENSPEC_SPEC_PATHSPEC).flatMap((path) => {
     const markdown = readFileSync(resolve(REPOSITORY_ROOT, path), "utf8");
-    return [...lintScenarios(path, markdown), ...(isArchivedDelta(path) ? [] : lintRequirementSources(path, markdown))];
+    const findings = lintScenarios(path, markdown);
+    if (!isArchivedDelta(path)) findings.push(...lintRequirementSources(path, markdown));
+    return findings;
   });

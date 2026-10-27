@@ -95,12 +95,12 @@ export const MAX_SHOWN_TIP_COUNT = 4096;
 // The mapped regions' data holds, counted on 2026-10-18, with room to spare
 export const MAX_ENEMY_RESPAWN_COUNT = 8192;
 // The bosses a player defeats and has not seen come back, one entry each, bounded by the bosses the mapped regions hold
-// with room to spare
+// With room to spare
 export const MAX_BOSS_DEFEAT_COUNT = 512;
 // The Trounce Blossoms the bosses leave, one each, bounded the same way as the defeats
 export const MAX_TROUNCE_BLOSSOM_COUNT = 512;
 // The newest claims a Trounce Blossom keeps in a save: a weekly boss's blossom takes one claim a week, so these reach
-// back over a year
+// Back over a year
 export const MAX_BLOSSOM_CLAIM_COUNT = 64;
 export const MAX_QUEST_COUNT = 512;
 export const MAX_OBJECTIVE_COUNT = 16;

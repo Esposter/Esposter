@@ -49,7 +49,7 @@ export const PROSECUTION_EDICT_ID = "wriothesley-prosecution-edict";
 const PROSECUTION_EDICT_MAX_STACKS = 5;
 const PROSECUTION_EDICT_ATTACK_SHARE = 0.06;
 // Constellation 2 raises Darkgold Wolfbite's DMG by 40% for each Prosecution Edict stack while Icefang Rush holds, as
-// gcsim v2.47.2 (MIT) internal/characters/wriothesley/cons.go's c2 gives it, at the burst's snapshot
+// `gcsim` v2.47.2 (MIT) internal/characters/wriothesley/cons.go's c2 gives it, at the burst's snapshot
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_DAMAGE_BONUS_PER_STACK = 0.4;
 

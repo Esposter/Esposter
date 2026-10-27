@@ -7,8 +7,8 @@ import { AzureFunction, exportUserDataEventGridDataSchema } from "@esposter/db-s
 import { getResultAsync, noop } from "@esposter/shared";
 
 // The archive build a published ExportUserData event starts. The event names the export row, and the handler marks a
-// failed build on the row, so only a failure before that point, such as a database write, is rethrown for Event Grid to
-// redeliver
+// Failed build on the row, so only a failure before that point, such as a database write, is rethrown for Event Grid to
+// Redeliver
 const exportUserDataEventHandler: EventGridHandler = (event, context) =>
   getResultAsync(async () => {
     context.log(`${AzureFunction.ExportUserData} started`);

@@ -28,7 +28,7 @@ describe(getNextAreaWeather, () => {
     expect(new Set(rainTurns)).toStrictEqual(new Set([WeatherKind.Clear, WeatherKind.Cloudy, WeatherKind.Eruption]));
   });
 
-  test("Rain resumes after an eruption", () => {
+  test("rain resumes after an eruption", () => {
     expect.hasAssertions();
 
     const eruptionTurns = Array.from({ length: 1000 }, (_value, index) =>

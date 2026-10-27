@@ -35,7 +35,7 @@ const CONSTELLATION_1_ICD_ID = "flins-c1-icd";
 // Constellation 4's ATK is built; its Elemental Mastery part needs the ATK total, which a passive bonus does not read.
 // His passives, and Constellations 2 and 6, read the Lunar-Charged reaction or the Manifest Flame's own skill
 // Constellation 1's Energy from the team's Lunar-Charged reactions is built; its shorter Spearstorm cooldown needs Spearstorm,
-// not built
+// Not built
 // Constellation 2 needs the six seconds after Northland Spearstorm and his next Normal Attack's hit, not built
 // Constellation 6 needs the Lunar-Charged reactions' DMG as a special DMG boost, which the kit does not read, not built
 export const createFlinsKitBehaviour = ({ readParameter, readStance }: KitRecordReader): KitBehaviour => {

@@ -84,9 +84,9 @@ const getConstellation6TickHeal = (combatant: Combatant): number => {
 
 // Sayu's behaviour: Yoohoo Art: Mujina Flurry heals the active character as it is cast, and casts Muji-Muji Daruma, whose
 // Ticks strike as a summon and heal as a field. Ascension 1's heal on a Swirl, Ascension 4's wider Daruma, Constellation 1's
-// heal at any HP, Constellation 4's Energy on a Swirl and Constellation 6's Elemental Mastery on the Daruma are built. Her
+// Heal at any HP, Constellation 4's Energy on a Swirl and Constellation 6's Elemental Mastery on the Daruma are built. Her
 // Constellation 2 is not built: it needs the roll's time spent rolling for the kick's DMG, and the roll's elemental kick,
-// which takes the element a roll absorbs, is not built, as the kit has no absorption check to read it
+// Which takes the element a roll absorbs, is not built, as the kit has no absorption check to read it
 export const createSayuKitBehaviour = ({ readHits, readParameter, readSeconds }: KitRecordReader): KitBehaviour => {
   // Mujina Flurry's heal and Muji-Muji Daruma's heal are each a flat amount and a share of Sayu's ATK, read at the cast
   const burstInitialHealFlat = readParameter("mujinaFlurryFlatHealing");

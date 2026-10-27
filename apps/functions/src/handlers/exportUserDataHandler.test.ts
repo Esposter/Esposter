@@ -33,22 +33,29 @@ vi.mock(import("#src/services/shared/db"), () => ({
 vi.mock(import("#src/services/azure/getContainerClient"), () => import("#src/services/azure/getContainerClient.test"));
 vi.mock(import("#src/services/azure/getTableClient"), () => import("#src/services/azure/getTableClient.test"));
 
+const readExportRow = async (dataExportId: string) =>
+  takeOne(
+    await mockDb
+      .select({
+        blobName: dataExportsInUser.blobName,
+        expiresAt: dataExportsInUser.expiresAt,
+        failureReason: dataExportsInUser.failureReason,
+        readyAt: dataExportsInUser.readyAt,
+        status: dataExportsInUser.status,
+      })
+      .from(dataExportsInUser)
+      .where(eq(dataExportsInUser.id, dataExportId)),
+  );
+
+const seedQueuedExport = async (userId: string) => {
+  const dataExportId = crypto.randomUUID();
+  await mockDb.insert(dataExportsInUser).values({ id: dataExportId, status: DataExportStatus.Queued, userId });
+  return dataExportId;
+};
+
 describe(exportUserDataHandler, () => {
   const context = new InvocationContext({ logHandler: () => {} });
   const name = "name";
-  const readExportRow = async (dataExportId: string) =>
-    takeOne(
-      await mockDb
-        .select({
-          blobName: dataExportsInUser.blobName,
-          expiresAt: dataExportsInUser.expiresAt,
-          failureReason: dataExportsInUser.failureReason,
-          readyAt: dataExportsInUser.readyAt,
-          status: dataExportsInUser.status,
-        })
-        .from(dataExportsInUser)
-        .where(eq(dataExportsInUser.id, dataExportId)),
-    );
 
   beforeAll(async () => {
     mockDb = await createMockDb();
@@ -60,12 +67,6 @@ describe(exportUserDataHandler, () => {
     MockTableDatabase.clear();
     await mockDb.delete(usersInAuth);
   });
-
-  const seedQueuedExport = async (userId: string) => {
-    const dataExportId = crypto.randomUUID();
-    await mockDb.insert(dataExportsInUser).values({ id: dataExportId, status: DataExportStatus.Queued, userId });
-    return dataExportId;
-  };
 
   test("marks an export with a failing entry failed, with its reason, and never sets a ready or expiry time", async () => {
     expect.hasAssertions();
@@ -88,10 +89,10 @@ describe(exportUserDataHandler, () => {
 
     await exportUserDataHandler(context, { dataExportId });
 
-    expect(await readExportRow(dataExportId)).toStrictEqual({
+    await expect(readExportRow(dataExportId)).resolves.toStrictEqual({
       blobName: getDataExportBlobName(dataExportId),
       expiresAt: null,
-      failureReason: expect.any(String),
+      failureReason: "The specified blob does not exist.",
       readyAt: null,
       status: DataExportStatus.Failed,
     });

@@ -6,8 +6,8 @@ import { writeRoomEmojiEntries } from "#src/services/user/writeRoomEmojiEntries"
 import { writeRoomImageEntries } from "#src/services/user/writeRoomImageEntries";
 
 // Each room the person owns as its record: its name, topic, type, settings and creation time, with its emoji by id and
-// name. The room's members are not written, since membership is other people's record. Its images and emoji blobs
-// follow it
+// Name. The room's members are not written, since membership is other people's record. Its images and emoji blobs
+// Follow it
 export const writeOwnedRoomEntries = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
   const rooms = await db.query.roomsInMessage.findMany({
     columns: {
@@ -25,10 +25,12 @@ export const writeOwnedRoomEntries = async (archive: UserDataArchive, userId: Us
     where: { userId: { eq: userId } },
   });
   for (const room of rooms) {
+    // oxlint-disable-next-line no-await-in-loop -- Bounded concurrency: one room at a time, its emoji read beside its record
     const emoji = await db.query.roomEmojisInMessage.findMany({
       columns: { id: true, name: true },
       where: { roomId: { eq: room.id } },
     });
+    // oxlint-disable-next-line no-await-in-loop -- The archive takes one entry at a time, so its entries stay in order
     await archive.addJsonEntry(`rooms/${room.id}/room.json`, {
       createdAt: room.createdAt,
       emoji,

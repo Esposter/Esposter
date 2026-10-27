@@ -68,10 +68,9 @@ const castBubblyShield = (context: KitContext, combatant: Combatant, seconds: nu
 // Constellation 4 needs Super Saturated Syringing, the burst, which the kit does not build
 // Constellation 6 needs the CRIT Rate and CRIT DMG her bubbles' heals set off, which the kit does not build
 export const createSigewinneKitBehaviour = ({ kit, readHits }: KitRecordReader): KitBehaviour => {
-  const bolsteringBubblebalmHits = readHits("bolsteringBubblebalmBounces").map((hit) => ({
-    ...hit,
-    enemyStatus: getConstellation2Status,
-  }));
+  const bolsteringBubblebalmHits = readHits("bolsteringBubblebalmBounces").map((hit) =>
+    Object.assign(hit, { enemyStatus: getConstellation2Status }),
+  );
   return {
     burst: {
       hits: kit.elementalBurst.hits.map(() => ({ enemyStatus: getConstellation2Status })),

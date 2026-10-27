@@ -18,6 +18,11 @@ const getButton = (component: VueWrapper, label: string) => {
   assert.exists(button);
   return button;
 };
+const mountCard = () =>
+  mountSuspended(UserDataExportCard, {
+    attachTo: document.body,
+    props: { section: UserSettingsPageSection.DataExport },
+  });
 
 describe("userDataExportCard", () => {
   // Only the date is pinned: the card's expiry check reads the clock, and the flushes between steps still run on real timers
@@ -49,11 +54,6 @@ describe("userDataExportCard", () => {
     updatedAt: epoch,
     userId: "userId",
   };
-  const mountCard = () =>
-    mountSuspended(UserDataExportCard, {
-      attachTo: document.body,
-      props: { section: UserSettingsPageSection.DataExport },
-    });
 
   test("names what the archive leaves out before any request", async () => {
     expect.hasAssertions();

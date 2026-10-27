@@ -12,9 +12,9 @@ describe("getMachineRootPaths", () => {
     getLineMatches(files, MACHINE_ROOT_REGEX, "path");
 
   test.each([
-    ["a home-folder path", "Store it in `~/Esposter/cache`.", "~/Esposter"],
+    ["a home-folder path", "Store it in `~/Workspace/cache`.", "~/Workspace"],
     ["a dotted home-folder path", "The settings sit at ~/.claude/settings.json.", "~/.claude"],
-    ["a Windows user folder", "Open C:\\Users\\jimmyc\\Documents first.", "C:\\Users\\jimmyc"],
+    ["a Windows user folder", String.raw`Open C:\Users\jimmyc\Documents first.`, String.raw`C:\Users\jimmyc`],
     ["a Git Bash user folder", "Run it from /c/Users/jimmyc/repo.", "/c/Users/jimmyc"],
     ["a macOS user folder", "Found in /Users/jimmyc/Library.", "/Users/jimmyc"],
   ])("flags %s", (_label, markdown, path) => {
@@ -38,8 +38,8 @@ describe("getMachineRootPaths", () => {
   test("reports the line the path is on", () => {
     expect.hasAssertions();
 
-    expect(getMachineRootPaths([{ markdown: "intro\n\n~/Esposter/cache", path: "a.md" }])).toStrictEqual([
-      "a.md:3 → ~/Esposter",
+    expect(getMachineRootPaths([{ markdown: "intro\n\n~/Workspace/cache", path: "a.md" }])).toStrictEqual([
+      "a.md:3 → ~/Workspace",
     ]);
   });
 

@@ -45,4 +45,5 @@ export const CITY_AREA_SUFFIX = "_City";
 export const CITY_AREA_FILE_PATH: string = join(PARITY_DIRECTORY, "city-areas.json");
 export const CITY_AREA_EXPORTS_DIRECTORY: string = join(PARITY_DIRECTORY, "city-areas", "exports");
 
+// oxlint-disable-next-line typescript/no-inferrable-types -- isolatedDeclarations demands the annotation this value would otherwise infer
 export const CITY_INDEX_SUFFIX: string = `${CITY_AREA_SUFFIX}${STREAM_INDEX_SUFFIX}`;

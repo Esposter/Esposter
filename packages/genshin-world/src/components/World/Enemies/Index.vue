@@ -55,7 +55,7 @@ import { CapsuleGeometry, Color, Matrix4, MeshBasicMaterial, SphereGeometry, Vec
 
 interface Props {
   // The moments the defeated bosses fell, by their spawn keys, as the save holds them: each boss stays down from its
-  // defeat until its blossom is claimed or the first teleport after it
+  // Defeat until its blossom is claimed or the first teleport after it
   bossDefeatMap: ReadonlyMap<string, string>;
   // The enemies in the world by their spawn key, which this writes as the camps load and unload and as enemies die
   enemyMap: Map<string, Enemy>;

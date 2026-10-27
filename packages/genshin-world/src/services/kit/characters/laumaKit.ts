@@ -151,7 +151,7 @@ const readConstellationPaleHymnIncrease = (constellationCount: number, isLunar: 
 };
 
 // Constellation 4 restores 5 energy to Lauma as a Frostgrove Sanctuary tick strikes an enemy, once every 5 seconds, as gcsim
-// v2.47.2 (MIT) lauma/skill.go's tick callback and lauma/cons.go give it
+// `v2.47.2` (MIT) lauma/skill.go's tick callback and lauma/cons.go give it
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/lauma/cons.go
 const CONSTELLATION_4 = 4;
 const CONSTELLATION_4_COOLDOWN_ID = "lauma-constellation-4-cooldown";

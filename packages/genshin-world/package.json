@@ -101,8 +101,7 @@
     "type-fest": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
-    "vitest-browser-vue": "catalog:",
-    "vue-tsc": "catalog:"
+    "vitest-browser-vue": "catalog:"
   },
   "peerDependencies": {
     "@esposter/shared": "workspace:*",

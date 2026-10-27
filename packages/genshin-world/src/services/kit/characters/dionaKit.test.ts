@@ -97,14 +97,15 @@ describe("drunkards' Farce", () => {
   });
 });
 
+// The buffs on a character, each as its attribute and amount
+const readBuffs = (effects: KitEffectState["effects"], characterId: number) =>
+  effects
+    .filter((effect): effect is KitBuff => effect.kind === "buff" && effect.characterId === characterId)
+    .map(({ amount, attribute }) => ({ amount, attribute }));
+
 describe("cat's Tail Closing Time", () => {
   const ABOVE_HALF_CHARACTER_ID = 1;
   const AT_HALF_CHARACTER_ID = 2;
-  // The buffs on a character, each as its attribute and amount
-  const readBuffs = (effects: KitEffectState["effects"], characterId: number) =>
-    effects
-      .filter((effect): effect is KitBuff => effect.kind === "buff" && effect.characterId === characterId)
-      .map(({ amount, attribute }) => ({ amount, attribute }));
   // Diona casts Signature Mix at the constellation on a team of herself and two members, one above half its HP and one
   // At it, then the cast is stepped to a quarter second past its first tick, inside the half-second that tick's buffs last
   const readTickEffects = (constellationCount: number) => {

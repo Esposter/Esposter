@@ -28,9 +28,9 @@ import { AzureContainer } from "@esposter/db-schema";
 import { getResultAsync, noop } from "@esposter/shared";
 
 // Streams one person's archive into the block blob named for it. The groups write the archive while the upload reads it,
-// so the build holds a block of it at a time, whatever the account holds. A failed write destroys the stream unfinished,
-// so the upload never commits a truncated archive, and the write's own error is the one reported. A failed upload is
-// rethrown as it is; the writes then wait on a stream nothing drains, which holds nothing more
+// So the build holds a block of it at a time, whatever the account holds. A failed write destroys the stream unfinished,
+// So the upload never commits a truncated archive, and the write's own error is the one reported. A failed upload is
+// Rethrown as it is; the writes then wait on a stream nothing drains, which holds nothing more
 export const buildUserDataArchive = async (userId: UserInAuth["id"], blobName: string): Promise<void> => {
   const containerClient = await getContainerClient(AzureContainer.DataExports);
   const archive = createUserDataArchive();

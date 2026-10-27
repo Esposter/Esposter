@@ -1,6 +1,6 @@
 import type { SyntaxNode } from "#src/models/syntax/SyntaxNode";
 
-import { getParent } from "#src/services/shared/getParent";
+import { parents } from "#src/services/shared/getParent";
 import { checkIsSubjectOfParent } from "#src/services/sweeps/unterminatedResults/checkIsSubjectOfParent";
 import { TERMINATOR_NAMES } from "#src/services/sweeps/unterminatedResults/constants";
 
@@ -8,9 +8,9 @@ import { TERMINATOR_NAMES } from "#src/services/sweeps/unterminatedResults/const
 export const getValueChain = (call: SyntaxNode): { isTerminated: boolean; top: SyntaxNode } => {
   let isTerminated = false;
   let top = call;
-  let parent = getParent(top);
+  let parent = parents.get(top);
   while (parent && checkIsSubjectOfParent(top)) {
-    const grandparent = getParent(parent);
+    const grandparent = parents.get(parent);
     if (
       parent.type === "MemberExpression" &&
       !parent.computed &&
@@ -21,7 +21,7 @@ export const getValueChain = (call: SyntaxNode): { isTerminated: boolean; top: S
     )
       isTerminated = true;
     top = parent;
-    parent = getParent(top);
+    parent = parents.get(top);
   }
   return { isTerminated, top };
 };

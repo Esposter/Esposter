@@ -51,7 +51,7 @@ const CONSTELLATION_1 = 1;
 const CONSTELLATION_1_SHIELD_ABSORPTION_BONUS = 0.2;
 const CONSTELLATION_2 = 2;
 // Constellation 6: Shooting Stars and Starlight Slugs deal 40% more DMG, and the Night Stars' tick comes 20% sooner, as gcsim
-// v2.47.2 (MIT) layla/cons.go and shield.go give them
+// `v2.47.2` (MIT) layla/cons.go and shield.go give them
 // https://github.com/genshinsim/gcsim/blob/v2.47.2/internal/characters/layla/cons.go
 const CONSTELLATION_6 = 6;
 const CONSTELLATION_6_DAMAGE_BONUS = 0.4;
@@ -190,13 +190,12 @@ export const createLaylaKitBehaviour = ({
     const stars = countKitResource(kitEffectState.effects, LAYLA_CHARACTER_ID, LAYLA_NIGHT_STARS_ID);
     // The first Shooting Star, fired at four stars, gives each deployed member Dawn Star from Constellation 4,
     // As gcsim's loop of Shooting Stars does on its first shot
-    if (stars === NIGHT_STARS_MAXIMUM && combatant.constellationCount >= CONSTELLATION_4) {
+    if (stars === NIGHT_STARS_MAXIMUM && combatant.constellationCount >= CONSTELLATION_4)
       for (const characterId of getDeployedCharacterIds(party))
         addKitStatus(kitEffectState, characterId, {
           id: LAYLA_DAWN_STAR_ID,
           secondsRemaining: CONSTELLATION_4_SECONDS,
         });
-    }
     const travelFrames = shootingStarTravelFrames[NIGHT_STARS_MAXIMUM - stars];
     if (travelFrames !== undefined) castShootingStar(kitEffectState, combatant, target, travelFrames);
     spendKitResource(kitEffectState, LAYLA_CHARACTER_ID, LAYLA_NIGHT_STARS_ID);

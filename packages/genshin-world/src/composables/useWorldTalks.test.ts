@@ -7,7 +7,6 @@ import { useWorldTalks } from "#src/composables/useWorldTalks";
 import { GCG_OPEN_ADVENTURE_RANK, GCG_TUTORIAL_QUEST_ID } from "#src/services/gcg/constants";
 import { readGcgLevels } from "#src/services/gcg/readGcgLevels";
 import { readStandingTalks } from "#src/services/resident/readStandingTalks";
-import { StandingTalkTextLoaderMap } from "#src/services/resident/StandingTalkTextLoaderMap";
 import { flushReads } from "#src/services/shared/flushReads.test";
 import { GameLanguage } from "genshin-text";
 import { describe, expect, test, vi } from "vitest";
@@ -59,7 +58,7 @@ describe(useWorldTalks, () => {
     });
   };
 
-  test("A game opens once the Player Level reaches its level", async () => {
+  test("a game opens once the Player Level reaches its level", async () => {
     expect.hasAssertions();
 
     const talks = useSeatedTalks(1);
@@ -68,7 +67,7 @@ describe(useWorldTalks, () => {
     expect(talks.getTalkDuelGameId(TALK_ID)).toBe(DUEL_GAME_ID);
   });
 
-  test("A game above the Player Level is not offered", async () => {
+  test("a game above the Player Level is not offered", async () => {
     expect.hasAssertions();
 
     const talks = useSeatedTalks(0);

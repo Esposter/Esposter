@@ -107,7 +107,7 @@ export const createCharlotteKitBehaviour = ({
   const snappyMarkHit = readHit("snappyMark");
   const snappyMarkSeconds = readSeconds("snappyMark");
   // Constellation 4 counts each burst hit that lands on an enemy the press marked, and gives energy for it, as gcsim's
-  // OnEnemyHit does for each of the burst's initial hit and its Kamera ticks
+  // `OnEnemyHit` does for each of the burst's initial hit and its Kamera ticks
   const burstHitBehaviour: KitHitBehaviour = {
     onStrike: ({ kitEffectState, party }, { combatant }, enemy) => {
       if (combatant.constellationCount < CONSTELLATION_4 || !checkIsSnappyMarked(enemy)) return;
@@ -125,7 +125,7 @@ export const createCharlotteKitBehaviour = ({
     },
   };
   const kameraHits = readHits("kamera", burstHitBehaviour);
-  const burstStrikeHits = [...kit.elementalBurst.hits, ...kameraHits];
+  const burstStrikeHits = new Set([...kit.elementalBurst.hits, ...kameraHits]);
   const burstHitmarkSeconds = takeOne(kit.elementalBurst.hits).hitmarkSeconds;
   const stillPhotoFlatHealth = readParameter("stillPhotoFlatHealth");
   const stillPhotoAttackShare = readParameter("stillPhotoAttackShare");
@@ -174,7 +174,7 @@ export const createCharlotteKitBehaviour = ({
     },
     // Spiritbreath Thorn is opened as the charged attack starts on a target, and its field strikes after the charged
     // Attack's hit, round the point the target stood at when the attack started, as gcsim (MIT) charlotte/charge.go
-    // takes it, not where the target stands at the hit, unless the thorn is still on its cooldown
+    // Takes it, not where the target stands at the hit, unless the thorn is still on its cooldown
     chargedAttack: {
       onStart: ({ activeCombatant: combatant, kitEffectState }, target) => {
         if (!target) return;
@@ -201,7 +201,7 @@ export const createCharlotteKitBehaviour = ({
     },
     getStrikeDamageBonus: ({ combatant, hit }, enemy, _party, effects) =>
       combatant.constellationCount >= CONSTELLATION_4 &&
-      burstStrikeHits.includes(hit) &&
+      burstStrikeHits.has(hit) &&
       checkIsSnappyMarked(enemy) &&
       countConstellation4Hits(effects, combatant.characterId) < CONSTELLATION_4_MAX_HITS
         ? CONSTELLATION_4_DAMAGE_BONUS

@@ -68,7 +68,7 @@ export const genshinSaveSchema = z
     // The entries the Archive has opened and the defeats it has counted
     archive: archiveSaveSchema,
     // Each defeated boss's moment of defeat by its spawn key, on the server's clock. A boss stays down until its blossom's
-    // claim or the first teleport after the defeat, so a reload keeps it down. Absent until a boss is defeated
+    // Claim or the first teleport after the defeat, so a reload keeps it down. Absent until a boss is defeated
     bossDefeats: bossDefeatSaveSchema.optional(),
     cardGameExp: cardGameExpSaveSchema,
     cardGameRewardedGameIds: createUniqueArraySchema(z.int().positive()).max(GCG_REWARDABLE_GAME_COUNT),

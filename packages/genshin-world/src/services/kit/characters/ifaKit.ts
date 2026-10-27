@@ -46,8 +46,8 @@ const countRescueEssentials = (constellationCount: number, partyPoints: number):
 // Constellations, which wait on the Nightsoul hook and the sedation-mark hook, the cooldown her leaving sets, which the kit
 // Does not hold, and the hold that plunges from inside the blessing. Her three normal attacks, charged attack, Compound
 // Sedation Field's hit, and her low and collision plunges are her record's alone, her high plunge's reach is too, and
-// its timing is unsourced, as the Page records. The low plunge, which gcsim plays only after the Nightsoul Blessing
-// ends, is not gated
+// Its timing is unsourced, as the Page records. The low plunge, which gcsim plays only after the Nightsoul Blessing
+// Ends, is not gated
 // Constellation 1 needs Supporting Fire, the normal attacks of Nightsoul's Blessing, which the state does not give yet
 // Constellation 2 counts her Rescue Essentials, as gcsim's cons.go gives it, and its in-game text is not read: the wiki's
 // Constellation table lists only levels 1, 3 and 6, and the dump's talent rows, keyed by obfuscated fields, were not decoded

@@ -10,7 +10,7 @@ const readRepositoryFile = (path: string): string => readFileSync(join(REPOSITOR
 
 describe("site-name literals", () => {
   // A workflow cannot read CONTENT_CACHE_DIRECTORY, so each one spells the mirror's path under the home folder. A rename
-  // moves the constant and not the path, and the cache then misses in silence on every run rather than failing
+  // Moves the constant and not the path, and the cache then misses in silence on every run rather than failing
   const CACHE_PATH = `~/${relative(homedir(), CONTENT_CACHE_DIRECTORY).replaceAll("\\", "/")}`;
 
   test("the workflows restore the game data mirror from the cache constant's path", () => {

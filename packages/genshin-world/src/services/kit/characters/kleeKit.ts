@@ -115,13 +115,12 @@ export const createKleeKitBehaviour = ({
   const jumpyDumptyHits = readHits("jumpyDumpty", { onStrike: rollExplosiveSpark }).map((hit, index) =>
     index < JUMPY_DUMPTY_BOUNCE_COUNT
       ? hit
-      : {
-          ...hit,
+      : Object.assign(hit, {
           onStrike: (context: KitContext, strike: KitStrike, enemy: Enemy) => {
             rollExplosiveSpark(context, strike);
             addExplosiveFrags(strike, enemy);
           },
-        },
+        }),
   );
   const sparkHits = readHits("spark");
   // The burst stands from its start for its seconds

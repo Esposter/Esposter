@@ -10,9 +10,9 @@ import { getResultAsync } from "@esposter/shared";
 import { eq } from "drizzle-orm";
 
 // Builds one export's archive into the blob named for its row. The row is marked building with the blob's name, and
-// ready only after the upload commits, so a link is never offered for an archive still being written. A build that fails
-// is recorded on the row with its reason, and the event is not rethrown, since the person sees that reason on their
-// settings page. A replayed event rebuilds the same blob
+// Ready only after the upload commits, so a link is never offered for an archive still being written. A build that fails
+// Is recorded on the row with its reason, and the event is not rethrown, since the person sees that reason on their
+// Settings page. A replayed event rebuilds the same blob
 export const exportUserDataHandler = async (
   context: InvocationContext,
   { dataExportId }: ExportUserDataEventGridData,

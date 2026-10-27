@@ -1,16 +1,16 @@
-import Bowser from "bowser";
+import { BROWSER_MAP, parse } from "bowser";
 
 const UNKNOWN_DEVICE_LABEL = "Unknown device";
 // Bowser's last browser matcher is a catch-all that pulls any `Name/Version` pair out of the string, so an
 // Agent it does not recognise still comes back named — `Mozilla`, or whatever the string happens to start
 // With. Its own vocabulary is the filter: a name outside this set is a claim bowser never actually made
-const BrowserNames = new Set(Object.values(Bowser.BROWSER_MAP));
+const BrowserNames = new Set(Object.values(BROWSER_MAP));
 // What the row shows instead of the stored user agent, which is unreadable and states more than the reader
 // Asked for. The parse runs here rather than on the client so the raw agent never leaves the server
 export const getDeviceLabel = (userAgent: string): string => {
   // Bowser throws on an empty string rather than returning an empty parse
   if (!userAgent) return UNKNOWN_DEVICE_LABEL;
-  const { browser, os, platform } = Bowser.parse(userAgent);
+  const { browser, os, platform } = parse(userAgent);
   const browserName = browser.name && BrowserNames.has(browser.name) ? browser.name : undefined;
   // The major alone: a browser ships a new patch every few days, and nobody recognises their session by one
   const browserVersion = browser.version?.split(".")[0];

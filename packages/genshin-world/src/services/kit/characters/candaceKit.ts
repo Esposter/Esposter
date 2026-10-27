@@ -44,7 +44,7 @@ const CONSTELLATION_6_COOLDOWN_SECONDS = 2.3;
 const CONSTELLATION_6_STATUS_ID = "candace-constellation-6";
 // Constellation 2 raises her Max HP by 20% for 15 seconds from each Sacred Rite: Heron's Sanctum hit on an enemy, each hit
 // Restarting it. Constellation 4 sets the charged hold's cooldown to the tap's. Measured: gcsim v2.47.2 (MIT) candace/cons.go
-// and skill.go, the HPP mod of 0.2 for 15 seconds, and the hold's cooldown taken from skillCD[0] at Constellation 4
+// And skill.go, the HPP mod of 0.2 for 15 seconds, and the hold's cooldown taken from skillCD[0] at Constellation 4
 // https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/candace
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_MAX_HEALTH_SHARE = 0.2;

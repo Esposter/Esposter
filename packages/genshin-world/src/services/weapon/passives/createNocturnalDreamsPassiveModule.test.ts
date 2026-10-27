@@ -41,7 +41,14 @@ describe(createNocturnalDreamsPassiveModule, () => {
     const context = createKitTestContext(wielder, { kitEffectState });
     nocturnalDreamsPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.ChargedAttack), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.ElementalMastery)).toMatchObject({ amount: 90, secondsRemaining: 10 });
+    expect(getBuff(kitEffectState, Attribute.ElementalMastery)).toStrictEqual({
+      amount: 90,
+      attribute: Attribute.ElementalMastery,
+      characterId: wielder.characterId,
+      kind: "buff",
+      secondsRemaining: 10,
+      source: "nocturnalDreamsChargedAttack",
+    });
   });
 
   test("an elemental skill hit raises the wielder's Elemental Mastery by the rank's second amount", () => {
@@ -51,7 +58,14 @@ describe(createNocturnalDreamsPassiveModule, () => {
     const context = createKitTestContext(wielder, { kitEffectState });
     nocturnalDreamsPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.ElementalSkill), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.ElementalMastery)).toMatchObject({ amount: 60, secondsRemaining: 10 });
+    expect(getBuff(kitEffectState, Attribute.ElementalMastery)).toStrictEqual({
+      amount: 60,
+      attribute: Attribute.ElementalMastery,
+      characterId: wielder.characterId,
+      kind: "buff",
+      secondsRemaining: 10,
+      source: "nocturnalDreamsSkill",
+    });
   });
 
   test("a normal attack hit raises no Elemental Mastery", () => {

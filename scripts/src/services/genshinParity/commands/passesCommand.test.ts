@@ -29,11 +29,12 @@ vi.mock(import("#src/services/genshinParity/passes/constants"), async (importOri
 }));
 
 describe("passesCommand", () => {
-  afterAll(() => {
-    rmSync(passesDirectory, { force: true, recursive: true });
-  });
   afterEach(() => {
     vi.restoreAllMocks();
+  });
+
+  afterAll(() => {
+    rmSync(passesDirectory, { force: true, recursive: true });
   });
 
   test("writes a pass run alone over its own rows, keeping the rest of the component's report", async () => {

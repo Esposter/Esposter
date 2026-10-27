@@ -2,6 +2,7 @@ import type { GoToken } from "#src/models/genshinAssets/kits/gcsim/GoToken";
 import type { ReturnedConstellationGate } from "#src/models/genshinAssets/kits/gcsim/ReturnedConstellationGate";
 
 import { GoTokenKind } from "#src/models/genshinAssets/kits/gcsim/GoTokenKind";
+import { ReturnedConstellationComparison } from "#src/models/genshinAssets/kits/gcsim/ReturnedConstellationComparison";
 import { checkIsGoPunctuation } from "#src/services/genshinAssets/kits/gcsim/checkIsGoPunctuation";
 import { findBlock } from "#src/services/genshinAssets/kits/gcsim/findBlock";
 import { findClosing } from "#src/services/genshinAssets/kits/gcsim/findClosing";
@@ -34,9 +35,9 @@ export const readReturnedConstellationGates = (tokens: readonly GoToken[]): Retu
     )
       continue;
     const comparison = checkIsGoPunctuation(tokens[ifPosition + 6], "<")
-      ? "<"
+      ? ReturnedConstellationComparison.Less
       : checkIsGoPunctuation(tokens[ifPosition + 6], ">=")
-        ? ">="
+        ? ReturnedConstellationComparison.GreaterOrEqual
         : undefined;
     const open = ifPosition + 8;
     const end = checkIsGoPunctuation(tokens[open], "{") ? findClosing(tokens, open, "{", "}") : undefined;

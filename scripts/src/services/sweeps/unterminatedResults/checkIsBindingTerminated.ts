@@ -1,6 +1,6 @@
 import type { SyntaxNode } from "#src/models/syntax/SyntaxNode";
 
-import { getParent } from "#src/services/shared/getParent";
+import { parents } from "#src/services/shared/getParent";
 import { getDescendants } from "#src/services/sweeps/getDescendants";
 import { TERMINATOR_NAMES } from "#src/services/sweeps/unterminatedResults/constants";
 
@@ -9,7 +9,7 @@ import { TERMINATOR_NAMES } from "#src/services/sweeps/unterminatedResults/const
 export const checkIsBindingTerminated = (call: SyntaxNode, bindingName: string, scope: SyntaxNode): boolean =>
   getDescendants(scope).some((node) => {
     if (node.type !== "MemberExpression" || node.computed || node.start < call.end) return false;
-    const parent = getParent(node);
+    const parent = parents.get(node);
     return (
       node.object.type === "Identifier" &&
       node.object.name === bindingName &&

@@ -93,7 +93,7 @@ export class MockBlockBlobClient extends MockBlobClient implements Except<BlockB
   }
 
   // Collected as raw bytes rather than handed to bodyToBuffer, which decodes a stream as UTF-8 and would corrupt a binary
-  // body such as an archive
+  // Body such as an archive
   async uploadStream(
     stream: Readable,
     _bufferSize?: number,

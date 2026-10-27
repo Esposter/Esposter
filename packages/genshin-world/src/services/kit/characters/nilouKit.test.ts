@@ -485,7 +485,7 @@ describe(createNilouKitBehaviour, () => {
     expect(enemy.statuses).toStrictEqual([]);
   });
 
-  test("Constellation 4 gives 15 Elemental Energy once per attack, on the first enemy the Pirouette third step strikes", () => {
+  test("constellation 4 gives 15 Elemental Energy once per attack, on the first enemy the Pirouette third step strikes", () => {
     expect.hasAssertions();
     const context = strikeWithPirouetteThirdStep(createNilouCombatant(4));
     const constellation3Context = strikeWithPirouetteThirdStep(createNilouCombatant(3));
@@ -503,7 +503,7 @@ describe(createNilouKitBehaviour, () => {
     });
   });
 
-  test("Lunar Prayer's third step gives no Constellation 4 energy", () => {
+  test("lunar Prayer's third step gives no Constellation 4 energy", () => {
     expect.hasAssertions();
     const combatant = createNilouCombatant(4);
     const context = createKitTestContext(combatant, { enemyMap: createTwoEnemyMap(), enemyTables });

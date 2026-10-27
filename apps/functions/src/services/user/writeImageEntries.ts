@@ -7,7 +7,7 @@ import { listBlobNames } from "@esposter/db";
 import { AzureContainer, getUserProfileImageBlobName } from "@esposter/db-schema";
 
 // The person's profile image, when they have one, and each call background they have set. A profile image is optional,
-// so its absence is no entry rather than a failed export
+// So its absence is no entry rather than a failed export
 export const writeImageEntries = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
   const publicContainerClient = await getContainerClient(AzureContainer.PublicUserAssets);
   const profileImageBlobName = getUserProfileImageBlobName(userId);

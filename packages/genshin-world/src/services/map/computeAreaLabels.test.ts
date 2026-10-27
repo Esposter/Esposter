@@ -30,7 +30,7 @@ describe(computeAreaLabels, () => {
     expect(computeAreaLabels(catalogue, [landmark]).map(({ id }) => id)).toStrictEqual(["galesong-hill"]);
   });
 
-  test("The map lists Snezhnaya's areas by the game's names", () => {
+  test("the map lists Snezhnaya's areas by the game's names", () => {
     expect.hasAssertions();
 
     const landmarks = [

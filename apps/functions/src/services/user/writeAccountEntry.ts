@@ -5,10 +5,10 @@ import { db } from "#src/services/shared/db";
 import { InvalidOperationError, Operation } from "@esposter/shared";
 
 // The account.json entry: the user row, the sign-in providers by name and the push subscriptions by endpoint, each
-// without its tokens or keys, beside the account's own block, notification, achievement and game-setting rows. The
-// friends are in their own entry, where each other party is named. No row carries its update or delete time, and a row
-// carries its creation time only where it records the person's own act: the account's creation, a block, a bookmark. A
-// notification, an achievement, a setting and a status are written by the system or are the account's current state
+// Without its tokens or keys, beside the account's own block, notification, achievement and game-setting rows. The
+// Friends are in their own entry, where each other party is named. No row carries its update or delete time, and a row
+// Carries its creation time only where it records the person's own act: the account's creation, a block, a bookmark. A
+// Notification, an achievement, a setting and a status are written by the system or are the account's current state
 export const writeAccountEntry = async (archive: UserDataArchive, userId: UserInAuth["id"]): Promise<void> => {
   const [user, accounts, pushSubscriptions, blocks, notifications, achievements, bookmarks, settings, statuses] =
     await Promise.all([

@@ -24,6 +24,7 @@ export const DEPTH_BANDS: readonly number[] = [0, 10, 20, 40, 80, 160, 320, 640]
 // The open top band each solve closes DEPTH_BANDS with: the fog's ends at 1280 m, so its pixels past that stand in no band,
 // And the stone light's is open to any depth
 export const FOG_TOP_DEPTH_BAND = 1280;
+// oxlint-disable-next-line typescript/no-inferrable-types -- isolatedDeclarations demands the annotation this value would otherwise infer
 export const STONE_LIGHT_TOP_DEPTH_BAND: number = Infinity;
 // The table each solve bins by: DEPTH_BANDS closed by its own open top band
 export const FOG_DEPTH_BANDS: readonly number[] = [...DEPTH_BANDS, FOG_TOP_DEPTH_BAND];

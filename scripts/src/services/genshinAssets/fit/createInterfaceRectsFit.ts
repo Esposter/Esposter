@@ -1,7 +1,7 @@
 import type { DerivedAssetFit } from "#src/models/genshinAssets/fit/DerivedAssetFit";
+import type { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import type { InterfaceNode } from "#src/models/genshinAssets/shared/InterfaceNode";
 
-import { DerivedAssetComponent } from "#src/models/genshinAssets/shared/DerivedAssetComponent";
 import { fitInterfaceRects } from "#src/services/genshinAssets/fit/fitInterfaceRects";
 import { runFits } from "#src/services/genshinAssets/fit/runFits";
 import { getComponentDirectory } from "#src/services/genshinAssets/shared/getComponentDirectory";

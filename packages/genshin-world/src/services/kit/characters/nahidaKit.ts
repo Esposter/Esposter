@@ -61,11 +61,11 @@ const CONSTELLATION_1 = 1;
 const CONSTELLATION_2 = 2;
 // Constellation 2's DEF reduction on a marked enemy for eight seconds from a Quicken, Aggravate or Spread on it, and its CRIT
 // On a Lunar-Bloom hit of another member's that lands on a marked enemy, as gcsim (MIT) nahida/cons.go gives them
-const CONSTELLATION_2_DEFENCE_REACTION_TYPES: readonly ReactionType[] = [
-  ReactionType.Quicken,
+const CONSTELLATION_2_DEFENCE_REACTION_TYPES: ReadonlySet<ReactionType> = new Set([
   ReactionType.Aggravate,
+  ReactionType.Quicken,
   ReactionType.Spread,
-];
+]);
 const CONSTELLATION_2_DEFENCE_STATUS_ID = "nahida-c2-defence-reduction";
 const CONSTELLATION_2_DEFENCE_REDUCTION = 0.3;
 const CONSTELLATION_2_DEFENCE_SECONDS = 8;
@@ -247,7 +247,7 @@ export const createNahidaKitBehaviour = ({
       const { characterId } = combatant;
       const { kitEffectState } = context;
       const isDefenceReaction = event.reactions.some(({ reactionType }) =>
-        CONSTELLATION_2_DEFENCE_REACTION_TYPES.includes(reactionType),
+        CONSTELLATION_2_DEFENCE_REACTION_TYPES.has(reactionType),
       );
       if (combatant.constellationCount >= CONSTELLATION_2 && isDefenceReaction)
         addEnemyStatus(event.enemy, {

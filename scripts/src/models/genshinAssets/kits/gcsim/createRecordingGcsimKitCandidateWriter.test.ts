@@ -6,7 +6,9 @@ import { describe } from "vitest";
 export const createRecordingGcsimKitCandidateWriter = (
   added: Map<string, { file: string; line: number; value: unknown }>,
 ): GcsimKitCandidateWriter => ({
-  add: (path, value, file, line) => void added.set(path, { file, line, value }),
+  add: (path, value, file, line) => {
+    added.set(path, { file, line, value });
+  },
   addFrames: () => undefined,
   addHit: () => undefined,
   addNoActionFileRule: () => undefined,

@@ -345,11 +345,11 @@ describe(readGenshinSave, () => {
     expect.hasAssertions();
     const bossSave: GenshinSave = {
       ...EMPTY_GENSHIN_SAVE,
-      bossDefeats: { boss: "2026-10-18T04:00:00Z" },
-      lastTeleportAt: "2026-10-18T05:00:00Z",
+      bossDefeats: { boss: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 4 }).toString() },
+      lastTeleportAt: Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 5 }).toString(),
       trounceBlossoms: {
         boss: {
-          claimedAts: ["2026-10-18T06:00:00Z"],
+          claimedAts: [Temporal.Instant.fromEpochMilliseconds(0).add({ hours: 6 }).toString()],
           kind: BlossomKind.NormalBoss,
           place: { x: 1, z: 2 },
           uniqueDropId: 3,

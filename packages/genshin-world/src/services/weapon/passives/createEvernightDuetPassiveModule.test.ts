@@ -60,9 +60,13 @@ describe(createEvernightDuetPassiveModule, () => {
     const context = createKitTestContext(wielder, { kitEffectState });
     evernightDuetPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.ElementalSkill), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.NormalAttackDamageBonus)).toMatchObject({
+    expect(getBuff(kitEffectState, Attribute.NormalAttackDamageBonus)).toStrictEqual({
       amount: 0.24,
+      attribute: Attribute.NormalAttackDamageBonus,
+      characterId: wielder.characterId,
+      kind: "buff",
       secondsRemaining: 6,
+      source: "evernightDuetElementalSkill",
     });
     expect(
       evernightDuetPassiveModule.getStrikeDamageBonus?.(

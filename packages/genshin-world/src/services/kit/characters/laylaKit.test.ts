@@ -384,7 +384,7 @@ describe(createLaylaKitBehaviour, () => {
     expect(damageBonusOf(buffedStriker)).toBeCloseTo(1.5 * damageBonusOf(createLaylaCombatant()));
   });
 
-  test("The first Shooting Star gives each deployed member Dawn Star for 3 seconds", () => {
+  test("the first Shooting Star gives each deployed member Dawn Star for 3 seconds", () => {
     expect.hasAssertions();
     const context = createLaylaContext(
       { effects: [] },
@@ -414,7 +414,7 @@ describe(createLaylaKitBehaviour, () => {
     });
   });
 
-  test("Dawn Star adds 5 percent of Layla's Max HP to a holder's Normal Attack until it lands, then ends 0.05 seconds later", () => {
+  test("dawn Star adds 5 percent of Layla's Max HP to a holder's Normal Attack until it lands, then ends 0.05 seconds later", () => {
     expect.hasAssertions();
     const enemy = createEnemyAt(3, 0);
     const context = createLaylaContext({ effects: [] }, { constellationCount: 4 }, [enemy]);

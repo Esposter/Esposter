@@ -26,11 +26,16 @@ const DREAMDRIFTER_SECONDS = 5;
 // The summon her press casts for its clouds, the name it is found by among the team's effects
 const DREAMDRIFTER_CLOUDS_ID = "dreamdrifter-clouds";
 // Constellation 2's DMG Bonus, for each point of her Elemental Mastery, on a party member's Pyro, Hydro, Cryo or Electro strike
-// while she is in the state, as gcsim (MIT) mizuki/cons.go's c2EMMultiplier gives it
+// While she is in the state, as gcsim (MIT) mizuki/cons.go's c2EMMultiplier gives it
 // https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/mizuki
 const CONSTELLATION_2 = 2;
 const CONSTELLATION_2_DAMAGE_BONUS_PER_ELEMENTAL_MASTERY = 0.0004;
-const CONSTELLATION_2_ELEMENTS: readonly Element[] = [Element.Pyro, Element.Hydro, Element.Cryo, Element.Electro];
+const CONSTELLATION_2_ELEMENTS: ReadonlySet<Element> = new Set([
+  Element.Cryo,
+  Element.Electro,
+  Element.Hydro,
+  Element.Pyro,
+]);
 
 // While the state lasts she starts no attack, plunge or charged attack, as gcsim's ActionReady allows only her swap,
 // Dash and burst. Each of her attacks and plunges, and the collision her plunge strikes, carries the check as its own gate
@@ -46,7 +51,7 @@ const getConstellation2DamageBonus = (
   effects: readonly KitEffect[],
 ): number => {
   const element = getKitHitElement(hit, striker);
-  const isElementalDamage = element !== undefined && CONSTELLATION_2_ELEMENTS.includes(element);
+  const isElementalDamage = element !== undefined && CONSTELLATION_2_ELEMENTS.has(element);
   return member.constellationCount >= CONSTELLATION_2 &&
     isElementalDamage &&
     checkIsKitStatusActive(effects, member.characterId, DREAMDRIFTER_STATUS_ID)

@@ -61,7 +61,7 @@ describe(createKazuhaKitBehaviour, () => {
     expect.hasAssertions();
     const context = createKitTestContext(createKazuhaCombatant(2));
     KAZUHA_KIT.elementalBurst.onStart?.(context);
-    const [, , constellationField] = context.kitEffectState.effects;
+    const constellationField = context.kitEffectState.effects[2];
     if (constellationField?.kind !== "field") throw new Error("The burst casts no constellation 2 field");
     constellationField.onTick(context, 0);
 
@@ -72,7 +72,7 @@ describe(createKazuhaKitBehaviour, () => {
     expect.hasAssertions();
     const context = createKitTestContext(createKazuhaCombatant(2));
     KAZUHA_KIT.elementalBurst.onStart?.(context);
-    const [, , constellationField] = context.kitEffectState.effects;
+    const constellationField = context.kitEffectState.effects[2];
     if (constellationField?.kind !== "field") throw new Error("The burst casts no constellation 2 field");
     context.body = createKitBody({ x: 10, z: 0 });
     constellationField.onTick(context, 0);

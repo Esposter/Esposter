@@ -1,6 +1,6 @@
 import type { UnterminatedResult } from "#src/models/sweeps/unterminatedResults/UnterminatedResult";
 
-import { getParent } from "#src/services/shared/getParent";
+import { parents } from "#src/services/shared/getParent";
 import { parseSource } from "#src/services/shared/parseSource";
 import { getDescendants } from "#src/services/sweeps/getDescendants";
 import { checkIsBindingTerminated } from "#src/services/sweeps/unterminatedResults/checkIsBindingTerminated";
@@ -19,7 +19,7 @@ export const getUnterminatedResults = (text: string): UnterminatedResult[] =>
       const { isTerminated, top } = getValueChain(call);
       if (isTerminated) return [];
 
-      const parent = getParent(top);
+      const parent = parents.get(top);
       const bindingName =
         parent?.type === "VariableDeclarator" && parent.init === top && parent.id.type === "Identifier"
           ? parent.id.name

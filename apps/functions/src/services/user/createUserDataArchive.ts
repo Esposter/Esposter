@@ -4,9 +4,9 @@ import { Zip, ZipDeflate } from "fflate";
 import { once } from "node:events";
 import { PassThrough } from "node:stream";
 
-// fflate's streaming zip pushes each entry's bytes into the PassThrough the upload reads, so the archive is built as it
-// is read rather than in memory. Pushing is synchronous, so an entry checks the stream after each push and waits for it
-// to drain before reading more of its source
+// `fflate`'s streaming zip pushes each entry's bytes into the PassThrough the upload reads, so the archive is built as it
+// Is read rather than in memory. Pushing is synchronous, so an entry checks the stream after each push and waits for it
+// To drain before reading more of its source
 export const createUserDataArchive = (): UserDataArchive => {
   const output = new PassThrough();
   const zip = new Zip((error, chunk) => {

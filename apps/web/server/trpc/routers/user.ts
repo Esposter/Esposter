@@ -281,8 +281,7 @@ export const userRouter = router({
       .values({ status: DataExportStatus.Queued, userId })
       .onConflictDoNothing()
       .returning();
-    if (!insertedDataExport) return requireEntity(readActiveDataExport(ctx), DatabaseEntityType.DataExport, userId);
-    else {
+    if (insertedDataExport) {
       const data: ExportUserDataEventGridData = { dataExportId: insertedDataExport.id };
       const exportUserDataEvent = createEventGridEvent(AzureFunction.ExportUserData, userId, data);
       await getResultAsync(() => useEventGridPublisherClient().send([exportUserDataEvent])).match(
@@ -293,7 +292,7 @@ export const userRouter = router({
         },
       );
       return insertedDataExport;
-    }
+    } else return requireEntity(readActiveDataExport(ctx), DatabaseEntityType.DataExport, userId);
   }),
   updateUser: standardAuthedProcedure
     .input(updateUserInputSchema)

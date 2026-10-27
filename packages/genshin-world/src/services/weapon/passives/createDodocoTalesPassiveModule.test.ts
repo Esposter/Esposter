@@ -41,9 +41,13 @@ describe(createDodocoTalesPassiveModule, () => {
     const context = createKitTestContext(wielder, { kitEffectState });
     dodocoTalesPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.NormalAttack), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.ChargedAttackDamageBonus)).toMatchObject({
+    expect(getBuff(kitEffectState, Attribute.ChargedAttackDamageBonus)).toStrictEqual({
       amount: 0.32,
+      attribute: Attribute.ChargedAttackDamageBonus,
+      characterId: wielder.characterId,
+      kind: "buff",
       secondsRemaining: 6,
+      source: "dodocoTalesNormalAttack",
     });
     expect(getBuff(kitEffectState, Attribute.AttackPercent)).toBeUndefined();
   });
@@ -55,7 +59,14 @@ describe(createDodocoTalesPassiveModule, () => {
     const context = createKitTestContext(wielder, { kitEffectState });
     dodocoTalesPassiveModule.onKitEvent?.(createDamageTaken(AttackTag.ChargedAttack), context, wielder);
 
-    expect(getBuff(kitEffectState, Attribute.AttackPercent)).toMatchObject({ amount: 0.16, secondsRemaining: 6 });
+    expect(getBuff(kitEffectState, Attribute.AttackPercent)).toStrictEqual({
+      amount: 0.16,
+      attribute: Attribute.AttackPercent,
+      characterId: wielder.characterId,
+      kind: "buff",
+      secondsRemaining: 6,
+      source: "dodocoTalesChargedAttack",
+    });
     expect(getBuff(kitEffectState, Attribute.ChargedAttackDamageBonus)).toBeUndefined();
   });
 });

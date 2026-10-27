@@ -14,7 +14,7 @@ export const AzureFunctionIsIdempotentMap = {
   // Nothing left to remove and changes nothing.
   [AzureFunction.DeleteOrphanedProfileImage]: true,
   // Rebuilds the export's own blob, named by its row's id, so a rerun overwrites the archive an earlier attempt wrote
-  // rather than adding a second one. The row's status moves to ready only after that upload commits.
+  // Rather than adding a second one. The row's status moves to ready only after that upload commits.
   [AzureFunction.ExportUserData]: true,
   // Deletes each blob with deleteIfExists, so a blob an earlier attempt already removed is a no-op rather than a
   // 404: a replay converges on the same empty state instead of duplicating work.
