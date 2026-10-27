@@ -13,7 +13,7 @@ Ineffa's four strikes and charged attack SHALL be her normal attacks, and the ch
 - **GIVEN** Ineffa is the character on the field
 - **WHEN** the player presses the attack button repeatedly
 - **THEN** her four strikes play in order
-- **AND** each of her normal attacks deals the poise the wiki gives it
+- **AND** each of her normal attacks deals its poise
 
 #### Scenario: The charged attack spends 25 stamina
 
