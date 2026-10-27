@@ -6,7 +6,7 @@ A region's settlements are built from a small set of pieces that repeat, so the 
 
 ```mermaid
 flowchart TD
-  OP[Building options: footprint, heights, wall thickness, roof kind] --> PL[Platform: a slab from the ground to the platform's top]
+  OP[Building options] --> PL[Platform: a slab from the ground to the platform's top]
   PL --> WL[Four walls on the platform, each a box of the wall thickness]
   WL --> RK{Roof kind}
   RK -->|Flat| FR[A slab over the walls]

@@ -60,7 +60,7 @@ Every field below is held only by the group scripts, which are the server's and 
 - **A trigger's region.** A trigger member names its group but has no place (`scripts/src/services/genshinAssets/sceneGroups/buildSceneGroups.ts`). A quest's go-to step is placed instead by its own location guide, which names a dummy point the client's scene3_dummy_points.lua holds ([quests](../quests/design.md)).
 - **The suites that move a resident by the hour.** The births give each NPC one spot, so no resident has a night spot.
 - **The NPCs the births leave out.** The cities' service keepers among them: Hertha, Wagner, Katheryne, Sara and Timaeus each have no birth (`~/Esposter/genshin-dump-backup-6.6/BinOutput/Scene/SceneNpcBorn/scene3_npcborn.json`: 1005 births, each with its spot, suites and config id, none for an NPC of these five names in `~/Esposter/genshin-dump-backup-6.6/ExcelBinOutput/NpcExcelConfigData.json`), so the record places their services' building points but not them.
-- **Nod-Krai's NPC placements.** No Nod-Krai NPC is placed in the record, so `packages/genshin-world/src/data/regions/nod-krai.json` keeps its `residents` empty, and the [resident schedules](../../../changes/genshin-resident-schedules/proposal.md) change waits on them.
+- **Nod-Krai's NPC placements.** `packages/genshin-world/src/data/regions/nod-krai.json` keeps its one resident, `lempo-isle` (id 7086), and the [resident schedules](../../../changes/genshin-resident-schedules/proposal.md) change waits on the rest (see Open).
 
 ## Key files
 
@@ -86,6 +86,6 @@ Every field below is held only by the group scripts, which are the server's and 
 ## Open
 
 - [ ] **The publish's notes count a handful of the codex's left-out rows** — no source yet: the publish notes were not run for the count in this pass.
-- [ ] **The Nod-Krai region's data file keeps its residents empty** — contradicted by `packages/genshin-world/src/data/regions/nod-krai.json`: it holds one resident, `lempo-isle` (id 7086).
+- [ ] **No Nod-Krai NPC is placed in the record beyond `lempo-isle`** — no source yet: the record's Nod-Krai members were not checked against the births.
 - [ ] **The group scripts hold the fields this page leaves out** — no source yet: `~/Esposter/genshin-parity/extracted/lua/raw/scene3.dat` names `born_pos`, `born_rot`, `routes`, `routes_config`, `block_rects` and `dummy_points`, but does not say which of the page's left-out rows those fields serve; the dummy point in `~/Esposter/genshin-parity/extracted/lua/raw/scene3_dummy_points.json` is not matched to the quests' location guide, which is not on disk.
 - [ ] **The group scripts are the server's and never in the client** — contradicted by `~/Esposter/genshin-parity/extracted/lua/raw/Build_Scripts_Scene_3_scene3_block115.dat`: an obfuscated Lua script for scene 3's block 115.

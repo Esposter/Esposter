@@ -6,10 +6,10 @@ Liyue's towns are built from one kit: a stone terrace, lacquered columns and bea
 
 ```mermaid
 flowchart TD
-  OP[Width, depth, storey height, roof tier count] --> BAY[Bays of at most three metres along each wall]
+  OP[Building options] --> BAY[Bays of at most three metres along each wall]
   BAY --> COL[A column at each bay's start and the far end, the sides between the corners]
   OP --> TER[Stone terrace, a margin past the walls]
-  COL --> LAC[Lacquer: columns, beams, lattice]
+  COL --> LAC[Lacquer]
   BAY --> LAT[Openwork: a rail at the sill and the head, a bar every cell]
   LAT --> LAC
   OP --> TIER[Roof tier i: eave scaled by the tier's fraction, rising from the wall top plus i tier heights]
@@ -22,7 +22,7 @@ flowchart TD
 - **Openwork.** Each bay between two columns is a lattice panel: a rail at its sill and another at its head, with a bar every cell between them (`packages/genshin-world/src/services/liyue/constants.ts`, lines 27 to 29). The bars stand flat to the wall, so the lattice reads as openwork from the street.
 - **Upturned eaves.** A roof tier is a shell of rings stepping inward from its eave to a flat top. The eave's corners lift by the curl over its middle (`packages/genshin-world/src/services/liyue/constants.ts`, line 32), and the shell's rise is steep at the eave and levels toward the top. Each top corner carries a finial.
 - **Stacked tiers.** Each tier above the first has its eave scaled by the tier scale of the one below and is raised one tier height (`packages/genshin-world/src/services/liyue/constants.ts`, lines 34 and 35; `packages/genshin-world/src/services/liyue/createLiyueBuildingGeometries.test.ts`, line 6), so a building with three tiers stands three rises above its walls.
-- **The kit stands in for Liyue Harbor's houses.** When the [parity](../parity/README.md) inventory claims the harbour's export, the export's buildings family is `Area_Ly_Build_` and `Area_LY_Build_` (`~/Esposter/genshin-parity/extracted/maps/index.tsv`), with its terrain tiles as its ground. The harbour's other meshes are claimed undrawn by kind (`LiyueUndrawnMeshRegexMap`).
+- **The kit stands in for Liyue Harbor's houses.** The [witness](../parity/witness/design.md) draws the harbour's buildings family, `Area_Ly_Build_` and `Area_LY_Build_` (`~/Esposter/genshin-parity/extracted/maps/index.tsv`), with its terrain tiles as the ground. The harbour's other meshes are claimed undrawn by kind (`LiyueUndrawnMeshRegexMap`).
 
 ## Palette
 

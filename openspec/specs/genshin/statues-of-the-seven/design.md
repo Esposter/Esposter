@@ -15,7 +15,7 @@ flowchart TD
   LEVEL --> PAY["Its stamina counted, its rewards waiting for a claim"]
   PAY --> CLAIM["A claim pays the next reached level's rewards once"]
   PAY --> MAX["computeMaximumStamina: the start plus every region's reached levels, at most 240"]
-  POOL["Restorative Power: 5,000 a statue, 1% back every 15 seconds"] --> CLICK["A click heals a member a tenth of its Max HP"]
+  POOL["Restorative Power: 5,000 a statue, 1% back every 15 seconds (RESTORATIVE_POWER_REFILL_SECONDS)"] --> CLICK["A click heals a member a tenth of its Max HP"]
   POOL --> AUTO["Auto-recover: the fallen revived at 35%, the hurt healed to the threshold"]
 ```
 
@@ -23,7 +23,7 @@ flowchart TD
 - **Oculi are offered, and levels are reached in turn.** `offerStatueOculi` offers a started region's held Oculi at the Worship Statue, and `offerItems`, the rule every [offering](../offering-systems/design.md) shares, adds them to the held count and reaches its levels as that page describes (`packages/genshin-world/src/services/offering/offerItems.ts`, `packages/genshin-world/src/services/statue/offerStatueOculi.ts`). Past the last level the Oculus is held with no level to reach. The levels take 65 Oculi in all (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/CityLevelupConfigData.json`, whose Oculi costs for levels 2 to 10 sum to 65), one short of the 66 Anemoculi the wiki is said to count in Mondstadt, a count not yet checked (see Open).
 - **Each reached level is claimed in one action.** `claimStatueLevel` takes the next level a region has reached and not yet claimed, and `payOfferingLevels` pays its rewards (`packages/genshin-world/src/services/statue/claimStatueLevel.ts`, `packages/genshin-world/src/services/offering/payOfferingLevels.ts`). The save keeps `claimedLevel` per region beside its level and held count, and a merge keeps the account's regions and found Oculi whole, since a claim's rewards and each Oculus found sit in the bag the merge keeps, so a level only the guest's copy claimed is claimed again on the account, and a region or an Oculus only the guest holds is not carried (`packages/genshin-world/src/services/save/mergeGenshinSave.ts`).
 - **The maximum stamina rises with the levels reached.** `computeMaximumStamina` adds the stamina share of each reached level in every region to the controller's start, `STAMINA_MAX`, and stops at 240 (`packages/genshin-world/src/services/statue/computeMaximumStamina.ts`). Mondstadt alone takes the maximum to 170 at its tenth level (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/CityLevelupConfigData.json`, whose stamina shares for levels 2 to 10 sum to 70). The engine's stamina takes its maximum as `createStamina`'s first argument, which `useWorldCombat` gives the party's pool and a controller given no pool takes as its `staminaMaximum` option, and keeps it on `stamina.maximum`, so a raised maximum reaches the body without a new stamina (`packages/genshin-engine/src/locomotion/createStamina.ts`, `packages/genshin-world/src/composables/useWorldCombat.ts`).
-- **The pool regenerates from its last change.** `regenerateRestorativePower` holds the Restorative Power as an amount and the moment it last changed, with 5,000 for each unlocked Statue of The Seven as its maximum. A refill of 1% of that maximum comes every 15 seconds, and the moment moves on by the refills that came, so the time to the next keeps its place. At the maximum the moment is now. The maximum is a multiple of 50, so every refill is a whole number (`packages/genshin-world/src/services/statue/regenerateRestorativePower.ts`).
+- **The pool regenerates from its last change.** `regenerateRestorativePower` holds the Restorative Power as an amount and the moment it last changed, with 5,000 for each unlocked Statue of The Seven as its maximum. A refill of 1% of that maximum comes every 15 seconds (`RESTORATIVE_POWER_REFILL_SECONDS`, `packages/genshin-world/src/services/statue/constants.ts`), and the moment moves on by the refills that came, so the time to the next keeps its place. At the maximum the moment is now. The maximum is a multiple of 50, so every refill is a whole number (`packages/genshin-world/src/services/statue/regenerateRestorativePower.ts`).
 - **A click heals a tenth of a member's Max HP from the pool.** `healPartyMemberWithPower` pays what the pool holds when that is less than the tenth, heals nothing at full HP, and heals nothing for a fallen member, since a fallen team is revived by auto-recover rather than by a click (`packages/genshin-world/src/services/statue/healPartyMemberWithPower.ts`).
 - **Auto-recover revives the fallen and heals to a threshold.** `autoRecoverParty` revives the deployed team's fallen at the revive share of 35% of their maximum HP, which costs the pool nothing, then heals every member under the threshold up to it from the pool, slot by slot. A pool that runs short leaves the last slots where they stand (`packages/genshin-world/src/services/statue/autoRecoverParty.ts`).
 
@@ -38,6 +38,7 @@ flowchart TD
 | `packages/genshin-world/src/services/statue/offerStatueOculi.ts`           | The Worship Statue's offer: a started region's held Oculi reach their levels          |
 | `packages/genshin-world/src/services/statue/claimStatueLevel.ts`           | Takes the next reached level, its rewards paid once                                   |
 | `packages/genshin-world/src/services/statue/computeMaximumStamina.ts`      | The maximum: the start, raised by the reached levels, at most 240                     |
+| `packages/genshin-world/src/services/statue/constants.ts`                  | The pool's refill interval, `RESTORATIVE_POWER_REFILL_SECONDS`                        |
 | `packages/genshin-world/src/services/statue/regenerateRestorativePower.ts` | The pool regenerated to now from its last change                                      |
 | `packages/genshin-world/src/services/statue/healPartyMemberWithPower.ts`   | A click's heal, paid from the pool                                                    |
 | `packages/genshin-world/src/services/statue/autoRecoverParty.ts`           | Auto-recover: the fallen revived, then the hurt healed to the threshold               |
@@ -46,13 +47,11 @@ flowchart TD
 
 ## Notes
 
-- **Partly wired.** The world screen holds each region's level, level claimed and held count, the found Oculi and the pool, and the Worship Statue offers and claims through them. The auto-recover setting is not yet its state, and the character component still passes the start maximum.
+- **Partly wired.** The auto-recover setting is not yet its state, and the character component still passes the start maximum.
 - **Oculi wait on the spawned places.** Oculi are not in the world's data, and their places come from the spawned places' fit ([spawned places](../../../changes/genshin-spawned-places/design.md)).
-- **Decided here.** A click on a fallen member does nothing, since the fallen are revived by auto-recover at no cost to the pool. A click that the pool cannot cover in full heals what it holds.
 
 ## Sources
 
-- [Oculus](https://genshin-impact.fandom.com/wiki/Oculus), Genshin Impact Wiki: the Anemoculi of Mondstadt, the count the levels are to be checked against; the page is not in the cache, so it is not yet read.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: the city level-up table and the reward table the slice is built from.
 
 ## Open

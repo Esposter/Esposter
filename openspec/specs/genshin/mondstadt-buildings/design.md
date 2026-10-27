@@ -4,16 +4,16 @@ A Mondstadt house is generated from its parameters by `createMondstadtBuildingGe
 
 ```mermaid
 flowchart TD
-  OP[MondstadtBuildingOptions: footprint, storeys, jetty, roof rise, dormers] --> GF[Stone ground floor and chimney]
+  OP[MondstadtBuildingOptions] --> GF[Stone ground floor and chimney]
   OP --> ST[Each storey: plaster box, overhanging by the jetty]
   ST --> TF[Timber corner posts and top beams, standing proud of the plaster]
   OP --> RF[Gable prism from the top storey's eaves, plus dormers at each slope's middle]
-  GF --> OUT[MondstadtBuildingGeometries: stone, plaster, timber, roof]
+  GF --> OUT[MondstadtBuildingGeometries]
   TF --> OUT
   RF --> OUT
 ```
 
-The house is what stands in for Mondstadt City's own buildings when the [parity](../parity/README.md) inventory claims the city's export: the export's buildings family is `Area_MdBuild_` and `Area_Mdbuild_`, with its terrain tiles as its ground (`packages/genshin-world/src/services/mondstadt/MondstadtPartFamilyMeshRegexMap.ts`, the `BigWorldTerrain_` ground family). The export's other meshes are claimed undrawn by kind (`packages/genshin-world/src/services/mondstadt/MondstadtUndrawnMeshRegexMap.ts`).
+The house stands in for Mondstadt City's own buildings, the export's `Area_MdBuild_` and `Area_Mdbuild_` family, which the [witness](../parity/witness/design.md) draws with its terrain tiles as the ground (`packages/genshin-world/src/services/mondstadt/MondstadtPartFamilyMeshRegexMap.ts`, the `BigWorldTerrain_` ground family). The export's other meshes are claimed undrawn by kind (`packages/genshin-world/src/services/mondstadt/MondstadtUndrawnMeshRegexMap.ts`).
 
 ## Parameters
 

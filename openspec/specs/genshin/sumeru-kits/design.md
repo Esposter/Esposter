@@ -20,7 +20,7 @@ flowchart TD
 
 The city's tiers narrow by a fixed step each, every walkway ledge overhangs its tier, and the dome is a hemisphere stepped through a few rings, so the whole city is one lathe (`packages/genshin-world/src/services/sumeru/createRainforestCityGeometry.ts`). The desert ruin's columns, obelisk and pyramid are lathe stacks too, the obelisk and pyramid faceted over four sides and turned a quarter so their faces sit on the axes (`packages/genshin-world/src/services/sumeru/createDesertRuinGeometry.ts`). A hall is one box from below the sand to its roof (`packages/genshin-world/src/services/sumeru/createDesertRuinGeometry.ts`).
 
-Sumeru City's houses, "Area_Xm_Build_" in the game's names (`~/Esposter/genshin-parity/extracted/sumeru/`, which holds 3,710 files with that prefix), are what the rainforest city kit stands in for when [parity](../parity/README.md) takes inventory of the city's witness, its terrain tiles the ground beside them; `SumeruUndrawnMeshRegexMap` names the rest, bridges, common buildings and plants among them, as not drawn yet (`packages/genshin-world/src/services/sumeru/SumeruUndrawnMeshRegexMap.ts`, lines 6 to 11).
+Sumeru City's houses, "Area_Xm_Build_" in the game's names (`~/Esposter/genshin-parity/extracted/sumeru/`, which holds files with that prefix), are what the rainforest city kit stands in for when the [witness](../parity/witness/design.md) draws the city, its terrain tiles the ground beside them; `SumeruUndrawnMeshRegexMap` names the rest, bridges, common buildings and plants among them, as not drawn yet (`packages/genshin-world/src/services/sumeru/SumeruUndrawnMeshRegexMap.ts`, lines 6 to 11).
 
 ## Key files
 

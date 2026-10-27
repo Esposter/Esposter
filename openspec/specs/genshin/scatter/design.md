@@ -45,7 +45,7 @@ flowchart TD
 ## Notes
 
 - **The flowers' spacing, sizes and colours are provisional.** Being random, they are matched to the references by their statistics, their density, sizes and colours' spread ([trees and scatter](../../../changes/genshin-trees-and-scatter/design.md)).
-- **A flower stands on its tile's finest heights.** As its tile morphs toward the next level at the far end of its range, the ground under a flower can move a few centimetres from where it stands (`packages/genshin-world/src/services/windrise/computeWindrisePlants.ts`, `packages/genshin-engine/src/terrain/createTerrainMaterial.ts`), where no one sees it.
+- **A flower stands on its tile's finest heights.** The gap its tile's morph toward the next level opens under it is unmeasured (see Open), `packages/genshin-world/src/services/windrise/computeWindrisePlants.ts` and `packages/genshin-engine/src/terrain/createTerrainMaterial.ts`.
 
 ## Open
 

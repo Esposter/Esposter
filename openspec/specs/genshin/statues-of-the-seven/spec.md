@@ -6,7 +6,7 @@ The rules of a Statue of The Seven past being a jump, built and tested but not y
 
 ### Requirement: Oculi reach a region's levels in turn
 
-Oculi offered to a region SHALL be added to its held count, and each level SHALL be reached in turn as the held Oculi cover its cost, the Oculi it takes being taken off the count (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/CityLevelupConfigData.json`, whose Mondstadt levels 2 to 10 cost 1, 2, 4, 6, 7, 8, 10, 12 and 15 of item 107001, an elemental crystal).
+Oculi offered to a region SHALL be added to its held count, and each level SHALL be reached in turn as the held Oculi cover its cost, the Oculi it takes being taken off the count (Mondstadt's levels 2 to 10 cost 1, 2, 4, 6, 7, 8, 10, 12 and 15 of item 107001, an elemental crystal).
 
 #### Scenario: Offering reaches a level
 
@@ -35,7 +35,7 @@ The maximum stamina SHALL rise with the stamina share of every reached level in 
 
 - **GIVEN** Mondstadt's levels are reached up to the tenth
 - **WHEN** the maximum stamina is computed
-- **THEN** the maximum is one hundred and seventy (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/CityLevelupConfigData.json`, whose Mondstadt stamina shares for levels 2 to 10 sum to 70)
+- **THEN** the maximum is one hundred and seventy (Mondstadt's stamina shares for levels 2 to 10 sum to 70)
 
 #### Scenario: Maximum held at the limit
 
@@ -45,7 +45,7 @@ The maximum stamina SHALL rise with the stamina share of every reached level in 
 
 ### Requirement: Restorative Power pool refills over time
 
-The Restorative Power SHALL hold five thousand for each unlocked statue as its maximum, and SHALL refill one percent of that maximum every fifteen seconds until it is full.
+The Restorative Power SHALL hold five thousand for each unlocked statue as its maximum, and SHALL refill one percent of that maximum every fifteen seconds (`RESTORATIVE_POWER_REFILL_SECONDS`) until it is full.
 
 #### Scenario: Refill every fifteen seconds
 
@@ -104,14 +104,14 @@ Auto-recover SHALL revive the deployed team's fallen members at thirty-five perc
 
 ### Requirement: Statues stay jumps until the world wires them
 
-Until the world screen holds the region's level, the pool and the auto-recover setting, a statue SHALL act only as a jump and the maximum stamina SHALL stay at its start.
+The world screen SHALL hold each region's levels, claimed level, held count and Restorative Power pool, and a Worship Statue's offer and claim SHALL act through them, and the maximum stamina SHALL stay at its start until the character component reads the reached levels.
 
 #### Scenario: Statue used before it is wired
 
-- **GIVEN** the world screen does not yet hold a region's statue level or pool
-- **WHEN** a player uses a statue
-- **THEN** the statue acts as a jump
-- **AND** no Oculus is offered to the region
+- **GIVEN** the world screen holds a region's levels and pool
+- **WHEN** Oculi are offered at the Worship Statue
+- **THEN** the Oculi are offered to that region
+- **AND** its level and held count are kept in the save
 
 ## Open
 
