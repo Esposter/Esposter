@@ -12,7 +12,6 @@ Design notes live in [the specs](https://github.com/Esposter/Esposter/tree/main/
 ## Table of Contents
 
 - 🚀 [Getting Started](#getting-started)
-- 🎛️ [Mods](#mods)
 - ⌨️ [Commands](#commands)
 - ⚖️ [License](#license)
 
@@ -35,18 +34,6 @@ Developing the plugin from a checkout loads the directory itself, with the insta
 claude plugin disable genshin-mods@esposter
 claude --plugin-dir packages/genshin-mods
 ```
-
-## <a name="mods">🎛️ Mods</a>
-
-- **Commission** — a goal meter over the session's task list: the goal, tasks done, the share complete and the minutes since it started.
-- **Delegation guard** — every subagent launch not on haiku refused, a fork included, and after every third lookup in a row with no decision between them, a note on that call's result that the chain goes to a haiku agent as one bounded question.
-- **Disk-scan guard** — a Bash `find`, `du`, `grep -r` or `ls -R` that starts at `/`, a drive, `~` or a home folder is refused, with the known place to look for the file.
-- **Pulse** — keeps the machine watcher running from any session with the plugin, so its heartbeat and the machine's state keep being written.
-- **Resin** — the prompt cache's time left, the context window, the five-hour and weekly limits and the cost so far, with **Warm**, **Compact** and **Handoff**, a toast before the cache goes cold, and a usage reserve past four-fifths of a limit window, or past half of one spent ahead of an even pace, that has the session clean up on cheap agents, then wind down, until the window resets, refusing a workflow at launch meanwhile.
-- **Veil** — recording mode: emails, amounts, phone numbers and secrets shown as placeholders while the model still reads the real values.
-- **Ward** — before an edit to a file another session changed in the last half hour, a question: proceed, move to a worktree, or cancel.
-- **Waypoints** — after each answered turn, up to three next steps the session suggests, each a button that sends it as the next prompt.
-- **Whole-index guard** — while another session edits this checkout, a Bash `git add .`, `git add -A`, `git reset` with no path, `git stash`, `git checkout .` or `git clean` is refused, with the path-scoped form to use instead.
 
 ## <a name="commands">⌨️ Commands</a>
 
