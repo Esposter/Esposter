@@ -4,16 +4,9 @@ The rules of a Statue of The Seven past being a jump, built and tested but not y
 
 ## Requirements
 
-### Requirement: Oculi reach a region's levels in turn
+### Requirement: Oculi offered to a region join its held count
 
-Oculi offered to a region SHALL be added to its held count, and each level SHALL be reached in turn as the held Oculi cover its cost, the Oculi it takes being taken off the count (Mondstadt's levels 2 to 10 cost 1, 2, 4, 6, 7, 8, 10, 12 and 15 of item 107001, an elemental crystal).
-
-#### Scenario: Offering reaches a level
-
-- **GIVEN** a region's next level costs its Oculi and enough are offered
-- **WHEN** the Oculi are offered to the region
-- **THEN** that level is reached
-- **AND** its Oculi are taken off the held count
+Oculi offered to a region SHALL be added to its held count.
 
 #### Scenario: Oculi held toward the next level
 
@@ -27,15 +20,30 @@ Oculi offered to a region SHALL be added to its held count, and each level SHALL
 - **WHEN** an Oculus is offered to it
 - **THEN** the Oculus is held with no level left to reach
 
-### Requirement: Maximum stamina rises with reached levels up to 240
+### Requirement: Oculi reach a region's levels in turn
 
-The maximum stamina SHALL rise with the stamina share of every reached level in every region, and SHALL never exceed two hundred and forty.
+Each level SHALL be reached in turn as the held Oculi cover its cost, the Oculi it takes being taken off the count (Mondstadt's levels 2 to 10 cost 1, 2, 4, 6, 7, 8, 10, 12 and 15 of item 107001, an elemental crystal).
+
+#### Scenario: Offering reaches a level
+
+- **GIVEN** a region's next level costs its Oculi and enough are offered
+- **WHEN** the Oculi are offered to the region
+- **THEN** that level is reached
+- **AND** its Oculi are taken off the held count
+
+### Requirement: Maximum stamina rises with reached levels
+
+The maximum stamina SHALL rise with the stamina share of every reached level in every region.
 
 #### Scenario: Mondstadt's tenth level
 
 - **GIVEN** Mondstadt's levels are reached up to the tenth
 - **WHEN** the maximum stamina is computed
 - **THEN** the maximum is one hundred and seventy (Mondstadt's stamina shares for levels 2 to 10 sum to 70)
+
+### Requirement: Maximum stamina never exceeds 240
+
+The maximum stamina SHALL never exceed two hundred and forty.
 
 #### Scenario: Maximum held at the limit
 
@@ -45,7 +53,7 @@ The maximum stamina SHALL rise with the stamina share of every reached level in 
 
 ### Requirement: Restorative Power pool refills over time
 
-The Restorative Power SHALL hold five thousand for each unlocked statue as its maximum, and SHALL refill one percent of that maximum every fifteen seconds (`RESTORATIVE_POWER_REFILL_SECONDS`) until it is full.
+The Restorative Power SHALL hold five thousand for each unlocked statue as its maximum, and SHALL refill one percent of that maximum every fifteen seconds until it is full.
 
 #### Scenario: Refill every fifteen seconds
 
