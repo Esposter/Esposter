@@ -51,6 +51,5 @@ flowchart LR
 - `~/Esposter/cache/genshin-wiki/Category_Columbina_Talents.json`: grounds the requirement Poise from strikes, the charged attack and plunges.
 - `~/Esposter/cache/gcsim-v2.47.2/internal/characters/columbina/charge.go` line 101, which sets the DEF ignored at 100 percent: grounds the requirement Moondew Cleanse's hits ignore all of each enemy's DEF.
 - `~/Esposter/cache/gcsim-v2.47.2/internal/characters/columbina/skill.go` lines 318 to 320, the DoT's radius of 4.0 and then 6 at Moonsign level 2 or above, as gcsim reaches them from Moonsign level 2: grounds the requirement Damage-over-time reach.
-- the standard time and not one measured for her, for the plunge's landing of 0.4 seconds (no path or line is cited; the Decisions bullet on the plunges names the wiki's standard): grounds the requirement Plunge landing time.
 
 ## Open

@@ -57,7 +57,6 @@ Her third and fifth constellations raise her skill and burst levels from the con
 ## Sources
 
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/nicole), MIT: the timings of her strikes, her charged attack, skill, burst and elements, and her table data file (`zz_nicole.dm.go`, which holds the shield's 2.21184 and 1386.6697).
-- The gcsim lines the spec's scenarios cite, by file: `attack.go` line 17, `charge.go` line 47, `asc.go` lines 15 to 17, 22, 26 to 28, 34, 36 to 38, 42, 50 to 55, 72 to 85 and 89 to 90, `cons.go` lines 42, 54, 55, 71, 84 to 90, 122, 130 to 132, 149 to 158, 170, 190 to 195, 209, 213 to 220 and 235, `burst.go` lines 16, 17, 106, 109, 113 to 114, 133 to 150, 137, 149, 158 and 162, `skill.go` lines 17, 20, 46, 54, 62 to 67, 76 and 78, `nicole.go` line 24, `shield.go` line 24, and `zz_nicole.dm.go` lines 124, 142, 160 and 178.
 - The proud skill groups 13131, 13132 and 13139 in the hosted game data: the multipliers, the shield and buff parameters, the cooldowns, the burst's energy and the charged stamina, read at talent level 1.
 - The cached Genshin wiki's `Category_Nicole_Talents.json` (the Allegoria page): the plunge poise rows, 50 low and 100 high.
 - No YouTube or Bilibili reference snapshot for Nicole is in the repo, so no claim here rests on video.
