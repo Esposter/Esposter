@@ -26,17 +26,19 @@ Clorinde's charged attack SHALL hit a circle round her and SHALL cost 20 stamina
 - **THEN** the charged attack hits the circle round her at 38 frames, in an animation of 68 frames
 - **AND** 20 stamina is spent
 
-### Requirement: Last Lightfall
+### Requirement: Last Lightfall strikes five times
 
 Last Lightfall SHALL strike five times at 97, 103, 109, 115 and 121 frames of its 128-frame animation.
-
-Last Lightfall SHALL be refused without the energy it costs.
 
 #### Scenario: Last Lightfall strikes five times
 
 - **GIVEN** Clorinde has enough energy
 - **WHEN** the player casts Last Lightfall
 - **THEN** its five strikes land at 97, 103, 109, 115 and 121 frames
+
+### Requirement: Last Lightfall is refused without the energy it costs
+
+Last Lightfall SHALL be refused without the energy it costs.
 
 #### Scenario: Last Lightfall is refused without enough energy
 
@@ -63,15 +65,17 @@ Pressing Hunter's Vigil SHALL play its 33-frame animation and start a 16-second 
 
 ### Requirement: Poise from normal attacks and plunges
 
-Clorinde's normal attacks and plunges SHALL deal poise, as the wiki gives it.
-
-Clorinde's plunges SHALL land as their action starts, provisional until a recording settles it.
+Clorinde's normal attacks and plunges SHALL deal poise.
 
 #### Scenario: A normal attack deals poise
 
 - **GIVEN** Clorinde is the character on the field
 - **WHEN** one of her normal attacks hits an enemy
-- **THEN** the enemy takes that hit's poise, which the wiki gives per hit
+- **THEN** the enemy takes that hit's poise
+
+### Requirement: Clorinde's plunges land as their action starts
+
+Clorinde's plunges SHALL land as their action starts.
 
 #### Scenario: A plunge lands as its action starts
 
