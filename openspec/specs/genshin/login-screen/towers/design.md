@@ -4,6 +4,14 @@ The towers, bridges and pillars the login's walkway runs past. Each tower is a l
 
 ## How it works
 
+```mermaid
+flowchart TD
+  LATHE["Lathe of the wall's profile"] --> SURF["Surface traced round the axis"]
+  SURF --> ATLAS["Facade atlas of loops"]
+  ATLAS --> SLAB["Columns, as slabs"]
+  ATLAS --> RECESS["Recesses, cut into the lathe"]
+```
+
 - **A tower the game draws only at its coarsest level, painted with the ground's stone alone, is fitted from that level's own mesh, its lathe and its facade both** (`scripts/src/services/genshinAssets/fit/readLevelOfDetailParts.ts` lines 36 to 52, `scripts/src/services/genshinAssets/fit/readTowerProfiles.ts` line 18, `scripts/src/services/genshinAssets/fit/fitLoginTowerFacades.ts` line 56).
 - **A tower is a lathe of its wall.** The radius of each tower's wall is read at every two units of height (`TOWER_BAND_HEIGHT` in `scripts/src/services/genshinAssets/shared/constants.ts`, `scripts/src/services/genshinAssets/fit/fitLatheProfile.ts`) and simplified into sloped runs, so a moulding's roll and a cornice's overhang turn as the game's do. A tower is built once and copied to each placement at its exact scale, turned as the game turns it and merged into one geometry (`packages/genshin-world/src/services/login/tower/createLoginTowersGeometry.ts`).
 - **The lathe reaches the tips of the columns and cornices, each band's radius being its outermost vertex** (`scripts/src/services/genshinAssets/fit/fitRadialProfile.ts:44`). The facade lies on the face it was read off, so the surface pass and the lathe agree (`scripts/src/services/genshinAssets/fit/fitLoginTowerFacades.ts`).
@@ -29,7 +37,6 @@ The towers, bridges and pillars the login's walkway runs past. Each tower is a l
 
 ## Open
 
-- [ ] **The lathe stands on the walls, not on the tips of the columns and cornices** — contradicted by `scripts/src/services/genshinAssets/fit/fitRadialProfile.ts:44`: each band's radius is its outermost vertex, tips included.
 - [ ] **The towers' mouldings and cornices turn as the game's do** — no source yet: no profile comparison with the game is kept.
 - [ ] **The carving's edges land within a pixel of the game's where the towers stand nearest** — no source yet: no edge measurement is kept.
 - [ ] **No bump tilts the light at a recess's edge, and a bump over the atlas changed no frame** — no source yet: no frame comparison of a bump over the atlas is kept in `~/Esposter/genshin-parity/comparisons/`, which holds no tower snapshot, and `packages/genshin-world/src/components/Login/Scene/Towers.reference.ts` records the result without one.

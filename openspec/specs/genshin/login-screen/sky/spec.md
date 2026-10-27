@@ -47,7 +47,7 @@ The sun and the moon SHALL sit where their references show them, the light takin
 
 ### Requirement: Dusk sunlight direction
 
-The dusk's sunlight SHALL fall 50 degrees up and 60 degrees left of the walkway.
+The dusk's sunlight SHALL fall about 50 degrees up and about 50 degrees off the walkway's +z axis, as `DUSK_LIGHT_DIRECTION` gives it.
 
 #### Scenario: Dusk shadows
 
@@ -66,6 +66,4 @@ Faces turned upward SHALL be lit by the sky's bright cloud colour and faces turn
 ## Open
 
 - [ ] **The frame is drawn through the game's own tone curve alone, with no grade or bloom** — no source yet: the login scene's post pipeline call passes `isBloomed: false` with a comment giving no grade and no bloom, but gives no curve values to compare the game's own tone curve against.
-- [ ] **The dusk's sunlight falls 50 degrees up and 60 degrees left of the walkway** — contradicted by `packages/genshin-world/src/services/login/scene/LoginSkyStateMap.ts`: `DUSK_LIGHT_DIRECTION` is 49.7 degrees up and 49.7 off the walkway's +z axis, not 60.
-- [ ] **Faces turned upward are lit by the sky's bright cloud colour** — contradicted by `packages/genshin-world/src/services/login/scene/LoginSkyStateMap.ts`: at dawn `hemisphereSkyColor` is 0xf2dfc8 against `cloudLitColor` 0xf5efe8.
 - [ ] **The night's moon stands behind the lantern tower** — no source yet: the reference point is not annotated against the lantern tower in any kept file.

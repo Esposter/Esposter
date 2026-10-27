@@ -4,6 +4,14 @@ The light on the login scene's stone and haze: the stone is lit as the game's de
 
 ## How it works
 
+```mermaid
+flowchart TD
+  ALBEDO["The stone's albedo"] --> GLOW["Edge glow, where the length reaches the emission range"]
+  GLOW --> RAMP["Deferred shading, the sun's toon ramp and the sky's harmonics"]
+  RAMP --> OCC["Screen-space occlusion, on the computer's frames"]
+  OCC --> HAZE["Haze blend, where the stone's mask is set"]
+```
+
 - **The stone is lit as the game's deferred pass lights it.** The game's stone shader only writes its G-buffer, and `Hidden/Internal-DeferredShading` lights it ([game data formats](../../game-data-formats/design.md)). Each family's stone is therefore its albedo, plus a glow along its edges as the program writes it: its material's colour at its strength, by one less the facing ratio raised to its power, drawn only where its length reaches the material's emission range (`createStoneGlowNode`, `packages/genshin-engine/src/nodes/createStoneGlowNode.ts`). The glow's strength is an eighth of the material's for the door and the towers, the share the frame shows (`GLOW_SCALES` in `fitLoginStone`, `scripts/src/services/genshinAssets/fit/fitLoginStone.ts`). The walkway and the bridges' own materials draw no glow, their fitted strength being none; most of the walkway's meshes also draw with `LoginScene_Edge01` (`~/Esposter/genshin-parity/extracted/login/inventory.md:226`), whose `_RGStrength` is 0.5 (`~/Esposter/genshin-parity/extracted/login/Material/LoginScene_Edge01.json`), which the fit does not take (`scripts/src/services/genshinAssets/fit/LoginStoneFamilyMaterialRegexMap.ts`).
 - **The stone's light is the deferred pass's own shading.** `StoneLightingModel` (`packages/genshin-engine/src/models/nodes/StoneLightingModel.ts`) lights the stone with the sun's colour through a toon ramp read at a half plus half the face's facing to the sun, scaled by the sun's visibility there raised to a fifth. The sky's light is second-order spherical harmonics over the world normal. A fitted light fades with height over tens of metres (`STONE_HEIGHT_FALLOFF`, `packages/genshin-engine/src/nodes/constants.ts`), standing in for the light the reflection pass's clustered probes cast stepping up the towers, which the page does not sample. The stone also darkens with height at each hour's rate, up to 20 metres (`computeStoneDarkening`, `packages/genshin-engine/src/nodes/computeStoneDarkening.ts`, `STONE_DARKENING_TOP` in `packages/genshin-engine/src/nodes/constants.ts`); the night darkens at 0.14 a metre, as the game's high stone shows its light falling away.
 - **One set of uniforms carries the light to every stone.** Every hour writes its values into one set of shared uniforms (`loginStoneLight`, `packages/genshin-world/src/services/login/scene/loginStoneLight.ts`), read from the `login/stoneLight` record (`packages/genshin-world/src/generated/gameDataLock.json`). The ramp holds the sun's colour, so the sun contributes its direction and its shadow only.
@@ -30,7 +38,6 @@ The light on the login scene's stone and haze: the stone is lit as the game's de
 
 ## Open
 
-- [ ] **The walkway and the bridges draw no glow, their fitted strength being none** — contradicted by `~/Esposter/genshin-parity/extracted/login/inventory.md:226`: most walkway meshes draw with Edge01, _RGStrength 0.5.
 - [ ] **The game draws no outline round its stone** — no source yet: no outline capture or game reference was read for this claim.
 - [ ] **Each hour's ramp, harmonics and height fall-off are solved over the exports' interior pixels, with the bins averaged** — no source yet: the solve is hosted under `login/stoneLight`, and its calibrate run is not kept locally.
 - [ ] **The night darkens at 0.14 a metre of height** — no source yet: the hosted `login/stoneLight` record is not on disk, and no file in `~/Esposter/genshin-parity/comparisons/`, `~/Esposter/genshin-parity/captures/`, `~/Esposter/genshin-parity/extracted/login` or `~/Esposter/genshin-parity/extracted/login-layout` holds `stoneLight`.

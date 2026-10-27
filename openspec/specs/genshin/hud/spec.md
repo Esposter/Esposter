@@ -88,7 +88,7 @@ The health display SHALL show the field member's level and, as whole numbers, it
 - **GIVEN** the member on the field has an HP and a maximum HP
 - **WHEN** the health display is drawn
 - **THEN** it shows the level
-- **AND** it shows the HP and the maximum HP as whole numbers (`~/Esposter.noindex/genshin-parity/references/hud-stamina-climb.png` reads "Lv. 70" and "8605 / 14729")
+- **AND** it shows the HP and the maximum HP as whole numbers (the climb reference reads "Lv. 70" and "8605 / 14729")
 
 ### Requirement: Holding a skill or burst button holds its key until release
 

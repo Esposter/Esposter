@@ -6,13 +6,8 @@ A screen's interface is laid out by the game's own tree. Unity places every piec
 
 ```mermaid
 flowchart LR
-  EX["genshin:assets interface"] --> TREE["interface.json: the screen's RectTransform tree"]
-  TREE --> FIT["fit: fitInterfaceRects"]
-  FIT -->|"rects by path, a layout group's children left out"| DATA["the screen's interfaceRects record, published to the hosted game data"]
-  DATA -->|"read before the screen opens, the pieces it places kept by name"| RECT["GameRect: nested in the nearest GameRect, or on the canvas"]
-  RECT --> CSS["toCanvasRectStyle: absolute + calc"]
   MEASURED["A prefab, a group's spacing, a text line: measured"] --> LEAF["Scoped CSS inside the GameRect holding it"]
-  RECT --> LEAF
+  RECT["GameRect: nested in the nearest GameRect, or on the canvas"] --> LEAF
 ```
 
 - **The tree is the screen's data.** `genshin:assets interface` exports the screen's RectTransforms from the game's block, outside the repository like every other reference (`scripts/src/services/genshinAssets/interface/extractComponentInterface.ts`). The screen's `fit` turns it into its `interfaceRects` record with `fitInterfaceRects`: every piece's anchors, pivot, position and size in canvas units, and its scale where it is not one, keyed by its path under the interface's root. The root is the canvas itself, so it is left out (`scripts/src/services/genshinAssets/fit/fitInterfaceRects.test.ts`). Each screen reads its rects from their published record in the [hosted game data](../hosted-game-data/design.md) and keeps only the pieces it places by, each named by the screen's own enum of them (`HudInterfaceRectName` for the [HUD](../hud/design.md), `LoginInterfaceRectName` for the login, whose rects the opening reads during its splashes) (`packages/genshin-world/src/generated/gameDataLock.json`, keys `hud/interfaceRects` and `login/interfaceRects`).
@@ -26,7 +21,6 @@ flowchart LR
 ## Notes
 
 - **A measured leaf is written from its parent's box**, such as the prompt's `calc(var(--unit) * 38 - var(--canvas-unit) * 128)` from a container standing 128 canvas units in (`packages/genshin-world/src/components/Login/Interface/Index.vue`, the `bottom` rule). The measure stays the one taken off the recording, and the parent's term keeps it where the recording shows on any window.
-- **A layout component has no image.** `GameRect` and `GameScreen` draw nothing of their own, so the interface library's suite exempts them from the fixture every other component owes (`packages/genshin-interface/src/components/components.visual.ts`, `LAYOUT_COMPONENTS`).
 
 ## Key files
 
@@ -48,3 +42,7 @@ flowchart LR
 - [ ] **A prefab or text line the tree cannot hold is measured on a recording** — no source yet: the recordings for `BtnPressStart` and the age rating's layout adaptor are not named, and no test holds their measures.
 - [ ] **A clip-moved `GameRect` carries its clip path as `data-clip-target`, and the door's prompt fades with `Center/SwitchServer`** — no source yet: no test holds `data-clip-target`, and no clip in the extracted set names `Center/SwitchServer`.
 - [ ] **The prompt's 38-unit measure is taken off a recording** — no source yet: the recording is not named.
+
+## Sources
+
+- `~/Esposter.noindex/genshin-parity/extracted/character/interface/json/RectTransform/RectTransform#324437.json`, `GrpMap` with a local scale of 0.6. Grounds the requirement "A scaled piece scales about its pivot".

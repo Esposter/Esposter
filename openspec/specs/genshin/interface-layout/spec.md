@@ -12,7 +12,7 @@ Each piece of a screen's interface SHALL be placed inside its game parent's box 
 
 - **GIVEN** a piece is anchored to the bottom of its parent
 - **WHEN** the window is resized to any shape
-- **THEN** the piece stays at the bottom of its parent, as the login's `Bottom` does with `anchorMin` [0, 0] and `anchorMax` [1, 0] (`~/Esposter.noindex/genshin-parity/extracted/login-ui/rects.json`)
+- **THEN** the piece stays at the bottom of its parent, as the login's `Bottom` does with `anchorMin` [0, 0] and `anchorMax` [1, 0]
 
 #### Scenario: A piece follows its parent
 
@@ -22,7 +22,7 @@ Each piece of a screen's interface SHALL be placed inside its game parent's box 
 
 ### Requirement: A scaled piece scales about its pivot
 
-A piece the game scales SHALL scale about its pivot, so the corner it is pivoted on stays where the layout places it (`~/Esposter.noindex/genshin-parity/extracted/character/interface/json/RectTransform/RectTransform#324437.json`, `GrpMap` with a local scale of 0.6).
+A piece the game scales SHALL scale about its pivot, so the corner it is pivoted on stays where the layout places it.
 
 #### Scenario: A corner-pivoted piece keeps its corner
 

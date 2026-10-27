@@ -4,6 +4,14 @@ The walkway the camera looks down: its pieces, each its fitted outline extruded 
 
 ## How it works
 
+```mermaid
+stateDiagram-v2
+  [*] --> Sunk
+  Sunk --> Rising: the camera nears its place ahead
+  Rising --> Settled: it settles into its place
+  Settled --> [*]
+```
+
 - **The walkway is 23 pieces, each one outline.** Each piece is its fitted outline extruded from the walkway's underside up to its stone, at the height most of its tops stand at, seen from above (`packages/genshin-world/src/services/login/walkway/createLoginWalkwayPieces.ts`). Its curbs (3 centimetres high) and its lanes' borders (9 millimetres) are traced from above and extruded over the piece to their own heights, so near the camera the curbs widen its outline and stand their inner faces as the game's do. Every copy of a piece is an instance of one batch, and each piece rises on its own.
 - **The paint is a plan read from the game's own textures.** Each piece's tops are drawn into a plan of one copy of the walkway through their own texture coordinates and the textures their materials hold (`fitLoginPaving`, `scripts/src/services/genshinAssets/fit/fitLoginPaving.ts`). The pattern repeats twice a copy, as the wings stand, so the plan is folded onto that 8 metre repeat, each cell the mean of its repeats over two centimetres a side. Folding also averages out the speckle each repeat paints differently (`foldPlanRepeats`, `scripts/src/services/genshinAssets/fit/foldPlanRepeats.ts`).
 - **Three tones are read from the plan.** The plan is read as three tones, as the door's front is (`fitPlanTones`, `scripts/src/services/genshinAssets/fit/fitPlanTones.ts`): the middle lane's paler bricks, the side lanes' and the wings' darker pockets, and the stone between. Five tones scored worse on the walkway's structure than three, and a single tone with darker pockets missed its mean colour by far more.

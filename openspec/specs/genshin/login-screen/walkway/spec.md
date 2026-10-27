@@ -6,7 +6,7 @@ The login walkway, as built: 23 pieces, each one outline, painted in the game's 
 
 ### Requirement: Walkway built from 23 pieces
 
-The walkway SHALL be 23 pieces, each its outline extruded from its underside up to its stone, with its curbs and lane borders raised over it.
+The walkway SHALL be built from its pieces, each its outline extruded from its underside up to its stone, with its curbs and lane borders raised over it; the piece count is unconfirmed (see Open).
 
 #### Scenario: Camera near the curbs
 
