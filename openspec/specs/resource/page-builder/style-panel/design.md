@@ -18,8 +18,8 @@ The field components take a value and its inherited placeholder, with no breakpo
 ```mermaid
 flowchart TD
   FIELD["a style field at the active breakpoint and state"] --> CHECK{"CSS.supports, the length limit, no brace, angle bracket or comment delimiter?"}
-  CHECK -->|no| ERR["the field's error; nothing written"]
-  CHECK -->|"a slider mid-drag"| PREVIEW["the canvas previews it; no history"]
+  CHECK -->|no| ERR["the field's error, nothing written"]
+  CHECK -->|"a slider mid-drag"| PREVIEW["the canvas previews it, no history"]
   CHECK -->|yes| PATCH["an update-props patch on the node's style, one interaction"]
   PREVIEW -->|"end"| PATCH
   PATCH --> EMIT["the renderer: base, then tablet, then mobile, hover with focus-visible"]

@@ -31,7 +31,7 @@ flowchart TD
   POINTER["pointer drag — palette block or node handle"] --> CAPTURE["editor's pointer events off, so the frame does not take the pointer"]
   CAPTURE --> HIT["hit test the frame's document at the pointer, less its offset, over its scale"]
   HIT --> SLOT{"nearest slot whose allow list accepts the type?"}
-  SLOT -->|no| NONE["no indicator; a drop cancels"]
+  SLOT -->|no| NONE["no indicator, a drop cancels"]
   SLOT -->|yes| INDEX["index from child midpoints along the slot's axis"]
   INDEX --> DROP["release: insert or move patch"]
   KEYS["Alt+arrow on the selected node"] --> STRUCT["previous or next sibling, into the previous sibling's slot, or out after the parent"]

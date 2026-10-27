@@ -34,7 +34,7 @@ flowchart TD
   OPEN["Panel opened / dock mounted"] --> RE
   ST --> PANEL["bell panel — merged, newest first<br/>StyledWaypoint pages the delivered half"]
   ST --> BADGE["unread count on the trigger + PWA icon badge"]
-  ST --> SNACK["toast queue (TOAST_DURATION_MS, errors persist)"]
+  ST --> SNACK["toast queue<br/>errors persist"]
   PANEL -->|closed| READ["updateNotificationsReadStatus"]
 ```
 

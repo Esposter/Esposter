@@ -55,7 +55,7 @@ The kind's document type is the union of the two node types the registry holds, 
 
 The owed items and their reasons are in the [change's tasks](../../../../changes/archive/2026-10-25-resource-page-builder-email/tasks.md).
 
-- **One merge-field form.** The compile writes a merge token's `&`, `<` and `>` escaped and leaves quotes as they are, so substitution matches that text escape alone. The raw form is no longer matched ([`substituteMergeFields.ts`](../../../../../apps/web/app/services/emailEditor/substituteMergeFields.ts)).
+- **One merge-field form.** The compile writes a merge token's `&`, `<` and `>` escaped and leaves quotes as they are, so substitution matches that text escape alone. ([`substituteMergeFields.ts`](../../../../../apps/web/app/services/emailEditor/substituteMergeFields.ts)).
 - **Length hint.** The preview text's limit is `MAX_EMAIL_PREVIEW_LENGTH`, which is the schema's maximum. The schema form draws it beside the field as a count, so the hint and the enforced limit come from one constant.
 - **Preview placement.** Preview is reachable without leaving the editor, so the toggle the Preview paragraph places stays in the header.
 - **FileAssets.** Email keeps `fileAssets` on its resource definition, since its images are hosted by us. Its image field has no upload path, so Email is not counted as an adopter of [resource-file-assets](../../resource-file-assets/design.md) until that field lands.
