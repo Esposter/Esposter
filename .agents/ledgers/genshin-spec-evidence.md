@@ -2,286 +2,286 @@
 
 Each Genshin spec.md page's requirements state behaviour only, and the game code or reference snapshot behind them is cited in the sibling design's `## Sources` (repo paths in its `## Key files`), or left open in the spec's `## Open` with the source that would settle it. Find recipe: `grep -l "no source yet" openspec/specs/genshin/**/spec.md`; the requirement-body check is `scripts/src/services/openspec/lintRequirementSources.ts`, which `pnpm test` in `scripts` runs.
 
-| Unit                                                                 | Swept | Notes |
-| :------------------------------------------------------------------- | :---- | :---- |
-| `openspec/specs/genshin/inventory/spec.md`                           | —     |       |
-| `openspec/specs/genshin/character-attributes/spec.md`                | —     |       |
-| `openspec/specs/genshin/characters/shading/spec.md`                  | —     |       |
-| `openspec/specs/genshin/gathering/spec.md`                           | —     |       |
-| `openspec/specs/genshin/party/spec.md`                               | —     |       |
-| `openspec/specs/genshin/combat/spec.md`                              | —     |       |
-| `openspec/specs/genshin/forging/spec.md`                             | —     |       |
-| `openspec/specs/genshin/login-screen/light/spec.md`                  | —     |       |
-| `openspec/specs/genshin/artifact-enhancement/spec.md`                | —     |       |
-| `openspec/specs/genshin/engine-architecture/spec.md`                 | —     |       |
-| `openspec/specs/genshin/interface-layout/spec.md`                    | —     |       |
-| `openspec/specs/genshin/spiral-abyss/spec.md`                        | —     |       |
-| `openspec/specs/genshin/derived-assets/spec.md`                      | —     |       |
-| `openspec/specs/genshin/wildlife/spec.md`                            | —     |       |
-| `openspec/specs/genshin/bosses/spec.md`                              | —     |       |
-| `openspec/specs/genshin/character-screen/spec.md`                    | —     |       |
-| `openspec/specs/genshin/enemies/spec.md`                             | —     |       |
-| `openspec/specs/genshin/genius-invokation/rules/spec.md`             | —     |       |
-| `openspec/specs/genshin/liyue-building-kit/spec.md`                  | —     |       |
-| `openspec/specs/genshin/login-screen/camera-and-glide/spec.md`       | —     |       |
-| `openspec/specs/genshin/paimon-menu/spec.md`                         | —     |       |
-| `openspec/specs/genshin/weather/spec.md`                             | —     |       |
-| `openspec/specs/genshin/cooking/spec.md`                             | —     |       |
-| `openspec/specs/genshin/game-data-formats/spec.md`                   | —     |       |
-| `openspec/specs/genshin/genius-invokation/decks/spec.md`             | —     |       |
-| `openspec/specs/genshin/kits/illuga/spec.md`                         | —     |       |
-| `openspec/specs/genshin/ley-line-outcrops/spec.md`                   | —     |       |
-| `openspec/specs/genshin/reputation/spec.md`                          | —     |       |
-| `openspec/specs/genshin/controls/spec.md`                            | —     |       |
-| `openspec/specs/genshin/ground-paint/spec.md`                        | —     |       |
-| `openspec/specs/genshin/hud/spec.md`                                 | —     |       |
-| `openspec/specs/genshin/interaction/spec.md`                         | —     |       |
-| `openspec/specs/genshin/login-screen/sky/spec.md`                    | —     |       |
-| `openspec/specs/genshin/map/spec.md`                                 | —     |       |
-| `openspec/specs/genshin/minimap/spec.md`                             | —     |       |
-| `openspec/specs/genshin/original-resin/spec.md`                      | —     |       |
-| `openspec/specs/genshin/parity/passes/spec.md`                       | —     |       |
-| `openspec/specs/genshin/sky-and-time/spec.md`                        | —     |       |
-| `openspec/specs/genshin/adventure-rank/spec.md`                      | —     |       |
-| `openspec/specs/genshin/adventurer-handbook/spec.md`                 | —     |       |
-| `openspec/specs/genshin/character-controller/spec.md`                | —     |       |
-| `openspec/specs/genshin/crafting/spec.md`                            | —     |       |
-| `openspec/specs/genshin/derived-assets/development-exports/spec.md`  | —     |       |
-| `openspec/specs/genshin/expeditions/spec.md`                         | —     |       |
-| `openspec/specs/genshin/game-text/spec.md`                           | —     |       |
-| `openspec/specs/genshin/genius-invokation/duel-board/spec.md`        | —     |       |
-| `openspec/specs/genshin/interface-library/spec.md`                   | —     |       |
-| `openspec/specs/genshin/kits/beidou/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/columbina/spec.md`                      | —     |       |
-| `openspec/specs/genshin/kits/nilou/spec.md`                          | —     |       |
-| `openspec/specs/genshin/login-screen/door/spec.md`                   | —     |       |
-| `openspec/specs/genshin/login-screen/interface/spec.md`              | —     |       |
-| `openspec/specs/genshin/map-unlocking/spec.md`                       | —     |       |
-| `openspec/specs/genshin/music/expression/spec.md`                    | —     |       |
-| `openspec/specs/genshin/offering-systems/spec.md`                    | —     |       |
-| `openspec/specs/genshin/parity/commands/spec.md`                     | —     |       |
-| `openspec/specs/genshin/region-buildings/spec.md`                    | —     |       |
-| `openspec/specs/genshin/reset-clock/spec.md`                         | —     |       |
-| `openspec/specs/genshin/scene-derivation/spec.md`                    | —     |       |
-| `openspec/specs/genshin/talents/spec.md`                             | —     |       |
-| `openspec/specs/genshin/title-splash/spec.md`                        | —     |       |
-| `openspec/specs/genshin/commissions/spec.md`                         | —     |       |
-| `openspec/specs/genshin/derived-assets/animestudio-macos/spec.md`    | —     |       |
-| `openspec/specs/genshin/domains/spec.md`                             | —     |       |
-| `openspec/specs/genshin/exploration-progress/spec.md`                | —     |       |
-| `openspec/specs/genshin/flowing-water/spec.md`                       | —     |       |
-| `openspec/specs/genshin/hosted-game-data/spec.md`                    | —     |       |
-| `openspec/specs/genshin/imaginarium-theater/spec.md`                 | —     |       |
-| `openspec/specs/genshin/investigation/spec.md`                       | —     |       |
-| `openspec/specs/genshin/kits/candace/spec.md`                        | —     |       |
-| `openspec/specs/genshin/kits/chongyun/spec.md`                       | —     |       |
-| `openspec/specs/genshin/kits/dehya/spec.md`                          | —     |       |
-| `openspec/specs/genshin/kits/furina/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/jean/spec.md`                           | —     |       |
-| `openspec/specs/genshin/kits/kachina/spec.md`                        | —     |       |
-| `openspec/specs/genshin/kits/kamisato-ayaka/spec.md`                 | —     |       |
-| `openspec/specs/genshin/kits/nefer/spec.md`                          | —     |       |
-| `openspec/specs/genshin/kits/qiqi/spec.md`                           | —     |       |
-| `openspec/specs/genshin/kits/vesna/spec.md`                          | —     |       |
-| `openspec/specs/genshin/kits/xinyan/spec.md`                         | —     |       |
-| `openspec/specs/genshin/load-budget/spec.md`                         | —     |       |
-| `openspec/specs/genshin/login-screen/towers/spec.md`                 | —     |       |
-| `openspec/specs/genshin/login-screen/walkway/spec.md`                | —     |       |
-| `openspec/specs/genshin/music/synthesizer/spec.md`                   | —     |       |
-| `openspec/specs/genshin/parity/clean-plate/spec.md`                  | —     |       |
-| `openspec/specs/genshin/parity/compare/spec.md`                      | —     |       |
-| `openspec/specs/genshin/parity/light/spec.md`                        | —     |       |
-| `openspec/specs/genshin/parity/motion/spec.md`                       | —     |       |
-| `openspec/specs/genshin/parity/tracing/spec.md`                      | —     |       |
-| `openspec/specs/genshin/parity/witness/spec.md`                      | —     |       |
-| `openspec/specs/genshin/puzzles/monument/spec.md`                    | —     |       |
-| `openspec/specs/genshin/puzzles/seelie/spec.md`                      | —     |       |
-| `openspec/specs/genshin/resident-schedules/spec.md`                  | —     |       |
-| `openspec/specs/genshin/save-data/spec.md`                           | —     |       |
-| `openspec/specs/genshin/scene-groups/spec.md`                        | —     |       |
-| `openspec/specs/genshin/shops/spec.md`                               | —     |       |
-| `openspec/specs/genshin/snezhnaya/spec.md`                           | —     |       |
-| `openspec/specs/genshin/sound-effects/spec.md`                       | —     |       |
-| `openspec/specs/genshin/vegetation/spec.md`                          | —     |       |
-| `openspec/specs/genshin/weapon-enhancement/spec.md`                  | —     |       |
-| `openspec/specs/genshin/wish/spec.md`                                | —     |       |
-| `openspec/specs/genshin/archive/spec.md`                             | —     |       |
-| `openspec/specs/genshin/character-profile/spec.md`                   | —     |       |
-| `openspec/specs/genshin/characters/drawing/spec.md`                  | —     |       |
-| `openspec/specs/genshin/constellations/spec.md`                      | —     |       |
-| `openspec/specs/genshin/derived-assets/animestudio-upstream/spec.md` | —     |       |
-| `openspec/specs/genshin/dialogue/spec.md`                            | —     |       |
-| `openspec/specs/genshin/elemental-sight/spec.md`                     | —     |       |
-| `openspec/specs/genshin/exploring/spec.md`                           | —     |       |
-| `openspec/specs/genshin/gadgets/spec.md`                             | —     |       |
-| `openspec/specs/genshin/inazuma/spec.md`                             | —     |       |
-| `openspec/specs/genshin/kits/aino/spec.md`                           | —     |       |
-| `openspec/specs/genshin/kits/amber/spec.md`                          | —     |       |
-| `openspec/specs/genshin/kits/chasca/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/chevreuse/spec.md`                      | —     |       |
-| `openspec/specs/genshin/kits/collei/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/dori/spec.md`                           | —     |       |
-| `openspec/specs/genshin/kits/hu-tao/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/lauma/spec.md`                          | —     |       |
-| `openspec/specs/genshin/kits/linnea/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/mualani/spec.md`                        | —     |       |
-| `openspec/specs/genshin/kits/noelle/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/ororon/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/raiden-shogun/spec.md`                  | —     |       |
-| `openspec/specs/genshin/kits/rosaria/spec.md`                        | —     |       |
-| `openspec/specs/genshin/kits/sethos/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/shenhe/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/sucrose/spec.md`                        | —     |       |
-| `openspec/specs/genshin/kits/thoma/spec.md`                          | —     |       |
-| `openspec/specs/genshin/kits/zhongli/spec.md`                        | —     |       |
-| `openspec/specs/genshin/login-screen/clouds/spec.md`                 | —     |       |
-| `openspec/specs/genshin/mining-outcrops/spec.md`                     | —     |       |
-| `openspec/specs/genshin/music/voices/spec.md`                        | —     |       |
-| `openspec/specs/genshin/nod-krai-kits/spec.md`                       | —     |       |
-| `openspec/specs/genshin/parity/costs/spec.md`                        | —     |       |
-| `openspec/specs/genshin/parity/screens/spec.md`                      | —     |       |
-| `openspec/specs/genshin/puzzles/time-trial-challenge/spec.md`        | —     |       |
-| `openspec/specs/genshin/quests/spec.md`                              | —     |       |
-| `openspec/specs/genshin/sampled-instruments/spec.md`                 | —     |       |
-| `openspec/specs/genshin/scatter/spec.md`                             | —     |       |
-| `openspec/specs/genshin/screens/spec.md`                             | —     |       |
-| `openspec/specs/genshin/serenitea-pot/spec.md`                       | —     |       |
-| `openspec/specs/genshin/spawned-places/spec.md`                      | —     |       |
-| `openspec/specs/genshin/sumeru-kits/spec.md`                         | —     |       |
-| `openspec/specs/genshin/touch-controls/spec.md`                      | —     |       |
-| `openspec/specs/genshin/achievements/spec.md`                        | —     |       |
-| `openspec/specs/genshin/artifact-strongbox/spec.md`                  | —     |       |
-| `openspec/specs/genshin/buildings/spec.md`                           | —     |       |
-| `openspec/specs/genshin/characters/development-packs/spec.md`        | —     |       |
-| `openspec/specs/genshin/characters/player-packs/spec.md`             | —     |       |
-| `openspec/specs/genshin/characters/pmx-reader/spec.md`               | —     |       |
-| `openspec/specs/genshin/chests/spec.md`                              | —     |       |
-| `openspec/specs/genshin/companionship/spec.md`                       | —     |       |
-| `openspec/specs/genshin/compute/capitals/spec.md`                    | —     |       |
-| `openspec/specs/genshin/compute/character/spec.md`                   | —     |       |
-| `openspec/specs/genshin/compute/crafting/spec.md`                    | —     |       |
-| `openspec/specs/genshin/compute/dialogue/spec.md`                    | —     |       |
-| `openspec/specs/genshin/compute/fontaine/spec.md`                    | —     |       |
-| `openspec/specs/genshin/compute/gcg/spec.md`                         | —     |       |
-| `openspec/specs/genshin/compute/handbook/spec.md`                    | —     |       |
-| `openspec/specs/genshin/compute/inazuma/spec.md`                     | —     |       |
-| `openspec/specs/genshin/compute/interaction/spec.md`                 | —     |       |
-| `openspec/specs/genshin/compute/interface/spec.md`                   | —     |       |
-| `openspec/specs/genshin/compute/inventory/spec.md`                   | —     |       |
-| `openspec/specs/genshin/compute/liyue/spec.md`                       | —     |       |
-| `openspec/specs/genshin/compute/login/spec.md`                       | —     |       |
-| `openspec/specs/genshin/compute/map/spec.md`                         | —     |       |
-| `openspec/specs/genshin/compute/mondstadt/spec.md`                   | —     |       |
-| `openspec/specs/genshin/compute/natlan/spec.md`                      | —     |       |
-| `openspec/specs/genshin/compute/nod-krai/spec.md`                    | —     |       |
-| `openspec/specs/genshin/compute/paimon/spec.md`                      | —     |       |
-| `openspec/specs/genshin/compute/quest/spec.md`                       | —     |       |
-| `openspec/specs/genshin/compute/settings/spec.md`                    | —     |       |
-| `openspec/specs/genshin/compute/snezhnaya/spec.md`                   | —     |       |
-| `openspec/specs/genshin/compute/sumeru/spec.md`                      | —     |       |
-| `openspec/specs/genshin/compute/text/spec.md`                        | —     |       |
-| `openspec/specs/genshin/compute/windrise/spec.md`                    | —     |       |
-| `openspec/specs/genshin/compute/wish/spec.md`                        | —     |       |
-| `openspec/specs/genshin/compute/world/spec.md`                       | —     |       |
-| `openspec/specs/genshin/fishing/spec.md`                             | —     |       |
-| `openspec/specs/genshin/follow-camera/spec.md`                       | —     |       |
-| `openspec/specs/genshin/free-camera/spec.md`                         | —     |       |
-| `openspec/specs/genshin/game-reading/spec.md`                        | —     |       |
-| `openspec/specs/genshin/kits/albedo/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/alhaitham/spec.md`                      | —     |       |
-| `openspec/specs/genshin/kits/aloy/spec.md`                           | —     |       |
-| `openspec/specs/genshin/kits/alyosha/spec.md`                        | —     |       |
-| `openspec/specs/genshin/kits/arlecchino/spec.md`                     | —     |       |
-| `openspec/specs/genshin/kits/baizhu/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/barbara/spec.md`                        | —     |       |
-| `openspec/specs/genshin/kits/bennett/spec.md`                        | —     |       |
-| `openspec/specs/genshin/kits/charlotte/spec.md`                      | —     |       |
-| `openspec/specs/genshin/kits/chiori/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/citlali/spec.md`                        | —     |       |
-| `openspec/specs/genshin/kits/clorinde/spec.md`                       | —     |       |
-| `openspec/specs/genshin/kits/cyno/spec.md`                           | —     |       |
-| `openspec/specs/genshin/kits/dahlia/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/diluc/spec.md`                          | —     |       |
-| `openspec/specs/genshin/kits/diona/spec.md`                          | —     |       |
-| `openspec/specs/genshin/kits/durin/spec.md`                          | —     |       |
-| `openspec/specs/genshin/kits/emilie/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/escoffier/spec.md`                      | —     |       |
-| `openspec/specs/genshin/kits/eula/spec.md`                           | —     |       |
-| `openspec/specs/genshin/kits/faruzan/spec.md`                        | —     |       |
-| `openspec/specs/genshin/kits/fischl/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/flins/spec.md`                          | —     |       |
-| `openspec/specs/genshin/kits/freminet/spec.md`                       | —     |       |
-| `openspec/specs/genshin/kits/gaming/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/ganyu/spec.md`                          | —     |       |
-| `openspec/specs/genshin/kits/gorou/spec.md`                          | —     |       |
-| `openspec/specs/genshin/kits/heizou/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/iansan/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/ifa/spec.md`                            | —     |       |
-| `openspec/specs/genshin/kits/ineffa/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/itto/spec.md`                           | —     |       |
-| `openspec/specs/genshin/kits/jahoda/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/kaeya/spec.md`                          | —     |       |
-| `openspec/specs/genshin/kits/kamisato-ayato/spec.md`                 | —     |       |
-| `openspec/specs/genshin/kits/kaveh/spec.md`                          | —     |       |
-| `openspec/specs/genshin/kits/kazuha/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/keqing/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/kinich/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/kirara/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/klee/spec.md`                           | —     |       |
-| `openspec/specs/genshin/kits/kokomi/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/kujou-sara/spec.md`                     | —     |       |
-| `openspec/specs/genshin/kits/kuki/spec.md`                           | —     |       |
-| `openspec/specs/genshin/kits/lan-yan/spec.md`                        | —     |       |
-| `openspec/specs/genshin/kits/layla/spec.md`                          | —     |       |
-| `openspec/specs/genshin/kits/lisa/spec.md`                           | —     |       |
-| `openspec/specs/genshin/kits/lohen/spec.md`                          | —     |       |
-| `openspec/specs/genshin/kits/lynette/spec.md`                        | —     |       |
-| `openspec/specs/genshin/kits/lyney/spec.md`                          | —     |       |
-| `openspec/specs/genshin/kits/mavuika/spec.md`                        | —     |       |
-| `openspec/specs/genshin/kits/mika/spec.md`                           | —     |       |
-| `openspec/specs/genshin/kits/mizuki/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/mona/spec.md`                           | —     |       |
-| `openspec/specs/genshin/kits/nahida/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/navia/spec.md`                          | —     |       |
-| `openspec/specs/genshin/kits/neuvillette/spec.md`                    | —     |       |
-| `openspec/specs/genshin/kits/nicole/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/ningguang/spec.md`                      | —     |       |
-| `openspec/specs/genshin/kits/odette/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/prune/spec.md`                          | —     |       |
-| `openspec/specs/genshin/kits/razor/spec.md`                          | —     |       |
-| `openspec/specs/genshin/kits/sandrone/spec.md`                       | —     |       |
-| `openspec/specs/genshin/kits/sayu/spec.md`                           | —     |       |
-| `openspec/specs/genshin/kits/sigewinne/spec.md`                      | —     |       |
-| `openspec/specs/genshin/kits/skirk/spec.md`                          | —     |       |
-| `openspec/specs/genshin/kits/tartaglia/spec.md`                      | —     |       |
-| `openspec/specs/genshin/kits/tighnari/spec.md`                       | —     |       |
-| `openspec/specs/genshin/kits/traveler/spec.md`                       | —     |       |
-| `openspec/specs/genshin/kits/varesa/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/varka/spec.md`                          | —     |       |
-| `openspec/specs/genshin/kits/venti/spec.md`                          | —     |       |
-| `openspec/specs/genshin/kits/vodyanitsa/spec.md`                     | —     |       |
-| `openspec/specs/genshin/kits/wanderer/spec.md`                       | —     |       |
-| `openspec/specs/genshin/kits/wriothesley/spec.md`                    | —     |       |
-| `openspec/specs/genshin/kits/xiangling/spec.md`                      | —     |       |
-| `openspec/specs/genshin/kits/xianyun/spec.md`                        | —     |       |
-| `openspec/specs/genshin/kits/xiao/spec.md`                           | —     |       |
-| `openspec/specs/genshin/kits/xilonen/spec.md`                        | —     |       |
-| `openspec/specs/genshin/kits/xingqiu/spec.md`                        | —     |       |
-| `openspec/specs/genshin/kits/yae-miko/spec.md`                       | —     |       |
-| `openspec/specs/genshin/kits/yanfei/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/yaoyao/spec.md`                         | —     |       |
-| `openspec/specs/genshin/kits/yelan/spec.md`                          | —     |       |
-| `openspec/specs/genshin/kits/yoimiya/spec.md`                        | —     |       |
-| `openspec/specs/genshin/kits/yun-jin/spec.md`                        | —     |       |
-| `openspec/specs/genshin/kits/zibai/spec.md`                          | —     |       |
-| `openspec/specs/genshin/mondstadt-buildings/spec.md`                 | —     |       |
-| `openspec/specs/genshin/music/scoring/spec.md`                       | —     |       |
-| `openspec/specs/genshin/parity/references/spec.md`                   | —     |       |
-| `openspec/specs/genshin/parity/visual-suite/spec.md`                 | —     |       |
-| `openspec/specs/genshin/rendering-style/spec.md`                     | —     |       |
-| `openspec/specs/genshin/statues-of-the-seven/spec.md`                | —     |       |
-| `openspec/specs/genshin/terrain-shape-height/spec.md`                | —     |       |
-| `openspec/specs/genshin/terrain/spec.md`                             | —     |       |
-| `openspec/specs/genshin/trees/spec.md`                               | —     |       |
-| `openspec/specs/genshin/water/spec.md`                               | —     |       |
-| `openspec/specs/genshin/world-map/spec.md`                           | —     |       |
+| Unit                                                                 | Swept                  | Notes |
+| :------------------------------------------------------------------- | :--------------------- | :---- |
+| `openspec/specs/genshin/inventory/spec.md`                           | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/character-attributes/spec.md`                | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/characters/shading/spec.md`                  | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/gathering/spec.md`                           | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/party/spec.md`                               | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/combat/spec.md`                              | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/forging/spec.md`                             | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/login-screen/light/spec.md`                  | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/artifact-enhancement/spec.md`                | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/engine-architecture/spec.md`                 | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/interface-layout/spec.md`                    | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/spiral-abyss/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/derived-assets/spec.md`                      | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/wildlife/spec.md`                            | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/bosses/spec.md`                              | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/character-screen/spec.md`                    | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/enemies/spec.md`                             | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/genius-invokation/rules/spec.md`             | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/liyue-building-kit/spec.md`                  | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/login-screen/camera-and-glide/spec.md`       | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/paimon-menu/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/weather/spec.md`                             | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/cooking/spec.md`                             | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/game-data-formats/spec.md`                   | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/genius-invokation/decks/spec.md`             | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/illuga/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/ley-line-outcrops/spec.md`                   | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/reputation/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/controls/spec.md`                            | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/ground-paint/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/hud/spec.md`                                 | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/interaction/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/login-screen/sky/spec.md`                    | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/map/spec.md`                                 | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/minimap/spec.md`                             | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/original-resin/spec.md`                      | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/parity/passes/spec.md`                       | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/sky-and-time/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/adventure-rank/spec.md`                      | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/adventurer-handbook/spec.md`                 | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/character-controller/spec.md`                | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/crafting/spec.md`                            | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/derived-assets/development-exports/spec.md`  | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/expeditions/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/game-text/spec.md`                           | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/genius-invokation/duel-board/spec.md`        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/interface-library/spec.md`                   | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/beidou/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/columbina/spec.md`                      | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/nilou/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/login-screen/door/spec.md`                   | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/login-screen/interface/spec.md`              | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/map-unlocking/spec.md`                       | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/music/expression/spec.md`                    | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/offering-systems/spec.md`                    | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/parity/commands/spec.md`                     | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/region-buildings/spec.md`                    | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/reset-clock/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/scene-derivation/spec.md`                    | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/talents/spec.md`                             | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/title-splash/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/commissions/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/derived-assets/animestudio-macos/spec.md`    | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/domains/spec.md`                             | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/exploration-progress/spec.md`                | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/flowing-water/spec.md`                       | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/hosted-game-data/spec.md`                    | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/imaginarium-theater/spec.md`                 | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/investigation/spec.md`                       | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/candace/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/chongyun/spec.md`                       | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/dehya/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/furina/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/jean/spec.md`                           | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/kachina/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/kamisato-ayaka/spec.md`                 | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/nefer/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/qiqi/spec.md`                           | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/vesna/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/xinyan/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/load-budget/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/login-screen/towers/spec.md`                 | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/login-screen/walkway/spec.md`                | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/music/synthesizer/spec.md`                   | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/parity/clean-plate/spec.md`                  | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/parity/compare/spec.md`                      | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/parity/light/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/parity/motion/spec.md`                       | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/parity/tracing/spec.md`                      | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/parity/witness/spec.md`                      | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/puzzles/monument/spec.md`                    | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/puzzles/seelie/spec.md`                      | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/resident-schedules/spec.md`                  | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/save-data/spec.md`                           | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/scene-groups/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/shops/spec.md`                               | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/snezhnaya/spec.md`                           | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/sound-effects/spec.md`                       | —                      |       |
+| `openspec/specs/genshin/vegetation/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/weapon-enhancement/spec.md`                  | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/wish/spec.md`                                | —                      |       |
+| `openspec/specs/genshin/archive/spec.md`                             | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/character-profile/spec.md`                   | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/characters/drawing/spec.md`                  | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/constellations/spec.md`                      | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/derived-assets/animestudio-upstream/spec.md` | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/dialogue/spec.md`                            | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/elemental-sight/spec.md`                     | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/exploring/spec.md`                           | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/gadgets/spec.md`                             | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/inazuma/spec.md`                             | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/aino/spec.md`                           | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/amber/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/chasca/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/chevreuse/spec.md`                      | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/collei/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/dori/spec.md`                           | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/hu-tao/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/lauma/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/linnea/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/mualani/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/noelle/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/ororon/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/raiden-shogun/spec.md`                  | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/rosaria/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/sethos/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/shenhe/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/sucrose/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/thoma/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/zhongli/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/login-screen/clouds/spec.md`                 | —                      |       |
+| `openspec/specs/genshin/mining-outcrops/spec.md`                     | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/music/voices/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/nod-krai-kits/spec.md`                       | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/parity/costs/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/parity/screens/spec.md`                      | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/puzzles/time-trial-challenge/spec.md`        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/quests/spec.md`                              | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/sampled-instruments/spec.md`                 | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/scatter/spec.md`                             | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/screens/spec.md`                             | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/serenitea-pot/spec.md`                       | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/spawned-places/spec.md`                      | —                      |       |
+| `openspec/specs/genshin/sumeru-kits/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/touch-controls/spec.md`                      | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/achievements/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/artifact-strongbox/spec.md`                  | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/buildings/spec.md`                           | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/characters/development-packs/spec.md`        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/characters/player-packs/spec.md`             | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/characters/pmx-reader/spec.md`               | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/chests/spec.md`                              | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/companionship/spec.md`                       | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/compute/capitals/spec.md`                    | —                      |       |
+| `openspec/specs/genshin/compute/character/spec.md`                   | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/compute/crafting/spec.md`                    | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/compute/dialogue/spec.md`                    | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/compute/fontaine/spec.md`                    | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/compute/gcg/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/compute/handbook/spec.md`                    | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/compute/inazuma/spec.md`                     | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/compute/interaction/spec.md`                 | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/compute/interface/spec.md`                   | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/compute/inventory/spec.md`                   | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/compute/liyue/spec.md`                       | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/compute/login/spec.md`                       | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/compute/map/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/compute/mondstadt/spec.md`                   | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/compute/natlan/spec.md`                      | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/compute/nod-krai/spec.md`                    | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/compute/paimon/spec.md`                      | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/compute/quest/spec.md`                       | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/compute/settings/spec.md`                    | —                      |       |
+| `openspec/specs/genshin/compute/snezhnaya/spec.md`                   | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/compute/sumeru/spec.md`                      | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/compute/text/spec.md`                        | —                      |       |
+| `openspec/specs/genshin/compute/windrise/spec.md`                    | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/compute/wish/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/compute/world/spec.md`                       | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/fishing/spec.md`                             | —                      |       |
+| `openspec/specs/genshin/follow-camera/spec.md`                       | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/free-camera/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/game-reading/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/albedo/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/alhaitham/spec.md`                      | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/aloy/spec.md`                           | —                      |       |
+| `openspec/specs/genshin/kits/alyosha/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/arlecchino/spec.md`                     | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/baizhu/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/barbara/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/bennett/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/charlotte/spec.md`                      | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/chiori/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/citlali/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/clorinde/spec.md`                       | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/cyno/spec.md`                           | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/dahlia/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/diluc/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/diona/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/durin/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/emilie/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/escoffier/spec.md`                      | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/eula/spec.md`                           | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/faruzan/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/fischl/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/flins/spec.md`                          | —                      |       |
+| `openspec/specs/genshin/kits/freminet/spec.md`                       | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/gaming/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/ganyu/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/gorou/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/heizou/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/iansan/spec.md`                         | —                      |       |
+| `openspec/specs/genshin/kits/ifa/spec.md`                            | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/ineffa/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/itto/spec.md`                           | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/jahoda/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/kaeya/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/kamisato-ayato/spec.md`                 | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/kaveh/spec.md`                          | —                      |       |
+| `openspec/specs/genshin/kits/kazuha/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/keqing/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/kinich/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/kirara/spec.md`                         | —                      |       |
+| `openspec/specs/genshin/kits/klee/spec.md`                           | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/kokomi/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/kujou-sara/spec.md`                     | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/kuki/spec.md`                           | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/lan-yan/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/layla/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/lisa/spec.md`                           | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/lohen/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/lynette/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/lyney/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/mavuika/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/mika/spec.md`                           | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/mizuki/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/mona/spec.md`                           | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/nahida/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/navia/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/neuvillette/spec.md`                    | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/nicole/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/ningguang/spec.md`                      | —                      |       |
+| `openspec/specs/genshin/kits/odette/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/prune/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/razor/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/sandrone/spec.md`                       | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/sayu/spec.md`                           | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/sigewinne/spec.md`                      | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/skirk/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/tartaglia/spec.md`                      | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/tighnari/spec.md`                       | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/traveler/spec.md`                       | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/varesa/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/varka/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/venti/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/vodyanitsa/spec.md`                     | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/wanderer/spec.md`                       | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/wriothesley/spec.md`                    | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/xiangling/spec.md`                      | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/xianyun/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/xiao/spec.md`                           | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/xilonen/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/xingqiu/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/yae-miko/spec.md`                       | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/yanfei/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/yaoyao/spec.md`                         | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/yelan/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/yoimiya/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/yun-jin/spec.md`                        | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/kits/zibai/spec.md`                          | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/mondstadt-buildings/spec.md`                 | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/music/scoring/spec.md`                       | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/parity/references/spec.md`                   | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/parity/visual-suite/spec.md`                 | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/rendering-style/spec.md`                     | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/statues-of-the-seven/spec.md`                | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/terrain-shape-height/spec.md`                | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/terrain/spec.md`                             | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/trees/spec.md`                               | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/water/spec.md`                               | 2026-10-27 · Haiku 5.5 |       |
+| `openspec/specs/genshin/world-map/spec.md`                           | 2026-10-27 · Haiku 5.5 |       |
