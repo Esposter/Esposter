@@ -169,7 +169,6 @@ Each other region's open world is derived by `extract` from its capital's catalo
 
 ## Open
 
-
 - [ ] **The interface converges within a few tenths of a percent** — no source yet: the parity pages (`openspec/specs/genshin/parity/`) hold no interface error figure when searched for "converg" and "interface error", and `~/Esposter.noindex/genshin-parity/comparisons` holds 37 image files and no report, so the figures are not on this machine.
 - [ ] **A tower's mesh of thousands of vertices, its textures and the material's several dozen values** — no source yet: the tower export's counts were not taken here.
 - [ ] **The login stone's programs and the game's deferred lighting: the sun ramp, the sky harmonics, the cube and the GGX highlight** — no source yet: the `miHoYo/Scene/Login Base` program's bytes in `~/Esposter.noindex/genshin-parity/extracted/login/shaders/raw/12903389/Shader/Shader#171.dat` are compiled, the file holds the name once and `Cube` three times with no `GGX` or `Ramp` string, and its lighting terms are not decoded here.

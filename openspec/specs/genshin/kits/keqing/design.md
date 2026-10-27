@@ -17,8 +17,8 @@ Keqing's kit is its record and one behaviour module, `createKeqingKitBehaviour`,
 
 ## Key files
 
-| File                                                              | Role                                                                                                                                                              |
-| :---------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| File                                                              | Role                                                                                                                                                                                          |
+| :---------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `packages/genshin-world/src/services/kit/characters/keqingKit.ts` | `createKeqingKitBehaviour`, Keqing's kit with Stellar Restoration and its Lightning Stiletto's recast and infusion, Starward Sword's slashes and final strike, and Constellation 2's particle |
 
 ## Sources

@@ -22,9 +22,9 @@ Diona's kit is its record and one behaviour module, `createDionaKitBehaviour`, a
 
 ## Key files
 
-| File                                                             | Role                                                                                                                                           |
-| :--------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages/genshin-world/src/services/kit/characters/dionaKit.ts` | `createDionaKitBehaviour`, Diona's kit with Icy Paws' tap and hold, its shields, Signature Mix's field and its constellations 1, 2 and 6       |
+| File                                                             | Role                                                                                                                                     |
+| :--------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-world/src/services/kit/characters/dionaKit.ts` | `createDionaKitBehaviour`, Diona's kit with Icy Paws' tap and hold, its shields, Signature Mix's field and its constellations 1, 2 and 6 |
 
 ## Sources
 

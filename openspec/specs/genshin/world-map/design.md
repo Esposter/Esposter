@@ -66,7 +66,6 @@ flowchart TD
 
 ## Open
 
-
 - [ ] **Names are facts: the catalogue's names come from the wiki, and no shape comes from a map's imagery** — no source yet: the wiki's Area page is not in `~/Esposter/cache/genshin-wiki/`, and no region's shape was checked against imagery.
 - [ ] **The game's file holds no polygon for Nod-Krai's areas** — no source yet: `~/Esposter/genshin-parity/text/BinOutput/Scene/WorldArea/scene3_worldArea.json` was not searched for Nod-Krai's area names.
 - [ ] **Windrise is a subarea of Galesong Hill in Mondstadt** — no source yet: the wiki's Area page, named in Sources, is not on disk.

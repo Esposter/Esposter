@@ -21,6 +21,7 @@ The walkway SHALL be painted in three tones read from the game's paving, the mid
 
 - **WHEN** the walkway is shown
 - **THEN** its paint reads in those three tones
+
 ### Requirement: Carving as depth
 
 The walkway's pockets and joints SHALL be carved as depth that the scene's own light shades at every hour, with no dark line drawn over the paint.
@@ -38,14 +39,17 @@ Each piece SHALL rise from 3 metres down at 17.5 metres ahead of the camera, car
 
 - **WHEN** the camera nears the walkway's far end
 - **THEN** the pieces rise and settle in turn
+
 #### Scenario: Piece past the rise
 
 - **WHEN** a piece lies beyond the rise
 - **THEN** it does not stand and casts no shadow
+
 #### Scenario: Walkway end is fixed
 
 - **WHEN** the world has moved any distance
 - **THEN** the walkway still ends a fixed distance ahead of the camera
+
 ## Open
 
 - [ ] **The walkway is 23 pieces** — no source yet: the hosted `login/walkway` record is in neither the repository's data nor the parity folder. The post-image of `walkway.json` in `~/Esposter.noindex/genshin-parity/plans/login-walkway-layers.patch` has 23 pieces, but its compact JSON hashes to `9652a04b…`, not the lock's `7ffee328…`, so it is not confirmed as that record.

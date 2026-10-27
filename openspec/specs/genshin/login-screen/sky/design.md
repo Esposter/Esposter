@@ -24,7 +24,6 @@ The sky behind the login scene: each hour's clear sky, solved as the game's sky 
 | `packages/genshin-world/src/components/Login/Scene/Sky.reference.ts`         | The sky the scene is compared with, per hour                           |
 | `packages/genshin-world/src/components/Login/Scene/Light.reference.ts`       | The light the scene is compared with, per hour                         |
 
-
 ## Open
 
 - [ ] **The night's sky is lavender away from the sun and rose toward it, as the recording's is** — no source yet: no colour comparison with the recording is kept.

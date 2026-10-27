@@ -73,6 +73,7 @@ A screen with a crossing SHALL load with its crossing's props and, when the cros
 
 - **WHEN** the crossing is requested together with paused loading
 - **THEN** the run is refused
+
 ### Requirement: Meter against budgets
 
 The meter SHALL print each figure against its budget and SHALL exit non-zero when a figure checked there is over its budget.
@@ -114,6 +115,7 @@ The world SHALL signal ready only once every region in reach has arrived or fail
 
 - **WHEN** the coarser terrain rings are still streaming
 - **THEN** ready does not wait on them
+
 ## Open
 
 - [ ] **The time to ready is read after the network idle window** — contradicted by scripts/src/services/genshinParity/shared/openParityPage.ts: opens the page at its load event rather than once idle.

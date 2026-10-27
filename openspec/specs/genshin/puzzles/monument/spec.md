@@ -79,7 +79,6 @@ A puzzle of monuments SHALL count as solved only when every monument of it is li
 - **WHEN** the puzzle is checked
 - **THEN** the puzzle is not solved
 
-
 ## Open
 
 - [ ] **A Swirl that spreads an element lights a monument of that element, and Burning ticks Pyro and auras decay on each step, as the game does** — no source yet: the wiki's Elemental Monument page and its elemental pages are not in the genshin-wiki cache.

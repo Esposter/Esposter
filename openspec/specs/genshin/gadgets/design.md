@@ -21,12 +21,12 @@ flowchart TD
 
 The config's widget type is the game's own kind, and a gadget is built as one of four kinds (`packages/genshin-world/src/models/gadget/GadgetKind.ts`, `scripts/src/services/genshinAssets/gadgets/ConfigWidgetTypeGadgetKindMap.ts`). Each kind is one widget type or a few that act alike.
 
-| Kind              | Widget types                                                    | What the config spawns                                                       |
-| :---------------- | :-------------------------------------------------------------- | :--------------------------------------------------------------------------- |
-| Collector         | `ConfigWidgetClientCollector`                                   | a wind field that absorbs wind seeds (`~/Esposter/genshin-parity/text/ExcelBinOutput/GadgetExcelConfigData.json`, ids 70500005 and 70500012) |
+| Kind              | Widget types                                                    | What the config spawns                                                                                                                                                                                   |
+| :---------------- | :-------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Collector         | `ConfigWidgetClientCollector`                                   | a wind field that absorbs wind seeds (`~/Esposter/genshin-parity/text/ExcelBinOutput/GadgetExcelConfigData.json`, ids 70500005 and 70500012)                                                             |
 | Detector          | `ConfigWidgetClientDetector`, `ConfigWidgetTreasureMapDetector` | the treasure boxes of Mondstadt, Liyue and Dragonspine, and a Seelie crystal (`~/Esposter/genshin-parity/text/ExcelBinOutput/GadgetExcelConfigData.json`, ids 70500008, 70500009, 70500031 and 70500013) |
-| GatherPointFinder | `ConfigWidgetOneoffGatherPointDetector`                         | the success and failure crystals of its gather point types (`~/Esposter/genshin-parity/text/ExcelBinOutput/GadgetExcelConfigData.json`, ids 70290533 and 70290534) |
-| Device            | `ConfigWidgetGadgetBuilder`, `ConfigWidgetMiracleRing`          | a Seelie, a balloon widget and a miracle ring (`~/Esposter/genshin-parity/text/ExcelBinOutput/GadgetExcelConfigData.json`, ids 70500014, 70500022 and 70500020) |
+| GatherPointFinder | `ConfigWidgetOneoffGatherPointDetector`                         | the success and failure crystals of its gather point types (`~/Esposter/genshin-parity/text/ExcelBinOutput/GadgetExcelConfigData.json`, ids 70290533 and 70290534)                                       |
+| Device            | `ConfigWidgetGadgetBuilder`, `ConfigWidgetMiracleRing`          | a Seelie, a balloon widget and a miracle ring (`~/Esposter/genshin-parity/text/ExcelBinOutput/GadgetExcelConfigData.json`, ids 70500014, 70500022 and 70500020)                                          |
 
 The rest of the config's widgets, the cameras, the avatar attachments, the water sprite, the ability groups and the toys, are not among the four kinds and are left out of the slice until a page names them (`scripts/src/services/genshinAssets/gadgets/toGadgetRows.ts`). The camera widgets wait on the [free camera](../free-camera/design.md) page.
 

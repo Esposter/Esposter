@@ -34,4 +34,3 @@ Ifa's kit is built around the Nightsoul Blessing. Her skill's press enters the b
 - [Category:Ifa Talents](https://genshin-impact.fandom.com/wiki/Category:Ifa_Talents), Genshin Impact Wiki: the poise of her normal attacks, charged attack and plunges, with the Rite of Dispelling Winds page it lists. The cached copy is `~/Esposter/cache/genshin-wiki/Category_Ifa_Talents.json`, which the Not yet built poise bullet reads; this link was not re-opened when it was written.
 
 ## Open
-

@@ -30,4 +30,3 @@ Her skill spawns a Yuegui two metres ahead of her, 63 frames after the cast (`~/
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/yaoyao), MIT: Yaoyao's strikes' hitmarks, reaches and cancel frames, the charged attack's circle and frames, the skill's cast animation, and Moonjade Descent's circle, animation and frames. The source is on disk at `~/Esposter/cache/gcsim-v2.47.2/internal/characters/yaoyao/`, and the line numbers above are its files'; the proud skill groups 7731, 7732 and 7739 are in `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ProudSkillExcelConfigData.json`.
 
 ## Open
-

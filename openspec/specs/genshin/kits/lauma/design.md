@@ -36,8 +36,8 @@ Two differences from gcsim are named here. The kit spends one stack for each rea
 
 ## Key files
 
-| File                                                             | Role                                                                                                                                                                                                                                                                        |
-| :--------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| File                                                             | Role                                                                                                                                                                                                                                                   |
+| :--------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `packages/genshin-world/src/services/kit/characters/laumaKit.ts` | `createLaumaKitBehaviour`, Lauma's strikes, charged attack, Hymn of Hunting's press and Hymn of Eternal Rest's hold with its Frostgrove Sanctuary, RES shred and Lunar-Bloom hit, her Moonsign Benediction and her Pale Hymn stacks and their spending |
 
 ## Sources
