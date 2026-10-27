@@ -142,7 +142,7 @@ describe("blueprintRouter", () => {
     await expect(webpageCaller.readResourceContent({ id: deployment.resource.id })).resolves.toBeUndefined();
   });
 
-  test("a Blueprint revision from before the cutover is refused", async () => {
+  test("a Blueprint revision whose entry still holds editor content is refused", async () => {
     expect.hasAssertions();
 
     const blueprint = await createBlueprint({

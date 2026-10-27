@@ -153,7 +153,7 @@ A Blueprint's webpage or email entry SHALL deploy as an empty document, and a re
 - **WHEN** an owner deploys the Blueprint
 - **THEN** the deployed webpage starts as an empty document
 
-#### Scenario: A Blueprint revision from before the cutover is refused
+#### Scenario: A Blueprint revision whose entry still holds editor content is refused
 
 - **GIVEN** a Blueprint revision whose webpage or email entry still holds editor content
 - **WHEN** an owner deploys that revision
