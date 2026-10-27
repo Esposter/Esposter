@@ -12,7 +12,7 @@ description: Apply when creating or updating any README.md in this monorepo, inc
 - **Dropping the `<a name>` wrapper so a heading has one anchor.** Every heading here answers to two: the explicit `name` the ToC links (`#local-development`), and the id GitHub derives from the rendered text, which strips the emoji without trimming the space it left behind and so carries a leading hyphen (`#-local-development`) — that second one is what the hover permalink copies, so a link pasted from the UI and a link from the ToC differ. Both resolve, and the split is the price of the emoji rather than a fault in the template. Removing the wrapper would move every ToC link onto the hyphenated slug, which is an artifact of one renderer's slugger and not a name anything declares — where the explicit `name` says what it is and reads the same in every renderer that honours it. Dropping the emoji instead buys the clean slug by deleting the thing the heading template exists for. It stays as it is.
 - **Re-emitting the workspace graph as a mermaid fence** to collect GitHub's pan/zoom. It costs the `dot` layout and with it the runtime-edge weighting that ranks the picture by what the repo ships, the `box3d` fold, its shadow pass and the two-stop fills. The zoom is worth less than the picture it degrades.
 - **Documentation and Related Documentation sections.** A README links its specs from one line under the description and names no technology. The technology links are the root README's stack tables, and the how lives in the specs. The "level up" section and the per-package related list are gone, and neither comes back.
-- **Badge colours from anywhere but the brand accent.** Every shield takes one green, derived from the Standard palette's accent in `apps/web/configuration/UiPaletteMap.ts` and held to WCAG AA against the white label (`references/template.md`). A badge is not a place for a new hex, and a lighter tone fails AA, so none is added.
+- **Badge colours from anywhere but the brand palette.** The shields take the Standard style's light-mode tones from `apps/web/configuration/UiPaletteMap.ts`, which is Esposter's brand. A badge is not a place for a new hex.
 
 ## Template
 
@@ -20,7 +20,7 @@ Anchor-plus-emoji headings, a `---` after the table of contents, and the skeleto
 
 ## Badge Rules
 
-A published package carries all four badges, a private one the licence badge alone, all in the one green (`references/template.md`).
+A published package carries all four badges, a private one the licence badge alone, both in the palette's colours (`references/template.md`).
 
 ## Which packages, and which are published
 

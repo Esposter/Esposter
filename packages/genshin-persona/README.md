@@ -92,9 +92,9 @@ Four more are the authoring queues of one more skill, `genshin-author`. They are
 
 Licensed under [Apache-2.0][url-license]. The plugin holds no image or audio from the game. Its game text is committed as generated slices, the character data arrives through an MIT-licensed dependency, and every persona card is written in our own words.
 
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=038758
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
-[badge-npm-version]: https://img.shields.io/npm/v/genshin-persona/latest?color=038758
+[badge-npm-version]: https://img.shields.io/npm/v/genshin-persona/latest?color=1b7a5f
 [url-npm]: https://www.npmjs.com/package/genshin-persona/v/latest
 [badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/genshin-persona/latest?label=npm
 [badge-npm-downloads]: https://img.shields.io/npm/dm/genshin-persona.svg

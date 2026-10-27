@@ -38,5 +38,5 @@ const blobNames = getFilesBlobNames("prefix", [{ filename: "photo.png", id: "fil
 
 This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).
 
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=038758
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE

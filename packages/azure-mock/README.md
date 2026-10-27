@@ -57,9 +57,9 @@ Each client's state lives in an exported `Mock*Database` map (`MockTableDatabase
 
 This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).
 
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=038758
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
-[badge-npm-version]: https://img.shields.io/npm/v/azure-mock/latest?color=038758
+[badge-npm-version]: https://img.shields.io/npm/v/azure-mock/latest?color=1b7a5f
 [url-npm]: https://www.npmjs.com/package/azure-mock/v/latest
 [badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/azure-mock/latest?label=npm
 [badge-npm-downloads]: https://img.shields.io/npm/dm/azure-mock.svg

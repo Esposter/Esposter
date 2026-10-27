@@ -104,9 +104,9 @@ ceilings, named so a caller paginating, batching or enqueueing does not hard-cod
 
 This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).
 
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=038758
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
-[badge-npm-version]: https://img.shields.io/npm/v/@esposter/azure/latest?color=038758
+[badge-npm-version]: https://img.shields.io/npm/v/@esposter/azure/latest?color=1b7a5f
 [url-npm]: https://www.npmjs.com/package/@esposter/azure/v/latest
 [badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/@esposter/azure/latest?label=npm
 [badge-npm-downloads]: https://img.shields.io/npm/dm/@esposter/azure.svg
