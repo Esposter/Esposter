@@ -90,7 +90,7 @@ A claim SHALL cost Original Resin by its blossom's kind, and a weekly boss SHALL
 
 ### Requirement: A blossom offers its claim in the ways its kind allows
 
-A blossom's claim SHALL be offered as one claim at its price, and a ley line or a domain SHALL also offer two claims at twice the price or a Condensed Resin for three claims, while a boss offers one claim only.
+A blossom's claim SHALL be offered as one claim at its price, and a ley line or a domain SHALL also offer two claims at twice the price or a Condensed Resin for three claims.
 
 #### Scenario: Ley line offers three ways to pay
 
@@ -99,6 +99,10 @@ A blossom's claim SHALL be offered as one claim at its price, and a ley line or 
 - **THEN** one claim at its price is offered
 - **AND** two claims at twice the price are offered
 - **AND** a Condensed Resin for three claims is offered
+
+### Requirement: Boss claims offer one claim only
+
+A boss SHALL offer one claim only.
 
 #### Scenario: Boss offers one claim
 
@@ -118,7 +122,7 @@ The world SHALL show no claim offer at a blossom while no challenge leaves one t
 
 ### Requirement: A Condensed Resin pays three claims at a ley line or domain
 
-A Condensed Resin SHALL be spent for three claims at a ley line or a domain, and SHALL be refused at a boss.
+A Condensed Resin SHALL be spent for three claims at a ley line or a domain.
 
 #### Scenario: Condensed Resin spent at a ley line
 
@@ -126,6 +130,10 @@ A Condensed Resin SHALL be spent for three claims at a ley line or a domain, and
 - **WHEN** the player spends the Condensed Resin on the claim
 - **THEN** three claims are paid
 - **AND** no Original Resin is spent
+
+### Requirement: A Condensed Resin is refused at a boss
+
+A Condensed Resin SHALL be refused at a boss.
 
 #### Scenario: Condensed Resin refused at a boss
 
@@ -216,7 +224,7 @@ Choosing a claim SHALL spend its Original Resin and grant its rewards into the b
 
 ### Requirement: Fragile Resin restores sixty Original Resin
 
-Using Fragile Resin from the bag SHALL restore sixty Original Resin and remove one Fragile Resin from the bag (`~/Esposter/genshin-parity/text/ExcelBinOutput/MaterialExcelConfigData.json`, row `107009`, whose `itemUse` adds `106` by `60`).
+Using Fragile Resin from the bag SHALL restore sixty Original Resin and remove one Fragile Resin from the bag.
 
 #### Scenario: Using Fragile Resin restores sixty Original Resin
 
