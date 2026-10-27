@@ -7,7 +7,7 @@ The editing model of a block editor: a registry-checked document whose root decl
 ```mermaid
 flowchart TD
   REG["a consumer's registry: its root and its types"] --> SCHEMA["createBlockDocumentSchema: the root's content schema, then the id and count walk"]
-  CMD["a command: insert, remove, move, move into the previous sibling, update props or paste"] --> GATE{"getAcceptedTypes: does the slot the command fills accept the node?"}
+  CMD["a command, update props or paste"] --> GATE{"getAcceptedTypes: does the slot the command fills accept the node?"}
   PASTE["a paste's copies, with fresh ids"] --> COPIES{"createBlockNodesSchema: the copies against the slot's types, then the id walk"}
   GATE -->|no| NONE["no operations, and the document is unchanged"]
   COPIES -->|no| NONE
