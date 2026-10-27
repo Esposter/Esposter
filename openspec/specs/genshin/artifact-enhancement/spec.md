@@ -95,17 +95,19 @@ An artifact's level SHALL rise as far as its EXP reaches the table's costs, and 
 - **THEN** the artifact stays at its highest level
 - **AND** the EXP beyond it is lost
 
-### Requirement: Every fourth level adds or raises a minor affix
+### Requirement: Every fourth level adds a minor affix to an artifact holding fewer than four
 
 Each fourth level an artifact passes SHALL add a minor affix to an artifact holding fewer than four.
-
-Each fourth level an artifact passes SHALL raise one of its four minor affixes.
 
 #### Scenario: Fewer than four minor affixes gains one
 
 - **GIVEN** an artifact with three minor affixes
 - **WHEN** it passes a fourth level
 - **THEN** it gains one further minor affix from those it lacks
+
+### Requirement: Every fourth level raises a minor affix of an artifact holding four
+
+Each fourth level an artifact passes SHALL raise one of its four minor affixes.
 
 #### Scenario: Four minor affixes raises one
 
@@ -133,25 +135,27 @@ A locked artifact SHALL never be used as fodder for another artifact.
 
 A reaction the Instructor's wearer triggers on the field SHALL give every deployed member of the team the bonus's Elemental Mastery for its seconds.
 
-The Elemental Mastery buff SHALL be restarted rather than stacked.
-
 #### Scenario: Reaction on the field gives the team the buff
 
 - **GIVEN** the Instructor's wearer is on the field
 - **WHEN** the wearer triggers a reaction
 - **THEN** every deployed team member gains the bonus's Elemental Mastery for its seconds
 
-#### Scenario: Repeated reaction restarts the buff
-
-- **GIVEN** the Elemental Mastery buff is active
-- **WHEN** another reaction is triggered by the wearer
-- **THEN** the buff restarts rather than stacking
-
 #### Scenario: Summon's reaction after the wearer leaves gives nothing
 
 - **GIVEN** the wearer has left the field
 - **WHEN** the wearer's summon triggers a reaction
 - **THEN** no Elemental Mastery is given
+
+### Requirement: Instructor's four-piece buff is restarted rather than stacked
+
+The Elemental Mastery buff SHALL be restarted rather than stacked.
+
+#### Scenario: Repeated reaction restarts the buff
+
+- **GIVEN** the Elemental Mastery buff is active
+- **WHEN** another reaction is triggered by the wearer
+- **THEN** the buff restarts rather than stacking
 
 ### Requirement: The Exile's four-piece regenerates the others' energy after a burst
 
@@ -168,19 +172,21 @@ A burst the wearer of The Exile's four-piece uses SHALL start a field that gives
 
 - **GIVEN** an energy field is still ticking
 - **WHEN** any wearer uses another burst
-- **THEN** no second field starts (gcsim `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/artifacts/exile/exile.go`, lines 50 to 54).
+- **THEN** no second field starts.
 
 ### Requirement: Traveling Doctor's four-piece heals its wearer as its burst is used
 
 A burst the wearer of Traveling Doctor's four-piece uses SHALL restore the wearer twenty percent of its Max HP.
-
-The restore SHALL be raised by the wearer's Healing Bonus.
 
 #### Scenario: Burst restores the wearer
 
 - **GIVEN** Traveling Doctor's wearer uses a burst
 - **WHEN** the burst is used
 - **THEN** the wearer is restored twenty percent of its Max HP
+
+### Requirement: Traveling Doctor's restore is raised by the wearer's Healing Bonus
+
+The restore SHALL be raised by the wearer's Healing Bonus.
 
 #### Scenario: Incoming Healing Bonus raises the restore
 

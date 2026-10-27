@@ -243,6 +243,7 @@ The weights are not in the tables. They are cited as the wiki's: each slot's mai
 - `~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, affix 2100131: 20% of Max HP, grounding "Traveling Doctor's four-piece heals its wearer as its burst is used" and "Traveling Doctor's restore is raised by the wearer's Healing Bonus".
 - `~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, affix 2100051, grounding "Berserker's four-piece raises CRIT Rate at low HP".
 - `~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, affix 2100101: 30% over 5s, 6% of Max HP a second, grounding "Adventurer's four-piece restoration".
+- [gcsim](https://github.com/genshinsim/gcsim) (MIT), `~/Esposter.noindex/cache/gcsim-v2.47.2/internal/artifacts/exile/exile.go`, lines 50 to 54, grounding scenario 'A running field starts no second one'.
 
 ## Open
 
