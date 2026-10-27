@@ -9,7 +9,7 @@ flowchart TD
   input["Query text from the Drizzle logger"]
   scan["One pass over the text<br/>a single alternation, read with matchAll"]
   token{"Which alternative matched?"}
-  painted["Comment, string, double-quoted identifier,<br/>parameter, keyword, function or number"]
+  painted["A token of a painted kind"]
   plain["Unpainted text, kept as typed<br/>bracket, operator or space: kept as typed"]
   styled["styleText paints the token<br/>and drops the colour off a non-terminal"]
   output["Output with colour stripped equals the input"]
