@@ -32,4 +32,4 @@ flowchart LR
 
 ## Notes
 
-- No persistence, no server involvement — deliberately the smallest possible feature. If users later ask for remembered per-friend volumes, that becomes a `userSettingsInMessage`-adjacent design decision, not an extension of this.
+- Deliberately the smallest possible feature. If users later ask for remembered per-friend volumes, that becomes a `userSettingsInMessage`-adjacent design decision, not an extension of this.

@@ -35,7 +35,7 @@ flowchart TD
 
 ## Data model
 
-One column: `usersToRooms.displayName` — `text`, NOT NULL DEFAULT `""`, max 32 chars.
+One column: `usersToRooms.displayName` — `text`, NOT NULL DEFAULT `""`, length capped by `DISPLAY_NAME_MAX_LENGTH`.
 
 ## Client state — `useUserToRoomStore` and `useUserStore`
 

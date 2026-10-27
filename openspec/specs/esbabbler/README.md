@@ -10,7 +10,7 @@ Esbabbler is Esposter's messaging module: a Discord-like experience with rooms, 
 - **Storage split** — relational data (rooms, roles, bans, friends, settings, scheduled jobs) lives in Postgres; high-volume, time-ordered data (messages, moderation log) lives in Azure Table Storage with `partitionKey = roomId` and a reverse-ticked timestamp `rowKey` so newest rows sort first. See [messaging](messaging/design.md).
 - **Real-time** — in-process Node `EventEmitter`s (`messageEventEmitter`, `roomEventEmitter`, `callEventEmitter`, …) drive tRPC subscriptions; Azure Web PubSub handles webhook delivery. Subscriptions are the source of truth for store mutations.
 - **RBAC** — permissions are a bigint bitfield on room roles; every privileged procedure is gated through a permissions-aware procedure builder. See [RBAC](rbac/design.md).
-- **Call session** — a call is anchored to a `callSessionsInMessage` row (12-character shareable id), not to a route. Room calls and standalone `/calls/[id]` share-link calls use the same session model. See [calls](calls/README.md).
+- **Call session** — a call is anchored to a `callSessionsInMessage` row (shareable id, its length set by `CALL_ID_LENGTH`), not to a route. Room calls and standalone `/calls/[id]` share-link calls use the same session model. See [calls](calls/README.md).
 
 ## Pages
 

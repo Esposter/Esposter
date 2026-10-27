@@ -8,7 +8,7 @@ Sub-pages: [call view UI](call-view/design.md) · [screenshare](screenshare/desi
 
 A call is anchored to a `callSessionsInMessage` row, not a route:
 
-- `id: text` PK — a **12-char alphanumeric token** (`createId(CALL_ID_LENGTH)`, crypto-secure); the id _is_ the shareable link token.
+- `id: text` PK — a **shareable alphanumeric token** (`createId(CALL_ID_LENGTH)`, crypto-secure); the id _is_ the shareable link token.
 - `roomId` — set for room calls (unique FK → rooms, cascade); null-scoped standalone calls persist ownership on `userId` (creator).
 - The session row is the persistent 1:1 anchor per room and survives restarts; participants do not (in-memory `callSessionParticipantMap`).
 
@@ -149,6 +149,5 @@ DM calls work identically — call procedures accept `RoomType.DirectMessage`; m
 
 ## Notes
 
-- **An SFU rather than a mesh.** Mesh WebRTC costs each participant an upload per peer, which video and screenshare make unsustainable past a handful of people; routing through LiveKit also means the app owns no signaling procedures of its own.
+- **An SFU rather than a mesh.** Mesh WebRTC costs each participant an upload per peer, which video and screenshare make unsustainable past a handful of people.
 - Hosting: LiveKit Cloud free tier (5,000 participant-minutes/month) now; self-hosted LiveKit on Azure Container Apps (~$5–15/month, scales to zero) when usage exceeds ~10,000 participant-minutes/month.
-- Virtual backgrounds: presets plus uploaded per-user slots via `@livekit/track-processors`; selecting one turns the camera on, and camera-off resets the processor. See [virtual backgrounds](virtual-backgrounds/design.md).

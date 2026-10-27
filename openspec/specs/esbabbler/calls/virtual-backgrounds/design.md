@@ -22,9 +22,9 @@ The list is the container listing under that prefix. Nothing has to be kept in s
 
 **Resolving a slot re-reads the listing rather than the session cache.** The cache the picker renders from goes wrong in both directions over the life of a session: it holds a slot another device has deleted, which would resolve to a url whose blob is gone instead of to no background, and the read SAS it is holding expires while the session stays open. Only a slot ever reaches that path, so a preset still pays nothing.
 
-A preset's id can never collide with a slot number, since ids are names and slots are numbers, so the two need no tag to tell apart. Persisting it is the smaller half of the value, but the visible one: before it, choosing a background was a per-tab act and anyone who wanted one had to re-pick it every session.
+A preset's id can never collide with a slot number, since ids are names and slots are numbers, so the two need no tag to tell apart. Persisting it is the smaller half of the value, but the visible one: a background picked once carries into every later call and session, rather than being re-picked for each tab.
 
-Applying a background and remembering it are separate calls. A camera that starts mid-call applies the persisted pick without writing it back — restoring a selection is not the user making it again.
+Applying a background and remembering it are separate calls. Selecting a background turns the camera on, and turning the camera off resets the processor. A camera that starts mid-call applies the persisted pick without writing it back — restoring a selection is not the user making it again.
 
 Picks supersede rather than queue, so only the one still in force is remembered. A slow selection can resolve after a later one has already applied; persisting it then would leave the settings row naming a background the call is not showing, and restore it on the next camera start.
 
@@ -53,7 +53,7 @@ A slot whose blob is gone resolves to nothing and falls back to no background, w
 
 Because a slot's blob name is fixed, a replace and a delete name the same blob, and a deletion event still in flight would take the replacement with it. **The delete is therefore published as a bounded prefix rather than as the name itself**: `publishBlobPrefixDeletion` stamps `createdBefore` with the instant the delete was decided, and the handler's listing drops anything created after it. A slot that has since been re-uploaded keeps its new image, and the worst case is a blob nothing points at rather than a background that vanishes after being replaced. This is the same bound every other prefix sweep states, so the delete needs no new field on the deletion event ([file & media](../../file-media/design.md)).
 
-A browser without background-processor support keeps the earlier behaviour: uploads are still stored, and applying one warns rather than failing.
+A browser without background-processor support still stores uploads, and applying one warns rather than failing.
 
 ## Key files
 

@@ -6,13 +6,13 @@ A code file attached to a message opens in a read-only CodeMirror view. The file
 
 ```mermaid
 flowchart TD
-  F["setup: the text fetched once, empty on failure"] --> M["onMounted: a view created with the text as its document"]
-  M --> C["basicSetup, then the grammar and the chrome in one compartment, read-only"]
-  G["the grammar loads on first use of its language"] -->|"after the view exists"| R["the compartment reconfigured, the document and scroll kept"]
+  F["setup<br/>fetch the text once"] --> M["onMounted<br/>view created on the text"]
+  M --> C["basicSetup<br/>app extensions in one Compartment"]
+  G["grammar load<br/>on first use of its language"] -->|"after the view exists"| R["compartment reconfigured<br/>document and scroll kept"]
   C --> R
   R --> U{"the attachment is removed"}
-  U --> S["onBeforeUnmount: a static copy takes the view's element"]
-  S --> D["the view destroyed; the copy leaves with the component's element"]
+  U --> S["onBeforeUnmount<br/>static copy takes the element"]
+  S --> D["the view destroyed — the copy leaves with the component's element"]
 ```
 
 - **The language comes from the filename.** `getLanguage` matches the name against `LanguageRegexMap`. A name no pattern matches gets no grammar and shows as plain text.

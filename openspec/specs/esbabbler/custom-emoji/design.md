@@ -107,6 +107,6 @@ Deleting an emoji removes the row first and then publishes the blob deletion, be
 
 ## Notes
 
-The composer shows the shortcode while an emoji is being typed rather than the image. A Tiptap node view would preview it, and would change nothing about storage — the node is the same either way.
+A Tiptap node view would preview the image in the composer, and would change nothing about storage — the node is the same either way.
 
 Animated emoji are out of scope: an animated upload is a different content type, a different size cap, and a per-render cost on a list that already has a per-item weight budget ([message list rendering](../message-list-rendering/design.md)).

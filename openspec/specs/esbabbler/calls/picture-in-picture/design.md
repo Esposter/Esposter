@@ -15,12 +15,6 @@ stateDiagram-v2
     [*] --> Docked: isInCall
     Docked --> PoppedOut: PictureInPicture/Button click
     Docked --> PoppedOut: startScreenShare (auto, post-picker)
-    note right of PoppedOut
-      Host opens OS window
-      Teleport PictureInPicture/View into pictureInPictureWindow.document.body
-      Bridge stylesheets (Uno + tokens)
-      Same MediaStream objects — no reconnect
-    end note
     PoppedOut --> Docked: expand (navigate back to call surface)
     PoppedOut --> Docked: user closes OS window (pagehide)
     PoppedOut --> [*]: leaveCall (auto-dock + close)
