@@ -15,7 +15,7 @@ The Voice & Video panel of the [user settings dialog](../settings/design.md), al
 flowchart LR
   DB[("userSettingsInMessage<br/>(synced)")] --> LK["liveKit store watchers"]
   LOCAL[("voice.ts localStorage<br/>device IDs")] --> LK
-  PTT["usePushToTalk<br/>(main window + PiP key listeners)"] -->|"setPushToTalkKeyHeld"| LK
+  PTT["usePushToTalk"] -->|"setPushToTalkKeyHeld"| LK
   LK -->|"GainNode gain + VA/PTT gate"| MP["MicrophoneProcessor<br/>(LiveKit audio TrackProcessor)"]
   LK -->|"HTMLMediaElement.volume"| SPK["remote audio elements"]
   LK -->|"audioCaptureDefaults + restartTrack"| GUM["getUserMedia constraints"]
