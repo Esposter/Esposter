@@ -7,7 +7,7 @@ No check reads a README's code fences: no tsconfig includes them, and CI typeche
 ## The compiler per example
 
 - **`.ts`** — `tsrs --fast -p <config>`, the compiler the packages' `typecheck` script runs (`tsrs --fast`). It takes a tsc-style config, and `tsrs` cannot read `.vue`.
-- **`.vue`** — `vue-tsc --noEmit -p <config>`, from `apps/web/node_modules/.bin/vue-tsc` (the catalog version). Four packages declare it, all as `catalog:` (`apps/web`, `genshin-interface`, `vue-phaserjs` and `genshin-world`), and `apps/web`'s own typecheck is `nuxt typecheck`, so this copy is for a README example only.
+- **`.vue`** — `vue-tsc --noEmit -p <config>`, from `apps/web/node_modules/.bin/vue-tsc` (the catalog version). Only `apps/web` declares it, as `catalog:`; `genshin-interface`, `vue-phaserjs` and `genshin-world` typecheck through `tsrs` now, so no package's own typecheck runs it, and `apps/web`'s own typecheck is `nuxt typecheck`, so this copy is for a README example only.
 - The repo's TypeScript is 6: `baseUrl` is removed from the config, so map the package's name with `paths`.
 
 ## Steps
