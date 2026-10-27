@@ -21,7 +21,7 @@ flowchart TD
   Branch -->|no| Nothing["the run saves nothing"]
 ```
 
-The pnpm store is keyed on the lockfile's hash. `install-projects` saves it after its install, and only when the restore did not hit that exact key. The game-data mirror is keyed on the lock's hash, and `build-packages` fills it and saves it under that key. The vp task cache is keyed per run, so it is the one cache that changes on every executed run; it is small, and its save is gated the same way as the others.
+The pnpm store is keyed on the lockfile's hash. `install-projects` saves it after a full install, and only when the restore did not hit that exact key; a narrower install never saves it, since the store it leaves is partial. The game-data mirror is keyed on the lock's hash, and `build-packages` fills it and saves it under that key. The vp task cache is keyed per run, so it is the one cache that changes on every executed run; it is small, and its save is gated the same way as the others.
 
 ## What the regression test checks
 
@@ -29,17 +29,17 @@ The pnpm store is keyed on the lockfile's hash. `install-projects` saves it afte
 
 ## Key files
 
-| File                                                     | Role                                                                      |
-| -------------------------------------------------------- | ------------------------------------------------------------------------- |
-| `.github/actions/setup-project-dependencies/action.yaml` | keys the pnpm store on the lockfile and restores it, and hands its key on |
-| `.github/actions/install-projects/action.yaml`           | saves the pnpm store after the install, on a miss from the two branches   |
-| `.github/actions/run-cached-task/action.yaml`            | restores and saves the vp task cache; the save is gated                   |
-| `.github/workflows/build-packages.yaml`                  | restores the game-data mirror everywhere; fills and saves it on the two   |
-| `.github/workflows/CI.yaml`                              | the coverage shards restore the mirror and never save it                  |
-| `scripts/src/workspace/ciCaches.test.ts`                 | the guard: no combined cache action, no per-run store cache, gated saves  |
+| File                                                     | Role                                                                       |
+| -------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `.github/actions/setup-project-dependencies/action.yaml` | keys the pnpm store on the lockfile and restores it, and hands its key on  |
+| `.github/actions/install-projects/action.yaml`           | saves the pnpm store after a full install, on a miss from the two branches |
+| `.github/actions/run-cached-task/action.yaml`            | restores and saves the vp task cache; the save is gated                    |
+| `.github/workflows/build-packages.yaml`                  | restores the game-data mirror everywhere; fills and saves it on the two    |
+| `.github/workflows/CI.yaml`                              | the coverage shards restore the mirror and never save it                   |
+| `scripts/src/workspace/ciCaches.test.ts`                 | the guard: no combined cache action, no per-run store cache, gated saves   |
 
 ## Notes
 
 - A branch's first run finds no cache of its own and falls back to the default branch's, so a Renovate or pull request branch's first run reads `main`'s store and mirror, and fetches only what their lock adds.
 - A cache is evicted by least recent use once the repository passes its cap, so the mirror and the store survive because the two saving branches read them on every run.
-- The lockfile verification cache that `pnpm/setup` saves either way is a single small entry, and CodeQL's internal cache is not written by this repository's workflows. Neither is governed by this rule.
+- The lockfile verification cache that `pnpm/setup` saves on every branch is one small entry per lockfile and branch, so a run on another branch still saves that entry. CodeQL's internal cache is not written by this repository's workflows. Neither is governed by this rule.

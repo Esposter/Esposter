@@ -8,7 +8,7 @@ Which CI runs save a cache and which only read one: the default branch and ai/qu
 
 ### Requirement: A cache is saved only from the default branch and ai/queue
 
-Every CI cache save SHALL run only on a workflow run of the default branch or of ai/queue. A run on any other branch SHALL restore the newest cache it can see and SHALL save none.
+Every CI cache save SHALL run only on a workflow run of the default branch or of ai/queue. A run on any other branch SHALL restore the newest cache it can see and SHALL save no pnpm store, task cache or game data mirror.
 
 #### Scenario: a run on ai/queue saves its caches
 
@@ -20,18 +20,24 @@ Every CI cache save SHALL run only on a workflow run of the default branch or of
 
 - **GIVEN** a run whose branch is a Renovate or pull request branch
 - **WHEN** the run reaches a cache save step
-- **THEN** no cache is saved
+- **THEN** no store, task cache or mirror is saved
 - **AND** the run's restore reads the newest cache from its own branch or the default branch
 
 ### Requirement: The pnpm store is saved only when its lockfile key is missing
 
-The pnpm store SHALL be keyed on the contents of the lockfile, and SHALL be saved after an install only when no store exists under that exact key.
+The pnpm store SHALL be keyed on the contents of the lockfile, and SHALL be saved after a full install only when no store exists under that exact key.
 
 #### Scenario: an unchanged lockfile saves nothing
 
 - **GIVEN** a store already saved under the current lockfile's key
 - **WHEN** a run restores that key and installs
 - **THEN** no store is saved
+
+#### Scenario: a narrower install saves no store
+
+- **GIVEN** a run whose install covers only part of the workspace
+- **WHEN** the install ends
+- **THEN** no store is saved, so a partial store never sits under the lockfile's key
 
 #### Scenario: a changed lockfile saves a store under its new key
 
