@@ -12,7 +12,7 @@ The sins mod SHALL be switched by its own command, off until it is switched on, 
 
 #### Scenario: Turning sins on
 
-- **GIVEN** sins is off
+- **GIVEN** sins is off and a key is set
 - **WHEN** the person sends the on command
 - **THEN** the band line and the pane are available and later prompts are scored
 
@@ -31,6 +31,18 @@ The sins mod SHALL be switched by its own command, off until it is switched on, 
 ### Requirement: Scoring needs a TypeSafe key, and the band and pane say so when it is missing
 
 While no TypeSafe key is set in the session's environment, the sins mod SHALL record no evidence, and the band line and the pane SHALL say that a key is needed.
+
+#### Scenario: Turning sins on without a key
+
+- **GIVEN** no key is set
+- **WHEN** the person sends the on command
+- **THEN** the switch does not change and the reply says a key is needed
+
+#### Scenario: A key removed before the next prompt
+
+- **GIVEN** sins is on and the key has been removed since the last prompt
+- **WHEN** the band or the pane is drawn
+- **THEN** it says a key is needed, before any prompt is scored
 
 #### Scenario: No key set
 
@@ -98,7 +110,7 @@ The pane SHALL draw each sin as one horizontal bar to its score, with a lighter 
 
 - **GIVEN** a steady run of prompts scored at 50%
 - **WHEN** the run has lasted well past the half-life
-- **THEN** the spread is about five percentage points
+- **THEN** the spread is about seven and a half percentage points
 
 #### Scenario: Seven sins drawn in a fixed order
 

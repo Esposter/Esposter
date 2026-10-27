@@ -15,6 +15,7 @@ export const getPosteriorTrail = (evidences: number[]): SinPosterior[] => {
   });
 };
 
-// A sin with no evidence reads as the prior, which is an even half with the spread of one count of each outcome
-export const getPosterior = (evidences: number[]): SinPosterior =>
-  getPosteriorTrail(evidences).at(-1) ?? { alpha: SIN_PRIOR, beta: SIN_PRIOR };
+// The posterior now is the trail's last entry, and a sin with no evidence reads as the prior: an even half with the spread
+// Of one count of each outcome
+export const getPosterior = (trail: SinPosterior[]): SinPosterior =>
+  trail.at(-1) ?? { alpha: SIN_PRIOR, beta: SIN_PRIOR };

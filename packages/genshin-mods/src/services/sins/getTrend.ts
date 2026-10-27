@@ -1,13 +1,12 @@
+import type { SinPosterior } from "../../models/SinPosterior";
+
 import { SIN_TREND_LENGTH } from "./constants";
-import { getPosteriorTrail } from "./getPosteriorTrail";
 
 const TREND_GLYPHS = "▁▂▃▄▅▆▇█";
 
-// The score after each of the last thirty prompts, from the same trail the score reads, so it is the score's own curve
-export const getTrend = (evidences: number[]): number[] =>
-  getPosteriorTrail(evidences)
-    .slice(-SIN_TREND_LENGTH)
-    .map(({ alpha, beta }) => alpha / (alpha + beta));
+// The score after each of the last thirty prompts, from the trail the score reads, so it is the score's own curve
+export const getTrend = (trail: SinPosterior[]): number[] =>
+  trail.slice(-SIN_TREND_LENGTH).map(({ alpha, beta }) => alpha / (alpha + beta));
 
 // One glyph per point, its height the point's share of the tallest glyph
 export const getTrendGlyphs = (trend: number[]): string =>

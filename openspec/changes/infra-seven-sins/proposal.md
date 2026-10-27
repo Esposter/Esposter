@@ -6,7 +6,7 @@ A session's prompts carry a pattern the band does not show: how the person is as
 
 ## What Changes
 
-- A sixth mod, `sins`, switched by `/sins [on | off]` and off until switched on.
+- A sixth mod, `sins`, switched by `/sins [on | off]` and off until switched on. Turning it on without a TypeSafe key is refused with a message, and the switch does not change.
 - With sins on and a key set, each prompt the person sends gets one Jev call that places the prompt on ordered levels for all seven sins at once. The prompt is redacted first, and it is never held for the answer.
 - Each sin's score is a discounted Beta posterior over those levels. It moves about halfway toward a new pattern within thirty prompts, and its spread narrows as prompts accrue.
 - A pane, opened from the band with `p`, draws seven horizontal bars, one per sin in its own fixed colour, each with its spread and its last thirty prompts as a trend. The band keeps one summary line.

@@ -2,14 +2,17 @@ import type { EngineInterface, On, RenderElement, RenderInput } from "claude-cod
 
 import { atom, read, update } from "claude-code";
 
-import type { EnabledMods, SinStatus } from "../../../types";
+import type { EnabledMods } from "../../../types";
 
 import { ACCENT_COLOR, HANDOFF_QUESTION, MAX_SHOWN_TASKS, WARM_QUESTION } from "../constants";
 import { InitialState } from "../InitialState";
 import { getResinFigures } from "../resin/getResinFigures";
-import { SinColorMap, SINS_PANE_ID } from "../sins/constants";
+import { SINS_PANE_ID } from "../sins/constants";
 import { getSinScores } from "../sins/getSinScores";
 import { readIsLightTheme } from "../sins/readIsLightTheme";
+import { readSinStatus } from "../sins/readSinStatus";
+import { SinColorMap } from "../sins/SinColorMap";
+import { SinStatusTextMap } from "../sins/SinStatusTextMap";
 import { getCommissionSummary } from "./getCommissionSummary";
 
 // The plugin's one band, a row per mod with something to say. `$` is followed only into functions in the file that
@@ -27,7 +30,6 @@ const lastCacheRequestAtAtom = atom(
 );
 const nowAtom = atom({ key: "now", plugin: "genshin-mods" } as const, InitialState.now);
 const sinHistoryAtom = atom({ key: "sinHistory", plugin: "genshin-mods" } as const, InitialState.sinHistory);
-const sinStatusAtom = atom({ key: "sinStatus", plugin: "genshin-mods" } as const, InitialState.sinStatus);
 const waypointsAtom = atom({ key: "waypoints", plugin: "genshin-mods" } as const, InitialState.waypoints);
 
 // The engine's press slot takes no promise; every action here resolves each of its outcomes itself
@@ -194,12 +196,6 @@ const drawWaypointsRow = async (
   });
 };
 
-// Why the band's sins row says so instead of the scores, for the statuses that have a reason to say
-const SinStatusSummaryMap: Partial<Record<SinStatus, string>> = {
-  "no-key": "needs a TypeSafe key",
-  "node-too-old": "needs Node 22.13 or later",
-};
-
 // The sins as one line, each in its colour, with the pane's own button; the pane holds the bars and the trends
 const drawSinsRow = async (
   $: EngineInterface,
@@ -211,7 +207,7 @@ const drawSinsRow = async (
 
   const scores = getSinScores(await read($, sinHistoryAtom));
   const isLight = await readIsLightTheme($);
-  const summary = SinStatusSummaryMap[await read($, sinStatusAtom)];
+  const summary = SinStatusTextMap[await readSinStatus($)];
   const { Box, Button, Text } = $.ui.resolve(e);
   return Box({
     children: [

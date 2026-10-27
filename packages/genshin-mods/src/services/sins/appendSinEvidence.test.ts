@@ -6,7 +6,7 @@ import { appendSinEvidence } from "./appendSinEvidence";
 describe(appendSinEvidence, () => {
   const answers = Object.fromEntries(SIN_NAMES.map((name) => [name, { confidence: 1, score: 2 }]));
 
-  test("appends each sin's evidence in the answer's own scale", () => {
+  test("appends each sin's score as its share of the top level", () => {
     expect.hasAssertions();
 
     const history = appendSinEvidence({}, answers);

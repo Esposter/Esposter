@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 
 import { SIN_TREND_LENGTH } from "./constants";
+import { getPosteriorTrail } from "./getPosteriorTrail";
 import { getTrend, getTrendGlyphs } from "./getTrend";
 
 describe(getTrend, () => {
@@ -8,7 +9,7 @@ describe(getTrend, () => {
     expect.hasAssertions();
 
     const evidences = Array.from({ length: SIN_TREND_LENGTH + 10 }, () => 0.5);
-    expect(getTrend(evidences)).toHaveLength(SIN_TREND_LENGTH);
+    expect(getTrend(getPosteriorTrail(evidences))).toHaveLength(SIN_TREND_LENGTH);
   });
 });
 

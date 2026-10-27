@@ -10,7 +10,7 @@ for await (const chunk of process.stdin) input += chunk;
 const { apiUrl, questions, session, state, storePath } = JSON.parse(input);
 const finish = (result) => process.stdout.write(JSON.stringify(result));
 const key = process.env.TYPESAFE_API_KEY;
-const sqlite = await import("node:sqlite").then((loaded) => loaded, () => undefined);
+const sqlite = process.getBuiltinModule("node:sqlite");
 
 if (!key) finish({ result: "no-key" });
 else if (!sqlite) finish({ result: "node-too-old" });
@@ -31,16 +31,12 @@ else {
     const database = new sqlite.Database(storePath);
     database.exec("PRAGMA busy_timeout = 5000");
     database.exec(
-      "CREATE TABLE IF NOT EXISTS evidence (id INTEGER PRIMARY KEY, session INTEGER NOT NULL, sin TEXT NOT NULL, score REAL NOT NULL, confidence REAL NOT NULL, recorded_at INTEGER NOT NULL)",
+      "CREATE TABLE IF NOT EXISTS evidence (id INTEGER PRIMARY KEY, session INTEGER NOT NULL, answers TEXT NOT NULL, recorded_at INTEGER NOT NULL)",
     );
-    const insert = database.prepare("INSERT INTO evidence (session, sin, score, confidence, recorded_at) VALUES (?, ?, ?, ?, ?)");
-    const recordedAt = Date.now();
-    for (const name of names) insert.run(session, name, answers[name].score, answers[name].confidence, recordedAt);
+    const picked = Object.fromEntries(names.map((name) => [name, { confidence: answers[name].confidence, score: answers[name].score }]));
+    database.prepare("INSERT INTO evidence (session, answers, recorded_at) VALUES (?, ?, ?)").run(session, JSON.stringify(picked), Date.now());
     database.close();
-    finish({
-      answers: Object.fromEntries(names.map((name) => [name, { confidence: answers[name].confidence, score: answers[name].score }])),
-      result: "answered",
-    });
+    finish({ answers: picked, result: "answered" });
   }
 }
 `;

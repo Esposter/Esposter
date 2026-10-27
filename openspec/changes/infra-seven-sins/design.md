@@ -1,6 +1,6 @@
 # Seven sins
 
-A sixth Claude Code mod that scores each prompt of a session against seven sins, one probability per sin from a single TypeSafe Jev call, and shows the seven discounted scores as a pane of bar charts with their spread, plus a one-line summary in the band.
+A sixth Claude Code mod that scores each prompt of a session against seven sins, one score per sin from a single TypeSafe Jev call, and shows the seven discounted scores as a pane of bar charts with their spread, plus a one-line summary in the band.
 
 ## How it works
 
@@ -26,7 +26,7 @@ flowchart LR
 
 ## The seven sins
 
-Each sin is a label this design picks, and its question text lives in the module's `sins/constants.ts`, the one place these definitions are written.
+Each sin is a label this design picks, and its question text lives in `sins/getSinQuestions.ts`, the one place these definitions are written.
 
 | Sin      | What Jev is asked                                                                                                               |
 | :------- | :------------------------------------------------------------------------------------------------------------------------------ |
@@ -48,7 +48,7 @@ The `score` primitive returns a probability-weighted expected level on the five 
 
 $$p_{k,t} = \frac{\text{score}_{k,t}}{4}$$
 
-The answer's confidence is kept in the evidence log and is not used to weight the update in this version.
+The answer's confidence is kept in the evidence log and is not used to weight the update in this version. The update treats the evidence as the probability it is on Jev's own scale. Nothing checks that probability against the owner's labels, so the panel calls the number a score and never a calibrated probability.
 
 ### The posterior
 
@@ -65,7 +65,7 @@ The pair is never stored. It is replayed from the bounded history of each sin, w
 Three facts follow from the update.
 
 - **Effective evidence.** The total count approaches $1/(1-\gamma)$, and the effective sample size approaches $\frac{1+\gamma}{1-\gamma} \approx \frac{2H}{\ln 2}$, about 87 at $H = 30$.
-- **Steady spread.** A steady stream at level $p$ gives a spread of about $\sqrt{p(1-p)/n_{\text{eff}}}$, about five points at $p = 0.5$.
+- **Steady spread.** A steady stream at level $p$ settles to a total count of $1/(1-\gamma) \approx 44$, so the posterior's spread is $\sqrt{p(1-p)/45}$, about seven and a half points at $p = 0.5$. The effective sample size of about 87 measures something else, the sampling spread of the discounted mean, and the posterior does not use it.
 - **Adaptation.** After a change from level $p_0$ to $p_1$, the score is $S_t \approx \gamma^t p_0 + (1-\gamma^t)\,p_1$, so it sits halfway between them after $H$ prompts. The prior's share decays by the same factor, so the result is exact in the limit and close at 30.
 
 The trend in the pane is the score after each of the last thirty prompts, from the same replay, so it is the score's own curve and not a second estimate.
@@ -133,9 +133,9 @@ A failed or slow call records nothing for that prompt and is not retried. The ne
 
 One node:sqlite database, `${home}/.claude/genshin-mods/sins.sqlite`, written only by the plugin's node script. The home folder is read through the shared `readHome` helper, which the ward mod's records file also uses.
 
-| Table      | Holds                                                                                                  | Written                              |
-| :--------- | :----------------------------------------------------------------------------------------------------- | :----------------------------------- |
-| `evidence` | One row per sin per scored prompt: the session, the score and the confidence, and when it was recorded | On each answered prompt; append-only |
+| Table      | Holds                                                                                                                           | Written                              |
+| :--------- | :------------------------------------------------------------------------------------------------------------------------------ | :----------------------------------- |
+| `evidence` | One row per scored prompt: the session, its seven answers as JSON, each with its score and confidence, and when it was recorded | On each answered prompt; append-only |
 
 Two sessions on one machine can write the log at once. The script sets a five-second busy timeout on every open, because without it a second writer fails at once with "database is locked" and loses its prompt's evidence. The timeout must be on every writer: a writer without it also fails its own commit while another connection reads.
 
@@ -153,35 +153,36 @@ The script returns one of four results: the seven answers; `no-key`, when no key
 
 ## Key files
 
-| File                                                            | Role                                                                                                                                        |
-| :-------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------ |
-| `packages/genshin-mods/src/register.ts`                         | The module the engine loads; registers the sins pane beside the others                                                                      |
-| `packages/genshin-mods/src/services/registerLifecycle.ts`       | The prompt hook that schedules the scoring beside the turn, the reset on `clear` and `resume`; the `/sins` command comes from the mod names |
-| `packages/genshin-mods/src/services/band/registerBand.ts`       | The band's summary line, its `p` button, and the lines for a missing key or an older Node                                                   |
-| `packages/genshin-mods/src/services/InitialState.ts`            | The switch's default, off, and the empty state                                                                                              |
-| `packages/genshin-mods/src/services/ModDescriptionMap.ts`       | The `sins` command and its menu line                                                                                                        |
-| `packages/genshin-mods/types/index.d.ts`                        | The state contract: the switch, the history, the session and the status                                                                     |
-| `packages/genshin-mods/src/services/ward/resolveRecordsPath.ts` | Reads the home folder through the shared `readHome`, as the sins scoring does                                                               |
-| `packages/genshin-mods/README.md`                               | The command table, and the Decisions bullet this change rewrites on ship                                                                    |
+| File                                                            | Role                                                                                                                                       |
+| :-------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/genshin-mods/src/register.ts`                         | The module the engine loads; registers the sins pane beside the others                                                                     |
+| `packages/genshin-mods/src/services/registerLifecycle.ts`       | The prompt hook that schedules the scoring beside the turn, the reset on `clear` and `resume`, and the refusal of `/sins on` without a key |
+| `packages/genshin-mods/src/services/band/registerBand.ts`       | The band's summary line, its `p` button, and the lines for a missing key or an older Node                                                  |
+| `packages/genshin-mods/src/services/InitialState.ts`            | The switch's default, off, and the empty state                                                                                             |
+| `packages/genshin-mods/src/services/ModDescriptionMap.ts`       | The `sins` command and its menu line                                                                                                       |
+| `packages/genshin-mods/types/index.d.ts`                        | The state contract: the switch, the history, the session and the status                                                                    |
+| `packages/genshin-mods/src/services/ward/resolveRecordsPath.ts` | Reads the home folder through the shared `readHome`, as the sins scoring does                                                              |
+| `packages/genshin-mods/README.md`                               | The command table, and the Decisions bullet this change rewrites on ship                                                                   |
 
 The new files:
 
 ```text
 packages/genshin-mods/src/services/readHome.ts         ← the home folder from the engine's environment, shared by ward and sins
-packages/genshin-mods/src/services/sins/
-  constants.ts            ← the half-life, the prior, the history cap, the palette, the seven questions, the API URL
+packages/genshin-mods/src/services/sins/   ← each module with its co-located .test.ts where it has one
+  constants.ts            ← the seven sins and their criteria, the half-life, the prior, the history cap, the bar width, the pane's id and the API URL
+  SinColorMap.ts          ← each sin's slot of the palette, light and dark
+  SinStatusTextMap.ts     ← the words the band and the pane give a status
   sinsScript.ts           ← the node script's code, run inline with `node -e`: one POST and the evidence log
   getPosteriorTrail.ts    ← the replayed posterior after each prompt, and the posterior now
   getScoreAndSpread.ts    ← the score and spread from one posterior
   getTrend.ts             ← the score after each of the last thirty prompts, and its glyphs
-  getEvidence.ts          ← one answer's score as evidence, in [0, 1]
-  appendSinEvidence.ts    ← the history with one prompt's evidence appended, capped at the history's length
+  appendSinEvidence.ts    ← the history with one prompt's evidence appended: the score as a share of the top level, in [0, 1], capped at the history's length
   getSinScores.ts         ← the drawn copy: each measured sin, and which are left out
   getBarCells.ts          ← a bar's solid and tinted cells from the score, the spread and the width
-  getSinQuestions.ts      ← the seven `score` questions one call answers
-  getSinsStorePath.ts     ← the evidence log's path, beside the ward mod's records
+  getSinQuestions.ts      ← the seven `score` questions one call answers, and the question each sin asks
   parseSinsResult.ts      ← the script's one JSON result
   readIsLightTheme.ts     ← the palette mode from the engine's theme row
+  readSinStatus.ts        ← the status as drawn, with a key removed since the last prompt read off the environment
   registerSins.ts         ← the pane's render, and the switch that hides it
 packages/genshin-mods/src/models/   ← SinPosterior, SinFigures, SinScore and SinsResult
 ```
@@ -191,9 +192,9 @@ packages/genshin-mods/src/models/   ← SinPosterior, SinFigures, SinScore and S
 - **The decision this overturns.** The genshin-mods README says that nothing goes beyond the session's own account and that no mod adds a service or a key. This change makes the sins mod the one exception: it calls TypeSafe with the person's key, once per prompt. The owner chose this on 2026-10-27 over the earlier draft, which kept the scorer local and rejected a per-prompt call. On ship, the README bullet is rewritten to name the sins mod as the exception, and the old direction is named there as rejected.
 - **No SDK.** The repo's pipeline reads Jev through `scripts/src/services/jev/readAnswers.ts` and the `@typesafe-ai/sdk` client. The plugin cannot import from the repo's scripts, and adding the SDK would add a dependency and a lockfile the plugin install reads only from npm. The plugin makes the one documented call itself, with `fetch`.
 - **The module has no Node.** The repo's mod rules keep Node out of a hooks module, so the network call and the database run in the node script, which the hook reaches through `$.process.run` with the request on stdin. The script is a string in `sinsScript.ts` because a plugin reaches none of its own files from inside the module.
-- **Cost is unverified.** Secondary write-ups from September 2026 put Jev at $0.042 per million input tokens, with output free. One vendor demo puts a call at about $0.00008, roughly 1,900 input tokens. By those figures that is about $0.08 per thousand prompts. No official pricing page was found, and access is an early-access waitlist, so the key may not exist for everyone. Task 7 measures the real tokens per call and the real bill.
+- **Cost is unverified.** Secondary write-ups from September 2026 put Jev at $0.042 per million input tokens, with output free. One vendor demo puts a call at about $0.00008, roughly 1,900 input tokens. By those figures that is about $0.08 per thousand prompts. No official pricing page was found, and access is an early-access waitlist, so the key may not exist for everyone. The real tokens per call and the bill are read off the account in use; no task gates shipping on either.
 - **The prompt leaves the machine.** Every scored prompt is sent to TypeSafe after veil's redaction. Redaction is always on rather than a setting, because prompts routinely carry secrets. This is the owner's call to confirm.
-- **Calibration.** Jev's levels are not calibrated probabilities by construction. Task 7 checks them against the owner's own labels on a sample, before the panel says "probability" anywhere. If the check fails, a one-parameter recalibration per sin is the fix, the form the Guo et al. abstract recommends as temperature scaling.
+- **Scores are Jev's own, not calibrated.** Jev's `score` is already a probability-weighted level, and the evidence is that probability on Jev's scale, so no calibration step is built or gates shipping. The panel labels the number a score, and says nothing about matching the person's own judgement. If the owner later wants the numbers read as calibrated probabilities, a calibration check against their labels comes first, as a separate change.
 - **Estimator choices considered and rejected.**
   - A Dirichlet over the seven sins forces one unit of mass across them, so a prompt cannot be both greedy and wrathful. Independent Betas fit a prompt that carries several sins.
   - A Kalman filter on the raw level has no bounds, so a score can leave the range from 0 to 1. The Beta is exact for a bounded mean.
@@ -210,11 +211,10 @@ packages/genshin-mods/src/models/   ← SinPosterior, SinFigures, SinScore and S
 ## Sources
 
 - [Taming Non-stationary Bandits: A Bayesian Approach](https://arxiv.org/abs/1707.09727), Raj and Kalyani, 2017. The abstract names discounting the prior's parameters to reduce the effect of past observations. Taken: the idea of discounting a Beta's counts. The rule here is this design's own; the full paper was not read for its exact form.
-- [On Calibration of Modern Neural Networks](https://arxiv.org/abs/1706.04599), Guo et al., ICML 2017. The abstract recommends temperature scaling as a one-parameter post-hoc fix. Taken: the calibration check and its one-parameter form.
 - [node:sqlite](https://nodejs.org/api/sqlite.html), Node.js documentation. A built-in module with a synchronous API, release-candidate stability, and no flag from Node 22.13 and 23.4. Taken: the evidence log and the version floor.
 - [TypeSafe System One HTTP API](https://docs.typesafe.ai/api.md). The endpoint, the Bearer header, the `score` question's shape and the response's `score`, `confidence` and `probabilities`. Taken: the one call the script makes.
 - [TypeSafe Score primitive](https://docs.typesafe.ai/primitives/score.md). The score is the probability-weighted level, from 0 to the top level. Taken: the evidence is the score divided by the top level.
-- [TypeSafe Jev pricing write-up](https://www.eesel.ai/blog/typesafe-jev-pricing), September 2026. A secondary source for $0.042 per million input tokens with output free. Unverified; task 7 measures it.
+- [TypeSafe Jev pricing write-up](https://www.eesel.ai/blog/typesafe-jev-pricing), September 2026. A secondary source for $0.042 per million input tokens with output free. Unverified; read off the bill in use.
 - The dataviz skill's reference palette (`references/palette.md`) and its `validate_palette.js`. Taken: the first seven categorical slots in their order, validated in both modes on adjacent pairs, and the rule that a light-mode contrast warning is met by direct labels.
 - The Claude Code plugin API declarations, as the plugin-authoring skill lays them: the pane's placement, the element table reached through `$.ui.resolve`, `$.process.run` with stdin, and `$.config.list()`. Taken: the pane, the band and the script run as the engine offers them.
 - Repo: `.agents/skills/llm-delegation/references/jev.md`, for the `score` primitive and the one-call-per-state rule; the ward mod's records file, for the home-folder store convention.

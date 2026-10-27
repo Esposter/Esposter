@@ -1,7 +1,7 @@
 import type { SinScore } from "../../models/SinScore";
 
 import { SIN_NAMES } from "./constants";
-import { getPosterior } from "./getPosteriorTrail";
+import { getPosterior, getPosteriorTrail } from "./getPosteriorTrail";
 import { getScoreAndSpread } from "./getScoreAndSpread";
 import { getTrend } from "./getTrend";
 
@@ -11,5 +11,7 @@ export const getSinScores = (history: Record<string, number[]>): SinScore[] =>
     const evidences = history[name] ?? [];
     if (evidences.length === 0) return [];
 
-    return [{ name, ...getScoreAndSpread(getPosterior(evidences)), trend: getTrend(evidences) }];
+    const trail = getPosteriorTrail(evidences);
+    const figures = getScoreAndSpread(getPosterior(trail));
+    return [{ name, ...figures, trend: getTrend(trail) }];
   });

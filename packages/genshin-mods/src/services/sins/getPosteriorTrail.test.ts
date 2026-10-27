@@ -11,7 +11,7 @@ describe(getPosteriorTrail, () => {
 
     const trail = getPosteriorTrail(evidences);
     expect(trail).toHaveLength(evidences.length);
-    expect(getPosterior(evidences)).toStrictEqual(trail.at(-1));
+    expect(getPosterior(trail)).toStrictEqual(trail.at(-1));
   });
 
   test("moves about halfway to a new level within one half-life", () => {
@@ -19,7 +19,7 @@ describe(getPosteriorTrail, () => {
 
     const steady = Array.from({ length: 300 }, () => 0.9);
     const switched = Array.from({ length: SIN_HALF_LIFE_PROMPTS }, () => 0.1);
-    const { alpha, beta } = getPosterior([...steady, ...switched]);
+    const { alpha, beta } = getPosterior(getPosteriorTrail([...steady, ...switched]));
     expect(alpha / (alpha + beta)).toBeCloseTo(0.5, 1);
   });
 });
