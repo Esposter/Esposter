@@ -21,7 +21,9 @@ trap is a test that fails when the trap reopens, rather than prose in the ledger
 or a tool" unanswerable from the path. `scripts/src/workspace/agentDirectories.test.ts` is the shape — a test **about** the
 agent tree, living where the toolchain already looks.
 
-## How a scan comes back empty without being clean
+## How a scan goes wrong without failing
+
+- **A count the owning tool disagrees with.** A body parser that stops only at one-to-three-hash headers runs on through `####` scenarios, so requirement bodies measured that way show 515 over-limit items where the CLI reports 15. Before a scan's count decides anything, reproduce the owning tool's own count on the same tree, and only then trust the scan's.
 
 - **`new RegExp` built from a template literal inside `node -e '...'`.** Single quotes hand the backslash to
   Node intact — the **template literal** is the layer that eats it, so a `\b` written for a word boundary reaches
@@ -47,7 +49,7 @@ agent tree, living where the toolchain already looks.
 ## A scan that reports nothing
 
 A find recipe that comes back empty is the same shape as a clean tree, so a broken scan reads as a finished
-sweep, and every shape in "How a scan comes back empty without being clean", on this page, is silent.
+sweep, and every shape in "How a scan goes wrong without failing", on this page, is silent.
 
 So **prove the scan can fail before believing it passed**: run it against a known violation, or break one on
 purpose and confirm it is reported. The rule the `testing` skill applies to a new test (`references/what-earns-a-test.md`) applies to a new recipe —

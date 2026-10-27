@@ -39,6 +39,8 @@ description: Apply when creating, updating or referencing any spec, design, prop
 ## Rules
 
 - A requirement describes behaviour an outsider can observe. File paths, class names and library choices belong in `design.md`.
+- **A requirement over the CLI's 500-character limit is an architecture signal, never a wording problem.** Its source citations move to the design (`## Sources` for game or wiki sources, `## Key files` for repo paths), and a requirement stating several behaviours splits by behaviour. The limit is a constant in the installed CLI, not a repo setting, so it is never raised here, and no citation is compressed or example dropped to fit it (`references/links-and-sources.md`).
+- **Read the owning rule before editing to satisfy a validator message.** The message names a symptom; `openspec/config.yaml` and this skill state the rule it breaks, and the fix follows the rule, not the message.
 - A decision in `design.md` names the alternative it rejected and the reason it lost. A decision that overturns a settled one names the old direction as rejected, so it cannot quietly return.
 - **One capability, change or idea per folder — never merged.** A feature starts as one capability and gains sub-capabilities only once they exist (`references/page-shapes.md`). A folder is removed only when its idea is superseded, never to tidy up — the supersession is recorded in `deferred/` or `rejected/`. Folder names are kebab-case.
 - **A list of N peer features is N capabilities plus a derived index, never one page.** The character kits are one capability each under `specs/genshin/kits/`, with the framework and the table in its `README.md`.

@@ -24,6 +24,7 @@ A heredoc piped to `-F -` from Bash, a single-quoted here-string from PowerShell
 - **No command over the whole index in a shared checkout.** `git add .`, `git add -N .`, `git reset -- .` and `git restore --staged .` reach every peer's staged entry as well as your own; `git reset -- .` can drop a peer's staged files; stage by explicit path. Name your paths. The ward's whole-index guard (`packages/genshin-mods/src/services/ward/`) refuses these forms with a Bash deny while another session edits the checkout.
 - **A rename that only changes case needs `git -c core.ignorecase=false` on every command that names the path** — Windows checks out with `core.ignorecase=true`, so `git add` and a pathspec `git commit` refuse the new spelling as "did not match any file", and a commit that does land leaves the old spelling behind as a staged `A` that `git -c core.ignorecase=false rm --cached` clears. `git mv` alone stages the move correctly; the pathspec commit after it is where the flag is needed.
 - **Never use `git stash`** — a failed/forgotten pop loses in-progress changes. To inspect prior committed state, use `git show HEAD:path/to/file` or `git diff HEAD`. To set work aside, make a WIP commit.
+- **Save a patch before discarding uncommitted edits.** `git checkout -- <paths>` and `git restore <paths>` erase work that is not in any commit. Run `git diff -- <paths> > <scratchpad>/<name>.patch` first, check it is non-empty, and only then discard, so the work can be re-applied in one `git apply`.
 
 ## Pushing
 
