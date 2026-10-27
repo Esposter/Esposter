@@ -20,7 +20,7 @@ flowchart TD
   client[Client upload] -->|"generateUploadFileSasEntities (declared size)"| sign[Sign write SAS locally]
   sign --> reserve{"Lock user row<br/>used + live holds + declared &lt;= quota?"}
   reserve -->|no| reject["FORBIDDEN — You have run out of storage"]
-  reserve -->|yes| ledger[("storageLedger hold<br/>countedBytes = 0<br/>expiresAt = SAS ttl")]
+  reserve -->|yes| ledger[("storageLedger hold")]
   ledger --> respond[SAS returned to client]
   respond --> put[Client PUTs bytes to Azure Blob]
   put --> created["Storage emits BlobCreated<br/>with contentLength"]
@@ -33,7 +33,7 @@ flowchart TD
   del -->|"whose counter moved"| pubsub
   pubsub -->|"re-read"| ui
   save -->|"emitStorageUsage — in-process"| ui
-  counter -->|storage.readUsage| ui["Usage bar — 3.2 GB of 10 GB"]
+  counter -->|storage.readUsage| ui["Usage bar — used of the tier quota"]
   tier[("users.storageTier")] -->|StorageTierQuotaMap| quota[Quota bytes]
   quota --> reserve
   quota --> ui

@@ -24,7 +24,7 @@ Each card is headed by the question's title and "_n_ responses", counting the re
 ```mermaid
 flowchart LR
   READ["survey.readSurveyResponseRecords"] --> REC[records]
-  CONTENT["survey.readResourceContent"] -->|"survey-core Model"| Q[kind · title · choices]
+  CONTENT["survey.readResourceContent"] -->|"survey-core Model"| Q[question model]
   REC --> AGG{getSurveySummaryCards}
   Q --> AGG
   AGG -->|choice, rating| BAR[count per choice → bar chart]

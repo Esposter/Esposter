@@ -20,7 +20,7 @@ The read sites are: the row store's cell reads (`getCellValue`, which the table'
 flowchart TD
   headers["Row store cell reads<br/>(table sort · global search · cell render)"] --> compile
   export["ExportDialog → filterDataSourceColumns"] --> compile
-  stats["useColumnStatistics · Table.vue · outlier store"] --> compile
+  stats["Column statistics"] --> compile
   compile["compileSheetColumns(columns)"] -->|"once per column list"| CM["ColumnTransformationCompileMap<br/>+ getCyclicColumnIds"]
   compile -->|"(rows): bind, once per row list"| bind["a column's reader"]
   bind -->|"stored column"| raw["row.data[column.name]"]

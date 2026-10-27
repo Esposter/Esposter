@@ -13,15 +13,15 @@ The split is not three storage systems — it is one row and one blob, with the 
 ```mermaid
 flowchart TD
   IMPORT["import a CSV, JSON or XLSX file"] --> PARSE["client-side parse, preview"]
-  PARSE --> DATA["content.data — columns, rows, metadata"]
-  ROW["resources row — name and id only"]
+  PARSE --> DATA["content.data"]
+  ROW["resources row"]
   SETTINGSFORM["Settings blade"] --> SETTINGS["content.settings — the per-format parse configuration"]
   GRID["Data blade — the grid editor"] --> DATA
   DATA --> BLOB["one content blob"]
   SETTINGS --> BLOB
   BLOB --> SAVE["one saveResourceContent, one contentVersion"]
   SAVE --> ROW
-  DATA --> DATASET["readSheetDataset — a DatasetReference is the resource id"]
+  DATA --> DATASET["readSheetDataset"]
   SETTINGS -.->|"applies on the next import, never rewrites data in place"| PARSE
 ```
 
