@@ -184,7 +184,7 @@ flowchart TD
 
 No suite reads a copy of the game data. A suite passes `GAME_DATA_LOCAL_BASE_URL`, `/game-data`, as its base, and the vitest setup file answers a fetch under it from the mirror: the machine-wide content cache, `CONTENT_CACHE_DIRECTORY` (`{data-root}/cache/content`) from `@esposter/shared-node/cache`, which the `scripts` package's reads share (`packages/genshin-world/scripts/gameData/constants.ts`, `packages/genshin-world/scripts/gameData/mirror/setupGameDataFetch.ts`, `packages/shared-node/src/services/cache/constants.ts`). The parity page and the browser suite reach the same mirror through a Vite middleware on the same path (`packages/genshin-world/scripts/gameData/mirror/gameDataMirrorPlugin.ts`). A hash the mirror lacks is downloaded from the dev account, its zstd frame decoded, and kept only once its bytes hash to its name (`packages/shared-node/src/services/cache/readContentAddressedObject.ts`); a worker that loses the race to write it has written the same bytes.
 
-CI keys the mirror on the lock's hash. The `build-packages` job looks the key up, and when no cache holds it, it restores the newest mirror an earlier lock saved, `pnpm game-data:mirror` (`packages/genshin-world/package.json`) downloads the objects and index entries the lock names that this mirror lacks, and the cache action saves the result under the new key as the job ends (`.github/workflows/build-packages.yaml`); each coverage shard only restores it (`.github/workflows/CI.yaml`), so a run fetches nothing until the lock moves, and a moved lock fetches only what it added. The name text's suite reads every record the lock names outside the text datasets, so it sets a sixty-second timeout that a cold local mirror's first run fits inside (`packages/genshin-world/src/services/character/NameTextLoaderMap.test.ts`).
+CI keys the mirror on the lock's hash. The `build-packages` job restores the newest mirror its branch can see. On the default branch and `ai/queue`, when no cache holds the exact key, `pnpm game-data:mirror` (`packages/genshin-world/package.json`) downloads the objects and index entries the lock names that this mirror lacks, and the cache action saves the result under the new key as the job ends (`.github/workflows/build-packages.yaml`); every other branch fills and saves nothing, and each coverage shard only restores it (`.github/workflows/CI.yaml`), so a run on `ai/queue` fetches nothing until the lock moves, and a moved lock fetches only what it added. Which branches save is [CI caches](../../architecture/ci-caches/design.md)'s rule. The name text's suite reads every record the lock names outside the text datasets, so it sets a sixty-second timeout that a cold local mirror's first run fits inside (`packages/genshin-world/src/services/character/NameTextLoaderMap.test.ts`).
 
 ```mermaid
 flowchart TD
@@ -200,7 +200,7 @@ flowchart TD
   Hash -->|yes| Store["temp file, rename into the cache"]
   Store --> Serve
   Lock["the lock's hash"] --> Cached{"a CI cache under it?"}
-  Cached -->|no| Fill["build-packages restores an earlier mirror, downloads what it lacks, saved as the job ends"]
+  Cached -->|no| Fill["build-packages downloads what the mirror lacks, saved as the job ends"]
   Cached -->|yes| Restore["each coverage shard restores it"]
   Fill --> Restore
   Restore --> Mirror
