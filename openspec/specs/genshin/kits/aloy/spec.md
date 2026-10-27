@@ -6,7 +6,7 @@ Aloy's kit as built: her strikes, fully charged shot and plunges, with Freeze Bo
 
 ### Requirement: Aloy's strikes, fully charged shot and plunges deal physical damage
 
-Aloy's strikes, fully charged shot and plunges SHALL deal their hits on the timings of their animations, and SHALL deal no poise yet.
+Aloy's strikes, fully charged shot and plunges SHALL deal their hits on the timings of their animations, and their poise SHALL be as design.md gives it.
 
 #### Scenario: A fully charged shot deals its hit
 
