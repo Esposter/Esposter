@@ -32,6 +32,5 @@ The clouds over the login's cloud sea and above its towers: three bands of the g
 - [ ] **The layer draws no settings until an hour's solve beats none** — no source yet: the gate on the layer's settings was not located in the code checked here.
 - [ ] **Each band is one of the game's painted clouds, traced** — no source yet: the cloud textures in `~/Esposter/genshin-parity/extracted/login-bytype-assets/Texture2D/`, not yet matched to the bands.
 - [ ] **Each cloud is coloured as the game's cloud particles are** — no source yet: the particle system's colour over its life, which neither cloud material on disk holds.
-- [ ] **The day's and the dusk's colours are measured, and those ship** — no source yet: the day and dusk cloud stills, not yet re-measured for the shipped colours.
-- [ ] **The day's cloud still is measured** — no source yet: the day cloud still the measurement would write is not on disk
-- [ ] **The sky's dome is ported as the game draws it** — no source yet: `~/Esposter/genshin-parity/extracted/login-bytype-assets/Material/Enviro_Atmosphere_Layer_Mat.json`, not yet compared with the ported dome.
+- [ ] **The day's and the dusk's colours are measured, and those ship; the day's cloud still is measured** — no source yet: the day and dusk cloud stills, not yet re-measured for the shipped colours; the still the measurement would write is not on disk.
+- [ ] **The sky's dome is ported as the game draws it** — no source yet: the `Sky_LOD0` mesh that `~/Esposter/genshin-parity/extracted/login/witness.json` places with the `Enviro_Atmosphere_Layer_Mat` material (`~/Esposter/genshin-parity/extracted/login-bytype-assets/Material/Enviro_Atmosphere_Layer_Mat.json`), not yet compared with the ported dome.
