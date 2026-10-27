@@ -62,8 +62,6 @@ Holding Icetide Vortex SHALL spend every Grimheart stack on one Icewhirl each, s
 
 Glacial Illumination SHALL summon the Lightfall Sword, which gains a stack every 0.1 seconds while it is lit, up to 30 stacks.
 
-The Lightfall Sword SHALL explode 35 frames after a character swap.
-
 #### Scenario: The Lightfall Sword gains stacks while lit
 
 - **GIVEN** the Lightfall Sword is lit
@@ -75,6 +73,10 @@ The Lightfall Sword SHALL explode 35 frames after a character swap.
 - **GIVEN** the Lightfall Sword has 30 stacks
 - **WHEN** another 0.1 seconds pass
 - **THEN** no further stack is added
+
+### Requirement: Lightfall Sword explodes on a swap
+
+The Lightfall Sword SHALL explode 35 frames after a character swap.
 
 #### Scenario: A swap explodes the Lightfall Sword
 
@@ -92,15 +94,9 @@ From Ascension 1, two Grimheart stacks SHALL raise a Shattered Lightfall Sword.
 - **WHEN** she has two Grimheart stacks
 - **THEN** a Shattered Lightfall Sword is raised
 
-### Requirement: Constellation 1, 4 and 6 effects
+### Requirement: Constellation 1 Physical DMG Bonus
 
 From constellation 1, Eula SHALL gain a Physical DMG Bonus.
-
-From constellation 4, Glacial Illumination's initial hit SHALL gain a bonus against an enemy below half its HP.
-
-From constellation 6, Eula SHALL start with five stacks.
-
-From constellation 6, each stack the Sword gains from her strikes SHALL have a 50% chance of a second one.
 
 #### Scenario: Constellation 1 adds a Physical DMG Bonus
 
@@ -108,11 +104,19 @@ From constellation 6, each stack the Sword gains from her strikes SHALL have a 5
 - **WHEN** she attacks with Physical damage
 - **THEN** her Physical DMG Bonus applies
 
+### Requirement: Constellation 4 bonus against a weakened enemy
+
+From constellation 4, Glacial Illumination's initial hit SHALL gain a bonus against an enemy below half its HP.
+
 #### Scenario: Constellation 4 adds a bonus against a weakened enemy
 
 - **GIVEN** Eula is at constellation 4
 - **WHEN** Glacial Illumination's initial hit strikes an enemy below half its HP
 - **THEN** the hit gains a bonus
+
+### Requirement: Constellation 6 starting stacks
+
+From constellation 6, Eula SHALL start with five stacks.
 
 #### Scenario: Constellation 6 starts with five stacks
 
@@ -120,11 +124,15 @@ From constellation 6, each stack the Sword gains from her strikes SHALL have a 5
 - **WHEN** Glacial Illumination is cast
 - **THEN** the Lightfall Sword starts with five stacks
 
+### Requirement: Constellation 6 extra stack chance
+
+From constellation 6, each stack the Sword gains from her strikes SHALL have a 50% chance of a second one.
+
 #### Scenario: Constellation 6 gives a stack a 50% chance of a second
 
 - **GIVEN** Eula is at constellation 6 and her Lightfall Sword is lit
 - **WHEN** one of her strikes gains the Sword a stack
-- **THEN** that stack is a second one with a 50% chance, as gcsim v2.47.2 rolls it
+- **THEN** that stack is a second one with a 50% chance
 
 ## Open
 
