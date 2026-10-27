@@ -64,9 +64,9 @@ const { frameBody, frameStyle } = useCanvasFrame({
 
 Licensed under [Apache-2.0][url-license].
 
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=038758
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
-[badge-npm-version]: https://img.shields.io/npm/v/vue-canvas-frame-headless/latest?color=1b7a5f
+[badge-npm-version]: https://img.shields.io/npm/v/vue-canvas-frame-headless/latest?color=038758
 [url-npm]: https://www.npmjs.com/package/vue-canvas-frame-headless/v/latest
 [badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/vue-canvas-frame-headless/latest?label=npm
 [badge-npm-downloads]: https://img.shields.io/npm/dm/vue-canvas-frame-headless.svg

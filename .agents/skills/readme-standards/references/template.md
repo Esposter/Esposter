@@ -67,14 +67,14 @@ Licensed under [Apache-2.0][url-license].
 [![Apache-2.0 licensed][badge-license]][url-license]
 ```
 
-Badge colours are the brand's: the Standard style of `apps/web/configuration/UiPaletteMap.ts`, the app's default (`DEFAULT_UI_STYLE`). A shield carries white label text, so a badge takes the light-mode tone rather than the dark one: success `1b7a5f` for the npm version, info `0b6ac0` for the licence. GitHub strips `style` attributes from markdown, so the palette reaches the badges and nothing else.
+Every shield on a page is one green, `038758`, so the page reads as one set. It is the Standard palette's accent (`#42d392`, the Vue green in `apps/web/configuration/UiPaletteMap.ts`, the app's default style) darkened in OKLCH to the most vivid tone that still reaches WCAG AA (4.5:1) against the white label text shields always draws. Along that hue the most vivid tone that passes is about `038758`, and a lighter tone of the hue fails AA. The palette's lighter greens cannot go on a badge, because shields has no text colour to change. GitHub strips `style` attributes from markdown, so the palette reaches the badges through this one hex and nothing else.
 
 Badge ref format (bottom of file):
 
 ```markdown
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=038758
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
-[badge-npm-version]: https://img.shields.io/npm/v/<npm-name>/latest?color=1b7a5f
+[badge-npm-version]: https://img.shields.io/npm/v/<npm-name>/latest?color=038758
 [url-npm]: https://www.npmjs.com/package/<npm-name>/v/latest
 [badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/<npm-name>/latest?label=npm
 [badge-npm-downloads]: https://img.shields.io/npm/dm/<npm-name>.svg

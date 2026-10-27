@@ -25,5 +25,5 @@ pnpm build        # compile to dist/
 
 This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).
 
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=038758
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE

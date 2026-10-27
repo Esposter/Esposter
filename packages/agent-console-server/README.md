@@ -64,9 +64,9 @@ pnpm start        # node bin/cli.js
 
 This project is licensed under the [Apache-2.0 license](https://github.com/Esposter/Esposter/blob/main/LICENSE).
 
-[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0
+[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=038758
 [url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE
-[badge-npm-version]: https://img.shields.io/npm/v/agent-console-server/latest?color=1b7a5f
+[badge-npm-version]: https://img.shields.io/npm/v/agent-console-server/latest?color=038758
 [url-npm]: https://www.npmjs.com/package/agent-console-server/v/latest
 [badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/agent-console-server/latest?label=npm
 [badge-npm-downloads]: https://img.shields.io/npm/dm/agent-console-server.svg
