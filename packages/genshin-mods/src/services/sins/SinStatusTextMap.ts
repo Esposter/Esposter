@@ -5,5 +5,5 @@ import { SinStatusKind } from "../../models/SinStatusKind";
 export const SinStatusTextMap: Partial<Record<SinStatus, string>> = {
   [SinStatusKind.Failed]: "Last prompt not scored",
   [SinStatusKind.NoKey]: "Needs a TypeSafe key",
-  [SinStatusKind.NodeTooOld]: "Needs Node 22.13 or later",
+  [SinStatusKind.NodeTooOld]: "Needs Node 22.13 or later on 22, or 23.4 or later on 23",
 };
