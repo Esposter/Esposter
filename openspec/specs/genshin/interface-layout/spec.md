@@ -32,13 +32,13 @@ A piece the game scales SHALL scale about its pivot, so the corner it is pivoted
 
 ### Requirement: A layout group's children take the group's spacing
 
-The children of a layout group SHALL be stacked and spaced as the game's own recording shows, and SHALL NOT be placed from the layout tree.
+The children of a layout group SHALL be stacked and spaced, and SHALL NOT be placed from the layout tree.
 
 #### Scenario: Group children are spaced as the recording shows
 
 - **GIVEN** a piece is a layout group whose children the game places at run time
 - **WHEN** its children are drawn
-- **THEN** they are stacked and spaced as the game's recording shows
+- **THEN** they are stacked and spaced
 
 ### Requirement: A clip that moves a piece moves everything nested in it
 

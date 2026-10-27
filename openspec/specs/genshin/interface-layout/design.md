@@ -46,3 +46,5 @@ flowchart LR
 ## Sources
 
 - `~/Esposter.noindex/genshin-parity/extracted/character/interface/json/RectTransform/RectTransform#324437.json`, `GrpMap` with a local scale of 0.6. Grounds the requirement "A scaled piece scales about its pivot".
+- The game's own recording of the group's stacking and spacing, not named (see Open): "as the game's own recording shows". Grounds the requirement "A layout group's children take the group's spacing".
+- The game's own recording of the same spacing, not named (see Open): "as the game's recording shows". Grounds scenario "Group children are spaced as the recording shows".
