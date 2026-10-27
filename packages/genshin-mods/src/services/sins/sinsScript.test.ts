@@ -15,19 +15,16 @@ import { SIN_NAMES } from "../../models/SinName";
 import { getSinQuestions } from "./getSinQuestions";
 import { SINS_SCRIPT } from "./sinsScript";
 
-// Runs the script as the module runs it, with the payload on stdin and the key in its environment, and reads its result
+// Runs the script as the module runs it, with the payload and the key on stdin, and reads its result
 const runScript = (payload: object, key: string, script = SINS_SCRIPT) =>
   new Promise<string>((resolve) => {
-    const child = spawn("node", ["--input-type=module", "-e", script], {
-      env: { ...process.env, TYPESAFE_API_KEY: key },
-      windowsHide: true,
-    });
+    const child = spawn("node", ["--input-type=module", "-e", script], { windowsHide: true });
     let stdout = "";
     child.stdout.on("data", (chunk: Buffer) => {
       stdout += chunk.toString();
     });
     child.on("close", () => resolve(stdout));
-    child.stdin.end(JSON.stringify(payload));
+    child.stdin.end(JSON.stringify({ ...payload, key }));
   });
 
 describe("sinsScript", () => {

@@ -8,5 +8,13 @@
   "repository": "https://github.com/Esposter/Esposter",
   "license": "Apache-2.0",
   "keywords": ["cache", "collision", "genshin", "handoff", "mods", "recording", "tasks"],
-  "types": "./types/index.d.ts"
+  "types": "./types/index.d.ts",
+  "userConfig": {
+    "typesafe_key": {
+      "type": "string",
+      "title": "TypeSafe key",
+      "description": "A TypeSafe API key for sins: with it, each prompt's seven sins are scored by one typed decision and drawn in a pane. The same option as genshin-persona's, stored in the credential store, never in a settings file.",
+      "sensitive": true
+    }
+  }
 }

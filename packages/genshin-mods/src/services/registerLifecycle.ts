@@ -26,6 +26,7 @@ import { appendSinEvidence } from "./sins/appendSinEvidence";
 import { SINS_API_URL, SINS_TIMEOUT_MS } from "./sins/constants";
 import { getSinQuestions } from "./sins/getSinQuestions";
 import { parseSinsResult } from "./sins/parseSinsResult";
+import { readTypeSafeKey } from "./sins/readTypeSafeKey";
 import { SINS_SCRIPT } from "./sins/sinsScript";
 import { veilText } from "./veil/veilText";
 import { parseWaypoints } from "./waypoints/parseWaypoints";
@@ -94,10 +95,11 @@ const suggestWaypoints = async ($: EngineInterface) => {
 
 // The sins are scored beside the prompt's turn, never in front of it: the call and the evidence log run in the plugin's
 // Node script, and a run that fails, or a machine that cannot open the log, records nothing and says why in the band
-const scoreSins = async ($: EngineInterface, text: string) => {
+const scoreSins = async ($: EngineInterface, text: string, typeSafeKey: string) => {
   if (!(await read($, enabledModsAtom)).sins) return;
 
-  if (!(await $.env.get("TYPESAFE_API_KEY"))) {
+  const key = await readTypeSafeKey($, typeSafeKey);
+  if (!key) {
     await update($, sinStatusAtom, () => SinStatusKind.NoKey);
     return;
   }
@@ -109,6 +111,7 @@ const scoreSins = async ($: EngineInterface, text: string) => {
     $.process.run(["node", "--input-type=module", "-e", SINS_SCRIPT], {
       stdin: JSON.stringify({
         apiUrl: SINS_API_URL,
+        key,
         questions: getSinQuestions(),
         session,
         state: veilText(text),
@@ -160,7 +163,7 @@ const closeCommission = async ($: EngineInterface) => {
   await update($, isCommissionExpandedAtom, () => InitialState.isCommissionExpanded);
 };
 
-export const registerLifecycle = (on: On): void => {
+export const registerLifecycle = (on: On, typeSafeKey: string): void => {
   // The bare command flips a mod and an argument sets it, kept in the store so it holds for every later session
   for (const name of ModNames)
     on("command.run", { command: name }, async ($, e) => {
@@ -169,8 +172,9 @@ export const registerLifecycle = (on: On): void => {
       const isNext = argument ? argument === "on" : !current[name];
       // Sins scores only with a TypeSafe key, so turning it on without one is refused and its value is left as it was
       if (name === "sins" && isNext) {
-        const key = await $.env.get("TYPESAFE_API_KEY");
-        if (!key) return { text: "Sins needs a TypeSafe key: set TYPESAFE_API_KEY first." };
+        const key = await readTypeSafeKey($, typeSafeKey);
+        if (!key)
+          return { text: "Sins needs a TypeSafe key: set the typesafe_key option, or TYPESAFE_API_KEY, first." };
       }
 
       const enabledMods = await update($, enabledModsAtom, (value) => ({ ...value, [name]: isNext }));
@@ -216,7 +220,7 @@ export const registerLifecycle = (on: On): void => {
     if (tasks.length > 0 && tasks.every(({ status }) => status === "completed")) await closeCommission($);
     $.clock.after(0, () => {
       // oxlint-disable-next-line typescript/no-floating-promises -- The engine's timer slot takes no promise, and scoring resolves every outcome itself
-      scoreSins($, e.text);
+      scoreSins($, e.text, typeSafeKey);
     });
     return next(e);
   });

@@ -26,6 +26,12 @@ claude plugin marketplace add Esposter/Esposter
 claude plugin install genshin-mods@esposter
 ```
 
+`/sins` scores with [TypeSafe](https://typesafe.ai), so it needs a key: the plugin's `typesafe_key` option, the same option [`genshin-persona`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-persona) has, or the `TYPESAFE_API_KEY` variable when the option is empty:
+
+```bash
+claude plugin install genshin-mods@esposter --config typesafe_key=<key>
+```
+
 A clone of this repository needs neither command: `.agents/settings.json` enables the plugin at project scope once you trust the repository. With [`genshin-persona`](https://github.com/Esposter/Esposter/tree/main/packages/genshin-persona) installed beside it, the band takes the session character's colour; without it, the game's interface gold.
 
 Developing the plugin from a checkout loads the directory itself, with the installed copy disabled so only one of them answers:
@@ -44,7 +50,7 @@ Each mod is switched by its own slash command; bare, it flips, and the choice is
 | `/commission [on \| off]` | Shows the goal meter while a turn works through a task list                                                                     |
 | `/pulse [on \| off]`      | Keeps the machine watcher running, or stops                                                                                     |
 | `/resin [on \| off]`      | Shows the cache, context, limits and cost row and its warning toast                                                             |
-| `/sins [on \| off]`       | Scores each prompt's seven sins with TypeSafe, drawn as bars in a pane; needs a `TYPESAFE_API_KEY`                              |
+| `/sins [on \| off]`       | Scores each prompt's seven sins with TypeSafe, drawn as bars in a pane; needs the `typesafe_key` option or `TYPESAFE_API_KEY`   |
 | `/veil [on \| off]`       | Turns recording mode on or off; off by default                                                                                  |
 | `/ward [on \| off]`       | Asks before an edit to a file another session just changed, and refuses a whole-index git command while one shares the checkout |
 | `/waypoints [on \| off]`  | Suggests the next steps after each answered turn, or stops                                                                      |

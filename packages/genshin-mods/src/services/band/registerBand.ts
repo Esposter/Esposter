@@ -203,12 +203,13 @@ const drawSinsRow = async (
   e: RenderInput<"AbovePrompt">,
   enabledMods: EnabledMods,
   accent: string,
+  typeSafeKey: string,
 ): Promise<RenderElement | undefined> => {
   if (!enabledMods.sins) return undefined;
 
   const scores = getSinScores(await read($, sinHistoryAtom));
   const isLight = await readIsLightTheme($);
-  const summary = SinStatusTextMap[await readSinStatus($)];
+  const summary = SinStatusTextMap[await readSinStatus($, typeSafeKey)];
   const { Box, Button, Text } = $.ui.resolve(e);
   return Box({
     children: [
@@ -236,7 +237,7 @@ const drawSinsRow = async (
 
 // The veil's marker first, so a recording never runs with it off unnoticed, and the engine's own band whenever no
 // Mod has anything to say
-export const registerBand = (on: On): void => {
+export const registerBand = (on: On, typeSafeKey: string): void => {
   on("ui.render", { component: "AbovePrompt" }, async ($, e, next) => {
     if (e.props.hasSurvey) return next(e);
 
@@ -247,7 +248,7 @@ export const registerBand = (on: On): void => {
         drawResinRow($, e, enabledMods, accent),
         drawCommissionRow($, e, enabledMods, accent),
         drawWaypointsRow($, e, enabledMods, accent),
-        drawSinsRow($, e, enabledMods, accent),
+        drawSinsRow($, e, enabledMods, accent, typeSafeKey),
       ])
     ).filter((row) => row !== undefined);
     if (rows.length === 0 && !enabledMods.veil) return next(e);

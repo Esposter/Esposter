@@ -18,7 +18,7 @@ const sinHistoryAtom = atom({ key: "sinHistory", plugin: "genshin-mods" } as con
 // The seven sins in full: one bar per measured sin in the same order every time, its spread as the tinted tail, and its
 // Last thirty prompts as a trend. It is drawn from the state alone, so a reload redraws it as it was, and it says so
 // Rather than drawing stale bars once the switch is off
-export const registerSins = (on: On): void => {
+export const registerSins = (on: On, typeSafeKey: string): void => {
   on("ui.render", { component: "Pane", requestId: SINS_PANE_ID }, async ($, e) => {
     const { Box, Text } = $.ui.resolve(e);
     if (!(await read($, enabledModsAtom)).sins)
@@ -29,7 +29,7 @@ export const registerSins = (on: On): void => {
 
     const scores = getSinScores(await read($, sinHistoryAtom));
     const isLight = await readIsLightTheme($);
-    const statusText = SinStatusTextMap[await readSinStatus($)];
+    const statusText = SinStatusTextMap[await readSinStatus($, typeSafeKey)];
     return Box({
       children: [
         Text({ bold: true, children: "Seven sins" }),

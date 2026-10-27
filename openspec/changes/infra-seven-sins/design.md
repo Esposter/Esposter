@@ -149,7 +149,7 @@ The log is what a later change would replay under a different half-life. The sco
 
 ## The call
 
-The script makes one `POST` to `https://api.typesafe.ai/v1/systemone` with the `Authorization: Bearer` header from `TYPESAFE_API_KEY`. The body names the model `jev-latest`, the redacted prompt as `state`, and seven `score` questions keyed by sin name, each with its instructions and five criteria. One call answers all seven, which is the batching rule of the typed-decisions tier: every independent question about one state goes in one call.
+The script makes one `POST` to `https://api.typesafe.ai/v1/systemone` with the `Authorization: Bearer` header from the key the plugin reads: its `typesafe_key` option, else `TYPESAFE_API_KEY`, handed to the script in its stdin request beside the payload. The body names the model `jev-latest`, the redacted prompt as `state`, and seven `score` questions keyed by sin name, each with its instructions and five criteria. One call answers all seven, which is the batching rule of the typed-decisions tier: every independent question about one state goes in one call.
 
 The script returns one of four results: the seven answers; `no-key`, when no key is set; `node-too-old`, when the Node cannot open the log; or `failed`, with a reason. The module treats only the answers as evidence, and records the other three as the status the band and the pane explain.
 
@@ -184,7 +184,9 @@ packages/genshin-mods/src/services/sins/   ← each module with its co-located .
   getSinQuestions.ts      ← the seven `score` questions one call answers, and the question each sin asks
   parseSinsResult.ts      ← the script's one JSON result
   readIsLightTheme.ts     ← the palette mode from the engine's theme row
-  readSinStatus.ts        ← the status as drawn, with a key removed since the last prompt read off the environment
+  readTypeSafeKey.ts      ← the key sins scores with, read off the plugin's option, else the variable
+  pickTypeSafeKey.ts      ← that choice on its own: the option first, a blank option falling back to the variable
+  readSinStatus.ts        ← the status as drawn, with a key removed since the last prompt read off the key readTypeSafeKey gives
   registerSins.ts         ← the pane's render, and the switch that hides it
 packages/genshin-mods/src/models/   ← SinPosterior, SinFigures, SinScore and SinsResult
 ```
@@ -192,6 +194,7 @@ packages/genshin-mods/src/models/   ← SinPosterior, SinFigures, SinScore and S
 ## Notes
 
 - **The decision this overturns.** The genshin-mods README says that nothing goes beyond the session's own account and that no mod adds a service or a key. This change makes the sins mod the one exception: it calls TypeSafe with the person's key, once per prompt. The owner chose this on 2026-10-27 over the earlier draft, which kept the scorer local and rejected a per-prompt call. On ship, the README bullet is rewritten to name the sins mod as the exception, and the old direction is named there as rejected.
+- **One key for both plugins.** The sins mod reads the same `typesafe_key` option and `TYPESAFE_API_KEY` fallback that genshin-persona reads, so one key set the same way serves both. The engine keeps each plugin's option in its own settings entry, so the key is given once per plugin rather than shared.
 - **No SDK.** The repo's pipeline reads Jev through `scripts/src/services/jev/readAnswers.ts` and the `@typesafe-ai/sdk` client. The plugin cannot import from the repo's scripts, and adding the SDK would add a dependency and a lockfile the plugin install reads only from npm. The plugin makes the one documented call itself, with `fetch`.
 - **The module has no Node.** The repo's mod rules keep Node out of a hooks module, so the network call and the database run in the node script, which the hook reaches through `$.process.run` with the request on stdin. The script is a string in `sinsScript.ts` because a plugin reaches none of its own files from inside the module.
 - **Cost is unverified.** Secondary write-ups from September 2026 put Jev at $0.042 per million input tokens, with output free. One vendor demo puts a call at about $0.00008, roughly 1,900 input tokens. By those figures that is about $0.08 per thousand prompts. No official pricing page was found, and access is an early-access waitlist, so the key may not exist for everyone. The real tokens per call and the bill are read off the account in use; no task gates shipping on either.

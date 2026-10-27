@@ -30,7 +30,7 @@ The sins mod SHALL be switched by its own command, off until it is switched on, 
 
 ### Requirement: Scoring needs a TypeSafe key, and the band and pane say so when it is missing
 
-While no TypeSafe key is set in the session's environment, the sins mod SHALL record no evidence, and the band line and the pane SHALL say that a key is needed.
+While no TypeSafe key is set, neither as the plugin's `typesafe_key` option nor as the `TYPESAFE_API_KEY` variable, the sins mod SHALL record no evidence, and the band line and the pane SHALL say that a key is needed.
 
 #### Scenario: Turning sins on without a key
 
