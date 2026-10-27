@@ -4,14 +4,6 @@ import { atom, read, update } from "claude-code";
 
 import type { EnabledMods } from "../../types";
 
-import { readHome } from "./readHome";
-import { veilText } from "./veil/veilText";
-import { appendSinEvidence } from "./sins/appendSinEvidence";
-import { SINS_API_URL, SINS_TIMEOUT_MS } from "./sins/constants";
-import { getSinQuestions } from "./sins/getSinQuestions";
-import { getSinsStorePath } from "./sins/getSinsStorePath";
-import { parseSinsResult } from "./sins/parseSinsResult";
-import { SINS_SCRIPT } from "./sins/sinsScript";
 import {
   CACHE_WARNING_MS,
   MACHINE_WATCHER_RETRY_MILLISECONDS,
@@ -23,11 +15,19 @@ import {
 } from "./constants";
 import { InitialState } from "./InitialState";
 import { ModDescriptionMap, ModNames } from "./ModDescriptionMap";
+import { readHome } from "./readHome";
 import { getCacheRemainingMs } from "./resin/getCacheRemainingMs";
 import { getCacheWarningDelayMs } from "./resin/getCacheWarningDelayMs";
 import { getReserveSummary } from "./resin/getReserveSummary";
 import { getReserveWindow } from "./resin/getReserveWindow";
 import { reserveText } from "./resin/reserveText";
+import { appendSinEvidence } from "./sins/appendSinEvidence";
+import { SINS_API_URL, SINS_TIMEOUT_MS } from "./sins/constants";
+import { getSinQuestions } from "./sins/getSinQuestions";
+import { getSinsStorePath } from "./sins/getSinsStorePath";
+import { parseSinsResult } from "./sins/parseSinsResult";
+import { SINS_SCRIPT } from "./sins/sinsScript";
+import { veilText } from "./veil/veilText";
 import { parseWaypoints } from "./waypoints/parseWaypoints";
 
 const commissionAtom = atom({ key: "commission", plugin: "genshin-mods" } as const, InitialState.commission);
@@ -121,6 +121,10 @@ const scoreSins = async ($: EngineInterface, text: string) => {
     outcome.status === "fulfilled" && outcome.value.exitCode === 0
       ? parseSinsResult(outcome.value.stdout)
       : { result: "failed" as const };
+
+  // A `/clear` or a resume during the run has reset the session, so this run's answers belong to a conversation no longer shown
+  if ((await read($, sinSessionAtom)) !== session) return;
+
   if (result.result === "answered")
     await update($, sinHistoryAtom, (history) => appendSinEvidence(history, result.answers));
 
