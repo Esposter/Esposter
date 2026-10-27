@@ -42,7 +42,7 @@ Three choices follow from the flow. A `valueOf` or `toString` is used only when 
 
 ## Upstream
 
-Every issue and pull request of [epoberezkin/fast-deep-equal](https://github.com/epoberezkin/fast-deep-equal) has one verdict below. A regression test is named by its issue number, and fails against the upstream package where the upstream is wrong, except where the table says it passes upstream too. The verdicts were checked against the upstream's own code, run under Node, and against the comments on each issue.
+Every issue and pull request of [fast-deep-equal](https://github.com/epoberezkin/fast-deep-equal) has one verdict below. A regression test is named by its issue number, and fails against the upstream package where the upstream is wrong, except where the table says it passes upstream too. The verdicts were checked against the upstream's own code, run under Node, and against the comments on each issue.
 
 | Issue                                                             | Verdict            | Proof                                                                                                                                                                                 |
 | :---------------------------------------------------------------- | :----------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -164,7 +164,7 @@ A pull request carries the verdict of the issue it fixes, or its own verdict whe
 ## Notes
 
 - The replacement compares a Map or Set's contents, where the upstream's default entry compared its own keys. A caller that relied on two different Sets being equal would now see them unequal. None of the callers does.
-- Cyclic structures are not detected. A comparison of data with a cycle overflows the stack, as the upstream's does, and no caller compares cyclic data.
+- Cyclic structures are not detected. A comparison of data with a cycle overflows the stack, as the upstream's does.
 
 ## Key files
 
@@ -179,6 +179,6 @@ A pull request carries the verdict of the issue it fixes, or its own verdict whe
 
 ## Sources
 
-- The upstream repository, [epoberezkin/fast-deep-equal](https://github.com/epoberezkin/fast-deep-equal), and its issue tracker, read whole before the rewrite.
+- The upstream repository, [fast-deep-equal](https://github.com/epoberezkin/fast-deep-equal), and its issue tracker, read whole before the rewrite.
 - [SameValueZero](https://tc39.es/ecma262/#sec-samevaluezero), the equality the Map keys, Set members and `NaN` comparisons use.
 - [Set objects](https://tc39.es/ecma262/#sec-set-objects), which hold their values by identity.

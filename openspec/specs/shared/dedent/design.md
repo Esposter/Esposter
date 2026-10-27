@@ -7,7 +7,7 @@
 ```mermaid
 flowchart TD
   input["Template or string"]
-  insertValues["Interpolate values<br/>alignValues indents them; a value is never cooked"]
+  insertValues["Interpolate values<br/>alignValues indents them, a value is never cooked"]
   continuations["Remove line continuations<br/>escaped newline, then its blanks"]
   dedent["Strip the common indentation<br/>only lines with text count"]
   trim{"trimWhitespace?"}
@@ -156,6 +156,6 @@ Every issue and pull request in `dmnd/dedent` has one verdict. A "fixed upstream
 
 ## Sources
 
-- The upstream package `dedent@1.7.2` on npm, [dmnd/dedent](https://github.com/dmnd/dedent), its test suite and snapshots — the parity contract for every case the table does not mark as a defect.
+- The upstream package `dedent@1.7.2` on npm, [dedent](https://github.com/dmnd/dedent), its test suite and snapshots — the parity contract for every case the table does not mark as a defect.
 - The ECMAScript template literal escape rules (cooked and raw template values), which the cooking step follows for the escapes it accepts.
 - The TC39 [String.dedent proposal](https://github.com/tc39/proposal-string-dedent), the spec this package does not follow (see #76).

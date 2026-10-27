@@ -1,6 +1,6 @@
 # Shared
 
-`packages/shared` (npm `@esposter/shared`) is the TypeScript code the app and the server both import: error classes, the neverthrow helpers, Zod schemas and the utilities that once came from a dependency. A utility that replaced a dependency has its own page here, with the upstream table of that dependency's issues and the test that proves each verdict.
+`packages/shared` (npm `@esposter/shared`) is the TypeScript code the app and the server both import: error classes, the neverthrow helpers, Zod schemas and the utilities absorbed from a dependency. A utility that replaced a dependency has its own page here, with the upstream table of that dependency's issues and the test that proves each verdict.
 
 - [Profanity check](profanity/design.md) — an English word list and a whole-word matcher, replacing `@2toad/profanity`.
 - [Typed event emitter](typed-event-emitter/design.md) — the app's game event bus, replacing `eventemitter3`.

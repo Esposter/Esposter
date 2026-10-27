@@ -100,7 +100,7 @@ Every `idb` issue and pull request, with its verdict. The verdict and what each 
 
 ## Sources
 
-- [jakearchibald/idb](https://github.com/jakearchibald/idb) — the package replaced, its issues and pull requests.
+- [idb](https://github.com/jakearchibald/idb) — the package replaced, its issues and pull requests.
 - [IndexedDB 3.0](https://www.w3.org/TR/IndexedDB/) (W3C) — the specification the request, transaction and version-change behaviour follows.
 - [IDBTransaction](https://developer.mozilla.org/en-US/docs/Web/API/IDBTransaction) (MDN) — the transaction's `complete`, `abort` and `error` events the `done` promise reads.
 - [fake-indexeddb](https://github.com/dumbmatter/fake-indexeddb) — the in-memory implementation the behaviour tests run against.

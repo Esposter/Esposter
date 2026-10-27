@@ -20,8 +20,8 @@ flowchart TD
   extensionMap --> caller
 ```
 
-- **The dataset is read on first use**, not at import. A bundle that reaches none of the three functions never carries the 200 KB JSON, and `@esposter/shared` stays `sideEffects: false`.
-- **One media type per extension.** Several types can list one extension (`mp4` is claimed by `application/mp4` and `video/mp4`). `getMimeScore` ranks them the way `mime-score` does, and the higher score keeps the extension. A tie goes to the type the dataset lists later, which is the order `mime-types` has always used; the 1.54.0 dataset has no tie at the top, so that rule decides nothing today.
+- **The dataset is read on first use**, not at import. A bundle that reaches none of the three functions never carries the dataset JSON, and `@esposter/shared` stays `sideEffects: false`.
+- **One media type per extension.** Several types can list one extension (`mp4` is claimed by `application/mp4` and `video/mp4`). `getMimeScore` ranks them the way `mime-score` does, and the higher score keeps the extension. A tie goes to the type the dataset lists later, which is the order `mime-types` has always used; the dataset the catalog pins has no tie at the top, so that rule decides nothing today.
 - **`extension` returns the first extension a type lists**, the order the dataset keeps.
 - **No `node:path`.** `lookup` reads a path's last segment itself, with the separators of both posix and Windows paths, so the function runs in a browser.
 
@@ -51,7 +51,7 @@ Every `jshttp/mime-types` issue, with its verdict. The four verdicts and what ea
 | [#115](https://github.com/jshttp/mime-types/issues/115) | Out of scope       | The CI test matrix of the upstream repository                                                                                                                                                                     |
 | [#113](https://github.com/jshttp/mime-types/issues/113) | In scope — defect  | `wav` resolves to `audio/wav`, not `audio/wave`; "maps wav to audio/wav over its other claimants" in `getExtensionMimeTypeMap.test.ts`                                                                            |
 | [#111](https://github.com/jshttp/mime-types/issues/111) | In scope — defect  | Fixed by construction: the browser build reaches no `process` or `path` global                                                                                                                                    |
-| [#110](https://github.com/jshttp/mime-types/issues/110) | Out of scope       | `application/javascript` is mime-db's data, which now lists `text/javascript` for `.js`; "maps js to text/javascript" in `getExtensionMimeTypeMap.test.ts` pins the result                                        |
+| [#110](https://github.com/jshttp/mime-types/issues/110) | Out of scope       | `application/javascript` is mime-db's data, which lists `text/javascript` for `.js`; "maps js to text/javascript" in `getExtensionMimeTypeMap.test.ts` pins the result                                            |
 | [#109](https://github.com/jshttp/mime-types/issues/109) | Out of scope       | The issue itself routes a missing type to mime-db; the lookup's map is read-only here, so no caller can edit it                                                                                                   |
 | [#106](https://github.com/jshttp/mime-types/issues/106) | In scope — feature | TypeScript and browser support, delivered by this rewrite rather than the fork's patch                                                                                                                            |
 | [#102](https://github.com/jshttp/mime-types/issues/102) | False positive     | The question was an image check built on extensions; the lookup answers the media type, and a prefix check on `image/` answers the rest                                                                           |
@@ -99,6 +99,6 @@ Pull requests the audit judged on their merits, rather than as issues:
 
 ## Sources
 
-- The upstream repository, [jshttp/mime-types](https://github.com/jshttp/mime-types), at 3.0.2, whose `index.js` and "mimeScore.js" the port rewrites and whose test suite the cases port from.
+- The upstream repository, [mime-types](https://github.com/jshttp/mime-types), at 3.0.2, whose `index.js` and "mimeScore.js" the port rewrites and whose test suite the cases port from.
 - [mime-db](https://github.com/jshttp/mime-db), the dataset this package reads, at 1.54.0.
 - [mime-score](https://github.com/broofa/mime-score), the ranking `getMimeScore` ports, and [RFC 6838](https://www.rfc-editor.org/rfc/rfc6838), the facets it scores.
