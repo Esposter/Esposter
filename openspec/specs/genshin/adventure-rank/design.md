@@ -11,7 +11,7 @@ flowchart TD
   G --> ST
   ST --> R["Rank: the EXP's rank, held at the cap the last open World Level sets"]
   ST --> WL["World Level unlocked"]
-  ST --> CARD["Profile card: rank, EXP bar, World Level"]
+  ST --> CARD["Profile card"]
   WL --> L["Lowered by one from World Level 3, once a day"]
   L --> W["World Level played at"]
   W --> S["Each camp's enemy stands at its level under that World Level"]
@@ -114,3 +114,6 @@ A camp's enemy stands at its camp level under World Level 0. From World Level 1 
 - [Adventure Rank](https://genshin-impact.fandom.com/wiki/Adventure_Rank), Genshin Impact Wiki: not in the cache (see Still open), so nothing here cites it. The World Level table and the holds at 25, 35, 45 and 50 are cited to the game's own text and `~/Esposter/genshin-parity/text/ExcelBinOutput/PlayerLevelLockExcelConfigData.json` where they are stated above, and lowering from World Level 3 to the game's own text; the 1:10 Mora rate and the enemy level ranges have no source yet.
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `PlayerLevelExcelConfigData`, `PlayerLevelLockExcelConfigData` and `WorldLevelExcelConfigData`, the tables the rank is read from. The dump at its revision lacked the three; they were taken from the same repository's files, which matched the dump's own tables byte for byte.
 - World Level tutorials recorded on the English PC client, [2024](https://www.youtube.com/watch?v=P13s7kSmVOE) and [2025](https://www.youtube.com/watch?v=ZGsragloQxU): the dialog the info icon opens on a click, open at the end of its help text, and the Change World Level prompt its button opens.
+- The caps in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/PlayerLevelLockExcelConfigData.json`, grounding "Rank follows Adventure EXP under the World Level cap".
+- The game's text at 2955635938 in `~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json` gives the same ranks and quests, grounding "A World Level opens after the rank and quest it needs".
+- The game's text at 2955635938 and 2310679825 in `~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, grounding "The World Level can be lowered from World Level 3", "A lowered World Level can be restored" and "Each World Level change is followed by a 24 hour wait".

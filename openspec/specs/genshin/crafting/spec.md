@@ -1,6 +1,6 @@
 ## Purpose
 
-The bench's recipes are read from the game's combine table into the world's data, and the rules of crafting run over them: which recipes a player has open, how many of a recipe the bag and wallet pay for, a batch crafted whole or refused, and a recipe learned from its instruction. This page is the first build of the crafting proposal, covering the tiers, potions, baits, Condensed Resin and the gadgets. The bench is not placed in the world yet.
+The bench's recipes are read from the game's combine table into the world's data, and the rules of crafting run over them: which recipes a player has open, how many of a recipe the bag and wallet pay for, a batch crafted whole or refused, and a recipe learned from its instruction.
 
 ## Requirements
 
@@ -87,7 +87,7 @@ The number of a recipe that can be crafted SHALL be the least count its material
 
 ### Requirement: Condensed Resin stops at the five a player can hold
 
-Crafting Condensed Resin SHALL be refused once the bag has no room for another (the game's text 953962629 in `~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json` says no more than 5 can be held).
+Crafting Condensed Resin SHALL be refused once the bag has no room for another.
 
 #### Scenario: A craft of Condensed Resin is refused with five held
 
@@ -97,7 +97,9 @@ Crafting Condensed Resin SHALL be refused once the bag has no room for another (
 
 ### Requirement: A crafting talent may add extra results and a character without one crafts plainly
 
-A character with a crafting talent SHALL draw its extra results, refunds or regional materials at the talent's chance on each craft it applies to, and a character without one SHALL craft only the recipe's own results.
+A character with a crafting talent SHALL draw its extra results, refunds or regional materials at the talent's chance on each craft it applies to.
+
+A character without one SHALL craft only the recipe's own results.
 
 #### Scenario: A talent adds an extra result to a craft
 
@@ -131,7 +133,9 @@ Open recipes SHALL be listed under one tab per combine type, each named by the g
 
 ### Requirement: Crafting Performed counts every batch since the first craft
 
-The save SHALL count each recipe's batches since the player first crafted it, across visits, and a merge SHALL keep the account's counts.
+The save SHALL count each recipe's batches since the player first crafted it, across visits.
+
+A merge SHALL keep the account's counts.
 
 #### Scenario: Batches count across visits
 
@@ -147,7 +151,11 @@ The save SHALL count each recipe's batches since the player first crafted it, ac
 
 ### Requirement: The recipe build refuses a table it cannot read
 
-The recipe build SHALL refuse a three-for-one tier that is not three of one material, a conversion that is not one material and its catalyst, and a hidden recipe that no instruction opens.
+The recipe build SHALL refuse a three-for-one tier that is not three of one material.
+
+The recipe build SHALL refuse a conversion that is not one material and its catalyst.
+
+The recipe build SHALL refuse a hidden recipe that no instruction opens.
 
 #### Scenario: A tier row that is not three of one material refuses the build
 
@@ -179,7 +187,9 @@ A city's crafting bench SHALL stand in the world at the place its scene group re
 
 ### Requirement: Using the bench opens crafting
 
-The crafting bench SHALL offer its prompt only within the character's reach, and using it SHALL open the crafting screen with the party's crafter picked.
+The crafting bench SHALL offer its prompt only within the character's reach.
+
+Using the bench SHALL open the crafting screen with the party's crafter picked.
 
 #### Scenario: The bench offers its prompt within reach
 
@@ -231,7 +241,7 @@ The crafting bench SHALL show each recipe the party has learned together with it
 
 ### Requirement: A conversion turns one material into another with its catalyst
 
-The bench SHALL hold each conversion of the game's conversion sections as a recipe that takes one material and the catalyst it names, makes one item and costs the Mora its row names (most convert rows name none; 21 rows of combine type five name 300, 900 or 2700, in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/CombineExcelConfigData.json`). A conversion SHALL be open from the start.
+The bench SHALL hold each conversion of the game's conversion sections as a recipe that takes one material and the catalyst it names, makes one item and costs the Mora its row names (most convert rows name none; some rows of combine type five name 300, 900 or 2700). A conversion SHALL be open from the start.
 
 #### Scenario: a conversion takes its material and its catalyst
 

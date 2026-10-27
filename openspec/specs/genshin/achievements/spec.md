@@ -65,7 +65,7 @@ A finished quest or parent quest SHALL count once toward each watched achievemen
 
 - **GIVEN** an achievement names a sub-quest that the game data does not carry
 - **WHEN** the doing happens
-- **THEN** its progress stays at zero (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/QuestExcelConfigData.json`: 207 of the 541 sub-quest ids the kept quest triggers name are absent from it)
+- **THEN** its progress stays at zero (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/QuestExcelConfigData.json`: some of the sub-quest ids the kept quest triggers name are absent from it)
 
 #### Scenario: Unwatched trigger type does not move
 
