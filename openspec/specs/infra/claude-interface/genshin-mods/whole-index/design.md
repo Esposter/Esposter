@@ -23,7 +23,7 @@ flowchart TD
   Form -->|no| Run[The command runs]
   Form -->|yes| Ward{Ward on}
   Ward -->|no| Run
-  Ward -->|yes| Peer{Another session edited a file in the checkout git runs in within thirty minutes}
+  Ward -->|yes| Peer{A peer edited this checkout<br/>within the ward window git runs in within thirty minutes}
   Peer -->|no| Run
   Peer -->|yes| Deny[Denied, naming the path-scoped forms to use]
 ```

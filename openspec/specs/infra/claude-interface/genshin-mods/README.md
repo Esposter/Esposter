@@ -41,8 +41,8 @@ flowchart LR
   Lifecycle --> State[(Session state)]
   Matched --> State
   Persona[genshin-persona's character] -->|accent| Band
-  State --> Band[The band: veil marker, resin, commission, waypoints]
-  Band -->|a press| Actions[Fork, compact, clear and submit, a prompt]
+  State --> Band[The band<br/>one row for each mod that draws one]
+  Band -->|a press| Actions[The button's action]
 ```
 
 ## Key files
