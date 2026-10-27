@@ -7,6 +7,7 @@ import type { MaybeRefOrGetter } from "vue";
 import { SubscriptionStatus } from "#src/runtime/client/models/SubscriptionStatus";
 import { checkIsServer } from "@esposter/shared";
 import { getCurrentScope, onScopeDispose, shallowRef, toValue, watch } from "vue";
+import { ConnectionStateSubscriptionStatus } from "#src/runtime/client/models/ConnectionStateSubscriptionStatus";
 
 type ConnectionState = Parameters<
   NonNullable<UseSubscriptionOptions<TRPCResolverDef>["onConnectionStateChange"]>
@@ -14,9 +15,9 @@ type ConnectionState = Parameters<
 type Unsubscribable = ReturnType<TRPCUntypedClient<AnyTRPCRouter>["subscription"]>;
 
 const ConnectionStateSubscriptionStatusMap = {
-  connecting: SubscriptionStatus.Connecting,
-  idle: SubscriptionStatus.Idle,
-  pending: SubscriptionStatus.Pending,
+  [ConnectionStateSubscriptionStatus.Connecting]: SubscriptionStatus.Connecting,
+  [ConnectionStateSubscriptionStatus.Idle]: SubscriptionStatus.Idle,
+  [ConnectionStateSubscriptionStatus.Pending]: SubscriptionStatus.Pending,
 } as const satisfies Record<ConnectionState, SubscriptionStatus>;
 
 export const useProcedureSubscription = (
