@@ -20,7 +20,7 @@ Lisa's four strikes SHALL land in order, and her charged attack SHALL land on th
 
 ### Requirement: Violet Arc's press and Conductive stacks
 
-Violet Arc's press SHALL apply one Conductive stack to each enemy it strikes, up to three per enemy, and Conductive stacks SHALL NOT expire, provisionally, as gcsim does not say how long they last.
+Violet Arc's press SHALL apply one Conductive stack to each enemy it strikes, up to three per enemy, and Conductive stacks SHALL NOT expire, provisionally.
 
 #### Scenario: Each press hit adds a stack
 
