@@ -26,7 +26,7 @@ An icon set such as Streamline, a traced or redrawn copy, and any file found und
 | Nuxt                        | `nuxt/nuxt.com`                 | public/assets/design-kit/icon-green.svg                     |
 | tRPC                        | `trpc/trpc`                     | www/static/img/logo.svg                                     |
 | Zod                         | `colinhacks/zod`                | logo.svg                                                    |
-| Drizzle                     | `drizzle-team/drizzle-orm-docs` | public/svg/drizzle.svg                                      |
+| Drizzle                     | `drizzle-team/drizzle-orm-docs` | public/svg/drizzle-dark.svg (black mark)                    |
 | Pulumi                      | `pulumi/docs`                   | assets/fingerprinted/logos/brand/pulumi-mark.svg            |
 | Vite+                       | `voidzero-dev/vite-plus`        | docs/public/logo.svg (wordmark; the repository has no mark) |
 | PostgreSQL                  | `postgres/pgweb`                | media/img/misc/Postgresql_elephant.svg                      |
