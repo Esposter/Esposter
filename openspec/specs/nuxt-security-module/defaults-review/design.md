@@ -2,7 +2,7 @@
 
 The module's defaults are the first thing a new app inherits, so the absorbed package starts from a reviewed set rather than from upstream's. This page reviews each header and option the module sets by default against published guidance. It is the input to the next phase: the package's defaults are written from the verdicts below, and each verdict that changes a value gets a test pinning the new value.
 
-The default set is read from the installed `nuxt-security@2.6.0` in `defaultConfig.mjs`. Our app does not set `strict`, so the non-strict defaults apply, and the strict set is noted where it differs. Recommended values are quoted from the sources linked in the last section. Where a source could not be read, the verdict is marked undecided rather than filled from memory.
+The default set is the one `nuxt-security@2.6.0` ships in `defaultConfig.mjs`. Our app does not set `strict`, so the non-strict defaults apply, and the strict set is noted where it differs. Recommended values are quoted from the sources linked in the last section. Where a source could not be read, the verdict is marked undecided rather than filled from memory.
 
 ## Headers
 
@@ -41,7 +41,7 @@ The default set is read from the installed `nuxt-security@2.6.0` in `defaultConf
 
 ## Sources
 
-- [OWASP Secure Headers Project](https://owasp.org/www-project-secure-headers/), whose recommended values are in its repository's [`ci/headers_add.json`](https://raw.githubusercontent.com/OWASP/www-project-secure-headers/master/ci/headers_add.json).
+- [OWASP Secure Headers Project](https://owasp.org/www-project-secure-headers/), whose recommended values are in its repository's [the recommended header list](https://raw.githubusercontent.com/OWASP/www-project-secure-headers/master/ci/headers_add.json).
 - [CSP Level 3](https://www.w3.org/TR/CSP3/), for `frame-ancestors`, `script-src-elem` and the `'unsafe-inline'` rules.
 - [Fetch standard](https://fetch.spec.whatwg.org/), §3.7 for `Cross-Origin-Resource-Policy`.
 - [RFC 6797](https://www.rfc-editor.org/rfc/rfc6797), for `Strict-Transport-Security`.

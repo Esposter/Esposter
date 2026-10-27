@@ -11,12 +11,12 @@ The email editor's canvas, preview and fields belong to the [email editor](../re
 ```mermaid
 flowchart LR
   DOC["a block document the registry's schema accepted"] --> FOLD["renderBlockNodes: each node after its slots"]
-  FOLD --> NODE["each type's render: escaped attributes, its content kind, its children"]
+  FOLD --> NODE["each type's render"]
   NODE --> JSON["MJML's JSON form, the head from the root's props"]
   JSON --> COMPILE["the consumer's compile: mjml2html, strict validation"]
   JSON --> SERIAL["serializeMjml: MJML source, every element closed by its own tag"]
   SOURCE["MJML source"] --> PARSE["node-html-parser: block text kept raw, attributes decoded"]
-  PARSE --> MAP["readMjmlRoot: the head into root props, each tag a node, content read by its kind"]
+  PARSE --> MAP["readMjmlRoot"]
   MAP --> SCHEMA{"the registry's document schema"}
   SCHEMA -->|accepted| DOC
   SCHEMA -->|refused| ERR["the refusal, naming the node or tag that failed"]
@@ -28,7 +28,7 @@ flowchart LR
 
 ## Decisions
 
-- **The component set is MJML's, current and whole.** Parity is with MJML 5's components, so a component the plugin never shipped is in the set too. Each block type's name is its MJML tag, so the render, the slot rules and the canvas key on one name.
+- **The component set is MJML's, current and whole.** Parity is with the components of the MJML release the `pnpm-workspace.yaml` catalog pins, so a component the plugin never shipped is in the set too. Each block type's name is its MJML tag, so the render, the slot rules and the canvas key on one name.
 - **The head is the root's props.** A head component belongs to the whole email, so `lang` and `dir` sit on `mjml`, `mj-title` and `mj-preview` are text props, `mj-font` is a list of a name and a stylesheet address, `mj-breakpoint` and `mj-body`'s attributes are maps, and `mj-attributes` is a map per type. `mj-style` is a list, and its schema refuses a `<` in the CSS so the CSS can never close its element.
 - **Components left out of MJML's set are refused by name.** `mj-include` reads files from the compiling server's disk, `mj-html-attributes` and `mj-class` target attributes by selector and share named classes, and the community components are not part of MJML's own preset. A head or body tag the package does not take, or a second tag of one the head or body reads once, is refused under its name in angle brackets (`<mj-include>`, `<body>`), a key no prop the root or the head reads can be. The `mjml` element takes `lang` and `dir` as root props, the direction held as `direction`, and any other attribute it carries is refused under `<mjml>`.
 - **Slots are MJML's nesting map.** Each container's `children` slot is the allow list MJML's core preset registers for its tag, and the root's content is the list for `mj-body`. A consumer's own leaf is added where MJML allows a leaf. A test holds every allow list equal to the installed preset, so a release that changes the nesting fails a test.
@@ -55,7 +55,7 @@ Reproduced when the `grapesjs-mjml` 1.0.8 plugin was installed, without GrapesJS
 - **[#388](https://github.com/GrapesJS/mjml/issues/388)** (open): `src/components/Head.ts` makes `mj-attributes` droppable in the head (lines 13 to 20), and no component type in `src/components` registers its children, so no defaults reach the canvas. Proven by reading the source; the compile half of the cascade is pinned by `#388 #269 #358 #367 #368 mj-attributes applies, and MJML's defaults fill what a node sets none`.
 - **[#406](https://github.com/GrapesJS/mjml/issues/406)** (open): the plugin's manifest pins `mjml-browser` at `^4.18.0` (`package.json`, line 32), where MJML 5 is current. The package compiles on MJML 5 under strict validation, pinned by `a valid email compiles under strict validation`.
 
-The in-scope features that are open (#203, #351, #390, #436) are the package's own tests, which exercise each attribute and element the plugin's issue asks for. The four MJML components the tracker never mentions (`mj-accordion`, `mj-breakpoint`, `mj-html-attributes` and `mj-include`) have no item here; they come from the component comparison alone, and the first two are in the set.
+The in-scope features that are open (#203, #351, #390, #436) are the package's own tests, which exercise each attribute and element the plugin's issue asks for. The MJML components the tracker never mentions (`mj-accordion`, `mj-breakpoint`, `mj-html-attributes` and `mj-include`) have no item here; they come from the component comparison alone, and the first two are in the set.
 
 | Upstream                                            | Verdict                            | Proof                                                                                                                                                                   |
 | :-------------------------------------------------- | :--------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
