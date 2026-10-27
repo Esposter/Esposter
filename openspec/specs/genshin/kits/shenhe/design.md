@@ -57,3 +57,25 @@ flowchart TD
 - `~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/skill.go` lines 74 and 136: grounds "Constellation 4 Skyfrost Mantra consumed by Spring Spirit Summoning".
 - `~/Esposter/cache/genshin-wiki/Category_Shenhe_Talents.json`, the Insight text: grounds "Constellation 4 Skyfrost Mantra consumed by Spring Spirit Summoning".
 - `~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/skill.go` lines 189 and 191: grounds "Constellation 6 exempts normal and charged attack triggers".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/attack.go` line 24: grounds scenario "Five strikes in sequence".
+- `~/Esposter/cache/genshin-wiki/Category_Shenhe_Talents.json`, the Plunging Attack text: grounds scenario "Plunge lands on the enemies in reach".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/skill.go` line 87: grounds scenario "Tap plays the press".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/skill.go` lines 137 to 144: grounds scenario "Hold past half a second plays the hold".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/shenhe.go` line 32: grounds scenario "Constellation 1 adds a charge".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/shenhe.go` line 31: grounds scenario "Constellation 0 adds nothing".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/burst.go` line 62: grounds scenario "Constellation 2 extends the field".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/burst.go` line 60: grounds scenario "Constellation 1 leaves the field as its base".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/cons.go` lines 17 to 20: grounds scenario "The active character in the field gains Cryo CRIT DMG".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/burst.go` line 94: grounds scenario "A character outside the field gains nothing".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/shenhe.go` line 48: grounds scenario "Constellation 1 gives no CRIT DMG".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/skill.go` lines 204 and 217: grounds scenario "A Cryo hit adds Shenhe's ATK and spends a trigger".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/skill.go` line 206: grounds scenario "A Cryo hit adds Shenhe's ATK and spends a trigger".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/skill.go` lines 180 to 181 and 199 to 200: grounds scenario "Other hits add nothing".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/skill.go` lines 193 to 194: grounds scenario "A hit from no attack kind adds nothing".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/burst.go` line 69: grounds scenario "A hit from no attack kind adds nothing".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/cons.go` lines 54 to 55: grounds scenario "A trigger gives a stack from Constellation 4".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/skill.go` lines 218 to 220: grounds scenario "A trigger gives a stack from Constellation 4".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/cons.go` line 31: grounds scenario "No stack below Constellation 4".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/cons.go` line 38: grounds scenario "Spring Spirit Summoning consumes the stacks".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/cons.go` line 42: grounds scenario "Spring Spirit Summoning consumes the stacks".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/skill.go` lines 186 and 205 to 206: grounds scenario "A skill still spends the quota".
