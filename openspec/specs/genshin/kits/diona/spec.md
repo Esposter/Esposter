@@ -18,14 +18,16 @@ Diona's normal attacks SHALL be five strikes, a charged aimed shot, a collision 
 
 Tapping Icy Paws SHALL cast paws that reach 5 metres and give Diona a shield set as the press starts.
 
-Icy Paws SHALL cool down before it can be used again.
-
 #### Scenario: A tap sets a shield from Diona's max HP
 
 - **GIVEN** Diona is the character on the field
 - **WHEN** the player taps Icy Paws
 - **THEN** the paws reach enemies within 5 metres
 - **AND** a shield sized from her max HP is set on her as the press starts
+
+### Requirement: Icy Paws cooldown
+
+Icy Paws SHALL cool down before it can be used again.
 
 #### Scenario: A tap during the cooldown does nothing
 
@@ -51,7 +53,7 @@ Holding Icy Paws SHALL cast paws that give Diona a larger shield, once the hold 
 
 ### Requirement: Constellation 2 shields
 
-From constellation 2, each Icy Paws shield, whether tapped or held, SHALL be 15 percent larger. Its damage part, which gcsim also gives, is open in the design.
+From constellation 2, each Icy Paws shield, whether tapped or held, SHALL be 15 percent larger. Its damage part is open in the design.
 
 #### Scenario: A shield at constellation 2 is larger
 
@@ -63,14 +65,16 @@ From constellation 2, each Icy Paws shield, whether tapped or held, SHALL be 15 
 
 Signature Mix SHALL set a field of radius 7 metres round Diona that heals the active character every 2 seconds, and its six ticks of damage SHALL be dealt from the cast.
 
-Signature Mix SHALL be refused without the energy it costs.
-
 #### Scenario: The field heals the active character
 
 - **GIVEN** Diona has enough energy
 - **WHEN** the player casts Signature Mix
 - **THEN** the field starts round Diona
 - **AND** the active character is healed every 2 seconds while the field stands
+
+### Requirement: Signature Mix refused without its energy cost
+
+Signature Mix SHALL be refused without the energy it costs.
 
 #### Scenario: Signature Mix is refused without enough energy
 
@@ -122,7 +126,7 @@ From Ascension 4, each enemy Signature Mix's initial hit or one of its ticks str
 
 ### Requirement: Paws deal no poise
 
-Icy Paws' paws SHALL deal no poise, a provisional zero until the game's own values are measured. The wiki's Icy Paw DMG gives 30 poise each, but the kit does not build it: the difference is open in the design.
+Icy Paws' paws SHALL deal no poise, a provisional zero until the game's own values are measured. The kit does not build 30 poise each: the difference is open in the design.
 
 #### Scenario: A paw deals no poise
 
