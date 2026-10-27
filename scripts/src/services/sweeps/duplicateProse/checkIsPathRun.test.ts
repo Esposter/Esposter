@@ -5,7 +5,9 @@ import { describe, expect, test } from "vitest";
 
 describe(checkIsPathRun, () => {
   const pathShingles = getPathShingles([getProseWords("apps/web/server/services/resource/takeRevision.ts").join(" ")]);
-  const prose = getProseWords("one two three four five six seven eight nine ten eleven twelve thirteen fourteen");
+  const prose = getProseWords(
+    "one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty",
+  );
 
   test("reads a path with the words that label it as a citation", () => {
     expect.hasAssertions();
@@ -27,6 +29,6 @@ describe(checkIsPathRun, () => {
   test("reads two words of a path as prose", () => {
     expect.hasAssertions();
 
-    expect(checkIsPathRun([...getProseWords("services/resource"), ...prose.slice(0, 12)], pathShingles)).toBe(false);
+    expect(checkIsPathRun([...getProseWords("services/resource"), ...prose.slice(0, 18)], pathShingles)).toBe(false);
   });
 });

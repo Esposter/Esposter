@@ -45,7 +45,7 @@ Grep 8's cross-page form is `pnpm ai:sweep:duplicate-prose`: every run of `SHING
 different owners share, longest first, which is what a page restating another's rule leaves behind — a paraphrase
 does not, and is still the pass's to read. A run three pages share is a template rather than a copy and is left
 out, and neither a URL nor the words of a path both pages cite are counted — a citation is the same string on both by design,
-so a key-files row or a link is a copy only by the ten prose words around it.
+so a key-files row or a link is a copy only by the `SHINGLE_SIZE` prose words around it.
 
 **Which page owns a rule is a judgement; that there is one to make is not.** The scan prints, and
 `scripts/src/workspace/duplicateProse.test.ts` fails `pnpm test` on anything it prints: a new run is a
