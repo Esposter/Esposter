@@ -66,18 +66,18 @@ Rate limiting and verification rows also carry the user id, and both expire on t
 
 Each one is named where it is decided and says which operation it affects. Items 5, 6, 7, 8, 9, 10, 11 and 12 are omissions the export design decides on purpose, each citing its reason in the export design's "Not included" section, and no item is left undecided.
 
-1. **Deletion and export.** Messages a user wrote in rooms they have since left stay attributed to them, because membership is the only index ([account deletion](../../user/account-deletion/design.md), "Limits the spec states"). The export leaves them out too (`user-data-export/design.md`, "Not included").
-2. **Deletion and export.** Moderation logs and notes that name the user in rooms it does not own, and the user's activity on other people's resources, are kept ([account deletion](../../user/account-deletion/spec.md), "The deletion states what it does not remove"). The export leaves out the same activity, since its resources entry covers owned resources only (item 8 covers the owned resources' log), and its moderation entries hold the records that name the user as target and the actions the person took as moderator in rooms they own (`user-data-export/design.md`, "What the archive holds").
-3. **Deletion and export.** The shared character-pack files are kept, and have no owner to attribute them to ([account deletion](../../user/account-deletion/spec.md), "The deletion states what it does not remove"). The export leaves them out too (`user-data-export/design.md`, "Not included").
+1. **Deletion and export.** Messages a user wrote in rooms they have since left stay attributed to them, because membership is the only index ([account deletion](../../user/account-deletion/design.md), "Limits the spec states"). The export leaves them out too (`../../user/data-export/design.md`, "Not included").
+2. **Deletion and export.** Moderation logs and notes that name the user in rooms it does not own, and the user's activity on other people's resources, are kept ([account deletion](../../user/account-deletion/spec.md), "The deletion states what it does not remove"). The export leaves out the same activity, since its resources entry covers owned resources only (item 8 covers the owned resources' log), and its moderation entries hold the records that name the user as target and the actions the person took as moderator in rooms they own (`../../user/data-export/design.md`, "What the archive holds").
+3. **Deletion and export.** The shared character-pack files are kept, and have no owner to attribute them to ([account deletion](../../user/account-deletion/spec.md), "The deletion states what it does not remove"). The export leaves them out too (`../../user/data-export/design.md`, "Not included").
 4. **Deletion only.** Azure AI Search keeps a copy of message text whose removal path is unverified ([account deletion](../../user/account-deletion/design.md), "Limits the spec states"). The export reads `Messages`, not this index.
-5. **Export only.** Sessions, API keys and every token in `accounts` are left out (`user-data-export/design.md`, "Not included"). The deletion removes them with the user row.
-6. **Export only.** Other people's content and counts are left out (`user-data-export/design.md`, "Not included").
-7. **Export only.** A resource's version history is left out (`user-data-export/design.md`, "Not included").
-8. **Export only.** The activity log of a resource the person owns is left out, and deletion removes it with the resource (`user-data-export/design.md`, "Not included").
-9. **Export only, by decision.** Program participants and survey responses on resources they own are not in the archive (`user-data-export/design.md`, "Not included").
-10. **Export only.** Derived thumbnails are left out (`user-data-export/design.md`, "Not included").
-11. **Export only.** The character-pack list is left out (`user-data-export/design.md`, "Not included").
-12. **Export only.** Staging and the storage ledger are left out (`user-data-export/design.md`, "Not included").
+5. **Export only.** Sessions, API keys and every token in `accounts` are left out (`../../user/data-export/design.md`, "Not included"). The deletion removes them with the user row.
+6. **Export only.** Other people's content and counts are left out (`../../user/data-export/design.md`, "Not included").
+7. **Export only.** A resource's version history is left out (`../../user/data-export/design.md`, "Not included").
+8. **Export only.** The activity log of a resource the person owns is left out, and deletion removes it with the resource (`../../user/data-export/design.md`, "Not included").
+9. **Export only, by decision.** Program participants and survey responses on resources they own are not in the archive (`../../user/data-export/design.md`, "Not included").
+10. **Export only.** Derived thumbnails are left out (`../../user/data-export/design.md`, "Not included").
+11. **Export only.** The character-pack list is left out (`../../user/data-export/design.md`, "Not included").
+12. **Export only.** Staging and the storage ledger are left out (`../../user/data-export/design.md`, "Not included").
 
 ## Key files
 
