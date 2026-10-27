@@ -24,7 +24,7 @@ The profile is a working value and is not written anywhere. A run measures the r
 ```mermaid
 flowchart LR
     Page["Wiki voice-over page<br/>the story template's files"]
-    Files["Wiki file host<br/>one Vorbis clip per line,<br/>a twin's cut to their opening turn"]
+    Files["Wiki file host<br/>one Vorbis clip per line"]
     Profile["Profile<br/>mean embedding"]
     Pick["Reference<br/>nearest the profile, long and clean"]
     Clone["Engine<br/>carrier sentence from the reference"]
@@ -55,7 +55,7 @@ The decoded clips exist only in memory: fetched, decoded, measured and dropped, 
 
 ## Settled — it lives in `scripts`, not in the plugin
 
-The runner reads the plugin's source — its wiki reading, its decoder, its engine loading, its card naming — and writes into the plugin's `generated/` folder. It is not inside the plugin because of the plugin's install: `claude plugin install` copies the plugin into its cache and freezes an `npm ci` there under a one-minute ceiling, which is why the package declares no devDependencies at all ([persona plugin](../persona-plugin/README.md)). The runner needs the speaker encoder and the in-process transformer library in its own `node_modules`, which would then install on every stranger's machine or break the install outright. So the tooling sits with the repository's own tooling in `scripts`, reaches into the plugin's source the way that package addresses itself, and the plugin receives only what it consumes: one map. The engine itself the plugin loads from a runtime its `voice` verb installs into the state directory ([spoken replies](../spoken-replies/design.md)), and the runner resolves the same package from its own dependencies through the same reader.
+The runner reads the plugin's source — its wiki reading, its decoder, its engine loading, its card naming — and writes into the plugin's `generated/` folder. It is not inside the plugin because of the plugin's install, which the [persona plugin](../persona-plugin/README.md) page states. The runner needs the speaker encoder and the in-process transformer library in its own `node_modules`, which would then install on every stranger's machine or break the install outright. So the tooling sits with the repository's own tooling in `scripts`, reaches into the plugin's source the way that package addresses itself, and the plugin receives only what it consumes: one map. The engine itself the plugin loads from a runtime its `voice` verb installs into the state directory ([spoken replies](../spoken-replies/design.md)), and the runner resolves the same package from its own dependencies through the same reader.
 
 ## Key files
 
@@ -77,6 +77,6 @@ The runner reads the plugin's source — its wiki reading, its decoder, its engi
 
 ## Notes
 
-- The measurement runs on one dub and its stem serves every dub. Whether the Japanese performance of the _same_ line is the best Japanese reference is a refinement the runner can make by running per dub and keying the map by it; it starts with English.
+- Whether the Japanese performance of the _same_ line is the best Japanese reference is a refinement the runner can make by running per dub and keying the map by it; it starts with English.
 - The engine's own variants and any candidate engine are chosen the same way: the likeness re-measured on a few characters, with the choice and its cost recorded on the [spoken replies](../spoken-replies/design.md) page.
 - The likeness is amplitude-blind: the embedder normalises what it hears, so a vocoder that returns near-silence scores as if it had spoken. A run therefore scores nothing an engine synthesized on a rung the [device ladder](../spoken-replies/design.md) has not heard speak — the engine moves down on any synthesis that is not speech, the run reports every move, and a character no rung speaks for ends it. The stems are chosen from the wiki's clips before the engine speaks, so a re-measurement moves the numbers and not the lines.

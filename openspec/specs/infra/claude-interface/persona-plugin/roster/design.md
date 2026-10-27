@@ -8,6 +8,23 @@ The game-data package the community maintains under MIT ships every playable cha
 
 Loading that package is almost the whole cost of a start — the better part of a second, against milliseconds for the query it then answers — so the roster is read once per installed version and kept in the state directory, which takes a warm start down to a fraction of that. The cache's file name carries the version off the data package's own manifest, so a bump invalidates it by itself and a write prunes every other version's copy: nothing is generated, nothing is checked in, and no step is added to the bump.
 
+```mermaid
+flowchart TD
+    Start["Session start"]
+    Hit{"Cache holds the installed version?"}
+    Load["Load the data package through require"]
+    Write["Write the cache in the state directory"]
+    Prune["Prune the other versions' copies"]
+    Answer["Answer the query from the roster"]
+
+    Start --> Hit
+    Hit -- yes --> Answer
+    Hit -- no --> Load
+    Load --> Write
+    Write --> Prune
+    Prune --> Answer
+```
+
 A character with no card is fully usable — the data alone is a persona — which is what makes "every playable character" a property of the dependency rather than a backlog.
 
 ## Key files

@@ -12,7 +12,7 @@ Three settings decide what a session reads, and they are deliberately not one ax
 | Interface | what the data package declares | every word the plugin puts on screen | a state file, and a module for our own words   |
 | Dub       | four                           | whose voice reads a reply            | an install of about a gigabyte and a proof run |
 
-**The set of interface languages is the game's own fifteen**, the `GameLanguage` enum [game text](../../../../genshin/game-text/design.md) keeps and the plugin carries a copy of, spelt as the data package spells them so either answers the other. Reading it costs nothing, where reading the data package's own list would cost a load of that package, so the list itself opens nothing, though the command's shared context read may load the package to build the roster on a cache miss; the game has added no language since it launched, and one it adds is a generator run. The `language` verb given no argument prints them, which is the whole of the discovery. Each is printed in its own words beside the word a person types for it — `Japanese (日本語)` — and either resolves, so what the verb invites is what it accepts.
+**The set of interface languages is the game's own list**, the `GameLanguage` enum [game text](../../../../genshin/game-text/design.md) keeps and the plugin carries a copy of, spelt as the data package spells them so either answers the other. Reading it costs nothing, where reading the data package's own list would cost a load of that package, so the list itself opens nothing, though the command's shared context read may load the package to build the roster on a cache miss; the game has added no language since it launched, and one it adds is a generator run. The `language` verb given no argument prints them, which is the whole of the discovery. Each is printed in its own words beside the word a person types for it — `Japanese (日本語)` — and either resolves, so what the verb invites is what it accepts.
 
 Naming a language in its own words, and in any other's, is the runtime's job rather than a table of ours: `Intl.DisplayNames` already knows all of them. The one thing it needs that the game does not carry is a BCP-47 tag per language, which `genshin-text` keeps beside the enum; a name that is no game language — a reply language may be any — is shown as given, which is also the word a person typed.
 
@@ -31,7 +31,7 @@ flowchart TD
     Language -->|cascades unless set| Reply
     Language -.->|reports, never installs| Dub
     Language --> Data{"Who already says it?"}
-    Data -- "name, title, element, region, description, the character's own lines" --> Free["Card headline, spinner tips, the hint's label"]
+    Data -- "the card's text and the character's own lines" --> Free["Card headline, spinner tips, the hint's label"]
     Data -- "the game's own words" --> Game["Generated game text<br/>the birthday label, and lines the data package lacks"]
     Game --> Free
     Data -- "our own words" --> Module{"A string or gerund in this language's module?"}

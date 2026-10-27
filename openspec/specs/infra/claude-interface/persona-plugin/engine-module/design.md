@@ -16,7 +16,7 @@ The character is named among the dim mode labels at the right of the prompt's fo
 
 ## Spoken replies
 
-The spoken replies are the engine's `MessageDisplay` event, which hands every flushed piece of a reply to the module as it would to a settings hook, whether or not one is configured; the module hands it to the speak script unchanged. The display waits on that event for about a node start per piece, a cost the voice earns and a plugin user with no voice should never pay, so the module checks the voice's dub file and the mute file first, which costs a file check and no node start. The native alternative, the turn's raw stream of text, would mean rebuilding the line batching and the piece numbering the speak script orders playback by, so the event stays the trigger ([spoken replies](../../spoken-replies/design.md)).
+The spoken replies are the engine's `MessageDisplay` event, which hands every flushed piece of a reply to the module as it would to a settings hook, whether or not one is configured; the module hands it to the speak script unchanged. The display waits on that event for about a node start per piece, a cost the voice earns and a plugin user with no voice should never pay, so the module checks the gates the [spoken replies](../../spoken-replies/design.md) page states first, which costs a file check and no node start. The native alternative, the turn's raw stream of text, would mean rebuilding the line batching and the piece numbering the speak script orders playback by, so the event stays the trigger ([spoken replies](../../spoken-replies/design.md)).
 
 ## How the surfaces connect
 

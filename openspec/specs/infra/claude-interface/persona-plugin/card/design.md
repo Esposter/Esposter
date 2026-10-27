@@ -22,7 +22,7 @@ The remarks are the person's alone — none is a fact the model answers from, so
 flowchart LR
     Data["Game data"]
     PersonaCard["Persona card<br/>habits, greeting, sign-off"]
-    Headline["Nameplate<br/>name, title, element, region"]
+    Headline["Nameplate<br/>the headline"]
     Note["Bracketed note<br/>birthday and its distance from today"]
     Remarks["Remarks<br/>the tier's chart or the week's birthdays, the voice"]
     Language["Language module<br/>the greeting in the interface language"]
@@ -46,7 +46,7 @@ flowchart LR
     Asked -- no --> Silent
 ```
 
-Personalisation goes wherever it costs the model nothing: the spinner, the hint and the spoken voice are the person's alone, the greeting is shown to them in their own language out of the card the model is already holding, and the context budget stays at the card. The output style, forced on while the plugin is enabled with coding instructions kept, carries the standing rules: the character speaks in spoken lines and nowhere else — one blockquote line opening an answer a reader will use and at most a closing one, or the whole reply when the ask was the character's — and everything else is plain, code, commits, commands and error text included, with every fact a neutral reply would carry still carried. What those lines are for is the [spoken replies](../../spoken-replies/design.md) page's. The published comparisons of persona prompts agree that a long character sheet degrades engineering output while a functional identity of a few lines does not.
+Personalisation goes wherever it costs the model nothing: the spinner, the hint and the spoken voice are the person's alone, the greeting is shown to them in their own language out of the card the model is already holding, and the context budget stays at the card. The output style, forced on while the plugin is enabled with coding instructions kept, carries the standing rules the [spoken replies](../../spoken-replies/design.md) page states, and everything else is plain, code, commits, commands and error text included, with every fact a neutral reply would carry still carried. The published comparisons of persona prompts agree that a long character sheet degrades engineering output while a functional identity of a few lines does not.
 
 The plugin's authoring skill keeps the hand-written half honest: the card shape and its ceiling, the sources a line may be drawn from (the character's own in-game lines and story, described in our words, never quoted), and the rule that a card describes how the character speaks and never what the assistant should do. Its commands are the loop: two queues list the characters with no card and the cards with no spinner verbs, newest first, and one prints a character's own lines to write from, off the game data or, before the data carries them, off the game's own text. Authoring is a queue drained when someone feels like it and never a gate on a patch, and a patch refills it on the same cadence as the dependency bump.
 
