@@ -44,6 +44,7 @@ flowchart TD
 - [gcsim](https://github.com/genshinsim/gcsim/tree/v2.47.2/internal/characters/sayu), MIT: Sayu's strikes' hitmarks, reaches, cancel frames and poise (`attack.go:16`), the Windwheel's DoT and kick circles and frames (`skill.go:22`, `skill.go:24`, `skill.go:137`), the roll's ticks and the short hold (`skill.go:27`, `skill.go:200`, `skill.go:222`, `skill.go:255`, `skill.go:260`), and Mujina Flurry's initial hit (`burst.go:41`), Muji-Muji Daruma's ticks and their frames (`burst.go:61` to `burst.go:68`, `burst.go:83`). The snapshot is on disk at `~/Esposter/cache/gcsim-v2.47.2/internal/characters/sayu/`.
 - [Yoohoo Art: Fuuin Dash](https://genshin-impact.fandom.com/wiki/Yoohoo_Art:_Fuuin_Dash), [Yoohoo Art: Mujina Flurry](https://genshin-impact.fandom.com/wiki/Yoohoo_Art:_Mujina_Flurry), [Someone More Capable](https://genshin-impact.fandom.com/wiki/Someone_More_Capable), [No Work Today!](https://genshin-impact.fandom.com/wiki/No_Work_Today!) and Sleep O'Clock on the Genshin Impact Wiki, cached at `~/Esposter/cache/genshin-wiki/Category_Sayu_Talents.json`: the scaling, cooldowns, durations, costs and constellation notes.
 - The proud skill groups 5331, 5332 and 5339, read from `~/Esposter/genshin-parity/text/ExcelBinOutput/ProudSkillExcelConfigData.json` at levels 1 to 15.
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/sayu/attack.go` line 16: the four strikes landing in order on the enemies within reach, grounding scenario "Four strikes in sequence".
 - `~/Esposter/cache/gcsim-v2.47.2/internal/characters/sayu/skill.go` lines 22 and 24: the press's Windwheel damage over time and kick, grounding the requirement "Fuufuu Windwheel's press".
 - `~/Esposter/cache/gcsim-v2.47.2/internal/characters/sayu/skill.go` line 27: the short hold at 48 frames, grounding the requirement "Short hold".
 - `~/Esposter/cache/genshin-wiki/Category_Sayu_Talents.json`: the roll's level rising with each whole second held up to ten, grounding the requirement "Fuufuu Windwheel's roll".
@@ -51,7 +52,10 @@ flowchart TD
 - `~/Esposter/cache/gcsim-v2.47.2/internal/characters/sayu/burst.go` line 41: Mujina Flurry's initial hit, grounding the requirement "Mujina Flurry".
 - `~/Esposter/cache/gcsim-v2.47.2/internal/characters/sayu/burst.go` lines 61 to 68: the field's flat heal and ATK share at the cast, grounding the requirement "Mujina Flurry".
 - `~/Esposter/cache/gcsim-v2.47.2/internal/characters/sayu/burst.go` lines 75 to 76: the six Muji-Muji Daruma ticks, grounding the requirement "Mujina Flurry".
-- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/sayu/burst.go` line 83: each tick striking the enemies in reach and healing the active character at 70% HP or under, grounding the requirement "Muji-Muji Daruma's ticks".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/sayu/burst.go` line 83: each tick striking the enemies in reach and healing the active character at 70% HP or under, grounding the requirement "Muji-Muji Daruma's ticks" and scenario "Below Constellation 1 the 70% limit holds".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/sayu/burst.go` lines 67 and 68: the Elemental Mastery shares a tick adds to its DMG and heal, read at the cast, grounding scenario "Constellation 6 adds Elemental Mastery to each tick".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/sayu/burst.go` lines 81 to 83: the Daruma's heal at any HP from Constellation 1, grounding scenario "Constellation 1 heals a character above 70% HP".
+- `~/Esposter/cache/gcsim-v2.47.2/internal/characters/sayu/asc.go` lines 35 and 38: the 1.2 Energy a Swirl gives Sayu on the field once every 2 seconds, grounding scenario "Constellation 4 restores Energy on the field".
 
 ## Open
 
