@@ -1,6 +1,9 @@
-import { PARITY_PAGE_TITLE } from "#src/services/genshinParity/shared/constants";
+import { PARITY_PAGE_TITLE, PARITY_PORT_COUNT } from "#src/services/genshinParity/shared/constants";
 import { resolveParityPageRoot } from "#src/services/genshinParity/shared/resolveParityPageRoot";
-import { createServer, type Server } from "node:http";
+import { InvalidOperationError, Operation } from "@esposter/shared";
+import type { Server } from "node:http";
+
+import { createServer } from "node:http";
 import { afterEach, describe, expect, test } from "vitest";
 
 describe(resolveParityPageRoot, () => {
@@ -33,6 +36,12 @@ describe(resolveParityPageRoot, () => {
     expect.hasAssertions();
     const port = await serve("<html><head><title>Something else</title></head></html>");
 
-    await expect(resolveParityPageRoot(port)).rejects.toThrow("no server answers");
+    await expect(resolveParityPageRoot(port)).rejects.toStrictEqual(
+      new InvalidOperationError(
+        Operation.Read,
+        "parity page",
+        `no server answers on ports ${port} to ${port + PARITY_PORT_COUNT - 1}; start one with pnpm -C packages/genshin-world parity`,
+      ),
+    );
   });
 });
