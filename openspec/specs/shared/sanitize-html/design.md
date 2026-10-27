@@ -32,7 +32,7 @@ Only the options the two call sites pass are offered: `allowedTags`, `allowedAtt
 - **Rich text.** `sanitizeTextHtml` adds the editor's allowance: mention and custom-emoji attributes, a code block's `language-*` and the highlighter's `hljs*` classes, a span's colour and radius, a task item's `input` and `label`. A task checkbox is rewritten to a disabled checkbox that keeps only whether it was ticked.
 - **Source rules.** A caller may name a source rule for a tag (`allowedSources`): an element whose tag has one is kept only when each named attribute is present and matches one of its patterns, and is otherwise unwrapped to its content like any tag the policy does not name. A caller's allowance can add a tag, its attributes and such a rule, but never a URL scheme. The note's published view uses one so an `img` shows only from resource storage, and the message composer names none.
 
-The render depth is capped at `MAX_NESTING_DEPTH`, declared in `packages/shared/src/services/sanitizeHtml/constants.ts`. Deeper content is dropped rather than rendered, since a recursion past the stack would throw on input a caller sent.
+The render depth is capped at 256 elements (`MAX_NESTING_DEPTH`), declared in `packages/shared/src/services/sanitizeHtml/constants.ts`. Deeper content is dropped rather than rendered, since a recursion past the stack would throw on input a caller sent.
 
 ## Parser
 
@@ -40,23 +40,23 @@ The upstream parses with htmlparser2, which does not parse the way a browser doe
 
 ## Upstream issues
 
-The upstream repository holds 688 items: 418 issues and 270 pull requests, read in full with their comments through the issues API, all of them, open and closed. Each issue gets one verdict from the [dependency admission triage](../../architecture/dependency-admission/design.md#triage). A pull request is read as the issue it closes, so a fix counts against its issue and not again.
+The upstream repository holds several hundred issues and pull requests, read in full with their comments through the issues API, all of them, open and closed. Each issue gets one verdict from the [dependency admission triage](../../architecture/dependency-admission/design.md#triage). A pull request is read as the issue it closes, so a fix counts against its issue and not again.
 
-| Kind          | Items | Read as                                                                 | Verdicts                                                            |
-| :------------ | ----: | :---------------------------------------------------------------------- | :------------------------------------------------------------------ |
-| Issues        |   418 | one verdict each, below                                                 | see the table below                                                 |
-| Pull requests |   270 | the verdict of the issue they fix or change; a dependency bump is noise | 126 noise, 76 feature, 33 defect, 27 false positive, 8 out of scope |
+| Kind          |    Items | Read as                                                                 | Verdicts                                             |
+| :------------ | -------: | :---------------------------------------------------------------------- | :--------------------------------------------------- |
+| Issues        | hundreds | one verdict each, below                                                 | see the table below                                  |
+| Pull requests | hundreds | the verdict of the issue they fix or change; a dependency bump is noise | about half noise, most of the rest feature or defect |
 
-Verdicts by count:
+Verdicts by share of issues:
 
-| Verdict                                                             | Issues |
-| :------------------------------------------------------------------ | -----: |
-| False positive                                                      |    211 |
-| Out of scope: option or surface we do not offer                     |    125 |
-| Out of scope: owned by a dependency or the toolchain                |     33 |
-| In scope: fixed or implemented                                      |     24 |
-| Out of scope: parser (htmlparser2), replaced by the standard parser |     15 |
-| False positive: not a sanitiser behaviour                           |     10 |
+| Verdict                                                             | Share          |
+| :------------------------------------------------------------------ | :------------- |
+| False positive                                                      | about half     |
+| Out of scope: option or surface we do not offer                     | around a third |
+| Out of scope: owned by a dependency or the toolchain                | a small share  |
+| In scope: fixed or implemented                                      | a small share  |
+| Out of scope: parser (htmlparser2), replaced by the standard parser | a few          |
+| False positive: not a sanitiser behaviour                           | a few          |
 
 Every defect and out-of-scope verdict was read against the thread and, where the claim could be run, against the code: the reproductions in the regression tests and the probes in the review below. The false-positive and feature verdicts are a first reading of each thread's own text and its maintainer's comments; they are recorded so a reader can check them, and a reader who finds one wrong reopens it on this page. A verdict that depends on an option the policy does not offer is out of scope by the policy rather than by a dependency, and says so.
 
@@ -483,7 +483,7 @@ Every defect and out-of-scope verdict was read against the thread and, where the
 
 ## Upstream advisories
 
-The GitHub repository for the upstream holds no security advisories of its own (`gh api repos/apostrophecms/sanitize-html/security-advisories` returns none). The GitHub Advisory Database has 13 for the package, read through "securityVulnerabilities". Each is given its verdict and the test that pins it.
+The GitHub repository for the upstream holds no security advisories of its own (`gh api repos/apostrophecms/sanitize-html/security-advisories` returns none). The GitHub Advisory Database has about a dozen for the package, read through "securityVulnerabilities". Each is given its verdict and the test that pins it.
 
 | Advisory                               | Published  | Summary                                                               | Verdict                                                                                                                                         | Pinned by                                                                       |
 | :------------------------------------- | :--------- | :-------------------------------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------ |
@@ -501,11 +501,11 @@ The GitHub repository for the upstream holds no security advisories of its own (
 | GHSA-mjxr-4v3x-q3m4 (CVE-2021-26540)   | 2021-05-06 | Relative iframe `src` bypass of "allowedIframeHostnames"              | Out of scope, as above                                                                                                                          | as above                                                                        |
 | GHSA-3j7m-hmh3-9jmp (CVE-2016-1000237) | 2020-04-16 | Input not sanitised recursively                                       | In scope, fixed: a tag inside a tag is read as the standard reads it, and its text escaped                                                      | "ghsa-3j7m"                                                                     |
 
-DOMPurify's advisories are not this package's, but the watch below reads them, and its mXSS and attribute classes are the attack surface the vector suite holds this policy to. Thirty-one distinct advisories are published for it. Those on DOM output modes (IN_PLACE, RETURN_DOM, cross-realm and shadow-root cases), on hooks, on CUSTOM_ELEMENT_HANDLING, on Trusted Types, on prototype pollution of its configuration and on `selectedcontent` do not reach a string filter that offers no hooks and returns markup. The rest are the nesting and template mXSS classes, the URI attribute checks and the ADD_TAGS/ADD_ATTR predicates, and each has a vector in the suite below.
+DOMPurify's advisories are not this package's, but the watch below reads them, and its mXSS and attribute classes are the attack surface the vector suite holds this policy to. Several dozen distinct advisories are published for it. Those on DOM output modes (IN_PLACE, RETURN_DOM, cross-realm and shadow-root cases), on hooks, on CUSTOM_ELEMENT_HANDLING, on Trusted Types, on prototype pollution of its configuration and on `selectedcontent` do not reach a string filter that offers no hooks and returns markup. The rest are the nesting and template mXSS classes, the URI attribute checks and the ADD_TAGS/ADD_ATTR predicates, and each has a vector in the suite below.
 
 ## Upstream test suite and attack vectors
 
-- **Upstream suite.** Of the upstream's 206 cases, 43 assert on behaviour the policy offers, and they are ported in `sanitizeHtml.upstream.test.ts`. The header of that file names the three rows that differ on purpose and the one left out, which asserts that an empty non-boolean attribute is removed: this policy keeps an empty value as written.
+- **Upstream suite.** Of the upstream's roughly two hundred cases, about a fifth assert on behaviour the policy offers, and they are ported in `sanitizeHtml.upstream.test.ts`. The header of that file names the three rows that differ on purpose and the one left out, which asserts that an empty non-boolean attribute is removed: this policy keeps an empty value as written.
 - **DOMPurify vectors.** The payloads of DOMPurify's own fixtures (`test/fixtures/expect.mjs`) are in `packages/shared/src/test/domPurifyVectors.json`. Each runs through `sanitizeHtml` and is held to three invariants: every element of the output is an HTML element the default list names, every attribute is one the policy names, and no value begins with a script scheme. The output is then sanitised again and must come back unchanged. None of them is compared to DOMPurify's expected output, since the policies differ.
 - **Regression tests.** `sanitizeHtml.advisories.test.ts` holds one case per pinned upstream issue or advisory, named for it, and the review's findings. Where a regression reproduces against the vulnerable upstream, it fails there; a case the upstream already fixed is a pin that passes on both. Run against sanitize-html 2.17.2, which sits inside the vulnerable range of most of these advisories, the inputs keep a live image through a textarea or an option (GHSA-jxwj, GHSA-9mrh), keep a `formaction` javascript address (GHSA-vccv), and keep a grave-accent or a no-break-space address (#86, #305), while a `!important` value that a rule accepts is dropped (#487). The inputs that 2.17.2 already answers as the policy does are pins for behaviour that version had fixed.
 
@@ -524,7 +524,7 @@ The review was run with the [security](../../architecture/security/README.md) ch
 | Finding                                                                                                                               | Class                                                                                    | State                                                                                                                                 |
 | :------------------------------------------------------------------------------------------------------------------------------------ | :--------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
 | A run of spaces before a value's `!important` was re-scanned from each position, so a 20,000-space style value took about a second    | ReDoS                                                                                    | Fixed: the expression is anchored at its bang and the value trimmed once; pinned by "cve-2022-25887"                                  |
-| Markup nested about 5,000 elements deep made the recursive render throw on the call stack                                             | Denial of service                                                                        | Fixed: the render stops at 256 elements; pinned by "a document nested past the render depth"                                          |
+| Markup nested about 5,000 elements deep made the recursive render throw on the call stack                                             | Denial of service                                                                        | Fixed: the render stops at 256 elements (`MAX_NESTING_DEPTH`); pinned by "a document nested past the render depth"                    |
 | A table's layout written twice by the transform was duplicated on the second pass, so the output was not stable and fell back to text | Stability                                                                                | Fixed: a property written twice keeps the value the cascade reads, an `!important` one over a later normal one and otherwise its last |
 | A no-break space ahead of `javascript:` was read as part of the value, which Safari reads as a scheme                                 | Scheme bypass                                                                            | Fixed: whitespace and controls are removed before the scheme is read; pinned by "#305"                                                |
 | A grave accent ahead of `javascript:`                                                                                                 | Scheme bypass                                                                            | Fixed: the accent is removed before the scheme is read; pinned by "#86"                                                               |

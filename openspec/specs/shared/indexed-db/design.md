@@ -2,7 +2,7 @@
 
 `@esposter/shared` (`packages/shared/src/services/indexedDb`) opens an IndexedDB database and types it from one schema interface. A store's key, its value and its indexes are declared once; every read, write and index lookup afterwards is checked against that declaration, so a store name, an index name or a key of the wrong type is a compile error rather than a rejected request.
 
-It replaced `idb`, a promise wrapper over the same API, and is the absorption that the [dependency admission](../../architecture/dependency-admission/design.md) page's standard describes for a small utility: the call sites are its only consumers, so it lives in the shared package rather than a package of its own. The wrapper is written from the IndexedDB surface the app's callers use, so the [Scope](#scope) below lists what it does not carry.
+It replaces `idb`, a promise wrapper over the same API, and is the absorption that the [dependency admission](../../architecture/dependency-admission/design.md) page's standard describes for a small utility. The wrapper is written from the IndexedDB surface the app's callers use, so the [Scope](#scope) below lists what it does not carry.
 
 ## The schema
 

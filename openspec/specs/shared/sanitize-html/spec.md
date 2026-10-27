@@ -118,11 +118,11 @@ The sanitiser SHALL return escaped text instead of markup whenever parsing its o
 
 ### Requirement: Content nested past the render depth is dropped without an error
 
-The sanitiser SHALL drop content nested deeper than 256 elements and SHALL NOT throw on such input.
+The sanitiser SHALL drop content nested deeper than 256 elements (`MAX_NESTING_DEPTH`) and SHALL NOT throw on such input.
 
 #### Scenario: A document nested past the render depth is sanitised
 
-- **GIVEN** input nested more than 256 elements deep
+- **GIVEN** input nested more than 256 elements (`MAX_NESTING_DEPTH`) deep
 - **WHEN** a caller sanitises the input
 - **THEN** the content past the depth is absent from the output
 - **AND** no error is thrown

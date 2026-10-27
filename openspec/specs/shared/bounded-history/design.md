@@ -6,11 +6,11 @@ The undo and redo stack in `@esposter/shared`: a history holds the entries an un
 
 ```mermaid
 flowchart TD
-  EDIT["a consumer's edit, as its entry"] --> PUSH["pushHistory: the entry joins the past, the oldest past entry dropped past the limit"]
-  PUSH --> PAST["past: the entries an undo can reverse, newest last"]
-  PUSH -.->|"the future cleared"| FUTURE
-  PAST -->|"undoHistory: the newest past entry moves, and the consumer reverses it"| FUTURE["future: the entries undone, the newest undone first"]
-  FUTURE -->|"redoHistory: the first future entry moves, and the consumer applies it again"| PAST
+  EDIT["Consumer edit"] --> PUSH["pushHistory"]
+  PUSH --> PAST["past"]
+  PUSH -.->|"clear future"| FUTURE["future"]
+  PAST -->|"undoHistory"| FUTURE
+  FUTURE -->|"redoHistory"| PAST
 ```
 
 ## Decisions

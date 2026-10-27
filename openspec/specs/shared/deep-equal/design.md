@@ -1,6 +1,6 @@
 # Deep equality
 
-`checkIsDeepEqual` in `packages/shared/src/util/object` answers whether two values hold the same data. It replaced `fast-deep-equal`, which the call sites in `apps/web` and `azure-mock` imported. The replacement is written against the same behaviour in ESM, with the upstream's ES6 cases (Map, Set, typed arrays, `RegExp`, `Date`, `NaN`, `valueOf`) in the one build, since the callers relied on the upstream's default entry and that entry compared a Map or Set as an object with no keys.
+`checkIsDeepEqual` in `packages/shared/src/util/object` answers whether two values hold the same data. It replaces `fast-deep-equal` for the call sites in `apps/web` and `azure-mock`. The replacement is written against the same behaviour in ESM, with the upstream's ES6 cases (Map, Set, typed arrays, `RegExp`, `Date`, `NaN`, `valueOf`) in the one build, because the callers need a Map or Set compared by its contents, and the upstream's default entry compares one as an object with no keys.
 
 ## How a comparison is decided
 
@@ -163,7 +163,7 @@ A pull request carries the verdict of the issue it fixes, or its own verdict whe
 
 ## Notes
 
-- The replacement compares a Map or Set's contents, where the upstream's default entry compared its own keys. A caller that relied on two different Sets being equal would now see them unequal. None of the callers does.
+- A caller that relied on two different Sets being equal would see them unequal. None of the callers does.
 - Cyclic structures are not detected. A comparison of data with a cycle overflows the stack, as the upstream's does.
 
 ## Key files

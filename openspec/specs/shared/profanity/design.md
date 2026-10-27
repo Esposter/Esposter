@@ -1,6 +1,6 @@
 # Profanity Check
 
-`checkContainsProfanity` in `packages/shared` (`@esposter/shared`) answers one question for the app: does this text contain an English profane word. The app's callers, such as the form rule `isNotProfanity` and the tRPC middleware that rejects a room's name, ask it that and nothing more. It replaced `@2toad/profanity`, an npm package whose word list and matcher are small enough to own outright, so the list is data in our tree and the matcher is ours.
+`checkContainsProfanity` in `packages/shared` (`@esposter/shared`) answers one question for the app: does this text contain an English profane word. The app's callers, such as the form rule `isNotProfanity` and the tRPC middleware that rejects a room's name, ask it that and nothing more. It replaces `@2toad/profanity`, an npm package whose word list and matcher are small enough to own outright, so the list is data in our tree and the matcher is ours.
 
 ## What a check does
 
@@ -9,7 +9,7 @@ flowchart TD
   input["Text from a form or a procedure input"]
   isString{"A string?"}
   mode{"isWholeWord<br/>(default true)"}
-  whole["Whole-word regex<br/>a profane word not touched by<br/>a letter, a number or a mark"]
+  whole["Whole-word regex<br/>word boundary"]
   substring["Substring regex<br/>a profane word anywhere"]
   test["Case-insensitive test"]
   result["True if the text contains one"]

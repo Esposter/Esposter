@@ -8,13 +8,11 @@ The module runs twice, at two different times. At configuration it reads the nam
 
 ```mermaid
 flowchart LR
-  config["nuxt.config<br/>the module's setup"]
-  statics["Static export names<br/>@tresjs/core and every installed @tresjs package"]
-  registry["Auto-imports and components<br/>use*, TresCanvas, package exports"]
-  canvas["TresCanvas runtime<br/>client wraps core, server placeholder"]
-  config --> statics
-  statics --> registry
-  registry --> canvas
+  module["The module, run twice"]
+  module -->|"at configuration"| names["Installed package names"]
+  module -->|"at build"| registry["Auto-imports and components"]
+  names -->|"resolved into"| registry
+  registry -->|"registers TresCanvas"| canvas["TresCanvas runtime"]
 ```
 
 - **Export names are read from the source, never imported.** Importing `@tresjs/core` to list its exports would load the renderer and `three` into every build of the app. The module reads each entry file's export list with `mlly` instead.

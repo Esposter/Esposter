@@ -2,7 +2,7 @@
 
 `packages/trpc-msw` (npm `trpc-msw`) answers a tRPC client's calls at the network, inside a test. A test registers a resolver per procedure through a proxy typed off the router — `trpcMsw.resource.readResource.query(({ input }) => …)` — and every request the client sends is served by a router built from those resolvers, on the consumer's own `initTRPC` result, through tRPC's own handlers. Nothing about tRPC's wire format is written in the package: batching, the transformer, the error formatter, `FormData` and octet input, method override, server-sent events and the WebSocket protocol are all tRPC's.
 
-It replaced `msw-trpc`, an adapter between the same two engines that re-implemented the wire format by hand, and is the worked example of the absorption flow in [dependency admission](../architecture/dependency-admission/design.md).
+It replaces `msw-trpc`, an adapter between the same two engines that re-implements the wire format by hand, and is the worked example of the absorption flow in [dependency admission](../architecture/dependency-admission/design.md).
 
 ## How a call is answered
 

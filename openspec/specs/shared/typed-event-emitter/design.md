@@ -2,7 +2,7 @@
 
 `TypedEventEmitter` in `packages/shared/src/models/eventEmitter/` is the emitter behind the app's game event bus. It takes an event map, an interface of event names to listener signatures, and types every `on`, `once`, `off` and `emit` against it: the event name is one of the map's keys, and the listener or the arguments are the map's own for that key. The app's bus is `new TypedEventEmitter<PhaserEvents>()` in `apps/web/app/services/phaser/phaserEventEmitter.ts`.
 
-It replaced `eventemitter3`, which the app used for the same bus, and it is the second absorption of a utility into `@esposter/shared`. Its verdicts are in the [upstream table](#upstream) below, each with the test or type test that proves it.
+It replaces `eventemitter3` for the app's bus, and it is the second absorption of a utility into `@esposter/shared`. Its verdicts are in the [upstream table](#upstream) below, each with the test or type test that proves it.
 
 ## Surface
 
@@ -20,9 +20,9 @@ Each event's listeners are kept as an array of entries, and an add or a remove r
 ```mermaid
 flowchart TD
   emit["emit(event, ...args)"]
-  found["Take the event's entries as they stand"]
-  drop["Replace the entries with the non-once ones"]
-  run["Call each entry of the snapshot in order"]
+  found["Copy the entries"]
+  drop["Remove the once listeners"]
+  run["Run each listener"]
   emit --> found --> drop --> run
 ```
 
@@ -68,4 +68,4 @@ Every `eventemitter3` issue on `primus/eventemitter3`, read with its comments, a
 
 ## Notes
 
-The upstream's behaviour that the emitter keeps on purpose is `off` removing every registration, a listener removed during an emit still running, and a listener's `this` not being bound; each is a row above and a test in `TypedEventEmitter.test.ts`. The package's bundle is larger by the emitter's own code, recorded in `packages/shared/src/index.test.ts`.
+The package's bundle is larger by the emitter's own code, recorded in `packages/shared/src/index.test.ts`.
