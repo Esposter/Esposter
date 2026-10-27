@@ -128,7 +128,7 @@ From two constellations, the Melody Loop's first tick SHALL give every other dep
 
 ### Requirement: Dedicating Everything to You revives a fallen member from six constellations
 
-From six constellations, a fallen member of the deployed team SHALL be revived to all of its HP while Barbara is in the party but not on the field, once every fifteen minutes. The HP is open: gcsim revives to 1 HP (see design.md, Not built).
+From six constellations, a fallen member of the deployed team SHALL be revived to all of its HP while Barbara is in the party but not on the field, once every fifteen minutes. The HP is open.
 
 #### Scenario: A fall revives the member once
 
