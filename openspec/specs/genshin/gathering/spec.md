@@ -8,13 +8,15 @@ The plants and specialties the official map marks, placed by the fit into each r
 
 Gathering points SHALL stand in each region where the official map marks their item.
 
-An item the game excludes SHALL NOT be a gathering point.
-
 #### Scenario: Plant stands at its official map mark
 
 - **GIVEN** the official map marks a plant in a region
 - **WHEN** the region is loaded
 - **THEN** a gathering point for the plant stands at that mark
+
+### Requirement: An item the game excludes is not a gathering point
+
+An item the game excludes SHALL NOT be a gathering point.
 
 #### Scenario: Mining item is not a gathering point
 
@@ -58,7 +60,7 @@ A picked local specialty SHALL stand again 46 hours after it was picked.
 
 ### Requirement: A picked cooking ingredient stands again at the next daily reset
 
-A picked cooking ingredient SHALL stand again at the game's next daily reset after the pick, which is 04:00 on the game's clock (a daily refresh of 14400 seconds).
+A picked cooking ingredient SHALL stand again at the game's next daily reset after the pick, which is 04:00 on the game's clock.
 
 #### Scenario: Ingredient picked before the reset is back at the reset
 
@@ -102,7 +104,7 @@ An ore SHALL break once the poise its landed hits deal reaches its requirement f
 
 - **GIVEN** a Geo character's normal attack, which deals no element, lands on an ore, or Ningguang's plunge lands on it
 - **WHEN** the hit is dealt
-- **THEN** the ore takes its poise as a melee hit or none, and Ningguang's plunge is not blunt, as the wiki's table excepts it
+- **THEN** the ore takes its poise as a melee hit or none, and Ningguang's plunge is not blunt
 
 #### Scenario: A Geo Traveler's skill strikes blunt, as the element it deals is Geo
 
@@ -120,19 +122,21 @@ An ore SHALL break once the poise its landed hits deal reaches its requirement f
 
 - **GIVEN** an Overloaded reaction lands on an enemy
 - **WHEN** the explosion resolves
-- **THEN** ores within three metres of that enemy take a blunt hit of ninety poise (`~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/overload.go`, lines 53-54 and 62)
+- **THEN** ores within three metres of that enemy take a blunt hit of ninety poise
 
-### Requirement: A broken ore drops its pieces where it lay
+### Requirement: A broken ore drops its certain piece where it lay
 
 A broken ore SHALL drop its certain piece where it lay.
-
-A broken ore SHALL drop one more for each of two draws that comes under ten per cent.
 
 #### Scenario: Broken ore drops its certain piece
 
 - **GIVEN** an ore breaks
 - **WHEN** it breaks
 - **THEN** its certain piece drops where it lay
+
+### Requirement: A broken ore drops one more for each of two draws that comes under ten per cent
+
+A broken ore SHALL drop one more for each of two draws that comes under ten per cent.
 
 #### Scenario: Extra piece drops on a successful draw
 

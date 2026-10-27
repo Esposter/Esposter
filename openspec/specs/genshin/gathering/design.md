@@ -101,6 +101,8 @@ F on a gathering point's row picks one of its item into the bag, through the sam
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `GatherExcelConfigData` and `MaterialExcelConfigData`, the tables the items and their ground rows are read from.
 - [Teyvat Interactive Map](https://act.hoyolab.com/ys/app/interactive-map/index.html), HoYoLAB: the official map's labels and points that the places are fitted from.
 - `~/Esposter/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, the daily refresh of 14400 seconds that the reset at 04:00 is read from; grounds the requirement "A picked cooking ingredient stands again at the next daily reset".
+- The Genshin Impact Wiki's Blunt Attacks table, not in the genshin-wiki cache: Ningguang's plunge is not blunt, as the wiki's table excepts it. Grounds scenario 'A Geo character's physical normal attack and a listed exception do not strike blunt'.
+- `~/Esposter/cache/gcsim-v2.47.2/pkg/reactable/overload.go`, lines 53-54 and 62: the Overloaded explosion's blunt strike, its 90 poise and the 3-metre circle. Grounds scenario 'Overloaded explosion strikes ores nearby'.
 
 ## Reference
 
