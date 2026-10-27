@@ -66,6 +66,6 @@ flowchart TD
 
 ## Open
 
-- [ ] **The login's music plays the right notes** — no source yet: no listening-score report for the login piece is kept in `~/Esposter/genshin-parity/`, and `~/Esposter/genshin-parity/extracted/music/chroma/` holds the game's frames without a score.
+- [ ] **The login's music plays the right notes** — no source yet: no listening-score report for the login piece is kept in `{data-root}/genshin-parity/`, and `{data-root}/genshin-parity/extracted/music/chroma/` holds the game's frames without a score.
 - [ ] **The game's sound is an orchestra recorded in a hall** — no source yet: nothing in the cached wiki or the parity folders describes the login music's instrumentation.
 - [ ] **The libraries are CC0, and each instrument is sampled as the Rules describe** — no source yet: their licence files and sampling notes are not kept locally, only the hashed sample downloads in the shared cache.

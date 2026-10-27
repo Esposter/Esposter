@@ -73,4 +73,4 @@ A Kresnik's Torch SHALL NOT light the scene around it until its light is built.
 
 ## Open
 
-- [ ] **The Kresnik's Torch is a stone plinth, shaft and brazier with a flame standing in its cup** — no source yet: the game's Kresnik's Torch mesh, which `~/Esposter/genshin-parity/extracted/snezhnaya/witness.json` does not name, and no cached wiki page describes the torch's shape
+- [ ] **The Kresnik's Torch is a stone plinth, shaft and brazier with a flame standing in its cup** — no source yet: the game's Kresnik's Torch mesh, which `{data-root}/genshin-parity/extracted/snezhnaya/witness.json` does not name, and no cached wiki page describes the torch's shape

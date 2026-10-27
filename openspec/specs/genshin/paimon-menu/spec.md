@@ -183,7 +183,7 @@ The Settings screen SHALL list its tabs down the left in the game's order and dr
 
 ## Open
 
-- [ ] **The contents run in the game's own order, Shop first** — no source yet: the 2560 wide 1.3 still is not in captures, and the 1920 wide `~/Esposter/genshin-parity/captures/menu-paimon-current.png` draws a shorter set, without Shop, Events, Adventurer Handbook, Wish, Battle Pass or Co-Op.
+- [ ] **The contents run in the game's own order, Shop first** — no source yet: the 2560 wide 1.3 still is not in captures, and the 1920 wide `{data-root}/genshin-parity/captures/menu-paimon-current.png` draws a shorter set, without Shop, Events, Adventurer Handbook, Wish, Battle Pass or Co-Op.
 - [ ] **Single-player pauses everything except particles and music** — no source yet: no game data or snapshot checked holds the single-player pause; `MENU_SCREEN_BEHAVIOUR` holds the world with no particle or music carve-out.
-- [ ] **The Birthday row stands over a Set Birthday button** — contradicted by `~/Esposter/genshin-parity/captures/menu-paimon-current.png`: the unset row shows -/- with no button beneath it; re-measure the frame before settling the row.
-- [ ] **The Paimon menu opens over the world from Escape or Start, and the quit prompt and World Level dialog open from it** — no source yet: the Paimon Menu wiki page, which the wiki cache at `~/Esposter/cache/genshin-wiki/` does not hold (it holds only the talent categories and the cached talent pages).
+- [ ] **The Birthday row stands over a Set Birthday button** — contradicted by `{data-root}/genshin-parity/captures/menu-paimon-current.png`: the unset row shows -/- with no button beneath it; re-measure the frame before settling the row.
+- [ ] **The Paimon menu opens over the world from Escape or Start, and the quit prompt and World Level dialog open from it** — no source yet: the Paimon Menu wiki page, which the wiki cache at `{data-root}/cache/genshin-wiki/` does not hold (it holds only the talent categories and the cached talent pages).

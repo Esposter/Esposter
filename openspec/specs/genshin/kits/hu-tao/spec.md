@@ -146,4 +146,4 @@ From constellation 2, Spirit Soother SHALL apply Blood Blossom to each enemy its
 
 - [ ] **Guide to Afterlife's HP cost never takes Hu Tao below 1 HP** — no source yet: no game text or gcsim record of that floor is checked here.
 - [ ] **Hu Tao's plunge frames and poise stay provisional until a recording settles them** — no source yet: no recording of her plunges is on disk.
-- [ ] **Blood Blossom's constellation 2 tick adds 10% of the Max HP Hu Tao had when it was applied** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/hutao/skill.go`: adds 10% of MaxHP at the tick (line 140).
+- [ ] **Blood Blossom's constellation 2 tick adds 10% of the Max HP Hu Tao had when it was applied** — contradicted by `{data-root}/cache/gcsim-v2.47.2/internal/characters/hutao/skill.go`: adds 10% of MaxHP at the tick (line 140).

@@ -37,7 +37,7 @@ This page links them and does not restate them.
 - **A table is read only at the install's build, and its revision is measured before it is trusted.**
   - The install's build is the one its own files name (`game_version`, `scripts/src/services/genshinAssets/shared/readGameVersion.ts`), and the community dump's tables are fetched from the branch at that build (`.agents/skills/genshin-parity/references/data-sources.md`).
   - A dump holds tables of several builds at once, so a table's size is compared with each branch's copy before its rows are used ([data sources](../../../../.agents/skills/genshin-parity/references/data-sources.md), `.agents/skills/genshin-parity/references/data-sources.md`).
-  - _Rejected: taking the dump's name for its revision._ On 2026-10-18 most of the dump matched the 6.6 branch while the install was 7.1.0 (`~/Esposter/genshin-parity/game/config.ini`).
+  - _Rejected: taking the dump's name for its revision._ On 2026-10-18 most of the dump matched the 6.6 branch while the install was 7.1.0 (`{data-root}/genshin-parity/game/config.ini`).
 - **A value's role is a candidate until a field name confirms it.**
   - A scrambled object with no type data gives its values offsets and shapes only, so a role such as fog density or sun intensity is written as a candidate, and its page lists it as open.
   - _Rejected: naming a value from how it moves over the day alone._ A curve that rises at dusk could be a light, a blend or a fog, and a fit assigns it whichever the rest of the frame allows.
@@ -67,21 +67,21 @@ flowchart TD
 
 ### Sources by question
 
-Every command runs from `scripts/` with `pnpm`. Outputs land under `~/Esposter/genshin-parity` (`PARITY_DIRECTORY`), outside the repository (`scripts/src/services/genshinAssets/commands/genshinAssetsCommand.ts`, `~/Esposter/genshin-parity/`).
+Every command runs from `scripts/` with `pnpm`. Outputs land under `{data-root}/genshin-parity` (`PARITY_DIRECTORY`), outside the repository (`scripts/src/services/genshinAssets/commands/genshinAssetsCommand.ts`, `{data-root}/genshin-parity/`).
 
 | Question                                  | Source                                                                         | Command                                                         | Lands in                                                                                                 | Owner                                                          |
 | :---------------------------------------- | :----------------------------------------------------------------------------- | :-------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------- |
 | A mesh, a place, a material, a texture    | The install's blocks                                                           | `genshin:assets extract`, then `inventory`, `witness`, `avatar` | `extracted/<component>/`                                                                                 | [Derived assets](../derived-assets/design.md)                  |
 | How a surface is shaded                   | Its shader's compiled programs                                                 | `genshin:assets shaders <component>`                            | Each program as `NNNNN.dxbc`, its `.asm` and `.hlsl`, and `programs.tsv` naming pass, stage and keywords | [Game data formats](../game-data-formats/design.md), "Shaders" |
-| An open-world placement, a tile's ground  | StreamGen blobs and TerrainData, found by path hash                            | `genshin:assets city-areas`, `asset-index`                      | `~/Esposter/genshin-parity/city-areas/`, `~/Esposter/genshin-parity/asset-index/`                        | Game data formats, "The open world"                            |
-| A table's rows                            | The community dump at the install's revision; a missing table fetched into it  | The dataset's builder, `genshin:assets <dataset>`               | `~/Esposter/genshin-parity/text/ExcelBinOutput/`, then a hosted record                                   | [Hosted game data](../hosted-game-data/design.md)              |
-| A string                                  | The install's own text maps                                                    | `genshin:text decode`                                           | `~/Esposter/genshin-parity/text/`, then the slices the app reads                                         | [Game text](../game-text/design.md)                            |
+| An open-world placement, a tile's ground  | StreamGen blobs and TerrainData, found by path hash                            | `genshin:assets city-areas`, `asset-index`                      | `{data-root}/genshin-parity/city-areas/`, `{data-root}/genshin-parity/asset-index/`                      | Game data formats, "The open world"                            |
+| A table's rows                            | The community dump at the install's revision; a missing table fetched into it  | The dataset's builder, `genshin:assets <dataset>`               | `{data-root}/genshin-parity/text/ExcelBinOutput/`, then a hosted record                                  | [Hosted game data](../hosted-game-data/design.md)              |
+| A string                                  | The install's own text maps                                                    | `genshin:text decode`                                           | `{data-root}/genshin-parity/text/`, then the slices the app reads                                        | [Game text](../game-text/design.md)                            |
 | A script's setting                        | Its MonoBehaviour's raw serialized bytes                                       | `genshin:assets behaviours`                                     | Printed                                                                                                  | Game data formats, "Scripts"                                   |
 | A non-group Lua script                    | Lua 5.3 bytecode in the game's own dialect                                     | `genshin:assets scene-scripts <file>`, `recreation lua-dialect` | Printed                                                                                                  | Game data formats, "Scripts"                                   |
 | A motion                                  | Animation clips                                                                | `genshin:assets clips`, `timings`                               | `extracted/<component>/`                                                                                 | Derived assets                                                 |
-| A piece of music, a sound                 | Wwise packages                                                                 | `genshin:assets playlist`, `music`, `sounds`                    | `~/Esposter/genshin-parity/extracted/music/`, `~/Esposter/genshin-parity/extracted/sounds/`              | Game data formats, "Audio"                                     |
+| A piece of music, a sound                 | Wwise packages                                                                 | `genshin:assets playlist`, `music`, `sounds`                    | `{data-root}/genshin-parity/extracted/music/`, `{data-root}/genshin-parity/extracted/sounds/`            | Game data formats, "Audio"                                     |
 | A scrambled field's name, a type's layout | The code metadata, decrypted offline from the user's own install where it pays | None kept                                                       | Outside the repository                                                                                   | [Scene derivation](../scene-derivation/design.md)'s decision   |
-| What no file holds                        | The wiki, then public clips on YouTube or Bilibili                             | `recreation clip`, `genshin:parity`                             | `~/Esposter/genshin-parity/captures/`                                                                    | [Parity](../parity/README.md)                                  |
+| What no file holds                        | The wiki, then public clips on YouTube or Bilibili                             | `recreation clip`, `genshin:parity`                             | `{data-root}/genshin-parity/captures/`                                                                   | [Parity](../parity/README.md)                                  |
 
 The client holds no scene group script; those are the server's, and leaked server data is never a source ([game data formats](../game-data-formats/design.md), "Scripts").
 
@@ -102,7 +102,7 @@ The client holds no scene group script; those are the server's, and leaked serve
 
 ### Machines
 
-Both machines hold an install, under `~/Esposter/genshin-parity/game` on the Mac, and run every AnimeStudio step with the game closed (`~/Esposter/genshin-parity/game/config.ini`, `scripts/src/services/recreation/animeStudio/assertAnimeStudioReady.ts`).
+Both machines hold an install, under `{data-root}/genshin-parity/game` on the Mac, and run every AnimeStudio step with the game closed (`{data-root}/genshin-parity/game/config.ini`, `scripts/src/services/recreation/animeStudio/assertAnimeStudioReady.ts`).
 
 | Step                                                          | Mac                         | Windows PC                                 |
 | :------------------------------------------------------------ | :-------------------------- | :----------------------------------------- |
@@ -116,7 +116,7 @@ The table's rows are read from `scripts/src/services/recreation/animeStudio/runA
 
 The PC runs no SSH server, so a transfer between the two runs from the PC to the Mac only, by `ai:fleet:data push` (`scripts/src/fleet/data/index.ts`). The Mac cannot pull from the PC.
 
-`vkd3d-compiler` is found by `VKD3D_COMPILER` or on `PATH` (`scripts/src/services/genshinAssets/materials/disassembleWithVkd3d.ts`); the Mac's is a vkd3d 2.1 build (`~/Esposter/cache/vkd3d/vkd3d-2.1`), named by `VKD3D_COMPILER`. A step whose compiler is missing stops, rather than writing programs without their assembly (`scripts/src/services/genshinAssets/materials/disassembleWithVkd3d.ts`).
+`vkd3d-compiler` is found by `VKD3D_COMPILER` or on `PATH` (`scripts/src/services/genshinAssets/materials/disassembleWithVkd3d.ts`); the Mac's is a vkd3d 2.1 build (`{data-root}/cache/vkd3d/vkd3d-2.1`), named by `VKD3D_COMPILER`. A step whose compiler is missing stops, rather than writing programs without their assembly (`scripts/src/services/genshinAssets/materials/disassembleWithVkd3d.ts`).
 
 ### What is kept where
 

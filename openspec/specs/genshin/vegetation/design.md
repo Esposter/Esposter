@@ -64,7 +64,7 @@ flowchart TD
 ## Open
 
 - [ ] **Vegetation: wet ground darkens the meadow and takes the sun's glint off the one normal** — no source yet: a game recording of a wet meadow's shading, since the wet branch in `packages/genshin-engine/src/vegetation/createGrassMaterial.ts` is repo code.
-- [ ] **Vegetation: Mondstadt's wind is a steady breeze from the west with gusts every half minute** — no source yet: a recording of Mondstadt's wind in `~/Esposter/genshin-parity/captures/`, not yet read for the gust interval.
+- [ ] **Vegetation: Mondstadt's wind is a steady breeze from the west with gusts every half minute** — no source yet: a recording of Mondstadt's wind in `{data-root}/genshin-parity/captures/`, not yet read for the gust interval.
 - [ ] **Vegetation: a blade a few centimetres off the drawn ground far from the eye** — no source yet: a measured offset of a blade from the drawn ground at the recapture distance, which no record holds.
 - [ ] **Vegetation: the rings fade into the ground's colour with no seam** — no source yet: a visual check of the seam on a recording, which no record holds.
 - [ ] **Vegetation: a meadow toon-shades as one surface with light rolling across it, as Genshin's grass does** — no source yet: a capture of Genshin's own grass shading, which the parity captures do not hold.

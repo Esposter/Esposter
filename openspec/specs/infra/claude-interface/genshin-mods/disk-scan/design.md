@@ -15,12 +15,12 @@ A root is `/`, a drive's folder such as `/c` or `C:\`, `/Users`, `/home`, a user
 A refused command is denied with a message that names the known homes, so the next attempt goes where the file is:
 
 - the repo, searched with `rg` or `git grep`;
-- `~/Esposter/genshin-parity`, for game data and captures;
+- `{data-root}/genshin-parity`, for game data and captures;
 - `~/.claude/genshin-persona`, for the voice;
 - a pinned tool (FFmpeg, yt-dlp) through `resolvePinnedTool`;
 - a package through `require.resolve` from the package that depends on it.
 
-A `find` inside the repo or inside `~/Esposter/genshin-parity` is not a root, so it runs as it always did.
+A `find` inside the repo or inside `{data-root}/genshin-parity` is not a root, so it runs as it always did.
 
 ```mermaid
 flowchart TD

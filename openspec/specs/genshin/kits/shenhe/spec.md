@@ -219,6 +219,6 @@ Shenhe's other passives SHALL NOT take effect.
 
 ## Open
 
-- [ ] **Each tick's RES Decrease lasts one tick interval** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/burst.go`: the RES mod lasts 36 frames, two 18-frame field ticks.
-- [ ] **Holding Spring Spirit Summoning past half a second releases its hold** — no source yet: gcsim reads hold as a flag (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/skill.go` lines 50 to 53), and no recording of the threshold is on disk.
-- [ ] **The Skyfrost Mantra bonus lasts the press action's length** — no source yet: the wiki gives no window, and gcsim applies the bonus once to the summoning's damage snapshot (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/shenhe/skill.go` lines 74 and 136) with no length stated.
+- [ ] **Each tick's RES Decrease lasts one tick interval** — contradicted by `{data-root}/cache/gcsim-v2.47.2/internal/characters/shenhe/burst.go`: the RES mod lasts 36 frames, two 18-frame field ticks.
+- [ ] **Holding Spring Spirit Summoning past half a second releases its hold** — no source yet: gcsim reads hold as a flag (`{data-root}/cache/gcsim-v2.47.2/internal/characters/shenhe/skill.go` lines 50 to 53), and no recording of the threshold is on disk.
+- [ ] **The Skyfrost Mantra bonus lasts the press action's length** — no source yet: the wiki gives no window, and gcsim applies the bonus once to the summoning's damage snapshot (`{data-root}/cache/gcsim-v2.47.2/internal/characters/shenhe/skill.go` lines 74 and 136) with no length stated.

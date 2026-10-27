@@ -57,6 +57,6 @@ Any landmark or area the map gains SHALL appear on the minimap with no change of
 ## Open
 
 - [ ] **The marks the game's interface tree places** — no source yet: the group's fourth child and MarkSouth's inset, which neither held file names.
-- [ ] **The fan a quarter turn wide** — no source yet: the sight fan's image width is not found in the exported tree (`~/Esposter.noindex/genshin-parity/extracted/character/interface/json/GameObject/MarkSightFan.json` holds only its object and a 1.25 scale).
-- [ ] **The minimap keeps north at the top of a circle round the character, with its N drawn there** — no source yet: a measured reading of the circle's cut and the N's place; the reference `~/Esposter/genshin-parity/references/hud-world-keys.png` is on disk, but no parity row scores the minimap.
-- [ ] **Pressing the minimap opens the map, as M does** — no source yet: the dump's table names hold no key-binding table, and the extracted SDK (`~/Esposter/genshin-parity/extracted/sdk/MonoBehaviour/`) holds only two input-field MonoBehaviours, so the game's M binding is not in the held data.
+- [ ] **The fan a quarter turn wide** — no source yet: the sight fan's image width is not found in the exported tree (`{data-root}/genshin-parity/extracted/character/interface/json/GameObject/MarkSightFan.json` holds only its object and a 1.25 scale).
+- [ ] **The minimap keeps north at the top of a circle round the character, with its N drawn there** — no source yet: a measured reading of the circle's cut and the N's place; the reference `{data-root}/genshin-parity/references/hud-world-keys.png` is on disk, but no parity row scores the minimap.
+- [ ] **Pressing the minimap opens the map, as M does** — no source yet: the dump's table names hold no key-binding table, and the extracted SDK (`{data-root}/genshin-parity/extracted/sdk/MonoBehaviour/`) holds only two input-field MonoBehaviours, so the game's M binding is not in the held data.

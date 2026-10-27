@@ -47,4 +47,4 @@ Dehya's Constellations 1, 2, 4 and 6 SHALL NOT take effect: Constellation 1 need
 
 ## Open
 
-- [ ] **the final hit's 300 frames are the wiki's 5-second maximum duration** — no source yet: a source that gives the final hit's frame count, since the Sandstorm Assault page gives only its Max Duration of 5s (`~/Esposter/cache/genshin-wiki/Category_Dehya_Talents.json`), so the 300 frames stay the repo's conversion of those 5 seconds.
+- [ ] **the final hit's 300 frames are the wiki's 5-second maximum duration** — no source yet: a source that gives the final hit's frame count, since the Sandstorm Assault page gives only its Max Duration of 5s (`{data-root}/cache/genshin-wiki/Category_Dehya_Talents.json`), so the 300 frames stay the repo's conversion of those 5 seconds.

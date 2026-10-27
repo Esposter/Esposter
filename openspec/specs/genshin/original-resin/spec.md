@@ -237,7 +237,7 @@ Using Fragile Resin from the bag SHALL restore sixty Original Resin and remove o
 
 - [ ] **the wallet regenerates one Original Resin every eight minutes, up to 200** — no source yet: the wiki's Original Resin page, which the cache does not hold.
 - [ ] **Primogems refill 60 Original Resin at six daily prices, filling to 2,000** — no source yet: the wiki's Original Resin page, which the cache does not hold.
-- [ ] **the Primogem refill day starts at 04:00 in UTC+8** — no source yet: the time zone of the dump's daily refresh of 14400 seconds (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, ids 1002 and 101000), which names none.
+- [ ] **the Primogem refill day starts at 04:00 in UTC+8** — no source yet: the time zone of the dump's daily refresh of 14400 seconds (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, ids 1002 and 101000), which names none.
 - [ ] **a claim costs by its blossom kind, with a weekly boss at 30 and then 60** — no source yet: the wiki's Original Resin page, which the cache does not hold.
 - [ ] **a ley line or a domain offers two claims at twice the price, or a Condensed Resin for three claims** — no source yet: the wiki's Original Resin page, which the cache does not hold.
 - [ ] **a claim gives five Adventure EXP a point** — no source yet: the wiki's Original Resin page, which the cache does not hold.

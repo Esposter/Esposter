@@ -1,6 +1,6 @@
 ## Purpose
 
-The Imaginarium Theater's rules as built, read from the game's role combat tables (`~/Esposter/genshin-parity/text/ExcelBinOutput/RoleCombatScheduleExcelConfigData.json`, `~/Esposter/genshin-parity/text/ExcelBinOutput/RoleCombatDifficultyExcelConfigData.json`) into genshin-world. The season the Theater plays is the latest begun, each season names its difficulties and each difficulty its level floor, a Principal Cast performs a stage only with four members holding Vigor, Blessing Level and its stats, the opening character's bonus and Stella rewards. The cast's elements and guests, the acts, the events, the rewind and the screen are not built yet.
+The Imaginarium Theater's rules as built, read from the game's role combat tables (`{data-root}/genshin-parity/text/ExcelBinOutput/RoleCombatScheduleExcelConfigData.json`, `{data-root}/genshin-parity/text/ExcelBinOutput/RoleCombatDifficultyExcelConfigData.json`) into genshin-world. The season the Theater plays is the latest begun, each season names its difficulties and each difficulty its level floor, a Principal Cast performs a stage only with four members holding Vigor, Blessing Level and its stats, the opening character's bonus and Stella rewards. The cast's elements and guests, the acts, the events, the rewind and the screen are not built yet.
 
 ## Requirements
 

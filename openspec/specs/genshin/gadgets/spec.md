@@ -1,6 +1,6 @@
 ## Purpose
 
-The game's tools are the widget config's entries: the Wind Catcher, the Treasure Compasses, the gather point finders and the devices, each a kind with its own cooldowns (`~/Esposter/genshin-parity/text/BinOutput/Widget/ConfigWidget.json`). This page is the first part of the gadgets proposal, its data and its cooldowns. Z is already bound to the quick-use gadget, but nothing is equipped to it and nothing is used yet: the bag's items do not yet include the widget material type, so a gadget has no item to equip.
+The game's tools are the widget config's entries: the Wind Catcher, the Treasure Compasses, the gather point finders and the devices, each a kind with its own cooldowns (`{data-root}/genshin-parity/text/BinOutput/Widget/ConfigWidget.json`). This page is the first part of the gadgets proposal, its data and its cooldowns. Z is already bound to the quick-use gadget, but nothing is equipped to it and nothing is used yet: the bag's items do not yet include the widget material type, so a gadget has no item to equip.
 
 ## Requirements
 
@@ -96,5 +96,5 @@ Gadgets SHALL NOT yet be equipped to the quick-use key or used from the world.
 
 ## Open
 
-- [ ] **Z is bound to the quick-use gadget** — no source yet: the game's settings file, which would hold the key binding, is not on disk (`~/Esposter.noindex/genshin-parity/game/config.ini` holds only the game version).
-- [ ] **A cooldown keeps counting down while the world is paused, as the game's do** — no source yet: the wiki's Gadget page is not in `~/Esposter.noindex/cache/genshin-wiki/`, so the game's pause rule is not checked.
+- [ ] **Z is bound to the quick-use gadget** — no source yet: the game's settings file, which would hold the key binding, is not on disk (`{data-root}/genshin-parity/game/config.ini` holds only the game version).
+- [ ] **A cooldown keeps counting down while the world is paused, as the game's do** — no source yet: the wiki's Gadget page is not in `{data-root}/cache/genshin-wiki/`, so the game's pause rule is not checked.

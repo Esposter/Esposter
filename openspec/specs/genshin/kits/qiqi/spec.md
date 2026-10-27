@@ -114,4 +114,4 @@ From Ascension 1, a reaction the character on the field triggers SHALL give that
 
 ## Open
 
-- [ ] **Rite of Resurrection revives on the step after the burst starts** — no source yet: gcsim leaves the revival unbuilt (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/qiqi/qiqi.go` lines 21 to 22), and the game's text gives no timing for it.
+- [ ] **Rite of Resurrection revives on the step after the burst starts** — no source yet: gcsim leaves the revival unbuilt (`{data-root}/cache/gcsim-v2.47.2/internal/characters/qiqi/qiqi.go` lines 21 to 22), and the game's text gives no timing for it.

@@ -79,4 +79,4 @@ Shadowpiercing Shot, the plain Aimed Shot, Secret Rite's Dusk Bolts, Ancient Rit
 
 ## Open
 
-- [ ] **Sethos's strikes deal no poise damage** — contradicted by `~/Esposter/cache/genshin-wiki/Category_Sethos_Talents.json`: Royal Reed Archery gives the strikes poise 18.879, 8.791 and 25.809.
+- [ ] **Sethos's strikes deal no poise damage** — contradicted by `{data-root}/cache/genshin-wiki/Category_Sethos_Talents.json`: Royal Reed Archery gives the strikes poise 18.879, 8.791 and 25.809.

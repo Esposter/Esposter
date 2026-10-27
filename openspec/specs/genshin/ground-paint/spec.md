@@ -137,6 +137,6 @@ A region whose base maps are not exported SHALL keep its layer colours unpainted
 - [ ] **The game places its layers by cell, never by slope** — no source yet: no checked game data shows that placement ignores slope.
 - [ ] **No grass blade grows on earth, rock, sand or path** — no source yet: no vegetation placement check is cited here.
 - [ ] **Flowers grow only where the weights are nearly all grass** — no source yet: no scatter placement check is cited here.
-- [ ] **The layer field is fitted from the layer the game's tiles paint each four-metre cell** — no source yet: the layer each cell is painted in, which the `BigWorldTerrain_*.bin.dat` tiles under `~/Esposter/genshin-parity/extracted/mondstadt/world/TerrainData/` would settle, is not read here; the four-metre span of a tile is not read from the game.
+- [ ] **The layer field is fitted from the layer the game's tiles paint each four-metre cell** — no source yet: the layer each cell is painted in, which the `BigWorldTerrain_*.bin.dat` tiles under `{data-root}/genshin-parity/extracted/mondstadt/world/TerrainData/` would settle, is not read here; the four-metre span of a tile is not read from the game.
 - [ ] **Genshin's terrain blends its layers per texel in its shader** — no source yet: the extracted shaders spell no terrain, splat or ground in any file.
 - [ ] **Genshin's tiles hold a weight per layer at every texel** — no source yet: the tiles' per-texel weights are not read here.

@@ -63,7 +63,7 @@ Noise covers every frequency, and no note in a piece sounds alone, so no note's 
 
 ## Open
 
-- [ ] **The fundamentals' peaks sit a small offset from their pitches, within about a tenth of a semitone** — no source yet: the per-voice `tuning` is measured in `scripts/src/services/genshinAssets/shared/fitInstrument.ts` (line 116), but no printed fit that records its values is kept in the repo or under `~/Esposter/genshin-parity`.
+- [ ] **The fundamentals' peaks sit a small offset from their pitches, within about a tenth of a semitone** — no source yet: the per-voice `tuning` is measured in `scripts/src/services/genshinAssets/shared/fitInstrument.ts` (line 116), but no printed fit that records its values is kept in the repo or under `{data-root}/genshin-parity`.
 - [ ] **About a fifth of each piece's notes are notes the music never played** — no source yet: `scripts/src/services/genshinParity/commands/notesCommand.ts` drops them, but no run output recording the dropped share is kept.
 - [ ] **A second fit takes seconds, from the cached readings** — no source yet: the cache is cited (`scripts/src/services/genshinAssets/shared/readMusicSourceNotes.ts`), but no timing of a cached fit is kept.
 - [ ] **A refit over the kept notes moves the synthesizer's level without gaining pitch agreement, and a second pass moves neither piece** — no source yet: no run comparing the refit or the second pass is kept.

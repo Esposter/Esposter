@@ -1,6 +1,6 @@
 # Reset clock
 
-Every daily, weekly and monthly reset in the world is read off one server clock, the Asia server's, UTC+8, where the daily reset is at 04:00 (`~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, row 1002, REFRESH_DAILY, its time of day), the weekly reset is Monday at 04:00 and the monthly reset is the first at 04:00 (`packages/genshin-world/src/services/time/constants.ts:2-8`; the dump's monthly shop goods change over at 04:00:01 on 2020-10-01, in `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ShopGoodsExcelConfigData.json`). One module in `packages/genshin-world/src/services/time/` owns the zone, the hour, and the weekday and day constants, and every system reads its functions rather than a copy of them.
+Every daily, weekly and monthly reset in the world is read off one server clock, the Asia server's, UTC+8, where the daily reset is at 04:00 (`{data-root}/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, row 1002, REFRESH_DAILY, its time of day), the weekly reset is Monday at 04:00 and the monthly reset is the first at 04:00 (`packages/genshin-world/src/services/time/constants.ts:2-8`; the dump's monthly shop goods change over at 04:00:01 on 2020-10-01, in `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/ShopGoodsExcelConfigData.json`). One module in `packages/genshin-world/src/services/time/` owns the zone, the hour, and the weekday and day constants, and every system reads its functions rather than a copy of them.
 
 ## How it works
 
@@ -76,5 +76,5 @@ flowchart TD
 ## Open
 
 - [ ] **The daily reset is on the Asia server's clock** — no source yet: row 1002 gives the time as 14400 seconds with no zone, and the wiki's Reset page is not in the local wiki cache.
-- [ ] **The weekly reset is Monday at 04:00** — no source yet: the dump's `~/Esposter/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json` row 800001 (REFRESH_WEEKlY, time `14400;360000`) is not read into a weekday, and the wiki's Daily Reset page is not cached.
+- [ ] **The weekly reset is Monday at 04:00** — no source yet: the dump's `{data-root}/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json` row 800001 (REFRESH_WEEKlY, time `14400;360000`) is not read into a weekday, and the wiki's Daily Reset page is not cached.
 - [ ] **The world keeps 04:00 where the wiki gives the mining respawn at 06:00** — no source yet: the dump's `BlossomRefreshExcelConfigData.json` holds a 06:00:00 refresh (`BLOSSOM_REFRESH_CRYSTAL`), and whether it is the mining respawn was not checked; the wiki's Mining Outcrop page is not cached.

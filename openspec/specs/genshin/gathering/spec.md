@@ -1,6 +1,6 @@
 ## Purpose
 
-The plants and specialties the official map marks, placed by the fit into each region as gathering points, picked with F and kept gone until their respawn. A local specialty comes back 46 hours after it is picked, as the wiki gives it, and a cooking ingredient at the daily reset that follows. The gather table's refresh ids name no policy in the dump, so the category settles it (`~/Esposter/genshin-parity/text/ExcelBinOutput/GatherExcelConfigData.json`, checked against `~/Esposter/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`).
+The plants and specialties the official map marks, placed by the fit into each region as gathering points, picked with F and kept gone until their respawn. A local specialty comes back 46 hours after it is picked, as the wiki gives it, and a cooking ingredient at the daily reset that follows. The gather table's refresh ids name no policy in the dump, so the category settles it (`{data-root}/genshin-parity/text/ExcelBinOutput/GatherExcelConfigData.json`, checked against `{data-root}/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`).
 
 ## Requirements
 
@@ -166,15 +166,15 @@ A broken ore SHALL stand again on its own respawn: an iron chunk at the daily re
 
 ## Open
 
-- [ ] **Gathering points stand where the official map marks their item** — no source yet: a comparison of the gathering points with `label-tree.json` and `points.json` under `~/Esposter/genshin-parity/references/interactive-map/`, which no record keeps.
+- [ ] **Gathering points stand where the official map marks their item** — no source yet: a comparison of the gathering points with `label-tree.json` and `points.json` under `{data-root}/genshin-parity/references/interactive-map/`, which no record keeps.
 - [ ] **F picks a gathering point into the bag, and F does not pick an ore** — no source yet: a run of the full-bag and no-ore scenarios on the pick path, which no record keeps.
 - [ ] **Ningguang's plunge is not blunt, as the wiki's table excepts it** — no source yet: the wiki's Blunt Attacks table is not cached; the code carries the exception. Checked: the genshin-wiki cache holds no Blunt Attack page.
-- [ ] **A burst breaks a crystal chunk in one hit** — no source yet: no frame of the Zhongli clip `~/Esposter/genshin-parity/captures/yt-EWYe-MYjmqU-ore-zhongli.mp4` in genshin-parity's captures has been checked.
+- [ ] **A burst breaks a crystal chunk in one hit** — no source yet: no frame of the Zhongli clip `{data-root}/genshin-parity/captures/yt-EWYe-MYjmqU-ore-zhongli.mp4` in genshin-parity's captures has been checked.
 - [ ] **An item a mining outcrop draws is not a gathering point** — no source yet: the mining outcrops' drops are not matched against the gather table's items.
 - [ ] **An ore breaks once its landed hits' poise reaches its requirement for blunt or melee** — no source yet: no poise requirement is in the dump's `ExcelBinOutput` tables.
 - [ ] **Claymore attacks, plunges and Geo damage strike blunt, and a Geo Traveler's skill does too; a Geo character's normal attack does not** — no source yet: the wiki's Blunt Attacks table is not cached. Checked: the genshin-wiki cache holds no Blunt Attack page.
-- [ ] **A hit that is neither blunt nor melee adds no poise, and converted poise does not reach an ore** — no source yet: the wiki's Blunt Attacks table is not in the genshin-wiki cache, and the game text at `~/Esposter/genshin-parity/text/TextMap/TextMapEN.json` names blunt attacks and poise only in flavour lines, with no rule for converted poise.
-- [ ] **A broken ore drops its certain piece, and one more for each of two draws under ten per cent** — no source yet: the dump's gather table at `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/GatherExcelConfigData.json` holds no drop chance, the resident gadget config's keys carry no drop field, and no wiki ore page is in the genshin-wiki cache.
-- [ ] **Ores stand again on their own respawn: an iron chunk at the daily reset, a white iron chunk or starsilver after two days, a crystal chunk, amethyst lump or condessence crystal after three** — no source yet: the gather table's ore refresh ids, 999900 to 999932, name no policy in `~/Esposter/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`.
-- [ ] **A local specialty stands again 46 hours after its pick** — no source yet: the Local Specialty wiki page is not in `~/Esposter.noindex/cache/genshin-wiki/`, and no 46-hour value was found in the gathering respawn code checked.
-- [ ] **The Reset page lists All Local Specialties at 48 hours** — no source yet: the wiki's Reset page, which is not in `~/Esposter.noindex/cache/genshin-wiki/`.
+- [ ] **A hit that is neither blunt nor melee adds no poise, and converted poise does not reach an ore** — no source yet: the wiki's Blunt Attacks table is not in the genshin-wiki cache, and the game text at `{data-root}/genshin-parity/text/TextMap/TextMapEN.json` names blunt attacks and poise only in flavour lines, with no rule for converted poise.
+- [ ] **A broken ore drops its certain piece, and one more for each of two draws under ten per cent** — no source yet: the dump's gather table at `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/GatherExcelConfigData.json` holds no drop chance, the resident gadget config's keys carry no drop field, and no wiki ore page is in the genshin-wiki cache.
+- [ ] **Ores stand again on their own respawn: an iron chunk at the daily reset, a white iron chunk or starsilver after two days, a crystal chunk, amethyst lump or condessence crystal after three** — no source yet: the gather table's ore refresh ids, 999900 to 999932, name no policy in `{data-root}/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`.
+- [ ] **A local specialty stands again 46 hours after its pick** — no source yet: the Local Specialty wiki page is not in `{data-root}/cache/genshin-wiki/`, and no 46-hour value was found in the gathering respawn code checked.
+- [ ] **The Reset page lists All Local Specialties at 48 hours** — no source yet: the wiki's Reset page, which is not in `{data-root}/cache/genshin-wiki/`.

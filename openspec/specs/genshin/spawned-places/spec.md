@@ -2,7 +2,7 @@
 
 ## Purpose
 
-The official Teyvat Interactive Map's statues and waypoints read into the references folder and fitted to the scene's transport points by one similarity over the whole map, with its residual, and each region's Oculi counted against the wiki's, Mondstadt checked first (`~/Esposter/genshin-parity/references/interactive-map/fit.json`).
+The official Teyvat Interactive Map's statues and waypoints read into the references folder and fitted to the scene's transport points by one similarity over the whole map, with its residual, and each region's Oculi counted against the wiki's, Mondstadt checked first (`{data-root}/genshin-parity/references/interactive-map/fit.json`).
 
 ## Requirements
 
@@ -100,5 +100,5 @@ The published Oculi SHALL be those on the ground, each with its map id, its kind
 
 ## Open
 
-- [ ] **The wiki's Oculus counts the report compares against** — no source yet: no cached Oculus wiki page is in `~/Esposter.noindex/cache/genshin-wiki/`.
-- [ ] **Snezhnaya holds no transport points in the scene** — no source yet: the dump's transport points for Snezhnaya's areas were not counted, and `~/Esposter/genshin-parity/references/interactive-map/fit.json` shows only its zero matches.
+- [ ] **The wiki's Oculus counts the report compares against** — no source yet: no cached Oculus wiki page is in `{data-root}/cache/genshin-wiki/`.
+- [ ] **Snezhnaya holds no transport points in the scene** — no source yet: the dump's transport points for Snezhnaya's areas were not counted, and `{data-root}/genshin-parity/references/interactive-map/fit.json` shows only its zero matches.

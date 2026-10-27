@@ -30,7 +30,7 @@ Its ground-layer and mapped-region checks are `scripts/src/services/genshinAsset
 
 The numbers are provisional, each marked in `packages/genshin-world/src/services/wildlife/constants.ts`:
 
-- **The escape radius and the escape time.** `WILDLIFE_ESCAPE_RADIUS` and `WILDLIFE_ESCAPE_SECONDS` are the environment table's gadget rows' values (`~/Esposter/genshin-parity/text/ExcelBinOutput/EnvAnimalGatherExcelConfigData.json`, four of its six Gadget rows at escapeRadius 4 and escapeTime 1), the closest it holds, since it has no row for a bird or a beast, until a recording of each kind's flight measures them.
+- **The escape radius and the escape time.** `WILDLIFE_ESCAPE_RADIUS` and `WILDLIFE_ESCAPE_SECONDS` are the environment table's gadget rows' values (`{data-root}/genshin-parity/text/ExcelBinOutput/EnvAnimalGatherExcelConfigData.json`, four of its six Gadget rows at escapeRadius 4 and escapeTime 1), the closest it holds, since it has no row for a bird or a beast, until a recording of each kind's flight measures them.
 - **The flight speed.** `WILDLIFE_FLEE_SPEED` is a placeholder, since no table gives it, until a recording times it (`packages/genshin-world/src/services/wildlife/constants.ts`; the environment table's keys carry escapeRadius and escapeTime and no speed).
 
 ## The placement

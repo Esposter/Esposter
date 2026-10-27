@@ -171,4 +171,4 @@ At constellation 4, Sacred Rite: Heron's Sanctum's charged hold SHALL share the 
 ## Open
 
 - [ ] **the charged hold starts after half a second of holding** — no source yet: the game's charged-hold threshold, in a table or on a wiki page; the design page keeps the framework's half second, leaving the game's agreement to the roadmap.
-- [ ] **the Prayer's infusion lasts 1 second** — no source yet: the game's own duration; gcsim's 60-frame infusion (`~/Esposter.noindex/cache/gcsim-v2.47.2/internal/characters/candace/burst.go`) is a simulator's value, not the game's.
+- [ ] **the Prayer's infusion lasts 1 second** — no source yet: the game's own duration; gcsim's 60-frame infusion (`{data-root}/cache/gcsim-v2.47.2/internal/characters/candace/burst.go`) is a simulator's value, not the game's.

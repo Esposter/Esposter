@@ -1,6 +1,6 @@
 # Lumine's shading
 
-Lumine (the game's "PlayerGirl") is drawn by the game's own "Character_Base_Uber" shader, the same shader for all four of her materials (`~/Esposter/genshin-parity/extracted/characters/playergirl/inventory.md` names `Character_Base_Uber`). This page gives the body's shading as equations, read from the programs that draw it. Each equation is tagged:
+Lumine (the game's "PlayerGirl") is drawn by the game's own "Character_Base_Uber" shader, the same shader for all four of her materials (`{data-root}/genshin-parity/extracted/characters/playergirl/inventory.md` names `Character_Base_Uber`). This page gives the body's shading as equations, read from the programs that draw it. Each equation is tagged:
 
 - **Exact:** read from a program, its register and constant use, or its keyword set. The program is named where it matters.
 - **Provisional:** the structure is read, but a name, a binding or a fitted number is not yet confirmed, and the reason is given.
@@ -9,7 +9,7 @@ Hair and face are written in their sections. The open items are at the end.
 
 ## What her materials select
 
-Each material sets a different set of keywords on the shader. These are read from the material's own bytes, so they are exact (`~/Esposter/genshin-parity/extracted/characters/playergirl/inventory.md` holds these keyword names).
+Each material sets a different set of keywords on the shader. These are read from the material's own bytes, so they are exact (`{data-root}/genshin-parity/extracted/characters/playergirl/inventory.md` holds these keyword names).
 
 | Material | Keywords set                                                                          |
 | :------- | :------------------------------------------------------------------------------------ |
@@ -26,7 +26,7 @@ The model draws five LOD0 meshes under its root "Avatar_Girl_Sword_PlayerGirl_Mo
 
 ### The base programs
 
-Each program is named by its index in the uber's named list: pass, then stage, then record order, the same index as its `NNNNN.dxbc` and its programs.tsv line. Each material's base variant is one keyword set with a pixel program, chosen by the rule in the Decisions below. The variant's programs are (listings named by the pattern `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber/NNNNN.asm`, where `NNNNN` is the program's index and the pattern is not one file; the stage each listing shows is given in the note below the table):
+Each program is named by its index in the uber's named list: pass, then stage, then record order, the same index as its `NNNNN.dxbc` and its programs.tsv line. Each material's base variant is one keyword set with a pixel program, chosen by the rule in the Decisions below. The variant's programs are (listings named by the pattern `{data-root}/genshin-parity/extracted/shaders/asm/uber/NNNNN.asm`, where `NNNNN` is the program's index and the pattern is not one file; the stage each listing shows is given in the note below the table):
 
 | Material | Pass      | Stage          | Program index | Container |
 | :------- | :-------- | :------------- | ------------: | :-------- |
@@ -63,7 +63,7 @@ The uber's compiled programs, by their own output signatures (Exact on each clas
 | No colour           | programs with no colour target (vertex-only or depth) |      390 |
 | MotionVectors       | a two-channel target                                  |        0 |
 
-The class counts are Provisional: the listing directory holds more files than the table's programs (`~/Esposter/genshin-parity/extracted/shaders/asm/uber`), and no listing carries a DXIL marker.
+The class counts are Provisional: the listing directory holds more files than the table's programs (`{data-root}/genshin-parity/extracted/shaders/asm/uber`), and no listing carries a DXIL marker.
 
 ## The body's Deferred pass
 
@@ -77,7 +77,7 @@ The body's pixel program writes six targets, and the lit colour is built from th
 
 ### The region
 
-The lightmap's alpha selects one of five regions. Exact on the toggles, read from the program; the thresholds are not literals in any listing under `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber/`, so they are open (see Open):
+The lightmap's alpha selects one of five regions. Exact on the toggles, read from the program; the thresholds are not literals in any listing under `{data-root}/genshin-parity/extracted/shaders/asm/uber/`, so they are open (see Open):
 
 ```text
 region(A) = 2  if A >= 0.8 and _UseMaterial2 != 0
@@ -176,7 +176,7 @@ o5.x   = (floor(F) & 15) / 255              (the material's nibble, Exact on the
 
 ## The hair
 
-The hair's base pixel program is 272 (DXBC), in the "BODY" pass (`~/Esposter/genshin-parity/extracted/shaders/asm/uber/00272.asm`). It has no metal branch, so its shade is the ramp path alone (Exact, read from the program's branch structure).
+The hair's base pixel program is 272 (DXBC), in the "BODY" pass (`{data-root}/genshin-parity/extracted/shaders/asm/uber/00272.asm`). It has no metal branch, so its shade is the ramp path alone (Exact, read from the program's branch structure).
 
 ### The hair's specular (pixel 272)
 
@@ -251,7 +251,7 @@ F  = smoothstep(0, 1, saturate((T - lo) / (hi - lo)))
 
 A face with no face map is lit, so `F` is one.
 
-The face map holds the nose's two flanks at its two ends, and both are at full alpha in `~/Esposter.noindex/genshin-parity/extracted/characters/playergirl/raw/tex-12271586/Texture2D/Avatar_Tex_Face_Shadow.png` (rows 212 to 240), with zero alpha between them, so the lookup reads both flanks as lit whatever the threshold.
+The face map holds the nose's two flanks at its two ends, and both are at full alpha in `{data-root}/genshin-parity/extracted/characters/playergirl/raw/tex-12271586/Texture2D/Avatar_Tex_Face_Shadow.png` (rows 212 to 240), with zero alpha between them, so the lookup reads both flanks as lit whatever the threshold.
 
 ### The shadow colour
 
@@ -271,7 +271,7 @@ A face in shadow therefore takes its shadow colour and is never black. The tone 
 
 ## The outline
 
-The outline is the face's "OUTLINE" pass, whose base programs are pixel 958 (DXBC: `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber/00958.asm` is a `ps_5_0` pixel program with one `SV_Target`, its inputs SV_POSITION and TEXCOORD only) and pixel 885 (no DXIL marker: `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber/00885.asm` is a D3D disassembly, and no listing holds DXIL). No listing names the outline's vertex program, so the width below is not read from a listing (see the open items). The colour is set in the pixel program.
+The outline is the face's "OUTLINE" pass, whose base programs are pixel 958 (DXBC: `{data-root}/genshin-parity/extracted/shaders/asm/uber/00958.asm` is a `ps_5_0` pixel program with one `SV_Target`, its inputs SV_POSITION and TEXCOORD only) and pixel 885 (no DXIL marker: `{data-root}/genshin-parity/extracted/shaders/asm/uber/00885.asm` is a D3D disassembly, and no listing holds DXIL). No listing names the outline's vertex program, so the width below is not read from a listing (see the open items). The colour is set in the pixel program.
 
 ### The width (vertex program not identified)
 
@@ -304,7 +304,7 @@ The code (`createGameOutlineMaterial`, `getGameOutlineOffset`, `createAvatarShad
 
 ### The colour (pixel 885)
 
-The outline's colour is its region's, drawn toward the main texture by its region's intensity (Exact on every operator, the factor read from `cb0[106].y` in `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber/00885.asm`, which holds no 0.200000 literal):
+The outline's colour is its region's, drawn toward the main texture by its region's intensity (Exact on every operator, the factor read from `cb0[106].y` in `{data-root}/genshin-parity/extracted/shaders/asm/uber/00885.asm`, which holds no 0.200000 literal):
 
 ```text
 Oc = "_OutlineColor"                       (no "_UseMaterial2" to "_UseMaterial5" on)
@@ -345,15 +345,15 @@ Program 394 (keywords "ELEMENT_VIEW_ON", "HAS_CHARACTER_LIGHT", "MHY_SHADER_HIGH
 | Region colours "_Color2" to "_Color5" and their toggles | The body's values from `inventory-values.txt`                                              | Nothing. A PMX file has one diffuse per material                                                          | The body's values from the inventory, with the region toggles off                            |
 | Keywords                                                | The four sets above                                                                        | Fixed by the material's type, not by the pack                                                             | The body's set                                                                               |
 
-The values in the Lumine column are the game's own, read from its material bytes. The texture sizes are in `~/Esposter/genshin-parity/extracted/characters/playergirl/inventory.md` (Body_Diffuse 1024x1024 BC7, Body_Lightmap 1024x1024 BC7, Body_Shadow_Ramp 256x20 RGB24). They are not committed here as numbers; `inventory-values.txt` is the extracted record. A player's pack supplies only what its own file holds, so for a production pack the regions and the lightmap take their defaults.
+The values in the Lumine column are the game's own, read from its material bytes. The texture sizes are in `{data-root}/genshin-parity/extracted/characters/playergirl/inventory.md` (Body_Diffuse 1024x1024 BC7, Body_Lightmap 1024x1024 BC7, Body_Shadow_Ramp 256x20 RGB24). They are not committed here as numbers; `inventory-values.txt` is the extracted record. A player's pack supplies only what its own file holds, so for a production pack the regions and the lightmap take their defaults.
 
-In development the Traveler's model reads these from the game's own values in `avatar.json` (`~/Esposter.noindex/genshin-parity/extracted/playergirl/avatar.json`, which holds `_LightArea` and `_ShadowRampWidth`), not from a pack: the main texture, lightmap, metal map, packed shadow ramp and face map by their slots; the colours `_Color` and `_Color2` to `_Color5`, the metal colours and `_SpecularColor`; the floats `_Shininess`, `_SpecMulti`, `_LightArea`, `_ShadowRampWidth` and `_FaceMapSoftness`; the three `_UseLightMapColorAO`, `_UseVertexColorAO` and `_UseVertexRampWidth` switches; and the region toggles `_UseMaterial2` to `_UseMaterial5`. A value a material does not hold keeps its default, and a toggle it does not hold is off. The outline reads the game's own width, width knots and offset, and its region colours and intensities, "_OutlineColor" to "_OutlineColor5" and "_OutLineIntensity" to "_OutLineIntensity5", as "The outline" section sets out.
+In development the Traveler's model reads these from the game's own values in `avatar.json` (`{data-root}/genshin-parity/extracted/playergirl/avatar.json`, which holds `_LightArea` and `_ShadowRampWidth`), not from a pack: the main texture, lightmap, metal map, packed shadow ramp and face map by their slots; the colours `_Color` and `_Color2` to `_Color5`, the metal colours and `_SpecularColor`; the floats `_Shininess`, `_SpecMulti`, `_LightArea`, `_ShadowRampWidth` and `_FaceMapSoftness`; the three `_UseLightMapColorAO`, `_UseVertexColorAO` and `_UseVertexRampWidth` switches; and the region toggles `_UseMaterial2` to `_UseMaterial5`. A value a material does not hold keeps its default, and a toggle it does not hold is off. The outline reads the game's own width, width knots and offset, and its region colours and intensities, "_OutlineColor" to "_OutlineColor5" and "_OutLineIntensity" to "_OutLineIntensity5", as "The outline" section sets out.
 
 ### Brightness, fog and tone (read off the body's program)
 
 The body's program is "Shader#0" of the layout's shader export, with 693 compiled variants (Exact on the counts; the register is the variant's header and its instructions).
 
-- **The brightness is a plain multiply, Exact on the form.** About a third of the body's variants read "_ES_CharacterMainLightBrightness" (`cb0[269].x` in each header), each as a single `mul` on the lit colour and on the specular term (the first `mul` into `r11` and the `mul` on `cb0[269].x` before the `movc`; the count is Provisional, see Open). The value is not on the material: the body's saved properties hold no "_ES_CharacterMainLightBrightness", and no extracted dump carries it (Exact on the absence; `~/Esposter.noindex/genshin-parity/extracted/characters/playergirl/inventory-values.txt` holds no such key). Its value is the game's own and is not read, so the world takes 1 (Provisional: a game-set value below 1 would be missing from the lit colour).
+- **The brightness is a plain multiply, Exact on the form.** About a third of the body's variants read "_ES_CharacterMainLightBrightness" (`cb0[269].x` in each header), each as a single `mul` on the lit colour and on the specular term (the first `mul` into `r11` and the `mul` on `cb0[269].x` before the `movc`; the count is Provisional, see Open). The value is not on the material: the body's saved properties hold no "_ES_CharacterMainLightBrightness", and no extracted dump carries it (Exact on the absence; `{data-root}/genshin-parity/extracted/characters/playergirl/inventory-values.txt` holds no such key). Its value is the game's own and is not read, so the world takes 1 (Provisional: a game-set value below 1 would be missing from the lit colour).
 - **No fog reaches the body's program, Provisional on the scan.** None of the variants reads a fog constant, see Open. The shader's properties declare "_FogStart", "_FogEnd", "_FogDensity" and "_FogColor", but no compiled variant reads them, so the game's body draws without fog. The world's height fog is a depth pass in the post pipeline (`createHeightFogNode`, `createPostPipeline`), applied to every scene pixel with depth below 1, the avatar's included. Whether the game's own post pass fogs characters is not read (Provisional).
 - **The haze at the close-up is zero, Exact on the form and Provisional on the evaluation.** The fog's integral starts at the world's start distance, so a pixel nearer than that gets no haze. At 3 m the factor is zero for every setting that sets a density: Windrise (`FOG_START_DISTANCE` 60 m, `FOG_DENSITY` 0.0024 and `FOG_HEIGHT_FALLOFF` 0.02, in `packages/genshin-world/src/services/windrise/constants.ts`) and the login's sky states (starting at 10 m, with densities in the hundreds to hundreds of thousands and falloffs of a tenth to one, each state in `packages/genshin-world/src/services/login/scene/LoginSkyStateMap.ts`), both level and tilted 10 degrees up. The evaluation is of the form `createHeightFogNode` writes, at the eye's height of 1.5 m, with the world's unit taken as the metre (the ground tiles are 1024 metres, Provisional on the unit). So the fog does not reach a close-up.
 - **The tone curve is the game's, Exact on the code path.** Both canvases pass the renderer's `GENSHIN_TONE_MAPPING`, which is `NoToneMapping`, and the post pipeline ends every pixel on `toneMapGenshinNode`, the avatar's included. Three's ACES Filmic is the canvas's default only where a canvas omits the prop, and none does. Against three's ACES Filmic, per channel on a grey, the game's curve gives 0.179 against 0.032 at scene 0.05, 0.335 against 0.213 at 0.18, 0.535 against 0.558 at 0.5, 0.702 against 0.763 at 1 (white, the sides differ by 0.061), and 0.968 against 0.952 at 4. The two cross near scene 0.5, so the shadows of the game's curve are lighter and its highlights darker than ACES. The game's own curve on characters is not read (Provisional).
@@ -373,37 +373,37 @@ The only case where a ramp stays raw is an artist painting it in linear values, 
 - [ ] **The shade term's `z` and `w`** — no source yet: their fitted values; the expressions are read.
 - [ ] **The lit colour `C`** — no source yet: the sum of the main colour, the ramp, the sun, the sky ambient, the specular and the rim, not yet assembled into one expression.
 - [ ] **Hair constants** — no source yet: a rendered hair frame that fits the hair's equations, which are written and not fitted; the face's threshold and flip, read from the game's own light and root bone, need a rendered face frame to check them.
-- [ ] **The deferred pass's character branch** — no source yet: a decoded listing of program 394 in the deferred block `~/Esposter/genshin-parity/extracted/maps/blocks/00/00612967.blk`, whose light loops, shadow terms and final output are not decoded.
+- [ ] **The deferred pass's character branch** — no source yet: a decoded listing of program 394 in the deferred block `{data-root}/genshin-parity/extracted/maps/blocks/00/00612967.blk`, whose light loops, shadow terms and final output are not decoded.
 - [ ] **The metal gate** — no source yet: a body variant that reads `_MTMap`, since the variant read for the emission and the specular uses no metal constant, so the "Lm.r > 0.9" gate and the matcap are unconfirmed.
 - [ ] **The register-to-texture binding** — no source yet: a check against a rendered frame of the order the parameter table lists the textures, which the bindings above use.
 - [ ] **A PMX AdditionalUv sphere is not drawn** — no source yet: its colour checked against a rendered pack. Its mode reads the mesh's second UV set (`subUv`), which the geometry carries, but the sphere is laid over the diffuse only for Multiply and Add.
 - [ ] **TOON_SPECULAR_ON is defined by no uber variant** — no source yet: a compile-time dump of the uber variants' defines, since none of the 6,337 listings or 43 `Shader#*.dat` dumps names the keyword.
 - [ ] **The candidate counts (body 124 and 41, hair 60 and 5, face 68 and 30, outline 16 and 24)** — no source yet: a count over the uber's keyword sets.
-- [ ] **The outline's width equations (the vertex program's moves, knots, tangent push and offset above)** — no source yet: a listing of the outline's vertex program, since `~/Esposter.noindex/genshin-parity/extracted/shaders/asm/uber/00958.asm` is a pixel program whose inputs are SV_POSITION and TEXCOORD only.
-- [ ] **The metal gate's threshold `Lm.r > 0.9`** — no source yet: the threshold literal in the program holding the metal gate; pixel 460 holds 0.930000 and no listing under `~/Esposter/genshin-parity/extracted/shaders/asm/uber` holds 0.900000.
-- [ ] **The half-Lambert scale 0.4975 in `N_v`** — no source yet: a listing that holds the literal 0.4975; none under `~/Esposter/genshin-parity/extracted/shaders/asm/uber` holds 0.497500, and pixel 460 holds 0.498000 in one add.
-- [ ] **The region thresholds 0.8, 0.6, 0.4 and 0.2** — no source yet: a listing that holds the thresholds 0.8, 0.6 or 0.4; none under `~/Esposter/genshin-parity/extracted/shaders/asm/uber` holds them, and pixel 460 holds 0.200000 but not 0.8, 0.6 or 0.4.
-- [ ] **The deferred lighting pass's block `~/Esposter/genshin-parity/extracted/maps/blocks/00/00612967.blk`, its 765 programs and its 34 character pixel programs** — no source yet: "Hidden/Internal-DeferredShading" is not in the extracted shader dump (`~/Esposter/genshin-parity/extracted/shaders`, searched in full, no hit).
+- [ ] **The outline's width equations (the vertex program's moves, knots, tangent push and offset above)** — no source yet: a listing of the outline's vertex program, since `{data-root}/genshin-parity/extracted/shaders/asm/uber/00958.asm` is a pixel program whose inputs are SV_POSITION and TEXCOORD only.
+- [ ] **The metal gate's threshold `Lm.r > 0.9`** — no source yet: the threshold literal in the program holding the metal gate; pixel 460 holds 0.930000 and no listing under `{data-root}/genshin-parity/extracted/shaders/asm/uber` holds 0.900000.
+- [ ] **The half-Lambert scale 0.4975 in `N_v`** — no source yet: a listing that holds the literal 0.4975; none under `{data-root}/genshin-parity/extracted/shaders/asm/uber` holds 0.497500, and pixel 460 holds 0.498000 in one add.
+- [ ] **The region thresholds 0.8, 0.6, 0.4 and 0.2** — no source yet: a listing that holds the thresholds 0.8, 0.6 or 0.4; none under `{data-root}/genshin-parity/extracted/shaders/asm/uber` holds them, and pixel 460 holds 0.200000 but not 0.8, 0.6 or 0.4.
+- [ ] **The deferred lighting pass's block `{data-root}/genshin-parity/extracted/maps/blocks/00/00612967.blk`, its 765 programs and its 34 character pixel programs** — no source yet: "Hidden/Internal-DeferredShading" is not in the extracted shader dump (`{data-root}/genshin-parity/extracted/shaders`, searched in full, no hit).
 - [ ] **240 of the 693 body variants read `_ES_CharacterMainLightBrightness` as one `mul`** — no source yet: a count over `Shader#0`'s variants, which is not reproduced.
 - [ ] **No body variant reads a fog constant, and the properties declare the four fog values** — no source yet: a scan of the body variants' constant reads, which is not on disk.
 - [ ] **The haze at the close-up is zero, and at 3 m it is 0.0000% for every setting that sets a density** — no source yet: an evaluation of `createHeightFogNode` at the stated settings and a close-up distance; no script or test commits it.
 - [ ] **The game's tone curve against ACES at scene 0.05, 0.18, 0.5, 1 and 4** — no source yet: a script evaluating both curves; none is committed.
-- [ ] **The face's flip, `_FaceFlipFactor` and its angle rule** — no source yet: a game listing that names `_FaceFlipFactor`, since none under `~/Esposter.noindex/genshin-parity/extracted/shaders` does, and the repo's `updateFaceDraw.ts` is repo code.
-- [ ] **The face's shadow colour `C = Cm * mix(S, 1, F)` and the no-face-map case lit** — no source yet: a rendered face that checks the equation, since `~/Esposter/genshin-parity/extracted/shaders/asm/uber/00432.asm` is not decoded to this form.
+- [ ] **The face's flip, `_FaceFlipFactor` and its angle rule** — no source yet: a game listing that names `_FaceFlipFactor`, since none under `{data-root}/genshin-parity/extracted/shaders` does, and the repo's `updateFaceDraw.ts` is repo code.
+- [ ] **The face's shadow colour `C = Cm * mix(S, 1, F)` and the no-face-map case lit** — no source yet: a rendered face that checks the equation, since `{data-root}/genshin-parity/extracted/shaders/asm/uber/00432.asm` is not decoded to this form.
 - [ ] **The outline's region intensities `_OutLineIntensity{k}`** — no source yet: the pixel program's read of each intensity, since the 885 listing's `cb0` indices are not matched to the names.
-- [ ] **The outline's `_OutLineZOffset` at `cb0[31].x` is not built** — no source yet: the game's `_OutLineZOffset` bias, which no listing under `~/Esposter/genshin-parity/extracted/shaders/asm/uber` or `Shader#*.dat` names.
+- [ ] **The outline's `_OutLineZOffset` at `cb0[31].x` is not built** — no source yet: the game's `_OutLineZOffset` bias, which no listing under `{data-root}/genshin-parity/extracted/shaders/asm/uber` or `Shader#*.dat` names.
 - [ ] **Each program's index is the same in its `NNNNN.dxbc` and its `programs.tsv` line** — no source yet: the cited file `programs.tsv` is not on disk
 - [ ] **The nose shows a dark mark in front light, as the character screen draws it** — no source yet: the Hydro Lumine character-screen video (https://www.youtube.com/watch?v=KPlvZW6udfk, 0:18) is not on disk.
 - [ ] **A pale dot on the nose of a back-lit face is the lit flank** — no source yet: a rendered back-lit frame of the face.
-- [ ] **The repo's outline projection scale holds the game's 2.414** — no source yet: a game listing holding the literal 2.414000; none under `~/Esposter/genshin-parity/extracted/shaders/asm/uber` does.
-- [ ] **The outline's width is `_OutlineWidth` times 0.41425, weighted by the alpha, with no `T_w`** — no source yet: a game listing holding the literal 0.41425; none under `~/Esposter/genshin-parity/extracted/shaders/asm/uber` does.
-- [ ] **The tone curve is the game's** — no source yet: a read of the game's tone curve from the raw shader exports under `~/Esposter/genshin-parity/extracted/shaders/Shader/`.
+- [ ] **The repo's outline projection scale holds the game's 2.414** — no source yet: a game listing holding the literal 2.414000; none under `{data-root}/genshin-parity/extracted/shaders/asm/uber` does.
+- [ ] **The outline's width is `_OutlineWidth` times 0.41425, weighted by the alpha, with no `T_w`** — no source yet: a game listing holding the literal 0.41425; none under `{data-root}/genshin-parity/extracted/shaders/asm/uber` does.
+- [ ] **The tone curve is the game's** — no source yet: a read of the game's tone curve from the raw shader exports under `{data-root}/genshin-parity/extracted/shaders/Shader/`.
 - [ ] **Lumine's body draws without fog** — no source yet: the game's own post pass for characters, whether it fogs the body, is not read; the body's program reads no fog constant, which is the shader side only.
 - [ ] **A pack's toon is read down its one column as the lookup, with the flat default lightmap as the threshold** — no source yet: the pack path through `packages/genshin-engine/src/character/shading/createCharacterShadingNode.ts` is not traced.
 - [ ] **A pack's region toggles stay off, and its values come from the game's inventory** — no source yet: the code path that fills a pack's material from the inventory record is not traced; `packages/genshin-engine/src/character/createCharacterShadingInputs.ts` defaults the region toggles to off, but neither it nor `packages/genshin-engine/src/character/createCharacterMaterial.ts` fills from the inventory record.
 - [ ] **The default light area and band width keep the lookup from clamping across the light's full range** — no source yet: a computed trace at the defaults; no test asserts it.
 - [ ] **A pack without a lightmap takes the flat default lightmap of red 0, green 0.5 and alpha 0** — no source yet: the flat lightmap's red and alpha are not traced to a constant.
-- [ ] **A part in a region whose toggle is off keeps the first region's colours, and a material with no region toggle on draws in the first region only** — no source yet: which constant buffer slots are the region toggles and what each selects, which `~/Esposter/genshin-parity/extracted/shaders/asm/uber/00460.asm` does not name.
-- [ ] **Lumine's outline takes her region's colour, toned as her body is, and the outline colour when no region toggle is on** — no source yet: which constant buffer slot is her region toggle and what each slot holds, which `~/Esposter/genshin-parity/extracted/shaders/asm/uber/00885.asm` does not name.
+- [ ] **A part in a region whose toggle is off keeps the first region's colours, and a material with no region toggle on draws in the first region only** — no source yet: which constant buffer slots are the region toggles and what each selects, which `{data-root}/genshin-parity/extracted/shaders/asm/uber/00460.asm` does not name.
+- [ ] **Lumine's outline takes her region's colour, toned as her body is, and the outline colour when no region toggle is on** — no source yet: which constant buffer slot is her region toggle and what each slot holds, which `{data-root}/genshin-parity/extracted/shaders/asm/uber/00885.asm` does not name.
 
 Related: [drawing a character](../drawing/design.md), [derived assets](../../derived-assets/design.md), [game data formats](../../game-data-formats/design.md).

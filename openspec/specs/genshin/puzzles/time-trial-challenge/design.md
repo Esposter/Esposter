@@ -23,7 +23,7 @@ stateDiagram-v2
 
 ## Sources
 
-- `~/Esposter.noindex/genshin-parity/captures/yt-B_l5b_KXt-o-time-trial-limit.mp4` — a Time Trial Challenge started at its marker and filmed to its end, with its clock in view, 3 minutes at most; the limit the clock is set to is read from it, since the wiki gives none for each challenge. Found 2026-10-11: https://www.youtube.com/watch?v=B_l5b_KXt-o at 0–55 s.
+- `{data-root}/genshin-parity/captures/yt-B_l5b_KXt-o-time-trial-limit.mp4` — a Time Trial Challenge started at its marker and filmed to its end, with its clock in view, 3 minutes at most; the limit the clock is set to is read from it, since the wiki gives none for each challenge. Found 2026-10-11: https://www.youtube.com/watch?v=B_l5b_KXt-o at 0–55 s.
 
 ## Open
 

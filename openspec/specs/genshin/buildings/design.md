@@ -33,5 +33,5 @@ The building is centred on the origin and stands on it, so a caller places it on
 
 ## Open
 
-- [ ] **Natlan's tribes build with the kit** — no source yet: a measurement of the Natlan building meshes under `~/Esposter/genshin-parity/extracted/natlan/assets/Mesh/` (`Area_Nt_Build_*.obj`) against the kit's box-and-cone form.
+- [ ] **Natlan's tribes build with the kit** — no source yet: a measurement of the Natlan building meshes under `{data-root}/genshin-parity/extracted/natlan/assets/Mesh/` (`Area_Nt_Build_*.obj`) against the kit's box-and-cone form.
 - [ ] **The People of the Springs' first building stands as a building landmark** — no source yet: a game record that places that building as a landmark, since the repo's own region data settles no game claim.

@@ -104,4 +104,4 @@ The Eye's bonus to another member's burst, the Musou Isshin plunges and her skil
 
 ## Open
 
-- [ ] **Her strikes deal no poise** — contradicted by `~/Esposter.noindex/cache/genshin-wiki/Category_Raiden_Shogun_Talents.json`: its Advanced Properties give 36.88 poise for a Musou Isshin 1-Hit DMG.
+- [ ] **Her strikes deal no poise** — contradicted by `{data-root}/cache/genshin-wiki/Category_Raiden_Shogun_Talents.json`: its Advanced Properties give 36.88 poise for a Musou Isshin 1-Hit DMG.

@@ -63,6 +63,7 @@ Write for a new engineer reading on GitHub, not for an agent grepping a repo:
 - **Every line earns its place** — link a page that already says it, by a relative path with prose as the link text (`references/links-and-sources.md`).
 - **A decision taken from outside the repo cites where it came from** in the design's `## Sources`, read before cited (`references/links-and-sources.md`).
 - **Never write down what the repo can count**, and **never restate a version a manifest declares, or a value a constant owns — name where it lives** (`references/repo-owned-facts.md`).
+- **A machine's root is never written into a page** — name it `{data-root}` and write the path from there, or write a repo path from the repository root (`references/repo-owned-facts.md`, "Machine roots").
 - Self-contained over link-chained: a page must be understandable without following links; links add depth, never required context.
 - **A `## Notes` bullet says what no other section of its page does** — a consequence, an exception, a trade it names the cost of; never a restatement, and never an unfixed defect, which is fixed or becomes a roadmap item (`references/notes-and-stale-prose.md`).
 - Keep the **Key files** table in every design — path and one-line role. It is the bridge from the spec to the code, and how a change is sized.

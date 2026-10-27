@@ -22,7 +22,7 @@ Two callers can fetch the same object at once. The later rename fails because th
 
 ## Where the cache lives
 
-`CACHE_ROOT` is a folder named for the site under the user's home directory, and `CONTENT_CACHE_DIRECTORY` is the `content` folder inside it. Both are constants in `services/cache/constants.ts`. Every checkout on a machine reads the same root, so a worktree or an ephemeral run reuses a download an earlier run already made. The path itself is not a requirement, since a test that pinned it would only repeat the constant.
+`CACHE_ROOT` is a folder named for the site under the user's home directory, and `CONTENT_CACHE_DIRECTORY` is the `content` folder inside it. Both are constants in `services/cache/constants.ts`. Every checkout on a machine reads the same root, so a worktree or an ephemeral run reuses a download an earlier run already made. The path itself is not a requirement, since a test that pinned it would only repeat the constant. Specs name that root `{data-root}`, so `CACHE_ROOT` is `{data-root}/cache` and the content folder is `{data-root}/cache/content`. The folder's name is the site constant's alone, so renaming the project changes that constant and no page (`.agents/skills/openspec/references/repo-owned-facts.md`, "Machine roots").
 
 ## Notes
 

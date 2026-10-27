@@ -1,6 +1,6 @@
 ## Purpose
 
-Fishing's points, stocks, fish and rods read from the game's tables (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/FishStockExcelConfigData.json`, `FishExcelConfigData.json`) onto the world, each stock drawn by the game's clock and refilled seventy-two hours after it is emptied, a lure's reaction read off a fish's ranges, and a reel's tension held in its zone until the fish is caught or the line breaks, with nothing yet cast or on a screen.
+Fishing's points, stocks, fish and rods read from the game's tables (`{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/FishStockExcelConfigData.json`, `FishExcelConfigData.json`) onto the world, each stock drawn by the game's clock and refilled seventy-two hours after it is emptied, a lure's reaction read off a fish's ranges, and a reel's tension held in its zone until the fish is caught or the line breaks, with nothing yet cast or on a screen.
 
 ## Requirements
 

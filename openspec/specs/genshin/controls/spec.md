@@ -144,7 +144,7 @@ The world SHALL leave unbound the keys of places and modes it does not have (whi
 
 ## Open
 
-- [ ] **The game's default key for each action on a PC and a gamepad, M, F3 and F5 among them** — no source yet: the wiki's Controls page is not in `~/Esposter.noindex/cache/genshin-wiki/`, and no capture shows the game's controls list.
+- [ ] **The game's default key for each action on a PC and a gamepad, M, F3 and F5 among them** — no source yet: the wiki's Controls page is not in `{data-root}/cache/genshin-wiki/`, and no capture shows the game's controls list.
 - [ ] **A pad's bumper turns the face buttons into the shortcut wheel's while held** — no source yet: a capture of the pad's bumper held in the game, not on this machine.
 - [ ] **The browser keeps Escape for a pointer lock and takes no lock from it** — no source yet: the Pointer Lock and user-activation specs, which this pass did not open.
 - [ ] **Chromium reports one spurious, very large pointer move after a lock** — no source yet: a recording of the first move after a lock, not taken here.

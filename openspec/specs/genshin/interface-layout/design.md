@@ -1,6 +1,6 @@
 # Interface layout
 
-A screen's interface is laid out by the game's own tree. Unity places every piece of an interface with a RectTransform: two anchors as shares of its parent's box, a pivot as a share of its own, the pivot's offset from the anchors (the anchored position) and how far its size strays from the anchors' span (the size delta) (`~/Esposter.noindex/genshin-parity/extracted/login-ui/rects.json`, each record's `anchorMin`, `anchorMax`, `pivot`, `position` and `size`). A screen's markup follows that tree piece for piece, so a piece sits inside its game parent and inherits its anchoring, and a fix to a parent reaches everything in it. On the login screen the foot, `Bottom`, is anchored to the screen's bottom (`~/Esposter.noindex/genshin-parity/extracted/login-ui/rects.json`, `Bottom`: `anchorMin` [0, 0], `anchorMax` [1, 0], `pivot` [0, 0]), and the loading row, the account, the build string and both button columns ride in it on any window.
+A screen's interface is laid out by the game's own tree. Unity places every piece of an interface with a RectTransform: two anchors as shares of its parent's box, a pivot as a share of its own, the pivot's offset from the anchors (the anchored position) and how far its size strays from the anchors' span (the size delta) (`{data-root}/genshin-parity/extracted/login-ui/rects.json`, each record's `anchorMin`, `anchorMax`, `pivot`, `position` and `size`). A screen's markup follows that tree piece for piece, so a piece sits inside its game parent and inherits its anchoring, and a fix to a parent reaches everything in it. On the login screen the foot, `Bottom`, is anchored to the screen's bottom (`{data-root}/genshin-parity/extracted/login-ui/rects.json`, `Bottom`: `anchorMin` [0, 0], `anchorMax` [1, 0], `pivot` [0, 0]), and the loading row, the account, the build string and both button columns ride in it on any window.
 
 ## How it works
 
@@ -45,5 +45,5 @@ flowchart LR
 
 ## Sources
 
-- `~/Esposter.noindex/genshin-parity/extracted/character/interface/json/RectTransform/RectTransform#324437.json`, `GrpMap` with a local scale of 0.6. Grounds the requirement "A scaled piece scales about its pivot".
+- `{data-root}/genshin-parity/extracted/character/interface/json/RectTransform/RectTransform#324437.json`, `GrpMap` with a local scale of 0.6. Grounds the requirement "A scaled piece scales about its pivot".
 - The game's own recording of the group's stacking and spacing, not named (see Open): "as the game's own recording shows". Grounds the requirement "A layout group's children take the group's spacing" and scenario "Group children are spaced as the recording shows".

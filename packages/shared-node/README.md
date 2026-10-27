@@ -47,7 +47,7 @@ import { spawnSync } from "@esposter/shared-node/child-process";
 spawnSync("pnpm", ["install"], { stdio: "inherit" });
 ```
 
-`@esposter/shared-node/cache` exports `CACHE_ROOT` (`~/Esposter/cache`), the one folder every checkout, worktree and ephemeral run on a machine shares for what it downloads, and `readContentAddressedObject`, a read-through cache for objects named by the hex SHA-256 of their bytes. A hit is read from `CONTENT_CACHE_DIRECTORY`; a miss is downloaded once and kept only if its bytes hash to its name, so a hit never goes stale and any source of the same content shares one copy.
+`@esposter/shared-node/cache` exports `CACHE_ROOT` (`{data-root}/cache`), the one folder every checkout, worktree and ephemeral run on a machine shares for what it downloads, and `readContentAddressedObject`, a read-through cache for objects named by the hex SHA-256 of their bytes. A hit is read from `CONTENT_CACHE_DIRECTORY`; a miss is downloaded once and kept only if its bytes hash to its name, so a hit never goes stale and any source of the same content shares one copy.
 
 ```ts
 import { readContentAddressedObject } from "@esposter/shared-node/cache";

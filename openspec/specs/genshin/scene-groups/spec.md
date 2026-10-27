@@ -105,5 +105,5 @@ A service keeper with no NPC birth SHALL be absent from the record while the poi
 
 ## Open
 
-- [ ] **Service keepers without a birth are absent from the record** — no source yet: no NPC id for the five named keepers is matched to a birth's config id by name text in `~/Esposter.noindex/genshin-dump-backup-6.6/BinOutput/Scene/SceneNpcBorn/scene3_npcborn.json`, which holds 1005 births.
+- [ ] **Service keepers without a birth are absent from the record** — no source yet: no NPC id for the five named keepers is matched to a birth's config id by name text in `{data-root}/genshin-dump-backup-6.6/BinOutput/Scene/SceneNpcBorn/scene3_npcborn.json`, which holds 1005 births.
 - [ ] **The camp keeps its stand-in** — no source yet: no game source places Windrise's camp; the enemies page and the authored record `mondstadt-camp-1` are repo records, cited on the design page.

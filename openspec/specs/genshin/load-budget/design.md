@@ -105,13 +105,13 @@ flowchart LR
 ## Open
 
 - [ ] **The request budget was recorded under the idle reading** — no source yet: no run record of its requests names the reading it was taken at, so it cannot be re-read. The budget's production figure of 132 is at `scripts/src/services/genshinParity/load/ScreenLoadBudgetMap.ts` (line 34).
-- [ ] **A world's load makes more requests than the browser's 250 resource timings** — no source yet: the dev server's 2049-request run record is not kept in the repo or under `~/Esposter.noindex` (the production budget's 132 requests is cited at `scripts/src/services/genshinParity/load/ScreenLoadBudgetMap.ts`, line 34).
+- [ ] **A world's load makes more requests than the browser's 250 resource timings** — no source yet: the dev server's 2049-request run record is not kept in the repo or under `{data-root}` (the production budget's 132 requests is cited at `scripts/src/services/genshinParity/load/ScreenLoadBudgetMap.ts`, line 34).
 - [ ] **The opening's steps are short** — no source yet: no run of the `opening` measures is kept to read their durations against.
 - [ ] **The world's browser test fails without the regions' wait** — no source yet: the wait is the terrain's ready gate (`packages/genshin-world/src/components/World/Terrain/Index.vue`, `isGroundSettled`, line 327), but no run of that test with it removed is recorded.
-- [ ] **The terrain-worker and Liyue-start figures (ready and `terrain` on both modes, Liyue's ground read into the terrain's load, the CPU profile's collider builds)** — no source yet: the runs' meter output is not kept in the repo or under `~/Esposter.noindex`.
-- [ ] **The landmark-collider figures (ready and `terrain` on each mode, the collider builds)** — no source yet: the three runs per side are not kept in the repo or under `~/Esposter.noindex`.
-- [ ] **The crossing figures (tiles rebuilt, time to settle from the move)** — no source yet: the three runs per side are not kept in the repo or under `~/Esposter.noindex`.
-- [ ] **The compile and gate figures (programs, geometries, `world-gate` and game data requests)** — no source yet: the runs are not kept in the repo or under `~/Esposter.noindex`.
-- [ ] **The region-ground figures (game data requests, `world-gate`)** — no source yet: the runs are not kept in the repo or under `~/Esposter.noindex`.
-- [ ] **The request split (game data, kit chunks, region reads and page files), the dev server's request count and the paused counts** — no source yet: the request kinds and the paused runs are not recorded in the repo or under `~/Esposter.noindex`.
-- [ ] **Bundled dev saves a few seconds of startup, with terrain unchanged** — no source yet: no bundled-dev run is recorded in the repo or under `~/Esposter.noindex`.
+- [ ] **The terrain-worker and Liyue-start figures (ready and `terrain` on both modes, Liyue's ground read into the terrain's load, the CPU profile's collider builds)** — no source yet: the runs' meter output is not kept in the repo or under `{data-root}`.
+- [ ] **The landmark-collider figures (ready and `terrain` on each mode, the collider builds)** — no source yet: the three runs per side are not kept in the repo or under `{data-root}`.
+- [ ] **The crossing figures (tiles rebuilt, time to settle from the move)** — no source yet: the three runs per side are not kept in the repo or under `{data-root}`.
+- [ ] **The compile and gate figures (programs, geometries, `world-gate` and game data requests)** — no source yet: the runs are not kept in the repo or under `{data-root}`.
+- [ ] **The region-ground figures (game data requests, `world-gate`)** — no source yet: the runs are not kept in the repo or under `{data-root}`.
+- [ ] **The request split (game data, kit chunks, region reads and page files), the dev server's request count and the paused counts** — no source yet: the request kinds and the paused runs are not recorded in the repo or under `{data-root}`.
+- [ ] **Bundled dev saves a few seconds of startup, with terrain unchanged** — no source yet: no bundled-dev run is recorded in the repo or under `{data-root}`.

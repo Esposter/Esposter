@@ -28,4 +28,4 @@ flowchart TD
 
 - [ ] **A recording's events are found by sampling it at ten frames a second** — no source yet: the frames command samples at ten a second by default (`scripts/src/services/genshinParity/commands/framesCommand.ts`), but the step that picks events from those frames was not found in `scripts/src/services/genshinParity`.
 - [ ] **Window capture takes a frame only when the window changes** — no source yet: `scripts/src/services/genshinParity/game/captureGame.ts` was not traced for frame skipping.
-- [ ] **When the window delivers a frame** — no source yet: the ffmpeg gfxcapture section (`~/Esposter/cache/ffmpeg/ffmpeg-9.0.2-essentials_build/doc/ffmpeg-filters.html`) gives the rate but not when a frame is sent, and `scripts/src/services/genshinParity/game/captureGame.ts` is repo code, not a source for the timing.
+- [ ] **When the window delivers a frame** — no source yet: the ffmpeg gfxcapture section (`{data-root}/cache/ffmpeg/ffmpeg-9.0.2-essentials_build/doc/ffmpeg-filters.html`) gives the rate but not when a frame is sent, and `scripts/src/services/genshinParity/game/captureGame.ts` is repo code, not a source for the timing.

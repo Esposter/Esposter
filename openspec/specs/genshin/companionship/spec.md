@@ -1,6 +1,6 @@
 ## Purpose
 
-Each character's Friendship Level read from the Companionship EXP it has earned, the game's own level table (`~/Esposter/genshin-parity/text/ExcelBinOutput/AvatarFettersLevelExcelConfigData.json`), and the Original Resin claims giving that EXP to the deployed team but the Traveler, with the Serenitea Pot dialogue and the namecard's art and description still unopened.
+Each character's Friendship Level read from the Companionship EXP it has earned, the game's own level table (`{data-root}/genshin-parity/text/ExcelBinOutput/AvatarFettersLevelExcelConfigData.json`), and the Original Resin claims giving that EXP to the deployed team but the Traveler, with the Serenitea Pot dialogue and the namecard's art and description still unopened.
 
 ## Requirements
 
@@ -72,4 +72,4 @@ A character SHALL hold its namecard once its total reaches level 10.
 ## Open
 
 - [ ] **The Original Resin claims give Companionship EXP to the deployed team but the Traveler** — no source yet: the cached Original Resin wiki page is not on disk.
-- [ ] **A character holds its namecard at the level its namecard row names, not a fixed level 10** — no source yet: a game capture or client record of a namecard held below level 10 at its row's level, since `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/FetterCharacterCardExcelConfigData.json` names level 6 or level 1 for four characters and the repo holds a fixed level 10 (`packages/genshin-world/src/services/friendship/constants.ts`).
+- [ ] **A character holds its namecard at the level its namecard row names, not a fixed level 10** — no source yet: a game capture or client record of a namecard held below level 10 at its row's level, since `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/FetterCharacterCardExcelConfigData.json` names level 6 or level 1 for four characters and the repo holds a fixed level 10 (`packages/genshin-world/src/services/friendship/constants.ts`).

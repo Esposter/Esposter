@@ -27,4 +27,4 @@ flowchart TD
 ## Open
 
 - [ ] **Translucent glass's colour is solved from the scene around it** — no source yet: no solver for translucent glass was found under `scripts/src/services/genshinParity` or `scripts/src/services/recreation`.
-- [ ] **The login's interface reaches a few tenths of a percent on each stage** — no source yet: no committed score report for the login's stages was found in the repository or in `~/Esposter.noindex/genshin-parity/comparisons/`.
+- [ ] **The login's interface reaches a few tenths of a percent on each stage** — no source yet: no committed score report for the login's stages was found in the repository or in `{data-root}/genshin-parity/comparisons/`.

@@ -90,4 +90,4 @@ From Constellation 6, Fiery Rain SHALL give each deployed party member 15% Movem
 
 ## Open
 
-- [ ] **The aimed shot turns to the enemy its aim is scored on** — no source yet: the cached Sharpshooter text (`~/Esposter/cache/genshin-wiki/Category_Amber_Talents.json`) gives the Aimed Shot's damage and poise, and no turn or score.
+- [ ] **The aimed shot turns to the enemy its aim is scored on** — no source yet: the cached Sharpshooter text (`{data-root}/cache/genshin-wiki/Category_Amber_Talents.json`) gives the Aimed Shot's damage and poise, and no turn or score.

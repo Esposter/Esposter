@@ -193,7 +193,7 @@ Furina's fourth constellation SHALL change her energy as set out in its scenario
 
 ## Open
 
-- [ ] **A member with no enemy in reach neither drains the team nor strikes** — no source yet: no recording of a Salon member with no enemy in reach is in `~/Esposter/genshin-parity/captures/`, and the reading is provisional.
-- [ ] **The Fanfare's debounce matches the game's: a 6-frame first point and a debounce window** — no source yet: gcsim marks the 6-frame delay and the debounce window as estimates (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/furina/burst.go` lines 25 to 26), and no recording settles them.
-- [ ] **The Salon summons stand for 30 seconds** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/furina/skill.go`: the Salon status runs 1736 frames plus a delay, about 29 seconds.
-- [ ] **The Fanfare lasts 18 seconds** — contradicted by `~/Esposter/cache/gcsim-v2.47.2/internal/characters/furina/burst.go`: burstDur is 18.2 * 60 frames.
+- [ ] **A member with no enemy in reach neither drains the team nor strikes** — no source yet: no recording of a Salon member with no enemy in reach is in `{data-root}/genshin-parity/captures/`, and the reading is provisional.
+- [ ] **The Fanfare's debounce matches the game's: a 6-frame first point and a debounce window** — no source yet: gcsim marks the 6-frame delay and the debounce window as estimates (`{data-root}/cache/gcsim-v2.47.2/internal/characters/furina/burst.go` lines 25 to 26), and no recording settles them.
+- [ ] **The Salon summons stand for 30 seconds** — contradicted by `{data-root}/cache/gcsim-v2.47.2/internal/characters/furina/skill.go`: the Salon status runs 1736 frames plus a delay, about 29 seconds.
+- [ ] **The Fanfare lasts 18 seconds** — contradicted by `{data-root}/cache/gcsim-v2.47.2/internal/characters/furina/burst.go`: burstDur is 18.2 * 60 frames.

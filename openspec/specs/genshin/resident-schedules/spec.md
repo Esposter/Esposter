@@ -104,4 +104,4 @@ An operator generating the residents SHALL place each named NPC that has a talk 
 
 ## Open
 
-- [ ] **Residents keep their day spot from six in the morning to seven at night, the game's own hours** — no source yet: a source for a resident's day-spot hours, since `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/GcgWorldWorkTimeExcelConfigData.json` holds three rows of 6 to 19 but is GCG's world work time, not a resident's day spot.
+- [ ] **Residents keep their day spot from six in the morning to seven at night, the game's own hours** — no source yet: a source for a resident's day-spot hours, since `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/GcgWorldWorkTimeExcelConfigData.json` holds three rows of 6 to 19 but is GCG's world work time, not a resident's day spot.

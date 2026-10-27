@@ -39,6 +39,6 @@ flowchart TD
 
 - [ ] **The towers' mouldings and cornices turn as the game's do** — no source yet: no profile comparison with the game is kept.
 - [ ] **The carving's edges land within a pixel of the game's where the towers stand nearest** — no source yet: no edge measurement is kept.
-- [ ] **No bump tilts the light at a recess's edge, and a bump over the atlas changed no frame** — no source yet: no frame comparison of a bump over the atlas is kept in `~/Esposter/genshin-parity/comparisons/`, which holds no tower snapshot, and `packages/genshin-world/src/components/Login/Scene/Towers.reference.ts` records the result without one.
+- [ ] **No bump tilts the light at a recess's edge, and a bump over the atlas changed no frame** — no source yet: no frame comparison of a bump over the atlas is kept in `{data-root}/genshin-parity/comparisons/`, which holds no tower snapshot, and `packages/genshin-world/src/components/Login/Scene/Towers.reference.ts` records the result without one.
 - [ ] **Columns and recesses together bring every frame's towers nearer the exports than the lathe alone** — no source yet: no per-frame score is kept.
 - [ ] **A tower the game draws only at its coarsest level is fitted from that level's own mesh, its lathe and its facade both** — no source yet: the game's record of the level of detail each tower is drawn at.

@@ -62,9 +62,9 @@ flowchart TD
 ## Open
 
 - [ ] **Each capital stands where its city's waypoints do in the game's data, to the nearest ten metres** — no source yet: the waypoint rows the seven places were read from are not saved or checked here.
-- [ ] **Snezhnograd stands about four kilometres along x from Nasha Town, level in z** — no source yet: `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/CityConfigData.json` does not hold this value, since it has no Snezhnograd row, and the waypoints 109 and 117 metres off are not matched to an outline in this entry.
+- [ ] **Snezhnograd stands about four kilometres along x from Nasha Town, level in z** — no source yet: `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/CityConfigData.json` does not hold this value, since it has no Snezhnograd row, and the waypoints 109 and 117 metres off are not matched to an outline in this entry.
 - [ ] **Snezhnograd's waypoints are filed under Nod-Krai's Voidsea Outlook, whose outline holds the place** — no source yet: "Voidsea Outlook" is in the English text, but no area table checked holds the outline that covers the place.
-- [ ] **Each capital's area takes the game's own outline** — no source yet: the other capitals' outlines in `~/Esposter.noindex/genshin-parity/city-areas.json` (584 in all, `Mengde` among them), which are not yet matched to their capitals.
+- [ ] **Each capital's area takes the game's own outline** — no source yet: the other capitals' outlines in `{data-root}/genshin-parity/city-areas.json` (584 in all, `Mengde` among them), which are not yet matched to their capitals.
 - [ ] **The disc overlap and error figures for the region grounds** — no source yet: the 2.2 km², −11 metre, 3 to 30 metre RMS and 4 metre figures are not saved in any parity or scratch file.
 - [ ] **The palettes' sampled colours** — no source yet: only the published keys are checked, not the colours each palette holds against the game's building textures.
-- [ ] **The game's map places Inazuma east of Liyue and Fontaine to its north-west** — no source yet: the map positions in `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/CityConfigData.json` are not yet read into the axis convention the page names.
+- [ ] **The game's map places Inazuma east of Liyue and Fontaine to its north-west** — no source yet: the map positions in `{data-root}/genshin-dump-backup-6.6/ExcelBinOutput/CityConfigData.json` are not yet read into the axis convention the page names.

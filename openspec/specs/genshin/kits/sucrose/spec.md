@@ -101,4 +101,4 @@ The skill's pull and her Hexerei team bonus SHALL NOT take effect.
 
 ## Open
 
-- [ ] **Constellations 1, 2 and 6 take effect** — no source yet: the kit's numbers for them, not yet read against the English text the dump gives talentIds 431, 432 and 436 (`~/Esposter/genshin-parity/text/ExcelBinOutput/AvatarTalentExcelConfigData.json`, whose names and descriptions are hashes into `~/Esposter/genshin-parity/text/TextMap/TextMap_MediumEN.json`).
+- [ ] **Constellations 1, 2 and 6 take effect** — no source yet: the kit's numbers for them, not yet read against the English text the dump gives talentIds 431, 432 and 436 (`{data-root}/genshin-parity/text/ExcelBinOutput/AvatarTalentExcelConfigData.json`, whose names and descriptions are hashes into `{data-root}/genshin-parity/text/TextMap/TextMap_MediumEN.json`).

@@ -48,6 +48,6 @@ flowchart TD
 
 ## Open
 
-- [ ] **The servers' puzzle mechanisms are not in the client's data** — no source yet: the servers' puzzle logic is not on disk; the extracted `lua/raw` folder holds `~/Esposter/genshin-parity/extracted/lua/raw/scene3_dummy_points.json`, a table of positions keyed by id.
-- [ ] **The map gives no element, timing or wiring for a mark** — no source yet: what the points' `ext_attrs` key 11 means for a mark is not settled; its values 71 to 73 are named Torch Puzzle, Large Rock Pile and Small Rock Pile in `~/Esposter/genshin-parity/references/interactive-map/label-tree.json`.
+- [ ] **The servers' puzzle mechanisms are not in the client's data** — no source yet: the servers' puzzle logic is not on disk; the extracted `lua/raw` folder holds `{data-root}/genshin-parity/extracted/lua/raw/scene3_dummy_points.json`, a table of positions keyed by id.
+- [ ] **The map gives no element, timing or wiring for a mark** — no source yet: what the points' `ext_attrs` key 11 means for a mark is not settled; its values 71 to 73 are named Torch Puzzle, Large Rock Pile and Small Rock Pile in `{data-root}/genshin-parity/references/interactive-map/label-tree.json`.
 - [ ] **The monuments are not yet placed in the world, drawn, struck or solved** — contradicted by `packages/genshin-world/src/composables/useWorldPuzzles.ts`: monuments are created, struck and solved there.

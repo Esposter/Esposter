@@ -74,5 +74,5 @@ The features keep the residual off their own ground too: the composed height mul
 ## Open
 
 - [ ] **A few hundred hills carry most of a valley** — no source yet: the hill count per valley is not measured in the cache.
-- [ ] **Inside Mondstadt City the land the city stands on is smoothed, its tiers and walls away** — no source yet: Mondstadt's own ground run is not compared with the city's areas, since its hills (`~/Esposter.noindex/cache/content/d46c78463b2e6f23e1a3a9ed838470984a492cc632fb7ad600d01a188294cb1a`) sit in the region's axes and comparing them needs the Windrise origin placement, which this pass did not run.
+- [ ] **Inside Mondstadt City the land the city stands on is smoothed, its tiers and walls away** — no source yet: Mondstadt's own ground run is not compared with the city's areas, since its hills (`{data-root}/cache/content/d46c78463b2e6f23e1a3a9ed838470984a492cc632fb7ad600d01a188294cb1a`) sit in the region's axes and comparing them needs the Windrise origin placement, which this pass did not run.
 - [ ] **A coastline's water is drawn as a negative plateau basin** — no source yet: no file under `scripts/src/services/genshinAssets/fit/` names a coastline (searched), and none draws a negative plateau (searched).

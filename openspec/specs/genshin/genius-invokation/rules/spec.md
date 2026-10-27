@@ -310,6 +310,6 @@ A character at no health SHALL be defeated: its equipment and statuses SHALL be 
 
 ## Open
 
-- [ ] **A duel ends with no winner once the fifteenth round's end phase has closed** — contradicted by `~/Esposter/genshin-parity/text/TextMap/TextMapEN.json`: no winner by the start of Round 15 means both sides lose.
-- [ ] **Leave It to Me makes the next switch a fast action and is spent** — no source yet: the keywords `$[K1]` and `$[K2]` in card 332006's text are not resolved; the card is in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/GCGCardExcelConfigData.json`.
+- [ ] **A duel ends with no winner once the fifteenth round's end phase has closed** — contradicted by `{data-root}/genshin-parity/text/TextMap/TextMapEN.json`: no winner by the start of Round 15 means both sides lose.
+- [ ] **Leave It to Me makes the next switch a fast action and is spent** — no source yet: the keywords `$[K1]` and `$[K2]` in card 332006's text are not resolved; the card is in `{data-root}/genshin-parity/text/ExcelBinOutput/GCGCardExcelConfigData.json`.
 - [ ] **A second reaction of the same kind joins the card already there** — no source yet: the join in the effect that places the reaction's card was not read.

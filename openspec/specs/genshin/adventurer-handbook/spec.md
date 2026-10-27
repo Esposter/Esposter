@@ -1,6 +1,6 @@
 ## Purpose
 
-Genshin's Adventurer Handbook as built — F1's screen, an open book with the game's six tabs down its left edge in the English client's order `~/Esposter/genshin-parity/references/handbook-experience.png`, each named in the game's own words `~/Esposter.noindex/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`, and its Experience page measured off the wiki's screenshot of the English client `~/Esposter/genshin-parity/references/handbook-experience.png`.
+Genshin's Adventurer Handbook as built — F1's screen, an open book with the game's six tabs down its left edge in the English client's order `{data-root}/genshin-parity/references/handbook-experience.png`, each named in the game's own words `{data-root}/genshin-dump-backup-6.6/TextMap/TextMap_MediumEN.json`, and its Experience page measured off the wiki's screenshot of the English client `{data-root}/genshin-parity/references/handbook-experience.png`.
 
 ## Requirements
 
@@ -62,6 +62,6 @@ The Experience page SHALL show the chapter's investigation panel and bar, its re
 
 ## Open
 
-- [ ] **F1 opens the handbook at its Experience tab in the open world** — no source yet: `handbook-open-close.mkv` is named in the design but is not in `~/Esposter/genshin-parity/captures/`.
+- [ ] **F1 opens the handbook at its Experience tab in the open world** — no source yet: `handbook-open-close.mkv` is named in the design but is not in `{data-root}/genshin-parity/captures/`.
 - [ ] **The close button returns the player to the world** — no source yet: no capture of the game's close is on disk.
 - [ ] **The world's empty investigation list on the Experience tab** — no source yet: no capture of the game with no investigations is on disk, and the empty state is the repo's own.

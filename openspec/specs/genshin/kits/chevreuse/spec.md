@@ -106,4 +106,4 @@ At constellation 4, Ring of Bursting Grenades SHALL let the next two holds of Sh
 
 ## Open
 
-- [ ] **The plunge's area round her landing point** — no source yet: no source on disk gives its area. gcsim's template returns not implemented for her plunges (`~/Esposter/cache/gcsim-v2.47.2/internal/template/character/character.go:157`), and the wiki's Chevreuse character page, which names the plunge's damage and collision, is not cached.
+- [ ] **The plunge's area round her landing point** — no source yet: no source on disk gives its area. gcsim's template returns not implemented for her plunges (`{data-root}/cache/gcsim-v2.47.2/internal/template/character/character.go:157`), and the wiki's Chevreuse character page, which names the plunge's damage and collision, is not cached.
