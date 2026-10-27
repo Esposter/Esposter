@@ -38,7 +38,7 @@ The user's one batch, checked whenever convenient ([parity](../../specs/genshin/
 - [ ] **Do Mika's plunges land on Bennett's frames and hitmarks, the timings they borrow?** — [Mika](../../specs/genshin/kits/mika/design.md): gcsim gives Mika no plunge file, so her low plunge's hitmark is Bennett's 36 frames, with the reaches the fallback's areas give.
 - [ ] **Does Mika's Rimestar Flare hold release at half a second?** — [Mika](../../specs/genshin/kits/mika/design.md): gcsim's hold is a boolean with no threshold, so the flare takes the half second the other holds take.
 - [ ] **Does Kaveh's charged attack strike once as it starts and again at its end, each in a circle of radius 2 round him?** — [Kaveh](../../specs/genshin/kits/kaveh/design.md): gcsim gives him none, so `kavehKit.ts` takes the table's spin and final-hit shape, as Dori's has it.
-- [ ] **Does Kaveh's plunge collision deal poise?** — [Kaveh](../../specs/genshin/kits/kaveh/design.md): gcsim gives his collision no poise, so it deals a provisional 0.
+- [ ] **Does Kaveh's plunge collision deal the wiki's 35 poise?** — [Kaveh](../../specs/genshin/kits/kaveh/design.md): gcsim gives his collision no poise, so `kavehKit.ts` takes the wiki's 35 as a provisional value.
 - [ ] **Do Aino's, Lauma's and Collei's plunge collisions deal their own element once the kit records are republished?** — [Aino](../../specs/genshin/kits/aino/design.md), [Lauma](../../specs/genshin/kits/lauma/design.md), [Collei](../../specs/genshin/kits/collei/design.md): the published record holds none.
 - [ ] **Does Candace's charged hold release at half a second of holding?** — [Candace](../../specs/genshin/kits/candace/design.md): gcsim gives the hold no threshold, so `candaceKit.ts` takes the framework's half second.
 - [ ] **Does Navia's charged attack strike twice, at half a second and at a second, and end at 1.2 seconds?** — [Navia](../../specs/genshin/kits/navia/design.md): gcsim gives her none, so `naviaKit.ts` borrows Razor's charge timing, provisional.
@@ -114,7 +114,7 @@ The user's one batch, checked whenever convenient ([parity](../../specs/genshin/
 - [ ] **Kazuha's skill, burst and collision deal the wiki's poise** — [Kazuha](../../specs/genshin/kits/kazuha/design.md): `kazuhaKit.ts` and `kaedehara-kazuha.json` carry no poise, so the wiki's 150, 300, 250 and 25 are unbuilt.
 - [ ] **Crystallize shard flies in from 2 metres** — [Combat](../../specs/genshin/combat/design.md): a shard flying to the character starts about 2 metres out.
 - [ ] **Yelan's first wave comes a second after the hit** — [Yelan](../../specs/genshin/kits/yelan/design.md): a recording of the burst shows its first three throws a second after the hit.
-- [ ] **Kirara's hits deal no poise** — [Kirara](../../specs/genshin/kits/kirara/design.md): none stagger a poised enemy in a recording.
+- [ ] **Kirara's hits deal the wiki's poise** — [Kirara](../../specs/genshin/kits/kirara/design.md): `kiraraKit.ts` takes the wiki's rows, and a recording shows whether a poised enemy staggers at each.
 - [ ] **Aloy's hits deal no poise** — [Aloy](../../specs/genshin/kits/aloy/design.md): none stagger a poised enemy in a recording.
 - [ ] **Freeze Bomb and each bomblet give 1U of Cryo** — [Aloy](../../specs/genshin/kits/aloy/design.md): a recording shows 1U from each.
 - [ ] **Shenhe's hits deal no poise** — [Shenhe](../../specs/genshin/kits/shenhe/design.md): none stagger a poised enemy in a recording.
