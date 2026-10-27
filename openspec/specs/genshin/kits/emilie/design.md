@@ -4,7 +4,7 @@ Emilie's kit is its record and one behaviour module, `createEmilieKitBehaviour`,
 
 ## Decisions
 
-- **Her strikes are priced as gcsim has them, round the primary target.** Her first, third and fourth are circles centred 0.4 metres ahead, of radii 2, 2.5 and 3, and her second a box of 1.6 by 3 metres on the target (gcsim's `~/Esposter/cache/gcsim-v2.47.2/internal/characters/emilie/attack.go` lines 18 to 31). Each circle is priced as the circle round the body that holds its reach from the target: the targeting area's radius, plus its offset, plus its own radius. Her strikes and charged attack are physical, so they deal no element and no gauge (`attack.go` line 63, `charge.go` line 32).
+- **Her strikes are priced as gcsim has them, round the primary target.** Her first, third and fourth are circles centred 0.4 metres ahead, of radii 2, 2.5 and 3, and her second a box of 1.6 by 3 metres on the target (gcsim's `~/Esposter/cache/gcsim-v2.47.2/internal/characters/emilie/attack.go` lines 18 to 31). Her strikes and charged attack are physical, so they deal no element and no gauge (`attack.go` line 63, `charge.go` line 32).
 - **Spiritbreath Thorn lands with every press.** Its cooldown of 10 seconds (the wiki's `interval=10s` in `~/Esposter/cache/genshin-wiki/Category_Emilie_Talents.json`, and the dump's 9932 at index 5) has always run out before the skill's of 14 comes round again, so the skill lands it each time. Its hit at 62 frames (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/emilie/skill.go` line 18) falls past the skill's 37-frame animation (`skill.go` line 26), and lands on the action's clock as the framework has late hitmarks.
 - **Constellation 2 cuts the Dendro RES of each enemy the skill's hits strike by 30% for 10 seconds.** gcsim applies it to every enemy hit whose damage is not zero (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/emilie/cons.go` line 90), for 10 seconds (`cons.go` line 22) at minus 30% Dendro RES (`cons.go` line 101), which the kit reads as an enemy status on each hit, given Emilie's constellations.
 - **Ascension 4 adds a DMG Bonus of 0.15 per 1000 of her total ATK, to a cap of 36%, to each strike that lands on a Burning enemy (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/emilie/asc.go` lines 60 to 63).** It is read through the kit's strike damage bonus, from her attack as it stands.
@@ -13,6 +13,15 @@ Emilie's kit is its record and one behaviour module, `createEmilieKitBehaviour`,
 ## Not built
 
 - **The Lumidouce Case, its ticks and its levels wait on the Cleardew hook.** The case strikes every 1.5 seconds at level 1 (`lumidouce.go:25`), and rises to levels 2 and 3 as Cleardew is generated: a Burning enemy within 20 metres of the case (`lumidouce.go:98`) generates one every half second (`lumidouce.go:28`), and two of them raise its level (`lumidouce.go:135-137`). Until a kit can read the Burning enemies in an area and keep the case's scents, the case's ticks and levels are not built, so the skill deals its summon hit and Thorn only.
+
+```mermaid
+flowchart LR
+  CASE["Lumidouce Case"] --> BURNING["Burning enemy within 20 metres"]
+  BURNING --> CLEARDEW["Cleardew every half second"]
+  CLEARDEW --> LEVEL["Two Cleardew raise the case's level"]
+  LEVEL --> CASE
+```
+
 - **The burst waits on the Cleardew hook.** The burst is the Lumidouce Case at level 3, which strikes a random enemy in its radius of 12 metres every 0.3 seconds (`burst.go:18`, `:20`); a field's tick can draw that enemy, since it is given the world's context and its random source. Until the hook lands the burst's action is a placeholder: it spends the energy and starts the cooldown, and deals nothing.
 - **Cleardew Cologne (Ascension 1) and Constellation 1 wait on the Cleardew hook.** Constellation 1 generates Cleardew when a Burning enemy takes Dendro, and Cleardew Cologne spends two of it on a hit from the case.
 - **Constellation 6 waits on the Cleardew hook and on a flat damage infusion.** It adds 3 times Emilie's total ATK as flat damage to her normal and charged attacks for 5 seconds (`cons.go:130-131`, `:23`), changes them to Dendro and generates Cleardew, which an infusion that adds flat damage does not yet express.

@@ -26,7 +26,7 @@ Escoffier's plunges SHALL play as airborne moves, the low plunge landing at 41 f
 
 ### Requirement: Poise from strikes, charged attack and collision
 
-Escoffier's normal attacks, charged attack and collision attack SHALL deal the wiki's poise: 47.95, 44.27 and 34.11 for the normal attacks, 120 for the charged attack and 25 for the collision. gcsim gives none, and the kit as built carries none, so the gap is open in the design.
+Escoffier's normal attacks, charged attack and collision attack SHALL deal the wiki's poise: 47.95, 44.27 and 34.11 for the normal attacks, 120 for the charged attack and 25 for the collision.
 
 #### Scenario: A normal attack deals the wiki's poise
 

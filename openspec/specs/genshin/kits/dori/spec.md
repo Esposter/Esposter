@@ -77,7 +77,7 @@ Alcazarzaray's Exactitude's Connector SHALL keep ticking until 772 frames after 
 
 ### Requirement: Poise from the shot, the Connector and the collision
 
-Troubleshooter Shot, the Connector and the plunging collision SHALL deal the wiki's poise: 30, 8 and 35. The kit as built deals none, as its record carries none and gcsim gives none: the gap is open in the design.
+Troubleshooter Shot, the Connector and the plunging collision SHALL deal the wiki's poise: 30, 8 and 35.
 
 #### Scenario: The plunging collision deals the wiki's 35 poise
 

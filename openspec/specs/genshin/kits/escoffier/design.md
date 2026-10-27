@@ -4,7 +4,7 @@ Escoffier's kit is its record and one behaviour module, `createEscoffierKitBehav
 
 ## Not yet built
 
-A combatant holds the deployed team's elements, which a status and a hit read as the team stands. The framework holds no timed effect on another member's hit, so the parts that depend on one wait on the hooks named below.
+The parts that depend on another member's hit wait on the hooks named below, as [Not built in the framework](../README.md#not-built-in-the-framework) sets out.
 
 - **Constellation 1 is built.** Her skill and burst each open a 15-second window on an Ascension 4 Escoffier while the deployed team holds only Cryo and Hydro members, as gcsim's `c1` in `cons.go` does (MIT, main) (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/escoffier/cons.go:15`, `:49`); the cached wiki gives Constellation 1 only its title, Pre-Dinner Dance for Your Taste Buds, so its wording is not checked. In the window each deployed member's Cryo strikes get 60% Crit DMG: her own through `getStrikeCriticalDamageBonus`, a teammate's through `getPartyStrikeBonus`, read beside the element's crit damage as each hit is priced. Two divergences from gcsim: the team is checked on the cast, where gcsim checks it once at init; and the stellar reactions are not built.
 - **Constellation 2 waits on the party-hit hook.** Cold Dishes adds 240% of her ATK to each Cryo normal, charged, plunge, Elemental Skill or Burst hit of another member while Frosty Parfait holds, for five hits (`cons.go:18`, `:110`, `:127`). A hit reading another member's buff is not built.
@@ -16,8 +16,23 @@ A combatant holds the deployed team's elements, which a status and a hit read as
 ## Decisions
 
 - **The plunges are the airborne ones.** gcsim plays her plunges as airborne moves, so the kit takes their frames: the low plunge at 41 frames of a 76-frame animation, the high at 43 of 77, and the collision at 35 (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/escoffier/plunge.go:21-23`, `:38`).
-- **The strikes, the charged attack and the collision take the wiki's poise, which the kit as built does not carry.** gcsim gives none to a normal attack, the charged attack or the collision (no `PoiseDMG` in `attack.go` or `charge.go`, and none in the collision at `plunge.go`), and the wiki's Kitchen Skills rows give 47.95, 44.27 and 34.11 for the normal attacks, 120 for the charged attack and 25 for the collision. The record carries no poise for any of them, so the poise is open.
+- **The strikes, the charged attack and the collision take the wiki's poise, as [framework decisions](../README.md#framework-decisions) fills it where gcsim gives none.** gcsim gives none to a normal attack, the charged attack or the collision (no `PoiseDMG` in `attack.go` or `charge.go`, and none in the collision at `plunge.go`), and the wiki's Kitchen Skills rows give 47.95, 44.27 and 34.11 for the normal attacks, 120 for the charged attack and 25 for the collision.
 - **The Surging Blade's interval is checked at its 83rd frame.** gcsim's task checks the 10-second interval 83 frames after the press, and queues the blade and starts the interval there only if it is not running (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/escoffier/skill.go` lines 18, 25 and 69 to 93). The kit schedules that check 83 frames after the press, starts the interval there, and lands the blade with its hitmark at 0 seconds. The record has no blade hitmark, so the kit sets it: gcsim's queued attack has zero delay (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/escoffier/skill.go` lines 89 and 90), so the blade hits at 0 seconds.
+
+```mermaid
+sequenceDiagram
+  participant Press as Skill press
+  participant Check as Interval check at 83 frames
+  participant Blade as Surging Blade
+  Press->>Check: Scheduled 83 frames after the press
+  alt interval not running
+    Check->>Blade: Blade lands at 0 seconds
+    Check->>Check: Interval starts
+  else interval running
+    Check->>Check: Nothing queued
+  end
+```
+
 - **Scoring Cuts' heal is one tick of a field.** gcsim heals at frame 97 (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/escoffier/burst.go:15`) with no hit of its own, which the framework does not place, so the burst sets a field whose one tick heals the active character, as Diona's Signature Mix heals, and a second tick is kept past its end.
 - **Rehab Diet is a field from the burst.** gcsim starts it from the burst on Ascension 1 or above, nine ticks from 157 frames every 58.5 frames (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/escoffier/asc.go:11-15`, nine at `asc.go:13`), each healing the active character for 1.3824 of her ATK, so the kit starts the same field from the burst's start.
 - **Ascension 4's RES shred is set on each hit from the team as it stands.** gcsim takes 0, 5, 10, 15 or 55% off the enemy's Cryo and Hydro RES (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/escoffier/asc.go:19`) for 0 to 4 Hydro or Cryo members the team holds, herself included, for 12 seconds (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/escoffier/asc.go:16`), on each enemy her skill and burst hit (`packages/genshin-world/src/services/kit/characters/escoffierKit.ts`). Each hit's status reads its combatant's `deployedElements`, and the burst's hit is set through the burst behaviour's `hits`.

@@ -27,7 +27,9 @@ Diluc's charged attack SHALL be provisional, its slashes timed at half a second 
 
 ### Requirement: Searing Onslaught chain
 
-Searing Onslaught SHALL chain up to three presses, each pressed within four seconds of the one before, and its ten-second cooldown SHALL start on the first press.
+Searing Onslaught SHALL chain up to three presses, each pressed within four seconds of the one before.
+
+Searing Onslaught's ten-second cooldown SHALL start on the first press.
 
 #### Scenario: A follow-up press plays inside the window
 
@@ -54,7 +56,7 @@ Dawn's phoenix SHALL launch from the slash, strike eight ticks at intervals of a
 
 ### Requirement: Charged attack stamina drain
 
-While the charged attack plays, stamina SHALL drain at 40 a second, 48 in all over its 1.2 seconds. The 40 a second is the wiki's Tempered Sword stamina and the dump's group 1631 at index 6; the 1.2 seconds is provisional (the design's Provisional constants).
+While the charged attack plays, stamina SHALL drain at 40 a second, 48 in all over its 1.2 seconds. The 40 a second is the wiki's Tempered Sword stamina and the dump's group 1631 at index 6; the 1.2 seconds is provisional.
 
 #### Scenario: The charged attack drains stamina as it plays
 
@@ -106,7 +108,7 @@ From constellation 1, each strike Diluc makes SHALL deal 15% more DMG to an enem
 
 ### Requirement: Second constellation stacks Searing Ember on each hit Diluc takes
 
-From constellation 2, each hit on Diluc that costs him HP, or that a shield takes whole or in part, SHALL add a stack of Searing Ember, at most one every 1.5 seconds (an open interval, see the design's Not built) and up to three stacks. Each stack gives 10% ATK and 5% ATK SPD for 10 seconds, and a new stack restarts those 10 seconds.
+From constellation 2, each hit on Diluc that costs him HP, or that a shield takes whole or in part, SHALL add a stack of Searing Ember, at most one every 1.5 seconds (an open interval) and up to three stacks. Each stack gives 10% ATK and 5% ATK SPD for 10 seconds, and a new stack restarts those 10 seconds.
 
 #### Scenario: A hit that costs Diluc HP adds a stack
 
@@ -140,7 +142,7 @@ From constellation 2, each hit on Diluc that costs him HP, or that a shield take
 
 ### Requirement: Fourth constellation adds 40% to a follow-up Searing Onslaught press two seconds after the one before
 
-From constellation 4, a Searing Onslaught press that follows the one before it by two seconds or more SHALL deal 40% more DMG for two seconds, its skill strikes taking the bonus while it runs. gcsim v2.47.2's `skill.go` and `cons.go` give the window; the cached wiki holds no Flowing Flame text to check it against.
+From constellation 4, a Searing Onslaught press that follows the one before it by two seconds or more SHALL deal 40% more DMG for two seconds, its skill strikes taking the bonus while it runs. The cached wiki holds no Flowing Flame text to check it against.
 
 #### Scenario: A press two seconds after the last gets the bonus
 

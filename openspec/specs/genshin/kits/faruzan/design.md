@@ -5,6 +5,16 @@ Faruzan's kit is its record and one behaviour module, `createFaruzanKitBehaviour
 ## Decisions
 
 - **The polyhedron's Pulses are summons of no damage, cast from the three gadgets' places.** gcsim places the gadgets from the body at the cast, offset 5.19 metres across and 10.5 ahead for the top two and 1.5 ahead for the bottom one (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/faruzan/burst.go` lines 78 to 80), and cycles each Pulse through them (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/faruzan/burst.go:84`). Each Pulse is a summon of a hit with no damage that gives the Perfidious Wind's Ruin RES cut to the enemies within 6 metres of its gadget (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/faruzan/burst.go` lines 89 to 91 for the six metres and 154 to 157 for the cut), which the kit's hits carry as an enemy status (`packages/genshin-world/src/services/kit/characters/faruzanKit.ts`). The first Pulse comes 3 seconds after the cast, then one every 2 seconds (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/faruzan/burst.go:83`, `:93`), and the field lasts gcsim's 745 frames from the cast (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/faruzan/burst.go:66`) with its ticker's 43-frame start, so the sixth Pulse lands at 13 seconds, 780 frames.
+
+```mermaid
+flowchart LR
+  CAST["The Wind's Secret Ways cast"] --> GADGETS["Three gadgets placed from the body"]
+  GADGETS --> PULSE["Pulse every 2 seconds cycling the gadgets"]
+  PULSE --> RES["Ruin RES cut on enemies within 6 metres"]
+  CAST --> BUFF["Prayerful Wind's Gift to the deployed team"]
+  PULSE --> BUFF
+```
+
 - **Prayerful Wind's Gift is given at the cast and on each Pulse, to every member of the deployed team.** gcsim refreshes it on a 239-frame schedule from 43 frames (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/faruzan/burst.go` lines 110 to 112 and 116), which keeps the buff up while the polyhedron stands. Here the cast and the Pulses refresh it (`packages/genshin-world/src/services/kit/characters/faruzanKit.ts`), as the 4-second buff (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/faruzan/burst.go` line 133) outlasts the 2-second interval between them.
 - **The skill's and the burst's hits are priced as circles offset from the body.** The skill's circle is radius 3 three metres ahead (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/faruzan/skill.go:58`), priced at 6 round the body, and the burst's radius 6.3 1.5 metres ahead (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/faruzan/burst.go:58`), priced at 7.8, as `createCircleReach` gives a circle centred ahead of the body.
 
@@ -17,7 +27,7 @@ Faruzan's kit is its record and one behaviour module, `createFaruzanKitBehaviour
 - **Ascension 4's Hurricane Guard is not built.** It adds 32% of her base ATK to Anemo hits of her team's characters while Prayerful Wind's Gift is on them, once each 0.8 seconds (`asc.go:59`, 48 frames), which waits on a party effect that adds to other members' hits.
 - **Constellations 1, 4 and 6 are not built.** Constellation 1's second Hurricane Arrow and 4's energy wait on Pressurized Collapse and the Manifest Gale; Constellation 6's 40% CRIT DMG and its extra arrow wait on the same two hooks.
 - **Dazzling Polyhedron stands 13.1 seconds, 788 frames, where the table gives 12, and the difference is open.** gcsim's last refresh lands at 788 frames (`burst.go:116`, 43 plus 745), so its sixth Whirlwind Pulse, at 780 frames, still fires inside the standing. The table's 12 seconds (the dump's 7639 at index 5) is 720 frames: gcsim's 745 has no source beyond gcsim, and the page keeps it open rather than settled.
-- **Poise is open.** The wiki's Parthian Shot page, Faruzan's own normal attack page, gives 15.6033, 14.7162, 18.5454 and 24.6351 for the four strikes, 20 for the fully charged shot, and 50 and 100 for the low and high plunges. gcsim gives none, and the record carries only the Pulse's zero (`hits.whirlwindPulse.poiseDamage`, Unsourced), so the kit as built deals no poise to these hits.
+- **Poise is the wiki's where gcsim gives none.** The wiki's Parthian Shot page, Faruzan's own normal attack page, gives 15.6033, 14.7162, 18.5454 and 24.6351 for the four strikes, 20 for the fully charged shot, and 50 and 100 for the low and high plunges. gcsim gives none, so the framework fills them from the wiki, as [framework decisions](../README.md#framework-decisions) sets out, and the Pulse's zero is `Unsourced` in the record (`hits.whirlwindPulse.poiseDamage`).
 
 ## Key files
 

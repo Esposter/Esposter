@@ -6,7 +6,7 @@ Eula's kit as built: her strikes, charged attack and plunges, Icetide Vortex's p
 
 ### Requirement: Basic attacks
 
-Eula's normal attacks SHALL be five strikes, a charged attack, a collision attack and two plunging attacks (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/eula/attack.go` line 16, `~/Esposter/cache/gcsim-v2.47.2/internal/characters/eula/plunge.go`).
+Eula's normal attacks SHALL be five strikes, a charged attack, a collision attack and two plunging attacks.
 
 #### Scenario: Strike chain plays five strikes in order
 
@@ -27,13 +27,13 @@ Eula's charged attack SHALL be provisional, its spin landing at half a second an
 
 ### Requirement: Icetide Vortex press adds Grimheart stacks
 
-Pressing Icetide Vortex SHALL add a Grimheart stack, up to two stacks, lasting 18 seconds (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/eula/skill.go` lines 54 to 60), and it SHALL cool down before it can be pressed again.
+Pressing Icetide Vortex SHALL add a Grimheart stack, up to two stacks, lasting 18 seconds, and it SHALL cool down before it can be pressed again.
 
 #### Scenario: A press adds a Grimheart stack
 
 - **GIVEN** Eula has fewer than two Grimheart stacks
 - **WHEN** the player presses Icetide Vortex
-- **THEN** a Grimheart stack is added for 18 seconds (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/eula/skill.go` line 60)
+- **THEN** a Grimheart stack is added for 18 seconds
 
 #### Scenario: A press at the stack cap adds no stack
 
@@ -43,14 +43,14 @@ Pressing Icetide Vortex SHALL add a Grimheart stack, up to two stacks, lasting 1
 
 ### Requirement: Icetide Vortex hold spends stacks
 
-Holding Icetide Vortex SHALL spend every Grimheart stack on one Icewhirl each, shredding the enemy's Cryo and Physical RES for 7 seconds per stack (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/eula/skill.go` lines 189 and 194), and the hold SHALL start after a half-second threshold that stays provisional.
+Holding Icetide Vortex SHALL spend every Grimheart stack on one Icewhirl each, shredding the enemy's Cryo and Physical RES for 7 seconds per stack, and the hold SHALL start after a half-second threshold that stays provisional.
 
 #### Scenario: The hold spends stacks into Icewhirls
 
 - **GIVEN** Eula has Grimheart stacks
 - **WHEN** the player holds Icetide Vortex past the threshold
 - **THEN** each stack becomes one Icewhirl
-- **AND** the enemy's Cryo and Physical RES are shredded for 7 seconds per stack (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/eula/skill.go` lines 189 and 194)
+- **AND** the enemy's Cryo and Physical RES are shredded for 7 seconds per stack
 
 #### Scenario: The hold without stacks makes no Icewhirl
 
@@ -60,7 +60,9 @@ Holding Icetide Vortex SHALL spend every Grimheart stack on one Icewhirl each, s
 
 ### Requirement: Glacial Illumination and the Lightfall Sword
 
-Glacial Illumination SHALL summon the Lightfall Sword, which gains a stack every 0.1 seconds while it is lit, up to 30 stacks (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/eula/burst.go` lines 98 to 99, and `~/Esposter/cache/gcsim-v2.47.2/internal/characters/eula/burst.go` line 147 for the 0.1 seconds), and which SHALL explode 35 frames after a character swap (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/eula/burst.go` lines 18 and 162).
+Glacial Illumination SHALL summon the Lightfall Sword, which gains a stack every 0.1 seconds while it is lit, up to 30 stacks.
+
+The Lightfall Sword SHALL explode 35 frames after a character swap.
 
 #### Scenario: The Lightfall Sword gains stacks while lit
 
@@ -78,11 +80,11 @@ Glacial Illumination SHALL summon the Lightfall Sword, which gains a stack every
 
 - **GIVEN** the Lightfall Sword is lit
 - **WHEN** the player swaps characters
-- **THEN** the Lightfall Sword explodes 35 frames later (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/eula/burst.go` lines 18 and 162)
+- **THEN** the Lightfall Sword explodes 35 frames later
 
 ### Requirement: Shattered Lightfall Sword from Ascension 1
 
-From Ascension 1, two Grimheart stacks SHALL raise a Shattered Lightfall Sword (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/eula/asc.go` lines 12 to 14).
+From Ascension 1, two Grimheart stacks SHALL raise a Shattered Lightfall Sword.
 
 #### Scenario: Two stacks raise the Shattered Lightfall Sword
 
@@ -92,7 +94,13 @@ From Ascension 1, two Grimheart stacks SHALL raise a Shattered Lightfall Sword (
 
 ### Requirement: Constellation 1, 4 and 6 effects
 
-From constellation 1, Eula SHALL gain a Physical DMG Bonus (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/eula/eula.go` lines 33 to 35); from constellation 4, Glacial Illumination's initial hit SHALL gain a bonus against an enemy below half its HP (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/eula/cons.go` lines 14 and 28); and from constellation 6, Eula SHALL start with five stacks (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/eula/burst.go` lines 41 to 42), and each stack the Sword gains from her strikes SHALL have a 50% chance of a second one (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/eula/burst.go` line 154).
+From constellation 1, Eula SHALL gain a Physical DMG Bonus.
+
+From constellation 4, Glacial Illumination's initial hit SHALL gain a bonus against an enemy below half its HP.
+
+From constellation 6, Eula SHALL start with five stacks.
+
+From constellation 6, each stack the Sword gains from her strikes SHALL have a 50% chance of a second one.
 
 #### Scenario: Constellation 1 adds a Physical DMG Bonus
 
@@ -104,19 +112,19 @@ From constellation 1, Eula SHALL gain a Physical DMG Bonus (`~/Esposter/cache/gc
 
 - **GIVEN** Eula is at constellation 4
 - **WHEN** Glacial Illumination's initial hit strikes an enemy below half its HP
-- **THEN** the hit gains a bonus (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/eula/cons.go` lines 14 and 28)
+- **THEN** the hit gains a bonus
 
 #### Scenario: Constellation 6 starts with five stacks
 
 - **GIVEN** Eula is at constellation 6
 - **WHEN** Glacial Illumination is cast
-- **THEN** the Lightfall Sword starts with five stacks (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/eula/burst.go` lines 41 to 42)
+- **THEN** the Lightfall Sword starts with five stacks
 
 #### Scenario: Constellation 6 gives a stack a 50% chance of a second
 
 - **GIVEN** Eula is at constellation 6 and her Lightfall Sword is lit
 - **WHEN** one of her strikes gains the Sword a stack
-- **THEN** that stack is a second one with a 50% chance, as gcsim v2.47.2 rolls it (`~/Esposter/cache/gcsim-v2.47.2/internal/characters/eula/burst.go` line 154)
+- **THEN** that stack is a second one with a 50% chance, as gcsim v2.47.2 rolls it
 
 ## Open
 
