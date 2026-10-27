@@ -136,7 +136,7 @@ export const OPTION_PARITY: OptionParity[] = [
     verdict: OptionParityVerdict.ChangedDefault,
   },
   {
-    note: "Same defaults: 2 MB for a request and 8 MB for a file upload",
+    note: "Same defaults: 2 MB for a request and 8 MB for a file upload, declared in `getDefaultModuleOptions`. The app sets its own from `MAX_REQUEST_SIZE` and `MAX_FILE_REQUEST_SIZE`",
     ours: "requestSizeLimiter",
     upstream: "requestSizeLimiter",
     verdict: OptionParityVerdict.Ported,

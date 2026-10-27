@@ -58,7 +58,7 @@ App pages SHALL be frameable only by pages from the same origin, so that the age
 
 ### Requirement: Browser features the app does not use are denied
 
-The app SHALL deny every browser feature that is not in use, and SHALL grant camera, display capture, fullscreen and microphone to its own origin only.
+The app SHALL deny every browser feature that is not in use, and SHALL grant autoplay, camera, clipboard-read, clipboard-write, display-capture, fullscreen, gamepad and microphone to its own origin only.
 
 #### Scenario: An embedded third-party frame cannot use geolocation
 
