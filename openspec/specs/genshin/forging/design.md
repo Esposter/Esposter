@@ -10,7 +10,7 @@ flowchart TD
   OPEN -->|"no"| R1["Refused"]
   OPEN -->|"yes"| REALM{"In the Serenitea Pot, with a Magical Crystal Chunk in it?"}
   REALM -->|"yes"| R2["Refused in the realm"]
-  REALM -->|"no"| CAP{"Under the game day's 400,000 forge points?"}
+  REALM -->|"no"| CAP{"Under the game day's forge-point cap?"}
   CAP -->|"no"| R3["Refused until the daily reset"]
   CAP -->|"yes"| Q{"A queue free, opened by rank?"}
   Q -->|"no"| R4["Refused while every queue is busy"]
@@ -30,17 +30,17 @@ flowchart TD
 
 - **Enhancement ores.** The Normal, Fine and Mystic Enhancement Ores, each with its ingredients, its Mora, its seconds per item, the most one queue holds and its forge points (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ForgeExcelConfigData.json`, rows 11001 to 11003: `materialItems` 2 of `101001`, 3 of `101002` and 4 of `101003`; `scoinCost` 5, 10 and 50, the field that holds Mora, as the ascension rows' 20000 does; `forgeTime` 3, 6 and 180; `queueNum` 40, 20 and 10; `forgePoint` 400, 2000 and 10000).
 - **The Mystic Enhancement Ore.** Three Magical Crystal Chunks and ten Original Resin (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ForgeExcelConfigData.json`, row 12001: 3 of `101004`, 10 of `106`), five seconds and one at a time, with no forge points (the same row: `forgeTime` 5, `forgePoint` 0), so it counts nothing toward the day's cap. Each unit yields one of two results at equal weight, six Mystic Enhancement Ores or one hundred Adventure EXP (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ForgeRandomExcelConfigData.json`, table 20001: 6 of `104013` and 100 of `102`, each at weight 10000; the names of `101004`, `106` and `102` are the hashes 2057452708, 3246419172 and 2333094364 in `~/Esposter/genshin-parity/text/TextMap/TextMap_MediumEN.json`, through `MaterialExcelConfigData.json`).
-- **Four-star weapons.** The swords, claymores, polearms, catalysts and bows, each forged from its region's billet with ores, one unit at a time, each yielding its weapon (`ForgeExcelConfigData.json`, rows 13001 to 19005: 38 weapon rows, each of rank four with `queueNum` 1, one billet from `101101` to `101105` or `101111` to `101120`, and 50 each of two ores, save that row 13013 takes 8 of `100619` for its second). Each is open from the start or once its diagram is learned.
+- **Four-star weapons.** The swords, claymores, polearms, catalysts and bows, each forged from its region's billet with ores, one unit at a time, each yielding its weapon (`ForgeExcelConfigData.json`, rows 13001 to 19005: the weapon rows, each of rank four with `queueNum` 1, one billet from `101101` to `101105` or `101111` to `101120`, and 50 each of two ores, save that row 13013 takes 8 of `100619` for its second). Each is open from the start or once its diagram is learned.
 - **Left out.** The widget rows, the gadgets' own recipes, which the [gadgets](../../../changes/genshin-gadgets/design.md) proposal owns.
 
 ## The rules
 
-- **Open.** Recipes open as the [crafting](../crafting/design.md) page sets out. Using a diagram takes it from the bag and records the recipe as learned (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/MaterialExcelConfigData.json`: 39 items carry `ITEM_USE_UNLOCK_FORGE`, such as `221003` with `useParam` 14003 and `maxUseCount` 1).
-- **Queues by rank.** One queue opens at first, a second at rank five, a third at ten and a fourth at fifteen, as the forge update table holds them (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ForgeUpdateExcelConfigData.json`: queues 1 to 4 at Adventure Rank 1, 5, 10 and 15). Splitting one recipe across queues forges it in parallel: each queue holds one order, of up to the recipe's queue size.
+- **Open.** Recipes open as the [crafting](../crafting/design.md) page sets out. Using a diagram takes it from the bag and records the recipe as learned (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/MaterialExcelConfigData.json`: the items carrying `ITEM_USE_UNLOCK_FORGE`, such as `221003` with `useParam` 14003 and `maxUseCount` 1).
+- **Queues by rank.** One queue opens at first, and each later queue opens at the rank `FORGE_QUEUE_PLAYER_LEVELS` declares for it, as the forge update table holds them (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ForgeUpdateExcelConfigData.json`: queues 1 to 4 at Adventure Rank 1, 5, 10 and 15). Splitting one recipe across queues forges it in parallel: each queue holds one order, of up to the recipe's queue size.
 - **Orders.** An order takes its materials and Mora when it is started, every unit's at once, and starts at once in a free queue. Original Resin is paid from the wallet as [crafting](../crafting/design.md) pays it, so the Mystic's ten are never taken from the bag. Its units then run one after another, each taking its seconds. Finished units go to the bag as [cooking](../cooking/design.md) describes, and a unit the bag has no room for waits in its queue. A queue whose order is fully collected is free again.
 - **Results.** A unit's result is drawn by the weight each of its recipe's results holds. A recipe with one result always yields it. Adventure EXP is a virtual item, so the collection returns it rather than putting it in the bag. A weapon recipe's result is a weapon: the bag takes it as one entry of its own at level 1, filed in the weapons tab, with no rank of its own since the tab sorts it by level and quality.
 - **Real time, at any blacksmith.** A queue is kept with when its order began and the seconds each unit takes, so it finishes on time whether or not the forge is open, and the forge is one state: what is forged is collected at any blacksmith. The [save](../save-data/design.md) does not hold the queues, so a reload empties them.
-- **A daily cap.** An order's forge points count toward the game day's 400,000 when it is started, Normal, Fine and Mystic together. An order that would pass the cap is refused until the game day turns at four in the morning in the game's time zone, and the day's points restart with it. A weapon counts none.
+- **A daily cap.** An order's forge points count toward the game day's cap, `FORGE_DAILY_POINT_CAP`, when it is started, Normal, Fine and Mystic together. An order that would pass the cap is refused until the game day turns at four in the morning in the game's time zone, and the day's points restart with it. A weapon counts none.
 - **Forging talents.** The characters in the party give the blacksmith their talents, for the forge type each names. Venti's and Bennett's apply to the enhancement ores, Diluc's, Zhongli's and Ganyu's to the claymore, polearm and bow:
   - **Reduce time.** Venti: an enhancement ore's unit takes a fifth less time. Read when the order starts.
   - **Extra result.** Bennett: each enhancement ore unit has a one-in-five chance to yield an extra copy of its result. Read when the unit is collected.
@@ -92,17 +92,17 @@ flowchart TD
 
 ## Sources
 
-- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `ForgeExcelConfigData` for the recipes and their forge points, "ForgeUpdateExcelConfigData" for the queues by rank, `ForgeRandomExcelConfigData` for each drop's random table, and `MaterialExcelConfigData`, whose `ITEM_USE_UNLOCK_FORGE` uses name the recipes each diagram opens.
+- [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump: `ForgeExcelConfigData` for the recipes and their forge points, `ForgeUpdateExcelConfigData` for the queues by rank, `ForgeRandomExcelConfigData` for each drop's random table, and `MaterialExcelConfigData`, whose `ITEM_USE_UNLOCK_FORGE` uses name the recipes each diagram opens.
 - `ProudSkillExcelConfigData` for the five forging talents' effects, and `AvatarSkillDepotExcelConfigData` for the depot each character's talent is in: Venti's and Bennett's in the talents list, Diluc's, Zhongli's and Ganyu's in the inherent proud skill list.
 - The English text map in the dump, searched by the three forge refusal lines' text ids, holds none of them (see Open).
 - [Forging](https://genshin-impact.fandom.com/wiki/Forging), Genshin Impact Wiki: the cap and the reset. Its claims wait on a source.
 
 ## Open
 
-- [ ] **The game day's cap of 400,000 forge points** — no source yet: the wiki's Forging page is not on disk, so the equivalence of a forge point to Weapon EXP is open, and no cap value is in the dump.
-- [ ] **The game day turns at four in the morning in the game's time zone** — no source yet: the reset hour is not in the dump, and the wiki's Forging page is not on disk.
-- [ ] **The three refusal lines are the game's own, keyed in `genshin-text`** — no source yet: their `forgePointNoticeTextMapHash` values were not found in `~/Esposter.noindex/genshin-dump-backup-6.6/TextMap/TextMapEN.json`.
-- [ ] **Venti's reduce-time of a fifth and Bennett's one-in-five extra copy** — no source yet: their talent rows (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json`, 221 to 224 and 321 to 324) and their depots' proud groups name no forge talent.
+- [ ] **The game day's cap of 400,000 forge points** — no source: the wiki's Forging page is not on disk, so the equivalence of a forge point to Weapon EXP is open, and no cap value is in the dump.
+- [ ] **The game day turns at four in the morning in the game's time zone** — no source: the reset hour is not in the dump, and the wiki's Forging page is not on disk.
+- [ ] **The three refusal lines are the game's own, keyed in `genshin-text`** — no source: their `forgePointNoticeTextMapHash` values were not found in `~/Esposter.noindex/genshin-dump-backup-6.6/TextMap/TextMapEN.json`.
+- [ ] **Venti's reduce-time of a fifth and Bennett's one-in-five extra copy** — no source: their talent rows (`~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/AvatarTalentExcelConfigData.json`, 221 to 224 and 321 to 324) and their depots' proud groups name no forge talent.
 - [ ] **The drop id 208001500 is in neither the dump nor the repository's other tables** — contradicted by `~/Esposter.noindex/genshin-dump-backup-6.6/ExcelBinOutput/ForgeExcelConfigData.json`: names 208001500 as row 12001's `mainRandomDropId`.
-- [ ] **Adventure EXP past rank 60 is paid into the wallet as Mora** — no source yet: the rank-60 rule is not in the dump, and the wiki's Forging page is not on disk.
-- [ ] **Each four-star weapon is open from the start or once its diagram is learned** — no source yet: no field of the weapon rows is checked against the diagram-unlock rule.
+- [ ] **Adventure EXP past rank 60 is paid into the wallet as Mora** — no source: the rank-60 rule is not in the dump, and the wiki's Forging page is not on disk.
+- [ ] **Each four-star weapon is open from the start or once its diagram is learned** — no source: no field of the weapon rows is checked against the diagram-unlock rule.

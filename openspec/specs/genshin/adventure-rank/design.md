@@ -39,7 +39,7 @@ The rank is the EXP's own, held at the cap of the last World Level open. So a pl
 
 ## Systems a rank opens
 
-The wiki's table of Game System Unlocks gives the rank each system opens at. Two of the Paimon menu's entries are in it: Co-Op Mode at rank 16 and the Battle Pass at rank 20 (`ScreenKindOpenRankMap`; Co-Op's rank 16 is id 49 of `~/Esposter/genshin-parity/text/ExcelBinOutput/OpenStateConfigData.json`, with a quest 35001 beside it, whose icon is the MultiPlayer icon, id 9 of `~/Esposter/genshin-parity/text/ExcelBinOutput/SystemOpenUIConfigData.json`; the Battle Pass's 20 is id 1301 of `~/Esposter/genshin-parity/text/ExcelBinOutput/OpenStateConfigData.json`, whose icon is id 10 of `SystemOpenUIConfigData.json`). Friends' rank 2 in the same map has no source yet (see Still open). An entry for one of them stays disabled below its rank (`checkIsSystemOpen`), as an entry not yet built does; the menu's other entries are open from the start. The table's other systems are not entries of the menu, so each is gated on its own screen.
+The wiki's table of Game System Unlocks gives the rank each system opens at. Two of the Paimon menu's entries are in it: Co-Op Mode at rank 16 and the Battle Pass at rank 20 (`ScreenKindOpenRankMap`; Co-Op's rank 16 is id 49 of `~/Esposter/genshin-parity/text/ExcelBinOutput/OpenStateConfigData.json`, with a quest 35001 beside it, whose icon is the MultiPlayer icon, id 9 of `~/Esposter/genshin-parity/text/ExcelBinOutput/SystemOpenUIConfigData.json`; the Battle Pass's 20 is id 1301 of `~/Esposter/genshin-parity/text/ExcelBinOutput/OpenStateConfigData.json`, whose icon is id 10 of `SystemOpenUIConfigData.json`). Friends' rank 2 in the same map has no source yet (see Still open). An entry for one of them stays disabled below its rank (`checkIsSystemOpen`), as an entry not built does; the menu's other entries are open from the start. The table's other systems are not entries of the menu, so each is gated on its own screen.
 
 ## EXP past the total and past rank 60
 
@@ -57,7 +57,7 @@ A camp's enemy stands at its camp level under World Level 0. From World Level 1 
 
 ## Notes
 
-- Only enemies are raised so far. Bosses, ley line outcrops and the World Level's rewards wait on their own pages.
+- Only enemies are raised here. Bosses, ley line outcrops and the World Level's rewards wait on their own pages.
 - The World Level adjustment is the save's `worldLevelAdjustment` slice, so the 24 hour wait survives a reload. The EXP is read back through the save sync, so a gain moves the rank, the World Level and the bar at once.
 - Katheryne hands out each reached rank's reward once, and the ranks given are kept with the save.
 
@@ -72,8 +72,8 @@ A camp's enemy stands at its camp level under World Level 0. From World Level 1 
 
 ## Still open
 
-- [ ] **Adventure EXP from the sources not built yet** — no source yet: the sources' own pages, which add their EXP through `gainWorldAdventureExp`, the composable's gain, which takes the completed main quests along; until a page calls it, its EXP is not gained.
-- [ ] **The Paimon menu's rank gates for systems not built yet** — no source yet: the wiki's Game System Unlocks page, which is not on disk and gives the rank each system not built opens at; its page takes those ranks in `ScreenKindOpenRankMap`, and an entry whose system is not built stays disabled.
+- [ ] **Adventure EXP from the sources not built** — no source yet: the sources' own pages, which add their EXP through `gainWorldAdventureExp`, the composable's gain, which takes the completed main quests along; until a page calls it, its EXP is not gained.
+- [ ] **The Paimon menu's rank gates for systems not built** — no source yet: the wiki's Game System Unlocks page, which is not on disk and gives the rank each system not built opens at; its page takes those ranks in `ScreenKindOpenRankMap`, and an entry whose system is not built stays disabled.
 - [ ] **Friends opens at Adventure Rank 2** — no source yet: an open-state row naming Friends at rank 2; the rank-2 rows (ids 30, 37 and 2101 of `~/Esposter/genshin-parity/text/ExcelBinOutput/OpenStateConfigData.json`) gate player level 2 and name no system.
 - [ ] **EXP past rank 60 pays ten Mora for each point** — no source yet: a game source for the rate, since the game's text converts the EXP to Mora (text 365981086) with no rate and the wiki's Adventure Rank page is not in the cache; the code applies it (`packages/genshin-world/src/services/adventureRank/gainAdventureExp.ts`).
 - [ ] **The lowest enemy at each World Level sits 14 to 17 under its monster level** — no source yet: the wiki's enemy level ranges are not in the cache, and the name-plate measurement is still on the References sought list.
