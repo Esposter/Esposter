@@ -8,6 +8,14 @@ Marks and logos are traced rather than copied, so a screen ships only shapes der
 
 - **A traced path is written in its shortest form.** `traceMask` returns each path through `compactSvgPath` (`scripts/src/services/genshinParity/shared/traceMask.ts`, `scripts/src/services/genshinParity/shared/compactSvgPath.ts`), which reads the path's absolute or relative commands at their own precision and writes the same geometry relative, with implicit letters, a line along an axis as one operand and no space before a minus sign. Its opening moveto alone stays absolute, so the paths of one trace joined into one `d` keep their places, where a relative one would start from wherever the path before it closed. The points are unchanged, the bytes a trace adds to the bundle are about a third to a half of the absolute form's (see Open).
 
+```mermaid
+flowchart TD
+  WIKI["Wiki standalone render of the mark, where one exists"] --> TRACE["traceImage at full resolution, ink split from paper"]
+  TRACE --> MASK["traceMask: specks cleared, every path kept"]
+  MASK --> COMPACT["compactSvgPath: shortest form, same points"]
+  COMPACT --> COMP["Component draws the path"]
+```
+
 ## Key files
 
 | File                                                          | Role                                                                   |

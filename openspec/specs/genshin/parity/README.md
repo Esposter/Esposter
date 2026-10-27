@@ -16,7 +16,7 @@ flowchart TD
   REF --> MEASURE[measure / zoom: colours, sizes, positions]
   MEASURE --> SCREEN
   SCREEN --> PAGE[Parity page on Vite, no Nuxt]
-  PAGE --> COMPARE{compare: reference, ours, difference, and a score per cell}
+  PAGE --> COMPARE{compare<br/>score per cell}
   REF --> COMPARE
   COMPARE -->|off| SCREEN
   COMPARE -->|matches| VISUAL[Visual suite: our own image, committed beside the component]
