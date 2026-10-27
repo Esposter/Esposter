@@ -85,6 +85,8 @@ const readEntryText = (entries: ReturnType<typeof unzipSync>, entryName: string)
 };
 const readEntryJson = (entries: ReturnType<typeof unzipSync>, entryName: string) =>
   jsonDateParse(readEntryText(entries, entryName));
+const getContextNames = (contexts: unknown[]): string[] =>
+  contexts.flatMap((context) => (context instanceof MockBlobClient ? [context.name] : []));
 
 describe(buildUserDataArchive, () => {
   const attachmentBytes = new Uint8Array([255]);
@@ -544,7 +546,7 @@ describe(buildUserDataArchive, () => {
     // The action the person took in the room they own, at a fixed time, beside another moderator's action there against
     // The person, and one the person took in a room they do not own
     const actionTime = new Date(
-      Temporal.Duration.from({ hours: 1, seconds: 2, milliseconds: 3 }).total("milliseconds"),
+      Temporal.Duration.from({ hours: 1, milliseconds: 3, seconds: 2 }).total("milliseconds"),
     );
     const moderationLogClient = await getTableClient(AzureTable.ModerationLog);
     const actions = [
@@ -737,7 +739,7 @@ describe(buildUserDataArchive, () => {
 
     await buildUserDataArchive(userId, blobName);
 
-    expect(download.mock.contexts.map((context) => context.name)).toContain(attachmentBlobName);
-    expect(downloadToBuffer.mock.contexts.map((context) => context.name)).not.toContain(attachmentBlobName);
+    expect(getContextNames(download.mock.contexts)).toContain(attachmentBlobName);
+    expect(getContextNames(downloadToBuffer.mock.contexts)).not.toContain(attachmentBlobName);
   });
 });

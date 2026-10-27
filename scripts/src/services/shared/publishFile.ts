@@ -5,7 +5,7 @@ import { dirname } from "node:path";
 
 // The publish each path's last writer queued, so writers of one path move their partial files in one after another:
 // On Windows a rename onto a file another rename is replacing at the same moment fails with EPERM
-const queuedPublishes = new Map<string, Promise<void>>();
+const queuedPublishes = new Map<string, PromiseLike<unknown>>();
 
 const writePartialThenMove = async (path: string, data: string | Uint8Array): Promise<void> => {
   await mkdir(dirname(path), { recursive: true });
@@ -25,11 +25,16 @@ const writePartialThenMove = async (path: string, data: string | Uint8Array): Pr
 // Leaves no file a later read takes for whole. Writers of one path publish in the order they were called, so the last
 // Call's data is the one left. A partial file a failed write or move leaves is removed before the failure is thrown
 export const publishFile = async (path: string, data: string | Uint8Array): Promise<void> => {
-  const publish = (queuedPublishes.get(path) ?? Promise.resolve())
-    .catch(noop)
-    .then(() => writePartialThenMove(path, data));
+  const previousPublish = queuedPublishes.get(path) ?? Promise.resolve();
+  // A publish that failed is reported to its own caller, so the publish queued behind it still runs
+  const publish = getResultAsync(async () => {
+    await previousPublish;
+    await writePartialThenMove(path, data);
+  });
   queuedPublishes.set(path, publish);
-  await publish.finally(() => {
-    if (queuedPublishes.get(path) === publish) queuedPublishes.delete(path);
+  const result = await publish;
+  if (queuedPublishes.get(path) === publish) queuedPublishes.delete(path);
+  result.match(noop, (error) => {
+    throw error;
   });
 };

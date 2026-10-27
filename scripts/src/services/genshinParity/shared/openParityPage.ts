@@ -28,7 +28,7 @@ const reportConsoleError = (message: ConsoleMessage): Promise<void> =>
       ? await firstArgument.evaluate((value) => (value instanceof Error ? value.message : String(value)))
       : message.text();
     console.error(`parity page: ${detail} ${message.location().url}`);
-  }).match(noop, noop);
+  }).match(noop, console.error);
 
 // The parity page on one screen, at the game's interface height and the reference's aspect, drawn at the reference's pixel
 // Size, once it has drawn. It launches its own Edge, with the flags an unlimited frame rate needs, and closes it with the page.

@@ -1,8 +1,8 @@
+import type { Server } from "node:http";
+
 import { PARITY_PAGE_TITLE, PARITY_PORT_COUNT } from "#src/services/genshinParity/shared/constants";
 import { resolveParityPageRoot } from "#src/services/genshinParity/shared/resolveParityPageRoot";
 import { InvalidOperationError, Operation } from "@esposter/shared";
-import type { Server } from "node:http";
-
 import { createServer } from "node:http";
 import { afterEach, describe, expect, test } from "vitest";
 
