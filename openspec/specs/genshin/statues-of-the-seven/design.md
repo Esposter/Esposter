@@ -15,7 +15,7 @@ flowchart TD
   LEVEL --> PAY["Its stamina counted, its rewards waiting for a claim"]
   PAY --> CLAIM["A claim pays the next reached level's rewards once"]
   PAY --> MAX["computeMaximumStamina: the start plus every region's reached levels, at most 240"]
-  POOL["Restorative Power: 5,000 a statue, 1% back every 15 seconds (RESTORATIVE_POWER_REFILL_SECONDS)"] --> CLICK["A click heals a member a tenth of its Max HP"]
+  POOL["Restorative Power: 1% back every 15 seconds (RESTORATIVE_POWER_REFILL_SECONDS)"] --> CLICK["A click heals a member a tenth of its Max HP"]
   POOL --> AUTO["Auto-recover: the fallen revived at 35%, the hurt healed to the threshold"]
 ```
 

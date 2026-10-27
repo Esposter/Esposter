@@ -15,7 +15,7 @@ flowchart TD
   Upgrade -->|no| Refuse[The socket closes]
   Upgrade -->|yes| Replay[Every open session's log replayed, then the session list]
   Replay --> Live[Live events broadcast to every page, and commands answered to the page that sent them]
-  Live -->|socket drops| Retry["The page retries, backing off up to thirty seconds (MAX_RECONNECT_DELAY_MS), until the host answers"]
+  Live -->|socket drops| Retry["The page retries, backing off to thirty seconds (MAX_RECONNECT_DELAY_MS)"]
   Retry --> Upgrade
   Live -->|Ctrl+C or the window closed| Stopping[HostStopping to every page, then every session closed]
   Stopping --> Stopped[The page shows the host stopped and waits for Reconnect]

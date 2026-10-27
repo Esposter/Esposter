@@ -8,12 +8,12 @@ Pressing F at a cleared challenge's blossom offers its claims, the ones the held
 
 ```mermaid
 flowchart TD
-  W["Wallet: the count and the moment it last changed"] --> R["Read to now: a point each eight minutes (ORIGINAL_RESIN_REGEN_MINUTES) below 200 (ORIGINAL_RESIN_CAP)"]
+  W["Wallet: the count and the moment it last changed"] --> R["Read to now: a point each eight minutes, to the cap (ORIGINAL_RESIN_CAP)"]
   R --> M["The map's top bar: the count out of 200"]
   R --> F{"Refill or claim?"}
-  F -->|"refill with Primogems"| P["The day's price, 60 restored (PRIMOGEM_RESIN_RESTORE), filling to 2,000 (ORIGINAL_RESIN_REFILL_CAP)"]
+  F -->|"refill with Primogems"| P["Price: 60 restored (PRIMOGEM_RESIN_RESTORE), to 2,000 (ORIGINAL_RESIN_REFILL_CAP)"]
   F -->|"claim at a blossom"| C["Its kind's price, the claim's resin spent"]
-  C --> X["Five Adventure EXP a point (ADVENTURE_EXP_PER_RESIN), through the rank's gain, and the Mora past rank 60 (MAX_ADVENTURE_RANK)"]
+  C --> X["Five Adventure EXP a point (ADVENTURE_EXP_PER_RESIN)"]
 ```
 
 ## Decisions
