@@ -6,7 +6,7 @@ Genshin's Adventure Rank as built — the rank to 60 on the game's own table, he
 
 ### Requirement: Rank follows Adventure EXP under the World Level cap
 
-The player's Adventure Rank SHALL be the rank their Adventure EXP reaches, held at the rank cap set by the last open World Level (the caps in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/PlayerLevelLockExcelConfigData.json`).
+The player's Adventure Rank SHALL be the rank their Adventure EXP reaches, held at the rank cap set by the last open World Level.
 
 #### Scenario: Rank holds at the cap while EXP keeps accruing
 
@@ -29,7 +29,7 @@ The player's Adventure Rank SHALL be the rank their Adventure EXP reaches, held 
 
 ### Requirement: A World Level opens after the rank and quest it needs
 
-A World Level SHALL open once the rank the World Level before it capped is reached and any quest its lock names is complete (the game's text at 2955635938 in `~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json` gives the same ranks and quests).
+A World Level SHALL open once the rank the World Level before it capped is reached and any quest its lock names is complete.
 
 #### Scenario: World Level 1 opens at rank 20
 
@@ -46,13 +46,17 @@ A World Level SHALL open once the rank the World Level before it capped is reach
 
 ### Requirement: Adventure EXP past rank 60 is paid as Mora
 
-Adventure EXP past rank 60's total SHALL be paid as Mora at ten Mora for each point once the rank cap is 60, and SHALL not be gained while the cap is below 60.
+Adventure EXP past rank 60's total SHALL be paid as Mora at ten Mora for each point once the rank cap is 60.
 
 #### Scenario: EXP past the total pays Mora at the cap of 60
 
 - **GIVEN** the rank cap is 60
 - **WHEN** an EXP gain passes rank 60's total
 - **THEN** the excess is paid as Mora at ten for each point
+
+### Requirement: Adventure EXP past rank 60 is not gained under a lower cap
+
+Adventure EXP past rank 60's total SHALL not be gained while the cap is below 60.
 
 #### Scenario: EXP past the total is not gained under a lower cap
 
@@ -61,9 +65,9 @@ Adventure EXP past rank 60's total SHALL be paid as Mora at ten Mora for each po
 - **THEN** the EXP past that total is not gained
 - **AND** no Mora is paid
 
-### Requirement: The World Level can be lowered and restored from World Level 3
+### Requirement: The World Level can be lowered from World Level 3
 
-From World Level 3 the player SHALL be able to lower the World Level by one and restore it by one, with each change followed by a 24 hour wait before the next change (the game's text at 2955635938 and 2310679825 in `~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`).
+From World Level 3 the player SHALL be able to lower the World Level by one.
 
 #### Scenario: Lowering the World Level by one
 
@@ -71,11 +75,19 @@ From World Level 3 the player SHALL be able to lower the World Level by one and 
 - **WHEN** the player lowers the World Level
 - **THEN** the World Level played at is one lower than the unlocked one
 
+### Requirement: A lowered World Level can be restored
+
+From World Level 3 the player SHALL be able to restore the World Level by one.
+
 #### Scenario: Restoring a lowered World Level
 
 - **GIVEN** the World Level has been lowered
 - **WHEN** the player restores it
 - **THEN** the World Level played at returns to the unlocked one
+
+### Requirement: Each World Level change is followed by a 24 hour wait
+
+Each World Level change SHALL be followed by a 24 hour wait before the next change.
 
 #### Scenario: A change inside the wait is not made
 
@@ -86,14 +98,18 @@ From World Level 3 the player SHALL be able to lower the World Level by one and 
 
 ### Requirement: The info icon opens the World Level dialog
 
-Clicking the info icon beside the World Level SHALL open the World Level dialog over the dimmed menu, and the dialog SHALL close back to the menu.
+Clicking the info icon beside the World Level SHALL open the World Level dialog over the dimmed menu.
 
 #### Scenario: Dialog opens at the end of the help text
 
 - **GIVEN** the profile card shows the World Level
 - **WHEN** the info icon is clicked
 - **THEN** the World Level dialog opens over the dimmed menu
-- **AND** the game's help text is shown with its end in view (`~/Esposter.noindex/genshin-parity/captures/yt-P13s7kSmVOE-world-level-dialog-2024.mp4`)
+- **AND** the game's help text is shown with its end in view
+
+### Requirement: The World Level dialog closes back to the menu
+
+The dialog SHALL close back to the menu.
 
 #### Scenario: Escape or the cross closes the dialog
 
@@ -104,7 +120,7 @@ Clicking the info icon beside the World Level SHALL open the World Level dialog 
 
 ### Requirement: Enemies stand at the level of the World Level played at
 
-Each camp's enemies SHALL stand at a level set by the World Level played at, and a change of World Level SHALL respawn every camp at its new level.
+Each camp's enemies SHALL stand at a level set by the World Level played at.
 
 #### Scenario: Camp enemies at World Level 0 stand at their camp level
 
@@ -117,6 +133,10 @@ Each camp's enemies SHALL stand at a level set by the World Level played at, and
 - **GIVEN** the World Level played at is 1
 - **WHEN** a camp at level 1 is met
 - **THEN** its enemy stands at level 9
+
+### Requirement: Changing the World Level respawns every camp
+
+A change of World Level SHALL respawn every camp at its new level.
 
 #### Scenario: Changing the World Level respawns every camp
 

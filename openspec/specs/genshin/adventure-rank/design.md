@@ -117,3 +117,4 @@ A camp's enemy stands at its camp level under World Level 0. From World Level 1 
 - The caps in `~/Esposter.noindex/genshin-parity/text/ExcelBinOutput/PlayerLevelLockExcelConfigData.json`, grounding "Rank follows Adventure EXP under the World Level cap".
 - The game's text at 2955635938 in `~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json` gives the same ranks and quests, grounding "A World Level opens after the rank and quest it needs".
 - The game's text at 2955635938 and 2310679825 in `~/Esposter.noindex/genshin-parity/text/TextMap/TextMap_MediumEN.json`, grounding "The World Level can be lowered from World Level 3", "A lowered World Level can be restored" and "Each World Level change is followed by a 24 hour wait".
+- The 2024 recording `~/Esposter.noindex/genshin-parity/captures/yt-P13s7kSmVOE-world-level-dialog-2024.mp4`, grounding scenario 'Dialog opens at the end of the help text'.
