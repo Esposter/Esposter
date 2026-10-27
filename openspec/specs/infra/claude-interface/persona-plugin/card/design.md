@@ -30,7 +30,7 @@ flowchart LR
     Terminal["Terminal welcome"]
     Context["Model context"]
     Asked{Asked about<br/>the character?}
-    Answer["Plain, never performed,<br/>the date as the note has it"]
+    Answer["Plain answer from the note"]
     Silent["Never announced"]
 
     Data --> Headline --> Terminal
@@ -46,8 +46,7 @@ flowchart LR
     Asked -- no --> Silent
 ```
 
-Personalisation goes wherever it costs the model nothing: the spinner, the hint and the spoken voice are the person's alone, the greeting is shown to them in their own language out of the card the model is already holding, and the context budget stays at the card. The output style, forced on while the plugin is enabled with coding instructions kept, carries the standing rules the [spoken replies](../../spoken-replies/design.md) page states, and everything else is plain, code, commits, commands and error text included, with every fact a neutral reply would carry still carried. The published comparisons of persona prompts agree that a long character sheet degrades engineering output while a functional identity of a few lines does not.
-
+Personalisation goes wherever it costs the model nothing: the spinner, the hint and the spoken voice are the person's alone, the greeting is shown to them in their own language out of the card the model is already holding, and the context budget stays at the card. The output style, forced on while the plugin is enabled with coding instructions kept, carries the standing rules the [spoken replies](../../spoken-replies/design.md) page states, and everything else is plain, code, commits, commands and error text included, with every fact a neutral reply would carry still carried.
 The plugin's authoring skill keeps the hand-written half honest: the card shape and its ceiling, the sources a line may be drawn from (the character's own in-game lines and story, described in our words, never quoted), and the rule that a card describes how the character speaks and never what the assistant should do. Its commands are the loop: two queues list the characters with no card and the cards with no spinner verbs, newest first, and one prints a character's own lines to write from, off the game data or, before the data carries them, off the game's own text. Authoring is a queue drained when someone feels like it and never a gate on a patch, and a patch refills it on the same cadence as the dependency bump.
 
 The card is the per-character half of the persona and the output style is the invariant half, on purpose: a style per character would be the same lines in a file the tool cannot switch per session, and the card already reaches the model as context at every start. Beside the voice the model also gets the game's one-line description of the character, the lore it answers from when asked who it is.

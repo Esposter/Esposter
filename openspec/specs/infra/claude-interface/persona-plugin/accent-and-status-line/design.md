@@ -10,6 +10,20 @@ The character's colour reaches the screen as the [genshin mods](../../genshin-mo
 
 The status line is a settings command a plugin cannot set, so the plugin ships one a person names in their own settings: the status-line script reads the same record the status script does, by the session id Claude Code hands it on stdin, and prints the nameplate: the name in the character's colour on a badge of that colour's tone, a tonal fill over dusk's background with the name lightened in OKLab until it reads on the badge. The badge carries its own contrast because a status line's output is piped, so the command has no terminal to ask for its background. A character with neither a colour nor an element of their own is named plain. It reads the state directory under the home folder, so it needs none of the plugin's environment and runs from wherever the settings name it. This repository names it in its checked-in project settings, resolving the path from the checkout's root so a session started in a subfolder or a worktree finds it; a person who has their own status line keeps it in their local settings, which outrank the project's.
 
+```mermaid
+flowchart LR
+    Stdin["Session id on stdin"]
+    Record["State record for the session"]
+    Known{"A colour or an element?"}
+    Badge["Name on a tonal badge"]
+    Plain["Name plain"]
+    Nameplate["Status line"]
+
+    Stdin --> Record --> Known
+    Known -- yes --> Badge --> Nameplate
+    Known -- no --> Plain --> Nameplate
+```
+
 ## Key files
 
 | File                                                           | Role                                                                                               |
