@@ -122,6 +122,7 @@ flowchart TD
 - [Talent Jump](https://genshin-impact.fandom.com/wiki/File:Talent_Jump.png), [Talent Normal Sprint](https://genshin-impact.fandom.com/wiki/File:Talent_Normal_Sprint.png) and the five weapons' normal attack icons, such as [Bow Unaligned](https://genshin-impact.fandom.com/wiki/File:Bow_Unaligned.png), and every playable character's skill and burst talent icons, such as Venti's [Talent Skyward Sonnet](https://genshin-impact.fandom.com/wiki/File:Talent_Skyward_Sonnet.png) and [Talent Wind's Grand Ode](https://genshin-impact.fandom.com/wiki/File:Talent_Wind%27s_Grand_Ode.png), Genshin Impact Wiki: the glyphs the buttons are traced from.
 - [Elemental Skill](https://genshin-impact.fandom.com/wiki/Elemental_Skill), Genshin Impact Wiki: the skill's cooldown, during which it cannot be used.
 - [Elemental Burst](https://genshin-impact.fandom.com/wiki/Elemental_Burst), Genshin Impact Wiki: the burst's icon at the bottom right showing its cooldown's time and filling with the character's energy, glowing once ready.
+- The member on the field shows its level and health, scenario "Health shows as whole numbers": (the climb reference reads "Lv. 70" and "8605 / 14729")
 
 ## Open
 
