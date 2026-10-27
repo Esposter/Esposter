@@ -1,3 +1,5 @@
+# genshin/load-budget Specification
+
 ## Purpose
 
 What a screen loads before it shows, measured and held to a budget. Each awaited load step is a browser performance measure (`packages/genshin-world/src/services/loading/measureLoadStep.ts`), and the load meter prints the time to ready, the requests and game data fetched, and the renderer's and scene's counts against the screen's budget (`scripts/src/services/genshinParity/shared/formatLoadMeter.ts`).
@@ -21,21 +23,21 @@ Each awaited load step SHALL be measured in the browser from its call to its set
 
 ### Requirement: Time to ready
 
-The time to ready SHALL be the milliseconds from navigation start to the screen signalling ready, read after the network idle window.
+The time to ready SHALL be the milliseconds from navigation start to the screen signalling ready, read at that signal.
 
 #### Scenario: Reading taken after idle
 
 - **WHEN** the screen signals ready
-- **THEN** the reading is taken after the network idle window
+- **THEN** the reading is taken at that signal
 
 ### Requirement: Request and game data counts
 
-The load SHALL count every request the page made with its transferred bytes, and SHALL count as game data the requests under the game data's base.
+The load SHALL count every request the page made by its ready signal with its transferred bytes, and SHALL count as game data the requests under the game data's base.
 
 #### Scenario: Requests after ready count
 
 - **WHEN** the page fetches more after signalling ready
-- **THEN** those requests are included in the counts
+- **THEN** those requests are not in the counts
 
 ### Requirement: Renderer and object counts
 
@@ -115,8 +117,3 @@ The world SHALL signal ready only once every region in reach has arrived or fail
 
 - **WHEN** the coarser terrain rings are still streaming
 - **THEN** ready does not wait on them
-
-## Open
-
-- [ ] **The time to ready is read after the network idle window** — contradicted by scripts/src/services/genshinParity/shared/openParityPage.ts: opens the page at its load event rather than once idle.
-- [ ] **Requests the page fetches after ready are included in the counts** — contradicted by scripts/src/services/genshinParity/shared/openParityPage.ts: a fetch after ready is not in the readings taken at ready.

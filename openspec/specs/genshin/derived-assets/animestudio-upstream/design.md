@@ -1,6 +1,6 @@
 # AnimeStudio upstream defects
 
-The Ooz source AnimeStudio vendors at the pinned commit, `~/Esposter.noindex/cache/animestudio-db860e1f/AnimeStudio.Ooz/kraken.cpp`, has the defect below. This is drafted text for Escartem/AnimeStudio, kept here and not filed or posted anywhere.
+The Ooz source AnimeStudio vendors at the pinned commit, `~/Esposter.noindex/cache/animestudio-db860e1f/AnimeStudio.Ooz/kraken.cpp`, has the defect below. This is drafted text for Escartem/AnimeStudio.
 
 **Title:** Ooz: the 8-byte match copy reads output not yet written when the match distance is under 8
 
@@ -8,6 +8,13 @@ The Ooz source AnimeStudio vendors at the pinned commit, `~/Esposter.noindex/cac
 - Minimal repro: `AnimeStudio.CLI` on `00/10850306.blk` from game 7.1.0, `--types Texture2D`, names set to that block's `UI_NameCardPic_*` entries, `--logger_flags Warning Error`. Stock source: 398 exception lines ("EndOfStreamException", "OverflowException", and an `ArgumentOutOfRangeException` in `ProcessAssetData`) and no textures. With the copy changed to byte-wise when the distance is under eight: no exception lines and 91 textures.
 - The stock decoder is also wrong with a zero-filled buffer: against the patched output, 226 of 466 Oodle calls in that block differ.
 - Patch: when `dst - src < 8`, copy one byte at a time; otherwise keep the eight-byte copy `scripts/src/services/recreation/animeStudio/buildAnimeStudio.ts`.
+
+```mermaid
+flowchart LR
+  COPY["COPY_64 copies eight bytes from dst + offset"] -->|"distance under eight"| OVERLAP["source bytes not yet written"]
+  BUF["the output buffer"] --> OVERLAP
+  OVERLAP --> OUT["output follows the buffer's old bytes"]
+```
 
 ```c
 static inline void oozCopy64(void *destination, const void *source) {

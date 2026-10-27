@@ -1,3 +1,5 @@
+# genshin/derived-assets/animestudio-macos Specification
+
 ## Purpose
 
 How the AnimeStudio CLI is built for macOS arm64 from its pinned sources, the edits the build applies to the clone, and the staging and acceptance that keep a failed rebuild from replacing a working CLI.

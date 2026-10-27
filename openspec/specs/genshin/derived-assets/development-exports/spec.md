@@ -1,3 +1,5 @@
+# genshin/derived-assets/development-exports Specification
+
 ## Purpose
 
 Under nuxt dev the development server serves the developer's own exports of the game's scenes from disk, and the world and the login scene draw them in place of our stand-ins of each family they hold. No build registers the route or holds a byte of them `apps/web/modules/serveGenshinExtractions.ts`.

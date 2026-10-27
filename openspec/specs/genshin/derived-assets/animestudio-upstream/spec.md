@@ -1,3 +1,5 @@
+# genshin/derived-assets/animestudio-upstream Specification
+
 ## Purpose
 
 The two defects in the AnimeStudio decoder found by the macOS build, drafted as upstream issues and kept here, not filed `openspec/specs/genshin/derived-assets/animestudio-upstream/design.md`.

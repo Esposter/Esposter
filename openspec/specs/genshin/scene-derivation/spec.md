@@ -1,3 +1,5 @@
+# genshin/scene-derivation Specification
+
 ## Purpose
 
 How a 3D scene is re-derived from the game's own assets, inside the recreation passes that order its unknowns. Each piece of information is sorted as exact, fieldless or on screen only and answered by the most exact query the data allows, never by a search over the frame. The witness render draws the exports through our own engine (`packages/genshin-world/parity/screens.ts`), so each stand-in is measured against the game's own data, and each is closed by the least representation that closes it: an exact value, a fitted generator or a richer kit. An open-world region is first laid out with every object at its exact place as a stand-in, then rebuilt one object at a time, each fitted against its own export.
