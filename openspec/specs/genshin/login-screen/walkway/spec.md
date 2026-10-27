@@ -1,10 +1,10 @@
 ## Purpose
 
-The login walkway, as built: 23 pieces, each one outline, painted in the game's own tones and carved as its normal map carves it, assembling ahead of the glide so that its far end is built as the camera nears it.
+The login walkway, as built: its pieces, each one outline, painted in the game's own tones and carved as its normal map carves it, assembling ahead of the glide so that its far end is built as the camera nears it.
 
 ## Requirements
 
-### Requirement: Walkway built from 23 pieces
+### Requirement: Walkway built from its pieces
 
 The walkway SHALL be built from its pieces, each its outline extruded from its underside up to its stone, with its curbs and lane borders raised over it; the piece count is unconfirmed (see Open).
 

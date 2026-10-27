@@ -53,7 +53,7 @@ The tree SHALL reach its first level on the first offer whatever the bag holds, 
 - **THEN** the first level is reached
 - **AND** its reward is paid once
 
-### Requirement: The offer is made on F in reach of the tree
+### Requirement: The offer is made on F at the tree
 
 The tree SHALL offer the bag when the player presses F there.
 

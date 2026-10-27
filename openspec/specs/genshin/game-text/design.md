@@ -103,8 +103,8 @@ The plugin is installed alone by a stranger's frozen `npm ci`, and every release
 ## Sources
 
 - [AnimeGameData](https://github.com/DimbreathBot/AnimeGameData), the community's per-patch dump of the game's data: the layout the text dump directory follows — `~/Esposter/genshin-parity/text/TextMap/`, the medium maps, and `~/Esposter/genshin-parity/text/ExcelBinOutput/ManualTextMapConfigData.json` and `FettersExcelConfigData.json`, the tables naming interface strings and characters' voice-over lines (`~/Esposter/genshin-parity/text/ExcelBinOutput/ManualTextMapConfigData.json`, `~/Esposter/genshin-parity/text/ExcelBinOutput/FettersExcelConfigData.json`).
-- `~/Esposter.noindex/genshin-parity/text/TextMap/`, the game's text maps, one file per language; grounds the requirement "The game's text is available in its fifteen languages".
-- `~/Esposter.noindex/genshin-parity/text/TextMap/TextMapEN.json`, the text map the line break is written in; grounds the requirement "A game string's line breaks are real line breaks".
+- `~/Esposter/genshin-parity/text/TextMap/`, the game's text maps, one file per language; grounds the requirement "The game's text is available in its fifteen languages".
+- `~/Esposter/genshin-parity/text/TextMap/TextMapEN.json`, the text map the line break is written in; grounds the requirement "A game string's line breaks are real line breaks".
 - `index.css` in the `@fontsource/signika` package, which has three `@font-face` blocks, none with a unicode range for Thai, CJK or Hangul; grounds the requirement "Non-Latin game text draws in a system face".
 
 ## Open
