@@ -57,6 +57,14 @@ describe(lintRequirementSources, () => {
     expect(lintRequirementSources(SPEC_PATH, markdown)).toStrictEqual([]);
   });
 
+  test("ignores the text between two code spans on one line", () => {
+    expect.hasAssertions();
+
+    const markdown = ["### Requirement: Example", "The system SHALL accept `add` / `remove` operations."].join("\n");
+
+    expect(lintRequirementSources(SPEC_PATH, markdown)).toStrictEqual([]);
+  });
+
   test("ignores a backticked identifier that names no file", () => {
     expect.hasAssertions();
 

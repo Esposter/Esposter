@@ -1,8 +1,9 @@
 const REQUIREMENT_REGEX = /^###\s+Requirement:\s*(?<title>.*)$/u;
 const HEADING_REGEX = /^#{1,6}\s/u;
-// A backticked path, or a backticked file name with a source's extension. Scenarios are outside a requirement's body, so
-// their citations are never read here.
-const SOURCE_PATH_REGEX = /`[^`\n]*(?:\/[^`\n]*|\.(?:cs|go|js|json|md|png|snap|ts|txt|vue))`/u;
+// A backticked path, or a backticked file name with a source's extension. A span holds no whitespace, so the text
+// Between two spans is never read as a path. Scenarios are outside a requirement's body, so their citations are never
+// Read here.
+const SOURCE_PATH_REGEX = /`[^`\s]*(?:\/[^`\s]*|\.(?:cs|go|js|json|md|png|snap|ts|txt|vue))`/u;
 
 // Returns one finding per requirement-body line that cites a source, formatted `path:line: message`. A requirement's body
 // ends at the next heading of any level, so a scenario's own citations and the design's Sources are never read as body.
