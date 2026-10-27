@@ -16,5 +16,7 @@ export interface ArcConfiguration
 `SetterMap` types the inner setter function as returning `void`. When the setter body is a single method call that returns a value (Phaser fluent API), wrap it in braces — never use the `void` operator:
 
 ```ts
-x: (gameObject) => (value) => { gameObject.setX(value); }, // wrap in braces; never the void operator
+[TransformSetter.X]: (gameObject) => (value) => { gameObject.setX(value); }, // wrap in braces; never the void operator
 ```
+
+A setter map is keyed by its component's setter enum members, never by the literal property name, so the key is `[TransformSetter.X]` rather than `x`.
