@@ -93,15 +93,15 @@ Columbina's burst SHALL deal its hit, scaled to her max HP.
 - **WHEN** the player casts the burst
 - **THEN** its hit lands, scaled to her max HP
 
-### Requirement: No poise from strikes and plunges
+### Requirement: Poise from strikes, the charged attack and plunges
 
-Columbina's strikes and plunges SHALL deal no poise, a provisional zero until a source gives her values.
+Columbina's strikes SHALL deal the poise the wiki gives, 8.8, 6.9 and 11 by the strike's place in the chain, her charged attack SHALL deal 100, and her plunges SHALL deal 50 when low and 100 when high, as the cached Advanced Properties give them (`~/Esposter/cache/genshin-wiki/Category_Columbina_Talents.json`).
 
-#### Scenario: A strike deals no poise
+#### Scenario: A strike deals its poise
 
 - **GIVEN** Columbina is the character on the field
 - **WHEN** one of her strikes hits an enemy
-- **THEN** the enemy takes no poise damage
+- **THEN** the enemy takes 8.8, 6.9 or 11 poise damage, by the strike's place in the chain
 
 ### Requirement: Plunge landing time
 
