@@ -160,4 +160,13 @@ describe(createColleiKitBehaviour, () => {
       COLLEI_KIT.getPassiveBonuses?.(combatant, 1, [createDeployedCombatant(combatant, { isOnField: false })], []),
     ).toStrictEqual([]);
   });
+
+  test("Collei's high and low plunges deal the poise the design gives them", () => {
+    expect.hasAssertions();
+
+    expect([
+      takeOne(COLLEI_KIT.highPlunge.hits).poiseDamage,
+      takeOne(COLLEI_KIT.lowPlunge.hits).poiseDamage,
+    ]).toStrictEqual([100, 50]);
+  });
 });
