@@ -20,7 +20,7 @@ export const getReadme = (options: CreatePackageOptions): string => {
     : ["[![Apache-2.0 licensed][badge-license]][url-license]"];
   const badgeReferences = isPublished
     ? [
-        `[badge-npm-version]: https://img.shields.io/npm/v/${packageName}/latest?color=brightgreen`,
+        `[badge-npm-version]: https://img.shields.io/npm/v/${packageName}/latest?color=1b7a5f`,
         `[url-npm]: https://www.npmjs.com/package/${packageName}/v/latest`,
         `[badge-npm-unpacked-size]: https://img.shields.io/npm/unpacked-size/${packageName}/latest?label=npm`,
         `[badge-npm-downloads]: https://img.shields.io/npm/dm/${packageName}.svg`,
@@ -28,7 +28,6 @@ export const getReadme = (options: CreatePackageOptions): string => {
     : [];
   const tableOfContents = [
     ...(isPublished ? ["- 🚀 [Getting Started](#getting-started)"] : []),
-    "- 📖 [Documentation](#documentation)",
     "- ⚖️ [License](#license)",
   ];
   const gettingStarted = isPublished
@@ -42,6 +41,8 @@ export const getReadme = (options: CreatePackageOptions): string => {
     "",
     description,
     "",
+    `Design notes live in [the specs](${SPECS_URL}).`,
+    "",
     "## Table of Contents",
     "",
     ...tableOfContents,
@@ -49,15 +50,11 @@ export const getReadme = (options: CreatePackageOptions): string => {
     "---",
     "",
     ...gettingStarted,
-    `## <a name="documentation">📖 Documentation</a>`,
-    "",
-    `We highly recommend you take a look at the [documentation](${SPECS_URL}) to level up.`,
-    "",
     `## <a name="license">⚖️ License</a>`,
     "",
     "Licensed under [Apache-2.0][url-license].",
     "",
-    "[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=blue",
+    "[badge-license]: https://img.shields.io/github/license/Esposter/Esposter.svg?color=0b6ac0",
     "[url-license]: https://github.com/Esposter/Esposter/blob/main/LICENSE",
     ...badgeReferences,
     "",
