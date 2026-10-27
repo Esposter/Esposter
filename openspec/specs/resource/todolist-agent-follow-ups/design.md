@@ -9,11 +9,11 @@ flowchart LR
   subgraph Terminal["Claude Code, any repository"]
     HOOK["SessionStart hook"]
     CAP["capture skill"]
-    DRAIN["drain skill — take, do, tick, repeat"]
+    DRAIN["drain skill"]
   end
   subgraph App["Esposter app"]
-    MCP["/api/mcp — an API key, and the procedures that opt in"]
-    SAVE["saveResourceContent — the one content door"]
+    MCP["/api/mcp<br/>opted-in procedures"]
+    SAVE["saveResourceContent<br/>the one content door"]
   end
   HOOK --> CAP
   CAP -->|"addFollowUp"| MCP
@@ -49,7 +49,7 @@ A todo with an `origin` is a **follow-up**, and otherwise an ordinary todo: it s
 
 ## The follow-up procedures
 
-Four procedures on the TodoList router, each opted into the MCP bridge under the `FollowUps` scope with a description written for the agent, and each taking the list's `id` and the owner guard every TodoList procedure has. A key reaches them only when it was made with that scope ([agent access](../../architecture/agent-access/design.md)).
+The follow-up procedures on the TodoList router, each opted into the MCP bridge under the `FollowUps` scope with a description written for the agent, and each taking the list's `id` and the owner guard every TodoList procedure has. A key reaches them only when it was made with that scope ([agent access](../../architecture/agent-access/design.md)).
 
 | Procedure          | Input                                                          | Does                                                                                                                                |
 | ------------------ | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
@@ -96,19 +96,19 @@ Captured follow-ups are half the loop; the plugin's drain skill does them. A ses
 
 ```mermaid
 flowchart TD
-  START["drain starts — note the open count as the checkpoint"] --> LIST["readFollowUps for this repository"]
+  START["drain starts<br/>open count noted as checkpoint"] --> LIST["readFollowUps for this repository"]
   LIST --> EMPTY{"any left?"}
-  EMPTY -->|"none"| DONE["stop — report what was done"]
+  EMPTY -->|"none"| DONE["stop<br/>report what was done"]
   EMPTY -->|"yes"| DUE{"taken as many as the checkpoint since it was set?"}
-  DUE -->|"no"| TAKE["take the first, in the list's order"]
+  DUE -->|"no"| TAKE["take the first<br/>in the list's order"]
   DUE -->|"yes"| CONV{"fewer open than the checkpoint?"}
-  CONV -->|"no"| STALL["stop — report the list is not converging"]
-  CONV -->|"yes"| RESET["the open count becomes the checkpoint"]
+  CONV -->|"no"| STALL["stop<br/>list not converging"]
+  CONV -->|"yes"| RESET["open count<br/>becomes the checkpoint"]
   RESET --> TAKE
   TAKE --> FITS{"one change, no design, nothing spent?"}
   FITS -->|"no"| BACK["handBackFollowUp with the reason"]
-  FITS -->|"yes"| WORK["do it through the repository's change loop"]
-  WORK --> FOUND["new follow-ups found — captured as they appear"]
+  FITS -->|"yes"| WORK["do it<br/>through the repository's change loop"]
+  WORK --> FOUND["new follow-ups<br/>captured as they appear"]
   WORK --> TICK["completeFollowUp with the commit"]
   BACK --> LIST
   TICK --> LIST
@@ -131,11 +131,11 @@ The drain stops in exactly two cases:
 1. **Nothing is left** — every follow-up for the repository is done or handed back.
 2. **The list is not shrinking.** Draining one follow-up can capture new ones. The drain notes the open count when it starts, as its checkpoint, and once it has taken that many, an open count no lower than the checkpoint means the work is producing follow-ups as fast as it closes them. It stops and says so, leaving everything open for the owner. A lower count becomes the checkpoint and the check repeats, so a drain that shrank once cannot grow unchecked afterwards.
 
-It is the convergence test every loop in the repository uses: each pass should find less than the one before ([engineering loops](../../architecture/engineering-loops/design.md)).
+It is the convergence test [engineering loops](../../architecture/engineering-loops/design.md) gives every loop.
 
 ### Running unattended
 
-A drain can run while the owner is away, which is what makes it worth having. It runs in whatever permission mode its session has and relies on the repository's own safety net rather than one of its own: in Esposter every change it pushes lands on `ai/queue`, where the review workflow reviews it before fast-forwarding `main` to it ([review](../../infra/review/design.md)). In Esposter the drain is also a step of what a session runs next when nothing is asked, after a red review run and before an area owed a product review, since the owner wrote each follow-up down or accepted a session writing it.
+A drain can run while the owner is away, which is what makes it worth having. It runs in whatever permission mode its session has and relies on the repository's own safety net rather than one of its own: in Esposter every change it pushes lands on `ai/queue`, where the review workflow reviews it before fast-forwarding `main` to it ([review](../../infra/review/design.md)). In Esposter the drain is also a step of what a session runs next when nothing is asked, placed by [engineering loops](../../architecture/engineering-loops/design.md), since the owner wrote each follow-up down or accepted a session writing it.
 
 A long drain runs in one session, so its context grows with every follow-up and relies on automatic compaction. A fresh session per follow-up, started by the [agent console](../../infra/claude-interface/agent-console/README.md)'s host, would keep each one clean — a step deferred until a drain has been seen to degrade.
 

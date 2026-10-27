@@ -1,6 +1,6 @@
 # TodoList Steps
 
-Part of [TodoList to a todo product](../README.md#shipped-log), built on [completion](../todolist-completion/design.md), whose `completedAt` each step reuses. A todo that is really several small actions had nowhere to list them but its notes, where nothing could be ticked.
+Part of [TodoList to a todo product](../README.md#shipped-log), built on [completion](../todolist-completion/design.md), whose `completedAt` each step reuses. A todo that is really several small actions needs somewhere to list them, and its notes cannot be ticked.
 
 ## How it works
 

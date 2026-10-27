@@ -1,6 +1,6 @@
 # TodoList Manual Order
 
-Part of [TodoList to a todo product](../README.md#shipped-log), built on [completion](../todolist-completion/design.md) and [importance](../todolist-importance/design.md). The list's order was already content — `items` is an ordered array, and a refused delete puts its row back at its index for that reason — but nothing could change it.
+Part of [TodoList to a todo product](../README.md#shipped-log), built on [completion](../todolist-completion/design.md) and [importance](../todolist-importance/design.md). The list's order is already content — `items` is an ordered array, and a refused delete puts its row back at its index for that reason — and the owner changes it here.
 
 ## How it works
 

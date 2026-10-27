@@ -1,6 +1,6 @@
 # TodoList Recurrence
 
-Part of [TodoList to a todo product](../README.md#shipped-log), built on [completion](../todolist-completion/design.md), since ticking is what advances a repeat. A habit or a bill kept as a todo had to be written again each time it came round.
+Part of [TodoList to a todo product](../README.md#shipped-log), built on [completion](../todolist-completion/design.md), since ticking is what advances a repeat. Without a repeat, a habit or a bill kept as a todo is written again each time it comes round.
 
 ## How it works
 

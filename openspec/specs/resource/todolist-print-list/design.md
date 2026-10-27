@@ -1,6 +1,6 @@
 # TodoList Print List
 
-Part of [TodoList to a todo product](../README.md#shipped-log), built on [task rows](../todolist-task-rows/design.md). A TodoList declared no capability, so the only way its work left the screen was a screenshot. Microsoft To Do's list menu answers that with **Print list**, and nothing more.
+Part of [TodoList to a todo product](../README.md#shipped-log), built on [task rows](../todolist-task-rows/design.md). Otherwise a TodoList's work leaves the screen only as a screenshot. Microsoft To Do's list menu answers that with **Print list**, and nothing more.
 
 ## How it works
 
