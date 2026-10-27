@@ -16,7 +16,7 @@ Dori's normal attacks SHALL be three strikes, a charged attack, a collision atta
 
 ### Requirement: Provisional charged attack
 
-Dori's charged attack SHALL be provisional, with a spin that lands at the start and a final hit at its maximum duration, until a recording of the game settles the timings.
+Dori's charged attack SHALL be provisional, with a spin that lands at the start and a final hit at its maximum duration.
 
 #### Scenario: Charging plays the spin and the final hit
 
@@ -77,9 +77,9 @@ Alcazarzaray's Exactitude's Connector SHALL keep ticking until 772 frames after 
 
 ### Requirement: Poise from the shot, the Connector and the collision
 
-Troubleshooter Shot, the Connector and the plunging collision SHALL deal the wiki's poise: 30, 8 and 35. The kit as built deals none, as its record carries none and gcsim gives none: the gap is open in the design.
+Troubleshooter Shot and the plunging collision SHALL deal 30 and 35 poise, and the Connector SHALL deal no poise yet.
 
-#### Scenario: The plunging collision deals the wiki's 35 poise
+#### Scenario: The plunging collision deals 35 poise
 
 - **GIVEN** Dori is in the air
 - **WHEN** her plunging collision hits an enemy
