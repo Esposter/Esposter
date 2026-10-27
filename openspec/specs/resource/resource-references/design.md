@@ -19,7 +19,7 @@ flowchart LR
   DEPENDENCIES -->|"deleted, binned or another owner's"| MISSING["counted, never named"]
 ```
 
-A reference whose target is deleted, in the recycle bin, or another owner's is still the owner's own content, so it is counted under Uses ("1 referenced resource can't be found"). It is never named, because what it points at is not the owner's to read ([cross-owner references](../../architecture/security/cross-owner-references/design.md)). Fixing one happens where the reference is picked, which is where each consumer already says its source is missing ([datasets](../../architecture/dataset/design.md)).
+A reference whose target is deleted, in the recycle bin, or another owner's is still the owner's own content, so it is counted under Uses ("1 referenced resource can't be found"). It is never named, because what it points at is not the owner's to read ([cross-owner references](../../architecture/security/cross-owner-references/design.md)). Fixing one happens where the reference is picked ([datasets](../../architecture/dataset/design.md)).
 
 ## Key files
 

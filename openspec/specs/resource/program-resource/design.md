@@ -15,10 +15,10 @@ flowchart LR
   EXPORT -.->|"sent outside the platform"| RESP["respondent"]
   ZIP -.->|"sent outside the platform"| RESP
   RESP -->|"?t= → createSurveyResponse"| SR[("SurveyResponseEntity.participantToken")]
-  STATUS["Status blade (owner-only)"] -->|"join participants × responses server-side"| FUNNEL["keyValue · addedAt · responded"]
+  STATUS["Status blade (owner-only)"] -->|"join participants × responses server-side"| FUNNEL["Status rows"]
   SETUP -->|"read bound survey mode"| MODE["Survey response mode"]
   MODE -->|"Anonymous"| WARNING["warning in Setup and when no participants have responded"]
-  STATUS -->|"ProgramStatus dataset<br/>(key column and token dropped)"| PUBSAFE["participant · addedAt · responded"]
+  STATUS -->|"ProgramStatus dataset<br/>(key column and token dropped)"| PUBSAFE["Dataset rows"]
   PUBSAFE --> DASH["Dashboard visual<br/>(response rate)"]
 ```
 
@@ -71,7 +71,7 @@ Plus the full `createResourceProcedures(ResourceType.Program)` set. Token _valid
 
 - **Naming.** _Program_ — generic enough to stay honest when it later orchestrates more than one email-and-survey wave, specific enough to read as "a thing that runs a plan". Considered and set aside: **Campaign** (marketing-suite connotation, ties the type to one use case), **Flow** (collides with the Flowchart resource), **Workflow**/**Automation** (promise a trigger/action engine this deliberately isn't), **Journey** (jargon).
 - **Naming.** _Participant_ — the row is a person in the audience holding a credential, and it exists whether or not anything was ever sent to them. _Invite_ names the row after a message that does not exist yet: when [email sending](../../../deferred/resource/email-sending/design.md) un-defers, the invite is the thing delivered _to_ a participant, so the word has to stay free for it — and it is already the room-invite code in messaging. Considered and set aside: **Recipient** (presumes a send, drifting back to the same collision), **Enrollment** (accurate but formal, and the verb pair buys nothing here).
-- **Deliberately not a workflow engine.** A general trigger/condition/action resource would need an event bus ([rejected](../../../rejected/resource/generic-event-bus/design.md)), background execution, and retry semantics — for one domain. The program's content schema is the extension seam: reminder emails to non-responders, send scheduling, and the actual send run (when [email sending](../../../deferred/resource/email-sending/design.md) un-defers, the program is its unit of execution) all extend this schema without a new platform layer.
-- Delivery is manual, which keeps the whole feature free of new Azure services while building the exact foundation sending needs.
+- **Deliberately not a workflow engine.** A general trigger/condition/action resource would need an event bus ([rejected](../../../rejected/resource/generic-event-bus/design.md)), background execution, and retry semantics — for one domain. Reminder emails to non-responders, send scheduling, and the actual send run (when [email sending](../../../deferred/resource/email-sending/design.md) un-defers, the program is its unit of execution) all extend the content schema without a new platform layer.
+- The feature needs no new Azure services while building the exact foundation sending needs.
 - The canonical "responses × audience" join is purpose-built rather than routed through a generic join engine, which keeps [dataset joins](../../../deferred/resource/dataset-joins/design.md) deferred.
 - One program per send-wave: re-running against a grown audience extends the same program; a genuinely new wave (new email, same audience) is a new program — Duplicate covers the setup copy.

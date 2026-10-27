@@ -10,7 +10,7 @@ This is explicitly **not** an analytics product: no unique-visitor identificatio
 flowchart LR
   VIEWER["public /view/[type]/[id]"] -->|readPublishedResourceContent| SERVE["serve the publish snapshot"]
   SERVE -->|"fire-and-forget increment<br/>(failure never blocks the read)"| AT[("ResourceViews table<br/>pk = resourceId, rk = UTC date<br/>count")]
-  OV["Overview Essentials<br/>(publishable + published)"] -->|readResourceViewCount owner| SUM["total views<br/>(+ responses beside it for Survey)"]
+  OV["Overview Essentials<br/>(publishable + published)"] -->|readResourceViewCount owner| SUM["total views"]
 ```
 
 - **Storage** — `AzureTable.ResourceViews`, partitionKey = resource id, rowKey = the UTC date, with a single `count` property. Daily buckets keep entities small and make "views this week" a partition range scan when it is needed.
@@ -40,6 +40,6 @@ The increment is internal to the public read, not a procedure.
 ## Notes
 
 - Riding `createResourceProcedures` makes this automatic for every current and future publishable type — no per-type wiring, consistent with the capability model. It is gated by the same `publishable` seam as the publish procedures: a type with no public URL has no views to count.
-- It counts views of the _content read_, so SSR/proxy prefetches and one person refreshing five times all count. The UI says "views", never "visitors". Precision is not the point; direction and magnitude are.
+- It counts views of the _content read_, so SSR/proxy prefetches and one person refreshing five times all count. The UI says "views", never "visitors".
 - This is platform-side counting, not client analytics — no script on the view page, nothing for ad-blockers to eat, and it works for OG-unfurl bots too (which is fine at this fidelity).
 - Per-version stats are out of scope; they would belong to [resource snapshots](../resource-snapshots/design.md) if ever needed.

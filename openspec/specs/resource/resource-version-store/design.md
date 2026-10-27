@@ -21,13 +21,13 @@ The same codec works on the wire as well: a large document's save is compressed 
 
 ```mermaid
 flowchart TD
-  trigger["version trigger"] --> anchor["Read the channel anchor — the newest keyframe row, and the bytes anchored above it"]
+  trigger["version trigger"] --> anchor["Read channel anchor"]
   anchor --> store["Write to the store — dedupe, delta, or promote to a keyframe"]
   store --> row[("Upsert the version row — hash, base, both sizes, reason, summary")]
   row --> commit{"Inside a publish transaction?"}
   commit -->|yes| claim["The publication claim commits with the row"]
   commit -->|no| charge
-  claim --> charge["Charge the stored bytes to the owner — nothing for a deduplicated write"]
+  claim --> charge["Charge stored bytes"]
   charge --> evict{"A revision past maxAgeMs, or past maxRetained?"}
   evict -->|no| done["Save proceeds"]
   evict -->|yes| shed["Delete those rows"]
@@ -86,7 +86,7 @@ Eviction hands the deletion path the exact set of objects nothing references, ra
 
 ## Notes
 
-- Existing snapshots written as full blobs under `{id}/revisions/` and `{id}/published/` were discarded rather than converted: a resource published before the store shipped has to be published again, and the blobs stay charged until purge takes the directory. Migration was scoped out because the history was recoverable by a republish and a conversion would have paid a full read of every snapshot for versions the ring buffer evicts within a session.
+- Full-blob snapshots under `{id}/revisions/` and `{id}/published/` are not converted: a resource published before the store has to be published again to have history, and the blobs stay charged until purge takes the directory. A conversion would pay a full read of every snapshot for versions the ring buffer evicts within a session.
 - Collection publishes the deletion of what it freed, and the publish is best-effort once the rows are gone: a publish that fails leaves the objects stored and charged until purge takes the directory. That is a harsher term than the write-path orphan above, which was never charged in the first place — this one was live and billed, and nothing hands the charge back until purge clears the whole directory. The order is deliberate — publishing first and then failing to delete the rows would free objects a surviving row still names, which is a version that cannot be read rather than bytes that cost. What is not built for it is an outbox of released hashes: that is a second write path and a sweep to drain it, for a failure the SDK's own retries already make rare, and the same trade the ledger's charges settled ([storage quotas](../storage-quotas/design.md)).
 - A write always encodes twice — standalone and against the anchor — because the promotion ratio compares the two. The two overlap on the threadpool, so the save path pays the slower of them rather than their sum: on a multi-megabyte document that is hundreds of milliseconds, where a full copy would be an upload of the same size; the committed bench beside `createKeyframeStore` is the record of what each shape costs, and the compression level is an option so a sweep of it never touches the implementation.
 - The same substrate also addresses assets by content, so a publish references them instead of cloning them ([content-addressed assets](../content-addressed-assets/design.md)). That addressing's correctness rests on a scan of content rather than on a column, so the files it releases are counted before any is deleted.

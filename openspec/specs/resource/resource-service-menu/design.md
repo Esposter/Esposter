@@ -12,7 +12,7 @@ flowchart LR
   MENU --> REC["Recent<br/>/resource-explorer/recents"]
   MENU --> TAGS["Tags<br/>/resource-explorer/tags"]
   MENU --> BIN["Recycle bin<br/>/resource-explorer/recycle-bin"]
-  ALL --> LIST["ResourceListView<br/>filters · columns · grouping · selection · export"]
+  ALL --> LIST["ResourceListView"]
   FAV --> LIST
   REC --> LIST
   TAGS --> TAGLIST["tag list — name + resource count"]

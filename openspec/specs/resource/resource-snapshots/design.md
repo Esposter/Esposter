@@ -41,7 +41,7 @@ flowchart LR
   WORK[("{id}/content.json<br/>working copy")]
   FILES[("{id}/files/{sha256}<br/>binary assets")]
 
-  WORK --> TAKEREV["revision take<br/>serialize, bump counter and clock,<br/>evict past 30 days or past 100"]
+  WORK --> TAKEREV["revision take"]
   WORK --> TAKEPUB["publish take<br/>transform, claim in txn"]
 
   TAKEREV --> REV[("revision n")]
@@ -103,16 +103,16 @@ A resource's first content write takes none — there is no prior state to keep,
 
 The published channel prunes nothing: publishes are deliberate and rare, and a retired public artifact is something an owner may need to point at.
 
-Revisions are kept for the channel's `maxAgeMs`, with at most `maxRetained` standing at once. Time is the standard the reference products retain by: Figma's free tier, Dropbox Basic and Google Drive's uploaded files keep 30 days, Notion keeps 7 to 90 by plan, and SharePoint, whose own guidance calls less than 30 days a risk of "inadvertent data loss", pairs an age with a count. The ceiling is Google Drive's hundred, so a resource edited all day — a revision every 15 minutes is up to a few thousand in 30 days — keeps a bounded history inside the window.
+Revisions are kept for the channel's `maxAgeMs` (30 days), with at most `maxRetained` (100) standing at once, both declared in `SnapshotChannelDefinitionMap`. Time is the standard the reference products retain by: Figma's free tier, Dropbox Basic and Google Drive's uploaded files keep 30 days, Notion keeps 7 to 90 by plan, and SharePoint, whose own guidance calls less than 30 days a risk of "inadvertent data loss", pairs an age with a count. The ceiling is Google Drive's hundred, so a resource edited all day — a revision every 15 minutes is up to a few thousand in 30 days — keeps a bounded history inside the window.
 
 Expiry has no job behind it. **A revision past its age is gone to every read the moment it expires**: `getSnapshotRetainedSince` is the cutoff both the history listing and the version read compare `createdAt` against, so a resource nobody edits loses its old revisions on time like any other. **The next revision taken deletes the rows** past the age or the count, and hands the deletion event exactly the objects no surviving version needs ([resource version store](../resource-version-store/design.md)), so the evicted bytes' ledger entries are released with them; a bare delete would make eviction a slow quota leak nothing reconciles ([storage quotas](../storage-quotas/design.md)).
 
 ```mermaid
 flowchart TD
-  expire["A revision passes 30 days"] --> hidden["Gone to every read — history lists it no more, a restore reads nothing"]
+  expire["A revision passes 30 days"] --> hidden["Unreadable to every read"]
   hidden --> edited{"Is the resource edited again?"}
-  edited -->|yes| take["The next revision take deletes its row and collects its bytes"]
-  edited -->|no| held["Its bytes stay stored and counted until the next take or the resource's purge"]
+  edited -->|yes| take["Next take evicts it"]
+  edited -->|no| held["Bytes stay counted"]
 ```
 
 The accepted cost is the last box: an expired revision of a resource nobody edits is unreachable but still stored, and counted against its owner, until the resource is edited again or purged. Deleting it on time would take a sweep, and a sweep is what this design exists not to run.

@@ -2,7 +2,7 @@
 
 The **FileAssets capability**: hosted binary assets for the resource types that need them. A type declaring `fileAssets: true` gets owner-only procedures for uploading and removing blobs under its own `{id}/files/…` directory, and the webpage's Settings blade uploads its share image through them — so an image a resource carries is a hosted URL, never a base64 blob inlined into the content.
 
-Adopters: Survey (SurveyJS image questions, logos, theme backgrounds), Note (inline images), Webpage (share image). Three adopters clears the capability admission rule of two or more ([resources](../../architecture/resource/design.md)). Email also declares `fileAssets` for the page builder's image style fields, but has no upload path, so it is not counted as an adopter.
+Adopters: Survey (SurveyJS image questions, logos, theme backgrounds), Note (inline images), Webpage (share image). The listed adopters clear the capability admission rule of two or more ([resources](../../architecture/resource/design.md)). Email also declares `fileAssets` for the page builder's image style fields, but has no upload path, so it is not counted as an adopter.
 
 ## How it works
 
@@ -73,7 +73,7 @@ Reads have no procedure — they go through the `/api/resource-assets` endpoint.
 
 ## Notes
 
-- Content old enough to predate the stable url bakes a signed Azure url in and expects it re-signed on every read. Nothing reads, converges, or migrates it — latest-shape-only applies ([persisted data — latest shape only](../../architecture/persisted-data-latest-shape-only/design.md)), so such a draft renders its assets broken until they are re-added in the editor, and that is accepted. [converge-on-read](../../architecture/content-token-rewriting/design.md) governs future changes to the stable url's own form.
+- Content that bakes a signed Azure url in and expects it re-signed on every read. It is neither read, converged nor migrated — latest-shape-only applies ([persisted data — latest shape only](../../architecture/persisted-data-latest-shape-only/design.md)), so such a draft renders its assets broken until they are re-added in the editor, and that is accepted. [converge-on-read](../../architecture/content-token-rewriting/design.md) governs future changes to the stable url's own form.
 - A standalone Asset or Image-library resource type was rejected: assets are meaningless outside their owning resource, die with it, and need no name, list or blades — an identity row per image is pure overhead. Cross-resource asset reuse has no demonstrated need; revisit only with a [brand kit](../../../deferred/resource/brand-kit-resource/design.md).
 - A **downloaded artifact** (Email's personalized HTML export) absolutizes its stable urls against the app origin, so its images render only for viewers with an owner session. Durable public asset urls are the [email sending](../../../deferred/resource/email-sending/design.md) follow-on.
 - Blueprint capture/deploy carries asset urls untouched (only whole-string resource ids are aliased), so deployed content references the _source_ resource's blobs; deleting a captured source strands those references — accepted, identical to deleting any referenced resource.

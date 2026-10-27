@@ -8,14 +8,14 @@ Copying the link off the Overview blade and pasting it into a room by hand still
 
 ```mermaid
 flowchart LR
-  CMD["Share command<br/>(command bar, published only)"] --> DLG["ShareDialog"]
+  CMD["Share command<br/>(page header, published only)"] --> DLG["ShareDialog"]
   DLG -->|room.readRooms| ROOMS["your rooms → UiSelect"]
   DLG --> MSG["getShareMessage<br/>note + newline + public URL"]
   MSG -->|"message.createMessage<br/>{ roomId, message }"| ROOM[("room message")]
   ROOM --> OK["notification: Shared to {room}<br/>+ Open room action"]
 ```
 
-- **The command appears for `PublishableResourceType` only while published.** An unpublished resource has no public URL, so there is nothing to share until it has one — the command is absent, not disabled. It sits beside the publish toggle in the command bar and collapses into the `…` overflow on narrow viewports with everything else.
+- **The command appears for `PublishableResourceType` only while published.** An unpublished resource has no public URL, so there is nothing to share until it has one — the command is absent, not disabled. It is the one action the page header shows once the resource is published, as [resource page parity](../resource-page-parity/design.md) sets.
 - **The dialog reads your rooms once per open** (it mounts only while open) into a `UiSelect`, with an optional note field. No rooms is an empty state pointing at esbabbler, not a disabled button with no explanation.
 - **The message is sanitized HTML with an explicit anchor** — message bodies render through `v-html` and nothing in the pipeline autolinks bare text, so `getShareMessage` builds the link itself (`<a href … target="_blank">`) and wraps the escaped note above it, newlines as line breaks. It goes through the standard `message.createMessage` mutation, so RBAC, rate limits, profanity filtering, and the whole message pipeline apply as they do to any message; rich embeds/unfurls stay [deferred](../../../deferred/resource/esbabbler-link-unfurl/design.md).
 - **The dialog validates what it sends** — the length rule checks the composed message (note + markup + link) against the message cap, not just the raw note, so a note that fits the counter can never produce a message the server rejects.
@@ -32,4 +32,4 @@ flowchart LR
 ## Notes
 
 - **Deliberately one direction** (resource → room). Surfacing "shared with me" inside the explorer is a different feature needing read-model thought, and is not part of this feature.
-- The message is the caller's own message in their own room — no special message type, no service-to-service write, no elevated permission. Deleting the resource leaves a dead link, exactly like any pasted URL.
+- The message is the caller's own message in their own room, with no service-to-service write. Deleting the resource leaves a dead link, exactly like any pasted URL.

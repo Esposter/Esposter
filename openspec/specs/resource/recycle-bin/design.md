@@ -13,7 +13,7 @@ Publication removal is deliberate: **restore returns a Draft**. Silently resurre
 ```mermaid
 stateDiagram-v2
   state "Draft / Published" as Live
-  state "Soft-deleted — deletedAt set,<br/>publication removed, blob kept" as Bin
+  state "Soft-deleted" as Bin
   Live --> Bin: deleteResource / deleteResources
   Bin --> Live: restoreResources (returns as Draft — re-publish is manual)
   Bin --> [*]: purgeResource (blob dir → table partitions → row)
@@ -61,8 +61,8 @@ The bin is a `UiDataTable` whose rows go nowhere, since a deleted resource has n
 
 ## Notes
 
-- Delete asks first, then the post-delete toast offers **Restore** directly, from the list and the resource page alike, so the common undo never needs a trip to the bin. A bulk delete's toast restores the whole selection in one batch write, `restoreResources`, which the bin's own row restore goes through too.
-- Purge keeps the type-the-name guard. It is the only destroy that is real. The bin reads through the same [`useReadResourcesPage`](../list-filters-and-views/design.md) as `/all`, so paging quickly or refreshing mid-read can never leave the table showing an earlier page's rows — a purge fired from a stale row is unrecoverable in a way a stale list elsewhere is not.
-- A dataset reference to a binned source reads as a missing one, exactly as after a purge, and its consumer says so where the reference is picked ([datasets](../../architecture/dataset/design.md)), as a Program's Email or Survey binding to a binned resource does under its picker in Setup. A restore heals it, because nothing rewrote the consumer's content in the meantime ([dangling reference cleanup](../../../rejected/resource/dangling-reference-cleanup/design.md)).
+- A bulk delete's toast restores the whole selection in one batch write, `restoreResources`, which the bin's own row restore goes through too.
+- Purge is the only destroy that is real. The bin reads through the same [`useReadResourcesPage`](../list-filters-and-views/design.md) as `/all`, so paging quickly or refreshing mid-read can never leave the table showing an earlier page's rows — a purge fired from a stale row is unrecoverable in a way a stale list elsewhere is not.
+- A dataset reference to a binned source reads as a missing one, exactly as after a purge, and its consumer says so where the reference is picked ([datasets](../../architecture/dataset/design.md)). A restore heals it, because nothing rewrote the consumer's content in the meantime ([dangling reference cleanup](../../../rejected/resource/dangling-reference-cleanup/design.md)).
 - Names are not unique, so a restore can never conflict.
 - The [activity log](../activity-log/design.md) partition survives the bin window, and its sweep runs at purge time — that page says how.

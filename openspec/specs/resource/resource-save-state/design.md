@@ -82,5 +82,5 @@ The indicator is a readout, never a control. Pending state that gates a _trigger
 ## Notes
 
 - The colour rides the icon rather than the text, as a whole class in each state's definition: a UnoCSS class built from a state name is a class the scanner never sees.
-- A save reports the resource that issued it. One that settles after the blade has moved on has its rejection, its `contentVersion` and its persisted-content baseline applied only while its own resource is still the loaded one. Its notification is not scoped: the write failed for the owner either way.
+- A save reports the resource that issued it. A save's rejection notification is not scoped to the resource on screen: the write failed for the owner either way.
 - Recovery points are [resource snapshots](../resource-snapshots/design.md), a separate mechanism on a separate clock. This page answers "did my edit land"; that one answers "can I go back".
