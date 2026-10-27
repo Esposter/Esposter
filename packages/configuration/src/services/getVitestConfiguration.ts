@@ -29,6 +29,9 @@ export const getVitestConfiguration = (
       // Earlier test made. Only the history goes: a `vi.mock` default or a `mockResolvedValue` stays in place.
       clearMocks: true,
       exclude: [...configDefaults.exclude, BROWSER_TEST_GLOB],
+      // The default leaves one core to the main process, which does little while the workers run, so a four-core
+      // Runner ran three workers. Every core runs one, which is the faster run on the runners the suite is timed on
+      maxWorkers: "100%",
       // Transforming the module graph is the largest share of a run and is otherwise redone from scratch every
       // Time; persisting it to `node_modules/.vitest-cache` reuses it across reruns and separate processes, and
       // A reinstall drops the directory along with the dependencies it was keyed on.
