@@ -98,6 +98,7 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@vitest/snapshot`                      | —                     | Keep — tooling   | pinned for vite-plus's own vitest                                                                      |
 | `@vitest/spy`                           | —                     | Keep — tooling   | pinned for vite-plus's own vitest                                                                      |
 | `@vitest/utils`                         | —                     | Keep — tooling   | pinned for vite-plus's own vitest                                                                      |
+| `@vizejs/nuxt`                          | —                     | Keep — framework | the Nuxt module that compiles the app's SFCs with Vize, beside Nuxt's Vue plugin                       |
 | `@vue-flow/background`                  | —                     | Keep — hold      | held while the flowchart's future is decided (flowchart on the editor core, deferred)                  |
 | `@vue-flow/controls`                    | —                     | Keep — hold      | held while the flowchart's future is decided (flowchart on the editor core, deferred)                  |
 | `@vue-flow/core`                        | —                     | Keep — engine    | the flow-diagram engine                                                                                |
@@ -107,7 +108,6 @@ Every catalog entry, each with its verdict: kept, replaced by the platform or by
 | `@vue/test-utils`                       | —                     | Keep — tooling   | component tests                                                                                        |
 | `@vuetify/v0`                           | —                     | Keep — framework | the UI library's headless base, on the stop list for accessibility                                     |
 | `@vueuse/core`                          | —                     | Keep — framework | the composable library                                                                                 |
-| `@vizejs/nuxt`                          | —                     | Keep — framework | the Nuxt module that compiles the app's SFCs with Vize, beside Nuxt's Vue plugin                       |
 | `@vueuse/nuxt`                          | —                     | Keep — framework | auto-imports the composables                                                                           |
 | `@vueuse/router`                        | —                     | Keep — framework | route-query composables, auto-imported                                                                 |
 | `@wasm-audio-decoders/ogg-vorbis`       | —                     | Keep — engine    | an Ogg Vorbis decoder                                                                                  |
