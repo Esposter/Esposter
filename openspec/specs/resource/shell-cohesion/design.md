@@ -9,7 +9,7 @@ Shell primitives live in `app/components/Ui/` (the UI library) and `app/componen
 - The page header — the `resource` layout's, on the UI library, with no surface of its own: the breadcrumb trail with a standing readout at its far end, which takes a line of its own under the trail when the row cannot hold both, then the page's title or a `heading` slot for a title row that carries more (a resource's type and commands), then a `navigation` slot for the page's sections as tab links. The trail row is where a persistent number belongs: the trail rarely fills a line, so anything parked on the title row instead pays a row of its own for width already going spare.
 - `UiEmptyState` — a mark named by its meaning, a title, an optional description and at most one action in its slot, for "no resources yet" / "no rows" / "not bound to data" states; `UiErrorState` is the same shape for a failed read, with its retry button.
 - `UiSkeleton` — a decorative block the caller sizes, standing in for per-region loading (instead of relying on the page loading bar, `AppLoadingIndicator`).
-- `AppBreadcrumbs` — renders the area hub followed by the pages the visitor actually came through, never the page they are on, so a direct arrival has its way out ([breadcrumb trail](../breadcrumb-trail/design.md)); rendered by the page header, not the dock, so it carries page context and never duplicates.
+- `AppBreadcrumbs` — the trail that [breadcrumb trail](../breadcrumb-trail/design.md) defines, rendered by the page header, not the dock, so it carries page context and never duplicates.
 
 ## Navigation
 

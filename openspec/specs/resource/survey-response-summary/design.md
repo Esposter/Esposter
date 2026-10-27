@@ -28,7 +28,7 @@ flowchart LR
   REC --> AGG{getSurveySummaryCards}
   Q --> AGG
   AGG -->|choice, rating| BAR[count per choice → bar chart]
-  AGG -->|number| STAT[minimum · average · maximum]
+  AGG -->|number| STAT["number range and average"]
   AGG -->|other| LIST[answers]
 ```
 

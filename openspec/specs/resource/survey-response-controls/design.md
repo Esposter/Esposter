@@ -15,7 +15,7 @@ flowchart LR
   SUBMIT["createSurveyResponse<br/>updateSurveyResponse"] -->|"resolveSurveyResponseWrite rejects when closed"| AT[("SurveyResponseEntity")]
 ```
 
-- **Public read** — `readPublishedResourceContent` merges the live settings into its response through `reapplyLiveResourceContent`, which applies what `ResourceLiveContentMap` declares live on every path that reconstitutes a snapshot ([resource snapshots](../resource-snapshots/design.md)) — the public read, the owner's version preview and the restore alike. The published model snapshot itself stays immutable; only the settings beside it are live.
+- **Public read** — `readPublishedResourceContent` merges the live settings into its response through `reapplyLiveResourceContent` ([resource snapshots](../resource-snapshots/design.md)). The published model snapshot itself stays immutable; only the settings beside it are live.
 - **Server enforcement** — both response mutations call `resolveSurveyResponseWrite`, which rejects with a conflict error when the survey is closed. Client state can never bypass it. This costs one blob read per submission; submissions are rate-limited and low-volume, so there is no caching until it is measured.
 - **Owner UX** — the toggle lives on the Survey Overview's Collection card next to publish status; the closed message is an inline field (normalized, capped by `MAX_CLOSED_MESSAGE_LENGTH`) shown only while closed.
 - **Respondent UX** — a closed survey renders a `UiEmptyState` titled with the survey's name and carrying the owner's message, or a default when none is set.
@@ -33,7 +33,7 @@ flowchart LR
 
 ## Notes
 
-- Settings live in the content blob per the resource standard ([resources](../../architecture/resource/design.md)) — one artifact, one write path, one `contentVersion`. The Overview toggle saves through the same `saveResourceContent` as the editor, so a concurrent edit surfaces through the existing stale-version path.
+- The Overview toggle saves through the same `saveResourceContent` as the editor, so a concurrent edit surfaces through the existing stale-version path.
 - In-flight respondents — form open when the survey closes — get the server rejection on submit rather than a silent failure.
 - Response modes ([survey response modes](../survey-response-modes/design.md)) extend this same `settings` object. There is one settings section, not one per feature.
 - Close-at-date scheduling is deliberately absent: it is [publish scheduling](../../../deferred/resource/publish-scheduling/design.md)'s shape — one timer subsystem, not two. Un-deferring it is additive, since the timer would flip this same flag.

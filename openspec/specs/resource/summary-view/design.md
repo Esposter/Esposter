@@ -43,5 +43,5 @@ flowchart LR
 
 ## Notes
 
-- The toggle is deliberately **not** URL-synced, unlike the filters. A filter is a question about your data and deserves a shareable link; a lens is a preference about how you are looking at it right now, and a card click is a one-way trip back into the list anyway.
+- Filters are URL-synced because a filter is a question about your data and deserves a shareable link; a lens is a preference about how you are looking at it right now, and a card click is a one-way trip back into the list anyway.
 - Refresh dispatches on the active lens, so the toolbar's Refresh means "re-read what I am looking at" in both modes.

@@ -10,7 +10,7 @@ Copy therefore materializes through the same path export uses: `filterDataSource
 
 A cell range indexes the **displayed** columns, while `compileSheetColumns` resolves a computed column's source by id against the columns it is handed and reads `null` for a source it cannot find — so the two sets are not interchangeable. `filterDataSourceRange` derives both from the one `DataSource`: the displayed columns select which cells the range covers, and the full column set stays the compute context. Hiding the source column of a computed column therefore changes nothing about what copy produces, matching the grid, which passes every column.
 
-Paste is unaffected: computed columns are read-only and every write site already skips them, so pasting over a computed cell stays a no-op. The copied value simply lands wherever the user pastes it — another column, Excel, Sheets — exactly the Excel semantics.
+Paste is unaffected: pasting over a computed cell stays a no-op ([computed columns](../computed-columns/design.md)). The copied value simply lands wherever the user pastes it — another column, Excel, Sheets — exactly the Excel semantics.
 
 ```mermaid
 flowchart LR

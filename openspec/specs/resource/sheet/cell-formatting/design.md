@@ -47,5 +47,5 @@ Paths relative to `apps/web`.
 ## Notes
 
 - Editing a cell edits the underlying value: the inline editor and the row dialog show the raw value, not the formatted text, so a currency cell is typed as `1234`.
-- Find and replace matches underlying values, since a replacement writes back into the cell. Two consequences the reader sees: searching `1,234` finds nothing in a cell rendered as `1,234.00`, and searching `1234` updates that cell while its highlight has nothing to mark, because the rendered text does not contain the term. That is the cost of the writes being valid, and it is the same trade every spreadsheet makes.
+- Find and replace has two consequences the reader sees: searching `1,234` finds nothing in a cell rendered as `1,234.00`, and searching `1234` updates that cell while its highlight has nothing to mark, because the rendered text does not contain the term. That is the cost of the writes being valid, and it is the same trade every spreadsheet makes.
 - Per-column filters run over the underlying values too — they are typed inputs bound to the column's type, not a text match against the grid.

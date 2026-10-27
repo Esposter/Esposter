@@ -15,6 +15,15 @@ Survey is a resource type: the SurveyJS model lives in the content blob, the res
 - **Publishable** — publish goes through the generic `publishResource`, which references its image files by content address without copying them ([resource file assets](../resource-file-assets/design.md)); and the live `settings` are merged back over every snapshot read through `ResourceLiveContentMap` ([resource snapshots](../resource-snapshots/design.md)), so closing or gating never needs a re-publish. Publishing snapshots the model; the public respondent page serves that snapshot and 404s for unpublished surveys. Public reads are counted ([view analytics](../published-view-analytics/design.md)).
 - **DatasetProvider** — `readSurveyResponsesDataset` serves responses through `dataset.readDataset`, auth keyed to resource ownership.
 
+```mermaid
+flowchart LR
+  PUB["publishResource"] -->|snapshots the model| SNAP[("Published snapshot")]
+  PUB -.->|"references image files by content address"| FILES[("File assets")]
+  SNAP -->|read| PAGE["Respondent page"]
+  LIVE[("Live settings")] -->|"merged over every snapshot read"| PAGE
+  PAGE -.->|"unpublished survey"| NF(["404"])
+```
+
 ## Procedures
 
 The `survey` router is `createResourceProcedures(ResourceType.Survey, …)` plus the type-specific procedures that are deliberately **not** capabilities (single consumer — see the admission rule in [resources](../../architecture/resource/design.md)):
@@ -33,7 +42,7 @@ Asset uploads are not listed here: they come from the shared FileAssets capabili
 - **Editor blade** — SurveyJS creator rendered inline (`useSurveyCreator`); autosave goes through the store's `saveModel`, which merges the model with the currently loaded `settings` and saves the whole `{ model, settings }` blob — the shape the content schema requires. SurveyJS keeps owning editor/preview state; the resource layer only sees model JSON in and out.
 - **Overview blade** — wraps the generic Overview to add the response count beside the Views row, plus the Collection card owning the `settings` section.
 - **Responses blade** — a table over `survey.readSurveyResponseRecords`, the first-look surface for results, with per-row detail and delete ([response management](../survey-response-management/design.md)).
-- **Respondent page** — `/view/Survey/[id]` via `ViewComponentMap`: an interactive published-view renderer (plain `survey-core` Model + theme; a survey with no author theme follows the app's light/dark palette, as the creator's own chrome does) that writes responses. In-progress resume stores only a per-survey response id in localStorage — answers live solely in Azure Table — and the id is removed on submit, so a later visitor on a shared device cannot reopen a submitted response. Until that submit, the row is a draft no count, table or funnel reads ([response management](../survey-response-management/design.md)). Email invite blocks link it via `RoutePath.View(ResourceType.Survey, id)`.
+- **Respondent page** — `/view/Survey/[id]` via `ViewComponentMap`: an interactive published-view renderer (plain `survey-core` Model + theme; a survey with no author theme follows the app's light/dark palette, as the creator's own chrome does) that writes responses. In-progress resume stores only a per-survey response id in localStorage — answers live solely in Azure Table — and the id is removed on submit, so a later visitor on a shared device cannot reopen a submitted response. Until that submit, the row is a draft ([response management](../survey-response-management/design.md)). Email invite blocks link it via `RoutePath.View(ResourceType.Survey, id)`.
 
 ## Key files
 
@@ -47,5 +56,5 @@ Asset uploads are not listed here: they come from the shared FileAssets capabili
 
 ## Notes
 
-- Respondent procedures are public and rate-limited — they are the only unauthenticated write path in the platform. Every response write passes `resolveSurveyResponseWrite`, the single boundary enforcing the closed toggle and the response mode, so client state can never bypass either. Being anonymous, it is also bounded: a creation adds a row, so it spends the slow budget per address (`slowRateLimitedProcedure`), and the answers are stored as one JSON property, so their serialized length is capped at what that property holds (`surveyResponseModelSchema`), refused before the write rather than by the Table after it.
-- Existing `surveys` rows were discarded, not migrated, when the table was dropped (migration `20260710120004_talented_slayback`); orphaned responses can be truncated.
+- Respondent procedures are public and rate-limited — they are the only unauthenticated write path in the platform. Every response write passes `resolveSurveyResponseWrite` ([response controls](../survey-response-controls/design.md)). Being anonymous, it is also bounded: a creation adds a row, so it spends the slow budget per address (`slowRateLimitedProcedure`), and the answers are stored as one JSON property, so their serialized length is capped at what that property holds (`surveyResponseModelSchema`), refused before the write rather than by the Table after it.
+- Responses whose survey row is absent are orphans, and orphans can be truncated.

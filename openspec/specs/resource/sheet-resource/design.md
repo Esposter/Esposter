@@ -15,8 +15,8 @@ flowchart TD
   IMPORT["import a CSV, JSON or XLSX file"] --> PARSE["client-side parse, preview"]
   PARSE --> DATA["content.data"]
   ROW["resources row"]
-  SETTINGSFORM["Settings blade"] --> SETTINGS["content.settings — the per-format parse configuration"]
-  GRID["Data blade — the grid editor"] --> DATA
+  SETTINGSFORM["Settings blade"] --> SETTINGS["content.settings"]
+  GRID["Data blade"] --> DATA
   DATA --> BLOB["one content blob"]
   SETTINGS --> BLOB
   BLOB --> SAVE["one saveResourceContent, one contentVersion"]
@@ -40,11 +40,11 @@ A Sheet resource always has a `data` section (empty `DataSource` on create) — 
 ## Capabilities
 
 - **DatasetProvider** — `readSheetDataset` reads `content.data` via `dataSourceToDataset`. A `DatasetReference` is just the resource id — a resource _is_ the item, so there is no sub-item selector.
-- **Portable** — `PortableFormatMap[ResourceType.Sheet]` carries a format per `DataSourceType` (accept/mimeType/serialize/deserialize); both Import and Export commands appear in the command bar. Import is a client-side parse (no upload) with a `SHEET_IMPORT_PREVIEW_ROW_COUNT`-row preview. The imported document is then saved like any other, so its ceiling is `MAX_RESOURCE_CONTENT_SIZE`, the content limit every resource shares: a Sheet under it saves, staged through Blob Storage once it outgrows one request body, and one over it is refused on the client with a notification ([file uploads](../../architecture/file-uploads/design.md)). An import replaces the data through `useSetDataSource`, which first hands the replaced sheet's identities to the imported one with `reconcileDataSource` — a column by its source header, a row by its position — so importing the same file again stores the same bytes, which the version store keeps once ([large documents](../../architecture/large-documents/design.md)). The xlsx codecs `await import` their workbook libraries inside `serializeXlsx`/`deserializeXlsx` rather than at module scope: the command bar renders on every resource page, so a static import would ship a parser to every type that can neither import nor export.
+- **Portable** — `PortableFormatMap[ResourceType.Sheet]` carries a format per `DataSourceType` (accept/mimeType/serialize/deserialize); both Import and Export commands appear in the command bar. Import is a client-side parse (no upload) with a `SHEET_IMPORT_PREVIEW_ROW_COUNT`-row preview. The imported document is then saved like any other, so its ceiling is `MAX_RESOURCE_CONTENT_SIZE`, the content limit every resource shares: a Sheet under it saves, and one over it is refused on the client with a notification ([file uploads](../../architecture/file-uploads/design.md)). An import replaces the data through `useSetDataSource`, which first hands the replaced sheet's identities to the imported one with `reconcileDataSource` — a column by its source header, a row by its position — so importing the same file again stores the same bytes, which the version store keeps once ([large documents](../../architecture/large-documents/design.md)). The xlsx codecs `await import` their workbook libraries inside `serializeXlsx`/`deserializeXlsx` rather than at module scope: the command bar renders on every resource page, so a static import would ship a parser to every type that can neither import nor export.
 
 ## Blades
 
-- **Data** — the entire grid editor: inline editing, computed columns, statistics, clipboard, find/replace, undo/redo. Components live under `Resource/Sheet/*`; the grid's feature set is documented in the [sheet editor](../sheet/README.md) area. Its view state — page, search, sort, selected rows and columns, the cell selection, find and replace, column filters — is keyed by the loaded resource, so the next sheet opened starts clean, and a filter is read back only for a column the sheet has.
+- **Data** — the entire grid editor: inline editing, computed columns, statistics, clipboard, find/replace, undo/redo. Components live under `Resource/Sheet/*`; the grid's feature set is documented in the [sheet editor](../sheet/README.md) area. Its view state is the sheet's own ([sheet editor](../sheet/README.md)), and a filter is read back only for a column the sheet has.
 - **Settings** — the file type, choosing which swaps in that format's defaults, beside that format's own parse options (delimiter etc.), editing `content.settings`; changing settings re-parses on next import, never silently rewrites data.
 
 Both blades edit sections of one blob and save through one `saveResourceContent` with one `contentVersion`.
@@ -61,7 +61,7 @@ Both blades edit sections of one blob and save through one `saveResourceContent`
 
 ## Notes
 
-- **Settings live in the content blob, not a column.** Rejected alternatives: a `settings` jsonb column on `resources` (untyped at the DB boundary — per-type settings schemas can't be one column schema; splits one artifact across two write paths with two version races) and a separate `{id}/settings` blob (doubles round-trips, needs its own version field for one consumer). The settings/data split is a UX separation (blades), not a storage separation ([resources](../../architecture/resource/design.md)).
+- **Settings live in the content blob, not a column.** Rejected alternatives: a `settings` jsonb column on `resources` (untyped at the DB boundary — per-type settings schemas can't be one column schema; splits one artifact across two write paths with two version races) and a separate `{id}/settings` blob (doubles round-trips, needs its own version field for one consumer).
 - The command/undo stack (`useSheetHistoryStore`, holding `ADataSourceCommand` instances) operates on a single `DataSource` — exactly one Sheet resource's `content.data`; it initializes from `useResourceStore` content.
 - **Row, column and byte counts are derived, not stored.** `computeDataSourceStatistics` reads them off `columns` and `rows` when the status bar renders. Persisting them meant every command re-syncing a copy that could only ever restate the blob it sits in, or drift from it.
 - A sibling resource type for the Vuetify component demos was [rejected](../../../rejected/resource/vuetify-component-resource/design.md).

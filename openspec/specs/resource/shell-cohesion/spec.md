@@ -6,7 +6,7 @@ The shared chrome primitives — page header, breadcrumbs, empty/loading states,
 
 ### Requirement: Breadcrumbs show the path the visitor came through
 
-The breadcrumb trail SHALL show the area hub followed by the pages the visitor came through, and SHALL NOT show the page they are on.
+The breadcrumb trail SHALL be the one the [breadcrumb trail spec](../breadcrumb-trail/spec.md) defines.
 
 #### Scenario: Direct arrival on a page
 

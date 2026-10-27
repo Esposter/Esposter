@@ -6,7 +6,7 @@ Excel-style range copy materializes computed-column values instead of yielding e
 
 ### Requirement: Copying a range writes the displayed value of computed cells
 
-Copying a range SHALL write the displayed value of each computed cell, never an empty cell.
+Copying a range SHALL follow the [clipboard spec](../clipboard/spec.md) for its computed cells.
 
 #### Scenario: Copy range with a computed column
 
@@ -36,7 +36,7 @@ A computed cell in a copied range SHALL copy the value the grid shows for it, in
 
 ### Requirement: Pasting onto a computed column changes nothing
 
-Pasting onto a computed column SHALL change nothing, and the copied value SHALL land where it is pasted elsewhere.
+Pasting onto a computed column SHALL follow the [clipboard spec](../clipboard/spec.md), and the copied value SHALL land where it is pasted elsewhere.
 
 #### Scenario: Paste onto a computed cell
 

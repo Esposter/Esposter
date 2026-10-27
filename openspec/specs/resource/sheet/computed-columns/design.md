@@ -18,7 +18,7 @@ The read sites are: the row store's cell reads (`getCellValue`, which the table'
 
 ```mermaid
 flowchart TD
-  headers["Row store cell reads<br/>(table sort · global search · cell render)"] --> compile
+  headers["Row store cell reads"] --> compile
   export["ExportDialog → filterDataSourceColumns"] --> compile
   stats["Column statistics"] --> compile
   compile["compileSheetColumns(columns)"] -->|"once per column list"| CM["ColumnTransformationCompileMap<br/>+ getCyclicColumnIds"]
@@ -27,7 +27,7 @@ flowchart TD
   bind -->|"cyclic column"| cyc["null"]
   bind -->|"computed column"| CM
   CM -->|"readSource(sourceColumnId)<br/>bound once, shared"| bind
-  CM -->|"Aggregation"| agg["AggregationTransformationComputeMap<br/>builds the whole-column result at bind"]
+  CM -->|"Aggregation"| agg["AggregationTransformationComputeMap"]
 ```
 
 Computed columns are created and edited through the same [schema form](../../../architecture/schema-forms/design.md) column dialog as every other column type — `computedColumnFormSchema` renders the transformation as a form, with per-transformation Zod validation surfacing errors before save.
@@ -110,5 +110,5 @@ A Sheet's [dataset](../../../architecture/dataset/design.md) serves its computed
 ## Notes
 
 - Rebuilding a binding is cheap next to the walks a cache would need to invalidate ([computed-value cache](../../../../deferred/resource/sheet/computed-value-cache/design.md)).
-- Cycles are found up front by the Tarjan pass over source ids, not guarded on each read. Every column on a cycle reads empty instead of an error, and a column that reads one reads an empty source, which a math column takes as zero like any other.
+- Every column on a cycle reads empty instead of an error, and a column that reads one reads an empty source, which a math column takes as zero like any other.
 - The rejected direction was a per-read guard: a `visited` set that short-circuited a revisited column to `null` on each read. It let a cycle show a number instead of empty — `a = b + 1` and `b = a + 1` each read as 2 — and an aggregation re-walked every row for each cell it was read from, so a grid pass over `n` rows cost `n` walks. Binding once per row list removes both, and the cycle set is decided before any read.
