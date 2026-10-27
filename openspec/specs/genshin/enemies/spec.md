@@ -4,17 +4,19 @@ The game's enemies in the world as built. Each kind's stats come from its base v
 
 ## Requirements
 
-### Requirement: An idle enemy notices a target and alerts before it chases
+### Requirement: An idle enemy notices a target and alerts
 
 An idle enemy SHALL become alert when a target comes within its aggro range.
-
-An enemy SHALL chase once its alert time passes or when it is hit.
 
 #### Scenario: A target within aggro range alerts an idle enemy
 
 - **GIVEN** an idle enemy
 - **WHEN** a target comes within its aggro range
 - **THEN** the enemy becomes alert
+
+### Requirement: An enemy chases once its alert time passes or when it is hit
+
+An enemy SHALL chase once its alert time passes or when it is hit.
 
 #### Scenario: An alert enemy chases once its alert time passes
 
@@ -28,17 +30,19 @@ An enemy SHALL chase once its alert time passes or when it is hit.
 - **WHEN** it is hit
 - **THEN** the enemy chases at once
 
-### Requirement: An enemy strikes only after its windup while the target is in reach
+### Requirement: A chasing enemy begins a windup when a target is within its attack range
 
 A chasing enemy SHALL begin a windup when a target is within its attack range and its cooldown is over.
-
-An enemy SHALL strike only when the windup passes with the target still in reach.
 
 #### Scenario: A target in attack range starts a windup
 
 - **GIVEN** a chasing enemy with its cooldown over and a target in attack range
 - **WHEN** the windup starts
 - **THEN** the enemy winds up
+
+### Requirement: An enemy strikes only after its windup while the target is in reach
+
+An enemy SHALL strike only when the windup passes with the target still in reach.
 
 #### Scenario: A windup that passes with the target in reach strikes
 
@@ -53,11 +57,9 @@ An enemy SHALL strike only when the windup passes with the target still in reach
 - **WHEN** the windup passes
 - **THEN** the enemy does not strike
 
-### Requirement: A staggered enemy cancels its attack until the stagger passes
+### Requirement: A broken poise staggers an enemy and cancels its attack
 
 An enemy whose poise breaks SHALL be staggered and its attack cancelled.
-
-An enemy SHALL chase again once the stagger passes.
 
 #### Scenario: A broken poise staggers the enemy
 
@@ -65,6 +67,10 @@ An enemy SHALL chase again once the stagger passes.
 - **WHEN** its poise breaks
 - **THEN** the enemy is staggered
 - **AND** its attack is cancelled
+
+### Requirement: A staggered enemy chases again once the stagger passes
+
+An enemy SHALL chase again once the stagger passes.
 
 #### Scenario: The enemy chases again once the stagger passes
 
@@ -91,11 +97,9 @@ A hit that leaves the enemy unstaggered, or does not launch, SHALL leave it unla
 - **WHEN** the hit lands
 - **THEN** the enemy carries no launched status
 
-### Requirement: An enemy past its leash returns home healed and immune on the way
+### Requirement: An enemy past its leash walks home immune to damage
 
 An enemy farther from its spawn than its leash distance, or with no target, SHALL walk home immune to damage (a returning enemy is immune).
-
-An enemy walking home SHALL arrive healed to full with its shield and poise restored.
 
 #### Scenario: An enemy past its leash walks home
 
@@ -109,6 +113,10 @@ An enemy walking home SHALL arrive healed to full with its shield and poise rest
 - **WHEN** it is struck
 - **THEN** it takes no damage
 
+### Requirement: An enemy walking home arrives healed to full
+
+An enemy walking home SHALL arrive healed to full with its shield and poise restored.
+
 #### Scenario: An enemy arriving home is healed to full
 
 - **GIVEN** an enemy walking home
@@ -117,13 +125,9 @@ An enemy walking home SHALL arrive healed to full with its shield and poise rest
 - **AND** its shield stands at its maximum
 - **AND** its poise is restored
 
-### Requirement: A defeated enemy drops what its table gives and a boss drops nothing
+### Requirement: A defeated enemy drops Mora, Character EXP and materials by its level band
 
 An enemy whose health reaches zero SHALL be defeated and drop Mora, Character EXP and materials by its level band.
-
-A boss drops nothing.
-
-No enemy gives Adventure EXP (which gives a boss nothing).
 
 #### Scenario: A defeated common enemy drops by its level band
 
@@ -131,11 +135,19 @@ No enemy gives Adventure EXP (which gives a boss nothing).
 - **WHEN** it is defeated
 - **THEN** it drops Mora, Character EXP and materials by its level's band
 
+### Requirement: A boss drops nothing
+
+A boss SHALL drop nothing.
+
 #### Scenario: A defeated boss drops nothing
 
 - **GIVEN** a boss
 - **WHEN** it is defeated
 - **THEN** it drops nothing
+
+### Requirement: No enemy gives Adventure EXP
+
+No enemy SHALL give Adventure EXP (which gives a boss nothing).
 
 #### Scenario: A defeated enemy gives no Adventure EXP
 
@@ -167,7 +179,7 @@ A defeated enemy SHALL NOT return before its respawn time, which depends on its 
 #### Scenario: An elite camp member returns at the next daily reset
 
 - **GIVEN** a camp with an elite and a member defeated
-- **WHEN** the next daily reset at 04:00 on the server's clock arrives (`~/Esposter/genshin-parity/text/ExcelBinOutput/RefreshPolicyExcelConfigData.json`, the `REFRESH_DAILY` rows with `14400`)
+- **WHEN** the next daily reset at 04:00 on the server's clock arrives
 - **THEN** the member returns
 
 #### Scenario: A boss camp returns five seconds after its reward is claimed
@@ -186,11 +198,9 @@ When one member of a camp is engaged, every idle member of that camp SHALL be al
 - **WHEN** the step is taken
 - **THEN** every idle camp-mate is alerted
 
-### Requirement: Camps spawn when their region arrives and respawn when the World Level changes
+### Requirement: Camps spawn when their region arrives and leave when the region leaves reach
 
 A camp SHALL spawn when its region's data arrives and leave when the region leaves reach.
-
-Every camp SHALL spawn anew when the World Level changes.
 
 #### Scenario: A region arriving in reach spawns its camps
 
@@ -203,6 +213,10 @@ Every camp SHALL spawn anew when the World Level changes.
 - **GIVEN** a region with spawned camps
 - **WHEN** the region leaves reach
 - **THEN** its enemies are removed
+
+### Requirement: Every camp spawns anew when the World Level changes
+
+Every camp SHALL spawn anew when the World Level changes.
 
 #### Scenario: A World Level change spawns every camp anew
 
@@ -251,14 +265,16 @@ An enemy SHALL drop its energy at each health threshold it falls to, once for it
 
 A reload of the page SHALL bring back a defeated enemy only once its saved respawn time has passed.
 
-A reload of the page SHALL bring back a boss's camp only by the return its saved defeat, blossom and last teleport give.
-
 #### Scenario: A defeated enemy stays away after a reload until its respawn time
 
 - **GIVEN** a common enemy defeated, with its saved respawn time still ahead
 - **WHEN** the page is reloaded
 - **THEN** the enemy is not in the world
 - **AND** it is back in the world once its respawn time passes
+
+### Requirement: A page reload brings a boss's camp back only by the return its saved defeat, blossom and last teleport give
+
+A reload of the page SHALL bring back a boss's camp only by the return its saved defeat, blossom and last teleport give.
 
 #### Scenario: A boss stays down after a reload until its blossom is claimed or the player teleports
 
@@ -271,13 +287,15 @@ A reload of the page SHALL bring back a boss's camp only by the return its saved
 
 Each enemy SHALL be drawn as a capsule tinted by its state.
 
-Each enemy SHALL be tinted white with a small flash at its middle for a moment after a hit (with the tint and flash timings as constants).
-
 #### Scenario: An enemy is tinted by its state
 
 - **GIVEN** an enemy in a given state
 - **WHEN** it is drawn
 - **THEN** its capsule is tinted by that state
+
+### Requirement: Each enemy is tinted white with a small flash at its middle after a hit
+
+Each enemy SHALL be tinted white with a small flash at its middle for a moment after a hit (with the tint and flash timings as constants).
 
 #### Scenario: A hit tints the enemy white with a flash
 
