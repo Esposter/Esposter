@@ -64,15 +64,19 @@ Starward Sword SHALL strike an initial hit, eight slashes and a final strike, al
 - **WHEN** the player casts Starward Sword again
 - **THEN** nothing happens
 
-### Requirement: Keqing's Constellations 1, 2, 4 and 6
+### Requirement: Keqing's Constellation 1
 
-Constellation 1 SHALL add an Electro hit of 50% of ATK 3 frames into each Stellar Restoration recast and another at its hitmark. Constellation 2 SHALL give a 50% chance of an Electro particle, delayed 100 frames, from each Normal Attack or Charged Attack hit on an enemy under Electro, at most once every 5 seconds. Constellation 4 SHALL give Keqing 25% ATK for 10 seconds when an Electro-related reaction she triggers lands. Constellation 6 SHALL give her 6% Electro DMG Bonus for 8 seconds from each Normal Attack, Charged Attack, Elemental Skill and Burst, a repeat of the same kind restarting its own.
+Constellation 1 SHALL add an Electro hit of 50% of ATK 3 frames into each Stellar Restoration recast and another at its hitmark.
 
 #### Scenario: Recast adds Electro hits at Constellation 1
 
 - **GIVEN** Keqing has Constellation 1
 - **WHEN** the player recasts Stellar Restoration
 - **THEN** an Electro hit of 50% of ATK lands 3 frames in, and another at the recast's hitmark
+
+### Requirement: Keqing's Constellation 2
+
+Constellation 2 SHALL give a 50% chance of an Electro particle, delayed 100 frames, from each Normal Attack or Charged Attack hit on an enemy under Electro, at most once every 5 seconds.
 
 #### Scenario: Electro hit gives a particle at Constellation 2
 
@@ -81,11 +85,19 @@ Constellation 1 SHALL add an Electro hit of 50% of ATK 3 frames into each Stella
 - **THEN** the cooldown starts for 5 seconds
 - **AND** an Electro particle is collected 100 frames later
 
+### Requirement: Keqing's Constellation 4
+
+Constellation 4 SHALL give Keqing 25% ATK for 10 seconds when an Electro-related reaction she triggers lands.
+
 #### Scenario: Electro reaction raises ATK at Constellation 4
 
 - **GIVEN** Keqing has Constellation 4
 - **WHEN** she triggers an Electro-related reaction
 - **THEN** she gains 25% ATK for 10 seconds
+
+### Requirement: Keqing's Constellation 6
+
+Constellation 6 SHALL give Keqing 6% Electro DMG Bonus for 8 seconds from each Normal Attack, Charged Attack, Elemental Skill and Burst, a repeat of the same kind restarting its own.
 
 #### Scenario: Each kind of action gives Electro DMG Bonus at Constellation 6
 
