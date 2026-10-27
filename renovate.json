@@ -33,11 +33,6 @@
       ]
     },
     {
-      "description": "`nitro` is pinned to one exact nightly build in the catalog and `overrides:`, not aliased to a dist-tag, so a lockfile refresh never moves it and a newer nightly is not proposed either. The pin holds for the two Nitro pull requests its `pnpm-workspace.yaml` comments link, which move Nitro's WebSocket upgrade listener and its Vite services. Drop this rule with the pin, back to a `^3` range, once both ship in a release.",
-      "enabled": false,
-      "matchPackageNames": ["nitro", "nitro-nightly"]
-    },
-    {
       "description": "`typescript` is aliased to `typescript-native-bridge` under `overrides:`, so a bump moves the bridge, the TypeScript behind it and `typescript-eslint` at once — a dedicated pass, never a routine update. A rule matches the resolved package name, so the alias target is named beside the alias.",
       "enabled": false,
       "matchPackageNames": ["typescript", "typescript-native-bridge"]
