@@ -40,9 +40,9 @@ The fleet reads every page here except this one, and an id that two pages share 
 The bars the region passes and the area pages' pass items share, each gate named by its constant.
 
 - **Layout**: each family's part within 0.02 m (`PART_GATE_METRES`) and its pixel gap within 2 px (`FRAME_GATE_PIXELS`).
-- **Surface**: each family's mean colour within 2.3 DeltaE (`COLOUR_GATE`) and its structure within the outline gate.
+- **Surface**: each family's mean colour within 2.3 DeltaE (`COLOUR_GATE`) and its structure within the outline gate. A surface pass reads the exports' albedo at the reference's camera and its kit colours from the region's palette.
 - **Shape**: outline within 1 px (`SHAPE_OUTLINE_GATE_PIXELS`), depth within 0.01 (`SHAPE_DEPTH_GATE`), normals within 10 degrees (`SHAPE_NORMAL_GATE_DEGREES`).
-- **Camera**: root mean square and reprojection 2 px (`FRAME_GATE_PIXELS`).
+- **Camera**: root mean square and reprojection 2 px (`FRAME_GATE_PIXELS`). The solved pose is written as `cameraPose` in `ParityReferenceMap.ts` once its landmarks reproject within the gate.
 - **Sun**: the solved edges within 2 px (`FRAME_GATE_PIXELS`); on a hit the held minute, read through `computeSunDirection`, replaces the provisional noon in the reference's `heldMinutes` (a call).
 - **Light**: shadow edges within 2 px (`FRAME_GATE_PIXELS`) and the stone's colour within 2.3 DeltaE (`COLOUR_GATE`).
 - **Atmosphere**: the sky's statistics within the spread of the reference's own sky halves, and its clear sky within 2.3 DeltaE (`COLOUR_GATE`).
