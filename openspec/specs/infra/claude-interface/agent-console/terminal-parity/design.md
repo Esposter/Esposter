@@ -39,6 +39,5 @@ The [agent console](../README.md) replaces the terminal only if nothing is lost 
 ## Notes
 
 - Parity reuses what Claude Code has rather than standing in for it. Where the terminal shows something of Claude Code's own — its spinner verbs, a task's in-progress text — the console shows the same, and where the SDK does not hand something over, the console leaves it out rather than inventing its own, as with the tips.
-- Every row marked done reads the fold of the recorded session, which the fold tests replay, and the host's wire has been driven live end to end over its socket: a prompt with a text attachment through two permission requests, a task list, a subagent, the reply streaming, a file rewind, an interrupt, a reconnect's replay and closing. What the panels and the world draw from it is checked by eye.
+- Every row marked done reads the fold of the recorded session, which the fold tests replay. What the panels and the world draw from it is checked by eye.
 - A file too large for the edit tool to have kept its text from before the session's first change to it shows its edits one by one rather than merged. A session resumed from its transcript merges like a live one, since the host reads each edit's original text back from the transcript on disk.
-- The page does what the terminal cannot in the rows above: parallel sessions each with their state one click apart, a notification when a hidden session needs attention, a search over the session, and a diff for every edit, including the one a permission request is asking about.

@@ -24,14 +24,14 @@ flowchart TD
 
 ```mermaid
 flowchart TD
-  A[Type the prompt in the console] --> B[Conversation, tool timeline and diff fill side by side]
+  A[Type the prompt in the console] --> B[Watch the turn in the console]
   B --> C{Permission prompt}
   C -->|full input shown on the card| D[Click allow or deny]
   D --> B
   B --> E[Turn ends<br/>notifies if the tab is hidden]
   E --> F[The turn's diff is already open, per file]
   E --> G[Context gauge in view, warns before compaction]
-  E --> H[Session list shows every session's state — one click to switch]
+  E --> H[Switch session from the list]
 ```
 
 ## Task by task
@@ -59,7 +59,7 @@ The comparison is only honest with the other column filled in. The console adds:
 - **Surface to maintain.** A host, a wire, a page and a theme layer, against a terminal someone else maintains. Every Claude Code release that changes the SDK's messages is a change the driver has to follow.
 - **A dependency on the SDK's billing.** Today the SDK runs on the subscription's own limits; if that changes, the SDK driver changes cost and the terminal-mirror driver is the fallback that keeps the console free ([drivers](../../../../../changes/infra-agent-console-terminal-mirror-driver/design.md)).
 
-- **A browser prompt, once.** The deployed page reaching a host on the loopback passes the private-network preflight the host answers, and current Chrome also asks once to allow local network access for the site. The local dev server needs neither.
+- **A browser prompt, once.** Current Chrome asks once per site, as [the host's private-network preflight](../host/design.md) explains.
 - **A header that fills in on the first turn.** The SDK reports a session's model and mode with the first turn's init message, so a session opened and not yet prompted shows the defaults until it runs.
 
 ## How the comparison is used
