@@ -90,7 +90,7 @@ Durin's burst SHALL be As the Light Shifts, or As the Stars Smolder while the De
 
 ### Requirement: Dragon ticks
 
-Each burst SHALL leave a Dragon that strikes the primary target in twenty ticks for As the Light Shifts or sixteen for As the Stars Smolder (gcsim's `burst.go:20-21`), and a new burst SHALL end the Dragon standing.
+Each burst SHALL leave a Dragon that strikes the primary target in twenty ticks for As the Light Shifts or sixteen for As the Stars Smolder, and a new burst SHALL end the Dragon standing.
 
 #### Scenario: The Dragon strikes its ticks
 
