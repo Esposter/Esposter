@@ -13,7 +13,6 @@ The quit prompt SHALL be fitted to a whole frame of its current three-button bui
 - **GIVEN** no whole frame of the current three-button prompt has been found
 - **WHEN** the prompt's placement is considered
 - **THEN** the prompt keeps the provisional 1080 high unit
-- **AND** the wiki crop serves only as a reference for its colours
 
 ### Requirement: The quit prompt's whole frame
 

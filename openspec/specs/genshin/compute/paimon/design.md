@@ -21,3 +21,7 @@
 - [ ] **Reputation: the grid's worst cells at 4.6% to 7.9%, the slots of levels 4 to 7** — no source yet: a per-cell score of the reward grid, which the snapshot does not break down.
 - [ ] **Reputation: the unlock lines at 5.4% to 7.4%** — no source yet: a per-line score of the unlock lines, which the snapshot does not break down.
 - [ ] **Paimon: the menu over its whole frame is read from the wiki's Version 1.3 still** — no source yet: the wiki's `File:Paimon Menu Version 1.3.png` is not on disk, and the Paimon Menu wiki page is not in the cache.
+
+## Sources
+
+- Requirement `The quit prompt`, scenario `Without a current-build frame the prompt keeps its provisional unit`: "the wiki crop serves only as a reference for its colours".
